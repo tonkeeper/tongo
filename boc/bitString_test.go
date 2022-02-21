@@ -2,24 +2,26 @@ package boc
 
 import (
 	"fmt"
-	"math"
-	"math/big"
 	"testing"
 )
 
 func TestOn(t *testing.T) {
 
-	fmt.Println(math.Ceil(float64(1023) / float64(8)))
-	var str = NewBitString(2)
+	//fmt.Println(math.Ceil(float64(1023) / float64(8)))
+	var str = NewBitString(8 * 10)
 	//
 	str.Print()
-	//str.WriteUint(big.NewInt(255), 8)
-	str.WriteInt(big.NewInt(-8), 8)
+	//str.WriteBigUint(big.NewInt(255), 8)
+	str.WriteCoins(77)
+	//str.WriteInt(-2, 8)
+	//str.WriteBigInt(big.NewInt(-128), 8)
+	//str.WriteUint(25, 8)
+	//str.WriteByte(2)
 	str.Print()
 
 	var reader = NewBitStringReader(&str)
 
-	var num = reader.ReadInt(8)
+	var num = reader.ReadCoins()
 	fmt.Println(num)
 
 	//var n = big.NewInt(1)
@@ -29,7 +31,7 @@ func TestOn(t *testing.T) {
 	//	fmt.Println(n.Bit(i))
 	//}
 
-	//str.WriteInt(big.NewInt(127), 8)
+	//str.WriteBigInt(big.NewInt(127), 8)
 	//str.On(0)
 	//
 	//str.On(8)

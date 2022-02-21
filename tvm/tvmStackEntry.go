@@ -19,15 +19,15 @@ const (
 
 type TvmStackEntry struct {
 	Type     EntryType
-	IntVal   big.Int
-	CellVal  *boc.Cell
-	TupleVal []*TvmStackEntry
+	intVal   big.Int
+	cellVal  *boc.Cell
+	tupleVal []TvmStackEntry
 }
 
 func NewIntStackEntry(val big.Int) TvmStackEntry {
 	return TvmStackEntry{
 		Type:   Int,
-		IntVal: val,
+		intVal: val,
 	}
 }
 
@@ -38,11 +38,23 @@ func NewNullStackEntry() TvmStackEntry {
 }
 
 func (e *TvmStackEntry) Int() big.Int {
-	return e.IntVal
+	return e.intVal
+}
+
+func (e *TvmStackEntry) Int64() int64 {
+	return e.intVal.Int64()
+}
+
+func (e *TvmStackEntry) Uint64() uint64 {
+	return e.intVal.Uint64()
 }
 
 func (e *TvmStackEntry) Cell() *boc.Cell {
-	return e.CellVal
+	return e.cellVal
+}
+
+func (e *TvmStackEntry) Tuple() []TvmStackEntry {
+	return e.tupleVal
 }
 
 func (e *TvmStackEntry) IsNull() bool {
@@ -58,13 +70,11 @@ func (e *TvmStackEntry) IsCell() bool {
 }
 
 func (e *TvmStackEntry) IsTuple() bool {
-	return e.Type == Cell
+	return e.Type == Tuple
 }
 
 func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	var m map[string]json.RawMessage
-
-	//m := map[string]string{}
 
 	err := json.Unmarshal(data, &m)
 	if err != nil {
@@ -88,20 +98,20 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 		}
 
 		e.Type = Int
-		e.IntVal.SetString(intEntry.Value, 10)
+		e.intVal.SetString(intEntry.Value, 10)
 	} else if entryType == "null" {
 		e.Type = Null
 	} else if entryType == "tuple" {
 		var tupleEntry struct {
-			Type  string           `json:"type"`
-			Value []*TvmStackEntry `json:"value"`
+			Type  string          `json:"type"`
+			Value []TvmStackEntry `json:"value"`
 		}
 		err = json.Unmarshal(data, &tupleEntry)
 		if err != nil {
 			return err
 		}
 		e.Type = Tuple
-		e.TupleVal = tupleEntry.Value
+		e.tupleVal = tupleEntry.Value
 	} else if entryType == "cell" {
 		var cellEntry struct {
 			Type  string `json:"type"`
@@ -121,9 +131,10 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 		if err != nil {
 			return err
 		}
-		e.CellVal = parsedBoc[0]
+		e.cellVal = parsedBoc[0]
 	} else {
 		return errors.New("unknown stack entry type")
 	}
+
 	return nil
 }

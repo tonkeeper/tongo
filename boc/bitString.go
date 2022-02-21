@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"strconv"
 )
 
 type BitString struct {
@@ -18,6 +19,17 @@ func NewBitString(bitLen int) BitString {
 		buf:    make([]byte, int(math.Ceil(float64(bitLen)/float64(8)))),
 		len:    bitLen,
 		cursor: 0,
+	}
+}
+
+func (s *BitString) Copy() BitString {
+	var buf = make([]byte, len(s.buf))
+	copy(buf, s.buf)
+
+	return BitString{
+		buf:    buf,
+		len:    len(s.buf) * 8,
+		cursor: s.cursor,
 	}
 }
 
@@ -38,7 +50,6 @@ func (s *BitString) Buffer() []byte {
 }
 
 func (s *BitString) Get(n int) bool {
-
 	return (s.buf[(n/8)|0] & (1 << (7 - (n % 8)))) > 0
 }
 
@@ -69,7 +80,7 @@ func (s *BitString) WriteBitArray(val []bool) {
 	}
 }
 
-func (s *BitString) WriteUint(val *big.Int, bitLen int) error {
+func (s *BitString) WriteBigUint(val *big.Int, bitLen int) error {
 	if bitLen == 0 || val.BitLen() > bitLen {
 		return errors.New("bit length is too small")
 	}
@@ -81,13 +92,13 @@ func (s *BitString) WriteUint(val *big.Int, bitLen int) error {
 	return nil
 }
 
-func (s *BitString) WriteInt(val *big.Int, bitLen int) error {
+func (s *BitString) WriteBigInt(val *big.Int, bitLen int) error {
 	if bitLen == 1 {
-		if val.Cmp(big.NewInt(-1)) == 0 {
+		if val.Int64() == -1 {
 			s.WriteBit(true)
 			return nil
 		}
-		if val.Cmp(big.NewInt(0)) == 0 {
+		if val.Int64() == 0 {
 			s.WriteBit(false)
 			return nil
 		}
@@ -97,13 +108,13 @@ func (s *BitString) WriteInt(val *big.Int, bitLen int) error {
 			s.WriteBit(true)
 			var b = big.NewInt(2)
 			var nb = b.Exp(b, big.NewInt(int64(bitLen-1)), nil)
-			err := s.WriteUint(nb.Add(nb, val), bitLen-1)
+			err := s.WriteBigUint(nb.Add(nb, val), bitLen-1)
 			if err != nil {
 				return err
 			}
 		} else {
 			s.WriteBit(false)
-			err := s.WriteUint(val, bitLen-1)
+			err := s.WriteBigUint(val, bitLen-1)
 			if err != nil {
 				return err
 			}
@@ -112,13 +123,69 @@ func (s *BitString) WriteInt(val *big.Int, bitLen int) error {
 	return nil
 }
 
-func (s *BitString) SetTopUppedArray(arr []byte, fullfilledBytes bool) error {
+func (s *BitString) WriteUint(val int, bitLen int) {
+	for i := bitLen - 1; i >= 0; i-- {
+		s.WriteBit(((val >> i) & 1) > 0)
+	}
+}
+
+func (s *BitString) WriteInt(val int, bitLen int) {
+	if bitLen == 1 {
+		if val == -1 {
+			s.WriteBit(true)
+		}
+		if val == 0 {
+			s.WriteBit(false)
+		}
+	} else {
+		if val < 0 {
+			s.WriteBit(true)
+			s.WriteUint(int(math.Pow(2, float64(bitLen-1)))+val, bitLen-1)
+		} else {
+			s.WriteBit(false)
+			s.WriteUint(val, bitLen-1)
+		}
+	}
+}
+
+func (s *BitString) WriteCoins(amount int) {
+	if amount == 0 {
+		s.WriteUint(0, 4)
+	} else {
+		l := int(math.Ceil(float64(len(strconv.FormatInt(int64(amount), 16)) / 2)))
+		s.WriteUint(l, 4)
+		s.WriteUint(amount, l*8)
+	}
+}
+
+func (s *BitString) WriteByte(val byte) {
+	s.WriteUint(int(val), 8)
+}
+
+func (s *BitString) WriteBytes(data []byte) {
+	for _, item := range data {
+		s.WriteByte(item)
+	}
+}
+
+func (s *BitString) WriteAddress(address *Address) {
+	if address == nil {
+		s.WriteUint(0, 2)
+	} else {
+		s.WriteUint(2, 2)
+		s.WriteUint(0, 1)
+		s.WriteInt(address.Workchain, 8)
+		s.WriteBytes(address.Address)
+	}
+}
+
+func (s *BitString) SetTopUppedArray(arr []byte, fulfilledBytes bool) error {
 	s.len = len(arr) * 8
 	s.buf = make([]byte, len(arr))
 	copy(s.buf, arr)
 	s.cursor = s.len
 
-	if fullfilledBytes || s.len == 0 {
+	if fulfilledBytes || s.len == 0 {
 		return nil
 	}
 
@@ -136,6 +203,22 @@ func (s *BitString) SetTopUppedArray(arr []byte, fullfilledBytes bool) error {
 		return errors.New("incorrect topUppedArray")
 	}
 	return nil
+}
+
+func (s *BitString) GetTopUppedArray() []byte {
+	ret := s.Copy()
+
+	tu := int(math.Ceil(float64(ret.Cursor())/8))*8 - ret.Cursor()
+	if tu > 0 {
+		tu = tu - 1
+		ret.WriteBit(true)
+		for tu > 0 {
+			tu = tu - 1
+			ret.WriteBit(false)
+		}
+	}
+	ret.buf = ret.buf[0:int(math.Ceil(float64(ret.cursor/8)))]
+	return ret.buf
 }
 
 func (s *BitString) Print() {

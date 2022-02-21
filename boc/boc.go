@@ -1,10 +1,13 @@
 package boc
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/binary"
 	"errors"
 	"hash/crc32"
 	"math"
+	"math/bits"
 )
 
 var reachBocMagicPrefix = []byte{
@@ -189,7 +192,12 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	dataBytesSize := int(math.Ceil(float64(d2) / float64(2)))
 	fullfilledBytes := ^(d2 % 2) > 0
 
-	var cell = NewCell(isExotic)
+	var cell *Cell
+	if isExotic {
+		cell = NewCellExotic()
+	} else {
+		cell = NewCell()
+	}
 	var refs = make([]int, 0)
 
 	if len(cellData) < dataBytesSize+referenceIndexSize*refNum {
@@ -204,7 +212,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 		cellData = cellData[referenceIndexSize:]
 	}
 
-	return &cell, refs, cellData, nil
+	return cell, refs, cellData, nil
 }
 
 func DeserializeBoc(boc []byte) ([]*Cell, error) {
@@ -240,4 +248,160 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 	}
 
 	return rootCells, nil
+}
+
+func DeserializeBocBase64(boc string) ([]*Cell, error) {
+	bocData, err := base64.StdEncoding.DecodeString(boc)
+	if err != nil {
+		return nil, err
+	}
+	return DeserializeBoc(bocData)
+}
+
+func getMaxDepth(cell *Cell) int {
+	maxDepth := 0
+	if cell.RefsSize() > 0 {
+		for _, v := range cell.Refs() {
+			if getMaxDepth(v) > maxDepth {
+				maxDepth = getMaxDepth(v)
+			}
+		}
+		maxDepth += 1
+	}
+	return maxDepth
+}
+
+func bocReprWithoutRefs(cell *Cell) []byte {
+	d1 := byte(cell.RefsSize())
+	d2 := byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
+
+	res := make([]byte, ((cell.BitSize()+7)/8)+2)
+	res[0] = d1
+	res[1] = d2
+	copy(res[2:], cell.Bits.buf)
+
+	if cell.BitSize()%8 != 0 {
+		res[len(res)-1] |= 1 << (7 - cell.BitSize()%8)
+	}
+
+	return res
+}
+
+func hashRepr(cell *Cell) []byte {
+	res := bocReprWithoutRefs(cell)
+	for _, r := range cell.Refs() {
+		depthRepr := make([]byte, 2)
+		binary.BigEndian.PutUint16(depthRepr, uint16(getMaxDepth(r)))
+		res = append(res, depthRepr...)
+	}
+	for _, r := range cell.refs {
+		res = append(res, r.Hash()...)
+	}
+	return res
+}
+
+func hashCell(cell *Cell) []byte {
+	hash := sha256.Sum256(hashRepr(cell))
+	return hash[:]
+}
+
+func topologicalSortImpl(cell *Cell, seen map[string]bool) ([]*Cell, error) {
+	var res = make([]*Cell, 0)
+
+	res = append(res, cell)
+
+	hash := cell.HashString()
+	if seen[hash] == true {
+		return nil, errors.New("circular references are not allowed")
+	}
+	seen[hash] = true
+
+	for _, ref := range cell.Refs() {
+		res2, err := topologicalSortImpl(ref, seen)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, res2...)
+	}
+
+	return res, nil
+}
+
+func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
+	res, err := topologicalSortImpl(cell, map[string]bool{})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	indexesMap := make(map[string]int)
+	for i := 0; i < len(res); i++ {
+		indexesMap[res[i].HashString()] = i
+	}
+
+	return res, indexesMap, nil
+}
+
+func bocRepr(c *Cell, indexesMap map[string]int) []byte {
+	res := bocReprWithoutRefs(c)
+
+	for _, ref := range c.Refs() {
+		res = append(res, byte(indexesMap[ref.HashString()]))
+	}
+
+	return res
+}
+
+func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags int) ([]byte, error) {
+	rootCell := cell
+	allCells, indexesMap, err := topologicalSort(rootCell)
+	if err != nil {
+		return nil, err
+	}
+
+	cellsNum := len(allCells)
+	sBits := bits.Len(uint(cellsNum))
+	sBytes := int(math.Min(math.Ceil(float64(sBits)/8), 1))
+	fullSize := 0
+	sizeIndex := make([]int, 0)
+	for _, cell := range allCells {
+		sizeIndex = append(sizeIndex, fullSize)
+		fullSize = fullSize + len(bocRepr(cell, indexesMap))
+	}
+
+	offsetBits := bits.Len(uint(fullSize))
+	offsetBytes := int(math.Max(math.Ceil(float64(offsetBits)/8), 1))
+
+	serStr := NewBitString((1023 + 32*4 + 32*3) * cellsNum)
+
+	serStr.WriteBytes(reachBocMagicPrefix)
+	serStr.WriteBitArray([]bool{idx, hasCrc32, cacheBits})
+	serStr.WriteUint(flags, 2)
+	serStr.WriteUint(sBytes, 3)
+	serStr.WriteUint(offsetBytes, 8)
+	serStr.WriteUint(cellsNum, sBytes*8)
+	serStr.WriteUint(1, sBytes*8)
+	serStr.WriteUint(0, sBytes*8)
+	serStr.WriteUint(fullSize, offsetBytes*8)
+	serStr.WriteUint(0, sBytes*8)
+
+	if idx {
+		for i, _ := range allCells {
+			serStr.WriteUint(sizeIndex[i], offsetBytes*8)
+		}
+	}
+
+	for _, cell := range allCells {
+		serStr.WriteBytes(bocRepr(cell, indexesMap))
+	}
+
+	resBytes := serStr.GetTopUppedArray()
+
+	if hasCrc32 {
+		checksum := make([]byte, 4)
+		binary.LittleEndian.PutUint32(checksum, crc32.Checksum(resBytes, crc32.MakeTable(crc32.Castagnoli)))
+
+		resBytes = append(resBytes, checksum...)
+	}
+
+	return resBytes, nil
 }

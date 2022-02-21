@@ -34,9 +34,9 @@ func main() {
 	err := json.Unmarshal([]byte(resJson), &executeResult)
 
 	fmt.Println(err)
-	fmt.Println(executeResult.Stack[2].TupleVal[0].IntVal)
-	fmt.Println(executeResult.Stack[2].TupleVal[1].IntVal)
-	//parse := executeResult.Stack[1].CellVal.BeginParse()
-	//fmt.Println(parse.ReadUint(32))
+	fmt.Println(executeResult.Stack[2].Tuple()[0].Int())
+	fmt.Println(executeResult.Stack[2].Tuple()[1].Int())
+	//parse := executeResult.Stack[1].cellVal.BeginParse()
+	//fmt.Println(parse.ReadBigUint(32))
 	//fmt.Print("Hello world!")
 }

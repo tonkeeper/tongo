@@ -394,7 +394,10 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags int
 		serStr.WriteBytes(bocRepr(cell, indexesMap))
 	}
 
-	resBytes := serStr.GetTopUppedArray()
+	resBytes, err := serStr.GetTopUppedArray()
+	if err != nil {
+		return nil, err
+	}
 
 	if hasCrc32 {
 		checksum := make([]byte, 4)

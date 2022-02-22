@@ -24,10 +24,31 @@ type TvmStackEntry struct {
 	tupleVal []TvmStackEntry
 }
 
-func NewIntStackEntry(val big.Int) TvmStackEntry {
+type basicEntry struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+type nullEntry struct {
+	Type string `json:"type"`
+}
+
+type tupleEntry struct {
+	Type  string          `json:"tuple"`
+	Value []TvmStackEntry `json:"value"`
+}
+
+func NewBigIntStackEntry(val big.Int) TvmStackEntry {
 	return TvmStackEntry{
 		Type:   Int,
 		intVal: val,
+	}
+}
+
+func NewIntStackEntry(val int) TvmStackEntry {
+	return TvmStackEntry{
+		Type:   Int,
+		intVal: *big.NewInt(int64(val)),
 	}
 }
 
@@ -88,10 +109,7 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	}
 
 	if entryType == "int" {
-		var intEntry struct {
-			Type  string `json:"type"`
-			Value string `json:"value"`
-		}
+		var intEntry basicEntry
 		err = json.Unmarshal(data, &intEntry)
 		if err != nil {
 			return err
@@ -102,10 +120,7 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	} else if entryType == "null" {
 		e.Type = Null
 	} else if entryType == "tuple" {
-		var tupleEntry struct {
-			Type  string          `json:"type"`
-			Value []TvmStackEntry `json:"value"`
-		}
+		var tupleEntry tupleEntry
 		err = json.Unmarshal(data, &tupleEntry)
 		if err != nil {
 			return err
@@ -113,10 +128,7 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 		e.Type = Tuple
 		e.tupleVal = tupleEntry.Value
 	} else if entryType == "cell" {
-		var cellEntry struct {
-			Type  string `json:"type"`
-			Value string `json:"value"`
-		}
+		var cellEntry basicEntry
 		err = json.Unmarshal(data, &cellEntry)
 		if err != nil {
 			return err
@@ -137,4 +149,21 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+func (e *TvmStackEntry) MarshalJSON() ([]byte, error) {
+	if e.Type == Int {
+		return json.Marshal(&basicEntry{Type: "int", Value: e.intVal.String()})
+	} else if e.Type == Cell {
+		bocStr, err := e.cellVal.ToBocBase64Custom(false, true, false, 0)
+		if err != nil {
+			return nil, err
+		}
+		return json.Marshal(&basicEntry{Type: "cell", Value: bocStr})
+	} else if e.Type == Cell {
+		return json.Marshal(&nullEntry{Type: "null"})
+	} else if e.Type == Tuple {
+		return json.Marshal(&tupleEntry{Type: "tuple", Value: e.tupleVal})
+	}
+	return nil, errors.New("unable to serialize tvm stack entry")
 }

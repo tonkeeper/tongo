@@ -1,11 +1,13 @@
 package boc
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math"
 	"math/big"
 	"strconv"
+	"strings"
 )
 
 type BitString struct {
@@ -226,4 +228,23 @@ func (s *BitString) Print() {
 		fmt.Printf("% 08b", n)
 	}
 	fmt.Println()
+}
+
+func (s *BitString) ToFiftHex() string {
+	if s.cursor%4 == 0 {
+		str := strings.ToUpper(hex.EncodeToString(s.buf[0 : (s.cursor+7)/8]))
+		if s.cursor%8 == 0 {
+			return str
+		} else {
+			return str[0 : len(str)-1]
+		}
+	} else {
+		temp := s.Copy()
+		temp.WriteBit(true)
+		for temp.cursor%4 != 0 {
+			temp.WriteBit(false)
+		}
+		hex := temp.ToFiftHex()
+		return hex + "_"
+	}
 }

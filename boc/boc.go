@@ -190,7 +190,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	isExotic := (d1 & 8) > 0
 	refNum := int(d1 % 8)
 	dataBytesSize := int(math.Ceil(float64(d2) / float64(2)))
-	fullfilledBytes := ^(d2 % 2) > 0
+	fullfilledBytes := !((d2 % 2) > 0)
 
 	var cell *Cell
 	if isExotic {
@@ -234,7 +234,7 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 
 		for ri := 0; ri < len(c); ri++ {
 			r := c[ri]
-			if r < int(i) {
+			if r < i {
 				return nil, errors.New("topological order is broken")
 			}
 			cellsArray[i].refs[ri] = cellsArray[r]
@@ -261,9 +261,9 @@ func DeserializeBocBase64(boc string) ([]*Cell, error) {
 func getMaxDepth(cell *Cell) int {
 	maxDepth := 0
 	if cell.RefsSize() > 0 {
-		for _, v := range cell.Refs() {
-			if getMaxDepth(v) > maxDepth {
-				maxDepth = getMaxDepth(v)
+		for _, ref := range cell.Refs() {
+			if getMaxDepth(ref) > maxDepth {
+				maxDepth = getMaxDepth(ref)
 			}
 		}
 		maxDepth += 1
@@ -294,7 +294,7 @@ func hashRepr(cell *Cell) []byte {
 		binary.BigEndian.PutUint16(depthRepr, uint16(getMaxDepth(r)))
 		res = append(res, depthRepr...)
 	}
-	for _, r := range cell.refs {
+	for _, r := range cell.Refs() {
 		res = append(res, r.Hash()...)
 	}
 	return res

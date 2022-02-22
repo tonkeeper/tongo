@@ -15,7 +15,7 @@ type Cell struct {
 func NewCell() *Cell {
 	return &Cell{
 		Bits:     NewBitString(1023),
-		refs:     make([]*Cell, 0),
+		refs:     make([]*Cell, 4),
 		isExotic: false,
 	}
 }
@@ -23,7 +23,7 @@ func NewCell() *Cell {
 func NewCellExotic() *Cell {
 	return &Cell{
 		Bits:     NewBitString(1023),
-		refs:     make([]*Cell, 0),
+		refs:     make([]*Cell, 4),
 		isExotic: true,
 	}
 }
@@ -33,11 +33,18 @@ func (c *Cell) BeginParse() BitStringReader {
 }
 
 func (c *Cell) RefsSize() int {
-	return len(c.refs)
+	return len(c.Refs())
 }
 
 func (c *Cell) Refs() []*Cell {
-	return c.refs
+	res := make([]*Cell, 0)
+	for _, ref := range c.refs {
+		if ref != nil {
+			res = append(res, ref)
+		}
+	}
+	return res
+	//return c.refs
 }
 
 func (c *Cell) IsExotic() bool {
@@ -96,4 +103,16 @@ func (c *Cell) AddReference(c2 *Cell) (*Cell, error) {
 	c.refs = append(c.refs, c2)
 
 	return c, nil
+}
+
+func (c *Cell) toStringImpl(ident string) string {
+	s := ident + "x{" + c.Bits.ToFiftHex() + "}\n"
+	for _, ref := range c.Refs() {
+		s += ref.toStringImpl(ident + " ")
+	}
+	return s
+}
+
+func (c *Cell) ToString() string {
+	return c.toStringImpl("")
 }

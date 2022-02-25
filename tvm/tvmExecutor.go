@@ -1,13 +1,15 @@
 package tvm
 
 // #cgo darwin CFLAGS: -I ../lib/
-// #cgo LDFLAGS: -L ../lib/ -Wl,-rpath,./lib -l vm-exec-lib
+// #cgo darwin,arm64 LDFLAGS: -L ../lib/darwin/arm64 -Wl,-rpath,./lib/darwin/arm64 -l vm-exec-lib
+// #cgo darwin,x86_64 LDFLAGS: -L ../lib/darwin/arm64 -Wl,-rpath,./lib/darwin/arm64 -l vm-exec-lib
+// #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,./lib/linux/ -l vm-exec-lib
 // #include "../lib/libvm-exec-lib.h"
 import "C"
 import (
 	"encoding/base64"
 	"encoding/json"
-	"strconv"
+	"time"
 	"tongo/boc"
 )
 
@@ -25,7 +27,7 @@ type tvmExecConfig struct {
 	InitStack        []TvmStackEntry `json:"init_stack"`
 	Code             string          `json:"code"`
 	Data             string          `json:"data"`
-	Time             string          `json:"time"`
+	C7Register       TvmStackEntry   `json:"c7_register"`
 }
 
 type TvmExecutionResult struct {
@@ -49,6 +51,30 @@ func getVmFunctionSelector(name string) int {
 	}
 }
 
+func buildDefaultC7Register() TvmStackEntry {
+	now := int(time.Now().Unix())
+
+	balance := NewTupleStackEntry([]TvmStackEntry{
+		NewIntStackEntry(1000),
+		NewNullStackEntry(),
+	})
+
+	return NewTupleStackEntry([]TvmStackEntry{
+		NewTupleStackEntry([]TvmStackEntry{
+			NewIntStackEntry(0x076ef1ea), // [ magic:0x076ef1ea
+			NewIntStackEntry(0),          // actions:Integer
+			NewIntStackEntry(0),          // msgs_sent:Integer
+			NewIntStackEntry(now),        // unixtime:Integer
+			NewIntStackEntry(now),        // block_lt:Integer
+			NewIntStackEntry(now),        // trans_lt:Integer
+			NewIntStackEntry(now),        // rand_seed:Integer
+			balance,                      // balance_remaining:[Integer (Maybe Cell)]
+			NewNullStackEntry(),          // myself:MsgAddressInt
+			NewNullStackEntry(),          // global_config:(Maybe Cell) ] = SmartContractInfo;
+		}),
+	})
+}
+
 func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntry, time int64) (TvmExecutionResult, error) {
 	codeBoc, err := code.ToBocBase64Custom(false, true, false, 0)
 	if err != nil {
@@ -65,7 +91,7 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntr
 		InitStack:        args,
 		Code:             codeBoc,
 		Data:             dataBoc,
-		Time:             strconv.FormatInt(time, 10),
+		C7Register:       buildDefaultC7Register(),
 	}
 
 	configStr, err := json.Marshal(config)

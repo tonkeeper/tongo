@@ -34,7 +34,7 @@ type nullEntry struct {
 }
 
 type tupleEntry struct {
-	Type  string          `json:"tuple"`
+	Type  string          `json:"type"`
 	Value []TvmStackEntry `json:"value"`
 }
 
@@ -55,6 +55,13 @@ func NewIntStackEntry(val int) TvmStackEntry {
 func NewNullStackEntry() TvmStackEntry {
 	return TvmStackEntry{
 		Type: Null,
+	}
+}
+
+func NewTupleStackEntry(val []TvmStackEntry) TvmStackEntry {
+	return TvmStackEntry{
+		Type:     Tuple,
+		tupleVal: val,
 	}
 }
 
@@ -151,7 +158,7 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (e *TvmStackEntry) MarshalJSON() ([]byte, error) {
+func (e TvmStackEntry) MarshalJSON() ([]byte, error) {
 	if e.Type == Int {
 		return json.Marshal(&basicEntry{Type: "int", Value: e.intVal.String()})
 	} else if e.Type == Cell {
@@ -160,10 +167,10 @@ func (e *TvmStackEntry) MarshalJSON() ([]byte, error) {
 			return nil, err
 		}
 		return json.Marshal(&basicEntry{Type: "cell", Value: bocStr})
-	} else if e.Type == Cell {
-		return json.Marshal(&nullEntry{Type: "null"})
 	} else if e.Type == Tuple {
 		return json.Marshal(&tupleEntry{Type: "tuple", Value: e.tupleVal})
+	} else if e.Type == Null {
+		return json.Marshal(&nullEntry{Type: "null"})
 	}
 	return nil, errors.New("unable to serialize tvm stack entry")
 }

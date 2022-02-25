@@ -1,1 +1,1 @@
-module tongo
+module github.com/startfellows/tongo

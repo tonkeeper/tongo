@@ -1,8 +1,8 @@
 package tvm
 
 import (
+	"github.com/startfellows/tongo/boc"
 	"testing"
-	"tongo/boc"
 )
 
 func TestExec(t *testing.T) {
@@ -22,7 +22,7 @@ func TestExec(t *testing.T) {
 		NewIntStackEntry(2),
 	}
 
-	runTvm, _ := RunTvm(code[0], data[0], "sum", args, 0)
+	runTvm, _ := RunTvm(code[0], data[0], "sum", args)
 
 	if runTvm.Stack[0].Int64() != 3 {
 		t.Fail()

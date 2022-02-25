@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"github.com/startfellows/tongo/boc"
 	"math/big"
-	"tongo/boc"
 )
 
 type EntryType int

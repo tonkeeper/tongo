@@ -9,8 +9,8 @@ import "C"
 import (
 	"encoding/base64"
 	"encoding/json"
+	"github.com/startfellows/tongo/boc"
 	"time"
-	"tongo/boc"
 )
 
 type tvmExecutionResultInternal struct {
@@ -75,7 +75,7 @@ func buildDefaultC7Register() TvmStackEntry {
 	})
 }
 
-func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntry, time int64) (TvmExecutionResult, error) {
+func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntry) (TvmExecutionResult, error) {
 	codeBoc, err := code.ToBocBase64Custom(false, true, false, 0)
 	if err != nil {
 		return TvmExecutionResult{}, err

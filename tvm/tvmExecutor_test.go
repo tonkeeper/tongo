@@ -1,12 +1,11 @@
-package main
+package tvm
 
 import (
-	"fmt"
+	"testing"
 	"tongo/boc"
-	"tongo/tvm"
 )
 
-func main() {
+func TestExec(t *testing.T) {
 	//  () main() {
 	//		;; noop
 	//	}
@@ -18,13 +17,14 @@ func main() {
 	// Empty data
 	data, _ := boc.DeserializeBocBase64("te6cckEBAQEAAgAAAEysuc0=")
 
-	args := []tvm.TvmStackEntry{
-		tvm.NewIntStackEntry(1),
-		tvm.NewIntStackEntry(2),
+	args := []TvmStackEntry{
+		NewIntStackEntry(1),
+		NewIntStackEntry(2),
 	}
 
-	runTvm, _ := tvm.RunTvm(code[0], data[0], "sum", args, 0)
+	runTvm, _ := RunTvm(code[0], data[0], "sum", args, 0)
 
-	// Prints 3
-	fmt.Println(runTvm.Stack[0].Int64())
+	if runTvm.Stack[0].Int64() != 3 {
+		t.Fail()
+	}
 }

@@ -15,13 +15,15 @@ const (
 	Null
 	Cell
 	Tuple
+	CellSlice
 )
 
 type TvmStackEntry struct {
-	Type     EntryType
-	intVal   big.Int
-	cellVal  *boc.Cell
-	tupleVal []TvmStackEntry
+	Type         EntryType
+	intVal       big.Int
+	cellVal      *boc.Cell
+	cellSliceVal *boc.Cell
+	tupleVal     []TvmStackEntry
 }
 
 type basicEntry struct {
@@ -101,6 +103,10 @@ func (e *TvmStackEntry) IsTuple() bool {
 	return e.Type == Tuple
 }
 
+func (e *TvmStackEntry) IsCellSlice() bool {
+	return e.Type == CellSlice
+}
+
 func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	var m map[string]json.RawMessage
 
@@ -151,6 +157,23 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		e.cellVal = parsedBoc[0]
+	} else if entryType == "cell_slice" {
+		var cellEntry basicEntry
+		err = json.Unmarshal(data, &cellEntry)
+		if err != nil {
+			return err
+		}
+
+		e.Type = Cell
+		cellData, err := base64.StdEncoding.DecodeString(cellEntry.Value)
+		if err != nil {
+			return err
+		}
+		parsedBoc, err := boc.DeserializeBoc(cellData)
+		if err != nil {
+			return err
+		}
+		e.cellSliceVal = parsedBoc[0]
 	} else {
 		return errors.New("unknown stack entry type")
 	}

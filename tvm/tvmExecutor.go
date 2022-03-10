@@ -2,7 +2,7 @@ package tvm
 
 // #cgo darwin CFLAGS: -I ../lib/
 // #cgo darwin,arm64 LDFLAGS: -L ../lib/darwin/arm64 -Wl,-rpath,../lib/darwin/arm64 -l vm-exec-lib
-// #cgo darwin,x86_64 LDFLAGS: -L ../lib/darwin/arm64 -Wl,-rpath,../lib/darwin/arm64 -l vm-exec-lib
+// #cgo darwin,x86_64 LDFLAGS: -L ../lib/darwin/arm64 -Wl,-rpath,../lib/darwin/x86 -l vm-exec-lib
 // #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l vm-exec-lib
 // #include "../lib/libvm-exec-lib.h"
 import "C"

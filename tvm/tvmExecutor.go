@@ -14,32 +14,32 @@ import (
 )
 
 type tvmExecutionResultInternal struct {
-	ExitCode       int             `json:"exit_code"`
-	GasConsumed    int             `json:"gas_consumed"`
-	DataCell       string          `json:"data_cell"`
-	ActionListCell string          `json:"action_list_cell"`
-	Logs           string          `json:"logs"`
-	Stack          []TvmStackEntry `json:"stack"`
+	ExitCode       int          `json:"exit_code"`
+	GasConsumed    int          `json:"gas_consumed"`
+	DataCell       string       `json:"data_cell"`
+	ActionListCell string       `json:"action_list_cell"`
+	Logs           string       `json:"logs"`
+	Stack          []StackEntry `json:"stack"`
 }
 
 type tvmExecConfig struct {
-	FunctionSelector int             `json:"function_selector"`
-	InitStack        []TvmStackEntry `json:"init_stack"`
-	Code             string          `json:"code"`
-	Data             string          `json:"data"`
-	C7Register       TvmStackEntry   `json:"c7_register"`
+	FunctionSelector int          `json:"function_selector"`
+	InitStack        []StackEntry `json:"init_stack"`
+	Code             string       `json:"code"`
+	Data             string       `json:"data"`
+	C7Register       StackEntry   `json:"c7_register"`
 }
 
-type TvmExecutionResult struct {
+type ExecutionResult struct {
 	ExitCode       int
 	GasConsumed    int
 	DataCell       *boc.Cell
 	ActionListCell *boc.Cell
 	Logs           string
-	Stack          []TvmStackEntry
+	Stack          []StackEntry
 }
 
-func getVmFunctionSelector(name string) int {
+func getVMFunctionSelector(name string) int {
 	if name == "main" {
 		return 0
 	} else if name == "recv_internal" {
@@ -51,16 +51,16 @@ func getVmFunctionSelector(name string) int {
 	}
 }
 
-func buildDefaultC7Register() TvmStackEntry {
+func buildDefaultC7Register() StackEntry {
 	now := int(time.Now().Unix())
 
-	balance := NewTupleStackEntry([]TvmStackEntry{
+	balance := NewTupleStackEntry([]StackEntry{
 		NewIntStackEntry(1000),
 		NewNullStackEntry(),
 	})
 
-	return NewTupleStackEntry([]TvmStackEntry{
-		NewTupleStackEntry([]TvmStackEntry{
+	return NewTupleStackEntry([]StackEntry{
+		NewTupleStackEntry([]StackEntry{
 			NewIntStackEntry(0x076ef1ea), // [ magic:0x076ef1ea
 			NewIntStackEntry(0),          // actions:Integer
 			NewIntStackEntry(0),          // msgs_sent:Integer
@@ -75,19 +75,19 @@ func buildDefaultC7Register() TvmStackEntry {
 	})
 }
 
-func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntry) (TvmExecutionResult, error) {
+func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry) (ExecutionResult, error) {
 	codeBoc, err := code.ToBocBase64Custom(false, true, false, 0)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 
 	dataBoc, err := data.ToBocBase64Custom(false, true, false, 0)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 
 	config := tvmExecConfig{
-		FunctionSelector: getVmFunctionSelector(funcName),
+		FunctionSelector: getVMFunctionSelector(funcName),
 		InitStack:        args,
 		Code:             codeBoc,
 		Data:             dataBoc,
@@ -96,32 +96,32 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntr
 
 	configStr, err := json.Marshal(config)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 
 	res := C.vm_exec(C.int(len(string(configStr))), C.CString(string(configStr)))
-	resJson := C.GoString(res)
+	resJSON := C.GoString(res)
 
 	var executeResult tvmExecutionResultInternal
-	err = json.Unmarshal([]byte(resJson), &executeResult)
+	err = json.Unmarshal([]byte(resJSON), &executeResult)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 
 	dataCell, err := boc.DeserializeBocBase64(executeResult.DataCell)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 	actionListCell, err := boc.DeserializeBocBase64(executeResult.ActionListCell)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 	logs, err := base64.StdEncoding.DecodeString(executeResult.Logs)
 	if err != nil {
-		return TvmExecutionResult{}, err
+		return ExecutionResult{}, err
 	}
 
-	result := TvmExecutionResult{
+	result := ExecutionResult{
 		ExitCode:       executeResult.ExitCode,
 		GasConsumed:    executeResult.GasConsumed,
 		DataCell:       dataCell[0],

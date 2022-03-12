@@ -44,17 +44,29 @@ func TestKek2(t *testing.T) {
 	//fmt.Println("danila:", hex.EncodeToString(cells[0].ToBOC()))
 
 	serialized, err := SerializeBoc(cells[0], true, true, false, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println("my:", hex.EncodeToString(serialized))
 
 	testCell := NewCell()
-	testCell.Bits.WriteUint(128, 8)
-
+	err = testCell.Bits.WriteUint(128, 8)
+	if err != nil {
+		t.Fatal(err)
+	}
 	testCell2 := NewCell()
-	testCell2.Bits.WriteInt(-55, 32)
-
-	testCell.AddReference(testCell2)
-
+	err = testCell2.Bits.WriteInt(-55, 32)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = testCell.AddReference(testCell2)
+	if err != nil {
+		t.Fatal(err)
+	}
 	serialized2, err := SerializeBoc(testCell, true, true, false, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println("kek:", hex.EncodeToString(serialized2))
 
 	//fmt.Sprintf("%x", cells[0].Hash())

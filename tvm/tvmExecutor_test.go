@@ -17,7 +17,7 @@ func TestExec(t *testing.T) {
 	// Empty data
 	data, _ := boc.DeserializeBocBase64("te6cckEBAQEAAgAAAEysuc0=")
 
-	args := []TvmStackEntry{
+	args := []StackEntry{
 		NewIntStackEntry(1),
 		NewIntStackEntry(2),
 	}

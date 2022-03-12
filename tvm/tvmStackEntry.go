@@ -18,12 +18,12 @@ const (
 	CellSlice
 )
 
-type TvmStackEntry struct {
+type StackEntry struct {
 	Type         EntryType
 	intVal       big.Int
 	cellVal      *boc.Cell
 	cellSliceVal *boc.Cell
-	tupleVal     []TvmStackEntry
+	tupleVal     []StackEntry
 }
 
 type basicEntry struct {
@@ -36,78 +36,82 @@ type nullEntry struct {
 }
 
 type tupleEntry struct {
-	Type  string          `json:"type"`
-	Value []TvmStackEntry `json:"value"`
+	Type  string       `json:"type"`
+	Value []StackEntry `json:"value"`
 }
 
-func NewBigIntStackEntry(val big.Int) TvmStackEntry {
-	return TvmStackEntry{
+func NewBigIntStackEntry(val big.Int) StackEntry {
+	return StackEntry{
 		Type:   Int,
 		intVal: val,
 	}
 }
 
-func NewIntStackEntry(val int) TvmStackEntry {
-	return TvmStackEntry{
+func NewIntStackEntry(val int) StackEntry {
+	return StackEntry{
 		Type:   Int,
 		intVal: *big.NewInt(int64(val)),
 	}
 }
 
-func NewNullStackEntry() TvmStackEntry {
-	return TvmStackEntry{
+func NewNullStackEntry() StackEntry {
+	return StackEntry{
 		Type: Null,
 	}
 }
 
-func NewTupleStackEntry(val []TvmStackEntry) TvmStackEntry {
-	return TvmStackEntry{
+func NewTupleStackEntry(val []StackEntry) StackEntry {
+	return StackEntry{
 		Type:     Tuple,
 		tupleVal: val,
 	}
 }
 
-func (e *TvmStackEntry) Int() big.Int {
+func (e *StackEntry) Int() big.Int {
 	return e.intVal
 }
 
-func (e *TvmStackEntry) Int64() int64 {
+func (e *StackEntry) Int64() int64 {
 	return e.intVal.Int64()
 }
 
-func (e *TvmStackEntry) Uint64() uint64 {
+func (e *StackEntry) Uint64() uint64 {
 	return e.intVal.Uint64()
 }
 
-func (e *TvmStackEntry) Cell() *boc.Cell {
+func (e *StackEntry) Cell() *boc.Cell {
 	return e.cellVal
 }
 
-func (e *TvmStackEntry) Tuple() []TvmStackEntry {
+func (e *StackEntry) Tuple() []StackEntry {
 	return e.tupleVal
 }
 
-func (e *TvmStackEntry) IsNull() bool {
+func (e *StackEntry) CellSlice() *boc.Cell {
+	return e.cellSliceVal
+}
+
+func (e *StackEntry) IsNull() bool {
 	return e.Type == Null
 }
 
-func (e *TvmStackEntry) IsInt() bool {
+func (e *StackEntry) IsInt() bool {
 	return e.Type == Int
 }
 
-func (e *TvmStackEntry) IsCell() bool {
+func (e *StackEntry) IsCell() bool {
 	return e.Type == Cell
 }
 
-func (e *TvmStackEntry) IsTuple() bool {
+func (e *StackEntry) IsTuple() bool {
 	return e.Type == Tuple
 }
 
-func (e *TvmStackEntry) IsCellSlice() bool {
+func (e *StackEntry) IsCellSlice() bool {
 	return e.Type == CellSlice
 }
 
-func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
+func (e *StackEntry) UnmarshalJSON(data []byte) error {
 	var m map[string]json.RawMessage
 
 	err := json.Unmarshal(data, &m)
@@ -164,7 +168,7 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 			return err
 		}
 
-		e.Type = Cell
+		e.Type = CellSlice
 		cellData, err := base64.StdEncoding.DecodeString(cellEntry.Value)
 		if err != nil {
 			return err
@@ -181,7 +185,7 @@ func (e *TvmStackEntry) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (e TvmStackEntry) MarshalJSON() ([]byte, error) {
+func (e StackEntry) MarshalJSON() ([]byte, error) {
 	if e.Type == Int {
 		return json.Marshal(&basicEntry{Type: "int", Value: e.intVal.String()})
 	} else if e.Type == Cell {

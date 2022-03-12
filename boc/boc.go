@@ -72,11 +72,13 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 	var prefix = boc[0:4]
 	boc = boc[4:]
 
-	var hasIdx = false
-	var hashCrc32 = false
-	var hasCacheBits = false
-	var flags = 0
-	var sizeBytes = 0
+	var (
+		hasIdx       bool
+		hashCrc32    bool
+		hasCacheBits bool
+		flags        int
+		sizeBytes    int
+	)
 
 	if ByteArrayEquals(prefix, reachBocMagicPrefix) {
 		var flagsByte = boc[0]
@@ -204,7 +206,10 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 		return nil, nil, nil, errors.New("not enough bytes to encode cell data")
 	}
 
-	cell.Bits.SetTopUppedArray(cellData[0:dataBytesSize], fullfilledBytes)
+	err := cell.Bits.SetTopUppedArray(cellData[0:dataBytesSize], fullfilledBytes)
+	if err != nil {
+		return nil, nil, nil, err
+	}
 	cellData = cellData[dataBytesSize:]
 
 	for i := 0; i < refNum; i++ {
@@ -216,14 +221,19 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 }
 
 func DeserializeBoc(boc []byte) ([]*Cell, error) {
-	header, _ := parseBocHeader(boc)
-
+	header, err := parseBocHeader(boc)
+	if err != nil {
+		return nil, err
+	}
 	cellsData := header.cellsData
 	cellsArray := make([]*Cell, 0)
 	refsArray := make([][]int, 0)
 
 	for i := 0; i < int(header.cellsNum); i++ {
-		cell, refs, residue, _ := deserializeCellData(cellsData, header.sizeBytes)
+		cell, refs, residue, err := deserializeCellData(cellsData, header.sizeBytes)
+		if err != nil {
+			return nil, err
+		}
 		cellsData = residue
 		cellsArray = append(cellsArray, cell)
 		refsArray = append(refsArray, refs)
@@ -266,7 +276,7 @@ func getMaxDepth(cell *Cell) int {
 				maxDepth = getMaxDepth(ref)
 			}
 		}
-		maxDepth += 1
+		maxDepth++
 	}
 	return maxDepth
 }
@@ -311,7 +321,7 @@ func topologicalSortImpl(cell *Cell, seen map[string]bool) ([]*Cell, error) {
 	res = append(res, cell)
 
 	hash := cell.HashString()
-	if seen[hash] == true {
+	if seen[hash] {
 		return nil, errors.New("circular references are not allowed")
 	}
 	seen[hash] = true
@@ -351,47 +361,83 @@ func bocRepr(c *Cell, indexesMap map[string]int) []byte {
 	return res
 }
 
-func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags int) ([]byte, error) {
+func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
 	rootCell := cell
 	allCells, indexesMap, err := topologicalSort(rootCell)
 	if err != nil {
 		return nil, err
 	}
 
-	cellsNum := len(allCells)
-	sBits := bits.Len(uint(cellsNum))
+	cellsNum := uint(len(allCells))
+	sBits := bits.Len(cellsNum)
 	sBytes := int(math.Min(math.Ceil(float64(sBits)/8), 1))
-	fullSize := 0
-	sizeIndex := make([]int, 0)
+	fullSize := uint(0)
+	sizeIndex := make([]uint, 0)
 	for _, cell := range allCells {
 		sizeIndex = append(sizeIndex, fullSize)
-		fullSize = fullSize + len(bocRepr(cell, indexesMap))
+		fullSize = fullSize + uint(len(bocRepr(cell, indexesMap)))
 	}
 
 	offsetBits := bits.Len(uint(fullSize))
 	offsetBytes := int(math.Max(math.Ceil(float64(offsetBits)/8), 1))
 
-	serStr := NewBitString((1023 + 32*4 + 32*3) * cellsNum)
+	serStr := NewBitString((1023 + 32*4 + 32*3) * int(cellsNum))
 
-	serStr.WriteBytes(reachBocMagicPrefix)
-	serStr.WriteBitArray([]bool{idx, hasCrc32, cacheBits})
-	serStr.WriteUint(flags, 2)
-	serStr.WriteUint(sBytes, 3)
-	serStr.WriteUint(offsetBytes, 8)
-	serStr.WriteUint(cellsNum, sBytes*8)
-	serStr.WriteUint(1, sBytes*8)
-	serStr.WriteUint(0, sBytes*8)
-	serStr.WriteUint(fullSize, offsetBytes*8)
-	serStr.WriteUint(0, sBytes*8)
+	err = serStr.WriteBytes(reachBocMagicPrefix)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteBitArray([]bool{idx, hasCrc32, cacheBits})
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteUint(flags, 2)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteInt(sBytes, 3)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteInt(offsetBytes, 8)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteUint(cellsNum, sBytes*8)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteUint(1, sBytes*8)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteUint(0, sBytes*8)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteUint(fullSize, offsetBytes*8)
+	if err != nil {
+		return nil, err
+	}
+	err = serStr.WriteUint(0, sBytes*8)
+	if err != nil {
+		return nil, err
+	}
 
 	if idx {
-		for i, _ := range allCells {
-			serStr.WriteUint(sizeIndex[i], offsetBytes*8)
+		for i := range allCells {
+			err = serStr.WriteUint(sizeIndex[i], offsetBytes*8)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
 	for _, cell := range allCells {
-		serStr.WriteBytes(bocRepr(cell, indexesMap))
+		err = serStr.WriteBytes(bocRepr(cell, indexesMap))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	resBytes, err := serStr.GetTopUppedArray()

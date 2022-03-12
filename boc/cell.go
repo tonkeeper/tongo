@@ -75,11 +75,11 @@ func (c *Cell) ToBocBase64() (string, error) {
 	return c.ToBocBase64Custom(true, true, false, 0)
 }
 
-func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags int) ([]byte, error) {
+func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
 	return SerializeBoc(c, idx, hasCrc32, cacheBits, flags)
 }
 
-func (c *Cell) ToBocStringCustom(idx bool, hasCrc32 bool, cacheBits bool, flags int) (string, error) {
+func (c *Cell) ToBocStringCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) (string, error) {
 	boc, err := c.ToBocCustom(idx, hasCrc32, cacheBits, flags)
 	if err != nil {
 		return "", err
@@ -87,7 +87,7 @@ func (c *Cell) ToBocStringCustom(idx bool, hasCrc32 bool, cacheBits bool, flags 
 	return hex.EncodeToString(boc), nil
 }
 
-func (c *Cell) ToBocBase64Custom(idx bool, hasCrc32 bool, cacheBits bool, flags int) (string, error) {
+func (c *Cell) ToBocBase64Custom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) (string, error) {
 	boc, err := c.ToBocCustom(idx, hasCrc32, cacheBits, flags)
 	if err != nil {
 		return "", err

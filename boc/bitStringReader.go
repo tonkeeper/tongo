@@ -21,7 +21,7 @@ func NewBitStringReader(bitString *BitString) BitStringReader {
 }
 
 func (s *BitStringReader) getBit(n int) bool {
-	return (s.buf[(n/8)|0] & (1 << (7 - (n % 8)))) > 0
+	return (s.buf[n/8] & (1 << (7 - (n % 8)))) > 0
 }
 
 func (s *BitStringReader) Skip(n int) {
@@ -60,9 +60,8 @@ func (s *BitStringReader) ReadBigInt(bitLen int) *big.Int {
 	if bitLen == 1 {
 		if s.ReadBit() {
 			return big.NewInt(-1)
-		} else {
-			return big.NewInt(0)
 		}
+		return big.NewInt(0)
 	}
 
 	if s.ReadBit() {
@@ -70,9 +69,8 @@ func (s *BitStringReader) ReadBigInt(bitLen int) *big.Int {
 		var b = big.NewInt(2)
 		var nb = b.Exp(b, big.NewInt(int64(bitLen-1)), nil)
 		return base.Sub(base, nb)
-	} else {
-		return s.ReadBigUint(bitLen - 1)
 	}
+	return s.ReadBigUint(bitLen - 1)
 }
 
 func (s *BitStringReader) ReadUint(bitLen int) uint {
@@ -98,17 +96,15 @@ func (s *BitStringReader) ReadInt(bitLen int) int {
 	if bitLen == 1 {
 		if s.ReadBit() {
 			return -1
-		} else {
-			return 0
 		}
+		return 0
 	}
 
 	if s.ReadBit() {
 		base := s.ReadUint(bitLen - 1)
 		return int(base - uint(math.Pow(2, float64(bitLen-1))))
-	} else {
-		return int(s.ReadUint(bitLen - 1))
 	}
+	return int(s.ReadUint(bitLen - 1))
 }
 
 func (s *BitStringReader) ReadCoins() uint {

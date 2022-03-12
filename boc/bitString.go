@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
-	"strconv"
+	"math/bits"
 	"strings"
 )
 
@@ -52,7 +52,7 @@ func (s *BitString) Buffer() []byte {
 }
 
 func (s *BitString) Get(n int) bool {
-	return (s.buf[(n/8)|0] & (1 << (7 - (n % 8)))) > 0
+	return (s.buf[n/8] & (1 << (7 - (n % 8)))) > 0
 }
 
 func (s *BitString) On(n int) error {
@@ -60,7 +60,7 @@ func (s *BitString) On(n int) error {
 	if err != nil {
 		return err
 	}
-	s.buf[(n/8)|0] |= 1 << (7 - (n % 8))
+	s.buf[n/8] |= 1 << (7 - (n % 8))
 	return nil
 }
 
@@ -69,7 +69,7 @@ func (s *BitString) Off(n int) error {
 	if err != nil {
 		return err
 	}
-	s.buf[(n/8)|0] &= ^(1 << (7 - (n % 8)))
+	s.buf[n/8] &= ^(1 << (7 - (n % 8)))
 	return nil
 }
 
@@ -78,7 +78,7 @@ func (s *BitString) Toggle(n int) error {
 	if err != nil {
 		return err
 	}
-	s.buf[(n/8)|0] ^= 1 << (7 - (n % 8))
+	s.buf[n/8] ^= 1 << (7 - (n % 8))
 	return nil
 }
 
@@ -140,33 +140,33 @@ func (s *BitString) WriteBigInt(val *big.Int, bitLen int) error {
 			return nil
 		}
 		return errors.New("bit length is too small")
+	}
+	if val.Sign() == -1 {
+		err := s.WriteBit(true)
+		if err != nil {
+			return err
+		}
+		var b = big.NewInt(2)
+		var nb = b.Exp(b, big.NewInt(int64(bitLen-1)), nil)
+		err = s.WriteBigUint(nb.Add(nb, val), bitLen-1)
+		if err != nil {
+			return err
+		}
 	} else {
-		if val.Sign() == -1 {
-			err := s.WriteBit(true)
-			if err != nil {
-				return err
-			}
-			var b = big.NewInt(2)
-			var nb = b.Exp(b, big.NewInt(int64(bitLen-1)), nil)
-			err = s.WriteBigUint(nb.Add(nb, val), bitLen-1)
-			if err != nil {
-				return err
-			}
-		} else {
-			err := s.WriteBit(false)
-			if err != nil {
-				return err
-			}
-			err = s.WriteBigUint(val, bitLen-1)
-			if err != nil {
-				return err
-			}
+		err := s.WriteBit(false)
+		if err != nil {
+			return err
+		}
+		err = s.WriteBigUint(val, bitLen-1)
+		if err != nil {
+			return err
 		}
 	}
+
 	return nil
 }
 
-func (s *BitString) WriteUint(val int, bitLen int) error {
+func (s *BitString) WriteUint(val uint, bitLen int) error {
 	for i := bitLen - 1; i >= 0; i-- {
 		err := s.WriteBit(((val >> i) & 1) > 0)
 		if err != nil {
@@ -196,7 +196,7 @@ func (s *BitString) WriteInt(val int, bitLen int) error {
 			if err != nil {
 				return err
 			}
-			err = s.WriteUint(int(math.Pow(2, float64(bitLen-1)))+val, bitLen-1)
+			err = s.WriteUint(uint(1<<(bitLen-1)+val), bitLen-1)
 			if err != nil {
 				return err
 			}
@@ -205,7 +205,7 @@ func (s *BitString) WriteInt(val int, bitLen int) error {
 			if err != nil {
 				return err
 			}
-			err = s.WriteUint(val, bitLen-1)
+			err = s.WriteUint(uint(val), bitLen-1)
 			if err != nil {
 				return err
 			}
@@ -214,19 +214,20 @@ func (s *BitString) WriteInt(val int, bitLen int) error {
 	return nil
 }
 
-func (s *BitString) WriteCoins(amount int) error {
+func (s *BitString) WriteCoins(amount uint) error {
 	if amount == 0 {
 		err := s.WriteUint(0, 4)
 		if err != nil {
 			return err
 		}
 	} else {
-		l := int(math.Ceil(float64(len(strconv.FormatInt(int64(amount), 16)) / 2)))
-		err := s.WriteUint(l, 4)
+
+		l := (bits.Len(amount) + 7) & -8
+		err := s.WriteInt(l, 4)
 		if err != nil {
 			return err
 		}
-		err = s.WriteUint(amount, l*8)
+		err = s.WriteUint(amount, l)
 		if err != nil {
 			return err
 		}
@@ -235,7 +236,7 @@ func (s *BitString) WriteCoins(amount int) error {
 }
 
 func (s *BitString) WriteByte(val byte) error {
-	err := s.WriteUint(int(val), 8)
+	err := s.WriteUint(uint(val), 8)
 	if err != nil {
 		return err
 	}
@@ -292,7 +293,7 @@ func (s *BitString) SetTopUppedArray(arr []byte, fulfilledBytes bool) error {
 	foundEndBit := false
 
 	for i := 0; i < 7; i++ {
-		s.cursor -= 1
+		s.cursor--
 		if s.Get(s.cursor) {
 			foundEndBit = true
 			err := s.Off(s.cursor)
@@ -326,7 +327,7 @@ func (s *BitString) GetTopUppedArray() ([]byte, error) {
 			}
 		}
 	}
-	ret.buf = ret.buf[0:int(math.Ceil(float64(ret.cursor/8)))]
+	ret.buf = ret.buf[0 : ((ret.cursor+7)&-8)/8]
 	return ret.buf, nil
 }
 
@@ -342,18 +343,16 @@ func (s *BitString) ToFiftHex() string {
 		str := strings.ToUpper(hex.EncodeToString(s.buf[0 : (s.cursor+7)/8]))
 		if s.cursor%8 == 0 {
 			return str
-		} else {
-			return str[0 : len(str)-1]
 		}
-	} else {
-		temp := s.Copy()
-		temp.WriteBit(true)
-		for temp.cursor%4 != 0 {
-			temp.WriteBit(false)
-		}
-		hex := temp.ToFiftHex()
-		return hex + "_"
+		return str[0 : len(str)-1]
 	}
+	temp := s.Copy()
+	temp.WriteBit(true)
+	for temp.cursor%4 != 0 {
+		temp.WriteBit(false)
+	}
+	hex := temp.ToFiftHex()
+	return hex + "_"
 }
 
 func (s *BitString) checkRange(n int) error {

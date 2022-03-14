@@ -9,6 +9,8 @@ import "C"
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/startfellows/tongo/boc"
 	"time"
 )
@@ -20,6 +22,8 @@ type tvmExecutionResultInternal struct {
 	ActionListCell string       `json:"action_list_cell"`
 	Logs           string       `json:"logs"`
 	Stack          []StackEntry `json:"stack"`
+	Ok             bool         `json:"ok"`
+	Error          string       `json:"error"`
 }
 
 type tvmExecConfig struct {
@@ -101,11 +105,30 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry) 
 
 	res := C.vm_exec(C.int(len(string(configStr))), C.CString(string(configStr)))
 	resJSON := C.GoString(res)
-
+	fmt.Println(resJSON)
 	var executeResult tvmExecutionResultInternal
 	err = json.Unmarshal([]byte(resJSON), &executeResult)
 	if err != nil {
 		return ExecutionResult{}, err
+	}
+
+	if !executeResult.Ok {
+		return ExecutionResult{}, errors.New(executeResult.Error)
+	}
+
+	if executeResult.ExitCode != 0 {
+		logs, err := base64.StdEncoding.DecodeString(executeResult.Logs)
+		if err != nil {
+			return ExecutionResult{}, err
+		}
+
+		result := ExecutionResult{
+			ExitCode:       executeResult.ExitCode,
+			GasConsumed:    executeResult.GasConsumed,
+			Logs:           string(logs),
+			Stack:          []StackEntry{},
+		}
+		return result, nil
 	}
 
 	dataCell, err := boc.DeserializeBocBase64(executeResult.DataCell)

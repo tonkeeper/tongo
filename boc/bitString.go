@@ -333,9 +333,8 @@ func (s *BitString) GetTopUppedArray() ([]byte, error) {
 
 func (s *BitString) Print() {
 	for _, n := range s.buf {
-		fmt.Printf("% 08b", n)
+		fmt.Printf("% 08b\n", n)
 	}
-	fmt.Println()
 }
 
 func (s *BitString) ToFiftHex() string {

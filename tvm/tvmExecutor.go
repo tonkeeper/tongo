@@ -10,7 +10,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/startfellows/tongo/boc"
 	"time"
 )
@@ -105,7 +104,6 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry) 
 
 	res := C.vm_exec(C.int(len(string(configStr))), C.CString(string(configStr)))
 	resJSON := C.GoString(res)
-	fmt.Println(resJSON)
 	var executeResult tvmExecutionResultInternal
 	err = json.Unmarshal([]byte(resJSON), &executeResult)
 	if err != nil {
@@ -123,10 +121,10 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry) 
 		}
 
 		result := ExecutionResult{
-			ExitCode:       executeResult.ExitCode,
-			GasConsumed:    executeResult.GasConsumed,
-			Logs:           string(logs),
-			Stack:          []StackEntry{},
+			ExitCode:    executeResult.ExitCode,
+			GasConsumed: executeResult.GasConsumed,
+			Logs:        string(logs),
+			Stack:       []StackEntry{},
 		}
 		return result, nil
 	}

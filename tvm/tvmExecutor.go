@@ -9,17 +9,21 @@ import "C"
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/startfellows/tongo/boc"
 	"time"
 )
 
 type tvmExecutionResultInternal struct {
+	Ok             bool            `json:"ok"`
 	ExitCode       int             `json:"exit_code"`
 	GasConsumed    int             `json:"gas_consumed"`
 	DataCell       string          `json:"data_cell"`
 	ActionListCell string          `json:"action_list_cell"`
 	Logs           string          `json:"logs"`
 	Stack          []TvmStackEntry `json:"stack"`
+	Error          string          `json:"error"`
 }
 
 type tvmExecConfig struct {
@@ -101,11 +105,33 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []TvmStackEntr
 
 	res := C.vm_exec(C.int(len(string(configStr))), C.CString(string(configStr)))
 	resJson := C.GoString(res)
-
+	fmt.Println(resJson)
 	var executeResult tvmExecutionResultInternal
 	err = json.Unmarshal([]byte(resJson), &executeResult)
+
 	if err != nil {
 		return TvmExecutionResult{}, err
+	}
+
+	if !executeResult.Ok {
+		return TvmExecutionResult{}, errors.New(executeResult.Error)
+	}
+
+	if executeResult.ExitCode != 0 {
+		logs, err := base64.StdEncoding.DecodeString(executeResult.Logs)
+		if err != nil {
+			return TvmExecutionResult{}, err
+		}
+
+		result := TvmExecutionResult{
+			ExitCode:       executeResult.ExitCode,
+			GasConsumed:    executeResult.GasConsumed,
+			DataCell:       nil,
+			ActionListCell: nil,
+			Logs:           string(logs),
+			Stack:          []TvmStackEntry{},
+		}
+		return result, nil
 	}
 
 	dataCell, err := boc.DeserializeBocBase64(executeResult.DataCell)

@@ -25,9 +25,7 @@ func (s *BitStringReader) getBit(n int) bool {
 }
 
 func (s *BitStringReader) Skip(n int) {
-	for i := 0; i < n; i++ {
-		s.ReadBit()
-	}
+	s.cursor += n
 }
 
 func (s *BitStringReader) ReadBit() bool {

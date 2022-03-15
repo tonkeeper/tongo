@@ -62,12 +62,11 @@ type bocHeader struct {
 
 func parseBocHeader(boc []byte) (*bocHeader, error) {
 
-	var originalBoc = make([]byte, len(boc))
-	copy(originalBoc, boc)
-
 	if len(boc) < 4+1 {
 		return nil, errors.New("not enough bytes for magic prefix")
 	}
+
+	checkSum := crc32.Checksum(boc[0:len(boc)-4], crcTable)
 
 	var prefix = boc[0:4]
 	boc = boc[4:]
@@ -154,7 +153,7 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 		if len(boc) < 4 {
 			return nil, errors.New("not enough bytes for crc32c hashsum")
 		}
-		if binary.LittleEndian.Uint32(boc[0:4]) != crc32.Checksum(originalBoc[0:len(originalBoc)-4], crcTable) {
+		if binary.LittleEndian.Uint32(boc[0:4]) != checkSum {
 			return nil, errors.New("crc32c hashsum mismatch")
 		}
 		boc = boc[4:]
@@ -181,7 +180,7 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 }
 
 func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int, []byte, error) {
-	if len(cellData) < 2 {
+	if len(cellData) < 3 {
 		return nil, nil, nil, errors.New("not enough bytes to encode cell descriptors")
 	}
 
@@ -191,7 +190,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 
 	isExotic := (d1 & 8) > 0
 	refNum := int(d1 % 8)
-	dataBytesSize := int(math.Ceil(float64(d2) / float64(2)))
+	dataBytesSize := int(math.Ceil(float64(d2) / 2))
 	fullfilledBytes := !((d2 % 2) > 0)
 
 	var cell *Cell
@@ -315,19 +314,18 @@ func hashCell(cell *Cell) []byte {
 	return hash[:]
 }
 
-func topologicalSortImpl(cell *Cell, seen map[string]bool) ([]*Cell, error) {
+func topologicalSortImpl(cell *Cell, seen []string) ([]*Cell, error) {
 	var res = make([]*Cell, 0)
 
 	res = append(res, cell)
 
 	hash := cell.HashString()
-	if seen[hash] {
+	if contains(seen, hash) {
 		return nil, errors.New("circular references are not allowed")
 	}
-	seen[hash] = true
 
 	for _, ref := range cell.Refs() {
-		res2, err := topologicalSortImpl(ref, seen)
+		res2, err := topologicalSortImpl(ref, append(seen, hash))
 		if err != nil {
 			return nil, err
 		}
@@ -338,7 +336,7 @@ func topologicalSortImpl(cell *Cell, seen map[string]bool) ([]*Cell, error) {
 }
 
 func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
-	res, err := topologicalSortImpl(cell, map[string]bool{})
+	res, err := topologicalSortImpl(cell, []string{})
 	if err != nil {
 		return nil, nil, err
 	}

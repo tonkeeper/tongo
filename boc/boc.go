@@ -180,7 +180,7 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 }
 
 func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int, []byte, error) {
-	if len(cellData) < 3 {
+	if len(cellData) < 2 {
 		return nil, nil, nil, errors.New("not enough bytes to encode cell descriptors")
 	}
 

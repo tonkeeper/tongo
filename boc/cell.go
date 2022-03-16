@@ -6,6 +6,8 @@ import (
 	"errors"
 )
 
+const BOCSizeLimit = 10000
+
 type Cell struct {
 	Bits     BitString
 	isExotic bool
@@ -55,12 +57,13 @@ func (c *Cell) BitSize() int {
 	return c.Bits.Cursor()
 }
 
-func (c *Cell) Hash() []byte {
+func (c *Cell) Hash() ([]byte, error) {
 	return hashCell(c)
 }
 
-func (c *Cell) HashString() string {
-	return hex.EncodeToString(hashCell(c))
+func (c *Cell) HashString() (string, error) {
+	h, err := hashCell(c) //todo: check error
+	return hex.EncodeToString(h), err
 }
 
 func (c *Cell) ToBoc() ([]byte, error) {
@@ -105,14 +108,19 @@ func (c *Cell) AddReference(c2 *Cell) (*Cell, error) {
 	return c, nil
 }
 
-func (c *Cell) toStringImpl(ident string) string {
+func (c *Cell) toStringImpl(ident string, iterationsLimit *int) string {
 	s := ident + "x{" + c.Bits.ToFiftHex() + "}\n"
+	if *iterationsLimit == 0 {
+		return s
+	}
+	*iterationsLimit -= 1
 	for _, ref := range c.Refs() {
-		s += ref.toStringImpl(ident + " ")
+		s += ref.toStringImpl(ident+" ", iterationsLimit)
 	}
 	return s
 }
 
 func (c *Cell) ToString() string {
-	return c.toStringImpl("")
+	iter := BOCSizeLimit
+	return c.toStringImpl("", &iter)
 }

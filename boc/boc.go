@@ -267,17 +267,25 @@ func DeserializeBocBase64(boc string) ([]*Cell, error) {
 	return DeserializeBoc(bocData)
 }
 
-func getMaxDepth(cell *Cell) int {
+func getMaxDepth(cell *Cell, iterationCounter *int) (int, error) {
+	if *iterationCounter == 0 {
+		return 0, errors.New("to big boc for processing")
+	}
+	*iterationCounter -= 1
 	maxDepth := 0
 	if cell.RefsSize() > 0 {
 		for _, ref := range cell.Refs() {
-			if getMaxDepth(ref) > maxDepth {
-				maxDepth = getMaxDepth(ref)
+			depth, err := getMaxDepth(ref, iterationCounter)
+			if err != nil {
+				return 0, err
+			}
+			if depth > maxDepth {
+				maxDepth = depth
 			}
 		}
 		maxDepth++
 	}
-	return maxDepth
+	return maxDepth, nil
 }
 
 func bocReprWithoutRefs(cell *Cell) []byte {
@@ -296,22 +304,35 @@ func bocReprWithoutRefs(cell *Cell) []byte {
 	return res
 }
 
-func hashRepr(cell *Cell) []byte {
+func hashRepr(cell *Cell) ([]byte, error) {
 	res := bocReprWithoutRefs(cell)
 	for _, r := range cell.Refs() {
 		depthRepr := make([]byte, 2)
-		binary.BigEndian.PutUint16(depthRepr, uint16(getMaxDepth(r)))
+		depthLimit := BOCSizeLimit
+		v, err := getMaxDepth(r, &depthLimit)
+		if err != nil {
+			return nil, err
+		}
+		binary.BigEndian.PutUint16(depthRepr, uint16(v))
 		res = append(res, depthRepr...)
 	}
 	for _, r := range cell.Refs() {
-		res = append(res, r.Hash()...)
+		h, err := r.Hash()
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, h...)
 	}
-	return res
+	return res, nil
 }
 
-func hashCell(cell *Cell) []byte {
-	hash := sha256.Sum256(hashRepr(cell))
-	return hash[:]
+func hashCell(cell *Cell) ([]byte, error) {
+	repr, err := hashRepr(cell)
+	if err != nil {
+		return nil, err
+	}
+	hash := sha256.Sum256(repr)
+	return hash[:], nil
 }
 
 func topologicalSortImpl(cell *Cell, seen []string) ([]*Cell, error) {
@@ -319,7 +340,10 @@ func topologicalSortImpl(cell *Cell, seen []string) ([]*Cell, error) {
 
 	res = append(res, cell)
 
-	hash := cell.HashString()
+	hash, err := cell.HashString()
+	if err != nil {
+		return nil, err
+	}
 	if contains(seen, hash) {
 		return nil, errors.New("circular references are not allowed")
 	}
@@ -343,20 +367,28 @@ func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
 
 	indexesMap := make(map[string]int)
 	for i := 0; i < len(res); i++ {
-		indexesMap[res[i].HashString()] = i
+		h, err := res[i].HashString()
+		if err != nil {
+			return nil, nil, err
+		}
+		indexesMap[h] = i
 	}
 
 	return res, indexesMap, nil
 }
 
-func bocRepr(c *Cell, indexesMap map[string]int) []byte {
+func bocRepr(c *Cell, indexesMap map[string]int) ([]byte, error) {
 	res := bocReprWithoutRefs(c)
 
 	for _, ref := range c.Refs() {
-		res = append(res, byte(indexesMap[ref.HashString()]))
+		h, err := ref.HashString()
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, byte(indexesMap[h]))
 	}
 
-	return res
+	return res, nil
 }
 
 func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
@@ -373,7 +405,11 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	sizeIndex := make([]uint, 0)
 	for _, cell := range allCells {
 		sizeIndex = append(sizeIndex, fullSize)
-		fullSize = fullSize + uint(len(bocRepr(cell, indexesMap)))
+		repr, err := bocRepr(cell, indexesMap)
+		if err != nil {
+			return nil, err
+		}
+		fullSize = fullSize + uint(len(repr))
 	}
 
 	offsetBits := bits.Len(uint(fullSize))
@@ -432,7 +468,11 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	}
 
 	for _, cell := range allCells {
-		err = serStr.WriteBytes(bocRepr(cell, indexesMap))
+		repr, err := bocRepr(cell, indexesMap)
+		if err != nil {
+			return nil, err
+		}
+		err = serStr.WriteBytes(repr)
 		if err != nil {
 			return nil, err
 		}

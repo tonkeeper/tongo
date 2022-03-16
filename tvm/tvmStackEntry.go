@@ -67,6 +67,19 @@ func NewTupleStackEntry(val []StackEntry) StackEntry {
 	}
 }
 
+func NewCellStackEntry(val *boc.Cell) StackEntry {
+	return StackEntry{
+		Type:    Cell,
+		cellVal: val,
+	}
+}
+func NewCellSliceStackEntry(val *boc.Cell) StackEntry {
+	return StackEntry{
+		Type:         CellSlice,
+		cellSliceVal: val,
+	}
+}
+
 func (e *StackEntry) Int() big.Int {
 	return e.intVal
 }
@@ -198,6 +211,12 @@ func (e StackEntry) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&tupleEntry{Type: "tuple", Value: e.tupleVal})
 	} else if e.Type == Null {
 		return json.Marshal(&nullEntry{Type: "null"})
+	} else if e.Type == CellSlice {
+		bocStr, err := e.cellSliceVal.ToBocBase64Custom(false, true, false, 0)
+		if err != nil {
+			return nil, err
+		}
+		return json.Marshal(&basicEntry{Type: "cell_slice", Value: bocStr})
 	}
 	return nil, errors.New("unable to serialize tvm stack entry")
 }

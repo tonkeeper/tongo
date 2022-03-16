@@ -54,13 +54,24 @@ func getVMFunctionSelector(name string) int {
 	}
 }
 
-func buildDefaultC7Register() StackEntry {
+func buildDefaultC7Register(address *boc.Address) (StackEntry, error) {
 	now := int(time.Now().Unix())
 
 	balance := NewTupleStackEntry([]StackEntry{
 		NewIntStackEntry(1000),
 		NewNullStackEntry(),
 	})
+	var addrStack StackEntry
+	if address != nil {
+		addrCell := boc.NewCell()
+		err := addrCell.Bits.WriteAddress(address)
+		if err != nil {
+			return StackEntry{}, err
+		}
+		addrStack = NewCellSliceStackEntry(addrCell)
+	} else {
+		addrStack = NewNullStackEntry()
+	}
 
 	return NewTupleStackEntry([]StackEntry{
 		NewTupleStackEntry([]StackEntry{
@@ -72,13 +83,13 @@ func buildDefaultC7Register() StackEntry {
 			NewIntStackEntry(now),        // trans_lt:Integer
 			NewIntStackEntry(now),        // rand_seed:Integer
 			balance,                      // balance_remaining:[Integer (Maybe Cell)]
-			NewNullStackEntry(),          // myself:MsgAddressInt
+			addrStack,                    // myself:MsgAddressInt
 			NewNullStackEntry(),          // global_config:(Maybe Cell) ] = SmartContractInfo;
 		}),
-	})
+	}), nil
 }
 
-func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry) (ExecutionResult, error) {
+func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry, destAccount *boc.Address) (ExecutionResult, error) {
 	codeBoc, err := code.ToBocBase64Custom(false, true, false, 0)
 	if err != nil {
 		return ExecutionResult{}, err
@@ -89,12 +100,16 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry) 
 		return ExecutionResult{}, err
 	}
 
+	register, err := buildDefaultC7Register(destAccount)
+	if err != nil {
+		return ExecutionResult{}, err
+	}
 	config := tvmExecConfig{
 		FunctionSelector: getVMFunctionSelector(funcName),
 		InitStack:        args,
 		Code:             codeBoc,
 		Data:             dataBoc,
-		C7Register:       buildDefaultC7Register(),
+		C7Register:       register,
 	}
 
 	configStr, err := json.Marshal(config)

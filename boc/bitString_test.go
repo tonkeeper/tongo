@@ -24,7 +24,7 @@ func TestOn(t *testing.T) {
 
 	var reader = NewBitStringReader(&str)
 
-	var num = reader.ReadCoins()
+	var num, _ = reader.ReadCoins()
 	fmt.Println(num)
 
 	//var n = big.NewInt(1)

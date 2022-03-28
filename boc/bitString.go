@@ -268,7 +268,7 @@ func (s *BitString) WriteAddress(address *Address) error {
 		if err != nil {
 			return err
 		}
-		err = s.WriteInt(address.Workchain, 8)
+		err = s.WriteInt(int(address.Workchain), 8)
 		if err != nil {
 			return err
 		}

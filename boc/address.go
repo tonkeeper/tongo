@@ -1,6 +1,6 @@
 package boc
 
 type Address struct {
-	Workchain int
+	Workchain int32
 	Address   []byte
 }

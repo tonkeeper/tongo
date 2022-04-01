@@ -35,7 +35,13 @@ func (c *Cell) BeginParse() BitStringReader {
 }
 
 func (c *Cell) RefsSize() int {
-	return len(c.Refs())
+	var count int
+	for i := range c.refs {
+		if c.refs[i] != nil {
+			count++
+		}
+	}
+	return count
 }
 
 func (c *Cell) Refs() []*Cell {

@@ -205,3 +205,21 @@ func (s *BitStringReader) ReadAddress() (*Address, error) {
 	address.Address = addr
 	return &address, nil
 }
+
+// ReadVarUint
+// TL-B: var_uint$_ {n:#} len:(#< n) value:(uint (len * 8)) = VarUInteger n;
+func (s *BitStringReader) ReadVarUint(byteLen int) (*big.Int, error) {
+	if byteLen < 2 {
+		return nil, fmt.Errorf("invalid varuint length")
+	}
+	lenBits := int(math.Ceil(math.Log2(float64(byteLen))))
+	uintLen, err := s.ReadUint(lenBits)
+	if err != nil {
+		return nil, err
+	}
+	value, err := s.ReadBigUint(int(uintLen) * 8)
+	if err != nil {
+		return nil, err
+	}
+	return value, nil
+}

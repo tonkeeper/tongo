@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/startfellows/tongo"
 	"math"
 	"math/big"
 	"math/bits"
@@ -253,7 +254,7 @@ func (s *BitString) WriteBytes(data []byte) error {
 	return nil
 }
 
-func (s *BitString) WriteAddress(address *Address) error {
+func (s *BitString) WriteAddress(address *tongo.AccountID) error {
 	if address == nil {
 		err := s.WriteUint(0, 2)
 		if err != nil {

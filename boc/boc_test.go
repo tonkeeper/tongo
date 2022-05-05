@@ -17,7 +17,8 @@ func TestKek(t *testing.T) {
 		t.Fail()
 		return
 	}
-	fmt.Println(hex.EncodeToString(cells[0].Hash()))
+	hash, err := cells[0].Hash()
+	fmt.Println(hex.EncodeToString(hash))
 
 	//fmt.Println(hex.EncodeToString(cells[0].ToBOC()))
 	//fmt.Sprintf("%x", cells[0].Hash())

@@ -3,6 +3,7 @@ package boc
 import (
 	"errors"
 	"fmt"
+	"github.com/startfellows/tongo"
 	"math"
 	"math/big"
 )
@@ -174,7 +175,7 @@ func (s *BitStringReader) ReadBytes(size int) ([]byte, error) {
 	return res, nil
 }
 
-func (s *BitStringReader) ReadAddress() (*Address, error) {
+func (s *BitStringReader) ReadAddress() (*tongo.AccountID, error) {
 	prefix, err := s.ReadUint(2)
 	if err != nil {
 		return nil, err
@@ -200,7 +201,7 @@ func (s *BitStringReader) ReadAddress() (*Address, error) {
 	if err != nil {
 		return nil, err
 	}
-	var address Address
+	var address tongo.AccountID
 	address.Workchain = int32(workchain)
 	address.Address = addr
 	return &address, nil

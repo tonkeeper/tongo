@@ -10,6 +10,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"time"
 )
@@ -54,7 +55,7 @@ func getVMFunctionSelector(name string) int {
 	}
 }
 
-func buildDefaultC7Register(address *boc.Address) (StackEntry, error) {
+func buildDefaultC7Register(address *tongo.AccountID) (StackEntry, error) {
 	now := int(time.Now().Unix())
 
 	balance := NewTupleStackEntry([]StackEntry{
@@ -89,7 +90,7 @@ func buildDefaultC7Register(address *boc.Address) (StackEntry, error) {
 	}), nil
 }
 
-func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry, destAccount *boc.Address) (ExecutionResult, error) {
+func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry, destAccount *tongo.AccountID) (ExecutionResult, error) {
 	codeBoc, err := code.ToBocBase64Custom(false, true, false, 0)
 	if err != nil {
 		return ExecutionResult{}, err

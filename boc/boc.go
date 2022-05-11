@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"hash/crc32"
 	"math"
 	"math/bits"
@@ -240,13 +241,17 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 
 	for i := int(header.cellsNum - 1); i >= 0; i-- {
 		c := refsArray[i]
-
-		for ri := 0; ri < len(c); ri++ {
-			r := c[ri]
+		if len(c) > 4 {
+			return nil, fmt.Errorf("too long refs array")
+		}
+		for ri, r := range c {
 			if r < i {
 				return nil, errors.New("topological order is broken")
 			}
-			cellsArray[i].refs[ri] = cellsArray[r] //todo: fix out of range panic
+			if r > len(cellsArray) {
+				return nil, errors.New("index out of range for boc deseriailization")
+			}
+			cellsArray[i].refs[ri] = cellsArray[r]
 		}
 	}
 

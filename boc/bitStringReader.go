@@ -430,7 +430,10 @@ func (s *BitStringReader) ReadStateInit() (codeFlag bool, dataFlag bool, err err
 		return false, false, err
 	}
 	if maybe {
-		return false, false, fmt.Errorf("special reading not implemented")
+		err = s.ReadTickTock()
+		if err != nil {
+			return false, false, err
+		}
 	}
 	maybe, err = s.ReadMaybe()
 	if err != nil {
@@ -451,4 +454,19 @@ func (s *BitStringReader) ReadStateInit() (codeFlag bool, dataFlag bool, err err
 		return false, false, err
 	}
 	return codeFlag, dataFlag, nil
+}
+
+// ReadTickTock
+// TL-B: tick_tock$_ tick:Bool tock:Bool = TickTock;
+func (s *BitStringReader) ReadTickTock() error {
+	_, err := s.ReadBit() // tick
+	if err != nil {
+		return err
+	}
+	_, err = s.ReadBit() // tock
+	if err != nil {
+		return err
+	}
+	// TODO: implement
+	return nil
 }

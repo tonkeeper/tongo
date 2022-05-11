@@ -248,7 +248,7 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 			if r < i {
 				return nil, errors.New("topological order is broken")
 			}
-			if r > len(cellsArray) {
+			if r >= len(cellsArray) {
 				return nil, errors.New("index out of range for boc deseriailization")
 			}
 			cellsArray[i].refs[ri] = cellsArray[r]

@@ -118,8 +118,8 @@ func (c *Connection) handshake() error {
 
 func (c *Connection) Send(p Packet) error {
 	b := p.marshal()
-	c.cipher.XORKeyStream(b, b)
 	c.packetMutex.Lock()
+	c.cipher.XORKeyStream(b, b)
 	_, err := c.conn.Write(b)
 	c.packetMutex.Unlock()
 	return err

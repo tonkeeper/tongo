@@ -10,6 +10,7 @@ import (
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/config"
 	"github.com/startfellows/tongo/tl"
+	"time"
 )
 
 type Client struct {
@@ -37,7 +38,9 @@ func NewClient(options config.Options) (*Client, error) {
 
 func (c *Client) GetLastRawAccountState(accountId tongo.AccountID) (AccountState, error) {
 	req := makeLiteServerQueryRequest(makeLiteServerGetMasterchainInfoRequest())
-	resp, err := c.adnlClient.Request(context.Background(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	resp, err := c.adnlClient.Request(ctx, req)
 	if err != nil {
 		return AccountState{}, err
 	}
@@ -56,7 +59,9 @@ func (c *Client) GetLastRawAccountState(accountId tongo.AccountID) (AccountState
 		return AccountState{}, err
 	}
 	req = makeLiteServerQueryRequest(asReq)
-	resp, err = c.adnlClient.Request(context.Background(), req)
+	ctx, cancel = context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	resp, err = c.adnlClient.Request(ctx, req)
 	if err != nil {
 		return AccountState{}, err
 	}

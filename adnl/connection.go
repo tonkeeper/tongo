@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	mrand "math/rand"
 	"net"
+	"sync"
 	"time"
 )
 
@@ -24,8 +25,9 @@ type Connection struct {
 	cipher   cipher.Stream
 	decipher cipher.Stream
 
-	conn net.Conn
-	resp chan Packet
+	conn        net.Conn
+	packetMutex sync.Mutex
+	resp        chan Packet
 }
 
 func NewConnection(ctx context.Context, peerPublicKey []byte, host string) (*Connection, error) {
@@ -117,7 +119,9 @@ func (c *Connection) handshake() error {
 func (c *Connection) Send(p Packet) error {
 	b := p.marshal()
 	c.cipher.XORKeyStream(b, b)
+	c.packetMutex.Lock()
 	_, err := c.conn.Write(b)
+	c.packetMutex.Unlock()
 	return err
 }
 

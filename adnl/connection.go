@@ -6,6 +6,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	mrand "math/rand"
 	"net"
@@ -18,18 +19,25 @@ const (
 	magicTCPPong = 0x03fb69dc //crc32(tcp.pong random_id:long = tcp.Pong)
 )
 
-type Connection struct {
-	cipher   cipher.Stream
-	decipher cipher.Stream
+type ConnectionStatus int
 
-	conn net.Conn
-	packetMutex sync.Mutex
-	resp chan Packet
+const (
+	NotInit ConnectionStatus = iota
+	Connecting
+	Connected
+	Closed
+)
+
+type Connection struct {
+	cipher        cipher.Stream
+	decipher      cipher.Stream
+	conn          net.Conn
+	packetMutex   sync.Mutex
+	resp          chan Packet
 	peerPublicKey []byte
 	host          string
-	IsReady       bool
+	Status        ConnectionStatus
 	lastPong      time.Time
-	ioReader      *bufio.Reader
 }
 
 func NewConnection(ctx context.Context, peerPublicKey []byte, host string) (*Connection, error) {
@@ -37,9 +45,9 @@ func NewConnection(ctx context.Context, peerPublicKey []byte, host string) (*Con
 	if err != nil {
 		return nil, err
 	}
-	c.IsReady = true
 	go c.reader()
 	go c.ping()
+	go c.watchdog(time.Second * 10)
 	return c, nil
 }
 
@@ -48,15 +56,15 @@ func createConnection(ctx context.Context, peerPublicKey []byte, host string) (*
 	if err != nil {
 		return nil, err
 	}
-	params, err := newParameters()
+	param, err := newParameters()
 	if err != nil {
 		return nil, err
 	}
-	ci, err := aes.NewCipher(params.txKey())
+	ci, err := aes.NewCipher(param.txKey())
 	if err != nil {
 		return nil, err
 	}
-	dci, err := aes.NewCipher(params.rxKey())
+	dci, err := aes.NewCipher(param.rxKey())
 	if err != nil {
 		return nil, err
 	}
@@ -70,22 +78,35 @@ func createConnection(ctx context.Context, peerPublicKey []byte, host string) (*
 		return nil, err
 	}
 	var c = &Connection{
-		cipher:   cipher.NewCTR(ci, params.txNonce()),
-		decipher: cipher.NewCTR(dci, params.rxNonce()),
-		conn:     conn,
-		resp:     make(chan Packet, 1000),
+		cipher:        cipher.NewCTR(ci, param.txNonce()),
+		decipher:      cipher.NewCTR(dci, param.rxNonce()),
+		conn:          conn,
+		resp:          make(chan Packet, 1000),
+		peerPublicKey: peerPublicKey,
+		host:          host,
 	}
-	err = c.handshake(a, params, keys)
+	err = c.handshake(a, param, keys)
 	if err != nil {
 		return nil, err
 	}
-	c.peerPublicKey = peerPublicKey
-	c.host = host
+	c.Status = Connected
+	c.lastPong = time.Now()
 	return c, nil
 }
 
+func (c *Connection) watchdog(timeout time.Duration) {
+	for {
+		if time.Since(c.lastPong) > timeout && c.Status != Connecting {
+			fmt.Printf("Pong time: %v, status: %v\n", time.Since(c.lastPong), c.Status)
+			c.reconnect()
+		}
+		time.Sleep(time.Millisecond * 200)
+	}
+}
+
 func (c *Connection) reconnect() {
-	c.IsReady = false
+	fmt.Printf("reconnect\n")
+	c.Status = Connecting
 	err := c.conn.Close()
 	if err != nil {
 		fmt.Printf("Cant close connection\n")
@@ -93,14 +114,13 @@ func (c *Connection) reconnect() {
 	for {
 		conn, err := createConnection(context.Background(), c.peerPublicKey, c.host)
 		if err == nil {
-			c.address = conn.address
-			c.params = conn.params
-			c.keys = conn.keys
 			c.cipher = conn.cipher
 			c.decipher = conn.decipher
 			c.conn = conn.conn
-			c.IsReady = true
-			c.ioReader = bufio.NewReader(c.conn)
+			c.packetMutex = sync.Mutex{}
+			c.lastPong = time.Now()
+			go c.reader()
+			c.Status = Connected
 			return
 		}
 		fmt.Printf("Reconnect failed: %v\n", err)
@@ -109,22 +129,20 @@ func (c *Connection) reconnect() {
 }
 
 func (c *Connection) reader() {
-	c.ioReader = bufio.NewReader(c.conn)
-	c.lastPong = time.Now()
+	ioReader := bufio.NewReader(c.conn)
 	for {
-		if c.IsReady != true {
-			continue
+		p, err := ParsePacket(ioReader, c.decipher)
+		if errors.Is(err, net.ErrClosed) {
+			fmt.Printf("Old connection closed. Drop reader.: %v\n", err)
+			break
 		}
-		err := c.conn.SetReadDeadline(time.Now().Add(time.Second * 3))
 		if err != nil {
-			fmt.Printf("set deadline error: %v\n", err)
-		}
-		p, err := ParsePacket(c.ioReader, c.decipher)
-		if err != nil {
-			//fmt.Printf("reader error: %v\n", err)
+			fmt.Printf("reader error: %v\n", err)
+			time.Sleep(time.Millisecond * 200)
 			continue
 		}
 		if p.MagicType() == magicTCPPong {
+			fmt.Printf("pong\n")
 			c.lastPong = time.Now()
 			continue
 		}
@@ -160,11 +178,18 @@ func (c *Connection) handshake(address Address, params params, keys x25519Keys) 
 }
 
 func (c *Connection) Send(p Packet) error {
+	if c.Status != Connected {
+		return nil
+	}
 	b := p.marshal()
 	c.packetMutex.Lock()
 	c.cipher.XORKeyStream(b, b)
 	_, err := c.conn.Write(b)
 	c.packetMutex.Unlock()
+	if err != nil {
+		fmt.Printf("Sending error: %v\n", err)
+		c.reconnect()
+	}
 	return err
 }
 
@@ -176,20 +201,17 @@ func (c *Connection) ping() {
 	ping := make([]byte, 12)
 	binary.BigEndian.PutUint32(ping[:4], magicTCPPing)
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 3)
 		mrand.Read(ping[4:])
 		p, err := NewPacket(ping)
 		if err != nil {
 			panic(err) // impossible if NewPacket function is correct
 		}
+		fmt.Printf("ping\n")
 		err = c.Send(p)
 		if err != nil {
-			fmt.Printf("send ping error: %v\n", err)
+			fmt.Printf("ping error: %v\n", err)
 			continue
-		}
-		if time.Since(c.lastPong) > time.Second*20 {
-			c.reconnect()
-			c.lastPong = time.Now()
 		}
 	}
 }

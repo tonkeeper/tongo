@@ -18,10 +18,6 @@ const (
 )
 
 type Connection struct {
-	address Address
-	params  params
-	keys    x25519Keys
-
 	cipher   cipher.Stream
 	decipher cipher.Stream
 
@@ -57,16 +53,13 @@ func NewConnection(ctx context.Context, peerPublicKey []byte, host string) (*Con
 		return nil, err
 	}
 	var c = &Connection{
-		address:  a,
-		params:   params,
-		keys:     keys,
 		cipher:   cipher.NewCTR(ci, params.txNonce()),
 		decipher: cipher.NewCTR(dci, params.rxNonce()),
 		conn:     conn,
 		resp:     make(chan Packet, 1000),
 	}
 
-	err = c.handshake()
+	err = c.handshake(a, params, keys)
 	if err != nil {
 		return nil, err
 	}
@@ -89,21 +82,21 @@ func (c *Connection) reader() {
 	}
 }
 
-func (c *Connection) handshake() error {
-	key := append([]byte{}, c.keys.shared[:16]...)
-	key = append(key, c.params.hash()[16:32]...)
-	nonce := append([]byte{}, c.params.hash()[0:4]...)
-	nonce = append(nonce, c.keys.shared[20:32]...)
+func (c *Connection) handshake(address Address, params params, keys x25519Keys) error {
+	key := append([]byte{}, keys.shared[:16]...)
+	key = append(key, params.hash()[16:32]...)
+	nonce := append([]byte{}, params.hash()[0:4]...)
+	nonce = append(nonce, keys.shared[20:32]...)
 	cipherKey, err := aes.NewCipher(key)
 	if err != nil {
 		return err
 	}
-	data := append([]byte{}, c.params[:]...)
+	data := append([]byte{}, params[:]...)
 	cipher.NewCTR(cipherKey, nonce).XORKeyStream(data, data)
 	req := make([]byte, 256)
-	copy(req[:32], c.address.hash())
-	copy(req[32:64], c.keys.public)
-	copy(req[64:96], c.params.hash())
+	copy(req[:32], address.hash())
+	copy(req[32:64], keys.public)
+	copy(req[64:96], params.hash())
 	copy(req[96:], data)
 	_, err = c.conn.Write(req)
 	if err != nil {

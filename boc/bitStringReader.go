@@ -353,6 +353,7 @@ func (s *BitStringReader) ReadAccount() (RawAccount, error) {
 }
 
 // ReadHashmapE
+// TODO: replace with CellReader
 // TL-B:
 // hme_empty$0 {n:#} {X:Type} = HashmapE n X;
 // hme_root$1 {n:#} {X:Type} root:^(Hashmap n X) = HashmapE n X;
@@ -469,4 +470,213 @@ func (s *BitStringReader) ReadTickTock() error {
 	}
 	// TODO: implement
 	return nil
+}
+
+// Unary
+// x == nil unary_zero
+// x != nil unary_succ
+type Unary struct {
+	ConstructorName string
+	X               *Unary
+	n               uint32
+}
+
+// ReadUnary
+// TL-B:
+// unary_zero$0 = Unary ~0;
+// unary_succ$1 {n:#} x:(Unary ~n) = Unary ~(n + 1);
+func (s *BitStringReader) ReadUnary() (Unary, error) {
+	unarySucc, err := s.ReadBit()
+	if err != nil {
+		return Unary{ConstructorName: "unary_zero", n: 0}, err
+	}
+	if !unarySucc {
+		return Unary{}, nil
+	}
+	unary, err := s.ReadUnary()
+	if err != nil {
+		return Unary{}, err
+	}
+	return Unary{ConstructorName: "unary_succ", X: &unary, n: unary.n + 1}, nil
+}
+
+// HmLabel
+// hml_short (len, s)
+// hml_long (n, s)
+// hml_same (v, n)
+type HmLabel struct {
+	ConstructorName string
+	Len             *Unary
+	S               *BitString
+	N, M            uint32
+	V               *bool
+}
+
+// ReadHmLabel
+// TL-B:
+// hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
+// hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
+// hml_same$11 {m:#} v:Bit n:(#<= m) = HmLabel ~n m;
+func (s *BitStringReader) ReadHmLabel(m uint32) (HmLabel, error) {
+	notShort, err := s.ReadBit()
+	if err != nil {
+		return HmLabel{}, err
+	}
+	if !notShort {
+		same, err := s.ReadBit()
+		if err != nil {
+			return HmLabel{}, err
+		}
+		if same {
+			// decode hml_same
+			v, err := s.ReadBit()
+			if err != nil {
+				return HmLabel{}, err
+			}
+			nLen := int(math.Ceil(math.Log2(float64(m + 1))))
+			n, err := s.ReadUint(nLen)
+			if err != nil {
+				return HmLabel{}, err
+			}
+			return HmLabel{ConstructorName: "hml_same", V: &v, N: uint32(n), M: m}, nil
+		}
+		// decode hml_long
+		nLen := int(math.Ceil(math.Log2(float64(m + 1))))
+		n, err := s.ReadUint(nLen)
+		if err != nil {
+			return HmLabel{}, err
+		}
+		bits, err := s.ReadBits(n)
+		if err != nil {
+			return HmLabel{}, err
+		}
+		return HmLabel{ConstructorName: "hml_long", S: &bits, N: uint32(n), M: m}, nil
+	}
+	// decode hml_short
+	ln, err := s.ReadUnary()
+	if err != nil {
+		return HmLabel{}, err
+	}
+	bits, err := s.ReadBits(uint(ln.n))
+	if err != nil {
+		return HmLabel{}, err
+	}
+	return HmLabel{ConstructorName: "hml_short", Len: &ln, S: &bits, N: ln.n, M: m}, nil
+}
+
+// ReadBits
+// {n:#} (n * Bit)
+func (s *BitStringReader) ReadBits(n uint) (BitString, error) {
+	var bitString BitString
+	for i := uint(0); i < n; i++ {
+		bit, err := s.ReadBit()
+		if err != nil {
+			return BitString{}, err
+		}
+		err = bitString.WriteBit(bit)
+		if err != nil {
+			return BitString{}, err
+		}
+	}
+	return bitString, nil
+}
+
+type HashmapNode struct {
+	ConstructorName string
+	NPlus           uint32
+	Value           *any
+	Left            *Hashmap
+	Right           *Hashmap
+}
+
+// ReadHashmapNode
+// TL-B:
+// hmn_leaf#_ {X:Type} value:X = HashmapNode 0 X;
+// hmn_fork#_ {n:#} {X:Type} left:^(Hashmap n X) right:^(Hashmap n X) = HashmapNode (n + 1) X;
+func (c *CellReader) ReadHashmapNode(nPlus uint32, x any) (HashmapNode, error) {
+	if nPlus == 0 {
+		value, err := c.ReadAnyType(x)
+		if err != nil {
+			return HashmapNode{}, err
+		}
+		return HashmapNode{ConstructorName: "hmn_leaf", Value: value, NPlus: nPlus}, nil
+	}
+	n := nPlus - 1
+	leftCell, err := c.getRef()
+	if err != nil {
+		return HashmapNode{}, err
+	}
+	left, err := leftCell.ReadHashmap(n, x)
+	if err != nil {
+		return HashmapNode{}, err
+	}
+	rightCell, err := c.getRef()
+	if err != nil {
+		return HashmapNode{}, err
+	}
+	right, err := rightCell.ReadHashmap(n, x)
+	if err != nil {
+		return HashmapNode{}, err
+	}
+	return HashmapNode{ConstructorName: "hmn_fork", NPlus: nPlus, Left: left, Right: right}, nil
+}
+
+type CellReader struct {
+	Cell            Cell
+	BitStringReader BitStringReader
+}
+
+type Hashmap struct {
+	ConstructorName string
+	Label           HmLabel
+	Node            HashmapNode
+	N               uint32
+	X               any
+}
+
+// ReadHashmap
+// TL-B:
+// hm_edge#_ {n:#} {X:Type} {l:#} {m:#} label:(HmLabel ~l n) {n = (~m) + l} node:(HashmapNode m X) = Hashmap n X;
+func (c *CellReader) ReadHashmap(n uint32, x any) (Hashmap, error) {
+	label, err := c.ReadHmLabel(n)
+	if err != nil {
+		return Hashmap{}, err
+	}
+	m := n - label.n
+	node, err := c.ReadHashmapNode(m, x)
+	if err != nil {
+		return Hashmap{}, err
+	}
+	return Hashmap{ConstructorName: "hm_edge", Label: label, Node: node, N: n, X: x}, nil
+}
+
+type HashmapE struct {
+	ConstructorName string
+	Root            *Hashmap
+	N               uint32
+	X               any
+}
+
+// ReadHashmapE
+// TODO: replace with CellReader
+// TL-B:
+// hme_empty$0 {n:#} {X:Type} = HashmapE n X;
+// hme_root$1 {n:#} {X:Type} root:^(Hashmap n X) = HashmapE n X;
+func (c *CellReader) ReadHashmapE(n uint32, x any) (HashmapE, error) {
+	root, err := c.BitStringReader.ReadBit()
+	if err != nil {
+		return HashmapE{}, err
+	}
+	if root {
+		rootCell, err := c.getRef()
+		if err != nil {
+			return HashmapE{}, err
+		}
+		root, err := rootCell.ReadHashmap(n, x)
+		if err != nil {
+			return HashmapE{}, err
+		}
+		return HashmapE{ConstructorName: "hme_root", Root: root, N: n, X: x}, nil
+	}
+	return HashmapE{ConstructorName: "hme_empty", N: n, X: x}, nil
 }

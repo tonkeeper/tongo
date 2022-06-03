@@ -390,10 +390,9 @@ func bocRepr(c *Cell, indexesMap map[string]int, sBytes int) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		idx := uint16(indexesMap[h])
-		b := make([]byte, sBytes)
-		binary.BigEndian.PutUint16(b[:sBytes], idx)
-		res = append(res, b...)
+		b := make([]byte, 8)
+		binary.BigEndian.PutUint64(b, uint64(indexesMap[h]))
+		res = append(res, b[8-sBytes:]...)
 	}
 
 	return res, nil

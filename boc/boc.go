@@ -382,7 +382,7 @@ func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
 	return res, indexesMap, nil
 }
 
-func bocRepr(c *Cell, indexesMap map[string]int) ([]byte, error) {
+func bocRepr(c *Cell, indexesMap map[string]int, sBytes int) ([]byte, error) {
 	res := bocReprWithoutRefs(c)
 
 	for _, ref := range c.Refs() {
@@ -390,7 +390,10 @@ func bocRepr(c *Cell, indexesMap map[string]int) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, byte(indexesMap[h]))
+		idx := uint16(indexesMap[h])
+		b := make([]byte, sBytes)
+		binary.BigEndian.PutUint16(b[:sBytes], idx)
+		res = append(res, b...)
 	}
 
 	return res, nil
@@ -405,12 +408,12 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 
 	cellsNum := uint(len(allCells))
 	sBits := bits.Len(cellsNum)
-	sBytes := int(math.Min(math.Ceil(float64(sBits)/8), 1))
+	sBytes := int(math.Max(math.Ceil(float64(sBits)/8), 1))
 	fullSize := uint(0)
 	sizeIndex := make([]uint, 0)
 	for _, cell := range allCells {
 		sizeIndex = append(sizeIndex, fullSize)
-		repr, err := bocRepr(cell, indexesMap)
+		repr, err := bocRepr(cell, indexesMap, sBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -473,7 +476,7 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	}
 
 	for _, cell := range allCells {
-		repr, err := bocRepr(cell, indexesMap)
+		repr, err := bocRepr(cell, indexesMap, sBytes)
 		if err != nil {
 			return nil, err
 		}

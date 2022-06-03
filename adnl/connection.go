@@ -97,7 +97,6 @@ func createConnection(ctx context.Context, peerPublicKey []byte, host string) (*
 func (c *Connection) watchdog(timeout time.Duration) {
 	for {
 		if time.Since(c.lastPong) > timeout && c.Status != Connecting {
-			fmt.Printf("Pong time: %v, status: %v\n", time.Since(c.lastPong), c.Status)
 			c.reconnect()
 		}
 		time.Sleep(time.Millisecond * 200)
@@ -105,7 +104,6 @@ func (c *Connection) watchdog(timeout time.Duration) {
 }
 
 func (c *Connection) reconnect() {
-	fmt.Printf("reconnect\n")
 	c.Status = Connecting
 	err := c.conn.Close()
 	if err != nil {
@@ -142,7 +140,6 @@ func (c *Connection) reader() {
 			continue
 		}
 		if p.MagicType() == magicTCPPong {
-			fmt.Printf("pong\n")
 			c.lastPong = time.Now()
 			continue
 		}
@@ -207,7 +204,6 @@ func (c *Connection) ping() {
 		if err != nil {
 			panic(err) // impossible if NewPacket function is correct
 		}
-		fmt.Printf("ping\n")
 		err = c.Send(p)
 		if err != nil {
 			fmt.Printf("ping error: %v\n", err)

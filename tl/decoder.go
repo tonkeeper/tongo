@@ -3,20 +3,36 @@ package tl
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"reflect"
 )
 
-func Unmarshal(b []byte, o any) error {
-	buf := bytes.NewReader(b)
-	return decode(buf, reflect.ValueOf(o))
+type SumType string
+
+func Unmarshal(r io.Reader, o any) error {
+	return decode(r, reflect.ValueOf(o))
 }
 
-func decode(buf *bytes.Reader, val reflect.Value) error {
+type UnmarshalerTL interface {
+	UnmarshalTL(r io.Reader) error
+}
+
+func decode(buf io.Reader, val reflect.Value) error {
 	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
+	i, ok := reflect.New(val.Type()).Interface().(UnmarshalerTL)
+	if ok {
+		err := i.UnmarshalTL(buf)
+		if err != nil {
+			return err
+		}
+		val.Set(reflect.ValueOf(i).Elem())
+		return nil
+	}
+
 	if !val.CanSet() {
 		return fmt.Errorf("value can't be changed")
 	}
@@ -47,7 +63,7 @@ func decode(buf *bytes.Reader, val reflect.Value) error {
 		return nil
 	case reflect.Slice:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
-			return fmt.Errorf("decoding slice of %v not supported", val.Type().Elem().Kind())
+			return decodeVector(buf, val)
 		}
 		data, err := readByteSlice(buf)
 		if err != nil {
@@ -69,23 +85,21 @@ func decode(buf *bytes.Reader, val reflect.Value) error {
 		reflect.Copy(val, reflect.ValueOf(data))
 		return nil
 	case reflect.Struct:
-		for i := 0; i < val.NumField(); i++ {
-			if !val.Field(i).CanSet() {
-				return fmt.Errorf("can't set field %v", i)
-			}
-			err := decode(buf, val.Field(i))
-			if err != nil {
-				return err
-			}
-		}
-		return nil
+		return decodeStruct(buf, val)
 
 	default:
 		return fmt.Errorf("type %v not emplemented", val.Kind())
 	}
 }
-func readByteSlice(buf *bytes.Reader) ([]byte, error) {
-	firstByte, err := buf.ReadByte()
+
+func readByte(r io.Reader) (byte, error) {
+	var b [1]byte
+	_, err := io.ReadFull(r, b[:])
+	return b[0], err
+}
+
+func readByteSlice(r io.Reader) ([]byte, error) {
+	firstByte, err := readByte(r)
 	if err != nil {
 		return nil, err
 	}
@@ -93,19 +107,19 @@ func readByteSlice(buf *bytes.Reader) ([]byte, error) {
 	var full int
 	if firstByte < 254 {
 		data = make([]byte, int(firstByte))
-		_, err := io.ReadFull(buf, data)
+		_, err := io.ReadFull(r, data)
 		if err != nil {
 			return nil, err
 		}
 		full = 1 + len(data)
 	} else if firstByte == 254 {
 		sizeBuf := make([]byte, 4)
-		_, err := io.ReadFull(buf, sizeBuf[:3])
+		_, err := io.ReadFull(r, sizeBuf[:3])
 		if err != nil {
 			return nil, err
 		}
 		data = make([]byte, binary.LittleEndian.Uint32(sizeBuf))
-		_, err = io.ReadFull(buf, data)
+		_, err = io.ReadFull(r, data)
 		if err != nil {
 			return nil, err
 		}
@@ -114,10 +128,91 @@ func readByteSlice(buf *bytes.Reader) ([]byte, error) {
 		return nil, fmt.Errorf("invalid bytes prefix")
 	}
 	for ; full%4 != 0; full++ {
-		_, err = buf.ReadByte()
+		_, err = readByte(r)
 		if err != nil {
 			return nil, err
 		}
 	}
 	return data, nil
+}
+
+func decodeStruct(buf io.Reader, val reflect.Value) error {
+	if _, ok := val.Type().FieldByName("SumType"); ok {
+		return decodeSumType(buf, val)
+	} else {
+		return decodeBasicStruct(buf, val)
+	}
+}
+
+func decodeSumType(r io.Reader, val reflect.Value) error {
+	for i := 0; i < val.NumField(); i++ {
+		if !val.Field(i).CanSet() {
+			return fmt.Errorf("can't set field %v", i)
+		}
+		if val.Field(i).Type().Name() == "SumType" {
+			continue
+		}
+		tag := val.Type().Field(i).Tag.Get("tlSumType")
+		ok, err := compareWithTag(r, tag)
+		if err != nil {
+			return err
+		}
+		if ok {
+			val.FieldByName("SumType").SetString(val.Type().Field(i).Name)
+			err := decode(r, val.Field(i))
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+	return fmt.Errorf("can not decode sumtype")
+}
+
+func decodeBasicStruct(r io.Reader, val reflect.Value) error {
+	for i := 0; i < val.NumField(); i++ {
+		if !val.Field(i).CanSet() {
+			return fmt.Errorf("can't set field %v", i)
+		}
+		err := decode(r, val.Field(i))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func compareWithTag(r io.Reader, tag string) (bool, error) {
+	var a [4]byte
+	t, err := hex.DecodeString(tag)
+	if err != nil {
+		return false, err
+	}
+	copy(a[:], t)
+	var b [4]byte
+	_, err = io.ReadFull(r, b[:])
+	if err != nil {
+		return false, err
+	}
+	return bytes.Equal(a[:], b[:]), nil
+}
+
+func decodeVector(r io.Reader, val reflect.Value) error {
+	var b [4]byte
+	_, err := io.ReadFull(r, b[:])
+	if err != nil {
+		return err
+	}
+	ln := int(binary.LittleEndian.Uint32(b[:]))
+	item := reflect.New(val.Type().Elem())
+	slice := reflect.MakeSlice(val.Type(), 0, ln)
+	for i := 0; i < ln; i++ {
+		err := decode(r, item)
+		slice = reflect.Append(slice, item.Elem())
+		if err != nil {
+			return err
+		}
+	}
+	val.Set(slice)
+	return nil
 }

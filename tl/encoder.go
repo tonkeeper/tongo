@@ -2,6 +2,7 @@ package tl
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"reflect"
 )
@@ -50,15 +51,7 @@ func Marshal(o any) ([]byte, error) {
 		}
 		return zeroPadding(b), nil
 	case reflect.Struct:
-		var buf []byte
-		for i := 0; i < val.NumField(); i++ {
-			b, err := Marshal(val.Field(i).Interface())
-			if err != nil {
-				return nil, err
-			}
-			buf = append(buf, b...)
-		}
-		return buf, nil
+		return encodeStruct(val)
 	default:
 		return nil, fmt.Errorf("type %v not emplemented", val.Kind())
 	}
@@ -81,4 +74,60 @@ func EncodeLength(i int) []byte {
 	} else {
 		return []byte{byte(i)}
 	}
+}
+
+func encodeStruct(val reflect.Value) ([]byte, error) {
+	if _, ok := val.Type().FieldByName("SumType"); ok {
+		return encodeSumType(val)
+	} else {
+		return encodeBasicStruct(val)
+	}
+}
+
+func encodeBasicStruct(val reflect.Value) ([]byte, error) {
+	var buf []byte
+	for i := 0; i < val.NumField(); i++ {
+		b, err := Marshal(val.Field(i).Interface())
+		if err != nil {
+			return nil, err
+		}
+		buf = append(buf, b...)
+	}
+	return buf, nil
+}
+
+func encodeSumType(val reflect.Value) ([]byte, error) {
+	name := val.FieldByName("SumType").String()
+	var buf []byte
+	for i := 0; i < val.NumField(); i++ {
+		if val.Field(i).Type().Name() == "SumType" {
+			continue
+		}
+		tag := val.Type().Field(i).Tag.Get("tlSumType")
+		if name != val.Type().Field(i).Name {
+			continue
+		}
+		t, err := encodeTag(tag)
+		if err != nil {
+			return nil, err
+		}
+		buf = append(buf, t[:]...)
+		b, err := Marshal(val.Field(i).Interface())
+		if err != nil {
+			return nil, err
+		}
+		buf = append(buf, b...)
+		break
+	}
+	return buf, nil
+}
+
+func encodeTag(tag string) ([4]byte, error) {
+	var res [4]byte
+	b, err := hex.DecodeString(tag)
+	if err != nil {
+		return [4]byte{}, err
+	}
+	copy(res[:], b)
+	return res, nil
 }

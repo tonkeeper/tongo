@@ -9,8 +9,8 @@ type TonNodeBlockIdExt struct {
 	Workchain int32
 	Shard     int64
 	Seqno     int32
-	RootHash  [32]byte
-	FileHash  [32]byte
+	RootHash  Hash
+	FileHash  Hash
 }
 
 func (id TonNodeBlockIdExt) MarshalTL() ([]byte, error) {
@@ -30,7 +30,6 @@ func (id *TonNodeBlockIdExt) UnmarshalTL(data []byte) error {
 	id.Workchain = int32(binary.LittleEndian.Uint32(data[:4]))
 	id.Shard = int64(binary.LittleEndian.Uint64(data[4:12]))
 	id.Seqno = int32(binary.LittleEndian.Uint32(data[12:16]))
-
 	copy(id.RootHash[:], data[16:48])
 	copy(id.FileHash[:], data[48:80])
 	return nil

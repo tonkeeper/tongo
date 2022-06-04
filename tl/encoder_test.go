@@ -2,6 +2,7 @@ package tl
 
 import (
 	"bytes"
+	"io"
 	"reflect"
 	"testing"
 )
@@ -48,7 +49,7 @@ func TestMarshal(t *testing.T) {
 			t.Fatal(err)
 		}
 		var unmarshaled testCase
-		err = Unmarshal(b1, &unmarshaled)
+		err = Unmarshal(bytes.NewReader(b1), &unmarshaled)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -62,5 +63,71 @@ func TestMarshal(t *testing.T) {
 		if !bytes.Equal(b1, b2) {
 			t.Fatal("not equal")
 		}
+	}
+}
+
+type custom struct {
+	A int32
+}
+
+type A struct {
+	A int32
+	B custom
+	C int32
+}
+
+func (c custom) MarshalTL() ([]byte, error) {
+	return []byte{1, 1, 1, 1}, nil
+}
+
+func (c *custom) UnmarshalTL(r io.Reader) error {
+	b := []byte{0, 0, 0, 0}
+	r.Read(b)
+	c.A = 15
+	return nil
+}
+
+func TestMarshalCustomDecode(t *testing.T) {
+	a := A{
+		A: 12,
+		B: custom{A: 15},
+		C: 13,
+	}
+	b, err := Marshal(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var a1 A
+	err = Unmarshal(bytes.NewReader(b), &a1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(a, a1) {
+		t.Fatal("not equal")
+	}
+}
+
+type testSumType struct {
+	SumType
+	A testCase `tlSumType:"0a"`
+	B testCase `tlSumType:"0b"`
+}
+
+func TestSumType(t *testing.T) {
+	a := testSumType{
+		SumType: "A",
+		A:       testCase{A: 1, E: []byte{1}},
+	}
+	b, err := Marshal(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var a1 testSumType
+	err = Unmarshal(bytes.NewReader(b), &a1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(a, a1) {
+		t.Fatal("not equal")
 	}
 }

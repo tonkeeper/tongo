@@ -206,7 +206,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 		return nil, nil, nil, errors.New("not enough bytes to encode cell data")
 	}
 
-	err := cell.Bits.SetTopUppedArray(cellData[0:dataBytesSize], fullfilledBytes)
+	err := cell.setTopUppedArray(cellData[0:dataBytesSize], fullfilledBytes)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -300,7 +300,7 @@ func bocReprWithoutRefs(cell *Cell) []byte {
 	res := make([]byte, ((cell.BitSize()+7)/8)+2)
 	res[0] = d1
 	res[1] = d2
-	copy(res[2:], cell.Bits.buf)
+	copy(res[2:], cell.getBuffer())
 
 	if cell.BitSize()%8 != 0 {
 		res[len(res)-1] |= 1 << (7 - cell.BitSize()%8)
@@ -422,7 +422,7 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	offsetBits := bits.Len(uint(fullSize))
 	offsetBytes := int(math.Max(math.Ceil(float64(offsetBits)/8), 1))
 
-	serStr := NewBitString((1023 + 32*4 + 32*3) * int(cellsNum))
+	serStr := NewBitString((CellBits + 32*4 + 32*3) * int(cellsNum))
 
 	err = serStr.WriteBytes(reachBocMagicPrefix)
 	if err != nil {
@@ -432,19 +432,19 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	if err != nil {
 		return nil, err
 	}
-	err = serStr.WriteUint(flags, 2)
+	err = serStr.WriteUint(uint64(flags), 2)
 	if err != nil {
 		return nil, err
 	}
-	err = serStr.WriteInt(sBytes, 3)
+	err = serStr.WriteInt(int64(sBytes), 3)
 	if err != nil {
 		return nil, err
 	}
-	err = serStr.WriteInt(offsetBytes, 8)
+	err = serStr.WriteInt(int64(offsetBytes), 8)
 	if err != nil {
 		return nil, err
 	}
-	err = serStr.WriteUint(cellsNum, sBytes*8)
+	err = serStr.WriteUint(uint64(cellsNum), sBytes*8)
 	if err != nil {
 		return nil, err
 	}
@@ -456,7 +456,7 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	if err != nil {
 		return nil, err
 	}
-	err = serStr.WriteUint(fullSize, offsetBytes*8)
+	err = serStr.WriteUint(uint64(fullSize), offsetBytes*8)
 	if err != nil {
 		return nil, err
 	}
@@ -467,7 +467,7 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 
 	if idx {
 		for i := range allCells {
-			err = serStr.WriteUint(sizeIndex[i], offsetBytes*8)
+			err = serStr.WriteUint(uint64(sizeIndex[i]), offsetBytes*8)
 			if err != nil {
 				return nil, err
 			}

@@ -12,6 +12,7 @@ import (
 	"errors"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
 	"time"
 )
 
@@ -65,7 +66,7 @@ func buildDefaultC7Register(address *tongo.AccountID) (StackEntry, error) {
 	var addrStack StackEntry
 	if address != nil {
 		addrCell := boc.NewCell()
-		err := addrCell.Bits.WriteAddress(address)
+		err := tlb.Marshal(addrCell, address)
 		if err != nil {
 			return StackEntry{}, err
 		}

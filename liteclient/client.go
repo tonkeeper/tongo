@@ -1,6 +1,7 @@
 package liteclient
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/binary"
@@ -10,6 +11,7 @@ import (
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/config"
 	"github.com/startfellows/tongo/tl"
+	"github.com/startfellows/tongo/tlb"
 )
 
 type Client struct {
@@ -82,13 +84,13 @@ type AccountState struct {
 	Balance           uint64
 	Data              []byte
 	Code              []byte
-	FrozenHash        [32]byte
+	FrozenHash        tongo.Hash
 	LastTransactionLt uint64
 }
 
 type LiteServerMasterchainInfo struct {
 	Last          tongo.TonNodeBlockIdExt
-	StateRootHash [32]byte
+	StateRootHash tongo.Hash
 	// TODO: add init
 }
 
@@ -306,7 +308,6 @@ func parseLiteServerQueryResponse(message adnl.Message) (ParsedLiteServerQueryRe
 }
 
 func decodeRawAccountStateBoc(bocBytes []byte) (AccountState, error) {
-	var code, data []byte
 	if bocBytes == nil {
 		return AccountState{Status: tongo.AccountEmpty}, nil
 	}
@@ -317,42 +318,112 @@ func decodeRawAccountStateBoc(bocBytes []byte) (AccountState, error) {
 	if len(cells) != 1 {
 		return AccountState{}, fmt.Errorf("must be one root cell")
 	}
-	reader := cells[0].BeginParse()
-	account, err := reader.ReadAccount()
+	var acc tongo.Account
+	err = tlb.Unmarshal(cells[0], &acc)
 	if err != nil {
 		return AccountState{}, err
 	}
-	if cells[0].RefsSize() > 2 {
-		return AccountState{}, fmt.Errorf("processing of complex states not implemented")
+	return convertTlbAccountToAccountState(acc)
+}
+
+func convertTlbAccountToAccountState(acc tongo.Account) (AccountState, error) {
+	if acc.SumType == "AccountNone" {
+		return AccountState{Status: tongo.AccountNone}, nil
 	}
 	res := AccountState{
-		Status:            account.Status,
-		Balance:           account.Balance,
-		FrozenHash:        account.FrozenHash,
-		LastTransactionLt: account.LastTransactionLt,
+		Balance:           uint64(acc.Account.Storage.Balance.Grams),
+		LastTransactionLt: acc.Account.Storage.LastTransLt,
 	}
-	if account.Status != tongo.AccountActive {
+	if acc.Account.Storage.State.SumType == "AccountUninit" {
+		res.Status = tongo.AccountUninit
 		return res, nil
 	}
-	if account.CodeFlag {
-		if len(cells[0].Refs()) < 1 {
-			return AccountState{}, fmt.Errorf("not enough refs")
+	if acc.Account.Storage.State.SumType == "AccountFrozen" {
+		res.FrozenHash = acc.Account.Storage.State.AccountFrozen.StateHash
+		res.Status = tongo.AccountFrozen
+		return res, nil
+	}
+	res.Status = tongo.AccountActive
+	if !acc.Account.Storage.State.AccountActive.StateInit.Data.Null {
+		data, err := acc.Account.Storage.State.AccountActive.StateInit.Data.Value.Value.ToBoc()
+		if err != nil {
+			return AccountState{}, err
 		}
-		code, err = cells[0].Refs()[0].ToBocCustom(false, true, false, 0)
+		res.Data = data
+	}
+	if !acc.Account.Storage.State.AccountActive.StateInit.Code.Null {
+		code, err := acc.Account.Storage.State.AccountActive.StateInit.Code.Value.Value.ToBoc()
 		if err != nil {
 			return AccountState{}, err
 		}
 		res.Code = code
 	}
-	if account.DataFlag {
-		if len(cells[0].Refs()) < 2 {
-			return AccountState{}, fmt.Errorf("not enough refs")
-		}
-		data, err = cells[0].Refs()[1].ToBocCustom(false, true, false, 0)
+	return res, nil
+}
+
+func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]tongo.Transaction, error) {
+	// TransactionList
+	// liteServer.transactionList ids:(vector tonNode.blockIdExt) transactions:bytes = liteServer.TransactionList;
+	type TransactionList struct {
+		Ids          []tongo.TonNodeBlockIdExt
+		Transactions []byte
+	}
+	type getTransactionsRequest struct {
+		Count   uint32
+		Account tongo.AccountID
+		Lt      uint64
+		Hash    tongo.Hash
+	}
+	r := struct {
+		tl.SumType
+		GetTransactionsRequest getTransactionsRequest `tlSumType:"a1e7401c"`
+	}{
+		SumType: "GetTransactionsRequest",
+		GetTransactionsRequest: getTransactionsRequest{
+			Count:   count,
+			Account: accountId,
+			Lt:      lt,
+			Hash:    hash,
+		},
+	}
+	rBytes, err := tl.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(rBytes)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	var pResp struct {
+		tlb.SumType
+		TransactionList TransactionList `tlSumType:"0bc6266f"` // TODO: must be 9dd72eb9
+		Error           LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &pResp)
+	if err != nil {
+		return nil, err
+	}
+	if pResp.SumType == "Error" {
+		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+	}
+	cells, err := boc.DeserializeBoc(pResp.TransactionList.Transactions)
+	if err != nil {
+		return nil, err
+	}
+	if len(cells) != len(pResp.TransactionList.Ids) {
+		return nil, fmt.Errorf("TonNodeBlockIdExt qty not equal transactions qty")
+	}
+	var res []tongo.Transaction
+	for _, cell := range cells {
+		var t tongo.Transaction
+		cell.ResetCounters()
+		err := tlb.Unmarshal(cell, &t)
 		if err != nil {
-			return AccountState{}, err
+			return nil, err
 		}
-		res.Data = data
+		res = append(res, t)
 	}
 	return res, nil
 }

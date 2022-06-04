@@ -12,10 +12,10 @@ func TestOn(t *testing.T) {
 	//
 	str.Print()
 	//str.WriteBigUint(big.NewInt(255), 8)
-	err := str.WriteCoins(77)
-	if err != nil {
-		t.Fatal(err)
-	}
+	//err := str.WriteCoins(77)
+	//if err != nil {
+	//	t.Fatal(err)
+	//}
 	//str.WriteInt(-2, 8)
 	//str.WriteBigInt(big.NewInt(-128), 8)
 	//str.WriteUint(25, 8)

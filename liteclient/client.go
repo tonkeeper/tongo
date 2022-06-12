@@ -335,6 +335,9 @@ func decodeRawAccountStateBoc(bocBytes []byte) (AccountState, error) {
 		return res, nil
 	}
 	if account.CodeFlag {
+		if len(cells[0].Refs()) < 1 {
+			return AccountState{}, fmt.Errorf("not enough refs")
+		}
 		code, err = cells[0].Refs()[0].ToBocCustom(false, true, false, 0)
 		if err != nil {
 			return AccountState{}, err
@@ -342,6 +345,9 @@ func decodeRawAccountStateBoc(bocBytes []byte) (AccountState, error) {
 		res.Code = code
 	}
 	if account.DataFlag {
+		if len(cells[0].Refs()) < 2 {
+			return AccountState{}, fmt.Errorf("not enough refs")
+		}
 		data, err = cells[0].Refs()[1].ToBocCustom(false, true, false, 0)
 		if err != nil {
 			return AccountState{}, err

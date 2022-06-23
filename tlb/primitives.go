@@ -138,8 +138,16 @@ type HashmapE[T any] struct {
 }
 
 func (h HashmapE[T]) MarshalTLB(c *boc.Cell, tag string) error {
+	// Marshal empty Hashmap
+	if len(h.values) == 0 || h.values == nil {
+		err := c.WriteBit(false)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 	// TODO: implement
-	return fmt.Errorf("HashmapE marshaling not implmented")
+	return fmt.Errorf("not empty HashmapE marshaling not implmented")
 }
 
 func (h *HashmapE[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -339,14 +347,45 @@ func decodeVarUIntegerTag(tag string) (int, error) {
 	return n, nil
 }
 
-type Any boc.BitString
+// TODO: replace bitstring with Cell
+type Any boc.Cell
 
 func (a Any) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("type Any encoding not implemnted")
+	x := boc.Cell(a)
+	y := &x
+	err := c.WriteBitString(y.RawBitString())
+	if err != nil {
+		return err
+	}
+	for y.RefsAvailableForRead() > 0 {
+		ref, err := y.NextRef()
+		if err != nil {
+			return err
+		}
+		err = c.AddRef(ref)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (a *Any) UnmarshalTLB(c *boc.Cell, tag string) error {
-	*a = Any(c.ReadRemainingBits())
+	x := boc.NewCell()
+	err := x.WriteBitString(c.ReadRemainingBits())
+	if err != nil {
+		return err
+	}
+	for c.RefsAvailableForRead() > 0 {
+		ref, err := c.NextRef()
+		if err != nil {
+			return err
+		}
+		err = x.AddRef(ref)
+		if err != nil {
+			return err
+		}
+	}
+	*a = Any(*x)
 	return nil
 }

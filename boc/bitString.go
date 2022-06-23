@@ -599,3 +599,16 @@ func decodeBitStringTag(tag string) (int, error) {
 func (s *BitString) ResetCounter() {
 	s.rCursor = 0
 }
+
+func (s *BitString) Grow(bitLen int) {
+	s.buf = append(s.buf, make([]byte, bitLen/8+1)...)
+	s.cap += bitLen
+}
+
+func (s *BitString) Append(b BitString) {
+	needBits := s.BitsAvailableForWrite() - b.len
+	if needBits > 0 {
+		s.Grow(needBits)
+	}
+	_ = s.WriteBitString(b) // must fit
+}

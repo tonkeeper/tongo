@@ -130,6 +130,7 @@ func (c *Cell) NextRef() (*Cell, error) {
 	ref := c.refs[c.refCursor]
 	if ref != nil {
 		c.refCursor++
+		ref.ResetCounters()
 		return ref, nil
 	}
 	return nil, ErrNotEnoughRefs
@@ -264,4 +265,8 @@ func (c *Cell) resetCounters(seen map[*Cell]struct{}) {
 
 func (c *Cell) BitsAvailableForRead() int {
 	return c.bits.BitsAvailableForRead()
+}
+
+func (c *Cell) RefsAvailableForRead() int {
+	return c.RefsSize() - c.refCursor
 }

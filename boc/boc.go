@@ -294,7 +294,11 @@ func getMaxDepth(cell *Cell, iterationCounter *int) (int, error) {
 }
 
 func bocReprWithoutRefs(cell *Cell) []byte {
-	d1 := byte(cell.RefsSize())
+	specBit := 0
+	if cell.isExotic {
+		specBit = 8
+	}
+	d1 := byte(cell.RefsSize() + specBit)
 	d2 := byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
 
 	res := make([]byte, ((cell.BitSize()+7)/8)+2)
@@ -337,6 +341,8 @@ func hashCell(cell *Cell) ([]byte, error) {
 		return nil, err
 	}
 	hash := sha256.Sum256(repr)
+	// TODO: fix for TX: (Account: -1:57E8E6D7A23A546736B73624B64E7449E0A47B95EAFC70E8CC441B7FB30CB842 Lt: 29067432000001 Hash: 8CFEA4730799269C9197B10E8F3DFEA7E151E31D0D1C9C1FB6D22910EFDEA447)
+	// Maybe need to add level parameter to descriptors for exotics cells
 	return hash[:], nil
 }
 

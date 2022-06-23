@@ -362,6 +362,26 @@ func convertTlbAccountToAccountState(acc tongo.Account) (AccountState, error) {
 }
 
 func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]tongo.Transaction, error) {
+	cells, err := c.GetRawTransactions(ctx, count, accountId, lt, hash)
+	if err != nil {
+		return nil, err
+	}
+	var res []tongo.Transaction
+	for _, cell := range cells {
+		var t tongo.Transaction
+		cell.ResetCounters()
+		err := tlb.Unmarshal(cell, &t)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, t)
+	}
+	return res, nil
+}
+
+// GetRawTransactions
+// Returns []boc.Cell of the transaction$0111 tlb constructor. Be careful when reading Cell. Some Cells are shared between slice elements. Use cell.ResetCounters()
+func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]*boc.Cell, error) {
 	// TransactionList
 	// liteServer.transactionList ids:(vector tonNode.blockIdExt) transactions:bytes = liteServer.TransactionList;
 	type TransactionList struct {
@@ -415,15 +435,5 @@ func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId to
 	if len(cells) != len(pResp.TransactionList.Ids) {
 		return nil, fmt.Errorf("TonNodeBlockIdExt qty not equal transactions qty")
 	}
-	var res []tongo.Transaction
-	for _, cell := range cells {
-		var t tongo.Transaction
-		cell.ResetCounters()
-		err := tlb.Unmarshal(cell, &t)
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, t)
-	}
-	return res, nil
+	return cells, nil
 }

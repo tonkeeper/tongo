@@ -606,7 +606,7 @@ func (s *BitString) Grow(bitLen int) {
 }
 
 func (s *BitString) Append(b BitString) {
-	needBits := s.BitsAvailableForWrite() - b.len
+	needBits := b.len - s.BitsAvailableForWrite()
 	if needBits > 0 {
 		s.Grow(needBits)
 	}

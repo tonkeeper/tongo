@@ -301,6 +301,10 @@ func (h HashmapE[T]) Values() []T {
 	return h.values
 }
 
+func (h HashmapE[T]) Keys() []boc.BitString {
+	return h.keys
+}
+
 type VarUInteger big.Int
 
 func (u VarUInteger) MarshalTLB(c *boc.Cell, tag string) error {

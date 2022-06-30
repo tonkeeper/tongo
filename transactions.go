@@ -479,3 +479,30 @@ type TrBouncePhase struct {
 		FwdFees Grams
 	} `tlbSumType:"tr_phase_bounce_ok$1"`
 }
+
+func (tx Transaction) IsSuccess() bool {
+	success := true
+	switch tx.Transaction.Description.Value.SumType {
+	case "TransStorage":
+		return true // TODO: check logic
+	case "TransOrd":
+		{
+			if tx.Transaction.Description.Value.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Transaction.Description.Value.TransOrd.ComputePh.TrPhaseComputeVm.Success
+			}
+			if !tx.Transaction.Description.Value.TransOrd.Action.Null {
+				success = success && tx.Transaction.Description.Value.TransOrd.Action.Value.Value.Success
+			}
+		}
+	case "TransTickTock":
+		{
+			if tx.Transaction.Description.Value.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Transaction.Description.Value.TransTickTock.ComputePh.TrPhaseComputeVm.Success
+			}
+			if !tx.Transaction.Description.Value.TransTickTock.Action.Null {
+				success = success && tx.Transaction.Description.Value.TransTickTock.Action.Value.Value.Success
+			}
+		}
+	}
+	return success
+}

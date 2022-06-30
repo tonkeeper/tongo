@@ -120,6 +120,22 @@ type ContentData struct {
 	} `tlbSumType:"chunks#01"`
 }
 
+func (c ContentData) Bytes() ([]byte, error) {
+	var bs boc.BitString
+	switch c.SumType {
+	case "Snake":
+		bs = boc.BitString(c.Snake.Data)
+	case "Chunks":
+		bs = boc.BitString(c.Chunks.Data)
+	default:
+		return nil, fmt.Errorf("empty content data struct")
+	}
+	if bs.BitsAvailableForRead()%8 != 0 {
+		return nil, fmt.Errorf("data is not multiple of 8 bits")
+	}
+	return bs.GetTopUppedArray()
+}
+
 // ChunkedData
 // chunked_data#_ data:(HashMapE 32 ^(SnakeData ~0)) = ChunkedData;
 type ChunkedData boc.BitString

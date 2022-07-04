@@ -71,6 +71,13 @@ func decode(buf io.Reader, val reflect.Value) error {
 		}
 		val.SetBytes(data)
 		return nil
+	case reflect.String:
+		data, err := readByteSlice(buf)
+		if err != nil {
+			return err
+		}
+		val.SetString(string(data))
+		return nil
 	case reflect.Array:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
 			return fmt.Errorf("decoding array of %v not supported", val.Type().Elem().Kind())
@@ -145,6 +152,11 @@ func decodeStruct(buf io.Reader, val reflect.Value) error {
 }
 
 func decodeSumType(r io.Reader, val reflect.Value) error {
+	var tagBytes [4]byte
+	_, err := io.ReadFull(r, tagBytes[:])
+	if err != nil {
+		return err
+	}
 	for i := 0; i < val.NumField(); i++ {
 		if !val.Field(i).CanSet() {
 			return fmt.Errorf("can't set field %v", i)
@@ -153,7 +165,7 @@ func decodeSumType(r io.Reader, val reflect.Value) error {
 			continue
 		}
 		tag := val.Type().Field(i).Tag.Get("tlSumType")
-		ok, err := compareWithTag(r, tag)
+		ok, err := compareWithTag(tagBytes, tag)
 		if err != nil {
 			return err
 		}
@@ -182,19 +194,14 @@ func decodeBasicStruct(r io.Reader, val reflect.Value) error {
 	return nil
 }
 
-func compareWithTag(r io.Reader, tag string) (bool, error) {
+func compareWithTag(tagBytes [4]byte, tag string) (bool, error) {
 	var a [4]byte
 	t, err := hex.DecodeString(tag)
 	if err != nil {
 		return false, err
 	}
 	copy(a[:], t)
-	var b [4]byte
-	_, err = io.ReadFull(r, b[:])
-	if err != nil {
-		return false, err
-	}
-	return bytes.Equal(a[:], b[:]), nil
+	return bytes.Equal(a[:], tagBytes[:]), nil
 }
 
 func decodeVector(r io.Reader, val reflect.Value) error {

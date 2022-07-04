@@ -9,11 +9,11 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("Z3X5IRueR4Lbdc0I+1SZwyWmnuDNHdUf14JwIPsGgRw=")
+	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
 	if err != nil {
 		panic(err)
 	}
-	c, err := NewConnection(context.Background(), pubkey, "127.0.0.1:7742")
+	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
 	if err != nil {
 		panic(err)
 	}

@@ -37,11 +37,6 @@ func NewCellExotic() *Cell {
 	}
 }
 
-// BeginParse DEPRECATED
-func (c *Cell) BeginParse() BitStringReader {
-	return NewBitStringReader(&c.bits)
-}
-
 func (c *Cell) RefsSize() int {
 	var count int
 	for i := range c.refs {

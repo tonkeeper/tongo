@@ -4,26 +4,13 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
-	"strconv"
 )
 
-type configFile struct {
-	Config configFileConfig `json:"config"`
-	//Keystore KeyStoreType           `json:"keystore_type"`
-}
-
-type configFileConfig struct {
-	Config         configServer `json:"config"`
-	BlockchainName string       `json:"blockchain_name"`
-	//UseCallbacksForNetwork bool         `json:"use_callbacks_for_network"`
-	//IgnoreCache            bool         `json:"ignore_cache"`
-}
-
 type liteServerConfig struct {
-	Type string       `json:"@type"`
 	Ip   int64        `json:"ip"`
-	Port string       `json:"port"`
+	Port int64        `json:"port"`
 	ID   liteServerId `json:"id"`
 }
 
@@ -32,9 +19,9 @@ type liteServerId struct {
 	Key  string `json:"key"`
 }
 
-type configServer struct {
+type configGlobal struct {
 	LiteServers []liteServerConfig `json:"liteservers"`
-	//Validator   ValidatorConfig            `json:"validator"`
+	//Validator   ValidatorConfig  `json:"validator"`
 }
 
 type Options struct {
@@ -53,23 +40,7 @@ func ParseConfigFile(path string) (*Options, error) {
 		return nil, err
 	}
 	defer jsonFile.Close()
-	var conf configFile
-	err = json.NewDecoder(jsonFile).Decode(&conf)
-	if err != nil {
-		return nil, err
-	}
-	var options Options
-	for _, server := range conf.Config.Config.LiteServers {
-		ls, err := convertToLiteServerOptions(server)
-		if err != nil {
-			continue
-		}
-		options.LiteServers = append(options.LiteServers, ls)
-	}
-	if len(options.LiteServers) == 0 {
-		return nil, fmt.Errorf("no one supported liteservers")
-	}
-	return &options, nil
+	return ParseConfig(jsonFile)
 }
 
 func convertToLiteServerOptions(server liteServerConfig) (LiteServer, error) {
@@ -81,12 +52,28 @@ func convertToLiteServerOptions(server liteServerConfig) (LiteServer, error) {
 	}
 	ipBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(ipBytes, uint32(server.Ip))
-	port, err := strconv.Atoi(server.Port)
-	if err != nil {
-		return LiteServer{}, err
-	}
 	return LiteServer{
-		Host: fmt.Sprintf("%v.%v.%v.%v:%v", ipBytes[0], ipBytes[1], ipBytes[2], ipBytes[3], port),
+		Host: fmt.Sprintf("%v.%v.%v.%v:%d", ipBytes[0], ipBytes[1], ipBytes[2], ipBytes[3], server.Port),
 		Key:  server.ID.Key,
 	}, nil
+}
+
+func ParseConfig(data io.Reader) (*Options, error) {
+	var conf configGlobal
+	err := json.NewDecoder(data).Decode(&conf)
+	if err != nil {
+		return nil, err
+	}
+	var options Options
+	for _, server := range conf.LiteServers {
+		ls, err := convertToLiteServerOptions(server)
+		if err != nil {
+			continue
+		}
+		options.LiteServers = append(options.LiteServers, ls)
+	}
+	if len(options.LiteServers) == 0 {
+		return nil, fmt.Errorf("no one supported liteservers")
+	}
+	return &options, nil
 }

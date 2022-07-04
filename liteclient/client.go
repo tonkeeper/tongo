@@ -12,14 +12,24 @@ import (
 	"github.com/startfellows/tongo/config"
 	"github.com/startfellows/tongo/tl"
 	"github.com/startfellows/tongo/tlb"
+	"net/http"
 )
 
 type Client struct {
 	adnlClient *adnl.Client
 }
 
-func NewClient(options config.Options) (*Client, error) {
+// NewClient
+// Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
+func NewClient(options *config.Options) (*Client, error) {
 	// TODO: implement multiple server support
+	if options == nil {
+		var err error
+		options, err = downloadConfig("https://ton.org/global-config.json")
+		if err != nil {
+			return nil, err
+		}
+	}
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
@@ -436,4 +446,57 @@ func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId
 		return nil, fmt.Errorf("TonNodeBlockIdExt qty not equal transactions qty")
 	}
 	return cells, nil
+}
+
+// SendMessage
+// Send binary payload to TON blockchain
+// liteServer.sendMessage body:bytes = liteServer.SendMsgStatus;
+// liteServer.sendMsgStatus status:int = liteServer.SendMsgStatus;
+func (c *Client) SendMessage(ctx context.Context, payload []byte) error {
+	request := struct {
+		tl.SumType
+		SendMessage struct {
+			Body []byte
+		} `tlSumType:"82d40a69"`
+	}{
+		SumType:     "SendMessage",
+		SendMessage: struct{ Body []byte }{payload},
+	}
+	rBytes, err := tl.Marshal(request)
+	if err != nil {
+		return err
+	}
+	req := makeLiteServerQueryRequest(rBytes)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return err
+	}
+	var response struct {
+		tlb.SumType
+		SendMsgStatus struct {
+			Status int32
+		} `tlSumType:"97e55039"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &response)
+	if err != nil {
+		return err
+	}
+	if response.SumType == "Error" {
+		return fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
+	}
+	if response.SendMsgStatus.Status != 1 {
+		return fmt.Errorf("message sending failed with status: %v", response.SendMsgStatus.Status)
+	}
+	return nil
+}
+
+func downloadConfig(path string) (*config.Options, error) {
+	resp, err := http.Get(path)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return config.ParseConfig(resp.Body)
 }

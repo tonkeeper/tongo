@@ -115,8 +115,9 @@ type testSumType struct {
 
 func TestSumType(t *testing.T) {
 	a := testSumType{
-		SumType: "A",
-		A:       testCase{A: 1, E: []byte{1}},
+		SumType: "B",
+		A:       testCase{},
+		B:       testCase{A: 1, E: []byte{1}},
 	}
 	b, err := Marshal(a)
 	if err != nil {

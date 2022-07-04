@@ -2,18 +2,14 @@ package liteclient
 
 import (
 	"context"
+	"encoding/base64"
 	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/config"
 	"log"
 	"testing"
 )
 
 func TestGetTransactions(t *testing.T) {
-	tongoConfig, err := config.ParseConfigFile("tmp/global.config.json")
-	if err != nil {
-		log.Fatalf("Unable to read config json: %v", err)
-	}
-	tongoClient, err := NewClient(*tongoConfig)
+	tongoClient, err := NewClient(nil)
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -24,5 +20,21 @@ func TestGetTransactions(t *testing.T) {
 	_, err = tongoClient.GetTransactions(context.Background(), 100, *accountId, lt, hash)
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
+	}
+}
+
+func TestSendMessage(t *testing.T) {
+	tongoConfig, err := config.ParseConfigFile("tmp/global.config.json")
+	if err != nil {
+		log.Fatalf("Unable to read config json: %v", err)
+	}
+	tongoClient, err := NewClient(*tongoConfig)
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	payload, _ := base64.StdEncoding.DecodeString("qrvM3Q==")
+	err = tongoClient.SendMessage(context.Background(), payload)
+	if err != nil {
+		log.Fatalf("Send message error: %v", err)
 	}
 }

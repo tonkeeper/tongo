@@ -8,6 +8,7 @@ import (
 	"github.com/snksoft/crc"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
+	"github.com/startfellows/tongo/utils"
 	"strings"
 )
 
@@ -49,6 +50,22 @@ func (id *AccountID) UnmarshalJSON(data []byte) error {
 
 func (id AccountID) ToRaw() string {
 	return fmt.Sprintf("%v:%x", id.Workchain, id.Address)
+}
+
+func (id AccountID) ToHuman(bounce, testnet bool) string {
+	prefix := byte(0b00010001)
+	if testnet {
+		prefix |= 0b10000000
+	}
+	if !bounce {
+		prefix |= 0b01000000
+	}
+	buf := make([]byte, 36)
+	buf[0] = prefix
+	buf[1] = byte(id.Workchain)
+	copy(buf[2:34], id.Address[:])
+	binary.BigEndian.PutUint16(buf[34:36], utils.Crc16(buf[:34]))
+	return base64.URLEncoding.EncodeToString(buf)
 }
 
 func (id AccountID) MarshalTL() ([]byte, error) {

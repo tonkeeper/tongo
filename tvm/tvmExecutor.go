@@ -13,6 +13,7 @@ import (
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
+	"github.com/startfellows/tongo/utils"
 	"time"
 )
 
@@ -52,7 +53,7 @@ func getVMFunctionSelector(name string) int {
 	} else if name == "recv_external" {
 		return -1
 	} else {
-		return int(Crc16String(name)&0xffff) | 0x10000
+		return int(utils.Crc16String(name)&0xffff) | 0x10000
 	}
 }
 

@@ -1,4 +1,4 @@
-package tvm
+package utils
 
 var TABLE = []uint16{
 	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
@@ -36,6 +36,17 @@ var TABLE = []uint16{
 }
 
 func Crc16String(data string) uint16 {
+	var crc uint16 = 0
+
+	for i := 0; i < len(data); i++ {
+		byte := data[i]
+		crc = (TABLE[((crc>>8)^uint16(byte))&0xff] ^ (crc << 8)) & 0xffff
+	}
+
+	return crc
+}
+
+func Crc16(data []byte) uint16 {
 	var crc uint16 = 0
 
 	for i := 0; i < len(data); i++ {

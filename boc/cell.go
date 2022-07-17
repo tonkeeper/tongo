@@ -75,15 +75,15 @@ func (c *Cell) HashString() (string, error) {
 }
 
 func (c *Cell) ToBoc() ([]byte, error) {
-	return SerializeBoc(c, true, true, false, 0)
+	return SerializeBoc(c, false, false, false, 0)
 }
 
 func (c *Cell) ToBocString() (string, error) {
-	return c.ToBocStringCustom(true, true, false, 0)
+	return c.ToBocStringCustom(false, false, false, 0)
 }
 
 func (c *Cell) ToBocBase64() (string, error) {
-	return c.ToBocBase64Custom(true, true, false, 0)
+	return c.ToBocBase64Custom(false, false, false, 0)
 }
 
 func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {

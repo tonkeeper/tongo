@@ -309,12 +309,15 @@ type VarUInteger big.Int
 
 func (u VarUInteger) MarshalTLB(c *boc.Cell, tag string) error {
 	n, err := decodeVarUIntegerTag(tag)
+	if n < 1 {
+		return fmt.Errorf("len of varuint must be at least one byte")
+	}
 	if err != nil {
 		return err
 	}
 	i := big.Int(u)
 	b := i.Bytes()
-	err = c.WriteLimUint(len(b), n)
+	err = c.WriteLimUint(len(b), n-1)
 	if err != nil {
 		return err
 	}

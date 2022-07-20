@@ -25,7 +25,7 @@ func NewClient(options *config.Options) (*Client, error) {
 	// TODO: implement multiple server support
 	if options == nil {
 		var err error
-		options, err = downloadConfig("https://ton.org/global-config.json")
+		options, err = downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
 		if err != nil {
 			return nil, err
 		}
@@ -448,11 +448,11 @@ func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId
 	return cells, nil
 }
 
-// SendMessage
+// SendRawMessage
 // Send binary payload to TON blockchain
 // liteServer.sendMessage body:bytes = liteServer.SendMsgStatus;
 // liteServer.sendMsgStatus status:int = liteServer.SendMsgStatus;
-func (c *Client) SendMessage(ctx context.Context, payload []byte) error {
+func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
 	request := struct {
 		tl.SumType
 		SendMessage struct {

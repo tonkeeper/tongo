@@ -169,6 +169,19 @@ func (id AccountID) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
+func MsgAddressFromAccountID(id *AccountID) MsgAddress {
+	if id == nil {
+		return MsgAddress{SumType: "AddrNone"}
+	}
+	addr := MsgAddress{
+		SumType: "AddrStd",
+	}
+	addr.AddrStd.WorkchainId = id.Workchain
+	addr.AddrStd.Address = id.Address
+	addr.AddrStd.Anycast.Null = true
+	return addr
+}
+
 // AccountStatus
 // acc_state_uninit$00 = AccountStatus;
 // acc_state_frozen$01 = AccountStatus;

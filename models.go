@@ -14,8 +14,12 @@ import (
 type Grams uint64 // total value fit to uint64
 
 func (g Grams) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("grams marshaling not implemented")
+	var amount struct {
+		Val tlb.VarUInteger `tlb:"16bytes"`
+	}
+	amount.Val = tlb.VarUInteger(*big.NewInt(int64(g)))
+	err := tlb.Marshal(c, amount)
+	return err
 }
 
 func (g *Grams) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -81,8 +85,25 @@ type HashUpdate struct {
 type SnakeData boc.BitString
 
 func (s SnakeData) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("SnakeData marshaling not implemented")
+	bs := boc.BitString(s)
+	if c.BitsAvailableForWrite() < bs.GetWriteCursor() {
+		s, err := bs.ReadBits(c.BitsAvailableForWrite())
+		if err != nil {
+			return err
+		}
+		err = c.WriteBitString(s)
+		if err != nil {
+			return err
+		}
+		ref := boc.NewCell()
+		err = tlb.Marshal(ref, SnakeData(bs.ReadRemainingBits()))
+		if err != nil {
+			return err
+		}
+		err = c.AddRef(ref)
+		return err
+	}
+	return c.WriteBitString(bs)
 }
 
 func (s *SnakeData) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -100,6 +121,36 @@ func (s *SnakeData) UnmarshalTLB(c *boc.Cell, tag string) error {
 		b.Append(boc.BitString(sn))
 	}
 	*s = SnakeData(b)
+	return nil
+}
+
+// text#_ {n:#} data:(SnakeData ~n) = Text;
+type Text string
+
+func (t Text) MarshalTLB(c *boc.Cell, tag string) error {
+	bs := boc.NewBitString(len(t) * 8)
+	err := bs.WriteBytes([]byte(t))
+	if err != nil {
+		return err
+	}
+	return tlb.Marshal(c, SnakeData(bs))
+}
+
+func (t *Text) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var sn SnakeData
+	err := tlb.Unmarshal(c, &sn)
+	if err != nil {
+		return err
+	}
+	bs := boc.BitString(sn)
+	if bs.BitsAvailableForRead()%8 != 0 {
+		return fmt.Errorf("text data must be a multiple of 8 bits")
+	}
+	b, err := bs.GetTopUppedArray()
+	if err != nil {
+		return err
+	}
+	*t = Text(b)
 	return nil
 }
 

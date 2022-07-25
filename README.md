@@ -9,7 +9,8 @@ Go implementation of libraries for TON blockchain.
 4. [TL](tl/README.md) - interaction with binary data described by TL (Type Language) schemas
 5. [TLB](tlb/README.md) - interaction with binary data (in Cells) described by TL-B (Typed Language - Binary) schemas
 6. [TVM](tvm/README.md) - interaction with TVM (TON Virtual Machine)
-7. [Examples](examples)
+7. [Wallet](wallet/README.md) - tools to simplify the deployment and interaction with the wallet smart contract
+8. [Examples](examples)
 
 ## Dependencies
 ### Libraries

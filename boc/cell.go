@@ -1,6 +1,7 @@
 package boc
 
 import (
+	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
@@ -264,4 +265,18 @@ func (c *Cell) BitsAvailableForRead() int {
 
 func (c *Cell) RefsAvailableForRead() int {
 	return c.RefsSize() - c.refCursor
+}
+
+func (c *Cell) Sign(key ed25519.PrivateKey) (BitString, error) {
+	hash, err := c.Hash()
+	if err != nil {
+		return BitString{}, err
+	}
+	bs := NewBitString(512)
+	err = bs.WriteBytes(ed25519.Sign(key, hash[:]))
+	return bs, err
+}
+
+func (c *Cell) BitsAvailableForWrite() int {
+	return c.bits.BitsAvailableForWrite()
 }

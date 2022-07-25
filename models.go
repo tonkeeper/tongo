@@ -1,11 +1,12 @@
 package tongo
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 	"math/big"
+	"strconv"
 )
 
 // Grams
@@ -34,7 +35,16 @@ func (g *Grams) UnmarshalTLB(c *boc.Cell, tag string) error {
 }
 
 func (g Grams) MarshalJSON() ([]byte, error) {
-	return json.Marshal(fmt.Sprintf("%d", g))
+	return []byte(fmt.Sprintf("\"%d\"", g)), nil
+}
+
+func (g *Grams) UnmarshalJSON(data []byte) error {
+	val, err := strconv.ParseUint(string(bytes.Trim(data, "\" \n")), 10, 64)
+	if err != nil {
+		return err
+	}
+	*g = Grams(val)
+	return nil
 }
 
 // CurrencyCollection

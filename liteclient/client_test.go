@@ -34,3 +34,15 @@ func TestSendRawMessage(t *testing.T) {
 		log.Fatalf("Send message error: %v", err)
 	}
 }
+
+func TestRunSmcMethod(t *testing.T) {
+	tongoClient, err := NewClient(nil)
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	accountId, _ := tongo.AccountIDFromRaw("0:deaae6518a11fd24c1da9c53ad38aedd35f4a66d1bef4f1e3081472d9276a920")
+	_, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
+	if err != nil {
+		log.Fatalf("Run smc error: %v", err)
+	}
+}

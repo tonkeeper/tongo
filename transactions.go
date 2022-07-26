@@ -113,7 +113,6 @@ func (a *Anycast) UnmarshalTLB(c *boc.Cell, tag string) error {
 // workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
 // _ _:MsgAddressInt = MsgAddress;
 // _ _:MsgAddressExt = MsgAddress;
-// TODO: make custom marshaler
 type MsgAddress struct {
 	tlb.SumType
 	AddrNone struct {
@@ -133,11 +132,6 @@ type MsgAddress struct {
 		WorkchainId int32
 		Address     boc.BitString
 	} `tlbSumType:"addr_var$11"`
-}
-
-func (a MsgAddress) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("MsgAddress marshaling not implemented")
 }
 
 func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -505,4 +499,28 @@ func (tx Transaction) IsSuccess() bool {
 		}
 	}
 	return success
+}
+
+func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, importFee Grams) (Message[tlb.Any], error) {
+	// TODO: add either selection algorithm
+	var msg = Message[tlb.Any]{
+		Info: CommonMsgInfo{
+			SumType: "ExtInMsgInfo",
+		},
+		Body: tlb.Either[tlb.Any, tlb.Ref[tlb.Any]]{
+			IsRight: true,
+			Right:   tlb.Ref[tlb.Any]{Value: tlb.Any(*body)},
+		},
+	}
+	if init != nil {
+		msg.Init.Null = false
+		msg.Init.Value.IsRight = true
+		msg.Init.Value.Right.Value = *init
+	} else {
+		msg.Init.Null = true
+	}
+	msg.Info.ExtInMsgInfo.Src = MsgAddressFromAccountID(nil)
+	msg.Info.ExtInMsgInfo.Dest = MsgAddressFromAccountID(&address)
+	msg.Info.ExtInMsgInfo.ImportFee = importFee
+	return msg, nil
 }

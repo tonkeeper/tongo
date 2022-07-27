@@ -145,6 +145,15 @@ func MustParseAccountId(s string) *AccountID {
 	return aa
 }
 
+func accountIdFromCell(cell *boc.Cell) (*AccountID, error) {
+	var msgAddress MsgAddress
+	err := tlb.Unmarshal(cell, &msgAddress)
+	if err != nil {
+		return nil, err
+	}
+	return msgAddress.AccountId()
+}
+
 // MsgAddressInt
 // addr_std$10 anycast:(Maybe Anycast)
 // workchain_id:int8 address:bits256  = MsgAddressInt;

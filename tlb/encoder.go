@@ -3,6 +3,7 @@ package tlb
 import (
 	"fmt"
 	"github.com/startfellows/tongo/boc"
+	"math/big"
 	"reflect"
 	"strconv"
 	"strings"
@@ -65,7 +66,12 @@ func encode(c *boc.Cell, o any, tag string) error {
 		}
 		return nil
 	case reflect.Struct:
-		return encodeStruct(c, o, tag)
+		switch o.(type) {
+		case big.Int:
+			return encodeBigInt(c, o, tag)
+		default:
+			return encodeStruct(c, o, tag)
+		}
 	default:
 		return fmt.Errorf("type %v not emplemented", val.Kind())
 	}
@@ -146,4 +152,9 @@ func parseTag(s string) (tag, error) {
 		return tag{a[0], len(a[1]) * 4, x}, nil
 	}
 	return tag{}, fmt.Errorf("invalid tag")
+}
+
+func encodeBigInt(c *boc.Cell, o any, tag string) error {
+	// TODO: implement
+	return fmt.Errorf("bigInt encoding not implemented")
 }

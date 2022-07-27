@@ -40,7 +40,7 @@ func main() {
 		log.Fatalf("Unable to get seqno: %v", err)
 	}
 
-	msg, err := w.GenerateTonTransferMessage(uint32(res.Values[0].VmStkTinyint), 0xFFFFFFFF, []wallet.TonTransfer{tonTransfer})
+	msg, err := w.GenerateTonTransferMessage(uint32(res[0].VmStkTinyInt), 0xFFFFFFFF, []wallet.TonTransfer{tonTransfer})
 	if err != nil {
 		log.Fatalf("Unable to generate transfer message: %v", err)
 	}

@@ -39,7 +39,7 @@ func (id AccountID) MarshalJSON() ([]byte, error) {
 }
 
 func (id *AccountID) UnmarshalJSON(data []byte) error {
-	a, err := ParseAccountId(strings.Trim(string(data), "\"\n "))
+	a, err := ParseAccountID(strings.Trim(string(data), "\"\n "))
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func AccountIDFromRaw(s string) (*AccountID, error) {
 	return &aa, nil
 }
 
-func ParseAccountId(s string) (*AccountID, error) {
+func ParseAccountID(s string) (*AccountID, error) {
 	aa, err := AccountIDFromRaw(s)
 	if err != nil {
 		aa, err = AccountIDFromBase64Url(s)
@@ -137,21 +137,21 @@ func ParseAccountId(s string) (*AccountID, error) {
 	return aa, nil
 }
 
-func MustParseAccountId(s string) *AccountID {
-	aa, err := ParseAccountId(s)
+func MustParseAccountID(s string) *AccountID {
+	aa, err := ParseAccountID(s)
 	if err != nil {
 		panic(err)
 	}
 	return aa
 }
 
-func AccountIdFromCell(cell *boc.Cell) (*AccountID, error) {
+func AccountIDFromCell(cell *boc.Cell) (*AccountID, error) {
 	var msgAddress MsgAddress
 	err := tlb.Unmarshal(cell, &msgAddress)
 	if err != nil {
 		return nil, err
 	}
-	return msgAddress.AccountId()
+	return msgAddress.AccountID()
 }
 
 // MsgAddressInt
@@ -209,7 +209,6 @@ const (
 func (a AccountStatus) MarshalTLB(c *boc.Cell, tag string) error {
 	// TODO: implement
 	return fmt.Errorf("AccountStatus marshaling not implemented")
-	return nil
 }
 
 func (a *AccountStatus) UnmarshalTLB(c *boc.Cell, tag string) error {

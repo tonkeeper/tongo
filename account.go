@@ -145,7 +145,7 @@ func MustParseAccountId(s string) *AccountID {
 	return aa
 }
 
-func accountIdFromCell(cell *boc.Cell) (*AccountID, error) {
+func AccountIdFromCell(cell *boc.Cell) (*AccountID, error) {
 	var msgAddress MsgAddress
 	err := tlb.Unmarshal(cell, &msgAddress)
 	if err != nil {

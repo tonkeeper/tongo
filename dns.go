@@ -9,7 +9,7 @@ import (
 // DNSRecordSet
 // _ (HashmapE 256 DNSRecord) = DNS_RecordSet;
 type DNSRecordSet struct {
-	Records tlb.HashmapE[DNSRecord] `tlb:"256bits"`
+	Records tlb.HashmapE[tlb.Ref[DNSRecord]] `tlb:"256bits"`
 }
 
 // DNSRecord
@@ -207,7 +207,7 @@ func readDNSSmcAddress(c *boc.Cell) (DNSRecord, error) {
 		return DNSRecord{}, err
 	}
 	if flags > 2 {
-		return DNSRecord{}, fmt.Errorf("invalid dns_adnl_address flags")
+		return DNSRecord{}, fmt.Errorf("invalid smc_addr flags")
 	}
 
 	var capabilities SmcCapabilities

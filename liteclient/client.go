@@ -70,6 +70,10 @@ func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountI
 	if err != nil {
 		return tongo.Account{}, err
 	}
+	if b == nil {
+		acc := tongo.Account{SumType: "AccountNone"}
+		return acc, nil
+	}
 	return decodeRawAccountBoc(b)
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
+	"runtime"
 	"unsafe"
 )
 
@@ -36,6 +37,7 @@ func NewEmulator(config *boc.Cell) (Emulator, error) {
 		return Emulator{}, err
 	}
 	e := Emulator{emulator: C.transaction_emulator_create(C.CString(configBoc), C.CString(libsStr))}
+	runtime.SetFinalizer(&e, destroy)
 	return e, nil
 }
 
@@ -88,7 +90,7 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 	return account, tx, nil
 }
 
-func (e *Emulator) Destroy() {
+func destroy(e *Emulator) {
 	C.transaction_emulator_destroy(e.emulator)
 	e.emulator = nil
 }

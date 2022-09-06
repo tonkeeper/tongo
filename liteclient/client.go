@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"fmt"
+
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/adnl"
 	"github.com/startfellows/tongo/boc"
@@ -135,6 +136,12 @@ type LiteServerAccountState struct {
 	State      []byte
 }
 
+type LiteServerAllShardsInfo struct {
+	Id    tongo.TonNodeBlockIdExt
+	Proof []byte
+	Data  []byte
+}
+
 type LiteServerError struct {
 	Code    int32
 	Message string
@@ -179,6 +186,17 @@ func makeLiteServerGetMasterchainInfoRequest() []byte {
 	payload := make([]byte, 4)
 	binary.BigEndian.PutUint32(payload, LiteServerGetMasterchainInfoTag)
 	return payload
+}
+
+func makeLiteServerAllShardsInfoRequest(blockIdExt tongo.TonNodeBlockIdExt) ([]byte, error) {
+	payload := make([]byte, 4)
+	binary.BigEndian.PutUint32(payload, LiteServerGetAllShardsInfoTag)
+	block, err := blockIdExt.MarshalTL()
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, block...)
+	return payload, nil
 }
 
 func makeLiteServerGetAccountStateRequest(blockIdExt tongo.TonNodeBlockIdExt, accountId tongo.AccountID) ([]byte, error) {
@@ -569,4 +587,51 @@ func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.
 		return tongo.VmStack{}, fmt.Errorf("method execution failed with code: %v", response.RunMethodResult.ExitCode)
 	}
 	return response.RunMethodResult.Result, nil
+}
+
+func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdExt) ([]tongo.TonNodeBlockIdExt, error) {
+	asReq, err := makeLiteServerAllShardsInfoRequest(last)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(asReq)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	parsedResp, err := parseLiteServerQueryResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	if parsedResp.Tag == LiteServerErrorTag {
+		return nil, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
+	}
+	if parsedResp.Tag != LiteServerAllShardsInfoTag {
+		return nil, fmt.Errorf("all shard info not recieved")
+	}
+
+	cells, err := boc.DeserializeBoc(parsedResp.LiteServerAllShardsInfo.Data)
+	if err != nil {
+		return nil, err
+	}
+	var inf tongo.AllShardsInfo
+	tlb.Unmarshal(cells[0], &inf)
+	var shards []tongo.TonNodeBlockIdExt
+	for _, v := range inf.ShardHashes.Values() {
+		wc := v.Wch
+		for _, vv := range v.ShardHash.Values() {
+			var rootHash, fileHash tongo.Hash
+			rootHash.FromBytes(vv.RootHash)
+			fileHash.FromBytes(vv.FileHash)
+			shards = append(shards, tongo.TonNodeBlockIdExt{
+				Workchain: wc,
+				Shard:     vv.NextValidatorShard,
+				Seqno:     int32(vv.SeqNo),
+				RootHash:  rootHash,
+				FileHash:  fileHash,
+			})
+		}
+
+	}
+	return shards, nil
 }

@@ -3,10 +3,11 @@ package tongo
 import (
 	"bytes"
 	"fmt"
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 	"math/big"
 	"strconv"
+
+	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
 )
 
 // Grams
@@ -224,4 +225,30 @@ func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
 	}
 	*d = ChunkedData(b)
 	return nil
+}
+
+type ShardDesc struct {
+	_                  uint32
+	SeqNo              uint32
+	RegMcSeqno         uint32
+	StartLT            uint64
+	EndLT              uint64
+	RootHash           []byte
+	FileHash           []byte
+	BeforeSplit        bool
+	BeforeMerge        bool
+	WantSplit          bool
+	WantMerge          bool
+	NXCCUpdated        bool
+	Flags              uint8 `tlb:"bits 3"`
+	NextCatchainSeqNo  uint32
+	NextValidatorShard int64
+	MinRefMcSeqNo      uint32
+	GenUTime           uint32
+}
+type AllShardsInfo struct {
+	ShardHashes *tlb.HashmapE[struct {
+		Wch       int32
+		ShardHash *tlb.HashmapE[ShardDesc] `tlb:"bits 32"`
+	}] `tlb:"bits 32"`
 }

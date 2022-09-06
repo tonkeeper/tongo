@@ -35,6 +35,16 @@ func (id *TonNodeBlockIdExt) UnmarshalTL(data []byte) error {
 	return nil
 }
 
+func NewTonBlockId(fileHash, rootHash Hash, seqno int32, shard int64, workchain int32) *TonNodeBlockIdExt {
+	return &TonNodeBlockIdExt{
+		Workchain: workchain,
+		Shard:     shard,
+		Seqno:     seqno,
+		FileHash:  fileHash,
+		RootHash:  rootHash,
+	}
+}
+
 func (id TonNodeBlockIdExt) String() string {
 	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
 }

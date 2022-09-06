@@ -6,6 +6,10 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"fmt"
+
+	"net/http"
+	"sync"
+
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/adnl"
 	"github.com/startfellows/tongo/boc"
@@ -13,8 +17,6 @@ import (
 	"github.com/startfellows/tongo/tl"
 	"github.com/startfellows/tongo/tlb"
 	"github.com/startfellows/tongo/utils"
-	"net/http"
-	"sync"
 )
 
 type Client struct {

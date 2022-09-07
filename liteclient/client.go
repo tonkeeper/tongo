@@ -618,8 +618,8 @@ func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdE
 	tlb.Unmarshal(cells[0], &inf)
 	var shards []tongo.TonNodeBlockIdExt
 	for _, v := range inf.ShardHashes.Values() {
-		wc := v.Wch
-		for _, vv := range v.ShardHash.Values() {
+		wc := v.Workchain
+		for _, vv := range v.BinTree.Values {
 			var rootHash, fileHash tongo.Hash
 			rootHash.FromBytes(vv.RootHash)
 			fileHash.FromBytes(vv.FileHash)

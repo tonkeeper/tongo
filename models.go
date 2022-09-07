@@ -228,7 +228,7 @@ func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
 }
 
 type ShardDesc struct {
-	_                  uint32
+	Magic              uint32
 	SeqNo              uint32
 	RegMcSeqno         uint32
 	StartLT            uint64
@@ -240,15 +240,50 @@ type ShardDesc struct {
 	WantSplit          bool
 	WantMerge          bool
 	NXCCUpdated        bool
-	Flags              uint8 `tlb:"bits 3"`
+	Flags              uint8 `tlb:"3bits"`
 	NextCatchainSeqNo  uint32
 	NextValidatorShard int64
 	MinRefMcSeqNo      uint32
 	GenUTime           uint32
 }
+
+type ShardInfoBinTree struct {
+	Workchain int32
+	BinTree   tlb.BinTree[ShardDesc] `tlb:"32bits"`
+}
 type AllShardsInfo struct {
-	ShardHashes *tlb.HashmapE[struct {
-		Wch       int32
-		ShardHash *tlb.HashmapE[ShardDesc] `tlb:"bits 32"`
-	}] `tlb:"bits 32"`
+	ShardHashes tlb.HashmapE[ShardInfoBinTree] `tlb:"32bits"`
+}
+
+func (d ShardInfoBinTree) MarshalTLB(c *boc.Cell, tag string) error {
+	// TODO: implement
+	return fmt.Errorf("ShardInfoBinTree marshaling not implemented")
+}
+
+func (d *ShardInfoBinTree) UnmarshalTLB(c *boc.Cell, tag string) error {
+
+	// err := tlb.Unmarshal(c, &d.Workchain)
+	// if err != nil {
+	// 	return err
+	// }
+	wc, err := c.ReadInt(32)
+	if err != nil {
+		return err
+	}
+	d.Workchain = int32(wc)
+
+	type bintree struct {
+		data tlb.BinTree[ShardDesc] `tlb:"32bits"`
+	}
+	var btree bintree
+
+	err = tlb.Unmarshal(c, &btree)
+	if err != nil {
+		return err
+	}
+	for _, v := range btree.data.Values {
+		d.BinTree.Values = append(d.BinTree.Values, v)
+	}
+
+	return nil
 }

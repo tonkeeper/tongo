@@ -2,11 +2,40 @@ package wallet
 
 import (
 	"crypto/ed25519"
+	"crypto/hmac"
+	"crypto/sha512"
+	"errors"
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
+	"golang.org/x/crypto/pbkdf2"
+	"strings"
 )
+
+func DefaultWalletFromSeed(seed string, version Version) (Wallet, error) {
+	pk, err := SeedToPrivateKey(seed)
+	if err != nil {
+		return Wallet{}, err
+	}
+	return NewWallet(pk, version, 0, nil)
+}
+
+func SeedToPrivateKey(seed string) (ed25519.PrivateKey, error) {
+	s := strings.Split(seed, " ")
+	if len(s) < 12 {
+		return nil, fmt.Errorf("seed should have at least 12 words")
+	}
+	mac := hmac.New(sha512.New, []byte(strings.Join(s, " ")))
+	hash := mac.Sum(nil)
+	p := pbkdf2.Key(hash, []byte("TON seed version"), 100000/256, 1, sha512.New)
+	if p[0] != 0 {
+		return nil, errors.New("invalid seed")
+	}
+	pk := pbkdf2.Key(hash, []byte("TON default seed"), 100000, 32, sha512.New)
+	privateKey := ed25519.NewKeyFromSeed(pk)
+	return privateKey, nil
+}
 
 // NewWallet
 // Fill new Wallet struct from known workchain, public key and version.

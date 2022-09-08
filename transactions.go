@@ -202,7 +202,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return fmt.Errorf("invalid tag")
 }
 
-func (a MsgAddress) AccountId() (*AccountID, error) {
+func (a MsgAddress) AccountID() (*AccountID, error) {
 	switch a.SumType {
 	case "AddrNone":
 		return nil, nil

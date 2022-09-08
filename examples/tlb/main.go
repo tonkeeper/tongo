@@ -44,7 +44,7 @@ func main() {
 		panic(err)
 	}
 	if res.SumType == "Transfer" {
-		newOwner, err := res.Transfer.NewOwner.AccountId() // convert tongo.MsgAddress to basic AccountID type
+		newOwner, err := res.Transfer.NewOwner.AccountID() // convert tongo.MsgAddress to basic AccountID type
 		if err != nil {
 			panic(err)
 		}

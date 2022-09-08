@@ -54,7 +54,7 @@ func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		addr, err := msgAddr.AccountId()
+		addr, err := msgAddr.AccountID()
 		if err != nil {
 			return err
 		}
@@ -195,7 +195,7 @@ func readDNSSmcAddress(c *boc.Cell) (DNSRecord, error) {
 	if err != nil {
 		return DNSRecord{}, err
 	}
-	addr, err := a.AccountId()
+	addr, err := a.AccountID()
 	if err != nil {
 		return DNSRecord{}, err
 	}

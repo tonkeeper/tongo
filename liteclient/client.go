@@ -12,6 +12,7 @@ import (
 	"github.com/startfellows/tongo/config"
 	"github.com/startfellows/tongo/tl"
 	"github.com/startfellows/tongo/tlb"
+	"github.com/startfellows/tongo/utils"
 	"net/http"
 )
 
@@ -509,6 +510,9 @@ func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
 	if response.SumType == "Error" {
 		return fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
 	}
+	if response.SumType != "SendMsgStatus" {
+		return fmt.Errorf("not SendMsgStatus response")
+	}
 	if response.SendMsgStatus.Status != 1 {
 		return fmt.Errorf("message sending failed with status: %v", response.SendMsgStatus.Status)
 	}
@@ -600,6 +604,10 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 	return &conf, nil
 }
 
+// GetMasterchainInfo
+// liteServer.getMasterchainInfo = liteServer.MasterchainInfo;
+// liteServer.masterchainInfo last:tonNode.blockIdExt state_root_hash:int256
+// init:tonNode.zeroStateIdExt = liteServer.MasterchainInfo;
 func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdExt, error) {
 	req := makeLiteServerQueryRequest(makeLiteServerGetMasterchainInfoRequest())
 	resp, err := c.adnlClient.Request(ctx, req)
@@ -617,4 +625,72 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdEx
 		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("masterchain info not recieved")
 	}
 	return parsedResp.LiteServerMasterchainInfo.Last, nil
+}
+
+// RunSmcMethod
+// Run smart contract method by name and parameters
+// liteServer.runSmcMethod mode:# id:tonNode.blockIdExt account:liteServer.accountId method_id:long params:bytes = liteServer.RunMethodResult;
+// liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
+// proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int result:mode.2?bytes = liteServer.RunMethodResult;
+func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.AccountID, method string, params tongo.VmStack) (tongo.VmStack, error) {
+	type runSmcRequest struct {
+		Mode     uint32
+		Id       tongo.TonNodeBlockIdExt
+		Account  tongo.AccountID
+		MethodId uint64
+		Params   tongo.VmStack
+	}
+	info, err := c.GetMasterchainInfo(ctx)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	r := struct {
+		tl.SumType
+		RunSmcRequest runSmcRequest `tlSumType:"d25dc65c"`
+	}{
+		SumType: "RunSmcRequest",
+		RunSmcRequest: runSmcRequest{
+			Mode:     mode,
+			Id:       info,
+			Account:  accountId,
+			MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
+			Params:   params,
+		},
+	}
+	payload, err := tl.Marshal(r)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	req := makeLiteServerQueryRequest(payload)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	var response struct {
+		tl.SumType
+		RunMethodResult struct {
+			Mode     uint32
+			Id       tongo.TonNodeBlockIdExt
+			ShardBlk tongo.TonNodeBlockIdExt
+			// TODO: add proofs support
+			ExitCode uint32
+			Result   tongo.VmStack
+		} `tlSumType:"6b619aa3"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &response)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	if response.SumType == "Error" {
+		return tongo.VmStack{}, fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
+	}
+	if response.SumType != "RunMethodResult" {
+		return tongo.VmStack{}, fmt.Errorf("not RunMethodResult response")
+	}
+	if response.RunMethodResult.ExitCode != 0 && response.RunMethodResult.ExitCode != 1 {
+		return tongo.VmStack{}, fmt.Errorf("method execution failed with code: %v", response.RunMethodResult.ExitCode)
+	}
+	return response.RunMethodResult.Result, nil
 }

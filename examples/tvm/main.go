@@ -45,6 +45,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	addr, _ := msgAddress.AccountId()
+	addr, _ := msgAddress.AccountID()
 	fmt.Printf("Nft index: %v\nNft item address: %v\n", index, addr.ToRaw())
 }

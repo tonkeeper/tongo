@@ -3,6 +3,7 @@ package tlb
 import (
 	"fmt"
 	"github.com/startfellows/tongo/boc"
+	"math/big"
 	"reflect"
 )
 
@@ -86,7 +87,13 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		val.SetBool(b)
 		return nil
 	case reflect.Struct:
-		return decodeStruct(c, val, tag)
+		t := reflect.New(val.Type()).Interface()
+		switch t.(type) {
+		case *big.Int:
+			return decodeBigInt(c, val, tag)
+		default:
+			return decodeStruct(c, val, tag)
+		}
 	default:
 		return fmt.Errorf("type %v not emplemented", val.Kind())
 	}
@@ -149,4 +156,9 @@ func compareWithTag(c *boc.Cell, tag string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func decodeBigInt(c *boc.Cell, val reflect.Value, tag string) error {
+	// TODO: implement
+	return fmt.Errorf("bigInt decoding not implemented")
 }

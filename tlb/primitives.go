@@ -338,6 +338,9 @@ func (u *VarUInteger) UnmarshalTLB(c *boc.Cell, tag string) error {
 		return err
 	}
 	val, err := c.ReadBigUint(int(ln) * 8)
+	if err != nil {
+		return err
+	}
 	*u = VarUInteger(*val)
 	return nil
 }

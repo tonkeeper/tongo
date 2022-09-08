@@ -22,9 +22,6 @@ func NewWallet(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *
 	if (ver == V3R1 || ver == V3R2 || ver == V4R1 || ver == V4R2) && subWalletId == nil {
 		id := DefaultSubWalletIdV3V4 + workchain
 		subWalletId = &id
-	} else {
-		id := 0
-		subWalletId = &id
 	}
 	return Wallet{
 		address:     address,

@@ -233,14 +233,14 @@ type ShardDesc struct {
 	RegMcSeqno         uint32
 	StartLT            uint64
 	EndLT              uint64
-	RootHash           []byte
-	FileHash           []byte
+	RootHash           Hash
+	FileHash           Hash
 	BeforeSplit        bool
 	BeforeMerge        bool
 	WantSplit          bool
 	WantMerge          bool
 	NXCCUpdated        bool
-	Flags              uint8 `tlb:"3bits"`
+	Flags              uint32 `tlb:"3bits"`
 	NextCatchainSeqNo  uint32
 	NextValidatorShard int64
 	MinRefMcSeqNo      uint32
@@ -252,38 +252,5 @@ type ShardInfoBinTree struct {
 	BinTree   tlb.BinTree[ShardDesc] `tlb:"32bits"`
 }
 type AllShardsInfo struct {
-	ShardHashes tlb.HashmapE[ShardInfoBinTree] `tlb:"32bits"`
-}
-
-func (d ShardInfoBinTree) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("ShardInfoBinTree marshaling not implemented")
-}
-
-func (d *ShardInfoBinTree) UnmarshalTLB(c *boc.Cell, tag string) error {
-
-	// err := tlb.Unmarshal(c, &d.Workchain)
-	// if err != nil {
-	// 	return err
-	// }
-	wc, err := c.ReadInt(32)
-	if err != nil {
-		return err
-	}
-	d.Workchain = int32(wc)
-
-	type bintree struct {
-		data tlb.BinTree[ShardDesc] `tlb:"32bits"`
-	}
-	var btree bintree
-
-	err = tlb.Unmarshal(c, &btree)
-	if err != nil {
-		return err
-	}
-	for _, v := range btree.data.Values {
-		d.BinTree.Values = append(d.BinTree.Values, v)
-	}
-
-	return nil
+	ShardHashes tlb.HashmapE[tlb.Ref[ShardInfoBinTree]] `tlb:"32bits"`
 }

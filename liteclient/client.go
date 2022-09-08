@@ -615,20 +615,20 @@ func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdE
 		return nil, err
 	}
 	var inf tongo.AllShardsInfo
-	tlb.Unmarshal(cells[0], &inf)
+	err = tlb.Unmarshal(cells[0], &inf)
+	if err != nil {
+		return nil, err
+	}
 	var shards []tongo.TonNodeBlockIdExt
 	for _, v := range inf.ShardHashes.Values() {
-		wc := v.Workchain
-		for _, vv := range v.BinTree.Values {
-			var rootHash, fileHash tongo.Hash
-			rootHash.FromBytes(vv.RootHash)
-			fileHash.FromBytes(vv.FileHash)
+		wc := v.Value.Workchain
+		for _, vv := range v.Value.BinTree.Values {
 			shards = append(shards, tongo.TonNodeBlockIdExt{
 				Workchain: wc,
 				Shard:     vv.NextValidatorShard,
 				Seqno:     int32(vv.SeqNo),
-				RootHash:  rootHash,
-				FileHash:  fileHash,
+				RootHash:  vv.RootHash,
+				FileHash:  vv.FileHash,
 			})
 		}
 

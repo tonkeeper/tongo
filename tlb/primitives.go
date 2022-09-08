@@ -449,7 +449,7 @@ func (b *BinTree[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	}
 	for _, i := range dec {
 		var t T
-		err := Unmarshal(i, t)
+		err := Unmarshal(i, &t)
 		if err != nil {
 			return err
 		}

@@ -12,6 +12,7 @@ import (
 	"github.com/startfellows/tongo/config"
 	"github.com/startfellows/tongo/tl"
 	"github.com/startfellows/tongo/tlb"
+	"github.com/startfellows/tongo/utils"
 	"net/http"
 )
 
@@ -650,7 +651,7 @@ func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.
 		SumType: "RunSmcRequest",
 		RunSmcRequest: runSmcRequest{
 			Mode:     mode,
-			Id:       info.Last,
+			Id:       info,
 			Account:  accountId,
 			MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
 			Params:   params,

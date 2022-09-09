@@ -228,28 +228,47 @@ func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
 }
 
 type ShardDesc struct {
-	Magic              uint32
-	SeqNo              uint32
-	RegMcSeqno         uint32
-	StartLT            uint64
-	EndLT              uint64
-	RootHash           Hash
-	FileHash           Hash
-	BeforeSplit        bool
-	BeforeMerge        bool
-	WantSplit          bool
-	WantMerge          bool
-	NXCCUpdated        bool
-	Flags              uint32 `tlb:"3bits"`
-	NextCatchainSeqNo  uint32
-	NextValidatorShard int64
-	MinRefMcSeqNo      uint32
-	GenUTime           uint32
+	tlb.SumType
+	Old struct {
+		SeqNo              uint32
+		RegMcSeqno         uint32
+		StartLT            uint64
+		EndLT              uint64
+		RootHash           Hash
+		FileHash           Hash
+		BeforeSplit        bool
+		BeforeMerge        bool
+		WantSplit          bool
+		WantMerge          bool
+		NXCCUpdated        bool
+		Flags              uint32 `tlb:"3bits"`
+		NextCatchainSeqNo  uint32
+		NextValidatorShard int64
+		MinRefMcSeqNo      uint32
+		GenUTime           uint32
+	} `tlbSumType:"old#b"`
+	New struct {
+		SeqNo              uint32
+		RegMcSeqno         uint32
+		StartLT            uint64
+		EndLT              uint64
+		RootHash           Hash
+		FileHash           Hash
+		BeforeSplit        bool
+		BeforeMerge        bool
+		WantSplit          bool
+		WantMerge          bool
+		NXCCUpdated        bool
+		Flags              uint32 `tlb:"3bits"`
+		NextCatchainSeqNo  uint32
+		NextValidatorShard int64
+		MinRefMcSeqNo      uint32
+		GenUTime           uint32
+	} `tlbSumType:"new#a""`
 }
 
 type ShardInfoBinTree struct {
-	Workchain int32
-	BinTree   tlb.BinTree[ShardDesc] `tlb:"32bits"`
+	BinTree tlb.BinTree[ShardDesc] `tlb:"32bits"`
 }
 type AllShardsInfo struct {
 	ShardHashes tlb.HashmapE[tlb.Ref[ShardInfoBinTree]] `tlb:"32bits"`

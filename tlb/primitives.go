@@ -407,11 +407,11 @@ type BinTree[T any] struct {
 
 func decodeRecursiveBinTree(c *boc.Cell) ([]*boc.Cell, error) {
 	var cellAr []*boc.Cell
-	isExists, err := c.ReadBit()
+	isBranch, err := c.ReadBit()
 	if err != nil {
 		return nil, err
 	}
-	if isExists {
+	if !isBranch {
 		return append(cellAr, c), nil
 	}
 

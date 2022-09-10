@@ -26,7 +26,7 @@ func NewClient(options *config.Options) (*Client, error) {
 	// TODO: implement multiple server support
 	if options == nil {
 		var err error
-		options, err = downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+		options, err = downloadConfig("https://ton-blockchain.github.io/global.config.json")
 		if err != nil {
 			return nil, err
 		}

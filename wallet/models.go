@@ -39,6 +39,10 @@ var codes = map[Version]string{
 	HighLoadV2: "te6ccgEBCQEA5QABFP8A9KQT9LzyyAsBAgEgAgcCAUgDBAAE0DACASAFBgAXvZznaiaGmvmOuF/8AEG+X5dqJoaY+Y6Z/p/5j6AmipEEAgegc30JjJLb/JXdHxQB6vKDCNcYINMf0z/4I6ofUyC58mPtRNDTH9M/0//0BNFTYIBA9A5voTHyYFFzuvKiB/kBVBCH+RDyowL0BNH4AH+OFiGAEPR4b6UgmALTB9QwAfsAkTLiAbPmW4MlochANIBA9EOK5jEByMsfE8s/y//0AMntVAgANCCAQPSWb6VsEiCUMFMDud4gkzM2AZJsIeKz",
 }
 
+type seqnoGetter interface {
+	GetWalletSeqno(account tongo.AccountID) (uint32, error)
+}
+
 func GetCodeByVer(ver Version) *boc.Cell {
 	c, err := boc.DeserializeBocBase64(codes[ver])
 	if err != nil {

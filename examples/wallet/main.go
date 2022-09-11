@@ -30,7 +30,7 @@ func main() {
 		Mode:      1,
 	}
 
-	client, err := liteclient.NewClient(nil)
+	client, err := liteclient.NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create lite client: %v", err)
 	}

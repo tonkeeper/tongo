@@ -14,23 +14,33 @@ import (
 	"github.com/startfellows/tongo/tlb"
 	"github.com/startfellows/tongo/utils"
 	"net/http"
+	"sync"
 )
 
 type Client struct {
 	adnlClient *adnl.Client
 }
 
+func NewClientWithDefaultMainnet() (*Client, error) {
+	options, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+	if err != nil {
+		return nil, err
+	}
+	return NewClient(*options)
+}
+func NewClientWithDefaultTestnet() (*Client, error) {
+	options, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+	if err != nil {
+		return nil, err
+	}
+	return NewClient(*options)
+}
+
 // NewClient
 // Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
-func NewClient(options *config.Options) (*Client, error) {
+func NewClient(options config.Options) (*Client, error) {
 	// TODO: implement multiple server support
-	if options == nil {
-		var err error
-		options, err = downloadConfig("https://ton-blockchain.github.io/global.config.json")
-		if err != nil {
-			return nil, err
-		}
-	}
+
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
@@ -519,13 +529,28 @@ func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
 	return nil
 }
 
+var configCache = make(map[string]*config.Options)
+var configCacheMutex sync.RWMutex
+
 func downloadConfig(path string) (*config.Options, error) {
+	configCacheMutex.RLock()
+	o, prs := configCache[path]
+	configCacheMutex.RUnlock()
+	if prs {
+		return o, nil
+	}
 	resp, err := http.Get(path)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return config.ParseConfig(resp.Body)
+	o, err = config.ParseConfig(resp.Body)
+	if err == nil {
+		configCacheMutex.Lock()
+		configCache[path] = o
+		configCacheMutex.Unlock()
+	}
+	return o, err
 }
 
 // GetLastConfigAll

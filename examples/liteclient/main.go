@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// options, err := config.ParseConfigFile("path/to/config.json")
-	tongoClient, err := liteclient.NewClient(nil) // with nil options client download config from ton.org
+	tongoClient, err := liteclient.NewClientWithDefaultTestnet()
 	if err != nil {
 		fmt.Printf("Unable to create tongo client: %v", err)
 	}

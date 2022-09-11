@@ -24,7 +24,7 @@ func TestExec(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create wallet: %v", err)
 	}
-	tongoClient, err := liteclient.NewClient(nil)
+	tongoClient, err := liteclient.NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -90,5 +90,4 @@ func TestExec(t *testing.T) {
 	fmt.Printf("Account last transaction hash: %x\n", acc.LastTransHash)
 	fmt.Printf("Prev transaction hash: %x\n", tx.Transaction.PrevTransHash)
 
-	e.Destroy()
 }

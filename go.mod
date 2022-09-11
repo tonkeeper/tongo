@@ -2,7 +2,6 @@ module github.com/startfellows/tongo
 
 go 1.18
 
-
 require (
 	github.com/oasisprotocol/curve25519-voi v0.0.0-20220328075252-7dd334e3daae
 	github.com/snksoft/crc v1.1.0

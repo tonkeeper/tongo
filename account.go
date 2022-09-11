@@ -9,6 +9,7 @@ import (
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 	"github.com/startfellows/tongo/utils"
+	"io"
 	"strings"
 )
 
@@ -75,13 +76,24 @@ func (id AccountID) MarshalTL() ([]byte, error) {
 	return payload, nil
 }
 
-func (id *AccountID) UnmarshalTL(data []byte) error {
-	if len(data) != 36 {
-		return fmt.Errorf("invalid data length")
+func (id *AccountID) UnmarshalTL(r io.Reader) error {
+	var b [4]byte
+	_, err := io.ReadFull(r, b[:])
+	if err != nil {
+		return err
 	}
-	id.Workchain = int32(binary.LittleEndian.Uint32(data[:4]))
-	copy(id.Address[:], data[4:36])
-	return nil
+	id.Workchain = int32(binary.LittleEndian.Uint32(b[:]))
+	_, err = io.ReadFull(r, id.Address[:])
+	return err
+}
+
+type AccountInfo struct {
+	Status            AccountStatus
+	Balance           uint64
+	Data              []byte
+	Code              []byte
+	FrozenHash        Hash
+	LastTransactionLt uint64
 }
 
 func AccountIDFromBase64Url(s string) (*AccountID, error) {

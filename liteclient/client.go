@@ -61,17 +61,17 @@ func NewClient(options config.Options) (*Client, error) {
 	return nil, fmt.Errorf("all liteservers are unavailable")
 }
 
-func (c *Client) GetLastRawAccountState(ctx context.Context, accountId tongo.AccountID) (AccountState, error) {
+func (c *Client) GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error) {
 	b, err := c.getLastRawAccount(ctx, accountId)
 	if err != nil {
-		return AccountState{}, err
+		return tongo.AccountInfo{}, err
 	}
 	if b == nil {
-		return AccountState{Status: tongo.AccountEmpty}, nil
+		return tongo.AccountInfo{Status: tongo.AccountEmpty}, nil
 	}
 	account, err := decodeRawAccountBoc(b)
 	if err != nil {
-		return AccountState{}, err
+		return tongo.AccountInfo{}, err
 	}
 	return convertTlbAccountToAccountState(account)
 }
@@ -89,50 +89,36 @@ func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountI
 }
 
 func (c *Client) getLastRawAccount(ctx context.Context, accountId tongo.AccountID) ([]byte, error) {
-	req := makeLiteServerQueryRequest(makeLiteServerGetMasterchainInfoRequest())
+	masterchainInfo, err := c.GetMasterchainInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
+	asReq, err := makeLiteServerGetAccountStateRequest(masterchainInfo, accountId)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(asReq)
 	resp, err := c.adnlClient.Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	parsedResp, err := parseLiteServerQueryResponse(resp)
+	var parsedResp struct {
+		tl.SumType
+		LiteServerError        LiteServerError        `tlSumType:"48e1a9bb"`
+		LiteServerAccountState LiteServerAccountState `tlSumType:"51c77970"`
+	}
+	err = tl.Unmarshal(bytes.NewReader(resp), &parsedResp)
 	if err != nil {
 		return nil, err
 	}
-	if parsedResp.Tag == LiteServerErrorTag {
+	switch parsedResp.SumType {
+	case "LiteServerError":
 		return nil, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
-	}
-	if parsedResp.Tag != LiteServerMasterchainInfoTag {
-		return nil, fmt.Errorf("masterchain info not recieved")
-	}
-	asReq, err := makeLiteServerGetAccountStateRequest(parsedResp.LiteServerMasterchainInfo.Last, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = makeLiteServerQueryRequest(asReq)
-	resp, err = c.adnlClient.Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	parsedResp, err = parseLiteServerQueryResponse(resp)
-	if err != nil {
-		return nil, err
-	}
-	if parsedResp.Tag == LiteServerErrorTag {
-		return nil, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
-	}
-	if parsedResp.Tag != LiteServerAccountStateTag {
+	case "LiteServerAccountState":
+	default:
 		return nil, fmt.Errorf("account state not recieved")
 	}
 	return parsedResp.LiteServerAccountState.State, nil
-}
-
-type AccountState struct {
-	Status            tongo.AccountStatus
-	Balance           uint64
-	Data              []byte
-	Code              []byte
-	FrozenHash        tongo.Hash
-	LastTransactionLt uint64
 }
 
 type LiteServerMasterchainInfo struct {
@@ -152,101 +138,6 @@ type LiteServerAccountState struct {
 type LiteServerError struct {
 	Code    int32
 	Message string
-}
-
-type ParsedLiteServerQueryResponse struct {
-	Tag                       uint32
-	LiteServerError           LiteServerError
-	LiteServerMasterchainInfo LiteServerMasterchainInfo
-	LiteServerAccountState    LiteServerAccountState
-}
-
-func ParseLiteServerMasterchainInfo(data []byte) (LiteServerMasterchainInfo, error) {
-	if len(data) < 4+80+32+4+32+32 {
-		return LiteServerMasterchainInfo{}, fmt.Errorf("invalid data length")
-	}
-	tag := binary.BigEndian.Uint32(data[:4])
-	if tag != LiteServerMasterchainInfoTag {
-		return LiteServerMasterchainInfo{}, fmt.Errorf("invalid tag")
-	}
-	var info LiteServerMasterchainInfo
-	var last tongo.TonNodeBlockIdExt
-	err := last.UnmarshalTL(data[4:84])
-	if err != nil {
-		return LiteServerMasterchainInfo{}, err
-	}
-	info.Last = last
-	copy(info.StateRootHash[:], data[84:116])
-	// TODO: fill init
-	return info, nil
-}
-
-func ParseLiteServerAccountState(data []byte) (LiteServerAccountState, error) {
-	if len(data) < 164 {
-		return LiteServerAccountState{}, fmt.Errorf("invalid data length")
-	}
-	tag := binary.BigEndian.Uint32(data[:4])
-	if tag != LiteServerAccountStateTag {
-		return LiteServerAccountState{}, fmt.Errorf("invalid tag")
-	}
-	var state LiteServerAccountState
-	var id, shardBlk tongo.TonNodeBlockIdExt
-	err := id.UnmarshalTL(data[4:84])
-	if err != nil {
-		return LiteServerAccountState{}, err
-	}
-	state.Id = id
-	err = shardBlk.UnmarshalTL(data[84:164])
-	if err != nil {
-		return LiteServerAccountState{}, err
-	}
-	state.ShardBlk = shardBlk
-	data = data[164:]
-	bytes, data, err := parseBytes(data)
-	if err != nil {
-		return LiteServerAccountState{}, err
-	}
-	state.ShardProof = append(state.ShardProof, bytes...)
-	if len(data) == 0 {
-		return LiteServerAccountState{}, fmt.Errorf("invalid length")
-	}
-	bytes, data, err = parseBytes(data)
-	if err != nil {
-		return LiteServerAccountState{}, err
-	}
-	state.Proof = append(state.Proof, bytes...)
-	if len(data) == 0 {
-		return LiteServerAccountState{}, fmt.Errorf("invalid length")
-	}
-	bytes, data, err = parseBytes(data)
-	if err != nil {
-		return LiteServerAccountState{}, err
-	}
-	state.State = append(state.State, bytes...)
-	if len(data) != 0 {
-		return LiteServerAccountState{}, fmt.Errorf("invalid length")
-	}
-	return state, nil
-}
-
-func parseLiteServerError(data []byte) (LiteServerError, error) {
-	if len(data) < 8 {
-		return LiteServerError{}, fmt.Errorf("invalid data length")
-	}
-	tag := binary.BigEndian.Uint32(data[:4])
-	if tag != LiteServerErrorTag {
-		return LiteServerError{}, fmt.Errorf("invalid tag")
-	}
-	code := binary.LittleEndian.Uint32(data[4:8])
-	var bytes []byte
-	if len(data) > 8 {
-		var err error
-		bytes, _, err = parseBytes(data[8:])
-		if err != nil {
-			return LiteServerError{}, err
-		}
-	}
-	return LiteServerError{Code: int32(code), Message: string(bytes)}, nil
 }
 
 func makeLiteServerQueryRequest(payload []byte) []byte {
@@ -284,22 +175,6 @@ func decodeLength(b []byte) (int, []byte, error) {
 	return int(i) >> 8, b[4:], nil
 }
 
-func parseBytes(source []byte) (read []byte, remaining []byte, err error) {
-	ln, buffer, err := decodeLength(source)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(buffer) < ln {
-		return nil, nil, fmt.Errorf("invalid length")
-	}
-	left := (len(source) - len(buffer) + ln) % 4
-	index := ln
-	if left != 0 {
-		index = ln + 4 - left
-	}
-	return buffer[:ln], buffer[index:], nil
-}
-
 func makeLiteServerGetMasterchainInfoRequest() []byte {
 	payload := make([]byte, 4)
 	binary.BigEndian.PutUint32(payload, LiteServerGetMasterchainInfoTag)
@@ -309,49 +184,17 @@ func makeLiteServerGetMasterchainInfoRequest() []byte {
 func makeLiteServerGetAccountStateRequest(blockIdExt tongo.TonNodeBlockIdExt, accountId tongo.AccountID) ([]byte, error) {
 	payload := make([]byte, 4)
 	binary.BigEndian.PutUint32(payload, LiteServerGetAccountStateTag)
-	block, err := blockIdExt.MarshalTL()
+	block, err := tl.Marshal(blockIdExt)
 	if err != nil {
 		return nil, err
 	}
 	payload = append(payload, block...)
-	a, err := accountId.MarshalTL()
+	a, err := tl.Marshal(accountId)
 	if err != nil {
 		return nil, err
 	}
 	payload = append(payload, a...)
 	return payload, nil
-}
-
-func parseLiteServerQueryResponse(message adnl.Message) (ParsedLiteServerQueryResponse, error) {
-	var response ParsedLiteServerQueryResponse
-	if len(message) < 4 {
-		return ParsedLiteServerQueryResponse{}, fmt.Errorf("invalid lenght")
-	}
-	tag := binary.BigEndian.Uint32(message[:4])
-	switch tag {
-	case LiteServerErrorTag:
-		serverError, err := parseLiteServerError(message[:])
-		if err != nil {
-			return ParsedLiteServerQueryResponse{}, err
-		}
-		response.LiteServerError = serverError
-		response.Tag = LiteServerErrorTag
-	case LiteServerMasterchainInfoTag:
-		info, err := ParseLiteServerMasterchainInfo(message[:])
-		if err != nil {
-			return ParsedLiteServerQueryResponse{}, err
-		}
-		response.LiteServerMasterchainInfo = info
-		response.Tag = LiteServerMasterchainInfoTag
-	case LiteServerAccountStateTag:
-		res, err := ParseLiteServerAccountState(message[:])
-		if err != nil {
-			return ParsedLiteServerQueryResponse{}, err
-		}
-		response.LiteServerAccountState = res
-		response.Tag = LiteServerAccountStateTag
-	}
-	return response, nil
 }
 
 func decodeRawAccountBoc(bocBytes []byte) (tongo.Account, error) {
@@ -370,11 +213,11 @@ func decodeRawAccountBoc(bocBytes []byte) (tongo.Account, error) {
 	return acc, nil
 }
 
-func convertTlbAccountToAccountState(acc tongo.Account) (AccountState, error) {
+func convertTlbAccountToAccountState(acc tongo.Account) (tongo.AccountInfo, error) {
 	if acc.SumType == "AccountNone" {
-		return AccountState{Status: tongo.AccountNone}, nil
+		return tongo.AccountInfo{Status: tongo.AccountNone}, nil
 	}
-	res := AccountState{
+	res := tongo.AccountInfo{
 		Balance:           uint64(acc.Account.Storage.Balance.Grams),
 		LastTransactionLt: acc.Account.Storage.LastTransLt,
 	}
@@ -391,14 +234,14 @@ func convertTlbAccountToAccountState(acc tongo.Account) (AccountState, error) {
 	if !acc.Account.Storage.State.AccountActive.StateInit.Data.Null {
 		data, err := acc.Account.Storage.State.AccountActive.StateInit.Data.Value.Value.ToBoc()
 		if err != nil {
-			return AccountState{}, err
+			return tongo.AccountInfo{}, err
 		}
 		res.Data = data
 	}
 	if !acc.Account.Storage.State.AccountActive.StateInit.Code.Null {
 		code, err := acc.Account.Storage.State.AccountActive.StateInit.Code.Value.Value.ToBoc()
 		if err != nil {
-			return AccountState{}, err
+			return tongo.AccountInfo{}, err
 		}
 		res.Code = code
 	}
@@ -460,7 +303,7 @@ func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId
 		return nil, err
 	}
 	var pResp struct {
-		tlb.SumType
+		tl.SumType
 		TransactionList TransactionList `tlSumType:"0bc6266f"` // TODO: must be 9dd72eb9
 		Error           LiteServerError `tlSumType:"48e1a9bb"`
 	}
@@ -506,7 +349,7 @@ func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
 		return err
 	}
 	var response struct {
-		tlb.SumType
+		tl.SumType
 		SendMsgStatus struct {
 			Status int32
 		} `tlSumType:"97e55039"`
@@ -595,7 +438,7 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 		return nil, err
 	}
 	var pResp struct {
-		tlb.SumType
+		tl.SumType
 		ConfigInfo configInfo      `tlSumType:"2f277bae"`
 		Error      LiteServerError `tlSumType:"48e1a9bb"`
 	}
@@ -639,17 +482,24 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdEx
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, err
 	}
-	parsedResp, err := parseLiteServerQueryResponse(resp)
+	var parsedResp struct {
+		tl.SumType
+		LiteServerError           LiteServerError           `tlSumType:"48e1a9bb"`
+		LiteServerMasterchainInfo LiteServerMasterchainInfo `tlSumType:"81288385"`
+	}
+	err = tl.Unmarshal(bytes.NewReader(resp), &parsedResp)
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, err
 	}
-	if parsedResp.Tag == LiteServerErrorTag {
+	switch parsedResp.SumType {
+	case "LiteServerError":
 		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
-	}
-	if parsedResp.Tag != LiteServerMasterchainInfoTag {
+	case "LiteServerMasterchainInfo":
+		return parsedResp.LiteServerMasterchainInfo.Last, nil
+	default:
 		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("masterchain info not recieved")
 	}
-	return parsedResp.LiteServerMasterchainInfo.Last, nil
+
 }
 
 // RunSmcMethod
@@ -686,6 +536,7 @@ func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.
 	if err != nil {
 		return tongo.VmStack{}, err
 	}
+	fmt.Printf("%x\n", payload)
 	req := makeLiteServerQueryRequest(payload)
 	resp, err := c.adnlClient.Request(ctx, req)
 	if err != nil {

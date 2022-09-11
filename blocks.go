@@ -34,3 +34,7 @@ func (id *TonNodeBlockIdExt) UnmarshalTL(data []byte) error {
 	copy(id.FileHash[:], data[48:80])
 	return nil
 }
+
+func (id TonNodeBlockIdExt) String() string {
+	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
+}

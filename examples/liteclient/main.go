@@ -14,7 +14,7 @@ func main() {
 		fmt.Printf("Unable to create tongo client: %v", err)
 	}
 	accountId, _ := tongo.AccountIDFromRaw("0:E2D41ED396A9F1BA03839D63C5650FAFC6FCFB574FD03F2E67D6555B61A3ACD9")
-	state, err := tongoClient.GetLastRawAccountState(context.Background(), *accountId)
+	state, err := tongoClient.GetAccountState(context.Background(), *accountId)
 	if err != nil {
 		fmt.Printf("Get account state error: %v", err)
 	}

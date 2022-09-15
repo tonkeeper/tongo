@@ -51,3 +51,21 @@ func TestRunSmcMethod(t *testing.T) {
 		log.Fatalf("Run smc error: %v", err)
 	}
 }
+
+func TestGetAllShards(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	shards, err := api.BlocksGetShards(context.TODO(), info)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(shards) == 0 {
+		t.Fatal("at least one shard should returns")
+	}
+}

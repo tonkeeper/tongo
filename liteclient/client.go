@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"fmt"
-
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/adnl"
 	"github.com/startfellows/tongo/boc"
@@ -599,18 +598,20 @@ func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdE
 	if err != nil {
 		return nil, err
 	}
-	parsedResp, err := parseLiteServerQueryResponse(resp)
+	var response struct {
+		tl.SumType
+		LiteServerAllShardsInfo struct {
+			Id    tongo.TonNodeBlockIdExt
+			Proof []byte
+			Data  []byte
+		} `tlSumType:"2de78f09"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	err = tl.Unmarshal(bytes.NewReader(resp), &response)
 	if err != nil {
 		return nil, err
 	}
-	if parsedResp.Tag == LiteServerErrorTag {
-		return nil, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
-	}
-	if parsedResp.Tag != LiteServerAllShardsInfoTag {
-		return nil, fmt.Errorf("all shard info not recieved")
-	}
-
-	cells, err := boc.DeserializeBoc(parsedResp.LiteServerAllShardsInfo.Data)
+	cells, err := boc.DeserializeBoc(response.LiteServerAllShardsInfo.Data)
 	if err != nil {
 		return nil, err
 	}

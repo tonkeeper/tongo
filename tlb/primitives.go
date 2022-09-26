@@ -162,30 +162,34 @@ func (h HashmapE[T]) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h HashmapE[T]) encodeMap(c *boc.Cell, keyStrings []boc.BitString, values []T, size int) error {
+func (h HashmapE[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
+	if len(keys) == 0 || len(values) == 0 {
+		return fmt.Errorf("keys or values are empty")
+	}
 
-	label, err := encodeLabel(c, keyStrings, size)
+	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], size)
 	if err != nil {
 		return err
 	}
+
 	size = size - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
 	var leftKeys, rightKeys []boc.BitString
 	var leftValues, rightValues []T
-	if len(keyStrings) > 1 {
-		for i := range keyStrings {
-			_, err := keyStrings[i].ReadBits(label.BitsAvailableForRead()) // skip common label
+	if len(keys) > 1 {
+		for i := range keys {
+			_, err := keys[i].ReadBits(label.BitsAvailableForRead()) // skip common label
 			if err != nil {
 				return err
 			}
-			isRight, err := keyStrings[i].ReadBit()
+			isRight, err := keys[i].ReadBit()
 			if err != nil {
 				return err
 			}
 			if isRight {
-				rightKeys = append(rightKeys, keyStrings[i].ReadRemainingBits())
+				rightKeys = append(rightKeys, keys[i].ReadRemainingBits())
 				rightValues = append(rightValues, values[i])
 			} else {
-				leftKeys = append(leftKeys, keyStrings[i].ReadRemainingBits())
+				leftKeys = append(leftKeys, keys[i].ReadRemainingBits())
 				leftValues = append(leftValues, values[i])
 			}
 		}
@@ -215,54 +219,47 @@ func (h HashmapE[T]) encodeMap(c *boc.Cell, keyStrings []boc.BitString, values [
 	return nil
 }
 
-func encodeLabel(c *boc.Cell, keys []boc.BitString, size int) (boc.BitString, error) {
-	if len(keys) == 0 {
-		return boc.BitString{}, nil
-	}
+func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
 	label := boc.NewBitString(size)
-	if len(keys) > 1 {
-		key1 := keys[0].Copy()
-		bitLeft, err := key1.ReadBit()
+	if keyFirst != keyLast {
+
+		bitLeft, err := keyFirst.ReadBit()
 		if err != nil {
 			return boc.BitString{}, err
 		}
-		for right := (len(keys) - 1); right >= 0; right-- {
-			key2 := keys[right].Copy()
-			for key1.BitsAvailableForRead() > 0 {
-				bitRight, err := key2.ReadBit()
-				if err != nil {
-					return boc.BitString{}, err
-				}
-				if !(bitLeft == bitRight) {
-					break
-				}
-				label.WriteBit(bitLeft)
-				bitLeft, err = key1.ReadBit()
-				if err != nil {
-					return boc.BitString{}, err
-				}
+		fmt.Println("keyF:  ", keyFirst.BinaryString())
+		fmt.Println("keyL:  ", keyLast.BinaryString())
+		for keyFirst.BitsAvailableForRead() > 0 {
+			bitRight, err := keyLast.ReadBit()
+			if err != nil {
+				return boc.BitString{}, err
 			}
-			if len(label.Buffer()) == 0 {
-				continue
+			if !(bitLeft == bitRight) {
+				break
 			}
-			break
+			label.WriteBit(bitLeft)
+			bitLeft, err = keyFirst.ReadBit()
+			if err != nil {
+				return boc.BitString{}, err
+			}
 		}
 	} else {
-		label = keys[0]
+		label = keyFirst.Copy()
 	}
-	l := label.Copy()
-	if l.BitsAvailableForRead() < 8 {
+	keyFirst.ResetCounter()
+	keyLast.ResetCounter()
+	if label.BitsAvailableForRead() < 8 {
 		//hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
 		err := c.WriteBit(false)
 		if err != nil {
 			return boc.BitString{}, err
 		}
 		// todo pack label
-		err = c.WriteUnary(uint(l.BitsAvailableForRead()))
+		err = c.WriteUnary(uint(label.BitsAvailableForRead()))
 		if err != nil {
 			return boc.BitString{}, err
 		}
-		err = c.WriteBitString(l)
+		err = c.WriteBitString(label)
 		if err != nil {
 			return boc.BitString{}, err
 		}
@@ -278,15 +275,17 @@ func encodeLabel(c *boc.Cell, keys []boc.BitString, size int) (boc.BitString, er
 			return boc.BitString{}, err
 		}
 		// todo pack label
-		err = c.WriteLimUint(l.BitsAvailableForRead(), size)
+		err = c.WriteLimUint(label.BitsAvailableForRead(), size)
 		if err != nil {
 			return boc.BitString{}, err
 		}
-		err = c.WriteBitString(l)
+		err = c.WriteBitString(label)
 		if err != nil {
 			return boc.BitString{}, err
 		}
 	}
+	fmt.Println("label: ", label.BinaryString())
+
 	return label, nil
 }
 

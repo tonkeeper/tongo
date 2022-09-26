@@ -227,8 +227,6 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 		if err != nil {
 			return boc.BitString{}, err
 		}
-		fmt.Println("keyF:  ", keyFirst.BinaryString())
-		fmt.Println("keyL:  ", keyLast.BinaryString())
 		for keyFirst.BitsAvailableForRead() > 0 {
 			bitRight, err := keyLast.ReadBit()
 			if err != nil {
@@ -284,8 +282,6 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 			return boc.BitString{}, err
 		}
 	}
-	fmt.Println("label: ", label.BinaryString())
-
 	return label, nil
 }
 

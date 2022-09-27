@@ -232,7 +232,7 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 			if err != nil {
 				return boc.BitString{}, err
 			}
-			if !(bitLeft == bitRight) {
+			if bitLeft != bitRight {
 				break
 			}
 			label.WriteBit(bitLeft)

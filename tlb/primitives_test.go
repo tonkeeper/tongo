@@ -2,10 +2,11 @@ package tlb
 
 import (
 	"encoding/hex"
-	"github.com/startfellows/tongo/boc"
 	"math/big"
 	"reflect"
 	"testing"
+
+	"github.com/startfellows/tongo/boc"
 )
 
 func TestMaybe(t *testing.T) {
@@ -174,5 +175,83 @@ func TestVarUint(t *testing.T) {
 		if b1.ToString() != b2.ToString() {
 			t.Fatal("not equal")
 		}
+	}
+}
+
+func TestMarchalHashMap(t *testing.T) {
+
+	var in struct {
+		InM HashmapE[Ref[int32]] `tlb:"16bits"`
+	}
+
+	k1 := boc.NewBitString(16)
+	k2 := boc.NewBitString(16)
+	k3 := boc.NewBitString(16)
+	kstr := "0000000000001101"
+	for i := range kstr {
+		if string(kstr[i]) == "0" {
+			k1.WriteBit(false)
+		} else {
+			k1.WriteBit(true)
+		}
+	}
+	kstr = "0000000000010001"
+	for i := range kstr {
+		if string(kstr[i]) == "0" {
+			k2.WriteBit(false)
+		} else {
+			k2.WriteBit(true)
+		}
+	}
+	kstr = "0000000011101111"
+	for i := range kstr {
+		if string(kstr[i]) == "0" {
+			k3.WriteBit(false)
+		} else {
+			k3.WriteBit(true)
+		}
+	}
+	chm := HashmapE[Ref[int32]]{
+		keys: []boc.BitString{
+			k1,
+			k2,
+			k3,
+		},
+		values: []Ref[int32]{
+			{Value: 100},
+			{Value: 289},
+			{Value: 57121},
+		},
+		keySize: 16,
+	}
+
+	in.InM = chm
+
+	c := boc.NewCell()
+
+	t.Log("Input heshmap: ")
+	for i := range in.InM.keys {
+		t.Logf("k%v: key: %v, value: %v",
+			i,
+			in.InM.keys[i].BinaryString(),
+			in.InM.values[i].Value)
+	}
+	err := Marshal(c, in)
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	var res struct {
+		OutMsgs HashmapE[Ref[int32]] `tlb:"16bits"`
+	}
+	err = Unmarshal(c, &res)
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	t.Log("Output heshmap: ")
+	for i := range res.OutMsgs.keys {
+		t.Logf("k%v: key: %v, value: %v",
+			i,
+			res.OutMsgs.keys[i].BinaryString(),
+			res.OutMsgs.values[i].Value)
 	}
 }

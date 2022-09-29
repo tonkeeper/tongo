@@ -147,8 +147,142 @@ func (h HashmapE[T]) MarshalTLB(c *boc.Cell, tag string) error {
 		}
 		return nil
 	}
-	// TODO: implement
-	return fmt.Errorf("not empty HashmapE marshaling not implmented")
+	err := c.WriteBit(true)
+	if err != nil {
+		return err
+	}
+	r, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	err = h.encodeMap(r, h.keys, h.values, h.keySize)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h HashmapE[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
+	if len(keys) == 0 || len(values) == 0 {
+		return fmt.Errorf("keys or values are empty")
+	}
+
+	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], size)
+	if err != nil {
+		return err
+	}
+
+	size = size - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
+	var leftKeys, rightKeys []boc.BitString
+	var leftValues, rightValues []T
+	if len(keys) > 1 {
+		for i := range keys {
+			_, err := keys[i].ReadBits(label.BitsAvailableForRead()) // skip common label
+			if err != nil {
+				return err
+			}
+			isRight, err := keys[i].ReadBit()
+			if err != nil {
+				return err
+			}
+			if isRight {
+				rightKeys = append(rightKeys, keys[i].ReadRemainingBits())
+				rightValues = append(rightValues, values[i])
+			} else {
+				leftKeys = append(leftKeys, keys[i].ReadRemainingBits())
+				leftValues = append(leftValues, values[i])
+			}
+		}
+		l, err := c.NewRef()
+		if err != nil {
+			return nil
+		}
+		err = h.encodeMap(l, leftKeys, leftValues, size)
+		if err != nil {
+			return err
+		}
+		r, err := c.NewRef()
+		if err != nil {
+			return nil
+		}
+		err = h.encodeMap(r, rightKeys, rightValues, size)
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	// marshal value
+	err = Marshal(c, values[0])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
+	label := boc.NewBitString(size)
+	if keyFirst != keyLast {
+
+		bitLeft, err := keyFirst.ReadBit()
+		if err != nil {
+			return boc.BitString{}, err
+		}
+		for keyFirst.BitsAvailableForRead() > 0 {
+			bitRight, err := keyLast.ReadBit()
+			if err != nil {
+				return boc.BitString{}, err
+			}
+			if bitLeft != bitRight {
+				break
+			}
+			label.WriteBit(bitLeft)
+			bitLeft, err = keyFirst.ReadBit()
+			if err != nil {
+				return boc.BitString{}, err
+			}
+		}
+	} else {
+		label = keyFirst.Copy()
+	}
+	keyFirst.ResetCounter()
+	keyLast.ResetCounter()
+	if label.BitsAvailableForRead() < 8 {
+		//hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
+		err := c.WriteBit(false)
+		if err != nil {
+			return boc.BitString{}, err
+		}
+		// todo pack label
+		err = c.WriteUnary(uint(label.BitsAvailableForRead()))
+		if err != nil {
+			return boc.BitString{}, err
+		}
+		err = c.WriteBitString(label)
+		if err != nil {
+			return boc.BitString{}, err
+		}
+
+	} else {
+		// hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
+		err := c.WriteBit(true)
+		if err != nil {
+			return boc.BitString{}, err
+		}
+		err = c.WriteBit(false)
+		if err != nil {
+			return boc.BitString{}, err
+		}
+		// todo pack label
+		err = c.WriteLimUint(label.BitsAvailableForRead(), size)
+		if err != nil {
+			return boc.BitString{}, err
+		}
+		err = c.WriteBitString(label)
+		if err != nil {
+			return boc.BitString{}, err
+		}
+	}
+	return label, nil
 }
 
 func (h *HashmapE[T]) UnmarshalTLB(c *boc.Cell, tag string) error {

@@ -68,7 +68,7 @@ func (c *Client) GetAccountState(ctx context.Context, accountId tongo.AccountID)
 	if err != nil {
 		return tongo.AccountInfo{}, err
 	}
-	if b == nil {
+	if len(b) == 0 {
 		return tongo.AccountInfo{Status: tongo.AccountEmpty}, nil
 	}
 	account, err := decodeRawAccountBoc(b)
@@ -83,7 +83,7 @@ func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountI
 	if err != nil {
 		return tongo.Account{}, err
 	}
-	if b == nil {
+	if len(b) == 0 {
 		acc := tongo.Account{SumType: "AccountNone"}
 		return acc, nil
 	}

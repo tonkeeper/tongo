@@ -45,10 +45,13 @@ type ShardStateUnsplit struct {
 		MinRefMcSeqno   uint32
 		OutMsgQueueInfo tlb.Ref[tlb.Any] // TODO: implement decoding OutMsgQueueInfo fields
 		BeforeSplit     bool
-		Accounts        tlb.Ref[tlb.Any] // TODO: implement decoding Accounts fields
-		Other           tlb.Ref[tlb.Any] // TODO: implement decoding Other fields
-		Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
+		Accounts        tlb.Ref[struct {
+			ShardAccounts tlb.HashmapE[tlb.Any] `tlb:"256bits"` // TODO: implement HashmapAugE and some problems with decoding Account
+		}]
+		Other  tlb.Ref[tlb.Any] // TODO: implement decoding Other fields
+		Custom tlb.Maybe[tlb.Ref[McStateExtra]]
 	} `tlbSumType:"shard_state#9023afe2"`
+	// SplitState struct{} `tlbSumType:"split_state#5f327da5"` // rare case
 }
 
 // ShardIdent
@@ -124,4 +127,45 @@ type ShardHashes struct {
 type ConfigParams struct {
 	ConfigAddr Hash
 	Config     tlb.Ref[tlb.Any] `tlb:"32bits"` // TODO: implement decoding config
+}
+
+// DepthBalanceInfo
+// depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
+type DepthBalanceInfo struct {
+	SplitDepth uint32
+	Balance    CurrencyCollection
+}
+
+func (i *DepthBalanceInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var balance CurrencyCollection
+	splitDepth, err := c.ReadLimUint(30)
+	if err != nil {
+		return err
+	}
+	err = tlb.Unmarshal(c, &balance)
+	if err != nil {
+		return err
+	}
+	i.SplitDepth = uint32(splitDepth)
+	i.Balance = balance
+	return nil
+}
+
+// ShardState
+// _ ShardStateUnsplit = ShardState;
+// split_state#5f327da5 left:^ShardStateUnsplit right:^ShardStateUnsplit = ShardState;
+type ShardState struct { // only manual decoding
+	tlb.SumType
+	UnsplitState struct {
+		Value ShardStateUnsplit
+	} `tlbSumType:"_"`
+	SplitState struct {
+		Left  ShardStateUnsplit // ^ but decodes manually
+		Right ShardStateUnsplit // ^ but decodes manually
+	} `tlbSumType:"split_state#5f327da5"`
+}
+
+func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
+	// TODO: implement
+	return fmt.Errorf("not implemented")
 }

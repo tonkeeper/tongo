@@ -3,6 +3,7 @@ package liteclient
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"github.com/startfellows/tongo"
 	"log"
 	"testing"
@@ -68,4 +69,62 @@ func TestGetAllShards(t *testing.T) {
 	if len(shards) == 0 {
 		t.Fatal("at least one shard should returns")
 	}
+}
+
+func TestGetBlock(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	block, err := api.GetBlock(context.TODO(), info)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := block.Block.Info.Value.GetParents()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Block seqno: %v\n", block.Block.Info.Value.SeqNo)
+	fmt.Printf("1st parent block seqno: %v\n", p[0].Seqno)
+}
+
+func TestGetShardAccount(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	accountID, _ := tongo.AccountIDFromRaw("0:5f00decb7da51881764dc3959cec60609045f6ca1b89e646bde49d492705d77f")
+	acc, err := api.GetLastShardAccount(context.TODO(), *accountID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Last TX LT: %v\n", acc.LastTransLt)
+}
+
+func TestGetLastConfigAll(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = api.GetLastConfigAll(context.TODO())
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetAccountState(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	accountID, _ := tongo.AccountIDFromRaw("0:5f00decb7da51881764dc3959cec60609045f6ca1b89e646bde49d492705d77f")
+	st, err := api.GetAccountState(context.TODO(), *accountID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Account status: %v\n", st.Status)
 }

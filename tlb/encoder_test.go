@@ -160,3 +160,28 @@ func TestBitString(t *testing.T) {
 		t.Fatal("not equal")
 	}
 }
+
+func TestRefTag(t *testing.T) {
+	type A struct {
+		A int32 `tlb:"^ 15bits"`
+		B int32 `tlb:"^11bits"`
+		C int32
+	}
+	a := A{1, 2, 3}
+	var a2 A
+	c := boc.NewCell()
+	err := Marshal(c, a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.Refs()) != 2 {
+		t.Fatal("invalid cells number")
+	}
+	err = Unmarshal(c, &a2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a != a2 {
+		t.Fatal("not equal")
+	}
+}

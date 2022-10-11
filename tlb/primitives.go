@@ -9,12 +9,6 @@ import (
 
 type SumType string
 
-type tag struct {
-	Name string
-	Len  int
-	Val  uint64
-}
-
 type Maybe[T any] struct {
 	Null  bool
 	Value T

@@ -27,7 +27,7 @@ func main() {
 			ResponseDestination tongo.MsgAddress
 			CustomPayload       tlb.Maybe[tlb.Ref[boc.Cell]]
 			ForwardAmount       tlb.VarUInteger `tlb:"16bytes"`
-			ForwardPayload      tlb.Either[boc.Cell, tlb.Ref[boc.Cell]]
+			ForwardPayload      tlb.EitherRef[boc.Cell]
 		} `tlbSumType:"transfer#5fcc3d14"`
 	}
 	b, err := hex.DecodeString("b5ee9c72c10101010056000000a75fcc3d140000000000000000800c0674dd00e3a7231084788441cc873e60eb8681f44901cba3a9107c5c322dc4500034a37c6673343b360e10d4e438483b555805a20e5f056742b6a42ba35311994c802625a008a90c976e")

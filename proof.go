@@ -13,7 +13,7 @@ type MerkleProof[T any] struct {
 	MerkleProof struct {
 		VirtualHash Hash
 		Depth       uint32 `tlb:"16bits"`
-		VirtualRoot tlb.Ref[T]
+		VirtualRoot T      `tlb:"^"`
 	} `tlbSumType:"!merkle_proof#03"`
 }
 
@@ -43,12 +43,12 @@ type ShardStateUnsplit struct {
 		GenUtime        uint32
 		GenLt           uint64
 		MinRefMcSeqno   uint32
-		OutMsgQueueInfo tlb.Ref[tlb.Any] // TODO: implement decoding OutMsgQueueInfo fields
+		OutMsgQueueInfo tlb.Any `tlb:"^"` // TODO: implement decoding OutMsgQueueInfo fields
 		BeforeSplit     bool
-		Accounts        tlb.Ref[struct {
+		Accounts        struct {
 			ShardAccounts tlb.HashmapE[tlb.Any] `tlb:"256bits"` // TODO: implement HashmapAugE and some problems with decoding Account
-		}]
-		Other  tlb.Ref[tlb.Any] // TODO: implement decoding Other fields
+		} `tlb:"^"`
+		Other  tlb.Any `tlb:"^"` // TODO: implement decoding Other fields
 		Custom tlb.Maybe[tlb.Ref[McStateExtra]]
 	} `tlbSumType:"shard_state#9023afe2"`
 	// SplitState struct{} `tlbSumType:"split_state#5f327da5"` // rare case
@@ -110,7 +110,7 @@ type McStateExtra struct {
 	McStateExtra struct {
 		ShardHashes   ShardHashes
 		Config        ConfigParams
-		Other         tlb.Ref[tlb.Any] // TODO: implement decoding other fields
+		Other         tlb.Any `tlb:"^"` // TODO: implement decoding other fields
 		GlobalBalance CurrencyCollection
 	} `tlbSumType:"masterchain_state_extra#cc26"`
 }
@@ -126,7 +126,7 @@ type ShardHashes struct {
 // = ConfigParams;
 type ConfigParams struct {
 	ConfigAddr Hash
-	Config     tlb.Ref[tlb.Any] `tlb:"32bits"` // TODO: implement decoding config
+	Config     tlb.Any `tlb:"^"` // TODO: implement decoding config
 }
 
 // DepthBalanceInfo

@@ -231,9 +231,9 @@ func (w Wallet) GenerateTonTransferMessage(seqno, validUntil uint32, tonTransfer
 		info.IntMsgInfo.Value.Grams = transfer.Amount
 		intMsg := tongo.Message[tlb.Any]{
 			Info: info,
-			Body: tlb.Either[tlb.Any, tlb.Ref[tlb.Any]]{
+			Body: tlb.EitherRef[tlb.Any]{
 				IsRight: true,
-				Right:   tlb.Ref[tlb.Any]{Value: tlb.Any(*body)},
+				Value:   tlb.Any(*body),
 			},
 		}
 		intMsg.Init.Null = true

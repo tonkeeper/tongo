@@ -75,7 +75,7 @@ func TestExec(t *testing.T) {
 	}
 
 	var shardAccount tongo.ShardAccount
-	shardAccount.Account.Value = account
+	shardAccount.Account = account
 	shardAccount.LastTransLt = account.Account.Storage.LastTransLt - 1
 
 	e, err := NewEmulator(config)

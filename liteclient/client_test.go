@@ -84,11 +84,11 @@ func TestGetBlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := block.Block.Info.Value.GetParents()
+	p, err := block.Block.Info.GetParents()
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("Block seqno: %v\n", block.Block.Info.Value.SeqNo)
+	fmt.Printf("Block seqno: %v\n", block.Block.Info.SeqNo)
 	fmt.Printf("1st parent block seqno: %v\n", p[0].Seqno)
 }
 

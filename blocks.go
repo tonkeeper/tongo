@@ -248,10 +248,10 @@ type Block struct {
 	tlb.SumType
 	Block struct {
 		GlobalId    int32
-		Info        tlb.Ref[BlockInfo]
-		ValueFlow   tlb.Ref[ValueFlow]
-		StateUpdate tlb.Ref[tlb.Any] // TODO: implement MERKLE_UPDATE ShardState
-		Extra       tlb.Ref[BlockExtra]
+		Info        BlockInfo  `tlb:"^"`
+		ValueFlow   ValueFlow  `tlb:"^"`
+		StateUpdate tlb.Any    `tlb:"^"` // TODO: implement MERKLE_UPDATE ShardState
+		Extra       BlockExtra `tlb:"^"`
 	} `tlbSumType:"block#11ef55aa"`
 }
 
@@ -270,19 +270,19 @@ type Block struct {
 type ValueFlow struct {
 	tlb.SumType
 	ValueFlow struct {
-		Values1 tlb.Ref[struct {
+		Values1 struct {
 			FromPrevBlk CurrencyCollection
 			ToNextBlk   CurrencyCollection
 			Imported    CurrencyCollection
 			Exported    CurrencyCollection
-		}]
+		} `tlb:"^"`
 		FeesCollected CurrencyCollection
-		Values2       tlb.Ref[struct {
+		Values2       struct {
 			FeesImported CurrencyCollection
 			Recovered    CurrencyCollection
 			Created      CurrencyCollection
 			Minted       CurrencyCollection
-		}]
+		} `tlb:"^"`
 	} `tlbSumType:"value_flow#b8e48dfb"`
 }
 
@@ -296,9 +296,9 @@ type ValueFlow struct {
 type BlockExtra struct {
 	tlb.SumType
 	BlockExtra struct {
-		InMsgDescr    tlb.Ref[tlb.Any] // TODO: implement InMsgDescr
-		OutMsgDescr   tlb.Ref[tlb.Any] // TODO: implement OutMsgDescr
-		AccountBlocks tlb.Ref[tlb.Any] // TODO: implement ShardAccountBlocks
+		InMsgDescr    tlb.Any `tlb:"^"` // TODO: implement InMsgDescr
+		OutMsgDescr   tlb.Any `tlb:"^"` // TODO: implement OutMsgDescr
+		AccountBlocks tlb.Any `tlb:"^"` // TODO: implement ShardAccountBlocks
 		RandSeed      Hash
 		CreatedBy     Hash
 		Custom        tlb.Maybe[tlb.Ref[tlb.Any]] // TODO: implement McBlockExtra
@@ -379,7 +379,7 @@ type MerkleUpdate[T any] struct {
 	MerkleUpdate struct {
 		OldHash Hash
 		NewHash Hash
-		Old     tlb.Ref[T]
-		New     tlb.Ref[T]
+		Old     T `tlb:"^"`
+		New     T `tlb:"^"`
 	} `tlbSumType:"!merkle_update#02"`
 }

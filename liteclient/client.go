@@ -97,7 +97,7 @@ func (c *Client) GetLastShardAccount(ctx context.Context, accountId tongo.Accoun
 	}
 	var sa tongo.ShardAccount
 	if len(a.State) == 0 {
-		sa.Account.Value.SumType = "AccountNone"
+		sa.Account.SumType = "AccountNone"
 		return sa, nil
 	}
 	account, err := decodeRawAccountBoc(a.State)
@@ -113,7 +113,7 @@ func (c *Client) GetLastShardAccount(ctx context.Context, accountId tongo.Accoun
 	}
 	sa.LastTransHash = hash
 	sa.LastTransLt = lt
-	sa.Account.Value = account
+	sa.Account = account
 	return sa, nil
 }
 
@@ -275,11 +275,11 @@ func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint6
 		return 0, tongo.Hash{}, err
 	}
 	if proof.Proof.SumType != "MerkleProof" ||
-		proof.Proof.MerkleProof.VirtualRoot.Value.SumType != "ShardStateUnsplit" {
+		proof.Proof.MerkleProof.VirtualRoot.SumType != "ShardStateUnsplit" {
 		return 0, tongo.Hash{}, fmt.Errorf("can not extract ShardAccounts")
 	}
-	values := proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Accounts.Value.ShardAccounts.Values()
-	keys := proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Accounts.Value.ShardAccounts.Keys()
+	values := proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Accounts.ShardAccounts.Values()
+	keys := proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Accounts.ShardAccounts.Keys()
 	for i, k := range keys {
 		keyVal, err := k.ReadBytes(32)
 		if err != nil {
@@ -290,7 +290,7 @@ func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint6
 			var a struct {
 				DepthBalanceInfo tongo.DepthBalanceInfo
 				Account          struct {
-					// Account       tlb.Ref[Account] // TODO: invalid data in Account cell
+					// Account       Account `tlb:"^"` // TODO: invalid data in Account cell
 					LastTransHash tongo.Hash
 					LastTransLt   uint64
 				}
@@ -555,12 +555,12 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 		return nil, err
 	}
 	if proof.Proof.SumType != "MerkleProof" ||
-		proof.Proof.MerkleProof.VirtualRoot.Value.SumType != "ShardStateUnsplit" ||
-		proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Null ||
-		proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.SumType != "McStateExtra" {
+		proof.Proof.MerkleProof.VirtualRoot.SumType != "ShardStateUnsplit" ||
+		proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Null ||
+		proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.SumType != "McStateExtra" {
 		return nil, fmt.Errorf("can not extract config")
 	}
-	conf := boc.Cell(proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config.Config.Value)
+	conf := boc.Cell(proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config.Config)
 	return &conf, nil
 }
 

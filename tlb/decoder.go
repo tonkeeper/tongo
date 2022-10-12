@@ -21,6 +21,16 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
+	t, err := parseTag(tag)
+	if err != nil {
+		return err
+	}
+	if t.IsRef {
+		c, err = c.NextRef()
+		if err != nil {
+			return err
+		}
+	}
 	i, ok := reflect.New(val.Type()).Interface().(UnmarshalerTLB)
 	if ok {
 		err := i.UnmarshalTLB(c, tag)
@@ -35,16 +45,10 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 	}
 	switch val.Kind() {
 	case reflect.Uint32, reflect.Int32:
-		var ln int
-		if tag != "" {
-			_, err := fmt.Sscanf(tag, "%dbits", &ln)
-			if err != nil {
-				return err
-			}
-			if ln > 32 {
-				return fmt.Errorf("can not marshal %v bits to 32 bits integer", ln)
-			}
-		} else {
+		ln := t.Len
+		if ln > 32 {
+			return fmt.Errorf("can not marshal %v bits to 32 bits integer", ln)
+		} else if ln == 0 {
 			ln = 32
 		}
 		v, err := c.ReadUint(ln)
@@ -58,16 +62,10 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		}
 		return nil
 	case reflect.Uint64, reflect.Int64:
-		var ln int
-		if tag != "" {
-			_, err := fmt.Sscanf(tag, "%dbits", &ln)
-			if err != nil {
-				return err
-			}
-			if ln > 64 {
-				return fmt.Errorf("can not marshal %v bits to 64 bits integer", ln)
-			}
-		} else {
+		ln := t.Len
+		if ln > 64 {
+			return fmt.Errorf("can not marshal %v bits to 64 bits integer", ln)
+		} else if ln == 0 {
 			ln = 64
 		}
 		v, err := c.ReadUint(ln)
@@ -130,7 +128,7 @@ func decodeSumType(c *boc.Cell, val reflect.Value, tag string) error {
 			continue
 		}
 		tag = val.Type().Field(i).Tag.Get("tlbSumType")
-		ok, err := compareWithTag(c, tag)
+		ok, err := compareWithSumTag(c, tag)
 		if err != nil {
 			return err
 		}
@@ -146,8 +144,8 @@ func decodeSumType(c *boc.Cell, val reflect.Value, tag string) error {
 	return fmt.Errorf("can not decode sumtype")
 }
 
-func compareWithTag(c *boc.Cell, tag string) (bool, error) {
-	t, err := parseTag(tag)
+func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {
+	t, err := parseSumTag(tag)
 	if err != nil {
 		return false, err
 	}

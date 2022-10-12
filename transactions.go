@@ -12,8 +12,8 @@ import (
 // body:(Either X ^X) = Message X;
 type Message[T any] struct {
 	Info CommonMsgInfo
-	Init tlb.Maybe[tlb.Either[StateInit, tlb.Ref[StateInit]]]
-	Body tlb.Either[T, tlb.Ref[T]]
+	Init tlb.Maybe[tlb.EitherRef[StateInit]]
+	Body tlb.EitherRef[T]
 }
 
 // CommonMsgInfo
@@ -223,7 +223,7 @@ type TickTock struct {
 // simple_lib$_ public:Bool root:^Cell = SimpleLib;
 type SimpleLib struct {
 	Public bool
-	Root   tlb.Ref[boc.Cell]
+	Root   boc.Cell `tlb:"^"`
 }
 
 // Transaction
@@ -245,13 +245,13 @@ type Transaction struct {
 		OutmsgCnt     uint32 `tlb:"15bits"`
 		OrigStatus    AccountStatus
 		EndStatus     AccountStatus
-		Msgs          tlb.Ref[struct {
+		Msgs          struct {
 			InMsg   tlb.Maybe[tlb.Ref[Message[tlb.Any]]]
 			OutMsgs tlb.HashmapE[tlb.Ref[Message[tlb.Any]]] `tlb:"15bits"`
-		}]
+		} `tlb:"^"`
 		TotalFees   CurrencyCollection
-		StateUpdate tlb.Ref[HashUpdate]
-		Description tlb.Ref[TransactionDescr]
+		StateUpdate HashUpdate       `tlb:"^"`
+		Description TransactionDescr `tlb:"^"`
 	} `tlbSumType:"transaction$0111"`
 }
 
@@ -371,7 +371,7 @@ type TrComputePhase struct {
 		MsgStateUsed     bool
 		AccountActivated bool
 		GasFees          Grams
-		Vm               tlb.Ref[struct {
+		Vm               struct {
 			GasUsed   tlb.VarUInteger `tlb:"7bytes"`
 			GasLimit  tlb.VarUInteger `tlb:"7bytes"`
 			GasCredit tlb.Maybe[struct {
@@ -383,7 +383,7 @@ type TrComputePhase struct {
 			VmSteps          uint32
 			VmInitStateHash  Hash
 			VmFinalStateHash Hash
-		}]
+		} `tlb:"^"`
 	} `tlbSumType:"tr_phase_compute_vm$1"`
 }
 
@@ -476,25 +476,25 @@ type TrBouncePhase struct {
 
 func (tx Transaction) IsSuccess() bool {
 	success := true
-	switch tx.Transaction.Description.Value.SumType {
+	switch tx.Transaction.Description.SumType {
 	case "TransStorage":
 		return true // TODO: check logic
 	case "TransOrd":
 		{
-			if tx.Transaction.Description.Value.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Transaction.Description.Value.TransOrd.ComputePh.TrPhaseComputeVm.Success
+			if tx.Transaction.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Transaction.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Transaction.Description.Value.TransOrd.Action.Null {
-				success = success && tx.Transaction.Description.Value.TransOrd.Action.Value.Value.Success
+			if !tx.Transaction.Description.TransOrd.Action.Null {
+				success = success && tx.Transaction.Description.TransOrd.Action.Value.Value.Success
 			}
 		}
 	case "TransTickTock":
 		{
-			if tx.Transaction.Description.Value.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Transaction.Description.Value.TransTickTock.ComputePh.TrPhaseComputeVm.Success
+			if tx.Transaction.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Transaction.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Transaction.Description.Value.TransTickTock.Action.Null {
-				success = success && tx.Transaction.Description.Value.TransTickTock.Action.Value.Value.Success
+			if !tx.Transaction.Description.TransTickTock.Action.Null {
+				success = success && tx.Transaction.Description.TransTickTock.Action.Value.Value.Success
 			}
 		}
 	}
@@ -507,15 +507,15 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, i
 		Info: CommonMsgInfo{
 			SumType: "ExtInMsgInfo",
 		},
-		Body: tlb.Either[tlb.Any, tlb.Ref[tlb.Any]]{
+		Body: tlb.EitherRef[tlb.Any]{
 			IsRight: true,
-			Right:   tlb.Ref[tlb.Any]{Value: tlb.Any(*body)},
+			Value:   tlb.Any(*body),
 		},
 	}
 	if init != nil {
 		msg.Init.Null = false
 		msg.Init.Value.IsRight = true
-		msg.Init.Value.Right.Value = *init
+		msg.Init.Value.Value = *init
 	} else {
 		msg.Init.Null = true
 	}

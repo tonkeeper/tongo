@@ -245,7 +245,7 @@ func (a *AccountStatus) UnmarshalTLB(c *boc.Cell, tag string) error {
 // account_descr$_ account:^Account last_trans_hash:bits256
 // last_trans_lt:uint64 = ShardAccount;
 type ShardAccount struct {
-	Account       tlb.Ref[Account]
+	Account       Account `tlb:"^"`
 	LastTransHash Hash
 	LastTransLt   uint64
 }

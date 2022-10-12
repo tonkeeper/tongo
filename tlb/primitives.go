@@ -9,12 +9,6 @@ import (
 
 type SumType string
 
-type tag struct {
-	Name string
-	Len  int
-	Val  uint64
-}
-
 type Maybe[T any] struct {
 	Null  bool
 	Value T
@@ -92,6 +86,40 @@ func (m *Either[_, _]) UnmarshalTLB(c *boc.Cell, tag string) error {
 		}
 	}
 	return nil
+}
+
+type EitherRef[T any] struct {
+	IsRight bool
+	Value   T
+}
+
+func (m EitherRef[_]) MarshalTLB(c *boc.Cell, tag string) error {
+	err := c.WriteBit(m.IsRight)
+	if err != nil {
+		return err
+	}
+	if m.IsRight {
+		c, err = c.NewRef()
+		if err != nil {
+			return err
+		}
+	}
+	return Marshal(c, m.Value)
+}
+
+func (m *EitherRef[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	isRight, err := c.ReadBit()
+	if err != nil {
+		return err
+	}
+	m.IsRight = isRight
+	if isRight {
+		c, err = c.NextRef()
+		if err != nil {
+			return err
+		}
+	}
+	return Unmarshal(c, &m.Value)
 }
 
 type Ref[T any] struct {

@@ -26,6 +26,14 @@ type result struct {
 	ShardAccount string `json:"shard_account"`
 }
 
+type EmulatorError struct {
+	text string
+}
+
+func (e EmulatorError) Error() string {
+	return e.text
+}
+
 func NewEmulator(config *boc.Cell) (Emulator, error) {
 	configBoc, err := config.ToBocBase64()
 	if err != nil {
@@ -66,7 +74,7 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 	}
 
 	if res.Success == false {
-		return tongo.ShardAccount{}, tongo.Transaction{}, fmt.Errorf("emulation error: %v", res.Error)
+		return tongo.ShardAccount{}, tongo.Transaction{}, EmulatorError{text: fmt.Sprintf("message rejected: %v", res.Error)}
 	}
 
 	accountCell, err := boc.DeserializeBocBase64(res.ShardAccount)

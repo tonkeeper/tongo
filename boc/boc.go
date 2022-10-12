@@ -23,6 +23,9 @@ var leanBocMagicPrefixCRC = []byte{
 	0xac, 0xc3, 0xa7, 0x28,
 }
 
+const hashSize = 32
+const depthSize = 2
+
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
 
 func ByteArrayEquals(a []byte, b []byte) bool {
@@ -131,13 +134,17 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 	}
 
 	// Index
-	index := make([]uint, 0)
+	index := make([]uint, 0, cellsNum)
 	if hasIdx {
 		if len(boc) < offsetBytes*int(cellsNum) {
 			return nil, errors.New("not enough bytes for index encoding")
 		}
 		for i := 0; i < int(cellsNum); i++ {
-			index = append(index, readNBytesUIntFromArray(offsetBytes, boc))
+			val := readNBytesUIntFromArray(offsetBytes, boc)
+			if hasCacheBits {
+				val /= 2
+			}
+			index = append(index, val)
 			boc = boc[offsetBytes:]
 		}
 	}
@@ -193,6 +200,8 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	refNum := int(d1 % 8)
 	dataBytesSize := int(math.Ceil(float64(d2) / 2))
 	fullfilledBytes := !((d2 % 2) > 0)
+	withHashes := (d1 & 0b10000) != 0
+	levelMask := d1 >> 5
 
 	var cell *Cell
 	if isExotic {
@@ -201,6 +210,13 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 		cell = NewCell()
 	}
 	var refs = make([]int, 0)
+
+	if withHashes {
+		maskBits := int(math.Ceil(math.Log2(float64(levelMask) + 1)))
+		hashesNum := maskBits + 1
+		offset := hashesNum*hashSize + hashesNum*depthSize
+		cellData = cellData[offset:]
+	}
 
 	if len(cellData) < dataBytesSize+referenceIndexSize*refNum {
 		return nil, nil, nil, errors.New("not enough bytes to encode cell data")

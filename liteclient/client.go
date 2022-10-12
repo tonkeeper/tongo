@@ -129,6 +129,17 @@ type LiteServerMasterchainInfo struct {
 	// TODO: add init
 }
 
+type LiteServerMasterchainInfoExt struct {
+	Mode          uint32
+	Version       uint32
+	Capabilities  uint64
+	Last          tongo.TonNodeBlockIdExt
+	LastUTime     uint32
+	Now           uint32
+	StateRootHash tongo.Hash
+	// TODO: add init
+}
+
 type LiteServerAccountState struct {
 	Id         tongo.TonNodeBlockIdExt
 	ShardBlk   tongo.TonNodeBlockIdExt
@@ -189,6 +200,17 @@ func makeLiteServerGetMasterchainInfoRequest() []byte {
 	return payload
 }
 
+func makeLiteServerGetMasterchainInfoExtRequest(mode uint32) ([]byte, error) {
+	payload := make([]byte, 4)
+	binary.BigEndian.PutUint32(payload, LiteServerGetMasterchainInfoExtTag)
+	m, err := tl.Marshal(mode)
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, m...)
+	return payload, nil
+}
+
 func makeLiteServerAllShardsInfoRequest(blockIdExt tongo.TonNodeBlockIdExt) ([]byte, error) {
 	payload := make([]byte, 4)
 	binary.BigEndian.PutUint32(payload, LiteServerGetAllShardsInfoTag)
@@ -197,6 +219,90 @@ func makeLiteServerAllShardsInfoRequest(blockIdExt tongo.TonNodeBlockIdExt) ([]b
 		return nil, err
 	}
 	payload = append(payload, block...)
+	return payload, nil
+}
+
+// liteServer.getValidatorStats#091a58bc mode:# id:tonNode.blockIdExt
+// limit:int start_after:mode.0?int256 modified_after:mode.2?int
+// = liteServer.ValidatorStats;
+func makeLiteServerGetValidatorStatsRequest(mode uint32,
+	blockIdExt tongo.TonNodeBlockIdExt,
+	limit uint32,
+	startAfter *tongo.Hash,
+	modifiedAfter *uint32,
+) ([]byte, error) {
+	payload := make([]byte, 4)
+	binary.BigEndian.PutUint32(payload, LiteServerGetValidatorStatsTag)
+	m, err := tl.Marshal(mode)
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, m...)
+	block, err := blockIdExt.MarshalTL()
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, block...)
+	l, err := tl.Marshal(limit)
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, l...)
+	if (mode & 0x01) == 0x1 { // start_after:mode.0?int256
+		if startAfter == nil {
+			return nil, fmt.Errorf("startAfter is null, but mode.0 is true. Please, see lite_api.tl")
+		}
+		sA, err := startAfter.MarshalTL()
+		if err != nil {
+			return nil, err
+		}
+		payload = append(payload, sA...)
+	}
+	if (mode & 0x04) == 0x4 { // modified_after:mode.2?int
+		if modifiedAfter == nil {
+			return nil, fmt.Errorf("modifiedAfter is null, but mode.2 is true. Please, see lite_api.tl")
+		}
+		mA, err := tl.Marshal(modifiedAfter)
+		if err != nil {
+			return nil, err
+		}
+		payload = append(payload, mA...)
+	}
+	return payload, nil
+}
+
+// liteServer.lookupBlock mode:# id:tonNode.blockId lt:mode.1?long
+// utime:mode.2?int = liteServer.BlockHeader;
+func makeLiteServerLookupBlockRequest(mode uint32,
+	blockId tongo.TonNodeBlockId,
+	lt uint64, utime uint32,
+) ([]byte, error) {
+	payload := make([]byte, 4)
+	binary.BigEndian.PutUint32(payload, LiteServerLookupBlockTag)
+	m, err := tl.Marshal(mode)
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, m...)
+	block, err := tl.Marshal(blockId)
+	if err != nil {
+		return nil, err
+	}
+	payload = append(payload, block...)
+	if (mode & 0x02) == 0x2 { // lt:mode.1?long
+		l, err := tl.Marshal(lt)
+		if err != nil {
+			return nil, err
+		}
+		payload = append(payload, l...)
+	}
+	if (mode & 0x04) == 0x4 { // utime:mode.2?int
+		u, err := tl.Marshal(utime)
+		if err != nil {
+			return nil, err
+		}
+		payload = append(payload, u...)
+	}
 	return payload, nil
 }
 
@@ -419,7 +525,7 @@ func downloadConfig(path string) (*config.Options, error) {
 // liteServer.getConfigAll mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
 // liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
 // Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof
-func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
+func (c *Client) GetLastConfigAll(ctx context.Context) (*tongo.ConfigParams, error) {
 	type getConfigAllRequest struct {
 		Mode uint32
 		ID   tongo.TonNodeBlockIdExt
@@ -487,8 +593,106 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 		proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.SumType != "McStateExtra" {
 		return nil, fmt.Errorf("can not extract config")
 	}
-	conf := boc.Cell(proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config.Config.Value)
-	return &conf, nil
+	//conf := boc.Cell(proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config.Config.Value)
+	return &proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config, nil
+}
+
+// GetLastConfigAll
+// liteServer.getConfigAll mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
+// liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
+// Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof
+func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) {
+	type getConfigAllRequest struct {
+		Mode uint32
+		ID   tongo.TonNodeBlockIdExt
+	}
+	type configInfo struct {
+		Mode        uint32
+		ID          tongo.TonNodeBlockIdExt
+		StateProof  []byte
+		ConfigProof []byte
+	}
+
+	lastBlock, err := c.GetMasterchainInfoExt(ctx, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	r := struct {
+		tl.SumType
+		GetConfigAllRequest getConfigAllRequest `tlSumType:"b7261b91"`
+	}{
+		SumType: "GetConfigAllRequest",
+		GetConfigAllRequest: getConfigAllRequest{
+			Mode: 0,
+			ID:   lastBlock,
+		},
+	}
+
+	rBytes, err := tl.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(rBytes)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	var pResp struct {
+		tl.SumType
+		ConfigInfo configInfo      `tlSumType:"2f277bae"`
+		Error      LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &pResp)
+	if err != nil {
+		return nil, err
+	}
+	if pResp.SumType == "Error" {
+		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+	}
+	// fmt.Println(fmt.Sprintf("config proof : %x", string(pResp.ConfigInfo.ConfigProof)))
+	// fmt.Println(fmt.Sprintf("state proof : %x", string(pResp.ConfigInfo.StateProof)))
+	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
+	if err != nil {
+		return nil, err
+	}
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
+	}
+	err = tlb.Unmarshal(cell[0], &proof)
+	if err != nil {
+		return nil, err
+	}
+	// for _, v := range proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.OutMsgQueueInf.Value.OutQueue.Queue.Values() {
+	// 	fmt.Println("message: ", v.OutMsg.Value.MsgEnvelope.CurrentAddress)
+	// }
+	// if proof.Proof.SumType != "MerkleProof" ||
+	// 	proof.Proof.MerkleProof.VirtualRoot.Value.SumType != "ShardStateUnsplit" ||
+	// 	proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Null ||
+	// 	proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.SumType != "McStateExtra" {
+	// 	return nil, fmt.Errorf("can not extract config")
+	// }
+	//conf := boc.Cell(proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config.Config.Value)
+	// lb := proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Other.
+	validatorStats, err := c.ValidatorStats(ctx, 0, lastBlock, 1000, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	lastBlockId := tongo.TonNodeBlockId{
+		Workchain: lastBlock.Workchain,
+		Shard:     lastBlock.Shard,
+		Seqno:     lastBlock.Seqno,
+	}
+	_, err = c.LookupBlock(ctx, 4, lastBlockId, 0, 1665483856)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("validatorStats: ", validatorStats.ShardStateUnsplit)
+	fmt.Println("------------------------------------------------------")
+	fmt.Println("mcInfo: ", proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit)
+
+	return &proof.Proof.MerkleProof.VirtualRoot.Value.ShardStateUnsplit.Custom.Value.Value, nil
 }
 
 // GetMasterchainInfo
@@ -515,6 +719,41 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdEx
 		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
 	case "LiteServerMasterchainInfo":
 		return parsedResp.LiteServerMasterchainInfo.Last, nil
+	default:
+		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("masterchain info not recieved")
+	}
+
+}
+
+// GetMasterchainInfoExt
+// liteServer.getMasterchainInfoExt mode:# = liteServer.MasterchainInfoExt;
+// liteServer.masterchainInfoExt mode:# version:int capabilities:long
+// last:tonNode.blockIdExt last_utime:int now:int state_root_hash:int256
+// init:tonNode.zeroStateIdExt = liteServer.MasterchainInfoExt;
+func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (tongo.TonNodeBlockIdExt, error) {
+	asReq, err := makeLiteServerGetMasterchainInfoExtRequest(mode)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, err
+	}
+	req := makeLiteServerQueryRequest(asReq)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, err
+	}
+	var parsedResp struct {
+		tl.SumType
+		LiteServerError              LiteServerError              `tlSumType:"48e1a9bb"`
+		LiteServerMasterchainInfoExt LiteServerMasterchainInfoExt `tlSumType:"f5e0cca8"`
+	}
+	err = tl.Unmarshal(bytes.NewReader(resp), &parsedResp)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, err
+	}
+	switch parsedResp.SumType {
+	case "LiteServerError":
+		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
+	case "LiteServerMasterchainInfoExt":
+		return parsedResp.LiteServerMasterchainInfoExt.Last, nil
 	default:
 		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("masterchain info not recieved")
 	}
@@ -634,4 +873,98 @@ func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdE
 
 	}
 	return shards, nil
+}
+
+func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.TonNodeBlockIdExt, limit uint32, startAfter *tongo.Hash, modifiedAfter *uint32) (*tongo.ShardStateUnsplit, error) {
+	asReq, err := makeLiteServerGetValidatorStatsRequest(mode, last, limit, startAfter, modifiedAfter)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(asReq)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	var response struct {
+		tl.SumType
+		LiteServerValidatorStats struct {
+			Mode       uint32
+			Id         tongo.TonNodeBlockIdExt
+			Count      uint32
+			Complete   uint32
+			StateProof []byte
+			DataProof  []byte
+		} `tlSumType:"d896f7b9"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+
+	err = tl.Unmarshal(bytes.NewReader(resp), &response)
+	if err != nil {
+		return nil, err
+	}
+	cells, err := boc.DeserializeBoc(response.LiteServerValidatorStats.DataProof)
+	if err != nil {
+		return nil, err
+	}
+	// s := atl.NewTlDecoderStruct(resp)
+	// err = atl.Unmarshal(&s, response)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// cells, err := boc.DeserializeBoc(response.LiteServerValidatorStats.DataProof)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
+	}
+	err = tlb.Unmarshal(cells[0], &proof)
+	if err != nil {
+		return nil, err
+	}
+
+	// }
+	return &proof.Proof.MerkleProof.VirtualRoot.Value, nil //shards, nil
+}
+
+func (c *Client) LookupBlock(ctx context.Context, mode uint32, last tongo.TonNodeBlockId, lt uint64, utime uint32) (*tongo.Block, error) {
+	asReq, err := makeLiteServerLookupBlockRequest(mode, last, lt, utime)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(asReq)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	var response struct {
+		tl.SumType
+		LiteServerLookupBlock struct {
+			Id          tongo.TonNodeBlockIdExt
+			Mode        uint32
+			HeaderProof []byte
+		} `tlSumType:"19822d75"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+
+	err = tl.Unmarshal(bytes.NewReader(resp), &response)
+	if err != nil {
+		return nil, err
+	}
+	cells, err := boc.DeserializeBoc(response.LiteServerLookupBlock.HeaderProof)
+	if err != nil {
+		return nil, err
+	}
+
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.Block]
+	}
+	err = tlb.Unmarshal(cells[0], &proof)
+	if err != nil {
+		return nil, err
+	}
+
+	// }
+	return &proof.Proof.MerkleProof.VirtualRoot.Value, nil
 }

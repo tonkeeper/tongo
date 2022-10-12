@@ -2,9 +2,10 @@ package tlb
 
 import (
 	"fmt"
-	"github.com/startfellows/tongo/boc"
 	"math/big"
 	"reflect"
+
+	"github.com/startfellows/tongo/boc"
 )
 
 type UnmarshalerTLB interface {

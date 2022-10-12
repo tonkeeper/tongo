@@ -2,11 +2,12 @@ package tlb
 
 import (
 	"fmt"
-	"github.com/startfellows/tongo/boc"
 	"math/big"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/startfellows/tongo/boc"
 )
 
 type MarshalerTLB interface {

@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+type TonNodeBlockId struct {
+	Workchain int32
+	Shard     int64
+	Seqno     int32
+}
+
 type TonNodeBlockIdExt struct {
 	Workchain int32
 	Shard     int64

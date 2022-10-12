@@ -7,9 +7,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/startfellows/tongo/boc"
 	"io"
 	"strings"
+
+	"github.com/startfellows/tongo/atl"
+	"github.com/startfellows/tongo/boc"
 )
 
 type Hash [32]byte
@@ -135,6 +137,14 @@ func (h *Hash) UnmarshalTL(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	*h = b
+	return nil
+}
+
+func (h *Hash) AUnmarshalTL(buf *atl.TlDecoderStruct) error {
+	var b [32]byte
+	copy(b[:], buf.Buf[:32])
+	buf.Buf = buf.Buf[32:]
 	*h = b
 	return nil
 }

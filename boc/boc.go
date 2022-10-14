@@ -1,6 +1,7 @@
 package boc
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/binary"
@@ -27,18 +28,6 @@ const hashSize = 32
 const depthSize = 2
 
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
-
-func ByteArrayEquals(a []byte, b []byte) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-	return true
-}
 
 func readNBytesUIntFromArray(n int, arr []byte) uint {
 	var res uint = 0
@@ -83,20 +72,20 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 		sizeBytes    int
 	)
 
-	if ByteArrayEquals(prefix, reachBocMagicPrefix) {
+	if bytes.Equal(prefix, reachBocMagicPrefix) {
 		var flagsByte = boc[0]
 		hasIdx = (flagsByte & 128) > 0
 		hashCrc32 = (flagsByte & 64) > 0
 		hasCacheBits = (flagsByte & 32) > 0
 		flags = int((flagsByte&16)*2 + (flagsByte & 8))
 		sizeBytes = int(flagsByte % 8)
-	} else if ByteArrayEquals(prefix, leanBocMagicPrefix) {
+	} else if bytes.Equal(prefix, leanBocMagicPrefix) {
 		hasIdx = true
 		hashCrc32 = false
 		hasCacheBits = false
 		flags = 0
 		sizeBytes = int(boc[0])
-	} else if ByteArrayEquals(prefix, leanBocMagicPrefixCRC) {
+	} else if bytes.Equal(prefix, leanBocMagicPrefixCRC) {
 		hasIdx = true
 		hashCrc32 = true
 		hasCacheBits = false

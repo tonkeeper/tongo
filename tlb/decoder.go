@@ -141,7 +141,7 @@ func decodeSumType(c *boc.Cell, val reflect.Value, tag string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("can not decode sumtype")
+	return fmt.Errorf("can not decode sumtype %v", tag)
 }
 
 func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {

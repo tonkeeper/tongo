@@ -1,6 +1,8 @@
 package tongo
 
 import (
+	"fmt"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
@@ -34,32 +36,75 @@ type MerkleProof[T any] struct {
 // = ShardStateUnsplit;
 type ShardStateUnsplit struct {
 	tlb.SumType
-	ShardStateUnsplit struct {
-		GlobalID        int32
-		ShardID         ShardIdent
-		SeqNo           uint32
-		VertSeqNo       uint32
-		GenUtime        uint32
-		GenLt           uint64
-		MinRefMcSeqno   uint32
-		OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"` // TODO: implement decoding OutMsgQueueInfo fields
-		BeforeSplit     bool
-		Accounts        tlb.Ref[tlb.Any] // TODO: implement decoding Accounts fields
-		Other           tlb.Ref[tlb.Any] // TODO: implement decoding Other fields
-		Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
-	} `tlbSumType:"shard_state#9023afe2"`
+	ShardStateUnsplit ShardStateUnsplitData `tlbSumType:"shard_state#9023afe2"`
 	// SplitState struct{} `tlbSumType:"split_state#5f327da5"` // rare case
 }
 
+type ShardStateUnsplitData struct {
+	GlobalID        int32
+	ShardID         ShardIdent
+	SeqNo           uint32
+	VertSeqNo       uint32
+	GenUtime        uint32
+	GenLt           uint64
+	MinRefMcSeqno   uint32
+	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
+	BeforeSplit     bool
+	Accounts        ShardAccounts          `tlb:"^"`
+	Other           ShardStateUnsplitOther `tlb:"^"`
+	Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
+}
+
+// ShardState
 // _ ShardStateUnsplit = ShardState;
 // split_state#5f327da5 left:^ShardStateUnsplit right:^ShardStateUnsplit = ShardState;
-type ShardState struct {
+type ShardState struct { // only manual decoding
 	tlb.SumType
-	ShardStateUnsplit
+	UnsplitState struct {
+		Value ShardStateUnsplit
+	} `tlbSumType:"_"`
 	SplitState struct {
-		Left  tlb.Ref[ShardStateUnsplit]
-		Right tlb.Ref[ShardStateUnsplit]
+		Left  ShardStateUnsplit `tlb:"^"` // ^ but decodes manually
+		Right ShardStateUnsplit `tlb:"^"` // ^ but decodes manually
 	} `tlbSumType:"split_state#5f327da5"`
+}
+
+func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
+	sumType, err := c.ReadUint(32)
+	if err != nil {
+		return err
+	}
+	switch sumType {
+	case 0x5f327da5:
+		c1, err := c.NextRef()
+		if err != nil {
+			return err
+		}
+		err = tlb.Unmarshal(c1, &s.SplitState.Left)
+		if err != nil {
+			return err
+		}
+		c1, err = c.NextRef()
+		if err != nil {
+			return err
+		}
+		err = tlb.Unmarshal(c1, &s.SplitState.Right)
+		if err != nil {
+			return err
+		}
+		break
+	case 0x9023afe2:
+		var shardUnsplitData ShardStateUnsplitData
+		err = tlb.Unmarshal(c, &shardUnsplitData)
+		if err != nil {
+			return err
+		}
+		s.UnsplitState.Value.ShardStateUnsplit = shardUnsplitData
+		break
+	default:
+		return fmt.Errorf("invalid tag")
+	}
+	return nil
 }
 
 // ShardIdent
@@ -68,88 +113,121 @@ type ShardState struct {
 type ShardIdent struct {
 	tlb.SumType
 	ShardIdent struct {
-		ShardPfxBits uint64 `tlb:"6bits"` // TODO: implement lim uint tag
+		ShardPfxBits uint64 `tlb:"6bits"`
 		WorkchainID  int32
 		ShardPrefix  uint64
 	} `tlbSumType:"shardident$00"`
 }
 
-// func (s *ShardIdent) UnmarshalTLB(c *boc.Cell, tag string) error {
-// 	t, err := c.ReadUint(2)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if t != 0 {
-// 		return fmt.Errorf("invalid tag")
-// 	}
-// 	prefixBits, err := c.ReadLimUint(60)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	workchain, err := c.ReadInt(32)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	prefix, err := c.ReadUint(64)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	s.SumType = "ShardIdent"
-// 	s.ShardIdent.ShardPfxBits = uint64(prefixBits)
-// 	s.ShardIdent.WorkchainID = int32(workchain)
-// 	s.ShardIdent.ShardPrefix = prefix
-// 	return nil
-// }
-
-// _ out_queue:OutMsgQueue proc_info:ProcessedInfo
-// ihr_pending:IhrPendingInfo = OutMsgQueueInfo;
-type OutMsgQueueInfo struct {
-	OutQueue  OutMsgQueue
-	ProcInfo  ProcessedInfo
-	IhrPendig IhrPendingInfo
+// sig_pair$_ node_id_short:bits256 sign:CryptoSignature = CryptoSignaturePair;  // 256+x ~ 772 bits
+type CryptoSignaturePair struct {
+	NodeIdShort Hash
+	Sign        CryptoSignature
 }
 
-// _ (HashmapAugE 352 EnqueuedMsg uint64) = OutMsgQueue;
-type OutMsgQueue struct {
-	//Queue tlb.HashmapE[EnqueuedMsg] `tlb:"352bits"`
-	Queue tlb.HashmapAugE[EnqueuedMsg, uint64] `tlb:"352bits"`
-}
-
-// _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;
-type EnqueuedMsg struct {
-	EnqueuedLt uint64
-	OutMsg     tlb.Ref[MsgEnvelope]
-}
-
-// 	msg_envelope#4 cur_addr:IntermediateAddress
-//  next_addr:IntermediateAddress fwd_fee_remaining:Grams
-//  msg:^(Message Any) = MsgEnvelope;
-type MsgEnvelope struct {
+// ed25519_signature#5 R:bits256 s:bits256 = CryptoSignatureSimple;  // 516 bits
+// _ CryptoSignatureSimple = CryptoSignature;
+// chained_signature#f signed_cert:^SignedCertificate temp_key_signature:CryptoSignatureSimple
+//   = CryptoSignature;   // 4+(356+516)+516 = 520 bits+ref (1392 bits total)
+type CryptoSignatureSimple struct {
 	tlb.SumType
-	MsgEnvelope struct {
-		CurrentAddress  IntermediateAddress
-		NextAddress     IntermediateAddress
-		FwdFeeRemaining Grams
-		Msg             tlb.Ref[Message[tlb.Any]]
-	} `tlbSumType:"msg_envelope#4"`
+	CryptoSignatureSimple CryptoSignatureSimpleData `tlbSumType:"ed25519_signature#5"`
+}
+type CryptoSignature struct {
+	tlb.SumType
+	CryptoSignatureSimple CryptoSignatureSimpleData `tlbSumType:"ed25519_signature#5"`
+	CryptoSignature       struct {
+		SignedCert       *SignedSertificate `tlb:"^"`
+		TempKeySignature CryptoSignatureSimple
+	} `tlbSumType:"chained_signature#f"`
 }
 
-// interm_addr_regular$0 use_dest_bits:(#<= 96) = IntermediateAddress;
-// interm_addr_simple$10 workchain_id:int8 addr_pfx:uint64 = IntermediateAddress;
-// interm_addr_ext$11 workchain_id:int32 addr_pfx:uint64 = IntermediateAddress;
-type IntermediateAddress struct {
+type CryptoSignatureSimpleData struct {
+	R Hash
+	S Hash
+}
+
+func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, tag string) error {
+	sumType, err := c.ReadUint(4)
+	if err != nil {
+		return err
+	}
+	if sumType == 0x5 {
+		cr.SumType = "CryptoSignatureSimple"
+		err = tlb.Unmarshal(c, &cr.CryptoSignatureSimple)
+		if err != nil {
+			return err
+		}
+	} else if sumType == 0xf {
+		cr.SumType = "CryptoSignature"
+		c1, err := c.NextRef()
+		if err != nil {
+			return err
+		}
+		err = tlb.Unmarshal(c1, &cr.CryptoSignature.SignedCert)
+		if err != nil {
+			return err
+		}
+		err = tlb.Unmarshal(c, &cr.CryptoSignature.TempKeySignature)
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("invalid tag")
+	}
+	return nil
+}
+
+// signed_certificate$_ certificate:Certificate certificate_signature:CryptoSignature
+//   = SignedCertificate;  // 356+516 = 872 bits
+type SignedSertificate struct {
+	Certificate          Certificate
+	CertificateSignature CryptoSignature
+}
+
+// certificate#4 temp_key:SigPubKey valid_since:uint32
+// valid_until:uint32 = Certificate;  // 356 bits
+type Certificate struct {
 	tlb.SumType
-	IntermediateAddressRegular struct {
-		UseDestBits boc.BitString `tlb:"7bits"`
-	} `tlbSumType:"interm_addr_regular$0"`
-	IntermediateAddressSimple struct {
-		WorkchainId   boc.BitString `tlb:"8bits"`
-		AddressPrefix uint64
-	} `tlbSumType:"interm_addr_simple$10"`
-	IntermediateAddressExt struct {
-		WorkchainId   int32
-		AddressPrefix uint64
-	} `tlbSumType:"interm_addr_ext$11"`
+	Certificate struct {
+		TempKey    SigPubKey
+		ValidSince uint32
+		ValidUntil uint32
+	} `tlbSumType:"certificate#4"`
+}
+
+// _ fees:CurrencyCollection create:CurrencyCollection = ShardFeeCreated;
+type ShardFeeCreated struct {
+	Fees   CurrencyCollection
+	Create CurrencyCollection
+}
+
+// _ (HashmapAugE 96 ShardFeeCreated ShardFeeCreated) = ShardFees;
+type ShardFees struct {
+	Hashmap tlb.HashmapAugE[ShardFeeCreated, ShardFeeCreated] `tlb:"96bits"`
+}
+
+// _ (HashmapAugE 256 InMsg ImportFees) = InMsgDescr;
+type InMsgDescr struct {
+	Hashmap tlb.HashmapAugE[InMsg, ImportFees] `tlb:"256bits"`
+}
+
+// _ (HashmapAugE 256 AccountBlock CurrencyCollection) = ShardAccountBlocks
+type ShardAccountBlocks struct {
+	Hashmap tlb.HashmapAugE[AccountBlock, CurrencyCollection] `tlb:"256bits"`
+}
+
+// acc_trans#5 account_addr:bits256
+//             transactions:(HashmapAug 64 ^Transaction CurrencyCollection)
+//             state_update:^(HASH_UPDATE Account)
+//           = AccountBlock;
+type AccountBlock struct {
+	tlb.SumType
+	AccountBlock struct {
+		AccountAddr  Hash
+		Transactions tlb.HashmapAug[tlb.Ref[Transaction], CurrencyCollection] `tlb:"64bits"`
+		StateUpdate  HashUpdate                                               `tlb:"^"`
+	} `tlbSumType:"acc_trans#5"`
 }
 
 // _ (HashmapE 96 ProcessedUpto) = ProcessedInfo;
@@ -175,13 +253,12 @@ type IhrPendingSince struct {
 
 // _ (HashmapAugE 256 ShardAccount DepthBalanceInfo) = ShardAccounts;
 type ShardAccounts struct {
-	//Accounts tlb.HashmapE[ShardAccount] `tlb:"256bits"`
 	Accounts tlb.HashmapAugE[ShardAccount, DepthBalanceInfo] `tlb:"256bits"`
 }
 
 // depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
 type DepthBalanceInfo struct {
-	SplitDepth boc.BitString `tlb:"5bits"`
+	SplitDepth uint32 `tlb:"5bits"`
 	Balance    CurrencyCollection
 }
 
@@ -204,41 +281,10 @@ type ShardStateUnsplitOther struct {
 type LibDescr struct {
 	tlb.SumType
 	LibDescr struct {
-		Lib        tlb.Ref[boc.Cell]
-		Publishers LibDescrPub
+		Lib        boc.Cell          `tlb:"^"`
+		Publishers tlb.Hashmap[bool] `tlb:"256bits"`
 	} `tlbSumType:"shared_lib_descr$00"`
 }
-
-type LibDescrPub struct {
-	Pub tlb.Hashmap[bool] `tlb:"256bits"`
-}
-
-// func (s *ShardIdent) UnmarshalTLB(c *boc.Cell, tag string) error {
-// 	t, err := c.ReadUint(2)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if t != 0 {
-// 		return fmt.Errorf("invalid tag")
-// 	}
-// 	prefixBits, err := c.ReadLimUint(60)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	workchain, err := c.ReadInt(32)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	prefix, err := c.ReadUint(64)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	s.SumType = "ShardIdent"
-// 	s.ShardIdent.ShardPfxBits = uint64(prefixBits)
-// 	s.ShardIdent.WorkchainID = int32(workchain)
-// 	s.ShardIdent.ShardPrefix = prefix
-// 	return nil
-// }
 
 // McStateExtra
 // masterchain_state_extra#cc26
@@ -277,13 +323,8 @@ type ConfigHashMap struct {
 // = ConfigParams;
 type ConfigParams struct {
 	ConfigAddr Hash
-	Config     tlb.Ref[ConfigHashMap] //`tlb:"32bits"` // TODO: implement decoding config
+	Config     ConfigHashMap `tlb:"^"`
 }
-
-// type ConfigParams struct {
-// 	ConfigAddr Hash
-// 	Config     tlb.Ref[tlb.Any] `tlb:"32bits"` // TODO: implement decoding config
-// }
 
 // ^[ flags:(## 16) { flags <= 1 }
 // validator_info:ValidatorInfo
@@ -309,79 +350,10 @@ type McStateExtraOther struct {
 	} `tlbSumType:"flags#0001"`
 }
 
-// func (mc *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
-// 	err := mc.Flags.UnmarshalTLB(c, "16bits")
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = tlb.Unmarshal(c, &mc.ValidatorInfo)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = tlb.Unmarshal(c, &mc.PrevBlocks)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = tlb.Unmarshal(c, &mc.AfterKeyBlock)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = tlb.Unmarshal(c, &mc.LastKeyBlock)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if (binary.BigEndian.Uint16(mc.Flags.Buffer()) & 0x1) == 0x1 {
-// 		err = tlb.Unmarshal(c, &mc.BlockCreateStats)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }
-
-// validator_info$_
-//   validator_list_hash_short:uint32
-//   catchain_seqno:uint32
-//   nx_cc_updated:Bool
-// = ValidatorInfo;
-type ValidatorInfo struct {
-	ValidatorListHashShort uint32
-	CatchainSeqno          uint32
-	NxCcUpdated            bool
-}
-
 // _ (HashmapAugE 32 KeyExtBlkRef KeyMaxLt) = OldMcBlocksInfo
 type OldMcBlocksInfo struct {
-	//Info tlb.HashmapE[KeyExtBlkRef] `tlb:"32bits"`
 	Info tlb.HashmapAugE[KeyExtBlkRef, KeyMaxLt] `tlb:"32bits"`
 }
-
-// func (mc *OldMcBlocksInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
-// 	// hashmapaug
-// 	r, err := c.ReadBit()
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	if r {
-// 		// cc := boc.NewCell()
-// 		// cc.WriteBit(true)
-// 		// cc.WriteBitString(c.ReadRemainingBits())
-// 		// c.WriteBitString(cc.ReadRemainingBits())
-
-// 		err := mc.Info.UnmarshalTLB(c, "32bits")
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-// 	var keyMaxLt KeyMaxLt
-// 	err = tlb.Unmarshal(c, &keyMaxLt)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
 
 // _ key:Bool max_end_lt:uint64 = KeyMaxLt;
 type KeyMaxLt struct {

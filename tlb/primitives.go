@@ -166,6 +166,75 @@ type Hashmap[T any] struct {
 	values  []T
 }
 
+func (h Hashmap[T]) MarshalTLB(c *boc.Cell, tag string) error {
+	// Marshal empty Hashmap
+	if len(h.values) == 0 || h.values == nil {
+		return nil
+	}
+	err := h.encodeMap(c, h.keys, h.values, h.keySize)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h Hashmap[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
+	if len(keys) == 0 || len(values) == 0 {
+		return fmt.Errorf("keys or values are empty")
+	}
+
+	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], size)
+	if err != nil {
+		return err
+	}
+
+	size = size - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
+	var leftKeys, rightKeys []boc.BitString
+	var leftValues, rightValues []T
+	if len(keys) > 1 {
+		for i := range keys {
+			_, err := keys[i].ReadBits(label.BitsAvailableForRead()) // skip common label
+			if err != nil {
+				return err
+			}
+			isRight, err := keys[i].ReadBit()
+			if err != nil {
+				return err
+			}
+			if isRight {
+				rightKeys = append(rightKeys, keys[i].ReadRemainingBits())
+				rightValues = append(rightValues, values[i])
+			} else {
+				leftKeys = append(leftKeys, keys[i].ReadRemainingBits())
+				leftValues = append(leftValues, values[i])
+			}
+		}
+		l, err := c.NewRef()
+		if err != nil {
+			return nil
+		}
+		err = h.encodeMap(l, leftKeys, leftValues, size)
+		if err != nil {
+			return err
+		}
+		r, err := c.NewRef()
+		if err != nil {
+			return nil
+		}
+		err = h.encodeMap(r, rightKeys, rightValues, size)
+		if err != nil {
+			return err
+		}
+		return err
+	}
+	// marshal value
+	err = Marshal(c, values[0])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *Hashmap[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	keySize, err := decodeHashmapTag(tag)
 	if err != nil {
@@ -550,47 +619,29 @@ func (h HashmapE[T]) Keys() []boc.BitString {
 	return h.keys
 }
 
+type HashmapAug[T1, T2 any] struct {
+	keys      []boc.BitString
+	keySize   int
+	values    []T1
+	extra     HashMapAugExtraList[T2]
+	rootExtra T2
+}
+
 type HashMapAugExtraList[T any] struct {
 	Left  *HashMapAugExtraList[T]
 	Right *HashMapAugExtraList[T]
 	Data  T
 }
 
-type HashmapAugE[T1, T2 any] struct {
-	keys    []boc.BitString
-	keySize int
-	values  []T1
-	extra   HashMapAugExtraList[T2]
-}
-
-func (h *HashmapAugE[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *HashmapAug[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	keySize, err := decodeHashmapTag(tag)
 	if err != nil {
 		return err
 	}
 	h.keySize = keySize
-	isExists, err := c.ReadBit()
-	if err != nil {
-		return err
-	}
-	// hme_empty$0 {n:#} {X:Type} {Y:Type} extra:Y = HashmapAugE n X Y;
-	// ahme_root$1 {n:#} {X:Type} {Y:Type} root:^(HashmapAug n X Y) extra:Y = HashmapAugE n X Y;
 
-	if !isExists {
-		return nil
-	}
-	var extra T2
-	err = Unmarshal(c, &extra)
-	if err != nil {
-		return err
-	}
-	h.extra.Data = extra
-	r, err := c.NextRef()
-	if err != nil {
-		return err
-	}
 	keyPrefix := boc.NewBitString(keySize)
-	err = h.mapInner(keySize, keySize, r, &keyPrefix, &h.extra)
+	err = h.mapInner(keySize, keySize, c, &keyPrefix, &h.extra)
 	if err != nil {
 		return err
 	}
@@ -598,7 +649,7 @@ func (h *HashmapAugE[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h *HashmapAugE[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
+func (h *HashmapAug[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
 	var err error
 	var size int
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
@@ -653,6 +704,119 @@ func (h *HashmapAugE[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, ke
 	}
 	extras.Data = extra
 	// add node to map
+	var value T1
+	err = Unmarshal(c, &value)
+	if err != nil {
+		return err
+	}
+	h.values = append(h.values, value)
+	key, err := keyPrefix.ReadBits(keySize)
+	if err != nil {
+		return err
+	}
+	h.keys = append(h.keys, key)
+
+	return nil
+}
+
+type HashmapAugE[T1, T2 any] struct {
+	keys      []boc.BitString
+	keySize   int
+	values    []T1
+	extra     HashMapAugExtraList[T2]
+	rootExtra T2
+}
+
+func (h *HashmapAugE[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	keySize, err := decodeHashmapTag(tag)
+	if err != nil {
+		return err
+	}
+	h.keySize = keySize
+	isExists, err := c.ReadBit()
+	if err != nil {
+		return err
+	}
+	// hme_empty$0 {n:#} {X:Type} {Y:Type} extra:Y = HashmapAugE n X Y;
+	// ahme_root$1 {n:#} {X:Type} {Y:Type} root:^(HashmapAug n X Y) extra:Y = HashmapAugE n X Y;
+	if !isExists {
+		return nil
+	}
+	r, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	keyPrefix := boc.NewBitString(keySize)
+	err = h.mapInner(keySize, keySize, r, &keyPrefix, &h.extra)
+	if err != nil {
+		return err
+	}
+	var extra T2
+	err = Unmarshal(c, &extra)
+	if err != nil {
+		return err
+	}
+	h.rootExtra = extra
+
+	return nil
+}
+
+func (h *HashmapAugE[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
+	var err error
+	var size int
+	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
+	if err != nil {
+		return err
+	}
+	var extra T2
+
+	// until key size is not equals we go deeper
+	if keyPrefix.BitsAvailableForRead() < keySize {
+		// 0 bit branch
+		left, err := c.NextRef()
+		if err != nil {
+			return nil
+		}
+		lp := keyPrefix.Copy()
+		err = lp.WriteBit(false)
+		if err != nil {
+			return err
+		}
+		var extraLeft HashMapAugExtraList[T2]
+		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp, &extraLeft)
+		if err != nil {
+			return err
+		}
+		// 1 bit branch
+		right, err := c.NextRef()
+		if err != nil {
+			return err
+		}
+		rp := keyPrefix.Copy()
+		err = rp.WriteBit(true)
+		if err != nil {
+			return err
+		}
+		var extraRight HashMapAugExtraList[T2]
+		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp, &extraRight)
+		if err != nil {
+			return err
+		}
+		extras.Left = &extraLeft
+		extras.Right = &extraRight
+		err = Unmarshal(c, &extra)
+		if err != nil {
+			return err
+		}
+		extras.Data = extra
+		return nil
+	}
+	// add node to map
+	err = Unmarshal(c, &extra)
+	if err != nil {
+		return err
+	}
+	extras.Data = extra
 	var value T1
 	err = Unmarshal(c, &value)
 	if err != nil {

@@ -10,7 +10,6 @@ import (
 	"io"
 	"strings"
 
-	"github.com/startfellows/tongo/atl"
 	"github.com/startfellows/tongo/boc"
 )
 
@@ -137,14 +136,6 @@ func (h *Hash) UnmarshalTL(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	*h = b
-	return nil
-}
-
-func (h *Hash) AUnmarshalTL(buf *atl.TlDecoderStruct) error {
-	var b [32]byte
-	copy(b[:], buf.Buf[:32])
-	buf.Buf = buf.Buf[32:]
 	*h = b
 	return nil
 }

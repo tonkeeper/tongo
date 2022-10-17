@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
@@ -31,10 +32,10 @@ func TestExec(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 
-	// config, err := tongoClient.GetLastConfigAll(context.Background())
-	// if err != nil {
-	// 	log.Fatalf("Get account state error: %v", err)
-	// }
+	config, err := tongoClient.GetLastConfigAll(context.Background())
+	if err != nil {
+		log.Fatalf("Get account state error: %v", err)
+	}
 
 	account, err := tongoClient.GetLastRawAccount(context.Background(), w.GetAddress())
 	if err != nil {
@@ -80,17 +81,17 @@ func TestExec(t *testing.T) {
 	shardAccount.Account = account
 	shardAccount.LastTransLt = account.Account.Storage.LastTransLt - 1
 
-	// e, err := NewEmulator(config)
-	// if err != nil {
-	// 	log.Fatalf("unable to create emulator: %v", err)
-	// }
+	e, err := NewEmulator(config)
+	if err != nil {
+		log.Fatalf("unable to create emulator: %v", err)
+	}
 
-	// acc, tx, err := e.Emulate(shardAccount, message)
-	// if err != nil {
-	// 	log.Fatalf("emulator error: %v", err)
-	// }
-	// fmt.Printf("Account last transaction hash: %x\n", acc.LastTransHash)
-	// fmt.Printf("Prev transaction hash: %x\n", tx.Transaction.PrevTransHash)
+	acc, tx, err := e.Emulate(shardAccount, message)
+	if err != nil {
+		log.Fatalf("emulator error: %v", err)
+	}
+	fmt.Printf("Account last transaction hash: %x\n", acc.LastTransHash)
+	fmt.Printf("Prev transaction hash: %x\n", tx.Transaction.PrevTransHash)
 
 }
 
@@ -109,12 +110,12 @@ func TestGetConfigExec(t *testing.T) {
 
 	config := mcExtra.McStateExtra.Config
 	fmt.Println("config addr: ", config.ConfigAddr.Hex())
-	for i := range config.Config.Value.Hashmap.Keys() {
-		if binary.BigEndian.Uint32(config.Config.Value.Hashmap.Keys()[i].Buffer()) == 34 {
-			str := config.Config.Value.Hashmap.Values()[i].Value.RawBitString()
-			fmt.Printf("key: %v, value: %x\n", config.Config.Value.Hashmap.Keys()[i].BinaryString(), str.Buffer())
+	for i := range config.Config.Hashmap.Keys() {
+		if binary.BigEndian.Uint32(config.Config.Hashmap.Keys()[i].Buffer()) == 34 {
+			str := config.Config.Hashmap.Values()[i].Value.RawBitString()
+			fmt.Printf("key: %v, value: %x\n", config.Config.Hashmap.Keys()[i].BinaryString(), str.Buffer())
 			var validatorSet tongo.ValidatorsSet
-			err := tlb.Unmarshal(&config.Config.Value.Hashmap.Values()[i].Value, &validatorSet)
+			err := tlb.Unmarshal(&config.Config.Hashmap.Values()[i].Value, &validatorSet)
 			if err != nil {
 				log.Fatalf("Unmarshal validator set error: %v", err)
 			}
@@ -126,27 +127,146 @@ func TestGetConfigExec(t *testing.T) {
 			fmt.Println("Main:            ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Main.Buffer()))
 			fmt.Println("Validators List: ")
 			var sum uint64
-			// for i := range validatorSet.ValidatorsExt.List.Keys() {
-			// 	fmt.Println("Number:    ", i)
-			// 	fmt.Println("Key:       ", validatorSet.ValidatorsExt.List.Keys()[i].BinaryString())
-			// 	fmt.Println("SumType:   ", validatorSet.ValidatorsExt.List.Values()[i].SumType)
-			// 	if validatorSet.ValidatorsExt.List.Values()[i].SumType == "ValidatorAddr" {
-			// 		fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.SigPubKey.PubKey.Hex())
-			// 		fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight)
-			// 		fmt.Println("AdnlAddr:  ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.AdnlAddr.Hex())
-			// 		sum += validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight
-
-			// 	} else {
-			// 		fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.SigPubKey.PubKey.Hex())
-			// 		fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].Validator.Weight)
-			// 	}
-
-			// 	fmt.Println("--------------------------------------------------------")
-			// }
+			for i := range validatorSet.ValidatorsExt.List.Keys() {
+				fmt.Println("Number:    ", i)
+				fmt.Println("Key:       ", validatorSet.ValidatorsExt.List.Keys()[i].BinaryString())
+				fmt.Println("SumType:   ", validatorSet.ValidatorsExt.List.Values()[i].SumType)
+				if validatorSet.ValidatorsExt.List.Values()[i].SumType == "ValidatorAddr" {
+					fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.SigPubKey.PubKey.Hex())
+					fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight)
+					fmt.Println("AdnlAddr:  ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.AdnlAddr.Hex())
+					sum += validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight
+				} else {
+					fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.SigPubKey.PubKey.Hex())
+					fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].Validator.Weight)
+				}
+				fmt.Println("--------------------------------------------------------")
+			}
 			fmt.Println(validatorSet.ValidatorsExt.TotalWeight)
 			fmt.Println(sum)
 		}
+	}
+}
 
-		// fmt.Println("--------------------------------------------------------")
+func TestValidatorLoadExec(t *testing.T) {
+	ctx := context.Background()
+	tongoClient, err := liteclient.NewClientWithDefaultMainnet() //
+	// tongoClient, err := liteclient.NewClientWithDefaultTestnet() //
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+
+	mcInfoExtra, err := tongoClient.GetMasterchainInfoExt(ctx, 0)
+	if err != nil {
+		log.Fatalf("Get account state error: %v", err)
+	}
+	lastBlockId := tongo.TonNodeBlockId{
+		Workchain: mcInfoExtra.Workchain,
+		Shard:     mcInfoExtra.Shard,
+		Seqno:     mcInfoExtra.Seqno,
+	}
+
+	now := time.Now().Unix()
+	header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
+	if err != nil {
+		log.Fatalf("LookupBlock 1 error: %v", err)
+	}
+	header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
+	if err != nil {
+		log.Fatalf("LookupBlock 2 error: %v", err)
+	}
+	parents1, err := header1.BlockHeader.Info.GetParents()
+	if err != nil {
+		log.Fatalf("GetParents 1 error: %v", err)
+	}
+	parents2, err := header2.BlockHeader.Info.GetParents()
+	if err != nil {
+		log.Fatalf("GetParents 2 error: %v", err)
+	}
+
+	_, err = tongoClient.GetBlockProof(ctx, 0, parents1[0], nil) //&parents2[0])
+	if err != nil {
+		log.Fatalf("Get account state error: %v", err)
+	}
+
+	shardState1, err := tongoClient.GetConfigById(ctx, parents1[0])
+	if err != nil {
+		log.Fatalf("GetConfigById 1 error: %v", err)
+	}
+	shardState2, err := tongoClient.GetConfigById(ctx, parents2[0])
+	if err != nil {
+		log.Fatalf("GetConfigById 2 error: %v", err)
+	}
+
+	block1, err := tongoClient.GetBlock(ctx, parents1[0])
+	if err != nil {
+		log.Fatalf("GetBlock 1 error: %v", err)
+	}
+	block2, err := tongoClient.GetBlock(ctx, parents2[0])
+	if err != nil {
+		log.Fatalf("GetBlock 2 error: %v", err)
+	}
+	if block1.Block.Extra.SumType == "" && block2.Block.Extra.SumType == "" {
+		log.Fatalf("SWW")
+	}
+
+	config1 := shardState1.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config
+	config2 := shardState2.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config
+
+	validatorStats1, err := tongoClient.ValidatorStats(ctx, 0, parents1[0], uint32(len(config1.Config.Hashmap.Keys())), nil, nil)
+	if err != nil {
+		log.Fatalf("ValidatorStats 1 error: %v", err)
+	}
+	validatorStats2, err := tongoClient.ValidatorStats(ctx, 0, parents2[0], uint32(len(config2.Config.Hashmap.Keys())), nil, nil)
+	if err != nil {
+		log.Fatalf("GetParents 1 error: %v", err)
+	}
+	if validatorStats1.ShardStateUnsplit.GlobalID != validatorStats2.ShardStateUnsplit.GlobalID {
+		log.Fatalf("SWW")
+	}
+	fmt.Println("config 1 addr: ", config1.ConfigAddr.Hex())
+	fmt.Println("config1 len: ", len(config1.Config.Hashmap.Keys()))
+
+	fmt.Println("config 2 addr: ", config2.ConfigAddr.Hex())
+	fmt.Println("config2 len: ", len(config2.Config.Hashmap.Keys()))
+
+	for i := range config1.Config.Hashmap.Keys() {
+		if binary.BigEndian.Uint32(config1.Config.Hashmap.Keys()[i].Buffer()) == 34 &&
+			binary.BigEndian.Uint32(config2.Config.Hashmap.Keys()[i].Buffer()) == 34 {
+			str := config1.Config.Hashmap.Values()[i].Value.RawBitString()
+			fmt.Printf("key: %v, value: %x\n", config1.Config.Hashmap.Keys()[i].BinaryString(), str.Buffer())
+			var validatorSet tongo.ValidatorsSet
+			err := tlb.Unmarshal(&config1.Config.Hashmap.Values()[i].Value, &validatorSet)
+			if err != nil {
+				log.Fatalf("Unmarshal validator set error: %v", err)
+			}
+			fmt.Println("SumType:         ", validatorSet.SumType)
+			fmt.Println("TotalWeight:     ", validatorSet.ValidatorsExt.TotalWeight)
+			fmt.Println("UtimeSince:      ", validatorSet.ValidatorsExt.UtimeSince)
+			fmt.Println("UtimeUntil:      ", validatorSet.ValidatorsExt.UtimeUntil)
+			fmt.Println("Total:           ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Total.Buffer()))
+			fmt.Println("Main:            ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Main.Buffer()))
+			// fmt.Println("Validators List: ")
+			// var sum uint64
+			// for i := range validatorSet.ValidatorsExt.List.Keys() {
+			// 	fmt.Println("Number:    ", i)
+			// 	fmt.Println("Key:       ", validatorSet.ValidatorsExt.List.Keys()[i].BinaryString())
+			// 	// fmt.Println("SumType:   ", validatorSet.ValidatorsExt.List.Values()[i].SumType)
+			// 	// if validatorSet.ValidatorsExt.List.Values()[i].SumType == "ValidatorAddr" {
+			// 	// 	fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.SigPubKey.PubKey.Hex())
+			// 	// 	fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight)
+			// 	// 	fmt.Println("AdnlAddr:  ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.AdnlAddr.Hex())
+			// 	// 	sum += validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight
+
+			// 	// } else {
+			// 	// 	fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.SigPubKey.PubKey.Hex())
+			// 	// 	fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].Validator.Weight)
+			// 	// }
+
+			// 	fmt.Println("--------------------------------------------------------")
+			// }
+			// fmt.Println(validatorSet.ValidatorsExt.TotalWeight)
+			// fmt.Println(sum)
+		}
 	}
 }

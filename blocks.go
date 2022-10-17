@@ -51,6 +51,12 @@ func (id TonNodeBlockIdExt) String() string {
 	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
 }
 
+type TonNodeBlockId struct {
+	Workchain int32
+	Shard     int64
+	Seqno     int32
+}
+
 // BlockInfo
 // block_info#9bc7a987 version:uint32
 // not_master:(## 1)

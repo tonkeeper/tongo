@@ -128,3 +128,21 @@ func TestGetAccountState(t *testing.T) {
 	}
 	fmt.Printf("Account status: %v\n", st.Status)
 }
+
+func TestLookupBlock(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Current block seqno : %v\n", info.Seqno)
+	blockID := tongo.TonNodeBlockId{Workchain: info.Workchain, Shard: info.Shard, Seqno: info.Seqno - 1}
+	bl, err := api.LookupBlock(context.TODO(), blockID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Prev block seqno    : %v\n", bl.Seqno)
+}

@@ -5,8 +5,8 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/binary"
+	"errors"
 	"fmt"
-
 	"net/http"
 	"sync"
 
@@ -18,6 +18,8 @@ import (
 	"github.com/startfellows/tongo/tlb"
 	"github.com/startfellows/tongo/utils"
 )
+
+var ErrBlockNotApplied = fmt.Errorf("block is not applied")
 
 type Client struct {
 	adnlClient *adnl.Client
@@ -118,10 +120,22 @@ func (c *Client) GetLastShardAccount(ctx context.Context, accountId tongo.Accoun
 }
 
 func (c *Client) getLastRawAccountState(ctx context.Context, accountId tongo.AccountID) (LiteServerAccountState, error) {
-	masterchainInfo, err := c.GetMasterchainInfo(ctx)
+	mcInfo, err := c.GetMasterchainInfo(ctx)
 	if err != nil {
 		return LiteServerAccountState{}, err
 	}
+	st, err := c.getRawAccountState(ctx, mcInfo, accountId)
+	if err != nil && errors.Is(err, ErrBlockNotApplied) {
+		prevMcInfo, err := c.LookupBlock(ctx, tongo.TonNodeBlockId{Workchain: mcInfo.Workchain, Shard: mcInfo.Shard, Seqno: mcInfo.Seqno - 1})
+		if err != nil {
+			return LiteServerAccountState{}, err
+		}
+		return c.getRawAccountState(ctx, prevMcInfo, accountId)
+	}
+	return st, err
+}
+
+func (c *Client) getRawAccountState(ctx context.Context, masterchainInfo tongo.TonNodeBlockIdExt, accountId tongo.AccountID) (LiteServerAccountState, error) {
 	asReq, err := makeLiteServerGetAccountStateRequest(masterchainInfo, accountId)
 	if err != nil {
 		return LiteServerAccountState{}, err
@@ -142,6 +156,9 @@ func (c *Client) getLastRawAccountState(ctx context.Context, accountId tongo.Acc
 	}
 	switch parsedResp.SumType {
 	case "LiteServerError":
+		if parsedResp.LiteServerError.Message == "block is not applied" {
+			return LiteServerAccountState{}, ErrBlockNotApplied
+		}
 		return LiteServerAccountState{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
 	case "LiteServerAccountState":
 	default:
@@ -743,6 +760,9 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 		return tongo.Block{}, err
 	}
 	if pResp.SumType == "Error" {
+		if pResp.Error.Message == "block is not applied" {
+			return tongo.Block{}, ErrBlockNotApplied
+		}
 		return tongo.Block{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
 	}
 	cell, err := boc.DeserializeBoc(pResp.BlockData.Data)
@@ -755,4 +775,53 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 		return tongo.Block{}, err
 	}
 	return data, nil
+}
+
+// LookupBlock
+// liteServer.lookupBlock mode:# id:tonNode.blockId lt:mode.1?long utime:mode.2?int = liteServer.BlockHeader;
+// liteServer.blockHeader id:tonNode.blockIdExt mode:# header_proof:bytes = liteServer.BlockHeader;
+func (c *Client) LookupBlock(ctx context.Context, blockID tongo.TonNodeBlockId) (tongo.TonNodeBlockIdExt, error) {
+	type lookupBlockRequest struct {
+		Mode uint32
+		Id   tongo.TonNodeBlockId
+		// TODO: add lt:mode.1?long
+		// TODO: add utime:mode.2?int
+	}
+	r := struct {
+		tl.SumType
+		LookupBlockRequest lookupBlockRequest `tlSumType:"1ef7c8fa"`
+	}{
+		SumType: "LookupBlockRequest",
+		LookupBlockRequest: lookupBlockRequest{
+			Mode: 1,
+			Id:   blockID,
+		},
+	}
+	rBytes, err := tl.Marshal(r)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, err
+	}
+	req := makeLiteServerQueryRequest(rBytes)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, err
+	}
+	var pResp struct {
+		tl.SumType
+		BlockHeader struct {
+			ID          tongo.TonNodeBlockIdExt
+			Mode        uint32
+			HeaderProof []byte
+		} `tlSumType:"19822d75"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &pResp)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, err
+	}
+	if pResp.SumType == "Error" {
+		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+	}
+	return pResp.BlockHeader.ID, nil
 }

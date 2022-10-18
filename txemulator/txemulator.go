@@ -34,19 +34,19 @@ func (e EmulatorError) Error() string {
 	return e.text
 }
 
-func NewEmulator(config *boc.Cell) (Emulator, error) {
+func NewEmulator(config *boc.Cell) (*Emulator, error) {
 	configBoc, err := config.ToBocBase64()
 	if err != nil {
-		return Emulator{}, err
+		return nil, err
 	}
 	var libs tlb.HashmapE[struct{}] // empty shard libs dict
 	libsStr, err := tlbStructToBase64(libs)
 	if err != nil {
-		return Emulator{}, err
+		return nil, err
 	}
 	e := Emulator{emulator: C.transaction_emulator_create(C.CString(configBoc), C.CString(libsStr))}
 	runtime.SetFinalizer(&e, destroy)
-	return e, nil
+	return &e, nil
 }
 
 func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Message[tlb.Any]) (tongo.ShardAccount, tongo.Transaction, error) {
@@ -101,6 +101,12 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 func destroy(e *Emulator) {
 	C.transaction_emulator_destroy(e.emulator)
 	e.emulator = nil
+}
+
+// SetVerbosityLevel
+// verbosity level (0 - never, 1 - error, 2 - warning, 3 - info, 4 - debug)
+func (e *Emulator) SetVerbosityLevel(level int) {
+	C.transaction_emulator_set_verbosity_level(C.int(level))
 }
 
 func tlbStructToBase64(s any) (string, error) {

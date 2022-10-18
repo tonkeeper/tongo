@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/32bitkid/bitreader v1.0.1
 	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
 	golang.org/x/sys v0.0.0-20220325203850-36772127a21f // indirect
 )

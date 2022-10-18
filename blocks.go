@@ -3,9 +3,16 @@ package tongo
 import (
 	"encoding/binary"
 	"fmt"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
+
+type TonNodeBlockId struct {
+	Workchain int32
+	Shard     int64
+	Seqno     int32
+}
 
 type TonNodeBlockIdExt struct {
 	Workchain int32
@@ -255,10 +262,56 @@ type Block struct {
 	Block struct {
 		GlobalId    int32
 		Info        BlockInfo  `tlb:"^"`
-		ValueFlow   ValueFlow  `tlb:"^"`
-		StateUpdate tlb.Any    `tlb:"^"` // TODO: implement MERKLE_UPDATE ShardState
+		ValueFlow   tlb.Any    `tlb:"^"` // ValueFlow
+		StateUpdate tlb.Any    `tlb:"^"` //MerkleUpdate[ShardState] `tlb:"^"` //
 		Extra       BlockExtra `tlb:"^"`
 	} `tlbSumType:"block#11ef55aa"`
+}
+
+// TODO: clarify the description of the structure
+type BlockHeader struct {
+	tlb.SumType
+	BlockHeader struct {
+		GlobalId int32
+		Info     BlockInfo `tlb:"^"`
+	} `tlbSumType:"block#11ef55aa"`
+}
+
+// block_proof#c3 proof_for:BlockIdExt root:^Cell signatures:(Maybe ^BlockSignatures) = BlockProof;
+type BlockProof struct {
+	tlb.SumType
+	BlockHeader struct {
+		ProofFor   BlockIdExt
+		Root       boc.Cell `tlb:"^"`
+		Signatures tlb.Maybe[tlb.Ref[BlockSignatures]]
+	} `tlbSumType:"block_proof#c3"`
+}
+
+// block_signatures#11 validator_info:ValidatorBaseInfo pure_signatures:BlockSignaturesPure = BlockSignatures;
+type BlockSignatures struct {
+	tlb.SumType
+	BlockSignatures struct {
+		ValidatorInfo  ValidatorBaseInfo
+		PureSignatures BlockSignaturesPure
+	} `tlbSumType:"block_signatures#11"`
+}
+
+// block_signatures_pure#_ sig_count:uint32 sig_weight:uint64
+//   signatures:(HashmapE 16 CryptoSignaturePair) = BlockSignaturesPure;
+
+type BlockSignaturesPure struct {
+	SigCount   uint32
+	SigWeight  uint64
+	Signatures tlb.HashmapE[CryptoSignaturePair] `tlb:"16bits"`
+}
+
+// block_id_ext$_ shard_id:ShardIdent seq_no:uint32
+// root_hash:bits256 file_hash:bits256 = BlockIdExt;
+type BlockIdExt struct {
+	ShardId  ShardIdent
+	SeqNo    uint32
+	RootHash Hash
+	FileHash Hash
 }
 
 // ValueFlow
@@ -302,12 +355,12 @@ type ValueFlow struct {
 type BlockExtra struct {
 	tlb.SumType
 	BlockExtra struct {
-		InMsgDescr    tlb.Any `tlb:"^"` // TODO: implement InMsgDescr
-		OutMsgDescr   tlb.Any `tlb:"^"` // TODO: implement OutMsgDescr
-		AccountBlocks tlb.Any `tlb:"^"` // TODO: implement ShardAccountBlocks
+		InMsgDescr    InMsgDescr         `tlb:"^"` // tlb.Any `tlb:"^"`
+		OutMsgDescr   OutMsgDescr        `tlb:"^"` // tlb.Any `tlb:"^"`
+		AccountBlocks ShardAccountBlocks `tlb:"^"` // tlb.Any     `tlb:"^"` //
 		RandSeed      Hash
 		CreatedBy     Hash
-		Custom        tlb.Maybe[tlb.Ref[tlb.Any]] // TODO: implement McBlockExtra
+		Custom        tlb.Maybe[tlb.Ref[McBlockExtra]]
 	} `tlbSumType:"block_extra#4a33f6fd"`
 }
 
@@ -378,14 +431,67 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 	return parents, nil
 }
 
-// MerkleUpdate
-// !merkle_update#02 {X:Type} old_hash:bits256 new_hash:bits256 old:^X new:^X = MERKLE_UPDATE X;
-type MerkleUpdate[T any] struct {
+// masterchain_block_extra#cca5
+//   key_block:(## 1)
+//   shard_hashes:ShardHashes
+//   shard_fees:ShardFees
+//   ^[ prev_blk_signatures:(HashmapE 16 CryptoSignaturePair)
+//      recover_create_msg:(Maybe ^InMsg)
+//      mint_msg:(Maybe ^InMsg) ]
+//   config:key_block?ConfigParams
+// = McBlockExtra;
+type McBlockExtra struct {
 	tlb.SumType
-	MerkleUpdate struct {
-		OldHash Hash
-		NewHash Hash
-		Old     T `tlb:"^"`
-		New     T `tlb:"^"`
-	} `tlbSumType:"!merkle_update#02"`
+	McBlockExtra struct {
+		KeyBlock     bool
+		ShardHashes  ShardHashes
+		ShardFees    ShardFees
+		McExtraOther struct {
+			PrevBlkSignatures tlb.HashmapE[CryptoSignaturePair] `tlb:"16bits"`
+			RecoverCreate     tlb.Maybe[tlb.Ref[InMsg]]
+			MintMsg           tlb.Maybe[tlb.Ref[InMsg]]
+		} `tlb:"^"`
+		Config ConfigParams
+	} `tlbSumType:"masterchain_block_extra#cca5"`
+}
+
+func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, tag string) error {
+	sumType, err := c.ReadUint(16)
+	if err != nil {
+		return err
+	}
+	if sumType != 0xcca5 {
+		return fmt.Errorf("invalid tag")
+	}
+	m.SumType = "McBlockExtra"
+	err = tlb.Unmarshal(c, &m.McBlockExtra.KeyBlock)
+	if err != nil {
+		return err
+	}
+	err = tlb.Unmarshal(c, &m.McBlockExtra.ShardHashes)
+	if err != nil {
+		return err
+	}
+	err = tlb.Unmarshal(c, &m.McBlockExtra.ShardFees)
+	if err != nil {
+		return err
+	}
+	c1, err := c.NextRef()
+	if err != nil && err != boc.ErrNotEnoughRefs {
+		return err
+	}
+
+	if c1 != nil {
+		err = tlb.Unmarshal(c1, &m.McBlockExtra.McExtraOther)
+		if err != nil {
+			return err
+		}
+	}
+	if m.McBlockExtra.KeyBlock {
+		err = tlb.Unmarshal(c, &m.McBlockExtra.Config)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

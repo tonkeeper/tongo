@@ -44,7 +44,7 @@ const (
 	LiteServerSignatureSetTag          uint32 = 0x9755e192
 	LiteServerBlockLinkBackTag         uint32 = 0xef1b7eef
 	LiteServerBlockLinkForwardTag      uint32 = 0x1cce0f52
-	LiteServerPartialBlockProofTag     uint32 = 0xf282e0d
+	LiteServerPartialBlockProofTag     uint32 = 0xc1d2d08e
 	LiteServerConfigInfoTag            uint32 = 0x2f277bae
 	LiteServerValidatorStatsTag        uint32 = 0xd896f7b9
 	LiteServerDebugVerbosityTag        uint32 = 0x3347405d

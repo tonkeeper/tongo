@@ -140,7 +140,7 @@ func TestLookupBlock(t *testing.T) {
 	}
 	fmt.Printf("Current block seqno : %v\n", info.Seqno)
 	blockID := tongo.TonNodeBlockId{Workchain: info.Workchain, Shard: info.Shard, Seqno: info.Seqno - 1}
-	bl, err := api.LookupBlock(context.TODO(), blockID)
+	bl, _, err := api.LookupBlock(context.TODO(), 1, blockID, 0, 0)
 	if err != nil {
 		t.Fatal(err)
 	}

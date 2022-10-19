@@ -126,7 +126,7 @@ func (c *Client) getLastRawAccountState(ctx context.Context, accountId tongo.Acc
 	}
 	st, err := c.getRawAccountState(ctx, mcInfo, accountId)
 	if err != nil && errors.Is(err, ErrBlockNotApplied) {
-		prevMcInfo, err := c.LookupBlock(ctx, tongo.TonNodeBlockId{Workchain: mcInfo.Workchain, Shard: mcInfo.Shard, Seqno: mcInfo.Seqno - 1})
+		prevMcInfo, _, err := c.LookupBlock(ctx, 1, tongo.TonNodeBlockId{Workchain: mcInfo.Workchain, Shard: mcInfo.Shard, Seqno: mcInfo.Seqno - 1}, 0, 0)
 		if err != nil {
 			return LiteServerAccountState{}, err
 		}
@@ -1066,49 +1066,6 @@ func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.Ton
 	return &proof.Proof.MerkleProof.VirtualRoot, nil //shards, nil
 }
 
-func (c *Client) LookupBlock(ctx context.Context, mode uint32, last tongo.TonNodeBlockId, lt uint64, utime uint32) (*tongo.BlockHeader, error) {
-	asReq, err := makeLiteServerLookupBlockRequest(mode, last, lt, utime)
-	if err != nil {
-		return nil, err
-	}
-	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.adnlClient.Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	var response struct {
-		tl.SumType
-		LiteServerLookupBlock struct {
-			Id          tongo.TonNodeBlockIdExt
-			Mode        uint32
-			HeaderProof []byte
-		} `tlSumType:"19822d75"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-
-	err = tl.Unmarshal(bytes.NewReader(resp), &response)
-	if err != nil {
-		return nil, err
-	}
-	if response.SumType == "Error" {
-		return nil, fmt.Errorf(response.Error.Message)
-	}
-	cells, err := boc.DeserializeBoc(response.LiteServerLookupBlock.HeaderProof)
-	if err != nil {
-		return nil, err
-	}
-
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.BlockHeader]
-	}
-	err = tlb.Unmarshal(cells[0], &proof)
-	if err != nil {
-		return nil, err
-	}
-
-	return &proof.Proof.MerkleProof.VirtualRoot, nil
-}
-
 func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tongo.TonNodeBlockIdExt, targetBlock *tongo.TonNodeBlockIdExt) ([]tongo.BlockProof, error) {
 	asReq, err := makeLiteServerGetBlockProofRequest(mode, knownBlock, targetBlock)
 	if err != nil {
@@ -1260,31 +1217,15 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 // LookupBlock
 // liteServer.lookupBlock mode:# id:tonNode.blockId lt:mode.1?long utime:mode.2?int = liteServer.BlockHeader;
 // liteServer.blockHeader id:tonNode.blockIdExt mode:# header_proof:bytes = liteServer.BlockHeader;
-func (c *Client) LookupBlock(ctx context.Context, blockID tongo.TonNodeBlockId) (tongo.TonNodeBlockIdExt, error) {
-	type lookupBlockRequest struct {
-		Mode uint32
-		Id   tongo.TonNodeBlockId
-		// TODO: add lt:mode.1?long
-		// TODO: add utime:mode.2?int
-	}
-	r := struct {
-		tl.SumType
-		LookupBlockRequest lookupBlockRequest `tlSumType:"1ef7c8fa"`
-	}{
-		SumType: "LookupBlockRequest",
-		LookupBlockRequest: lookupBlockRequest{
-			Mode: 1,
-			Id:   blockID,
-		},
-	}
-	rBytes, err := tl.Marshal(r)
+func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.TonNodeBlockId, lt uint64, utime uint32) (tongo.TonNodeBlockIdExt, tongo.BlockInfo, error) {
+	asReq, err := makeLiteServerLookupBlockRequest(mode, blockID, lt, utime)
 	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
 	}
-	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+
+	resp, err := c.adnlClient.Request(ctx, makeLiteServerQueryRequest(asReq))
 	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
 	}
 	var pResp struct {
 		tl.SumType
@@ -1298,10 +1239,22 @@ func (c *Client) LookupBlock(ctx context.Context, blockID tongo.TonNodeBlockId) 
 	reader := bytes.NewReader(resp)
 	err = tl.Unmarshal(reader, &pResp)
 	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
 	}
 	if pResp.SumType == "Error" {
-		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
 	}
-	return pResp.BlockHeader.ID, nil
+	cells, err := boc.DeserializeBoc(pResp.BlockHeader.HeaderProof)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+	}
+
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.BlockHeader]
+	}
+	err = tlb.Unmarshal(cells[0], &proof)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+	}
+	return pResp.BlockHeader.ID, proof.Proof.MerkleProof.VirtualRoot.BlockHeader.Info, nil
 }

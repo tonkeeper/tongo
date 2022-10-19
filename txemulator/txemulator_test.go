@@ -117,7 +117,7 @@ func TestGetConfigExec(t *testing.T) {
 			var validatorSet tongo.ValidatorsSet
 			err := tlb.Unmarshal(&config.Config.Hashmap.Values()[i].Value, &validatorSet)
 			if err != nil {
-				log.Fatalf("Unmarshal validator set error: %v", err)
+				t.Fatalf("Unmarshal validator set error: %v", err)
 			}
 			fmt.Println("SumType:         ", validatorSet.SumType)
 			fmt.Println("TotalWeight:     ", validatorSet.ValidatorsExt.TotalWeight)
@@ -167,19 +167,19 @@ func TestValidatorLoadExec(t *testing.T) {
 	}
 
 	now := time.Now().Unix()
-	header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
+	_, header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
 	if err != nil {
 		log.Fatalf("LookupBlock 1 error: %v", err)
 	}
-	header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
+	_, header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
 	if err != nil {
 		log.Fatalf("LookupBlock 2 error: %v", err)
 	}
-	parents1, err := header1.BlockHeader.Info.GetParents()
+	parents1, err := header1.GetParents()
 	if err != nil {
 		log.Fatalf("GetParents 1 error: %v", err)
 	}
-	parents2, err := header2.BlockHeader.Info.GetParents()
+	parents2, err := header2.GetParents()
 	if err != nil {
 		log.Fatalf("GetParents 2 error: %v", err)
 	}

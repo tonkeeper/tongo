@@ -1240,5 +1240,5 @@ func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.Ton
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
 	}
-	return pResp.BlockHeader.ID, proof.Proof.MerkleProof.VirtualRoot.BlockHeader.Info, nil
+	return pResp.BlockHeader.ID, proof.Proof.VirtualRoot.Info, nil
 }

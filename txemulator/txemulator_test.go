@@ -91,7 +91,7 @@ func TestExec(t *testing.T) {
 		log.Fatalf("emulator error: %v", err)
 	}
 	fmt.Printf("Account last transaction hash: %x\n", acc.LastTransHash)
-	fmt.Printf("Prev transaction hash: %x\n", tx.Transaction.PrevTransHash)
+	fmt.Printf("Prev transaction hash: %x\n", tx.PrevTransHash)
 
 }
 
@@ -108,7 +108,7 @@ func TestGetConfigExec(t *testing.T) {
 		log.Fatalf("Get account state error: %v", err)
 	}
 
-	config := mcExtra.McStateExtra.Config
+	config := mcExtra.Config
 	fmt.Println("config addr: ", config.ConfigAddr.Hex())
 	for i := range config.Config.Hashmap.Keys() {
 		if binary.BigEndian.Uint32(config.Config.Hashmap.Keys()[i].Buffer()) == 34 {
@@ -123,8 +123,8 @@ func TestGetConfigExec(t *testing.T) {
 			fmt.Println("TotalWeight:     ", validatorSet.ValidatorsExt.TotalWeight)
 			fmt.Println("UtimeSince:      ", validatorSet.ValidatorsExt.UtimeSince)
 			fmt.Println("UtimeUntil:      ", validatorSet.ValidatorsExt.UtimeUntil)
-			fmt.Println("Total:           ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Total.Buffer()))
-			fmt.Println("Main:            ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Main.Buffer()))
+			fmt.Println("Total:           ", validatorSet.ValidatorsExt.Total)
+			fmt.Println("Main:            ", validatorSet.ValidatorsExt.Main)
 			fmt.Println("Validators List: ")
 			var sum uint64
 			for i := range validatorSet.ValidatorsExt.List.Keys() {
@@ -132,12 +132,12 @@ func TestGetConfigExec(t *testing.T) {
 				fmt.Println("Key:       ", validatorSet.ValidatorsExt.List.Keys()[i].BinaryString())
 				fmt.Println("SumType:   ", validatorSet.ValidatorsExt.List.Values()[i].SumType)
 				if validatorSet.ValidatorsExt.List.Values()[i].SumType == "ValidatorAddr" {
-					fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.SigPubKey.PubKey.Hex())
+					fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.PubKey.Hex())
 					fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight)
 					fmt.Println("AdnlAddr:  ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.AdnlAddr.Hex())
 					sum += validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight
 				} else {
-					fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.SigPubKey.PubKey.Hex())
+					fmt.Println("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.PubKey.Hex())
 					fmt.Println("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].Validator.Weight)
 				}
 				fmt.Println("--------------------------------------------------------")
@@ -175,11 +175,11 @@ func TestValidatorLoadExec(t *testing.T) {
 	if err != nil {
 		log.Fatalf("LookupBlock 2 error: %v", err)
 	}
-	parents1, err := header1.BlockHeader.Info.GetParents()
+	parents1, err := header1.Info.GetParents()
 	if err != nil {
 		log.Fatalf("GetParents 1 error: %v", err)
 	}
-	parents2, err := header2.BlockHeader.Info.GetParents()
+	parents2, err := header2.Info.GetParents()
 	if err != nil {
 		log.Fatalf("GetParents 2 error: %v", err)
 	}
@@ -206,12 +206,12 @@ func TestValidatorLoadExec(t *testing.T) {
 	if err != nil {
 		log.Fatalf("GetBlock 2 error: %v", err)
 	}
-	if block1.Block.Extra.SumType == "" && block2.Block.Extra.SumType == "" {
+	if block1.Extra.CreatedBy.Base64() == "" && block2.Extra.CreatedBy.Base64() == "" {
 		log.Fatalf("SWW")
 	}
 
-	config1 := shardState1.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config
-	config2 := shardState2.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config
+	config1 := shardState1.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.Config
+	config2 := shardState2.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.Config
 
 	validatorStats1, err := tongoClient.ValidatorStats(ctx, 0, parents1[0], uint32(len(config1.Config.Hashmap.Keys())), nil, nil)
 	if err != nil {
@@ -244,8 +244,8 @@ func TestValidatorLoadExec(t *testing.T) {
 			fmt.Println("TotalWeight:     ", validatorSet.ValidatorsExt.TotalWeight)
 			fmt.Println("UtimeSince:      ", validatorSet.ValidatorsExt.UtimeSince)
 			fmt.Println("UtimeUntil:      ", validatorSet.ValidatorsExt.UtimeUntil)
-			fmt.Println("Total:           ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Total.Buffer()))
-			fmt.Println("Main:            ", binary.BigEndian.Uint16(validatorSet.ValidatorsExt.Main.Buffer()))
+			fmt.Println("Total:           ", validatorSet.ValidatorsExt.Total)
+			fmt.Println("Main:            ", validatorSet.ValidatorsExt.Main)
 			// fmt.Println("Validators List: ")
 			// var sum uint64
 			// for i := range validatorSet.ValidatorsExt.List.Keys() {

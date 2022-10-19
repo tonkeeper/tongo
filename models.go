@@ -73,11 +73,9 @@ type ExtraCurrencyCollection struct {
 // update_hashes#72 {X:Type} old_hash:bits256 new_hash:bits256
 // = HASH_UPDATE X;
 type HashUpdate struct {
-	tlb.SumType
-	HashUpdate struct {
-		OldHash Hash
-		NewHash Hash
-	} `tlbSumType:"update_hashes#72"`
+	Magic   tlb.Magic `tlb:"update_hashes#72"`
+	OldHash Hash
+	NewHash Hash
 }
 
 // SnakeData

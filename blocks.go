@@ -117,8 +117,8 @@ func (i *BlockInfo) GetParents() ([]TonNodeBlockIdExt, error) {
 
 func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 	var data struct {
-		tlb.SumType
-		BlockInfo blockInfoPart `tlbSumType:"block_info#9bc7a987"`
+		Magic     tlb.Magic `tlb:"block_info#9bc7a987"`
+		BlockInfo blockInfoPart
 	} // for partial decoding
 	err := tlb.Unmarshal(c, &data)
 	if err != nil {
@@ -173,11 +173,9 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 // GlobalVersion
 // capabilities#c4 version:uint32 capabilities:uint64 = GlobalVersion;
 type GlobalVersion struct {
-	tlb.SumType
-	Capabilities struct {
-		Version      uint32
-		Capabilities uint64
-	} `tlbSumType:"capabilities#c4"`
+	Magic        tlb.Magic `tlb:"capabilities#c4"`
+	Version      uint32
+	Capabilities uint64
 }
 
 // ExtBlkRef
@@ -252,42 +250,34 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 // state_update:^(MERKLE_UPDATE ShardState)
 // extra:^BlockExtra = Block;
 type Block struct {
-	tlb.SumType
-	Block struct {
-		GlobalId    int32
-		Info        BlockInfo  `tlb:"^"`
-		ValueFlow   tlb.Any    `tlb:"^"` // ValueFlow
-		StateUpdate tlb.Any    `tlb:"^"` //MerkleUpdate[ShardState] `tlb:"^"` //
-		Extra       BlockExtra `tlb:"^"`
-	} `tlbSumType:"block#11ef55aa"`
+	Magic       tlb.Magic `tlb:"block#11ef55aa"`
+	GlobalId    int32
+	Info        BlockInfo  `tlb:"^"`
+	ValueFlow   tlb.Any    `tlb:"^"` // ValueFlow
+	StateUpdate tlb.Any    `tlb:"^"` //MerkleUpdate[ShardState] `tlb:"^"` //
+	Extra       BlockExtra `tlb:"^"`
 }
 
 // TODO: clarify the description of the structure
 type BlockHeader struct {
-	tlb.SumType
-	BlockHeader struct {
-		GlobalId int32
-		Info     BlockInfo `tlb:"^"`
-	} `tlbSumType:"block#11ef55aa"`
+	Magic    tlb.Magic `tlb:"block#11ef55aa"`
+	GlobalId int32
+	Info     BlockInfo `tlb:"^"`
 }
 
 // block_proof#c3 proof_for:BlockIdExt root:^Cell signatures:(Maybe ^BlockSignatures) = BlockProof;
 type BlockProof struct {
-	tlb.SumType
-	BlockHeader struct {
-		ProofFor   BlockIdExt
-		Root       boc.Cell `tlb:"^"`
-		Signatures tlb.Maybe[tlb.Ref[BlockSignatures]]
-	} `tlbSumType:"block_proof#c3"`
+	Magic      tlb.Magic `tlb:"block_proof#c3"`
+	ProofFor   BlockIdExt
+	Root       boc.Cell `tlb:"^"`
+	Signatures tlb.Maybe[tlb.Ref[BlockSignatures]]
 }
 
 // block_signatures#11 validator_info:ValidatorBaseInfo pure_signatures:BlockSignaturesPure = BlockSignatures;
 type BlockSignatures struct {
-	tlb.SumType
-	BlockSignatures struct {
-		ValidatorInfo  ValidatorBaseInfo
-		PureSignatures BlockSignaturesPure
-	} `tlbSumType:"block_signatures#11"`
+	Magic          tlb.Magic `tlb:"block_signatures#11"`
+	ValidatorInfo  ValidatorBaseInfo
+	PureSignatures BlockSignaturesPure
 }
 
 // block_signatures_pure#_ sig_count:uint32 sig_weight:uint64
@@ -321,22 +311,20 @@ type BlockIdExt struct {
 // minted:CurrencyCollection
 // ] = ValueFlow;
 type ValueFlow struct {
-	tlb.SumType
-	ValueFlow struct {
-		Values1 struct {
-			FromPrevBlk CurrencyCollection
-			ToNextBlk   CurrencyCollection
-			Imported    CurrencyCollection
-			Exported    CurrencyCollection
-		} `tlb:"^"`
-		FeesCollected CurrencyCollection
-		Values2       struct {
-			FeesImported CurrencyCollection
-			Recovered    CurrencyCollection
-			Created      CurrencyCollection
-			Minted       CurrencyCollection
-		} `tlb:"^"`
-	} `tlbSumType:"value_flow#b8e48dfb"`
+	Magic   tlb.Magic `tlb:"value_flow#b8e48dfb"`
+	Values1 struct {
+		FromPrevBlk CurrencyCollection
+		ToNextBlk   CurrencyCollection
+		Imported    CurrencyCollection
+		Exported    CurrencyCollection
+	} `tlb:"^"`
+	FeesCollected CurrencyCollection
+	Values2       struct {
+		FeesImported CurrencyCollection
+		Recovered    CurrencyCollection
+		Created      CurrencyCollection
+		Minted       CurrencyCollection
+	} `tlb:"^"`
 }
 
 // BlockExtra
@@ -347,15 +335,13 @@ type ValueFlow struct {
 // created_by:bits256
 // custom:(Maybe ^McBlockExtra) = BlockExtra;
 type BlockExtra struct {
-	tlb.SumType
-	BlockExtra struct {
-		InMsgDescr    InMsgDescr         `tlb:"^"` // tlb.Any `tlb:"^"`
-		OutMsgDescr   OutMsgDescr        `tlb:"^"` // tlb.Any `tlb:"^"`
-		AccountBlocks ShardAccountBlocks `tlb:"^"` // tlb.Any     `tlb:"^"` //
-		RandSeed      Hash
-		CreatedBy     Hash
-		Custom        tlb.Maybe[tlb.Ref[McBlockExtra]]
-	} `tlbSumType:"block_extra#4a33f6fd"`
+	Magic         tlb.Magic          `tlb:"block_extra#4a33f6fd"`
+	InMsgDescr    InMsgDescr         `tlb:"^"` // tlb.Any `tlb:"^"`
+	OutMsgDescr   OutMsgDescr        `tlb:"^"` // tlb.Any `tlb:"^"`
+	AccountBlocks ShardAccountBlocks `tlb:"^"` // tlb.Any     `tlb:"^"` //
+	RandSeed      Hash
+	CreatedBy     Hash
+	Custom        tlb.Maybe[tlb.Ref[McBlockExtra]]
 }
 
 // td::uint64 x = td::lower_bit64(shard) >> 1;
@@ -376,10 +362,10 @@ func shardParent(shard uint64) uint64 {
 }
 
 func convertShardIdent(si ShardIdent) (workchain int32, shard uint64) {
-	shard = si.ShardIdent.ShardPrefix
-	pow2 := uint64(1) << (63 - si.ShardIdent.ShardPfxBits)
+	shard = si.ShardPrefix
+	pow2 := uint64(1) << (63 - si.ShardPfxBits)
 	shard |= pow2
-	return si.ShardIdent.WorkchainID, shard
+	return si.WorkchainID, shard
 }
 
 func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint64, workchain int32) ([]TonNodeBlockIdExt, error) {
@@ -435,18 +421,16 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 //   config:key_block?ConfigParams
 // = McBlockExtra;
 type McBlockExtra struct {
-	tlb.SumType
-	McBlockExtra struct {
-		KeyBlock     bool
-		ShardHashes  ShardHashes
-		ShardFees    ShardFees
-		McExtraOther struct {
-			PrevBlkSignatures tlb.HashmapE[CryptoSignaturePair] `tlb:"16bits"`
-			RecoverCreate     tlb.Maybe[tlb.Ref[InMsg]]
-			MintMsg           tlb.Maybe[tlb.Ref[InMsg]]
-		} `tlb:"^"`
-		Config ConfigParams
-	} `tlbSumType:"masterchain_block_extra#cca5"`
+	Magic        tlb.Magic `tlb:"masterchain_block_extra#cca5"`
+	KeyBlock     bool
+	ShardHashes  ShardHashes
+	ShardFees    ShardFees
+	McExtraOther struct {
+		PrevBlkSignatures tlb.HashmapE[CryptoSignaturePair] `tlb:"16bits"`
+		RecoverCreate     tlb.Maybe[tlb.Ref[InMsg]]
+		MintMsg           tlb.Maybe[tlb.Ref[InMsg]]
+	} `tlb:"^"`
+	Config ConfigParams
 }
 
 func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -457,16 +441,16 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if sumType != 0xcca5 {
 		return fmt.Errorf("invalid tag")
 	}
-	m.SumType = "McBlockExtra"
-	err = tlb.Unmarshal(c, &m.McBlockExtra.KeyBlock)
+
+	err = tlb.Unmarshal(c, &m.KeyBlock)
 	if err != nil {
 		return err
 	}
-	err = tlb.Unmarshal(c, &m.McBlockExtra.ShardHashes)
+	err = tlb.Unmarshal(c, &m.ShardHashes)
 	if err != nil {
 		return err
 	}
-	err = tlb.Unmarshal(c, &m.McBlockExtra.ShardFees)
+	err = tlb.Unmarshal(c, &m.ShardFees)
 	if err != nil {
 		return err
 	}
@@ -476,13 +460,13 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, tag string) error {
 	}
 
 	if c1 != nil {
-		err = tlb.Unmarshal(c1, &m.McBlockExtra.McExtraOther)
+		err = tlb.Unmarshal(c1, &m.McExtraOther)
 		if err != nil {
 			return err
 		}
 	}
-	if m.McBlockExtra.KeyBlock {
-		err = tlb.Unmarshal(c, &m.McBlockExtra.Config)
+	if m.KeyBlock {
+		err = tlb.Unmarshal(c, &m.Config)
 		if err != nil {
 			return err
 		}

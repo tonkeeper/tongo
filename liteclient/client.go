@@ -428,12 +428,8 @@ func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint6
 	if err != nil {
 		return 0, tongo.Hash{}, err
 	}
-	if proof.Proof.SumType != "MerkleProof" ||
-		proof.Proof.MerkleProof.VirtualRoot.SumType != "ShardStateUnsplit" {
-		return 0, tongo.Hash{}, fmt.Errorf("can not extract ShardAccounts")
-	}
-	values := proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Values()
-	keys := proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Keys()
+	values := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Values()
+	keys := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Keys()
 	for i, k := range keys {
 		keyVal, err := k.ReadBytes(32)
 		if err != nil {
@@ -695,15 +691,9 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 	if err != nil {
 		return nil, err
 	}
-	if proof.Proof.SumType != "MerkleProof" ||
-		proof.Proof.MerkleProof.VirtualRoot.SumType != "ShardStateUnsplit" ||
-		proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Null ||
-		proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.SumType != "McStateExtra" {
 
-		return nil, fmt.Errorf("can not extract config")
-	}
 	conf := boc.NewCell()
-	tlb.Marshal(conf, proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.McStateExtra.Config.Config)
+	tlb.Marshal(conf, proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config.Config)
 	return conf, nil
 }
 
@@ -772,13 +762,7 @@ func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) 
 	if err != nil {
 		return nil, err
 	}
-	if proof.Proof.SumType != "MerkleProof" ||
-		proof.Proof.MerkleProof.VirtualRoot.SumType != "ShardStateUnsplit" ||
-		proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Null ||
-		proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.SumType != "McStateExtra" {
-		return nil, fmt.Errorf("can not extract config")
-	}
-	return &proof.Proof.MerkleProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value, nil
+	return &proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value, nil
 }
 
 func (c *Client) GetConfigById(ctx context.Context, last tongo.TonNodeBlockIdExt) (*tongo.ShardState, error) {
@@ -837,7 +821,7 @@ func (c *Client) GetConfigById(ctx context.Context, last tongo.TonNodeBlockIdExt
 	if err != nil {
 		return nil, err
 	}
-	return &proof.Proof.MerkleProof.VirtualRoot, nil
+	return &proof.Proof.VirtualRoot, nil
 }
 
 // GetMasterchainInfo
@@ -1063,7 +1047,7 @@ func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.Ton
 	}
 
 	// }
-	return &proof.Proof.MerkleProof.VirtualRoot, nil //shards, nil
+	return &proof.Proof.VirtualRoot, nil //shards, nil
 }
 
 func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tongo.TonNodeBlockIdExt, targetBlock *tongo.TonNodeBlockIdExt) ([]tongo.BlockProof, error) {

@@ -1,7 +1,6 @@
 package tongo
 
 import (
-	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
 
@@ -33,8 +32,8 @@ type ValidatorsSet struct {
 	Validators struct {
 		UtimeSince uint32
 		UtimeUntil uint32
-		Total      boc.BitString               `tlb:"16bits"`
-		Main       boc.BitString               `tlb:"16bits"`
+		Total      uint32                      `tlb:"16bits"`
+		Main       uint32                      `tlb:"16bits"`
 		List       tlb.Hashmap[ValidatorDescr] `tlb:"16bits"`
 	} `tlbSumType:"validators#11"`
 	// validators_ext#12 utime_since:uint32 utime_until:uint32
@@ -43,8 +42,8 @@ type ValidatorsSet struct {
 	ValidatorsExt struct {
 		UtimeSince  uint32
 		UtimeUntil  uint32
-		Total       boc.BitString `tlb:"16bits"`
-		Main        boc.BitString `tlb:"16bits"`
+		Total       uint32 `tlb:"16bits"`
+		Main        uint32 `tlb:"16bits"`
 		TotalWeight uint64
 		List        tlb.HashmapE[ValidatorDescr] `tlb:"16bits"`
 	} `tlbSumType:"validatorsext#12"`
@@ -66,10 +65,8 @@ type ValidatorDescr struct {
 }
 
 type SigPubKey struct {
-	tlb.SumType
-	SigPubKey struct {
-		PubKey Hash
-	} `tlbSumType:"pubkey#8e81278a"`
+	Magic  tlb.Magic `tlb:"pubkey#8e81278a"`
+	PubKey Hash
 }
 
 //ed25519_pubkey#8e81278a pubkey:bits256 = SigPubKey;

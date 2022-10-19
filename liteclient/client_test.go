@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/startfellows/tongo"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/startfellows/tongo"
 )
 
 func TestGetTransactions(t *testing.T) {
@@ -84,11 +85,11 @@ func TestGetBlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := block.Block.Info.GetParents()
+	p, err := block.Info.GetParents()
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("Block seqno: %v\n", block.Block.Info.SeqNo)
+	fmt.Printf("Block seqno: %v\n", block.Info.SeqNo)
 	fmt.Printf("1st parent block seqno: %v\n", p[0].Seqno)
 }
 

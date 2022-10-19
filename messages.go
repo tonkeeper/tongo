@@ -396,13 +396,11 @@ type EnqueuedMsg struct {
 //  next_addr:IntermediateAddress fwd_fee_remaining:Grams
 //  msg:^(Message Any) = MsgEnvelope;
 type MsgEnvelope struct {
-	tlb.SumType
-	MsgEnvelope struct {
-		CurrentAddress  IntermediateAddress
-		NextAddress     IntermediateAddress
-		FwdFeeRemaining Grams
-		Msg             Message[tlb.Any] `tlb:"^"`
-	} `tlbSumType:"msg_envelope#4"`
+	Magic           tlb.Magic `tlb:"msg_envelope#4"`
+	CurrentAddress  IntermediateAddress
+	NextAddress     IntermediateAddress
+	FwdFeeRemaining Grams
+	Msg             Message[tlb.Any] `tlb:"^"`
 }
 
 // interm_addr_regular$0 use_dest_bits:(#<= 96) = IntermediateAddress;

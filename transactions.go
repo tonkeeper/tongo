@@ -16,24 +16,22 @@ import (
 // total_fees:CurrencyCollection state_update:^(HASH_UPDATE Account)
 // description:^TransactionDescr = Transaction;
 type Transaction struct {
-	tlb.SumType
-	Transaction struct {
-		AccountAddr   Hash
-		Lt            uint64
-		PrevTransHash Hash
-		PrevTransLt   uint64
-		Now           uint32
-		OutMsgCnt     uint32 `tlb:"15bits"`
-		OrigStatus    AccountStatus
-		EndStatus     AccountStatus
-		Msgs          struct {
-			InMsg   tlb.Maybe[tlb.Ref[Message[tlb.Any]]]
-			OutMsgs tlb.HashmapE[tlb.Ref[Message[tlb.Any]]] `tlb:"15bits"`
-		} `tlb:"^"`
-		TotalFees   CurrencyCollection
-		StateUpdate HashUpdate       `tlb:"^"`
-		Description TransactionDescr `tlb:"^"`
-	} `tlbSumType:"transaction$0111"`
+	Magic         tlb.Magic `tlb:"transaction$0111"`
+	AccountAddr   Hash
+	Lt            uint64
+	PrevTransHash Hash
+	PrevTransLt   uint64
+	Now           uint32
+	OutMsgCnt     uint32 `tlb:"15bits"`
+	OrigStatus    AccountStatus
+	EndStatus     AccountStatus
+	Msgs          struct {
+		InMsg   tlb.Maybe[tlb.Ref[Message[tlb.Any]]]
+		OutMsgs tlb.HashmapE[tlb.Ref[Message[tlb.Any]]] `tlb:"15bits"`
+	} `tlb:"^"`
+	TotalFees   CurrencyCollection
+	StateUpdate HashUpdate       `tlb:"^"`
+	Description TransactionDescr `tlb:"^"`
 }
 
 // trans_ord$0000 credit_first:Bool
@@ -317,25 +315,25 @@ type TrBouncePhase struct {
 
 func (tx Transaction) IsSuccess() bool {
 	success := true
-	switch tx.Transaction.Description.SumType {
+	switch tx.Description.SumType {
 	case "TransStorage":
 		return true // TODO: check logic
 	case "TransOrd":
 		{
-			if tx.Transaction.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Transaction.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
+			if tx.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Transaction.Description.TransOrd.Action.Null {
-				success = success && tx.Transaction.Description.TransOrd.Action.Value.Value.Success
+			if !tx.Description.TransOrd.Action.Null {
+				success = success && tx.Description.TransOrd.Action.Value.Value.Success
 			}
 		}
 	case "TransTickTock":
 		{
-			if tx.Transaction.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Transaction.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
+			if tx.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Transaction.Description.TransTickTock.Action.Null {
-				success = success && tx.Transaction.Description.TransTickTock.Action.Value.Value.Success
+			if !tx.Description.TransTickTock.Action.Null {
+				success = success && tx.Description.TransTickTock.Action.Value.Value.Success
 			}
 		}
 	}

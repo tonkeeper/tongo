@@ -2,9 +2,10 @@ package tlb
 
 import (
 	"fmt"
-	"github.com/startfellows/tongo/boc"
 	"strconv"
 	"strings"
+
+	"github.com/startfellows/tongo/boc"
 )
 
 type sumTag struct {
@@ -28,6 +29,9 @@ func parseTag(s string) (tag, error) {
 		s = strings.TrimSpace(s[1:])
 	}
 	if len(s) == 0 {
+		return t, nil
+	}
+	if strings.Contains(s, "#") || strings.Contains(s, "$") {
 		return t, nil
 	}
 	_, err := fmt.Sscanf(s, "%dbits", &t.Len)

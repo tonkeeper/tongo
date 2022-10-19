@@ -3,11 +3,44 @@ package tlb
 import (
 	"fmt"
 	"math/big"
+	"strconv"
+	"strings"
 
 	"github.com/startfellows/tongo/boc"
 )
 
 type SumType string
+
+type Magic uint32
+
+func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
+	a := strings.Split(tag, "$")
+	if len(a) == 2 {
+		x, err := strconv.ParseUint(a[1], 2, 32)
+		if err != nil {
+			return err
+		}
+		y, err := c.ReadUint(len(a[1]))
+		if x != y {
+			return fmt.Errorf("magic prefix: %v not found ", tag)
+		}
+		return nil
+	}
+	a = strings.Split(tag, "#")
+	if len(a) == 2 {
+		x, err := strconv.ParseUint(a[1], 16, 32)
+		if err != nil {
+			return err
+		}
+		y, err := c.ReadUint(len(a[1]) * 4)
+		if x != y {
+			return fmt.Errorf("magic prefix: %v not found ", tag)
+		}
+		return nil
+	}
+
+	return fmt.Errorf("unsupported tag: %v", tag)
+}
 
 type Maybe[T any] struct {
 	Null  bool

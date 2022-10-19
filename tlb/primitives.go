@@ -20,12 +20,11 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		y, err := c.PickUint(len(a[1]))
-		if x == y {
-			_ = c.Skip(len(a[1])) // already checked
-			return nil
+		y, err := c.ReadUint(len(a[1]))
+		if x != y {
+			return fmt.Errorf("magic prefix: %v not found ", tag)
 		}
-		return fmt.Errorf("magic prefix: %v not found ", tag)
+		return nil
 	}
 	a = strings.Split(tag, "#")
 	if len(a) == 2 {
@@ -33,12 +32,11 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		y, err := c.PickUint(len(a[1]) * 4)
-		if x == y {
-			_ = c.Skip(len(a[1]) * 4) // already checked
-			return nil
+		y, err := c.ReadUint(len(a[1]) * 4)
+		if x != y {
+			return fmt.Errorf("magic prefix: %v not found ", tag)
 		}
-		return fmt.Errorf("magic prefix: %v not found ", tag)
+		return nil
 	}
 
 	return fmt.Errorf("unsupported tag: %v", tag)

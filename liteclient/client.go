@@ -1242,3 +1242,60 @@ func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.Ton
 	}
 	return pResp.BlockHeader.ID, proof.Proof.VirtualRoot.Info, nil
 }
+
+// GetOneRawTransaction
+// liteServer.getOneTransaction id:tonNode.blockIdExt account:liteServer.accountId lt:long = liteServer.TransactionInfo;
+// liteServer.transactionInfo id:tonNode.blockIdExt proof:bytes transaction:bytes = liteServer.TransactionInfo;
+func (c *Client) GetOneRawTransaction(ctx context.Context, id tongo.TonNodeBlockIdExt, accountId tongo.AccountID, lt uint64) ([]*boc.Cell, []byte, error) {
+	type getOneTransactionRequest struct {
+		ID      tongo.TonNodeBlockIdExt
+		Account tongo.AccountID
+		Lt      uint64
+	}
+	type transactionInfo struct {
+		Id          tongo.TonNodeBlockIdExt
+		Proof       []byte
+		Transaction []byte
+	}
+	r := struct {
+		tl.SumType
+		GetOneTransactionRequest getOneTransactionRequest `tlSumType:"ea240fd4"`
+	}{
+		SumType: "GetOneTransactionRequest",
+		GetOneTransactionRequest: getOneTransactionRequest{
+			ID:      id,
+			Account: accountId,
+			Lt:      lt,
+		},
+	}
+	rBytes, err := tl.Marshal(r)
+	if err != nil {
+		return nil, nil, err
+	}
+	req := makeLiteServerQueryRequest(rBytes)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, nil, err
+	}
+	var pResp struct {
+		tl.SumType
+		TransactionInfo transactionInfo `tlSumType:"47edde0e"`
+		Error           LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &pResp)
+	if err != nil {
+		return nil, nil, err
+	}
+	if pResp.SumType == "Error" {
+		return nil, nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+	}
+	cells, err := boc.DeserializeBoc(pResp.TransactionInfo.Transaction)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(cells) != 1 {
+		return nil, nil, fmt.Errorf("must be one root cell")
+	}
+	return cells, pResp.TransactionInfo.Proof, nil
+}

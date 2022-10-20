@@ -147,3 +147,20 @@ func TestLookupBlock(t *testing.T) {
 	}
 	fmt.Printf("Prev block seqno    : %v\n", bl.Seqno)
 }
+
+func TestGetOneTransaction(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
+	var lt uint64 = 32174166000001
+	var rh, fh tongo.Hash
+	_ = fh.FromUnknownString("4237A19CD87265EB16ADDD0EF2EADF07B8F362903386653ED3ABDCF34477F748")
+	_ = rh.FromUnknownString("9F66A2B2CE8F80762F39E0F5340F873192C8D416E9B82C015918E98C851A23C2")
+	blockID := tongo.TonNodeBlockIdExt{Workchain: -1, Shard: -9223372036854775808, Seqno: 24425406, RootHash: rh, FileHash: fh}
+	_, _, err = tongoClient.GetOneRawTransaction(context.Background(), blockID, *accountId, lt)
+	if err != nil {
+		log.Fatalf("Get transaction error: %v", err)
+	}
+}

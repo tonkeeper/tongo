@@ -329,10 +329,11 @@ type McStateExtraOther struct {
 }
 
 func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
-	err := tlb.Unmarshal(c, &m.Flags)
+	flags, err := c.ReadUint(16)
 	if err != nil {
 		return err
 	}
+	m.Flags = uint32(flags)
 	err = tlb.Unmarshal(c, &m.ValidatorInfo)
 	if err != nil {
 		return err

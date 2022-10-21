@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"context"
 	"crypto/ed25519"
 	"fmt"
 	"github.com/startfellows/tongo"
@@ -40,7 +41,8 @@ var codes = map[Version]string{
 }
 
 type blockchain interface {
-	GetWalletSeqno(account tongo.AccountID) (uint32, error)
+	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
+	SendRawMessage(ctx context.Context, payload []byte) error
 }
 
 func GetCodeByVer(ver Version) *boc.Cell {
@@ -83,6 +85,7 @@ type Wallet struct {
 	address     tongo.AccountID
 	ver         Version
 	subWalletId uint32
+	blockchain  blockchain
 }
 
 func (w Wallet) GetAddress() tongo.AccountID {

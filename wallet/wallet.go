@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"context"
 	"crypto/ed25519"
 	"crypto/hmac"
 	"crypto/sha512"
@@ -13,12 +14,12 @@ import (
 	"strings"
 )
 
-func DefaultWalletFromSeed(seed string, version Version) (Wallet, error) {
+func DefaultWalletFromSeed(seed string, version Version, blockchain blockchain) (Wallet, error) {
 	pk, err := SeedToPrivateKey(seed)
 	if err != nil {
 		return Wallet{}, err
 	}
-	return NewWallet(pk, version, 0, nil)
+	return NewWallet(pk, version, 0, nil, blockchain)
 }
 
 func SeedToPrivateKey(seed string) (ed25519.PrivateKey, error) {
@@ -42,7 +43,7 @@ func SeedToPrivateKey(seed string) (ed25519.PrivateKey, error) {
 // subWalletId is only used in V3 and V4 wallets. Use nil for default value.
 // The version number is associated with a specific implementation of the wallet code
 // (https://github.com/toncenter/tonweb/blob/master/src/contract/wallet/WalletSources.md)
-func NewWallet(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *int) (Wallet, error) {
+func NewWallet(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *int, blockchain blockchain) (Wallet, error) {
 	publicKey := key.Public().(ed25519.PublicKey)
 	address, err := GenerateWalletAddress(publicKey, ver, workchain, subWalletId)
 	if err != nil {
@@ -57,6 +58,7 @@ func NewWallet(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *
 		key:         key,
 		ver:         ver,
 		subWalletId: uint32(*subWalletId),
+		blockchain:  blockchain,
 	}, nil
 }
 
@@ -271,4 +273,10 @@ func checkMessagesLimit(msgQty int, ver Version) error { // TODO: maybe return b
 		return fmt.Errorf("message qty checking is not implemented for %v wallet", ver.ToString())
 	}
 	return nil
+}
+
+// GetSeqno
+// Get last seqno for wallet
+func (w Wallet) GetSeqno(ctx context.Context) (uint32, error) {
+	return w.blockchain.GetSeqno(ctx, w.address)
 }

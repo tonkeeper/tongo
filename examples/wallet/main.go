@@ -15,7 +15,12 @@ func main() {
 	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 	privateKey := ed25519.NewKeyFromSeed(pk)
 
-	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil)
+	client, err := liteclient.NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create lite client: %v", err)
+	}
+
+	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil, client)
 	if err != nil {
 		log.Fatalf("Unable to create wallet: %v", err)
 	}
@@ -30,17 +35,12 @@ func main() {
 		Mode:      1,
 	}
 
-	client, err := liteclient.NewClientWithDefaultTestnet()
-	if err != nil {
-		log.Fatalf("Unable to create lite client: %v", err)
-	}
-
-	res, err := client.RunSmcMethod(context.Background(), 4, w.GetAddress(), "seqno", tongo.VmStack{})
+	seqno, err := w.GetSeqno(context.Background())
 	if err != nil {
 		log.Fatalf("Unable to get seqno: %v", err)
 	}
 
-	msg, err := w.GenerateTonTransferMessage(uint32(res[0].VmStkTinyInt), 0xFFFFFFFF, []wallet.TonTransfer{tonTransfer})
+	msg, err := w.GenerateTonTransferMessage(seqno, 0xFFFFFFFF, []wallet.TonTransfer{tonTransfer})
 	if err != nil {
 		log.Fatalf("Unable to generate transfer message: %v", err)
 	}

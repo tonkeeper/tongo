@@ -1,7 +1,8 @@
 package txemulator
 
-//#cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
-//#include "../lib/emulator-extern.h"
+// #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
+// #include "../lib/emulator-extern.h"
+// #include <stdlib.h>
 import "C"
 import (
 	"encoding/json"
@@ -44,7 +45,11 @@ func NewEmulator(config *boc.Cell) (*Emulator, error) {
 	if err != nil {
 		return nil, err
 	}
-	e := Emulator{emulator: C.transaction_emulator_create(C.CString(configBoc), C.CString(libsStr))}
+	cConfigStr := C.CString(configBoc)
+	defer C.free(unsafe.Pointer(cConfigStr))
+	cLibStr := C.CString(libsStr)
+	defer C.free(unsafe.Pointer(cLibStr))
+	e := Emulator{emulator: C.transaction_emulator_create(cConfigStr, cLibStr)}
 	runtime.SetFinalizer(&e, destroy)
 	return &e, nil
 }
@@ -61,8 +66,14 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 		return tongo.ShardAccount{}, tongo.Transaction{}, err
 	}
 
-	r := C.transaction_emulator_emulate_transaction(e.emulator, C.CString(acc), C.CString(msg))
+	cAccStr := C.CString(acc)
+	defer C.free(unsafe.Pointer(cAccStr))
+	cMsgStr := C.CString(msg)
+	defer C.free(unsafe.Pointer(cMsgStr))
+
+	r := C.transaction_emulator_emulate_transaction(e.emulator, cAccStr, cMsgStr)
 	rJSON := C.GoString(r)
+	defer C.free(unsafe.Pointer(r))
 	var (
 		res     result
 		account tongo.ShardAccount
@@ -100,7 +111,6 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 
 func destroy(e *Emulator) {
 	C.transaction_emulator_destroy(e.emulator)
-	e.emulator = nil
 }
 
 // SetVerbosityLevel

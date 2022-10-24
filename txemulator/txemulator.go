@@ -1,7 +1,8 @@
 package txemulator
 
-//#cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
-//#include "../lib/emulator-extern.h"
+// #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
+// #include "../lib/emulator-extern.h"
+// #include <stdlib.h>
 import "C"
 import (
 	"encoding/json"
@@ -34,19 +35,23 @@ func (e EmulatorError) Error() string {
 	return e.text
 }
 
-func NewEmulator(config *boc.Cell) (Emulator, error) {
+func NewEmulator(config *boc.Cell) (*Emulator, error) {
 	configBoc, err := config.ToBocBase64()
 	if err != nil {
-		return Emulator{}, err
+		return nil, err
 	}
 	var libs tlb.HashmapE[struct{}] // empty shard libs dict
 	libsStr, err := tlbStructToBase64(libs)
 	if err != nil {
-		return Emulator{}, err
+		return nil, err
 	}
-	e := Emulator{emulator: C.transaction_emulator_create(C.CString(configBoc), C.CString(libsStr))}
+	cConfigStr := C.CString(configBoc)
+	defer C.free(unsafe.Pointer(cConfigStr))
+	cLibStr := C.CString(libsStr)
+	defer C.free(unsafe.Pointer(cLibStr))
+	e := Emulator{emulator: C.transaction_emulator_create(cConfigStr, cLibStr)}
 	runtime.SetFinalizer(&e, destroy)
-	return e, nil
+	return &e, nil
 }
 
 func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Message[tlb.Any]) (tongo.ShardAccount, tongo.Transaction, error) {
@@ -61,8 +66,14 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 		return tongo.ShardAccount{}, tongo.Transaction{}, err
 	}
 
-	r := C.transaction_emulator_emulate_transaction(e.emulator, C.CString(acc), C.CString(msg))
+	cAccStr := C.CString(acc)
+	defer C.free(unsafe.Pointer(cAccStr))
+	cMsgStr := C.CString(msg)
+	defer C.free(unsafe.Pointer(cMsgStr))
+
+	r := C.transaction_emulator_emulate_transaction(e.emulator, cAccStr, cMsgStr)
 	rJSON := C.GoString(r)
+	defer C.free(unsafe.Pointer(r))
 	var (
 		res     result
 		account tongo.ShardAccount
@@ -100,7 +111,12 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 
 func destroy(e *Emulator) {
 	C.transaction_emulator_destroy(e.emulator)
-	e.emulator = nil
+}
+
+// SetVerbosityLevel
+// verbosity level (0 - never, 1 - error, 2 - warning, 3 - info, 4 - debug)
+func (e *Emulator) SetVerbosityLevel(level int) {
+	C.transaction_emulator_set_verbosity_level(C.int(level))
 }
 
 func tlbStructToBase64(s any) (string, error) {

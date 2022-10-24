@@ -1,3 +1,5 @@
+github.com/32bitkid/bitreader v1.0.1 h1:BlmpTTTL1us9nQ+EUh4M/r5/mY+j4JeC5qOCgL/08ms=
+github.com/32bitkid/bitreader v1.0.1/go.mod h1:wiZHryiWx8YsSuS17YiR7Be4rz6FNxxQl/zs1eWJBMo=
 github.com/oasisprotocol/curve25519-voi v0.0.0-20220328075252-7dd334e3daae h1:7smdlrfdcZic4VfsGKD2ulWL804a4GVphr4s7WZxGiY=
 github.com/oasisprotocol/curve25519-voi v0.0.0-20220328075252-7dd334e3daae/go.mod h1:hVoHR2EVESiICEMbg137etN/Lx+lSrHPTD39Z/uE+2s=
 github.com/snksoft/crc v1.1.0 h1:HkLdI4taFlgGGG1KvsWMpz78PkOC9TkPVpTV/cuWn48=

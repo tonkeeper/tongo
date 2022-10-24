@@ -2,229 +2,10 @@ package tongo
 
 import (
 	"fmt"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
-
-// Message
-// message$_ {X:Type} info:CommonMsgInfo
-// init:(Maybe (Either StateInit ^StateInit))
-// body:(Either X ^X) = Message X;
-type Message[T any] struct {
-	Info CommonMsgInfo
-	Init tlb.Maybe[tlb.EitherRef[StateInit]]
-	Body tlb.EitherRef[T]
-}
-
-// CommonMsgInfo
-// int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
-// src:MsgAddressInt dest:MsgAddressInt
-// value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
-// created_lt:uint64 created_at:uint32 = CommonMsgInfo;
-// ext_in_msg_info$10 src:MsgAddressExt dest:MsgAddressInt
-// import_fee:Grams = CommonMsgInfo;
-// ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
-// created_lt:uint64 created_at:uint32 = CommonMsgInfo;
-type CommonMsgInfo struct {
-	tlb.SumType
-	IntMsgInfo struct {
-		IhrDisabled bool
-		Bounce      bool
-		Bounced     bool
-		Src         MsgAddress
-		Dest        MsgAddress
-		Value       CurrencyCollection
-		IhrFee      Grams
-		FwdFee      Grams
-		CreatedLt   uint64
-		CreatedAt   uint32
-	} `tlbSumType:"int_msg_info$0"`
-	ExtInMsgInfo struct {
-		Src       MsgAddress
-		Dest      MsgAddress
-		ImportFee Grams
-	} `tlbSumType:"ext_in_msg_info$10"`
-	ExtOutMsgInfo struct {
-		Src       MsgAddress
-		Dest      MsgAddress
-		CreatedLt uint64
-		CreatedAt uint32
-	} `tlbSumType:"ext_out_msg_info$11"`
-}
-
-// StateInit
-// _ split_depth:(Maybe (## 5)) special:(Maybe TickTock)
-// code:(Maybe ^Cell) data:(Maybe ^Cell)
-// library:(HashmapE 256 SimpleLib) = StateInit;
-type StateInit struct {
-	SplitDepth tlb.Maybe[struct {
-		Depth uint64 `tlb:"5bits"`
-	}]
-	Special tlb.Maybe[TickTock]
-	Code    tlb.Maybe[tlb.Ref[boc.Cell]]
-	Data    tlb.Maybe[tlb.Ref[boc.Cell]]
-	Library tlb.HashmapE[SimpleLib] `tlb:"256bits"`
-}
-
-// Anycast
-// anycast_info$_ depth:(#<= 30) { depth >= 1 }
-// rewrite_pfx:(bits depth) = Anycast;
-type Anycast struct {
-	Depth      uint32
-	RewritePfx boc.BitString
-}
-
-func (a Anycast) MarshalTLB(c *boc.Cell, tag string) error {
-	err := c.WriteLimUint(int(a.Depth), 30)
-	if err != nil {
-		return err
-	}
-	err = c.WriteBitString(a.RewritePfx)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (a *Anycast) UnmarshalTLB(c *boc.Cell, tag string) error {
-	depth, err := c.ReadLimUint(30)
-	if err != nil {
-		return err
-	}
-	if depth < 1 {
-		return fmt.Errorf("invalid anycast depth")
-	}
-	pfx, err := c.ReadBits(int(depth))
-	if err != nil {
-		return err
-	}
-	a.Depth = uint32(depth)
-	a.RewritePfx = pfx
-	return nil
-}
-
-// MsgAddress
-// addr_none$00 = MsgAddressExt;
-// addr_extern$01 len:(## 9) external_address:(bits len)
-// = MsgAddressExt;
-// addr_std$10 anycast:(Maybe Anycast)
-// workchain_id:int8 address:bits256  = MsgAddressInt;
-// addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
-// workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
-// _ _:MsgAddressInt = MsgAddress;
-// _ _:MsgAddressExt = MsgAddress;
-type MsgAddress struct {
-	tlb.SumType
-	AddrNone struct {
-	} `tlbSumType:"addr_none$00"`
-	AddrExtern struct {
-		Len             uint32 `tlb:"9bits"`
-		ExternalAddress boc.BitString
-	} `tlbSumType:"addr_extern$01"`
-	AddrStd struct {
-		Anycast     tlb.Maybe[Anycast]
-		WorkchainId int32 `tlb:"8bits"`
-		Address     Hash
-	} `tlbSumType:"addr_std$10"`
-	AddrVar struct {
-		Anycast     tlb.Maybe[Anycast]
-		AddrLen     uint32 `tlb:"9bits"`
-		WorkchainId int32
-		Address     boc.BitString
-	} `tlbSumType:"addr_var$11"`
-}
-
-func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
-	t, err := c.ReadUint(2)
-	if err != nil {
-		return err
-	}
-	switch t {
-	case 0:
-		a.SumType = "AddrNone"
-		return nil
-	case 1:
-		ln, err := c.ReadUint(9)
-		if err != nil {
-			return err
-		}
-		addr, err := c.ReadBits(int(ln))
-		if err != nil {
-			return err
-		}
-		a.AddrExtern.Len = uint32(ln)
-		a.AddrExtern.ExternalAddress = addr
-		a.SumType = "AddrExtern"
-		return nil
-	case 2:
-		var anycast tlb.Maybe[Anycast]
-		err := anycast.UnmarshalTLB(c, "")
-		if err != nil {
-			return err
-		}
-		workchain, err := c.ReadInt(8)
-		if err != nil {
-			return err
-		}
-		address, err := c.ReadBytes(32)
-		if err != nil {
-			return err
-		}
-		a.AddrStd.Anycast = anycast
-		a.AddrStd.WorkchainId = int32(workchain)
-		copy(a.AddrStd.Address[:], address)
-		a.SumType = "AddrStd"
-		return nil
-	case 3:
-		var anycast tlb.Maybe[Anycast]
-		err := anycast.UnmarshalTLB(c, "")
-		if err != nil {
-			return err
-		}
-		ln, err := c.ReadUint(9)
-		if err != nil {
-			return err
-		}
-		workchain, err := c.ReadInt(32)
-		if err != nil {
-			return err
-		}
-		addr, err := c.ReadBits(int(ln))
-		if err != nil {
-			return err
-		}
-		a.AddrVar.AddrLen = uint32(ln)
-		a.AddrVar.Address = addr
-		a.AddrVar.WorkchainId = int32(workchain)
-		a.AddrVar.Anycast = anycast
-		a.SumType = "AddrVar"
-	}
-	return fmt.Errorf("invalid tag")
-}
-
-func (a MsgAddress) AccountID() (*AccountID, error) {
-	switch a.SumType {
-	case "AddrNone":
-		return nil, nil
-	case "AddrStd":
-		return &AccountID{Workchain: a.AddrStd.WorkchainId, Address: a.AddrStd.Address}, nil
-	}
-	return nil, fmt.Errorf("can not convert not std address to AccountId")
-}
-
-// TickTock
-// tick_tock$_ tick:Bool tock:Bool = TickTock;
-type TickTock struct {
-	Tick bool
-	Tock bool
-}
-
-// SimpleLib
-// simple_lib$_ public:Bool root:^Cell = SimpleLib;
-type SimpleLib struct {
-	Public bool
-	Root   boc.Cell `tlb:"^"`
-}
 
 // Transaction
 // transaction$0111 account_addr:bits256 lt:uint64
@@ -235,39 +16,59 @@ type SimpleLib struct {
 // total_fees:CurrencyCollection state_update:^(HASH_UPDATE Account)
 // description:^TransactionDescr = Transaction;
 type Transaction struct {
-	tlb.SumType
-	Transaction struct {
-		AccountAddr   Hash
-		Lt            uint64
-		PrevTransHash Hash
-		PrevTransLt   uint64
-		Now           uint32
-		OutmsgCnt     uint32 `tlb:"15bits"`
-		OrigStatus    AccountStatus
-		EndStatus     AccountStatus
-		Msgs          struct {
-			InMsg   tlb.Maybe[tlb.Ref[Message[tlb.Any]]]
-			OutMsgs tlb.HashmapE[tlb.Ref[Message[tlb.Any]]] `tlb:"15bits"`
-		} `tlb:"^"`
-		TotalFees   CurrencyCollection
-		StateUpdate HashUpdate       `tlb:"^"`
-		Description TransactionDescr `tlb:"^"`
-	} `tlbSumType:"transaction$0111"`
+	Magic         tlb.Magic `tlb:"transaction$0111"`
+	AccountAddr   Hash
+	Lt            uint64
+	PrevTransHash Hash
+	PrevTransLt   uint64
+	Now           uint32
+	OutMsgCnt     uint32 `tlb:"15bits"`
+	OrigStatus    AccountStatus
+	EndStatus     AccountStatus
+	Msgs          struct {
+		InMsg   tlb.Maybe[tlb.Ref[Message[tlb.Any]]]
+		OutMsgs tlb.HashmapE[tlb.Ref[Message[tlb.Any]]] `tlb:"15bits"`
+	} `tlb:"^"`
+	TotalFees   CurrencyCollection
+	StateUpdate HashUpdate       `tlb:"^"`
+	Description TransactionDescr `tlb:"^"`
 }
 
-// TransactionDescr
 // trans_ord$0000 credit_first:Bool
-// storage_ph:(Maybe TrStoragePhase)
-// credit_ph:(Maybe TrCreditPhase)
-// compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
-// aborted:Bool bounce:(Maybe TrBouncePhase)
-// destroyed:Bool
-// = TransactionDescr;
+//   storage_ph:(Maybe TrStoragePhase)
+//   credit_ph:(Maybe TrCreditPhase)
+//   compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
+//   aborted:Bool bounce:(Maybe TrBouncePhase)
+//   destroyed:Bool
+//   = TransactionDescr;
+
 // trans_storage$0001 storage_ph:TrStoragePhase
-// = TransactionDescr;
+//   = TransactionDescr;
+
 // trans_tick_tock$001 is_tock:Bool storage_ph:TrStoragePhase
-// compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
-// aborted:Bool destroyed:Bool = TransactionDescr;
+//   compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
+//   aborted:Bool destroyed:Bool = TransactionDescr;
+// //
+
+// trans_split_prepare$0100 split_info:SplitMergeInfo
+//   storage_ph:(Maybe TrStoragePhase)
+//   compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
+//   aborted:Bool destroyed:Bool
+//   = TransactionDescr;
+// trans_split_install$0101 split_info:SplitMergeInfo
+//   prepare_transaction:^Transaction
+//   installed:Bool = TransactionDescr;
+
+// trans_merge_prepare$0110 split_info:SplitMergeInfo
+//   storage_ph:TrStoragePhase aborted:Bool
+//   = TransactionDescr;
+// trans_merge_install$0111 split_info:SplitMergeInfo
+//   prepare_transaction:^Transaction
+//   storage_ph:(Maybe TrStoragePhase)
+//   credit_ph:(Maybe TrCreditPhase)
+//   compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
+//   aborted:Bool destroyed:Bool
+//   = TransactionDescr;
 type TransactionDescr struct {
 	tlb.SumType
 	TransOrd struct {
@@ -291,6 +92,44 @@ type TransactionDescr struct {
 		Aborted   bool
 		Destroyed bool
 	} `tlbSumType:"trans_tick_tock$001"`
+	TransSplitPrepare struct {
+		SplitInfo SplitMergeInfo
+		StoragePh tlb.Maybe[TrStoragePhase]
+		ComputePh TrComputePhase
+		Action    tlb.Maybe[tlb.Ref[TrActionPhase]]
+		Aborted   bool
+		Destroyed bool
+	} `tlbSumType:"trans_split_prepare$0100"`
+	TransSplitInstall struct {
+		SplitInfo          SplitMergeInfo
+		PrepareTransaction tlb.Any `tlb:"^"`
+		Installed          bool
+	} `tlbSumType:"trans_split_install$0101"`
+	TransMergePrepare struct {
+		SplitInfo SplitMergeInfo
+		StoragePh TrStoragePhase
+		Aborted   bool
+	} `tlbSumType:"trans_merge_prepare$0110"`
+	TransMergeInstall struct {
+		SplitInfo          SplitMergeInfo
+		PrepareTransaction tlb.Any `tlb:"^"` //Transaction]
+		StoragePh          tlb.Maybe[TrStoragePhase]
+		CreditPh           tlb.Maybe[TrCreditPhase]
+		ComputePh          TrComputePhase
+		Action             tlb.Maybe[tlb.Ref[TrActionPhase]]
+		Aborted            bool
+		Destroyed          bool
+	} `tlbSumType:"trans_merge_install$0111"`
+}
+
+// split_merge_info$_ cur_shard_pfx_len:(## 6)
+//   acc_split_depth:(## 6) this_addr:bits256 sibling_addr:bits256
+//   = SplitMergeInfo;
+type SplitMergeInfo struct {
+	CurSHardPfxLen uint32 `tlb:"6bits"`
+	AccSplitDepth  uint32 `tlb:"6bits"`
+	ThisAddr       Hash
+	SiblingAddr    Hash
 }
 
 // TrStoragePhase
@@ -476,51 +315,27 @@ type TrBouncePhase struct {
 
 func (tx Transaction) IsSuccess() bool {
 	success := true
-	switch tx.Transaction.Description.SumType {
+	switch tx.Description.SumType {
 	case "TransStorage":
 		return true // TODO: check logic
 	case "TransOrd":
 		{
-			if tx.Transaction.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Transaction.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
+			if tx.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Transaction.Description.TransOrd.Action.Null {
-				success = success && tx.Transaction.Description.TransOrd.Action.Value.Value.Success
+			if !tx.Description.TransOrd.Action.Null {
+				success = success && tx.Description.TransOrd.Action.Value.Value.Success
 			}
 		}
 	case "TransTickTock":
 		{
-			if tx.Transaction.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Transaction.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
+			if tx.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
+				success = tx.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Transaction.Description.TransTickTock.Action.Null {
-				success = success && tx.Transaction.Description.TransTickTock.Action.Value.Value.Success
+			if !tx.Description.TransTickTock.Action.Null {
+				success = success && tx.Description.TransTickTock.Action.Value.Value.Success
 			}
 		}
 	}
 	return success
-}
-
-func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, importFee Grams) (Message[tlb.Any], error) {
-	// TODO: add either selection algorithm
-	var msg = Message[tlb.Any]{
-		Info: CommonMsgInfo{
-			SumType: "ExtInMsgInfo",
-		},
-		Body: tlb.EitherRef[tlb.Any]{
-			IsRight: true,
-			Value:   tlb.Any(*body),
-		},
-	}
-	if init != nil {
-		msg.Init.Null = false
-		msg.Init.Value.IsRight = true
-		msg.Init.Value.Value = *init
-	} else {
-		msg.Init.Null = true
-	}
-	msg.Info.ExtInMsgInfo.Src = MsgAddressFromAccountID(nil)
-	msg.Info.ExtInMsgInfo.Dest = MsgAddressFromAccountID(&address)
-	msg.Info.ExtInMsgInfo.ImportFee = importFee
-	return msg, nil
 }

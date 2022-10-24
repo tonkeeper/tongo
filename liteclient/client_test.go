@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/startfellows/tongo"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/startfellows/tongo"
 )
 
 func TestGetTransactions(t *testing.T) {
@@ -84,11 +85,11 @@ func TestGetBlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := block.Block.Info.GetParents()
+	p, err := block.Info.GetParents()
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("Block seqno: %v\n", block.Block.Info.SeqNo)
+	fmt.Printf("Block seqno: %v\n", block.Info.SeqNo)
 	fmt.Printf("1st parent block seqno: %v\n", p[0].Seqno)
 }
 
@@ -127,4 +128,39 @@ func TestGetAccountState(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("Account status: %v\n", st.Status)
+}
+
+func TestLookupBlock(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Current block seqno : %v\n", info.Seqno)
+	blockID := tongo.TonNodeBlockId{Workchain: info.Workchain, Shard: info.Shard, Seqno: info.Seqno - 1}
+	bl, _, err := api.LookupBlock(context.TODO(), 1, blockID, 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Prev block seqno    : %v\n", bl.Seqno)
+}
+
+func TestGetOneTransaction(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
+	var lt uint64 = 32174166000001
+	var rh, fh tongo.Hash
+	_ = fh.FromUnknownString("4237A19CD87265EB16ADDD0EF2EADF07B8F362903386653ED3ABDCF34477F748")
+	_ = rh.FromUnknownString("9F66A2B2CE8F80762F39E0F5340F873192C8D416E9B82C015918E98C851A23C2")
+	blockID := tongo.TonNodeBlockIdExt{Workchain: -1, Shard: -9223372036854775808, Seqno: 24425406, RootHash: rh, FileHash: fh}
+	_, _, err = tongoClient.GetOneRawTransaction(context.Background(), blockID, *accountId, lt)
+	if err != nil {
+		log.Fatalf("Get transaction error: %v", err)
+	}
 }

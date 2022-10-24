@@ -168,6 +168,9 @@ func (s *VmStack) UnmarshalTL(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	if len(b) == 0 {
+		return nil
+	}
 	cell, err := boc.DeserializeBoc(b)
 	if err != nil {
 		return err

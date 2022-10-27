@@ -1,13 +1,16 @@
 package wallet
 
 import (
+	"context"
 	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/liteclient"
 	"github.com/startfellows/tongo/tlb"
+	"log"
 	"testing"
 )
 
@@ -85,31 +88,74 @@ func TestLongCommentSerialization(t *testing.T) {
 	}
 }
 
-func TestGenerateTonTransferMessage(t *testing.T) {
-	// TODO: implement for other versions
-	testMessage := "b5ee9c720101040100b70001458801bd55cca31423fa4983b538a75a715dba6be94cda37de9e3c61028e5b24ed52400c01019c0f95a1f93ce745d54c2c837927f4b2f5eeff4b4119b63f465adba5c1eaf861b29d037adca6dd325d441b02f06d54f3292f3e9ade15d67effcf945c74a28da10d29a9a317ffffffff0000000d00010201644200283ef53eb037916cf42b3c69f76f1cddf099d434695071f03faa8165b85c5289113880000000000000000000000000010300120000000068656c6c6f"
+func TestSendSimpleTonTransferMessage(t *testing.T) {
+	t.Skip()
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
-	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
-	privateKey := ed25519.NewKeyFromSeed(pk)
-
-	w, err := NewWallet(privateKey, V4R2, 0, nil)
+	client, err := liteclient.NewClientWithDefaultTestnet()
 	if err != nil {
-		t.Fatalf("Unable to create wallet: %v", err)
+		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-
-	tonTransfer := TonTransfer{
-		Recipient: *recipientAddr,
-		Amount:    10000,
-		Comment:   "hello",
-		Bounce:    false,
-		Mode:      1,
+	w := initDefaultWallet(client)
+	comment := "hello"
+	tonTransfer := Message{
+		Amount:  10000,
+		Address: *recipientAddr,
+		Comment: &comment,
+		// Body:    *boc.Cell, // empty
+		// Init:    *tongo.StateInit, // empty
+		// Bounceable: *bool, // default
+		// Mode:       *byte, // default
 	}
-
-	msg, err := w.GenerateTonTransferMessage(13, 0xFFFFFFFF, []TonTransfer{tonTransfer})
+	err = w.SimpleSend(context.Background(), []Message{tonTransfer})
 	if err != nil {
 		t.Fatalf("Unable to generate transfer message: %v", err)
 	}
-	if fmt.Sprintf("%x", msg) != testMessage {
-		t.Fatalf("messages mismatch")
+}
+
+func TestGetSeqno(t *testing.T) {
+	client, err := liteclient.NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
 	}
+	w := initDefaultWallet(client)
+	seqno, err := w.getSeqno(context.Background())
+	if err != nil {
+		t.Fatalf("Unable to get wallet seqno: %v", err)
+	}
+	fmt.Printf("Seqno: %v\n", seqno)
+}
+
+func TestMockBlockchain(t *testing.T) {
+	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
+	client, c := NewMockBlockchain(1, tongo.AccountInfo{Balance: 1000})
+	w := initDefaultWallet(client)
+	comment := "hello"
+	tonTransfer := Message{
+		Amount:  10000,
+		Address: *recipientAddr,
+		Comment: &comment,
+		// Body:    *boc.Cell, // empty
+		// Init:    *tongo.StateInit, // empty
+		// Bounceable: *bool, // default
+		// Mode:       *byte, // default
+	}
+	err := w.SimpleSend(context.Background(), []Message{tonTransfer})
+	if err != nil {
+		t.Fatalf("Unable to generate transfer message: %v", err)
+	}
+	res := <-c
+	fmt.Printf("Transfer message: %x\n", res)
+	b, _ := w.GetBalance(context.Background())
+	fmt.Printf("Wallet balance: %v\n", b)
+}
+
+func initDefaultWallet(blockchain blockchain) Wallet {
+	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
+	privateKey := ed25519.NewKeyFromSeed(pk)
+	w, err := NewWallet(privateKey, V4R2, 0, nil, blockchain)
+	if err != nil {
+		panic("unable to create wallet")
+	}
+	fmt.Printf("Wallet address: %v\n", w.GetAddress())
+	return w
 }

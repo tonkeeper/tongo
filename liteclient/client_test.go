@@ -48,7 +48,7 @@ func TestRunSmcMethod(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	accountId, _ := tongo.ParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
-	_, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
+	_, _, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
 	if err != nil {
 		log.Fatalf("Run smc error: %v", err)
 	}

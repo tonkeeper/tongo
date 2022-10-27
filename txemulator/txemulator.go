@@ -54,7 +54,7 @@ func NewEmulator(config *boc.Cell) (*Emulator, error) {
 	return &e, nil
 }
 
-func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Message[tlb.Any]) (tongo.ShardAccount, tongo.Transaction, error) {
+func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Message) (tongo.ShardAccount, tongo.Transaction, error) {
 
 	msg, err := tlbStructToBase64(message)
 	if err != nil {

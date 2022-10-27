@@ -23,7 +23,8 @@ func TestExec(t *testing.T) {
 	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 	privateKey := ed25519.NewKeyFromSeed(pk)
 
-	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil)
+	client, c := wallet.NewMockBlockchain(1, tongo.AccountInfo{Balance: 1000})
+	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil, client)
 	if err != nil {
 		log.Fatalf("Unable to create wallet: %v", err)
 	}
@@ -42,12 +43,11 @@ func TestExec(t *testing.T) {
 		log.Fatalf("Get account state error: %v", err)
 	}
 
-	tonTransfer := wallet.TonTransfer{
-		Recipient: *recipientAddr,
-		Amount:    10000,
-		Comment:   "hello",
-		Bounce:    false,
-		Mode:      1,
+	comment := "hello"
+	tonTransfer := wallet.Message{
+		Amount:  10000,
+		Address: *recipientAddr,
+		Comment: &comment,
 	}
 
 	accountID := w.GetAddress()
@@ -62,17 +62,18 @@ func TestExec(t *testing.T) {
 		log.Fatalf("TVM execution failed")
 	}
 
-	msg, err := w.GenerateTonTransferMessage(uint32(res.Stack[0].Int64()), 0xFFFFFFFF, []wallet.TonTransfer{tonTransfer})
+	err = w.SimpleSend(context.Background(), []wallet.Message{tonTransfer})
 	if err != nil {
 		log.Fatalf("Unable to generate transfer message: %v", err)
 	}
 
-	var message tongo.Message[tlb.Any]
-	c, err := boc.DeserializeBoc(msg)
+	msg := <-c
+	var message tongo.Message
+	cell, err := boc.DeserializeBoc(msg)
 	if err != nil {
 		log.Fatalf("unable to deserialize transfer message: %v", err)
 	}
-	err = tlb.Unmarshal(c[0], &message)
+	err = tlb.Unmarshal(cell[0], &message)
 	if err != nil {
 		log.Fatalf("unable to unmarshal transfer message: %v", err)
 	}

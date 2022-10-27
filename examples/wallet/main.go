@@ -27,27 +27,20 @@ func main() {
 
 	log.Printf("Wallet address: %v\n", w.GetAddress().ToRaw())
 
-	tonTransfer := wallet.TonTransfer{
-		Recipient: *recipientAddr,
-		Amount:    10000,
-		Comment:   "hello",
-		Bounce:    false,
-		Mode:      1,
+	comment := "hello"
+	tonTransfer := wallet.Message{
+		Amount:  10000,
+		Address: *recipientAddr,
+		Comment: &comment,
+		// Body:    *boc.Cell, // empty
+		// Init:    *tongo.StateInit, // empty
+		// Bounceable: *bool, // default
+		// Mode:       *byte, // default
 	}
 
-	seqno, err := w.GetSeqno(context.Background())
-	if err != nil {
-		log.Fatalf("Unable to get seqno: %v", err)
-	}
-
-	msg, err := w.GenerateTonTransferMessage(seqno, 0xFFFFFFFF, []wallet.TonTransfer{tonTransfer})
+	err = w.SimpleSend(context.Background(), []wallet.Message{tonTransfer})
 	if err != nil {
 		log.Fatalf("Unable to generate transfer message: %v", err)
-	}
-
-	err = client.SendRawMessage(context.Background(), msg)
-	if err != nil {
-		log.Fatalf("Send message error: %v", err)
 	}
 	log.Printf("The message was sent successfully")
 }

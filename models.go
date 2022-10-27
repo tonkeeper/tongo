@@ -262,7 +262,7 @@ type ShardDesc struct {
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
 		GenUTime           uint32
-	} `tlbSumType:"new#a""`
+	} `tlbSumType:"new#a"`
 }
 
 func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {

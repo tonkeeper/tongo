@@ -298,3 +298,18 @@ func (ct *VmCont) UnmarshalTLB(c *boc.Cell, tag string) error {
 	// TODO: implement
 	return fmt.Errorf("VmCont TLB unmarshaling not implemented")
 }
+
+func TlbStructToVmCellSlice[T any](s T) (VmCellSlice, error) {
+	cell := boc.NewCell()
+	err := tlb.Marshal(cell, s)
+	if err != nil {
+		return VmCellSlice{}, err
+	}
+	return VmCellSlice{
+		cell:    cell,
+		stBits:  0,
+		endBits: cell.BitSize(),
+		stRef:   0,
+		endRef:  cell.RefsSize(),
+	}, nil
+}

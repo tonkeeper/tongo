@@ -164,3 +164,17 @@ func TestGetOneTransaction(t *testing.T) {
 		log.Fatalf("Get transaction error: %v", err)
 	}
 }
+
+func TestGetJettonWallet(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	owner, _ := tongo.ParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	wallet, err := tongoClient.GetJettonWallet(context.Background(), *master, *owner)
+	if err != nil {
+		log.Fatalf("get jetton wallet error: %v", err)
+	}
+	fmt.Printf("jetton wallet address: %v\n", wallet.String())
+}

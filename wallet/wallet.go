@@ -150,14 +150,22 @@ func generateStateInit(
 	return state, nil
 }
 
-// generateExternalMessage
-// Generate signed external message for wallet with custom internal messages and init
-// Payload serialized to bytes and can be sent by liteclient.SendRawMessage method
-func (w *Wallet) generateExternalMessage(seqno uint32, validUntil time.Time, internalMessages messageArray, init *tongo.StateInit) ([]byte, error) {
-	var err error
-	err = checkMessagesLimit(len(internalMessages), w.ver)
+// RawSend
+// Generates a signed external message for wallet with custom internal messages, seqno, TTL and init
+// The payload is serialized into bytes and sent by the method SendRawMessage
+func (w *Wallet) RawSend(
+	ctx context.Context,
+	seqno uint32,
+	validUntil time.Time,
+	internalMessages []RawMessage,
+	init *tongo.StateInit,
+) error {
+	if w.blockchain == nil {
+		return BlockchainInterfaceIsNil
+	}
+	err := checkMessagesLimit(len(internalMessages), w.ver)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	bodyCell := boc.NewCell()
 	switch w.ver {
@@ -179,15 +187,15 @@ func (w *Wallet) generateExternalMessage(seqno uint32, validUntil time.Time, int
 		}
 		err = tlb.Marshal(bodyCell, body)
 	default:
-		return nil, fmt.Errorf("message body generation for this wallet is not supported: %v", err)
+		return fmt.Errorf("message body generation for this wallet is not supported: %v", err)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("can not marshal wallet message body: %v", err)
+		return fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
 
 	sign, err := bodyCell.Sign(w.key)
 	if err != nil {
-		return nil, fmt.Errorf("can not sign wallet message body: %v", err)
+		return fmt.Errorf("can not sign wallet message body: %v", err)
 	}
 	signedBody := struct {
 		Sign    boc.BitString `tlb:"512bits"`
@@ -202,13 +210,13 @@ func (w *Wallet) generateExternalMessage(seqno uint32, validUntil time.Time, int
 	extMsgCell := boc.NewCell()
 	err = tlb.Marshal(extMsgCell, extMsg)
 	if err != nil {
-		return nil, fmt.Errorf("can not marshal wallet external message: %v", err)
+		return fmt.Errorf("can not marshal wallet external message: %v", err)
 	}
 	payload, err := extMsgCell.ToBocCustom(false, false, false, 0)
 	if err != nil {
-		return nil, fmt.Errorf("can not serialize external message cell: %v", err)
+		return fmt.Errorf("can not serialize external message cell: %v", err)
 	}
-	return payload, err
+	return w.blockchain.SendRawMessage(ctx, payload)
 }
 
 func generateInternalMessage(msg Message) (tongo.Message, error) {
@@ -281,13 +289,15 @@ func (w *Wallet) getSeqno(ctx context.Context) (uint32, error) {
 	return w.blockchain.GetSeqno(ctx, w.address)
 }
 
-type messageArray []struct {
-	Message tongo.Message
-	Mode    byte
-}
-
+// SimpleSend
+// Generates a signed external message for wallet with custom internal messages and default TTL
+// Gets actual seqno and attach init for wallet if it needed
+// The payload is serialized into bytes and sent by the method SendRawMessage
 func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 	var init *tongo.StateInit
+	if w.blockchain == nil {
+		return BlockchainInterfaceIsNil
+	}
 	seqno, err := w.getSeqno(ctx)
 	if err != nil {
 		return err
@@ -299,7 +309,7 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 		}
 	}
 	var (
-		msgArray messageArray
+		msgArray []RawMessage
 		mode     byte
 	)
 	for _, m := range messages {
@@ -312,19 +322,19 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 		} else {
 			mode = *m.Mode
 		}
-		msgArray = append(msgArray, struct {
-			Message tongo.Message
-			Mode    byte
-		}{Message: intMsg, Mode: mode})
+		cell := boc.NewCell()
+		err = tlb.Marshal(cell, intMsg)
+		if err != nil {
+			return err
+		}
+		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
 	}
 	validUntil := time.Now().Add(DefaultMessageLifetime)
-	payload, err := w.generateExternalMessage(seqno, validUntil, msgArray, init)
-	if w.blockchain == nil {
-		return BlockchainInterfaceIsNil
-	}
-	return w.blockchain.SendRawMessage(ctx, payload)
+	return w.RawSend(ctx, seqno, validUntil, msgArray, init)
 }
 
+// GetBalance
+// Gets actual TON balance for wallet
 func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if w.blockchain == nil {
 		return 0, BlockchainInterfaceIsNil

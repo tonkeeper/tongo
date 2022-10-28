@@ -135,10 +135,7 @@ type MessageV4 struct {
 	Payload     PayloadV1toV4
 }
 
-type PayloadV1toV4 []struct {
-	Message tongo.Message
-	Mode    byte
-}
+type PayloadV1toV4 []RawMessage
 
 type TonTransfer struct {
 	Recipient tongo.AccountID
@@ -156,6 +153,11 @@ type Message struct {
 	Init       *tongo.StateInit
 	Bounceable *bool
 	Mode       *byte
+}
+
+type RawMessage struct {
+	Message *boc.Cell
+	Mode    byte
 }
 
 type TextComment string
@@ -190,16 +192,11 @@ func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, tag string) error {
 		return fmt.Errorf("PayloadV1toV4 supports only up to 4 messages")
 	}
 	for _, msg := range p {
-		cell := boc.NewCell()
-		err := tlb.Marshal(cell, msg.Message)
+		err := c.WriteUint(uint64(msg.Mode), 8)
 		if err != nil {
 			return err
 		}
-		err = c.WriteUint(uint64(msg.Mode), 8)
-		if err != nil {
-			return err
-		}
-		err = c.AddRef(cell)
+		err = c.AddRef(msg.Message)
 		if err != nil {
 			return err
 		}

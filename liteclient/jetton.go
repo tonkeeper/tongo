@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/tlb"
 )
 
 func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.AccountID) (tongo.AccountID, error) {
@@ -26,10 +25,8 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.Accoun
 	if len(stack) != 1 || stack[0].SumType != "VmStkSlice" {
 		return tongo.AccountID{}, fmt.Errorf("invalid stack")
 	}
-	// TODO: implement universal converter
 	var res tongo.MsgAddress
-	cell := stack[0].VmStkSlice.Cell()
-	err = tlb.Unmarshal(cell, &res)
+	err = stack[0].VmStkSlice.UnmarshallToTlbStruct(&res)
 	if err != nil {
 		return tongo.AccountID{}, err
 	}

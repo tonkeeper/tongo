@@ -8,10 +8,13 @@ import (
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/contract/jetton"
 	"github.com/startfellows/tongo/liteclient"
 	"github.com/startfellows/tongo/tlb"
 	"log"
+	"math/big"
 	"testing"
+	"time"
 )
 
 func TestGetCodeByVer(t *testing.T) {
@@ -88,7 +91,7 @@ func TestLongCommentSerialization(t *testing.T) {
 	}
 }
 
-func TestSendSimpleTonTransferMessage(t *testing.T) {
+func TestSimpleSend(t *testing.T) {
 	t.Skip()
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 	client, err := liteclient.NewClientWithDefaultTestnet()
@@ -141,7 +144,7 @@ func TestMockBlockchain(t *testing.T) {
 	}
 	err := w.SimpleSend(context.Background(), []Message{tonTransfer})
 	if err != nil {
-		t.Fatalf("Unable to generate transfer message: %v", err)
+		t.Fatalf("Unable to send message: %v", err)
 	}
 	res := <-c
 	fmt.Printf("Transfer message: %x\n", res)
@@ -158,4 +161,49 @@ func initDefaultWallet(blockchain blockchain) Wallet {
 	}
 	fmt.Printf("Wallet address: %v\n", w.GetAddress())
 	return w
+}
+
+func TestSendJetton(t *testing.T) {
+	//t.Skip()
+	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
+
+	client, err := liteclient.NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	w := initDefaultWallet(client)
+
+	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	j := jetton.NewJetton(*master, client)
+	b, err := j.GetBalance(context.Background(), w.GetAddress())
+	if err != nil {
+		log.Fatalf("Unable to get jetton wallet balance: %v", err)
+	}
+	amount := big.NewInt(1000)
+	if amount.Cmp(b) == 1 {
+		log.Fatalf("%v jettons needed, but only %v on balance", amount, b)
+	}
+
+	log.Printf("Prev balance: %v", b)
+	comment := "hello"
+	jettonTransfer := jetton.TransferMessage{
+		Jetton:       j,
+		JettonAmount: amount,
+		Destination:  *recipientAddr,
+		// ResponseDestination: *tongo.AccountID
+		TonAmount:        400_000_000,
+		ForwardTonAmount: 200_000_000,
+		Comment:          &comment,
+		// Payload: *boc.Cell
+	}
+	err = w.SendJetton(context.Background(), []jetton.TransferMessage{jettonTransfer})
+	if err != nil {
+		t.Fatalf("Unable to send transfer message: %v", err)
+	}
+	time.Sleep(time.Second * 15)
+	b, err = j.GetBalance(context.Background(), w.GetAddress())
+	if err != nil {
+		log.Fatalf("Unable to get jetton wallet balance: %v", err)
+	}
+	log.Printf("New balance: %v", b)
 }

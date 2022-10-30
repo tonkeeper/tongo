@@ -314,7 +314,7 @@ func TlbStructToVmCellSlice(s any) (VmCellSlice, error) {
 	}, nil
 }
 
-func (s VmCellSlice) UnmarshallToTlbStruct(res any) error {
+func (s VmCellSlice) UnmarshalToTlbStruct(res any) error {
 	cell := s.Cell()
 	err := tlb.Unmarshal(cell, res)
 	if err != nil {

@@ -9,8 +9,10 @@ import (
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/contract/jetton"
 	"github.com/startfellows/tongo/tlb"
 	"golang.org/x/crypto/pbkdf2"
+	"math/rand"
 	"strings"
 	"time"
 )
@@ -161,7 +163,7 @@ func (w *Wallet) RawSend(
 	init *tongo.StateInit,
 ) error {
 	if w.blockchain == nil {
-		return BlockchainInterfaceIsNil
+		return tongo.BlockchainInterfaceIsNil
 	}
 	err := checkMessagesLimit(len(internalMessages), w.ver)
 	if err != nil {
@@ -284,7 +286,7 @@ func checkMessagesLimit(msgQty int, ver Version) error { // TODO: maybe return b
 
 func (w *Wallet) getSeqno(ctx context.Context) (uint32, error) {
 	if w.blockchain == nil {
-		return 0, BlockchainInterfaceIsNil
+		return 0, tongo.BlockchainInterfaceIsNil
 	}
 	return w.blockchain.GetSeqno(ctx, w.address)
 }
@@ -296,7 +298,7 @@ func (w *Wallet) getSeqno(ctx context.Context) (uint32, error) {
 func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 	var init *tongo.StateInit
 	if w.blockchain == nil {
-		return BlockchainInterfaceIsNil
+		return tongo.BlockchainInterfaceIsNil
 	}
 	seqno, err := w.getSeqno(ctx)
 	if err != nil {
@@ -337,11 +339,78 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 // Gets actual TON balance for wallet
 func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if w.blockchain == nil {
-		return 0, BlockchainInterfaceIsNil
+		return 0, tongo.BlockchainInterfaceIsNil
 	}
 	state, err := w.blockchain.GetAccountState(ctx, w.address)
 	if err != nil {
 		return 0, err
 	}
 	return state.Balance, nil
+}
+
+// SendJetton
+// Sends Jettons to recipient address
+func (w *Wallet) SendJetton(ctx context.Context, messages []jetton.TransferMessage) error {
+	var msgArray []Message
+	for _, m := range messages {
+		body, err := buildJettonTransferBody(w.GetAddress(), m)
+		if err != nil {
+			return err
+		}
+		jettonWallet, err := m.Jetton.GetJettonWallet(ctx, w.GetAddress())
+		if err != nil {
+			return err
+		}
+		msgArray = append(msgArray, Message{
+			Amount:  m.TonAmount,
+			Address: jettonWallet,
+			Body:    body,
+		})
+	}
+	return w.SimpleSend(ctx, msgArray)
+}
+
+func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) (*boc.Cell, error) {
+	payload := boc.NewCell()
+	if msg.Comment != nil && msg.Payload != nil {
+		return nil, fmt.Errorf("only payload or comment must be presented")
+	} else if msg.Comment != nil {
+		err := tlb.Marshal(payload, TextComment(*msg.Comment))
+		if err != nil {
+			return nil, err
+		}
+	} else if msg.Payload != nil {
+		payload = msg.Payload
+	}
+	var responseDestination tongo.MsgAddress
+	if msg.ResponseDestination == nil {
+		responseDestination = tongo.MsgAddressFromAccountID(&owner) // send excess to sender wallet
+	} else {
+		responseDestination = tongo.MsgAddressFromAccountID(msg.ResponseDestination)
+	}
+	transferMsg := struct {
+		tlb.Magic           `tlb:"transfer#0f8a7ea5"`
+		QueryId             uint64
+		Amount              tlb.VarUInteger `tlb:"16bytes"`
+		Destination         tongo.MsgAddress
+		ResponseDestination tongo.MsgAddress
+		CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
+		ForwardTonAmount    tongo.Grams // (VarUInteger 16)
+		ForwardPayload      tlb.EitherRef[tlb.Any]
+	}{
+		QueryId:             rand.Uint64(),
+		Amount:              tlb.VarUInteger(*msg.JettonAmount),
+		Destination:         tongo.MsgAddressFromAccountID(&msg.Destination),
+		ResponseDestination: responseDestination,
+		ForwardTonAmount:    tongo.Grams(msg.ForwardTonAmount),
+	}
+	transferMsg.CustomPayload.Null = true
+	transferMsg.ForwardPayload.IsRight = true
+	transferMsg.ForwardPayload.Value = tlb.Any(*payload)
+	res := boc.NewCell()
+	err := tlb.Marshal(res, transferMsg)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }

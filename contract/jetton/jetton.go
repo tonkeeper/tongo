@@ -53,3 +53,10 @@ func (j *Jetton) GetJettonWallet(ctx context.Context, owner tongo.AccountID) (to
 	}
 	return j.blockchain.GetJettonWallet(ctx, j.Master, owner)
 }
+
+func (j *Jetton) GetDecimals(ctx context.Context) (int, error) {
+	if j.blockchain == nil {
+		return 0, tongo.BlockchainInterfaceIsNil
+	}
+	return j.blockchain.GetDecimals(ctx, j.Master)
+}

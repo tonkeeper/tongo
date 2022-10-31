@@ -11,10 +11,10 @@ import (
 // message$_ {X:Type} info:CommonMsgInfo
 // init:(Maybe (Either StateInit ^StateInit))
 // body:(Either X ^X) = Message X;
-type Message[T any] struct {
+type Message struct {
 	Info CommonMsgInfo
 	Init tlb.Maybe[tlb.EitherRef[StateInit]]
-	Body tlb.EitherRef[T]
+	Body tlb.EitherRef[tlb.Any]
 }
 
 // CommonMsgInfo
@@ -227,9 +227,9 @@ type SimpleLib struct {
 	Root   boc.Cell `tlb:"^"`
 }
 
-func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, importFee Grams) (Message[tlb.Any], error) {
+func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, importFee Grams) (Message, error) {
 	// TODO: add either selection algorithm
-	var msg = Message[tlb.Any]{
+	var msg = Message{
 		Info: CommonMsgInfo{
 			SumType: "ExtInMsgInfo",
 		},
@@ -268,12 +268,12 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, i
 type InMsg struct {
 	tlb.SumType
 	MsgImportExt struct {
-		Msg         Message[tlb.Any] `tlb:"^"`
-		Transaction Transaction      `tlb:"^"`
+		Msg         Message     `tlb:"^"`
+		Transaction Transaction `tlb:"^"`
 	} `tlbSumType:"msg_import_ext$000"`
 	MsgImportIhr struct {
-		Msg          Message[tlb.Any] `tlb:"^"`
-		Transaction  Transaction      `tlb:"^"`
+		Msg          Message     `tlb:"^"`
+		Transaction  Transaction `tlb:"^"`
 		IhrFee       Grams
 		ProofCreated boc.Cell `tlb:"^"`
 	} `tlbSumType:"msg_import_ihr$010"`
@@ -337,8 +337,8 @@ type OutMsgDescr struct {
 type OutMsg struct {
 	tlb.SumType
 	MsgExportExt struct {
-		Msg         Message[tlb.Any] `tlb:"^"`
-		Transaction Transaction      `tlb:"^"`
+		Msg         Message     `tlb:"^"`
+		Transaction Transaction `tlb:"^"`
 	} `tlbSumType:"msg_export_ext$000"`
 	MsgExportImm struct {
 		OutMsg      MsgEnvelope `tlb:"^"`
@@ -400,7 +400,7 @@ type MsgEnvelope struct {
 	CurrentAddress  IntermediateAddress
 	NextAddress     IntermediateAddress
 	FwdFeeRemaining Grams
-	Msg             Message[tlb.Any] `tlb:"^"`
+	Msg             Message `tlb:"^"`
 }
 
 // interm_addr_regular$0 use_dest_bits:(#<= 96) = IntermediateAddress;

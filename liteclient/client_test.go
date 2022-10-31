@@ -48,7 +48,7 @@ func TestRunSmcMethod(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	accountId, _ := tongo.ParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
-	_, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
+	_, _, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
 	if err != nil {
 		log.Fatalf("Run smc error: %v", err)
 	}
@@ -163,4 +163,44 @@ func TestGetOneTransaction(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
 	}
+}
+
+func TestGetJettonWallet(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	owner, _ := tongo.ParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	wallet, err := tongoClient.GetJettonWallet(context.Background(), *master, *owner)
+	if err != nil {
+		log.Fatalf("get jetton wallet error: %v", err)
+	}
+	fmt.Printf("jetton wallet address: %v\n", wallet.String())
+}
+
+func TestGetDecimals(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	dec, err := tongoClient.GetDecimals(context.Background(), *master)
+	if err != nil {
+		log.Fatalf("get jetton decimals error: %v", err)
+	}
+	fmt.Printf("jetton decimals: %v\n", dec)
+}
+
+func TestGetJettonBalance(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	jettonWallet, _ := tongo.ParseAccountID("kQCOSEttz9aEGXkjd1h_NJsQqOca3T-Pld5zSIPHcYZIxsyf")
+	b, err := tongoClient.GetJettonBalance(context.Background(), *jettonWallet)
+	if err != nil {
+		log.Fatalf("get jetton decimals error: %v", err)
+	}
+	fmt.Printf("jetton balance: %v\n", b)
 }

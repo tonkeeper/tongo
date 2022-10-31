@@ -2,6 +2,7 @@ package tongo
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -9,6 +10,8 @@ import (
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
+
+var BlockchainInterfaceIsNil = errors.New("blockchain interface is nil")
 
 // Grams
 // nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -262,7 +265,7 @@ type ShardDesc struct {
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
 		GenUTime           uint32
-	} `tlbSumType:"new#a""`
+	} `tlbSumType:"new#a"`
 }
 
 func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {

@@ -38,8 +38,11 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
 		}
 		return nil
 	}
-
 	return fmt.Errorf("unsupported tag: %v", tag)
+}
+
+func (m Magic) MarshalTLB(c *boc.Cell, tag string) error {
+	return encodeSumTag(c, tag)
 }
 
 type Maybe[T any] struct {

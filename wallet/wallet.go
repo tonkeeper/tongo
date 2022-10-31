@@ -389,7 +389,7 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 		responseDestination = tongo.MsgAddressFromAccountID(msg.ResponseDestination)
 	}
 	transferMsg := struct {
-		tlb.Magic           `tlb:"transfer#0f8a7ea5"`
+		Magic               tlb.Magic `tlb:"transfer#0f8a7ea5"`
 		QueryId             uint64
 		Amount              tlb.VarUInteger `tlb:"16bytes"`
 		Destination         tongo.MsgAddress

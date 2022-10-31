@@ -81,18 +81,22 @@ func TestExec(t *testing.T) {
 	shardAccount.Account = account
 	shardAccount.LastTransLt = account.Account.Storage.LastTransLt - 1
 
-	e, err := NewEmulator(config)
+	e, err := NewEmulator(config, PrintsAllStackValuesForCommand)
 	if err != nil {
 		log.Fatalf("unable to create emulator: %v", err)
 	}
 
-	acc, tx, err := e.Emulate(shardAccount, message)
+	e.SetVerbosityLevel(0)
+
+	emRes, err := e.Emulate(shardAccount, message)
 	if err != nil {
 		log.Fatalf("emulator error: %v", err)
 	}
-	fmt.Printf("Account last transaction hash: %x\n", acc.LastTransHash)
-	fmt.Printf("Prev transaction hash: %x\n", tx.PrevTransHash)
-
+	if emRes.Emulation == nil {
+		log.Fatalf("empty emulation")
+	}
+	fmt.Printf("Account last transaction hash: %x\n", emRes.Emulation.ShardAccount.LastTransHash)
+	fmt.Printf("Transaction lt: %v\n", emRes.Emulation.Transaction.Lt)
 }
 
 func TestGetConfigExec(t *testing.T) {

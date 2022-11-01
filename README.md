@@ -31,3 +31,8 @@ Tongo operates with TON blockchain structures described in [block.tlb](https://g
 and some types described in [lite_api.tl](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/lite_api.tl).
 Go definitions of this types you can find in files: `account.go`, `transactions.go`, `models.go` ... 
 
+## Chat
+
+You can join to our chat in telegram - https://t.me/tongo_lib 
+
+Don't be afraid if you see only russians - we welcome any english speakers too.

@@ -305,10 +305,11 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 		return err
 	}
 	if seqno == 0 {
-		*init, err = w.getInit()
+		i, err := w.getInit()
 		if err != nil {
 			return err
 		}
+		init = &i
 	}
 	var (
 		msgArray []RawMessage

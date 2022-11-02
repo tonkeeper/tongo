@@ -105,7 +105,8 @@ func TestSimpleSend(t *testing.T) {
 		Address: *recipientAddr,
 		Comment: &comment,
 		// Body:    *boc.Cell, // empty
-		// Init:    *tongo.StateInit, // empty
+		// Code:    *boc.Cell, // empty
+		// Data:    *boc.Cell, // empty
 		// Bounceable: *bool, // default
 		// Mode:       *byte, // default
 	}

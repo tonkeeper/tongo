@@ -147,7 +147,8 @@ type Message struct {
 	Address    tongo.AccountID
 	Comment    *string
 	Body       *boc.Cell
-	Init       *tongo.StateInit
+	Code       *boc.Cell
+	Data       *boc.Cell
 	Bounceable *bool
 	Mode       *byte
 }

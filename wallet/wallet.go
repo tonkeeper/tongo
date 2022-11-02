@@ -255,14 +255,25 @@ func generateInternalMessage(msg Message) (tongo.Message, error) {
 		},
 	}
 
-	if msg.Init == nil {
+	if msg.Code == nil && msg.Data == nil {
 		intMsg.Init.Null = true
 	} else {
-		intMsg.Init.Null = false
 		intMsg.Init.Value.IsRight = true
-		intMsg.Init.Value.Value = *msg.Init
+		var init tongo.StateInit
+		init.Special.Null = true
+		init.SplitDepth.Null = true
+		if msg.Code != nil {
+			init.Code.Value.Value = *msg.Code
+		} else {
+			init.Code.Null = true
+		}
+		if msg.Data != nil {
+			init.Data.Value.Value = *msg.Data
+		} else {
+			init.Data.Null = true
+		}
+		intMsg.Init.Value.Value = init
 	}
-
 	return intMsg, nil
 }
 

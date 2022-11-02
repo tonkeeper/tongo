@@ -200,3 +200,22 @@ func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, tag string) error {
 	}
 	return nil
 }
+
+func (p *PayloadV1toV4) UnmarshalTLB(c *boc.Cell, tag string) error {
+	for {
+		ref, err := c.NextRef()
+		if err != nil {
+			break
+		}
+		mode, err := c.ReadUint(8)
+		if err != nil {
+			return err
+		}
+		msg := RawMessage{
+			Message: ref,
+			Mode:    byte(mode),
+		}
+		*p = append(*p, msg)
+	}
+	return nil
+}

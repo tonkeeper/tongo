@@ -208,3 +208,17 @@ func TestSendJetton(t *testing.T) {
 	}
 	log.Printf("New balance: %v", b)
 }
+
+func TestDeserializeMessage(t *testing.T) {
+	raw := "te6ccgECBgEAAXgAAZyTKd6JrxqOdZVwzAQwORTSmzEWraYc1v/B1trCjeQrl2o3reaq5d5fnMSdsStxpuQiWtclR30WuOqT4B5llBUBKamjF2NhSmsAAAAhAAMBAWpiAGyOLO7S4cYY8vrxnyGjmQy4fbFHsBTVru7/HlYASPPFKAlQL5AAAAAAAAAAAAAAAAAAAQIDtUY3KJoNoPRt29Q+0/k+b+3eMh/+pICK4Bdz8Cp7zpaXiLqHOGifBStWBqk5GdQn02DkhGQ+wOAtjn9w4gNcdEaIjZ0HAAAnE2NhShBjYUqmCXRlc3RlZWRlMcADBAUAWgFodHRwczovL25mdC5zdGVsLmNvbS91c2VybmFtZS90ZXN0ZWVkZTEuanNvbgBrgBCxVofvaKaMhDVkiORUzmkG5xwA0tZBmR3uDe2eRLI7agJUC+QAoCVAvkAAoAABwgAAACWQAEsABQBkgBCxVofvaKaMhDVkiORUzmkG5xwA0tZBmR3uDe2eRLI7cA=="
+	cells, err := boc.DeserializeBocBase64(raw)
+	if err != nil {
+		panic(err)
+	}
+	var msg MessageV4
+	cells[0].Skip(512)
+	err = tlb.Unmarshal(cells[0], &msg)
+	if err != nil {
+		panic(err)
+	}
+}

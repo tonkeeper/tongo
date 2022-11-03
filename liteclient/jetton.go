@@ -117,7 +117,7 @@ func (c *Client) GetJettonBalance(ctx context.Context, jettonWallet tongo.Accoun
 	if stack[0].SumType == "VmStkTinyInt" {
 		return big.NewInt(stack[0].VmStkTinyInt), nil
 	}
-	return &stack[0].VmStkInt.Value, nil
+	return stack[0].VmStkInt.BigInt(), nil
 }
 
 // TEP-64 Token Data Standard

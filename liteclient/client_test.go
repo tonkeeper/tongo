@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"math/big"
 	"testing"
 	"time"
 
@@ -179,17 +180,17 @@ func TestGetJettonWallet(t *testing.T) {
 	fmt.Printf("jetton wallet address: %v\n", wallet.String())
 }
 
-func TestGetDecimals(t *testing.T) {
+func TestGetJettonData(t *testing.T) {
 	tongoClient, err := NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
-	dec, err := tongoClient.GetDecimals(context.Background(), *master)
+	meta, err := tongoClient.GetJettonData(context.Background(), *master)
 	if err != nil {
 		log.Fatalf("get jetton decimals error: %v", err)
 	}
-	fmt.Printf("jetton decimals: %v\n", dec)
+	fmt.Printf("jetton symbol: %v\n", meta.Symbol)
 }
 
 func TestGetJettonBalance(t *testing.T) {
@@ -203,4 +204,29 @@ func TestGetJettonBalance(t *testing.T) {
 		log.Fatalf("get jetton decimals error: %v", err)
 	}
 	fmt.Printf("jetton balance: %v\n", b)
+}
+
+func TestDnsResolve(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	root, _ := tongo.ParseAccountID("Ef_BimcWrQ5pmAWfRqfeVHUCNV8XgsLqeAMBivKryXrghFW3")
+	m, _, err := tongoClient.DnsResolve(context.Background(), *root, "ton\u0000alice\u0000", big.NewInt(0))
+	if err != nil {
+		log.Fatalf("dns resolve error: %v", err)
+	}
+	fmt.Printf("Bytes resolved: %v\n", m)
+}
+
+func TestGetRootDNS(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	root, err := tongoClient.GetRootDNS(context.Background())
+	if err != nil {
+		log.Fatalf("get root dns error: %v", err)
+	}
+	fmt.Printf("Root DNS: %v\n", root.ToRaw())
 }

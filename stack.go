@@ -176,6 +176,10 @@ func (s *VmStack) UnmarshalTL(r io.Reader) error {
 	return tlb.Unmarshal(cell[0], s)
 }
 
+func (s *VmStack) Put(val VmStackValue) {
+	*s = append(VmStack{val}, *s...)
+}
+
 func (s VmCellSlice) MarshalTLB(c *boc.Cell, tag string) error {
 	if s.stBits > s.endBits {
 		return fmt.Errorf("invalid StBits and EndBits for CellSlice")

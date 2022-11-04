@@ -31,6 +31,7 @@ type DNSRecord struct {
 		Address       AccountID
 		SmcCapability SmcCapabilities
 	} `tlbSumType:"dns_smc_address#9fd3"`
+	NotStandard *boc.Cell // only for custom unmarshaling
 }
 
 func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -80,6 +81,9 @@ func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
 		*r = res
 		return nil
 	}
+	c.ResetCounters()
+	r.SumType = "NotStandard"
+	r.NotStandard = c
 	return nil
 }
 

@@ -5,11 +5,12 @@ import (
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"math/big"
+	"strconv"
 )
 
 type blockchain interface {
 	GetJettonWallet(ctx context.Context, master, owner tongo.AccountID) (tongo.AccountID, error)
-	GetDecimals(ctx context.Context, master tongo.AccountID) (int, error)
+	GetJettonData(ctx context.Context, master tongo.AccountID) (tongo.JettonMetadata, error)
 	GetJettonBalance(ctx context.Context, jettonWallet tongo.AccountID) (*big.Int, error)
 }
 
@@ -58,5 +59,12 @@ func (j *Jetton) GetDecimals(ctx context.Context) (int, error) {
 	if j.blockchain == nil {
 		return 0, tongo.BlockchainInterfaceIsNil
 	}
-	return j.blockchain.GetDecimals(ctx, j.Master)
+	data, err := j.blockchain.GetJettonData(ctx, j.Master)
+	if err != nil {
+		return 0, err
+	}
+	if data.Decimals == "" {
+		return 9, nil
+	}
+	return strconv.Atoi(data.Decimals)
 }

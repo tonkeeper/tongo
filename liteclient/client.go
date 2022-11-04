@@ -19,7 +19,9 @@ import (
 	"github.com/startfellows/tongo/utils"
 )
 
-var ErrBlockNotApplied = fmt.Errorf("block is not applied")
+var (
+	ErrBlockNotApplied = fmt.Errorf("block is not applied")
+)
 
 type Client struct {
 	adnlClient *adnl.Client
@@ -697,7 +699,7 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 	return conf, nil
 }
 
-// GetLastConfigAll
+// GetConfigAll
 // liteServer.getConfigAll mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
 // liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
 // Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof

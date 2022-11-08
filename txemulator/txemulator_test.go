@@ -167,11 +167,11 @@ func TestValidatorLoadExec(t *testing.T) {
 	}
 
 	now := time.Now().Unix()
-	header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
+	_, header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
 	if err != nil {
 		log.Fatalf("LookupBlock 1 error: %v", err)
 	}
-	header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
+	_, header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
 	if err != nil {
 		log.Fatalf("LookupBlock 2 error: %v", err)
 	}
@@ -291,11 +291,11 @@ func TestGetProofLoopExec(t *testing.T) {
 	for {
 		cycle++
 		now := time.Now().Unix()
-		header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
+		_, header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
 		if err != nil {
 			log.Fatalf("LookupBlock 1 error: %v cycle: %v", err, cycle)
 		}
-		header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
+		_, header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
 		if err != nil {
 			log.Fatalf("LookupBlock 2 error: %v cycle: %v", err, cycle)
 		}
@@ -314,4 +314,143 @@ func TestGetProofLoopExec(t *testing.T) {
 		}
 	}
 
+}
+
+func TestGetValidatorsInfoExec(t *testing.T) {
+	ctx := context.Background()
+	// tongoClient, err := liteclient.NewClientWithDefaultMainnet() //
+	tongoClient, err := liteclient.NewClientWithDefaultTestnet() //
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+
+	mcInfoExtra, err := tongoClient.GetMasterchainInfoExt(ctx, 0)
+	if err != nil {
+		log.Fatalf("Get account state error: %v", err)
+	}
+
+	b, err := tongoClient.GetBlock(ctx, mcInfoExtra)
+	if err != nil {
+		log.Fatalf("LookupBlock 1 error: %v", err)
+	}
+
+	shard := b.Info.Shard.ShardPrefix
+	pow2 := uint64(1) << (63 - b.Info.Shard.ShardPfxBits)
+	shard |= pow2
+
+	lastBlockId := tongo.TonNodeBlockId{
+		Workchain: b.Info.Shard.WorkchainID,
+		Shard:     int64(shard),
+		Seqno:     int32(b.Info.PrevKeyBlockSeqno),
+	}
+
+	keyBlockId, header, err := tongoClient.LookupBlock(ctx, 1, lastBlockId, 0, 0)
+	if err != nil {
+		log.Fatalf("LookupBlock 1 error: %v", err)
+	}
+
+	if !header.Info.KeyBlock {
+
+		shard := header.Info.Shard.ShardPrefix
+		pow2 := uint64(1) << (63 - header.Info.Shard.ShardPfxBits)
+		shard |= pow2
+
+		lastBlockId := tongo.TonNodeBlockId{
+			Workchain: header.Info.Shard.WorkchainID,
+			Shard:     int64(shard),
+			Seqno:     int32(header.Info.PrevKeyBlockSeqno),
+		}
+
+		keyBlockId, header, err = tongoClient.LookupBlock(ctx, 1, lastBlockId, 0, 0)
+		if err != nil {
+			log.Fatalf("LookupBlock 1 error: %v", err)
+		}
+
+	}
+
+	var electorAddr tongo.Hash
+	hasElector := false
+	for {
+		shardState, err := tongoClient.GetConfigById(ctx, *keyBlockId)
+		if err != nil {
+			log.Fatalf("GetConfigById 1 error: %v", err)
+		}
+		config := shardState.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.Config
+		find := false
+		for i := range config.Config.Hashmap.Keys() {
+			if !hasElector {
+				if binary.BigEndian.Uint32(config.Config.Hashmap.Keys()[i].Buffer()) == 1 {
+					err := tlb.Unmarshal(&config.Config.Hashmap.Values()[i].Value, &electorAddr)
+					if err != nil {
+						log.Fatalf("Unmarshal elector addr error: %v", err)
+					}
+					hasElector = true
+				}
+			}
+			if binary.BigEndian.Uint32(config.Config.Hashmap.Keys()[i].Buffer()) == 36 {
+				t.Log("Yep it is config 36")
+				find = true
+				break
+			}
+		}
+		if find {
+			break
+		}
+		shard := header.Info.Shard.ShardPrefix
+		pow2 := uint64(1) << (63 - b.Info.Shard.ShardPfxBits)
+		shard |= pow2
+
+		lastBlockId := tongo.TonNodeBlockId{
+			Workchain: header.Info.Shard.WorkchainID,
+			Shard:     int64(shard),
+			Seqno:     int32(header.Info.PrevKeyBlockSeqno),
+		}
+
+		keyBlockId, header, err = tongoClient.LookupBlock(ctx, 1, lastBlockId, 0, 0)
+		if err != nil {
+			log.Fatalf("LookupBlock 1 error: %v", err)
+		}
+	}
+	// for {
+	// }
+	shard = header.Info.Shard.ShardPrefix
+	pow2 = uint64(1) << (63 - header.Info.Shard.ShardPfxBits)
+	shard |= pow2
+
+	// prevBlockId := tongo.TonNodeBlockIdExt{
+	// 	Workchain: header.Info.Shard.WorkchainID,
+	// 	Shard:     int64(shard),
+	// 	Seqno:     int32(header.Info.PrevRef.PrevBlkInfo.Prev.SeqNo),
+	// 	FileHash:  header.Info.PrevRef.PrevBlkInfo.Prev.FileHash,
+	// 	RootHash:  header.Info.PrevRef.PrevBlkInfo.Prev.RootHash,
+	// }
+
+	lastBlockId = tongo.TonNodeBlockId{
+		Workchain: header.Info.Shard.WorkchainID,
+		Shard:     int64(shard),
+		Seqno:     int32(header.Info.SeqNo - 1),
+	}
+	var prevBlockId *tongo.TonNodeBlockIdExt
+	prevBlockId, header, err = tongoClient.LookupBlock(ctx, 1, lastBlockId, 0, 0)
+	if err != nil {
+		log.Fatalf("LookupBlock 1 error: %v", err)
+	}
+
+	partic, err := tongoClient.RunSmcMethodByExtBlockId(ctx, 4,
+		*prevBlockId,
+		*tongo.NewAccountId(mcInfoExtra.Workchain, electorAddr),
+		"participant_list_extended", tongo.VmStack{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// var v uint64
+	p := partic[0]
+	i := 0
+	for p.SumType == "VmStkTuple" {
+		t.Log(fmt.Sprintf("%v:%x", -1, p.VmStkTuple.Data.Head.Entry.VmStkTuple.Data.Head.Entry.VmStkInt.Value))
+		t.Log(p.VmStkTuple.Data.Head.Entry.VmStkTuple.Data.Tail.VmStkTinyInt)
+		t.Log(i)
+		p = p.VmStkTuple.Data.Tail
+		i++
+	}
 }

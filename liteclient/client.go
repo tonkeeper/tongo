@@ -940,6 +940,70 @@ func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.
 	return response.RunMethodResult.Result, nil
 }
 
+// RunSmcMethod
+// Run smart contract method by name and parameters
+// liteServer.runSmcMethod mode:# id:tonNode.blockIdExt account:liteServer.accountId method_id:long params:bytes = liteServer.RunMethodResult;
+// liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
+// proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int result:mode.2?bytes = liteServer.RunMethodResult;
+func (c *Client) RunSmcMethodByExtBlockId(ctx context.Context, mode uint32, id tongo.TonNodeBlockIdExt, accountId tongo.AccountID, method string, params tongo.VmStack) (tongo.VmStack, error) {
+	type runSmcRequest struct {
+		Mode     uint32
+		Id       tongo.TonNodeBlockIdExt
+		Account  tongo.AccountID
+		MethodId uint64
+		Params   tongo.VmStack
+	}
+	r := struct {
+		tl.SumType
+		RunSmcRequest runSmcRequest `tlSumType:"d25dc65c"`
+	}{
+		SumType: "RunSmcRequest",
+		RunSmcRequest: runSmcRequest{
+			Mode:     mode,
+			Id:       id,
+			Account:  accountId,
+			MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
+			Params:   params,
+		},
+	}
+	payload, err := tl.Marshal(r)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	req := makeLiteServerQueryRequest(payload)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	var response struct {
+		tl.SumType
+		RunMethodResult struct {
+			Mode     uint32
+			Id       tongo.TonNodeBlockIdExt
+			ShardBlk tongo.TonNodeBlockIdExt
+			// TODO: add proofs support
+			ExitCode uint32
+			Result   tongo.VmStack
+		} `tlSumType:"6b619aa3"`
+		Error LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &response)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	if response.SumType == "Error" {
+		return tongo.VmStack{}, fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
+	}
+	if response.SumType != "RunMethodResult" {
+		return tongo.VmStack{}, fmt.Errorf("not RunMethodResult response")
+	}
+	if response.RunMethodResult.ExitCode != 0 && response.RunMethodResult.ExitCode != 1 {
+		return tongo.VmStack{}, fmt.Errorf("method execution failed with code: %v", response.RunMethodResult.ExitCode)
+	}
+	return response.RunMethodResult.Result, nil
+}
+
 func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdExt) ([]tongo.TonNodeBlockIdExt, error) {
 	asReq, err := makeLiteServerAllShardsInfoRequest(last)
 	if err != nil {
@@ -1033,15 +1097,15 @@ func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.Ton
 	return &proof.Proof.VirtualRoot, nil //shards, nil
 }
 
-func (c *Client) LookupBlock(ctx context.Context, mode uint32, last tongo.TonNodeBlockId, lt uint64, utime uint32) (*tongo.BlockHeader, error) {
+func (c *Client) LookupBlock(ctx context.Context, mode uint32, last tongo.TonNodeBlockId, lt uint64, utime uint32) (*tongo.TonNodeBlockIdExt, *tongo.BlockHeader, error) {
 	asReq, err := makeLiteServerLookupBlockRequest(mode, last, lt, utime)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
 	resp, err := c.adnlClient.Request(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var response struct {
 		tl.SumType
@@ -1055,14 +1119,14 @@ func (c *Client) LookupBlock(ctx context.Context, mode uint32, last tongo.TonNod
 
 	err = tl.Unmarshal(bytes.NewReader(resp), &response)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if response.SumType == "Error" {
-		return nil, fmt.Errorf(response.Error.Message)
+		return nil, nil, fmt.Errorf(response.Error.Message)
 	}
 	cells, err := boc.DeserializeBoc(response.LiteServerLookupBlock.HeaderProof)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var proof struct {
@@ -1070,10 +1134,10 @@ func (c *Client) LookupBlock(ctx context.Context, mode uint32, last tongo.TonNod
 	}
 	err = tlb.Unmarshal(cells[0], &proof)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &proof.Proof.VirtualRoot, nil
+	return &response.LiteServerLookupBlock.Id, &proof.Proof.VirtualRoot, nil
 }
 
 func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tongo.TonNodeBlockIdExt, targetBlock *tongo.TonNodeBlockIdExt) ([]tongo.BlockProof, error) {
@@ -1152,7 +1216,34 @@ func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tong
 
 	for i := range response.LiteServerGetProofBlock.Steps {
 		if response.LiteServerGetProofBlock.Steps[i].SumType == "BlockLinkBack" {
-			cells, err := boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.DestProof)
+			cells, err := boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.StateProof)
+			if err != nil {
+				return nil, err
+			}
+			cells, err = boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.Proof)
+			if err != nil {
+				return nil, err
+			}
+			cells, err = boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.DestProof)
+			if err != nil {
+				return nil, err
+			}
+
+			var proof struct {
+				Proof tongo.MerkleProof[tongo.BlockHeader]
+			}
+			err = tlb.Unmarshal(cells[0], &proof)
+			if err != nil {
+				return nil, err
+			}
+
+		}
+		if response.LiteServerGetProofBlock.Steps[i].SumType == "BlockLinkForward" {
+			cells, err := boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkForward.ConfigProof)
+			if err != nil {
+				return nil, err
+			}
+			cells, err = boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkForward.DestProof)
 			if err != nil {
 				return nil, err
 			}

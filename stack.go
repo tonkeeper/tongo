@@ -2,11 +2,11 @@ package tongo
 
 import (
 	"fmt"
+	"io"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tl"
 	"github.com/startfellows/tongo/tlb"
-	"io"
-	"math/big"
 )
 
 // VmStack
@@ -43,7 +43,96 @@ type VmCont struct {
 // vm_tuple_nil$_ = VmTuple 0;
 // vm_tuple_tcons$_ {n:#} head:(VmTupleRef n) tail:^VmStackValue = VmTuple (n + 1);
 // vm_stk_tuple#07 len:(## 16) data:(VmTuple len) = VmStackValue;
-type VmStkTuple []VmStackValue
+type VmStkTuple struct {
+	Len  uint32 `tlb:"16bits"`
+	Data *VmTuple
+}
+
+type VmTuple struct {
+	Head VmTupleRef
+	Tail VmStackValue `tlb:"^"`
+}
+
+type VmTupleRef struct {
+	Entry *VmStackValue `tlb:"^"`
+	Ref   *VmTuple      `tlb:"^"`
+}
+
+func (t VmStkTuple) MarshalTLB(c *boc.Cell, tag string) error {
+	// TODO: implement
+	return fmt.Errorf("VmStkTuple TLB marshaling not implemented")
+}
+
+func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
+	l, err := c.ReadUint(16)
+	if err != nil {
+		return err
+	}
+	t.Len = uint32(l)
+	t.Data, err = vmTupleInner(t.Len, c)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func vmTupleInner(n uint32, c *boc.Cell) (*VmTuple, error) {
+	if n > 0 {
+		vmTuple := VmTuple{}
+		n -= 1
+		head, err := vmTupleRefInner(n, c)
+		if err != nil {
+			return nil, err
+		}
+		if head != nil {
+			vmTuple.Head = *head
+		}
+		c1, err := c.NextRef()
+		if err != nil {
+			return nil, err
+		}
+		vmStackValue := VmStackValue{}
+		err = tlb.Unmarshal(c1, &vmStackValue)
+		if err != nil {
+			return nil, err
+		}
+		vmTuple.Tail = vmStackValue
+		return &vmTuple, nil
+	}
+	return nil, nil
+}
+
+func vmTupleRefInner(n uint32, c *boc.Cell) (*VmTupleRef, error) {
+	vmTupleRef := VmTupleRef{}
+	if n == 1 {
+		c1, err := c.NextRef()
+		if err != nil {
+			return nil, err
+		}
+		vmStackValue := VmStackValue{}
+		tlb.Unmarshal(c1, &vmStackValue)
+		vmTupleRef.Entry = &vmStackValue
+		return &vmTupleRef, nil
+	} else if n > 1 {
+		c1, err := c.NextRef()
+		if err != nil {
+			return nil, err
+		}
+		ref, err := vmTupleInner(n, c1)
+		if err != nil {
+			return nil, err
+		}
+		vmTupleRef.Ref = ref
+		return &vmTupleRef, nil
+	}
+	return nil, nil
+}
+
+func (t *VmTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
+
+	return nil
+}
 
 // VmCellSlice
 // _ cell:^Cell st_bits:(## 10) end_bits:(## 10) { st_bits <= end_bits }
@@ -71,8 +160,8 @@ type VmStackValue struct {
 	VmStkNull    struct{} `tlbSumType:"vm_stk_null#00"`
 	VmStkTinyInt int64    `tlbSumType:"vm_stk_tinyint#01"`
 	VmStkInt     struct {
-		Value big.Int `tlb:"256bits"`
-	} `tlbSumType:"vm_stk_int$00100000000"` // vm_stk_int#0201_
+		Value Hash `tlb:"256bits"` //Value big.Int `tlb:"257bits"` //
+	} `tlbSumType:"vm_stk_int#0200"` // "vm_stk_int$000000100000000"` //
 	VmStkNan     struct{}          `tlbSumType:"vm_stk_nan#02ff"`
 	VmStkCell    tlb.Ref[boc.Cell] `tlbSumType:"vm_stk_cell#03"`
 	VmStkSlice   VmCellSlice       `tlbSumType:"vm_stk_slice#04"`
@@ -274,16 +363,6 @@ func (s VmCellSlice) Cell() *boc.Cell {
 		}
 	}
 	return cell
-}
-
-func (t VmStkTuple) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("VmStkTuple TLB marshaling not implemented")
-}
-
-func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("VmStkTuple TLB unmarshaling not implemented")
 }
 
 func (ct VmCont) MarshalTLB(c *boc.Cell, tag string) error {

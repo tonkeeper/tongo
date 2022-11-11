@@ -2,6 +2,7 @@ package tongo
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -10,9 +11,13 @@ import (
 	"github.com/startfellows/tongo/tlb"
 )
 
+var BlockchainInterfaceIsNil = errors.New("blockchain interface is nil")
+
 // Grams
 // nanograms$_ amount:(VarUInteger 16) = Grams;
 type Grams uint64 // total value fit to uint64
+
+const OneTON Grams = 1_000_000_000
 
 func (g Grams) MarshalTLB(c *boc.Cell, tag string) error {
 	var amount struct {
@@ -262,7 +267,7 @@ type ShardDesc struct {
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
 		GenUTime           uint32
-	} `tlbSumType:"new#a""`
+	} `tlbSumType:"new#a"`
 }
 
 func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
@@ -290,4 +295,14 @@ type ShardInfoBinTree struct {
 }
 type AllShardsInfo struct {
 	ShardHashes tlb.HashmapE[tlb.Ref[ShardInfoBinTree]] `tlb:"32bits"`
+}
+
+type JettonMetadata struct {
+	Uri         string `json:"uri,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Image       string `json:"image,omitempty"`
+	ImageData   []byte `json:"image_data,omitempty"`
+	Symbol      string `json:"symbol,omitempty"`
+	Decimals    string `json:"decimals,omitempty"`
 }

@@ -3,6 +3,7 @@ package tongo
 import (
 	"fmt"
 	"io"
+	"math/big"
 
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tl"
@@ -157,11 +158,9 @@ type VmCellSlice struct {
 // vm_stk_tuple#07 len:(## 16) data:(VmTuple len) = VmStackValue;
 type VmStackValue struct {
 	tl.SumType
-	VmStkNull    struct{} `tlbSumType:"vm_stk_null#00"`
-	VmStkTinyInt int64    `tlbSumType:"vm_stk_tinyint#01"`
-	VmStkInt     struct {
-		Value Hash `tlb:"256bits"` //Value big.Int `tlb:"257bits"` //
-	} `tlbSumType:"vm_stk_int#0200"` // "vm_stk_int$000000100000000"` //
+	VmStkNull    struct{}          `tlbSumType:"vm_stk_null#00"`
+	VmStkTinyInt int64             `tlbSumType:"vm_stk_tinyint#01"`
+	VmStkInt     Int257            `tlbSumType:"vm_stk_int$000000100000000"` // vm_stk_int#0201_
 	VmStkNan     struct{}          `tlbSumType:"vm_stk_nan#02ff"`
 	VmStkCell    tlb.Ref[boc.Cell] `tlbSumType:"vm_stk_cell#03"`
 	VmStkSlice   VmCellSlice       `tlbSumType:"vm_stk_slice#04"`
@@ -257,11 +256,18 @@ func (s *VmStack) UnmarshalTL(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	if len(b) == 0 {
+		return nil
+	}
 	cell, err := boc.DeserializeBoc(b)
 	if err != nil {
 		return err
 	}
 	return tlb.Unmarshal(cell[0], s)
+}
+
+func (s *VmStack) Put(val VmStackValue) {
+	*s = append(VmStack{val}, *s...)
 }
 
 func (s VmCellSlice) MarshalTLB(c *boc.Cell, tag string) error {
@@ -373,4 +379,87 @@ func (ct VmCont) MarshalTLB(c *boc.Cell, tag string) error {
 func (ct *VmCont) UnmarshalTLB(c *boc.Cell, tag string) error {
 	// TODO: implement
 	return fmt.Errorf("VmCont TLB unmarshaling not implemented")
+}
+
+func TlbStructToVmCellSlice(s any) (VmCellSlice, error) {
+	cell := boc.NewCell()
+	err := tlb.Marshal(cell, s)
+	if err != nil {
+		return VmCellSlice{}, err
+	}
+	return VmCellSlice{
+		cell:    cell,
+		stBits:  0,
+		endBits: cell.BitSize(),
+		stRef:   0,
+		endRef:  cell.RefsSize(),
+	}, nil
+}
+
+func CellToVmCellSlice(cell *boc.Cell) (VmCellSlice, error) {
+	return VmCellSlice{
+		cell:    cell,
+		stBits:  0,
+		endBits: cell.BitSize(),
+		stRef:   0,
+		endRef:  cell.RefsSize(),
+	}, nil
+}
+
+func (s VmCellSlice) UnmarshalToTlbStruct(res any) error {
+	cell := s.Cell()
+	err := tlb.Unmarshal(cell, res)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type Int257 struct {
+	data boc.BitString
+}
+
+func (i Int257) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteBitString(i.data)
+}
+
+func (i *Int257) UnmarshalTLB(c *boc.Cell, tag string) error {
+	data, err := c.ReadBits(257)
+	if err != nil {
+		return err
+	}
+	i.data = data
+	return nil
+}
+
+func (i Int257) BigInt() *big.Int {
+	bs := i.data
+	sign, _ := bs.ReadBit()
+	bytes, _ := bs.ReadBytes(32)
+	res := big.NewInt(0)
+	res.SetBytes(bytes)
+	if sign {
+		res.Mul(res, big.NewInt(-1))
+	}
+	return res
+}
+
+func Int257FromBigInt(i *big.Int) (Int257, error) {
+	if i == nil {
+		return Int257{}, fmt.Errorf("nil big int")
+	}
+	bytes := i.Bytes()
+	if len(bytes) > 32 {
+		return Int257{}, fmt.Errorf("big int not fit in int257")
+	}
+	bytes = append(make([]byte, 32-len(bytes)), bytes...) // append zero bytes
+	sign := i.Sign()
+	bs := boc.NewBitString(257)
+	if sign == -1 {
+		_ = bs.WriteBit(true)
+	} else {
+		_ = bs.WriteBit(false)
+	}
+	_ = bs.WriteBytes(bytes)
+	return Int257{data: bs}, nil
 }

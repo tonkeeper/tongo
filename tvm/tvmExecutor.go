@@ -5,6 +5,7 @@ package tvm
 // #cgo darwin,x86_64 LDFLAGS: -L ../lib/darwin/arm64 -Wl,-rpath,../lib/darwin/x86 -l vm-exec-lib
 // #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l vm-exec-lib
 // #include "../lib/libvm-exec-lib.h"
+// #include <stdlib.h>
 import "C"
 import (
 	"encoding/base64"
@@ -15,6 +16,7 @@ import (
 	"github.com/startfellows/tongo/tlb"
 	"github.com/startfellows/tongo/utils"
 	"time"
+	"unsafe"
 )
 
 type tvmExecutionResultInternal struct {
@@ -119,9 +121,11 @@ func RunTvm(code *boc.Cell, data *boc.Cell, funcName string, args []StackEntry, 
 	if err != nil {
 		return ExecutionResult{}, err
 	}
-
-	res := C.vm_exec(C.int(len(string(configStr))), C.CString(string(configStr)))
+	CconfigStr := C.CString(string(configStr))
+	defer C.free(unsafe.Pointer(CconfigStr))
+	res := C.vm_exec(C.int(len(string(configStr))), CconfigStr)
 	resJSON := C.GoString(res)
+	defer C.free(unsafe.Pointer(res))
 	var executeResult tvmExecutionResultInternal
 	err = json.Unmarshal([]byte(resJSON), &executeResult)
 	if err != nil {

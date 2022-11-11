@@ -37,6 +37,9 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		if err != nil {
 			return err
 		}
+		if !val.CanSet() {
+			return fmt.Errorf("value can't be changed")
+		}
 		val.Set(reflect.ValueOf(i).Elem())
 		return nil
 	}

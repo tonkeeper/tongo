@@ -10,7 +10,8 @@ Go implementation of libraries for TON blockchain.
 5. [TLB](tlb/README.md) - interaction with binary data (in Cells) described by TL-B (Typed Language - Binary) schemas
 6. [TVM](tvm/README.md) - interaction with TVM (TON Virtual Machine)
 7. [Wallet](wallet/README.md) - tools to simplify the deployment and interaction with the wallet smart contract
-8. [Examples](examples)
+8. [Contract](contract/README.md) - tools to simplify the interaction with the smart contracts like Jettons and NFT
+9. [Examples](examples)
 
 ## Dependencies
 ### Libraries
@@ -30,3 +31,8 @@ Tongo operates with TON blockchain structures described in [block.tlb](https://g
 and some types described in [lite_api.tl](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/lite_api.tl).
 Go definitions of this types you can find in files: `account.go`, `transactions.go`, `models.go` ... 
 
+## Chat
+
+You can join to our chat in telegram - https://t.me/tongo_lib 
+
+Don't be afraid if you see only russians - we welcome any english speakers too.

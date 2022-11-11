@@ -1,11 +1,13 @@
 package wallet
 
 import (
+	"context"
 	"crypto/ed25519"
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
+	"time"
 )
 
 type Version int
@@ -24,7 +26,11 @@ const (
 	// TODO: maybe add lockup wallet
 )
 
-const DefaultSubWalletIdV3V4 = 698983191
+const (
+	DefaultSubWalletIdV3V4 = 698983191
+	DefaultMessageLifetime = time.Minute * 3
+	DefaultMessageMode     = 3
+)
 
 var codes = map[Version]string{
 	V1R1:       "te6cckEBAQEARAAAhP8AIN2k8mCBAgDXGCDXCx/tRNDTH9P/0VESuvKhIvkBVBBE+RDyovgAAdMfMSDXSpbTB9QC+wDe0aTIyx/L/8ntVEH98Ik=",
@@ -40,7 +46,9 @@ var codes = map[Version]string{
 }
 
 type blockchain interface {
-	GetWalletSeqno(account tongo.AccountID) (uint32, error)
+	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
+	SendRawMessage(ctx context.Context, payload []byte) error
+	GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error)
 }
 
 func GetCodeByVer(ver Version) *boc.Cell {
@@ -83,9 +91,10 @@ type Wallet struct {
 	address     tongo.AccountID
 	ver         Version
 	subWalletId uint32
+	blockchain  blockchain
 }
 
-func (w Wallet) GetAddress() tongo.AccountID {
+func (w *Wallet) GetAddress() tongo.AccountID {
 	return w.address
 }
 
@@ -111,24 +120,19 @@ type MessageV3 struct {
 	SubWalletId uint32
 	ValidUntil  uint32
 	Seqno       uint32
-	Messages    MessageArray
+	Payload     PayloadV1toV4
 }
 
 type MessageV4 struct {
+	// Op: 0 - simple send, 1 - deploy and install plugin, 2 - install plugin, 3 - remove plugin
 	SubWalletId uint32
 	ValidUntil  uint32
 	Seqno       uint32
-	// Op: 0 - simple send, 1 - deploy and install plugin, 2 - install plugin, 3 - remove plugin
-	Op       int32 `tlb:"8bits"`
-	Messages MessageArray
+	Op          int32 `tlb:"8bits"`
+	Payload     PayloadV1toV4
 }
 
-type MessageArray struct {
-	Messages []struct {
-		Message tongo.Message[tlb.Any]
-		Mode    byte
-	}
-}
+type PayloadV1toV4 []RawMessage
 
 type TonTransfer struct {
 	Recipient tongo.AccountID
@@ -136,6 +140,22 @@ type TonTransfer struct {
 	Comment   string
 	Bounce    bool
 	Mode      byte
+}
+
+type Message struct {
+	Amount     int64
+	Address    tongo.AccountID
+	Comment    *string
+	Body       *boc.Cell
+	Code       *boc.Cell
+	Data       *boc.Cell
+	Bounceable *bool
+	Mode       *byte
+}
+
+type RawMessage struct {
+	Message *boc.Cell
+	Mode    byte
 }
 
 type TextComment string
@@ -165,21 +185,38 @@ func (t *TextComment) UnmarshalTLB(c *boc.Cell, tag string) error { // TODO: imp
 	return nil
 }
 
-func (a MessageArray) MarshalTLB(c *boc.Cell, tag string) error {
-	for _, msg := range a.Messages {
-		cell := boc.NewCell()
-		err := tlb.Marshal(cell, msg.Message)
+func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, tag string) error {
+	if len(p) > 4 {
+		return fmt.Errorf("PayloadV1toV4 supports only up to 4 messages")
+	}
+	for _, msg := range p {
+		err := c.WriteUint(uint64(msg.Mode), 8)
 		if err != nil {
 			return err
 		}
-		err = c.WriteUint(uint64(msg.Mode), 8)
+		err = c.AddRef(msg.Message)
 		if err != nil {
 			return err
 		}
-		err = c.AddRef(cell)
+	}
+	return nil
+}
+
+func (p *PayloadV1toV4) UnmarshalTLB(c *boc.Cell, tag string) error {
+	for {
+		ref, err := c.NextRef()
+		if err != nil {
+			break
+		}
+		mode, err := c.ReadUint(8)
 		if err != nil {
 			return err
 		}
+		msg := RawMessage{
+			Message: ref,
+			Mode:    byte(mode),
+		}
+		*p = append(*p, msg)
 	}
 	return nil
 }

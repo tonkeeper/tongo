@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"math/big"
 	"testing"
 	"time"
 
@@ -48,7 +49,7 @@ func TestRunSmcMethod(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	accountId, _ := tongo.ParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
-	_, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
+	_, _, err = tongoClient.RunSmcMethod(context.Background(), 4, *accountId, "seqno", tongo.VmStack{})
 	if err != nil {
 		log.Fatalf("Run smc error: %v", err)
 	}
@@ -128,4 +129,104 @@ func TestGetAccountState(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("Account status: %v\n", st.Status)
+}
+
+func TestLookupBlock(t *testing.T) {
+	api, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Current block seqno : %v\n", info.Seqno)
+	blockID := tongo.TonNodeBlockId{Workchain: info.Workchain, Shard: info.Shard, Seqno: info.Seqno - 1}
+	bl, _, err := api.LookupBlock(context.TODO(), 1, blockID, 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Prev block seqno    : %v\n", bl.Seqno)
+}
+
+func TestGetOneTransaction(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
+	var lt uint64 = 32174166000001
+	var rh, fh tongo.Hash
+	_ = fh.FromUnknownString("4237A19CD87265EB16ADDD0EF2EADF07B8F362903386653ED3ABDCF34477F748")
+	_ = rh.FromUnknownString("9F66A2B2CE8F80762F39E0F5340F873192C8D416E9B82C015918E98C851A23C2")
+	blockID := tongo.TonNodeBlockIdExt{Workchain: -1, Shard: -9223372036854775808, Seqno: 24425406, RootHash: rh, FileHash: fh}
+	_, _, err = tongoClient.GetOneRawTransaction(context.Background(), blockID, *accountId, lt)
+	if err != nil {
+		log.Fatalf("Get transaction error: %v", err)
+	}
+}
+
+func TestGetJettonWallet(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	owner, _ := tongo.ParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	wallet, err := tongoClient.GetJettonWallet(context.Background(), *master, *owner)
+	if err != nil {
+		log.Fatalf("get jetton wallet error: %v", err)
+	}
+	fmt.Printf("jetton wallet address: %v\n", wallet.String())
+}
+
+func TestGetJettonData(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	meta, err := tongoClient.GetJettonData(context.Background(), *master)
+	if err != nil {
+		log.Fatalf("get jetton decimals error: %v", err)
+	}
+	fmt.Printf("jetton symbol: %v\n", meta.Symbol)
+}
+
+func TestGetJettonBalance(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	jettonWallet, _ := tongo.ParseAccountID("kQCOSEttz9aEGXkjd1h_NJsQqOca3T-Pld5zSIPHcYZIxsyf")
+	b, err := tongoClient.GetJettonBalance(context.Background(), *jettonWallet)
+	if err != nil {
+		log.Fatalf("get jetton decimals error: %v", err)
+	}
+	fmt.Printf("jetton balance: %v\n", b)
+}
+
+func TestDnsResolve(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	root, _ := tongo.ParseAccountID("Ef_BimcWrQ5pmAWfRqfeVHUCNV8XgsLqeAMBivKryXrghFW3")
+	m, _, err := tongoClient.DnsResolve(context.Background(), *root, "ton\u0000alice\u0000", big.NewInt(0))
+	if err != nil {
+		log.Fatalf("dns resolve error: %v", err)
+	}
+	fmt.Printf("Bytes resolved: %v\n", m)
+}
+
+func TestGetRootDNS(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	root, err := tongoClient.GetRootDNS(context.Background())
+	if err != nil {
+		log.Fatalf("get root dns error: %v", err)
+	}
+	fmt.Printf("Root DNS: %v\n", root.ToRaw())
 }

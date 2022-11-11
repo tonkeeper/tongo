@@ -1,0 +1,113 @@
+package dns
+
+import (
+	"context"
+	"fmt"
+	"github.com/startfellows/tongo"
+	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
+	"math/big"
+	"strings"
+)
+
+type blockchain interface {
+	DnsResolve(ctx context.Context, address tongo.AccountID, domain string, category *big.Int) (int, *boc.Cell, error)
+	GetRootDNS(ctx context.Context) (tongo.AccountID, error)
+}
+
+type DNS struct {
+	Root       tongo.AccountID
+	blockchain blockchain
+}
+
+// NewDNS
+// If root == nil then use root from network config
+func NewDNS(root *tongo.AccountID, blockchain blockchain) (*DNS, error) {
+	var (
+		err error
+		r   tongo.AccountID
+	)
+	if root == nil {
+		if blockchain == nil {
+			return nil, tongo.BlockchainInterfaceIsNil
+		}
+		r, err = blockchain.GetRootDNS(context.Background())
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		r = *root
+	}
+	return &DNS{
+		Root:       r,
+		blockchain: blockchain,
+	}, nil
+}
+
+func (d *DNS) Resolve(ctx context.Context, domain string) ([]tongo.DNSRecord, error) {
+	if d.blockchain == nil {
+		return nil, tongo.BlockchainInterfaceIsNil
+	}
+	if domain == "" {
+		domain = "."
+	}
+	dom := convertDomain(domain)
+	return d.resolve(ctx, d.Root, dom)
+}
+
+func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom string) ([]tongo.DNSRecord, error) {
+	n := len(dom)
+	i, res, err := d.blockchain.DnsResolve(ctx, resolver, dom, big.NewInt(0))
+	if err != nil {
+		return nil, err
+	}
+	if i%8 != 0 {
+		return nil, fmt.Errorf("invalid qty of resolved bits")
+	}
+	if i/8 == 0 { // not resolved
+		return nil, nil
+	} else if i/8 == n { // resolved
+		return parseDnsRecords(res)
+	} // m < n partial resolved
+	rec, err := parseDnsRecords(res)
+	if err != nil {
+		return nil, err
+	}
+	if len(rec) != 1 {
+		return nil, fmt.Errorf("must be only one record for partial resolved")
+	}
+	if rec[0].SumType != "DNSNextResolver" {
+		return nil, fmt.Errorf("must be only next resolver record for partial resolved")
+	}
+	return d.resolve(ctx, rec[0].DNSNextResolver, string([]byte(dom)[i/8:]))
+}
+
+func convertDomain(domain string) string {
+	domains := strings.Split(domain, ".")
+	for i, j := 0, len(domains)-1; i < j; i, j = i+1, j-1 { // reverse array
+		domains[i], domains[j] = domains[j], domains[i]
+	}
+	return strings.Join(domains, "\x00") + "\x00"
+}
+
+func parseDnsRecords(c *boc.Cell) ([]tongo.DNSRecord, error) {
+	var record tongo.DNSRecord
+	err := tlb.Unmarshal(c, &record)
+	if err == nil {
+		return []tongo.DNSRecord{record}, nil
+	}
+	c.ResetCounters()
+	var records tongo.DNSRecordSet
+	c2 := boc.NewCell()
+	_ = c2.WriteBit(true)
+	_ = c2.AddRef(c)
+	err = tlb.Unmarshal(c2, &records)
+	if err != nil {
+		return nil, err
+	}
+	var res []tongo.DNSRecord
+	for _, r := range records.Records.Values() {
+		res = append(res, r.Value)
+	}
+	return res, nil
+}

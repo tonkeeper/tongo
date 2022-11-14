@@ -727,7 +727,7 @@ func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) 
 		SumType: "GetConfigAllRequest",
 		GetConfigAllRequest: getConfigAllRequest{
 			Mode: 0,
-			ID:   lastBlock,
+			ID:   lastBlock.Last,
 		},
 	}
 
@@ -861,15 +861,15 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdEx
 // liteServer.masterchainInfoExt mode:# version:int capabilities:long
 // last:tonNode.blockIdExt last_utime:int now:int state_root_hash:int256
 // init:tonNode.zeroStateIdExt = liteServer.MasterchainInfoExt;
-func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (tongo.TonNodeBlockIdExt, error) {
+func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (LiteServerMasterchainInfoExt, error) {
 	asReq, err := makeLiteServerGetMasterchainInfoExtRequest(mode)
 	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
+		return LiteServerMasterchainInfoExt{}, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
 	resp, err := c.adnlClient.Request(ctx, req)
 	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
+		return LiteServerMasterchainInfoExt{}, err
 	}
 	var parsedResp struct {
 		tl.SumType
@@ -878,15 +878,15 @@ func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (tongo.
 	}
 	err = tl.Unmarshal(bytes.NewReader(resp), &parsedResp)
 	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
+		return LiteServerMasterchainInfoExt{}, err
 	}
 	switch parsedResp.SumType {
 	case "LiteServerError":
-		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
+		return LiteServerMasterchainInfoExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
 	case "LiteServerMasterchainInfoExt":
-		return parsedResp.LiteServerMasterchainInfoExt.Last, nil
+		return parsedResp.LiteServerMasterchainInfoExt, nil
 	default:
-		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("masterchain info not recieved")
+		return LiteServerMasterchainInfoExt{}, fmt.Errorf("masterchain info not recieved")
 	}
 
 }
@@ -997,6 +997,11 @@ func (c *Client) RunSmcMethodByExtBlockId(ctx context.Context, mode uint32, id t
 			Mode     uint32
 			Id       tongo.TonNodeBlockIdExt
 			ShardBlk tongo.TonNodeBlockIdExt
+			// ShardProof []byte
+			// Proof      []byte
+			// StateProof []byte
+			// InitC7     []byte
+			// LibExtras  []byte
 			// TODO: add proofs support
 			ExitCode uint32
 			Result   tongo.VmStack
@@ -1238,7 +1243,7 @@ func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tong
 // GetBlock
 // liteServer.getBlock id:tonNode.blockIdExt = liteServer.BlockData;
 // liteServer.blockData id:tonNode.blockIdExt data:bytes = liteServer.BlockData;
-func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (tongo.Block, error) {
+func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.TonNodeBlockIdExt, tongo.Block, error) {
 	r := struct {
 		tl.SumType
 		GetBlockRequest tongo.TonNodeBlockIdExt `tlSumType:"0dcf7763"`
@@ -1249,12 +1254,12 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 
 	rBytes, err := tl.Marshal(r)
 	if err != nil {
-		return tongo.Block{}, err
+		return nil, tongo.Block{}, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
 	resp, err := c.adnlClient.Request(ctx, req)
 	if err != nil {
-		return tongo.Block{}, err
+		return nil, tongo.Block{}, err
 	}
 	var pResp struct {
 		tl.SumType
@@ -1267,24 +1272,24 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 	reader := bytes.NewReader(resp)
 	err = tl.Unmarshal(reader, &pResp)
 	if err != nil {
-		return tongo.Block{}, err
+		return nil, tongo.Block{}, err
 	}
 	if pResp.SumType == "Error" {
 		if pResp.Error.Message == "block is not applied" {
-			return tongo.Block{}, ErrBlockNotApplied
+			return nil, tongo.Block{}, ErrBlockNotApplied
 		}
-		return tongo.Block{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+		return nil, tongo.Block{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
 	}
 	cell, err := boc.DeserializeBoc(pResp.BlockData.Data)
 	if err != nil {
-		return tongo.Block{}, err
+		return nil, tongo.Block{}, err
 	}
 	var data tongo.Block
 	err = tlb.Unmarshal(cell[0], &data)
 	if err != nil {
-		return tongo.Block{}, err
+		return nil, tongo.Block{}, err
 	}
-	return data, nil
+	return &pResp.BlockData.ID, data, nil
 }
 
 // LookupBlock

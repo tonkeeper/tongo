@@ -173,76 +173,33 @@ func TestValidatorLoadExec(t *testing.T) {
 	}
 
 	now := time.Now().Unix()
-	_, header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
+	_, header, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
 	if err != nil {
-		log.Fatalf("LookupBlock 1 error: %v", err)
+		log.Fatalf("LookupBlock error: %v", err)
 	}
-	_, header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
+	parents, err := header.GetParents()
 	if err != nil {
-		log.Fatalf("LookupBlock 2 error: %v", err)
-	}
-	parents1, err := header1.GetParents()
-	if err != nil {
-		log.Fatalf("GetParents 1 error: %v", err)
-	}
-	parents2, err := header2.GetParents()
-	if err != nil {
-		log.Fatalf("GetParents 2 error: %v", err)
+		log.Fatalf("GetParents error: %v", err)
 	}
 
-	_, err = tongoClient.GetBlockProof(ctx, 0, parents1[0], nil) //&parents2[0])
+	_, err = tongoClient.GetBlockProof(ctx, 0, parents[0], nil) //&parents2[0])
 	if err != nil {
 		log.Fatalf("Get account state error: %v", err)
 	}
 
-	shardState1, err := tongoClient.GetConfigAllById(ctx, parents1[0])
+	shardState, err := tongoClient.GetConfigAllById(ctx, parents[0])
 	if err != nil {
-		log.Fatalf("GetConfigById 1 error: %v", err)
-	}
-	shardState2, err := tongoClient.GetConfigAllById(ctx, parents2[0])
-	if err != nil {
-		log.Fatalf("GetConfigById 2 error: %v", err)
+		log.Fatalf("GetConfigById error: %v", err)
 	}
 
-	_, block1, err := tongoClient.GetBlock(ctx, parents1[0])
-	if err != nil {
-		log.Fatalf("GetBlock 1 error: %v", err)
-	}
-	_, block2, err := tongoClient.GetBlock(ctx, parents2[0])
-	if err != nil {
-		log.Fatalf("GetBlock 2 error: %v", err)
-	}
-	if block1.Extra.CreatedBy.Base64() == "" && block2.Extra.CreatedBy.Base64() == "" {
-		log.Fatalf("SWW")
-	}
+	config := shardState.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.Config
 
-	config1 := shardState1.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.Config
-	config2 := shardState2.UnsplitState.Value.ShardStateUnsplit.Custom.Value.Value.Config
-
-	validatorStats1, err := tongoClient.ValidatorStats(ctx, 0, parents1[0], 1000, nil, nil)
-	if err != nil {
-		log.Fatalf("ValidatorStats 1 error: %v", err)
-	}
-	validatorStats2, err := tongoClient.ValidatorStats(ctx, 0, parents2[0], 1000, nil, nil)
-	if err != nil {
-		log.Fatalf("GetParents 1 error: %v", err)
-	}
-	if validatorStats1.ShardStateUnsplit.GlobalID != validatorStats2.ShardStateUnsplit.GlobalID {
-		log.Fatalf("SWW")
-	}
-	t.Log("config 1 addr: ", config1.ConfigAddr.Hex())
-	t.Log("config1 len: ", len(config1.Config.Hashmap.Keys()))
-
-	t.Log("config 2 addr: ", config2.ConfigAddr.Hex())
-	t.Log("config2 len: ", len(config2.Config.Hashmap.Keys()))
-
-	for i := range config1.Config.Hashmap.Keys() {
-		if binary.BigEndian.Uint32(config1.Config.Hashmap.Keys()[i].Buffer()) == 34 &&
-			binary.BigEndian.Uint32(config2.Config.Hashmap.Keys()[i].Buffer()) == 34 {
-			str := config1.Config.Hashmap.Values()[i].Value.RawBitString()
-			fmt.Printf("key: %v, value: %x\n", config1.Config.Hashmap.Keys()[i].BinaryString(), str.Buffer())
+	for i := range config.Config.Hashmap.Keys() {
+		if binary.BigEndian.Uint32(config.Config.Hashmap.Keys()[i].Buffer()) == 34 {
+			str := config.Config.Hashmap.Values()[i].Value.RawBitString()
+			t.Logf("key: %v, value: %x\n", config.Config.Hashmap.Keys()[i].BinaryString(), str.Buffer())
 			var validatorSet tongo.ValidatorsSet
-			err := tlb.Unmarshal(&config1.Config.Hashmap.Values()[i].Value, &validatorSet)
+			err := tlb.Unmarshal(&config.Config.Hashmap.Values()[i].Value, &validatorSet)
 			if err != nil {
 				log.Fatalf("Unmarshal validator set error: %v", err)
 			}
@@ -256,18 +213,18 @@ func TestValidatorLoadExec(t *testing.T) {
 			var sum uint64
 			for i := range validatorSet.ValidatorsExt.List.Keys() {
 				t.Log("Number:    ", i)
-				// t.Log("Key:       ", validatorSet.ValidatorsExt.List.Keys()[i].BinaryString())
-				// t.Log("SumType:   ", validatorSet.ValidatorsExt.List.Values()[i].SumType)
-				// if validatorSet.ValidatorsExt.List.Values()[i].SumType == "ValidatorAddr" {
-				t.Log("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.PubKey.Hex())
-				// 	t.Log("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight)
-				t.Log("AdnlAddr:  ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.AdnlAddr.Hex())
-				// 	sum += validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight
+				t.Log("Key:       ", validatorSet.ValidatorsExt.List.Keys()[i].BinaryString())
+				t.Log("SumType:   ", validatorSet.ValidatorsExt.List.Values()[i].SumType)
+				if validatorSet.ValidatorsExt.List.Values()[i].SumType == "ValidatorAddr" {
+					t.Log("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.PublicKey.PubKey.Hex())
+					t.Log("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight)
+					t.Log("AdnlAddr:  ", validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.AdnlAddr.Hex())
+					sum += validatorSet.ValidatorsExt.List.Values()[i].ValidatorAddr.Weight
 
-				// } else {
-				// 	t.Log("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.SigPubKey.PubKey.Hex())
-				// 	t.Log("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].Validator.Weight)
-				// }
+				} else {
+					t.Log("PublicKey: ", validatorSet.ValidatorsExt.List.Values()[i].Validator.PublicKey.PubKey.Hex())
+					t.Log("Weight:    ", validatorSet.ValidatorsExt.List.Values()[i].Validator.Weight)
+				}
 
 				t.Log("--------------------------------------------------------")
 			}

@@ -850,68 +850,6 @@ func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockId
 	return &proof.Proof.VirtualRoot, nil
 }
 
-// liteServer.getConfigParams mode:# id:tonNode.blockIdExt param_list:(vector int) = liteServer.ConfigInfo;
-func (c *Client) GetConfigParamsById(ctx context.Context, last tongo.TonNodeBlockIdExt, params []int32) (*tongo.ShardState, error) {
-	type getConfigParamsRequest struct {
-		Mode      uint32
-		ID        tongo.TonNodeBlockIdExt
-		ParamList []int32
-	}
-	type configInfo struct {
-		Mode        uint32
-		ID          tongo.TonNodeBlockIdExt
-		StateProof  []byte
-		ConfigProof []byte
-	}
-
-	r := struct {
-		tl.SumType
-		GetConfigParamsRequest getConfigParamsRequest `tlSumType:"191c112a"` //"638df89e"` //
-	}{
-		SumType: "GetConfigParamsRequest",
-		GetConfigParamsRequest: getConfigParamsRequest{
-			Mode:      0,
-			ID:        last,
-			ParamList: params,
-		},
-	}
-
-	rBytes, err := tl.Marshal(r)
-	if err != nil {
-		return nil, err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	var pResp struct {
-		tl.SumType
-		ConfigInfo configInfo      `tlSumType:"2f277bae"`
-		Error      LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, err
-	}
-	if pResp.SumType == "Error" {
-		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
-	if err != nil {
-		return nil, err
-	}
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardState]
-	}
-	err = tlb.Unmarshal(cell[0], &proof)
-	if err != nil {
-		return nil, err
-	}
-	return &proof.Proof.VirtualRoot, nil
-}
-
 // GetMasterchainInfo
 // liteServer.getMasterchainInfo = liteServer.MasterchainInfo;
 // liteServer.masterchainInfo last:tonNode.blockIdExt state_root_hash:int256

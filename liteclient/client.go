@@ -94,6 +94,18 @@ func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountI
 	return decodeRawAccountBoc(a.State)
 }
 
+func (c *Client) GetRawAccountById(ctx context.Context, accountId tongo.AccountID, blockId tongo.TonNodeBlockIdExt) (tongo.Account, error) {
+	a, err := c.getRawAccountStateById(ctx, accountId, blockId)
+	if err != nil {
+		return tongo.Account{}, err
+	}
+	if len(a.State) == 0 {
+		acc := tongo.Account{SumType: "AccountNone"}
+		return acc, nil
+	}
+	return decodeRawAccountBoc(a.State)
+}
+
 func (c *Client) GetLastShardAccount(ctx context.Context, accountId tongo.AccountID) (tongo.ShardAccount, error) {
 	a, err := c.getLastRawAccountState(ctx, accountId)
 	if err != nil {
@@ -129,6 +141,18 @@ func (c *Client) getLastRawAccountState(ctx context.Context, accountId tongo.Acc
 	st, err := c.getRawAccountState(ctx, mcInfo, accountId)
 	if err != nil && errors.Is(err, ErrBlockNotApplied) {
 		prevMcInfo, _, err := c.LookupBlock(ctx, 1, tongo.TonNodeBlockId{Workchain: mcInfo.Workchain, Shard: mcInfo.Shard, Seqno: mcInfo.Seqno - 1}, 0, 0)
+		if err != nil {
+			return LiteServerAccountState{}, err
+		}
+		return c.getRawAccountState(ctx, prevMcInfo, accountId)
+	}
+	return st, err
+}
+
+func (c *Client) getRawAccountStateById(ctx context.Context, accountId tongo.AccountID, blockId tongo.TonNodeBlockIdExt) (LiteServerAccountState, error) {
+	st, err := c.getRawAccountState(ctx, blockId, accountId)
+	if err != nil && errors.Is(err, ErrBlockNotApplied) {
+		prevMcInfo, _, err := c.LookupBlock(ctx, 1, tongo.TonNodeBlockId{Workchain: blockId.Workchain, Shard: blockId.Shard, Seqno: blockId.Seqno - 1}, 0, 0)
 		if err != nil {
 			return LiteServerAccountState{}, err
 		}
@@ -767,7 +791,7 @@ func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) 
 	return &proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value, nil
 }
 
-func (c *Client) GetConfigById(ctx context.Context, last tongo.TonNodeBlockIdExt) (*tongo.ShardState, error) {
+func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockIdExt) (*tongo.ShardState, error) {
 	type getConfigAllRequest struct {
 		Mode uint32
 		ID   tongo.TonNodeBlockIdExt
@@ -787,6 +811,68 @@ func (c *Client) GetConfigById(ctx context.Context, last tongo.TonNodeBlockIdExt
 		GetConfigAllRequest: getConfigAllRequest{
 			Mode: 0,
 			ID:   last,
+		},
+	}
+
+	rBytes, err := tl.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	req := makeLiteServerQueryRequest(rBytes)
+	resp, err := c.adnlClient.Request(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	var pResp struct {
+		tl.SumType
+		ConfigInfo configInfo      `tlSumType:"2f277bae"`
+		Error      LiteServerError `tlSumType:"48e1a9bb"`
+	}
+	reader := bytes.NewReader(resp)
+	err = tl.Unmarshal(reader, &pResp)
+	if err != nil {
+		return nil, err
+	}
+	if pResp.SumType == "Error" {
+		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+	}
+	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
+	if err != nil {
+		return nil, err
+	}
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.ShardState]
+	}
+	err = tlb.Unmarshal(cell[0], &proof)
+	if err != nil {
+		return nil, err
+	}
+	return &proof.Proof.VirtualRoot, nil
+}
+
+// liteServer.getConfigParams mode:# id:tonNode.blockIdExt param_list:(vector int) = liteServer.ConfigInfo;
+func (c *Client) GetConfigParamsById(ctx context.Context, last tongo.TonNodeBlockIdExt, params []int32) (*tongo.ShardState, error) {
+	type getConfigParamsRequest struct {
+		Mode      uint32
+		ID        tongo.TonNodeBlockIdExt
+		ParamList []int32
+	}
+	type configInfo struct {
+		Mode        uint32
+		ID          tongo.TonNodeBlockIdExt
+		StateProof  []byte
+		ConfigProof []byte
+	}
+
+	r := struct {
+		tl.SumType
+		GetConfigParamsRequest getConfigParamsRequest `tlSumType:"191c112a"` //"638df89e"` //
+	}{
+		SumType: "GetConfigParamsRequest",
+		GetConfigParamsRequest: getConfigParamsRequest{
+			Mode:      0,
+			ID:        last,
+			ParamList: params,
 		},
 	}
 

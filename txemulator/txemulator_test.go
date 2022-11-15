@@ -5,6 +5,7 @@ import (
 	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"testing"
@@ -194,11 +195,11 @@ func TestValidatorLoadExec(t *testing.T) {
 		log.Fatalf("Get account state error: %v", err)
 	}
 
-	shardState1, err := tongoClient.GetConfigById(ctx, parents1[0])
+	shardState1, err := tongoClient.GetConfigAllById(ctx, parents1[0])
 	if err != nil {
 		log.Fatalf("GetConfigById 1 error: %v", err)
 	}
-	shardState2, err := tongoClient.GetConfigById(ctx, parents2[0])
+	shardState2, err := tongoClient.GetConfigAllById(ctx, parents2[0])
 	if err != nil {
 		log.Fatalf("GetConfigById 2 error: %v", err)
 	}
@@ -276,51 +277,6 @@ func TestValidatorLoadExec(t *testing.T) {
 	}
 }
 
-func TestGetProofLoopExec(t *testing.T) {
-	ctx := context.Background()
-	tongoClient, err := liteclient.NewClientWithDefaultMainnet()
-	if err != nil {
-		log.Fatalf("Unable to create tongo client: %v", err)
-	}
-
-	mcInfoExtra, err := tongoClient.GetMasterchainInfoExt(ctx, 0)
-	if err != nil {
-		log.Fatalf("Get account state error: %v", err)
-	}
-	lastBlockId := tongo.TonNodeBlockId{
-		Workchain: mcInfoExtra.Last.Workchain,
-		Shard:     mcInfoExtra.Last.Shard,
-		Seqno:     mcInfoExtra.Last.Seqno,
-	}
-	var cycle uint64
-	for {
-		cycle++
-		now := time.Now().Unix()
-		_, header1, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-1000))
-		if err != nil {
-			log.Fatalf("LookupBlock 1 error: %v cycle: %v", err, cycle)
-		}
-		_, header2, err := tongoClient.LookupBlock(ctx, 4, lastBlockId, 0, uint32(now-10))
-		if err != nil {
-			log.Fatalf("LookupBlock 2 error: %v cycle: %v", err, cycle)
-		}
-		parents1, err := header1.GetParents()
-		if err != nil {
-			log.Fatalf("GetParents 1 error: %v cycle: %v", err, cycle)
-		}
-		_, err = header2.GetParents()
-		if err != nil {
-			log.Fatalf("GetParents 2 error: %v cycle: %v", err, cycle)
-		}
-
-		_, err = tongoClient.GetBlockProof(ctx, 0, parents1[0], nil)
-		if err != nil {
-			log.Fatalf("Get account state error: %v cycle: %v", err, cycle)
-		}
-	}
-
-}
-
 func TestGetValidatorsInfoExec(t *testing.T) {
 	ctx := context.Background()
 	tongoClient, err := liteclient.NewClientWithDefaultMainnet() //
@@ -348,11 +304,11 @@ func TestGetValidatorsInfoExec(t *testing.T) {
 	for {
 		keyBlockId, header, err = tongoClient.LookupBlock(ctx, 1, lastBlockId, 0, 0)
 		if err != nil {
-			log.Fatalf("LookupBlock 1 error: %v", err)
+			log.Fatalf("LookupBlock error: %v", err)
 		}
 		if header.KeyBlock {
 
-			shardState, err := tongoClient.GetConfigById(ctx, keyBlockId)
+			shardState, err := tongoClient.GetConfigAllById(ctx, keyBlockId)
 			if err != nil {
 				log.Fatalf("GetConfigById error: %v", err)
 			}
@@ -391,12 +347,17 @@ func TestGetValidatorsInfoExec(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	partic, err := tongoClient.RunSmcMethodByExtBlockId(ctx, 4,
-		prevBlockId,
-		*a,
-		"participant_list_extended", tongo.VmStack{})
+	account, err := tongoClient.GetRawAccountById(context.Background(), *a, prevBlockId)
 	if err != nil {
-		t.Fatal(err)
+		log.Fatalf("Get account state error: %v", err)
+	}
+
+	res, err := tvm.RunTvm(
+		&account.Account.Storage.State.AccountActive.StateInit.Code.Value.Value,
+		&account.Account.Storage.State.AccountActive.StateInit.Data.Value.Value,
+		"participant_list_extended", []tvm.StackEntry{}, a)
+	if err != nil {
+		log.Fatalf("TVM run error: %v", err)
 	}
 
 	type validator struct {
@@ -405,18 +366,24 @@ func TestGetValidatorsInfoExec(t *testing.T) {
 		Address   []byte
 		AdnlAddr  []byte
 	}
-
 	var validators []validator
-	for partic[4].SumType == "VmStkTuple" {
+
+	for res.Stack[4].Type == tvm.Tuple {
+		addr := res.Stack[4].Tuple()[0].Tuple()[1].Tuple()[2].Int()
+		adnl := res.Stack[4].Tuple()[0].Tuple()[1].Tuple()[3].Int()
 		validators = append(validators, validator{
-			Stake:     partic[4].VmStkTuple.Data.Head.Entry.VmStkTuple.Data.Tail.VmStkTuple.Data.Head.Ref.Head.Ref.Head.Entry.VmStkTinyInt,
-			MaxFactor: partic[4].VmStkTuple.Data.Head.Entry.VmStkTuple.Data.Tail.VmStkTuple.Data.Head.Ref.Head.Ref.Tail.VmStkTinyInt,
-			Address:   partic[4].VmStkTuple.Data.Head.Entry.VmStkTuple.Data.Tail.VmStkTuple.Data.Head.Ref.Tail.VmStkInt.BigInt().Bytes(),
-			AdnlAddr:  partic[4].VmStkTuple.Data.Head.Entry.VmStkTuple.Data.Tail.VmStkTuple.Data.Tail.VmStkInt.BigInt().Bytes(),
+			Stake:     int64(res.Stack[4].Tuple()[0].Tuple()[1].Tuple()[0].Uint64()),
+			MaxFactor: int64(res.Stack[4].Tuple()[0].Tuple()[1].Tuple()[1].Uint64()),
+			Address:   addr.Bytes(),
+			AdnlAddr:  adnl.Bytes(),
 		})
-		partic[4] = partic[4].VmStkTuple.Data.Tail
+		res.Stack[4] = res.Stack[4].Tuple()[1]
 	}
 	for i := range validators {
-		t.Log(validators[i])
+		t.Log(i)
+		t.Log("stake:      ", validators[i].Stake)
+		t.Log("max factor: ", validators[i].MaxFactor)
+		t.Log("Address:    ", hex.EncodeToString(validators[i].Address))
+		t.Log("Adnl: ", hex.EncodeToString(validators[i].AdnlAddr))
 	}
 }

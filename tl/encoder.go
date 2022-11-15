@@ -1,6 +1,7 @@
 package tl
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
@@ -35,7 +36,12 @@ func Marshal(o any) ([]byte, error) {
 		return b, nil
 	case reflect.Slice:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
-			return nil, fmt.Errorf("encoding slice of %v not supported", val.Type().Elem().Kind())
+			b, err := encodeVector(val)
+			if err != nil {
+				return nil, err
+			}
+			return zeroPadding(b), nil
+			//return nil, fmt.Errorf("encoding slice of %v not supported", val.Type().Elem().Kind())
 		}
 		data := val.Bytes()
 		b := append(EncodeLength(len(data)), data...)
@@ -130,4 +136,19 @@ func encodeTag(tag string) ([4]byte, error) {
 	}
 	copy(res[:], b)
 	return res, nil
+}
+
+func encodeVector(val reflect.Value) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	err := binary.Write(buf, binary.LittleEndian, uint32(val.Len()))
+	if err != nil {
+		return nil, err
+	}
+	for i := 0; i < val.Len(); i++ {
+		err = binary.Write(buf, binary.LittleEndian, val.Index(i).Interface())
+		if err != nil {
+			return nil, err
+		}
+	}
+	return buf.Bytes(), nil
 }

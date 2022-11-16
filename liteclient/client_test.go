@@ -82,7 +82,7 @@ func TestGetBlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	block, err := api.GetBlock(context.TODO(), info)
+	_, block, err := api.GetBlock(context.TODO(), info)
 	if err != nil {
 		t.Fatal(err)
 	}

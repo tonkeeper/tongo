@@ -28,7 +28,7 @@ const (
 )
 
 // crc16 xmodem || 0x10000
-var Methods = map[int64]string{
+var Methods = map[int64]ContractMethod{
 	81467:  GetSubwalletId,
 	107653: GetPluginList,
 	92260:  GetSubscriptionData,

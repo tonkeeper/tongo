@@ -87,6 +87,20 @@ func (h *Hash) FromBytes(b []byte) error {
 	return nil
 }
 
+func ParseHash(s string) (Hash, error) {
+	var h Hash
+	err := h.FromUnknownString(s)
+	return h, err
+}
+
+func MustParseHash(s string) Hash {
+	h, err := ParseHash(s)
+	if err != nil {
+		panic(err)
+	}
+	return h
+}
+
 // Scan implements Scanner for database/sql.
 func (h *Hash) Scan(src interface{}) error {
 	srcB, ok := src.([]byte)

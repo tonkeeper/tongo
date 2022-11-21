@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"hash/crc32"
@@ -271,6 +272,14 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 
 func DeserializeBocBase64(boc string) ([]*Cell, error) {
 	bocData, err := base64.StdEncoding.DecodeString(boc)
+	if err != nil {
+		return nil, err
+	}
+	return DeserializeBoc(bocData)
+}
+
+func DeserializeBocHex(boc string) ([]*Cell, error) {
+	bocData, err := hex.DecodeString(boc)
 	if err != nil {
 		return nil, err
 	}

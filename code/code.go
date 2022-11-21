@@ -5,7 +5,7 @@ import (
 	"github.com/startfellows/tongo/tlb"
 )
 
-type ContractMethod = string
+type ContractMethod string
 
 const (
 	GetSubwalletId           ContractMethod = "get_subwallet_id"

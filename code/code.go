@@ -1,0 +1,78 @@
+package code
+
+import (
+	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
+)
+
+type ContractMethod = string
+
+const (
+	GetSubwalletId           ContractMethod = "get_subwallet_id"
+	GetPluginList            ContractMethod = "get_plugin_list"
+	GetSubscriptionData      ContractMethod = "get_subscription_data"
+	GetCollectionData        ContractMethod = "get_collection_data"
+	GetNftData               ContractMethod = "get_nft_data"
+	GetJettonData            ContractMethod = "get_jetton_data"
+	GetWalletData            ContractMethod = "get_wallet_data"
+	RoyaltyParams            ContractMethod = "royalty_params"
+	GetEditor                ContractMethod = "get_editor"
+	GetSaleData              ContractMethod = "get_sale_data"
+	DnsResolve               ContractMethod = "dnsresolve"
+	GetDomain                ContractMethod = "get_domain"
+	GetFullDomain            ContractMethod = "get_full_domain"
+	GetAuctionInfo           ContractMethod = "get_auction_info"
+	GetTelemintTokenName     ContractMethod = "get_telemint_token_name"
+	GetTelemintAuctionConfig ContractMethod = "get_telemint_auction_config"
+	GetLockupData            ContractMethod = "get_lockup_data"
+)
+
+// crc16 xmodem || 0x10000
+var Methods = map[int64]string{
+	81467:  GetSubwalletId,
+	107653: GetPluginList,
+	92260:  GetSubscriptionData,
+	102491: GetCollectionData,
+	102351: GetNftData,
+	106029: GetJettonData,
+	97026:  GetWalletData,
+	85719:  RoyaltyParams,
+	90228:  GetEditor,
+	72748:  GetSaleData,
+	123660: DnsResolve,
+	119378: GetDomain,
+	66763:  GetFullDomain,
+	80697:  GetAuctionInfo,
+	69506:  GetTelemintTokenName,
+	129619: GetTelemintAuctionConfig,
+	107305: GetLockupData,
+}
+
+func ParseContractMethods(code []byte) ([]int64, error) {
+	cell, err := boc.DeserializeBoc(code)
+	if err != nil {
+		return nil, err
+	}
+	c, err := cell[0].NextRef()
+	if err != nil {
+		return nil, err
+	}
+	type GetMethods struct {
+		Hashmap tlb.Hashmap[boc.Cell] `tlb:"19bits"`
+	}
+	var methods GetMethods
+	err = tlb.Unmarshal(c, &methods)
+	if err != nil {
+		return nil, err
+	}
+
+	ifs := []int64{}
+	for i := range methods.Hashmap.Keys() {
+		methodId, err := methods.Hashmap.Keys()[i].ReadInt(19)
+		if err != nil {
+			return nil, err
+		}
+		ifs = append(ifs, methodId)
+	}
+	return ifs, nil
+}

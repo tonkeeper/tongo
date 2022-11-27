@@ -15,11 +15,9 @@ type TonNodeBlockId struct {
 }
 
 type TonNodeBlockIdExt struct {
-	Workchain int32
-	Shard     int64
-	Seqno     int32
-	RootHash  Hash
-	FileHash  Hash
+	TonNodeBlockId
+	RootHash Hash
+	FileHash Hash
 }
 
 func (id TonNodeBlockIdExt) MarshalTL() ([]byte, error) {
@@ -46,16 +44,21 @@ func (id *TonNodeBlockIdExt) UnmarshalTL(data []byte) error {
 
 func NewTonBlockId(fileHash, rootHash Hash, seqno int32, shard int64, workchain int32) *TonNodeBlockIdExt {
 	return &TonNodeBlockIdExt{
-		Workchain: workchain,
-		Shard:     shard,
-		Seqno:     seqno,
-		FileHash:  fileHash,
-		RootHash:  rootHash,
+		TonNodeBlockId: TonNodeBlockId{
+			Workchain: workchain,
+			Shard:     shard,
+			Seqno:     seqno,
+		},
+		FileHash: fileHash,
+		RootHash: rootHash,
 	}
 }
 
 func (id TonNodeBlockIdExt) String() string {
-	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
+	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, uint64(id.Shard), id.Seqno, id.RootHash, id.FileHash)
+}
+func (id TonNodeBlockId) String() string {
+	return fmt.Sprintf("(%d,%x,%d)", id.Workchain, uint64(id.Shard), id.Seqno)
 }
 
 // BlockInfo
@@ -375,10 +378,12 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 			return nil, fmt.Errorf("two parent blocks may be only after merge")
 		}
 		blockID := TonNodeBlockIdExt{
-			Workchain: workchain,
-			FileHash:  blkPrevInfo.PrevBlkInfo.Prev.FileHash,
-			RootHash:  blkPrevInfo.PrevBlkInfo.Prev.RootHash,
-			Seqno:     int32(blkPrevInfo.PrevBlkInfo.Prev.SeqNo),
+			TonNodeBlockId: TonNodeBlockId{
+				Workchain: workchain,
+				Seqno:     int32(blkPrevInfo.PrevBlkInfo.Prev.SeqNo),
+			},
+			FileHash: blkPrevInfo.PrevBlkInfo.Prev.FileHash,
+			RootHash: blkPrevInfo.PrevBlkInfo.Prev.RootHash,
 		}
 		if afterSplit {
 			blockID.Shard = int64(shardParent(shard))
@@ -393,19 +398,23 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 	}
 
 	parents = append(parents, TonNodeBlockIdExt{
-		Workchain: workchain,
-		FileHash:  blkPrevInfo.PrevBlksInfo.Prev1.FileHash,
-		RootHash:  blkPrevInfo.PrevBlksInfo.Prev1.RootHash,
-		Seqno:     int32(blkPrevInfo.PrevBlksInfo.Prev1.SeqNo),
-		Shard:     int64(shardChild(shard, true)),
+		TonNodeBlockId: TonNodeBlockId{
+			Seqno:     int32(blkPrevInfo.PrevBlksInfo.Prev1.SeqNo),
+			Shard:     int64(shardChild(shard, true)),
+			Workchain: workchain,
+		},
+		FileHash: blkPrevInfo.PrevBlksInfo.Prev1.FileHash,
+		RootHash: blkPrevInfo.PrevBlksInfo.Prev1.RootHash,
 	})
 
 	parents = append(parents, TonNodeBlockIdExt{
-		Workchain: workchain,
-		FileHash:  blkPrevInfo.PrevBlksInfo.Prev2.FileHash,
-		RootHash:  blkPrevInfo.PrevBlksInfo.Prev2.RootHash,
-		Seqno:     int32(blkPrevInfo.PrevBlksInfo.Prev2.SeqNo),
-		Shard:     int64(shardChild(shard, false)),
+		FileHash: blkPrevInfo.PrevBlksInfo.Prev2.FileHash,
+		RootHash: blkPrevInfo.PrevBlksInfo.Prev2.RootHash,
+		TonNodeBlockId: TonNodeBlockId{
+			Seqno:     int32(blkPrevInfo.PrevBlksInfo.Prev2.SeqNo),
+			Shard:     int64(shardChild(shard, false)),
+			Workchain: workchain,
+		},
 	})
 
 	return parents, nil

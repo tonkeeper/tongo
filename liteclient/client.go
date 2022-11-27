@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	mrand "math/rand"
 	"net/http"
 	"sync"
 
@@ -23,8 +24,14 @@ var (
 	ErrBlockNotApplied = fmt.Errorf("block is not applied")
 )
 
+type liteserverConnection struct {
+	workchain   int32
+	shardPrefix tongo.ShardID
+	client      *adnl.Client
+}
+
 type Client struct {
-	adnlClient *adnl.Client
+	adnlClient []liteserverConnection
 }
 
 func NewClientWithDefaultMainnet() (*Client, error) {
@@ -50,6 +57,7 @@ func NewClient(options config.Options) (*Client, error) {
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
+	client := Client{}
 	for _, ls := range options.LiteServers {
 		serverPubkey, err := base64.StdEncoding.DecodeString(ls.Key)
 		if err != nil {
@@ -59,12 +67,45 @@ func NewClient(options config.Options) (*Client, error) {
 		if err != nil {
 			continue
 		}
-		adnlClient := adnl.NewClient(c)
-		return &Client{
-			adnlClient: adnlClient,
-		}, nil
+		client.adnlClient = append(client.adnlClient, liteserverConnection{
+			workchain:   0,
+			shardPrefix: tongo.MustParseShardID(-8000000000000000),
+			client:      adnl.NewClient(c),
+		})
+		return &client, nil
 	}
 	return nil, fmt.Errorf("all liteservers are unavailable")
+}
+
+func (c *Client) getMasterchainServer() *adnl.Client {
+	return c.adnlClient[mrand.Intn(len(c.adnlClient))].client
+}
+
+func (c *Client) getServerByAccountID(a tongo.AccountID) (*adnl.Client, error) {
+	if a.Workchain == -1 {
+		return c.getMasterchainServer(), nil
+	}
+	for _, server := range c.adnlClient {
+		if server.workchain != a.Workchain {
+			continue
+		}
+		if server.shardPrefix.MatchAccountID(a) {
+			return server.client, nil
+		}
+	}
+	return nil, fmt.Errorf("can't find server for account %v", a.ToRaw())
+}
+
+func (c *Client) getServerByBlockID(block tongo.TonNodeBlockId) (*adnl.Client, error) {
+	if block.Workchain == -1 {
+		return c.getMasterchainServer(), nil
+	}
+	for _, server := range c.adnlClient {
+		if server.shardPrefix.MatchBlockID(block) {
+			return server.client, nil
+		}
+	}
+	return nil, fmt.Errorf("can't find server for block %v", block.String())
 }
 
 func (c *Client) GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error) {
@@ -167,7 +208,11 @@ func (c *Client) getRawAccountState(ctx context.Context, masterchainInfo tongo.T
 		return LiteServerAccountState{}, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.adnlClient.Request(ctx, req)
+	server, err := c.getServerByAccountID(accountId)
+	if err != nil {
+		return LiteServerAccountState{}, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return LiteServerAccountState{}, err
 	}
@@ -553,7 +598,11 @@ func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	server, err := c.getServerByAccountID(accountId)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -599,7 +648,7 @@ func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
 		return err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -688,7 +737,7 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -760,7 +809,7 @@ func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) 
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -819,7 +868,7 @@ func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockId
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -856,7 +905,7 @@ func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockId
 // init:tonNode.zeroStateIdExt = liteServer.MasterchainInfo;
 func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdExt, error) {
 	req := makeLiteServerQueryRequest(makeLiteServerGetMasterchainInfoRequest())
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, err
 	}
@@ -891,7 +940,7 @@ func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (LiteSe
 		return LiteServerMasterchainInfoExt{}, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return LiteServerMasterchainInfoExt{}, err
 	}
@@ -950,7 +999,11 @@ func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.
 		return 0, tongo.VmStack{}, err
 	}
 	req := makeLiteServerQueryRequest(payload)
-	resp, err := c.adnlClient.Request(ctx, req)
+	server, err := c.getServerByAccountID(accountId)
+	if err != nil {
+		return 0, nil, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return 0, tongo.VmStack{}, err
 	}
@@ -1011,7 +1064,11 @@ func (c *Client) RunSmcMethodByExtBlockId(ctx context.Context, mode uint32, id t
 		return tongo.VmStack{}, err
 	}
 	req := makeLiteServerQueryRequest(payload)
-	resp, err := c.adnlClient.Request(ctx, req)
+	server, err := c.getServerByAccountID(accountId)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return tongo.VmStack{}, err
 	}
@@ -1055,7 +1112,7 @@ func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdE
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -1101,7 +1158,7 @@ func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.Ton
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.adnlClient.Request(ctx, req)
+	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -1147,7 +1204,16 @@ func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tong
 		return nil, err
 	}
 	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.adnlClient.Request(ctx, req)
+	var server *adnl.Client
+	if targetBlock != nil {
+		server, err = c.getServerByBlockID(targetBlock.TonNodeBlockId)
+	} else {
+		server, err = c.getServerByBlockID(knownBlock.TonNodeBlockId)
+	}
+	if err != nil {
+		return nil, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -1281,7 +1347,11 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 		return nil, tongo.Block{}, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
+	if err != nil {
+		return nil, tongo.Block{}, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return nil, tongo.Block{}, err
 	}
@@ -1324,8 +1394,11 @@ func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.Ton
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
 	}
-
-	resp, err := c.adnlClient.Request(ctx, makeLiteServerQueryRequest(asReq))
+	server, err := c.getServerByBlockID(blockID)
+	if err != nil {
+		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+	}
+	resp, err := server.Request(ctx, makeLiteServerQueryRequest(asReq))
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
 	}
@@ -1391,7 +1464,11 @@ func (c *Client) GetOneRawTransaction(ctx context.Context, id tongo.TonNodeBlock
 		return nil, nil, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.adnlClient.Request(ctx, req)
+	server, err := c.getServerByAccountID(accountId)
+	if err != nil {
+		return nil, nil, err
+	}
+	resp, err := server.Request(ctx, req)
 	if err != nil {
 		return nil, nil, err
 	}

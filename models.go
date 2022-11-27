@@ -273,19 +273,23 @@ type ShardDesc struct {
 func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
 	if s.SumType == "Old" {
 		return TonNodeBlockIdExt{
-			Workchain: workchain,
-			Shard:     s.Old.NextValidatorShard,
-			Seqno:     int32(s.Old.SeqNo),
-			RootHash:  s.Old.RootHash,
-			FileHash:  s.Old.FileHash,
+			TonNodeBlockId: TonNodeBlockId{
+				Workchain: workchain,
+				Shard:     s.Old.NextValidatorShard,
+				Seqno:     int32(s.Old.SeqNo),
+			},
+			RootHash: s.Old.RootHash,
+			FileHash: s.Old.FileHash,
 		}
 	} else {
 		return TonNodeBlockIdExt{
-			Workchain: workchain,
-			Shard:     s.New.NextValidatorShard,
-			Seqno:     int32(s.New.SeqNo),
-			RootHash:  s.New.RootHash,
-			FileHash:  s.New.FileHash,
+			TonNodeBlockId: TonNodeBlockId{
+				Workchain: workchain,
+				Shard:     s.New.NextValidatorShard,
+				Seqno:     int32(s.New.SeqNo),
+			},
+			RootHash: s.New.RootHash,
+			FileHash: s.New.FileHash,
 		}
 	}
 }

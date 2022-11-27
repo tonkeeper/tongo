@@ -56,6 +56,7 @@ func (c *Client) Request(ctx context.Context, q Query) (Message, error) {
 	}
 	select {
 	case <-ctx.Done():
+		c.unregisterCallback(id)
 		return nil, ctx.Err()
 	case b := <-resp:
 		return b, nil
@@ -142,6 +143,11 @@ func (c *Client) processQueryAnswer(p Packet) error {
 	if len(data) < length {
 		return fmt.Errorf("payload is smaller than should be according to length")
 	}
-	resp <- data[:length] //todo: maybe copy
+	select {
+	case resp <- data[:length]: //todo: maybe copy
+	default:
+		return fmt.Errorf("can't write query answer")
+	}
+
 	return nil
 }

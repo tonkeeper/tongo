@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"math/rand"
 	"testing"
 	"time"
 
@@ -20,18 +21,28 @@ import (
 )
 
 func TestExec(t *testing.T) {
+	// TODO: refactor
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 	privateKey := ed25519.NewKeyFromSeed(pk)
 
-	client, c := wallet.NewMockBlockchain(1, tongo.AccountInfo{Balance: 1000})
-	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil, client)
-	if err != nil {
-		log.Fatalf("Unable to create wallet: %v", err)
-	}
 	tongoClient, err := liteclient.NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+
+	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil, tongoClient)
+	if err != nil {
+		log.Fatalf("Unable to create wallet: %v", err)
+	}
+
+	seqno, err := tongoClient.GetSeqno(context.Background(), w.GetAddress())
+	balance, err := w.GetBalance(context.Background())
+
+	client, c := wallet.NewMockBlockchain(seqno, tongo.AccountInfo{Balance: balance})
+	w, err = wallet.NewWallet(privateKey, wallet.V4R2, 0, nil, client)
+	if err != nil {
+		log.Fatalf("Unable to create wallet: %v", err)
 	}
 
 	config, err := tongoClient.GetLastConfigAll(context.Background())
@@ -88,7 +99,41 @@ func TestExec(t *testing.T) {
 		log.Fatalf("unable to create emulator: %v", err)
 	}
 
-	e.SetVerbosityLevel(0)
+	err = e.SetVerbosityLevel(0)
+	if err != nil {
+		log.Fatalf("unable to set verbosity level : %v", err)
+	}
+
+	var lt uint64 = 6788214000003
+	err = e.SetLT(lt)
+	if err != nil {
+		log.Fatalf("unable to set LT : %v", err)
+	}
+
+	now := uint32(time.Now().Unix())
+	fmt.Printf("Time now: %v\n", now)
+	err = e.SetUnixtime(now)
+	if err != nil {
+		log.Fatalf("unable to set LT : %v", err)
+	}
+
+	err = e.SetIgnoreSignatureCheck(true)
+	if err != nil {
+		log.Fatalf("unable to set IgnoreSignatureCheck : %v", err)
+	}
+
+	err = e.SetConfig(config)
+	if err != nil {
+		log.Fatalf("unable to set IgnoreSignatureCheck : %v", err)
+	}
+
+	var seed [32]byte
+	_, err = rand.Read(seed[:])
+
+	err = e.SetRandomSeed(seed)
+	if err != nil {
+		log.Fatalf("unable to set SetRandomSeed : %v", err)
+	}
 
 	emRes, err := e.Emulate(shardAccount, message)
 	if err != nil {
@@ -97,8 +142,18 @@ func TestExec(t *testing.T) {
 	if emRes.Emulation == nil {
 		log.Fatalf("empty emulation")
 	}
+
+	if emRes.Emulation.Transaction.Lt != lt {
+		log.Fatalf("invalid lt")
+	}
+
+	if emRes.Emulation.Transaction.Now != now {
+		log.Fatalf("invalid utime")
+	}
+
 	fmt.Printf("Account last transaction hash: %x\n", emRes.Emulation.ShardAccount.LastTransHash)
 	fmt.Printf("Transaction lt: %v\n", emRes.Emulation.Transaction.Lt)
+	fmt.Printf("Transaction utime: %v\n", emRes.Emulation.Transaction.Now)
 }
 
 func TestGetConfigExec(t *testing.T) {
@@ -292,12 +347,12 @@ func TestGetValidatorsInfoExec(t *testing.T) {
 
 	}
 	prevBlockId := tongo.TonNodeBlockIdExt{
-		Workchain: keyBlockId.Workchain,
-		Shard:     keyBlockId.Shard,
-		Seqno:     int32(header.PrevRef.PrevBlkInfo.Prev.SeqNo),
-		FileHash:  header.PrevRef.PrevBlkInfo.Prev.FileHash,
-		RootHash:  header.PrevRef.PrevBlkInfo.Prev.RootHash,
+		FileHash: header.PrevRef.PrevBlkInfo.Prev.FileHash,
+		RootHash: header.PrevRef.PrevBlkInfo.Prev.RootHash,
 	}
+	prevBlockId.Workchain = keyBlockId.Workchain
+	prevBlockId.Shard = keyBlockId.Shard
+	prevBlockId.Seqno = int32(header.PrevRef.PrevBlkInfo.Prev.SeqNo)
 
 	// elector contract
 	a, err := tongo.AccountIDFromBase64Url("Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF")

@@ -74,7 +74,6 @@ func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -131,8 +130,7 @@ func vmTupleRefInner(n uint32, c *boc.Cell) (*VmTupleRef, error) {
 }
 
 func (t *VmTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
-
-	return nil
+	return fmt.Errorf("VmTuple TLB unmarshaling not implemented")
 }
 
 // VmCellSlice
@@ -349,6 +347,7 @@ func (s *VmCellSlice) UnmarshalTLB(c *boc.Cell, tag string) error {
 func (s VmCellSlice) Cell() *boc.Cell {
 	// TODO: maybe add as a filed to VmCellSlice
 	cell := boc.NewCell()
+	s.cell.ResetCounters()
 	err := s.cell.Skip(s.stBits)
 	if err != nil {
 		panic("not enough cell bits")
@@ -462,4 +461,105 @@ func Int257FromBigInt(i *big.Int) (Int257, error) {
 	}
 	_ = bs.WriteBytes(bytes)
 	return Int257{data: bs}, nil
+}
+
+// Deprecated: IsInt is deprecated.
+func (v VmStackValue) IsInt() bool {
+	return v.SumType == "VmStkTinyInt" || v.SumType == "VmStkInt"
+}
+
+// Deprecated: IsCellSlice is deprecated.
+func (v VmStackValue) IsCellSlice() bool {
+	return v.SumType == "VmStkSlice"
+}
+
+// Deprecated: IsNull is deprecated.
+func (v VmStackValue) IsNull() bool {
+	return v.SumType == "VmStkNull"
+}
+
+// Deprecated: IsCell is deprecated.
+func (v VmStackValue) IsCell() bool {
+	return v.SumType == "VmStkCell"
+}
+
+// Deprecated: IsTuple is deprecated.
+func (v VmStackValue) IsTuple() bool {
+	return v.SumType == "VmStkTuple"
+}
+
+// Deprecated: CellSlice is deprecated.
+func (v VmStackValue) CellSlice() *boc.Cell {
+	if !v.IsCellSlice() {
+		panic("stack value is not cell slice")
+	}
+	return v.VmStkSlice.Cell()
+}
+
+// Deprecated: Cell is deprecated.
+func (v VmStackValue) Cell() *boc.Cell {
+	if !v.IsCell() {
+		panic("stack value is not cell")
+	}
+	return &v.VmStkCell.Value
+}
+
+// Deprecated: Int is deprecated.
+func (v VmStackValue) Int() big.Int {
+	switch v.SumType {
+	case "VmStkTinyInt":
+		return *big.NewInt(v.VmStkTinyInt)
+	case "VmStkInt":
+		return *v.VmStkInt.BigInt()
+	default:
+		panic("stack value is not int")
+	}
+}
+
+// Deprecated: Int64 is deprecated.
+func (v VmStackValue) Int64() int64 {
+	switch v.SumType {
+	case "VmStkTinyInt":
+		return v.VmStkTinyInt
+	case "VmStkInt":
+		return v.VmStkInt.BigInt().Int64()
+	default:
+		panic("stack value is not int")
+	}
+}
+
+// Deprecated: Uint64 is deprecated.
+func (v VmStackValue) Uint64() uint64 {
+	switch v.SumType {
+	case "VmStkTinyInt":
+		return uint64(v.VmStkTinyInt)
+	case "VmStkInt":
+		return v.VmStkInt.BigInt().Uint64()
+	default:
+		panic("stack value is not int")
+	}
+}
+
+// Deprecated: Tuple is deprecated.
+func (v VmStackValue) Tuple() []VmStackValue {
+	if !v.IsTuple() {
+		panic("stack value is not tuple")
+	}
+	if v.VmStkTuple.Data == nil {
+		return nil
+	}
+	return convertVmTuple(*v.VmStkTuple.Data)
+}
+
+func convertVmTuple(t VmTuple) []VmStackValue {
+	var res []VmStackValue
+	if t.Head.Entry != nil {
+		res = append(res, *t.Head.Entry)
+	}
+	if t.Head.Ref != nil {
+		val := convertVmTuple(*t.Head.Ref)
+		res = append(res, val...)
+	}
+	res = append(res, t.Tail)
+	return res
 }

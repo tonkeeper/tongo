@@ -3,9 +3,12 @@ package txemulator
 // #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
 // #include "../lib/emulator-extern.h"
 // #include <stdlib.h>
+// #include <stdbool.h>
 import "C"
 import (
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
@@ -26,8 +29,19 @@ type Emulator struct {
 	emulator unsafe.Pointer
 }
 
-// { "success": false, "error": "Error description" }
-// { "success": true, "transaction": "Base64 encoded Transaction boc", "shard_account": "Base64 encoded ShardAccount boc" }
+// {
+//   "success": false,
+//   "error": "Error description"
+//   // and optional fields "vm_exit_code" and "vm_log" in case external message was not accepted.
+// }
+// Or success:
+// {
+//   "success": true,
+//   "transaction": "Base64 encoded Transaction boc",
+//   "shard_account": "Base64 encoded new ShardAccount boc",
+//   "vm_log": "execute DUP...",
+//   "actions": "Base64 encoded compute phase actions boc (OutList n)"
+// }
 type result struct {
 	Success      bool   `json:"success"`
 	Error        string `json:"error"`
@@ -35,6 +49,7 @@ type result struct {
 	ShardAccount string `json:"shard_account"`
 	VmLog        string `json:"vm_log"`
 	VmExitCode   int    `json:"vm_exit_code"`
+	Actions      string `json:"actions"`
 }
 
 type EmulationResult struct {
@@ -58,19 +73,74 @@ func NewEmulator(config *boc.Cell, verbosityLevel VerbosityLevel) (*Emulator, er
 	if err != nil {
 		return nil, err
 	}
-	var libs tlb.HashmapE[struct{}] // empty shard libs dict
-	libsStr, err := tlbStructToBase64(libs)
+	cConfigStr := C.CString(configBoc)
+	defer C.free(unsafe.Pointer(cConfigStr))
+	level := C.int(verbosityLevel)
+	e := Emulator{emulator: C.transaction_emulator_create(cConfigStr, level)}
+	runtime.SetFinalizer(&e, destroy)
+	return &e, nil
+}
+
+func (e *Emulator) SetUnixtime(utime uint32) error {
+	ok := C.transaction_emulator_set_unixtime(e.emulator, C.uint32_t(utime))
+	if !ok {
+		return fmt.Errorf("set unixtime error")
+	}
+	return nil
+}
+
+func (e *Emulator) SetLT(lt uint64) error {
+	ok := C.transaction_emulator_set_lt(e.emulator, C.uint64_t(lt))
+	if !ok {
+		return fmt.Errorf("set LT error")
+	}
+	return nil
+}
+
+func (e *Emulator) SetRandomSeed(seed [32]byte) error {
+	cSeedStr := C.CString(hex.EncodeToString(seed[:]))
+	defer C.free(unsafe.Pointer(cSeedStr))
+	ok := C.transaction_emulator_set_rand_seed(e.emulator, cSeedStr)
+	if !ok {
+		return fmt.Errorf("set random seed error")
+	}
+	return nil
+}
+
+func (e *Emulator) SetIgnoreSignatureCheck(ignore bool) error {
+	ok := C.transaction_emulator_set_ignore_chksig(e.emulator, C.bool(ignore))
+	if !ok {
+		return fmt.Errorf("set IgnoreSignatureCheck error")
+	}
+	return nil
+}
+
+func (e *Emulator) SetConfig(config *boc.Cell) error {
+	configBoc, err := config.ToBocBase64()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	cConfigStr := C.CString(configBoc)
 	defer C.free(unsafe.Pointer(cConfigStr))
-	cLibStr := C.CString(libsStr)
-	defer C.free(unsafe.Pointer(cLibStr))
-	level := C.int(verbosityLevel)
-	e := Emulator{emulator: C.transaction_emulator_create(cConfigStr, cLibStr, level)}
-	runtime.SetFinalizer(&e, destroy)
-	return &e, nil
+	ok := C.transaction_emulator_set_config(e.emulator, cConfigStr)
+	if !ok {
+		return fmt.Errorf("set config error")
+	}
+	return nil
+}
+
+func (e *Emulator) SetLibs(libs *boc.Cell) error {
+	libsBoc, err := libs.ToBocBase64()
+	if err != nil {
+		return err
+	}
+	cLibsStr := C.CString(libsBoc)
+	defer C.free(unsafe.Pointer(cLibsStr))
+	ok := C.transaction_emulator_set_libs(e.emulator, cLibsStr)
+	if !ok {
+		return fmt.Errorf("set libs error")
+	}
+	return nil
 }
 
 func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Message) (EmulationResult, error) {
@@ -146,8 +216,12 @@ func destroy(e *Emulator) {
 
 // SetVerbosityLevel
 // verbosity level (0 - never, 1 - error, 2 - warning, 3 - info, 4 - debug)
-func (e *Emulator) SetVerbosityLevel(level int) {
-	C.transaction_emulator_set_verbosity_level(C.int(level))
+func (e *Emulator) SetVerbosityLevel(level int) error {
+	ok := C.emulator_set_verbosity_level(C.int(level))
+	if !ok {
+		return fmt.Errorf("set VerbosityLevel error")
+	}
+	return nil
 }
 
 func tlbStructToBase64(s any) (string, error) {

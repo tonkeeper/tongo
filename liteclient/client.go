@@ -69,7 +69,7 @@ func NewClient(options config.Options) (*Client, error) {
 		}
 		client.adnlClient = append(client.adnlClient, liteserverConnection{
 			workchain:   0,
-			shardPrefix: tongo.MustParseShardID(-8000000000000000),
+			shardPrefix: tongo.MustParseShardID(-0x8000000000000000),
 			client:      adnl.NewClient(c),
 		})
 		return &client, nil

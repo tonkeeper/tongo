@@ -40,7 +40,7 @@ func (s ShardID) MatchAccountID(a AccountID) bool {
 }
 
 func (s ShardID) MatchBlockID(block TonNodeBlockId) bool {
-	panic("not implemented") //todo: write tests and fixes
+	return true //todo: write tests and fixes
 	sub, err := ParseShardID(block.Shard)
 	if err != nil {
 		return false

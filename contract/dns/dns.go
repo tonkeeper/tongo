@@ -15,6 +15,10 @@ type blockchain interface {
 	GetRootDNS(ctx context.Context) (tongo.AccountID, error)
 }
 
+var (
+	ErrNotResolved = fmt.Errorf("not resolved")
+)
+
 type DNS struct {
 	Root       tongo.AccountID
 	blockchain blockchain
@@ -52,7 +56,11 @@ func (d *DNS) Resolve(ctx context.Context, domain string) ([]tongo.DNSRecord, er
 		domain = "."
 	}
 	dom := convertDomain(domain)
-	return d.resolve(ctx, d.Root, dom)
+	r, err := d.resolve(ctx, d.Root, dom)
+	if err != nil && strings.Contains(err.Error(), "method execution failed") {
+		return nil, ErrNotResolved
+	}
+	return r, err
 }
 
 func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom string) ([]tongo.DNSRecord, error) {

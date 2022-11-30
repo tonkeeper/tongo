@@ -8,7 +8,7 @@ import (
 	"math/big"
 )
 
-const BOCSizeLimit = 10000
+const BOCSizeLimit = 65536
 const CellBits = 1023
 
 var ErrCellRefsOverflow = errors.New("too many refs")

@@ -93,7 +93,7 @@ func convertDomain(domain string) string {
 func parseDnsRecords(c *boc.Cell) ([]tongo.DNSRecord, error) {
 	var record tongo.DNSRecord
 	err := tlb.Unmarshal(c, &record)
-	if err == nil {
+	if err == nil && record.SumType == "DNSNextResolver" {
 		return []tongo.DNSRecord{record}, nil
 	}
 	c.ResetCounters()

@@ -73,3 +73,27 @@ func parseSumTag(s string) (sumTag, error) {
 	}
 	return sumTag{}, fmt.Errorf("invalid tag")
 }
+
+func decodeHashmapTag(tag string) (int, error) {
+	var ln int
+	if tag == "" {
+		return 0, fmt.Errorf("empty hashmap tag")
+	}
+	_, err := fmt.Sscanf(tag, "%dbits", &ln)
+	if err != nil {
+		return 0, err
+	}
+	return ln, nil
+}
+
+func decodeVarUIntegerTag(tag string) (int, error) {
+	var n int
+	if tag == "" {
+		return 0, fmt.Errorf("empty varuint tag")
+	}
+	_, err := fmt.Sscanf(tag, "%dbytes", &n)
+	if err != nil {
+		return 0, err
+	}
+	return n, nil
+}

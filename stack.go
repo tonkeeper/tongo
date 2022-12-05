@@ -155,7 +155,7 @@ type VmCellSlice struct {
 // vm_stk_cont#06 cont:VmCont = VmStackValue;
 // vm_stk_tuple#07 len:(## 16) data:(VmTuple len) = VmStackValue;
 type VmStackValue struct {
-	tl.SumType
+	tlb.SumType
 	VmStkNull    struct{}          `tlbSumType:"vm_stk_null#00"`
 	VmStkTinyInt int64             `tlbSumType:"vm_stk_tinyint#01"`
 	VmStkInt     Int257            `tlbSumType:"vm_stk_int$000000100000000"` // vm_stk_int#0201_

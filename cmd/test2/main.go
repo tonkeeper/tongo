@@ -1,10 +1,8 @@
 package main
 
 import (
-	"github.com/alecthomas/participle/v2"
-	"github.com/alecthomas/repr"
-
-	"github.com/alecthomas/participle/v2/lexer"
+	"fmt"
+	"github.com/startfellows/tongo/tlb/parser"
 )
 
 var SOURCE = `
@@ -31,92 +29,15 @@ _ split_depth:(Maybe (## 5)) special:(Maybe TickTock)
   library:(HashmapE 256 SimpleLib) = StateInit;
 `
 
-var (
-	iniLexer = lexer.MustSimple([]lexer.SimpleRule{
-		{`Ident`, `[a-zA-Z_][0-9a-zA-Z0-9_]*`},
-		{`HexTag`, `#([0-9a-f]+_?|_)`},
-		{`BinTag`, `\$[01]*_?`},
-		{"BuiltIn", `(#<=|#<|##|#)`},
-		{"NUMBER", `[\d]+`},
-		{`Punct`, `[][={};<>^:)(]`},
-		{"comment", `//[^\n]*`},
-		{"whitespace", `\s+`},
-	})
-	parser = participle.MustBuild[TLB](
-		participle.Lexer(iniLexer),
-	)
-)
-
-type TLB struct {
-	Declarations []*CombinatorDeclaration `@@*`
-}
-type CombinatorDeclaration struct {
-	Constructor      Constructor        `@@`
-	FieldDefinitions []*FieldDefinition `@@*`
-	Equal            string             `"="`
-	Combinator       Combinator         `@@`
-	End              string             `";"`
-}
-type Constructor struct {
-	Name   string `@Ident`
-	Prefix string `@(HexTag|BinTag)?`
-}
-
-type Combinator struct {
-	Name            string           `@Ident`
-	TypeExpressions []TypeExpression `@@*`
-}
-
-type FieldDefinition struct {
-	Implicit   *ImplicitDefinition `@@`
-	NamedField *NamedField         `| @@`
-	CellRef    *CellRef            `| @@`
-}
-
-type NamedField struct {
-	Name       string         `@(Ident|"_")`
-	Sep        string         `":"`
-	Expression TypeExpression `@@`
-}
-
-type ImplicitDefinition struct {
-	Start      string          `"{"`
-	Implicit   *ImplicitField  `(@@`
-	Expression *TypeExpression `| @@)`
-	End        string          `"}"`
-}
-type ImplicitField struct {
-	Name string `@Ident`
-	Sep  string `":"`
-	Type string `@("#"|"Type")`
-}
-
-type ParenExpression struct {
-	Name      TypeExpression   `"(" @@ `
-	Parameter []TypeExpression `@@* ")"`
-}
-type CellRef struct {
-	TypeExpression TypeExpression `"^" @@`
-}
-
-type Anon struct {
-	Values []FieldDefinition `"[" @@ "]"`
-}
-
-type TypeExpression struct {
-	Tilda                string           `@"~"?`
-	ParenExpression      *ParenExpression `@@`
-	AnonymousConstructor *Anon            `| @@`
-	CellRef              *CellRef         `| @@`
-	BuiltIn              *string          `| @BuiltIn`
-	NUMBER               *string          `| @NUMBER`
-	NamedRef             *string          `| @Ident`
-}
-
 func main() {
-	ini, err := parser.ParseString("", SOURCE)
-	repr.Println(ini, repr.Indent("  "), repr.OmitEmpty(true))
+	t, err := parser.Parse(SOURCE)
 	if err != nil {
 		panic(err)
 	}
+	s, err := parser.GenerateGolangTypes(*t)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(s)
+
 }

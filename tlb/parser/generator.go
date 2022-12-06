@@ -64,7 +64,11 @@ func generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 		}
 		builder.WriteString(toCamelCase(name))
 		builder.WriteRune('\t')
-		builder.WriteString(e.String())
+		t, err := e.ToGolangType()
+		if err != nil {
+			return "", err
+		}
+		builder.WriteString(t.name)
 		builder.WriteRune('\n')
 	}
 	builder.WriteRune('}')
@@ -101,6 +105,18 @@ func generateGolangType(declarations []CombinatorDeclaration) (string, error) {
 	} else {
 		return generateGolangSumType(declarations)
 	}
+}
+
+type golangType struct {
+	name string
+	tag  string
+}
+
+func (t *TypeExpression) ToGolangType() (golangType, error) {
+	return golangType{
+		name: "Temp",
+		tag:  "",
+	}, nil
 }
 
 func toCamelCase(s string) string {

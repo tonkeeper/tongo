@@ -10,7 +10,9 @@ func TestParseShardID(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	t.Logf("%b\n%b", uint64(shardID.mask), uint64(shardID.prefix))
+	t.Logf("Shard  : %b\n", shard)
+	t.Logf("Mask   : %b\n", uint64(shardID.mask))
+	t.Logf("Prefix : %b\n", uint64(shardID.prefix))
 	if int64(shard) != shardID.Encode() {
 		t.Logf("%b\n", shard)
 		t.Logf("%b\n", uint64(shardID.Encode()))
@@ -35,17 +37,25 @@ func TestShardID_MatchAccountID(t *testing.T) {
 		}
 	}
 }
+
 func TestShardID_MatchBlockID(t *testing.T) {
 	for _, c := range []struct {
 		shard uint64
 		block uint64
 		match bool
 	}{
-		{shard: 0xfb80000000000000, block: 0xfb80000000000000, match: true}, //todo: write tests and fix function
-		{shard: 0xfb80000000000000, block: 0x8000000000000000, match: true},
-		{shard: 0x8000000000000000, block: 0xfb80000000000000, match: true},
+		{shard: 0xfb80000000000000, block: 0xfb80000000000000, match: true},  // equal prefixes
+		{shard: 0xfb80000000000000, block: 0x8000000000000000, match: true},  // only one real shard. node tracks it
+		{shard: 0xfb80000000000000, block: 0xc000000000000000, match: true},  // two real shards. node tracks this shard
+		{shard: 0xfb80000000000000, block: 0x4000000000000000, match: false}, // two real shards. node not tracks this shard
+		{shard: 0x8000000000000000, block: 0xfb80000000000000, match: true},  // node tracks all shards
+		{shard: 0xfc80000000000000, block: 0xfb80000000000000, match: false}, // not equal prefixes
+		{shard: 0xfb80000000000000, block: 0xffc0000000000000, match: false},
+		{shard: 0xfb80000000000000, block: 0xff00000000000000, match: false},
 	} {
 		shard := MustParseShardID(int64(c.shard))
+		t.Logf("Shard       : %b\n", c.shard)
+		t.Logf("Block shard : %b\n\n", c.block)
 		if shard.MatchBlockID(TonNodeBlockId{Shard: int64(c.block)}) != c.match {
 			t.Errorf("shard %v block %v", c.shard, c.block)
 		}

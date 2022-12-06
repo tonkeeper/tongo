@@ -40,13 +40,12 @@ func (s ShardID) MatchAccountID(a AccountID) bool {
 }
 
 func (s ShardID) MatchBlockID(block TonNodeBlockId) bool {
-	return true //todo: write tests and fixes
 	sub, err := ParseShardID(block.Shard)
 	if err != nil {
 		return false
 	}
 	if bits.TrailingZeros64(uint64(s.mask)) < bits.TrailingZeros64(uint64(sub.mask)) {
-		return false
+		return s.prefix&sub.mask == sub.prefix
 	}
-	return sub.prefix&s.mask == s.mask
+	return sub.prefix&s.mask == s.prefix
 }

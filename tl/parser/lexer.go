@@ -3,7 +3,6 @@ package parser
 import (
 	"github.com/alecthomas/participle/v2"
 	"github.com/alecthomas/participle/v2/lexer"
-	"github.com/alecthomas/repr"
 )
 
 var (
@@ -20,6 +19,14 @@ var (
 	tlParser = participle.MustBuild[TL](
 		participle.Lexer(iniLexer),
 	)
+	typesMapping = map[string]string{
+		"#":      "int",
+		"int":    "int",
+		"int256": "tl.Int256",
+		"long":   "int64",
+		"bytes":  "[]byte",
+		"Bool":   "bool",
+	}
 )
 
 type TL struct {
@@ -27,6 +34,7 @@ type TL struct {
 	Separator    string                   `FunctionsSeparator`
 	Functions    []*CombinatorDeclaration "@@*"
 }
+
 type CombinatorDeclaration struct {
 	Constructor      string        `@Ident`
 	Tag              string        `@HexTag?`
@@ -69,8 +77,6 @@ func (t TypeExpression) String() string {
 }
 
 func Parse(tl string) (*TL, error) {
-
 	a, err := tlParser.ParseString("", tl)
-	repr.Print(a)
 	return a, err
 }

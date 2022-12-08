@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"github.com/startfellows/tongo/utils"
 	"go/format"
 	"strings"
 )
@@ -62,7 +63,7 @@ func generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 		if name == "" || name == "_" {
 			name = fmt.Sprintf("Field%v", i)
 		}
-		builder.WriteString(toCamelCase(name))
+		builder.WriteString(utils.ToCamelCase(name))
 		builder.WriteRune('\t')
 		t, err := e.ToGolangType()
 		if err != nil {
@@ -88,7 +89,7 @@ func generateGolangSumType(declarations []CombinatorDeclaration) (string, error)
 		if err != nil {
 			return "", err
 		}
-		builder.WriteString(toCamelCase(d.Constructor.Name))
+		builder.WriteString(utils.ToCamelCase(d.Constructor.Name))
 		builder.WriteRune(' ')
 		builder.WriteString(s)
 		builder.WriteString(fmt.Sprintf(" `tlbSumType:\"%v\"`", d.Constructor.Prefix))
@@ -117,40 +118,4 @@ func (t *TypeExpression) ToGolangType() (golangType, error) {
 		name: "Temp",
 		tag:  "",
 	}, nil
-}
-
-func toCamelCase(s string) string {
-	s = strings.TrimSpace(s)
-	if s == "" {
-		return s
-	}
-
-	n := strings.Builder{}
-	n.Grow(len(s))
-	capNext := true
-	for i, v := range []byte(s) {
-		vIsCap := v >= 'A' && v <= 'Z'
-		vIsLow := v >= 'a' && v <= 'z'
-		if capNext {
-			if vIsLow {
-				v += 'A'
-				v -= 'a'
-			}
-		} else if i == 0 {
-			if vIsCap {
-				v += 'a'
-				v -= 'A'
-			}
-		}
-		if vIsCap || vIsLow {
-			n.WriteByte(v)
-			capNext = false
-		} else if vIsNum := v >= '0' && v <= '9'; vIsNum {
-			n.WriteByte(v)
-			capNext = true
-		} else {
-			capNext = v == '_' || v == ' ' || v == '-' || v == '.'
-		}
-	}
-	return n.String()
 }

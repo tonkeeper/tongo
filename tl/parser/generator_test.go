@@ -10,8 +10,8 @@ tonNode.blockId workchain:int shard:long seqno:int = tonNode.BlockId;
 tonNode.blockIdExt workchain:int shard:long seqno:int root_hash:int256 file_hash:int256 = tonNode.BlockIdExt;
 tonNode.zeroStateIdExt workchain:int root_hash:int256 file_hash:int256 = tonNode.ZeroStateIdExt;
 
-adnl.message.query query_id:int256 query:bytes = adnl.Message;
-adnl.message.answer query_id:int256 answer:bytes = adnl.Message;
+adnl.message.query#7af98bb4 query_id:int256 query:bytes = adnl.Message;
+adnl.message.answer#1684ac0f query_id:int256 answer:bytes = adnl.Message;
 
 liteServer.error code:int message:string = liteServer.Error; 
 
@@ -37,8 +37,8 @@ liteServer.transactionId3 account:int256 lt:long = liteServer.TransactionId3;
 liteServer.blockTransactions id:tonNode.blockIdExt req_count:# incomplete:Bool ids:(vector liteServer.transactionId) proof:bytes = liteServer.BlockTransactions;
 liteServer.signature node_id_short:int256 signature:bytes = liteServer.Signature;
 liteServer.signatureSet validator_set_hash:int catchain_seqno:int signatures:(vector liteServer.signature) = liteServer.SignatureSet;
-liteServer.blockLinkBack to_key_block:Bool from:tonNode.blockIdExt to:tonNode.blockIdExt dest_proof:bytes proof:bytes state_proof:bytes = liteServer.BlockLink;
-liteServer.blockLinkForward to_key_block:Bool from:tonNode.blockIdExt to:tonNode.blockIdExt dest_proof:bytes config_proof:bytes signatures:liteServer.SignatureSet = liteServer.BlockLink;
+liteServer.blockLinkBack#ef1b7eef to_key_block:Bool from:tonNode.blockIdExt to:tonNode.blockIdExt dest_proof:bytes proof:bytes state_proof:bytes = liteServer.BlockLink;
+liteServer.blockLinkForward#1cce0f52 to_key_block:Bool from:tonNode.blockIdExt to:tonNode.blockIdExt dest_proof:bytes config_proof:bytes signatures:liteServer.SignatureSet = liteServer.BlockLink;
 liteServer.partialBlockProof complete:Bool from:tonNode.blockIdExt to:tonNode.blockIdExt steps:(vector liteServer.BlockLink) = liteServer.PartialBlockProof;
 liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
 liteServer.validatorStats mode:# id:tonNode.blockIdExt count:int complete:Bool state_proof:bytes data_proof:bytes = liteServer.ValidatorStats;
@@ -54,7 +54,7 @@ liteServer.getMasterchainInfo = liteServer.MasterchainInfo;
 liteServer.getMasterchainInfoExt mode:# = liteServer.MasterchainInfoExt;
 `
 
-func TestStruct(t *testing.T) {
+func TestGenerateGolangTypes(t *testing.T) {
 	parsed, err := Parse(SOURCE)
 	if err != nil {
 		panic(err)
@@ -64,4 +64,12 @@ func TestStruct(t *testing.T) {
 		panic(err)
 	}
 	fmt.Printf("%s", s)
+}
+
+func TestCheckBits(t *testing.T) {
+	mode := 53
+	fmt.Printf("Mode: %b\n", mode)
+	for i := 0; i < 6; i++ {
+		fmt.Printf("%v bit: %v\n", i, (mode>>i)&1 == 1)
+	}
 }

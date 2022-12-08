@@ -19,14 +19,6 @@ var (
 	tlParser = participle.MustBuild[TL](
 		participle.Lexer(iniLexer),
 	)
-	typesMapping = map[string]string{
-		"#":      "int",
-		"int":    "int",
-		"int256": "tl.Int256",
-		"long":   "int64",
-		"bytes":  "[]byte",
-		"Bool":   "bool",
-	}
 )
 
 type TL struct {

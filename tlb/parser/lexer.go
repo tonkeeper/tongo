@@ -12,7 +12,7 @@ var (
 		{`BinTag`, `\$[01]*_?`},
 		{"BuiltIn", `(#<=|#<|##|#)`},
 		{"NUMBER", `[\d]+`},
-		{`Punct`, `[][={};<>^:)(]`},
+		{`Punct`, `[][={};<>^~:)(]`},
 		{"comment", `//[^\n]*`},
 		{"whitespace", `\s+`},
 	})
@@ -87,12 +87,12 @@ type Anon struct {
 
 type TypeExpression struct {
 	Tilda                string           `@"~"?`
-	ParenExpression      *ParenExpression `@@`
+	ParenExpression      *ParenExpression `(@@`
 	AnonymousConstructor *Anon            `| @@`
 	CellRef              *CellRef         `| @@`
 	BuiltIn              *string          `| @BuiltIn`
 	NUMBER               *string          `| @NUMBER`
-	NamedRef             *string          `| @Ident`
+	NamedRef             *string          `| @Ident)`
 }
 
 func (t TypeExpression) String() string {

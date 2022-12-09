@@ -28,7 +28,6 @@ func GenerateGolangTypes(t TLB) (string, error) {
 		s += "\n" + t
 	}
 
-	print(s)
 	b, err := format.Source([]byte(s))
 	if err != nil {
 		return s, err

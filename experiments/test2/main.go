@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/startfellows/tongo/tl/parser"
+	"github.com/startfellows/tongo/tlb/parser"
 )
 
 var SOURCE = `
-
+                text#_ {n:#} data:(SnakeData ~n) = Text;
+      
 `
 
 func main() {

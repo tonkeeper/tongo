@@ -59,7 +59,9 @@ func TestGenerateGolangTypes(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	s, err := GenerateGolangTypes(*parsed)
+	g := NewGenerator(nil, "LightClient")
+
+	s, err := g.LoadTypes(parsed.Declarations)
 	if err != nil {
 		panic(err)
 	}

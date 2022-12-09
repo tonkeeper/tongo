@@ -9,11 +9,13 @@ import (
 	"strings"
 )
 
+type DefaultType struct {
+	Name          string
+	IsPointerType bool
+}
+
 var (
-	typesMapping = map[string]struct {
-		Name        string
-		PointerType bool
-	}{
+	defaultKnownTypes = map[string]DefaultType{
 		"#":      {"int32", false},
 		"int":    {"int32", false},
 		"int256": {"tl.Int256", false},
@@ -27,10 +29,26 @@ var (
 	marshalerReturnErr   = "if err != nil {return nil, err}\n"
 )
 
-func GenerateGolangTypes(t TL) (string, error) {
+type Generator struct {
+	knownTypes map[string]DefaultType
+	newTlTypes []string
+	typeName   string
+}
+
+func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator {
+	if knownTypes == nil {
+		knownTypes = defaultKnownTypes
+	}
+	return &Generator{
+		knownTypes: knownTypes,
+		typeName:   typeName,
+	}
+}
+
+func (g *Generator) LoadTypes(Declarations []*CombinatorDeclaration) (string, error) {
 	sumTypes := make(map[string][]CombinatorDeclaration)
 
-	for i, c := range t.Declarations {
+	for i, c := range Declarations {
 		if c == nil {
 			return "", fmt.Errorf("declaration %v is nil", i)
 		}
@@ -39,21 +57,23 @@ func GenerateGolangTypes(t TL) (string, error) {
 
 	s := ""
 	for _, v := range sumTypes {
-		types, err := generateGolangType(v)
+		typeString, err := generateGolangType(v)
 		if err != nil {
 			return "", err
 		}
-		unmarshalers, err := generateUnmarshalers(v)
+		g.newTlTypes = append(g.newTlTypes, typeString)
+
+		unmarshaler, err := generateUnmarshalers(v)
 		if err != nil {
 			return "", err
 		}
-		marshalers, err := generateMarshalers(v)
+		marshaler, err := generateMarshalers(v)
 		if err != nil {
 			return "", err
 		}
-		s += "\n" + types + "\n"
-		s += "\n" + marshalers + "\n"
-		s += "\n" + unmarshalers + "\n"
+		s += "\n" + typeString + "\n"
+		s += "\n" + marshaler + "\n"
+		s += "\n" + unmarshaler + "\n"
 	}
 
 	b, err := format.Source([]byte(s))
@@ -62,6 +82,10 @@ func GenerateGolangTypes(t TL) (string, error) {
 	}
 
 	return string(b), err
+}
+
+func (g *Generator) LoadFunctions(Functions []*CombinatorDeclaration) (string, error) {
+	return "", fmt.Errorf("not implemnted")
 }
 
 func generateGolangType(declarations []CombinatorDeclaration) (string, error) {
@@ -146,12 +170,12 @@ func (t golangType) String() string {
 }
 
 func mapToGoType(name string, optional bool) golangType {
-	goType, ok := typesMapping[name]
+	goType, ok := defaultKnownTypes[name]
 	if ok {
 		return golangType{
 			name:        goType.Name,
 			optional:    optional,
-			pointerType: goType.PointerType,
+			pointerType: goType.IsPointerType,
 		}
 	}
 	return golangType{

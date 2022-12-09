@@ -16,6 +16,9 @@ func Marshal(o any) ([]byte, error) {
 		return m.MarshalTL()
 	}
 	val := reflect.ValueOf(o)
+	if val.Kind() == reflect.Pointer {
+		val = val.Elem()
+	}
 	switch val.Kind() {
 	case reflect.Uint32:
 		b := make([]byte, 4)

@@ -11,8 +11,11 @@ var defaultKnownTypes = map[string]string{
 	"accountid": "tongo.AccountID",
 	"cell":      "boc.Cell",
 	"int8":      "int8",
+	"int64":     "int64",
+	"int256":    "tongo.Int256",
 	"int257":    "tongo.Int257",
 	"any":       "boc.Any",
+	"[]byte":    "[]byte",
 }
 
 type Generator struct {
@@ -75,11 +78,20 @@ func (g *Generator) GetMethod(m GetMethod) (string, error) {
 	builder.WriteString(strings.Join(args, ", "))
 	builder.WriteString(") (")
 	for _, s := range m.Stack {
-		t, err := g.checkType(s.Type)
-		if err != nil {
-			return "", err
+		if len(s.Cases) == 0 {
+			t, err := g.checkType(s.Type)
+			if err != nil {
+				return "", err
+			}
+			result = append(result, t)
 		}
-		result = append(result, t)
+		for _, c := range s.Cases {
+			t, err := g.checkType(c)
+			if err != nil {
+				return "", err
+			}
+			result = append(result, t)
+		}
 	}
 	result = append(result, "error")
 	builder.WriteString(strings.Join(result, ", "))

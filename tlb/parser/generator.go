@@ -42,10 +42,7 @@ func generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 		builder.WriteRune('\n')
 	}
 	for i, field := range declaration.FieldDefinitions {
-		if field == nil {
-			return "", fmt.Errorf("nil field %v in %v", i, declaration.Constructor.Name)
-		}
-		if field.NamedField == nil && field.CellRef == nil && field.Implicit == nil {
+		if field.IsEmpty() {
 			return "", fmt.Errorf("all types are nil in field %v in %v", i, declaration.Constructor.Name)
 		}
 		if field.Implicit != nil {
@@ -55,7 +52,7 @@ func generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 		var e TypeExpression
 		if field.CellRef != nil {
 			e = field.CellRef.TypeExpression
-		} else {
+		} else if field.NamedField != nil {
 			name = field.NamedField.Name
 			e = field.NamedField.Expression
 		}

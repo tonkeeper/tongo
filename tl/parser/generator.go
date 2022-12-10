@@ -25,7 +25,7 @@ var (
 		"string": {"string", false},
 	}
 
-	unmarshalerReturnErr = "if err != nil {return nil}\n"
+	unmarshalerReturnErr = "if err != nil {return err}\n"
 	marshalerReturnErr   = "if err != nil {return nil, err}\n"
 )
 
@@ -45,14 +45,11 @@ func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator
 	}
 }
 
-func (g *Generator) LoadTypes(Declarations []*CombinatorDeclaration) (string, error) {
+func (g *Generator) LoadTypes(Declarations []CombinatorDeclaration) (string, error) {
 	sumTypes := make(map[string][]CombinatorDeclaration)
 
-	for i, c := range Declarations {
-		if c == nil {
-			return "", fmt.Errorf("declaration %v is nil", i)
-		}
-		sumTypes[c.Combinator] = append(sumTypes[c.Combinator], *c)
+	for _, c := range Declarations {
+		sumTypes[c.Combinator] = append(sumTypes[c.Combinator], c)
 	}
 
 	s := ""
@@ -84,7 +81,7 @@ func (g *Generator) LoadTypes(Declarations []*CombinatorDeclaration) (string, er
 	return string(b), err
 }
 
-func (g *Generator) LoadFunctions(Functions []*CombinatorDeclaration) (string, error) {
+func (g *Generator) LoadFunctions(functions []CombinatorDeclaration) (string, error) {
 	return "", fmt.Errorf("not implemnted")
 }
 

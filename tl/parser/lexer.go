@@ -22,9 +22,9 @@ var (
 )
 
 type TL struct {
-	Declarations []*CombinatorDeclaration `@@*`
-	Separator    string                   `FunctionsSeparator`
-	Functions    []*CombinatorDeclaration "@@*"
+	Declarations []CombinatorDeclaration `@@*`
+	Separator    string                  `FunctionsSeparator`
+	Functions    []CombinatorDeclaration "@@*"
 }
 
 type CombinatorDeclaration struct {

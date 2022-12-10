@@ -45,4 +45,26 @@
             </cell>
         </get_method>
     </interface>
+    <interface group="dns">
+        <get_method name="dnsresolve">
+            <input>
+                <slice name="domain">[]byte</slice>
+                <int name="category">int256</int>
+            </input>
+            <tinyint name="resolved_bits">int64</tinyint>
+            <cell name="result">
+                <case>
+                    dns_text#1eda _:Text = DNSRecord;
+                    dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
+                    dns_adnl_address#ad01 adnl_addr:bits256 flags:(## 8)
+                    proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
+                    dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8)
+                    cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
+                </case>
+                <case>
+                    _ (Hashmap 256 DNSRecord) = DNS_RecordSet;
+                </case>
+            </cell>
+        </get_method>
+    </interface>
 </interfaces>

@@ -47,8 +47,9 @@ type GetMethod struct {
 
 type StackRecord struct {
 	XMLName xml.Name
-	Name    string `xml:"name,attr"`
-	Type    string `xml:",chardata"`
+	Name    string   `xml:"name,attr"`
+	Type    string   `xml:",chardata"`
+	Cases   []string `xml:"case"`
 }
 
 func ParseInterface(s []byte) ([]Interface, error) {

@@ -17,6 +17,7 @@ func Marshal(o any) ([]byte, error) {
 	}
 	val := reflect.ValueOf(o)
 	if val.Kind() == reflect.Pointer {
+		// TODO: check for nil pointer
 		val = val.Elem()
 	}
 	switch val.Kind() {

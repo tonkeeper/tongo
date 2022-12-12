@@ -50,8 +50,9 @@ liteServer.debug.verbosity value:int = liteServer.debug.Verbosity;
 
 ---functions---
 
-liteServer.getMasterchainInfo = liteServer.MasterchainInfo;
-liteServer.getMasterchainInfoExt mode:# = liteServer.MasterchainInfoExt;
+liteServer.getMasterchainInfo#2ee6b589 = liteServer.MasterchainInfo;
+liteServer.getMasterchainInfoExt#df71a670 mode:# = liteServer.MasterchainInfoExt;
+liteServer.getTime#345aad16 = liteServer.CurrentTime;
 `
 
 func TestGenerateGolangTypes(t *testing.T) {
@@ -62,6 +63,24 @@ func TestGenerateGolangTypes(t *testing.T) {
 	g := NewGenerator(nil, "LightClient")
 
 	s, err := g.LoadTypes(parsed.Declarations)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%s", s)
+}
+
+func TestGenerateGolangMethods(t *testing.T) {
+	parsed, err := Parse(SOURCE)
+	if err != nil {
+		panic(err)
+	}
+	g := NewGenerator(nil, "LightClient")
+
+	_, err = g.LoadTypes(parsed.Declarations)
+	if err != nil {
+		panic(err)
+	}
+	s, err := g.LoadFunctions(parsed.Functions)
 	if err != nil {
 		panic(err)
 	}

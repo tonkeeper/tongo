@@ -24,7 +24,7 @@ import (
 
 type Emulator struct {
 	emulator unsafe.Pointer
-	config   *boc.Cell
+	config   string
 	balance  uint64
 }
 
@@ -40,9 +40,31 @@ func NewEmulator(code, data, config *boc.Cell, balance int64, verbosityLevel txe
 	if err != nil {
 		return nil, err
 	}
+	configBoc, err := config.ToBocBase64()
+	if err != nil {
+		return nil, err
+	}
 	cCodeStr := C.CString(codeBoc)
 	defer C.free(unsafe.Pointer(cCodeStr))
 	cDataStr := C.CString(dataBoc)
+	defer C.free(unsafe.Pointer(cDataStr))
+	level := C.int(verbosityLevel)
+	e := Emulator{
+		emulator: C.tvm_emulator_create(cCodeStr, cDataStr, level),
+		config:   configBoc,
+		balance:  uint64(balance),
+	}
+	runtime.SetFinalizer(&e, destroy)
+	return &e, nil
+}
+
+// NewEmulatorFromBOCsBase64
+// Verbosity level of VM log. 0 - log truncated to last 256 characters. 1 - unlimited length log.
+// 2 - for each command prints its cell hash and offset. 3 - for each command log prints all stack values.
+func NewEmulatorFromBOCsBase64(code, data, config string, balance int64, verbosityLevel txemulator.VerbosityLevel) (*Emulator, error) {
+	cCodeStr := C.CString(code)
+	defer C.free(unsafe.Pointer(cCodeStr))
+	cDataStr := C.CString(data)
 	defer C.free(unsafe.Pointer(cDataStr))
 	level := C.int(verbosityLevel)
 	e := Emulator{
@@ -94,11 +116,7 @@ func (e *Emulator) SetGasLimit(gasLimit int64) error {
 	return nil
 }
 
-func (e *Emulator) setC7(address string, unixTime uint32, balance uint64, randSeed [32]byte, config *boc.Cell) error {
-	configBoc, err := config.ToBocBase64()
-	if err != nil {
-		return err
-	}
+func (e *Emulator) setC7(address string, unixTime uint32, balance uint64, randSeed [32]byte, configBoc string) error {
 	cConfigStr := C.CString(configBoc)
 	defer C.free(unsafe.Pointer(cConfigStr))
 	cAddressStr := C.CString(address)

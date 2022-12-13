@@ -29,10 +29,10 @@ liteServer.libraryEntry#4624ff8a hash:int256 data:bytes = liteServer.LibraryEntr
 
 liteServer.masterchainInfo#81288385 last:tonNode.blockIdExt state_root_hash:int256 init:tonNode.zeroStateIdExt = liteServer.MasterchainInfo;
 liteServer.masterchainInfoExt#f5e0cca8 mode:# version:int capabilities:long last:tonNode.blockIdExt last_utime:int now:int state_root_hash:int256 init:tonNode.zeroStateIdExt = liteServer.MasterchainInfoExt;
-liteServer.currentTime#d0053e9 now:int = liteServer.CurrentTime;
+liteServer.currentTime#0d0053e9 now:int = liteServer.CurrentTime;
 liteServer.version#e591045a mode:# version:int capabilities:long now:int = liteServer.Version;
 liteServer.blockData#6ced74a5 id:tonNode.blockIdExt data:bytes = liteServer.BlockData;
-liteServer.blockState#cdcadab id:tonNode.blockIdExt root_hash:int256 file_hash:int256 data:bytes = liteServer.BlockState;
+liteServer.blockState#0cdcadab id:tonNode.blockIdExt root_hash:int256 file_hash:int256 data:bytes = liteServer.BlockState;
 liteServer.blockHeader#19822d75 id:tonNode.blockIdExt mode:# header_proof:bytes = liteServer.BlockHeader;
 liteServer.sendMsgStatus#97e55039 status:int = liteServer.SendMsgStatus;
 liteServer.accountState#51c77970 id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:bytes proof:bytes state:bytes = liteServer.AccountState;

@@ -28,12 +28,12 @@ type TL struct {
 }
 
 type CombinatorDeclaration struct {
-	Constructor      string        `@Ident`
-	Tag              string        `@HexTag?`
-	FieldDefinitions []*NamedField `@@*`
-	Equal            string        `"="`
-	Combinator       string        `@Ident`
-	End              string        `";"`
+	Constructor      string       `@Ident`
+	Tag              string       `@HexTag?`
+	FieldDefinitions []NamedField `@@*`
+	Equal            string       `"="`
+	Combinator       string       `@Ident`
+	End              string       `";"`
 }
 
 type NamedField struct {

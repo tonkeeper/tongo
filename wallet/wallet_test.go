@@ -9,7 +9,7 @@ import (
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/contract/jetton"
-	"github.com/startfellows/tongo/liteclient"
+	"github.com/startfellows/tongo/liteapi"
 	"github.com/startfellows/tongo/tlb"
 	"log"
 	"math/big"

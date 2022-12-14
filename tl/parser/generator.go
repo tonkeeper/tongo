@@ -25,6 +25,7 @@ var (
 		"#":      {"int32", false},
 		"int":    {"int32", false},
 		"int256": {"tl.Int256", false},
+		"true":   {"tl.True", false},
 		"long":   {"int64", false},
 		"bytes":  {"[]byte", true},
 		"Bool":   {"bool", false},
@@ -337,7 +338,7 @@ func (g *Generator) generateSumTypeUnmarshaler(declarations []CombinatorDeclarat
 		if err != nil {
 			return "", err
 		}
-		builder.WriteString(fmt.Sprintf("case 0x%x:\n", tag))
+		builder.WriteString(fmt.Sprintf("case %#x:\n", tag))
 		name := utils.ToCamelCase(d.Constructor)
 		builder.WriteString("t.SumType = \"" + name + "\"\n")
 		code, err := g.generateUnmarshalerCode(d, "t."+name)
@@ -419,7 +420,7 @@ func generateSumTypeMarshaler(declarations []CombinatorDeclaration) (string, err
 			return "", err
 		}
 		builder.WriteString(fmt.Sprintf("case \"%s\":\n", name))
-		builder.WriteString(fmt.Sprintf("b, err = tl.Marshal(uint32(0x%x))\n", tag))
+		builder.WriteString(fmt.Sprintf("b, err = tl.Marshal(uint32(%#x))\n", tag))
 		builder.WriteString(marshalerReturnErr)
 		builder.WriteString("_, err = buf.Write(b)\n")
 		code, err := generateMarshalerCode(d, "t."+name)
@@ -478,17 +479,15 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 
 		// request marshaling
 		builder.WriteString(fmt.Sprintf("payload, err := tl.Marshal(struct{tl.SumType \n Req %sRequest", methodName))
-		builder.WriteString(fmt.Sprintf(" `tlSumType:\"%x\"`}{Req: request})\n", tag))
+		builder.WriteString(fmt.Sprintf(" `tlSumType:\"%08x\"`}{SumType: \"Req\", Req: request})\n", tag))
 		builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
 	} else {
 		builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
 		builder.WriteString("payload := make([]byte, 4)\n")
-		builder.WriteString(fmt.Sprintf("binary.BigEndian.PutUint32(payload, 0x%x)\n", tag))
+		builder.WriteString(fmt.Sprintf("binary.BigEndian.PutUint32(payload, %#x)\n", tag))
 	}
 
-	builder.WriteString("req := makeLiteServerQueryRequest(payload)\n")
-	builder.WriteString("server := c.getMasterchainServer()\n")
-	builder.WriteString("resp, err := server.Request(ctx, req)\n")
+	builder.WriteString("resp, err := c.liteServerRequest(ctx, payload)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
 
 	builder.WriteString(fmt.Sprintf("if len(resp) < 4 {return %s{}, fmt.Errorf(\"not enought bytes for tag\")}\n",
@@ -496,7 +495,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	builder.WriteString("tag := binary.BigEndian.Uint32(resp[:4])\n")
 
 	// lite server error processing
-	builder.WriteString(fmt.Sprintf("if tag == 0x%x {\n", errType.tags[0]))
+	builder.WriteString(fmt.Sprintf("if tag == %#x {\n", errType.tags[0]))
 	builder.WriteString("var errRes LiteServerError\n")
 	builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
@@ -509,7 +508,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 
 	if len(respType.tags) == 1 {
 		// simple type response
-		builder.WriteString(fmt.Sprintf("if tag == 0x%x {\n", respType.tags[0]))
+		builder.WriteString(fmt.Sprintf("if tag == %#x {\n", respType.tags[0]))
 		builder.WriteString(fmt.Sprintf("var res %s\n", responseName))
 		builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)\n")
 		builder.WriteString("return res, err\n}\n")
@@ -529,8 +528,3 @@ func (g *Generator) generateGolangMethodRequestType(c CombinatorDeclaration) (st
 	name := utils.ToCamelCase(c.Constructor) + "Request"
 	return name, fmt.Sprintf("type %s %s", name, s), err
 }
-
-// TODO: add custom method
-//func (t LiteServerError) Error() string {
-//	return fmt.Sprintf("error code: %d message: %s", t.Code, t.Message)
-//}

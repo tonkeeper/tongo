@@ -52,7 +52,30 @@ liteServer.debug.verbosity#3347405d value:int = liteServer.debug.Verbosity;
 
 liteServer.getMasterchainInfo#2ee6b589 = liteServer.MasterchainInfo;
 liteServer.getMasterchainInfoExt#df71a670 mode:# = liteServer.MasterchainInfoExt;
-liteServer.getTime#345aad16 = liteServer.BlockLink;
+liteServer.getTime#345aad16 = liteServer.CurrentTime;
+liteServer.getVersion#0b942b23 = liteServer.Version;
+liteServer.getBlock#0dcf7763 id:tonNode.blockIdExt = liteServer.BlockData;
+liteServer.getState#b62e6eba id:tonNode.blockIdExt = liteServer.BlockState;
+liteServer.getBlockHeader#9e06ec21 id:tonNode.blockIdExt mode:# = liteServer.BlockHeader;
+liteServer.sendMessage#82d40a69 body:bytes = liteServer.SendMsgStatus;
+liteServer.getAccountState#250e896b id:tonNode.blockIdExt account:liteServer.accountId = liteServer.AccountState;
+liteServer.runSmcMethod#d25dc65c mode:# id:tonNode.blockIdExt account:liteServer.accountId method_id:long params:bytes = liteServer.RunMethodResult;
+liteServer.getShardInfo#25f4a246 id:tonNode.blockIdExt workchain:int shard:long exact:Bool = liteServer.ShardInfo;
+liteServer.getAllShardsInfo#6bfdd374 id:tonNode.blockIdExt = liteServer.AllShardsInfo;
+liteServer.getOneTransaction#ea240fd4 id:tonNode.blockIdExt account:liteServer.accountId lt:long = liteServer.TransactionInfo;
+liteServer.getTransactions#a1e7401c count:# account:liteServer.accountId lt:long hash:int256 = liteServer.TransactionList;
+liteServer.lookupBlock#1ef7c8fa mode:# id:tonNode.blockId lt:mode.1?long utime:mode.2?int = liteServer.BlockHeader;
+liteServer.listBlockTransactions#dac7fcad id:tonNode.blockIdExt mode:# count:# after:mode.7?liteServer.transactionId3 reverse_order:mode.6?true want_proof:mode.5?true = liteServer.BlockTransactions;
+liteServer.getBlockProof#449cea8a mode:# known_block:tonNode.blockIdExt target_block:mode.0?tonNode.blockIdExt = liteServer.PartialBlockProof;
+liteServer.getConfigAll#b7261b91 mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
+liteServer.getConfigParams#638df89e mode:# id:tonNode.blockIdExt param_list:(vector int) = liteServer.ConfigInfo;
+liteServer.getValidatorStats#091a58bc mode:# id:tonNode.blockIdExt limit:int start_after:mode.0?int256 modified_after:mode.2?int = liteServer.ValidatorStats;
+liteServer.getLibraries#99181e7e library_list:(vector int256) = liteServer.LibraryResult;
+liteServer.getShardBlockProof#5003a64c id:tonNode.blockIdExt = liteServer.ShardBlockProof;
+
+//liteServer.queryPrefix#86e6d372 = Object;
+//liteServer.query#df068c79 data:bytes = Object;
+//liteServer.waitMasterchainSeqno#92b8eaba seqno:int timeout_ms:int = Object; // query prefix
 `
 
 func TestGenerateGolangTypes(t *testing.T) {
@@ -74,9 +97,9 @@ func TestGenerateGolangMethods(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	g := NewGenerator(nil, "*LightClient")
+	g := NewGenerator(nil, "*Client")
 
-	_, err = g.LoadTypes(parsed.Declarations)
+	ty, err := g.LoadTypes(parsed.Declarations)
 	if err != nil {
 		panic(err)
 	}
@@ -84,6 +107,8 @@ func TestGenerateGolangMethods(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("%s", ty)
+	fmt.Printf("\n")
 	fmt.Printf("%s", s)
 }
 

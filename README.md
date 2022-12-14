@@ -3,8 +3,8 @@
 Go implementation of libraries for TON blockchain.
 
 ## Library structure
-1. [ADNL](adnl/README.md) - low level adnl protocol implementation
-2. [Lite client](liteclient/README.md) - interaction with TON node as lite client
+1. [ADNL](liteclient/README.md) - low level adnl protocol implementation
+2. [Lite client](liteapi/README.md) - interaction with TON node as lite client
 3. [BOC](boc/README.md) - cells and bag-of-cells methods and primitives
 4. [TL](tl/README.md) - interaction with binary data described by TL (Type Language) schemas
 5. [TLB](tlb/README.md) - interaction with binary data (in Cells) described by TL-B (Typed Language - Binary) schemas

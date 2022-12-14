@@ -1,4 +1,4 @@
-package adnl
+package liteclient
 
 import (
 	"crypto/ed25519"

@@ -1,4 +1,4 @@
-package adnl
+package liteclient
 
 import (
 	"bufio"

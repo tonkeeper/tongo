@@ -5,7 +5,7 @@ import (
 	"crypto/ed25519"
 	"encoding/base64"
 	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/liteclient"
+	"github.com/startfellows/tongo/liteapi"
 	"github.com/startfellows/tongo/wallet"
 	"log"
 )

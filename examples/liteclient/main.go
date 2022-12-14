@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/liteclient"
+	"github.com/startfellows/tongo/liteapi"
 )
 
 func main() {

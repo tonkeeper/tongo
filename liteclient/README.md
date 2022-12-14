@@ -1,10 +1,10 @@
-## Lite client implementation.
+## ADNL pure-golang implementation.
 
-This library implements TON lite client over ADNL protocol to communicate with TON lite servers.
+This library implements ADNL protocol to communicate with TON nodes at low level.
 
-TL schemas for lite server API you can find here: 
-* [Lite API](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/lite_api.tl)
+Protocol description you can find here: 
+* [tonstack](https://github.com/tonstack/ton-docs/tree/main/ADNL)
+* [TON Whitepaper, section 3.1](https://ton-blockchain.github.io/docs/ton.pdf)
 
-### Usage
-[Example](../examples/liteclient/main.go)
-
+### Usage 
+[Example](../examples/adnl/main.go)

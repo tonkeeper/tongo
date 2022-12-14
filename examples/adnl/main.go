@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/startfellows/tongo/adnl"
+	"github.com/startfellows/tongo/liteclient"
 )
 
 func main() {

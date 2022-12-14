@@ -25,7 +25,6 @@ var (
 		"#":      {"int32", false},
 		"int":    {"int32", false},
 		"int256": {"tl.Int256", false},
-		"true":   {"tl.True", false},
 		"long":   {"int64", false},
 		"bytes":  {"[]byte", true},
 		"Bool":   {"bool", false},
@@ -73,7 +72,7 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 		if err != nil {
 			return "", err
 		}
-		marshaler, err := generateMarshalers(v, t.name)
+		marshaler, err := g.generateMarshalers(v, t.name)
 		if err != nil {
 			return "", err
 		}
@@ -98,7 +97,7 @@ func (g *Generator) LoadFunctions(functions []CombinatorDeclaration) (string, er
 			if err != nil {
 				return "", err
 			}
-			marshaler, err := generateMarshalers([]CombinatorDeclaration{c}, name)
+			marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, name)
 			if err != nil {
 				return "", err
 			}
@@ -191,13 +190,17 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration) (str
 		if field.Modificator.Name == "mode" { // mode.0?field
 			optional = true
 		}
-
-		builder.WriteString(utils.ToCamelCase(name))
-		builder.WriteRune('\t')
 		t, err := toGolangType(e, optional, g.knownTypes)
 		if err != nil {
 			return "", err
 		}
+
+		if t.name == "True" {
+			continue // TODO: check
+		}
+
+		builder.WriteString(utils.ToCamelCase(name))
+		builder.WriteRune('\t')
 		builder.WriteString(t.String())
 		builder.WriteRune('\n')
 	}
@@ -352,19 +355,19 @@ func (g *Generator) generateSumTypeUnmarshaler(declarations []CombinatorDeclarat
 	return builder.String(), nil
 }
 
-func generateMarshalers(declarations []CombinatorDeclaration, receiverType string) (string, error) {
+func (g *Generator) generateMarshalers(declarations []CombinatorDeclaration, receiverType string) (string, error) {
 	builder := strings.Builder{}
 	builder.WriteString(fmt.Sprintf("func (t %s) MarshalTL() ([]byte, error) {\n", receiverType))
 	builder.WriteString("var (err error \n b []byte)\n")
 	builder.WriteString("buf := new(bytes.Buffer)\n")
 	if len(declarations) == 1 {
-		s, err := generateSimpleTypeMarshaler(declarations[0])
+		s, err := g.generateSimpleTypeMarshaler(declarations[0])
 		if err != nil {
 			return "", err
 		}
 		builder.WriteString(s)
 	} else {
-		s, err := generateSumTypeMarshaler(declarations)
+		s, err := g.generateSumTypeMarshaler(declarations)
 		if err != nil {
 			return "", err
 		}
@@ -375,9 +378,9 @@ func generateMarshalers(declarations []CombinatorDeclaration, receiverType strin
 	return builder.String(), nil
 }
 
-func generateSimpleTypeMarshaler(declaration CombinatorDeclaration) (string, error) {
+func (g *Generator) generateSimpleTypeMarshaler(declaration CombinatorDeclaration) (string, error) {
 	builder := strings.Builder{}
-	code, err := generateMarshalerCode(declaration, "t")
+	code, err := g.generateMarshalerCode(declaration, "t")
 	if err != nil {
 		return "", err
 	}
@@ -385,12 +388,19 @@ func generateSimpleTypeMarshaler(declaration CombinatorDeclaration) (string, err
 	return builder.String(), nil
 }
 
-func generateMarshalerCode(declaration CombinatorDeclaration, receiverName string) (string, error) {
+func (g *Generator) generateMarshalerCode(declaration CombinatorDeclaration, receiverName string) (string, error) {
 	builder := strings.Builder{}
 
 	for _, field := range declaration.FieldDefinitions {
 		name := utils.ToCamelCase(field.Name)
 		if field.Modificator.Name != "" { // mode.0?field
+			t, err := toGolangType(field.Expression, true, g.knownTypes)
+			if err != nil {
+				return "", err
+			}
+			if t.name == "True" {
+				continue // TODO: check
+			}
 			builder.WriteString(fmt.Sprintf("if (t.%s>>%s)&1 == 1{\n",
 				utils.ToCamelCase(field.Modificator.Name), field.Modificator.Bit))
 			builder.WriteString("b, err = tl.Marshal(" + receiverName + "." + name + ")\n")
@@ -408,7 +418,7 @@ func generateMarshalerCode(declaration CombinatorDeclaration, receiverName strin
 	return builder.String(), nil
 }
 
-func generateSumTypeMarshaler(declarations []CombinatorDeclaration) (string, error) {
+func (g *Generator) generateSumTypeMarshaler(declarations []CombinatorDeclaration) (string, error) {
 	builder := strings.Builder{}
 
 	builder.WriteString("switch t.SumType {\n")
@@ -423,7 +433,7 @@ func generateSumTypeMarshaler(declarations []CombinatorDeclaration) (string, err
 		builder.WriteString(fmt.Sprintf("b, err = tl.Marshal(uint32(%#x))\n", tag))
 		builder.WriteString(marshalerReturnErr)
 		builder.WriteString("_, err = buf.Write(b)\n")
-		code, err := generateMarshalerCode(d, "t."+name)
+		code, err := g.generateMarshalerCode(d, "t."+name)
 		if err != nil {
 			return "", err
 		}

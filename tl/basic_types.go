@@ -39,10 +39,3 @@ func (i *Int256) UnmarshalTL(r io.Reader) error {
 	*i = b
 	return nil
 }
-
-type True bool
-
-func (t True) MarshalTL() ([]byte, error) {
-	// TODO: check marshaling algo
-	return []byte{1}, nil
-}

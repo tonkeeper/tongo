@@ -2,21 +2,33 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/liteapi"
+	"github.com/startfellows/tongo/liteclient"
 )
 
 func main() {
-	// options, err := config.ParseConfigFile("path/to/config.json")
-	tongoClient, err := liteclient.NewClientWithDefaultTestnet()
+	myPayload, _ := hex.DecodeString("7af98bb435263e6c95d6fecb497dfd0aa5f031e7d412986b5ce720496db512052e8f2d100cdf068c7904345aad16000000000000")
+	serverPubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
 	if err != nil {
-		fmt.Printf("Unable to create tongo client: %v", err)
+		panic(err)
 	}
-	accountId, _ := tongo.AccountIDFromRaw("0:E2D41ED396A9F1BA03839D63C5650FAFC6FCFB574FD03F2E67D6555B61A3ACD9")
-	state, err := tongoClient.GetAccountState(context.Background(), *accountId)
+	c, err := liteclient.NewConnection(context.Background(), serverPubkey, "135.181.140.221:46995")
 	if err != nil {
-		fmt.Printf("Get account state error: %v", err)
+		panic(err)
 	}
-	fmt.Printf("Account status: %v\nBalance: %v\n", state.Status, state.Balance)
+	packet, err := liteclient.NewPacket(myPayload)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Send: %x\n", myPayload)
+	err = c.Send(packet)
+	if err != nil {
+		panic(err)
+	}
+	for p := range c.Responses() {
+		fmt.Printf("Received: %x\n", p.Payload)
+		return
+	}
 }

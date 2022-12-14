@@ -7,4 +7,4 @@ Protocol description you can find here:
 * [TON Whitepaper, section 3.1](https://ton-blockchain.github.io/docs/ton.pdf)
 
 ### Usage 
-[Example](../examples/adnl/main.go)
+[Example](../examples/liteclient/main.go)

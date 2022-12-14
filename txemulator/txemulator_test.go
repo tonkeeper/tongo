@@ -19,7 +19,7 @@ import (
 //	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 //	privateKey := ed25519.NewKeyFromSeed(pk)
 //
-//	tongoClient, err := liteclient.NewClientWithDefaultTestnet()
+//	tongoClient, err := liteapi.NewClientWithDefaultTestnet()
 //	if err != nil {
 //		log.Fatalf("Unable to create tongo client: %v", err)
 //	}
@@ -151,8 +151,8 @@ import (
 
 func TestGetConfigExec(t *testing.T) {
 
-	tongoClient, err := liteclient.NewClientWithDefaultMainnet() //
-	// tongoClient, err := liteclient.NewClientWithDefaultTestnet() //
+	tongoClient, err := liteapi.NewClientWithDefaultMainnet() //
+	// tongoClient, err := liteapi.NewClientWithDefaultTestnet() //
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -204,8 +204,8 @@ func TestGetConfigExec(t *testing.T) {
 
 func TestValidatorLoadExec(t *testing.T) {
 	ctx := context.Background()
-	tongoClient, err := liteclient.NewClientWithDefaultMainnet() //
-	// tongoClient, err := liteclient.NewClientWithDefaultTestnet() //
+	tongoClient, err := liteapi.NewClientWithDefaultMainnet() //
+	// tongoClient, err := liteapi.NewClientWithDefaultTestnet() //
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -285,8 +285,8 @@ func TestValidatorLoadExec(t *testing.T) {
 // TODO: remove import cycle
 //func TestGetValidatorsInfoExec(t *testing.T) {
 //	ctx := context.Background()
-//	tongoClient, err := liteclient.NewClientWithDefaultMainnet() //
-//	// tongoClient, err := liteclient.NewClientWithDefaultTestnet() //
+//	tongoClient, err := liteapi.NewClientWithDefaultMainnet() //
+//	// tongoClient, err := liteapi.NewClientWithDefaultTestnet() //
 //	if err != nil {
 //		log.Fatalf("Unable to create tongo client: %v", err)
 //	}

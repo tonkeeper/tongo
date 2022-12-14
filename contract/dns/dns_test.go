@@ -9,7 +9,7 @@ import (
 )
 
 func TestResolve(t *testing.T) {
-	client, err := liteclient.NewClientWithDefaultMainnet()
+	client, err := liteapi.NewClientWithDefaultMainnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}

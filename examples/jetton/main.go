@@ -16,7 +16,7 @@ import (
 func main() {
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 
-	client, err := liteclient.NewClientWithDefaultTestnet()
+	client, err := liteapi.NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}

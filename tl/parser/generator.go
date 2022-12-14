@@ -474,27 +474,31 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	builder.WriteString(fmt.Sprintf("func (c %s) %s(ctx context.Context", typeName, methodName))
 	if len(c.FieldDefinitions) > 0 {
 		builder.WriteString(fmt.Sprintf(", request %sRequest", methodName))
-	}
-	builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
+		builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
 
-	// request marshaling
-	builder.WriteString(fmt.Sprintf("payload, err := tl.Marshal(struct{tl.SumType \n Req %sRequest", methodName))
-	builder.WriteString(fmt.Sprintf(" `tlSumType:\"%x\"`}{Req: request})\n", tag))
-	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
+		// request marshaling
+		builder.WriteString(fmt.Sprintf("payload, err := tl.Marshal(struct{tl.SumType \n Req %sRequest", methodName))
+		builder.WriteString(fmt.Sprintf(" `tlSumType:\"%x\"`}{Req: request})\n", tag))
+		builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
+	} else {
+		builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
+		builder.WriteString("payload := make([]byte, 4)\n")
+		builder.WriteString(fmt.Sprintf("binary.BigEndian.PutUint32(payload, 0x%x)\n", tag))
+	}
 
 	builder.WriteString("req := makeLiteServerQueryRequest(payload)\n")
+	builder.WriteString("server := c.getMasterchainServer()\n")
 	builder.WriteString("resp, err := server.Request(ctx, req)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
 
 	builder.WriteString(fmt.Sprintf("if len(resp) < 4 {return %s{}, fmt.Errorf(\"not enought bytes for tag\")}\n",
 		responseName))
-	builder.WriteString("tag := binary.LittleEndian.Uint32(resp[:4])\n")
-	builder.WriteString("reader := bytes.NewReader(resp)\n")
+	builder.WriteString("tag := binary.BigEndian.Uint32(resp[:4])\n")
 
 	// lite server error processing
 	builder.WriteString(fmt.Sprintf("if tag == 0x%x {\n", errType.tags[0]))
 	builder.WriteString("var errRes LiteServerError\n")
-	builder.WriteString("err = tl.Unmarshal(reader, &errRes)\n")
+	builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
 	builder.WriteString(fmt.Sprintf("return %s{}, errRes\n", responseName))
 	builder.WriteString("}\n")
@@ -507,13 +511,12 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 		// simple type response
 		builder.WriteString(fmt.Sprintf("if tag == 0x%x {\n", respType.tags[0]))
 		builder.WriteString(fmt.Sprintf("var res %s\n", responseName))
-		builder.WriteString("reader.Skip(4)\n")
-		builder.WriteString("err = tl.Unmarshal(reader, &res)\n")
+		builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)\n")
 		builder.WriteString("return res, err\n}\n")
 		builder.WriteString(fmt.Sprintf("return %s{}, fmt.Errorf(\"invalid tag\")\n", responseName))
 	} else if len(respType.tags) > 1 {
 		builder.WriteString(fmt.Sprintf("var res %s\n", responseName))
-		builder.WriteString("err = tl.Unmarshal(reader, &res)\n")
+		builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp), &res)\n")
 		builder.WriteString("return res, err\n")
 	}
 
@@ -526,3 +529,8 @@ func (g *Generator) generateGolangMethodRequestType(c CombinatorDeclaration) (st
 	name := utils.ToCamelCase(c.Constructor) + "Request"
 	return name, fmt.Sprintf("type %s %s", name, s), err
 }
+
+// TODO: add custom method
+//func (t LiteServerError) Error() string {
+//	return fmt.Sprintf("error code: %d message: %s", t.Code, t.Message)
+//}

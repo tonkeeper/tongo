@@ -144,6 +144,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
+		res.MasterRef = &BlkMasterInfo{}
 		err = tlb.Unmarshal(c1, res.MasterRef)
 		if err != nil {
 			return err

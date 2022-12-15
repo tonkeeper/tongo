@@ -22,7 +22,7 @@ var (
 )
 
 type TLB struct {
-	Declarations []*CombinatorDeclaration `@@*`
+	Declarations []CombinatorDeclaration `@@*`
 }
 type CombinatorDeclaration struct {
 	Constructor      Constructor       `@@`
@@ -41,13 +41,13 @@ type Combinator struct {
 	TypeExpressions []TypeExpression `@@*`
 }
 
-func (c Combinator) String() string {
-	s := c.Name
-	for _, e := range c.TypeExpressions {
-		s += " " + e.String()
-	}
-	return s
-}
+//func (c Combinator) String() string {
+//	s := c.Name
+//	for _, e := range c.TypeExpressions {
+//		s += " " + e.String()
+//	}
+//	return s
+//}
 
 type FieldDefinition struct {
 	Implicit   *ImplicitDefinition `@@`
@@ -82,6 +82,7 @@ type ParenExpression struct {
 	Name      TypeExpression   `"(" @@ `
 	Parameter []TypeExpression `@@* ")"`
 }
+
 type CellRef struct {
 	TypeExpression TypeExpression `"^" @@`
 }
@@ -107,10 +108,6 @@ type TypeExpression struct {
 	BuiltIn              *string          `| @BuiltIn`
 	Number               *int             `| @NUMBER`
 	NamedRef             *string          `| @Ident)`
-}
-
-func (t TypeExpression) String() string {
-	return "Temp" //todo: implement
 }
 
 func Parse(tlb string) (*TLB, error) {

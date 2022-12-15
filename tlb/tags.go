@@ -15,8 +15,9 @@ type sumTag struct {
 }
 
 type tag struct {
-	Len   int
-	IsRef bool
+	Len        int
+	IsRef      bool
+	IsOptional bool
 }
 
 func parseTag(s string) (tag, error) {

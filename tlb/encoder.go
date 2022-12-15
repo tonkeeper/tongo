@@ -71,6 +71,11 @@ func encode(c *boc.Cell, o any, tag string) error {
 		default:
 			return encodeStruct(c, o, tag)
 		}
+	case reflect.Pointer:
+		if val.IsNil() && !t.IsOptional {
+			return fmt.Errorf("can't encode empty pointer %v if tlb scheme is not optional", val.Type())
+		}
+		return encode(c, val.Elem().Interface(), tag)
 	default:
 		return fmt.Errorf("type %v not emplemented", val.Kind())
 	}

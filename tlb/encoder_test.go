@@ -185,3 +185,36 @@ func TestRefTag(t *testing.T) {
 		t.Fatal("not equal")
 	}
 }
+
+func TestPointer(t *testing.T) {
+	var a struct {
+		A *int32
+		B *struct {
+			C *int32
+		}
+	}
+	i := int32(100)
+	s := struct {
+		C *int32
+	}{&i}
+	a.A = &i
+	a.B = &s
+	c := boc.NewCell()
+	err := Marshal(c, a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var b struct {
+		A *int32
+		B *struct {
+			C *int32
+		}
+	}
+	err = Unmarshal(c, &b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(a, b) {
+		t.Fatal("not equal")
+	}
+}

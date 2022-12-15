@@ -18,9 +18,6 @@ func Unmarshal(c *boc.Cell, o any) error {
 }
 
 func decode(c *boc.Cell, val reflect.Value, tag string) error {
-	if val.Kind() == reflect.Pointer {
-		val = val.Elem()
-	}
 	t, err := parseTag(tag)
 	if err != nil {
 		return err
@@ -43,7 +40,7 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		val.Set(reflect.ValueOf(i).Elem())
 		return nil
 	}
-	if !val.CanSet() {
+	if !val.CanSet() && val.Kind() != reflect.Pointer {
 		return fmt.Errorf("value can't be changed")
 	}
 	switch val.Kind() {
@@ -96,6 +93,17 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		default:
 			return decodeStruct(c, val, tag)
 		}
+	case reflect.Pointer:
+		if val.Kind() == reflect.Pointer && !val.IsNil() {
+			return decode(c, val.Elem(), tag)
+		}
+		a := reflect.New(val.Type().Elem())
+		err = decode(c, a, tag)
+		if err != nil {
+			return err
+		}
+		val.Set(a)
+		return nil
 	default:
 		return fmt.Errorf("type %v not emplemented", val.Kind())
 	}

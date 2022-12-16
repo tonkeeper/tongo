@@ -37,9 +37,17 @@ func Marshal(o any) ([]byte, error) {
 		b := make([]byte, 8)
 		binary.LittleEndian.PutUint64(b, val.Uint())
 		return b, nil
+	case reflect.Bool:
+		b := make([]byte, 4)
+		if val.Bool() {
+			binary.BigEndian.PutUint32(b, 0xb5757299) // true
+		} else {
+			binary.BigEndian.PutUint32(b, 0x379779bc) // false
+		}
+		return b, nil
 	case reflect.Slice:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
-			return nil, fmt.Errorf("encoding slice of %v not supported", val.Type().Elem().Kind())
+			return encodeVector(val)
 		}
 		data := val.Bytes()
 		b := append(EncodeLength(len(data)), data...)
@@ -134,4 +142,18 @@ func encodeTag(tag string) ([4]byte, error) {
 	}
 	copy(res[:], b)
 	return res, nil
+}
+
+func encodeVector(val reflect.Value) ([]byte, error) {
+	b := make([]byte, 4)
+	ln := val.Len()
+	binary.LittleEndian.PutUint32(b[:], uint32(ln))
+	for i := 0; i < val.Len(); i++ {
+		b1, err := Marshal(val.Index(i).Interface())
+		if err != nil {
+			return nil, err
+		}
+		b = append(b, b1...)
+	}
+	return b, nil
 }

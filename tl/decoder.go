@@ -61,6 +61,21 @@ func decode(buf io.Reader, val reflect.Value) error {
 			val.SetInt(int64(binary.LittleEndian.Uint64(b)))
 		}
 		return nil
+	case reflect.Bool:
+		b := make([]byte, 4)
+		_, err := io.ReadFull(buf, b)
+		if err != nil {
+			return err
+		}
+		switch binary.BigEndian.Uint32(b) {
+		case 0xb5757299:
+			val.SetBool(true)
+		case 0x379779bc:
+			val.SetBool(false)
+		default:
+			return fmt.Errorf("invalid Bool tag")
+		}
+		return nil
 	case reflect.Slice:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
 			return decodeVector(buf, val)

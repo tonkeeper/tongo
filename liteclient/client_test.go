@@ -75,3 +75,35 @@ func TestGeneratedMethod2(t *testing.T) {
 	fmt.Printf("Req  seqno: %d\n", req.Id.Seqno)
 	fmt.Printf("Resp seqno: %d\n", resp.Id.Seqno)
 }
+
+func TestGeneratedMethod3(t *testing.T) {
+	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	if err != nil {
+		panic(err)
+	}
+	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
+	if err != nil {
+		panic(err)
+	}
+
+	client := NewClient(c)
+
+	r, err := client.LiteServerGetMasterchainInfo(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	req := LiteServerGetValidatorStatsRequest{
+		Mode:  0,
+		Id:    r.Last,
+		Limit: 10,
+	}
+
+	resp, err := client.LiteServerGetValidatorStats(context.Background(), req)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Count: %d\n", resp.Count)
+	fmt.Printf("Complete: %v\n", resp.Complete)
+}

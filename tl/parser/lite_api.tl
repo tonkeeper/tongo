@@ -78,6 +78,7 @@ liteServer.listBlockTransactions#dac7fcad id:tonNode.blockIdExt mode:# count:# a
 liteServer.getBlockProof#449cea8a mode:# known_block:tonNode.blockIdExt target_block:mode.0?tonNode.blockIdExt = liteServer.PartialBlockProof;
 liteServer.getConfigAll#b7261b91 mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
 liteServer.getConfigParams#638df89e mode:# id:tonNode.blockIdExt param_list:(vector int) = liteServer.ConfigInfo;
+// TODO: fix bytes order in tags
 liteServer.getValidatorStats#091a58bc mode:# id:tonNode.blockIdExt limit:int start_after:mode.0?int256 modified_after:mode.2?int = liteServer.ValidatorStats;
 liteServer.getLibraries#99181e7e library_list:(vector int256) = liteServer.LibraryResult;
 liteServer.getShardBlockProof#5003a64c id:tonNode.blockIdExt = liteServer.ShardBlockProof;

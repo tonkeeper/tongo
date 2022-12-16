@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/startfellows/tongo/utils"
 	"go/format"
+	"strconv"
 	"strings"
 )
 
@@ -22,7 +23,6 @@ var (
 	defaultKnownTypes = map[string]DefaultType{
 		"#":       {"uint32", false},
 		"int32":   {"int32", false},
-		"int8":    {"int8", false},
 		"bits256": {"tongo.Hash", false},
 	}
 )
@@ -155,9 +155,17 @@ func (t TypeExpression) ToGolangType() (golangType, error) {
 	if t.Number != nil {
 		return mapToGoType(fmt.Sprintf("%d", *t.Number), false), nil
 	}
+	if t.CellRef != nil {
+		gt, err := t.CellRef.TypeExpression.ToGolangType()
+		if err != nil {
+			return golangType{}, err
+		}
+		gt.tag = "^"
+		return mapToGoType(gt.String(), false), nil
+	}
 
 	return golangType{
-		name: "Temp",
+		name: "UnknownType",
 		tag:  "",
 	}, nil
 }
@@ -202,6 +210,16 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 		}
 		res.params = []golangType{p}
 		return res, nil
+	case "Maybe":
+		if len(t.Parameter) != 1 {
+			return golangType{}, fmt.Errorf("invalid parameters qty for Maybe")
+		}
+		p, err := t.Parameter[0].ToGolangType()
+		if err != nil {
+			return golangType{}, err
+		}
+		res.params = []golangType{p}
+		return res, nil
 	case "VarUInteger":
 		if len(t.Parameter) != 1 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for VarUInteger")
@@ -221,6 +239,18 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 			return golangType{}, err
 		}
 		res.tag = p.String()
+		return res, nil
+	case "Bits":
+		if len(t.Parameter) != 1 {
+			return golangType{}, fmt.Errorf("invalid parameters qty for Bits")
+		}
+		if t.Parameter[0].Number != nil { // static type
+			p, err := t.Parameter[0].ToGolangType()
+			if err != nil {
+				return golangType{}, err
+			}
+			res.tag = p.String()
+		}
 		return res, nil
 	}
 
@@ -243,6 +273,10 @@ func mapToGoType(name string, optional bool) golangType {
 			//pointerType: goType.IsPointerType,
 		}
 	}
+	t, ok := parseBuildInInt(name)
+	if ok {
+		return t
+	}
 	if name == "##" {
 		return golangType{
 			name: name,
@@ -255,6 +289,22 @@ func mapToGoType(name string, optional bool) golangType {
 		//optional:    optional,
 		//pointerType: false,
 	}
+}
+
+func parseBuildInInt(s string) (golangType, bool) {
+	if strings.HasPrefix(s, "int") {
+		last := strings.TrimPrefix(s, "int")
+		bits, err := strconv.Atoi(last)
+		if err != nil {
+			return golangType{}, false
+		}
+		return golangType{
+			name: fmt.Sprintf("uint64 `tlb:\"%dbits\"`", bits),
+			//optional:    optional,
+			//pointerType: false,
+		}, true
+	}
+	return golangType{}, false
 }
 
 func (t golangType) String() string {
@@ -271,6 +321,18 @@ func (t golangType) String() string {
 		}
 		tStr := fmt.Sprintf("tlb.%s[%s] `tlb:\"%sbits\"`", t.name, pStr, t.tag)
 		return tStr
+	case "Maybe":
+		if len(t.params) != 1 {
+			return t.name
+		}
+		var pStr string
+		if t.params[0].tag != "" {
+			pStr = fmt.Sprintf("struct {Val %s}", t.params[0].String())
+		} else {
+			pStr = t.params[0].String()
+		}
+		tStr := fmt.Sprintf("tlb.%s[%s]", t.name, pStr)
+		return tStr
 	case "VarUInteger":
 		if t.tag == "" {
 			return t.name
@@ -281,7 +343,13 @@ func (t golangType) String() string {
 		if t.tag == "" {
 			return t.name
 		}
-		tStr := fmt.Sprintf("int64 `tlb:\"%sbits\"`", t.tag)
+		tStr := fmt.Sprintf("uint64 `tlb:\"%sbits\"`", t.tag) // max 32 bits in block.tlb
+		return tStr
+	case "Bits":
+		if t.tag == "" {
+			return "tlb.BitString"
+		}
+		tStr := fmt.Sprintf("tlb.BitString `tlb:\"%sbits\"`", t.tag)
 		return tStr
 	default:
 		return t.name

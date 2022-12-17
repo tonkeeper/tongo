@@ -69,9 +69,9 @@ type CurrencyCollection struct {
 // extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32))
 // = ExtraCurrencyCollection;
 type ExtraCurrencyCollection struct {
-	Dict tlb.HashmapE[struct {
+	Dict tlb.HashmapE[tlb.KeySize32, struct {
 		Val tlb.VarUInteger `tlb:"32bytes"`
-	}] `tlb:"32bits"`
+	}]
 }
 
 // HashUpdate
@@ -165,7 +165,7 @@ func (t *Text) UnmarshalTLB(c *boc.Cell, tag string) error {
 type FullContent struct {
 	tlb.SumType
 	Onchain struct {
-		Data tlb.HashmapE[tlb.Ref[ContentData]] `tlb:"256bits"`
+		Data tlb.HashmapE[tlb.Size256, tlb.Ref[ContentData]]
 	} `tlbSumType:"onchain#00"`
 	Offchain struct {
 		Uri SnakeData // Text
@@ -212,7 +212,7 @@ func (d ChunkedData) MarshalTLB(c *boc.Cell, tag string) error {
 
 func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
 	type chunkedData struct {
-		Data tlb.HashmapE[tlb.Ref[SnakeData]] `tlb:"32bits"`
+		Data tlb.HashmapE[tlb.KeySize32, tlb.Ref[SnakeData]]
 	}
 	var (
 		cd chunkedData
@@ -298,7 +298,7 @@ type ShardInfoBinTree struct {
 	BinTree tlb.BinTree[ShardDesc] `tlb:"32bits"`
 }
 type AllShardsInfo struct {
-	ShardHashes tlb.HashmapE[tlb.Ref[ShardInfoBinTree]] `tlb:"32bits"`
+	ShardHashes tlb.HashmapE[tlb.KeySize32, tlb.Ref[ShardInfoBinTree]]
 }
 
 type JettonMetadata struct {

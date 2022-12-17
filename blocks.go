@@ -289,7 +289,7 @@ type BlockSignatures struct {
 type BlockSignaturesPure struct {
 	SigCount   uint32
 	SigWeight  uint64
-	Signatures tlb.HashmapE[CryptoSignaturePair] `tlb:"16bits"`
+	Signatures tlb.HashmapE[tlb.Size16, CryptoSignaturePair]
 }
 
 // block_id_ext$_ shard_id:ShardIdent seq_no:uint32
@@ -435,7 +435,7 @@ type McBlockExtra struct {
 	ShardHashes  ShardHashes
 	ShardFees    ShardFees
 	McExtraOther struct {
-		PrevBlkSignatures tlb.HashmapE[CryptoSignaturePair] `tlb:"16bits"`
+		PrevBlkSignatures tlb.HashmapE[tlb.Size16, CryptoSignaturePair]
 		RecoverCreate     tlb.Maybe[tlb.Ref[InMsg]]
 		MintMsg           tlb.Maybe[tlb.Ref[InMsg]]
 	} `tlb:"^"`

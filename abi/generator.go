@@ -108,6 +108,6 @@ func (g *Generator) CollectedTypes() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return tlbParser.GenerateGolangTypes(*types)
-
+	p := tlbParser.NewGenerator(nil, "Temp")
+	return p.LoadTypes(types.Declarations)
 }

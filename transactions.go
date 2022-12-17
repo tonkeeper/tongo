@@ -27,7 +27,7 @@ type Transaction struct {
 	EndStatus     AccountStatus
 	Msgs          struct {
 		InMsg   tlb.Maybe[tlb.Ref[Message]]
-		OutMsgs tlb.HashmapE[tlb.Ref[Message]] `tlb:"15bits"`
+		OutMsgs tlb.HashmapE[tlb.Size15, tlb.Ref[Message]]
 	} `tlb:"^"`
 	TotalFees   CurrencyCollection
 	StateUpdate HashUpdate       `tlb:"^"`

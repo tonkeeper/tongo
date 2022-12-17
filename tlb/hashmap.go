@@ -5,25 +5,29 @@ import (
 	"github.com/startfellows/tongo/boc"
 )
 
-type Hashmap[T any] struct {
-	keys    []boc.BitString
-	keySize int
-	values  []T
+type fixedSize interface {
+	FixedSize() int
 }
 
-func (h Hashmap[T]) MarshalTLB(c *boc.Cell, tag string) error {
+type Hashmap[sizeT fixedSize, T any] struct {
+	keys   []boc.BitString
+	values []T
+}
+
+func (h Hashmap[sizeT, T]) MarshalTLB(c *boc.Cell, tag string) error {
 	// Marshal empty Hashmap
 	if len(h.values) == 0 || h.values == nil {
 		return nil
 	}
-	err := h.encodeMap(c, h.keys, h.values, h.keySize)
+	var s sizeT
+	err := h.encodeMap(c, h.keys, h.values, s.FixedSize())
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (h Hashmap[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
+func (h Hashmap[sizeT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}
@@ -80,21 +84,18 @@ func (h Hashmap[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, siz
 	return nil
 }
 
-func (h *Hashmap[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	keySize, err := decodeHashmapTag(tag)
-	if err != nil {
-		return err
-	}
-	h.keySize = keySize
+func (h *Hashmap[sizeT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var s sizeT
+	keySize := s.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
-	err = h.mapInner(keySize, keySize, c, &keyPrefix)
+	err := h.mapInner(keySize, keySize, c, &keyPrefix)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (h *Hashmap[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
+func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
 	var err error
 	var size int
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
@@ -148,99 +149,16 @@ func (h *Hashmap[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *
 	return nil
 }
 
-func (h Hashmap[T]) Values() []T {
+func (h Hashmap[sizeT, T]) Values() []T {
 	return h.values
 }
 
-func (h Hashmap[T]) Keys() []boc.BitString {
+func (h Hashmap[sizeT, T]) Keys() []boc.BitString {
 	return h.keys
 }
 
-type HashmapE[T any] struct {
-	keys    []boc.BitString
-	keySize int
-	values  []T
-}
-
-func (h HashmapE[T]) MarshalTLB(c *boc.Cell, tag string) error {
-	// Marshal empty Hashmap
-	if len(h.values) == 0 || h.values == nil {
-		err := c.WriteBit(false)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	err := c.WriteBit(true)
-	if err != nil {
-		return err
-	}
-	r, err := c.NewRef()
-	if err != nil {
-		return err
-	}
-	err = h.encodeMap(r, h.keys, h.values, h.keySize)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (h HashmapE[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
-	if len(keys) == 0 || len(values) == 0 {
-		return fmt.Errorf("keys or values are empty")
-	}
-
-	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], size)
-	if err != nil {
-		return err
-	}
-
-	size = size - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
-	var leftKeys, rightKeys []boc.BitString
-	var leftValues, rightValues []T
-	if len(keys) > 1 {
-		for i := range keys {
-			_, err := keys[i].ReadBits(label.BitsAvailableForRead()) // skip common label
-			if err != nil {
-				return err
-			}
-			isRight, err := keys[i].ReadBit()
-			if err != nil {
-				return err
-			}
-			if isRight {
-				rightKeys = append(rightKeys, keys[i].ReadRemainingBits())
-				rightValues = append(rightValues, values[i])
-			} else {
-				leftKeys = append(leftKeys, keys[i].ReadRemainingBits())
-				leftValues = append(leftValues, values[i])
-			}
-		}
-		l, err := c.NewRef()
-		if err != nil {
-			return nil
-		}
-		err = h.encodeMap(l, leftKeys, leftValues, size)
-		if err != nil {
-			return err
-		}
-		r, err := c.NewRef()
-		if err != nil {
-			return nil
-		}
-		err = h.encodeMap(r, rightKeys, rightValues, size)
-		if err != nil {
-			return err
-		}
-		return err
-	}
-	// marshal value
-	err = Marshal(c, values[0])
-	if err != nil {
-		return err
-	}
-	return nil
+type HashmapE[sizeT fixedSize, T any] struct {
+	Maybe[Ref[Hashmap[sizeT, T]]]
 }
 
 func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
@@ -309,88 +227,12 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 	return label, nil
 }
 
-func (h *HashmapE[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	keySize, err := decodeHashmapTag(tag)
-	if err != nil {
-		return err
-	}
-	h.keySize = keySize
-	isExists, err := c.ReadBit()
-	if !isExists {
-		return nil
-	} // hme_empty$0 {n:#} {X:Type} = HashmapE n X;
-	r, err := c.NextRef() // hme_root$1 {n:#} {X:Type} root:^(Hashmap n X) = HashmapE n X;
-	if err != nil {
-		return err
-	}
-	keyPrefix := boc.NewBitString(keySize)
-	err = h.mapInner(keySize, keySize, r, &keyPrefix)
-	if err != nil {
-		return err
-	}
-	return nil
+func (h HashmapE[sizeT, T]) Values() []T {
+	return h.Value.Value.values
 }
 
-func (h *HashmapE[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
-	var err error
-	var size int
-	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
-	if err != nil {
-		return err
-	}
-	// until key size is not equals we go deeper
-	if keyPrefix.BitsAvailableForRead() < keySize {
-		// 0 bit branch
-		left, err := c.NextRef()
-		if err != nil {
-			return nil
-		}
-		lp := keyPrefix.Copy()
-		err = lp.WriteBit(false)
-		if err != nil {
-			return err
-		}
-		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp)
-		if err != nil {
-			return err
-		}
-		// 1 bit branch
-		right, err := c.NextRef()
-		if err != nil {
-			return err
-		}
-		rp := keyPrefix.Copy()
-		err = rp.WriteBit(true)
-		if err != nil {
-			return err
-		}
-		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	// add node to map
-	var value T
-	err = Unmarshal(c, &value)
-	if err != nil {
-		return err
-	}
-	h.values = append(h.values, value)
-	key, err := keyPrefix.ReadBits(keySize)
-	if err != nil {
-		return err
-	}
-	h.keys = append(h.keys, key)
-	return nil
-}
-
-func (h HashmapE[T]) Values() []T {
-	return h.values
-}
-
-func (h HashmapE[T]) Keys() []boc.BitString {
-	return h.keys
+func (h HashmapE[sizeT, T]) Keys() []boc.BitString {
+	return h.Value.Value.keys
 }
 
 type HashmapAug[T1, T2 any] struct {

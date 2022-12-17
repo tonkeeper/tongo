@@ -113,7 +113,7 @@ type DataV4 struct {
 	Seqno       uint32
 	SubWalletId uint32
 	PublicKey   tongo.Hash
-	PluginDict  tlb.HashmapE[tlb.Any] // TODO: find type and size
+	PluginDict  tlb.HashmapE[tlb.Size264, tlb.Any] // TODO: find type and check size
 }
 
 type MessageV3 struct {

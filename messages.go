@@ -64,7 +64,7 @@ type StateInit struct {
 	Special tlb.Maybe[TickTock]
 	Code    tlb.Maybe[tlb.Ref[boc.Cell]]
 	Data    tlb.Maybe[tlb.Ref[boc.Cell]]
-	Library tlb.HashmapE[SimpleLib] `tlb:"256bits"`
+	Library tlb.HashmapE[tlb.Size256, SimpleLib]
 }
 
 // Anycast

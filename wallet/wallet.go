@@ -127,10 +127,9 @@ func generateStateInit(
 			subWalletId = &id
 		}
 		data := DataV4{
-			0,
-			uint32(*subWalletId),
-			publicKey,
-			tlb.HashmapE[tlb.Any]{}, // TODO: clarify type
+			Seqno:       0,
+			SubWalletId: uint32(*subWalletId),
+			PublicKey:   publicKey,
 		}
 		err = tlb.Marshal(dataCell, data)
 	default:

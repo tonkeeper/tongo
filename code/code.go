@@ -58,7 +58,7 @@ func ParseContractMethods(code []byte) ([]int64, error) {
 		return nil, err
 	}
 	type GetMethods struct {
-		Hashmap tlb.Hashmap[boc.Cell] `tlb:"19bits"`
+		Hashmap tlb.Hashmap[tlb.Size19, boc.Cell]
 	}
 	var methods GetMethods
 	err = tlb.Unmarshal(c, &methods)

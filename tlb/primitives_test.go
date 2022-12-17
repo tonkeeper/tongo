@@ -102,13 +102,13 @@ func TestHashMapE(t *testing.T) {
 		_, _ = m.NextRef() // in msg
 	}
 	var res struct {
-		OutMsgs HashmapE[Ref[boc.Cell]] `tlb:"15bits"`
+		OutMsgs HashmapE[Size15, Ref[boc.Cell]]
 	}
 	err := Unmarshal(m, &res)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	if len(res.OutMsgs.keys) != int(msgCount) {
+	if len(res.OutMsgs.Value.Value.keys) != int(msgCount) {
 		t.Fatalf("ivalid number of out messages")
 	}
 }
@@ -180,10 +180,6 @@ func TestVarUint(t *testing.T) {
 
 func TestMarchalHashMap(t *testing.T) {
 
-	var in struct {
-		InM HashmapE[Ref[int32]] `tlb:"16bits"`
-	}
-
 	k1 := boc.NewBitString(16)
 	k2 := boc.NewBitString(16)
 	k3 := boc.NewBitString(16)
@@ -211,47 +207,42 @@ func TestMarchalHashMap(t *testing.T) {
 			k3.WriteBit(true)
 		}
 	}
-	chm := HashmapE[Ref[int32]]{
-		keys: []boc.BitString{
-			k1,
-			k2,
-			k3,
-		},
-		values: []Ref[int32]{
-			{Value: 100},
-			{Value: 289},
-			{Value: 57121},
-		},
-		keySize: 16,
+	chm := HashmapE[Size16, Ref[int32]]{}
+	chm.Value.Value.keys = []boc.BitString{
+		k1,
+		k2,
+		k3,
 	}
-
-	in.InM = chm
+	chm.Value.Value.values = []Ref[int32]{
+		{Value: 100},
+		{Value: 289},
+		{Value: 57121},
+	}
 
 	c := boc.NewCell()
 
 	t.Log("Input heshmap: ")
-	for i := range in.InM.keys {
+	for i := range chm.Keys() {
 		t.Logf("k%v: key: %v, value: %v",
 			i,
-			in.InM.keys[i].BinaryString(),
-			in.InM.values[i].Value)
+			chm.Keys()[i].BinaryString(),
+			chm.Values()[i].Value)
 	}
-	err := Marshal(c, in)
+	err := Marshal(c, chm)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	var res struct {
-		OutMsgs HashmapE[Ref[int32]] `tlb:"16bits"`
-	}
+	var res HashmapE[Size16, Ref[int32]]
+
 	err = Unmarshal(c, &res)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
 	t.Log("Output heshmap: ")
-	for i := range res.OutMsgs.keys {
+	for i := range res.Keys() {
 		t.Logf("k%v: key: %v, value: %v",
 			i,
-			res.OutMsgs.keys[i].BinaryString(),
-			res.OutMsgs.values[i].Value)
+			res.Keys()[i].BinaryString(),
+			res.Values()[i].Value)
 	}
 }

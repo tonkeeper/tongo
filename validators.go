@@ -32,9 +32,9 @@ type ValidatorsSet struct {
 	Validators struct {
 		UtimeSince uint32
 		UtimeUntil uint32
-		Total      uint32                      `tlb:"16bits"`
-		Main       uint32                      `tlb:"16bits"`
-		List       tlb.Hashmap[ValidatorDescr] `tlb:"16bits"`
+		Total      uint32 `tlb:"16bits"`
+		Main       uint32 `tlb:"16bits"`
+		List       tlb.Hashmap[tlb.Size16, ValidatorDescr]
 	} `tlbSumType:"validators#11"`
 	// validators_ext#12 utime_since:uint32 utime_until:uint32
 	//   total:(## 16) main:(## 16) { main <= total } { main >= 1 }
@@ -45,7 +45,7 @@ type ValidatorsSet struct {
 		Total       uint32 `tlb:"16bits"`
 		Main        uint32 `tlb:"16bits"`
 		TotalWeight uint64
-		List        tlb.HashmapE[ValidatorDescr] `tlb:"16bits"`
+		List        tlb.HashmapE[tlb.Size16, ValidatorDescr]
 	} `tlbSumType:"validatorsext#12"`
 }
 

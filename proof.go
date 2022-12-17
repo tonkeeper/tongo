@@ -223,7 +223,7 @@ type AccountBlock struct {
 
 // _ (HashmapE 96 ProcessedUpto) = ProcessedInfo;
 type ProcessedInfo struct {
-	ProcessedInfo tlb.HashmapE[ProcessedUpto] `tlb:"96bits"`
+	ProcessedInfo tlb.HashmapE[tlb.Size96, ProcessedUpto]
 }
 
 // processed_upto$_ last_msg_lt:uint64 last_msg_hash:bits256 = ProcessedUpto;
@@ -234,7 +234,7 @@ type ProcessedUpto struct {
 
 // _ (HashmapE 320 IhrPendingSince) = IhrPendingInfo;
 type IhrPendingInfo struct {
-	IhrPendingInfo tlb.HashmapE[IhrPendingSince] `tlb:"320bits"`
+	IhrPendingInfo tlb.HashmapE[tlb.Size320, IhrPendingSince]
 }
 
 // ihr_pending$_ import_lt:uint64 = IhrPendingSince;
@@ -263,16 +263,16 @@ type ShardStateUnsplitOther struct {
 	UnderloadHistory   uint64
 	TotalBalance       CurrencyCollection
 	TotalValidatorFees CurrencyCollection
-	Libraries          tlb.HashmapE[LibDescr] `tlb:"256bits"`
+	Libraries          tlb.HashmapE[tlb.Size256, LibDescr]
 	MasterRef          tlb.Maybe[BlkMasterInfo]
 }
 
 // shared_lib_descr$00 lib:^Cell publishers:(Hashmap 256 True)
 //   = LibDescr;
 type LibDescr struct {
-	Magic      tlb.Magic         `tlb:"shared_lib_descr$00"`
-	Lib        boc.Cell          `tlb:"^"`
-	Publishers tlb.Hashmap[bool] `tlb:"256bits"`
+	Magic      tlb.Magic `tlb:"shared_lib_descr$00"`
+	Lib        boc.Cell  `tlb:"^"`
+	Publishers tlb.Hashmap[tlb.Size256, bool]
 }
 
 // McStateExtra
@@ -298,11 +298,11 @@ type McStateExtra struct {
 // ShardHashes
 // _ (HashmapE 32 ^(BinTree ShardDescr)) = ShardHashes;
 type ShardHashes struct {
-	Hashes tlb.HashmapE[tlb.Ref[ShardInfoBinTree]] `tlb:"32bits"`
+	Hashes tlb.HashmapE[tlb.KeySize32, tlb.Ref[ShardInfoBinTree]]
 }
 
 type ConfigHashMap struct {
-	Hashmap tlb.Hashmap[tlb.Ref[boc.Cell]] `tlb:"32bits"`
+	Hashmap tlb.Hashmap[tlb.KeySize32, tlb.Ref[boc.Cell]]
 }
 
 // ConfigParams
@@ -382,7 +382,7 @@ type KeyExtBlkRef struct {
 type BlockCreateStats struct {
 	tlb.SumType
 	BlockCreateStats struct {
-		Counters tlb.HashmapE[CreatorStats] `tlb:"256bits"`
+		Counters tlb.HashmapE[tlb.Size256, CreatorStats]
 	} `tlbSumType:"block_create_stats#17"`
 	BlockCreateStatsExt struct {
 		Counters tlb.HashmapAugE[CreatorStats, uint32] `tlb:"256bits"`

@@ -20,23 +20,19 @@ type Grams uint64 // total value fit to uint64
 const OneTON Grams = 1_000_000_000
 
 func (g Grams) MarshalTLB(c *boc.Cell, tag string) error {
-	var amount struct {
-		Val tlb.VarUInteger `tlb:"16bytes"`
-	}
-	amount.Val = tlb.VarUInteger(*big.NewInt(int64(g)))
+	var amount tlb.VarUInteger16
+	amount = tlb.VarUInteger16(*big.NewInt(int64(g)))
 	err := tlb.Marshal(c, amount)
 	return err
 }
 
 func (g *Grams) UnmarshalTLB(c *boc.Cell, tag string) error {
-	var amount struct {
-		Val tlb.VarUInteger `tlb:"16bytes"`
-	}
+	var amount tlb.VarUInteger16
 	err := tlb.Unmarshal(c, &amount)
 	if err != nil {
 		return err
 	}
-	val := big.Int(amount.Val)
+	val := big.Int(amount)
 	if !val.IsUint64() {
 		return fmt.Errorf("grams overflow")
 	}
@@ -69,9 +65,7 @@ type CurrencyCollection struct {
 // extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32))
 // = ExtraCurrencyCollection;
 type ExtraCurrencyCollection struct {
-	Dict tlb.HashmapE[tlb.Size32, struct {
-		Val tlb.VarUInteger `tlb:"32bytes"`
-	}]
+	Dict tlb.HashmapE[tlb.Size32, tlb.VarUInteger32]
 }
 
 // HashUpdate

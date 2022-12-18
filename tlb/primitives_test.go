@@ -144,14 +144,11 @@ func TestEither(t *testing.T) {
 }
 
 func TestVarUint(t *testing.T) {
-	type test struct {
-		Val VarUInteger `tlb:"3bytes"`
-	}
-	var cases = []test{
-		{
-			Val: VarUInteger(*big.NewInt(1))},
-		{
-			Val: VarUInteger(*big.NewInt(100))},
+	var cases = []VarUInteger3{
+		VarUInteger3(*big.NewInt(0)),
+		VarUInteger3(*big.NewInt(1)),
+		VarUInteger3(*big.NewInt(100)),
+		VarUInteger3(*big.NewInt(1000)),
 	}
 	for _, maybe := range cases {
 		b1 := boc.NewCell()
@@ -159,7 +156,7 @@ func TestVarUint(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		var unmarshaled test
+		var unmarshaled VarUInteger3
 		err = Unmarshal(b1, &unmarshaled)
 		if err != nil {
 			t.Fatal(err)

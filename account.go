@@ -304,7 +304,7 @@ type StorageInfo struct {
 // storage_used$_ cells:(VarUInteger 7) bits:(VarUInteger 7)
 // public_cells:(VarUInteger 7) = StorageUsed;
 type StorageUsed struct {
-	Cells       tlb.VarUInteger `tlb:"7bytes"`
-	Bits        tlb.VarUInteger `tlb:"7bytes"`
-	PublicCells tlb.VarUInteger `tlb:"7bytes"`
+	Cells       tlb.VarUInteger7
+	Bits        tlb.VarUInteger7
+	PublicCells tlb.VarUInteger7
 }

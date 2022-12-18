@@ -31,3 +31,7 @@ func TestGenerateGolangTypes(t *testing.T) {
 	fmt.Printf("%s", s)
 	//_ = s
 }
+
+func TestGenerateVarUintTypes(t *testing.T) {
+	fmt.Println(GenerateVarUintTypes(32))
+}

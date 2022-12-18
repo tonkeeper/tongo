@@ -74,15 +74,3 @@ func parseSumTag(s string) (sumTag, error) {
 	}
 	return sumTag{}, fmt.Errorf("invalid tag")
 }
-
-func decodeVarUIntegerTag(tag string) (int, error) {
-	var n int
-	if tag == "" {
-		return 0, fmt.Errorf("empty varuint tag")
-	}
-	_, err := fmt.Sscanf(tag, "%dbytes", &n)
-	if err != nil {
-		return 0, err
-	}
-	return n, nil
-}

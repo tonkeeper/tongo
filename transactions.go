@@ -60,15 +60,18 @@ type Transaction struct {
 //   installed:Bool = TransactionDescr;
 
 // trans_merge_prepare$0110 split_info:SplitMergeInfo
-//   storage_ph:TrStoragePhase aborted:Bool
-//   = TransactionDescr;
+//
+//	storage_ph:TrStoragePhase aborted:Bool
+//	= TransactionDescr;
+//
 // trans_merge_install$0111 split_info:SplitMergeInfo
-//   prepare_transaction:^Transaction
-//   storage_ph:(Maybe TrStoragePhase)
-//   credit_ph:(Maybe TrCreditPhase)
-//   compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
-//   aborted:Bool destroyed:Bool
-//   = TransactionDescr;
+//
+//	prepare_transaction:^Transaction
+//	storage_ph:(Maybe TrStoragePhase)
+//	credit_ph:(Maybe TrCreditPhase)
+//	compute_ph:TrComputePhase action:(Maybe ^TrActionPhase)
+//	aborted:Bool destroyed:Bool
+//	= TransactionDescr;
 type TransactionDescr struct {
 	tlb.SumType
 	TransOrd struct {
@@ -123,8 +126,9 @@ type TransactionDescr struct {
 }
 
 // split_merge_info$_ cur_shard_pfx_len:(## 6)
-//   acc_split_depth:(## 6) this_addr:bits256 sibling_addr:bits256
-//   = SplitMergeInfo;
+//
+//	acc_split_depth:(## 6) this_addr:bits256 sibling_addr:bits256
+//	= SplitMergeInfo;
 type SplitMergeInfo struct {
 	CurSHardPfxLen uint32 `tlb:"6bits"`
 	AccSplitDepth  uint32 `tlb:"6bits"`
@@ -211,11 +215,9 @@ type TrComputePhase struct {
 		AccountActivated bool
 		GasFees          Grams
 		Vm               struct {
-			GasUsed   tlb.VarUInteger `tlb:"7bytes"`
-			GasLimit  tlb.VarUInteger `tlb:"7bytes"`
-			GasCredit tlb.Maybe[struct {
-				Val tlb.VarUInteger `tlb:"3bytes"`
-			}]
+			GasUsed          tlb.VarUInteger7
+			GasLimit         tlb.VarUInteger7
+			GasCredit        tlb.Maybe[tlb.VarUInteger3]
 			Mode             int32 `tlb:"8bits"`
 			ExitCode         int32
 			ExitArg          tlb.Maybe[int32]
@@ -288,8 +290,8 @@ type TrActionPhase struct {
 // storage_used_short$_ cells:(VarUInteger 7)
 // bits:(VarUInteger 7) = StorageUsedShort;
 type StorageUsedShort struct {
-	Cells tlb.VarUInteger `tlb:"7bytes"`
-	Bits  tlb.VarUInteger `tlb:"7bytes"`
+	Cells tlb.VarUInteger7
+	Bits  tlb.VarUInteger7
 }
 
 // TrBouncePhase

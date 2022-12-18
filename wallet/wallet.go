@@ -402,7 +402,7 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 	transferMsg := struct {
 		Magic               tlb.Magic `tlb:"transfer#0f8a7ea5"`
 		QueryId             uint64
-		Amount              tlb.VarUInteger `tlb:"16bytes"`
+		Amount              tlb.VarUInteger16
 		Destination         tongo.MsgAddress
 		ResponseDestination tongo.MsgAddress
 		CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
@@ -410,7 +410,7 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 		ForwardPayload      tlb.EitherRef[tlb.Any]
 	}{
 		QueryId:             rand.Uint64(),
-		Amount:              tlb.VarUInteger(*msg.JettonAmount),
+		Amount:              tlb.VarUInteger16(*msg.JettonAmount),
 		Destination:         tongo.MsgAddressFromAccountID(&msg.Destination),
 		ResponseDestination: responseDestination,
 		ForwardTonAmount:    tongo.Grams(msg.ForwardTonAmount),

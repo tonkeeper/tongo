@@ -2,7 +2,6 @@ package tlb
 
 import (
 	"fmt"
-	"math/big"
 	"strconv"
 	"strings"
 
@@ -28,7 +27,6 @@ type Ref[T any] struct {
 	Value T
 }
 type Unary uint
-type VarUInteger big.Int
 type Any boc.Cell
 
 func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -190,44 +188,6 @@ func (n *Unary) UnmarshalTLB(c *boc.Cell, tag string) error {
 	a, err := c.ReadUnary()
 	*n = Unary(a)
 	return err
-}
-
-func (u VarUInteger) MarshalTLB(c *boc.Cell, tag string) error {
-	n, err := decodeVarUIntegerTag(tag)
-	if n < 1 {
-		return fmt.Errorf("len of varuint must be at least one byte")
-	}
-	if err != nil {
-		return err
-	}
-	i := big.Int(u)
-	b := i.Bytes()
-	err = c.WriteLimUint(len(b), n-1)
-	if err != nil {
-		return err
-	}
-	err = c.WriteBytes(b)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (u *VarUInteger) UnmarshalTLB(c *boc.Cell, tag string) error {
-	n, err := decodeVarUIntegerTag(tag)
-	if err != nil {
-		return err
-	}
-	ln, err := c.ReadLimUint(n - 1)
-	if err != nil {
-		return err
-	}
-	val, err := c.ReadBigUint(int(ln) * 8)
-	if err != nil {
-		return err
-	}
-	*u = VarUInteger(*val)
-	return nil
 }
 
 func (a Any) MarshalTLB(c *boc.Cell, tag string) error {

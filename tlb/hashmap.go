@@ -248,12 +248,10 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 	return label, nil
 }
 
-type HashmapAug[T1, T2 any] struct {
-	keys      []boc.BitString
-	keySize   int
-	values    []T1
-	extra     HashMapAugExtraList[T2]
-	rootExtra T2
+type HashmapAug[sizeT fixedSize, T1, T2 any] struct {
+	keys   []boc.BitString
+	values []T1
+	extra  HashMapAugExtraList[T2]
 }
 
 type HashMapAugExtraList[T any] struct {
@@ -262,15 +260,15 @@ type HashMapAugExtraList[T any] struct {
 	Data  T
 }
 
-func (h *HashmapAug[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	keySize, err := decodeHashmapTag(tag)
-	if err != nil {
-		return err
-	}
-	h.keySize = keySize
+func (h HashmapAug[sizeT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
+	return fmt.Errorf("not implemented")
+}
 
+func (h *HashmapAug[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var t sizeT
+	keySize := t.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
-	err = h.mapInner(keySize, keySize, c, &keyPrefix, &h.extra)
+	err := h.mapInner(keySize, keySize, c, &keyPrefix, &h.extra)
 	if err != nil {
 		return err
 	}
@@ -278,7 +276,7 @@ func (h *HashmapAug[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h *HashmapAug[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
+func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
 	var err error
 	var size int
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
@@ -348,125 +346,39 @@ func (h *HashmapAug[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, key
 	return nil
 }
 
-type HashmapAugE[T1, T2 any] struct {
-	keys      []boc.BitString
-	keySize   int
-	values    []T1
-	extra     HashMapAugExtraList[T2]
-	rootExtra T2
+type HashmapAugE[sizeT fixedSize, T1, T2 any] struct {
+	m     HashmapAug[sizeT, T1, T2]
+	extra T2
 }
 
-func (h *HashmapAugE[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	keySize, err := decodeHashmapTag(tag)
-	if err != nil {
-		return err
-	}
-	h.keySize = keySize
-	isExists, err := c.ReadBit()
-	if err != nil {
-		return err
-	}
-	// hme_empty$0 {n:#} {X:Type} {Y:Type} extra:Y = HashmapAugE n X Y;
-	// ahme_root$1 {n:#} {X:Type} {Y:Type} root:^(HashmapAug n X Y) extra:Y = HashmapAugE n X Y;
-	if !isExists {
-		return nil
-	}
-	r, err := c.NextRef()
-	if err != nil {
-		return err
-	}
-	keyPrefix := boc.NewBitString(keySize)
-	err = h.mapInner(keySize, keySize, r, &keyPrefix, &h.extra)
-	if err != nil {
-		return err
-	}
-	var extra T2
-	err = Unmarshal(c, &extra)
-	if err != nil {
-		return err
-	}
-	h.rootExtra = extra
-
-	return nil
+func (h *HashmapAugE[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var temp Maybe[struct {
+		M     Ref[HashmapAug[sizeT, T1, T2]]
+		Extra T2
+	}]
+	err := Unmarshal(c, &temp)
+	h.m = temp.Value.M.Value
+	h.extra = temp.Value.Extra
+	return err
 }
 
-func (h *HashmapAugE[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
-	var err error
-	var size int
-	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
-	if err != nil {
-		return err
-	}
-	var extra T2
-
-	// until key size is not equals we go deeper
-	if keyPrefix.BitsAvailableForRead() < keySize {
-		// 0 bit branch
-		left, err := c.NextRef()
-		if err != nil {
-			return nil
-		}
-		lp := keyPrefix.Copy()
-		err = lp.WriteBit(false)
-		if err != nil {
-			return err
-		}
-		var extraLeft HashMapAugExtraList[T2]
-		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp, &extraLeft)
-		if err != nil {
-			return err
-		}
-		// 1 bit branch
-		right, err := c.NextRef()
-		if err != nil {
-			return err
-		}
-		rp := keyPrefix.Copy()
-		err = rp.WriteBit(true)
-		if err != nil {
-			return err
-		}
-		var extraRight HashMapAugExtraList[T2]
-		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp, &extraRight)
-		if err != nil {
-			return err
-		}
-		extras.Left = &extraLeft
-		extras.Right = &extraRight
-		err = Unmarshal(c, &extra)
-		if err != nil {
-			return err
-		}
-		extras.Data = extra
-		return nil
-	}
-	// add node to map
-	err = Unmarshal(c, &extra)
-	if err != nil {
-		return err
-	}
-	extras.Data = extra
-	var value T1
-	err = Unmarshal(c, &value)
-	if err != nil {
-		return err
-	}
-	h.values = append(h.values, value)
-	key, err := keyPrefix.ReadBits(keySize)
-	if err != nil {
-		return err
-	}
-	h.keys = append(h.keys, key)
-
-	return nil
+func (h HashmapAugE[sizeT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
+	var temp Maybe[struct {
+		M     Ref[HashmapAug[sizeT, T1, T2]]
+		Extra T2
+	}]
+	temp.Null = len(h.m.keys) == 0
+	temp.Value.M.Value = h.m
+	temp.Value.Extra = h.extra
+	return Marshal(c, temp)
 }
 
-func (h HashmapAugE[T1, T2]) Values() []T1 {
-	return h.values
+func (h HashmapAugE[sizeT, T1, T2]) Values() []T1 {
+	return h.m.values
 }
 
-func (h HashmapAugE[T1, T2]) Keys() []boc.BitString {
-	return h.keys
+func (h HashmapAugE[sizeT, T1, T2]) Keys() []boc.BitString {
+	return h.m.keys
 }
 
 func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, error) {

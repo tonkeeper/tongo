@@ -252,19 +252,32 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, i
 }
 
 // msg_import_ext$000 msg:^(Message Any) transaction:^Transaction
-//               = InMsg;
+//
+//	= InMsg;
+//
 // msg_import_ihr$010 msg:^(Message Any) transaction:^Transaction
-//     ihr_fee:Grams proof_created:^Cell = InMsg;
+//
+//	ihr_fee:Grams proof_created:^Cell = InMsg;
+//
 // msg_import_imm$011 in_msg:^MsgEnvelope
-//     transaction:^Transaction fwd_fee:Grams = InMsg;
+//
+//	transaction:^Transaction fwd_fee:Grams = InMsg;
+//
 // msg_import_fin$100 in_msg:^MsgEnvelope
-//     transaction:^Transaction fwd_fee:Grams = InMsg;
+//
+//	transaction:^Transaction fwd_fee:Grams = InMsg;
+//
 // msg_import_tr$101  in_msg:^MsgEnvelope out_msg:^MsgEnvelope
-//     transit_fee:Grams = InMsg;
+//
+//	transit_fee:Grams = InMsg;
+//
 // msg_discard_fin$110 in_msg:^MsgEnvelope transaction_id:uint64
-//     fwd_fee:Grams = InMsg;
+//
+//	fwd_fee:Grams = InMsg;
+//
 // msg_discard_tr$111 in_msg:^MsgEnvelope transaction_id:uint64
-//     fwd_fee:Grams proof_delivered:^Cell = InMsg;
+//
+//	fwd_fee:Grams proof_delivered:^Cell = InMsg;
 type InMsg struct {
 	tlb.SumType
 	MsgImportExt struct {
@@ -306,7 +319,8 @@ type InMsg struct {
 }
 
 // import_fees$_ fees_collected:Grams
-//   value_imported:CurrencyCollection = ImportFees;
+//
+//	value_imported:CurrencyCollection = ImportFees;
 type ImportFees struct {
 	FeesCollected Grams
 	ValueImported CurrencyCollection
@@ -314,26 +328,41 @@ type ImportFees struct {
 
 // _ (HashmapAugE 256 OutMsg CurrencyCollection) = OutMsgDescr
 type OutMsgDescr struct {
-	Hashmap tlb.HashmapAugE[OutMsg, CurrencyCollection] `tlb:"256bits"`
+	Hashmap tlb.HashmapAugE[tlb.Size256, OutMsg, CurrencyCollection]
 }
 
 // msg_export_ext$000 msg:^(Message Any)
-//     transaction:^Transaction = OutMsg;
+//
+//	transaction:^Transaction = OutMsg;
+//
 // msg_export_imm$010 out_msg:^MsgEnvelope
-//     transaction:^Transaction reimport:^InMsg = OutMsg;
+//
+//	transaction:^Transaction reimport:^InMsg = OutMsg;
+//
 // msg_export_new$001 out_msg:^MsgEnvelope
-//     transaction:^Transaction = OutMsg;
+//
+//	transaction:^Transaction = OutMsg;
+//
 // msg_export_tr$011  out_msg:^MsgEnvelope
-//     imported:^InMsg = OutMsg;
+//
+//	imported:^InMsg = OutMsg;
+//
 // msg_export_deq$1100 out_msg:^MsgEnvelope
-//     import_block_lt:uint63 = OutMsg;
+//
+//	import_block_lt:uint63 = OutMsg;
+//
 // msg_export_deq_short$1101 msg_env_hash:bits256
-//     next_workchain:int32 next_addr_pfx:uint64
-//     import_block_lt:uint64 = OutMsg;
+//
+//	next_workchain:int32 next_addr_pfx:uint64
+//	import_block_lt:uint64 = OutMsg;
+//
 // msg_export_tr_req$111 out_msg:^MsgEnvelope
-//     imported:^InMsg = OutMsg;
+//
+//	imported:^InMsg = OutMsg;
+//
 // msg_export_deq_imm$100 out_msg:^MsgEnvelope
-//     reimport:^InMsg = OutMsg;
+//
+//	reimport:^InMsg = OutMsg;
 type OutMsg struct {
 	tlb.SumType
 	MsgExportExt struct {
@@ -383,7 +412,7 @@ type OutMsgQueueInfo struct {
 
 // _ (HashmapAugE 352 EnqueuedMsg uint64) = OutMsgQueue;
 type OutMsgQueue struct {
-	Queue tlb.HashmapAugE[EnqueuedMsg, uint64] `tlb:"352bits"`
+	Queue tlb.HashmapAugE[tlb.Size352, EnqueuedMsg, uint64]
 }
 
 // _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;
@@ -392,9 +421,9 @@ type EnqueuedMsg struct {
 	OutMsg     MsgEnvelope `tlb:"^"`
 }
 
-// 	msg_envelope#4 cur_addr:IntermediateAddress
-//  next_addr:IntermediateAddress fwd_fee_remaining:Grams
-//  msg:^(Message Any) = MsgEnvelope;
+//		msg_envelope#4 cur_addr:IntermediateAddress
+//	 next_addr:IntermediateAddress fwd_fee_remaining:Grams
+//	 msg:^(Message Any) = MsgEnvelope;
 type MsgEnvelope struct {
 	Magic           tlb.Magic `tlb:"msg_envelope#4"`
 	CurrentAddress  IntermediateAddress

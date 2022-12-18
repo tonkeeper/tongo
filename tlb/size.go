@@ -20,10 +20,16 @@ func (u Size19) FixedSize() int {
 	return 19
 }
 
-type KeySize32 Size
+type Size32 Size
 
-func (u KeySize32) FixedSize() int {
+func (u Size32) FixedSize() int {
 	return 32
+}
+
+type Size64 Size
+
+func (u Size64) FixedSize() int {
+	return 64
 }
 
 type Size96 Size
@@ -48,4 +54,10 @@ type Size320 Size
 
 func (u Size320) FixedSize() int {
 	return 320
+}
+
+type Size352 Size
+
+func (u Size352) FixedSize() int {
+	return 352
 }

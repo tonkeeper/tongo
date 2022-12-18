@@ -123,7 +123,8 @@ type CryptoSignaturePair struct {
 // ed25519_signature#5 R:bits256 s:bits256 = CryptoSignatureSimple;  // 516 bits
 // _ CryptoSignatureSimple = CryptoSignature;
 // chained_signature#f signed_cert:^SignedCertificate temp_key_signature:CryptoSignatureSimple
-//   = CryptoSignature;   // 4+(356+516)+516 = 520 bits+ref (1392 bits total)
+//
+//	= CryptoSignature;   // 4+(356+516)+516 = 520 bits+ref (1392 bits total)
 type CryptoSignatureSimple struct {
 	Magic                 tlb.Magic `tlb:"ed25519_signature#5"`
 	CryptoSignatureSimple CryptoSignatureSimpleData
@@ -174,7 +175,8 @@ func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, tag string) error {
 }
 
 // signed_certificate$_ certificate:Certificate certificate_signature:CryptoSignature
-//   = SignedCertificate;  // 356+516 = 872 bits
+//
+//	= SignedCertificate;  // 356+516 = 872 bits
 type SignedSertificate struct {
 	Certificate          Certificate
 	CertificateSignature CryptoSignature
@@ -197,28 +199,29 @@ type ShardFeeCreated struct {
 
 // _ (HashmapAugE 96 ShardFeeCreated ShardFeeCreated) = ShardFees;
 type ShardFees struct {
-	Hashmap tlb.HashmapAugE[ShardFeeCreated, ShardFeeCreated] `tlb:"96bits"`
+	Hashmap tlb.HashmapAugE[tlb.Size96, ShardFeeCreated, ShardFeeCreated]
 }
 
 // _ (HashmapAugE 256 InMsg ImportFees) = InMsgDescr;
 type InMsgDescr struct {
-	Hashmap tlb.HashmapAugE[InMsg, ImportFees] `tlb:"256bits"`
+	Hashmap tlb.HashmapAugE[tlb.Size256, InMsg, ImportFees]
 }
 
 // _ (HashmapAugE 256 AccountBlock CurrencyCollection) = ShardAccountBlocks
 type ShardAccountBlocks struct {
-	Hashmap tlb.HashmapAugE[AccountBlock, CurrencyCollection] `tlb:"256bits"`
+	Hashmap tlb.HashmapAugE[tlb.Size256, AccountBlock, CurrencyCollection]
 }
 
 // acc_trans#5 account_addr:bits256
-//             transactions:(HashmapAug 64 ^Transaction CurrencyCollection)
-//             state_update:^(HASH_UPDATE Account)
-//           = AccountBlock;
+//
+//	  transactions:(HashmapAug 64 ^Transaction CurrencyCollection)
+//	  state_update:^(HASH_UPDATE Account)
+//	= AccountBlock;
 type AccountBlock struct {
 	Magic        tlb.Magic `tlb:"acc_trans#5"`
 	AccountAddr  Hash
-	Transactions tlb.HashmapAug[tlb.Ref[Transaction], CurrencyCollection] `tlb:"64bits"`
-	StateUpdate  HashUpdate                                               `tlb:"^"`
+	Transactions tlb.HashmapAug[tlb.Size64, tlb.Ref[Transaction], CurrencyCollection]
+	StateUpdate  HashUpdate `tlb:"^"`
 }
 
 // _ (HashmapE 96 ProcessedUpto) = ProcessedInfo;
@@ -244,7 +247,7 @@ type IhrPendingSince struct {
 
 // _ (HashmapAugE 256 ShardAccount DepthBalanceInfo) = ShardAccounts;
 type ShardAccounts struct {
-	Accounts tlb.HashmapAugE[ShardAccount, DepthBalanceInfo] `tlb:"256bits"`
+	Accounts tlb.HashmapAugE[tlb.Size256, ShardAccount, DepthBalanceInfo]
 }
 
 // depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
@@ -268,7 +271,8 @@ type ShardStateUnsplitOther struct {
 }
 
 // shared_lib_descr$00 lib:^Cell publishers:(Hashmap 256 True)
-//   = LibDescr;
+//
+//	= LibDescr;
 type LibDescr struct {
 	Magic      tlb.Magic `tlb:"shared_lib_descr$00"`
 	Lib        boc.Cell  `tlb:"^"`
@@ -298,11 +302,11 @@ type McStateExtra struct {
 // ShardHashes
 // _ (HashmapE 32 ^(BinTree ShardDescr)) = ShardHashes;
 type ShardHashes struct {
-	Hashes tlb.HashmapE[tlb.KeySize32, tlb.Ref[ShardInfoBinTree]]
+	Hashes tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]
 }
 
 type ConfigHashMap struct {
-	Hashmap tlb.Hashmap[tlb.KeySize32, tlb.Ref[boc.Cell]]
+	Hashmap tlb.Hashmap[tlb.Size32, tlb.Ref[boc.Cell]]
 }
 
 // ConfigParams
@@ -362,7 +366,7 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
 
 // _ (HashmapAugE 32 KeyExtBlkRef KeyMaxLt) = OldMcBlocksInfo
 type OldMcBlocksInfo struct {
-	Info tlb.HashmapAugE[KeyExtBlkRef, KeyMaxLt] `tlb:"32bits"`
+	Info tlb.HashmapAugE[tlb.Size32, KeyExtBlkRef, KeyMaxLt]
 }
 
 // _ key:Bool max_end_lt:uint64 = KeyMaxLt;
@@ -385,7 +389,7 @@ type BlockCreateStats struct {
 		Counters tlb.HashmapE[tlb.Size256, CreatorStats]
 	} `tlbSumType:"block_create_stats#17"`
 	BlockCreateStatsExt struct {
-		Counters tlb.HashmapAugE[CreatorStats, uint32] `tlb:"256bits"`
+		Counters tlb.HashmapAugE[tlb.Size256, CreatorStats, uint32]
 	} `tlbSumType:"block_create_statsext#34"`
 }
 

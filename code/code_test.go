@@ -23,7 +23,7 @@ func TestCodeInspect(t *testing.T) {
 		t.Fatal(err)
 	}
 	type GetMethods struct {
-		Hashmap tlb.Hashmap[tlb.Size19, boc.Cell] `tlb:"19bits"`
+		Hashmap tlb.Hashmap[tlb.Size19, boc.Cell]
 	}
 	var d GetMethods
 	err = tlb.Unmarshal(c, &d)

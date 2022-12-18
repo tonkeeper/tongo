@@ -44,39 +44,37 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		return fmt.Errorf("value can't be changed")
 	}
 	switch val.Kind() {
-	case reflect.Uint32, reflect.Int32:
-		ln := t.Len
-		if ln > 32 {
-			return fmt.Errorf("can not marshal %v bits to 32 bits integer", ln)
-		} else if ln == 0 {
-			ln = 32
+	case reflect.Int64, reflect.Int32, reflect.Int16, reflect.Int8:
+		l := 8
+		switch val.Kind() {
+		case reflect.Int16:
+			l = 16
+		case reflect.Int32:
+			l = 32
+		case reflect.Int64:
+			l = 64
 		}
-		v, err := c.ReadUint(ln)
+		v, err := c.ReadInt(l)
 		if err != nil {
 			return err
 		}
-		if val.Kind() == reflect.Uint32 {
-			val.SetUint(v)
-		} else {
-			val.SetInt(int64(v))
-		}
+		val.SetInt(v)
 		return nil
-	case reflect.Uint64, reflect.Int64:
-		ln := t.Len
-		if ln > 64 {
-			return fmt.Errorf("can not marshal %v bits to 64 bits integer", ln)
-		} else if ln == 0 {
-			ln = 64
+	case reflect.Uint64, reflect.Uint32, reflect.Uint16, reflect.Uint8:
+		l := 8
+		switch val.Kind() {
+		case reflect.Uint16:
+			l = 16
+		case reflect.Uint32:
+			l = 32
+		case reflect.Uint64:
+			l = 64
 		}
-		v, err := c.ReadUint(ln)
+		v, err := c.ReadUint(l)
 		if err != nil {
 			return err
 		}
-		if val.Kind() == reflect.Uint64 {
-			val.SetUint(v)
-		} else {
-			val.SetInt(int64(v))
-		}
+		val.SetUint(v)
 		return nil
 	case reflect.Bool:
 		b, err := c.ReadBit()

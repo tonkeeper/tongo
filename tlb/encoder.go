@@ -32,32 +32,22 @@ func encode(c *boc.Cell, o any, tag string) error {
 	}
 	val := reflect.ValueOf(o)
 	switch val.Kind() {
-	case reflect.Uint32, reflect.Uint64:
-		ln := t.Len
-		if ln == 0 {
-			ln = 32
-			if val.Kind() == reflect.Uint64 {
-				ln = 64
-			}
-		}
-		err := c.WriteUint(val.Uint(), ln)
-		if err != nil {
-			return err
-		}
-		return nil
-	case reflect.Int32, reflect.Int64:
-		ln := t.Len
-		if ln == 0 {
-			ln = 32
-			if val.Kind() == reflect.Int64 {
-				ln = 64
-			}
-		}
-		err := c.WriteInt(val.Int(), ln)
-		if err != nil {
-			return err
-		}
-		return nil
+	case reflect.Uint8:
+		return c.WriteUint(val.Uint(), 8)
+	case reflect.Uint16:
+		return c.WriteUint(val.Uint(), 16)
+	case reflect.Uint32:
+		return c.WriteUint(val.Uint(), 32)
+	case reflect.Uint64:
+		return c.WriteUint(val.Uint(), 64)
+	case reflect.Int8:
+		return c.WriteInt(val.Int(), 8)
+	case reflect.Int16:
+		return c.WriteInt(val.Int(), 16)
+	case reflect.Int32:
+		return c.WriteInt(val.Int(), 32)
+	case reflect.Int64:
+		return c.WriteInt(val.Int(), 64)
 	case reflect.Bool:
 		err := c.WriteBit(val.Bool())
 		if err != nil {

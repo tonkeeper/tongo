@@ -58,13 +58,11 @@ type CommonMsgInfo struct {
 // code:(Maybe ^Cell) data:(Maybe ^Cell)
 // library:(HashmapE 256 SimpleLib) = StateInit;
 type StateInit struct {
-	SplitDepth tlb.Maybe[struct {
-		Depth uint64 `tlb:"5bits"`
-	}]
-	Special tlb.Maybe[TickTock]
-	Code    tlb.Maybe[tlb.Ref[boc.Cell]]
-	Data    tlb.Maybe[tlb.Ref[boc.Cell]]
-	Library tlb.HashmapE[tlb.Size256, SimpleLib]
+	SplitDepth tlb.Maybe[tlb.Uint5]
+	Special    tlb.Maybe[TickTock]
+	Code       tlb.Maybe[tlb.Ref[boc.Cell]]
+	Data       tlb.Maybe[tlb.Ref[boc.Cell]]
+	Library    tlb.HashmapE[tlb.Size256, SimpleLib]
 }
 
 // Anycast
@@ -119,17 +117,17 @@ type MsgAddress struct {
 	AddrNone struct {
 	} `tlbSumType:"addr_none$00"`
 	AddrExtern struct {
-		Len             uint32 `tlb:"9bits"`
+		Len             tlb.Uint9
 		ExternalAddress boc.BitString
 	} `tlbSumType:"addr_extern$01"`
 	AddrStd struct {
 		Anycast     tlb.Maybe[Anycast]
-		WorkchainId int32 `tlb:"8bits"`
+		WorkchainId int8
 		Address     Hash
 	} `tlbSumType:"addr_std$10"`
 	AddrVar struct {
 		Anycast     tlb.Maybe[Anycast]
-		AddrLen     uint32 `tlb:"9bits"`
+		AddrLen     tlb.Uint9
 		WorkchainId int32
 		Address     boc.BitString
 	} `tlbSumType:"addr_var$11"`
@@ -153,7 +151,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		a.AddrExtern.Len = uint32(ln)
+		a.AddrExtern.Len = tlb.Uint9(ln)
 		a.AddrExtern.ExternalAddress = addr
 		a.SumType = "AddrExtern"
 		return nil
@@ -172,7 +170,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 			return err
 		}
 		a.AddrStd.Anycast = anycast
-		a.AddrStd.WorkchainId = int32(workchain)
+		a.AddrStd.WorkchainId = int8(workchain)
 		copy(a.AddrStd.Address[:], address)
 		a.SumType = "AddrStd"
 		return nil
@@ -194,7 +192,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		a.AddrVar.AddrLen = uint32(ln)
+		a.AddrVar.AddrLen = tlb.Uint9(ln)
 		a.AddrVar.Address = addr
 		a.AddrVar.WorkchainId = int32(workchain)
 		a.AddrVar.Anycast = anycast
@@ -208,7 +206,7 @@ func (a MsgAddress) AccountID() (*AccountID, error) {
 	case "AddrNone":
 		return nil, nil
 	case "AddrStd":
-		return &AccountID{Workchain: a.AddrStd.WorkchainId, Address: a.AddrStd.Address}, nil
+		return &AccountID{Workchain: int32(a.AddrStd.WorkchainId), Address: a.AddrStd.Address}, nil
 	}
 	return nil, fmt.Errorf("can not convert not std address to AccountId")
 }
@@ -383,8 +381,8 @@ type OutMsg struct {
 		Imported InMsg       `tlb:"^"`
 	} `tlbSumType:"msg_export_tr$011"`
 	MsgExportDeq struct {
-		OutMsg      MsgEnvelope   `tlb:"^"`
-		ImportBlock boc.BitString `tlb:"63bits"`
+		OutMsg      MsgEnvelope `tlb:"^"`
+		ImportBlock tlb.Uint63
 	} `tlbSumType:"msg_export_deq$1100"`
 	MsgExportDeqShort struct {
 		MsgEnvHash     Hash
@@ -438,10 +436,10 @@ type MsgEnvelope struct {
 type IntermediateAddress struct {
 	tlb.SumType
 	IntermediateAddressRegular struct {
-		UseDestBits boc.BitString `tlb:"7bits"`
+		UseDestBits tlb.Uint7
 	} `tlbSumType:"interm_addr_regular$0"`
 	IntermediateAddressSimple struct {
-		WorkchainId   int32 `tlb:"8bits"`
+		WorkchainId   int8
 		AddressPrefix uint64
 	} `tlbSumType:"interm_addr_simple$10"`
 	IntermediateAddressExt struct {

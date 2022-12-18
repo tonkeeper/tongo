@@ -5,9 +5,11 @@ import (
 )
 
 // validator_info$_
-//   validator_list_hash_short:uint32
-//   catchain_seqno:uint32
-//   nx_cc_updated:Bool
+//
+//	validator_list_hash_short:uint32
+//	catchain_seqno:uint32
+//	nx_cc_updated:Bool
+//
 // = ValidatorInfo;
 type ValidatorInfo struct {
 	ValidatorListHashShort uint32
@@ -16,8 +18,10 @@ type ValidatorInfo struct {
 }
 
 // validator_base_info$_
-//   validator_list_hash_short:uint32
-//   catchain_seqno:uint32
+//
+//	validator_list_hash_short:uint32
+//	catchain_seqno:uint32
+//
 // = ValidatorBaseInfo;
 type ValidatorBaseInfo struct {
 	ValidatorListHashShort uint32
@@ -32,8 +36,8 @@ type ValidatorsSet struct {
 	Validators struct {
 		UtimeSince uint32
 		UtimeUntil uint32
-		Total      uint32 `tlb:"16bits"`
-		Main       uint32 `tlb:"16bits"`
+		Total      uint16
+		Main       uint16
 		List       tlb.Hashmap[tlb.Size16, ValidatorDescr]
 	} `tlbSumType:"validators#11"`
 	// validators_ext#12 utime_since:uint32 utime_until:uint32
@@ -42,8 +46,8 @@ type ValidatorsSet struct {
 	ValidatorsExt struct {
 		UtimeSince  uint32
 		UtimeUntil  uint32
-		Total       uint32 `tlb:"16bits"`
-		Main        uint32 `tlb:"16bits"`
+		Total       uint16
+		Main        uint16
 		TotalWeight uint64
 		List        tlb.HashmapE[tlb.Size16, ValidatorDescr]
 	} `tlbSumType:"validatorsext#12"`

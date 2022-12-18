@@ -15,7 +15,6 @@ type sumTag struct {
 }
 
 type tag struct {
-	Len        int
 	IsRef      bool
 	IsOptional bool
 }
@@ -35,12 +34,10 @@ func parseTag(s string) (tag, error) {
 	if strings.Contains(s, "#") || strings.Contains(s, "$") {
 		return t, nil
 	}
-	_, err := fmt.Sscanf(s, "%dbits", &t.Len)
-	if err != nil {
-		_, err = fmt.Sscanf(s, "%dbytes", &t.Len)
-		return t, err
+	if strings.Contains(s, "bits") || strings.Contains(s, "bytes") {
+		return t, fmt.Errorf("tag format '%v' is deprecated", s)
 	}
-	return t, err
+	return t, nil
 }
 
 func encodeSumTag(c *boc.Cell, tag string) error {

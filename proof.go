@@ -12,8 +12,8 @@ import (
 type MerkleProof[T any] struct {
 	Magic       tlb.Magic `tlb:"!merkle_proof#03"`
 	VirtualHash Hash
-	Depth       boc.BitString `tlb:"16bits"`
-	VirtualRoot T             `tlb:"^"`
+	Depth       uint16
+	VirtualRoot T `tlb:"^"`
 }
 
 // ShardStateUnsplit
@@ -109,7 +109,7 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
 // workchain_id:int32 shard_prefix:uint64 = ShardIdent;
 type ShardIdent struct {
 	Magic        tlb.Magic `tlb:"shardident$00"`
-	ShardPfxBits uint64    `tlb:"6bits"`
+	ShardPfxBits tlb.Uint6
 	WorkchainID  int32
 	ShardPrefix  uint64
 }
@@ -252,7 +252,7 @@ type ShardAccounts struct {
 
 // depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
 type DepthBalanceInfo struct {
-	SplitDepth uint32 `tlb:"5bits"`
+	SplitDepth tlb.Uint5
 	Balance    CurrencyCollection
 }
 
@@ -324,7 +324,7 @@ type ConfigParams struct {
 // last_key_block:(Maybe ExtBlkRef)
 // block_create_stats:(flags . 0)?BlockCreateStats ]
 type McStateExtraOther struct {
-	Flags            uint32 `tlb:"16bits"`
+	Flags            uint16
 	ValidatorInfo    ValidatorInfo
 	PrevBlocks       OldMcBlocksInfo
 	AfterKeyBlock    bool
@@ -337,7 +337,7 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-	m.Flags = uint32(flags)
+	m.Flags = uint16(flags)
 	err = tlb.Unmarshal(c, &m.ValidatorInfo)
 	if err != nil {
 		return err

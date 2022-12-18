@@ -22,7 +22,7 @@ type Transaction struct {
 	PrevTransHash Hash
 	PrevTransLt   uint64
 	Now           uint32
-	OutMsgCnt     uint32 `tlb:"15bits"`
+	OutMsgCnt     tlb.Uint15
 	OrigStatus    AccountStatus
 	EndStatus     AccountStatus
 	Msgs          struct {
@@ -130,8 +130,8 @@ type TransactionDescr struct {
 //	acc_split_depth:(## 6) this_addr:bits256 sibling_addr:bits256
 //	= SplitMergeInfo;
 type SplitMergeInfo struct {
-	CurSHardPfxLen uint32 `tlb:"6bits"`
-	AccSplitDepth  uint32 `tlb:"6bits"`
+	CurSHardPfxLen tlb.Uint6
+	AccSplitDepth  tlb.Uint6
 	ThisAddr       Hash
 	SiblingAddr    Hash
 }
@@ -218,7 +218,7 @@ type TrComputePhase struct {
 			GasUsed          tlb.VarUInteger7
 			GasLimit         tlb.VarUInteger7
 			GasCredit        tlb.Maybe[tlb.VarUInteger3]
-			Mode             int32 `tlb:"8bits"`
+			Mode             int8
 			ExitCode         int32
 			ExitArg          tlb.Maybe[int32]
 			VmSteps          uint32
@@ -278,10 +278,10 @@ type TrActionPhase struct {
 	TotalActionFees tlb.Maybe[Grams]
 	ResultCode      int32
 	ResultArg       tlb.Maybe[int32]
-	TotActions      uint32 `tlb:"16bits"`
-	SpecActions     uint32 `tlb:"16bits"`
-	SkippedActions  uint32 `tlb:"16bits"`
-	MsgsCreated     uint32 `tlb:"16bits"`
+	TotActions      uint16
+	SpecActions     uint16
+	SkippedActions  uint16
+	MsgsCreated     uint16
 	ActionListHash  Hash
 	TotMsgSize      StorageUsedShort
 }

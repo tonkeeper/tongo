@@ -100,7 +100,7 @@ type blockInfoPart struct {
 	WantMerge                 bool
 	KeyBlock                  bool
 	VertSeqnoIncr             bool
-	Flags                     uint32 `tlb:"8bits"`
+	Flags                     uint8
 	SeqNo                     uint32
 	VertSeqNo                 uint32
 	Shard                     ShardIdent
@@ -421,13 +421,15 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 }
 
 // masterchain_block_extra#cca5
-//   key_block:(## 1)
-//   shard_hashes:ShardHashes
-//   shard_fees:ShardFees
-//   ^[ prev_blk_signatures:(HashmapE 16 CryptoSignaturePair)
-//      recover_create_msg:(Maybe ^InMsg)
-//      mint_msg:(Maybe ^InMsg) ]
-//   config:key_block?ConfigParams
+//
+//	key_block:(## 1)
+//	shard_hashes:ShardHashes
+//	shard_fees:ShardFees
+//	^[ prev_blk_signatures:(HashmapE 16 CryptoSignaturePair)
+//	   recover_create_msg:(Maybe ^InMsg)
+//	   mint_msg:(Maybe ^InMsg) ]
+//	config:key_block?ConfigParams
+//
 // = McBlockExtra;
 type McBlockExtra struct {
 	Magic        tlb.Magic `tlb:"masterchain_block_extra#cca5"`

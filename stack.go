@@ -45,7 +45,7 @@ type VmCont struct {
 // vm_tuple_tcons$_ {n:#} head:(VmTupleRef n) tail:^VmStackValue = VmTuple (n + 1);
 // vm_stk_tuple#07 len:(## 16) data:(VmTuple len) = VmStackValue;
 type VmStkTuple struct {
-	Len  uint32 `tlb:"16bits"`
+	Len  uint16
 	Data *VmTuple
 }
 
@@ -69,7 +69,7 @@ func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-	t.Len = uint32(l)
+	t.Len = uint16(l)
 	t.Data, err = vmTupleInner(t.Len, c)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func vmTupleInner(n uint32, c *boc.Cell) (*VmTuple, error) {
+func vmTupleInner(n uint16, c *boc.Cell) (*VmTuple, error) {
 	if n > 0 {
 		vmTuple := VmTuple{}
 		n -= 1
@@ -103,7 +103,7 @@ func vmTupleInner(n uint32, c *boc.Cell) (*VmTuple, error) {
 	return nil, nil
 }
 
-func vmTupleRefInner(n uint32, c *boc.Cell) (*VmTupleRef, error) {
+func vmTupleRefInner(n uint16, c *boc.Cell) (*VmTupleRef, error) {
 	vmTupleRef := VmTupleRef{}
 	if n == 1 {
 		c1, err := c.NextRef()

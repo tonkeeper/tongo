@@ -238,7 +238,7 @@ type ShardDesc struct {
 		WantSplit          bool
 		WantMerge          bool
 		NXCCUpdated        bool
-		Flags              uint32 `tlb:"3bits"`
+		Flags              tlb.Uint3
 		NextCatchainSeqNo  uint32
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
@@ -256,7 +256,7 @@ type ShardDesc struct {
 		WantSplit          bool
 		WantMerge          bool
 		NXCCUpdated        bool
-		Flags              uint32 `tlb:"3bits"`
+		Flags              tlb.Uint3
 		NextCatchainSeqNo  uint32
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
@@ -289,7 +289,7 @@ func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
 }
 
 type ShardInfoBinTree struct {
-	BinTree tlb.BinTree[ShardDesc] `tlb:"32bits"`
+	BinTree tlb.BinTree[ShardDesc]
 }
 type AllShardsInfo struct {
 	ShardHashes tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]

@@ -33,5 +33,5 @@ func TestGenerateGolangTypes(t *testing.T) {
 }
 
 func TestGenerateVarUintTypes(t *testing.T) {
-	fmt.Println(GenerateVarUintTypes(32))
+	fmt.Println(GenerateConstantInts(17))
 }

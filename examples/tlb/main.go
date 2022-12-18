@@ -53,13 +53,11 @@ func main() {
 	// Serialize
 	newCell := boc.NewCell()
 	var X struct {
-		A uint32 `tlb:"8bits"`
-		B tlb.Ref[struct {
-			C uint32 `tlb:"8bits"`
-		}]
+		A uint8
+		B tlb.Ref[uint8]
 	}
 	X.A = 10
-	X.B.Value.C = 11
+	X.B.Value = 11
 	err = tlb.Marshal(newCell, X)
 	if err != nil {
 		panic(err)

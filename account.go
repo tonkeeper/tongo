@@ -197,7 +197,7 @@ func MsgAddressFromAccountID(id *AccountID) MsgAddress {
 	addr := MsgAddress{
 		SumType: "AddrStd",
 	}
-	addr.AddrStd.WorkchainId = id.Workchain
+	addr.AddrStd.WorkchainId = int8(id.Workchain)
 	addr.AddrStd.Address = id.Address
 	addr.AddrStd.Anycast.Null = true
 	return addr

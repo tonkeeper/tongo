@@ -128,7 +128,7 @@ type MessageV4 struct {
 	SubWalletId uint32
 	ValidUntil  uint32
 	Seqno       uint32
-	Op          int32 `tlb:"8bits"`
+	Op          int8
 	Payload     PayloadV1toV4
 }
 

@@ -8,6 +8,8 @@ import (
 	"github.com/startfellows/tongo/boc"
 )
 
+//go:generate go run generator.go
+
 type SumType string
 type Magic uint32
 type Maybe[T any] struct {

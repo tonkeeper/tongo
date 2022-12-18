@@ -158,9 +158,30 @@ func (h Hashmap[sizeT, T]) Keys() []boc.BitString {
 }
 
 type HashmapE[sizeT fixedSize, T any] struct {
-	Maybe[Ref[Hashmap[sizeT, T]]]
+	m Hashmap[sizeT, T]
 }
 
+func (h HashmapE[sizeT, T]) MarshalTLB(c *boc.Cell, tag string) error {
+	var temp Maybe[Ref[Hashmap[sizeT, T]]]
+	temp.Null = len(h.m.keys) == 0
+	temp.Value.Value = h.m
+	return Marshal(c, temp)
+}
+
+func (h *HashmapE[sizeT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var temp Maybe[Ref[Hashmap[sizeT, T]]]
+	err := Unmarshal(c, &temp)
+	h.m = temp.Value.Value
+	return err
+}
+
+func (h HashmapE[sizeT, T]) Values() []T {
+	return h.m.values
+}
+
+func (h HashmapE[sizeT, T]) Keys() []boc.BitString {
+	return h.m.keys
+}
 func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
 	label := boc.NewBitString(size)
 	if keyFirst != keyLast {
@@ -225,14 +246,6 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 		}
 	}
 	return label, nil
-}
-
-func (h HashmapE[sizeT, T]) Values() []T {
-	return h.Value.Value.values
-}
-
-func (h HashmapE[sizeT, T]) Keys() []boc.BitString {
-	return h.Value.Value.keys
 }
 
 type HashmapAug[T1, T2 any] struct {

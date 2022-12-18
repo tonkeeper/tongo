@@ -108,7 +108,7 @@ func TestHashMapE(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	if len(res.OutMsgs.Value.Value.keys) != int(msgCount) {
+	if len(res.OutMsgs.Keys()) != int(msgCount) {
 		t.Fatalf("ivalid number of out messages")
 	}
 }
@@ -208,12 +208,12 @@ func TestMarchalHashMap(t *testing.T) {
 		}
 	}
 	chm := HashmapE[Size16, Ref[int32]]{}
-	chm.Value.Value.keys = []boc.BitString{
+	chm.m.keys = []boc.BitString{
 		k1,
 		k2,
 		k3,
 	}
-	chm.Value.Value.values = []Ref[int32]{
+	chm.m.values = []Ref[int32]{
 		{Value: 100},
 		{Value: 289},
 		{Value: 57121},
@@ -244,5 +244,17 @@ func TestMarchalHashMap(t *testing.T) {
 			i,
 			res.Keys()[i].BinaryString(),
 			res.Values()[i].Value)
+	}
+}
+
+func TestEmptyHashMap(t *testing.T) {
+	c := boc.NewCell()
+	var h HashmapE[Size15, boc.Cell]
+	err := Marshal(c, h)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.Refs()) != 0 || c.BitSize() != 1 {
+		t.Fatal("invalid cell")
 	}
 }

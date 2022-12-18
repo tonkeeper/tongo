@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"math"
 	"math/big"
 	"strings"
 )
@@ -21,7 +20,7 @@ type BitString struct {
 
 func NewBitString(bitLen int) BitString {
 	return BitString{
-		buf:     make([]byte, int(math.Ceil(float64(bitLen)/float64(8)))),
+		buf:     make([]byte, ((bitLen+7)&-8)/8),
 		cap:     bitLen,
 		rCursor: 0,
 		len:     0,
@@ -85,7 +84,7 @@ func (s *BitString) SetTopUppedArray(arr []byte, fulfilledBytes bool) error {
 func (s *BitString) GetTopUppedArray() ([]byte, error) {
 	ret := s.Copy()
 
-	tu := int(math.Ceil(float64(ret.GetWriteCursor())/8))*8 - ret.GetWriteCursor()
+	tu := ((ret.GetWriteCursor() + 7) & -8) - ret.GetWriteCursor()
 	if tu > 0 {
 		tu = tu - 1
 		err := ret.WriteBit(true)
@@ -236,6 +235,9 @@ func (s *BitString) ReadInt(bitLen int) (int64, error) {
 	if bitLen > 64 {
 		return 0, fmt.Errorf("too much bits for int64")
 	}
+	if bitLen == 0 {
+		return 0, fmt.Errorf("integer can't be zero size")
+	}
 	if s.BitsAvailableForRead() < bitLen {
 		return 0, ErrNotEnoughBits
 	}
@@ -253,7 +255,7 @@ func (s *BitString) ReadInt(bitLen int) (int64, error) {
 		if err != nil {
 			return 0, err
 		}
-		return int64(base - uint64(math.Pow(2, float64(bitLen-1)))), nil
+		return int64(base - 1<<(bitLen-1)), nil
 	}
 	res, err := s.ReadUint(bitLen - 1)
 	if err != nil {
@@ -545,7 +547,7 @@ func (s *BitString) ReadUnary() (uint, error) {
 // ReadLimUint
 // #<= n
 func (s *BitString) ReadLimUint(n int) (uint, error) {
-	ln := int(math.Ceil(math.Log2(float64(n + 1))))
+	ln := minBitsRequired(uint64(n))
 	res, err := s.ReadUint(ln)
 	return uint(res), err
 }
@@ -553,7 +555,7 @@ func (s *BitString) ReadLimUint(n int) (uint, error) {
 // WriteLimUint
 // #<= n
 func (s *BitString) WriteLimUint(val, n int) error {
-	ln := int(math.Ceil(math.Log2(float64(n + 1))))
+	ln := minBitsRequired(uint64(n))
 	err := s.WriteUint(uint64(val), ln)
 	return err
 }
@@ -611,4 +613,27 @@ func (s *BitString) Append(b BitString) {
 		s.Grow(needBits)
 	}
 	_ = s.WriteBitString(b) // must fit
+}
+
+var tab64 = [64]int{
+	63, 0, 58, 1, 59, 47, 53, 2,
+	60, 39, 48, 27, 54, 33, 42, 3,
+	61, 51, 37, 40, 49, 18, 28, 20,
+	55, 30, 34, 11, 43, 14, 22, 4,
+	62, 57, 46, 52, 38, 26, 32, 41,
+	50, 36, 17, 19, 29, 10, 13, 21,
+	56, 45, 25, 31, 35, 16, 9, 12,
+	44, 24, 15, 8, 23, 7, 6, 5}
+
+func minBitsRequired(value uint64) int {
+	if value == 0 {
+		return 0
+	}
+	value |= value >> 1
+	value |= value >> 2
+	value |= value >> 4
+	value |= value >> 8
+	value |= value >> 16
+	value |= value >> 32
+	return tab64[((value-(value>>1))*0x07EDD5E59A4E28C2)>>58] + 1
 }

@@ -150,6 +150,7 @@ func TestLookupBlock(t *testing.T) {
 }
 
 func TestGetOneTransaction(t *testing.T) {
+	t.Skip() //todo: switch  to archive node
 	tongoClient, err := NewClientWithDefaultMainnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)

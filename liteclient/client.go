@@ -1327,13 +1327,10 @@ func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tong
 
 	}
 	return nil, nil
-
 }
 
-// GetBlock
-// liteServer.getBlock id:tonNode.blockIdExt = liteServer.BlockData;
-// liteServer.blockData id:tonNode.blockIdExt data:bytes = liteServer.BlockData;
-func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.TonNodeBlockIdExt, tongo.Block, error) {
+// GetRawBlock returns a raw block without TL-B deserialization.
+func (c *Client) GetRawBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.RawBlock, error) {
 	r := struct {
 		tl.SumType
 		GetBlockRequest tongo.TonNodeBlockIdExt `tlSumType:"0dcf7763"`
@@ -1341,19 +1338,18 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 		SumType:         "GetBlockRequest",
 		GetBlockRequest: blockID,
 	}
-
 	rBytes, err := tl.Marshal(r)
 	if err != nil {
-		return nil, tongo.Block{}, err
+		return nil, err
 	}
 	req := makeLiteServerQueryRequest(rBytes)
 	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
 	if err != nil {
-		return nil, tongo.Block{}, err
+		return nil, err
 	}
 	resp, err := server.Request(ctx, req)
 	if err != nil {
-		return nil, tongo.Block{}, err
+		return nil, err
 	}
 	var pResp struct {
 		tl.SumType
@@ -1366,15 +1362,30 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 	reader := bytes.NewReader(resp)
 	err = tl.Unmarshal(reader, &pResp)
 	if err != nil {
-		return nil, tongo.Block{}, err
+		return nil, err
 	}
 	if pResp.SumType == "Error" {
 		if pResp.Error.Message == "block is not applied" {
-			return nil, tongo.Block{}, ErrBlockNotApplied
+			return nil, ErrBlockNotApplied
 		}
-		return nil, tongo.Block{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
 	}
-	cell, err := boc.DeserializeBoc(pResp.BlockData.Data)
+	raw := tongo.RawBlock{
+		ID:   pResp.BlockData.ID,
+		Data: pResp.BlockData.Data,
+	}
+	return &raw, nil
+}
+
+// GetBlock
+// liteServer.getBlock id:tonNode.blockIdExt = liteServer.BlockData;
+// liteServer.blockData id:tonNode.blockIdExt data:bytes = liteServer.BlockData;
+func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.TonNodeBlockIdExt, tongo.Block, error) {
+	rawBlock, err := c.GetRawBlock(ctx, blockID)
+	if err != nil {
+		return nil, tongo.Block{}, err
+	}
+	cell, err := boc.DeserializeBoc(rawBlock.Data)
 	if err != nil {
 		return nil, tongo.Block{}, err
 	}
@@ -1383,7 +1394,7 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 	if err != nil {
 		return nil, tongo.Block{}, err
 	}
-	return &pResp.BlockData.ID, data, nil
+	return &rawBlock.ID, data, nil
 }
 
 // LookupBlock

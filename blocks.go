@@ -249,6 +249,13 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 	return nil
 }
 
+// RawBlock contains a block's data without TL-B deserialization returned by a lite server's GetBlock method.
+type RawBlock struct {
+	ID TonNodeBlockIdExt
+	// Data contains a BOC.
+	Data []byte
+}
+
 // Block
 // block#11ef55aa global_id:int32
 // info:^BlockInfo value_flow:^ValueFlow

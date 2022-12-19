@@ -244,7 +244,6 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 		cellsArray = append(cellsArray, cell)
 		refsArray = append(refsArray, refs)
 	}
-
 	for i := int(header.cellsNum - 1); i >= 0; i-- {
 		c := refsArray[i]
 		if len(c) > 4 {

@@ -165,6 +165,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
+		res.PrevVertRef = &BlkPrevInfo{}
 		err = res.PrevVertRef.UnmarshalTLB(c1, false)
 		if err != nil {
 			return err

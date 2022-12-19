@@ -64,7 +64,7 @@ func (c *Client) Request(ctx context.Context, q Query) (Message, error) {
 }
 
 func (c *Client) registerCallback(id queryID) chan Message {
-	resp := make(chan Message)
+	resp := make(chan Message, 1)
 	c.queriesMutex.Lock()
 	c.queries[id] = resp
 	c.queriesMutex.Unlock()
@@ -143,11 +143,6 @@ func (c *Client) processQueryAnswer(p Packet) error {
 	if len(data) < length {
 		return fmt.Errorf("payload is smaller than should be according to length")
 	}
-	select {
-	case resp <- data[:length]: //todo: maybe copy
-	default:
-		return fmt.Errorf("can't write query answer")
-	}
-
+	resp <- data[:length]
 	return nil
 }

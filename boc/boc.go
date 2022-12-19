@@ -117,7 +117,7 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 	}
 
 	// Roots
-	rootList := make([]uint, 0)
+	rootList := make([]uint, 0, rootsNum)
 	for i := 0; i < int(rootsNum); i++ {
 		rootList = append(rootList, readNBytesUIntFromArray(sizeBytes, boc))
 		boc = boc[sizeBytes:]
@@ -199,8 +199,6 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	} else {
 		cell = NewCell()
 	}
-	var refs = make([]int, 0)
-
 	if withHashes {
 		maskBits := int(math.Ceil(math.Log2(float64(levelMask) + 1)))
 		hashesNum := maskBits + 1
@@ -218,6 +216,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	}
 	cellData = cellData[dataBytesSize:]
 
+	refs := make([]int, 0, refNum)
 	for i := 0; i < refNum; i++ {
 		refs = append(refs, int(readNBytesUIntFromArray(referenceIndexSize, cellData)))
 		cellData = cellData[referenceIndexSize:]
@@ -232,8 +231,8 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 		return nil, err
 	}
 	cellsData := header.cellsData
-	cellsArray := make([]*Cell, 0)
-	refsArray := make([][]int, 0)
+	cellsArray := make([]*Cell, 0, header.cellsNum)
+	refsArray := make([][]int, 0, header.cellsNum)
 
 	for i := 0; i < int(header.cellsNum); i++ {
 		cell, refs, residue, err := deserializeCellData(cellsData, header.sizeBytes)
@@ -260,12 +259,10 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 		}
 	}
 
-	rootCells := make([]*Cell, 0)
-
+	rootCells := make([]*Cell, 0, len(header.rootList))
 	for _, item := range header.rootList {
 		rootCells = append(rootCells, cellsArray[item])
 	}
-
 	return rootCells, nil
 }
 

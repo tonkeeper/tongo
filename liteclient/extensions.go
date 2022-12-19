@@ -1,5 +1,7 @@
 package liteclient
 
+//go:generate go run generator.go
+
 import "fmt"
 
 func (t LiteServerError) Error() string {

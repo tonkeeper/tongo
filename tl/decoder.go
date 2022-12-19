@@ -67,10 +67,10 @@ func decode(buf io.Reader, val reflect.Value) error {
 		if err != nil {
 			return err
 		}
-		switch binary.BigEndian.Uint32(b) {
-		case 0xb5757299:
+		switch binary.LittleEndian.Uint32(b) {
+		case 0x997275b5:
 			val.SetBool(true)
-		case 0x379779bc:
+		case 0xbc799737:
 			val.SetBool(false)
 		default:
 			return fmt.Errorf("invalid Bool tag")
@@ -210,13 +210,14 @@ func decodeBasicStruct(r io.Reader, val reflect.Value) error {
 }
 
 func compareWithTag(tagBytes [4]byte, tag string) (bool, error) {
-	var a [4]byte
 	t, err := hex.DecodeString(tag)
 	if err != nil {
 		return false, err
 	}
-	copy(a[:], t)
-	return bytes.Equal(a[:], tagBytes[:]), nil
+	if len(t) != 4 {
+		return false, fmt.Errorf("invalid tag")
+	}
+	return bytes.Equal([]byte{t[3], t[2], t[1], t[0]}, tagBytes[:]), nil
 }
 
 func decodeVector(r io.Reader, val reflect.Value) error {

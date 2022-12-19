@@ -81,7 +81,7 @@ func (p Packet) MagicType() uint32 {
 	if len(p.Payload) < 4 {
 		return 0
 	}
-	return binary.BigEndian.Uint32(p.Payload[:4])
+	return binary.LittleEndian.Uint32(p.Payload[:4])
 }
 
 func ParsePacket(r io.Reader, decryptor cipher.Stream) (Packet, error) {

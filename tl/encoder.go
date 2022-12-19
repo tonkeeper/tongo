@@ -135,13 +135,14 @@ func encodeSumType(val reflect.Value) ([]byte, error) {
 }
 
 func encodeTag(tag string) ([4]byte, error) {
-	var res [4]byte
 	b, err := hex.DecodeString(tag)
 	if err != nil {
 		return [4]byte{}, err
 	}
-	copy(res[:], b)
-	return res, nil
+	if len(b) != 4 {
+		return [4]byte{}, fmt.Errorf("invalid tag")
+	}
+	return [4]byte{b[3], b[2], b[1], b[0]}, nil
 }
 
 func encodeVector(val reflect.Value) ([]byte, error) {

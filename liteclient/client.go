@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	magicADNLQuery       = 0x7af98bb4 // crc32("adnl.message.query query_id:int256 query:bytes = adnl.Message")
-	magicADNLAnswer      = 0x1684ac0f // crc32("adnl.message.answer query_id:int256 answer:bytes = adnl.Message")
-	magicLiteServerQuery = 0xdf068c79 // crc32("liteServer.query#df068c79 data:bytes = Object")
+	magicADNLQuery       = 0xb48bf97a // crc32("adnl.message.query query_id:int256 query:bytes = adnl.Message")
+	magicADNLAnswer      = 0x0fac8416 // crc32("adnl.message.answer query_id:int256 answer:bytes = adnl.Message")
+	magicLiteServerQuery = 0x798c06df // crc32("liteServer.query#df068c79 data:bytes = Object")
 )
 
 type queryID [32]byte
@@ -39,7 +39,7 @@ func (c *Client) Request(ctx context.Context, q []byte) ([]byte, error) {
 	var id queryID
 	rand.Read(id[:])
 	data := make([]byte, 4, 44+len(q)) //create with small overhead for reducing garbage collector calls
-	binary.BigEndian.PutUint32(data, magicADNLQuery)
+	binary.LittleEndian.PutUint32(data, magicADNLQuery)
 	data = append(data, id[:]...)
 	data = append(data, encodeLength(len(q))...)
 	data = append(data, q...)
@@ -150,10 +150,10 @@ func (c *Client) processQueryAnswer(p Packet) error {
 	return nil
 }
 
-// liteServerRequest sends q as liteServer.query#df068c79 data:bytes = Object;
+// liteServerRequest sends q as liteServer.query data:bytes = Object;
 func (c *Client) liteServerRequest(ctx context.Context, q []byte) ([]byte, error) {
 	data := make([]byte, 4)
-	binary.BigEndian.PutUint32(data, magicLiteServerQuery)
+	binary.LittleEndian.PutUint32(data, magicLiteServerQuery)
 	data = append(data, tl.EncodeLength(len(q))...)
 	data = append(data, q...)
 	data = alignBytes(data)

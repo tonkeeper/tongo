@@ -451,7 +451,7 @@ func tagToUint32(tag string) (uint32, error) {
 	tag = strings.TrimPrefix(tag, "#")
 	b, err := hex.DecodeString(tag)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("ivalid tag %s err: %s", tag, err.Error())
 	}
 	b1 := make([]byte, 4)
 	copy(b1[:], b)
@@ -494,7 +494,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	} else {
 		builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
 		builder.WriteString("payload := make([]byte, 4)\n")
-		builder.WriteString(fmt.Sprintf("binary.BigEndian.PutUint32(payload, %#x)\n", tag))
+		builder.WriteString(fmt.Sprintf("binary.LittleEndian.PutUint32(payload, %#x)\n", tag))
 	}
 
 	builder.WriteString("resp, err := c.liteServerRequest(ctx, payload)\n")
@@ -502,7 +502,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 
 	builder.WriteString(fmt.Sprintf("if len(resp) < 4 {return %s{}, fmt.Errorf(\"not enought bytes for tag\")}\n",
 		responseName))
-	builder.WriteString("tag := binary.BigEndian.Uint32(resp[:4])\n")
+	builder.WriteString("tag := binary.LittleEndian.Uint32(resp[:4])\n")
 
 	// lite server error processing
 	builder.WriteString(fmt.Sprintf("if tag == %#x {\n", errType.tags[0]))

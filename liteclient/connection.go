@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	magicTCPPing = 0x9a2b084d //crc32(tcp.ping random_id:long = tcp.Pong)
-	magicTCPPong = 0x03fb69dc //crc32(tcp.pong random_id:long = tcp.Pong)
+	magicTCPPing = 0x4d082b9a //crc32(tcp.ping random_id:long = tcp.Pong)
+	magicTCPPong = 0xdc69fb03 //crc32(tcp.pong random_id:long = tcp.Pong)
 )
 
 type ConnectionStatus int
@@ -196,7 +196,7 @@ func (c *Connection) Responses() chan Packet {
 
 func (c *Connection) ping() {
 	ping := make([]byte, 12)
-	binary.BigEndian.PutUint32(ping[:4], magicTCPPing)
+	binary.LittleEndian.PutUint32(ping[:4], magicTCPPing)
 	for {
 		time.Sleep(time.Second * 3)
 		mrand.Read(ping[4:])

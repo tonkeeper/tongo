@@ -352,24 +352,24 @@ type HashmapAugE[sizeT fixedSize, T1, T2 any] struct {
 }
 
 func (h *HashmapAugE[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	var temp Maybe[struct {
-		M     Ref[HashmapAug[sizeT, T1, T2]]
+	var temp struct {
+		M     Maybe[Ref[HashmapAug[sizeT, T1, T2]]]
 		Extra T2
-	}]
+	}
 	err := Unmarshal(c, &temp)
-	h.m = temp.Value.M.Value
-	h.extra = temp.Value.Extra
+	h.m = temp.M.Value.Value
+	h.extra = temp.Extra
 	return err
 }
 
 func (h HashmapAugE[sizeT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
-	var temp Maybe[struct {
-		M     Ref[HashmapAug[sizeT, T1, T2]]
+	var temp struct {
+		M     Maybe[Ref[HashmapAug[sizeT, T1, T2]]]
 		Extra T2
-	}]
-	temp.Null = len(h.m.keys) == 0
-	temp.Value.M.Value = h.m
-	temp.Value.Extra = h.extra
+	}
+	temp.M.Null = len(h.m.keys) == 0
+	temp.M.Value.Value = h.m
+	temp.Extra = h.extra
 	return Marshal(c, temp)
 }
 

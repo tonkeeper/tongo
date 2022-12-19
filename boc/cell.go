@@ -166,7 +166,9 @@ func (c *Cell) WriteInt(val int64, bitLen int) error {
 }
 
 func (c *Cell) setTopUppedArray(arr []byte, fulfilledBytes bool) error {
-	return c.bits.SetTopUppedArray(arr, fulfilledBytes)
+	err := c.bits.SetTopUppedArray(arr, fulfilledBytes)
+	c.bits.cap = 1023
+	return err
 }
 
 func (c *Cell) getBuffer() []byte {

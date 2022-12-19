@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"encoding/hex"
+	"fmt"
 	"math/big"
 	"reflect"
 	"testing"
@@ -253,5 +254,42 @@ func TestEmptyHashMap(t *testing.T) {
 	}
 	if len(c.Refs()) != 0 || c.BitSize() != 1 {
 		t.Fatal("invalid cell")
+	}
+}
+
+func TestHahmapAug(t *testing.T) {
+	var cases = []struct{ Name, Boc string }{
+		//{Name: "aug-dict-0",
+		//	Boc: "te6ccgEBAQEABwAACQAAAABA"},
+		{Name: "aug-dict-1",
+			Boc: "te6ccgEBAgEAFQABCYAAAAVAAQAVoAACAAAAFAAAAAM="},
+		{Name: "aug-dict-2",
+			Boc: "te6ccgEBBAEAJwABCYAAAA9AAQIKzQAAAB4CAwARZAAAACgAAAAGABHQAAAAoAAAABQ="},
+		{Name: "aug-dict-5",
+			Boc: "te6ccgEBCgEAYwABCYAAAEtAAQIKywAAAJYCAwIJAAAADyAEBQIJAAAAFqAICQIJAAAAB6AGBwARsgAAADwAAAAHABFkAAAAKAAAAAYAEdAAAACgAAAAFAAR2AAAAUAAAAAkABGyAAAAZAAAAAs="},
+		{Name: "aug-dict-20",
+			Boc: "te6ccgECKAEAAZwAAQmAAAQaQAECCscAAAg0AgMCCQAAASwgBAUCCQAAAOEgICECCQAAAKUgBgcCCQAAAIcgGhsCCQAAAEYgCAkCCQAAAF8gFBUCCQAAACWgCgsCCQAAACCgEhMCCQAAAA8gDA0CCQAAABagEBECCQAAAAegDg8AEbIAAAA8AAAABwARZAAAACgAAAAGABHQAAAAoAAAABQAEdgAAAFAAAAAJAARsgAAAGQAAAALABOiAAAAHgAAAANAABOggAAAIwAAAAPAAgkAAAAqoBYXAgkAAAA0oBgZABHQAAABQAAAACIAE6CAAAAtAAAABMAAE6IAAAAyAAAABUAAE6SAAAA3AAAABcACCQAAAD6gHB0CCQAAAEigHh8AE6wAAAAeAAAAAyAAE6pAAAAggAAAA2AAE6kAAAAjAAAAA6AAE6hAAAAlgAAAA+ACCQAAAK8gIiMAE7kAAAAMgAAAAUgCCQAAAFKgJCUCCQAAAFygJicAEdQAAAKAAAAAQgATqEAAACqAAAAEYAATqQAAAC0AAAAEoAATqkAAAC+AAAAE4A=="},
+	}
+
+	for _, c := range cases {
+		cells, err := boc.DeserializeBocBase64(c.Boc)
+		if err != nil {
+			t.Fatal(c.Name, err)
+		}
+		cells[0].WriteUint(15, 5)
+
+		var h struct {
+			H      HashmapAugE[Size16, int16, int32]
+			Suffix Uint5
+		}
+		err = Unmarshal(cells[0], &h)
+		if err != nil {
+			t.Fatal(c.Name, err)
+		}
+		if h.Suffix != 15 {
+			t.Fatal("invalid suffix", c.Name)
+		}
+		fmt.Println(c.Name)
+		fmt.Println(h.H.Values())
 	}
 }

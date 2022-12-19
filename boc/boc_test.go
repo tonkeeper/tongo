@@ -3,10 +3,9 @@ package boc
 import (
 	"encoding/hex"
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestBigCell(t *testing.T) {
@@ -103,19 +102,28 @@ func TestDecodeTreeWithDuplicates(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		bocBytes, err := hex.DecodeString(tc.encodedBoc)
-		require.Nil(t, err)
-
+		if err != nil {
+			t.Errorf("failed to decode boc: %v", err)
+		}
 		cells, err := DeserializeBoc(bocBytes)
-		require.Nil(t, err)
-		require.Equal(t, tc.expectedRoots, len(cells))
-
+		if err != nil {
+			t.Errorf("failed to deserialize boc: %v", err)
+		}
+		if len(cells) != tc.expectedRoots {
+			t.Errorf("len(DeserializeBoc()) = %d; want %d", len(cells), tc.expectedRoots)
+		}
 		var allIndexes []int
 		for _, cell := range cells {
 			indexes, err := visit(cell)
-			require.Nil(t, err)
+			if err != nil {
+				t.Errorf("visit() failed %v", err)
+			}
 			allIndexes = append(allIndexes, indexes...)
 		}
-		require.Equal(t, tc.expectedIndexes, allIndexes)
+
+		if !reflect.DeepEqual(tc.expectedIndexes, allIndexes) {
+			t.Errorf("got indexes = %d; want %d", allIndexes, tc.expectedIndexes)
+		}
 	}
 }
 
@@ -123,21 +131,33 @@ const complexBoc = "b5ee9c7202020d52000a00009fc400090008000700060005000400030002
 
 func TestDecodeMultirootBocContainingLongs(t *testing.T) {
 	bocBytes, err := hex.DecodeString(complexBoc)
-	require.Nil(t, err)
+	if err != nil {
+		t.Errorf("failed to decode boc: %v", err)
+	}
 
 	cells, err := DeserializeBoc(bocBytes)
-	require.Nil(t, err)
-	require.Equal(t, 10, len(cells))
+	if err != nil {
+		t.Errorf("failed to deserialize boc: %v", err)
+	}
+	if len(cells) != 10 {
+		t.Errorf("len(DeserializeBoc()) = %d; want %d", len(cells), 10)
+	}
 
 	var allIndexes []int
 	for _, cell := range cells {
 		indexes, err := visit(cell)
-		require.Nil(t, err)
+		if err != nil {
+			t.Errorf("visit() failed %v", err)
+		}
 		allIndexes = append(allIndexes, indexes...)
 	}
-	require.Equal(t, 3410, len(allIndexes))
+	if len(allIndexes) != 3410 {
+		t.Errorf("len expected indexes = %d; want %d", len(allIndexes), 3410)
+	}
 	for i, value := range allIndexes {
-		require.Equal(t, i, value)
+		if i != value {
+			t.Error()
+		}
 	}
 }
 
@@ -169,28 +189,46 @@ we must ensure that we reveal as little as possible.`
 
 	lines := strings.Split(encodedText, "\n")
 	bocBytes, err := hex.DecodeString(s)
-	require.Nil(t, err)
+	if err != nil {
+		t.Errorf("hex.DecodeString() failed: %v", err)
+	}
 
 	cells, err := DeserializeBoc(bocBytes)
-	require.Nil(t, err)
-	require.Equal(t, len(lines), len(cells))
+	if err != nil {
+		t.Errorf("DeserializeBoc() failed: %v", err)
+	}
+	if len(cells) != len(lines) {
+		t.Errorf("len(DeserializeBoc()) = %d; want %d", len(cells), len(lines))
+	}
 
 	for i, cell := range cells {
 		// each cell is built with store_long(index).store_long(length).store_bytes(line)
 		index, err := cell.ReadUint(64)
-		require.Nil(t, err)
-		require.Equal(t, i, int(index))
+		if err != nil {
+			t.Errorf("ReadUint() failed: %v", err)
+		}
+		if i != int(index) {
+			t.Error()
+		}
 		length, err := cell.ReadUint(64)
-		require.Nil(t, err)
+		if err != nil {
+			t.Errorf("ReadUint() failed: %v", err)
+		}
 		bytes, err := cell.ReadBytes(int(length))
-		require.Nil(t, err)
-		require.Equal(t, lines[i], string(bytes))
+		if err != nil {
+			t.Errorf("ReadUint() failed: %v", err)
+		}
+		if lines[i] != string(bytes) {
+			t.Errorf("cell contains '%v': want '%v'", string(bytes), lines[i])
+		}
 	}
 }
 
 func BenchmarkDeserializeBoc(b *testing.B) {
 	bocBytes, err := hex.DecodeString(complexBoc)
-	require.Nil(b, err)
+	if err != nil {
+		b.Errorf("hex.DecodeString() failed: %v", err)
+	}
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {

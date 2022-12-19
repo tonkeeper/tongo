@@ -2,7 +2,6 @@ package tlb
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math/big"
 	"reflect"
 	"testing"
@@ -257,18 +256,25 @@ func TestEmptyHashMap(t *testing.T) {
 	}
 }
 
-func TestHahmapAug(t *testing.T) {
-	var cases = []struct{ Name, Boc string }{
-		//{Name: "aug-dict-0",
-		//	Boc: "te6ccgEBAQEABwAACQAAAABA"},
+func TestHashmapAug(t *testing.T) {
+	var cases = []struct {
+		Name, Boc string
+		values    []int32
+	}{
+		{Name: "aug-dict-0",
+			Boc: "te6ccgEBAQEABwAACQAAAABA"},
 		{Name: "aug-dict-1",
-			Boc: "te6ccgEBAgEAFQABCYAAAAVAAQAVoAACAAAAFAAAAAM="},
+			Boc:    "te6ccgEBAgEAFQABCYAAAAVAAQAVoAACAAAAFAAAAAM=",
+			values: []int32{1}},
 		{Name: "aug-dict-2",
-			Boc: "te6ccgEBBAEAJwABCYAAAA9AAQIKzQAAAB4CAwARZAAAACgAAAAGABHQAAAAoAAAABQ="},
+			Boc:    "te6ccgEBBAEAJwABCYAAAA9AAQIKzQAAAB4CAwARZAAAACgAAAAGABHQAAAAoAAAABQ=",
+			values: []int32{1, 2}},
 		{Name: "aug-dict-5",
-			Boc: "te6ccgEBCgEAYwABCYAAAEtAAQIKywAAAJYCAwIJAAAADyAEBQIJAAAAFqAICQIJAAAAB6AGBwARsgAAADwAAAAHABFkAAAAKAAAAAYAEdAAAACgAAAAFAAR2AAAAUAAAAAkABGyAAAAZAAAAAs="},
+			Boc:    "te6ccgEBCgEAYwABCYAAAEtAAQIKywAAAJYCAwIJAAAADyAEBQIJAAAAFqAICQIJAAAAB6AGBwARsgAAADwAAAAHABFkAAAAKAAAAAYAEdAAAACgAAAAFAAR2AAAAUAAAAAkABGyAAAAZAAAAAs=",
+			values: []int32{1, 2, 3, 4, 5}},
 		{Name: "aug-dict-20",
-			Boc: "te6ccgECKAEAAZwAAQmAAAQaQAECCscAAAg0AgMCCQAAASwgBAUCCQAAAOEgICECCQAAAKUgBgcCCQAAAIcgGhsCCQAAAEYgCAkCCQAAAF8gFBUCCQAAACWgCgsCCQAAACCgEhMCCQAAAA8gDA0CCQAAABagEBECCQAAAAegDg8AEbIAAAA8AAAABwARZAAAACgAAAAGABHQAAAAoAAAABQAEdgAAAFAAAAAJAARsgAAAGQAAAALABOiAAAAHgAAAANAABOggAAAIwAAAAPAAgkAAAAqoBYXAgkAAAA0oBgZABHQAAABQAAAACIAE6CAAAAtAAAABMAAE6IAAAAyAAAABUAAE6SAAAA3AAAABcACCQAAAD6gHB0CCQAAAEigHh8AE6wAAAAeAAAAAyAAE6pAAAAggAAAA2AAE6kAAAAjAAAAA6AAE6hAAAAlgAAAA+ACCQAAAK8gIiMAE7kAAAAMgAAAAUgCCQAAAFKgJCUCCQAAAFygJicAEdQAAAKAAAAAQgATqEAAACqAAAAEYAATqQAAAC0AAAAEoAATqkAAAC+AAAAE4A=="},
+			Boc:    "te6ccgECKAEAAZwAAQmAAAQaQAECCscAAAg0AgMCCQAAASwgBAUCCQAAAOEgICECCQAAAKUgBgcCCQAAAIcgGhsCCQAAAEYgCAkCCQAAAF8gFBUCCQAAACWgCgsCCQAAACCgEhMCCQAAAA8gDA0CCQAAABagEBECCQAAAAegDg8AEbIAAAA8AAAABwARZAAAACgAAAAGABHQAAAAoAAAABQAEdgAAAFAAAAAJAARsgAAAGQAAAALABOiAAAAHgAAAANAABOggAAAIwAAAAPAAgkAAAAqoBYXAgkAAAA0oBgZABHQAAABQAAAACIAE6CAAAAtAAAABMAAE6IAAAAyAAAABUAAE6SAAAA3AAAABcACCQAAAD6gHB0CCQAAAEigHh8AE6wAAAAeAAAAAyAAE6pAAAAggAAAA2AAE6kAAAAjAAAAA6AAE6hAAAAlgAAAA+ACCQAAAK8gIiMAE7kAAAAMgAAAAUgCCQAAAFKgJCUCCQAAAFygJicAEdQAAAKAAAAAQgATqEAAACqAAAAEYAATqQAAAC0AAAAEoAATqkAAAC+AAAAE4A==",
+			values: []int32{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}},
 	}
 
 	for _, c := range cases {
@@ -279,7 +285,7 @@ func TestHahmapAug(t *testing.T) {
 		cells[0].WriteUint(15, 5)
 
 		var h struct {
-			H      HashmapAugE[Size16, int16, int32]
+			H      HashmapAugE[Size16, int32, int32]
 			Suffix Uint5
 		}
 		err = Unmarshal(cells[0], &h)
@@ -289,7 +295,21 @@ func TestHahmapAug(t *testing.T) {
 		if h.Suffix != 15 {
 			t.Fatal("invalid suffix", c.Name)
 		}
-		fmt.Println(c.Name)
-		fmt.Println(h.H.Values())
+
+		if !equal(h.H.Values(), c.values) {
+			t.Fatal("invalid values", c.Name)
+		}
 	}
+}
+
+func equal[T comparable](a, b []T) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }

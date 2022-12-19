@@ -1,11 +1,13 @@
 <interfaces>
     <interface group="nft">
         <get_method name="get_nft_data" callback="true">
-            <tinyint name="init">int8</tinyint>
-            <int name="index">int257</int>
-            <slice name="collection_address">AccountID</slice>
-            <slice name="owner_address">AccountID</slice>
-            <cell name="individual_content">any</cell>
+            <output>
+                <tinyint name="init">int8</tinyint>
+                <int name="index">int257</int>
+                <slice name="collection_address">AccountID</slice>
+                <slice name="owner_address">AccountID</slice>
+                <cell name="individual_content">any</cell>
+            </output>
         </get_method>
         <internal name="transfer">
             <input>
@@ -36,13 +38,15 @@
                 <int name="index">int257</int>
                 <cell name="individual_content">any</cell>
             </input>
-            <cell name="content">
-                text#_ {n:#} data:(SnakeData ~n) = Text;
-                snake#00 data:(SnakeData ~n) = ContentData;
-                chunks#01 data:ChunkedData = ContentData;
-                onchain#00 data:(HashMapE 256 ^ContentData) = FullContent;
-                offchain#01 uri:Text = FullContent;
-            </cell>
+            <output>
+                <cell name="content">
+                    text#_ {n:#} data:(SnakeData ~n) = Text;
+                    snake#00 data:(SnakeData ~n) = ContentData;
+                    chunks#01 data:ChunkedData = ContentData;
+                    onchain#00 data:(HashMapE 256 ^ContentData) = FullContent;
+                    offchain#01 uri:Text = FullContent;
+                </cell>
+            </output>
         </get_method>
     </interface>
     <interface group="dns">
@@ -51,20 +55,23 @@
                 <slice name="domain">[]byte</slice>
                 <int name="category">int256</int>
             </input>
-            <tinyint name="resolved_bits">int64</tinyint>
-            <cell name="result">
-                <case>
-                    dns_text#1eda _:Text = DNSRecord;
-                    dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
-                    dns_adnl_address#ad01 adnl_addr:bits256 flags:(## 8)
-                    proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
-                    dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8)
-                    cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
-                </case>
-                <case>
+            <output>
+                <tinyint name="resolved_bits">int64</tinyint>
+                <cell name="result">
+                dns_text#1eda _:Text = DNSRecord;
+                dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
+                dns_adnl_address#ad01 adnl_addr:bits256 flags:(## 8)
+                proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
+                dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8)
+                cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
+                </cell>
+            </output>
+            <output>
+                <tinyint name="resolved_bits">int64</tinyint>
+                <cell name="result">
                     _ (Hashmap 256 DNSRecord) = DNS_RecordSet;
-                </case>
-            </cell>
+                </cell>
+            </output>
         </get_method>
     </interface>
 </interfaces>

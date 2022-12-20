@@ -270,6 +270,33 @@ type Block struct {
 	Extra       BlockExtra `tlb:"^"`
 }
 
+// ShardIDs returns a list of IDs of shard blocks this block refers to.
+func (blk *Block) ShardIDs() ([]TonNodeBlockIdExt, error) {
+	items := blk.Extra.Custom.Value.Value.ShardHashes.Hashes.Items()
+	shards := make([]TonNodeBlockIdExt, 0, len(items))
+	for _, item := range blk.Extra.Custom.Value.Value.ShardHashes.Hashes.Items() {
+		item.Key.ResetCounter()
+		bits := item.Key.BitsAvailableForRead()
+		workchain, err := item.Key.ReadInt(bits)
+		if err != nil {
+			// shouldn't happen but anyway
+			return nil, err
+		}
+		for _, x := range item.Value.Value.BinTree.Values {
+			shardID := x.ToBlockId(int32(workchain))
+			if shardID.Seqno == 0 {
+				continue
+			}
+			if workchain != 0 {
+				// TODO: verify that workchain is correct.
+				panic("shard.workchain must be 0")
+			}
+			shards = append(shards, shardID)
+		}
+	}
+	return shards, nil
+}
+
 // TODO: clarify the description of the structure
 type BlockHeader struct {
 	Magic    tlb.Magic `tlb:"block#11ef55aa"`

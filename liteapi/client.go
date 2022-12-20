@@ -108,6 +108,162 @@ func (c *Client) getServerByBlockID(block tongo.TonNodeBlockId) (*liteclient.Cli
 	return nil, fmt.Errorf("can't find server for block %v", block.String())
 }
 
+func (c *Client) GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerMasterchainInfo, error) {
+	return c.getMasterchainServer().LiteServerGetMasterchainInfo(ctx)
+}
+
+func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode int32) (liteclient.LiteServerMasterchainInfoExt, error) {
+	return c.getMasterchainServer().LiteServerGetMasterchainInfoExt(ctx, liteclient.LiteServerGetMasterchainInfoExtRequest(mode))
+}
+
+func (c *Client) GetTime(ctx context.Context) (int32, error) {
+	res, err := c.getMasterchainServer().LiteServerGetTime(ctx)
+	return int32(res), err
+}
+
+func (c *Client) GetVersion(ctx context.Context) (liteclient.LiteServerVersion, error) {
+	return c.getMasterchainServer().LiteServerGetVersion(ctx)
+}
+
+func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (tongo.Block, error) {
+	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	res, err := server.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest(blockID))
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	cells, err := boc.DeserializeBoc(res.Data)
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	if len(cells) != 1 {
+		return tongo.Block{}, boc.ErrNoOneRootCell
+	}
+	var data tongo.Block
+	err = tlb.Unmarshal(cells[0], &data)
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	// TODO: maybe return blockID
+	return data, nil
+}
+
+func (c *Client) GetState(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (tongo.State, error) {
+	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	res, err := server.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest(blockID))
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	cells, err := boc.DeserializeBoc(res.Data)
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	if len(cells) != 1 {
+		return tongo.Block{}, boc.ErrNoOneRootCell
+	}
+	var state tongo.State // TODO: add State tlb type
+	err = tlb.Unmarshal(cells[0], &state)
+	if err != nil {
+		return tongo.Block{}, err
+	}
+	// TODO: maybe return blockID, rootHash, fileHash
+	return state, nil
+}
+
+func (c *Client) GetBlockHeader(ctx context.Context, blockID tongo.TonNodeBlockIdExt, mode int32) (tongo.BlockInfo, error) {
+	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
+	if err != nil {
+		return tongo.BlockInfo{}, err
+	}
+	res, err := server.LiteServerGetBlockHeader(ctx, liteclient.LiteServerGetBlockHeaderRequest{
+		Id:   blockID,
+		Mode: mode,
+	})
+	if err != nil {
+		return tongo.BlockInfo{}, err
+	}
+	return decodeBlockHeader(res)
+}
+
+func (c *Client) LookupBlock(ctx context.Context, mode int32, blockID tongo.TonNodeBlockId, lt *int64, utime *int32) (tongo.BlockInfo, error) {
+	server, err := c.getServerByBlockID(blockID)
+	if err != nil {
+		return tongo.BlockInfo{}, err
+	}
+	res, err := server.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
+		Mode:  mode,
+		Id:    liteclient.TonNodeBlockId(blockID),
+		Lt:    lt,
+		Utime: utime,
+	})
+	if err != nil {
+		return tongo.BlockInfo{}, err
+	}
+	return decodeBlockHeader(res)
+}
+
+func decodeBlockHeader(header liteclient.LiteServerBlockHeader) (tongo.BlockInfo, error) {
+	cells, err := boc.DeserializeBoc(header.HeaderProof)
+	if err != nil {
+		return tongo.BlockInfo{}, err
+	}
+	if len(cells) != 1 {
+		return tongo.BlockInfo{}, boc.ErrNoOneRootCell
+	}
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.BlockHeader]
+	}
+	err = tlb.Unmarshal(cells[0], &proof)
+	if err != nil {
+		return tongo.BlockInfo{}, err
+	}
+	// TODO: maybe return blockID, mode
+	return proof.Proof.VirtualRoot.Info, nil // TODO: maybe blockHeader
+}
+
+func (c *Client) SendMessage(ctx context.Context, payload []byte) (int32, error) {
+	res, err := c.getMasterchainServer().LiteServerSendMessage(ctx, payload)
+	return int32(res), err
+}
+
+func (c *Client) RunSmcMethod(
+	ctx context.Context,
+	mode int32,
+	id tongo.TonNodeBlockIdExt,
+	accountID tongo.AccountID,
+	method string,
+	params tongo.VmStack,
+) (tongo.VmStack, error) {
+	stack, err := tl.Marshal(params)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	req := liteclient.LiteServerRunSmcMethodRequest{
+		Mode:     mode,
+		Id:       id,
+		Account:  accountID,
+		MethodId: int64(utils.Crc16String(method)&0xffff) | 0x10000,
+		Params:   stack,
+	}
+	server, err := c.getServerByAccountID(accountID)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	res, err := server.LiteServerRunSmcMethod(ctx, req)
+	if err != nil {
+		return tongo.VmStack{}, err
+	}
+	// TODO: deserialize all cells
+	_ = res
+	return tongo.VmStack{}, fmt.Errorf("not implemented")
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
 func (c *Client) GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error) {
 	a, err := c.getLastRawAccountState(ctx, accountId)
 	if err != nil {
@@ -238,23 +394,6 @@ func (c *Client) getRawAccountState(ctx context.Context, masterchainInfo tongo.T
 	return parsedResp.LiteServerAccountState, nil
 }
 
-type LiteServerMasterchainInfo struct {
-	Last          tongo.TonNodeBlockIdExt
-	StateRootHash tongo.Hash
-	// TODO: add init
-}
-
-type LiteServerMasterchainInfoExt struct {
-	Mode          uint32
-	Version       uint32
-	Capabilities  uint64
-	Last          tongo.TonNodeBlockIdExt
-	LastUTime     uint32
-	Now           uint32
-	StateRootHash tongo.Hash
-	// TODO: add init
-}
-
 type LiteServerAccountState struct {
 	Id         tongo.TonNodeBlockIdExt
 	ShardBlk   tongo.TonNodeBlockIdExt
@@ -284,46 +423,6 @@ func makeLiteServerQueryRequest(payload []byte) []byte {
 		data = append(data, make([]byte, 4-left)...)
 	}
 	return data
-}
-
-func decodeLength(b []byte) (int, []byte, error) {
-	// TODO: import from ADNL
-	if len(b) == 0 {
-		return 0, nil, fmt.Errorf("size should contains at least one byte")
-	}
-	if b[0] == 255 {
-		return 0, nil, fmt.Errorf("invalid first byte value %x", b[0])
-	}
-	if b[0] < 254 {
-		return int(b[0]), b[1:], nil
-	}
-	if b[0] != 254 {
-		panic("how it cat be possible? you are fucking wizard!")
-	}
-	if len(b) < 4 {
-		return 0, nil, fmt.Errorf("not enought bytes for decoding size")
-	}
-	b[0] = 0
-	i := binary.LittleEndian.Uint32(b[:4])
-	b[0] = 254
-	return int(i) >> 8, b[4:], nil
-}
-
-func makeLiteServerGetMasterchainInfoRequest() []byte {
-	payload := make([]byte, 4)
-	binary.BigEndian.PutUint32(payload, LiteServerGetMasterchainInfoTag)
-	return payload
-}
-
-func makeLiteServerGetMasterchainInfoExtRequest(mode uint32) ([]byte, error) {
-	payload := make([]byte, 4)
-	binary.BigEndian.PutUint32(payload, LiteServerGetMasterchainInfoExtTag)
-	m, err := tl.Marshal(mode)
-	if err != nil {
-		return nil, err
-	}
-	payload = append(payload, m...)
-	return payload, nil
 }
 
 func makeLiteServerAllShardsInfoRequest(blockIdExt tongo.TonNodeBlockIdExt) ([]byte, error) {
@@ -633,48 +732,48 @@ func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId
 // Send binary payload to TON blockchain
 // liteServer.sendMessage body:bytes = liteServer.SendMsgStatus;
 // liteServer.sendMsgStatus status:int = liteServer.SendMsgStatus;
-func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
-	request := struct {
-		tl.SumType
-		SendMessage struct {
-			Body []byte
-		} `tlSumType:"82d40a69"`
-	}{
-		SumType:     "SendMessage",
-		SendMessage: struct{ Body []byte }{payload},
-	}
-	rBytes, err := tl.Marshal(request)
-	if err != nil {
-		return err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.getMasterchainServer().Request(ctx, req)
-	if err != nil {
-		return err
-	}
-	var response struct {
-		tl.SumType
-		SendMsgStatus struct {
-			Status int32
-		} `tlSumType:"97e55039"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &response)
-	if err != nil {
-		return err
-	}
-	if response.SumType == "Error" {
-		return fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
-	}
-	if response.SumType != "SendMsgStatus" {
-		return fmt.Errorf("not SendMsgStatus response")
-	}
-	if response.SendMsgStatus.Status != 1 {
-		return fmt.Errorf("message sending failed with status: %v", response.SendMsgStatus.Status)
-	}
-	return nil
-}
+//func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
+//	request := struct {
+//		tl.SumType
+//		SendMessage struct {
+//			Body []byte
+//		} `tlSumType:"82d40a69"`
+//	}{
+//		SumType:     "SendMessage",
+//		SendMessage: struct{ Body []byte }{payload},
+//	}
+//	rBytes, err := tl.Marshal(request)
+//	if err != nil {
+//		return err
+//	}
+//	req := makeLiteServerQueryRequest(rBytes)
+//	resp, err := c.getMasterchainServer().Request(ctx, req)
+//	if err != nil {
+//		return err
+//	}
+//	var response struct {
+//		tl.SumType
+//		SendMsgStatus struct {
+//			Status int32
+//		} `tlSumType:"97e55039"`
+//		Error LiteServerError `tlSumType:"48e1a9bb"`
+//	}
+//	reader := bytes.NewReader(resp)
+//	err = tl.Unmarshal(reader, &response)
+//	if err != nil {
+//		return err
+//	}
+//	if response.SumType == "Error" {
+//		return fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
+//	}
+//	if response.SumType != "SendMsgStatus" {
+//		return fmt.Errorf("not SendMsgStatus response")
+//	}
+//	if response.SendMsgStatus.Status != 1 {
+//		return fmt.Errorf("message sending failed with status: %v", response.SendMsgStatus.Status)
+//	}
+//	return nil
+//}
 
 var configCache = make(map[string]*config.Options)
 var configCacheMutex sync.RWMutex
@@ -899,212 +998,74 @@ func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockId
 	return &proof.Proof.VirtualRoot, nil
 }
 
-// GetMasterchainInfo
-// liteServer.getMasterchainInfo = liteServer.MasterchainInfo;
-// liteServer.masterchainInfo last:tonNode.blockIdExt state_root_hash:int256
-// init:tonNode.zeroStateIdExt = liteServer.MasterchainInfo;
-func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdExt, error) {
-	req := makeLiteServerQueryRequest(makeLiteServerGetMasterchainInfoRequest())
-	resp, err := c.getMasterchainServer().Request(ctx, req)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
-	}
-	var parsedResp struct {
-		tl.SumType
-		LiteServerError           LiteServerError           `tlSumType:"48e1a9bb"`
-		LiteServerMasterchainInfo LiteServerMasterchainInfo `tlSumType:"81288385"`
-	}
-	err = tl.Unmarshal(bytes.NewReader(resp), &parsedResp)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, err
-	}
-	switch parsedResp.SumType {
-	case "LiteServerError":
-		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
-	case "LiteServerMasterchainInfo":
-		return parsedResp.LiteServerMasterchainInfo.Last, nil
-	default:
-		return tongo.TonNodeBlockIdExt{}, fmt.Errorf("masterchain info not recieved")
-	}
-
-}
-
-// GetMasterchainInfoExt
-// liteServer.getMasterchainInfoExt mode:# = liteServer.MasterchainInfoExt;
-// liteServer.masterchainInfoExt mode:# version:int capabilities:long
-// last:tonNode.blockIdExt last_utime:int now:int state_root_hash:int256
-// init:tonNode.zeroStateIdExt = liteServer.MasterchainInfoExt;
-func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (LiteServerMasterchainInfoExt, error) {
-	asReq, err := makeLiteServerGetMasterchainInfoExtRequest(mode)
-	if err != nil {
-		return LiteServerMasterchainInfoExt{}, err
-	}
-	req := makeLiteServerQueryRequest(asReq)
-	resp, err := c.getMasterchainServer().Request(ctx, req)
-	if err != nil {
-		return LiteServerMasterchainInfoExt{}, err
-	}
-	var parsedResp struct {
-		tl.SumType
-		LiteServerError              LiteServerError              `tlSumType:"48e1a9bb"`
-		LiteServerMasterchainInfoExt LiteServerMasterchainInfoExt `tlSumType:"f5e0cca8"`
-	}
-	err = tl.Unmarshal(bytes.NewReader(resp), &parsedResp)
-	if err != nil {
-		return LiteServerMasterchainInfoExt{}, err
-	}
-	switch parsedResp.SumType {
-	case "LiteServerError":
-		return LiteServerMasterchainInfoExt{}, fmt.Errorf("lite server error: %v %v", parsedResp.LiteServerError.Code, parsedResp.LiteServerError.Message)
-	case "LiteServerMasterchainInfoExt":
-		return parsedResp.LiteServerMasterchainInfoExt, nil
-	default:
-		return LiteServerMasterchainInfoExt{}, fmt.Errorf("masterchain info not recieved")
-	}
-
-}
-
 // RunSmcMethod
 // Run smart contract method by name and parameters
 // liteServer.runSmcMethod mode:# id:tonNode.blockIdExt account:liteServer.accountId method_id:long params:bytes = liteServer.RunMethodResult;
 // liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
 // proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int result:mode.2?bytes = liteServer.RunMethodResult;
-func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.AccountID, method string, params tongo.VmStack) (uint32, tongo.VmStack, error) {
-	type runSmcRequest struct {
-		Mode     uint32
-		Id       tongo.TonNodeBlockIdExt
-		Account  tongo.AccountID
-		MethodId uint64
-		Params   tongo.VmStack
-	}
-	info, err := c.GetMasterchainInfo(ctx)
-	if err != nil {
-		return 0, tongo.VmStack{}, err
-	}
-	r := struct {
-		tl.SumType
-		RunSmcRequest runSmcRequest `tlSumType:"d25dc65c"`
-	}{
-		SumType: "RunSmcRequest",
-		RunSmcRequest: runSmcRequest{
-			Mode:     mode,
-			Id:       info,
-			Account:  accountId,
-			MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
-			Params:   params,
-		},
-	}
-	payload, err := tl.Marshal(r)
-	if err != nil {
-		return 0, tongo.VmStack{}, err
-	}
-	req := makeLiteServerQueryRequest(payload)
-	server, err := c.getServerByAccountID(accountId)
-	if err != nil {
-		return 0, nil, err
-	}
-	resp, err := server.Request(ctx, req)
-	if err != nil {
-		return 0, tongo.VmStack{}, err
-	}
-	var response struct {
-		tl.SumType
-		RunMethodResult struct {
-			Mode     uint32
-			Id       tongo.TonNodeBlockIdExt
-			ShardBlk tongo.TonNodeBlockIdExt
-			// TODO: add proofs support
-			ExitCode uint32
-			Result   tongo.VmStack
-		} `tlSumType:"6b619aa3"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &response)
-	if err != nil {
-		return 0, tongo.VmStack{}, err
-	}
-	if response.SumType == "Error" {
-		return 0, tongo.VmStack{}, fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
-	}
-	if response.SumType != "RunMethodResult" {
-		return 0, tongo.VmStack{}, fmt.Errorf("not RunMethodResult response")
-	}
-	return response.RunMethodResult.ExitCode, response.RunMethodResult.Result, nil
-}
-
-// RunSmcMethod
-// Run smart contract method by name and parameters
-// liteServer.runSmcMethod mode:# id:tonNode.blockIdExt account:liteServer.accountId method_id:long params:bytes = liteServer.RunMethodResult;
-// liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
-// proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int result:mode.2?bytes = liteServer.RunMethodResult;
-func (c *Client) RunSmcMethodByExtBlockId(ctx context.Context, mode uint32, id tongo.TonNodeBlockIdExt, accountId tongo.AccountID, method string, params tongo.VmStack) (tongo.VmStack, error) {
-	type runSmcRequest struct {
-		Mode     uint32
-		Id       tongo.TonNodeBlockIdExt
-		Account  tongo.AccountID
-		MethodId uint64
-		Params   tongo.VmStack
-	}
-	r := struct {
-		tl.SumType
-		RunSmcRequest runSmcRequest `tlSumType:"d25dc65c"`
-	}{
-		SumType: "RunSmcRequest",
-		RunSmcRequest: runSmcRequest{
-			Mode:     mode,
-			Id:       id,
-			Account:  accountId,
-			MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
-			Params:   params,
-		},
-	}
-	payload, err := tl.Marshal(r)
-	if err != nil {
-		return tongo.VmStack{}, err
-	}
-	req := makeLiteServerQueryRequest(payload)
-	server, err := c.getServerByAccountID(accountId)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := server.Request(ctx, req)
-	if err != nil {
-		return tongo.VmStack{}, err
-	}
-	var response struct {
-		tl.SumType
-		RunMethodResult struct {
-			Mode     uint32
-			Id       tongo.TonNodeBlockIdExt
-			ShardBlk tongo.TonNodeBlockIdExt
-			// ShardProof []byte
-			// Proof      []byte
-			// StateProof []byte
-			// InitC7     []byte
-			// LibExtras  []byte
-			// TODO: add proofs support
-			ExitCode uint32
-			Result   tongo.VmStack
-		} `tlSumType:"6b619aa3"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &response)
-	if err != nil {
-		return tongo.VmStack{}, err
-	}
-	if response.SumType == "Error" {
-		return tongo.VmStack{}, fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
-	}
-	if response.SumType != "RunMethodResult" {
-		return tongo.VmStack{}, fmt.Errorf("not RunMethodResult response")
-	}
-	if response.RunMethodResult.ExitCode != 0 && response.RunMethodResult.ExitCode != 1 {
-		return tongo.VmStack{}, fmt.Errorf("method execution failed with code: %v", response.RunMethodResult.ExitCode)
-	}
-	return response.RunMethodResult.Result, nil
-}
+//func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.AccountID, method string, params tongo.VmStack) (uint32, tongo.VmStack, error) {
+//	type runSmcRequest struct {
+//		Mode     uint32
+//		Id       tongo.TonNodeBlockIdExt
+//		Account  tongo.AccountID
+//		MethodId uint64
+//		Params   tongo.VmStack
+//	}
+//	info, err := c.GetMasterchainInfo(ctx)
+//	if err != nil {
+//		return 0, tongo.VmStack{}, err
+//	}
+//	r := struct {
+//		tl.SumType
+//		RunSmcRequest runSmcRequest `tlSumType:"d25dc65c"`
+//	}{
+//		SumType: "RunSmcRequest",
+//		RunSmcRequest: runSmcRequest{
+//			Mode:     mode,
+//			Id:       info,
+//			Account:  accountId,
+//			MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
+//			Params:   params,
+//		},
+//	}
+//	payload, err := tl.Marshal(r)
+//	if err != nil {
+//		return 0, tongo.VmStack{}, err
+//	}
+//	req := makeLiteServerQueryRequest(payload)
+//	server, err := c.getServerByAccountID(accountId)
+//	if err != nil {
+//		return 0, nil, err
+//	}
+//	resp, err := server.Request(ctx, req)
+//	if err != nil {
+//		return 0, tongo.VmStack{}, err
+//	}
+//	var response struct {
+//		tl.SumType
+//		RunMethodResult struct {
+//			Mode     uint32
+//			Id       tongo.TonNodeBlockIdExt
+//			ShardBlk tongo.TonNodeBlockIdExt
+//			// TODO: add proofs support
+//			ExitCode uint32
+//			Result   tongo.VmStack
+//		} `tlSumType:"6b619aa3"`
+//		Error LiteServerError `tlSumType:"48e1a9bb"`
+//	}
+//	reader := bytes.NewReader(resp)
+//	err = tl.Unmarshal(reader, &response)
+//	if err != nil {
+//		return 0, tongo.VmStack{}, err
+//	}
+//	if response.SumType == "Error" {
+//		return 0, tongo.VmStack{}, fmt.Errorf("error code: %v , message: %v", response.Error.Code, response.Error.Message)
+//	}
+//	if response.SumType != "RunMethodResult" {
+//		return 0, tongo.VmStack{}, fmt.Errorf("not RunMethodResult response")
+//	}
+//	return response.RunMethodResult.ExitCode, response.RunMethodResult.Result, nil
+//}
 
 func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdExt) ([]tongo.TonNodeBlockIdExt, error) {
 	asReq, err := makeLiteServerAllShardsInfoRequest(last)
@@ -1333,106 +1294,106 @@ func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tong
 // GetBlock
 // liteServer.getBlock id:tonNode.blockIdExt = liteServer.BlockData;
 // liteServer.blockData id:tonNode.blockIdExt data:bytes = liteServer.BlockData;
-func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.TonNodeBlockIdExt, tongo.Block, error) {
-	r := struct {
-		tl.SumType
-		GetBlockRequest tongo.TonNodeBlockIdExt `tlSumType:"0dcf7763"`
-	}{
-		SumType:         "GetBlockRequest",
-		GetBlockRequest: blockID,
-	}
-
-	rBytes, err := tl.Marshal(r)
-	if err != nil {
-		return nil, tongo.Block{}, err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
-	if err != nil {
-		return nil, tongo.Block{}, err
-	}
-	resp, err := server.Request(ctx, req)
-	if err != nil {
-		return nil, tongo.Block{}, err
-	}
-	var pResp struct {
-		tl.SumType
-		BlockData struct {
-			ID   tongo.TonNodeBlockIdExt
-			Data []byte
-		} `tlSumType:"6ced74a5"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, tongo.Block{}, err
-	}
-	if pResp.SumType == "Error" {
-		if pResp.Error.Message == "block is not applied" {
-			return nil, tongo.Block{}, ErrBlockNotApplied
-		}
-		return nil, tongo.Block{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cell, err := boc.DeserializeBoc(pResp.BlockData.Data)
-	if err != nil {
-		return nil, tongo.Block{}, err
-	}
-	var data tongo.Block
-	err = tlb.Unmarshal(cell[0], &data)
-	if err != nil {
-		return nil, tongo.Block{}, err
-	}
-	return &pResp.BlockData.ID, data, nil
-}
+//func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.TonNodeBlockIdExt, tongo.Block, error) {
+//	r := struct {
+//		tl.SumType
+//		GetBlockRequest tongo.TonNodeBlockIdExt `tlSumType:"0dcf7763"`
+//	}{
+//		SumType:         "GetBlockRequest",
+//		GetBlockRequest: blockID,
+//	}
+//
+//	rBytes, err := tl.Marshal(r)
+//	if err != nil {
+//		return nil, tongo.Block{}, err
+//	}
+//	req := makeLiteServerQueryRequest(rBytes)
+//	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
+//	if err != nil {
+//		return nil, tongo.Block{}, err
+//	}
+//	resp, err := server.Request(ctx, req)
+//	if err != nil {
+//		return nil, tongo.Block{}, err
+//	}
+//	var pResp struct {
+//		tl.SumType
+//		BlockData struct {
+//			ID   tongo.TonNodeBlockIdExt
+//			Data []byte
+//		} `tlSumType:"6ced74a5"`
+//		Error LiteServerError `tlSumType:"48e1a9bb"`
+//	}
+//	reader := bytes.NewReader(resp)
+//	err = tl.Unmarshal(reader, &pResp)
+//	if err != nil {
+//		return nil, tongo.Block{}, err
+//	}
+//	if pResp.SumType == "Error" {
+//		if pResp.Error.Message == "block is not applied" {
+//			return nil, tongo.Block{}, ErrBlockNotApplied
+//		}
+//		return nil, tongo.Block{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+//	}
+//	cell, err := boc.DeserializeBoc(pResp.BlockData.Data)
+//	if err != nil {
+//		return nil, tongo.Block{}, err
+//	}
+//	var data tongo.Block
+//	err = tlb.Unmarshal(cell[0], &data)
+//	if err != nil {
+//		return nil, tongo.Block{}, err
+//	}
+//	return &pResp.BlockData.ID, data, nil
+//}
 
 // LookupBlock
 // liteServer.lookupBlock mode:# id:tonNode.blockId lt:mode.1?long utime:mode.2?int = liteServer.BlockHeader;
 // liteServer.blockHeader id:tonNode.blockIdExt mode:# header_proof:bytes = liteServer.BlockHeader;
-func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.TonNodeBlockId, lt uint64, utime uint32) (tongo.TonNodeBlockIdExt, tongo.BlockInfo, error) {
-	asReq, err := makeLiteServerLookupBlockRequest(mode, blockID, lt, utime)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
-	}
-	server, err := c.getServerByBlockID(blockID)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
-	}
-	resp, err := server.Request(ctx, makeLiteServerQueryRequest(asReq))
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
-	}
-	var pResp struct {
-		tl.SumType
-		BlockHeader struct {
-			ID          tongo.TonNodeBlockIdExt
-			Mode        uint32
-			HeaderProof []byte
-		} `tlSumType:"19822d75"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
-	}
-	if pResp.SumType == "Error" {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cells, err := boc.DeserializeBoc(pResp.BlockHeader.HeaderProof)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
-	}
-
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.BlockHeader]
-	}
-	err = tlb.Unmarshal(cells[0], &proof)
-	if err != nil {
-		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
-	}
-	return pResp.BlockHeader.ID, proof.Proof.VirtualRoot.Info, nil
-}
+//func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.TonNodeBlockId, lt uint64, utime uint32) (tongo.TonNodeBlockIdExt, tongo.BlockInfo, error) {
+//	asReq, err := makeLiteServerLookupBlockRequest(mode, blockID, lt, utime)
+//	if err != nil {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+//	}
+//	server, err := c.getServerByBlockID(blockID)
+//	if err != nil {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+//	}
+//	resp, err := server.Request(ctx, makeLiteServerQueryRequest(asReq))
+//	if err != nil {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+//	}
+//	var pResp struct {
+//		tl.SumType
+//		BlockHeader struct {
+//			ID          tongo.TonNodeBlockIdExt
+//			Mode        uint32
+//			HeaderProof []byte
+//		} `tlSumType:"19822d75"`
+//		Error LiteServerError `tlSumType:"48e1a9bb"`
+//	}
+//	reader := bytes.NewReader(resp)
+//	err = tl.Unmarshal(reader, &pResp)
+//	if err != nil {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+//	}
+//	if pResp.SumType == "Error" {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
+//	}
+//	cells, err := boc.DeserializeBoc(pResp.BlockHeader.HeaderProof)
+//	if err != nil {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+//	}
+//
+//	var proof struct {
+//		Proof tongo.MerkleProof[tongo.BlockHeader]
+//	}
+//	err = tlb.Unmarshal(cells[0], &proof)
+//	if err != nil {
+//		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
+//	}
+//	return pResp.BlockHeader.ID, proof.Proof.VirtualRoot.Info, nil
+//}
 
 // GetOneRawTransaction
 // liteServer.getOneTransaction id:tonNode.blockIdExt account:liteServer.accountId lt:long = liteServer.TransactionInfo;

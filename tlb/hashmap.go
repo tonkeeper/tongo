@@ -2,8 +2,15 @@ package tlb
 
 import (
 	"fmt"
+
 	"github.com/startfellows/tongo/boc"
 )
+
+// HashmapItem represents a key-value pair stored in HashmapE[T].
+type HashmapItem[T any] struct {
+	Key   boc.BitString
+	Value T
+}
 
 type Hashmap[T any] struct {
 	keys    []boc.BitString
@@ -391,6 +398,18 @@ func (h HashmapE[T]) Values() []T {
 
 func (h HashmapE[T]) Keys() []boc.BitString {
 	return h.keys
+}
+
+// Items returns key-value pairs of this hashmap.
+func (h HashmapE[T]) Items() []HashmapItem[T] {
+	items := make([]HashmapItem[T], len(h.keys))
+	for i, key := range h.keys {
+		items[i] = HashmapItem[T]{
+			Key:   key,
+			Value: h.values[i],
+		}
+	}
+	return items
 }
 
 type HashmapAug[T1, T2 any] struct {

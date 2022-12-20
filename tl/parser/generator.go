@@ -62,7 +62,12 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 	}
 
 	s := ""
-	for _, v := range sumTypes {
+	keys := make([]string, 0, len(sumTypes))
+	for k := range sumTypes {
+		keys = append(keys, k)
+	}
+	for _, k := range keys {
+		v := sumTypes[k]
 		t, err := g.generateGolangType(v)
 		if err != nil {
 			return "", err

@@ -512,6 +512,11 @@ func (h *HashmapAug[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, key
 	return nil
 }
 
+// Values returns a list of value of this hashmap.
+func (h HashmapAug[T1, T2]) Values() []T1 {
+	return h.values
+}
+
 type HashmapAugE[T1, T2 any] struct {
 	keys      []boc.BitString
 	keySize   int

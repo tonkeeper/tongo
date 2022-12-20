@@ -13,7 +13,7 @@ const CellBits = 1023
 
 var ErrCellRefsOverflow = errors.New("too many refs")
 var ErrNotEnoughRefs = errors.New("not enough refs")
-var ErrNoOneRootCell = errors.New("should be one root cell")
+var ErrNotSingleRoot = errors.New("should be one root cell")
 
 type Cell struct {
 	bits      BitString

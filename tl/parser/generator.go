@@ -24,10 +24,10 @@ type tlType struct {
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":                    {"int32", false},
-		"int":                  {"int32", false},
+		"#":                    {"uint32", false},
+		"int":                  {"uint32", false},
 		"int256":               {"tl.Int256", false},
-		"long":                 {"int64", false},
+		"long":                 {"uint64", false},
 		"bytes":                {"[]byte", true},
 		"Bool":                 {"bool", false},
 		"string":               {"string", false},

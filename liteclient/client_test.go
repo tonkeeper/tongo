@@ -63,16 +63,14 @@ func TestGeneratedMethod2(t *testing.T) {
 		panic(err)
 	}
 
-	req := LiteServerGetBlockRequest{
-		Id: r.Last,
-	}
+	req := LiteServerGetBlockRequest(r.Last)
 
 	resp, err := client.LiteServerGetBlock(context.Background(), req)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Req  seqno: %d\n", req.Id.Seqno)
+	fmt.Printf("Req  seqno: %d\n", req.Seqno)
 	fmt.Printf("Resp seqno: %d\n", resp.Id.Seqno)
 }
 
@@ -106,4 +104,24 @@ func TestGeneratedMethod3(t *testing.T) {
 
 	fmt.Printf("Count: %d\n", resp.Count)
 	fmt.Printf("Complete: %v\n", resp.Complete)
+}
+
+func TestGeneratedMethod4(t *testing.T) {
+	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	if err != nil {
+		panic(err)
+	}
+	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
+	if err != nil {
+		panic(err)
+	}
+
+	client := NewClient(c)
+
+	r, err := client.LiteServerGetTime(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Current time: %d\n", r)
 }

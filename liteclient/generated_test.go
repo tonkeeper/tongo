@@ -2,17 +2,20 @@ package liteclient
 
 import (
 	"bytes"
+	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/tl"
 	"reflect"
 	"testing"
 )
 
-var blk = TonNodeBlockIdExt{
-	Workchain: 0,
-	Shard:     123,
-	Seqno:     321,
-	RootHash:  tl.Int256([32]byte{1, 2, 3}),
-	FileHash:  tl.Int256([32]byte{3, 2, 1}),
+var blk = tongo.TonNodeBlockIdExt{
+	TonNodeBlockId: tongo.TonNodeBlockId{
+		Workchain: 0,
+		Shard:     123,
+		Seqno:     321,
+	},
+	RootHash: tongo.Hash([32]byte{1, 2, 3}),
+	FileHash: tongo.Hash([32]byte{3, 2, 1}),
 }
 
 func TestSimpleType(t *testing.T) {
@@ -161,6 +164,39 @@ func TestSimpleTypeWithVector(t *testing.T) {
 		t.Fatal(err)
 	}
 	var a1 LiteServerBlockTransactions
+	err = tl.Unmarshal(bytes.NewReader(b), &a1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(a, a1) {
+		t.Fatal("not equal")
+	}
+}
+
+func TestVerySimpleType(t *testing.T) {
+	var a LiteServerCurrentTime = 123
+	b, err := tl.Marshal(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var a1 LiteServerCurrentTime
+	err = tl.Unmarshal(bytes.NewReader(b), &a1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(a, a1) {
+		t.Fatal("not equal")
+	}
+}
+
+func TestArraySimpleType(t *testing.T) {
+	type M []LiteServerCurrentTime
+	a := M{1, 2, 3}
+	b, err := tl.Marshal(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var a1 M
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)

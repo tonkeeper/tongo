@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/startfellows/tongo/utils"
 	"go/format"
+	"sort"
 	"strings"
 )
 
@@ -18,22 +19,25 @@ type tlType struct {
 	name       string
 	tags       []uint32
 	definition string
+	isStruct   bool
 }
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":      {"int32", false},
-		"int":    {"int32", false},
-		"int256": {"tl.Int256", false},
-		"long":   {"int64", false},
-		"bytes":  {"[]byte", true},
-		"Bool":   {"bool", false},
-		"string": {"string", false},
+		"#":                    {"int32", false},
+		"int":                  {"int32", false},
+		"int256":               {"tl.Int256", false},
+		"long":                 {"int64", false},
+		"bytes":                {"[]byte", true},
+		"Bool":                 {"bool", false},
+		"string":               {"string", false},
+		"tonNode.blockIdExt":   {"tongo.TonNodeBlockIdExt", false},
+		"liteServer.accountId": {"tongo.AccountID", false},
 	}
 
 	unmarshalerReturnErr = "if err != nil {return err}\n"
 	marshalerReturnErr   = "if err != nil {return nil, err}\n"
-	functionReturnErr    = "if err != nil {return %s{}, %s}\n"
+	functionReturnErr    = "if err != nil {return res, %s}\n"
 )
 
 type Generator struct {
@@ -66,6 +70,7 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 	for k := range sumTypes {
 		keys = append(keys, k)
 	}
+	sort.Strings(keys)
 	for _, k := range keys {
 		v := sumTypes[k]
 		t, err := g.generateGolangType(v)
@@ -73,17 +78,19 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 			return "", err
 		}
 		g.newTlTypes[t.name] = t
-		unmarshaler, err := g.generateUnmarshalers(v, t.name)
-		if err != nil {
-			return "", err
-		}
-		marshaler, err := g.generateMarshalers(v, t.name)
-		if err != nil {
-			return "", err
-		}
 		s += "\n" + t.definition + "\n"
-		s += "\n" + marshaler + "\n"
-		s += "\n" + unmarshaler + "\n"
+		if t.isStruct {
+			unmarshaler, err := g.generateUnmarshalers(v, t.name)
+			if err != nil {
+				return "", err
+			}
+			marshaler, err := g.generateMarshalers(v, t.name)
+			if err != nil {
+				return "", err
+			}
+			s += "\n" + marshaler + "\n"
+			s += "\n" + unmarshaler + "\n"
+		}
 	}
 
 	b, err := format.Source([]byte(s))
@@ -102,12 +109,14 @@ func (g *Generator) LoadFunctions(functions []CombinatorDeclaration) (string, er
 			if err != nil {
 				return "", err
 			}
-			marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, name)
-			if err != nil {
-				return "", err
-			}
 			s += "\n" + requestType + "\n"
-			s += "\n" + marshaler + "\n"
+			if len(c.FieldDefinitions) > 1 {
+				marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, name)
+				if err != nil {
+					return "", err
+				}
+				s += "\n" + marshaler + "\n"
+			}
 		}
 		method, err := g.generateGolangMethod(g.typeName, c)
 		if err != nil {
@@ -140,10 +149,12 @@ func (g *Generator) generateGolangSimpleType(declaration CombinatorDeclaration) 
 	if err != nil {
 		return tlType{}, err
 	}
+	isStruct := len(declaration.FieldDefinitions) != 1
 	return tlType{
 		name:       name,
 		tags:       []uint32{tag},
 		definition: fmt.Sprintf("type %v %v", name, s),
+		isStruct:   isStruct,
 	}, nil
 }
 
@@ -172,11 +183,23 @@ func (g *Generator) generateGolangSumType(declarations []CombinatorDeclaration) 
 		name:       name,
 		tags:       tags,
 		definition: builder.String(),
+		isStruct:   true,
 	}, nil
 }
 
 func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 	builder := strings.Builder{}
+
+	if len(declaration.FieldDefinitions) == 1 {
+		t, err := toGolangType(declaration.FieldDefinitions[0].Expression, false, g.knownTypes)
+		if err != nil {
+			return "", err
+		}
+		builder.WriteString(t.String())
+		builder.WriteRune('\n')
+		return builder.String(), nil
+	}
+
 	builder.WriteString("struct{")
 	if len(declaration.FieldDefinitions) > 0 {
 		builder.WriteRune('\n')
@@ -490,31 +513,30 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	builder.WriteString(fmt.Sprintf("func (c %s) %s(ctx context.Context", typeName, methodName))
 	if len(c.FieldDefinitions) > 0 {
 		builder.WriteString(fmt.Sprintf(", request %sRequest", methodName))
-		builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
+		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", responseName))
 
 		// request marshaling
 		builder.WriteString(fmt.Sprintf("payload, err := tl.Marshal(struct{tl.SumType \n Req %sRequest", methodName))
 		builder.WriteString(fmt.Sprintf(" `tlSumType:\"%08x\"`}{SumType: \"Req\", Req: request})\n", tag))
-		builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
+		builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
 	} else {
-		builder.WriteString(fmt.Sprintf(") (%s ,error) {\n", responseName))
+		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", responseName))
 		builder.WriteString("payload := make([]byte, 4)\n")
 		builder.WriteString(fmt.Sprintf("binary.LittleEndian.PutUint32(payload, %#x)\n", tag))
 	}
 
 	builder.WriteString("resp, err := c.liteServerRequest(ctx, payload)\n")
-	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
+	builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
 
-	builder.WriteString(fmt.Sprintf("if len(resp) < 4 {return %s{}, fmt.Errorf(\"not enought bytes for tag\")}\n",
-		responseName))
+	builder.WriteString("if len(resp) < 4 {return res, fmt.Errorf(\"not enough bytes for tag\")}\n")
 	builder.WriteString("tag := binary.LittleEndian.Uint32(resp[:4])\n")
 
 	// lite server error processing
 	builder.WriteString(fmt.Sprintf("if tag == %#x {\n", errType.tags[0]))
 	builder.WriteString("var errRes LiteServerError\n")
 	builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)\n")
-	builder.WriteString(fmt.Sprintf(functionReturnErr, responseName, "err"))
-	builder.WriteString(fmt.Sprintf("return %s{}, errRes\n", responseName))
+	builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
+	builder.WriteString("return res, errRes\n")
 	builder.WriteString("}\n")
 
 	if len(respType.tags) == 0 {
@@ -524,12 +546,10 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	if len(respType.tags) == 1 {
 		// simple type response
 		builder.WriteString(fmt.Sprintf("if tag == %#x {\n", respType.tags[0]))
-		builder.WriteString(fmt.Sprintf("var res %s\n", responseName))
 		builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)\n")
 		builder.WriteString("return res, err\n}\n")
-		builder.WriteString(fmt.Sprintf("return %s{}, fmt.Errorf(\"invalid tag\")\n", responseName))
+		builder.WriteString("return res, fmt.Errorf(\"invalid tag\")\n")
 	} else if len(respType.tags) > 1 {
-		builder.WriteString(fmt.Sprintf("var res %s\n", responseName))
 		builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp), &res)\n")
 		builder.WriteString("return res, err\n")
 	}

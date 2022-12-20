@@ -6,1606 +6,10 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
+	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/tl"
 	"io"
 )
-
-type LiteServerSignatureSet struct {
-	ValidatorSetHash int32
-	CatchainSeqno    int32
-	Signatures       []LiteServerSignature
-}
-
-func (t LiteServerSignatureSet) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.ValidatorSetHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.CatchainSeqno)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Signatures)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerSignatureSet) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.ValidatorSetHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.CatchainSeqno)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Signatures)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerShardBlockProof struct {
-	MasterchainId TonNodeBlockIdExt
-	Links         []LiteServerShardBlockLink
-}
-
-func (t LiteServerShardBlockProof) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.MasterchainId)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Links)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerShardBlockProof) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.MasterchainId)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Links)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerAccountId struct {
-	Workchain int32
-	Id        tl.Int256
-}
-
-func (t LiteServerAccountId) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Workchain)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerAccountId) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Workchain)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerSendMsgStatus struct {
-	Status int32
-}
-
-func (t LiteServerSendMsgStatus) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Status)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerSendMsgStatus) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Status)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerTransactionId3 struct {
-	Account tl.Int256
-	Lt      int64
-}
-
-func (t LiteServerTransactionId3) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Account)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Lt)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerTransactionId3) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Account)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Lt)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerVersion struct {
-	Mode         int32
-	Version      int32
-	Capabilities int64
-	Now          int32
-}
-
-func (t LiteServerVersion) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Version)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Capabilities)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Now)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerVersion) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Version)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Capabilities)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Now)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerRunMethodResult struct {
-	Mode       int32
-	Id         TonNodeBlockIdExt
-	Shardblk   TonNodeBlockIdExt
-	ShardProof []byte
-	Proof      []byte
-	StateProof []byte
-	InitC7     []byte
-	LibExtras  []byte
-	ExitCode   int32
-	Result     []byte
-}
-
-func (t LiteServerRunMethodResult) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Shardblk)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	if (t.Mode>>0)&1 == 1 {
-		b, err = tl.Marshal(t.ShardProof)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if (t.Mode>>0)&1 == 1 {
-		b, err = tl.Marshal(t.Proof)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if (t.Mode>>1)&1 == 1 {
-		b, err = tl.Marshal(t.StateProof)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if (t.Mode>>3)&1 == 1 {
-		b, err = tl.Marshal(t.InitC7)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if (t.Mode>>4)&1 == 1 {
-		b, err = tl.Marshal(t.LibExtras)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	b, err = tl.Marshal(t.ExitCode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	if (t.Mode>>2)&1 == 1 {
-		b, err = tl.Marshal(t.Result)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerRunMethodResult) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Shardblk)
-	if err != nil {
-		return err
-	}
-	if (t.Mode>>0)&1 == 1 {
-		var tempShardProof []byte
-		err = tl.Unmarshal(r, &tempShardProof)
-		if err != nil {
-			return err
-		}
-		t.ShardProof = tempShardProof
-	}
-	if (t.Mode>>0)&1 == 1 {
-		var tempProof []byte
-		err = tl.Unmarshal(r, &tempProof)
-		if err != nil {
-			return err
-		}
-		t.Proof = tempProof
-	}
-	if (t.Mode>>1)&1 == 1 {
-		var tempStateProof []byte
-		err = tl.Unmarshal(r, &tempStateProof)
-		if err != nil {
-			return err
-		}
-		t.StateProof = tempStateProof
-	}
-	if (t.Mode>>3)&1 == 1 {
-		var tempInitC7 []byte
-		err = tl.Unmarshal(r, &tempInitC7)
-		if err != nil {
-			return err
-		}
-		t.InitC7 = tempInitC7
-	}
-	if (t.Mode>>4)&1 == 1 {
-		var tempLibExtras []byte
-		err = tl.Unmarshal(r, &tempLibExtras)
-		if err != nil {
-			return err
-		}
-		t.LibExtras = tempLibExtras
-	}
-	err = tl.Unmarshal(r, &t.ExitCode)
-	if err != nil {
-		return err
-	}
-	if (t.Mode>>2)&1 == 1 {
-		var tempResult []byte
-		err = tl.Unmarshal(r, &tempResult)
-		if err != nil {
-			return err
-		}
-		t.Result = tempResult
-	}
-	return nil
-}
-
-type TonNodeBlockIdExt struct {
-	Workchain int32
-	Shard     int64
-	Seqno     int32
-	RootHash  tl.Int256
-	FileHash  tl.Int256
-}
-
-func (t TonNodeBlockIdExt) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Workchain)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Shard)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Seqno)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.RootHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.FileHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *TonNodeBlockIdExt) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Workchain)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Shard)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Seqno)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.RootHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.FileHash)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerError struct {
-	Code    int32
-	Message string
-}
-
-func (t LiteServerError) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Code)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Message)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerError) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Code)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Message)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerMasterchainInfo struct {
-	Last          TonNodeBlockIdExt
-	StateRootHash tl.Int256
-	Init          TonNodeZeroStateIdExt
-}
-
-func (t LiteServerMasterchainInfo) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Last)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.StateRootHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Init)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerMasterchainInfo) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Last)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.StateRootHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Init)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type TonNodeBlockId struct {
-	Workchain int32
-	Shard     int64
-	Seqno     int32
-}
-
-func (t TonNodeBlockId) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Workchain)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Shard)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Seqno)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *TonNodeBlockId) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Workchain)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Shard)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Seqno)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerBlockHeader struct {
-	Id          TonNodeBlockIdExt
-	Mode        int32
-	HeaderProof []byte
-}
-
-func (t LiteServerBlockHeader) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.HeaderProof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerBlockHeader) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.HeaderProof)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerDebugVerbosity struct {
-	Value int32
-}
-
-func (t LiteServerDebugVerbosity) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Value)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerDebugVerbosity) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Value)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerValidatorStats struct {
-	Mode       int32
-	Id         TonNodeBlockIdExt
-	Count      int32
-	Complete   bool
-	StateProof []byte
-	DataProof  []byte
-}
-
-func (t LiteServerValidatorStats) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Count)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Complete)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.StateProof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.DataProof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerValidatorStats) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Count)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Complete)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.StateProof)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.DataProof)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerMasterchainInfoExt struct {
-	Mode          int32
-	Version       int32
-	Capabilities  int64
-	Last          TonNodeBlockIdExt
-	LastUtime     int32
-	Now           int32
-	StateRootHash tl.Int256
-	Init          TonNodeZeroStateIdExt
-}
-
-func (t LiteServerMasterchainInfoExt) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Version)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Capabilities)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Last)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.LastUtime)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Now)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.StateRootHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Init)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerMasterchainInfoExt) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Version)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Capabilities)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Last)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.LastUtime)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Now)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.StateRootHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Init)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerAllShardsInfo struct {
-	Id    TonNodeBlockIdExt
-	Proof []byte
-	Data  []byte
-}
-
-func (t LiteServerAllShardsInfo) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Proof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Data)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerAllShardsInfo) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Proof)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerBlockTransactions struct {
-	Id         TonNodeBlockIdExt
-	ReqCount   int32
-	Incomplete bool
-	Ids        []LiteServerTransactionId
-	Proof      []byte
-}
-
-func (t LiteServerBlockTransactions) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.ReqCount)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Incomplete)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Ids)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Proof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerBlockTransactions) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.ReqCount)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Incomplete)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Ids)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Proof)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerBlockData struct {
-	Id   TonNodeBlockIdExt
-	Data []byte
-}
-
-func (t LiteServerBlockData) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Data)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerBlockData) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerBlockState struct {
-	Id       TonNodeBlockIdExt
-	RootHash tl.Int256
-	FileHash tl.Int256
-	Data     []byte
-}
-
-func (t LiteServerBlockState) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.RootHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.FileHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Data)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerBlockState) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.RootHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.FileHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerSignature struct {
-	NodeIdShort tl.Int256
-	Signature   []byte
-}
-
-func (t LiteServerSignature) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.NodeIdShort)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Signature)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerSignature) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.NodeIdShort)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Signature)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerCurrentTime struct {
-	Now int32
-}
-
-func (t LiteServerCurrentTime) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Now)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerCurrentTime) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Now)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerTransactionInfo struct {
-	Id          TonNodeBlockIdExt
-	Proof       []byte
-	Transaction []byte
-}
-
-func (t LiteServerTransactionInfo) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Proof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Transaction)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerTransactionInfo) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Proof)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Transaction)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerTransactionId struct {
-	Mode    int32
-	Account *tl.Int256
-	Lt      *int64
-	Hash    *tl.Int256
-}
-
-func (t LiteServerTransactionId) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	if (t.Mode>>0)&1 == 1 {
-		b, err = tl.Marshal(t.Account)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if (t.Mode>>1)&1 == 1 {
-		b, err = tl.Marshal(t.Lt)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if (t.Mode>>2)&1 == 1 {
-		b, err = tl.Marshal(t.Hash)
-		if err != nil {
-			return nil, err
-		}
-		_, err = buf.Write(b)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerTransactionId) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	if (t.Mode>>0)&1 == 1 {
-		var tempAccount tl.Int256
-		err = tl.Unmarshal(r, &tempAccount)
-		if err != nil {
-			return err
-		}
-		t.Account = &tempAccount
-	}
-	if (t.Mode>>1)&1 == 1 {
-		var tempLt int64
-		err = tl.Unmarshal(r, &tempLt)
-		if err != nil {
-			return err
-		}
-		t.Lt = &tempLt
-	}
-	if (t.Mode>>2)&1 == 1 {
-		var tempHash tl.Int256
-		err = tl.Unmarshal(r, &tempHash)
-		if err != nil {
-			return err
-		}
-		t.Hash = &tempHash
-	}
-	return nil
-}
-
-type LiteServerConfigInfo struct {
-	Mode        int32
-	Id          TonNodeBlockIdExt
-	StateProof  []byte
-	ConfigProof []byte
-}
-
-func (t LiteServerConfigInfo) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Mode)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.StateProof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.ConfigProof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerConfigInfo) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Mode)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.StateProof)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.ConfigProof)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type TonNodeZeroStateIdExt struct {
-	Workchain int32
-	RootHash  tl.Int256
-	FileHash  tl.Int256
-}
-
-func (t TonNodeZeroStateIdExt) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Workchain)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.RootHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.FileHash)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *TonNodeZeroStateIdExt) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Workchain)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.RootHash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.FileHash)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 
 type AdnlMessage struct {
 	tl.SumType
@@ -1711,18 +115,18 @@ func (t *AdnlMessage) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
-type LiteServerLibraryEntry struct {
-	Hash tl.Int256
-	Data []byte
+type LiteServerAccountId struct {
+	Workchain int32
+	Id        tl.Int256
 }
 
-func (t LiteServerLibraryEntry) MarshalTL() ([]byte, error) {
+func (t LiteServerAccountId) MarshalTL() ([]byte, error) {
 	var (
 		err error
 		b   []byte
 	)
 	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Hash)
+	b, err = tl.Marshal(t.Workchain)
 	if err != nil {
 		return nil, err
 	}
@@ -1730,43 +134,6 @@ func (t LiteServerLibraryEntry) MarshalTL() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	b, err = tl.Marshal(t.Data)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerLibraryEntry) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Hash)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerShardInfo struct {
-	Id         TonNodeBlockIdExt
-	Shardblk   TonNodeBlockIdExt
-	ShardProof []byte
-	ShardDescr []byte
-}
-
-func (t LiteServerShardInfo) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
 	b, err = tl.Marshal(t.Id)
 	if err != nil {
 		return nil, err
@@ -1775,190 +142,16 @@ func (t LiteServerShardInfo) MarshalTL() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	b, err = tl.Marshal(t.Shardblk)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.ShardProof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.ShardDescr)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
 	return buf.Bytes(), nil
 }
 
-func (t *LiteServerShardInfo) UnmarshalTL(r io.Reader) error {
+func (t *LiteServerAccountId) UnmarshalTL(r io.Reader) error {
 	var err error
+	err = tl.Unmarshal(r, &t.Workchain)
+	if err != nil {
+		return err
+	}
 	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Shardblk)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.ShardProof)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.ShardDescr)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerLibraryResult struct {
-	Result []LiteServerLibraryEntry
-}
-
-func (t LiteServerLibraryResult) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Result)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerLibraryResult) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Result)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerShardBlockLink struct {
-	Id    TonNodeBlockIdExt
-	Proof []byte
-}
-
-func (t LiteServerShardBlockLink) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Proof)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerShardBlockLink) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Id)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Proof)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-type LiteServerPartialBlockProof struct {
-	Complete bool
-	From     TonNodeBlockIdExt
-	To       TonNodeBlockIdExt
-	Steps    []LiteServerBlockLink
-}
-
-func (t LiteServerPartialBlockProof) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Complete)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.From)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.To)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	b, err = tl.Marshal(t.Steps)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *LiteServerPartialBlockProof) UnmarshalTL(r io.Reader) error {
-	var err error
-	err = tl.Unmarshal(r, &t.Complete)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.From)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.To)
-	if err != nil {
-		return err
-	}
-	err = tl.Unmarshal(r, &t.Steps)
 	if err != nil {
 		return err
 	}
@@ -1966,8 +159,8 @@ func (t *LiteServerPartialBlockProof) UnmarshalTL(r io.Reader) error {
 }
 
 type LiteServerAccountState struct {
-	Id         TonNodeBlockIdExt
-	Shardblk   TonNodeBlockIdExt
+	Id         tongo.TonNodeBlockIdExt
+	Shardblk   tongo.TonNodeBlockIdExt
 	ShardProof []byte
 	Proof      []byte
 	State      []byte
@@ -2047,18 +240,19 @@ func (t *LiteServerAccountState) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
-type LiteServerTransactionList struct {
-	Ids          []TonNodeBlockIdExt
-	Transactions []byte
+type LiteServerAllShardsInfo struct {
+	Id    tongo.TonNodeBlockIdExt
+	Proof []byte
+	Data  []byte
 }
 
-func (t LiteServerTransactionList) MarshalTL() ([]byte, error) {
+func (t LiteServerAllShardsInfo) MarshalTL() ([]byte, error) {
 	var (
 		err error
 		b   []byte
 	)
 	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Ids)
+	b, err = tl.Marshal(t.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -2066,7 +260,15 @@ func (t LiteServerTransactionList) MarshalTL() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	b, err = tl.Marshal(t.Transactions)
+	b, err = tl.Marshal(t.Proof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -2077,13 +279,116 @@ func (t LiteServerTransactionList) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (t *LiteServerTransactionList) UnmarshalTL(r io.Reader) error {
+func (t *LiteServerAllShardsInfo) UnmarshalTL(r io.Reader) error {
 	var err error
-	err = tl.Unmarshal(r, &t.Ids)
+	err = tl.Unmarshal(r, &t.Id)
 	if err != nil {
 		return err
 	}
-	err = tl.Unmarshal(r, &t.Transactions)
+	err = tl.Unmarshal(r, &t.Proof)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerBlockData struct {
+	Id   tongo.TonNodeBlockIdExt
+	Data []byte
+}
+
+func (t LiteServerBlockData) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Data)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerBlockData) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerBlockHeader struct {
+	Id          tongo.TonNodeBlockIdExt
+	Mode        int32
+	HeaderProof []byte
+}
+
+func (t LiteServerBlockHeader) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.HeaderProof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerBlockHeader) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.HeaderProof)
 	if err != nil {
 		return err
 	}
@@ -2094,16 +399,16 @@ type LiteServerBlockLink struct {
 	tl.SumType
 	LiteServerBlockLinkBack struct {
 		ToKeyBlock bool
-		From       TonNodeBlockIdExt
-		To         TonNodeBlockIdExt
+		From       tongo.TonNodeBlockIdExt
+		To         tongo.TonNodeBlockIdExt
 		DestProof  []byte
 		Proof      []byte
 		StateProof []byte
 	}
 	LiteServerBlockLinkForward struct {
 		ToKeyBlock  bool
-		From        TonNodeBlockIdExt
-		To          TonNodeBlockIdExt
+		From        tongo.TonNodeBlockIdExt
+		To          tongo.TonNodeBlockIdExt
 		DestProof   []byte
 		ConfigProof []byte
 		Signatures  LiteServerSignatureSet
@@ -2298,38 +603,165 @@ func (t *LiteServerBlockLink) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
-func (c *Client) LiteServerGetMasterchainInfo(ctx context.Context) (LiteServerMasterchainInfo, error) {
-	payload := make([]byte, 4)
-	binary.LittleEndian.PutUint32(payload, 0x89b5e62e)
-	resp, err := c.liteServerRequest(ctx, payload)
+type LiteServerBlockState struct {
+	Id       tongo.TonNodeBlockIdExt
+	RootHash tl.Int256
+	FileHash tl.Int256
+	Data     []byte
+}
+
+func (t LiteServerBlockState) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
 	if err != nil {
-		return LiteServerMasterchainInfo{}, err
+		return nil, err
 	}
-	if len(resp) < 4 {
-		return LiteServerMasterchainInfo{}, fmt.Errorf("not enought bytes for tag")
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
 	}
-	tag := binary.LittleEndian.Uint32(resp[:4])
-	if tag == 0xbba9e148 {
-		var errRes LiteServerError
-		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
-		if err != nil {
-			return LiteServerMasterchainInfo{}, err
-		}
-		return LiteServerMasterchainInfo{}, errRes
+	b, err = tl.Marshal(t.RootHash)
+	if err != nil {
+		return nil, err
 	}
-	if tag == 0x85832881 {
-		var res LiteServerMasterchainInfo
-		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
-		return res, err
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
 	}
-	return LiteServerMasterchainInfo{}, fmt.Errorf("invalid tag")
+	b, err = tl.Marshal(t.FileHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Data)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
-type LiteServerGetMasterchainInfoExtRequest struct {
-	Mode int32
+func (t *LiteServerBlockState) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.RootHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.FileHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (t LiteServerGetMasterchainInfoExtRequest) MarshalTL() ([]byte, error) {
+type LiteServerBlockTransactions struct {
+	Id         tongo.TonNodeBlockIdExt
+	ReqCount   int32
+	Incomplete bool
+	Ids        []LiteServerTransactionId
+	Proof      []byte
+}
+
+func (t LiteServerBlockTransactions) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.ReqCount)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Incomplete)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Ids)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Proof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerBlockTransactions) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.ReqCount)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Incomplete)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Ids)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Proof)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerConfigInfo struct {
+	Mode        int32
+	Id          tongo.TonNodeBlockIdExt
+	StateProof  []byte
+	ConfigProof []byte
+}
+
+func (t LiteServerConfigInfo) MarshalTL() ([]byte, error) {
 	var (
 		err error
 		b   []byte
@@ -2343,203 +775,1597 @@ func (t LiteServerGetMasterchainInfoExtRequest) MarshalTL() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.StateProof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.ConfigProof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request LiteServerGetMasterchainInfoExtRequest) (LiteServerMasterchainInfoExt, error) {
+func (t *LiteServerConfigInfo) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.StateProof)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.ConfigProof)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerCurrentTime int32
+
+type LiteServerError struct {
+	Code    int32
+	Message string
+}
+
+func (t LiteServerError) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Code)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Message)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerError) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Code)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Message)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerLibraryEntry struct {
+	Hash tl.Int256
+	Data []byte
+}
+
+func (t LiteServerLibraryEntry) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Hash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Data)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerLibraryEntry) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Hash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerLibraryResult []LiteServerLibraryEntry
+
+type LiteServerMasterchainInfo struct {
+	Last          tongo.TonNodeBlockIdExt
+	StateRootHash tl.Int256
+	Init          TonNodeZeroStateIdExt
+}
+
+func (t LiteServerMasterchainInfo) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Last)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.StateRootHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Init)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerMasterchainInfo) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Last)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.StateRootHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Init)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerMasterchainInfoExt struct {
+	Mode          int32
+	Version       int32
+	Capabilities  int64
+	Last          tongo.TonNodeBlockIdExt
+	LastUtime     int32
+	Now           int32
+	StateRootHash tl.Int256
+	Init          TonNodeZeroStateIdExt
+}
+
+func (t LiteServerMasterchainInfoExt) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Version)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Capabilities)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Last)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.LastUtime)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Now)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.StateRootHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Init)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerMasterchainInfoExt) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Version)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Capabilities)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Last)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.LastUtime)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Now)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.StateRootHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Init)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerPartialBlockProof struct {
+	Complete bool
+	From     tongo.TonNodeBlockIdExt
+	To       tongo.TonNodeBlockIdExt
+	Steps    []LiteServerBlockLink
+}
+
+func (t LiteServerPartialBlockProof) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Complete)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.From)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.To)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Steps)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerPartialBlockProof) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Complete)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.From)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.To)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Steps)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerRunMethodResult struct {
+	Mode       int32
+	Id         tongo.TonNodeBlockIdExt
+	Shardblk   tongo.TonNodeBlockIdExt
+	ShardProof []byte
+	Proof      []byte
+	StateProof []byte
+	InitC7     []byte
+	LibExtras  []byte
+	ExitCode   int32
+	Result     []byte
+}
+
+func (t LiteServerRunMethodResult) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Shardblk)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		b, err = tl.Marshal(t.ShardProof)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if (t.Mode>>0)&1 == 1 {
+		b, err = tl.Marshal(t.Proof)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if (t.Mode>>1)&1 == 1 {
+		b, err = tl.Marshal(t.StateProof)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if (t.Mode>>3)&1 == 1 {
+		b, err = tl.Marshal(t.InitC7)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if (t.Mode>>4)&1 == 1 {
+		b, err = tl.Marshal(t.LibExtras)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	b, err = tl.Marshal(t.ExitCode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	if (t.Mode>>2)&1 == 1 {
+		b, err = tl.Marshal(t.Result)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerRunMethodResult) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Shardblk)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempShardProof []byte
+		err = tl.Unmarshal(r, &tempShardProof)
+		if err != nil {
+			return err
+		}
+		t.ShardProof = tempShardProof
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempProof []byte
+		err = tl.Unmarshal(r, &tempProof)
+		if err != nil {
+			return err
+		}
+		t.Proof = tempProof
+	}
+	if (t.Mode>>1)&1 == 1 {
+		var tempStateProof []byte
+		err = tl.Unmarshal(r, &tempStateProof)
+		if err != nil {
+			return err
+		}
+		t.StateProof = tempStateProof
+	}
+	if (t.Mode>>3)&1 == 1 {
+		var tempInitC7 []byte
+		err = tl.Unmarshal(r, &tempInitC7)
+		if err != nil {
+			return err
+		}
+		t.InitC7 = tempInitC7
+	}
+	if (t.Mode>>4)&1 == 1 {
+		var tempLibExtras []byte
+		err = tl.Unmarshal(r, &tempLibExtras)
+		if err != nil {
+			return err
+		}
+		t.LibExtras = tempLibExtras
+	}
+	err = tl.Unmarshal(r, &t.ExitCode)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>2)&1 == 1 {
+		var tempResult []byte
+		err = tl.Unmarshal(r, &tempResult)
+		if err != nil {
+			return err
+		}
+		t.Result = tempResult
+	}
+	return nil
+}
+
+type LiteServerSendMsgStatus int32
+
+type LiteServerShardBlockLink struct {
+	Id    tongo.TonNodeBlockIdExt
+	Proof []byte
+}
+
+func (t LiteServerShardBlockLink) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Proof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerShardBlockLink) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Proof)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerShardBlockProof struct {
+	MasterchainId tongo.TonNodeBlockIdExt
+	Links         []LiteServerShardBlockLink
+}
+
+func (t LiteServerShardBlockProof) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.MasterchainId)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Links)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerShardBlockProof) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.MasterchainId)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Links)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerShardInfo struct {
+	Id         tongo.TonNodeBlockIdExt
+	Shardblk   tongo.TonNodeBlockIdExt
+	ShardProof []byte
+	ShardDescr []byte
+}
+
+func (t LiteServerShardInfo) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Shardblk)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.ShardProof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.ShardDescr)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerShardInfo) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Shardblk)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.ShardProof)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.ShardDescr)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerSignature struct {
+	NodeIdShort tl.Int256
+	Signature   []byte
+}
+
+func (t LiteServerSignature) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.NodeIdShort)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Signature)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerSignature) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.NodeIdShort)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Signature)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerSignatureSet struct {
+	ValidatorSetHash int32
+	CatchainSeqno    int32
+	Signatures       []LiteServerSignature
+}
+
+func (t LiteServerSignatureSet) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.ValidatorSetHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.CatchainSeqno)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Signatures)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerSignatureSet) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.ValidatorSetHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.CatchainSeqno)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Signatures)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerTransactionId struct {
+	Mode    int32
+	Account *tl.Int256
+	Lt      *int64
+	Hash    *tl.Int256
+}
+
+func (t LiteServerTransactionId) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		b, err = tl.Marshal(t.Account)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if (t.Mode>>1)&1 == 1 {
+		b, err = tl.Marshal(t.Lt)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if (t.Mode>>2)&1 == 1 {
+		b, err = tl.Marshal(t.Hash)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerTransactionId) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempAccount tl.Int256
+		err = tl.Unmarshal(r, &tempAccount)
+		if err != nil {
+			return err
+		}
+		t.Account = &tempAccount
+	}
+	if (t.Mode>>1)&1 == 1 {
+		var tempLt int64
+		err = tl.Unmarshal(r, &tempLt)
+		if err != nil {
+			return err
+		}
+		t.Lt = &tempLt
+	}
+	if (t.Mode>>2)&1 == 1 {
+		var tempHash tl.Int256
+		err = tl.Unmarshal(r, &tempHash)
+		if err != nil {
+			return err
+		}
+		t.Hash = &tempHash
+	}
+	return nil
+}
+
+type LiteServerTransactionId3 struct {
+	Account tl.Int256
+	Lt      int64
+}
+
+func (t LiteServerTransactionId3) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Account)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Lt)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerTransactionId3) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Account)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Lt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerTransactionInfo struct {
+	Id          tongo.TonNodeBlockIdExt
+	Proof       []byte
+	Transaction []byte
+}
+
+func (t LiteServerTransactionInfo) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Proof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Transaction)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerTransactionInfo) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Proof)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Transaction)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerTransactionList struct {
+	Ids          []tongo.TonNodeBlockIdExt
+	Transactions []byte
+}
+
+func (t LiteServerTransactionList) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Ids)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Transactions)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerTransactionList) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Ids)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Transactions)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerValidatorStats struct {
+	Mode       int32
+	Id         tongo.TonNodeBlockIdExt
+	Count      int32
+	Complete   bool
+	StateProof []byte
+	DataProof  []byte
+}
+
+func (t LiteServerValidatorStats) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Count)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Complete)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.StateProof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.DataProof)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerValidatorStats) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Count)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Complete)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.StateProof)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.DataProof)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerVersion struct {
+	Mode         int32
+	Version      int32
+	Capabilities int64
+	Now          int32
+}
+
+func (t LiteServerVersion) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Version)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Capabilities)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Now)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerVersion) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Version)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Capabilities)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Now)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerDebugVerbosity int32
+
+type TonNodeBlockId struct {
+	Workchain int32
+	Shard     int64
+	Seqno     int32
+}
+
+func (t TonNodeBlockId) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Workchain)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Shard)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Seqno)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *TonNodeBlockId) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Workchain)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Shard)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Seqno)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type TonNodeBlockIdExt struct {
+	Workchain int32
+	Shard     int64
+	Seqno     int32
+	RootHash  tl.Int256
+	FileHash  tl.Int256
+}
+
+func (t TonNodeBlockIdExt) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Workchain)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Shard)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Seqno)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.RootHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.FileHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *TonNodeBlockIdExt) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Workchain)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Shard)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Seqno)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.RootHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.FileHash)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type TonNodeZeroStateIdExt struct {
+	Workchain int32
+	RootHash  tl.Int256
+	FileHash  tl.Int256
+}
+
+func (t TonNodeZeroStateIdExt) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Workchain)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.RootHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.FileHash)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *TonNodeZeroStateIdExt) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Workchain)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.RootHash)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.FileHash)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) LiteServerGetMasterchainInfo(ctx context.Context) (res LiteServerMasterchainInfo, err error) {
+	payload := make([]byte, 4)
+	binary.LittleEndian.PutUint32(payload, 0x89b5e62e)
+	resp, err := c.liteServerRequest(ctx, payload)
+	if err != nil {
+		return res, err
+	}
+	if len(resp) < 4 {
+		return res, fmt.Errorf("not enough bytes for tag")
+	}
+	tag := binary.LittleEndian.Uint32(resp[:4])
+	if tag == 0xbba9e148 {
+		var errRes LiteServerError
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
+		if err != nil {
+			return res, err
+		}
+		return res, errRes
+	}
+	if tag == 0x85832881 {
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
+		return res, err
+	}
+	return res, fmt.Errorf("invalid tag")
+}
+
+type LiteServerGetMasterchainInfoExtRequest int32
+
+func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request LiteServerGetMasterchainInfoExtRequest) (res LiteServerMasterchainInfoExt, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetMasterchainInfoExtRequest `tlSumType:"70a671df"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerMasterchainInfoExt{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerMasterchainInfoExt{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerMasterchainInfoExt{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerMasterchainInfoExt{}, err
+			return res, err
 		}
-		return LiteServerMasterchainInfoExt{}, errRes
+		return res, errRes
 	}
 	if tag == 0xa8cce0f5 {
-		var res LiteServerMasterchainInfoExt
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerMasterchainInfoExt{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-func (c *Client) LiteServerGetTime(ctx context.Context) (LiteServerCurrentTime, error) {
+func (c *Client) LiteServerGetTime(ctx context.Context) (res LiteServerCurrentTime, err error) {
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0x16ad5a34)
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerCurrentTime{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerCurrentTime{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerCurrentTime{}, err
+			return res, err
 		}
-		return LiteServerCurrentTime{}, errRes
+		return res, errRes
 	}
 	if tag == 0xe953000d {
-		var res LiteServerCurrentTime
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerCurrentTime{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-func (c *Client) LiteServerGetVersion(ctx context.Context) (LiteServerVersion, error) {
+func (c *Client) LiteServerGetVersion(ctx context.Context) (res LiteServerVersion, err error) {
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0x232b940b)
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerVersion{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerVersion{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerVersion{}, err
+			return res, err
 		}
-		return LiteServerVersion{}, errRes
+		return res, errRes
 	}
 	if tag == 0x5a0491e5 {
-		var res LiteServerVersion
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerVersion{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-type LiteServerGetBlockRequest struct {
-	Id TonNodeBlockIdExt
-}
+type LiteServerGetBlockRequest tongo.TonNodeBlockIdExt
 
-func (t LiteServerGetBlockRequest) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (c *Client) LiteServerGetBlock(ctx context.Context, request LiteServerGetBlockRequest) (LiteServerBlockData, error) {
+func (c *Client) LiteServerGetBlock(ctx context.Context, request LiteServerGetBlockRequest) (res LiteServerBlockData, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetBlockRequest `tlSumType:"6377cf0d"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerBlockData{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerBlockData{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerBlockData{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerBlockData{}, err
+			return res, err
 		}
-		return LiteServerBlockData{}, errRes
+		return res, errRes
 	}
 	if tag == 0xa574ed6c {
-		var res LiteServerBlockData
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerBlockData{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-type LiteServerGetStateRequest struct {
-	Id TonNodeBlockIdExt
-}
+type LiteServerGetStateRequest tongo.TonNodeBlockIdExt
 
-func (t LiteServerGetStateRequest) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (c *Client) LiteServerGetState(ctx context.Context, request LiteServerGetStateRequest) (LiteServerBlockState, error) {
+func (c *Client) LiteServerGetState(ctx context.Context, request LiteServerGetStateRequest) (res LiteServerBlockState, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetStateRequest `tlSumType:"ba6e2eb6"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerBlockState{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerBlockState{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerBlockState{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerBlockState{}, err
+			return res, err
 		}
-		return LiteServerBlockState{}, errRes
+		return res, errRes
 	}
 	if tag == 0xabaddc0c {
-		var res LiteServerBlockState
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerBlockState{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetBlockHeaderRequest struct {
-	Id   TonNodeBlockIdExt
+	Id   tongo.TonNodeBlockIdExt
 	Mode int32
 }
 
@@ -2568,94 +2394,73 @@ func (t LiteServerGetBlockHeaderRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetBlockHeader(ctx context.Context, request LiteServerGetBlockHeaderRequest) (LiteServerBlockHeader, error) {
+func (c *Client) LiteServerGetBlockHeader(ctx context.Context, request LiteServerGetBlockHeaderRequest) (res LiteServerBlockHeader, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetBlockHeaderRequest `tlSumType:"21ec069e"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerBlockHeader{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerBlockHeader{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerBlockHeader{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerBlockHeader{}, err
+			return res, err
 		}
-		return LiteServerBlockHeader{}, errRes
+		return res, errRes
 	}
 	if tag == 0x752d8219 {
-		var res LiteServerBlockHeader
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerBlockHeader{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-type LiteServerSendMessageRequest struct {
-	Body []byte
-}
+type LiteServerSendMessageRequest []byte
 
-func (t LiteServerSendMessageRequest) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Body)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (c *Client) LiteServerSendMessage(ctx context.Context, request LiteServerSendMessageRequest) (LiteServerSendMsgStatus, error) {
+func (c *Client) LiteServerSendMessage(ctx context.Context, request LiteServerSendMessageRequest) (res LiteServerSendMsgStatus, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerSendMessageRequest `tlSumType:"690ad482"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerSendMsgStatus{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerSendMsgStatus{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerSendMsgStatus{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerSendMsgStatus{}, err
+			return res, err
 		}
-		return LiteServerSendMsgStatus{}, errRes
+		return res, errRes
 	}
 	if tag == 0x3950e597 {
-		var res LiteServerSendMsgStatus
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerSendMsgStatus{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetAccountStateRequest struct {
-	Id      TonNodeBlockIdExt
-	Account LiteServerAccountId
+	Id      tongo.TonNodeBlockIdExt
+	Account tongo.AccountID
 }
 
 func (t LiteServerGetAccountStateRequest) MarshalTL() ([]byte, error) {
@@ -2683,42 +2488,41 @@ func (t LiteServerGetAccountStateRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetAccountState(ctx context.Context, request LiteServerGetAccountStateRequest) (LiteServerAccountState, error) {
+func (c *Client) LiteServerGetAccountState(ctx context.Context, request LiteServerGetAccountStateRequest) (res LiteServerAccountState, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetAccountStateRequest `tlSumType:"6b890e25"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerAccountState{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerAccountState{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerAccountState{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerAccountState{}, err
+			return res, err
 		}
-		return LiteServerAccountState{}, errRes
+		return res, errRes
 	}
 	if tag == 0x7079c751 {
-		var res LiteServerAccountState
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerAccountState{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerRunSmcMethodRequest struct {
 	Mode     int32
-	Id       TonNodeBlockIdExt
-	Account  LiteServerAccountId
+	Id       tongo.TonNodeBlockIdExt
+	Account  tongo.AccountID
 	MethodId int64
 	Params   []byte
 }
@@ -2772,40 +2576,39 @@ func (t LiteServerRunSmcMethodRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerRunSmcMethod(ctx context.Context, request LiteServerRunSmcMethodRequest) (LiteServerRunMethodResult, error) {
+func (c *Client) LiteServerRunSmcMethod(ctx context.Context, request LiteServerRunSmcMethodRequest) (res LiteServerRunMethodResult, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerRunSmcMethodRequest `tlSumType:"5cc65dd2"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerRunMethodResult{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerRunMethodResult{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerRunMethodResult{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerRunMethodResult{}, err
+			return res, err
 		}
-		return LiteServerRunMethodResult{}, errRes
+		return res, errRes
 	}
 	if tag == 0xa39a616b {
-		var res LiteServerRunMethodResult
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerRunMethodResult{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetShardInfoRequest struct {
-	Id        TonNodeBlockIdExt
+	Id        tongo.TonNodeBlockIdExt
 	Workchain int32
 	Shard     int64
 	Exact     bool
@@ -2852,94 +2655,73 @@ func (t LiteServerGetShardInfoRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetShardInfo(ctx context.Context, request LiteServerGetShardInfoRequest) (LiteServerShardInfo, error) {
+func (c *Client) LiteServerGetShardInfo(ctx context.Context, request LiteServerGetShardInfoRequest) (res LiteServerShardInfo, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetShardInfoRequest `tlSumType:"46a2f425"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerShardInfo{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerShardInfo{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerShardInfo{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerShardInfo{}, err
+			return res, err
 		}
-		return LiteServerShardInfo{}, errRes
+		return res, errRes
 	}
 	if tag == 0x9fe6cd84 {
-		var res LiteServerShardInfo
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerShardInfo{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-type LiteServerGetAllShardsInfoRequest struct {
-	Id TonNodeBlockIdExt
-}
+type LiteServerGetAllShardsInfoRequest tongo.TonNodeBlockIdExt
 
-func (t LiteServerGetAllShardsInfoRequest) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (c *Client) LiteServerGetAllShardsInfo(ctx context.Context, request LiteServerGetAllShardsInfoRequest) (LiteServerAllShardsInfo, error) {
+func (c *Client) LiteServerGetAllShardsInfo(ctx context.Context, request LiteServerGetAllShardsInfoRequest) (res LiteServerAllShardsInfo, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetAllShardsInfoRequest `tlSumType:"74d3fd6b"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerAllShardsInfo{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerAllShardsInfo{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerAllShardsInfo{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerAllShardsInfo{}, err
+			return res, err
 		}
-		return LiteServerAllShardsInfo{}, errRes
+		return res, errRes
 	}
 	if tag == 0x98fe72d {
-		var res LiteServerAllShardsInfo
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerAllShardsInfo{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetOneTransactionRequest struct {
-	Id      TonNodeBlockIdExt
-	Account LiteServerAccountId
+	Id      tongo.TonNodeBlockIdExt
+	Account tongo.AccountID
 	Lt      int64
 }
 
@@ -2976,41 +2758,40 @@ func (t LiteServerGetOneTransactionRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetOneTransaction(ctx context.Context, request LiteServerGetOneTransactionRequest) (LiteServerTransactionInfo, error) {
+func (c *Client) LiteServerGetOneTransaction(ctx context.Context, request LiteServerGetOneTransactionRequest) (res LiteServerTransactionInfo, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetOneTransactionRequest `tlSumType:"d40f24ea"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerTransactionInfo{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerTransactionInfo{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerTransactionInfo{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerTransactionInfo{}, err
+			return res, err
 		}
-		return LiteServerTransactionInfo{}, errRes
+		return res, errRes
 	}
 	if tag == 0xedeed47 {
-		var res LiteServerTransactionInfo
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerTransactionInfo{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetTransactionsRequest struct {
 	Count   int32
-	Account LiteServerAccountId
+	Account tongo.AccountID
 	Lt      int64
 	Hash    tl.Int256
 }
@@ -3056,36 +2837,35 @@ func (t LiteServerGetTransactionsRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetTransactions(ctx context.Context, request LiteServerGetTransactionsRequest) (LiteServerTransactionList, error) {
+func (c *Client) LiteServerGetTransactions(ctx context.Context, request LiteServerGetTransactionsRequest) (res LiteServerTransactionList, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetTransactionsRequest `tlSumType:"1c40e7a1"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerTransactionList{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerTransactionList{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerTransactionList{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerTransactionList{}, err
+			return res, err
 		}
-		return LiteServerTransactionList{}, errRes
+		return res, errRes
 	}
 	if tag == 0x6f26c60b {
-		var res LiteServerTransactionList
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerTransactionList{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerLookupBlockRequest struct {
@@ -3140,40 +2920,39 @@ func (t LiteServerLookupBlockRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerLookupBlock(ctx context.Context, request LiteServerLookupBlockRequest) (LiteServerBlockHeader, error) {
+func (c *Client) LiteServerLookupBlock(ctx context.Context, request LiteServerLookupBlockRequest) (res LiteServerBlockHeader, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerLookupBlockRequest `tlSumType:"fac8f71e"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerBlockHeader{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerBlockHeader{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerBlockHeader{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerBlockHeader{}, err
+			return res, err
 		}
-		return LiteServerBlockHeader{}, errRes
+		return res, errRes
 	}
 	if tag == 0x752d8219 {
-		var res LiteServerBlockHeader
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerBlockHeader{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerListBlockTransactionsRequest struct {
-	Id    TonNodeBlockIdExt
+	Id    tongo.TonNodeBlockIdExt
 	Mode  int32
 	Count int32
 	After *LiteServerTransactionId3
@@ -3222,42 +3001,41 @@ func (t LiteServerListBlockTransactionsRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerListBlockTransactions(ctx context.Context, request LiteServerListBlockTransactionsRequest) (LiteServerBlockTransactions, error) {
+func (c *Client) LiteServerListBlockTransactions(ctx context.Context, request LiteServerListBlockTransactionsRequest) (res LiteServerBlockTransactions, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerListBlockTransactionsRequest `tlSumType:"adfcc7da"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerBlockTransactions{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerBlockTransactions{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerBlockTransactions{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerBlockTransactions{}, err
+			return res, err
 		}
-		return LiteServerBlockTransactions{}, errRes
+		return res, errRes
 	}
 	if tag == 0xbd8cad2b {
-		var res LiteServerBlockTransactions
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerBlockTransactions{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetBlockProofRequest struct {
 	Mode        int32
-	KnownBlock  TonNodeBlockIdExt
-	TargetBlock *TonNodeBlockIdExt
+	KnownBlock  tongo.TonNodeBlockIdExt
+	TargetBlock *tongo.TonNodeBlockIdExt
 }
 
 func (t LiteServerGetBlockProofRequest) MarshalTL() ([]byte, error) {
@@ -3295,41 +3073,40 @@ func (t LiteServerGetBlockProofRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetBlockProof(ctx context.Context, request LiteServerGetBlockProofRequest) (LiteServerPartialBlockProof, error) {
+func (c *Client) LiteServerGetBlockProof(ctx context.Context, request LiteServerGetBlockProofRequest) (res LiteServerPartialBlockProof, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetBlockProofRequest `tlSumType:"8aea9c44"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerPartialBlockProof{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerPartialBlockProof{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerPartialBlockProof{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerPartialBlockProof{}, err
+			return res, err
 		}
-		return LiteServerPartialBlockProof{}, errRes
+		return res, errRes
 	}
 	if tag == 0x8ed0d2c1 {
-		var res LiteServerPartialBlockProof
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerPartialBlockProof{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetConfigAllRequest struct {
 	Mode int32
-	Id   TonNodeBlockIdExt
+	Id   tongo.TonNodeBlockIdExt
 }
 
 func (t LiteServerGetConfigAllRequest) MarshalTL() ([]byte, error) {
@@ -3357,41 +3134,40 @@ func (t LiteServerGetConfigAllRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetConfigAll(ctx context.Context, request LiteServerGetConfigAllRequest) (LiteServerConfigInfo, error) {
+func (c *Client) LiteServerGetConfigAll(ctx context.Context, request LiteServerGetConfigAllRequest) (res LiteServerConfigInfo, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetConfigAllRequest `tlSumType:"911b26b7"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerConfigInfo{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerConfigInfo{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerConfigInfo{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerConfigInfo{}, err
+			return res, err
 		}
-		return LiteServerConfigInfo{}, errRes
+		return res, errRes
 	}
 	if tag == 0xae7b272f {
-		var res LiteServerConfigInfo
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerConfigInfo{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetConfigParamsRequest struct {
 	Mode      int32
-	Id        TonNodeBlockIdExt
+	Id        tongo.TonNodeBlockIdExt
 	ParamList []int32
 }
 
@@ -3428,41 +3204,40 @@ func (t LiteServerGetConfigParamsRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetConfigParams(ctx context.Context, request LiteServerGetConfigParamsRequest) (LiteServerConfigInfo, error) {
+func (c *Client) LiteServerGetConfigParams(ctx context.Context, request LiteServerGetConfigParamsRequest) (res LiteServerConfigInfo, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetConfigParamsRequest `tlSumType:"2a111c19"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerConfigInfo{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerConfigInfo{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerConfigInfo{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerConfigInfo{}, err
+			return res, err
 		}
-		return LiteServerConfigInfo{}, errRes
+		return res, errRes
 	}
 	if tag == 0xae7b272f {
-		var res LiteServerConfigInfo
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerConfigInfo{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
 type LiteServerGetValidatorStatsRequest struct {
 	Mode          int32
-	Id            TonNodeBlockIdExt
+	Id            tongo.TonNodeBlockIdExt
 	Limit         int32
 	StartAfter    *tl.Int256
 	ModifiedAfter *int32
@@ -3521,140 +3296,99 @@ func (t LiteServerGetValidatorStatsRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Client) LiteServerGetValidatorStats(ctx context.Context, request LiteServerGetValidatorStatsRequest) (LiteServerValidatorStats, error) {
+func (c *Client) LiteServerGetValidatorStats(ctx context.Context, request LiteServerGetValidatorStatsRequest) (res LiteServerValidatorStats, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetValidatorStatsRequest `tlSumType:"091a58bc"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerValidatorStats{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerValidatorStats{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerValidatorStats{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerValidatorStats{}, err
+			return res, err
 		}
-		return LiteServerValidatorStats{}, errRes
+		return res, errRes
 	}
 	if tag == 0xb9f796d8 {
-		var res LiteServerValidatorStats
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerValidatorStats{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-type LiteServerGetLibrariesRequest struct {
-	LibraryList []tl.Int256
-}
+type LiteServerGetLibrariesRequest []tl.Int256
 
-func (t LiteServerGetLibrariesRequest) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.LibraryList)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (c *Client) LiteServerGetLibraries(ctx context.Context, request LiteServerGetLibrariesRequest) (LiteServerLibraryResult, error) {
+func (c *Client) LiteServerGetLibraries(ctx context.Context, request LiteServerGetLibrariesRequest) (res LiteServerLibraryResult, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetLibrariesRequest `tlSumType:"d122b662"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerLibraryResult{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerLibraryResult{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerLibraryResult{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerLibraryResult{}, err
+			return res, err
 		}
-		return LiteServerLibraryResult{}, errRes
+		return res, errRes
 	}
 	if tag == 0x117ab96b {
-		var res LiteServerLibraryResult
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerLibraryResult{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }
 
-type LiteServerGetShardBlockProofRequest struct {
-	Id TonNodeBlockIdExt
-}
+type LiteServerGetShardBlockProofRequest tongo.TonNodeBlockIdExt
 
-func (t LiteServerGetShardBlockProofRequest) MarshalTL() ([]byte, error) {
-	var (
-		err error
-		b   []byte
-	)
-	buf := new(bytes.Buffer)
-	b, err = tl.Marshal(t.Id)
-	if err != nil {
-		return nil, err
-	}
-	_, err = buf.Write(b)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (c *Client) LiteServerGetShardBlockProof(ctx context.Context, request LiteServerGetShardBlockProofRequest) (LiteServerShardBlockProof, error) {
+func (c *Client) LiteServerGetShardBlockProof(ctx context.Context, request LiteServerGetShardBlockProofRequest) (res LiteServerShardBlockProof, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetShardBlockProofRequest `tlSumType:"4ca60350"`
 	}{SumType: "Req", Req: request})
 	if err != nil {
-		return LiteServerShardBlockProof{}, err
+		return res, err
 	}
 	resp, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
-		return LiteServerShardBlockProof{}, err
+		return res, err
 	}
 	if len(resp) < 4 {
-		return LiteServerShardBlockProof{}, fmt.Errorf("not enought bytes for tag")
+		return res, fmt.Errorf("not enough bytes for tag")
 	}
 	tag := binary.LittleEndian.Uint32(resp[:4])
 	if tag == 0xbba9e148 {
 		var errRes LiteServerError
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
 		if err != nil {
-			return LiteServerShardBlockProof{}, err
+			return res, err
 		}
-		return LiteServerShardBlockProof{}, errRes
+		return res, errRes
 	}
 	if tag == 0x1d62a07a {
-		var res LiteServerShardBlockProof
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}
-	return LiteServerShardBlockProof{}, fmt.Errorf("invalid tag")
+	return res, fmt.Errorf("invalid tag")
 }

@@ -1,6 +1,8 @@
 package tongo
 
 import (
+	"fmt"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
@@ -30,6 +32,88 @@ type Transaction struct {
 	TotalFees   CurrencyCollection
 	StateUpdate HashUpdate       `tlb:"^"`
 	Description TransactionDescr `tlb:"^"`
+
+	hash Hash
+}
+
+// Hash returns a hash of this transaction.
+func (tx *Transaction) Hash() Hash {
+	return tx.hash
+}
+
+func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
+	hash, err := c.Hash()
+	if err != nil {
+		return err
+	}
+	if err := tx.hash.FromBytes(hash); err != nil {
+		return err
+	}
+	c.ResetCounters()
+
+	sumType, err := c.ReadUint(4)
+	if err != nil {
+		return err
+	}
+	if sumType != 0b0111 {
+		return fmt.Errorf("invalid tag")
+	}
+	if err = tlb.Unmarshal(c, &tx.AccountAddr); err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c, &tx.Lt); err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c, &tx.PrevTransHash); err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c, &tx.PrevTransLt); err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c, &tx.Now); err != nil {
+		return err
+	}
+	outMsgCnt, err := c.ReadUint(15)
+	if err != nil {
+		return err
+	}
+	tx.OutMsgCnt = uint32(outMsgCnt)
+	if err = tlb.Unmarshal(c, &tx.OrigStatus); err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c, &tx.EndStatus); err != nil {
+		return err
+	}
+	c1, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	var msgs struct {
+		InMsg   tlb.Maybe[tlb.Ref[Message]]
+		OutMsgs tlb.HashmapE[tlb.Ref[Message]] `tlb:"15bits"`
+	}
+	if err = tlb.Unmarshal(c1, &msgs); err != nil {
+		return err
+	}
+	tx.Msgs = msgs
+	if err = tlb.Unmarshal(c, &tx.TotalFees); err != nil {
+		return err
+	}
+	c2, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c2, &tx.StateUpdate); err != nil {
+		return err
+	}
+	c3, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	if err = tlb.Unmarshal(c3, &tx.Description); err != nil {
+		return err
+	}
+	return nil
 }
 
 // trans_ord$0000 credit_first:Bool

@@ -211,7 +211,7 @@ func MsgAddressFromAccountID(id *AccountID) MsgAddress {
 type AccountStatus string
 
 const (
-	AccountEmpty  AccountStatus = "empty" // empty state from node
+	//AccountEmpty  AccountStatus = "empty" // empty state from node
 	AccountNone   AccountStatus = "nonexist"
 	AccountUninit AccountStatus = "uninit"
 	AccountActive AccountStatus = "active"
@@ -307,4 +307,39 @@ type StorageUsed struct {
 	Cells       tlb.VarUInteger7
 	Bits        tlb.VarUInteger7
 	PublicCells tlb.VarUInteger7
+}
+
+func (a Account) GetInfo() (AccountInfo, error) {
+	if a.SumType == "AccountNone" {
+		return AccountInfo{Status: AccountNone}, nil
+	}
+	res := AccountInfo{
+		Balance:           uint64(a.Account.Storage.Balance.Grams),
+		LastTransactionLt: a.Account.Storage.LastTransLt,
+	}
+	if a.Account.Storage.State.SumType == "AccountUninit" {
+		res.Status = AccountUninit
+		return res, nil
+	}
+	if a.Account.Storage.State.SumType == "AccountFrozen" {
+		res.FrozenHash = a.Account.Storage.State.AccountFrozen.StateHash
+		res.Status = AccountFrozen
+		return res, nil
+	}
+	res.Status = AccountActive
+	if !a.Account.Storage.State.AccountActive.StateInit.Data.Null {
+		data, err := a.Account.Storage.State.AccountActive.StateInit.Data.Value.Value.ToBoc()
+		if err != nil {
+			return AccountInfo{}, err
+		}
+		res.Data = data
+	}
+	if !a.Account.Storage.State.AccountActive.StateInit.Code.Null {
+		code, err := a.Account.Storage.State.AccountActive.StateInit.Code.Value.Value.ToBoc()
+		if err != nil {
+			return AccountInfo{}, err
+		}
+		res.Code = code
+	}
+	return res, nil
 }

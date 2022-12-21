@@ -19,10 +19,6 @@ import (
 	"github.com/startfellows/tongo/utils"
 )
 
-var (
-	ErrBlockNotApplied = fmt.Errorf("block is not applied")
-)
-
 type connection struct {
 	workchain   int32
 	shardPrefix tongo.ShardID
@@ -298,43 +294,29 @@ func (c *Client) RunSmcMethod(
 	return res.ExitCode, result, err
 }
 
-func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tongo.AccountInfo, error) {
+func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tongo.Account, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
-		return tongo.AccountInfo{}, err
+		return tongo.Account{}, err
 	}
 	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
-		return tongo.AccountInfo{}, err
+		return tongo.Account{}, err
 	}
 	res, err := server.LiteServerGetAccountState(ctx, liteclient.LiteServerGetAccountStateRequest{
 		Account: accountID,
 		Id:      id,
 	})
 	if err != nil {
-		return tongo.AccountInfo{}, err
+		return tongo.Account{}, err
 	}
-	if checkForNotApplied(err.(liteclient.LiteServerError)) { // TODO: add to other methods
-		return tongo.AccountInfo{}, ErrBlockNotApplied
+	if err.(liteclient.LiteServerError).IsNotApplied() { // TODO: add to other methods
+		return tongo.Account{}, liteclient.ErrBlockNotApplied
 	}
 	if len(res.State) == 0 {
-		return tongo.AccountInfo{Status: tongo.AccountEmpty}, nil
+		return tongo.Account{SumType: "AccountNone"}, nil
 	}
-	acc, err := decodeRawAccountBoc(res.State)
-	if err != nil {
-		return tongo.AccountInfo{}, err
-	}
-	// TODO: proof check?
-	// TODO: save raw account into account info?
-	return convertTlbAccountToAccountState(acc)
-}
-
-func checkForNotApplied(e liteclient.LiteServerError) bool {
-	return e.Message == "block is not applied"
-}
-
-func decodeRawAccountBoc(bocBytes []byte) (tongo.Account, error) {
-	cells, err := boc.DeserializeBoc(bocBytes)
+	cells, err := boc.DeserializeBoc(res.State)
 	if err != nil {
 		return tongo.Account{}, err
 	}
@@ -347,115 +329,92 @@ func decodeRawAccountBoc(bocBytes []byte) (tongo.Account, error) {
 		return tongo.Account{}, err
 	}
 	return acc, nil
+	// TODO: proof check and extract shard account info
 }
 
-func convertTlbAccountToAccountState(acc tongo.Account) (tongo.AccountInfo, error) {
-	if acc.SumType == "AccountNone" {
-		return tongo.AccountInfo{Status: tongo.AccountNone}, nil
+func (c *Client) GetShardInfo(
+	ctx context.Context,
+	blockID tongo.TonNodeBlockIdExt,
+	workchain uint32,
+	shard uint64,
+	exact bool,
+) (liteclient.LiteServerShardInfo, error) {
+	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
+	if err != nil {
+		return liteclient.LiteServerShardInfo{}, err
 	}
-	res := tongo.AccountInfo{
-		Balance:           uint64(acc.Account.Storage.Balance.Grams),
-		LastTransactionLt: acc.Account.Storage.LastTransLt,
-	}
-	if acc.Account.Storage.State.SumType == "AccountUninit" {
-		res.Status = tongo.AccountUninit
-		return res, nil
-	}
-	if acc.Account.Storage.State.SumType == "AccountFrozen" {
-		res.FrozenHash = acc.Account.Storage.State.AccountFrozen.StateHash
-		res.Status = tongo.AccountFrozen
-		return res, nil
-	}
-	res.Status = tongo.AccountActive
-	if !acc.Account.Storage.State.AccountActive.StateInit.Data.Null {
-		data, err := acc.Account.Storage.State.AccountActive.StateInit.Data.Value.Value.ToBoc()
-		if err != nil {
-			return tongo.AccountInfo{}, err
-		}
-		res.Data = data
-	}
-	if !acc.Account.Storage.State.AccountActive.StateInit.Code.Null {
-		code, err := acc.Account.Storage.State.AccountActive.StateInit.Code.Value.Value.ToBoc()
-		if err != nil {
-			return tongo.AccountInfo{}, err
-		}
-		res.Code = code
-	}
-	return res, nil
+	// TODO: decode descr
+	return server.LiteServerGetShardInfo(ctx, liteclient.LiteServerGetShardInfoRequest{
+		Id:        blockID,
+		Workchain: workchain,
+		Shard:     shard,
+		Exact:     exact,
+	})
 }
 
-//--------------------------------------------------------------------------------------------------------------------//
-
-func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountID) (tongo.Account, error) {
-	a, err := c.getLastRawAccountState(ctx, accountId)
+func (c *Client) GetAllShardsInfo(ctx context.Context) (liteclient.LiteServerAllShardsInfo, error) {
+	id, err := c.targetBlock(ctx)
 	if err != nil {
-		return tongo.Account{}, err
+		return liteclient.LiteServerAllShardsInfo{}, err
 	}
-	if len(a.State) == 0 {
-		acc := tongo.Account{SumType: "AccountNone"}
-		return acc, nil
-	}
-	return decodeRawAccountBoc(a.State)
+	// TODO: decode data
+	return c.getMasterchainServer().LiteServerGetAllShardsInfo(ctx, liteclient.LiteServerGetAllShardsInfoRequest(id))
 }
 
-func (c *Client) GetLastShardAccount(ctx context.Context, accountId tongo.AccountID) (tongo.ShardAccount, error) {
-	a, err := c.getLastRawAccountState(ctx, accountId)
+func (c *Client) GetOneTransaction(
+	ctx context.Context,
+	accountID tongo.AccountID,
+	lt uint64,
+) (tongo.Transaction, error) {
+	id, err := c.targetBlock(ctx)
 	if err != nil {
-		return tongo.ShardAccount{}, err
+		return tongo.Transaction{}, err
 	}
-	var sa tongo.ShardAccount
-	if len(a.State) == 0 {
-		sa.Account.SumType = "AccountNone"
-		return sa, nil
-	}
-	account, err := decodeRawAccountBoc(a.State)
+	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
-		return tongo.ShardAccount{}, err
+		return tongo.Transaction{}, err
 	}
-	if len(a.Proof) == 0 {
-		return tongo.ShardAccount{}, fmt.Errorf("empty proof")
-	}
-	lt, hash, err := decodeAccountDataFromProof(a.Proof, accountId)
+	r, err := server.LiteServerGetOneTransaction(ctx, liteclient.LiteServerGetOneTransactionRequest{
+		Id:      id,
+		Account: accountID,
+		Lt:      lt,
+	})
 	if err != nil {
-		return tongo.ShardAccount{}, err
+		return tongo.Transaction{}, err
 	}
-	sa.LastTransHash = hash
-	sa.LastTransLt = lt
-	sa.Account = account
-	return sa, nil
+	cells, err := boc.DeserializeBoc(r.Transaction)
+	if err != nil {
+		return tongo.Transaction{}, err
+	}
+	if len(cells) != 1 {
+		return tongo.Transaction{}, boc.ErrNotSingleRoot
+	}
+	var t tongo.Transaction
+	err = tlb.Unmarshal(cells[0], &t)
+	return t, err
 }
 
-func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tongo.Hash, error) {
-	cells, err := boc.DeserializeBoc(bocBytes)
+func (c *Client) GetTransactions(
+	ctx context.Context,
+	count uint32,
+	accountID tongo.AccountID,
+	lt uint64,
+	hash tongo.Hash,
+) ([]tongo.Transaction, error) {
+	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
-		return 0, tongo.Hash{}, err
+		return nil, err
 	}
-	if len(cells) < 1 {
-		return 0, tongo.Hash{}, fmt.Errorf("must be at least one root cell")
-	}
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
-	}
-	err = tlb.Unmarshal(cells[1], &proof) // cells order must be strictly defined
+	r, err := server.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
+		Count:   count,
+		Account: accountID,
+		Lt:      lt,
+		Hash:    tl.Int256(hash),
+	})
 	if err != nil {
-		return 0, tongo.Hash{}, err
+		return nil, err
 	}
-	values := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Values()
-	keys := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Keys()
-	for i, k := range keys {
-		keyVal, err := k.ReadBytes(32)
-		if err != nil {
-			return 0, tongo.Hash{}, err
-		}
-		if bytes.Equal(keyVal, account.Address[:]) {
-			return values[i].LastTransLt, values[i].LastTransHash, nil
-		}
-	}
-	return 0, tongo.Hash{}, fmt.Errorf("account not found in ShardAccounts")
-}
-
-func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]tongo.Transaction, error) {
-	cells, err := c.GetRawTransactions(ctx, count, accountId, lt, hash)
+	cells, err := boc.DeserializeBoc(r.Transactions)
 	if err != nil {
 		return nil, err
 	}
@@ -472,68 +431,129 @@ func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId to
 	return res, nil
 }
 
-// GetRawTransactions
-// Returns []boc.Cell of the transaction$0111 tlb constructor. Be careful when reading Cell. Some Cells are shared between slice elements. Use cell.ResetCounters()
-func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]*boc.Cell, error) {
-	// TransactionList
-	// liteServer.transactionList ids:(vector tonNode.blockIdExt) transactions:bytes = liteServer.TransactionList;
-	type TransactionList struct {
-		Ids          []tongo.TonNodeBlockIdExt
-		Transactions []byte
-	}
-	type getTransactionsRequest struct {
-		Count   uint32
-		Account tongo.AccountID
-		Lt      uint64
-		Hash    tongo.Hash
-	}
-	r := struct {
-		tl.SumType
-		GetTransactionsRequest getTransactionsRequest `tlSumType:"a1e7401c"`
-	}{
-		SumType: "GetTransactionsRequest",
-		GetTransactionsRequest: getTransactionsRequest{
-			Count:   count,
-			Account: accountId,
-			Lt:      lt,
-			Hash:    hash,
-		},
-	}
-	rBytes, err := tl.Marshal(r)
+func (c *Client) ListBlockTransactions(
+	ctx context.Context,
+	blockID tongo.TonNodeBlockIdExt,
+	mode, count uint32,
+	after *liteclient.LiteServerTransactionId3,
+) ([]liteclient.LiteServerTransactionId, bool, error) {
+	// TODO: replace with tongo types
+	server, err := c.getServerByBlockID(blockID.TonNodeBlockId)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
-	req := makeLiteServerQueryRequest(rBytes)
-	server, err := c.getServerByAccountID(accountId)
+	r, err := server.LiteServerListBlockTransactions(ctx, liteclient.LiteServerListBlockTransactionsRequest{
+		Id:    blockID,
+		Mode:  mode,
+		Count: count,
+		After: after,
+	})
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
-	resp, err := server.Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	var pResp struct {
-		tl.SumType
-		TransactionList TransactionList `tlSumType:"0bc6266f"` // TODO: must be 9dd72eb9
-		Error           LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, err
-	}
-	if pResp.SumType == "Error" {
-		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cells, err := boc.DeserializeBoc(pResp.TransactionList.Transactions)
-	if err != nil {
-		return nil, err
-	}
-	if len(cells) != len(pResp.TransactionList.Ids) {
-		return nil, fmt.Errorf("TonNodeBlockIdExt qty not equal transactions qty")
-	}
-	return cells, nil
+	return r.Ids, r.Incomplete, nil
 }
+
+func (c *Client) GetBlockProof(
+	ctx context.Context,
+	knownBlock tongo.TonNodeBlockIdExt,
+	targetBlock *tongo.TonNodeBlockIdExt,
+) ([]tongo.BlockProof, error) {
+	var (
+		err    error
+		server *liteclient.Client
+		mode   uint32 = 0
+	)
+	if targetBlock != nil {
+		server, err = c.getServerByBlockID(targetBlock.TonNodeBlockId)
+		mode = 1
+	} else {
+		server, err = c.getServerByBlockID(knownBlock.TonNodeBlockId)
+	}
+	if err != nil {
+		return nil, err
+	}
+	r, err := server.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
+		Mode:        mode,
+		KnownBlock:  knownBlock,
+		TargetBlock: targetBlock,
+	})
+	if err != nil {
+		return nil, err
+	}
+	// TODO: maybe add from, to, complete
+	return decodeBlockProof(r.Steps)
+}
+
+func decodeBlockProof(steps []liteclient.LiteServerBlockLink) ([]tongo.BlockProof, error) {
+	// TODO: implement
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (c *Client) GetConfigAll(ctx context.Context, mode uint32) (*tongo.McStateExtra, error) {
+	id, err := c.targetBlock(ctx)
+	if err != nil {
+		return nil, err
+	}
+	server, err := c.getServerByBlockID(id.TonNodeBlockId)
+	if err != nil {
+		return nil, err
+	}
+	r, err := server.LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
+		Mode: mode,
+		Id:   id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	cells, err := boc.DeserializeBoc(r.ConfigProof)
+	if err != nil {
+		return nil, err
+	}
+	if len(cells) != 1 {
+		return nil, boc.ErrNotSingleRoot
+	} // TODO: maybe not
+	var proof struct {
+		Proof tongo.MerkleProof[tongo.ShardState]
+	}
+	err = tlb.Unmarshal(cells[0], &proof)
+	if err != nil {
+		return nil, err
+	}
+	// TODO: extract config params from ShardState
+	return nil, fmt.Errorf("not implemented")
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+//func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tongo.Hash, error) {
+//	cells, err := boc.DeserializeBoc(bocBytes)
+//	if err != nil {
+//		return 0, tongo.Hash{}, err
+//	}
+//	if len(cells) < 1 {
+//		return 0, tongo.Hash{}, fmt.Errorf("must be at least one root cell")
+//	}
+//	var proof struct {
+//		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
+//	}
+//	err = tlb.Unmarshal(cells[1], &proof) // cells order must be strictly defined
+//	if err != nil {
+//		return 0, tongo.Hash{}, err
+//	}
+//	values := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Values()
+//	keys := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Accounts.Keys()
+//	for i, k := range keys {
+//		keyVal, err := k.ReadBytes(32)
+//		if err != nil {
+//			return 0, tongo.Hash{}, err
+//		}
+//		if bytes.Equal(keyVal, account.Address[:]) {
+//			return values[i].LastTransLt, values[i].LastTransHash, nil
+//		}
+//	}
+//	return 0, tongo.Hash{}, fmt.Errorf("account not found in ShardAccounts")
+//}
 
 var configCache = make(map[string]*config.Options)
 var configCacheMutex sync.RWMutex
@@ -557,205 +577,6 @@ func downloadConfig(path string) (*config.Options, error) {
 		configCacheMutex.Unlock()
 	}
 	return o, err
-}
-
-// GetLastConfigAll
-// liteServer.getConfigAll mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
-// liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
-// Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof
-func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
-	type getConfigAllRequest struct {
-		Mode uint32
-		ID   tongo.TonNodeBlockIdExt
-	}
-	type configInfo struct {
-		Mode        uint32
-		ID          tongo.TonNodeBlockIdExt
-		StateProof  []byte
-		ConfigProof []byte
-	}
-
-	lastBlock, err := c.GetMasterchainInfo(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	r := struct {
-		tl.SumType
-		GetConfigAllRequest getConfigAllRequest `tlSumType:"b7261b91"`
-	}{
-		SumType: "GetConfigAllRequest",
-		GetConfigAllRequest: getConfigAllRequest{
-			Mode: 0,
-			ID:   lastBlock,
-		},
-	}
-
-	rBytes, err := tl.Marshal(r)
-	if err != nil {
-		return nil, err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.getMasterchainServer().Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	var pResp struct {
-		tl.SumType
-		ConfigInfo configInfo      `tlSumType:"2f277bae"`
-		Error      LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, err
-	}
-	if pResp.SumType == "Error" {
-		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-
-	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
-	if err != nil {
-		return nil, err
-	}
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
-	}
-	err = tlb.Unmarshal(cell[0], &proof)
-	if err != nil {
-		return nil, err
-	}
-
-	conf := boc.NewCell()
-	tlb.Marshal(conf, proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config.Config)
-	return conf, nil
-}
-
-// GetConfigAll
-// liteServer.getConfigAll mode:# id:tonNode.blockIdExt = liteServer.ConfigInfo;
-// liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
-// Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof
-func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) {
-	type getConfigAllRequest struct {
-		Mode uint32
-		ID   tongo.TonNodeBlockIdExt
-	}
-	type configInfo struct {
-		Mode        uint32
-		ID          tongo.TonNodeBlockIdExt
-		StateProof  []byte
-		ConfigProof []byte
-	}
-
-	lastBlock, err := c.GetMasterchainInfoExt(ctx, 0)
-	if err != nil {
-		return nil, err
-	}
-
-	r := struct {
-		tl.SumType
-		GetConfigAllRequest getConfigAllRequest `tlSumType:"b7261b91"`
-	}{
-		SumType: "GetConfigAllRequest",
-		GetConfigAllRequest: getConfigAllRequest{
-			Mode: 0,
-			ID:   lastBlock.Last,
-		},
-	}
-
-	rBytes, err := tl.Marshal(r)
-	if err != nil {
-		return nil, err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.getMasterchainServer().Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	var pResp struct {
-		tl.SumType
-		ConfigInfo configInfo      `tlSumType:"2f277bae"`
-		Error      LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, err
-	}
-	if pResp.SumType == "Error" {
-		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
-	if err != nil {
-		return nil, err
-	}
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
-	}
-	err = tlb.Unmarshal(cell[0], &proof)
-	if err != nil {
-		return nil, err
-	}
-	return &proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value, nil
-}
-
-func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockIdExt) (*tongo.ShardState, error) {
-	type getConfigAllRequest struct {
-		Mode uint32
-		ID   tongo.TonNodeBlockIdExt
-	}
-	type configInfo struct {
-		Mode        uint32
-		ID          tongo.TonNodeBlockIdExt
-		StateProof  []byte
-		ConfigProof []byte
-	}
-
-	r := struct {
-		tl.SumType
-		GetConfigAllRequest getConfigAllRequest `tlSumType:"b7261b91"`
-	}{
-		SumType: "GetConfigAllRequest",
-		GetConfigAllRequest: getConfigAllRequest{
-			Mode: 0,
-			ID:   last,
-		},
-	}
-
-	rBytes, err := tl.Marshal(r)
-	if err != nil {
-		return nil, err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	resp, err := c.getMasterchainServer().Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	var pResp struct {
-		tl.SumType
-		ConfigInfo configInfo      `tlSumType:"2f277bae"`
-		Error      LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, err
-	}
-	if pResp.SumType == "Error" {
-		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
-	if err != nil {
-		return nil, err
-	}
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardState]
-	}
-	err = tlb.Unmarshal(cell[0], &proof)
-	if err != nil {
-		return nil, err
-	}
-	return &proof.Proof.VirtualRoot, nil
 }
 
 func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdExt) ([]tongo.TonNodeBlockIdExt, error) {
@@ -849,196 +670,4 @@ func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.Ton
 
 	// }
 	return &proof.Proof.VirtualRoot, nil //shards, nil
-}
-func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tongo.TonNodeBlockIdExt, targetBlock *tongo.TonNodeBlockIdExt) ([]tongo.BlockProof, error) {
-	asReq, err := makeLiteServerGetBlockProofRequest(mode, knownBlock, targetBlock)
-	if err != nil {
-		return nil, err
-	}
-	req := makeLiteServerQueryRequest(asReq)
-	var server *liteclient.Client
-	if targetBlock != nil {
-		server, err = c.getServerByBlockID(targetBlock.TonNodeBlockId)
-	} else {
-		server, err = c.getServerByBlockID(knownBlock.TonNodeBlockId)
-	}
-	if err != nil {
-		return nil, err
-	}
-	resp, err := server.Request(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	// liteServer.signature node_id_short:int256 signature:bytes = liteServer.Signature;
-	type Signature struct {
-		NodeIdShort tongo.Hash
-		Signature   []byte
-	}
-
-	// liteServer.signatureSet validator_set_hash:int catchain_seqno:int
-	// signatures:(vector liteServer.signature) = liteServer.SignatureSet;
-	type SignatureSet struct {
-		ValidatorSetHash int32
-		CatchainSeqNo    int32
-		Signatures       Signature
-	}
-
-	type blockLink struct {
-		tl.SumType
-		// liteServer.blockLinkForward to_key_block:Bool from:tonNode.blockIdExt
-		// to:tonNode.blockIdExt dest_proof:bytes config_proof:bytes
-		// signatures:liteServer.SignatureSet
-		// = liteServer.BlockLink;
-		BlockLinkForward struct {
-			ToKeyBlock  uint32
-			From        tongo.TonNodeBlockIdExt
-			To          tongo.TonNodeBlockIdExt
-			DestProof   []byte
-			ConfigProof []byte
-			Signatures  SignatureSet
-		} `tlSumType:"1cce0f52"`
-		// liteServer.blockLinkBack to_key_block:Bool from:tonNode.blockIdExt
-		// to:tonNode.blockIdExt dest_proof:bytes proof:bytes state_proof:bytes
-		// = liteServer.BlockLink;
-		BlockLinkBack struct {
-			ToKeyBlock uint32
-			From       tongo.TonNodeBlockIdExt
-			To         tongo.TonNodeBlockIdExt
-			DestProof  []byte
-			Proof      []byte
-			StateProof []byte
-		} `tlSumType:"ef1b7eef"`
-	}
-
-	// liteServer.partialBlockProof complete:Bool from:tonNode.blockIdExt
-	// to:tonNode.blockIdExt steps:(vector liteServer.BlockLink) =
-	// liteServer.PartialBlockProof
-	var response struct {
-		tl.SumType
-		LiteServerGetProofBlock struct {
-			Complete uint32
-			From     tongo.TonNodeBlockIdExt
-			To       tongo.TonNodeBlockIdExt
-			Steps    []blockLink
-		} `tlSumType:"c1d2d08e"`
-		Error LiteServerError `tlSumType:"48e1a9bb"`
-	}
-
-	err = tl.Unmarshal(bytes.NewReader(resp), &response)
-	if err != nil {
-		return nil, err
-	}
-	if response.SumType == "Error" {
-		return nil, fmt.Errorf(response.Error.Message)
-	}
-
-	for i := range response.LiteServerGetProofBlock.Steps {
-		if response.LiteServerGetProofBlock.Steps[i].SumType == "BlockLinkBack" {
-			cells, err := boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.StateProof)
-			if err != nil {
-				return nil, err
-			}
-			cells, err = boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.Proof)
-			if err != nil {
-				return nil, err
-			}
-			cells, err = boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkBack.DestProof)
-			if err != nil {
-				return nil, err
-			}
-
-			var proof struct {
-				Proof tongo.MerkleProof[tongo.BlockHeader]
-			}
-			err = tlb.Unmarshal(cells[0], &proof)
-			if err != nil {
-				return nil, err
-			}
-
-		}
-		if response.LiteServerGetProofBlock.Steps[i].SumType == "BlockLinkForward" {
-			cells, err := boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkForward.ConfigProof)
-			if err != nil {
-				return nil, err
-			}
-			cells, err = boc.DeserializeBoc(response.LiteServerGetProofBlock.Steps[i].BlockLinkForward.DestProof)
-			if err != nil {
-				return nil, err
-			}
-
-			var proof struct {
-				Proof tongo.MerkleProof[tongo.BlockHeader]
-			}
-			err = tlb.Unmarshal(cells[0], &proof)
-			if err != nil {
-				return nil, err
-			}
-
-		}
-
-	}
-	return nil, nil
-
-}
-
-// GetOneRawTransaction
-// liteServer.getOneTransaction id:tonNode.blockIdExt account:liteServer.accountId lt:long = liteServer.TransactionInfo;
-// liteServer.transactionInfo id:tonNode.blockIdExt proof:bytes transaction:bytes = liteServer.TransactionInfo;
-func (c *Client) GetOneRawTransaction(ctx context.Context, id tongo.TonNodeBlockIdExt, accountId tongo.AccountID, lt uint64) ([]*boc.Cell, []byte, error) {
-	type getOneTransactionRequest struct {
-		ID      tongo.TonNodeBlockIdExt
-		Account tongo.AccountID
-		Lt      uint64
-	}
-	type transactionInfo struct {
-		Id          tongo.TonNodeBlockIdExt
-		Proof       []byte
-		Transaction []byte
-	}
-	r := struct {
-		tl.SumType
-		GetOneTransactionRequest getOneTransactionRequest `tlSumType:"ea240fd4"`
-	}{
-		SumType: "GetOneTransactionRequest",
-		GetOneTransactionRequest: getOneTransactionRequest{
-			ID:      id,
-			Account: accountId,
-			Lt:      lt,
-		},
-	}
-	rBytes, err := tl.Marshal(r)
-	if err != nil {
-		return nil, nil, err
-	}
-	req := makeLiteServerQueryRequest(rBytes)
-	server, err := c.getServerByAccountID(accountId)
-	if err != nil {
-		return nil, nil, err
-	}
-	resp, err := server.Request(ctx, req)
-	if err != nil {
-		return nil, nil, err
-	}
-	var pResp struct {
-		tl.SumType
-		TransactionInfo transactionInfo `tlSumType:"47edde0e"`
-		Error           LiteServerError `tlSumType:"48e1a9bb"`
-	}
-	reader := bytes.NewReader(resp)
-	err = tl.Unmarshal(reader, &pResp)
-	if err != nil {
-		return nil, nil, err
-	}
-	if pResp.SumType == "Error" {
-		return nil, nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
-	}
-	cells, err := boc.DeserializeBoc(pResp.TransactionInfo.Transaction)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(cells) != 1 {
-		return nil, nil, fmt.Errorf("must be one root cell")
-	}
-	return cells, pResp.TransactionInfo.Proof, nil
 }

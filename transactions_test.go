@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/hex"
+	"testing"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
-	"testing"
 )
 
 func TestTransaction(t *testing.T) {
@@ -48,5 +49,61 @@ func TestHash(t *testing.T) {
 	h, _ := cells[0].Hash()
 	if !bytes.Equal(hash, h) {
 		t.Fatalf("Hash mismatch.\nOriginal:   %x\nCalculated: %x", hash, h)
+	}
+}
+
+func TestComputeSkipReason_MarshalTLB(t *testing.T) {
+	tests := []struct {
+		reason ComputeSkipReason
+	}{
+		{reason: ComputeSkipReasonNoGas},
+		{reason: ComputeSkipReasonNoState},
+		{reason: ComputeSkipReasonBadState},
+	}
+	for _, tt := range tests {
+		t.Run(string(tt.reason), func(t *testing.T) {
+			c := boc.NewCell()
+			err := tt.reason.MarshalTLB(c, "")
+			if err != nil {
+				t.Errorf("MarshalTLB() error = %v", err)
+			}
+			c.ResetCounters()
+			var reason ComputeSkipReason
+			err = (&reason).UnmarshalTLB(c, "")
+			if err != nil {
+				t.Errorf("UnmarshalTLB() error = %v", err)
+			}
+			if tt.reason != reason {
+				t.Fail()
+			}
+		})
+	}
+}
+
+func TestAccStatusChange_MarshalTLB(t *testing.T) {
+	tests := []struct {
+		status AccStatusChange
+	}{
+		{status: AccStatusChangeDeleted},
+		{status: AccStatusChangeFrozen},
+		{status: AccStatusChangeUnchanged},
+	}
+	for _, tt := range tests {
+		t.Run(string(tt.status), func(t *testing.T) {
+			c := boc.NewCell()
+			err := tt.status.MarshalTLB(c, "")
+			if err != nil {
+				t.Errorf("MarshalTLB() error = %v", err)
+			}
+			c.ResetCounters()
+			var status AccStatusChange
+			err = (&status).UnmarshalTLB(c, "")
+			if err != nil {
+				t.Errorf("UnmarshalTLB() error = %v", err)
+			}
+			if tt.status != status {
+				t.Fail()
+			}
+		})
 	}
 }

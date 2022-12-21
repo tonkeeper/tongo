@@ -1,8 +1,6 @@
 package tongo
 
 import (
-	"fmt"
-
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
@@ -156,8 +154,16 @@ const (
 )
 
 func (a AccStatusChange) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("AccStatusChange marshaling not implemented")
+	if a == AccStatusChangeUnchanged {
+		return c.WriteBit(false)
+	}
+	if err := c.WriteBit(true); err != nil {
+		return err
+	}
+	if a == AccStatusChangeDeleted {
+		return c.WriteBit(true)
+	}
+	return c.WriteBit(false)
 }
 
 func (a *AccStatusChange) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -239,8 +245,15 @@ const (
 )
 
 func (a ComputeSkipReason) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("ComputeSkipReason marshaling not implemented")
+	switch a {
+	case ComputeSkipReasonNoState:
+		return c.WriteUint(0, 2)
+	case ComputeSkipReasonBadState:
+		return c.WriteUint(1, 2)
+	case ComputeSkipReasonNoGas:
+		return c.WriteUint(2, 2)
+	}
+	return nil
 }
 
 func (a *ComputeSkipReason) UnmarshalTLB(c *boc.Cell, tag string) error {

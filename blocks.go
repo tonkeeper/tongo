@@ -83,14 +83,14 @@ func (id TonNodeBlockId) String() string {
 // prev_vert_ref:vert_seqno_incr?^(BlkPrevInfo 0)
 // = BlockInfo;
 type BlockInfo struct {
-	blockInfoPart
+	BlockInfoPart
 	GenSoftware *GlobalVersion
 	MasterRef   *BlkMasterInfo
 	PrevRef     BlkPrevInfo
 	PrevVertRef *BlkPrevInfo
 }
 
-type blockInfoPart struct {
+type BlockInfoPart struct {
 	Version                   uint32
 	NotMaster                 bool
 	AfterMerge                bool
@@ -121,14 +121,14 @@ func (i *BlockInfo) GetParents() ([]TonNodeBlockIdExt, error) {
 func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 	var data struct {
 		Magic     tlb.Magic `tlb:"block_info#9bc7a987"`
-		BlockInfo blockInfoPart
+		BlockInfo BlockInfoPart
 	} // for partial decoding
 	err := tlb.Unmarshal(c, &data)
 	if err != nil {
 		return err
 	}
 	var res BlockInfo
-	res.blockInfoPart = data.BlockInfo
+	res.BlockInfoPart = data.BlockInfo
 
 	if res.Flags&1 == 1 {
 		var gs GlobalVersion

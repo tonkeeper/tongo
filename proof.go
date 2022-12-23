@@ -47,7 +47,7 @@ type ShardStateUnsplitData struct {
 	MinRefMcSeqno   uint32
 	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
 	BeforeSplit     bool
-	Accounts        ShardAccounts          `tlb:"^"`
+	Accounts        tlb.HashmapAugE[tlb.Size256, ShardAccount, DepthBalanceInfo]          `tlb:"^"`
 	Other           ShardStateUnsplitOther `tlb:"^"`
 	Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
 }
@@ -202,15 +202,7 @@ type ShardFees struct {
 	Hashmap tlb.HashmapAugE[tlb.Size96, ShardFeeCreated, ShardFeeCreated]
 }
 
-// _ (HashmapAugE 256 InMsg ImportFees) = InMsgDescr;
-type InMsgDescr struct {
-	Hashmap tlb.HashmapAugE[tlb.Size256, InMsg, ImportFees]
-}
 
-// _ (HashmapAugE 256 AccountBlock CurrencyCollection) = ShardAccountBlocks
-type ShardAccountBlocks struct {
-	Hashmap tlb.HashmapAugE[tlb.Size256, AccountBlock, CurrencyCollection]
-}
 
 // acc_trans#5 account_addr:bits256
 //
@@ -224,10 +216,7 @@ type AccountBlock struct {
 	StateUpdate  HashUpdate `tlb:"^"`
 }
 
-// _ (HashmapE 96 ProcessedUpto) = ProcessedInfo;
-type ProcessedInfo struct {
-	ProcessedInfo tlb.HashmapE[tlb.Size96, ProcessedUpto]
-}
+
 
 // processed_upto$_ last_msg_lt:uint64 last_msg_hash:bits256 = ProcessedUpto;
 type ProcessedUpto struct {
@@ -235,20 +224,13 @@ type ProcessedUpto struct {
 	LastMsgHash Hash
 }
 
-// _ (HashmapE 320 IhrPendingSince) = IhrPendingInfo;
-type IhrPendingInfo struct {
-	IhrPendingInfo tlb.HashmapE[tlb.Size320, IhrPendingSince]
-}
 
 // ihr_pending$_ import_lt:uint64 = IhrPendingSince;
 type IhrPendingSince struct {
 	ImportLt uint64
 }
 
-// _ (HashmapAugE 256 ShardAccount DepthBalanceInfo) = ShardAccounts;
-type ShardAccounts struct {
-	Accounts tlb.HashmapAugE[tlb.Size256, ShardAccount, DepthBalanceInfo]
-}
+
 
 // depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
 type DepthBalanceInfo struct {
@@ -293,28 +275,20 @@ type LibDescr struct {
 // = McStateExtra;
 type McStateExtra struct {
 	Magic         tlb.Magic `tlb:"masterchain_state_extra#cc26"`
-	ShardHashes   ShardHashes
+	ShardHashes   tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]
 	Config        ConfigParams
 	Other         McStateExtraOther `tlb:"^"`
 	GlobalBalance CurrencyCollection
 }
 
-// ShardHashes
-// _ (HashmapE 32 ^(BinTree ShardDescr)) = ShardHashes;
-type ShardHashes struct {
-	Hashes tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]
-}
 
-type ConfigHashMap struct {
-	Hashmap tlb.Hashmap[tlb.Size32, tlb.Ref[boc.Cell]]
-}
 
 // ConfigParams
 // _ config_addr:bits256 config:^(Hashmap 32 ^Cell)
 // = ConfigParams;
 type ConfigParams struct {
 	ConfigAddr Hash
-	Config     ConfigHashMap `tlb:"^"`
+	Config     tlb.Hashmap[tlb.Size32, tlb.Ref[boc.Cell]] `tlb:"^"`
 }
 
 // ^[ flags:(## 16) { flags <= 1 }
@@ -326,7 +300,7 @@ type ConfigParams struct {
 type McStateExtraOther struct {
 	Flags            uint16
 	ValidatorInfo    ValidatorInfo
-	PrevBlocks       OldMcBlocksInfo
+	PrevBlocks       tlb.HashmapAugE[tlb.Size32, KeyExtBlkRef, KeyMaxLt]
 	AfterKeyBlock    bool
 	LastKeyBlock     tlb.Maybe[ExtBlkRef]
 	BlockCreateStats BlockCreateStats
@@ -364,10 +338,7 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-// _ (HashmapAugE 32 KeyExtBlkRef KeyMaxLt) = OldMcBlocksInfo
-type OldMcBlocksInfo struct {
-	Info tlb.HashmapAugE[tlb.Size32, KeyExtBlkRef, KeyMaxLt]
-}
+
 
 // _ key:Bool max_end_lt:uint64 = KeyMaxLt;
 type KeyMaxLt struct {

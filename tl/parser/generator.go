@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/startfellows/tongo/utils"
 	"go/format"
-	"sort"
 	"strings"
 )
 
@@ -56,25 +55,31 @@ func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator
 }
 
 func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, error) {
-	sumTypes := make(map[string][]CombinatorDeclaration)
-
+	dec := make([][]CombinatorDeclaration, 0)
 	for _, c := range declarations {
-		sumTypes[c.Combinator] = append(sumTypes[c.Combinator], c)
+		f := false
+		for i, c1 := range dec {
+			if c1[0].Combinator == c.Combinator {
+				dec[i] = append(dec[i], c)
+				f = true
+				break
+			}
+		}
+		if !f {
+			dec = append(dec, []CombinatorDeclaration{c})
+		}
 	}
-
 	s := ""
-	keys := make([]string, 0, len(sumTypes))
-	for k := range sumTypes {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	for _, k := range keys {
-		v := sumTypes[k]
+	for _, v := range dec {
 		t, err := g.generateGolangType(v)
 		if err != nil {
 			return "", err
 		}
-		g.newTlTypes[t.name] = t
+		if len(v) == 1 {
+			g.newTlTypes[v[0].Constructor] = t
+		} else {
+			g.newTlTypes[v[0].Combinator] = t
+		}
 		s += "\n" + t.definition + "\n"
 		unmarshaler, err := g.generateUnmarshalers(v, t.name)
 		if err != nil {
@@ -134,7 +139,7 @@ func (g *Generator) generateGolangType(declarations []CombinatorDeclaration) (tl
 }
 
 func (g *Generator) generateGolangSimpleType(declaration CombinatorDeclaration) (tlType, error) {
-	name := utils.ToCamelCase(declaration.Combinator)
+	name := utils.ToCamelCase(declaration.Constructor)
 	s, err := g.generateGolangStruct(declaration)
 	if err != nil {
 		return tlType{}, err
@@ -144,9 +149,9 @@ func (g *Generator) generateGolangSimpleType(declaration CombinatorDeclaration) 
 		return tlType{}, err
 	}
 	return tlType{
-		name:       name,
+		name:       name + "C",
 		tags:       []uint32{tag},
-		definition: fmt.Sprintf("type %v %v", name, s),
+		definition: fmt.Sprintf("type %vC %v", name, s),
 	}, nil
 }
 
@@ -199,13 +204,14 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration) (str
 		if field.Modificator.Name == "mode" { // mode.0?field
 			optional = true
 		}
-		t, err := toGolangType(e, optional, g.knownTypes)
+
+		t, err := toGolangType(e, optional, g.knownTypes, g.newTlTypes)
 		if err != nil {
 			return "", err
 		}
 
 		if t.name == "True" {
-			continue // TODO: check
+			continue
 		}
 
 		builder.WriteString(utils.ToCamelCase(name))
@@ -230,13 +236,21 @@ func (t golangType) String() string {
 	return "*" + t.name
 }
 
-func mapToGoType(name string, optional bool, defaultTypes map[string]DefaultType) golangType {
+func mapToGoType(name string, optional bool, defaultTypes map[string]DefaultType, newTlTypes map[string]tlType) golangType {
 	goType, ok := defaultTypes[name]
 	if ok {
 		return golangType{
 			name:        goType.Name,
 			optional:    optional,
 			pointerType: goType.IsPointerType,
+		}
+	}
+	knType, ok := newTlTypes[name]
+	if ok {
+		return golangType{
+			name:        knType.name,
+			optional:    optional,
+			pointerType: false,
 		}
 	}
 	return golangType{
@@ -246,19 +260,19 @@ func mapToGoType(name string, optional bool, defaultTypes map[string]DefaultType
 	}
 }
 
-func toGolangType(t TypeExpression, optional bool, defaultTypes map[string]DefaultType) (golangType, error) {
+func toGolangType(t TypeExpression, optional bool, defaultTypes map[string]DefaultType, newTlTypes map[string]tlType) (golangType, error) {
 	if t.BuiltIn != nil {
-		return mapToGoType(*t.BuiltIn, optional, defaultTypes), nil
+		return mapToGoType(*t.BuiltIn, optional, defaultTypes, newTlTypes), nil
 	}
 	if t.NamedRef != nil {
-		return mapToGoType(*t.NamedRef, optional, defaultTypes), nil
+		return mapToGoType(*t.NamedRef, optional, defaultTypes, newTlTypes), nil
 	}
 
 	if t.Vector != nil {
 		if len(t.Vector.Parameter) != 1 {
 			return golangType{}, fmt.Errorf("vector must contains only one parameter")
 		}
-		gt, err := toGolangType(t.Vector.Parameter[0], false, defaultTypes) // can not be pointer type under vector
+		gt, err := toGolangType(t.Vector.Parameter[0], false, defaultTypes, newTlTypes) // can not be pointer type under vector
 		if err != nil {
 			return golangType{}, err
 		}
@@ -311,7 +325,7 @@ func (g *Generator) generateUnmarshalerCode(declaration CombinatorDeclaration, r
 	for _, field := range declaration.FieldDefinitions {
 		name := utils.ToCamelCase(field.Name)
 		if field.Modificator.Name != "" { // mode.0?field
-			gt, err := toGolangType(field.Expression, false, g.knownTypes)
+			gt, err := toGolangType(field.Expression, false, g.knownTypes, g.newTlTypes)
 			if err != nil {
 				return "", err
 			}
@@ -403,7 +417,7 @@ func (g *Generator) generateMarshalerCode(declaration CombinatorDeclaration, rec
 	for _, field := range declaration.FieldDefinitions {
 		name := utils.ToCamelCase(field.Name)
 		if field.Modificator.Name != "" { // mode.0?field
-			t, err := toGolangType(field.Expression, true, g.knownTypes)
+			t, err := toGolangType(field.Expression, true, g.knownTypes, g.newTlTypes)
 			if err != nil {
 				return "", err
 			}
@@ -475,7 +489,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 		return "", err
 	}
 
-	errType, ok := g.newTlTypes["LiteServerError"]
+	errType, ok := g.newTlTypes["liteServer.error"]
 	if !ok {
 		return "", fmt.Errorf("LiteServerError not parsed")
 	}
@@ -483,7 +497,16 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 		return "", fmt.Errorf("invalid error tag")
 	}
 
-	respType, ok := g.newTlTypes[responseName]
+	var respType tlType
+	ok = false
+	for k, v := range g.newTlTypes {
+		// TODO: valid if only one constructor OR type
+		if strings.ToLower(c.Combinator) == strings.ToLower(k) {
+			respType = v
+			ok = true
+			break
+		}
+	}
 	if !ok {
 		return "", fmt.Errorf("response type %s not parsed", responseName)
 	}
@@ -494,14 +517,14 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	builder.WriteString(fmt.Sprintf("func (c %s) %s(ctx context.Context", typeName, methodName))
 	if len(c.FieldDefinitions) > 0 {
 		builder.WriteString(fmt.Sprintf(", request %sRequest", methodName))
-		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", responseName))
+		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", respType.name))
 
 		// request marshaling
 		builder.WriteString(fmt.Sprintf("payload, err := tl.Marshal(struct{tl.SumType \n Req %sRequest", methodName))
 		builder.WriteString(fmt.Sprintf(" `tlSumType:\"%08x\"`}{SumType: \"Req\", Req: request})\n", tag))
 		builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
 	} else {
-		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", responseName))
+		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", respType.name))
 		builder.WriteString("payload := make([]byte, 4)\n")
 		builder.WriteString(fmt.Sprintf("binary.LittleEndian.PutUint32(payload, %#x)\n", tag))
 	}
@@ -514,7 +537,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 
 	// lite server error processing
 	builder.WriteString(fmt.Sprintf("if tag == %#x {\n", errType.tags[0]))
-	builder.WriteString("var errRes LiteServerError\n")
+	builder.WriteString("var errRes LiteServerErrorC\n")
 	builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
 	builder.WriteString("return res, errRes\n")

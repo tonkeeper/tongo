@@ -1,7 +1,6 @@
 package abi
 
 import (
-	"fmt"
 	"io/ioutil"
 	"testing"
 )
@@ -17,12 +16,16 @@ func TestGenerateGetMethodsGolang(t *testing.T) {
 	}
 	g := NewGenerator(nil, "MethodsScanner")
 	for _, i := range interfaces {
-		s, err := g.GetMethods(i.Methods)
+		if i.Types != "" {
+			err = g.RegisterTypes(i.Types)
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+		_, err := g.GetMethods(i.Methods)
 		if err != nil {
 			t.Fatal(err)
 		}
-		fmt.Println(s)
 	}
-	fmt.Println(g.CollectedTypes())
 
 }

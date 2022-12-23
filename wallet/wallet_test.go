@@ -102,7 +102,7 @@ func TestSimpleSend(t *testing.T) {
 	comment := "hello"
 	tonTransfer := Message{
 		Amount:  10000,
-		Address: *recipientAddr,
+		Address: recipientAddr,
 		Comment: &comment,
 		// Body:    *boc.Cell, // empty
 		// Code:    *boc.Cell, // empty
@@ -136,7 +136,7 @@ func TestMockBlockchain(t *testing.T) {
 	comment := "hello"
 	tonTransfer := Message{
 		Amount:  10000,
-		Address: *recipientAddr,
+		Address: recipientAddr,
 		Comment: &comment,
 		// Body:    *boc.Cell, // empty
 		// Init:    *tongo.StateInit, // empty
@@ -175,7 +175,7 @@ func TestSendJetton(t *testing.T) {
 	w := initDefaultWallet(client)
 
 	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
-	j := jetton.NewJetton(*master, client)
+	j := jetton.NewJetton(master, client)
 	b, err := j.GetBalance(context.Background(), w.GetAddress())
 	if err != nil {
 		log.Fatalf("Unable to get jetton wallet balance: %v", err)
@@ -190,7 +190,7 @@ func TestSendJetton(t *testing.T) {
 	jettonTransfer := jetton.TransferMessage{
 		Jetton:       j,
 		JettonAmount: amount,
-		Destination:  *recipientAddr,
+		Destination:  recipientAddr,
 		// ResponseDestination: *tongo.AccountID
 		TonAmount:        400_000_000,
 		ForwardTonAmount: 200_000_000,

@@ -264,10 +264,10 @@ type ShardDesc struct {
 	} `tlbSumType:"new#a"`
 }
 
-func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
+func (s ShardDesc) ToBlockId(workchain int32) BlockIDExt {
 	if s.SumType == "Old" {
-		return TonNodeBlockIdExt{
-			TonNodeBlockId: TonNodeBlockId{
+		return BlockIDExt{
+			BlockID: BlockID{
 				Workchain: workchain,
 				Shard:     uint64(s.Old.NextValidatorShard),
 				Seqno:     s.Old.SeqNo,
@@ -276,8 +276,8 @@ func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
 			FileHash: s.Old.FileHash,
 		}
 	} else {
-		return TonNodeBlockIdExt{
-			TonNodeBlockId: TonNodeBlockId{
+		return BlockIDExt{
+			BlockID: BlockID{
 				Workchain: workchain,
 				Shard:     uint64(s.New.NextValidatorShard),
 				Seqno:     s.New.SeqNo,

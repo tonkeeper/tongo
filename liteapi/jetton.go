@@ -21,7 +21,7 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.Accoun
 		SumType:    "VmStkSlice",
 		VmStkSlice: slice,
 	}
-	errCode, stack, err := c.RunSmcMethod(ctx, 4, master, "get_wallet_address", tongo.VmStack{val})
+	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_wallet_address", tongo.VmStack{val})
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
@@ -50,7 +50,7 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.Accoun
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (tongo.JettonMetadata, error) {
-	errCode, stack, err := c.RunSmcMethod(ctx, 4, master, "get_jetton_data", tongo.VmStack{})
+	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_jetton_data", tongo.VmStack{})
 	if err != nil {
 		return tongo.JettonMetadata{}, err
 	}
@@ -84,7 +84,7 @@ func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (ton
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 func (c *Client) GetJettonBalance(ctx context.Context, jettonWallet tongo.AccountID) (*big.Int, error) {
-	errCode, stack, err := c.RunSmcMethod(ctx, 4, jettonWallet, "get_wallet_data", tongo.VmStack{})
+	errCode, stack, err := c.RunSmcMethod(ctx, jettonWallet, "get_wallet_data", tongo.VmStack{})
 	if err != nil {
 		return nil, err
 	}

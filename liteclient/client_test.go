@@ -125,3 +125,46 @@ func TestGeneratedMethod4(t *testing.T) {
 
 	fmt.Printf("Current time: %d\n", r)
 }
+
+func TestGeneratedMethod5(t *testing.T) {
+	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	if err != nil {
+		panic(err)
+	}
+	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
+	if err != nil {
+		panic(err)
+	}
+
+	client := NewClient(c)
+
+	r, err := client.LiteServerGetMasterchainInfo(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	req := LiteServerLookupBlockRequest{
+		Mode: 1,
+		Id: TonNodeBlockIdC{
+			r.Last.Workchain,
+			r.Last.Shard,
+			r.Last.Seqno - 2,
+		},
+		Lt:    nil,
+		Utime: nil,
+	}
+
+	r1, err := client.LiteServerLookupBlock(context.Background(), req)
+
+	req1 := LiteServerGetBlockProofRequest{
+		Mode:        0,
+		KnownBlock:  r1.Id,
+		TargetBlock: nil,
+	}
+
+	r2, err := client.LiteServerGetBlockProof(context.Background(), req1)
+	if err != nil {
+		panic(err)
+	}
+	_ = r2
+}

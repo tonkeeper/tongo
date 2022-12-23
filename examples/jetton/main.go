@@ -28,8 +28,8 @@ func main() {
 		panic("unable to create wallet")
 	}
 
-	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
-	j := jetton.NewJetton(*master, client)
+	master := tongo.MustParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	j := jetton.NewJetton(master, client)
 	b, err := j.GetBalance(context.Background(), w.GetAddress())
 	if err != nil {
 		log.Fatalf("Unable to get jetton wallet balance: %v", err)
@@ -57,7 +57,7 @@ func main() {
 	jettonTransfer := jetton.TransferMessage{
 		Jetton:       j,
 		JettonAmount: amount,
-		Destination:  *recipientAddr,
+		Destination:  recipientAddr,
 		// ResponseDestination: *tongo.AccountID
 		TonAmount:        400_000_000,
 		ForwardTonAmount: 200_000_000,

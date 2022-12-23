@@ -24,8 +24,11 @@ var METHOD = `
 `
 
 type Interface struct {
+	Name      string      `xml:"name,attr"`
+	Group     string      `xml:"group,attr"`
 	Methods   []GetMethod `xml:"get_method"`
 	Internals []Internal  `xml:"internal"`
+	Types     string      `xml:"types"`
 }
 
 type Internal struct {
@@ -39,17 +42,22 @@ type GetMethod struct {
 	Input struct {
 		StackValues []StackRecord `xml:",any"`
 	} `xml:"input"`
-	Name        string        `xml:"name,attr"`
-	Callback    bool          `xml:"callback,attr"`
-	FixedLength bool          `xml:"fixed_length,attr"`
+	Name        string            `xml:"name,attr"`
+	Callback    bool              `xml:"callback,attr"`
+	FixedLength bool              `xml:"fixed_length,attr"`
+	Output      []GetmethodOutput `xml:"output"`
+}
+
+type GetmethodOutput struct {
+	Version     string        `xml:"version"`
+	FixedLength bool          `xml:"fixed_length"`
 	Stack       []StackRecord `xml:",any"`
 }
 
 type StackRecord struct {
 	XMLName xml.Name
-	Name    string   `xml:"name,attr"`
-	Type    string   `xml:",chardata"`
-	Cases   []string `xml:"case"`
+	Name    string `xml:"name,attr"`
+	Type    string `xml:",chardata"`
 }
 
 func ParseInterface(s []byte) ([]Interface, error) {

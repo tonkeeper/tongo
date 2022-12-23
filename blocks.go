@@ -8,19 +8,19 @@ import (
 	"github.com/startfellows/tongo/tlb"
 )
 
-type TonNodeBlockId struct {
+type BlockID struct {
 	Workchain int32
 	Shard     uint64
 	Seqno     uint32
 }
 
-type TonNodeBlockIdExt struct {
-	TonNodeBlockId
+type BlockIDExt struct {
+	BlockID
 	RootHash Hash
 	FileHash Hash
 }
 
-func (id TonNodeBlockIdExt) MarshalTL() ([]byte, error) {
+func (id BlockIDExt) MarshalTL() ([]byte, error) {
 	payload := make([]byte, 80)
 	binary.LittleEndian.PutUint32(payload[:4], uint32(id.Workchain))
 	binary.LittleEndian.PutUint64(payload[4:12], uint64(id.Shard))
@@ -30,7 +30,7 @@ func (id TonNodeBlockIdExt) MarshalTL() ([]byte, error) {
 	return payload, nil
 }
 
-func (id *TonNodeBlockIdExt) UnmarshalTL(data []byte) error {
+func (id *BlockIDExt) UnmarshalTL(data []byte) error {
 	if len(data) != 80 {
 		return fmt.Errorf("invalid data length")
 	}
@@ -42,9 +42,9 @@ func (id *TonNodeBlockIdExt) UnmarshalTL(data []byte) error {
 	return nil
 }
 
-func NewTonBlockId(fileHash, rootHash Hash, seqno uint32, shard uint64, workchain int32) *TonNodeBlockIdExt {
-	return &TonNodeBlockIdExt{
-		TonNodeBlockId: TonNodeBlockId{
+func NewTonBlockId(fileHash, rootHash Hash, seqno uint32, shard uint64, workchain int32) *BlockIDExt {
+	return &BlockIDExt{
+		BlockID: BlockID{
 			Workchain: workchain,
 			Shard:     shard,
 			Seqno:     seqno,
@@ -54,10 +54,10 @@ func NewTonBlockId(fileHash, rootHash Hash, seqno uint32, shard uint64, workchai
 	}
 }
 
-func (id TonNodeBlockIdExt) String() string {
+func (id BlockIDExt) String() string {
 	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, uint64(id.Shard), id.Seqno, id.RootHash, id.FileHash)
 }
-func (id TonNodeBlockId) String() string {
+func (id BlockID) String() string {
 	return fmt.Sprintf("(%d,%x,%d)", id.Workchain, uint64(id.Shard), id.Seqno)
 }
 
@@ -113,7 +113,7 @@ type blockInfoPart struct {
 	PrevKeyBlockSeqno         uint32
 }
 
-func (i *BlockInfo) GetParents() ([]TonNodeBlockIdExt, error) {
+func (i *BlockInfo) GetParents() ([]BlockIDExt, error) {
 	workchain, shard := convertShardIdent(i.Shard)
 	return getParents(i.PrevRef, i.AfterSplit, i.AfterMerge, shard, workchain)
 }
@@ -338,10 +338,10 @@ type ValueFlow struct {
 // created_by:bits256
 // custom:(Maybe ^McBlockExtra) = BlockExtra;
 type BlockExtra struct {
-	Magic         tlb.Magic          `tlb:"block_extra#4a33f6fd"`
-	InMsgDescr    InMsgDescr         `tlb:"^"` // tlb.Any `tlb:"^"`
-	OutMsgDescr   OutMsgDescr        `tlb:"^"` // tlb.Any `tlb:"^"`
-	AccountBlocks ShardAccountBlocks `tlb:"^"` // tlb.Any     `tlb:"^"` //
+	Magic         tlb.Magic                                                      `tlb:"block_extra#4a33f6fd"`
+	InMsgDescr    tlb.HashmapAugE[tlb.Size256, InMsg, ImportFees]                `tlb:"^"` // tlb.Any `tlb:"^"`
+	OutMsgDescr   tlb.HashmapAugE[tlb.Size256, OutMsg, CurrencyCollection]       `tlb:"^"` // tlb.Any `tlb:"^"`
+	AccountBlocks tlb.HashmapAugE[tlb.Size256, AccountBlock, CurrencyCollection] `tlb:"^"` // tlb.Any     `tlb:"^"` //
 	RandSeed      Hash
 	CreatedBy     Hash
 	Custom        tlb.Maybe[tlb.Ref[McBlockExtra]]
@@ -371,14 +371,14 @@ func convertShardIdent(si ShardIdent) (workchain int32, shard uint64) {
 	return si.WorkchainID, shard
 }
 
-func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint64, workchain int32) ([]TonNodeBlockIdExt, error) {
-	var parents []TonNodeBlockIdExt
+func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint64, workchain int32) ([]BlockIDExt, error) {
+	var parents []BlockIDExt
 	if !afterMerge {
 		if blkPrevInfo.SumType != "PrevBlkInfo" {
 			return nil, fmt.Errorf("two parent blocks may be only after merge")
 		}
-		blockID := TonNodeBlockIdExt{
-			TonNodeBlockId: TonNodeBlockId{
+		blockID := BlockIDExt{
+			BlockID: BlockID{
 				Workchain: workchain,
 				Seqno:     blkPrevInfo.PrevBlkInfo.Prev.SeqNo,
 			},
@@ -387,18 +387,18 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 		}
 		if afterSplit {
 			blockID.Shard = shardParent(shard)
-			return []TonNodeBlockIdExt{blockID}, nil
+			return []BlockIDExt{blockID}, nil
 		}
 		blockID.Shard = shard
-		return []TonNodeBlockIdExt{blockID}, nil
+		return []BlockIDExt{blockID}, nil
 	}
 
 	if blkPrevInfo.SumType != "PrevBlksInfo" {
 		return nil, fmt.Errorf("two parent blocks must be after merge")
 	}
 
-	parents = append(parents, TonNodeBlockIdExt{
-		TonNodeBlockId: TonNodeBlockId{
+	parents = append(parents, BlockIDExt{
+		BlockID: BlockID{
 			Seqno:     blkPrevInfo.PrevBlksInfo.Prev1.SeqNo,
 			Shard:     shardChild(shard, true),
 			Workchain: workchain,
@@ -407,10 +407,10 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 		RootHash: blkPrevInfo.PrevBlksInfo.Prev1.RootHash,
 	})
 
-	parents = append(parents, TonNodeBlockIdExt{
+	parents = append(parents, BlockIDExt{
 		FileHash: blkPrevInfo.PrevBlksInfo.Prev2.FileHash,
 		RootHash: blkPrevInfo.PrevBlksInfo.Prev2.RootHash,
-		TonNodeBlockId: TonNodeBlockId{
+		BlockID: BlockID{
 			Seqno:     blkPrevInfo.PrevBlksInfo.Prev2.SeqNo,
 			Shard:     shardChild(shard, false),
 			Workchain: workchain,
@@ -434,7 +434,7 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 type McBlockExtra struct {
 	Magic        tlb.Magic `tlb:"masterchain_block_extra#cca5"`
 	KeyBlock     bool
-	ShardHashes  ShardHashes
+	ShardHashes  tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]
 	ShardFees    ShardFees
 	McExtraOther struct {
 		PrevBlkSignatures tlb.HashmapE[tlb.Size16, CryptoSignaturePair]

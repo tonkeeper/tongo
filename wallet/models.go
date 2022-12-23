@@ -47,8 +47,8 @@ var codes = map[Version]string{
 
 type blockchain interface {
 	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
-	SendRawMessage(ctx context.Context, payload []byte) error
-	GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error)
+	SendMessage(ctx context.Context, payload []byte) (uint32, error)
+	GetAccountState(ctx context.Context, accountID tongo.AccountID) (tongo.ShardAccount, error)
 }
 
 func GetCodeByVer(ver Version) *boc.Cell {

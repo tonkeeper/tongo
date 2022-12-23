@@ -217,7 +217,8 @@ func (w *Wallet) RawSend(
 	if err != nil {
 		return fmt.Errorf("can not serialize external message cell: %v", err)
 	}
-	return w.blockchain.SendRawMessage(ctx, payload)
+	_, err = w.blockchain.SendMessage(ctx, payload) // TODO: add result code check
+	return err
 }
 
 func generateInternalMessage(msg Message) (tongo.Message, error) {
@@ -356,7 +357,11 @@ func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return state.Balance, nil
+	accInfo, err := state.Account.GetInfo()
+	if err != nil {
+		return 0, err
+	}
+	return accInfo.Balance, nil
 }
 
 // SendJetton

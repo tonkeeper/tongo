@@ -1,5 +1,5 @@
 <interfaces>
-    <interface group="nft">
+    <interface name="tep_62_item" group="nft">
         <get_method name="get_nft_data" callback="true">
             <output>
                 <tinyint name="init">int8</tinyint>
@@ -15,62 +15,90 @@
                 custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell) =
                 InternalMsgBody;
             </input>
-            <ouput>
+            <output>
                 ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) =
                 InternalMsgBody;
-            </ouput>
-            <ouput>
+            </output>
+            <output>
                 excesses#d53276db query_id:uint64 = InternalMsgBody;
-            </ouput>
+            </output>
         </internal>
         <internal name="get_static_data">
             <input>
                 get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
             </input>
-            <ouput>
+            <output>
                 report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
-            </ouput>
+            </output>
         </internal>
     </interface>
-    <interface group="nft_collection">
+    <interface name="tep_62_collection" group="nft_collection">
+        <types>
+            text#_ {n:#} data:(SnakeData ~n) = Text;
+            snake#00 data:(SnakeData ~n) = ContentData;
+            chunks#01 data:ChunkedData = ContentData;
+            onchain#00 data:(HashMapE 256 ^ContentData) = FullContent;
+            offchain#01 uri:Text = FullContent;
+        </types>
         <get_method name="get_nft_content">
             <input>
                 <int name="index">int257</int>
                 <cell name="individual_content">any</cell>
             </input>
             <output>
-                <cell name="content">
-                    text#_ {n:#} data:(SnakeData ~n) = Text;
-                    snake#00 data:(SnakeData ~n) = ContentData;
-                    chunks#01 data:ChunkedData = ContentData;
-                    onchain#00 data:(HashMapE 256 ^ContentData) = FullContent;
-                    offchain#01 uri:Text = FullContent;
-                </cell>
+                <cell name="content">FullContent</cell>
             </output>
         </get_method>
     </interface>
-    <interface group="dns">
+    <interface name="tep_81" group="dns">
+        <types>
+            dns_text#1eda _:Text = DNSRecord;
+            dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
+            dns_adnl_address#ad01 adnl_addr:bits256 flags:(## 8)
+            proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
+            dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8)
+            cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
+        </types>
         <get_method name="dnsresolve">
             <input>
                 <slice name="domain">[]byte</slice>
                 <int name="category">int256</int>
             </input>
-            <output>
+            <output version="record" fixed_length="true">
                 <tinyint name="resolved_bits">int64</tinyint>
-                <cell name="result">
-                dns_text#1eda _:Text = DNSRecord;
-                dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
-                dns_adnl_address#ad01 adnl_addr:bits256 flags:(## 8)
-                proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
-                dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8)
-                cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
-                </cell>
+                <cell name="result">DNSRecord</cell>
             </output>
-            <output>
+            <output version="records" fixed_length="true">
                 <tinyint name="resolved_bits">int64</tinyint>
                 <cell name="result">
                     _ (Hashmap 256 DNSRecord) = DNS_RecordSet;
                 </cell>
+            </output>
+        </get_method>
+    </interface>
+    <interface name="nft_sale" group="nft">
+        <get_method name="get_sale_data">
+            <output version="basic" fixed_length="true">
+                <slice name="marketplace">AccountID</slice>
+                <slice name="nft">AccountID</slice>
+                <slice name="owner">AccountID</slice>
+                <int name="full_price">big.Int</int>
+                <tinyint name="market_fee">uint64</tinyint>
+                <slice name="royalty_address">AccountID</slice>
+                <tinyint name="royalty_amount">uint64</tinyint>
+            </output>
+            <output version="getgems" fixed_length="true">
+                <tinyint name="fix_price">uint64</tinyint>
+                <tinyint name="is_complete">bool</tinyint>
+                <tinyint name="created_at">uint64</tinyint>
+                <slice name="marketplace">AccountID</slice>
+                <slice name="nft">AccountID</slice>
+                <slice name="owner">AccountID</slice>
+                <int name="full_price">big.Int</int>
+                <slice name="market_fee_address">AccountID</slice>
+                <tinyint name="market_fee">uint64</tinyint>
+                <slice name="royalty_address">AccountID</slice>
+                <tinyint name="royalty_amount">uint64</tinyint>
             </output>
         </get_method>
     </interface>

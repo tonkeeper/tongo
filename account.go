@@ -96,31 +96,25 @@ type AccountInfo struct {
 	LastTransactionLt uint64
 }
 
-func AccountIDFromBase64Url(s string) (*AccountID, error) {
-	if len(s) == 0 {
-		return nil, nil
-	}
+func AccountIDFromBase64Url(s string) (AccountID, error) {
 	var aa AccountID
 	b, err := base64.URLEncoding.DecodeString(s)
 	if err != nil {
-		return nil, err
+		return AccountID{}, err
 	}
 	if len(b) != 36 {
-		return nil, fmt.Errorf("invalid account 'user friendly' form length: %v", s)
+		return AccountID{}, fmt.Errorf("invalid account 'user friendly' form length: %v", s)
 	}
 	checksum := uint64(binary.BigEndian.Uint16(b[34:36]))
 	if checksum != crc.CalculateCRC(crc.XMODEM, b[0:34]) {
-		return nil, fmt.Errorf("invalid checksum")
+		return AccountID{}, fmt.Errorf("invalid checksum")
 	}
 	aa.Workchain = int32(int8(b[1]))
 	copy(aa.Address[:], b[2:34])
-	return &aa, nil
+	return aa, nil
 }
 
-func AccountIDFromRaw(s string) (*AccountID, error) {
-	if len(s) == 0 {
-		return nil, nil
-	}
+func AccountIDFromRaw(s string) (AccountID, error) {
 	var (
 		workchain int32
 		address   []byte
@@ -128,28 +122,28 @@ func AccountIDFromRaw(s string) (*AccountID, error) {
 	)
 	_, err := fmt.Sscanf(s, "%d:%x", &workchain, &address)
 	if err != nil {
-		return nil, err
+		return AccountID{}, err
 	}
 	if len(address) != 32 {
-		return nil, fmt.Errorf("address len must be 32 bytes")
+		return AccountID{}, fmt.Errorf("address len must be 32 bytes")
 	}
 	aa.Workchain = workchain
 	copy(aa.Address[:], address)
-	return &aa, nil
+	return aa, nil
 }
 
-func ParseAccountID(s string) (*AccountID, error) {
+func ParseAccountID(s string) (AccountID, error) {
 	aa, err := AccountIDFromRaw(s)
 	if err != nil {
 		aa, err = AccountIDFromBase64Url(s)
 		if err != nil {
-			return nil, err
+			return AccountID{}, err
 		}
 	}
 	return aa, nil
 }
 
-func MustParseAccountID(s string) *AccountID {
+func MustParseAccountID(s string) AccountID {
 	aa, err := ParseAccountID(s)
 	if err != nil {
 		panic(err)
@@ -157,19 +151,9 @@ func MustParseAccountID(s string) *AccountID {
 	return aa
 }
 
-func AccountIDFromCell(cell *boc.Cell) (*AccountID, error) {
-	var msgAddress MsgAddress
-	err := tlb.Unmarshal(cell, &msgAddress)
-	if err != nil {
-		return nil, err
-	}
-	return msgAddress.AccountID()
-}
-
 // MsgAddressInt
 // addr_std$10 anycast:(Maybe Anycast)
 // workchain_id:int8 address:bits256  = MsgAddressInt;
-
 func (id AccountID) MarshalTLB(c *boc.Cell, tag string) error {
 	err := c.WriteUint(2, 2)
 	if err != nil {

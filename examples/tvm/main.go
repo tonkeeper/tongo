@@ -36,7 +36,7 @@ func main() {
 		panic(err)
 	}
 
-	code, res, err := emulator.RunGetMethod(context.Background(), *account, "get_nft_address_by_index", tongo.VmStack{val})
+	code, res, err := emulator.RunGetMethod(context.Background(), account, "get_nft_address_by_index", tongo.VmStack{val})
 	if err != nil {
 		panic(err)
 	}

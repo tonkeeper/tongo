@@ -30,7 +30,7 @@ func main() {
 	comment := "hello"
 	tonTransfer := wallet.Message{
 		Amount:  10000,
-		Address: *recipientAddr,
+		Address: recipientAddr,
 		Comment: &comment,
 		// Body:    *boc.Cell, // empty
 		// Init:    *tongo.StateInit, // empty

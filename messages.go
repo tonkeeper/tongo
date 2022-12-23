@@ -324,10 +324,7 @@ type ImportFees struct {
 	ValueImported CurrencyCollection
 }
 
-// _ (HashmapAugE 256 OutMsg CurrencyCollection) = OutMsgDescr
-type OutMsgDescr struct {
-	Hashmap tlb.HashmapAugE[tlb.Size256, OutMsg, CurrencyCollection]
-}
+
 
 // msg_export_ext$000 msg:^(Message Any)
 //
@@ -403,15 +400,12 @@ type OutMsg struct {
 // _ out_queue:OutMsgQueue proc_info:ProcessedInfo
 // ihr_pending:IhrPendingInfo = OutMsgQueueInfo;
 type OutMsgQueueInfo struct {
-	OutQueue  OutMsgQueue
-	ProcInfo  ProcessedInfo
-	IhrPendig IhrPendingInfo
+	OutQueue  tlb.HashmapAugE[tlb.Size352, EnqueuedMsg, uint64]
+	ProcInfo  tlb.HashmapE[tlb.Size96, ProcessedUpto]
+	IhrPendig tlb.HashmapE[tlb.Size320, IhrPendingSince]
 }
 
-// _ (HashmapAugE 352 EnqueuedMsg uint64) = OutMsgQueue;
-type OutMsgQueue struct {
-	Queue tlb.HashmapAugE[tlb.Size352, EnqueuedMsg, uint64]
-}
+
 
 // _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;
 type EnqueuedMsg struct {

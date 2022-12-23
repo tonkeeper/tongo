@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var blk = TonNodeBlockIdExt{
+var blk = TonNodeBlockIdExtC{
 
 	Workchain: 0,
 	Shard:     123,
@@ -17,7 +17,7 @@ var blk = TonNodeBlockIdExt{
 }
 
 func TestSimpleType(t *testing.T) {
-	a := TonNodeBlockIdExt{
+	a := TonNodeBlockIdExtC{
 		Workchain: 0,
 		Shard:     123,
 		Seqno:     321,
@@ -28,7 +28,7 @@ func TestSimpleType(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var a1 TonNodeBlockIdExt
+	var a1 TonNodeBlockIdExtC
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)
@@ -41,7 +41,7 @@ func TestSimpleType(t *testing.T) {
 func TestSimpleTypeWithMode(t *testing.T) {
 	account := tl.Int256([32]byte{3, 2, 1})
 	var lt uint64 = 123
-	a := LiteServerTransactionId{
+	a := LiteServerTransactionIdC{
 		Mode:    3,
 		Account: &account,
 		Lt:      &lt,
@@ -51,7 +51,7 @@ func TestSimpleTypeWithMode(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var a1 LiteServerTransactionId
+	var a1 LiteServerTransactionIdC
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)
@@ -64,7 +64,7 @@ func TestSimpleTypeWithMode(t *testing.T) {
 func TestSimpleTypeInvalidMode(t *testing.T) {
 	account := tl.Int256([32]byte{3, 2, 1})
 	var lt uint64 = 123
-	a := LiteServerTransactionId{
+	a := LiteServerTransactionIdC{
 		Mode:    2,
 		Account: &account,
 		Lt:      &lt,
@@ -74,7 +74,7 @@ func TestSimpleTypeInvalidMode(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var a1 LiteServerTransactionId
+	var a1 LiteServerTransactionIdC
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)
@@ -88,7 +88,7 @@ func TestSimpleTypeWithModeAndSlice(t *testing.T) {
 	// liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
 	// proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int
 	// result:mode.2?bytes = liteServer.RunMethodResult;
-	a := LiteServerRunMethodResult{
+	a := LiteServerRunMethodResultC{
 		Mode:       5, // 101
 		Id:         blk,
 		Shardblk:   blk,
@@ -104,7 +104,7 @@ func TestSimpleTypeWithModeAndSlice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var a1 LiteServerRunMethodResult
+	var a1 LiteServerRunMethodResultC
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)
@@ -138,30 +138,30 @@ func TestSumType(t *testing.T) {
 func TestSimpleTypeWithVector(t *testing.T) {
 	account := tl.Int256([32]byte{3, 2, 1})
 	var lt uint64 = 123
-	id1 := LiteServerTransactionId{
+	id1 := LiteServerTransactionIdC{
 		Mode:    3,
 		Account: &account,
 		Lt:      &lt,
 		Hash:    nil,
 	}
-	id2 := LiteServerTransactionId{
+	id2 := LiteServerTransactionIdC{
 		Mode:    1,
 		Account: &account,
 		Lt:      nil,
 		Hash:    nil,
 	}
-	a := LiteServerBlockTransactions{
+	a := LiteServerBlockTransactionsC{
 		Id:         blk,
 		ReqCount:   123,
 		Incomplete: true,
-		Ids:        []LiteServerTransactionId{id1, id2},
+		Ids:        []LiteServerTransactionIdC{id1, id2},
 		Proof:      []byte{1, 2, 3},
 	}
 	b, err := tl.Marshal(a)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var a1 LiteServerBlockTransactions
+	var a1 LiteServerBlockTransactionsC
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)
@@ -172,14 +172,14 @@ func TestSimpleTypeWithVector(t *testing.T) {
 }
 
 func TestVerySimpleType(t *testing.T) {
-	a := LiteServerCurrentTime{
+	a := LiteServerCurrentTimeC{
 		Now: 123,
 	}
 	b, err := tl.Marshal(a)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var a1 LiteServerCurrentTime
+	var a1 LiteServerCurrentTimeC
 	err = tl.Unmarshal(bytes.NewReader(b), &a1)
 	if err != nil {
 		t.Fatal(err)
@@ -190,7 +190,7 @@ func TestVerySimpleType(t *testing.T) {
 }
 
 func TestArraySimpleType(t *testing.T) {
-	type M []LiteServerCurrentTime
+	type M []LiteServerCurrentTimeC
 	a := M{{Now: 1}, {Now: 2}, {Now: 3}}
 	b, err := tl.Marshal(a)
 	if err != nil {

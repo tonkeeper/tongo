@@ -7,7 +7,7 @@ import (
 )
 
 func (c *Client) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {
-	errCode, stack, err := c.RunSmcMethod(ctx, 4, account, "seqno", tongo.VmStack{})
+	errCode, stack, err := c.RunSmcMethod(ctx, account, "seqno", tongo.VmStack{})
 	if err != nil {
 		return 0, err
 	}

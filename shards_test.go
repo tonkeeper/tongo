@@ -32,7 +32,7 @@ func TestShardID_MatchAccountID(t *testing.T) {
 	} {
 		a := MustParseAccountID(c.account)
 		shardID := MustParseShardID(int64(c.shard))
-		if shardID.MatchAccountID(*a) != c.match {
+		if shardID.MatchAccountID(a) != c.match {
 			t.Errorf("%v %x", c.account, c.shard)
 		}
 	}
@@ -56,7 +56,7 @@ func TestShardID_MatchBlockID(t *testing.T) {
 		shard := MustParseShardID(int64(c.shard))
 		t.Logf("Shard       : %b\n", c.shard)
 		t.Logf("Block shard : %b\n\n", c.block)
-		if shard.MatchBlockID(TonNodeBlockId{Shard: int64(c.block)}) != c.match {
+		if shard.MatchBlockID(BlockID{Shard: c.block}) != c.match {
 			t.Errorf("shard %v block %v", c.shard, c.block)
 		}
 	}

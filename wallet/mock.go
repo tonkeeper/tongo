@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"context"
+	"fmt"
 	"github.com/startfellows/tongo"
 )
 
@@ -27,13 +28,14 @@ func (b *SimpleMockBlockchain) GetSeqno(ctx context.Context, account tongo.Accou
 	return b.seqno, nil
 }
 
-func (b *SimpleMockBlockchain) SendRawMessage(ctx context.Context, payload []byte) error {
+func (b *SimpleMockBlockchain) SendMessage(ctx context.Context, payload []byte) (uint32, error) {
 	b.messages <- payload
 	b.seqno++ // it does not check message, address and seqno logic
 	// it does not modify account state
-	return nil
+	return 0, nil
 }
 
-func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error) {
-	return b.state, nil
+func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tongo.ShardAccount, error) {
+	// TODO: fix
+	return tongo.ShardAccount{}, fmt.Errorf("not implemnted")
 }

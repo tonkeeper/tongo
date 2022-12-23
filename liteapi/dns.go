@@ -38,7 +38,7 @@ func (c *Client) DnsResolve(ctx context.Context, address tongo.AccountID, domain
 		VmStkInt: int257,
 	}
 	params.Put(cat)
-	errCode, stack, err := c.RunSmcMethod(ctx, 4, address, "dnsresolve", params)
+	errCode, stack, err := c.RunSmcMethod(ctx, address, "dnsresolve", params)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -57,17 +57,17 @@ func (c *Client) DnsResolve(ctx context.Context, address tongo.AccountID, domain
 }
 
 func (c *Client) GetRootDNS(ctx context.Context) (tongo.AccountID, error) {
-	conf, err := c.GetConfigAll(ctx)
+	conf, err := c.GetConfigAll(ctx, 0) // TODO: check mode
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
-	for i, k := range conf.Config.Config.Hashmap.Keys() {
+	for i, k := range conf.Config.Config.Keys() {
 		key, err := k.ReadUint(32)
 		if err != nil {
 			return tongo.AccountID{}, err
 		}
 		if key == 4 {
-			addr, err := conf.Config.Config.Hashmap.Values()[i].Value.ReadBytes(32)
+			addr, err := conf.Config.Config.Values()[i].Value.ReadBytes(32)
 			if err != nil {
 				return tongo.AccountID{}, err
 			}

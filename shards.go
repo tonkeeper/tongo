@@ -39,7 +39,7 @@ func (s ShardID) MatchAccountID(a AccountID) bool {
 	return (int64(aPrefix) & s.mask) == s.prefix
 }
 
-func (s ShardID) MatchBlockID(block TonNodeBlockId) bool {
+func (s ShardID) MatchBlockID(block BlockID) bool {
 	sub, err := ParseShardID(int64(block.Shard))
 	if err != nil {
 		return false

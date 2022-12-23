@@ -12,10 +12,13 @@ var defaultKnownTypes = map[string]string{
 	"cell":      "boc.Cell",
 	"int8":      "int8",
 	"int64":     "int64",
+	"bool":      "bool",
+	"uint64":    "uint64",
 	"int256":    "tongo.Int256",
 	"int257":    "tongo.Int257",
 	"any":       "boc.Any",
 	"[]byte":    "[]byte",
+	"big.int":   "big.Int",
 }
 
 type Generator struct {
@@ -48,6 +51,20 @@ func (g *Generator) GetMethods(methods []GetMethod) (string, error) {
 	return builder.String(), nil
 }
 
+func (g *Generator) RegisterTypes(s string) error {
+	tlb, err := tlbParser.Parse(s)
+	if err != nil {
+		return fmt.Errorf("can't decoder %v error %w", s, err)
+	}
+	if len(tlb.Declarations) == 0 {
+		return fmt.Errorf("can't parse type %v", s)
+	}
+	for _, d := range tlb.Declarations {
+		g.knownTypes[strings.ToLower(d.Combinator.Name)] = d.Combinator.Name
+	}
+	return nil
+}
+
 func (g *Generator) checkType(s string) (string, error) {
 	if typeName, prs := g.knownTypes[strings.ToLower(s)]; prs {
 		return typeName, nil
@@ -77,16 +94,9 @@ func (g *Generator) GetMethod(m GetMethod) (string, error) {
 	}
 	builder.WriteString(strings.Join(args, ", "))
 	builder.WriteString(") (")
-	for _, s := range m.Stack {
-		if len(s.Cases) == 0 {
-			t, err := g.checkType(s.Type)
-			if err != nil {
-				return "", err
-			}
-			result = append(result, t)
-		}
-		for _, c := range s.Cases {
-			t, err := g.checkType(c)
+	for _, o := range m.Output {
+		for _, c := range o.Stack {
+			t, err := g.checkType(c.Type)
 			if err != nil {
 				return "", err
 			}

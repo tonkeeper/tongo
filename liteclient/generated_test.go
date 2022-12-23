@@ -2,20 +2,18 @@ package liteclient
 
 import (
 	"bytes"
-	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/tl"
 	"reflect"
 	"testing"
 )
 
-var blk = tongo.TonNodeBlockIdExt{
-	TonNodeBlockId: tongo.TonNodeBlockId{
-		Workchain: 0,
-		Shard:     123,
-		Seqno:     321,
-	},
-	RootHash: tongo.Hash([32]byte{1, 2, 3}),
-	FileHash: tongo.Hash([32]byte{3, 2, 1}),
+var blk = TonNodeBlockIdExt{
+
+	Workchain: 0,
+	Shard:     123,
+	Seqno:     321,
+	RootHash:  tl.Int256([32]byte{1, 2, 3}),
+	FileHash:  tl.Int256([32]byte{3, 2, 1}),
 }
 
 func TestSimpleType(t *testing.T) {
@@ -42,7 +40,7 @@ func TestSimpleType(t *testing.T) {
 
 func TestSimpleTypeWithMode(t *testing.T) {
 	account := tl.Int256([32]byte{3, 2, 1})
-	var lt int64 = 123
+	var lt uint64 = 123
 	a := LiteServerTransactionId{
 		Mode:    3,
 		Account: &account,
@@ -65,7 +63,7 @@ func TestSimpleTypeWithMode(t *testing.T) {
 
 func TestSimpleTypeInvalidMode(t *testing.T) {
 	account := tl.Int256([32]byte{3, 2, 1})
-	var lt int64 = 123
+	var lt uint64 = 123
 	a := LiteServerTransactionId{
 		Mode:    2,
 		Account: &account,
@@ -139,7 +137,7 @@ func TestSumType(t *testing.T) {
 
 func TestSimpleTypeWithVector(t *testing.T) {
 	account := tl.Int256([32]byte{3, 2, 1})
-	var lt int64 = 123
+	var lt uint64 = 123
 	id1 := LiteServerTransactionId{
 		Mode:    3,
 		Account: &account,
@@ -174,7 +172,9 @@ func TestSimpleTypeWithVector(t *testing.T) {
 }
 
 func TestVerySimpleType(t *testing.T) {
-	var a LiteServerCurrentTime = 123
+	a := LiteServerCurrentTime{
+		Now: 123,
+	}
 	b, err := tl.Marshal(a)
 	if err != nil {
 		t.Fatal(err)
@@ -191,7 +191,7 @@ func TestVerySimpleType(t *testing.T) {
 
 func TestArraySimpleType(t *testing.T) {
 	type M []LiteServerCurrentTime
-	a := M{1, 2, 3}
+	a := M{{Now: 1}, {Now: 2}, {Now: 3}}
 	b, err := tl.Marshal(a)
 	if err != nil {
 		t.Fatal(err)

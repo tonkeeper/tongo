@@ -63,14 +63,14 @@ func TestGeneratedMethod2(t *testing.T) {
 		panic(err)
 	}
 
-	req := LiteServerGetBlockRequest(r.Last)
+	req := LiteServerGetBlockRequest{Id: r.Last}
 
 	resp, err := client.LiteServerGetBlock(context.Background(), req)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Req  seqno: %d\n", req.Seqno)
+	fmt.Printf("Req  seqno: %d\n", req.Id.Seqno)
 	fmt.Printf("Resp seqno: %d\n", resp.Id.Seqno)
 }
 

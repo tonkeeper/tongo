@@ -40,7 +40,7 @@ func (s ShardID) MatchAccountID(a AccountID) bool {
 }
 
 func (s ShardID) MatchBlockID(block TonNodeBlockId) bool {
-	sub, err := ParseShardID(block.Shard)
+	sub, err := ParseShardID(int64(block.Shard))
 	if err != nil {
 		return false
 	}

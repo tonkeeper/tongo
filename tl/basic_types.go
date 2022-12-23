@@ -2,6 +2,8 @@ package tl
 
 import (
 	"database/sql/driver"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 )
@@ -37,5 +39,26 @@ func (i *Int256) UnmarshalTL(r io.Reader) error {
 		return err
 	}
 	*i = b
+	return nil
+}
+
+func (i Int256) MarshalJSON() ([]byte, error) {
+	return json.Marshal(hex.EncodeToString(i[:]))
+}
+
+func (i *Int256) UnmarshalJSON(data []byte) error {
+	var h string
+	err := json.Unmarshal(data, &h)
+	if err != nil {
+		return err
+	}
+	b, err := hex.DecodeString(h)
+	if err != nil {
+		return err
+	}
+	if len(b) != len(i) {
+		return fmt.Errorf("invalid int256 len")
+	}
+	copy(i[:], b)
 	return nil
 }

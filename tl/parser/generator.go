@@ -19,20 +19,17 @@ type tlType struct {
 	name       string
 	tags       []uint32
 	definition string
-	isStruct   bool
 }
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":                    {"uint32", false},
-		"int":                  {"uint32", false},
-		"int256":               {"tl.Int256", false},
-		"long":                 {"uint64", false},
-		"bytes":                {"[]byte", true},
-		"Bool":                 {"bool", false},
-		"string":               {"string", false},
-		"tonNode.blockIdExt":   {"tongo.TonNodeBlockIdExt", false},
-		"liteServer.accountId": {"tongo.AccountID", false},
+		"#":      {"uint32", false},
+		"int":    {"uint32", false},
+		"int256": {"tl.Int256", false},
+		"long":   {"uint64", false},
+		"bytes":  {"[]byte", true},
+		"Bool":   {"bool", false},
+		"string": {"string", false},
 	}
 
 	unmarshalerReturnErr = "if err != nil {return err}\n"
@@ -79,18 +76,17 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 		}
 		g.newTlTypes[t.name] = t
 		s += "\n" + t.definition + "\n"
-		if t.isStruct {
-			unmarshaler, err := g.generateUnmarshalers(v, t.name)
-			if err != nil {
-				return "", err
-			}
-			marshaler, err := g.generateMarshalers(v, t.name)
-			if err != nil {
-				return "", err
-			}
-			s += "\n" + marshaler + "\n"
-			s += "\n" + unmarshaler + "\n"
+		unmarshaler, err := g.generateUnmarshalers(v, t.name)
+		if err != nil {
+			return "", err
 		}
+		marshaler, err := g.generateMarshalers(v, t.name)
+		if err != nil {
+			return "", err
+		}
+		s += "\n" + marshaler + "\n"
+		s += "\n" + unmarshaler + "\n"
+
 	}
 
 	b, err := format.Source([]byte(s))
@@ -110,13 +106,11 @@ func (g *Generator) LoadFunctions(functions []CombinatorDeclaration) (string, er
 				return "", err
 			}
 			s += "\n" + requestType + "\n"
-			if len(c.FieldDefinitions) > 1 {
-				marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, name)
-				if err != nil {
-					return "", err
-				}
-				s += "\n" + marshaler + "\n"
+			marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, name)
+			if err != nil {
+				return "", err
 			}
+			s += "\n" + marshaler + "\n"
 		}
 		method, err := g.generateGolangMethod(g.typeName, c)
 		if err != nil {
@@ -149,12 +143,10 @@ func (g *Generator) generateGolangSimpleType(declaration CombinatorDeclaration) 
 	if err != nil {
 		return tlType{}, err
 	}
-	isStruct := len(declaration.FieldDefinitions) != 1
 	return tlType{
 		name:       name,
 		tags:       []uint32{tag},
 		definition: fmt.Sprintf("type %v %v", name, s),
-		isStruct:   isStruct,
 	}, nil
 }
 
@@ -183,22 +175,11 @@ func (g *Generator) generateGolangSumType(declarations []CombinatorDeclaration) 
 		name:       name,
 		tags:       tags,
 		definition: builder.String(),
-		isStruct:   true,
 	}, nil
 }
 
 func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 	builder := strings.Builder{}
-
-	if len(declaration.FieldDefinitions) == 1 {
-		t, err := toGolangType(declaration.FieldDefinitions[0].Expression, false, g.knownTypes)
-		if err != nil {
-			return "", err
-		}
-		builder.WriteString(t.String())
-		builder.WriteRune('\n')
-		return builder.String(), nil
-	}
 
 	builder.WriteString("struct{")
 	if len(declaration.FieldDefinitions) > 0 {

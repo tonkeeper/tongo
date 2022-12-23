@@ -269,8 +269,8 @@ func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
 		return TonNodeBlockIdExt{
 			TonNodeBlockId: TonNodeBlockId{
 				Workchain: workchain,
-				Shard:     s.Old.NextValidatorShard,
-				Seqno:     int32(s.Old.SeqNo),
+				Shard:     uint64(s.Old.NextValidatorShard),
+				Seqno:     s.Old.SeqNo,
 			},
 			RootHash: s.Old.RootHash,
 			FileHash: s.Old.FileHash,
@@ -279,8 +279,8 @@ func (s ShardDesc) ToBlockId(workchain int32) TonNodeBlockIdExt {
 		return TonNodeBlockIdExt{
 			TonNodeBlockId: TonNodeBlockId{
 				Workchain: workchain,
-				Shard:     s.New.NextValidatorShard,
-				Seqno:     int32(s.New.SeqNo),
+				Shard:     uint64(s.New.NextValidatorShard),
+				Seqno:     s.New.SeqNo,
 			},
 			RootHash: s.New.RootHash,
 			FileHash: s.New.FileHash,

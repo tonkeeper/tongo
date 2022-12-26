@@ -236,6 +236,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 		res.SumType = "PrevBlksInfo"
 		res.PrevBlksInfo.Prev1 = prev1
 		res.PrevBlksInfo.Prev2 = prev2
+		*i = res
 		return nil
 	}
 	var prev ExtBlkRef

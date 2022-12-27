@@ -1,12 +1,15 @@
 package tlb
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/startfellows/tongo/boc"
 )
+
+var ErrInvalidTag = errors.New("invalid tag")
 
 type sumTag struct {
 	Name string
@@ -34,12 +37,22 @@ func parseTag(s string) (tag, error) {
 	if strings.Contains(s, "#") || strings.Contains(s, "$") {
 		return t, nil
 	}
-	_, err := fmt.Sscanf(s, "%dbits", &t.Len)
-	if err != nil {
-		_, err = fmt.Sscanf(s, "%dbytes", &t.Len)
-		return t, err
+	if strings.HasSuffix(s, "bits") {
+		length, err := strconv.Atoi(s[:len(s)-4])
+		if err != nil {
+			return t, ErrInvalidTag
+		}
+		t.Len = length
+		return t, nil
+	} else if strings.HasSuffix(s, "bytes") {
+		length, err := strconv.Atoi(s[:len(s)-5])
+		if err != nil {
+			return t, ErrInvalidTag
+		}
+		t.Len = length
+		return t, nil
 	}
-	return t, err
+	return t, ErrInvalidTag
 }
 
 func encodeSumTag(c *boc.Cell, tag string) error {
@@ -71,29 +84,33 @@ func parseSumTag(s string) (sumTag, error) {
 		}
 		return sumTag{a[0], len(a[1]) * 4, x}, nil
 	}
-	return sumTag{}, fmt.Errorf("invalid tag")
+	return sumTag{}, ErrInvalidTag
 }
 
 func decodeHashmapTag(tag string) (int, error) {
-	var ln int
 	if tag == "" {
 		return 0, fmt.Errorf("empty hashmap tag")
 	}
-	_, err := fmt.Sscanf(tag, "%dbits", &ln)
-	if err != nil {
-		return 0, err
+	if !strings.HasSuffix(tag, "bits") {
+		return 0, ErrInvalidTag
 	}
-	return ln, nil
+	n, err := strconv.Atoi(tag[:len(tag)-4])
+	if err != nil {
+		return 0, ErrInvalidTag
+	}
+	return n, nil
 }
 
 func decodeVarUIntegerTag(tag string) (int, error) {
-	var n int
 	if tag == "" {
 		return 0, fmt.Errorf("empty varuint tag")
 	}
-	_, err := fmt.Sscanf(tag, "%dbytes", &n)
-	if err != nil {
-		return 0, err
+	if !strings.HasSuffix(tag, "bytes") {
+		return 0, ErrInvalidTag
 	}
-	return n, nil
+	n, err := strconv.Atoi(tag[:len(tag)-5])
+	if err != nil {
+		return 0, ErrInvalidTag
+	}
+	return n, err
 }

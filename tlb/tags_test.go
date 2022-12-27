@@ -62,7 +62,7 @@ func Test_parseTag(t *testing.T) {
 		{
 			name:    "invalid tag",
 			tag:     "56hello",
-			want:    tag{IsRef: false, Len: 56},
+			want:    tag{IsRef: false, Len: 0},
 			wantErr: true,
 		},
 	}

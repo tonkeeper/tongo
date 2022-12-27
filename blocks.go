@@ -252,7 +252,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 
 // RawBlock contains a block's data without TL-B deserialization returned by a lite server's GetBlock method.
 type RawBlock struct {
-	ID TonNodeBlockIdExt
+	ID BlockIDExt
 	// Data contains a BOC.
 	Data []byte
 }
@@ -272,10 +272,10 @@ type Block struct {
 }
 
 // ShardIDs returns a list of IDs of shard blocks this block refers to.
-func (blk *Block) ShardIDs() ([]TonNodeBlockIdExt, error) {
-	items := blk.Extra.Custom.Value.Value.ShardHashes.Hashes.Items()
-	shards := make([]TonNodeBlockIdExt, 0, len(items))
-	for _, item := range blk.Extra.Custom.Value.Value.ShardHashes.Hashes.Items() {
+func (blk *Block) ShardIDs() ([]BlockIDExt, error) {
+	items := blk.Extra.Custom.Value.Value.ShardHashes.Items()
+	shards := make([]BlockIDExt, 0, len(items))
+	for _, item := range blk.Extra.Custom.Value.Value.ShardHashes.Items() {
 		item.Key.ResetCounter()
 		bits := item.Key.BitsAvailableForRead()
 		workchain, err := item.Key.ReadInt(bits)

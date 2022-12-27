@@ -77,7 +77,7 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-	tx.OutMsgCnt = uint32(outMsgCnt)
+	tx.OutMsgCnt = tlb.Uint15(outMsgCnt)
 	if err = tlb.Unmarshal(c, &tx.OrigStatus); err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 	}
 	var msgs struct {
 		InMsg   tlb.Maybe[tlb.Ref[Message]]
-		OutMsgs tlb.HashmapE[tlb.Ref[Message]] `tlb:"15bits"`
+		OutMsgs tlb.HashmapE[tlb.Size15, tlb.Ref[Message]]
 	}
 	if err = tlb.Unmarshal(c1, &msgs); err != nil {
 		return err

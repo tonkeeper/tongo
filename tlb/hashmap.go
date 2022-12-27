@@ -16,7 +16,6 @@ type HashmapItem[T any] struct {
 	Value T
 }
 
-
 type Hashmap[sizeT fixedSize, T any] struct {
 	keys   []boc.BitString
 	values []T
@@ -353,8 +352,6 @@ func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Ce
 	return nil
 }
 
-
-
 type HashmapAugE[sizeT fixedSize, T1, T2 any] struct {
 	m     HashmapAug[sizeT, T1, T2]
 	extra T2
@@ -447,4 +444,25 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 		}
 	}
 	return int(ln), key, nil
+}
+
+// Values returns a list of value of this hashmap.
+func (h HashmapAug[_, T1, _]) Values() []T1 {
+	return h.values
+}
+
+// Items returns key-value pairs of this hashmap.
+func (h HashmapE[_, T]) Items() []HashmapItem[T] {
+	return h.m.Items()
+}
+
+func (h Hashmap[_, T]) Items() []HashmapItem[T] {
+	items := make([]HashmapItem[T], len(h.keys))
+	for i, key := range h.keys {
+		items[i] = HashmapItem[T]{
+			Key:   key,
+			Value: h.values[i],
+		}
+	}
+	return items
 }

@@ -63,7 +63,7 @@ func (h Hashmap[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, siz
 		}
 		l, err := c.NewRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		err = h.encodeMap(l, leftKeys, leftValues, size)
 		if err != nil {
@@ -71,7 +71,7 @@ func (h Hashmap[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, siz
 		}
 		r, err := c.NewRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		err = h.encodeMap(r, rightKeys, rightValues, size)
 		if err != nil {
@@ -113,7 +113,7 @@ func (h *Hashmap[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)
@@ -226,7 +226,7 @@ func (h HashmapE[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, si
 		}
 		l, err := c.NewRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		err = h.encodeMap(l, leftKeys, leftValues, size)
 		if err != nil {
@@ -234,7 +234,7 @@ func (h HashmapE[T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, si
 		}
 		r, err := c.NewRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		err = h.encodeMap(r, rightKeys, rightValues, size)
 		if err != nil {
@@ -350,7 +350,7 @@ func (h *HashmapE[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix 
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)
@@ -438,7 +438,6 @@ func (h *HashmapAug[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -455,7 +454,7 @@ func (h *HashmapAug[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, key
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)
@@ -573,7 +572,7 @@ func (h *HashmapAugE[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, ke
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)

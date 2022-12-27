@@ -19,6 +19,7 @@ type DNSRecordSet struct {
 // proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
 // dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8) { flags <= 1 }
 // cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
+// dns_storage_address#7473 bag_id:bits256 = DNSRecord;
 type DNSRecord struct {
 	tlb.SumType
 	DNSText         DNSText   `tlbSumType:"dns_text#1eda"`
@@ -31,7 +32,8 @@ type DNSRecord struct {
 		Address       AccountID
 		SmcCapability SmcCapabilities
 	} `tlbSumType:"dns_smc_address#9fd3"`
-	NotStandard *boc.Cell // only for custom unmarshaling
+	DNSStorageAddress Hash      `tlbSumType:"dns_storage_address#7473"`
+	NotStandard       *boc.Cell // only for custom unmarshaling
 }
 
 func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -79,6 +81,14 @@ func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
 			return err
 		}
 		*r = res
+		return nil
+	case 0x7473: // dns_storage_address#7473 bag_id:bits256 = DNSRecord;
+		addr, err := c.ReadBytes(32)
+		if err != nil {
+			return err
+		}
+		r.SumType = "DNSStorageAddress"
+		copy(r.DNSStorageAddress[:], addr[:])
 		return nil
 	}
 	c.ResetCounters()

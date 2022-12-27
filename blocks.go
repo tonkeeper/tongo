@@ -83,14 +83,14 @@ func (id BlockID) String() string {
 // prev_vert_ref:vert_seqno_incr?^(BlkPrevInfo 0)
 // = BlockInfo;
 type BlockInfo struct {
-	blockInfoPart
+	BlockInfoPart
 	GenSoftware *GlobalVersion
 	MasterRef   *BlkMasterInfo
 	PrevRef     BlkPrevInfo
 	PrevVertRef *BlkPrevInfo
 }
 
-type blockInfoPart struct {
+type BlockInfoPart struct {
 	Version                   uint32
 	NotMaster                 bool
 	AfterMerge                bool
@@ -121,14 +121,14 @@ func (i *BlockInfo) GetParents() ([]BlockIDExt, error) {
 func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 	var data struct {
 		Magic     tlb.Magic `tlb:"block_info#9bc7a987"`
-		BlockInfo blockInfoPart
+		BlockInfo BlockInfoPart
 	} // for partial decoding
 	err := tlb.Unmarshal(c, &data)
 	if err != nil {
 		return err
 	}
 	var res BlockInfo
-	res.blockInfoPart = data.BlockInfo
+	res.BlockInfoPart = data.BlockInfo
 
 	if res.Flags&1 == 1 {
 		var gs GlobalVersion
@@ -144,6 +144,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
+		res.MasterRef = &BlkMasterInfo{}
 		err = tlb.Unmarshal(c1, res.MasterRef)
 		if err != nil {
 			return err
@@ -164,6 +165,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
+		res.PrevVertRef = &BlkPrevInfo{}
 		err = res.PrevVertRef.UnmarshalTLB(c1, false)
 		if err != nil {
 			return err
@@ -234,6 +236,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 		res.SumType = "PrevBlksInfo"
 		res.PrevBlksInfo.Prev1 = prev1
 		res.PrevBlksInfo.Prev2 = prev2
+		*i = res
 		return nil
 	}
 	var prev ExtBlkRef
@@ -245,6 +248,13 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 	res.PrevBlkInfo.Prev = prev
 	*i = res
 	return nil
+}
+
+// RawBlock contains a block's data without TL-B deserialization returned by a lite server's GetBlock method.
+type RawBlock struct {
+	ID TonNodeBlockIdExt
+	// Data contains a BOC.
+	Data []byte
 }
 
 // Block
@@ -259,6 +269,33 @@ type Block struct {
 	ValueFlow   tlb.Any    `tlb:"^"` // ValueFlow
 	StateUpdate tlb.Any    `tlb:"^"` //MerkleUpdate[ShardState] `tlb:"^"` //
 	Extra       BlockExtra `tlb:"^"`
+}
+
+// ShardIDs returns a list of IDs of shard blocks this block refers to.
+func (blk *Block) ShardIDs() ([]TonNodeBlockIdExt, error) {
+	items := blk.Extra.Custom.Value.Value.ShardHashes.Hashes.Items()
+	shards := make([]TonNodeBlockIdExt, 0, len(items))
+	for _, item := range blk.Extra.Custom.Value.Value.ShardHashes.Hashes.Items() {
+		item.Key.ResetCounter()
+		bits := item.Key.BitsAvailableForRead()
+		workchain, err := item.Key.ReadInt(bits)
+		if err != nil {
+			// shouldn't happen but anyway
+			return nil, err
+		}
+		for _, x := range item.Value.Value.BinTree.Values {
+			shardID := x.ToBlockId(int32(workchain))
+			if shardID.Seqno == 0 {
+				continue
+			}
+			if workchain != 0 {
+				// TODO: verify that workchain is correct.
+				panic("shard.workchain must be 0")
+			}
+			shards = append(shards, shardID)
+		}
+	}
+	return shards, nil
 }
 
 // TODO: clarify the description of the structure

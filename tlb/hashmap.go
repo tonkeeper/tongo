@@ -2,12 +2,20 @@ package tlb
 
 import (
 	"fmt"
+
 	"github.com/startfellows/tongo/boc"
 )
 
 type fixedSize interface {
 	FixedSize() int
 }
+
+// HashmapItem represents a key-value pair stored in HashmapE[T].
+type HashmapItem[T any] struct {
+	Key   boc.BitString
+	Value T
+}
+
 
 type Hashmap[sizeT fixedSize, T any] struct {
 	keys   []boc.BitString
@@ -60,7 +68,7 @@ func (h Hashmap[sizeT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values [
 		}
 		l, err := c.NewRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		err = h.encodeMap(l, leftKeys, leftValues, size)
 		if err != nil {
@@ -68,7 +76,7 @@ func (h Hashmap[sizeT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values [
 		}
 		r, err := c.NewRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		err = h.encodeMap(r, rightKeys, rightValues, size)
 		if err != nil {
@@ -107,7 +115,7 @@ func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyP
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)
@@ -272,7 +280,6 @@ func (h *HashmapAug[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error 
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -289,7 +296,7 @@ func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Ce
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return nil
+			return err
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)
@@ -345,6 +352,8 @@ func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Ce
 
 	return nil
 }
+
+
 
 type HashmapAugE[sizeT fixedSize, T1, T2 any] struct {
 	m     HashmapAug[sizeT, T1, T2]

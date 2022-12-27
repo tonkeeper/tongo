@@ -46,7 +46,7 @@ func (s *BitString) Buffer() []byte {
 }
 
 func (s *BitString) checkRange(n int) error {
-	if n > s.cap {
+	if n >= s.cap {
 		return ErrBitStingOverflow
 	}
 	return nil

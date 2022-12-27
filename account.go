@@ -5,12 +5,14 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io"
+	"strings"
+
 	"github.com/snksoft/crc"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 	"github.com/startfellows/tongo/utils"
-	"io"
-	"strings"
 )
 
 type AccountID struct {
@@ -203,8 +205,17 @@ const (
 )
 
 func (a AccountStatus) MarshalTLB(c *boc.Cell, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("AccountStatus marshaling not implemented")
+	switch a {
+	case AccountUninit:
+		return c.WriteUint(0, 2)
+	case AccountFrozen:
+		return c.WriteUint(1, 2)
+	case AccountActive:
+		return c.WriteUint(2, 2)
+	case AccountNone:
+		return c.WriteUint(3, 2)
+	}
+	return nil
 }
 
 func (a *AccountStatus) UnmarshalTLB(c *boc.Cell, tag string) error {

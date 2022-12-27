@@ -1,12 +1,15 @@
 package tlb
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/startfellows/tongo/boc"
 )
+
+var ErrInvalidTag = errors.New("invalid tag")
 
 type sumTag struct {
 	Name string
@@ -69,5 +72,5 @@ func parseSumTag(s string) (sumTag, error) {
 		}
 		return sumTag{a[0], len(a[1]) * 4, x}, nil
 	}
-	return sumTag{}, fmt.Errorf("invalid tag")
+	return sumTag{}, ErrInvalidTag
 }

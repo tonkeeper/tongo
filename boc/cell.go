@@ -243,20 +243,8 @@ func (c *Cell) WriteBytes(b []byte) error {
 }
 
 func (c *Cell) ResetCounters() {
-	c.resetCounters(make(map[*Cell]struct{}))
-}
-
-func (c *Cell) resetCounters(seen map[*Cell]struct{}) {
-	if _, prs := seen[c]; prs {
-		return
-	}
-	seen[c] = struct{}{}
 	c.bits.ResetCounter()
 	c.refCursor = 0
-	for _, ref := range c.Refs() {
-		ref.resetCounters(seen)
-	}
-	return
 }
 
 func (c *Cell) BitsAvailableForRead() int {

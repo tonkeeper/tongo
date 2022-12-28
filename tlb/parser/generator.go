@@ -21,9 +21,13 @@ type Generator struct {
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":       {"uint32", false},
-		"int32":   {"int32", false},
-		"bits256": {"tongo.Hash", false},
+		"#":          {"uint32", false},
+		"int32":      {"int32", false},
+		"uint64":     {"uint64", false},
+		"bits256":    {"tongo.Hash", false},
+		"MsgAddress": {"tongo.MsgAddress", false},
+		"uint256":    {"tongo.Hash", false},
+		"Bool":       {"bool", false},
 	}
 )
 
@@ -161,7 +165,10 @@ func (t TypeExpression) ToGolangType() (golangType, error) {
 			return golangType{}, err
 		}
 		gt.tag = "^"
-		return mapToGoType(gt.String(), false), nil
+		return golangType{
+			name: gt.String(),
+			tag:  "",
+		}, nil
 	}
 
 	return golangType{
@@ -194,7 +201,11 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 		return golangType{}, err
 	}
 	res.name = name.String()
-	switch res.name {
+	switch name.String() {
+	case "Either":
+		if len(t.Parameter) != 2 {
+			return golangType{}, fmt.Errorf("invalid parameters qty for Either")
+		}
 	case "HashmapE":
 		if len(t.Parameter) != 2 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for HashmapE")
@@ -203,12 +214,12 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 		if err != nil {
 			return golangType{}, err
 		}
-		res.tag = p.String()
+		size := p.String()
 		p, err = t.Parameter[1].ToGolangType()
 		if err != nil {
 			return golangType{}, err
 		}
-		res.params = []golangType{p}
+		res.name = fmt.Sprintf("tlb.HashmapE[tlb.Uint%s, %s]", size, p.String())
 		return res, nil
 	case "Maybe":
 		if len(t.Parameter) != 1 {
@@ -218,7 +229,7 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 		if err != nil {
 			return golangType{}, err
 		}
-		res.params = []golangType{p}
+		res.name = fmt.Sprintf("tlb.Maybe[%s]", p.String())
 		return res, nil
 	case "VarUInteger":
 		if len(t.Parameter) != 1 {
@@ -228,7 +239,7 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 		if err != nil {
 			return golangType{}, err
 		}
-		res.tag = p.String()
+		res.name = fmt.Sprintf("tlb.VarUInteger%s", p.String())
 		return res, nil
 	case "##":
 		if len(t.Parameter) != 1 {
@@ -238,7 +249,12 @@ func (t *ParenExpression) ToGolangType() (golangType, error) {
 		if err != nil {
 			return golangType{}, err
 		}
-		res.tag = p.String()
+		size := p.String()
+		if size == "8" || size == "16" || size == "32" || size == "64" {
+			res.name = fmt.Sprintf("uint%s", p.String())
+		} else {
+			res.name = fmt.Sprintf("tlb.Uint%s", p.String())
+		}
 		return res, nil
 	case "Bits":
 		if len(t.Parameter) != 1 {
@@ -309,48 +325,54 @@ func parseBuildInInt(s string) (golangType, bool) {
 
 func (t golangType) String() string {
 	switch t.name {
-	case "HashmapE":
-		if len(t.params) != 1 {
-			return t.name
-		}
-		var pStr string
-		if t.params[0].tag != "" {
-			pStr = fmt.Sprintf("struct {Val %s}", t.params[0].String())
-		} else {
-			pStr = t.params[0].String()
-		}
-		tStr := fmt.Sprintf("tlb.%s[%s] `tlb:\"%sbits\"`", t.name, pStr, t.tag)
-		return tStr
-	case "Maybe":
-		if len(t.params) != 1 {
-			return t.name
-		}
-		var pStr string
-		if t.params[0].tag != "" {
-			pStr = fmt.Sprintf("struct {Val %s}", t.params[0].String())
-		} else {
-			pStr = t.params[0].String()
-		}
-		tStr := fmt.Sprintf("tlb.%s[%s]", t.name, pStr)
-		return tStr
-	case "VarUInteger":
-		if t.tag == "" {
-			return t.name
-		}
-		tStr := fmt.Sprintf("tlb.%s `tlb:\"%sbytes\"`", t.name, t.tag)
-		return tStr
-	case "##":
-		if t.tag == "" {
-			return t.name
-		}
-		tStr := fmt.Sprintf("uint64 `tlb:\"%sbits\"`", t.tag) // max 32 bits in block.tlb
-		return tStr
+	//case "HashmapE":
+	//	if len(t.params) != 1 {
+	//		return t.name
+	//	}
+	//	var pStr string
+	//	if t.params[0].tag != "" {
+	//		pStr = fmt.Sprintf("struct {Val %s}", t.params[0].String())
+	//	} else {
+	//		pStr = t.params[0].String()
+	//	}
+	//	tStr := fmt.Sprintf("tlb.%s[tlb.Uint%s, %s]", t.name, t.tag, pStr)
+	//	return tStr
+	//case "Maybe":
+	//	if len(t.params) != 1 {
+	//		return t.name
+	//	}
+	//	var pStr string
+	//	if t.params[0].tag != "" {
+	//		pStr = fmt.Sprintf("struct {Val %s}", t.params[0].String())
+	//	} else {
+	//		pStr = t.params[0].String()
+	//	}
+	//	tStr := fmt.Sprintf("tlb.%s[%s]", t.name, pStr)
+	//	return tStr
+	//case "VarUInteger":
+	//	if t.tag == "" {
+	//		return t.name
+	//	}
+	//	tStr := fmt.Sprintf("tlb.%s `tlb:\"%sbytes\"`", t.name, t.tag)
+	//	return tStr
+	//case "##":
+	//	if t.tag == "" {
+	//		return t.name
+	//	}
+	//	tStr := fmt.Sprintf("uint64 `tlb:\"%sbits\"`", t.tag) // max 32 bits in block.tlb
+	//	return tStr
 	case "Bits":
 		if t.tag == "" {
 			return "tlb.BitString"
 		}
 		tStr := fmt.Sprintf("tlb.BitString `tlb:\"%sbits\"`", t.tag)
 		return tStr
+	case "Cell":
+		if t.tag == "^" {
+			return "tlb.Ref[boc.Cell]"
+		} else {
+			return "tlb.Any"
+		}
 	default:
 		return t.name
 	}

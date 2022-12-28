@@ -37,7 +37,7 @@
             text#_ {n:#} data:(SnakeData ~n) = Text;
             snake#00 data:(SnakeData ~n) = ContentData;
             chunks#01 data:ChunkedData = ContentData;
-            onchain#00 data:(HashMapE 256 ^ContentData) = FullContent;
+            onchain#00 data:(HashmapE 256 ^ContentData) = FullContent;
             offchain#01 uri:Text = FullContent;
         </types>
         <get_method name="get_nft_content">
@@ -49,6 +49,93 @@
                 <cell name="content">FullContent</cell>
             </output>
         </get_method>
+        <get_method name="get_collection_data">
+            <output>
+                <int name="next_item_index">int257</int>
+                <cell name="collection_content">any</cell>
+                <slice name="owner_address">AccountID</slice>
+            </output>
+        </get_method>
+        <get_method name="get_nft_address_by_index">
+            <input>
+                <int name="index">int257</int>
+            </input>
+            <output>
+                <slice name="address">AccountID</slice>
+            </output>
+        </get_method>
+    </interface>
+    <interface name="tep_66_nft_royalty" group="nft_royalty">
+        <get_method name="royalty_params">
+            <output>
+                <tinyint name="numerator">uint16</tinyint>
+                <tinyint name="denominator">uint16</tinyint>
+                <slice name="destination">AccountID</slice>
+            </output>
+        </get_method>
+        <internal name="get_royalty_params">
+            <input>
+                get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16 destination:MsgAddress = InternalMsgBody;
+            </output>
+        </internal>
+    </interface>
+    <interface name="tep_74_jetton_master" group="jetton_master">
+        <get_method name="get_jetton_data">
+            <output>
+                <int name="total_supply">int257</int>
+                <tinyint name="mintable">int8</tinyint>
+                <slice name="admin_address">AccountID</slice>
+                <cell name="jetton_content">any</cell>
+                <cell name="jetton_wallet_code">any</cell>
+            </output>
+        </get_method>
+        <get_method name="get_wallet_address">
+            <input>
+                <slice name="owner_address">AccountID</slice>
+            </input>
+            <output>
+                <slice name="jetton_wallet_address">AccountID</slice>
+            </output>
+        </get_method>
+    </interface>
+    <interface name="tep_74_jetton_wallet" group="jetton_wallet">
+        <get_method name="get_wallet_data">
+            <output>
+                <int name="balance">int257</int>
+                <slice name="owner">AccountID</slice>
+                <slice name="jetton">AccountID</slice>
+                <cell name="jetton_wallet_code">any</cell>
+            </output>
+        </get_method>
+        <internal name="transfer">
+            <input>
+                transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
+                response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+                forward_ton_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell)
+                = InternalMsgBody;
+            </input>
+            <output>
+                transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
+                sender:MsgAddress forward_payload:(Either Cell ^Cell)
+                = InternalMsgBody;
+            </output>
+            <output>
+                excesses#d53276db query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="burn">
+            <input>
+                burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
+                response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+                = InternalMsgBody;
+            </input>
+            <output>
+                excesses#d53276db query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
     </interface>
     <interface name="tep_81" group="dns">
         <types>
@@ -101,5 +188,50 @@
                 <tinyint name="royalty_amount">uint64</tinyint>
             </output>
         </get_method>
+    </interface>
+    <interface name="tep_85_sbt" group="sbt">
+        <get_method name="get_authority_address">
+            <output>
+                <slice name="address">AccountID</slice>
+            </output>
+        </get_method>
+        <get_method name="get_revoked_time">
+            <output>
+                <tinyint name="time">uint64</tinyint>
+            </output>
+        </get_method>
+        <internal name="prove_ownership">
+            <input>
+                prove_ownership#04ded148 query_id:uint64 dest:MsgAddress
+                forward_payload:^Cell with_content:Bool = InternalMsgBody;
+            </input>
+            <output>
+                ownership_proof#0524c7ae query_id:uint64 item_id:uint256 owner:MsgAddress
+                data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="request_owner">
+            <input>
+                request_owner#d0c3bfea query_id:uint64 dest:MsgAddress
+                forward_payload:^Cell with_content:Bool = InternalMsgBody;
+            </input>
+            <output>
+                owner_info#0dd607e3 query_id:uint64 item_id:uint256 initiator:MsgAddress owner:MsgAddress
+                data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="destroy">
+            <input>
+                destroy#1f04537a query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                excesses#d53276db query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="revoke">
+            <input>
+                revoke#6f89f5e3 query_id:uint64 = InternalMsgBody;
+            </input>
+        </internal>
     </interface>
 </interfaces>

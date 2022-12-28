@@ -2,3 +2,4 @@
 liteclient/tmp
 liteclient/test.keys
 temp
+testdata/*.output.json

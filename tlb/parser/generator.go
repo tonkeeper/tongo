@@ -223,7 +223,7 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 		if err != nil {
 			return golangType{}, err
 		}
-		res.name = fmt.Sprintf("tlb.HashmapE[tlb.Uint%s, %s]", size, p.String())
+		res.name = fmt.Sprintf("tlb.HashmapE[tlb.Size%s, %s]", size, p.String())
 		return res, nil
 	case "Maybe":
 		if len(t.Parameter) != 1 {

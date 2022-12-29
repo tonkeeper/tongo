@@ -216,7 +216,7 @@ type AccountBlock struct {
 
 // processed_upto$_ last_msg_lt:uint64 last_msg_hash:bits256 = ProcessedUpto;
 type ProcessedUpto struct {
-	LastMsg     uint64
+	LastMsgLt   uint64
 	LastMsgHash Bits256
 }
 

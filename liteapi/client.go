@@ -556,25 +556,25 @@ func (c *Client) GetBlockProof(
 	return r, nil
 }
 
-func (c *Client) GetConfigAll(ctx context.Context, mode uint32) (*tongo.McStateExtra, error) {
+func (c *Client) GetConfigAll(ctx context.Context, mode uint32) (tongo.ConfigParams, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
-		return nil, err
+		return tongo.ConfigParams{}, err
 	}
 	r, err := c.getMasterchainServer().LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
 		Mode: mode,
 		Id:   liteclient.BlockIDExt(id),
 	})
 	if err != nil {
-		return nil, err
+		return tongo.ConfigParams{}, err
 	}
 	return decodeConfigParams(r.ConfigProof)
 }
 
-func (c *Client) GetConfigParams(ctx context.Context, mode uint32, paramList []uint32) (*tongo.McStateExtra, error) {
+func (c *Client) GetConfigParams(ctx context.Context, mode uint32, paramList []uint32) (tongo.ConfigParams, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
-		return nil, err
+		return tongo.ConfigParams{}, err
 	}
 	r, err := c.getMasterchainServer().LiteServerGetConfigParams(ctx, liteclient.LiteServerGetConfigParamsRequest{
 		Mode:      mode,
@@ -582,28 +582,30 @@ func (c *Client) GetConfigParams(ctx context.Context, mode uint32, paramList []u
 		ParamList: paramList,
 	})
 	if err != nil {
-		return nil, err
+		return tongo.ConfigParams{}, err
 	}
 	return decodeConfigParams(r.ConfigProof)
 }
 
-func decodeConfigParams(b []byte) (*tongo.McStateExtra, error) {
+func decodeConfigParams(b []byte) (tongo.ConfigParams, error) {
 	cells, err := boc.DeserializeBoc(b)
 	if err != nil {
-		return nil, err
+		return tongo.ConfigParams{}, err
 	}
 	if len(cells) != 1 {
-		return nil, boc.ErrNotSingleRoot
+		return tongo.ConfigParams{}, boc.ErrNotSingleRoot
 	}
 	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardState]
+		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
 	}
 	err = tlb.Unmarshal(cells[0], &proof)
 	if err != nil {
-		return nil, err
+		return tongo.ConfigParams{}, err
 	}
-	// TODO: extract config params from ShardState
-	return nil, fmt.Errorf("not implemented")
+	if proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Null != true {
+		return proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config, nil
+	}
+	return tongo.ConfigParams{}, fmt.Errorf("empty Custom field")
 }
 
 func (c *Client) GetValidatorStats(

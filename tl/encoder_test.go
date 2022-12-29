@@ -109,8 +109,8 @@ func TestMarshalCustomDecode(t *testing.T) {
 
 type testSumType struct {
 	SumType
-	A testCase `tlSumType:"0a"`
-	B testCase `tlSumType:"0b"`
+	A testCase `tlSumType:"0a0a0a0a"`
+	B testCase `tlSumType:"0b0b0b0b"`
 }
 
 func TestSumType(t *testing.T) {

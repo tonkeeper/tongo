@@ -19,8 +19,8 @@ func main() {
 		Workchain int32
 		Shard     int64
 		Seqno     int32
-		RootHash  tongo.Hash
-		FileHash  tongo.Hash
+		RootHash  tongo.Bits256
+		FileHash  tongo.Bits256
 	}
 	var response struct {
 		tlb.SumType

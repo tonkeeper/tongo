@@ -90,7 +90,7 @@ func GenerateWalletAddress(
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
-	var hash tongo.Hash
+	var hash tongo.Bits256
 	copy(hash[:], h[:])
 	if err != nil {
 		return tongo.AccountID{}, fmt.Errorf("can not calculate state init hash: %v", err)
@@ -106,7 +106,7 @@ func generateStateInit(
 ) (tongo.StateInit, error) {
 	var (
 		err       error
-		publicKey tongo.Hash
+		publicKey tongo.Bits256
 	)
 	copy(publicKey[:], key[:])
 	dataCell := boc.NewCell()

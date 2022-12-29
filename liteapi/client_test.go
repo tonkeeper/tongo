@@ -20,7 +20,7 @@ func TestGetTransactions(t *testing.T) {
 	}
 	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
 	var lt uint64 = 33973842000003
-	var hash tongo.Hash
+	var hash tongo.Bits256
 	_ = hash.FromHex("8005AF92C0854B5A614427206673D120EA2914468C11C8F867F43740D6B4ACFB")
 	tx, err := tongoClient.GetTransactions(context.Background(), 100, accountId, lt, hash)
 	if err != nil {
@@ -157,7 +157,7 @@ func TestGetOneTransaction(t *testing.T) {
 	}
 	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
 	var lt uint64 = 33973842000001
-	var rh, fh tongo.Hash
+	var rh, fh tongo.Bits256
 	_ = fh.FromUnknownString("F497D5CE3DA3C2DAA217145A91A615188E5AD4D8D5EC58C86414DE3F627DFE8A")
 	_ = rh.FromUnknownString("8215CADE3E7BAB4311230F35B5BAC218CFCB8B3706A21563556BCA29828206C9")
 	blockID := tongo.BlockIDExt{BlockID: tongo.BlockID{Workchain: -1, Shard: uint64(9223372036854775808), Seqno: 26097165}, RootHash: rh, FileHash: fh}

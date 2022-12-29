@@ -32,7 +32,7 @@ type DNSRecord struct {
 		Address       AccountID
 		SmcCapability SmcCapabilities
 	} `tlbSumType:"dns_smc_address#9fd3"`
-	DNSStorageAddress Hash      `tlbSumType:"dns_storage_address#7473"`
+	DNSStorageAddress Bits256   `tlbSumType:"dns_storage_address#7473"`
 	NotStandard       *boc.Cell // only for custom unmarshaling
 }
 

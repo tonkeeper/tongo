@@ -94,7 +94,7 @@ type AccountInfo struct {
 	Balance           uint64
 	Data              []byte
 	Code              []byte
-	FrozenHash        Hash
+	FrozenHash        Bits256
 	LastTransactionLt uint64
 }
 
@@ -241,7 +241,7 @@ func (a *AccountStatus) UnmarshalTLB(c *boc.Cell, tag string) error {
 // last_trans_lt:uint64 = ShardAccount;
 type ShardAccount struct {
 	Account       Account `tlb:"^"`
-	LastTransHash Hash
+	LastTransHash Bits256
 	LastTransLt   uint64
 }
 
@@ -282,7 +282,7 @@ type AccountState struct {
 		StateInit StateInit
 	} `tlbSumType:"account_active$1"`
 	AccountFrozen struct {
-		StateHash Hash
+		StateHash Bits256
 	} `tlbSumType:"account_frozen$01"`
 }
 

@@ -123,7 +123,7 @@ type MsgAddress struct {
 	AddrStd struct {
 		Anycast     tlb.Maybe[Anycast]
 		WorkchainId int8
-		Address     Hash
+		Address     Bits256
 	} `tlbSumType:"addr_std$10"`
 	AddrVar struct {
 		Anycast     tlb.Maybe[Anycast]
@@ -324,8 +324,6 @@ type ImportFees struct {
 	ValueImported CurrencyCollection
 }
 
-
-
 // msg_export_ext$000 msg:^(Message Any)
 //
 //	transaction:^Transaction = OutMsg;
@@ -382,7 +380,7 @@ type OutMsg struct {
 		ImportBlock tlb.Uint63
 	} `tlbSumType:"msg_export_deq$1100"`
 	MsgExportDeqShort struct {
-		MsgEnvHash     Hash
+		MsgEnvHash     Bits256
 		NextWorkchain  uint32
 		NextAddrPrefix uint64
 		ImportBlockLt  uint64
@@ -404,8 +402,6 @@ type OutMsgQueueInfo struct {
 	ProcInfo  tlb.HashmapE[tlb.Size96, ProcessedUpto]
 	IhrPendig tlb.HashmapE[tlb.Size320, IhrPendingSince]
 }
-
-
 
 // _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;
 type EnqueuedMsg struct {

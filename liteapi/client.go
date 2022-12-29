@@ -191,17 +191,17 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tongo.
 	return data, nil
 }
 
-func (c *Client) GetState(ctx context.Context, blockID tongo.BlockIDExt) ([]byte, tongo.Hash, tongo.Hash, error) {
+func (c *Client) GetState(ctx context.Context, blockID tongo.BlockIDExt) ([]byte, tongo.Bits256, tongo.Bits256, error) {
 	server, err := c.getServerByBlockID(blockID.BlockID)
 	if err != nil {
-		return nil, tongo.Hash{}, tongo.Hash{}, err
+		return nil, tongo.Bits256{}, tongo.Bits256{}, err
 	}
 	res, err := server.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
 	if err != nil {
-		return nil, tongo.Hash{}, tongo.Hash{}, err
+		return nil, tongo.Bits256{}, tongo.Bits256{}, err
 	}
 	// TODO: implement state tlb decoding
-	return res.Data, tongo.Hash(res.RootHash), tongo.Hash(res.FileHash), nil
+	return res.Data, tongo.Bits256(res.RootHash), tongo.Bits256(res.FileHash), nil
 }
 
 func (c *Client) GetBlockHeader(ctx context.Context, blockID tongo.BlockIDExt, mode uint32) (tongo.BlockInfo, error) {
@@ -345,33 +345,33 @@ func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID)
 	return tongo.ShardAccount{Account: acc}, err
 }
 
-func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tongo.Hash, error) {
+func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tongo.Bits256, error) {
 	cells, err := boc.DeserializeBoc(bocBytes)
 	if err != nil {
-		return 0, tongo.Hash{}, err
+		return 0, tongo.Bits256{}, err
 	}
 	if len(cells) < 1 {
-		return 0, tongo.Hash{}, fmt.Errorf("must be at least one root cell")
+		return 0, tongo.Bits256{}, fmt.Errorf("must be at least one root cell")
 	}
 	var proof struct {
 		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
 	}
 	err = tlb.Unmarshal(cells[1], &proof) // cells order must be strictly defined
 	if err != nil {
-		return 0, tongo.Hash{}, err
+		return 0, tongo.Bits256{}, err
 	}
 	values := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Values()
 	keys := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Keys()
 	for i, k := range keys {
 		keyVal, err := k.ReadBytes(32)
 		if err != nil {
-			return 0, tongo.Hash{}, err
+			return 0, tongo.Bits256{}, err
 		}
 		if bytes.Equal(keyVal, account.Address[:]) {
 			return values[i].LastTransLt, values[i].LastTransHash, nil
 		}
 	}
-	return 0, tongo.Hash{}, fmt.Errorf("account not found in ShardAccounts")
+	return 0, tongo.Bits256{}, fmt.Errorf("account not found in ShardAccounts")
 }
 
 func (c *Client) GetShardInfo(
@@ -465,7 +465,7 @@ func (c *Client) GetTransactions(
 	count uint32,
 	accountID tongo.AccountID,
 	lt uint64,
-	hash tongo.Hash,
+	hash tongo.Bits256,
 ) ([]tongo.Transaction, error) {
 	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
@@ -609,7 +609,7 @@ func decodeConfigParams(b []byte) (*tongo.McStateExtra, error) {
 func (c *Client) GetValidatorStats(
 	ctx context.Context,
 	mode, limit uint32,
-	startAfter *tongo.Hash,
+	startAfter *tongo.Bits256,
 	modifiedAfter *uint32,
 ) (*tongo.McStateExtra, error) {
 	id, err := c.targetBlock(ctx)
@@ -650,7 +650,7 @@ func (c *Client) GetValidatorStats(
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Hash) ([]liteclient.LiteServerLibraryEntryC, error) {
+func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) ([]liteclient.LiteServerLibraryEntryC, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
 		return nil, err

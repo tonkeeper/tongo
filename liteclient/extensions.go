@@ -68,8 +68,8 @@ func (t *LiteServerSignatureSet) UnmarshalTL(r io.Reader) error {
 
 func (t TonNodeBlockIdExtC) ToBlockIdExt() tongo.BlockIDExt {
 	res := tongo.BlockIDExt{
-		RootHash: tongo.Hash(t.RootHash),
-		FileHash: tongo.Hash(t.FileHash),
+		RootHash: tongo.Bits256(t.RootHash),
+		FileHash: tongo.Bits256(t.FileHash),
 	}
 	res.Seqno = t.Seqno
 	res.Shard = t.Shard

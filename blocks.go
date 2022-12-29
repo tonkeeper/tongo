@@ -16,8 +16,8 @@ type BlockID struct {
 
 type BlockIDExt struct {
 	BlockID
-	RootHash Hash
-	FileHash Hash
+	RootHash Bits256
+	FileHash Bits256
 }
 
 func (id BlockIDExt) MarshalTL() ([]byte, error) {
@@ -42,7 +42,7 @@ func (id *BlockIDExt) UnmarshalTL(data []byte) error {
 	return nil
 }
 
-func NewTonBlockId(fileHash, rootHash Hash, seqno uint32, shard uint64, workchain int32) *BlockIDExt {
+func NewTonBlockId(fileHash, rootHash Bits256, seqno uint32, shard uint64, workchain int32) *BlockIDExt {
 	return &BlockIDExt{
 		BlockID: BlockID{
 			Workchain: workchain,
@@ -188,8 +188,8 @@ type GlobalVersion struct {
 type ExtBlkRef struct {
 	EndLt    uint64
 	SeqNo    uint32
-	RootHash Hash
-	FileHash Hash
+	RootHash Bits256
+	FileHash Bits256
 }
 
 // BlkMasterInfo
@@ -334,8 +334,8 @@ type BlockSignaturesPure struct {
 type BlockIdExt struct {
 	ShardId  ShardIdent
 	SeqNo    uint32
-	RootHash Hash
-	FileHash Hash
+	RootHash Bits256
+	FileHash Bits256
 }
 
 // ValueFlow
@@ -379,8 +379,8 @@ type BlockExtra struct {
 	InMsgDescr    tlb.HashmapAugE[tlb.Size256, InMsg, ImportFees]                `tlb:"^"` // tlb.Any `tlb:"^"`
 	OutMsgDescr   tlb.HashmapAugE[tlb.Size256, OutMsg, CurrencyCollection]       `tlb:"^"` // tlb.Any `tlb:"^"`
 	AccountBlocks tlb.HashmapAugE[tlb.Size256, AccountBlock, CurrencyCollection] `tlb:"^"` // tlb.Any     `tlb:"^"` //
-	RandSeed      Hash
-	CreatedBy     Hash
+	RandSeed      Bits256
+	CreatedBy     Bits256
 	Custom        tlb.Maybe[tlb.Ref[McBlockExtra]]
 }
 

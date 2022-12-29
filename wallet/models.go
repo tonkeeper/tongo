@@ -62,18 +62,18 @@ func GetCodeByVer(ver Version) *boc.Cell {
 	return c[0]
 }
 
-func GetCodeHashByVer(ver Version) tongo.Hash {
+func GetCodeHashByVer(ver Version) tongo.Bits256 {
 	code := GetCodeByVer(ver)
 	h, err := code.Hash()
 	if err != nil {
 		panic("can not calc hash for hardcoded code")
 	}
-	var hash tongo.Hash
+	var hash tongo.Bits256
 	copy(hash[:], h[:])
 	return hash
 }
 
-func GetVerByCodeHash(hash tongo.Hash) Version {
+func GetVerByCodeHash(hash tongo.Bits256) Version {
 	// TODO: implement
 	return 0
 }
@@ -100,19 +100,19 @@ func (w *Wallet) GetAddress() tongo.AccountID {
 
 type DataV1V2 struct {
 	Seqno     uint32
-	PublicKey tongo.Hash
+	PublicKey tongo.Bits256
 }
 
 type DataV3 struct {
 	Seqno       uint32
 	SubWalletId uint32
-	PublicKey   tongo.Hash
+	PublicKey   tongo.Bits256
 }
 
 type DataV4 struct {
 	Seqno       uint32
 	SubWalletId uint32
-	PublicKey   tongo.Hash
+	PublicKey   tongo.Bits256
 	PluginDict  tlb.HashmapE[tlb.Size264, tlb.Any] // TODO: find type and check size
 }
 

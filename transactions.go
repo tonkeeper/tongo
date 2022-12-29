@@ -17,9 +17,9 @@ import (
 // description:^TransactionDescr = Transaction;
 type Transaction struct {
 	Magic         tlb.Magic `tlb:"transaction$0111"`
-	AccountAddr   Hash
+	AccountAddr   Bits256
 	Lt            uint64
-	PrevTransHash Hash
+	PrevTransHash Bits256
 	PrevTransLt   uint64
 	Now           uint32
 	OutMsgCnt     tlb.Uint15
@@ -33,11 +33,11 @@ type Transaction struct {
 	StateUpdate HashUpdate       `tlb:"^"`
 	Description TransactionDescr `tlb:"^"`
 
-	hash Hash
+	hash Bits256
 }
 
 // Hash returns a hash of this transaction.
-func (tx *Transaction) Hash() Hash {
+func (tx *Transaction) Hash() Bits256 {
 	return tx.hash
 }
 
@@ -214,8 +214,8 @@ type TransactionDescr struct {
 type SplitMergeInfo struct {
 	CurSHardPfxLen tlb.Uint6
 	AccSplitDepth  tlb.Uint6
-	ThisAddr       Hash
-	SiblingAddr    Hash
+	ThisAddr       Bits256
+	SiblingAddr    Bits256
 }
 
 // TrStoragePhase
@@ -312,8 +312,8 @@ type TrComputePhase struct {
 			ExitCode         int32
 			ExitArg          tlb.Maybe[int32]
 			VmSteps          uint32
-			VmInitStateHash  Hash
-			VmFinalStateHash Hash
+			VmInitStateHash  Bits256
+			VmFinalStateHash Bits256
 		} `tlb:"^"`
 	} `tlbSumType:"tr_phase_compute_vm$1"`
 }
@@ -379,7 +379,7 @@ type TrActionPhase struct {
 	SpecActions     uint16
 	SkippedActions  uint16
 	MsgsCreated     uint16
-	ActionListHash  Hash
+	ActionListHash  Bits256
 	TotMsgSize      StorageUsedShort
 }
 

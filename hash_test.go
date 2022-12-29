@@ -8,12 +8,12 @@ import (
 )
 
 func TestHashTl(t *testing.T) {
-	hash := Hash{1, 2, 3, 4, 5, 6}
+	hash := Bits256{1, 2, 3, 4, 5, 6}
 	b, err := tl.Marshal(hash)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var hash1 Hash
+	var hash1 Bits256
 	err = tl.Unmarshal(bytes.NewReader(b), &hash1)
 	if err != nil {
 		t.Fatal(err)

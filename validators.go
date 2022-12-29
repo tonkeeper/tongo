@@ -64,13 +64,13 @@ type ValidatorDescr struct {
 	ValidatorAddr struct {
 		PublicKey SigPubKey
 		Weight    uint64
-		AdnlAddr  Hash
+		AdnlAddr  Bits256
 	} `tlbSumType:"validatoraddr#73"`
 }
 
 type SigPubKey struct {
 	Magic  tlb.Magic `tlb:"pubkey#8e81278a"`
-	PubKey Hash
+	PubKey Bits256
 }
 
 //ed25519_pubkey#8e81278a pubkey:bits256 = SigPubKey;

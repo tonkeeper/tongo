@@ -73,8 +73,8 @@ type ExtraCurrencyCollection struct {
 // = HASH_UPDATE X;
 type HashUpdate struct {
 	Magic   tlb.Magic `tlb:"update_hashes#72"`
-	OldHash Hash
-	NewHash Hash
+	OldHash Bits256
+	NewHash Bits256
 }
 
 // SnakeData
@@ -231,8 +231,8 @@ type ShardDesc struct {
 		RegMcSeqno         uint32
 		StartLT            uint64
 		EndLT              uint64
-		RootHash           Hash
-		FileHash           Hash
+		RootHash           Bits256
+		FileHash           Bits256
 		BeforeSplit        bool
 		BeforeMerge        bool
 		WantSplit          bool
@@ -249,8 +249,8 @@ type ShardDesc struct {
 		RegMcSeqno         uint32
 		StartLT            uint64
 		EndLT              uint64
-		RootHash           Hash
-		FileHash           Hash
+		RootHash           Bits256
+		FileHash           Bits256
 		BeforeSplit        bool
 		BeforeMerge        bool
 		WantSplit          bool

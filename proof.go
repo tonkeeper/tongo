@@ -11,7 +11,7 @@ import (
 // !merkle_proof#03 {X:Type} virtual_hash:bits256 depth:uint16 virtual_root:^X = MERKLE_PROOF X;
 type MerkleProof[T any] struct {
 	Magic       tlb.Magic `tlb:"!merkle_proof#03"`
-	VirtualHash Hash
+	VirtualHash Bits256
 	Depth       uint16
 	VirtualRoot T `tlb:"^"`
 }
@@ -47,8 +47,8 @@ type ShardStateUnsplitData struct {
 	MinRefMcSeqno   uint32
 	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
 	BeforeSplit     bool
-	Accounts        tlb.HashmapAugE[tlb.Size256, ShardAccount, DepthBalanceInfo]          `tlb:"^"`
-	Other           ShardStateUnsplitOther `tlb:"^"`
+	Accounts        tlb.HashmapAugE[tlb.Size256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
+	Other           ShardStateUnsplitOther                                       `tlb:"^"`
 	Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
 }
 
@@ -116,7 +116,7 @@ type ShardIdent struct {
 
 // sig_pair$_ node_id_short:bits256 sign:CryptoSignature = CryptoSignaturePair;  // 256+x ~ 772 bits
 type CryptoSignaturePair struct {
-	NodeIdShort Hash
+	NodeIdShort Bits256
 	Sign        CryptoSignature
 }
 
@@ -139,8 +139,8 @@ type CryptoSignature struct {
 }
 
 type CryptoSignatureSimpleData struct {
-	R Hash
-	S Hash
+	R Bits256
+	S Bits256
 }
 
 func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, tag string) error {
@@ -202,8 +202,6 @@ type ShardFees struct {
 	Hashmap tlb.HashmapAugE[tlb.Size96, ShardFeeCreated, ShardFeeCreated]
 }
 
-
-
 // acc_trans#5 account_addr:bits256
 //
 //	  transactions:(HashmapAug 64 ^Transaction CurrencyCollection)
@@ -211,26 +209,21 @@ type ShardFees struct {
 //	= AccountBlock;
 type AccountBlock struct {
 	Magic        tlb.Magic `tlb:"acc_trans#5"`
-	AccountAddr  Hash
+	AccountAddr  Bits256
 	Transactions tlb.HashmapAug[tlb.Size64, tlb.Ref[Transaction], CurrencyCollection]
 	StateUpdate  HashUpdate `tlb:"^"`
 }
 
-
-
 // processed_upto$_ last_msg_lt:uint64 last_msg_hash:bits256 = ProcessedUpto;
 type ProcessedUpto struct {
 	LastMsg     uint64
-	LastMsgHash Hash
+	LastMsgHash Bits256
 }
-
 
 // ihr_pending$_ import_lt:uint64 = IhrPendingSince;
 type IhrPendingSince struct {
 	ImportLt uint64
 }
-
-
 
 // depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
 type DepthBalanceInfo struct {
@@ -281,13 +274,11 @@ type McStateExtra struct {
 	GlobalBalance CurrencyCollection
 }
 
-
-
 // ConfigParams
 // _ config_addr:bits256 config:^(Hashmap 32 ^Cell)
 // = ConfigParams;
 type ConfigParams struct {
-	ConfigAddr Hash
+	ConfigAddr Bits256
 	Config     tlb.Hashmap[tlb.Size32, tlb.Ref[boc.Cell]] `tlb:"^"`
 }
 
@@ -337,8 +328,6 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
 
 	return nil
 }
-
-
 
 // _ key:Bool max_end_lt:uint64 = KeyMaxLt;
 type KeyMaxLt struct {

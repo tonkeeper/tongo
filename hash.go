@@ -13,18 +13,18 @@ import (
 	"github.com/startfellows/tongo/boc"
 )
 
-type Hash [32]byte
+type Bits256 [32]byte
 
 var ErrEntityNotFound = errors.New("entity not found")
 
-func (h Hash) Base64() string {
+func (h Bits256) Base64() string {
 	return base64.StdEncoding.EncodeToString(h[:])
 }
 
-func (h Hash) Hex() string {
+func (h Bits256) Hex() string {
 	return fmt.Sprintf("%x", h[:])
 }
-func (h *Hash) FromBase64(s string) error {
+func (h *Bits256) FromBase64(s string) error {
 	b, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (h *Hash) FromBase64(s string) error {
 	return nil
 }
 
-func (h *Hash) FromBase64URL(s string) error {
+func (h *Bits256) FromBase64URL(s string) error {
 	b, err := base64.URLEncoding.DecodeString(s)
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func (h *Hash) FromBase64URL(s string) error {
 	return nil
 }
 
-func (h *Hash) FromHex(s string) error {
+func (h *Bits256) FromHex(s string) error {
 	if strings.HasPrefix(s, "0x") {
 		s = s[2:]
 	}
@@ -63,7 +63,7 @@ func (h *Hash) FromHex(s string) error {
 	return nil
 }
 
-func (h *Hash) FromUnknownString(s string) error {
+func (h *Bits256) FromUnknownString(s string) error {
 	err := h.FromBase64(s)
 	if err == nil {
 		return nil
@@ -79,21 +79,21 @@ func (h *Hash) FromUnknownString(s string) error {
 	return err
 }
 
-func (h *Hash) FromBytes(b []byte) error {
+func (h *Bits256) FromBytes(b []byte) error {
 	if len(b) != 32 {
-		return fmt.Errorf("can't scan []byte of len %d into Hash, want %d", len(b), 32)
+		return fmt.Errorf("can't scan []byte of len %d into Bits256, want %d", len(b), 32)
 	}
 	copy(h[:], b)
 	return nil
 }
 
-func ParseHash(s string) (Hash, error) {
-	var h Hash
+func ParseHash(s string) (Bits256, error) {
+	var h Bits256
 	err := h.FromUnknownString(s)
 	return h, err
 }
 
-func MustParseHash(s string) Hash {
+func MustParseHash(s string) Bits256 {
 	h, err := ParseHash(s)
 	if err != nil {
 		panic(err)
@@ -102,28 +102,28 @@ func MustParseHash(s string) Hash {
 }
 
 // Scan implements Scanner for database/sql.
-func (h *Hash) Scan(src interface{}) error {
+func (h *Bits256) Scan(src interface{}) error {
 	srcB, ok := src.([]byte)
 	if !ok {
-		return fmt.Errorf("can't scan %T into Hash", src)
+		return fmt.Errorf("can't scan %T into Bits256", src)
 	}
 	if len(srcB) != 32 {
-		return fmt.Errorf("can't scan []byte of len %d into Hash, want %d", len(srcB), 32)
+		return fmt.Errorf("can't scan []byte of len %d into Bits256, want %d", len(srcB), 32)
 	}
 	copy(h[:], srcB)
 	return nil
 }
 
 // Value implements valuer for database/sql.
-func (h Hash) Value() (driver.Value, error) {
+func (h Bits256) Value() (driver.Value, error) {
 	return h[:], nil
 }
 
-func (h Hash) MarshalJSON() ([]byte, error) {
+func (h Bits256) MarshalJSON() ([]byte, error) {
 	return json.Marshal(fmt.Sprintf("%x", h))
 }
 
-func (h Hash) MarshalTLB(c *boc.Cell, tag string) error {
+func (h Bits256) MarshalTLB(c *boc.Cell, tag string) error {
 	err := c.WriteBytes(h[:])
 	if err != nil {
 		return err
@@ -131,7 +131,7 @@ func (h Hash) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h *Hash) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *Bits256) UnmarshalTLB(c *boc.Cell, tag string) error {
 	b, err := c.ReadBytes(32)
 	if err != nil {
 		return err
@@ -140,11 +140,11 @@ func (h *Hash) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h Hash) MarshalTL() ([]byte, error) {
+func (h Bits256) MarshalTL() ([]byte, error) {
 	return h[:], nil
 }
 
-func (h *Hash) UnmarshalTL(r io.Reader) error {
+func (h *Bits256) UnmarshalTL(r io.Reader) error {
 	var b [32]byte
 	_, err := io.ReadFull(r, b[:])
 	if err != nil {

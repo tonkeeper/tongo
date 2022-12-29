@@ -59,6 +59,8 @@ forward_payload:^Cell with_content:Bool = InternalMsgBody;
 
 owner_info#0dd607e3 query_id:uint64 item_id:uint256 initiator:MsgAddress owner:MsgAddress
 data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+
+_ (Hashmap 256 DNSRecord) = DNS_RecordSet;
 `
 
 func TestGenerateGolangTypes(t *testing.T) {

@@ -727,7 +727,7 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 	}{
 		SumType: "GetConfigAllRequest",
 		GetConfigAllRequest: getConfigAllRequest{
-			Mode: 0,
+			Mode: 0x8000, // 0x8000 - TON returns ID of the last key block from masterchain that contains Config
 			ID:   lastBlock,
 		},
 	}
@@ -754,21 +754,18 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 	if pResp.SumType == "Error" {
 		return nil, fmt.Errorf("error code: %v , message: %v", pResp.Error.Code, pResp.Error.Message)
 	}
-
-	cell, err := boc.DeserializeBoc(pResp.ConfigInfo.ConfigProof)
+	_, configBlock, err := c.GetBlock(ctx, pResp.ConfigInfo.ID)
 	if err != nil {
 		return nil, err
 	}
-	var proof struct {
-		Proof tongo.MerkleProof[tongo.ShardStateUnsplit]
+	mcBlockExtra := configBlock.Extra.Custom.Value.Value
+	if !mcBlockExtra.KeyBlock {
+		return nil, fmt.Errorf("failed to get key block to extract Config")
 	}
-	err = tlb.Unmarshal(cell[0], &proof)
-	if err != nil {
-		return nil, err
-	}
-
 	conf := boc.NewCell()
-	tlb.Marshal(conf, proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config.Config)
+	if err := tlb.Marshal(conf, mcBlockExtra.Config.Config); err != nil {
+		return nil, err
+	}
 	return conf, nil
 }
 
@@ -792,7 +789,6 @@ func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) 
 	if err != nil {
 		return nil, err
 	}
-
 	r := struct {
 		tl.SumType
 		GetConfigAllRequest getConfigAllRequest `tlSumType:"b7261b91"`

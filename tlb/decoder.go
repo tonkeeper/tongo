@@ -34,17 +34,16 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 			return nil
 		}
 	}
-	i, ok := reflect.New(val.Type()).Interface().(UnmarshalerTLB)
+
+	i, ok := val.Interface().(UnmarshalerTLB)
 	if ok {
-		err := i.UnmarshalTLB(c, tag)
-		if err != nil {
-			return err
+		return i.UnmarshalTLB(c, tag)
+	}
+	if val.CanAddr() {
+		i, ok := val.Addr().Interface().(UnmarshalerTLB)
+		if ok {
+			return i.UnmarshalTLB(c, tag)
 		}
-		if !val.CanSet() {
-			return fmt.Errorf("value can't be changed")
-		}
-		val.Set(reflect.ValueOf(i).Elem())
-		return nil
 	}
 	if !val.CanSet() {
 		return fmt.Errorf("value can't be changed")

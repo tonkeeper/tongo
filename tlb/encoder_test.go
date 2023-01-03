@@ -1,9 +1,10 @@
 package tlb
 
 import (
-	"github.com/startfellows/tongo/boc"
 	"reflect"
 	"testing"
+
+	"github.com/startfellows/tongo/boc"
 )
 
 type testCase struct {
@@ -183,5 +184,36 @@ func TestRefTag(t *testing.T) {
 	}
 	if a != a2 {
 		t.Fatal("not equal")
+	}
+}
+
+type A struct {
+	A int32
+}
+
+func (a *A) UnmarshalTLB(cell *boc.Cell, tag string) error {
+	a.A = 100
+	return nil
+}
+
+func TestDecoderInterface(t *testing.T) {
+	var a A
+	c := boc.NewCell()
+	err := Unmarshal(c, &a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a.A != 100 {
+		t.Fatal(a.A)
+	}
+	var b struct {
+		A A
+	}
+	err = Unmarshal(c, &b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if b.A.A != 100 {
+		t.Fatal(b.A.A)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/startfellows/tongo/tl"
 	"math/rand"
 	"sync"
+	"time"
 )
 
 const (
@@ -17,16 +18,36 @@ const (
 
 type queryID [32]byte
 
+const (
+	defaultTimeout = time.Minute
+)
+
 type Client struct {
+	// timeout configures a timeout of a lite client method.
+	// if such a method makes several calls to a lite server,
+	// the total time is bounded by the timeout.
+	timeout      time.Duration
 	connection   *Connection
 	queries      map[queryID]chan []byte
 	queriesMutex sync.Mutex
 }
 
-func NewClient(c *Connection) *Client {
+type Options func(connection *Client)
+
+func OptionTimeout(t time.Duration) Options {
+	return func(c *Client) {
+		c.timeout = t
+	}
+}
+
+func NewClient(c *Connection, opts ...Options) *Client {
 	c2 := &Client{
+		timeout:    defaultTimeout,
 		connection: c,
 		queries:    make(map[queryID]chan []byte),
+	}
+	for _, f := range opts {
+		f(c2)
 	}
 	go c2.reader()
 	return c2
@@ -36,6 +57,8 @@ func NewClient(c *Connection) *Client {
 // adnl.message.query query_id:int256 query:bytes = adnl.Message
 // adnl.message.answer query_id:int256 answer:bytes = adnl.Message
 func (c *Client) Request(ctx context.Context, q []byte) ([]byte, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	var id queryID
 	rand.Read(id[:])
 	data := make([]byte, 4, 44+len(q)) //create with small overhead for reducing garbage collector calls

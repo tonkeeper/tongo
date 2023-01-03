@@ -24,7 +24,9 @@ type configGlobal struct {
 	//Validator   ValidatorConfig  `json:"validator"`
 }
 
-type Options struct {
+// GlobalConfigurationFile contains global configuration of the TON Blockchain.
+// It is shared by all nodes and includes information about network, init block, hardforks, etc.
+type GlobalConfigurationFile struct {
 	LiteServers []LiteServer
 }
 
@@ -34,7 +36,7 @@ type LiteServer struct {
 	Key  string
 }
 
-func ParseConfigFile(path string) (*Options, error) {
+func ParseConfigFile(path string) (*GlobalConfigurationFile, error) {
 	jsonFile, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -58,13 +60,13 @@ func convertToLiteServerOptions(server liteServerConfig) (LiteServer, error) {
 	}, nil
 }
 
-func ParseConfig(data io.Reader) (*Options, error) {
+func ParseConfig(data io.Reader) (*GlobalConfigurationFile, error) {
 	var conf configGlobal
 	err := json.NewDecoder(data).Decode(&conf)
 	if err != nil {
 		return nil, err
 	}
-	var options Options
+	var options GlobalConfigurationFile
 	for _, server := range conf.LiteServers {
 		ls, err := convertToLiteServerOptions(server)
 		if err != nil {

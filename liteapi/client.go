@@ -50,7 +50,7 @@ func NewClientWithDefaultTestnet() (*Client, error) {
 
 // NewClient
 // Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
-func NewClient(options config.Options) (*Client, error) {
+func NewClient(options config.GlobalConfigurationFile) (*Client, error) {
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
@@ -682,10 +682,10 @@ func (c *Client) GetShardBlockProof(ctx context.Context) (liteclient.LiteServerS
 	})
 }
 
-var configCache = make(map[string]*config.Options)
+var configCache = make(map[string]*config.GlobalConfigurationFile)
 var configCacheMutex sync.RWMutex
 
-func downloadConfig(path string) (*config.Options, error) {
+func downloadConfig(path string) (*config.GlobalConfigurationFile, error) {
 	configCacheMutex.RLock()
 	o, prs := configCache[path]
 	configCacheMutex.RUnlock()

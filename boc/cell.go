@@ -14,11 +14,21 @@ const CellBits = 1023
 var ErrCellRefsOverflow = errors.New("too many refs")
 var ErrNotEnoughRefs = errors.New("not enough refs")
 
+type CellType uint8
+
+const (
+	OrdinaryCell CellType = iota
+	PrunedBranchCell
+	LibraryCell
+	MerkleProofCell
+	MerkleUpdateCell
+)
+
 type Cell struct {
 	bits      BitString
 	refs      [4]*Cell
 	refCursor int
-	isExotic  bool
+	cellType  CellType
 	// TODO: add capacity checking
 }
 
@@ -26,15 +36,15 @@ func NewCell() *Cell {
 	return &Cell{
 		bits:     NewBitString(CellBits),
 		refs:     [4]*Cell{},
-		isExotic: false,
+		cellType: OrdinaryCell,
 	}
 }
 
-func NewCellExotic() *Cell {
+func NewCellExotic(cellType CellType) *Cell {
 	return &Cell{
 		bits:     NewBitString(CellBits),
 		refs:     [4]*Cell{},
-		isExotic: true,
+		cellType: cellType,
 	}
 }
 
@@ -59,7 +69,11 @@ func (c *Cell) Refs() []*Cell {
 }
 
 func (c *Cell) IsExotic() bool {
-	return c.isExotic
+	return c.cellType != OrdinaryCell
+}
+
+func (c *Cell) CellType() CellType {
+	return c.cellType
 }
 
 func (c *Cell) BitSize() int {

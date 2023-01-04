@@ -30,6 +30,9 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		if err != nil {
 			return err
 		}
+		if c.CellType() == boc.PrunedBranchCell {
+			return nil
+		}
 	}
 	i, ok := reflect.New(val.Type()).Interface().(UnmarshalerTLB)
 	if ok {

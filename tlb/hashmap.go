@@ -330,6 +330,9 @@ func (h *HashmapE[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
+	if r.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
 	keyPrefix := boc.NewBitString(keySize)
 	err = h.mapInner(keySize, keySize, r, &keyPrefix)
 	if err != nil {
@@ -539,22 +542,25 @@ func (h *HashmapAugE[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if !isExists {
 		return nil
 	}
-	r, err := c.NextRef()
+	root, err := c.NextRef()
 	if err != nil {
 		return err
 	}
-	keyPrefix := boc.NewBitString(keySize)
-	err = h.mapInner(keySize, keySize, r, &keyPrefix, &h.extra)
-	if err != nil {
-		return err
+	if root.CellType() != boc.PrunedBranchCell {
+		keyPrefix := boc.NewBitString(keySize)
+		err = h.mapInner(keySize, keySize, root, &keyPrefix, &h.extra)
+		if err != nil {
+			return err
+		}
 	}
+	// even if "root" branch is pruned
+	// "extra" still presents in "c" cell.
 	var extra T2
 	err = Unmarshal(c, &extra)
 	if err != nil {
 		return err
 	}
 	h.rootExtra = extra
-
 	return nil
 }
 

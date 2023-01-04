@@ -95,7 +95,7 @@ func decode(buf io.Reader, val reflect.Value) error {
 		return decodeStruct(buf, val)
 
 	default:
-		return fmt.Errorf("type %v not emplemented", val.Kind())
+		return fmt.Errorf("type %v not implemented", val.Kind())
 	}
 }
 

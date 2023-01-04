@@ -53,7 +53,7 @@ func Marshal(o any) ([]byte, error) {
 	case reflect.Struct:
 		return encodeStruct(val)
 	default:
-		return nil, fmt.Errorf("type %v not emplemented", val.Kind())
+		return nil, fmt.Errorf("type %v not implemented", val.Kind())
 	}
 }
 

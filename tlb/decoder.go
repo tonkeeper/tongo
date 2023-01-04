@@ -100,7 +100,7 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 			return decodeStruct(c, val, tag)
 		}
 	default:
-		return fmt.Errorf("type %v not emplemented", val.Kind())
+		return fmt.Errorf("type %v not implemented", val.Kind())
 	}
 }
 

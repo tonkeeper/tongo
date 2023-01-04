@@ -350,13 +350,12 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-	if m.Flags == 1 {
+	if m.Flags == 0 {
 		err = tlb.Unmarshal(c, &m.BlockCreateStats)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 

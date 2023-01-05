@@ -104,6 +104,11 @@ func (h *Hashmap[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 func (h *Hashmap[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
 	var err error
 	var size int
+
+	if c.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
+
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
 		return err
@@ -344,6 +349,11 @@ func (h *HashmapE[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 func (h *HashmapE[T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
 	var err error
 	var size int
+
+	if c.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
+
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
 		return err
@@ -447,6 +457,11 @@ func (h *HashmapAug[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 func (h *HashmapAug[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
 	var err error
 	var size int
+
+	if c.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
+
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
 		return err
@@ -567,6 +582,11 @@ func (h *HashmapAugE[T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 func (h *HashmapAugE[T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
 	var err error
 	var size int
+
+	if c.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
+
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
 		return err

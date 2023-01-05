@@ -350,7 +350,7 @@ type BlockCreateStats struct {
 	} `tlbSumType:"block_create_stats#17"`
 	BlockCreateStatsExt struct {
 		Counters tlb.HashmapAugE[tlb.Size256, CreatorStats, uint32]
-	} `tlbSumType:"block_create_statsext#34"`
+	} `tlbSumType:"block_create_stats_ext#34"`
 }
 
 // creator_info#4 mc_blocks:Counters shard_blocks:Counters = CreatorStats;

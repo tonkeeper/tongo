@@ -27,6 +27,9 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		if err != nil {
 			return err
 		}
+		if c.CellType() == boc.PrunedBranchCell {
+			return nil
+		}
 	}
 	i, ok := reflect.New(val.Type()).Interface().(UnmarshalerTLB)
 	if ok {
@@ -103,7 +106,7 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		val.Set(a)
 		return nil
 	default:
-		return fmt.Errorf("type %v not emplemented", val.Kind())
+		return fmt.Errorf("type %v not implemented", val.Kind())
 	}
 }
 

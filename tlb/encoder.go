@@ -67,7 +67,7 @@ func encode(c *boc.Cell, o any, tag string) error {
 		}
 		return encode(c, val.Elem().Interface(), tag)
 	default:
-		return fmt.Errorf("type %v not emplemented", val.Kind())
+		return fmt.Errorf("type %v not implemented", val.Kind())
 	}
 }
 

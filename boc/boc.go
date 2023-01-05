@@ -195,7 +195,9 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 
 	var cell *Cell
 	if isExotic {
-		cell = NewCellExotic()
+		// the first byte of an exotic cell stores the cell's type.
+		exoticType := CellType(readNBytesUIntFromArray(1, cellData))
+		cell = NewCellExotic(exoticType)
 	} else {
 		cell = NewCell()
 	}
@@ -305,7 +307,7 @@ func getMaxDepth(cell *Cell, iterationCounter *int) (int, error) {
 
 func bocReprWithoutRefs(cell *Cell) []byte {
 	specBit := 0
-	if cell.isExotic {
+	if cell.IsExotic() {
 		specBit = 8
 	}
 	d1 := byte(cell.RefsSize() + specBit)

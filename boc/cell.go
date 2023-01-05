@@ -15,11 +15,21 @@ var ErrCellRefsOverflow = errors.New("too many refs")
 var ErrNotEnoughRefs = errors.New("not enough refs")
 var ErrNotSingleRoot = errors.New("should be one root cell")
 
+type CellType uint8
+
+const (
+	OrdinaryCell CellType = iota
+	PrunedBranchCell
+	LibraryCell
+	MerkleProofCell
+	MerkleUpdateCell
+)
+
 type Cell struct {
 	bits      BitString
 	refs      [4]*Cell
 	refCursor int
-	isExotic  bool
+	cellType  CellType
 	// TODO: add capacity checking
 }
 
@@ -27,15 +37,15 @@ func NewCell() *Cell {
 	return &Cell{
 		bits:     NewBitString(CellBits),
 		refs:     [4]*Cell{},
-		isExotic: false,
+		cellType: OrdinaryCell,
 	}
 }
 
-func NewCellExotic() *Cell {
+func NewCellExotic(cellType CellType) *Cell {
 	return &Cell{
 		bits:     NewBitString(CellBits),
 		refs:     [4]*Cell{},
-		isExotic: true,
+		cellType: cellType,
 	}
 }
 
@@ -60,7 +70,11 @@ func (c *Cell) Refs() []*Cell {
 }
 
 func (c *Cell) IsExotic() bool {
-	return c.isExotic
+	return c.cellType != OrdinaryCell
+}
+
+func (c *Cell) CellType() CellType {
+	return c.cellType
 }
 
 func (c *Cell) BitSize() int {
@@ -246,20 +260,8 @@ func (c *Cell) WriteBytes(b []byte) error {
 }
 
 func (c *Cell) ResetCounters() {
-	c.resetCounters(make(map[*Cell]struct{}))
-}
-
-func (c *Cell) resetCounters(seen map[*Cell]struct{}) {
-	if _, prs := seen[c]; prs {
-		return
-	}
-	seen[c] = struct{}{}
 	c.bits.ResetCounter()
 	c.refCursor = 0
-	for _, ref := range c.Refs() {
-		ref.resetCounters(seen)
-	}
-	return
 }
 
 func (c *Cell) BitsAvailableForRead() int {

@@ -1,12 +1,12 @@
 package abi
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
 func TestGenerateGetMethodsGolang(t *testing.T) {
-	b, err := ioutil.ReadFile("known.xml")
+	b, err := os.ReadFile("known.xml")
 	if err != nil {
 		t.Fatal(err)
 	}

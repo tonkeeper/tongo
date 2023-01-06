@@ -62,7 +62,7 @@ type StateInit struct {
 	Special    tlb.Maybe[TickTock]
 	Code       tlb.Maybe[tlb.Ref[boc.Cell]]
 	Data       tlb.Maybe[tlb.Ref[boc.Cell]]
-	Library    tlb.HashmapE[tlb.Size256, SimpleLib]
+	Library    tlb.HashmapE[Bits256, SimpleLib]
 }
 
 // Anycast
@@ -398,9 +398,9 @@ type OutMsg struct {
 // _ out_queue:OutMsgQueue proc_info:ProcessedInfo
 // ihr_pending:IhrPendingInfo = OutMsgQueueInfo;
 type OutMsgQueueInfo struct {
-	OutQueue  tlb.HashmapAugE[tlb.Size352, EnqueuedMsg, uint64]
-	ProcInfo  tlb.HashmapE[tlb.Size96, ProcessedUpto]
-	IhrPendig tlb.HashmapE[tlb.Size320, IhrPendingSince]
+	OutQueue  tlb.HashmapAugE[tlb.Bits352, EnqueuedMsg, uint64]
+	ProcInfo  tlb.HashmapE[tlb.Bits96, ProcessedUpto]
+	IhrPendig tlb.HashmapE[tlb.Bits320, IhrPendingSince]
 }
 
 // _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;

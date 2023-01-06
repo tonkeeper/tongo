@@ -47,9 +47,6 @@ func GenerateConstantInts(max int) string {
 	var b bytes.Buffer
 	for i := 1; i <= max; i++ {
 		p := nearestPow(i)
-		if p == i {
-			continue
-		}
 		fmt.Fprintf(&b, `
 type Uint%v uint%v
 
@@ -63,6 +60,10 @@ func (u *Uint%v) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint%v) FixedSize() int {
+	return %v
+}
+
 type Int%v int%v
 
 func (u Int%v) MarshalTLB(c *boc.Cell, tag string) error {
@@ -74,7 +75,36 @@ func (u *Int%v) UnmarshalTLB(c *boc.Cell, tag string) error {
 	*u = Int%v(v)
 	return err
 }
-`, i, p, i, i, i, i, i, i, p, i, i, i, i, i)
+
+func (u Int%v) FixedSize() int {
+	return %v
+}
+`, i, p, i, i, i, i, i, i, i, i, p, i, i, i, i, i, i, i)
+	}
+	bytes, _ := format.Source(b.Bytes())
+	return string(bytes)
+}
+
+func GenerateBitsTypes(sizes []int) string {
+	var b bytes.Buffer
+	for _, i := range sizes {
+		fmt.Fprintf(&b, `
+	type Bits%v boc.BitString
+	
+	func (u Bits%v) MarshalTLB(c *boc.Cell, tag string) error {
+		return c.WriteBitString(boc.BitString(u))
+	}
+	
+	func (u *Bits%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+		v, err := c.ReadBits(%v)
+		*u = Bits%v(v)
+		return err
+	}
+
+	func (u Bits%v) FixedSize() int {
+		return %v
+	}
+	`, i, i, i, i, i, i, i)
 	}
 	bytes, _ := format.Source(b.Bytes())
 	return string(bytes)

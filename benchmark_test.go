@@ -2,7 +2,7 @@ package tongo
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -11,7 +11,7 @@ import (
 )
 
 func Benchmark_Tlb_Unmarshal(b *testing.B) {
-	data, err := ioutil.ReadFile("testdata/raw-block.bin")
+	data, err := os.ReadFile("testdata/raw-block.bin")
 	if err != nil {
 		b.Errorf("ReadFile() failed: %v", err)
 	}
@@ -38,14 +38,14 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		PrevTransHash string
 		PrevTransLt   uint64
 		Now           uint32
-		OutMsgCnt     uint32
+		OutMsgCnt     tlb.Uint15
 		OrigStatus    AccountStatus
 		EndStatus     AccountStatus
 	}
 	type accountBlock struct {
 		Transactions map[uint64]transaction
 	}
-	data, err := ioutil.ReadFile("testdata/raw-block.bin")
+	data, err := os.ReadFile("testdata/raw-block.bin")
 	if err != nil {
 		t.Errorf("ReadFile() failed: %v", err)
 	}
@@ -59,7 +59,7 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		t.Errorf("Unmarshal() failed: %v", err)
 	}
 	accounts := map[string]*accountBlock{}
-	for _, account := range block.Extra.AccountBlocks.Hashmap.Values() {
+	for _, account := range block.Extra.AccountBlocks.Values() {
 		accBlock, ok := accounts[account.AccountAddr.Hex()]
 		if !ok {
 			accBlock = &accountBlock{Transactions: map[uint64]transaction{}}
@@ -84,10 +84,10 @@ func Test_tlb_Unmarshal(t *testing.T) {
 	if err != nil {
 		t.Errorf("json.MarshalIndent() failed: %v", err)
 	}
-	if err := ioutil.WriteFile("testdata/raw-block.output.json", bs, 0644); err != nil {
+	if err := os.WriteFile("testdata/raw-block.output.json", bs, 0644); err != nil {
 		t.Errorf("WriteFile() failed: %v", err)
 	}
-	content, err := ioutil.ReadFile("testdata/raw-block.expected.json")
+	content, err := os.ReadFile("testdata/raw-block.expected.json")
 	if err != nil {
 		t.Errorf("ReadFile() failed: %v", err)
 	}

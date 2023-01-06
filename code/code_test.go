@@ -23,7 +23,7 @@ func TestCodeInspect(t *testing.T) {
 		t.Fatal(err)
 	}
 	type GetMethods struct {
-		Hashmap tlb.Hashmap[tlb.Size19, boc.Cell]
+		Hashmap tlb.Hashmap[tlb.Uint19, boc.Cell]
 	}
 	var d GetMethods
 	err = tlb.Unmarshal(c, &d)
@@ -31,7 +31,7 @@ func TestCodeInspect(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i := range d.Hashmap.Keys() {
-		num, err := d.Hashmap.Keys()[i].ReadInt(19)
+		num := d.Hashmap.Keys()[i]
 		if err != nil {
 			t.Fatal(err)
 		}

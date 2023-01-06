@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/startfellows/tongo/connect"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"regexp"
@@ -68,7 +68,7 @@ func getHash(client *http.Client) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}

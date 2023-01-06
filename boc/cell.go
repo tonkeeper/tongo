@@ -285,3 +285,11 @@ func (c *Cell) Sign(key ed25519.PrivateKey) (BitString, error) {
 func (c *Cell) BitsAvailableForWrite() int {
 	return c.bits.BitsAvailableForWrite()
 }
+
+func NewCellWithBits(b BitString) *Cell {
+	if b.len > CellBits {
+		panic("bit string not fit to Cell")
+	}
+	b.Grow(CellBits - b.len)
+	return &Cell{bits: b, cellType: OrdinaryCell}
+}

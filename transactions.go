@@ -27,7 +27,7 @@ type Transaction struct {
 	EndStatus     AccountStatus
 	Msgs          struct {
 		InMsg   tlb.Maybe[tlb.Ref[Message]]
-		OutMsgs tlb.HashmapE[tlb.Size15, tlb.Ref[Message]]
+		OutMsgs tlb.HashmapE[tlb.Uint15, tlb.Ref[Message]]
 	} `tlb:"^"`
 	TotalFees   CurrencyCollection
 	StateUpdate HashUpdate       `tlb:"^"`
@@ -90,7 +90,7 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 	}
 	var msgs struct {
 		InMsg   tlb.Maybe[tlb.Ref[Message]]
-		OutMsgs tlb.HashmapE[tlb.Size15, tlb.Ref[Message]]
+		OutMsgs tlb.HashmapE[tlb.Uint15, tlb.Ref[Message]]
 	}
 	if err = tlb.Unmarshal(c1, &msgs); err != nil {
 		return err

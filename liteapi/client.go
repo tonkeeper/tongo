@@ -363,11 +363,7 @@ func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint6
 	values := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Values()
 	keys := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Keys()
 	for i, k := range keys {
-		keyVal, err := k.ReadBytes(32)
-		if err != nil {
-			return 0, tongo.Bits256{}, err
-		}
-		if bytes.Equal(keyVal, account.Address[:]) {
+		if bytes.Equal(k[:], account.Address[:]) {
 			return values[i].LastTransLt, values[i].LastTransHash, nil
 		}
 	}
@@ -413,10 +409,7 @@ func (c *Client) GetAllShardsInfo(ctx context.Context, blockID tongo.BlockIDExt)
 	}
 	var shards []tongo.BlockIDExt
 	for i, v := range inf.ShardHashes.Values() {
-		wc, err := inf.ShardHashes.Keys()[i].ReadUint(32)
-		if err != nil {
-			return nil, err
-		}
+		wc := inf.ShardHashes.Keys()[i]
 		for _, vv := range v.Value.BinTree.Values {
 			shards = append(shards, vv.ToBlockId(int32(wc)))
 		}

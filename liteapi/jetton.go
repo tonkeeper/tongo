@@ -2,7 +2,6 @@ package liteapi
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/tlb"
@@ -114,11 +113,7 @@ func convertOnchainData(content tongo.FullContent) (tongo.JettonMetadata, error)
 	}
 	var m tongo.JettonMetadata
 	for i, v := range content.Onchain.Data.Values() {
-		key, err := content.Onchain.Data.Keys()[i].ReadBytes(32)
-		keyS := hex.EncodeToString(key)
-		if err != nil {
-			return tongo.JettonMetadata{}, err
-		}
+		keyS := content.Onchain.Data.Keys()[i].Hex()
 		switch keyS {
 		case "70e5d7b6a29b392f85076fe15ca2f2053c56c2338728c4e33c9e8ddb1ee827cc": // sha256(uri)
 			b, err := v.Value.Bytes()

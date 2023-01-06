@@ -47,8 +47,8 @@ type ShardStateUnsplitData struct {
 	MinRefMcSeqno   uint32
 	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
 	BeforeSplit     bool
-	Accounts        tlb.HashmapAugE[tlb.Size256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
-	Other           ShardStateUnsplitOther                                       `tlb:"^"`
+	Accounts        tlb.HashmapAugE[Bits256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
+	Other           ShardStateUnsplitOther                                   `tlb:"^"`
 	Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
 }
 
@@ -199,7 +199,7 @@ type ShardFeeCreated struct {
 
 // _ (HashmapAugE 96 ShardFeeCreated ShardFeeCreated) = ShardFees;
 type ShardFees struct {
-	Hashmap tlb.HashmapAugE[tlb.Size96, ShardFeeCreated, ShardFeeCreated]
+	Hashmap tlb.HashmapAugE[tlb.Bits96, ShardFeeCreated, ShardFeeCreated]
 }
 
 // acc_trans#5 account_addr:bits256
@@ -210,7 +210,7 @@ type ShardFees struct {
 type AccountBlock struct {
 	Magic        tlb.Magic `tlb:"acc_trans#5"`
 	AccountAddr  Bits256
-	Transactions tlb.HashmapAug[tlb.Size64, tlb.Ref[Transaction], CurrencyCollection]
+	Transactions tlb.HashmapAug[tlb.Uint64, tlb.Ref[Transaction], CurrencyCollection]
 	StateUpdate  HashUpdate `tlb:"^"`
 }
 
@@ -241,7 +241,7 @@ type ShardStateUnsplitOther struct {
 	UnderloadHistory   uint64
 	TotalBalance       CurrencyCollection
 	TotalValidatorFees CurrencyCollection
-	Libraries          tlb.HashmapE[tlb.Size256, LibDescr]
+	Libraries          tlb.HashmapE[Bits256, LibDescr]
 	MasterRef          tlb.Maybe[BlkMasterInfo]
 }
 
@@ -251,7 +251,7 @@ type ShardStateUnsplitOther struct {
 type LibDescr struct {
 	Magic      tlb.Magic `tlb:"shared_lib_descr$00"`
 	Lib        boc.Cell  `tlb:"^"`
-	Publishers tlb.Hashmap[tlb.Size256, bool]
+	Publishers tlb.Hashmap[Bits256, bool]
 }
 
 // McStateExtra
@@ -268,7 +268,7 @@ type LibDescr struct {
 // = McStateExtra;
 type McStateExtra struct {
 	Magic         tlb.Magic `tlb:"masterchain_state_extra#cc26"`
-	ShardHashes   tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]
+	ShardHashes   tlb.HashmapE[tlb.Uint32, tlb.Ref[ShardInfoBinTree]]
 	Config        ConfigParams
 	Other         McStateExtraOther `tlb:"^"`
 	GlobalBalance CurrencyCollection
@@ -279,7 +279,7 @@ type McStateExtra struct {
 // = ConfigParams;
 type ConfigParams struct {
 	ConfigAddr Bits256
-	Config     tlb.Hashmap[tlb.Size32, tlb.Ref[boc.Cell]] `tlb:"^"`
+	Config     tlb.Hashmap[tlb.Uint32, tlb.Ref[boc.Cell]] `tlb:"^"`
 }
 
 // ^[ flags:(## 16) { flags <= 1 }
@@ -291,7 +291,7 @@ type ConfigParams struct {
 type McStateExtraOther struct {
 	Flags            uint16
 	ValidatorInfo    ValidatorInfo
-	PrevBlocks       tlb.HashmapAugE[tlb.Size32, KeyExtBlkRef, KeyMaxLt]
+	PrevBlocks       tlb.HashmapAugE[tlb.Uint32, KeyExtBlkRef, KeyMaxLt]
 	AfterKeyBlock    bool
 	LastKeyBlock     tlb.Maybe[ExtBlkRef]
 	BlockCreateStats BlockCreateStats
@@ -346,10 +346,10 @@ type KeyExtBlkRef struct {
 type BlockCreateStats struct {
 	tlb.SumType
 	BlockCreateStats struct {
-		Counters tlb.HashmapE[tlb.Size256, CreatorStats]
+		Counters tlb.HashmapE[Bits256, CreatorStats]
 	} `tlbSumType:"block_create_stats#17"`
 	BlockCreateStatsExt struct {
-		Counters tlb.HashmapAugE[tlb.Size256, CreatorStats, uint32]
+		Counters tlb.HashmapAugE[Bits256, CreatorStats, uint32]
 	} `tlbSumType:"block_create_stats_ext#34"`
 }
 

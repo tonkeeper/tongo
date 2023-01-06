@@ -437,7 +437,7 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 		fullSize = fullSize + uint(len(repr))
 	}
 
-	offsetBits := bits.Len(uint(fullSize))
+	offsetBits := bits.Len(fullSize)
 	offsetBytes := int(math.Max(math.Ceil(float64(offsetBits)/8), 1))
 
 	serStr := NewBitString((CellBits + 32*4 + 32*3) * int(cellsNum))

@@ -165,7 +165,7 @@ func initDefaultWallet(blockchain blockchain) Wallet {
 }
 
 func TestSendJetton(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 
 	client, err := liteapi.NewClientWithDefaultTestnet()

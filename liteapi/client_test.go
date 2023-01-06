@@ -12,6 +12,18 @@ import (
 	"github.com/startfellows/tongo"
 )
 
+//type mockLiteClient struct {
+//	requestCounter int
+//	OnRequest      func(ctx context.Context, q []byte) ([]byte, error)
+//}
+//
+//func (m *mockLiteClient) Request(ctx context.Context, q []byte) ([]byte, error) {
+//	m.requestCounter += 1
+//	return m.OnRequest(ctx, q)
+//}
+//
+//var _ liteClient = &mockLiteClient{}
+
 func TestGetTransactions(t *testing.T) {
 	t.Skip() //TODO: switch tests to archive node
 	tongoClient, err := NewClientWithDefaultMainnet()
@@ -232,3 +244,45 @@ func TestGetRootDNS(t *testing.T) {
 	}
 	fmt.Printf("Root DNS: %v\n", root.ToRaw())
 }
+
+// TODO: fix
+//func TestGetLastConfigAll_mockConnection(t *testing.T) {
+//	cli := &mockLiteClient{}
+//	cli.OnRequest = func(ctx context.Context, q []byte) ([]byte, error) {
+//		switch cli.requestCounter {
+//		case 1:
+//			bytes, err := ioutil.ReadFile("testdata/get-last-config-all-1.bin")
+//			if err != nil {
+//				t.Errorf("failed to read response file: %v", err)
+//			}
+//			return bytes, err
+//		case 2:
+//			bytes, err := ioutil.ReadFile("testdata/get-last-config-all-2.bin")
+//			if err != nil {
+//				t.Errorf("failed to read response file: %v", err)
+//			}
+//			return bytes, err
+//		}
+//		t.Errorf("unexpected request")
+//		return nil, fmt.Errorf("unexpected request")
+//	}
+//	api := &Client{
+//		connectionPool: []connection{{client: cli}},
+//	}
+//	conf, err := api.GetConfigAll(context.TODO(), 0)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	cell := boc.NewCell()
+//	err = tlb.Marshal(cell, conf)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	hash, err := cell.HashString()
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	if hash != "32bfc7a9c87ec2b0d4544740813fc02db0705f7056db6ffd2029d78897a01c6d" {
+//		t.Fatal(err)
+//	}
+//}

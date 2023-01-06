@@ -818,6 +818,10 @@ func (u *Uint1) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint1) FixedSize() int {
+	return 1
+}
+
 type Int1 int8
 
 func (u Int1) MarshalTLB(c *boc.Cell, tag string) error {
@@ -828,6 +832,10 @@ func (u *Int1) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(1)
 	*u = Int1(v)
 	return err
+}
+
+func (u Int1) FixedSize() int {
+	return 1
 }
 
 type Uint2 uint8
@@ -842,6 +850,10 @@ func (u *Uint2) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint2) FixedSize() int {
+	return 2
+}
+
 type Int2 int8
 
 func (u Int2) MarshalTLB(c *boc.Cell, tag string) error {
@@ -852,6 +864,10 @@ func (u *Int2) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(2)
 	*u = Int2(v)
 	return err
+}
+
+func (u Int2) FixedSize() int {
+	return 2
 }
 
 type Uint3 uint8
@@ -866,6 +882,10 @@ func (u *Uint3) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint3) FixedSize() int {
+	return 3
+}
+
 type Int3 int8
 
 func (u Int3) MarshalTLB(c *boc.Cell, tag string) error {
@@ -876,6 +896,10 @@ func (u *Int3) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(3)
 	*u = Int3(v)
 	return err
+}
+
+func (u Int3) FixedSize() int {
+	return 3
 }
 
 type Uint4 uint8
@@ -890,6 +914,10 @@ func (u *Uint4) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint4) FixedSize() int {
+	return 4
+}
+
 type Int4 int8
 
 func (u Int4) MarshalTLB(c *boc.Cell, tag string) error {
@@ -900,6 +928,10 @@ func (u *Int4) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(4)
 	*u = Int4(v)
 	return err
+}
+
+func (u Int4) FixedSize() int {
+	return 4
 }
 
 type Uint5 uint8
@@ -914,6 +946,10 @@ func (u *Uint5) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint5) FixedSize() int {
+	return 5
+}
+
 type Int5 int8
 
 func (u Int5) MarshalTLB(c *boc.Cell, tag string) error {
@@ -924,6 +960,10 @@ func (u *Int5) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(5)
 	*u = Int5(v)
 	return err
+}
+
+func (u Int5) FixedSize() int {
+	return 5
 }
 
 type Uint6 uint8
@@ -938,6 +978,10 @@ func (u *Uint6) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint6) FixedSize() int {
+	return 6
+}
+
 type Int6 int8
 
 func (u Int6) MarshalTLB(c *boc.Cell, tag string) error {
@@ -948,6 +992,10 @@ func (u *Int6) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(6)
 	*u = Int6(v)
 	return err
+}
+
+func (u Int6) FixedSize() int {
+	return 6
 }
 
 type Uint7 uint8
@@ -962,6 +1010,10 @@ func (u *Uint7) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint7) FixedSize() int {
+	return 7
+}
+
 type Int7 int8
 
 func (u Int7) MarshalTLB(c *boc.Cell, tag string) error {
@@ -972,6 +1024,42 @@ func (u *Int7) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(7)
 	*u = Int7(v)
 	return err
+}
+
+func (u Int7) FixedSize() int {
+	return 7
+}
+
+type Uint8 uint8
+
+func (u Uint8) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteUint(uint64(u), 8)
+}
+
+func (u *Uint8) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadUint(8)
+	*u = Uint8(v)
+	return err
+}
+
+func (u Uint8) FixedSize() int {
+	return 8
+}
+
+type Int8 int8
+
+func (u Int8) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteInt(int64(u), 8)
+}
+
+func (u *Int8) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadInt(8)
+	*u = Int8(v)
+	return err
+}
+
+func (u Int8) FixedSize() int {
+	return 8
 }
 
 type Uint9 uint16
@@ -986,6 +1074,10 @@ func (u *Uint9) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint9) FixedSize() int {
+	return 9
+}
+
 type Int9 int16
 
 func (u Int9) MarshalTLB(c *boc.Cell, tag string) error {
@@ -996,6 +1088,10 @@ func (u *Int9) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(9)
 	*u = Int9(v)
 	return err
+}
+
+func (u Int9) FixedSize() int {
+	return 9
 }
 
 type Uint10 uint16
@@ -1010,6 +1106,10 @@ func (u *Uint10) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint10) FixedSize() int {
+	return 10
+}
+
 type Int10 int16
 
 func (u Int10) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1020,6 +1120,10 @@ func (u *Int10) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(10)
 	*u = Int10(v)
 	return err
+}
+
+func (u Int10) FixedSize() int {
+	return 10
 }
 
 type Uint11 uint16
@@ -1034,6 +1138,10 @@ func (u *Uint11) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint11) FixedSize() int {
+	return 11
+}
+
 type Int11 int16
 
 func (u Int11) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1044,6 +1152,10 @@ func (u *Int11) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(11)
 	*u = Int11(v)
 	return err
+}
+
+func (u Int11) FixedSize() int {
+	return 11
 }
 
 type Uint12 uint16
@@ -1058,6 +1170,10 @@ func (u *Uint12) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint12) FixedSize() int {
+	return 12
+}
+
 type Int12 int16
 
 func (u Int12) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1068,6 +1184,10 @@ func (u *Int12) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(12)
 	*u = Int12(v)
 	return err
+}
+
+func (u Int12) FixedSize() int {
+	return 12
 }
 
 type Uint13 uint16
@@ -1082,6 +1202,10 @@ func (u *Uint13) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint13) FixedSize() int {
+	return 13
+}
+
 type Int13 int16
 
 func (u Int13) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1092,6 +1216,10 @@ func (u *Int13) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(13)
 	*u = Int13(v)
 	return err
+}
+
+func (u Int13) FixedSize() int {
+	return 13
 }
 
 type Uint14 uint16
@@ -1106,6 +1234,10 @@ func (u *Uint14) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint14) FixedSize() int {
+	return 14
+}
+
 type Int14 int16
 
 func (u Int14) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1116,6 +1248,10 @@ func (u *Int14) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(14)
 	*u = Int14(v)
 	return err
+}
+
+func (u Int14) FixedSize() int {
+	return 14
 }
 
 type Uint15 uint16
@@ -1130,6 +1266,10 @@ func (u *Uint15) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint15) FixedSize() int {
+	return 15
+}
+
 type Int15 int16
 
 func (u Int15) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1140,6 +1280,42 @@ func (u *Int15) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(15)
 	*u = Int15(v)
 	return err
+}
+
+func (u Int15) FixedSize() int {
+	return 15
+}
+
+type Uint16 uint16
+
+func (u Uint16) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteUint(uint64(u), 16)
+}
+
+func (u *Uint16) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadUint(16)
+	*u = Uint16(v)
+	return err
+}
+
+func (u Uint16) FixedSize() int {
+	return 16
+}
+
+type Int16 int16
+
+func (u Int16) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteInt(int64(u), 16)
+}
+
+func (u *Int16) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadInt(16)
+	*u = Int16(v)
+	return err
+}
+
+func (u Int16) FixedSize() int {
+	return 16
 }
 
 type Uint17 uint32
@@ -1154,6 +1330,10 @@ func (u *Uint17) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint17) FixedSize() int {
+	return 17
+}
+
 type Int17 int32
 
 func (u Int17) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1164,6 +1344,10 @@ func (u *Int17) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(17)
 	*u = Int17(v)
 	return err
+}
+
+func (u Int17) FixedSize() int {
+	return 17
 }
 
 type Uint18 uint32
@@ -1178,6 +1362,10 @@ func (u *Uint18) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint18) FixedSize() int {
+	return 18
+}
+
 type Int18 int32
 
 func (u Int18) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1188,6 +1376,10 @@ func (u *Int18) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(18)
 	*u = Int18(v)
 	return err
+}
+
+func (u Int18) FixedSize() int {
+	return 18
 }
 
 type Uint19 uint32
@@ -1202,6 +1394,10 @@ func (u *Uint19) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint19) FixedSize() int {
+	return 19
+}
+
 type Int19 int32
 
 func (u Int19) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1212,6 +1408,10 @@ func (u *Int19) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(19)
 	*u = Int19(v)
 	return err
+}
+
+func (u Int19) FixedSize() int {
+	return 19
 }
 
 type Uint20 uint32
@@ -1226,6 +1426,10 @@ func (u *Uint20) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint20) FixedSize() int {
+	return 20
+}
+
 type Int20 int32
 
 func (u Int20) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1236,6 +1440,10 @@ func (u *Int20) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(20)
 	*u = Int20(v)
 	return err
+}
+
+func (u Int20) FixedSize() int {
+	return 20
 }
 
 type Uint21 uint32
@@ -1250,6 +1458,10 @@ func (u *Uint21) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint21) FixedSize() int {
+	return 21
+}
+
 type Int21 int32
 
 func (u Int21) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1260,6 +1472,10 @@ func (u *Int21) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(21)
 	*u = Int21(v)
 	return err
+}
+
+func (u Int21) FixedSize() int {
+	return 21
 }
 
 type Uint22 uint32
@@ -1274,6 +1490,10 @@ func (u *Uint22) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint22) FixedSize() int {
+	return 22
+}
+
 type Int22 int32
 
 func (u Int22) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1284,6 +1504,10 @@ func (u *Int22) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(22)
 	*u = Int22(v)
 	return err
+}
+
+func (u Int22) FixedSize() int {
+	return 22
 }
 
 type Uint23 uint32
@@ -1298,6 +1522,10 @@ func (u *Uint23) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint23) FixedSize() int {
+	return 23
+}
+
 type Int23 int32
 
 func (u Int23) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1308,6 +1536,10 @@ func (u *Int23) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(23)
 	*u = Int23(v)
 	return err
+}
+
+func (u Int23) FixedSize() int {
+	return 23
 }
 
 type Uint24 uint32
@@ -1322,6 +1554,10 @@ func (u *Uint24) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint24) FixedSize() int {
+	return 24
+}
+
 type Int24 int32
 
 func (u Int24) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1332,6 +1568,10 @@ func (u *Int24) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(24)
 	*u = Int24(v)
 	return err
+}
+
+func (u Int24) FixedSize() int {
+	return 24
 }
 
 type Uint25 uint32
@@ -1346,6 +1586,10 @@ func (u *Uint25) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint25) FixedSize() int {
+	return 25
+}
+
 type Int25 int32
 
 func (u Int25) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1356,6 +1600,10 @@ func (u *Int25) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(25)
 	*u = Int25(v)
 	return err
+}
+
+func (u Int25) FixedSize() int {
+	return 25
 }
 
 type Uint26 uint32
@@ -1370,6 +1618,10 @@ func (u *Uint26) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint26) FixedSize() int {
+	return 26
+}
+
 type Int26 int32
 
 func (u Int26) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1380,6 +1632,10 @@ func (u *Int26) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(26)
 	*u = Int26(v)
 	return err
+}
+
+func (u Int26) FixedSize() int {
+	return 26
 }
 
 type Uint27 uint32
@@ -1394,6 +1650,10 @@ func (u *Uint27) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint27) FixedSize() int {
+	return 27
+}
+
 type Int27 int32
 
 func (u Int27) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1404,6 +1664,10 @@ func (u *Int27) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(27)
 	*u = Int27(v)
 	return err
+}
+
+func (u Int27) FixedSize() int {
+	return 27
 }
 
 type Uint28 uint32
@@ -1418,6 +1682,10 @@ func (u *Uint28) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint28) FixedSize() int {
+	return 28
+}
+
 type Int28 int32
 
 func (u Int28) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1428,6 +1696,10 @@ func (u *Int28) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(28)
 	*u = Int28(v)
 	return err
+}
+
+func (u Int28) FixedSize() int {
+	return 28
 }
 
 type Uint29 uint32
@@ -1442,6 +1714,10 @@ func (u *Uint29) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint29) FixedSize() int {
+	return 29
+}
+
 type Int29 int32
 
 func (u Int29) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1452,6 +1728,10 @@ func (u *Int29) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(29)
 	*u = Int29(v)
 	return err
+}
+
+func (u Int29) FixedSize() int {
+	return 29
 }
 
 type Uint30 uint32
@@ -1466,6 +1746,10 @@ func (u *Uint30) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint30) FixedSize() int {
+	return 30
+}
+
 type Int30 int32
 
 func (u Int30) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1476,6 +1760,10 @@ func (u *Int30) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(30)
 	*u = Int30(v)
 	return err
+}
+
+func (u Int30) FixedSize() int {
+	return 30
 }
 
 type Uint31 uint32
@@ -1490,6 +1778,10 @@ func (u *Uint31) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint31) FixedSize() int {
+	return 31
+}
+
 type Int31 int32
 
 func (u Int31) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1500,6 +1792,42 @@ func (u *Int31) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(31)
 	*u = Int31(v)
 	return err
+}
+
+func (u Int31) FixedSize() int {
+	return 31
+}
+
+type Uint32 uint32
+
+func (u Uint32) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteUint(uint64(u), 32)
+}
+
+func (u *Uint32) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadUint(32)
+	*u = Uint32(v)
+	return err
+}
+
+func (u Uint32) FixedSize() int {
+	return 32
+}
+
+type Int32 int32
+
+func (u Int32) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteInt(int64(u), 32)
+}
+
+func (u *Int32) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadInt(32)
+	*u = Int32(v)
+	return err
+}
+
+func (u Int32) FixedSize() int {
+	return 32
 }
 
 type Uint33 uint64
@@ -1514,6 +1842,10 @@ func (u *Uint33) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint33) FixedSize() int {
+	return 33
+}
+
 type Int33 int64
 
 func (u Int33) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1524,6 +1856,10 @@ func (u *Int33) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(33)
 	*u = Int33(v)
 	return err
+}
+
+func (u Int33) FixedSize() int {
+	return 33
 }
 
 type Uint34 uint64
@@ -1538,6 +1874,10 @@ func (u *Uint34) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint34) FixedSize() int {
+	return 34
+}
+
 type Int34 int64
 
 func (u Int34) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1548,6 +1888,10 @@ func (u *Int34) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(34)
 	*u = Int34(v)
 	return err
+}
+
+func (u Int34) FixedSize() int {
+	return 34
 }
 
 type Uint35 uint64
@@ -1562,6 +1906,10 @@ func (u *Uint35) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint35) FixedSize() int {
+	return 35
+}
+
 type Int35 int64
 
 func (u Int35) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1572,6 +1920,10 @@ func (u *Int35) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(35)
 	*u = Int35(v)
 	return err
+}
+
+func (u Int35) FixedSize() int {
+	return 35
 }
 
 type Uint36 uint64
@@ -1586,6 +1938,10 @@ func (u *Uint36) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint36) FixedSize() int {
+	return 36
+}
+
 type Int36 int64
 
 func (u Int36) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1596,6 +1952,10 @@ func (u *Int36) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(36)
 	*u = Int36(v)
 	return err
+}
+
+func (u Int36) FixedSize() int {
+	return 36
 }
 
 type Uint37 uint64
@@ -1610,6 +1970,10 @@ func (u *Uint37) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint37) FixedSize() int {
+	return 37
+}
+
 type Int37 int64
 
 func (u Int37) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1620,6 +1984,10 @@ func (u *Int37) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(37)
 	*u = Int37(v)
 	return err
+}
+
+func (u Int37) FixedSize() int {
+	return 37
 }
 
 type Uint38 uint64
@@ -1634,6 +2002,10 @@ func (u *Uint38) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint38) FixedSize() int {
+	return 38
+}
+
 type Int38 int64
 
 func (u Int38) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1644,6 +2016,10 @@ func (u *Int38) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(38)
 	*u = Int38(v)
 	return err
+}
+
+func (u Int38) FixedSize() int {
+	return 38
 }
 
 type Uint39 uint64
@@ -1658,6 +2034,10 @@ func (u *Uint39) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint39) FixedSize() int {
+	return 39
+}
+
 type Int39 int64
 
 func (u Int39) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1668,6 +2048,10 @@ func (u *Int39) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(39)
 	*u = Int39(v)
 	return err
+}
+
+func (u Int39) FixedSize() int {
+	return 39
 }
 
 type Uint40 uint64
@@ -1682,6 +2066,10 @@ func (u *Uint40) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint40) FixedSize() int {
+	return 40
+}
+
 type Int40 int64
 
 func (u Int40) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1692,6 +2080,10 @@ func (u *Int40) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(40)
 	*u = Int40(v)
 	return err
+}
+
+func (u Int40) FixedSize() int {
+	return 40
 }
 
 type Uint41 uint64
@@ -1706,6 +2098,10 @@ func (u *Uint41) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint41) FixedSize() int {
+	return 41
+}
+
 type Int41 int64
 
 func (u Int41) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1716,6 +2112,10 @@ func (u *Int41) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(41)
 	*u = Int41(v)
 	return err
+}
+
+func (u Int41) FixedSize() int {
+	return 41
 }
 
 type Uint42 uint64
@@ -1730,6 +2130,10 @@ func (u *Uint42) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint42) FixedSize() int {
+	return 42
+}
+
 type Int42 int64
 
 func (u Int42) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1740,6 +2144,10 @@ func (u *Int42) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(42)
 	*u = Int42(v)
 	return err
+}
+
+func (u Int42) FixedSize() int {
+	return 42
 }
 
 type Uint43 uint64
@@ -1754,6 +2162,10 @@ func (u *Uint43) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint43) FixedSize() int {
+	return 43
+}
+
 type Int43 int64
 
 func (u Int43) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1764,6 +2176,10 @@ func (u *Int43) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(43)
 	*u = Int43(v)
 	return err
+}
+
+func (u Int43) FixedSize() int {
+	return 43
 }
 
 type Uint44 uint64
@@ -1778,6 +2194,10 @@ func (u *Uint44) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint44) FixedSize() int {
+	return 44
+}
+
 type Int44 int64
 
 func (u Int44) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1788,6 +2208,10 @@ func (u *Int44) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(44)
 	*u = Int44(v)
 	return err
+}
+
+func (u Int44) FixedSize() int {
+	return 44
 }
 
 type Uint45 uint64
@@ -1802,6 +2226,10 @@ func (u *Uint45) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint45) FixedSize() int {
+	return 45
+}
+
 type Int45 int64
 
 func (u Int45) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1812,6 +2240,10 @@ func (u *Int45) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(45)
 	*u = Int45(v)
 	return err
+}
+
+func (u Int45) FixedSize() int {
+	return 45
 }
 
 type Uint46 uint64
@@ -1826,6 +2258,10 @@ func (u *Uint46) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint46) FixedSize() int {
+	return 46
+}
+
 type Int46 int64
 
 func (u Int46) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1836,6 +2272,10 @@ func (u *Int46) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(46)
 	*u = Int46(v)
 	return err
+}
+
+func (u Int46) FixedSize() int {
+	return 46
 }
 
 type Uint47 uint64
@@ -1850,6 +2290,10 @@ func (u *Uint47) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint47) FixedSize() int {
+	return 47
+}
+
 type Int47 int64
 
 func (u Int47) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1860,6 +2304,10 @@ func (u *Int47) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(47)
 	*u = Int47(v)
 	return err
+}
+
+func (u Int47) FixedSize() int {
+	return 47
 }
 
 type Uint48 uint64
@@ -1874,6 +2322,10 @@ func (u *Uint48) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint48) FixedSize() int {
+	return 48
+}
+
 type Int48 int64
 
 func (u Int48) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1884,6 +2336,10 @@ func (u *Int48) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(48)
 	*u = Int48(v)
 	return err
+}
+
+func (u Int48) FixedSize() int {
+	return 48
 }
 
 type Uint49 uint64
@@ -1898,6 +2354,10 @@ func (u *Uint49) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint49) FixedSize() int {
+	return 49
+}
+
 type Int49 int64
 
 func (u Int49) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1908,6 +2368,10 @@ func (u *Int49) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(49)
 	*u = Int49(v)
 	return err
+}
+
+func (u Int49) FixedSize() int {
+	return 49
 }
 
 type Uint50 uint64
@@ -1922,6 +2386,10 @@ func (u *Uint50) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint50) FixedSize() int {
+	return 50
+}
+
 type Int50 int64
 
 func (u Int50) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1932,6 +2400,10 @@ func (u *Int50) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(50)
 	*u = Int50(v)
 	return err
+}
+
+func (u Int50) FixedSize() int {
+	return 50
 }
 
 type Uint51 uint64
@@ -1946,6 +2418,10 @@ func (u *Uint51) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint51) FixedSize() int {
+	return 51
+}
+
 type Int51 int64
 
 func (u Int51) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1956,6 +2432,10 @@ func (u *Int51) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(51)
 	*u = Int51(v)
 	return err
+}
+
+func (u Int51) FixedSize() int {
+	return 51
 }
 
 type Uint52 uint64
@@ -1970,6 +2450,10 @@ func (u *Uint52) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint52) FixedSize() int {
+	return 52
+}
+
 type Int52 int64
 
 func (u Int52) MarshalTLB(c *boc.Cell, tag string) error {
@@ -1980,6 +2464,10 @@ func (u *Int52) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(52)
 	*u = Int52(v)
 	return err
+}
+
+func (u Int52) FixedSize() int {
+	return 52
 }
 
 type Uint53 uint64
@@ -1994,6 +2482,10 @@ func (u *Uint53) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint53) FixedSize() int {
+	return 53
+}
+
 type Int53 int64
 
 func (u Int53) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2004,6 +2496,10 @@ func (u *Int53) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(53)
 	*u = Int53(v)
 	return err
+}
+
+func (u Int53) FixedSize() int {
+	return 53
 }
 
 type Uint54 uint64
@@ -2018,6 +2514,10 @@ func (u *Uint54) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint54) FixedSize() int {
+	return 54
+}
+
 type Int54 int64
 
 func (u Int54) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2028,6 +2528,10 @@ func (u *Int54) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(54)
 	*u = Int54(v)
 	return err
+}
+
+func (u Int54) FixedSize() int {
+	return 54
 }
 
 type Uint55 uint64
@@ -2042,6 +2546,10 @@ func (u *Uint55) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint55) FixedSize() int {
+	return 55
+}
+
 type Int55 int64
 
 func (u Int55) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2052,6 +2560,10 @@ func (u *Int55) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(55)
 	*u = Int55(v)
 	return err
+}
+
+func (u Int55) FixedSize() int {
+	return 55
 }
 
 type Uint56 uint64
@@ -2066,6 +2578,10 @@ func (u *Uint56) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint56) FixedSize() int {
+	return 56
+}
+
 type Int56 int64
 
 func (u Int56) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2076,6 +2592,10 @@ func (u *Int56) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(56)
 	*u = Int56(v)
 	return err
+}
+
+func (u Int56) FixedSize() int {
+	return 56
 }
 
 type Uint57 uint64
@@ -2090,6 +2610,10 @@ func (u *Uint57) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint57) FixedSize() int {
+	return 57
+}
+
 type Int57 int64
 
 func (u Int57) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2100,6 +2624,10 @@ func (u *Int57) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(57)
 	*u = Int57(v)
 	return err
+}
+
+func (u Int57) FixedSize() int {
+	return 57
 }
 
 type Uint58 uint64
@@ -2114,6 +2642,10 @@ func (u *Uint58) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint58) FixedSize() int {
+	return 58
+}
+
 type Int58 int64
 
 func (u Int58) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2124,6 +2656,10 @@ func (u *Int58) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(58)
 	*u = Int58(v)
 	return err
+}
+
+func (u Int58) FixedSize() int {
+	return 58
 }
 
 type Uint59 uint64
@@ -2138,6 +2674,10 @@ func (u *Uint59) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint59) FixedSize() int {
+	return 59
+}
+
 type Int59 int64
 
 func (u Int59) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2148,6 +2688,10 @@ func (u *Int59) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(59)
 	*u = Int59(v)
 	return err
+}
+
+func (u Int59) FixedSize() int {
+	return 59
 }
 
 type Uint60 uint64
@@ -2162,6 +2706,10 @@ func (u *Uint60) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint60) FixedSize() int {
+	return 60
+}
+
 type Int60 int64
 
 func (u Int60) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2172,6 +2720,10 @@ func (u *Int60) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(60)
 	*u = Int60(v)
 	return err
+}
+
+func (u Int60) FixedSize() int {
+	return 60
 }
 
 type Uint61 uint64
@@ -2186,6 +2738,10 @@ func (u *Uint61) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint61) FixedSize() int {
+	return 61
+}
+
 type Int61 int64
 
 func (u Int61) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2196,6 +2752,10 @@ func (u *Int61) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(61)
 	*u = Int61(v)
 	return err
+}
+
+func (u Int61) FixedSize() int {
+	return 61
 }
 
 type Uint62 uint64
@@ -2210,6 +2770,10 @@ func (u *Uint62) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint62) FixedSize() int {
+	return 62
+}
+
 type Int62 int64
 
 func (u Int62) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2220,6 +2784,10 @@ func (u *Int62) UnmarshalTLB(c *boc.Cell, tag string) error {
 	v, err := c.ReadInt(62)
 	*u = Int62(v)
 	return err
+}
+
+func (u Int62) FixedSize() int {
+	return 62
 }
 
 type Uint63 uint64
@@ -2234,6 +2802,10 @@ func (u *Uint63) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
+func (u Uint63) FixedSize() int {
+	return 63
+}
+
 type Int63 int64
 
 func (u Int63) MarshalTLB(c *boc.Cell, tag string) error {
@@ -2245,3 +2817,104 @@ func (u *Int63) UnmarshalTLB(c *boc.Cell, tag string) error {
 	*u = Int63(v)
 	return err
 }
+
+func (u Int63) FixedSize() int {
+	return 63
+}
+
+type Uint64 uint64
+
+func (u Uint64) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteUint(uint64(u), 64)
+}
+
+func (u *Uint64) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadUint(64)
+	*u = Uint64(v)
+	return err
+}
+
+func (u Uint64) FixedSize() int {
+	return 64
+}
+
+type Int64 int64
+
+func (u Int64) MarshalTLB(c *boc.Cell, tag string) error {
+	return c.WriteInt(int64(u), 64)
+}
+
+func (u *Int64) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadInt(64)
+	*u = Int64(v)
+	return err
+}
+
+func (u Int64) FixedSize() int {
+	return 64
+}
+
+	type Bits96 boc.BitString
+
+	func (u Bits96) MarshalTLB(c *boc.Cell, tag string) error {
+		return c.WriteBitString(boc.BitString(u))
+	}
+
+	func (u *Bits96) UnmarshalTLB(c *boc.Cell, tag string) error {
+		v, err := c.ReadBits(96)
+		*u = Bits96(v)
+		return err
+	}
+
+	func (u Bits96) FixedSize() int {
+		return 96
+	}
+
+	type Bits264 boc.BitString
+
+	func (u Bits264) MarshalTLB(c *boc.Cell, tag string) error {
+		return c.WriteBitString(boc.BitString(u))
+	}
+
+	func (u *Bits264) UnmarshalTLB(c *boc.Cell, tag string) error {
+		v, err := c.ReadBits(264)
+		*u = Bits264(v)
+		return err
+	}
+
+	func (u Bits264) FixedSize() int {
+		return 264
+	}
+
+	type Bits320 boc.BitString
+
+	func (u Bits320) MarshalTLB(c *boc.Cell, tag string) error {
+		return c.WriteBitString(boc.BitString(u))
+	}
+
+	func (u *Bits320) UnmarshalTLB(c *boc.Cell, tag string) error {
+		v, err := c.ReadBits(320)
+		*u = Bits320(v)
+		return err
+	}
+
+	func (u Bits320) FixedSize() int {
+		return 320
+	}
+
+	type Bits352 boc.BitString
+
+	func (u Bits352) MarshalTLB(c *boc.Cell, tag string) error {
+		return c.WriteBitString(boc.BitString(u))
+	}
+
+	func (u *Bits352) UnmarshalTLB(c *boc.Cell, tag string) error {
+		v, err := c.ReadBits(352)
+		*u = Bits352(v)
+		return err
+	}
+
+	func (u Bits352) FixedSize() int {
+		return 352
+	}
+	

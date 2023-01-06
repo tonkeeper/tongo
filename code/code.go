@@ -58,7 +58,7 @@ func ParseContractMethods(code []byte) ([]int64, error) {
 		return nil, err
 	}
 	type GetMethods struct {
-		Hashmap tlb.Hashmap[tlb.Size19, boc.Cell]
+		Hashmap tlb.Hashmap[tlb.Uint19, boc.Cell]
 	}
 	var methods GetMethods
 	err = tlb.Unmarshal(c, &methods)
@@ -66,13 +66,9 @@ func ParseContractMethods(code []byte) ([]int64, error) {
 		return nil, err
 	}
 
-	ifs := []int64{}
+	ifs := make([]int64, 0)
 	for i := range methods.Hashmap.Keys() {
-		methodId, err := methods.Hashmap.Keys()[i].ReadInt(19)
-		if err != nil {
-			return nil, err
-		}
-		ifs = append(ifs, methodId)
+		ifs = append(ifs, int64(methods.Hashmap.Keys()[i]))
 	}
 	return ifs, nil
 }

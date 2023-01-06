@@ -23,8 +23,8 @@ type BlockIDExt struct {
 func (id BlockIDExt) MarshalTL() ([]byte, error) {
 	payload := make([]byte, 80)
 	binary.LittleEndian.PutUint32(payload[:4], uint32(id.Workchain))
-	binary.LittleEndian.PutUint64(payload[4:12], uint64(id.Shard))
-	binary.LittleEndian.PutUint32(payload[12:16], uint32(id.Seqno))
+	binary.LittleEndian.PutUint64(payload[4:12], id.Shard)
+	binary.LittleEndian.PutUint32(payload[12:16], id.Seqno)
 	copy(payload[16:48], id.RootHash[:])
 	copy(payload[48:80], id.FileHash[:])
 	return payload, nil
@@ -55,10 +55,10 @@ func NewTonBlockId(fileHash, rootHash Bits256, seqno uint32, shard uint64, workc
 }
 
 func (id BlockIDExt) String() string {
-	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, uint64(id.Shard), id.Seqno, id.RootHash, id.FileHash)
+	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
 }
 func (id BlockID) String() string {
-	return fmt.Sprintf("(%d,%x,%d)", id.Workchain, uint64(id.Shard), id.Seqno)
+	return fmt.Sprintf("(%d,%x,%d)", id.Workchain, id.Shard, id.Seqno)
 }
 
 // BlockInfo
@@ -276,13 +276,7 @@ func (blk *Block) ShardIDs() ([]BlockIDExt, error) {
 	items := blk.Extra.Custom.Value.Value.ShardHashes.Items()
 	shards := make([]BlockIDExt, 0, len(items))
 	for _, item := range blk.Extra.Custom.Value.Value.ShardHashes.Items() {
-		item.Key.ResetCounter()
-		bits := item.Key.BitsAvailableForRead()
-		workchain, err := item.Key.ReadInt(bits)
-		if err != nil {
-			// shouldn't happen but anyway
-			return nil, err
-		}
+		workchain := item.Key
 		for _, x := range item.Value.Value.BinTree.Values {
 			shardID := x.ToBlockId(int32(workchain))
 			if shardID.Seqno == 0 {
@@ -326,7 +320,7 @@ type BlockSignatures struct {
 type BlockSignaturesPure struct {
 	SigCount   uint32
 	SigWeight  uint64
-	Signatures tlb.HashmapE[tlb.Size16, CryptoSignaturePair]
+	Signatures tlb.HashmapE[tlb.Uint16, CryptoSignaturePair]
 }
 
 // block_id_ext$_ shard_id:ShardIdent seq_no:uint32
@@ -375,10 +369,10 @@ type ValueFlow struct {
 // created_by:bits256
 // custom:(Maybe ^McBlockExtra) = BlockExtra;
 type BlockExtra struct {
-	Magic         tlb.Magic                                                      `tlb:"block_extra#4a33f6fd"`
-	InMsgDescr    tlb.HashmapAugE[tlb.Size256, InMsg, ImportFees]                `tlb:"^"` // tlb.Any `tlb:"^"`
-	OutMsgDescr   tlb.HashmapAugE[tlb.Size256, OutMsg, CurrencyCollection]       `tlb:"^"` // tlb.Any `tlb:"^"`
-	AccountBlocks tlb.HashmapAugE[tlb.Size256, AccountBlock, CurrencyCollection] `tlb:"^"` // tlb.Any     `tlb:"^"` //
+	Magic         tlb.Magic                                                  `tlb:"block_extra#4a33f6fd"`
+	InMsgDescr    tlb.HashmapAugE[Bits256, InMsg, ImportFees]                `tlb:"^"` // tlb.Any `tlb:"^"`
+	OutMsgDescr   tlb.HashmapAugE[Bits256, OutMsg, CurrencyCollection]       `tlb:"^"` // tlb.Any `tlb:"^"`
+	AccountBlocks tlb.HashmapAugE[Bits256, AccountBlock, CurrencyCollection] `tlb:"^"` // tlb.Any     `tlb:"^"` //
 	RandSeed      Bits256
 	CreatedBy     Bits256
 	Custom        tlb.Maybe[tlb.Ref[McBlockExtra]]
@@ -471,10 +465,10 @@ func getParents(blkPrevInfo BlkPrevInfo, afterSplit, afterMerge bool, shard uint
 type McBlockExtra struct {
 	Magic        tlb.Magic `tlb:"masterchain_block_extra#cca5"`
 	KeyBlock     bool
-	ShardHashes  tlb.HashmapE[tlb.Size32, tlb.Ref[ShardInfoBinTree]]
+	ShardHashes  tlb.HashmapE[tlb.Uint32, tlb.Ref[ShardInfoBinTree]]
 	ShardFees    ShardFees
 	McExtraOther struct {
-		PrevBlkSignatures tlb.HashmapE[tlb.Size16, CryptoSignaturePair]
+		PrevBlkSignatures tlb.HashmapE[tlb.Uint16, CryptoSignaturePair]
 		RecoverCreate     tlb.Maybe[tlb.Ref[InMsg]]
 		MintMsg           tlb.Maybe[tlb.Ref[InMsg]]
 	} `tlb:"^"`

@@ -62,11 +62,7 @@ func (c *Client) GetRootDNS(ctx context.Context) (tongo.AccountID, error) {
 		return tongo.AccountID{}, err
 	}
 	for i, k := range conf.Config.Keys() {
-		key, err := k.ReadUint(32)
-		if err != nil {
-			return tongo.AccountID{}, err
-		}
-		if key == 4 {
+		if k == 4 {
 			addr, err := conf.Config.Values()[i].Value.ReadBytes(32)
 			if err != nil {
 				return tongo.AccountID{}, err

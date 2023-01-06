@@ -65,23 +65,23 @@
             </output>
         </get_method>
     </interface>
-    <interface name="tep_66_nft_royalty" group="nft_royalty">
-        <get_method name="royalty_params">
-            <output>
-                <tinyint name="numerator">uint16</tinyint>
-                <tinyint name="denominator">uint16</tinyint>
-                <slice name="destination">AccountID</slice>
-            </output>
-        </get_method>
-        <internal name="get_royalty_params">
-            <input>
-                get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16 destination:MsgAddress = InternalMsgBody;
-            </output>
-        </internal>
-    </interface>
+<!--    <interface name="tep_66_nft_royalty" group="nft_royalty">-->
+<!--        <get_method name="royalty_params">-->
+<!--            <output>-->
+<!--                <tinyint name="numerator">uint16</tinyint>-->
+<!--                <tinyint name="denominator">uint16</tinyint>-->
+<!--                <slice name="destination">AccountID</slice>-->
+<!--            </output>-->
+<!--        </get_method>-->
+<!--        <internal name="get_royalty_params">-->
+<!--            <input>-->
+<!--                get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;-->
+<!--            </input>-->
+<!--            <output>-->
+<!--                report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16 destination:MsgAddress = InternalMsgBody;-->
+<!--            </output>-->
+<!--        </internal>-->
+<!--    </interface>-->
     <interface name="tep_74_jetton_master" group="jetton_master">
         <get_method name="get_jetton_data">
             <output>

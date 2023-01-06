@@ -102,7 +102,7 @@ func TestHashMapE(t *testing.T) {
 		_, _ = m.NextRef() // in msg
 	}
 	var res struct {
-		OutMsgs HashmapE[Size15, Ref[boc.Cell]]
+		OutMsgs HashmapE[Uint15, Ref[boc.Cell]]
 	}
 	err := Unmarshal(m, &res)
 	if err != nil {
@@ -175,37 +175,16 @@ func TestVarUint(t *testing.T) {
 	}
 }
 
-func TestMarchalHashMap(t *testing.T) {
+func TestMarshalHashMap(t *testing.T) {
 
-	k1 := boc.NewBitString(16)
-	k2 := boc.NewBitString(16)
-	k3 := boc.NewBitString(16)
-	kstr := "0000000000001101"
-	for i := range kstr {
-		if string(kstr[i]) == "0" {
-			k1.WriteBit(false)
-		} else {
-			k1.WriteBit(true)
-		}
-	}
-	kstr = "0000000000010001"
-	for i := range kstr {
-		if string(kstr[i]) == "0" {
-			k2.WriteBit(false)
-		} else {
-			k2.WriteBit(true)
-		}
-	}
-	kstr = "0000000011101111"
-	for i := range kstr {
-		if string(kstr[i]) == "0" {
-			k3.WriteBit(false)
-		} else {
-			k3.WriteBit(true)
-		}
-	}
-	chm := HashmapE[Size16, Ref[int32]]{}
-	chm.m.keys = []boc.BitString{
+	var (
+		k1 Uint16 = 13  // 0000000000001101
+		k2 Uint16 = 17  // 0000000000010001
+		k3 Uint16 = 239 // 0000000011101111
+	)
+
+	chm := HashmapE[Uint16, Ref[int32]]{}
+	chm.m.keys = []Uint16{
 		k1,
 		k2,
 		k3,
@@ -218,35 +197,35 @@ func TestMarchalHashMap(t *testing.T) {
 
 	c := boc.NewCell()
 
-	t.Log("Input heshmap: ")
+	t.Log("Input hashmap: ")
 	for i := range chm.Keys() {
 		t.Logf("k%v: key: %v, value: %v",
 			i,
-			chm.Keys()[i].BinaryString(),
+			chm.Keys()[i],
 			chm.Values()[i].Value)
 	}
 	err := Marshal(c, chm)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	var res HashmapE[Size16, Ref[int32]]
+	var res HashmapE[Uint16, Ref[int32]]
 
 	err = Unmarshal(c, &res)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	t.Log("Output heshmap: ")
+	t.Log("Output hashmap: ")
 	for i := range res.Keys() {
 		t.Logf("k%v: key: %v, value: %v",
 			i,
-			res.Keys()[i].BinaryString(),
+			res.Keys()[i],
 			res.Values()[i].Value)
 	}
 }
 
 func TestEmptyHashMap(t *testing.T) {
 	c := boc.NewCell()
-	var h HashmapE[Size15, boc.Cell]
+	var h HashmapE[Uint15, boc.Cell]
 	err := Marshal(c, h)
 	if err != nil {
 		t.Fatal(err)
@@ -285,7 +264,7 @@ func TestHashmapAug(t *testing.T) {
 		cells[0].WriteUint(15, 5)
 
 		var h struct {
-			H      HashmapAugE[Size16, int32, int32]
+			H      HashmapAugE[Uint16, int32, int32]
 			Suffix Uint5
 		}
 		err = Unmarshal(cells[0], &h)

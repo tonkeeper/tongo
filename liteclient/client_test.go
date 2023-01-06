@@ -5,27 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"math/big"
 	"testing"
-	"time"
-
-	"github.com/startfellows/tongo"
-
 )
-
-type mockADNLClient struct {
-	requestCounter int
-	OnRequest      func(ctx context.Context, q adnl.Query) (adnl.Message, error)
-}
-
-func (m *mockADNLClient) Request(ctx context.Context, q adnl.Query) (adnl.Message, error) {
-	m.requestCounter += 1
-	return m.OnRequest(ctx, q)
-}
-
-var _ adnlClient = &mockADNLClient{}
 
 func TestClient(t *testing.T) {
 	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
@@ -123,42 +104,6 @@ func TestGeneratedMethod3(t *testing.T) {
 
 	fmt.Printf("Count: %d\n", resp.Count)
 	fmt.Printf("Complete: %v\n", resp.Complete)
-}
-
-func TestGetLastConfigAll_mockConnection(t *testing.T) {
-	cli := &mockADNLClient{}
-	cli.OnRequest = func(ctx context.Context, q adnl.Query) (adnl.Message, error) {
-		switch cli.requestCounter {
-		case 1:
-			bytes, err := ioutil.ReadFile("testdata/get-last-config-all-1.bin")
-			if err != nil {
-				t.Errorf("failed to read response file: %v", err)
-			}
-			return bytes, err
-		case 2:
-			bytes, err := ioutil.ReadFile("testdata/get-last-config-all-2.bin")
-			if err != nil {
-				t.Errorf("failed to read response file: %v", err)
-			}
-			return bytes, err
-		}
-		t.Errorf("unexpected request")
-		return nil, fmt.Errorf("unexpected request")
-	}
-	api := &Client{
-		adnlClient: []liteserverConnection{{client: cli}},
-	}
-	cell, err := api.GetLastConfigAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
-	hash, err := cell.HashString()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if hash != "32bfc7a9c87ec2b0d4544740813fc02db0705f7056db6ffd2029d78897a01c6d" {
-		t.Fatal(err)
-	}
 }
 
 func TestGeneratedMethod4(t *testing.T) {

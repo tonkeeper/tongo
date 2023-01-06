@@ -9,7 +9,7 @@ import (
 // DNSRecordSet
 // _ (HashmapE 256 DNSRecord) = DNS_RecordSet;
 type DNSRecordSet struct {
-	Records tlb.HashmapE[tlb.Size256, tlb.Ref[DNSRecord]]
+	Records tlb.HashmapE[Bits256, tlb.Ref[DNSRecord]]
 }
 
 // DNSRecord

@@ -153,3 +153,7 @@ func (h *Bits256) UnmarshalTL(r io.Reader) error {
 	*h = b
 	return nil
 }
+
+func (u Bits256) FixedSize() int {
+	return 256
+}

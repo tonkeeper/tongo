@@ -74,3 +74,25 @@ func TestBitString_WriteBit(t *testing.T) {
 		})
 	}
 }
+
+func TestNewCellWithBitsPanic(t *testing.T) {
+	defer func() { recover() }()
+	bs := NewBitString(2000)
+	bs.len = 2000
+	NewCellWithBits(bs)
+	t.Errorf("should panic with cell overflow")
+}
+
+func TestNewCellWithBits(t *testing.T) {
+	bs := NewBitString(0)
+	if NewCellWithBits(bs).BitsAvailableForWrite() != CellBits {
+		t.Errorf("should be Cell with zero bits")
+	}
+	bs = NewBitString(CellBits)
+	for i := 0; i < CellBits; i++ {
+		_ = bs.WriteBit(true)
+	}
+	if NewCellWithBits(bs).BitsAvailableForWrite() != 0 {
+		t.Errorf("should be full Cell")
+	}
+}

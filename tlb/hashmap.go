@@ -11,13 +11,13 @@ type fixedSize interface {
 }
 
 // HashmapItem represents a key-value pair stored in HashmapE[T].
-type HashmapItem[T any] struct {
-	Key   boc.BitString
+type HashmapItem[sizeT fixedSize, T any] struct {
+	Key   sizeT
 	Value T
 }
 
 type Hashmap[sizeT fixedSize, T any] struct {
-	keys   []boc.BitString
+	keys   []sizeT
 	values []T
 }
 
@@ -27,7 +27,16 @@ func (h Hashmap[sizeT, T]) MarshalTLB(c *boc.Cell, tag string) error {
 		return nil
 	}
 	var s sizeT
-	err := h.encodeMap(c, h.keys, h.values, s.FixedSize())
+	keys := make([]boc.BitString, 0)
+	for _, k := range h.keys {
+		cell := boc.NewCell()
+		err := Marshal(cell, k)
+		if err != nil {
+			return err
+		}
+		keys = append(keys, cell.RawBitString())
+	}
+	err := h.encodeMap(c, keys, h.values, s.FixedSize())
 	if err != nil {
 		return err
 	}
@@ -105,6 +114,9 @@ func (h *Hashmap[sizeT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
 	var err error
 	var size int
+	if c.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
 		return err
@@ -152,7 +164,14 @@ func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyP
 	if err != nil {
 		return err
 	}
-	h.keys = append(h.keys, key)
+
+	var k sizeT
+	cell := boc.NewCellWithBits(key)
+	err = Unmarshal(cell, &k)
+	if err != nil {
+		return err
+	}
+	h.keys = append(h.keys, k)
 	return nil
 }
 
@@ -160,7 +179,7 @@ func (h Hashmap[sizeT, T]) Values() []T {
 	return h.values
 }
 
-func (h Hashmap[sizeT, T]) Keys() []boc.BitString {
+func (h Hashmap[sizeT, T]) Keys() []sizeT {
 	return h.keys
 }
 
@@ -186,7 +205,7 @@ func (h HashmapE[sizeT, T]) Values() []T {
 	return h.m.values
 }
 
-func (h HashmapE[sizeT, T]) Keys() []boc.BitString {
+func (h HashmapE[sizeT, T]) Keys() []sizeT {
 	return h.m.keys
 }
 func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
@@ -256,7 +275,7 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 }
 
 type HashmapAug[sizeT fixedSize, T1, T2 any] struct {
-	keys   []boc.BitString
+	keys   []sizeT
 	values []T1
 	extra  HashMapAugExtraList[T2]
 }
@@ -285,6 +304,9 @@ func (h *HashmapAug[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error 
 func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
 	var err error
 	var size int
+	if c.CellType() == boc.PrunedBranchCell {
+		return nil
+	}
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
 		return err
@@ -347,8 +369,14 @@ func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Ce
 	if err != nil {
 		return err
 	}
-	h.keys = append(h.keys, key)
 
+	var k sizeT
+	cell := boc.NewCellWithBits(key)
+	err = Unmarshal(cell, &k)
+	if err != nil {
+		return err
+	}
+	h.keys = append(h.keys, k)
 	return nil
 }
 
@@ -383,7 +411,7 @@ func (h HashmapAugE[sizeT, T1, T2]) Values() []T1 {
 	return h.m.values
 }
 
-func (h HashmapAugE[sizeT, T1, T2]) Keys() []boc.BitString {
+func (h HashmapAugE[sizeT, T1, T2]) Keys() []sizeT {
 	return h.m.keys
 }
 
@@ -452,14 +480,14 @@ func (h HashmapAug[_, T1, _]) Values() []T1 {
 }
 
 // Items returns key-value pairs of this hashmap.
-func (h HashmapE[_, T]) Items() []HashmapItem[T] {
+func (h HashmapE[sizeT, T]) Items() []HashmapItem[sizeT, T] {
 	return h.m.Items()
 }
 
-func (h Hashmap[_, T]) Items() []HashmapItem[T] {
-	items := make([]HashmapItem[T], len(h.keys))
+func (h Hashmap[sizeT, T]) Items() []HashmapItem[sizeT, T] {
+	items := make([]HashmapItem[sizeT, T], len(h.keys))
 	for i, key := range h.keys {
-		items[i] = HashmapItem[T]{
+		items[i] = HashmapItem[sizeT, T]{
 			Key:   key,
 			Value: h.values[i],
 		}

@@ -14,9 +14,9 @@ type DefaultType struct {
 }
 
 type Generator struct {
-	knownTypes map[string]DefaultType
-	newTlTypes []string
-	typeName   string
+	knownTypes  map[string]DefaultType
+	newTlbTypes []string
+	typeName    string
 }
 
 var (
@@ -52,17 +52,27 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 	return generateGolangTypes(declarations)
 }
 
-func generateGolangTypes(t []CombinatorDeclaration) (string, error) {
-	sumTypes := make(map[string][]CombinatorDeclaration)
-
-	for _, c := range t {
+func generateGolangTypes(declarations []CombinatorDeclaration) (string, error) {
+	dec := make([][]CombinatorDeclaration, 0)
+	for _, c := range declarations {
 		if len(c.Combinator.TypeExpressions) > 0 {
 			return "", fmt.Errorf("combinators with paramaters '%v' are not supported", c.Combinator.Name)
 		}
-		sumTypes[c.Combinator.Name] = append(sumTypes[c.Combinator.Name], c)
+		f := false
+		for i, c1 := range dec {
+			if c1[0].Combinator.Name == c.Combinator.Name {
+				dec[i] = append(dec[i], c)
+				f = true
+				break
+			}
+		}
+		if !f {
+			dec = append(dec, []CombinatorDeclaration{c})
+		}
 	}
 	s := ""
-	for _, v := range sumTypes {
+
+	for _, v := range dec {
 		t, err := generateGolangType(v)
 		if err != nil {
 			return "", err
@@ -77,12 +87,17 @@ func generateGolangTypes(t []CombinatorDeclaration) (string, error) {
 	return string(b), err
 }
 
-func generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
+func generateGolangStruct(declaration CombinatorDeclaration, withMagic bool) (string, error) {
 	builder := strings.Builder{}
 	builder.WriteString("struct{")
 	if len(declaration.FieldDefinitions) > 0 {
 		builder.WriteRune('\n')
 	}
+
+	if withMagic && declaration.Constructor.Prefix != "" {
+		builder.WriteString(fmt.Sprintf("Magic tlb.Magic `tlb:\"%v%v\"`\n", declaration.Constructor.Name, declaration.Constructor.Prefix))
+	}
+
 	for i, field := range declaration.FieldDefinitions {
 		if field.IsEmpty() {
 			return "", fmt.Errorf("all types are nil in field %v in %v", i, declaration.Constructor.Name)
@@ -116,7 +131,7 @@ func generateGolangStruct(declaration CombinatorDeclaration) (string, error) {
 }
 
 func generateGolangSimpleType(declaration CombinatorDeclaration) (string, error) {
-	s, err := generateGolangStruct(declaration)
+	s, err := generateGolangStruct(declaration, true)
 	return fmt.Sprintf("type %v %v", declaration.Combinator.Name, s), err
 }
 
@@ -124,14 +139,14 @@ func generateGolangSumType(declarations []CombinatorDeclaration) (string, error)
 	builder := strings.Builder{}
 	builder.WriteString("type " + declarations[0].Combinator.Name + " struct{\ntlb.SumType\n")
 	for _, d := range declarations {
-		s, err := generateGolangStruct(d)
+		s, err := generateGolangStruct(d, false)
 		if err != nil {
 			return "", err
 		}
 		builder.WriteString(utils.ToCamelCase(d.Constructor.Name))
 		builder.WriteRune(' ')
 		builder.WriteString(s)
-		builder.WriteString(fmt.Sprintf(" `tlbSumType:\"%v\"`", d.Constructor.Prefix))
+		builder.WriteString(fmt.Sprintf(" `tlbSumType:\"%v%v\"`", d.Constructor.Name, d.Constructor.Prefix))
 		builder.WriteRune('\n')
 	}
 	builder.WriteRune('}')

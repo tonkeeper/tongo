@@ -2854,67 +2854,107 @@ func (u Int64) FixedSize() int {
 	return 64
 }
 
-	type Bits96 boc.BitString
+type Uint256 big.Int
 
-	func (u Bits96) MarshalTLB(c *boc.Cell, tag string) error {
-		return c.WriteBitString(boc.BitString(u))
-	}
+func (u Uint256) MarshalTLB(c *boc.Cell, tag string) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, 256)
+}
 
-	func (u *Bits96) UnmarshalTLB(c *boc.Cell, tag string) error {
-		v, err := c.ReadBits(96)
-		*u = Bits96(v)
-		return err
-	}
+func (u *Uint256) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadBigUint(256)
+	*u = Uint256(*v)
+	return err
+}
 
-	func (u Bits96) FixedSize() int {
-		return 96
-	}
+func (u Uint256) FixedSize() int {
+	return 256
+}
 
-	type Bits264 boc.BitString
+type Int256 big.Int
 
-	func (u Bits264) MarshalTLB(c *boc.Cell, tag string) error {
-		return c.WriteBitString(boc.BitString(u))
-	}
+func (u Int256) MarshalTLB(c *boc.Cell, tag string) error {
+	x := big.Int(u)
+	return c.WriteBigInt(&x, 256)
+}
 
-	func (u *Bits264) UnmarshalTLB(c *boc.Cell, tag string) error {
-		v, err := c.ReadBits(264)
-		*u = Bits264(v)
-		return err
-	}
+func (u *Int256) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadBigInt(256)
+	*u = Int256(*v)
+	return err
+}
 
-	func (u Bits264) FixedSize() int {
-		return 264
-	}
+func (u Int256) FixedSize() int {
+	return 256
+}
 
-	type Bits320 boc.BitString
+type Uint257 big.Int
 
-	func (u Bits320) MarshalTLB(c *boc.Cell, tag string) error {
-		return c.WriteBitString(boc.BitString(u))
-	}
+func (u Uint257) MarshalTLB(c *boc.Cell, tag string) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, 257)
+}
 
-	func (u *Bits320) UnmarshalTLB(c *boc.Cell, tag string) error {
-		v, err := c.ReadBits(320)
-		*u = Bits320(v)
-		return err
-	}
+func (u *Uint257) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadBigUint(257)
+	*u = Uint257(*v)
+	return err
+}
 
-	func (u Bits320) FixedSize() int {
-		return 320
-	}
+func (u Uint257) FixedSize() int {
+	return 257
+}
 
-	type Bits352 boc.BitString
+type Int257 big.Int
 
-	func (u Bits352) MarshalTLB(c *boc.Cell, tag string) error {
-		return c.WriteBitString(boc.BitString(u))
-	}
+func (u Int257) MarshalTLB(c *boc.Cell, tag string) error {
+	x := big.Int(u)
+	return c.WriteBigInt(&x, 257)
+}
 
-	func (u *Bits352) UnmarshalTLB(c *boc.Cell, tag string) error {
-		v, err := c.ReadBits(352)
-		*u = Bits352(v)
-		return err
-	}
+func (u *Int257) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadBigInt(257)
+	*u = Int257(*v)
+	return err
+}
 
-	func (u Bits352) FixedSize() int {
-		return 352
-	}
+func (u Int257) FixedSize() int {
+	return 257
+}
+
+type Bits96 [12]byte
+
+func (u Bits96) FixedSize() int {
+	return 96
+}
+
+type Bits256 [32]byte
+
+func (u Bits256) FixedSize() int {
+	return 256
+}
+
+type Bits264 [33]byte
+
+func (u Bits264) FixedSize() int {
+	return 264
+}
+
+type Bits320 [40]byte
+
+func (u Bits320) FixedSize() int {
+	return 320
+}
+
+type Bits352 [44]byte
+
+func (u Bits352) FixedSize() int {
+	return 352
+}
+
+type Bits512 [64]byte
+
+func (u Bits512) FixedSize() int {
+	return 512
+}
 	

@@ -229,12 +229,24 @@ func (c *Cell) WriteBitString(s BitString) error {
 	return c.bits.WriteBitString(s)
 }
 
+func (c *Cell) WriteBigInt(val *big.Int, bitLen int) error {
+	return c.bits.WriteBigInt(val, bitLen)
+}
+
+func (c *Cell) WriteBigUint(val *big.Int, bitLen int) error {
+	return c.bits.WriteBigUint(val, bitLen)
+}
+
 func (c *Cell) ReadInt(n int) (int64, error) {
 	return c.bits.ReadInt(n)
 }
 
 func (c *Cell) ReadBytes(n int) ([]byte, error) {
 	return c.bits.ReadBytes(n)
+}
+
+func (c *Cell) ReadBigInt(n int) (*big.Int, error) {
+	return c.bits.ReadBigInt(n)
 }
 
 func (c *Cell) ReadBigUint(n int) (*big.Int, error) {

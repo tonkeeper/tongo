@@ -11,22 +11,22 @@ type fixedSize interface {
 }
 
 // HashmapItem represents a key-value pair stored in HashmapE[T].
-type HashmapItem[sizeT fixedSize, T any] struct {
-	Key   sizeT
+type HashmapItem[keyT fixedSize, T any] struct {
+	Key   keyT
 	Value T
 }
 
-type Hashmap[sizeT fixedSize, T any] struct {
-	keys   []sizeT
+type Hashmap[keyT fixedSize, T any] struct {
+	keys   []keyT
 	values []T
 }
 
-func (h Hashmap[sizeT, T]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, tag string) error {
 	// Marshal empty Hashmap
 	if len(h.values) == 0 || h.values == nil {
 		return nil
 	}
-	var s sizeT
+	var s keyT
 	keys := make([]boc.BitString, 0)
 	for _, k := range h.keys {
 		cell := boc.NewCell()
@@ -43,7 +43,7 @@ func (h Hashmap[sizeT, T]) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h Hashmap[sizeT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
+func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}
@@ -100,8 +100,8 @@ func (h Hashmap[sizeT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values [
 	return nil
 }
 
-func (h *Hashmap[sizeT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	var s sizeT
+func (h *Hashmap[keyT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var s keyT
 	keySize := s.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
 	err := h.mapInner(keySize, keySize, c, &keyPrefix)
@@ -111,7 +111,7 @@ func (h *Hashmap[sizeT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
+func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
 	var err error
 	var size int
 	if c.CellType() == boc.PrunedBranchCell {
@@ -165,7 +165,7 @@ func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyP
 		return err
 	}
 
-	var k sizeT
+	var k keyT
 	cell := boc.NewCellWithBits(key)
 	err = Unmarshal(cell, &k)
 	if err != nil {
@@ -175,37 +175,37 @@ func (h *Hashmap[sizeT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyP
 	return nil
 }
 
-func (h Hashmap[sizeT, T]) Values() []T {
+func (h Hashmap[keyT, T]) Values() []T {
 	return h.values
 }
 
-func (h Hashmap[sizeT, T]) Keys() []sizeT {
+func (h Hashmap[keyT, T]) Keys() []keyT {
 	return h.keys
 }
 
-type HashmapE[sizeT fixedSize, T any] struct {
-	m Hashmap[sizeT, T]
+type HashmapE[keyT fixedSize, T any] struct {
+	m Hashmap[keyT, T]
 }
 
-func (h HashmapE[sizeT, T]) MarshalTLB(c *boc.Cell, tag string) error {
-	var temp Maybe[Ref[Hashmap[sizeT, T]]]
+func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, tag string) error {
+	var temp Maybe[Ref[Hashmap[keyT, T]]]
 	temp.Null = len(h.m.keys) == 0
 	temp.Value.Value = h.m
 	return Marshal(c, temp)
 }
 
-func (h *HashmapE[sizeT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	var temp Maybe[Ref[Hashmap[sizeT, T]]]
+func (h *HashmapE[keyT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var temp Maybe[Ref[Hashmap[keyT, T]]]
 	err := Unmarshal(c, &temp)
 	h.m = temp.Value.Value
 	return err
 }
 
-func (h HashmapE[sizeT, T]) Values() []T {
+func (h HashmapE[keyT, T]) Values() []T {
 	return h.m.values
 }
 
-func (h HashmapE[sizeT, T]) Keys() []sizeT {
+func (h HashmapE[keyT, T]) Keys() []keyT {
 	return h.m.keys
 }
 func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
@@ -274,8 +274,8 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 	return label, nil
 }
 
-type HashmapAug[sizeT fixedSize, T1, T2 any] struct {
-	keys   []sizeT
+type HashmapAug[keyT fixedSize, T1, T2 any] struct {
+	keys   []keyT
 	values []T1
 	extra  HashMapAugExtraList[T2]
 }
@@ -286,12 +286,12 @@ type HashMapAugExtraList[T any] struct {
 	Data  T
 }
 
-func (h HashmapAug[sizeT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h HashmapAug[keyT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
 	return fmt.Errorf("not implemented")
 }
 
-func (h *HashmapAug[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
-	var t sizeT
+func (h *HashmapAug[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+	var t keyT
 	keySize := t.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
 	err := h.mapInner(keySize, keySize, c, &keyPrefix, &h.extra)
@@ -301,7 +301,7 @@ func (h *HashmapAug[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error 
 	return nil
 }
 
-func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
+func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
 	var err error
 	var size int
 	if c.CellType() == boc.PrunedBranchCell {
@@ -370,7 +370,7 @@ func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Ce
 		return err
 	}
 
-	var k sizeT
+	var k keyT
 	cell := boc.NewCellWithBits(key)
 	err = Unmarshal(cell, &k)
 	if err != nil {
@@ -380,14 +380,14 @@ func (h *HashmapAug[sizeT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Ce
 	return nil
 }
 
-type HashmapAugE[sizeT fixedSize, T1, T2 any] struct {
-	m     HashmapAug[sizeT, T1, T2]
+type HashmapAugE[keyT fixedSize, T1, T2 any] struct {
+	m     HashmapAug[keyT, T1, T2]
 	extra T2
 }
 
-func (h *HashmapAugE[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *HashmapAugE[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	var temp struct {
-		M     Maybe[Ref[HashmapAug[sizeT, T1, T2]]]
+		M     Maybe[Ref[HashmapAug[keyT, T1, T2]]]
 		Extra T2
 	}
 	err := Unmarshal(c, &temp)
@@ -396,9 +396,9 @@ func (h *HashmapAugE[sizeT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error
 	return err
 }
 
-func (h HashmapAugE[sizeT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h HashmapAugE[keyT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
 	var temp struct {
-		M     Maybe[Ref[HashmapAug[sizeT, T1, T2]]]
+		M     Maybe[Ref[HashmapAug[keyT, T1, T2]]]
 		Extra T2
 	}
 	temp.M.Null = len(h.m.keys) == 0
@@ -407,11 +407,11 @@ func (h HashmapAugE[sizeT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
 	return Marshal(c, temp)
 }
 
-func (h HashmapAugE[sizeT, T1, T2]) Values() []T1 {
+func (h HashmapAugE[keyT, T1, T2]) Values() []T1 {
 	return h.m.values
 }
 
-func (h HashmapAugE[sizeT, T1, T2]) Keys() []sizeT {
+func (h HashmapAugE[keyT, T1, T2]) Keys() []keyT {
 	return h.m.keys
 }
 
@@ -480,14 +480,14 @@ func (h HashmapAug[_, T1, _]) Values() []T1 {
 }
 
 // Items returns key-value pairs of this hashmap.
-func (h HashmapE[sizeT, T]) Items() []HashmapItem[sizeT, T] {
+func (h HashmapE[keyT, T]) Items() []HashmapItem[keyT, T] {
 	return h.m.Items()
 }
 
-func (h Hashmap[sizeT, T]) Items() []HashmapItem[sizeT, T] {
-	items := make([]HashmapItem[sizeT, T], len(h.keys))
+func (h Hashmap[keyT, T]) Items() []HashmapItem[keyT, T] {
+	items := make([]HashmapItem[keyT, T], len(h.keys))
 	for i, key := range h.keys {
-		items[i] = HashmapItem[sizeT, T]{
+		items[i] = HashmapItem[keyT, T]{
 			Key:   key,
 			Value: h.values[i],
 		}

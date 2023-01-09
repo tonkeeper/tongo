@@ -1,4 +1,6 @@
 <interfaces>
+
+    <!--    NFT item    -->
     <interface name="tep_62_item" group="nft">
         <get_method name="get_nft_data" callback="true">
             <output>
@@ -32,6 +34,8 @@
             </output>
         </internal>
     </interface>
+
+    <!--    NFT collection    -->
     <interface name="tep_62_collection" group="nft_collection">
         <types>
             text#_ {n:#} data:(SnakeData ~n) = Text;
@@ -65,23 +69,27 @@
             </output>
         </get_method>
     </interface>
-<!--    <interface name="tep_66_nft_royalty" group="nft_royalty">-->
-<!--        <get_method name="royalty_params">-->
-<!--            <output>-->
-<!--                <tinyint name="numerator">uint16</tinyint>-->
-<!--                <tinyint name="denominator">uint16</tinyint>-->
-<!--                <slice name="destination">AccountID</slice>-->
-<!--            </output>-->
-<!--        </get_method>-->
-<!--        <internal name="get_royalty_params">-->
-<!--            <input>-->
-<!--                get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;-->
-<!--            </input>-->
-<!--            <output>-->
-<!--                report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16 destination:MsgAddress = InternalMsgBody;-->
-<!--            </output>-->
-<!--        </internal>-->
-<!--    </interface>-->
+
+    <!--    NFT royalty    -->
+    <interface name="tep_66_nft_royalty" group="nft_royalty">
+        <get_method name="royalty_params">
+            <output>
+                <tinyint name="numerator">uint16</tinyint>
+                <tinyint name="denominator">uint16</tinyint>
+                <slice name="destination">AccountID</slice>
+            </output>
+        </get_method>
+        <internal name="get_royalty_params">
+            <input>
+                get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16 destination:MsgAddress = InternalMsgBody;
+            </output>
+        </internal>
+    </interface>
+
+    <!--    Jetton master    -->
     <interface name="tep_74_jetton_master" group="jetton_master">
         <get_method name="get_jetton_data">
             <output>
@@ -101,6 +109,8 @@
             </output>
         </get_method>
     </interface>
+
+    <!--    Jetton wallet    -->
     <interface name="tep_74_jetton_wallet" group="jetton_wallet">
         <get_method name="get_wallet_data">
             <output>
@@ -137,6 +147,8 @@
             </output>
         </internal>
     </interface>
+
+    <!--    DNS    -->
     <interface name="tep_81" group="dns">
         <types>
             dns_text#1eda _:Text = DNSRecord;
@@ -163,6 +175,8 @@
             </output>
         </get_method>
     </interface>
+
+    <!--    NFT sale    -->
     <interface name="nft_sale" group="nft">
         <get_method name="get_sale_data">
             <output version="basic" fixed_length="true">
@@ -189,6 +203,8 @@
             </output>
         </get_method>
     </interface>
+
+    <!--    SBT    -->
     <interface name="tep_85_sbt" group="sbt">
         <get_method name="get_authority_address">
             <output>
@@ -232,6 +248,116 @@
             <input>
                 revoke#6f89f5e3 query_id:uint64 = InternalMsgBody;
             </input>
+        </internal>
+    </interface>
+
+    <!--    Payment channel    -->
+    <interface name="payment_channel" group="payment_channel">
+        <types>
+            cp#_ amount:Coins condition:Cell = ConditionalPayment;
+            sc_body#_ seqno:uint64 sent:Coins conditionals:(HashmapE 32 ConditionalPayment)
+            = SemiChannelBody; // 64+132+1 = 197
+            semichannel_state#43685374 channel_id:uint128 data:SemiChannelBody counterparty_data:(Maybe ^SemiChannelBody)
+            = SemiChannel; // 32 + 128 + 197 + 1 = 358
+            signed_schs#_ signature:bits512 state:SemiChannel = SignedSemiChannel; // 512 + 358 = 870
+            quarantined_state#_ state_A:SemiChannelBody state_B:SemiChannelBody
+            quarantine_starts:uint32
+            state_commited_by_A:Bool
+            = QuarantinedState; // 358 + 358 + 32 + 1 = 749
+            conf#_ quarantin_duration:uint32
+            misbehavior_fine:Coins
+            conditional_close_duration:uint32 = ClosingConfig; // 32 + 132 + 132 + 32 = 296
+            payment_conf#_  excess_fee:Coins
+            dest_A:MsgAddress
+            dest_B:MsgAddress = PaymentConfig;
+            channel_state#_ balance_A:Coins balance_B:Coins
+            key_A:uint256 key_B:uint256
+            channel_id:uint128
+            config:^ClosingConfig
+            commited_seqno_A:uint32 commited_seqno_B:uint32
+            quarantin:(Maybe ^QuarantinedState)
+            payments:^PaymentConfig = Storage;
+            // 132 + 132 + 256 + 256 + 32 + 32 + 1 + 132 = 973
+        </types>
+        <get_method name="get_channel_state">
+            <output>
+                <tinyint name="state">uint64</tinyint>
+            </output>
+        </get_method>
+<!--        <get_method name="get_channel_data">-->
+<!--            <output>-->
+<!--            </output>-->
+<!--        </get_method>-->
+        <internal name="top_up_balance">
+            <input>
+                top_up_balance add_A:Coins add_B:Coins = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="init_channel">
+            <input>
+                init_channel is_A:Bool signature:bits512 tag:# {tag = 0x696e6974} channel_id:uint128 balance_A:Coins balance_B:Coins = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="cooperative_close">
+            <input>
+                cooperative_close sig_A:^bits512 sig_B:^bits512 tag:# {tag = 0x436c6f73} channel_id:uint128 balance_A:Coins balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="cooperative_commit">
+            <input>
+                cooperative_commit sig_A:^bits512 sig_B:^bits512 tag:# {tag = 0x43436d74} channel_id:uint128 seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="start_uncooperative_close">
+            <input>
+                start_uncooperative_close signed_by_A:Bool signature:bits512 tag:# {tag = 0x556e436c} channel_id:uint128
+                sch_A:^SignedSemiChannel
+                sch_B:^SignedSemiChannel = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="challenge_quarantined_state">
+            <input>
+                challenge_quarantined_state
+                challenged_by_A:Bool signature:bits512 tag:# {tag = 0x43686751} channel_id:uint128
+                sch_A:^SignedSemiChannel
+                sch_B:^SignedSemiChannel = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="settle_conditionals">
+            <input>
+                settle_conditionals
+                from_A:Bool signature:bits512 tag:# {tag = 0x436c436e} channel_id:uint128
+                conditionals_to_settle:(HashmapE 32 Cell)
+                = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="finish_uncooperative_close">
+            <input>
+                finish_uncooperative_close = InternalMsgBody;
+            </input>
+            <output>
+            </output>
+        </internal>
+        <internal name="channel_closed">
+            <input>
+                channel_closed channel_id:uint128 = InternalMsgBody;
+            </input>
+            <output>
+            </output>
         </internal>
     </interface>
 </interfaces>

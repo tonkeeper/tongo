@@ -105,6 +105,16 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 		}
 		val.Set(a)
 		return nil
+	case reflect.Array:
+		if val.Type().Elem().Kind() != reflect.Uint8 {
+			return fmt.Errorf("decoding array of %v not supported", val.Type().Elem().Kind())
+		}
+		v, err := c.ReadBytes(val.Len())
+		if err != nil {
+			return err
+		}
+		reflect.Copy(val, reflect.ValueOf(v))
+		return nil
 	default:
 		return fmt.Errorf("type %v not implemented", val.Kind())
 	}

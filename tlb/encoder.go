@@ -66,6 +66,16 @@ func encode(c *boc.Cell, o any, tag string) error {
 			return fmt.Errorf("can't encode empty pointer %v if tlb scheme is not optional", val.Type())
 		}
 		return encode(c, val.Elem().Interface(), tag)
+	case reflect.Array:
+		if val.Type().Elem().Kind() != reflect.Uint8 {
+			return fmt.Errorf("encoding array of %v not supported", val.Type().Elem().Kind())
+		}
+		// TODO: optimize
+		b := make([]byte, 0, val.Len())
+		for i := 0; i < val.Len(); i++ {
+			b = append(b, uint8(val.Index(i).Uint()))
+		}
+		return c.WriteBytes(b)
 	default:
 		return fmt.Errorf("type %v not implemented", val.Kind())
 	}

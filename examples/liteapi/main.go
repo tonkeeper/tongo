@@ -18,6 +18,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("Get account state error: %v", err)
 	}
-	acc, _ := state.Account.GetInfo()
+	acc, _ := tongo.GetAccountInfo(state.Account)
 	fmt.Printf("Account status: %v\nBalance: %v\n", acc.Status, acc.Balance)
 }

@@ -1,10 +1,8 @@
-package tongo
+package tlb
 
 import (
 	"fmt"
-
 	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
 
 // Message
@@ -13,8 +11,8 @@ import (
 // body:(Either X ^X) = Message X;
 type Message struct {
 	Info CommonMsgInfo
-	Init tlb.Maybe[tlb.EitherRef[StateInit]]
-	Body tlb.EitherRef[tlb.Any]
+	Init Maybe[EitherRef[StateInit]]
+	Body EitherRef[Any]
 }
 
 // CommonMsgInfo
@@ -27,7 +25,7 @@ type Message struct {
 // ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
 // created_lt:uint64 created_at:uint32 = CommonMsgInfo;
 type CommonMsgInfo struct {
-	tlb.SumType
+	SumType
 	IntMsgInfo struct {
 		IhrDisabled bool
 		Bounce      bool
@@ -58,11 +56,11 @@ type CommonMsgInfo struct {
 // code:(Maybe ^Cell) data:(Maybe ^Cell)
 // library:(HashmapE 256 SimpleLib) = StateInit;
 type StateInit struct {
-	SplitDepth tlb.Maybe[tlb.Uint5]
-	Special    tlb.Maybe[TickTock]
-	Code       tlb.Maybe[tlb.Ref[boc.Cell]]
-	Data       tlb.Maybe[tlb.Ref[boc.Cell]]
-	Library    tlb.HashmapE[Bits256, SimpleLib]
+	SplitDepth Maybe[Uint5]
+	Special    Maybe[TickTock]
+	Code       Maybe[Ref[boc.Cell]]
+	Data       Maybe[Ref[boc.Cell]]
+	Library    HashmapE[Bits256, SimpleLib]
 }
 
 // Anycast
@@ -113,21 +111,21 @@ func (a *Anycast) UnmarshalTLB(c *boc.Cell, tag string) error {
 // _ _:MsgAddressInt = MsgAddress;
 // _ _:MsgAddressExt = MsgAddress;
 type MsgAddress struct {
-	tlb.SumType
+	SumType
 	AddrNone struct {
 	} `tlbSumType:"addr_none$00"`
 	AddrExtern struct {
-		Len             tlb.Uint9
+		Len             Uint9
 		ExternalAddress boc.BitString
 	} `tlbSumType:"addr_extern$01"`
 	AddrStd struct {
-		Anycast     tlb.Maybe[Anycast]
+		Anycast     Maybe[Anycast]
 		WorkchainId int8
 		Address     Bits256
 	} `tlbSumType:"addr_std$10"`
 	AddrVar struct {
-		Anycast     tlb.Maybe[Anycast]
-		AddrLen     tlb.Uint9
+		Anycast     Maybe[Anycast]
+		AddrLen     Uint9
 		WorkchainId int32
 		Address     boc.BitString
 	} `tlbSumType:"addr_var$11"`
@@ -151,12 +149,12 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		a.AddrExtern.Len = tlb.Uint9(ln)
+		a.AddrExtern.Len = Uint9(ln)
 		a.AddrExtern.ExternalAddress = addr
 		a.SumType = "AddrExtern"
 		return nil
 	case 2:
-		var anycast tlb.Maybe[Anycast]
+		var anycast Maybe[Anycast]
 		err := anycast.UnmarshalTLB(c, "")
 		if err != nil {
 			return err
@@ -175,7 +173,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		a.SumType = "AddrStd"
 		return nil
 	case 3:
-		var anycast tlb.Maybe[Anycast]
+		var anycast Maybe[Anycast]
 		err := anycast.UnmarshalTLB(c, "")
 		if err != nil {
 			return err
@@ -192,23 +190,13 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		a.AddrVar.AddrLen = tlb.Uint9(ln)
+		a.AddrVar.AddrLen = Uint9(ln)
 		a.AddrVar.Address = addr
 		a.AddrVar.WorkchainId = int32(workchain)
 		a.AddrVar.Anycast = anycast
 		a.SumType = "AddrVar"
 	}
 	return fmt.Errorf("invalid tag")
-}
-
-func (a MsgAddress) AccountID() (*AccountID, error) {
-	switch a.SumType {
-	case "AddrNone":
-		return nil, nil
-	case "AddrStd":
-		return &AccountID{Workchain: int32(a.AddrStd.WorkchainId), Address: a.AddrStd.Address}, nil
-	}
-	return nil, fmt.Errorf("can not convert not std address to AccountId")
 }
 
 // TickTock
@@ -223,30 +211,6 @@ type TickTock struct {
 type SimpleLib struct {
 	Public bool
 	Root   boc.Cell `tlb:"^"`
-}
-
-func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, importFee Grams) (Message, error) {
-	// TODO: add either selection algorithm
-	var msg = Message{
-		Info: CommonMsgInfo{
-			SumType: "ExtInMsgInfo",
-		},
-		Body: tlb.EitherRef[tlb.Any]{
-			IsRight: true,
-			Value:   tlb.Any(*body),
-		},
-	}
-	if init != nil {
-		msg.Init.Null = false
-		msg.Init.Value.IsRight = true
-		msg.Init.Value.Value = *init
-	} else {
-		msg.Init.Null = true
-	}
-	msg.Info.ExtInMsgInfo.Src = MsgAddressFromAccountID(nil)
-	msg.Info.ExtInMsgInfo.Dest = MsgAddressFromAccountID(&address)
-	msg.Info.ExtInMsgInfo.ImportFee = importFee
-	return msg, nil
 }
 
 // msg_import_ext$000 msg:^(Message Any) transaction:^Transaction
@@ -277,7 +241,7 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *StateInit, i
 //
 //	fwd_fee:Grams proof_delivered:^Cell = InMsg;
 type InMsg struct {
-	tlb.SumType
+	SumType
 	MsgImportExt struct {
 		Msg         Message     `tlb:"^"`
 		Transaction Transaction `tlb:"^"`
@@ -357,7 +321,7 @@ type ImportFees struct {
 //
 //	reimport:^InMsg = OutMsg;
 type OutMsg struct {
-	tlb.SumType
+	SumType
 	MsgExportExt struct {
 		Msg         Message     `tlb:"^"`
 		Transaction Transaction `tlb:"^"`
@@ -377,7 +341,7 @@ type OutMsg struct {
 	} `tlbSumType:"msg_export_tr$011"`
 	MsgExportDeq struct {
 		OutMsg      MsgEnvelope `tlb:"^"`
-		ImportBlock tlb.Uint63
+		ImportBlock Uint63
 	} `tlbSumType:"msg_export_deq$1100"`
 	MsgExportDeqShort struct {
 		MsgEnvHash     Bits256
@@ -398,9 +362,9 @@ type OutMsg struct {
 // _ out_queue:OutMsgQueue proc_info:ProcessedInfo
 // ihr_pending:IhrPendingInfo = OutMsgQueueInfo;
 type OutMsgQueueInfo struct {
-	OutQueue  tlb.HashmapAugE[tlb.Bits352, EnqueuedMsg, uint64]
-	ProcInfo  tlb.HashmapE[tlb.Bits96, ProcessedUpto]
-	IhrPendig tlb.HashmapE[tlb.Bits320, IhrPendingSince]
+	OutQueue  HashmapAugE[Bits352, EnqueuedMsg, uint64]
+	ProcInfo  HashmapE[Bits96, ProcessedUpto]
+	IhrPendig HashmapE[Bits320, IhrPendingSince]
 }
 
 // _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;
@@ -413,7 +377,7 @@ type EnqueuedMsg struct {
 //	 next_addr:IntermediateAddress fwd_fee_remaining:Grams
 //	 msg:^(Message Any) = MsgEnvelope;
 type MsgEnvelope struct {
-	Magic           tlb.Magic `tlb:"msg_envelope#4"`
+	Magic           Magic `tlb:"msg_envelope#4"`
 	CurrentAddress  IntermediateAddress
 	NextAddress     IntermediateAddress
 	FwdFeeRemaining Grams
@@ -424,9 +388,9 @@ type MsgEnvelope struct {
 // interm_addr_simple$10 workchain_id:int8 addr_pfx:uint64 = IntermediateAddress;
 // interm_addr_ext$11 workchain_id:int32 addr_pfx:uint64 = IntermediateAddress;
 type IntermediateAddress struct {
-	tlb.SumType
+	SumType
 	IntermediateAddressRegular struct {
-		UseDestBits tlb.Uint7
+		UseDestBits Uint7
 	} `tlbSumType:"interm_addr_regular$0"`
 	IntermediateAddressSimple struct {
 		WorkchainId   int8

@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/startfellows/tongo"
+	"github.com/startfellows/tongo/tlb"
 )
 
 func (c *Client) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {
-	errCode, stack, err := c.RunSmcMethod(ctx, account, "seqno", tongo.VmStack{})
+	errCode, stack, err := c.RunSmcMethod(ctx, account, "seqno", tlb.VmStack{})
 	if err != nil {
 		return 0, err
 	}

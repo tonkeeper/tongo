@@ -1,8 +1,4 @@
-package tongo
-
-import (
-	"github.com/startfellows/tongo/tlb"
-)
+package tlb
 
 // validator_info$_
 //
@@ -29,7 +25,7 @@ type ValidatorBaseInfo struct {
 }
 
 type ValidatorsSet struct {
-	tlb.SumType
+	SumType
 	// validators#11 utime_since:uint32 utime_until:uint32
 	//   total:(## 16) main:(## 16) { main <= total } { main >= 1 }
 	//   list:(Hashmap 16 ValidatorDescr) = ValidatorSet;
@@ -38,7 +34,7 @@ type ValidatorsSet struct {
 		UtimeUntil uint32
 		Total      uint16
 		Main       uint16
-		List       tlb.Hashmap[tlb.Uint16, ValidatorDescr]
+		List       Hashmap[Uint16, ValidatorDescr]
 	} `tlbSumType:"validators#11"`
 	// validators_ext#12 utime_since:uint32 utime_until:uint32
 	//   total:(## 16) main:(## 16) { main <= total } { main >= 1 }
@@ -49,12 +45,12 @@ type ValidatorsSet struct {
 		Total       uint16
 		Main        uint16
 		TotalWeight uint64
-		List        tlb.HashmapE[tlb.Uint16, ValidatorDescr]
+		List        HashmapE[Uint16, ValidatorDescr]
 	} `tlbSumType:"validatorsext#12"`
 }
 
 type ValidatorDescr struct {
-	tlb.SumType
+	SumType
 	// validator#53 public_key:SigPubKey weight:uint64 = ValidatorDescr;
 	Validator struct {
 		PublicKey SigPubKey
@@ -69,7 +65,7 @@ type ValidatorDescr struct {
 }
 
 type SigPubKey struct {
-	Magic  tlb.Magic `tlb:"pubkey#8e81278a"`
+	Magic  Magic `tlb:"pubkey#8e81278a"`
 	PubKey Bits256
 }
 

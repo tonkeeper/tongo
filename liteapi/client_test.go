@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/startfellows/tongo/tlb"
 	"log"
 	"math/big"
 	"testing"
@@ -32,8 +33,7 @@ func TestGetTransactions(t *testing.T) {
 	}
 	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
 	var lt uint64 = 33973842000003
-	var hash tongo.Bits256
-	_ = hash.FromHex("8005AF92C0854B5A614427206673D120EA2914468C11C8F867F43740D6B4ACFB")
+	hash := tongo.MustParseHash("8005AF92C0854B5A614427206673D120EA2914468C11C8F867F43740D6B4ACFB")
 	tx, err := tongoClient.GetTransactions(context.Background(), 100, accountId, lt, hash)
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
@@ -63,7 +63,7 @@ func TestRunSmcMethod(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	accountId := tongo.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
-	_, _, err = tongoClient.RunSmcMethod(context.Background(), accountId, "seqno", tongo.VmStack{})
+	_, _, err = tongoClient.RunSmcMethod(context.Background(), accountId, "seqno", tlb.VmStack{})
 	if err != nil {
 		log.Fatalf("Run smc error: %v", err)
 	}
@@ -103,7 +103,7 @@ func TestGetBlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := block.Info.GetParents()
+	p, err := tongo.GetParents(block.Info)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -132,7 +132,7 @@ func TestGetAccountState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ai, err := st.Account.GetInfo()
+	ai, err := tongo.GetAccountInfo(st.Account)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -169,9 +169,10 @@ func TestGetOneTransaction(t *testing.T) {
 	}
 	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
 	var lt uint64 = 33973842000001
-	var rh, fh tongo.Bits256
-	_ = fh.FromUnknownString("F497D5CE3DA3C2DAA217145A91A615188E5AD4D8D5EC58C86414DE3F627DFE8A")
-	_ = rh.FromUnknownString("8215CADE3E7BAB4311230F35B5BAC218CFCB8B3706A21563556BCA29828206C9")
+
+	rh := tongo.MustParseHash("F497D5CE3DA3C2DAA217145A91A615188E5AD4D8D5EC58C86414DE3F627DFE8A")
+	fh := tongo.MustParseHash("8215CADE3E7BAB4311230F35B5BAC218CFCB8B3706A21563556BCA29828206C9")
+
 	blockID := tongo.BlockIDExt{BlockID: tongo.BlockID{Workchain: -1, Shard: uint64(9223372036854775808), Seqno: 26097165}, RootHash: rh, FileHash: fh}
 	tx, err := tongoClient.WithBlock(blockID).GetOneTransaction(context.Background(), accountId, lt)
 	if err != nil {

@@ -1,4 +1,4 @@
-package tongo
+package tlb
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
 
 func TestTransaction(t *testing.T) {
@@ -34,7 +33,7 @@ func TestTransaction(t *testing.T) {
 		cells, _ := boc.DeserializeBoc(data)
 		c := cells[0]
 		var res Transaction
-		err := tlb.Unmarshal(c, &res)
+		err := Unmarshal(c, &res)
 		if err != nil {
 			t.Fatalf("error: %v", err)
 		}

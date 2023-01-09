@@ -1,10 +1,8 @@
-package tongo
+package tlb
 
 import (
 	"fmt"
-
 	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
 
 // Transaction
@@ -16,18 +14,18 @@ import (
 // total_fees:CurrencyCollection state_update:^(HASH_UPDATE Account)
 // description:^TransactionDescr = Transaction;
 type Transaction struct {
-	Magic         tlb.Magic `tlb:"transaction$0111"`
+	Magic         Magic `tlb:"transaction$0111"`
 	AccountAddr   Bits256
 	Lt            uint64
 	PrevTransHash Bits256
 	PrevTransLt   uint64
 	Now           uint32
-	OutMsgCnt     tlb.Uint15
+	OutMsgCnt     Uint15
 	OrigStatus    AccountStatus
 	EndStatus     AccountStatus
 	Msgs          struct {
-		InMsg   tlb.Maybe[tlb.Ref[Message]]
-		OutMsgs tlb.HashmapE[tlb.Uint15, tlb.Ref[Message]]
+		InMsg   Maybe[Ref[Message]]
+		OutMsgs HashmapE[Uint15, Ref[Message]]
 	} `tlb:"^"`
 	TotalFees   CurrencyCollection
 	StateUpdate HashUpdate       `tlb:"^"`
@@ -46,9 +44,7 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-	if err := tx.hash.FromBytes(hash); err != nil {
-		return err
-	}
+	copy(tx.hash[:], hash[:])
 	c.ResetCounters()
 
 	sumType, err := c.ReadUint(4)
@@ -58,30 +54,30 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 	if sumType != 0b0111 {
 		return fmt.Errorf("invalid tag")
 	}
-	if err = tlb.Unmarshal(c, &tx.AccountAddr); err != nil {
+	if err = Unmarshal(c, &tx.AccountAddr); err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c, &tx.Lt); err != nil {
+	if err = Unmarshal(c, &tx.Lt); err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c, &tx.PrevTransHash); err != nil {
+	if err = Unmarshal(c, &tx.PrevTransHash); err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c, &tx.PrevTransLt); err != nil {
+	if err = Unmarshal(c, &tx.PrevTransLt); err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c, &tx.Now); err != nil {
+	if err = Unmarshal(c, &tx.Now); err != nil {
 		return err
 	}
 	outMsgCnt, err := c.ReadUint(15)
 	if err != nil {
 		return err
 	}
-	tx.OutMsgCnt = tlb.Uint15(outMsgCnt)
-	if err = tlb.Unmarshal(c, &tx.OrigStatus); err != nil {
+	tx.OutMsgCnt = Uint15(outMsgCnt)
+	if err = Unmarshal(c, &tx.OrigStatus); err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c, &tx.EndStatus); err != nil {
+	if err = Unmarshal(c, &tx.EndStatus); err != nil {
 		return err
 	}
 	c1, err := c.NextRef()
@@ -89,28 +85,28 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 		return err
 	}
 	var msgs struct {
-		InMsg   tlb.Maybe[tlb.Ref[Message]]
-		OutMsgs tlb.HashmapE[tlb.Uint15, tlb.Ref[Message]]
+		InMsg   Maybe[Ref[Message]]
+		OutMsgs HashmapE[Uint15, Ref[Message]]
 	}
-	if err = tlb.Unmarshal(c1, &msgs); err != nil {
+	if err = Unmarshal(c1, &msgs); err != nil {
 		return err
 	}
 	tx.Msgs = msgs
-	if err = tlb.Unmarshal(c, &tx.TotalFees); err != nil {
+	if err = Unmarshal(c, &tx.TotalFees); err != nil {
 		return err
 	}
 	c2, err := c.NextRef()
 	if err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c2, &tx.StateUpdate); err != nil {
+	if err = Unmarshal(c2, &tx.StateUpdate); err != nil {
 		return err
 	}
 	c3, err := c.NextRef()
 	if err != nil {
 		return err
 	}
-	if err = tlb.Unmarshal(c3, &tx.Description); err != nil {
+	if err = Unmarshal(c3, &tx.Description); err != nil {
 		return err
 	}
 	return nil
@@ -155,15 +151,15 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
 //	aborted:Bool destroyed:Bool
 //	= TransactionDescr;
 type TransactionDescr struct {
-	tlb.SumType
+	SumType
 	TransOrd struct {
 		CreditFirst bool
-		StoragePh   tlb.Maybe[TrStoragePhase]
-		CreditPh    tlb.Maybe[TrCreditPhase]
+		StoragePh   Maybe[TrStoragePhase]
+		CreditPh    Maybe[TrCreditPhase]
 		ComputePh   TrComputePhase
-		Action      tlb.Maybe[tlb.Ref[TrActionPhase]]
+		Action      Maybe[Ref[TrActionPhase]]
 		Aborted     bool
-		Bounce      tlb.Maybe[TrBouncePhase]
+		Bounce      Maybe[TrBouncePhase]
 		Destroyed   bool
 	} `tlbSumType:"trans_ord$0000"`
 	TransStorage struct {
@@ -173,21 +169,21 @@ type TransactionDescr struct {
 		IsTock    bool
 		StoragePh TrStoragePhase
 		ComputePh TrComputePhase
-		Action    tlb.Maybe[tlb.Ref[TrActionPhase]]
+		Action    Maybe[Ref[TrActionPhase]]
 		Aborted   bool
 		Destroyed bool
 	} `tlbSumType:"trans_tick_tock$001"`
 	TransSplitPrepare struct {
 		SplitInfo SplitMergeInfo
-		StoragePh tlb.Maybe[TrStoragePhase]
+		StoragePh Maybe[TrStoragePhase]
 		ComputePh TrComputePhase
-		Action    tlb.Maybe[tlb.Ref[TrActionPhase]]
+		Action    Maybe[Ref[TrActionPhase]]
 		Aborted   bool
 		Destroyed bool
 	} `tlbSumType:"trans_split_prepare$0100"`
 	TransSplitInstall struct {
 		SplitInfo          SplitMergeInfo
-		PrepareTransaction tlb.Any `tlb:"^"`
+		PrepareTransaction Any `tlb:"^"`
 		Installed          bool
 	} `tlbSumType:"trans_split_install$0101"`
 	TransMergePrepare struct {
@@ -197,11 +193,11 @@ type TransactionDescr struct {
 	} `tlbSumType:"trans_merge_prepare$0110"`
 	TransMergeInstall struct {
 		SplitInfo          SplitMergeInfo
-		PrepareTransaction tlb.Any `tlb:"^"` //Transaction]
-		StoragePh          tlb.Maybe[TrStoragePhase]
-		CreditPh           tlb.Maybe[TrCreditPhase]
+		PrepareTransaction Any `tlb:"^"` //Transaction]
+		StoragePh          Maybe[TrStoragePhase]
+		CreditPh           Maybe[TrCreditPhase]
 		ComputePh          TrComputePhase
-		Action             tlb.Maybe[tlb.Ref[TrActionPhase]]
+		Action             Maybe[Ref[TrActionPhase]]
 		Aborted            bool
 		Destroyed          bool
 	} `tlbSumType:"trans_merge_install$0111"`
@@ -212,8 +208,8 @@ type TransactionDescr struct {
 //	acc_split_depth:(## 6) this_addr:bits256 sibling_addr:bits256
 //	= SplitMergeInfo;
 type SplitMergeInfo struct {
-	CurSHardPfxLen tlb.Uint6
-	AccSplitDepth  tlb.Uint6
+	CurSHardPfxLen Uint6
+	AccSplitDepth  Uint6
 	ThisAddr       Bits256
 	SiblingAddr    Bits256
 }
@@ -225,7 +221,7 @@ type SplitMergeInfo struct {
 // = TrStoragePhase;
 type TrStoragePhase struct {
 	StorageFeesCollected Grams
-	StorageFeesDue       tlb.Maybe[Grams]
+	StorageFeesDue       Maybe[Grams]
 	StatusChange         AccStatusChange
 }
 
@@ -279,7 +275,7 @@ func (a *AccStatusChange) UnmarshalTLB(c *boc.Cell, tag string) error {
 // tr_phase_credit$_ due_fees_collected:(Maybe Grams)
 // credit:CurrencyCollection = TrCreditPhase;
 type TrCreditPhase struct {
-	DueFeesCollected tlb.Maybe[Grams]
+	DueFeesCollected Maybe[Grams]
 	Credit           CurrencyCollection
 }
 
@@ -295,7 +291,7 @@ type TrCreditPhase struct {
 // vm_init_state_hash:bits256 vm_final_state_hash:bits256 ]
 // = TrComputePhase;
 type TrComputePhase struct {
-	tlb.SumType
+	SumType
 	TrPhaseComputeSkipped struct {
 		Reason ComputeSkipReason
 	} `tlbSumType:"tr_phase_compute_skipped$0"`
@@ -305,12 +301,12 @@ type TrComputePhase struct {
 		AccountActivated bool
 		GasFees          Grams
 		Vm               struct {
-			GasUsed          tlb.VarUInteger7
-			GasLimit         tlb.VarUInteger7
-			GasCredit        tlb.Maybe[tlb.VarUInteger3]
+			GasUsed          VarUInteger7
+			GasLimit         VarUInteger7
+			GasCredit        Maybe[VarUInteger3]
 			Mode             int8
 			ExitCode         int32
-			ExitArg          tlb.Maybe[int32]
+			ExitArg          Maybe[int32]
 			VmSteps          uint32
 			VmInitStateHash  Bits256
 			VmFinalStateHash Bits256
@@ -371,10 +367,10 @@ type TrActionPhase struct {
 	Valid           bool
 	NoFunds         bool
 	StatusChange    AccStatusChange
-	TotalFwdFees    tlb.Maybe[Grams]
-	TotalActionFees tlb.Maybe[Grams]
+	TotalFwdFees    Maybe[Grams]
+	TotalActionFees Maybe[Grams]
 	ResultCode      int32
-	ResultArg       tlb.Maybe[int32]
+	ResultArg       Maybe[int32]
 	TotActions      uint16
 	SpecActions     uint16
 	SkippedActions  uint16
@@ -387,8 +383,8 @@ type TrActionPhase struct {
 // storage_used_short$_ cells:(VarUInteger 7)
 // bits:(VarUInteger 7) = StorageUsedShort;
 type StorageUsedShort struct {
-	Cells tlb.VarUInteger7
-	Bits  tlb.VarUInteger7
+	Cells VarUInteger7
+	Bits  VarUInteger7
 }
 
 // TrBouncePhase
@@ -398,7 +394,7 @@ type StorageUsedShort struct {
 // tr_phase_bounce_ok$1 msg_size:StorageUsedShort
 // msg_fees:Grams fwd_fees:Grams = TrBouncePhase;
 type TrBouncePhase struct {
-	tlb.SumType
+	SumType
 	TrPhaseBounceNegfunds struct {
 	} `tlbSumType:"tr_phase_bounce_negfunds$00"`
 	TrPhaseBounceNofunds struct {

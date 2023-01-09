@@ -9,7 +9,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 	"runtime"
@@ -55,8 +54,8 @@ type result struct {
 type EmulationResult struct {
 	Success   bool
 	Emulation *struct {
-		ShardAccount tongo.ShardAccount
-		Transaction  tongo.Transaction
+		ShardAccount tlb.ShardAccount
+		Transaction  tlb.Transaction
 	}
 	Logs  string
 	Error *struct {
@@ -143,7 +142,7 @@ func (e *Emulator) SetLibs(libs *boc.Cell) error {
 	return nil
 }
 
-func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Message) (EmulationResult, error) {
+func (e *Emulator) Emulate(shardAccount tlb.ShardAccount, message tlb.Message) (EmulationResult, error) {
 	msg, err := tlbStructToBase64(message)
 	if err != nil {
 		return EmulationResult{}, err
@@ -164,8 +163,8 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 	defer C.free(unsafe.Pointer(r))
 	var (
 		res     result
-		account tongo.ShardAccount
-		tx      tongo.Transaction
+		account tlb.ShardAccount
+		tx      tlb.Transaction
 	)
 	err = json.Unmarshal([]byte(rJSON), &res)
 	if err != nil {
@@ -201,8 +200,8 @@ func (e *Emulator) Emulate(shardAccount tongo.ShardAccount, message tongo.Messag
 		return EmulationResult{}, err
 	}
 	em := struct {
-		ShardAccount tongo.ShardAccount
-		Transaction  tongo.Transaction
+		ShardAccount tlb.ShardAccount
+		Transaction  tlb.Transaction
 	}{
 		ShardAccount: account,
 		Transaction:  tx,

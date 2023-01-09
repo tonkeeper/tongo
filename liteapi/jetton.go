@@ -2,6 +2,7 @@ package liteapi
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/tlb"
@@ -12,15 +13,15 @@ import (
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.AccountID) (tongo.AccountID, error) {
-	slice, err := tongo.TlbStructToVmCellSlice(owner)
+	slice, err := tlb.TlbStructToVmCellSlice(owner)
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
-	val := tongo.VmStackValue{
+	val := tlb.VmStackValue{
 		SumType:    "VmStkSlice",
 		VmStkSlice: slice,
 	}
-	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_wallet_address", tongo.VmStack{val})
+	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_wallet_address", tlb.VmStack{val})
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
@@ -30,12 +31,12 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.Accoun
 	if len(stack) != 1 || stack[0].SumType != "VmStkSlice" {
 		return tongo.AccountID{}, fmt.Errorf("invalid stack")
 	}
-	var res tongo.MsgAddress
+	var res tlb.MsgAddress
 	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&res)
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
-	addr, err := res.AccountID()
+	addr, err := tongo.AccountIDFromTlb(res)
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
@@ -49,7 +50,7 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.Accoun
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (tongo.JettonMetadata, error) {
-	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_jetton_data", tongo.VmStack{})
+	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_jetton_data", tlb.VmStack{})
 	if err != nil {
 		return tongo.JettonMetadata{}, err
 	}
@@ -64,7 +65,7 @@ func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (ton
 		return tongo.JettonMetadata{}, fmt.Errorf("invalid stack")
 	}
 	cell := &stack[3].VmStkCell.Value
-	var content tongo.FullContent
+	var content tlb.FullContent
 	err = tlb.Unmarshal(cell, &content)
 	if err != nil {
 		return tongo.JettonMetadata{}, err
@@ -83,7 +84,7 @@ func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (ton
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 func (c *Client) GetJettonBalance(ctx context.Context, jettonWallet tongo.AccountID) (*big.Int, error) {
-	errCode, stack, err := c.RunSmcMethod(ctx, jettonWallet, "get_wallet_data", tongo.VmStack{})
+	errCode, stack, err := c.RunSmcMethod(ctx, jettonWallet, "get_wallet_data", tlb.VmStack{})
 	if err != nil {
 		return nil, err
 	}
@@ -102,18 +103,19 @@ func (c *Client) GetJettonBalance(ctx context.Context, jettonWallet tongo.Accoun
 	if stack[0].SumType == "VmStkTinyInt" {
 		return big.NewInt(stack[0].VmStkTinyInt), nil
 	}
-	return stack[0].VmStkInt.BigInt(), nil
+	res := big.Int(stack[0].VmStkInt)
+	return &res, nil
 }
 
 // TEP-64 Token Data Standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md
-func convertOnchainData(content tongo.FullContent) (tongo.JettonMetadata, error) {
+func convertOnchainData(content tlb.FullContent) (tongo.JettonMetadata, error) {
 	if content.SumType != "Onchain" {
 		return tongo.JettonMetadata{}, fmt.Errorf("not Onchain content")
 	}
 	var m tongo.JettonMetadata
 	for i, v := range content.Onchain.Data.Values() {
-		keyS := content.Onchain.Data.Keys()[i].Hex()
+		keyS := hex.EncodeToString(content.Onchain.Data.Keys()[i][:])
 		switch keyS {
 		case "70e5d7b6a29b392f85076fe15ca2f2053c56c2338728c4e33c9e8ddb1ee827cc": // sha256(uri)
 			b, err := v.Value.Bytes()

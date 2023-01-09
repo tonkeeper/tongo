@@ -7,15 +7,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
+	"github.com/startfellows/tongo/tlb"
 	"strings"
-
-	"github.com/startfellows/tongo/boc"
 )
 
-type Bits256 [32]byte
-
-var ErrEntityNotFound = errors.New("entity not found")
+type Bits256 tlb.Bits256
 
 func (h Bits256) Base64() string {
 	return base64.StdEncoding.EncodeToString(h[:])
@@ -121,39 +117,4 @@ func (h Bits256) Value() (driver.Value, error) {
 
 func (h Bits256) MarshalJSON() ([]byte, error) {
 	return json.Marshal(fmt.Sprintf("%x", h))
-}
-
-func (h Bits256) MarshalTLB(c *boc.Cell, tag string) error {
-	err := c.WriteBytes(h[:])
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (h *Bits256) UnmarshalTLB(c *boc.Cell, tag string) error {
-	b, err := c.ReadBytes(32)
-	if err != nil {
-		return err
-	}
-	copy(h[:], b[:])
-	return nil
-}
-
-func (h Bits256) MarshalTL() ([]byte, error) {
-	return h[:], nil
-}
-
-func (h *Bits256) UnmarshalTL(r io.Reader) error {
-	var b [32]byte
-	_, err := io.ReadFull(r, b[:])
-	if err != nil {
-		return err
-	}
-	*h = b
-	return nil
-}
-
-func (u Bits256) FixedSize() int {
-	return 256
 }

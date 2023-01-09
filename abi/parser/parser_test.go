@@ -1,4 +1,4 @@
-package abi
+package parser
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ func TestParseMethod(t *testing.T) {
 }
 
 func TestParseInterface(t *testing.T) {
-	b, err := os.ReadFile("known.xml")
+	b, err := os.ReadFile("../known.xml")
 	if err != nil {
 		t.Fatal(err)
 	}

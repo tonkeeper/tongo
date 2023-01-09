@@ -1,16 +1,14 @@
-package tongo
+package tlb
 
 import (
 	"fmt"
-
 	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
 
 // MerkleProof
 // !merkle_proof#03 {X:Type} virtual_hash:bits256 depth:uint16 virtual_root:^X = MERKLE_PROOF X;
 type MerkleProof[T any] struct {
-	Magic       tlb.Magic `tlb:"!merkle_proof#03"`
+	Magic       Magic `tlb:"!merkle_proof#03"`
 	VirtualHash Bits256
 	Depth       uint16
 	VirtualRoot T `tlb:"^"`
@@ -33,7 +31,7 @@ type MerkleProof[T any] struct {
 // custom:(Maybe ^McStateExtra)
 // = ShardStateUnsplit;
 type ShardStateUnsplit struct {
-	Magic             tlb.Magic `tlb:"shard_state#9023afe2"`
+	Magic             Magic `tlb:"shard_state#9023afe2"`
 	ShardStateUnsplit ShardStateUnsplitData
 }
 
@@ -47,16 +45,16 @@ type ShardStateUnsplitData struct {
 	MinRefMcSeqno   uint32
 	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
 	BeforeSplit     bool
-	Accounts        tlb.HashmapAugE[Bits256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
-	Other           ShardStateUnsplitOther                                   `tlb:"^"`
-	Custom          tlb.Maybe[tlb.Ref[McStateExtra]]
+	Accounts        HashmapAugE[Bits256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
+	Other           ShardStateUnsplitOther                               `tlb:"^"`
+	Custom          Maybe[Ref[McStateExtra]]
 }
 
 // ShardState
 // _ ShardStateUnsplit = ShardState;
 // split_state#5f327da5 left:^ShardStateUnsplit right:^ShardStateUnsplit = ShardState;
 type ShardState struct { // only manual decoding
-	tlb.SumType
+	SumType
 	UnsplitState struct {
 		Value ShardStateUnsplit
 	} `tlbSumType:"_"`
@@ -77,7 +75,7 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		err = tlb.Unmarshal(c1, &s.SplitState.Left)
+		err = Unmarshal(c1, &s.SplitState.Left)
 		if err != nil {
 			return err
 		}
@@ -85,14 +83,14 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		err = tlb.Unmarshal(c1, &s.SplitState.Right)
+		err = Unmarshal(c1, &s.SplitState.Right)
 		if err != nil {
 			return err
 		}
 		break
 	case 0x9023afe2:
 		var shardUnsplitData ShardStateUnsplitData
-		err = tlb.Unmarshal(c, &shardUnsplitData)
+		err = Unmarshal(c, &shardUnsplitData)
 		if err != nil {
 			return err
 		}
@@ -108,8 +106,8 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
 // shard_ident$00 shard_pfx_bits:(#<= 60)
 // workchain_id:int32 shard_prefix:uint64 = ShardIdent;
 type ShardIdent struct {
-	Magic        tlb.Magic `tlb:"shardident$00"`
-	ShardPfxBits tlb.Uint6
+	Magic        Magic `tlb:"shardident$00"`
+	ShardPfxBits Uint6
 	WorkchainID  int32
 	ShardPrefix  uint64
 }
@@ -126,11 +124,11 @@ type CryptoSignaturePair struct {
 //
 //	= CryptoSignature;   // 4+(356+516)+516 = 520 bits+ref (1392 bits total)
 type CryptoSignatureSimple struct {
-	Magic                 tlb.Magic `tlb:"ed25519_signature#5"`
+	Magic                 Magic `tlb:"ed25519_signature#5"`
 	CryptoSignatureSimple CryptoSignatureSimpleData
 }
 type CryptoSignature struct {
-	tlb.SumType
+	SumType
 	CryptoSignatureSimple CryptoSignatureSimpleData `tlbSumType:"ed25519_signature#5"`
 	CryptoSignature       struct {
 		SignedCert       *SignedSertificate `tlb:"^"`
@@ -150,7 +148,7 @@ func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, tag string) error {
 	}
 	if sumType == 0x5 {
 		cr.SumType = "CryptoSignatureSimple"
-		err = tlb.Unmarshal(c, &cr.CryptoSignatureSimple)
+		err = Unmarshal(c, &cr.CryptoSignatureSimple)
 		if err != nil {
 			return err
 		}
@@ -160,11 +158,11 @@ func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, tag string) error {
 		if err != nil {
 			return err
 		}
-		err = tlb.Unmarshal(c1, &cr.CryptoSignature.SignedCert)
+		err = Unmarshal(c1, &cr.CryptoSignature.SignedCert)
 		if err != nil {
 			return err
 		}
-		err = tlb.Unmarshal(c, &cr.CryptoSignature.TempKeySignature)
+		err = Unmarshal(c, &cr.CryptoSignature.TempKeySignature)
 		if err != nil {
 			return err
 		}
@@ -185,7 +183,7 @@ type SignedSertificate struct {
 // certificate#4 temp_key:SigPubKey valid_since:uint32
 // valid_until:uint32 = Certificate;  // 356 bits
 type Certificate struct {
-	Magic      tlb.Magic `tlb:"certificate#4"`
+	Magic      Magic `tlb:"certificate#4"`
 	TempKey    SigPubKey
 	ValidSince uint32
 	ValidUntil uint32
@@ -199,7 +197,7 @@ type ShardFeeCreated struct {
 
 // _ (HashmapAugE 96 ShardFeeCreated ShardFeeCreated) = ShardFees;
 type ShardFees struct {
-	Hashmap tlb.HashmapAugE[tlb.Bits96, ShardFeeCreated, ShardFeeCreated]
+	Hashmap HashmapAugE[Bits96, ShardFeeCreated, ShardFeeCreated]
 }
 
 // acc_trans#5 account_addr:bits256
@@ -208,9 +206,9 @@ type ShardFees struct {
 //	  state_update:^(HASH_UPDATE Account)
 //	= AccountBlock;
 type AccountBlock struct {
-	Magic        tlb.Magic `tlb:"acc_trans#5"`
+	Magic        Magic `tlb:"acc_trans#5"`
 	AccountAddr  Bits256
-	Transactions tlb.HashmapAug[tlb.Uint64, tlb.Ref[Transaction], CurrencyCollection]
+	Transactions HashmapAug[Uint64, Ref[Transaction], CurrencyCollection]
 	StateUpdate  HashUpdate `tlb:"^"`
 }
 
@@ -227,7 +225,7 @@ type IhrPendingSince struct {
 
 // depth_balance$_ split_depth:(#<= 30) balance:CurrencyCollection = DepthBalanceInfo;
 type DepthBalanceInfo struct {
-	SplitDepth tlb.Uint5
+	SplitDepth Uint5
 	Balance    CurrencyCollection
 }
 
@@ -241,17 +239,17 @@ type ShardStateUnsplitOther struct {
 	UnderloadHistory   uint64
 	TotalBalance       CurrencyCollection
 	TotalValidatorFees CurrencyCollection
-	Libraries          tlb.HashmapE[Bits256, LibDescr]
-	MasterRef          tlb.Maybe[BlkMasterInfo]
+	Libraries          HashmapE[Bits256, LibDescr]
+	MasterRef          Maybe[BlkMasterInfo]
 }
 
 // shared_lib_descr$00 lib:^Cell publishers:(Hashmap 256 True)
 //
 //	= LibDescr;
 type LibDescr struct {
-	Magic      tlb.Magic `tlb:"shared_lib_descr$00"`
-	Lib        boc.Cell  `tlb:"^"`
-	Publishers tlb.Hashmap[Bits256, bool]
+	Magic      Magic    `tlb:"shared_lib_descr$00"`
+	Lib        boc.Cell `tlb:"^"`
+	Publishers Hashmap[Bits256, bool]
 }
 
 // McStateExtra
@@ -267,8 +265,8 @@ type LibDescr struct {
 // global_balance:CurrencyCollection
 // = McStateExtra;
 type McStateExtra struct {
-	Magic         tlb.Magic `tlb:"masterchain_state_extra#cc26"`
-	ShardHashes   tlb.HashmapE[tlb.Uint32, tlb.Ref[ShardInfoBinTree]]
+	Magic         Magic `tlb:"masterchain_state_extra#cc26"`
+	ShardHashes   HashmapE[Uint32, Ref[ShardInfoBinTree]]
 	Config        ConfigParams
 	Other         McStateExtraOther `tlb:"^"`
 	GlobalBalance CurrencyCollection
@@ -279,7 +277,7 @@ type McStateExtra struct {
 // = ConfigParams;
 type ConfigParams struct {
 	ConfigAddr Bits256
-	Config     tlb.Hashmap[tlb.Uint32, tlb.Ref[boc.Cell]] `tlb:"^"`
+	Config     Hashmap[Uint32, Ref[boc.Cell]] `tlb:"^"`
 }
 
 // ^[ flags:(## 16) { flags <= 1 }
@@ -291,9 +289,9 @@ type ConfigParams struct {
 type McStateExtraOther struct {
 	Flags            uint16
 	ValidatorInfo    ValidatorInfo
-	PrevBlocks       tlb.HashmapAugE[tlb.Uint32, KeyExtBlkRef, KeyMaxLt]
+	PrevBlocks       HashmapAugE[Uint32, KeyExtBlkRef, KeyMaxLt]
 	AfterKeyBlock    bool
-	LastKeyBlock     tlb.Maybe[ExtBlkRef]
+	LastKeyBlock     Maybe[ExtBlkRef]
 	BlockCreateStats BlockCreateStats
 }
 
@@ -303,24 +301,24 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
 		return err
 	}
 	m.Flags = uint16(flags)
-	err = tlb.Unmarshal(c, &m.ValidatorInfo)
+	err = Unmarshal(c, &m.ValidatorInfo)
 	if err != nil {
 		return err
 	}
-	err = tlb.Unmarshal(c, &m.PrevBlocks)
+	err = Unmarshal(c, &m.PrevBlocks)
 	if err != nil {
 		return err
 	}
-	err = tlb.Unmarshal(c, &m.AfterKeyBlock)
+	err = Unmarshal(c, &m.AfterKeyBlock)
 	if err != nil {
 		return err
 	}
-	err = tlb.Unmarshal(c, &m.LastKeyBlock)
+	err = Unmarshal(c, &m.LastKeyBlock)
 	if err != nil {
 		return err
 	}
 	if m.Flags == 1 {
-		err = tlb.Unmarshal(c, &m.BlockCreateStats)
+		err = Unmarshal(c, &m.BlockCreateStats)
 		if err != nil {
 			return err
 		}
@@ -344,18 +342,18 @@ type KeyExtBlkRef struct {
 // block_create_stats#17 counters:(HashmapE 256 CreatorStats) = BlockCreateStats;
 // block_create_stats_ext#34 counters:(HashmapAugE 256 CreatorStats uint32) = BlockCreateStats;
 type BlockCreateStats struct {
-	tlb.SumType
+	SumType
 	BlockCreateStats struct {
-		Counters tlb.HashmapE[Bits256, CreatorStats]
+		Counters HashmapE[Bits256, CreatorStats]
 	} `tlbSumType:"block_create_stats#17"`
 	BlockCreateStatsExt struct {
-		Counters tlb.HashmapAugE[Bits256, CreatorStats, uint32]
+		Counters HashmapAugE[Bits256, CreatorStats, uint32]
 	} `tlbSumType:"block_create_stats_ext#34"`
 }
 
 // creator_info#4 mc_blocks:Counters shard_blocks:Counters = CreatorStats;
 type CreatorStats struct {
-	Magic       tlb.Magic `tlb:"creator_info#4"`
+	Magic       Magic `tlb:"creator_info#4"`
 	McBlocks    Counters
 	ShardBlocks Counters
 }

@@ -1,12 +1,11 @@
 package tongo
 
 import (
+	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
 	"os"
 	"reflect"
 	"testing"
-
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
 
 func TestBlockInfo_GetParents(t *testing.T) {
@@ -49,11 +48,11 @@ func TestBlockInfo_GetParents(t *testing.T) {
 			if err != nil {
 				t.Errorf("DeserializeBoc() failed: %v", err)
 			}
-			var data Block
+			var data tlb.Block
 			if err = tlb.Unmarshal(cell[0], &data); err != nil {
 				t.Errorf("Unmarshal() failed: %v", err)
 			}
-			got, err := data.Info.GetParents()
+			got, err := GetParents(data.Info)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetParents() error = %v, wantErr %v", err, tt.wantErr)
 				return

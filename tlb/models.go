@@ -1,17 +1,13 @@
-package tongo
+package tlb
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
 
 	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
-
-var BlockchainInterfaceIsNil = errors.New("blockchain interface is nil")
 
 // Grams
 // nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -20,15 +16,15 @@ type Grams uint64 // total value fit to uint64
 const OneTON Grams = 1_000_000_000
 
 func (g Grams) MarshalTLB(c *boc.Cell, tag string) error {
-	var amount tlb.VarUInteger16
-	amount = tlb.VarUInteger16(*big.NewInt(int64(g)))
-	err := tlb.Marshal(c, amount)
+	var amount VarUInteger16
+	amount = VarUInteger16(*big.NewInt(int64(g)))
+	err := Marshal(c, amount)
 	return err
 }
 
 func (g *Grams) UnmarshalTLB(c *boc.Cell, tag string) error {
-	var amount tlb.VarUInteger16
-	err := tlb.Unmarshal(c, &amount)
+	var amount VarUInteger16
+	err := Unmarshal(c, &amount)
 	if err != nil {
 		return err
 	}
@@ -65,14 +61,14 @@ type CurrencyCollection struct {
 // extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32))
 // = ExtraCurrencyCollection;
 type ExtraCurrencyCollection struct {
-	Dict tlb.HashmapE[tlb.Uint32, tlb.VarUInteger32]
+	Dict HashmapE[Uint32, VarUInteger32]
 }
 
 // HashUpdate
 // update_hashes#72 {X:Type} old_hash:bits256 new_hash:bits256
 // = HASH_UPDATE X;
 type HashUpdate struct {
-	Magic   tlb.Magic `tlb:"update_hashes#72"`
+	Magic   Magic `tlb:"update_hashes#72"`
 	OldHash Bits256
 	NewHash Bits256
 }
@@ -94,7 +90,7 @@ func (s SnakeData) MarshalTLB(c *boc.Cell, tag string) error {
 			return err
 		}
 		ref := boc.NewCell()
-		err = tlb.Marshal(ref, SnakeData(bs.ReadRemainingBits()))
+		err = Marshal(ref, SnakeData(bs.ReadRemainingBits()))
 		if err != nil {
 			return err
 		}
@@ -112,7 +108,7 @@ func (s *SnakeData) UnmarshalTLB(c *boc.Cell, tag string) error {
 			return err
 		}
 		var sn SnakeData
-		err = tlb.Unmarshal(cell, &sn)
+		err = Unmarshal(cell, &sn)
 		if err != nil {
 			return err
 		}
@@ -131,12 +127,12 @@ func (t Text) MarshalTLB(c *boc.Cell, tag string) error {
 	if err != nil {
 		return err
 	}
-	return tlb.Marshal(c, SnakeData(bs))
+	return Marshal(c, SnakeData(bs))
 }
 
 func (t *Text) UnmarshalTLB(c *boc.Cell, tag string) error {
 	var sn SnakeData
-	err := tlb.Unmarshal(c, &sn)
+	err := Unmarshal(c, &sn)
 	if err != nil {
 		return err
 	}
@@ -157,9 +153,9 @@ func (t *Text) UnmarshalTLB(c *boc.Cell, tag string) error {
 // offchain#01 uri:Text = FullContent;
 // text#_ {n:#} data:(SnakeData ~n) = Text;
 type FullContent struct {
-	tlb.SumType
+	SumType
 	Onchain struct {
-		Data tlb.HashmapE[Bits256, tlb.Ref[ContentData]]
+		Data HashmapE[Bits256, Ref[ContentData]]
 	} `tlbSumType:"onchain#00"`
 	Offchain struct {
 		Uri SnakeData // Text
@@ -170,7 +166,7 @@ type FullContent struct {
 // snake#00 data:(SnakeData ~n) = ContentData;
 // chunks#01 data:ChunkedData = ContentData;
 type ContentData struct {
-	tlb.SumType
+	SumType
 	Snake struct {
 		Data SnakeData
 	} `tlbSumType:"snake#00"`
@@ -206,13 +202,13 @@ func (d ChunkedData) MarshalTLB(c *boc.Cell, tag string) error {
 
 func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
 	type chunkedData struct {
-		Data tlb.HashmapE[tlb.Uint32, tlb.Ref[SnakeData]]
+		Data HashmapE[Uint32, Ref[SnakeData]]
 	}
 	var (
 		cd chunkedData
 	)
 	b := boc.NewBitString(boc.CellBits)
-	err := tlb.Unmarshal(c, &cd)
+	err := Unmarshal(c, &cd)
 	if err != nil {
 		return err
 	}
@@ -225,7 +221,7 @@ func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
 }
 
 type ShardDesc struct {
-	tlb.SumType
+	SumType
 	Old struct {
 		SeqNo              uint32
 		RegMcSeqno         uint32
@@ -238,7 +234,7 @@ type ShardDesc struct {
 		WantSplit          bool
 		WantMerge          bool
 		NXCCUpdated        bool
-		Flags              tlb.Uint3
+		Flags              Uint3
 		NextCatchainSeqNo  uint32
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
@@ -256,7 +252,7 @@ type ShardDesc struct {
 		WantSplit          bool
 		WantMerge          bool
 		NXCCUpdated        bool
-		Flags              tlb.Uint3
+		Flags              Uint3
 		NextCatchainSeqNo  uint32
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
@@ -264,44 +260,10 @@ type ShardDesc struct {
 	} `tlbSumType:"new#a"`
 }
 
-func (s ShardDesc) ToBlockId(workchain int32) BlockIDExt {
-	if s.SumType == "Old" {
-		return BlockIDExt{
-			BlockID: BlockID{
-				Workchain: workchain,
-				Shard:     uint64(s.Old.NextValidatorShard),
-				Seqno:     s.Old.SeqNo,
-			},
-			RootHash: s.Old.RootHash,
-			FileHash: s.Old.FileHash,
-		}
-	} else {
-		return BlockIDExt{
-			BlockID: BlockID{
-				Workchain: workchain,
-				Shard:     uint64(s.New.NextValidatorShard),
-				Seqno:     s.New.SeqNo,
-			},
-			RootHash: s.New.RootHash,
-			FileHash: s.New.FileHash,
-		}
-	}
-}
-
 type ShardInfoBinTree struct {
-	BinTree tlb.BinTree[ShardDesc]
+	BinTree BinTree[ShardDesc]
 }
 
 type AllShardsInfo struct {
-	ShardHashes tlb.HashmapE[tlb.Uint32, tlb.Ref[ShardInfoBinTree]]
-}
-
-type JettonMetadata struct {
-	Uri         string `json:"uri,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Image       string `json:"image,omitempty"`
-	ImageData   []byte `json:"image_data,omitempty"`
-	Symbol      string `json:"symbol,omitempty"`
-	Decimals    string `json:"decimals,omitempty"`
+	ShardHashes HashmapE[Uint32, Ref[ShardInfoBinTree]]
 }

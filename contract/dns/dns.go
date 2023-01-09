@@ -48,7 +48,7 @@ func NewDNS(root *tongo.AccountID, blockchain blockchain) (*DNS, error) {
 	}, nil
 }
 
-func (d *DNS) Resolve(ctx context.Context, domain string) ([]tongo.DNSRecord, error) {
+func (d *DNS) Resolve(ctx context.Context, domain string) ([]tlb.DNSRecord, error) {
 	if d.blockchain == nil {
 		return nil, tongo.BlockchainInterfaceIsNil
 	}
@@ -63,7 +63,7 @@ func (d *DNS) Resolve(ctx context.Context, domain string) ([]tongo.DNSRecord, er
 	return r, err
 }
 
-func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom string) ([]tongo.DNSRecord, error) {
+func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom string) ([]tlb.DNSRecord, error) {
 	n := len(dom)
 	i, res, err := d.blockchain.DnsResolve(ctx, resolver, dom, big.NewInt(0))
 	if err != nil {
@@ -87,7 +87,14 @@ func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom string)
 	if rec[0].SumType != "DNSNextResolver" {
 		return nil, fmt.Errorf("must be only next resolver record for partial resolved")
 	}
-	return d.resolve(ctx, rec[0].DNSNextResolver, string([]byte(dom)[i/8:]))
+	account, err := tongo.AccountIDFromTlb(rec[0].DNSNextResolver)
+	if err != nil {
+		return nil, err
+	}
+	if account == nil {
+		return nil, fmt.Errorf("nil account id")
+	}
+	return d.resolve(ctx, *account, string([]byte(dom)[i/8:]))
 }
 
 func convertDomain(domain string) string {
@@ -98,14 +105,14 @@ func convertDomain(domain string) string {
 	return strings.Join(domains, "\x00") + "\x00"
 }
 
-func parseDnsRecords(c *boc.Cell) ([]tongo.DNSRecord, error) {
-	var record tongo.DNSRecord
+func parseDnsRecords(c *boc.Cell) ([]tlb.DNSRecord, error) {
+	var record tlb.DNSRecord
 	err := tlb.Unmarshal(c, &record)
 	if err == nil && record.SumType == "DNSNextResolver" {
-		return []tongo.DNSRecord{record}, nil
+		return []tlb.DNSRecord{record}, nil
 	}
 	c.ResetCounters()
-	var records tongo.DNSRecordSet
+	var records tlb.DNSRecordSet
 	c2 := boc.NewCell()
 	_ = c2.WriteBit(true)
 	_ = c2.AddRef(c)
@@ -113,7 +120,7 @@ func parseDnsRecords(c *boc.Cell) ([]tongo.DNSRecord, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res []tongo.DNSRecord
+	var res []tlb.DNSRecord
 	for _, r := range records.Records.Values() {
 		res = append(res, r.Value)
 	}

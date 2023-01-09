@@ -1,4 +1,4 @@
-package tongo
+package tlb
 
 import (
 	"fmt"
@@ -7,7 +7,6 @@ import (
 
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tl"
-	"github.com/startfellows/tongo/tlb"
 )
 
 // VmStack
@@ -93,7 +92,7 @@ func vmTupleInner(n uint16, c *boc.Cell) (*VmTuple, error) {
 			return nil, err
 		}
 		vmStackValue := VmStackValue{}
-		err = tlb.Unmarshal(c1, &vmStackValue)
+		err = Unmarshal(c1, &vmStackValue)
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +110,7 @@ func vmTupleRefInner(n uint16, c *boc.Cell) (*VmTupleRef, error) {
 			return nil, err
 		}
 		vmStackValue := VmStackValue{}
-		tlb.Unmarshal(c1, &vmStackValue)
+		Unmarshal(c1, &vmStackValue)
 		vmTupleRef.Entry = &vmStackValue
 		return &vmTupleRef, nil
 	} else if n > 1 {
@@ -155,16 +154,16 @@ type VmCellSlice struct {
 // vm_stk_cont#06 cont:VmCont = VmStackValue;
 // vm_stk_tuple#07 len:(## 16) data:(VmTuple len) = VmStackValue;
 type VmStackValue struct {
-	tlb.SumType
-	VmStkNull    struct{}          `tlbSumType:"vm_stk_null#00"`
-	VmStkTinyInt int64             `tlbSumType:"vm_stk_tinyint#01"`
-	VmStkInt     Int257            `tlbSumType:"vm_stk_int$000000100000000"` // vm_stk_int#0201_
-	VmStkNan     struct{}          `tlbSumType:"vm_stk_nan#02ff"`
-	VmStkCell    tlb.Ref[boc.Cell] `tlbSumType:"vm_stk_cell#03"`
-	VmStkSlice   VmCellSlice       `tlbSumType:"vm_stk_slice#04"`
-	VmStkBuilder tlb.Ref[boc.Cell] `tlbSumType:"vm_stk_builder#05"`
-	VmStkCont    VmCont            `tlbSumType:"vm_stk_cont#06"`
-	VmStkTuple   VmStkTuple        `tlbSumType:"vm_stk_tuple#07"`
+	SumType
+	VmStkNull    struct{}      `tlbSumType:"vm_stk_null#00"`
+	VmStkTinyInt int64         `tlbSumType:"vm_stk_tinyint#01"`
+	VmStkInt     Int257        `tlbSumType:"vm_stk_int$000000100000000"` // vm_stk_int#0201_
+	VmStkNan     struct{}      `tlbSumType:"vm_stk_nan#02ff"`
+	VmStkCell    Ref[boc.Cell] `tlbSumType:"vm_stk_cell#03"`
+	VmStkSlice   VmCellSlice   `tlbSumType:"vm_stk_slice#04"`
+	VmStkBuilder Ref[boc.Cell] `tlbSumType:"vm_stk_builder#05"`
+	VmStkCont    VmCont        `tlbSumType:"vm_stk_cont#06"`
+	VmStkTuple   VmStkTuple    `tlbSumType:"vm_stk_tuple#07"`
 }
 
 func (s VmStack) MarshalTLB(c *boc.Cell, tag string) error {
@@ -210,7 +209,7 @@ func getStackListItems(c *boc.Cell, depth uint64) ([]VmStackValue, error) {
 		return nil, err
 	}
 	res = append(res, rest...)
-	err = tlb.Unmarshal(c, &tos)
+	err = Unmarshal(c, &tos)
 	if err != nil {
 		return nil, err
 	}
@@ -231,13 +230,13 @@ func putStackListItems(c *boc.Cell, list []VmStackValue) error {
 	if err != nil {
 		return err
 	}
-	err = tlb.Marshal(c, list[0])
+	err = Marshal(c, list[0])
 	return err
 }
 
 func (s VmStack) MarshalTL() ([]byte, error) {
 	cell := boc.NewCell()
-	err := tlb.Marshal(cell, s)
+	err := Marshal(cell, s)
 	if err != nil {
 		return nil, err
 	}
@@ -261,7 +260,7 @@ func (s *VmStack) UnmarshalTL(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	return tlb.Unmarshal(cell[0], s)
+	return Unmarshal(cell[0], s)
 }
 
 func (s *VmStack) Put(val VmStackValue) {
@@ -382,7 +381,7 @@ func (ct *VmCont) UnmarshalTLB(c *boc.Cell, tag string) error {
 
 func TlbStructToVmCellSlice(s any) (VmCellSlice, error) {
 	cell := boc.NewCell()
-	err := tlb.Marshal(cell, s)
+	err := Marshal(cell, s)
 	if err != nil {
 		return VmCellSlice{}, err
 	}
@@ -407,60 +406,11 @@ func CellToVmCellSlice(cell *boc.Cell) (VmCellSlice, error) {
 
 func (s VmCellSlice) UnmarshalToTlbStruct(res any) error {
 	cell := s.Cell()
-	err := tlb.Unmarshal(cell, res)
+	err := Unmarshal(cell, res)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-type Int257 struct {
-	data boc.BitString
-}
-
-func (i Int257) MarshalTLB(c *boc.Cell, tag string) error {
-	return c.WriteBitString(i.data)
-}
-
-func (i *Int257) UnmarshalTLB(c *boc.Cell, tag string) error {
-	data, err := c.ReadBits(257)
-	if err != nil {
-		return err
-	}
-	i.data = data
-	return nil
-}
-
-func (i Int257) BigInt() *big.Int {
-	bs := i.data
-	sign, _ := bs.ReadBit()
-	bytes, _ := bs.ReadBytes(32)
-	res := big.NewInt(0)
-	res.SetBytes(bytes)
-	if sign {
-		res.Mul(res, big.NewInt(-1))
-	}
-	return res
-}
-
-func Int257FromBigInt(i *big.Int) (Int257, error) {
-	if i == nil {
-		return Int257{}, fmt.Errorf("nil big int")
-	}
-	bytes := i.Bytes()
-	if len(bytes) > 32 {
-		return Int257{}, fmt.Errorf("big int not fit in int257")
-	}
-	bytes = append(make([]byte, 32-len(bytes)), bytes...) // append zero bytes
-	sign := i.Sign()
-	bs := boc.NewBitString(257)
-	if sign == -1 {
-		_ = bs.WriteBit(true)
-	} else {
-		_ = bs.WriteBit(false)
-	}
-	_ = bs.WriteBytes(bytes)
-	return Int257{data: bs}, nil
 }
 
 // Deprecated: IsInt is deprecated.
@@ -510,7 +460,7 @@ func (v VmStackValue) Int() big.Int {
 	case "VmStkTinyInt":
 		return *big.NewInt(v.VmStkTinyInt)
 	case "VmStkInt":
-		return *v.VmStkInt.BigInt()
+		return big.Int(v.VmStkInt)
 	default:
 		panic("stack value is not int")
 	}
@@ -522,7 +472,8 @@ func (v VmStackValue) Int64() int64 {
 	case "VmStkTinyInt":
 		return v.VmStkTinyInt
 	case "VmStkInt":
-		return v.VmStkInt.BigInt().Int64()
+		x := big.Int(v.VmStkInt)
+		return x.Int64()
 	default:
 		panic("stack value is not int")
 	}
@@ -534,7 +485,8 @@ func (v VmStackValue) Uint64() uint64 {
 	case "VmStkTinyInt":
 		return uint64(v.VmStkTinyInt)
 	case "VmStkInt":
-		return v.VmStkInt.BigInt().Uint64()
+		x := big.Int(v.VmStkInt)
+		return x.Uint64()
 	default:
 		panic("stack value is not int")
 	}

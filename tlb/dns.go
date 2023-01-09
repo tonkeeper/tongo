@@ -1,15 +1,14 @@
-package tongo
+package tlb
 
 import (
 	"fmt"
 	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 )
 
 // DNSRecordSet
 // _ (HashmapE 256 DNSRecord) = DNS_RecordSet;
 type DNSRecordSet struct {
-	Records tlb.HashmapE[Bits256, tlb.Ref[DNSRecord]]
+	Records HashmapE[Bits256, Ref[DNSRecord]]
 }
 
 // DNSRecord
@@ -21,15 +20,15 @@ type DNSRecordSet struct {
 // cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
 // dns_storage_address#7473 bag_id:bits256 = DNSRecord;
 type DNSRecord struct {
-	tlb.SumType
-	DNSText         DNSText   `tlbSumType:"dns_text#1eda"`
-	DNSNextResolver AccountID `tlbSumType:"dns_next_resolver#ba93"`
+	SumType
+	DNSText         DNSText    `tlbSumType:"dns_text#1eda"`
+	DNSNextResolver MsgAddress `tlbSumType:"dns_next_resolver#ba93"`
 	DNSAdnlAddress  struct {
 		Address   [32]byte
 		ProtoList []string
 	} `tlbSumType:"dns_adnl_address#ad01"`
 	DNSSmcAddress struct {
-		Address       AccountID
+		Address       MsgAddress
 		SmcCapability SmcCapabilities
 	} `tlbSumType:"dns_smc_address#9fd3"`
 	DNSStorageAddress Bits256   `tlbSumType:"dns_storage_address#7473"`
@@ -44,7 +43,7 @@ func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
 	switch t {
 	case 0x1eda: // dns_text#1eda _:Text = DNSRecord;
 		var text DNSText
-		err := tlb.Unmarshal(c, &text)
+		err := Unmarshal(c, &text)
 		if err != nil {
 			return err
 		}
@@ -53,19 +52,12 @@ func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
 		return nil
 	case 0xba93: // dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
 		var msgAddr MsgAddress
-		err := tlb.Unmarshal(c, &msgAddr)
+		err := Unmarshal(c, &msgAddr)
 		if err != nil {
 			return err
-		}
-		addr, err := msgAddr.AccountID()
-		if err != nil {
-			return err
-		}
-		if addr == nil {
-			return fmt.Errorf("nil next resolver address")
 		}
 		r.SumType = "DNSNextResolver"
-		r.DNSNextResolver = *addr
+		r.DNSNextResolver = msgAddr
 		return nil
 	case 0xad01:
 		res, err := readDnsAdnlAddress(c)
@@ -204,17 +196,10 @@ type SmcCapabilities struct {
 }
 
 func readDNSSmcAddress(c *boc.Cell) (DNSRecord, error) {
-	var a MsgAddress
-	err := tlb.Unmarshal(c, &a)
+	var addr MsgAddress
+	err := Unmarshal(c, &addr)
 	if err != nil {
 		return DNSRecord{}, err
-	}
-	addr, err := a.AccountID()
-	if err != nil {
-		return DNSRecord{}, err
-	}
-	if addr == nil {
-		return DNSRecord{}, fmt.Errorf("nil smc_addr")
 	}
 	flags, err := c.ReadUint(8)
 	if err != nil {
@@ -226,7 +211,7 @@ func readDNSSmcAddress(c *boc.Cell) (DNSRecord, error) {
 
 	var capabilities SmcCapabilities
 	var capability struct {
-		tlb.SumType
+		SumType
 		CapMethodSeqno  struct{} `tlbSumType:"cap_method_seqno#5371"`
 		CapMethodPubkey struct{} `tlbSumType:"cap_method_pubkey#71f4"`
 		CapIsWallet     struct{} `tlbSumType:"cap_is_wallet#2177"`
@@ -239,7 +224,7 @@ func readDNSSmcAddress(c *boc.Cell) (DNSRecord, error) {
 			return DNSRecord{}, err
 		}
 		for next {
-			err = tlb.Unmarshal(c, &capability)
+			err = Unmarshal(c, &capability)
 			if err != nil {
 				return DNSRecord{}, err
 			}
@@ -261,7 +246,7 @@ func readDNSSmcAddress(c *boc.Cell) (DNSRecord, error) {
 	}
 	var res DNSRecord
 	res.SumType = "DNSSmcAddress"
-	res.DNSSmcAddress.Address = *addr
+	res.DNSSmcAddress.Address = addr
 	res.DNSSmcAddress.SmcCapability = capabilities
 	return res, nil
 }

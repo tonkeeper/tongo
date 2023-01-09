@@ -160,7 +160,7 @@ type result struct {
 	GasUsed        string `json:"gas_used"`
 }
 
-func (e *Emulator) RunGetMethod(ctx context.Context, accountId tongo.AccountID, method string, params tongo.VmStack) (uint32, tongo.VmStack, error) {
+func (e *Emulator) RunGetMethod(ctx context.Context, accountId tongo.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error) {
 
 	address := accountId.ToRaw()
 
@@ -169,34 +169,34 @@ func (e *Emulator) RunGetMethod(ctx context.Context, accountId tongo.AccountID, 
 
 	err = e.setC7(address, uint32(time.Now().Unix()), e.balance, seed, e.config)
 	if err != nil {
-		return 0, tongo.VmStack{}, err
+		return 0, tlb.VmStack{}, err
 	}
 
 	paramsCell := boc.NewCell()
 	err = tlb.Marshal(paramsCell, params)
 	if err != nil {
-		return 0, tongo.VmStack{}, err
+		return 0, tlb.VmStack{}, err
 	}
 	res, err := e.runGetMethod(method, paramsCell)
 	if err != nil {
-		return 0, tongo.VmStack{}, err
+		return 0, tlb.VmStack{}, err
 	}
 	if !res.Success {
-		return 0, tongo.VmStack{}, fmt.Errorf("TVM emulation error: %v", res.Error)
+		return 0, tlb.VmStack{}, fmt.Errorf("TVM emulation error: %v", res.Error)
 	}
 
 	b, err := base64.StdEncoding.DecodeString(res.Stack)
 	if err != nil {
-		return 0, tongo.VmStack{}, err
+		return 0, tlb.VmStack{}, err
 	}
 	c, err := boc.DeserializeBoc(b)
 	if err != nil {
-		return 0, tongo.VmStack{}, err
+		return 0, tlb.VmStack{}, err
 	}
-	var stack tongo.VmStack
+	var stack tlb.VmStack
 	err = tlb.Unmarshal(c[0], &stack)
 	if err != nil {
-		return 0, tongo.VmStack{}, err
+		return 0, tlb.VmStack{}, err
 	}
 	return uint32(res.VmExitCode), stack, nil
 }

@@ -90,7 +90,7 @@ func GenerateWalletAddress(
 	if err != nil {
 		return tongo.AccountID{}, err
 	}
-	var hash tongo.Bits256
+	var hash tlb.Bits256
 	copy(hash[:], h[:])
 	if err != nil {
 		return tongo.AccountID{}, fmt.Errorf("can not calculate state init hash: %v", err)
@@ -103,10 +103,10 @@ func generateStateInit(
 	ver Version,
 	workchain int,
 	subWalletId *int,
-) (tongo.StateInit, error) {
+) (tlb.StateInit, error) {
 	var (
 		err       error
-		publicKey tongo.Bits256
+		publicKey tlb.Bits256
 	)
 	copy(publicKey[:], key[:])
 	dataCell := boc.NewCell()
@@ -133,16 +133,16 @@ func generateStateInit(
 		}
 		err = tlb.Marshal(dataCell, data)
 	default:
-		return tongo.StateInit{}, fmt.Errorf("address generation not implemented for this wallet ver")
+		return tlb.StateInit{}, fmt.Errorf("address generation not implemented for this wallet ver")
 	}
 	if err != nil {
-		return tongo.StateInit{}, fmt.Errorf("wallet data marshaling error: %v", err)
+		return tlb.StateInit{}, fmt.Errorf("wallet data marshaling error: %v", err)
 	}
 
 	codeCell := GetCodeByVer(ver)
 
-	state := tongo.StateInit{
-		Special: tlb.Maybe[tongo.TickTock]{Null: true},
+	state := tlb.StateInit{
+		Special: tlb.Maybe[tlb.TickTock]{Null: true},
 		Code:    tlb.Maybe[tlb.Ref[boc.Cell]]{Null: false, Value: tlb.Ref[boc.Cell]{Value: *codeCell}},
 		Data:    tlb.Maybe[tlb.Ref[boc.Cell]]{Null: false, Value: tlb.Ref[boc.Cell]{Value: *dataCell}},
 		// Library: empty by default
@@ -159,7 +159,7 @@ func (w *Wallet) RawSend(
 	seqno uint32,
 	validUntil time.Time,
 	internalMessages []RawMessage,
-	init *tongo.StateInit,
+	init *tlb.StateInit,
 ) error {
 	if w.blockchain == nil {
 		return tongo.BlockchainInterfaceIsNil
@@ -221,25 +221,25 @@ func (w *Wallet) RawSend(
 	return err
 }
 
-func generateInternalMessage(msg Message) (tongo.Message, error) {
+func generateInternalMessage(msg Message) (tlb.Message, error) {
 	body := boc.NewCell()
 	if msg.Comment != nil && msg.Body != nil {
-		return tongo.Message{}, fmt.Errorf("only body or comment must be presented")
+		return tlb.Message{}, fmt.Errorf("only body or comment must be presented")
 	} else if msg.Comment != nil {
 		err := tlb.Marshal(body, TextComment(*msg.Comment))
 		if err != nil {
-			return tongo.Message{}, err
+			return tlb.Message{}, err
 		}
 	} else if msg.Body != nil {
 		body = msg.Body
 	}
-	info := tongo.CommonMsgInfo{
+	info := tlb.CommonMsgInfo{
 		SumType: "IntMsgInfo",
 	}
 	info.IntMsgInfo.IhrDisabled = true
 	info.IntMsgInfo.Src = tongo.MsgAddressFromAccountID(nil)
 	info.IntMsgInfo.Dest = tongo.MsgAddressFromAccountID(&msg.Address)
-	info.IntMsgInfo.Value.Grams = tongo.Grams(msg.Amount)
+	info.IntMsgInfo.Value.Grams = tlb.Grams(msg.Amount)
 
 	if msg.Bounceable == nil {
 		info.IntMsgInfo.Bounce = true
@@ -247,7 +247,7 @@ func generateInternalMessage(msg Message) (tongo.Message, error) {
 		info.IntMsgInfo.Bounce = *msg.Bounceable
 	}
 
-	intMsg := tongo.Message{
+	intMsg := tlb.Message{
 		Info: info,
 		Body: tlb.EitherRef[tlb.Any]{
 			IsRight: true,
@@ -259,7 +259,7 @@ func generateInternalMessage(msg Message) (tongo.Message, error) {
 		intMsg.Init.Null = true
 	} else {
 		intMsg.Init.Value.IsRight = true
-		var init tongo.StateInit
+		var init tlb.StateInit
 		init.Special.Null = true
 		init.SplitDepth.Null = true
 		if msg.Code != nil {
@@ -277,7 +277,7 @@ func generateInternalMessage(msg Message) (tongo.Message, error) {
 	return intMsg, nil
 }
 
-func (w *Wallet) getInit() (tongo.StateInit, error) {
+func (w *Wallet) getInit() (tlb.StateInit, error) {
 	publicKey := w.key.Public().(ed25519.PublicKey)
 	id := int(w.subWalletId)
 	return generateStateInit(publicKey, w.ver, int(w.address.Workchain), &id)
@@ -307,7 +307,7 @@ func (w *Wallet) getSeqno(ctx context.Context) (uint32, error) {
 // Gets actual seqno and attach init for wallet if it needed
 // The payload is serialized into bytes and sent by the method SendRawMessage
 func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
-	var init *tongo.StateInit
+	var init *tlb.StateInit
 	if w.blockchain == nil {
 		return tongo.BlockchainInterfaceIsNil
 	}
@@ -357,7 +357,7 @@ func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	accInfo, err := state.Account.GetInfo()
+	accInfo, err := tongo.GetAccountInfo(state.Account)
 	if err != nil {
 		return 0, err
 	}
@@ -398,7 +398,7 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 	} else if msg.Payload != nil {
 		payload = msg.Payload
 	}
-	var responseDestination tongo.MsgAddress
+	var responseDestination tlb.MsgAddress
 	if msg.ResponseDestination == nil {
 		responseDestination = tongo.MsgAddressFromAccountID(&owner) // send excess to sender wallet
 	} else {
@@ -408,17 +408,17 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 		Magic               tlb.Magic `tlb:"transfer#0f8a7ea5"`
 		QueryId             uint64
 		Amount              tlb.VarUInteger16
-		Destination         tongo.MsgAddress
-		ResponseDestination tongo.MsgAddress
+		Destination         tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
 		CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
-		ForwardTonAmount    tongo.Grams // (VarUInteger 16)
+		ForwardTonAmount    tlb.Grams // (VarUInteger 16)
 		ForwardPayload      tlb.EitherRef[tlb.Any]
 	}{
 		QueryId:             rand.Uint64(),
 		Amount:              tlb.VarUInteger16(*msg.JettonAmount),
 		Destination:         tongo.MsgAddressFromAccountID(&msg.Destination),
 		ResponseDestination: responseDestination,
-		ForwardTonAmount:    tongo.Grams(msg.ForwardTonAmount),
+		ForwardTonAmount:    tlb.Grams(msg.ForwardTonAmount),
 	}
 	transferMsg.CustomPayload.Null = true
 	transferMsg.ForwardPayload.IsRight = true

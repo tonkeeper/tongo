@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-
 	"github.com/startfellows/tongo"
+
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/tlb"
 )
@@ -23,8 +23,8 @@ func main() {
 	type InternalMsgBody struct {
 		Magic               tlb.Magic `tlb:"transfer#5fcc3d14"`
 		QueryId             uint64
-		NewOwner            tongo.MsgAddress
-		ResponseDestination tongo.MsgAddress
+		NewOwner            tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
 		CustomPayload       tlb.Maybe[tlb.Ref[boc.Cell]]
 		ForwardAmount       tlb.VarUInteger16
 		ForwardPayload      tlb.EitherRef[boc.Cell]
@@ -43,7 +43,7 @@ func main() {
 		panic(err)
 	}
 
-	newOwner, err := res.NewOwner.AccountID() // convert tongo.MsgAddress to basic AccountID type
+	newOwner, err := tongo.AccountIDFromTlb(res.NewOwner) // convert tongo.MsgAddress to basic AccountID type
 	if err != nil {
 		panic(err)
 	}

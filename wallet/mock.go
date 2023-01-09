@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/startfellows/tongo"
+	"github.com/startfellows/tongo/tlb"
 )
 
 // SimpleMockBlockchain
@@ -35,7 +36,7 @@ func (b *SimpleMockBlockchain) SendMessage(ctx context.Context, payload []byte) 
 	return 0, nil
 }
 
-func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tongo.ShardAccount, error) {
+func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {
 	// TODO: fix
-	return tongo.ShardAccount{}, fmt.Errorf("not implemnted")
+	return tlb.ShardAccount{}, fmt.Errorf("not implemnted")
 }

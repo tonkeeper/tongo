@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
 	"math/big"
 )
 
@@ -14,26 +15,26 @@ import (
 // Returns the length (in bits) of the prefix of the internal representation of the domain that has been resolved and Cell with the TON DNS record
 // Returns 0,nil,nil if DNS record is Null
 func (c *Client) DnsResolve(ctx context.Context, address tongo.AccountID, domain string, category *big.Int) (int, *boc.Cell, error) {
-	var params tongo.VmStack
+	var params tlb.VmStack
 	cell := boc.NewCell()
 	err := cell.WriteBytes([]byte(domain))
 	if err != nil {
 		return 0, nil, err
 	}
-	slice, err := tongo.CellToVmCellSlice(cell)
+	slice, err := tlb.CellToVmCellSlice(cell)
 	if err != nil {
 		return 0, nil, err
 	}
-	dom := tongo.VmStackValue{
+	dom := tlb.VmStackValue{
 		SumType:    "VmStkSlice",
 		VmStkSlice: slice,
 	}
 	params.Put(dom)
-	int257, err := tongo.Int257FromBigInt(category)
+	int257 := tlb.Int257(*category)
 	if err != nil {
 		return 0, nil, err
 	}
-	cat := tongo.VmStackValue{
+	cat := tlb.VmStackValue{
 		SumType:  "VmStkInt",
 		VmStkInt: int257,
 	}

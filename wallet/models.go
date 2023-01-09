@@ -48,7 +48,7 @@ var codes = map[Version]string{
 type blockchain interface {
 	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
 	SendMessage(ctx context.Context, payload []byte) (uint32, error)
-	GetAccountState(ctx context.Context, accountID tongo.AccountID) (tongo.ShardAccount, error)
+	GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error)
 }
 
 func GetCodeByVer(ver Version) *boc.Cell {
@@ -62,18 +62,18 @@ func GetCodeByVer(ver Version) *boc.Cell {
 	return c[0]
 }
 
-func GetCodeHashByVer(ver Version) tongo.Bits256 {
+func GetCodeHashByVer(ver Version) tlb.Bits256 {
 	code := GetCodeByVer(ver)
 	h, err := code.Hash()
 	if err != nil {
 		panic("can not calc hash for hardcoded code")
 	}
-	var hash tongo.Bits256
+	var hash tlb.Bits256
 	copy(hash[:], h[:])
 	return hash
 }
 
-func GetVerByCodeHash(hash tongo.Bits256) Version {
+func GetVerByCodeHash(hash tlb.Bits256) Version {
 	// TODO: implement
 	return 0
 }
@@ -100,19 +100,19 @@ func (w *Wallet) GetAddress() tongo.AccountID {
 
 type DataV1V2 struct {
 	Seqno     uint32
-	PublicKey tongo.Bits256
+	PublicKey tlb.Bits256
 }
 
 type DataV3 struct {
 	Seqno       uint32
 	SubWalletId uint32
-	PublicKey   tongo.Bits256
+	PublicKey   tlb.Bits256
 }
 
 type DataV4 struct {
 	Seqno       uint32
 	SubWalletId uint32
-	PublicKey   tongo.Bits256
+	PublicKey   tlb.Bits256
 	PluginDict  tlb.HashmapE[tlb.Bits264, tlb.Any] // TODO: find type and check size
 }
 
@@ -136,7 +136,7 @@ type PayloadV1toV4 []RawMessage
 
 type TonTransfer struct {
 	Recipient tongo.AccountID
-	Amount    tongo.Grams
+	Amount    tlb.Grams
 	Comment   string
 	Bounce    bool
 	Mode      byte
@@ -165,7 +165,7 @@ func (t TextComment) MarshalTLB(c *boc.Cell, tag string) error { // TODO: implem
 	if err != nil {
 		return err
 	}
-	return tlb.Marshal(c, tongo.Text(t))
+	return tlb.Marshal(c, tlb.Text(t))
 }
 
 func (t *TextComment) UnmarshalTLB(c *boc.Cell, tag string) error { // TODO: implement for binary comment
@@ -176,7 +176,7 @@ func (t *TextComment) UnmarshalTLB(c *boc.Cell, tag string) error { // TODO: imp
 	if val != 0 {
 		return fmt.Errorf("not a text comment")
 	}
-	var text tongo.Text
+	var text tlb.Text
 	err = tlb.Unmarshal(c, &text)
 	if err != nil {
 		return err

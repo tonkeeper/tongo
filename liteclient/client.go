@@ -10,6 +10,7 @@ import (
 	mrand "math/rand"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/adnl"
@@ -24,6 +25,10 @@ var (
 	ErrBlockNotApplied = fmt.Errorf("block is not applied")
 )
 
+const (
+	defaultTimeout = 1 * time.Minute
+)
+
 type adnlClient interface {
 	Request(ctx context.Context, q adnl.Query) (adnl.Message, error)
 }
@@ -35,34 +40,68 @@ type liteserverConnection struct {
 }
 
 type Client struct {
+	// timeout configures a timeout of a lite client method.
+	// if such a method makes several calls to a lite server,
+	// the total time is bounded by the timeout.
+	timeout    time.Duration
 	adnlClient []liteserverConnection
 }
 
 func NewClientWithDefaultMainnet() (*Client, error) {
-	options, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+	configurationFile, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
 	if err != nil {
 		return nil, err
 	}
-	return NewClient(*options)
+	return New(WithLiteServers(configurationFile.LiteServers))
 }
+
 func NewClientWithDefaultTestnet() (*Client, error) {
-	options, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+	configurationFile, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
 	if err != nil {
 		return nil, err
 	}
-	return NewClient(*options)
+	return New(WithLiteServers(configurationFile.LiteServers))
 }
 
-// NewClient
-// Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
-func NewClient(options config.Options) (*Client, error) {
-	// TODO: implement multiple server support
+// Options holds parameters to configure a lite client instance.
+type Options struct {
+	LiteServers []config.LiteServer
+	Timeout     time.Duration
+}
 
-	if len(options.LiteServers) == 0 {
+type Option func(o *Options)
+
+func WithLiteServers(servers []config.LiteServer) Option {
+	return func(o *Options) {
+		o.LiteServers = servers
+	}
+}
+
+func WithTimeout(timeout time.Duration) Option {
+	return func(o *Options) {
+		o.Timeout = timeout
+	}
+}
+
+func WithConfigurationFile(file config.GlobalConfigurationFile) Option {
+	return func(o *Options) {
+		o.LiteServers = file.LiteServers
+	}
+}
+
+// New returns a new instance of Client.
+func New(options ...Option) (*Client, error) {
+	opts := &Options{
+		Timeout: defaultTimeout,
+	}
+	for _, o := range options {
+		o(opts)
+	}
+	if len(opts.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
 	client := Client{}
-	for _, ls := range options.LiteServers {
+	for _, ls := range opts.LiteServers {
 		serverPubkey, err := base64.StdEncoding.DecodeString(ls.Key)
 		if err != nil {
 			continue
@@ -79,6 +118,15 @@ func NewClient(options config.Options) (*Client, error) {
 		return &client, nil
 	}
 	return nil, fmt.Errorf("all liteservers are unavailable")
+}
+
+// NewClient
+// Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
+// Deprecated: use New(WithConfigurationFile()) instead.
+func NewClient(configurationFile config.GlobalConfigurationFile) (*Client, error) {
+	// TODO: implement multiple server support
+	return New(WithLiteServers(configurationFile.LiteServers))
+
 }
 
 func (c *Client) getMasterchainServer() adnlClient {
@@ -113,6 +161,8 @@ func (c *Client) getServerByBlockID(block tongo.TonNodeBlockId) (adnlClient, err
 }
 
 func (c *Client) GetAccountState(ctx context.Context, accountId tongo.AccountID) (tongo.AccountInfo, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	a, err := c.getLastRawAccountState(ctx, accountId)
 	if err != nil {
 		return tongo.AccountInfo{}, err
@@ -128,6 +178,8 @@ func (c *Client) GetAccountState(ctx context.Context, accountId tongo.AccountID)
 }
 
 func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountID) (tongo.Account, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	a, err := c.getLastRawAccountState(ctx, accountId)
 	if err != nil {
 		return tongo.Account{}, err
@@ -140,6 +192,8 @@ func (c *Client) GetLastRawAccount(ctx context.Context, accountId tongo.AccountI
 }
 
 func (c *Client) GetRawAccountById(ctx context.Context, accountId tongo.AccountID, blockId tongo.TonNodeBlockIdExt) (tongo.Account, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	a, err := c.getRawAccountStateById(ctx, accountId, blockId)
 	if err != nil {
 		return tongo.Account{}, err
@@ -152,6 +206,8 @@ func (c *Client) GetRawAccountById(ctx context.Context, accountId tongo.AccountI
 }
 
 func (c *Client) GetLastShardAccount(ctx context.Context, accountId tongo.AccountID) (tongo.ShardAccount, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	a, err := c.getLastRawAccountState(ctx, accountId)
 	if err != nil {
 		return tongo.ShardAccount{}, err
@@ -553,6 +609,8 @@ func convertTlbAccountToAccountState(acc tongo.Account) (tongo.AccountInfo, erro
 }
 
 func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]tongo.Transaction, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	cells, err := c.GetRawTransactions(ctx, count, accountId, lt, hash)
 	if err != nil {
 		return nil, err
@@ -573,6 +631,8 @@ func (c *Client) GetTransactions(ctx context.Context, count uint32, accountId to
 // GetRawTransactions
 // Returns []boc.Cell of the transaction$0111 tlb constructor. Be careful when reading Cell. Some Cells are shared between slice elements. Use cell.ResetCounters()
 func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId tongo.AccountID, lt uint64, hash tongo.Hash) ([]*boc.Cell, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	// TransactionList
 	// liteServer.transactionList ids:(vector tonNode.blockIdExt) transactions:bytes = liteServer.TransactionList;
 	type TransactionList struct {
@@ -638,6 +698,8 @@ func (c *Client) GetRawTransactions(ctx context.Context, count uint32, accountId
 // liteServer.sendMessage body:bytes = liteServer.SendMsgStatus;
 // liteServer.sendMsgStatus status:int = liteServer.SendMsgStatus;
 func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	request := struct {
 		tl.SumType
 		SendMessage struct {
@@ -680,10 +742,10 @@ func (c *Client) SendRawMessage(ctx context.Context, payload []byte) error {
 	return nil
 }
 
-var configCache = make(map[string]*config.Options)
+var configCache = make(map[string]*config.GlobalConfigurationFile)
 var configCacheMutex sync.RWMutex
 
-func downloadConfig(path string) (*config.Options, error) {
+func downloadConfig(path string) (*config.GlobalConfigurationFile, error) {
 	configCacheMutex.RLock()
 	o, prs := configCache[path]
 	configCacheMutex.RUnlock()
@@ -732,6 +794,8 @@ type configResponse struct {
 // liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
 // Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof
 func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	lastBlock, err := c.GetMasterchainInfo(ctx)
 	if err != nil {
 		return nil, err
@@ -784,6 +848,8 @@ func (c *Client) GetLastConfigAll(ctx context.Context) (*boc.Cell, error) {
 // liteServer.configInfo mode:# id:tonNode.blockIdExt state_proof:bytes config_proof:bytes = liteServer.ConfigInfo;
 // Returns config: (Hashmap 32 ^Cell) as a Cell from config_proof
 func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	lastBlock, err := c.GetMasterchainInfoExt(ctx, 0)
 	if err != nil {
 		return nil, err
@@ -828,6 +894,8 @@ func (c *Client) GetConfigAll(ctx context.Context) (*tongo.McStateExtra, error) 
 }
 
 func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockIdExt) (*tongo.ShardState, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	r := configRequest{
 		SumType: "GetConfigAllRequest",
 		GetConfigAllRequest: configRequestParams{
@@ -872,6 +940,8 @@ func (c *Client) GetConfigAllById(ctx context.Context, last tongo.TonNodeBlockId
 // liteServer.masterchainInfo last:tonNode.blockIdExt state_root_hash:int256
 // init:tonNode.zeroStateIdExt = liteServer.MasterchainInfo;
 func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdExt, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	req := makeLiteServerQueryRequest(makeLiteServerGetMasterchainInfoRequest())
 	resp, err := c.getMasterchainServer().Request(ctx, req)
 	if err != nil {
@@ -903,6 +973,8 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (tongo.TonNodeBlockIdEx
 // last:tonNode.blockIdExt last_utime:int now:int state_root_hash:int256
 // init:tonNode.zeroStateIdExt = liteServer.MasterchainInfoExt;
 func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (LiteServerMasterchainInfoExt, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	asReq, err := makeLiteServerGetMasterchainInfoExtRequest(mode)
 	if err != nil {
 		return LiteServerMasterchainInfoExt{}, err
@@ -938,6 +1010,8 @@ func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (LiteSe
 // liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
 // proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int result:mode.2?bytes = liteServer.RunMethodResult;
 func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.AccountID, method string, params tongo.VmStack) (uint32, tongo.VmStack, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	type runSmcRequest struct {
 		Mode     uint32
 		Id       tongo.TonNodeBlockIdExt
@@ -1007,6 +1081,8 @@ func (c *Client) RunSmcMethod(ctx context.Context, mode uint32, accountId tongo.
 // liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:mode.0?bytes
 // proof:mode.0?bytes state_proof:mode.1?bytes init_c7:mode.3?bytes lib_extras:mode.4?bytes exit_code:int result:mode.2?bytes = liteServer.RunMethodResult;
 func (c *Client) RunSmcMethodByExtBlockId(ctx context.Context, mode uint32, id tongo.TonNodeBlockIdExt, accountId tongo.AccountID, method string, params tongo.VmStack) (tongo.VmStack, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	type runSmcRequest struct {
 		Mode     uint32
 		Id       tongo.TonNodeBlockIdExt
@@ -1075,6 +1151,8 @@ func (c *Client) RunSmcMethodByExtBlockId(ctx context.Context, mode uint32, id t
 }
 
 func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdExt) ([]tongo.TonNodeBlockIdExt, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	asReq, err := makeLiteServerAllShardsInfoRequest(last)
 	if err != nil {
 		return nil, err
@@ -1121,6 +1199,8 @@ func (c *Client) BlocksGetShards(ctx context.Context, last tongo.TonNodeBlockIdE
 }
 
 func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.TonNodeBlockIdExt, limit uint32, startAfter *tongo.Hash, modifiedAfter *uint32) (*tongo.ShardStateUnsplit, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	asReq, err := makeLiteServerGetValidatorStatsRequest(mode, last, limit, startAfter, modifiedAfter)
 	if err != nil {
 		return nil, err
@@ -1167,6 +1247,8 @@ func (c *Client) ValidatorStats(ctx context.Context, mode uint32, last tongo.Ton
 	return &proof.Proof.VirtualRoot, nil //shards, nil
 }
 func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tongo.TonNodeBlockIdExt, targetBlock *tongo.TonNodeBlockIdExt) ([]tongo.BlockProof, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	asReq, err := makeLiteServerGetBlockProofRequest(mode, knownBlock, targetBlock)
 	if err != nil {
 		return nil, err
@@ -1299,6 +1381,8 @@ func (c *Client) GetBlockProof(ctx context.Context, mode uint32, knownBlock tong
 
 // GetRawBlock returns a raw block without TL-B deserialization.
 func (c *Client) GetRawBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.RawBlock, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	r := struct {
 		tl.SumType
 		GetBlockRequest tongo.TonNodeBlockIdExt `tlSumType:"0dcf7763"`
@@ -1349,6 +1433,8 @@ func (c *Client) GetRawBlock(ctx context.Context, blockID tongo.TonNodeBlockIdEx
 // liteServer.getBlock id:tonNode.blockIdExt = liteServer.BlockData;
 // liteServer.blockData id:tonNode.blockIdExt data:bytes = liteServer.BlockData;
 func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) (*tongo.TonNodeBlockIdExt, tongo.Block, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	rawBlock, err := c.GetRawBlock(ctx, blockID)
 	if err != nil {
 		return nil, tongo.Block{}, err
@@ -1369,6 +1455,8 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.TonNodeBlockIdExt) 
 // liteServer.lookupBlock mode:# id:tonNode.blockId lt:mode.1?long utime:mode.2?int = liteServer.BlockHeader;
 // liteServer.blockHeader id:tonNode.blockIdExt mode:# header_proof:bytes = liteServer.BlockHeader;
 func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.TonNodeBlockId, lt uint64, utime uint32) (tongo.TonNodeBlockIdExt, tongo.BlockInfo, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	asReq, err := makeLiteServerLookupBlockRequest(mode, blockID, lt, utime)
 	if err != nil {
 		return tongo.TonNodeBlockIdExt{}, tongo.BlockInfo{}, err
@@ -1417,6 +1505,8 @@ func (c *Client) LookupBlock(ctx context.Context, mode uint32, blockID tongo.Ton
 // liteServer.getOneTransaction id:tonNode.blockIdExt account:liteServer.accountId lt:long = liteServer.TransactionInfo;
 // liteServer.transactionInfo id:tonNode.blockIdExt proof:bytes transaction:bytes = liteServer.TransactionInfo;
 func (c *Client) GetOneRawTransaction(ctx context.Context, id tongo.TonNodeBlockIdExt, accountId tongo.AccountID, lt uint64) ([]*boc.Cell, []byte, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 	type getOneTransactionRequest struct {
 		ID      tongo.TonNodeBlockIdExt
 		Account tongo.AccountID

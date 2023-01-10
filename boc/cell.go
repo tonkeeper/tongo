@@ -29,6 +29,7 @@ type Cell struct {
 	refs      [4]*Cell
 	refCursor int
 	cellType  CellType
+	mask      LevelMask
 	// TODO: add capacity checking
 }
 
@@ -74,6 +75,14 @@ func (c *Cell) IsExotic() bool {
 
 func (c *Cell) CellType() CellType {
 	return c.cellType
+}
+
+func (c *Cell) Level() int {
+	switch c.cellType {
+	case MerkleProofCell:
+		return c.refs[0].mask.ShiftRight().Level()
+	}
+	return c.mask.Level()
 }
 
 func (c *Cell) BitSize() int {

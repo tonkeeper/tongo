@@ -26,7 +26,7 @@ var (
 )
 
 const (
-	defaultTimeout = 15 * time.Minute
+	defaultTimeout = 1 * time.Minute
 )
 
 type adnlClient interface {

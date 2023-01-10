@@ -31,7 +31,7 @@ type GlobalConfigurationFile struct {
 }
 
 // Deprecated: use GlobalConfigurationFile instead.
-type Options GlobalConfigurationFile
+type Options = GlobalConfigurationFile
 
 // LiteServer TODO: clarify struct
 type LiteServer struct {

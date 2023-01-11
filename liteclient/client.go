@@ -100,7 +100,7 @@ func New(options ...Option) (*Client, error) {
 	if len(opts.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
-	client := Client{}
+	client := Client{timeout: opts.Timeout}
 	for _, ls := range opts.LiteServers {
 		serverPubkey, err := base64.StdEncoding.DecodeString(ls.Key)
 		if err != nil {

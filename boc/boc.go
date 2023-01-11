@@ -194,27 +194,10 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	withHashes := (d1 & 0b10000) != 0
 	mask := LevelMask(d1 >> 5)
 
-	level := mask.Level()
-
 	var cell *Cell
 	if isExotic {
 		// the first byte of an exotic cell stores the cell's type.
 		exoticType := CellType(readNBytesUIntFromArray(1, cellData))
-		switch exoticType {
-		case PrunedBranchCell:
-			// level mask of a pruned branch is taken from the second byte
-			mask = LevelMask(readNBytesUIntFromArray(1, cellData[1:]))
-			level = mask.Level()
-			if level > maxLevel || level == 0 {
-				return nil, nil, nil, errors.New("pruned branch has an invalid level")
-			}
-		case MerkleProofCell:
-			if dataBytesSize != (1 + hashSize + depthSize) {
-				return nil, nil, nil, errors.New("wrong size of a Merkle Proof cell")
-			}
-		case MerkleUpdateCell:
-		case LibraryCell:
-		}
 		cell = NewCellExotic(exoticType)
 		cell.mask = mask
 	} else {

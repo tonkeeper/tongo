@@ -37,3 +37,11 @@ func ToCamelCase(s string) string {
 	}
 	return n.String()
 }
+
+func ToCamelCasePrivate(s string) string {
+	res := ToCamelCase(s)
+	if len(res) > 0 {
+		res = strings.ToLower(res[0:1]) + res[1:]
+	}
+	return res
+}

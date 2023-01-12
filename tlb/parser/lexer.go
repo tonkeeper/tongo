@@ -41,14 +41,6 @@ type Combinator struct {
 	TypeExpressions []TypeExpression `@@*`
 }
 
-//func (c Combinator) String() string {
-//	s := c.Name
-//	for _, e := range c.TypeExpressions {
-//		s += " " + e.String()
-//	}
-//	return s
-//}
-
 type FieldDefinition struct {
 	Implicit   *ImplicitDefinition `@@`
 	NamedField *NamedField         `| @@`
@@ -72,6 +64,7 @@ type ImplicitDefinition struct {
 	Expression *TypeExpression `| @@)`
 	End        string          `"}"`
 }
+
 type ImplicitField struct {
 	Name string `@Ident`
 	Sep  string `":"`

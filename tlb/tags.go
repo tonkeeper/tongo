@@ -11,7 +11,7 @@ import (
 
 var ErrInvalidTag = errors.New("invalid tag")
 
-type sumTag struct {
+type Tag struct {
 	Name string
 	Len  int
 	Val  uint64
@@ -44,7 +44,7 @@ func parseTag(s string) (tag, error) {
 }
 
 func encodeSumTag(c *boc.Cell, tag string) error {
-	t, err := parseSumTag(tag)
+	t, err := ParseTag(tag)
 	if err != nil {
 		return err
 	}
@@ -55,22 +55,22 @@ func encodeSumTag(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func parseSumTag(s string) (sumTag, error) {
+func ParseTag(s string) (Tag, error) {
 	a := strings.Split(s, "$")
 	if len(a) == 2 {
 		x, err := strconv.ParseUint(a[1], 2, 32)
 		if err != nil {
-			return sumTag{}, err
+			return Tag{}, err
 		}
-		return sumTag{a[0], len(a[1]), x}, nil
+		return Tag{a[0], len(a[1]), x}, nil
 	}
 	a = strings.Split(s, "#")
 	if len(a) == 2 {
 		x, err := strconv.ParseUint(a[1], 16, 32)
 		if err != nil {
-			return sumTag{}, err
+			return Tag{}, err
 		}
-		return sumTag{a[0], len(a[1]) * 4, x}, nil
+		return Tag{a[0], len(a[1]) * 4, x}, nil
 	}
-	return sumTag{}, ErrInvalidTag
+	return Tag{}, ErrInvalidTag
 }

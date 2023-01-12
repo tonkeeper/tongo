@@ -1,7 +1,16 @@
 <interfaces>
 
+    <!--    Text    -->
+    <interface name="text_comment" group="text">
+        <internal name="text_comment">
+            <input>
+                text_comment#00000000 text:Text = InternalMsgBody;
+            </input>
+        </internal>
+    </interface>
+
     <!--    NFT item    -->
-    <interface name="tep_62_item" group="nft">
+    <interface name="tep_62_nft_item" group="nft">
         <get_method name="get_nft_data" callback="true">
             <output>
                 <tinyint name="init">int8</tinyint>
@@ -36,9 +45,8 @@
     </interface>
 
     <!--    NFT collection    -->
-    <interface name="tep_62_collection" group="nft_collection">
+    <interface name="tep_62_nft_collection" group="nft">
         <types>
-            text#_ {n:#} data:(SnakeData ~n) = Text;
             snake#00 data:(SnakeData ~n) = ContentData;
             chunks#01 data:ChunkedData = ContentData;
             onchain#00 data:(HashmapE 256 ^ContentData) = FullContent;
@@ -71,7 +79,7 @@
     </interface>
 
     <!--    NFT royalty    -->
-    <interface name="tep_66_nft_royalty" group="nft_royalty">
+    <interface name="tep_66_nft_royalty" group="nft">
         <get_method name="royalty_params">
             <output>
                 <tinyint name="numerator">uint16</tinyint>
@@ -90,7 +98,7 @@
     </interface>
 
     <!--    Jetton master    -->
-    <interface name="tep_74_jetton_master" group="jetton_master">
+    <interface name="tep_74_jetton_master" group="jetton">
         <get_method name="get_jetton_data">
             <output>
                 <int name="total_supply">int257</int>
@@ -111,7 +119,7 @@
     </interface>
 
     <!--    Jetton wallet    -->
-    <interface name="tep_74_jetton_wallet" group="jetton_wallet">
+    <interface name="tep_74_jetton_wallet" group="jetton">
         <get_method name="get_wallet_data">
             <output>
                 <int name="balance">int257</int>
@@ -149,15 +157,7 @@
     </interface>
 
     <!--    DNS    -->
-    <interface name="tep_81" group="dns">
-        <types>
-            dns_text#1eda _:Text = DNSRecord;
-            dns_next_resolver#ba93 resolver:MsgAddressInt = DNSRecord;  // usually in record #-1
-            dns_adnl_address#ad01 adnl_addr:bits256 flags:(## 8)
-            proto_list:flags . 0?ProtoList = DNSRecord;  // often in record #2
-            dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8)
-            cap_list:flags . 0?SmcCapList = DNSRecord;   // often in record #1
-        </types>
+    <interface name="tep_81_dns" group="dns">
         <get_method name="dnsresolve">
             <input>
                 <slice name="domain">[]byte</slice>
@@ -290,74 +290,56 @@
 <!--        </get_method>-->
         <internal name="top_up_balance">
             <input>
-                top_up_balance add_A:Coins add_B:Coins = InternalMsgBody;
+                top_up_balance#67c7d281 add_A:Coins add_B:Coins = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="init_channel">
             <input>
-                init_channel is_A:Bool signature:bits512 tag:# {tag = 0x696e6974} channel_id:uint128 balance_A:Coins balance_B:Coins = InternalMsgBody;
+                init_channel#56103bba is_A:Bool signature:bits512 tag:# channel_id:uint128 balance_A:Coins balance_B:Coins = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="cooperative_close">
             <input>
-                cooperative_close sig_A:^bits512 sig_B:^bits512 tag:# {tag = 0x436c6f73} channel_id:uint128 balance_A:Coins balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+                cooperative_close#0df395b9 sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 balance_A:Coins balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="cooperative_commit">
             <input>
-                cooperative_commit sig_A:^bits512 sig_B:^bits512 tag:# {tag = 0x43436d74} channel_id:uint128 seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+                cooperative_commit#cf19aff5 sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="start_uncooperative_close">
             <input>
-                start_uncooperative_close signed_by_A:Bool signature:bits512 tag:# {tag = 0x556e436c} channel_id:uint128
+                start_uncooperative_close#b942f428 signed_by_A:Bool signature:bits512 tag:# channel_id:uint128
                 sch_A:^SignedSemiChannel
                 sch_B:^SignedSemiChannel = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="challenge_quarantined_state">
             <input>
-                challenge_quarantined_state
-                challenged_by_A:Bool signature:bits512 tag:# {tag = 0x43686751} channel_id:uint128
+                challenge_quarantined_state#ab15bc6a
+                challenged_by_A:Bool signature:bits512 tag:# channel_id:uint128
                 sch_A:^SignedSemiChannel
                 sch_B:^SignedSemiChannel = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="settle_conditionals">
             <input>
-                settle_conditionals
-                from_A:Bool signature:bits512 tag:# {tag = 0x436c436e} channel_id:uint128
+                settle_conditionals#04291097
+                from_A:Bool signature:bits512 tag:# channel_id:uint128
                 conditionals_to_settle:(HashmapE 32 Cell)
                 = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="finish_uncooperative_close">
             <input>
-                finish_uncooperative_close = InternalMsgBody;
+                finish_uncooperative_close#25432a91 = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
         <internal name="channel_closed">
             <input>
-                channel_closed channel_id:uint128 = InternalMsgBody;
+                channel_closed#dddc88ba channel_id:uint128 = InternalMsgBody;
             </input>
-            <output>
-            </output>
         </internal>
     </interface>
 </interfaces>

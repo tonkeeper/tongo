@@ -2854,6 +2854,40 @@ func (u Int64) FixedSize() int {
 	return 64
 }
 
+type Uint128 big.Int
+
+func (u Uint128) MarshalTLB(c *boc.Cell, tag string) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, 128)
+}
+
+func (u *Uint128) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadBigUint(128)
+	*u = Uint128(*v)
+	return err
+}
+
+func (u Uint128) FixedSize() int {
+	return 128
+}
+
+type Int128 big.Int
+
+func (u Int128) MarshalTLB(c *boc.Cell, tag string) error {
+	x := big.Int(u)
+	return c.WriteBigInt(&x, 128)
+}
+
+func (u *Int128) UnmarshalTLB(c *boc.Cell, tag string) error {
+	v, err := c.ReadBigInt(128)
+	*u = Int128(*v)
+	return err
+}
+
+func (u Int128) FixedSize() int {
+	return 128
+}
+
 type Uint256 big.Int
 
 func (u Uint256) MarshalTLB(c *boc.Cell, tag string) error {

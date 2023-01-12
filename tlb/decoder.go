@@ -167,7 +167,7 @@ func decodeSumType(c *boc.Cell, val reflect.Value, tag string) error {
 }
 
 func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {
-	t, err := parseSumTag(tag)
+	t, err := ParseTag(tag)
 	if err != nil {
 		return false, err
 	}

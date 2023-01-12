@@ -9,7 +9,7 @@ import (
 )
 
 var bitsSizes = []int{96, 256, 264, 320, 352, 512}
-var intSizes = []int{256, 257}
+var intSizes = []int{128, 256, 257}
 
 func main() {
 	s1 := parser.GenerateVarUintTypes(32)

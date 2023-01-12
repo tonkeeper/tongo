@@ -48,6 +48,11 @@ var Methods = map[int64]ContractMethod{
 	107305: GetLockupData,
 }
 
+// ParseContractMethods tries to extract method names from the given code.
+// It does work for most of the code compiled by FunC
+// but there are smart contracts that can't be handled by ParseContractMethods.
+// So if ParseContractMethods returns an error,
+// you need to find another way to get method names.
 func ParseContractMethods(code []byte) ([]int64, error) {
 	cell, err := boc.DeserializeBoc(code)
 	if err != nil {
@@ -66,9 +71,10 @@ func ParseContractMethods(code []byte) ([]int64, error) {
 		return nil, err
 	}
 
-	ifs := make([]int64, 0)
-	for i := range methods.Hashmap.Keys() {
-		ifs = append(ifs, int64(methods.Hashmap.Keys()[i]))
+	keys := methods.Hashmap.Keys()
+	ifs := make([]int64, len(keys))
+	for i := range keys {
+		ifs[i] = int64(keys[i])
 	}
 	return ifs, nil
 }

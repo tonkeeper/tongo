@@ -104,7 +104,7 @@ func (g *Generator) registerType(s string) error {
 	}
 
 	gen := tlbParser.NewGenerator(nil, "")
-	types, err := gen.LoadTypes(tlbData.Declarations, "")
+	types, err := gen.LoadTypes(tlbData.Declarations, "", false)
 	if err != nil {
 		return fmt.Errorf("load types error: %v", err)
 	}
@@ -141,7 +141,7 @@ func (g *Generator) registerMsgType(name, s string) error {
 		typePrefix = fmt.Sprintf("%s%s", utils.ToCamelCase(name), utils.ToCamelCase(parsed.Declarations[0].Constructor.Name))
 	}
 
-	t, err := gen.LoadTypes(parsed.Declarations, typePrefix)
+	t, err := gen.LoadTypes(parsed.Declarations, typePrefix, true)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
 	}
@@ -242,7 +242,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 
 	builder.WriteString("func MessageDecoder(cell *boc.Cell) (string, any, error) {\n")
 
-	builder.WriteString("tag, err := cell.PickUint(32)\n")
+	builder.WriteString("tag, err := cell.ReadUint(32)\n")
 	builder.WriteString(msgDecoderReturnErr)
 
 	builder.WriteString("switch tag {\n")

@@ -51,11 +51,11 @@ func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator
 	}
 }
 
-func (g *Generator) LoadTypes(declarations []CombinatorDeclaration, typePrefix string) (string, error) {
-	return generateGolangTypes(declarations, typePrefix)
+func (g *Generator) LoadTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
+	return generateGolangTypes(declarations, typePrefix, skipMagic)
 }
 
-func generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string) (string, error) {
+func generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
 	dec := make([][]CombinatorDeclaration, 0)
 	for _, c := range declarations {
 		if len(c.Combinator.TypeExpressions) > 0 {
@@ -76,7 +76,7 @@ func generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string
 	s := ""
 
 	for _, v := range dec {
-		t, err := generateGolangType(v, typePrefix)
+		t, err := generateGolangType(v, typePrefix, skipMagic)
 		if err != nil {
 			return "", err
 		}
@@ -90,14 +90,14 @@ func generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string
 	return string(b), err
 }
 
-func generateGolangStruct(declaration CombinatorDeclaration, withMagic bool) (string, error) {
+func generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (string, error) {
 	builder := strings.Builder{}
 	builder.WriteString("struct{")
 	if len(declaration.FieldDefinitions) > 0 {
 		builder.WriteRune('\n')
 	}
 
-	if withMagic && declaration.Constructor.Prefix != "" && declaration.Constructor.Prefix != "#_" && declaration.Constructor.Prefix != "$_" {
+	if !skipMagic && declaration.Constructor.Prefix != "" && declaration.Constructor.Prefix != "#_" && declaration.Constructor.Prefix != "$_" {
 		builder.WriteString(fmt.Sprintf("Magic tlb.Magic `tlb:\"%v\"`\n", declaration.Constructor.Prefix))
 	}
 
@@ -133,8 +133,8 @@ func generateGolangStruct(declaration CombinatorDeclaration, withMagic bool) (st
 	return builder.String(), nil
 }
 
-func generateGolangSimpleType(declaration CombinatorDeclaration, typePrefix string) (string, error) {
-	s, err := generateGolangStruct(declaration, true)
+func generateGolangSimpleType(declaration CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
+	s, err := generateGolangStruct(declaration, skipMagic)
 	return fmt.Sprintf("type %s%v %v", utils.ToCamelCase(typePrefix), declaration.Combinator.Name, s), err
 }
 
@@ -142,7 +142,7 @@ func generateGolangSumType(declarations []CombinatorDeclaration, typePrefix stri
 	builder := strings.Builder{}
 	builder.WriteString("type " + utils.ToCamelCase(typePrefix) + declarations[0].Combinator.Name + " struct{\ntlb.SumType\n")
 	for _, d := range declarations {
-		s, err := generateGolangStruct(d, false)
+		s, err := generateGolangStruct(d, true)
 		if err != nil {
 			return "", err
 		}
@@ -157,9 +157,9 @@ func generateGolangSumType(declarations []CombinatorDeclaration, typePrefix stri
 
 }
 
-func generateGolangType(declarations []CombinatorDeclaration, typePrefix string) (string, error) {
+func generateGolangType(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
 	if len(declarations) == 1 {
-		return generateGolangSimpleType(declarations[0], typePrefix)
+		return generateGolangSimpleType(declarations[0], typePrefix, skipMagic)
 	} else {
 		return generateGolangSumType(declarations, typePrefix)
 	}

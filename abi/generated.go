@@ -84,12 +84,10 @@ type Storage struct {
 }
 
 type TextCommentTextCommentInternalMsgBody struct {
-	Magic tlb.Magic `tlb:"#00000000"`
-	Text  tlb.Text
+	Text tlb.Text
 }
 
 type PaymentChannelSettleConditionalsInternalMsgBody struct {
-	Magic                tlb.Magic `tlb:"#04291097"`
 	FromA                bool
 	Signature            tlb.Bits512
 	Tag                  uint32
@@ -98,7 +96,6 @@ type PaymentChannelSettleConditionalsInternalMsgBody struct {
 }
 
 type Tep85SbtProveOwnershipInternalMsgBody struct {
-	Magic          tlb.Magic `tlb:"#04ded148"`
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
@@ -106,14 +103,12 @@ type Tep85SbtProveOwnershipInternalMsgBody struct {
 }
 
 type Tep62NftItemOwnershipAssignedInternalMsgBody struct {
-	Magic          tlb.Magic `tlb:"#05138d91"`
 	QueryId        uint64
 	PrevOwner      tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[tlb.Any]
 }
 
 type Tep85SbtOwnershipProofInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#0524c7ae"`
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Owner     tlb.MsgAddress
@@ -123,7 +118,6 @@ type Tep85SbtOwnershipProofInternalMsgBody struct {
 }
 
 type Tep85SbtOwnerInfoInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#0dd607e3"`
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Initiator tlb.MsgAddress
@@ -134,7 +128,6 @@ type Tep85SbtOwnerInfoInternalMsgBody struct {
 }
 
 type PaymentChannelCooperativeCloseInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#0df395b9"`
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
 	Tag       uint32
@@ -146,7 +139,6 @@ type PaymentChannelCooperativeCloseInternalMsgBody struct {
 }
 
 type Tep74JettonWalletTransferInternalMsgBody struct {
-	Magic               tlb.Magic `tlb:"#0f8a7ea5"`
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	Destination         tlb.MsgAddress
@@ -157,21 +149,16 @@ type Tep74JettonWalletTransferInternalMsgBody struct {
 }
 
 type Tep85SbtDestroyInternalMsgBody struct {
-	Magic   tlb.Magic `tlb:"#1f04537a"`
 	QueryId uint64
 }
 
-type PaymentChannelFinishUncooperativeCloseInternalMsgBody struct {
-	Magic tlb.Magic `tlb:"#25432a91"`
-}
+type PaymentChannelFinishUncooperativeCloseInternalMsgBody struct{}
 
 type Tep62NftItemGetStaticDataInternalMsgBody struct {
-	Magic   tlb.Magic `tlb:"#2fcb26a2"`
 	QueryId uint64
 }
 
 type PaymentChannelInitChannelInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#56103bba"`
 	IsA       bool
 	Signature tlb.Bits512
 	Tag       uint32
@@ -181,7 +168,6 @@ type PaymentChannelInitChannelInternalMsgBody struct {
 }
 
 type Tep74JettonWalletBurnInternalMsgBody struct {
-	Magic               tlb.Magic `tlb:"#595f07bc"`
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
@@ -189,7 +175,6 @@ type Tep74JettonWalletBurnInternalMsgBody struct {
 }
 
 type Tep62NftItemTransferInternalMsgBody struct {
-	Magic               tlb.Magic `tlb:"#5fcc3d14"`
 	QueryId             uint64
 	NewOwner            tlb.MsgAddress
 	ResponseDestination tlb.MsgAddress
@@ -199,23 +184,19 @@ type Tep62NftItemTransferInternalMsgBody struct {
 }
 
 type PaymentChannelTopUpBalanceInternalMsgBody struct {
-	Magic tlb.Magic `tlb:"#67c7d281"`
-	AddA  tlb.Grams
-	AddB  tlb.Grams
+	AddA tlb.Grams
+	AddB tlb.Grams
 }
 
 type Tep66NftRoyaltyGetRoyaltyParamsInternalMsgBody struct {
-	Magic   tlb.Magic `tlb:"#693d3950"`
 	QueryId uint64
 }
 
 type Tep85SbtRevokeInternalMsgBody struct {
-	Magic   tlb.Magic `tlb:"#6f89f5e3"`
 	QueryId uint64
 }
 
 type Tep74JettonWalletTransferNotificationInternalMsgBody struct {
-	Magic          tlb.Magic `tlb:"#7362d09c"`
 	QueryId        uint64
 	Amount         tlb.VarUInteger16
 	Sender         tlb.MsgAddress
@@ -223,14 +204,12 @@ type Tep74JettonWalletTransferNotificationInternalMsgBody struct {
 }
 
 type Tep62NftItemReportStaticDataInternalMsgBody struct {
-	Magic      tlb.Magic `tlb:"#8b771735"`
 	QueryId    uint64
 	Index      tlb.Uint256
 	Collection tlb.MsgAddress
 }
 
 type Tep66NftRoyaltyReportRoyaltyParamsInternalMsgBody struct {
-	Magic       tlb.Magic `tlb:"#a8cb00ad"`
 	QueryId     uint64
 	Numerator   uint16
 	Denominator uint16
@@ -238,7 +217,6 @@ type Tep66NftRoyaltyReportRoyaltyParamsInternalMsgBody struct {
 }
 
 type PaymentChannelChallengeQuarantinedStateInternalMsgBody struct {
-	Magic         tlb.Magic `tlb:"#ab15bc6a"`
 	ChallengedByA bool
 	Signature     tlb.Bits512
 	Tag           uint32
@@ -248,7 +226,6 @@ type PaymentChannelChallengeQuarantinedStateInternalMsgBody struct {
 }
 
 type PaymentChannelStartUncooperativeCloseInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#b942f428"`
 	SignedByA bool
 	Signature tlb.Bits512
 	Tag       uint32
@@ -258,7 +235,6 @@ type PaymentChannelStartUncooperativeCloseInternalMsgBody struct {
 }
 
 type PaymentChannelCooperativeCommitInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#cf19aff5"`
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
 	Tag       uint32
@@ -268,7 +244,6 @@ type PaymentChannelCooperativeCommitInternalMsgBody struct {
 }
 
 type Tep85SbtRequestOwnerInternalMsgBody struct {
-	Magic          tlb.Magic `tlb:"#d0c3bfea"`
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
@@ -276,17 +251,15 @@ type Tep85SbtRequestOwnerInternalMsgBody struct {
 }
 
 type ExcessesInternalMsgBody struct {
-	Magic   tlb.Magic `tlb:"#d53276db"`
 	QueryId uint64
 }
 
 type PaymentChannelChannelClosedInternalMsgBody struct {
-	Magic     tlb.Magic `tlb:"#dddc88ba"`
 	ChannelId tlb.Uint128
 }
 
 func MessageDecoder(cell *boc.Cell) (string, any, error) {
-	tag, err := cell.PickUint(32)
+	tag, err := cell.ReadUint(32)
 	if err != nil {
 		return "", nil, err
 	}

@@ -13,31 +13,37 @@ type DefaultType struct {
 	IsPointerType bool
 }
 
+type TlbType struct {
+	Name       string
+	Definition string
+}
+
 type Generator struct {
 	knownTypes  map[string]DefaultType
-	newTlbTypes []string
+	newTlbTypes map[string]TlbType
 	typeName    string
 }
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":           {"uint32", false},
-		"int8":        {"int8", false},
-		"int16":       {"int16", false},
-		"int32":       {"int32", false},
-		"int64":       {"int64", false},
-		"uint8":       {"uint8", false},
-		"uint16":      {"uint16", false},
-		"uint32":      {"uint32", false},
-		"uint64":      {"uint64", false},
-		"Bool":        {"bool", false},
-		"Cell":        {"tlb.Any", false},
-		"MsgAddress":  {"tlb.MsgAddress", false},
-		"Coins":       {"tlb.Grams", false},
-		"Text":        {"tlb.Text", false},
-		"SnakeData":   {"tlb.SnakeData", false},
-		"ChunkedData": {"tlb.ChunkedData", false},
-		"DNSRecord":   {"tlb.DNSRecord", false},
+		"#":             {"uint32", false},
+		"int8":          {"int8", false},
+		"int16":         {"int16", false},
+		"int32":         {"int32", false},
+		"int64":         {"int64", false},
+		"uint8":         {"uint8", false},
+		"uint16":        {"uint16", false},
+		"uint32":        {"uint32", false},
+		"uint64":        {"uint64", false},
+		"Bool":          {"bool", false},
+		"Cell":          {"tlb.Any", false},
+		"MsgAddress":    {"tlb.MsgAddress", false},
+		"Coins":         {"tlb.Grams", false},
+		"Text":          {"tlb.Text", false},
+		"SnakeData":     {"tlb.SnakeData", false},
+		"ChunkedData":   {"tlb.ChunkedData", false},
+		"DNSRecord":     {"tlb.DNSRecord", false},
+		"DNS_RecordSet": {"tlb.DNSRecordSet", false},
 	}
 )
 
@@ -46,16 +52,25 @@ func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator
 		knownTypes = defaultKnownTypes
 	}
 	return &Generator{
-		knownTypes: knownTypes,
-		typeName:   typeName,
+		knownTypes:  knownTypes,
+		typeName:    typeName,
+		newTlbTypes: make(map[string]TlbType),
 	}
 }
 
 func (g *Generator) LoadTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
-	return generateGolangTypes(declarations, typePrefix, skipMagic)
+	return g.generateGolangTypes(declarations, typePrefix, skipMagic)
 }
 
-func generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
+func (g *Generator) GetTlbTypes() []TlbType {
+	var res []TlbType
+	for _, v := range g.newTlbTypes {
+		res = append(res, v)
+	}
+	return res
+}
+
+func (g *Generator) generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
 	dec := make([][]CombinatorDeclaration, 0)
 	for _, c := range declarations {
 		if len(c.Combinator.TypeExpressions) > 0 {
@@ -76,18 +91,25 @@ func generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string
 	s := ""
 
 	for _, v := range dec {
-		t, err := generateGolangType(v, typePrefix, skipMagic)
+		name := utils.ToCamelCase(typePrefix) + v[0].Combinator.Name
+		t, err := generateGolangType(v, name, skipMagic)
 		if err != nil {
 			return "", err
+		}
+
+		b, err := format.Source([]byte(t))
+		if err != nil {
+			return "", err
+		}
+
+		g.newTlbTypes[name] = TlbType{
+			Name:       name,
+			Definition: string(b),
 		}
 		s += "\n\n" + t
 	}
 
-	b, err := format.Source([]byte(s))
-	if err != nil {
-		return s, err
-	}
-	return string(b), err
+	return s, nil
 }
 
 func generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (string, error) {
@@ -133,14 +155,14 @@ func generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (st
 	return builder.String(), nil
 }
 
-func generateGolangSimpleType(declaration CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
+func generateGolangSimpleType(declaration CombinatorDeclaration, typeName string, skipMagic bool) (string, error) {
 	s, err := generateGolangStruct(declaration, skipMagic)
-	return fmt.Sprintf("type %s%v %v", utils.ToCamelCase(typePrefix), declaration.Combinator.Name, s), err
+	return fmt.Sprintf("type %s %v", typeName, s), err
 }
 
-func generateGolangSumType(declarations []CombinatorDeclaration, typePrefix string) (string, error) {
+func generateGolangSumType(declarations []CombinatorDeclaration, typeName string) (string, error) {
 	builder := strings.Builder{}
-	builder.WriteString("type " + utils.ToCamelCase(typePrefix) + declarations[0].Combinator.Name + " struct{\ntlb.SumType\n")
+	builder.WriteString("type " + typeName + " struct{\ntlb.SumType\n")
 	for _, d := range declarations {
 		s, err := generateGolangStruct(d, true)
 		if err != nil {
@@ -157,11 +179,11 @@ func generateGolangSumType(declarations []CombinatorDeclaration, typePrefix stri
 
 }
 
-func generateGolangType(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
+func generateGolangType(declarations []CombinatorDeclaration, typeName string, skipMagic bool) (string, error) {
 	if len(declarations) == 1 {
-		return generateGolangSimpleType(declarations[0], typePrefix, skipMagic)
+		return generateGolangSimpleType(declarations[0], typeName, skipMagic)
 	} else {
-		return generateGolangSumType(declarations, typePrefix)
+		return generateGolangSumType(declarations, typeName)
 	}
 }
 

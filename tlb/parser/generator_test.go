@@ -114,7 +114,7 @@ func TestGenerateGolangTypes(t *testing.T) {
 	}
 	g := NewGenerator(nil, "")
 
-	s, err := g.LoadTypes(parsed.Declarations, "")
+	s, err := g.LoadTypes(parsed.Declarations, "", false)
 	if err != nil {
 		panic(err)
 	}

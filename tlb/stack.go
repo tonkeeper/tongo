@@ -379,28 +379,49 @@ func (ct *VmCont) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return fmt.Errorf("VmCont TLB unmarshaling not implemented")
 }
 
-func TlbStructToVmCellSlice(s any) (VmCellSlice, error) {
+func TlbStructToVmCellSlice(s any) (VmStackValue, error) {
 	cell := boc.NewCell()
 	err := Marshal(cell, s)
 	if err != nil {
-		return VmCellSlice{}, err
+		return VmStackValue{}, err
 	}
-	return VmCellSlice{
+	slice := VmCellSlice{
 		cell:    cell,
 		stBits:  0,
 		endBits: cell.BitSize(),
 		stRef:   0,
 		endRef:  cell.RefsSize(),
+	}
+	return VmStackValue{
+		SumType:    "VmStkSlice",
+		VmStkSlice: slice,
 	}, nil
 }
 
-func CellToVmCellSlice(cell *boc.Cell) (VmCellSlice, error) {
-	return VmCellSlice{
+func TlbStructToVmCell(s any) (VmStackValue, error) {
+	cell := boc.NewCell()
+	err := Marshal(cell, s)
+	if err != nil {
+		return VmStackValue{}, err
+	}
+	res := VmStackValue{
+		SumType: "VmStkCell",
+	}
+	res.VmStkCell.Value = *cell
+	return res, nil
+}
+
+func CellToVmCellSlice(cell *boc.Cell) (VmStackValue, error) {
+	slice := VmCellSlice{
 		cell:    cell,
 		stBits:  0,
 		endBits: cell.BitSize(),
 		stRef:   0,
 		endRef:  cell.RefsSize(),
+	}
+	return VmStackValue{
+		SumType:    "VmStkSlice",
+		VmStkSlice: slice,
 	}, nil
 }
 
@@ -455,12 +476,12 @@ func (v VmStackValue) Cell() *boc.Cell {
 }
 
 // Deprecated: Int is deprecated.
-func (v VmStackValue) Int() big.Int {
+func (v VmStackValue) Int257() Int257 {
 	switch v.SumType {
 	case "VmStkTinyInt":
-		return *big.NewInt(v.VmStkTinyInt)
+		return Int257(*big.NewInt(v.VmStkTinyInt))
 	case "VmStkInt":
-		return big.Int(v.VmStkInt)
+		return v.VmStkInt
 	default:
 		panic("stack value is not int")
 	}

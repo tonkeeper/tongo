@@ -49,15 +49,16 @@ type GetMethod struct {
 }
 
 type GetmethodOutput struct {
-	Version     string        `xml:"version"`
-	FixedLength bool          `xml:"fixed_length"`
+	Version     string        `xml:"version,attr"`
+	FixedLength bool          `xml:"fixed_length,attr"`
 	Stack       []StackRecord `xml:",any"`
 }
 
 type StackRecord struct {
-	XMLName xml.Name
-	Name    string `xml:"name,attr"`
-	Type    string `xml:",chardata"`
+	XMLName  xml.Name
+	Name     string `xml:"name,attr"`
+	Nullable bool   `xml:"nullable,attr"`
+	Type     string `xml:",chardata"`
 }
 
 func ParseInterface(s []byte) ([]Interface, error) {

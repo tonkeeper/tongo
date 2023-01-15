@@ -21,13 +21,9 @@ func (c *Client) DnsResolve(ctx context.Context, address tongo.AccountID, domain
 	if err != nil {
 		return 0, nil, err
 	}
-	slice, err := tlb.CellToVmCellSlice(cell)
+	dom, err := tlb.CellToVmCellSlice(cell)
 	if err != nil {
 		return 0, nil, err
-	}
-	dom := tlb.VmStackValue{
-		SumType:    "VmStkSlice",
-		VmStkSlice: slice,
 	}
 	params.Put(dom)
 	int257 := tlb.Int257(*category)

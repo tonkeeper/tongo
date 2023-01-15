@@ -345,20 +345,20 @@ func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID)
 	return tlb.ShardAccount{Account: acc}, err
 }
 
-func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tongo.Bits256, error) {
+func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tlb.Bits256, error) {
 	cells, err := boc.DeserializeBoc(bocBytes)
 	if err != nil {
-		return 0, tongo.Bits256{}, err
+		return 0, tlb.Bits256{}, err
 	}
 	if len(cells) < 1 {
-		return 0, tongo.Bits256{}, fmt.Errorf("must be at least one root cell")
+		return 0, tlb.Bits256{}, fmt.Errorf("must be at least one root cell")
 	}
 	var proof struct {
 		Proof tlb.MerkleProof[tlb.ShardStateUnsplit]
 	}
 	err = tlb.Unmarshal(cells[1], &proof) // cells order must be strictly defined
 	if err != nil {
-		return 0, tongo.Bits256{}, err
+		return 0, tlb.Bits256{}, err
 	}
 	values := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Values()
 	keys := proof.Proof.VirtualRoot.ShardStateUnsplit.Accounts.Keys()
@@ -367,7 +367,7 @@ func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint6
 			return values[i].LastTransLt, values[i].LastTransHash, nil
 		}
 	}
-	return 0, tongo.Bits256{}, fmt.Errorf("account not found in ShardAccounts")
+	return 0, tlb.Bits256{}, fmt.Errorf("account not found in ShardAccounts")
 }
 
 func (c *Client) GetShardInfo(

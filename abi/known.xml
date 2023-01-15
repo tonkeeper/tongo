@@ -161,7 +161,7 @@
         <get_method name="dnsresolve">
             <input>
                 <slice name="domain">[]byte</slice>
-                <int name="category">int256</int>
+                <int name="category">int257</int>
             </input>
             <output version="record" fixed_length="true">
                 <tinyint name="resolved_bits">int64</tinyint>
@@ -169,9 +169,7 @@
             </output>
             <output version="records" fixed_length="true">
                 <tinyint name="resolved_bits">int64</tinyint>
-                <cell name="result">
-                    _ (Hashmap 256 DNSRecord) = DNS_RecordSet;
-                </cell>
+                <cell name="result">DNS_RecordSet</cell>
             </output>
         </get_method>
     </interface>
@@ -183,7 +181,7 @@
                 <slice name="marketplace">AccountID</slice>
                 <slice name="nft">AccountID</slice>
                 <slice name="owner">AccountID</slice>
-                <int name="full_price">big.Int</int>
+                <int name="full_price">int257</int>
                 <tinyint name="market_fee">uint64</tinyint>
                 <slice name="royalty_address">AccountID</slice>
                 <tinyint name="royalty_amount">uint64</tinyint>
@@ -195,7 +193,7 @@
                 <slice name="marketplace">AccountID</slice>
                 <slice name="nft">AccountID</slice>
                 <slice name="owner">AccountID</slice>
-                <int name="full_price">big.Int</int>
+                <int name="full_price">int257</int>
                 <slice name="market_fee_address">AccountID</slice>
                 <tinyint name="market_fee">uint64</tinyint>
                 <slice name="royalty_address">AccountID</slice>
@@ -203,7 +201,7 @@
             </output>
         </get_method>
     </interface>
-
+    
     <!--    SBT    -->
     <interface name="tep_85_sbt" group="sbt">
         <get_method name="get_authority_address">

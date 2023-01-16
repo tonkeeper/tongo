@@ -44,7 +44,7 @@ func Test_tlb_Unmarshal(t *testing.T) {
 	type accountBlock struct {
 		Transactions map[uint64]transaction
 	}
-	data, err := os.ReadFile("../testdata/raw-block.bin")
+	data, err := os.ReadFile("testdata/raw-block.bin")
 	if err != nil {
 		t.Errorf("ReadFile() failed: %v", err)
 	}

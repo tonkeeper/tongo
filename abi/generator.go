@@ -1,13 +1,14 @@
-package abi
+//go:build ignore
+
+package main
 
 import (
 	"fmt"
 	"github.com/startfellows/tongo/abi/parser"
 	"os"
-	"testing"
 )
 
-func TestGen(t *testing.T) {
+func main() {
 	scheme, err := os.ReadFile("known.xml")
 	if err != nil {
 		panic(err)

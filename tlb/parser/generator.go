@@ -64,8 +64,9 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration, typePrefix s
 
 func (g *Generator) GetTlbTypes() []TlbType {
 	var res []TlbType
-	for _, v := range g.newTlbTypes {
-		res = append(res, v)
+
+	for _, k := range utils.GetOrderedKeys(g.newTlbTypes) {
+		res = append(res, g.newTlbTypes[k])
 	}
 	return res
 }
@@ -92,7 +93,7 @@ func (g *Generator) generateGolangTypes(declarations []CombinatorDeclaration, ty
 
 	for _, v := range dec {
 		name := utils.ToCamelCase(typePrefix) + v[0].Combinator.Name
-		t, err := generateGolangType(v, name, skipMagic)
+		t, err := g.generateGolangType(v, name, skipMagic)
 		if err != nil {
 			return "", err
 		}
@@ -112,7 +113,7 @@ func (g *Generator) generateGolangTypes(declarations []CombinatorDeclaration, ty
 	return s, nil
 }
 
-func generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (string, error) {
+func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (string, error) {
 	builder := strings.Builder{}
 	builder.WriteString("struct{")
 	if len(declaration.FieldDefinitions) > 0 {
@@ -143,7 +144,7 @@ func generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (st
 		}
 		builder.WriteString(utils.ToCamelCase(name))
 		builder.WriteRune('\t')
-		t, err := e.toGolangType()
+		t, err := e.toGolangType(g.knownTypes)
 		if err != nil {
 			return "", err
 		}
@@ -155,16 +156,16 @@ func generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (st
 	return builder.String(), nil
 }
 
-func generateGolangSimpleType(declaration CombinatorDeclaration, typeName string, skipMagic bool) (string, error) {
-	s, err := generateGolangStruct(declaration, skipMagic)
+func (g *Generator) generateGolangSimpleType(declaration CombinatorDeclaration, typeName string, skipMagic bool) (string, error) {
+	s, err := g.generateGolangStruct(declaration, skipMagic)
 	return fmt.Sprintf("type %s %v", typeName, s), err
 }
 
-func generateGolangSumType(declarations []CombinatorDeclaration, typeName string) (string, error) {
+func (g *Generator) generateGolangSumType(declarations []CombinatorDeclaration, typeName string) (string, error) {
 	builder := strings.Builder{}
 	builder.WriteString("type " + typeName + " struct{\ntlb.SumType\n")
 	for _, d := range declarations {
-		s, err := generateGolangStruct(d, true)
+		s, err := g.generateGolangStruct(d, true)
 		if err != nil {
 			return "", err
 		}
@@ -179,11 +180,11 @@ func generateGolangSumType(declarations []CombinatorDeclaration, typeName string
 
 }
 
-func generateGolangType(declarations []CombinatorDeclaration, typeName string, skipMagic bool) (string, error) {
+func (g *Generator) generateGolangType(declarations []CombinatorDeclaration, typeName string, skipMagic bool) (string, error) {
 	if len(declarations) == 1 {
-		return generateGolangSimpleType(declarations[0], typeName, skipMagic)
+		return g.generateGolangSimpleType(declarations[0], typeName, skipMagic)
 	} else {
-		return generateGolangSumType(declarations, typeName)
+		return g.generateGolangSumType(declarations, typeName)
 	}
 }
 
@@ -193,21 +194,21 @@ type golangType struct {
 	params []golangType
 }
 
-func (t TypeExpression) toGolangType() (golangType, error) {
+func (t TypeExpression) toGolangType(knownTypes map[string]DefaultType) (golangType, error) {
 	if t.ParenExpression != nil {
-		return t.ParenExpression.toGolangType()
+		return t.ParenExpression.toGolangType(knownTypes)
 	}
 	if t.NamedRef != nil {
-		return mapToGoType(*t.NamedRef, false), nil
+		return mapToGoType(*t.NamedRef, false, knownTypes), nil
 	}
 	if t.BuiltIn != nil {
-		return mapToGoType(*t.BuiltIn, false), nil
+		return mapToGoType(*t.BuiltIn, false, knownTypes), nil
 	}
 	if t.Number != nil {
-		return mapToGoType(fmt.Sprintf("%d", *t.Number), false), nil
+		return mapToGoType(fmt.Sprintf("%d", *t.Number), false, knownTypes), nil
 	}
 	if t.CellRef != nil {
-		gt, err := t.CellRef.TypeExpression.toGolangType()
+		gt, err := t.CellRef.TypeExpression.toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -223,9 +224,9 @@ func (t TypeExpression) toGolangType() (golangType, error) {
 	}, nil
 }
 
-func (t *ParenExpression) toGolangType() (golangType, error) {
+func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golangType, error) {
 	var res golangType
-	name, err := t.Name.toGolangType()
+	name, err := t.Name.toGolangType(knownTypes)
 	if err != nil {
 		return golangType{}, err
 	}
@@ -235,11 +236,11 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 		if len(t.Parameter) != 2 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for Either")
 		}
-		p1, err := t.Parameter[0].toGolangType()
+		p1, err := t.Parameter[0].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
-		p2, err := t.Parameter[1].toGolangType()
+		p2, err := t.Parameter[1].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -257,7 +258,7 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 			return golangType{}, fmt.Errorf("invalid bitsize type for HashmapE")
 		}
 		size := mapBitsSizeToType(*t.Parameter[0].Number)
-		p, err := t.Parameter[1].toGolangType()
+		p, err := t.Parameter[1].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -267,7 +268,7 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 		if len(t.Parameter) != 1 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for Maybe")
 		}
-		p, err := t.Parameter[0].toGolangType()
+		p, err := t.Parameter[0].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -277,7 +278,7 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 		if len(t.Parameter) != 1 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for VarUInteger")
 		}
-		p, err := t.Parameter[0].toGolangType()
+		p, err := t.Parameter[0].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -287,7 +288,7 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 		if len(t.Parameter) != 1 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for ##")
 		}
-		p, err := t.Parameter[0].toGolangType()
+		p, err := t.Parameter[0].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -301,7 +302,7 @@ func (t *ParenExpression) toGolangType() (golangType, error) {
 	}
 
 	for _, p := range t.Parameter {
-		param, err := p.toGolangType()
+		param, err := p.toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -321,8 +322,8 @@ func mapBitsSizeToType(bits int) golangType {
 	}
 }
 
-func mapToGoType(name string, optional bool) golangType {
-	goType, ok := defaultKnownTypes[name] // TODO: replace to generator field
+func mapToGoType(name string, optional bool, knownTypes map[string]DefaultType) golangType {
+	goType, ok := knownTypes[name]
 	if ok {
 		return golangType{
 			name: goType.Name,

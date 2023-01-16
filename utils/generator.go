@@ -1,6 +1,11 @@
 package utils
 
-import "strings"
+import (
+	"golang.org/x/exp/constraints"
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
+	"strings"
+)
 
 func ToCamelCase(s string) string {
 	s = strings.TrimSpace(s)
@@ -44,4 +49,10 @@ func ToCamelCasePrivate(s string) string {
 		res = strings.ToLower(res[0:1]) + res[1:]
 	}
 	return res
+}
+
+func GetOrderedKeys[M ~map[K]V, K constraints.Ordered, V any](m M) []K {
+	keys := maps.Keys(m)
+	slices.Sort(keys)
+	return keys
 }

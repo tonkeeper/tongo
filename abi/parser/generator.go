@@ -6,7 +6,7 @@ import (
 	tlbParser "github.com/startfellows/tongo/tlb/parser"
 	"github.com/startfellows/tongo/utils"
 	"go/format"
-	"sort"
+	"golang.org/x/exp/slices"
 	"strings"
 )
 
@@ -29,7 +29,6 @@ var defaultKnownTypes = map[string]string{
 
 var (
 	msgDecoderReturnErr = "if err != nil {return \"\", nil, err}\n"
-	returnNilErr        = "if err != nil {return nil, err}\n"
 	returnInvalidStack  = "{return \"\", nil, fmt.Errorf(\"invalid stack format\")}\n"
 	returnStrNilErr     = "if err != nil {return \"\", nil, err}\n"
 )
@@ -62,16 +61,43 @@ func NewGenerator(knownTypes map[string]string, typeName string) *Generator {
 }
 
 func (g *Generator) GetMethods(interfaces []Interface) (string, error) {
-	var builder strings.Builder
+	var builder, methodMap, resultMap strings.Builder
 	builder.WriteString(`
 type Executor interface {
 	RunSmcMethod(ctx context.Context, accountID tongo.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 	`)
+
+	methods := make(map[int][]string)
+	var resultTypes []string
+
 	for _, i := range interfaces {
 		for _, m := range i.Methods {
-			s, err := g.GetMethod(m)
+			methodName := utils.ToCamelCase(m.Name)
+
+			if len(m.Input.StackValues) == 0 {
+				temp, ok := methods[utils.MethodIdFromName(methodName)]
+				if ok {
+					temp = append(temp, methodName)
+					methods[utils.MethodIdFromName(methodName)] = temp
+				} else {
+					methods[utils.MethodIdFromName(methodName)] = []string{methodName}
+				}
+			}
+
+			for _, o := range m.Output {
+				resultTypeName := utils.ToCamelCase(o.Version) + utils.ToCamelCase(m.Name) + "Result"
+				resultTypes = append(resultTypes, resultTypeName)
+				r, err := g.buildResultType(resultTypeName, o.Stack)
+				if err != nil {
+					return "", err
+				}
+				builder.WriteString(r)
+				builder.WriteRune('\n')
+			}
+
+			s, err := g.getMethod(m)
 			if err != nil {
 				return "", err
 			}
@@ -79,7 +105,29 @@ type Executor interface {
 			builder.WriteRune('\n')
 		}
 	}
-	return builder.String(), nil
+
+	methodMap.WriteString("var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){\n")
+	for _, k := range utils.GetOrderedKeys(methods) {
+		methodMap.WriteString(fmt.Sprintf("%d: {", k))
+		for _, m := range methods[k] {
+			methodMap.WriteString(fmt.Sprintf("%s, ", m))
+		}
+		methodMap.WriteString("},\n")
+	}
+	methodMap.WriteString("}\n\n")
+
+	resultMap.WriteString("var ResultTypes = []interface{}{\n")
+	slices.Sort(resultTypes)
+	for _, r := range resultTypes {
+		resultMap.WriteString(fmt.Sprintf("&%s{}, \n", r))
+	}
+	resultMap.WriteString("}\n\n")
+
+	b, err := format.Source([]byte(methodMap.String() + resultMap.String() + builder.String()))
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 func (g *Generator) RegisterTypes(interfaces []Interface) error {
@@ -182,18 +230,9 @@ func (g *Generator) checkType(s string) (string, error) {
 	return s, nil
 }
 
-func (g *Generator) GetMethod(m GetMethod) (string, error) {
+func (g *Generator) getMethod(m GetMethod) (string, error) {
 	var builder strings.Builder
 	var args []string
-
-	for _, o := range m.Output {
-		r, err := g.buildResultType(utils.ToCamelCase(o.Version)+utils.ToCamelCase(m.Name)+"Result", o.Stack)
-		if err != nil {
-			return "", err
-		}
-		builder.WriteString(r)
-		builder.WriteRune('\n')
-	}
 
 	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ", utils.ToCamelCase(m.Name)))
 
@@ -250,13 +289,7 @@ func (g *Generator) GetMethod(m GetMethod) (string, error) {
 		builder.WriteString(decoders)
 		builder.WriteRune('\n')
 	}
-
-	b, err := format.Source([]byte(builder.String()))
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
-	//return builder.String(), nil
+	return builder.String(), nil
 }
 
 func buildInputStackValues(r []StackRecord) string {
@@ -329,35 +362,38 @@ func (g *Generator) buildOutputDecoder(name string, r []StackRecord) (string, er
 			return "", err
 		}
 		varName := utils.ToCamelCasePrivate(s.Name)
-
+		recName := varName
 		if s.Nullable {
 			builder.WriteString(fmt.Sprintf("var %s *%s\n", varName, varType))
 			builder.WriteString(fmt.Sprintf("if stack[%d].SumType != \"VmStkNull\" {", i))
+			builder.WriteString(fmt.Sprintf("var temp %s\n", varType))
+			recName = "temp"
 		} else {
 			builder.WriteString(fmt.Sprintf("var %s %s\n", varName, varType))
 		}
 
 		resBuilder.WriteString(fmt.Sprintf("%s: %s,\n", utils.ToCamelCase(s.Name), varName))
-		// TODO: add nullable values decoding
+
 		switch s.XMLName.Local {
 		case "tinyint":
 			if varType == "bool" {
-				builder.WriteString(fmt.Sprintf("%s = stack[%d].Int64() != 0\n", varName, i))
+				builder.WriteString(fmt.Sprintf("%s = stack[%d].Int64() != 0\n", recName, i))
 			} else {
-				builder.WriteString(fmt.Sprintf("%s = %s(stack[%d].Int64())\n", varName, varType, i))
+				builder.WriteString(fmt.Sprintf("%s = %s(stack[%d].Int64())\n", recName, varType, i))
 			}
 		case "int":
-			builder.WriteString(fmt.Sprintf("%s = stack[%d].Int257()\n", varName, i))
+			builder.WriteString(fmt.Sprintf("%s = stack[%d].Int257()\n", recName, i))
 		case "slice":
-			builder.WriteString(fmt.Sprintf("err = stack[%d].VmStkSlice.UnmarshalToTlbStruct(&%s)\n", i, varName))
+			builder.WriteString(fmt.Sprintf("err = stack[%d].VmStkSlice.UnmarshalToTlbStruct(&%s)\n", i, recName))
 			builder.WriteString(returnStrNilErr)
 		case "cell":
-			builder.WriteString(fmt.Sprintf("%sCell := &stack[%d].VmStkCell.Value\n", varName, i))
-			builder.WriteString(fmt.Sprintf("err = tlb.Unmarshal(%sCell, &%s)\n", varName, varName))
+			builder.WriteString(fmt.Sprintf("%sCell := &stack[%d].VmStkCell.Value\n", recName, i))
+			builder.WriteString(fmt.Sprintf("err = tlb.Unmarshal(%sCell, &%s)\n", recName, recName))
 			builder.WriteString(returnStrNilErr)
 		}
 
 		if s.Nullable {
+			builder.WriteString(fmt.Sprintf("%s = &temp\n", varName))
 			builder.WriteString("}\n")
 		}
 	}
@@ -387,26 +423,12 @@ func (g *Generator) buildResultType(name string, s []StackRecord) (string, error
 	return builder.String(), nil
 }
 
-func (g *Generator) sortedMessages() []TLBMsgBody {
-	var keys []int
-	for k := range g.loadedTlbMsgTypes {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-
-	var res []TLBMsgBody
-	for _, k := range keys {
-		res = append(res, g.loadedTlbMsgTypes[uint32(k)])
-	}
-	return res
-}
-
 func (g *Generator) CollectedTypes() string {
 	var builder strings.Builder
 	builder.WriteString(strings.Join(g.loadedTlbTypes, "\n\n"))
 
-	for _, m := range g.sortedMessages() {
-		builder.WriteString(m.Code)
+	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
+		builder.WriteString(g.loadedTlbMsgTypes[k].Code)
 		builder.WriteRune('\n')
 	}
 	builder.WriteRune('\n')
@@ -427,11 +449,11 @@ func (g *Generator) GenerateMsgDecoder() string {
 
 	builder.WriteString("switch tag {\n")
 
-	for _, m := range g.sortedMessages() {
-		builder.WriteString(fmt.Sprintf("case 0x%x:\n", m.Tag))
-		builder.WriteString(fmt.Sprintf("var res %s%s\n", m.TypePrefix, m.TypeName))
+	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
+		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
+		builder.WriteString(fmt.Sprintf("var res %s%s\n", g.loadedTlbMsgTypes[k].TypePrefix, g.loadedTlbMsgTypes[k].TypeName))
 		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", m.TypePrefix))
+		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].TypePrefix))
 	}
 
 	builder.WriteString("}\n")

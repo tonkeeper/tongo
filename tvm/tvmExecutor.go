@@ -209,7 +209,7 @@ func (e *Emulator) runGetMethod(methodName string, stack *boc.Cell) (result, err
 	cStackStr := C.CString(stackBoc)
 	defer C.free(unsafe.Pointer(cStackStr))
 
-	methodID := int(utils.Crc16String(methodName)&0xffff) | 0x10000
+	methodID := utils.MethodIdFromName(methodName)
 
 	var res result
 	r := C.tvm_emulator_run_get_method(e.emulator, C.int(methodID), cStackStr)

@@ -41,12 +41,12 @@ func decodeRecursiveBinTree(c *boc.Cell) ([]*boc.Cell, error) {
 	return cellAr, nil
 }
 
-func (b BinTree[T]) MarshalTLB(c *boc.Cell, tag string) error {
+func (b BinTree[T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	// TODO: implement
 	return fmt.Errorf("BinTree marshaling not implmented")
 }
 
-func (b *BinTree[T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (b *BinTree[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	dec, err := decodeRecursiveBinTree(c)
 	if err != nil {
 		return err

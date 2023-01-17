@@ -15,8 +15,8 @@
             <output>
                 <tinyint name="init">int8</tinyint>
                 <int name="index">int257</int>
-                <slice name="collection_address">AccountID</slice>
-                <slice name="owner_address">AccountID</slice>
+                <slice name="collection_address">msgaddress</slice>
+                <slice name="owner_address">msgaddress</slice>
                 <cell name="individual_content">any</cell>
             </output>
         </get_method>
@@ -65,7 +65,7 @@
             <output>
                 <int name="next_item_index">int257</int>
                 <cell name="collection_content">any</cell>
-                <slice name="owner_address">AccountID</slice>
+                <slice name="owner_address">msgaddress</slice>
             </output>
         </get_method>
         <get_method name="get_nft_address_by_index">
@@ -73,7 +73,7 @@
                 <int name="index">int257</int>
             </input>
             <output>
-                <slice name="address">AccountID</slice>
+                <slice name="address">msgaddress</slice>
             </output>
         </get_method>
     </interface>
@@ -84,7 +84,7 @@
             <output>
                 <tinyint name="numerator">uint16</tinyint>
                 <tinyint name="denominator">uint16</tinyint>
-                <slice name="destination">AccountID</slice>
+                <slice name="destination">msgaddress</slice>
             </output>
         </get_method>
         <internal name="get_royalty_params">
@@ -103,17 +103,17 @@
             <output>
                 <int name="total_supply">int257</int>
                 <tinyint name="mintable">int8</tinyint>
-                <slice name="admin_address">AccountID</slice>
+                <slice name="admin_address">msgaddress</slice>
                 <cell name="jetton_content">any</cell>
                 <cell name="jetton_wallet_code">any</cell>
             </output>
         </get_method>
         <get_method name="get_wallet_address">
             <input>
-                <slice name="owner_address">AccountID</slice>
+                <slice name="owner_address">msgaddress</slice>
             </input>
             <output>
-                <slice name="jetton_wallet_address">AccountID</slice>
+                <slice name="jetton_wallet_address">msgaddress</slice>
             </output>
         </get_method>
     </interface>
@@ -123,8 +123,8 @@
         <get_method name="get_wallet_data">
             <output>
                 <int name="balance">int257</int>
-                <slice name="owner">AccountID</slice>
-                <slice name="jetton">AccountID</slice>
+                <slice name="owner">msgaddress</slice>
+                <slice name="jetton">msgaddress</slice>
                 <cell name="jetton_wallet_code">any</cell>
             </output>
         </get_method>
@@ -178,25 +178,25 @@
     <interface name="nft_sale" group="nft">
         <get_method name="get_sale_data">
             <output version="basic" fixed_length="true">
-                <slice name="marketplace">AccountID</slice>
-                <slice name="nft">AccountID</slice>
-                <slice name="owner">AccountID</slice>
+                <slice name="marketplace">msgaddress</slice>
+                <slice name="nft">msgaddress</slice>
+                <slice name="owner">msgaddress</slice>
                 <int name="full_price">int257</int>
                 <tinyint name="market_fee">uint64</tinyint>
-                <slice name="royalty_address">AccountID</slice>
+                <slice name="royalty_address">msgaddress</slice>
                 <tinyint name="royalty_amount">uint64</tinyint>
             </output>
             <output version="getgems" fixed_length="true">
                 <tinyint name="fix_price">uint64</tinyint>
                 <tinyint name="is_complete">bool</tinyint>
                 <tinyint name="created_at">uint64</tinyint>
-                <slice name="marketplace">AccountID</slice>
-                <slice name="nft">AccountID</slice>
-                <slice name="owner">AccountID</slice>
+                <slice name="marketplace">msgaddress</slice>
+                <slice name="nft">msgaddress</slice>
+                <slice name="owner">msgaddress</slice>
                 <int name="full_price">int257</int>
-                <slice name="market_fee_address">AccountID</slice>
+                <slice name="market_fee_address">msgaddress</slice>
                 <tinyint name="market_fee">uint64</tinyint>
-                <slice name="royalty_address">AccountID</slice>
+                <slice name="royalty_address">msgaddress</slice>
                 <tinyint name="royalty_amount">uint64</tinyint>
             </output>
         </get_method>
@@ -206,7 +206,7 @@
     <interface name="tep_85_sbt" group="sbt">
         <get_method name="get_authority_address">
             <output>
-                <slice name="address">AccountID</slice>
+                <slice name="address">msgaddress</slice>
             </output>
         </get_method>
         <get_method name="get_revoked_time">
@@ -293,29 +293,29 @@
         </internal>
         <internal name="init_channel">
             <input>
-                init_channel#56103bba is_A:Bool signature:bits512 tag:# channel_id:uint128 balance_A:Coins balance_B:Coins = InternalMsgBody;
+                init_channel#0e0620c2 is_A:Bool signature:bits512 tag:# channel_id:uint128 balance_A:Coins balance_B:Coins = InternalMsgBody;
             </input>
         </internal>
         <internal name="cooperative_close">
             <input>
-                cooperative_close#0df395b9 sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 balance_A:Coins balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+                cooperative_close#5577587e sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 balance_A:Coins balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
             </input>
         </internal>
         <internal name="cooperative_commit">
             <input>
-                cooperative_commit#cf19aff5 sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+                cooperative_commit#79a126ef sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
             </input>
         </internal>
         <internal name="start_uncooperative_close">
             <input>
-                start_uncooperative_close#b942f428 signed_by_A:Bool signature:bits512 tag:# channel_id:uint128
+                start_uncooperative_close#1f151acf signed_by_A:Bool signature:bits512 tag:# channel_id:uint128
                 sch_A:^SignedSemiChannel
                 sch_B:^SignedSemiChannel = InternalMsgBody;
             </input>
         </internal>
         <internal name="challenge_quarantined_state">
             <input>
-                challenge_quarantined_state#ab15bc6a
+                challenge_quarantined_state#088eaa32
                 challenged_by_A:Bool signature:bits512 tag:# channel_id:uint128
                 sch_A:^SignedSemiChannel
                 sch_B:^SignedSemiChannel = InternalMsgBody;
@@ -323,7 +323,7 @@
         </internal>
         <internal name="settle_conditionals">
             <input>
-                settle_conditionals#04291097
+                settle_conditionals#66f6f069
                 from_A:Bool signature:bits512 tag:# channel_id:uint128
                 conditionals_to_settle:(HashmapE 32 Cell)
                 = InternalMsgBody;

@@ -31,7 +31,7 @@ func TestRunGetMethod(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	code, res, err := emulator.RunGetMethod(context.Background(), account, "get_nft_address_by_index", tlb.VmStack{val})
+	code, res, err := emulator.RunSmcMethod(context.Background(), account, "get_nft_address_by_index", tlb.VmStack{val})
 	if err != nil {
 		t.Fatal(err)
 	}

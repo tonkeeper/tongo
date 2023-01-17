@@ -62,13 +62,13 @@ func TestComputeSkipReason_MarshalTLB(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(string(tt.reason), func(t *testing.T) {
 			c := boc.NewCell()
-			err := tt.reason.MarshalTLB(c, "")
+			err := tt.reason.MarshalTLB(c, &Encoder{})
 			if err != nil {
 				t.Errorf("MarshalTLB() error = %v", err)
 			}
 			c.ResetCounters()
 			var reason ComputeSkipReason
-			err = (&reason).UnmarshalTLB(c, "")
+			err = (&reason).UnmarshalTLB(c, &Decoder{})
 			if err != nil {
 				t.Errorf("UnmarshalTLB() error = %v", err)
 			}
@@ -90,13 +90,13 @@ func TestAccStatusChange_MarshalTLB(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(string(tt.status), func(t *testing.T) {
 			c := boc.NewCell()
-			err := tt.status.MarshalTLB(c, "")
+			err := tt.status.MarshalTLB(c, &Encoder{})
 			if err != nil {
 				t.Errorf("MarshalTLB() error = %v", err)
 			}
 			c.ResetCounters()
 			var status AccStatusChange
-			err = (&status).UnmarshalTLB(c, "")
+			err = (&status).UnmarshalTLB(c, &Decoder{})
 			if err != nil {
 				t.Errorf("UnmarshalTLB() error = %v", err)
 			}

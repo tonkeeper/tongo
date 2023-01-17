@@ -565,39 +565,6 @@ func (s *BitString) ReadRemainingBits() BitString {
 	return bs
 }
 
-func (s BitString) MarshalTLB(cell *Cell, tag string) error {
-	err := cell.WriteBitString(s)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *BitString) UnmarshalTLB(cell *Cell, tag string) error {
-	ln, err := decodeBitStringTag(tag)
-	if err != nil {
-		return err
-	}
-	bs, err := cell.ReadBits(ln)
-	if err != nil {
-		return err
-	}
-	*s = bs
-	return nil
-}
-
-func decodeBitStringTag(tag string) (int, error) {
-	var n int
-	if tag == "" {
-		return 0, fmt.Errorf("empty BitString tag")
-	}
-	_, err := fmt.Sscanf(tag, "%dbits", &n)
-	if err != nil {
-		return 0, err
-	}
-	return n, nil
-}
-
 func (s *BitString) ResetCounter() {
 	s.rCursor = 0
 }

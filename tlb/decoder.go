@@ -2,23 +2,27 @@ package tlb
 
 import (
 	"fmt"
-	"math/big"
 	"reflect"
 
 	"github.com/startfellows/tongo/boc"
 )
 
+type Decoder struct {
+	tag string
+}
+
 type UnmarshalerTLB interface {
-	UnmarshalTLB(c *boc.Cell, tag string) error
+	UnmarshalTLB(c *boc.Cell, decoder *Decoder) error
 }
 
 func Unmarshal(c *boc.Cell, o any) error {
 	//TODO: clone cell with cursor reset
-	return decode(c, reflect.ValueOf(o), "")
+	decoder := Decoder{}
+	return decode(c, reflect.ValueOf(o), &decoder)
 }
 
-func decode(c *boc.Cell, val reflect.Value, tag string) error {
-	t, err := parseTag(tag)
+func decode(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
+	t, err := parseTag(decoder.tag)
 	if err != nil {
 		return err
 	}
@@ -33,7 +37,7 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 	}
 	i, ok := reflect.New(val.Type()).Interface().(UnmarshalerTLB)
 	if ok {
-		err := i.UnmarshalTLB(c, tag)
+		err := i.UnmarshalTLB(c, decoder)
 		if err != nil {
 			return err
 		}
@@ -89,17 +93,19 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 	case reflect.Struct:
 		t := reflect.New(val.Type()).Interface()
 		switch t.(type) {
-		case *big.Int:
-			return decodeBigInt(c, val, tag)
+		case *boc.Cell:
+			return decodeCell(c, val)
+		case *boc.BitString:
+			return decodeBitString(c, val)
 		default:
-			return decodeStruct(c, val, tag)
+			return decodeStruct(c, val, decoder)
 		}
 	case reflect.Pointer:
 		if val.Kind() == reflect.Pointer && !val.IsNil() {
-			return decode(c, val.Elem(), tag)
+			return decode(c, val.Elem(), decoder)
 		}
 		a := reflect.New(val.Type().Elem())
-		err = decode(c, a, tag)
+		err = decode(c, a, decoder)
 		if err != nil {
 			return err
 		}
@@ -120,20 +126,21 @@ func decode(c *boc.Cell, val reflect.Value, tag string) error {
 	}
 }
 
-func decodeStruct(c *boc.Cell, val reflect.Value, tag string) error {
+func decodeStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 	if _, ok := val.Type().FieldByName("SumType"); ok {
-		return decodeSumType(c, val, tag)
+		return decodeSumType(c, val, decoder)
 	} else {
-		return decodeBasicStruct(c, val, tag)
+		return decodeBasicStruct(c, val, decoder)
 	}
 }
 
-func decodeBasicStruct(c *boc.Cell, val reflect.Value, tag string) error {
+func decodeBasicStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 	for i := 0; i < val.NumField(); i++ {
 		if !val.Field(i).CanSet() {
 			return fmt.Errorf("can't set field %v", i)
 		}
-		err := decode(c, val.Field(i), val.Type().Field(i).Tag.Get("tlb"))
+		decoder.tag = val.Type().Field(i).Tag.Get("tlb")
+		err := decode(c, val.Field(i), decoder)
 		if err != nil {
 			return err
 		}
@@ -141,7 +148,7 @@ func decodeBasicStruct(c *boc.Cell, val reflect.Value, tag string) error {
 	return nil
 }
 
-func decodeSumType(c *boc.Cell, val reflect.Value, tag string) error {
+func decodeSumType(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 	for i := 0; i < val.NumField(); i++ {
 		if !val.Field(i).CanSet() {
 			return fmt.Errorf("can't set field %v", i)
@@ -149,21 +156,22 @@ func decodeSumType(c *boc.Cell, val reflect.Value, tag string) error {
 		if val.Field(i).Type().Name() == "SumType" {
 			continue
 		}
-		tag = val.Type().Field(i).Tag.Get("tlbSumType")
+		tag := val.Type().Field(i).Tag.Get("tlbSumType")
 		ok, err := compareWithSumTag(c, tag)
 		if err != nil {
 			return err
 		}
 		if ok {
 			val.FieldByName("SumType").SetString(val.Type().Field(i).Name)
-			err := decode(c, val.Field(i), "")
+			decoder.tag = ""
+			err := decode(c, val.Field(i), decoder)
 			if err != nil {
 				return err
 			}
 			return nil
 		}
 	}
-	return fmt.Errorf("can not decode sumtype %v", tag)
+	return fmt.Errorf("can not decode sumtype %v", decoder.tag)
 }
 
 func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {
@@ -179,7 +187,14 @@ func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {
 	return false, nil
 }
 
-func decodeBigInt(c *boc.Cell, val reflect.Value, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("bigInt decoding not implemented")
+func decodeCell(c *boc.Cell, val reflect.Value) error {
+	if !val.CanSet() {
+		return fmt.Errorf("value can't be changed")
+	}
+	val.Set(reflect.ValueOf(c).Elem())
+	return nil
+}
+
+func decodeBitString(c *boc.Cell, val reflect.Value) error {
+	return fmt.Errorf("bigString decoding not supported")
 }

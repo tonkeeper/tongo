@@ -57,7 +57,7 @@ type BlockInfoPart struct {
 	PrevKeyBlockSeqno         uint32
 }
 
-func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var data struct {
 		Magic     Magic `tlb:"block_info#9bc7a987"`
 		BlockInfo BlockInfoPart
@@ -313,7 +313,7 @@ type McBlockExtra struct {
 	Config ConfigParams
 }
 
-func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	sumType, err := c.ReadUint(16)
 	if err != nil {
 		return err

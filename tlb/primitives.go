@@ -31,8 +31,8 @@ type Ref[T any] struct {
 type Unary uint
 type Any boc.Cell
 
-func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
-	a := strings.Split(tag, "$")
+func (m *Magic) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	a := strings.Split(decoder.tag, "$")
 	if len(a) == 2 {
 		x, err := strconv.ParseUint(a[1], 2, 32)
 		if err != nil {
@@ -40,11 +40,11 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
 		}
 		y, err := c.ReadUint(len(a[1]))
 		if x != y {
-			return fmt.Errorf("magic prefix: %v not found ", tag)
+			return fmt.Errorf("magic prefix: %v not found ", decoder.tag)
 		}
 		return nil
 	}
-	a = strings.Split(tag, "#")
+	a = strings.Split(decoder.tag, "#")
 	if len(a) == 2 {
 		x, err := strconv.ParseUint(a[1], 16, 32)
 		if err != nil {
@@ -52,18 +52,18 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, tag string) error {
 		}
 		y, err := c.ReadUint(len(a[1]) * 4)
 		if x != y {
-			return fmt.Errorf("magic prefix: %v not found ", tag)
+			return fmt.Errorf("magic prefix: %v not found ", decoder.tag)
 		}
 		return nil
 	}
-	return fmt.Errorf("unsupported tag: %v", tag)
+	return fmt.Errorf("unsupported tag: %v", decoder.tag)
 }
 
-func (m Magic) MarshalTLB(c *boc.Cell, tag string) error {
-	return encodeSumTag(c, tag)
+func (m Magic) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return encodeSumTag(c, encoder.tag)
 }
 
-func (m Maybe[_]) MarshalTLB(c *boc.Cell, tag string) error {
+func (m Maybe[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	err := c.WriteBit(!m.Null)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (m Maybe[_]) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	exist, err := c.ReadBit()
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (m Either[_, _]) MarshalTLB(c *boc.Cell, tag string) error {
+func (m Either[_, _]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	err := c.WriteBit(m.IsRight)
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func (m Either[_, _]) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (m *Either[_, _]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (m *Either[_, _]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	isRight, err := c.ReadBit()
 	if err != nil {
 		return err
@@ -131,7 +131,7 @@ func (m *Either[_, _]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (m EitherRef[_]) MarshalTLB(c *boc.Cell, tag string) error {
+func (m EitherRef[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	err := c.WriteBit(m.IsRight)
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ func (m EitherRef[_]) MarshalTLB(c *boc.Cell, tag string) error {
 	return Marshal(c, m.Value)
 }
 
-func (m *EitherRef[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (m *EitherRef[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	isRight, err := c.ReadBit()
 	if err != nil {
 		return err
@@ -160,7 +160,7 @@ func (m *EitherRef[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return Unmarshal(c, &m.Value)
 }
 
-func (m Ref[_]) MarshalTLB(c *boc.Cell, tag string) error {
+func (m Ref[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	r := boc.NewCell()
 	err := Marshal(r, m.Value)
 	if err != nil {
@@ -170,7 +170,7 @@ func (m Ref[_]) MarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
-func (m *Ref[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (m *Ref[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	r, err := c.NextRef()
 	if err != nil {
 		return err
@@ -182,17 +182,17 @@ func (m *Ref[_]) UnmarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (n Unary) MarshalTLB(c *boc.Cell, tag string) error {
+func (n Unary) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return c.WriteUnary(uint(n))
 }
 
-func (n *Unary) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (n *Unary) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	a, err := c.ReadUnary()
 	*n = Unary(a)
 	return err
 }
 
-func (a Any) MarshalTLB(c *boc.Cell, tag string) error {
+func (a Any) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	x := boc.Cell(a)
 	y := &x
 	err := c.WriteBitString(y.RawBitString())
@@ -212,7 +212,7 @@ func (a Any) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (a *Any) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (a *Any) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	x := boc.NewCell()
 	err := x.WriteBitString(c.ReadRemainingBits())
 	if err != nil {

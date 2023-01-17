@@ -35,7 +35,7 @@ type DNSRecord struct {
 	NotStandard       *boc.Cell // only for custom unmarshaling
 }
 
-func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	t, err := c.ReadUint(16)
 	if err != nil {
 		return err
@@ -93,7 +93,7 @@ func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, tag string) error {
 // text$_ chunks:(## 8) rest:(TextChunks chunks) = Text;
 type DNSText string
 
-func (t *DNSText) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (t *DNSText) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	chunksQty, err := c.ReadUint(8)
 	if err != nil {
 		return err

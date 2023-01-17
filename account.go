@@ -150,29 +150,6 @@ func MustParseAccountID(s string) AccountID {
 	return aa
 }
 
-// MsgAddressInt
-// addr_std$10 anycast:(Maybe Anycast)
-// workchain_id:int8 address:bits256  = MsgAddressInt;
-//func (id AccountID) MarshalTLB(c *boc.Cell, tag string) error {
-//	err := c.WriteUint(2, 2)
-//	if err != nil {
-//		return err
-//	}
-//	err = c.WriteBit(false)
-//	if err != nil {
-//		return err
-//	}
-//	err = c.WriteUint(uint64(id.Workchain), 8)
-//	if err != nil {
-//		return err
-//	}
-//	err = c.WriteBytes(id.Address[:])
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
 func MsgAddressFromAccountID(id *AccountID) tlb.MsgAddress {
 	if id == nil {
 		return tlb.MsgAddress{SumType: "AddrNone"}

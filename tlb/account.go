@@ -85,7 +85,7 @@ const (
 	AccountFrozen AccountStatus = "frozen"
 )
 
-func (a AccountStatus) MarshalTLB(c *boc.Cell, tag string) error {
+func (a AccountStatus) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	switch a {
 	case AccountUninit:
 		return c.WriteUint(0, 2)
@@ -99,7 +99,7 @@ func (a AccountStatus) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (a *AccountStatus) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (a *AccountStatus) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	t, err := c.ReadUint(2)
 	if err != nil {
 		return err

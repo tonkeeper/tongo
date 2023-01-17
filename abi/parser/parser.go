@@ -45,10 +45,11 @@ type GetMethod struct {
 	Name        string            `xml:"name,attr"`
 	Callback    bool              `xml:"callback,attr"`
 	FixedLength bool              `xml:"fixed_length,attr"`
-	Output      []GetmethodOutput `xml:"output"`
+	ID          int               `xml:"id,attr"`
+	Output      []GetMethodOutput `xml:"output"`
 }
 
-type GetmethodOutput struct {
+type GetMethodOutput struct {
 	Version     string        `xml:"version,attr"`
 	FixedLength bool          `xml:"fixed_length,attr"`
 	Stack       []StackRecord `xml:",any"`

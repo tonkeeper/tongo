@@ -58,12 +58,12 @@ type VmTupleRef struct {
 	Ref   *VmTuple      `tlb:"^"`
 }
 
-func (t VmStkTuple) MarshalTLB(c *boc.Cell, tag string) error {
+func (t VmStkTuple) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	// TODO: implement
 	return fmt.Errorf("VmStkTuple TLB marshaling not implemented")
 }
 
-func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	l, err := c.ReadUint(16)
 	if err != nil {
 		return err
@@ -128,7 +128,7 @@ func vmTupleRefInner(n uint16, c *boc.Cell) (*VmTupleRef, error) {
 	return nil, nil
 }
 
-func (t *VmTuple) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (t *VmTuple) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return fmt.Errorf("VmTuple TLB unmarshaling not implemented")
 }
 
@@ -166,7 +166,7 @@ type VmStackValue struct {
 	VmStkTuple   VmStkTuple    `tlbSumType:"vm_stk_tuple#07"`
 }
 
-func (s VmStack) MarshalTLB(c *boc.Cell, tag string) error {
+func (s VmStack) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	depth := uint64(len(s))
 	err := c.WriteUint(depth, 24)
 	if err != nil {
@@ -176,7 +176,7 @@ func (s VmStack) MarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
-func (s *VmStack) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (s *VmStack) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	depth, err := c.ReadUint(24)
 	if err != nil {
 		return err
@@ -267,7 +267,7 @@ func (s *VmStack) Put(val VmStackValue) {
 	*s = append(VmStack{val}, *s...)
 }
 
-func (s VmCellSlice) MarshalTLB(c *boc.Cell, tag string) error {
+func (s VmCellSlice) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	if s.stBits > s.endBits {
 		return fmt.Errorf("invalid StBits and EndBits for CellSlice")
 	}
@@ -300,7 +300,7 @@ func (s VmCellSlice) MarshalTLB(c *boc.Cell, tag string) error {
 	return err
 }
 
-func (s *VmCellSlice) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (s *VmCellSlice) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	cell, err := c.NextRef()
 	if err != nil {
 		return err
@@ -369,12 +369,12 @@ func (s VmCellSlice) Cell() *boc.Cell {
 	return cell
 }
 
-func (ct VmCont) MarshalTLB(c *boc.Cell, tag string) error {
+func (ct VmCont) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	// TODO: implement
 	return fmt.Errorf("VmCont TLB marshaling not implemented")
 }
 
-func (ct *VmCont) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (ct *VmCont) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	// TODO: implement
 	return fmt.Errorf("VmCont TLB unmarshaling not implemented")
 }

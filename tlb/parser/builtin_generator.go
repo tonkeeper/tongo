@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
 	"go/format"
 )
 
@@ -14,7 +15,7 @@ func GenerateVarUintTypes(max int) string {
 			`
 type VarUInteger%v big.Int
 
-func (u VarUInteger%v) MarshalTLB(c *boc.Cell, tag string) error {
+func (u VarUInteger%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	i := big.Int(u)
     b := i.Bytes()
 	err := c.WriteLimUint(len(b), %v)
@@ -24,7 +25,7 @@ func (u VarUInteger%v) MarshalTLB(c *boc.Cell, tag string) error {
 	return c.WriteBytes(b)
 }
 
-func (u *VarUInteger%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *VarUInteger%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	ln, err := c.ReadLimUint(%v)
 	if err != nil {
 		return err
@@ -53,11 +54,11 @@ func GenerateConstantInts(max int) string {
 		fmt.Fprintf(&b, `
 type Uint%v uint%v
 
-func (u Uint%v) MarshalTLB(c *boc.Cell, tag string) error {
+func (u Uint%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return c.WriteUint(uint64(u), %v)
 }
 
-func (u *Uint%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *Uint%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadUint(%v)
 	*u = Uint%v(v)
 	return err
@@ -69,11 +70,11 @@ func (u Uint%v) FixedSize() int {
 
 type Int%v int%v
 
-func (u Int%v) MarshalTLB(c *boc.Cell, tag string) error {
+func (u Int%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return c.WriteInt(int64(u), %v)
 }
 
-func (u *Int%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *Int%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadInt(%v)
 	*u = Int%v(v)
 	return err
@@ -97,12 +98,12 @@ func GenerateConstantBigInts(sizes []int) string {
 		fmt.Fprintf(&b, `
 type Uint%v big.Int
 
-func (u Uint%v) MarshalTLB(c *boc.Cell, tag string) error {
+func (u Uint%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	x := big.Int(u)
 	return c.WriteBigUint(&x, %v)
 }
 
-func (u *Uint%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *Uint%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigUint(%v)
 	*u = Uint%v(*v)
 	return err
@@ -114,12 +115,12 @@ func (u Uint%v) FixedSize() int {
 
 type Int%v big.Int
 
-func (u Int%v) MarshalTLB(c *boc.Cell, tag string) error {
+func (u Int%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	x := big.Int(u)
 	return c.WriteBigInt(&x, %v)
 }
 
-func (u *Int%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *Int%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigInt(%v)
 	*u = Int%v(*v)
 	return err
@@ -152,11 +153,11 @@ func (u Bits%v) FixedSize() int {
 			fmt.Fprintf(&b, `
 type Bits%v boc.BitString
 	
-func (u Bits%v) MarshalTLB(c *boc.Cell, tag string) error {
+func (u Bits%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return c.WriteBitString(boc.BitString(u))
 }
 	
-func (u *Bits%v) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *Bits%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBits(%v)
 	*u = Bits%v(v)
 	return err
@@ -192,10 +193,10 @@ func nearestPow(i int) int {
 
 type Int2 int8
 
-func (u Int2) MarshalTLB(c *boc.Cell, tag string) error {
+func (u Int2) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	return c.WriteInt(int64(u), 2)
 }
-func (u *Int2) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (u *Int2) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	v, err := c.ReadInt(2)
 	*u = Int2(v)
 	return err

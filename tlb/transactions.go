@@ -39,7 +39,7 @@ func (tx *Transaction) Hash() Bits256 {
 	return tx.hash
 }
 
-func (tx *Transaction) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	hash, err := c.Hash()
 	if err != nil {
 		return err
@@ -237,7 +237,7 @@ const (
 	AccStatusChangeDeleted   AccStatusChange = "acst_deleted"
 )
 
-func (a AccStatusChange) MarshalTLB(c *boc.Cell, tag string) error {
+func (a AccStatusChange) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	if a == AccStatusChangeUnchanged {
 		return c.WriteBit(false)
 	}
@@ -250,7 +250,7 @@ func (a AccStatusChange) MarshalTLB(c *boc.Cell, tag string) error {
 	return c.WriteBit(false)
 }
 
-func (a *AccStatusChange) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (a *AccStatusChange) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	f, err := c.ReadBit()
 	if err != nil {
 		return err
@@ -326,7 +326,7 @@ const (
 	ComputeSkipReasonNoGas    ComputeSkipReason = "cskip_no_gas"
 )
 
-func (a ComputeSkipReason) MarshalTLB(c *boc.Cell, tag string) error {
+func (a ComputeSkipReason) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	switch a {
 	case ComputeSkipReasonNoState:
 		return c.WriteUint(0, 2)
@@ -338,7 +338,7 @@ func (a ComputeSkipReason) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (a *ComputeSkipReason) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (a *ComputeSkipReason) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	t, err := c.ReadUint(2)
 	if err != nil {
 		return err

@@ -160,8 +160,12 @@ type result struct {
 	GasUsed        string `json:"gas_used"`
 }
 
-func (e *Emulator) RunGetMethod(ctx context.Context, accountId tongo.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error) {
+func (e *Emulator) RunSmcMethod(ctx context.Context, accountId tongo.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error) {
+	methodID := utils.MethodIdFromName(method)
+	return e.RunSmcMethodByID(ctx, accountId, methodID, params)
+}
 
+func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error) {
 	address := accountId.ToRaw()
 
 	var seed [32]byte
@@ -177,7 +181,7 @@ func (e *Emulator) RunGetMethod(ctx context.Context, accountId tongo.AccountID, 
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-	res, err := e.runGetMethod(method, paramsCell)
+	res, err := e.runGetMethod(methodID, paramsCell)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
@@ -201,15 +205,13 @@ func (e *Emulator) RunGetMethod(ctx context.Context, accountId tongo.AccountID, 
 	return uint32(res.VmExitCode), stack, nil
 }
 
-func (e *Emulator) runGetMethod(methodName string, stack *boc.Cell) (result, error) {
+func (e *Emulator) runGetMethod(methodID int, stack *boc.Cell) (result, error) {
 	stackBoc, err := stack.ToBocBase64()
 	if err != nil {
 		return result{}, err
 	}
 	cStackStr := C.CString(stackBoc)
 	defer C.free(unsafe.Pointer(cStackStr))
-
-	methodID := utils.MethodIdFromName(methodName)
 
 	var res result
 	r := C.tvm_emulator_run_get_method(e.emulator, C.int(methodID), cStackStr)

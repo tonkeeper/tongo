@@ -257,16 +257,6 @@ func (c *Cell) ReadRemainingBits() BitString {
 	return c.bits.ReadRemainingBits()
 }
 
-func (c Cell) MarshalTLB(cell *Cell, tag string) error {
-	*cell = c
-	return nil
-}
-
-func (c *Cell) UnmarshalTLB(cell *Cell, tag string) error {
-	*c = *cell
-	return nil
-}
-
 func (c *Cell) WriteBytes(b []byte) error {
 	return c.bits.WriteBytes(b)
 }

@@ -71,7 +71,7 @@ type Anycast struct {
 	RewritePfx boc.BitString
 }
 
-func (a Anycast) MarshalTLB(c *boc.Cell, tag string) error {
+func (a Anycast) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	err := c.WriteLimUint(int(a.Depth), 30)
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ func (a Anycast) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (a *Anycast) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (a *Anycast) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	depth, err := c.ReadLimUint(30)
 	if err != nil {
 		return err
@@ -131,7 +131,7 @@ type MsgAddress struct {
 	} `tlbSumType:"addr_var$11"`
 }
 
-func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	t, err := c.ReadUint(2)
 	if err != nil {
 		return err
@@ -155,7 +155,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		return nil
 	case 2:
 		var anycast Maybe[Anycast]
-		err := anycast.UnmarshalTLB(c, "")
+		err := anycast.UnmarshalTLB(c, &Decoder{})
 		if err != nil {
 			return err
 		}
@@ -174,7 +174,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, tag string) error {
 		return nil
 	case 3:
 		var anycast Maybe[Anycast]
-		err := anycast.UnmarshalTLB(c, "")
+		err := anycast.UnmarshalTLB(c, &Decoder{})
 		if err != nil {
 			return err
 		}

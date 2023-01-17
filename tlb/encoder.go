@@ -2,22 +2,26 @@ package tlb
 
 import (
 	"fmt"
-	"math/big"
 	"reflect"
 
 	"github.com/startfellows/tongo/boc"
 )
 
+type Encoder struct {
+	tag string
+}
+
 type MarshalerTLB interface {
-	MarshalTLB(c *boc.Cell, tag string) error
+	MarshalTLB(c *boc.Cell, encoder *Encoder) error
 }
 
 func Marshal(c *boc.Cell, o any) error {
-	return encode(c, o, "")
+	encoder := Encoder{}
+	return encode(c, o, &encoder)
 }
 
-func encode(c *boc.Cell, o any, tag string) error {
-	t, err := parseTag(tag)
+func encode(c *boc.Cell, o any, encoder *Encoder) error {
+	t, err := parseTag(encoder.tag)
 	if err != nil {
 		return err
 	}
@@ -28,7 +32,7 @@ func encode(c *boc.Cell, o any, tag string) error {
 		}
 	}
 	if m, ok := o.(MarshalerTLB); ok {
-		return m.MarshalTLB(c, tag)
+		return m.MarshalTLB(c, encoder)
 	}
 	val := reflect.ValueOf(o)
 	switch val.Kind() {
@@ -56,16 +60,18 @@ func encode(c *boc.Cell, o any, tag string) error {
 		return nil
 	case reflect.Struct:
 		switch o.(type) {
-		case big.Int:
-			return encodeBigInt(c, o, tag)
+		case boc.Cell:
+			return encodeCell(c, o)
+		case boc.BitString:
+			return encodeBitString(c, o)
 		default:
-			return encodeStruct(c, o, tag)
+			return encodeStruct(c, o, encoder)
 		}
 	case reflect.Pointer:
 		if val.IsNil() && !t.IsOptional {
 			return fmt.Errorf("can't encode empty pointer %v if tlb scheme is not optional", val.Type())
 		}
-		return encode(c, val.Elem().Interface(), tag)
+		return encode(c, val.Elem().Interface(), encoder)
 	case reflect.Array:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
 			return fmt.Errorf("encoding array of %v not supported", val.Type().Elem().Kind())
@@ -81,20 +87,21 @@ func encode(c *boc.Cell, o any, tag string) error {
 	}
 }
 
-func encodeStruct(c *boc.Cell, o any, tag string) error {
+func encodeStruct(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	if _, ok := val.Type().FieldByName("SumType"); ok {
-		return encodeSumType(c, o, tag)
+		return encodeSumType(c, o, encoder)
 	} else {
-		return encodeBasicStruct(c, o, tag)
+		return encodeBasicStruct(c, o, encoder)
 	}
 }
 
-func encodeBasicStruct(c *boc.Cell, o any, tag string) error {
+func encodeBasicStruct(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	for i := 0; i < val.NumField(); i++ {
 		var err error
-		err = encode(c, val.Field(i).Interface(), val.Type().Field(i).Tag.Get("tlb"))
+		encoder.tag = val.Type().Field(i).Tag.Get("tlb")
+		err = encode(c, val.Field(i).Interface(), encoder)
 		if err != nil {
 			return err
 		}
@@ -102,14 +109,14 @@ func encodeBasicStruct(c *boc.Cell, o any, tag string) error {
 	return nil
 }
 
-func encodeSumType(c *boc.Cell, o any, tag string) error {
+func encodeSumType(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	name := val.FieldByName("SumType").String()
 	for i := 0; i < val.NumField(); i++ {
 		if val.Field(i).Type().Name() == "SumType" {
 			continue
 		}
-		tag = val.Type().Field(i).Tag.Get("tlbSumType")
+		tag := val.Type().Field(i).Tag.Get("tlbSumType")
 		if name != val.Type().Field(i).Name {
 			continue
 		}
@@ -117,7 +124,8 @@ func encodeSumType(c *boc.Cell, o any, tag string) error {
 		if err != nil {
 			return err
 		}
-		err = encode(c, val.Field(i).Interface(), "")
+		encoder.tag = ""
+		err = encode(c, val.Field(i).Interface(), encoder)
 		if err != nil {
 			return err
 		}
@@ -126,7 +134,15 @@ func encodeSumType(c *boc.Cell, o any, tag string) error {
 	return nil
 }
 
-func encodeBigInt(c *boc.Cell, o any, tag string) error {
-	// TODO: implement
-	return fmt.Errorf("bigInt encoding not implemented")
+func encodeCell(c *boc.Cell, o any) error {
+	*c = o.(boc.Cell)
+	return nil
+}
+
+func encodeBitString(c *boc.Cell, o any) error {
+	err := c.WriteBitString(o.(boc.BitString))
+	if err != nil {
+		return err
+	}
+	return nil
 }

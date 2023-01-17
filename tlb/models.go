@@ -15,14 +15,14 @@ type Grams uint64 // total value fit to uint64
 
 const OneTON Grams = 1_000_000_000
 
-func (g Grams) MarshalTLB(c *boc.Cell, tag string) error {
+func (g Grams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var amount VarUInteger16
 	amount = VarUInteger16(*big.NewInt(int64(g)))
 	err := Marshal(c, amount)
 	return err
 }
 
-func (g *Grams) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var amount VarUInteger16
 	err := Unmarshal(c, &amount)
 	if err != nil {
@@ -78,7 +78,7 @@ type HashUpdate struct {
 // cons#_ {bn:#} {n:#} b:(bits bn) next:^(SnakeData ~n) = SnakeData ~(n + 1);
 type SnakeData boc.BitString
 
-func (s SnakeData) MarshalTLB(c *boc.Cell, tag string) error {
+func (s SnakeData) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	bs := boc.BitString(s)
 	if c.BitsAvailableForWrite() < bs.GetWriteCursor() {
 		s, err := bs.ReadBits(c.BitsAvailableForWrite())
@@ -100,7 +100,7 @@ func (s SnakeData) MarshalTLB(c *boc.Cell, tag string) error {
 	return c.WriteBitString(bs)
 }
 
-func (s *SnakeData) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (s *SnakeData) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	b := c.ReadRemainingBits()
 	if c.RefsAvailableForRead() > 0 {
 		cell, err := c.NextRef()
@@ -121,7 +121,7 @@ func (s *SnakeData) UnmarshalTLB(c *boc.Cell, tag string) error {
 // text#_ {n:#} data:(SnakeData ~n) = Text;
 type Text string
 
-func (t Text) MarshalTLB(c *boc.Cell, tag string) error {
+func (t Text) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	bs := boc.NewBitString(len(t) * 8)
 	err := bs.WriteBytes([]byte(t))
 	if err != nil {
@@ -130,7 +130,7 @@ func (t Text) MarshalTLB(c *boc.Cell, tag string) error {
 	return Marshal(c, SnakeData(bs))
 }
 
-func (t *Text) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (t *Text) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var sn SnakeData
 	err := Unmarshal(c, &sn)
 	if err != nil {
@@ -195,12 +195,12 @@ func (c ContentData) Bytes() ([]byte, error) {
 // chunked_data#_ data:(HashMapE 32 ^(SnakeData ~0)) = ChunkedData;
 type ChunkedData boc.BitString
 
-func (d ChunkedData) MarshalTLB(c *boc.Cell, tag string) error {
+func (d ChunkedData) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	// TODO: implement
 	return fmt.Errorf("ChunkedData marshaling not implemented")
 }
 
-func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	type chunkedData struct {
 		Data HashmapE[Uint32, Ref[SnakeData]]
 	}

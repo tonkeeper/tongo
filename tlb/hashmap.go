@@ -21,7 +21,7 @@ type Hashmap[keyT fixedSize, T any] struct {
 	values []T
 }
 
-func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	// Marshal empty Hashmap
 	if len(h.values) == 0 || h.values == nil {
 		return nil
@@ -100,7 +100,7 @@ func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []
 	return nil
 }
 
-func (h *Hashmap[keyT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *Hashmap[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var s keyT
 	keySize := s.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
@@ -187,14 +187,14 @@ type HashmapE[keyT fixedSize, T any] struct {
 	m Hashmap[keyT, T]
 }
 
-func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var temp Maybe[Ref[Hashmap[keyT, T]]]
 	temp.Null = len(h.m.keys) == 0
 	temp.Value.Value = h.m
 	return Marshal(c, temp)
 }
 
-func (h *HashmapE[keyT, T]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *HashmapE[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var temp Maybe[Ref[Hashmap[keyT, T]]]
 	err := Unmarshal(c, &temp)
 	h.m = temp.Value.Value
@@ -286,11 +286,11 @@ type HashMapAugExtraList[T any] struct {
 	Data  T
 }
 
-func (h HashmapAug[keyT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h HashmapAug[keyT, T1, T2]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return fmt.Errorf("not implemented")
 }
 
-func (h *HashmapAug[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *HashmapAug[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var t keyT
 	keySize := t.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
@@ -385,7 +385,7 @@ type HashmapAugE[keyT fixedSize, T1, T2 any] struct {
 	extra T2
 }
 
-func (h *HashmapAugE[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (h *HashmapAugE[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var temp struct {
 		M     Maybe[Ref[HashmapAug[keyT, T1, T2]]]
 		Extra T2
@@ -396,7 +396,7 @@ func (h *HashmapAugE[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, tag string) error 
 	return err
 }
 
-func (h HashmapAugE[keyT, T1, T2]) MarshalTLB(c *boc.Cell, tag string) error {
+func (h HashmapAugE[keyT, T1, T2]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var temp struct {
 		M     Maybe[Ref[HashmapAug[keyT, T1, T2]]]
 		Extra T2

@@ -25,6 +25,7 @@ var defaultKnownTypes = map[string]string{
 	"big.int":       "big.Int",
 	"dnsrecord":     "tlb.DNSRecord",
 	"dns_recordset": "tlb.DNSRecordSet",
+	"msgaddress":    "tlb.MsgAddress",
 }
 
 var (
@@ -64,7 +65,7 @@ func (g *Generator) GetMethods(interfaces []Interface) (string, error) {
 	var builder, methodMap, resultMap strings.Builder
 	builder.WriteString(`
 type Executor interface {
-	RunSmcMethod(ctx context.Context, accountID tongo.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error)
+	RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 	`)
@@ -75,14 +76,20 @@ type Executor interface {
 	for _, i := range interfaces {
 		for _, m := range i.Methods {
 			methodName := utils.ToCamelCase(m.Name)
+			var methodID int
+			if m.ID != 0 {
+				methodID = m.ID
+			} else {
+				methodID = utils.MethodIdFromName(m.Name)
+			}
 
 			if len(m.Input.StackValues) == 0 {
-				temp, ok := methods[utils.MethodIdFromName(methodName)]
+				temp, ok := methods[methodID]
 				if ok {
 					temp = append(temp, methodName)
-					methods[utils.MethodIdFromName(methodName)] = temp
+					methods[methodID] = temp
 				} else {
-					methods[utils.MethodIdFromName(methodName)] = []string{methodName}
+					methods[methodID] = []string{methodName}
 				}
 			}
 
@@ -97,7 +104,7 @@ type Executor interface {
 				builder.WriteRune('\n')
 			}
 
-			s, err := g.getMethod(m)
+			s, err := g.getMethod(m, methodID)
 			if err != nil {
 				return "", err
 			}
@@ -230,7 +237,7 @@ func (g *Generator) checkType(s string) (string, error) {
 	return s, nil
 }
 
-func (g *Generator) getMethod(m GetMethod) (string, error) {
+func (g *Generator) getMethod(m GetMethod, methodID int) (string, error) {
 	var builder strings.Builder
 	var args []string
 
@@ -255,13 +262,13 @@ func (g *Generator) getMethod(m GetMethod) (string, error) {
 	builder.WriteString(buildInputStackValues(m.Input.StackValues))
 	builder.WriteRune('\n')
 
-	builder.WriteString(fmt.Sprintf("errCode, stack, err := executor.RunSmcMethod(ctx, reqAccountID, \"%s\", stack)\n", m.Name))
+	builder.WriteString(fmt.Sprintf("errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, %d, stack)\n", methodID))
 	builder.WriteString(returnStrNilErr)
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
 
 	if len(m.Output) == 1 {
 		name := utils.ToCamelCase(m.Output[0].Version) + utils.ToCamelCase(m.Name) + "Result"
-		resDecoder, err := g.buildOutputDecoder(name, m.Output[0].Stack)
+		resDecoder, err := g.buildOutputDecoder(name, m.Output[0].Stack, m.Output[0].FixedLength)
 		if err != nil {
 			return "", err
 		}
@@ -275,7 +282,7 @@ func (g *Generator) getMethod(m GetMethod) (string, error) {
 		for _, o := range m.Output {
 			name := utils.ToCamelCase(o.Version) + utils.ToCamelCase(m.Name) + "Result"
 			builder.WriteString(fmt.Sprintf("decode%s, ", name))
-			resDecoder, err := g.buildOutputDecoder(name, o.Stack)
+			resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
 			if err != nil {
 				return "", err
 			}
@@ -323,9 +330,13 @@ func buildInputStackValues(r []StackRecord) string {
 	return builder.String()
 }
 
-func buildOutputStackCheck(r []StackRecord) string {
+func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 	var builder strings.Builder
-	builder.WriteString(fmt.Sprintf("if len(stack) != %d ", len(r)))
+	if isFixed {
+		builder.WriteString(fmt.Sprintf("if len(stack) != %d ", len(r)))
+	} else {
+		builder.WriteString(fmt.Sprintf("if len(stack) < %d ", len(r)))
+	}
 	for i, s := range r {
 		nullableCheck := ""
 		stackType := fmt.Sprintf("stack[%d].SumType", i)
@@ -347,12 +358,12 @@ func buildOutputStackCheck(r []StackRecord) string {
 	return builder.String()
 }
 
-func (g *Generator) buildOutputDecoder(name string, r []StackRecord) (string, error) {
+func (g *Generator) buildOutputDecoder(name string, r []StackRecord, isFixed bool) (string, error) {
 	var builder, resBuilder strings.Builder
 
 	builder.WriteString(fmt.Sprintf("func decode%s(stack tlb.VmStack) (resultType string, resultAny any, err error) {\n", name))
 
-	builder.WriteString(buildOutputStackCheck(r))
+	builder.WriteString(buildOutputStackCheck(r, isFixed))
 
 	resBuilder.WriteString(fmt.Sprintf("%s{\n", name))
 

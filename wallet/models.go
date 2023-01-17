@@ -160,7 +160,7 @@ type RawMessage struct {
 
 type TextComment string
 
-func (t TextComment) MarshalTLB(c *boc.Cell, tag string) error { // TODO: implement for binary comment
+func (t TextComment) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error { // TODO: implement for binary comment
 	err := c.WriteUint(0, 32) // text comment tag
 	if err != nil {
 		return err
@@ -168,7 +168,7 @@ func (t TextComment) MarshalTLB(c *boc.Cell, tag string) error { // TODO: implem
 	return tlb.Marshal(c, tlb.Text(t))
 }
 
-func (t *TextComment) UnmarshalTLB(c *boc.Cell, tag string) error { // TODO: implement for binary comment
+func (t *TextComment) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error { // TODO: implement for binary comment
 	val, err := c.ReadUint(32) // text comment tag
 	if err != nil {
 		return err
@@ -185,7 +185,7 @@ func (t *TextComment) UnmarshalTLB(c *boc.Cell, tag string) error { // TODO: imp
 	return nil
 }
 
-func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, tag string) error {
+func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	if len(p) > 4 {
 		return fmt.Errorf("PayloadV1toV4 supports only up to 4 messages")
 	}
@@ -202,7 +202,7 @@ func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func (p *PayloadV1toV4) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (p *PayloadV1toV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	for {
 		ref, err := c.NextRef()
 		if err != nil {

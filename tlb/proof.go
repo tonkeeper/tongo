@@ -64,7 +64,7 @@ type ShardState struct { // only manual decoding
 	} `tlbSumType:"split_state#5f327da5"`
 }
 
-func (s *ShardState) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	sumType, err := c.ReadUint(32)
 	if err != nil {
 		return err
@@ -141,7 +141,7 @@ type CryptoSignatureSimpleData struct {
 	S Bits256
 }
 
-func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	sumType, err := c.ReadUint(4)
 	if err != nil {
 		return err
@@ -295,7 +295,7 @@ type McStateExtraOther struct {
 	BlockCreateStats BlockCreateStats
 }
 
-func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, tag string) error {
+func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	flags, err := c.ReadUint(16)
 	if err != nil {
 		return err

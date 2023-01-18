@@ -217,3 +217,34 @@ func TestPointer(t *testing.T) {
 		t.Fatal("not equal")
 	}
 }
+
+type A struct {
+	A int32
+}
+
+func (a *A) UnmarshalTLB(cell *boc.Cell, d *Decoder) error {
+	a.A = 100
+	return nil
+}
+
+func TestDecoderInterface(t *testing.T) {
+	var a A
+	c := boc.NewCell()
+	err := Unmarshal(c, &a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a.A != 100 {
+		t.Fatal(a.A)
+	}
+	var b struct {
+		A A
+	}
+	err = Unmarshal(c, &b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if b.A.A != 100 {
+		t.Fatal(b.A.A)
+	}
+}

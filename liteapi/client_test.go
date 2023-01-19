@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/startfellows/tongo/tlb"
 	"log"
 	"math/big"
 	"testing"
 	"time"
+
+	"github.com/startfellows/tongo/tlb"
 
 	"github.com/startfellows/tongo"
 )
@@ -154,7 +155,7 @@ func TestLookupBlock(t *testing.T) {
 		Shard:     info.Last.Shard,
 		Seqno:     info.Last.Seqno - 1,
 	}
-	bl, err := api.LookupBlock(context.TODO(), blockID, 1, nil, nil)
+	_, bl, err := api.LookupBlock(context.TODO(), blockID, 1, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

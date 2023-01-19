@@ -216,13 +216,14 @@ func (c *Client) GetBlockHeader(ctx context.Context, blockID tongo.BlockIDExt, m
 	if err != nil {
 		return tlb.BlockInfo{}, err
 	}
-	return decodeBlockHeader(res)
+	_, info, err := decodeBlockHeader(res)
+	return info, err
 }
 
-func (c *Client) LookupBlock(ctx context.Context, blockID tongo.BlockID, mode uint32, lt *uint64, utime *uint32) (tlb.BlockInfo, error) {
+func (c *Client) LookupBlock(ctx context.Context, blockID tongo.BlockID, mode uint32, lt *uint64, utime *uint32) (tongo.BlockIDExt, tlb.BlockInfo, error) {
 	server, err := c.getServerByBlockID(blockID)
 	if err != nil {
-		return tlb.BlockInfo{}, err
+		return tongo.BlockIDExt{}, tlb.BlockInfo{}, err
 	}
 	res, err := server.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
 		Mode: mode,
@@ -235,27 +236,27 @@ func (c *Client) LookupBlock(ctx context.Context, blockID tongo.BlockID, mode ui
 		Utime: utime,
 	})
 	if err != nil {
-		return tlb.BlockInfo{}, err
+		return tongo.BlockIDExt{}, tlb.BlockInfo{}, err
 	}
 	return decodeBlockHeader(res)
 }
 
-func decodeBlockHeader(header liteclient.LiteServerBlockHeaderC) (tlb.BlockInfo, error) {
+func decodeBlockHeader(header liteclient.LiteServerBlockHeaderC) (tongo.BlockIDExt, tlb.BlockInfo, error) {
 	cells, err := boc.DeserializeBoc(header.HeaderProof)
 	if err != nil {
-		return tlb.BlockInfo{}, err
+		return tongo.BlockIDExt{}, tlb.BlockInfo{}, err
 	}
 	if len(cells) != 1 {
-		return tlb.BlockInfo{}, boc.ErrNotSingleRoot
+		return tongo.BlockIDExt{}, tlb.BlockInfo{}, boc.ErrNotSingleRoot
 	}
 	var proof struct {
 		Proof tlb.MerkleProof[tlb.BlockHeader]
 	}
 	err = tlb.Unmarshal(cells[0], &proof)
 	if err != nil {
-		return tlb.BlockInfo{}, err
+		return tongo.BlockIDExt{}, tlb.BlockInfo{}, err
 	}
-	return proof.Proof.VirtualRoot.Info, nil // TODO: maybe decode more
+	return header.Id.ToBlockIdExt(), proof.Proof.VirtualRoot.Info, nil // TODO: maybe decode more
 }
 
 func (c *Client) SendMessage(ctx context.Context, payload []byte) (uint32, error) {

@@ -7,14 +7,16 @@ import (
 	"crypto/sha512"
 	"errors"
 	"fmt"
+	"math/rand"
+	"strings"
+	"time"
+
+	"golang.org/x/crypto/pbkdf2"
+
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
 	"github.com/startfellows/tongo/contract/jetton"
 	"github.com/startfellows/tongo/tlb"
-	"golang.org/x/crypto/pbkdf2"
-	"math/rand"
-	"strings"
-	"time"
 )
 
 func DefaultWalletFromSeed(seed string, version Version, blockchain blockchain) (Wallet, error) {
@@ -194,15 +196,17 @@ func (w *Wallet) RawSend(
 		return fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
 
-	sign, err := bodyCell.Sign(w.key)
+	signBytes, err := bodyCell.Sign(w.key)
 	if err != nil {
 		return fmt.Errorf("can not sign wallet message body: %v", err)
 	}
+	bits512 := tlb.Bits512{}
+	copy(bits512[:], signBytes[:])
 	signedBody := struct {
-		Sign    boc.BitString `tlb:"512bits"`
+		Sign    tlb.Bits512
 		Payload tlb.Any
 	}{
-		Sign:    sign,
+		Sign:    bits512,
 		Payload: tlb.Any(*bodyCell),
 	}
 	signedBodyCell := boc.NewCell()

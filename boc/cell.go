@@ -274,14 +274,12 @@ func (c *Cell) RefsAvailableForRead() int {
 	return c.RefsSize() - c.refCursor
 }
 
-func (c *Cell) Sign(key ed25519.PrivateKey) (BitString, error) {
+func (c *Cell) Sign(key ed25519.PrivateKey) ([]byte, error) {
 	hash, err := c.Hash()
 	if err != nil {
-		return BitString{}, err
+		return nil, err
 	}
-	bs := NewBitString(512)
-	err = bs.WriteBytes(ed25519.Sign(key, hash[:]))
-	return bs, err
+	return ed25519.Sign(key, hash[:]), nil
 }
 
 func (c *Cell) BitsAvailableForWrite() int {

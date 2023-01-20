@@ -27,34 +27,69 @@ type connection struct {
 
 type Client struct {
 	connectionPool                 []connection
+	timeout                        time.Duration
 	targetBlockID                  *tongo.BlockIDExt
 	masterchainLastBlockCache      *liteclient.TonNodeBlockIdExtC
 	masterchainLastBlockUpdateTime time.Time
 }
 
+// Options holds parameters to configure a lite api instance.
+type Options struct {
+	LiteServers []config.LiteServer
+	Timeout     time.Duration
+}
+
+type Option func(o *Options)
+
+func WithLiteServers(servers []config.LiteServer) Option {
+	return func(o *Options) {
+		o.LiteServers = servers
+	}
+}
+
+func WithTimeout(timeout time.Duration) Option {
+	return func(o *Options) {
+		o.Timeout = timeout
+	}
+}
+
+func WithConfigurationFile(file config.GlobalConfigurationFile) Option {
+	return func(o *Options) {
+		o.LiteServers = file.LiteServers
+	}
+}
+
 func NewClientWithDefaultMainnet() (*Client, error) {
-	options, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+	file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
 	if err != nil {
 		return nil, err
 	}
-	return NewClient(*options)
+	return NewClient(WithConfigurationFile(*file))
 }
 
 func NewClientWithDefaultTestnet() (*Client, error) {
-	options, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+	file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
 	if err != nil {
 		return nil, err
 	}
-	return NewClient(*options)
+	return NewClient(WithConfigurationFile(*file))
 }
 
 // NewClient
 // Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
-func NewClient(options config.GlobalConfigurationFile) (*Client, error) {
+func NewClient(opts ...Option) (*Client, error) {
+	options := &Options{
+		Timeout: 60 * time.Second,
+	}
+	for _, o := range opts {
+		o(options)
+	}
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
-	client := Client{}
+	client := Client{
+		timeout: options.Timeout,
+	}
 	for _, ls := range options.LiteServers {
 		serverPubkey, err := base64.StdEncoding.DecodeString(ls.Key)
 		if err != nil {
@@ -67,7 +102,7 @@ func NewClient(options config.GlobalConfigurationFile) (*Client, error) {
 		client.connectionPool = append(client.connectionPool, connection{
 			workchain:   0,
 			shardPrefix: tongo.MustParseShardID(-0x8000000000000000),
-			client:      liteclient.NewClient(c),
+			client:      liteclient.NewClient(c, liteclient.OptionTimeout(options.Timeout)),
 		})
 		go client.refreshMasterchainTask()
 		return &client, nil
@@ -144,6 +179,7 @@ func (c *Client) refreshMasterchainTask() {
 func (c *Client) WithBlock(block tongo.BlockIDExt) *Client {
 	return &Client{
 		connectionPool:                 c.connectionPool,
+		timeout:                        c.timeout,
 		targetBlockID:                  &block,
 		masterchainLastBlockCache:      c.masterchainLastBlockCache,
 		masterchainLastBlockUpdateTime: c.masterchainLastBlockUpdateTime,

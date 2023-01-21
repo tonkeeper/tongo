@@ -9,6 +9,58 @@
         </internal>
     </interface>
 
+    <!--    Wallet V3R2    -->
+    <interface name="wallet_v3r2" group="wallet">
+        <!--        <get_method name="seqno"> already presented in storage-provider -->
+        <!--        <get_method name="get_public_key"> already presented in storage-provider -->
+        <external name="signed">
+            <input>
+                signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4  = ExternalMsgBody;
+            </input>
+        </external>
+    </interface>
+
+    <!--    Wallet V4R2    -->
+    <interface name="wallet_v4r2" group="wallet">
+        <!--        <get_method name="seqno"> already presented in storage-provider -->
+        <!--        <get_method name="get_public_key"> already presented in storage-provider -->
+        <!--        <get_method name="get_plugin_list"> tuple not supported yet -->
+        <get_method name="get_subwallet_id">
+            <output>
+                <tinyint name="subwallet_id">uint32</tinyint>
+            </output>
+        </get_method>
+        <get_method name="is_plugin_installed">
+            <output>
+                <tinyint name="success">bool</tinyint>
+            </output>
+        </get_method>
+
+        <external name="signed">
+            <input>
+                signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8 payload:PayloadV1toV4  = ExternalMsgBody;
+            </input>
+        </external>
+
+        <internal name="payment_request">
+            <input>
+                request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
+            </input>
+            <output>
+                payment_request_response#f06c7567 query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
+
+        <internal name="destruct">
+            <input>
+                destruct#64737472 query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                destruct_response#e4737472 query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
+    </interface>
+
     <!--    NFT item    -->
     <interface name="tep_62_nft_item" group="nft">
         <get_method name="get_nft_data" callback="true">
@@ -277,15 +329,14 @@
             payments:^PaymentConfig = Storage;
             // 132 + 132 + 256 + 256 + 32 + 32 + 1 + 132 = 973
         </types>
+
         <get_method name="get_channel_state">
             <output>
                 <tinyint name="state">uint64</tinyint>
             </output>
         </get_method>
-<!--        <get_method name="get_channel_data">-->
-<!--            <output>-->
-<!--            </output>-->
-<!--        </get_method>-->
+        <!--        <get_method name="get_channel_data"> tuple not supported yet -->
+
         <internal name="top_up_balance">
             <input>
                 top_up_balance#67c7d281 add_A:Coins add_B:Coins = InternalMsgBody;
@@ -337,6 +388,162 @@
         <internal name="channel_closed">
             <input>
                 channel_closed#dddc88ba channel_id:uint128 = InternalMsgBody;
+            </input>
+        </internal>
+    </interface>
+
+    <!--    Storage provider    -->
+    <interface name="storage_provider" group="storage">
+        <types>
+            torrent_info piece_size:uint32 file_size:uint64 root_hash:(## 256) header_size:uint64 header_hash:(## 256)
+            microchunk_hash:(Maybe (## 256)) description:Text = TorrentInfo;
+        </types>
+        <get_method name="seqno">
+            <output>
+                <tinyint name="state">uint32</tinyint>
+            </output>
+        </get_method>
+        <get_method name="get_public_key">
+            <output>
+                <int name="public_key">int257</int>
+            </output>
+        </get_method>
+        <get_method name="get_wallet_params">
+            <output>
+                <tinyint name="seqno">uint32</tinyint>
+                <tinyint name="subwallet">uint32</tinyint>
+                <int name="public_key">int257</int>
+            </output>
+        </get_method>
+        <get_method name="get_storage_params">
+            <output>
+                <tinyint name="accept_new_contracts">bool</tinyint>
+                <tinyint name="rate_per_mb_day">uint64</tinyint>
+                <tinyint name="max_span">uint32</tinyint>
+                <tinyint name="minimal_file_size">uint64</tinyint>
+                <tinyint name="maximal_file_size">uint64</tinyint>
+            </output>
+        </get_method>
+        <get_method name="get_storage_contract_address">
+            <input>
+                <int name="merkle_hash">int257</int>
+                <tinyint name="file_size">uint64</tinyint>
+                <slice name="client">msgaddress</slice>
+                <int name="torrent_hash">int257</int>
+            </input>
+            <output>
+                <slice name="storage_contract_address">msgaddress</slice>
+            </output>
+        </get_method>
+
+<!--        TODO: input collides with output-->
+        <internal name="offer_storage_contract">
+            <input>
+                offer_storage_contract#107c49ef
+                query_id:uint64 info:^TorrentInfo merkle_hash:bits256 expected_rate:Coins expected_max_span:uint32
+                = InternalMsgBody;
+            </input>
+            <output>
+                offer_storage_contract#107c49ef
+                query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="storage_contract_terminated">
+            <input>
+                storage_contract_terminated#b6236d63
+                query_id:uint64 = InternalMsgBody;
+            </input>
+        </internal>
+        <internal name="update_pubkey">
+            <input>
+                update_pubkey#53f34cd6
+                query_id:uint64 new_pubkey:bits256 = InternalMsgBody;
+            </input>
+        </internal>
+        <internal name="update_storage_params">
+            <input>
+                update_storage_params#54cbf19b
+                query_id:uint64 accept_new_contracts:Bool rate_per_mb_day:Coins max_span:uint32
+                minimal_file_size:uint64 maximal_file_size:uint64  = InternalMsgBody;
+            </input>
+        </internal>
+    </interface>
+
+    <!--    Storage contract    -->
+    <interface name="storage_contract" group="storage">
+        <get_method name="get_storage_contract_data">
+            <output>
+                <tinyint name="active">bool</tinyint>
+                <tinyint name="balance">uint64</tinyint>
+                <slice name="provider,">msgaddress</slice>
+                <int name="merkle_hash">int257</int>
+                <tinyint name="file_size">uint64</tinyint>
+                <tinyint name="next_proof">uint64</tinyint>
+                <tinyint name="rate_per_mb_day">uint64</tinyint>
+                <tinyint name="max_span">uint32</tinyint>
+                <tinyint name="last_proof_time">uint32</tinyint>
+                <slice name="client">msgaddress</slice>
+                <int name="torrent_hash">int257</int>
+            </output>
+        </get_method>
+        <get_method name="get_torrent_hash">
+            <output>
+                <int name="torrent_hash">int257</int>
+            </output>
+        </get_method>
+        <get_method name="is_active">
+            <output>
+                <tinyint name="is_active">bool</tinyint>
+            </output>
+        </get_method>
+        <get_method name="get_next_proof_info">
+            <output>
+                <tinyint name="next_proof">uint64</tinyint>
+                <tinyint name="last_proof_time">uint32</tinyint>
+                <tinyint name="max_span">uint32</tinyint>
+            </output>
+        </get_method>
+
+        <internal name="offer_storage_contract">
+            <input>
+                offer_storage_contract#107c49ef
+                query_id:uint64 = InternalMsgBody;
+            </input>
+        </internal>
+        <internal name="accept_storage_contract">
+            <input>
+                accept_storage_contract#7a361688
+                query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                storage_contract_confirmed#d4caedcd
+                cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="close_contract">
+            <input>
+                close_contract#79f937ea
+                query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                storage_contract_terminated#b6236d63
+                cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="withdraw">
+            <input>
+                withdraw#46ed2e94
+                query_id:uint64 = InternalMsgBody;
+            </input>
+            <output>
+                reward_withdrawal#a91baf56
+                query_id:uint64 = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="proof_storage">
+            <input>
+                proof_storage#419d5d4d
+                query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
             </input>
         </internal>
     </interface>

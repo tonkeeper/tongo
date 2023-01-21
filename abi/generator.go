@@ -21,12 +21,11 @@ func main() {
 	gen := parser.NewGenerator(nil, "test")
 
 	err = gen.RegisterTypes(interfaces)
-
-	types := gen.CollectedTypes()
 	if err != nil {
 		panic(err)
 	}
 
+	types := gen.CollectedTypes()
 	msgDecoder := gen.GenerateMsgDecoder()
 
 	getMethods, err := gen.GetMethods(interfaces)

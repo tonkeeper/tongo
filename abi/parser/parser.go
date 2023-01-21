@@ -28,7 +28,14 @@ type Interface struct {
 	Group     string      `xml:"group,attr"`
 	Methods   []GetMethod `xml:"get_method"`
 	Internals []Internal  `xml:"internal"`
+	Externals []Internal  `xml:"external"`
 	Types     string      `xml:"types"`
+}
+
+type External struct {
+	Name    string   `xml:"name,attr"`
+	Input   string   `xml:"input"`
+	Outputs []string `xml:"output"`
 }
 
 type Internal struct {

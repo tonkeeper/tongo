@@ -17,11 +17,13 @@ var defaultKnownTypes = map[string]string{
 	"int64":         "int64",
 	"bool":          "bool",
 	"uint16":        "uint16",
+	"uint32":        "uint32",
 	"uint64":        "uint64",
 	"int256":        "tlb.Int256",
 	"int257":        "tlb.Int257",
 	"any":           "tlb.Any",
 	"[]byte":        "[]byte",
+	"coins":         "tlb.Grams",
 	"big.int":       "big.Int",
 	"dnsrecord":     "tlb.DNSRecord",
 	"dns_recordset": "tlb.DNSRecordSet",
@@ -104,7 +106,7 @@ type Executor interface {
 				builder.WriteRune('\n')
 			}
 
-			s, err := g.getMethod(m, methodID)
+			s, err := g.getMethod(m, methodID, m.Name)
 			if err != nil {
 				return "", err
 			}
@@ -237,7 +239,7 @@ func (g *Generator) checkType(s string) (string, error) {
 	return s, nil
 }
 
-func (g *Generator) getMethod(m GetMethod, methodID int) (string, error) {
+func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (string, error) {
 	var builder strings.Builder
 	var args []string
 
@@ -262,6 +264,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int) (string, error) {
 	builder.WriteString(buildInputStackValues(m.Input.StackValues))
 	builder.WriteRune('\n')
 
+	builder.WriteString(fmt.Sprintf("// MethodID = %d for \"%s\" method\n", methodID, methodName))
 	builder.WriteString(fmt.Sprintf("errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, %d, stack)\n", methodID))
 	builder.WriteString(returnStrNilErr)
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")

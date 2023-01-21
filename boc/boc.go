@@ -27,6 +27,7 @@ var leanBocMagicPrefixCRC = []byte{
 
 const hashSize = 32
 const depthSize = 2
+const maxLevel = 3
 
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
 
@@ -188,23 +189,23 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 
 	isExotic := (d1 & 8) > 0
 	refNum := int(d1 % 8)
-	dataBytesSize := int(math.Ceil(float64(d2) / 2))
+	dataBytesSize := int(d2>>1) + int(d2%2)
 	fullfilledBytes := !((d2 % 2) > 0)
 	withHashes := (d1 & 0b10000) != 0
-	levelMask := d1 >> 5
+	mask := LevelMask(d1 >> 5)
 
 	var cell *Cell
 	if isExotic {
 		// the first byte of an exotic cell stores the cell's type.
 		exoticType := CellType(readNBytesUIntFromArray(1, cellData))
 		cell = NewCellExotic(exoticType)
+		cell.mask = mask
 	} else {
 		cell = NewCell()
+		cell.mask = mask
 	}
 	if withHashes {
-		maskBits := int(math.Ceil(math.Log2(float64(levelMask) + 1)))
-		hashesNum := maskBits + 1
-		offset := hashesNum*hashSize + hashesNum*depthSize
+		offset := mask.HashesCount() * (hashSize + depthSize)
 		cellData = cellData[offset:]
 	}
 
@@ -305,12 +306,12 @@ func getMaxDepth(cell *Cell, iterationCounter *int) (int, error) {
 	return maxDepth, nil
 }
 
-func bocReprWithoutRefs(cell *Cell) []byte {
+func bocReprWithoutRefs(cell *Cell, mask LevelMask) []byte {
 	specBit := 0
 	if cell.IsExotic() {
 		specBit = 8
 	}
-	d1 := byte(cell.RefsSize() + specBit)
+	d1 := byte(cell.RefsSize() + specBit + 32*int(mask))
 	d2 := byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
 
 	res := make([]byte, ((cell.BitSize()+7)/8)+2)
@@ -326,7 +327,7 @@ func bocReprWithoutRefs(cell *Cell) []byte {
 }
 
 func hashRepr(cell *Cell) ([]byte, error) {
-	res := bocReprWithoutRefs(cell)
+	res := bocReprWithoutRefs(cell, LevelMask(0))
 	for _, r := range cell.Refs() {
 		depthRepr := make([]byte, 2)
 		depthLimit := BOCSizeLimit
@@ -401,7 +402,8 @@ func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
 }
 
 func bocRepr(c *Cell, indexesMap map[string]int, sBytes int) ([]byte, error) {
-	res := bocReprWithoutRefs(c)
+	// TODO: currently, it works only if all cells are ordinary.
+	res := bocReprWithoutRefs(c, LevelMask(0))
 
 	for _, ref := range c.Refs() {
 		h, err := ref.HashString()

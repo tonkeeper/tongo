@@ -2,7 +2,9 @@ package boc
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
@@ -28,6 +30,81 @@ func TestBigCell(t *testing.T) {
 		t.Fail()
 		return
 	}
+}
+
+type node struct {
+	Type  int    `json:"type"`
+	Level int    `json:"level"`
+	Hash  string `json:"hash"`
+	Refs  []node `json:"refs"`
+}
+
+func (n *node) compare(c *Cell, path []int) error {
+	if int(c.CellType()) != n.Type {
+		return fmt.Errorf("want cell type: %v, got %v, path = %v", n.Type, c.cellType, path)
+	}
+	if int(c.Level()) != n.Level {
+		return fmt.Errorf("want level: %v, got %v, path = %v", n.Level, c.Level(), path)
+	}
+	h, err := c.HashString()
+	if err != nil {
+		return err
+	}
+	if n.Hash != h {
+		return fmt.Errorf("want hash: %v, got %v, path = %v", n.Hash, h, path)
+	}
+	if len(n.Refs) != c.RefsSize() {
+		return fmt.Errorf("want #refs: %v, got %v", len(n.Refs), c.RefsSize())
+	}
+	for i, ref := range n.Refs {
+		if err := ref.compare(c.refs[i], append(path, i)); err != nil {
+			return err
+		}
+	}
+	return nil
+
+}
+
+func TestDeserializeBoc(t *testing.T) {
+	testCases := []struct {
+		name           string
+		hexString      string
+		resultFilename string
+	}{
+		{
+			hexString:      "b5ee9c720102790100025c00030400010102030304000a0405060304000b2b2c2d0304000c5253540304006407080903040065131415030400661f2021030403e80a0b0c030403e90d0e0f030403ea1011120004271000042711000427120004271a0004271b0004271c000427240004272500042726030403f2161718030403f3191a1b030403f41c1d1e0004277400042775000427760004277e0004277f0004278000042788000427890004278a030403fc222324030403fd252627030403fe28292a000427d8000427d9000427da000427e2000427e3000427e4000427ec000427ed000427ee0304006e2e2f300304006f3a3b3c030400704647480304044c3132330304044d3435360304044e37383900042af800042af900042afa00042b0200042b0300042b0400042b0c00042b0d00042b0e030404563d3e3f030404574041420304045843444500042b5c00042b5d00042b5e00042b6600042b6700042b6800042b7000042b7100042b7203040460494a4b030404614c4d4e030404624f505100042bc000042bc100042bc200042bca00042bcb00042bcc00042bd400042bd500042bd603040078555657030400796162630304007a6d6e6f030404b058595a030404b15b5c5d030404b25e5f6000042ee000042ee100042ee200042eea00042eeb00042eec00042ef400042ef500042ef6030404ba646566030404bb676869030404bc6a6b6c00042f4400042f4500042f4600042f4e00042f4f00042f5000042f5800042f5900042f5a030404c4707172030404c5737475030404c676777800042fa800042fa900042faa00042fb200042fb300042fb400042fbc00042fbd00042fbe",
+			resultFilename: "testdata/deserialize_1.json",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			bocBytes, err := hex.DecodeString(tc.hexString)
+			if err != nil {
+				t.Errorf("hex.DecodeString() failed: %v", err)
+			}
+			cells, err := DeserializeBoc(bocBytes)
+			if err != nil {
+				t.Errorf("hex.DecodeString() failed: %v", err)
+			}
+			if len(cells) != 1 {
+				t.Errorf("hex.DecodeString() failed")
+			}
+			content, err := ioutil.ReadFile(tc.resultFilename)
+			if err != nil {
+				t.Errorf("ReadFile() failed: %v", err)
+			}
+			var node node
+			err = json.Unmarshal(content, &node)
+			if err != nil {
+				t.Errorf("json.Unmarshal() failed: %v", err)
+			}
+			err = node.compare(cells[0], nil)
+			if err != nil {
+				t.Errorf("test failed: %v", err)
+			}
+		})
+	}
+
 }
 
 func visit(x *Cell) ([]int, error) {

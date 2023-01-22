@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
+	"github.com/startfellows/tongo/tlb"
 	"math/big"
 	"strconv"
 )
@@ -24,7 +25,7 @@ type TransferMessage struct {
 	JettonAmount        *big.Int
 	Destination         tongo.AccountID
 	ResponseDestination *tongo.AccountID
-	TonAmount           int64
+	TonAmount           tlb.Grams
 	ForwardTonAmount    int64
 	Comment             *string
 	Payload             *boc.Cell

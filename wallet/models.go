@@ -94,6 +94,8 @@ type Wallet struct {
 	blockchain  blockchain
 }
 
+// GetAddress returns current wallet address but you can also call function GenerateWalletAddress
+// which returns same address but doesn't require blockchain connection for calling
 func (w *Wallet) GetAddress() tongo.AccountID {
 	return w.address
 }
@@ -134,16 +136,8 @@ type MessageV4 struct {
 
 type PayloadV1toV4 []RawMessage
 
-type TonTransfer struct {
-	Recipient tongo.AccountID
-	Amount    tlb.Grams
-	Comment   string
-	Bounce    bool
-	Mode      byte
-}
-
 type Message struct {
-	Amount     int64
+	Amount     tlb.Grams
 	Address    tongo.AccountID
 	Comment    *string
 	Body       *boc.Cell

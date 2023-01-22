@@ -3,15 +3,9 @@ package wallet
 import (
 	"context"
 	"crypto/ed25519"
-	"crypto/hmac"
-	"crypto/sha512"
-	"errors"
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
-
-	"golang.org/x/crypto/pbkdf2"
 
 	"github.com/startfellows/tongo"
 	"github.com/startfellows/tongo/boc"
@@ -19,28 +13,12 @@ import (
 	"github.com/startfellows/tongo/tlb"
 )
 
-func DefaultWalletFromSeed(seed string, version Version, blockchain blockchain) (Wallet, error) {
+func DefaultWalletFromSeed(seed string, blockchain blockchain) (Wallet, error) {
 	pk, err := SeedToPrivateKey(seed)
 	if err != nil {
 		return Wallet{}, err
 	}
-	return NewWallet(pk, version, 0, nil, blockchain)
-}
-
-func SeedToPrivateKey(seed string) (ed25519.PrivateKey, error) {
-	s := strings.Split(seed, " ")
-	if len(s) < 12 {
-		return nil, fmt.Errorf("seed should have at least 12 words")
-	}
-	mac := hmac.New(sha512.New, []byte(strings.Join(s, " ")))
-	hash := mac.Sum(nil)
-	p := pbkdf2.Key(hash, []byte("TON seed version"), 100000/256, 1, sha512.New)
-	if p[0] != 0 {
-		return nil, errors.New("invalid seed")
-	}
-	pk := pbkdf2.Key(hash, []byte("TON default seed"), 100000, 32, sha512.New)
-	privateKey := ed25519.NewKeyFromSeed(pk)
-	return privateKey, nil
+	return NewWallet(pk, V4R2, 0, nil, blockchain)
 }
 
 // NewWallet
@@ -225,7 +203,7 @@ func (w *Wallet) RawSend(
 	return err
 }
 
-func generateInternalMessage(msg Message) (tlb.Message, error) {
+func generateInternalMessage(ctx context.Context, msg Message, bc blockchain) (tlb.Message, error) {
 	body := boc.NewCell()
 	if msg.Comment != nil && msg.Body != nil {
 		return tlb.Message{}, fmt.Errorf("only body or comment must be presented")
@@ -246,7 +224,13 @@ func generateInternalMessage(msg Message) (tlb.Message, error) {
 	info.IntMsgInfo.Value.Grams = tlb.Grams(msg.Amount)
 
 	if msg.Bounceable == nil {
-		info.IntMsgInfo.Bounce = true
+		destinationState, err := bc.GetAccountState(ctx, msg.Address)
+		if err != nil {
+			return tlb.Message{}, err
+		}
+		if destinationState.Account.SumType != "AccountNone" || destinationState.Account.Account.Storage.State.SumType == "AccountActive" {
+			info.IntMsgInfo.Bounce = true
+		}
 	} else {
 		info.IntMsgInfo.Bounce = *msg.Bounceable
 	}
@@ -311,14 +295,24 @@ func (w *Wallet) getSeqno(ctx context.Context) (uint32, error) {
 // Gets actual seqno and attach init for wallet if it needed
 // The payload is serialized into bytes and sent by the method SendRawMessage
 func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
-	var init *tlb.StateInit
 	if w.blockchain == nil {
 		return tongo.BlockchainInterfaceIsNil
 	}
-	seqno, err := w.getSeqno(ctx)
+
+	var init *tlb.StateInit
+
+	state, err := w.blockchain.GetAccountState(ctx, w.GetAddress())
 	if err != nil {
 		return err
 	}
+	var seqno uint32
+	if state.Account.Status() == tlb.AccountActive {
+		seqno, err = w.getSeqno(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	if seqno == 0 {
 		i, err := w.getInit()
 		if err != nil {
@@ -331,7 +325,7 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 		mode     byte
 	)
 	for _, m := range messages {
-		intMsg, err := generateInternalMessage(m)
+		intMsg, err := generateInternalMessage(ctx, m, w.blockchain)
 		if err != nil {
 			return err
 		}

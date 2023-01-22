@@ -1,5 +1,77 @@
 package wallet
 
+import (
+	"crypto/ed25519"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha512"
+	"errors"
+	"fmt"
+	"github.com/startfellows/tongo/boc"
+	"golang.org/x/crypto/pbkdf2"
+	"strings"
+)
+
+func RandomSeed() string {
+	for {
+		seed, err := randSeed()
+		if err != nil {
+			println(err)
+			continue
+		}
+		if checkSumSeed(seed) {
+			return seed
+		}
+
+	}
+}
+
+func SeedToPrivateKey(seed string) (ed25519.PrivateKey, error) {
+	s := strings.Split(seed, " ")
+	if len(s) < 12 {
+		return nil, fmt.Errorf("seed should have at least 12 words")
+	}
+	mac := hmac.New(sha512.New, []byte(strings.Join(s, " ")))
+	hash := mac.Sum(nil)
+	p := pbkdf2.Key(hash, []byte("TON seed version"), 100000/256, 1, sha512.New)
+	if p[0] != 0 {
+		return nil, errors.New("invalid seed")
+	}
+	pk := pbkdf2.Key(hash, []byte("TON default seed"), 100000, 32, sha512.New)
+	privateKey := ed25519.NewKeyFromSeed(pk)
+	return privateKey, nil
+}
+
+func checkSumSeed(seed string) bool {
+	mac := hmac.New(sha512.New, []byte(seed))
+	hash := mac.Sum(nil)
+	p := pbkdf2.Key(hash, []byte("TON seed version"), 100000/256, 1, sha512.New)
+	return p[0] == 0
+}
+
+func randSeed() (string, error) {
+	b := make([]byte, 33)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	bs := boc.NewBitString(264)
+	err = bs.SetTopUppedArray(b, true)
+	if err != nil {
+		return "", err
+	}
+	bs.ResetCounter()
+	worldlist := make([]string, 24)
+	for i := 0; i < 24; i++ {
+		n, err := bs.ReadUint(11)
+		if err != nil {
+			return "", err
+		}
+		worldlist[i] = WORDLIST[int(n)]
+	}
+	return strings.Join(worldlist, " "), nil
+}
+
 var WORDLIST = []string{
 	"abandon",
 	"ability",

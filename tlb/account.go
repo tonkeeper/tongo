@@ -26,6 +26,21 @@ type Account struct {
 	} `tlbSumType:"account$1"`
 }
 
+func (a Account) Status() AccountStatus {
+	if a.SumType == "AccountNone" {
+		return AccountNone
+	}
+	switch a.Account.Storage.State.SumType {
+	case "AccountUninit":
+		return AccountUninit
+	case "AccountActive":
+		return AccountActive
+	case "AccountFrozen":
+		return AccountFrozen
+	}
+	panic("invalid sum types for account status")
+}
+
 // AccountStorage
 // account_storage$_ last_trans_lt:uint64
 // balance:CurrencyCollection state:AccountState

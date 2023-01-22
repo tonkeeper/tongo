@@ -13,8 +13,6 @@ import (
 // nanograms$_ amount:(VarUInteger 16) = Grams;
 type Grams uint64 // total value fit to uint64
 
-const OneTON Grams = 1_000_000_000
-
 func (g Grams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var amount VarUInteger16
 	amount = VarUInteger16(*big.NewInt(int64(g)))

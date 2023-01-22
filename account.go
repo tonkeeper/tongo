@@ -86,6 +86,26 @@ func (id *AccountID) UnmarshalTL(r io.Reader) error {
 	return err
 }
 
+func (id *AccountID) ToMsgAddress() tlb.MsgAddress {
+	if id == nil {
+		return tlb.MsgAddress{
+			SumType: "AddrNone",
+		}
+	}
+	return tlb.MsgAddress{
+		SumType: "AddrStd",
+		AddrStd: struct {
+			Anycast     tlb.Maybe[tlb.Anycast]
+			WorkchainId int8
+			Address     tlb.Bits256
+		}{
+			Anycast:     tlb.Maybe[tlb.Anycast]{Null: true},
+			WorkchainId: int8(id.Workchain),
+			Address:     id.Address,
+		},
+	}
+}
+
 type AccountInfo struct {
 	Status            tlb.AccountStatus
 	Balance           uint64

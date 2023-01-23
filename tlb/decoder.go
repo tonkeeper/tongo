@@ -179,6 +179,9 @@ func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {
 		return false, err
 	}
 	y, err := c.PickUint(t.Len)
+	if err != nil {
+		return false, err
+	}
 	if t.Val == y {
 		_ = c.Skip(t.Len) // already checked
 		return true, nil

@@ -99,7 +99,6 @@ func (id *AccountID) ToMsgAddress() tlb.MsgAddress {
 			WorkchainId int8
 			Address     tlb.Bits256
 		}{
-			Anycast:     tlb.Maybe[tlb.Anycast]{Null: true},
 			WorkchainId: int8(id.Workchain),
 			Address:     id.Address,
 		},
@@ -179,7 +178,6 @@ func MsgAddressFromAccountID(id *AccountID) tlb.MsgAddress {
 	}
 	addr.AddrStd.WorkchainId = int8(id.Workchain)
 	addr.AddrStd.Address = id.Address
-	addr.AddrStd.Anycast.Null = true
 	return addr
 }
 
@@ -201,14 +199,14 @@ func GetAccountInfo(a tlb.Account) (AccountInfo, error) {
 		return res, nil
 	}
 	res.Status = tlb.AccountActive
-	if !a.Account.Storage.State.AccountActive.StateInit.Data.Null {
+	if a.Account.Storage.State.AccountActive.StateInit.Data.Exists {
 		data, err := a.Account.Storage.State.AccountActive.StateInit.Data.Value.Value.ToBoc()
 		if err != nil {
 			return AccountInfo{}, err
 		}
 		res.Data = data
 	}
-	if !a.Account.Storage.State.AccountActive.StateInit.Code.Null {
+	if a.Account.Storage.State.AccountActive.StateInit.Code.Exists {
 		code, err := a.Account.Storage.State.AccountActive.StateInit.Code.Value.Value.ToBoc()
 		if err != nil {
 			return AccountInfo{}, err

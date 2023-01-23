@@ -122,12 +122,10 @@ func generateStateInit(
 	codeCell := GetCodeByVer(ver)
 
 	state := tlb.StateInit{
-		Special: tlb.Maybe[tlb.TickTock]{Null: true},
-		Code:    tlb.Maybe[tlb.Ref[boc.Cell]]{Null: false, Value: tlb.Ref[boc.Cell]{Value: *codeCell}},
-		Data:    tlb.Maybe[tlb.Ref[boc.Cell]]{Null: false, Value: tlb.Ref[boc.Cell]{Value: *dataCell}},
+		Code: tlb.Maybe[tlb.Ref[boc.Cell]]{Exists: true, Value: tlb.Ref[boc.Cell]{Value: *codeCell}},
+		Data: tlb.Maybe[tlb.Ref[boc.Cell]]{Exists: true, Value: tlb.Ref[boc.Cell]{Value: *dataCell}},
 		// Library: empty by default
 	}
-	state.SplitDepth.Null = true
 	return state, nil
 }
 
@@ -243,22 +241,17 @@ func generateInternalMessage(ctx context.Context, msg Message, bc blockchain) (t
 		},
 	}
 
-	if msg.Code == nil && msg.Data == nil {
-		intMsg.Init.Null = true
-	} else {
+	if msg.Code != nil && msg.Data != nil {
+		intMsg.Init.Exists = true
 		intMsg.Init.Value.IsRight = true
 		var init tlb.StateInit
-		init.Special.Null = true
-		init.SplitDepth.Null = true
 		if msg.Code != nil {
+			init.Code.Exists = true
 			init.Code.Value.Value = *msg.Code
-		} else {
-			init.Code.Null = true
 		}
 		if msg.Data != nil {
+			init.Data.Exists = true
 			init.Data.Value.Value = *msg.Data
-		} else {
-			init.Data.Null = true
 		}
 		intMsg.Init.Value.Value = init
 	}
@@ -418,7 +411,6 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 		ResponseDestination: responseDestination,
 		ForwardTonAmount:    tlb.Grams(msg.ForwardTonAmount),
 	}
-	transferMsg.CustomPayload.Null = true
 	transferMsg.ForwardPayload.IsRight = true
 	transferMsg.ForwardPayload.Value = tlb.Any(*payload)
 	res := boc.NewCell()

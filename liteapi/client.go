@@ -632,7 +632,7 @@ func decodeConfigParams(b []byte) (tlb.ConfigParams, error) {
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	if proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Null != true {
+	if proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Exists {
 		return proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config, nil
 	}
 	return tlb.ConfigParams{}, fmt.Errorf("empty Custom field")

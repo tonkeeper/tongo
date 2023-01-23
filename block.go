@@ -174,11 +174,9 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 		},
 	}
 	if init != nil {
-		msg.Init.Null = false
+		msg.Init.Exists = true
 		msg.Init.Value.IsRight = true
 		msg.Init.Value.Value = *init
-	} else {
-		msg.Init.Null = true
 	}
 	msg.Info.ExtInMsgInfo.Src = MsgAddressFromAccountID(nil)
 	msg.Info.ExtInMsgInfo.Dest = MsgAddressFromAccountID(&address)

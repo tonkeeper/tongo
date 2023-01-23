@@ -11,24 +11,31 @@ import (
 //go:generate go run generator.go
 
 type SumType string
+
 type Magic uint32
+
 type Maybe[T any] struct {
-	Null  bool
-	Value T
+	Exists bool
+	Value  T
 }
+
 type Either[M, N any] struct {
 	IsRight bool
 	Left    M
 	Right   N
 }
+
 type EitherRef[T any] struct {
 	IsRight bool
 	Value   T
 }
+
 type Ref[T any] struct {
 	Value T
 }
+
 type Unary uint
+
 type Any boc.Cell
 
 func (m *Magic) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -64,11 +71,11 @@ func (m Magic) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 }
 
 func (m Maybe[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	err := c.WriteBit(!m.Null)
+	err := c.WriteBit(m.Exists)
 	if err != nil {
 		return err
 	}
-	if !m.Null {
+	if m.Exists {
 		err = Marshal(c, m.Value)
 		if err != nil {
 			return err
@@ -82,7 +89,7 @@ func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if err != nil {
 		return err
 	}
-	m.Null = !exist
+	m.Exists = exist
 	if exist {
 		err = Unmarshal(c, &m.Value)
 		if err != nil {

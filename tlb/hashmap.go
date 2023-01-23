@@ -189,7 +189,7 @@ type HashmapE[keyT fixedSize, T any] struct {
 
 func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var temp Maybe[Ref[Hashmap[keyT, T]]]
-	temp.Null = len(h.m.keys) == 0
+	temp.Exists = len(h.m.keys) > 0
 	temp.Value.Value = h.m
 	return Marshal(c, temp)
 }
@@ -401,7 +401,7 @@ func (h HashmapAugE[keyT, T1, T2]) MarshalTLB(c *boc.Cell, encoder *Encoder) err
 		M     Maybe[Ref[HashmapAug[keyT, T1, T2]]]
 		Extra T2
 	}
-	temp.M.Null = len(h.m.keys) == 0
+	temp.M.Exists = len(h.m.keys) > 0
 	temp.M.Value.Value = h.m
 	temp.Extra = h.extra
 	return Marshal(c, temp)

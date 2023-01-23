@@ -418,7 +418,7 @@ func (tx Transaction) IsSuccess() bool {
 			if tx.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
 				success = tx.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Description.TransOrd.Action.Null {
+			if tx.Description.TransOrd.Action.Exists {
 				success = success && tx.Description.TransOrd.Action.Value.Value.Success
 			}
 		}
@@ -427,7 +427,7 @@ func (tx Transaction) IsSuccess() bool {
 			if tx.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
 				success = tx.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
 			}
-			if !tx.Description.TransTickTock.Action.Null {
+			if tx.Description.TransTickTock.Action.Exists {
 				success = success && tx.Description.TransTickTock.Action.Value.Value.Success
 			}
 		}

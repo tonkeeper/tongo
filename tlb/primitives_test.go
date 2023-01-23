@@ -11,8 +11,8 @@ import (
 
 func TestMaybe(t *testing.T) {
 	var cases = []Maybe[testCase]{
-		{Null: true},
-		{Null: false, Value: testCase{3, 5}},
+		{Exists: false},
+		{Exists: true, Value: testCase{3, 5}},
 	}
 	for _, maybe := range cases {
 		b1 := boc.NewCell()

@@ -3,30 +3,27 @@ package parser
 import (
 	"bytes"
 	"fmt"
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
 	"go/format"
+	"text/template"
 )
 
 func GenerateVarUintTypes(max int) string {
 	var b bytes.Buffer
-	for i := 1; i <= max; i++ {
-		fmt.Fprintf(&b,
-			`
-type VarUInteger%v big.Int
+	templateStr := ` 
+type VarUInteger{{.NameIndex}} big.Int
 
-func (u VarUInteger%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+func (u VarUInteger{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	i := big.Int(u)
     b := i.Bytes()
-	err := c.WriteLimUint(len(b), %v)
+	err := c.WriteLimUint(len(b), {{.BitsLimit}})
 	if err != nil {
 		return err
 	}
 	return c.WriteBytes(b)
 }
 
-func (u *VarUInteger%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	ln, err := c.ReadLimUint(%v)
+func (u *VarUInteger{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	ln, err := c.ReadLimUint({{.BitsLimit}})
 	if err != nil {
 		return err
 	}
@@ -34,11 +31,38 @@ func (u *VarUInteger%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if err != nil {
 		return err
 	}
-	*u = VarUInteger%v(*val)
+	*u = VarUInteger{{.NameIndex}}(*val)
 	return nil
 }
-`,
-			i, i, i-1, i, i-1, i)
+
+func (u VarUInteger{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    i := big.Int(u)
+    return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
+}
+
+func (u *VarUInteger{{.NameIndex}}) UnmarshalJSON(p []byte) error {
+    var z big.Int
+    _, ok := z.SetString(strings.Trim(string(p), "\""), 10)
+    if !ok {
+        return fmt.Errorf("invalid integer: %s", p)
+    }
+    *u = VarUInteger{{.NameIndex}}(z)
+    return nil
+}
+`
+	tpl, err := template.New("varUInteger").Parse(templateStr)
+	if err != nil {
+		panic(err)
+	}
+	type context struct {
+		NameIndex int
+		BitsLimit int
+	}
+	for i := 1; i <= max; i++ {
+		ctx := context{NameIndex: i, BitsLimit: i - 1}
+		if err := tpl.Execute(&b, ctx); err != nil {
+			panic(err)
+		}
 	}
 	bytes, err := format.Source(b.Bytes())
 	if err != nil {
@@ -94,42 +118,84 @@ func (u Int%v) FixedSize() int {
 
 func GenerateConstantBigInts(sizes []int) string {
 	var b bytes.Buffer
+
+	templateStr := `
+type Uint{{.NameIndex}} big.Int
+
+func (u Uint{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, {{.NameIndex}})
+}
+
+func (u *Uint{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadBigUint({{.NameIndex}})
+	*u = Uint{{.NameIndex}}(*v)
+	return err
+}
+
+func (u Uint{{.NameIndex}}) FixedSize() int {
+	return {{.NameIndex}}
+}
+
+func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    i := big.Int(u)
+    return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
+}
+
+func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
+    var z big.Int
+    _, ok := z.SetString(strings.Trim(string(p), "\""), 10)
+    if !ok {
+        return fmt.Errorf("invalid integer: %s", p)
+    }
+    *u = Uint{{.NameIndex}}(z)
+    return nil
+}
+
+type Int{{.NameIndex}} big.Int
+
+func (u Int{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	x := big.Int(u)
+	return c.WriteBigInt(&x, {{.NameIndex}})
+}
+
+func (u *Int{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadBigInt({{.NameIndex}})
+	*u = Int{{.NameIndex}}(*v)
+	return err
+}
+
+func (u Int{{.NameIndex}}) FixedSize() int {
+	return {{.NameIndex}}
+}
+
+func (u Int{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    i := big.Int(u)
+    return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
+}
+
+func (u *Int{{.NameIndex}}) UnmarshalJSON(p []byte) error {
+    var z big.Int
+    _, ok := z.SetString(strings.Trim(string(p), "\""), 10)
+    if !ok {
+        return fmt.Errorf("invalid integer: %s", p)
+    }
+    *u = Int{{.NameIndex}}(z)
+    return nil
+}
+`
+	tpl, err := template.New("bigInts").Parse(templateStr)
+	if err != nil {
+		panic(err)
+	}
+	type context struct {
+		NameIndex int
+	}
 	for _, i := range sizes {
-		fmt.Fprintf(&b, `
-type Uint%v big.Int
-
-func (u Uint%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	x := big.Int(u)
-	return c.WriteBigUint(&x, %v)
-}
-
-func (u *Uint%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	v, err := c.ReadBigUint(%v)
-	*u = Uint%v(*v)
-	return err
-}
-
-func (u Uint%v) FixedSize() int {
-	return %v
-}
-
-type Int%v big.Int
-
-func (u Int%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	x := big.Int(u)
-	return c.WriteBigInt(&x, %v)
-}
-
-func (u *Int%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	v, err := c.ReadBigInt(%v)
-	*u = Int%v(*v)
-	return err
-}
-
-func (u Int%v) FixedSize() int {
-	return %v
-}
-`, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i)
+		ctx := context{NameIndex: i}
+		if err := tpl.Execute(&b, ctx); err != nil {
+			panic(err)
+		}
 	}
 	bytes, err := format.Source(b.Bytes())
 	if err != nil {
@@ -189,15 +255,4 @@ func nearestPow(i int) int {
 	default:
 		panic(i)
 	}
-}
-
-type Int2 int8
-
-func (u Int2) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
-	return c.WriteInt(int64(u), 2)
-}
-func (u *Int2) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	v, err := c.ReadInt(2)
-	*u = Int2(v)
-	return err
 }

@@ -5,7 +5,9 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"math/big"
+	"strings"
 )
 
 const BOCSizeLimit = 65536
@@ -168,7 +170,7 @@ func (c *Cell) toStringImpl(ident string, iterationsLimit *int) string {
 	return s
 }
 
-func (c *Cell) ToString() string {
+func (c Cell) ToString() string {
 	iter := BOCSizeLimit
 	return c.toStringImpl("", &iter)
 }
@@ -293,6 +295,27 @@ func (c *Cell) Sign(key ed25519.PrivateKey) ([]byte, error) {
 
 func (c *Cell) BitsAvailableForWrite() int {
 	return c.bits.BitsAvailableForWrite()
+}
+
+func (c Cell) MarshalJSON() ([]byte, error) {
+	str, err := c.ToBocString()
+	if err != nil {
+		return nil, err
+	}
+	return []byte(fmt.Sprintf("\"%s\"", str)), nil
+}
+
+func (c *Cell) UnmarshalJSON(b []byte) error {
+	str := strings.Trim(string(b), "\"")
+	cells, err := DeserializeBocHex(str)
+	if err != nil {
+		return err
+	}
+	if len(cells) != 1 {
+		return errors.New("multiple cells not supported")
+	}
+	*c = *cells[0]
+	return nil
 }
 
 func NewCellWithBits(b BitString) *Cell {

@@ -356,3 +356,33 @@ func TestMaybe_JSON(t *testing.T) {
 		},
 	})
 }
+
+func TestAny_JSON(t *testing.T) {
+	type testType struct {
+		Data EitherRef[Any]
+	}
+	cell := boc.NewCell()
+	cell.WriteBytes([]byte("hello"))
+
+	data := testType{
+		Data: EitherRef[Any]{
+			IsRight: true,
+			Value:   Any(*cell),
+		},
+	}
+
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		t.Fatalf("json.Marshal() failed: %v", err)
+	}
+	var unmarshalled testType
+	if err := json.Unmarshal(bytes, &unmarshalled); err != nil {
+		t.Fatalf("json.Unmarshal() failed: %v", err)
+	}
+	if data.Data.IsRight != unmarshalled.Data.IsRight {
+		t.Fatalf("want isRight: %v, got isRight: %v", data.Data.IsRight, unmarshalled.Data.IsRight)
+	}
+	if boc.Cell(data.Data.Value).ToString() != boc.Cell(unmarshalled.Data.Value).ToString() {
+		t.Fatalf("want isRight: %v, got isRight: %v", data.Data.IsRight, unmarshalled.Data.IsRight)
+	}
+}

@@ -257,3 +257,11 @@ func (a *Any) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	*a = Any(*x)
 	return nil
 }
+
+func (a Any) MarshalJSON() ([]byte, error) {
+	return boc.Cell(a).MarshalJSON()
+}
+
+func (a *Any) UnmarshalJSON(b []byte) error {
+	return (*boc.Cell)(a).UnmarshalJSON(b)
+}

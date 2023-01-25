@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -97,6 +98,24 @@ func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		}
 	}
 	return nil
+}
+
+func (m Maybe[T]) MarshalJSON() ([]byte, error) {
+	if m.Exists {
+		return json.Marshal(m.Value)
+	}
+	return []byte("null"), nil
+}
+
+func (m *Maybe[T]) UnmarshalJSON(b []byte) error {
+	if string(b) == "null" {
+		m.Exists = false
+		var defaultValue T
+		m.Value = defaultValue
+		return nil
+	}
+	m.Exists = true
+	return json.Unmarshal(b, &m.Value)
 }
 
 func (m Either[_, _]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {

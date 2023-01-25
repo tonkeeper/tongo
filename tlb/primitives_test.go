@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"math/big"
 	"reflect"
 	"testing"
@@ -291,4 +292,67 @@ func equal[T comparable](a, b []T) bool {
 		}
 	}
 	return true
+}
+
+func testJSON[T any](t *testing.T, data T) {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		t.Fatalf("json.Marshal() failed: %v", err)
+	}
+	var unmarshalled T
+	if err := json.Unmarshal(bytes, &unmarshalled); err != nil {
+		t.Fatalf("json.Unmarshal() failed: %v", err)
+	}
+	if !reflect.DeepEqual(data, unmarshalled) {
+		t.Fatalf("want: %v, got: %v", data, unmarshalled)
+	}
+}
+
+func TestMaybe_JSON(t *testing.T) {
+	type testIntSlice struct {
+		Data Maybe[[]int]
+	}
+	testJSON(t, testIntSlice{
+		Data: Maybe[[]int]{
+			Value:  []int{2, 4, 5},
+			Exists: true,
+		},
+	})
+
+	type testStructType struct {
+		Data Maybe[Int257]
+	}
+	testJSON(t, testStructType{
+		Data: Maybe[Int257]{
+			Value:  Int257(*big.NewInt(68)),
+			Exists: true,
+		},
+	})
+	testJSON(t, testStructType{
+		Data: Maybe[Int257]{
+			Exists: false,
+		},
+	})
+
+	type testString struct {
+		Data Maybe[string]
+	}
+	testJSON(t, testString{
+		Data: Maybe[string]{
+			Value:  "ton",
+			Exists: true,
+		},
+	})
+	testJSON(t, testString{
+		Data: Maybe[string]{
+			Value:  "null",
+			Exists: true,
+		},
+	})
+	// test an empty string
+	testJSON(t, testString{
+		Data: Maybe[string]{
+			Exists: true,
+		},
+	})
 }

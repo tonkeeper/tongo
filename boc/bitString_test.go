@@ -1,7 +1,10 @@
 package boc
 
 import (
+	"encoding/json"
+	"fmt"
 	"math"
+	"math/rand"
 	"testing"
 )
 
@@ -95,4 +98,41 @@ func TestNewCellWithBits(t *testing.T) {
 	if NewCellWithBits(bs).BitsAvailableForWrite() != 0 {
 		t.Errorf("should be full Cell")
 	}
+}
+
+func Test_JSON(t *testing.T) {
+	rand.Seed(24)
+
+	b := make([]byte, CellBits)
+	_, err := rand.Read(b)
+	if err != nil {
+		t.Errorf("rand.Read() failed: %v", err)
+	}
+	binaryStr := fmt.Sprintf("%08b", b)
+	type testType struct {
+		Value BitString
+	}
+	for length := 1; length < CellBits; length++ {
+		bs := NewBitString(length)
+		for i := 0; i < length; i++ {
+			err := bs.WriteBit(binaryStr[i] == '1')
+			if err != nil {
+				t.Errorf("WriteBit() failed: %v", err)
+			}
+		}
+
+		data, err := json.Marshal(testType{Value: bs})
+		if err != nil {
+			t.Errorf("json.Marshal() failed: %v", err)
+		}
+		var dest testType
+		err = json.Unmarshal(data, &dest)
+		if err != nil {
+			t.Errorf("json.Unmarshal() failed: %v", err)
+		}
+		if bs.BinaryString() != dest.Value.BinaryString() {
+			t.Errorf("\nwant: %v\n got: %v\ndata=%v", bs.BinaryString(), dest.Value.BinaryString(), string(data))
+		}
+	}
+
 }

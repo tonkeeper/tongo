@@ -163,6 +163,14 @@ type OfferStorageContractInternalMsgBody struct {
 	QueryId uint64
 }
 
+type InternalTransferInternalMsgBody struct {
+	QueryId          uint64
+	Amount           tlb.VarUInteger16
+	From             tlb.MsgAddress
+	ResponseAddress  tlb.MsgAddress
+	ForwardTonAmount tlb.VarUInteger16
+}
+
 type Tep85SbtDestroyInternalMsgBody struct {
 	QueryId uint64
 }
@@ -378,6 +386,10 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		var res OfferStorageContractInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "OfferStorageContract", res, err
+	case 0x178d4519:
+		var res InternalTransferInternalMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "InternalTransfer", res, err
 	case 0x1f04537a:
 		var res Tep85SbtDestroyInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)

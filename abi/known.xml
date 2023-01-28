@@ -188,6 +188,22 @@
                 = InternalMsgBody;
             </input>
             <output>
+                internal_transfer#178d4519  query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
+                response_address:MsgAddress
+                forward_ton_amount:(VarUInteger 16)
+<!--                forward_payload:(Either Cell ^Cell) to prevent fail decoding at invalid forward_payload-->
+                = InternalMsgBody;
+            </output>
+        </internal>
+        <internal name="internal_transfer">
+            <input>
+                internal_transfer#178d4519  query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
+                response_address:MsgAddress
+                forward_ton_amount:(VarUInteger 16)
+<!--                forward_payload:(Either Cell ^Cell)-->
+                = InternalMsgBody;
+            </input>
+            <output>
                 transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
                 sender:MsgAddress forward_payload:(Either Cell ^Cell)
                 = InternalMsgBody;

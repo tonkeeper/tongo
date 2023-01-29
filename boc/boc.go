@@ -2,7 +2,6 @@ package boc
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
@@ -28,6 +27,7 @@ var leanBocMagicPrefixCRC = []byte{
 const hashSize = 32
 const depthSize = 2
 const maxLevel = 3
+const maxDepth = 1024
 
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
 
@@ -192,7 +192,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	dataBytesSize := int(d2>>1) + int(d2%2)
 	fullfilledBytes := !((d2 % 2) > 0)
 	withHashes := (d1 & 0b10000) != 0
-	mask := LevelMask(d1 >> 5)
+	mask := levelMask(d1 >> 5)
 
 	var cell *Cell
 	if isExotic {
@@ -285,78 +285,35 @@ func DeserializeBocHex(boc string) ([]*Cell, error) {
 	return DeserializeBoc(bocData)
 }
 
-func getMaxDepth(cell *Cell, iterationCounter *int) (int, error) {
-	if *iterationCounter == 0 {
-		return 0, errors.New("to big boc for processing")
-	}
-	*iterationCounter -= 1
-	maxDepth := 0
-	if cell.RefsSize() > 0 {
-		for _, ref := range cell.Refs() {
-			depth, err := getMaxDepth(ref, iterationCounter)
-			if err != nil {
-				return 0, err
-			}
-			if depth > maxDepth {
-				maxDepth = depth
-			}
-		}
-		maxDepth++
-	}
-	return maxDepth, nil
-}
-
-func bocReprWithoutRefs(cell *Cell, mask LevelMask) []byte {
+func d1(cell *Cell, mask levelMask) byte {
 	specBit := 0
 	if cell.IsExotic() {
 		specBit = 8
 	}
-	d1 := byte(cell.RefsSize() + specBit + 32*int(mask))
-	d2 := byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
+	return byte(cell.RefsSize() + specBit + 32*int(mask))
+}
 
+func d2(cell *Cell) byte {
+	return byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
+}
+
+func bocReprWithoutRefs(cell *Cell, mask levelMask) []byte {
 	res := make([]byte, ((cell.BitSize()+7)/8)+2)
-	res[0] = d1
-	res[1] = d2
+	res[0] = d1(cell, mask)
+	res[1] = d2(cell)
 	copy(res[2:], cell.getBuffer())
-
 	if cell.BitSize()%8 != 0 {
 		res[len(res)-1] |= 1 << (7 - cell.BitSize()%8)
 	}
-
 	return res
 }
 
-func hashRepr(cell *Cell) ([]byte, error) {
-	res := bocReprWithoutRefs(cell, LevelMask(0))
-	for _, r := range cell.Refs() {
-		depthRepr := make([]byte, 2)
-		depthLimit := BOCSizeLimit
-		v, err := getMaxDepth(r, &depthLimit)
-		if err != nil {
-			return nil, err
-		}
-		binary.BigEndian.PutUint16(depthRepr, uint16(v))
-		res = append(res, depthRepr...)
-	}
-	for _, r := range cell.Refs() {
-		h, err := r.Hash()
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, h...)
-	}
-	return res, nil
-}
-
 func hashCell(cell *Cell) ([]byte, error) {
-	repr, err := hashRepr(cell)
+	imc, err := newImmutableCell(cell)
 	if err != nil {
 		return nil, err
 	}
-	hash := sha256.Sum256(repr)
-	// TODO: fix for TX: (Account: -1:57E8E6D7A23A546736B73624B64E7449E0A47B95EAFC70E8CC441B7FB30CB842 Lt: 29067432000001 Hash: 8CFEA4730799269C9197B10E8F3DFEA7E151E31D0D1C9C1FB6D22910EFDEA447)
-	// Maybe need to add level parameter to descriptors for exotics cells
-	return hash[:], nil
+	return imc.Hash(maxLevel), nil
 }
 
 func topologicalSortImpl(cell *Cell, seen []string) ([]*Cell, error) {
@@ -403,7 +360,7 @@ func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
 
 func bocRepr(c *Cell, indexesMap map[string]int, sBytes int) ([]byte, error) {
 	// TODO: currently, it works only if all cells are ordinary.
-	res := bocReprWithoutRefs(c, LevelMask(0))
+	res := bocReprWithoutRefs(c, levelMask(0))
 
 	for _, ref := range c.Refs() {
 		h, err := ref.HashString()

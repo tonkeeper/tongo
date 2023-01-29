@@ -16,6 +16,7 @@ const CellBits = 1023
 var ErrCellRefsOverflow = errors.New("too many refs")
 var ErrNotEnoughRefs = errors.New("not enough refs")
 var ErrNotSingleRoot = errors.New("should be one root cell")
+var ErrDepthIsTooBig = errors.New("depth is too big")
 
 type CellType uint8
 
@@ -32,7 +33,7 @@ type Cell struct {
 	refs      [4]*Cell
 	refCursor int
 	cellType  CellType
-	mask      LevelMask
+	mask      levelMask
 	// TODO: add capacity checking
 }
 
@@ -80,14 +81,6 @@ func (c *Cell) CellType() CellType {
 	return c.cellType
 }
 
-func (c *Cell) Level() int {
-	switch c.cellType {
-	case MerkleProofCell:
-		return c.refs[0].mask.ShiftRight().Level()
-	}
-	return c.mask.Level()
-}
-
 func (c *Cell) BitSize() int {
 	return c.bits.GetWriteCursor()
 }
@@ -97,7 +90,10 @@ func (c *Cell) Hash() ([]byte, error) {
 }
 
 func (c *Cell) HashString() (string, error) {
-	h, err := hashCell(c) //todo: check error
+	h, err := hashCell(c)
+	if err != nil {
+		return "", err
+	}
 	return hex.EncodeToString(h), err
 }
 

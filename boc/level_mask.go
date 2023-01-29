@@ -2,32 +2,27 @@ package boc
 
 import "math/bits"
 
-type LevelMask uint32
+// levelMask is a tricky way to keep track of two things simultaneously:
+// a cell level and a number of different hashes that makes sense to calculate for a cell.
+type levelMask uint32
 
-func (m LevelMask) Level() int {
+func (m levelMask) Level() int {
 	return 32 - bits.LeadingZeros32(uint32(m))
 }
 
-func (m LevelMask) HashIndex() int {
+func (m levelMask) HashIndex() int {
 	return bits.OnesCount32(uint32(m))
 }
 
-func (m LevelMask) HashesCount() int {
+func (m levelMask) HashesCount() int {
 	return m.HashIndex() + 1
 }
 
-func (m LevelMask) Apply(level uint32) LevelMask {
-	return LevelMask(uint32(m) & ((1 << level) - 1))
+func (m levelMask) Apply(level int) levelMask {
+	return levelMask(uint32(m) & ((1 << uint32(level)) - 1))
 }
 
-func (m LevelMask) ApplyOr(other LevelMask) LevelMask {
-	return m | other
-}
-func (m LevelMask) ShiftRight() LevelMask {
-	return m >> 1
-}
-
-func (m LevelMask) IsSignificant(level uint32) bool {
+func (m levelMask) IsSignificant(level uint32) bool {
 	if level == 0 {
 		return true
 	}

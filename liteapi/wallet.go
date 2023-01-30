@@ -3,8 +3,8 @@ package liteapi
 import (
 	"context"
 	"fmt"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/tlb"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func (c *Client) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {

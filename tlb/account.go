@@ -1,6 +1,6 @@
 package tlb
 
-import "github.com/startfellows/tongo/boc"
+import "github.com/tonkeeper/tongo/boc"
 
 // ShardAccount
 // account_descr$_ account:^Account last_trans_hash:bits256

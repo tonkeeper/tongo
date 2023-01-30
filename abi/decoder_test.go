@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tvm"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tvm"
 )
 
 func TestMsgDecoder(t *testing.T) {

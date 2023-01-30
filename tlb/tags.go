@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 
 var ErrInvalidTag = errors.New("invalid tag")

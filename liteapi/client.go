@@ -10,13 +10,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/config"
-	"github.com/startfellows/tongo/liteclient"
-	"github.com/startfellows/tongo/tl"
-	"github.com/startfellows/tongo/tlb"
-	"github.com/startfellows/tongo/utils"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/config"
+	"github.com/tonkeeper/tongo/liteclient"
+	"github.com/tonkeeper/tongo/tl"
+	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type connection struct {

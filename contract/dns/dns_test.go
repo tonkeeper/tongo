@@ -3,7 +3,7 @@ package dns
 import (
 	"context"
 	"fmt"
-	"github.com/startfellows/tongo/liteapi"
+	"github.com/tonkeeper/tongo/liteapi"
 	"log"
 	"testing"
 )

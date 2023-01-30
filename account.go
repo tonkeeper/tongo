@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/snksoft/crc"
-	"github.com/startfellows/tongo/tlb"
-	"github.com/startfellows/tongo/utils"
+	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/utils"
 	"io"
 	"strings"
 )

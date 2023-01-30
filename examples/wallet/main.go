@@ -4,9 +4,9 @@ import (
 	"context"
 	"crypto/ed25519"
 	"encoding/base64"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/liteapi"
-	"github.com/startfellows/tongo/wallet"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/wallet"
 	"log"
 )
 

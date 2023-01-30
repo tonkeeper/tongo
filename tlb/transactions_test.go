@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 
 func TestTransaction(t *testing.T) {

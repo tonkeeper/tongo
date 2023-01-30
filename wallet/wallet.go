@@ -7,10 +7,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/contract/jetton"
-	"github.com/startfellows/tongo/tlb"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/contract/jetton"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func DefaultWalletFromSeed(seed string, blockchain blockchain) (Wallet, error) {

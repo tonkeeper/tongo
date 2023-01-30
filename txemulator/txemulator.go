@@ -9,8 +9,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tlb"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
 	"runtime"
 	"unsafe"
 )

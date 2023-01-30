@@ -2,9 +2,9 @@ package parser
 
 import (
 	"fmt"
-	"github.com/startfellows/tongo/tlb"
-	tlbParser "github.com/startfellows/tongo/tlb/parser"
-	"github.com/startfellows/tongo/utils"
+	"github.com/tonkeeper/tongo/tlb"
+	tlbParser "github.com/tonkeeper/tongo/tlb/parser"
+	"github.com/tonkeeper/tongo/utils"
 	"go/format"
 	"golang.org/x/exp/slices"
 	"strings"

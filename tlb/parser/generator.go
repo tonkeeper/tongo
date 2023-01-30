@@ -2,7 +2,7 @@ package parser
 
 import (
 	"fmt"
-	"github.com/startfellows/tongo/utils"
+	"github.com/tonkeeper/tongo/utils"
 	"go/format"
 	"strconv"
 	"strings"

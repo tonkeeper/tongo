@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/startfellows/tongo/tlb"
+	"github.com/tonkeeper/tongo/tlb"
 
-	"github.com/startfellows/tongo"
+	"github.com/tonkeeper/tongo"
 )
 
 //type mockLiteClient struct {

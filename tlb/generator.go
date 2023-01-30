@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/startfellows/tongo/tlb/parser"
+	"github.com/tonkeeper/tongo/tlb/parser"
 )
 
 var bitsSizes = []int{96, 256, 264, 320, 352, 512}
@@ -29,7 +29,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 `)
 	if err != nil {

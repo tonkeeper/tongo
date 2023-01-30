@@ -2,7 +2,7 @@ package liteclient
 
 import (
 	"bytes"
-	"github.com/startfellows/tongo/tl"
+	"github.com/tonkeeper/tongo/tl"
 	"reflect"
 	"testing"
 )

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/liteapi"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/liteapi"
 )
 
 func main() {

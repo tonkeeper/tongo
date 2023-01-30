@@ -5,8 +5,8 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/startfellows/tongo/boc"
-	"github.com/startfellows/tongo/tl"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tl"
 )
 
 // VmStack

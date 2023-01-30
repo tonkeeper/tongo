@@ -23,7 +23,7 @@ Lite client supports auto-download mainnet config from ton.org.
 ## Package installation
 
 ```shell
-go get github.com/startfellows/tongo
+go get github.com/tonkeeper/tongo
 ```
 
 ## Basic types

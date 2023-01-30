@@ -7,7 +7,7 @@ import (
 	"crypto/sha512"
 	"errors"
 	"fmt"
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 	"golang.org/x/crypto/pbkdf2"
 	"strings"
 )

@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 
 //go:generate go run generator.go

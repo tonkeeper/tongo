@@ -5,8 +5,8 @@ package liteclient
 import (
 	"bytes"
 	"fmt"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/tl"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/tl"
 	"io"
 )
 

@@ -2,8 +2,8 @@ package jetton
 
 import (
 	"context"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/boc"
 	"math/big"
 	"strconv"
 )

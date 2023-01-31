@@ -3,8 +3,8 @@ package liteclient
 import (
 	"context"
 	"fmt"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/boc"
 	"math/big"
 )
 

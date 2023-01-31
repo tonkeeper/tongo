@@ -3,7 +3,7 @@ package tongo
 import (
 	"testing"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 
 func TestAccountStatus_MarshalTLB(t *testing.T) {

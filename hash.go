@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 
 type Hash [32]byte

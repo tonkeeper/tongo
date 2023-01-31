@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/tl"
-	"github.com/startfellows/tongo/tlb"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/tl"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func main() {

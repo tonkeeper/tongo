@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/liteclient"
-	"github.com/startfellows/tongo/tlb"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/liteclient"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 // TODO: fix test

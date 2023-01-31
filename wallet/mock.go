@@ -2,7 +2,7 @@ package wallet
 
 import (
 	"context"
-	"github.com/startfellows/tongo"
+	"github.com/tonkeeper/tongo"
 )
 
 // SimpleMockBlockchain

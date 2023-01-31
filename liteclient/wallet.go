@@ -3,7 +3,7 @@ package liteclient
 import (
 	"context"
 	"fmt"
-	"github.com/startfellows/tongo"
+	"github.com/tonkeeper/tongo"
 )
 
 func (c *Client) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {

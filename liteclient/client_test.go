@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/startfellows/tongo"
-	"github.com/startfellows/tongo/adnl"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/adnl"
 )
 
 type mockADNLClient struct {

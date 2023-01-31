@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/startfellows/tongo/boc"
+	"github.com/tonkeeper/tongo/boc"
 )
 
 type testCase struct {

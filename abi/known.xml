@@ -11,8 +11,16 @@
 
     <!--    Wallet V3R2    -->
     <interface name="wallet_v3r2" group="wallet">
-        <!--        <get_method name="seqno"> already presented in storage-provider -->
-        <!--        <get_method name="get_public_key"> already presented in storage-provider -->
+        <get_method name="seqno">
+            <output>
+                <tinyint name="state">uint32</tinyint>
+            </output>
+        </get_method>
+        <get_method name="get_public_key">
+            <output>
+                <int name="public_key">int257</int>
+            </output>
+        </get_method>
         <external name="signed">
             <input>
                 signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4  = ExternalMsgBody;
@@ -22,8 +30,16 @@
 
     <!--    Wallet V4R2    -->
     <interface name="wallet_v4r2" group="wallet">
-        <!--        <get_method name="seqno"> already presented in storage-provider -->
-        <!--        <get_method name="get_public_key"> already presented in storage-provider -->
+        <get_method name="seqno">
+            <output>
+                <tinyint name="state">uint32</tinyint>
+            </output>
+        </get_method>
+        <get_method name="get_public_key">
+            <output>
+                <int name="public_key">int257</int>
+            </output>
+        </get_method>
         <!--        <get_method name="get_plugin_list"> tuple not supported yet -->
         <get_method name="get_subwallet_id">
             <output>
@@ -244,8 +260,8 @@
 
     <!--    NFT sale    -->
     <interface name="nft_sale" group="nft">
-        <get_method name="get_sale_data">
-            <output version="basic" fixed_length="true">
+        <get_method name="get_sale_data" golang_name="NftSaleGetSaleData" >
+            <output fixed_length="true">
                 <slice name="marketplace">msgaddress</slice>
                 <slice name="nft">msgaddress</slice>
                 <slice name="owner">msgaddress</slice>
@@ -254,7 +270,13 @@
                 <slice name="royalty_address">msgaddress</slice>
                 <tinyint name="royalty_amount">uint64</tinyint>
             </output>
-            <output version="getgems" fixed_length="true">
+        </get_method>
+    </interface>
+
+    <!--    GetGems NFT sale    -->
+    <interface name="nft_sale_getgems" group="nft">
+        <get_method name="get_sale_data" golang_name="NftSaleGetGemsGetSaleData" >
+            <output fixed_length="true">
                 <tinyint name="fix_price">uint64</tinyint>
                 <tinyint name="is_complete">bool</tinyint>
                 <tinyint name="created_at">uint64</tinyint>
@@ -269,7 +291,7 @@
             </output>
         </get_method>
     </interface>
-    
+
     <!--    SBT    -->
     <interface name="tep_85_sbt" group="sbt">
         <get_method name="get_authority_address">

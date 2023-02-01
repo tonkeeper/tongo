@@ -174,13 +174,18 @@ func TestSimpleGetMethod(t *testing.T) {
 				if !ok {
 					t.Fatal("unknown method")
 				}
+				// there must be at least one method that successfully execute our code and parse execution results
+				success := false
 				for _, m := range KnownSimpleGetMethods[methodID] {
-					s, r, err := m(context.Background(), emulator, account)
+					s, _, err := m(context.Background(), emulator, account)
 					if err != nil {
-						t.Fatal(err)
+						continue
 					}
+					success = true
 					fmt.Printf("Result type: %s\n", s)
-					_ = r
+				}
+				if !success {
+					t.Fatalf("failed to get execution results of %v", methodID)
 				}
 			}
 		})

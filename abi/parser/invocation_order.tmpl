@@ -1,0 +1,28 @@
+
+type ContractInterface string
+
+const (
+{{- range $name, $iface := .Interfaces }}
+	{{ $name }} ContractInterface = "{{ $iface.Name }}"
+{{- end }}
+)
+
+type invokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
+
+type methodDescription struct {
+	Name       string
+	// ImplementedBy is a list of contract interfaces that implement this method.
+	ImplementedBy []ContractInterface
+	// InvokeFn executes this method on a contract and returns parsed execution results.
+	InvokeFn invokeFn
+}
+
+var methodInvocationOrder = []methodDescription{
+{{- range $method := .InvocationOrder }}
+	{
+	    Name: "{{ $method.Name }}",
+		ImplementedBy: []ContractInterface{  {{range $method.Interfaces }}{{.}},{{end}}  },
+		InvokeFn: {{ $method.InvokeFnName }},
+	},
+{{- end }}
+}

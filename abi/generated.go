@@ -1675,7 +1675,7 @@ func decodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultA
 
 type ContractInterface string
 
-// wallet-related contract interfaces are listed in wallet.go
+// more wallet-related contract interfaces are defined in wallet.go
 const (
 	NftSale            ContractInterface = "nft_sale"
 	NftSaleGetgems     ContractInterface = "nft_sale_getgems"
@@ -1694,17 +1694,18 @@ const (
 	WalletV4R2         ContractInterface = "wallet_v4r2"
 )
 
-type invokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
+type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
 
-type methodDescription struct {
+// MethodDescription describes a particular method and provides a function to execute it.
+type MethodDescription struct {
 	Name string
 	// ImplementedBy is a list of contract interfaces that implement this method.
 	ImplementedBy []ContractInterface
 	// InvokeFn executes this method on a contract and returns parsed execution results.
-	InvokeFn invokeFn
+	InvokeFn InvokeFn
 }
 
-var methodInvocationOrder = []methodDescription{
+var methodInvocationOrder = []MethodDescription{
 	{
 		Name:          "get_authority_address",
 		ImplementedBy: []ContractInterface{Tep85Sbt},

@@ -1,24 +1,25 @@
 
 type ContractInterface string
 
-// wallet-related contract interfaces are listed in wallet.go
+// more wallet-related contract interfaces are defined in wallet.go
 const (
 {{- range $name, $iface := .Interfaces }}
 	{{ $name }} ContractInterface = "{{ $iface.Name }}"
 {{- end }}
 )
 
-type invokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
+type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
 
-type methodDescription struct {
+// MethodDescription describes a particular method and provides a function to execute it.
+type MethodDescription struct {
 	Name       string
 	// ImplementedBy is a list of contract interfaces that implement this method.
 	ImplementedBy []ContractInterface
 	// InvokeFn executes this method on a contract and returns parsed execution results.
-	InvokeFn invokeFn
+	InvokeFn InvokeFn
 }
 
-var methodInvocationOrder = []methodDescription{
+var methodInvocationOrder = []MethodDescription{
 {{- range $method := .InvocationOrder }}
 	{
 	    Name: "{{ $method.Name }}",

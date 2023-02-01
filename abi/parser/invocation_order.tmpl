@@ -1,6 +1,7 @@
 
 type ContractInterface string
 
+// wallet-related contract interfaces are listed in wallet.go
 const (
 {{- range $name, $iface := .Interfaces }}
 	{{ $name }} ContractInterface = "{{ $iface.Name }}"

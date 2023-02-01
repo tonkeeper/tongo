@@ -1,13 +1,19 @@
 package parser
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
+	"go/format"
+	"sort"
+	"strings"
+	"text/template"
+
+	"golang.org/x/exp/slices"
+
 	"github.com/tonkeeper/tongo/tlb"
 	tlbParser "github.com/tonkeeper/tongo/tlb/parser"
 	"github.com/tonkeeper/tongo/utils"
-	"go/format"
-	"golang.org/x/exp/slices"
-	"strings"
 )
 
 var defaultKnownTypes = map[string]string{
@@ -34,6 +40,8 @@ var (
 	msgDecoderReturnErr = "if err != nil {return \"\", nil, err}\n"
 	returnInvalidStack  = "{return \"\", nil, fmt.Errorf(\"invalid stack format\")}\n"
 	returnStrNilErr     = "if err != nil {return \"\", nil, err}\n"
+	//go:embed invocation_order.tmpl
+	invocationOrderTemplate string
 )
 
 type TLBMsgBody struct {
@@ -45,6 +53,7 @@ type TLBMsgBody struct {
 
 type Generator struct {
 	knownTypes        map[string]string
+	interfaces        map[string]Interface
 	newTlbTypes       map[string]struct{}
 	loadedTlbTypes    []string
 	loadedTlbMsgTypes map[uint32]TLBMsgBody
@@ -57,13 +66,14 @@ func NewGenerator(knownTypes map[string]string, typeName string) *Generator {
 	}
 	return &Generator{
 		knownTypes:        knownTypes,
+		interfaces:        map[string]Interface{},
 		typeName:          typeName,
 		loadedTlbMsgTypes: make(map[uint32]TLBMsgBody),
 		newTlbTypes:       make(map[string]struct{}),
 	}
 }
 
-func (g *Generator) GetMethods(interfaces []Interface) (string, error) {
+func (g *Generator) GetMethods() (string, error) {
 	var builder, methodMap, resultMap strings.Builder
 	builder.WriteString(`
 type Executor interface {
@@ -75,28 +85,28 @@ type Executor interface {
 	methods := make(map[int][]string)
 	var resultTypes []string
 
-	for _, i := range interfaces {
+	usedNames := map[string]struct{}{}
+
+	for _, i := range g.interfaces {
 		for _, m := range i.Methods {
-			methodName := utils.ToCamelCase(m.Name)
+			methodName := m.GolangFunctionName()
 			var methodID int
 			if m.ID != 0 {
 				methodID = m.ID
 			} else {
 				methodID = utils.MethodIdFromName(m.Name)
 			}
+			if _, ok := usedNames[methodName]; ok {
+				continue
+			}
+			usedNames[methodName] = struct{}{}
 
 			if len(m.Input.StackValues) == 0 {
-				temp, ok := methods[methodID]
-				if ok {
-					temp = append(temp, methodName)
-					methods[methodID] = temp
-				} else {
-					methods[methodID] = []string{methodName}
-				}
+				methods[methodID] = append(methods[methodID], methodName)
 			}
 
 			for _, o := range m.Output {
-				resultTypeName := utils.ToCamelCase(o.Version) + utils.ToCamelCase(m.Name) + "Result"
+				resultTypeName := utils.ToCamelCase(o.Version) + methodName + "Result"
 				resultTypes = append(resultTypes, resultTypeName)
 				r, err := g.buildResultType(resultTypeName, o.Stack)
 				if err != nil {
@@ -106,7 +116,7 @@ type Executor interface {
 				builder.WriteRune('\n')
 			}
 
-			s, err := g.getMethod(m, methodID, m.Name)
+			s, err := g.getMethod(m, methodID, methodName)
 			if err != nil {
 				return "", err
 			}
@@ -139,8 +149,9 @@ type Executor interface {
 	return string(b), nil
 }
 
-func (g *Generator) RegisterTypes(interfaces []Interface) error {
+func (g *Generator) RegisterInterfaces(interfaces []Interface) error {
 	for _, i := range interfaces {
+		g.interfaces[i.Name] = i
 		if i.Types != "" {
 			err := g.registerType(i.Types)
 			if err != nil {
@@ -243,7 +254,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	var builder strings.Builder
 	var args []string
 
-	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ", utils.ToCamelCase(m.Name)))
+	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ", m.GolangFunctionName()))
 
 	for _, s := range m.Input.StackValues {
 		t, err := g.checkType(s.Type)
@@ -270,7 +281,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
 
 	if len(m.Output) == 1 {
-		name := utils.ToCamelCase(m.Output[0].Version) + utils.ToCamelCase(m.Name) + "Result"
+		name := utils.ToCamelCase(m.Output[0].Version) + methodName + "Result"
 		resDecoder, err := g.buildOutputDecoder(name, m.Output[0].Stack, m.Output[0].FixedLength)
 		if err != nil {
 			return "", err
@@ -283,7 +294,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 		decoders := ""
 		builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
 		for _, o := range m.Output {
-			name := utils.ToCamelCase(o.Version) + utils.ToCamelCase(m.Name) + "Result"
+			name := utils.ToCamelCase(o.Version) + methodName + "Result"
 			builder.WriteString(fmt.Sprintf("decode%s, ", name))
 			resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
 			if err != nil {
@@ -480,4 +491,58 @@ func (g *Generator) GenerateMsgDecoder() string {
 		panic(err)
 	}
 	return string(b)
+}
+
+type templateContext struct {
+	Interfaces      map[string]Interface
+	InvocationOrder []methodDescription
+}
+
+type methodDescription struct {
+	Name         string
+	InvokeFnName string
+	Interfaces   []string
+}
+
+func (g *Generator) RenderInvocationOrderList() (string, error) {
+	context := templateContext{
+		Interfaces: map[string]Interface{},
+	}
+	descriptions := map[string]methodDescription{}
+	for ifaceName, iface := range g.interfaces {
+		context.Interfaces[utils.ToCamelCase(ifaceName)] = iface
+		for _, method := range iface.Methods {
+			if !method.UsedByIntrospection() {
+				continue
+			}
+			invokeFnName := method.GolangFunctionName()
+			desc, ok := descriptions[invokeFnName]
+			if !ok {
+				desc = methodDescription{
+					Name:         method.Name,
+					InvokeFnName: invokeFnName,
+					Interfaces:   []string{},
+				}
+			}
+			desc.Interfaces = append(desc.Interfaces, utils.ToCamelCase(ifaceName))
+			descriptions[invokeFnName] = desc
+			sort.Strings(desc.Interfaces)
+		}
+	}
+
+	for _, desc := range descriptions {
+		context.InvocationOrder = append(context.InvocationOrder, desc)
+	}
+	sort.Slice(context.InvocationOrder, func(i, j int) bool {
+		return context.InvocationOrder[i].Name < context.InvocationOrder[j].Name
+	})
+	tmpl, err := template.New("invocationOrder").Parse(invocationOrderTemplate)
+	if err != nil {
+		return "", err
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, context); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }

@@ -3,25 +3,9 @@ package parser
 import (
 	"bytes"
 	"encoding/xml"
+
+	"github.com/tonkeeper/tongo/utils"
 )
-
-var METHOD = `
-
-
-
-
-<internal name="transfer">
-        <input>
-            transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell) = InternalMsgBody;
-        </input>
-        <ouput>
-            ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
-        </ouput>
-        <ouput>
-            excesses#d53276db query_id:uint64 = InternalMsgBody;
-        </ouput>
-    </internal>
-`
 
 type Interface struct {
 	Name      string      `xml:"name,attr"`
@@ -54,6 +38,8 @@ type GetMethod struct {
 	FixedLength bool              `xml:"fixed_length,attr"`
 	ID          int               `xml:"id,attr"`
 	Output      []GetMethodOutput `xml:"output"`
+	// GolangName defines a name of a golang function generated to execute this get method.
+	GolangName string `xml:"golang_name,attr"`
 }
 
 type GetMethodOutput struct {
@@ -67,6 +53,17 @@ type StackRecord struct {
 	Name     string `xml:"name,attr"`
 	Nullable bool   `xml:"nullable,attr"`
 	Type     string `xml:",chardata"`
+}
+
+func (m GetMethod) UsedByIntrospection() bool {
+	return len(m.Input.StackValues) == 0
+}
+
+func (m GetMethod) GolangFunctionName() string {
+	if len(m.GolangName) > 0 {
+		return m.GolangName
+	}
+	return utils.ToCamelCase(m.Name)
 }
 
 func ParseInterface(s []byte) ([]Interface, error) {

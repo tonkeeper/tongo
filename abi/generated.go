@@ -573,67 +573,6 @@ type Executor interface {
 	RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
-type GetAuthorityAddressResult struct {
-	Address tlb.MsgAddress
-}
-
-func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 84760 for "GetAuthorityAddress" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 84760, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	return decodeGetAuthorityAddressResult(stack)
-}
-
-func decodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var address tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&address)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetAuthorityAddressResult", GetAuthorityAddressResult{
-		Address: address,
-	}, nil
-}
-
-type GetRevokedTimeResult struct {
-	Time uint64
-}
-
-func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 97667 for "GetRevokedTime" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97667, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	return decodeGetRevokedTimeResult(stack)
-}
-
-func decodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var time uint64
-	time = uint64(stack[0].Int64())
-	return "GetRevokedTimeResult", GetRevokedTimeResult{
-		Time: time,
-	}, nil
-}
-
 type SeqnoResult struct {
 	State uint32
 }
@@ -641,7 +580,7 @@ type SeqnoResult struct {
 func Seqno(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 85143 for "Seqno" method
+	// MethodID = 85143 for "seqno" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 85143, stack)
 	if err != nil {
 		return "", nil, err
@@ -670,7 +609,7 @@ type GetPublicKeyResult struct {
 func GetPublicKey(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 78748 for "GetPublicKey" method
+	// MethodID = 78748 for "get_public_key" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 78748, stack)
 	if err != nil {
 		return "", nil, err
@@ -699,7 +638,7 @@ type GetSubwalletIdResult struct {
 func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 81467 for "GetSubwalletId" method
+	// MethodID = 81467 for "get_subwallet_id" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 81467, stack)
 	if err != nil {
 		return "", nil, err
@@ -728,7 +667,7 @@ type IsPluginInstalledResult struct {
 func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 76407 for "IsPluginInstalled" method
+	// MethodID = 76407 for "is_plugin_installed" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 76407, stack)
 	if err != nil {
 		return "", nil, err
@@ -750,6 +689,61 @@ func decodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, result
 	}, nil
 }
 
+type GetNftDataResult struct {
+	Init              int8
+	Index             tlb.Int257
+	CollectionAddress tlb.MsgAddress
+	OwnerAddress      tlb.MsgAddress
+	IndividualContent tlb.Any
+}
+
+func GetNftData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 102351 for "get_nft_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 102351, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	return decodeGetNftDataResult(stack)
+}
+
+func decodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var init int8
+	init = int8(stack[0].Int64())
+	var index tlb.Int257
+	index = stack[1].Int257()
+	var collectionAddress tlb.MsgAddress
+	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&collectionAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var ownerAddress tlb.MsgAddress
+	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&ownerAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var individualContent tlb.Any
+	individualContentCell := &stack[4].VmStkCell.Value
+	err = tlb.Unmarshal(individualContentCell, &individualContent)
+	if err != nil {
+		return "", nil, err
+	}
+	return "GetNftDataResult", GetNftDataResult{
+		Init:              init,
+		Index:             index,
+		CollectionAddress: collectionAddress,
+		OwnerAddress:      ownerAddress,
+		IndividualContent: individualContent,
+	}, nil
+}
+
 type GetNftContentResult struct {
 	Content FullContent
 }
@@ -768,7 +762,7 @@ func GetNftContent(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	}
 	stack.Put(val)
 
-	// MethodID = 68445 for "GetNftContent" method
+	// MethodID = 68445 for "get_nft_content" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 68445, stack)
 	if err != nil {
 		return "", nil, err
@@ -803,7 +797,7 @@ type GetCollectionDataResult struct {
 func GetCollectionData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 102491 for "GetCollectionData" method
+	// MethodID = 102491 for "get_collection_data" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 102491, stack)
 	if err != nil {
 		return "", nil, err
@@ -851,7 +845,7 @@ func GetNftAddressByIndex(ctx context.Context, executor Executor, reqAccountID t
 	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: index}
 	stack.Put(val)
 
-	// MethodID = 92067 for "GetNftAddressByIndex" method
+	// MethodID = 92067 for "get_nft_address_by_index" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 92067, stack)
 	if err != nil {
 		return "", nil, err
@@ -876,6 +870,143 @@ func decodeGetNftAddressByIndexResult(stack tlb.VmStack) (resultType string, res
 	}, nil
 }
 
+type RoyaltyParamsResult struct {
+	Numerator   uint16
+	Denominator uint16
+	Destination tlb.MsgAddress
+}
+
+func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 85719 for "royalty_params" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 85719, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	return decodeRoyaltyParamsResult(stack)
+}
+
+func decodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var numerator uint16
+	numerator = uint16(stack[0].Int64())
+	var denominator uint16
+	denominator = uint16(stack[1].Int64())
+	var destination tlb.MsgAddress
+	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&destination)
+	if err != nil {
+		return "", nil, err
+	}
+	return "RoyaltyParamsResult", RoyaltyParamsResult{
+		Numerator:   numerator,
+		Denominator: denominator,
+		Destination: destination,
+	}, nil
+}
+
+type GetJettonDataResult struct {
+	TotalSupply      tlb.Int257
+	Mintable         int8
+	AdminAddress     tlb.MsgAddress
+	JettonContent    tlb.Any
+	JettonWalletCode tlb.Any
+}
+
+func GetJettonData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 106029 for "get_jetton_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106029, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	return decodeGetJettonDataResult(stack)
+}
+
+func decodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var totalSupply tlb.Int257
+	totalSupply = stack[0].Int257()
+	var mintable int8
+	mintable = int8(stack[1].Int64())
+	var adminAddress tlb.MsgAddress
+	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&adminAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var jettonContent tlb.Any
+	jettonContentCell := &stack[3].VmStkCell.Value
+	err = tlb.Unmarshal(jettonContentCell, &jettonContent)
+	if err != nil {
+		return "", nil, err
+	}
+	var jettonWalletCode tlb.Any
+	jettonWalletCodeCell := &stack[4].VmStkCell.Value
+	err = tlb.Unmarshal(jettonWalletCodeCell, &jettonWalletCode)
+	if err != nil {
+		return "", nil, err
+	}
+	return "GetJettonDataResult", GetJettonDataResult{
+		TotalSupply:      totalSupply,
+		Mintable:         mintable,
+		AdminAddress:     adminAddress,
+		JettonContent:    jettonContent,
+		JettonWalletCode: jettonWalletCode,
+	}, nil
+}
+
+type GetWalletAddressResult struct {
+	JettonWalletAddress tlb.MsgAddress
+}
+
+func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(ownerAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 103289 for "get_wallet_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103289, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	return decodeGetWalletAddressResult(stack)
+}
+
+func decodeGetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var jettonWalletAddress tlb.MsgAddress
+	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&jettonWalletAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	return "GetWalletAddressResult", GetWalletAddressResult{
+		JettonWalletAddress: jettonWalletAddress,
+	}, nil
+}
+
 type GetWalletDataResult struct {
 	Balance          tlb.Int257
 	Owner            tlb.MsgAddress
@@ -886,7 +1017,7 @@ type GetWalletDataResult struct {
 func GetWalletData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 97026 for "GetWalletData" method
+	// MethodID = 97026 for "get_wallet_data" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97026, stack)
 	if err != nil {
 		return "", nil, err
@@ -927,6 +1058,83 @@ func decodeGetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	}, nil
 }
 
+type RecordDnsresolveResult struct {
+	ResolvedBits int64
+	Result       tlb.DNSRecord
+}
+
+type RecordsDnsresolveResult struct {
+	ResolvedBits int64
+	Result       tlb.DNSRecordSet
+}
+
+func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, domain []byte, category tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(domain)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: category}
+	stack.Put(val)
+
+	// MethodID = 123660 for "dnsresolve" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 123660, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){decodeRecordDnsresolveResult, decodeRecordsDnsresolveResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func decodeRecordDnsresolveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var resolvedBits int64
+	resolvedBits = int64(stack[0].Int64())
+	var result tlb.DNSRecord
+	resultCell := &stack[1].VmStkCell.Value
+	err = tlb.Unmarshal(resultCell, &result)
+	if err != nil {
+		return "", nil, err
+	}
+	return "RecordDnsresolveResult", RecordDnsresolveResult{
+		ResolvedBits: resolvedBits,
+		Result:       result,
+	}, nil
+}
+
+func decodeRecordsDnsresolveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var resolvedBits int64
+	resolvedBits = int64(stack[0].Int64())
+	var result tlb.DNSRecordSet
+	resultCell := &stack[1].VmStkCell.Value
+	err = tlb.Unmarshal(resultCell, &result)
+	if err != nil {
+		return "", nil, err
+	}
+	return "RecordsDnsresolveResult", RecordsDnsresolveResult{
+		ResolvedBits: resolvedBits,
+		Result:       result,
+	}, nil
+}
+
 type NftSaleGetSaleDataResult struct {
 	Marketplace    tlb.MsgAddress
 	Nft            tlb.MsgAddress
@@ -940,7 +1148,7 @@ type NftSaleGetSaleDataResult struct {
 func NftSaleGetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 72748 for "NftSaleGetSaleData" method
+	// MethodID = 72748 for "get_sale_data" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72748, stack)
 	if err != nil {
 		return "", nil, err
@@ -1009,7 +1217,7 @@ type NftSaleGetGemsGetSaleDataResult struct {
 func NftSaleGetGemsGetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 72748 for "NftSaleGetGemsGetSaleData" method
+	// MethodID = 72748 for "get_sale_data" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72748, stack)
 	if err != nil {
 		return "", nil, err
@@ -1076,272 +1284,64 @@ func decodeNftSaleGetGemsGetSaleDataResult(stack tlb.VmStack) (resultType string
 	}, nil
 }
 
-type GetNftDataResult struct {
-	Init              int8
-	Index             tlb.Int257
-	CollectionAddress tlb.MsgAddress
-	OwnerAddress      tlb.MsgAddress
-	IndividualContent tlb.Any
+type GetAuthorityAddressResult struct {
+	Address tlb.MsgAddress
 }
 
-func GetNftData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 102351 for "GetNftData" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 102351, stack)
+	// MethodID = 84760 for "get_authority_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 84760, stack)
 	if err != nil {
 		return "", nil, err
 	}
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetNftDataResult(stack)
+	return decodeGetAuthorityAddressResult(stack)
 }
 
-func decodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var init int8
-	init = int8(stack[0].Int64())
-	var index tlb.Int257
-	index = stack[1].Int257()
-	var collectionAddress tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&collectionAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var ownerAddress tlb.MsgAddress
-	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&ownerAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var individualContent tlb.Any
-	individualContentCell := &stack[4].VmStkCell.Value
-	err = tlb.Unmarshal(individualContentCell, &individualContent)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetNftDataResult", GetNftDataResult{
-		Init:              init,
-		Index:             index,
-		CollectionAddress: collectionAddress,
-		OwnerAddress:      ownerAddress,
-		IndividualContent: individualContent,
-	}, nil
-}
-
-type RoyaltyParamsResult struct {
-	Numerator   uint16
-	Denominator uint16
-	Destination tlb.MsgAddress
-}
-
-func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 85719 for "RoyaltyParams" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 85719, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	return decodeRoyaltyParamsResult(stack)
-}
-
-func decodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var numerator uint16
-	numerator = uint16(stack[0].Int64())
-	var denominator uint16
-	denominator = uint16(stack[1].Int64())
-	var destination tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&destination)
-	if err != nil {
-		return "", nil, err
-	}
-	return "RoyaltyParamsResult", RoyaltyParamsResult{
-		Numerator:   numerator,
-		Denominator: denominator,
-		Destination: destination,
-	}, nil
-}
-
-type GetJettonDataResult struct {
-	TotalSupply      tlb.Int257
-	Mintable         int8
-	AdminAddress     tlb.MsgAddress
-	JettonContent    tlb.Any
-	JettonWalletCode tlb.Any
-}
-
-func GetJettonData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 106029 for "GetJettonData" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106029, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	return decodeGetJettonDataResult(stack)
-}
-
-func decodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var totalSupply tlb.Int257
-	totalSupply = stack[0].Int257()
-	var mintable int8
-	mintable = int8(stack[1].Int64())
-	var adminAddress tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&adminAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var jettonContent tlb.Any
-	jettonContentCell := &stack[3].VmStkCell.Value
-	err = tlb.Unmarshal(jettonContentCell, &jettonContent)
-	if err != nil {
-		return "", nil, err
-	}
-	var jettonWalletCode tlb.Any
-	jettonWalletCodeCell := &stack[4].VmStkCell.Value
-	err = tlb.Unmarshal(jettonWalletCodeCell, &jettonWalletCode)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetJettonDataResult", GetJettonDataResult{
-		TotalSupply:      totalSupply,
-		Mintable:         mintable,
-		AdminAddress:     adminAddress,
-		JettonContent:    jettonContent,
-		JettonWalletCode: jettonWalletCode,
-	}, nil
-}
-
-type GetWalletAddressResult struct {
-	JettonWalletAddress tlb.MsgAddress
-}
-
-func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val, err = tlb.TlbStructToVmCellSlice(ownerAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-
-	// MethodID = 103289 for "GetWalletAddress" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103289, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	return decodeGetWalletAddressResult(stack)
-}
-
-func decodeGetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var jettonWalletAddress tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&jettonWalletAddress)
+	var address tlb.MsgAddress
+	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&address)
 	if err != nil {
 		return "", nil, err
 	}
-	return "GetWalletAddressResult", GetWalletAddressResult{
-		JettonWalletAddress: jettonWalletAddress,
+	return "GetAuthorityAddressResult", GetAuthorityAddressResult{
+		Address: address,
 	}, nil
 }
 
-type RecordDnsresolveResult struct {
-	ResolvedBits int64
-	Result       tlb.DNSRecord
+type GetRevokedTimeResult struct {
+	Time uint64
 }
 
-type RecordsDnsresolveResult struct {
-	ResolvedBits int64
-	Result       tlb.DNSRecordSet
-}
-
-func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, domain []byte, category tlb.Int257) (string, any, error) {
+func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val, err = tlb.TlbStructToVmCellSlice(domain)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: category}
-	stack.Put(val)
 
-	// MethodID = 123660 for "Dnsresolve" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 123660, stack)
+	// MethodID = 97667 for "get_revoked_time" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97667, stack)
 	if err != nil {
 		return "", nil, err
 	}
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeRecordDnsresolveResult, decodeRecordsDnsresolveResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
+	return decodeGetRevokedTimeResult(stack)
 }
 
-func decodeRecordDnsresolveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
+func decodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var resolvedBits int64
-	resolvedBits = int64(stack[0].Int64())
-	var result tlb.DNSRecord
-	resultCell := &stack[1].VmStkCell.Value
-	err = tlb.Unmarshal(resultCell, &result)
-	if err != nil {
-		return "", nil, err
-	}
-	return "RecordDnsresolveResult", RecordDnsresolveResult{
-		ResolvedBits: resolvedBits,
-		Result:       result,
-	}, nil
-}
-
-func decodeRecordsDnsresolveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var resolvedBits int64
-	resolvedBits = int64(stack[0].Int64())
-	var result tlb.DNSRecordSet
-	resultCell := &stack[1].VmStkCell.Value
-	err = tlb.Unmarshal(resultCell, &result)
-	if err != nil {
-		return "", nil, err
-	}
-	return "RecordsDnsresolveResult", RecordsDnsresolveResult{
-		ResolvedBits: resolvedBits,
-		Result:       result,
+	var time uint64
+	time = uint64(stack[0].Int64())
+	return "GetRevokedTimeResult", GetRevokedTimeResult{
+		Time: time,
 	}, nil
 }
 
@@ -1352,7 +1352,7 @@ type GetChannelStateResult struct {
 func GetChannelState(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 106901 for "GetChannelState" method
+	// MethodID = 106901 for "get_channel_state" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106901, stack)
 	if err != nil {
 		return "", nil, err
@@ -1383,7 +1383,7 @@ type GetWalletParamsResult struct {
 func GetWalletParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 130271 for "GetWalletParams" method
+	// MethodID = 130271 for "get_wallet_params" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 130271, stack)
 	if err != nil {
 		return "", nil, err
@@ -1422,7 +1422,7 @@ type GetStorageParamsResult struct {
 func GetStorageParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 104346 for "GetStorageParams" method
+	// MethodID = 104346 for "get_storage_params" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 104346, stack)
 	if err != nil {
 		return "", nil, err
@@ -1478,7 +1478,7 @@ func GetStorageContractAddress(ctx context.Context, executor Executor, reqAccoun
 	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: torrentHash}
 	stack.Put(val)
 
-	// MethodID = 119729 for "GetStorageContractAddress" method
+	// MethodID = 119729 for "get_storage_contract_address" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 119729, stack)
 	if err != nil {
 		return "", nil, err
@@ -1520,7 +1520,7 @@ type GetStorageContractDataResult struct {
 func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 86593 for "GetStorageContractData" method
+	// MethodID = 86593 for "get_storage_contract_data" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 86593, stack)
 	if err != nil {
 		return "", nil, err
@@ -1585,7 +1585,7 @@ type GetTorrentHashResult struct {
 func GetTorrentHash(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 71463 for "GetTorrentHash" method
+	// MethodID = 71463 for "get_torrent_hash" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 71463, stack)
 	if err != nil {
 		return "", nil, err
@@ -1614,7 +1614,7 @@ type IsActiveResult struct {
 func IsActive(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 122058 for "IsActive" method
+	// MethodID = 122058 for "is_active" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122058, stack)
 	if err != nil {
 		return "", nil, err
@@ -1645,7 +1645,7 @@ type GetNextProofInfoResult struct {
 func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
-	// MethodID = 81490 for "GetNextProofInfo" method
+	// MethodID = 81490 for "get_next_proof_info" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 81490, stack)
 	if err != nil {
 		return "", nil, err
@@ -1675,6 +1675,7 @@ func decodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultA
 
 type ContractInterface string
 
+// wallet-related contract interfaces are listed in wallet.go
 const (
 	NftSale            ContractInterface = "nft_sale"
 	NftSaleGetgems     ContractInterface = "nft_sale_getgems"
@@ -1746,13 +1747,13 @@ var methodInvocationOrder = []methodDescription{
 	},
 	{
 		Name:          "get_sale_data",
-		ImplementedBy: []ContractInterface{NftSaleGetgems},
-		InvokeFn:      NftSaleGetGemsGetSaleData,
+		ImplementedBy: []ContractInterface{NftSale},
+		InvokeFn:      NftSaleGetSaleData,
 	},
 	{
 		Name:          "get_sale_data",
-		ImplementedBy: []ContractInterface{NftSale},
-		InvokeFn:      NftSaleGetSaleData,
+		ImplementedBy: []ContractInterface{NftSaleGetgems},
+		InvokeFn:      NftSaleGetGemsGetSaleData,
 	},
 	{
 		Name:          "get_storage_contract_data",

@@ -53,7 +53,7 @@ type TLBMsgBody struct {
 
 type Generator struct {
 	knownTypes        map[string]string
-	interfaces        map[string]Interface
+	interfaces        []Interface
 	newTlbTypes       map[string]struct{}
 	loadedTlbTypes    []string
 	loadedTlbMsgTypes map[uint32]TLBMsgBody
@@ -66,7 +66,7 @@ func NewGenerator(knownTypes map[string]string, typeName string) *Generator {
 	}
 	return &Generator{
 		knownTypes:        knownTypes,
-		interfaces:        map[string]Interface{},
+		interfaces:        []Interface{},
 		typeName:          typeName,
 		loadedTlbMsgTypes: make(map[uint32]TLBMsgBody),
 		newTlbTypes:       make(map[string]struct{}),
@@ -151,7 +151,7 @@ type Executor interface {
 
 func (g *Generator) RegisterInterfaces(interfaces []Interface) error {
 	for _, i := range interfaces {
-		g.interfaces[i.Name] = i
+		g.interfaces = append(g.interfaces, i)
 		if i.Types != "" {
 			err := g.registerType(i.Types)
 			if err != nil {
@@ -275,7 +275,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	builder.WriteString(buildInputStackValues(m.Input.StackValues))
 	builder.WriteRune('\n')
 
-	builder.WriteString(fmt.Sprintf("// MethodID = %d for \"%s\" method\n", methodID, methodName))
+	builder.WriteString(fmt.Sprintf("// MethodID = %d for \"%s\" method\n", methodID, m.Name))
 	builder.WriteString(fmt.Sprintf("errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, %d, stack)\n", methodID))
 	builder.WriteString(returnStrNilErr)
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
@@ -509,8 +509,8 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 		Interfaces: map[string]Interface{},
 	}
 	descriptions := map[string]methodDescription{}
-	for ifaceName, iface := range g.interfaces {
-		context.Interfaces[utils.ToCamelCase(ifaceName)] = iface
+	for _, iface := range g.interfaces {
+		context.Interfaces[utils.ToCamelCase(iface.Name)] = iface
 		for _, method := range iface.Methods {
 			if !method.UsedByIntrospection() {
 				continue
@@ -524,7 +524,7 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 					Interfaces:   []string{},
 				}
 			}
-			desc.Interfaces = append(desc.Interfaces, utils.ToCamelCase(ifaceName))
+			desc.Interfaces = append(desc.Interfaces, utils.ToCamelCase(iface.Name))
 			descriptions[invokeFnName] = desc
 			sort.Strings(desc.Interfaces)
 		}

@@ -39,6 +39,13 @@ type Unary uint
 
 type Any boc.Cell
 
+func (m Maybe[T]) Pointer() *T {
+	if m.Exists {
+		return &m.Value
+	}
+	return nil
+}
+
 func (m *Magic) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	a := strings.Split(decoder.tag, "$")
 	if len(a) == 2 {

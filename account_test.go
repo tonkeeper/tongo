@@ -23,3 +23,10 @@ func TestAccountIDJsonUnmarshal(t *testing.T) {
 		}
 	}
 }
+
+func TestToMsgAddress(t *testing.T) {
+	ma := (*AccountID)(nil).ToMsgAddress()
+	if ma.SumType != "AddrNone" {
+		t.Fatal(ma.SumType)
+	}
+}

@@ -169,18 +169,6 @@ func MustParseAccountID(s string) AccountID {
 	return aa
 }
 
-func MsgAddressFromAccountID(id *AccountID) tlb.MsgAddress {
-	if id == nil {
-		return tlb.MsgAddress{SumType: "AddrNone"}
-	}
-	addr := tlb.MsgAddress{
-		SumType: "AddrStd",
-	}
-	addr.AddrStd.WorkchainId = int8(id.Workchain)
-	addr.AddrStd.Address = id.Address
-	return addr
-}
-
 func GetAccountInfo(a tlb.Account) (AccountInfo, error) {
 	if a.SumType == "AccountNone" {
 		return AccountInfo{Status: tlb.AccountNone}, nil
@@ -219,7 +207,7 @@ func GetAccountInfo(a tlb.Account) (AccountInfo, error) {
 // TODO: replace pointer with nullable type
 func AccountIDFromTlb(a tlb.MsgAddress) (*AccountID, error) {
 	switch a.SumType {
-	case "AddrNone":
+	case "AddrNone", "AddrExtern": //todo: make something with external addresses
 		return nil, nil
 	case "AddrStd":
 		return &AccountID{Workchain: int32(a.AddrStd.WorkchainId), Address: a.AddrStd.Address}, nil

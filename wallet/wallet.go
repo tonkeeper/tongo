@@ -217,8 +217,8 @@ func generateInternalMessage(ctx context.Context, msg Message, bc blockchain) (t
 		SumType: "IntMsgInfo",
 	}
 	info.IntMsgInfo.IhrDisabled = true
-	info.IntMsgInfo.Src = tongo.MsgAddressFromAccountID(nil)
-	info.IntMsgInfo.Dest = tongo.MsgAddressFromAccountID(&msg.Address)
+	info.IntMsgInfo.Src = (*tongo.AccountID)(nil).ToMsgAddress()
+	info.IntMsgInfo.Dest = msg.Address.ToMsgAddress()
 	info.IntMsgInfo.Value.Grams = tlb.Grams(msg.Amount)
 
 	if msg.Bounceable == nil {
@@ -391,9 +391,9 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 	}
 	var responseDestination tlb.MsgAddress
 	if msg.ResponseDestination == nil {
-		responseDestination = tongo.MsgAddressFromAccountID(&owner) // send excess to sender wallet
+		responseDestination = owner.ToMsgAddress() // send excess to sender wallet
 	} else {
-		responseDestination = tongo.MsgAddressFromAccountID(msg.ResponseDestination)
+		responseDestination = msg.ResponseDestination.ToMsgAddress()
 	}
 	transferMsg := struct {
 		Magic               tlb.Magic `tlb:"transfer#0f8a7ea5"`
@@ -407,7 +407,7 @@ func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) 
 	}{
 		QueryId:             rand.Uint64(),
 		Amount:              tlb.VarUInteger16(*msg.JettonAmount),
-		Destination:         tongo.MsgAddressFromAccountID(&msg.Destination),
+		Destination:         msg.Destination.ToMsgAddress(),
 		ResponseDestination: responseDestination,
 		ForwardTonAmount:    tlb.Grams(msg.ForwardTonAmount),
 	}

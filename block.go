@@ -178,8 +178,8 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 		msg.Init.Value.IsRight = true
 		msg.Init.Value.Value = *init
 	}
-	msg.Info.ExtInMsgInfo.Src = MsgAddressFromAccountID(nil)
-	msg.Info.ExtInMsgInfo.Dest = MsgAddressFromAccountID(&address)
+	msg.Info.ExtInMsgInfo.Src = (*AccountID)(nil).ToMsgAddress()
+	msg.Info.ExtInMsgInfo.Dest = address.ToMsgAddress()
 	msg.Info.ExtInMsgInfo.ImportFee = importFee
 	return msg, nil
 }

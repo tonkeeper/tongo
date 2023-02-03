@@ -377,9 +377,8 @@ func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID)
 	if err != nil {
 		return tlb.ShardAccount{}, err
 	}
-	//lt, hash, err := decodeAccountDataFromProof(res.Proof, accountID)
-	// TODO: fix tlb decoding of Account
-	return tlb.ShardAccount{Account: acc}, err
+	lt, hash, err := decodeAccountDataFromProof(res.Proof, accountID)
+	return tlb.ShardAccount{Account: acc, LastTransHash: hash, LastTransLt: lt}, err
 }
 
 func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tlb.Bits256, error) {

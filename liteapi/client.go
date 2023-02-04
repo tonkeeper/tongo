@@ -509,6 +509,9 @@ func (c *Client) GetTransactions(
 	if err != nil {
 		return nil, err
 	}
+	if len(r.Transactions) == 0 {
+		return []tlb.Transaction{}, nil
+	}
 	cells, err := boc.DeserializeBoc(r.Transactions)
 	if err != nil {
 		return nil, err

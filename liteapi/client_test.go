@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"math/rand"
 	"testing"
 	"time"
 
@@ -288,3 +289,17 @@ func TestGetRootDNS(t *testing.T) {
 //		t.Fatal(err)
 //	}
 //}
+
+func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
+	var a tongo.AccountID
+	rand.Read(a.Address[:])
+	client, err := NewClientWithDefaultTestnet()
+	if err != nil {
+		t.Error(err)
+	}
+
+	txs, err := client.GetTransactions(context.Background(), 10, a, 0, tongo.Bits256{})
+	if err != nil || len(txs) != 0 {
+		t.Error(err, len(txs))
+	}
+}

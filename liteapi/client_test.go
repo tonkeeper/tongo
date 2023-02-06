@@ -129,16 +129,36 @@ func TestGetAccountState(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	accountID, _ := tongo.AccountIDFromRaw("0:5f00decb7da51881764dc3959cec60609045f6ca1b89e646bde49d492705d77f")
-	st, err := api.GetAccountState(context.TODO(), accountID)
-	if err != nil {
-		t.Fatal(err)
+	testCases := []struct {
+		name      string
+		accountID string
+	}{
+		{
+			name:      "account from masterchain",
+			accountID: "-1:34517c7bdf5187c55af4f8b61fdc321588c7ab768dee24b006df29106458d7cf",
+		},
+		{
+			name:      "account from basechain",
+			accountID: "0:5f00decb7da51881764dc3959cec60609045f6ca1b89e646bde49d492705d77f",
+		},
 	}
-	ai, err := tongo.GetAccountInfo(st.Account)
-	if err != nil {
-		t.Fatal(err)
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			accountID, err := tongo.AccountIDFromRaw(tt.accountID)
+			if err != nil {
+				t.Fatal("AccountIDFromRaw() failed: %w", err)
+			}
+			st, err := api.GetAccountState(context.TODO(), accountID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ai, err := tongo.GetAccountInfo(st.Account)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Printf("Account status: %v\n", ai.Status)
+		})
 	}
-	fmt.Printf("Account status: %v\n", ai.Status)
 }
 
 func TestLookupBlock(t *testing.T) {

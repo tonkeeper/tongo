@@ -203,10 +203,15 @@ func (m Ref[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return err
 }
 
-func (m *Ref[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	r, err := c.NextRef()
 	if err != nil {
 		return err
+	}
+	if r.CellType() == boc.PrunedBranchCell {
+		var value T
+		m.Value = value
+		return nil
 	}
 	err = Unmarshal(r, &m.Value)
 	if err != nil {

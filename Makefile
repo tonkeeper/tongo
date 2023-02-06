@@ -8,4 +8,4 @@ imports:
 fmt:
 	gofmt -s -l -w $$(go list -f {{.Dir}} ./... | grep -v /vendor/)
 test: 
-	go test $$(go list ./... | grep -v /vendor/) -coverprofile cover.out
+	go test $$(go list ./... | grep -v /vendor/) -race -coverprofile cover.out

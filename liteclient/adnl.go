@@ -102,7 +102,7 @@ func ParsePacket(r io.Reader, decryptor cipher.Stream) (Packet, error) {
 		return Packet{}, err
 	}
 	if n != length {
-		return p, fmt.Errorf("invalid packe length. should be %v by header but real length is %v", length, n)
+		return p, fmt.Errorf("invalid packet length. should be %v by header but real length is %v", length, n)
 	}
 	decryptor.XORKeyStream(data, data)
 	copy(p.nonce[:], data[:32])

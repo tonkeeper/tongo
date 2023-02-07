@@ -457,14 +457,14 @@ func (c *Client) GetOneTransaction(
 	ctx context.Context,
 	accountID tongo.AccountID,
 	lt uint64,
-) (tlb.Transaction, error) {
+) (tongo.Transaction, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
-		return tlb.Transaction{}, err
+		return tongo.Transaction{}, err
 	}
 	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
-		return tlb.Transaction{}, err
+		return tongo.Transaction{}, err
 	}
 	r, err := server.LiteServerGetOneTransaction(ctx, liteclient.LiteServerGetOneTransactionRequest{
 		Id:      liteclient.BlockIDExt(id),
@@ -472,21 +472,21 @@ func (c *Client) GetOneTransaction(
 		Lt:      lt,
 	})
 	if err != nil {
-		return tlb.Transaction{}, err
+		return tongo.Transaction{}, err
 	}
 	if len(r.Transaction) == 0 {
-		return tlb.Transaction{}, fmt.Errorf("transaction not found")
+		return tongo.Transaction{}, fmt.Errorf("transaction not found")
 	}
 	cells, err := boc.DeserializeBoc(r.Transaction)
 	if err != nil {
-		return tlb.Transaction{}, err
+		return tongo.Transaction{}, err
 	}
 	if len(cells) != 1 {
-		return tlb.Transaction{}, boc.ErrNotSingleRoot
+		return tongo.Transaction{}, boc.ErrNotSingleRoot
 	}
 	var t tlb.Transaction
 	err = tlb.Unmarshal(cells[0], &t)
-	return t, err
+	return tongo.Transaction{Transaction: t, BlockID: r.Id.ToBlockIdExt()}, err
 }
 
 func (c *Client) GetTransactions(
@@ -495,7 +495,7 @@ func (c *Client) GetTransactions(
 	accountID tongo.AccountID,
 	lt uint64,
 	hash tongo.Bits256,
-) ([]tlb.Transaction, error) {
+) ([]tongo.Transaction, error) {
 	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
 		return nil, err
@@ -510,21 +510,53 @@ func (c *Client) GetTransactions(
 		return nil, err
 	}
 	if len(r.Transactions) == 0 {
-		return []tlb.Transaction{}, nil
+		return []tongo.Transaction{}, nil
 	}
 	cells, err := boc.DeserializeBoc(r.Transactions)
 	if err != nil {
 		return nil, err
 	}
-	var res []tlb.Transaction
-	for _, cell := range cells {
+	var res []tongo.Transaction
+	for i, cell := range cells {
 		var t tlb.Transaction
 		cell.ResetCounters()
 		err := tlb.Unmarshal(cell, &t)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, t)
+		res = append(res, tongo.Transaction{
+			Transaction: t,
+			BlockID:     r.Ids[i].ToBlockIdExt(),
+		})
+	}
+	return res, nil
+}
+
+func (c *Client) GetLastTransactions(ctx context.Context, a tongo.AccountID, limit int) ([]tongo.Transaction, error) {
+	state, err := c.GetAccountState(ctx, a)
+	if err != nil {
+		return nil, err
+	}
+	lastLt, lastHash := state.LastTransLt, state.LastTransHash
+	var res []tongo.Transaction
+	for {
+		txs, err := c.GetTransactions(ctx, 10, a, lastLt, tongo.Bits256(lastHash))
+		if err != nil {
+			if e, ok := err.(liteclient.LiteServerErrorC); ok && int32(e.Code) == -400 {
+				break
+			}
+			return nil, err
+		}
+		if len(txs) == 0 {
+			break
+		}
+		res = append(res, txs...)
+		if len(res) >= limit {
+			res = res[:limit]
+			break
+		}
+		lastLt, lastHash = res[len(res)-1].PrevTransLt, res[len(res)-1].PrevTransHash
+
 	}
 	return res, nil
 }

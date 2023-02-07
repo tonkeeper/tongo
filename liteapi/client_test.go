@@ -323,3 +323,45 @@ func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
 		t.Error(err, len(txs))
 	}
 }
+
+func TestMappingTransactionsToBlocks(t *testing.T) {
+	const limit = 100
+	c, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.Background()
+	txs, err := c.GetLastTransactions(ctx, tongo.MustParseAccountID("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"), limit)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(txs) != limit {
+		t.Fatal(len(txs))
+	}
+	txsInBlockCache := make(map[tongo.Bits256][]tlb.Bits256)
+	for _, tx := range txs {
+		if _, ok := txsInBlockCache[tx.BlockID.RootHash]; !ok {
+			block, err := c.GetBlock(ctx, tx.BlockID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var txHashes []tlb.Bits256
+			for _, accountBlock := range block.Extra.AccountBlocks.Values() {
+				for _, txRef := range accountBlock.Transactions.Values() {
+					txHashes = append(txHashes, txRef.Value.Hash())
+				}
+			}
+			txsInBlockCache[tx.BlockID.RootHash] = txHashes
+		}
+		found := false
+		for _, hash := range txsInBlockCache[tx.BlockID.RootHash] {
+			if hash == tx.Hash() {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("can't find tx %v in block %v", tx.Hash(), tx.BlockID.String())
+		}
+	}
+}

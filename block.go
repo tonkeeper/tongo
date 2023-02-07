@@ -204,10 +204,3 @@ func ShardIDs(blk *tlb.Block) ([]BlockIDExt, error) {
 	}
 	return shards, nil
 }
-
-// RawBlock contains a block's data without TL-B deserialization returned by a lite server's GetBlock method.
-type RawBlock struct {
-	ID BlockIDExt
-	// Data contains a BOC.
-	Data []byte
-}

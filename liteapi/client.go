@@ -540,9 +540,12 @@ func (c *Client) GetLastTransactions(ctx context.Context, a tongo.AccountID, lim
 	lastLt, lastHash := state.LastTransLt, state.LastTransHash
 	var res []tongo.Transaction
 	for {
+		if lastLt == 0 {
+			break
+		}
 		txs, err := c.GetTransactions(ctx, 10, a, lastLt, tongo.Bits256(lastHash))
 		if err != nil {
-			if e, ok := err.(liteclient.LiteServerErrorC); ok && int32(e.Code) == -400 {
+			if e, ok := err.(liteclient.LiteServerErrorC); ok && int32(e.Code) == -400 { // liteserver can store not full history. in that case it return error -400 for old transactions
 				break
 			}
 			return nil, err

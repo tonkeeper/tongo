@@ -338,6 +338,13 @@ func TestMappingTransactionsToBlocks(t *testing.T) {
 	if len(txs) != limit {
 		t.Fatal(len(txs))
 	}
+
+	for i := 0; i < len(txs)-1; i++ {
+		if txs[i].PrevTransLt != txs[i+1].Lt {
+			t.Fatal("something with tx order")
+		}
+	}
+
 	txsInBlockCache := make(map[tongo.Bits256][]tlb.Bits256)
 	for _, tx := range txs {
 		if _, ok := txsInBlockCache[tx.BlockID.RootHash]; !ok {

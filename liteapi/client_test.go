@@ -184,23 +184,33 @@ func TestLookupBlock(t *testing.T) {
 }
 
 func TestGetOneTransaction(t *testing.T) {
-	t.Skip() //todo: switch  to archive node
+
 	tongoClient, err := NewClientWithDefaultMainnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
-	var lt uint64 = 33973842000001
+	ctx := context.Background()
+	lastBlockID, err := tongoClient.getlastBlock(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	shards, err := tongoClient.GetAllShardsInfo(ctx, lastBlockID.ToBlockIdExt())
+	if err != nil {
+		t.Fatal(err)
+	}
+	block, err := tongoClient.GetBlock(ctx, shards[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx1 := block.AllTransactions()[0]
 
-	rh := tongo.MustParseHash("F497D5CE3DA3C2DAA217145A91A615188E5AD4D8D5EC58C86414DE3F627DFE8A")
-	fh := tongo.MustParseHash("8215CADE3E7BAB4311230F35B5BAC218CFCB8B3706A21563556BCA29828206C9")
-
-	blockID := tongo.BlockIDExt{BlockID: tongo.BlockID{Workchain: -1, Shard: uint64(9223372036854775808), Seqno: 26097165}, RootHash: rh, FileHash: fh}
-	tx, err := tongoClient.WithBlock(blockID).GetOneTransaction(context.Background(), accountId, lt)
+	tx2, err := tongoClient.GetOneTransactionFromBlock(context.Background(), tongo.AccountID{Workchain: shards[0].Workchain, Address: tx1.AccountAddr}, shards[0], tx1.Lt)
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
 	}
-	fmt.Printf("TX utime: %v", tx.Now)
+	if tx2.Hash() != tx1.Hash() {
+		log.Fatalf("mismatch hashes")
+	}
 }
 
 func TestGetJettonWallet(t *testing.T) {

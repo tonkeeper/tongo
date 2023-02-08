@@ -453,21 +453,18 @@ func (c *Client) GetAllShardsInfo(ctx context.Context, blockID tongo.BlockIDExt)
 	return shards, nil
 }
 
-func (c *Client) GetOneTransaction(
+func (c *Client) GetOneTransactionFromBlock(
 	ctx context.Context,
 	accountID tongo.AccountID,
+	blockId tongo.BlockIDExt,
 	lt uint64,
 ) (tongo.Transaction, error) {
-	id, err := c.targetBlock(ctx)
-	if err != nil {
-		return tongo.Transaction{}, err
-	}
 	server, err := c.getServerByAccountID(accountID)
 	if err != nil {
 		return tongo.Transaction{}, err
 	}
 	r, err := server.LiteServerGetOneTransaction(ctx, liteclient.LiteServerGetOneTransactionRequest{
-		Id:      liteclient.BlockIDExt(id),
+		Id:      liteclient.BlockIDExt(blockId),
 		Account: liteclient.AccountID(accountID),
 		Lt:      lt,
 	})

@@ -353,3 +353,13 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 	return nil
 }
+
+func (b Block) AllTransactions() []Transaction {
+	var transactions []Transaction
+	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
+		for _, txRef := range accountBlock.Transactions.Values() {
+			transactions = append(transactions, txRef.Value)
+		}
+	}
+	return transactions
+}

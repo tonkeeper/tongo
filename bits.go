@@ -1,10 +1,10 @@
 package tongo
 
 import (
+	"bytes"
 	"database/sql/driver"
 	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/tonkeeper/tongo/tlb"
@@ -115,6 +115,16 @@ func (h Bits256) Value() (driver.Value, error) {
 	return h[:], nil
 }
 
-func (h Bits256) MarshalJSON() ([]byte, error) {
-	return json.Marshal(fmt.Sprintf("%x", h))
+func (b Bits256) MarshalJSON() ([]byte, error) {
+	return fmt.Appendf(nil, "\"%x\"", b), nil
+}
+
+func (b *Bits256) UnmarshalJSON(buf []byte) error {
+	var sl []byte
+	_, err := fmt.Fscanf(bytes.NewReader(buf), "\"%x\"", &sl)
+	if len(sl) != 32 {
+		return fmt.Errorf("can't parse 256bits %v", string(buf))
+	}
+	copy(b[:], sl)
+	return err
 }

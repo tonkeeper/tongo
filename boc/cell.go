@@ -146,6 +146,9 @@ func (c *Cell) AddRef(c2 *Cell) error {
 }
 
 func (c *Cell) NextRef() (*Cell, error) {
+	if c.refCursor > 3 {
+		return nil, ErrNotEnoughRefs
+	}
 	ref := c.refs[c.refCursor]
 	if ref != nil {
 		c.refCursor++

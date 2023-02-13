@@ -47,6 +47,10 @@
             </output>
         </get_method>
         <get_method name="is_plugin_installed">
+            <input>
+                <tinyint name="workchain">int32</tinyint>
+                <int name="addr_hash">int257</int>
+            </input>
             <output>
                 <tinyint name="success">bool</tinyint>
             </output>
@@ -584,5 +588,27 @@
                 query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
             </input>
         </internal>
+    </interface>
+    <!--    TF stacking contract    -->
+    <interface name="tf_nominators" group="stacking">
+        <get_method name="list_nominators">
+            <output>
+                <tuple list="true">
+                    <int name="address">bits256</int>
+                    <tinyint name="amount">uint64</tinyint>
+                    <tinyint name="pending_deposit_amount">uint64</tinyint>
+                    <tinyint name="withdraw_requested">bool</tinyint>
+                </tuple>
+            </output>
+        </get_method>
+        <get_method name="list_votes">
+            <output>
+                <tuple list="true">
+                    <int name="proposal_hash">bits256</int>
+                    <tinyint name="vote_create_time">uint32</tinyint>
+                </tuple>
+            </output>
+        </get_method>
+<!--        todo: make internal and externals       -->
     </interface>
 </interfaces>

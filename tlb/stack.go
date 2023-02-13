@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"reflect"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tl"
@@ -513,26 +514,63 @@ func (v VmStackValue) Uint64() uint64 {
 	}
 }
 
-// Deprecated: Tuple is deprecated.
-func (v VmStackValue) Tuple() []VmStackValue {
-	if !v.IsTuple() {
-		panic("stack value is not tuple")
+func (v VmStackValue) Unmarshal(dest any) error {
+	val := reflect.ValueOf(dest)
+	if val.Kind() != reflect.Pointer {
+		return fmt.Errorf("should be pointer, not %v", val.Kind())
 	}
-	if v.VmStkTuple.Data == nil {
-		return nil
+	val = val.Elem()
+	if !val.CanSet() {
+		return fmt.Errorf("can't set")
 	}
-	return convertVmTuple(*v.VmStkTuple.Data)
+	switch v.SumType {
+	case "VmStkTinyInt":
+		if val.Kind() == reflect.Bool {
+			val.SetBool(v.VmStkTinyInt != 0)
+		} else {
+			err := toInt(val, v.VmStkTinyInt)
+			if err != nil {
+				return err
+			}
+		}
+		break
+	case "VmStkInt":
+		b := big.Int(v.VmStkInt)
+		if reflect.Int <= val.Kind() && val.Kind() <= reflect.Uint64 {
+			if !b.IsInt64() {
+				return fmt.Errorf("int %v is to big to represented as %v", b, val.Kind())
+			}
+			toInt(val, b.Int64())
+			break
+		}
+		if i, ok := dest.(*Bits256); ok {
+			bytes := b.Bytes()
+			if len(bytes) > 32 {
+				return fmt.Errorf("integer257 can't be mapped to 256bits")
+			}
+			copy(i[32-len(bytes):], bytes)
+			break
+		}
+		return fmt.Errorf("maping integer257 to %v is not supported", val.Kind())
+	case "VmStkTuple":
+		err := v.VmStkTuple.UnmarshalTo(dest)
+		if err != nil {
+			return err
+		}
+
+	default:
+		return fmt.Errorf("%v is not supported for unmarshaling", v.SumType)
+	}
+	return nil
 }
 
-func convertVmTuple(t VmTuple) []VmStackValue {
-	var res []VmStackValue
-	if t.Head.Entry != nil {
-		res = append(res, *t.Head.Entry)
+func toInt(val reflect.Value, i int64) error {
+	if reflect.Uint <= val.Kind() && val.Kind() <= reflect.Uint64 {
+		val.SetUint(uint64(i))
+		return nil
+	} else if reflect.Int <= val.Kind() && val.Kind() <= reflect.Int64 {
+		val.SetInt(i)
+		return nil
 	}
-	if t.Head.Ref != nil {
-		val := convertVmTuple(*t.Head.Ref)
-		res = append(res, val...)
-	}
-	res = append(res, t.Tail)
-	return res
+	return fmt.Errorf("invalid type for int %v", val.Kind())
 }

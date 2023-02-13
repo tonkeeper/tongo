@@ -20,6 +20,7 @@ var defaultKnownTypes = map[string]string{
 	"accountid":     "tongo.AccountID",
 	"cell":          "boc.Cell",
 	"int8":          "int8",
+	"int32":         "int32",
 	"int64":         "int64",
 	"bool":          "bool",
 	"uint16":        "uint16",

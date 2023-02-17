@@ -10,23 +10,22 @@ var METHOD = `
 
 
 
-
-<internal name="transfer">
-        <input>
-            transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell) = InternalMsgBody;
-        </input>
-        <ouput>
-            ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
-        </ouput>
-        <ouput>
-            excesses#d53276db query_id:uint64 = InternalMsgBody;
-        </ouput>
-    </internal>
+        <get_method name="list_nominators">
+            <output>
+                <tuple list="true">
+                    <int name="address">bits256</int>
+                    <tinyint name="amount">uint64</tinyint>
+                    <tinyint name="pending_deposit_amount">uint64</tinyint>
+                    <tinyint name="withdraw_requested">bool</tinyint>
+                </tuple>
+            </output>
+        </get_method>
 `
 
 func TestParseMethod(t *testing.T) {
 	i, err := ParseMethod([]byte(METHOD))
-	fmt.Println(i, err)
+	fmt.Println(err)
+	fmt.Printf("%#v", i)
 }
 
 func TestParseInterface(t *testing.T) {

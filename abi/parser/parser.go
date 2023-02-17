@@ -50,9 +50,11 @@ type GetMethodOutput struct {
 
 type StackRecord struct {
 	XMLName  xml.Name
-	Name     string `xml:"name,attr"`
-	Nullable bool   `xml:"nullable,attr"`
-	Type     string `xml:",chardata"`
+	Name     string        `xml:"name,attr"`
+	Nullable bool          `xml:"nullable,attr"`
+	List     bool          `xml:"list,attr"`
+	Type     string        `xml:",chardata"`
+	SubStack []StackRecord `xml:",any"`
 }
 
 func (m GetMethod) UsedByIntrospection() bool {

@@ -28,6 +28,7 @@ var defaultKnownTypes = map[string]string{
 	"uint64":        "uint64",
 	"int256":        "tlb.Int256",
 	"int257":        "tlb.Int257",
+	"bits256":       "tlb.Bits256",
 	"any":           "tlb.Any",
 	"[]byte":        "[]byte",
 	"coins":         "tlb.Grams",
@@ -283,14 +284,10 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 
 	if len(m.Output) == 1 {
 		name := utils.ToCamelCase(m.Output[0].Version) + methodName + "Result"
-		resDecoder, err := g.buildOutputDecoder(name, m.Output[0].Stack, m.Output[0].FixedLength)
-		if err != nil {
-			return "", err
-		}
-		builder.WriteString(fmt.Sprintf("return decode%s(stack)\n", name))
+		builder.WriteString("var result " + name + "\n")
+		builder.WriteString("err = stack.Unmarshal(&result)\n")
+		builder.WriteString(fmt.Sprintf("return \"%s\", result, err\n", name))
 		builder.WriteString("}\n\n")
-		builder.WriteString(resDecoder)
-		builder.WriteRune('\n')
 	} else {
 		decoders := ""
 		builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
@@ -367,6 +364,8 @@ func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 			builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkSlice\"%s) ", stackType, nullableCheck))
 		case "cell":
 			builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkCell\"%s) ", stackType, nullableCheck))
+		case "tuple":
+			builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkTuple\"%s) ", stackType, nullableCheck))
 		}
 	}
 	builder.WriteString(returnInvalidStack)
@@ -383,6 +382,9 @@ func (g *Generator) buildOutputDecoder(name string, r []StackRecord, isFixed boo
 	resBuilder.WriteString(fmt.Sprintf("%s{\n", name))
 
 	for i, s := range r {
+		if s.XMLName.Local == "tuple" {
+			continue
+		}
 		varType, err := g.checkType(s.Type)
 		if err != nil {
 			return "", err
@@ -432,21 +434,40 @@ func (g *Generator) buildOutputDecoder(name string, r []StackRecord, isFixed boo
 }
 
 func (g *Generator) buildResultType(name string, s []StackRecord) (string, error) {
+	str, err := g.buildStackStruct(s)
+	return "type " + name + " " + str, err
+}
+
+func (g *Generator) buildStackStruct(s []StackRecord) (string, error) {
 	var builder strings.Builder
-	builder.WriteString(fmt.Sprintf("type %s struct {\n", name))
+	builder.WriteString("struct {\n")
 	for _, c := range s {
+		if c.XMLName.Local == "tuple" {
+			list := ""
+			if c.List {
+				list = "[]"
+			}
+			str, err := g.buildStackStruct(c.SubStack)
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(&builder, "%s %s%s\n", utils.ToCamelCase(c.Name), list, str)
+			continue
+		}
 		t, err := g.checkType(c.Type)
 		if err != nil {
 			return "", err
 		}
+		pointer := ""
 		if c.Nullable {
-			builder.WriteString(fmt.Sprintf("%s *%s\n", utils.ToCamelCase(c.Name), t))
-		} else {
-			builder.WriteString(fmt.Sprintf("%s %s\n", utils.ToCamelCase(c.Name), t))
+			pointer = "*"
 		}
+		fmt.Fprintf(&builder, "%s %s%s\n", utils.ToCamelCase(c.Name), pointer, t)
+
 	}
 	builder.WriteString("}\n")
 	return builder.String(), nil
+
 }
 
 func (g *Generator) CollectedTypes() string {

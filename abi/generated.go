@@ -521,7 +521,6 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
 	71463:  {GetTorrentHash},
 	72748:  {NftSaleGetSaleData, NftSaleGetGemsGetSaleData},
-	76407:  {IsPluginInstalled},
 	78748:  {GetPublicKey},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
@@ -536,8 +535,10 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	104346: {GetStorageParams},
 	106029: {GetJettonData},
 	106901: {GetChannelState},
+	111161: {ListNominators},
 	122058: {IsActive},
 	130271: {GetWalletParams},
+	130309: {ListVotes},
 }
 
 var ResultTypes = []interface{}{
@@ -561,6 +562,8 @@ var ResultTypes = []interface{}{
 	&GetWalletParamsResult{},
 	&IsActiveResult{},
 	&IsPluginInstalledResult{},
+	&ListNominatorsResult{},
+	&ListVotesResult{},
 	&NftSaleGetGemsGetSaleDataResult{},
 	&NftSaleGetSaleDataResult{},
 	&RecordDnsresolveResult{},
@@ -588,18 +591,9 @@ func Seqno(ctx context.Context, executor Executor, reqAccountID tongo.AccountID)
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeSeqnoResult(stack)
-}
-
-func decodeSeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var state uint32
-	state = uint32(stack[0].Int64())
-	return "SeqnoResult", SeqnoResult{
-		State: state,
-	}, nil
+	var result SeqnoResult
+	err = stack.Unmarshal(&result)
+	return "SeqnoResult", result, err
 }
 
 type GetPublicKeyResult struct {
@@ -617,18 +611,9 @@ func GetPublicKey(ctx context.Context, executor Executor, reqAccountID tongo.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetPublicKeyResult(stack)
-}
-
-func decodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var publicKey tlb.Int257
-	publicKey = stack[0].Int257()
-	return "GetPublicKeyResult", GetPublicKeyResult{
-		PublicKey: publicKey,
-	}, nil
+	var result GetPublicKeyResult
+	err = stack.Unmarshal(&result)
+	return "GetPublicKeyResult", result, err
 }
 
 type GetSubwalletIdResult struct {
@@ -646,26 +631,25 @@ func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetSubwalletIdResult(stack)
-}
-
-func decodeGetSubwalletIdResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var subwalletId uint32
-	subwalletId = uint32(stack[0].Int64())
-	return "GetSubwalletIdResult", GetSubwalletIdResult{
-		SubwalletId: subwalletId,
-	}, nil
+	var result GetSubwalletIdResult
+	err = stack.Unmarshal(&result)
+	return "GetSubwalletIdResult", result, err
 }
 
 type IsPluginInstalledResult struct {
 	Success bool
 }
 
-func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, workchain int32, addrHash tlb.Int257) (string, any, error) {
 	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(workchain)}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: addrHash}
+	stack.Put(val)
 
 	// MethodID = 76407 for "is_plugin_installed" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 76407, stack)
@@ -675,18 +659,9 @@ func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tong
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeIsPluginInstalledResult(stack)
-}
-
-func decodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var success bool
-	success = stack[0].Int64() != 0
-	return "IsPluginInstalledResult", IsPluginInstalledResult{
-		Success: success,
-	}, nil
+	var result IsPluginInstalledResult
+	err = stack.Unmarshal(&result)
+	return "IsPluginInstalledResult", result, err
 }
 
 type GetNftDataResult struct {
@@ -708,40 +683,9 @@ func GetNftData(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetNftDataResult(stack)
-}
-
-func decodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var init int8
-	init = int8(stack[0].Int64())
-	var index tlb.Int257
-	index = stack[1].Int257()
-	var collectionAddress tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&collectionAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var ownerAddress tlb.MsgAddress
-	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&ownerAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var individualContent tlb.Any
-	individualContentCell := &stack[4].VmStkCell.Value
-	err = tlb.Unmarshal(individualContentCell, &individualContent)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetNftDataResult", GetNftDataResult{
-		Init:              init,
-		Index:             index,
-		CollectionAddress: collectionAddress,
-		OwnerAddress:      ownerAddress,
-		IndividualContent: individualContent,
-	}, nil
+	var result GetNftDataResult
+	err = stack.Unmarshal(&result)
+	return "GetNftDataResult", result, err
 }
 
 type GetNftContentResult struct {
@@ -770,22 +714,9 @@ func GetNftContent(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetNftContentResult(stack)
-}
-
-func decodeGetNftContentResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var content FullContent
-	contentCell := &stack[0].VmStkCell.Value
-	err = tlb.Unmarshal(contentCell, &content)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetNftContentResult", GetNftContentResult{
-		Content: content,
-	}, nil
+	var result GetNftContentResult
+	err = stack.Unmarshal(&result)
+	return "GetNftContentResult", result, err
 }
 
 type GetCollectionDataResult struct {
@@ -805,31 +736,9 @@ func GetCollectionData(ctx context.Context, executor Executor, reqAccountID tong
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetCollectionDataResult(stack)
-}
-
-func decodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var nextItemIndex tlb.Int257
-	nextItemIndex = stack[0].Int257()
-	var collectionContent tlb.Any
-	collectionContentCell := &stack[1].VmStkCell.Value
-	err = tlb.Unmarshal(collectionContentCell, &collectionContent)
-	if err != nil {
-		return "", nil, err
-	}
-	var ownerAddress tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&ownerAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetCollectionDataResult", GetCollectionDataResult{
-		NextItemIndex:     nextItemIndex,
-		CollectionContent: collectionContent,
-		OwnerAddress:      ownerAddress,
-	}, nil
+	var result GetCollectionDataResult
+	err = stack.Unmarshal(&result)
+	return "GetCollectionDataResult", result, err
 }
 
 type GetNftAddressByIndexResult struct {
@@ -853,21 +762,9 @@ func GetNftAddressByIndex(ctx context.Context, executor Executor, reqAccountID t
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetNftAddressByIndexResult(stack)
-}
-
-func decodeGetNftAddressByIndexResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var address tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&address)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetNftAddressByIndexResult", GetNftAddressByIndexResult{
-		Address: address,
-	}, nil
+	var result GetNftAddressByIndexResult
+	err = stack.Unmarshal(&result)
+	return "GetNftAddressByIndexResult", result, err
 }
 
 type RoyaltyParamsResult struct {
@@ -887,27 +784,9 @@ func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeRoyaltyParamsResult(stack)
-}
-
-func decodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var numerator uint16
-	numerator = uint16(stack[0].Int64())
-	var denominator uint16
-	denominator = uint16(stack[1].Int64())
-	var destination tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&destination)
-	if err != nil {
-		return "", nil, err
-	}
-	return "RoyaltyParamsResult", RoyaltyParamsResult{
-		Numerator:   numerator,
-		Denominator: denominator,
-		Destination: destination,
-	}, nil
+	var result RoyaltyParamsResult
+	err = stack.Unmarshal(&result)
+	return "RoyaltyParamsResult", result, err
 }
 
 type GetJettonDataResult struct {
@@ -929,41 +808,9 @@ func GetJettonData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetJettonDataResult(stack)
-}
-
-func decodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var totalSupply tlb.Int257
-	totalSupply = stack[0].Int257()
-	var mintable int8
-	mintable = int8(stack[1].Int64())
-	var adminAddress tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&adminAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var jettonContent tlb.Any
-	jettonContentCell := &stack[3].VmStkCell.Value
-	err = tlb.Unmarshal(jettonContentCell, &jettonContent)
-	if err != nil {
-		return "", nil, err
-	}
-	var jettonWalletCode tlb.Any
-	jettonWalletCodeCell := &stack[4].VmStkCell.Value
-	err = tlb.Unmarshal(jettonWalletCodeCell, &jettonWalletCode)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetJettonDataResult", GetJettonDataResult{
-		TotalSupply:      totalSupply,
-		Mintable:         mintable,
-		AdminAddress:     adminAddress,
-		JettonContent:    jettonContent,
-		JettonWalletCode: jettonWalletCode,
-	}, nil
+	var result GetJettonDataResult
+	err = stack.Unmarshal(&result)
+	return "GetJettonDataResult", result, err
 }
 
 type GetWalletAddressResult struct {
@@ -990,21 +837,9 @@ func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetWalletAddressResult(stack)
-}
-
-func decodeGetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var jettonWalletAddress tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&jettonWalletAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetWalletAddressResult", GetWalletAddressResult{
-		JettonWalletAddress: jettonWalletAddress,
-	}, nil
+	var result GetWalletAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetWalletAddressResult", result, err
 }
 
 type GetWalletDataResult struct {
@@ -1025,37 +860,9 @@ func GetWalletData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetWalletDataResult(stack)
-}
-
-func decodeGetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var balance tlb.Int257
-	balance = stack[0].Int257()
-	var owner tlb.MsgAddress
-	err = stack[1].VmStkSlice.UnmarshalToTlbStruct(&owner)
-	if err != nil {
-		return "", nil, err
-	}
-	var jetton tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&jetton)
-	if err != nil {
-		return "", nil, err
-	}
-	var jettonWalletCode tlb.Any
-	jettonWalletCodeCell := &stack[3].VmStkCell.Value
-	err = tlb.Unmarshal(jettonWalletCodeCell, &jettonWalletCode)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetWalletDataResult", GetWalletDataResult{
-		Balance:          balance,
-		Owner:            owner,
-		Jetton:           jetton,
-		JettonWalletCode: jettonWalletCode,
-	}, nil
+	var result GetWalletDataResult
+	err = stack.Unmarshal(&result)
+	return "GetWalletDataResult", result, err
 }
 
 type RecordDnsresolveResult struct {
@@ -1156,48 +963,9 @@ func NftSaleGetSaleData(ctx context.Context, executor Executor, reqAccountID ton
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeNftSaleGetSaleDataResult(stack)
-}
-
-func decodeNftSaleGetSaleDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var marketplace tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
-	if err != nil {
-		return "", nil, err
-	}
-	var nft tlb.MsgAddress
-	err = stack[1].VmStkSlice.UnmarshalToTlbStruct(&nft)
-	if err != nil {
-		return "", nil, err
-	}
-	var owner tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&owner)
-	if err != nil {
-		return "", nil, err
-	}
-	var fullPrice tlb.Int257
-	fullPrice = stack[3].Int257()
-	var marketFee uint64
-	marketFee = uint64(stack[4].Int64())
-	var royaltyAddress tlb.MsgAddress
-	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var royaltyAmount uint64
-	royaltyAmount = uint64(stack[6].Int64())
-	return "NftSaleGetSaleDataResult", NftSaleGetSaleDataResult{
-		Marketplace:    marketplace,
-		Nft:            nft,
-		Owner:          owner,
-		FullPrice:      fullPrice,
-		MarketFee:      marketFee,
-		RoyaltyAddress: royaltyAddress,
-		RoyaltyAmount:  royaltyAmount,
-	}, nil
+	var result NftSaleGetSaleDataResult
+	err = stack.Unmarshal(&result)
+	return "NftSaleGetSaleDataResult", result, err
 }
 
 type NftSaleGetGemsGetSaleDataResult struct {
@@ -1225,63 +993,9 @@ func NftSaleGetGemsGetSaleData(ctx context.Context, executor Executor, reqAccoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeNftSaleGetGemsGetSaleDataResult(stack)
-}
-
-func decodeNftSaleGetGemsGetSaleDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var fixPrice uint64
-	fixPrice = uint64(stack[0].Int64())
-	var isComplete bool
-	isComplete = stack[1].Int64() != 0
-	var createdAt uint64
-	createdAt = uint64(stack[2].Int64())
-	var marketplace tlb.MsgAddress
-	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
-	if err != nil {
-		return "", nil, err
-	}
-	var nft tlb.MsgAddress
-	err = stack[4].VmStkSlice.UnmarshalToTlbStruct(&nft)
-	if err != nil {
-		return "", nil, err
-	}
-	var owner tlb.MsgAddress
-	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&owner)
-	if err != nil {
-		return "", nil, err
-	}
-	var fullPrice tlb.Int257
-	fullPrice = stack[6].Int257()
-	var marketFeeAddress tlb.MsgAddress
-	err = stack[7].VmStkSlice.UnmarshalToTlbStruct(&marketFeeAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var marketFee uint64
-	marketFee = uint64(stack[8].Int64())
-	var royaltyAddress tlb.MsgAddress
-	err = stack[9].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var royaltyAmount uint64
-	royaltyAmount = uint64(stack[10].Int64())
-	return "NftSaleGetGemsGetSaleDataResult", NftSaleGetGemsGetSaleDataResult{
-		FixPrice:         fixPrice,
-		IsComplete:       isComplete,
-		CreatedAt:        createdAt,
-		Marketplace:      marketplace,
-		Nft:              nft,
-		Owner:            owner,
-		FullPrice:        fullPrice,
-		MarketFeeAddress: marketFeeAddress,
-		MarketFee:        marketFee,
-		RoyaltyAddress:   royaltyAddress,
-		RoyaltyAmount:    royaltyAmount,
-	}, nil
+	var result NftSaleGetGemsGetSaleDataResult
+	err = stack.Unmarshal(&result)
+	return "NftSaleGetGemsGetSaleDataResult", result, err
 }
 
 type GetAuthorityAddressResult struct {
@@ -1299,21 +1013,9 @@ func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID to
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetAuthorityAddressResult(stack)
-}
-
-func decodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var address tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&address)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetAuthorityAddressResult", GetAuthorityAddressResult{
-		Address: address,
-	}, nil
+	var result GetAuthorityAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetAuthorityAddressResult", result, err
 }
 
 type GetRevokedTimeResult struct {
@@ -1331,18 +1033,9 @@ func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetRevokedTimeResult(stack)
-}
-
-func decodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var time uint64
-	time = uint64(stack[0].Int64())
-	return "GetRevokedTimeResult", GetRevokedTimeResult{
-		Time: time,
-	}, nil
+	var result GetRevokedTimeResult
+	err = stack.Unmarshal(&result)
+	return "GetRevokedTimeResult", result, err
 }
 
 type GetChannelStateResult struct {
@@ -1360,18 +1053,9 @@ func GetChannelState(ctx context.Context, executor Executor, reqAccountID tongo.
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetChannelStateResult(stack)
-}
-
-func decodeGetChannelStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var state uint64
-	state = uint64(stack[0].Int64())
-	return "GetChannelStateResult", GetChannelStateResult{
-		State: state,
-	}, nil
+	var result GetChannelStateResult
+	err = stack.Unmarshal(&result)
+	return "GetChannelStateResult", result, err
 }
 
 type GetWalletParamsResult struct {
@@ -1391,24 +1075,9 @@ func GetWalletParams(ctx context.Context, executor Executor, reqAccountID tongo.
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetWalletParamsResult(stack)
-}
-
-func decodeGetWalletParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var seqno uint32
-	seqno = uint32(stack[0].Int64())
-	var subwallet uint32
-	subwallet = uint32(stack[1].Int64())
-	var publicKey tlb.Int257
-	publicKey = stack[2].Int257()
-	return "GetWalletParamsResult", GetWalletParamsResult{
-		Seqno:     seqno,
-		Subwallet: subwallet,
-		PublicKey: publicKey,
-	}, nil
+	var result GetWalletParamsResult
+	err = stack.Unmarshal(&result)
+	return "GetWalletParamsResult", result, err
 }
 
 type GetStorageParamsResult struct {
@@ -1430,30 +1099,9 @@ func GetStorageParams(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetStorageParamsResult(stack)
-}
-
-func decodeGetStorageParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var acceptNewContracts bool
-	acceptNewContracts = stack[0].Int64() != 0
-	var ratePerMbDay uint64
-	ratePerMbDay = uint64(stack[1].Int64())
-	var maxSpan uint32
-	maxSpan = uint32(stack[2].Int64())
-	var minimalFileSize uint64
-	minimalFileSize = uint64(stack[3].Int64())
-	var maximalFileSize uint64
-	maximalFileSize = uint64(stack[4].Int64())
-	return "GetStorageParamsResult", GetStorageParamsResult{
-		AcceptNewContracts: acceptNewContracts,
-		RatePerMbDay:       ratePerMbDay,
-		MaxSpan:            maxSpan,
-		MinimalFileSize:    minimalFileSize,
-		MaximalFileSize:    maximalFileSize,
-	}, nil
+	var result GetStorageParamsResult
+	err = stack.Unmarshal(&result)
+	return "GetStorageParamsResult", result, err
 }
 
 type GetStorageContractAddressResult struct {
@@ -1486,21 +1134,9 @@ func GetStorageContractAddress(ctx context.Context, executor Executor, reqAccoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetStorageContractAddressResult(stack)
-}
-
-func decodeGetStorageContractAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var storageContractAddress tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&storageContractAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	return "GetStorageContractAddressResult", GetStorageContractAddressResult{
-		StorageContractAddress: storageContractAddress,
-	}, nil
+	var result GetStorageContractAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetStorageContractAddressResult", result, err
 }
 
 type GetStorageContractDataResult struct {
@@ -1528,54 +1164,9 @@ func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetStorageContractDataResult(stack)
-}
-
-func decodeGetStorageContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var active bool
-	active = stack[0].Int64() != 0
-	var balance uint64
-	balance = uint64(stack[1].Int64())
-	var provider tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&provider)
-	if err != nil {
-		return "", nil, err
-	}
-	var merkleHash tlb.Int257
-	merkleHash = stack[3].Int257()
-	var fileSize uint64
-	fileSize = uint64(stack[4].Int64())
-	var nextProof uint64
-	nextProof = uint64(stack[5].Int64())
-	var ratePerMbDay uint64
-	ratePerMbDay = uint64(stack[6].Int64())
-	var maxSpan uint32
-	maxSpan = uint32(stack[7].Int64())
-	var lastProofTime uint32
-	lastProofTime = uint32(stack[8].Int64())
-	var client tlb.MsgAddress
-	err = stack[9].VmStkSlice.UnmarshalToTlbStruct(&client)
-	if err != nil {
-		return "", nil, err
-	}
-	var torrentHash tlb.Int257
-	torrentHash = stack[10].Int257()
-	return "GetStorageContractDataResult", GetStorageContractDataResult{
-		Active:        active,
-		Balance:       balance,
-		Provider:      provider,
-		MerkleHash:    merkleHash,
-		FileSize:      fileSize,
-		NextProof:     nextProof,
-		RatePerMbDay:  ratePerMbDay,
-		MaxSpan:       maxSpan,
-		LastProofTime: lastProofTime,
-		Client:        client,
-		TorrentHash:   torrentHash,
-	}, nil
+	var result GetStorageContractDataResult
+	err = stack.Unmarshal(&result)
+	return "GetStorageContractDataResult", result, err
 }
 
 type GetTorrentHashResult struct {
@@ -1593,18 +1184,9 @@ func GetTorrentHash(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetTorrentHashResult(stack)
-}
-
-func decodeGetTorrentHashResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var torrentHash tlb.Int257
-	torrentHash = stack[0].Int257()
-	return "GetTorrentHashResult", GetTorrentHashResult{
-		TorrentHash: torrentHash,
-	}, nil
+	var result GetTorrentHashResult
+	err = stack.Unmarshal(&result)
+	return "GetTorrentHashResult", result, err
 }
 
 type IsActiveResult struct {
@@ -1622,18 +1204,9 @@ func IsActive(ctx context.Context, executor Executor, reqAccountID tongo.Account
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeIsActiveResult(stack)
-}
-
-func decodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var isActive bool
-	isActive = stack[0].Int64() != 0
-	return "IsActiveResult", IsActiveResult{
-		IsActive: isActive,
-	}, nil
+	var result IsActiveResult
+	err = stack.Unmarshal(&result)
+	return "IsActiveResult", result, err
 }
 
 type GetNextProofInfoResult struct {
@@ -1653,24 +1226,57 @@ func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	return decodeGetNextProofInfoResult(stack)
+	var result GetNextProofInfoResult
+	err = stack.Unmarshal(&result)
+	return "GetNextProofInfoResult", result, err
 }
 
-func decodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
+type ListNominatorsResult struct {
+	Nominators []struct {
+		Address              tlb.Bits256
+		Amount               uint64
+		PendingDepositAmount uint64
+		WithdrawRequested    bool
 	}
-	var nextProof uint64
-	nextProof = uint64(stack[0].Int64())
-	var lastProofTime uint32
-	lastProofTime = uint32(stack[1].Int64())
-	var maxSpan uint32
-	maxSpan = uint32(stack[2].Int64())
-	return "GetNextProofInfoResult", GetNextProofInfoResult{
-		NextProof:     nextProof,
-		LastProofTime: lastProofTime,
-		MaxSpan:       maxSpan,
-	}, nil
+}
+
+func ListNominators(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 111161 for "list_nominators" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 111161, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result ListNominatorsResult
+	err = stack.Unmarshal(&result)
+	return "ListNominatorsResult", result, err
+}
+
+type ListVotesResult struct {
+	Votes []struct {
+		ProposalHash   tlb.Bits256
+		VoteCreateTime uint32
+	}
+}
+
+func ListVotes(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 130309 for "list_votes" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 130309, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result ListVotesResult
+	err = stack.Unmarshal(&result)
+	return "ListVotesResult", result, err
 }
 
 type ContractInterface string
@@ -1690,6 +1296,7 @@ const (
 	Tep81Dns           ContractInterface = "tep_81_dns"
 	Tep85Sbt           ContractInterface = "tep_85_sbt"
 	TextComment        ContractInterface = "text_comment"
+	TfNominators       ContractInterface = "tf_nominators"
 	WalletV3R2         ContractInterface = "wallet_v3r2"
 	WalletV4R2         ContractInterface = "wallet_v4r2"
 )
@@ -1792,9 +1399,14 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn:      IsActive,
 	},
 	{
-		Name:          "is_plugin_installed",
-		ImplementedBy: []ContractInterface{WalletV4R2},
-		InvokeFn:      IsPluginInstalled,
+		Name:          "list_nominators",
+		ImplementedBy: []ContractInterface{TfNominators},
+		InvokeFn:      ListNominators,
+	},
+	{
+		Name:          "list_votes",
+		ImplementedBy: []ContractInterface{TfNominators},
+		InvokeFn:      ListVotes,
 	},
 	{
 		Name:          "royalty_params",

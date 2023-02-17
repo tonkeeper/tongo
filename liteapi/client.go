@@ -334,7 +334,6 @@ func (c *Client) RunSmcMethod(
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-	fmt.Println(base64.StdEncoding.EncodeToString(res.Result))
 	cells, err := boc.DeserializeBoc(res.Result)
 	if err != nil {
 		return 0, tlb.VmStack{}, err

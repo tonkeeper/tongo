@@ -525,7 +525,10 @@ func (v VmStackValue) Unmarshal(dest any) error {
 	}
 	switch v.SumType {
 	case "VmStkTinyInt":
-		if val.Kind() == reflect.Bool {
+		if _, ok := dest.(*Int257); ok {
+			bi := big.NewInt(v.VmStkTinyInt)
+			val.Set(reflect.ValueOf(Int257(*bi)))
+		} else if val.Kind() == reflect.Bool {
 			val.SetBool(v.VmStkTinyInt != 0)
 		} else {
 			err := toInt(val, v.VmStkTinyInt)
@@ -533,7 +536,7 @@ func (v VmStackValue) Unmarshal(dest any) error {
 				return err
 			}
 		}
-		break
+		return nil
 	case "VmStkInt":
 		b := big.Int(v.VmStkInt)
 		if reflect.Int <= val.Kind() && val.Kind() <= reflect.Uint64 {
@@ -541,7 +544,7 @@ func (v VmStackValue) Unmarshal(dest any) error {
 				return fmt.Errorf("int %v is to big to represented as %v", b, val.Kind())
 			}
 			toInt(val, b.Int64())
-			break
+			return nil
 		}
 		if i, ok := dest.(*Bits256); ok {
 			bytes := b.Bytes()
@@ -549,19 +552,22 @@ func (v VmStackValue) Unmarshal(dest any) error {
 				return fmt.Errorf("integer257 can't be mapped to 256bits")
 			}
 			copy(i[32-len(bytes):], bytes)
-			break
+			return nil
+		}
+		if i, ok := dest.(*Int257); ok {
+			*i = v.VmStkInt
+			return nil
 		}
 		return fmt.Errorf("maping integer257 to %v is not supported", val.Kind())
 	case "VmStkTuple":
-		err := v.VmStkTuple.UnmarshalTo(dest)
-		if err != nil {
-			return err
-		}
-
+		return v.VmStkTuple.Unmarshal(dest)
+	case "VmStkSlice":
+		return v.VmStkSlice.UnmarshalToTlbStruct(dest)
+	case "VmStkCell":
+		return Unmarshal(&v.VmStkCell.Value, dest)
 	default:
 		return fmt.Errorf("%v is not supported for unmarshaling", v.SumType)
 	}
-	return nil
 }
 
 func toInt(val reflect.Value, i int64) error {
@@ -572,5 +578,24 @@ func toInt(val reflect.Value, i int64) error {
 		val.SetInt(i)
 		return nil
 	}
-	return fmt.Errorf("invalid type for int %v", val.Kind())
+	return fmt.Errorf("invalid type for int - %v", val.Kind())
+}
+
+func (s VmStack) Unmarshal(dest any) error {
+	val := reflect.ValueOf(dest)
+	if val.Kind() != reflect.Pointer {
+		return fmt.Errorf("value should be a pointer")
+	}
+	if val.Elem().Type().NumField() > len(s) {
+		return fmt.Errorf("noot enough values in stack")
+	}
+	for i := 0; i < val.Elem().Type().NumField(); i++ {
+		value := reflect.New(val.Elem().Field(i).Type())
+		err := s[i].Unmarshal(value.Interface())
+		val.Elem().Field(i).Set(value.Elem())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

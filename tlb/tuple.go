@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func (t *VmStkTuple) UnmarshalTo(v any) error {
+func (t *VmStkTuple) Unmarshal(v any) error {
 	val := reflect.ValueOf(v)
 	if val.Kind() != reflect.Pointer {
 		return fmt.Errorf("should be a pointer. not %v", val.Kind())

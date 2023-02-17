@@ -593,7 +593,7 @@
     <interface name="tf_nominators" group="stacking">
         <get_method name="list_nominators">
             <output>
-                <tuple list="true">
+                <tuple name="nominators" list="true">
                     <int name="address">bits256</int>
                     <tinyint name="amount">uint64</tinyint>
                     <tinyint name="pending_deposit_amount">uint64</tinyint>
@@ -603,7 +603,7 @@
         </get_method>
         <get_method name="list_votes">
             <output>
-                <tuple list="true">
+                <tuple name="votes" list="true">
                     <int name="proposal_hash">bits256</int>
                     <tinyint name="vote_create_time">uint32</tinyint>
                 </tuple>

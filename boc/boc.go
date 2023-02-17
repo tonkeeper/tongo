@@ -277,6 +277,17 @@ func DeserializeBocBase64(boc string) ([]*Cell, error) {
 	return DeserializeBoc(bocData)
 }
 
+func DeserializeSinglRootBase64(boc string) (*Cell, error) {
+	cells, err := DeserializeBocBase64(boc)
+	if err != nil {
+		return nil, err
+	}
+	if len(cells) != 1 {
+		return nil, fmt.Errorf("invalid boc roots number %v", len(cells))
+	}
+	return cells[0], nil
+}
+
 func DeserializeBocHex(boc string) ([]*Cell, error) {
 	bocData, err := hex.DecodeString(boc)
 	if err != nil {

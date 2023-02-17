@@ -11,13 +11,13 @@ const (
 	// Wallet is an abstract interface,
 	// any wallet in the blockchain has a concrete version like v1R1, v4R1 but
 	// whenever a contract implements any specific wallet interface, this one will be added too.
-	Wallet     ContractInterface = "wallet"
 	WalletV1R1 ContractInterface = "wallet_v1R1"
 	WalletV1R2 ContractInterface = "wallet_v1R2"
 	WalletV1R3 ContractInterface = "wallet_v1R3"
 	WalletV2R1 ContractInterface = "wallet_v2R1"
 	WalletV2R2 ContractInterface = "wallet_v2R2"
 	WalletV3R1 ContractInterface = "wallet_v3R1"
+	WalletV3R2 ContractInterface = "wallet_v3R2"
 	WalletV4R1 ContractInterface = "wallet_v4R1"
 	// WalletV4 is an abstract interface, added once a wallet implements any of v4R* versions.
 	WalletV4 ContractInterface = "wallet_v4"

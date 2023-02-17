@@ -55,24 +55,25 @@ type TLBMsgBody struct {
 
 type Generator struct {
 	knownTypes        map[string]string
-	interfaces        []Interface
+	abi               ABI
 	newTlbTypes       map[string]struct{}
 	loadedTlbTypes    []string
 	loadedTlbMsgTypes map[uint32]TLBMsgBody
 	typeName          string
 }
 
-func NewGenerator(knownTypes map[string]string, typeName string) *Generator {
+func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 	if knownTypes == nil {
 		knownTypes = defaultKnownTypes
 	}
-	return &Generator{
+	g := &Generator{
 		knownTypes:        knownTypes,
-		interfaces:        []Interface{},
-		typeName:          typeName,
+		abi:               abi,
 		loadedTlbMsgTypes: make(map[uint32]TLBMsgBody),
 		newTlbTypes:       make(map[string]struct{}),
 	}
+	err := g.registerABI()
+	return g, err
 }
 
 func (g *Generator) GetMethods() (string, error) {
@@ -89,42 +90,40 @@ type Executor interface {
 
 	usedNames := map[string]struct{}{}
 
-	for _, i := range g.interfaces {
-		for _, m := range i.Methods {
-			methodName := m.GolangFunctionName()
-			var methodID int
-			if m.ID != 0 {
-				methodID = m.ID
-			} else {
-				methodID = utils.MethodIdFromName(m.Name)
-			}
-			if _, ok := usedNames[methodName]; ok {
-				continue
-			}
-			usedNames[methodName] = struct{}{}
+	for _, m := range g.abi.Methods {
+		methodName := m.GolangFunctionName()
+		var methodID int
+		if m.ID != 0 {
+			methodID = m.ID
+		} else {
+			methodID = utils.MethodIdFromName(m.Name)
+		}
+		if _, ok := usedNames[methodName]; ok {
+			continue
+		}
+		usedNames[methodName] = struct{}{}
 
-			if len(m.Input.StackValues) == 0 {
-				methods[methodID] = append(methods[methodID], methodName)
-			}
+		if len(m.Input.StackValues) == 0 {
+			methods[methodID] = append(methods[methodID], methodName)
+		}
 
-			for _, o := range m.Output {
-				resultTypeName := utils.ToCamelCase(o.Version) + methodName + "Result"
-				resultTypes = append(resultTypes, resultTypeName)
-				r, err := g.buildResultType(resultTypeName, o.Stack)
-				if err != nil {
-					return "", err
-				}
-				builder.WriteString(r)
-				builder.WriteRune('\n')
-			}
-
-			s, err := g.getMethod(m, methodID, methodName)
+		for _, o := range m.Output {
+			resultTypeName := methodName + utils.ToCamelCase(o.Version) + "Result"
+			resultTypes = append(resultTypes, resultTypeName)
+			r, err := g.buildResultType(resultTypeName, o.Stack)
 			if err != nil {
 				return "", err
 			}
-			builder.WriteString(s)
+			builder.WriteString(r)
 			builder.WriteRune('\n')
 		}
+
+		s, err := g.getMethod(m, methodID, methodName)
+		if err != nil {
+			return "", err
+		}
+		builder.WriteString(s)
+		builder.WriteRune('\n')
 	}
 
 	methodMap.WriteString("var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){\n")
@@ -151,26 +150,24 @@ type Executor interface {
 	return string(b), nil
 }
 
-func (g *Generator) RegisterInterfaces(interfaces []Interface) error {
-	for _, i := range interfaces {
-		g.interfaces = append(g.interfaces, i)
-		if i.Types != "" {
-			err := g.registerType(i.Types)
+func (g *Generator) registerABI() error {
+	for _, t := range g.abi.Types {
+		if t != "" {
+			err := g.registerType(t)
 			if err != nil {
 				return err
 			}
 		}
-
-		for _, internal := range i.Internals {
-			err := g.registerMsgType(i.Name, internal.Input)
+	}
+	for _, internal := range g.abi.Internals {
+		err := g.registerMsgType(internal.Name, internal.Input)
+		if err != nil {
+			return err
+		}
+		for _, out := range internal.Outputs {
+			err := g.registerMsgType(internal.Name, out)
 			if err != nil {
 				return err
-			}
-			for _, out := range internal.Outputs {
-				err := g.registerMsgType(i.Name, out)
-				if err != nil {
-					return err
-				}
 			}
 		}
 	}
@@ -283,7 +280,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
 
 	if len(m.Output) == 1 {
-		name := utils.ToCamelCase(m.Output[0].Version) + methodName + "Result"
+		name := methodName + utils.ToCamelCase(m.Output[0].Version) + "Result"
 		builder.WriteString("var result " + name + "\n")
 		builder.WriteString("err = stack.Unmarshal(&result)\n")
 		builder.WriteString(fmt.Sprintf("return \"%s\", result, err\n", name))
@@ -292,7 +289,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 		decoders := ""
 		builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
 		for _, o := range m.Output {
-			name := utils.ToCamelCase(o.Version) + methodName + "Result"
+			name := methodName + utils.ToCamelCase(o.Version) + "Result"
 			builder.WriteString(fmt.Sprintf("decode%s, ", name))
 			resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
 			if err != nil {
@@ -516,7 +513,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 }
 
 type templateContext struct {
-	Interfaces      map[string]Interface
+	Interfaces      map[string]string
 	InvocationOrder []methodDescription
 }
 
@@ -528,28 +525,32 @@ type methodDescription struct {
 
 func (g *Generator) RenderInvocationOrderList() (string, error) {
 	context := templateContext{
-		Interfaces: map[string]Interface{},
+		Interfaces: map[string]string{},
 	}
 	descriptions := map[string]methodDescription{}
-	for _, iface := range g.interfaces {
-		context.Interfaces[utils.ToCamelCase(iface.Name)] = iface
-		for _, method := range iface.Methods {
-			if !method.UsedByIntrospection() {
-				continue
-			}
-			invokeFnName := method.GolangFunctionName()
-			desc, ok := descriptions[invokeFnName]
-			if !ok {
-				desc = methodDescription{
-					Name:         method.Name,
-					InvokeFnName: invokeFnName,
-					Interfaces:   []string{},
-				}
-			}
-			desc.Interfaces = append(desc.Interfaces, utils.ToCamelCase(iface.Name))
-			descriptions[invokeFnName] = desc
-			sort.Strings(desc.Interfaces)
+
+	for _, method := range g.abi.Methods {
+		if !method.UsedByIntrospection() {
+			continue
 		}
+
+		invokeFnName := method.GolangFunctionName()
+		desc, ok := descriptions[invokeFnName]
+		if ok {
+			return "", fmt.Errorf("method duplicate %v", invokeFnName)
+		}
+
+		desc = methodDescription{
+			Name:         method.Name,
+			InvokeFnName: invokeFnName,
+			Interfaces:   make([]string, len(method.Interfaces)),
+		}
+		for i, iface := range method.Interfaces {
+			desc.Interfaces[i] = utils.ToCamelCase(iface)
+			context.Interfaces[utils.ToCamelCase(iface)] = iface
+		}
+		sort.Strings(desc.Interfaces)
+		descriptions[invokeFnName] = desc
 	}
 
 	for _, desc := range descriptions {

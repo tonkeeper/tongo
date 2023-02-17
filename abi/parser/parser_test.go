@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/xml"
 	"fmt"
 	"os"
 	"testing"
@@ -33,9 +34,27 @@ func TestParseInterface(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	i, err := ParseInterface(b)
+	i, err := ParseABI(b)
 	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Println(i)
+}
+
+func TestParseArray(t *testing.T) {
+	a := `
+<ololo interface="A" interface="B">
+text
+</ololo>
+`
+	var A struct {
+		Interface []string `xml:"interface,attr"`
+		Text      string   `xml:",cdata"`
+	}
+	err := xml.Unmarshal([]byte(a), &A)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", A.Interface[1])
+
 }

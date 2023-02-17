@@ -4,7 +4,7 @@ type ContractInterface string
 // more wallet-related contract interfaces are defined in wallet.go
 const (
 {{- range $name, $iface := .Interfaces }}
-	{{ $name }} ContractInterface = "{{ $iface.Name }}"
+	{{ $name }} ContractInterface = "{{ $iface }}"
 {{- end }}
 )
 

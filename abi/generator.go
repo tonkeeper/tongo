@@ -15,14 +15,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	interfaces, err := parser.ParseInterface(scheme)
+	abi, err := parser.ParseABI(scheme)
 	if err != nil {
 		panic(err)
 	}
 
-	gen := parser.NewGenerator(nil, "test")
-
-	err = gen.RegisterInterfaces(interfaces)
+	gen, err := parser.NewGenerator(nil, abi)
 	if err != nil {
 		panic(err)
 	}

@@ -28,8 +28,6 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			data:    "B5EE9C7201010201003C0001590000000163DB941BA317BE6D05A095B841DFC5AD719E71E49027E63A970787F78F2B781992B68ABA73BDC400C0010013A031EDCCBB735BC7FAC0",
 			want: map[ContractInterface][]string{
 				StorageProvider: {"get_public_key"},
-				WalletV3R2:      {"get_public_key"},
-				WalletV4R2:      {"get_public_key"},
 				Wallet:          {},
 			},
 		},

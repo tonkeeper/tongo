@@ -108,7 +108,7 @@ type Executor interface {
 		}
 
 		for _, o := range m.Output {
-			resultTypeName := methodName + utils.ToCamelCase(o.Version) + "Result"
+			resultTypeName := o.FullResultName(methodName)
 			resultTypes = append(resultTypes, resultTypeName)
 			r, err := g.buildResultType(resultTypeName, o.Stack)
 			if err != nil {
@@ -280,7 +280,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
 
 	if len(m.Output) == 1 {
-		name := methodName + utils.ToCamelCase(m.Output[0].Version) + "Result"
+		name := m.Output[0].FullResultName(methodName)
 		builder.WriteString("var result " + name + "\n")
 		builder.WriteString("err = stack.Unmarshal(&result)\n")
 		builder.WriteString(fmt.Sprintf("return \"%s\", result, err\n", name))
@@ -289,7 +289,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 		decoders := ""
 		builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
 		for _, o := range m.Output {
-			name := methodName + utils.ToCamelCase(o.Version) + "Result"
+			name := o.FullResultName(methodName)
 			builder.WriteString(fmt.Sprintf("decode%s, ", name))
 			resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
 			if err != nil {

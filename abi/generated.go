@@ -542,8 +542,8 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 }
 
 var ResultTypes = []interface{}{
-	&DnsresolveRecordResult{},
-	&DnsresolveRecordsResult{},
+	&Dnsresolve_RecordResult{},
+	&Dnsresolve_RecordsResult{},
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
@@ -554,8 +554,8 @@ var ResultTypes = []interface{}{
 	&GetNftDataResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
-	&GetSaleDataBasicResult{},
-	&GetSaleDataGetgemsResult{},
+	&GetSaleData_BasicResult{},
+	&GetSaleData_GetgemsResult{},
 	&GetStorageContractAddressResult{},
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
@@ -865,12 +865,12 @@ func GetWalletData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	return "GetWalletDataResult", result, err
 }
 
-type DnsresolveRecordResult struct {
+type Dnsresolve_RecordResult struct {
 	ResolvedBits int64
 	Result       tlb.DNSRecord
 }
 
-type DnsresolveRecordsResult struct {
+type Dnsresolve_RecordsResult struct {
 	ResolvedBits int64
 	Result       tlb.DNSRecordSet
 }
@@ -897,7 +897,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeDnsresolveRecordResult, decodeDnsresolveRecordsResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){decodeDnsresolve_RecordResult, decodeDnsresolve_RecordsResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -906,7 +906,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func decodeDnsresolveRecordResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeDnsresolve_RecordResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
@@ -918,13 +918,13 @@ func decodeDnsresolveRecordResult(stack tlb.VmStack) (resultType string, resultA
 	if err != nil {
 		return "", nil, err
 	}
-	return "DnsresolveRecordResult", DnsresolveRecordResult{
+	return "Dnsresolve_RecordResult", Dnsresolve_RecordResult{
 		ResolvedBits: resolvedBits,
 		Result:       result,
 	}, nil
 }
 
-func decodeDnsresolveRecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
@@ -936,13 +936,13 @@ func decodeDnsresolveRecordsResult(stack tlb.VmStack) (resultType string, result
 	if err != nil {
 		return "", nil, err
 	}
-	return "DnsresolveRecordsResult", DnsresolveRecordsResult{
+	return "Dnsresolve_RecordsResult", Dnsresolve_RecordsResult{
 		ResolvedBits: resolvedBits,
 		Result:       result,
 	}, nil
 }
 
-type GetSaleDataBasicResult struct {
+type GetSaleData_BasicResult struct {
 	Marketplace    tlb.MsgAddress
 	Nft            tlb.MsgAddress
 	Owner          tlb.MsgAddress
@@ -952,7 +952,7 @@ type GetSaleDataBasicResult struct {
 	RoyaltyAmount  uint64
 }
 
-type GetSaleDataGetgemsResult struct {
+type GetSaleData_GetgemsResult struct {
 	FixPrice         uint64
 	IsComplete       bool
 	CreatedAt        uint64
@@ -977,7 +977,7 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeGetSaleDataBasicResult, decodeGetSaleDataGetgemsResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){decodeGetSaleData_BasicResult, decodeGetSaleData_GetgemsResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -986,7 +986,7 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func decodeGetSaleDataBasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
@@ -1016,7 +1016,7 @@ func decodeGetSaleDataBasicResult(stack tlb.VmStack) (resultType string, resultA
 	}
 	var royaltyAmount uint64
 	royaltyAmount = uint64(stack[6].Int64())
-	return "GetSaleDataBasicResult", GetSaleDataBasicResult{
+	return "GetSaleData_BasicResult", GetSaleData_BasicResult{
 		Marketplace:    marketplace,
 		Nft:            nft,
 		Owner:          owner,
@@ -1027,7 +1027,7 @@ func decodeGetSaleDataBasicResult(stack tlb.VmStack) (resultType string, resultA
 	}, nil
 }
 
-func decodeGetSaleDataGetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
@@ -1068,7 +1068,7 @@ func decodeGetSaleDataGetgemsResult(stack tlb.VmStack) (resultType string, resul
 	}
 	var royaltyAmount uint64
 	royaltyAmount = uint64(stack[10].Int64())
-	return "GetSaleDataGetgemsResult", GetSaleDataGetgemsResult{
+	return "GetSaleData_GetgemsResult", GetSaleData_GetgemsResult{
 		FixPrice:         fixPrice,
 		IsComplete:       isComplete,
 		CreatedAt:        createdAt,
@@ -1371,7 +1371,8 @@ const (
 	PaymentChannel  ContractInterface = "payment_channel"
 	StorageContract ContractInterface = "storage_contract"
 	StorageProvider ContractInterface = "storage_provider"
-	Tep62           ContractInterface = "tep62"
+	Tep62Collection ContractInterface = "tep62_collection"
+	Tep62Item       ContractInterface = "tep62_item"
 	Tep66           ContractInterface = "tep66"
 	Tep74           ContractInterface = "tep74"
 	Tep85           ContractInterface = "tep85"
@@ -1404,7 +1405,7 @@ var methodInvocationOrder = []MethodDescription{
 	},
 	{
 		Name:          "get_collection_data",
-		ImplementedBy: []ContractInterface{Tep62},
+		ImplementedBy: []ContractInterface{Tep62Collection},
 		InvokeFn:      GetCollectionData,
 	},
 	{
@@ -1419,7 +1420,7 @@ var methodInvocationOrder = []MethodDescription{
 	},
 	{
 		Name:          "get_nft_data",
-		ImplementedBy: []ContractInterface{Tep62},
+		ImplementedBy: []ContractInterface{Tep62Item},
 		InvokeFn:      GetNftData,
 	},
 	{

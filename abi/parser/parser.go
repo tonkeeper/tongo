@@ -39,6 +39,14 @@ type GetMethodOutput struct {
 	Stack       []StackRecord `xml:",any"`
 }
 
+func (o GetMethodOutput) FullResultName(methodName string) string {
+	version := ""
+	if len(o.Version) > 0 {
+		version = "_" + utils.ToCamelCase(o.Version)
+	}
+	return methodName + version + "Result"
+}
+
 type StackRecord struct {
 	XMLName  xml.Name
 	Name     string        `xml:"name,attr"`

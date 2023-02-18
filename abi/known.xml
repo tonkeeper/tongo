@@ -63,7 +63,7 @@
 
 
         <!--        NFTs     -->
-        <get_method name="get_nft_data" callback="true" interface="tep62">
+        <get_method name="get_nft_data" callback="true" interface="tep62_item">
             <output>
                 <tinyint name="init">bool</tinyint>
                 <int name="index">int257</int>
@@ -81,14 +81,14 @@
                 <cell name="content">FullContent</cell>
             </output>
         </get_method>
-        <get_method name="get_collection_data" interface="tep62">
+        <get_method name="get_collection_data" interface="tep62_collection">
             <output>
                 <int name="next_item_index">int257</int>
                 <cell name="collection_content">any</cell>
                 <slice name="owner_address">msgaddress</slice>
             </output>
         </get_method>
-        <get_method name="get_nft_address_by_index" interface="tep62">
+        <get_method name="get_nft_address_by_index" interface="tep62_collection">
             <input>
                 <int name="index">int257</int>
             </input>

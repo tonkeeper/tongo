@@ -99,20 +99,20 @@ type TextCommentTextCommentInternalMsgBody struct {
 	Text tlb.Text
 }
 
-type Tep85SbtProveOwnershipInternalMsgBody struct {
+type ProveOwnershipProveOwnershipInternalMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
 	WithContent    bool
 }
 
-type Tep62NftItemOwnershipAssignedInternalMsgBody struct {
+type NftTransferOwnershipAssignedInternalMsgBody struct {
 	QueryId        uint64
 	PrevOwner      tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[tlb.Any]
 }
 
-type Tep85SbtOwnershipProofInternalMsgBody struct {
+type ProveOwnershipOwnershipProofInternalMsgBody struct {
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Owner     tlb.MsgAddress
@@ -121,7 +121,7 @@ type Tep85SbtOwnershipProofInternalMsgBody struct {
 	Content   tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
-type PaymentChannelChallengeQuarantinedStateInternalMsgBody struct {
+type ChallengeQuarantinedStateChallengeQuarantinedStateInternalMsgBody struct {
 	ChallengedByA bool
 	Signature     tlb.Bits512
 	Tag           uint32
@@ -130,7 +130,7 @@ type PaymentChannelChallengeQuarantinedStateInternalMsgBody struct {
 	SchB          tlb.Ref[SignedSemiChannel]
 }
 
-type Tep85SbtOwnerInfoInternalMsgBody struct {
+type RequestOwnerOwnerInfoInternalMsgBody struct {
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Initiator tlb.MsgAddress
@@ -140,7 +140,7 @@ type Tep85SbtOwnerInfoInternalMsgBody struct {
 	Content   tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
-type PaymentChannelInitChannelInternalMsgBody struct {
+type InitChannelInitChannelInternalMsgBody struct {
 	IsA       bool
 	Signature tlb.Bits512
 	Tag       uint32
@@ -149,7 +149,7 @@ type PaymentChannelInitChannelInternalMsgBody struct {
 	BalanceB  tlb.Grams
 }
 
-type Tep74JettonWalletTransferInternalMsgBody struct {
+type JettonTransferTransferInternalMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	Destination         tlb.MsgAddress
@@ -171,11 +171,11 @@ type InternalTransferInternalMsgBody struct {
 	ForwardTonAmount tlb.VarUInteger16
 }
 
-type Tep85SbtDestroyInternalMsgBody struct {
+type DestroyDestroyInternalMsgBody struct {
 	QueryId uint64
 }
 
-type PaymentChannelStartUncooperativeCloseInternalMsgBody struct {
+type StartUncooperativeCloseStartUncooperativeCloseInternalMsgBody struct {
 	SignedByA bool
 	Signature tlb.Bits512
 	Tag       uint32
@@ -184,27 +184,27 @@ type PaymentChannelStartUncooperativeCloseInternalMsgBody struct {
 	SchB      tlb.Ref[SignedSemiChannel]
 }
 
-type PaymentChannelFinishUncooperativeCloseInternalMsgBody struct{}
+type FinishUncooperativeCloseFinishUncooperativeCloseInternalMsgBody struct{}
 
-type Tep62NftItemGetStaticDataInternalMsgBody struct {
+type GetStaticDataGetStaticDataInternalMsgBody struct {
 	QueryId uint64
 }
 
-type StorageContractProofStorageInternalMsgBody struct {
+type ProofStorageProofStorageInternalMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Ref[tlb.Any]
 }
 
-type StorageContractWithdrawInternalMsgBody struct {
+type WithdrawWithdrawInternalMsgBody struct {
 	QueryId uint64
 }
 
-type StorageProviderUpdatePubkeyInternalMsgBody struct {
+type UpdatePubkeyUpdatePubkeyInternalMsgBody struct {
 	QueryId   uint64
 	NewPubkey tlb.Bits256
 }
 
-type StorageProviderUpdateStorageParamsInternalMsgBody struct {
+type UpdateStorageParamsUpdateStorageParamsInternalMsgBody struct {
 	QueryId            uint64
 	AcceptNewContracts bool
 	RatePerMbDay       tlb.Grams
@@ -213,7 +213,7 @@ type StorageProviderUpdateStorageParamsInternalMsgBody struct {
 	MaximalFileSize    uint64
 }
 
-type PaymentChannelCooperativeCloseInternalMsgBody struct {
+type CooperativeCloseCooperativeCloseInternalMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
 	Tag       uint32
@@ -224,14 +224,14 @@ type PaymentChannelCooperativeCloseInternalMsgBody struct {
 	SeqnoB    uint64
 }
 
-type Tep74JettonWalletBurnInternalMsgBody struct {
+type BurnBurnInternalMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
-type Tep62NftItemTransferInternalMsgBody struct {
+type NftTransferTransferInternalMsgBody struct {
 	QueryId             uint64
 	NewOwner            tlb.MsgAddress
 	ResponseDestination tlb.MsgAddress
@@ -240,11 +240,11 @@ type Tep62NftItemTransferInternalMsgBody struct {
 	ForwardPayload      tlb.EitherRef[tlb.Any]
 }
 
-type WalletV4R2DestructInternalMsgBody struct {
+type DestructDestructInternalMsgBody struct {
 	QueryId uint64
 }
 
-type PaymentChannelSettleConditionalsInternalMsgBody struct {
+type SettleConditionalsSettleConditionalsInternalMsgBody struct {
 	FromA                bool
 	Signature            tlb.Bits512
 	Tag                  uint32
@@ -252,32 +252,32 @@ type PaymentChannelSettleConditionalsInternalMsgBody struct {
 	ConditionalsToSettle tlb.HashmapE[tlb.Uint32, tlb.Any]
 }
 
-type PaymentChannelTopUpBalanceInternalMsgBody struct {
+type TopUpBalanceTopUpBalanceInternalMsgBody struct {
 	AddA tlb.Grams
 	AddB tlb.Grams
 }
 
-type Tep66NftRoyaltyGetRoyaltyParamsInternalMsgBody struct {
+type GetRoyaltyParamsGetRoyaltyParamsInternalMsgBody struct {
 	QueryId uint64
 }
 
-type Tep85SbtRevokeInternalMsgBody struct {
+type RevokeRevokeInternalMsgBody struct {
 	QueryId uint64
 }
 
-type WalletV4R2RequestFundsInternalMsgBody struct {
+type PaymentRequestRequestFundsInternalMsgBody struct {
 	QueryId uint64
 	Amount  tlb.CurrencyCollection
 }
 
-type Tep74JettonWalletTransferNotificationInternalMsgBody struct {
+type JettonInternalTransferTransferNotificationInternalMsgBody struct {
 	QueryId        uint64
 	Amount         tlb.VarUInteger16
 	Sender         tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[tlb.Any]
 }
 
-type PaymentChannelCooperativeCommitInternalMsgBody struct {
+type CooperativeCommitCooperativeCommitInternalMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
 	Tag       uint32
@@ -286,28 +286,28 @@ type PaymentChannelCooperativeCommitInternalMsgBody struct {
 	SeqnoB    uint64
 }
 
-type StorageContractCloseContractInternalMsgBody struct {
+type CloseContractCloseContractInternalMsgBody struct {
 	QueryId uint64
 }
 
-type StorageContractAcceptStorageContractInternalMsgBody struct {
+type AcceptStorageContractAcceptStorageContractInternalMsgBody struct {
 	QueryId uint64
 }
 
-type Tep62NftItemReportStaticDataInternalMsgBody struct {
+type GetStaticDataReportStaticDataInternalMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
 	Collection tlb.MsgAddress
 }
 
-type Tep66NftRoyaltyReportRoyaltyParamsInternalMsgBody struct {
+type GetRoyaltyParamsReportRoyaltyParamsInternalMsgBody struct {
 	QueryId     uint64
 	Numerator   uint16
 	Denominator uint16
 	Destination tlb.MsgAddress
 }
 
-type StorageContractRewardWithdrawalInternalMsgBody struct {
+type WithdrawRewardWithdrawalInternalMsgBody struct {
 	QueryId uint64
 }
 
@@ -316,14 +316,14 @@ type StorageContractTerminatedInternalMsgBody struct {
 	TorrentHash tlb.Bits256
 }
 
-type Tep85SbtRequestOwnerInternalMsgBody struct {
+type RequestOwnerRequestOwnerInternalMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
 	WithContent    bool
 }
 
-type StorageContractStorageContractConfirmedInternalMsgBody struct {
+type AcceptStorageContractStorageContractConfirmedInternalMsgBody struct {
 	CurLt       uint64
 	TorrentHash tlb.Bits256
 }
@@ -332,15 +332,15 @@ type ExcessesInternalMsgBody struct {
 	QueryId uint64
 }
 
-type PaymentChannelChannelClosedInternalMsgBody struct {
+type ChannelClosedChannelClosedInternalMsgBody struct {
 	ChannelId tlb.Uint128
 }
 
-type WalletV4R2DestructResponseInternalMsgBody struct {
+type DestructDestructResponseInternalMsgBody struct {
 	QueryId uint64
 }
 
-type WalletV4R2PaymentRequestResponseInternalMsgBody struct {
+type PaymentRequestPaymentRequestResponseInternalMsgBody struct {
 	QueryId uint64
 }
 
@@ -355,33 +355,33 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		err = tlb.Unmarshal(cell, &res)
 		return "TextCommentTextComment", res, err
 	case 0x4ded148:
-		var res Tep85SbtProveOwnershipInternalMsgBody
+		var res ProveOwnershipProveOwnershipInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep85SbtProveOwnership", res, err
+		return "ProveOwnershipProveOwnership", res, err
 	case 0x5138d91:
-		var res Tep62NftItemOwnershipAssignedInternalMsgBody
+		var res NftTransferOwnershipAssignedInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep62NftItemOwnershipAssigned", res, err
+		return "NftTransferOwnershipAssigned", res, err
 	case 0x524c7ae:
-		var res Tep85SbtOwnershipProofInternalMsgBody
+		var res ProveOwnershipOwnershipProofInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep85SbtOwnershipProof", res, err
+		return "ProveOwnershipOwnershipProof", res, err
 	case 0x88eaa32:
-		var res PaymentChannelChallengeQuarantinedStateInternalMsgBody
+		var res ChallengeQuarantinedStateChallengeQuarantinedStateInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelChallengeQuarantinedState", res, err
+		return "ChallengeQuarantinedStateChallengeQuarantinedState", res, err
 	case 0xdd607e3:
-		var res Tep85SbtOwnerInfoInternalMsgBody
+		var res RequestOwnerOwnerInfoInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep85SbtOwnerInfo", res, err
+		return "RequestOwnerOwnerInfo", res, err
 	case 0xe0620c2:
-		var res PaymentChannelInitChannelInternalMsgBody
+		var res InitChannelInitChannelInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelInitChannel", res, err
+		return "InitChannelInitChannel", res, err
 	case 0xf8a7ea5:
-		var res Tep74JettonWalletTransferInternalMsgBody
+		var res JettonTransferTransferInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep74JettonWalletTransfer", res, err
+		return "JettonTransferTransfer", res, err
 	case 0x107c49ef:
 		var res OfferStorageContractInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -391,136 +391,136 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		err = tlb.Unmarshal(cell, &res)
 		return "InternalTransfer", res, err
 	case 0x1f04537a:
-		var res Tep85SbtDestroyInternalMsgBody
+		var res DestroyDestroyInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep85SbtDestroy", res, err
+		return "DestroyDestroy", res, err
 	case 0x1f151acf:
-		var res PaymentChannelStartUncooperativeCloseInternalMsgBody
+		var res StartUncooperativeCloseStartUncooperativeCloseInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelStartUncooperativeClose", res, err
+		return "StartUncooperativeCloseStartUncooperativeClose", res, err
 	case 0x25432a91:
-		var res PaymentChannelFinishUncooperativeCloseInternalMsgBody
+		var res FinishUncooperativeCloseFinishUncooperativeCloseInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelFinishUncooperativeClose", res, err
+		return "FinishUncooperativeCloseFinishUncooperativeClose", res, err
 	case 0x2fcb26a2:
-		var res Tep62NftItemGetStaticDataInternalMsgBody
+		var res GetStaticDataGetStaticDataInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep62NftItemGetStaticData", res, err
+		return "GetStaticDataGetStaticData", res, err
 	case 0x419d5d4d:
-		var res StorageContractProofStorageInternalMsgBody
+		var res ProofStorageProofStorageInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractProofStorage", res, err
+		return "ProofStorageProofStorage", res, err
 	case 0x46ed2e94:
-		var res StorageContractWithdrawInternalMsgBody
+		var res WithdrawWithdrawInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractWithdraw", res, err
+		return "WithdrawWithdraw", res, err
 	case 0x53f34cd6:
-		var res StorageProviderUpdatePubkeyInternalMsgBody
+		var res UpdatePubkeyUpdatePubkeyInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageProviderUpdatePubkey", res, err
+		return "UpdatePubkeyUpdatePubkey", res, err
 	case 0x54cbf19b:
-		var res StorageProviderUpdateStorageParamsInternalMsgBody
+		var res UpdateStorageParamsUpdateStorageParamsInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageProviderUpdateStorageParams", res, err
+		return "UpdateStorageParamsUpdateStorageParams", res, err
 	case 0x5577587e:
-		var res PaymentChannelCooperativeCloseInternalMsgBody
+		var res CooperativeCloseCooperativeCloseInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelCooperativeClose", res, err
+		return "CooperativeCloseCooperativeClose", res, err
 	case 0x595f07bc:
-		var res Tep74JettonWalletBurnInternalMsgBody
+		var res BurnBurnInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep74JettonWalletBurn", res, err
+		return "BurnBurn", res, err
 	case 0x5fcc3d14:
-		var res Tep62NftItemTransferInternalMsgBody
+		var res NftTransferTransferInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep62NftItemTransfer", res, err
+		return "NftTransferTransfer", res, err
 	case 0x64737472:
-		var res WalletV4R2DestructInternalMsgBody
+		var res DestructDestructInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletV4R2Destruct", res, err
+		return "DestructDestruct", res, err
 	case 0x66f6f069:
-		var res PaymentChannelSettleConditionalsInternalMsgBody
+		var res SettleConditionalsSettleConditionalsInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelSettleConditionals", res, err
+		return "SettleConditionalsSettleConditionals", res, err
 	case 0x67c7d281:
-		var res PaymentChannelTopUpBalanceInternalMsgBody
+		var res TopUpBalanceTopUpBalanceInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelTopUpBalance", res, err
+		return "TopUpBalanceTopUpBalance", res, err
 	case 0x693d3950:
-		var res Tep66NftRoyaltyGetRoyaltyParamsInternalMsgBody
+		var res GetRoyaltyParamsGetRoyaltyParamsInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep66NftRoyaltyGetRoyaltyParams", res, err
+		return "GetRoyaltyParamsGetRoyaltyParams", res, err
 	case 0x6f89f5e3:
-		var res Tep85SbtRevokeInternalMsgBody
+		var res RevokeRevokeInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep85SbtRevoke", res, err
+		return "RevokeRevoke", res, err
 	case 0x706c7567:
-		var res WalletV4R2RequestFundsInternalMsgBody
+		var res PaymentRequestRequestFundsInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletV4R2RequestFunds", res, err
+		return "PaymentRequestRequestFunds", res, err
 	case 0x7362d09c:
-		var res Tep74JettonWalletTransferNotificationInternalMsgBody
+		var res JettonInternalTransferTransferNotificationInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep74JettonWalletTransferNotification", res, err
+		return "JettonInternalTransferTransferNotification", res, err
 	case 0x79a126ef:
-		var res PaymentChannelCooperativeCommitInternalMsgBody
+		var res CooperativeCommitCooperativeCommitInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelCooperativeCommit", res, err
+		return "CooperativeCommitCooperativeCommit", res, err
 	case 0x79f937ea:
-		var res StorageContractCloseContractInternalMsgBody
+		var res CloseContractCloseContractInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractCloseContract", res, err
+		return "CloseContractCloseContract", res, err
 	case 0x7a361688:
-		var res StorageContractAcceptStorageContractInternalMsgBody
+		var res AcceptStorageContractAcceptStorageContractInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractAcceptStorageContract", res, err
+		return "AcceptStorageContractAcceptStorageContract", res, err
 	case 0x8b771735:
-		var res Tep62NftItemReportStaticDataInternalMsgBody
+		var res GetStaticDataReportStaticDataInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep62NftItemReportStaticData", res, err
+		return "GetStaticDataReportStaticData", res, err
 	case 0xa8cb00ad:
-		var res Tep66NftRoyaltyReportRoyaltyParamsInternalMsgBody
+		var res GetRoyaltyParamsReportRoyaltyParamsInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep66NftRoyaltyReportRoyaltyParams", res, err
+		return "GetRoyaltyParamsReportRoyaltyParams", res, err
 	case 0xa91baf56:
-		var res StorageContractRewardWithdrawalInternalMsgBody
+		var res WithdrawRewardWithdrawalInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractRewardWithdrawal", res, err
+		return "WithdrawRewardWithdrawal", res, err
 	case 0xb6236d63:
 		var res StorageContractTerminatedInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "StorageContractTerminated", res, err
 	case 0xd0c3bfea:
-		var res Tep85SbtRequestOwnerInternalMsgBody
+		var res RequestOwnerRequestOwnerInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Tep85SbtRequestOwner", res, err
+		return "RequestOwnerRequestOwner", res, err
 	case 0xd4caedcd:
-		var res StorageContractStorageContractConfirmedInternalMsgBody
+		var res AcceptStorageContractStorageContractConfirmedInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractStorageContractConfirmed", res, err
+		return "AcceptStorageContractStorageContractConfirmed", res, err
 	case 0xd53276db:
 		var res ExcessesInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "Excesses", res, err
 	case 0xdddc88ba:
-		var res PaymentChannelChannelClosedInternalMsgBody
+		var res ChannelClosedChannelClosedInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentChannelChannelClosed", res, err
+		return "ChannelClosedChannelClosed", res, err
 	case 0xe4737472:
-		var res WalletV4R2DestructResponseInternalMsgBody
+		var res DestructDestructResponseInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletV4R2DestructResponse", res, err
+		return "DestructDestructResponse", res, err
 	case 0xf06c7567:
-		var res WalletV4R2PaymentRequestResponseInternalMsgBody
+		var res PaymentRequestPaymentRequestResponseInternalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletV4R2PaymentRequestResponse", res, err
+		return "PaymentRequestPaymentRequestResponse", res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
 	71463:  {GetTorrentHash},
-	72748:  {NftSaleGetSaleData, NftSaleGetGemsGetSaleData},
+	72748:  {GetSaleData},
 	78748:  {GetPublicKey},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
@@ -542,6 +542,8 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 }
 
 var ResultTypes = []interface{}{
+	&Dnsresolve_RecordResult{},
+	&Dnsresolve_RecordsResult{},
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
@@ -552,6 +554,8 @@ var ResultTypes = []interface{}{
 	&GetNftDataResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
+	&GetSaleData_BasicResult{},
+	&GetSaleData_GetgemsResult{},
 	&GetStorageContractAddressResult{},
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
@@ -564,10 +568,6 @@ var ResultTypes = []interface{}{
 	&IsPluginInstalledResult{},
 	&ListNominatorsResult{},
 	&ListVotesResult{},
-	&NftSaleGetGemsGetSaleDataResult{},
-	&NftSaleGetSaleDataResult{},
-	&RecordDnsresolveResult{},
-	&RecordsDnsresolveResult{},
 	&RoyaltyParamsResult{},
 	&SeqnoResult{},
 }
@@ -665,7 +665,7 @@ func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tong
 }
 
 type GetNftDataResult struct {
-	Init              int8
+	Init              bool
 	Index             tlb.Int257
 	CollectionAddress tlb.MsgAddress
 	OwnerAddress      tlb.MsgAddress
@@ -865,12 +865,12 @@ func GetWalletData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	return "GetWalletDataResult", result, err
 }
 
-type RecordDnsresolveResult struct {
+type Dnsresolve_RecordResult struct {
 	ResolvedBits int64
 	Result       tlb.DNSRecord
 }
 
-type RecordsDnsresolveResult struct {
+type Dnsresolve_RecordsResult struct {
 	ResolvedBits int64
 	Result       tlb.DNSRecordSet
 }
@@ -897,7 +897,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeRecordDnsresolveResult, decodeRecordsDnsresolveResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){decodeDnsresolve_RecordResult, decodeDnsresolve_RecordsResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -906,7 +906,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func decodeRecordDnsresolveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeDnsresolve_RecordResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
@@ -918,13 +918,13 @@ func decodeRecordDnsresolveResult(stack tlb.VmStack) (resultType string, resultA
 	if err != nil {
 		return "", nil, err
 	}
-	return "RecordDnsresolveResult", RecordDnsresolveResult{
+	return "Dnsresolve_RecordResult", Dnsresolve_RecordResult{
 		ResolvedBits: resolvedBits,
 		Result:       result,
 	}, nil
 }
 
-func decodeRecordsDnsresolveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func decodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
@@ -936,13 +936,13 @@ func decodeRecordsDnsresolveResult(stack tlb.VmStack) (resultType string, result
 	if err != nil {
 		return "", nil, err
 	}
-	return "RecordsDnsresolveResult", RecordsDnsresolveResult{
+	return "Dnsresolve_RecordsResult", Dnsresolve_RecordsResult{
 		ResolvedBits: resolvedBits,
 		Result:       result,
 	}, nil
 }
 
-type NftSaleGetSaleDataResult struct {
+type GetSaleData_BasicResult struct {
 	Marketplace    tlb.MsgAddress
 	Nft            tlb.MsgAddress
 	Owner          tlb.MsgAddress
@@ -952,23 +952,7 @@ type NftSaleGetSaleDataResult struct {
 	RoyaltyAmount  uint64
 }
 
-func NftSaleGetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 72748 for "get_sale_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72748, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	var result NftSaleGetSaleDataResult
-	err = stack.Unmarshal(&result)
-	return "NftSaleGetSaleDataResult", result, err
-}
-
-type NftSaleGetGemsGetSaleDataResult struct {
+type GetSaleData_GetgemsResult struct {
 	FixPrice         uint64
 	IsComplete       bool
 	CreatedAt        uint64
@@ -982,7 +966,7 @@ type NftSaleGetGemsGetSaleDataResult struct {
 	RoyaltyAmount    uint64
 }
 
-func NftSaleGetGemsGetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 72748 for "get_sale_data" method
@@ -993,9 +977,110 @@ func NftSaleGetGemsGetSaleData(ctx context.Context, executor Executor, reqAccoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	var result NftSaleGetGemsGetSaleDataResult
-	err = stack.Unmarshal(&result)
-	return "NftSaleGetGemsGetSaleDataResult", result, err
+	for _, f := range []func(tlb.VmStack) (string, any, error){decodeGetSaleData_BasicResult, decodeGetSaleData_GetgemsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func decodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var marketplace tlb.MsgAddress
+	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
+	if err != nil {
+		return "", nil, err
+	}
+	var nft tlb.MsgAddress
+	err = stack[1].VmStkSlice.UnmarshalToTlbStruct(&nft)
+	if err != nil {
+		return "", nil, err
+	}
+	var owner tlb.MsgAddress
+	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&owner)
+	if err != nil {
+		return "", nil, err
+	}
+	var fullPrice tlb.Int257
+	fullPrice = stack[3].Int257()
+	var marketFee uint64
+	marketFee = uint64(stack[4].Int64())
+	var royaltyAddress tlb.MsgAddress
+	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var royaltyAmount uint64
+	royaltyAmount = uint64(stack[6].Int64())
+	return "GetSaleData_BasicResult", GetSaleData_BasicResult{
+		Marketplace:    marketplace,
+		Nft:            nft,
+		Owner:          owner,
+		FullPrice:      fullPrice,
+		MarketFee:      marketFee,
+		RoyaltyAddress: royaltyAddress,
+		RoyaltyAmount:  royaltyAmount,
+	}, nil
+}
+
+func decodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var fixPrice uint64
+	fixPrice = uint64(stack[0].Int64())
+	var isComplete bool
+	isComplete = stack[1].Int64() != 0
+	var createdAt uint64
+	createdAt = uint64(stack[2].Int64())
+	var marketplace tlb.MsgAddress
+	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
+	if err != nil {
+		return "", nil, err
+	}
+	var nft tlb.MsgAddress
+	err = stack[4].VmStkSlice.UnmarshalToTlbStruct(&nft)
+	if err != nil {
+		return "", nil, err
+	}
+	var owner tlb.MsgAddress
+	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&owner)
+	if err != nil {
+		return "", nil, err
+	}
+	var fullPrice tlb.Int257
+	fullPrice = stack[6].Int257()
+	var marketFeeAddress tlb.MsgAddress
+	err = stack[7].VmStkSlice.UnmarshalToTlbStruct(&marketFeeAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var marketFee uint64
+	marketFee = uint64(stack[8].Int64())
+	var royaltyAddress tlb.MsgAddress
+	err = stack[9].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var royaltyAmount uint64
+	royaltyAmount = uint64(stack[10].Int64())
+	return "GetSaleData_GetgemsResult", GetSaleData_GetgemsResult{
+		FixPrice:         fixPrice,
+		IsComplete:       isComplete,
+		CreatedAt:        createdAt,
+		Marketplace:      marketplace,
+		Nft:              nft,
+		Owner:            owner,
+		FullPrice:        fullPrice,
+		MarketFeeAddress: marketFeeAddress,
+		MarketFee:        marketFee,
+		RoyaltyAddress:   royaltyAddress,
+		RoyaltyAmount:    royaltyAmount,
+	}, nil
 }
 
 type GetAuthorityAddressResult struct {
@@ -1283,22 +1368,17 @@ type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
 const (
-	NftSale            ContractInterface = "nft_sale"
-	NftSaleGetgems     ContractInterface = "nft_sale_getgems"
-	PaymentChannel     ContractInterface = "payment_channel"
-	StorageContract    ContractInterface = "storage_contract"
-	StorageProvider    ContractInterface = "storage_provider"
-	Tep62NftCollection ContractInterface = "tep_62_nft_collection"
-	Tep62NftItem       ContractInterface = "tep_62_nft_item"
-	Tep66NftRoyalty    ContractInterface = "tep_66_nft_royalty"
-	Tep74JettonMaster  ContractInterface = "tep_74_jetton_master"
-	Tep74JettonWallet  ContractInterface = "tep_74_jetton_wallet"
-	Tep81Dns           ContractInterface = "tep_81_dns"
-	Tep85Sbt           ContractInterface = "tep_85_sbt"
-	TextComment        ContractInterface = "text_comment"
-	TfNominators       ContractInterface = "tf_nominators"
-	WalletV3R2         ContractInterface = "wallet_v3r2"
-	WalletV4R2         ContractInterface = "wallet_v4r2"
+	PaymentChannel  ContractInterface = "payment_channel"
+	StorageContract ContractInterface = "storage_contract"
+	StorageProvider ContractInterface = "storage_provider"
+	Tep62Collection ContractInterface = "tep62_collection"
+	Tep62Item       ContractInterface = "tep62_item"
+	Tep66           ContractInterface = "tep66"
+	Tep74           ContractInterface = "tep74"
+	Tep85           ContractInterface = "tep85"
+	TfNominator     ContractInterface = "tf_nominator"
+	Wallet          ContractInterface = "wallet"
+	WalletV4R2      ContractInterface = "wallet_v4r2"
 )
 
 type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
@@ -1315,7 +1395,7 @@ type MethodDescription struct {
 var methodInvocationOrder = []MethodDescription{
 	{
 		Name:          "get_authority_address",
-		ImplementedBy: []ContractInterface{Tep85Sbt},
+		ImplementedBy: []ContractInterface{Tep85},
 		InvokeFn:      GetAuthorityAddress,
 	},
 	{
@@ -1325,12 +1405,12 @@ var methodInvocationOrder = []MethodDescription{
 	},
 	{
 		Name:          "get_collection_data",
-		ImplementedBy: []ContractInterface{Tep62NftCollection},
+		ImplementedBy: []ContractInterface{Tep62Collection},
 		InvokeFn:      GetCollectionData,
 	},
 	{
 		Name:          "get_jetton_data",
-		ImplementedBy: []ContractInterface{Tep74JettonMaster},
+		ImplementedBy: []ContractInterface{Tep74},
 		InvokeFn:      GetJettonData,
 	},
 	{
@@ -1340,28 +1420,23 @@ var methodInvocationOrder = []MethodDescription{
 	},
 	{
 		Name:          "get_nft_data",
-		ImplementedBy: []ContractInterface{Tep62NftItem},
+		ImplementedBy: []ContractInterface{Tep62Item},
 		InvokeFn:      GetNftData,
 	},
 	{
 		Name:          "get_public_key",
-		ImplementedBy: []ContractInterface{StorageProvider, WalletV3R2, WalletV4R2},
+		ImplementedBy: []ContractInterface{StorageProvider, Wallet},
 		InvokeFn:      GetPublicKey,
 	},
 	{
 		Name:          "get_revoked_time",
-		ImplementedBy: []ContractInterface{Tep85Sbt},
+		ImplementedBy: []ContractInterface{Tep85},
 		InvokeFn:      GetRevokedTime,
 	},
 	{
 		Name:          "get_sale_data",
-		ImplementedBy: []ContractInterface{NftSale},
-		InvokeFn:      NftSaleGetSaleData,
-	},
-	{
-		Name:          "get_sale_data",
-		ImplementedBy: []ContractInterface{NftSaleGetgems},
-		InvokeFn:      NftSaleGetGemsGetSaleData,
+		ImplementedBy: []ContractInterface{},
+		InvokeFn:      GetSaleData,
 	},
 	{
 		Name:          "get_storage_contract_data",
@@ -1385,7 +1460,7 @@ var methodInvocationOrder = []MethodDescription{
 	},
 	{
 		Name:          "get_wallet_data",
-		ImplementedBy: []ContractInterface{Tep74JettonWallet},
+		ImplementedBy: []ContractInterface{Tep74},
 		InvokeFn:      GetWalletData,
 	},
 	{
@@ -1400,22 +1475,22 @@ var methodInvocationOrder = []MethodDescription{
 	},
 	{
 		Name:          "list_nominators",
-		ImplementedBy: []ContractInterface{TfNominators},
+		ImplementedBy: []ContractInterface{TfNominator},
 		InvokeFn:      ListNominators,
 	},
 	{
 		Name:          "list_votes",
-		ImplementedBy: []ContractInterface{TfNominators},
+		ImplementedBy: []ContractInterface{TfNominator},
 		InvokeFn:      ListVotes,
 	},
 	{
 		Name:          "royalty_params",
-		ImplementedBy: []ContractInterface{Tep66NftRoyalty},
+		ImplementedBy: []ContractInterface{Tep66},
 		InvokeFn:      RoyaltyParams,
 	},
 	{
 		Name:          "seqno",
-		ImplementedBy: []ContractInterface{StorageProvider, WalletV3R2, WalletV4R2},
+		ImplementedBy: []ContractInterface{StorageProvider, Wallet},
 		InvokeFn:      Seqno,
 	},
 }

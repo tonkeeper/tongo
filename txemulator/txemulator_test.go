@@ -54,7 +54,7 @@ package txemulator
 //		log.Fatalf("TVM execution failed")
 //	}
 //
-//	err = w.SimpleSend(context.Background(), []wallet.Message{tonTransfer})
+//	err = w.Send(context.Background(), []wallet.Message{tonTransfer})
 //	if err != nil {
 //		log.Fatalf("Unable to generate transfer message: %v", err)
 //	}

@@ -23,7 +23,7 @@ type sender interface {
 	GetAddress() tongo.AccountID
 }
 
-func (item Item) Send(ctx context.Context, sender sender, destination tongo.AccountID) error {
+func (item Item) Transfer(ctx context.Context, sender sender, destination tongo.AccountID) error {
 	if item.Owner != nil && sender.GetAddress() != *item.Owner {
 		return errors.New("sender is not the item owner")
 	}

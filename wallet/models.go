@@ -145,15 +145,82 @@ type MessageV4 struct {
 
 type PayloadV1toV4 []RawMessage
 
+type Sendable interface {
+	ToInternal() (tlb.Message, uint8, error)
+}
+
+type SimpleTransfer struct {
+	Amount  tlb.Grams
+	Address tongo.AccountID
+	Comment string
+}
+
+func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error) {
+	info := tlb.CommonMsgInfo{
+		SumType: "IntMsgInfo",
+	}
+
+	info.IntMsgInfo.IhrDisabled = true
+	info.IntMsgInfo.Src = (*tongo.AccountID)(nil).ToMsgAddress()
+	info.IntMsgInfo.Dest = m.Address.ToMsgAddress()
+	info.IntMsgInfo.Value.Grams = m.Amount
+	info.IntMsgInfo.Bounce = false
+
+	intMsg := tlb.Message{
+		Info: info,
+	}
+
+	if m.Comment != "" {
+		body := boc.NewCell()
+		err := tlb.Marshal(body, TextComment(m.Comment))
+		if err != nil {
+			return tlb.Message{}, 0, err
+		}
+		intMsg.Body.IsRight = true //todo: check length and
+		intMsg.Body.Value = tlb.Any(*body)
+	}
+	return intMsg, DefaultMessageMode, nil
+}
+
 type Message struct {
-	Amount     tlb.Grams
-	Address    tongo.AccountID
-	Comment    *string
-	Body       *boc.Cell
-	Code       *boc.Cell
-	Data       *boc.Cell
-	Bounceable *bool
-	Mode       *byte
+	Amount  tlb.Grams
+	Address tongo.AccountID
+	Body    *boc.Cell
+	Code    *boc.Cell
+	Data    *boc.Cell
+	Bounce  bool
+	Mode    uint8
+}
+
+func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
+	info := tlb.CommonMsgInfo{
+		SumType: "IntMsgInfo",
+	}
+
+	info.IntMsgInfo.IhrDisabled = true
+	info.IntMsgInfo.Src = (*tongo.AccountID)(nil).ToMsgAddress()
+	info.IntMsgInfo.Dest = m.Address.ToMsgAddress()
+	info.IntMsgInfo.Value.Grams = m.Amount
+	info.IntMsgInfo.Bounce = m.Bounce
+
+	intMsg := tlb.Message{
+		Info: info,
+	}
+
+	if m.Body != nil {
+		intMsg.Body.IsRight = true //todo: check length and
+		intMsg.Body.Value = tlb.Any(*m.Body)
+	}
+	if m.Code != nil && m.Data != nil {
+		intMsg.Init.Exists = true
+		intMsg.Init.Value.IsRight = true
+		intMsg.Init.Value.Value.Code.Exists = true
+		intMsg.Init.Value.Value.Data.Exists = true
+		intMsg.Init.Value.Value.Code.Value.Value = *m.Code
+		intMsg.Init.Value.Value.Data.Value.Value = *m.Data
+	}
+
+	return intMsg, m.Mode, nil
 }
 
 type RawMessage struct {

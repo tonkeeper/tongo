@@ -2,11 +2,15 @@ package jetton
 
 import (
 	"context"
+
 	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/abi"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/wallet"
 	"math/big"
 	"strconv"
+	"time"
 )
 
 type blockchain interface {
@@ -22,16 +26,54 @@ type Jetton struct {
 
 type TransferMessage struct {
 	Jetton              *Jetton
+	Sender              tongo.AccountID
 	JettonAmount        *big.Int
 	Destination         tongo.AccountID
 	ResponseDestination *tongo.AccountID
-	TonAmount           tlb.Grams
-	ForwardTonAmount    int64
-	Comment             *string
-	Payload             *boc.Cell
+	AttachedTon         tlb.Grams
+	ForwardTonAmount    tlb.Grams
+	ForwardPayload      *boc.Cell
+	CustomPayload       *boc.Cell
 }
 
-func NewJetton(master tongo.AccountID, blockchain blockchain) *Jetton {
+func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
+	c := boc.NewCell()
+	forwardTon := big.NewInt(int64(tm.ForwardTonAmount))
+	msgBody := abi.JettonTransferTransferInternalMsgBody{
+		QueryId:             uint64(time.Now().UnixNano()),
+		Amount:              tlb.VarUInteger16(*tm.JettonAmount),
+		Destination:         tm.Destination.ToMsgAddress(),
+		ResponseDestination: tm.ResponseDestination.ToMsgAddress(),
+		ForwardTonAmount:    tlb.VarUInteger16(*forwardTon),
+	}
+	if tm.CustomPayload != nil {
+		msgBody.CustomPayload.Exists = true
+		msgBody.CustomPayload.Value.Value = tlb.Any(*tm.CustomPayload)
+	}
+	if tm.ForwardPayload != nil {
+		msgBody.ForwardPayload.IsRight = true
+		msgBody.ForwardPayload.Value = tlb.Any(*tm.ForwardPayload)
+	}
+	c.WriteUint(0xf8a7ea5, 32)
+	err := tlb.Marshal(c, msgBody)
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	jettonWallet, err := tm.Jetton.GetJettonWallet(context.TODO(), tm.Sender)
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	m := wallet.Message{
+		Amount:  tm.AttachedTon,
+		Address: jettonWallet,
+		Bounce:  true,
+		Mode:    wallet.DefaultMessageMode,
+		Body:    c,
+	}
+	return m.ToInternal()
+}
+
+func New(master tongo.AccountID, blockchain blockchain) *Jetton {
 	return &Jetton{
 		Master:     master,
 		blockchain: blockchain,

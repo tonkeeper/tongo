@@ -8,13 +8,10 @@ import (
 	"fmt"
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/contract/jetton"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"log"
-	"math/big"
 	"testing"
-	"time"
 )
 
 func TestGetCodeByVer(t *testing.T) {
@@ -99,18 +96,12 @@ func TestSimpleSend(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	w := initDefaultWallet(client)
-	comment := "hello"
-	tonTransfer := Message{
+	tonTransfer := SimpleTransfer{
 		Amount:  10000,
 		Address: recipientAddr,
-		Comment: &comment,
-		// Body:    *boc.Cell, // empty
-		// Code:    *boc.Cell, // empty
-		// Data:    *boc.Cell, // empty
-		// Bounceable: *bool, // default
-		// Mode:       *byte, // default
+		Comment: "hello",
 	}
-	err = w.SimpleSend(context.Background(), []Message{tonTransfer})
+	err = w.Send(context.Background(), tonTransfer)
 	if err != nil {
 		t.Fatalf("Unable to generate transfer message: %v", err)
 	}
@@ -122,7 +113,7 @@ func TestGetSeqno(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	w := initDefaultWallet(client)
-	seqno, err := w.getSeqno(context.Background())
+	seqno, err := client.GetSeqno(context.Background(), w.GetAddress())
 	if err != nil {
 		t.Fatalf("Unable to get wallet seqno: %v", err)
 	}
@@ -133,17 +124,16 @@ func TestMockBlockchain(t *testing.T) {
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 	client, c := NewMockBlockchain(1, tongo.AccountInfo{Balance: 1000})
 	w := initDefaultWallet(client)
-	comment := "hello"
-	tonTransfer := Message{
+	tonTransfer := SimpleTransfer{
 		Amount:  10000,
 		Address: recipientAddr,
-		Comment: &comment,
+		Comment: "hello",
 		// Body:    *boc.Cell, // empty
 		// Init:    *tongo.StateInit, // empty
-		// Bounceable: *bool, // default
+		// Bounce: *bool, // default
 		// Mode:       *byte, // default
 	}
-	err := w.SimpleSend(context.Background(), []Message{tonTransfer})
+	err := w.Send(context.Background(), tonTransfer)
 	if err != nil {
 		t.Fatalf("Unable to send message: %v", err)
 	}
@@ -156,57 +146,12 @@ func TestMockBlockchain(t *testing.T) {
 func initDefaultWallet(blockchain blockchain) Wallet {
 	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 	privateKey := ed25519.NewKeyFromSeed(pk)
-	w, err := NewWallet(privateKey, V4R2, 0, nil, blockchain)
+	w, err := New(privateKey, V4R2, 0, nil, blockchain)
 	if err != nil {
 		panic("unable to create wallet")
 	}
 	fmt.Printf("Wallet address: %v\n", w.GetAddress())
 	return w
-}
-
-func TestSendJetton(t *testing.T) {
-	t.Skip()
-	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
-
-	client, err := liteapi.NewClientWithDefaultTestnet()
-	if err != nil {
-		log.Fatalf("Unable to create tongo client: %v", err)
-	}
-	w := initDefaultWallet(client)
-
-	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
-	j := jetton.NewJetton(master, client)
-	b, err := j.GetBalance(context.Background(), w.GetAddress())
-	if err != nil {
-		log.Fatalf("Unable to get jetton wallet balance: %v", err)
-	}
-	amount := big.NewInt(1000)
-	if amount.Cmp(b) == 1 {
-		log.Fatalf("%v jettons needed, but only %v on balance", amount, b)
-	}
-
-	log.Printf("Prev balance: %v", b)
-	comment := "hello"
-	jettonTransfer := jetton.TransferMessage{
-		Jetton:       j,
-		JettonAmount: amount,
-		Destination:  recipientAddr,
-		// ResponseDestination: *tongo.AccountID
-		TonAmount:        400_000_000,
-		ForwardTonAmount: 200_000_000,
-		Comment:          &comment,
-		// Payload: *boc.Cell
-	}
-	err = w.SendJetton(context.Background(), []jetton.TransferMessage{jettonTransfer})
-	if err != nil {
-		t.Fatalf("Unable to send transfer message: %v", err)
-	}
-	time.Sleep(time.Second * 15)
-	b, err = j.GetBalance(context.Background(), w.GetAddress())
-	if err != nil {
-		log.Fatalf("Unable to get jetton wallet balance: %v", err)
-	}
-	log.Printf("New balance: %v", b)
 }
 
 func TestDeserializeMessage(t *testing.T) {

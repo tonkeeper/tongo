@@ -20,25 +20,20 @@ func main() {
 		log.Fatalf("Unable to create lite client: %v", err)
 	}
 
-	w, err := wallet.NewWallet(privateKey, wallet.V4R2, 0, nil, client)
+	w, err := wallet.New(privateKey, wallet.V4R2, 0, nil, client)
 	if err != nil {
 		log.Fatalf("Unable to create wallet: %v", err)
 	}
 
 	log.Printf("Wallet address: %v\n", w.GetAddress().ToRaw())
 
-	comment := "hello"
-	tonTransfer := wallet.Message{
+	tonTransfer := wallet.SimpleTransfer{
 		Amount:  10000,
 		Address: recipientAddr,
-		Comment: &comment,
-		// Body:    *boc.Cell, // empty
-		// Init:    *tongo.StateInit, // empty
-		// Bounceable: *bool, // default
-		// Mode:       *byte, // default
+		Comment: "hello",
 	}
 
-	err = w.SimpleSend(context.Background(), []wallet.Message{tonTransfer})
+	err = w.Send(context.Background(), tonTransfer)
 	if err != nil {
 		log.Fatalf("Unable to generate transfer message: %v", err)
 	}

@@ -4,12 +4,10 @@ import (
 	"context"
 	"crypto/ed25519"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/contract/jetton"
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -18,15 +16,15 @@ func DefaultWalletFromSeed(seed string, blockchain blockchain) (Wallet, error) {
 	if err != nil {
 		return Wallet{}, err
 	}
-	return NewWallet(pk, V4R2, 0, nil, blockchain)
+	return New(pk, V4R2, 0, nil, blockchain)
 }
 
-// NewWallet
+// New
 // Fill new Wallet struct from known workchain, public key and version.
 // subWalletId is only used in V3 and V4 wallets. Use nil for default value.
 // The version number is associated with a specific implementation of the wallet code
 // (https://github.com/toncenter/tonweb/blob/master/src/contract/wallet/WalletSources.md)
-func NewWallet(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *int, blockchain blockchain) (Wallet, error) {
+func New(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *int, blockchain blockchain) (Wallet, error) {
 	publicKey := key.Public().(ed25519.PublicKey)
 	address, err := GenerateWalletAddress(publicKey, ver, workchain, subWalletId)
 	if err != nil {
@@ -201,63 +199,6 @@ func (w *Wallet) RawSend(
 	return err
 }
 
-func generateInternalMessage(ctx context.Context, msg Message, bc blockchain) (tlb.Message, error) {
-	body := boc.NewCell()
-	if msg.Comment != nil && msg.Body != nil {
-		return tlb.Message{}, fmt.Errorf("only body or comment must be presented")
-	} else if msg.Comment != nil {
-		err := tlb.Marshal(body, TextComment(*msg.Comment))
-		if err != nil {
-			return tlb.Message{}, err
-		}
-	} else if msg.Body != nil {
-		body = msg.Body
-	}
-	info := tlb.CommonMsgInfo{
-		SumType: "IntMsgInfo",
-	}
-	info.IntMsgInfo.IhrDisabled = true
-	info.IntMsgInfo.Src = (*tongo.AccountID)(nil).ToMsgAddress()
-	info.IntMsgInfo.Dest = msg.Address.ToMsgAddress()
-	info.IntMsgInfo.Value.Grams = tlb.Grams(msg.Amount)
-
-	if msg.Bounceable == nil {
-		destinationState, err := bc.GetAccountState(ctx, msg.Address)
-		if err != nil {
-			return tlb.Message{}, err
-		}
-		if destinationState.Account.SumType != "AccountNone" || destinationState.Account.Account.Storage.State.SumType == "AccountActive" {
-			info.IntMsgInfo.Bounce = true
-		}
-	} else {
-		info.IntMsgInfo.Bounce = *msg.Bounceable
-	}
-
-	intMsg := tlb.Message{
-		Info: info,
-		Body: tlb.EitherRef[tlb.Any]{
-			IsRight: true,
-			Value:   tlb.Any(*body),
-		},
-	}
-
-	if msg.Code != nil && msg.Data != nil {
-		intMsg.Init.Exists = true
-		intMsg.Init.Value.IsRight = true
-		var init tlb.StateInit
-		if msg.Code != nil {
-			init.Code.Exists = true
-			init.Code.Value.Value = *msg.Code
-		}
-		if msg.Data != nil {
-			init.Data.Exists = true
-			init.Data.Value.Value = *msg.Data
-		}
-		intMsg.Init.Value.Value = init
-	}
-	return intMsg, nil
-}
-
 func (w *Wallet) getInit() (tlb.StateInit, error) {
 	publicKey := w.key.Public().(ed25519.PublicKey)
 	id := int(w.subWalletId)
@@ -276,18 +217,11 @@ func checkMessagesLimit(msgQty int, ver Version) error { // TODO: maybe return b
 	return nil
 }
 
-func (w *Wallet) getSeqno(ctx context.Context) (uint32, error) {
-	if w.blockchain == nil {
-		return 0, tongo.BlockchainInterfaceIsNil
-	}
-	return w.blockchain.GetSeqno(ctx, w.address)
-}
-
-// SimpleSend
+// Send
 // Generates a signed external message for wallet with custom internal messages and default TTL
 // Gets actual seqno and attach init for wallet if it needed
 // The payload is serialized into bytes and sent by the method SendRawMessage
-func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
+func (w *Wallet) Send(ctx context.Context, messages ...Sendable) error {
 	if w.blockchain == nil {
 		return tongo.BlockchainInterfaceIsNil
 	}
@@ -300,7 +234,7 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 	}
 	var seqno uint32
 	if state.Account.Status() == tlb.AccountActive {
-		seqno, err = w.getSeqno(ctx)
+		seqno, err = w.blockchain.GetSeqno(ctx, w.address)
 		if err != nil {
 			return err
 		}
@@ -313,19 +247,12 @@ func (w *Wallet) SimpleSend(ctx context.Context, messages []Message) error {
 		}
 		init = &i
 	}
-	var (
-		msgArray []RawMessage
-		mode     byte
-	)
+
+	var msgArray []RawMessage
 	for _, m := range messages {
-		intMsg, err := generateInternalMessage(ctx, m, w.blockchain)
+		intMsg, mode, err := m.ToInternal()
 		if err != nil {
 			return err
-		}
-		if m.Mode == nil {
-			mode = DefaultMessageMode
-		} else {
-			mode = *m.Mode
 		}
 		cell := boc.NewCell()
 		err = tlb.Marshal(cell, intMsg)
@@ -353,70 +280,4 @@ func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 		return 0, err
 	}
 	return accInfo.Balance, nil
-}
-
-// SendJetton
-// Sends Jettons to recipient address
-func (w *Wallet) SendJetton(ctx context.Context, messages []jetton.TransferMessage) error {
-	var msgArray []Message
-	for _, m := range messages {
-		body, err := buildJettonTransferBody(w.GetAddress(), m)
-		if err != nil {
-			return err
-		}
-		jettonWallet, err := m.Jetton.GetJettonWallet(ctx, w.GetAddress())
-		if err != nil {
-			return err
-		}
-		msgArray = append(msgArray, Message{
-			Amount:  m.TonAmount,
-			Address: jettonWallet,
-			Body:    body,
-		})
-	}
-	return w.SimpleSend(ctx, msgArray)
-}
-
-func buildJettonTransferBody(owner tongo.AccountID, msg jetton.TransferMessage) (*boc.Cell, error) {
-	payload := boc.NewCell()
-	if msg.Comment != nil && msg.Payload != nil {
-		return nil, fmt.Errorf("only payload or comment must be presented")
-	} else if msg.Comment != nil {
-		err := tlb.Marshal(payload, TextComment(*msg.Comment))
-		if err != nil {
-			return nil, err
-		}
-	} else if msg.Payload != nil {
-		payload = msg.Payload
-	}
-	var responseDestination tlb.MsgAddress
-	if msg.ResponseDestination == nil {
-		responseDestination = owner.ToMsgAddress() // send excess to sender wallet
-	} else {
-		responseDestination = msg.ResponseDestination.ToMsgAddress()
-	}
-	transferMsg := struct {
-		Magic               tlb.Magic `tlb:"transfer#0f8a7ea5"`
-		QueryId             uint64
-		Amount              tlb.VarUInteger16
-		Destination         tlb.MsgAddress
-		ResponseDestination tlb.MsgAddress
-		CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
-		ForwardTonAmount    tlb.Grams // (VarUInteger 16)
-		ForwardPayload      tlb.EitherRef[tlb.Any]
-	}{
-		QueryId:             rand.Uint64(),
-		Amount:              tlb.VarUInteger16(*msg.JettonAmount),
-		Destination:         msg.Destination.ToMsgAddress(),
-		ResponseDestination: responseDestination,
-		ForwardTonAmount:    tlb.Grams(msg.ForwardTonAmount),
-	}
-	transferMsg.ForwardPayload.IsRight = true
-	transferMsg.ForwardPayload.Value = tlb.Any(*payload)
-	res := boc.NewCell()
-	err := tlb.Marshal(res, transferMsg)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
 }

@@ -95,24 +95,24 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
-type TextCommentTextCommentInternalMsgBody struct {
+type TextCommentMsgBody struct {
 	Text tlb.Text
 }
 
-type ProveOwnershipProveOwnershipInternalMsgBody struct {
+type ProveOwnershipMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
 	WithContent    bool
 }
 
-type NftTransferOwnershipAssignedInternalMsgBody struct {
+type NftOwnershipAssignedMsgBody struct {
 	QueryId        uint64
 	PrevOwner      tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[tlb.Any]
 }
 
-type ProveOwnershipOwnershipProofInternalMsgBody struct {
+type OwnershipProofMsgBody struct {
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Owner     tlb.MsgAddress
@@ -121,7 +121,7 @@ type ProveOwnershipOwnershipProofInternalMsgBody struct {
 	Content   tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
-type ChallengeQuarantinedStateChallengeQuarantinedStateInternalMsgBody struct {
+type ChallengeQuarantinedChannelStateMsgBody struct {
 	ChallengedByA bool
 	Signature     tlb.Bits512
 	Tag           uint32
@@ -130,7 +130,7 @@ type ChallengeQuarantinedStateChallengeQuarantinedStateInternalMsgBody struct {
 	SchB          tlb.Ref[SignedSemiChannel]
 }
 
-type RequestOwnerOwnerInfoInternalMsgBody struct {
+type SbtOwnerInfoMsgBody struct {
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Initiator tlb.MsgAddress
@@ -140,7 +140,7 @@ type RequestOwnerOwnerInfoInternalMsgBody struct {
 	Content   tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
-type InitChannelInitChannelInternalMsgBody struct {
+type InitPaymentChannelMsgBody struct {
 	IsA       bool
 	Signature tlb.Bits512
 	Tag       uint32
@@ -149,7 +149,7 @@ type InitChannelInitChannelInternalMsgBody struct {
 	BalanceB  tlb.Grams
 }
 
-type JettonTransferTransferInternalMsgBody struct {
+type JettonTransferMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	Destination         tlb.MsgAddress
@@ -159,11 +159,11 @@ type JettonTransferTransferInternalMsgBody struct {
 	ForwardPayload      tlb.EitherRef[tlb.Any]
 }
 
-type OfferStorageContractInternalMsgBody struct {
+type OfferStorageContractMsgBody struct {
 	QueryId uint64
 }
 
-type InternalTransferInternalMsgBody struct {
+type JettonInternalTransferMsgBody struct {
 	QueryId          uint64
 	Amount           tlb.VarUInteger16
 	From             tlb.MsgAddress
@@ -171,11 +171,11 @@ type InternalTransferInternalMsgBody struct {
 	ForwardTonAmount tlb.VarUInteger16
 }
 
-type DestroyDestroyInternalMsgBody struct {
+type SbtDestroyMsgBody struct {
 	QueryId uint64
 }
 
-type StartUncooperativeCloseStartUncooperativeCloseInternalMsgBody struct {
+type StartUncooperativeChannelCloseMsgBody struct {
 	SignedByA bool
 	Signature tlb.Bits512
 	Tag       uint32
@@ -184,27 +184,27 @@ type StartUncooperativeCloseStartUncooperativeCloseInternalMsgBody struct {
 	SchB      tlb.Ref[SignedSemiChannel]
 }
 
-type FinishUncooperativeCloseFinishUncooperativeCloseInternalMsgBody struct{}
+type FinishUncooperativeChannelCloseMsgBody struct{}
 
-type GetStaticDataGetStaticDataInternalMsgBody struct {
+type GetStaticDataMsgBody struct {
 	QueryId uint64
 }
 
-type ProofStorageProofStorageInternalMsgBody struct {
+type ProofStorageMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Ref[tlb.Any]
 }
 
-type WithdrawWithdrawInternalMsgBody struct {
+type StorageWithdrawMsgBody struct {
 	QueryId uint64
 }
 
-type UpdatePubkeyUpdatePubkeyInternalMsgBody struct {
+type UpdatePubkeyMsgBody struct {
 	QueryId   uint64
 	NewPubkey tlb.Bits256
 }
 
-type UpdateStorageParamsUpdateStorageParamsInternalMsgBody struct {
+type UpdateStorageParamsMsgBody struct {
 	QueryId            uint64
 	AcceptNewContracts bool
 	RatePerMbDay       tlb.Grams
@@ -213,7 +213,7 @@ type UpdateStorageParamsUpdateStorageParamsInternalMsgBody struct {
 	MaximalFileSize    uint64
 }
 
-type CooperativeCloseCooperativeCloseInternalMsgBody struct {
+type ChannelCooperativeCloseMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
 	Tag       uint32
@@ -224,14 +224,14 @@ type CooperativeCloseCooperativeCloseInternalMsgBody struct {
 	SeqnoB    uint64
 }
 
-type BurnBurnInternalMsgBody struct {
+type JettonBurnMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
-type NftTransferTransferInternalMsgBody struct {
+type NftTransferMsgBody struct {
 	QueryId             uint64
 	NewOwner            tlb.MsgAddress
 	ResponseDestination tlb.MsgAddress
@@ -240,11 +240,11 @@ type NftTransferTransferInternalMsgBody struct {
 	ForwardPayload      tlb.EitherRef[tlb.Any]
 }
 
-type DestructDestructInternalMsgBody struct {
+type WalletPluginDestructMsgBody struct {
 	QueryId uint64
 }
 
-type SettleConditionalsSettleConditionalsInternalMsgBody struct {
+type SettleChannelConditionalsMsgBody struct {
 	FromA                bool
 	Signature            tlb.Bits512
 	Tag                  uint32
@@ -252,32 +252,25 @@ type SettleConditionalsSettleConditionalsInternalMsgBody struct {
 	ConditionalsToSettle tlb.HashmapE[tlb.Uint32, tlb.Any]
 }
 
-type TopUpBalanceTopUpBalanceInternalMsgBody struct {
+type TopUpChannelBalanceMsgBody struct {
 	AddA tlb.Grams
 	AddB tlb.Grams
 }
 
-type GetRoyaltyParamsGetRoyaltyParamsInternalMsgBody struct {
+type GetRoyaltyParamsMsgBody struct {
 	QueryId uint64
 }
 
-type RevokeRevokeInternalMsgBody struct {
+type SbtRevokeMsgBody struct {
 	QueryId uint64
 }
 
-type PaymentRequestRequestFundsInternalMsgBody struct {
+type PaymentRequestMsgBody struct {
 	QueryId uint64
 	Amount  tlb.CurrencyCollection
 }
 
-type JettonInternalTransferTransferNotificationInternalMsgBody struct {
-	QueryId        uint64
-	Amount         tlb.VarUInteger16
-	Sender         tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[tlb.Any]
-}
-
-type CooperativeCommitCooperativeCommitInternalMsgBody struct {
+type ChannelCooperativeCommitMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
 	Tag       uint32
@@ -286,61 +279,69 @@ type CooperativeCommitCooperativeCommitInternalMsgBody struct {
 	SeqnoB    uint64
 }
 
-type CloseContractCloseContractInternalMsgBody struct {
+type CloseStorageContractMsgBody struct {
 	QueryId uint64
 }
 
-type AcceptStorageContractAcceptStorageContractInternalMsgBody struct {
+type AcceptStorageContractMsgBody struct {
 	QueryId uint64
 }
 
-type GetStaticDataReportStaticDataInternalMsgBody struct {
+type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
 	Collection tlb.MsgAddress
 }
 
-type GetRoyaltyParamsReportRoyaltyParamsInternalMsgBody struct {
+type ReportRoyaltyParamsMsgBody struct {
 	QueryId     uint64
 	Numerator   uint16
 	Denominator uint16
 	Destination tlb.MsgAddress
 }
 
-type WithdrawRewardWithdrawalInternalMsgBody struct {
+type StorageRewardWithdrawalMsgBody struct {
 	QueryId uint64
 }
 
-type StorageContractTerminatedInternalMsgBody struct {
+type StorageContractTerminatedMsgBody struct {
 	CurLt       uint64
 	TorrentHash tlb.Bits256
 }
 
-type RequestOwnerRequestOwnerInternalMsgBody struct {
+type SbtRequestOwnerMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
 	WithContent    bool
 }
 
-type AcceptStorageContractStorageContractConfirmedInternalMsgBody struct {
+type StorageContractConfirmedMsgBody struct {
 	CurLt       uint64
 	TorrentHash tlb.Bits256
 }
 
-type ExcessesInternalMsgBody struct {
+type ExcessMsgBody struct {
 	QueryId uint64
 }
 
-type ChannelClosedChannelClosedInternalMsgBody struct {
+type ChannelClosedMsgBody struct {
 	ChannelId tlb.Uint128
 }
 
-type DestructDestructResponseInternalMsgBody struct {
+type WalletPluginDestructResponseMsgBody struct {
 	QueryId uint64
 }
 
-type PaymentRequestPaymentRequestResponseInternalMsgBody struct {
+type DeployStorageContractMsgBody struct {
+	QueryId         uint64
+	Info            tlb.Ref[TorrentInfo]
+	MerkleHash      tlb.Bits256
+	ExpectedRate    tlb.Grams
+	ExpectedMaxSpan uint32
+}
+
+type PaymentRequestResponseMsgBody struct {
 	QueryId uint64
 }
 
@@ -351,169 +352,169 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 	}
 	switch tag {
 	case 0x0:
-		var res TextCommentTextCommentInternalMsgBody
+		var res TextCommentMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TextCommentTextComment", res, err
+		return "TextCommentMsgBody", res, err
 	case 0x4ded148:
-		var res ProveOwnershipProveOwnershipInternalMsgBody
+		var res ProveOwnershipMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProveOwnershipProveOwnership", res, err
+		return "ProveOwnershipMsgBody", res, err
 	case 0x5138d91:
-		var res NftTransferOwnershipAssignedInternalMsgBody
+		var res NftOwnershipAssignedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "NftTransferOwnershipAssigned", res, err
+		return "NftOwnershipAssignedMsgBody", res, err
 	case 0x524c7ae:
-		var res ProveOwnershipOwnershipProofInternalMsgBody
+		var res OwnershipProofMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProveOwnershipOwnershipProof", res, err
+		return "OwnershipProofMsgBody", res, err
 	case 0x88eaa32:
-		var res ChallengeQuarantinedStateChallengeQuarantinedStateInternalMsgBody
+		var res ChallengeQuarantinedChannelStateMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChallengeQuarantinedStateChallengeQuarantinedState", res, err
+		return "ChallengeQuarantinedChannelStateMsgBody", res, err
 	case 0xdd607e3:
-		var res RequestOwnerOwnerInfoInternalMsgBody
+		var res SbtOwnerInfoMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "RequestOwnerOwnerInfo", res, err
+		return "SbtOwnerInfoMsgBody", res, err
 	case 0xe0620c2:
-		var res InitChannelInitChannelInternalMsgBody
+		var res InitPaymentChannelMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "InitChannelInitChannel", res, err
+		return "InitPaymentChannelMsgBody", res, err
 	case 0xf8a7ea5:
-		var res JettonTransferTransferInternalMsgBody
+		var res JettonTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonTransferTransfer", res, err
+		return "JettonTransferMsgBody", res, err
 	case 0x107c49ef:
-		var res OfferStorageContractInternalMsgBody
+		var res OfferStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "OfferStorageContract", res, err
+		return "OfferStorageContractMsgBody", res, err
 	case 0x178d4519:
-		var res InternalTransferInternalMsgBody
+		var res JettonInternalTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "InternalTransfer", res, err
+		return "JettonInternalTransferMsgBody", res, err
 	case 0x1f04537a:
-		var res DestroyDestroyInternalMsgBody
+		var res SbtDestroyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "DestroyDestroy", res, err
+		return "SbtDestroyMsgBody", res, err
 	case 0x1f151acf:
-		var res StartUncooperativeCloseStartUncooperativeCloseInternalMsgBody
+		var res StartUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StartUncooperativeCloseStartUncooperativeClose", res, err
+		return "StartUncooperativeChannelCloseMsgBody", res, err
 	case 0x25432a91:
-		var res FinishUncooperativeCloseFinishUncooperativeCloseInternalMsgBody
+		var res FinishUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "FinishUncooperativeCloseFinishUncooperativeClose", res, err
+		return "FinishUncooperativeChannelCloseMsgBody", res, err
 	case 0x2fcb26a2:
-		var res GetStaticDataGetStaticDataInternalMsgBody
+		var res GetStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetStaticDataGetStaticData", res, err
+		return "GetStaticDataMsgBody", res, err
 	case 0x419d5d4d:
-		var res ProofStorageProofStorageInternalMsgBody
+		var res ProofStorageMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProofStorageProofStorage", res, err
+		return "ProofStorageMsgBody", res, err
 	case 0x46ed2e94:
-		var res WithdrawWithdrawInternalMsgBody
+		var res StorageWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WithdrawWithdraw", res, err
+		return "StorageWithdrawMsgBody", res, err
 	case 0x53f34cd6:
-		var res UpdatePubkeyUpdatePubkeyInternalMsgBody
+		var res UpdatePubkeyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "UpdatePubkeyUpdatePubkey", res, err
+		return "UpdatePubkeyMsgBody", res, err
 	case 0x54cbf19b:
-		var res UpdateStorageParamsUpdateStorageParamsInternalMsgBody
+		var res UpdateStorageParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "UpdateStorageParamsUpdateStorageParams", res, err
+		return "UpdateStorageParamsMsgBody", res, err
 	case 0x5577587e:
-		var res CooperativeCloseCooperativeCloseInternalMsgBody
+		var res ChannelCooperativeCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "CooperativeCloseCooperativeClose", res, err
+		return "ChannelCooperativeCloseMsgBody", res, err
 	case 0x595f07bc:
-		var res BurnBurnInternalMsgBody
+		var res JettonBurnMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "BurnBurn", res, err
+		return "JettonBurnMsgBody", res, err
 	case 0x5fcc3d14:
-		var res NftTransferTransferInternalMsgBody
+		var res NftTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "NftTransferTransfer", res, err
+		return "NftTransferMsgBody", res, err
 	case 0x64737472:
-		var res DestructDestructInternalMsgBody
+		var res WalletPluginDestructMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "DestructDestruct", res, err
+		return "WalletPluginDestructMsgBody", res, err
 	case 0x66f6f069:
-		var res SettleConditionalsSettleConditionalsInternalMsgBody
+		var res SettleChannelConditionalsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SettleConditionalsSettleConditionals", res, err
+		return "SettleChannelConditionalsMsgBody", res, err
 	case 0x67c7d281:
-		var res TopUpBalanceTopUpBalanceInternalMsgBody
+		var res TopUpChannelBalanceMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TopUpBalanceTopUpBalance", res, err
+		return "TopUpChannelBalanceMsgBody", res, err
 	case 0x693d3950:
-		var res GetRoyaltyParamsGetRoyaltyParamsInternalMsgBody
+		var res GetRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetRoyaltyParamsGetRoyaltyParams", res, err
+		return "GetRoyaltyParamsMsgBody", res, err
 	case 0x6f89f5e3:
-		var res RevokeRevokeInternalMsgBody
+		var res SbtRevokeMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "RevokeRevoke", res, err
+		return "SbtRevokeMsgBody", res, err
 	case 0x706c7567:
-		var res PaymentRequestRequestFundsInternalMsgBody
+		var res PaymentRequestMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentRequestRequestFunds", res, err
-	case 0x7362d09c:
-		var res JettonInternalTransferTransferNotificationInternalMsgBody
-		err = tlb.Unmarshal(cell, &res)
-		return "JettonInternalTransferTransferNotification", res, err
+		return "PaymentRequestMsgBody", res, err
 	case 0x79a126ef:
-		var res CooperativeCommitCooperativeCommitInternalMsgBody
+		var res ChannelCooperativeCommitMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "CooperativeCommitCooperativeCommit", res, err
+		return "ChannelCooperativeCommitMsgBody", res, err
 	case 0x79f937ea:
-		var res CloseContractCloseContractInternalMsgBody
+		var res CloseStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "CloseContractCloseContract", res, err
+		return "CloseStorageContractMsgBody", res, err
 	case 0x7a361688:
-		var res AcceptStorageContractAcceptStorageContractInternalMsgBody
+		var res AcceptStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "AcceptStorageContractAcceptStorageContract", res, err
+		return "AcceptStorageContractMsgBody", res, err
 	case 0x8b771735:
-		var res GetStaticDataReportStaticDataInternalMsgBody
+		var res ReportStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetStaticDataReportStaticData", res, err
+		return "ReportStaticDataMsgBody", res, err
 	case 0xa8cb00ad:
-		var res GetRoyaltyParamsReportRoyaltyParamsInternalMsgBody
+		var res ReportRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetRoyaltyParamsReportRoyaltyParams", res, err
+		return "ReportRoyaltyParamsMsgBody", res, err
 	case 0xa91baf56:
-		var res WithdrawRewardWithdrawalInternalMsgBody
+		var res StorageRewardWithdrawalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WithdrawRewardWithdrawal", res, err
+		return "StorageRewardWithdrawalMsgBody", res, err
 	case 0xb6236d63:
-		var res StorageContractTerminatedInternalMsgBody
+		var res StorageContractTerminatedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractTerminated", res, err
+		return "StorageContractTerminatedMsgBody", res, err
 	case 0xd0c3bfea:
-		var res RequestOwnerRequestOwnerInternalMsgBody
+		var res SbtRequestOwnerMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "RequestOwnerRequestOwner", res, err
+		return "SbtRequestOwnerMsgBody", res, err
 	case 0xd4caedcd:
-		var res AcceptStorageContractStorageContractConfirmedInternalMsgBody
+		var res StorageContractConfirmedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "AcceptStorageContractStorageContractConfirmed", res, err
+		return "StorageContractConfirmedMsgBody", res, err
 	case 0xd53276db:
-		var res ExcessesInternalMsgBody
+		var res ExcessMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Excesses", res, err
+		return "ExcessMsgBody", res, err
 	case 0xdddc88ba:
-		var res ChannelClosedChannelClosedInternalMsgBody
+		var res ChannelClosedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelClosedChannelClosed", res, err
+		return "ChannelClosedMsgBody", res, err
 	case 0xe4737472:
-		var res DestructDestructResponseInternalMsgBody
+		var res WalletPluginDestructResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "DestructDestructResponse", res, err
+		return "WalletPluginDestructResponseMsgBody", res, err
+	case 0xe4748df1:
+		var res DeployStorageContractMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "DeployStorageContractMsgBody", res, err
 	case 0xf06c7567:
-		var res PaymentRequestPaymentRequestResponseInternalMsgBody
+		var res PaymentRequestResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentRequestPaymentRequestResponse", res, err
+		return "PaymentRequestResponseMsgBody", res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
 }

@@ -50,7 +50,7 @@ type ItemTransferMessage struct {
 func (itm ItemTransferMessage) ToInternal() (tlb.Message, byte, error) {
 	c := boc.NewCell()
 	forwardTon := big.NewInt(int64(itm.ForwardTon))
-	msgBody := abi.NftTransferTransferInternalMsgBody{
+	msgBody := abi.NftTransferMsgBody{
 		QueryId:             uint64(time.Now().UnixNano()),
 		NewOwner:            itm.Destination.ToMsgAddress(),
 		ResponseDestination: itm.ResponseDestination.ToMsgAddress(),

@@ -24,6 +24,9 @@ func TestMsgDecoder(t *testing.T) {
 		c, _ := boc.DeserializeBoc(h)
 
 		s, _, err := MessageDecoder(c[0])
+		c[0].ResetCounters()
+		op, _ := c[0].ReadUint(32)
+		fmt.Printf("%x\n", op)
 		if err != nil {
 			t.Error(err)
 		}

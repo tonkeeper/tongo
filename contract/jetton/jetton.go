@@ -39,7 +39,7 @@ type TransferMessage struct {
 func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 	c := boc.NewCell()
 	forwardTon := big.NewInt(int64(tm.ForwardTonAmount))
-	msgBody := abi.JettonTransferTransferInternalMsgBody{
+	msgBody := abi.JettonTransferMsgBody{
 		QueryId:             uint64(time.Now().UnixNano()),
 		Amount:              tlb.VarUInteger16(*tm.JettonAmount),
 		Destination:         tm.Destination.ToMsgAddress(),

@@ -51,6 +51,14 @@
             <tinyint name="subwallet_id">uint32</tinyint>
         </output>
     </get_method>
+    <get_method name="get_plugin_list" interface="wallet_v4r2">
+        <output>
+            <tuple name="plugins" list="true">
+                <tinyint name="workchain">int32</tinyint>
+                <int name="address">bits256</int>
+            </tuple>
+        </output>
+    </get_method>
     <get_method name="is_plugin_installed" interface="wallet_v4r2">
         <input>
             <tinyint name="workchain">int32</tinyint>

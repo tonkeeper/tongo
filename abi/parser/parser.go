@@ -15,9 +15,8 @@ type ABI struct {
 
 type Message struct {
 	Name       string   `xml:"name,attr"`
-	Input      string   `xml:"input"`
+	Input      string   `xml:",chardata"`
 	Interfaces []string `xml:"interface,attr"`
-	Outputs    []string `xml:"output"`
 }
 
 type GetMethod struct {

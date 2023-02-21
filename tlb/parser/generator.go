@@ -60,10 +60,6 @@ func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator
 	}
 }
 
-func (g *Generator) LoadTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
-	return g.generateGolangTypes(declarations, typePrefix, skipMagic)
-}
-
 func (g *Generator) GetTlbTypes() []TlbType {
 	var res []TlbType
 
@@ -73,7 +69,7 @@ func (g *Generator) GetTlbTypes() []TlbType {
 	return res
 }
 
-func (g *Generator) generateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
+func (g *Generator) GenerateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
 	dec := make([][]CombinatorDeclaration, 0)
 	for _, c := range declarations {
 		if len(c.Combinator.TypeExpressions) > 0 {
@@ -94,7 +90,10 @@ func (g *Generator) generateGolangTypes(declarations []CombinatorDeclaration, ty
 	s := ""
 
 	for _, v := range dec {
-		name := utils.ToCamelCase(typePrefix) + v[0].Combinator.Name
+		name := v[0].Combinator.Name
+		if typePrefix != "" {
+			name = utils.ToCamelCase(typePrefix)
+		}
 		t, err := g.generateGolangType(v, name, skipMagic)
 		if err != nil {
 			return "", err

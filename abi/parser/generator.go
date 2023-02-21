@@ -47,10 +47,9 @@ var (
 )
 
 type TLBMsgBody struct {
-	TypePrefix string
-	TypeName   string
-	Tag        uint64
-	Code       string
+	TypeName string
+	Tag      uint64
+	Code     string
 }
 
 type Generator struct {
@@ -164,12 +163,6 @@ func (g *Generator) registerABI() error {
 		if err != nil {
 			return err
 		}
-		for _, out := range internal.Outputs {
-			err := g.registerMsgType(internal.Name, out)
-			if err != nil {
-				return err
-			}
-		}
 	}
 	return nil
 }
@@ -184,7 +177,7 @@ func (g *Generator) registerType(s string) error {
 	}
 
 	gen := tlbParser.NewGenerator(nil, "")
-	_, err = gen.LoadTypes(tlbData.Declarations, "", false)
+	_, err = gen.GenerateGolangTypes(tlbData.Declarations, "", false)
 	if err != nil {
 		return fmt.Errorf("load types error: %v", err)
 	}
@@ -220,19 +213,18 @@ func (g *Generator) registerMsgType(name, s string) error {
 	if ok {
 		typePrefix = utils.ToCamelCase(parsed.Declarations[0].Constructor.Name)
 	} else {
-		typePrefix = fmt.Sprintf("%s%s", utils.ToCamelCase(name), utils.ToCamelCase(parsed.Declarations[0].Constructor.Name))
+		typePrefix = utils.ToCamelCase(name) + "MsgBody"
 	}
 
-	t, err := gen.LoadTypes(parsed.Declarations, typePrefix, true)
+	t, err := gen.GenerateGolangTypes(parsed.Declarations, typePrefix, true)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
 	}
 
 	g.loadedTlbMsgTypes[uint32(tag.Val)] = TLBMsgBody{
-		TypePrefix: typePrefix,
-		TypeName:   utils.ToCamelCase(parsed.Declarations[0].Combinator.Name),
-		Tag:        tag.Val,
-		Code:       t,
+		TypeName: utils.ToCamelCase(name) + "MsgBody",
+		Tag:      tag.Val,
+		Code:     t,
 	}
 
 	return nil
@@ -495,9 +487,9 @@ func (g *Generator) GenerateMsgDecoder() string {
 
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
 		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
-		builder.WriteString(fmt.Sprintf("var res %s%s\n", g.loadedTlbMsgTypes[k].TypePrefix, g.loadedTlbMsgTypes[k].TypeName))
+		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
 		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].TypePrefix))
+		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].TypeName))
 	}
 
 	builder.WriteString("}\n")

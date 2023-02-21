@@ -19,7 +19,7 @@
         conf#_ quarantin_duration:uint32
         misbehavior_fine:Coins
         conditional_close_duration:uint32 = ClosingConfig; // 32 + 132 + 132 + 32 = 296
-        payment_conf#_  excess_fee:Coins
+        payment_conf#_ excess_fee:Coins
         dest_A:MsgAddress
         dest_B:MsgAddress = PaymentConfig;
         channel_state#_ balance_A:Coins balance_B:Coins
@@ -35,529 +35,437 @@
         torrent_info piece_size:uint32 file_size:uint64 root_hash:(## 256) header_size:uint64 header_hash:(## 256)
         microchunk_hash:(Maybe (## 256)) description:Text = TorrentInfo;
     </types>
-        <!--        Wallets      -->
-        <get_method name="seqno" interface="wallet" interface="storage_provider">
-            <output>
-                <tinyint name="state">uint32</tinyint>
-            </output>
-        </get_method>
-        <get_method name="get_public_key" interface="wallet" interface="storage_provider">
-            <output>
-                <int name="public_key">int257</int>
-            </output>
-        </get_method>
-        <get_method name="get_subwallet_id" interface="wallet_v4r2">
-            <output>
-                <tinyint name="subwallet_id">uint32</tinyint>
-            </output>
-        </get_method>
-        <get_method name="is_plugin_installed" interface="wallet_v4r2">
-            <input>
-                <tinyint name="workchain">int32</tinyint>
-                <int name="addr_hash">int257</int>
-            </input>
-            <output>
-                <tinyint name="success">bool</tinyint>
-            </output>
-        </get_method>
+    <!--        Wallets      -->
+    <get_method name="seqno" interface="wallet" interface="storage_provider">
+        <output>
+            <tinyint name="state">uint32</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_public_key" interface="wallet" interface="storage_provider">
+        <output>
+            <int name="public_key">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_subwallet_id" interface="wallet_v4r2">
+        <output>
+            <tinyint name="subwallet_id">uint32</tinyint>
+        </output>
+    </get_method>
+    <get_method name="is_plugin_installed" interface="wallet_v4r2">
+        <input>
+            <tinyint name="workchain">int32</tinyint>
+            <int name="addr_hash">int257</int>
+        </input>
+        <output>
+            <tinyint name="success">bool</tinyint>
+        </output>
+    </get_method>
 
 
-        <!--        NFTs     -->
-        <get_method name="get_nft_data" callback="true" interface="tep62_item">
-            <output>
-                <tinyint name="init">bool</tinyint>
-                <int name="index">int257</int>
-                <slice name="collection_address">msgaddress</slice>
-                <slice name="owner_address">msgaddress</slice>
-                <cell name="individual_content">any</cell>
-            </output>
-        </get_method>
-        <get_method name="get_nft_content" interface="tep62">
-            <input>
-                <int name="index">int257</int>
-                <cell name="individual_content">any</cell>
-            </input>
-            <output>
-                <cell name="content">FullContent</cell>
-            </output>
-        </get_method>
-        <get_method name="get_collection_data" interface="tep62_collection">
-            <output>
-                <int name="next_item_index">int257</int>
-                <cell name="collection_content">any</cell>
-                <slice name="owner_address">msgaddress</slice>
-            </output>
-        </get_method>
-        <get_method name="get_nft_address_by_index" interface="tep62_collection">
-            <input>
-                <int name="index">int257</int>
-            </input>
-            <output>
-                <slice name="address">msgaddress</slice>
-            </output>
-        </get_method>
-        <get_method name="royalty_params" interface="tep66">
-            <output>
-                <tinyint name="numerator">uint16</tinyint>
-                <tinyint name="denominator">uint16</tinyint>
-                <slice name="destination">msgaddress</slice>
-            </output>
-        </get_method>
+    <!--        NFTs     -->
+    <get_method name="get_nft_data" callback="true" interface="tep62_item">
+        <output>
+            <tinyint name="init">bool</tinyint>
+            <int name="index">int257</int>
+            <slice name="collection_address">msgaddress</slice>
+            <slice name="owner_address">msgaddress</slice>
+            <cell name="individual_content">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_nft_content" interface="tep62">
+        <input>
+            <int name="index">int257</int>
+            <cell name="individual_content">any</cell>
+        </input>
+        <output>
+            <cell name="content">FullContent</cell>
+        </output>
+    </get_method>
+    <get_method name="get_collection_data" interface="tep62_collection">
+        <output>
+            <int name="next_item_index">int257</int>
+            <cell name="collection_content">any</cell>
+            <slice name="owner_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_nft_address_by_index" interface="tep62_collection">
+        <input>
+            <int name="index">int257</int>
+        </input>
+        <output>
+            <slice name="address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="royalty_params" interface="tep66">
+        <output>
+            <tinyint name="numerator">uint16</tinyint>
+            <tinyint name="denominator">uint16</tinyint>
+            <slice name="destination">msgaddress</slice>
+        </output>
+    </get_method>
 
-<!--        Jettons    -->
-        <get_method name="get_jetton_data" interface="tep74">
-            <output>
-                <int name="total_supply">int257</int>
-                <tinyint name="mintable">int8</tinyint>
-                <slice name="admin_address">msgaddress</slice>
-                <cell name="jetton_content">any</cell>
-                <cell name="jetton_wallet_code">any</cell>
-            </output>
-        </get_method>
-        <get_method name="get_wallet_address" interface="tep74">
-            <input>
-                <slice name="owner_address">msgaddress</slice>
-            </input>
-            <output>
-                <slice name="jetton_wallet_address">msgaddress</slice>
-            </output>
-        </get_method>
-        <get_method name="get_wallet_data" interface="tep74">
-            <output>
-                <int name="balance">int257</int>
-                <slice name="owner">msgaddress</slice>
-                <slice name="jetton">msgaddress</slice>
-                <cell name="jetton_wallet_code">any</cell>
-            </output>
-        </get_method>
+    <!--        Jettons    -->
+    <get_method name="get_jetton_data" interface="tep74">
+        <output>
+            <int name="total_supply">int257</int>
+            <tinyint name="mintable">int8</tinyint>
+            <slice name="admin_address">msgaddress</slice>
+            <cell name="jetton_content">any</cell>
+            <cell name="jetton_wallet_code">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_wallet_address" interface="tep74">
+        <input>
+            <slice name="owner_address">msgaddress</slice>
+        </input>
+        <output>
+            <slice name="jetton_wallet_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_wallet_data" interface="tep74">
+        <output>
+            <int name="balance">int257</int>
+            <slice name="owner">msgaddress</slice>
+            <slice name="jetton">msgaddress</slice>
+            <cell name="jetton_wallet_code">any</cell>
+        </output>
+    </get_method>
 
-<!--        DNS      -->
-        <get_method name="dnsresolve" interface="tep81">
-            <input>
-                <slice name="domain">[]byte</slice>
-                <int name="category">int257</int>
-            </input>
-            <output version="record" fixed_length="true">
-                <tinyint name="resolved_bits">int64</tinyint>
-                <cell name="result">DNSRecord</cell>
-            </output>
-            <output version="records" fixed_length="true">
-                <tinyint name="resolved_bits">int64</tinyint>
-                <cell name="result">DNS_RecordSet</cell>
-            </output>
-        </get_method>
+    <!--        DNS      -->
+    <get_method name="dnsresolve" interface="tep81">
+        <input>
+            <slice name="domain">[]byte</slice>
+            <int name="category">int257</int>
+        </input>
+        <output version="record" fixed_length="true">
+            <tinyint name="resolved_bits">int64</tinyint>
+            <cell name="result">DNSRecord</cell>
+        </output>
+        <output version="records" fixed_length="true">
+            <tinyint name="resolved_bits">int64</tinyint>
+            <cell name="result">DNS_RecordSet</cell>
+        </output>
+    </get_method>
 
-<!--        NFT sale      -->
-        <get_method name="get_sale_data">
-            <output version="basic" fixed_length="true" interface="nft_sale">
-                <slice name="marketplace">msgaddress</slice>
-                <slice name="nft">msgaddress</slice>
-                <slice name="owner">msgaddress</slice>
-                <int name="full_price">int257</int>
-                <tinyint name="market_fee">uint64</tinyint>
-                <slice name="royalty_address">msgaddress</slice>
-                <tinyint name="royalty_amount">uint64</tinyint>
-            </output>
+    <!--        NFT sale      -->
+    <get_method name="get_sale_data">
+        <output version="basic" fixed_length="true" interface="nft_sale">
+            <slice name="marketplace">msgaddress</slice>
+            <slice name="nft">msgaddress</slice>
+            <slice name="owner">msgaddress</slice>
+            <int name="full_price">int257</int>
+            <tinyint name="market_fee">uint64</tinyint>
+            <slice name="royalty_address">msgaddress</slice>
+            <tinyint name="royalty_amount">uint64</tinyint>
+        </output>
 
-            <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
-                <tinyint name="fix_price">uint64</tinyint>
-                <tinyint name="is_complete">bool</tinyint>
-                <tinyint name="created_at">uint64</tinyint>
-                <slice name="marketplace">msgaddress</slice>
-                <slice name="nft">msgaddress</slice>
-                <slice name="owner">msgaddress</slice>
-                <int name="full_price">int257</int>
-                <slice name="market_fee_address">msgaddress</slice>
-                <tinyint name="market_fee">uint64</tinyint>
-                <slice name="royalty_address">msgaddress</slice>
-                <tinyint name="royalty_amount">uint64</tinyint>
-            </output>
-        </get_method>
+        <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
+            <tinyint name="fix_price">uint64</tinyint>
+            <tinyint name="is_complete">bool</tinyint>
+            <tinyint name="created_at">uint64</tinyint>
+            <slice name="marketplace">msgaddress</slice>
+            <slice name="nft">msgaddress</slice>
+            <slice name="owner">msgaddress</slice>
+            <int name="full_price">int257</int>
+            <slice name="market_fee_address">msgaddress</slice>
+            <tinyint name="market_fee">uint64</tinyint>
+            <slice name="royalty_address">msgaddress</slice>
+            <tinyint name="royalty_amount">uint64</tinyint>
+        </output>
+    </get_method>
 
-<!--        SBT    -->
-        <get_method name="get_authority_address" interface="tep85">
-            <output>
-                <slice name="address">msgaddress</slice>
-            </output>
-        </get_method>
-        <get_method name="get_revoked_time" interface="tep85">
-            <output>
-                <tinyint name="time">uint64</tinyint>
-            </output>
-        </get_method>
+    <!--        SBT    -->
+    <get_method name="get_authority_address" interface="tep85">
+        <output>
+            <slice name="address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_revoked_time" interface="tep85">
+        <output>
+            <tinyint name="time">uint64</tinyint>
+        </output>
+    </get_method>
 
-<!--        Payment channels    -->
-        <get_method name="get_channel_state" interface="payment_channel">
-            <output>
-                <tinyint name="state">uint64</tinyint>
-            </output>
-        </get_method>
+    <!--        Payment channels    -->
+    <get_method name="get_channel_state" interface="payment_channel">
+        <output>
+            <tinyint name="state">uint64</tinyint>
+        </output>
+    </get_method>
 
-<!--      Storage    -->
-        <get_method name="get_wallet_params"  interface="storage_provider">
-            <output>
-                <tinyint name="seqno">uint32</tinyint>
-                <tinyint name="subwallet">uint32</tinyint>
-                <int name="public_key">int257</int>
-            </output>
-        </get_method>
-        <get_method name="get_storage_params"  interface="storage_provider">
-            <output>
-                <tinyint name="accept_new_contracts">bool</tinyint>
-                <tinyint name="rate_per_mb_day">uint64</tinyint>
-                <tinyint name="max_span">uint32</tinyint>
-                <tinyint name="minimal_file_size">uint64</tinyint>
-                <tinyint name="maximal_file_size">uint64</tinyint>
-            </output>
-        </get_method>
-        <get_method name="get_storage_contract_address"  interface="storage_provider">
-            <input>
-                <int name="merkle_hash">int257</int>
-                <tinyint name="file_size">uint64</tinyint>
-                <slice name="client">msgaddress</slice>
-                <int name="torrent_hash">int257</int>
-            </input>
-            <output>
-                <slice name="storage_contract_address">msgaddress</slice>
-            </output>
-        </get_method>
-        <get_method name="get_storage_contract_data" interface="storage_contract">
-            <output>
-                <tinyint name="active">bool</tinyint>
-                <tinyint name="balance">uint64</tinyint>
-                <slice name="provider,">msgaddress</slice>
-                <int name="merkle_hash">int257</int>
-                <tinyint name="file_size">uint64</tinyint>
-                <tinyint name="next_proof">uint64</tinyint>
-                <tinyint name="rate_per_mb_day">uint64</tinyint>
-                <tinyint name="max_span">uint32</tinyint>
-                <tinyint name="last_proof_time">uint32</tinyint>
-                <slice name="client">msgaddress</slice>
-                <int name="torrent_hash">int257</int>
-            </output>
-        </get_method>
-        <get_method name="get_torrent_hash" interface="storage_contract">
-            <output>
-                <int name="torrent_hash">int257</int>
-            </output>
-        </get_method>
-        <get_method name="is_active" interface="storage_contract">
-            <output>
-                <tinyint name="is_active">bool</tinyint>
-            </output>
-        </get_method>
-        <get_method name="get_next_proof_info" interface="storage_contract">
-            <output>
-                <tinyint name="next_proof">uint64</tinyint>
-                <tinyint name="last_proof_time">uint32</tinyint>
-                <tinyint name="max_span">uint32</tinyint>
-            </output>
-        </get_method>
+    <!--      Storage    -->
+    <get_method name="get_wallet_params" interface="storage_provider">
+        <output>
+            <tinyint name="seqno">uint32</tinyint>
+            <tinyint name="subwallet">uint32</tinyint>
+            <int name="public_key">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_storage_params" interface="storage_provider">
+        <output>
+            <tinyint name="accept_new_contracts">bool</tinyint>
+            <tinyint name="rate_per_mb_day">uint64</tinyint>
+            <tinyint name="max_span">uint32</tinyint>
+            <tinyint name="minimal_file_size">uint64</tinyint>
+            <tinyint name="maximal_file_size">uint64</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_storage_contract_address" interface="storage_provider">
+        <input>
+            <int name="merkle_hash">int257</int>
+            <tinyint name="file_size">uint64</tinyint>
+            <slice name="client">msgaddress</slice>
+            <int name="torrent_hash">int257</int>
+        </input>
+        <output>
+            <slice name="storage_contract_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_storage_contract_data" interface="storage_contract">
+        <output>
+            <tinyint name="active">bool</tinyint>
+            <tinyint name="balance">uint64</tinyint>
+            <slice name="provider,">msgaddress</slice>
+            <int name="merkle_hash">int257</int>
+            <tinyint name="file_size">uint64</tinyint>
+            <tinyint name="next_proof">uint64</tinyint>
+            <tinyint name="rate_per_mb_day">uint64</tinyint>
+            <tinyint name="max_span">uint32</tinyint>
+            <tinyint name="last_proof_time">uint32</tinyint>
+            <slice name="client">msgaddress</slice>
+            <int name="torrent_hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_torrent_hash" interface="storage_contract">
+        <output>
+            <int name="torrent_hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="is_active" interface="storage_contract">
+        <output>
+            <tinyint name="is_active">bool</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_next_proof_info" interface="storage_contract">
+        <output>
+            <tinyint name="next_proof">uint64</tinyint>
+            <tinyint name="last_proof_time">uint32</tinyint>
+            <tinyint name="max_span">uint32</tinyint>
+        </output>
+    </get_method>
 
-<!--        Nominators     -->
-        <get_method name="list_nominators" interface="tf_nominator">
-            <output>
-                <tuple name="nominators" list="true">
-                    <int name="address">bits256</int>
-                    <tinyint name="amount">uint64</tinyint>
-                    <tinyint name="pending_deposit_amount">uint64</tinyint>
-                    <tinyint name="withdraw_requested">bool</tinyint>
-                </tuple>
-            </output>
-        </get_method>
-        <get_method name="list_votes" interface="tf_nominator">
-            <output>
-                <tuple name="votes" list="true">
-                    <int name="proposal_hash">bits256</int>
-                    <tinyint name="vote_create_time">uint32</tinyint>
-                </tuple>
-            </output>
-        </get_method>
+    <!--        Nominators     -->
+    <get_method name="list_nominators" interface="tf_nominator">
+        <output>
+            <tuple name="nominators" list="true">
+                <int name="address">bits256</int>
+                <tinyint name="amount">uint64</tinyint>
+                <tinyint name="pending_deposit_amount">uint64</tinyint>
+                <tinyint name="withdraw_requested">bool</tinyint>
+            </tuple>
+        </output>
+    </get_method>
+    <get_method name="list_votes" interface="tf_nominator">
+        <output>
+            <tuple name="votes" list="true">
+                <int name="proposal_hash">bits256</int>
+                <tinyint name="vote_create_time">uint32</tinyint>
+            </tuple>
+        </output>
+    </get_method>
 
-        <!--    Text    -->
-        <internal name="text_comment">
-            <input>
-                text_comment#00000000 text:Text = InternalMsgBody;
-            </input>
-        </internal>
+    <!--    Text    -->
+    <internal name="text_comment">
+            text_comment#00000000 text:Text = InternalMsgBody;
+    </internal>
+    <internal name="excess">
 
-        <!--        Subscriptions     -->
-        <internal name="payment_request" interface="wallet_v4r2">
-            <input>
-                request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
-            </input>
-            <output>
-                payment_request_response#f06c7567 query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="destruct" interface="wallet_v4r2">
-            <input>
-                destruct#64737472 query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                destruct_response#e4737472 query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
+            excesses#d53276db query_id:uint64 = InternalMsgBody;
 
-<!--        NFTs       -->
-        <internal name="nft_transfer" interface="tep62">
-            <input>
-                transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
-                custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell) =
-                InternalMsgBody;
-            </input>
-            <output>
-                ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) =
-                InternalMsgBody;
-            </output>
-            <output>
-                excesses#d53276db query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="get_static_data"  interface="tep62">
-            <input>
-                get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="get_royalty_params" interface="tep66">
-            <input>
-                get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16
-                destination:MsgAddress = InternalMsgBody;
-            </output>
-        </internal>
+    </internal>
+
+    <!--        Subscriptions     -->
+    <internal name="payment_request" interface="wallet_v4r2">
+        request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
+    </internal>
+    <internal name="payment_request_response" interface="wallet_v4r2">
+        payment_request_response#f06c7567 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_plugin_destruct" interface="wallet_v4r2">
+        destruct#64737472 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_plugin_destruct_response" interface="wallet_v4r2">
+        destruct_response#e4737472 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <!--        NFTs       -->
+    <internal name="nft_transfer" interface="tep62">
+        transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
+        custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell) =
+        InternalMsgBody;
+    </internal>
+    <internal name="nft_ownership_assigned" interface="tep62">
+        ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) =
+        InternalMsgBody;
+    </internal>
+    <internal name="get_static_data" interface="tep62">
+        get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="report_static_data" interface="tep62">
+        report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
+    </internal>
+    <internal name="get_royalty_params" interface="tep66">
+        get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="report_royalty_params" interface="tep66">
+        report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16
+        destination:MsgAddress = InternalMsgBody;
+    </internal>
 
 
-<!--        Jettons    -->
-        <internal name="jetton_transfer" interface="tep74">
-            <input>
-                transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
-                response_destination:MsgAddress custom_payload:(Maybe ^Cell)
-                forward_ton_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell)
-                = InternalMsgBody;
-            </input>
-            <output>
-                internal_transfer#178d4519 query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
-                response_address:MsgAddress
-                forward_ton_amount:(VarUInteger 16)
-                <!--                forward_payload:(Either Cell ^Cell) to prevent fail decoding at invalid forward_payload-->
-                = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="jetton_internal_transfer"  interface="tep74">
-            <input>
-                internal_transfer#178d4519 query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
-                response_address:MsgAddress
-                forward_ton_amount:(VarUInteger 16)
-                <!--                forward_payload:(Either Cell ^Cell)-->
-                = InternalMsgBody;
-            </input>
-            <output>
-                transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
-                sender:MsgAddress forward_payload:(Either Cell ^Cell)
-                = InternalMsgBody;
-            </output>
-            <output>
-                excesses#d53276db query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="burn"  interface="tep74">
-            <input>
-                burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
-                response_destination:MsgAddress custom_payload:(Maybe ^Cell)
-                = InternalMsgBody;
-            </input>
-            <output>
-                excesses#d53276db query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
+    <!--        Jettons    -->
+    <internal name="jetton_transfer" interface="tep74">
 
-<!--    SBT     -->
-        <internal name="prove_ownership" interface="tep85">
-            <input>
-                prove_ownership#04ded148 query_id:uint64 dest:MsgAddress
-                forward_payload:^Cell with_content:Bool = InternalMsgBody;
-            </input>
-            <output>
-                ownership_proof#0524c7ae query_id:uint64 item_id:uint256 owner:MsgAddress
-                data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="request_owner" interface="tep85">
-            <input>
-                request_owner#d0c3bfea query_id:uint64 dest:MsgAddress
-                forward_payload:^Cell with_content:Bool = InternalMsgBody;
-            </input>
-            <output>
-                owner_info#0dd607e3 query_id:uint64 item_id:uint256 initiator:MsgAddress owner:MsgAddress
-                data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="destroy" interface="tep85">
-            <input>
-                destroy#1f04537a query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                excesses#d53276db query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="revoke" interface="tep85">
-            <input>
-                revoke#6f89f5e3 query_id:uint64 = InternalMsgBody;
-            </input>
-        </internal>
+        transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
+        response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+        forward_ton_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell)
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_internal_transfer" interface="tep74">
+        internal_transfer#178d4519 query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
+        response_address:MsgAddress
+        forward_ton_amount:(VarUInteger 16)
+        <!--                forward_payload:(Either Cell ^Cell)-->
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_burn" interface="tep74">
+        burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
+        response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+        = InternalMsgBody;
+    </internal>
+
+    <!--    SBT     -->
+    <internal name="prove_ownership" interface="tep85">
+        prove_ownership#04ded148 query_id:uint64 dest:MsgAddress
+        forward_payload:^Cell with_content:Bool = InternalMsgBody;
+    </internal>
+    <internal name="ownership_proof" interface="tep85">
+        ownership_proof#0524c7ae query_id:uint64 item_id:uint256 owner:MsgAddress
+        data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+    <internal name="sbt_request_owner" interface="tep85">
+        request_owner#d0c3bfea query_id:uint64 dest:MsgAddress
+        forward_payload:^Cell with_content:Bool = InternalMsgBody;
+    </internal>
+    <internal name="sbt_owner_info" interface="tep85">
+        owner_info#0dd607e3 query_id:uint64 item_id:uint256 initiator:MsgAddress owner:MsgAddress
+        data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+    <internal name="sbt_destroy" interface="tep85">
+        destroy#1f04537a query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="sbt_revoke" interface="tep85">
+        revoke#6f89f5e3 query_id:uint64 = InternalMsgBody;
+    </internal>
 
 
-<!--        Payment channels     -->
-        <internal name="top_up_balance" interface="payment_channel">
-            <input>
-                top_up_balance#67c7d281 add_A:Coins add_B:Coins = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="init_channel" interface="payment_channel">
-            <input>
-                init_channel#0e0620c2 is_A:Bool signature:bits512 tag:# channel_id:uint128 balance_A:Coins
-                balance_B:Coins = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="cooperative_close" interface="payment_channel">
-            <input>
-                cooperative_close#5577587e sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 balance_A:Coins
-                balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="cooperative_commit" interface="payment_channel">
-            <input>
-                cooperative_commit#79a126ef sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 seqno_A:uint64
-                seqno_B:uint64 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="start_uncooperative_close" interface="payment_channel">
-            <input>
-                start_uncooperative_close#1f151acf signed_by_A:Bool signature:bits512 tag:# channel_id:uint128
-                sch_A:^SignedSemiChannel
-                sch_B:^SignedSemiChannel = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="challenge_quarantined_state" interface="payment_channel">
-            <input>
-                challenge_quarantined_state#088eaa32
-                challenged_by_A:Bool signature:bits512 tag:# channel_id:uint128
-                sch_A:^SignedSemiChannel
-                sch_B:^SignedSemiChannel = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="settle_conditionals" interface="payment_channel">
-            <input>
-                settle_conditionals#66f6f069
-                from_A:Bool signature:bits512 tag:# channel_id:uint128
-                conditionals_to_settle:(HashmapE 32 Cell)
-                = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="finish_uncooperative_close" interface="payment_channel">
-            <input>
-                finish_uncooperative_close#25432a91 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="channel_closed" interface="payment_channel">
-            <input>
-                channel_closed#dddc88ba channel_id:uint128 = InternalMsgBody;
-            </input>
-        </internal>
+    <!--        Payment channels     -->
+    <internal name="top_up_channel_balance" interface="payment_channel">
+        top_up_balance#67c7d281 add_A:Coins add_B:Coins = InternalMsgBody;
+    </internal>
+    <internal name="init_payment_channel" interface="payment_channel">
+        init_channel#0e0620c2 is_A:Bool signature:bits512 tag:# channel_id:uint128 balance_A:Coins
+        balance_B:Coins = InternalMsgBody;
+    </internal>
+    <internal name="channel_cooperative_close" interface="payment_channel">
+        cooperative_close#5577587e sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 balance_A:Coins
+        balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="channel_cooperative_commit" interface="payment_channel">
+        cooperative_commit#79a126ef sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 seqno_A:uint64
+        seqno_B:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="start_uncooperative_channel_close" interface="payment_channel">
+        start_uncooperative_close#1f151acf signed_by_A:Bool signature:bits512 tag:# channel_id:uint128
+        sch_A:^SignedSemiChannel
+        sch_B:^SignedSemiChannel = InternalMsgBody;
+    </internal>
+    <internal name="challenge_quarantined_channel_state" interface="payment_channel">
+        challenge_quarantined_state#088eaa32
+        challenged_by_A:Bool signature:bits512 tag:# channel_id:uint128
+        sch_A:^SignedSemiChannel
+        sch_B:^SignedSemiChannel = InternalMsgBody;
+    </internal>
+    <internal name="settle_channel_conditionals" interface="payment_channel">
+        settle_conditionals#66f6f069
+        from_A:Bool signature:bits512 tag:# channel_id:uint128
+        conditionals_to_settle:(HashmapE 32 Cell)
+        = InternalMsgBody;
+    </internal>
+    <internal name="finish_uncooperative_channel_close" interface="payment_channel">
+        finish_uncooperative_close#25432a91 = InternalMsgBody;
+    </internal>
+    <internal name="channel_closed" interface="payment_channel">
+        channel_closed#dddc88ba channel_id:uint128 = InternalMsgBody;
+    </internal>
 
 
-<!--        Storage   -->
-        <internal name="offer_storage_contract" interface="storage_provider">
-            <input>
-                offer_storage_contract#107c49ef
-                query_id:uint64 info:^TorrentInfo merkle_hash:bits256 expected_rate:Coins expected_max_span:uint32
-                = InternalMsgBody;
-            </input>
-            <output>
-                offer_storage_contract#107c49ef
-                query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="storage_contract_terminated"  interface="storage_provider">
-            <input>
-                storage_contract_terminated#b6236d63
-                query_id:uint64 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="update_pubkey"  interface="storage_provider">
-            <input>
-                update_pubkey#53f34cd6
-                query_id:uint64 new_pubkey:bits256 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="update_storage_params"  interface="storage_provider">
-            <input>
-                update_storage_params#54cbf19b
-                query_id:uint64 accept_new_contracts:Bool rate_per_mb_day:Coins max_span:uint32
-                minimal_file_size:uint64 maximal_file_size:uint64 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="offer_storage_contract" interface="storage_contract">
-            <input>
-                offer_storage_contract#107c49ef
-                query_id:uint64 = InternalMsgBody;
-            </input>
-        </internal>
-        <internal name="accept_storage_contract" interface="storage_contract">
-            <input>
-                accept_storage_contract#7a361688
-                query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                storage_contract_confirmed#d4caedcd
-                cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="close_contract" interface="storage_contract">
-            <input>
-                close_contract#79f937ea
-                query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                storage_contract_terminated#b6236d63
-                cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="withdraw" interface="storage_contract">
-            <input>
-                withdraw#46ed2e94
-                query_id:uint64 = InternalMsgBody;
-            </input>
-            <output>
-                reward_withdrawal#a91baf56
-                query_id:uint64 = InternalMsgBody;
-            </output>
-        </internal>
-        <internal name="proof_storage" interface="storage_contract">
-            <input>
-                proof_storage#419d5d4d
-                query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
-            </input>
-        </internal>
+    <!--        Storage   -->
+    <internal name="deploy_storage_contract" interface="storage_provider">
+        deploy_storage_contract#e4748df1
+        query_id:uint64 info:^TorrentInfo merkle_hash:bits256 expected_rate:Coins expected_max_span:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="update_pubkey" interface="storage_provider">
+        update_pubkey#53f34cd6
+        query_id:uint64 new_pubkey:bits256 = InternalMsgBody;
+    </internal>
+    <internal name="update_storage_params" interface="storage_provider">
+        update_storage_params#54cbf19b
+        query_id:uint64 accept_new_contracts:Bool rate_per_mb_day:Coins max_span:uint32
+        minimal_file_size:uint64 maximal_file_size:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="offer_storage_contract" interface="storage_contract">
+        offer_storage_contract#107c49ef
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="accept_storage_contract" interface="storage_contract">
+        accept_storage_contract#7a361688
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="storage_contract_confirmed" interface="storage_contract">
+        storage_contract_confirmed#d4caedcd
+        cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
+    </internal>
+    <internal name="close_storage_contract" interface="storage_contract">
+        close_contract#79f937ea
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="storage_contract_terminated" interface="storage_contract" interface="storage_provider">
+        storage_contract_terminated#b6236d63
+        cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
+    </internal>
+    <internal name="storage_withdraw" interface="storage_contract">
+        withdraw#46ed2e94
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="storage_reward_withdrawal" interface="storage_contract">
+        reward_withdrawal#a91baf56
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="proof_storage" interface="storage_contract">
+        proof_storage#419d5d4d
+        query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
+    </internal>
 
 
-        <!--        Wallets     -->
-        <external name="wallet_signed_v3" interface="wallet_v3">
-            <input>
-                signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
-                ExternalMsgBody;
-            </input>
-        </external>
-        <external name="wallet_signed_v3" interface="wallet_v4">
-            <input>
-                signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-                payload:PayloadV1toV4 = ExternalMsgBody;
-            </input>
-        </external>
+    <!--        Wallets     -->
+    <external name="wallet_signed_v3" interface="wallet_v3">
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
+        ExternalMsgBody;
+    </external>
+    <external name="wallet_signed_v3" interface="wallet_v4">
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
+        payload:PayloadV1toV4 = ExternalMsgBody;
+    </external>
 </abi>

@@ -536,6 +536,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	104346: {GetStorageParams},
 	106029: {GetJettonData},
 	106901: {GetChannelState},
+	107653: {GetPluginList},
 	111161: {ListNominators},
 	122058: {IsActive},
 	130271: {GetWalletParams},
@@ -553,6 +554,7 @@ var ResultTypes = []interface{}{
 	&GetNftAddressByIndexResult{},
 	&GetNftContentResult{},
 	&GetNftDataResult{},
+	&GetPluginListResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
 	&GetSaleData_BasicResult{},
@@ -635,6 +637,29 @@ func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID tongo.A
 	var result GetSubwalletIdResult
 	err = stack.Unmarshal(&result)
 	return "GetSubwalletIdResult", result, err
+}
+
+type GetPluginListResult struct {
+	Plugins []struct {
+		Workchain int32
+		Address   tlb.Bits256
+	}
+}
+
+func GetPluginList(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 107653 for "get_plugin_list" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 107653, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetPluginListResult
+	err = stack.Unmarshal(&result)
+	return "GetPluginListResult", result, err
 }
 
 type IsPluginInstalledResult struct {
@@ -1423,6 +1448,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_nft_data",
 		ImplementedBy: []ContractInterface{Tep62Item},
 		InvokeFn:      GetNftData,
+	},
+	{
+		Name:          "get_plugin_list",
+		ImplementedBy: []ContractInterface{WalletV4R2},
+		InvokeFn:      GetPluginList,
 	},
 	{
 		Name:          "get_public_key",

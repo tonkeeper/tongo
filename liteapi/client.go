@@ -620,13 +620,14 @@ func (c *Client) GetBlockProof(
 	return r, nil
 }
 
-func (c *Client) GetConfigAll(ctx context.Context, mode uint32) (tlb.ConfigParams, error) {
+// GetConfigAll returns a current configuration of the blockchain.
+func (c *Client) GetConfigAll(ctx context.Context, mode ConfigMode) (tlb.ConfigParams, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
 	r, err := c.getMasterchainServer().LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
-		Mode: mode,
+		Mode: uint32(mode),
 		Id:   liteclient.BlockIDExt(id),
 	})
 	if err != nil {
@@ -635,13 +636,13 @@ func (c *Client) GetConfigAll(ctx context.Context, mode uint32) (tlb.ConfigParam
 	return decodeConfigParams(r.ConfigProof)
 }
 
-func (c *Client) GetConfigParams(ctx context.Context, mode uint32, paramList []uint32) (tlb.ConfigParams, error) {
+func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList []uint32) (tlb.ConfigParams, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
 	r, err := c.getMasterchainServer().LiteServerGetConfigParams(ctx, liteclient.LiteServerGetConfigParamsRequest{
-		Mode:      mode,
+		Mode:      uint32(mode),
 		Id:        liteclient.BlockIDExt(id),
 		ParamList: paramList,
 	})

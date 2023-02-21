@@ -10,7 +10,7 @@ import (
 )
 
 func Benchmark_Tlb_Unmarshal(b *testing.B) {
-	data, err := os.ReadFile("../testdata/raw-block.bin")
+	data, err := os.ReadFile("../testdata/raw-13516764.bin")
 	if err != nil {
 		b.Errorf("ReadFile() failed: %v", err)
 	}

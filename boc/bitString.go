@@ -202,16 +202,21 @@ func (s *BitString) ReadBigUint(bitLen int) (*big.Int, error) {
 	if bitLen == 0 {
 		return big.NewInt(0), nil
 	}
-	var res = ""
-	for i := 0; i < bitLen; i++ {
-		if s.mustReadBit() {
-			res += "1"
-		} else {
-			res += "0"
-		}
-	}
 	var num = big.NewInt(0)
-	num.SetString(res, 2)
+	var b []byte
+	var err error
+	if bitLen%8 != 0 {
+		firstByte, err := s.ReadUint(bitLen % 8)
+		if err != nil {
+			return nil, err
+		}
+		b = []byte{byte(firstByte)}
+	}
+	b, err = s.ReadBytes(bitLen / 8)
+	if err != nil {
+		return nil, err
+	}
+	num.SetBytes(b)
 	return num, nil
 }
 
@@ -229,7 +234,10 @@ func (s *BitString) ReadBigInt(bitLen int) (*big.Int, error) {
 		return big.NewInt(0), nil
 	}
 	if s.mustReadBit() {
-		var base, _ = s.ReadBigUint(bitLen - 1)
+		var base, err = s.ReadBigUint(bitLen - 1)
+		if err != nil {
+			return nil, err
+		}
 		var b = big.NewInt(2)
 		var nb = b.Exp(b, big.NewInt(int64(bitLen-1)), nil)
 		return base.Sub(base, nb), nil

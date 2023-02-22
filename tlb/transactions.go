@@ -173,7 +173,7 @@ type TransactionDescr struct {
 		Aborted   bool
 		Destroyed bool
 	} `tlbSumType:"trans_tick_tock$001"`
-	TransSplitPrepare struct {
+	TransSplitPrepare *struct {
 		SplitInfo SplitMergeInfo
 		StoragePh Maybe[TrStoragePhase]
 		ComputePh TrComputePhase
@@ -181,17 +181,17 @@ type TransactionDescr struct {
 		Aborted   bool
 		Destroyed bool
 	} `tlbSumType:"trans_split_prepare$0100"`
-	TransSplitInstall struct {
+	TransSplitInstall *struct {
 		SplitInfo          SplitMergeInfo
 		PrepareTransaction Any `tlb:"^"`
 		Installed          bool
 	} `tlbSumType:"trans_split_install$0101"`
-	TransMergePrepare struct {
+	TransMergePrepare *struct {
 		SplitInfo SplitMergeInfo
 		StoragePh TrStoragePhase
 		Aborted   bool
 	} `tlbSumType:"trans_merge_prepare$0110"`
-	TransMergeInstall struct {
+	TransMergeInstall *struct {
 		SplitInfo          SplitMergeInfo
 		PrepareTransaction Any `tlb:"^"` //Transaction]
 		StoragePh          Maybe[TrStoragePhase]

@@ -79,18 +79,15 @@ func newImmutableCell(c *Cell) (*immutableCell, error) {
 			continue
 		}
 
-		var repr []byte
+		x := sha256.New()
 		if hashIndex == offset {
 			// either i=0 or cellType=PrunedBranchCell
 			cellRepr := bocReprWithoutRefs(c, c.mask.Apply(i))
-			repr = make([]byte, 0, len(cellRepr)+len(imm.refs)*(hashSize+depthSize))
-			repr = append(repr, cellRepr...)
+			x.Write(cellRepr)
 		} else {
 			// i>0
-			repr = make([]byte, 2, 2+hashSize+len(imm.refs)*(hashSize+depthSize))
-			repr[0] = d1(c, c.mask.Apply(i))
-			repr[1] = d2(c)
-			repr = append(repr, imm.hashes[hashIndex-offset-1]...)
+			x.Write([]byte{d1(c, c.mask.Apply(i)), d2(c)})
+			x.Write(imm.hashes[hashIndex-offset-1])
 		}
 
 		childLevelIndex := i
@@ -102,7 +99,7 @@ func newImmutableCell(c *Cell) (*immutableCell, error) {
 			childDepth := ref.Depth(childLevelIndex)
 			var depthRepr [2]byte
 			binary.BigEndian.PutUint16(depthRepr[:], uint16(childDepth))
-			repr = append(repr, depthRepr[:]...)
+			x.Write(depthRepr[:])
 			if depth < childDepth {
 				depth = childDepth
 			}
@@ -115,12 +112,9 @@ func newImmutableCell(c *Cell) (*immutableCell, error) {
 		}
 		imm.depths = append(imm.depths, depth)
 		for _, ref := range imm.refs {
-			repr = append(repr, ref.Hash(childLevelIndex)...)
+			x.Write(ref.Hash(childLevelIndex))
 		}
-		x := sha256.New()
-		if _, err := x.Write(repr); err != nil {
-			return nil, err
-		}
+
 		imm.hashes = append(imm.hashes, x.Sum(nil))
 	}
 	return imm, nil

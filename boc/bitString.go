@@ -205,7 +205,7 @@ func (s *BitString) ReadBigUint(bitLen int) (*big.Int, error) {
 	var num = big.NewInt(0)
 	var b []byte
 	var err error
-	if bitLen%8 != 0 {
+	if bitLen&0b111 != 0 {
 		firstByte, err := s.ReadUint(bitLen % 8)
 		if err != nil {
 			return nil, err
@@ -255,7 +255,7 @@ func (s *BitString) ReadUint(bitLen int) (uint64, error) {
 	if bitLen == 0 {
 		return 0, nil
 	}
-	var res uint64 = 0
+	var res uint64
 	for i := bitLen - 1; i >= 0; i-- {
 		if s.mustReadBit() {
 			res |= 1 << i
@@ -283,9 +283,7 @@ func (s *BitString) ReadInt(bitLen int) (int64, error) {
 	if s.BitsAvailableForRead() < bitLen {
 		return 0, ErrNotEnoughBits
 	}
-	if bitLen == 0 {
-		return 0, nil
-	}
+
 	if bitLen == 1 {
 		if s.mustReadBit() {
 			return -1, nil
@@ -307,6 +305,10 @@ func (s *BitString) ReadInt(bitLen int) (int64, error) {
 }
 
 func (s *BitString) ReadByte() (byte, error) {
+	if s.rCursor&0b111 == 0 && s.BitsAvailableForRead() > 8 {
+		s.rCursor += 8
+		return s.buf[s.rCursor/8], nil
+	}
 	res, err := s.ReadUint(8)
 	if err != nil {
 		return 0, err
@@ -317,6 +319,11 @@ func (s *BitString) ReadByte() (byte, error) {
 func (s *BitString) ReadBytes(size int) ([]byte, error) {
 	if s.BitsAvailableForRead() < size*8 {
 		return nil, ErrNotEnoughBits
+	}
+	if s.rCursor&0b111 == 0 {
+		rCursor := s.rCursor
+		s.rCursor += size * 8
+		return s.buf[rCursor/8 : rCursor/8+size], nil
 	}
 	res := make([]byte, size)
 	for i := 0; i < size; i++ {
@@ -331,6 +338,12 @@ func (s *BitString) ReadBytes(size int) ([]byte, error) {
 
 func (s *BitString) ReadBits(n int) (BitString, error) {
 	bitString := NewBitString(n)
+	if s.rCursor&0b111 == 0 {
+		copy(bitString.buf, s.buf[s.rCursor/8:s.rCursor/8+len(bitString.buf)])
+		bitString.len = n
+		s.rCursor += n
+		return bitString, nil
+	}
 	for i := 0; i < n; i++ {
 		bit, err := s.ReadBit()
 		if err != nil {

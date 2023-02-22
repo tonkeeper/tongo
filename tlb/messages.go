@@ -374,37 +374,37 @@ type SimpleLib struct {
 //	fwd_fee:Grams proof_delivered:^Cell = InMsg;
 type InMsg struct {
 	SumType
-	MsgImportExt struct {
+	MsgImportExt *struct {
 		Msg         Message     `tlb:"^"`
 		Transaction Transaction `tlb:"^"`
 	} `tlbSumType:"msg_import_ext$000"`
-	MsgImportIhr struct {
+	MsgImportIhr *struct {
 		Msg          Message     `tlb:"^"`
 		Transaction  Transaction `tlb:"^"`
 		IhrFee       Grams
 		ProofCreated boc.Cell `tlb:"^"`
 	} `tlbSumType:"msg_import_ihr$010"`
-	MsgImportImm struct {
+	MsgImportImm *struct {
 		InMsg       MsgEnvelope `tlb:"^"`
 		Transaction Transaction `tlb:"^"`
 		FwdFee      Grams
 	} `tlbSumType:"msg_import_imm$011"`
-	MsgImportFin struct {
+	MsgImportFin *struct {
 		InMsg       MsgEnvelope `tlb:"^"`
 		Transaction Transaction `tlb:"^"`
 		FwdFee      Grams
 	} `tlbSumType:"msg_import_fin$100"`
-	MsgImportTr struct {
+	MsgImportTr *struct {
 		InMsg      MsgEnvelope `tlb:"^"`
 		OutMsg     MsgEnvelope `tlb:"^"`
 		TransitFee Grams
 	} `tlbSumType:"msg_import_tr$101"`
-	MsgDiscardFin struct {
+	MsgDiscardFin *struct {
 		InMsg         MsgEnvelope `tlb:"^"`
 		TransactionId uint64
 		FwdFee        Grams
 	} `tlbSumType:"msg_discard_fin$110"`
-	MsgDiscardTr struct {
+	MsgDiscardTr *struct {
 		InMsg          MsgEnvelope `tlb:"^"`
 		TransactionId  uint64
 		FwdFee         Grams

@@ -36,6 +36,7 @@ type GetMethodOutput struct {
 	Version     string        `xml:"version,attr"`
 	FixedLength bool          `xml:"fixed_length,attr"`
 	Stack       []StackRecord `xml:",any"`
+	Interface   string        `xml:"interface,attr"`
 }
 
 func (o GetMethodOutput) FullResultName(methodName string) string {

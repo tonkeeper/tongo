@@ -47,9 +47,10 @@ var (
 )
 
 type TLBMsgBody struct {
-	TypeName string
-	Tag      uint64
-	Code     string
+	TypeName      string
+	OperationName string
+	Tag           uint64
+	Code          string
 }
 
 type Generator struct {
@@ -222,9 +223,10 @@ func (g *Generator) registerMsgType(name, s string) error {
 	}
 
 	g.loadedTlbMsgTypes[uint32(tag.Val)] = TLBMsgBody{
-		TypeName: utils.ToCamelCase(name) + "MsgBody",
-		Tag:      tag.Val,
-		Code:     t,
+		TypeName:      utils.ToCamelCase(name) + "MsgBody",
+		OperationName: utils.ToCamelCase(name),
+		Tag:           tag.Val,
+		Code:          t,
 	}
 
 	return nil
@@ -489,7 +491,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
 		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].TypeName))
+		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].OperationName))
 	}
 
 	builder.WriteString("}\n")
@@ -510,9 +512,10 @@ type templateContext struct {
 }
 
 type methodDescription struct {
-	Name         string
-	InvokeFnName string
-	Interfaces   []string
+	Name                 string
+	InvokeFnName         string
+	InterfacePerTypeHint map[string]string // map[typeHint]ContractInterface
+	Interfaces           []string
 }
 
 func (g *Generator) RenderInvocationOrderList() (string, error) {
@@ -540,6 +543,25 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 		for i, iface := range method.Interfaces {
 			desc.Interfaces[i] = utils.ToCamelCase(iface)
 			context.Interfaces[utils.ToCamelCase(iface)] = iface
+		}
+		if len(method.Interfaces) == 0 {
+			// this means, interfaces are defined per "output":
+			//
+			// <get_method name="get_sale_data">
+			//    <output version="basic" fixed_length="true" interface="nft_sale">
+			//      <slice name="marketplace">msgaddress</slice>
+			//    </output>
+			//    <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
+			//       <tinyint name="fix_price">uint64</tinyint>
+			//    </output>
+			// </get_method>
+
+			desc.InterfacePerTypeHint = make(map[string]string)
+			for _, output := range method.Output {
+				context.Interfaces[utils.ToCamelCase(output.Interface)] = output.Interface
+				methodName := method.GolangFunctionName()
+				desc.InterfacePerTypeHint[output.FullResultName(methodName)] = utils.ToCamelCase(output.Interface)
+			}
 		}
 		sort.Strings(desc.Interfaces)
 		descriptions[invokeFnName] = desc

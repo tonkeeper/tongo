@@ -1,7 +1,11 @@
 package tlb
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -197,6 +201,134 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		a.SumType = "AddrVar"
 	}
 	return fmt.Errorf("invalid tag")
+}
+
+func (a MsgAddress) MarshalJSON() ([]byte, error) {
+	var x string
+	var extra string
+	switch a.SumType {
+	case "AddrExtern":
+		// we assume that AddrExtern.ExternalAddress has exactly AddrExtern.Len bits
+		// that's always true, if the current MsgAddress was deserialized from TL-B.
+		x = a.AddrExtern.ExternalAddress.ToFiftHex()
+	case "AddrStd":
+		if a.AddrStd.Anycast.Exists {
+			extra = fmt.Sprintf(":Anycast(%d,%s)", a.AddrStd.Anycast.Value.Depth, a.AddrStd.Anycast.Value.RewritePfx.ToFiftHex())
+		}
+		x = fmt.Sprintf("%d:%s", a.AddrStd.WorkchainId, a.AddrStd.Address.Hex())
+	case "AddrVar":
+		if a.AddrVar.Anycast.Exists {
+			extra = fmt.Sprintf(":Anycast(%d,%s)", a.AddrVar.Anycast.Value.Depth, a.AddrVar.Anycast.Value.RewritePfx.ToFiftHex())
+		}
+		// we assume that AddrVar.Address has exactly AddrVar.Len bits
+		// that's always true, if the current MsgAddress was deserialized from TL-B.
+		x = fmt.Sprintf("%d:%s", a.AddrVar.WorkchainId, a.AddrVar.Address.ToFiftHex())
+	}
+	return []byte(fmt.Sprintf(`"%s%s"`, x, extra)), nil
+}
+
+func (a *MsgAddress) UnmarshalJSON(b []byte) error {
+	value := strings.Trim(string(b), `"`)
+	if value == "" {
+		*a = MsgAddress{SumType: "AddrNone"}
+		return nil
+	}
+	parts := strings.Split(value, ":")
+	if len(parts) == 1 {
+		externalAddr, err := boc.BitStringFromFiftHex(value)
+		if err != nil {
+			return err
+		}
+		*a = MsgAddress{
+			SumType: "AddrExtern",
+			AddrExtern: struct {
+				Len             Uint9
+				ExternalAddress boc.BitString
+			}{
+				Len:             Uint9(externalAddr.BitsAvailableForRead()),
+				ExternalAddress: *externalAddr,
+			},
+		}
+		return nil
+	}
+	if len(parts) != 2 && len(parts) != 3 {
+		return fmt.Errorf("unknown MsgAddress format")
+	}
+	workchain, err := strconv.ParseInt(parts[0], 10, 8)
+	if err != nil {
+		return fmt.Errorf("failed to parse %v workchain: %w", parts[0], err)
+	}
+
+	var anycast *Anycast
+	if len(parts) == 3 {
+		if !strings.HasPrefix(parts[2], "Anycast(") || !strings.HasSuffix(parts[2], ")") {
+			return fmt.Errorf("unknown MsgAddress format")
+		}
+		var depth int
+		var prefix string
+		depthAndPrefix := parts[2][len("Anycast(") : len(parts[2])-1]
+		if _, err := fmt.Sscanf(depthAndPrefix, "%d,%s", &depth, &prefix); err != nil {
+			return fmt.Errorf("failed to parse Anycast in MsgAddress: %w", err)
+		}
+		pfx, err := boc.BitStringFromFiftHex(prefix)
+		if err != nil {
+			return fmt.Errorf("failed to parse Anycast in MsgAddress: %w", err)
+		}
+		anycast = &Anycast{
+			Depth:      uint32(depth),
+			RewritePfx: *pfx,
+		}
+	}
+	// try AddrStd first
+	if len(parts[1]) == 64 {
+		var dst [32]byte
+		_, err := hex.Decode(dst[:], []byte(parts[1]))
+		if err != nil {
+			return err
+		}
+		*a = MsgAddress{
+			SumType: "AddrStd",
+			AddrStd: struct {
+				Anycast     Maybe[Anycast]
+				WorkchainId int8
+				Address     Bits256
+			}{
+				WorkchainId: int8(workchain),
+				Address:     dst,
+			},
+		}
+		if anycast != nil {
+			a.AddrStd.Anycast = Maybe[Anycast]{
+				Exists: true,
+				Value:  *anycast,
+			}
+		}
+		return nil
+	}
+	bitstr, err := boc.BitStringFromFiftHex(parts[1])
+	if err != nil {
+		return fmt.Errorf("failed to parse fift hex: %w", err)
+	}
+	*a = MsgAddress{
+		SumType: "AddrVar",
+		AddrVar: struct {
+			Anycast     Maybe[Anycast]
+			AddrLen     Uint9
+			WorkchainId int32
+			Address     boc.BitString
+		}{
+			AddrLen:     Uint9(bitstr.BitsAvailableForRead()),
+			WorkchainId: int32(workchain),
+			Address:     *bitstr,
+		},
+	}
+	if anycast != nil {
+		a.AddrVar.Anycast = Maybe[Anycast]{
+			Exists: true,
+			Value:  *anycast,
+		}
+	}
+	return nil
 }
 
 // TickTock

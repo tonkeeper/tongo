@@ -13,18 +13,35 @@ type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 // MethodDescription describes a particular method and provides a function to execute it.
 type MethodDescription struct {
 	Name       string
-	// ImplementedBy is a list of contract interfaces that implement this method.
-	ImplementedBy []ContractInterface
 	// InvokeFn executes this method on a contract and returns parsed execution results.
 	InvokeFn InvokeFn
+	// ImplementedBy is a list of contract interfaces that implement this method.
+	// All contract interfaces share the same method with the same output type.
+	ImplementedBy []ContractInterface
+	// ImplementedByFn returns an implemented contract interface based on a type hint from InvokeFn.
+	// Contract interfaces share the same method name but output is different for each contract interface.
+	// Check GetSaleData out as an example.
+	ImplementedByFn func (typeName string) ContractInterface
 }
 
 var methodInvocationOrder = []MethodDescription{
 {{- range $method := .InvocationOrder }}
 	{
 	    Name: "{{ $method.Name }}",
-		ImplementedBy: []ContractInterface{  {{range $method.Interfaces }}{{.}},{{end}}  },
 		InvokeFn: {{ $method.InvokeFnName }},
+		{{- if $method.InterfacePerTypeHint }}
+		ImplementedByFn: func (typeHint string) ContractInterface {
+	        switch typeHint {
+	        {{- range $typeHint, $iface := $method.InterfacePerTypeHint }}
+	        case "{{ $typeHint }}":
+	            return {{ $iface }}
+	        {{- end }}
+	        }
+	        return ""
+		},
+		{{- else }}
+		ImplementedBy: []ContractInterface{  {{range $method.Interfaces }}{{.}},{{end}}  },
+		{{- end }}
 	},
 {{- end }}
 }

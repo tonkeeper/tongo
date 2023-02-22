@@ -84,7 +84,7 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		if err != nil {
 			continue
 		}
-		for _, ifaceName := range method.ImplementedBy {
+		for _, ifaceName := range method.implementedInterfaces(typeHint) {
 			if !isInterfaceAllowed(ifaceName, restricted) {
 				continue
 			}
@@ -112,6 +112,20 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 	return &ContractDescription{
 		Interfaces: implemented,
 	}, nil
+}
+
+func (m MethodDescription) implementedInterfaces(typeHint string) []ContractInterface {
+	if m.ImplementedByFn != nil {
+		// implementedByFn is optional,
+		// if it's defined,
+		// we use typeHint to get the exact contract interface.
+		iface := m.ImplementedByFn(typeHint)
+		if len(iface) > 0 {
+			return []ContractInterface{iface}
+		}
+		return nil
+	}
+	return m.ImplementedBy
 }
 
 func isInterfaceAllowed(name ContractInterface, restricted map[ContractInterface]struct{}) bool {

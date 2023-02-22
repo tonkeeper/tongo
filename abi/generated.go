@@ -1394,6 +1394,8 @@ type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
 const (
+	NftSale         ContractInterface = "nft_sale"
+	NftSaleGetgems  ContractInterface = "nft_sale_getgems"
 	PaymentChannel  ContractInterface = "payment_channel"
 	StorageContract ContractInterface = "storage_contract"
 	StorageProvider ContractInterface = "storage_provider"
@@ -1412,116 +1414,129 @@ type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 // MethodDescription describes a particular method and provides a function to execute it.
 type MethodDescription struct {
 	Name string
-	// ImplementedBy is a list of contract interfaces that implement this method.
-	ImplementedBy []ContractInterface
 	// InvokeFn executes this method on a contract and returns parsed execution results.
 	InvokeFn InvokeFn
+	// ImplementedBy is a list of contract interfaces that implement this method.
+	// All contract interfaces share the same method with the same output type.
+	ImplementedBy []ContractInterface
+	// ImplementedByFn returns an implemented contract interface based on a type hint from InvokeFn.
+	// Contract interfaces share the same method name but output is different for each contract interface.
+	// Check GetSaleData out as an example.
+	ImplementedByFn func(typeName string) ContractInterface
 }
 
 var methodInvocationOrder = []MethodDescription{
 	{
 		Name:          "get_authority_address",
-		ImplementedBy: []ContractInterface{Tep85},
 		InvokeFn:      GetAuthorityAddress,
+		ImplementedBy: []ContractInterface{Tep85},
 	},
 	{
 		Name:          "get_channel_state",
-		ImplementedBy: []ContractInterface{PaymentChannel},
 		InvokeFn:      GetChannelState,
+		ImplementedBy: []ContractInterface{PaymentChannel},
 	},
 	{
 		Name:          "get_collection_data",
-		ImplementedBy: []ContractInterface{Tep62Collection},
 		InvokeFn:      GetCollectionData,
+		ImplementedBy: []ContractInterface{Tep62Collection},
 	},
 	{
 		Name:          "get_jetton_data",
-		ImplementedBy: []ContractInterface{Tep74},
 		InvokeFn:      GetJettonData,
+		ImplementedBy: []ContractInterface{Tep74},
 	},
 	{
 		Name:          "get_next_proof_info",
-		ImplementedBy: []ContractInterface{StorageContract},
 		InvokeFn:      GetNextProofInfo,
+		ImplementedBy: []ContractInterface{StorageContract},
 	},
 	{
 		Name:          "get_nft_data",
-		ImplementedBy: []ContractInterface{Tep62Item},
 		InvokeFn:      GetNftData,
+		ImplementedBy: []ContractInterface{Tep62Item},
 	},
 	{
 		Name:          "get_plugin_list",
-		ImplementedBy: []ContractInterface{WalletV4R2},
 		InvokeFn:      GetPluginList,
+		ImplementedBy: []ContractInterface{WalletV4R2},
 	},
 	{
 		Name:          "get_public_key",
-		ImplementedBy: []ContractInterface{StorageProvider, Wallet},
 		InvokeFn:      GetPublicKey,
+		ImplementedBy: []ContractInterface{StorageProvider, Wallet},
 	},
 	{
 		Name:          "get_revoked_time",
-		ImplementedBy: []ContractInterface{Tep85},
 		InvokeFn:      GetRevokedTime,
+		ImplementedBy: []ContractInterface{Tep85},
 	},
 	{
-		Name:          "get_sale_data",
-		ImplementedBy: []ContractInterface{},
-		InvokeFn:      GetSaleData,
+		Name:     "get_sale_data",
+		InvokeFn: GetSaleData,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetSaleData_BasicResult":
+				return NftSale
+			case "GetSaleData_GetgemsResult":
+				return NftSaleGetgems
+			}
+			return ""
+		},
 	},
 	{
 		Name:          "get_storage_contract_data",
-		ImplementedBy: []ContractInterface{StorageContract},
 		InvokeFn:      GetStorageContractData,
+		ImplementedBy: []ContractInterface{StorageContract},
 	},
 	{
 		Name:          "get_storage_params",
-		ImplementedBy: []ContractInterface{StorageProvider},
 		InvokeFn:      GetStorageParams,
+		ImplementedBy: []ContractInterface{StorageProvider},
 	},
 	{
 		Name:          "get_subwallet_id",
-		ImplementedBy: []ContractInterface{WalletV4R2},
 		InvokeFn:      GetSubwalletId,
+		ImplementedBy: []ContractInterface{WalletV4R2},
 	},
 	{
 		Name:          "get_torrent_hash",
-		ImplementedBy: []ContractInterface{StorageContract},
 		InvokeFn:      GetTorrentHash,
+		ImplementedBy: []ContractInterface{StorageContract},
 	},
 	{
 		Name:          "get_wallet_data",
-		ImplementedBy: []ContractInterface{Tep74},
 		InvokeFn:      GetWalletData,
+		ImplementedBy: []ContractInterface{Tep74},
 	},
 	{
 		Name:          "get_wallet_params",
-		ImplementedBy: []ContractInterface{StorageProvider},
 		InvokeFn:      GetWalletParams,
+		ImplementedBy: []ContractInterface{StorageProvider},
 	},
 	{
 		Name:          "is_active",
-		ImplementedBy: []ContractInterface{StorageContract},
 		InvokeFn:      IsActive,
+		ImplementedBy: []ContractInterface{StorageContract},
 	},
 	{
 		Name:          "list_nominators",
-		ImplementedBy: []ContractInterface{TfNominator},
 		InvokeFn:      ListNominators,
+		ImplementedBy: []ContractInterface{TfNominator},
 	},
 	{
 		Name:          "list_votes",
-		ImplementedBy: []ContractInterface{TfNominator},
 		InvokeFn:      ListVotes,
+		ImplementedBy: []ContractInterface{TfNominator},
 	},
 	{
 		Name:          "royalty_params",
-		ImplementedBy: []ContractInterface{Tep66},
 		InvokeFn:      RoyaltyParams,
+		ImplementedBy: []ContractInterface{Tep66},
 	},
 	{
 		Name:          "seqno",
-		ImplementedBy: []ContractInterface{StorageProvider, Wallet},
 		InvokeFn:      Seqno,
+		ImplementedBy: []ContractInterface{StorageProvider, Wallet},
 	},
 }

@@ -47,9 +47,10 @@ var (
 )
 
 type TLBMsgBody struct {
-	TypeName string
-	Tag      uint64
-	Code     string
+	TypeName      string
+	OperationName string
+	Tag           uint64
+	Code          string
 }
 
 type Generator struct {
@@ -222,9 +223,10 @@ func (g *Generator) registerMsgType(name, s string) error {
 	}
 
 	g.loadedTlbMsgTypes[uint32(tag.Val)] = TLBMsgBody{
-		TypeName: utils.ToCamelCase(name) + "MsgBody",
-		Tag:      tag.Val,
-		Code:     t,
+		TypeName:      utils.ToCamelCase(name) + "MsgBody",
+		OperationName: utils.ToCamelCase(name),
+		Tag:           tag.Val,
+		Code:          t,
 	}
 
 	return nil
@@ -489,7 +491,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
 		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].TypeName))
+		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].OperationName))
 	}
 
 	builder.WriteString("}\n")

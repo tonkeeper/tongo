@@ -510,9 +510,10 @@ type templateContext struct {
 }
 
 type methodDescription struct {
-	Name         string
-	InvokeFnName string
-	Interfaces   []string
+	Name                 string
+	InvokeFnName         string
+	InterfacePerTypeHint map[string]string // map[typeHint]ContractInterface
+	Interfaces           []string
 }
 
 func (g *Generator) RenderInvocationOrderList() (string, error) {
@@ -540,6 +541,25 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 		for i, iface := range method.Interfaces {
 			desc.Interfaces[i] = utils.ToCamelCase(iface)
 			context.Interfaces[utils.ToCamelCase(iface)] = iface
+		}
+		if len(method.Interfaces) == 0 {
+			// this means, interfaces are defined per "output":
+			//
+			// <get_method name="get_sale_data">
+			//    <output version="basic" fixed_length="true" interface="nft_sale">
+			//      <slice name="marketplace">msgaddress</slice>
+			//    </output>
+			//    <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
+			//       <tinyint name="fix_price">uint64</tinyint>
+			//    </output>
+			// </get_method>
+
+			desc.InterfacePerTypeHint = make(map[string]string)
+			for _, output := range method.Output {
+				context.Interfaces[utils.ToCamelCase(output.Interface)] = output.Interface
+				methodName := method.GolangFunctionName()
+				desc.InterfacePerTypeHint[output.FullResultName(methodName)] = utils.ToCamelCase(output.Interface)
+			}
 		}
 		sort.Strings(desc.Interfaces)
 		descriptions[invokeFnName] = desc

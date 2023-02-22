@@ -129,6 +129,9 @@ func (u Uint{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (u *Uint{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigUint({{.NameIndex}})
+	if err != nil {
+		return err
+	}
 	*u = Uint{{.NameIndex}}(*v)
 	return err
 }

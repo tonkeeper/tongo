@@ -538,7 +538,10 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	106901: {GetChannelState},
 	107653: {GetPluginList},
 	111161: {ListNominators},
+	120146: {GetPoolStatus},
 	122058: {IsActive},
+	123928: {GetStakingStatus},
+	127654: {GetMembers},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
 }
@@ -550,15 +553,18 @@ var ResultTypes = []interface{}{
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
 	&GetJettonDataResult{},
+	&GetMembers_WhalesNominatorResult{},
 	&GetNextProofInfoResult{},
 	&GetNftAddressByIndexResult{},
 	&GetNftContentResult{},
 	&GetNftDataResult{},
 	&GetPluginListResult{},
+	&GetPoolStatusResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
 	&GetSaleData_BasicResult{},
 	&GetSaleData_GetgemsResult{},
+	&GetStakingStatusResult{},
 	&GetStorageContractAddressResult{},
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
@@ -1390,23 +1396,100 @@ func ListVotes(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 	return "ListVotesResult", result, err
 }
 
+type GetStakingStatusResult struct {
+	StakeAt             uint32
+	StakeUntil          uint32
+	StakeSent           uint64
+	QuerySent           bool
+	CouldUnlock         bool
+	Locked              bool
+	ProxyStakeLockFinal bool
+}
+
+func GetStakingStatus(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 123928 for "get_staking_status" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 123928, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetStakingStatusResult
+	err = stack.Unmarshal(&result)
+	return "GetStakingStatusResult", result, err
+}
+
+type GetPoolStatusResult struct {
+	Balance                int64
+	BalanceSent            int64
+	BalancePendingDeposits int64
+	BalancePendingWithdraw int64
+	BalanceWithdraw        int64
+}
+
+func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 120146 for "get_pool_status" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 120146, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetPoolStatusResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolStatusResult", result, err
+}
+
+type GetMembers_WhalesNominatorResult struct {
+	Members []struct {
+		Address               tlb.MsgAddress
+		MemberBalance         int64
+		MemberPendingDeposit  int64
+		MemberPendingWithdraw int64
+		MemberWithdraw        int64
+	}
+}
+
+func GetMembers(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 127654 for "get_members" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 127654, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetMembers_WhalesNominatorResult
+	err = stack.Unmarshal(&result)
+	return "GetMembers_WhalesNominatorResult", result, err
+}
+
 type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
 const (
-	NftSale         ContractInterface = "nft_sale"
-	NftSaleGetgems  ContractInterface = "nft_sale_getgems"
-	PaymentChannel  ContractInterface = "payment_channel"
-	StorageContract ContractInterface = "storage_contract"
-	StorageProvider ContractInterface = "storage_provider"
-	Tep62Collection ContractInterface = "tep62_collection"
-	Tep62Item       ContractInterface = "tep62_item"
-	Tep66           ContractInterface = "tep66"
-	Tep74           ContractInterface = "tep74"
-	Tep85           ContractInterface = "tep85"
-	TfNominator     ContractInterface = "tf_nominator"
-	Wallet          ContractInterface = "wallet"
-	WalletV4R2      ContractInterface = "wallet_v4r2"
+	NftSale          ContractInterface = "nft_sale"
+	NftSaleGetgems   ContractInterface = "nft_sale_getgems"
+	PaymentChannel   ContractInterface = "payment_channel"
+	StorageContract  ContractInterface = "storage_contract"
+	StorageProvider  ContractInterface = "storage_provider"
+	Tep62Collection  ContractInterface = "tep62_collection"
+	Tep62Item        ContractInterface = "tep62_item"
+	Tep66            ContractInterface = "tep66"
+	Tep74            ContractInterface = "tep74"
+	Tep85            ContractInterface = "tep85"
+	TfNominator      ContractInterface = "tf_nominator"
+	Wallet           ContractInterface = "wallet"
+	WalletV4R2       ContractInterface = "wallet_v4r2"
+	WhalesNominators ContractInterface = "whales_nominators"
 )
 
 type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
@@ -1447,6 +1530,17 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{Tep74},
 	},
 	{
+		Name:     "get_members",
+		InvokeFn: GetMembers,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetMembers_WhalesNominatorResult":
+				return WhalesNominators
+			}
+			return ""
+		},
+	},
+	{
 		Name:          "get_next_proof_info",
 		InvokeFn:      GetNextProofInfo,
 		ImplementedBy: []ContractInterface{StorageContract},
@@ -1460,6 +1554,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_plugin_list",
 		InvokeFn:      GetPluginList,
 		ImplementedBy: []ContractInterface{WalletV4R2},
+	},
+	{
+		Name:          "get_pool_status",
+		InvokeFn:      GetPoolStatus,
+		ImplementedBy: []ContractInterface{WhalesNominators},
 	},
 	{
 		Name:          "get_public_key",
@@ -1483,6 +1582,11 @@ var methodInvocationOrder = []MethodDescription{
 			}
 			return ""
 		},
+	},
+	{
+		Name:          "get_staking_status",
+		InvokeFn:      GetStakingStatus,
+		ImplementedBy: []ContractInterface{WhalesNominators},
 	},
 	{
 		Name:          "get_storage_contract_data",

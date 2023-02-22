@@ -282,13 +282,46 @@
         </output>
     </get_method>
 
+    <!--    Whales nominators     -->
+    <get_method name="get_staking_status" interface="whales_nominators">
+        <output fixed_length="true">
+            <tinyint name="stake_at">uint32</tinyint>
+            <tinyint name="stake_until">uint32</tinyint>
+            <tinyint name="stake_sent">uint64</tinyint>
+            <tinyint name="query_sent">bool</tinyint>
+            <tinyint name="could_unlock">bool</tinyint>
+            <tinyint name="locked">bool</tinyint>
+            <tinyint name="proxy_stake_lock_final">bool</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_pool_status" interface="whales_nominators">
+        <output fixed_length="true">
+            <tinyint name="balance">int64</tinyint>
+            <tinyint name="balance_sent">int64</tinyint>
+            <tinyint name="balance_pending_deposits">int64</tinyint>
+            <tinyint name="balance_pending_withdraw">int64</tinyint>
+            <tinyint name="balance_withdraw">int64</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_members">
+        <output version="whales_nominator" interface="whales_nominators">
+            <tuple name="members" list="true">
+                <cell name="address">msgaddress</cell>
+                <tinyint name="member_balance">int64</tinyint>
+                <tinyint name="member_pending_deposit">int64</tinyint>
+                <tinyint name="member_pending_withdraw">int64</tinyint>
+                <tinyint name="member_withdraw">int64</tinyint>
+            </tuple>
+        </output>
+    </get_method>
+
     <!--    Text    -->
     <internal name="text_comment">
-            text_comment#00000000 text:Text = InternalMsgBody;
+        text_comment#00000000 text:Text = InternalMsgBody;
     </internal>
     <internal name="excess">
 
-            excesses#d53276db query_id:uint64 = InternalMsgBody;
+        excesses#d53276db query_id:uint64 = InternalMsgBody;
 
     </internal>
 

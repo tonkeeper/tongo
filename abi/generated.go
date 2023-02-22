@@ -354,167 +354,167 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 	case 0x0:
 		var res TextCommentMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TextCommentMsgBody", res, err
+		return "TextComment", res, err
 	case 0x4ded148:
 		var res ProveOwnershipMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProveOwnershipMsgBody", res, err
+		return "ProveOwnership", res, err
 	case 0x5138d91:
 		var res NftOwnershipAssignedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "NftOwnershipAssignedMsgBody", res, err
+		return "NftOwnershipAssigned", res, err
 	case 0x524c7ae:
 		var res OwnershipProofMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "OwnershipProofMsgBody", res, err
+		return "OwnershipProof", res, err
 	case 0x88eaa32:
 		var res ChallengeQuarantinedChannelStateMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChallengeQuarantinedChannelStateMsgBody", res, err
+		return "ChallengeQuarantinedChannelState", res, err
 	case 0xdd607e3:
 		var res SbtOwnerInfoMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtOwnerInfoMsgBody", res, err
+		return "SbtOwnerInfo", res, err
 	case 0xe0620c2:
 		var res InitPaymentChannelMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "InitPaymentChannelMsgBody", res, err
+		return "InitPaymentChannel", res, err
 	case 0xf8a7ea5:
 		var res JettonTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonTransferMsgBody", res, err
+		return "JettonTransfer", res, err
 	case 0x107c49ef:
 		var res OfferStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "OfferStorageContractMsgBody", res, err
+		return "OfferStorageContract", res, err
 	case 0x178d4519:
 		var res JettonInternalTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonInternalTransferMsgBody", res, err
+		return "JettonInternalTransfer", res, err
 	case 0x1f04537a:
 		var res SbtDestroyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtDestroyMsgBody", res, err
+		return "SbtDestroy", res, err
 	case 0x1f151acf:
 		var res StartUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StartUncooperativeChannelCloseMsgBody", res, err
+		return "StartUncooperativeChannelClose", res, err
 	case 0x25432a91:
 		var res FinishUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "FinishUncooperativeChannelCloseMsgBody", res, err
+		return "FinishUncooperativeChannelClose", res, err
 	case 0x2fcb26a2:
 		var res GetStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetStaticDataMsgBody", res, err
+		return "GetStaticData", res, err
 	case 0x419d5d4d:
 		var res ProofStorageMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProofStorageMsgBody", res, err
+		return "ProofStorage", res, err
 	case 0x46ed2e94:
 		var res StorageWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageWithdrawMsgBody", res, err
+		return "StorageWithdraw", res, err
 	case 0x53f34cd6:
 		var res UpdatePubkeyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "UpdatePubkeyMsgBody", res, err
+		return "UpdatePubkey", res, err
 	case 0x54cbf19b:
 		var res UpdateStorageParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "UpdateStorageParamsMsgBody", res, err
+		return "UpdateStorageParams", res, err
 	case 0x5577587e:
 		var res ChannelCooperativeCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelCooperativeCloseMsgBody", res, err
+		return "ChannelCooperativeClose", res, err
 	case 0x595f07bc:
 		var res JettonBurnMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonBurnMsgBody", res, err
+		return "JettonBurn", res, err
 	case 0x5fcc3d14:
 		var res NftTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "NftTransferMsgBody", res, err
+		return "NftTransfer", res, err
 	case 0x64737472:
 		var res WalletPluginDestructMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletPluginDestructMsgBody", res, err
+		return "WalletPluginDestruct", res, err
 	case 0x66f6f069:
 		var res SettleChannelConditionalsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SettleChannelConditionalsMsgBody", res, err
+		return "SettleChannelConditionals", res, err
 	case 0x67c7d281:
 		var res TopUpChannelBalanceMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TopUpChannelBalanceMsgBody", res, err
+		return "TopUpChannelBalance", res, err
 	case 0x693d3950:
 		var res GetRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetRoyaltyParamsMsgBody", res, err
+		return "GetRoyaltyParams", res, err
 	case 0x6f89f5e3:
 		var res SbtRevokeMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtRevokeMsgBody", res, err
+		return "SbtRevoke", res, err
 	case 0x706c7567:
 		var res PaymentRequestMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentRequestMsgBody", res, err
+		return "PaymentRequest", res, err
 	case 0x79a126ef:
 		var res ChannelCooperativeCommitMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelCooperativeCommitMsgBody", res, err
+		return "ChannelCooperativeCommit", res, err
 	case 0x79f937ea:
 		var res CloseStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "CloseStorageContractMsgBody", res, err
+		return "CloseStorageContract", res, err
 	case 0x7a361688:
 		var res AcceptStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "AcceptStorageContractMsgBody", res, err
+		return "AcceptStorageContract", res, err
 	case 0x8b771735:
 		var res ReportStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ReportStaticDataMsgBody", res, err
+		return "ReportStaticData", res, err
 	case 0xa8cb00ad:
 		var res ReportRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ReportRoyaltyParamsMsgBody", res, err
+		return "ReportRoyaltyParams", res, err
 	case 0xa91baf56:
 		var res StorageRewardWithdrawalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageRewardWithdrawalMsgBody", res, err
+		return "StorageRewardWithdrawal", res, err
 	case 0xb6236d63:
 		var res StorageContractTerminatedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractTerminatedMsgBody", res, err
+		return "StorageContractTerminated", res, err
 	case 0xd0c3bfea:
 		var res SbtRequestOwnerMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtRequestOwnerMsgBody", res, err
+		return "SbtRequestOwner", res, err
 	case 0xd4caedcd:
 		var res StorageContractConfirmedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractConfirmedMsgBody", res, err
+		return "StorageContractConfirmed", res, err
 	case 0xd53276db:
 		var res ExcessMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ExcessMsgBody", res, err
+		return "Excess", res, err
 	case 0xdddc88ba:
 		var res ChannelClosedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelClosedMsgBody", res, err
+		return "ChannelClosed", res, err
 	case 0xe4737472:
 		var res WalletPluginDestructResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletPluginDestructResponseMsgBody", res, err
+		return "WalletPluginDestructResponse", res, err
 	case 0xe4748df1:
 		var res DeployStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "DeployStorageContractMsgBody", res, err
+		return "DeployStorageContract", res, err
 	case 0xf06c7567:
 		var res PaymentRequestResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentRequestResponseMsgBody", res, err
+		return "PaymentRequestResponse", res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
 }

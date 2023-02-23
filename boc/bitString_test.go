@@ -136,3 +136,29 @@ func Test_JSON(t *testing.T) {
 	}
 
 }
+
+func TestBitString_ReadBits(t *testing.T) {
+	for length := 1; length < 32; length++ {
+		s := NewBitString(length)
+		for i := 0; i < length; i++ {
+			if err := s.WriteBit(true); err != nil {
+				t.Fatalf("WriteBit() failed: %v", err)
+			}
+		}
+		for startPos := 0; startPos <= length; startPos++ {
+			for readbits := 1; readbits <= length; readbits++ {
+				s.rCursor = startPos
+				_, err := s.ReadBits(readbits)
+				if startPos+readbits > length {
+					if err != ErrNotEnoughBits {
+						t.Fatalf("startPos: %v, readbits: %v, length: %v, err has to be ErrNotEnoughBits", startPos, readbits, length)
+					}
+					continue
+				}
+				if err != nil {
+					t.Fatalf("startPos: %v, readbits: %v, length: %v, err has to nil", startPos, readbits, length)
+				}
+			}
+		}
+	}
+}

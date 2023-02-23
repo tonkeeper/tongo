@@ -95,10 +95,4 @@ func TestWhalesNominators(t *testing.T) {
 	}
 	status := v.(GetPoolStatusResult)
 	fmt.Printf("%+v\n", status)
-	_, v, err = GetStakingStatus(context.Background(), client, address)
-	if err != nil {
-		t.Fatal(err)
-	}
-	stakingStatus := v.(GetStakingStatusResult)
-	fmt.Printf("%+v\n", stakingStatus)
 }

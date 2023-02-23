@@ -3,10 +3,9 @@ package tlb
 import (
 	"errors"
 	"fmt"
+	"github.com/tonkeeper/tongo/boc"
 	"strconv"
 	"strings"
-
-	"github.com/tonkeeper/tongo/boc"
 )
 
 var ErrInvalidTag = errors.New("invalid tag")
@@ -55,22 +54,28 @@ func encodeSumTag(c *boc.Cell, tag string) error {
 	return nil
 }
 
-func ParseTag(s string) (Tag, error) {
-	a := strings.Split(s, "$")
-	if len(a) == 2 {
-		x, err := strconv.ParseUint(a[1], 2, 32)
-		if err != nil {
-			return Tag{}, err
+func ParseTag(tagString string) (Tag, error) {
+	var separatorPlace int
+	var base int
+	var length int
+	for i, symbol := range tagString {
+		if symbol == '$' {
+			base = 2
+			separatorPlace = i
+			length = len(tagString) - separatorPlace - 1
+			break
 		}
-		return Tag{a[0], len(a[1]), x}, nil
-	}
-	a = strings.Split(s, "#")
-	if len(a) == 2 {
-		x, err := strconv.ParseUint(a[1], 16, 32)
-		if err != nil {
-			return Tag{}, err
+		if symbol == '#' {
+			base = 16
+			separatorPlace = i
+			length = (len(tagString) - separatorPlace - 1) * 4
+			break
 		}
-		return Tag{a[0], len(a[1]) * 4, x}, nil
 	}
-	return Tag{}, ErrInvalidTag
+	if base == 0 || len(tagString) == separatorPlace+1 {
+		return Tag{}, ErrInvalidTag
+	}
+
+	val, err := strconv.ParseUint(tagString[separatorPlace+1:], base, 32)
+	return Tag{Name: tagString[:separatorPlace], Len: length, Val: val}, err
 }

@@ -21,6 +21,9 @@ func Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, reflect.ValueOf(o), &decoder)
 }
 
+var bocCellType = reflect.TypeOf(boc.Cell{})
+var bitStringType = reflect.TypeOf(boc.BitString{})
+
 func decode(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 	t, err := parseTag(decoder.tag)
 	if err != nil {
@@ -90,11 +93,10 @@ func decode(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 		val.SetBool(b)
 		return nil
 	case reflect.Struct:
-		t := reflect.New(val.Type()).Interface()
-		switch t.(type) {
-		case *boc.Cell:
+		switch val.Type() {
+		case bocCellType:
 			return decodeCell(c, val)
-		case *boc.BitString:
+		case bitStringType:
 			return decodeBitString(c, val)
 		default:
 			return decodeStruct(c, val, decoder)

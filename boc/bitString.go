@@ -337,6 +337,9 @@ func (s *BitString) ReadBytes(size int) ([]byte, error) {
 }
 
 func (s *BitString) ReadBits(n int) (BitString, error) {
+	if s.BitsAvailableForRead() < n {
+		return BitString{}, ErrNotEnoughBits
+	}
 	bitString := NewBitString(n)
 	if s.rCursor&0b111 == 0 {
 		copy(bitString.buf, s.buf[s.rCursor/8:s.rCursor/8+len(bitString.buf)])

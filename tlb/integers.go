@@ -3347,6 +3347,9 @@ func (u Uint128) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (u *Uint128) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigUint(128)
+	if err != nil {
+		return err
+	}
 	*u = Uint128(*v)
 	return err
 }
@@ -3411,6 +3414,9 @@ func (u Uint256) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (u *Uint256) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigUint(256)
+	if err != nil {
+		return err
+	}
 	*u = Uint256(*v)
 	return err
 }
@@ -3475,6 +3481,9 @@ func (u Uint257) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (u *Uint257) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigUint(257)
+	if err != nil {
+		return err
+	}
 	*u = Uint257(*v)
 	return err
 }

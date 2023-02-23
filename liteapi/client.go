@@ -300,12 +300,7 @@ func (c *Client) SendMessage(ctx context.Context, payload []byte) (uint32, error
 	return res.Status, err
 }
 
-func (c *Client) RunSmcMethod(
-	ctx context.Context,
-	accountID tongo.AccountID,
-	method string,
-	params tlb.VmStack,
-) (uint32, tlb.VmStack, error) {
+func (c *Client) RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error) {
 	cell := boc.NewCell()
 	err := tlb.Marshal(cell, params)
 	if err != nil {
@@ -323,7 +318,7 @@ func (c *Client) RunSmcMethod(
 		Mode:     4,
 		Id:       liteclient.BlockIDExt(id),
 		Account:  liteclient.AccountID(accountID),
-		MethodId: uint64(utils.Crc16String(method)&0xffff) | 0x10000,
+		MethodId: uint64(methodID),
 		Params:   b,
 	}
 	server, err := c.getServerByAccountID(accountID)
@@ -344,6 +339,15 @@ func (c *Client) RunSmcMethod(
 	var result tlb.VmStack
 	err = tlb.Unmarshal(cells[0], &result)
 	return res.ExitCode, result, err
+}
+
+func (c *Client) RunSmcMethod(
+	ctx context.Context,
+	accountID tongo.AccountID,
+	method string,
+	params tlb.VmStack,
+) (uint32, tlb.VmStack, error) {
+	return c.RunSmcMethodByID(ctx, accountID, utils.MethodIdFromName(method), params)
 }
 
 func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {

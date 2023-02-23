@@ -3,6 +3,8 @@ package abi
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
+	"github.com/tonkeeper/tongo/liteapi"
 	"reflect"
 	"testing"
 
@@ -71,4 +73,32 @@ func TestGetPluginList(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestWhalesNominators(t *testing.T) {
+	address := tongo.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
+	client, err := liteapi.NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, v, err := GetMembers(context.Background(), client, address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	members := v.(GetMembers_WhalesNominatorResult).Members
+	if len(members) == 0 || members[0].Address.SumType != "AddrStd" {
+		t.Fatal(len(members))
+	}
+	_, v, err = GetPoolStatus(context.Background(), client, address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	status := v.(GetPoolStatusResult)
+	fmt.Printf("%+v\n", status)
+	_, v, err = GetStakingStatus(context.Background(), client, address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stakingStatus := v.(GetStakingStatusResult)
+	fmt.Printf("%+v\n", stakingStatus)
 }

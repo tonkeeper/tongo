@@ -563,6 +563,7 @@ var ResultTypes = []interface{}{
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
 	&GetSaleData_BasicResult{},
+	&GetSaleData_GetgemsAuctionResult{},
 	&GetSaleData_GetgemsResult{},
 	&GetStakingStatusResult{},
 	&GetStorageContractAddressResult{},
@@ -998,6 +999,29 @@ type GetSaleData_GetgemsResult struct {
 	RoyaltyAmount    uint64
 }
 
+type GetSaleData_GetgemsAuctionResult struct {
+	Magic            uint64
+	End              bool
+	EndTime          uint32
+	Marketplace      tlb.MsgAddress
+	Nft              tlb.MsgAddress
+	Owner            tlb.MsgAddress
+	LastBid          uint64
+	LastMember       tlb.MsgAddress
+	MinStep          uint64
+	MarketFeeAddress tlb.MsgAddress
+	MpFeeFactor      uint32
+	MpFeeBase        uint32
+	RoyaltyAddress   tlb.MsgAddress
+	RoyaltyFeeFactor uint32
+	RoyaltyFeeBase   uint32
+	MaxBid           uint64
+	MinBid           uint64
+	CreatedAt        uint32
+	LastBidAt        uint32
+	IsCanceled       bool
+}
+
 func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
@@ -1009,7 +1033,7 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeGetSaleData_BasicResult, decodeGetSaleData_GetgemsResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){decodeGetSaleData_BasicResult, decodeGetSaleData_GetgemsResult, decodeGetSaleData_GetgemsAuctionResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1112,6 +1136,92 @@ func decodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resu
 		MarketFee:        marketFee,
 		RoyaltyAddress:   royaltyAddress,
 		RoyaltyAmount:    royaltyAmount,
+	}, nil
+}
+
+func decodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 20 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTinyInt") || (stack[17].SumType != "VmStkTinyInt") || (stack[18].SumType != "VmStkTinyInt") || (stack[19].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var magic uint64
+	magic = uint64(stack[0].Int64())
+	var end bool
+	end = stack[1].Int64() != 0
+	var endTime uint32
+	endTime = uint32(stack[2].Int64())
+	var marketplace tlb.MsgAddress
+	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
+	if err != nil {
+		return "", nil, err
+	}
+	var nft tlb.MsgAddress
+	err = stack[4].VmStkSlice.UnmarshalToTlbStruct(&nft)
+	if err != nil {
+		return "", nil, err
+	}
+	var owner tlb.MsgAddress
+	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&owner)
+	if err != nil {
+		return "", nil, err
+	}
+	var lastBid uint64
+	lastBid = uint64(stack[6].Int64())
+	var lastMember tlb.MsgAddress
+	err = stack[7].VmStkSlice.UnmarshalToTlbStruct(&lastMember)
+	if err != nil {
+		return "", nil, err
+	}
+	var minStep uint64
+	minStep = uint64(stack[8].Int64())
+	var marketFeeAddress tlb.MsgAddress
+	err = stack[9].VmStkSlice.UnmarshalToTlbStruct(&marketFeeAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var mpFeeFactor uint32
+	mpFeeFactor = uint32(stack[10].Int64())
+	var mpFeeBase uint32
+	mpFeeBase = uint32(stack[11].Int64())
+	var royaltyAddress tlb.MsgAddress
+	err = stack[12].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	var royaltyFeeFactor uint32
+	royaltyFeeFactor = uint32(stack[13].Int64())
+	var royaltyFeeBase uint32
+	royaltyFeeBase = uint32(stack[14].Int64())
+	var maxBid uint64
+	maxBid = uint64(stack[15].Int64())
+	var minBid uint64
+	minBid = uint64(stack[16].Int64())
+	var createdAt uint32
+	createdAt = uint32(stack[17].Int64())
+	var lastBidAt uint32
+	lastBidAt = uint32(stack[18].Int64())
+	var isCanceled bool
+	isCanceled = stack[19].Int64() != 0
+	return "GetSaleData_GetgemsAuctionResult", GetSaleData_GetgemsAuctionResult{
+		Magic:            magic,
+		End:              end,
+		EndTime:          endTime,
+		Marketplace:      marketplace,
+		Nft:              nft,
+		Owner:            owner,
+		LastBid:          lastBid,
+		LastMember:       lastMember,
+		MinStep:          minStep,
+		MarketFeeAddress: marketFeeAddress,
+		MpFeeFactor:      mpFeeFactor,
+		MpFeeBase:        mpFeeBase,
+		RoyaltyAddress:   royaltyAddress,
+		RoyaltyFeeFactor: royaltyFeeFactor,
+		RoyaltyFeeBase:   royaltyFeeBase,
+		MaxBid:           maxBid,
+		MinBid:           minBid,
+		CreatedAt:        createdAt,
+		LastBidAt:        lastBidAt,
+		IsCanceled:       isCanceled,
 	}, nil
 }
 
@@ -1577,6 +1687,8 @@ var methodInvocationOrder = []MethodDescription{
 			switch typeHint {
 			case "GetSaleData_BasicResult":
 				return NftSale
+			case "GetSaleData_GetgemsAuctionResult":
+				return NftSaleGetgems
 			case "GetSaleData_GetgemsResult":
 				return NftSaleGetgems
 			}

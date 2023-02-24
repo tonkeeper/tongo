@@ -986,7 +986,7 @@ type GetSaleData_BasicResult struct {
 }
 
 type GetSaleData_GetgemsResult struct {
-	FixPrice         uint64
+	Magic            uint64
 	IsComplete       bool
 	CreatedAt        uint64
 	Marketplace      tlb.MsgAddress
@@ -1087,8 +1087,11 @@ func decodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resu
 	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var fixPrice uint64
-	fixPrice = uint64(stack[0].Int64())
+	var magic uint64
+	magic = uint64(stack[0].Int64())
+	if magic != 0x46495850 {
+		return "", nil, fmt.Errorf("required value mismatch")
+	}
 	var isComplete bool
 	isComplete = stack[1].Int64() != 0
 	var createdAt uint64
@@ -1125,7 +1128,7 @@ func decodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resu
 	var royaltyAmount uint64
 	royaltyAmount = uint64(stack[10].Int64())
 	return "GetSaleData_GetgemsResult", GetSaleData_GetgemsResult{
-		FixPrice:         fixPrice,
+		Magic:            magic,
 		IsComplete:       isComplete,
 		CreatedAt:        createdAt,
 		Marketplace:      marketplace,
@@ -1145,6 +1148,9 @@ func decodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType strin
 	}
 	var magic uint64
 	magic = uint64(stack[0].Int64())
+	if magic != 0x415543 {
+		return "", nil, fmt.Errorf("required value mismatch")
+	}
 	var end bool
 	end = stack[1].Int64() != 0
 	var endTime uint32

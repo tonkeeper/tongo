@@ -400,6 +400,11 @@ func (g *Generator) buildOutputDecoder(name string, r []StackRecord, isFixed boo
 			} else {
 				builder.WriteString(fmt.Sprintf("%s = %s(stack[%d].Int64())\n", recName, varType, i))
 			}
+			if len(s.RequiredValue) > 0 {
+				builder.WriteString(fmt.Sprintf("if %s != %v { \n", recName, s.RequiredValue))
+				builder.WriteString(`return "", nil, fmt.Errorf("required value mismatch")`)
+				builder.WriteString("}\n")
+			}
 		case "int":
 			builder.WriteString(fmt.Sprintf("%s = stack[%d].Int257()\n", recName, i))
 		case "slice":

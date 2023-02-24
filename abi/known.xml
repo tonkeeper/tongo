@@ -168,7 +168,7 @@
         </output>
 
         <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
-            <tinyint name="fix_price">uint64</tinyint>
+            <tinyint name="magic" required_value="0x46495850">uint64</tinyint>
             <tinyint name="is_complete">bool</tinyint>
             <tinyint name="created_at">uint64</tinyint>
             <slice name="marketplace">msgaddress</slice>
@@ -182,7 +182,7 @@
         </output>
 
         <output version="getgems_auction" fixed_length="true" interface="nft_sale_getgems">
-            <tinyint name="magic">uint64</tinyint>
+            <tinyint name="magic" required_value="0x415543">uint64</tinyint>
             <tinyint name="end">bool</tinyint>
             <tinyint name="end_time">uint32</tinyint>
             <slice name="marketplace">msgaddress</slice>

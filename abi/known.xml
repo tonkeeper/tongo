@@ -180,6 +180,29 @@
             <slice name="royalty_address">msgaddress</slice>
             <tinyint name="royalty_amount">uint64</tinyint>
         </output>
+
+        <output version="getgems_auction" fixed_length="true" interface="nft_sale_getgems">
+            <tinyint name="magic">uint64</tinyint>
+            <tinyint name="end">bool</tinyint>
+            <tinyint name="end_time">uint32</tinyint>
+            <slice name="marketplace">msgaddress</slice>
+            <slice name="nft">msgaddress</slice>
+            <slice name="owner">msgaddress</slice>
+            <tinyint name="last_bid">uint64</tinyint>
+            <slice name="last_member">msgaddress</slice>
+            <tinyint name="min_step">uint64</tinyint>
+            <slice name="market_fee_address">msgaddress</slice>
+            <tinyint name="mp_fee_factor">uint32</tinyint>
+            <tinyint name="mp_fee_base">uint32</tinyint>
+            <slice name="royalty_address">msgaddress</slice>
+            <tinyint name="royalty_fee_factor">uint32</tinyint>
+            <tinyint name="royalty_fee_base">uint32</tinyint>
+            <tinyint name="max_bid">uint64</tinyint>
+            <tinyint name="min_bid">uint64</tinyint>
+            <tinyint name="created_at">uint32</tinyint>
+            <tinyint name="last_bid_at">uint32</tinyint>
+            <tinyint name="is_canceled">bool</tinyint>
+        </output>
     </get_method>
 
     <!--        SBT    -->

@@ -337,6 +337,17 @@
             </tuple>
         </output>
     </get_method>
+    <get_method name="get_params">
+        <output version="whales_nominator"  interface="whales_nominators" fixed_length="true">
+            <tinyint name="enabled">bool</tinyint>
+            <tinyint name="updates_enables">bool</tinyint>
+            <tinyint name="min_stake">int64</tinyint>
+            <tinyint name="deposit_fee">int64</tinyint>
+            <tinyint name="withdraw_fee">int64</tinyint>
+            <tinyint name="pool_fee">int64</tinyint>
+            <tinyint name="receipt_price">int64</tinyint>
+        </output>
+    </get_method>
 
     <!--    Text    -->
     <internal name="text_comment">

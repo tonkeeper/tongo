@@ -6,6 +6,8 @@ import (
 
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type MethodInvocation struct {
@@ -57,14 +59,14 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 	if len(code) == 0 {
 		return &ContractDescription{}, nil
 	}
-	hash, err := getCodeHash(code)
+	info, err := getCodeInfo(code)
 	if err != nil {
 		return nil, err
 	}
 	var restricted map[ContractInterface]struct{}
 	implemented := make(map[ContractInterface]InterfaceDescription)
 
-	if wallets, ok := walletsByHashCode[hash.Hex()]; ok {
+	if wallets, ok := walletsByHashCode[info.hash.Hex()]; ok {
 		// ok, this is a wallet,
 		restricted = make(map[ContractInterface]struct{}, len(wallets))
 		for _, iface := range wallets {
@@ -78,6 +80,10 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 	for _, method := range ci.knownMethods {
 		// if this is a wallet, we execute only wallet methods
 		if !isMethodAllowed(method.ImplementedBy, restricted) {
+			continue
+		}
+		// let's avoid running get methods that we know don't exist
+		if !info.isMethodOkToTry(method.Name) {
 			continue
 		}
 		typeHint, result, err := method.InvokeFn(ctx, executor, reqAccountID)
@@ -148,7 +154,29 @@ func isMethodAllowed(implementedBy []ContractInterface, restricted map[ContractI
 	return false
 }
 
-func getCodeHash(code []byte) (*tongo.Bits256, error) {
+func (ci ContractDescription) ImplementedInterfaces() []ContractInterface {
+	results := make([]ContractInterface, 0, len(ci.Interfaces))
+	for ifaceName := range ci.Interfaces {
+		results = append(results, ifaceName)
+	}
+	return results
+}
+
+type codeInfo struct {
+	hash    tongo.Bits256
+	methods map[int64]struct{}
+}
+
+func (i codeInfo) isMethodOkToTry(name string) bool {
+	if i.methods == nil {
+		return true
+	}
+	methodID := utils.MethodIdFromName(name)
+	_, ok := i.methods[int64(methodID)]
+	return ok
+}
+
+func getCodeInfo(code []byte) (*codeInfo, error) {
 	cells, err := boc.DeserializeBoc(code)
 	if err != nil {
 		return nil, err
@@ -164,13 +192,25 @@ func getCodeHash(code []byte) (*tongo.Bits256, error) {
 	if err = hash.FromBytes(h); err != nil {
 		return nil, err
 	}
-	return &hash, nil
-}
-
-func (ci ContractDescription) ImplementedInterfaces() []ContractInterface {
-	results := make([]ContractInterface, 0, len(ci.Interfaces))
-	for ifaceName := range ci.Interfaces {
-		results = append(results, ifaceName)
+	cells[0].ResetCounters()
+	c, err := cells[0].NextRef()
+	if err != nil {
+		// we are OK, if there is no information about get methods
+		return &codeInfo{hash: hash}, nil
 	}
-	return results
+	type GetMethods struct {
+		Hashmap tlb.Hashmap[tlb.Uint19, boc.Cell]
+	}
+	var getMethods GetMethods
+	err = tlb.Unmarshal(c, &getMethods)
+	if err != nil {
+		// we are OK, if there is no information about get methods
+		return &codeInfo{hash: hash}, nil
+	}
+	keys := getMethods.Hashmap.Keys()
+	methods := make(map[int64]struct{}, len(keys))
+	for _, key := range keys {
+		methods[int64(key)] = struct{}{}
+	}
+	return &codeInfo{hash: hash, methods: methods}, nil
 }

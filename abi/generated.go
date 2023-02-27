@@ -538,6 +538,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	106901: {GetChannelState},
 	107653: {GetPluginList},
 	111161: {ListNominators},
+	115150: {GetParams},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
 	123928: {GetStakingStatus},
@@ -558,6 +559,7 @@ var ResultTypes = []interface{}{
 	&GetNftAddressByIndexResult{},
 	&GetNftContentResult{},
 	&GetNftDataResult{},
+	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
 	&GetPoolStatusResult{},
 	&GetPublicKeyResult{},
@@ -1588,6 +1590,32 @@ func GetMembers(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	return "GetMembers_WhalesNominatorResult", result, err
 }
 
+type GetParams_WhalesNominatorResult struct {
+	Enabled        bool
+	UpdatesEnables bool
+	MinStake       int64
+	DepositFee     int64
+	WithdrawFee    int64
+	PoolFee        int64
+	ReceiptPrice   int64
+}
+
+func GetParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 115150 for "get_params" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 115150, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetParams_WhalesNominatorResult
+	err = stack.Unmarshal(&result)
+	return "GetParams_WhalesNominatorResult", result, err
+}
+
 type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
@@ -1665,6 +1693,17 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_nft_data",
 		InvokeFn:      GetNftData,
 		ImplementedBy: []ContractInterface{Tep62Item},
+	},
+	{
+		Name:     "get_params",
+		InvokeFn: GetParams,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetParams_WhalesNominatorResult":
+				return WhalesNominators
+			}
+			return ""
+		},
 	},
 	{
 		Name:          "get_plugin_list",

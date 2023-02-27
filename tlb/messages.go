@@ -159,7 +159,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return nil
 	case 2:
 		var anycast Maybe[Anycast]
-		err := anycast.UnmarshalTLB(c, &Decoder{})
+		err := anycast.UnmarshalTLB(c, decoder)
 		if err != nil {
 			return err
 		}
@@ -178,7 +178,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return nil
 	case 3:
 		var anycast Maybe[Anycast]
-		err := anycast.UnmarshalTLB(c, &Decoder{})
+		err := anycast.UnmarshalTLB(c, decoder)
 		if err != nil {
 			return err
 		}

@@ -74,10 +74,10 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	tx.OutMsgCnt = Uint15(outMsgCnt)
-	if err = Unmarshal(c, &tx.OrigStatus); err != nil {
+	if err = tx.OrigStatus.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if err = Unmarshal(c, &tx.EndStatus); err != nil {
+	if err = tx.EndStatus.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
 	c1, err := c.NextRef()

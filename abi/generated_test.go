@@ -153,4 +153,12 @@ func TestWhalesNominators(t *testing.T) {
 	}
 	status := v.(GetPoolStatusResult)
 	fmt.Printf("%+v\n", status)
+
+	_, v, err = GetParams(context.Background(), client, address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	params := v.(GetParams_WhalesNominatorResult)
+	fmt.Printf("%+v\n", params)
+
 }

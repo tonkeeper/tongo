@@ -23,6 +23,9 @@ func newImmutableCell(c *Cell) (*immutableCell, error) {
 	imm := &immutableCell{
 		mask:     c.mask,
 		cellType: c.cellType,
+		refs:     make([]*immutableCell, 0, c.RefsSize()),
+		hashes:   make([][]byte, 0, c.mask.HashesCount()),
+		depths:   make([]int, 0, c.mask.HashesCount()),
 		bitsBuf:  c.bits.buf,
 	}
 	for _, ref := range c.refs {

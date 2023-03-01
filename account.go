@@ -5,11 +5,13 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/snksoft/crc"
-	"github.com/tonkeeper/tongo/tlb"
-	"github.com/tonkeeper/tongo/utils"
 	"io"
 	"strings"
+
+	"github.com/snksoft/crc"
+
+	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type AccountID struct {

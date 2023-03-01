@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -143,10 +144,10 @@ type BlkMasterInfo struct {
 // prev_blks_info$_ prev1:^ExtBlkRef prev2:^ExtBlkRef = BlkPrevInfo 1;
 type BlkPrevInfo struct { // only manual decoding
 	SumType
-	PrevBlkInfo struct {
+	PrevBlkInfo *struct {
 		Prev ExtBlkRef
 	} `tlbSumType:"prev_blk_info$_"`
-	PrevBlksInfo struct {
+	PrevBlksInfo *struct {
 		Prev1 ExtBlkRef // ^ but decodes manually
 		Prev2 ExtBlkRef // ^ but decodes manually
 	} `tlbSumType:"prev_blks_info$_"`
@@ -173,8 +174,10 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 			return err
 		}
 		res.SumType = "PrevBlksInfo"
-		res.PrevBlksInfo.Prev1 = prev1
-		res.PrevBlksInfo.Prev2 = prev2
+		res.PrevBlksInfo = &struct {
+			Prev1 ExtBlkRef
+			Prev2 ExtBlkRef
+		}{Prev1: prev1, Prev2: prev2}
 		*i = res
 		return nil
 	}
@@ -184,7 +187,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 		return err
 	}
 	res.SumType = "PrevBlkInfo"
-	res.PrevBlkInfo.Prev = prev
+	res.PrevBlkInfo = &struct{ Prev ExtBlkRef }{Prev: prev}
 	*i = res
 	return nil
 }

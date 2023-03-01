@@ -5,11 +5,13 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/snksoft/crc"
-	"github.com/tonkeeper/tongo/tlb"
-	"github.com/tonkeeper/tongo/utils"
 	"io"
 	"strings"
+
+	"github.com/snksoft/crc"
+
+	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type AccountID struct {
@@ -89,12 +91,13 @@ func (id *AccountID) UnmarshalTL(r io.Reader) error {
 func (id *AccountID) ToMsgAddress() tlb.MsgAddress {
 	if id == nil {
 		return tlb.MsgAddress{
-			SumType: "AddrNone",
+			SumType:  "AddrNone",
+			AddrNone: &struct{}{},
 		}
 	}
 	return tlb.MsgAddress{
 		SumType: "AddrStd",
-		AddrStd: struct {
+		AddrStd: &struct {
 			Anycast     tlb.Maybe[tlb.Anycast]
 			WorkchainId int8
 			Address     tlb.Bits256

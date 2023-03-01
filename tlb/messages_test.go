@@ -34,7 +34,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 			name: "AddrNone",
 			addr: MsgAddress{
 				SumType:  "AddrNone",
-				AddrNone: struct{}{},
+				AddrNone: &struct{}{},
 			},
 			want: []byte(`""`),
 		},
@@ -42,7 +42,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 			name: "AddrStd",
 			addr: MsgAddress{
 				SumType: "AddrStd",
-				AddrStd: struct {
+				AddrStd: &struct {
 					Anycast     Maybe[Anycast]
 					WorkchainId int8
 					Address     Bits256
@@ -57,7 +57,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 			name: "AddrStd with Anycast",
 			addr: MsgAddress{
 				SumType: "AddrStd",
-				AddrStd: struct {
+				AddrStd: &struct {
 					Anycast     Maybe[Anycast]
 					WorkchainId int8
 					Address     Bits256
@@ -79,7 +79,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 			name: "AddrExtern",
 			addr: MsgAddress{
 				SumType: "AddrExtern",
-				AddrExtern: struct {
+				AddrExtern: &struct {
 					Len             Uint9
 					ExternalAddress boc.BitString
 				}{
@@ -93,7 +93,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 			name: "AddrVar",
 			addr: MsgAddress{
 				SumType: "AddrVar",
-				AddrVar: struct {
+				AddrVar: &struct {
 					Anycast     Maybe[Anycast]
 					AddrLen     Uint9
 					WorkchainId int32
@@ -110,7 +110,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 			name: "AddrVar with Anycast",
 			addr: MsgAddress{
 				SumType: "AddrVar",
-				AddrVar: struct {
+				AddrVar: &struct {
 					Anycast     Maybe[Anycast]
 					AddrLen     Uint9
 					WorkchainId int32

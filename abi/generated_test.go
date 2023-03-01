@@ -30,7 +30,7 @@ func mustToMsgAddress(x string) tlb.MsgAddress {
 	}
 	addr := tlb.MsgAddress{
 		SumType: "AddrStd",
-		AddrStd: struct {
+		AddrStd: &struct {
 			Anycast     tlb.Maybe[tlb.Anycast]
 			WorkchainId int8
 			Address     tlb.Bits256

@@ -3,6 +3,7 @@ package tongo
 import (
 	"encoding/binary"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
@@ -167,6 +168,15 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 	var msg = tlb.Message{
 		Info: tlb.CommonMsgInfo{
 			SumType: "ExtInMsgInfo",
+			ExtInMsgInfo: &struct {
+				Src       tlb.MsgAddress
+				Dest      tlb.MsgAddress
+				ImportFee tlb.Grams
+			}{
+				Src:       (*AccountID)(nil).ToMsgAddress(),
+				Dest:      address.ToMsgAddress(),
+				ImportFee: importFee,
+			},
 		},
 		Body: tlb.EitherRef[tlb.Any]{
 			IsRight: true,
@@ -178,9 +188,6 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 		msg.Init.Value.IsRight = true
 		msg.Init.Value.Value = *init
 	}
-	msg.Info.ExtInMsgInfo.Src = (*AccountID)(nil).ToMsgAddress()
-	msg.Info.ExtInMsgInfo.Dest = address.ToMsgAddress()
-	msg.Info.ExtInMsgInfo.ImportFee = importFee
 	return msg, nil
 }
 

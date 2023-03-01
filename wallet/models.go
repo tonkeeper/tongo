@@ -160,11 +160,24 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		SumType: "IntMsgInfo",
 	}
 
-	info.IntMsgInfo.IhrDisabled = true
-	info.IntMsgInfo.Src = (*tongo.AccountID)(nil).ToMsgAddress()
-	info.IntMsgInfo.Dest = m.Address.ToMsgAddress()
+	info.IntMsgInfo = &struct {
+		IhrDisabled bool
+		Bounce      bool
+		Bounced     bool
+		Src         tlb.MsgAddress
+		Dest        tlb.MsgAddress
+		Value       tlb.CurrencyCollection
+		IhrFee      tlb.Grams
+		FwdFee      tlb.Grams
+		CreatedLt   uint64
+		CreatedAt   uint32
+	}{
+		IhrDisabled: true,
+		Bounce:      false,
+		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
+		Dest:        m.Address.ToMsgAddress(),
+	}
 	info.IntMsgInfo.Value.Grams = m.Amount
-	info.IntMsgInfo.Bounce = false
 
 	intMsg := tlb.Message{
 		Info: info,
@@ -197,11 +210,24 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 		SumType: "IntMsgInfo",
 	}
 
-	info.IntMsgInfo.IhrDisabled = true
-	info.IntMsgInfo.Src = (*tongo.AccountID)(nil).ToMsgAddress()
-	info.IntMsgInfo.Dest = m.Address.ToMsgAddress()
+	info.IntMsgInfo = &struct {
+		IhrDisabled bool
+		Bounce      bool
+		Bounced     bool
+		Src         tlb.MsgAddress
+		Dest        tlb.MsgAddress
+		Value       tlb.CurrencyCollection
+		IhrFee      tlb.Grams
+		FwdFee      tlb.Grams
+		CreatedLt   uint64
+		CreatedAt   uint32
+	}{
+		IhrDisabled: true,
+		Bounce:      m.Bounce,
+		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
+		Dest:        m.Address.ToMsgAddress(),
+	}
 	info.IntMsgInfo.Value.Grams = m.Amount
-	info.IntMsgInfo.Bounce = m.Bounce
 
 	intMsg := tlb.Message{
 		Info: info,

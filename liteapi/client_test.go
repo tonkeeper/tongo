@@ -198,13 +198,27 @@ func TestGetOneTransaction(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	block, err := tongoClient.GetBlock(ctx, shards[0])
-	if err != nil {
-		t.Fatal(err)
+	blockID := shards[0]
+	var tx1 tlb.Transaction
+	for i := 0; i < 10; i++ {
+		block, err := tongoClient.GetBlock(ctx, blockID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(block.AllTransactions()) == 0 {
+			prev := block.Info.PrevRef.PrevBlkInfo.Prev
+			blockID = tongo.BlockIDExt{tongo.BlockID{
+				blockID.Workchain, blockID.Shard, prev.SeqNo,
+			},
+				tongo.Bits256(prev.RootHash), tongo.Bits256(prev.FileHash),
+			}
+			continue
+		}
+		tx1 = block.AllTransactions()[0]
+		break
 	}
-	tx1 := block.AllTransactions()[0]
 
-	tx2, err := tongoClient.GetOneTransactionFromBlock(context.Background(), tongo.AccountID{Workchain: shards[0].Workchain, Address: tx1.AccountAddr}, shards[0], tx1.Lt)
+	tx2, err := tongoClient.GetOneTransactionFromBlock(context.Background(), tongo.AccountID{Workchain: blockID.Workchain, Address: tx1.AccountAddr}, blockID, tx1.Lt)
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
 	}

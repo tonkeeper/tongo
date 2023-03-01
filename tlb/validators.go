@@ -29,7 +29,7 @@ type ValidatorsSet struct {
 	// validators#11 utime_since:uint32 utime_until:uint32
 	//   total:(## 16) main:(## 16) { main <= total } { main >= 1 }
 	//   list:(Hashmap 16 ValidatorDescr) = ValidatorSet;
-	Validators struct {
+	Validators *struct {
 		UtimeSince uint32
 		UtimeUntil uint32
 		Total      uint16
@@ -39,7 +39,7 @@ type ValidatorsSet struct {
 	// validators_ext#12 utime_since:uint32 utime_until:uint32
 	//   total:(## 16) main:(## 16) { main <= total } { main >= 1 }
 	//   total_weight:uint64 list:(HashmapE 16 ValidatorDescr) = ValidatorSet;
-	ValidatorsExt struct {
+	ValidatorsExt *struct {
 		UtimeSince  uint32
 		UtimeUntil  uint32
 		Total       uint16
@@ -52,12 +52,12 @@ type ValidatorsSet struct {
 type ValidatorDescr struct {
 	SumType
 	// validator#53 public_key:SigPubKey weight:uint64 = ValidatorDescr;
-	Validator struct {
+	Validator *struct {
 		PublicKey SigPubKey
 		Weight    uint64
 	} `tlbSumType:"validator#53"`
 	// validator_addr#73 public_key:SigPubKey weight:uint64 adnl_addr:bits256 = ValidatorDescr;
-	ValidatorAddr struct {
+	ValidatorAddr *struct {
 		PublicKey SigPubKey
 		Weight    uint64
 		AdnlAddr  Bits256

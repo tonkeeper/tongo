@@ -30,7 +30,7 @@ type Message struct {
 // created_lt:uint64 created_at:uint32 = CommonMsgInfo;
 type CommonMsgInfo struct {
 	SumType
-	IntMsgInfo struct {
+	IntMsgInfo *struct {
 		IhrDisabled bool
 		Bounce      bool
 		Bounced     bool
@@ -42,12 +42,12 @@ type CommonMsgInfo struct {
 		CreatedLt   uint64
 		CreatedAt   uint32
 	} `tlbSumType:"int_msg_info$0"`
-	ExtInMsgInfo struct {
+	ExtInMsgInfo *struct {
 		Src       MsgAddress
 		Dest      MsgAddress
 		ImportFee Grams
 	} `tlbSumType:"ext_in_msg_info$10"`
-	ExtOutMsgInfo struct {
+	ExtOutMsgInfo *struct {
 		Src       MsgAddress
 		Dest      MsgAddress
 		CreatedLt uint64
@@ -118,7 +118,7 @@ type MsgAddress struct {
 	SumType
 	AddrNone struct {
 	} `tlbSumType:"addr_none$00"`
-	AddrExtern struct {
+	AddrExtern *struct {
 		Len             Uint9
 		ExternalAddress boc.BitString
 	} `tlbSumType:"addr_extern$01"`
@@ -127,7 +127,7 @@ type MsgAddress struct {
 		WorkchainId int8
 		Address     Bits256
 	} `tlbSumType:"addr_std$10"`
-	AddrVar struct {
+	AddrVar *struct {
 		Anycast     Maybe[Anycast]
 		AddrLen     Uint9
 		WorkchainId int32
@@ -153,9 +153,14 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
-		a.AddrExtern.Len = Uint9(ln)
-		a.AddrExtern.ExternalAddress = addr
 		a.SumType = "AddrExtern"
+		a.AddrExtern = &struct {
+			Len             Uint9
+			ExternalAddress boc.BitString
+		}{
+			Len:             Uint9(ln),
+			ExternalAddress: addr,
+		}
 		return nil
 	case 2:
 		var anycast Maybe[Anycast]
@@ -171,10 +176,10 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
+		a.SumType = "AddrStd"
 		a.AddrStd.Anycast = anycast
 		a.AddrStd.WorkchainId = int8(workchain)
 		copy(a.AddrStd.Address[:], address)
-		a.SumType = "AddrStd"
 		return nil
 	case 3:
 		var anycast Maybe[Anycast]
@@ -194,11 +199,14 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
-		a.AddrVar.AddrLen = Uint9(ln)
-		a.AddrVar.Address = addr
-		a.AddrVar.WorkchainId = int32(workchain)
-		a.AddrVar.Anycast = anycast
 		a.SumType = "AddrVar"
+		a.AddrVar = &struct {
+			Anycast     Maybe[Anycast]
+			AddrLen     Uint9
+			WorkchainId int32
+			Address     boc.BitString
+		}{Anycast: anycast, AddrLen: Uint9(ln), WorkchainId: int32(workchain), Address: addr}
+		return nil
 	}
 	return fmt.Errorf("invalid tag")
 }
@@ -241,7 +249,7 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 		}
 		*a = MsgAddress{
 			SumType: "AddrExtern",
-			AddrExtern: struct {
+			AddrExtern: &struct {
 				Len             Uint9
 				ExternalAddress boc.BitString
 			}{
@@ -311,7 +319,7 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 	}
 	*a = MsgAddress{
 		SumType: "AddrVar",
-		AddrVar: struct {
+		AddrVar: &struct {
 			Anycast     Maybe[Anycast]
 			AddrLen     Uint9
 			WorkchainId int32

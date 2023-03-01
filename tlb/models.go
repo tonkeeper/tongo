@@ -21,16 +21,22 @@ func (g Grams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 }
 
 func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	var amount VarUInteger16
-	err := Unmarshal(c, &amount)
+	ln, err := c.ReadLimUint(15)
 	if err != nil {
 		return err
 	}
-	val := big.Int(amount)
-	if !val.IsUint64() {
+	if ln > 8 {
 		return fmt.Errorf("grams overflow")
 	}
-	*g = Grams(val.Uint64())
+	var amount uint64
+	for i := 0; i < int(ln); i++ {
+		b, err := c.ReadUint(8)
+		if err != nil {
+			return err
+		}
+		amount = uint64(b) | (amount << 8)
+	}
+	*g = Grams(amount)
 	return nil
 }
 

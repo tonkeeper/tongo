@@ -424,14 +424,19 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 	if !first {
 		// Unary, while 1, add to ln
 		ln, err := c.ReadUnary()
-		keyBits, err := c.ReadBits(int(ln))
 		if err != nil {
 			return 0, nil, err
 		}
 		// add bits to key
-		err = key.WriteBitString(keyBits)
-		if err != nil {
-			return 0, nil, err
+		for i := 0; i < int(ln); i++ {
+			bit, err := c.ReadBit()
+			if err != nil {
+				return 0, nil, err
+			}
+			err = key.WriteBit(bit)
+			if err != nil {
+				return 0, nil, err
+			}
 		}
 		return int(ln), key, nil
 	}
@@ -445,14 +450,15 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 		if err != nil {
 			return 0, nil, err
 		}
-		keyBits, err := c.ReadBits(int(ln))
-		if err != nil {
-			return 0, nil, err
-		}
-		// add bits to key
-		err = key.WriteBitString(keyBits)
-		if err != nil {
-			return 0, nil, err
+		for i := 0; i < int(ln); i++ {
+			bit, err := c.ReadBit()
+			if err != nil {
+				return 0, nil, err
+			}
+			err = key.WriteBit(bit)
+			if err != nil {
+				return 0, nil, err
+			}
 		}
 		return int(ln), key, nil
 	}

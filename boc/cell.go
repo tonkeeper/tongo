@@ -321,6 +321,5 @@ func NewCellWithBits(b BitString) *Cell {
 	if b.len > CellBits {
 		panic("bit string not fit to Cell")
 	}
-	b.Grow(CellBits - b.len)
 	return &Cell{bits: b, cellType: OrdinaryCell}
 }

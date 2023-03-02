@@ -3,9 +3,10 @@ package tlb
 import (
 	"errors"
 	"fmt"
-	"github.com/tonkeeper/tongo/boc"
 	"strconv"
 	"strings"
+
+	"github.com/tonkeeper/tongo/boc"
 )
 
 var ErrInvalidTag = errors.New("invalid tag")

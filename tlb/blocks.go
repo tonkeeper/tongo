@@ -63,7 +63,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		Magic     Magic `tlb:"block_info#9bc7a987"`
 		BlockInfo BlockInfoPart
 	} // for partial decoding
-	err := Unmarshal(c, &data)
+	err := decoder.Unmarshal(c, &data)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 	if res.Flags&1 == 1 {
 		var gs GlobalVersion
-		err = Unmarshal(c, &gs)
+		err = decoder.Unmarshal(c, &gs)
 		if err != nil {
 			return err
 		}
@@ -85,7 +85,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			return err
 		}
 		res.MasterRef = &BlkMasterInfo{}
-		err = Unmarshal(c1, res.MasterRef)
+		err = decoder.Unmarshal(c1, res.MasterRef)
 		if err != nil {
 			return err
 		}
@@ -95,7 +95,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if err != nil {
 		return err
 	}
-	err = res.PrevRef.UnmarshalTLB(c1, data.BlockInfo.AfterMerge)
+	err = res.PrevRef.UnmarshalTLB(c1, data.BlockInfo.AfterMerge, decoder)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			return err
 		}
 		res.PrevVertRef = &BlkPrevInfo{}
-		err = res.PrevVertRef.UnmarshalTLB(c1, false)
+		err = res.PrevVertRef.UnmarshalTLB(c1, false, decoder)
 		if err != nil {
 			return err
 		}
@@ -153,7 +153,7 @@ type BlkPrevInfo struct { // only manual decoding
 	} `tlbSumType:"prev_blks_info$_"`
 }
 
-func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom unmarshaler. Not for automatic decoder.
+func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool, decoder *Decoder) error { // custom unmarshaler. Not for automatic decoder.
 	var res BlkPrevInfo
 	if isBlks {
 		var prev1, prev2 ExtBlkRef
@@ -161,7 +161,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 		if err != nil {
 			return err
 		}
-		err = Unmarshal(c1, &prev1)
+		err = decoder.Unmarshal(c1, &prev1)
 		if err != nil {
 			return err
 		}
@@ -169,7 +169,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 		if err != nil {
 			return err
 		}
-		err = Unmarshal(c2, &prev2)
+		err = decoder.Unmarshal(c2, &prev2)
 		if err != nil {
 			return err
 		}
@@ -182,7 +182,7 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool) error { // custom u
 		return nil
 	}
 	var prev ExtBlkRef
-	err := Unmarshal(c, &prev)
+	err := decoder.Unmarshal(c, &prev)
 	if err != nil {
 		return err
 	}
@@ -325,15 +325,15 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return fmt.Errorf("invalid tag")
 	}
 
-	err = Unmarshal(c, &m.KeyBlock)
+	err = decoder.Unmarshal(c, &m.KeyBlock)
 	if err != nil {
 		return err
 	}
-	err = Unmarshal(c, &m.ShardHashes)
+	err = decoder.Unmarshal(c, &m.ShardHashes)
 	if err != nil {
 		return err
 	}
-	err = Unmarshal(c, &m.ShardFees)
+	err = decoder.Unmarshal(c, &m.ShardFees)
 	if err != nil {
 		return err
 	}
@@ -343,13 +343,13 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 
 	if c1 != nil {
-		err = Unmarshal(c1, &m.McExtraOther)
+		err = decoder.Unmarshal(c1, &m.McExtraOther)
 		if err != nil {
 			return err
 		}
 	}
 	if m.KeyBlock {
-		err = Unmarshal(c, &m.Config)
+		err = decoder.Unmarshal(c, &m.Config)
 		if err != nil {
 			return err
 		}

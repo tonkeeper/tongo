@@ -46,8 +46,8 @@ func (m Maybe[T]) Pointer() *T {
 	return nil
 }
 
-func (m *Magic) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	a := strings.Split(decoder.tag, "$")
+func (m *Magic) ValidateTag(c *boc.Cell, tag string) error {
+	a := strings.Split(tag, "$")
 	if len(a) == 2 {
 		x, err := strconv.ParseUint(a[1], 2, 32)
 		if err != nil {
@@ -55,11 +55,11 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		}
 		y, err := c.ReadUint(len(a[1]))
 		if x != y {
-			return fmt.Errorf("magic prefix: %v not found ", decoder.tag)
+			return fmt.Errorf("magic prefix: %v not found ", tag)
 		}
 		return nil
 	}
-	a = strings.Split(decoder.tag, "#")
+	a = strings.Split(tag, "#")
 	if len(a) == 2 {
 		x, err := strconv.ParseUint(a[1], 16, 32)
 		if err != nil {
@@ -67,11 +67,11 @@ func (m *Magic) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		}
 		y, err := c.ReadUint(len(a[1]) * 4)
 		if x != y {
-			return fmt.Errorf("magic prefix: %v not found ", decoder.tag)
+			return fmt.Errorf("magic prefix: %v not found ", tag)
 		}
 		return nil
 	}
-	return fmt.Errorf("unsupported tag: %v", decoder.tag)
+	return fmt.Errorf("unsupported tag: %v", tag)
 }
 
 func (m Magic) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -99,7 +99,7 @@ func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 	m.Exists = exist
 	if exist {
-		err = Unmarshal(c, &m.Value)
+		err = decoder.Unmarshal(c, &m.Value)
 		if err != nil {
 			return err
 		}
@@ -151,12 +151,12 @@ func (m *Either[_, _]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 	m.IsRight = isRight
 	if isRight {
-		err = Unmarshal(c, &m.Right)
+		err = decoder.Unmarshal(c, &m.Right)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = Unmarshal(c, &m.Left)
+		err = decoder.Unmarshal(c, &m.Left)
 		if err != nil {
 			return err
 		}
@@ -190,7 +190,7 @@ func (m *EitherRef[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			return err
 		}
 	}
-	return Unmarshal(c, &m.Value)
+	return decoder.Unmarshal(c, &m.Value)
 }
 
 func (m Ref[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -213,7 +213,7 @@ func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		m.Value = value
 		return nil
 	}
-	err = Unmarshal(r, &m.Value)
+	err = decoder.Unmarshal(r, &m.Value)
 	if err != nil {
 		return err
 	}

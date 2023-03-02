@@ -19,7 +19,12 @@ type immutableCell struct {
 }
 
 // newImmutableCell returns a new instance of immutable cell.
-func newImmutableCell(c *Cell) (*immutableCell, error) {
+func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, error) {
+	if cache != nil {
+		if imm, ok := cache[c]; ok {
+			return imm, nil
+		}
+	}
 	imm := &immutableCell{
 		mask:     c.mask,
 		cellType: c.cellType,
@@ -32,7 +37,7 @@ func newImmutableCell(c *Cell) (*immutableCell, error) {
 		if ref == nil {
 			break
 		}
-		immRef, err := newImmutableCell(ref)
+		immRef, err := newImmutableCell(ref, cache)
 		if err != nil {
 			return nil, err
 		}
@@ -119,6 +124,9 @@ func newImmutableCell(c *Cell) (*immutableCell, error) {
 		}
 
 		imm.hashes = append(imm.hashes, x.Sum(nil))
+	}
+	if cache != nil {
+		cache[c] = imm
 	}
 	return imm, nil
 }

@@ -104,14 +104,14 @@ func (h *Hashmap[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var s keyT
 	keySize := s.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
-	err := h.mapInner(keySize, keySize, c, &keyPrefix)
+	err := h.mapInner(keySize, keySize, c, &keyPrefix, decoder)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString) error {
+func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, decoder *Decoder) error {
 	var err error
 	var size int
 	if c.CellType() == boc.PrunedBranchCell {
@@ -133,7 +133,7 @@ func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPr
 		if err != nil {
 			return err
 		}
-		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp)
+		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp, decoder)
 		if err != nil {
 			return err
 		}
@@ -147,7 +147,7 @@ func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPr
 		if err != nil {
 			return err
 		}
-		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp)
+		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp, decoder)
 		if err != nil {
 			return err
 		}
@@ -155,7 +155,7 @@ func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPr
 	}
 	// add node to map
 	var value T
-	err = Unmarshal(c, &value)
+	err = decoder.Unmarshal(c, &value)
 	if err != nil {
 		return err
 	}
@@ -167,7 +167,7 @@ func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPr
 
 	var k keyT
 	cell := boc.NewCellWithBits(key)
-	err = Unmarshal(cell, &k)
+	err = decoder.Unmarshal(cell, &k)
 	if err != nil {
 		return err
 	}
@@ -196,7 +196,7 @@ func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (h *HashmapE[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var temp Maybe[Ref[Hashmap[keyT, T]]]
-	err := Unmarshal(c, &temp)
+	err := decoder.Unmarshal(c, &temp)
 	h.m = temp.Value.Value
 	return err
 }
@@ -294,14 +294,14 @@ func (h *HashmapAug[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) e
 	var t keyT
 	keySize := t.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
-	err := h.mapInner(keySize, keySize, c, &keyPrefix, &h.extra)
+	err := h.mapInner(keySize, keySize, c, &keyPrefix, &h.extra, decoder)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2]) error {
+func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, extras *HashMapAugExtraList[T2], decoder *Decoder) error {
 	var err error
 	var size int
 	if c.CellType() == boc.PrunedBranchCell {
@@ -325,7 +325,7 @@ func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cel
 			return err
 		}
 		var extraLeft HashMapAugExtraList[T2]
-		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp, &extraLeft)
+		err = h.mapInner(keySize, leftKeySize-(1+size), left, &lp, &extraLeft, decoder)
 		if err != nil {
 			return err
 		}
@@ -340,27 +340,27 @@ func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cel
 			return err
 		}
 		var extraRight HashMapAugExtraList[T2]
-		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp, &extraRight)
+		err = h.mapInner(keySize, leftKeySize-(1+size), right, &rp, &extraRight, decoder)
 		if err != nil {
 			return err
 		}
 		extras.Left = &extraLeft
 		extras.Right = &extraRight
-		err = Unmarshal(c, &extra)
+		err = decoder.Unmarshal(c, &extra)
 		if err != nil {
 			return err
 		}
 		extras.Data = extra
 		return nil
 	}
-	err = Unmarshal(c, &extra)
+	err = decoder.Unmarshal(c, &extra)
 	if err != nil {
 		return err
 	}
 	extras.Data = extra
 	// add node to map
 	var value T1
-	err = Unmarshal(c, &value)
+	err = decoder.Unmarshal(c, &value)
 	if err != nil {
 		return err
 	}
@@ -372,7 +372,7 @@ func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cel
 
 	var k keyT
 	cell := boc.NewCellWithBits(key)
-	err = Unmarshal(cell, &k)
+	err = decoder.Unmarshal(cell, &k)
 	if err != nil {
 		return err
 	}
@@ -390,7 +390,7 @@ func (h *HashmapAugE[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) 
 		M     Maybe[Ref[HashmapAug[keyT, T1, T2]]]
 		Extra T2
 	}
-	err := Unmarshal(c, &temp)
+	err := decoder.Unmarshal(c, &temp)
 	h.m = temp.M.Value.Value
 	h.extra = temp.Extra
 	return err

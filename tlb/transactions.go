@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -40,7 +41,15 @@ func (tx *Transaction) Hash() Bits256 {
 }
 
 func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	hash, err := c.Hash()
+	var (
+		hash []byte
+		err  error
+	)
+	if decoder.hasher != nil {
+		hash, err = decoder.hasher.Hash(c)
+	} else {
+		hash, err = c.Hash()
+	}
 	if err != nil {
 		return err
 	}
@@ -54,19 +63,19 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if sumType != 0b0111 {
 		return fmt.Errorf("invalid tag")
 	}
-	if err = Unmarshal(c, &tx.AccountAddr); err != nil {
+	if err = decoder.Unmarshal(c, &tx.AccountAddr); err != nil {
 		return err
 	}
-	if err = Unmarshal(c, &tx.Lt); err != nil {
+	if err = decoder.Unmarshal(c, &tx.Lt); err != nil {
 		return err
 	}
-	if err = Unmarshal(c, &tx.PrevTransHash); err != nil {
+	if err = decoder.Unmarshal(c, &tx.PrevTransHash); err != nil {
 		return err
 	}
-	if err = Unmarshal(c, &tx.PrevTransLt); err != nil {
+	if err = decoder.Unmarshal(c, &tx.PrevTransLt); err != nil {
 		return err
 	}
-	if err = Unmarshal(c, &tx.Now); err != nil {
+	if err = decoder.Unmarshal(c, &tx.Now); err != nil {
 		return err
 	}
 	outMsgCnt, err := c.ReadUint(15)
@@ -88,25 +97,25 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		InMsg   Maybe[Ref[Message]]
 		OutMsgs HashmapE[Uint15, Ref[Message]]
 	}
-	if err = Unmarshal(c1, &msgs); err != nil {
+	if err = decoder.Unmarshal(c1, &msgs); err != nil {
 		return err
 	}
 	tx.Msgs = msgs
-	if err = Unmarshal(c, &tx.TotalFees); err != nil {
+	if err = decoder.Unmarshal(c, &tx.TotalFees); err != nil {
 		return err
 	}
 	c2, err := c.NextRef()
 	if err != nil {
 		return err
 	}
-	if err = Unmarshal(c2, &tx.StateUpdate); err != nil {
+	if err = decoder.Unmarshal(c2, &tx.StateUpdate); err != nil {
 		return err
 	}
 	c3, err := c.NextRef()
 	if err != nil {
 		return err
 	}
-	if err = Unmarshal(c3, &tx.Description); err != nil {
+	if err = decoder.Unmarshal(c3, &tx.Description); err != nil {
 		return err
 	}
 	return nil

@@ -7,29 +7,48 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 )
 
+// Decoder unmarshal a cell into a golang type.
 type Decoder struct {
-	tag string
+	hasher *boc.Hasher
 }
 
+// NewDecoder returns a new Decoder.
+func NewDecoder() *Decoder {
+	return &Decoder{
+		hasher: boc.NewHasher(),
+	}
+}
+
+// Unmarshal decodes the give cell using TL-B schema and stores the result in the value pointed to by o.
+func (dec *Decoder) Unmarshal(c *boc.Cell, o any) error {
+	return decode(c, "", reflect.ValueOf(o), dec)
+}
+
+// UnmarshalerTLB contains method UnmarshalTLB that must be implemented by a struct
+// if it provides specific unmarshalling code.
 type UnmarshalerTLB interface {
 	UnmarshalTLB(c *boc.Cell, decoder *Decoder) error
 }
 
+type tagValidator interface {
+	ValidateTag(c *boc.Cell, tag string) error
+}
+
 func Unmarshal(c *boc.Cell, o any) error {
-	//TODO: clone cell with cursor reset
-	decoder := Decoder{}
-	return decode(c, reflect.ValueOf(o), &decoder)
+	dec := Decoder{}
+	return decode(c, "", reflect.ValueOf(o), &dec)
 }
 
 var bocCellType = reflect.TypeOf(boc.Cell{})
 var bitStringType = reflect.TypeOf(boc.BitString{})
 
-func decode(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
-	t, err := parseTag(decoder.tag)
+func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error {
+	t, err := parseTag(tag)
 	if err != nil {
 		return err
 	}
 	if t.IsRef {
+		tag = ""
 		c, err = c.NextRef()
 		if err != nil {
 			return err
@@ -47,6 +66,10 @@ func decode(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 		i, ok := val.Addr().Interface().(UnmarshalerTLB)
 		if ok {
 			return i.UnmarshalTLB(c, decoder)
+		}
+		v, ok := val.Addr().Interface().(tagValidator)
+		if ok {
+			return v.ValidateTag(c, tag)
 		}
 	}
 	if !val.CanSet() && val.Kind() != reflect.Pointer {
@@ -103,10 +126,10 @@ func decode(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 		}
 	case reflect.Pointer:
 		if val.Kind() == reflect.Pointer && !val.IsNil() {
-			return decode(c, val.Elem(), decoder)
+			return decode(c, tag, val.Elem(), decoder)
 		}
 		a := reflect.New(val.Type().Elem())
-		err = decode(c, a, decoder)
+		err = decode(c, tag, a, decoder)
 		if err != nil {
 			return err
 		}
@@ -140,8 +163,8 @@ func decodeBasicStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 		if !val.Field(i).CanSet() {
 			return fmt.Errorf("can't set field %v", i)
 		}
-		decoder.tag = val.Type().Field(i).Tag.Get("tlb")
-		err := decode(c, val.Field(i), decoder)
+		tag := val.Type().Field(i).Tag.Get("tlb")
+		err := decode(c, tag, val.Field(i), decoder)
 		if err != nil {
 			return err
 		}
@@ -164,15 +187,14 @@ func decodeSumType(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 		}
 		if ok {
 			val.FieldByName("SumType").SetString(val.Type().Field(i).Name)
-			decoder.tag = ""
-			err := decode(c, val.Field(i), decoder)
+			err := decode(c, "", val.Field(i), decoder)
 			if err != nil {
 				return err
 			}
 			return nil
 		}
 	}
-	return fmt.Errorf("can not decode sumtype %v", decoder.tag)
+	return fmt.Errorf("can not decode sumtype %v", val.Type().Name())
 }
 
 func compareWithSumTag(c *boc.Cell, tag string) (bool, error) {

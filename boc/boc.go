@@ -319,8 +319,8 @@ func bocReprWithoutRefs(cell *Cell, mask levelMask) []byte {
 	return res
 }
 
-func hashCell(cell *Cell) ([]byte, error) {
-	imc, err := newImmutableCell(cell)
+func hashCell(cell *Cell, cache map[*Cell]*immutableCell) ([]byte, error) {
+	imc, err := newImmutableCell(cell, cache)
 	if err != nil {
 		return nil, err
 	}

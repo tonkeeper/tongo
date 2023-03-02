@@ -106,7 +106,8 @@ func TestDeserializeBoc(t *testing.T) {
 			if len(cells) != 1 {
 				t.Fatalf("hex.DecodeString() failed")
 			}
-			imm, err := newImmutableCell(cells[0])
+			cache := map[*Cell]*immutableCell{}
+			imm, err := newImmutableCell(cells[0], cache)
 			if err != nil {
 				t.Fatalf("hex.DecodeString() failed")
 			}

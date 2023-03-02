@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -75,7 +76,7 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
-		err = Unmarshal(c1, &s.SplitState.Left)
+		err = decoder.Unmarshal(c1, &s.SplitState.Left)
 		if err != nil {
 			return err
 		}
@@ -83,14 +84,14 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
-		err = Unmarshal(c1, &s.SplitState.Right)
+		err = decoder.Unmarshal(c1, &s.SplitState.Right)
 		if err != nil {
 			return err
 		}
 		break
 	case 0x9023afe2:
 		var shardUnsplitData ShardStateUnsplitData
-		err = Unmarshal(c, &shardUnsplitData)
+		err = decoder.Unmarshal(c, &shardUnsplitData)
 		if err != nil {
 			return err
 		}
@@ -148,7 +149,7 @@ func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 	if sumType == 0x5 {
 		cr.SumType = "CryptoSignatureSimple"
-		err = Unmarshal(c, &cr.CryptoSignatureSimple)
+		err = decoder.Unmarshal(c, &cr.CryptoSignatureSimple)
 		if err != nil {
 			return err
 		}
@@ -158,11 +159,11 @@ func (cr *CryptoSignature) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
-		err = Unmarshal(c1, &cr.CryptoSignature.SignedCert)
+		err = decoder.Unmarshal(c1, &cr.CryptoSignature.SignedCert)
 		if err != nil {
 			return err
 		}
-		err = Unmarshal(c, &cr.CryptoSignature.TempKeySignature)
+		err = decoder.Unmarshal(c, &cr.CryptoSignature.TempKeySignature)
 		if err != nil {
 			return err
 		}
@@ -301,24 +302,24 @@ func (m *McStateExtraOther) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	m.Flags = uint16(flags)
-	err = Unmarshal(c, &m.ValidatorInfo)
+	err = decoder.Unmarshal(c, &m.ValidatorInfo)
 	if err != nil {
 		return err
 	}
-	err = Unmarshal(c, &m.PrevBlocks)
+	err = decoder.Unmarshal(c, &m.PrevBlocks)
 	if err != nil {
 		return err
 	}
-	err = Unmarshal(c, &m.AfterKeyBlock)
+	err = decoder.Unmarshal(c, &m.AfterKeyBlock)
 	if err != nil {
 		return err
 	}
-	err = Unmarshal(c, &m.LastKeyBlock)
+	err = decoder.Unmarshal(c, &m.LastKeyBlock)
 	if err != nil {
 		return err
 	}
 	if m.Flags == 1 {
-		err = Unmarshal(c, &m.BlockCreateStats)
+		err = decoder.Unmarshal(c, &m.BlockCreateStats)
 		if err != nil {
 			return err
 		}

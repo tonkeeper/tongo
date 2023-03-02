@@ -112,7 +112,7 @@ func (s *SnakeData) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			return err
 		}
 		var sn SnakeData
-		err = Unmarshal(cell, &sn)
+		err = decoder.Unmarshal(cell, &sn)
 		if err != nil {
 			return err
 		}
@@ -136,7 +136,7 @@ func (t Text) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (t *Text) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var sn SnakeData
-	err := Unmarshal(c, &sn)
+	err := decoder.Unmarshal(c, &sn)
 	if err != nil {
 		return err
 	}
@@ -212,7 +212,7 @@ func (d *ChunkedData) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		cd chunkedData
 	)
 	b := boc.NewBitString(boc.CellBits)
-	err := Unmarshal(c, &cd)
+	err := decoder.Unmarshal(c, &cd)
 	if err != nil {
 		return err
 	}

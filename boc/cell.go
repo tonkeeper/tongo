@@ -86,19 +86,28 @@ func (c *Cell) BitSize() int {
 }
 
 func (c *Cell) Hash() ([]byte, error) {
-	return hashCell(c, nil)
+	return c.hash(nil)
 }
 
 func (c *Cell) HashString() (string, error) {
-	h, err := hashCell(c, nil)
+	h, err := c.hash(nil)
 	if err != nil {
 		return "", err
 	}
 	return hex.EncodeToString(h), err
 }
 
+func (c *Cell) hash(cache map[*Cell]*immutableCell) ([]byte, error) {
+	imc, err := newImmutableCell(c, cache)
+	if err != nil {
+		return nil, err
+	}
+	return imc.Hash(maxLevel), nil
+}
+
 func (c *Cell) ToBoc() ([]byte, error) {
-	return SerializeBoc(c, false, false, false, 0)
+	bag := newBagOfCells()
+	return bag.serializeBoc([]*Cell{c}, false, false, false, 0)
 }
 
 func (c *Cell) ToBocString() (string, error) {
@@ -110,7 +119,8 @@ func (c *Cell) ToBocBase64() (string, error) {
 }
 
 func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
-	return SerializeBoc(c, idx, hasCrc32, cacheBits, flags)
+	bag := newBagOfCells()
+	return bag.serializeBoc([]*Cell{c}, idx, hasCrc32, cacheBits, 0)
 }
 
 func (c *Cell) ToBocStringCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) (string, error) {
@@ -322,4 +332,27 @@ func NewCellWithBits(b BitString) *Cell {
 		panic("bit string not fit to Cell")
 	}
 	return &Cell{bits: b, cellType: OrdinaryCell}
+}
+
+func d1(cell *Cell, mask levelMask) byte {
+	specBit := 0
+	if cell.IsExotic() {
+		specBit = 8
+	}
+	return byte(cell.RefsSize() + specBit + 32*int(mask))
+}
+
+func d2(cell *Cell) byte {
+	return byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
+}
+
+func (c *Cell) bocReprWithoutRefs(mask levelMask) []byte {
+	res := make([]byte, ((c.BitSize()+7)/8)+2)
+	res[0] = d1(c, mask)
+	res[1] = d2(c)
+	copy(res[2:], c.getBuffer())
+	if c.BitSize()%8 != 0 {
+		res[len(res)-1] |= 1 << (7 - c.BitSize()%8)
+	}
+	return res
 }

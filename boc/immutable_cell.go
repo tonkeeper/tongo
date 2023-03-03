@@ -90,7 +90,7 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 		x := sha256.New()
 		if hashIndex == offset {
 			// either i=0 or cellType=PrunedBranchCell
-			cellRepr := bocReprWithoutRefs(c, c.mask.Apply(i))
+			cellRepr := c.bocReprWithoutRefs(c.mask.Apply(i))
 			x.Write(cellRepr)
 		} else {
 			// i>0

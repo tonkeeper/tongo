@@ -28,6 +28,7 @@ const hashSize = 32
 const depthSize = 2
 const maxLevel = 3
 const maxDepth = 1024
+const maxCellWhs = 64
 
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
 
@@ -42,13 +43,13 @@ func readNBytesUIntFromArray(n int, arr []byte) uint {
 
 type bocHeader struct {
 	hasIdx       bool
-	hashCrc32    bool
+	hasCrc32     bool
 	hasCacheBits bool
 	flags        int
 	sizeBytes    int
-	cellsNum     uint
-	rootsNum     uint
-	absentNum    uint
+	cellCount    uint
+	rootCount    uint
+	absentCount  uint
 	totCellsSize uint
 	rootList     []uint
 	index        []uint
@@ -56,11 +57,9 @@ type bocHeader struct {
 }
 
 func parseBocHeader(boc []byte) (*bocHeader, error) {
-
 	if len(boc) < 4+1 {
 		return nil, errors.New("not enough bytes for magic prefix")
 	}
-
 	checkSum := crc32.Checksum(boc[0:len(boc)-4], crcTable)
 
 	var prefix = boc[0:4]
@@ -104,33 +103,33 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 
 	offsetBytes := int(boc[0])
 	boc = boc[1:]
-	cellsNum := readNBytesUIntFromArray(sizeBytes, boc)
+	cellsCount := readNBytesUIntFromArray(sizeBytes, boc)
 	boc = boc[sizeBytes:]
-	rootsNum := readNBytesUIntFromArray(sizeBytes, boc)
+	rootsCount := readNBytesUIntFromArray(sizeBytes, boc)
 	boc = boc[sizeBytes:]
 	absentNum := readNBytesUIntFromArray(sizeBytes, boc)
 	boc = boc[sizeBytes:]
 	totCellsSize := readNBytesUIntFromArray(offsetBytes, boc)
 	boc = boc[offsetBytes:]
 
-	if len(boc) < int(rootsNum)*sizeBytes {
+	if len(boc) < int(rootsCount)*sizeBytes {
 		return nil, errors.New("not enough bytes for encoding root cells hashes")
 	}
 
 	// Roots
-	rootList := make([]uint, 0, rootsNum)
-	for i := 0; i < int(rootsNum); i++ {
+	rootList := make([]uint, 0, rootsCount)
+	for i := 0; i < int(rootsCount); i++ {
 		rootList = append(rootList, readNBytesUIntFromArray(sizeBytes, boc))
 		boc = boc[sizeBytes:]
 	}
 
 	// Index
-	index := make([]uint, 0, cellsNum)
+	index := make([]uint, 0, cellsCount)
 	if hasIdx {
-		if len(boc) < offsetBytes*int(cellsNum) {
+		if len(boc) < offsetBytes*int(cellsCount) {
 			return nil, errors.New("not enough bytes for index encoding")
 		}
-		for i := 0; i < int(cellsNum); i++ {
+		for i := 0; i < int(cellsCount); i++ {
 			val := readNBytesUIntFromArray(offsetBytes, boc)
 			if hasCacheBits {
 				val /= 2
@@ -163,18 +162,18 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 	}
 
 	return &bocHeader{
-		hasIdx,
-		hashCrc32,
-		hasCacheBits,
-		flags,
-		sizeBytes,
-		cellsNum,
-		rootsNum,
-		absentNum,
-		totCellsSize,
-		rootList,
-		index,
-		cellsData,
+		hasIdx:       hasIdx,
+		hasCrc32:     hashCrc32,
+		hasCacheBits: hasCacheBits,
+		flags:        flags,
+		sizeBytes:    sizeBytes,
+		cellCount:    cellsCount,
+		rootCount:    rootsCount,
+		absentCount:  absentNum,
+		totCellsSize: totCellsSize,
+		rootList:     rootList,
+		index:        index,
+		cellsData:    cellsData,
 	}, nil
 }
 
@@ -189,6 +188,7 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 
 	isExotic := (d1 & 8) > 0
 	refNum := int(d1 % 8)
+
 	dataBytesSize := int(d2>>1) + int(d2%2)
 	fullfilledBytes := !((d2 % 2) > 0)
 	withHashes := (d1 & 0b10000) != 0
@@ -234,10 +234,10 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 		return nil, err
 	}
 	cellsData := header.cellsData
-	cellsArray := make([]*Cell, 0, header.cellsNum)
-	refsArray := make([][]int, 0, header.cellsNum)
+	cellsArray := make([]*Cell, 0, header.cellCount)
+	refsArray := make([][]int, 0, header.cellCount)
 
-	for i := 0; i < int(header.cellsNum); i++ {
+	for i := 0; i < int(header.cellCount); i++ {
 		cell, refs, residue, err := deserializeCellData(cellsData, header.sizeBytes)
 		if err != nil {
 			return nil, err
@@ -246,7 +246,7 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 		cellsArray = append(cellsArray, cell)
 		refsArray = append(refsArray, refs)
 	}
-	for i := int(header.cellsNum - 1); i >= 0; i-- {
+	for i := int(header.cellCount - 1); i >= 0; i-- {
 		c := refsArray[i]
 		if len(c) > 4 {
 			return nil, fmt.Errorf("too long refs array")
@@ -256,7 +256,7 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 				return nil, errors.New("topological order is broken")
 			}
 			if r >= len(cellsArray) {
-				return nil, errors.New("index out of range for boc deseriailization")
+				return nil, errors.New("index out of range for boc deserialization")
 			}
 			cellsArray[i].refs[ri] = cellsArray[r]
 		}
@@ -296,194 +296,365 @@ func DeserializeBocHex(boc string) ([]*Cell, error) {
 	return DeserializeBoc(bocData)
 }
 
-func d1(cell *Cell, mask levelMask) byte {
-	specBit := 0
-	if cell.IsExotic() {
-		specBit = 8
-	}
-	return byte(cell.RefsSize() + specBit + 32*int(mask))
-}
-
-func d2(cell *Cell) byte {
-	return byte((cell.BitSize()+7)/8 + cell.BitSize()/8)
-}
-
-func bocReprWithoutRefs(cell *Cell, mask levelMask) []byte {
-	res := make([]byte, ((cell.BitSize()+7)/8)+2)
-	res[0] = d1(cell, mask)
-	res[1] = d2(cell)
-	copy(res[2:], cell.getBuffer())
-	if cell.BitSize()%8 != 0 {
-		res[len(res)-1] |= 1 << (7 - cell.BitSize()%8)
-	}
-	return res
-}
-
-func hashCell(cell *Cell, cache map[*Cell]*immutableCell) ([]byte, error) {
-	imc, err := newImmutableCell(cell, cache)
-	if err != nil {
-		return nil, err
-	}
-	return imc.Hash(maxLevel), nil
-}
-
-func topologicalSortImpl(cell *Cell, seen []string) ([]*Cell, error) {
-	var res = make([]*Cell, 0)
-
-	res = append(res, cell)
-
-	hash, err := cell.HashString()
-	if err != nil {
-		return nil, err
-	}
-	if contains(seen, hash) {
-		return nil, errors.New("circular references are not allowed")
-	}
-
-	for _, ref := range cell.Refs() {
-		res2, err := topologicalSortImpl(ref, append(seen, hash))
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, res2...)
-	}
-
-	return res, nil
-}
-
-func topologicalSort(cell *Cell) ([]*Cell, map[string]int, error) {
-	res, err := topologicalSortImpl(cell, []string{})
-	if err != nil {
-		return nil, nil, err
-	}
-
-	indexesMap := make(map[string]int)
-	for i := 0; i < len(res); i++ {
-		h, err := res[i].HashString()
-		if err != nil {
-			return nil, nil, err
-		}
-		indexesMap[h] = i
-	}
-
-	return res, indexesMap, nil
-}
-
-func bocRepr(c *Cell, indexesMap map[string]int, sBytes int) ([]byte, error) {
-	// TODO: currently, it works only if all cells are ordinary.
-	res := bocReprWithoutRefs(c, levelMask(0))
-
-	for _, ref := range c.Refs() {
-		h, err := ref.HashString()
-		if err != nil {
-			return nil, err
-		}
-		b := make([]byte, 8)
-		binary.BigEndian.PutUint64(b, uint64(indexesMap[h]))
-		res = append(res, b[8-sBytes:]...)
-	}
-
-	return res, nil
-}
-
 func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
-	rootCell := cell
-	allCells, indexesMap, err := topologicalSort(rootCell)
+	bag := newBagOfCells()
+	return bag.serializeBoc([]*Cell{cell}, idx, hasCrc32, cacheBits, flags)
+}
+
+// bagOfCells serializes cells to a boc.
+//
+// the serialization algorithms is a golang version of
+// https://github.com/ton-blockchain/ton/blob/master/crypto/vm/boc.cpp#
+type bagOfCells struct {
+	hasher *Hasher
+}
+
+func newBagOfCells() *bagOfCells {
+	return &bagOfCells{
+		hasher: NewHasher(),
+	}
+}
+
+// serializeBoc converts the given list of root cells to a byte representation.
+//
+//	serialized_boc#672fb0ac has_idx:(## 1) has_crc32c:(## 1)
+//	has_cache_bits:(## 1) flags:(## 2) { flags = 0 }
+//	size:(## 3) { size <= 4 }
+//	off_bytes:(## 8) { off_bytes <= 8 }
+//	cells:(##(size * 8))
+//	roots:(##(size * 8))
+//	absent:(##(size * 8)) { roots + absent <= cells }
+//	tot_cells_size:(##(off_bytes * 8))
+//	index:(cells * ##(off_bytes * 8))
+//	cell_data:(tot_cells_size * [ uint8 ])
+//	= BagOfCells;
+func (boc *bagOfCells) serializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+	roots, cellInfos, err := boc.importRoots(rootCells)
 	if err != nil {
 		return nil, err
 	}
+	cellCount := len(cellInfos)
+	refBitSize := bits.Len(uint(cellCount))
+	refByteSize := int(math.Max(math.Ceil(float64(refBitSize)/8), 1))
+	offset := uint(0)
+	offsets := make([]uint, cellCount)
+	reps := make([][]byte, cellCount)
+	for i := cellCount - 1; i >= 0; i-- {
+		ci := cellInfos[i]
+		repr := ci.cell.bocReprWithoutRefs(ci.cell.mask)
+		for j := 0; j < ci.refsNumber; j++ {
+			var b [8]byte
+			k := cellCount - 1 - ci.refsIndex[j]
+			binary.BigEndian.PutUint64(b[:], uint64(k))
+			repr = append(repr, b[8-refByteSize:]...)
+		}
+		reps[i] = repr
+		offset += uint(len(repr))
+		fixedOffset := offset
+		if cacheBits {
+			fixedOffset = offset * 2
+			if ci.shouldCache {
+				fixedOffset += 1
+			}
+		}
+		offsets[i] = fixedOffset
+	}
 
-	cellsNum := uint(len(allCells))
-	sBits := bits.Len(cellsNum)
-	sBytes := int(math.Max(math.Ceil(float64(sBits)/8), 1))
-	fullSize := uint(0)
-	sizeIndex := make([]uint, 0)
-	for _, cell := range allCells {
-		sizeIndex = append(sizeIndex, fullSize)
-		repr, err := bocRepr(cell, indexesMap, sBytes)
+	offsetBitSize := bits.Len(offset)
+	offsetByteSize := int(math.Max(math.Ceil(float64(offsetBitSize)/8), 1))
+
+	bitString := NewBitString((CellBits + 32*4 + 32*3) * int(cellCount))
+	err = bitString.WriteBytes(reachBocMagicPrefix)
+	if err != nil {
+		return nil, err
+	}
+	err = bitString.WriteBitArray([]bool{idx, hasCrc32, cacheBits})
+	if err != nil {
+		return nil, err
+	}
+	err = bitString.WriteUint(uint64(flags), 2)
+	if err != nil {
+		return nil, err
+	}
+	err = bitString.WriteInt(int64(refByteSize), 3)
+	if err != nil {
+		return nil, err
+	}
+	err = bitString.WriteInt(int64(offsetByteSize), 8)
+	if err != nil {
+		return nil, err
+	}
+	err = bitString.WriteUint(uint64(cellCount), refByteSize*8)
+	if err != nil {
+		return nil, err
+	}
+	err = bitString.WriteUint(uint64(len(roots)), refByteSize*8)
+	if err != nil {
+		return nil, err
+	}
+	// absent count
+	err = bitString.WriteUint(0, refByteSize*8)
+	if err != nil {
+		return nil, err
+	}
+	// total cells size
+	err = bitString.WriteUint(uint64(offset), offsetByteSize*8)
+	if err != nil {
+		return nil, err
+	}
+	for _, root := range roots {
+		k := len(cellInfos) - 1 - root.index
+		err = bitString.WriteUint(uint64(k), refByteSize*8)
 		if err != nil {
 			return nil, err
 		}
-		fullSize = fullSize + uint(len(repr))
-	}
-
-	offsetBits := bits.Len(fullSize)
-	offsetBytes := int(math.Max(math.Ceil(float64(offsetBits)/8), 1))
-
-	serStr := NewBitString((CellBits + 32*4 + 32*3) * int(cellsNum))
-
-	err = serStr.WriteBytes(reachBocMagicPrefix)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteBitArray([]bool{idx, hasCrc32, cacheBits})
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteUint(uint64(flags), 2)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteInt(int64(sBytes), 3)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteInt(int64(offsetBytes), 8)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteUint(uint64(cellsNum), sBytes*8)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteUint(1, sBytes*8)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteUint(0, sBytes*8)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteUint(uint64(fullSize), offsetBytes*8)
-	if err != nil {
-		return nil, err
-	}
-	err = serStr.WriteUint(0, sBytes*8)
-	if err != nil {
-		return nil, err
 	}
 
 	if idx {
-		for i := range allCells {
-			err = serStr.WriteUint(uint64(sizeIndex[i]), offsetBytes*8)
+		for i := cellCount - 1; i >= 0; i-- {
+			err = bitString.WriteUint(uint64(offsets[i]), offsetByteSize*8)
 			if err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	for _, cell := range allCells {
-		repr, err := bocRepr(cell, indexesMap, sBytes)
-		if err != nil {
-			return nil, err
-		}
-		err = serStr.WriteBytes(repr)
+	for i := cellCount - 1; i >= 0; i-- {
+		err = bitString.WriteBytes(reps[i])
 		if err != nil {
 			return nil, err
 		}
 	}
-
-	resBytes, err := serStr.GetTopUppedArray()
+	resBytes, err := bitString.GetTopUppedArray()
 	if err != nil {
 		return nil, err
 	}
-
 	if hasCrc32 {
 		checksum := make([]byte, 4)
 		binary.LittleEndian.PutUint32(checksum, crc32.Checksum(resBytes, crc32.MakeTable(crc32.Castagnoli)))
-
 		resBytes = append(resBytes, checksum...)
 	}
-
 	return resBytes, nil
+}
+
+func (boc *bagOfCells) importRoots(rootCells []*Cell) ([]*rootInfo, []*cellInfo, error) {
+	roots := make([]*rootInfo, 0, len(rootCells))
+	state := &orderState{
+		cells: map[string]int{},
+	}
+	for _, root := range rootCells {
+		pos, err := boc.importCell(state, root, 0)
+		if err != nil {
+			return nil, nil, err
+		}
+		info := rootInfo{
+			cell:  root,
+			index: pos,
+		}
+		roots = append(roots, &info)
+	}
+	cellInfos := boc.reorderCells(roots, state)
+	return roots, cellInfos, nil
+}
+
+func (boc *bagOfCells) importCell(state *orderState, cell *Cell, depth int) (int, error) {
+	if depth > maxDepth {
+		return 0, ErrDepthIsTooBig
+	}
+	if cell == nil {
+		return 0, errors.New("failed to import nil cell")
+	}
+	hash, err := boc.hasher.HashString(cell)
+	if err != nil {
+		return 0, err
+	}
+	if pos, ok := state.cells[hash]; ok {
+		state.cellList[pos].shouldCache = true
+		return pos, nil
+	}
+	var refs [4]int
+	sumChildWt := 1
+	refsNumber := 0
+	for i, ref := range cell.refs {
+		if ref == nil {
+			break
+		}
+		refsNumber += 1
+		refPos, err := boc.importCell(state, ref, depth+1)
+		if err != nil {
+			return 0, err
+		}
+		refs[i] = refPos
+		sumChildWt += state.cellList[refPos].wt
+		state.intRefs += 1
+	}
+	state.cells[hash] = len(state.cellList)
+	if sumChildWt > 255 {
+		sumChildWt = 255
+	}
+	info := cellInfo{
+		cell:        cell,
+		shouldCache: false,
+		wt:          sumChildWt,
+		refsIndex:   refs,
+		refsNumber:  refsNumber,
+		hashCount:   cell.mask.HashesCount(),
+		newIndex:    -1,
+		isRootCell:  false,
+	}
+	return state.add(&info), nil
+}
+
+// cellInfo holds information required to come up with an order to serialize boc.
+type cellInfo struct {
+	cell        *Cell
+	shouldCache bool
+	wt          int
+	refsIndex   [4]int
+	refsNumber  int
+	hashCount   int
+	newIndex    int
+	isRootCell  bool
+}
+
+func (ci *cellInfo) isSpecial() bool {
+	return ci.wt == 0
+}
+
+type rootInfo struct {
+	cell  *Cell
+	index int
+}
+
+type orderState struct {
+	cellList []*cellInfo
+	cells    map[string]int
+	intRefs  int
+}
+
+func (bag *orderState) add(ci *cellInfo) int {
+	bag.cellList = append(bag.cellList, ci)
+	return len(bag.cellList) - 1
+}
+
+type force int
+
+const (
+	previsit force = iota
+	visit
+	allocate
+)
+
+func (boc *bagOfCells) revisit(state, newState *orderState, cellIndex int, force force) int {
+	dci := state.cellList[cellIndex]
+	if dci.newIndex >= 0 {
+		return dci.newIndex
+	}
+	if force == previsit {
+		if dci.newIndex != -1 {
+			// already previsited or visited
+			return dci.newIndex
+		}
+		for j := dci.refsNumber - 1; j >= 0; j-- {
+			childIndex := dci.refsIndex[j]
+			childCell := state.cellList[childIndex]
+			if childCell.isSpecial() {
+				boc.revisit(state, newState, childIndex, visit)
+			} else {
+				boc.revisit(state, newState, childIndex, previsit)
+			}
+		}
+		dci.newIndex = -2
+		return dci.newIndex
+	}
+	if force == allocate {
+		dci.newIndex = newState.add(dci)
+		return dci.newIndex
+	}
+
+	if dci.newIndex == -3 {
+		return dci.newIndex
+	}
+	if dci.isSpecial() {
+		boc.revisit(state, newState, cellIndex, previsit)
+	}
+
+	for j := dci.refsNumber - 1; j >= 0; j-- {
+		boc.revisit(state, newState, dci.refsIndex[j], visit)
+	}
+	for j := dci.refsNumber - 1; j >= 0; j-- {
+		dci.refsIndex[j] = boc.revisit(state, newState, dci.refsIndex[j], allocate)
+	}
+	dci.newIndex = -3
+	return dci.newIndex
+
+}
+func (boc *bagOfCells) reorderCells(roots []*rootInfo, state *orderState) []*cellInfo {
+	for i := len(state.cellList) - 1; i >= 0; i-- {
+		dci := state.cellList[i]
+		c := dci.refsNumber
+		sum := maxCellWhs - 1
+		mask := 0
+		for j := 0; j < dci.refsNumber; j++ {
+			dcj := state.cellList[dci.refsIndex[j]]
+			limit := (maxCellWhs - 1 + j) / dci.refsNumber
+			if dcj.wt <= limit {
+				sum -= dcj.wt
+				c--
+				mask |= 1 << j
+			}
+		}
+		if c > 0 {
+			for j := 0; j < dci.refsNumber; j++ {
+				if mask&(1<<j) == 0 {
+					dcj := state.cellList[dci.refsIndex[j]]
+					sum += 1
+					limit := sum / c
+					if dcj.wt > limit {
+						dcj.wt = limit
+					}
+				}
+			}
+		}
+	}
+	// intHashes will be used to preallocate all required space to store a boc.
+	// currently, not used.
+	intHashes := 0
+	for _, dci := range state.cellList {
+		sum := 1
+		for j := 0; j < dci.refsNumber; j++ {
+			sum += state.cellList[dci.refsIndex[j]].wt
+		}
+		if sum <= dci.wt {
+			dci.wt = sum
+		} else {
+			dci.wt = 0
+			intHashes += dci.hashCount
+		}
+	}
+	// topHashes will be used to preallocate space required to store a boc.
+	// currently, not used.
+	topHashes := 0
+	for _, root := range roots {
+		ci := state.cellList[root.index]
+		ci.isRootCell = true
+		if ci.wt > 0 {
+			topHashes += ci.hashCount
+		}
+	}
+
+	newState := &orderState{}
+	if len(state.cellList) > 0 {
+		for _, root := range roots {
+			boc.revisit(state, newState, root.index, previsit)
+			boc.revisit(state, newState, root.index, visit)
+		}
+		for _, root := range roots {
+			boc.revisit(state, newState, root.index, allocate)
+		}
+		for _, root := range roots {
+			root.index = state.cellList[root.index].newIndex
+		}
+	}
+	return newState.cellList
 }

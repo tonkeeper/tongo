@@ -301,11 +301,11 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	return bag.SerializeBoc([]*Cell{cell}, mode(idx, hasCrc32, cacheBits))
 }
 
-// bagOfCells serializes cells to a boc.
+// BagOfCells serializes cells to a boc.
 //
 // the serialization algorithms is a golang version of
 // https://github.com/ton-blockchain/ton/blob/master/crypto/vm/boc.cpp#
-type bagOfCells struct {
+type BagOfCells struct {
 	hasher *Hasher
 }
 
@@ -321,7 +321,7 @@ func BagWithHasher(hasher *Hasher) BagOption {
 	}
 }
 
-func NewBagOfCells(opts ...BagOption) *bagOfCells {
+func NewBagOfCells(opts ...BagOption) *BagOfCells {
 	options := &BagOptions{}
 	for _, o := range opts {
 		o(options)
@@ -329,7 +329,7 @@ func NewBagOfCells(opts ...BagOption) *bagOfCells {
 	if options.hasher == nil {
 		options.hasher = NewHasher()
 	}
-	return &bagOfCells{
+	return &BagOfCells{
 		hasher: options.hasher,
 	}
 }
@@ -374,7 +374,7 @@ func (m SerializationMode) withCacheBits() bool {
 // SerializeBoc converts the given list of root cells to a byte representation.
 // If you are not sure about mode, use mode = 0.
 // 0 works well for the most use-cases.
-func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, mode SerializationMode) ([]byte, error) {
+func (boc *BagOfCells) SerializeBoc(rootCells []*Cell, mode SerializationMode) ([]byte, error) {
 	//	serialized_boc#672fb0ac has_idx:(## 1) has_crc32c:(## 1)
 	//	has_cache_bits:(## 1) flags:(## 2) { flags = 0 }
 	//	size:(## 3) { size <= 4 }
@@ -495,7 +495,7 @@ func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, mode SerializationMode) (
 	return resBytes, nil
 }
 
-func (boc *bagOfCells) importRoots(rootCells []*Cell) ([]*rootInfo, []*cellInfo, error) {
+func (boc *BagOfCells) importRoots(rootCells []*Cell) ([]*rootInfo, []*cellInfo, error) {
 	roots := make([]*rootInfo, 0, len(rootCells))
 	state := &orderState{
 		cells: map[string]int{},
@@ -515,7 +515,7 @@ func (boc *bagOfCells) importRoots(rootCells []*Cell) ([]*rootInfo, []*cellInfo,
 	return roots, cellInfos, nil
 }
 
-func (boc *bagOfCells) importCell(state *orderState, cell *Cell, depth int) (int, error) {
+func (boc *BagOfCells) importCell(state *orderState, cell *Cell, depth int) (int, error) {
 	if depth > maxDepth {
 		return 0, ErrDepthIsTooBig
 	}
@@ -603,7 +603,7 @@ const (
 	allocate
 )
 
-func (boc *bagOfCells) revisit(state, newState *orderState, cellIndex int, force force) int {
+func (boc *BagOfCells) revisit(state, newState *orderState, cellIndex int, force force) int {
 	dci := state.cellList[cellIndex]
 	if dci.newIndex >= 0 {
 		return dci.newIndex
@@ -647,7 +647,7 @@ func (boc *bagOfCells) revisit(state, newState *orderState, cellIndex int, force
 	return dci.newIndex
 
 }
-func (boc *bagOfCells) reorderCells(roots []*rootInfo, state *orderState) []*cellInfo {
+func (boc *BagOfCells) reorderCells(roots []*rootInfo, state *orderState) []*cellInfo {
 	for i := len(state.cellList) - 1; i >= 0; i-- {
 		dci := state.cellList[i]
 		c := dci.refsNumber

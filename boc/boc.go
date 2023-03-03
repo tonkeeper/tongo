@@ -297,8 +297,8 @@ func DeserializeBocHex(boc string) ([]*Cell, error) {
 }
 
 func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
-	bag := newBagOfCells()
-	return bag.serializeBoc([]*Cell{cell}, idx, hasCrc32, cacheBits, flags)
+	bag := NewBagOfCells()
+	return bag.SerializeBoc([]*Cell{cell}, idx, hasCrc32, cacheBits, flags)
 }
 
 // bagOfCells serializes cells to a boc.
@@ -309,26 +309,44 @@ type bagOfCells struct {
 	hasher *Hasher
 }
 
-func newBagOfCells() *bagOfCells {
-	return &bagOfCells{
-		hasher: NewHasher(),
+type BagOptions struct {
+	hasher *Hasher
+}
+type BagOption func(o *BagOptions)
+
+// BagWithHasher configures a BagOfCells to use the given hasher.
+func BagWithHasher(hasher *Hasher) BagOption {
+	return func(o *BagOptions) {
+		o.hasher = hasher
 	}
 }
 
-// serializeBoc converts the given list of root cells to a byte representation.
-//
-//	serialized_boc#672fb0ac has_idx:(## 1) has_crc32c:(## 1)
-//	has_cache_bits:(## 1) flags:(## 2) { flags = 0 }
-//	size:(## 3) { size <= 4 }
-//	off_bytes:(## 8) { off_bytes <= 8 }
-//	cells:(##(size * 8))
-//	roots:(##(size * 8))
-//	absent:(##(size * 8)) { roots + absent <= cells }
-//	tot_cells_size:(##(off_bytes * 8))
-//	index:(cells * ##(off_bytes * 8))
-//	cell_data:(tot_cells_size * [ uint8 ])
-//	= BagOfCells;
-func (boc *bagOfCells) serializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+func NewBagOfCells(opts ...BagOption) *bagOfCells {
+	options := &BagOptions{}
+	for _, o := range opts {
+		o(options)
+	}
+	if options.hasher == nil {
+		options.hasher = NewHasher()
+	}
+	return &bagOfCells{
+		hasher: options.hasher,
+	}
+}
+
+// SerializeBoc converts the given list of root cells to a byte representation.
+func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+	//	serialized_boc#672fb0ac has_idx:(## 1) has_crc32c:(## 1)
+	//	has_cache_bits:(## 1) flags:(## 2) { flags = 0 }
+	//	size:(## 3) { size <= 4 }
+	//	off_bytes:(## 8) { off_bytes <= 8 }
+	//	cells:(##(size * 8))
+	//	roots:(##(size * 8))
+	//	absent:(##(size * 8)) { roots + absent <= cells }
+	//	tot_cells_size:(##(off_bytes * 8))
+	//	index:(cells * ##(off_bytes * 8))
+	//	cell_data:(tot_cells_size * [ uint8 ])
+	//	= BagOfCells;
 	roots, cellInfos, err := boc.importRoots(rootCells)
 	if err != nil {
 		return nil, err

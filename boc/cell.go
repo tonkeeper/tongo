@@ -106,8 +106,8 @@ func (c *Cell) hash(cache map[*Cell]*immutableCell) ([]byte, error) {
 }
 
 func (c *Cell) ToBoc() ([]byte, error) {
-	bag := newBagOfCells()
-	return bag.serializeBoc([]*Cell{c}, false, false, false, 0)
+	bag := NewBagOfCells()
+	return bag.SerializeBoc([]*Cell{c}, false, false, false, 0)
 }
 
 func (c *Cell) ToBocString() (string, error) {
@@ -119,8 +119,8 @@ func (c *Cell) ToBocBase64() (string, error) {
 }
 
 func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
-	bag := newBagOfCells()
-	return bag.serializeBoc([]*Cell{c}, idx, hasCrc32, cacheBits, 0)
+	bag := NewBagOfCells()
+	return bag.SerializeBoc([]*Cell{c}, idx, hasCrc32, cacheBits, 0)
 }
 
 func (c *Cell) ToBocStringCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) (string, error) {

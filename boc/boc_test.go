@@ -18,8 +18,8 @@ func TestBigCell(t *testing.T) {
 		t.Fail()
 		return
 	}
-	bag := newBagOfCells()
-	x, err := bag.serializeBoc([]*Cell{cells[0]}, false, true, false, 0)
+	bag := NewBagOfCells()
+	x, err := bag.SerializeBoc([]*Cell{cells[0]}, false, true, false, 0)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -374,10 +374,10 @@ func Test_bagOfCells_serializeBoc(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to deserialize boc: %v", err)
 			}
-			bag := newBagOfCells()
-			bs, err := bag.serializeBoc(cells, tt.hasIndex, tt.hasCrc, tt.hasCacheBits, 0)
+			bag := NewBagOfCells()
+			bs, err := bag.SerializeBoc(cells, tt.hasIndex, tt.hasCrc, tt.hasCacheBits, 0)
 			if err != nil {
-				t.Fatalf("serializeBoc() failed: %v", err)
+				t.Fatalf("SerializeBoc() failed: %v", err)
 			}
 			if tt.hexBoc != hex.EncodeToString(bs) {
 				t.Fatalf("serializedBoc differs from hexBoc")

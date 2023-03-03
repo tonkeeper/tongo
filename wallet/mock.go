@@ -2,7 +2,9 @@ package wallet
 
 import (
 	"context"
+
 	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -39,7 +41,7 @@ func (b *SimpleMockBlockchain) SendMessage(ctx context.Context, payload []byte) 
 	return 0, nil
 }
 
-func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {
+func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID, opts ...liteapi.MethodOption) (tlb.ShardAccount, error) {
 	return tlb.ShardAccount{
 		Account: tlb.Account{
 			SumType: "Account",

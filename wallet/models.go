@@ -8,6 +8,7 @@ import (
 
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -57,7 +58,7 @@ var codes = map[Version]string{
 type blockchain interface {
 	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
 	SendMessage(ctx context.Context, payload []byte) (uint32, error)
-	GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error)
+	GetAccountState(ctx context.Context, accountID tongo.AccountID, opts ...liteapi.MethodOption) (tlb.ShardAccount, error)
 }
 
 func GetCodeByVer(ver Version) *boc.Cell {

@@ -24,6 +24,12 @@ func (dec *Decoder) Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, "", reflect.ValueOf(o), dec)
 }
 
+// Hasher returns an instance of boc.Hasher that has been used by this decoder
+// to unmarshal TL-B data.
+func (dec *Decoder) Hasher() *boc.Hasher {
+	return dec.hasher
+}
+
 // UnmarshalerTLB contains method UnmarshalTLB that must be implemented by a struct
 // if it provides specific unmarshalling code.
 type UnmarshalerTLB interface {

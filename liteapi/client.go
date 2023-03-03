@@ -186,6 +186,31 @@ func (c *Client) WithBlock(block tongo.BlockIDExt) *Client {
 	}
 }
 
+// MethodOptions configures different aspects of method execution.
+type MethodOptions struct {
+	decoder *tlb.Decoder
+}
+
+type MethodOption func(o *MethodOptions)
+
+func makeMethodOptions(opts ...MethodOption) *MethodOptions {
+	options := &MethodOptions{}
+	for _, o := range opts {
+		o(options)
+	}
+	if options.decoder == nil {
+		options.decoder = tlb.NewDecoder()
+	}
+	return options
+}
+
+// WithDecoder provides an instance of tlb.Decoder to unmarshal TL-B data.
+func WithDecoder(dec *tlb.Decoder) MethodOption {
+	return func(o *MethodOptions) {
+		o.decoder = dec
+	}
+}
+
 func (c *Client) GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerMasterchainInfoC, error) {
 	return c.getMasterchainServer().LiteServerGetMasterchainInfo(ctx)
 }
@@ -203,7 +228,8 @@ func (c *Client) GetVersion(ctx context.Context) (liteclient.LiteServerVersionC,
 	return c.getMasterchainServer().LiteServerGetVersion(ctx)
 }
 
-func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Block, error) {
+func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt, opts ...MethodOption) (tlb.Block, error) {
+	options := makeMethodOptions(opts...)
 	server, err := c.getServerByBlockID(blockID.BlockID)
 	if err != nil {
 		return tlb.Block{}, err
@@ -220,7 +246,7 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Bl
 		return tlb.Block{}, boc.ErrNotSingleRoot
 	}
 	var data tlb.Block
-	err = tlb.Unmarshal(cells[0], &data)
+	err = options.decoder.Unmarshal(cells[0], &data)
 	if err != nil {
 		return tlb.Block{}, err
 	}
@@ -350,7 +376,8 @@ func (c *Client) RunSmcMethod(
 	return c.RunSmcMethodByID(ctx, accountID, utils.MethodIdFromName(method), params)
 }
 
-func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {
+func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID, opts ...MethodOption) (tlb.ShardAccount, error) {
+	options := makeMethodOptions(opts...)
 	id, err := c.targetBlock(ctx)
 	if err != nil {
 		return tlb.ShardAccount{}, err
@@ -377,15 +404,15 @@ func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID)
 		return tlb.ShardAccount{}, boc.ErrNotSingleRoot
 	}
 	var acc tlb.Account
-	err = tlb.Unmarshal(cells[0], &acc)
+	err = options.decoder.Unmarshal(cells[0], &acc)
 	if err != nil {
 		return tlb.ShardAccount{}, err
 	}
-	lt, hash, err := decodeAccountDataFromProof(res.Proof, accountID)
+	lt, hash, err := decodeAccountDataFromProof(options.decoder, res.Proof, accountID)
 	return tlb.ShardAccount{Account: acc, LastTransHash: hash, LastTransLt: lt}, err
 }
 
-func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tlb.Bits256, error) {
+func decodeAccountDataFromProof(decoder *tlb.Decoder, bocBytes []byte, account tongo.AccountID) (uint64, tlb.Bits256, error) {
 	cells, err := boc.DeserializeBoc(bocBytes)
 	if err != nil {
 		return 0, tlb.Bits256{}, err
@@ -396,7 +423,7 @@ func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint6
 	var proof struct {
 		Proof tlb.MerkleProof[tlb.ShardStateUnsplit]
 	}
-	err = tlb.Unmarshal(cells[1], &proof) // cells order must be strictly defined
+	err = decoder.Unmarshal(cells[1], &proof) // cells order must be strictly defined
 	if err != nil {
 		return 0, tlb.Bits256{}, err
 	}

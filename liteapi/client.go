@@ -220,7 +220,7 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Bl
 		return tlb.Block{}, boc.ErrNotSingleRoot
 	}
 	var data tlb.Block
-	err = tlb.Unmarshal(cells[0], &data)
+	err = tlb.NewDecoder().Unmarshal(cells[0], &data)
 	if err != nil {
 		return tlb.Block{}, err
 	}

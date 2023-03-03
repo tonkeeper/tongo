@@ -19,7 +19,7 @@ func TestBigCell(t *testing.T) {
 		return
 	}
 	bag := NewBagOfCells()
-	x, err := bag.SerializeBoc([]*Cell{cells[0]}, false, true, false, 0)
+	x, err := bag.SerializeBoc([]*Cell{cells[0]}, 0)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
@@ -329,13 +329,11 @@ func BenchmarkDeserializeBoc(b *testing.B) {
 
 func Test_bagOfCells_serializeBoc(t *testing.T) {
 	tests := []struct {
-		name         string
-		hexBoc       string
-		hasIndex     bool
-		hasCrc       bool
-		hasCacheBits bool
-		want         []byte
-		wantErr      bool
+		name    string
+		hexBoc  string
+		mode    SerializationMode
+		want    []byte
+		wantErr bool
 	}{
 		{
 			name:   "complex boc",
@@ -346,22 +344,19 @@ func Test_bagOfCells_serializeBoc(t *testing.T) {
 			hexBoc: multirootBocWithText,
 		},
 		{
-			name:     "with index",
-			hexBoc:   "b5ee9c7281010401003d0015172b3d03200000000000000001000000000000000201010200000220000000000000000300000000000000040303002000000000000000010000000000000002",
-			hasIndex: true,
+			name:   "with index",
+			hexBoc: "b5ee9c7281010401003d0015172b3d03200000000000000001000000000000000201010200000220000000000000000300000000000000040303002000000000000000010000000000000002",
+			mode:   WithIndex,
 		},
 		{
-			name:     "with index, with crc",
-			hexBoc:   "b5ee9c72c1010401003d0015172b3d032000000000000000010000000000000002010102000002200000000000000003000000000000000403030020000000000000000100000000000000029524008b",
-			hasIndex: true,
-			hasCrc:   true,
+			name:   "with index, with crc",
+			hexBoc: "b5ee9c72c1010401003d0015172b3d032000000000000000010000000000000002010102000002200000000000000003000000000000000403030020000000000000000100000000000000029524008b",
+			mode:   WithIndex | WithCRC32C,
 		},
 		{
-			name:         "with index, with crc, with cache bits",
-			hexBoc:       "b5ee9c72e1010401003d002a2f567b03200000000000000001000000000000000201010200000220000000000000000300000000000000040303002000000000000000010000000000000002b64a27ad",
-			hasIndex:     true,
-			hasCrc:       true,
-			hasCacheBits: true,
+			name:   "with index, with crc, with cache bits",
+			hexBoc: "b5ee9c72e1010401003d002a2f567b03200000000000000001000000000000000201010200000220000000000000000300000000000000040303002000000000000000010000000000000002b64a27ad",
+			mode:   WithIndex | WithCRC32C | WithCacheBits,
 		},
 	}
 	for _, tt := range tests {
@@ -375,7 +370,7 @@ func Test_bagOfCells_serializeBoc(t *testing.T) {
 				t.Fatalf("failed to deserialize boc: %v", err)
 			}
 			bag := NewBagOfCells()
-			bs, err := bag.SerializeBoc(cells, tt.hasIndex, tt.hasCrc, tt.hasCacheBits, 0)
+			bs, err := bag.SerializeBoc(cells, tt.mode)
 			if err != nil {
 				t.Fatalf("SerializeBoc() failed: %v", err)
 			}

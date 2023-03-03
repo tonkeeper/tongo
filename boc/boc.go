@@ -298,7 +298,7 @@ func DeserializeBocHex(boc string) ([]*Cell, error) {
 
 func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
 	bag := NewBagOfCells()
-	return bag.SerializeBoc([]*Cell{cell}, idx, hasCrc32, cacheBits, flags)
+	return bag.SerializeBoc([]*Cell{cell}, mode(idx, hasCrc32, cacheBits))
 }
 
 // bagOfCells serializes cells to a boc.
@@ -334,8 +334,47 @@ func NewBagOfCells(opts ...BagOption) *bagOfCells {
 	}
 }
 
+// SerializationMode configures different aspects of boc serialization.
+type SerializationMode int
+
+const (
+	WithIndex     SerializationMode = 1
+	WithCRC32C    SerializationMode = 2
+	WithTopHash   SerializationMode = 4
+	WithIntHashes SerializationMode = 8
+	WithCacheBits SerializationMode = 16
+)
+
+func mode(idx, hasCrc32, cacheBits bool) SerializationMode {
+	var m SerializationMode
+	if idx {
+		m |= WithIndex
+	}
+	if hasCrc32 {
+		m |= WithCRC32C
+	}
+	if cacheBits {
+		m |= WithCacheBits
+	}
+	return m
+}
+
+func (m SerializationMode) withIndex() bool {
+	return (m & WithIndex) > 0
+}
+
+func (m SerializationMode) withCRC() bool {
+	return (m & WithCRC32C) > 0
+}
+
+func (m SerializationMode) withCacheBits() bool {
+	return (m & WithCacheBits) > 0
+}
+
 // SerializeBoc converts the given list of root cells to a byte representation.
-func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+// If you are not sure about mode, use mode = 0.
+// 0 works well for the most use-cases.
+func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, mode SerializationMode) ([]byte, error) {
 	//	serialized_boc#672fb0ac has_idx:(## 1) has_crc32c:(## 1)
 	//	has_cache_bits:(## 1) flags:(## 2) { flags = 0 }
 	//	size:(## 3) { size <= 4 }
@@ -369,7 +408,7 @@ func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, 
 		reps[i] = repr
 		offset += uint(len(repr))
 		fixedOffset := offset
-		if cacheBits {
+		if mode.withCacheBits() {
 			fixedOffset = offset * 2
 			if ci.shouldCache {
 				fixedOffset += 1
@@ -386,11 +425,12 @@ func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, 
 	if err != nil {
 		return nil, err
 	}
-	err = bitString.WriteBitArray([]bool{idx, hasCrc32, cacheBits})
+	err = bitString.WriteBitArray([]bool{mode.withIndex(), mode.withCRC(), mode.withCacheBits()})
 	if err != nil {
 		return nil, err
 	}
-	err = bitString.WriteUint(uint64(flags), 2)
+	// flags
+	err = bitString.WriteUint(uint64(0), 2)
 	if err != nil {
 		return nil, err
 	}
@@ -428,7 +468,7 @@ func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, 
 		}
 	}
 
-	if idx {
+	if mode.withIndex() {
 		for i := cellCount - 1; i >= 0; i-- {
 			err = bitString.WriteUint(uint64(offsets[i]), offsetByteSize*8)
 			if err != nil {
@@ -447,7 +487,7 @@ func (boc *bagOfCells) SerializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, 
 	if err != nil {
 		return nil, err
 	}
-	if hasCrc32 {
+	if mode.withCRC() {
 		checksum := make([]byte, 4)
 		binary.LittleEndian.PutUint32(checksum, crc32.Checksum(resBytes, crc32.MakeTable(crc32.Castagnoli)))
 		resBytes = append(resBytes, checksum...)

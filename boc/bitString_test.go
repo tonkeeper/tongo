@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/bits"
 	"math/rand"
 	"testing"
 )
@@ -188,6 +189,32 @@ func BenchmarkReadUint(b *testing.B) {
 		_, _ = str.ReadUint(1)
 		_, _ = str.ReadUint(16)
 		_, _ = str.ReadUint(64)
+	}
+}
+
+func TestReadUint(t *testing.T) {
+	for _, u := range []uint64{0, 1, 2, 8, 100500, (1 << 32) - 1, 1 << 32, (1 << 32) + 1, (1 << 64) - 1} {
+		for offset := 0; offset <= 17; offset++ {
+			str := NewBitString(1023)
+			for i := 0; i < offset; i++ {
+				str.WriteBit(true)
+			}
+			str.WriteUint(u, bits.Len64(u))
+			if bits.Len64(u) < 32 {
+				str.WriteUint(u, bits.Len64(u)*2)
+			}
+			for i := 0; i < offset; i++ {
+				str.ReadBit()
+			}
+
+			u2, err := str.ReadUint(bits.Len64(u))
+			if err != nil {
+				t.Error(err)
+			}
+			if u2 != u {
+				t.Errorf("%v with offset %v: %v", u, offset, u2)
+			}
+		}
 	}
 }
 

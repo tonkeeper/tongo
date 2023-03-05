@@ -262,12 +262,20 @@ func (s *BitString) ReadUint(bitLen int) (uint64, error) {
 		s.rCursor += bitLen
 		return binary.BigEndian.Uint64(buf[:]), nil
 	}
-
+	if bitLen < 57 { //7 byte
+		var b [8]byte
+		copy(b[:], s.buf[s.rCursor/8:])
+		u64 := binary.BigEndian.Uint64(b[:])
+		u64 = (u64 >> (64 - bitLen - (s.rCursor & 0b0111))) & ((1 << bitLen) - 1)
+		s.rCursor += bitLen
+		return u64, nil
+	}
 	for i := bitLen - 1; i >= 0; i-- {
 		if s.mustReadBit() {
 			res |= 1 << i
 		}
 	}
+
 	return res, nil
 }
 

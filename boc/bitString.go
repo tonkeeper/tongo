@@ -1,6 +1,7 @@
 package boc
 
 import (
+	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -153,7 +154,7 @@ func (s *BitString) On(n int) error {
 	if err != nil {
 		return err
 	}
-	s.buf[n/8] |= 1 << (7 - (n % 8))
+	s.buf[n/8] |= 1 << (7 - (n & 0b111))
 	return nil
 }
 
@@ -162,14 +163,14 @@ func (s *BitString) Off(n int) error {
 	if err != nil {
 		return err
 	}
-	s.buf[n/8] &= ^(1 << (7 - (n % 8)))
+	s.buf[n/8] &= ^(1 << (7 - (n & 0b111)))
 	return nil
 }
 
 // Read methods
 
 func (s *BitString) mustGetBit(n int) bool {
-	return (s.buf[n/8] & (1 << (7 - (n % 8)))) > 0
+	return s.buf[n/8]&(1<<(7-(n&0b111))) > 0
 }
 
 func (s *BitString) mustReadBit() bool {
@@ -206,7 +207,7 @@ func (s *BitString) ReadBigUint(bitLen int) (*big.Int, error) {
 	var b []byte
 	var err error
 	if bitLen&0b111 != 0 {
-		firstByte, err := s.ReadUint(bitLen % 8)
+		firstByte, err := s.ReadUint(bitLen & 0b111)
 		if err != nil {
 			return nil, err
 		}
@@ -252,10 +253,16 @@ func (s *BitString) ReadUint(bitLen int) (uint64, error) {
 	if s.BitsAvailableForRead() < bitLen {
 		return 0, ErrNotEnoughBits
 	}
-	if bitLen == 0 {
-		return 0, nil
-	}
 	var res uint64
+	if s.rCursor&0b111 == 0 && bitLen&0b111 == 0 {
+		var buf [8]byte
+		l := bitLen >> 3
+		c := s.rCursor >> 3
+		copy(buf[8-l:], s.buf[c:c+l])
+		s.rCursor += bitLen
+		return binary.BigEndian.Uint64(buf[:]), nil
+	}
+
 	for i := bitLen - 1; i >= 0; i-- {
 		if s.mustReadBit() {
 			res |= 1 << i
@@ -305,15 +312,18 @@ func (s *BitString) ReadInt(bitLen int) (int64, error) {
 }
 
 func (s *BitString) ReadByte() (byte, error) {
-	if s.rCursor&0b111 == 0 && s.BitsAvailableForRead() > 8 {
+	if s.BitsAvailableForRead() < 8 {
+		return 0, ErrNotEnoughBits
+	}
+	bCursor := s.rCursor >> 3
+	if s.rCursor&0b111 == 0 {
 		s.rCursor += 8
-		return s.buf[s.rCursor/8], nil
+		return s.buf[bCursor], nil
 	}
-	res, err := s.ReadUint(8)
-	if err != nil {
-		return 0, err
-	}
-	return byte(res), nil
+	u16 := binary.BigEndian.Uint16(s.buf[bCursor : bCursor+2])
+	u16 = u16 >> (8 - (s.rCursor & 0b111))
+	s.rCursor += 8
+	return byte(u16), nil
 }
 
 func (s *BitString) ReadBytes(size int) ([]byte, error) {
@@ -325,13 +335,13 @@ func (s *BitString) ReadBytes(size int) ([]byte, error) {
 		s.rCursor += size * 8
 		return s.buf[rCursor/8 : rCursor/8+size], nil
 	}
+	var err error
 	res := make([]byte, size)
 	for i := 0; i < size; i++ {
-		b, err := s.ReadUint(8)
+		res[i], err = s.ReadByte()
 		if err != nil {
 			return nil, err
 		}
-		res[i] = byte(b)
 	}
 	return res, nil
 }
@@ -541,7 +551,7 @@ func (s *BitString) ToFiftHex() string {
 	//    Then we convert the last group to a hex value and add "_" to the resulting hex string.
 	if s.len%4 == 0 {
 		str := strings.ToUpper(hex.EncodeToString(s.buf[0 : (s.len+7)/8]))
-		if s.len%8 == 0 {
+		if s.len&0b111 == 0 {
 			return str
 		}
 		return str[0 : len(str)-1]

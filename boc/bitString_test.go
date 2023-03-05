@@ -162,3 +162,47 @@ func TestBitString_ReadBits(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkReadBit(b *testing.B) {
+	str := NewBitString(1023)
+	rand.Read(str.buf)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < 1023; j++ {
+			_ = str.mustGetBit(j)
+		}
+	}
+}
+
+func BenchmarkReadUint(b *testing.B) {
+	str := NewBitString(1023)
+	rand.Read(str.buf)
+	str.len = 1023
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		str.ResetCounter()
+		_, _ = str.ReadUint(32)
+		_, _ = str.ReadUint(64)
+		_, _ = str.ReadUint(10)
+		_, _ = str.ReadUint(32)
+		_, _ = str.ReadUint(1)
+		_, _ = str.ReadUint(16)
+		_, _ = str.ReadUint(64)
+	}
+}
+
+func TestReadByte(t *testing.T) {
+	str := NewBitString(1023)
+	str.WriteBit(true)
+	str.WriteByte(107)
+	fmt.Printf("%b\n", 107)
+	str.ReadBit()
+	b, err := str.ReadByte()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("%b\n", b)
+	if b != 107 {
+		t.Fatal(b)
+	}
+}

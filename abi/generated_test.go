@@ -162,3 +162,22 @@ func TestWhalesNominators(t *testing.T) {
 	fmt.Printf("%+v\n", params)
 
 }
+
+func TestMethodsDecode(t *testing.T) {
+	c, err := boc.DeserializeSinglRootBase64("te6ccgEBBAEA7AADs0Y3KJoZbSToF2FWrsk5n2kJkqyX4X6Ap8VP92juX4NPlNJSZUBwdJYp6pn3SVlg0xt+7QjJLdBJYx7JVdtEr9ZqVVgPAAAAA2QEUxhkBFOuCHpoZW5nc2h1wAECAwBgAWh0dHBzOi8vbmZ0LmZyYWdtZW50LmNvbS91c2VybmFtZS96aGVuZ3NodS5qc29uAGGACBG0dlFtgMtLJ8IHIk03VVOL8ZXXgY07PhVXdWVTJK1qMG3EIAAAoAABwgABJ1AQAEsABQBkgAgRtHZRbYDLSyfCByJNN1VTi/GV14GNOz4VV3VlUyStcA==")
+	if err != nil {
+		return
+	}
+	typeName, v, err := MessageDecoder(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if typeName != "TelemintDeploy" {
+		t.Fatal(typeName)
+	}
+	body := v.(TelemintDeployMsgBody)
+	if body.Msg.Username != "zhengshu" {
+		t.Fatal(body.Msg.Username)
+	}
+
+}

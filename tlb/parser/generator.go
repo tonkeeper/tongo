@@ -41,6 +41,7 @@ var (
 		"Coins":              {"tlb.Grams", false},
 		"Grams":              {"tlb.Grams", false},
 		"Text":               {"tlb.Text", false},
+		"FixedLengthText":    {"tlb.FixedLengthText", false},
 		"SnakeData":          {"tlb.SnakeData", false},
 		"ChunkedData":        {"tlb.ChunkedData", false},
 		"DNSRecord":          {"tlb.DNSRecord", false},

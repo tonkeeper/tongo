@@ -152,6 +152,27 @@ func (t *Text) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
+type FixedLengthText string
+
+func (t FixedLengthText) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	l := len(t)
+	err := c.WriteUint(uint64(l), 8)
+	if err != nil {
+		return err
+	}
+	return c.WriteBytes([]byte(t))
+}
+
+func (t *FixedLengthText) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	l, err := c.ReadUint(8)
+	if err != nil {
+		return err
+	}
+	b, err := c.ReadBytes(int(l))
+	*t = FixedLengthText(b)
+	return err
+}
+
 // FullContent
 // onchain#00 data:(HashMapE 256 ^ContentData) = FullContent;
 // offchain#01 uri:Text = FullContent;

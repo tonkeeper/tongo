@@ -95,6 +95,56 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
+type NftRoyaltyParams struct {
+	Numerator   uint16
+	Denominator uint16
+	Destination tlb.MsgAddress
+}
+
+type TeleitemAuctionConfig struct {
+	BeneficiarAddress tlb.MsgAddress
+	InitialMinBid     tlb.Grams
+	MaxBid            tlb.Grams
+	MinBidStep        uint8
+	MinExtendTime     uint32
+	Duration          uint32
+}
+
+type TelemintData struct {
+	Touched           bool
+	SubwalletId       uint32
+	PublicKey         tlb.Bits256
+	CollectionContent tlb.Ref[tlb.Any]
+	NftItemCode       tlb.Ref[tlb.Any]
+	RoyaltyParams     tlb.Ref[NftRoyaltyParams]
+}
+
+type TelemintRestrictions struct {
+	ForceSenderAddress   tlb.Maybe[tlb.MsgAddress]
+	RewriteSenderAddress tlb.Maybe[tlb.MsgAddress]
+}
+
+type TelemintUnsignedDeploy struct {
+	SubwalletId   uint32
+	ValidSince    uint32
+	ValidTill     uint32
+	Username      tlb.FixedLengthText
+	Content       tlb.Ref[tlb.Any]
+	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
+	RoyaltyParams tlb.Maybe[tlb.Ref[NftRoyaltyParams]]
+}
+
+type TelemintUnsignedDeployV2 struct {
+	SubwalletId   uint32
+	ValidSince    uint32
+	ValidTill     uint32
+	TokenName     tlb.FixedLengthText
+	Content       tlb.Ref[tlb.Any]
+	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
+	RoyaltyParams tlb.Maybe[tlb.Ref[NftRoyaltyParams]]
+	Restrictions  tlb.Maybe[tlb.Ref[TelemintRestrictions]]
+}
+
 type TextCommentMsgBody struct {
 	Text tlb.Text
 }
@@ -186,8 +236,21 @@ type StartUncooperativeChannelCloseMsgBody struct {
 
 type FinishUncooperativeChannelCloseMsgBody struct{}
 
+type TeleitemDeployMsgBody struct {
+	SenderAddress tlb.MsgAddress
+	Bid           tlb.Grams
+	Username      tlb.FixedLengthText
+	Content       tlb.Ref[tlb.Any]
+	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
+	RoyaltyParams tlb.Ref[NftRoyaltyParams]
+}
+
 type GetStaticDataMsgBody struct {
 	QueryId uint64
+}
+
+type TeleitemCancelAuctionMsgBody struct {
+	QueryId int64
 }
 
 type ProofStorageMsgBody struct {
@@ -195,8 +258,23 @@ type ProofStorageMsgBody struct {
 	FileDictProof tlb.Ref[tlb.Any]
 }
 
+type TelemintDeployMsgBody struct {
+	Sig tlb.Bits512
+	Msg TelemintUnsignedDeploy
+}
+
+type TelemintDeployV2MsgBody struct {
+	Sig tlb.Bits512
+	Msg TelemintUnsignedDeployV2
+}
+
 type StorageWithdrawMsgBody struct {
 	QueryId uint64
+}
+
+type TeleitemStartAuctionMsgBody struct {
+	QueryId       int64
+	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
 }
 
 type UpdatePubkeyMsgBody struct {
@@ -403,18 +481,38 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		var res FinishUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "FinishUncooperativeChannelClose", res, err
+	case 0x299a3e15:
+		var res TeleitemDeployMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "TeleitemDeploy", res, err
 	case 0x2fcb26a2:
 		var res GetStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "GetStaticData", res, err
+	case 0x371638ae:
+		var res TeleitemCancelAuctionMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "TeleitemCancelAuction", res, err
 	case 0x419d5d4d:
 		var res ProofStorageMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "ProofStorage", res, err
+	case 0x4637289a:
+		var res TelemintDeployMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "TelemintDeploy", res, err
+	case 0x4637289b:
+		var res TelemintDeployV2MsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "TelemintDeployV2", res, err
 	case 0x46ed2e94:
 		var res StorageWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "StorageWithdraw", res, err
+	case 0x487a8e81:
+		var res TeleitemStartAuctionMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "TeleitemStartAuction", res, err
 	case 0x53f34cd6:
 		var res UpdatePubkeyMsgBody
 		err = tlb.Unmarshal(cell, &res)

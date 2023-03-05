@@ -83,6 +83,7 @@ func (c *Connection) reconnect() {
 			time.Sleep(1 * time.Second)
 			continue
 		}
+		break
 	}
 }
 

@@ -360,6 +360,32 @@
         </output>
     </get_method>
 
+<!--    Telegram     -->
+    <get_method name="get_telemint_auction_state" interface="telemint">
+        <output fixed_length="true">
+            <slice name="bidder">msgaddress</slice>
+            <tinyint name="bid">int64</tinyint>
+            <tinyint name="bid_ts">int64</tinyint>
+            <tinyint name="min_bid">int64</tinyint>
+            <tinyint name="end_time">int64</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_telemint_auction_config" interface="telemint">
+        <output fixed_length="true">
+            <slice name="beneficiar">msgaddress</slice>
+            <tinyint name="initial_min_bid">int64</tinyint>
+            <tinyint name="max_bid">int64</tinyint>
+            <tinyint name="min_bid_step">int64</tinyint>
+            <tinyint name="min_extend_time">int64</tinyint>
+            <tinyint name="duration">int64</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_telemint_token_name" interface="telemint">
+        <output fixed_length="true">
+            <slice name="beneficiar">text</slice>
+        </output>
+    </get_method>
+
     <!--    Text    -->
     <internal name="text_comment">
         text_comment#00000000 text:Text = InternalMsgBody;

@@ -618,6 +618,7 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
+	69506:  {GetTelemintTokenName},
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
 	78748:  {GetPublicKey},
@@ -639,8 +640,10 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	115150: {GetParams},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
+	122498: {GetTelemintAuctionState},
 	123928: {GetStakingStatus},
 	127654: {GetMembers},
+	129619: {GetTelemintAuctionConfig},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
 }
@@ -670,6 +673,9 @@ var ResultTypes = []interface{}{
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
 	&GetSubwalletIdResult{},
+	&GetTelemintAuctionConfigResult{},
+	&GetTelemintAuctionStateResult{},
+	&GetTelemintTokenNameResult{},
 	&GetTorrentHashResult{},
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
@@ -1714,6 +1720,75 @@ func GetParams(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 	return "GetParams_WhalesNominatorResult", result, err
 }
 
+type GetTelemintAuctionStateResult struct {
+	Bidder  tlb.MsgAddress
+	Bid     int64
+	BidTs   int64
+	MinBid  int64
+	EndTime int64
+}
+
+func GetTelemintAuctionState(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 122498 for "get_telemint_auction_state" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122498, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetTelemintAuctionStateResult
+	err = stack.Unmarshal(&result)
+	return "GetTelemintAuctionStateResult", result, err
+}
+
+type GetTelemintAuctionConfigResult struct {
+	Beneficiar    tlb.MsgAddress
+	InitialMinBid int64
+	MaxBid        int64
+	MinBidStep    int64
+	MinExtendTime int64
+	Duration      int64
+}
+
+func GetTelemintAuctionConfig(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 129619 for "get_telemint_auction_config" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 129619, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetTelemintAuctionConfigResult
+	err = stack.Unmarshal(&result)
+	return "GetTelemintAuctionConfigResult", result, err
+}
+
+type GetTelemintTokenNameResult struct {
+	Beneficiar tlb.Text
+}
+
+func GetTelemintTokenName(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 69506 for "get_telemint_token_name" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 69506, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetTelemintTokenNameResult
+	err = stack.Unmarshal(&result)
+	return "GetTelemintTokenNameResult", result, err
+}
+
 type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
@@ -1723,6 +1798,7 @@ const (
 	PaymentChannel   ContractInterface = "payment_channel"
 	StorageContract  ContractInterface = "storage_contract"
 	StorageProvider  ContractInterface = "storage_provider"
+	Telemint         ContractInterface = "telemint"
 	Tep62Collection  ContractInterface = "tep62_collection"
 	Tep62Item        ContractInterface = "tep62_item"
 	Tep66            ContractInterface = "tep66"
@@ -1857,6 +1933,21 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_subwallet_id",
 		InvokeFn:      GetSubwalletId,
 		ImplementedBy: []ContractInterface{WalletV4R2},
+	},
+	{
+		Name:          "get_telemint_auction_config",
+		InvokeFn:      GetTelemintAuctionConfig,
+		ImplementedBy: []ContractInterface{Telemint},
+	},
+	{
+		Name:          "get_telemint_auction_state",
+		InvokeFn:      GetTelemintAuctionState,
+		ImplementedBy: []ContractInterface{Telemint},
+	},
+	{
+		Name:          "get_telemint_token_name",
+		InvokeFn:      GetTelemintTokenName,
+		ImplementedBy: []ContractInterface{Telemint},
 	},
 	{
 		Name:          "get_torrent_hash",

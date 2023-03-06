@@ -36,6 +36,7 @@ var defaultKnownTypes = map[string]string{
 	"dnsrecord":     "tlb.DNSRecord",
 	"dns_recordset": "tlb.DNSRecordSet",
 	"msgaddress":    "tlb.MsgAddress",
+	"text":          "tlb.Text",
 }
 
 var (

@@ -3,7 +3,6 @@ package liteclient
 import (
 	"context"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	mrand "math/rand"
 	"sync"
@@ -23,10 +22,6 @@ const (
 )
 const (
 	reconnectTimeout = 10 * time.Second
-)
-
-var (
-	ErrNotConnectedYet = errors.New("not connected yet")
 )
 
 type Connection struct {
@@ -117,11 +112,11 @@ func (c *Connection) Send(p Packet) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.status != Connected {
-		return ErrNotConnectedYet
+		return newClientError("not connected yet")
 	}
 	if err := c.econn.send(b); err != nil {
 		go c.reconnect()
-		return err
+		return newClientError("net.Conn.send() failed: %v", err)
 	}
 	return nil
 }
@@ -141,7 +136,7 @@ func (c *Connection) ping() {
 			panic(err) // impossible if NewPacket function is correct
 		}
 		err = c.Send(p)
-		if err != nil && !errors.Is(err, ErrNotConnectedYet) {
+		if err != nil && IsNotConnectedYet(err) {
 			fmt.Printf("ping error: %v\n", err)
 			continue
 		}

@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
-	"github.com/tonkeeper/tongo/tl"
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 const (
@@ -69,17 +70,18 @@ func (c *Client) Request(ctx context.Context, q []byte) ([]byte, error) {
 	data = alignBytes(data)
 	p, err := NewPacket(data)
 	if err != nil {
-		return nil, err
+		return nil, newClientError("NewPacket() failed: %v", err)
 	}
 	resp := c.registerCallback(id)
+	defer c.unregisterCallback(id)
+
 	err = c.connection.Send(p)
 	if err != nil {
 		return nil, err
 	}
 	select {
 	case <-ctx.Done():
-		c.unregisterCallback(id)
-		return nil, ctx.Err()
+		return nil, newClientError("request timeout: %v", err)
 	case b := <-resp:
 		return b, nil
 	}

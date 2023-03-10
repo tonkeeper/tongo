@@ -73,41 +73,91 @@ func (u *VarUInteger{{.NameIndex}}) UnmarshalJSON(p []byte) error {
 
 func GenerateConstantInts(max int) string {
 	var b bytes.Buffer
+	templateStr := `
+type Uint{{.NameIndex}} uint{{.P}}
+
+func (u Uint{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteUint(uint64(u), {{.NameIndex}})
+}
+
+func (u *Uint{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadUint({{.NameIndex}})
+	*u = Uint{{.NameIndex}}(v)
+	return err
+}
+
+func (u Uint{{.NameIndex}}) FixedSize() int {
+	return {{.NameIndex}}
+}
+
+{{- if lt .NameIndex 57 }}
+func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    return []byte(fmt.Sprintf("%d", u)), nil
+}
+{{- else }}
+func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    return []byte(fmt.Sprintf("\"%d\"", u)), nil
+}
+{{- end }}
+
+func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
+	value, err := strconv.ParseUint(strings.Trim(string(p), "\""), 10, {{.NameIndex}})
+    if err != nil {
+		return err
+    }
+    *u = Uint{{.NameIndex}}(value)
+    return nil
+}
+
+type Int{{.NameIndex}} int{{.P}}
+
+func (u Int{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteInt(int64(u), {{.NameIndex}})
+}
+
+func (u *Int{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadInt({{.NameIndex}})
+	*u = Int{{.NameIndex}}(v)
+	return err
+}
+
+func (u Int{{.NameIndex}}) FixedSize() int {
+	return {{.NameIndex}}
+}
+
+{{- if lt .NameIndex 57 }}
+func (u Int{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    return []byte(fmt.Sprintf("%d", u)), nil
+}
+{{- else }}
+func (u Int{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    return []byte(fmt.Sprintf("\"%d\"", u)), nil
+}
+{{- end }}
+
+func (u *Int{{.NameIndex}}) UnmarshalJSON(p []byte) error {
+	value, err := strconv.ParseInt(strings.Trim(string(p), "\""), 10, {{.NameIndex}})
+    if err != nil {
+		return err
+    }
+    *u = Int{{.NameIndex}}(value)
+    return nil
+}
+`
+	tpl, err := template.New("smallInts").Parse(templateStr)
+	if err != nil {
+		panic(err)
+	}
+	type context struct {
+		NameIndex int
+		P         int
+	}
 	for i := 1; i <= max; i++ {
 		p := nearestPow(i)
-		fmt.Fprintf(&b, `
-type Uint%v uint%v
-
-func (u Uint%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	return c.WriteUint(uint64(u), %v)
-}
-
-func (u *Uint%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	v, err := c.ReadUint(%v)
-	*u = Uint%v(v)
-	return err
-}
-
-func (u Uint%v) FixedSize() int {
-	return %v
-}
-
-type Int%v int%v
-
-func (u Int%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	return c.WriteInt(int64(u), %v)
-}
-
-func (u *Int%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	v, err := c.ReadInt(%v)
-	*u = Int%v(v)
-	return err
-}
-
-func (u Int%v) FixedSize() int {
-	return %v
-}
-`, i, p, i, i, i, i, i, i, i, i, p, i, i, i, i, i, i, i)
+		ctx := context{NameIndex: i, P: p}
+		if err := tpl.Execute(&b, ctx); err != nil {
+			panic(err)
+		}
 	}
 	bytes, err := format.Source(b.Bytes())
 	if err != nil {
@@ -217,7 +267,23 @@ type Bits%v [%v]byte
 func (u Bits%v) FixedSize() int {
 	return %v
 }
-	`, i, i/8, i, i)
+
+func (u Bits%v) MarshalJSON() ([]byte, error) {
+    return []byte(fmt.Sprintf("\"%%x\"", u[:])), nil
+}
+
+func (u *Bits%v) UnmarshalJSON(b []byte) error {
+	bs, err := hex.DecodeString(strings.Trim(string(b), "\""))
+	if err != nil {
+		return err
+	}
+	if len(bs) != %v {
+		return fmt.Errorf("can't parse Bits%v %%v", string(b))
+	}
+	copy(b[:], bs)
+    return nil
+}
+	`, i, i/8, i, i, i, i, i/8, i)
 		} else {
 			fmt.Fprintf(&b, `
 type Bits%v boc.BitString

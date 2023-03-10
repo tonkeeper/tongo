@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -66,6 +67,18 @@ type CurrencyCollection struct {
 // = ExtraCurrencyCollection;
 type ExtraCurrencyCollection struct {
 	Dict HashmapE[Uint32, VarUInteger32]
+}
+
+func (h HashmapE[keyT, T]) MarshalJSON() ([]byte, error) {
+	m := make(map[keyT]T, len(h.Keys()))
+	for _, item := range h.Items() {
+		m[item.Key] = item.Value
+	}
+	return json.Marshal(m)
+}
+
+func (f ExtraCurrencyCollection) MarshalJSON() ([]byte, error) {
+	return f.Dict.MarshalJSON()
 }
 
 // HashUpdate

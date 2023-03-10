@@ -3,5 +3,6 @@ liteapi/tmp
 liteapi/test.keys
 temp
 testdata/*.output.json
+tlb/testdata/*.output.json
 vendor/
 cover.out

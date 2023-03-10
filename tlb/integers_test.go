@@ -68,3 +68,32 @@ func TestInt_MarshalJSON(t *testing.T) {
 		t.Errorf("want: %v, got: %v", value1.Int64(), value2.Int64())
 	}
 }
+
+func TestBits_JSON(t *testing.T) {
+	tests := []struct {
+		name    string
+		u       any
+		want    string
+		wantErr bool
+	}{
+		{
+			u:    Bits256([32]byte{255, 0, 255}),
+			want: `"ff00ff0000000000000000000000000000000000000000000000000000000000"`,
+		},
+		{
+			u:    Bits512([64]byte{255, 0, 255}),
+			want: `"ff00ff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			value, err := json.Marshal(tt.u)
+			if err != nil {
+				t.Fatalf("json.Marshal() failed: %v", err)
+			}
+			if tt.want != string(value) {
+				t.Errorf("want: %v, got: %v", tt.want, value)
+			}
+		})
+	}
+}

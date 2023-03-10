@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"os"
@@ -116,4 +117,20 @@ func Test_tlb_Unmarshal(t *testing.T) {
 	if !reflect.DeepEqual(accounts, expectedAccounts) {
 		t.Errorf("expectedAccounts differs from accounts")
 	}
+	bs, err = json.MarshalIndent(block.ValueFlow, " ", "  ")
+	if err != nil {
+		t.Fatalf("MarshalIndent() failed: %v", err)
+	}
+	if err := os.WriteFile("testdata/value-flow.output.json", bs, 0644); err != nil {
+		t.Fatalf("WriteFile() failed: %v", err)
+	}
+	data, err = os.ReadFile("testdata/value-flow.expected.json")
+	if err != nil {
+		t.Fatalf("ReadFile() failed: %v", err)
+	}
+	if bytes.Compare(bytes.Trim(bs, " \n"), bytes.Trim(data, " \n")) != 0 {
+		t.Errorf("ValueFlows differ")
+
+	}
+
 }

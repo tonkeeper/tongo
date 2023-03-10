@@ -8,6 +8,7 @@ import (
 
 type fixedSize interface {
 	FixedSize() int
+	comparable
 }
 
 // HashmapItem represents a key-value pair stored in HashmapE[T].

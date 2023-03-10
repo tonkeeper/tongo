@@ -201,7 +201,7 @@ type Block struct {
 	Magic       Magic `tlb:"block#11ef55aa"`
 	GlobalId    int32
 	Info        BlockInfo  `tlb:"^"`
-	ValueFlow   Any        `tlb:"^"` // ValueFlow
+	ValueFlow   ValueFlow  `tlb:"^"`
 	StateUpdate Any        `tlb:"^"` //MerkleUpdate[ShardState] `tlb:"^"` //
 	Extra       BlockExtra `tlb:"^"`
 }
@@ -259,20 +259,71 @@ type BlockIdExt struct {
 // minted:CurrencyCollection
 // ] = ValueFlow;
 type ValueFlow struct {
-	Magic   Magic `tlb:"value_flow#b8e48dfb"`
-	Values1 struct {
-		FromPrevBlk CurrencyCollection
-		ToNextBlk   CurrencyCollection
-		Imported    CurrencyCollection
-		Exported    CurrencyCollection
-	} `tlb:"^"`
+	Magic         Magic `tlb:"value_flow#b8e48dfb" json:"-"`
+	FromPrevBlk   CurrencyCollection
+	ToNextBlk     CurrencyCollection
+	Imported      CurrencyCollection
+	Exported      CurrencyCollection
 	FeesCollected CurrencyCollection
-	Values2       struct {
-		FeesImported CurrencyCollection
-		Recovered    CurrencyCollection
-		Created      CurrencyCollection
-		Minted       CurrencyCollection
-	} `tlb:"^"`
+	FeesImported  CurrencyCollection
+	Recovered     CurrencyCollection
+	Created       CurrencyCollection
+	Minted        CurrencyCollection
+}
+
+func (m *ValueFlow) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	sumType, err := c.ReadUint(32)
+	if err != nil {
+		return err
+	}
+	if sumType != 0xb8e48dfb {
+		return fmt.Errorf("invalid tag")
+	}
+	firstGroup, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(c, &m.FeesCollected)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(firstGroup, &m.FromPrevBlk)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(firstGroup, &m.ToNextBlk)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(firstGroup, &m.Imported)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(firstGroup, &m.Exported)
+	if err != nil {
+		return err
+	}
+	secondGroup, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(secondGroup, &m.FeesImported)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(secondGroup, &m.Recovered)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(secondGroup, &m.Created)
+	if err != nil {
+		return err
+	}
+	err = decoder.Unmarshal(secondGroup, &m.Minted)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // BlockExtra

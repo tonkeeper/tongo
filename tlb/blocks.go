@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/tonkeeper/tongo/boc"
 )
@@ -408,12 +409,20 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
-func (b Block) AllTransactions() []Transaction {
-	var transactions []Transaction
+// AllTransactions returns all transactions in this block ordered by Lt.
+func (b *Block) AllTransactions() []*Transaction {
+	count := 0
 	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
-		for _, txRef := range accountBlock.Transactions.Values() {
-			transactions = append(transactions, txRef.Value)
+		count += len(accountBlock.Transactions.keys)
+	}
+	transactions := make([]*Transaction, 0, count)
+	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
+		for i := range accountBlock.Transactions.values {
+			transactions = append(transactions, &accountBlock.Transactions.values[i].Value)
 		}
 	}
+	sort.Slice(transactions, func(i, j int) bool {
+		return transactions[i].Lt < transactions[j].Lt
+	})
 	return transactions
 }

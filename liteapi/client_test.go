@@ -199,7 +199,7 @@ func TestGetOneTransaction(t *testing.T) {
 		t.Fatal(err)
 	}
 	blockID := shards[0]
-	var tx1 tlb.Transaction
+	var tx1 *tlb.Transaction
 	for i := 0; i < 10; i++ {
 		block, err := tongoClient.GetBlock(ctx, blockID)
 		if err != nil {

@@ -252,7 +252,7 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 		}
 		res.name = fmt.Sprintf("tlb.Either[%s, %s]", p1.String(), p2.String())
 		return res, nil
-	case "HashmapE":
+	case "HashmapE", "Hashmap":
 		if len(t.Parameter) != 2 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for HashmapE")
 		}
@@ -264,7 +264,7 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 		if err != nil {
 			return golangType{}, err
 		}
-		res.name = fmt.Sprintf("tlb.HashmapE[%s, %s]", size.String(), p.String())
+		res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), size.String(), p.String())
 		return res, nil
 	case "Maybe":
 		if len(t.Parameter) != 1 {

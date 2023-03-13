@@ -139,13 +139,21 @@ func TestWhalesNominators(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, v, err := GetMembers(context.Background(), client, address)
+	_, v, err := GetMembersRaw(context.Background(), client, address)
 	if err != nil {
 		t.Fatal(err)
 	}
-	members := v.(GetMembers_WhalesNominatorResult).Members
-	if len(members) == 0 || members[0].Address.SumType != "AddrStd" {
-		t.Fatal(len(members))
+	members := v.(GetMembersRaw_WhalesNominatorResult).Members
+	if len(members.List.Keys()) == 0 {
+		t.Fatal(len(members.List.Keys()))
+	}
+	memberAddress := tongo.NewAccountId(0, members.List.Keys()[1])
+	_, v, err = GetMember(context.Background(), client, address, memberAddress.ToMsgAddress())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v.(GetMember_WhalesNominatorResult).MemberBalance == 0 {
+		t.Fatal("zero balance")
 	}
 	_, v, err = GetPoolStatus(context.Background(), client, address)
 	if err != nil {

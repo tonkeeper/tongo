@@ -145,6 +145,19 @@ type TelemintUnsignedDeployV2 struct {
 	Restrictions  tlb.Maybe[tlb.Ref[TelemintRestrictions]]
 }
 
+type WhalesNominatorsMember struct {
+	Prefix             tlb.Int128
+	Balance            tlb.Grams
+	PendingWithdraw    tlb.Grams
+	PendingWithdrawAll bool
+	PendingDeposit     tlb.Grams
+	MemberWithdraw     tlb.Grams
+}
+
+type WhalesNominatorsMembersList struct {
+	List tlb.Hashmap[tlb.Bits256, WhalesNominatorsMember]
+}
+
 type TextCommentMsgBody struct {
 	Text tlb.Text
 }
@@ -365,6 +378,11 @@ type AcceptStorageContractMsgBody struct {
 	QueryId uint64
 }
 
+type WhalesNominatorsDepositMsgBody struct {
+	QueryId int64
+	Gas     tlb.Grams
+}
+
 type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
@@ -401,6 +419,12 @@ type StorageContractConfirmedMsgBody struct {
 
 type ExcessMsgBody struct {
 	QueryId uint64
+}
+
+type WhalesNominatorsWithdrawMsgBody struct {
+	QueryId int64
+	Gas     tlb.Grams
+	Amount  tlb.Grams
 }
 
 type ChannelClosedMsgBody struct {
@@ -569,6 +593,10 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		var res AcceptStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "AcceptStorageContract", res, err
+	case 0x7bcd1fef:
+		var res WhalesNominatorsDepositMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "WhalesNominatorsDeposit", res, err
 	case 0x8b771735:
 		var res ReportStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -597,6 +625,10 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		var res ExcessMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "Excess", res, err
+	case 0xda803efd:
+		var res WhalesNominatorsWithdrawMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "WhalesNominatorsWithdraw", res, err
 	case 0xdddc88ba:
 		var res ChannelClosedMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -628,6 +660,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
 	86593:  {GetStorageContractData},
+	89295:  {GetMembersRaw},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
 	102351: {GetNftData},
@@ -642,7 +675,6 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	122058: {IsActive},
 	122498: {GetTelemintAuctionState},
 	123928: {GetStakingStatus},
-	127654: {GetMembers},
 	129619: {GetTelemintAuctionConfig},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
@@ -655,7 +687,8 @@ var ResultTypes = []interface{}{
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
 	&GetJettonDataResult{},
-	&GetMembers_WhalesNominatorResult{},
+	&GetMember_WhalesNominatorResult{},
+	&GetMembersRaw_WhalesNominatorResult{},
 	&GetNextProofInfoResult{},
 	&GetNftAddressByIndexResult{},
 	&GetNftContentResult{},
@@ -1668,30 +1701,56 @@ func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	return "GetPoolStatusResult", result, err
 }
 
-type GetMembers_WhalesNominatorResult struct {
-	Members []struct {
-		Address               tlb.MsgAddress
-		MemberBalance         int64
-		MemberPendingDeposit  int64
-		MemberPendingWithdraw int64
-		MemberWithdraw        int64
-	}
+type GetMember_WhalesNominatorResult struct {
+	MemberBalance         int64
+	MemberPendingDeposit  int64
+	MemberPendingWithdraw int64
+	MemberWithdraw        int64
 }
 
-func GetMembers(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetMember(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, member tlb.MsgAddress) (string, any, error) {
 	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(member)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
 
-	// MethodID = 127654 for "get_members" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 127654, stack)
+	// MethodID = 70558 for "get_member" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 70558, stack)
 	if err != nil {
 		return "", nil, err
 	}
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	var result GetMembers_WhalesNominatorResult
+	var result GetMember_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetMembers_WhalesNominatorResult", result, err
+	return "GetMember_WhalesNominatorResult", result, err
+}
+
+type GetMembersRaw_WhalesNominatorResult struct {
+	Members WhalesNominatorsMembersList
+}
+
+func GetMembersRaw(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 89295 for "get_members_raw" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 89295, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetMembersRaw_WhalesNominatorResult
+	err = stack.Unmarshal(&result)
+	return "GetMembersRaw_WhalesNominatorResult", result, err
 }
 
 type GetParams_WhalesNominatorResult struct {
@@ -1848,11 +1907,11 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{Tep74},
 	},
 	{
-		Name:     "get_members",
-		InvokeFn: GetMembers,
+		Name:     "get_members_raw",
+		InvokeFn: GetMembersRaw,
 		ImplementedByFn: func(typeHint string) ContractInterface {
 			switch typeHint {
-			case "GetMembers_WhalesNominatorResult":
+			case "GetMembersRaw_WhalesNominatorResult":
 				return WhalesNominators
 			}
 			return ""

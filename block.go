@@ -2,11 +2,14 @@ package tongo
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
+
+var ErrIncorrectWorkchain = errors.New("incorrect workchain")
 
 type BlockID struct {
 	Workchain int32
@@ -203,8 +206,7 @@ func ShardIDs(blk *tlb.Block) ([]BlockIDExt, error) {
 				continue
 			}
 			if workchain != 0 {
-				// TODO: verify that workchain is correct.
-				panic("shard.workchain must be 0")
+				return nil, ErrIncorrectWorkchain
 			}
 			shards = append(shards, shardID)
 		}

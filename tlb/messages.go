@@ -72,7 +72,7 @@ type StateInit struct {
 // rewrite_pfx:(bits depth) = Anycast;
 type Anycast struct {
 	Depth      uint32
-	RewritePfx boc.BitString
+	RewritePfx uint32
 }
 
 func (a Anycast) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -80,7 +80,7 @@ func (a Anycast) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	if err != nil {
 		return err
 	}
-	err = c.WriteBitString(a.RewritePfx)
+	err = c.WriteUint(uint64(a.RewritePfx), int(a.Depth))
 	if err != nil {
 		return err
 	}
@@ -95,12 +95,12 @@ func (a *Anycast) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if depth < 1 {
 		return fmt.Errorf("invalid anycast depth")
 	}
-	pfx, err := c.ReadBits(int(depth))
+	pfx, err := c.ReadUint(int(depth))
 	if err != nil {
 		return err
 	}
 	a.Depth = uint32(depth)
-	a.RewritePfx = pfx
+	a.RewritePfx = uint32(pfx)
 	return nil
 }
 
@@ -221,12 +221,12 @@ func (a MsgAddress) MarshalJSON() ([]byte, error) {
 		x = a.AddrExtern.ExternalAddress.ToFiftHex()
 	case "AddrStd":
 		if a.AddrStd.Anycast.Exists {
-			extra = fmt.Sprintf(":Anycast(%d,%s)", a.AddrStd.Anycast.Value.Depth, a.AddrStd.Anycast.Value.RewritePfx.ToFiftHex())
+			extra = fmt.Sprintf(":Anycast(%d,%d)", a.AddrStd.Anycast.Value.Depth, a.AddrStd.Anycast.Value.RewritePfx)
 		}
 		x = fmt.Sprintf("%d:%s", a.AddrStd.WorkchainId, a.AddrStd.Address.Hex())
 	case "AddrVar":
 		if a.AddrVar.Anycast.Exists {
-			extra = fmt.Sprintf(":Anycast(%d,%s)", a.AddrVar.Anycast.Value.Depth, a.AddrVar.Anycast.Value.RewritePfx.ToFiftHex())
+			extra = fmt.Sprintf(":Anycast(%d,%d)", a.AddrVar.Anycast.Value.Depth, a.AddrVar.Anycast.Value.RewritePfx)
 		}
 		// we assume that AddrVar.Address has exactly AddrVar.Len bits
 		// that's always true, if the current MsgAddress was deserialized from TL-B.
@@ -272,19 +272,15 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 		if !strings.HasPrefix(parts[2], "Anycast(") || !strings.HasSuffix(parts[2], ")") {
 			return fmt.Errorf("unknown MsgAddress format")
 		}
-		var depth int
-		var prefix string
+		var depth uint32
+		var prefix uint32
 		depthAndPrefix := parts[2][len("Anycast(") : len(parts[2])-1]
-		if _, err := fmt.Sscanf(depthAndPrefix, "%d,%s", &depth, &prefix); err != nil {
-			return fmt.Errorf("failed to parse Anycast in MsgAddress: %w", err)
-		}
-		pfx, err := boc.BitStringFromFiftHex(prefix)
-		if err != nil {
+		if _, err := fmt.Sscanf(depthAndPrefix, "%d,%d", &depth, &prefix); err != nil {
 			return fmt.Errorf("failed to parse Anycast in MsgAddress: %w", err)
 		}
 		anycast = &Anycast{
-			Depth:      uint32(depth),
-			RewritePfx: *pfx,
+			Depth:      depth,
+			RewritePfx: prefix,
 		}
 	}
 	// try AddrStd first

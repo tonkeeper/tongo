@@ -66,14 +66,14 @@ func TestMsgAddress_JSON(t *testing.T) {
 						Exists: true,
 						Value: Anycast{
 							Depth:      16,
-							RewritePfx: bitstr,
+							RewritePfx: 9,
 						},
 					},
 					WorkchainId: -1,
 					Address:     byte32FromHex("adfd5f1d28db13e50591d5c76a976c15d8ab6cad90554748ab254871390d9334"),
 				},
 			},
-			want: []byte(`"-1:adfd5f1d28db13e50591d5c76a976c15d8ab6cad90554748ab254871390d9334:Anycast(16,FF2C)"`),
+			want: []byte(`"-1:adfd5f1d28db13e50591d5c76a976c15d8ab6cad90554748ab254871390d9334:Anycast(16,9)"`),
 		},
 		{
 			name: "AddrExtern",
@@ -120,7 +120,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 						Exists: true,
 						Value: Anycast{
 							Depth:      16,
-							RewritePfx: bitstr,
+							RewritePfx: 8,
 						},
 					},
 					WorkchainId: 0,
@@ -128,7 +128,7 @@ func TestMsgAddress_JSON(t *testing.T) {
 					Address:     bitstr,
 				},
 			},
-			want: []byte(`"0:FF2C:Anycast(16,FF2C)"`),
+			want: []byte(`"0:FF2C:Anycast(16,8)"`),
 		},
 	}
 	for _, tt := range tests {

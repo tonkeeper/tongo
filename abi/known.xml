@@ -46,6 +46,15 @@
         telemint_unsigned_deploy_v2$_ subwallet_id:uint32 valid_since:uint32 valid_till:uint32 token_name:FixedLengthText
         content:^Cell auction_config:^TeleitemAuctionConfig royalty_params:(Maybe ^NftRoyaltyParams) restrictions:(Maybe ^TelemintRestrictions) = TelemintUnsignedDeployV2;
     </types>
+<!--    Balance            tlb.Grams-->
+<!--    PendingWithdraw    tlb.Grams-->
+<!--    PendingWithdrawAll bool-->
+<!--    PendingDeposit     tlb.Grams-->
+<!--    MemberWithdraw     tlb.Grams-->
+    <types interface="whales_nominators">
+        whales_nominators_member#_ prefix:int128 balance:Grams pending_withdraw:Grams pending_withdraw_all:Bool pending_deposit:Grams member_withdraw:Grams= WhalesNominatorsMember;
+        whales_nominators_members_list#_ list:(Hashmap 256 WhalesNominatorsMember)= WhalesNominatorsMembersList;
+    </types>
     <!--        Wallets      -->
     <get_method name="seqno" interface="wallet" interface="storage_provider">
         <output>
@@ -337,15 +346,20 @@
             <tinyint name="balance_withdraw">int64</tinyint>
         </output>
     </get_method>
-    <get_method name="get_members">
-        <output version="whales_nominator" interface="whales_nominators">
-            <tuple name="members" list="true">
-                <cell name="address">msgaddress</cell>
-                <tinyint name="member_balance">int64</tinyint>
-                <tinyint name="member_pending_deposit">int64</tinyint>
-                <tinyint name="member_pending_withdraw">int64</tinyint>
-                <tinyint name="member_withdraw">int64</tinyint>
-            </tuple>
+    <get_method name="get_member" interface="whales_nominators">
+        <input>
+            <slice name="member">msgaddress</slice>
+        </input>
+        <output version="whales_nominator">
+            <tinyint name="member_balance">int64</tinyint>
+            <tinyint name="member_pending_deposit">int64</tinyint>
+            <tinyint name="member_pending_withdraw">int64</tinyint>
+            <tinyint name="member_withdraw">int64</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_members_raw">
+        <output version="whales_nominator" interface="whales_nominators" fixed_length="true">
+            <cell name="members">WhalesNominatorsMembersList</cell>
         </output>
     </get_method>
     <get_method name="get_params">
@@ -586,7 +600,12 @@
         teleitem_msg_cancel_auction#371638ae query_id:int64 = TeleitemMsg;
     </internal>
 
-
+    <internal name="whales_nominators_withdraw">
+        withdraw#da803efd query_id:int64 gas:Grams amount:Grams = Withdraw;
+    </internal>
+    <internal name="whales_nominators_deposit">
+        deposit#7bcd1fef query_id:int64 gas:Grams = Deposit;
+    </internal>
 
     <!--        Wallets     -->
     <external name="wallet_signed_v3" interface="wallet_v3">

@@ -656,6 +656,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	78748:  {GetPublicKey},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
+	81689:  {GetPoolData},
 	84760:  {GetAuthorityAddress},
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
@@ -695,6 +696,7 @@ var ResultTypes = []interface{}{
 	&GetNftDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
+	&GetPoolData_TfResult{},
 	&GetPoolStatusResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
@@ -1651,6 +1653,45 @@ func ListVotes(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 	return "ListVotesResult", result, err
 }
 
+type GetPoolData_TfResult struct {
+	State                int8
+	NominatorsCount      uint32
+	StakeAmountSent      int64
+	ValidatorAmount      int64
+	ValidatorAddress     tlb.Bits256
+	ValidatorRewardShare uint32
+	MaxNominatorsCount   uint32
+	MinValidatorStake    int64
+	MinNominatorStake    int64
+	Nominators           tlb.Any
+	WithdrawRequests     []struct {
+	}
+
+	StakeAt                  uint32
+	SavedValidatorSetHash    tlb.Bits256
+	ValidatorSetChangesCount uint32
+	ValidatorSetChangeTime   uint32
+	StakeHeldFor             uint32
+	ConfigProposalVotings    []struct {
+	}
+}
+
+func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 81689 for "get_pool_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 81689, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	var result GetPoolData_TfResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolData_TfResult", result, err
+}
+
 type GetStakingStatusResult struct {
 	StakeAt             uint32
 	StakeUntil          uint32
@@ -1942,6 +1983,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_plugin_list",
 		InvokeFn:      GetPluginList,
 		ImplementedBy: []ContractInterface{WalletV4R2},
+	},
+	{
+		Name:          "get_pool_data",
+		InvokeFn:      GetPoolData,
+		ImplementedBy: []ContractInterface{TfNominator},
 	},
 	{
 		Name:          "get_pool_status",

@@ -324,6 +324,27 @@
             </tuple>
         </output>
     </get_method>
+    <get_method name="get_pool_data" interface="tf_nominator">
+        <output version="tf">
+            <tinyint name="state">int8</tinyint>
+            <tinyint name="nominators_count">uint32</tinyint>
+            <tinyint name="stake_amount_sent">int64</tinyint>
+            <tinyint name="validator_amount">int64</tinyint>
+            <int name="validator_address">bits256</int>
+            <tinyint name="validator_reward_share">uint32</tinyint>
+            <tinyint name="max_nominators_count">uint32</tinyint>
+            <tinyint name="min_validator_stake">int64</tinyint>
+            <tinyint name="min_nominator_stake">int64</tinyint>
+            <cell name="nominators">any</cell>
+            <tuple name="withdraw_requests" list="true"></tuple>
+            <tinyint name="stake_at">uint32</tinyint>
+            <int name="saved_validator_set_hash">bits256</int>
+            <tinyint name="validator_set_changes_count">uint32</tinyint>
+            <tinyint name="validator_set_change_time">uint32</tinyint>
+            <tinyint name="stake_held_for">uint32</tinyint>
+            <tuple name="config_proposal_votings" list="true"></tuple>
+        </output>
+    </get_method>
 
     <!--    Whales nominators     -->
     <get_method name="get_staking_status" interface="whales_nominators">

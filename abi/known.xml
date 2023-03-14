@@ -336,13 +336,13 @@
             <tinyint name="min_validator_stake">int64</tinyint>
             <tinyint name="min_nominator_stake">int64</tinyint>
             <cell name="nominators">any</cell>
-            <tuple name="withdraw_requests" list="true"></tuple>
+            <tuple name="withdraw_requests" list="true"/>
             <tinyint name="stake_at">uint32</tinyint>
             <int name="saved_validator_set_hash">bits256</int>
             <tinyint name="validator_set_changes_count">uint32</tinyint>
             <tinyint name="validator_set_change_time">uint32</tinyint>
             <tinyint name="stake_held_for">uint32</tinyint>
-            <tuple name="config_proposal_votings" list="true"></tuple>
+            <tuple name="config_proposal_votings" list="true"/>
         </output>
     </get_method>
 

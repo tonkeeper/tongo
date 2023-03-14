@@ -146,7 +146,7 @@ type TelemintUnsignedDeployV2 struct {
 }
 
 type WhalesNominatorsMember struct {
-	Prefix             tlb.Int128
+	ProfitPerCoin      tlb.Int128
 	Balance            tlb.Grams
 	PendingWithdraw    tlb.Grams
 	PendingWithdrawAll bool

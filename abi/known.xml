@@ -52,7 +52,7 @@
 <!--    PendingDeposit     tlb.Grams-->
 <!--    MemberWithdraw     tlb.Grams-->
     <types interface="whales_nominators">
-        whales_nominators_member#_ prefix:int128 balance:Grams pending_withdraw:Grams pending_withdraw_all:Bool pending_deposit:Grams member_withdraw:Grams= WhalesNominatorsMember;
+        whales_nominators_member#_ profit_per_coin:int128 balance:Grams pending_withdraw:Grams pending_withdraw_all:Bool pending_deposit:Grams member_withdraw:Grams= WhalesNominatorsMember;
         whales_nominators_members_list#_ list:(Hashmap 256 WhalesNominatorsMember)= WhalesNominatorsMembersList;
     </types>
     <!--        Wallets      -->

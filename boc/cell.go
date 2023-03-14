@@ -356,3 +356,8 @@ func (c *Cell) bocReprWithoutRefs(mask levelMask) []byte {
 	}
 	return res
 }
+
+// Level returns a level of this cell.
+func (c *Cell) Level() int {
+	return c.mask.Level()
+}

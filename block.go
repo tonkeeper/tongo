@@ -2,14 +2,11 @@ package tongo
 
 import (
 	"encoding/binary"
-	"errors"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
-
-var ErrIncorrectWorkchain = errors.New("incorrect workchain")
 
 type BlockID struct {
 	Workchain int32
@@ -195,21 +192,31 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 }
 
 // ShardIDs returns a list of IDs of shard blocks this block refers to.
-func ShardIDs(blk *tlb.Block) ([]BlockIDExt, error) {
+func ShardIDs(blk *tlb.Block) []BlockIDExt {
+	if !blk.Extra.Custom.Exists {
+		return nil
+	}
 	items := blk.Extra.Custom.Value.Value.ShardHashes.Items()
-	shards := make([]BlockIDExt, 0, len(items))
-	for _, item := range blk.Extra.Custom.Value.Value.ShardHashes.Items() {
-		workchain := item.Key
+	shardsCount := 0
+	for _, item := range items {
 		for _, x := range item.Value.Value.BinTree.Values {
-			shardID := ToBlockId(x, int32(workchain))
-			if shardID.Seqno == 0 {
+			if x.SeqNo() == 0 {
 				continue
 			}
-			if workchain != 0 {
-				return nil, ErrIncorrectWorkchain
-			}
-			shards = append(shards, shardID)
+			shardsCount += 1
 		}
 	}
-	return shards, nil
+	if shardsCount == 0 {
+		return nil
+	}
+	shards := make([]BlockIDExt, 0, shardsCount)
+	for _, item := range items {
+		for _, shardDesc := range item.Value.Value.BinTree.Values {
+			if shardDesc.SeqNo() == 0 {
+				continue
+			}
+			shards = append(shards, ToBlockId(shardDesc, int32(item.Key)))
+		}
+	}
+	return shards
 }

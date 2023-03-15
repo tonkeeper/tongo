@@ -298,6 +298,13 @@ type ShardDesc struct {
 	} `tlbSumType:"new#a"`
 }
 
+func (d *ShardDesc) SeqNo() uint32 {
+	if d.SumType == "New" {
+		return d.New.SeqNo
+	}
+	return d.Old.SeqNo
+}
+
 type ShardInfoBinTree struct {
 	BinTree BinTree[ShardDesc]
 }

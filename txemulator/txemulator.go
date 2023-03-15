@@ -1,5 +1,6 @@
 package txemulator
 
+// #cgo darwin LDFLAGS: -L ../lib/darwin/ -Wl,-rpath,../lib/darwin/ -l emulator
 // #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
 // #include "../lib/emulator-extern.h"
 // #include <stdlib.h>
@@ -28,19 +29,21 @@ type Emulator struct {
 	emulator unsafe.Pointer
 }
 
-// {
-//   "success": false,
-//   "error": "Error description"
-//   // and optional fields "vm_exit_code" and "vm_log" in case external message was not accepted.
-// }
+//	{
+//	  "success": false,
+//	  "error": "Error description"
+//	  // and optional fields "vm_exit_code" and "vm_log" in case external message was not accepted.
+//	}
+//
 // Or success:
-// {
-//   "success": true,
-//   "transaction": "Base64 encoded Transaction boc",
-//   "shard_account": "Base64 encoded new ShardAccount boc",
-//   "vm_log": "execute DUP...",
-//   "actions": "Base64 encoded compute phase actions boc (OutList n)"
-// }
+//
+//	{
+//	  "success": true,
+//	  "transaction": "Base64 encoded Transaction boc",
+//	  "shard_account": "Base64 encoded new ShardAccount boc",
+//	  "vm_log": "execute DUP...",
+//	  "actions": "Base64 encoded compute phase actions boc (OutList n)"
+//	}
 type result struct {
 	Success      bool   `json:"success"`
 	Error        string `json:"error"`

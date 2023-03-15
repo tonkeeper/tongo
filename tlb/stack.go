@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"math/big"
@@ -587,15 +588,22 @@ func (s VmStack) Unmarshal(dest any) error {
 		return fmt.Errorf("value should be a pointer")
 	}
 	if val.Elem().Type().NumField() > len(s) {
-		return fmt.Errorf("noot enough values in stack")
+		return fmt.Errorf("not enough values in stack")
 	}
 	for i := 0; i < val.Elem().Type().NumField(); i++ {
-		value := reflect.New(val.Elem().Field(i).Type())
-		err := s[i].Unmarshal(value.Interface())
-		val.Elem().Field(i).Set(value.Elem())
-		if err != nil {
+		fieldType := val.Elem().Field(i).Type()
+		if s[i].SumType == "VmStkNull" {
+			kind := fieldType.Kind()
+			if kind == reflect.Pointer || kind == reflect.Slice {
+				continue
+			}
+			return errors.New("can't unmarshal null")
+		}
+		value := reflect.New(fieldType)
+		if err := s[i].Unmarshal(value.Interface()); err != nil {
 			return err
 		}
+		val.Elem().Field(i).Set(value.Elem())
 	}
 	return nil
 }

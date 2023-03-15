@@ -441,14 +441,17 @@ func (g *Generator) buildStackStruct(s []StackRecord) (string, error) {
 	for _, c := range s {
 		if c.XMLName.Local == "tuple" {
 			list := ""
+			pointer := ""
 			if c.List {
 				list = "[]"
+			} else if c.Nullable {
+				pointer = "*"
 			}
 			str, err := g.buildStackStruct(c.SubStack)
 			if err != nil {
 				return "", err
 			}
-			fmt.Fprintf(&builder, "%s %s%s\n", utils.ToCamelCase(c.Name), list, str)
+			fmt.Fprintf(&builder, "%s %s%s%s\n", utils.ToCamelCase(c.Name), pointer, list, str)
 			continue
 		}
 		t, err := g.checkType(c.Type)

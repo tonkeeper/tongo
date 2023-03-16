@@ -158,7 +158,7 @@ func (c *Client) processQueryAnswer(p Packet) error {
 	delete(c.queries, id)
 	c.queriesMutex.Unlock()
 	if !prs {
-		return fmt.Errorf("unknow query %x", id)
+		return fmt.Errorf("unknown query %x with id %x", p.Payload[:4], id)
 	}
 	length, data, err := decodeLength(p.Payload[36:])
 	if err != nil {

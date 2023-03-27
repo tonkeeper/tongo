@@ -78,13 +78,14 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 }
 
 func (g *Generator) GetMethods() (string, error) {
-	var builder, methodMap, resultMap strings.Builder
+	var builder, methodMap, resultMap, decodersMap strings.Builder
 	builder.WriteString(`
 type Executor interface {
 	RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 	`)
+	decodersMap.WriteString("var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){\n")
 
 	methods := make(map[int][]string)
 	var resultTypes []string
@@ -107,9 +108,10 @@ type Executor interface {
 		if len(m.Input.StackValues) == 0 {
 			methods[methodID] = append(methods[methodID], methodName)
 		}
-
+		decodersMap.WriteString(fmt.Sprintf(`"%v":{`, m.Name))
 		for _, o := range m.Output {
 			resultTypeName := o.FullResultName(methodName)
+			decodersMap.WriteString("Decode" + resultTypeName + ",")
 			resultTypes = append(resultTypes, resultTypeName)
 			r, err := g.buildResultType(resultTypeName, o.Stack)
 			if err != nil {
@@ -118,7 +120,7 @@ type Executor interface {
 			builder.WriteString(r)
 			builder.WriteRune('\n')
 		}
-
+		decodersMap.WriteString("},\n")
 		s, err := g.getMethod(m, methodID, methodName)
 		if err != nil {
 			return "", err
@@ -126,7 +128,7 @@ type Executor interface {
 		builder.WriteString(s)
 		builder.WriteRune('\n')
 	}
-
+	decodersMap.WriteString("}\n\n")
 	methodMap.WriteString("var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){\n")
 	for _, k := range utils.GetOrderedKeys(methods) {
 		methodMap.WriteString(fmt.Sprintf("%d: {", k))
@@ -143,8 +145,7 @@ type Executor interface {
 		resultMap.WriteString(fmt.Sprintf("&%s{}, \n", r))
 	}
 	resultMap.WriteString("}\n\n")
-
-	b, err := format.Source([]byte(methodMap.String() + resultMap.String() + builder.String()))
+	b, err := format.Source([]byte(decodersMap.String() + methodMap.String() + resultMap.String() + builder.String()))
 	if err != nil {
 		return "", err
 	}
@@ -274,32 +275,25 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	builder.WriteString(returnStrNilErr)
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
 
-	if len(m.Output) == 1 {
-		name := m.Output[0].FullResultName(methodName)
-		builder.WriteString("var result " + name + "\n")
-		builder.WriteString("err = stack.Unmarshal(&result)\n")
-		builder.WriteString(fmt.Sprintf("return \"%s\", result, err\n", name))
-		builder.WriteString("}\n\n")
-	} else {
-		decoders := ""
-		builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
-		for _, o := range m.Output {
-			name := o.FullResultName(methodName)
-			builder.WriteString(fmt.Sprintf("decode%s, ", name))
-			resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
-			if err != nil {
-				return "", err
-			}
-			decoders = decoders + "\n\n" + resDecoder
+	decoders := ""
+	builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
+	for _, o := range m.Output {
+		name := o.FullResultName(methodName)
+		builder.WriteString(fmt.Sprintf("Decode%s, ", name))
+		resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
+		if err != nil {
+			return "", err
 		}
-		builder.WriteString("} {\n")
-		builder.WriteString("s, r, err := f(stack)\n")
-		builder.WriteString("if err == nil {return s, r, nil}\n")
-		builder.WriteString("}\n")
-		builder.WriteString("return \"\", nil, fmt.Errorf(\"can not decode outputs\")\n}\n")
-		builder.WriteString(decoders)
-		builder.WriteRune('\n')
+		decoders = decoders + "\n\n" + resDecoder
 	}
+	builder.WriteString("} {\n")
+	builder.WriteString("s, r, err := f(stack)\n")
+	builder.WriteString("if err == nil {return s, r, nil}\n")
+	builder.WriteString("}\n")
+	builder.WriteString("return \"\", nil, fmt.Errorf(\"can not decode outputs\")\n}\n")
+	builder.WriteString(decoders)
+	builder.WriteRune('\n')
+
 	return builder.String(), nil
 }
 
@@ -344,7 +338,7 @@ func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 	for i, s := range r {
 		nullableCheck := ""
 		stackType := fmt.Sprintf("stack[%d].SumType", i)
-		if s.Nullable {
+		if s.Nullable || (s.XMLName.Local == "tuple" && s.List) {
 			nullableCheck = fmt.Sprintf(" && %s != \"VmStkNull\"", stackType)
 		}
 		switch s.XMLName.Local {
@@ -365,68 +359,18 @@ func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 }
 
 func (g *Generator) buildOutputDecoder(name string, r []StackRecord, isFixed bool) (string, error) {
-	var builder, resBuilder strings.Builder
+	builder := new(strings.Builder)
 
-	builder.WriteString(fmt.Sprintf("func decode%s(stack tlb.VmStack) (resultType string, resultAny any, err error) {\n", name))
+	builder.WriteString(fmt.Sprintf("func Decode%s(stack tlb.VmStack) (resultType string, resultAny any, err error) {\n", name))
 
 	builder.WriteString(buildOutputStackCheck(r, isFixed))
+	builder.WriteString(fmt.Sprintf("var result %v\n", name))
+	builder.WriteString("err = stack.Unmarshal(&result)\n")
 
-	resBuilder.WriteString(fmt.Sprintf("%s{\n", name))
+	builder.WriteString(fmt.Sprintf("return \"%s\",result, nil", name))
 
-	for i, s := range r {
-		if s.XMLName.Local == "tuple" {
-			continue
-		}
-		varType, err := g.checkType(s.Type)
-		if err != nil {
-			return "", err
-		}
-		varName := utils.ToCamelCasePrivate(s.Name)
-		recName := varName
-		if s.Nullable {
-			builder.WriteString(fmt.Sprintf("var %s *%s\n", varName, varType))
-			builder.WriteString(fmt.Sprintf("if stack[%d].SumType != \"VmStkNull\" {", i))
-			builder.WriteString(fmt.Sprintf("var temp %s\n", varType))
-			recName = "temp"
-		} else {
-			builder.WriteString(fmt.Sprintf("var %s %s\n", varName, varType))
-		}
+	builder.WriteString("}\n")
 
-		resBuilder.WriteString(fmt.Sprintf("%s: %s,\n", utils.ToCamelCase(s.Name), varName))
-
-		switch s.XMLName.Local {
-		case "tinyint":
-			if varType == "bool" {
-				builder.WriteString(fmt.Sprintf("%s = stack[%d].Int64() != 0\n", recName, i))
-			} else {
-				builder.WriteString(fmt.Sprintf("%s = %s(stack[%d].Int64())\n", recName, varType, i))
-			}
-			if len(s.RequiredValue) > 0 {
-				builder.WriteString(fmt.Sprintf("if %s != %v { \n", recName, s.RequiredValue))
-				builder.WriteString(`return "", nil, fmt.Errorf("required value mismatch")`)
-				builder.WriteString("}\n")
-			}
-		case "int":
-			builder.WriteString(fmt.Sprintf("%s = stack[%d].Int257()\n", recName, i))
-		case "slice":
-			builder.WriteString(fmt.Sprintf("err = stack[%d].VmStkSlice.UnmarshalToTlbStruct(&%s)\n", i, recName))
-			builder.WriteString(returnStrNilErr)
-		case "cell":
-			builder.WriteString(fmt.Sprintf("%sCell := &stack[%d].VmStkCell.Value\n", recName, i))
-			builder.WriteString(fmt.Sprintf("err = tlb.Unmarshal(%sCell, &%s)\n", recName, recName))
-			builder.WriteString(returnStrNilErr)
-		}
-
-		if s.Nullable {
-			builder.WriteString(fmt.Sprintf("%s = &temp\n", varName))
-			builder.WriteString("}\n")
-		}
-	}
-
-	resBuilder.WriteString("}")
-	builder.WriteString(fmt.Sprintf("return \"%s\",%s, nil", name, resBuilder.String()))
-
-	builder.WriteString("}")
 	return builder.String(), nil
 }
 

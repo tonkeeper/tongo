@@ -649,6 +649,45 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 	return "", nil, fmt.Errorf("invalid message tag")
 }
 
+var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
+	"seqno":                        {DecodeSeqnoResult},
+	"get_public_key":               {DecodeGetPublicKeyResult},
+	"get_subwallet_id":             {DecodeGetSubwalletIdResult},
+	"get_plugin_list":              {DecodeGetPluginListResult},
+	"is_plugin_installed":          {DecodeIsPluginInstalledResult},
+	"get_nft_data":                 {DecodeGetNftDataResult},
+	"get_nft_content":              {DecodeGetNftContentResult},
+	"get_collection_data":          {DecodeGetCollectionDataResult},
+	"get_nft_address_by_index":     {DecodeGetNftAddressByIndexResult},
+	"royalty_params":               {DecodeRoyaltyParamsResult},
+	"get_jetton_data":              {DecodeGetJettonDataResult},
+	"get_wallet_address":           {DecodeGetWalletAddressResult},
+	"get_wallet_data":              {DecodeGetWalletDataResult},
+	"dnsresolve":                   {DecodeDnsresolve_RecordResult, DecodeDnsresolve_RecordsResult},
+	"get_sale_data":                {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
+	"get_authority_address":        {DecodeGetAuthorityAddressResult},
+	"get_revoked_time":             {DecodeGetRevokedTimeResult},
+	"get_channel_state":            {DecodeGetChannelStateResult},
+	"get_wallet_params":            {DecodeGetWalletParamsResult},
+	"get_storage_params":           {DecodeGetStorageParamsResult},
+	"get_storage_contract_address": {DecodeGetStorageContractAddressResult},
+	"get_storage_contract_data":    {DecodeGetStorageContractDataResult},
+	"get_torrent_hash":             {DecodeGetTorrentHashResult},
+	"is_active":                    {DecodeIsActiveResult},
+	"get_next_proof_info":          {DecodeGetNextProofInfoResult},
+	"list_nominators":              {DecodeListNominatorsResult},
+	"list_votes":                   {DecodeListVotesResult},
+	"get_pool_data":                {DecodeGetPoolData_TfResult},
+	"get_staking_status":           {DecodeGetStakingStatusResult},
+	"get_pool_status":              {DecodeGetPoolStatusResult},
+	"get_member":                   {DecodeGetMember_WhalesNominatorResult},
+	"get_members_raw":              {DecodeGetMembersRaw_WhalesNominatorResult},
+	"get_params":                   {DecodeGetParams_WhalesNominatorResult},
+	"get_telemint_auction_state":   {DecodeGetTelemintAuctionStateResult},
+	"get_telemint_auction_config":  {DecodeGetTelemintAuctionConfigResult},
+	"get_telemint_token_name":      {DecodeGetTelemintTokenNameResult},
+}
+
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
 	69506:  {GetTelemintTokenName},
 	71463:  {GetTorrentHash},
@@ -742,9 +781,22 @@ func Seqno(ctx context.Context, executor Executor, reqAccountID tongo.AccountID)
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeSeqnoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeSeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result SeqnoResult
 	err = stack.Unmarshal(&result)
-	return "SeqnoResult", result, err
+	return "SeqnoResult", result, nil
 }
 
 type GetPublicKeyResult struct {
@@ -762,9 +814,22 @@ func GetPublicKey(ctx context.Context, executor Executor, reqAccountID tongo.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPublicKeyResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetPublicKeyResult
 	err = stack.Unmarshal(&result)
-	return "GetPublicKeyResult", result, err
+	return "GetPublicKeyResult", result, nil
 }
 
 type GetSubwalletIdResult struct {
@@ -782,9 +847,22 @@ func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSubwalletIdResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetSubwalletIdResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetSubwalletIdResult
 	err = stack.Unmarshal(&result)
-	return "GetSubwalletIdResult", result, err
+	return "GetSubwalletIdResult", result, nil
 }
 
 type GetPluginListResult struct {
@@ -805,9 +883,22 @@ func GetPluginList(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPluginListResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPluginListResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTuple" && stack[0].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetPluginListResult
 	err = stack.Unmarshal(&result)
-	return "GetPluginListResult", result, err
+	return "GetPluginListResult", result, nil
 }
 
 type IsPluginInstalledResult struct {
@@ -833,9 +924,22 @@ func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tong
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsPluginInstalledResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result IsPluginInstalledResult
 	err = stack.Unmarshal(&result)
-	return "IsPluginInstalledResult", result, err
+	return "IsPluginInstalledResult", result, nil
 }
 
 type GetNftDataResult struct {
@@ -857,9 +961,22 @@ func GetNftData(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNftDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetNftDataResult
 	err = stack.Unmarshal(&result)
-	return "GetNftDataResult", result, err
+	return "GetNftDataResult", result, nil
 }
 
 type GetNftContentResult struct {
@@ -888,9 +1005,22 @@ func GetNftContent(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNftContentResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNftContentResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetNftContentResult
 	err = stack.Unmarshal(&result)
-	return "GetNftContentResult", result, err
+	return "GetNftContentResult", result, nil
 }
 
 type GetCollectionDataResult struct {
@@ -910,9 +1040,22 @@ func GetCollectionData(ctx context.Context, executor Executor, reqAccountID tong
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCollectionDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetCollectionDataResult
 	err = stack.Unmarshal(&result)
-	return "GetCollectionDataResult", result, err
+	return "GetCollectionDataResult", result, nil
 }
 
 type GetNftAddressByIndexResult struct {
@@ -936,9 +1079,22 @@ func GetNftAddressByIndex(ctx context.Context, executor Executor, reqAccountID t
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNftAddressByIndexResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNftAddressByIndexResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetNftAddressByIndexResult
 	err = stack.Unmarshal(&result)
-	return "GetNftAddressByIndexResult", result, err
+	return "GetNftAddressByIndexResult", result, nil
 }
 
 type RoyaltyParamsResult struct {
@@ -958,9 +1114,22 @@ func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeRoyaltyParamsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result RoyaltyParamsResult
 	err = stack.Unmarshal(&result)
-	return "RoyaltyParamsResult", result, err
+	return "RoyaltyParamsResult", result, nil
 }
 
 type GetJettonDataResult struct {
@@ -982,9 +1151,22 @@ func GetJettonData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetJettonDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetJettonDataResult
 	err = stack.Unmarshal(&result)
-	return "GetJettonDataResult", result, err
+	return "GetJettonDataResult", result, nil
 }
 
 type GetWalletAddressResult struct {
@@ -1011,9 +1193,22 @@ func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetWalletAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetWalletAddressResult
 	err = stack.Unmarshal(&result)
-	return "GetWalletAddressResult", result, err
+	return "GetWalletAddressResult", result, nil
 }
 
 type GetWalletDataResult struct {
@@ -1034,9 +1229,22 @@ func GetWalletData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetWalletDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetWalletDataResult
 	err = stack.Unmarshal(&result)
-	return "GetWalletDataResult", result, err
+	return "GetWalletDataResult", result, nil
 }
 
 type Dnsresolve_RecordResult struct {
@@ -1071,7 +1279,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeDnsresolve_RecordResult, decodeDnsresolve_RecordsResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeDnsresolve_RecordResult, DecodeDnsresolve_RecordsResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1080,40 +1288,22 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func decodeDnsresolve_RecordResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeDnsresolve_RecordResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var resolvedBits int64
-	resolvedBits = int64(stack[0].Int64())
-	var result tlb.DNSRecord
-	resultCell := &stack[1].VmStkCell.Value
-	err = tlb.Unmarshal(resultCell, &result)
-	if err != nil {
-		return "", nil, err
-	}
-	return "Dnsresolve_RecordResult", Dnsresolve_RecordResult{
-		ResolvedBits: resolvedBits,
-		Result:       result,
-	}, nil
+	var result Dnsresolve_RecordResult
+	err = stack.Unmarshal(&result)
+	return "Dnsresolve_RecordResult", result, nil
 }
 
-func decodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var resolvedBits int64
-	resolvedBits = int64(stack[0].Int64())
-	var result tlb.DNSRecordSet
-	resultCell := &stack[1].VmStkCell.Value
-	err = tlb.Unmarshal(resultCell, &result)
-	if err != nil {
-		return "", nil, err
-	}
-	return "Dnsresolve_RecordsResult", Dnsresolve_RecordsResult{
-		ResolvedBits: resolvedBits,
-		Result:       result,
-	}, nil
+	var result Dnsresolve_RecordsResult
+	err = stack.Unmarshal(&result)
+	return "Dnsresolve_RecordsResult", result, nil
 }
 
 type GetSaleData_BasicResult struct {
@@ -1174,7 +1364,7 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){decodeGetSaleData_BasicResult, decodeGetSaleData_GetgemsResult, decodeGetSaleData_GetgemsAuctionResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1183,193 +1373,31 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func decodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var marketplace tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
-	if err != nil {
-		return "", nil, err
-	}
-	var nft tlb.MsgAddress
-	err = stack[1].VmStkSlice.UnmarshalToTlbStruct(&nft)
-	if err != nil {
-		return "", nil, err
-	}
-	var owner tlb.MsgAddress
-	err = stack[2].VmStkSlice.UnmarshalToTlbStruct(&owner)
-	if err != nil {
-		return "", nil, err
-	}
-	var fullPrice tlb.Int257
-	fullPrice = stack[3].Int257()
-	var marketFee uint64
-	marketFee = uint64(stack[4].Int64())
-	var royaltyAddress tlb.MsgAddress
-	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var royaltyAmount uint64
-	royaltyAmount = uint64(stack[6].Int64())
-	return "GetSaleData_BasicResult", GetSaleData_BasicResult{
-		Marketplace:    marketplace,
-		Nft:            nft,
-		Owner:          owner,
-		FullPrice:      fullPrice,
-		MarketFee:      marketFee,
-		RoyaltyAddress: royaltyAddress,
-		RoyaltyAmount:  royaltyAmount,
-	}, nil
+	var result GetSaleData_BasicResult
+	err = stack.Unmarshal(&result)
+	return "GetSaleData_BasicResult", result, nil
 }
 
-func decodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var magic uint64
-	magic = uint64(stack[0].Int64())
-	if magic != 0x46495850 {
-		return "", nil, fmt.Errorf("required value mismatch")
-	}
-	var isComplete bool
-	isComplete = stack[1].Int64() != 0
-	var createdAt uint64
-	createdAt = uint64(stack[2].Int64())
-	var marketplace tlb.MsgAddress
-	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
-	if err != nil {
-		return "", nil, err
-	}
-	var nft tlb.MsgAddress
-	err = stack[4].VmStkSlice.UnmarshalToTlbStruct(&nft)
-	if err != nil {
-		return "", nil, err
-	}
-	var owner tlb.MsgAddress
-	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&owner)
-	if err != nil {
-		return "", nil, err
-	}
-	var fullPrice tlb.Int257
-	fullPrice = stack[6].Int257()
-	var marketFeeAddress tlb.MsgAddress
-	err = stack[7].VmStkSlice.UnmarshalToTlbStruct(&marketFeeAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var marketFee uint64
-	marketFee = uint64(stack[8].Int64())
-	var royaltyAddress tlb.MsgAddress
-	err = stack[9].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var royaltyAmount uint64
-	royaltyAmount = uint64(stack[10].Int64())
-	return "GetSaleData_GetgemsResult", GetSaleData_GetgemsResult{
-		Magic:            magic,
-		IsComplete:       isComplete,
-		CreatedAt:        createdAt,
-		Marketplace:      marketplace,
-		Nft:              nft,
-		Owner:            owner,
-		FullPrice:        fullPrice,
-		MarketFeeAddress: marketFeeAddress,
-		MarketFee:        marketFee,
-		RoyaltyAddress:   royaltyAddress,
-		RoyaltyAmount:    royaltyAmount,
-	}, nil
+	var result GetSaleData_GetgemsResult
+	err = stack.Unmarshal(&result)
+	return "GetSaleData_GetgemsResult", result, nil
 }
 
-func decodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 20 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTinyInt") || (stack[17].SumType != "VmStkTinyInt") || (stack[18].SumType != "VmStkTinyInt") || (stack[19].SumType != "VmStkTinyInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var magic uint64
-	magic = uint64(stack[0].Int64())
-	if magic != 0x415543 {
-		return "", nil, fmt.Errorf("required value mismatch")
-	}
-	var end bool
-	end = stack[1].Int64() != 0
-	var endTime uint32
-	endTime = uint32(stack[2].Int64())
-	var marketplace tlb.MsgAddress
-	err = stack[3].VmStkSlice.UnmarshalToTlbStruct(&marketplace)
-	if err != nil {
-		return "", nil, err
-	}
-	var nft tlb.MsgAddress
-	err = stack[4].VmStkSlice.UnmarshalToTlbStruct(&nft)
-	if err != nil {
-		return "", nil, err
-	}
-	var owner tlb.MsgAddress
-	err = stack[5].VmStkSlice.UnmarshalToTlbStruct(&owner)
-	if err != nil {
-		return "", nil, err
-	}
-	var lastBid uint64
-	lastBid = uint64(stack[6].Int64())
-	var lastMember tlb.MsgAddress
-	err = stack[7].VmStkSlice.UnmarshalToTlbStruct(&lastMember)
-	if err != nil {
-		return "", nil, err
-	}
-	var minStep uint64
-	minStep = uint64(stack[8].Int64())
-	var marketFeeAddress tlb.MsgAddress
-	err = stack[9].VmStkSlice.UnmarshalToTlbStruct(&marketFeeAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var mpFeeFactor uint32
-	mpFeeFactor = uint32(stack[10].Int64())
-	var mpFeeBase uint32
-	mpFeeBase = uint32(stack[11].Int64())
-	var royaltyAddress tlb.MsgAddress
-	err = stack[12].VmStkSlice.UnmarshalToTlbStruct(&royaltyAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	var royaltyFeeFactor uint32
-	royaltyFeeFactor = uint32(stack[13].Int64())
-	var royaltyFeeBase uint32
-	royaltyFeeBase = uint32(stack[14].Int64())
-	var maxBid uint64
-	maxBid = uint64(stack[15].Int64())
-	var minBid uint64
-	minBid = uint64(stack[16].Int64())
-	var createdAt uint32
-	createdAt = uint32(stack[17].Int64())
-	var lastBidAt uint32
-	lastBidAt = uint32(stack[18].Int64())
-	var isCanceled bool
-	isCanceled = stack[19].Int64() != 0
-	return "GetSaleData_GetgemsAuctionResult", GetSaleData_GetgemsAuctionResult{
-		Magic:            magic,
-		End:              end,
-		EndTime:          endTime,
-		Marketplace:      marketplace,
-		Nft:              nft,
-		Owner:            owner,
-		LastBid:          lastBid,
-		LastMember:       lastMember,
-		MinStep:          minStep,
-		MarketFeeAddress: marketFeeAddress,
-		MpFeeFactor:      mpFeeFactor,
-		MpFeeBase:        mpFeeBase,
-		RoyaltyAddress:   royaltyAddress,
-		RoyaltyFeeFactor: royaltyFeeFactor,
-		RoyaltyFeeBase:   royaltyFeeBase,
-		MaxBid:           maxBid,
-		MinBid:           minBid,
-		CreatedAt:        createdAt,
-		LastBidAt:        lastBidAt,
-		IsCanceled:       isCanceled,
-	}, nil
+	var result GetSaleData_GetgemsAuctionResult
+	err = stack.Unmarshal(&result)
+	return "GetSaleData_GetgemsAuctionResult", result, nil
 }
 
 type GetAuthorityAddressResult struct {
@@ -1387,9 +1415,22 @@ func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID to
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAuthorityAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetAuthorityAddressResult
 	err = stack.Unmarshal(&result)
-	return "GetAuthorityAddressResult", result, err
+	return "GetAuthorityAddressResult", result, nil
 }
 
 type GetRevokedTimeResult struct {
@@ -1407,9 +1448,22 @@ func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRevokedTimeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetRevokedTimeResult
 	err = stack.Unmarshal(&result)
-	return "GetRevokedTimeResult", result, err
+	return "GetRevokedTimeResult", result, nil
 }
 
 type GetChannelStateResult struct {
@@ -1427,9 +1481,22 @@ func GetChannelState(ctx context.Context, executor Executor, reqAccountID tongo.
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetChannelStateResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetChannelStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetChannelStateResult
 	err = stack.Unmarshal(&result)
-	return "GetChannelStateResult", result, err
+	return "GetChannelStateResult", result, nil
 }
 
 type GetWalletParamsResult struct {
@@ -1449,9 +1516,22 @@ func GetWalletParams(ctx context.Context, executor Executor, reqAccountID tongo.
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetWalletParamsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetWalletParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetWalletParamsResult
 	err = stack.Unmarshal(&result)
-	return "GetWalletParamsResult", result, err
+	return "GetWalletParamsResult", result, nil
 }
 
 type GetStorageParamsResult struct {
@@ -1473,9 +1553,22 @@ func GetStorageParams(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStorageParamsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStorageParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetStorageParamsResult
 	err = stack.Unmarshal(&result)
-	return "GetStorageParamsResult", result, err
+	return "GetStorageParamsResult", result, nil
 }
 
 type GetStorageContractAddressResult struct {
@@ -1508,9 +1601,22 @@ func GetStorageContractAddress(ctx context.Context, executor Executor, reqAccoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStorageContractAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStorageContractAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetStorageContractAddressResult
 	err = stack.Unmarshal(&result)
-	return "GetStorageContractAddressResult", result, err
+	return "GetStorageContractAddressResult", result, nil
 }
 
 type GetStorageContractDataResult struct {
@@ -1538,9 +1644,22 @@ func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStorageContractDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStorageContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetStorageContractDataResult
 	err = stack.Unmarshal(&result)
-	return "GetStorageContractDataResult", result, err
+	return "GetStorageContractDataResult", result, nil
 }
 
 type GetTorrentHashResult struct {
@@ -1558,9 +1677,22 @@ func GetTorrentHash(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTorrentHashResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetTorrentHashResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetTorrentHashResult
 	err = stack.Unmarshal(&result)
-	return "GetTorrentHashResult", result, err
+	return "GetTorrentHashResult", result, nil
 }
 
 type IsActiveResult struct {
@@ -1578,9 +1710,22 @@ func IsActive(ctx context.Context, executor Executor, reqAccountID tongo.Account
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsActiveResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result IsActiveResult
 	err = stack.Unmarshal(&result)
-	return "IsActiveResult", result, err
+	return "IsActiveResult", result, nil
 }
 
 type GetNextProofInfoResult struct {
@@ -1600,9 +1745,22 @@ func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNextProofInfoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetNextProofInfoResult
 	err = stack.Unmarshal(&result)
-	return "GetNextProofInfoResult", result, err
+	return "GetNextProofInfoResult", result, nil
 }
 
 type ListNominatorsResult struct {
@@ -1625,9 +1783,22 @@ func ListNominators(ctx context.Context, executor Executor, reqAccountID tongo.A
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeListNominatorsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeListNominatorsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTuple" && stack[0].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result ListNominatorsResult
 	err = stack.Unmarshal(&result)
-	return "ListNominatorsResult", result, err
+	return "ListNominatorsResult", result, nil
 }
 
 type ListVotesResult struct {
@@ -1648,9 +1819,22 @@ func ListVotes(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeListVotesResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeListVotesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTuple" && stack[0].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result ListVotesResult
 	err = stack.Unmarshal(&result)
-	return "ListVotesResult", result, err
+	return "ListVotesResult", result, nil
 }
 
 type GetPoolData_TfResult struct {
@@ -1687,9 +1871,22 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_TfResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 17 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkCell") || (stack[10].SumType != "VmStkTuple" && stack[10].SumType != "VmStkNull") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTuple" && stack[16].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetPoolData_TfResult
 	err = stack.Unmarshal(&result)
-	return "GetPoolData_TfResult", result, err
+	return "GetPoolData_TfResult", result, nil
 }
 
 type GetStakingStatusResult struct {
@@ -1713,9 +1910,22 @@ func GetStakingStatus(ctx context.Context, executor Executor, reqAccountID tongo
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStakingStatusResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStakingStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetStakingStatusResult
 	err = stack.Unmarshal(&result)
-	return "GetStakingStatusResult", result, err
+	return "GetStakingStatusResult", result, nil
 }
 
 type GetPoolStatusResult struct {
@@ -1737,9 +1947,22 @@ func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolStatusResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetPoolStatusResult
 	err = stack.Unmarshal(&result)
-	return "GetPoolStatusResult", result, err
+	return "GetPoolStatusResult", result, nil
 }
 
 type GetMember_WhalesNominatorResult struct {
@@ -1769,9 +1992,22 @@ func GetMember(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetMember_WhalesNominatorResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetMember_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetMember_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetMember_WhalesNominatorResult", result, err
+	return "GetMember_WhalesNominatorResult", result, nil
 }
 
 type GetMembersRaw_WhalesNominatorResult struct {
@@ -1789,9 +2025,22 @@ func GetMembersRaw(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetMembersRaw_WhalesNominatorResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetMembersRaw_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetMembersRaw_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetMembersRaw_WhalesNominatorResult", result, err
+	return "GetMembersRaw_WhalesNominatorResult", result, nil
 }
 
 type GetParams_WhalesNominatorResult struct {
@@ -1815,9 +2064,22 @@ func GetParams(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetParams_WhalesNominatorResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetParams_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetParams_WhalesNominatorResult", result, err
+	return "GetParams_WhalesNominatorResult", result, nil
 }
 
 type GetTelemintAuctionStateResult struct {
@@ -1839,9 +2101,22 @@ func GetTelemintAuctionState(ctx context.Context, executor Executor, reqAccountI
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTelemintAuctionStateResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetTelemintAuctionStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetTelemintAuctionStateResult
 	err = stack.Unmarshal(&result)
-	return "GetTelemintAuctionStateResult", result, err
+	return "GetTelemintAuctionStateResult", result, nil
 }
 
 type GetTelemintAuctionConfigResult struct {
@@ -1864,9 +2139,22 @@ func GetTelemintAuctionConfig(ctx context.Context, executor Executor, reqAccount
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTelemintAuctionConfigResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetTelemintAuctionConfigResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetTelemintAuctionConfigResult
 	err = stack.Unmarshal(&result)
-	return "GetTelemintAuctionConfigResult", result, err
+	return "GetTelemintAuctionConfigResult", result, nil
 }
 
 type GetTelemintTokenNameResult struct {
@@ -1884,9 +2172,22 @@ func GetTelemintTokenName(ctx context.Context, executor Executor, reqAccountID t
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTelemintTokenNameResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
 	var result GetTelemintTokenNameResult
 	err = stack.Unmarshal(&result)
-	return "GetTelemintTokenNameResult", result, err
+	return "GetTelemintTokenNameResult", result, nil
 }
 
 type ContractInterface string

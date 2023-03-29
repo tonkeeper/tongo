@@ -488,6 +488,11 @@
         response_destination:MsgAddress custom_payload:(Maybe ^Cell)
         = InternalMsgBody;
     </internal>
+    <internal name="jetton_notify" interface="tep74">
+        transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
+        sender:MsgAddress forward_payload:(Either Cell ^Cell)
+        = InternalMsgBody;
+    </internal>
 
     <!--    SBT     -->
     <internal name="prove_ownership" interface="tep85">

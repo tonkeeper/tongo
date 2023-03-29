@@ -439,19 +439,24 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString(msgDecoderReturnErr)
 
 	builder.WriteString("switch tag {\n")
-
+	var knownTypes [][2]string
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
 		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
 		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
 		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].OperationName))
+		knownTypes = append(knownTypes, [2]string{g.loadedTlbMsgTypes[k].OperationName, g.loadedTlbMsgTypes[k].TypeName})
 	}
 
 	builder.WriteString("}\n")
 	builder.WriteString("return \"\", nil, fmt.Errorf(\"invalid message tag\")\n")
 	builder.WriteString("}\n")
 	builder.WriteRune('\n')
-
+	builder.WriteString("var KnownMsgTypes = map[string]any{\n")
+	for _, v := range knownTypes {
+		fmt.Fprintf(&builder, "\"%v\": %v{},\n", v[0], v[1])
+	}
+	builder.WriteString("}\n\n")
 	b, err := format.Source([]byte(builder.String()))
 	if err != nil {
 		panic(err)

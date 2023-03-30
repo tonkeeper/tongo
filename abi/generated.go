@@ -361,6 +361,13 @@ type PaymentRequestMsgBody struct {
 	Amount  tlb.CurrencyCollection
 }
 
+type JettonNotifyMsgBody struct {
+	QueryId        uint64
+	Amount         tlb.VarUInteger16
+	Sender         tlb.MsgAddress
+	ForwardPayload tlb.EitherRef[tlb.Any]
+}
+
 type ChannelCooperativeCommitMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
@@ -581,6 +588,10 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		var res PaymentRequestMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "PaymentRequest", res, err
+	case 0x7362d09c:
+		var res JettonNotifyMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "JettonNotify", res, err
 	case 0x79a126ef:
 		var res ChannelCooperativeCommitMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -647,6 +658,58 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		return "PaymentRequestResponse", res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
+}
+
+var KnownMsgTypes = map[string]any{
+	"TextComment":                      TextCommentMsgBody{},
+	"ProveOwnership":                   ProveOwnershipMsgBody{},
+	"NftOwnershipAssigned":             NftOwnershipAssignedMsgBody{},
+	"OwnershipProof":                   OwnershipProofMsgBody{},
+	"ChallengeQuarantinedChannelState": ChallengeQuarantinedChannelStateMsgBody{},
+	"SbtOwnerInfo":                     SbtOwnerInfoMsgBody{},
+	"InitPaymentChannel":               InitPaymentChannelMsgBody{},
+	"JettonTransfer":                   JettonTransferMsgBody{},
+	"OfferStorageContract":             OfferStorageContractMsgBody{},
+	"JettonInternalTransfer":           JettonInternalTransferMsgBody{},
+	"SbtDestroy":                       SbtDestroyMsgBody{},
+	"StartUncooperativeChannelClose":   StartUncooperativeChannelCloseMsgBody{},
+	"FinishUncooperativeChannelClose":  FinishUncooperativeChannelCloseMsgBody{},
+	"TeleitemDeploy":                   TeleitemDeployMsgBody{},
+	"GetStaticData":                    GetStaticDataMsgBody{},
+	"TeleitemCancelAuction":            TeleitemCancelAuctionMsgBody{},
+	"ProofStorage":                     ProofStorageMsgBody{},
+	"TelemintDeploy":                   TelemintDeployMsgBody{},
+	"TelemintDeployV2":                 TelemintDeployV2MsgBody{},
+	"StorageWithdraw":                  StorageWithdrawMsgBody{},
+	"TeleitemStartAuction":             TeleitemStartAuctionMsgBody{},
+	"UpdatePubkey":                     UpdatePubkeyMsgBody{},
+	"UpdateStorageParams":              UpdateStorageParamsMsgBody{},
+	"ChannelCooperativeClose":          ChannelCooperativeCloseMsgBody{},
+	"JettonBurn":                       JettonBurnMsgBody{},
+	"NftTransfer":                      NftTransferMsgBody{},
+	"WalletPluginDestruct":             WalletPluginDestructMsgBody{},
+	"SettleChannelConditionals":        SettleChannelConditionalsMsgBody{},
+	"TopUpChannelBalance":              TopUpChannelBalanceMsgBody{},
+	"GetRoyaltyParams":                 GetRoyaltyParamsMsgBody{},
+	"SbtRevoke":                        SbtRevokeMsgBody{},
+	"PaymentRequest":                   PaymentRequestMsgBody{},
+	"JettonNotify":                     JettonNotifyMsgBody{},
+	"ChannelCooperativeCommit":         ChannelCooperativeCommitMsgBody{},
+	"CloseStorageContract":             CloseStorageContractMsgBody{},
+	"AcceptStorageContract":            AcceptStorageContractMsgBody{},
+	"WhalesNominatorsDeposit":          WhalesNominatorsDepositMsgBody{},
+	"ReportStaticData":                 ReportStaticDataMsgBody{},
+	"ReportRoyaltyParams":              ReportRoyaltyParamsMsgBody{},
+	"StorageRewardWithdrawal":          StorageRewardWithdrawalMsgBody{},
+	"StorageContractTerminated":        StorageContractTerminatedMsgBody{},
+	"SbtRequestOwner":                  SbtRequestOwnerMsgBody{},
+	"StorageContractConfirmed":         StorageContractConfirmedMsgBody{},
+	"Excess":                           ExcessMsgBody{},
+	"WhalesNominatorsWithdraw":         WhalesNominatorsWithdrawMsgBody{},
+	"ChannelClosed":                    ChannelClosedMsgBody{},
+	"WalletPluginDestructResponse":     WalletPluginDestructResponseMsgBody{},
+	"DeployStorageContract":            DeployStorageContractMsgBody{},
+	"PaymentRequestResponse":           PaymentRequestResponseMsgBody{},
 }
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){

@@ -158,9 +158,9 @@ func TestSimpleGetMethod(t *testing.T) {
 				err      error
 			)
 			if c.IsMainnet {
-				emulator, err = tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], 1_000_000_000, 0)
+				emulator, err = tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0])
 			} else {
-				emulator, err = tvm.NewEmulator(codeCell[0], dataCell[0], testnetConfig[0], 1_000_000_000, 0)
+				emulator, err = tvm.NewEmulator(codeCell[0], dataCell[0], testnetConfig[0])
 			}
 			if err != nil {
 				t.Fatal(err)

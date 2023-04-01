@@ -2,11 +2,12 @@ package tvm
 
 import (
 	"context"
+	"math/big"
+	"testing"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"math/big"
-	"testing"
 )
 
 func TestRunGetMethod(t *testing.T) {
@@ -21,7 +22,7 @@ func TestRunGetMethod(t *testing.T) {
 		VmStkInt: index,
 	}
 
-	emulator, err := NewEmulator(codeCell[0], dataCell[0], config[0], 1_000_000_000, 0)
+	emulator, err := NewEmulator(codeCell[0], dataCell[0], config[0], WithLazyC7Optimization())
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -12,27 +12,67 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"runtime"
+	"time"
+	"unsafe"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/txemulator"
 	"github.com/tonkeeper/tongo/utils"
-	"math/rand"
-	"runtime"
-	"time"
-	"unsafe"
 )
 
 type Emulator struct {
 	emulator unsafe.Pointer
 	config   string
 	balance  uint64
+	lazyC7   bool
+}
+
+type Options struct {
+	verbosityLevel txemulator.VerbosityLevel
+	balance        int64
+	lazyC7         bool
+}
+
+type Option func(o *Options)
+
+func WithVerbosityLevel(level txemulator.VerbosityLevel) Option {
+	return func(o *Options) {
+		o.verbosityLevel = level
+	}
+}
+func WithBalance(balance int64) Option {
+	return func(o *Options) {
+		o.balance = balance
+	}
+}
+
+// WithLazyC7Optimization allows to make two attempts to execute a get method.
+// At the first attempt an emulator invokes a get method without C7.
+// This works for most get methods and significantly decreases the execution time.
+// If the first attempt fails,
+// an emulator invokes the same get method again but with configured C7.
+func WithLazyC7Optimization() Option {
+	return func(o *Options) {
+		o.lazyC7 = true
+	}
+}
+
+func defaultOptions() Options {
+	return Options{
+		lazyC7:         false,
+		balance:        1_000_000_000,
+		verbosityLevel: txemulator.LogTruncated,
+	}
 }
 
 // NewEmulator
 // Verbosity level of VM log. 0 - log truncated to last 256 characters. 1 - unlimited length log.
 // 2 - for each command prints its cell hash and offset. 3 - for each command log prints all stack values.
-func NewEmulator(code, data, config *boc.Cell, balance int64, verbosityLevel txemulator.VerbosityLevel) (*Emulator, error) {
+func NewEmulator(code, data, config *boc.Cell, opts ...Option) (*Emulator, error) {
 	codeBoc, err := code.ToBocBase64()
 	if err != nil {
 		return nil, err
@@ -45,33 +85,27 @@ func NewEmulator(code, data, config *boc.Cell, balance int64, verbosityLevel txe
 	if err != nil {
 		return nil, err
 	}
-	cCodeStr := C.CString(codeBoc)
-	defer C.free(unsafe.Pointer(cCodeStr))
-	cDataStr := C.CString(dataBoc)
-	defer C.free(unsafe.Pointer(cDataStr))
-	level := C.int(verbosityLevel)
-	e := Emulator{
-		emulator: C.tvm_emulator_create(cCodeStr, cDataStr, level),
-		config:   configBoc,
-		balance:  uint64(balance),
-	}
-	runtime.SetFinalizer(&e, destroy)
-	return &e, nil
+	return NewEmulatorFromBOCsBase64(codeBoc, dataBoc, configBoc, opts...)
 }
 
 // NewEmulatorFromBOCsBase64
 // Verbosity level of VM log. 0 - log truncated to last 256 characters. 1 - unlimited length log.
 // 2 - for each command prints its cell hash and offset. 3 - for each command log prints all stack values.
-func NewEmulatorFromBOCsBase64(code, data, config string, balance int64, verbosityLevel txemulator.VerbosityLevel) (*Emulator, error) {
+func NewEmulatorFromBOCsBase64(code, data, config string, opts ...Option) (*Emulator, error) {
+	options := defaultOptions()
+	for _, o := range opts {
+		o(&options)
+	}
 	cCodeStr := C.CString(code)
 	defer C.free(unsafe.Pointer(cCodeStr))
 	cDataStr := C.CString(data)
 	defer C.free(unsafe.Pointer(cDataStr))
-	level := C.int(verbosityLevel)
+	level := C.int(options.verbosityLevel)
 	e := Emulator{
 		emulator: C.tvm_emulator_create(cCodeStr, cDataStr, level),
 		config:   config,
-		balance:  uint64(balance),
+		lazyC7:   options.lazyC7,
+		balance:  uint64(options.balance),
 	}
 	runtime.SetFinalizer(&e, destroy)
 	return &e, nil
@@ -117,14 +151,19 @@ func (e *Emulator) SetGasLimit(gasLimit int64) error {
 	return nil
 }
 
-func (e *Emulator) setC7(address string, unixTime uint32, balance uint64, randSeed [32]byte, configBoc string) error {
-	cConfigStr := C.CString(configBoc)
+func (e *Emulator) setC7(address string, unixTime uint32) error {
+	var seed [32]byte
+	_, err := rand.Read(seed[:])
+	if err != nil {
+		return err
+	}
+	cConfigStr := C.CString(e.config)
 	defer C.free(unsafe.Pointer(cConfigStr))
 	cAddressStr := C.CString(address)
 	defer C.free(unsafe.Pointer(cAddressStr))
-	cSeedStr := C.CString(hex.EncodeToString(randSeed[:]))
+	cSeedStr := C.CString(hex.EncodeToString(seed[:]))
 	defer C.free(unsafe.Pointer(cSeedStr))
-	ok := C.tvm_emulator_set_c7(e.emulator, cAddressStr, C.uint32_t(unixTime), C.uint64_t(balance), cSeedStr, cConfigStr)
+	ok := C.tvm_emulator_set_c7(e.emulator, cAddressStr, C.uint32_t(unixTime), C.uint64_t(e.balance), cSeedStr, cConfigStr)
 	if !ok {
 		return fmt.Errorf("set C7 error")
 	}
@@ -167,29 +206,29 @@ func (e *Emulator) RunSmcMethod(ctx context.Context, accountId tongo.AccountID, 
 }
 
 func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error) {
-	address := accountId.ToRaw()
-
-	var seed [32]byte
-	_, err := rand.Read(seed[:])
-
-	err = e.setC7(address, uint32(time.Now().Unix()), e.balance, seed, e.config)
+	if !e.lazyC7 {
+		err := e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+	}
+	res, err := e.runGetMethod(methodID, params)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-
-	paramsCell := boc.NewCell()
-	err = tlb.Marshal(paramsCell, params)
-	if err != nil {
-		return 0, tlb.VmStack{}, err
-	}
-	res, err := e.runGetMethod(methodID, paramsCell)
-	if err != nil {
-		return 0, tlb.VmStack{}, err
+	if res.Success && res.VmExitCode > 1 && e.lazyC7 {
+		err = e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+		res, err = e.runGetMethod(methodID, params)
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
 	}
 	if !res.Success {
 		return 0, tlb.VmStack{}, fmt.Errorf("TVM emulation error: %v", res.Error)
 	}
-
 	b, err := base64.StdEncoding.DecodeString(res.Stack)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
@@ -206,7 +245,12 @@ func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId tongo.Account
 	return uint32(res.VmExitCode), stack, nil
 }
 
-func (e *Emulator) runGetMethod(methodID int, stack *boc.Cell) (result, error) {
+func (e *Emulator) runGetMethod(methodID int, params tlb.VmStack) (result, error) {
+	stack := boc.NewCell()
+	err := tlb.Marshal(stack, params)
+	if err != nil {
+		return result{}, err
+	}
 	stackBoc, err := stack.ToBocBase64()
 	if err != nil {
 		return result{}, err
@@ -223,6 +267,5 @@ func (e *Emulator) runGetMethod(methodID int, stack *boc.Cell) (result, error) {
 	if err != nil {
 		return result{}, err
 	}
-
 	return res, nil
 }

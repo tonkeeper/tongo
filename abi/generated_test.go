@@ -145,7 +145,7 @@ func TestGetMethods(t *testing.T) {
 			}
 			codeCell, _ := boc.DeserializeBoc(code)
 			dataCell, _ := boc.DeserializeBoc(data)
-			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], 1_000_000_000, -1)
+			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], tvm.WithVerbosityLevel(-1), tvm.WithLazyC7Optimization())
 			typeHint, got, err := tt.method(context.Background(), emulator, accountID)
 			if err != nil {
 				t.Fatalf("method invocation failed: %v", err)

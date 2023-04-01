@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/big"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/tvm"
-	"math/big"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 		VmStkInt: index,
 	}
 
-	emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], config[0], 1_000_000_000, 0)
+	emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], config[0])
 	if err != nil {
 		panic(err)
 	}

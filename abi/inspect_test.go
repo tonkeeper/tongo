@@ -50,7 +50,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			copy(addr[:], address[:])
 			account := tongo.AccountID{Address: addr, Workchain: 0}
 			ci := NewContractInspector()
-			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], 1_000_000_000, 0)
+			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], tvm.WithLazyC7Optimization())
 			contractDescription, err := ci.InspectContract(context.Background(), codeBytes, emulator, account)
 			if err != nil {
 				t.Fatalf("InspectContract() failed: %v", err)

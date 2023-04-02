@@ -216,7 +216,7 @@ func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId tongo.Account
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-	if res.Success && res.VmExitCode > 1 && e.lazyC7 {
+	if res.Success && res.VmExitCode != 0 && res.VmExitCode != 1 && e.lazyC7 {
 		err = e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
 		if err != nil {
 			return 0, tlb.VmStack{}, err

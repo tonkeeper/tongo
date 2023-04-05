@@ -418,28 +418,43 @@ type TrBouncePhase struct {
 }
 
 func (tx Transaction) IsSuccess() bool {
-	success := true
 	switch tx.Description.SumType {
-	case "TransStorage":
-		return true // TODO: check logic
 	case "TransOrd":
-		{
-			if tx.Description.TransOrd.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Description.TransOrd.ComputePh.TrPhaseComputeVm.Success
-			}
-			if tx.Description.TransOrd.Action.Exists {
-				success = success && tx.Description.TransOrd.Action.Value.Value.Success
-			}
+		o := tx.Description.TransOrd
+		if o.Aborted {
+			return false
 		}
+		if o.Bounce.Exists {
+			return false
+		}
+		cph := o.ComputePh
+		if cph.SumType == "TrPhaseComputeSkipped" && cph.TrPhaseComputeSkipped.Reason != ComputeSkipReasonNoState {
+			return false
+		}
+		if cph.SumType == "TrPhaseComputeVm" && (!cph.TrPhaseComputeVm.Success || (cph.TrPhaseComputeVm.Vm.ExitCode != 0 && cph.TrPhaseComputeVm.Vm.ExitCode != 1)) {
+			return false
+		}
+		if o.Action.Exists && !o.Action.Value.Value.Success {
+			return false
+		}
+		return true
 	case "TransTickTock":
-		{
-			if tx.Description.TransTickTock.ComputePh.SumType == "TrPhaseComputeVm" {
-				success = tx.Description.TransTickTock.ComputePh.TrPhaseComputeVm.Success
-			}
-			if tx.Description.TransTickTock.Action.Exists {
-				success = success && tx.Description.TransTickTock.Action.Value.Value.Success
-			}
+		t := tx.Description.TransTickTock
+		if t.Aborted {
+			return false
 		}
+		cph := t.ComputePh
+		if cph.SumType == "TrPhaseComputeSkipped" && cph.TrPhaseComputeSkipped.Reason != ComputeSkipReasonNoState {
+			return false
+		}
+		if cph.SumType == "TrPhaseComputeVm" && (!cph.TrPhaseComputeVm.Success || (cph.TrPhaseComputeVm.Vm.ExitCode != 0 && cph.TrPhaseComputeVm.Vm.ExitCode != 1)) {
+			return false
+		}
+		if t.Action.Exists && !t.Action.Value.Value.Success {
+			return false
+		}
+		return true
+	default:
+		return true //todo: add logic for over types
 	}
-	return success
 }

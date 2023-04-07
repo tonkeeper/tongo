@@ -421,9 +421,6 @@ func (tx Transaction) IsSuccess() bool {
 	switch tx.Description.SumType {
 	case "TransOrd":
 		o := tx.Description.TransOrd
-		if o.Aborted {
-			return false
-		}
 		if o.Bounce.Exists {
 			return false
 		}
@@ -440,9 +437,6 @@ func (tx Transaction) IsSuccess() bool {
 		return true
 	case "TransTickTock":
 		t := tx.Description.TransTickTock
-		if t.Aborted {
-			return false
-		}
 		cph := t.ComputePh
 		if cph.SumType == "TrPhaseComputeSkipped" && cph.TrPhaseComputeSkipped.Reason != ComputeSkipReasonNoState {
 			return false

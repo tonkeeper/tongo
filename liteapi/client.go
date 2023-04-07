@@ -341,6 +341,10 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
+	var result tlb.VmStack
+	if res.ExitCode == 4294967040 { //-256
+		return res.ExitCode, nil, fmt.Errorf("account not found")
+	}
 	cells, err := boc.DeserializeBoc(res.Result)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
@@ -348,7 +352,6 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID
 	if len(cells) != 1 {
 		return 0, tlb.VmStack{}, boc.ErrNotSingleRoot
 	}
-	var result tlb.VmStack
 	err = tlb.Unmarshal(cells[0], &result)
 	return res.ExitCode, result, err
 }

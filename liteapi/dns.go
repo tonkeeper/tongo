@@ -9,11 +9,7 @@ import (
 	"math/big"
 )
 
-// DnsResolve
-// TEP-81 TON DNS Standard
-// https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md
-// Returns the length (in bits) of the prefix of the internal representation of the domain that has been resolved and Cell with the TON DNS record
-// Returns 0,nil,nil if DNS record is Null
+// DnsResolve is deprecated. please use github.com/tonkeeper/tongo/contract/dns
 func (c *Client) DnsResolve(ctx context.Context, address tongo.AccountID, domain string, category *big.Int) (int, *boc.Cell, error) {
 	var params tlb.VmStack
 	cell := boc.NewCell()

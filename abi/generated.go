@@ -726,7 +726,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_jetton_data":              {DecodeGetJettonDataResult},
 	"get_wallet_address":           {DecodeGetWalletAddressResult},
 	"get_wallet_data":              {DecodeGetWalletDataResult},
-	"dnsresolve":                   {DecodeDnsresolve_RecordResult, DecodeDnsresolve_RecordsResult},
+	"dnsresolve":                   {DecodeDnsresolve_RecordsResult},
 	"get_sale_data":                {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
 	"get_authority_address":        {DecodeGetAuthorityAddressResult},
 	"get_revoked_time":             {DecodeGetRevokedTimeResult},
@@ -784,7 +784,6 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 }
 
 var ResultTypes = []interface{}{
-	&Dnsresolve_RecordResult{},
 	&Dnsresolve_RecordsResult{},
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
@@ -1310,11 +1309,6 @@ func DecodeGetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetWalletDataResult", result, nil
 }
 
-type Dnsresolve_RecordResult struct {
-	ResolvedBits int64
-	Result       tlb.DNSRecord
-}
-
 type Dnsresolve_RecordsResult struct {
 	ResolvedBits int64
 	Result       tlb.DNSRecordSet
@@ -1342,22 +1336,13 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeDnsresolve_RecordResult, DecodeDnsresolve_RecordsResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeDnsresolve_RecordsResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
 		}
 	}
 	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeDnsresolve_RecordResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result Dnsresolve_RecordResult
-	err = stack.Unmarshal(&result)
-	return "Dnsresolve_RecordResult", result, nil
 }
 
 func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {

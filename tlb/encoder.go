@@ -82,6 +82,11 @@ func encode(c *boc.Cell, o any, encoder *Encoder) error {
 			b = append(b, uint8(val.Index(i).Uint()))
 		}
 		return c.WriteBytes(b)
+	case reflect.Slice:
+		if val.Type().Elem().Kind() != reflect.Uint8 {
+			return fmt.Errorf("encoding slice of %v not supported", val.Type().Elem().Kind())
+		}
+		return c.WriteBytes(val.Bytes())
 	default:
 		return fmt.Errorf("type %v not implemented", val.Kind())
 	}

@@ -6,13 +6,11 @@ import (
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"math/big"
 	"strings"
 )
 
-type blockchain interface {
-	DnsResolve(ctx context.Context, address tongo.AccountID, domain string, category *big.Int) (int, *boc.Cell, error)
-	GetRootDNS(ctx context.Context) (tongo.AccountID, error)
+type executor interface {
+	RunSmcMethodByID(context.Context, tongo.AccountID, int, tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 var (
@@ -20,81 +18,93 @@ var (
 )
 
 type DNS struct {
-	Root       tongo.AccountID
-	blockchain blockchain
+	root     tongo.AccountID
+	executor executor
 }
 
 // NewDNS
 // If root == nil then use root from network config
-func NewDNS(root *tongo.AccountID, blockchain blockchain) (*DNS, error) {
-	var (
-		err error
-		r   tongo.AccountID
-	)
-	if root == nil {
-		if blockchain == nil {
-			return nil, tongo.BlockchainInterfaceIsNil
-		}
-		r, err = blockchain.GetRootDNS(context.Background())
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		r = *root
-	}
+func NewDNS(root tongo.AccountID, e executor) *DNS {
 	return &DNS{
-		Root:       r,
-		blockchain: blockchain,
-	}, nil
+		root:     root,
+		executor: e,
+	}
 }
 
 func (d *DNS) Resolve(ctx context.Context, domain string) ([]tlb.DNSRecord, error) {
-	if d.blockchain == nil {
+	if d.executor == nil {
 		return nil, tongo.BlockchainInterfaceIsNil
 	}
 	if domain == "" {
 		domain = "."
 	}
 	dom := convertDomain(domain)
-	r, err := d.resolve(ctx, d.Root, dom)
+	r, err := d.resolve(ctx, d.root, []byte(dom))
 	if err != nil && strings.Contains(err.Error(), "method execution failed") {
 		return nil, ErrNotResolved
 	}
 	return r, err
 }
 
-func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom string) ([]tlb.DNSRecord, error) {
-	n := len(dom)
-	i, res, err := d.blockchain.DnsResolve(ctx, resolver, dom, big.NewInt(0))
+func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom []byte) ([]tlb.DNSRecord, error) {
+	n := int64(len(dom))
+	stack := tlb.VmStack{}
+	val, err := tlb.TlbStructToVmCellSlice(dom)
 	if err != nil {
 		return nil, err
 	}
-	if i%8 != 0 {
+	stack.Put(val)
+	stack.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257{}})
+	exitCode, stack, err := d.executor.RunSmcMethodByID(ctx, resolver, 123660, stack)
+	if err != nil {
+		return nil, err
+	}
+	if !(exitCode == 0 || exitCode == 1) {
+		return nil, fmt.Errorf("invalid exit code %v", exitCode)
+	}
+	var result struct {
+		ResolvedBits int64
+		Result       boc.Cell
+	}
+	err = stack.Unmarshal(&result)
+	if err != nil {
+		return nil, err
+	}
+	if result.ResolvedBits&0b111 != 0 {
 		return nil, fmt.Errorf("invalid qty of resolved bits")
 	}
-	if i/8 == 0 { // not resolved
-		return nil, nil
-	} else if i/8 == n { // resolved
-		return parseDnsRecords(res)
-	} // m < n partial resolved
-	rec, err := parseDnsRecords(res)
+	if result.ResolvedBits == 0 {
+		return nil, fmt.Errorf("not resolved")
+	}
+	if result.ResolvedBits/8 == n {
+		var recordSet tlb.DNSRecordSet
+		err = tlb.Unmarshal(&result.Result, &recordSet)
+		if err != nil {
+			return nil, err
+		}
+		var records []tlb.DNSRecord
+		for i := range recordSet.Records.Values() {
+			records = append(records, recordSet.Records.Values()[i].Value)
+		}
+		return records, nil
+	}
+	var record tlb.DNSRecord
+	err = tlb.Unmarshal(&result.Result, &record)
 	if err != nil {
 		return nil, err
 	}
-	if len(rec) != 1 {
-		return nil, fmt.Errorf("must be only one record for partial resolved")
+	if record.SumType != "DNSNextResolver" {
+		return nil, fmt.Errorf("should be next resolver")
 	}
-	if rec[0].SumType != "DNSNextResolver" {
-		return nil, fmt.Errorf("must be only next resolver record for partial resolved")
-	}
-	account, err := tongo.AccountIDFromTlb(rec[0].DNSNextResolver)
+	account, err := tongo.AccountIDFromTlb(record.DNSNextResolver)
 	if err != nil {
 		return nil, err
 	}
 	if account == nil {
-		return nil, fmt.Errorf("nil account id")
+		return nil, fmt.Errorf("invalid next resolver")
 	}
-	return d.resolve(ctx, *account, string([]byte(dom)[i/8:]))
+	return d.resolve(ctx, *account, dom[result.ResolvedBits/8:])
+
 }
 
 func convertDomain(domain string) string {
@@ -103,26 +113,4 @@ func convertDomain(domain string) string {
 		domains[i], domains[j] = domains[j], domains[i]
 	}
 	return strings.Join(domains, "\x00") + "\x00"
-}
-
-func parseDnsRecords(c *boc.Cell) ([]tlb.DNSRecord, error) {
-	var record tlb.DNSRecord
-	err := tlb.Unmarshal(c, &record)
-	if err == nil && record.SumType == "DNSNextResolver" {
-		return []tlb.DNSRecord{record}, nil
-	}
-	c.ResetCounters()
-	var records tlb.DNSRecordSet
-	c2 := boc.NewCell()
-	_ = c2.WriteBit(true)
-	_ = c2.AddRef(c)
-	err = tlb.Unmarshal(c2, &records)
-	if err != nil {
-		return nil, err
-	}
-	var res []tlb.DNSRecord
-	for _, r := range records.Records.Values() {
-		res = append(res, r.Value)
-	}
-	return res, nil
 }

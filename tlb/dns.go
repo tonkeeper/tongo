@@ -8,7 +8,7 @@ import (
 // DNSRecordSet
 // _ (HashmapE 256 DNSRecord) = DNS_RecordSet;
 type DNSRecordSet struct {
-	Records HashmapE[Bits256, Ref[DNSRecord]]
+	Records Hashmap[Bits256, Ref[DNSRecord]]
 }
 
 // DNSRecord

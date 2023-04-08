@@ -165,10 +165,6 @@
             <slice name="domain">[]byte</slice>
             <int name="category">int257</int>
         </input>
-        <output version="record" fixed_length="true">
-            <tinyint name="resolved_bits">int64</tinyint>
-            <cell name="result">DNSRecord</cell>
-        </output>
         <output version="records" fixed_length="true">
             <tinyint name="resolved_bits">int64</tinyint>
             <cell name="result">DNS_RecordSet</cell>

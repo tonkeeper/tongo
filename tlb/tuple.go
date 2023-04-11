@@ -12,7 +12,7 @@ func (t *VmStkTuple) Unmarshal(v any) error {
 	}
 	switch val.Elem().Kind() {
 	case reflect.Slice:
-		items, err := t.recursiveToSlice()
+		items, err := t.RecursiveToSlice()
 		if err != nil {
 			return err
 		}
@@ -31,7 +31,7 @@ func (t *VmStkTuple) Unmarshal(v any) error {
 			return fmt.Errorf("mismatched fields count in tuple and struct")
 		}
 
-		values, err := t.Data.recursiveToSlice(int(t.Len))
+		values, err := t.Data.RecursiveToSlice(int(t.Len))
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ func (t *VmStkTuple) Unmarshal(v any) error {
 	return nil
 }
 
-func (t *VmStkTuple) recursiveToSlice() ([]VmStackValue, error) {
+func (t *VmStkTuple) RecursiveToSlice() ([]VmStackValue, error) {
 	if t.Len != 2 {
 		return nil, fmt.Errorf("recursive tuple element must have length value == 2 not %v", t.Len)
 	}
@@ -64,14 +64,14 @@ func (t *VmStkTuple) recursiveToSlice() ([]VmStackValue, error) {
 		return nil, fmt.Errorf("invalid type %v in recursive slice decoding", t.Data.Tail.SumType)
 	}
 
-	values, err := t.Data.Tail.VmStkTuple.recursiveToSlice()
+	values, err := t.Data.Tail.VmStkTuple.RecursiveToSlice()
 	if err != nil {
 		return nil, err
 	}
 	return append(sl, values...), nil
 }
 
-func (t VmTuple) recursiveToSlice(depth int) ([]VmStackValue, error) {
+func (t VmTuple) RecursiveToSlice(depth int) ([]VmStackValue, error) {
 	var sl []VmStackValue
 	var err error
 	if depth == 2 {
@@ -80,7 +80,7 @@ func (t VmTuple) recursiveToSlice(depth int) ([]VmStackValue, error) {
 		}
 		sl = append(sl, *t.Head.Entry)
 	} else {
-		sl, err = t.Head.Ref.recursiveToSlice(depth - 1)
+		sl, err = t.Head.Ref.RecursiveToSlice(depth - 1)
 	}
 	return append(sl, t.Tail), err
 }

@@ -55,6 +55,9 @@
         whales_nominators_member#_ profit_per_coin:int128 balance:Grams pending_withdraw:Grams pending_withdraw_all:Bool pending_deposit:Grams member_withdraw:Grams= WhalesNominatorsMember;
         whales_nominators_members_list#_ list:(Hashmap 256 WhalesNominatorsMember)= WhalesNominatorsMembersList;
     </types>
+    <types interface="tf_nominators">
+        account_lists#_ list:(Hashmap 256 Cell) = AccountLists;
+    </types>
     <!--        Wallets      -->
     <get_method name="seqno" interface="wallet" interface="storage_provider">
         <output>
@@ -332,7 +335,7 @@
             <tinyint name="min_validator_stake">int64</tinyint>
             <tinyint name="min_nominator_stake">int64</tinyint>
             <cell name="nominators">any</cell>
-            <tuple name="withdraw_requests" list="true"/>
+            <cell name="withdraw_requests" nullable="true">AccountLists</cell>
             <tinyint name="stake_at">uint32</tinyint>
             <int name="saved_validator_set_hash">bits256</int>
             <tinyint name="validator_set_changes_count">uint32</tinyint>

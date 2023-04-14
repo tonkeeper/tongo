@@ -158,6 +158,10 @@ type WhalesNominatorsMembersList struct {
 	List tlb.Hashmap[tlb.Bits256, WhalesNominatorsMember]
 }
 
+type AccountLists struct {
+	List tlb.Hashmap[tlb.Bits256, tlb.Any]
+}
+
 type TextCommentMsgBody struct {
 	Text tlb.Text
 }
@@ -1886,19 +1890,17 @@ func DecodeListVotesResult(stack tlb.VmStack) (resultType string, resultAny any,
 }
 
 type GetPoolData_TfResult struct {
-	State                int8
-	NominatorsCount      uint32
-	StakeAmountSent      int64
-	ValidatorAmount      int64
-	ValidatorAddress     tlb.Bits256
-	ValidatorRewardShare uint32
-	MaxNominatorsCount   uint32
-	MinValidatorStake    int64
-	MinNominatorStake    int64
-	Nominators           tlb.Any
-	WithdrawRequests     []struct {
-	}
-
+	State                    int8
+	NominatorsCount          uint32
+	StakeAmountSent          int64
+	ValidatorAmount          int64
+	ValidatorAddress         tlb.Bits256
+	ValidatorRewardShare     uint32
+	MaxNominatorsCount       uint32
+	MinValidatorStake        int64
+	MinNominatorStake        int64
+	Nominators               tlb.Any
+	WithdrawRequests         *AccountLists
 	StakeAt                  uint32
 	SavedValidatorSetHash    tlb.Bits256
 	ValidatorSetChangesCount uint32
@@ -1929,7 +1931,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 }
 
 func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 17 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkCell") || (stack[10].SumType != "VmStkTuple" && stack[10].SumType != "VmStkNull") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTuple" && stack[16].SumType != "VmStkNull") {
+	if len(stack) < 17 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkCell") || (stack[10].SumType != "VmStkCell" && stack[10].SumType != "VmStkNull") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTuple" && stack[16].SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_TfResult

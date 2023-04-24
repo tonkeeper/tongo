@@ -135,6 +135,28 @@
         </output>
     </get_method>
 
+    <!--    Subscriptions-->
+    <get_method name="get_subscription_data" interface="subscription">
+        <output>
+            <tuple name="wallet">
+                <tinyint name="workchain">uint32</tinyint>
+                <int name="address">bits256</int>
+            </tuple>
+            <tuple name="beneficiary">
+                <tinyint name="workchain">uint32</tinyint>
+                <int name="address">bits256</int>
+            </tuple>
+            <tinyint name="amount">uint64</tinyint>
+            <tinyint name="period">uint64</tinyint>
+            <tinyint name="start_time">uint64</tinyint>
+            <tinyint name="timeout">uint64</tinyint>
+            <tinyint name="last_payment_time">uint64</tinyint>
+            <tinyint name="last_request_time">uint64</tinyint>
+            <tinyint name="failed_attempts">uint32</tinyint>
+            <tinyint name="subscription_id">uint64</tinyint>
+        </output>
+    </get_method>
+
     <!--        Jettons    -->
     <get_method name="get_jetton_data" interface="tep74">
         <output>
@@ -432,15 +454,19 @@
     <internal name="payment_request" interface="wallet_v4r2">
         request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
     </internal>
-    <internal name="payment_request_response" interface="wallet_v4r2">
-        payment_request_response#f06c7567 query_id:uint64 = InternalMsgBody;
+    <internal name="payment_request_response" interface="subscription">
+        payment_request_response#f06c7567 = InternalMsgBody;
     </internal>
     <internal name="wallet_plugin_destruct" interface="wallet_v4r2">
-        destruct#64737472 query_id:uint64 = InternalMsgBody;
+        destruct#64737472 = InternalMsgBody;
     </internal>
     <internal name="wallet_plugin_destruct_response" interface="wallet_v4r2">
-        destruct_response#e4737472 query_id:uint64 = InternalMsgBody;
+        destruct_response#e4737472 = InternalMsgBody;
     </internal>
+    <internal name="subscription_payment" interface="subscription">
+        subscription_payment#73756273 = InternalMsgBody;
+    </internal>
+
 
     <!--        NFTs       -->
     <internal name="nft_transfer" interface="tep62">

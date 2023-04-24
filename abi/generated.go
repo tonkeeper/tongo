@@ -5,6 +5,7 @@ package abi
 import (
 	"context"
 	"fmt"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -335,9 +336,7 @@ type NftTransferMsgBody struct {
 	ForwardPayload      tlb.EitherRef[tlb.Any]
 }
 
-type WalletPluginDestructMsgBody struct {
-	QueryId uint64
-}
+type WalletPluginDestructMsgBody struct{}
 
 type SettleChannelConditionalsMsgBody struct {
 	FromA                bool
@@ -371,6 +370,8 @@ type JettonNotifyMsgBody struct {
 	Sender         tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[tlb.Any]
 }
+
+type SubscriptionPaymentMsgBody struct{}
 
 type ChannelCooperativeCommitMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
@@ -442,9 +443,7 @@ type ChannelClosedMsgBody struct {
 	ChannelId tlb.Uint128
 }
 
-type WalletPluginDestructResponseMsgBody struct {
-	QueryId uint64
-}
+type WalletPluginDestructResponseMsgBody struct{}
 
 type DeployStorageContractMsgBody struct {
 	QueryId         uint64
@@ -454,9 +453,7 @@ type DeployStorageContractMsgBody struct {
 	ExpectedMaxSpan uint32
 }
 
-type PaymentRequestResponseMsgBody struct {
-	QueryId uint64
-}
+type PaymentRequestResponseMsgBody struct{}
 
 func MessageDecoder(cell *boc.Cell) (string, any, error) {
 	tag, err := cell.ReadUint(32)
@@ -596,6 +593,10 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 		var res JettonNotifyMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return "JettonNotify", res, err
+	case 0x73756273:
+		var res SubscriptionPaymentMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return "SubscriptionPayment", res, err
 	case 0x79a126ef:
 		var res ChannelCooperativeCommitMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -698,6 +699,7 @@ var KnownMsgTypes = map[string]any{
 	"SbtRevoke":                        SbtRevokeMsgBody{},
 	"PaymentRequest":                   PaymentRequestMsgBody{},
 	"JettonNotify":                     JettonNotifyMsgBody{},
+	"SubscriptionPayment":              SubscriptionPaymentMsgBody{},
 	"ChannelCooperativeCommit":         ChannelCooperativeCommitMsgBody{},
 	"CloseStorageContract":             CloseStorageContractMsgBody{},
 	"AcceptStorageContract":            AcceptStorageContractMsgBody{},
@@ -727,6 +729,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_collection_data":          {DecodeGetCollectionDataResult},
 	"get_nft_address_by_index":     {DecodeGetNftAddressByIndexResult},
 	"royalty_params":               {DecodeRoyaltyParamsResult},
+	"get_subscription_data":        {DecodeGetSubscriptionDataResult},
 	"get_jetton_data":              {DecodeGetJettonDataResult},
 	"get_wallet_address":           {DecodeGetWalletAddressResult},
 	"get_wallet_data":              {DecodeGetWalletDataResult},
@@ -768,6 +771,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	85719:  {RoyaltyParams},
 	86593:  {GetStorageContractData},
 	89295:  {GetMembersRaw},
+	92260:  {GetSubscriptionData},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
 	102351: {GetNftData},
@@ -812,6 +816,7 @@ var ResultTypes = []interface{}{
 	&GetStorageContractAddressResult{},
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
+	&GetSubscriptionDataResult{},
 	&GetSubwalletIdResult{},
 	&GetTelemintAuctionConfigResult{},
 	&GetTelemintAuctionStateResult{},
@@ -1196,6 +1201,56 @@ func DecodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny 
 	var result RoyaltyParamsResult
 	err = stack.Unmarshal(&result)
 	return "RoyaltyParamsResult", result, nil
+}
+
+type GetSubscriptionDataResult struct {
+	Wallet struct {
+		Workchain uint32
+		Address   tlb.Bits256
+	}
+
+	Beneficiary struct {
+		Workchain uint32
+		Address   tlb.Bits256
+	}
+
+	Amount          uint64
+	Period          uint64
+	StartTime       uint64
+	Timeout         uint64
+	LastPaymentTime uint64
+	LastRequestTime uint64
+	FailedAttempts  uint32
+	SubscriptionId  uint64
+}
+
+func GetSubscriptionData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 92260 for "get_subscription_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 92260, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSubscriptionDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 10 || (stack[0].SumType != "VmStkTuple") || (stack[1].SumType != "VmStkTuple") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetSubscriptionDataResult
+	err = stack.Unmarshal(&result)
+	return "GetSubscriptionDataResult", result, nil
 }
 
 type GetJettonDataResult struct {
@@ -2249,6 +2304,7 @@ const (
 	PaymentChannel   ContractInterface = "payment_channel"
 	StorageContract  ContractInterface = "storage_contract"
 	StorageProvider  ContractInterface = "storage_provider"
+	Subscription     ContractInterface = "subscription"
 	Telemint         ContractInterface = "telemint"
 	Tep62Collection  ContractInterface = "tep62_collection"
 	Tep62Item        ContractInterface = "tep62_item"
@@ -2384,6 +2440,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_storage_params",
 		InvokeFn:      GetStorageParams,
 		ImplementedBy: []ContractInterface{StorageProvider},
+	},
+	{
+		Name:          "get_subscription_data",
+		InvokeFn:      GetSubscriptionData,
+		ImplementedBy: []ContractInterface{Subscription},
 	},
 	{
 		Name:          "get_subwallet_id",

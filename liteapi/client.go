@@ -297,16 +297,8 @@ func decodeBlockHeader(header liteclient.LiteServerBlockHeaderC) (tongo.BlockIDE
 
 // SendMessage verifies that the given payload contains an external message and sends it to a lite server.
 func (c *Client) SendMessage(ctx context.Context, payload []byte) (uint32, error) {
-	roots, err := boc.DeserializeBoc(payload)
-	if err != nil {
+	if err := VerifySendMessagePayload(payload); err != nil {
 		return 0, err
-	}
-	if len(roots) != 1 {
-		return 0, fmt.Errorf("external message is not a valid bag of cells")
-	}
-	root := roots[0]
-	if root.Level() != 0 {
-		return 0, fmt.Errorf("external message must have zero level")
 	}
 	res, err := c.getMasterchainServer().LiteServerSendMessage(ctx, liteclient.LiteServerSendMessageRequest{Body: payload})
 	return res.Status, err

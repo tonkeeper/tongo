@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
@@ -34,7 +35,7 @@ type FullContent struct {
 
 // TEP-64 Token Data Standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md
-func ConvertOnсhainData(content tlb.FullContent) (Metadata, error) {
+func ConvertOnchainData(content tlb.FullContent) (Metadata, error) {
 	if content.SumType != "Onchain" {
 		return Metadata{}, fmt.Errorf("not Onchain content")
 	}
@@ -101,7 +102,7 @@ func DecodeFullContent(cell *boc.Cell) (FullContent, error) {
 	}
 	if content.SumType == "Onchain" {
 		layout = OnChain
-		meta, err := ConvertOnсhainData(content)
+		meta, err := ConvertOnchainData(content)
 		if err != nil {
 			return FullContent{}, err
 		}

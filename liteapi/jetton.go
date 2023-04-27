@@ -3,10 +3,11 @@ package liteapi
 import (
 	"context"
 	"fmt"
+	"math/big"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/tep64"
 	"github.com/tonkeeper/tongo/tlb"
-	"math/big"
 )
 
 // GetJettonWallet
@@ -69,7 +70,7 @@ func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (ton
 	if content.SumType != "Onchain" {
 		return tongo.JettonMetadata{}, fmt.Errorf("only onchain jetton data supported")
 	}
-	meta, err := tep64.ConvertOnсhainData(content)
+	meta, err := tep64.ConvertOnchainData(content)
 	if err != nil {
 		return tongo.JettonMetadata{}, err
 	}

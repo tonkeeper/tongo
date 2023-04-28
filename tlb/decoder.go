@@ -124,6 +124,14 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		default:
 			return decodeStruct(c, val, decoder)
 		}
+	case reflect.String:
+		bs := c.ReadRemainingBits()
+		bytes, err := bs.GetTopUppedArray()
+		if err != nil {
+			return err
+		}
+		val.SetString(string(bytes))
+		return nil
 	case reflect.Pointer:
 		if val.Kind() == reflect.Pointer && !val.IsNil() {
 			return decode(c, tag, val.Elem(), decoder)

@@ -729,6 +729,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nft_address_by_index":     {DecodeGetNftAddressByIndexResult},
 	"royalty_params":               {DecodeRoyaltyParamsResult},
 	"get_editor":                   {DecodeGetEditorResult},
+	"get_auction_info":             {DecodeGetAuctionInfoResult},
 	"get_subscription_data":        {DecodeGetSubscriptionDataResult},
 	"get_jetton_data":              {DecodeGetJettonDataResult},
 	"get_wallet_address":           {DecodeGetWalletAddressResult},
@@ -763,6 +764,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
 	78748:  {GetPublicKey},
+	80697:  {GetAuctionInfo},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
@@ -794,6 +796,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 
 var ResultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
+	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
@@ -1236,6 +1239,41 @@ func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any,
 	var result GetEditorResult
 	err = stack.Unmarshal(&result)
 	return "GetEditorResult", result, nil
+}
+
+type GetAuctionInfoResult struct {
+	MaxBidAddress  tlb.MsgAddress
+	MaxBidAmount   uint64
+	AuctionEndTime uint64
+}
+
+func GetAuctionInfo(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 80697 for "get_auction_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 80697, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAuctionInfoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAuctionInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAuctionInfoResult
+	err = stack.Unmarshal(&result)
+	return "GetAuctionInfoResult", result, nil
 }
 
 type GetSubscriptionDataResult struct {
@@ -2334,6 +2372,7 @@ type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
 const (
+	Auction          ContractInterface = "auction"
 	NftEditable      ContractInterface = "nft_editable"
 	NftSale          ContractInterface = "nft_sale"
 	NftSaleGetgems   ContractInterface = "nft_sale_getgems"
@@ -2370,6 +2409,11 @@ type MethodDescription struct {
 }
 
 var methodInvocationOrder = []MethodDescription{
+	{
+		Name:          "get_auction_info",
+		InvokeFn:      GetAuctionInfo,
+		ImplementedBy: []ContractInterface{Auction},
+	},
 	{
 		Name:          "get_authority_address",
 		InvokeFn:      GetAuthorityAddress,

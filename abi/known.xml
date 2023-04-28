@@ -139,6 +139,13 @@
             <slice name="editor">msgaddress</slice>
         </output>
     </get_method>
+    <get_method name="get_auction_info" interface="auction">
+        <output>
+            <slice name="max_bid_address">msgaddress</slice>
+            <tinyint name="max_bid_amount">uint64</tinyint>
+            <tinyint name="auction_end_time ">uint64</tinyint>
+        </output>
+    </get_method>
 
     <!--    Subscriptions-->
     <get_method name="get_subscription_data" interface="subscription">

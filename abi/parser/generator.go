@@ -367,7 +367,7 @@ func (g *Generator) buildOutputDecoder(name string, r []StackRecord, isFixed boo
 	builder.WriteString(fmt.Sprintf("var result %v\n", name))
 	builder.WriteString("err = stack.Unmarshal(&result)\n")
 
-	builder.WriteString(fmt.Sprintf("return \"%s\",result, nil", name))
+	builder.WriteString(fmt.Sprintf("return \"%s\",result, err", name))
 
 	builder.WriteString("}\n")
 

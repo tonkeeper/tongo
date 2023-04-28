@@ -872,7 +872,7 @@ func DecodeSeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err
 	}
 	var result SeqnoResult
 	err = stack.Unmarshal(&result)
-	return "SeqnoResult", result, nil
+	return "SeqnoResult", result, err
 }
 
 type GetPublicKeyResult struct {
@@ -905,7 +905,7 @@ func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny a
 	}
 	var result GetPublicKeyResult
 	err = stack.Unmarshal(&result)
-	return "GetPublicKeyResult", result, nil
+	return "GetPublicKeyResult", result, err
 }
 
 type GetSubwalletIdResult struct {
@@ -938,7 +938,7 @@ func DecodeGetSubwalletIdResult(stack tlb.VmStack) (resultType string, resultAny
 	}
 	var result GetSubwalletIdResult
 	err = stack.Unmarshal(&result)
-	return "GetSubwalletIdResult", result, nil
+	return "GetSubwalletIdResult", result, err
 }
 
 type GetPluginListResult struct {
@@ -974,7 +974,7 @@ func DecodeGetPluginListResult(stack tlb.VmStack) (resultType string, resultAny 
 	}
 	var result GetPluginListResult
 	err = stack.Unmarshal(&result)
-	return "GetPluginListResult", result, nil
+	return "GetPluginListResult", result, err
 }
 
 type IsPluginInstalledResult struct {
@@ -1015,7 +1015,7 @@ func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, result
 	}
 	var result IsPluginInstalledResult
 	err = stack.Unmarshal(&result)
-	return "IsPluginInstalledResult", result, nil
+	return "IsPluginInstalledResult", result, err
 }
 
 type GetNftDataResult struct {
@@ -1052,7 +1052,7 @@ func DecodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any
 	}
 	var result GetNftDataResult
 	err = stack.Unmarshal(&result)
-	return "GetNftDataResult", result, nil
+	return "GetNftDataResult", result, err
 }
 
 type GetNftContentResult struct {
@@ -1096,7 +1096,7 @@ func DecodeGetNftContentResult(stack tlb.VmStack) (resultType string, resultAny 
 	}
 	var result GetNftContentResult
 	err = stack.Unmarshal(&result)
-	return "GetNftContentResult", result, nil
+	return "GetNftContentResult", result, err
 }
 
 type GetCollectionDataResult struct {
@@ -1131,7 +1131,7 @@ func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, result
 	}
 	var result GetCollectionDataResult
 	err = stack.Unmarshal(&result)
-	return "GetCollectionDataResult", result, nil
+	return "GetCollectionDataResult", result, err
 }
 
 type GetNftAddressByIndexResult struct {
@@ -1170,7 +1170,7 @@ func DecodeGetNftAddressByIndexResult(stack tlb.VmStack) (resultType string, res
 	}
 	var result GetNftAddressByIndexResult
 	err = stack.Unmarshal(&result)
-	return "GetNftAddressByIndexResult", result, nil
+	return "GetNftAddressByIndexResult", result, err
 }
 
 type RoyaltyParamsResult struct {
@@ -1205,7 +1205,7 @@ func DecodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny 
 	}
 	var result RoyaltyParamsResult
 	err = stack.Unmarshal(&result)
-	return "RoyaltyParamsResult", result, nil
+	return "RoyaltyParamsResult", result, err
 }
 
 type GetEditorResult struct {
@@ -1238,7 +1238,7 @@ func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any,
 	}
 	var result GetEditorResult
 	err = stack.Unmarshal(&result)
-	return "GetEditorResult", result, nil
+	return "GetEditorResult", result, err
 }
 
 type GetAuctionInfoResult struct {
@@ -1273,7 +1273,7 @@ func DecodeGetAuctionInfoResult(stack tlb.VmStack) (resultType string, resultAny
 	}
 	var result GetAuctionInfoResult
 	err = stack.Unmarshal(&result)
-	return "GetAuctionInfoResult", result, nil
+	return "GetAuctionInfoResult", result, err
 }
 
 type GetSubscriptionDataResult struct {
@@ -1323,7 +1323,7 @@ func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resu
 	}
 	var result GetSubscriptionDataResult
 	err = stack.Unmarshal(&result)
-	return "GetSubscriptionDataResult", result, nil
+	return "GetSubscriptionDataResult", result, err
 }
 
 type GetJettonDataResult struct {
@@ -1360,7 +1360,7 @@ func DecodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	}
 	var result GetJettonDataResult
 	err = stack.Unmarshal(&result)
-	return "GetJettonDataResult", result, nil
+	return "GetJettonDataResult", result, err
 }
 
 type GetWalletAddressResult struct {
@@ -1402,7 +1402,7 @@ func DecodeGetWalletAddressResult(stack tlb.VmStack) (resultType string, resultA
 	}
 	var result GetWalletAddressResult
 	err = stack.Unmarshal(&result)
-	return "GetWalletAddressResult", result, nil
+	return "GetWalletAddressResult", result, err
 }
 
 type GetWalletDataResult struct {
@@ -1438,7 +1438,7 @@ func DecodeGetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	}
 	var result GetWalletDataResult
 	err = stack.Unmarshal(&result)
-	return "GetWalletDataResult", result, nil
+	return "GetWalletDataResult", result, err
 }
 
 type Dnsresolve_RecordsResult struct {
@@ -1483,7 +1483,7 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 	}
 	var result Dnsresolve_RecordsResult
 	err = stack.Unmarshal(&result)
-	return "Dnsresolve_RecordsResult", result, nil
+	return "Dnsresolve_RecordsResult", result, err
 }
 
 type GetSaleData_BasicResult struct {
@@ -1559,7 +1559,7 @@ func DecodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, result
 	}
 	var result GetSaleData_BasicResult
 	err = stack.Unmarshal(&result)
-	return "GetSaleData_BasicResult", result, nil
+	return "GetSaleData_BasicResult", result, err
 }
 
 func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
@@ -1568,7 +1568,7 @@ func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resu
 	}
 	var result GetSaleData_GetgemsResult
 	err = stack.Unmarshal(&result)
-	return "GetSaleData_GetgemsResult", result, nil
+	return "GetSaleData_GetgemsResult", result, err
 }
 
 func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
@@ -1577,7 +1577,7 @@ func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType strin
 	}
 	var result GetSaleData_GetgemsAuctionResult
 	err = stack.Unmarshal(&result)
-	return "GetSaleData_GetgemsAuctionResult", result, nil
+	return "GetSaleData_GetgemsAuctionResult", result, err
 }
 
 type GetAuthorityAddressResult struct {
@@ -1610,7 +1610,7 @@ func DecodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resu
 	}
 	var result GetAuthorityAddressResult
 	err = stack.Unmarshal(&result)
-	return "GetAuthorityAddressResult", result, nil
+	return "GetAuthorityAddressResult", result, err
 }
 
 type GetRevokedTimeResult struct {
@@ -1643,7 +1643,7 @@ func DecodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny
 	}
 	var result GetRevokedTimeResult
 	err = stack.Unmarshal(&result)
-	return "GetRevokedTimeResult", result, nil
+	return "GetRevokedTimeResult", result, err
 }
 
 type GetChannelStateResult struct {
@@ -1676,7 +1676,7 @@ func DecodeGetChannelStateResult(stack tlb.VmStack) (resultType string, resultAn
 	}
 	var result GetChannelStateResult
 	err = stack.Unmarshal(&result)
-	return "GetChannelStateResult", result, nil
+	return "GetChannelStateResult", result, err
 }
 
 type GetWalletParamsResult struct {
@@ -1711,7 +1711,7 @@ func DecodeGetWalletParamsResult(stack tlb.VmStack) (resultType string, resultAn
 	}
 	var result GetWalletParamsResult
 	err = stack.Unmarshal(&result)
-	return "GetWalletParamsResult", result, nil
+	return "GetWalletParamsResult", result, err
 }
 
 type GetStorageParamsResult struct {
@@ -1748,7 +1748,7 @@ func DecodeGetStorageParamsResult(stack tlb.VmStack) (resultType string, resultA
 	}
 	var result GetStorageParamsResult
 	err = stack.Unmarshal(&result)
-	return "GetStorageParamsResult", result, nil
+	return "GetStorageParamsResult", result, err
 }
 
 type GetStorageContractAddressResult struct {
@@ -1796,7 +1796,7 @@ func DecodeGetStorageContractAddressResult(stack tlb.VmStack) (resultType string
 	}
 	var result GetStorageContractAddressResult
 	err = stack.Unmarshal(&result)
-	return "GetStorageContractAddressResult", result, nil
+	return "GetStorageContractAddressResult", result, err
 }
 
 type GetStorageContractDataResult struct {
@@ -1839,7 +1839,7 @@ func DecodeGetStorageContractDataResult(stack tlb.VmStack) (resultType string, r
 	}
 	var result GetStorageContractDataResult
 	err = stack.Unmarshal(&result)
-	return "GetStorageContractDataResult", result, nil
+	return "GetStorageContractDataResult", result, err
 }
 
 type GetTorrentHashResult struct {
@@ -1872,7 +1872,7 @@ func DecodeGetTorrentHashResult(stack tlb.VmStack) (resultType string, resultAny
 	}
 	var result GetTorrentHashResult
 	err = stack.Unmarshal(&result)
-	return "GetTorrentHashResult", result, nil
+	return "GetTorrentHashResult", result, err
 }
 
 type IsActiveResult struct {
@@ -1905,7 +1905,7 @@ func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, 
 	}
 	var result IsActiveResult
 	err = stack.Unmarshal(&result)
-	return "IsActiveResult", result, nil
+	return "IsActiveResult", result, err
 }
 
 type GetNextProofInfoResult struct {
@@ -1940,7 +1940,7 @@ func DecodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultA
 	}
 	var result GetNextProofInfoResult
 	err = stack.Unmarshal(&result)
-	return "GetNextProofInfoResult", result, nil
+	return "GetNextProofInfoResult", result, err
 }
 
 type ListNominatorsResult struct {
@@ -1978,7 +1978,7 @@ func DecodeListNominatorsResult(stack tlb.VmStack) (resultType string, resultAny
 	}
 	var result ListNominatorsResult
 	err = stack.Unmarshal(&result)
-	return "ListNominatorsResult", result, nil
+	return "ListNominatorsResult", result, err
 }
 
 type ListVotesResult struct {
@@ -2014,7 +2014,7 @@ func DecodeListVotesResult(stack tlb.VmStack) (resultType string, resultAny any,
 	}
 	var result ListVotesResult
 	err = stack.Unmarshal(&result)
-	return "ListVotesResult", result, nil
+	return "ListVotesResult", result, err
 }
 
 type GetPoolData_TfResult struct {
@@ -2064,7 +2064,7 @@ func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny
 	}
 	var result GetPoolData_TfResult
 	err = stack.Unmarshal(&result)
-	return "GetPoolData_TfResult", result, nil
+	return "GetPoolData_TfResult", result, err
 }
 
 type GetStakingStatusResult struct {
@@ -2103,7 +2103,7 @@ func DecodeGetStakingStatusResult(stack tlb.VmStack) (resultType string, resultA
 	}
 	var result GetStakingStatusResult
 	err = stack.Unmarshal(&result)
-	return "GetStakingStatusResult", result, nil
+	return "GetStakingStatusResult", result, err
 }
 
 type GetPoolStatusResult struct {
@@ -2140,7 +2140,7 @@ func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny 
 	}
 	var result GetPoolStatusResult
 	err = stack.Unmarshal(&result)
-	return "GetPoolStatusResult", result, nil
+	return "GetPoolStatusResult", result, err
 }
 
 type GetMember_WhalesNominatorResult struct {
@@ -2185,7 +2185,7 @@ func DecodeGetMember_WhalesNominatorResult(stack tlb.VmStack) (resultType string
 	}
 	var result GetMember_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetMember_WhalesNominatorResult", result, nil
+	return "GetMember_WhalesNominatorResult", result, err
 }
 
 type GetMembersRaw_WhalesNominatorResult struct {
@@ -2218,7 +2218,7 @@ func DecodeGetMembersRaw_WhalesNominatorResult(stack tlb.VmStack) (resultType st
 	}
 	var result GetMembersRaw_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetMembersRaw_WhalesNominatorResult", result, nil
+	return "GetMembersRaw_WhalesNominatorResult", result, err
 }
 
 type GetParams_WhalesNominatorResult struct {
@@ -2257,7 +2257,7 @@ func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string
 	}
 	var result GetParams_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
-	return "GetParams_WhalesNominatorResult", result, nil
+	return "GetParams_WhalesNominatorResult", result, err
 }
 
 type GetTelemintAuctionStateResult struct {
@@ -2294,7 +2294,7 @@ func DecodeGetTelemintAuctionStateResult(stack tlb.VmStack) (resultType string, 
 	}
 	var result GetTelemintAuctionStateResult
 	err = stack.Unmarshal(&result)
-	return "GetTelemintAuctionStateResult", result, nil
+	return "GetTelemintAuctionStateResult", result, err
 }
 
 type GetTelemintAuctionConfigResult struct {
@@ -2332,7 +2332,7 @@ func DecodeGetTelemintAuctionConfigResult(stack tlb.VmStack) (resultType string,
 	}
 	var result GetTelemintAuctionConfigResult
 	err = stack.Unmarshal(&result)
-	return "GetTelemintAuctionConfigResult", result, nil
+	return "GetTelemintAuctionConfigResult", result, err
 }
 
 type GetTelemintTokenNameResult struct {
@@ -2365,7 +2365,7 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 	}
 	var result GetTelemintTokenNameResult
 	err = stack.Unmarshal(&result)
-	return "GetTelemintTokenNameResult", result, nil
+	return "GetTelemintTokenNameResult", result, err
 }
 
 type ContractInterface string

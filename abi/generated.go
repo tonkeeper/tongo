@@ -5,7 +5,6 @@ package abi
 import (
 	"context"
 	"fmt"
-
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -729,6 +728,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_collection_data":          {DecodeGetCollectionDataResult},
 	"get_nft_address_by_index":     {DecodeGetNftAddressByIndexResult},
 	"royalty_params":               {DecodeRoyaltyParamsResult},
+	"get_editor":                   {DecodeGetEditorResult},
 	"get_subscription_data":        {DecodeGetSubscriptionDataResult},
 	"get_jetton_data":              {DecodeGetJettonDataResult},
 	"get_wallet_address":           {DecodeGetWalletAddressResult},
@@ -771,6 +771,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	85719:  {RoyaltyParams},
 	86593:  {GetStorageContractData},
 	89295:  {GetMembersRaw},
+	90228:  {GetEditor},
 	92260:  {GetSubscriptionData},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
@@ -796,6 +797,7 @@ var ResultTypes = []interface{}{
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
+	&GetEditorResult{},
 	&GetJettonDataResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
@@ -1201,6 +1203,39 @@ func DecodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny 
 	var result RoyaltyParamsResult
 	err = stack.Unmarshal(&result)
 	return "RoyaltyParamsResult", result, nil
+}
+
+type GetEditorResult struct {
+	Editor tlb.MsgAddress
+}
+
+func GetEditor(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 90228 for "get_editor" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 90228, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetEditorResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetEditorResult
+	err = stack.Unmarshal(&result)
+	return "GetEditorResult", result, nil
 }
 
 type GetSubscriptionDataResult struct {
@@ -2299,6 +2334,7 @@ type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
 const (
+	NftEditable      ContractInterface = "nft_editable"
 	NftSale          ContractInterface = "nft_sale"
 	NftSaleGetgems   ContractInterface = "nft_sale_getgems"
 	PaymentChannel   ContractInterface = "payment_channel"
@@ -2348,6 +2384,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_collection_data",
 		InvokeFn:      GetCollectionData,
 		ImplementedBy: []ContractInterface{Tep62Collection},
+	},
+	{
+		Name:          "get_editor",
+		InvokeFn:      GetEditor,
+		ImplementedBy: []ContractInterface{NftEditable},
 	},
 	{
 		Name:          "get_jetton_data",

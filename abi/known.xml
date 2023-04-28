@@ -134,6 +134,11 @@
             <slice name="destination">msgaddress</slice>
         </output>
     </get_method>
+    <get_method name="get_editor" interface="nft_editable">
+        <output>
+            <slice name="editor">msgaddress</slice>
+        </output>
+    </get_method>
 
     <!--    Subscriptions-->
     <get_method name="get_subscription_data" interface="subscription">

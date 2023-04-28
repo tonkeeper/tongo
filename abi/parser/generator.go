@@ -31,6 +31,7 @@ var defaultKnownTypes = map[string]string{
 	"bits256":       "tlb.Bits256",
 	"any":           "tlb.Any",
 	"[]byte":        "[]byte",
+	"string":        "string",
 	"coins":         "tlb.Grams",
 	"big.int":       "big.Int",
 	"dnsrecord":     "tlb.DNSRecord",

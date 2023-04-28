@@ -207,6 +207,21 @@
             <cell name="result">DNS_RecordSet</cell>
         </output>
     </get_method>
+    <get_method name="get_last_fill_up_time" interface="domain">
+        <output>
+            <tinyint name="last_fill_up_time">uint64</tinyint>
+        </output>
+    </get_method>
+    <get_method name="get_domain" interface="domain">
+        <output>
+            <slice name="domain">string</slice>
+        </output>
+    </get_method>
+    <get_method name="get_full_domain" interface="domain">
+        <output>
+            <slice name="domain">string</slice>
+        </output>
+    </get_method>
 
     <!--        NFT sale      -->
     <get_method name="get_sale_data">

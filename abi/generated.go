@@ -735,6 +735,9 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_wallet_address":           {DecodeGetWalletAddressResult},
 	"get_wallet_data":              {DecodeGetWalletDataResult},
 	"dnsresolve":                   {DecodeDnsresolve_RecordsResult},
+	"get_last_fill_up_time":        {DecodeGetLastFillUpTimeResult},
+	"get_domain":                   {DecodeGetDomainResult},
+	"get_full_domain":              {DecodeGetFullDomainResult},
 	"get_sale_data":                {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
 	"get_authority_address":        {DecodeGetAuthorityAddressResult},
 	"get_revoked_time":             {DecodeGetRevokedTimeResult},
@@ -760,6 +763,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
+	66763:  {GetFullDomain},
 	69506:  {GetTelemintTokenName},
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
@@ -774,6 +778,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	86593:  {GetStorageContractData},
 	89295:  {GetMembersRaw},
 	90228:  {GetEditor},
+	91481:  {GetLastFillUpTime},
 	92260:  {GetSubscriptionData},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
@@ -785,6 +790,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	107653: {GetPluginList},
 	111161: {ListNominators},
 	115150: {GetParams},
+	119378: {GetDomain},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
 	122498: {GetTelemintAuctionState},
@@ -800,8 +806,11 @@ var ResultTypes = []interface{}{
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
+	&GetDomainResult{},
 	&GetEditorResult{},
+	&GetFullDomainResult{},
 	&GetJettonDataResult{},
+	&GetLastFillUpTimeResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
 	&GetNextProofInfoResult{},
@@ -1484,6 +1493,105 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 	var result Dnsresolve_RecordsResult
 	err = stack.Unmarshal(&result)
 	return "Dnsresolve_RecordsResult", result, err
+}
+
+type GetLastFillUpTimeResult struct {
+	LastFillUpTime uint64
+}
+
+func GetLastFillUpTime(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 91481 for "get_last_fill_up_time" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 91481, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLastFillUpTimeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLastFillUpTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLastFillUpTimeResult
+	err = stack.Unmarshal(&result)
+	return "GetLastFillUpTimeResult", result, err
+}
+
+type GetDomainResult struct {
+	Domain string
+}
+
+func GetDomain(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 119378 for "get_domain" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 119378, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetDomainResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetDomainResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetDomainResult
+	err = stack.Unmarshal(&result)
+	return "GetDomainResult", result, err
+}
+
+type GetFullDomainResult struct {
+	Domain string
+}
+
+func GetFullDomain(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 66763 for "get_full_domain" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 66763, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetFullDomainResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetFullDomainResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetFullDomainResult
+	err = stack.Unmarshal(&result)
+	return "GetFullDomainResult", result, err
 }
 
 type GetSaleData_BasicResult struct {
@@ -2373,6 +2481,7 @@ type ContractInterface string
 // more wallet-related contract interfaces are defined in wallet.go
 const (
 	Auction          ContractInterface = "auction"
+	Domain           ContractInterface = "domain"
 	NftEditable      ContractInterface = "nft_editable"
 	NftSale          ContractInterface = "nft_sale"
 	NftSaleGetgems   ContractInterface = "nft_sale_getgems"
@@ -2430,14 +2539,29 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{Tep62Collection},
 	},
 	{
+		Name:          "get_domain",
+		InvokeFn:      GetDomain,
+		ImplementedBy: []ContractInterface{Domain},
+	},
+	{
 		Name:          "get_editor",
 		InvokeFn:      GetEditor,
 		ImplementedBy: []ContractInterface{NftEditable},
 	},
 	{
+		Name:          "get_full_domain",
+		InvokeFn:      GetFullDomain,
+		ImplementedBy: []ContractInterface{Domain},
+	},
+	{
 		Name:          "get_jetton_data",
 		InvokeFn:      GetJettonData,
 		ImplementedBy: []ContractInterface{Tep74},
+	},
+	{
+		Name:          "get_last_fill_up_time",
+		InvokeFn:      GetLastFillUpTime,
+		ImplementedBy: []ContractInterface{Domain},
 	},
 	{
 		Name:     "get_members_raw",

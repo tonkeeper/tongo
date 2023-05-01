@@ -7,6 +7,7 @@ import (
 	"fmt"
 	mrand "math/rand"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
@@ -17,6 +18,10 @@ import (
 	"github.com/tonkeeper/tongo/tl"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/utils"
+)
+
+const (
+	LiteServerEnvName = "LITE_SERVERS"
 )
 
 type connection struct {
@@ -39,40 +44,74 @@ type Options struct {
 	Timeout     time.Duration
 }
 
-type Option func(o *Options)
+type Option func(o *Options) error
 
 func WithLiteServers(servers []config.LiteServer) Option {
-	return func(o *Options) {
+	return func(o *Options) error {
 		o.LiteServers = servers
+		return nil
 	}
 }
 
 func WithTimeout(timeout time.Duration) Option {
-	return func(o *Options) {
+	return func(o *Options) error {
 		o.Timeout = timeout
+		return nil
+	}
+}
+
+// FromEnvs configures a Client based on the following environment variables:
+// LITE_SERVERS - a list of lite servers to use
+func FromEnvs() Option {
+	return func(o *Options) error {
+		if value, ok := os.LookupEnv(LiteServerEnvName); ok {
+			servers, err := config.ParseLiteServersEnvVar(value)
+			if err != nil {
+				return err
+			}
+			o.LiteServers = servers
+		}
+		return nil
+	}
+}
+
+// Mainnet configures a client to use lite servers from the mainnet.
+func Mainnet() Option {
+	return func(o *Options) error {
+		file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+		if err != nil {
+			return err
+		}
+		o.LiteServers = file.LiteServers
+		return nil
+	}
+}
+
+// Testnet configures a client to use lite servers from the testnet.
+func Testnet() Option {
+	return func(o *Options) error {
+		file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+		if err != nil {
+			return err
+		}
+		o.LiteServers = file.LiteServers
+		return nil
 	}
 }
 
 func WithConfigurationFile(file config.GlobalConfigurationFile) Option {
-	return func(o *Options) {
+	return func(o *Options) error {
 		o.LiteServers = file.LiteServers
+		return nil
 	}
 }
 
 func NewClientWithDefaultMainnet() (*Client, error) {
-	file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
-	if err != nil {
-		return nil, err
-	}
-	return NewClient(WithConfigurationFile(*file))
+	return NewClient(Mainnet())
 }
 
 func NewClientWithDefaultTestnet() (*Client, error) {
-	file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
-	if err != nil {
-		return nil, err
-	}
-	return NewClient(WithConfigurationFile(*file))
+	return NewClient(Testnet())
 }
 
 // NewClient
@@ -82,7 +121,9 @@ func NewClient(opts ...Option) (*Client, error) {
 		Timeout: 60 * time.Second,
 	}
 	for _, o := range opts {
-		o(options)
+		if err := o(options); err != nil {
+			return nil, err
+		}
 	}
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")

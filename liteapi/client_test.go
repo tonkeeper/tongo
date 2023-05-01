@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/big"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 
@@ -394,5 +395,35 @@ func TestMappingTransactionsToBlocks(t *testing.T) {
 		if !found {
 			t.Errorf("can't find tx %v in block %v", tx.Hash(), tx.BlockID.String())
 		}
+	}
+}
+
+func TestFromEnvs(t *testing.T) {
+
+	os.Setenv("LITE_SERVERS", "some-value")
+	options := Options{}
+	err := FromEnvs()(&options)
+	if err == nil {
+		t.Fatal("expected err")
+	}
+
+	os.Setenv("LITE_SERVERS", "127.0.0.1:22095:6PGkPQSbyFp12esf1+Mp5+cAx5wtTU=")
+	options = Options{}
+	err = FromEnvs()(&options)
+	if err != nil {
+		t.Fatalf("FromEnv()() failed: %v", err)
+	}
+	if len(options.LiteServers) != 1 {
+		t.Fatal("expected 1 lite server")
+	}
+
+	os.Unsetenv("LITE_SERVERS")
+	options = Options{}
+	err = FromEnvs()(&options)
+	if err != nil {
+		t.Fatalf("FromEnv()() failed: %v", err)
+	}
+	if len(options.LiteServers) != 0 {
+		t.Fatal("expected 0 lite server")
 	}
 }

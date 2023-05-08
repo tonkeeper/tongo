@@ -434,7 +434,9 @@ func (g *Generator) CollectedTypes() string {
 func (g *Generator) GenerateMsgDecoder() string {
 	var builder strings.Builder
 
-	builder.WriteString("func MessageDecoder(cell *boc.Cell) (string, any, error) {\n")
+	builder.WriteString("// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.\n")
+	builder.WriteString("// On success, it returns an operation name and a decoded body.\n")
+	builder.WriteString("func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {\n")
 
 	builder.WriteString("tag, err := cell.ReadUint(32)\n")
 	builder.WriteString(msgDecoderReturnErr)
@@ -445,7 +447,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
 		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return \"%s\", res, err\n", g.loadedTlbMsgTypes[k].OperationName))
+		builder.WriteString(fmt.Sprintf("return %sMsgOp, res, err\n", g.loadedTlbMsgTypes[k].OperationName))
 		knownTypes = append(knownTypes, [2]string{g.loadedTlbMsgTypes[k].OperationName, g.loadedTlbMsgTypes[k].TypeName})
 	}
 
@@ -453,9 +455,16 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("return \"\", nil, fmt.Errorf(\"invalid message tag\")\n")
 	builder.WriteString("}\n")
 	builder.WriteRune('\n')
+	builder.WriteString("// MsgOpName is a human-friendly name for a message's operation which is identified by the first 4 bytes of the message's body.\n")
+	builder.WriteString("type MsgOpName = string\n")
+	builder.WriteString("const (\n")
+	for _, v := range knownTypes {
+		fmt.Fprintf(&builder, `%vMsgOp MsgOpName = "%v"`+"\n", v[0], v[0])
+	}
+	builder.WriteString(")\n")
 	builder.WriteString("var KnownMsgTypes = map[string]any{\n")
 	for _, v := range knownTypes {
-		fmt.Fprintf(&builder, "\"%v\": %v{},\n", v[0], v[1])
+		fmt.Fprintf(&builder, "%vMsgOp: %v{},\n", v[0], v[1])
 	}
 	builder.WriteString("}\n\n")
 	b, err := format.Source([]byte(builder.String()))

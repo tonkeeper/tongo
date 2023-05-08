@@ -454,7 +454,9 @@ type DeployStorageContractMsgBody struct {
 
 type PaymentRequestResponseMsgBody struct{}
 
-func MessageDecoder(cell *boc.Cell) (string, any, error) {
+// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
+// On success, it returns an operation name and a decoded body.
+func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 	tag, err := cell.ReadUint(32)
 	if err != nil {
 		return "", nil, err
@@ -463,258 +465,314 @@ func MessageDecoder(cell *boc.Cell) (string, any, error) {
 	case 0x0:
 		var res TextCommentMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TextComment", res, err
+		return TextCommentMsgOp, res, err
 	case 0x4ded148:
 		var res ProveOwnershipMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProveOwnership", res, err
+		return ProveOwnershipMsgOp, res, err
 	case 0x5138d91:
 		var res NftOwnershipAssignedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "NftOwnershipAssigned", res, err
+		return NftOwnershipAssignedMsgOp, res, err
 	case 0x524c7ae:
 		var res OwnershipProofMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "OwnershipProof", res, err
+		return OwnershipProofMsgOp, res, err
 	case 0x88eaa32:
 		var res ChallengeQuarantinedChannelStateMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChallengeQuarantinedChannelState", res, err
+		return ChallengeQuarantinedChannelStateMsgOp, res, err
 	case 0xdd607e3:
 		var res SbtOwnerInfoMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtOwnerInfo", res, err
+		return SbtOwnerInfoMsgOp, res, err
 	case 0xe0620c2:
 		var res InitPaymentChannelMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "InitPaymentChannel", res, err
+		return InitPaymentChannelMsgOp, res, err
 	case 0xf8a7ea5:
 		var res JettonTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonTransfer", res, err
+		return JettonTransferMsgOp, res, err
 	case 0x107c49ef:
 		var res OfferStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "OfferStorageContract", res, err
+		return OfferStorageContractMsgOp, res, err
 	case 0x178d4519:
 		var res JettonInternalTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonInternalTransfer", res, err
+		return JettonInternalTransferMsgOp, res, err
 	case 0x1f04537a:
 		var res SbtDestroyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtDestroy", res, err
+		return SbtDestroyMsgOp, res, err
 	case 0x1f151acf:
 		var res StartUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StartUncooperativeChannelClose", res, err
+		return StartUncooperativeChannelCloseMsgOp, res, err
 	case 0x25432a91:
 		var res FinishUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "FinishUncooperativeChannelClose", res, err
+		return FinishUncooperativeChannelCloseMsgOp, res, err
 	case 0x299a3e15:
 		var res TeleitemDeployMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TeleitemDeploy", res, err
+		return TeleitemDeployMsgOp, res, err
 	case 0x2fcb26a2:
 		var res GetStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetStaticData", res, err
+		return GetStaticDataMsgOp, res, err
 	case 0x371638ae:
 		var res TeleitemCancelAuctionMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TeleitemCancelAuction", res, err
+		return TeleitemCancelAuctionMsgOp, res, err
 	case 0x419d5d4d:
 		var res ProofStorageMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ProofStorage", res, err
+		return ProofStorageMsgOp, res, err
 	case 0x4637289a:
 		var res TelemintDeployMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TelemintDeploy", res, err
+		return TelemintDeployMsgOp, res, err
 	case 0x4637289b:
 		var res TelemintDeployV2MsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TelemintDeployV2", res, err
+		return TelemintDeployV2MsgOp, res, err
 	case 0x46ed2e94:
 		var res StorageWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageWithdraw", res, err
+		return StorageWithdrawMsgOp, res, err
 	case 0x487a8e81:
 		var res TeleitemStartAuctionMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TeleitemStartAuction", res, err
+		return TeleitemStartAuctionMsgOp, res, err
 	case 0x53f34cd6:
 		var res UpdatePubkeyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "UpdatePubkey", res, err
+		return UpdatePubkeyMsgOp, res, err
 	case 0x54cbf19b:
 		var res UpdateStorageParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "UpdateStorageParams", res, err
+		return UpdateStorageParamsMsgOp, res, err
 	case 0x5577587e:
 		var res ChannelCooperativeCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelCooperativeClose", res, err
+		return ChannelCooperativeCloseMsgOp, res, err
 	case 0x595f07bc:
 		var res JettonBurnMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonBurn", res, err
+		return JettonBurnMsgOp, res, err
 	case 0x5fcc3d14:
 		var res NftTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "NftTransfer", res, err
+		return NftTransferMsgOp, res, err
 	case 0x64737472:
 		var res WalletPluginDestructMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletPluginDestruct", res, err
+		return WalletPluginDestructMsgOp, res, err
 	case 0x66f6f069:
 		var res SettleChannelConditionalsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SettleChannelConditionals", res, err
+		return SettleChannelConditionalsMsgOp, res, err
 	case 0x67c7d281:
 		var res TopUpChannelBalanceMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "TopUpChannelBalance", res, err
+		return TopUpChannelBalanceMsgOp, res, err
 	case 0x693d3950:
 		var res GetRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "GetRoyaltyParams", res, err
+		return GetRoyaltyParamsMsgOp, res, err
 	case 0x6f89f5e3:
 		var res SbtRevokeMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtRevoke", res, err
+		return SbtRevokeMsgOp, res, err
 	case 0x706c7567:
 		var res PaymentRequestMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentRequest", res, err
+		return PaymentRequestMsgOp, res, err
 	case 0x7362d09c:
 		var res JettonNotifyMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "JettonNotify", res, err
+		return JettonNotifyMsgOp, res, err
 	case 0x73756273:
 		var res SubscriptionPaymentMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SubscriptionPayment", res, err
+		return SubscriptionPaymentMsgOp, res, err
 	case 0x79a126ef:
 		var res ChannelCooperativeCommitMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelCooperativeCommit", res, err
+		return ChannelCooperativeCommitMsgOp, res, err
 	case 0x79f937ea:
 		var res CloseStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "CloseStorageContract", res, err
+		return CloseStorageContractMsgOp, res, err
 	case 0x7a361688:
 		var res AcceptStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "AcceptStorageContract", res, err
+		return AcceptStorageContractMsgOp, res, err
 	case 0x7bcd1fef:
 		var res WhalesNominatorsDepositMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WhalesNominatorsDeposit", res, err
+		return WhalesNominatorsDepositMsgOp, res, err
 	case 0x8b771735:
 		var res ReportStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ReportStaticData", res, err
+		return ReportStaticDataMsgOp, res, err
 	case 0xa8cb00ad:
 		var res ReportRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ReportRoyaltyParams", res, err
+		return ReportRoyaltyParamsMsgOp, res, err
 	case 0xa91baf56:
 		var res StorageRewardWithdrawalMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageRewardWithdrawal", res, err
+		return StorageRewardWithdrawalMsgOp, res, err
 	case 0xb6236d63:
 		var res StorageContractTerminatedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractTerminated", res, err
+		return StorageContractTerminatedMsgOp, res, err
 	case 0xd0c3bfea:
 		var res SbtRequestOwnerMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "SbtRequestOwner", res, err
+		return SbtRequestOwnerMsgOp, res, err
 	case 0xd4caedcd:
 		var res StorageContractConfirmedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "StorageContractConfirmed", res, err
+		return StorageContractConfirmedMsgOp, res, err
 	case 0xd53276db:
 		var res ExcessMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "Excess", res, err
+		return ExcessMsgOp, res, err
 	case 0xda803efd:
 		var res WhalesNominatorsWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WhalesNominatorsWithdraw", res, err
+		return WhalesNominatorsWithdrawMsgOp, res, err
 	case 0xdddc88ba:
 		var res ChannelClosedMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "ChannelClosed", res, err
+		return ChannelClosedMsgOp, res, err
 	case 0xe4737472:
 		var res WalletPluginDestructResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "WalletPluginDestructResponse", res, err
+		return WalletPluginDestructResponseMsgOp, res, err
 	case 0xe4748df1:
 		var res DeployStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "DeployStorageContract", res, err
+		return DeployStorageContractMsgOp, res, err
 	case 0xf06c7567:
 		var res PaymentRequestResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
-		return "PaymentRequestResponse", res, err
+		return PaymentRequestResponseMsgOp, res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
 }
 
+// MsgOpName is a human-friendly name for a message's operation which is identified by the first 4 bytes of the message's body.
+type MsgOpName = string
+
+const (
+	TextCommentMsgOp                      MsgOpName = "TextComment"
+	ProveOwnershipMsgOp                   MsgOpName = "ProveOwnership"
+	NftOwnershipAssignedMsgOp             MsgOpName = "NftOwnershipAssigned"
+	OwnershipProofMsgOp                   MsgOpName = "OwnershipProof"
+	ChallengeQuarantinedChannelStateMsgOp MsgOpName = "ChallengeQuarantinedChannelState"
+	SbtOwnerInfoMsgOp                     MsgOpName = "SbtOwnerInfo"
+	InitPaymentChannelMsgOp               MsgOpName = "InitPaymentChannel"
+	JettonTransferMsgOp                   MsgOpName = "JettonTransfer"
+	OfferStorageContractMsgOp             MsgOpName = "OfferStorageContract"
+	JettonInternalTransferMsgOp           MsgOpName = "JettonInternalTransfer"
+	SbtDestroyMsgOp                       MsgOpName = "SbtDestroy"
+	StartUncooperativeChannelCloseMsgOp   MsgOpName = "StartUncooperativeChannelClose"
+	FinishUncooperativeChannelCloseMsgOp  MsgOpName = "FinishUncooperativeChannelClose"
+	TeleitemDeployMsgOp                   MsgOpName = "TeleitemDeploy"
+	GetStaticDataMsgOp                    MsgOpName = "GetStaticData"
+	TeleitemCancelAuctionMsgOp            MsgOpName = "TeleitemCancelAuction"
+	ProofStorageMsgOp                     MsgOpName = "ProofStorage"
+	TelemintDeployMsgOp                   MsgOpName = "TelemintDeploy"
+	TelemintDeployV2MsgOp                 MsgOpName = "TelemintDeployV2"
+	StorageWithdrawMsgOp                  MsgOpName = "StorageWithdraw"
+	TeleitemStartAuctionMsgOp             MsgOpName = "TeleitemStartAuction"
+	UpdatePubkeyMsgOp                     MsgOpName = "UpdatePubkey"
+	UpdateStorageParamsMsgOp              MsgOpName = "UpdateStorageParams"
+	ChannelCooperativeCloseMsgOp          MsgOpName = "ChannelCooperativeClose"
+	JettonBurnMsgOp                       MsgOpName = "JettonBurn"
+	NftTransferMsgOp                      MsgOpName = "NftTransfer"
+	WalletPluginDestructMsgOp             MsgOpName = "WalletPluginDestruct"
+	SettleChannelConditionalsMsgOp        MsgOpName = "SettleChannelConditionals"
+	TopUpChannelBalanceMsgOp              MsgOpName = "TopUpChannelBalance"
+	GetRoyaltyParamsMsgOp                 MsgOpName = "GetRoyaltyParams"
+	SbtRevokeMsgOp                        MsgOpName = "SbtRevoke"
+	PaymentRequestMsgOp                   MsgOpName = "PaymentRequest"
+	JettonNotifyMsgOp                     MsgOpName = "JettonNotify"
+	SubscriptionPaymentMsgOp              MsgOpName = "SubscriptionPayment"
+	ChannelCooperativeCommitMsgOp         MsgOpName = "ChannelCooperativeCommit"
+	CloseStorageContractMsgOp             MsgOpName = "CloseStorageContract"
+	AcceptStorageContractMsgOp            MsgOpName = "AcceptStorageContract"
+	WhalesNominatorsDepositMsgOp          MsgOpName = "WhalesNominatorsDeposit"
+	ReportStaticDataMsgOp                 MsgOpName = "ReportStaticData"
+	ReportRoyaltyParamsMsgOp              MsgOpName = "ReportRoyaltyParams"
+	StorageRewardWithdrawalMsgOp          MsgOpName = "StorageRewardWithdrawal"
+	StorageContractTerminatedMsgOp        MsgOpName = "StorageContractTerminated"
+	SbtRequestOwnerMsgOp                  MsgOpName = "SbtRequestOwner"
+	StorageContractConfirmedMsgOp         MsgOpName = "StorageContractConfirmed"
+	ExcessMsgOp                           MsgOpName = "Excess"
+	WhalesNominatorsWithdrawMsgOp         MsgOpName = "WhalesNominatorsWithdraw"
+	ChannelClosedMsgOp                    MsgOpName = "ChannelClosed"
+	WalletPluginDestructResponseMsgOp     MsgOpName = "WalletPluginDestructResponse"
+	DeployStorageContractMsgOp            MsgOpName = "DeployStorageContract"
+	PaymentRequestResponseMsgOp           MsgOpName = "PaymentRequestResponse"
+)
+
 var KnownMsgTypes = map[string]any{
-	"TextComment":                      TextCommentMsgBody{},
-	"ProveOwnership":                   ProveOwnershipMsgBody{},
-	"NftOwnershipAssigned":             NftOwnershipAssignedMsgBody{},
-	"OwnershipProof":                   OwnershipProofMsgBody{},
-	"ChallengeQuarantinedChannelState": ChallengeQuarantinedChannelStateMsgBody{},
-	"SbtOwnerInfo":                     SbtOwnerInfoMsgBody{},
-	"InitPaymentChannel":               InitPaymentChannelMsgBody{},
-	"JettonTransfer":                   JettonTransferMsgBody{},
-	"OfferStorageContract":             OfferStorageContractMsgBody{},
-	"JettonInternalTransfer":           JettonInternalTransferMsgBody{},
-	"SbtDestroy":                       SbtDestroyMsgBody{},
-	"StartUncooperativeChannelClose":   StartUncooperativeChannelCloseMsgBody{},
-	"FinishUncooperativeChannelClose":  FinishUncooperativeChannelCloseMsgBody{},
-	"TeleitemDeploy":                   TeleitemDeployMsgBody{},
-	"GetStaticData":                    GetStaticDataMsgBody{},
-	"TeleitemCancelAuction":            TeleitemCancelAuctionMsgBody{},
-	"ProofStorage":                     ProofStorageMsgBody{},
-	"TelemintDeploy":                   TelemintDeployMsgBody{},
-	"TelemintDeployV2":                 TelemintDeployV2MsgBody{},
-	"StorageWithdraw":                  StorageWithdrawMsgBody{},
-	"TeleitemStartAuction":             TeleitemStartAuctionMsgBody{},
-	"UpdatePubkey":                     UpdatePubkeyMsgBody{},
-	"UpdateStorageParams":              UpdateStorageParamsMsgBody{},
-	"ChannelCooperativeClose":          ChannelCooperativeCloseMsgBody{},
-	"JettonBurn":                       JettonBurnMsgBody{},
-	"NftTransfer":                      NftTransferMsgBody{},
-	"WalletPluginDestruct":             WalletPluginDestructMsgBody{},
-	"SettleChannelConditionals":        SettleChannelConditionalsMsgBody{},
-	"TopUpChannelBalance":              TopUpChannelBalanceMsgBody{},
-	"GetRoyaltyParams":                 GetRoyaltyParamsMsgBody{},
-	"SbtRevoke":                        SbtRevokeMsgBody{},
-	"PaymentRequest":                   PaymentRequestMsgBody{},
-	"JettonNotify":                     JettonNotifyMsgBody{},
-	"SubscriptionPayment":              SubscriptionPaymentMsgBody{},
-	"ChannelCooperativeCommit":         ChannelCooperativeCommitMsgBody{},
-	"CloseStorageContract":             CloseStorageContractMsgBody{},
-	"AcceptStorageContract":            AcceptStorageContractMsgBody{},
-	"WhalesNominatorsDeposit":          WhalesNominatorsDepositMsgBody{},
-	"ReportStaticData":                 ReportStaticDataMsgBody{},
-	"ReportRoyaltyParams":              ReportRoyaltyParamsMsgBody{},
-	"StorageRewardWithdrawal":          StorageRewardWithdrawalMsgBody{},
-	"StorageContractTerminated":        StorageContractTerminatedMsgBody{},
-	"SbtRequestOwner":                  SbtRequestOwnerMsgBody{},
-	"StorageContractConfirmed":         StorageContractConfirmedMsgBody{},
-	"Excess":                           ExcessMsgBody{},
-	"WhalesNominatorsWithdraw":         WhalesNominatorsWithdrawMsgBody{},
-	"ChannelClosed":                    ChannelClosedMsgBody{},
-	"WalletPluginDestructResponse":     WalletPluginDestructResponseMsgBody{},
-	"DeployStorageContract":            DeployStorageContractMsgBody{},
-	"PaymentRequestResponse":           PaymentRequestResponseMsgBody{},
+	TextCommentMsgOp:                      TextCommentMsgBody{},
+	ProveOwnershipMsgOp:                   ProveOwnershipMsgBody{},
+	NftOwnershipAssignedMsgOp:             NftOwnershipAssignedMsgBody{},
+	OwnershipProofMsgOp:                   OwnershipProofMsgBody{},
+	ChallengeQuarantinedChannelStateMsgOp: ChallengeQuarantinedChannelStateMsgBody{},
+	SbtOwnerInfoMsgOp:                     SbtOwnerInfoMsgBody{},
+	InitPaymentChannelMsgOp:               InitPaymentChannelMsgBody{},
+	JettonTransferMsgOp:                   JettonTransferMsgBody{},
+	OfferStorageContractMsgOp:             OfferStorageContractMsgBody{},
+	JettonInternalTransferMsgOp:           JettonInternalTransferMsgBody{},
+	SbtDestroyMsgOp:                       SbtDestroyMsgBody{},
+	StartUncooperativeChannelCloseMsgOp:   StartUncooperativeChannelCloseMsgBody{},
+	FinishUncooperativeChannelCloseMsgOp:  FinishUncooperativeChannelCloseMsgBody{},
+	TeleitemDeployMsgOp:                   TeleitemDeployMsgBody{},
+	GetStaticDataMsgOp:                    GetStaticDataMsgBody{},
+	TeleitemCancelAuctionMsgOp:            TeleitemCancelAuctionMsgBody{},
+	ProofStorageMsgOp:                     ProofStorageMsgBody{},
+	TelemintDeployMsgOp:                   TelemintDeployMsgBody{},
+	TelemintDeployV2MsgOp:                 TelemintDeployV2MsgBody{},
+	StorageWithdrawMsgOp:                  StorageWithdrawMsgBody{},
+	TeleitemStartAuctionMsgOp:             TeleitemStartAuctionMsgBody{},
+	UpdatePubkeyMsgOp:                     UpdatePubkeyMsgBody{},
+	UpdateStorageParamsMsgOp:              UpdateStorageParamsMsgBody{},
+	ChannelCooperativeCloseMsgOp:          ChannelCooperativeCloseMsgBody{},
+	JettonBurnMsgOp:                       JettonBurnMsgBody{},
+	NftTransferMsgOp:                      NftTransferMsgBody{},
+	WalletPluginDestructMsgOp:             WalletPluginDestructMsgBody{},
+	SettleChannelConditionalsMsgOp:        SettleChannelConditionalsMsgBody{},
+	TopUpChannelBalanceMsgOp:              TopUpChannelBalanceMsgBody{},
+	GetRoyaltyParamsMsgOp:                 GetRoyaltyParamsMsgBody{},
+	SbtRevokeMsgOp:                        SbtRevokeMsgBody{},
+	PaymentRequestMsgOp:                   PaymentRequestMsgBody{},
+	JettonNotifyMsgOp:                     JettonNotifyMsgBody{},
+	SubscriptionPaymentMsgOp:              SubscriptionPaymentMsgBody{},
+	ChannelCooperativeCommitMsgOp:         ChannelCooperativeCommitMsgBody{},
+	CloseStorageContractMsgOp:             CloseStorageContractMsgBody{},
+	AcceptStorageContractMsgOp:            AcceptStorageContractMsgBody{},
+	WhalesNominatorsDepositMsgOp:          WhalesNominatorsDepositMsgBody{},
+	ReportStaticDataMsgOp:                 ReportStaticDataMsgBody{},
+	ReportRoyaltyParamsMsgOp:              ReportRoyaltyParamsMsgBody{},
+	StorageRewardWithdrawalMsgOp:          StorageRewardWithdrawalMsgBody{},
+	StorageContractTerminatedMsgOp:        StorageContractTerminatedMsgBody{},
+	SbtRequestOwnerMsgOp:                  SbtRequestOwnerMsgBody{},
+	StorageContractConfirmedMsgOp:         StorageContractConfirmedMsgBody{},
+	ExcessMsgOp:                           ExcessMsgBody{},
+	WhalesNominatorsWithdrawMsgOp:         WhalesNominatorsWithdrawMsgBody{},
+	ChannelClosedMsgOp:                    ChannelClosedMsgBody{},
+	WalletPluginDestructResponseMsgOp:     WalletPluginDestructResponseMsgBody{},
+	DeployStorageContractMsgOp:            DeployStorageContractMsgBody{},
+	PaymentRequestResponseMsgOp:           PaymentRequestResponseMsgBody{},
 }
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){

@@ -8,3 +8,5 @@ TVM description you can find here:
 
 ### Usage
 [Example](../examples/tvm/main.go)
+
+How to link or recompile shared library you can find in [/lib](../lib/) directory depending on your OS.

@@ -10,6 +10,10 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+var (
+	ErrOnchainContentOnly = fmt.Errorf("only onchain jetton data supported")
+)
+
 // GetJettonWallet
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
@@ -68,7 +72,7 @@ func (c *Client) GetJettonData(ctx context.Context, master tongo.AccountID) (ton
 		return tongo.JettonMetadata{}, err
 	}
 	if content.SumType != "Onchain" {
-		return tongo.JettonMetadata{}, fmt.Errorf("only onchain jetton data supported")
+		return tongo.JettonMetadata{}, ErrOnchainContentOnly
 	}
 	meta, err := tep64.ConvertOnchainData(content)
 	if err != nil {

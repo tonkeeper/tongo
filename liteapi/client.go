@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	mrand "math/rand"
 	"net/http"
@@ -22,6 +23,11 @@ import (
 
 const (
 	LiteServerEnvName = "LITE_SERVERS"
+)
+
+var (
+	// ErrAccountNotFound is returned by lite server when executing a method for an account that has not been deployed to the blockchain.
+	ErrAccountNotFound = errors.New("account not found")
 )
 
 type connection struct {
@@ -376,7 +382,7 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID
 	}
 	var result tlb.VmStack
 	if res.ExitCode == 4294967040 { //-256
-		return res.ExitCode, nil, fmt.Errorf("account not found")
+		return res.ExitCode, nil, ErrAccountNotFound
 	}
 	cells, err := boc.DeserializeBoc(res.Result)
 	if err != nil {

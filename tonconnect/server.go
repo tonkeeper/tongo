@@ -96,14 +96,16 @@ func init() {
 }
 
 type Proof struct {
-	Address string `json:"address"`
-	Proof   struct {
-		Timestamp int64  `json:"timestamp"`
-		Domain    string `json:"domain"`
-		Signature string `json:"signature"`
-		Payload   string `json:"payload"`
-		StateInit string `json:"state_init"`
-	} `json:"proof"`
+	Address string    `json:"address"`
+	Proof   ProofData `json:"proof"`
+}
+
+type ProofData struct {
+	Timestamp int64  `json:"timestamp"`
+	Domain    string `json:"domain"`
+	Signature string `json:"signature"`
+	Payload   string `json:"payload"`
+	StateInit string `json:"state_init"`
 }
 
 type parsedMessage struct {
@@ -136,51 +138,55 @@ func (s *Server) GeneratePayload() (string, error) {
 // details see the frontend SDK: https://github.com/ton-connect/sdk/tree/main/packages/sdk
 // 3) User approves connection and client receives signed payload with additional prefixes.
 // 4) Client sends signed result (Proof) to the backend and CheckProof checks correctness of the all prefixes and signature correctness
-func (s *Server) CheckProof(tp *Proof) (bool, error) {
+func (s *Server) CheckProof(tp *Proof) (bool, ed25519.PublicKey, error) {
 	verified, err := s.checkPayload(tp.Proof.Payload)
 	if !verified {
-		return false, fmt.Errorf("failed verify payload")
+		return false, nil, fmt.Errorf("failed verify payload")
 	}
 
 	parsed, err := s.convertTonProofMessage(tp)
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
 
 	if time.Since(time.Unix(parsed.ts, 0)) > time.Duration(s.lifeTimeProof)*time.Second {
-		return false, fmt.Errorf("proof has been expired")
+		return false, nil, fmt.Errorf("proof has been expired")
 	}
 
 	accountID, err := tongo.ParseAccountID(tp.Address)
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
 
 	pubKey, err := s.getWalletPubKey(accountID)
 	if err != nil {
 		if tp.Proof.StateInit == "" {
-			return false, fmt.Errorf("failed get public key")
+			return false, nil, fmt.Errorf("failed get public key")
 		}
 		if ok, err := compareStateInitWithAddress(accountID, tp.Proof.StateInit); err != nil || !ok {
-			return false, fmt.Errorf("failed compare state init with address")
+			return false, nil, fmt.Errorf("failed compare state init with address")
 		}
 		pubKey, err = parseStateInit(tp.Proof.StateInit)
 		if err != nil {
-			return false, fmt.Errorf("failed get public key")
+			return false, nil, fmt.Errorf("failed get public key")
 		}
 	}
 
 	mes, err := createMessage(parsed)
 	if err != nil {
-		return false, err
+		return false, nil, err
 	}
 
 	check := signatureVerify(pubKey, mes, parsed.signature)
 	if !check {
-		return false, fmt.Errorf("failed proof")
+		return false, nil, fmt.Errorf("failed proof")
 	}
 
-	return true, nil
+	return true, pubKey, nil
+}
+
+func (s *Server) GetSecret() string {
+	return s.secret
 }
 
 func (s *Server) checkPayload(payload string) (bool, error) {

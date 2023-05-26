@@ -29,6 +29,8 @@ type Emulator struct {
 	emulator unsafe.Pointer
 }
 
+var DefaultConfig = `te6ccgECRwEABFcAAgmbAAAAEAECAgEgAwQCASAaGwIBIAUGAgEgDxACASAHCAEBYg4CASAJCgEBSA0BASALAQEgDABAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUAQDMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA5WdU+DQm9psJJnvYdqyXxEghNFt+JmvZVqe/v7mN81wBAWIRAgEgEhMAGsQAAAACAAAAAAAAAC4BAUgUAgEgFhcBAcAVALfQUy7nTs8AAAJwACrYn7aHDoYaZOELB7fIx0lsFfzu58bxcmSlH++c6KojdwX2/yWZOw/Zr08OxAx1OQZWjQc9ppdrOeJEc5dIgaEAAAAAD/////gAAAAAAAAABAEBIBgBASAZABRrRlU/EAQ7msoAACAAAQAAAACAAAAAIAAAAIAAAgEgHB0CASAvMAIBIB4fAgEgJSYCASAgIQEBSCQBASAiAQEgIwAMAZAAZABLADdwEQ2TFuwAByOG8m/BAACAEKdBpGJ4AAAAMAAIAE3QZgAAAAAAAAAAAAAAAIAAAAAAAAD6AAAAAAAAAfQAAAAAAAPQkEACASAnKAIBICssAQEgKQEBICoAlNEAAAAAAAAAZAAAAAAAD0JA3gAAAAAnEAAAAAAAAAAPQkAAAAAAAhYOwAAAAAAAACcQAAAAAAI0k0AAAAAABfXhAAAAAAA7msoAAJTRAAAAAAAAAGQAAAAAAAGGoN4AAAAAA+gAAAAAAAAAD0JAAAAAAAAPQkAAAAAAAAAnEAAAAAAAmJaAAAAAAAX14QAAAAAAO5rKAAEBIC0BASAuAFBdwwACAAAACAAAABAAAMMAHoSAAB6EgAI0k0DDAAAD6AAAE4gAACcQAFBdwwACAAAACAAAABAAAMMAHoSAAJiWgAExLQDDAAAD6AAAE4gAACcQAgFIMTICASA1NgEBIDMBASA0AELqAAAAAACYloAAAAAAJxAAAAAAAA9CQAAAAAGAAFVVVVUAQuoAAAAAAA9CQAAAAAAD6AAAAAAAAYagAAAAAYAAVVVVVQIBIDc4AQFYOwEBIDkBASA6ACTCAQAAAPoAAAD6AAAD6AAAABcAStkBAwAAB9AAAD6AAAAAAwAAAAgAAAAEACAAAAAgAAAAAgAAJxABAcA8AgEgPT4CASA/QABDv+6SYlD5XEfFuCmona5jYtGN4iWVOW5abGAZxXh4ab9iwAIBIEFCAEK/jVwCELNdrdqiGfrEWdug/e+x+uTpeg0Hl3Of4FDWlMoCAUhDRAIBWEVGAAPfcABBvvXr/85ThwN08RVEkXrXOpCNTrUaVASnRwrD2wNe3bMUAEG+2ZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZwAQb7c3f6FapnFy4B4QZnAdwvqMfKODXM49zeESA3vRM2QFA==`
+
 //	{
 //	  "success": false,
 //	  "error": "Error description"
@@ -57,8 +59,9 @@ type result struct {
 type EmulationResult struct {
 	Success   bool
 	Emulation *struct {
-		ShardAccount tlb.ShardAccount
-		Transaction  tlb.Transaction
+		ShardAccount   tlb.ShardAccount
+		Transaction    tlb.Transaction
+		RawTransaction string
 	}
 	Logs  string
 	Error *struct {
@@ -75,6 +78,11 @@ func NewEmulator(config *boc.Cell, verbosityLevel VerbosityLevel) (*Emulator, er
 	if err != nil {
 		return nil, err
 	}
+	return newEmulatorBase64(configBoc, verbosityLevel)
+}
+
+func newEmulatorBase64(configBoc string, verbosityLevel VerbosityLevel) (*Emulator, error) {
+
 	cConfigStr := C.CString(configBoc)
 	defer C.free(unsafe.Pointer(cConfigStr))
 	level := C.int(verbosityLevel)
@@ -155,7 +163,10 @@ func (e *Emulator) Emulate(shardAccount tlb.ShardAccount, message tlb.Message) (
 	if err != nil {
 		return EmulationResult{}, err
 	}
+	return e.emulateBase64(acc, msg)
+}
 
+func (e *Emulator) emulateBase64(acc string, msg string) (EmulationResult, error) {
 	cAccStr := C.CString(acc)
 	defer C.free(unsafe.Pointer(cAccStr))
 	cMsgStr := C.CString(msg)
@@ -169,7 +180,7 @@ func (e *Emulator) Emulate(shardAccount tlb.ShardAccount, message tlb.Message) (
 		account tlb.ShardAccount
 		tx      tlb.Transaction
 	)
-	err = json.Unmarshal([]byte(rJSON), &res)
+	err := json.Unmarshal([]byte(rJSON), &res)
 	if err != nil {
 		return EmulationResult{}, err
 	}
@@ -203,11 +214,13 @@ func (e *Emulator) Emulate(shardAccount tlb.ShardAccount, message tlb.Message) (
 		return EmulationResult{}, err
 	}
 	em := struct {
-		ShardAccount tlb.ShardAccount
-		Transaction  tlb.Transaction
+		ShardAccount   tlb.ShardAccount
+		Transaction    tlb.Transaction
+		RawTransaction string
 	}{
-		ShardAccount: account,
-		Transaction:  tx,
+		ShardAccount:   account,
+		Transaction:    tx,
+		RawTransaction: res.Transaction,
 	}
 	return EmulationResult{Success: true, Logs: res.VmLog, Emulation: &em}, nil
 }

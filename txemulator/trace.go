@@ -34,6 +34,26 @@ type accountGetter interface {
 	GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error)
 }
 
+type AccountGetterMixin struct {
+	g     accountGetter
+	mixin map[tongo.AccountID]tlb.ShardAccount
+}
+
+func NewAccountGetterMixin(g accountGetter, mixin map[tongo.AccountID]tlb.ShardAccount) AccountGetterMixin {
+	return AccountGetterMixin{
+		g:     g,
+		mixin: mixin,
+	}
+}
+
+func (g AccountGetterMixin) GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error) {
+	s, prs := g.mixin[a]
+	if prs {
+		return s, nil
+	}
+	return g.g.GetAccountState(ctx, a)
+}
+
 func WithConfig(c *boc.Cell) TraceOption {
 	return func(o *TraceOptions) {
 		o.config, _ = c.ToBocBase64()
@@ -166,4 +186,8 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 		tree.Children = append(tree.Children, child)
 	}
 	return tree, err
+}
+
+func (t *Tracer) FinalStates() map[tongo.AccountID]tlb.ShardAccount {
+	return t.currentShardAccount
 }

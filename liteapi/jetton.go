@@ -18,7 +18,7 @@ var (
 // TEP-74 Fungible tokens (Jettons) standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 func (c *Client) GetJettonWallet(ctx context.Context, master, owner tongo.AccountID) (tongo.AccountID, error) {
-	val, err := tlb.TlbStructToVmCellSlice(owner)
+	val, err := tlb.TlbStructToVmCellSlice(owner.ToMsgAddress())
 	if err != nil {
 		return tongo.AccountID{}, err
 	}

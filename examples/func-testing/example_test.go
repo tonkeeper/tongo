@@ -29,21 +29,24 @@ const SOURCE_CODE = `
     if (op != 1) {
         throw(32);
     }
-
+	if (counter > 4) {
+		throw(33);
+    }
     var msg = begin_cell()
-            .store_uint(0x18, 6)
+            .store_uint(0x10, 6)
+            .store_slice(addr)
+            .store_coins(100000000)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
+    send_raw_message(msg.end_cell(), 3);
+    var msg = begin_cell()
+            .store_uint(0x10, 6)
             .store_slice(my_address())
             .store_coins(1)
             .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
             .store_uint(1,32)
             .store_slice(addr);
     send_raw_message(msg.end_cell(), 128);
-    var msg = begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(addr)
-            .store_coins(100000000)
-            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
-    send_raw_message(msg.end_cell(), 128);
+
     save_data(counter + 1);
 }
 
@@ -93,7 +96,7 @@ func TestExample(t *testing.T) {
 	oldDestinationState, err := client.GetAccountState(ctx, payTo)
 
 	initData := struct {
-		Counter uint32
+		Counter uint64
 	}{1}
 	body := struct {
 		OP            uint32
@@ -121,7 +124,7 @@ func TestExample(t *testing.T) {
 	if len(result.Children) != 1 {
 		t.Fatal("not enough transactions")
 	}
-	if tracer.FinalStates()[payTo].Account.Account.Storage.Balance.Grams != oldDestinationState.Account.Account.Storage.Balance.Grams+800000000 {
+	if tracer.FinalStates()[payTo].Account.Account.Storage.Balance.Grams < oldDestinationState.Account.Account.Storage.Balance.Grams+200000000 {
 		t.Fatal("invalid result balance")
 	}
 }

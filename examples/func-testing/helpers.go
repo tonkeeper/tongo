@@ -106,7 +106,7 @@ func externalMessageToNewAccount(code, data, body any) (tlb.Message, tongo.Accou
 	m.Init.Value.Value.Code.Exists = true
 	m.Init.Value.Value.Data.Exists = true
 	m.Init.Value.Value.Code.Value.Value = *codeCell
-	m.Init.Value.Value.Code.Value.Value = *dataCell
+	m.Init.Value.Value.Data.Value.Value = *dataCell
 
 	initState := boc.NewCell()
 	err = tlb.Marshal(initState, m.Init.Value.Value)

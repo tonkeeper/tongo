@@ -11,7 +11,7 @@ import (
 )
 
 type Tracer struct {
-	e                   Emulator
+	e                   *Emulator
 	currentShardAccount map[tongo.AccountID]tlb.ShardAccount
 	blockchain          accountGetter
 	counter             int
@@ -126,7 +126,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		return nil, err
 	}
 	return &Tracer{
-		e:                   *e,
+		e:                   e,
 		currentShardAccount: make(map[tongo.AccountID]tlb.ShardAccount),
 		blockchain:          option.blockchain,
 		limit:               option.limit,

@@ -1,10 +1,10 @@
 package func_testing
 
 import (
+	"crypto/rand"
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"math/rand"
 	"time"
 )
 
@@ -19,7 +19,6 @@ func fakeUninitAccount(addr tongo.AccountID, balance tlb.Grams) tlb.ShardAccount
 			}{
 				Addr: addr.ToMsgAddress(),
 				StorageStat: tlb.StorageInfo{
-					Used:     tlb.StorageUsed{},
 					LastPaid: uint32(time.Now().Unix()),
 				},
 				Storage: tlb.AccountStorage{
@@ -117,7 +116,8 @@ func externalMessageToNewAccount(code, data, body any) (tlb.Message, tongo.Accou
 	if err != nil {
 		return tlb.Message{}, tongo.AccountID{}, err
 	}
-	a := tongo.AccountID{Workchain: 0, Address: [32]byte(hash)}
+	a := tongo.AccountID{Workchain: 0}
+	copy(a.Address[:], hash)
 	m.Init.Value.Value.Code.Value.Value.ResetCounters()
 	m.Init.Value.Value.Data.Value.Value.ResetCounters()
 

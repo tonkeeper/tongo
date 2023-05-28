@@ -110,9 +110,8 @@ func TestExample(t *testing.T) {
 		t.Fatal(err)
 	}
 	tracer, err := txemulator.NewTraceBuilder(
-		txemulator.WithAccountsSource(txemulator.NewAccountGetterMixin(client, map[tongo.AccountID]tlb.ShardAccount{
-			a: fakeUninitAccount(a, tongo.OneTON),
-		})),
+		txemulator.WithPredefinedAccounts(map[tongo.AccountID]tlb.ShardAccount{a: fakeUninitAccount(a, tongo.OneTON)}),
+		txemulator.WithAccountsSource(client),
 	)
 	if err != nil {
 		t.Fatal(err)

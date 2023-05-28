@@ -24,34 +24,16 @@ type TxTree struct {
 }
 
 type TraceOptions struct {
-	config         string
-	limit          int
-	blockchain     accountGetter
-	time           int64
-	checkSignature bool
+	config             string
+	limit              int
+	blockchain         accountGetter
+	time               int64
+	checkSignature     bool
+	predefinedAccounts map[tongo.AccountID]tlb.ShardAccount
 }
+
 type accountGetter interface {
 	GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error)
-}
-
-type AccountGetterMixin struct {
-	g     accountGetter
-	mixin map[tongo.AccountID]tlb.ShardAccount
-}
-
-func NewAccountGetterMixin(g accountGetter, mixin map[tongo.AccountID]tlb.ShardAccount) AccountGetterMixin {
-	return AccountGetterMixin{
-		g:     g,
-		mixin: mixin,
-	}
-}
-
-func (g AccountGetterMixin) GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error) {
-	s, prs := g.mixin[a]
-	if prs {
-		return s, nil
-	}
-	return g.g.GetAccountState(ctx, a)
 }
 
 func WithConfig(c *boc.Cell) TraceOption {
@@ -78,6 +60,12 @@ func WithTime(t int64) TraceOption {
 	}
 }
 
+func WithPredefinedAccounts(m map[tongo.AccountID]tlb.ShardAccount) TraceOption {
+	return func(o *TraceOptions) {
+		o.predefinedAccounts = m
+	}
+}
+
 func WithAccountsSource(b accountGetter) TraceOption {
 	return func(o *TraceOptions) {
 		o.blockchain = b
@@ -93,15 +81,16 @@ func WithSignatureCheck() TraceOption {
 type TraceOption func(o *TraceOptions)
 
 func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
-	var option TraceOptions
+	option := TraceOptions{
+		config:             DefaultConfig,
+		limit:              100,
+		blockchain:         nil,
+		time:               time.Now().Unix(),
+		checkSignature:     false,
+		predefinedAccounts: make(map[tongo.AccountID]tlb.ShardAccount),
+	}
 	for _, o := range options {
 		o(&option)
-	}
-	if option.config == "" {
-		option.config = DefaultConfig
-	}
-	if option.limit == 0 {
-		option.limit = 100
 	}
 	if option.blockchain == nil {
 		var err error
@@ -114,9 +103,6 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	if err != nil {
 		return nil, err
 	}
-	if option.time == 0 {
-		option.time = time.Now().Unix()
-	}
 	err = e.SetUnixtime(uint32(option.time))
 	if err != nil {
 		return nil, err
@@ -127,7 +113,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	}
 	return &Tracer{
 		e:                   e,
-		currentShardAccount: make(map[tongo.AccountID]tlb.ShardAccount),
+		currentShardAccount: option.predefinedAccounts,
 		blockchain:          option.blockchain,
 		limit:               option.limit,
 	}, nil

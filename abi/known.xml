@@ -37,22 +37,28 @@
     </types>
     <types interface="telemint">
         nft_royalty_params$_ numerator:uint16 denominator:uint16 destination:MsgAddress = NftRoyaltyParams;
-        teleitem_auction_config$_ beneficiar_address:MsgAddress initial_min_bid:Grams max_bid:Grams min_bid_step:uint8 min_extend_time:uint32 duration:uint32 = TeleitemAuctionConfig;
+        teleitem_auction_config$_ beneficiar_address:MsgAddress initial_min_bid:Grams max_bid:Grams min_bid_step:uint8
+        min_extend_time:uint32 duration:uint32 = TeleitemAuctionConfig;
         telemint_data$_ touched:Bool subwallet_id:uint32 public_key:bits256 collection_content:^Cell nft_item_code:^Cell
         royalty_params:^NftRoyaltyParams = TelemintData;
         telemint_unsigned_deploy$_ subwallet_id:uint32 valid_since:uint32 valid_till:uint32 username:FixedLengthText
-        content:^Cell auction_config:^TeleitemAuctionConfig royalty_params:(Maybe ^NftRoyaltyParams) = TelemintUnsignedDeploy;
-        telemint_restrictions$_ force_sender_address:(Maybe MsgAddress) rewrite_sender_address:(Maybe MsgAddress) = TelemintRestrictions;
-        telemint_unsigned_deploy_v2$_ subwallet_id:uint32 valid_since:uint32 valid_till:uint32 token_name:FixedLengthText
-        content:^Cell auction_config:^TeleitemAuctionConfig royalty_params:(Maybe ^NftRoyaltyParams) restrictions:(Maybe ^TelemintRestrictions) = TelemintUnsignedDeployV2;
+        content:^Cell auction_config:^TeleitemAuctionConfig royalty_params:(Maybe ^NftRoyaltyParams) =
+        TelemintUnsignedDeploy;
+        telemint_restrictions$_ force_sender_address:(Maybe MsgAddress) rewrite_sender_address:(Maybe MsgAddress) =
+        TelemintRestrictions;
+        telemint_unsigned_deploy_v2$_ subwallet_id:uint32 valid_since:uint32 valid_till:uint32
+        token_name:FixedLengthText
+        content:^Cell auction_config:^TeleitemAuctionConfig royalty_params:(Maybe ^NftRoyaltyParams) restrictions:(Maybe
+        ^TelemintRestrictions) = TelemintUnsignedDeployV2;
     </types>
-<!--    Balance            tlb.Grams-->
-<!--    PendingWithdraw    tlb.Grams-->
-<!--    PendingWithdrawAll bool-->
-<!--    PendingDeposit     tlb.Grams-->
-<!--    MemberWithdraw     tlb.Grams-->
+    <!--    Balance            tlb.Grams-->
+    <!--    PendingWithdraw    tlb.Grams-->
+    <!--    PendingWithdrawAll bool-->
+    <!--    PendingDeposit     tlb.Grams-->
+    <!--    MemberWithdraw     tlb.Grams-->
     <types interface="whales_nominators">
-        whales_nominators_member#_ profit_per_coin:int128 balance:Grams pending_withdraw:Grams pending_withdraw_all:Bool pending_deposit:Grams member_withdraw:Grams= WhalesNominatorsMember;
+        whales_nominators_member#_ profit_per_coin:int128 balance:Grams pending_withdraw:Grams pending_withdraw_all:Bool
+        pending_deposit:Grams member_withdraw:Grams= WhalesNominatorsMember;
         whales_nominators_members_list#_ list:(Hashmap 256 WhalesNominatorsMember)= WhalesNominatorsMembersList;
     </types>
     <types interface="tf_nominators">
@@ -432,7 +438,7 @@
         </output>
     </get_method>
     <get_method name="get_params">
-        <output version="whales_nominator"  interface="whales_nominators" fixed_length="true">
+        <output version="whales_nominator" interface="whales_nominators" fixed_length="true">
             <tinyint name="enabled">bool</tinyint>
             <tinyint name="updates_enables">bool</tinyint>
             <tinyint name="min_stake">int64</tinyint>
@@ -443,7 +449,7 @@
         </output>
     </get_method>
 
-<!--    Telegram     -->
+    <!--    Telegram     -->
     <get_method name="get_telemint_auction_state" interface="telemint">
         <output fixed_length="true">
             <slice name="bidder">msgaddress</slice>
@@ -660,12 +666,12 @@
         query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
     </internal>
 
-<!--    Telegram    -->
+    <!--    Telegram    -->
     <internal name="telemint_deploy" interface="telemint">
-        telemint_msg_deploy#4637289a  sig:bits512 msg:TelemintUnsignedDeploy = TelemintMsg;
+        telemint_msg_deploy#4637289a sig:bits512 msg:TelemintUnsignedDeploy = TelemintMsg;
     </internal>
     <internal name="telemint_deploy_v2" interface="telemint">
-        telemint_msg_deploy_v2#4637289b  sig:bits512 msg:TelemintUnsignedDeployV2 = TelemintMsgV2;
+        telemint_msg_deploy_v2#4637289b sig:bits512 msg:TelemintUnsignedDeployV2 = TelemintMsgV2;
     </internal>
     <internal name="teleitem_deploy" interface="teleitem">
         teleitem_msg_deploy#299a3e15 sender_address:MsgAddress bid:Grams username:FixedLengthText content:^Cell
@@ -694,4 +700,75 @@
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
         payload:PayloadV1toV4 = ExternalMsgBody;
     </external>
+
+    <!-- TonStake messages to controller -->
+    <internal name="tonstake_controller_top_up" interface="controller">
+        top_up#d372158c query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_credit" interface="controller">
+        credit#1690c604 query_id:uint64 amount:Coins = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_approve" interface="controller">
+        approve#7b4b42e6 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_disapprove" interface="controller">
+        disapprove#e8a0abfe query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_recover_stake" interface="controller">
+        recover_stake#eb373a05 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_update_validator_hash" interface="controller">
+        update_validator_hash#f0fd2250 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_withdraw_validator" interface="controller">
+        withdraw_validator#cefaaefd query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_new_stake" interface="controller">
+        new_stake#e0505d0e query_id:uint64 value:Coins validator_pubkey:uint256 stake_at:uint32 max_factor:uint32
+        adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_send_request_loan" interface="controller">
+        send_request_loan#452f7112 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint18 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_return_unused_loan" interface="controller">
+        return_unused_loan#ed7378a6 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <!-- TonStake messages to pool -->
+    <internal name="tonstake_pool_request_loan" interface="pool">
+        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint18 validator:MsgAddress
+        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_pool_loan_repayment" interface="pool">
+        loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_pool_deposit" interface="pool">
+        deposit#47d54391 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_pool_withdraw" interface="pool">
+        withdraw#319b0cdc query_id:uint64 jetton_amount:Coins from_address:MsgAddress response_address:MsgAddress =
+        InternalMsgBody;
+    </internal>
+    <internal name="tonstake_pool_set_roles" interface="pool">
+        set_roles#7a756db8 governor:(Maybe MsgAddress) interest_manager:(Maybe MsgAddress) halter:(Maybe MsgAddress)
+        consigliere:(Maybe MsgAddress) = InternalMsgBody;
+    </internal>
+
+    <!-- TonStake messages to pool and controller -->
+    <internal name="tonstake_controller_pool_send_message" interface="controller_pool">
+        send_message#270695fb query_id:uint64 mode:uint8 msg:^Cell = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_pool_upgrade" interface="controller_pool">
+        upgrade#96e7f528 query_id:uint64 data:(Maybe ^Cell) code:(Maybe ^Cell) after_upgrade:(Maybe ^Cell) =
+        InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_pool_set_sudoer" interface="controller_pool">
+        set_sudoer#79e7c016 query_id:uint64 sudoer:MsgAddress = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_pool_unhalt" interface="controller_pool">
+        unhalt#7247e7a5 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="tonstake_controller_pool_halt" interface="controller_pool">
+        halt#139a1b4e query_id:uint64 = InternalMsgBody;
+    </internal>
 </abi>

@@ -81,7 +81,7 @@ type CellRef struct {
 }
 
 type Anon struct {
-	Values []FieldDefinition `"[" @@ "]"`
+	Values []FieldDefinition `"[" @@* "]"`
 }
 
 type Optional struct {

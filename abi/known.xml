@@ -469,6 +469,42 @@
         </output>
     </get_method>
 
+    <!--    Pool    -->
+    <get_method name="get_pool_finance_data" interface="pool">
+        <output fixed_length="true">
+            <int name="total_balance">int32</int>
+            <int name="supply">int32</int>
+            <int name="requested_for_deposit">int32</int>
+            <int name="requested_for_withdrawal">int32</int>
+        </output>
+    </get_method>
+    <get_method name="get_pool_current_round_deposit_minter" interface="pool">
+        <output>
+            <slice name="deposit_minter">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_pool_current_round_withdrawal_minter" interface="pool">
+        <output fixed_length="true">
+            <slice name="deposit_minter">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <!--    Validator-Controller    -->
+    <get_method name="get_validator_controller_data" interface="validator_controller">
+        <output fixed_length="true">
+            <int name="state">int32</int>
+            <tinyint name="approved">bool</tinyint>
+            <int name="stake_amount_sent">int32</int>
+            <int name="stake_at">int32</int>
+            <int name="saved_validator_set_hash">int32</int>
+            <int name="validator_set_changes_count">int32</int>
+            <int name="validator_set_change_time">int32</int>
+            <int name="stake_held_for">int32</int>
+            <int name="borrowed_amount">int32</int>
+            <int name="borrowing_time">int32</int>
+        </output>
+    </get_method>
+
     <!--    Text    -->
     <internal name="text_comment">
         text_comment#00000000 text:Text = InternalMsgBody;
@@ -729,10 +765,10 @@
     </internal>
 
     <!-- TonStake messages to pool -->
-<!--    <internal name="tonstake_pool_request_loan" interface="pool">-->
-<!--        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint18 validator:MsgAddress-->
-<!--        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;-->
-<!--    </internal>-->
+    <!--    <internal name="tonstake_pool_request_loan" interface="pool">-->
+    <!--        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint18 validator:MsgAddress-->
+    <!--        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;-->
+    <!--    </internal>-->
     <internal name="tonstake_pool_loan_repayment" interface="pool">
         loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;
     </internal>

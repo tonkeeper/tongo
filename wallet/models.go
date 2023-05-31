@@ -153,6 +153,7 @@ type SimpleTransfer struct {
 	Amount  tlb.Grams
 	Address tongo.AccountID
 	Comment string
+	Bounce  bool
 }
 
 func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error) {
@@ -173,7 +174,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		CreatedAt   uint32
 	}{
 		IhrDisabled: true,
-		Bounce:      true,
+		Bounce:      m.Bounce,
 		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
 	}

@@ -5,6 +5,7 @@ package abi
 import (
 	"context"
 	"fmt"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -988,48 +989,52 @@ var KnownMsgTypes = map[string]any{
 }
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
-	"seqno":                        {DecodeSeqnoResult},
-	"get_public_key":               {DecodeGetPublicKeyResult},
-	"get_subwallet_id":             {DecodeGetSubwalletIdResult},
-	"get_plugin_list":              {DecodeGetPluginListResult},
-	"is_plugin_installed":          {DecodeIsPluginInstalledResult},
-	"get_nft_data":                 {DecodeGetNftDataResult},
-	"get_nft_content":              {DecodeGetNftContentResult},
-	"get_collection_data":          {DecodeGetCollectionDataResult},
-	"get_nft_address_by_index":     {DecodeGetNftAddressByIndexResult},
-	"royalty_params":               {DecodeRoyaltyParamsResult},
-	"get_editor":                   {DecodeGetEditorResult},
-	"get_auction_info":             {DecodeGetAuctionInfoResult},
-	"get_subscription_data":        {DecodeGetSubscriptionDataResult},
-	"get_jetton_data":              {DecodeGetJettonDataResult},
-	"get_wallet_address":           {DecodeGetWalletAddressResult},
-	"get_wallet_data":              {DecodeGetWalletDataResult},
-	"dnsresolve":                   {DecodeDnsresolve_RecordsResult},
-	"get_last_fill_up_time":        {DecodeGetLastFillUpTimeResult},
-	"get_domain":                   {DecodeGetDomainResult},
-	"get_full_domain":              {DecodeGetFullDomainResult},
-	"get_sale_data":                {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
-	"get_authority_address":        {DecodeGetAuthorityAddressResult},
-	"get_revoked_time":             {DecodeGetRevokedTimeResult},
-	"get_channel_state":            {DecodeGetChannelStateResult},
-	"get_wallet_params":            {DecodeGetWalletParamsResult},
-	"get_storage_params":           {DecodeGetStorageParamsResult},
-	"get_storage_contract_address": {DecodeGetStorageContractAddressResult},
-	"get_storage_contract_data":    {DecodeGetStorageContractDataResult},
-	"get_torrent_hash":             {DecodeGetTorrentHashResult},
-	"is_active":                    {DecodeIsActiveResult},
-	"get_next_proof_info":          {DecodeGetNextProofInfoResult},
-	"list_nominators":              {DecodeListNominatorsResult},
-	"list_votes":                   {DecodeListVotesResult},
-	"get_pool_data":                {DecodeGetPoolData_TfResult},
-	"get_staking_status":           {DecodeGetStakingStatusResult},
-	"get_pool_status":              {DecodeGetPoolStatusResult},
-	"get_member":                   {DecodeGetMember_WhalesNominatorResult},
-	"get_members_raw":              {DecodeGetMembersRaw_WhalesNominatorResult},
-	"get_params":                   {DecodeGetParams_WhalesNominatorResult},
-	"get_telemint_auction_state":   {DecodeGetTelemintAuctionStateResult},
-	"get_telemint_auction_config":  {DecodeGetTelemintAuctionConfigResult},
-	"get_telemint_token_name":      {DecodeGetTelemintTokenNameResult},
+	"seqno":                                    {DecodeSeqnoResult},
+	"get_public_key":                           {DecodeGetPublicKeyResult},
+	"get_subwallet_id":                         {DecodeGetSubwalletIdResult},
+	"get_plugin_list":                          {DecodeGetPluginListResult},
+	"is_plugin_installed":                      {DecodeIsPluginInstalledResult},
+	"get_nft_data":                             {DecodeGetNftDataResult},
+	"get_nft_content":                          {DecodeGetNftContentResult},
+	"get_collection_data":                      {DecodeGetCollectionDataResult},
+	"get_nft_address_by_index":                 {DecodeGetNftAddressByIndexResult},
+	"royalty_params":                           {DecodeRoyaltyParamsResult},
+	"get_editor":                               {DecodeGetEditorResult},
+	"get_auction_info":                         {DecodeGetAuctionInfoResult},
+	"get_subscription_data":                    {DecodeGetSubscriptionDataResult},
+	"get_jetton_data":                          {DecodeGetJettonDataResult},
+	"get_wallet_address":                       {DecodeGetWalletAddressResult},
+	"get_wallet_data":                          {DecodeGetWalletDataResult},
+	"dnsresolve":                               {DecodeDnsresolve_RecordsResult},
+	"get_last_fill_up_time":                    {DecodeGetLastFillUpTimeResult},
+	"get_domain":                               {DecodeGetDomainResult},
+	"get_full_domain":                          {DecodeGetFullDomainResult},
+	"get_sale_data":                            {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
+	"get_authority_address":                    {DecodeGetAuthorityAddressResult},
+	"get_revoked_time":                         {DecodeGetRevokedTimeResult},
+	"get_channel_state":                        {DecodeGetChannelStateResult},
+	"get_wallet_params":                        {DecodeGetWalletParamsResult},
+	"get_storage_params":                       {DecodeGetStorageParamsResult},
+	"get_storage_contract_address":             {DecodeGetStorageContractAddressResult},
+	"get_storage_contract_data":                {DecodeGetStorageContractDataResult},
+	"get_torrent_hash":                         {DecodeGetTorrentHashResult},
+	"is_active":                                {DecodeIsActiveResult},
+	"get_next_proof_info":                      {DecodeGetNextProofInfoResult},
+	"list_nominators":                          {DecodeListNominatorsResult},
+	"list_votes":                               {DecodeListVotesResult},
+	"get_pool_data":                            {DecodeGetPoolData_TfResult},
+	"get_staking_status":                       {DecodeGetStakingStatusResult},
+	"get_pool_status":                          {DecodeGetPoolStatusResult},
+	"get_member":                               {DecodeGetMember_WhalesNominatorResult},
+	"get_members_raw":                          {DecodeGetMembersRaw_WhalesNominatorResult},
+	"get_params":                               {DecodeGetParams_WhalesNominatorResult},
+	"get_telemint_auction_state":               {DecodeGetTelemintAuctionStateResult},
+	"get_telemint_auction_config":              {DecodeGetTelemintAuctionConfigResult},
+	"get_telemint_token_name":                  {DecodeGetTelemintTokenNameResult},
+	"get_pool_finance_data":                    {DecodeGetPoolFinanceDataResult},
+	"get_pool_current_round_deposit_minter":    {DecodeGetPoolCurrentRoundDepositMinterResult},
+	"get_pool_current_round_withdrawal_minter": {DecodeGetPoolCurrentRoundWithdrawalMinterResult},
+	"get_validator_controller_data":            {DecodeGetValidatorControllerDataResult},
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
@@ -1054,11 +1059,14 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	97667:  {GetRevokedTime},
 	102351: {GetNftData},
 	102491: {GetCollectionData},
+	103232: {GetValidatorControllerData},
+	103597: {GetPoolCurrentRoundDepositMinter},
 	104346: {GetStorageParams},
 	106029: {GetJettonData},
 	106901: {GetChannelState},
 	107653: {GetPluginList},
 	111161: {ListNominators},
+	111643: {GetPoolFinanceData},
 	115150: {GetParams},
 	119378: {GetDomain},
 	120146: {GetPoolStatus},
@@ -1068,6 +1076,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	129619: {GetTelemintAuctionConfig},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
+	131049: {GetPoolCurrentRoundWithdrawalMinter},
 }
 
 var ResultTypes = []interface{}{
@@ -1089,7 +1098,10 @@ var ResultTypes = []interface{}{
 	&GetNftDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
+	&GetPoolCurrentRoundDepositMinterResult{},
+	&GetPoolCurrentRoundWithdrawalMinterResult{},
 	&GetPoolData_TfResult{},
+	&GetPoolFinanceDataResult{},
 	&GetPoolStatusResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
@@ -1106,6 +1118,7 @@ var ResultTypes = []interface{}{
 	&GetTelemintAuctionStateResult{},
 	&GetTelemintTokenNameResult{},
 	&GetTorrentHashResult{},
+	&GetValidatorControllerDataResult{},
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
@@ -2746,29 +2759,175 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 	return "GetTelemintTokenNameResult", result, err
 }
 
+type GetPoolFinanceDataResult struct {
+	TotalBalance           int32
+	Supply                 int32
+	RequestedForDeposit    int32
+	RequestedForWithdrawal int32
+}
+
+func GetPoolFinanceData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 111643 for "get_pool_finance_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 111643, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolFinanceDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolFinanceDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolFinanceDataResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolFinanceDataResult", result, err
+}
+
+type GetPoolCurrentRoundDepositMinterResult struct {
+	DepositMinter tlb.MsgAddress
+}
+
+func GetPoolCurrentRoundDepositMinter(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 103597 for "get_pool_current_round_deposit_minter" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103597, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolCurrentRoundDepositMinterResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolCurrentRoundDepositMinterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolCurrentRoundDepositMinterResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolCurrentRoundDepositMinterResult", result, err
+}
+
+type GetPoolCurrentRoundWithdrawalMinterResult struct {
+	DepositMinter tlb.MsgAddress
+}
+
+func GetPoolCurrentRoundWithdrawalMinter(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 131049 for "get_pool_current_round_withdrawal_minter" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 131049, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolCurrentRoundWithdrawalMinterResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolCurrentRoundWithdrawalMinterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolCurrentRoundWithdrawalMinterResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolCurrentRoundWithdrawalMinterResult", result, err
+}
+
+type GetValidatorControllerDataResult struct {
+	State                    int32
+	Approved                 bool
+	StakeAmountSent          int32
+	StakeAt                  int32
+	SavedValidatorSetHash    int32
+	ValidatorSetChangesCount int32
+	ValidatorSetChangeTime   int32
+	StakeHeldFor             int32
+	BorrowedAmount           int32
+	BorrowingTime            int32
+}
+
+func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 103232 for "get_validator_controller_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103232, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetValidatorControllerDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetValidatorControllerDataResult
+	err = stack.Unmarshal(&result)
+	return "GetValidatorControllerDataResult", result, err
+}
+
 type ContractInterface string
 
 // more wallet-related contract interfaces are defined in wallet.go
 const (
-	Auction          ContractInterface = "auction"
-	Domain           ContractInterface = "domain"
-	NftEditable      ContractInterface = "nft_editable"
-	NftSale          ContractInterface = "nft_sale"
-	NftSaleGetgems   ContractInterface = "nft_sale_getgems"
-	PaymentChannel   ContractInterface = "payment_channel"
-	StorageContract  ContractInterface = "storage_contract"
-	StorageProvider  ContractInterface = "storage_provider"
-	Subscription     ContractInterface = "subscription"
-	Telemint         ContractInterface = "telemint"
-	Tep62Collection  ContractInterface = "tep62_collection"
-	Tep62Item        ContractInterface = "tep62_item"
-	Tep66            ContractInterface = "tep66"
-	Tep74            ContractInterface = "tep74"
-	Tep85            ContractInterface = "tep85"
-	TfNominator      ContractInterface = "tf_nominator"
-	Wallet           ContractInterface = "wallet"
-	WalletV4R2       ContractInterface = "wallet_v4r2"
-	WhalesNominators ContractInterface = "whales_nominators"
+	Auction             ContractInterface = "auction"
+	Domain              ContractInterface = "domain"
+	NftEditable         ContractInterface = "nft_editable"
+	NftSale             ContractInterface = "nft_sale"
+	NftSaleGetgems      ContractInterface = "nft_sale_getgems"
+	PaymentChannel      ContractInterface = "payment_channel"
+	Pool                ContractInterface = "pool"
+	StorageContract     ContractInterface = "storage_contract"
+	StorageProvider     ContractInterface = "storage_provider"
+	Subscription        ContractInterface = "subscription"
+	Telemint            ContractInterface = "telemint"
+	Tep62Collection     ContractInterface = "tep62_collection"
+	Tep62Item           ContractInterface = "tep62_item"
+	Tep66               ContractInterface = "tep66"
+	Tep74               ContractInterface = "tep74"
+	Tep85               ContractInterface = "tep85"
+	TfNominator         ContractInterface = "tf_nominator"
+	ValidatorController ContractInterface = "validator_controller"
+	Wallet              ContractInterface = "wallet"
+	WalletV4R2          ContractInterface = "wallet_v4r2"
+	WhalesNominators    ContractInterface = "whales_nominators"
 )
 
 type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
@@ -2871,9 +3030,24 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{WalletV4R2},
 	},
 	{
+		Name:          "get_pool_current_round_deposit_minter",
+		InvokeFn:      GetPoolCurrentRoundDepositMinter,
+		ImplementedBy: []ContractInterface{Pool},
+	},
+	{
+		Name:          "get_pool_current_round_withdrawal_minter",
+		InvokeFn:      GetPoolCurrentRoundWithdrawalMinter,
+		ImplementedBy: []ContractInterface{Pool},
+	},
+	{
 		Name:          "get_pool_data",
 		InvokeFn:      GetPoolData,
 		ImplementedBy: []ContractInterface{TfNominator},
+	},
+	{
+		Name:          "get_pool_finance_data",
+		InvokeFn:      GetPoolFinanceData,
+		ImplementedBy: []ContractInterface{Pool},
 	},
 	{
 		Name:          "get_pool_status",
@@ -2949,6 +3123,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_torrent_hash",
 		InvokeFn:      GetTorrentHash,
 		ImplementedBy: []ContractInterface{StorageContract},
+	},
+	{
+		Name:          "get_validator_controller_data",
+		InvokeFn:      GetValidatorControllerData,
+		ImplementedBy: []ContractInterface{ValidatorController},
 	},
 	{
 		Name:          "get_wallet_data",

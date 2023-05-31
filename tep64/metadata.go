@@ -3,6 +3,7 @@ package tep64
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -28,10 +29,19 @@ type Metadata struct {
 	Decimals    string `json:"decimals,omitempty"`
 }
 
+// FullContent is either a link to metadata or metadata itself depending on the layout.
 type FullContent struct {
 	Layout ContentLayout
 	Data   []byte
+	// OnchainMetadata contains a decoded metadata when the layout is onchain.
+	OnchainMetadata *Metadata
+	// OffchainURL contains a link to JSON when the layout is offchain.
+	OffchainURL string
 }
+
+var (
+	ErrUnsupportedContentType = errors.New("unsupported content type")
+)
 
 // TEP-64 Token Data Standard
 // https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md
@@ -90,36 +100,46 @@ func ConvertOnchainData(content tlb.FullContent) (Metadata, error) {
 	return m, nil
 }
 
-func DecodeFullContent(cell *boc.Cell) (FullContent, error) {
-	var (
-		content tlb.FullContent
-		layout  ContentLayout
-		result  []byte
-	)
+func DecodeFullContentFromCell(cell *boc.Cell) (FullContent, error) {
+	var content tlb.FullContent
 	err := tlb.Unmarshal(cell, &content)
 	if err != nil {
 		return FullContent{}, fmt.Errorf("%v content decoding: %v", content.SumType, err)
 	}
-	if content.SumType == "Onchain" {
-		layout = OnChain
+	return DecodeFullContent(content)
+}
+
+func DecodeFullContent(content tlb.FullContent) (FullContent, error) {
+	switch content.SumType {
+	case "Onchain":
 		meta, err := ConvertOnchainData(content)
 		if err != nil {
 			return FullContent{}, err
 		}
-		result, err = json.Marshal(meta)
+		result, err := json.Marshal(meta)
 		if err != nil {
 			return FullContent{}, err
 		}
-	} else {
-		layout = OffChain
+		return FullContent{
+			Layout:          OnChain,
+			Data:            result,
+			OnchainMetadata: &meta,
+		}, nil
+
+	case "Offchain":
 		bs := boc.BitString(content.Offchain.Uri)
 		if bs.BitsAvailableForRead()%8 != 0 {
 			return FullContent{}, fmt.Errorf("text data is not multiple of 8 bits")
 		}
-		result, err = bs.GetTopUppedArray()
+		result, err := bs.GetTopUppedArray()
 		if err != nil {
 			return FullContent{}, err
 		}
+		return FullContent{
+			Layout:      OffChain,
+			Data:        result,
+			OffchainURL: string(result),
+		}, nil
 	}
-	return FullContent{layout, result}, nil
+	return FullContent{}, ErrUnsupportedContentType
 }

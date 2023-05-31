@@ -150,10 +150,10 @@ type Sendable interface {
 }
 
 type SimpleTransfer struct {
-	Amount  tlb.Grams
-	Address tongo.AccountID
-	Comment string
-	Bounce  bool
+	Amount     tlb.Grams
+	Address    tongo.AccountID
+	Comment    string
+	Bounceable bool
 }
 
 func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error) {
@@ -174,7 +174,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		CreatedAt   uint32
 	}{
 		IhrDisabled: true,
-		Bounce:      m.Bounce,
+		Bounce:      m.Bounceable,
 		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
 	}

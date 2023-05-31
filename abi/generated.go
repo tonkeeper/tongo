@@ -230,6 +230,15 @@ type OfferStorageContractMsgBody struct {
 	QueryId uint64
 }
 
+type TonstakeControllerPoolHaltMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakeControllerCreditMsgBody struct {
+	QueryId uint64
+	Amount  tlb.Grams
+}
+
 type JettonInternalTransferMsgBody struct {
 	QueryId          uint64
 	Amount           tlb.VarUInteger16
@@ -253,6 +262,12 @@ type StartUncooperativeChannelCloseMsgBody struct {
 
 type FinishUncooperativeChannelCloseMsgBody struct{}
 
+type TonstakeControllerPoolSendMessageMsgBody struct {
+	QueryId uint64
+	Mode    uint8
+	Msg     tlb.Ref[tlb.Any]
+}
+
 type TeleitemDeployMsgBody struct {
 	SenderAddress tlb.MsgAddress
 	Bid           tlb.Grams
@@ -266,6 +281,13 @@ type GetStaticDataMsgBody struct {
 	QueryId uint64
 }
 
+type TonstakePoolWithdrawMsgBody struct {
+	QueryId         uint64
+	JettonAmount    tlb.Grams
+	FromAddress     tlb.MsgAddress
+	ResponseAddress tlb.MsgAddress
+}
+
 type TeleitemCancelAuctionMsgBody struct {
 	QueryId int64
 }
@@ -273,6 +295,13 @@ type TeleitemCancelAuctionMsgBody struct {
 type ProofStorageMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Ref[tlb.Any]
+}
+
+type TonstakeControllerSendRequestLoanMsgBody struct {
+	QueryId    uint64
+	MinLoan    tlb.Grams
+	MaxLoan    tlb.Grams
+	MaxInterst tlb.Uint18
 }
 
 type TelemintDeployMsgBody struct {
@@ -286,6 +315,10 @@ type TelemintDeployV2MsgBody struct {
 }
 
 type StorageWithdrawMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakePoolDepositMsgBody struct {
 	QueryId uint64
 }
 
@@ -363,6 +396,10 @@ type PaymentRequestMsgBody struct {
 	Amount  tlb.CurrencyCollection
 }
 
+type TonstakeControllerPoolUnhaltMsgBody struct {
+	QueryId uint64
+}
+
 type JettonNotifyMsgBody struct {
 	QueryId        uint64
 	Amount         tlb.VarUInteger16
@@ -381,11 +418,27 @@ type ChannelCooperativeCommitMsgBody struct {
 	SeqnoB    uint64
 }
 
+type TonstakeControllerPoolSetSudoerMsgBody struct {
+	QueryId uint64
+	Sudoer  tlb.MsgAddress
+}
+
 type CloseStorageContractMsgBody struct {
 	QueryId uint64
 }
 
 type AcceptStorageContractMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakePoolSetRolesMsgBody struct {
+	Governor        tlb.Maybe[tlb.MsgAddress]
+	InterestManager tlb.Maybe[tlb.MsgAddress]
+	Halter          tlb.Maybe[tlb.MsgAddress]
+	Consigliere     tlb.Maybe[tlb.MsgAddress]
+}
+
+type TonstakeControllerApproveMsgBody struct {
 	QueryId uint64
 }
 
@@ -398,6 +451,13 @@ type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
 	Collection tlb.MsgAddress
+}
+
+type TonstakeControllerPoolUpgradeMsgBody struct {
+	QueryId      uint64
+	Data         tlb.Maybe[tlb.Ref[tlb.Any]]
+	Code         tlb.Maybe[tlb.Ref[tlb.Any]]
+	AfterUpgrade tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
 type ReportRoyaltyParamsMsgBody struct {
@@ -416,11 +476,19 @@ type StorageContractTerminatedMsgBody struct {
 	TorrentHash tlb.Bits256
 }
 
+type TonstakeControllerWithdrawValidatorMsgBody struct {
+	QueryId uint64
+}
+
 type SbtRequestOwnerMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
 	ForwardPayload tlb.Ref[tlb.Any]
 	WithContent    bool
+}
+
+type TonstakeControllerTopUpMsgBody struct {
+	QueryId uint64
 }
 
 type StorageContractConfirmedMsgBody struct {
@@ -442,6 +510,20 @@ type ChannelClosedMsgBody struct {
 	ChannelId tlb.Uint128
 }
 
+type TonstakePoolLoanRepaymentMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakeControllerNewStakeMsgBody struct {
+	QueryId         uint64
+	Value           tlb.Grams
+	ValidatorPubkey tlb.Uint256
+	StakeAt         uint32
+	MaxFactor       uint32
+	AdnlAddr        tlb.Uint256
+	Signature       tlb.Ref[tlb.Bits512]
+}
+
 type WalletPluginDestructResponseMsgBody struct{}
 
 type DeployStorageContractMsgBody struct {
@@ -452,7 +534,23 @@ type DeployStorageContractMsgBody struct {
 	ExpectedMaxSpan uint32
 }
 
+type TonstakeControllerDisapproveMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakeControllerRecoverStakeMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakeControllerReturnUnusedLoanMsgBody struct {
+	QueryId uint64
+}
+
 type PaymentRequestResponseMsgBody struct{}
+
+type TonstakeControllerUpdateValidatorHashMsgBody struct {
+	QueryId uint64
+}
 
 // MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
 // On success, it returns an operation name and a decoded body.
@@ -498,6 +596,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res OfferStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return OfferStorageContractMsgOp, res, err
+	case 0x139a1b4e:
+		var res TonstakeControllerPoolHaltMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerPoolHaltMsgOp, res, err
+	case 0x1690c604:
+		var res TonstakeControllerCreditMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerCreditMsgOp, res, err
 	case 0x178d4519:
 		var res JettonInternalTransferMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -514,6 +620,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res FinishUncooperativeChannelCloseMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return FinishUncooperativeChannelCloseMsgOp, res, err
+	case 0x270695fb:
+		var res TonstakeControllerPoolSendMessageMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerPoolSendMessageMsgOp, res, err
 	case 0x299a3e15:
 		var res TeleitemDeployMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -522,6 +632,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res GetStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return GetStaticDataMsgOp, res, err
+	case 0x319b0cdc:
+		var res TonstakePoolWithdrawMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakePoolWithdrawMsgOp, res, err
 	case 0x371638ae:
 		var res TeleitemCancelAuctionMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -530,6 +644,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res ProofStorageMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return ProofStorageMsgOp, res, err
+	case 0x452f7112:
+		var res TonstakeControllerSendRequestLoanMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerSendRequestLoanMsgOp, res, err
 	case 0x4637289a:
 		var res TelemintDeployMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -542,6 +660,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res StorageWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return StorageWithdrawMsgOp, res, err
+	case 0x47d54391:
+		var res TonstakePoolDepositMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakePoolDepositMsgOp, res, err
 	case 0x487a8e81:
 		var res TeleitemStartAuctionMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -590,6 +712,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res PaymentRequestMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return PaymentRequestMsgOp, res, err
+	case 0x7247e7a5:
+		var res TonstakeControllerPoolUnhaltMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerPoolUnhaltMsgOp, res, err
 	case 0x7362d09c:
 		var res JettonNotifyMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -602,6 +728,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res ChannelCooperativeCommitMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return ChannelCooperativeCommitMsgOp, res, err
+	case 0x79e7c016:
+		var res TonstakeControllerPoolSetSudoerMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerPoolSetSudoerMsgOp, res, err
 	case 0x79f937ea:
 		var res CloseStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -610,6 +740,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res AcceptStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return AcceptStorageContractMsgOp, res, err
+	case 0x7a756db8:
+		var res TonstakePoolSetRolesMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakePoolSetRolesMsgOp, res, err
+	case 0x7b4b42e6:
+		var res TonstakeControllerApproveMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerApproveMsgOp, res, err
 	case 0x7bcd1fef:
 		var res WhalesNominatorsDepositMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -618,6 +756,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res ReportStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return ReportStaticDataMsgOp, res, err
+	case 0x96e7f528:
+		var res TonstakeControllerPoolUpgradeMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerPoolUpgradeMsgOp, res, err
 	case 0xa8cb00ad:
 		var res ReportRoyaltyParamsMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -630,10 +772,18 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res StorageContractTerminatedMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return StorageContractTerminatedMsgOp, res, err
+	case 0xcefaaefd:
+		var res TonstakeControllerWithdrawValidatorMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerWithdrawValidatorMsgOp, res, err
 	case 0xd0c3bfea:
 		var res SbtRequestOwnerMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return SbtRequestOwnerMsgOp, res, err
+	case 0xd372158c:
+		var res TonstakeControllerTopUpMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerTopUpMsgOp, res, err
 	case 0xd4caedcd:
 		var res StorageContractConfirmedMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -650,6 +800,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res ChannelClosedMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return ChannelClosedMsgOp, res, err
+	case 0xdfdca27b:
+		var res TonstakePoolLoanRepaymentMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakePoolLoanRepaymentMsgOp, res, err
+	case 0xe0505d0e:
+		var res TonstakeControllerNewStakeMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerNewStakeMsgOp, res, err
 	case 0xe4737472:
 		var res WalletPluginDestructResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -658,10 +816,26 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res DeployStorageContractMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return DeployStorageContractMsgOp, res, err
+	case 0xe8a0abfe:
+		var res TonstakeControllerDisapproveMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerDisapproveMsgOp, res, err
+	case 0xeb373a05:
+		var res TonstakeControllerRecoverStakeMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerRecoverStakeMsgOp, res, err
+	case 0xed7378a6:
+		var res TonstakeControllerReturnUnusedLoanMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerReturnUnusedLoanMsgOp, res, err
 	case 0xf06c7567:
 		var res PaymentRequestResponseMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return PaymentRequestResponseMsgOp, res, err
+	case 0xf0fd2250:
+		var res TonstakeControllerUpdateValidatorHashMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakeControllerUpdateValidatorHashMsgOp, res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
 }
@@ -670,109 +844,147 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 type MsgOpName = string
 
 const (
-	TextCommentMsgOp                      MsgOpName = "TextComment"
-	ProveOwnershipMsgOp                   MsgOpName = "ProveOwnership"
-	NftOwnershipAssignedMsgOp             MsgOpName = "NftOwnershipAssigned"
-	OwnershipProofMsgOp                   MsgOpName = "OwnershipProof"
-	ChallengeQuarantinedChannelStateMsgOp MsgOpName = "ChallengeQuarantinedChannelState"
-	SbtOwnerInfoMsgOp                     MsgOpName = "SbtOwnerInfo"
-	InitPaymentChannelMsgOp               MsgOpName = "InitPaymentChannel"
-	JettonTransferMsgOp                   MsgOpName = "JettonTransfer"
-	OfferStorageContractMsgOp             MsgOpName = "OfferStorageContract"
-	JettonInternalTransferMsgOp           MsgOpName = "JettonInternalTransfer"
-	SbtDestroyMsgOp                       MsgOpName = "SbtDestroy"
-	StartUncooperativeChannelCloseMsgOp   MsgOpName = "StartUncooperativeChannelClose"
-	FinishUncooperativeChannelCloseMsgOp  MsgOpName = "FinishUncooperativeChannelClose"
-	TeleitemDeployMsgOp                   MsgOpName = "TeleitemDeploy"
-	GetStaticDataMsgOp                    MsgOpName = "GetStaticData"
-	TeleitemCancelAuctionMsgOp            MsgOpName = "TeleitemCancelAuction"
-	ProofStorageMsgOp                     MsgOpName = "ProofStorage"
-	TelemintDeployMsgOp                   MsgOpName = "TelemintDeploy"
-	TelemintDeployV2MsgOp                 MsgOpName = "TelemintDeployV2"
-	StorageWithdrawMsgOp                  MsgOpName = "StorageWithdraw"
-	TeleitemStartAuctionMsgOp             MsgOpName = "TeleitemStartAuction"
-	UpdatePubkeyMsgOp                     MsgOpName = "UpdatePubkey"
-	UpdateStorageParamsMsgOp              MsgOpName = "UpdateStorageParams"
-	ChannelCooperativeCloseMsgOp          MsgOpName = "ChannelCooperativeClose"
-	JettonBurnMsgOp                       MsgOpName = "JettonBurn"
-	NftTransferMsgOp                      MsgOpName = "NftTransfer"
-	WalletPluginDestructMsgOp             MsgOpName = "WalletPluginDestruct"
-	SettleChannelConditionalsMsgOp        MsgOpName = "SettleChannelConditionals"
-	TopUpChannelBalanceMsgOp              MsgOpName = "TopUpChannelBalance"
-	GetRoyaltyParamsMsgOp                 MsgOpName = "GetRoyaltyParams"
-	SbtRevokeMsgOp                        MsgOpName = "SbtRevoke"
-	PaymentRequestMsgOp                   MsgOpName = "PaymentRequest"
-	JettonNotifyMsgOp                     MsgOpName = "JettonNotify"
-	SubscriptionPaymentMsgOp              MsgOpName = "SubscriptionPayment"
-	ChannelCooperativeCommitMsgOp         MsgOpName = "ChannelCooperativeCommit"
-	CloseStorageContractMsgOp             MsgOpName = "CloseStorageContract"
-	AcceptStorageContractMsgOp            MsgOpName = "AcceptStorageContract"
-	WhalesNominatorsDepositMsgOp          MsgOpName = "WhalesNominatorsDeposit"
-	ReportStaticDataMsgOp                 MsgOpName = "ReportStaticData"
-	ReportRoyaltyParamsMsgOp              MsgOpName = "ReportRoyaltyParams"
-	StorageRewardWithdrawalMsgOp          MsgOpName = "StorageRewardWithdrawal"
-	StorageContractTerminatedMsgOp        MsgOpName = "StorageContractTerminated"
-	SbtRequestOwnerMsgOp                  MsgOpName = "SbtRequestOwner"
-	StorageContractConfirmedMsgOp         MsgOpName = "StorageContractConfirmed"
-	ExcessMsgOp                           MsgOpName = "Excess"
-	WhalesNominatorsWithdrawMsgOp         MsgOpName = "WhalesNominatorsWithdraw"
-	ChannelClosedMsgOp                    MsgOpName = "ChannelClosed"
-	WalletPluginDestructResponseMsgOp     MsgOpName = "WalletPluginDestructResponse"
-	DeployStorageContractMsgOp            MsgOpName = "DeployStorageContract"
-	PaymentRequestResponseMsgOp           MsgOpName = "PaymentRequestResponse"
+	TextCommentMsgOp                           MsgOpName = "TextComment"
+	ProveOwnershipMsgOp                        MsgOpName = "ProveOwnership"
+	NftOwnershipAssignedMsgOp                  MsgOpName = "NftOwnershipAssigned"
+	OwnershipProofMsgOp                        MsgOpName = "OwnershipProof"
+	ChallengeQuarantinedChannelStateMsgOp      MsgOpName = "ChallengeQuarantinedChannelState"
+	SbtOwnerInfoMsgOp                          MsgOpName = "SbtOwnerInfo"
+	InitPaymentChannelMsgOp                    MsgOpName = "InitPaymentChannel"
+	JettonTransferMsgOp                        MsgOpName = "JettonTransfer"
+	OfferStorageContractMsgOp                  MsgOpName = "OfferStorageContract"
+	TonstakeControllerPoolHaltMsgOp            MsgOpName = "TonstakeControllerPoolHalt"
+	TonstakeControllerCreditMsgOp              MsgOpName = "TonstakeControllerCredit"
+	JettonInternalTransferMsgOp                MsgOpName = "JettonInternalTransfer"
+	SbtDestroyMsgOp                            MsgOpName = "SbtDestroy"
+	StartUncooperativeChannelCloseMsgOp        MsgOpName = "StartUncooperativeChannelClose"
+	FinishUncooperativeChannelCloseMsgOp       MsgOpName = "FinishUncooperativeChannelClose"
+	TonstakeControllerPoolSendMessageMsgOp     MsgOpName = "TonstakeControllerPoolSendMessage"
+	TeleitemDeployMsgOp                        MsgOpName = "TeleitemDeploy"
+	GetStaticDataMsgOp                         MsgOpName = "GetStaticData"
+	TonstakePoolWithdrawMsgOp                  MsgOpName = "TonstakePoolWithdraw"
+	TeleitemCancelAuctionMsgOp                 MsgOpName = "TeleitemCancelAuction"
+	ProofStorageMsgOp                          MsgOpName = "ProofStorage"
+	TonstakeControllerSendRequestLoanMsgOp     MsgOpName = "TonstakeControllerSendRequestLoan"
+	TelemintDeployMsgOp                        MsgOpName = "TelemintDeploy"
+	TelemintDeployV2MsgOp                      MsgOpName = "TelemintDeployV2"
+	StorageWithdrawMsgOp                       MsgOpName = "StorageWithdraw"
+	TonstakePoolDepositMsgOp                   MsgOpName = "TonstakePoolDeposit"
+	TeleitemStartAuctionMsgOp                  MsgOpName = "TeleitemStartAuction"
+	UpdatePubkeyMsgOp                          MsgOpName = "UpdatePubkey"
+	UpdateStorageParamsMsgOp                   MsgOpName = "UpdateStorageParams"
+	ChannelCooperativeCloseMsgOp               MsgOpName = "ChannelCooperativeClose"
+	JettonBurnMsgOp                            MsgOpName = "JettonBurn"
+	NftTransferMsgOp                           MsgOpName = "NftTransfer"
+	WalletPluginDestructMsgOp                  MsgOpName = "WalletPluginDestruct"
+	SettleChannelConditionalsMsgOp             MsgOpName = "SettleChannelConditionals"
+	TopUpChannelBalanceMsgOp                   MsgOpName = "TopUpChannelBalance"
+	GetRoyaltyParamsMsgOp                      MsgOpName = "GetRoyaltyParams"
+	SbtRevokeMsgOp                             MsgOpName = "SbtRevoke"
+	PaymentRequestMsgOp                        MsgOpName = "PaymentRequest"
+	TonstakeControllerPoolUnhaltMsgOp          MsgOpName = "TonstakeControllerPoolUnhalt"
+	JettonNotifyMsgOp                          MsgOpName = "JettonNotify"
+	SubscriptionPaymentMsgOp                   MsgOpName = "SubscriptionPayment"
+	ChannelCooperativeCommitMsgOp              MsgOpName = "ChannelCooperativeCommit"
+	TonstakeControllerPoolSetSudoerMsgOp       MsgOpName = "TonstakeControllerPoolSetSudoer"
+	CloseStorageContractMsgOp                  MsgOpName = "CloseStorageContract"
+	AcceptStorageContractMsgOp                 MsgOpName = "AcceptStorageContract"
+	TonstakePoolSetRolesMsgOp                  MsgOpName = "TonstakePoolSetRoles"
+	TonstakeControllerApproveMsgOp             MsgOpName = "TonstakeControllerApprove"
+	WhalesNominatorsDepositMsgOp               MsgOpName = "WhalesNominatorsDeposit"
+	ReportStaticDataMsgOp                      MsgOpName = "ReportStaticData"
+	TonstakeControllerPoolUpgradeMsgOp         MsgOpName = "TonstakeControllerPoolUpgrade"
+	ReportRoyaltyParamsMsgOp                   MsgOpName = "ReportRoyaltyParams"
+	StorageRewardWithdrawalMsgOp               MsgOpName = "StorageRewardWithdrawal"
+	StorageContractTerminatedMsgOp             MsgOpName = "StorageContractTerminated"
+	TonstakeControllerWithdrawValidatorMsgOp   MsgOpName = "TonstakeControllerWithdrawValidator"
+	SbtRequestOwnerMsgOp                       MsgOpName = "SbtRequestOwner"
+	TonstakeControllerTopUpMsgOp               MsgOpName = "TonstakeControllerTopUp"
+	StorageContractConfirmedMsgOp              MsgOpName = "StorageContractConfirmed"
+	ExcessMsgOp                                MsgOpName = "Excess"
+	WhalesNominatorsWithdrawMsgOp              MsgOpName = "WhalesNominatorsWithdraw"
+	ChannelClosedMsgOp                         MsgOpName = "ChannelClosed"
+	TonstakePoolLoanRepaymentMsgOp             MsgOpName = "TonstakePoolLoanRepayment"
+	TonstakeControllerNewStakeMsgOp            MsgOpName = "TonstakeControllerNewStake"
+	WalletPluginDestructResponseMsgOp          MsgOpName = "WalletPluginDestructResponse"
+	DeployStorageContractMsgOp                 MsgOpName = "DeployStorageContract"
+	TonstakeControllerDisapproveMsgOp          MsgOpName = "TonstakeControllerDisapprove"
+	TonstakeControllerRecoverStakeMsgOp        MsgOpName = "TonstakeControllerRecoverStake"
+	TonstakeControllerReturnUnusedLoanMsgOp    MsgOpName = "TonstakeControllerReturnUnusedLoan"
+	PaymentRequestResponseMsgOp                MsgOpName = "PaymentRequestResponse"
+	TonstakeControllerUpdateValidatorHashMsgOp MsgOpName = "TonstakeControllerUpdateValidatorHash"
 )
 
 var KnownMsgTypes = map[string]any{
-	TextCommentMsgOp:                      TextCommentMsgBody{},
-	ProveOwnershipMsgOp:                   ProveOwnershipMsgBody{},
-	NftOwnershipAssignedMsgOp:             NftOwnershipAssignedMsgBody{},
-	OwnershipProofMsgOp:                   OwnershipProofMsgBody{},
-	ChallengeQuarantinedChannelStateMsgOp: ChallengeQuarantinedChannelStateMsgBody{},
-	SbtOwnerInfoMsgOp:                     SbtOwnerInfoMsgBody{},
-	InitPaymentChannelMsgOp:               InitPaymentChannelMsgBody{},
-	JettonTransferMsgOp:                   JettonTransferMsgBody{},
-	OfferStorageContractMsgOp:             OfferStorageContractMsgBody{},
-	JettonInternalTransferMsgOp:           JettonInternalTransferMsgBody{},
-	SbtDestroyMsgOp:                       SbtDestroyMsgBody{},
-	StartUncooperativeChannelCloseMsgOp:   StartUncooperativeChannelCloseMsgBody{},
-	FinishUncooperativeChannelCloseMsgOp:  FinishUncooperativeChannelCloseMsgBody{},
-	TeleitemDeployMsgOp:                   TeleitemDeployMsgBody{},
-	GetStaticDataMsgOp:                    GetStaticDataMsgBody{},
-	TeleitemCancelAuctionMsgOp:            TeleitemCancelAuctionMsgBody{},
-	ProofStorageMsgOp:                     ProofStorageMsgBody{},
-	TelemintDeployMsgOp:                   TelemintDeployMsgBody{},
-	TelemintDeployV2MsgOp:                 TelemintDeployV2MsgBody{},
-	StorageWithdrawMsgOp:                  StorageWithdrawMsgBody{},
-	TeleitemStartAuctionMsgOp:             TeleitemStartAuctionMsgBody{},
-	UpdatePubkeyMsgOp:                     UpdatePubkeyMsgBody{},
-	UpdateStorageParamsMsgOp:              UpdateStorageParamsMsgBody{},
-	ChannelCooperativeCloseMsgOp:          ChannelCooperativeCloseMsgBody{},
-	JettonBurnMsgOp:                       JettonBurnMsgBody{},
-	NftTransferMsgOp:                      NftTransferMsgBody{},
-	WalletPluginDestructMsgOp:             WalletPluginDestructMsgBody{},
-	SettleChannelConditionalsMsgOp:        SettleChannelConditionalsMsgBody{},
-	TopUpChannelBalanceMsgOp:              TopUpChannelBalanceMsgBody{},
-	GetRoyaltyParamsMsgOp:                 GetRoyaltyParamsMsgBody{},
-	SbtRevokeMsgOp:                        SbtRevokeMsgBody{},
-	PaymentRequestMsgOp:                   PaymentRequestMsgBody{},
-	JettonNotifyMsgOp:                     JettonNotifyMsgBody{},
-	SubscriptionPaymentMsgOp:              SubscriptionPaymentMsgBody{},
-	ChannelCooperativeCommitMsgOp:         ChannelCooperativeCommitMsgBody{},
-	CloseStorageContractMsgOp:             CloseStorageContractMsgBody{},
-	AcceptStorageContractMsgOp:            AcceptStorageContractMsgBody{},
-	WhalesNominatorsDepositMsgOp:          WhalesNominatorsDepositMsgBody{},
-	ReportStaticDataMsgOp:                 ReportStaticDataMsgBody{},
-	ReportRoyaltyParamsMsgOp:              ReportRoyaltyParamsMsgBody{},
-	StorageRewardWithdrawalMsgOp:          StorageRewardWithdrawalMsgBody{},
-	StorageContractTerminatedMsgOp:        StorageContractTerminatedMsgBody{},
-	SbtRequestOwnerMsgOp:                  SbtRequestOwnerMsgBody{},
-	StorageContractConfirmedMsgOp:         StorageContractConfirmedMsgBody{},
-	ExcessMsgOp:                           ExcessMsgBody{},
-	WhalesNominatorsWithdrawMsgOp:         WhalesNominatorsWithdrawMsgBody{},
-	ChannelClosedMsgOp:                    ChannelClosedMsgBody{},
-	WalletPluginDestructResponseMsgOp:     WalletPluginDestructResponseMsgBody{},
-	DeployStorageContractMsgOp:            DeployStorageContractMsgBody{},
-	PaymentRequestResponseMsgOp:           PaymentRequestResponseMsgBody{},
+	TextCommentMsgOp:                           TextCommentMsgBody{},
+	ProveOwnershipMsgOp:                        ProveOwnershipMsgBody{},
+	NftOwnershipAssignedMsgOp:                  NftOwnershipAssignedMsgBody{},
+	OwnershipProofMsgOp:                        OwnershipProofMsgBody{},
+	ChallengeQuarantinedChannelStateMsgOp:      ChallengeQuarantinedChannelStateMsgBody{},
+	SbtOwnerInfoMsgOp:                          SbtOwnerInfoMsgBody{},
+	InitPaymentChannelMsgOp:                    InitPaymentChannelMsgBody{},
+	JettonTransferMsgOp:                        JettonTransferMsgBody{},
+	OfferStorageContractMsgOp:                  OfferStorageContractMsgBody{},
+	TonstakeControllerPoolHaltMsgOp:            TonstakeControllerPoolHaltMsgBody{},
+	TonstakeControllerCreditMsgOp:              TonstakeControllerCreditMsgBody{},
+	JettonInternalTransferMsgOp:                JettonInternalTransferMsgBody{},
+	SbtDestroyMsgOp:                            SbtDestroyMsgBody{},
+	StartUncooperativeChannelCloseMsgOp:        StartUncooperativeChannelCloseMsgBody{},
+	FinishUncooperativeChannelCloseMsgOp:       FinishUncooperativeChannelCloseMsgBody{},
+	TonstakeControllerPoolSendMessageMsgOp:     TonstakeControllerPoolSendMessageMsgBody{},
+	TeleitemDeployMsgOp:                        TeleitemDeployMsgBody{},
+	GetStaticDataMsgOp:                         GetStaticDataMsgBody{},
+	TonstakePoolWithdrawMsgOp:                  TonstakePoolWithdrawMsgBody{},
+	TeleitemCancelAuctionMsgOp:                 TeleitemCancelAuctionMsgBody{},
+	ProofStorageMsgOp:                          ProofStorageMsgBody{},
+	TonstakeControllerSendRequestLoanMsgOp:     TonstakeControllerSendRequestLoanMsgBody{},
+	TelemintDeployMsgOp:                        TelemintDeployMsgBody{},
+	TelemintDeployV2MsgOp:                      TelemintDeployV2MsgBody{},
+	StorageWithdrawMsgOp:                       StorageWithdrawMsgBody{},
+	TonstakePoolDepositMsgOp:                   TonstakePoolDepositMsgBody{},
+	TeleitemStartAuctionMsgOp:                  TeleitemStartAuctionMsgBody{},
+	UpdatePubkeyMsgOp:                          UpdatePubkeyMsgBody{},
+	UpdateStorageParamsMsgOp:                   UpdateStorageParamsMsgBody{},
+	ChannelCooperativeCloseMsgOp:               ChannelCooperativeCloseMsgBody{},
+	JettonBurnMsgOp:                            JettonBurnMsgBody{},
+	NftTransferMsgOp:                           NftTransferMsgBody{},
+	WalletPluginDestructMsgOp:                  WalletPluginDestructMsgBody{},
+	SettleChannelConditionalsMsgOp:             SettleChannelConditionalsMsgBody{},
+	TopUpChannelBalanceMsgOp:                   TopUpChannelBalanceMsgBody{},
+	GetRoyaltyParamsMsgOp:                      GetRoyaltyParamsMsgBody{},
+	SbtRevokeMsgOp:                             SbtRevokeMsgBody{},
+	PaymentRequestMsgOp:                        PaymentRequestMsgBody{},
+	TonstakeControllerPoolUnhaltMsgOp:          TonstakeControllerPoolUnhaltMsgBody{},
+	JettonNotifyMsgOp:                          JettonNotifyMsgBody{},
+	SubscriptionPaymentMsgOp:                   SubscriptionPaymentMsgBody{},
+	ChannelCooperativeCommitMsgOp:              ChannelCooperativeCommitMsgBody{},
+	TonstakeControllerPoolSetSudoerMsgOp:       TonstakeControllerPoolSetSudoerMsgBody{},
+	CloseStorageContractMsgOp:                  CloseStorageContractMsgBody{},
+	AcceptStorageContractMsgOp:                 AcceptStorageContractMsgBody{},
+	TonstakePoolSetRolesMsgOp:                  TonstakePoolSetRolesMsgBody{},
+	TonstakeControllerApproveMsgOp:             TonstakeControllerApproveMsgBody{},
+	WhalesNominatorsDepositMsgOp:               WhalesNominatorsDepositMsgBody{},
+	ReportStaticDataMsgOp:                      ReportStaticDataMsgBody{},
+	TonstakeControllerPoolUpgradeMsgOp:         TonstakeControllerPoolUpgradeMsgBody{},
+	ReportRoyaltyParamsMsgOp:                   ReportRoyaltyParamsMsgBody{},
+	StorageRewardWithdrawalMsgOp:               StorageRewardWithdrawalMsgBody{},
+	StorageContractTerminatedMsgOp:             StorageContractTerminatedMsgBody{},
+	TonstakeControllerWithdrawValidatorMsgOp:   TonstakeControllerWithdrawValidatorMsgBody{},
+	SbtRequestOwnerMsgOp:                       SbtRequestOwnerMsgBody{},
+	TonstakeControllerTopUpMsgOp:               TonstakeControllerTopUpMsgBody{},
+	StorageContractConfirmedMsgOp:              StorageContractConfirmedMsgBody{},
+	ExcessMsgOp:                                ExcessMsgBody{},
+	WhalesNominatorsWithdrawMsgOp:              WhalesNominatorsWithdrawMsgBody{},
+	ChannelClosedMsgOp:                         ChannelClosedMsgBody{},
+	TonstakePoolLoanRepaymentMsgOp:             TonstakePoolLoanRepaymentMsgBody{},
+	TonstakeControllerNewStakeMsgOp:            TonstakeControllerNewStakeMsgBody{},
+	WalletPluginDestructResponseMsgOp:          WalletPluginDestructResponseMsgBody{},
+	DeployStorageContractMsgOp:                 DeployStorageContractMsgBody{},
+	TonstakeControllerDisapproveMsgOp:          TonstakeControllerDisapproveMsgBody{},
+	TonstakeControllerRecoverStakeMsgOp:        TonstakeControllerRecoverStakeMsgBody{},
+	TonstakeControllerReturnUnusedLoanMsgOp:    TonstakeControllerReturnUnusedLoanMsgBody{},
+	PaymentRequestResponseMsgOp:                PaymentRequestResponseMsgBody{},
+	TonstakeControllerUpdateValidatorHashMsgOp: TonstakeControllerUpdateValidatorHashMsgBody{},
 }
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){

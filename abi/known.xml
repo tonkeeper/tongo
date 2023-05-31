@@ -728,17 +728,17 @@
         adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;
     </internal>
     <internal name="tonstake_controller_send_request_loan" interface="controller">
-        send_request_loan#452f7112 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint18 = InternalMsgBody;
+        send_request_loan#452f7112 query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint18 = InternalMsgBody;
     </internal>
     <internal name="tonstake_controller_return_unused_loan" interface="controller">
         return_unused_loan#ed7378a6 query_id:uint64 = InternalMsgBody;
     </internal>
 
     <!-- TonStake messages to pool -->
-    <internal name="tonstake_pool_request_loan" interface="pool">
-        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint18 validator:MsgAddress
-        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;
-    </internal>
+<!--    <internal name="tonstake_pool_request_loan" interface="pool">-->
+<!--        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint18 validator:MsgAddress-->
+<!--        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;-->
+<!--    </internal>-->
     <internal name="tonstake_pool_loan_repayment" interface="pool">
         loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;
     </internal>

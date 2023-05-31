@@ -1,10 +1,4 @@
 <abi>
-    <types interface="tep62">
-        snake#00 data:(SnakeData ~n) = ContentData;
-        chunks#01 data:ChunkedData = ContentData;
-        onchain#00 data:(HashmapE 256 ^ContentData) = FullContent;
-        offchain#01 uri:Text = FullContent;
-    </types>
     <types interface="payment_channel">
         cp#_ amount:Coins condition:Cell = ConditionalPayment;
         sc_body#_ seqno:uint64 sent:Coins conditionals:(HashmapE 32 ConditionalPayment)

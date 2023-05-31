@@ -10,26 +10,6 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-type ContentData struct {
-	tlb.SumType
-	Snake struct {
-		Data tlb.SnakeData
-	} `tlbSumType:"#00"`
-	Chunks struct {
-		Data tlb.ChunkedData
-	} `tlbSumType:"#01"`
-}
-
-type FullContent struct {
-	tlb.SumType
-	Onchain struct {
-		Data tlb.HashmapE[tlb.Bits256, tlb.Ref[ContentData]]
-	} `tlbSumType:"#00"`
-	Offchain struct {
-		Uri tlb.Text
-	} `tlbSumType:"#01"`
-}
-
 type ClosingConfig struct {
 	QuarantinDuration        uint32
 	MisbehaviorFine          tlb.Grams
@@ -1335,7 +1315,7 @@ func DecodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any
 }
 
 type GetNftContentResult struct {
-	Content FullContent
+	Content tlb.FullContent
 }
 
 func GetNftContent(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, index tlb.Int257, individualContent tlb.Any) (string, any, error) {

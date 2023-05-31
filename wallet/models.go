@@ -173,7 +173,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		CreatedAt   uint32
 	}{
 		IhrDisabled: true,
-		Bounce:      false,
+		Bounce:      true,
 		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
 	}

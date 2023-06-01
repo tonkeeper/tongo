@@ -166,7 +166,7 @@ func (s *Server) CheckProof(tp *Proof) (bool, ed25519.PublicKey, error) {
 		if ok, err := compareStateInitWithAddress(accountID, tp.Proof.StateInit); err != nil || !ok {
 			return false, nil, fmt.Errorf("failed compare state init with address")
 		}
-		pubKey, err = parseStateInit(tp.Proof.StateInit)
+		pubKey, err = ParseStateInit(tp.Proof.StateInit)
 		if err != nil {
 			return false, nil, fmt.Errorf("failed get public key")
 		}
@@ -292,7 +292,7 @@ func signatureVerify(pubKey ed25519.PublicKey, message, signature []byte) bool {
 	return ed25519.Verify(pubKey, message, signature)
 }
 
-func parseStateInit(stateInit string) ([]byte, error) {
+func ParseStateInit(stateInit string) ([]byte, error) {
 	cells, err := boc.DeserializeBocBase64(stateInit)
 	if err != nil || len(cells) != 1 {
 		return nil, err

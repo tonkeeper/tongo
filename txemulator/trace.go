@@ -37,48 +37,76 @@ type accountGetter interface {
 }
 
 func WithConfig(c *boc.Cell) TraceOption {
-	return func(o *TraceOptions) {
-		o.config, _ = c.ToBocBase64()
+	return func(o *TraceOptions) error {
+		var err error
+		o.config, err = c.ToBocBase64()
+		return err
 	}
 }
 
 func WithConfigBase64(c string) TraceOption {
-	return func(o *TraceOptions) {
+	return func(o *TraceOptions) error {
 		o.config = c
+		return nil
 	}
 }
 
 func WithLimit(l int) TraceOption {
-	return func(o *TraceOptions) {
+	return func(o *TraceOptions) error {
 		o.limit = l
+		return nil
 	}
 }
 
 func WithTime(t int64) TraceOption {
-	return func(o *TraceOptions) {
+	return func(o *TraceOptions) error {
 		o.time = t
+		return nil
 	}
 }
 
-func WithPredefinedAccounts(m map[tongo.AccountID]tlb.ShardAccount) TraceOption {
-	return func(o *TraceOptions) {
+func WithAccountsMap(m map[tongo.AccountID]tlb.ShardAccount) TraceOption {
+	return func(o *TraceOptions) error {
 		o.predefinedAccounts = m
+		return nil
+	}
+}
+func WithAccounts(accounts ...tlb.ShardAccount) TraceOption {
+	return func(o *TraceOptions) error {
+		for i := range accounts {
+			a, err := tongo.AccountIDFromTlb(accounts[i].Account.Account.Addr)
+			if err != nil {
+				return err
+			}
+			o.predefinedAccounts[*a] = accounts[i]
+		}
+		return nil
+	}
+}
+
+func WithTestnet() TraceOption {
+	return func(o *TraceOptions) error {
+		var err error
+		o.blockchain, err = liteapi.NewClientWithDefaultTestnet()
+		return err
 	}
 }
 
 func WithAccountsSource(b accountGetter) TraceOption {
-	return func(o *TraceOptions) {
+	return func(o *TraceOptions) error {
 		o.blockchain = b
+		return nil
 	}
 }
 
 func WithSignatureCheck() TraceOption {
-	return func(o *TraceOptions) {
+	return func(o *TraceOptions) error {
 		o.checkSignature = true
+		return nil
 	}
 }
 
-type TraceOption func(o *TraceOptions)
+type TraceOption func(o *TraceOptions) error
 
 func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	option := TraceOptions{
@@ -90,7 +118,10 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		predefinedAccounts: make(map[tongo.AccountID]tlb.ShardAccount),
 	}
 	for _, o := range options {
-		o(&option)
+		err := o(&option)
+		if err != nil {
+			return nil, err
+		}
 	}
 	if option.blockchain == nil {
 		var err error

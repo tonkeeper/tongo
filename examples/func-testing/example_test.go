@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/code"
-	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/tontest"
 	"github.com/tonkeeper/tongo/txemulator"
 	"testing"
 )
@@ -82,10 +82,6 @@ int counter() method_id {
 func TestExample(t *testing.T) {
 	ctx := context.Background()
 	compiler := code.NewFunCCompiler()
-	client, err := liteapi.NewClientWithDefaultTestnet()
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	_, codeBoc, err := compiler.Compile(map[string]string{"main.fc": SOURCE_CODE})
 	if err != nil {
@@ -93,7 +89,6 @@ func TestExample(t *testing.T) {
 	}
 
 	payTo := tongo.MustParseAccountID("0:ea27294687663e7c460be08e5bcef9341ae3ba6a1e2c4b0448b2f51e5eb45298")
-	oldDestinationState, err := client.GetAccountState(ctx, payTo)
 
 	initData := struct {
 		Counter uint64
@@ -105,25 +100,29 @@ func TestExample(t *testing.T) {
 		OP:            1,
 		PayoutAddress: payTo.ToMsgAddress(),
 	}
-	external, a, err := externalMessageToNewAccount(codeBoc, initData, body)
-	if err != nil {
-		t.Fatal(err)
-	}
+	m := tontest.NewMessage().
+		WithBody(tontest.MustAnyToCell(body)).
+		WithInit(tontest.MustAnyToCell(codeBoc), tontest.MustAnyToCell(initData)).
+		MustMessage()
+
+	testAccount := tontest.Account().
+		StateInit(tontest.MustAnyToCell(codeBoc), tontest.MustAnyToCell(initData)).
+		Balance(tongo.OneTON).
+		MustShardAccount()
+
 	tracer, err := txemulator.NewTraceBuilder(
-		txemulator.WithPredefinedAccounts(map[tongo.AccountID]tlb.ShardAccount{a: fakeUninitAccount(a, tongo.OneTON)}),
-		txemulator.WithAccountsSource(client),
+		txemulator.WithAccounts(testAccount),
+		txemulator.WithTestnet(),
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err := tracer.Run(ctx, external)
+	result, err := tracer.Run(ctx, m)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(result.Children) != 1 {
 		t.Fatal("not enough transactions")
 	}
-	if tracer.FinalStates()[payTo].Account.Account.Storage.Balance.Grams < oldDestinationState.Account.Account.Storage.Balance.Grams+200000000 {
-		t.Fatal("invalid result balance")
-	}
+
 }

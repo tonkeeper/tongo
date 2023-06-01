@@ -1,0 +1,210 @@
+package txemulator
+
+import (
+	"context"
+	"fmt"
+	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/tlb"
+	"time"
+)
+
+type Tracer struct {
+	e                   *Emulator
+	currentShardAccount map[tongo.AccountID]tlb.ShardAccount
+	blockchain          accountGetter
+	counter             int
+	limit               int
+}
+
+type TxTree struct {
+	TX       tlb.Transaction
+	Children []*TxTree
+}
+
+type TraceOptions struct {
+	config             string
+	limit              int
+	blockchain         accountGetter
+	time               int64
+	checkSignature     bool
+	predefinedAccounts map[tongo.AccountID]tlb.ShardAccount
+}
+
+type accountGetter interface {
+	GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error)
+}
+
+func WithConfig(c *boc.Cell) TraceOption {
+	return func(o *TraceOptions) error {
+		var err error
+		o.config, err = c.ToBocBase64()
+		return err
+	}
+}
+
+func WithConfigBase64(c string) TraceOption {
+	return func(o *TraceOptions) error {
+		o.config = c
+		return nil
+	}
+}
+
+func WithLimit(l int) TraceOption {
+	return func(o *TraceOptions) error {
+		o.limit = l
+		return nil
+	}
+}
+
+func WithTime(t int64) TraceOption {
+	return func(o *TraceOptions) error {
+		o.time = t
+		return nil
+	}
+}
+
+func WithAccountsMap(m map[tongo.AccountID]tlb.ShardAccount) TraceOption {
+	return func(o *TraceOptions) error {
+		o.predefinedAccounts = m
+		return nil
+	}
+}
+func WithAccounts(accounts ...tlb.ShardAccount) TraceOption {
+	return func(o *TraceOptions) error {
+		for i := range accounts {
+			a, err := tongo.AccountIDFromTlb(accounts[i].Account.Account.Addr)
+			if err != nil {
+				return err
+			}
+			o.predefinedAccounts[*a] = accounts[i]
+		}
+		return nil
+	}
+}
+
+func WithTestnet() TraceOption {
+	return func(o *TraceOptions) error {
+		var err error
+		o.blockchain, err = liteapi.NewClientWithDefaultTestnet()
+		return err
+	}
+}
+
+func WithAccountsSource(b accountGetter) TraceOption {
+	return func(o *TraceOptions) error {
+		o.blockchain = b
+		return nil
+	}
+}
+
+func WithSignatureCheck() TraceOption {
+	return func(o *TraceOptions) error {
+		o.checkSignature = true
+		return nil
+	}
+}
+
+type TraceOption func(o *TraceOptions) error
+
+func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
+	option := TraceOptions{
+		config:             DefaultConfig,
+		limit:              100,
+		blockchain:         nil,
+		time:               time.Now().Unix(),
+		checkSignature:     false,
+		predefinedAccounts: make(map[tongo.AccountID]tlb.ShardAccount),
+	}
+	for _, o := range options {
+		err := o(&option)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if option.blockchain == nil {
+		var err error
+		option.blockchain, err = liteapi.NewClientWithDefaultMainnet()
+		if err != nil {
+			return nil, err
+		}
+	}
+	e, err := newEmulatorBase64(option.config, LogTruncated)
+	if err != nil {
+		return nil, err
+	}
+	err = e.SetUnixtime(uint32(option.time))
+	if err != nil {
+		return nil, err
+	}
+	err = e.SetIgnoreSignatureCheck(!option.checkSignature)
+	if err != nil {
+		return nil, err
+	}
+	return &Tracer{
+		e:                   e,
+		currentShardAccount: option.predefinedAccounts,
+		blockchain:          option.blockchain,
+		limit:               option.limit,
+	}, nil
+}
+
+func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) {
+	if t.counter >= t.limit {
+		return nil, fmt.Errorf("to many iterations: %v/%v", t.counter, t.limit)
+	}
+	var a tlb.MsgAddress
+	switch message.Info.SumType {
+	case "IntMsgInfo":
+		a = message.Info.IntMsgInfo.Dest
+	case "ExtInMsgInfo":
+		a = message.Info.ExtInMsgInfo.Dest
+	default:
+		return nil, fmt.Errorf("can't emulate message with type %v", message.Info.SumType)
+	}
+	accountAddr, err := tongo.AccountIDFromTlb(a)
+	if err != nil {
+		return nil, err
+	}
+	if accountAddr == nil {
+		return nil, fmt.Errorf("destination account is null")
+	}
+	state, prs := t.currentShardAccount[*accountAddr]
+	if !prs {
+		state, err = t.blockchain.GetAccountState(ctx, *accountAddr)
+		if err != nil {
+			return nil, err
+		}
+	}
+	result, err := t.e.Emulate(state, message)
+	if err != nil {
+		return nil, err
+	}
+	if result.Error != nil {
+		return nil, fmt.Errorf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, result.Error.ExitCode, result.Error.Text)
+	}
+	if result.Emulation == nil {
+		return nil, fmt.Errorf("empty emulation result on iteration %v", t.counter)
+	}
+	t.counter++
+	t.currentShardAccount[*accountAddr] = result.Emulation.ShardAccount
+	tree := &TxTree{
+		TX: result.Emulation.Transaction,
+	}
+	for _, m := range result.Emulation.Transaction.Msgs.OutMsgs.Values() {
+		if m.Value.Info.SumType == "ExtOutMsgInfo" {
+			continue
+		}
+		child, err := t.Run(ctx, m.Value)
+		if err != nil {
+			return tree, err
+		}
+		tree.Children = append(tree.Children, child)
+	}
+	return tree, err
+}
+
+func (t *Tracer) FinalStates() map[tongo.AccountID]tlb.ShardAccount {
+	return t.currentShardAccount
+}

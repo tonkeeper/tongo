@@ -13,17 +13,19 @@ type ShardAccount struct {
 
 // Account
 // account_none$0 = Account;
-// account$1 addr:MsgAddressInt storage_stat:StorageInfo
-// storage:AccountStorage = Account;
 type Account struct {
 	SumType
 	AccountNone struct {
 	} `tlbSumType:"account_none$0"`
-	Account struct {
-		Addr        MsgAddress
-		StorageStat StorageInfo
-		Storage     AccountStorage
-	} `tlbSumType:"account$1"`
+	Account ExistedAccount `tlbSumType:"account$1"`
+}
+
+// account$1 addr:MsgAddressInt storage_stat:StorageInfo
+// storage:AccountStorage = Account;
+type ExistedAccount struct {
+	Addr        MsgAddress
+	StorageStat StorageInfo
+	Storage     AccountStorage
 }
 
 func (a Account) Status() AccountStatus {

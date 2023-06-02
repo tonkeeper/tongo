@@ -184,8 +184,13 @@ func (w *Wallet) RawSend(
 		Payload: tlb.Any(*bodyCell),
 	}
 	signedBodyCell := boc.NewCell()
-	err = tlb.Marshal(signedBodyCell, signedBody)
+	if err = tlb.Marshal(signedBodyCell, signedBody); err != nil {
+		return fmt.Errorf("can not marshal signed body: %v", err)
+	}
 	extMsg, err := tongo.CreateExternalMessage(w.address, signedBodyCell, init, 0)
+	if err != nil {
+		return fmt.Errorf("can not create external message: %v", err)
+	}
 	extMsgCell := boc.NewCell()
 	err = tlb.Marshal(extMsgCell, extMsg)
 	if err != nil {

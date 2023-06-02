@@ -3,10 +3,11 @@ package tontest
 import (
 	"crypto/rand"
 	"fmt"
+	"time"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"time"
 )
 
 type accountBuilder struct {
@@ -23,6 +24,11 @@ type accountBuilder struct {
 
 func Account() accountBuilder {
 	return accountBuilder{}
+}
+
+func (b accountBuilder) Address(a tongo.AccountID) accountBuilder {
+	b.address = &a
+	return b
 }
 
 func (b accountBuilder) Balance(grams tlb.Grams) accountBuilder {

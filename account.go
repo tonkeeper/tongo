@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/snksoft/crc"
-
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/utils"
 )
@@ -107,15 +106,6 @@ func (id *AccountID) ToMsgAddress() tlb.MsgAddress {
 	}
 }
 
-type AccountInfo struct {
-	Status            tlb.AccountStatus
-	Balance           uint64
-	Data              []byte
-	Code              []byte
-	FrozenHash        Bits256
-	LastTransactionLt uint64
-}
-
 func AccountIDFromBase64Url(s string) (AccountID, error) {
 	var aa AccountID
 	b, err := base64.URLEncoding.DecodeString(s)
@@ -169,41 +159,6 @@ func MustParseAccountID(s string) AccountID {
 		panic(err)
 	}
 	return aa
-}
-
-func GetAccountInfo(a tlb.Account) (AccountInfo, error) {
-	if a.SumType == "AccountNone" {
-		return AccountInfo{Status: tlb.AccountNone}, nil
-	}
-	res := AccountInfo{
-		Balance:           uint64(a.Account.Storage.Balance.Grams),
-		LastTransactionLt: a.Account.Storage.LastTransLt,
-	}
-	if a.Account.Storage.State.SumType == "AccountUninit" {
-		res.Status = tlb.AccountUninit
-		return res, nil
-	}
-	if a.Account.Storage.State.SumType == "AccountFrozen" {
-		res.FrozenHash = Bits256(a.Account.Storage.State.AccountFrozen.StateHash)
-		res.Status = tlb.AccountFrozen
-		return res, nil
-	}
-	res.Status = tlb.AccountActive
-	if a.Account.Storage.State.AccountActive.StateInit.Data.Exists {
-		data, err := a.Account.Storage.State.AccountActive.StateInit.Data.Value.Value.ToBoc()
-		if err != nil {
-			return AccountInfo{}, err
-		}
-		res.Data = data
-	}
-	if a.Account.Storage.State.AccountActive.StateInit.Code.Exists {
-		code, err := a.Account.Storage.State.AccountActive.StateInit.Code.Value.Value.ToBoc()
-		if err != nil {
-			return AccountInfo{}, err
-		}
-		res.Code = code
-	}
-	return res, nil
 }
 
 // TODO: replace pointer with nullable type

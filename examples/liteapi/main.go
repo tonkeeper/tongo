@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteapi"
 )
@@ -18,6 +19,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("Get account state error: %v", err)
 	}
-	acc, _ := tongo.GetAccountInfo(state.Account)
-	fmt.Printf("Account status: %v\nBalance: %v\n", acc.Status, acc.Balance)
+
+	fmt.Printf("Account status: %v\nBalance: %v\n", state.Account.Status(), state.Account.Account.Storage.Balance.Grams)
 }

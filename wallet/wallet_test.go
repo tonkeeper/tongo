@@ -6,12 +6,14 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"log"
+	"testing"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
-	"log"
-	"testing"
+	"github.com/tonkeeper/tongo/tontest"
 )
 
 func TestGetCodeByVer(t *testing.T) {
@@ -122,7 +124,7 @@ func TestGetSeqno(t *testing.T) {
 
 func TestMockBlockchain(t *testing.T) {
 	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
-	client, c := NewMockBlockchain(1, tongo.AccountInfo{Balance: 1000})
+	client, c := NewMockBlockchain(1, tontest.Account().Balance(10000).Address(tongo.AccountID{}).MustShardAccount())
 	w := initDefaultWallet(client)
 	tonTransfer := SimpleTransfer{
 		Amount:  10000,

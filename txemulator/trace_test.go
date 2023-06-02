@@ -8,6 +8,7 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/tontest"
 	"github.com/tonkeeper/tongo/wallet"
 )
 
@@ -26,7 +27,7 @@ func TestSimpleEmulation(t *testing.T) {
 	w, err := wallet.DefaultWalletFromSeed(SEED, client)
 	seqno := uint32(0)
 
-	mock, messages := wallet.NewMockBlockchain(seqno, tongo.AccountInfo{Status: "active"})
+	mock, messages := wallet.NewMockBlockchain(seqno, tontest.Account().Address(tongo.AccountID{}).State(tlb.AccountActive).MustShardAccount())
 	w, err = wallet.DefaultWalletFromSeed(SEED, mock)
 	if err != nil {
 		t.Fatal(err)

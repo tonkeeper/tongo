@@ -157,11 +157,7 @@ func TestGetAccountState(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			ai, err := tongo.GetAccountInfo(st.Account)
-			if err != nil {
-				t.Fatal(err)
-			}
-			fmt.Printf("Account status: %v\n", ai.Status)
+			fmt.Printf("Account status: %v\n", st.Account.Status())
 		})
 	}
 }

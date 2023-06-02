@@ -351,9 +351,5 @@ func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	accInfo, err := tongo.GetAccountInfo(state.Account)
-	if err != nil {
-		return 0, err
-	}
-	return accInfo.Balance, nil
+	return uint64(state.Account.Account.Storage.Balance.Grams), nil
 }

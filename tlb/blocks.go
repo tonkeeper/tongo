@@ -248,38 +248,45 @@ type BlockIdExt struct {
 }
 
 // ValueFlow
-// value_flow ^[ from_prev_blk:CurrencyCollection
-// to_next_blk:CurrencyCollection
-// imported:CurrencyCollection
-// exported:CurrencyCollection ]
+//
+// v1:
+// ^[ from_prev_blk:CurrencyCollection to_next_blk:CurrencyCollection imported:CurrencyCollection exported:CurrencyCollection ]
 // fees_collected:CurrencyCollection
-// ^[
-// fees_imported:CurrencyCollection
-// recovered:CurrencyCollection
-// created:CurrencyCollection
-// minted:CurrencyCollection
-// ] = ValueFlow;
+// ^[  fees_imported:CurrencyCollection recovered:CurrencyCollection  created:CurrencyCollection minted:CurrencyCollection
+// ];
+//
+// v2:
+//
+//	^[ from_prev_blk:CurrencyCollection to_next_blk:CurrencyCollection imported:CurrencyCollection exported:CurrencyCollection ]
+//	fees_collected: CurrencyCollection
+//	burned: CurrencyCollection
+//	^[ fees_imported:CurrencyCollection recovered:CurrencyCollection created:CurrencyCollection minted:CurrencyCollection ]
 type ValueFlow struct {
-	Magic         Magic `tlb:"value_flow#b8e48dfb" json:"-"`
+	Magic         Magic `json:"-"`
 	FromPrevBlk   CurrencyCollection
 	ToNextBlk     CurrencyCollection
 	Imported      CurrencyCollection
 	Exported      CurrencyCollection
 	FeesCollected CurrencyCollection
+	Burned        *CurrencyCollection
 	FeesImported  CurrencyCollection
 	Recovered     CurrencyCollection
 	Created       CurrencyCollection
 	Minted        CurrencyCollection
 }
 
+const valueFlowV1 = 0xb8e48dfb
+const valueFlowV2 = 0x3ebf98b7
+
 func (m *ValueFlow) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	sumType, err := c.ReadUint(32)
 	if err != nil {
 		return err
 	}
-	if sumType != 0xb8e48dfb {
-		return fmt.Errorf("invalid tag")
+	if sumType != valueFlowV1 && sumType != valueFlowV2 {
+		return fmt.Errorf("value flow invalid tag: %v", sumType)
 	}
+	m.Magic = Magic(sumType)
 	firstGroup, err := c.NextRef()
 	if err != nil {
 		return err
@@ -303,6 +310,13 @@ func (m *ValueFlow) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	err = decoder.Unmarshal(firstGroup, &m.Exported)
 	if err != nil {
 		return err
+	}
+	if sumType == valueFlowV2 {
+		m.Burned = &CurrencyCollection{}
+		err = decoder.Unmarshal(c, &m.Burned)
+		if err != nil {
+			return err
+		}
 	}
 	secondGroup, err := c.NextRef()
 	if err != nil {

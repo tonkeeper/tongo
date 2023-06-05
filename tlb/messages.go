@@ -262,10 +262,6 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 	if len(parts) != 2 && len(parts) != 3 {
 		return fmt.Errorf("unknown MsgAddress format")
 	}
-	workchain, err := strconv.ParseInt(parts[0], 10, 8)
-	if err != nil {
-		return fmt.Errorf("failed to parse %v workchain: %w", parts[0], err)
-	}
 
 	var anycast *Anycast
 	if len(parts) == 3 {
@@ -290,6 +286,10 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 		if err != nil {
 			return err
 		}
+		workchain, err := strconv.ParseInt(parts[0], 10, 8)
+		if err != nil {
+			return fmt.Errorf("failed to parse %v workchain: %w", parts[0], err)
+		}
 		*a = MsgAddress{
 			SumType: "AddrStd",
 			AddrStd: struct {
@@ -312,6 +312,10 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 	bitstr, err := boc.BitStringFromFiftHex(parts[1])
 	if err != nil {
 		return fmt.Errorf("failed to parse fift hex: %w", err)
+	}
+	workchain, err := strconv.ParseInt(parts[0], 10, 32)
+	if err != nil {
+		return fmt.Errorf("failed to parse %v workchain: %w", parts[0], err)
 	}
 	*a = MsgAddress{
 		SumType: "AddrVar",

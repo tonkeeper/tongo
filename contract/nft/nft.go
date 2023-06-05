@@ -3,13 +3,14 @@ package nft
 import (
 	"context"
 	"errors"
+	"math/big"
+	"time"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/abi"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/wallet"
-	"math/big"
-	"time"
 )
 
 type Item struct {
@@ -64,9 +65,10 @@ func (itm ItemTransferMessage) ToInternal() (tlb.Message, byte, error) {
 		msgBody.ForwardPayload.IsRight = true
 		msgBody.ForwardPayload.Value = tlb.Any(*itm.ForwardPayload)
 	}
-	c.WriteUint(0x5fcc3d14, 32)
-	err := tlb.Marshal(c, msgBody)
-	if err != nil {
+	if err := c.WriteUint(0x5fcc3d14, 32); err != nil {
+		return tlb.Message{}, 0, err
+	}
+	if err := tlb.Marshal(c, msgBody); err != nil {
 		return tlb.Message{}, 0, err
 	}
 	m := wallet.Message{

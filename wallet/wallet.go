@@ -151,7 +151,7 @@ func (w *Wallet) RawSend(
 			SubWalletId: w.subWalletId,
 			ValidUntil:  uint32(validUntil.Unix()),
 			Seqno:       seqno,
-			Payload:     PayloadV1toV4(internalMessages),
+			RawMessages: PayloadV1toV4(internalMessages),
 		}
 		err = tlb.Marshal(bodyCell, body)
 	case V4R1, V4R2:
@@ -160,7 +160,7 @@ func (w *Wallet) RawSend(
 			ValidUntil:  uint32(validUntil.Unix()),
 			Seqno:       seqno,
 			Op:          0,
-			Payload:     PayloadV1toV4(internalMessages),
+			RawMessages: PayloadV1toV4(internalMessages),
 		}
 		err = tlb.Marshal(bodyCell, body)
 	default:
@@ -176,12 +176,9 @@ func (w *Wallet) RawSend(
 	}
 	bits512 := tlb.Bits512{}
 	copy(bits512[:], signBytes[:])
-	signedBody := struct {
-		Sign    tlb.Bits512
-		Payload tlb.Any
-	}{
+	signedBody := SingedMsgBody{
 		Sign:    bits512,
-		Payload: tlb.Any(*bodyCell),
+		Message: tlb.Any(*bodyCell),
 	}
 	signedBodyCell := boc.NewCell()
 	if err = tlb.Marshal(signedBodyCell, signedBody); err != nil {

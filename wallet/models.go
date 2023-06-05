@@ -127,24 +127,6 @@ type DataV4 struct {
 	PluginDict  tlb.HashmapE[tlb.Bits264, tlb.Any] // TODO: find type and check size
 }
 
-type MessageV3 struct {
-	SubWalletId uint32
-	ValidUntil  uint32
-	Seqno       uint32
-	Payload     PayloadV1toV4
-}
-
-type MessageV4 struct {
-	// Op: 0 - simple send, 1 - deploy and install plugin, 2 - install plugin, 3 - remove plugin
-	SubWalletId uint32
-	ValidUntil  uint32
-	Seqno       uint32
-	Op          int8
-	Payload     PayloadV1toV4
-}
-
-type PayloadV1toV4 []RawMessage
-
 type Sendable interface {
 	ToInternal() (tlb.Message, uint8, error)
 }
@@ -250,11 +232,6 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 	return intMsg, m.Mode, nil
 }
 
-type RawMessage struct {
-	Message *boc.Cell
-	Mode    byte
-}
-
 type TextComment string
 
 func (t TextComment) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error { // TODO: implement for binary comment
@@ -279,41 +256,5 @@ func (t *TextComment) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error { //
 		return err
 	}
 	*t = TextComment(text)
-	return nil
-}
-
-func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
-	if len(p) > 4 {
-		return fmt.Errorf("PayloadV1toV4 supports only up to 4 messages")
-	}
-	for _, msg := range p {
-		err := c.WriteUint(uint64(msg.Mode), 8)
-		if err != nil {
-			return err
-		}
-		err = c.AddRef(msg.Message)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (p *PayloadV1toV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	for {
-		ref, err := c.NextRef()
-		if err != nil {
-			break
-		}
-		mode, err := c.ReadUint(8)
-		if err != nil {
-			return err
-		}
-		msg := RawMessage{
-			Message: ref,
-			Mode:    byte(mode),
-		}
-		*p = append(*p, msg)
-	}
 	return nil
 }

@@ -152,3 +152,56 @@ func TestMsgAddress_JSON(t *testing.T) {
 		})
 	}
 }
+
+func mustFromFiftHex(hexStr string) boc.BitString {
+	value, err := boc.BitStringFromFiftHex(hexStr)
+	if err != nil {
+		panic(err)
+	}
+	return *value
+}
+
+func TestMsgAddress_UnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		name       string
+		addressStr string
+		wantAddr   *MsgAddress
+	}{
+		{
+			name:       "AddrVar - all good",
+			addressStr: "1968328842:0D4ED212D5D996B95A9FC3_:Anycast(10,374)",
+			wantAddr: &MsgAddress{
+				SumType: "AddrVar",
+				AddrVar: &struct {
+					Anycast     Maybe[Anycast]
+					AddrLen     Uint9
+					WorkchainId int32
+					Address     boc.BitString
+				}{
+					Anycast: Maybe[Anycast]{
+						Exists: true,
+						Value: Anycast{
+							Depth:      10,
+							RewritePfx: 374,
+						},
+					},
+					AddrLen:     87,
+					WorkchainId: 1968328842,
+					Address:     mustFromFiftHex("0D4ED212D5D996B95A9FC3_"),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			addr := &MsgAddress{}
+			err := addr.UnmarshalJSON([]byte(tt.addressStr))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(addr, tt.wantAddr) {
+				t.Fatalf("want: %v, got: %#v\n", tt.wantAddr, addr)
+			}
+		})
+	}
+}

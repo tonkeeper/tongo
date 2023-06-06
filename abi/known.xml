@@ -470,20 +470,20 @@
     </get_method>
 
     <!--    Pool    -->
-    <get_method name="get_pool_finance_data" interface="pool">
-        <output fixed_length="true">
+    <get_method name="get_finance_data" interface="pool">
+        <output version="pool" fixed_length="true">
             <int name="total_balance">int32</int>
             <int name="supply">int32</int>
             <int name="requested_for_deposit">int32</int>
             <int name="requested_for_withdrawal">int32</int>
         </output>
     </get_method>
-    <get_method name="get_pool_current_round_deposit_minter" interface="pool">
+    <get_method name="get_current_round_deposit_minter" interface="pool">
         <output>
             <slice name="deposit_minter">msgaddress</slice>
         </output>
     </get_method>
-    <get_method name="get_pool_current_round_withdrawal_minter" interface="pool">
+    <get_method name="get_current_round_withdrawal_minter" interface="pool">
         <output fixed_length="true">
             <slice name="deposit_minter">msgaddress</slice>
         </output>

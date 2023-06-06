@@ -54,6 +54,15 @@ var codes = map[Version]string{
 	HighLoadV2R2: "te6ccgEBCQEA6QABFP8A9KQT9LzyyAsBAgEgAgMCAUgEBQHu8oMI1xgg0x/TP/gjqh9TILnyY+1E0NMf0z/T//QE0VNggED0Dm+hMfJgUXO68qIH+QFUEIf5EPKjAvQE0fgAf44YIYAQ9HhvoW+hIJgC0wfUMAH7AJEy4gGz5luDJaHIQDSAQPRDiuYxyBLLHxPLP8v/9ADJ7VQIAATQMAIBIAYHABe9nOdqJoaa+Y64X/wAQb5fl2omhpj5jpn+n/mPoCaKkQQCB6BzfQmMktv8ld0fFAA4IIBA9JZvoW+hMlEQlDBTA7neIJMzNgGSMjDisw==",
 }
 
+// codeHashToVersion maps code's hash to a wallet version.
+var codeHashToVersion = map[tlb.Bits256]Version{}
+
+func init() {
+	for ver := range codes {
+		codeHashToVersion[GetCodeHashByVer(ver)] = ver
+	}
+}
+
 type blockchain interface {
 	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
 	SendMessage(ctx context.Context, payload []byte) (uint32, error)
@@ -82,9 +91,13 @@ func GetCodeHashByVer(ver Version) tlb.Bits256 {
 	return hash
 }
 
-func GetVerByCodeHash(hash tlb.Bits256) Version {
-	// TODO: implement
-	return 0
+// GetVerByCodeHash returns (Version, true) if there is code with the given hash.
+// Otherwise, it returns (0, false).
+func GetVerByCodeHash(hash tlb.Bits256) (Version, bool) {
+	if ver, ok := codeHashToVersion[hash]; ok {
+		return ver, true
+	}
+	return 0, false
 }
 
 func (v Version) ToString() string {

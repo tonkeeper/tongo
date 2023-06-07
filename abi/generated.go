@@ -2739,10 +2739,10 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 }
 
 type GetFinanceData_PoolResult struct {
-	TotalBalance           int32
-	Supply                 int32
-	RequestedForDeposit    int32
-	RequestedForWithdrawal int32
+	TotalBalance           int64
+	Supply                 int64
+	RequestedForDeposit    int64
+	RequestedForWithdrawal int64
 }
 
 func GetFinanceData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
@@ -2843,14 +2843,14 @@ func DecodeGetCurrentRoundWithdrawalMinterResult(stack tlb.VmStack) (resultType 
 type GetValidatorControllerDataResult struct {
 	State                    int32
 	Approved                 bool
-	StakeAmountSent          int32
-	StakeAt                  int32
-	SavedValidatorSetHash    int32
+	StakeAmountSent          int64
+	StakeAt                  uint32
+	SavedValidatorSetHash    tlb.Bits256
 	ValidatorSetChangesCount int32
-	ValidatorSetChangeTime   int32
-	StakeHeldFor             int32
-	BorrowedAmount           int32
-	BorrowingTime            int32
+	ValidatorSetChangeTime   uint32
+	StakeHeldFor             uint32
+	BorrowedAmount           int64
+	BorrowingTime            uint32
 }
 
 func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {

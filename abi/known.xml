@@ -472,10 +472,10 @@
     <!--    Pool    -->
     <get_method name="get_finance_data" interface="pool">
         <output version="pool" fixed_length="true">
-            <int name="total_balance">int32</int>
-            <int name="supply">int32</int>
-            <int name="requested_for_deposit">int32</int>
-            <int name="requested_for_withdrawal">int32</int>
+            <int name="total_balance">int64</int>
+            <int name="supply">int64</int>
+            <int name="requested_for_deposit">int64</int>
+            <int name="requested_for_withdrawal">int64</int>
         </output>
     </get_method>
     <get_method name="get_current_round_deposit_minter" interface="pool">
@@ -494,14 +494,14 @@
         <output fixed_length="true">
             <int name="state">int32</int>
             <tinyint name="approved">bool</tinyint>
-            <int name="stake_amount_sent">int32</int>
-            <int name="stake_at">int32</int>
-            <int name="saved_validator_set_hash">int32</int>
+            <int name="stake_amount_sent">int64</int>
+            <int name="stake_at">uint32</int>
+            <int name="saved_validator_set_hash">bits256</int>
             <int name="validator_set_changes_count">int32</int>
-            <int name="validator_set_change_time">int32</int>
-            <int name="stake_held_for">int32</int>
-            <int name="borrowed_amount">int32</int>
-            <int name="borrowing_time">int32</int>
+            <int name="validator_set_change_time">uint32</int>
+            <int name="stake_held_for">uint32</int>
+            <int name="borrowed_amount">int64</int>
+            <int name="borrowing_time">uint32</int>
         </output>
     </get_method>
 

@@ -1013,6 +1013,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_finance_data":                    {DecodeGetFinanceData_PoolResult},
 	"get_current_round_deposit_minter":    {DecodeGetCurrentRoundDepositMinterResult},
 	"get_current_round_withdrawal_minter": {DecodeGetCurrentRoundWithdrawalMinterResult},
+	"get_pool_credit_params":              {DecodeGetPoolCreditParamsResult},
 	"get_validator_controller_data":       {DecodeGetValidatorControllerDataResult},
 }
 
@@ -1041,6 +1042,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
 	104346: {GetStorageParams},
+	105499: {GetPoolCreditParams},
 	106029: {GetJettonData},
 	106901: {GetChannelState},
 	107653: {GetPluginList},
@@ -1080,6 +1082,7 @@ var ResultTypes = []interface{}{
 	&GetNftDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
+	&GetPoolCreditParamsResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolStatusResult{},
 	&GetPublicKeyResult{},
@@ -2840,6 +2843,43 @@ func DecodeGetCurrentRoundWithdrawalMinterResult(stack tlb.VmStack) (resultType 
 	return "GetCurrentRoundWithdrawalMinterResult", result, err
 }
 
+type GetPoolCreditParamsResult struct {
+	MinLoanPerValidator int64
+	MaxLoanPerValidator int64
+	InterestRate        int8
+	GovernanceFee       int32
+	InterestManager     tlb.MsgAddress
+}
+
+func GetPoolCreditParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 105499 for "get_pool_credit_params" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 105499, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolCreditParamsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolCreditParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolCreditParamsResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolCreditParamsResult", result, err
+}
+
 type GetValidatorControllerDataResult struct {
 	State                    int32
 	Approved                 bool
@@ -3022,6 +3062,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_plugin_list",
 		InvokeFn:      GetPluginList,
 		ImplementedBy: []ContractInterface{WalletV4R2},
+	},
+	{
+		Name:          "get_pool_credit_params",
+		InvokeFn:      GetPoolCreditParams,
+		ImplementedBy: []ContractInterface{Pool},
 	},
 	{
 		Name:          "get_pool_data",

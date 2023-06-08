@@ -488,6 +488,15 @@
             <slice name="deposit_minter">msgaddress</slice>
         </output>
     </get_method>
+    <get_method name="get_pool_credit_params" interface="pool">
+        <output fixed_length="true">
+            <int name="min_loan_per_validator">int64</int>
+            <int name="max_loan_per_validator">int64</int>
+            <int name="interest_rate">int8</int>
+            <int name="governance_fee">int32</int>
+            <slice name="interest_manager">msgaddress</slice>
+        </output>
+    </get_method>
 
     <!--    Validator-Controller    -->
     <get_method name="get_validator_controller_data" interface="validator_controller">

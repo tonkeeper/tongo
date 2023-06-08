@@ -86,11 +86,11 @@ func (c *Cell) BitSize() int {
 }
 
 func (c *Cell) Hash() ([]byte, error) {
-	return c.hash(nil)
+	return c.hash(map[*Cell]*immutableCell{})
 }
 
 func (c *Cell) HashString() (string, error) {
-	h, err := c.hash(nil)
+	h, err := c.hash(map[*Cell]*immutableCell{})
 	if err != nil {
 		return "", err
 	}

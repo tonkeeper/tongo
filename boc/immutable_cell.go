@@ -19,11 +19,10 @@ type immutableCell struct {
 }
 
 // newImmutableCell returns a new instance of immutable cell.
+// cache can't be nil because it helps to avoid an endless loop in case of the given cell contains a fork bomb.
 func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, error) {
-	if cache != nil {
-		if imm, ok := cache[c]; ok {
-			return imm, nil
-		}
+	if imm, ok := cache[c]; ok {
+		return imm, nil
 	}
 	imm := &immutableCell{
 		mask:     c.mask,
@@ -125,9 +124,7 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 
 		imm.hashes = append(imm.hashes, x.Sum(nil))
 	}
-	if cache != nil {
-		cache[c] = imm
-	}
+	cache[c] = imm
 	return imm, nil
 }
 

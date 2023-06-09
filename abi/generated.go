@@ -5,6 +5,7 @@ package abi
 import (
 	"context"
 	"fmt"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -427,6 +428,20 @@ type WhalesNominatorsDepositMsgBody struct {
 	Gas     tlb.Grams
 }
 
+type TonstakePoolRequestLoanMsgBody struct {
+	QueryId    uint64
+	MinLoan    tlb.Grams
+	MaxLoan    tlb.Grams
+	MaxInterst tlb.Uint18
+	Validator  tlb.MsgAddress
+	Pool       tlb.MsgAddress
+	Governor   tlb.MsgAddress
+	Field7     struct {
+		Approver tlb.MsgAddress
+		Halter   tlb.MsgAddress
+	} `tlb:"^"`
+}
+
 type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
@@ -732,6 +747,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res WhalesNominatorsDepositMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return WhalesNominatorsDepositMsgOp, res, err
+	case 0x7ccd46e9:
+		var res TonstakePoolRequestLoanMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return TonstakePoolRequestLoanMsgOp, res, err
 	case 0x8b771735:
 		var res ReportStaticDataMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -872,6 +891,7 @@ const (
 	TonstakePoolSetRolesMsgOp                  MsgOpName = "TonstakePoolSetRoles"
 	TonstakeControllerApproveMsgOp             MsgOpName = "TonstakeControllerApprove"
 	WhalesNominatorsDepositMsgOp               MsgOpName = "WhalesNominatorsDeposit"
+	TonstakePoolRequestLoanMsgOp               MsgOpName = "TonstakePoolRequestLoan"
 	ReportStaticDataMsgOp                      MsgOpName = "ReportStaticData"
 	TonstakeControllerPoolUpgradeMsgOp         MsgOpName = "TonstakeControllerPoolUpgrade"
 	ReportRoyaltyParamsMsgOp                   MsgOpName = "ReportRoyaltyParams"
@@ -944,6 +964,7 @@ var KnownMsgTypes = map[string]any{
 	TonstakePoolSetRolesMsgOp:                  TonstakePoolSetRolesMsgBody{},
 	TonstakeControllerApproveMsgOp:             TonstakeControllerApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:               WhalesNominatorsDepositMsgBody{},
+	TonstakePoolRequestLoanMsgOp:               TonstakePoolRequestLoanMsgBody{},
 	ReportStaticDataMsgOp:                      ReportStaticDataMsgBody{},
 	TonstakeControllerPoolUpgradeMsgOp:         TonstakeControllerPoolUpgradeMsgBody{},
 	ReportRoyaltyParamsMsgOp:                   ReportRoyaltyParamsMsgBody{},

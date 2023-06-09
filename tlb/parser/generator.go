@@ -2,10 +2,11 @@ package parser
 
 import (
 	"fmt"
-	"github.com/tonkeeper/tongo/utils"
 	"go/format"
 	"strconv"
 	"strings"
+
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type DefaultType struct {
@@ -125,10 +126,21 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skip
 	if !skipMagic && declaration.Constructor.Prefix != "" && declaration.Constructor.Prefix != "#_" && declaration.Constructor.Prefix != "$_" {
 		builder.WriteString(fmt.Sprintf("Magic tlb.Magic `tlb:\"%v\"`\n", declaration.Constructor.Prefix))
 	}
+	s, err := fieldDefintionsToStruct(declaration.FieldDefinitions, g.knownTypes)
+	if err != nil {
+		return "", err
+	}
+	builder.WriteString(s)
 
-	for i, field := range declaration.FieldDefinitions {
+	builder.WriteRune('}')
+	return builder.String(), nil
+}
+
+func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[string]DefaultType) (string, error) {
+	var builder strings.Builder
+	for i, field := range definitions {
 		if field.IsEmpty() {
-			return "", fmt.Errorf("all types are nil in field %v in %v", i, declaration.Constructor.Name)
+			return "", fmt.Errorf("all types are nil in field %v ", i)
 		}
 		if field.Implicit != nil {
 			continue
@@ -146,15 +158,17 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skip
 		}
 		builder.WriteString(utils.ToCamelCase(name))
 		builder.WriteRune('\t')
-		t, err := e.toGolangType(g.knownTypes)
+		t, err := e.toGolangType(knownTypes)
 		if err != nil {
 			return "", err
 		}
 		builder.WriteString(t.String())
+		if field.CellRef != nil {
+			builder.WriteString(" `tlb:\"^\"`")
+		}
 		_ = e
 		builder.WriteRune('\n')
 	}
-	builder.WriteRune('}')
 	return builder.String(), nil
 }
 
@@ -217,6 +231,17 @@ func (t TypeExpression) toGolangType(knownTypes map[string]DefaultType) (golangT
 		return golangType{
 			name: fmt.Sprintf("tlb.Ref[%s]", gt.String()),
 			tag:  "",
+		}, nil
+	}
+	if t.AnonymousConstructor != nil {
+		s, err := fieldDefintionsToStruct(t.AnonymousConstructor.Values, knownTypes)
+		if err != nil {
+			return golangType{}, err
+		}
+		return golangType{
+			name:   fmt.Sprintf("struct {\n%s\n}", s),
+			tag:    "",
+			params: nil,
 		}, nil
 	}
 

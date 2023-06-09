@@ -730,16 +730,6 @@
         deposit#7bcd1fef query_id:int64 gas:Grams = Deposit;
     </internal>
 
-    <!--        Wallets     -->
-    <external name="wallet_signed_v3" interface="wallet_v3">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
-        ExternalMsgBody;
-    </external>
-    <external name="wallet_signed_v3" interface="wallet_v4">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-        payload:PayloadV1toV4 = ExternalMsgBody;
-    </external>
-
     <!-- TonStake messages to controller -->
     <internal name="tonstake_controller_top_up" interface="controller">
         top_up#d372158c query_id:uint64 = InternalMsgBody;
@@ -773,11 +763,11 @@
         return_unused_loan#ed7378a6 query_id:uint64 = InternalMsgBody;
     </internal>
 
-    <!-- TonStake messages to pool -->
-    <!--    <internal name="tonstake_pool_request_loan" interface="pool">-->
-    <!--        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint18 validator:MsgAddress-->
-    <!--        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;-->
-    <!--    </internal>-->
+    <!--     TonStake messages to pool -->
+    <internal name="tonstake_pool_request_loan" interface="pool">
+        request_loan#7ccd46e9 query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint18 validator:MsgAddress
+        pool:MsgAddress governor:MsgAddress ^[ approver:MsgAddress halter:MsgAddress ] = InternalMsgBody;
+    </internal>
     <internal name="tonstake_pool_loan_repayment" interface="pool">
         loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;
     </internal>
@@ -797,7 +787,7 @@
     <internal name="tonstake_controller_pool_send_message" interface="controller_pool">
         send_message#270695fb query_id:uint64 mode:uint8 msg:^Cell = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_pool_upgrade" interface="controller_pool">
+        <internal name="tonstake_controller_pool_upgrade" interface="controller_pool">
         upgrade#96e7f528 query_id:uint64 data:(Maybe ^Cell) code:(Maybe ^Cell) after_upgrade:(Maybe ^Cell) =
         InternalMsgBody;
     </internal>
@@ -810,4 +800,14 @@
     <internal name="tonstake_controller_pool_halt" interface="controller_pool">
         halt#139a1b4e query_id:uint64 = InternalMsgBody;
     </internal>
+
+    <!--        Wallets     -->
+    <external name="wallet_signed_v3" interface="wallet_v3">
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
+        ExternalMsgBody;
+    </external>
+    <external name="wallet_signed_v3" interface="wallet_v4">
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
+        payload:PayloadV1toV4 = ExternalMsgBody;
+    </external>
 </abi>

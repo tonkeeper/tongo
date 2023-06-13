@@ -8,7 +8,7 @@ import (
 func HumanFriendlyCoinsRepr(amount int64) string {
 	k := int64(1)
 	currentAmount := amount
-	for _, unit := range []string{"nanoTon", "microTon", "milliTon", "Ton", "kiloTon", "megaTon", "gigaTon"} {
+	for _, unit := range []string{"nanoTON", "microTON", "milliTON", "TON", "kiloTON", "megaTON", "gigaTON"} {
 		if currentAmount < 1000 {
 			fraction := amount - currentAmount*k
 			if fraction == 0 {
@@ -25,5 +25,5 @@ func HumanFriendlyCoinsRepr(amount int64) string {
 		k *= 1000
 		currentAmount /= 1000
 	}
-	return fmt.Sprintf("%v nanoTon", amount)
+	return fmt.Sprintf("%v nanoTON", amount)
 }

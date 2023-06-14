@@ -1067,6 +1067,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"list_nominators":                     {DecodeListNominatorsResult},
 	"list_votes":                          {DecodeListVotesResult},
 	"get_pool_data":                       {DecodeGetPoolData_TfResult},
+	"get_nominator_data":                  {DecodeGetNominatorDataResult},
 	"get_staking_status":                  {DecodeGetStakingStatusResult},
 	"get_pool_status":                     {DecodeGetPoolStatusResult},
 	"get_member":                          {DecodeGetMember_WhalesNominatorResult},
@@ -1145,6 +1146,7 @@ var ResultTypes = []interface{}{
 	&GetNftAddressByIndexResult{},
 	&GetNftContentResult{},
 	&GetNftDataResult{},
+	&GetNominatorDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
 	&GetPoolCreditParamsResult{},
@@ -2503,6 +2505,47 @@ func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny
 	var result GetPoolData_TfResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolData_TfResult", result, err
+}
+
+type GetNominatorDataResult struct {
+	Amount               uint64
+	PendingDepositAmount uint64
+	WithdrawFound        bool
+}
+
+func GetNominatorData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, address tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: address}
+	stack.Put(val)
+
+	// MethodID = 112473 for "get_nominator_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 112473, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNominatorDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetNominatorDataResult
+	err = stack.Unmarshal(&result)
+	return "GetNominatorDataResult", result, err
 }
 
 type GetStakingStatusResult struct {

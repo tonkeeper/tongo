@@ -393,6 +393,16 @@
             <tuple name="config_proposal_votings" list="true"/>
         </output>
     </get_method>
+    <get_method name="get_nominator_data">
+        <input>
+            <int name="address">int257</int>
+        </input>
+        <output>
+            <tinyint name="amount">uint64</tinyint>
+            <tinyint name="pending_deposit_amount">uint64</tinyint>
+            <tinyint name="withdraw_found">bool</tinyint>
+        </output>
+    </get_method>
 
     <!--    Whales nominators     -->
     <get_method name="get_staking_status" interface="whales_nominators">

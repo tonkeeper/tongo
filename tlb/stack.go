@@ -555,6 +555,10 @@ func (v VmStackValue) Unmarshal(dest any) error {
 			copy(i[32-len(bytes):], bytes)
 			return nil
 		}
+		if val.Kind() == reflect.Bool {
+			val.SetBool(b.Uint64() != 0)
+			return nil
+		}
 		if i, ok := dest.(*Int257); ok {
 			*i = v.VmStkInt
 			return nil

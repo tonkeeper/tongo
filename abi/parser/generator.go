@@ -345,8 +345,6 @@ func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 			nullableCheck = fmt.Sprintf(" && %s != \"VmStkNull\"", stackType)
 		}
 		switch s.XMLName.Local {
-		case "tinyint":
-			builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkTinyInt\"%s) ", stackType, nullableCheck))
 		case "int":
 			builder.WriteString(fmt.Sprintf("|| ((%s != \"VmStkTinyInt\" && %s != \"VmStkInt\")%s) ", stackType, stackType, nullableCheck))
 		case "slice":

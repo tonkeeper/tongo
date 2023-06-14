@@ -1033,59 +1033,57 @@ var KnownMsgTypes = map[string]any{
 }
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
-	"seqno":                               {DecodeSeqnoResult},
-	"get_public_key":                      {DecodeGetPublicKeyResult},
-	"get_subwallet_id":                    {DecodeGetSubwalletIdResult},
-	"get_plugin_list":                     {DecodeGetPluginListResult},
-	"is_plugin_installed":                 {DecodeIsPluginInstalledResult},
-	"get_nft_data":                        {DecodeGetNftDataResult},
-	"get_nft_content":                     {DecodeGetNftContentResult},
-	"get_collection_data":                 {DecodeGetCollectionDataResult},
-	"get_nft_address_by_index":            {DecodeGetNftAddressByIndexResult},
-	"royalty_params":                      {DecodeRoyaltyParamsResult},
-	"get_editor":                          {DecodeGetEditorResult},
-	"get_auction_info":                    {DecodeGetAuctionInfoResult},
-	"get_subscription_data":               {DecodeGetSubscriptionDataResult},
-	"get_jetton_data":                     {DecodeGetJettonDataResult},
-	"get_wallet_address":                  {DecodeGetWalletAddressResult},
-	"get_wallet_data":                     {DecodeGetWalletDataResult},
-	"dnsresolve":                          {DecodeDnsresolve_RecordsResult},
-	"get_last_fill_up_time":               {DecodeGetLastFillUpTimeResult},
-	"get_domain":                          {DecodeGetDomainResult},
-	"get_full_domain":                     {DecodeGetFullDomainResult},
-	"get_sale_data":                       {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
-	"get_authority_address":               {DecodeGetAuthorityAddressResult},
-	"get_revoked_time":                    {DecodeGetRevokedTimeResult},
-	"get_channel_state":                   {DecodeGetChannelStateResult},
-	"get_wallet_params":                   {DecodeGetWalletParamsResult},
-	"get_storage_params":                  {DecodeGetStorageParamsResult},
-	"get_storage_contract_address":        {DecodeGetStorageContractAddressResult},
-	"get_storage_contract_data":           {DecodeGetStorageContractDataResult},
-	"get_torrent_hash":                    {DecodeGetTorrentHashResult},
-	"is_active":                           {DecodeIsActiveResult},
-	"get_next_proof_info":                 {DecodeGetNextProofInfoResult},
-	"list_nominators":                     {DecodeListNominatorsResult},
-	"list_votes":                          {DecodeListVotesResult},
-	"get_pool_data":                       {DecodeGetPoolData_TfResult},
-	"get_nominator_data":                  {DecodeGetNominatorDataResult},
-	"get_staking_status":                  {DecodeGetStakingStatusResult},
-	"get_pool_status":                     {DecodeGetPoolStatusResult},
-	"get_member":                          {DecodeGetMember_WhalesNominatorResult},
-	"get_members_raw":                     {DecodeGetMembersRaw_WhalesNominatorResult},
-	"get_params":                          {DecodeGetParams_WhalesNominatorResult},
-	"get_telemint_auction_state":          {DecodeGetTelemintAuctionStateResult},
-	"get_telemint_auction_config":         {DecodeGetTelemintAuctionConfigResult},
-	"get_telemint_token_name":             {DecodeGetTelemintTokenNameResult},
-	"get_finance_data":                    {DecodeGetFinanceData_PoolResult},
-	"get_current_round_deposit_minter":    {DecodeGetCurrentRoundDepositMinterResult},
-	"get_current_round_withdrawal_minter": {DecodeGetCurrentRoundWithdrawalMinterResult},
-	"get_pool_credit_params":              {DecodeGetPoolCreditParamsResult},
-	"get_validator_controller_data":       {DecodeGetValidatorControllerDataResult},
+	"seqno":                          {DecodeSeqnoResult},
+	"get_public_key":                 {DecodeGetPublicKeyResult},
+	"get_subwallet_id":               {DecodeGetSubwalletIdResult},
+	"get_plugin_list":                {DecodeGetPluginListResult},
+	"is_plugin_installed":            {DecodeIsPluginInstalledResult},
+	"get_nft_data":                   {DecodeGetNftDataResult},
+	"get_nft_content":                {DecodeGetNftContentResult},
+	"get_collection_data":            {DecodeGetCollectionDataResult},
+	"get_nft_address_by_index":       {DecodeGetNftAddressByIndexResult},
+	"royalty_params":                 {DecodeRoyaltyParamsResult},
+	"get_editor":                     {DecodeGetEditorResult},
+	"get_auction_info":               {DecodeGetAuctionInfoResult},
+	"get_subscription_data":          {DecodeGetSubscriptionDataResult},
+	"get_jetton_data":                {DecodeGetJettonDataResult},
+	"get_wallet_address":             {DecodeGetWalletAddressResult},
+	"get_wallet_data":                {DecodeGetWalletDataResult},
+	"dnsresolve":                     {DecodeDnsresolve_RecordsResult},
+	"get_last_fill_up_time":          {DecodeGetLastFillUpTimeResult},
+	"get_domain":                     {DecodeGetDomainResult},
+	"get_full_domain":                {DecodeGetFullDomainResult},
+	"get_sale_data":                  {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
+	"get_authority_address":          {DecodeGetAuthorityAddressResult},
+	"get_revoked_time":               {DecodeGetRevokedTimeResult},
+	"get_channel_state":              {DecodeGetChannelStateResult},
+	"get_wallet_params":              {DecodeGetWalletParamsResult},
+	"get_storage_params":             {DecodeGetStorageParamsResult},
+	"get_storage_contract_address":   {DecodeGetStorageContractAddressResult},
+	"get_storage_contract_data":      {DecodeGetStorageContractDataResult},
+	"get_torrent_hash":               {DecodeGetTorrentHashResult},
+	"is_active":                      {DecodeIsActiveResult},
+	"get_next_proof_info":            {DecodeGetNextProofInfoResult},
+	"list_nominators":                {DecodeListNominatorsResult},
+	"list_votes":                     {DecodeListVotesResult},
+	"get_pool_data":                  {DecodeGetPoolData_TfResult},
+	"get_nominator_data":             {DecodeGetNominatorDataResult},
+	"get_staking_status":             {DecodeGetStakingStatusResult},
+	"get_pool_status":                {DecodeGetPoolStatusResult},
+	"get_member":                     {DecodeGetMember_WhalesNominatorResult},
+	"get_members_raw":                {DecodeGetMembersRaw_WhalesNominatorResult},
+	"get_params":                     {DecodeGetParams_WhalesNominatorResult},
+	"get_telemint_auction_state":     {DecodeGetTelemintAuctionStateResult},
+	"get_telemint_auction_config":    {DecodeGetTelemintAuctionConfigResult},
+	"get_telemint_token_name":        {DecodeGetTelemintTokenNameResult},
+	"get_finance_data":               {DecodeGetFinanceData_PoolResult},
+	"get_pool_credit_params":         {DecodeGetPoolCreditParamsResult},
+	"get_projected_conversion_ratio": {DecodeGetProjectedConversionRatioResult},
+	"get_validator_controller_data":  {DecodeGetValidatorControllerDataResult},
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
 	66763:  {GetFullDomain},
-	67226:  {GetCurrentRoundWithdrawalMinter},
 	69506:  {GetTelemintTokenName},
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
@@ -1094,6 +1092,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
+	83464:  {GetProjectedConversionRatio},
 	84760:  {GetAuthorityAddress},
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
@@ -1114,7 +1113,6 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	107653: {GetPluginList},
 	111161: {ListNominators},
 	115150: {GetParams},
-	116342: {GetCurrentRoundDepositMinter},
 	119378: {GetDomain},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
@@ -1132,8 +1130,6 @@ var ResultTypes = []interface{}{
 	&GetAuthorityAddressResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
-	&GetCurrentRoundDepositMinterResult{},
-	&GetCurrentRoundWithdrawalMinterResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
 	&GetFinanceData_PoolResult{},
@@ -1152,6 +1148,7 @@ var ResultTypes = []interface{}{
 	&GetPoolCreditParamsResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolStatusResult{},
+	&GetProjectedConversionRatioResult{},
 	&GetPublicKeyResult{},
 	&GetRevokedTimeResult{},
 	&GetSaleData_BasicResult{},
@@ -1208,7 +1205,7 @@ func Seqno(ctx context.Context, executor Executor, reqAccountID tongo.AccountID)
 }
 
 func DecodeSeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result SeqnoResult
@@ -1274,7 +1271,7 @@ func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID tongo.A
 }
 
 func DecodeGetSubwalletIdResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubwalletIdResult
@@ -1351,7 +1348,7 @@ func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tong
 }
 
 func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsPluginInstalledResult
@@ -1388,7 +1385,7 @@ func GetNftData(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 }
 
 func DecodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftDataResult
@@ -1541,7 +1538,7 @@ func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 }
 
 func DecodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result RoyaltyParamsResult
@@ -1609,7 +1606,7 @@ func GetAuctionInfo(ctx context.Context, executor Executor, reqAccountID tongo.A
 }
 
 func DecodeGetAuctionInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAuctionInfoResult
@@ -1659,7 +1656,7 @@ func GetSubscriptionData(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 10 || (stack[0].SumType != "VmStkTuple") || (stack[1].SumType != "VmStkTuple") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkTinyInt") {
+	if len(stack) < 10 || (stack[0].SumType != "VmStkTuple") || (stack[1].SumType != "VmStkTuple") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubscriptionDataResult
@@ -1696,7 +1693,7 @@ func GetJettonData(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 }
 
 func DecodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetJettonDataResult
@@ -1819,7 +1816,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.Accou
 }
 
 func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkCell") {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result Dnsresolve_RecordsResult
@@ -1852,7 +1849,7 @@ func GetLastFillUpTime(ctx context.Context, executor Executor, reqAccountID tong
 }
 
 func DecodeGetLastFillUpTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLastFillUpTimeResult
@@ -1994,7 +1991,7 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 }
 
 func DecodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSaleData_BasicResult
@@ -2003,7 +2000,7 @@ func DecodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, result
 }
 
 func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") {
+	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSaleData_GetgemsResult
@@ -2012,7 +2009,7 @@ func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resu
 }
 
 func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 20 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTinyInt") || (stack[17].SumType != "VmStkTinyInt") || (stack[18].SumType != "VmStkTinyInt") || (stack[19].SumType != "VmStkTinyInt") {
+	if len(stack) != 20 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSaleData_GetgemsAuctionResult
@@ -2078,7 +2075,7 @@ func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID tongo.A
 }
 
 func DecodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRevokedTimeResult
@@ -2111,7 +2108,7 @@ func GetChannelState(ctx context.Context, executor Executor, reqAccountID tongo.
 }
 
 func DecodeGetChannelStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetChannelStateResult
@@ -2146,7 +2143,7 @@ func GetWalletParams(ctx context.Context, executor Executor, reqAccountID tongo.
 }
 
 func DecodeGetWalletParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetWalletParamsResult
@@ -2183,7 +2180,7 @@ func GetStorageParams(ctx context.Context, executor Executor, reqAccountID tongo
 }
 
 func DecodeGetStorageParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStorageParamsResult
@@ -2274,7 +2271,7 @@ func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID
 }
 
 func DecodeGetStorageContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 11 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+	if len(stack) < 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStorageContractDataResult
@@ -2340,7 +2337,7 @@ func IsActive(ctx context.Context, executor Executor, reqAccountID tongo.Account
 }
 
 func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsActiveResult
@@ -2375,7 +2372,7 @@ func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID tongo
 }
 
 func DecodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNextProofInfoResult
@@ -2499,7 +2496,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 }
 
 func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 17 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") || (stack[7].SumType != "VmStkTinyInt") || (stack[8].SumType != "VmStkTinyInt") || (stack[9].SumType != "VmStkCell") || (stack[10].SumType != "VmStkCell" && stack[10].SumType != "VmStkNull") || (stack[11].SumType != "VmStkTinyInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt") || (stack[14].SumType != "VmStkTinyInt") || (stack[15].SumType != "VmStkTinyInt") || (stack[16].SumType != "VmStkTuple" && stack[16].SumType != "VmStkNull") {
+	if len(stack) < 17 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkCell") || (stack[10].SumType != "VmStkCell" && stack[10].SumType != "VmStkNull") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTuple" && stack[16].SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_TfResult
@@ -2540,7 +2537,7 @@ func GetNominatorData(ctx context.Context, executor Executor, reqAccountID tongo
 }
 
 func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") {
+	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNominatorDataResult
@@ -2579,7 +2576,7 @@ func GetStakingStatus(ctx context.Context, executor Executor, reqAccountID tongo
 }
 
 func DecodeGetStakingStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStakingStatusResult
@@ -2616,7 +2613,7 @@ func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID tongo.Ac
 }
 
 func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolStatusResult
@@ -2661,7 +2658,7 @@ func GetMember(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 }
 
 func DecodeGetMember_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") {
+	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMember_WhalesNominatorResult
@@ -2733,7 +2730,7 @@ func GetParams(ctx context.Context, executor Executor, reqAccountID tongo.Accoun
 }
 
 func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") || (stack[6].SumType != "VmStkTinyInt") {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetParams_WhalesNominatorResult
@@ -2770,7 +2767,7 @@ func GetTelemintAuctionState(ctx context.Context, executor Executor, reqAccountI
 }
 
 func DecodeGetTelemintAuctionStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTelemintAuctionStateResult
@@ -2808,7 +2805,7 @@ func GetTelemintAuctionConfig(ctx context.Context, executor Executor, reqAccount
 }
 
 func DecodeGetTelemintAuctionConfigResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt") || (stack[3].SumType != "VmStkTinyInt") || (stack[4].SumType != "VmStkTinyInt") || (stack[5].SumType != "VmStkTinyInt") {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTelemintAuctionConfigResult
@@ -2854,6 +2851,7 @@ type GetFinanceData_PoolResult struct {
 	Supply                 int64
 	RequestedForDeposit    int64
 	RequestedForWithdrawal int64
+	JettonMaster           tlb.MsgAddress
 }
 
 func GetFinanceData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
@@ -2877,78 +2875,12 @@ func GetFinanceData(ctx context.Context, executor Executor, reqAccountID tongo.A
 }
 
 func DecodeGetFinanceData_PoolResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFinanceData_PoolResult
 	err = stack.Unmarshal(&result)
 	return "GetFinanceData_PoolResult", result, err
-}
-
-type GetCurrentRoundDepositMinterResult struct {
-	DepositMinter tlb.MsgAddress
-}
-
-func GetCurrentRoundDepositMinter(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 116342 for "get_current_round_deposit_minter" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 116342, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCurrentRoundDepositMinterResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetCurrentRoundDepositMinterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetCurrentRoundDepositMinterResult
-	err = stack.Unmarshal(&result)
-	return "GetCurrentRoundDepositMinterResult", result, err
-}
-
-type GetCurrentRoundWithdrawalMinterResult struct {
-	DepositMinter tlb.MsgAddress
-}
-
-func GetCurrentRoundWithdrawalMinter(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 67226 for "get_current_round_withdrawal_minter" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 67226, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCurrentRoundWithdrawalMinterResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetCurrentRoundWithdrawalMinterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetCurrentRoundWithdrawalMinterResult
-	err = stack.Unmarshal(&result)
-	return "GetCurrentRoundWithdrawalMinterResult", result, err
 }
 
 type GetPoolCreditParamsResult struct {
@@ -2988,6 +2920,40 @@ func DecodeGetPoolCreditParamsResult(stack tlb.VmStack) (resultType string, resu
 	return "GetPoolCreditParamsResult", result, err
 }
 
+type GetProjectedConversionRatioResult struct {
+	ProjectedBalance int64
+	ProjectedSupply  int64
+}
+
+func GetProjectedConversionRatio(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 83464 for "get_projected_conversion_ratio" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 83464, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetProjectedConversionRatioResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetProjectedConversionRatioResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetProjectedConversionRatioResult
+	err = stack.Unmarshal(&result)
+	return "GetProjectedConversionRatioResult", result, err
+}
+
 type GetValidatorControllerDataResult struct {
 	State                    int32
 	Approved                 bool
@@ -2999,6 +2965,9 @@ type GetValidatorControllerDataResult struct {
 	StakeHeldFor             uint32
 	BorrowedAmount           int64
 	BorrowingTime            uint32
+	Validator                tlb.MsgAddress
+	Pool                     tlb.MsgAddress
+	Sudoer                   tlb.MsgAddress
 }
 
 func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
@@ -3022,7 +2991,7 @@ func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+	if len(stack) < 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkSlice") || (stack[11].SumType != "VmStkSlice") || (stack[12].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetValidatorControllerDataResult
@@ -3036,6 +3005,7 @@ type ContractInterface string
 const (
 	Auction             ContractInterface = "auction"
 	Domain              ContractInterface = "domain"
+	LiquidPool          ContractInterface = "liquid_pool"
 	NftEditable         ContractInterface = "nft_editable"
 	NftSale             ContractInterface = "nft_sale"
 	NftSaleGetgems      ContractInterface = "nft_sale_getgems"
@@ -3093,16 +3063,6 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_collection_data",
 		InvokeFn:      GetCollectionData,
 		ImplementedBy: []ContractInterface{Tep62Collection},
-	},
-	{
-		Name:          "get_current_round_deposit_minter",
-		InvokeFn:      GetCurrentRoundDepositMinter,
-		ImplementedBy: []ContractInterface{Pool},
-	},
-	{
-		Name:          "get_current_round_withdrawal_minter",
-		InvokeFn:      GetCurrentRoundWithdrawalMinter,
-		ImplementedBy: []ContractInterface{Pool},
 	},
 	{
 		Name:          "get_domain",
@@ -3174,7 +3134,7 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:          "get_pool_credit_params",
 		InvokeFn:      GetPoolCreditParams,
-		ImplementedBy: []ContractInterface{Pool},
+		ImplementedBy: []ContractInterface{LiquidPool},
 	},
 	{
 		Name:          "get_pool_data",
@@ -3185,6 +3145,11 @@ var methodInvocationOrder = []MethodDescription{
 		Name:          "get_pool_status",
 		InvokeFn:      GetPoolStatus,
 		ImplementedBy: []ContractInterface{WhalesNominators},
+	},
+	{
+		Name:          "get_projected_conversion_ratio",
+		InvokeFn:      GetProjectedConversionRatio,
+		ImplementedBy: []ContractInterface{LiquidPool},
 	},
 	{
 		Name:          "get_public_key",

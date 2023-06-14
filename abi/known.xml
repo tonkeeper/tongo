@@ -61,7 +61,7 @@
     <!--        Wallets      -->
     <get_method name="seqno" interface="wallet" interface="storage_provider">
         <output>
-            <tinyint name="state">uint32</tinyint>
+            <int name="state">uint32</int>
         </output>
     </get_method>
     <get_method name="get_public_key" interface="wallet" interface="storage_provider">
@@ -71,13 +71,13 @@
     </get_method>
     <get_method name="get_subwallet_id" interface="wallet_v4r2">
         <output>
-            <tinyint name="subwallet_id">uint32</tinyint>
+            <int name="subwallet_id">uint32</int>
         </output>
     </get_method>
     <get_method name="get_plugin_list" interface="wallet_v4r2">
         <output>
             <tuple name="plugins" list="true">
-                <tinyint name="workchain">int32</tinyint>
+                <int name="workchain">int32</int>
                 <int name="address">bits256</int>
             </tuple>
         </output>
@@ -88,7 +88,7 @@
             <int name="addr_hash">int257</int>
         </input>
         <output>
-            <tinyint name="success">bool</tinyint>
+            <int name="success">bool</int>
         </output>
     </get_method>
 
@@ -96,7 +96,7 @@
     <!--        NFTs     -->
     <get_method name="get_nft_data" callback="true" interface="tep62_item">
         <output>
-            <tinyint name="init">bool</tinyint>
+            <int name="init">bool</int>
             <int name="index">int257</int>
             <slice name="collection_address">msgaddress</slice>
             <slice name="owner_address">msgaddress</slice>
@@ -129,8 +129,8 @@
     </get_method>
     <get_method name="royalty_params" interface="tep66">
         <output>
-            <tinyint name="numerator">uint16</tinyint>
-            <tinyint name="denominator">uint16</tinyint>
+            <int name="numerator">uint16</int>
+            <int name="denominator">uint16</int>
             <slice name="destination">msgaddress</slice>
         </output>
     </get_method>
@@ -142,8 +142,8 @@
     <get_method name="get_auction_info" interface="auction">
         <output>
             <slice name="max_bid_address">msgaddress</slice>
-            <tinyint name="max_bid_amount">uint64</tinyint>
-            <tinyint name="auction_end_time ">uint64</tinyint>
+            <int name="max_bid_amount">uint64</int>
+            <int name="auction_end_time ">uint64</int>
         </output>
     </get_method>
 
@@ -151,21 +151,21 @@
     <get_method name="get_subscription_data" interface="subscription">
         <output>
             <tuple name="wallet">
-                <tinyint name="workchain">uint32</tinyint>
+                <int name="workchain">uint32</int>
                 <int name="address">bits256</int>
             </tuple>
             <tuple name="beneficiary">
-                <tinyint name="workchain">uint32</tinyint>
+                <int name="workchain">uint32</int>
                 <int name="address">bits256</int>
             </tuple>
-            <tinyint name="amount">uint64</tinyint>
-            <tinyint name="period">uint64</tinyint>
-            <tinyint name="start_time">uint64</tinyint>
-            <tinyint name="timeout">uint64</tinyint>
-            <tinyint name="last_payment_time">uint64</tinyint>
-            <tinyint name="last_request_time">uint64</tinyint>
-            <tinyint name="failed_attempts">uint32</tinyint>
-            <tinyint name="subscription_id">uint64</tinyint>
+            <int name="amount">uint64</int>
+            <int name="period">uint64</int>
+            <int name="start_time">uint64</int>
+            <int name="timeout">uint64</int>
+            <int name="last_payment_time">uint64</int>
+            <int name="last_request_time">uint64</int>
+            <int name="failed_attempts">uint32</int>
+            <int name="subscription_id">uint64</int>
         </output>
     </get_method>
 
@@ -173,7 +173,7 @@
     <get_method name="get_jetton_data" interface="tep74">
         <output>
             <int name="total_supply">int257</int>
-            <tinyint name="mintable">int8</tinyint>
+            <int name="mintable">int8</int>
             <slice name="admin_address">msgaddress</slice>
             <cell name="jetton_content">any</cell>
             <cell name="jetton_wallet_code">any</cell>
@@ -203,13 +203,13 @@
             <int name="category">int257</int>
         </input>
         <output version="records" fixed_length="true">
-            <tinyint name="resolved_bits">int64</tinyint>
+            <int name="resolved_bits">int64</int>
             <cell name="result">DNS_RecordSet</cell>
         </output>
     </get_method>
     <get_method name="get_last_fill_up_time" interface="domain">
         <output>
-            <tinyint name="last_fill_up_time">uint64</tinyint>
+            <int name="last_fill_up_time">uint64</int>
         </output>
     </get_method>
     <get_method name="get_domain" interface="domain">
@@ -230,46 +230,46 @@
             <slice name="nft">msgaddress</slice>
             <slice name="owner">msgaddress</slice>
             <int name="full_price">int257</int>
-            <tinyint name="market_fee">uint64</tinyint>
+            <int name="market_fee">uint64</int>
             <slice name="royalty_address">msgaddress</slice>
-            <tinyint name="royalty_amount">uint64</tinyint>
+            <int name="royalty_amount">uint64</int>
         </output>
 
         <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
-            <tinyint name="magic" required_value="0x46495850">uint64</tinyint>
-            <tinyint name="is_complete">bool</tinyint>
-            <tinyint name="created_at">uint64</tinyint>
+            <int name="magic" required_value="0x46495850">uint64</int>
+            <int name="is_complete">bool</int>
+            <int name="created_at">uint64</int>
             <slice name="marketplace">msgaddress</slice>
             <slice name="nft">msgaddress</slice>
             <slice name="owner">msgaddress</slice>
             <int name="full_price">int257</int>
             <slice name="market_fee_address">msgaddress</slice>
-            <tinyint name="market_fee">uint64</tinyint>
+            <int name="market_fee">uint64</int>
             <slice name="royalty_address">msgaddress</slice>
-            <tinyint name="royalty_amount">uint64</tinyint>
+            <int name="royalty_amount">uint64</int>
         </output>
 
         <output version="getgems_auction" fixed_length="true" interface="nft_sale_getgems">
-            <tinyint name="magic" required_value="0x415543">uint64</tinyint>
-            <tinyint name="end">bool</tinyint>
-            <tinyint name="end_time">uint32</tinyint>
+            <int name="magic" required_value="0x415543">uint64</int>
+            <int name="end">bool</int>
+            <int name="end_time">uint32</int>
             <slice name="marketplace">msgaddress</slice>
             <slice name="nft">msgaddress</slice>
             <slice name="owner">msgaddress</slice>
-            <tinyint name="last_bid">uint64</tinyint>
+            <int name="last_bid">uint64</int>
             <slice name="last_member">msgaddress</slice>
-            <tinyint name="min_step">uint64</tinyint>
+            <int name="min_step">uint64</int>
             <slice name="market_fee_address">msgaddress</slice>
-            <tinyint name="mp_fee_factor">uint32</tinyint>
-            <tinyint name="mp_fee_base">uint32</tinyint>
+            <int name="mp_fee_factor">uint32</int>
+            <int name="mp_fee_base">uint32</int>
             <slice name="royalty_address">msgaddress</slice>
-            <tinyint name="royalty_fee_factor">uint32</tinyint>
-            <tinyint name="royalty_fee_base">uint32</tinyint>
-            <tinyint name="max_bid">uint64</tinyint>
-            <tinyint name="min_bid">uint64</tinyint>
-            <tinyint name="created_at">uint32</tinyint>
-            <tinyint name="last_bid_at">uint32</tinyint>
-            <tinyint name="is_canceled">bool</tinyint>
+            <int name="royalty_fee_factor">uint32</int>
+            <int name="royalty_fee_base">uint32</int>
+            <int name="max_bid">uint64</int>
+            <int name="min_bid">uint64</int>
+            <int name="created_at">uint32</int>
+            <int name="last_bid_at">uint32</int>
+            <int name="is_canceled">bool</int>
         </output>
     </get_method>
 
@@ -281,32 +281,32 @@
     </get_method>
     <get_method name="get_revoked_time" interface="tep85">
         <output>
-            <tinyint name="time">uint64</tinyint>
+            <int name="time">uint64</int>
         </output>
     </get_method>
 
     <!--        Payment channels    -->
     <get_method name="get_channel_state" interface="payment_channel">
         <output>
-            <tinyint name="state">uint64</tinyint>
+            <int name="state">uint64</int>
         </output>
     </get_method>
 
     <!--      Storage    -->
     <get_method name="get_wallet_params" interface="storage_provider">
         <output>
-            <tinyint name="seqno">uint32</tinyint>
-            <tinyint name="subwallet">uint32</tinyint>
+            <int name="seqno">uint32</int>
+            <int name="subwallet">uint32</int>
             <int name="public_key">int257</int>
         </output>
     </get_method>
     <get_method name="get_storage_params" interface="storage_provider">
         <output>
-            <tinyint name="accept_new_contracts">bool</tinyint>
-            <tinyint name="rate_per_mb_day">uint64</tinyint>
-            <tinyint name="max_span">uint32</tinyint>
-            <tinyint name="minimal_file_size">uint64</tinyint>
-            <tinyint name="maximal_file_size">uint64</tinyint>
+            <int name="accept_new_contracts">bool</int>
+            <int name="rate_per_mb_day">uint64</int>
+            <int name="max_span">uint32</int>
+            <int name="minimal_file_size">uint64</int>
+            <int name="maximal_file_size">uint64</int>
         </output>
     </get_method>
     <get_method name="get_storage_contract_address" interface="storage_provider">
@@ -322,15 +322,15 @@
     </get_method>
     <get_method name="get_storage_contract_data" interface="storage_contract">
         <output>
-            <tinyint name="active">bool</tinyint>
-            <tinyint name="balance">uint64</tinyint>
+            <int name="active">bool</int>
+            <int name="balance">uint64</int>
             <slice name="provider,">msgaddress</slice>
             <int name="merkle_hash">int257</int>
-            <tinyint name="file_size">uint64</tinyint>
-            <tinyint name="next_proof">uint64</tinyint>
-            <tinyint name="rate_per_mb_day">uint64</tinyint>
-            <tinyint name="max_span">uint32</tinyint>
-            <tinyint name="last_proof_time">uint32</tinyint>
+            <int name="file_size">uint64</int>
+            <int name="next_proof">uint64</int>
+            <int name="rate_per_mb_day">uint64</int>
+            <int name="max_span">uint32</int>
+            <int name="last_proof_time">uint32</int>
             <slice name="client">msgaddress</slice>
             <int name="torrent_hash">int257</int>
         </output>
@@ -342,14 +342,14 @@
     </get_method>
     <get_method name="is_active" interface="storage_contract">
         <output>
-            <tinyint name="is_active">bool</tinyint>
+            <int name="is_active">bool</int>
         </output>
     </get_method>
     <get_method name="get_next_proof_info" interface="storage_contract">
         <output>
-            <tinyint name="next_proof">uint64</tinyint>
-            <tinyint name="last_proof_time">uint32</tinyint>
-            <tinyint name="max_span">uint32</tinyint>
+            <int name="next_proof">uint64</int>
+            <int name="last_proof_time">uint32</int>
+            <int name="max_span">uint32</int>
         </output>
     </get_method>
 
@@ -358,9 +358,9 @@
         <output>
             <tuple name="nominators" list="true">
                 <int name="address">bits256</int>
-                <tinyint name="amount">uint64</tinyint>
-                <tinyint name="pending_deposit_amount">uint64</tinyint>
-                <tinyint name="withdraw_requested">bool</tinyint>
+                <int name="amount">uint64</int>
+                <int name="pending_deposit_amount">uint64</int>
+                <int name="withdraw_requested">bool</int>
             </tuple>
         </output>
     </get_method>
@@ -368,28 +368,28 @@
         <output>
             <tuple name="votes" list="true">
                 <int name="proposal_hash">bits256</int>
-                <tinyint name="vote_create_time">uint32</tinyint>
+                <int name="vote_create_time">uint32</int>
             </tuple>
         </output>
     </get_method>
     <get_method name="get_pool_data" interface="tf_nominator">
         <output version="tf">
-            <tinyint name="state">int8</tinyint>
-            <tinyint name="nominators_count">uint32</tinyint>
-            <tinyint name="stake_amount_sent">int64</tinyint>
-            <tinyint name="validator_amount">int64</tinyint>
+            <int name="state">int8</int>
+            <int name="nominators_count">uint32</int>
+            <int name="stake_amount_sent">int64</int>
+            <int name="validator_amount">int64</int>
             <int name="validator_address">bits256</int>
-            <tinyint name="validator_reward_share">uint32</tinyint>
-            <tinyint name="max_nominators_count">uint32</tinyint>
-            <tinyint name="min_validator_stake">int64</tinyint>
-            <tinyint name="min_nominator_stake">int64</tinyint>
+            <int name="validator_reward_share">uint32</int>
+            <int name="max_nominators_count">uint32</int>
+            <int name="min_validator_stake">int64</int>
+            <int name="min_nominator_stake">int64</int>
             <cell name="nominators">any</cell>
             <cell name="withdraw_requests" nullable="true">AccountLists</cell>
-            <tinyint name="stake_at">uint32</tinyint>
+            <int name="stake_at">uint32</int>
             <int name="saved_validator_set_hash">bits256</int>
-            <tinyint name="validator_set_changes_count">uint32</tinyint>
-            <tinyint name="validator_set_change_time">uint32</tinyint>
-            <tinyint name="stake_held_for">uint32</tinyint>
+            <int name="validator_set_changes_count">uint32</int>
+            <int name="validator_set_change_time">uint32</int>
+            <int name="stake_held_for">uint32</int>
             <tuple name="config_proposal_votings" list="true"/>
         </output>
     </get_method>
@@ -398,31 +398,31 @@
             <int name="address">int257</int>
         </input>
         <output>
-            <tinyint name="amount">uint64</tinyint>
-            <tinyint name="pending_deposit_amount">uint64</tinyint>
-            <tinyint name="withdraw_found">bool</tinyint>
+            <int name="amount">uint64</int>
+            <int name="pending_deposit_amount">uint64</int>
+            <int name="withdraw_found">bool</int>
         </output>
     </get_method>
 
     <!--    Whales nominators     -->
     <get_method name="get_staking_status" interface="whales_nominators">
         <output fixed_length="true">
-            <tinyint name="stake_at">uint32</tinyint>
-            <tinyint name="stake_until">uint32</tinyint>
-            <tinyint name="stake_sent">uint64</tinyint>
-            <tinyint name="query_sent">bool</tinyint>
-            <tinyint name="could_unlock">bool</tinyint>
-            <tinyint name="locked">bool</tinyint>
-            <tinyint name="proxy_stake_lock_final">bool</tinyint>
+            <int name="stake_at">uint32</int>
+            <int name="stake_until">uint32</int>
+            <int name="stake_sent">uint64</int>
+            <int name="query_sent">bool</int>
+            <int name="could_unlock">bool</int>
+            <int name="locked">bool</int>
+            <int name="proxy_stake_lock_final">bool</int>
         </output>
     </get_method>
     <get_method name="get_pool_status" interface="whales_nominators">
         <output fixed_length="true">
-            <tinyint name="balance">int64</tinyint>
-            <tinyint name="balance_sent">int64</tinyint>
-            <tinyint name="balance_pending_deposits">int64</tinyint>
-            <tinyint name="balance_pending_withdraw">int64</tinyint>
-            <tinyint name="balance_withdraw">int64</tinyint>
+            <int name="balance">int64</int>
+            <int name="balance_sent">int64</int>
+            <int name="balance_pending_deposits">int64</int>
+            <int name="balance_pending_withdraw">int64</int>
+            <int name="balance_withdraw">int64</int>
         </output>
     </get_method>
     <get_method name="get_member" interface="whales_nominators">
@@ -430,10 +430,10 @@
             <slice name="member">msgaddress</slice>
         </input>
         <output version="whales_nominator">
-            <tinyint name="member_balance">int64</tinyint>
-            <tinyint name="member_pending_deposit">int64</tinyint>
-            <tinyint name="member_pending_withdraw">int64</tinyint>
-            <tinyint name="member_withdraw">int64</tinyint>
+            <int name="member_balance">int64</int>
+            <int name="member_pending_deposit">int64</int>
+            <int name="member_pending_withdraw">int64</int>
+            <int name="member_withdraw">int64</int>
         </output>
     </get_method>
     <get_method name="get_members_raw">
@@ -443,13 +443,13 @@
     </get_method>
     <get_method name="get_params">
         <output version="whales_nominator" interface="whales_nominators" fixed_length="true">
-            <tinyint name="enabled">bool</tinyint>
-            <tinyint name="updates_enables">bool</tinyint>
-            <tinyint name="min_stake">int64</tinyint>
-            <tinyint name="deposit_fee">int64</tinyint>
-            <tinyint name="withdraw_fee">int64</tinyint>
-            <tinyint name="pool_fee">int64</tinyint>
-            <tinyint name="receipt_price">int64</tinyint>
+            <int name="enabled">bool</int>
+            <int name="updates_enables">bool</int>
+            <int name="min_stake">int64</int>
+            <int name="deposit_fee">int64</int>
+            <int name="withdraw_fee">int64</int>
+            <int name="pool_fee">int64</int>
+            <int name="receipt_price">int64</int>
         </output>
     </get_method>
 
@@ -457,20 +457,20 @@
     <get_method name="get_telemint_auction_state" interface="telemint">
         <output fixed_length="true">
             <slice name="bidder">msgaddress</slice>
-            <tinyint name="bid">int64</tinyint>
-            <tinyint name="bid_ts">int64</tinyint>
-            <tinyint name="min_bid">int64</tinyint>
-            <tinyint name="end_time">int64</tinyint>
+            <int name="bid">int64</int>
+            <int name="bid_ts">int64</int>
+            <int name="min_bid">int64</int>
+            <int name="end_time">int64</int>
         </output>
     </get_method>
     <get_method name="get_telemint_auction_config" interface="telemint">
         <output fixed_length="true">
             <slice name="beneficiar">msgaddress</slice>
-            <tinyint name="initial_min_bid">int64</tinyint>
-            <tinyint name="max_bid">int64</tinyint>
-            <tinyint name="min_bid_step">int64</tinyint>
-            <tinyint name="min_extend_time">int64</tinyint>
-            <tinyint name="duration">int64</tinyint>
+            <int name="initial_min_bid">int64</int>
+            <int name="max_bid">int64</int>
+            <int name="min_bid_step">int64</int>
+            <int name="min_extend_time">int64</int>
+            <int name="duration">int64</int>
         </output>
     </get_method>
     <get_method name="get_telemint_token_name" interface="telemint">
@@ -486,19 +486,10 @@
             <int name="supply">int64</int>
             <int name="requested_for_deposit">int64</int>
             <int name="requested_for_withdrawal">int64</int>
+            <slice name="jetton_master">msgaddress</slice>
         </output>
     </get_method>
-    <get_method name="get_current_round_deposit_minter" interface="pool">
-        <output>
-            <slice name="deposit_minter">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_current_round_withdrawal_minter" interface="pool">
-        <output fixed_length="true">
-            <slice name="deposit_minter">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_pool_credit_params" interface="pool">
+    <get_method name="get_pool_credit_params" interface="liquid_pool">
         <output fixed_length="true">
             <int name="min_loan_per_validator">int64</int>
             <int name="max_loan_per_validator">int64</int>
@@ -507,12 +498,18 @@
             <slice name="interest_manager">msgaddress</slice>
         </output>
     </get_method>
+    <get_method name="get_projected_conversion_ratio" interface="liquid_pool">
+        <output>
+            <int name="projected_balance">int64</int>
+            <int name="projected_supply">int64</int>
+        </output>
+    </get_method>
 
     <!--    Validator-Controller    -->
     <get_method name="get_validator_controller_data" interface="validator_controller">
-        <output fixed_length="true">
+        <output>
             <int name="state">int32</int>
-            <tinyint name="approved">bool</tinyint>
+            <int name="approved">bool</int>
             <int name="stake_amount_sent">int64</int>
             <int name="stake_at">uint32</int>
             <int name="saved_validator_set_hash">bits256</int>
@@ -521,6 +518,9 @@
             <int name="stake_held_for">uint32</int>
             <int name="borrowed_amount">int64</int>
             <int name="borrowing_time">uint32</int>
+            <slice name="validator">msgaddress</slice>
+            <slice name="pool">msgaddress</slice>
+            <slice name="sudoer">msgaddress</slice>
         </output>
     </get_method>
 

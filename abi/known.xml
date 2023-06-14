@@ -655,6 +655,19 @@
     <internal name="channel_closed" interface="payment_channel">
         channel_closed#dddc88ba channel_id:uint128 = InternalMsgBody;
     </internal>
+    <internal name="elector_new_stake" interface="elector">
+        new_stake#4e73744b query_id:uint64 validator_pubkey:bits256 stake_at:uint32
+        max_factor:uint32 adnl_addr:bits256 signature:^bits512 = InternalMsgBody;
+    </internal>
+    <internal name="elector_new_stake_confirmation" interface="elector">
+        new_stake_confirmation#f374484c query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="elector_recover_stake_request" interface="elector">
+        recover_stake_request#47657424 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="elector_recover_stake_response" interface="elector">
+        recover_stake_response#f96f7324 query_id:uint64 = InternalMsgBody;
+    </internal>
 
 
     <!--        Storage   -->

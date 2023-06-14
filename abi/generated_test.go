@@ -284,20 +284,88 @@ func TestWhalesNominators(t *testing.T) {
 
 }
 
-func TestMethodsDecode(t *testing.T) {
-	c, err := boc.DeserializeSinglRootBase64("te6ccgEBBAEA7AADs0Y3KJoZbSToF2FWrsk5n2kJkqyX4X6Ap8VP92juX4NPlNJSZUBwdJYp6pn3SVlg0xt+7QjJLdBJYx7JVdtEr9ZqVVgPAAAAA2QEUxhkBFOuCHpoZW5nc2h1wAECAwBgAWh0dHBzOi8vbmZ0LmZyYWdtZW50LmNvbS91c2VybmFtZS96aGVuZ3NodS5qc29uAGGACBG0dlFtgMtLJ8IHIk03VVOL8ZXXgY07PhVXdWVTJK1qMG3EIAAAoAABwgABJ1AQAEsABQBkgAgRtHZRbYDLSyfCByJNN1VTi/GV14GNOz4VV3VlUyStcA==")
-	if err != nil {
-		return
+func TestMessageDecoder(t *testing.T) {
+	tests := []struct {
+		name         string
+		boc          string
+		wantOpName   MsgOpName
+		wantValue    any
+		wantValidate func(t *testing.T, value any)
+	}{
+		{
+			name:       "telemint deploy",
+			boc:        "te6ccgEBBAEA7AADs0Y3KJoZbSToF2FWrsk5n2kJkqyX4X6Ap8VP92juX4NPlNJSZUBwdJYp6pn3SVlg0xt+7QjJLdBJYx7JVdtEr9ZqVVgPAAAAA2QEUxhkBFOuCHpoZW5nc2h1wAECAwBgAWh0dHBzOi8vbmZ0LmZyYWdtZW50LmNvbS91c2VybmFtZS96aGVuZ3NodS5qc29uAGGACBG0dlFtgMtLJ8IHIk03VVOL8ZXXgY07PhVXdWVTJK1qMG3EIAAAoAABwgABJ1AQAEsABQBkgAgRtHZRbYDLSyfCByJNN1VTi/GV14GNOz4VV3VlUyStcA==",
+			wantOpName: TelemintDeployMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(TelemintDeployMsgBody)
+				if body.Msg.Username != "zhengshu" {
+					t.Errorf("got: %v, want: %v", body.Msg.Username, "zhengshu")
+				}
+			},
+		},
+		{
+			name:       "elector new stake",
+			boc:        "te6ccgEBAgEAmQABqE5zdEsAAAGIsvJfe+aMZUshdNyzRr18l+R6zoT5JTFV0wvEY5pVettDt6WoZIhPCAADAAByqS8vzZ9J5LBRsipw1exZ37mcctWGpeeSq/Qpa7CGrQEAgEyUVHocPTT7h/s+//UOfy6LEW8mW1R1pQ35orfivNAb7e5qfpcym6AuhR1D3+bFzQSVm8wlLSxDlfBH+7ceNAw=",
+			wantOpName: ElectorNewStakeMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(ElectorNewStakeMsgBody)
+				if body.QueryId != 1686629408635 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "elector new stake confirmation",
+			boc:        "te6ccgEBAQEAEgAAIPN0SEwAAAGIsvJfewAAAAA=",
+			wantOpName: ElectorNewStakeConfirmationMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(ElectorNewStakeConfirmationMsgBody)
+				if body.QueryId != 1686629408635 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "elector recover stake request",
+			boc:        "te6ccgEBAQEADgAAGEdldCQAAAAAAAAAAA==",
+			wantOpName: ElectorRecoverStakeRequestMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(ElectorRecoverStakeRequestMsgBody)
+				fmt.Printf("body = %v\n", body)
+				if body.QueryId != 0 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "elector recover stake response",
+			boc:        "te6ccgEBAQEADgAAGPlvcyQAAAAAAAAAAA==",
+			wantOpName: ElectorRecoverStakeResponseMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(ElectorRecoverStakeResponseMsgBody)
+				if body.QueryId != 0 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
 	}
-	typeName, v, err := MessageDecoder(c)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if typeName != "TelemintDeploy" {
-		t.Fatal(typeName)
-	}
-	body := v.(TelemintDeployMsgBody)
-	if body.Msg.Username != "zhengshu" {
-		t.Fatal(body.Msg.Username)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c, err := boc.DeserializeSinglRootBase64(tt.boc)
+			if err != nil {
+				return
+			}
+			opName, value, err := MessageDecoder(c)
+			if err != nil {
+				t.Fatalf("MessageDecoder() error: %v", err)
+			}
+			if opName != tt.wantOpName {
+				t.Fatalf("got opname: %v, want: %v", opName, tt.wantOpName)
+			}
+			if tt.wantValidate != nil {
+				tt.wantValidate(t, value)
+				return
+			}
+		})
 	}
 }

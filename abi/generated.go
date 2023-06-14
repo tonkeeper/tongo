@@ -5,7 +5,6 @@ package abi
 import (
 	"context"
 	"fmt"
-
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -299,6 +298,10 @@ type StorageWithdrawMsgBody struct {
 	QueryId uint64
 }
 
+type ElectorRecoverStakeRequestMsgBody struct {
+	QueryId uint64
+}
+
 type TonstakePoolDepositMsgBody struct {
 	QueryId uint64
 }
@@ -306,6 +309,15 @@ type TonstakePoolDepositMsgBody struct {
 type TeleitemStartAuctionMsgBody struct {
 	QueryId       int64
 	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
+}
+
+type ElectorNewStakeMsgBody struct {
+	QueryId         uint64
+	ValidatorPubkey tlb.Bits256
+	StakeAt         uint32
+	MaxFactor       uint32
+	AdnlAddr        tlb.Bits256
+	Signature       tlb.Ref[tlb.Bits512]
 }
 
 type UpdatePubkeyMsgBody struct {
@@ -547,6 +559,14 @@ type TonstakeControllerUpdateValidatorHashMsgBody struct {
 	QueryId uint64
 }
 
+type ElectorNewStakeConfirmationMsgBody struct {
+	QueryId uint64
+}
+
+type ElectorRecoverStakeResponseMsgBody struct {
+	QueryId uint64
+}
+
 // MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
 // On success, it returns an operation name and a decoded body.
 func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
@@ -655,6 +675,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res StorageWithdrawMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return StorageWithdrawMsgOp, res, err
+	case 0x47657424:
+		var res ElectorRecoverStakeRequestMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return ElectorRecoverStakeRequestMsgOp, res, err
 	case 0x47d54391:
 		var res TonstakePoolDepositMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -663,6 +687,10 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res TeleitemStartAuctionMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return TeleitemStartAuctionMsgOp, res, err
+	case 0x4e73744b:
+		var res ElectorNewStakeMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return ElectorNewStakeMsgOp, res, err
 	case 0x53f34cd6:
 		var res UpdatePubkeyMsgBody
 		err = tlb.Unmarshal(cell, &res)
@@ -835,6 +863,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		var res TonstakeControllerUpdateValidatorHashMsgBody
 		err = tlb.Unmarshal(cell, &res)
 		return TonstakeControllerUpdateValidatorHashMsgOp, res, err
+	case 0xf374484c:
+		var res ElectorNewStakeConfirmationMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return ElectorNewStakeConfirmationMsgOp, res, err
+	case 0xf96f7324:
+		var res ElectorRecoverStakeResponseMsgBody
+		err = tlb.Unmarshal(cell, &res)
+		return ElectorRecoverStakeResponseMsgOp, res, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
 }
@@ -868,8 +904,10 @@ const (
 	TelemintDeployMsgOp                        MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                      MsgOpName = "TelemintDeployV2"
 	StorageWithdrawMsgOp                       MsgOpName = "StorageWithdraw"
+	ElectorRecoverStakeRequestMsgOp            MsgOpName = "ElectorRecoverStakeRequest"
 	TonstakePoolDepositMsgOp                   MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                  MsgOpName = "TeleitemStartAuction"
+	ElectorNewStakeMsgOp                       MsgOpName = "ElectorNewStake"
 	UpdatePubkeyMsgOp                          MsgOpName = "UpdatePubkey"
 	UpdateStorageParamsMsgOp                   MsgOpName = "UpdateStorageParams"
 	ChannelCooperativeCloseMsgOp               MsgOpName = "ChannelCooperativeClose"
@@ -913,6 +951,8 @@ const (
 	TonstakeControllerReturnUnusedLoanMsgOp    MsgOpName = "TonstakeControllerReturnUnusedLoan"
 	PaymentRequestResponseMsgOp                MsgOpName = "PaymentRequestResponse"
 	TonstakeControllerUpdateValidatorHashMsgOp MsgOpName = "TonstakeControllerUpdateValidatorHash"
+	ElectorNewStakeConfirmationMsgOp           MsgOpName = "ElectorNewStakeConfirmation"
+	ElectorRecoverStakeResponseMsgOp           MsgOpName = "ElectorRecoverStakeResponse"
 )
 
 var KnownMsgTypes = map[string]any{
@@ -941,8 +981,10 @@ var KnownMsgTypes = map[string]any{
 	TelemintDeployMsgOp:                        TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                      TelemintDeployV2MsgBody{},
 	StorageWithdrawMsgOp:                       StorageWithdrawMsgBody{},
+	ElectorRecoverStakeRequestMsgOp:            ElectorRecoverStakeRequestMsgBody{},
 	TonstakePoolDepositMsgOp:                   TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                  TeleitemStartAuctionMsgBody{},
+	ElectorNewStakeMsgOp:                       ElectorNewStakeMsgBody{},
 	UpdatePubkeyMsgOp:                          UpdatePubkeyMsgBody{},
 	UpdateStorageParamsMsgOp:                   UpdateStorageParamsMsgBody{},
 	ChannelCooperativeCloseMsgOp:               ChannelCooperativeCloseMsgBody{},
@@ -986,6 +1028,8 @@ var KnownMsgTypes = map[string]any{
 	TonstakeControllerReturnUnusedLoanMsgOp:    TonstakeControllerReturnUnusedLoanMsgBody{},
 	PaymentRequestResponseMsgOp:                PaymentRequestResponseMsgBody{},
 	TonstakeControllerUpdateValidatorHashMsgOp: TonstakeControllerUpdateValidatorHashMsgBody{},
+	ElectorNewStakeConfirmationMsgOp:           ElectorNewStakeConfirmationMsgBody{},
+	ElectorRecoverStakeResponseMsgOp:           ElectorRecoverStakeResponseMsgBody{},
 }
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){

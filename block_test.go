@@ -1,11 +1,12 @@
 package tongo
 
 import (
-	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/tlb"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func TestBlockInfo_GetParents(t *testing.T) {
@@ -59,6 +60,37 @@ func TestBlockInfo_GetParents(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetParents() got = %#v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestParseBlockID(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       string
+		want    BlockID
+		wantErr bool
+	}{
+		{
+			name: "all good",
+			s:    "(-1,8000000000000000,29537038)",
+			want: BlockID{
+				Workchain: -1,
+				Shard:     0x8000000000000000,
+				Seqno:     29537038,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ParseBlockID(tt.s)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseBlockID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ParseBlockID() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

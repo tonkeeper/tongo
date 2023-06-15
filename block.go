@@ -220,3 +220,21 @@ func ShardIDs(blk *tlb.Block) []BlockIDExt {
 	}
 	return shards
 }
+
+// ParseBlockID tries to construct BlockID from the given string.
+func ParseBlockID(s string) (BlockID, error) {
+	var id BlockID
+	_, err := fmt.Sscanf(s, "(%d,%x,%d)", &id.Workchain, &id.Shard, &id.Seqno)
+	if err != nil {
+		return BlockID{}, err
+	}
+	return id, nil
+}
+
+func MustParseBlockID(s string) BlockID {
+	id, err := ParseBlockID(s)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}

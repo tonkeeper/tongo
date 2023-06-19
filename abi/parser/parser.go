@@ -17,6 +17,8 @@ type Message struct {
 	Name       string   `xml:"name,attr"`
 	Input      string   `xml:",chardata"`
 	Interfaces []string `xml:"interface,attr"`
+	// FixedLength means that a destination type must have the same size in bits as the number of bits in a cell.
+	FixedLength bool `xml:"fixed_length,attr"`
 }
 
 type GetMethod struct {

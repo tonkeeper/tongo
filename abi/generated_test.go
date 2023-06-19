@@ -348,6 +348,71 @@ func TestMessageDecoder(t *testing.T) {
 				}
 			},
 		},
+		{
+			name:       "whales nominators - send stake",
+			boc:        "te6ccgEBAgEAowABvKIGXywAAAGI0j1Mgyw1BwFYnPUnKHbwWM4TRS5hbZhmsJpGbOJDg75wT5qMaoGMU5UBzzKSWmSQTwgAAwAAbNIn+VFPb/l4sANmljVkghl6ljI2ocx/jenSYm1bcPkBAIDB/wSVjt2bFSbZPDK61sYORwjzGoahODL638cmc32s8x/EiJ461gEckV2LexXz3os8VVSv5KE6VByuNNCMwIgH",
+			wantOpName: WhalesNominatorsSendStakeMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsSendStakeMsgBody)
+				if body.QueryId != 1687154412675 {
+					t.Fatalf("queryId mismatch")
+				}
+				if body.GasLimit != 50000 {
+					t.Fatalf("gas limit mismatch")
+				}
+				if body.Stake != 378906127837302 {
+					t.Fatalf("stake mismatch")
+				}
+
+			},
+		},
+		{
+			name:       "whales nominators - withdraw unowned",
+			boc:        "te6ccgEBAQEAEgAAHyUdapgAAAGI0kAuMDAYagg=",
+			wantOpName: WhalesNominatorsWithdrawUnownedMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsWithdrawUnownedMsgBody)
+				if body.QueryId != 1687154601520 {
+					t.Fatalf("queryId mismatch")
+				}
+				if body.GasLimit != 100_000 {
+					t.Fatalf("gas limit mismatch")
+				}
+			},
+		},
+		{
+			name:       "whales nominators - withdraw unowned response",
+			boc:        "te6ccgEBAQEADgAAGB0XFb8AAAGI0kAuMA==",
+			wantOpName: WhalesNominatorsWithdrawUnownedResponseMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsWithdrawUnownedResponseMsgBody)
+				if body.QueryId != 1687154601520 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "whales nominators - accept stakes",
+			boc:        "te6ccgEBCAEAsgABH5moEfsAAAGI0cbxIjD0JAwBAgEgAgMCASAEBQIBIAYHAEO/scWCjvQfTFQL1KOh6Ztr+nmQ2C/4kaXNiOi32wpy6CDAAEO/p3S5+e23IvfQ+gvnzqIOTbeuaCgp9yPokv68ZDfOGiPAAEO/oelM0QVfYQ+xunGB33oFiH1+YQOoEJASlZe2kARO5xnAAEO/mysRUYDIEknvXY8sMQx76uL+6/7Q/rgIdqBtazx2oQHA",
+			wantOpName: WhalesNominatorsAcceptStakeMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsAcceptStakeMsgBody)
+				if body.QueryId != 1687146656034 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "whales nominators - accept stakes",
+			boc:        "te6ccgEBBgEAhwABH6Gf2TQAAAGI0ceOyDD0JAwBAgEgAgMAQ7/UdemOy3akYORpWtha5F6O8CndmRarogLAwRuWQp6MVGACAW4EBQBBvw73+YMCAelmRbwV6nBjD2g+GRAa76aw/T3TTJUWAbKDAEG/GEVIP5Hp4hjND4ZSFia4OPv/sH91W1DMG7JUq2bkLS8=",
+			wantOpName: WhalesNominatorsAcceptWithdrawsMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsAcceptWithdrawsMsgBody)
+				if body.QueryId != 1687146696392 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -55,6 +55,7 @@ type TLBMsgBody struct {
 	OperationName string
 	Tag           uint64
 	Code          string
+	FixedLength   bool
 }
 
 type Generator struct {
@@ -165,7 +166,7 @@ func (g *Generator) registerABI() error {
 		}
 	}
 	for _, internal := range g.abi.Internals {
-		err := g.registerMsgType(internal.Name, internal.Input)
+		err := g.registerMsgType(internal.Name, internal.Input, internal.FixedLength)
 		if err != nil {
 			return err
 		}
@@ -195,7 +196,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func (g *Generator) registerMsgType(name, s string) error {
+func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -232,6 +233,7 @@ func (g *Generator) registerMsgType(name, s string) error {
 		OperationName: utils.ToCamelCase(name),
 		Tag:           tag.Val,
 		Code:          t,
+		FixedLength:   fixedLength,
 	}
 
 	return nil
@@ -444,11 +446,17 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("switch tag {\n")
 	var knownTypes [][2]string
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
-		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
-		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
-		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return %sMsgOp, res, err\n", g.loadedTlbMsgTypes[k].OperationName))
-		knownTypes = append(knownTypes, [2]string{g.loadedTlbMsgTypes[k].OperationName, g.loadedTlbMsgTypes[k].TypeName})
+		tlbType := g.loadedTlbMsgTypes[k]
+		builder.WriteString(fmt.Sprintf("case 0x%x:\n", tlbType.Tag))
+		builder.WriteString(fmt.Sprintf("var res %s\n", tlbType.TypeName))
+		builder.WriteString(fmt.Sprintf(`if err := tlb.Unmarshal(cell, &res); err != nil { return %sMsgOp, nil, err; }`, tlbType.OperationName))
+		builder.WriteString("\n")
+		if tlbType.FixedLength {
+			builder.WriteString(fmt.Sprintf(`if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
+			builder.WriteString("\n")
+		}
+		builder.WriteString(fmt.Sprintf("return %sMsgOp, res, nil\n", tlbType.OperationName))
+		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
 	}
 
 	builder.WriteString("}\n")

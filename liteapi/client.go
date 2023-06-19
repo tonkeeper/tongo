@@ -251,11 +251,7 @@ func (c *Client) GetVersion(ctx context.Context) (liteclient.LiteServerVersionC,
 }
 
 func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Block, error) {
-	server, err := c.getServerByBlockID(blockID.BlockID)
-	if err != nil {
-		return tlb.Block{}, err
-	}
-	res, err := server.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest{liteclient.BlockIDExt(blockID)})
+	res, err := c.GetBlockRaw(ctx, blockID)
 	if err != nil {
 		return tlb.Block{}, err
 	}
@@ -274,12 +270,20 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Bl
 	return data, nil
 }
 
-func (c *Client) GetState(ctx context.Context, blockID tongo.BlockIDExt) ([]byte, tongo.Bits256, tongo.Bits256, error) {
+func (c *Client) GetBlockRaw(ctx context.Context, blockID tongo.BlockIDExt) (liteclient.LiteServerBlockDataC, error) {
 	server, err := c.getServerByBlockID(blockID.BlockID)
 	if err != nil {
-		return nil, tongo.Bits256{}, tongo.Bits256{}, err
+		return liteclient.LiteServerBlockDataC{}, err
 	}
-	res, err := server.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
+	res, err := server.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest{liteclient.BlockIDExt(blockID)})
+	if err != nil {
+		return liteclient.LiteServerBlockDataC{}, err
+	}
+	return res, err
+}
+
+func (c *Client) GetState(ctx context.Context, blockID tongo.BlockIDExt) ([]byte, tongo.Bits256, tongo.Bits256, error) {
+	res, err := c.GetStateRaw(ctx, blockID)
 	if err != nil {
 		return nil, tongo.Bits256{}, tongo.Bits256{}, err
 	}
@@ -287,20 +291,40 @@ func (c *Client) GetState(ctx context.Context, blockID tongo.BlockIDExt) ([]byte
 	return res.Data, tongo.Bits256(res.RootHash), tongo.Bits256(res.FileHash), nil
 }
 
-func (c *Client) GetBlockHeader(ctx context.Context, blockID tongo.BlockIDExt, mode uint32) (tlb.BlockInfo, error) {
+func (c *Client) GetStateRaw(ctx context.Context, blockID tongo.BlockIDExt) (liteclient.LiteServerBlockStateC, error) {
 	server, err := c.getServerByBlockID(blockID.BlockID)
 	if err != nil {
+		return liteclient.LiteServerBlockStateC{}, err
+	}
+	res, err := server.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
+	if err != nil {
+		return liteclient.LiteServerBlockStateC{}, err
+	}
+	return res, nil
+}
+
+func (c *Client) GetBlockHeader(ctx context.Context, blockID tongo.BlockIDExt, mode uint32) (tlb.BlockInfo, error) {
+	res, err := c.GetBlockHeaderRaw(ctx, blockID, mode)
+	if err != nil {
 		return tlb.BlockInfo{}, err
+	}
+	_, info, err := decodeBlockHeader(res)
+	return info, err
+}
+
+func (c *Client) GetBlockHeaderRaw(ctx context.Context, blockID tongo.BlockIDExt, mode uint32) (liteclient.LiteServerBlockHeaderC, error) {
+	server, err := c.getServerByBlockID(blockID.BlockID)
+	if err != nil {
+		return liteclient.LiteServerBlockHeaderC{}, err
 	}
 	res, err := server.LiteServerGetBlockHeader(ctx, liteclient.LiteServerGetBlockHeaderRequest{
 		Id:   liteclient.BlockIDExt(blockID),
 		Mode: mode,
 	})
 	if err != nil {
-		return tlb.BlockInfo{}, err
+		return liteclient.LiteServerBlockHeaderC{}, err
 	}
-	_, info, err := decodeBlockHeader(res)
-	return info, err
+	return res, nil
 }
 
 func (c *Client) LookupBlock(ctx context.Context, blockID tongo.BlockID, mode uint32, lt *uint64, utime *uint32) (tongo.BlockIDExt, tlb.BlockInfo, error) {
@@ -405,18 +429,7 @@ func (c *Client) RunSmcMethod(
 }
 
 func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {
-	id, err := c.targetBlock(ctx)
-	if err != nil {
-		return tlb.ShardAccount{}, err
-	}
-	server, err := c.getServerByAccountID(accountID)
-	if err != nil {
-		return tlb.ShardAccount{}, err
-	}
-	res, err := server.LiteServerGetAccountState(ctx, liteclient.LiteServerGetAccountStateRequest{
-		Account: liteclient.AccountID(accountID),
-		Id:      liteclient.BlockIDExt(id),
-	})
+	res, err := c.GetAccountStateRaw(ctx, accountID)
 	if err != nil {
 		return tlb.ShardAccount{}, err
 	}
@@ -437,6 +450,25 @@ func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID)
 	}
 	lt, hash, err := decodeAccountDataFromProof(res.Proof, accountID)
 	return tlb.ShardAccount{Account: acc, LastTransHash: hash, LastTransLt: lt}, err
+}
+
+func (c *Client) GetAccountStateRaw(ctx context.Context, accountID tongo.AccountID) (liteclient.LiteServerAccountStateC, error) {
+	id, err := c.targetBlock(ctx)
+	if err != nil {
+		return liteclient.LiteServerAccountStateC{}, err
+	}
+	server, err := c.getServerByAccountID(accountID)
+	if err != nil {
+		return liteclient.LiteServerAccountStateC{}, err
+	}
+	res, err := server.LiteServerGetAccountState(ctx, liteclient.LiteServerGetAccountStateRequest{
+		Account: liteclient.AccountID(accountID),
+		Id:      liteclient.BlockIDExt(id),
+	})
+	if err != nil {
+		return liteclient.LiteServerAccountStateC{}, err
+	}
+	return res, nil
 }
 
 func decodeAccountDataFromProof(bocBytes []byte, account tongo.AccountID) (uint64, tlb.Bits256, error) {
@@ -471,6 +503,14 @@ func (c *Client) GetShardInfo(
 	shard uint64,
 	exact bool,
 ) (tongo.BlockIDExt, error) {
+	res, err := c.GetShardInfoRaw(ctx, blockID, workchain, shard, exact)
+	if err != nil {
+		return tongo.BlockIDExt{}, err
+	}
+	return res.Id.ToBlockIdExt(), nil
+}
+
+func (c *Client) GetShardInfoRaw(ctx context.Context, blockID tongo.BlockIDExt, workchain uint32, shard uint64, exact bool) (liteclient.LiteServerShardInfoC, error) {
 	res, err := c.getMasterchainServer().LiteServerGetShardInfo(ctx, liteclient.LiteServerGetShardInfoRequest{
 		Id:        liteclient.BlockIDExt(blockID),
 		Workchain: workchain,
@@ -478,14 +518,13 @@ func (c *Client) GetShardInfo(
 		Exact:     exact,
 	})
 	if err != nil {
-		return tongo.BlockIDExt{}, err
+		return liteclient.LiteServerShardInfoC{}, err
 	}
-	return res.Id.ToBlockIdExt(), nil
+	return res, nil
 }
 
 func (c *Client) GetAllShardsInfo(ctx context.Context, blockID tongo.BlockIDExt) ([]tongo.BlockIDExt, error) {
-	res, err := c.getMasterchainServer().LiteServerGetAllShardsInfo(ctx, liteclient.LiteServerGetAllShardsInfoRequest{
-		Id: liteclient.BlockIDExt(blockID)})
+	res, err := c.GetAllShardsInfoRaw(ctx, blockID)
 	if err != nil {
 		return nil, err
 	}
@@ -509,6 +548,15 @@ func (c *Client) GetAllShardsInfo(ctx context.Context, blockID tongo.BlockIDExt)
 		}
 	}
 	return shards, nil
+}
+
+func (c *Client) GetAllShardsInfoRaw(ctx context.Context, blockID tongo.BlockIDExt) (liteclient.LiteServerAllShardsInfoC, error) {
+	res, err := c.getMasterchainServer().LiteServerGetAllShardsInfo(ctx, liteclient.LiteServerGetAllShardsInfoRequest{
+		Id: liteclient.BlockIDExt(blockID)})
+	if err != nil {
+		return liteclient.LiteServerAllShardsInfoC{}, err
+	}
+	return res, nil
 }
 
 func (c *Client) GetOneTransactionFromBlock(
@@ -551,16 +599,7 @@ func (c *Client) GetTransactions(
 	lt uint64,
 	hash tongo.Bits256,
 ) ([]tongo.Transaction, error) {
-	server, err := c.getServerByAccountID(accountID)
-	if err != nil {
-		return nil, err
-	}
-	r, err := server.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
-		Count:   count,
-		Account: liteclient.AccountID(accountID),
-		Lt:      lt,
-		Hash:    tl.Int256(hash),
-	})
+	r, err := c.GetTransactionsRaw(ctx, count, accountID, lt, hash)
 	if err != nil {
 		return nil, err
 	}
@@ -583,6 +622,23 @@ func (c *Client) GetTransactions(
 			Transaction: t,
 			BlockID:     r.Ids[i].ToBlockIdExt(),
 		})
+	}
+	return res, nil
+}
+
+func (c *Client) GetTransactionsRaw(ctx context.Context, count uint32, accountID tongo.AccountID, lt uint64, hash tongo.Bits256) (liteclient.LiteServerTransactionListC, error) {
+	server, err := c.getServerByAccountID(accountID)
+	if err != nil {
+		return liteclient.LiteServerTransactionListC{}, err
+	}
+	res, err := server.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
+		Count:   count,
+		Account: liteclient.AccountID(accountID),
+		Lt:      lt,
+		Hash:    tl.Int256(hash),
+	})
+	if err != nil {
+		return liteclient.LiteServerTransactionListC{}, err
 	}
 	return res, nil
 }
@@ -626,20 +682,28 @@ func (c *Client) ListBlockTransactions(
 	after *liteclient.LiteServerTransactionId3C,
 ) ([]liteclient.LiteServerTransactionIdC, bool, error) {
 	// TODO: replace with tongo types
-	server, err := c.getServerByBlockID(blockID.BlockID)
+	res, err := c.ListBlockTransactionsRaw(ctx, blockID, mode, count, after)
 	if err != nil {
 		return nil, false, err
 	}
-	r, err := server.LiteServerListBlockTransactions(ctx, liteclient.LiteServerListBlockTransactionsRequest{
+	return res.Ids, res.Incomplete, nil
+}
+
+func (c *Client) ListBlockTransactionsRaw(ctx context.Context, blockID tongo.BlockIDExt, mode, count uint32, after *liteclient.LiteServerTransactionId3C) (liteclient.LiteServerBlockTransactionsC, error) {
+	server, err := c.getServerByBlockID(blockID.BlockID)
+	if err != nil {
+		return liteclient.LiteServerBlockTransactionsC{}, err
+	}
+	res, err := server.LiteServerListBlockTransactions(ctx, liteclient.LiteServerListBlockTransactionsRequest{
 		Id:    liteclient.BlockIDExt(blockID),
 		Mode:  mode,
 		Count: count,
 		After: after,
 	})
 	if err != nil {
-		return nil, false, err
+		return liteclient.LiteServerBlockTransactionsC{}, err
 	}
-	return r.Ids, r.Incomplete, nil
+	return res, nil
 }
 
 func (c *Client) GetBlockProof(
@@ -647,6 +711,15 @@ func (c *Client) GetBlockProof(
 	knownBlock tongo.BlockIDExt,
 	targetBlock *tongo.BlockIDExt,
 ) (liteclient.LiteServerPartialBlockProofC, error) {
+	res, err := c.GetBlockProofRaw(ctx, knownBlock, targetBlock)
+	if err != nil {
+		return liteclient.LiteServerPartialBlockProofC{}, err
+	}
+	// TODO: decode block proof
+	return res, nil
+}
+
+func (c *Client) GetBlockProofRaw(ctx context.Context, knownBlock tongo.BlockIDExt, targetBlock *tongo.BlockIDExt) (liteclient.LiteServerPartialBlockProofC, error) {
 	var (
 		err    error
 		server *liteclient.Client
@@ -666,7 +739,7 @@ func (c *Client) GetBlockProof(
 		b := liteclient.BlockIDExt(*targetBlock)
 		tb = &b
 	}
-	r, err := server.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
+	res, err := server.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
 		Mode:        mode,
 		KnownBlock:  liteclient.BlockIDExt(knownBlock),
 		TargetBlock: tb,
@@ -674,24 +747,31 @@ func (c *Client) GetBlockProof(
 	if err != nil {
 		return liteclient.LiteServerPartialBlockProofC{}, err
 	}
-	// TODO: decode block proof
-	return r, nil
+	return res, nil
 }
 
 // GetConfigAll returns a current configuration of the blockchain.
 func (c *Client) GetConfigAll(ctx context.Context, mode ConfigMode) (tlb.ConfigParams, error) {
-	id, err := c.targetBlock(ctx)
+	res, err := c.GetConfigAllRaw(ctx, mode)
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	r, err := c.getMasterchainServer().LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
+	return decodeConfigParams(res.ConfigProof)
+}
+
+func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclient.LiteServerConfigInfoC, error) {
+	id, err := c.targetBlock(ctx)
+	if err != nil {
+		return liteclient.LiteServerConfigInfoC{}, err
+	}
+	res, err := c.getMasterchainServer().LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
 		Mode: uint32(mode),
 		Id:   liteclient.BlockIDExt(id),
 	})
 	if err != nil {
-		return tlb.ConfigParams{}, err
+		return liteclient.LiteServerConfigInfoC{}, err
 	}
-	return decodeConfigParams(r.ConfigProof)
+	return res, nil
 }
 
 func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList []uint32) (tlb.ConfigParams, error) {
@@ -799,6 +879,14 @@ func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) 
 }
 
 func (c *Client) GetShardBlockProof(ctx context.Context) (liteclient.LiteServerShardBlockProofC, error) {
+	res, err := c.GetShardBlockProofRaw(ctx)
+	if err != nil {
+		return liteclient.LiteServerShardBlockProofC{}, err
+	}
+	return res, nil
+}
+
+func (c *Client) GetShardBlockProofRaw(ctx context.Context) (liteclient.LiteServerShardBlockProofC, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
 		return liteclient.LiteServerShardBlockProofC{}, err

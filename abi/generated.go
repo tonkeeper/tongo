@@ -604,98 +604,98 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	switch tag {
-	case 0x0:
+	switch uint32(tag) {
+	case TextCommentMsgOpCode: // 0x0
 		var res TextCommentMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TextCommentMsgOp, nil, err
 		}
 		return TextCommentMsgOp, res, nil
-	case 0x4ded148:
+	case ProveOwnershipMsgOpCode: // 0x4ded148
 		var res ProveOwnershipMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ProveOwnershipMsgOp, nil, err
 		}
 		return ProveOwnershipMsgOp, res, nil
-	case 0x5138d91:
+	case NftOwnershipAssignedMsgOpCode: // 0x5138d91
 		var res NftOwnershipAssignedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return NftOwnershipAssignedMsgOp, nil, err
 		}
 		return NftOwnershipAssignedMsgOp, res, nil
-	case 0x524c7ae:
+	case OwnershipProofMsgOpCode: // 0x524c7ae
 		var res OwnershipProofMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return OwnershipProofMsgOp, nil, err
 		}
 		return OwnershipProofMsgOp, res, nil
-	case 0x88eaa32:
+	case ChallengeQuarantinedChannelStateMsgOpCode: // 0x88eaa32
 		var res ChallengeQuarantinedChannelStateMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ChallengeQuarantinedChannelStateMsgOp, nil, err
 		}
 		return ChallengeQuarantinedChannelStateMsgOp, res, nil
-	case 0xdd607e3:
+	case SbtOwnerInfoMsgOpCode: // 0xdd607e3
 		var res SbtOwnerInfoMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SbtOwnerInfoMsgOp, nil, err
 		}
 		return SbtOwnerInfoMsgOp, res, nil
-	case 0xe0620c2:
+	case InitPaymentChannelMsgOpCode: // 0xe0620c2
 		var res InitPaymentChannelMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return InitPaymentChannelMsgOp, nil, err
 		}
 		return InitPaymentChannelMsgOp, res, nil
-	case 0xf8a7ea5:
+	case JettonTransferMsgOpCode: // 0xf8a7ea5
 		var res JettonTransferMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return JettonTransferMsgOp, nil, err
 		}
 		return JettonTransferMsgOp, res, nil
-	case 0x107c49ef:
+	case OfferStorageContractMsgOpCode: // 0x107c49ef
 		var res OfferStorageContractMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return OfferStorageContractMsgOp, nil, err
 		}
 		return OfferStorageContractMsgOp, res, nil
-	case 0x139a1b4e:
+	case TonstakeControllerPoolHaltMsgOpCode: // 0x139a1b4e
 		var res TonstakeControllerPoolHaltMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerPoolHaltMsgOp, nil, err
 		}
 		return TonstakeControllerPoolHaltMsgOp, res, nil
-	case 0x1690c604:
+	case TonstakeControllerCreditMsgOpCode: // 0x1690c604
 		var res TonstakeControllerCreditMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerCreditMsgOp, nil, err
 		}
 		return TonstakeControllerCreditMsgOp, res, nil
-	case 0x178d4519:
+	case JettonInternalTransferMsgOpCode: // 0x178d4519
 		var res JettonInternalTransferMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return JettonInternalTransferMsgOp, nil, err
 		}
 		return JettonInternalTransferMsgOp, res, nil
-	case 0x1d1715bf:
+	case WhalesNominatorsWithdrawUnownedResponseMsgOpCode: // 0x1d1715bf
 		var res WhalesNominatorsWithdrawUnownedResponseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsWithdrawUnownedResponseMsgOp, nil, err
 		}
 		return WhalesNominatorsWithdrawUnownedResponseMsgOp, res, nil
-	case 0x1f04537a:
+	case SbtDestroyMsgOpCode: // 0x1f04537a
 		var res SbtDestroyMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SbtDestroyMsgOp, nil, err
 		}
 		return SbtDestroyMsgOp, res, nil
-	case 0x1f151acf:
+	case StartUncooperativeChannelCloseMsgOpCode: // 0x1f151acf
 		var res StartUncooperativeChannelCloseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return StartUncooperativeChannelCloseMsgOp, nil, err
 		}
 		return StartUncooperativeChannelCloseMsgOp, res, nil
-	case 0x251d6a98:
+	case WhalesNominatorsWithdrawUnownedMsgOpCode: // 0x251d6a98
 		var res WhalesNominatorsWithdrawUnownedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsWithdrawUnownedMsgOp, nil, err
@@ -704,253 +704,253 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return WhalesNominatorsWithdrawUnownedMsgOp, nil, ErrStructSizeMismatch
 		}
 		return WhalesNominatorsWithdrawUnownedMsgOp, res, nil
-	case 0x25432a91:
+	case FinishUncooperativeChannelCloseMsgOpCode: // 0x25432a91
 		var res FinishUncooperativeChannelCloseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return FinishUncooperativeChannelCloseMsgOp, nil, err
 		}
 		return FinishUncooperativeChannelCloseMsgOp, res, nil
-	case 0x270695fb:
+	case TonstakeControllerPoolSendMessageMsgOpCode: // 0x270695fb
 		var res TonstakeControllerPoolSendMessageMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerPoolSendMessageMsgOp, nil, err
 		}
 		return TonstakeControllerPoolSendMessageMsgOp, res, nil
-	case 0x299a3e15:
+	case TeleitemDeployMsgOpCode: // 0x299a3e15
 		var res TeleitemDeployMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TeleitemDeployMsgOp, nil, err
 		}
 		return TeleitemDeployMsgOp, res, nil
-	case 0x2fcb26a2:
+	case GetStaticDataMsgOpCode: // 0x2fcb26a2
 		var res GetStaticDataMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return GetStaticDataMsgOp, nil, err
 		}
 		return GetStaticDataMsgOp, res, nil
-	case 0x319b0cdc:
+	case TonstakePoolWithdrawMsgOpCode: // 0x319b0cdc
 		var res TonstakePoolWithdrawMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakePoolWithdrawMsgOp, nil, err
 		}
 		return TonstakePoolWithdrawMsgOp, res, nil
-	case 0x371638ae:
+	case TeleitemCancelAuctionMsgOpCode: // 0x371638ae
 		var res TeleitemCancelAuctionMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TeleitemCancelAuctionMsgOp, nil, err
 		}
 		return TeleitemCancelAuctionMsgOp, res, nil
-	case 0x419d5d4d:
+	case ProofStorageMsgOpCode: // 0x419d5d4d
 		var res ProofStorageMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ProofStorageMsgOp, nil, err
 		}
 		return ProofStorageMsgOp, res, nil
-	case 0x452f7112:
+	case TonstakeControllerSendRequestLoanMsgOpCode: // 0x452f7112
 		var res TonstakeControllerSendRequestLoanMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerSendRequestLoanMsgOp, nil, err
 		}
 		return TonstakeControllerSendRequestLoanMsgOp, res, nil
-	case 0x4637289a:
+	case TelemintDeployMsgOpCode: // 0x4637289a
 		var res TelemintDeployMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TelemintDeployMsgOp, nil, err
 		}
 		return TelemintDeployMsgOp, res, nil
-	case 0x4637289b:
+	case TelemintDeployV2MsgOpCode: // 0x4637289b
 		var res TelemintDeployV2MsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TelemintDeployV2MsgOp, nil, err
 		}
 		return TelemintDeployV2MsgOp, res, nil
-	case 0x46ed2e94:
+	case StorageWithdrawMsgOpCode: // 0x46ed2e94
 		var res StorageWithdrawMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return StorageWithdrawMsgOp, nil, err
 		}
 		return StorageWithdrawMsgOp, res, nil
-	case 0x47657424:
+	case ElectorRecoverStakeRequestMsgOpCode: // 0x47657424
 		var res ElectorRecoverStakeRequestMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ElectorRecoverStakeRequestMsgOp, nil, err
 		}
 		return ElectorRecoverStakeRequestMsgOp, res, nil
-	case 0x47d54391:
+	case TonstakePoolDepositMsgOpCode: // 0x47d54391
 		var res TonstakePoolDepositMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakePoolDepositMsgOp, nil, err
 		}
 		return TonstakePoolDepositMsgOp, res, nil
-	case 0x487a8e81:
+	case TeleitemStartAuctionMsgOpCode: // 0x487a8e81
 		var res TeleitemStartAuctionMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TeleitemStartAuctionMsgOp, nil, err
 		}
 		return TeleitemStartAuctionMsgOp, res, nil
-	case 0x4e73744b:
+	case ElectorNewStakeMsgOpCode: // 0x4e73744b
 		var res ElectorNewStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ElectorNewStakeMsgOp, nil, err
 		}
 		return ElectorNewStakeMsgOp, res, nil
-	case 0x53f34cd6:
+	case UpdatePubkeyMsgOpCode: // 0x53f34cd6
 		var res UpdatePubkeyMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return UpdatePubkeyMsgOp, nil, err
 		}
 		return UpdatePubkeyMsgOp, res, nil
-	case 0x54cbf19b:
+	case UpdateStorageParamsMsgOpCode: // 0x54cbf19b
 		var res UpdateStorageParamsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return UpdateStorageParamsMsgOp, nil, err
 		}
 		return UpdateStorageParamsMsgOp, res, nil
-	case 0x5577587e:
+	case ChannelCooperativeCloseMsgOpCode: // 0x5577587e
 		var res ChannelCooperativeCloseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ChannelCooperativeCloseMsgOp, nil, err
 		}
 		return ChannelCooperativeCloseMsgOp, res, nil
-	case 0x595f07bc:
+	case JettonBurnMsgOpCode: // 0x595f07bc
 		var res JettonBurnMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return JettonBurnMsgOp, nil, err
 		}
 		return JettonBurnMsgOp, res, nil
-	case 0x5fcc3d14:
+	case NftTransferMsgOpCode: // 0x5fcc3d14
 		var res NftTransferMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return NftTransferMsgOp, nil, err
 		}
 		return NftTransferMsgOp, res, nil
-	case 0x64737472:
+	case WalletPluginDestructMsgOpCode: // 0x64737472
 		var res WalletPluginDestructMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WalletPluginDestructMsgOp, nil, err
 		}
 		return WalletPluginDestructMsgOp, res, nil
-	case 0x66f6f069:
+	case SettleChannelConditionalsMsgOpCode: // 0x66f6f069
 		var res SettleChannelConditionalsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SettleChannelConditionalsMsgOp, nil, err
 		}
 		return SettleChannelConditionalsMsgOp, res, nil
-	case 0x67c7d281:
+	case TopUpChannelBalanceMsgOpCode: // 0x67c7d281
 		var res TopUpChannelBalanceMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TopUpChannelBalanceMsgOp, nil, err
 		}
 		return TopUpChannelBalanceMsgOp, res, nil
-	case 0x693d3950:
+	case GetRoyaltyParamsMsgOpCode: // 0x693d3950
 		var res GetRoyaltyParamsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return GetRoyaltyParamsMsgOp, nil, err
 		}
 		return GetRoyaltyParamsMsgOp, res, nil
-	case 0x6f89f5e3:
+	case SbtRevokeMsgOpCode: // 0x6f89f5e3
 		var res SbtRevokeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SbtRevokeMsgOp, nil, err
 		}
 		return SbtRevokeMsgOp, res, nil
-	case 0x706c7567:
+	case PaymentRequestMsgOpCode: // 0x706c7567
 		var res PaymentRequestMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return PaymentRequestMsgOp, nil, err
 		}
 		return PaymentRequestMsgOp, res, nil
-	case 0x7247e7a5:
+	case TonstakeControllerPoolUnhaltMsgOpCode: // 0x7247e7a5
 		var res TonstakeControllerPoolUnhaltMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerPoolUnhaltMsgOp, nil, err
 		}
 		return TonstakeControllerPoolUnhaltMsgOp, res, nil
-	case 0x7362d09c:
+	case JettonNotifyMsgOpCode: // 0x7362d09c
 		var res JettonNotifyMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return JettonNotifyMsgOp, nil, err
 		}
 		return JettonNotifyMsgOp, res, nil
-	case 0x73756273:
+	case SubscriptionPaymentMsgOpCode: // 0x73756273
 		var res SubscriptionPaymentMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SubscriptionPaymentMsgOp, nil, err
 		}
 		return SubscriptionPaymentMsgOp, res, nil
-	case 0x79a126ef:
+	case ChannelCooperativeCommitMsgOpCode: // 0x79a126ef
 		var res ChannelCooperativeCommitMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ChannelCooperativeCommitMsgOp, nil, err
 		}
 		return ChannelCooperativeCommitMsgOp, res, nil
-	case 0x79e7c016:
+	case TonstakeControllerPoolSetSudoerMsgOpCode: // 0x79e7c016
 		var res TonstakeControllerPoolSetSudoerMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerPoolSetSudoerMsgOp, nil, err
 		}
 		return TonstakeControllerPoolSetSudoerMsgOp, res, nil
-	case 0x79f937ea:
+	case CloseStorageContractMsgOpCode: // 0x79f937ea
 		var res CloseStorageContractMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return CloseStorageContractMsgOp, nil, err
 		}
 		return CloseStorageContractMsgOp, res, nil
-	case 0x7a361688:
+	case AcceptStorageContractMsgOpCode: // 0x7a361688
 		var res AcceptStorageContractMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return AcceptStorageContractMsgOp, nil, err
 		}
 		return AcceptStorageContractMsgOp, res, nil
-	case 0x7a756db8:
+	case TonstakePoolSetRolesMsgOpCode: // 0x7a756db8
 		var res TonstakePoolSetRolesMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakePoolSetRolesMsgOp, nil, err
 		}
 		return TonstakePoolSetRolesMsgOp, res, nil
-	case 0x7b4b42e6:
+	case TonstakeControllerApproveMsgOpCode: // 0x7b4b42e6
 		var res TonstakeControllerApproveMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerApproveMsgOp, nil, err
 		}
 		return TonstakeControllerApproveMsgOp, res, nil
-	case 0x7bcd1fef:
+	case WhalesNominatorsDepositMsgOpCode: // 0x7bcd1fef
 		var res WhalesNominatorsDepositMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsDepositMsgOp, nil, err
 		}
 		return WhalesNominatorsDepositMsgOp, res, nil
-	case 0x7ccd46e9:
+	case TonstakePoolRequestLoanMsgOpCode: // 0x7ccd46e9
 		var res TonstakePoolRequestLoanMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakePoolRequestLoanMsgOp, nil, err
 		}
 		return TonstakePoolRequestLoanMsgOp, res, nil
-	case 0x8b771735:
+	case ReportStaticDataMsgOpCode: // 0x8b771735
 		var res ReportStaticDataMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ReportStaticDataMsgOp, nil, err
 		}
 		return ReportStaticDataMsgOp, res, nil
-	case 0x96e7f528:
+	case TonstakeControllerPoolUpgradeMsgOpCode: // 0x96e7f528
 		var res TonstakeControllerPoolUpgradeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerPoolUpgradeMsgOp, nil, err
 		}
 		return TonstakeControllerPoolUpgradeMsgOp, res, nil
-	case 0x99a811fb:
+	case WhalesNominatorsAcceptStakeMsgOpCode: // 0x99a811fb
 		var res WhalesNominatorsAcceptStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsAcceptStakeMsgOp, nil, err
 		}
 		return WhalesNominatorsAcceptStakeMsgOp, res, nil
-	case 0xa19fd934:
+	case WhalesNominatorsAcceptWithdrawsMsgOpCode: // 0xa19fd934
 		var res WhalesNominatorsAcceptWithdrawsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsAcceptWithdrawsMsgOp, nil, err
 		}
 		return WhalesNominatorsAcceptWithdrawsMsgOp, res, nil
-	case 0xa2065f2c:
+	case WhalesNominatorsSendStakeMsgOpCode: // 0xa2065f2c
 		var res WhalesNominatorsSendStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsSendStakeMsgOp, nil, err
@@ -959,127 +959,127 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return WhalesNominatorsSendStakeMsgOp, nil, ErrStructSizeMismatch
 		}
 		return WhalesNominatorsSendStakeMsgOp, res, nil
-	case 0xa8cb00ad:
+	case ReportRoyaltyParamsMsgOpCode: // 0xa8cb00ad
 		var res ReportRoyaltyParamsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ReportRoyaltyParamsMsgOp, nil, err
 		}
 		return ReportRoyaltyParamsMsgOp, res, nil
-	case 0xa91baf56:
+	case StorageRewardWithdrawalMsgOpCode: // 0xa91baf56
 		var res StorageRewardWithdrawalMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return StorageRewardWithdrawalMsgOp, nil, err
 		}
 		return StorageRewardWithdrawalMsgOp, res, nil
-	case 0xb6236d63:
+	case StorageContractTerminatedMsgOpCode: // 0xb6236d63
 		var res StorageContractTerminatedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return StorageContractTerminatedMsgOp, nil, err
 		}
 		return StorageContractTerminatedMsgOp, res, nil
-	case 0xcefaaefd:
+	case TonstakeControllerWithdrawValidatorMsgOpCode: // 0xcefaaefd
 		var res TonstakeControllerWithdrawValidatorMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerWithdrawValidatorMsgOp, nil, err
 		}
 		return TonstakeControllerWithdrawValidatorMsgOp, res, nil
-	case 0xd0c3bfea:
+	case SbtRequestOwnerMsgOpCode: // 0xd0c3bfea
 		var res SbtRequestOwnerMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SbtRequestOwnerMsgOp, nil, err
 		}
 		return SbtRequestOwnerMsgOp, res, nil
-	case 0xd372158c:
+	case TonstakeControllerTopUpMsgOpCode: // 0xd372158c
 		var res TonstakeControllerTopUpMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerTopUpMsgOp, nil, err
 		}
 		return TonstakeControllerTopUpMsgOp, res, nil
-	case 0xd4caedcd:
+	case StorageContractConfirmedMsgOpCode: // 0xd4caedcd
 		var res StorageContractConfirmedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return StorageContractConfirmedMsgOp, nil, err
 		}
 		return StorageContractConfirmedMsgOp, res, nil
-	case 0xd53276db:
+	case ExcessMsgOpCode: // 0xd53276db
 		var res ExcessMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ExcessMsgOp, nil, err
 		}
 		return ExcessMsgOp, res, nil
-	case 0xda803efd:
+	case WhalesNominatorsWithdrawMsgOpCode: // 0xda803efd
 		var res WhalesNominatorsWithdrawMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsWithdrawMsgOp, nil, err
 		}
 		return WhalesNominatorsWithdrawMsgOp, res, nil
-	case 0xdddc88ba:
+	case ChannelClosedMsgOpCode: // 0xdddc88ba
 		var res ChannelClosedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ChannelClosedMsgOp, nil, err
 		}
 		return ChannelClosedMsgOp, res, nil
-	case 0xdfdca27b:
+	case TonstakePoolLoanRepaymentMsgOpCode: // 0xdfdca27b
 		var res TonstakePoolLoanRepaymentMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakePoolLoanRepaymentMsgOp, nil, err
 		}
 		return TonstakePoolLoanRepaymentMsgOp, res, nil
-	case 0xe0505d0e:
+	case TonstakeControllerNewStakeMsgOpCode: // 0xe0505d0e
 		var res TonstakeControllerNewStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerNewStakeMsgOp, nil, err
 		}
 		return TonstakeControllerNewStakeMsgOp, res, nil
-	case 0xe4737472:
+	case WalletPluginDestructResponseMsgOpCode: // 0xe4737472
 		var res WalletPluginDestructResponseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WalletPluginDestructResponseMsgOp, nil, err
 		}
 		return WalletPluginDestructResponseMsgOp, res, nil
-	case 0xe4748df1:
+	case DeployStorageContractMsgOpCode: // 0xe4748df1
 		var res DeployStorageContractMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return DeployStorageContractMsgOp, nil, err
 		}
 		return DeployStorageContractMsgOp, res, nil
-	case 0xe8a0abfe:
+	case TonstakeControllerDisapproveMsgOpCode: // 0xe8a0abfe
 		var res TonstakeControllerDisapproveMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerDisapproveMsgOp, nil, err
 		}
 		return TonstakeControllerDisapproveMsgOp, res, nil
-	case 0xeb373a05:
+	case TonstakeControllerRecoverStakeMsgOpCode: // 0xeb373a05
 		var res TonstakeControllerRecoverStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerRecoverStakeMsgOp, nil, err
 		}
 		return TonstakeControllerRecoverStakeMsgOp, res, nil
-	case 0xed7378a6:
+	case TonstakeControllerReturnUnusedLoanMsgOpCode: // 0xed7378a6
 		var res TonstakeControllerReturnUnusedLoanMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerReturnUnusedLoanMsgOp, nil, err
 		}
 		return TonstakeControllerReturnUnusedLoanMsgOp, res, nil
-	case 0xf06c7567:
+	case PaymentRequestResponseMsgOpCode: // 0xf06c7567
 		var res PaymentRequestResponseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return PaymentRequestResponseMsgOp, nil, err
 		}
 		return PaymentRequestResponseMsgOp, res, nil
-	case 0xf0fd2250:
+	case TonstakeControllerUpdateValidatorHashMsgOpCode: // 0xf0fd2250
 		var res TonstakeControllerUpdateValidatorHashMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerUpdateValidatorHashMsgOp, nil, err
 		}
 		return TonstakeControllerUpdateValidatorHashMsgOp, res, nil
-	case 0xf374484c:
+	case ElectorNewStakeConfirmationMsgOpCode: // 0xf374484c
 		var res ElectorNewStakeConfirmationMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ElectorNewStakeConfirmationMsgOp, nil, err
 		}
 		return ElectorNewStakeConfirmationMsgOp, res, nil
-	case 0xf96f7324:
+	case ElectorRecoverStakeResponseMsgOpCode: // 0xf96f7324
 		var res ElectorRecoverStakeResponseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ElectorRecoverStakeResponseMsgOp, nil, err
@@ -1172,6 +1172,91 @@ const (
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
 	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
+)
+
+// MsgOpCode is the first 4 bytes of a message body identifying an operation to be performed.
+type MsgOpCode = uint32
+
+const (
+	TextCommentMsgOpCode                             MsgOpCode = 0x0
+	ProveOwnershipMsgOpCode                          MsgOpCode = 0x4ded148
+	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x5138d91
+	OwnershipProofMsgOpCode                          MsgOpCode = 0x524c7ae
+	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x88eaa32
+	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0xdd607e3
+	InitPaymentChannelMsgOpCode                      MsgOpCode = 0xe0620c2
+	JettonTransferMsgOpCode                          MsgOpCode = 0xf8a7ea5
+	OfferStorageContractMsgOpCode                    MsgOpCode = 0x107c49ef
+	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
+	TonstakeControllerCreditMsgOpCode                MsgOpCode = 0x1690c604
+	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
+	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
+	SbtDestroyMsgOpCode                              MsgOpCode = 0x1f04537a
+	StartUncooperativeChannelCloseMsgOpCode          MsgOpCode = 0x1f151acf
+	WhalesNominatorsWithdrawUnownedMsgOpCode         MsgOpCode = 0x251d6a98
+	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
+	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
+	TeleitemDeployMsgOpCode                          MsgOpCode = 0x299a3e15
+	GetStaticDataMsgOpCode                           MsgOpCode = 0x2fcb26a2
+	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
+	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
+	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
+	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x452f7112
+	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
+	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
+	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
+	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
+	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
+	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
+	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
+	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
+	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
+	ChannelCooperativeCloseMsgOpCode                 MsgOpCode = 0x5577587e
+	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
+	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
+	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
+	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
+	TopUpChannelBalanceMsgOpCode                     MsgOpCode = 0x67c7d281
+	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
+	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
+	PaymentRequestMsgOpCode                          MsgOpCode = 0x706c7567
+	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
+	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
+	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
+	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
+	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
+	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
+	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
+	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x7a756db8
+	TonstakeControllerApproveMsgOpCode               MsgOpCode = 0x7b4b42e6
+	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
+	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0x7ccd46e9
+	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
+	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
+	WhalesNominatorsAcceptStakeMsgOpCode             MsgOpCode = 0x99a811fb
+	WhalesNominatorsAcceptWithdrawsMsgOpCode         MsgOpCode = 0xa19fd934
+	WhalesNominatorsSendStakeMsgOpCode               MsgOpCode = 0xa2065f2c
+	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
+	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
+	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
+	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0xcefaaefd
+	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
+	TonstakeControllerTopUpMsgOpCode                 MsgOpCode = 0xd372158c
+	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
+	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
+	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
+	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
+	TonstakePoolLoanRepaymentMsgOpCode               MsgOpCode = 0xdfdca27b
+	TonstakeControllerNewStakeMsgOpCode              MsgOpCode = 0xe0505d0e
+	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
+	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
+	TonstakeControllerDisapproveMsgOpCode            MsgOpCode = 0xe8a0abfe
+	TonstakeControllerRecoverStakeMsgOpCode          MsgOpCode = 0xeb373a05
+	TonstakeControllerReturnUnusedLoanMsgOpCode      MsgOpCode = 0xed7378a6
+	PaymentRequestResponseMsgOpCode                  MsgOpCode = 0xf06c7567
+	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
+	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
+	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 )
 
 var KnownMsgTypes = map[string]any{

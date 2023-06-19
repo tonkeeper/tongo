@@ -433,6 +433,11 @@ func (g *Generator) CollectedTypes() string {
 	return string(b)
 }
 
+type opCode struct {
+	OperationName string
+	Tag           uint64
+}
+
 func (g *Generator) GenerateMsgDecoder() string {
 	var builder strings.Builder
 
@@ -443,11 +448,12 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("tag, err := cell.ReadUint(32)\n")
 	builder.WriteString(msgDecoderReturnErr)
 
-	builder.WriteString("switch tag {\n")
+	builder.WriteString("switch uint32(tag) {\n")
 	var knownTypes [][2]string
+	var knownOpcodes []opCode
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
 		tlbType := g.loadedTlbMsgTypes[k]
-		builder.WriteString(fmt.Sprintf("case 0x%x:\n", tlbType.Tag))
+		builder.WriteString(fmt.Sprintf("case %sMsgOpCode:  // 0x%x\n", tlbType.OperationName, tlbType.Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", tlbType.TypeName))
 		builder.WriteString(fmt.Sprintf(`if err := tlb.Unmarshal(cell, &res); err != nil { return %sMsgOp, nil, err; }`, tlbType.OperationName))
 		builder.WriteString("\n")
@@ -457,6 +463,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 		}
 		builder.WriteString(fmt.Sprintf("return %sMsgOp, res, nil\n", tlbType.OperationName))
 		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
+		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
 	}
 
 	builder.WriteString("}\n")
@@ -468,6 +475,13 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("const (\n")
 	for _, v := range knownTypes {
 		fmt.Fprintf(&builder, `%vMsgOp MsgOpName = "%v"`+"\n", v[0], v[0])
+	}
+	builder.WriteString(")\n")
+	builder.WriteString("// MsgOpCode is the first 4 bytes of a message body identifying an operation to be performed.\n")
+	builder.WriteString("type MsgOpCode = uint32\n")
+	builder.WriteString("const (\n")
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, `%vMsgOpCode MsgOpCode = 0x%x`+"\n", v.OperationName, v.Tag)
 	}
 	builder.WriteString(")\n")
 	builder.WriteString("var KnownMsgTypes = map[string]any{\n")

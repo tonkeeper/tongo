@@ -55,6 +55,7 @@ type TLBMsgBody struct {
 	OperationName string
 	Tag           uint64
 	Code          string
+	FixedLength   bool
 }
 
 type Generator struct {
@@ -165,7 +166,7 @@ func (g *Generator) registerABI() error {
 		}
 	}
 	for _, internal := range g.abi.Internals {
-		err := g.registerMsgType(internal.Name, internal.Input)
+		err := g.registerMsgType(internal.Name, internal.Input, internal.FixedLength)
 		if err != nil {
 			return err
 		}
@@ -195,7 +196,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func (g *Generator) registerMsgType(name, s string) error {
+func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -232,6 +233,7 @@ func (g *Generator) registerMsgType(name, s string) error {
 		OperationName: utils.ToCamelCase(name),
 		Tag:           tag.Val,
 		Code:          t,
+		FixedLength:   fixedLength,
 	}
 
 	return nil
@@ -431,6 +433,11 @@ func (g *Generator) CollectedTypes() string {
 	return string(b)
 }
 
+type opCode struct {
+	OperationName string
+	Tag           uint64
+}
+
 func (g *Generator) GenerateMsgDecoder() string {
 	var builder strings.Builder
 
@@ -441,14 +448,22 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("tag, err := cell.ReadUint(32)\n")
 	builder.WriteString(msgDecoderReturnErr)
 
-	builder.WriteString("switch tag {\n")
+	builder.WriteString("switch uint32(tag) {\n")
 	var knownTypes [][2]string
+	var knownOpcodes []opCode
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
-		builder.WriteString(fmt.Sprintf("case 0x%x:\n", g.loadedTlbMsgTypes[k].Tag))
-		builder.WriteString(fmt.Sprintf("var res %s\n", g.loadedTlbMsgTypes[k].TypeName))
-		builder.WriteString("err = tlb.Unmarshal(cell, &res)\n")
-		builder.WriteString(fmt.Sprintf("return %sMsgOp, res, err\n", g.loadedTlbMsgTypes[k].OperationName))
-		knownTypes = append(knownTypes, [2]string{g.loadedTlbMsgTypes[k].OperationName, g.loadedTlbMsgTypes[k].TypeName})
+		tlbType := g.loadedTlbMsgTypes[k]
+		builder.WriteString(fmt.Sprintf("case %sMsgOpCode:  // 0x%x\n", tlbType.OperationName, tlbType.Tag))
+		builder.WriteString(fmt.Sprintf("var res %s\n", tlbType.TypeName))
+		builder.WriteString(fmt.Sprintf(`if err := tlb.Unmarshal(cell, &res); err != nil { return %sMsgOp, nil, err; }`, tlbType.OperationName))
+		builder.WriteString("\n")
+		if tlbType.FixedLength {
+			builder.WriteString(fmt.Sprintf(`if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
+			builder.WriteString("\n")
+		}
+		builder.WriteString(fmt.Sprintf("return %sMsgOp, res, nil\n", tlbType.OperationName))
+		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
+		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
 	}
 
 	builder.WriteString("}\n")
@@ -460,6 +475,13 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("const (\n")
 	for _, v := range knownTypes {
 		fmt.Fprintf(&builder, `%vMsgOp MsgOpName = "%v"`+"\n", v[0], v[0])
+	}
+	builder.WriteString(")\n")
+	builder.WriteString("// MsgOpCode is the first 4 bytes of a message body identifying an operation to be performed.\n")
+	builder.WriteString("type MsgOpCode = uint32\n")
+	builder.WriteString("const (\n")
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, `%vMsgOpCode MsgOpCode = 0x%x`+"\n", v.OperationName, v.Tag)
 	}
 	builder.WriteString(")\n")
 	builder.WriteString("var KnownMsgTypes = map[string]any{\n")

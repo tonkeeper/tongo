@@ -524,6 +524,17 @@ func (v VmStackValue) Unmarshal(dest any) error {
 	if !val.CanSet() {
 		return fmt.Errorf("can't set")
 	}
+	if v.SumType == "VmStkNull" {
+		if val.Kind() != reflect.Pointer {
+			return fmt.Errorf("can't unmarshal Null to not pointer type")
+		}
+		return nil
+	}
+	if val.Kind() == reflect.Pointer {
+		a := reflect.New(val.Type().Elem())
+		dest = a.Interface()
+		val.Set(a)
+	}
 	switch v.SumType {
 	case "VmStkTinyInt":
 		if _, ok := dest.(*Int257); ok {

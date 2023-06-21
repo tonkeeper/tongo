@@ -30,7 +30,7 @@ func TestParseMethod(t *testing.T) {
 }
 
 func TestParseInterface(t *testing.T) {
-	b, err := os.ReadFile("../known.xml")
+	b, err := os.ReadFile("../schemas/known.xml")
 	if err != nil {
 		t.Fatal(err)
 	}

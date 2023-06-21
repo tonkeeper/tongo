@@ -45,6 +45,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return ChallengeQuarantinedChannelStateMsgOp, nil, err
 		}
 		return ChallengeQuarantinedChannelStateMsgOp, res, nil
+	case TonstakePoolWithdrawalMsgOpCode: // 0xa77535c
+		var res TonstakePoolWithdrawalMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolWithdrawalMsgOp, nil, err
+		}
+		return TonstakePoolWithdrawalMsgOp, res, nil
 	case SbtOwnerInfoMsgOpCode: // 0xdd607e3
 		var res SbtOwnerInfoMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -69,6 +75,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return OfferStorageContractMsgOp, nil, err
 		}
 		return OfferStorageContractMsgOp, res, nil
+	case TonstakeNftInitMsgOpCode: // 0x132f9a45
+		var res TonstakeNftInitMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeNftInitMsgOp, nil, err
+		}
+		return TonstakeNftInitMsgOp, res, nil
 	case TonstakeControllerPoolHaltMsgOpCode: // 0x139a1b4e
 		var res TonstakeControllerPoolHaltMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -132,12 +144,24 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TeleitemDeployMsgOp, nil, err
 		}
 		return TeleitemDeployMsgOp, res, nil
+	case TonstakePoolSetGovernanceFeeMsgOpCode: // 0x2aaa96a0
+		var res TonstakePoolSetGovernanceFeeMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolSetGovernanceFeeMsgOp, nil, err
+		}
+		return TonstakePoolSetGovernanceFeeMsgOp, res, nil
 	case GetStaticDataMsgOpCode: // 0x2fcb26a2
 		var res GetStaticDataMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return GetStaticDataMsgOp, nil, err
 		}
 		return GetStaticDataMsgOp, res, nil
+	case TonstakeControllerValidatorWithdrawalMsgOpCode: // 0x30026327
+		var res TonstakeControllerValidatorWithdrawalMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeControllerValidatorWithdrawalMsgOp, nil, err
+		}
+		return TonstakeControllerValidatorWithdrawalMsgOp, res, nil
 	case TonstakePoolWithdrawMsgOpCode: // 0x319b0cdc
 		var res TonstakePoolWithdrawMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -156,12 +180,6 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return ProofStorageMsgOp, nil, err
 		}
 		return ProofStorageMsgOp, res, nil
-	case TonstakeControllerSendRequestLoanMsgOpCode: // 0x452f7112
-		var res TonstakeControllerSendRequestLoanMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerSendRequestLoanMsgOp, nil, err
-		}
-		return TonstakeControllerSendRequestLoanMsgOp, res, nil
 	case TelemintDeployMsgOpCode: // 0x4637289a
 		var res TelemintDeployMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -198,6 +216,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TeleitemStartAuctionMsgOp, nil, err
 		}
 		return TeleitemStartAuctionMsgOp, res, nil
+	case TonstakePoolTouchMsgOpCode: // 0x4bc7c2df
+		var res TonstakePoolTouchMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolTouchMsgOp, nil, err
+		}
+		return TonstakePoolTouchMsgOp, res, nil
 	case ElectorNewStakeMsgOpCode: // 0x4e73744b
 		var res ElectorNewStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -216,24 +240,48 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return UpdateStorageParamsMsgOp, nil, err
 		}
 		return UpdateStorageParamsMsgOp, res, nil
+	case TonstakeImanagerOperationFeeMsgOpCode: // 0x54d37487
+		var res TonstakeImanagerOperationFeeMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeImanagerOperationFeeMsgOp, nil, err
+		}
+		return TonstakeImanagerOperationFeeMsgOp, res, nil
 	case ChannelCooperativeCloseMsgOpCode: // 0x5577587e
 		var res ChannelCooperativeCloseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ChannelCooperativeCloseMsgOp, nil, err
 		}
 		return ChannelCooperativeCloseMsgOp, res, nil
+	case TonstakeControllerReturnAvailableFundsMsgOpCode: // 0x55c26cd5
+		var res TonstakeControllerReturnAvailableFundsMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeControllerReturnAvailableFundsMsgOp, nil, err
+		}
+		return TonstakeControllerReturnAvailableFundsMsgOp, res, nil
 	case JettonBurnMsgOpCode: // 0x595f07bc
 		var res JettonBurnMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return JettonBurnMsgOp, nil, err
 		}
 		return JettonBurnMsgOp, res, nil
+	case TonstakePoolSetRolesMsgOpCode: // 0x5e517f36
+		var res TonstakePoolSetRolesMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolSetRolesMsgOp, nil, err
+		}
+		return TonstakePoolSetRolesMsgOp, res, nil
 	case NftTransferMsgOpCode: // 0x5fcc3d14
 		var res NftTransferMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return NftTransferMsgOp, nil, err
 		}
 		return NftTransferMsgOp, res, nil
+	case TonstakeControllerSendRequestLoanMsgOpCode: // 0x6335b11a
+		var res TonstakeControllerSendRequestLoanMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeControllerSendRequestLoanMsgOp, nil, err
+		}
+		return TonstakeControllerSendRequestLoanMsgOp, res, nil
 	case WalletPluginDestructMsgOpCode: // 0x64737472
 		var res WalletPluginDestructMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -312,12 +360,6 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return AcceptStorageContractMsgOp, nil, err
 		}
 		return AcceptStorageContractMsgOp, res, nil
-	case TonstakePoolSetRolesMsgOpCode: // 0x7a756db8
-		var res TonstakePoolSetRolesMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolSetRolesMsgOp, nil, err
-		}
-		return TonstakePoolSetRolesMsgOp, res, nil
 	case TonstakeControllerApproveMsgOpCode: // 0x7b4b42e6
 		var res TonstakeControllerApproveMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -330,30 +372,42 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return WhalesNominatorsDepositMsgOp, nil, err
 		}
 		return WhalesNominatorsDepositMsgOp, res, nil
-	case TonstakePoolRequestLoanMsgOpCode: // 0x7ccd46e9
-		var res TonstakePoolRequestLoanMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolRequestLoanMsgOp, nil, err
-		}
-		return TonstakePoolRequestLoanMsgOp, res, nil
 	case ReportStaticDataMsgOpCode: // 0x8b771735
 		var res ReportStaticDataMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ReportStaticDataMsgOp, nil, err
 		}
 		return ReportStaticDataMsgOp, res, nil
+	case TonstakeControllerWithdrawValidatorMsgOpCode: // 0x8efed779
+		var res TonstakeControllerWithdrawValidatorMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeControllerWithdrawValidatorMsgOp, nil, err
+		}
+		return TonstakeControllerWithdrawValidatorMsgOp, res, nil
 	case TonstakeControllerPoolUpgradeMsgOpCode: // 0x96e7f528
 		var res TonstakeControllerPoolUpgradeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakeControllerPoolUpgradeMsgOp, nil, err
 		}
 		return TonstakeControllerPoolUpgradeMsgOp, res, nil
+	case TonstakePoolPrepareGovernanceMigrationMsgOpCode: // 0x9971881c
+		var res TonstakePoolPrepareGovernanceMigrationMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolPrepareGovernanceMigrationMsgOp, nil, err
+		}
+		return TonstakePoolPrepareGovernanceMigrationMsgOp, res, nil
 	case WhalesNominatorsAcceptStakeMsgOpCode: // 0x99a811fb
 		var res WhalesNominatorsAcceptStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return WhalesNominatorsAcceptStakeMsgOp, nil, err
 		}
 		return WhalesNominatorsAcceptStakeMsgOp, res, nil
+	case TonstakePoolSetDepositSettingsMsgOpCode: // 0x9bf5561c
+		var res TonstakePoolSetDepositSettingsMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolSetDepositSettingsMsgOp, nil, err
+		}
+		return TonstakePoolSetDepositSettingsMsgOp, res, nil
 	case WhalesNominatorsAcceptWithdrawsMsgOpCode: // 0xa19fd934
 		var res WhalesNominatorsAcceptWithdrawsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -381,18 +435,36 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return StorageRewardWithdrawalMsgOp, nil, err
 		}
 		return StorageRewardWithdrawalMsgOp, res, nil
+	case TonstakeImanagerRequestNotificationMsgOpCode: // 0xb1ebae06
+		var res TonstakeImanagerRequestNotificationMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeImanagerRequestNotificationMsgOp, nil, err
+		}
+		return TonstakeImanagerRequestNotificationMsgOp, res, nil
+	case TonstakePoolDeployControllerMsgOpCode: // 0xb27edcad
+		var res TonstakePoolDeployControllerMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolDeployControllerMsgOp, nil, err
+		}
+		return TonstakePoolDeployControllerMsgOp, res, nil
 	case StorageContractTerminatedMsgOpCode: // 0xb6236d63
 		var res StorageContractTerminatedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return StorageContractTerminatedMsgOp, nil, err
 		}
 		return StorageContractTerminatedMsgOp, res, nil
-	case TonstakeControllerWithdrawValidatorMsgOpCode: // 0xcefaaefd
-		var res TonstakeControllerWithdrawValidatorMsgBody
+	case TonstakeImanagerStatsMsgOpCode: // 0xc1344900
+		var res TonstakeImanagerStatsMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerWithdrawValidatorMsgOp, nil, err
+			return TonstakeImanagerStatsMsgOp, nil, err
 		}
-		return TonstakeControllerWithdrawValidatorMsgOp, res, nil
+		return TonstakeImanagerStatsMsgOp, res, nil
+	case TonstakeImanagerSetInterestMsgOpCode: // 0xc9f04485
+		var res TonstakeImanagerSetInterestMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeImanagerSetInterestMsgOp, nil, err
+		}
+		return TonstakeImanagerSetInterestMsgOp, res, nil
 	case SbtRequestOwnerMsgOpCode: // 0xd0c3bfea
 		var res SbtRequestOwnerMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -435,12 +507,6 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakePoolLoanRepaymentMsgOp, nil, err
 		}
 		return TonstakePoolLoanRepaymentMsgOp, res, nil
-	case TonstakeControllerNewStakeMsgOpCode: // 0xe0505d0e
-		var res TonstakeControllerNewStakeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerNewStakeMsgOp, nil, err
-		}
-		return TonstakeControllerNewStakeMsgOp, res, nil
 	case WalletPluginDestructResponseMsgOpCode: // 0xe4737472
 		var res WalletPluginDestructResponseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -453,6 +519,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return DeployStorageContractMsgOp, nil, err
 		}
 		return DeployStorageContractMsgOp, res, nil
+	case TonstakePoolRequestLoanMsgOpCode: // 0xe642c965
+		var res TonstakePoolRequestLoanMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakePoolRequestLoanMsgOp, nil, err
+		}
+		return TonstakePoolRequestLoanMsgOp, res, nil
 	case TonstakeControllerDisapproveMsgOpCode: // 0xe8a0abfe
 		var res TonstakeControllerDisapproveMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -465,6 +537,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakeControllerRecoverStakeMsgOp, nil, err
 		}
 		return TonstakeControllerRecoverStakeMsgOp, res, nil
+	case TonstakeNftBurnNotificationMsgOpCode: // 0xed58b0b2
+		var res TonstakeNftBurnNotificationMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeNftBurnNotificationMsgOp, nil, err
+		}
+		return TonstakeNftBurnNotificationMsgOp, res, nil
 	case TonstakeControllerReturnUnusedLoanMsgOpCode: // 0xed7378a6
 		var res TonstakeControllerReturnUnusedLoanMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -483,6 +561,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakeControllerUpdateValidatorHashMsgOp, nil, err
 		}
 		return TonstakeControllerUpdateValidatorHashMsgOp, res, nil
+	case TonstakeNftBurnMsgOpCode: // 0xf127fe4e
+		var res TonstakeNftBurnMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return TonstakeNftBurnMsgOp, nil, err
+		}
+		return TonstakeNftBurnMsgOp, res, nil
 	case ElectorNewStakeConfirmationMsgOpCode: // 0xf374484c
 		var res ElectorNewStakeConfirmationMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -508,10 +592,12 @@ const (
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
 	OwnershipProofMsgOp                          MsgOpName = "OwnershipProof"
 	ChallengeQuarantinedChannelStateMsgOp        MsgOpName = "ChallengeQuarantinedChannelState"
+	TonstakePoolWithdrawalMsgOp                  MsgOpName = "TonstakePoolWithdrawal"
 	SbtOwnerInfoMsgOp                            MsgOpName = "SbtOwnerInfo"
 	InitPaymentChannelMsgOp                      MsgOpName = "InitPaymentChannel"
 	JettonTransferMsgOp                          MsgOpName = "JettonTransfer"
 	OfferStorageContractMsgOp                    MsgOpName = "OfferStorageContract"
+	TonstakeNftInitMsgOp                         MsgOpName = "TonstakeNftInit"
 	TonstakeControllerPoolHaltMsgOp              MsgOpName = "TonstakeControllerPoolHalt"
 	TonstakeControllerCreditMsgOp                MsgOpName = "TonstakeControllerCredit"
 	JettonInternalTransferMsgOp                  MsgOpName = "JettonInternalTransfer"
@@ -522,23 +608,29 @@ const (
 	FinishUncooperativeChannelCloseMsgOp         MsgOpName = "FinishUncooperativeChannelClose"
 	TonstakeControllerPoolSendMessageMsgOp       MsgOpName = "TonstakeControllerPoolSendMessage"
 	TeleitemDeployMsgOp                          MsgOpName = "TeleitemDeploy"
+	TonstakePoolSetGovernanceFeeMsgOp            MsgOpName = "TonstakePoolSetGovernanceFee"
 	GetStaticDataMsgOp                           MsgOpName = "GetStaticData"
+	TonstakeControllerValidatorWithdrawalMsgOp   MsgOpName = "TonstakeControllerValidatorWithdrawal"
 	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
-	TonstakeControllerSendRequestLoanMsgOp       MsgOpName = "TonstakeControllerSendRequestLoan"
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
 	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
 	ElectorRecoverStakeRequestMsgOp              MsgOpName = "ElectorRecoverStakeRequest"
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
+	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
 	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
+	TonstakeImanagerOperationFeeMsgOp            MsgOpName = "TonstakeImanagerOperationFee"
 	ChannelCooperativeCloseMsgOp                 MsgOpName = "ChannelCooperativeClose"
+	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
+	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
+	TonstakeControllerSendRequestLoanMsgOp       MsgOpName = "TonstakeControllerSendRequestLoan"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
 	SettleChannelConditionalsMsgOp               MsgOpName = "SettleChannelConditionals"
 	TopUpChannelBalanceMsgOp                     MsgOpName = "TopUpChannelBalance"
@@ -552,19 +644,23 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
-	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	TonstakeControllerApproveMsgOp               MsgOpName = "TonstakeControllerApprove"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
-	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
+	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
 	TonstakeControllerPoolUpgradeMsgOp           MsgOpName = "TonstakeControllerPoolUpgrade"
+	TonstakePoolPrepareGovernanceMigrationMsgOp  MsgOpName = "TonstakePoolPrepareGovernanceMigration"
 	WhalesNominatorsAcceptStakeMsgOp             MsgOpName = "WhalesNominatorsAcceptStake"
+	TonstakePoolSetDepositSettingsMsgOp          MsgOpName = "TonstakePoolSetDepositSettings"
 	WhalesNominatorsAcceptWithdrawsMsgOp         MsgOpName = "WhalesNominatorsAcceptWithdraws"
 	WhalesNominatorsSendStakeMsgOp               MsgOpName = "WhalesNominatorsSendStake"
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
+	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
+	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
 	StorageContractTerminatedMsgOp               MsgOpName = "StorageContractTerminated"
-	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
+	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
+	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
 	SbtRequestOwnerMsgOp                         MsgOpName = "SbtRequestOwner"
 	TonstakeControllerTopUpMsgOp                 MsgOpName = "TonstakeControllerTopUp"
 	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
@@ -572,14 +668,16 @@ const (
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
 	TonstakePoolLoanRepaymentMsgOp               MsgOpName = "TonstakePoolLoanRepayment"
-	TonstakeControllerNewStakeMsgOp              MsgOpName = "TonstakeControllerNewStake"
 	WalletPluginDestructResponseMsgOp            MsgOpName = "WalletPluginDestructResponse"
 	DeployStorageContractMsgOp                   MsgOpName = "DeployStorageContract"
+	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
 	TonstakeControllerDisapproveMsgOp            MsgOpName = "TonstakeControllerDisapprove"
 	TonstakeControllerRecoverStakeMsgOp          MsgOpName = "TonstakeControllerRecoverStake"
+	TonstakeNftBurnNotificationMsgOp             MsgOpName = "TonstakeNftBurnNotification"
 	TonstakeControllerReturnUnusedLoanMsgOp      MsgOpName = "TonstakeControllerReturnUnusedLoan"
 	PaymentRequestResponseMsgOp                  MsgOpName = "PaymentRequestResponse"
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
+	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
 	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 )
@@ -593,10 +691,12 @@ const (
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x5138d91
 	OwnershipProofMsgOpCode                          MsgOpCode = 0x524c7ae
 	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x88eaa32
+	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0xa77535c
 	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0xdd607e3
 	InitPaymentChannelMsgOpCode                      MsgOpCode = 0xe0620c2
 	JettonTransferMsgOpCode                          MsgOpCode = 0xf8a7ea5
 	OfferStorageContractMsgOpCode                    MsgOpCode = 0x107c49ef
+	TonstakeNftInitMsgOpCode                         MsgOpCode = 0x132f9a45
 	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
 	TonstakeControllerCreditMsgOpCode                MsgOpCode = 0x1690c604
 	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
@@ -607,23 +707,29 @@ const (
 	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
 	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
 	TeleitemDeployMsgOpCode                          MsgOpCode = 0x299a3e15
+	TonstakePoolSetGovernanceFeeMsgOpCode            MsgOpCode = 0x2aaa96a0
 	GetStaticDataMsgOpCode                           MsgOpCode = 0x2fcb26a2
+	TonstakeControllerValidatorWithdrawalMsgOpCode   MsgOpCode = 0x30026327
 	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
-	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x452f7112
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
 	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
 	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
+	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
 	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
+	TonstakeImanagerOperationFeeMsgOpCode            MsgOpCode = 0x54d37487
 	ChannelCooperativeCloseMsgOpCode                 MsgOpCode = 0x5577587e
+	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
+	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
+	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x6335b11a
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
 	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
 	TopUpChannelBalanceMsgOpCode                     MsgOpCode = 0x67c7d281
@@ -637,19 +743,23 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
-	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x7a756db8
 	TonstakeControllerApproveMsgOpCode               MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
-	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0x7ccd46e9
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
+	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
 	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
+	TonstakePoolPrepareGovernanceMigrationMsgOpCode  MsgOpCode = 0x9971881c
 	WhalesNominatorsAcceptStakeMsgOpCode             MsgOpCode = 0x99a811fb
+	TonstakePoolSetDepositSettingsMsgOpCode          MsgOpCode = 0x9bf5561c
 	WhalesNominatorsAcceptWithdrawsMsgOpCode         MsgOpCode = 0xa19fd934
 	WhalesNominatorsSendStakeMsgOpCode               MsgOpCode = 0xa2065f2c
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
+	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
+	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
 	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
-	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0xcefaaefd
+	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
+	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
 	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
 	TonstakeControllerTopUpMsgOpCode                 MsgOpCode = 0xd372158c
 	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
@@ -657,14 +767,16 @@ const (
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
 	TonstakePoolLoanRepaymentMsgOpCode               MsgOpCode = 0xdfdca27b
-	TonstakeControllerNewStakeMsgOpCode              MsgOpCode = 0xe0505d0e
 	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
 	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
+	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0xe642c965
 	TonstakeControllerDisapproveMsgOpCode            MsgOpCode = 0xe8a0abfe
 	TonstakeControllerRecoverStakeMsgOpCode          MsgOpCode = 0xeb373a05
+	TonstakeNftBurnNotificationMsgOpCode             MsgOpCode = 0xed58b0b2
 	TonstakeControllerReturnUnusedLoanMsgOpCode      MsgOpCode = 0xed7378a6
 	PaymentRequestResponseMsgOpCode                  MsgOpCode = 0xf06c7567
 	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
+	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
 	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 )
@@ -675,10 +787,12 @@ var KnownMsgTypes = map[string]any{
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
 	OwnershipProofMsgOp:                          OwnershipProofMsgBody{},
 	ChallengeQuarantinedChannelStateMsgOp:        ChallengeQuarantinedChannelStateMsgBody{},
+	TonstakePoolWithdrawalMsgOp:                  TonstakePoolWithdrawalMsgBody{},
 	SbtOwnerInfoMsgOp:                            SbtOwnerInfoMsgBody{},
 	InitPaymentChannelMsgOp:                      InitPaymentChannelMsgBody{},
 	JettonTransferMsgOp:                          JettonTransferMsgBody{},
 	OfferStorageContractMsgOp:                    OfferStorageContractMsgBody{},
+	TonstakeNftInitMsgOp:                         TonstakeNftInitMsgBody{},
 	TonstakeControllerPoolHaltMsgOp:              TonstakeControllerPoolHaltMsgBody{},
 	TonstakeControllerCreditMsgOp:                TonstakeControllerCreditMsgBody{},
 	JettonInternalTransferMsgOp:                  JettonInternalTransferMsgBody{},
@@ -689,23 +803,29 @@ var KnownMsgTypes = map[string]any{
 	FinishUncooperativeChannelCloseMsgOp:         FinishUncooperativeChannelCloseMsgBody{},
 	TonstakeControllerPoolSendMessageMsgOp:       TonstakeControllerPoolSendMessageMsgBody{},
 	TeleitemDeployMsgOp:                          TeleitemDeployMsgBody{},
+	TonstakePoolSetGovernanceFeeMsgOp:            TonstakePoolSetGovernanceFeeMsgBody{},
 	GetStaticDataMsgOp:                           GetStaticDataMsgBody{},
+	TonstakeControllerValidatorWithdrawalMsgOp:   TonstakeControllerValidatorWithdrawalMsgBody{},
 	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
-	TonstakeControllerSendRequestLoanMsgOp:       TonstakeControllerSendRequestLoanMsgBody{},
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
 	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
 	ElectorRecoverStakeRequestMsgOp:              ElectorRecoverStakeRequestMsgBody{},
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
+	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
 	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
+	TonstakeImanagerOperationFeeMsgOp:            TonstakeImanagerOperationFeeMsgBody{},
 	ChannelCooperativeCloseMsgOp:                 ChannelCooperativeCloseMsgBody{},
+	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
+	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},
+	TonstakeControllerSendRequestLoanMsgOp:       TonstakeControllerSendRequestLoanMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
 	SettleChannelConditionalsMsgOp:               SettleChannelConditionalsMsgBody{},
 	TopUpChannelBalanceMsgOp:                     TopUpChannelBalanceMsgBody{},
@@ -719,19 +839,23 @@ var KnownMsgTypes = map[string]any{
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
-	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	TonstakeControllerApproveMsgOp:               TonstakeControllerApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
-	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
+	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
 	TonstakeControllerPoolUpgradeMsgOp:           TonstakeControllerPoolUpgradeMsgBody{},
+	TonstakePoolPrepareGovernanceMigrationMsgOp:  TonstakePoolPrepareGovernanceMigrationMsgBody{},
 	WhalesNominatorsAcceptStakeMsgOp:             WhalesNominatorsAcceptStakeMsgBody{},
+	TonstakePoolSetDepositSettingsMsgOp:          TonstakePoolSetDepositSettingsMsgBody{},
 	WhalesNominatorsAcceptWithdrawsMsgOp:         WhalesNominatorsAcceptWithdrawsMsgBody{},
 	WhalesNominatorsSendStakeMsgOp:               WhalesNominatorsSendStakeMsgBody{},
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
+	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
+	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
 	StorageContractTerminatedMsgOp:               StorageContractTerminatedMsgBody{},
-	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
+	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
+	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},
 	SbtRequestOwnerMsgOp:                         SbtRequestOwnerMsgBody{},
 	TonstakeControllerTopUpMsgOp:                 TonstakeControllerTopUpMsgBody{},
 	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
@@ -739,14 +863,16 @@ var KnownMsgTypes = map[string]any{
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},
 	TonstakePoolLoanRepaymentMsgOp:               TonstakePoolLoanRepaymentMsgBody{},
-	TonstakeControllerNewStakeMsgOp:              TonstakeControllerNewStakeMsgBody{},
 	WalletPluginDestructResponseMsgOp:            WalletPluginDestructResponseMsgBody{},
 	DeployStorageContractMsgOp:                   DeployStorageContractMsgBody{},
+	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},
 	TonstakeControllerDisapproveMsgOp:            TonstakeControllerDisapproveMsgBody{},
 	TonstakeControllerRecoverStakeMsgOp:          TonstakeControllerRecoverStakeMsgBody{},
+	TonstakeNftBurnNotificationMsgOp:             TonstakeNftBurnNotificationMsgBody{},
 	TonstakeControllerReturnUnusedLoanMsgOp:      TonstakeControllerReturnUnusedLoanMsgBody{},
 	PaymentRequestResponseMsgOp:                  PaymentRequestResponseMsgBody{},
 	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
+	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
 	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 }

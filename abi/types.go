@@ -172,6 +172,10 @@ type ChallengeQuarantinedChannelStateMsgBody struct {
 	SchB          tlb.Ref[SignedSemiChannel]
 }
 
+type TonstakePoolWithdrawalMsgBody struct {
+	QueryId uint64
+}
+
 type SbtOwnerInfoMsgBody struct {
 	QueryId   uint64
 	ItemId    tlb.Uint256
@@ -203,6 +207,14 @@ type JettonTransferMsgBody struct {
 
 type OfferStorageContractMsgBody struct {
 	QueryId uint64
+}
+
+type TonstakeNftInitMsgBody struct {
+	QueryId uint64
+	Owner   tlb.MsgAddress
+	Amount  tlb.Grams
+	Prev    tlb.MsgAddress
+	Next    tlb.MsgAddress
 }
 
 type TonstakeControllerPoolHaltMsgBody struct {
@@ -261,8 +273,18 @@ type TeleitemDeployMsgBody struct {
 	RoyaltyParams tlb.Ref[NftRoyaltyParams]
 }
 
+type TonstakePoolSetGovernanceFeeMsgBody struct {
+	QueryId       uint64
+	GovernanceFee uint16
+}
+
 type GetStaticDataMsgBody struct {
 	QueryId uint64
+}
+
+type TonstakeControllerValidatorWithdrawalMsgBody struct {
+	QueryId uint64
+	Amount  tlb.Grams
 }
 
 type TonstakePoolWithdrawMsgBody struct {
@@ -279,13 +301,6 @@ type TeleitemCancelAuctionMsgBody struct {
 type ProofStorageMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Ref[tlb.Any]
-}
-
-type TonstakeControllerSendRequestLoanMsgBody struct {
-	QueryId    uint64
-	MinLoan    tlb.Grams
-	MaxLoan    tlb.Grams
-	MaxInterst tlb.Uint18
 }
 
 type TelemintDeployMsgBody struct {
@@ -315,6 +330,10 @@ type TeleitemStartAuctionMsgBody struct {
 	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
 }
 
+type TonstakePoolTouchMsgBody struct {
+	QueryId uint64
+}
+
 type ElectorNewStakeMsgBody struct {
 	QueryId         uint64
 	ValidatorPubkey tlb.Bits256
@@ -338,6 +357,10 @@ type UpdateStorageParamsMsgBody struct {
 	MaximalFileSize    uint64
 }
 
+type TonstakeImanagerOperationFeeMsgBody struct {
+	QueryId uint64
+}
+
 type ChannelCooperativeCloseMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]
 	SigB      tlb.Ref[tlb.Bits512]
@@ -349,11 +372,22 @@ type ChannelCooperativeCloseMsgBody struct {
 	SeqnoB    uint64
 }
 
+type TonstakeControllerReturnAvailableFundsMsgBody struct {
+	QueryId uint64
+}
+
 type JettonBurnMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
+}
+
+type TonstakePoolSetRolesMsgBody struct {
+	QueryId         uint64
+	Governor        tlb.Maybe[tlb.MsgAddress]
+	InterestManager tlb.Maybe[tlb.MsgAddress]
+	Halter          tlb.Maybe[tlb.MsgAddress]
 }
 
 type NftTransferMsgBody struct {
@@ -363,6 +397,13 @@ type NftTransferMsgBody struct {
 	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
 	ForwardAmount       tlb.VarUInteger16
 	ForwardPayload      tlb.EitherRef[tlb.Any]
+}
+
+type TonstakeControllerSendRequestLoanMsgBody struct {
+	QueryId    uint64
+	MinLoan    tlb.Grams
+	MaxLoan    tlb.Grams
+	MaxInterst uint16
 }
 
 type WalletPluginDestructMsgBody struct{}
@@ -428,13 +469,6 @@ type AcceptStorageContractMsgBody struct {
 	QueryId uint64
 }
 
-type TonstakePoolSetRolesMsgBody struct {
-	Governor        tlb.Maybe[tlb.MsgAddress]
-	InterestManager tlb.Maybe[tlb.MsgAddress]
-	Halter          tlb.Maybe[tlb.MsgAddress]
-	Consigliere     tlb.Maybe[tlb.MsgAddress]
-}
-
 type TonstakeControllerApproveMsgBody struct {
 	QueryId uint64
 }
@@ -444,24 +478,15 @@ type WhalesNominatorsDepositMsgBody struct {
 	Gas     tlb.Grams
 }
 
-type TonstakePoolRequestLoanMsgBody struct {
-	QueryId    uint64
-	MinLoan    tlb.Grams
-	MaxLoan    tlb.Grams
-	MaxInterst tlb.Uint18
-	Validator  tlb.MsgAddress
-	Pool       tlb.MsgAddress
-	Governor   tlb.MsgAddress
-	Field7     struct {
-		Approver tlb.MsgAddress
-		Halter   tlb.MsgAddress
-	} `tlb:"^"`
-}
-
 type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
 	Collection tlb.MsgAddress
+}
+
+type TonstakeControllerWithdrawValidatorMsgBody struct {
+	QueryId uint64
+	Value   tlb.Grams
 }
 
 type TonstakeControllerPoolUpgradeMsgBody struct {
@@ -471,9 +496,20 @@ type TonstakeControllerPoolUpgradeMsgBody struct {
 	AfterUpgrade tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
+type TonstakePoolPrepareGovernanceMigrationMsgBody struct {
+	QueryId             uint64
+	GovernorUpdateAfter tlb.Uint48
+}
+
 type WhalesNominatorsAcceptStakeMsgBody struct {
 	QueryId uint64
 	Members tlb.Any
+}
+
+type TonstakePoolSetDepositSettingsMsgBody struct {
+	QueryId                      uint64
+	OptimisticDepositWithdrawals bool
+	DepositsOpen                 bool
 }
 
 type WhalesNominatorsAcceptWithdrawsMsgBody struct {
@@ -503,13 +539,36 @@ type StorageRewardWithdrawalMsgBody struct {
 	QueryId uint64
 }
 
+type TonstakeImanagerRequestNotificationMsgBody struct {
+	QueryId     uint64
+	MinLoan     tlb.Grams
+	MaxLoan     tlb.Grams
+	MaxInterest uint16
+}
+
+type TonstakePoolDeployControllerMsgBody struct {
+	ControllerId uint32
+	QueryId      uint64
+}
+
 type StorageContractTerminatedMsgBody struct {
 	CurLt       uint64
 	TorrentHash tlb.Bits256
 }
 
-type TonstakeControllerWithdrawValidatorMsgBody struct {
-	QueryId uint64
+type TonstakeImanagerStatsMsgBody struct {
+	QueryId      uint64
+	Borrowed     tlb.Grams
+	Expected     tlb.Grams
+	Returned     tlb.Grams
+	ProfitSign   tlb.Int1
+	Profit       tlb.Grams
+	TotalBalance tlb.Grams
+}
+
+type TonstakeImanagerSetInterestMsgBody struct {
+	QueryId      uint64
+	InterestRate uint16
 }
 
 type SbtRequestOwnerMsgBody struct {
@@ -546,16 +605,6 @@ type TonstakePoolLoanRepaymentMsgBody struct {
 	QueryId uint64
 }
 
-type TonstakeControllerNewStakeMsgBody struct {
-	QueryId         uint64
-	Value           tlb.Grams
-	ValidatorPubkey tlb.Uint256
-	StakeAt         uint32
-	MaxFactor       uint32
-	AdnlAddr        tlb.Uint256
-	Signature       tlb.Ref[tlb.Bits512]
-}
-
 type WalletPluginDestructResponseMsgBody struct{}
 
 type DeployStorageContractMsgBody struct {
@@ -566,12 +615,28 @@ type DeployStorageContractMsgBody struct {
 	ExpectedMaxSpan uint32
 }
 
+type TonstakePoolRequestLoanMsgBody struct {
+	QueryId      uint64
+	MinLoan      tlb.Grams
+	MaxLoan      tlb.Grams
+	MaxInterest  uint16
+	ControllerId uint32
+	Validator    tlb.MsgAddress
+}
+
 type TonstakeControllerDisapproveMsgBody struct {
 	QueryId uint64
 }
 
 type TonstakeControllerRecoverStakeMsgBody struct {
 	QueryId uint64
+}
+
+type TonstakeNftBurnNotificationMsgBody struct {
+	QueryId uint64
+	Amount  tlb.Grams
+	Owner   tlb.MsgAddress
+	Index   uint64
 }
 
 type TonstakeControllerReturnUnusedLoanMsgBody struct {
@@ -581,6 +646,10 @@ type TonstakeControllerReturnUnusedLoanMsgBody struct {
 type PaymentRequestResponseMsgBody struct{}
 
 type TonstakeControllerUpdateValidatorHashMsgBody struct {
+	QueryId uint64
+}
+
+type TonstakeNftBurnMsgBody struct {
 	QueryId uint64
 }
 

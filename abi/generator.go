@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/tonkeeper/tongo/abi/parser"
 	"go/format"
+	"io/fs"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -18,16 +20,28 @@ import (
 )
 
 `
+const SCHEMAS_PATH = "schemas/"
 
 func main() {
-	scheme, err := os.ReadFile("known.xml")
-	if err != nil {
-		panic(err)
-	}
-	abi, err := parser.ParseABI(scheme)
-	if err != nil {
-		panic(err)
-	}
+	var abi parser.ABI
+	filepath.Walk(SCHEMAS_PATH, func(path string, info fs.FileInfo, err error) error {
+		if !strings.HasSuffix(info.Name(), ".xml") {
+			return nil
+		}
+		scheme, err := os.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		a, err := parser.ParseABI(scheme)
+		if err != nil {
+			panic(err)
+		}
+		abi.Externals = append(abi.Externals, a.Externals...)
+		abi.Internals = append(abi.Internals, a.Internals...)
+		abi.Methods = append(abi.Methods, a.Methods...)
+		abi.Types = append(abi.Types, a.Types...)
+		return nil
+	})
 
 	gen, err := parser.NewGenerator(nil, abi)
 	if err != nil {

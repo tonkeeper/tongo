@@ -801,7 +801,7 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 }
 
 type GetLastFillUpTimeResult struct {
-	LastFillUpTime uint64
+	LastFillUpTime int64
 }
 
 func GetLastFillUpTime(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {

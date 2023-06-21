@@ -209,7 +209,7 @@
     </get_method>
     <get_method name="get_last_fill_up_time" interface="domain">
         <output>
-            <int name="last_fill_up_time">uint64</int>
+            <int name="last_fill_up_time">int64</int>
         </output>
     </get_method>
     <get_method name="get_domain" interface="domain">

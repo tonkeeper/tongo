@@ -195,15 +195,6 @@ func TestGetMethods(t *testing.T) {
 			wantTypeHint: "GetFullDomainResult",
 			want:         "yoganews.t.me",
 		},
-		{
-			name:         "GetLastFillUpTimeResult",
-			code:         "b5ee9c7201010101001400002430ed44d07f708b108003fa40d43010341023",
-			data:         "b5ee9c720101020100780001478009109f72d3469f6f9ff2b44d726b58f09e126ad7ed576830fd8aa1a90ce1399260307001009e0168747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f47757361726963682f66616b652d6e66742f6d61696e2f736372697074732f6d657461646174612e6a736f6e",
-			account:      "0:1bd36da3143f3d62f689fb5b9443e620fc74ff3d22216efdcad9c42e5c790fd2",
-			method:       GetLastFillUpTime,
-			wantTypeHint: "GetLastFillUpTimeResult",
-			want:         GetLastFillUpTimeResult{LastFillUpTime: -1},
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

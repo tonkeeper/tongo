@@ -208,7 +208,7 @@
         </output>
     </get_method>
     <get_method name="get_last_fill_up_time" interface="domain">
-        <output>
+        <output  fixed_length="true">
             <int name="last_fill_up_time">int64</int>
         </output>
     </get_method>
@@ -480,30 +480,56 @@
     </get_method>
 
     <!--    Pool    -->
-    <get_method name="get_finance_data" interface="pool">
-        <output version="pool" fixed_length="true">
-            <int name="total_balance">int64</int>
-            <int name="supply">int64</int>
-            <int name="requested_for_deposit">int64</int>
-            <int name="requested_for_withdrawal">int64</int>
-            <slice name="jetton_master">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_pool_credit_params" interface="liquid_pool">
+    <get_method name="get_pool_full_data" interface="liquid_pool">
         <output fixed_length="true">
+            <int name="state">int32</int> <!-- i=0 -->
+            <int name="halted">bool</int>
+            <int name="total_balance">int64</int>
+            <int name="interest_rate">int32</int>
+            <int name="optimistic_deposit_withdrawals">int64</int>
+            <int name="deposits_open">bool</int>
+            <int name="saved_validator_set_hash">bits256</int>
+            <tuple name="prev_round_borrowers">
+                <slice name="borrowers_dict" nullable="true">cell</slice>
+                <int name="round_id">int32</int>
+                <int name="active_borrowers">int32</int>
+                <int name="borrowed">int64</int>
+                <int name="expected">int64</int>
+                <int name="retured">int64</int>
+                <int name="profit">int64</int>
+            </tuple>
+            <tuple name="current_round_borrowers">
+                <cell name="borrowers_dict" nullable="true">cell</cell>
+                <int name="round_id">int32</int>
+                <int name="active_borrowers">int32</int>
+                <int name="borrowed">int64</int>
+                <int name="expected">int64</int>
+                <int name="retured">int64</int>
+                <int name="profit">int64</int>
+            </tuple>
             <int name="min_loan_per_validator">int64</int>
-            <int name="max_loan_per_validator">int64</int>
-            <int name="interest_rate">int8</int>
+            <int name="max_loan_per_validator">int64</int> <!-- i=10 -->
             <int name="governance_fee">int32</int>
-            <slice name="interest_manager">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_projected_conversion_ratio" interface="liquid_pool">
-        <output>
+            <slice name="jetton_minter">msgaddress</slice>
+            <int name="supply">int64</int>
+            <slice name="deposit_payout" nullable="true">msgaddress</slice>
+            <int name="requested_for_deposit">int64</int>
+            <slice name="withdrawal_payout" nullable="true">msgaddress</slice>
+            <int name="requested_for_withdrawal">int64</int>
+            <slice name="sudoer" nullable="true">msgaddress</slice>
+            <int name="sudoer_set_at">int32</int>
+            <slice name="governor" nullable="true">msgaddress</slice> <!-- i=20 -->
+            <slice name="interest_manager" nullable="true">msgaddress</slice>
+            <slice name="halter" nullable="true">msgaddress</slice>
+            <slice name="approver" nullable="true">msgaddress</slice>
+            <cell name="controller_code">cell</cell>
+            <cell name="pool_jetton_wallet_code">cell</cell>
+            <cell name="payout_minter_code">cell</cell>
             <int name="projected_balance">int64</int>
             <int name="projected_supply">int64</int>
         </output>
     </get_method>
+
 
     <!--    Validator-Controller    -->
     <get_method name="get_validator_controller_data" interface="validator_controller">

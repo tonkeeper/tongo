@@ -18,7 +18,6 @@ const (
 	NftSale             ContractInterface = "nft_sale"
 	NftSaleGetgems      ContractInterface = "nft_sale_getgems"
 	PaymentChannel      ContractInterface = "payment_channel"
-	Pool                ContractInterface = "pool"
 	StorageContract     ContractInterface = "storage_contract"
 	StorageProvider     ContractInterface = "storage_provider"
 	Subscription        ContractInterface = "subscription"
@@ -83,11 +82,6 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{NftEditable},
 	},
 	{
-		Name:          "get_finance_data",
-		InvokeFn:      GetFinanceData,
-		ImplementedBy: []ContractInterface{Pool},
-	},
-	{
 		Name:          "get_full_domain",
 		InvokeFn:      GetFullDomain,
 		ImplementedBy: []ContractInterface{Domain},
@@ -140,24 +134,19 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{WalletV4R2},
 	},
 	{
-		Name:          "get_pool_credit_params",
-		InvokeFn:      GetPoolCreditParams,
-		ImplementedBy: []ContractInterface{LiquidPool},
-	},
-	{
 		Name:          "get_pool_data",
 		InvokeFn:      GetPoolData,
 		ImplementedBy: []ContractInterface{TfNominator},
 	},
 	{
+		Name:          "get_pool_full_data",
+		InvokeFn:      GetPoolFullData,
+		ImplementedBy: []ContractInterface{LiquidPool},
+	},
+	{
 		Name:          "get_pool_status",
 		InvokeFn:      GetPoolStatus,
 		ImplementedBy: []ContractInterface{WhalesNominators},
-	},
-	{
-		Name:          "get_projected_conversion_ratio",
-		InvokeFn:      GetProjectedConversionRatio,
-		ImplementedBy: []ContractInterface{LiquidPool},
 	},
 	{
 		Name:          "get_public_key",

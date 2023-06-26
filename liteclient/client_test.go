@@ -168,3 +168,30 @@ func TestGeneratedMethod5(t *testing.T) {
 	}
 	_ = r2
 }
+
+func TestClient_WaitMasterchainSeqno(t *testing.T) {
+	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	if err != nil {
+		t.Fatalf("DecodeString() failed: %v", err)
+	}
+	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
+	if err != nil {
+		t.Fatalf("NewConnection() failed: %v", err)
+	}
+	client := NewClient(c)
+	resp, err := client.LiteServerGetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
+	}
+	seqno := resp.Last.Seqno + 2
+	if err := client.WaitMasterchainSeqno(context.Background(), seqno, 15000); err != nil {
+		t.Fatalf("WaitMasterchainSeqno() failed: %v", err)
+	}
+	resp, err = client.LiteServerGetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
+	}
+	if resp.Last.Seqno != seqno {
+		t.Fatalf("want seqno: %v, got: %v", seqno, resp.Last.Seqno)
+	}
+}

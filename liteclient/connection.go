@@ -142,3 +142,9 @@ func (c *Connection) ping() {
 		}
 	}
 }
+
+func (c *Connection) Status() ConnectionStatus {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.status
+}

@@ -1,6 +1,7 @@
 package liteclient
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"fmt"
@@ -12,9 +13,10 @@ import (
 )
 
 const (
-	magicADNLQuery       = 0xb48bf97a // crc32("adnl.message.query query_id:int256 query:bytes = adnl.Message")
-	magicADNLAnswer      = 0x0fac8416 // crc32("adnl.message.answer query_id:int256 answer:bytes = adnl.Message")
-	magicLiteServerQuery = 0x798c06df // crc32("liteServer.query#df068c79 data:bytes = Object")
+	magicADNLQuery                      = 0xb48bf97a // crc32("adnl.message.query query_id:int256 query:bytes = adnl.Message")
+	magicADNLAnswer                     = 0x0fac8416 // crc32("adnl.message.answer query_id:int256 answer:bytes = adnl.Message")
+	magicLiteServerQuery                = 0x798c06df // crc32("liteServer.query#df068c79 data:bytes = Object")
+	magicLiteServerWaitMasterchainSeqno = 0xbaeab892
 )
 
 type queryID [32]byte
@@ -54,6 +56,11 @@ func NewClient(c *Connection, opts ...Options) *Client {
 	return c2
 }
 
+// IsOK returns true if there is no problems with this client and its underlying connection to a lite server.
+func (c *Client) IsOK() bool {
+	return c.connection.Status() == Connected
+}
+
 // Request sends q as query in adnl.message.query and receives answer from adnl.message.answer
 // adnl.message.query query_id:int256 query:bytes = adnl.Message
 // adnl.message.answer query_id:int256 answer:bytes = adnl.Message
@@ -81,7 +88,7 @@ func (c *Client) Request(ctx context.Context, q []byte) ([]byte, error) {
 	}
 	select {
 	case <-ctx.Done():
-		return nil, newClientError("request timeout: %v", err)
+		return nil, newClientError("request timeout: %v", ctx.Err())
 	case b := <-resp:
 		return b, nil
 	}
@@ -187,4 +194,32 @@ func alignBytes(data []byte) []byte {
 		data = append(data, make([]byte, 4-left)...)
 	}
 	return data
+}
+
+// WaitMasterchainSeqno waits for the given block to become committed.
+// If timeout happens, it returns an error.
+func (c *Client) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout uint32) error {
+	data := make([]byte, 0, 12)
+	data = binary.LittleEndian.AppendUint32(data, magicLiteServerWaitMasterchainSeqno)
+	data = binary.LittleEndian.AppendUint32(data, seqno)
+	data = binary.LittleEndian.AppendUint32(data, timeout)
+	resp, err := c.liteServerRequest(ctx, data)
+	if err != nil {
+		return err
+	}
+	if len(resp) < 4 {
+		return fmt.Errorf("not enough bytes for tag")
+	}
+	tag := binary.LittleEndian.Uint32(resp[:4])
+	if tag == 0xbba9e148 {
+		var errRes LiteServerErrorC
+		if err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes); err != nil {
+			return err
+		}
+		if errRes.Code == 0 {
+			return nil
+		}
+		return errRes
+	}
+	return fmt.Errorf("invalid tag")
 }

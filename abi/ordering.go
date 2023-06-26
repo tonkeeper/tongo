@@ -13,7 +13,6 @@ type ContractInterface string
 const (
 	Auction             ContractInterface = "auction"
 	Domain              ContractInterface = "domain"
-	LiquidPool          ContractInterface = "liquid_pool"
 	NftEditable         ContractInterface = "nft_editable"
 	NftSale             ContractInterface = "nft_sale"
 	NftSaleGetgems      ContractInterface = "nft_sale_getgems"
@@ -28,6 +27,7 @@ const (
 	Tep74               ContractInterface = "tep74"
 	Tep85               ContractInterface = "tep85"
 	TfNominator         ContractInterface = "tf_nominator"
+	TonstakePool        ContractInterface = "tonstake_pool"
 	ValidatorController ContractInterface = "validator_controller"
 	Wallet              ContractInterface = "wallet"
 	WalletV4R2          ContractInterface = "wallet_v4r2"
@@ -141,7 +141,7 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:          "get_pool_full_data",
 		InvokeFn:      GetPoolFullData,
-		ImplementedBy: []ContractInterface{LiquidPool},
+		ImplementedBy: []ContractInterface{TonstakePool},
 	},
 	{
 		Name:          "get_pool_status",

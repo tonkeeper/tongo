@@ -23,7 +23,8 @@ import (
 )
 
 const (
-	LiteServerEnvName = "LITE_SERVERS"
+	LiteServerEnvName           = "LITE_SERVERS"
+	defaultMaxConnectionsNumber = 3
 )
 
 var (
@@ -42,6 +43,8 @@ type Client struct {
 type Options struct {
 	LiteServers []config.LiteServer
 	Timeout     time.Duration
+	// MaxConnections specifies a number of connections to lite servers for a connections pool.
+	MaxConnections int
 }
 
 type Option func(o *Options) error
@@ -49,6 +52,17 @@ type Option func(o *Options) error
 func WithLiteServers(servers []config.LiteServer) Option {
 	return func(o *Options) error {
 		o.LiteServers = servers
+		return nil
+	}
+}
+
+// WithMaxConnectionsNumber specifies a number of concurrent connections to lite servers
+// to be maintained by a connections pool.
+// Be careful when combining WithMaxConnectionsNumber and FromEnvs() because
+// MaxConnectionsNumber is set by FromEnvs() to the number of servers in LITE_SERVERS env variable.
+func WithMaxConnectionsNumber(maxConns int) Option {
+	return func(o *Options) error {
+		o.MaxConnections = maxConns
 		return nil
 	}
 }
@@ -61,7 +75,8 @@ func WithTimeout(timeout time.Duration) Option {
 }
 
 // FromEnvs configures a Client based on the following environment variables:
-// LITE_SERVERS - a list of lite servers to use
+// LITE_SERVERS - a list of lite servers to use.
+// FromEnvs() also sets MaxConnectionsNumber to be equal to the number of servers in LITE_SERVERS.
 func FromEnvs() Option {
 	return func(o *Options) error {
 		if value, ok := os.LookupEnv(LiteServerEnvName); ok {
@@ -70,6 +85,7 @@ func FromEnvs() Option {
 				return err
 			}
 			o.LiteServers = servers
+			o.MaxConnections = len(servers)
 		}
 		return nil
 	}
@@ -118,7 +134,8 @@ func NewClientWithDefaultTestnet() (*Client, error) {
 // Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
 func NewClient(opts ...Option) (*Client, error) {
 	options := &Options{
-		Timeout: 60 * time.Second,
+		Timeout:        60 * time.Second,
+		MaxConnections: defaultMaxConnectionsNumber,
 	}
 	for _, o := range opts {
 		if err := o(options); err != nil {
@@ -128,7 +145,7 @@ func NewClient(opts ...Option) (*Client, error) {
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
-	liteclients := make([]*liteclient.Client, 0, len(options.LiteServers))
+	liteclients := make([]*liteclient.Client, 0, options.MaxConnections)
 	for _, ls := range options.LiteServers {
 		serverPubkey, err := base64.StdEncoding.DecodeString(ls.Key)
 		if err != nil {
@@ -139,6 +156,9 @@ func NewClient(opts ...Option) (*Client, error) {
 			continue
 		}
 		liteclients = append(liteclients, liteclient.NewClient(c, liteclient.OptionTimeout(options.Timeout)))
+		if len(liteclients) >= options.MaxConnections {
+			break
+		}
 	}
 	if len(liteclients) == 0 {
 		return nil, fmt.Errorf("all liteservers are unavailable")

@@ -111,3 +111,8 @@ func (p *FailoverPool) BestServerByAccountID(tongo.AccountID) (*liteclient.Clien
 func (p *FailoverPool) BestServerByBlockID(tongo.BlockID) (*liteclient.Client, error) {
 	return p.BestMasterchainServer(), nil
 }
+
+// ConnectionsNumber returns a number of connections in this pool.
+func (p *FailoverPool) ConnectionsNumber() int {
+	return len(p.conns)
+}

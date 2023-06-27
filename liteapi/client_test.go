@@ -28,6 +28,23 @@ import (
 //
 //var _ liteClient = &mockLiteClient{}
 
+func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
+	cli, err := NewClient(Mainnet())
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	if cli.pool.ConnectionsNumber() != defaultMaxConnectionsNumber {
+		t.Fatalf("want connections number: %v, got: %v", defaultMaxConnectionsNumber, cli.pool.ConnectionsNumber())
+	}
+	cli, err = NewClient(Mainnet(), WithMaxConnectionsNumber(defaultMaxConnectionsNumber+1))
+	if err != nil {
+		t.Fatalf("Unable to create tongo client: %v", err)
+	}
+	if cli.pool.ConnectionsNumber() != defaultMaxConnectionsNumber+1 {
+		t.Fatalf("want connections number: %v, got: %v", defaultMaxConnectionsNumber+1, cli.pool.ConnectionsNumber())
+	}
+}
+
 func TestGetTransactions(t *testing.T) {
 	t.Skip() //TODO: switch tests to archive node
 	tongoClient, err := NewClientWithDefaultMainnet()

@@ -87,6 +87,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakeControllerPoolHaltMsgOp, nil, err
 		}
 		return TonstakeControllerPoolHaltMsgOp, res, nil
+	case WhalesNominatorsForceKickMsgOpCode: // 0x1596920c
+		var res WhalesNominatorsForceKickMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return WhalesNominatorsForceKickMsgOp, nil, err
+		}
+		return WhalesNominatorsForceKickMsgOp, res, nil
 	case TonstakeControllerCreditMsgOpCode: // 0x1690c604
 		var res TonstakeControllerCreditMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -117,6 +123,15 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return StartUncooperativeChannelCloseMsgOp, nil, err
 		}
 		return StartUncooperativeChannelCloseMsgOp, res, nil
+	case WhalesNominatorsStakeWithdrawCompletedMsgOpCode: // 0x23d421e1
+		var res WhalesNominatorsStakeWithdrawCompletedMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return WhalesNominatorsStakeWithdrawCompletedMsgOp, nil, err
+		}
+		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
+			return WhalesNominatorsStakeWithdrawCompletedMsgOp, nil, ErrStructSizeMismatch
+		}
+		return WhalesNominatorsStakeWithdrawCompletedMsgOp, res, nil
 	case WhalesNominatorsWithdrawUnownedMsgOpCode: // 0x251d6a98
 		var res WhalesNominatorsWithdrawUnownedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -336,6 +351,15 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return SubscriptionPaymentMsgOp, nil, err
 		}
 		return SubscriptionPaymentMsgOp, res, nil
+	case WhalesNominatorsStakeWithdrawDelayedMsgOpCode: // 0x74bb3427
+		var res WhalesNominatorsStakeWithdrawDelayedMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return WhalesNominatorsStakeWithdrawDelayedMsgOp, nil, err
+		}
+		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
+			return WhalesNominatorsStakeWithdrawDelayedMsgOp, nil, ErrStructSizeMismatch
+		}
+		return WhalesNominatorsStakeWithdrawDelayedMsgOp, res, nil
 	case ChannelCooperativeCommitMsgOpCode: // 0x79a126ef
 		var res ChannelCooperativeCommitMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -599,11 +623,13 @@ const (
 	OfferStorageContractMsgOp                    MsgOpName = "OfferStorageContract"
 	TonstakeNftInitMsgOp                         MsgOpName = "TonstakeNftInit"
 	TonstakeControllerPoolHaltMsgOp              MsgOpName = "TonstakeControllerPoolHalt"
+	WhalesNominatorsForceKickMsgOp               MsgOpName = "WhalesNominatorsForceKick"
 	TonstakeControllerCreditMsgOp                MsgOpName = "TonstakeControllerCredit"
 	JettonInternalTransferMsgOp                  MsgOpName = "JettonInternalTransfer"
 	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
 	SbtDestroyMsgOp                              MsgOpName = "SbtDestroy"
 	StartUncooperativeChannelCloseMsgOp          MsgOpName = "StartUncooperativeChannelClose"
+	WhalesNominatorsStakeWithdrawCompletedMsgOp  MsgOpName = "WhalesNominatorsStakeWithdrawCompleted"
 	WhalesNominatorsWithdrawUnownedMsgOp         MsgOpName = "WhalesNominatorsWithdrawUnowned"
 	FinishUncooperativeChannelCloseMsgOp         MsgOpName = "FinishUncooperativeChannelClose"
 	TonstakeControllerPoolSendMessageMsgOp       MsgOpName = "TonstakeControllerPoolSendMessage"
@@ -640,6 +666,7 @@ const (
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
+	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
 	ChannelCooperativeCommitMsgOp                MsgOpName = "ChannelCooperativeCommit"
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
@@ -698,11 +725,13 @@ const (
 	OfferStorageContractMsgOpCode                    MsgOpCode = 0x107c49ef
 	TonstakeNftInitMsgOpCode                         MsgOpCode = 0x132f9a45
 	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
+	WhalesNominatorsForceKickMsgOpCode               MsgOpCode = 0x1596920c
 	TonstakeControllerCreditMsgOpCode                MsgOpCode = 0x1690c604
 	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
 	SbtDestroyMsgOpCode                              MsgOpCode = 0x1f04537a
 	StartUncooperativeChannelCloseMsgOpCode          MsgOpCode = 0x1f151acf
+	WhalesNominatorsStakeWithdrawCompletedMsgOpCode  MsgOpCode = 0x23d421e1
 	WhalesNominatorsWithdrawUnownedMsgOpCode         MsgOpCode = 0x251d6a98
 	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
 	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
@@ -739,6 +768,7 @@ const (
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
+	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
 	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
@@ -794,11 +824,13 @@ var KnownMsgTypes = map[string]any{
 	OfferStorageContractMsgOp:                    OfferStorageContractMsgBody{},
 	TonstakeNftInitMsgOp:                         TonstakeNftInitMsgBody{},
 	TonstakeControllerPoolHaltMsgOp:              TonstakeControllerPoolHaltMsgBody{},
+	WhalesNominatorsForceKickMsgOp:               WhalesNominatorsForceKickMsgBody{},
 	TonstakeControllerCreditMsgOp:                TonstakeControllerCreditMsgBody{},
 	JettonInternalTransferMsgOp:                  JettonInternalTransferMsgBody{},
 	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
 	SbtDestroyMsgOp:                              SbtDestroyMsgBody{},
 	StartUncooperativeChannelCloseMsgOp:          StartUncooperativeChannelCloseMsgBody{},
+	WhalesNominatorsStakeWithdrawCompletedMsgOp:  WhalesNominatorsStakeWithdrawCompletedMsgBody{},
 	WhalesNominatorsWithdrawUnownedMsgOp:         WhalesNominatorsWithdrawUnownedMsgBody{},
 	FinishUncooperativeChannelCloseMsgOp:         FinishUncooperativeChannelCloseMsgBody{},
 	TonstakeControllerPoolSendMessageMsgOp:       TonstakeControllerPoolSendMessageMsgBody{},
@@ -835,6 +867,7 @@ var KnownMsgTypes = map[string]any{
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
+	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
 	ChannelCooperativeCommitMsgOp:                ChannelCooperativeCommitMsgBody{},
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},

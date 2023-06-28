@@ -221,6 +221,10 @@ type TonstakeControllerPoolHaltMsgBody struct {
 	QueryId uint64
 }
 
+type WhalesNominatorsForceKickMsgBody struct {
+	QueryId int64
+}
+
 type TonstakeControllerCreditMsgBody struct {
 	QueryId uint64
 	Amount  tlb.Grams
@@ -249,6 +253,10 @@ type StartUncooperativeChannelCloseMsgBody struct {
 	ChannelId tlb.Uint128
 	SchA      tlb.Ref[SignedSemiChannel]
 	SchB      tlb.Ref[SignedSemiChannel]
+}
+
+type WhalesNominatorsStakeWithdrawCompletedMsgBody struct {
+	QueryId int64
 }
 
 type WhalesNominatorsWithdrawUnownedMsgBody struct {
@@ -446,6 +454,10 @@ type JettonNotifyMsgBody struct {
 }
 
 type SubscriptionPaymentMsgBody struct{}
+
+type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
+	QueryId int64
+}
 
 type ChannelCooperativeCommitMsgBody struct {
 	SigA      tlb.Ref[tlb.Bits512]

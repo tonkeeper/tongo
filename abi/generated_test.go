@@ -413,6 +413,51 @@ func TestMessageDecoder(t *testing.T) {
 				}
 			},
 		},
+		{
+			name:       "whales nominators - stake withdraw completed",
+			boc:        "te6ccgEBAQEADgAAGCPUIeEAARfZiCji9A==",
+			wantOpName: WhalesNominatorsStakeWithdrawCompletedMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsStakeWithdrawCompletedMsgBody)
+				fmt.Printf("%v\n", body.QueryId)
+				if body.QueryId != 307698036433652 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "whales nominators - stake withdraw completed",
+			boc:        "te6ccgEBAQEADgAAGCPUIeEAARfZiCji9A==",
+			wantOpName: WhalesNominatorsStakeWithdrawCompletedMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsStakeWithdrawCompletedMsgBody)
+				if body.QueryId != 307698036433652 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "whales nominators - stake withdraw delayed",
+			boc:        "te6ccgEBAQEADgAAGHS7NCcAEdbPGIwy+g==",
+			wantOpName: WhalesNominatorsStakeWithdrawDelayedMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsStakeWithdrawDelayedMsgBody)
+				if body.QueryId != 5021259562496762 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
+		{
+			name:       "whales nominators - force kick",
+			boc:        "te6ccgEBAQEAEgAAHxWWkgwAAAGI/qz9HDAYagg=",
+			wantOpName: WhalesNominatorsForceKickMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				body := value.(WhalesNominatorsForceKickMsgBody)
+				if body.QueryId != 1687899929884 {
+					t.Fatalf("queryId mismatch")
+				}
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

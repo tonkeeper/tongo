@@ -23,6 +23,7 @@ var defaultKnownTypes = map[string]string{
 	"int32":         "int32",
 	"int64":         "int64",
 	"bool":          "bool",
+	"uint8":         "uint8",
 	"uint16":        "uint16",
 	"uint32":        "uint32",
 	"uint64":        "uint64",

@@ -490,6 +490,13 @@ type WhalesNominatorsDepositMsgBody struct {
 	Gas     tlb.Grams
 }
 
+type JettonBurnNotificationMsgBody struct {
+	QueryId             uint64
+	Amount              tlb.VarUInteger16
+	Sender              tlb.MsgAddress
+	ResponseDestination tlb.MsgAddress
+}
+
 type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256

@@ -396,6 +396,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return WhalesNominatorsDepositMsgOp, nil, err
 		}
 		return WhalesNominatorsDepositMsgOp, res, nil
+	case JettonBurnNotificationMsgOpCode: // 0x7bdd97de
+		var res JettonBurnNotificationMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return JettonBurnNotificationMsgOp, nil, err
+		}
+		return JettonBurnNotificationMsgOp, res, nil
 	case ReportStaticDataMsgOpCode: // 0x8b771735
 		var res ReportStaticDataMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -673,6 +679,7 @@ const (
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
 	TonstakeControllerApproveMsgOp               MsgOpName = "TonstakeControllerApprove"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
+	JettonBurnNotificationMsgOp                  MsgOpName = "JettonBurnNotification"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
 	TonstakeControllerPoolUpgradeMsgOp           MsgOpName = "TonstakeControllerPoolUpgrade"
@@ -775,6 +782,7 @@ const (
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
 	TonstakeControllerApproveMsgOpCode               MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
+	JettonBurnNotificationMsgOpCode                  MsgOpCode = 0x7bdd97de
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
 	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
@@ -874,6 +882,7 @@ var KnownMsgTypes = map[string]any{
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
 	TonstakeControllerApproveMsgOp:               TonstakeControllerApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
+	JettonBurnNotificationMsgOp:                  JettonBurnNotificationMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
 	TonstakeControllerPoolUpgradeMsgOp:           TonstakeControllerPoolUpgradeMsgBody{},

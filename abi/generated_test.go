@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"reflect"
 	"testing"
 
@@ -283,6 +284,10 @@ func TestWhalesNominators(t *testing.T) {
 	fmt.Printf("%+v\n", params)
 
 }
+func mustAccountIDToMsgAddress(account string) tlb.MsgAddress {
+	accountID := tongo.MustParseAccountID(account)
+	return accountID.ToMsgAddress()
+}
 
 func TestMessageDecoder(t *testing.T) {
 	tests := []struct {
@@ -292,6 +297,17 @@ func TestMessageDecoder(t *testing.T) {
 		wantValue    any
 		wantValidate func(t *testing.T, value any)
 	}{
+		{
+			name:       "jetton burn notification",
+			boc:        "te6ccgEBAQEASAAAi3vdl952mKNkA9fVjzGM4ygA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpEB64AEuSPMwX2JvQ+QTUtfXxYKTyMA=",
+			wantOpName: JettonBurnNotificationMsgOp,
+			wantValue: JettonBurnNotificationMsgBody{
+				QueryId:             8545759942892049807,
+				Amount:              tlb.VarUInteger16(*big.NewInt(1625650)),
+				Sender:              mustAccountIDToMsgAddress("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220"),
+				ResponseDestination: tlb.MsgAddress{SumType: "AddrNone"},
+			},
+		},
 		{
 			name:       "telemint deploy",
 			boc:        "te6ccgEBBAEA7AADs0Y3KJoZbSToF2FWrsk5n2kJkqyX4X6Ap8VP92juX4NPlNJSZUBwdJYp6pn3SVlg0xt+7QjJLdBJYx7JVdtEr9ZqVVgPAAAAA2QEUxhkBFOuCHpoZW5nc2h1wAECAwBgAWh0dHBzOi8vbmZ0LmZyYWdtZW50LmNvbS91c2VybmFtZS96aGVuZ3NodS5qc29uAGGACBG0dlFtgMtLJ8IHIk03VVOL8ZXXgY07PhVXdWVTJK1qMG3EIAAAoAABwgABJ1AQAEsABQBkgAgRtHZRbYDLSyfCByJNN1VTi/GV14GNOz4VV3VlUyStcA==",
@@ -475,6 +491,9 @@ func TestMessageDecoder(t *testing.T) {
 			if tt.wantValidate != nil {
 				tt.wantValidate(t, value)
 				return
+			}
+			if !reflect.DeepEqual(tt.wantValue, value) {
+				t.Fatalf("want value: %v, got: %v", tt.wantValue, value)
 			}
 		})
 	}

@@ -533,7 +533,6 @@
 
     <!--        Jettons    -->
     <internal name="jetton_transfer" interface="tep74">
-
         transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
         response_destination:MsgAddress custom_payload:(Maybe ^Cell)
         forward_ton_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell)
@@ -550,6 +549,10 @@
         burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
         response_destination:MsgAddress custom_payload:(Maybe ^Cell)
         = InternalMsgBody;
+    </internal>
+    <internal name="jetton_burn_notification" interface="tep74">
+        burn_notification#7bdd97de query_id:uint64 amount:(VarUInteger 16)
+        sender:MsgAddress response_destination:MsgAddress = InternalMsgBody;
     </internal>
     <internal name="jetton_notify" interface="tep74">
         transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)

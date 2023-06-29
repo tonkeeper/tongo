@@ -1,0 +1,42 @@
+<abi>
+    <types interface="stonfi_router">
+        pay_to_params#_ amount0_out:Coins token0_address:MsgAddress amount1_out:Coins token1_address:MsgAddress = StonfiPayToParams;
+        swap_addresses#_ from_user:MsgAddress = StonfiSwapAddrs;
+    </types>
+
+<!--    <get_method name="get_router_data">-->
+<!--        <output version="stonfi" fixed_length="true" interface="stonfi_router">-->
+<!--            <int name="is_locked">bool</int>-->
+<!--            <slice name="admin_address">msgaddress</slice>-->
+<!--            <cell name="temp_upgrade">any</cell>-->
+<!--            <cell name="pool_code">any</cell>-->
+<!--            <cell name="jetton_lp_wallet_code">any</cell>-->
+<!--            <cell name="lp_account_code">any</cell>-->
+<!--        </output>-->
+<!--    </get_method>-->
+
+    <get_method name="get_pool_data">
+        <output version="stonfi" fixed_length="true" interface="stonfi_pool">
+            <int name="reserve0">uint64</int>
+            <int name="reserve1">uint64</int>
+            <slice name="token0_address">msgaddress</slice>
+            <slice name="token1_address">msgaddress</slice>
+            <int name="lp_fee">uint8</int>
+            <int name="protocol_fee">uint8</int>
+            <int name="ref_fee">uint8</int>
+            <slice name="protocol_fee_address">msgaddress</slice>
+            <int name="collected_token0_protocol_fee">uint64</int>
+            <int name="collected_token1_protocol_fee">uint64</int>
+        </output>
+    </get_method>
+
+    <internal name="stonfi_swap" interface="stonfi_pool">
+        swap#25938561 query_id:uint64 to_address:MsgAddress sender_address:MsgAddress
+        jetton_amount:Coins min_out:Coins has_ref_address:Bool addrs:^StonfiSwapAddrs = InternalMsgBody;
+    </internal>
+    <internal name="stonfi_payment_request" fixed_length="true" interface="stonfi_router">
+        pay_to#f93bb43f query_id:uint64 owner:MsgAddress exit_code:uint32
+        params:(Either StonfiPayToParams ^StonfiPayToParams) = InternalMsgBody;
+    </internal>
+
+</abi>

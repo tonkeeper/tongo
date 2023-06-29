@@ -147,6 +147,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return FinishUncooperativeChannelCloseMsgOp, nil, err
 		}
 		return FinishUncooperativeChannelCloseMsgOp, res, nil
+	case StonfiSwapMsgOpCode: // 0x25938561
+		var res StonfiSwapMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return StonfiSwapMsgOp, nil, err
+		}
+		return StonfiSwapMsgOp, res, nil
 	case TonstakeControllerPoolSendMessageMsgOpCode: // 0x270695fb
 		var res TonstakeControllerPoolSendMessageMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -603,6 +609,15 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return ElectorNewStakeConfirmationMsgOp, nil, err
 		}
 		return ElectorNewStakeConfirmationMsgOp, res, nil
+	case StonfiPaymentRequestMsgOpCode: // 0xf93bb43f
+		var res StonfiPaymentRequestMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return StonfiPaymentRequestMsgOp, nil, err
+		}
+		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
+			return StonfiPaymentRequestMsgOp, nil, ErrStructSizeMismatch
+		}
+		return StonfiPaymentRequestMsgOp, res, nil
 	case ElectorRecoverStakeResponseMsgOpCode: // 0xf96f7324
 		var res ElectorRecoverStakeResponseMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -638,6 +653,7 @@ const (
 	WhalesNominatorsStakeWithdrawCompletedMsgOp  MsgOpName = "WhalesNominatorsStakeWithdrawCompleted"
 	WhalesNominatorsWithdrawUnownedMsgOp         MsgOpName = "WhalesNominatorsWithdrawUnowned"
 	FinishUncooperativeChannelCloseMsgOp         MsgOpName = "FinishUncooperativeChannelClose"
+	StonfiSwapMsgOp                              MsgOpName = "StonfiSwap"
 	TonstakeControllerPoolSendMessageMsgOp       MsgOpName = "TonstakeControllerPoolSendMessage"
 	TeleitemDeployMsgOp                          MsgOpName = "TeleitemDeploy"
 	TonstakePoolSetGovernanceFeeMsgOp            MsgOpName = "TonstakePoolSetGovernanceFee"
@@ -713,6 +729,7 @@ const (
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
 	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
 	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
+	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 )
 
@@ -741,6 +758,7 @@ const (
 	WhalesNominatorsStakeWithdrawCompletedMsgOpCode  MsgOpCode = 0x23d421e1
 	WhalesNominatorsWithdrawUnownedMsgOpCode         MsgOpCode = 0x251d6a98
 	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
+	StonfiSwapMsgOpCode                              MsgOpCode = 0x25938561
 	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
 	TeleitemDeployMsgOpCode                          MsgOpCode = 0x299a3e15
 	TonstakePoolSetGovernanceFeeMsgOpCode            MsgOpCode = 0x2aaa96a0
@@ -816,6 +834,7 @@ const (
 	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
 	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
 	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
+	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 )
 
@@ -841,6 +860,7 @@ var KnownMsgTypes = map[string]any{
 	WhalesNominatorsStakeWithdrawCompletedMsgOp:  WhalesNominatorsStakeWithdrawCompletedMsgBody{},
 	WhalesNominatorsWithdrawUnownedMsgOp:         WhalesNominatorsWithdrawUnownedMsgBody{},
 	FinishUncooperativeChannelCloseMsgOp:         FinishUncooperativeChannelCloseMsgBody{},
+	StonfiSwapMsgOp:                              StonfiSwapMsgBody{},
 	TonstakeControllerPoolSendMessageMsgOp:       TonstakeControllerPoolSendMessageMsgBody{},
 	TeleitemDeployMsgOp:                          TeleitemDeployMsgBody{},
 	TonstakePoolSetGovernanceFeeMsgOp:            TonstakePoolSetGovernanceFeeMsgBody{},
@@ -916,6 +936,7 @@ var KnownMsgTypes = map[string]any{
 	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
 	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
 	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
+	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 }
 

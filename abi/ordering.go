@@ -18,6 +18,7 @@ const (
 	NftSaleGetgems      ContractInterface = "nft_sale_getgems"
 	PaymentChannel      ContractInterface = "payment_channel"
 	StakingNft          ContractInterface = "staking_nft"
+	StonfiPool          ContractInterface = "stonfi_pool"
 	StorageContract     ContractInterface = "storage_contract"
 	StorageProvider     ContractInterface = "storage_provider"
 	Subscription        ContractInterface = "subscription"
@@ -144,6 +145,8 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPoolData,
 		ImplementedByFn: func(typeHint string) ContractInterface {
 			switch typeHint {
+			case "GetPoolData_StonfiResult":
+				return StonfiPool
 			case "GetPoolData_TfResult":
 				return TfNominator
 			}

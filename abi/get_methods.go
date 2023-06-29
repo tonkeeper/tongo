@@ -30,7 +30,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nominator_data":            {DecodeGetNominatorDataResult},
 	"get_params":                    {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":               {DecodeGetPluginListResult},
-	"get_pool_data":                 {DecodeGetPoolData_TfResult},
+	"get_pool_data":                 {DecodeGetPoolData_TfResult, DecodeGetPoolData_StonfiResult},
 	"get_pool_full_data":            {DecodeGetPoolFullDataResult},
 	"get_pool_status":               {DecodeGetPoolStatusResult},
 	"get_public_key":                {DecodeGetPublicKeyResult},
@@ -120,6 +120,7 @@ var ResultTypes = []interface{}{
 	&GetNominatorDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
+	&GetPoolData_StonfiResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
 	&GetPoolStatusResult{},
@@ -907,6 +908,19 @@ type GetPoolData_TfResult struct {
 	}
 }
 
+type GetPoolData_StonfiResult struct {
+	Reserve0                   uint64
+	Reserve1                   uint64
+	Token0Address              tlb.MsgAddress
+	Token1Address              tlb.MsgAddress
+	LpFee                      uint8
+	ProtocolFee                uint8
+	RefFee                     uint8
+	ProtocolFeeAddress         tlb.MsgAddress
+	CollectedToken0ProtocolFee uint64
+	CollectedToken1ProtocolFee uint64
+}
+
 func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
@@ -918,7 +932,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_TfResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_TfResult, DecodeGetPoolData_StonfiResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -934,6 +948,15 @@ func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny
 	var result GetPoolData_TfResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolData_TfResult", result, err
+}
+
+func DecodeGetPoolData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolData_StonfiResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolData_StonfiResult", result, err
 }
 
 type GetPoolFullDataResult struct {

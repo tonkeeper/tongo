@@ -39,6 +39,7 @@
             <slice name="sudoer" nullable="true">msgaddress</slice>
             <int name="sudoer_set_at">int32</int>
             <slice name="governor" nullable="true">msgaddress</slice> <!-- i=20 -->
+            <int name="governor_uppdate_after" nullable="true">int64</int>
             <slice name="interest_manager" nullable="true">msgaddress</slice>
             <slice name="halter" nullable="true">msgaddress</slice>
             <slice name="approver" nullable="true">msgaddress</slice>

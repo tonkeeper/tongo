@@ -184,6 +184,15 @@ func (h Hashmap[keyT, T]) Keys() []keyT {
 	return h.keys
 }
 
+func (h Hashmap[keyT, T]) Get(key keyT) (T, bool) {
+	for i, k := range h.keys {
+		if k == key {
+			return h.values[i], true
+		}
+	}
+	return *new(T), false
+}
+
 type HashmapE[keyT fixedSize, T any] struct {
 	m Hashmap[keyT, T]
 }
@@ -500,4 +509,8 @@ func (h Hashmap[keyT, T]) Items() []HashmapItem[keyT, T] {
 		}
 	}
 	return items
+}
+
+func (h HashmapE[keyT, T]) Get(key keyT) (T, bool) {
+	return h.m.Get(key)
 }

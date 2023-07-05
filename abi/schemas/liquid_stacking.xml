@@ -68,6 +68,14 @@
             <slice name="sudoer">msgaddress</slice>
         </output>
     </get_method>
+
+    <!--   Payout NFTs     -->
+    <get_method name="get_bill_amount" interface="staking_nft">
+        <output fixed_length="true">
+            <int name="amount">int64</int>
+        </output>
+    </get_method>
+
     <!-- TonStake messages to controller -->
     <internal name="tonstake_controller_credit" interface="tonstake_controller">
         credit#1690c604 query_id:uint64 amount:Coins = InternalMsgBody;

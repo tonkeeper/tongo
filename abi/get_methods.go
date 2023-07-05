@@ -56,6 +56,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_telemint_token_name":       {DecodeGetTelemintTokenNameResult},
 	"get_pool_full_data":            {DecodeGetPoolFullDataResult},
 	"get_validator_controller_data": {DecodeGetValidatorControllerDataResult},
+	"get_bill_amount":               {DecodeGetBillAmountResult},
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
@@ -77,6 +78,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	91481:  {GetLastFillUpTime},
 	92229:  {GetPoolFullData},
 	92260:  {GetSubscriptionData},
+	96705:  {GetBillAmount},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
 	102351: {GetNftData},
@@ -102,6 +104,7 @@ var ResultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
 	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
+	&GetBillAmountResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
 	&GetDomainResult{},
@@ -1941,4 +1944,37 @@ func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType strin
 	var result GetValidatorControllerDataResult
 	err = stack.Unmarshal(&result)
 	return "GetValidatorControllerDataResult", result, err
+}
+
+type GetBillAmountResult struct {
+	Amount int64
+}
+
+func GetBillAmount(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 96705 for "get_bill_amount" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96705, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetBillAmountResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetBillAmountResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetBillAmountResult
+	err = stack.Unmarshal(&result)
+	return "GetBillAmountResult", result, err
 }

@@ -101,8 +101,13 @@ func NewEmulatorFromBOCsBase64(code, data, config string, opts ...Option) (*Emul
 	cDataStr := C.CString(data)
 	defer C.free(unsafe.Pointer(cDataStr))
 	level := C.int(options.verbosityLevel)
+
+	emulator := C.tvm_emulator_create(cCodeStr, cDataStr, level)
+	if emulator == nil {
+		return nil, fmt.Errorf("failed to create emulator")
+	}
 	e := Emulator{
-		emulator: C.tvm_emulator_create(cCodeStr, cDataStr, level),
+		emulator: emulator,
 		config:   config,
 		lazyC7:   options.lazyC7,
 		balance:  uint64(options.balance),

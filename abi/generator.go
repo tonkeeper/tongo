@@ -4,12 +4,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/tonkeeper/tongo/abi/parser"
 	"go/format"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
+
+	"github.com/tonkeeper/tongo/abi/parser"
 )
 
 const HEADER = `package abi
@@ -22,8 +24,42 @@ import (
 `
 const SCHEMAS_PATH = "schemas/"
 
+func mergeMethods(methods []parser.GetMethod) ([]parser.GetMethod, error) {
+	methodsMap := map[string]parser.GetMethod{}
+	var golangNamedMethods []parser.GetMethod
+	for _, method := range methods {
+		current, ok := methodsMap[method.Name]
+		if !ok {
+			methodsMap[method.Name] = method
+			continue
+		}
+		if len(method.GolangName) > 0 {
+			golangNamedMethods = append(golangNamedMethods, method)
+			continue
+		}
+		if len(current.Interfaces) > 0 || len(method.Interfaces) > 0 {
+			return nil, fmt.Errorf("method '%s' must be defined without 'interface' attr because it has multiple version", method.Name)
+		}
+		if len(current.Input.StackValues) > 0 || len(method.Input.StackValues) > 0 {
+			return nil, fmt.Errorf("method '%s' has a version with input params, it has to be defined with golang_name to avoid collision", method.Name)
+		}
+		current.Output = append(current.Output, method.Output...)
+		methodsMap[method.Name] = current
+	}
+	var results []parser.GetMethod
+	for _, method := range methodsMap {
+		results = append(results, method)
+	}
+	results = append(results, golangNamedMethods...)
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Name < results[j].Name
+	})
+	return results, nil
+}
+
 func main() {
 	var abi parser.ABI
+	var methods []parser.GetMethod
 	filepath.Walk(SCHEMAS_PATH, func(path string, info fs.FileInfo, err error) error {
 		if !strings.HasSuffix(info.Name(), ".xml") {
 			return nil
@@ -36,12 +72,18 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		methods = append(methods, a.Methods...)
 		abi.Externals = append(abi.Externals, a.Externals...)
 		abi.Internals = append(abi.Internals, a.Internals...)
-		abi.Methods = append(abi.Methods, a.Methods...)
 		abi.Types = append(abi.Types, a.Types...)
 		return nil
 	})
+
+	methods, err := mergeMethods(methods)
+	if err != nil {
+		panic(err)
+	}
+	abi.Methods = methods
 
 	gen, err := parser.NewGenerator(nil, abi)
 	if err != nil {

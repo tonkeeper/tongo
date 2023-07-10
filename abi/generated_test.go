@@ -474,6 +474,43 @@ func TestMessageDecoder(t *testing.T) {
 				}
 			},
 		},
+		{
+			name:       "stonfi swap",
+			boc:        "te6ccgEBAgEAoQABsSWThWEAF9FtgGlyuYAVUoS5uZxArCUbLyf7phLgN5PBW9e9kIid2rJzK9oArXAARULUYsmJq1RiZ+YiH+IJLcAZUVkVff+KBPwEmmaQGH1EVt4eddAYMnVDAQCFgBVShLm5nECsJRsvJ/umEuA3k8Fb172QiJ3asnMr2gCtcAGyO71SfAD9PQh0Amu3lB+P3U1Zntjnpj9CbVcj8DiPLg==",
+			wantOpName: StonfiSwapMsgOp,
+			wantValue: StonfiSwapMsgBody{
+				QueryId:       6704192700379833,
+				ToAddress:     mustAccountIDToMsgAddress("0:aa9425cdcce2056128d9793fdd309701bc9e0adebdec8444eed593995ed0056b"),
+				SenderAddress: mustAccountIDToMsgAddress("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f"),
+				JettonAmount:  74549066199,
+				MinOut:        101490000,
+				HasRefAddress: true,
+				Addrs: tlb.Ref[StonfiSwapAddrs]{
+					Value: StonfiSwapAddrs{
+						FromUser: mustAccountIDToMsgAddress("0:aa9425cdcce2056128d9793fdd309701bc9e0adebdec8444eed593995ed0056b"),
+					},
+				},
+			},
+		},
+		{
+			name:       "stonfi pay to",
+			boc:        "te6ccgEBAgEAfgABY/k7tD8AF9FtgGlyuYANkd3qk+AH6ehDoBNdvKD8fupqzPbHPTH6E2q5H4HEeWig8KgYAQCNMBjz2AApWA5YrFIkZa+bJ7vYJARri8uevEBP6Td4tUTty6RJsBAARULUYsmJq1RiZ+YiH+IJLcAZUVkVff+KBPwEmmaQGH4=",
+			wantOpName: StonfiPaymentRequestMsgOp,
+			wantValue: StonfiPaymentRequestMsgBody{
+				QueryId:  6704192700379833,
+				Owner:    mustAccountIDToMsgAddress("0:6c8eef549f003f4f421d009aede507e3f7535667b639e98fd09b55c8fc0e23cb"),
+				ExitCode: 1158120768,
+				Params: tlb.EitherRef[StonfiPayToParams]{
+					IsRight: true,
+					Value: StonfiPayToParams{
+						Amount0Out:    102205,
+						Token0Address: mustAccountIDToMsgAddress("0:14ac072c56291232d7cd93ddec120235c5e5cf5e2027f49bbc5aa276e5d224d8"),
+						Amount1Out:    0,
+						Token1Address: mustAccountIDToMsgAddress("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f"),
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

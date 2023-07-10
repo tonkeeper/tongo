@@ -137,6 +137,17 @@ type AccountLists struct {
 	List tlb.Hashmap[tlb.Bits256, tlb.Any]
 }
 
+type StonfiPayToParams struct {
+	Amount0Out    tlb.Grams
+	Token0Address tlb.MsgAddress
+	Amount1Out    tlb.Grams
+	Token1Address tlb.MsgAddress
+}
+
+type StonfiSwapAddrs struct {
+	FromUser tlb.MsgAddress
+}
+
 type TextCommentMsgBody struct {
 	Text tlb.Text
 }
@@ -265,6 +276,16 @@ type WhalesNominatorsWithdrawUnownedMsgBody struct {
 }
 
 type FinishUncooperativeChannelCloseMsgBody struct{}
+
+type StonfiSwapMsgBody struct {
+	QueryId       uint64
+	ToAddress     tlb.MsgAddress
+	SenderAddress tlb.MsgAddress
+	JettonAmount  tlb.Grams
+	MinOut        tlb.Grams
+	HasRefAddress bool
+	Addrs         tlb.Ref[StonfiSwapAddrs]
+}
 
 type TonstakeControllerPoolSendMessageMsgBody struct {
 	QueryId uint64
@@ -674,6 +695,13 @@ type TonstakeNftBurnMsgBody struct {
 
 type ElectorNewStakeConfirmationMsgBody struct {
 	QueryId uint64
+}
+
+type StonfiPaymentRequestMsgBody struct {
+	QueryId  uint64
+	Owner    tlb.MsgAddress
+	ExitCode uint32
+	Params   tlb.EitherRef[StonfiPayToParams]
 }
 
 type ElectorRecoverStakeResponseMsgBody struct {

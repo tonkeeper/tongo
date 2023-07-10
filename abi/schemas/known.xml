@@ -372,8 +372,8 @@
             </tuple>
         </output>
     </get_method>
-    <get_method name="get_pool_data" interface="tf_nominator">
-        <output version="tf">
+    <get_method name="get_pool_data">
+        <output version="tf" interface="tf_nominator">
             <int name="state">int8</int>
             <int name="nominators_count">uint32</int>
             <int name="stake_amount_sent">int64</int>

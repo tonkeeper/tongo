@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/big"
 	"strconv"
+	"unicode/utf8"
 
 	"github.com/tonkeeper/tongo/boc"
 )
@@ -135,19 +136,18 @@ func (s *SnakeData) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
-// text#_ {n:#} data:(SnakeData ~n) = Text;
-type Text string
+type Bytes []byte
 
-func (t Text) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	bs := boc.NewBitString(len(t) * 8)
-	err := bs.WriteBytes([]byte(t))
+func (b Bytes) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	bs := boc.NewBitString(len(b) * 8)
+	err := bs.WriteBytes(b)
 	if err != nil {
 		return err
 	}
 	return Marshal(c, SnakeData(bs))
 }
 
-func (t *Text) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+func (b *Bytes) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	var sn SnakeData
 	err := decoder.Unmarshal(c, &sn)
 	if err != nil {
@@ -157,9 +157,29 @@ func (t *Text) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bs.BitsAvailableForRead()%8 != 0 {
 		return fmt.Errorf("text data must be a multiple of 8 bits")
 	}
-	b, err := bs.GetTopUppedArray()
+	buf, err := bs.GetTopUppedArray()
 	if err != nil {
 		return err
+	}
+	*b = buf
+	return nil
+}
+
+// text#_ {n:#} data:(SnakeData ~n) = Text;
+type Text string
+
+func (t Text) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return Bytes(t).MarshalTLB(c, encoder)
+}
+
+func (t *Text) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	var b Bytes
+	err := b.UnmarshalTLB(c, decoder)
+	if err != nil {
+		return err
+	}
+	if !utf8.Valid(b) {
+		return fmt.Errorf("invalid unicode characters in text")
 	}
 	*t = Text(b)
 	return nil

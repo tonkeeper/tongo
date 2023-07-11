@@ -484,6 +484,9 @@
     <internal name="text_comment">
         text_comment#00000000 text:Text = InternalMsgBody;
     </internal>
+    <internal name="encrypted_text_comment">
+        text_comment#2167da4b cipher_text:Bytes = InternalMsgBody;
+    </internal>
     <internal name="excess">
         excesses#d53276db query_id:uint64 = InternalMsgBody;
     </internal>

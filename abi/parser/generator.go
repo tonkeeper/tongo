@@ -490,6 +490,17 @@ func (g *Generator) GenerateMsgDecoder() string {
 		fmt.Fprintf(&builder, "%vMsgOp: %v{},\n", v[0], v[1])
 	}
 	builder.WriteString("}\n\n")
+	builder.WriteString("// GetMsgOpName returns an operation name by its opcode.\n")
+	builder.WriteString("// On success this function returns (MsgOpName, true),\n")
+	builder.WriteString(`// and ("", false) if a given opcode is unknown. ` + "\n")
+	builder.WriteString("func GetMsgOpName(opcode MsgOpCode) (MsgOpName, bool) {\n")
+	builder.WriteString("switch opcode {\n")
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, `case %vMsgOpCode: return %vMsgOp, true`+"\n", v.OperationName, v.OperationName)
+	}
+	builder.WriteString("}\n\n")
+	builder.WriteString(`return "", false` + "\n")
+	builder.WriteString("}\n\n")
 	b, err := format.Source([]byte(builder.String()))
 	if err != nil {
 		panic(err)

@@ -4,6 +4,7 @@ package abi
 
 import (
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
@@ -948,4 +949,214 @@ var KnownMsgTypes = map[string]any{
 	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
+}
+
+// GetMsgOpName returns an operation name by its opcode.
+// On success this function returns (MsgOpName, true),
+// and ("", false) if a given opcode is unknown.
+func GetMsgOpName(opcode MsgOpCode) (MsgOpName, bool) {
+	switch opcode {
+	case TextCommentMsgOpCode:
+		return TextCommentMsgOp, true
+	case ProveOwnershipMsgOpCode:
+		return ProveOwnershipMsgOp, true
+	case NftOwnershipAssignedMsgOpCode:
+		return NftOwnershipAssignedMsgOp, true
+	case OwnershipProofMsgOpCode:
+		return OwnershipProofMsgOp, true
+	case ChallengeQuarantinedChannelStateMsgOpCode:
+		return ChallengeQuarantinedChannelStateMsgOp, true
+	case TonstakePoolWithdrawalMsgOpCode:
+		return TonstakePoolWithdrawalMsgOp, true
+	case SbtOwnerInfoMsgOpCode:
+		return SbtOwnerInfoMsgOp, true
+	case InitPaymentChannelMsgOpCode:
+		return InitPaymentChannelMsgOp, true
+	case JettonTransferMsgOpCode:
+		return JettonTransferMsgOp, true
+	case OfferStorageContractMsgOpCode:
+		return OfferStorageContractMsgOp, true
+	case TonstakeNftInitMsgOpCode:
+		return TonstakeNftInitMsgOp, true
+	case TonstakeControllerPoolHaltMsgOpCode:
+		return TonstakeControllerPoolHaltMsgOp, true
+	case WhalesNominatorsForceKickMsgOpCode:
+		return WhalesNominatorsForceKickMsgOp, true
+	case TonstakeControllerCreditMsgOpCode:
+		return TonstakeControllerCreditMsgOp, true
+	case JettonInternalTransferMsgOpCode:
+		return JettonInternalTransferMsgOp, true
+	case WhalesNominatorsWithdrawUnownedResponseMsgOpCode:
+		return WhalesNominatorsWithdrawUnownedResponseMsgOp, true
+	case SbtDestroyMsgOpCode:
+		return SbtDestroyMsgOp, true
+	case StartUncooperativeChannelCloseMsgOpCode:
+		return StartUncooperativeChannelCloseMsgOp, true
+	case EncryptedTextCommentMsgOpCode:
+		return EncryptedTextCommentMsgOp, true
+	case WhalesNominatorsStakeWithdrawCompletedMsgOpCode:
+		return WhalesNominatorsStakeWithdrawCompletedMsgOp, true
+	case WhalesNominatorsWithdrawUnownedMsgOpCode:
+		return WhalesNominatorsWithdrawUnownedMsgOp, true
+	case FinishUncooperativeChannelCloseMsgOpCode:
+		return FinishUncooperativeChannelCloseMsgOp, true
+	case StonfiSwapMsgOpCode:
+		return StonfiSwapMsgOp, true
+	case TonstakeControllerPoolSendMessageMsgOpCode:
+		return TonstakeControllerPoolSendMessageMsgOp, true
+	case TeleitemDeployMsgOpCode:
+		return TeleitemDeployMsgOp, true
+	case TonstakePoolSetGovernanceFeeMsgOpCode:
+		return TonstakePoolSetGovernanceFeeMsgOp, true
+	case GetStaticDataMsgOpCode:
+		return GetStaticDataMsgOp, true
+	case TonstakeControllerValidatorWithdrawalMsgOpCode:
+		return TonstakeControllerValidatorWithdrawalMsgOp, true
+	case TonstakePoolWithdrawMsgOpCode:
+		return TonstakePoolWithdrawMsgOp, true
+	case TeleitemCancelAuctionMsgOpCode:
+		return TeleitemCancelAuctionMsgOp, true
+	case ProofStorageMsgOpCode:
+		return ProofStorageMsgOp, true
+	case TelemintDeployMsgOpCode:
+		return TelemintDeployMsgOp, true
+	case TelemintDeployV2MsgOpCode:
+		return TelemintDeployV2MsgOp, true
+	case StorageWithdrawMsgOpCode:
+		return StorageWithdrawMsgOp, true
+	case ElectorRecoverStakeRequestMsgOpCode:
+		return ElectorRecoverStakeRequestMsgOp, true
+	case TonstakePoolDepositMsgOpCode:
+		return TonstakePoolDepositMsgOp, true
+	case TeleitemStartAuctionMsgOpCode:
+		return TeleitemStartAuctionMsgOp, true
+	case TonstakePoolTouchMsgOpCode:
+		return TonstakePoolTouchMsgOp, true
+	case ElectorNewStakeMsgOpCode:
+		return ElectorNewStakeMsgOp, true
+	case UpdatePubkeyMsgOpCode:
+		return UpdatePubkeyMsgOp, true
+	case UpdateStorageParamsMsgOpCode:
+		return UpdateStorageParamsMsgOp, true
+	case TonstakeImanagerOperationFeeMsgOpCode:
+		return TonstakeImanagerOperationFeeMsgOp, true
+	case ChannelCooperativeCloseMsgOpCode:
+		return ChannelCooperativeCloseMsgOp, true
+	case TonstakeControllerReturnAvailableFundsMsgOpCode:
+		return TonstakeControllerReturnAvailableFundsMsgOp, true
+	case JettonBurnMsgOpCode:
+		return JettonBurnMsgOp, true
+	case TonstakePoolSetRolesMsgOpCode:
+		return TonstakePoolSetRolesMsgOp, true
+	case NftTransferMsgOpCode:
+		return NftTransferMsgOp, true
+	case TonstakeControllerSendRequestLoanMsgOpCode:
+		return TonstakeControllerSendRequestLoanMsgOp, true
+	case WalletPluginDestructMsgOpCode:
+		return WalletPluginDestructMsgOp, true
+	case SettleChannelConditionalsMsgOpCode:
+		return SettleChannelConditionalsMsgOp, true
+	case TopUpChannelBalanceMsgOpCode:
+		return TopUpChannelBalanceMsgOp, true
+	case GetRoyaltyParamsMsgOpCode:
+		return GetRoyaltyParamsMsgOp, true
+	case SbtRevokeMsgOpCode:
+		return SbtRevokeMsgOp, true
+	case PaymentRequestMsgOpCode:
+		return PaymentRequestMsgOp, true
+	case TonstakeControllerPoolUnhaltMsgOpCode:
+		return TonstakeControllerPoolUnhaltMsgOp, true
+	case JettonNotifyMsgOpCode:
+		return JettonNotifyMsgOp, true
+	case SubscriptionPaymentMsgOpCode:
+		return SubscriptionPaymentMsgOp, true
+	case WhalesNominatorsStakeWithdrawDelayedMsgOpCode:
+		return WhalesNominatorsStakeWithdrawDelayedMsgOp, true
+	case ChannelCooperativeCommitMsgOpCode:
+		return ChannelCooperativeCommitMsgOp, true
+	case TonstakeControllerPoolSetSudoerMsgOpCode:
+		return TonstakeControllerPoolSetSudoerMsgOp, true
+	case CloseStorageContractMsgOpCode:
+		return CloseStorageContractMsgOp, true
+	case AcceptStorageContractMsgOpCode:
+		return AcceptStorageContractMsgOp, true
+	case TonstakeControllerApproveMsgOpCode:
+		return TonstakeControllerApproveMsgOp, true
+	case WhalesNominatorsDepositMsgOpCode:
+		return WhalesNominatorsDepositMsgOp, true
+	case JettonBurnNotificationMsgOpCode:
+		return JettonBurnNotificationMsgOp, true
+	case ReportStaticDataMsgOpCode:
+		return ReportStaticDataMsgOp, true
+	case TonstakeControllerWithdrawValidatorMsgOpCode:
+		return TonstakeControllerWithdrawValidatorMsgOp, true
+	case TonstakeControllerPoolUpgradeMsgOpCode:
+		return TonstakeControllerPoolUpgradeMsgOp, true
+	case TonstakePoolPrepareGovernanceMigrationMsgOpCode:
+		return TonstakePoolPrepareGovernanceMigrationMsgOp, true
+	case WhalesNominatorsAcceptStakeMsgOpCode:
+		return WhalesNominatorsAcceptStakeMsgOp, true
+	case TonstakePoolSetDepositSettingsMsgOpCode:
+		return TonstakePoolSetDepositSettingsMsgOp, true
+	case WhalesNominatorsAcceptWithdrawsMsgOpCode:
+		return WhalesNominatorsAcceptWithdrawsMsgOp, true
+	case WhalesNominatorsSendStakeMsgOpCode:
+		return WhalesNominatorsSendStakeMsgOp, true
+	case ReportRoyaltyParamsMsgOpCode:
+		return ReportRoyaltyParamsMsgOp, true
+	case StorageRewardWithdrawalMsgOpCode:
+		return StorageRewardWithdrawalMsgOp, true
+	case TonstakeImanagerRequestNotificationMsgOpCode:
+		return TonstakeImanagerRequestNotificationMsgOp, true
+	case TonstakePoolDeployControllerMsgOpCode:
+		return TonstakePoolDeployControllerMsgOp, true
+	case StorageContractTerminatedMsgOpCode:
+		return StorageContractTerminatedMsgOp, true
+	case TonstakeImanagerStatsMsgOpCode:
+		return TonstakeImanagerStatsMsgOp, true
+	case TonstakeImanagerSetInterestMsgOpCode:
+		return TonstakeImanagerSetInterestMsgOp, true
+	case SbtRequestOwnerMsgOpCode:
+		return SbtRequestOwnerMsgOp, true
+	case TonstakeControllerTopUpMsgOpCode:
+		return TonstakeControllerTopUpMsgOp, true
+	case StorageContractConfirmedMsgOpCode:
+		return StorageContractConfirmedMsgOp, true
+	case ExcessMsgOpCode:
+		return ExcessMsgOp, true
+	case WhalesNominatorsWithdrawMsgOpCode:
+		return WhalesNominatorsWithdrawMsgOp, true
+	case ChannelClosedMsgOpCode:
+		return ChannelClosedMsgOp, true
+	case TonstakePoolLoanRepaymentMsgOpCode:
+		return TonstakePoolLoanRepaymentMsgOp, true
+	case WalletPluginDestructResponseMsgOpCode:
+		return WalletPluginDestructResponseMsgOp, true
+	case DeployStorageContractMsgOpCode:
+		return DeployStorageContractMsgOp, true
+	case TonstakePoolRequestLoanMsgOpCode:
+		return TonstakePoolRequestLoanMsgOp, true
+	case TonstakeControllerDisapproveMsgOpCode:
+		return TonstakeControllerDisapproveMsgOp, true
+	case TonstakeControllerRecoverStakeMsgOpCode:
+		return TonstakeControllerRecoverStakeMsgOp, true
+	case TonstakeNftBurnNotificationMsgOpCode:
+		return TonstakeNftBurnNotificationMsgOp, true
+	case TonstakeControllerReturnUnusedLoanMsgOpCode:
+		return TonstakeControllerReturnUnusedLoanMsgOp, true
+	case PaymentRequestResponseMsgOpCode:
+		return PaymentRequestResponseMsgOp, true
+	case TonstakeControllerUpdateValidatorHashMsgOpCode:
+		return TonstakeControllerUpdateValidatorHashMsgOp, true
+	case TonstakeNftBurnMsgOpCode:
+		return TonstakeNftBurnMsgOp, true
+	case ElectorNewStakeConfirmationMsgOpCode:
+		return ElectorNewStakeConfirmationMsgOp, true
+	case StonfiPaymentRequestMsgOpCode:
+		return StonfiPaymentRequestMsgOp, true
+	case ElectorRecoverStakeResponseMsgOpCode:
+		return ElectorRecoverStakeResponseMsgOp, true
+	}
+
+	return "", false
 }

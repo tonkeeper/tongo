@@ -7,7 +7,7 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 )
 
-// Decoder unmarshal a cell into a golang type.
+// Decoder unmarshals a cell into a golang type.
 type Decoder struct {
 	hasher *boc.Hasher
 }

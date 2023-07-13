@@ -1,0 +1,17 @@
+{
+   "Info": {
+     "SumType": "ExtInMsgInfo",
+     "IntMsgInfo": null,
+     "ExtInMsgInfo": {
+       "Src": "",
+       "Dest": "0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220",
+       "ImportFee": "0"
+     },
+     "ExtOutMsgInfo": null
+   },
+   "Init": null,
+   "Body": {
+     "IsRight": false,
+     "Value": "b5ee9c7201010201008700019ca378b704d2ff603c754fe65fb7b3dfb32fbbc674a080e2cde6f5f21352c60b8356fb207024567f128bcc518d021332d85d141bd1454db8cc99b84bcbfcfa700329a9a3176458b12b0000001b000301006862005940e1bba9799e03fd93c35a4b5f6224710e61e5fc56cf3701b243096d5551b0a35a4e900000000000000000000000000000"
+   }
+ }

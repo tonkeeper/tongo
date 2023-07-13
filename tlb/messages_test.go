@@ -1,7 +1,10 @@
 package tlb
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"os"
 	"reflect"
 	"testing"
 
@@ -201,6 +204,71 @@ func TestMsgAddress_UnmarshalJSON(t *testing.T) {
 			}
 			if !reflect.DeepEqual(addr, tt.wantAddr) {
 				t.Fatalf("want: %v, got: %#v\n", tt.wantAddr, addr)
+			}
+		})
+	}
+}
+
+func TestMessage_Marshal_and_Unmarshal(t *testing.T) {
+	tests := []struct {
+		name     string
+		boc      string
+		filename string
+		wantHash string
+	}{
+		{
+			name:     "ExtInMsg with body",
+			boc:      "te6ccgEBAgEAqgAB4YgA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpEAFG8W4Jpf7AeOqfzL9vZ79mX3eM6UEBxZvN6+QmpYwXBq32QOBIrP4lF5ijGgQmZbC6KDeiiptxmTNwl5f59OAGU1NGLsixYlYAAAA2AAcAQBoYgBZQOG7qXmeA/2Tw1pLX2IkcQ5h5fxWzzcBskMJbVVRsKNaTpAAAAAAAAAAAAAAAAAAAA==",
+			filename: "testdata/message-1",
+			wantHash: "d5376cf6e9de8813d0640016545000e17bcc399bd654826f4fd7a3000b2fad68",
+		},
+		{
+			name:     "IntMsg with body",
+			boc:      "te6ccgEBAgEAjAABsUgALXKEDiSWLCdVuhCWy/hYz3hnzF93uwd93pYymUX+v88AGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgQBycOAAYdyRAAAEQo20NHEsixYeDAAQBbBRONkQAAAAAAAAAAgBZQOG7qXmeA/2Tw1pLX2IkcQ5h5fxWzzcBskMJbVVRsKA==",
+			filename: "testdata/message-2",
+			wantHash: "b55e0995ab2428b7ccffa4d417ff78caca62dc4d33bc0e33b2d9bcf0c396f08c",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			msgCell, err := boc.DeserializeSinglRootBase64(tt.boc)
+			if err != nil {
+				t.Fatalf("DeserializeSinglRootBase64() failed: %v", err)
+			}
+			var msg Message
+			if err := Unmarshal(msgCell, &msg); err != nil {
+				t.Fatalf("Unmarshal(() failed: %v", err)
+			}
+			hash := fmt.Sprintf("%x", msg.Hash())
+			if hash != tt.wantHash {
+				t.Fatalf("want hash: %v, got: %v", tt.wantHash, hash)
+			}
+			jsonMsg, err := json.MarshalIndent(msg, " ", "  ")
+			if err != nil {
+				t.Fatalf("json.MarshalIndent(() failed: %v", err)
+			}
+			outputFilename := fmt.Sprintf("%v.output.json", tt.filename)
+			if err := os.WriteFile(outputFilename, jsonMsg, 0644); err != nil {
+				t.Fatalf("os.WriteFile() failed: %v", err)
+			}
+			inputFilename := fmt.Sprintf("%v.json", tt.filename)
+			expected, err := os.ReadFile(inputFilename)
+			if err != nil {
+				t.Fatalf("os.ReadFile() failed: %v", err)
+			}
+			if !bytes.Equal(expected, jsonMsg) {
+				t.Fatalf("got different results")
+			}
+			c := boc.NewCell()
+			if err := Marshal(c, msg); err != nil {
+				t.Fatalf("tlb.Marshal() failed: %v", err)
+			}
+			base64, err := c.ToBocBase64()
+			if err != nil {
+				t.Fatalf("Cell.ToBocBase64() failed: %v", err)
+			}
+			if tt.boc != base64 {
+				t.Fatalf("tlb.Marshal yields a different string")
 			}
 		})
 	}

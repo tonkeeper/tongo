@@ -17,6 +17,56 @@ type Message struct {
 	Info CommonMsgInfo
 	Init Maybe[EitherRef[StateInit]]
 	Body EitherRef[Any]
+
+	hash Bits256
+}
+
+// Hash returns a hash of this Message.
+func (m *Message) Hash() Bits256 {
+	return m.hash
+}
+
+func (m *Message) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	var (
+		hash []byte
+		err  error
+	)
+	if decoder.hasher != nil {
+		hash, err = decoder.hasher.Hash(c)
+	} else {
+		hash, err = c.Hash()
+	}
+	if err != nil {
+		return err
+	}
+	copy(m.hash[:], hash[:])
+	c.ResetCounters()
+
+	var msg struct {
+		Info CommonMsgInfo
+		Init Maybe[EitherRef[StateInit]]
+		Body EitherRef[Any]
+	}
+	if err := decoder.Unmarshal(c, &msg); err != nil {
+		return err
+	}
+	m.Info = msg.Info
+	m.Init = msg.Init
+	m.Body = msg.Body
+	return nil
+}
+
+func (m Message) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	if err := encoder.Marshal(c, m.Info); err != nil {
+		return err
+	}
+	if err := encoder.Marshal(c, m.Init); err != nil {
+		return err
+	}
+	if err := encoder.Marshal(c, m.Body); err != nil {
+		return err
+	}
+	return nil
 }
 
 // CommonMsgInfo

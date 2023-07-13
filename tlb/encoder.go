@@ -20,6 +20,10 @@ func Marshal(c *boc.Cell, o any) error {
 	return encode(c, o, &encoder)
 }
 
+func (enc *Encoder) Marshal(c *boc.Cell, o any) error {
+	return encode(c, o, enc)
+}
+
 func encode(c *boc.Cell, o any, encoder *Encoder) error {
 	t, err := parseTag(encoder.tag)
 	if err != nil {
@@ -104,10 +108,8 @@ func encodeStruct(c *boc.Cell, o any, encoder *Encoder) error {
 func encodeBasicStruct(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	for i := 0; i < val.NumField(); i++ {
-		var err error
 		encoder.tag = val.Type().Field(i).Tag.Get("tlb")
-		err = encode(c, val.Field(i).Interface(), encoder)
-		if err != nil {
+		if err := encode(c, val.Field(i).Interface(), encoder); err != nil {
 			return err
 		}
 	}

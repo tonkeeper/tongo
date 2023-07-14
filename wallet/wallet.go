@@ -127,22 +127,20 @@ func generateStateInit(
 	return state, nil
 }
 
-// RawSend
-// Generates a signed external message for wallet with custom internal messages, seqno, TTL and init
-// The payload is serialized into bytes and sent by the method SendRawMessage
-func (w *Wallet) RawSend(
+func (w *Wallet) RawSendV2(
 	ctx context.Context,
 	seqno uint32,
 	validUntil time.Time,
 	internalMessages []RawMessage,
 	init *tlb.StateInit,
-) error {
+	waitingConfirmation time.Duration,
+) (tongo.Bits256, error) {
 	if w.blockchain == nil {
-		return tongo.BlockchainInterfaceIsNil
+		return tongo.Bits256{}, tongo.BlockchainInterfaceIsNil
 	}
 	err := checkMessagesLimit(len(internalMessages), w.ver)
 	if err != nil {
-		return nil
+		return tongo.Bits256{}, nil
 	}
 	bodyCell := boc.NewCell()
 	switch w.ver {
@@ -164,15 +162,15 @@ func (w *Wallet) RawSend(
 		}
 		err = tlb.Marshal(bodyCell, body)
 	default:
-		return fmt.Errorf("message body generation for this wallet is not supported: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("message body generation for this wallet is not supported: %v", err)
 	}
 	if err != nil {
-		return fmt.Errorf("can not marshal wallet message body: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
 
 	signBytes, err := bodyCell.Sign(w.key)
 	if err != nil {
-		return fmt.Errorf("can not sign wallet message body: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("can not sign wallet message body: %v", err)
 	}
 	bits512 := tlb.Bits512{}
 	copy(bits512[:], signBytes[:])
@@ -182,22 +180,57 @@ func (w *Wallet) RawSend(
 	}
 	signedBodyCell := boc.NewCell()
 	if err = tlb.Marshal(signedBodyCell, signedBody); err != nil {
-		return fmt.Errorf("can not marshal signed body: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("can not marshal signed body: %v", err)
 	}
 	extMsg, err := tongo.CreateExternalMessage(w.address, signedBodyCell, init, 0)
 	if err != nil {
-		return fmt.Errorf("can not create external message: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("can not create external message: %v", err)
 	}
 	extMsgCell := boc.NewCell()
 	err = tlb.Marshal(extMsgCell, extMsg)
 	if err != nil {
-		return fmt.Errorf("can not marshal wallet external message: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("can not marshal wallet external message: %v", err)
+	}
+	msgHash, err := extMsgCell.Hash256()
+	if err != nil {
+		return tongo.Bits256{}, fmt.Errorf("can not create external message: %v", err)
 	}
 	payload, err := extMsgCell.ToBocCustom(false, false, false, 0)
 	if err != nil {
-		return fmt.Errorf("can not serialize external message cell: %v", err)
+		return tongo.Bits256{}, fmt.Errorf("can not serialize external message cell: %v", err)
 	}
+	t := time.Now()
 	_, err = w.blockchain.SendMessage(ctx, payload) // TODO: add result code check
+	if err != nil {
+		return msgHash, err
+	}
+	if waitingConfirmation == 0 {
+		return msgHash, nil
+	}
+
+	for ; time.Since(t) < waitingConfirmation; time.Sleep(waitingConfirmation / 10) {
+		newSeqno, err := w.blockchain.GetSeqno(ctx, w.address)
+		if err == nil {
+			continue
+		}
+		if newSeqno >= seqno {
+			return msgHash, nil //todo: check if it is the same message
+		}
+	}
+	return msgHash, fmt.Errorf("waiting confirmation timeout")
+}
+
+// RawSend
+// Generates a signed external message for wallet with custom internal messages, seqno, TTL and init
+// The payload is serialized into bytes and sent by the method SendRawMessage
+func (w *Wallet) RawSend(
+	ctx context.Context,
+	seqno uint32,
+	validUntil time.Time,
+	internalMessages []RawMessage,
+	init *tlb.StateInit,
+) error {
+	_, err := w.RawSendV2(ctx, seqno, validUntil, internalMessages, init, 0)
 	return err
 }
 
@@ -219,33 +252,33 @@ func checkMessagesLimit(msgQty int, ver Version) error { // TODO: maybe return b
 	return nil
 }
 
-// Send
-// Generates a signed external message for wallet with custom internal messages and default TTL
-// Gets actual seqno and attach init for wallet if it needed
-// The payload is serialized into bytes and sent by the method SendRawMessage
-func (w *Wallet) Send(ctx context.Context, messages ...Sendable) error {
+func (w *Wallet) SendV2(
+	ctx context.Context,
+	waitingConfirmation time.Duration,
+	messages ...Sendable,
+) (tongo.Bits256, error) {
 	if w.blockchain == nil {
-		return tongo.BlockchainInterfaceIsNil
+		return tongo.Bits256{}, tongo.BlockchainInterfaceIsNil
 	}
 
 	var init *tlb.StateInit
 
 	state, err := w.blockchain.GetAccountState(ctx, w.GetAddress())
 	if err != nil {
-		return err
+		return tongo.Bits256{}, err
 	}
 	var seqno uint32
 	if state.Account.Status() == tlb.AccountActive {
 		seqno, err = w.blockchain.GetSeqno(ctx, w.address)
 		if err != nil {
-			return err
+			return tongo.Bits256{}, err
 		}
 	}
 
 	if seqno == 0 {
 		i, err := w.getInit()
 		if err != nil {
-			return err
+			return tongo.Bits256{}, err
 		}
 		init = &i
 	}
@@ -254,17 +287,26 @@ func (w *Wallet) Send(ctx context.Context, messages ...Sendable) error {
 	for _, m := range messages {
 		intMsg, mode, err := m.ToInternal()
 		if err != nil {
-			return err
+			return tongo.Bits256{}, err
 		}
 		cell := boc.NewCell()
 		err = tlb.Marshal(cell, intMsg)
 		if err != nil {
-			return err
+			return tongo.Bits256{}, err
 		}
 		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
 	}
 	validUntil := time.Now().Add(DefaultMessageLifetime)
-	return w.RawSend(ctx, seqno, validUntil, msgArray, init)
+	return w.RawSendV2(ctx, seqno, validUntil, msgArray, init, waitingConfirmation)
+}
+
+// Send
+// Generates a signed external message for wallet with custom internal messages and default TTL
+// Gets actual seqno and attach init for wallet if it needed
+// The payload is serialized into bytes and sent by the method SendRawMessage
+func (w *Wallet) Send(ctx context.Context, messages ...Sendable) error {
+	_, err := w.SendV2(ctx, 0, messages...)
+	return err
 }
 
 // GetBalance

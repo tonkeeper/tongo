@@ -27,6 +27,8 @@ type Metadata struct {
 	ImageData   []byte `json:"image_data,omitempty"`
 	Symbol      string `json:"symbol,omitempty"`
 	Decimals    string `json:"decimals,omitempty"`
+	RenderType  string `json:"render_type,omitempty"`
+	AmountStyle string `json:"amount_style,omitempty"`
 }
 
 // FullContent is either a link to metadata or metadata itself depending on the layout.
@@ -95,6 +97,18 @@ func ConvertOnchainData(content tlb.FullContent) (Metadata, error) {
 				return Metadata{}, err
 			}
 			m.Decimals = string(b)
+		case "d33ae06043036d0d1c3be27201ac15ee4c73da8cdb7c8f3462ce308026095ac0": // sha256(render_type)
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
+			m.RenderType = string(b)
+		case "8b10e058ce46c44bc1ba139bc9761721e49170e2c0a176129250a70af053b700": // sha256(amount_style)
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
+			m.AmountStyle = string(b)
 		}
 	}
 	return m, nil

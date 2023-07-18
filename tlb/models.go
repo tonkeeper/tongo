@@ -3,6 +3,7 @@ package tlb
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 )
+
+var ErrGramsOverflow = errors.New("grams overflow")
 
 // Grams
 // nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -32,7 +35,7 @@ func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	if ln > 8 {
-		return fmt.Errorf("grams overflow")
+		return ErrGramsOverflow
 	}
 	var amount uint64
 	for i := 0; i < int(ln); i++ {
@@ -68,7 +71,7 @@ func (g *SignedCoins) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	if ln > 8 {
-		return fmt.Errorf("grams overflow")
+		return ErrGramsOverflow
 	}
 	var amount uint64
 	for i := 0; i < int(ln); i++ {
@@ -79,7 +82,7 @@ func (g *SignedCoins) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		amount = uint64(b) | (amount << 8)
 	}
 	if amount > 1<<63 {
-		return fmt.Errorf("grams overflow")
+		return ErrGramsOverflow
 	}
 	if negative {
 		amount = -amount

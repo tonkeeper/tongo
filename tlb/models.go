@@ -3,6 +3,7 @@ package tlb
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -11,14 +12,20 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 )
 
+var ErrGramsOverflow = errors.New("grams overflow")
+
 // Grams
 // nanograms$_ amount:(VarUInteger 16) = Grams;
 type Grams uint64 // total value fit to uint64
 
+type Coins = Grams
+
+type SignedCoins int64
+
 func (g Grams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var amount VarUInteger16
 	amount = VarUInteger16(*big.NewInt(int64(g)))
-	err := Marshal(c, amount)
+	err := encode(c, amount, encoder)
 	return err
 }
 
@@ -28,7 +35,7 @@ func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	if ln > 8 {
-		return fmt.Errorf("grams overflow")
+		return ErrGramsOverflow
 	}
 	var amount uint64
 	for i := 0; i < int(ln); i++ {
@@ -42,6 +49,48 @@ func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
+func (g SignedCoins) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	err := c.WriteBit(g < 0)
+	if err != nil {
+		return err
+	}
+	if g < 0 {
+		g = -g
+	}
+	amount := VarUInteger16(*big.NewInt(int64(g)))
+	return encode(c, amount, encoder)
+}
+
+func (g *SignedCoins) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	negative, err := c.ReadBit()
+	if err != nil {
+		return err
+	}
+	ln, err := c.ReadLimUint(15)
+	if err != nil {
+		return err
+	}
+	if ln > 8 {
+		return ErrGramsOverflow
+	}
+	var amount uint64
+	for i := 0; i < int(ln); i++ {
+		b, err := c.ReadUint(8)
+		if err != nil {
+			return err
+		}
+		amount = uint64(b) | (amount << 8)
+	}
+	if amount > 1<<63 {
+		return ErrGramsOverflow
+	}
+	if negative {
+		amount = -amount
+	}
+	*g = SignedCoins(amount)
+	return nil
+}
+
 func (g Grams) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", g)), nil
 }
@@ -52,6 +101,18 @@ func (g *Grams) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*g = Grams(val)
+	return nil
+}
+func (g SignedCoins) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%d\"", g)), nil
+}
+
+func (g *SignedCoins) UnmarshalJSON(data []byte) error {
+	val, err := strconv.ParseUint(string(bytes.Trim(data, "\" \n")), 10, 64)
+	if err != nil {
+		return err
+	}
+	*g = SignedCoins(val)
 	return nil
 }
 

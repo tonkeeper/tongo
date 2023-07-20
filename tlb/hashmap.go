@@ -22,13 +22,22 @@ type Hashmap[keyT fixedSize, T any] struct {
 	values []T
 }
 
+// NewHashmap returns a new instance of Hashmap.
+// Make sure that a key at index "i" corresponds to a value at the same index.
+func NewHashmap[keyT fixedSize, T any](keys []keyT, values []T) Hashmap[keyT, T] {
+	return Hashmap[keyT, T]{
+		keys:   keys,
+		values: values,
+	}
+}
+
 func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	// Marshal empty Hashmap
 	if len(h.values) == 0 || h.values == nil {
 		return nil
 	}
 	var s keyT
-	keys := make([]boc.BitString, 0)
+	keys := make([]boc.BitString, 0, len(h.keys))
 	for _, k := range h.keys {
 		cell := boc.NewCell()
 		err := Marshal(cell, k)
@@ -44,17 +53,15 @@ func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return nil
 }
 
-func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, size int) error {
+func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []T, keySize int) error {
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}
-
-	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], size)
+	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], keySize)
 	if err != nil {
 		return err
 	}
-
-	size = size - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
+	keySize = keySize - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
 	var leftKeys, rightKeys []boc.BitString
 	var leftValues, rightValues []T
 	if len(keys) > 1 {
@@ -79,7 +86,7 @@ func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []
 		if err != nil {
 			return err
 		}
-		err = h.encodeMap(l, leftKeys, leftValues, size)
+		err = h.encodeMap(l, leftKeys, leftValues, keySize)
 		if err != nil {
 			return err
 		}
@@ -87,7 +94,7 @@ func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []
 		if err != nil {
 			return err
 		}
-		err = h.encodeMap(r, rightKeys, rightValues, size)
+		err = h.encodeMap(r, rightKeys, rightValues, keySize)
 		if err != nil {
 			return err
 		}
@@ -201,7 +208,7 @@ func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var temp Maybe[Ref[Hashmap[keyT, T]]]
 	temp.Exists = len(h.m.keys) > 0
 	temp.Value.Value = h.m
-	return Marshal(c, temp)
+	return encoder.Marshal(c, temp)
 }
 
 func (h *HashmapE[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -218,10 +225,9 @@ func (h HashmapE[keyT, T]) Values() []T {
 func (h HashmapE[keyT, T]) Keys() []keyT {
 	return h.m.keys
 }
-func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.BitString, error) {
-	label := boc.NewBitString(size)
+func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, keySize int) (boc.BitString, error) {
+	label := boc.NewBitString(keySize)
 	if keyFirst != keyLast {
-
 		bitLeft, err := keyFirst.ReadBit()
 		if err != nil {
 			return boc.BitString{}, err
@@ -234,7 +240,9 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 			if bitLeft != bitRight {
 				break
 			}
-			label.WriteBit(bitLeft)
+			if err := label.WriteBit(bitLeft); err != nil {
+				return boc.BitString{}, err
+			}
 			bitLeft, err = keyFirst.ReadBit()
 			if err != nil {
 				return boc.BitString{}, err
@@ -272,7 +280,7 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, size int) (boc.B
 			return boc.BitString{}, err
 		}
 		// todo pack label
-		err = c.WriteLimUint(label.BitsAvailableForRead(), size)
+		err = c.WriteLimUint(label.BitsAvailableForRead(), keySize)
 		if err != nil {
 			return boc.BitString{}, err
 		}

@@ -11,22 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tonkeeper/tongo/tlb"
-
 	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/tlb"
 )
-
-//type mockLiteClient struct {
-//	requestCounter int
-//	OnRequest      func(ctx context.Context, q []byte) ([]byte, error)
-//}
-//
-//func (m *mockLiteClient) Request(ctx context.Context, q []byte) ([]byte, error) {
-//	m.requestCounter += 1
-//	return m.OnRequest(ctx, q)
-//}
-//
-//var _ liteClient = &mockLiteClient{}
 
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 	cli, err := NewClient(Mainnet())
@@ -245,6 +232,34 @@ func TestGetOneTransaction(t *testing.T) {
 	}
 }
 
+func TestGetLibraries(t *testing.T) {
+	tongoClient, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+
+	hash := tongo.MustParseHash("587CC789EFF1C84F46EC3797E45FC809A14FF5AE24F1E0C7A6A99CC9DC9061FF")
+	libs, err := tongoClient.GetLibraries(context.Background(), []tongo.Bits256{hash})
+	if err != nil {
+		log.Fatalf("GetLibraries() failed: %v", err)
+	}
+	if len(libs) != 1 {
+		t.Fatalf("expected libs lengths: 1, got: %v", len(libs))
+	}
+	cell, ok := libs[hash]
+	if !ok {
+		t.Fatalf("expected lib is not found")
+	}
+	base64, err := cell.ToBocBase64()
+	if err != nil {
+		t.Fatalf("ToBocBase64() failed: %v", err)
+	}
+	expected := "te6ccgEBAQEAXwAAuv8AIN0gggFMl7ohggEznLqxnHGw7UTQ0x/XC//jBOCk8mCBAgDXGCDXCx/tRNDTH9P/0VESuvKhIvkBVBBE+RDyovgAAdMfMSDXSpbTB9QC+wDe0aTIyx/L/8ntVA=="
+	if base64 != expected {
+		t.Fatalf("want: %v, got: %v", expected, base64)
+	}
+}
+
 func TestGetJettonWallet(t *testing.T) {
 	tongoClient, err := NewClientWithDefaultTestnet()
 	if err != nil {
@@ -309,48 +324,6 @@ func TestGetRootDNS(t *testing.T) {
 	}
 	fmt.Printf("Root DNS: %v\n", root.ToRaw())
 }
-
-// TODO: fix
-//func TestGetLastConfigAll_mockConnection(t *testing.T) {
-//	cli := &mockLiteClient{}
-//	cli.OnRequest = func(ctx context.Context, q []byte) ([]byte, error) {
-//		switch cli.requestCounter {
-//		case 1:
-//			bytes, err := ioutil.ReadFile("testdata/get-last-config-all-1.bin")
-//			if err != nil {
-//				t.Errorf("failed to read response file: %v", err)
-//			}
-//			return bytes, err
-//		case 2:
-//			bytes, err := ioutil.ReadFile("testdata/get-last-config-all-2.bin")
-//			if err != nil {
-//				t.Errorf("failed to read response file: %v", err)
-//			}
-//			return bytes, err
-//		}
-//		t.Errorf("unexpected request")
-//		return nil, fmt.Errorf("unexpected request")
-//	}
-//	api := &Client{
-//		connectionPool: []connection{{client: cli}},
-//	}
-//	conf, err := api.GetConfigAll(context.TODO(), 0)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	cell := boc.NewCell()
-//	err = tlb.Marshal(cell, conf)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	hash, err := cell.HashString()
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	if hash != "32bfc7a9c87ec2b0d4544740813fc02db0705f7056db6ffd2029d78897a01c6d" {
-//		t.Fatal(err)
-//	}
-//}
 
 func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
 	var a tongo.AccountID

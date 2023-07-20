@@ -34,7 +34,9 @@ type Emulator struct {
 type Options struct {
 	verbosityLevel txemulator.VerbosityLevel
 	balance        int64
-	lazyC7         bool
+	// libraries is a list of available libraries encoded as a base64 string.
+	libraries string
+	lazyC7    bool
 }
 
 type Option func(o *Options)
@@ -47,6 +49,14 @@ func WithVerbosityLevel(level txemulator.VerbosityLevel) Option {
 func WithBalance(balance int64) Option {
 	return func(o *Options) {
 		o.balance = balance
+	}
+}
+
+// WithLibrariesBase64 provides a list of available libraries as a base64 string.
+// Take a look at LibrariesToBase64() to convert a map with libraries to such a string.
+func WithLibrariesBase64(libraries string) Option {
+	return func(o *Options) {
+		o.libraries = libraries
 	}
 }
 
@@ -112,6 +122,11 @@ func NewEmulatorFromBOCsBase64(code, data, config string, opts ...Option) (*Emul
 		lazyC7:   options.lazyC7,
 		balance:  uint64(options.balance),
 	}
+	if len(options.libraries) > 0 {
+		if err := e.setLibs(options.libraries); err != nil {
+			return nil, err
+		}
+	}
 	runtime.SetFinalizer(&e, destroy)
 	return &e, nil
 }
@@ -139,6 +154,10 @@ func (e *Emulator) SetLibs(libs *boc.Cell) error {
 	if err != nil {
 		return err
 	}
+	return e.setLibs(libsBoc)
+}
+
+func (e *Emulator) setLibs(libsBoc string) error {
 	cLibsStr := C.CString(libsBoc)
 	defer C.free(unsafe.Pointer(cLibsStr))
 	ok := C.tvm_emulator_set_libraries(e.emulator, cLibsStr)

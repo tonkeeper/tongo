@@ -838,7 +838,7 @@ func (c *Client) GetValidatorStats(
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) ([]liteclient.LiteServerLibraryEntryC, error) {
+func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) (map[tongo.Bits256]*boc.Cell, error) {
 	id, err := c.targetBlock(ctx)
 	if err != nil {
 		return nil, err
@@ -857,8 +857,18 @@ func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) 
 	if err != nil {
 		return nil, err
 	}
-	// TODO: replace with tongo type
-	return r.Result, nil
+	libs := make(map[tongo.Bits256]*boc.Cell, len(r.Result))
+	for _, lib := range r.Result {
+		data, err := boc.DeserializeBoc(lib.Data)
+		if err != nil {
+			return nil, err
+		}
+		if len(data) != 1 {
+			return nil, fmt.Errorf("multiroot lib is not supported")
+		}
+		libs[tongo.Bits256(lib.Hash)] = data[0]
+	}
+	return libs, nil
 }
 
 func (c *Client) GetShardBlockProof(ctx context.Context) (liteclient.LiteServerShardBlockProofC, error) {

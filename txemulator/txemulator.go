@@ -145,6 +145,10 @@ func (e *Emulator) SetLibs(libs *boc.Cell) error {
 	if err != nil {
 		return err
 	}
+	return e.setLibs(libsBoc)
+}
+
+func (e *Emulator) setLibs(libsBoc string) error {
 	cLibsStr := C.CString(libsBoc)
 	defer C.free(unsafe.Pointer(cLibsStr))
 	ok := C.transaction_emulator_set_libs(e.emulator, cLibsStr)

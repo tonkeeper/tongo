@@ -35,6 +35,7 @@ type TraceOptions struct {
 
 type accountGetter interface {
 	GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error)
+	GetLibraries(ctx context.Context, libraries []tongo.Bits256) (map[tongo.Bits256]*boc.Cell, error)
 }
 
 func WithConfig(c *boc.Cell) TraceOption {
@@ -143,12 +144,28 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	if err != nil {
 		return nil, err
 	}
+	// TODO: set gas limit, currently, the transaction emulator doesn't support that
 	return &Tracer{
 		e:                   e,
 		currentShardAccount: option.predefinedAccounts,
 		blockchain:          option.blockchain,
 		limit:               option.limit,
 	}, nil
+}
+
+func accountCode(account tlb.ShardAccount) *boc.Cell {
+	if account.Account.SumType == "AccountNone" {
+		return nil
+	}
+	if account.Account.Account.Storage.State.SumType != "AccountActive" {
+		return nil
+	}
+	code := account.Account.Account.Storage.State.AccountActive.StateInit.Code
+	if !code.Exists {
+		return nil
+	}
+	cell := code.Value.Value
+	return &cell
 }
 
 func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) {
@@ -178,6 +195,30 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			return nil, err
 		}
 	}
+	var publicLibs map[tongo.Bits256]*boc.Cell
+	if code := accountCode(state); code != nil {
+		hashes, err := FindLibraries(code)
+		if err != nil {
+			return nil, err
+		}
+		if len(hashes) > 0 {
+			libs, err := t.blockchain.GetLibraries(ctx, hashes)
+			if err != nil {
+				return nil, err
+			}
+			publicLibs = libs
+		}
+	}
+	if len(publicLibs) > 0 {
+		libsBoc, err := LibrariesToBase64(publicLibs)
+		if err != nil {
+			return nil, err
+		}
+		if err := t.e.setLibs(libsBoc); err != nil {
+			return nil, err
+		}
+	}
+	// TODO: look up libraries in the msg's stateInit, so if it's a deploy contract message, Emulate() won't fail.
 	result, err := t.e.Emulate(state, message)
 	if err != nil {
 		return nil, err

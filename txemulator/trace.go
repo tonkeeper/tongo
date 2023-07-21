@@ -168,6 +168,18 @@ func accountCode(account tlb.ShardAccount) *boc.Cell {
 	return &cell
 }
 
+func msgStateInitCode(msg tlb.Message) *boc.Cell {
+	if !msg.Init.Exists {
+		return nil
+	}
+	code := msg.Init.Value.Value.Code
+	if !code.Exists {
+		return nil
+	}
+	cell := code.Value.Value
+	return &cell
+}
+
 func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) {
 	if t.counter >= t.limit {
 		return nil, fmt.Errorf("to many iterations: %v/%v", t.counter, t.limit)
@@ -195,8 +207,11 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			return nil, err
 		}
 	}
-	var publicLibs map[tongo.Bits256]*boc.Cell
-	if code := accountCode(state); code != nil {
+	publicLibs := map[tongo.Bits256]*boc.Cell{}
+	for _, code := range []*boc.Cell{accountCode(state), msgStateInitCode(message)} {
+		if code == nil {
+			continue
+		}
 		hashes, err := FindLibraries(code)
 		if err != nil {
 			return nil, err
@@ -206,7 +221,9 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			if err != nil {
 				return nil, err
 			}
-			publicLibs = libs
+			for hash, cell := range libs {
+				publicLibs[hash] = cell
+			}
 		}
 	}
 	if len(publicLibs) > 0 {
@@ -218,7 +235,6 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			return nil, err
 		}
 	}
-	// TODO: look up libraries in the msg's stateInit, so if it's a deploy contract message, Emulate() won't fail.
 	result, err := t.e.Emulate(state, message)
 	if err != nil {
 		return nil, err

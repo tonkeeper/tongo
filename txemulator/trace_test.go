@@ -89,10 +89,40 @@ func TestEmulate(t *testing.T) {
 		t.Fatalf("tx failed")
 	}
 	if len(tree.Children) != 1 {
-		t.Fatalf("expected tx to has 1 child")
+		t.Fatalf("expected tx to have 1 child")
 	}
 	second := tree.Children[0].TX
 	if !second.IsSuccess() {
 		t.Fatalf("second tx failed")
+	}
+}
+
+func TestEmulate_ToUninitContract(t *testing.T) {
+	// this message is a contract-deploy message for "EQCeL1iwCkDZFIN_w3corAk0HLyDFoFKI9sU-zbpBtsqxwd0", which uses a public library.
+	c, err := boc.DeserializeSinglRootBase64("te6ccgEBAwEAtQACz4gBPF6xYBSBsikG/4buUVgSaDl5Bi0ClEe2KfZt0g22VY4RgapDllUZl8zqKhXvay+jOBYBQZIi9WgRbY+2Sm0k2sZOpAdn+updccco1ndWlewrbU2NzSA29wvefa9KuFSWIeAAAAAQAQIIQgJYfMeJ7/HIT0bsN5fkX8gJoU/1riTx4MemqZzJ3JBh/wBIAAAAAMRoaqYjP2gxcScR+ePyWBCVr/kSa65hTLtoJPi7y8sP")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var m tlb.Message
+	if err = tlb.Unmarshal(c, &m); err != nil {
+		t.Fatal(err)
+	}
+	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
+	if err != nil {
+		t.Fatal(err)
+	}
+	emulator, err := NewTraceBuilder(WithAccountsSource(client))
+	if err != nil {
+		t.Fatalf("NewTraceBuilder() failed: %v", err)
+	}
+	tree, err := emulator.Run(context.Background(), m)
+	if err != nil {
+		t.Fatalf("Run() failed: %v", err)
+	}
+	if !tree.TX.IsSuccess() {
+		t.Fatalf("tx failed")
+	}
+	if len(tree.Children) != 0 {
+		t.Fatalf("expected tx to have no children")
 	}
 }

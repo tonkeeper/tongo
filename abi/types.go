@@ -250,6 +250,11 @@ type JettonInternalTransferMsgBody struct {
 	ForwardTonAmount tlb.VarUInteger16
 }
 
+type EditContentMsgBody struct {
+	QueryId uint64
+	Content tlb.Ref[tlb.Any]
+}
+
 type WhalesNominatorsWithdrawUnownedResponseMsgBody struct {
 	QueryId uint64
 }
@@ -337,6 +342,10 @@ type ProofStorageMsgBody struct {
 	FileDictProof tlb.Ref[tlb.Any]
 }
 
+type ProcessGovernanceDecisionMsgBody struct {
+	QueryId uint64
+}
+
 type TelemintDeployMsgBody struct {
 	Sig tlb.Bits512
 	Msg TelemintUnsignedDeploy
@@ -375,6 +384,17 @@ type ElectorNewStakeMsgBody struct {
 	MaxFactor       uint32
 	AdnlAddr        tlb.Bits256
 	Signature       tlb.Ref[tlb.Bits512]
+}
+
+type ChangeDnsRecordMsgBody struct {
+	QueryId  uint64
+	Key      tlb.Uint256
+	HasValue bool
+	Value    tlb.Ref[tlb.Any]
+}
+
+type DnsBalanceReleaseMsgBody struct {
+	QueryId uint64
 }
 
 type UpdatePubkeyMsgBody struct {

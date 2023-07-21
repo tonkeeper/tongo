@@ -1,0 +1,64 @@
+<abi>
+    <internal name="dns_balance_release">
+        release_balance#4ed14b65 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="change_dns_record">
+        change_dns_record#4eb1f0f9 query_id:uint64 key:uint256 has_value:Bool value:^Cell = InternalMsgBody;
+    </internal>
+    <internal name="edit_content">
+        edit_content#1a0b9d51 query_id:uint64 content:^Cell = InternalMsgBody;
+    </internal>
+    <internal name="transfer">
+        transfer#5fcc3d14 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="process_governance_decision">
+        process_governance_decision#44beae41 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <get_method name="dnsresolve" interface="tep81">
+        <input>
+            <slice name="domain">[]byte</slice>
+            <int name="category">int257</int>
+        </input>
+        <output version="records" fixed_length="true">
+            <int name="resolved_bits">int64</int>
+            <cell name="result">DNS_RecordSet</cell>
+        </output>
+    </get_method>
+    <get_method name="get_last_fill_up_time" interface="domain">
+        <output fixed_length="true">
+            <int name="last_fill_up_time">int64</int>
+        </output>
+    </get_method>
+    <get_method name="get_domain" interface="domain">
+        <output>
+            <slice name="domain">string</slice>
+        </output>
+    </get_method>
+    <get_method name="get_full_domain" interface="domain">
+        <output>
+            <slice name="domain">string</slice>
+        </output>
+    </get_method>
+    <get_method name="get_domain_auction_info" interface="domain">
+        <output fixed_length="true">
+            <slice name="max_bid_address">[]byte</slice>
+            <int name="max_bid_amount">int256</int>
+            <int name="auction_end_time">int64</int>
+        </output>
+    </get_method>
+    <get_method name="get_domain_data" interface="domain">
+        <output>
+            <int name="init">int256</int>
+            <int name="index">int256</int>
+            <slice name="collection_address">[]byte</slice>
+            <slice name="owner_address">[]byte</slice>
+            <cell name="content">[]byte</cell>
+        </output>
+    </get_method>
+    <get_method name="get_domain_editor" interface="domain">
+        <output>
+            <slice name="owner_address">[]byte</slice>
+        </output>
+    </get_method>
+</abi>

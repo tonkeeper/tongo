@@ -196,33 +196,6 @@
         </output>
     </get_method>
 
-    <!--        DNS      -->
-    <get_method name="dnsresolve" interface="tep81">
-        <input>
-            <slice name="domain">[]byte</slice>
-            <int name="category">int257</int>
-        </input>
-        <output version="records" fixed_length="true">
-            <int name="resolved_bits">int64</int>
-            <cell name="result">DNS_RecordSet</cell>
-        </output>
-    </get_method>
-    <get_method name="get_last_fill_up_time" interface="domain">
-        <output  fixed_length="true">
-            <int name="last_fill_up_time">int64</int>
-        </output>
-    </get_method>
-    <get_method name="get_domain" interface="domain">
-        <output>
-            <slice name="domain">string</slice>
-        </output>
-    </get_method>
-    <get_method name="get_full_domain" interface="domain">
-        <output>
-            <slice name="domain">string</slice>
-        </output>
-    </get_method>
-
     <!--        NFT sale      -->
     <get_method name="get_sale_data">
         <output version="basic" fixed_length="true" interface="nft_sale">

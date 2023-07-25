@@ -249,7 +249,7 @@
             <int name="royalty_amount">uint64</int>
         </output>
 
-        <output version="getgems_auction" fixed_length="true" interface="nft_sale_getgems">
+        <output version="getgems_auction" fixed_length="true" interface="nft_sale_getgems_auction">
             <int name="magic" required_value="0x415543">uint64</int>
             <int name="end">bool</int>
             <int name="end_time">uint32</int>

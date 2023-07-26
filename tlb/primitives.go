@@ -193,49 +193,29 @@ func (m *EitherRef[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return decoder.Unmarshal(c, &m.Value)
 }
 
-func (r Ref[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	ref := boc.NewCell()
-	err := Marshal(ref, r.Value)
+func (m Ref[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	r := boc.NewCell()
+	err := Marshal(r, m.Value)
 	if err != nil {
 		return err
 	}
-	err = c.AddRef(ref)
+	err = c.AddRef(r)
 	return err
 }
 
-func (r *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	ref, err := c.NextRef()
+func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	r, err := c.NextRef()
 	if err != nil {
 		return err
 	}
-	if ref.CellType() == boc.PrunedBranchCell {
+	if r.CellType() == boc.PrunedBranchCell {
 		var value T
-		r.Value = value
+		m.Value = value
 		return nil
 	}
-	err = decoder.Unmarshal(ref, &r.Value)
+	err = decoder.Unmarshal(r, &m.Value)
 	if err != nil {
 		return err
-	}
-	return nil
-}
-
-func (r Ref[T]) MarshalJSON() ([]byte, error) {
-	return json.Marshal(r.Value)
-}
-
-func (r *Ref[T]) UnmarshalJSON(b []byte) error {
-	if err := json.Unmarshal(b, &r.Value); err != nil {
-		// fallback to decoding Ref as {"Value":...}
-		// TODO: remove this one day
-		type v struct {
-			Value T
-		}
-		var value v
-		if err := json.Unmarshal(b, &value); err != nil {
-			return err
-		}
-		r.Value = value.Value
 	}
 	return nil
 }

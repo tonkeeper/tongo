@@ -140,7 +140,7 @@ func (w *Wallet) RawSendV2(
 	}
 	err := checkMessagesLimit(len(internalMessages), w.ver)
 	if err != nil {
-		return tongo.Bits256{}, nil
+		return tongo.Bits256{}, err
 	}
 	bodyCell := boc.NewCell()
 	switch w.ver {

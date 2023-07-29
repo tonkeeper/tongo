@@ -126,11 +126,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		}
 	}
 	if option.blockchain == nil {
-		var err error
-		option.blockchain, err = liteapi.NewClientWithDefaultMainnet()
-		if err != nil {
-			return nil, err
-		}
+		return nil, fmt.Errorf("blockchain source is not configured. please use WithAccountsSource")
 	}
 	e, err := newEmulatorBase64(option.config, LogTruncated)
 	if err != nil {

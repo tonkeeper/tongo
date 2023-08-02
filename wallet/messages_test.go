@@ -1,11 +1,13 @@
 package wallet
 
 import (
+	"crypto/ed25519"
 	"fmt"
 	"reflect"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func mustFromHex(msg string) *boc.Cell {
@@ -75,6 +77,62 @@ func TestExtractRawMessages(t *testing.T) {
 					fmt.Printf("got mode: %v\n", msg.Mode)
 				}
 				t.Fatalf("wrong raw messages")
+			}
+		})
+	}
+}
+
+func TestSignedMsgBody_Verify(t *testing.T) {
+	seed1 := RandomSeed()
+	privateKey1, _ := SeedToPrivateKey(seed1)
+
+	seed2 := RandomSeed()
+	privateKey2, _ := SeedToPrivateKey(seed2)
+
+	tests := []struct {
+		name              string
+		privateKey        ed25519.PrivateKey
+		invalidPublicKeys []ed25519.PublicKey
+	}{
+		{
+			name:       "signed by privateKey1",
+			privateKey: privateKey1,
+			invalidPublicKeys: []ed25519.PublicKey{
+				privateKey2.Public().(ed25519.PublicKey),
+			},
+		},
+		{
+			name:       "signed by privateKey2",
+			privateKey: privateKey2,
+			invalidPublicKeys: []ed25519.PublicKey{
+				privateKey1.Public().(ed25519.PublicKey),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			bodyCell := boc.NewCell()
+			if err := bodyCell.WriteBytes([]byte("hello")); err != nil {
+				t.Fatalf("WriteBytes() failed: %v", err)
+			}
+			signBytes, err := bodyCell.Sign(tt.privateKey)
+			if err != nil {
+				t.Fatalf("Sign() failed: %v", err)
+			}
+			bits512 := tlb.Bits512{}
+			copy(bits512[:], signBytes[:])
+			signedBody := SignedMsgBody{
+				Sign:    bits512,
+				Message: tlb.Any(*bodyCell),
+			}
+			publicKey := tt.privateKey.Public().(ed25519.PublicKey)
+			if err = signedBody.Verify(publicKey); err != nil {
+				t.Fatalf("Verify() failed: %v", err)
+			}
+			for _, invalidKey := range tt.invalidPublicKeys {
+				if err = signedBody.Verify(invalidKey); err == nil {
+					t.Fatalf("Verify() had to fail but it didn't")
+				}
 			}
 		})
 	}

@@ -32,7 +32,9 @@ const (
 )
 
 const (
-	DefaultSubWalletIdV3V4 = 698983191
+	// DefaultSubWallet is a recommended default value of subWalletID according to
+	// https://docs.ton.org/develop/smart-contracts/tutorials/wallet#subwallet-ids.
+	DefaultSubWallet       = 698983191
 	DefaultMessageLifetime = time.Minute * 3
 	DefaultMessageMode     = 3
 )
@@ -138,6 +140,14 @@ type DataV4 struct {
 	SubWalletId uint32
 	PublicKey   tlb.Bits256
 	PluginDict  tlb.HashmapE[tlb.Bits264, tlb.Any] // TODO: find type and check size
+}
+
+// DataHighloadV4 represents data of a highload-wallet contract.
+type DataHighloadV4 struct {
+	SubWalletId     uint32
+	LastCleanedTime uint64
+	PublicKey       tlb.Bits256
+	Queries         tlb.HashmapE[tlb.Uint64, tlb.Any]
 }
 
 type Sendable interface {

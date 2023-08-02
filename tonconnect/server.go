@@ -144,7 +144,7 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof) (bool, ed25519.Publi
 		return false, nil, fmt.Errorf("failed verify payload")
 	}
 
-	parsed, err := s.convertTonProofMessage(tp)
+	parsed, err := convertTonProofMessage(tp)
 	if err != nil {
 		return false, nil, err
 	}
@@ -212,7 +212,7 @@ func (s *Server) checkPayload(payload string) (bool, error) {
 	return true, nil
 }
 
-func (s *Server) convertTonProofMessage(tp *Proof) (*parsedMessage, error) {
+func convertTonProofMessage(tp *Proof) (*parsedMessage, error) {
 	addr := strings.Split(tp.Address, ":")
 	if len(addr) != 2 {
 		return nil, fmt.Errorf("invalid address param: %v", tp.Address)
@@ -290,6 +290,10 @@ func createMessage(message *parsedMessage) ([]byte, error) {
 
 func signatureVerify(pubKey ed25519.PublicKey, message, signature []byte) bool {
 	return ed25519.Verify(pubKey, message, signature)
+}
+
+func signMessage(privateKey ed25519.PrivateKey, message []byte) []byte {
+	return ed25519.Sign(privateKey, message)
 }
 
 func ParseStateInit(stateInit string) ([]byte, error) {

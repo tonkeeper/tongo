@@ -55,7 +55,7 @@ func GenerateWalletAddress(
 	workchain int,
 	subWalletId *int,
 ) (tongo.AccountID, error) {
-	state, err := generateStateInit(key, ver, workchain, subWalletId)
+	state, err := GenerateStateInit(key, ver, workchain, subWalletId)
 	if err != nil {
 		return tongo.AccountID{}, fmt.Errorf("can not generate wallet state: %v", err)
 	}
@@ -76,7 +76,7 @@ func GenerateWalletAddress(
 	return tongo.AccountID{Workchain: int32(workchain), Address: hash}, nil
 }
 
-func generateStateInit(
+func GenerateStateInit(
 	key ed25519.PublicKey,
 	ver Version,
 	workchain int,
@@ -237,7 +237,7 @@ func (w *Wallet) RawSend(
 func (w *Wallet) getInit() (tlb.StateInit, error) {
 	publicKey := w.key.Public().(ed25519.PublicKey)
 	id := int(w.subWalletId)
-	return generateStateInit(publicKey, w.ver, int(w.address.Workchain), &id)
+	return GenerateStateInit(publicKey, w.ver, int(w.address.Workchain), &id)
 }
 
 func checkMessagesLimit(msgQty int, ver Version) error { // TODO: maybe return bool

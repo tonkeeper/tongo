@@ -13,6 +13,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"dnsresolve":                    {DecodeDnsresolve_RecordsResult},
 	"get_auction_info":              {DecodeGetAuctionInfoResult},
 	"get_authority_address":         {DecodeGetAuthorityAddressResult},
+	"get_bill_address":              {DecodeGetBillAddressResult},
 	"get_bill_amount":               {DecodeGetBillAmountResult},
 	"get_channel_state":             {DecodeGetChannelStateResult},
 	"get_collection_data":           {DecodeGetCollectionDataResult},
@@ -21,6 +22,8 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_full_domain":               {DecodeGetFullDomainResult},
 	"get_jetton_data":               {DecodeGetJettonDataResult},
 	"get_last_fill_up_time":         {DecodeGetLastFillUpTimeResult},
+	"get_locker_bill_data":          {DecodeGetLockerBillDataResult},
+	"get_locker_data":               {DecodeGetLockerDataResult},
 	"get_member":                    {DecodeGetMember_WhalesNominatorResult},
 	"get_members_raw":               {DecodeGetMembersRaw_WhalesNominatorResult},
 	"get_next_proof_info":           {DecodeGetNextProofInfoResult},
@@ -63,6 +66,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	69506:  {GetTelemintTokenName},
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
+	73490:  {GetLockerData},
 	78748:  {GetPublicKey},
 	80697:  {GetAuctionInfo},
 	81467:  {GetSubwalletId},
@@ -89,6 +93,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	107653: {GetPluginList},
 	111161: {ListNominators},
 	115150: {GetParams},
+	118274: {GetLockerBillData},
 	119378: {GetDomain},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
@@ -103,6 +108,7 @@ var ResultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
 	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
+	&GetBillAddressResult{},
 	&GetBillAmountResult{},
 	&GetChannelStateResult{},
 	&GetCollectionDataResult{},
@@ -111,6 +117,8 @@ var ResultTypes = []interface{}{
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
 	&GetLastFillUpTimeResult{},
+	&GetLockerBillDataResult{},
+	&GetLockerDataResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
 	&GetNextProofInfoResult{},
@@ -266,6 +274,48 @@ func DecodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resu
 	var result GetAuthorityAddressResult
 	err = stack.Unmarshal(&result)
 	return "GetAuthorityAddressResult", result, err
+}
+
+type GetBillAddressResult struct {
+	BillAddress tlb.MsgAddress
+}
+
+func GetBillAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, userAddress tlb.MsgAddress) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(userAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 130076 for "get_bill_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 130076, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetBillAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetBillAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetBillAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetBillAddressResult", result, err
 }
 
 type GetBillAmountResult struct {
@@ -536,6 +586,80 @@ func DecodeGetLastFillUpTimeResult(stack tlb.VmStack) (resultType string, result
 	var result GetLastFillUpTimeResult
 	err = stack.Unmarshal(&result)
 	return "GetLastFillUpTimeResult", result, err
+}
+
+type GetLockerBillDataResult struct {
+	LockerAddress     tlb.MsgAddress
+	TotalCoinsDeposit uint64
+	UserAddress       tlb.MsgAddress
+	LastWithdrawTime  uint32
+}
+
+func GetLockerBillData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 118274 for "get_locker_bill_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 118274, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLockerBillDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLockerBillDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLockerBillDataResult
+	err = stack.Unmarshal(&result)
+	return "GetLockerBillDataResult", result, err
+}
+
+type GetLockerDataResult struct {
+	TotalCoinsLocked     uint64
+	TotalReward          uint64
+	DepositsEndTime      uint32
+	VestingStartTime     uint32
+	VestingTotalDuration uint32
+	UnlockPeriod         uint32
+}
+
+func GetLockerData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 73490 for "get_locker_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 73490, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLockerDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLockerDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLockerDataResult
+	err = stack.Unmarshal(&result)
+	return "GetLockerDataResult", result, err
 }
 
 type GetMember_WhalesNominatorResult struct {

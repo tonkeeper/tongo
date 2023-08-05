@@ -40,6 +40,7 @@ func findLibraries(cell *boc.Cell) (map[tongo.Bits256]struct{}, error) {
 	}
 	var libs map[tongo.Bits256]struct{}
 	for _, ref := range cell.Refs() {
+		ref.ResetCounters()
 		hashes, err := findLibraries(ref)
 		if err != nil {
 			return nil, err

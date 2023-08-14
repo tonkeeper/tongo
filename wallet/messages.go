@@ -39,7 +39,7 @@ type RawMessage struct {
 
 type PayloadV1toV4 []RawMessage
 
-func decodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
+func DecodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
 	var m tlb.Message
 	if err := tlb.Unmarshal(msg, &m); err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func decodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
 	return &msgv4, nil
 }
 
-func decodeMessageV3(msg *boc.Cell) (*MessageV3, error) {
+func DecodeMessageV3(msg *boc.Cell) (*MessageV3, error) {
 	var m tlb.Message
 	if err := tlb.Unmarshal(msg, &m); err != nil {
 		return nil, err
@@ -79,14 +79,14 @@ func decodeMessageV3(msg *boc.Cell) (*MessageV3, error) {
 func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
 	switch ver {
 	case V4R1, V4R2:
-		v4, err := decodeMessageV4(msg)
+		v4, err := DecodeMessageV4(msg)
 		if err != nil {
 			return nil, err
 		}
 		// TODO: check opcode
 		return v4.RawMessages, nil
 	case V3R1, V3R2:
-		v3, err := decodeMessageV3(msg)
+		v3, err := DecodeMessageV3(msg)
 		if err != nil {
 			return nil, err
 		}

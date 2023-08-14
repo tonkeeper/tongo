@@ -32,6 +32,39 @@ type Metadata struct {
 	AmountStyle string `json:"amount_style,omitempty"`
 }
 
+func (m *Metadata) Merge(other *Metadata) {
+	if other == nil {
+		return
+	}
+	if other.Uri != "" {
+		m.Uri = other.Uri
+	}
+	if other.Name != "" {
+		m.Name = other.Name
+	}
+	if other.Description != "" {
+		m.Description = other.Description
+	}
+	if other.Image != "" {
+		m.Image = other.Image
+	}
+	if other.ImageData != nil {
+		m.ImageData = other.ImageData
+	}
+	if other.Symbol != "" {
+		m.Symbol = other.Symbol
+	}
+	if other.Decimals != "" {
+		m.Decimals = other.Decimals
+	}
+	if other.RenderType != "" {
+		m.RenderType = other.RenderType
+	}
+	if other.AmountStyle != "" {
+		m.AmountStyle = other.AmountStyle
+	}
+}
+
 // FullContent is either a link to metadata or metadata itself depending on the layout.
 type FullContent struct {
 	Layout ContentLayout

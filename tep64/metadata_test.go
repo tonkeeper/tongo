@@ -70,3 +70,83 @@ func TestDecodeFullContentFromCell(t *testing.T) {
 		})
 	}
 }
+
+func TestMetadata_Merge(t *testing.T) {
+	tests := []struct {
+		name  string
+		meta  *Metadata
+		other *Metadata
+		want  *Metadata
+	}{
+		{
+			name: "keep all fields",
+			meta: &Metadata{
+				Uri:         "uri",
+				Name:        "name",
+				Description: "description",
+				Image:       "image",
+				ImageData:   []byte("image-data"),
+				Symbol:      "symbol",
+				Decimals:    "decimals",
+				RenderType:  "render-type",
+				AmountStyle: "amount-style",
+			},
+			other: &Metadata{},
+			want: &Metadata{
+				Uri:         "uri",
+				Name:        "name",
+				Description: "description",
+				Image:       "image",
+				ImageData:   []byte("image-data"),
+				Symbol:      "symbol",
+				Decimals:    "decimals",
+				RenderType:  "render-type",
+				AmountStyle: "amount-style",
+			},
+		},
+		{
+			name: "copy all fields",
+			meta: &Metadata{
+				Uri:         "uri",
+				Name:        "name",
+				Description: "description",
+				Image:       "image",
+				ImageData:   []byte("image-data"),
+				Symbol:      "symbol",
+				Decimals:    "decimals",
+				RenderType:  "render-type",
+				AmountStyle: "amount-style",
+			},
+			other: &Metadata{
+				Uri:         "new-uri",
+				Name:        "new-name",
+				Description: "new-description",
+				Image:       "new-image",
+				ImageData:   []byte("new-image-data"),
+				Symbol:      "new-symbol",
+				Decimals:    "new-decimals",
+				RenderType:  "new-render-type",
+				AmountStyle: "new-amount-style",
+			},
+			want: &Metadata{
+				Uri:         "new-uri",
+				Name:        "new-name",
+				Description: "new-description",
+				Image:       "new-image",
+				ImageData:   []byte("new-image-data"),
+				Symbol:      "new-symbol",
+				Decimals:    "new-decimals",
+				RenderType:  "new-render-type",
+				AmountStyle: "new-amount-style",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.meta.Merge(tt.other)
+			if !reflect.DeepEqual(tt.want, tt.meta) {
+				t.Fatalf("want: %v, got: %v", tt.want, tt.meta)
+			}
+		})
+	}
+}

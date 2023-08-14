@@ -20,6 +20,7 @@ const (
 )
 
 type Metadata struct {
+	// Uri points to JSON document with metadata. Used by SemiChain layout. ASCII string.
 	Uri         string `json:"uri,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
@@ -130,14 +131,22 @@ func DecodeFullContent(content tlb.FullContent) (FullContent, error) {
 		if err != nil {
 			return FullContent{}, err
 		}
+		layout := OnChain
+		offchainURL := ""
+		if len(meta.Uri) > 0 {
+			// according to https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md
+			// if uri is present, then the layout is SemiChain
+			layout = SemiChain
+		}
 		result, err := json.Marshal(meta)
 		if err != nil {
 			return FullContent{}, err
 		}
 		return FullContent{
-			Layout:          OnChain,
+			Layout:          layout,
 			Data:            result,
 			OnchainMetadata: &meta,
+			OffchainURL:     offchainURL,
 		}, nil
 
 	case "Offchain":

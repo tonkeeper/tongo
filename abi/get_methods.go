@@ -24,8 +24,12 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_last_fill_up_time":         {DecodeGetLastFillUpTimeResult},
 	"get_locker_bill_data":          {DecodeGetLockerBillDataResult},
 	"get_locker_data":               {DecodeGetLockerDataResult},
+	"get_lp_data":                   {DecodeGetLpData_MegatonResult},
+	"get_lp_mining_data":            {DecodeGetLpMiningData_MegatonResult},
+	"get_lp_swap_data":              {DecodeGetLpSwapData_MegatonResult},
 	"get_member":                    {DecodeGetMember_WhalesNominatorResult},
 	"get_members_raw":               {DecodeGetMembersRaw_WhalesNominatorResult},
+	"get_mining_data":               {DecodeGetMiningData_MegatonResult},
 	"get_next_proof_info":           {DecodeGetNextProofInfoResult},
 	"get_nft_address_by_index":      {DecodeGetNftAddressByIndexResult},
 	"get_nft_content":               {DecodeGetNftContentResult},
@@ -68,6 +72,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
 	78748:  {GetPublicKey},
+	80035:  {GetLpData},
 	80697:  {GetAuctionInfo},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
@@ -81,18 +86,21 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	91481:  {GetLastFillUpTime},
 	92229:  {GetPoolFullData},
 	92260:  {GetSubscriptionData},
+	96219:  {GetMiningData},
 	96705:  {GetBillAmount},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
+	104122: {GetLpMiningData},
 	104346: {GetStorageParams},
 	106029: {GetJettonData},
 	106901: {GetChannelState},
 	107653: {GetPluginList},
 	111161: {ListNominators},
 	115150: {GetParams},
+	116242: {GetLpSwapData},
 	118274: {GetLockerBillData},
 	119378: {GetDomain},
 	120146: {GetPoolStatus},
@@ -119,8 +127,12 @@ var ResultTypes = []interface{}{
 	&GetLastFillUpTimeResult{},
 	&GetLockerBillDataResult{},
 	&GetLockerDataResult{},
+	&GetLpData_MegatonResult{},
+	&GetLpMiningData_MegatonResult{},
+	&GetLpSwapData_MegatonResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
+	&GetMiningData_MegatonResult{},
 	&GetNextProofInfoResult{},
 	&GetNftAddressByIndexResult{},
 	&GetNftContentResult{},
@@ -662,6 +674,123 @@ func DecodeGetLockerDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetLockerDataResult", result, err
 }
 
+type GetLpData_MegatonResult struct {
+	PoolCount      uint64
+	JettonPairToLp tlb.Any
+	LpToJettonPair tlb.Any
+}
+
+func GetLpData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 80035 for "get_lp_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 80035, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpData_MegatonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpData_MegatonResult
+	err = stack.Unmarshal(&result)
+	return "GetLpData_MegatonResult", result, err
+}
+
+type GetLpMiningData_MegatonResult struct {
+	MiningAmount   uint64
+	DatetimeAmount uint64
+	MinableTime    uint64
+	HalfLife       uint64
+	LastIndex      uint64
+	LastMined      uint64
+	MiningRateCell tlb.Any
+}
+
+func GetLpMiningData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 104122 for "get_lp_mining_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 104122, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpMiningData_MegatonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpMiningData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpMiningData_MegatonResult
+	err = stack.Unmarshal(&result)
+	return "GetLpMiningData_MegatonResult", result, err
+}
+
+type GetLpSwapData_MegatonResult struct {
+	SwapFee               uint64
+	MinAmount             uint64
+	RouterAddress         tlb.MsgAddress
+	JettonAAddress        tlb.MsgAddress
+	JettonAWalletAddress  tlb.MsgAddress
+	JettonABalance        tlb.Int257
+	JettonAPendingBalance tlb.Int257
+	JettonBAddress        tlb.MsgAddress
+	JettonBWalletAddress  tlb.MsgAddress
+	JettonBBalance        tlb.Int257
+	JettonBPendingBalance tlb.Int257
+}
+
+func GetLpSwapData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 116242 for "get_lp_swap_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 116242, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpSwapData_MegatonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpSwapData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkSlice") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpSwapData_MegatonResult
+	err = stack.Unmarshal(&result)
+	return "GetLpSwapData_MegatonResult", result, err
+}
+
 type GetMember_WhalesNominatorResult struct {
 	MemberBalance         int64
 	MemberPendingDeposit  int64
@@ -738,6 +867,44 @@ func DecodeGetMembersRaw_WhalesNominatorResult(stack tlb.VmStack) (resultType st
 	var result GetMembersRaw_WhalesNominatorResult
 	err = stack.Unmarshal(&result)
 	return "GetMembersRaw_WhalesNominatorResult", result, err
+}
+
+type GetMiningData_MegatonResult struct {
+	TotalMiningAmount  uint64
+	TotalMiningRate    uint64
+	MiningAmountPerSec uint64
+	HalfLife           uint64
+	TotalReward        uint64
+	Unknown            uint64
+}
+
+func GetMiningData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 96219 for "get_mining_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96219, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetMiningData_MegatonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetMiningData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetMiningData_MegatonResult
+	err = stack.Unmarshal(&result)
+	return "GetMiningData_MegatonResult", result, err
 }
 
 type GetNextProofInfoResult struct {

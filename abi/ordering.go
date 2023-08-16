@@ -15,6 +15,8 @@ const (
 	Domain                ContractInterface = "domain"
 	Locker                ContractInterface = "locker"
 	LockerBill            ContractInterface = "locker_bill"
+	MegatonExchange       ContractInterface = "megaton_exchange"
+	MegatonRouter         ContractInterface = "megaton_router"
 	NftEditable           ContractInterface = "nft_editable"
 	NftSale               ContractInterface = "nft_sale"
 	NftSaleGetgems        ContractInterface = "nft_sale_getgems"
@@ -117,12 +119,56 @@ var methodInvocationOrder = []MethodDescription{
 		ImplementedBy: []ContractInterface{Locker},
 	},
 	{
+		Name:     "get_lp_data",
+		InvokeFn: GetLpData,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetLpData_MegatonResult":
+				return MegatonRouter
+			}
+			return ""
+		},
+	},
+	{
+		Name:     "get_lp_mining_data",
+		InvokeFn: GetLpMiningData,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetLpMiningData_MegatonResult":
+				return MegatonExchange
+			}
+			return ""
+		},
+	},
+	{
+		Name:     "get_lp_swap_data",
+		InvokeFn: GetLpSwapData,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetLpSwapData_MegatonResult":
+				return MegatonExchange
+			}
+			return ""
+		},
+	},
+	{
 		Name:     "get_members_raw",
 		InvokeFn: GetMembersRaw,
 		ImplementedByFn: func(typeHint string) ContractInterface {
 			switch typeHint {
 			case "GetMembersRaw_WhalesNominatorResult":
 				return WhalesNominators
+			}
+			return ""
+		},
+	},
+	{
+		Name:     "get_mining_data",
+		InvokeFn: GetMiningData,
+		ImplementedByFn: func(typeHint string) ContractInterface {
+			switch typeHint {
+			case "GetMiningData_MegatonResult":
+				return MegatonRouter
 			}
 			return ""
 		},

@@ -1,6 +1,6 @@
 <abi>
     <get_method name="get_mining_data">
-        <output version="megaton" fixed_length="true" interface="megaton_router">
+        <output version="megaton" fixed_length="true" interface="megatonfi_router">
             <int name="total_mining_amount">uint64</int>
             <int name="total_mining_rate">uint64</int>
             <int name="mining_amount_per_sec">uint64</int>
@@ -10,14 +10,14 @@
         </output>
     </get_method>
     <get_method name="get_lp_data">
-        <output version="megaton" fixed_length="true" interface="megaton_router">
+        <output version="megaton" fixed_length="true" interface="megatonfi_router">
             <int name="pool_count">uint64</int>
             <cell name="jetton_pair_to_lp">any</cell>
             <cell name="lp_to_jetton_pair">any</cell>
         </output>
     </get_method>
     <get_method name="get_lp_swap_data">
-        <output version="megaton" fixed_length="true" interface="megaton_exchange">
+        <output version="megaton" fixed_length="true" interface="megatonfi_exchange">
             <int name="swap_fee">uint64</int>
             <int name="min_amount">uint64</int>
             <slice name="router_address">msgaddress</slice>
@@ -33,7 +33,7 @@
     </get_method>
 <!--    // TODO: figure out the exact types of ints-->
     <get_method name="get_lp_mining_data">
-        <output version="megaton" fixed_length="true" interface="megaton_exchange">
+        <output version="megaton" fixed_length="true" interface="megatonfi_exchange">
             <int name="mining_amount">uint64</int>
             <int name="datetime_amount">uint64</int>
             <int name="minable_time">uint64</int>

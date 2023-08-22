@@ -24,7 +24,7 @@ import (
 
 const (
 	LiteServerEnvName           = "LITE_SERVERS"
-	defaultMaxConnectionsNumber = 3
+	defaultMaxConnectionsNumber = 1
 )
 
 var (
@@ -32,11 +32,26 @@ var (
 	ErrAccountNotFound = errors.New("account not found")
 )
 
+// Client provides a convenient way to interact with TON blockchain.
+//
+// By default, it uses a single connection to a lite server.
+// But internally, it makes use of a failover pool,
+// so it is possible to force it to use multiple connections. Take a look at WithMaxConnectionsNumber() option.
+//
+// When the client is configured with several connections,
+// two different lite servers can be used for two consequent requests.
+// Because a blockchain is inherently a distributed system,
+// this could lead to some inconsistencies.
+// For example,
+// 1. you obtain a master head with GetMasterchainInfo,
+// 2. you get an account state with GetAccountState,
+// the account state can be obtained from a block that is earlier in the blockchain than the master head you obtained at step 1.
+// To avoid this, you can use WithBlock() method to specify a target block for all requests.
 type Client struct {
-	pool                           *pool.FailoverPool
-	targetBlockID                  *tongo.BlockIDExt
-	masterchainLastBlockCache      *liteclient.TonNodeBlockIdExtC
-	masterchainLastBlockUpdateTime time.Time
+	pool *pool.FailoverPool
+
+	mu            sync.RWMutex
+	targetBlockID *tongo.BlockIDExt
 }
 
 // Options holds parameters to configure a lite api instance.
@@ -167,69 +182,48 @@ func NewClient(opts ...Option) (*Client, error) {
 		pool: pool.NewFailoverPool(liteclients),
 	}
 	go client.pool.Run(context.TODO())
-	go client.refreshMasterchainTask()
 	return &client, nil
 }
 
-func (c *Client) targetBlock(ctx context.Context) (tongo.BlockIDExt, error) {
-	if c.targetBlockID != nil {
-		return *c.targetBlockID, nil
+func (c *Client) targetBlockOr(blockID tongo.BlockIDExt) tongo.BlockIDExt {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if c.targetBlockID == nil {
+		return blockID
 	}
-	if time.Since(c.masterchainLastBlockUpdateTime) < 20*time.Second && c.masterchainLastBlockCache != nil {
-		return c.masterchainLastBlockCache.ToBlockIdExt(), nil
-	}
-	r, err := c.pool.BestMasterchainServer().LiteServerGetMasterchainInfo(context.TODO())
-	if err != nil {
-		return tongo.BlockIDExt{}, err
-	}
-	return r.Last.ToBlockIdExt(), nil
-}
-
-func (c *Client) getlastBlock(ctx context.Context) (liteclient.TonNodeBlockIdExtC, error) {
-	info, err := c.pool.BestMasterchainServer().LiteServerGetMasterchainInfo(ctx)
-	if err != nil {
-		return liteclient.TonNodeBlockIdExtC{}, err
-	}
-	return info.Last, nil
-}
-
-func (c *Client) refreshMasterchainTask() {
-	for {
-		time.Sleep(time.Second) //todo: switch to wait function
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		block, err := c.getlastBlock(ctx)
-		cancel()
-		if err != nil {
-			continue
-		}
-		c.masterchainLastBlockCache = &block
-	}
+	return *c.targetBlockID
 }
 
 func (c *Client) WithBlock(block tongo.BlockIDExt) *Client {
 	return &Client{
-		pool:                           c.pool,
-		targetBlockID:                  &block,
-		masterchainLastBlockCache:      c.masterchainLastBlockCache,
-		masterchainLastBlockUpdateTime: c.masterchainLastBlockUpdateTime,
+		pool:          c.pool,
+		targetBlockID: &block,
 	}
 }
 
 func (c *Client) GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerMasterchainInfoC, error) {
-	return c.pool.BestMasterchainServer().LiteServerGetMasterchainInfo(ctx)
+	return c.pool.BestMasterchainInfoClient().LiteServerGetMasterchainInfo(ctx)
 }
 
 func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (liteclient.LiteServerMasterchainInfoExtC, error) {
-	return c.pool.BestMasterchainServer().LiteServerGetMasterchainInfoExt(ctx, liteclient.LiteServerGetMasterchainInfoExtRequest{Mode: mode})
+	return c.pool.BestMasterchainInfoClient().LiteServerGetMasterchainInfoExt(ctx, liteclient.LiteServerGetMasterchainInfoExtRequest{Mode: mode})
 }
 
 func (c *Client) GetTime(ctx context.Context) (uint32, error) {
-	res, err := c.pool.BestMasterchainServer().LiteServerGetTime(ctx)
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return 0, err
+	}
+	res, err := client.LiteServerGetTime(ctx)
 	return res.Now, err
 }
 
 func (c *Client) GetVersion(ctx context.Context) (liteclient.LiteServerVersionC, error) {
-	return c.pool.BestMasterchainServer().LiteServerGetVersion(ctx)
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return liteclient.LiteServerVersionC{}, err
+	}
+	return client.LiteServerGetVersion(ctx)
 }
 
 func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Block, error) {
@@ -253,12 +247,11 @@ func (c *Client) GetBlock(ctx context.Context, blockID tongo.BlockIDExt) (tlb.Bl
 }
 
 func (c *Client) GetBlockRaw(ctx context.Context, blockID tongo.BlockIDExt) (liteclient.LiteServerBlockDataC, error) {
-	server, err := c.pool.BestServerByBlockID(blockID.BlockID)
+	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
 	if err != nil {
 		return liteclient.LiteServerBlockDataC{}, err
 	}
-
-	res, err := server.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest{liteclient.BlockIDExt(blockID)})
+	res, err := client.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest{liteclient.BlockIDExt(blockID)})
 	if err != nil {
 		return liteclient.LiteServerBlockDataC{}, err
 	}
@@ -275,11 +268,11 @@ func (c *Client) GetState(ctx context.Context, blockID tongo.BlockIDExt) ([]byte
 }
 
 func (c *Client) GetStateRaw(ctx context.Context, blockID tongo.BlockIDExt) (liteclient.LiteServerBlockStateC, error) {
-	server, err := c.pool.BestServerByBlockID(blockID.BlockID)
+	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
 	if err != nil {
 		return liteclient.LiteServerBlockStateC{}, err
 	}
-	res, err := server.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
+	res, err := client.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
 	if err != nil {
 		return liteclient.LiteServerBlockStateC{}, err
 	}
@@ -296,11 +289,11 @@ func (c *Client) GetBlockHeader(ctx context.Context, blockID tongo.BlockIDExt, m
 }
 
 func (c *Client) GetBlockHeaderRaw(ctx context.Context, blockID tongo.BlockIDExt, mode uint32) (liteclient.LiteServerBlockHeaderC, error) {
-	server, err := c.pool.BestServerByBlockID(blockID.BlockID)
+	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
 	if err != nil {
 		return liteclient.LiteServerBlockHeaderC{}, err
 	}
-	res, err := server.LiteServerGetBlockHeader(ctx, liteclient.LiteServerGetBlockHeaderRequest{
+	res, err := client.LiteServerGetBlockHeader(ctx, liteclient.LiteServerGetBlockHeaderRequest{
 		Id:   liteclient.BlockIDExt(blockID),
 		Mode: mode,
 	})
@@ -311,11 +304,11 @@ func (c *Client) GetBlockHeaderRaw(ctx context.Context, blockID tongo.BlockIDExt
 }
 
 func (c *Client) LookupBlock(ctx context.Context, blockID tongo.BlockID, mode uint32, lt *uint64, utime *uint32) (tongo.BlockIDExt, tlb.BlockInfo, error) {
-	server, err := c.pool.BestServerByBlockID(blockID)
+	client, err := c.pool.BestClientByBlockID(ctx, blockID)
 	if err != nil {
 		return tongo.BlockIDExt{}, tlb.BlockInfo{}, err
 	}
-	res, err := server.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
+	res, err := client.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
 		Mode: mode,
 		Id: liteclient.TonNodeBlockIdC{
 			Workchain: uint32(blockID.Workchain),
@@ -354,7 +347,11 @@ func (c *Client) SendMessage(ctx context.Context, payload []byte) (uint32, error
 	if err := VerifySendMessagePayload(payload); err != nil {
 		return 0, err
 	}
-	res, err := c.pool.BestMasterchainServer().LiteServerSendMessage(ctx, liteclient.LiteServerSendMessageRequest{Body: payload})
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return 0, err
+	}
+	res, err := client.LiteServerSendMessage(ctx, liteclient.LiteServerSendMessageRequest{Body: payload})
 	return res.Status, err
 }
 
@@ -368,22 +365,18 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-	id, err := c.targetBlock(ctx)
+	client, masterHead, err := c.pool.BestClientByAccountID(ctx, accountID)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
 	req := liteclient.LiteServerRunSmcMethodRequest{
 		Mode:     4,
-		Id:       liteclient.BlockIDExt(id),
+		Id:       liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
 		Account:  liteclient.AccountID(accountID),
 		MethodId: uint64(methodID),
 		Params:   b,
 	}
-	server, err := c.pool.BestServerByAccountID(accountID)
-	if err != nil {
-		return 0, tlb.VmStack{}, err
-	}
-	res, err := server.LiteServerRunSmcMethod(ctx, req)
+	res, err := client.LiteServerRunSmcMethod(ctx, req)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
@@ -436,17 +429,14 @@ func (c *Client) GetAccountState(ctx context.Context, accountID tongo.AccountID)
 }
 
 func (c *Client) GetAccountStateRaw(ctx context.Context, accountID tongo.AccountID) (liteclient.LiteServerAccountStateC, error) {
-	id, err := c.targetBlock(ctx)
+	client, masterHead, err := c.pool.BestClientByAccountID(ctx, accountID)
 	if err != nil {
 		return liteclient.LiteServerAccountStateC{}, err
 	}
-	server, err := c.pool.BestServerByAccountID(accountID)
-	if err != nil {
-		return liteclient.LiteServerAccountStateC{}, err
-	}
-	res, err := server.LiteServerGetAccountState(ctx, liteclient.LiteServerGetAccountStateRequest{
+	blockID := c.targetBlockOr(masterHead)
+	res, err := client.LiteServerGetAccountState(ctx, liteclient.LiteServerGetAccountStateRequest{
 		Account: liteclient.AccountID(accountID),
-		Id:      liteclient.BlockIDExt(id),
+		Id:      liteclient.BlockIDExt(blockID),
 	})
 	if err != nil {
 		return liteclient.LiteServerAccountStateC{}, err
@@ -494,7 +484,11 @@ func (c *Client) GetShardInfo(
 }
 
 func (c *Client) GetShardInfoRaw(ctx context.Context, blockID tongo.BlockIDExt, workchain uint32, shard uint64, exact bool) (liteclient.LiteServerShardInfoC, error) {
-	res, err := c.pool.BestMasterchainServer().LiteServerGetShardInfo(ctx, liteclient.LiteServerGetShardInfoRequest{
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return liteclient.LiteServerShardInfoC{}, err
+	}
+	res, err := client.LiteServerGetShardInfo(ctx, liteclient.LiteServerGetShardInfoRequest{
 		Id:        liteclient.BlockIDExt(blockID),
 		Workchain: workchain,
 		Shard:     shard,
@@ -534,7 +528,11 @@ func (c *Client) GetAllShardsInfo(ctx context.Context, blockID tongo.BlockIDExt)
 }
 
 func (c *Client) GetAllShardsInfoRaw(ctx context.Context, blockID tongo.BlockIDExt) (liteclient.LiteServerAllShardsInfoC, error) {
-	res, err := c.pool.BestMasterchainServer().LiteServerGetAllShardsInfo(ctx, liteclient.LiteServerGetAllShardsInfoRequest{
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return liteclient.LiteServerAllShardsInfoC{}, err
+	}
+	res, err := client.LiteServerGetAllShardsInfo(ctx, liteclient.LiteServerGetAllShardsInfoRequest{
 		Id: liteclient.BlockIDExt(blockID)})
 	if err != nil {
 		return liteclient.LiteServerAllShardsInfoC{}, err
@@ -548,11 +546,11 @@ func (c *Client) GetOneTransactionFromBlock(
 	blockId tongo.BlockIDExt,
 	lt uint64,
 ) (tongo.Transaction, error) {
-	server, err := c.pool.BestServerByAccountID(accountID)
+	client, _, err := c.pool.BestClientByAccountID(ctx, accountID)
 	if err != nil {
 		return tongo.Transaction{}, err
 	}
-	r, err := server.LiteServerGetOneTransaction(ctx, liteclient.LiteServerGetOneTransactionRequest{
+	r, err := client.LiteServerGetOneTransaction(ctx, liteclient.LiteServerGetOneTransactionRequest{
 		Id:      liteclient.BlockIDExt(blockId),
 		Account: liteclient.AccountID(accountID),
 		Lt:      lt,
@@ -610,11 +608,11 @@ func (c *Client) GetTransactions(
 }
 
 func (c *Client) GetTransactionsRaw(ctx context.Context, count uint32, accountID tongo.AccountID, lt uint64, hash tongo.Bits256) (liteclient.LiteServerTransactionListC, error) {
-	server, err := c.pool.BestServerByAccountID(accountID)
+	client, _, err := c.pool.BestClientByAccountID(ctx, accountID)
 	if err != nil {
 		return liteclient.LiteServerTransactionListC{}, err
 	}
-	res, err := server.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
+	res, err := client.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
 		Count:   count,
 		Account: liteclient.AccountID(accountID),
 		Lt:      lt,
@@ -673,11 +671,11 @@ func (c *Client) ListBlockTransactions(
 }
 
 func (c *Client) ListBlockTransactionsRaw(ctx context.Context, blockID tongo.BlockIDExt, mode, count uint32, after *liteclient.LiteServerTransactionId3C) (liteclient.LiteServerBlockTransactionsC, error) {
-	server, err := c.pool.BestServerByBlockID(blockID.BlockID)
+	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
 	if err != nil {
 		return liteclient.LiteServerBlockTransactionsC{}, err
 	}
-	res, err := server.LiteServerListBlockTransactions(ctx, liteclient.LiteServerListBlockTransactionsRequest{
+	res, err := client.LiteServerListBlockTransactions(ctx, liteclient.LiteServerListBlockTransactionsRequest{
 		Id:    liteclient.BlockIDExt(blockID),
 		Mode:  mode,
 		Count: count,
@@ -705,14 +703,14 @@ func (c *Client) GetBlockProof(
 func (c *Client) GetBlockProofRaw(ctx context.Context, knownBlock tongo.BlockIDExt, targetBlock *tongo.BlockIDExt) (liteclient.LiteServerPartialBlockProofC, error) {
 	var (
 		err    error
-		server *liteclient.Client
+		client *liteclient.Client
 		mode   uint32 = 0
 	)
 	if targetBlock != nil {
-		server, err = c.pool.BestServerByBlockID(targetBlock.BlockID)
+		client, err = c.pool.BestClientByBlockID(ctx, targetBlock.BlockID)
 		mode = 1
 	} else {
-		server, err = c.pool.BestServerByBlockID(knownBlock.BlockID)
+		client, err = c.pool.BestClientByBlockID(ctx, knownBlock.BlockID)
 	}
 	if err != nil {
 		return liteclient.LiteServerPartialBlockProofC{}, err
@@ -722,7 +720,7 @@ func (c *Client) GetBlockProofRaw(ctx context.Context, knownBlock tongo.BlockIDE
 		b := liteclient.BlockIDExt(*targetBlock)
 		tb = &b
 	}
-	res, err := server.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
+	res, err := client.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
 		Mode:        mode,
 		KnownBlock:  liteclient.BlockIDExt(knownBlock),
 		TargetBlock: tb,
@@ -743,13 +741,13 @@ func (c *Client) GetConfigAll(ctx context.Context, mode ConfigMode) (tlb.ConfigP
 }
 
 func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclient.LiteServerConfigInfoC, error) {
-	id, err := c.targetBlock(ctx)
+	client, masterHead, err := c.pool.BestMasterchainClient(ctx)
 	if err != nil {
 		return liteclient.LiteServerConfigInfoC{}, err
 	}
-	res, err := c.pool.BestMasterchainServer().LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
+	res, err := client.LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
 		Mode: uint32(mode),
-		Id:   liteclient.BlockIDExt(id),
+		Id:   liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
 	})
 	if err != nil {
 		return liteclient.LiteServerConfigInfoC{}, err
@@ -758,13 +756,13 @@ func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclie
 }
 
 func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList []uint32) (tlb.ConfigParams, error) {
-	id, err := c.targetBlock(ctx)
+	client, masterHead, err := c.pool.BestMasterchainClient(ctx)
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	r, err := c.pool.BestMasterchainServer().LiteServerGetConfigParams(ctx, liteclient.LiteServerGetConfigParamsRequest{
+	r, err := client.LiteServerGetConfigParams(ctx, liteclient.LiteServerGetConfigParamsRequest{
 		Mode:      uint32(mode),
-		Id:        liteclient.BlockIDExt(id),
+		Id:        liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
 		ParamList: paramList,
 	})
 	if err != nil {
@@ -800,7 +798,7 @@ func (c *Client) GetValidatorStats(
 	startAfter *tongo.Bits256,
 	modifiedAfter *uint32,
 ) (*tlb.McStateExtra, error) {
-	id, err := c.targetBlock(ctx)
+	client, masterHead, err := c.pool.BestMasterchainClient(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -809,9 +807,9 @@ func (c *Client) GetValidatorStats(
 		b := tl.Int256(*startAfter)
 		sa = &b
 	}
-	r, err := c.pool.BestMasterchainServer().LiteServerGetValidatorStats(ctx, liteclient.LiteServerGetValidatorStatsRequest{
+	r, err := client.LiteServerGetValidatorStats(ctx, liteclient.LiteServerGetValidatorStatsRequest{
 		Mode:          mode,
-		Id:            liteclient.BlockIDExt(id),
+		Id:            liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
 		Limit:         limit,
 		StartAfter:    sa,
 		ModifiedAfter: modifiedAfter,
@@ -839,11 +837,7 @@ func (c *Client) GetValidatorStats(
 }
 
 func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) (map[tongo.Bits256]*boc.Cell, error) {
-	id, err := c.targetBlock(ctx)
-	if err != nil {
-		return nil, err
-	}
-	server, err := c.pool.BestServerByBlockID(id.BlockID)
+	client, _, err := c.pool.BestMasterchainClient(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -851,7 +845,7 @@ func (c *Client) GetLibraries(ctx context.Context, libraryList []tongo.Bits256) 
 	for _, l := range libraryList {
 		ll = append(ll, tl.Int256(l))
 	}
-	r, err := server.LiteServerGetLibraries(ctx, liteclient.LiteServerGetLibrariesRequest{
+	r, err := client.LiteServerGetLibraries(ctx, liteclient.LiteServerGetLibrariesRequest{
 		LibraryList: ll,
 	})
 	if err != nil {
@@ -880,17 +874,20 @@ func (c *Client) GetShardBlockProof(ctx context.Context) (liteclient.LiteServerS
 }
 
 func (c *Client) GetShardBlockProofRaw(ctx context.Context) (liteclient.LiteServerShardBlockProofC, error) {
-	id, err := c.targetBlock(ctx)
+	client, masterHead, err := c.pool.BestMasterchainClient(ctx)
 	if err != nil {
 		return liteclient.LiteServerShardBlockProofC{}, err
 	}
-	server, err := c.pool.BestServerByBlockID(id.BlockID)
-	if err != nil {
-		return liteclient.LiteServerShardBlockProofC{}, err
-	}
-	return server.LiteServerGetShardBlockProof(ctx, liteclient.LiteServerGetShardBlockProofRequest{
-		Id: liteclient.BlockIDExt(id),
+	return client.LiteServerGetShardBlockProof(ctx, liteclient.LiteServerGetShardBlockProofRequest{
+		Id: liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
 	})
+}
+
+// WaitMasterchainSeqno waits for a masterchain block with the given seqno.
+// If any connection in the pool becomes aware of this seqno, the function returns.
+// If the timeout is reached, the function returns an error.
+func (c *Client) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout time.Duration) error {
+	return c.pool.WaitMasterchainSeqno(ctx, seqno, timeout)
 }
 
 var configCache = make(map[string]*config.GlobalConfigurationFile)

@@ -165,10 +165,6 @@ func TestSimpleGetMethod(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			err = emulator.SetVerbosityLevel(1)
-			if err != nil {
-				t.Fatal(err)
-			}
 			for _, methodID := range c.GetMethods {
 				_, ok := KnownSimpleGetMethods[methodID]
 				if !ok {

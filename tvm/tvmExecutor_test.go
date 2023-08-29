@@ -30,12 +30,6 @@ func TestRunGetMethod(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	err = emulator.SetVerbosityLevel(1)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	code, res, err := emulator.RunSmcMethod(context.Background(), account, "get_nft_address_by_index", tlb.VmStack{val})
 	if err != nil {
 		t.Fatal(err)
@@ -64,12 +58,6 @@ func TestRunGetMethod_MYADDR(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	err = emulator.SetVerbosityLevel(16)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	fmt.Printf("%v\n", account)
 	code, res, err := emulator.RunSmcMethod(context.Background(), account, "get_my_addr", tlb.VmStack{})
 	if err != nil {

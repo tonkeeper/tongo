@@ -32,7 +32,7 @@ func main() {
 		panic(err)
 	}
 
-	err = emulator.SetVerbosityLevel(1)
+	err = tvm.SetVerbosityLevel(1)
 	if err != nil {
 		panic(err)
 	}

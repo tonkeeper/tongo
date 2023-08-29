@@ -41,6 +41,8 @@ type Options struct {
 
 type Option func(o *Options)
 
+// WithVerbosityLevel sets verbosity level of a TVM emulator instance.
+// TODO: find a way to expose logs to the caller.
 func WithVerbosityLevel(level txemulator.VerbosityLevel) Option {
 	return func(o *Options) {
 		o.verbosityLevel = level
@@ -135,9 +137,17 @@ func destroy(e *Emulator) {
 	C.tvm_emulator_destroy(e.emulator)
 }
 
-// SetVerbosityLevel
+func init() {
+	if err := SetVerbosityLevel(0); err != nil {
+		// TODO: replace Printf with logger interface
+		fmt.Printf("SetVerbosityLevel() failed: %v\n", err)
+	}
+}
+
+// SetVerbosityLevel sets verbosity level of TVM emulator.
+// This is a global setting that affects all emulators.
 // verbosity level (0 - never, 1 - error, 2 - warning, 3 - info, 4 - debug)
-func (e *Emulator) SetVerbosityLevel(level int) error {
+func SetVerbosityLevel(level int) error {
 	ok := C.emulator_set_verbosity_level(C.int(level))
 	if !ok {
 		return fmt.Errorf("set VerbosityLevel error")

@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -147,9 +148,12 @@ func readDnsAdnlAddress(c *boc.Cell) (DNSRecord, error) {
 	if err != nil {
 		return DNSRecord{}, err
 	}
-	flags, err := c.ReadUint(8)
-	if err != nil {
-		return DNSRecord{}, err
+	var flags uint64
+	if c.BitsAvailableForRead() > 0 {
+		flags, err = c.ReadUint(8)
+		if err != nil {
+			return DNSRecord{}, err
+		}
 	}
 	if flags > 2 {
 		return DNSRecord{}, fmt.Errorf("invalid dns_adnl_address flags")

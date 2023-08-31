@@ -5,18 +5,30 @@ import (
 	"sync"
 	"time"
 
+	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteclient"
 )
 
 type connection struct {
-	client      *liteclient.Client
-	mu          sync.RWMutex
-	masterSeqno uint32
+	id     int
+	client *liteclient.Client
+
+	// masterHeadUpdatedCh is used to send a notification when a known master head is changed.
+	masterHeadUpdatedCh chan masterHeadUpdated
+
+	mu sync.RWMutex
+	// masterHead is the latest known masterchain head.
+	masterHead tongo.BlockIDExt
+}
+
+type masterHeadUpdated struct {
+	Head tongo.BlockIDExt
+	Conn *connection
 }
 
 func (c *connection) Run(ctx context.Context) {
 	for {
-		var seqno uint32
+		var head tongo.BlockIDExt
 		for {
 			res, err := c.client.LiteServerGetMasterchainInfo(ctx)
 			if err != nil {
@@ -24,12 +36,12 @@ func (c *connection) Run(ctx context.Context) {
 				time.Sleep(1000 * time.Millisecond)
 				continue
 			}
-			seqno = res.Last.Seqno
+			head = res.Last.ToBlockIdExt()
 			break
 		}
-		c.setMasterSeqno(seqno)
+		c.SetMasterHead(head)
 		for {
-			if err := c.client.WaitMasterchainSeqno(ctx, seqno+1, 15_000); err != nil {
+			if err := c.client.WaitMasterchainSeqno(ctx, head.Seqno+1, 15_000); err != nil {
 				// TODO: log error
 				time.Sleep(1000 * time.Millisecond)
 				// we want to request seqno again with LiteServerGetMasterchainInfo
@@ -37,11 +49,23 @@ func (c *connection) Run(ctx context.Context) {
 				// and it doesn't contain a block with the latest known seqno anymore.
 				break
 			}
-			seqno += 1
 			if ctx.Err() != nil {
 				return
 			}
-			c.setMasterSeqno(seqno)
+			res, err := c.client.LiteServerGetMasterchainInfo(ctx)
+			if err != nil {
+				// TODO: log error
+				time.Sleep(1000 * time.Millisecond)
+				// we want to request seqno again with LiteServerGetMasterchainInfo
+				// to avoid situation when this server has been offline for too long,
+				// and it doesn't contain a block with the latest known seqno anymore.
+				break
+			}
+			if ctx.Err() != nil {
+				return
+			}
+			head = res.Last.ToBlockIdExt()
+			c.SetMasterHead(head)
 		}
 	}
 }
@@ -51,18 +75,28 @@ func (c *connection) IsOK() bool {
 	return c.client.IsOK()
 }
 
+func (c *connection) ID() int {
+	return c.id
+}
+
 func (c *connection) Client() *liteclient.Client {
 	return c.client
 }
 
-func (c *connection) MasterSeqno() uint32 {
+func (c *connection) MasterHead() tongo.BlockIDExt {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.masterSeqno
+	return c.masterHead
 }
 
-func (c *connection) setMasterSeqno(seqno uint32) {
+func (c *connection) SetMasterHead(head tongo.BlockIDExt) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.masterSeqno = seqno
+	if head.Seqno > c.masterHead.Seqno {
+		c.masterHead = head
+		c.masterHeadUpdatedCh <- masterHeadUpdated{
+			Head: head,
+			Conn: c,
+		}
+	}
 }

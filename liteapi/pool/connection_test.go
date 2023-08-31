@@ -19,7 +19,8 @@ func Test_connection_Run(t *testing.T) {
 		t.Fatalf("NewConnection() failed: %v", err)
 	}
 	conn := &connection{
-		client: liteclient.NewClient(c),
+		client:              liteclient.NewClient(c),
+		masterHeadUpdatedCh: make(chan masterHeadUpdated, 100),
 	}
 	go conn.Run(context.Background())
 
@@ -28,16 +29,16 @@ func Test_connection_Run(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
 	}
-	if res.Last.Seqno != conn.MasterSeqno() {
-		t.Fatalf("want seqno: %v, got: %v", res.Last.Seqno, conn.MasterSeqno())
+	if res.Last.Seqno != conn.MasterHead().Seqno {
+		t.Fatalf("want seqno: %v, got: %v", res.Last.Seqno, conn.MasterHead())
 	}
 	if err := conn.Client().WaitMasterchainSeqno(context.Background(), res.Last.Seqno+1, 15_000); err != nil {
 		t.Fatalf("WaitMasterchainSeqno() failed: %v", err)
 	}
 	// give a few milliseconds to the connection's goroutine
-	time.Sleep(150 * time.Millisecond)
+	time.Sleep(1 * time.Second)
 
-	if res.Last.Seqno+1 != conn.MasterSeqno() {
-		t.Fatalf("want seqno: %v, got: %v", res.Last.Seqno, conn.MasterSeqno())
+	if res.Last.Seqno+1 != conn.MasterHead().Seqno {
+		t.Fatalf("want seqno: %v, got: %v", res.Last.Seqno, conn.MasterHead())
 	}
 }

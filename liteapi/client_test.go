@@ -189,17 +189,13 @@ func TestLookupBlock(t *testing.T) {
 }
 
 func TestGetOneTransaction(t *testing.T) {
-
 	tongoClient, err := NewClientWithDefaultMainnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	ctx := context.Background()
-	lastBlockID, err := tongoClient.getlastBlock(ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
-	shards, err := tongoClient.GetAllShardsInfo(ctx, lastBlockID.ToBlockIdExt())
+	info, err := tongoClient.GetMasterchainInfo(ctx)
+	shards, err := tongoClient.GetAllShardsInfo(ctx, info.Last.ToBlockIdExt())
 	if err != nil {
 		t.Fatal(err)
 	}

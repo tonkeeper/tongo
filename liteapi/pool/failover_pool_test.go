@@ -3,7 +3,9 @@ package pool
 import (
 	"context"
 	"testing"
+	"time"
 
+	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteclient"
 )
 
@@ -11,6 +13,17 @@ type mockConn struct {
 	id    int
 	seqno uint32
 	isOK  bool
+}
+
+func (m *mockConn) ID() int {
+	return 0
+}
+
+func (m *mockConn) MasterHead() tongo.BlockIDExt {
+	return tongo.BlockIDExt{BlockID: tongo.BlockID{Seqno: m.seqno}}
+}
+
+func (m *mockConn) SetMasterHead(ext tongo.BlockIDExt) {
 }
 
 func (m *mockConn) MasterSeqno() uint32 {
@@ -85,7 +98,8 @@ func TestFailoverPool_updateBest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &FailoverPool{
-				conns: tt.conns,
+				conns:              tt.conns,
+				updateBestInterval: time.Second,
 			}
 			ctx := context.Background()
 			go p.Run(ctx)

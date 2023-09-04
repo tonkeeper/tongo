@@ -482,8 +482,8 @@ func TestMessageDecoder(t *testing.T) {
 				QueryId:       6704192700379833,
 				ToAddress:     mustAccountIDToMsgAddress("0:aa9425cdcce2056128d9793fdd309701bc9e0adebdec8444eed593995ed0056b"),
 				SenderAddress: mustAccountIDToMsgAddress("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f"),
-				JettonAmount:  74549066199,
-				MinOut:        101490000,
+				JettonAmount:  tlb.VarUInteger16(*big.NewInt(74549066199)),
+				MinOut:        tlb.VarUInteger16(*big.NewInt(101490000)),
 				HasRefAddress: true,
 				Addrs: tlb.Ref[StonfiSwapAddrs]{
 					Value: StonfiSwapAddrs{
@@ -503,9 +503,9 @@ func TestMessageDecoder(t *testing.T) {
 				Params: tlb.EitherRef[StonfiPayToParams]{
 					IsRight: true,
 					Value: StonfiPayToParams{
-						Amount0Out:    102205,
+						Amount0Out:    tlb.VarUInteger16(*big.NewInt(102205)),
 						Token0Address: mustAccountIDToMsgAddress("0:14ac072c56291232d7cd93ddec120235c5e5cf5e2027f49bbc5aa276e5d224d8"),
-						Amount1Out:    0,
+						Amount1Out:    tlb.VarUInteger16(*big.NewInt(0)),
 						Token1Address: mustAccountIDToMsgAddress("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f"),
 					},
 				},

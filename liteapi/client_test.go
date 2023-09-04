@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
@@ -38,9 +38,9 @@ func TestGetTransactions(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	accountId, _ := tongo.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
+	accountId, _ := ton.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
 	var lt uint64 = 33973842000003
-	hash := tongo.MustParseHash("8005AF92C0854B5A614427206673D120EA2914468C11C8F867F43740D6B4ACFB")
+	hash := ton.MustParseHash("8005AF92C0854B5A614427206673D120EA2914468C11C8F867F43740D6B4ACFB")
 	tx, err := tongoClient.GetTransactions(context.Background(), 100, accountId, lt, hash)
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
@@ -69,7 +69,7 @@ func TestRunSmcMethod(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	accountId := tongo.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
 	_, _, err = tongoClient.RunSmcMethod(context.Background(), accountId, "seqno", tlb.VmStack{})
 	if err != nil {
 		log.Fatalf("Run smc error: %v", err)
@@ -106,15 +106,15 @@ func TestGetBlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	block, err := api.GetBlock(context.TODO(), info.Last.ToBlockIdExt())
+	b, err := api.GetBlock(context.TODO(), info.Last.ToBlockIdExt())
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := tongo.GetParents(block.Info)
+	p, err := ton.GetParents(b.Info)
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("Block seqno: %v\n", block.Info.SeqNo)
+	fmt.Printf("Block seqno: %v\n", b.Info.SeqNo)
 	fmt.Printf("1st parent block seqno: %v\n", p[0].Seqno)
 }
 
@@ -149,7 +149,7 @@ func TestGetAccountState(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			accountID, err := tongo.AccountIDFromRaw(tt.accountID)
+			accountID, err := ton.AccountIDFromRaw(tt.accountID)
 			if err != nil {
 				t.Fatal("AccountIDFromRaw() failed: %w", err)
 			}
@@ -172,7 +172,7 @@ func TestLookupBlock(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("Current block seqno : %v\n", info.Last.Seqno)
-	blockID := tongo.BlockID{
+	blockID := ton.BlockID{
 		Workchain: int32(info.Last.Workchain),
 		Shard:     info.Last.Shard,
 		Seqno:     info.Last.Seqno - 1,
@@ -198,24 +198,24 @@ func TestGetOneTransaction(t *testing.T) {
 	blockID := shards[0]
 	var tx1 *tlb.Transaction
 	for i := 0; i < 10; i++ {
-		block, err := tongoClient.GetBlock(ctx, blockID)
+		b, err := tongoClient.GetBlock(ctx, blockID)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if len(block.AllTransactions()) == 0 {
-			prev := block.Info.PrevRef.PrevBlkInfo.Prev
-			blockID = tongo.BlockIDExt{tongo.BlockID{
+		if len(b.AllTransactions()) == 0 {
+			prev := b.Info.PrevRef.PrevBlkInfo.Prev
+			blockID = ton.BlockIDExt{ton.BlockID{
 				blockID.Workchain, blockID.Shard, prev.SeqNo,
 			},
-				tongo.Bits256(prev.RootHash), tongo.Bits256(prev.FileHash),
+				ton.Bits256(prev.RootHash), ton.Bits256(prev.FileHash),
 			}
 			continue
 		}
-		tx1 = block.AllTransactions()[0]
+		tx1 = b.AllTransactions()[0]
 		break
 	}
 
-	tx2, err := tongoClient.GetOneTransactionFromBlock(context.Background(), tongo.AccountID{Workchain: blockID.Workchain, Address: tx1.AccountAddr}, blockID, tx1.Lt)
+	tx2, err := tongoClient.GetOneTransactionFromBlock(context.Background(), ton.AccountID{Workchain: blockID.Workchain, Address: tx1.AccountAddr}, blockID, tx1.Lt)
 	if err != nil {
 		log.Fatalf("Get transaction error: %v", err)
 	}
@@ -230,8 +230,8 @@ func TestGetLibraries(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 
-	hash := tongo.MustParseHash("587CC789EFF1C84F46EC3797E45FC809A14FF5AE24F1E0C7A6A99CC9DC9061FF")
-	libs, err := tongoClient.GetLibraries(context.Background(), []tongo.Bits256{hash})
+	hash := ton.MustParseHash("587CC789EFF1C84F46EC3797E45FC809A14FF5AE24F1E0C7A6A99CC9DC9061FF")
+	libs, err := tongoClient.GetLibraries(context.Background(), []ton.Bits256{hash})
 	if err != nil {
 		log.Fatalf("GetLibraries() failed: %v", err)
 	}
@@ -257,8 +257,8 @@ func TestGetJettonWallet(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	master := tongo.MustParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
-	owner := tongo.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	master := ton.MustParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	owner := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
 	wallet, err := tongoClient.GetJettonWallet(context.Background(), master, owner)
 	if err != nil {
 		log.Fatalf("get jetton wallet error: %v", err)
@@ -271,7 +271,7 @@ func TestGetJettonData(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	master := tongo.MustParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	master := ton.MustParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
 	meta, err := tongoClient.GetJettonData(context.Background(), master)
 	if err != nil {
 		log.Fatalf("get jetton decimals error: %v", err)
@@ -284,7 +284,7 @@ func TestGetJettonBalance(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	jettonWallet := tongo.MustParseAccountID("kQCOSEttz9aEGXkjd1h_NJsQqOca3T-Pld5zSIPHcYZIxsyf")
+	jettonWallet := ton.MustParseAccountID("kQCOSEttz9aEGXkjd1h_NJsQqOca3T-Pld5zSIPHcYZIxsyf")
 	b, err := tongoClient.GetJettonBalance(context.Background(), jettonWallet)
 	if err != nil {
 		log.Fatalf("get jetton decimals error: %v", err)
@@ -297,7 +297,7 @@ func TestDnsResolve(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	root := tongo.MustParseAccountID("Ef_BimcWrQ5pmAWfRqfeVHUCNV8XgsLqeAMBivKryXrghFW3")
+	root := ton.MustParseAccountID("Ef_BimcWrQ5pmAWfRqfeVHUCNV8XgsLqeAMBivKryXrghFW3")
 	m, _, err := tongoClient.DnsResolve(context.Background(), root, "ton\u0000alice\u0000", big.NewInt(0))
 	if err != nil {
 		log.Fatalf("dns resolve error: %v", err)
@@ -318,14 +318,14 @@ func TestGetRootDNS(t *testing.T) {
 }
 
 func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
-	var a tongo.AccountID
+	var a ton.AccountID
 	rand.Read(a.Address[:])
 	client, err := NewClientWithDefaultTestnet()
 	if err != nil {
 		t.Error(err)
 	}
 
-	txs, err := client.GetTransactions(context.Background(), 10, a, 0, tongo.Bits256{})
+	txs, err := client.GetTransactions(context.Background(), 10, a, 0, ton.Bits256{})
 	if err != nil || len(txs) != 0 {
 		t.Error(err, len(txs))
 	}
@@ -338,7 +338,7 @@ func TestMappingTransactionsToBlocks(t *testing.T) {
 		t.Fatal(err)
 	}
 	ctx := context.Background()
-	txs, err := c.GetLastTransactions(ctx, tongo.MustParseAccountID("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"), limit)
+	txs, err := c.GetLastTransactions(ctx, ton.MustParseAccountID("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"), limit)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -352,7 +352,7 @@ func TestMappingTransactionsToBlocks(t *testing.T) {
 		}
 	}
 
-	txsInBlockCache := make(map[tongo.Bits256][]tlb.Bits256)
+	txsInBlockCache := make(map[ton.Bits256][]tlb.Bits256)
 	for _, tx := range txs {
 		if _, ok := txsInBlockCache[tx.BlockID.RootHash]; !ok {
 			block, err := c.GetBlock(ctx, tx.BlockID)

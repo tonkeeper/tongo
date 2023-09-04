@@ -5,13 +5,14 @@ import (
 	"crypto/ed25519"
 	"encoding/base64"
 	"fmt"
-	"github.com/tonkeeper/tongo"
-	"github.com/tonkeeper/tongo/liteapi"
-	"github.com/tonkeeper/tongo/wallet"
 	"log"
 	"math/big"
 	"testing"
 	"time"
+
+	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/wallet"
 )
 
 func initDefaultWallet(blockchain *liteapi.Client) wallet.Wallet {
@@ -27,7 +28,7 @@ func initDefaultWallet(blockchain *liteapi.Client) wallet.Wallet {
 
 func TestSendJetton(t *testing.T) {
 	t.Skip()
-	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
+	recipientAddr, _ := ton.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 
 	client, err := liteapi.NewClientWithDefaultTestnet()
 	if err != nil {
@@ -35,7 +36,7 @@ func TestSendJetton(t *testing.T) {
 	}
 	w := initDefaultWallet(client)
 
-	master, _ := tongo.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
+	master, _ := ton.ParseAccountID("kQCKt2WPGX-fh0cIAz38Ljd_OKQjoZE_cqk7QrYGsNP6wfP0")
 	j := New(master, client)
 	b, err := j.GetBalance(context.Background(), w.GetAddress())
 	if err != nil {
@@ -51,7 +52,7 @@ func TestSendJetton(t *testing.T) {
 		Jetton:           j,
 		JettonAmount:     amount,
 		Destination:      recipientAddr,
-		AttachedTon:      tongo.OneTON / 2,
+		AttachedTon:      ton.OneTON / 2,
 		ForwardTonAmount: 200_000_000,
 	}
 	err = w.Send(context.Background(), jettonTransfer)

@@ -3,6 +3,7 @@ package liteclient
 import (
 	"crypto/ed25519"
 	"crypto/rand"
+
 	"github.com/oasisprotocol/curve25519-voi/curve"
 	ed25519crv "github.com/oasisprotocol/curve25519-voi/primitives/ed25519"
 	"github.com/oasisprotocol/curve25519-voi/primitives/x25519"

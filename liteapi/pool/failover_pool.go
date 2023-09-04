@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteclient"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 const (
@@ -32,15 +32,15 @@ type FailoverPool struct {
 	mu         sync.RWMutex
 	bestConn   conn
 	waitListID uint64
-	waitList   map[uint64]chan tongo.BlockIDExt
+	waitList   map[uint64]chan ton.BlockIDExt
 }
 
 // conn contains all methods needed by a pool.
 // used to implement tests.
 type conn interface {
 	ID() int
-	MasterHead() tongo.BlockIDExt
-	SetMasterHead(tongo.BlockIDExt)
+	MasterHead() ton.BlockIDExt
+	SetMasterHead(ton.BlockIDExt)
 	IsOK() bool
 	Client() *liteclient.Client
 	Run(ctx context.Context)
@@ -66,7 +66,7 @@ func NewFailoverPool(clients []*liteclient.Client) *FailoverPool {
 		conns:               conns,
 		updateBestInterval:  updateBestConnectionInterval,
 		bestConn:            conns[0],
-		waitList:            map[uint64]chan tongo.BlockIDExt{},
+		waitList:            map[uint64]chan ton.BlockIDExt{},
 		masterHeadUpdatedCh: masterHeadUpdatedCh,
 	}
 }
@@ -152,7 +152,7 @@ func (p *FailoverPool) BestMasterchainInfoClient() *MasterchainInfoClient {
 }
 
 // BestMasterchainClient returns a liteclient and its known masterchain head.
-func (p *FailoverPool) BestMasterchainClient(ctx context.Context) (*liteclient.Client, tongo.BlockIDExt, error) {
+func (p *FailoverPool) BestMasterchainClient(ctx context.Context) (*liteclient.Client, ton.BlockIDExt, error) {
 	bestConnection := p.bestConnection()
 	masterHead := bestConnection.MasterHead()
 	if masterHead.Seqno > 0 {
@@ -165,19 +165,19 @@ func (p *FailoverPool) BestMasterchainClient(ctx context.Context) (*liteclient.C
 
 	select {
 	case <-ctx.Done():
-		return nil, tongo.BlockIDExt{}, ctx.Err()
+		return nil, ton.BlockIDExt{}, ctx.Err()
 	case head := <-ch:
 		return bestConnection.Client(), head, nil
 	}
 }
 
 // BestClientByAccountID returns a liteclient and its known masterchain head.
-func (p *FailoverPool) BestClientByAccountID(ctx context.Context, accountID tongo.AccountID) (*liteclient.Client, tongo.BlockIDExt, error) {
+func (p *FailoverPool) BestClientByAccountID(ctx context.Context, accountID ton.AccountID) (*liteclient.Client, ton.BlockIDExt, error) {
 	return p.BestMasterchainClient(ctx)
 }
 
 // BestClientByBlockID returns a liteclient and its known masterchain head.
-func (p *FailoverPool) BestClientByBlockID(ctx context.Context, blockID tongo.BlockID) (*liteclient.Client, error) {
+func (p *FailoverPool) BestClientByBlockID(ctx context.Context, blockID ton.BlockID) (*liteclient.Client, error) {
 	server, _, err := p.BestMasterchainClient(ctx)
 	return server, err
 }
@@ -199,8 +199,8 @@ func (p *FailoverPool) notifySubscribers(update masterHeadUpdated) {
 	}
 }
 
-func (p *FailoverPool) subscribe(seqno uint32) (uint64, chan tongo.BlockIDExt) {
-	ch := make(chan tongo.BlockIDExt, 1)
+func (p *FailoverPool) subscribe(seqno uint32) (uint64, chan ton.BlockIDExt) {
+	ch := make(chan ton.BlockIDExt, 1)
 
 	p.mu.Lock()
 	defer p.mu.Unlock()

@@ -1,10 +1,11 @@
 package utils
 
 import (
+	"strings"
+
 	"golang.org/x/exp/constraints"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
-	"strings"
 )
 
 func ToCamelCase(s string) string {

@@ -17,9 +17,9 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/txemulator"
 	"github.com/tonkeeper/tongo/utils"
 )
@@ -234,12 +234,12 @@ type result struct {
 	GasUsed        string `json:"gas_used"`
 }
 
-func (e *Emulator) RunSmcMethod(ctx context.Context, accountId tongo.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error) {
+func (e *Emulator) RunSmcMethod(ctx context.Context, accountId ton.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error) {
 	methodID := utils.MethodIdFromName(method)
 	return e.RunSmcMethodByID(ctx, accountId, methodID, params)
 }
 
-func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error) {
+func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error) {
 	if !e.lazyC7 {
 		err := e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
 		if err != nil {

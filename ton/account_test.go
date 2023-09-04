@@ -1,4 +1,4 @@
-package account
+package ton
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 func TestAccountIDJsonUnmarshal(t *testing.T) {
 	input := []byte(`{"A": "-1:7014a79eb7a81cf37542a62b75defa99427580e6612f956d47caa0fe0ec5d05e"}`)
 	var a struct {
-		A ID
+		A AccountID
 	}
 	err := json.Unmarshal(input, &a)
 	if err != nil {
@@ -25,7 +25,7 @@ func TestAccountIDJsonUnmarshal(t *testing.T) {
 }
 
 func TestToMsgAddress(t *testing.T) {
-	ma := (*ID)(nil).ToMsgAddress()
+	ma := (*AccountID)(nil).ToMsgAddress()
 	if ma.SumType != "AddrNone" {
 		t.Fatal(ma.SumType)
 	}

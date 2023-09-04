@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tontest"
 	"github.com/tonkeeper/tongo/wallet"
 )
@@ -27,16 +27,16 @@ func TestSimpleEmulation(t *testing.T) {
 	w, err := wallet.DefaultWalletFromSeed(SEED, client)
 	seqno := uint32(0)
 
-	mock, messages := wallet.NewMockBlockchain(seqno, tontest.Account().Address(tongo.AccountID{}).State(tlb.AccountActive).MustShardAccount())
+	mock, messages := wallet.NewMockBlockchain(seqno, tontest.Account().Address(ton.AccountID{}).State(tlb.AccountActive).MustShardAccount())
 	w, err = wallet.DefaultWalletFromSeed(SEED, mock)
 	if err != nil {
 		t.Fatal(err)
 	}
 	err = w.Send(ctx, wallet.SimpleTransfer{
-		Amount:  tongo.OneTON / 10,
+		Amount:  ton.OneTON / 10,
 		Address: w.GetAddress(),
 	}, wallet.SimpleTransfer{
-		Amount:  tongo.OneTON / 10,
+		Amount:  ton.OneTON / 10,
 		Address: w.GetAddress(),
 	})
 	if err != nil {
@@ -59,7 +59,7 @@ func TestSimpleEmulation(t *testing.T) {
 	if len(tree.Children) != 2 {
 		t.Fatal(len(tree.Children))
 	}
-	if tree.Children[0].TX.Msgs.InMsg.Value.Value.Info.IntMsgInfo.Value.Grams != tongo.OneTON/10 {
+	if tree.Children[0].TX.Msgs.InMsg.Value.Value.Info.IntMsgInfo.Value.Grams != ton.OneTON/10 {
 		t.Fatal("invalid amount")
 	}
 }

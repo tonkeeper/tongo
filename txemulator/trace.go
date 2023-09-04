@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type Tracer struct {
 	e                   *Emulator
-	currentShardAccount map[tongo.AccountID]tlb.ShardAccount
+	currentShardAccount map[ton.AccountID]tlb.ShardAccount
 	blockchain          accountGetter
 	counter             int
 	limit               int
@@ -30,12 +30,12 @@ type TraceOptions struct {
 	blockchain         accountGetter
 	time               int64
 	checkSignature     bool
-	predefinedAccounts map[tongo.AccountID]tlb.ShardAccount
+	predefinedAccounts map[ton.AccountID]tlb.ShardAccount
 }
 
 type accountGetter interface {
-	GetAccountState(ctx context.Context, a tongo.AccountID) (tlb.ShardAccount, error)
-	GetLibraries(ctx context.Context, libraries []tongo.Bits256) (map[tongo.Bits256]*boc.Cell, error)
+	GetAccountState(ctx context.Context, a ton.AccountID) (tlb.ShardAccount, error)
+	GetLibraries(ctx context.Context, libraries []ton.Bits256) (map[ton.Bits256]*boc.Cell, error)
 }
 
 func WithConfig(c *boc.Cell) TraceOption {
@@ -67,7 +67,7 @@ func WithTime(t int64) TraceOption {
 	}
 }
 
-func WithAccountsMap(m map[tongo.AccountID]tlb.ShardAccount) TraceOption {
+func WithAccountsMap(m map[ton.AccountID]tlb.ShardAccount) TraceOption {
 	return func(o *TraceOptions) error {
 		o.predefinedAccounts = m
 		return nil
@@ -76,7 +76,7 @@ func WithAccountsMap(m map[tongo.AccountID]tlb.ShardAccount) TraceOption {
 func WithAccounts(accounts ...tlb.ShardAccount) TraceOption {
 	return func(o *TraceOptions) error {
 		for i := range accounts {
-			a, err := tongo.AccountIDFromTlb(accounts[i].Account.Account.Addr)
+			a, err := ton.AccountIDFromTlb(accounts[i].Account.Account.Addr)
 			if err != nil {
 				return err
 			}
@@ -117,7 +117,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		blockchain:         nil,
 		time:               time.Now().Unix(),
 		checkSignature:     false,
-		predefinedAccounts: make(map[tongo.AccountID]tlb.ShardAccount),
+		predefinedAccounts: make(map[ton.AccountID]tlb.ShardAccount),
 	}
 	for _, o := range options {
 		err := o(&option)
@@ -189,7 +189,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 	default:
 		return nil, fmt.Errorf("can't emulate message with type %v", message.Info.SumType)
 	}
-	accountAddr, err := tongo.AccountIDFromTlb(a)
+	accountAddr, err := ton.AccountIDFromTlb(a)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			return nil, err
 		}
 	}
-	publicLibs := map[tongo.Bits256]*boc.Cell{}
+	publicLibs := map[ton.Bits256]*boc.Cell{}
 	for _, code := range []*boc.Cell{accountCode(state), msgStateInitCode(message)} {
 		if code == nil {
 			continue
@@ -259,6 +259,6 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 	return tree, err
 }
 
-func (t *Tracer) FinalStates() map[tongo.AccountID]tlb.ShardAccount {
+func (t *Tracer) FinalStates() map[ton.AccountID]tlb.ShardAccount {
 	return t.currentShardAccount
 }

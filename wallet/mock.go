@@ -3,8 +3,8 @@ package wallet
 import (
 	"context"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 // SimpleMockBlockchain
@@ -25,7 +25,7 @@ func NewMockBlockchain(seqno uint32, state tlb.ShardAccount) (*SimpleMockBlockch
 	}, c
 }
 
-func (b *SimpleMockBlockchain) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {
+func (b *SimpleMockBlockchain) GetSeqno(ctx context.Context, account ton.AccountID) (uint32, error) {
 	return b.seqno, nil
 }
 
@@ -40,6 +40,6 @@ func (b *SimpleMockBlockchain) SendMessage(ctx context.Context, payload []byte) 
 	return 0, nil
 }
 
-func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {
+func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID ton.AccountID) (tlb.ShardAccount, error) {
 	return b.state, nil
 }

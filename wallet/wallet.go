@@ -3,13 +3,14 @@ package wallet
 import (
 	"context"
 	"crypto/ed25519"
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func DefaultWalletFromSeed(seed string, blockchain blockchain) (Wallet, error) {
@@ -55,26 +56,26 @@ func GenerateWalletAddress(
 	ver Version,
 	workchain int,
 	subWalletId *int,
-) (tongo.AccountID, error) {
+) (ton.AccountID, error) {
 	state, err := GenerateStateInit(key, ver, workchain, subWalletId)
 	if err != nil {
-		return tongo.AccountID{}, fmt.Errorf("can not generate wallet state: %v", err)
+		return ton.AccountID{}, fmt.Errorf("can not generate wallet state: %v", err)
 	}
 	stateCell := boc.NewCell()
 	err = tlb.Marshal(stateCell, state)
 	if err != nil {
-		return tongo.AccountID{}, fmt.Errorf("can not marshal wallet state: %v", err)
+		return ton.AccountID{}, fmt.Errorf("can not marshal wallet state: %v", err)
 	}
 	h, err := stateCell.Hash()
 	if err != nil {
-		return tongo.AccountID{}, err
+		return ton.AccountID{}, err
 	}
 	var hash tlb.Bits256
 	copy(hash[:], h[:])
 	if err != nil {
-		return tongo.AccountID{}, fmt.Errorf("can not calculate state init hash: %v", err)
+		return ton.AccountID{}, fmt.Errorf("can not calculate state init hash: %v", err)
 	}
-	return tongo.AccountID{Workchain: int32(workchain), Address: hash}, nil
+	return ton.AccountID{Workchain: int32(workchain), Address: hash}, nil
 }
 
 func GenerateStateInit(
@@ -145,13 +146,13 @@ func (w *Wallet) RawSendV2(
 	internalMessages []RawMessage,
 	init *tlb.StateInit,
 	waitingConfirmation time.Duration,
-) (tongo.Bits256, error) {
+) (ton.Bits256, error) {
 	if w.blockchain == nil {
-		return tongo.Bits256{}, tongo.BlockchainInterfaceIsNil
+		return ton.Bits256{}, errors.New("blockchain interface is nil")
 	}
 	err := checkMessagesLimit(len(internalMessages), w.ver)
 	if err != nil {
-		return tongo.Bits256{}, err
+		return ton.Bits256{}, nil
 	}
 	bodyCell := boc.NewCell()
 	switch w.ver {
@@ -181,15 +182,15 @@ func (w *Wallet) RawSendV2(
 		}
 		err = tlb.Marshal(bodyCell, body)
 	default:
-		return tongo.Bits256{}, fmt.Errorf("message body generation for this wallet is not supported: %v", err)
+		return ton.Bits256{}, fmt.Errorf("message body generation for this wallet is not supported: %v", err)
 	}
 	if err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not marshal wallet message body: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
 
 	signBytes, err := bodyCell.Sign(w.key)
 	if err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not sign wallet message body: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not sign wallet message body: %v", err)
 	}
 	bits512 := tlb.Bits512{}
 	copy(bits512[:], signBytes[:])
@@ -199,24 +200,24 @@ func (w *Wallet) RawSendV2(
 	}
 	signedBodyCell := boc.NewCell()
 	if err = tlb.Marshal(signedBodyCell, signedBody); err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not marshal signed body: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not marshal signed body: %v", err)
 	}
-	extMsg, err := tongo.CreateExternalMessage(w.address, signedBodyCell, init, 0)
+	extMsg, err := ton.CreateExternalMessage(w.address, signedBodyCell, init, 0)
 	if err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not create external message: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not create external message: %v", err)
 	}
 	extMsgCell := boc.NewCell()
 	err = tlb.Marshal(extMsgCell, extMsg)
 	if err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not marshal wallet external message: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not marshal wallet external message: %v", err)
 	}
 	msgHash, err := extMsgCell.Hash256()
 	if err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not create external message: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not create external message: %v", err)
 	}
 	payload, err := extMsgCell.ToBocCustom(false, false, false, 0)
 	if err != nil {
-		return tongo.Bits256{}, fmt.Errorf("can not serialize external message cell: %v", err)
+		return ton.Bits256{}, fmt.Errorf("can not serialize external message cell: %v", err)
 	}
 	t := time.Now()
 	_, err = w.blockchain.SendMessage(ctx, payload) // TODO: add result code check
@@ -282,9 +283,9 @@ func (w *Wallet) SendV2(
 	ctx context.Context,
 	waitingConfirmation time.Duration,
 	messages ...Sendable,
-) (tongo.Bits256, error) {
+) (ton.Bits256, error) {
 	if w.blockchain == nil {
-		return tongo.Bits256{}, tongo.BlockchainInterfaceIsNil
+		return ton.Bits256{}, errors.New("blockchain interface is nil")
 	}
 
 	var init *tlb.StateInit
@@ -292,7 +293,7 @@ func (w *Wallet) SendV2(
 
 	state, err := w.blockchain.GetAccountState(ctx, w.GetAddress())
 	if err != nil {
-		return tongo.Bits256{}, err
+		return ton.Bits256{}, err
 	}
 	requireInit := false
 	switch w.ver {
@@ -303,7 +304,7 @@ func (w *Wallet) SendV2(
 		if state.Account.Status() == tlb.AccountActive {
 			seqno, err = w.blockchain.GetSeqno(ctx, w.address)
 			if err != nil {
-				return tongo.Bits256{}, err
+				return ton.Bits256{}, err
 			}
 		}
 		requireInit = seqno == 0
@@ -311,7 +312,7 @@ func (w *Wallet) SendV2(
 	if requireInit {
 		i, err := w.getInit()
 		if err != nil {
-			return tongo.Bits256{}, err
+			return ton.Bits256{}, err
 		}
 		init = &i
 	}
@@ -319,12 +320,12 @@ func (w *Wallet) SendV2(
 	for _, m := range messages {
 		intMsg, mode, err := m.ToInternal()
 		if err != nil {
-			return tongo.Bits256{}, err
+			return ton.Bits256{}, err
 		}
 		cell := boc.NewCell()
 		err = tlb.Marshal(cell, intMsg)
 		if err != nil {
-			return tongo.Bits256{}, err
+			return ton.Bits256{}, err
 		}
 		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
 	}
@@ -345,7 +346,7 @@ func (w *Wallet) Send(ctx context.Context, messages ...Sendable) error {
 // Gets actual TON balance for wallet
 func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if w.blockchain == nil {
-		return 0, tongo.BlockchainInterfaceIsNil
+		return 0, errors.New("blockchain interface is nil")
 	}
 	state, err := w.blockchain.GetAccountState(ctx, w.address)
 	if err != nil {

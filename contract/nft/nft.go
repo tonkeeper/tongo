@@ -6,25 +6,25 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/abi"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/wallet"
 )
 
 type Item struct {
-	Address    tongo.AccountID
-	Collection *tongo.AccountID
-	Owner      *tongo.AccountID
+	Address    ton.AccountID
+	Collection *ton.AccountID
+	Owner      *ton.AccountID
 }
 
 type sender interface {
 	Send(context.Context, ...wallet.Sendable) error
-	GetAddress() tongo.AccountID
+	GetAddress() ton.AccountID
 }
 
-func (item Item) Transfer(ctx context.Context, sender sender, destination tongo.AccountID) error {
+func (item Item) Transfer(ctx context.Context, sender sender, destination ton.AccountID) error {
 	if item.Owner != nil && sender.GetAddress() != *item.Owner {
 		return errors.New("sender is not the item owner")
 	}
@@ -32,16 +32,16 @@ func (item Item) Transfer(ctx context.Context, sender sender, destination tongo.
 		ItemAddress:         item.Address,
 		Destination:         destination,
 		ResponseDestination: sender.GetAddress(),
-		AttachedTon:         tongo.OneTON / 20,
+		AttachedTon:         ton.OneTON / 20,
 		ForwardTon:          0,
 	}
 	return sender.Send(ctx, transfer)
 }
 
 type ItemTransferMessage struct {
-	ItemAddress         tongo.AccountID
-	Destination         tongo.AccountID
-	ResponseDestination tongo.AccountID
+	ItemAddress         ton.AccountID
+	Destination         ton.AccountID
+	ResponseDestination ton.AccountID
 	AttachedTon         tlb.Grams
 	ForwardTon          tlb.Grams
 	ForwardPayload      *boc.Cell

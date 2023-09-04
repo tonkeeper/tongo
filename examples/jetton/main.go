@@ -4,13 +4,14 @@ import (
 	"context"
 	"crypto/ed25519"
 	"encoding/base64"
+	"log"
+	"math/big"
+	"time"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/contract/jetton"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/wallet"
-	"log"
-	"math/big"
-	"time"
 )
 
 func main() {

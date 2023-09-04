@@ -2,15 +2,17 @@ package dns
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"github.com/tonkeeper/tongo"
+	"strings"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"strings"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type executor interface {
-	RunSmcMethodByID(context.Context, tongo.AccountID, int, tlb.VmStack) (uint32, tlb.VmStack, error)
+	RunSmcMethodByID(context.Context, ton.AccountID, int, tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 var (
@@ -18,13 +20,13 @@ var (
 )
 
 type DNS struct {
-	root     tongo.AccountID
+	root     ton.AccountID
 	executor executor
 }
 
 // NewDNS
 // If root == nil then use root from network config
-func NewDNS(root tongo.AccountID, e executor) *DNS {
+func NewDNS(root ton.AccountID, e executor) *DNS {
 	return &DNS{
 		root:     root,
 		executor: e,
@@ -33,7 +35,7 @@ func NewDNS(root tongo.AccountID, e executor) *DNS {
 
 func (d *DNS) Resolve(ctx context.Context, domain string) ([]tlb.DNSRecord, error) {
 	if d.executor == nil {
-		return nil, tongo.BlockchainInterfaceIsNil
+		return nil, errors.New("blockchain interface is nil")
 	}
 	if domain == "" {
 		domain = "."
@@ -46,7 +48,7 @@ func (d *DNS) Resolve(ctx context.Context, domain string) ([]tlb.DNSRecord, erro
 	return r, err
 }
 
-func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom []byte) ([]tlb.DNSRecord, error) {
+func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) ([]tlb.DNSRecord, error) {
 	n := int64(len(dom))
 	stack := tlb.VmStack{}
 	val, err := tlb.TlbStructToVmCellSlice(dom)
@@ -96,7 +98,7 @@ func (d *DNS) resolve(ctx context.Context, resolver tongo.AccountID, dom []byte)
 	if record.SumType != "DNSNextResolver" {
 		return nil, fmt.Errorf("should be next resolver")
 	}
-	account, err := tongo.AccountIDFromTlb(record.DNSNextResolver)
+	account, err := ton.AccountIDFromTlb(record.DNSNextResolver)
 	if err != nil {
 		return nil, err
 	}

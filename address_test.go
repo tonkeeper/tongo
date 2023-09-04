@@ -1,4 +1,4 @@
-package account
+package tongo
 
 import (
 	"context"
@@ -6,12 +6,12 @@ import (
 )
 
 func TestParseAddress(t *testing.T) {
-	accountParser := NewAccountParser()
+	parser := DefaultAddressParser()
 
 	const (
-		parseToHumanAddress  int = 1
-		parseToRawAddress        = 2
-		parseDnsToRawAddress     = 3
+		parseToHumanAddress = iota
+		parseToRawAddress
+		parseDnsToRawAddress
 	)
 
 	type testCase struct {
@@ -40,9 +40,15 @@ func TestParseAddress(t *testing.T) {
 			request:   "blackpepper.ton",
 			response:  "0:44556b55c15052eb44c6b75a9eccbc6280d32d598d12e975f435195795bb11d5",
 		},
+		{
+			name:      "Parse dns to raw address",
+			typeParse: parseDnsToRawAddress,
+			request:   "subbotin.ton",
+			response:  "0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb",
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			account, err := accountParser.ParseAddress(context.Background(), test.request)
+			account, err := parser.ParseAddress(context.Background(), test.request)
 			if err != nil {
 				t.Fatalf("failed parse %v address: %v", test.request, err)
 			}

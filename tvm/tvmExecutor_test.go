@@ -6,9 +6,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/txemulator"
 )
 
@@ -19,7 +19,7 @@ func TestRunGetMethod(t *testing.T) {
 	dataCell, _ := boc.DeserializeBocBase64("te6ccsECEgEAAmcAAAAALwAzAFcAbwB8AIEAhgCLAPsBeQG8AfcCAgIHAicCOAI/A1OAH+KPIWfXRAHhzc8BIGKAZ7CGFDhMB09Wc+npbBemPgcgAAAAAAAAaBABBBECAAIDAEQBaHR0cHM6Ly9sb3Rvbi5mdW4vY29sbGVjdGlvbi5qc29uACxodHRwczovL2xvdG9uLmZ1bi9uZnQvART/APSkE/S88sgLBQIBYgYQAgLOBw0CASAIDALXDIhxwCSXwPg0NMDAXGwkl8D4PpA+kAx+gAxcdch+gAx+gAw8AIEs44UMGwiNFIyxwXy4ZUB+kDUMBAj8APgBtMf0z+CEF/MPRRSMLqOhzIQN14yQBPgMDQ0NTWCEC/LJqISuuMCXwSED/LwgCQsB9lE1xwXy4ZH6QCHwAfpA0gAx+gCCCvrwgBuhIZRTFaCh3iLXCwHDACCSBqGRNuIgwv/y4ZIhjj6CEAUTjZHIUAnPFlALzxZxJEkUVEagcIAQyMsFUAfPFlAF+gIVy2oSyx/LPyJus5RYzxcBkTLiAckB+wAQR5QQKjdb4goAggKONSbwAYIQ1TJ22xA3RABtcXCAEMjLBVAHzxZQBfoCFctqEssfyz8ibrOUWM8XAZEy4gHJAfsAkzAyNOJVAvADAHJwghCLdxc1BcjL/1AEzxYQJIBAcIAQyMsFUAfPFlAF+gIVy2oSyx/LPyJus5RYzxcBkTLiAckB+wAAET6RDBwuvLhTYAIBIA4PADs7UTQ0z/6QCDXScIAmn8B+kDUMBAkECPgMHBZbW2AAHQDyMs/WM8WAc8WzMntVIAAJoR+f4AUASwBkA+iAH+KPIWfXRAHhzc8BIGKAZ7CGFDhMB09Wc+npbBemPgcw9Pr6lQ==")
 	config, _ := boc.DeserializeBocBase64(mainnetConfig)
 	index := tlb.Int257(*big.NewInt(100))
-	account, _ := tongo.AccountIDFromRaw("0:4ccba08d80193c3eb4f92cd8cf10bc425ff2d705a552aad6f3453a141e51b7b7")
+	account, _ := ton.AccountIDFromRaw("0:4ccba08d80193c3eb4f92cd8cf10bc425ff2d705a552aad6f3453a141e51b7b7")
 
 	val := tlb.VmStackValue{
 		SumType:  "VmStkInt",
@@ -52,7 +52,7 @@ func TestRunGetMethod_MYADDR(t *testing.T) {
 	codeCell, _ := boc.DeserializeBocHex("b5ee9c72410106010026000114ff00f4a413f4bcf2c80b01020120020302014804050004f2300004d0300009a17d69f0510464af6e")
 	dataCell, _ := boc.DeserializeBocHex("b5ee9c7241010101002a0000500000000000000000febdbf007927e5f1e9aad18bb45255281f521861e27272b2c9e383ad48c1b1333c77b344")
 	config, _ := boc.DeserializeBocBase64(mainnetConfig)
-	account, _ := tongo.AccountIDFromRaw("0:665f75889f630daa0ac81044ece59f42fdcde17d3df692adb9a73cae0959b9e0")
+	account, _ := ton.AccountIDFromRaw("0:665f75889f630daa0ac81044ece59f42fdcde17d3df692adb9a73cae0959b9e0")
 
 	emulator, err := NewEmulator(codeCell[0], dataCell[0], config[0], WithLazyC7Optimization())
 	if err != nil {
@@ -77,7 +77,7 @@ func TestRunGetMethod_MYADDR(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	accountID, err := tongo.AccountIDFromTlb(addr)
+	accountID, err := ton.AccountIDFromTlb(addr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,14 +88,14 @@ func TestEmulator_WithLibraries(t *testing.T) {
 	codeCell, _ := boc.DeserializeSinglRootBase64("te6ccgEBAQEAIwAIQgJYfMeJ7/HIT0bsN5fkX8gJoU/1riTx4MemqZzJ3JBh/w==")
 	dataCell, _ := boc.DeserializeSinglRootBase64("te6ccgEBAQEAJgAASAAAAAFADM/69gpLOqEdnlFlgw9dtQ9qcJxeaDf/99Bpg9BMSw==")
 	config, _ := boc.DeserializeSinglRootBase64(mainnetConfig)
-	account, _ := tongo.AccountIDFromRaw("EQDa2R3ST5ep0u9dXCtgO-1Mp0J_hlZuZFCvofjLaVSY3tlD")
+	account, _ := ton.AccountIDFromRaw("EQDa2R3ST5ep0u9dXCtgO-1Mp0J_hlZuZFCvofjLaVSY3tlD")
 
-	hash := tongo.MustParseHash("587CC789EFF1C84F46EC3797E45FC809A14FF5AE24F1E0C7A6A99CC9DC9061FF")
+	hash := ton.MustParseHash("587CC789EFF1C84F46EC3797E45FC809A14FF5AE24F1E0C7A6A99CC9DC9061FF")
 	cell, err := boc.DeserializeSinglRootBase64("te6ccgEBAQEAXwAAuv8AIN0gggFMl7ohggEznLqxnHGw7UTQ0x/XC//jBOCk8mCBAgDXGCDXCx/tRNDTH9P/0VESuvKhIvkBVBBE+RDyovgAAdMfMSDXSpbTB9QC+wDe0aTIyx/L/8ntVA==")
 	if err != nil {
 		t.Fatalf("boc.DeserializeSinglRootBase64() failed: %v", err)
 	}
-	base64libs, err := txemulator.LibrariesToBase64(map[tongo.Bits256]*boc.Cell{hash: cell})
+	base64libs, err := txemulator.LibrariesToBase64(map[ton.Bits256]*boc.Cell{hash: cell})
 	if err != nil {
 		t.Fatalf("LibrariesToBase64() failed: %v", err)
 	}

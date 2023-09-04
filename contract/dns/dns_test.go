@@ -3,10 +3,11 @@ package dns
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo"
-	"github.com/tonkeeper/tongo/liteapi"
 	"log"
 	"testing"
+
+	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func TestResolve(t *testing.T) {
@@ -36,7 +37,7 @@ func TestResolve(t *testing.T) {
 				t.Fatalf("Unable to resolve domain: %v", err)
 			}
 			if c.success {
-				a, _ := tongo.AccountIDFromTlb(res[0].DNSSmcAddress.Address)
+				a, _ := ton.AccountIDFromTlb(res[0].DNSSmcAddress.Address)
 				if a.ToRaw() != c.wallet {
 					t.Fatal("invalid wallet")
 				}

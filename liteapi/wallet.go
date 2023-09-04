@@ -3,11 +3,12 @@ package liteapi
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo"
+
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
-func (c *Client) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {
+func (c *Client) GetSeqno(ctx context.Context, account ton.AccountID) (uint32, error) {
 	errCode, stack, err := c.RunSmcMethod(ctx, account, "seqno", tlb.VmStack{})
 	if err != nil {
 		return 0, err

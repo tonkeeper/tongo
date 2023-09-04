@@ -2,12 +2,13 @@ package func_testing
 
 import (
 	"context"
-	"github.com/tonkeeper/tongo"
+	"testing"
+
 	"github.com/tonkeeper/tongo/code"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tontest"
 	"github.com/tonkeeper/tongo/txemulator"
-	"testing"
 )
 
 const SOURCE_CODE = `
@@ -88,7 +89,7 @@ func TestExample(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	payTo := tongo.MustParseAccountID("0:ea27294687663e7c460be08e5bcef9341ae3ba6a1e2c4b0448b2f51e5eb45298")
+	payTo := ton.MustParseAccountID("0:ea27294687663e7c460be08e5bcef9341ae3ba6a1e2c4b0448b2f51e5eb45298")
 
 	initData := struct {
 		Counter uint64
@@ -107,7 +108,7 @@ func TestExample(t *testing.T) {
 
 	testAccount := tontest.Account().
 		StateInit(tontest.MustAnyToCell(codeBoc), tontest.MustAnyToCell(initData)).
-		Balance(tongo.OneTON).
+		Balance(ton.OneTON).
 		MustShardAccount()
 
 	tracer, err := txemulator.NewTraceBuilder(

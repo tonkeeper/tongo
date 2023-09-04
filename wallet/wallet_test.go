@@ -9,10 +9,10 @@ import (
 	"log"
 	"testing"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tontest"
 )
 
@@ -92,7 +92,7 @@ func TestLongCommentSerialization(t *testing.T) {
 
 func TestSimpleSend(t *testing.T) {
 	t.Skip()
-	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
+	recipientAddr, _ := ton.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
 	client, err := liteapi.NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -123,8 +123,8 @@ func TestGetSeqno(t *testing.T) {
 }
 
 func TestMockBlockchain(t *testing.T) {
-	recipientAddr, _ := tongo.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
-	client, c := NewMockBlockchain(1, tontest.Account().Balance(10000).Address(tongo.AccountID{}).MustShardAccount())
+	recipientAddr, _ := ton.AccountIDFromRaw("0:507dea7d606f22d9e85678d3eede39bbe133a868d2a0e3e07f5502cb70b8a512")
+	client, c := NewMockBlockchain(1, tontest.Account().Balance(10000).Address(ton.AccountID{}).MustShardAccount())
 	w := initDefaultWallet(client)
 	tonTransfer := SimpleTransfer{
 		Amount:  10000,

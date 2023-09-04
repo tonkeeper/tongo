@@ -7,9 +7,11 @@ import (
 	"crypto/sha512"
 	"errors"
 	"fmt"
-	"github.com/tonkeeper/tongo/boc"
-	"golang.org/x/crypto/pbkdf2"
 	"strings"
+
+	"golang.org/x/crypto/pbkdf2"
+
+	"github.com/tonkeeper/tongo/boc"
 )
 
 func RandomSeed() string {

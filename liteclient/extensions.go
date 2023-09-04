@@ -5,9 +5,10 @@ package liteclient
 import (
 	"bytes"
 	"fmt"
-	"github.com/tonkeeper/tongo"
-	"github.com/tonkeeper/tongo/tl"
 	"io"
+
+	"github.com/tonkeeper/tongo/tl"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 var (
@@ -66,10 +67,10 @@ func (t *LiteServerSignatureSet) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
-func (t TonNodeBlockIdExtC) ToBlockIdExt() tongo.BlockIDExt {
-	res := tongo.BlockIDExt{
-		RootHash: tongo.Bits256(t.RootHash),
-		FileHash: tongo.Bits256(t.FileHash),
+func (t TonNodeBlockIdExtC) ToBlockIdExt() ton.BlockIDExt {
+	res := ton.BlockIDExt{
+		RootHash: ton.Bits256(t.RootHash),
+		FileHash: ton.Bits256(t.FileHash),
 	}
 	res.Seqno = t.Seqno
 	res.Shard = t.Shard
@@ -77,14 +78,14 @@ func (t TonNodeBlockIdExtC) ToBlockIdExt() tongo.BlockIDExt {
 	return res
 }
 
-func AccountID(id tongo.AccountID) LiteServerAccountIdC {
+func AccountID(id ton.AccountID) LiteServerAccountIdC {
 	return LiteServerAccountIdC{
 		Workchain: uint32(id.Workchain),
 		Id:        id.Address,
 	}
 }
 
-func BlockIDExt(id tongo.BlockIDExt) TonNodeBlockIdExtC {
+func BlockIDExt(id ton.BlockIDExt) TonNodeBlockIdExtC {
 	return TonNodeBlockIdExtC{
 		Workchain: uint32(id.Workchain),
 		Shard:     id.Shard,

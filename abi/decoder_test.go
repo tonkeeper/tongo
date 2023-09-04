@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tvm"
 )
 
@@ -151,7 +151,7 @@ func TestSimpleGetMethod(t *testing.T) {
 			dataBytes, _ := hex.DecodeString(c.Data)
 			codeCell, _ := boc.DeserializeBoc(codeBytes)
 			dataCell, _ := boc.DeserializeBoc(dataBytes)
-			account, _ := tongo.AccountIDFromRaw(c.Account)
+			account, _ := ton.AccountIDFromRaw(c.Account)
 
 			var (
 				emulator *tvm.Emulator

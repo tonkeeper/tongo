@@ -5,7 +5,7 @@ package abi
 import (
 	"context"
 
-	"github.com/tonkeeper/tongo"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type ContractInterface string
@@ -42,7 +42,7 @@ const (
 	WhalesNominators      ContractInterface = "whales_nominators"
 )
 
-type InvokeFn func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error)
+type InvokeFn func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error)
 
 // MethodDescription describes a particular method and provides a function to execute it.
 type MethodDescription struct {

@@ -1,4 +1,4 @@
-package tongo
+package ton
 
 import (
 	"testing"

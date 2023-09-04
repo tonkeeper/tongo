@@ -8,16 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tonkeeper/tongo/liteapi"
-
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tvm"
 )
 
-func mustToAddress(x string) tongo.AccountID {
-	accountID, err := tongo.AccountIDFromRaw(x)
+func mustToAddress(x string) ton.AccountID {
+	accountID, err := ton.AccountIDFromRaw(x)
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +24,7 @@ func mustToAddress(x string) tongo.AccountID {
 }
 
 func mustToMsgAddress(x string) tlb.MsgAddress {
-	accountID, err := tongo.AccountIDFromRaw(x)
+	accountID, err := ton.AccountIDFromRaw(x)
 	if err != nil {
 		panic(err)
 	}
@@ -140,11 +139,11 @@ func TestGetMethods(t *testing.T) {
 				Wallet: struct {
 					Workchain uint32
 					Address   tlb.Bits256
-				}{0, tlb.Bits256(tongo.MustParseHash("f3b542fa6d15e4bba8c9aac63aa1b8a97d787ab7dcb34730e1e5a4e78e104b80"))},
+				}{0, tlb.Bits256(ton.MustParseHash("f3b542fa6d15e4bba8c9aac63aa1b8a97d787ab7dcb34730e1e5a4e78e104b80"))},
 				Beneficiary: struct {
 					Workchain uint32
 					Address   tlb.Bits256
-				}{0, tlb.Bits256(tongo.MustParseHash("e01675b731ed41f3a186a29d4a203068f744f68162cc370b0cde92f24ff97de5"))},
+				}{0, tlb.Bits256(ton.MustParseHash("e01675b731ed41f3a186a29d4a203068f744f68162cc370b0cde92f24ff97de5"))},
 				Amount:          1000000000,
 				Period:          2629800,
 				StartTime:       1644413924,
@@ -208,7 +207,7 @@ func TestGetMethods(t *testing.T) {
 			if err != nil {
 				t.Fatalf("DecodeString() failed: %v", err)
 			}
-			accountID, err := tongo.AccountIDFromRaw(tt.account)
+			accountID, err := ton.AccountIDFromRaw(tt.account)
 			if err != nil {
 				t.Fatalf("AccountIDFromRaw() failed: %v", err)
 			}
@@ -248,7 +247,7 @@ func TestGetMethods(t *testing.T) {
 }
 
 func TestWhalesNominators(t *testing.T) {
-	address := tongo.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
+	address := ton.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
 	client, err := liteapi.NewClientWithDefaultMainnet()
 	if err != nil {
 		t.Fatal(err)
@@ -261,7 +260,7 @@ func TestWhalesNominators(t *testing.T) {
 	if len(members.List.Keys()) == 0 {
 		t.Fatal(len(members.List.Keys()))
 	}
-	memberAddress := tongo.NewAccountId(0, members.List.Keys()[1])
+	memberAddress := ton.NewAccountId(0, members.List.Keys()[1])
 	_, v, err = GetMember(context.Background(), client, address, memberAddress.ToMsgAddress())
 	if err != nil {
 		t.Fatal(err)
@@ -285,7 +284,7 @@ func TestWhalesNominators(t *testing.T) {
 
 }
 func mustAccountIDToMsgAddress(account string) tlb.MsgAddress {
-	accountID := tongo.MustParseAccountID(account)
+	accountID := ton.MustParseAccountID(account)
 	return accountID.ToMsgAddress()
 }
 

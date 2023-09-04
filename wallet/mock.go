@@ -2,8 +2,9 @@ package wallet
 
 import (
 	"context"
-	"github.com/tonkeeper/tongo"
+
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 // SimpleMockBlockchain
@@ -11,11 +12,11 @@ import (
 // Only for internal tests and demonstration purposes.
 type SimpleMockBlockchain struct {
 	seqno    uint32
-	state    tongo.AccountInfo
+	state    tlb.ShardAccount
 	messages chan []byte
 }
 
-func NewMockBlockchain(seqno uint32, state tongo.AccountInfo) (*SimpleMockBlockchain, chan []byte) {
+func NewMockBlockchain(seqno uint32, state tlb.ShardAccount) (*SimpleMockBlockchain, chan []byte) {
 	c := make(chan []byte, 100)
 	return &SimpleMockBlockchain{
 		seqno:    seqno,
@@ -24,7 +25,7 @@ func NewMockBlockchain(seqno uint32, state tongo.AccountInfo) (*SimpleMockBlockc
 	}, c
 }
 
-func (b *SimpleMockBlockchain) GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error) {
+func (b *SimpleMockBlockchain) GetSeqno(ctx context.Context, account ton.AccountID) (uint32, error) {
 	return b.seqno, nil
 }
 
@@ -39,28 +40,6 @@ func (b *SimpleMockBlockchain) SendMessage(ctx context.Context, payload []byte) 
 	return 0, nil
 }
 
-func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error) {
-	return tlb.ShardAccount{
-		Account: tlb.Account{
-			SumType: "Account",
-			Account: struct {
-				Addr        tlb.MsgAddress
-				StorageStat tlb.StorageInfo
-				Storage     tlb.AccountStorage
-			}{
-				Addr: accountID.ToMsgAddress(),
-				Storage: tlb.AccountStorage{
-					LastTransLt: 0,
-					Balance: tlb.CurrencyCollection{
-						Grams: tlb.Grams(b.state.Balance),
-					},
-					State: tlb.AccountState{
-						SumType: "AccountActive",
-					},
-				},
-			},
-		},
-		LastTransHash: tlb.Bits256{},
-		LastTransLt:   0,
-	}, nil
+func (b *SimpleMockBlockchain) GetAccountState(ctx context.Context, accountID ton.AccountID) (tlb.ShardAccount, error) {
+	return b.state, nil
 }

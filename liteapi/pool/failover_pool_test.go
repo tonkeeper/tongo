@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteclient"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type mockConn struct {
@@ -19,11 +19,11 @@ func (m *mockConn) ID() int {
 	return 0
 }
 
-func (m *mockConn) MasterHead() tongo.BlockIDExt {
-	return tongo.BlockIDExt{BlockID: tongo.BlockID{Seqno: m.seqno}}
+func (m *mockConn) MasterHead() ton.BlockIDExt {
+	return ton.BlockIDExt{BlockID: ton.BlockID{Seqno: m.seqno}}
 }
 
-func (m *mockConn) SetMasterHead(ext tongo.BlockIDExt) {
+func (m *mockConn) SetMasterHead(ext ton.BlockIDExt) {
 }
 
 func (m *mockConn) MasterSeqno() uint32 {

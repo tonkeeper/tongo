@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/tonkeeper/tongo/code"
 	"log"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/tonkeeper/tongo/code"
 )
 
 func main() {

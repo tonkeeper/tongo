@@ -3,10 +3,11 @@ package tontest
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/tonkeeper/tongo"
+	"time"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"time"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type accountBuilder struct {
@@ -17,12 +18,17 @@ type accountBuilder struct {
 	lastLT     *uint64
 	lastHash   *tlb.Bits256
 	workchain  *int32
-	address    *tongo.AccountID
+	address    *ton.AccountID
 	frozenHash *tlb.Bits256
 }
 
 func Account() accountBuilder {
 	return accountBuilder{}
+}
+
+func (b accountBuilder) Address(a ton.AccountID) accountBuilder {
+	b.address = &a
+	return b
 }
 
 func (b accountBuilder) Balance(grams tlb.Grams) accountBuilder {
@@ -74,7 +80,7 @@ func (b accountBuilder) ShardAccount() (tlb.ShardAccount, error) {
 			},
 		}, nil
 	}
-	var address *tongo.AccountID
+	var address *ton.AccountID
 	if b.address != nil {
 		address = b.address
 	}
@@ -178,8 +184,8 @@ const Internal MsgType = 1
 
 type messageBuilder struct {
 	msgType          MsgType
-	to               *tongo.AccountID
-	from             tongo.AccountID
+	to               *ton.AccountID
+	from             ton.AccountID
 	value            tlb.Grams
 	bounce           bool
 	bounced          bool
@@ -190,11 +196,11 @@ func NewMessage() messageBuilder {
 	return messageBuilder{}
 }
 
-func (b messageBuilder) To(a tongo.AccountID) messageBuilder {
+func (b messageBuilder) To(a ton.AccountID) messageBuilder {
 	b.to = &a
 	return b
 }
-func (b messageBuilder) Internal(from tongo.AccountID, value tlb.Grams) messageBuilder {
+func (b messageBuilder) Internal(from ton.AccountID, value tlb.Grams) messageBuilder {
 	b.msgType = Internal
 	b.value = value
 	b.from = from
@@ -280,7 +286,7 @@ func (b messageBuilder) Message() (tlb.Message, error) {
 	return m, nil
 }
 
-func initToAddress(workchain int32, code, data *boc.Cell) (*tongo.AccountID, error) {
+func initToAddress(workchain int32, code, data *boc.Cell) (*ton.AccountID, error) {
 	initState := boc.NewCell()
 	s := tlb.StateInit{}
 	if code != nil {
@@ -300,7 +306,7 @@ func initToAddress(workchain int32, code, data *boc.Cell) (*tongo.AccountID, err
 	if err != nil {
 		return nil, err
 	}
-	a := tongo.AccountID{Workchain: workchain}
+	a := ton.AccountID{Workchain: workchain}
 	copy(a.Address[:], hash)
 	code.ResetCounters()
 	data.ResetCounters()

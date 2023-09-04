@@ -1,4 +1,4 @@
-package tongo
+package ton
 
 import "github.com/tonkeeper/tongo/tlb"
 

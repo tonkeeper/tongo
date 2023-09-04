@@ -17,10 +17,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/abi"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/wallet"
 )
 
@@ -153,7 +153,7 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof) (bool, ed25519.Publi
 		return false, nil, fmt.Errorf("proof has been expired")
 	}
 
-	accountID, err := tongo.ParseAccountID(tp.Address)
+	accountID, err := ton.ParseAccountID(tp.Address)
 	if err != nil {
 		return false, nil, err
 	}
@@ -244,7 +244,7 @@ func convertTonProofMessage(tp *Proof) (*parsedMessage, error) {
 	}, nil
 }
 
-func (s *Server) getWalletPubKey(ctx context.Context, address tongo.AccountID) (ed25519.PublicKey, error) {
+func (s *Server) getWalletPubKey(ctx context.Context, address ton.AccountID) (ed25519.PublicKey, error) {
 	_, result, err := abi.GetPublicKey(ctx, s.executor, address)
 	if err != nil {
 		return nil, err
@@ -344,7 +344,7 @@ func ParseStateInit(stateInit string) ([]byte, error) {
 	return pubKey[:], nil
 }
 
-func compareStateInitWithAddress(a tongo.AccountID, stateInit string) (bool, error) {
+func compareStateInitWithAddress(a ton.AccountID, stateInit string) (bool, error) {
 	cells, err := boc.DeserializeBocBase64(stateInit)
 	if err != nil || len(cells) != 1 {
 		return false, err

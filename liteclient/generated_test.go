@@ -2,9 +2,10 @@ package liteclient
 
 import (
 	"bytes"
-	"github.com/tonkeeper/tongo/tl"
 	"reflect"
 	"testing"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 var blk = TonNodeBlockIdExtC{

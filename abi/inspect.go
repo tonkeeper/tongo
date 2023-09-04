@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/utils"
 )
 
@@ -55,7 +55,7 @@ func NewContractInspector(opts ...InspectorOption) *contractInspector {
 // The contract is not provided directly,
 // instead, it is expected that "executor" has been created with knowledge of the contract's code and data.
 // Executor must be ready to execute multiple different methods and must not rely on a particular order of execution.
-func (ci contractInspector) InspectContract(ctx context.Context, code []byte, executor Executor, reqAccountID tongo.AccountID) (*ContractDescription, error) {
+func (ci contractInspector) InspectContract(ctx context.Context, code []byte, executor Executor, reqAccountID ton.AccountID) (*ContractDescription, error) {
 	if len(code) == 0 {
 		return &ContractDescription{}, nil
 	}
@@ -163,7 +163,7 @@ func (ci ContractDescription) ImplementedInterfaces() []ContractInterface {
 }
 
 type codeInfo struct {
-	hash    tongo.Bits256
+	hash    ton.Bits256
 	methods map[int64]struct{}
 }
 
@@ -188,7 +188,7 @@ func getCodeInfo(code []byte) (*codeInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	var hash tongo.Bits256
+	var hash ton.Bits256
 	if err = hash.FromBytes(h); err != nil {
 		return nil, err
 	}

@@ -4,7 +4,7 @@ package abi
 import (
 "context"
 "fmt"
-"github.com/tonkeeper/tongo"
+"github.com/tonkeeper/tongo/ton"
 "github.com/tonkeeper/tongo/boc"
 "github.com/tonkeeper/tongo/tlb"
 )
@@ -65,7 +65,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"seqno":                         {DecodeSeqnoResult},
 }
 
-var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){
+var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){
 	66763:  {GetFullDomain},
 	69506:  {GetTelemintTokenName},
 	71463:  {GetTorrentHash},
@@ -172,7 +172,7 @@ var ResultTypes = []interface{}{
 }
 
 type Executor interface {
-	RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
+	RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 type Dnsresolve_RecordsResult struct {
@@ -180,7 +180,7 @@ type Dnsresolve_RecordsResult struct {
 	Result       tlb.DNSRecordSet
 }
 
-func Dnsresolve(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, domain []byte, category tlb.Int257) (string, any, error) {
+func Dnsresolve(ctx context.Context, executor Executor, reqAccountID ton.AccountID, domain []byte, category tlb.Int257) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -226,7 +226,7 @@ type GetAuctionInfoResult struct {
 	AuctionEndTime uint64
 }
 
-func GetAuctionInfo(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetAuctionInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 80697 for "get_auction_info" method
@@ -259,7 +259,7 @@ type GetAuthorityAddressResult struct {
 	Address tlb.MsgAddress
 }
 
-func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 84760 for "get_authority_address" method
@@ -292,7 +292,7 @@ type GetBillAddressResult struct {
 	BillAddress tlb.MsgAddress
 }
 
-func GetBillAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, userAddress tlb.MsgAddress) (string, any, error) {
+func GetBillAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, userAddress tlb.MsgAddress) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -334,7 +334,7 @@ type GetBillAmountResult struct {
 	Amount int64
 }
 
-func GetBillAmount(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetBillAmount(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 96705 for "get_bill_amount" method
@@ -367,7 +367,7 @@ type GetChannelStateResult struct {
 	State uint64
 }
 
-func GetChannelState(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetChannelState(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 106901 for "get_channel_state" method
@@ -402,7 +402,7 @@ type GetCollectionDataResult struct {
 	OwnerAddress      tlb.MsgAddress
 }
 
-func GetCollectionData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetCollectionData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 102491 for "get_collection_data" method
@@ -435,7 +435,7 @@ type GetDomainResult struct {
 	Domain string
 }
 
-func GetDomain(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetDomain(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 119378 for "get_domain" method
@@ -468,7 +468,7 @@ type GetEditorResult struct {
 	Editor tlb.MsgAddress
 }
 
-func GetEditor(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetEditor(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 90228 for "get_editor" method
@@ -501,7 +501,7 @@ type GetFullDomainResult struct {
 	Domain string
 }
 
-func GetFullDomain(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetFullDomain(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 66763 for "get_full_domain" method
@@ -538,7 +538,7 @@ type GetJettonDataResult struct {
 	JettonWalletCode tlb.Any
 }
 
-func GetJettonData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetJettonData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 106029 for "get_jetton_data" method
@@ -571,7 +571,7 @@ type GetLastFillUpTimeResult struct {
 	LastFillUpTime int64
 }
 
-func GetLastFillUpTime(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetLastFillUpTime(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 91481 for "get_last_fill_up_time" method
@@ -607,7 +607,7 @@ type GetLockerBillDataResult struct {
 	LastWithdrawTime  uint32
 }
 
-func GetLockerBillData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetLockerBillData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 118274 for "get_locker_bill_data" method
@@ -645,7 +645,7 @@ type GetLockerDataResult struct {
 	UnlockPeriod         uint32
 }
 
-func GetLockerData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetLockerData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 73490 for "get_locker_data" method
@@ -680,7 +680,7 @@ type GetLpData_MegatonResult struct {
 	LpToJettonPair tlb.Any
 }
 
-func GetLpData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetLpData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 80035 for "get_lp_data" method
@@ -719,7 +719,7 @@ type GetLpMiningData_MegatonResult struct {
 	MiningRateCell tlb.Any
 }
 
-func GetLpMiningData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetLpMiningData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 104122 for "get_lp_mining_data" method
@@ -762,7 +762,7 @@ type GetLpSwapData_MegatonResult struct {
 	JettonBPendingBalance tlb.Int257
 }
 
-func GetLpSwapData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetLpSwapData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 116242 for "get_lp_swap_data" method
@@ -798,7 +798,7 @@ type GetMember_WhalesNominatorResult struct {
 	MemberWithdraw        int64
 }
 
-func GetMember(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, member tlb.MsgAddress) (string, any, error) {
+func GetMember(ctx context.Context, executor Executor, reqAccountID ton.AccountID, member tlb.MsgAddress) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -840,7 +840,7 @@ type GetMembersRaw_WhalesNominatorResult struct {
 	Members WhalesNominatorsMembersList
 }
 
-func GetMembersRaw(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetMembersRaw(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 89295 for "get_members_raw" method
@@ -878,7 +878,7 @@ type GetMiningData_MegatonResult struct {
 	Unknown            uint64
 }
 
-func GetMiningData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetMiningData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 96219 for "get_mining_data" method
@@ -913,7 +913,7 @@ type GetNextProofInfoResult struct {
 	MaxSpan       uint32
 }
 
-func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 81490 for "get_next_proof_info" method
@@ -946,7 +946,7 @@ type GetNftAddressByIndexResult struct {
 	Address tlb.MsgAddress
 }
 
-func GetNftAddressByIndex(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, index tlb.Int257) (string, any, error) {
+func GetNftAddressByIndex(ctx context.Context, executor Executor, reqAccountID ton.AccountID, index tlb.Int257) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -985,7 +985,7 @@ type GetNftContentResult struct {
 	Content tlb.FullContent
 }
 
-func GetNftContent(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, index tlb.Int257, individualContent tlb.Any) (string, any, error) {
+func GetNftContent(ctx context.Context, executor Executor, reqAccountID ton.AccountID, index tlb.Int257, individualContent tlb.Any) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -1033,7 +1033,7 @@ type GetNftDataResult struct {
 	IndividualContent tlb.Any
 }
 
-func GetNftData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetNftData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 102351 for "get_nft_data" method
@@ -1068,7 +1068,7 @@ type GetNominatorDataResult struct {
 	WithdrawFound        bool
 }
 
-func GetNominatorData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, address tlb.Int257) (string, any, error) {
+func GetNominatorData(ctx context.Context, executor Executor, reqAccountID ton.AccountID, address tlb.Int257) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -1113,7 +1113,7 @@ type GetParams_WhalesNominatorResult struct {
 	ReceiptPrice   int64
 }
 
-func GetParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetParams(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 115150 for "get_params" method
@@ -1149,7 +1149,7 @@ type GetPluginListResult struct {
 	}
 }
 
-func GetPluginList(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetPluginList(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 107653 for "get_plugin_list" method
@@ -1212,7 +1212,7 @@ type GetPoolData_StonfiResult struct {
 	CollectedToken1ProtocolFee uint64
 }
 
-func GetPoolData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 81689 for "get_pool_data" method
@@ -1301,7 +1301,7 @@ type GetPoolFullDataResult struct {
 	ProjectedSupply        int64
 }
 
-func GetPoolFullData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetPoolFullData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 92229 for "get_pool_full_data" method
@@ -1338,7 +1338,7 @@ type GetPoolStatusResult struct {
 	BalanceWithdraw        int64
 }
 
-func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 120146 for "get_pool_status" method
@@ -1371,7 +1371,7 @@ type GetPublicKeyResult struct {
 	PublicKey tlb.Int257
 }
 
-func GetPublicKey(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetPublicKey(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 78748 for "get_public_key" method
@@ -1404,7 +1404,7 @@ type GetRevokedTimeResult struct {
 	Time uint64
 }
 
-func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 97667 for "get_revoked_time" method
@@ -1480,7 +1480,7 @@ type GetSaleData_GetgemsAuctionResult struct {
 	IsCanceled       bool
 }
 
-func GetSaleData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetSaleData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 72748 for "get_sale_data" method
@@ -1537,7 +1537,7 @@ type GetStakingStatusResult struct {
 	ProxyStakeLockFinal bool
 }
 
-func GetStakingStatus(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetStakingStatus(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 123928 for "get_staking_status" method
@@ -1570,7 +1570,7 @@ type GetStorageContractAddressResult struct {
 	StorageContractAddress tlb.MsgAddress
 }
 
-func GetStorageContractAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, merkleHash tlb.Int257, fileSize uint64, client tlb.MsgAddress, torrentHash tlb.Int257) (string, any, error) {
+func GetStorageContractAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, merkleHash tlb.Int257, fileSize uint64, client tlb.MsgAddress, torrentHash tlb.Int257) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -1628,7 +1628,7 @@ type GetStorageContractDataResult struct {
 	TorrentHash   tlb.Int257
 }
 
-func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 86593 for "get_storage_contract_data" method
@@ -1665,7 +1665,7 @@ type GetStorageParamsResult struct {
 	MaximalFileSize    uint64
 }
 
-func GetStorageParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetStorageParams(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 104346 for "get_storage_params" method
@@ -1715,7 +1715,7 @@ type GetSubscriptionDataResult struct {
 	SubscriptionId  uint64
 }
 
-func GetSubscriptionData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetSubscriptionData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 92260 for "get_subscription_data" method
@@ -1748,7 +1748,7 @@ type GetSubwalletIdResult struct {
 	SubwalletId uint32
 }
 
-func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 81467 for "get_subwallet_id" method
@@ -1786,7 +1786,7 @@ type GetTelemintAuctionConfigResult struct {
 	Duration      int64
 }
 
-func GetTelemintAuctionConfig(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetTelemintAuctionConfig(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 129619 for "get_telemint_auction_config" method
@@ -1823,7 +1823,7 @@ type GetTelemintAuctionStateResult struct {
 	EndTime int64
 }
 
-func GetTelemintAuctionState(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetTelemintAuctionState(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 122498 for "get_telemint_auction_state" method
@@ -1856,7 +1856,7 @@ type GetTelemintTokenNameResult struct {
 	Beneficiar tlb.Text
 }
 
-func GetTelemintTokenName(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetTelemintTokenName(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 69506 for "get_telemint_token_name" method
@@ -1889,7 +1889,7 @@ type GetTorrentHashResult struct {
 	TorrentHash tlb.Int257
 }
 
-func GetTorrentHash(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetTorrentHash(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 71463 for "get_torrent_hash" method
@@ -1934,7 +1934,7 @@ type GetValidatorControllerDataResult struct {
 	Sudoer                   tlb.MsgAddress
 }
 
-func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 103232 for "get_validator_controller_data" method
@@ -1967,7 +1967,7 @@ type GetWalletAddressResult struct {
 	JettonWalletAddress tlb.MsgAddress
 }
 
-func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
+func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -2012,7 +2012,7 @@ type GetWalletDataResult struct {
 	JettonWalletCode tlb.Any
 }
 
-func GetWalletData(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetWalletData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 97026 for "get_wallet_data" method
@@ -2047,7 +2047,7 @@ type GetWalletParamsResult struct {
 	PublicKey tlb.Int257
 }
 
-func GetWalletParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func GetWalletParams(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 130271 for "get_wallet_params" method
@@ -2080,7 +2080,7 @@ type IsActiveResult struct {
 	IsActive bool
 }
 
-func IsActive(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func IsActive(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 122058 for "is_active" method
@@ -2113,7 +2113,7 @@ type IsPluginInstalledResult struct {
 	Success bool
 }
 
-func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, workchain int32, addrHash tlb.Int257) (string, any, error) {
+func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID ton.AccountID, workchain int32, addrHash tlb.Int257) (string, any, error) {
 	stack := tlb.VmStack{}
 	var (
 		val tlb.VmStackValue
@@ -2159,7 +2159,7 @@ type ListNominatorsResult struct {
 	}
 }
 
-func ListNominators(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func ListNominators(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 111161 for "list_nominators" method
@@ -2195,7 +2195,7 @@ type ListVotesResult struct {
 	}
 }
 
-func ListVotes(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func ListVotes(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 130309 for "list_votes" method
@@ -2230,7 +2230,7 @@ type RoyaltyParamsResult struct {
 	Destination tlb.MsgAddress
 }
 
-func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 85719 for "royalty_params" method
@@ -2263,7 +2263,7 @@ type SeqnoResult struct {
 	State uint32
 }
 
-func Seqno(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error) {
+func Seqno(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
 	// MethodID = 85143 for "seqno" method

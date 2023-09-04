@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteclient"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type connection struct {
@@ -18,17 +18,17 @@ type connection struct {
 
 	mu sync.RWMutex
 	// masterHead is the latest known masterchain head.
-	masterHead tongo.BlockIDExt
+	masterHead ton.BlockIDExt
 }
 
 type masterHeadUpdated struct {
-	Head tongo.BlockIDExt
+	Head ton.BlockIDExt
 	Conn *connection
 }
 
 func (c *connection) Run(ctx context.Context) {
 	for {
-		var head tongo.BlockIDExt
+		var head ton.BlockIDExt
 		for {
 			res, err := c.client.LiteServerGetMasterchainInfo(ctx)
 			if err != nil {
@@ -83,13 +83,13 @@ func (c *connection) Client() *liteclient.Client {
 	return c.client
 }
 
-func (c *connection) MasterHead() tongo.BlockIDExt {
+func (c *connection) MasterHead() ton.BlockIDExt {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.masterHead
 }
 
-func (c *connection) SetMasterHead(head tongo.BlockIDExt) {
+func (c *connection) SetMasterHead(head ton.BlockIDExt) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if head.Seqno > c.masterHead.Seqno {

@@ -17,7 +17,7 @@ import (
 )
 
 var defaultKnownTypes = map[string]string{
-	"accountid":     "tongo.AccountID",
+	"accountid":     "ton.AccountID",
 	"cell":          "boc.Cell",
 	"int8":          "int8",
 	"int32":         "int32",
@@ -86,7 +86,7 @@ func (g *Generator) GetMethods() (string, error) {
 	var builder, methodMap, resultMap, decodersMap strings.Builder
 	builder.WriteString(`
 type Executor interface {
-	RunSmcMethodByID(ctx context.Context, accountID tongo.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
+	RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
 
 	`)
@@ -134,7 +134,7 @@ type Executor interface {
 		builder.WriteRune('\n')
 	}
 	decodersMap.WriteString("}\n\n")
-	methodMap.WriteString("var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID tongo.AccountID) (string, any, error){\n")
+	methodMap.WriteString("var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){\n")
 	for _, k := range utils.GetOrderedKeys(methods) {
 		methodMap.WriteString(fmt.Sprintf("%d: {", k))
 		for _, m := range methods[k] {
@@ -255,7 +255,7 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 	var builder strings.Builder
 	var args []string
 
-	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID tongo.AccountID, ", m.GolangFunctionName()))
+	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ", m.GolangFunctionName()))
 
 	for _, s := range m.Input.StackValues {
 		t, err := g.checkType(s.Type)

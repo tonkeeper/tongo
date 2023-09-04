@@ -8,8 +8,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tvm"
 )
 
@@ -98,7 +98,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			}
 			var addr [32]byte
 			copy(addr[:], address[:])
-			account := tongo.AccountID{Address: addr, Workchain: 0}
+			account := ton.AccountID{Address: addr, Workchain: 0}
 			ci := NewContractInspector()
 			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], tvm.WithLazyC7Optimization())
 			contractDescription, err := ci.InspectContract(context.Background(), codeBytes, emulator, account)

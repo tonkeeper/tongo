@@ -29,7 +29,7 @@ go get github.com/tonkeeper/tongo
 ## Basic types
 Tongo operates with TON blockchain structures described in [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb)
 and some types described in [lite_api.tl](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/lite_api.tl).
-Go definitions of this types you can find in files: `account.go`, `transactions.go`, `models.go` ... 
+Go definitions of these types you can find in files: `ton/account.go`, `ton/transactions.go`, `ton/models.go` ... 
 
 ## Chat
 

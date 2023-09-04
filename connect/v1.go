@@ -3,6 +3,7 @@ package connect
 import (
 	"encoding/base64"
 	"fmt"
+
 	"golang.org/x/crypto/nacl/sign"
 )
 

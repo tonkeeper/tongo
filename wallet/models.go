@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type Version int
@@ -66,9 +66,9 @@ func init() {
 }
 
 type blockchain interface {
-	GetSeqno(ctx context.Context, account tongo.AccountID) (uint32, error)
+	GetSeqno(ctx context.Context, account ton.AccountID) (uint32, error)
 	SendMessage(ctx context.Context, payload []byte) (uint32, error)
-	GetAccountState(ctx context.Context, accountID tongo.AccountID) (tlb.ShardAccount, error)
+	GetAccountState(ctx context.Context, accountID ton.AccountID) (tlb.ShardAccount, error)
 }
 
 func GetCodeByVer(ver Version) *boc.Cell {
@@ -112,7 +112,7 @@ func (v Version) ToString() string {
 
 type Wallet struct {
 	key         ed25519.PrivateKey
-	address     tongo.AccountID
+	address     ton.AccountID
 	ver         Version
 	subWalletId uint32
 	blockchain  blockchain
@@ -120,7 +120,7 @@ type Wallet struct {
 
 // GetAddress returns current wallet address but you can also call function GenerateWalletAddress
 // which returns same address but doesn't require blockchain connection for calling
-func (w *Wallet) GetAddress() tongo.AccountID {
+func (w *Wallet) GetAddress() ton.AccountID {
 	return w.address
 }
 
@@ -156,7 +156,7 @@ type Sendable interface {
 
 type SimpleTransfer struct {
 	Amount     tlb.Grams
-	Address    tongo.AccountID
+	Address    ton.AccountID
 	Comment    string
 	Bounceable bool
 }
@@ -180,7 +180,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 	}{
 		IhrDisabled: true,
 		Bounce:      m.Bounceable,
-		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
+		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
 	}
 	info.IntMsgInfo.Value.Grams = m.Amount
@@ -203,7 +203,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 
 type Message struct {
 	Amount  tlb.Grams
-	Address tongo.AccountID
+	Address ton.AccountID
 	Body    *boc.Cell
 	Code    *boc.Cell
 	Data    *boc.Cell
@@ -230,7 +230,7 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 	}{
 		IhrDisabled: true,
 		Bounce:      m.Bounce,
-		Src:         (*tongo.AccountID)(nil).ToMsgAddress(),
+		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
 	}
 	info.IntMsgInfo.Value.Grams = m.Amount

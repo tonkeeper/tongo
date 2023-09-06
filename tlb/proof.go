@@ -281,6 +281,29 @@ type ConfigParams struct {
 	Config     Hashmap[Uint32, Ref[boc.Cell]] `tlb:"^"`
 }
 
+// CloneKeepingSubsetOfKeys returns a new ConfigParams with only the keys specified in the keys parameter.
+func (params *ConfigParams) CloneKeepingSubsetOfKeys(keys []uint32) ConfigParams {
+	keysMap := make(map[uint32]struct{})
+	for _, key := range keys {
+		keysMap[key] = struct{}{}
+	}
+	var newKeys []Uint32
+	var newValues []Ref[boc.Cell]
+	for _, item := range params.Config.Items() {
+		if _, ok := keysMap[uint32(item.Key)]; ok {
+			newKeys = append(newKeys, item.Key)
+			newValues = append(newValues, item.Value)
+		}
+	}
+	return ConfigParams{
+		ConfigAddr: params.ConfigAddr,
+		Config: Hashmap[Uint32, Ref[boc.Cell]]{
+			keys:   newKeys,
+			values: newValues,
+		},
+	}
+}
+
 // ^[ flags:(## 16) { flags <= 1 }
 // validator_info:ValidatorInfo
 // prev_blocks:OldMcBlocksInfo

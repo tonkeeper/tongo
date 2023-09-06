@@ -40,7 +40,7 @@ func TestConfigParams_CloneKeepingSubsetOfKeys(t *testing.T) {
 			for _, item := range clone.Config.Items() {
 				clonedKeys[uint32(item.Key)] = struct{}{}
 			}
-			if reflect.DeepEqual(clonedKeys, tt.expectedKeys) {
+			if !reflect.DeepEqual(clonedKeys, tt.expectedKeys) {
 				t.Fatalf("expected keys: %v, got keys: %v", tt.expectedKeys, clonedKeys)
 			}
 		})

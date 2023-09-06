@@ -67,15 +67,18 @@ func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) (
 		ResolvedBits int64
 		Result       boc.Cell
 	}
-	if result.ResolvedBits&0b111 != 0 {
-		return nil, fmt.Errorf("%w: invalid qty of resolved bits", ErrNotResolved)
-	}
-	if result.ResolvedBits == 0 {
+	if len(stack) == 2 && stack[0].SumType == "VmStkTinyInt" && stack[0].VmStkTinyInt == 0 && stack[1].SumType == "VmStkNull" {
 		return nil, ErrNotResolved
 	}
 	err = stack.Unmarshal(&result)
 	if err != nil {
 		return nil, err
+	}
+	if result.ResolvedBits&0b111 != 0 {
+		return nil, fmt.Errorf("%w: invalid qty of resolved bits", ErrNotResolved)
+	}
+	if result.ResolvedBits == 0 {
+		return nil, ErrNotResolved
 	}
 	if result.ResolvedBits/8 == n {
 		var recordSet tlb.DNSRecordSet

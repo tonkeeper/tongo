@@ -5094,7 +5094,7 @@ func (u *Bits96) UnmarshalJSON(b []byte) error {
 	if len(bs) != 12 {
 		return fmt.Errorf("can't parse Bits96 %v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
 	return nil
 }
 
@@ -5116,7 +5116,7 @@ func (u *Bits256) UnmarshalJSON(b []byte) error {
 	if len(bs) != 32 {
 		return fmt.Errorf("can't parse Bits256 %v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
 	return nil
 }
 
@@ -5138,7 +5138,7 @@ func (u *Bits264) UnmarshalJSON(b []byte) error {
 	if len(bs) != 33 {
 		return fmt.Errorf("can't parse Bits264 %v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
 	return nil
 }
 
@@ -5160,7 +5160,7 @@ func (u *Bits320) UnmarshalJSON(b []byte) error {
 	if len(bs) != 40 {
 		return fmt.Errorf("can't parse Bits320 %v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
 	return nil
 }
 
@@ -5182,7 +5182,7 @@ func (u *Bits352) UnmarshalJSON(b []byte) error {
 	if len(bs) != 44 {
 		return fmt.Errorf("can't parse Bits352 %v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
 	return nil
 }
 
@@ -5204,7 +5204,7 @@ func (u *Bits512) UnmarshalJSON(b []byte) error {
 	if len(bs) != 64 {
 		return fmt.Errorf("can't parse Bits512 %v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
 	return nil
 }
 	

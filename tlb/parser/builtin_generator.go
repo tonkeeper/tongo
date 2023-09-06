@@ -280,7 +280,7 @@ func (u *Bits%v) UnmarshalJSON(b []byte) error {
 	if len(bs) != %v {
 		return fmt.Errorf("can't parse Bits%v %%v", string(b))
 	}
-	copy(b[:], bs)
+	copy(u[:], bs)
     return nil
 }
 	`, i, i/8, i, i, i, i, i/8, i)

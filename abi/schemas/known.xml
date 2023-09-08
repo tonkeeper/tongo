@@ -479,6 +479,10 @@
         </output>
     </get_method>
 
+    <!--   Internal messages    -->
+    <internal name="bounce">
+        bounce_message#ffffffff payload:Cell = InternalMsgBody;
+    </internal>
 
     <!--    Text    -->
     <internal name="text_comment">
@@ -690,6 +694,11 @@
         query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
     </internal>
 
+    <!-- Auction -->
+    <internal name="auction_fill_up" interface="auction">
+        auction_fill_up#370fec51 query_id:uint64 = InternalMsgBody;
+    </internal>
+
     <!--    Telegram    -->
     <internal name="telemint_deploy" interface="telemint">
         telemint_msg_deploy#4637289a sig:bits512 msg:TelemintUnsignedDeploy = TelemintMsg;
@@ -706,6 +715,12 @@
     </internal>
     <internal name="teleitem_cancel_auction" interface="teleitem">
         teleitem_msg_cancel_auction#371638ae query_id:int64 = TeleitemMsg;
+    </internal>
+    <internal name="teleitem_ok" interface="teleitem">
+        teleitem_msg_ok#a37a0983 query_id:int64 = TeleitemMsg;
+    </internal>
+    <internal name="teleitem_return_bid" interface="teleitem">
+        teleitem_return_bid#a43227e1 cur_lt:int64 = TeleitemMsg;
     </internal>
 
     <internal name="whales_nominators_withdraw">

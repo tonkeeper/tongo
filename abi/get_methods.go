@@ -13,6 +13,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"dnsresolve":                    {DecodeDnsresolve_RecordsResult},
 	"get_auction_info":              {DecodeGetAuctionInfoResult},
 	"get_authority_address":         {DecodeGetAuthorityAddressResult},
+	"get_balances":                  {DecodeGetBalancesResult},
 	"get_bill_address":              {DecodeGetBillAddressResult},
 	"get_bill_amount":               {DecodeGetBillAmountResult},
 	"get_channel_state":             {DecodeGetChannelStateResult},
@@ -24,6 +25,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_last_fill_up_time":         {DecodeGetLastFillUpTimeResult},
 	"get_locker_bill_data":          {DecodeGetLockerBillDataResult},
 	"get_locker_data":               {DecodeGetLockerDataResult},
+	"get_lockup_data":               {DecodeGetLockupDataResult},
 	"get_lp_data":                   {DecodeGetLpData_MegatonResult},
 	"get_lp_mining_data":            {DecodeGetLpMiningData_MegatonResult},
 	"get_lp_swap_data":              {DecodeGetLpSwapData_MegatonResult},
@@ -81,6 +83,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
 	86593:  {GetStorageContractData},
+	87878:  {GetBalances},
 	89295:  {GetMembersRaw},
 	90228:  {GetEditor},
 	91481:  {GetLastFillUpTime},
@@ -97,6 +100,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	104346: {GetStorageParams},
 	106029: {GetJettonData},
 	106901: {GetChannelState},
+	107305: {GetLockupData},
 	107653: {GetPluginList},
 	111161: {ListNominators},
 	115150: {GetParams},
@@ -116,6 +120,7 @@ var ResultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
 	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
+	&GetBalancesResult{},
 	&GetBillAddressResult{},
 	&GetBillAmountResult{},
 	&GetChannelStateResult{},
@@ -127,6 +132,7 @@ var ResultTypes = []interface{}{
 	&GetLastFillUpTimeResult{},
 	&GetLockerBillDataResult{},
 	&GetLockerDataResult{},
+	&GetLockupDataResult{},
 	&GetLpData_MegatonResult{},
 	&GetLpMiningData_MegatonResult{},
 	&GetLpSwapData_MegatonResult{},
@@ -286,6 +292,41 @@ func DecodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resu
 	var result GetAuthorityAddressResult
 	err = stack.Unmarshal(&result)
 	return "GetAuthorityAddressResult", result, err
+}
+
+type GetBalancesResult struct {
+	TonBalance           int64
+	TotalRestrictedValue int64
+	TotalLockedValue     int64
+}
+
+func GetBalances(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 87878 for "get_balances" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 87878, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetBalancesResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetBalancesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetBalancesResult
+	err = stack.Unmarshal(&result)
+	return "GetBalancesResult", result, err
 }
 
 type GetBillAddressResult struct {
@@ -672,6 +713,44 @@ func DecodeGetLockerDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	var result GetLockerDataResult
 	err = stack.Unmarshal(&result)
 	return "GetLockerDataResult", result, err
+}
+
+type GetLockupDataResult struct {
+	StartTime     int64
+	TotalDuration int64
+	UnlockPeriod  int64
+	CliffDiration int64
+	TotalAmount   int64
+	AllowElector  int64
+}
+
+func GetLockupData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 107305 for "get_lockup_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 107305, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLockupDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLockupDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLockupDataResult
+	err = stack.Unmarshal(&result)
+	return "GetLockupDataResult", result, err
 }
 
 type GetLpData_MegatonResult struct {

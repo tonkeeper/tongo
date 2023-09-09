@@ -38,5 +38,8 @@
         pay_to#f93bb43f query_id:uint64 owner:MsgAddress exit_code:uint32
         params:(Either StonfiPayToParams ^StonfiPayToParams) = InternalMsgBody;
     </internal>
+    <jetton_payload name="stonfi_swap" interface="stonfi_router">
+        swap#25938561 token_wallet:MsgAddress min_out:(VarUInteger 16) to_address:MsgAddress referral_address:(Maybe MsgAddress) = JettonPayload;
+    </jetton_payload>
 
 </abi>

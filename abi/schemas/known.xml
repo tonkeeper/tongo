@@ -542,7 +542,7 @@
     <internal name="jetton_transfer" interface="tep74">
         transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
         response_destination:MsgAddress custom_payload:(Maybe ^Cell)
-        forward_ton_amount:(VarUInteger 16) forward_payload:(Either Cell ^Cell)
+        forward_ton_amount:(VarUInteger 16) forward_payload:(Either JettonPayload ^JettonPayload) <!-- todo: maybe replace custom non-standard types with xml like <JettonPayload>Cell</JettonPayload>-->
         = InternalMsgBody;
     </internal>
     <internal name="jetton_internal_transfer" interface="tep74">
@@ -554,7 +554,7 @@
     </internal>
     <internal name="jetton_burn" interface="tep74">
         burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
-        response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+        response_destination:MsgAddress custom_payload:(Maybe ^JettonPayload)
         = InternalMsgBody;
     </internal>
     <internal name="jetton_burn_notification" interface="tep74">
@@ -563,7 +563,7 @@
     </internal>
     <internal name="jetton_notify" interface="tep74">
         transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
-        sender:MsgAddress forward_payload:(Either Cell ^Cell)
+        sender:MsgAddress forward_payload:(Either JettonPayload ^JettonPayload)
         = InternalMsgBody;
     </internal>
 
@@ -754,6 +754,10 @@
     <internal name="whales_nominators_accept_withdraws" interface="whales_nominators">
         accept_withdraws#a19fd934 query_id:uint64 members:Cell= InternalMsgBody;
     </internal>
+
+    <jetton_payload name="text_comment">
+        jetton_payload#00000000 text:Text = JettonMsgPayload;
+    </jetton_payload>
 
     <external name="wallet_signed_v3" interface="wallet_v3">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =

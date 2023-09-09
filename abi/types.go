@@ -214,7 +214,7 @@ type JettonTransferMsgBody struct {
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
 	ForwardTonAmount    tlb.VarUInteger16
-	ForwardPayload      tlb.EitherRef[tlb.Any]
+	ForwardPayload      tlb.EitherRef[JettonPayload]
 }
 
 type OfferStorageContractMsgBody struct {
@@ -418,7 +418,7 @@ type JettonBurnMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
-	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
+	CustomPayload       tlb.Maybe[tlb.Ref[JettonPayload]]
 }
 
 type TonstakePoolSetRolesMsgBody struct {
@@ -480,7 +480,7 @@ type JettonNotifyMsgBody struct {
 	QueryId        uint64
 	Amount         tlb.VarUInteger16
 	Sender         tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[tlb.Any]
+	ForwardPayload tlb.EitherRef[JettonPayload]
 }
 
 type SubscriptionPaymentMsgBody struct{}

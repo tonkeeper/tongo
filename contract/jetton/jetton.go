@@ -54,7 +54,7 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 	}
 	if tm.ForwardPayload != nil {
 		msgBody.ForwardPayload.IsRight = true
-		msgBody.ForwardPayload.Value = tlb.Any(*tm.ForwardPayload)
+		msgBody.ForwardPayload.Value = abi.JettonPayload{SumType: abi.UnknownJettonOp, Value: tm.ForwardPayload}
 	}
 	if err := c.WriteUint(0xf8a7ea5, 32); err != nil {
 		return tlb.Message{}, 0, err

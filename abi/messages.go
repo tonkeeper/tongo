@@ -16,55 +16,55 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		return "", nil, err
 	}
 	switch uint32(tag) {
-	case TextCommentMsgOpCode: // 0x0
+	case TextCommentMsgOpCode: // 0x00000000
 		var res TextCommentMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TextCommentMsgOp, nil, err
 		}
 		return TextCommentMsgOp, res, nil
-	case ProveOwnershipMsgOpCode: // 0x4ded148
+	case ProveOwnershipMsgOpCode: // 0x04ded148
 		var res ProveOwnershipMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ProveOwnershipMsgOp, nil, err
 		}
 		return ProveOwnershipMsgOp, res, nil
-	case NftOwnershipAssignedMsgOpCode: // 0x5138d91
+	case NftOwnershipAssignedMsgOpCode: // 0x05138d91
 		var res NftOwnershipAssignedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return NftOwnershipAssignedMsgOp, nil, err
 		}
 		return NftOwnershipAssignedMsgOp, res, nil
-	case OwnershipProofMsgOpCode: // 0x524c7ae
+	case OwnershipProofMsgOpCode: // 0x0524c7ae
 		var res OwnershipProofMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return OwnershipProofMsgOp, nil, err
 		}
 		return OwnershipProofMsgOp, res, nil
-	case ChallengeQuarantinedChannelStateMsgOpCode: // 0x88eaa32
+	case ChallengeQuarantinedChannelStateMsgOpCode: // 0x088eaa32
 		var res ChallengeQuarantinedChannelStateMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return ChallengeQuarantinedChannelStateMsgOp, nil, err
 		}
 		return ChallengeQuarantinedChannelStateMsgOp, res, nil
-	case TonstakePoolWithdrawalMsgOpCode: // 0xa77535c
+	case TonstakePoolWithdrawalMsgOpCode: // 0x0a77535c
 		var res TonstakePoolWithdrawalMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return TonstakePoolWithdrawalMsgOp, nil, err
 		}
 		return TonstakePoolWithdrawalMsgOp, res, nil
-	case SbtOwnerInfoMsgOpCode: // 0xdd607e3
+	case SbtOwnerInfoMsgOpCode: // 0x0dd607e3
 		var res SbtOwnerInfoMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return SbtOwnerInfoMsgOp, nil, err
 		}
 		return SbtOwnerInfoMsgOp, res, nil
-	case InitPaymentChannelMsgOpCode: // 0xe0620c2
+	case InitPaymentChannelMsgOpCode: // 0x0e0620c2
 		var res InitPaymentChannelMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return InitPaymentChannelMsgOp, nil, err
 		}
 		return InitPaymentChannelMsgOp, res, nil
-	case JettonTransferMsgOpCode: // 0xf8a7ea5
+	case JettonTransferMsgOpCode: // 0x0f8a7ea5
 		var res JettonTransferMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
 			return JettonTransferMsgOp, nil, err
@@ -773,15 +773,15 @@ const (
 type MsgOpCode = uint32
 
 const (
-	TextCommentMsgOpCode                             MsgOpCode = 0x0
-	ProveOwnershipMsgOpCode                          MsgOpCode = 0x4ded148
-	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x5138d91
-	OwnershipProofMsgOpCode                          MsgOpCode = 0x524c7ae
-	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x88eaa32
-	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0xa77535c
-	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0xdd607e3
-	InitPaymentChannelMsgOpCode                      MsgOpCode = 0xe0620c2
-	JettonTransferMsgOpCode                          MsgOpCode = 0xf8a7ea5
+	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
+	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
+	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
+	OwnershipProofMsgOpCode                          MsgOpCode = 0x0524c7ae
+	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x088eaa32
+	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0x0a77535c
+	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0x0dd607e3
+	InitPaymentChannelMsgOpCode                      MsgOpCode = 0x0e0620c2
+	JettonTransferMsgOpCode                          MsgOpCode = 0x0f8a7ea5
 	OfferStorageContractMsgOpCode                    MsgOpCode = 0x107c49ef
 	TonstakeNftInitMsgOpCode                         MsgOpCode = 0x132f9a45
 	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e

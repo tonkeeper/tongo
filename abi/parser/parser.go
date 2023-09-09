@@ -7,10 +7,12 @@ import (
 )
 
 type ABI struct {
-	Methods   []GetMethod `xml:"get_method"`
-	Internals []Message   `xml:"internal"`
-	Externals []Message   `xml:"external"`
-	Types     []string    `xml:"types"`
+	Methods        []GetMethod `xml:"get_method"`
+	Internals      []Message   `xml:"internal"`
+	Externals      []Message   `xml:"external"`
+	JettonPayloads []Message   `xml:"jetton_payload"`
+	NFTPayloads    []Message   `xml:"nft_payload"`
+	Types          []string    `xml:"types"`
 }
 
 type Message struct {

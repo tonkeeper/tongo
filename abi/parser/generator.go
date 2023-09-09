@@ -60,12 +60,13 @@ type TLBMsgBody struct {
 }
 
 type Generator struct {
-	knownTypes        map[string]string
-	abi               ABI
-	newTlbTypes       map[string]struct{}
-	loadedTlbTypes    []string
-	loadedTlbMsgTypes map[uint32]TLBMsgBody
-	typeName          string
+	knownTypes            map[string]string
+	abi                   ABI
+	newTlbTypes           map[string]struct{}
+	loadedTlbTypes        []string
+	loadedTlbMsgTypes     map[uint32]TLBMsgBody
+	loadedJettonsMsgTypes map[uint32]TLBMsgBody
+	typeName              string
 }
 
 func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
@@ -73,10 +74,11 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 		knownTypes = defaultKnownTypes
 	}
 	g := &Generator{
-		knownTypes:        knownTypes,
-		abi:               abi,
-		loadedTlbMsgTypes: make(map[uint32]TLBMsgBody),
-		newTlbTypes:       make(map[string]struct{}),
+		knownTypes:            knownTypes,
+		abi:                   abi,
+		loadedTlbMsgTypes:     make(map[uint32]TLBMsgBody),
+		loadedJettonsMsgTypes: make(map[uint32]TLBMsgBody),
+		newTlbTypes:           make(map[string]struct{}),
 	}
 	err := g.registerABI()
 	return g, err
@@ -167,7 +169,13 @@ func (g *Generator) registerABI() error {
 		}
 	}
 	for _, internal := range g.abi.Internals {
-		err := g.registerMsgType(internal.Name, internal.Input, internal.FixedLength)
+		err := registerMstType(g.loadedTlbMsgTypes, "MsgBody", internal.Name, internal.Input, internal.FixedLength)
+		if err != nil {
+			return err
+		}
+	}
+	for _, jetton := range g.abi.JettonPayloads {
+		err := registerMstType(g.loadedJettonsMsgTypes, "JettonPayload", jetton.Name, jetton.Input, jetton.FixedLength)
 		if err != nil {
 			return err
 		}
@@ -197,7 +205,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
+func registerMstType(known map[uint32]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -217,11 +225,11 @@ func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
 	}
 
 	var typePrefix string
-	_, ok := g.loadedTlbMsgTypes[uint32(tag.Val)]
+	_, ok := known[uint32(tag.Val)]
 	if ok {
 		typePrefix = utils.ToCamelCase(parsed.Declarations[0].Constructor.Name)
 	} else {
-		typePrefix = utils.ToCamelCase(name) + "MsgBody"
+		typePrefix = utils.ToCamelCase(name) + postfix
 	}
 
 	t, err := gen.GenerateGolangTypes(parsed.Declarations, typePrefix, true)
@@ -229,8 +237,8 @@ func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
 		return fmt.Errorf("can't decode %v error %w", s, err)
 	}
 
-	g.loadedTlbMsgTypes[uint32(tag.Val)] = TLBMsgBody{
-		TypeName:      utils.ToCamelCase(name) + "MsgBody",
+	known[uint32(tag.Val)] = TLBMsgBody{
+		TypeName:      utils.ToCamelCase(name) + postfix,
 		OperationName: utils.ToCamelCase(name),
 		Tag:           tag.Val,
 		Code:          t,
@@ -454,7 +462,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 	var knownOpcodes []opCode
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
 		tlbType := g.loadedTlbMsgTypes[k]
-		builder.WriteString(fmt.Sprintf("case %sMsgOpCode:  // 0x%x\n", tlbType.OperationName, tlbType.Tag))
+		builder.WriteString(fmt.Sprintf("case %sMsgOpCode:  // 0x%08x\n", tlbType.OperationName, tlbType.Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", tlbType.TypeName))
 		builder.WriteString(fmt.Sprintf(`if err := tlb.Unmarshal(cell, &res); err != nil { return %sMsgOp, nil, err; }`, tlbType.OperationName))
 		builder.WriteString("\n")
@@ -482,7 +490,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("type MsgOpCode = uint32\n")
 	builder.WriteString("const (\n")
 	for _, v := range knownOpcodes {
-		fmt.Fprintf(&builder, `%vMsgOpCode MsgOpCode = 0x%x`+"\n", v.OperationName, v.Tag)
+		fmt.Fprintf(&builder, `%vMsgOpCode MsgOpCode = 0x%08x`+"\n", v.OperationName, v.Tag)
 	}
 	builder.WriteString(")\n")
 	builder.WriteString("var KnownMsgTypes = map[string]any{\n")
@@ -490,11 +498,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 		fmt.Fprintf(&builder, "%vMsgOp: %v{},\n", v[0], v[1])
 	}
 	builder.WriteString("}\n\n")
-	b, err := format.Source([]byte(builder.String()))
-	if err != nil {
-		panic(err)
-	}
-	return string(b)
+	return builder.String()
 }
 
 type templateContext struct {
@@ -573,4 +577,83 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+func (g *Generator) RenderJetton() (string, error) {
+	var builder strings.Builder
+
+	builder.WriteString(`
+
+func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
+	if cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
+		return nil
+	}
+	tempCell := cell.CopyRemaining()
+	op64, err := tempCell.ReadUint(32)
+	if errors.Is(err, boc.ErrNotEnoughBits) {
+		j.SumType = UnknownJettonOp
+		j.Value = cell.CopyRemaining()
+		return nil
+	}
+	op := uint32(op64)
+	j.OpCode = &op
+	switch  op {
+`)
+
+	var knownTypes [][2]string
+	var knownOpcodes []opCode
+	for _, k := range utils.GetOrderedKeys(g.loadedJettonsMsgTypes) {
+		tlbType := g.loadedJettonsMsgTypes[k]
+		fmt.Fprintf(&builder, "case %sJettonOpCode:  // 0x%08x\n", tlbType.OperationName, tlbType.Tag)
+		fmt.Fprintf(&builder, "var res %s\n", tlbType.TypeName)
+		fmt.Fprintf(&builder, `if err := tlb.Unmarshal(tempCell, &res); err == nil { 
+	j.SumType = %vJettonOp
+	j.Value = res
+	return  nil 
+}`, tlbType.OperationName)
+		builder.WriteString("\n")
+		if tlbType.FixedLength {
+			builder.WriteString(fmt.Sprintf(`if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
+			builder.WriteString("\n")
+		}
+		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
+		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
+	}
+
+	builder.WriteString(`
+}
+		j.SumType = UnknownJettonOp
+		j.Value = cell.CopyRemaining()
+	
+	return nil
+}
+const (
+`)
+	for _, v := range knownTypes {
+		fmt.Fprintf(&builder, `%vJettonOp JettonOpName = "%v"`+"\n", v[0], v[0])
+	}
+	builder.WriteString(`
+
+`)
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, `%sJettonOpCode JettonOpCode = 0x%08x`+"\n", v.OperationName, v.Tag)
+	}
+	builder.WriteString(")\n")
+	builder.WriteString("var KnownJettonTypes = map[string]any{\n")
+	for _, v := range knownTypes {
+		fmt.Fprintf(&builder, "%vJettonOp: %v{},\n", v[0], v[1])
+	}
+	builder.WriteString(`}
+var jettonOpCodes = map[JettonOpName]JettonOpCode{
+`)
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, "%sJettonOp: %sJettonOpCode,\n", v.OperationName, v.OperationName)
+	}
+	builder.WriteString("\n}\n")
+	for _, k := range utils.GetOrderedKeys(g.loadedJettonsMsgTypes) {
+		builder.WriteString(g.loadedJettonsMsgTypes[k].Code)
+		builder.WriteRune('\n')
+	}
+	builder.WriteRune('\n')
+	return builder.String(), nil
 }

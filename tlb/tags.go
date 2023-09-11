@@ -19,11 +19,25 @@ type Tag struct {
 
 type tag struct {
 	IsRef      bool
+	IsMaybe    bool
+	IsMaybeRef bool
+	// TODO: figure out if we need IsOptional. It seems the flag is not in use.
 	IsOptional bool
 }
 
 func parseTag(s string) (tag, error) {
 	var t tag
+	if len(s) == 0 {
+		return t, nil
+	}
+	if strings.HasPrefix(s, "maybe^") {
+		t.IsMaybeRef = true
+		s = s[len("maybe^"):]
+	}
+	if strings.HasPrefix(s, "maybe") {
+		t.IsMaybe = true
+		s = s[len("maybe"):]
+	}
 	if len(s) == 0 {
 		return t, nil
 	}

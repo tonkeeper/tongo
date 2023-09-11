@@ -29,7 +29,29 @@ func encode(c *boc.Cell, o any, encoder *Encoder) error {
 	if err != nil {
 		return err
 	}
-	if t.IsRef {
+	switch {
+	case t.IsMaybeRef:
+		if reflect.ValueOf(o).IsNil() {
+			err := c.WriteBit(false)
+			return err
+		}
+		if err := c.WriteBit(true); err != nil {
+			return err
+		}
+		c, err = c.NewRef()
+		if err != nil {
+			return err
+		}
+
+	case t.IsMaybe:
+		if reflect.ValueOf(o).IsNil() {
+			err := c.WriteBit(false)
+			return err
+		}
+		if err := c.WriteBit(true); err != nil {
+			return err
+		}
+	case t.IsRef:
 		c, err = c.NewRef()
 		if err != nil {
 			return err

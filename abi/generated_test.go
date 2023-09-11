@@ -23,6 +23,40 @@ func mustToAddress(x string) ton.AccountID {
 	return accountID
 }
 
+func mustToBits512(s string) tlb.Bits512 {
+	bits := tlb.Bits512{}
+	bs, err := hex.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	if len(bs) != 64 {
+		panic(fmt.Sprintf("wrong length"))
+	}
+	copy(bits[:], bs[:])
+	return bits
+}
+
+func mustToBoc(a *tlb.Any) string {
+	if a == nil {
+		return ""
+	}
+	cell := boc.NewCell()
+	if err := tlb.Marshal(cell, *a); err != nil {
+		panic(err)
+	}
+	s, err := cell.ToBocString()
+	if err != nil {
+		panic(err)
+	}
+	return s
+}
+
+func mustToVarUInteger16(s string) tlb.VarUInteger16 {
+	i := big.Int{}
+	i.SetString(s, 10)
+	return tlb.VarUInteger16(i)
+}
+
 func mustToMsgAddress(x string) tlb.MsgAddress {
 	accountID, err := ton.AccountIDFromRaw(x)
 	if err != nil {
@@ -503,6 +537,81 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 		{
+			name:       "telemint deploy v2",
+			boc:        "te6ccgECBQEAARoABLlGNyibSnKFbLb9BariGutjeV1NX9pHFDBdJPTjQZwnkrbuozQ9z1dFSxwdSrucHKIgUN1S1cXZDhAIW5amasPH68RHDwAAAAxjj9foY4/Yfgs4ODgwNjA2NDU5MeABAgMEAGIBaHR0cHM6Ly9uZnQuZnJhZ21lbnQuY29tL251bWJlci84ODgwNjA2NDU5MS5qc29uAGuACBG0dlFtgMtLJ8IHIk03VVOL8ZXXgY07PhVXdWVTJK1qBDDiNACgQw4jQACgAAHCAAEnUBAASwAFAGSACBG0dlFtgMtLJ8IHIk03VVOL8ZXXgY07PhVXdWVTJK1wAEPADUaB/hrwxMFm1o8HL3BxGPth8cNxJn5ZMJcJdz8Xe3UE",
+			wantOpName: TelemintDeployV2MsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				got := value.(TelemintDeployV2MsgBody)
+				senderAddr := mustToMsgAddress("0:d4681fe1af0c4c166d68f072f707118fb61f1c371267e59309709773f177b750")
+				content := got.Msg.Content
+				got.Msg.Content = tlb.Any{}
+				expected := TelemintDeployV2MsgBody{
+					Sig: mustToBits512("4a72856cb6fd05aae21aeb63795d4d5fda4714305d24f4e3419c2792b6eea3343dcf57454b1c1d4abb9c1ca22050dd52d5c5d90e10085b96a66ac3c7ebc4470f"),
+					Msg: TelemintUnsignedDeployV2{
+						SubwalletId: 12,
+						ValidSince:  1670371304,
+						ValidTill:   1670371454,
+						TokenName:   "88806064591",
+						Content:     tlb.Any{},
+						AuctionConfig: TeleitemAuctionConfig{
+							BeneficiarAddress: mustToMsgAddress("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"),
+							InitialMinBid:     9000000000,
+							MaxBid:            9000000000,
+							MinBidStep:        5,
+							MinExtendTime:     3600,
+							Duration:          604800,
+						},
+						RoyaltyParams: &NftRoyaltyParams{
+							Numerator:   5,
+							Denominator: 100,
+							Destination: mustToMsgAddress("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"),
+						},
+						Restrictions: &TelemintRestrictions{
+							ForceSenderAddress:   &senderAddr,
+							RewriteSenderAddress: nil,
+						},
+					},
+				}
+				if !reflect.DeepEqual(got, expected) {
+					t.Fatalf("got different result")
+				}
+				if mustToBoc(&content) != "b5ee9c720101010100330000620168747470733a2f2f6e66742e667261676d656e742e636f6d2f6e756d6265722f38383830363036343539312e6a736f6e" {
+					t.Fatalf("got different result")
+				}
+			},
+		},
+		{
+			name:       "teleitem deploy",
+			boc:        "te6ccgECCQEAATMAA3Mpmj4VgAzs0ncMX6iyBS1zERGvUh6mNkf29/PiNb4SlqWFgjSNqHc1lAAe6Mrm6OrmyuTcwtrKYmRnAQIDAQMAwAQAaYAQsVaH72imjIQ1ZIjkVM5pBuccANLWQZkd7g3tnkSyO2h3NZQAoEqBfIAAoAAFRgAAfpAQAEsABQBkgBCxVofvaKaMhDVkiORUzmkG5xwA0tZBmR3uDe2eRLI7cAIBWAUGAUK/gqNTf/Dbzn7sNdae3DoYnubxfYLzU6VT+aqWywvjzokHAUK/iQRvejetDqfO5zNVmE+lQomC+LN8j3vOyR96xxp80QQIACoAdGVzdHVzZXJuYW1lMTIzLnQubWUAVABVc2VybmFtZSDCq3Rlc3R1c2VybmFtZTEyM8K7IGZvciBUZWxlZ3JhbQ==",
+			wantOpName: TeleitemDeployMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				got := value.(TeleitemDeployMsgBody)
+				got.Content = tlb.Any{}
+				expected := TeleitemDeployMsgBody{
+					SenderAddress: mustToMsgAddress("0:676693b862fd4590296b98888d7a90f531b23fb7bf9f11adf094b52c2c11a46d"),
+					Bid:           1000000000,
+					Username:      "testusername123",
+					AuctionConfig: TeleitemAuctionConfig{
+						BeneficiarAddress: mustToMsgAddress("0:858ab43f7b45346421ab244722a673483738e00696b20cc8ef706f6cf22591db"),
+						InitialMinBid:     1000000000,
+						MaxBid:            10000000000,
+						MinBidStep:        5,
+						MinExtendTime:     10800,
+						Duration:          259200,
+					},
+					RoyaltyParams: NftRoyaltyParams{
+						Numerator:   5,
+						Denominator: 100,
+						Destination: mustToMsgAddress("0:858ab43f7b45346421ab244722a673483738e00696b20cc8ef706f6cf22591db"),
+					},
+				}
+				if !reflect.DeepEqual(got, expected) {
+					t.Fatalf("got different result")
+				}
+			},
+		},
+
+		{
 			name:       "stonfi swap",
 			boc:        "te6ccgEBAgEAoQABsSWThWEAF9FtgGlyuYAVUoS5uZxArCUbLyf7phLgN5PBW9e9kIid2rJzK9oArXAARULUYsmJq1RiZ+YiH+IJLcAZUVkVff+KBPwEmmaQGH1EVt4eddAYMnVDAQCFgBVShLm5nECsJRsvJ/umEuA3k8Fb172QiJ3asnMr2gCtcAGyO71SfAD9PQh0Amu3lB+P3U1Zntjnpj9CbVcj8DiPLg==",
 			wantOpName: StonfiSwapMsgOp,
@@ -513,11 +622,52 @@ func TestMessageDecoder(t *testing.T) {
 				JettonAmount:  tlb.VarUInteger16(*big.NewInt(74549066199)),
 				MinOut:        tlb.VarUInteger16(*big.NewInt(101490000)),
 				HasRefAddress: true,
-				Addrs: tlb.Ref[StonfiSwapAddrs]{
-					Value: StonfiSwapAddrs{
-						FromUser: mustAccountIDToMsgAddress("0:aa9425cdcce2056128d9793fdd309701bc9e0adebdec8444eed593995ed0056b"),
-					},
+				Addrs: StonfiSwapAddrs{
+					FromUser: mustAccountIDToMsgAddress("0:aa9425cdcce2056128d9793fdd309701bc9e0adebdec8444eed593995ed0056b"),
 				},
+			},
+		},
+
+		{
+			name:       "jetton burn",
+			boc:        "te6ccgECCAEAAhgAAW5ZXwe8AAAAAAAAAACVulPgrVndPmxoAEUNniLqkBYBsZuVKvJcDSg77tClhipfNGnRWwv1QqUlAQJTgBPgz6ZzvAvnHOQF+lB882wKxXE7ZY0rtYm62kdLeB7zIAAEiR+eUeC8AgMCCDr9RhwEBQIIOv1GHAYHANBmK2fQChP6+TJUcU3WAfXtSe8vUSFzb+JIL66ExgVAASEhVBcuBtTkkxBPFx4XRbIvc3+f6fNgS4XJZyco7uz2ic8fDPfdA/IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXdhP6lOTR5QDHgBPgz6ZzvAvnHOQF+lB882wKxXE7ZY0rtYm62kdLeB7zMAMIgSjQdRRiwBX6VMy+I534aRJd9U+w1kwaNFo04D/r7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMfkSgDQZitn0AoT+vkyVHFN1gH17UnvL1GOiQxwqskzIxUIwTtMWPbWf61+n5fM5lvg1Mgq9A8LhLpVSV1iP50NgLOctKegUf6wO3O0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABbjcf22wjvFOEAx4AT4M+mc7wL5xzkBfpQfPNsCsVxO2WNK7WJutpHS3ge8zADCIEo0HUUYsAV+lTMviOd+GkSXfVPsNZMGjRaNOA/6+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADH6Eo=",
+			wantOpName: JettonBurnMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				got := value.(JettonBurnMsgBody)
+				expected := JettonBurnMsgBody{
+					QueryId:             0,
+					Amount:              mustToVarUInteger16("1690560677084975589062"),
+					ResponseDestination: mustToMsgAddress("0:2286cf1175480b00d8cdca95792e06941df76852c3152f9a34e8ad85faa15292"),
+				}
+				customPayload := got.CustomPayload
+				got.CustomPayload = nil
+				if !reflect.DeepEqual(got, expected) {
+					t.Fatalf("got different result")
+				}
+				if mustToBoc(customPayload) != "b5ee9c72010207010001de0002538013e0cfa673bc0be71ce405fa507cf36c0ac5713b658d2bb589bada474b781ef3200004891f9e51e0bc010202083afd461c030402083afd461c050600d0662b67d00a13faf93254714dd601f5ed49ef2f5121736fe2482fae84c6054001212154172e06d4e493104f171e1745b22f737f9fe9f3604b85c9672728eeecf689cf1f0cf7dd03f2000000000000000000000000000000000000000000000000177613fa94e4d1e500c78013e0cfa673bc0be71ce405fa507cf36c0ac5713b658d2bb589bada474b781ef33003088128d0751462c015fa54ccbe239df869125df54fb0d64c1a345a34e03febec000000000000000000000000000000000000000000000000000000000000c7e44a00d0662b67d00a13faf93254714dd601f5ed49ef2f518e890c70aac933231508c13b4c58f6d67fad7e9f97cce65be0d4c82af40f0b84ba55495d623f9d0d80b39cb4a7a051feb03b73b400000000000000000000000000000000000000000000005b8dc7f6db08ef14e100c78013e0cfa673bc0be71ce405fa507cf36c0ac5713b658d2bb589bada474b781ef33003088128d0751462c015fa54ccbe239df869125df54fb0d64c1a345a34e03febec000000000000000000000000000000000000000000000000000000000000c7e84a" {
+					t.Fatalf("got different result")
+				}
+			},
+		},
+		{
+			name:       "jetton burn 2",
+			boc:        "te6ccgECCAEAAhkAAXBZXwe8AAAAAAAAAACgRsUa48wJE4AACAFDHixVJ+/V+/nuhEo7dt2+OJFdoy2NcbsmLo/peqKGyQECU4AXlkN9KNe8PwlEuhQXb8OEHdTRbc1wBsVtW0S0nHlci2AABHMz4N3IfAIDAgg6/UYcBAUCCDr9RhwGBwDQAAAAAAAAAAAAAAAAAAAAAAAAAAAhc2/iSC+uhMYFQAEhIVQXLgbU5JMQTxceF0WyL3N/n+nzYEuFyWcnKO7s9onPHwz33QPyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABId+piGJzAAAAx4AXlkN9KNe8PwlEuhQXb8OEHdTRbc1wBsVtW0S0nHlci3AAQX+vGOoGA6n5Sj2YhgmbypSzopG9d5E5wGpys2qSl/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACBEoA0AAAAAAAAAAAAAAAAAAAAAAAAAAAzt5J5s1Bn1ucvSu1OKsAlM3gKUucgbp58v5g7juBGW5BWHshPHNaemrDKuINE8K9slIj+QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEay/OkzguxQAAAMeAF5ZDfSjXvD8JRLoUF2/DhB3U0W3NcAbFbVtEtJx5XItwAEF/rxjqBgOp+Uo9mIYJm8qUs6KRvXeROcBqcrNqkpfwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAghK",
+			wantOpName: JettonBurnMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				got := value.(JettonBurnMsgBody)
+				expected := JettonBurnMsgBody{
+					QueryId:             0,
+					Amount:              mustToVarUInteger16("20887600000000000000000"),
+					ResponseDestination: mustToMsgAddress("0:a18f162a93f7eafdfcf742251dbb6edf1c48aed196c6b8dd931747f4bd514364"),
+				}
+				customPayload := got.CustomPayload
+				got.CustomPayload = nil
+				if !reflect.DeepEqual(got, expected) {
+					t.Fatalf("got different result")
+				}
+				if mustToBoc(customPayload) != "b5ee9c72010207010001de000253801796437d28d7bc3f0944ba14176fc3841dd4d16dcd7006c56d5b44b49c795c8b6000047333e0ddc87c010202083afd461c030402083afd461c050600d0000000000000000000000000000000000000000021736fe2482fae84c6054001212154172e06d4e493104f171e1745b22f737f9fe9f3604b85c9672728eeecf689cf1f0cf7dd03f200000000000000000000000000000000000000000000000121dfa9886273000000c7801796437d28d7bc3f0944ba14176fc3841dd4d16dcd7006c56d5b44b49c795c8b7000417faf18ea0603a9f94a3d9886099bca94b3a291bd779139c06a72b36a9297f000000000000000000000000000000000000000000000000000000000000002044a00d00000000000000000000000000000000000000000cede49e6cd419f5b9cbd2bb538ab0094cde0294b9c81ba79f2fe60ee3b81196e41587b213c735a7a6ac32ae20d13c2bdb25223f900000000000000000000000000000000000000000000046b2fce93382ec5000000c7801796437d28d7bc3f0944ba14176fc3841dd4d16dcd7006c56d5b44b49c795c8b7000417faf18ea0603a9f94a3d9886099bca94b3a291bd779139c06a72b36a9297f000000000000000000000000000000000000000000000000000000000000002084a" {
+					t.Fatalf("got different result")
+				}
 			},
 		},
 		{
@@ -558,7 +708,7 @@ func TestMessageDecoder(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(tt.wantValue, value) {
-				t.Fatalf("want value: %v, got: %v", tt.wantValue, value)
+				t.Fatalf("want value: \n%v\n, got: \n%v", tt.wantValue, value)
 			}
 		})
 	}

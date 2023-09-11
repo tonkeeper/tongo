@@ -47,7 +47,33 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 	if err != nil {
 		return err
 	}
-	if t.IsRef {
+	switch {
+	case t.IsMaybeRef:
+		tag = ""
+		exist, err := c.ReadBit()
+		if err != nil {
+			return err
+		}
+		if !exist {
+			return nil
+		}
+		c, err = c.NextRef()
+		if err != nil {
+			return err
+		}
+		if c.CellType() == boc.PrunedBranchCell {
+			return nil
+		}
+	case t.IsMaybe:
+		tag = ""
+		exist, err := c.ReadBit()
+		if err != nil {
+			return err
+		}
+		if !exist {
+			return nil
+		}
+	case t.IsRef:
 		tag = ""
 		c, err = c.NextRef()
 		if err != nil {
@@ -57,9 +83,13 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return nil
 		}
 	}
-
 	i, ok := val.Interface().(UnmarshalerTLB)
 	if ok {
+		if val.IsNil() {
+			p := reflect.New(val.Type().Elem())
+			val.Set(p)
+			i = p.Interface().(UnmarshalerTLB)
+		}
 		return i.UnmarshalTLB(c, decoder)
 	}
 	if val.CanAddr() {

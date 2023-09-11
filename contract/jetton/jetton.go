@@ -49,12 +49,12 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 		ForwardTonAmount:    tlb.VarUInteger16(*forwardTon),
 	}
 	if tm.CustomPayload != nil {
-		msgBody.CustomPayload.Exists = true
-		msgBody.CustomPayload.Value.Value = tlb.Any(*tm.CustomPayload)
+		payload := tlb.Any(*tm.CustomPayload)
+		msgBody.CustomPayload = &payload
 	}
 	if tm.ForwardPayload != nil {
-		msgBody.ForwardPayload.IsRight = true
-		msgBody.ForwardPayload.Value = tlb.Any(*tm.ForwardPayload)
+		payload := tlb.Any(*tm.ForwardPayload)
+		msgBody.ForwardPayload.Value = payload
 	}
 	if err := c.WriteUint(0xf8a7ea5, 32); err != nil {
 		return tlb.Message{}, 0, err

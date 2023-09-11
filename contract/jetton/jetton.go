@@ -49,8 +49,8 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 		ForwardTonAmount:    tlb.VarUInteger16(*forwardTon),
 	}
 	if tm.CustomPayload != nil {
-		msgBody.CustomPayload.Exists = true
-		msgBody.CustomPayload.Value.Value = tlb.Any(*tm.CustomPayload)
+		payload := tlb.Any(*tm.CustomPayload)
+		msgBody.CustomPayload = &payload
 	}
 	if tm.ForwardPayload != nil {
 		msgBody.ForwardPayload.IsRight = true

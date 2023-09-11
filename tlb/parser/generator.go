@@ -164,10 +164,9 @@ func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[strin
 			return "", err
 		}
 		builder.WriteString(t.String())
-		if field.CellRef != nil {
-			builder.WriteString(" `tlb:\"^\"`")
+		if len(t.tag) > 0 {
+			builder.WriteString(fmt.Sprintf("`tlb:\"%s\"`", t.tag))
 		}
-		_ = e
 		builder.WriteRune('\n')
 	}
 	return builder.String(), nil
@@ -230,8 +229,8 @@ func (t TypeExpression) toGolangType(knownTypes map[string]DefaultType) (golangT
 			return golangType{}, err
 		}
 		return golangType{
-			name: fmt.Sprintf("tlb.Ref[%s]", gt.String()),
-			tag:  "",
+			name: fmt.Sprintf("%s", gt.String()),
+			tag:  "^",
 		}, nil
 	}
 	if t.AnonymousConstructor != nil {
@@ -272,7 +271,8 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 		if err != nil {
 			return golangType{}, err
 		}
-		if fmt.Sprintf("tlb.Ref[%s]", p1.String()) == p2.String() {
+		if p1.name == p2.name && p2.tag == "^" {
+			// todo: compare tags?
 			res.name = fmt.Sprintf("tlb.EitherRef[%s]", p1.String())
 			return res, nil
 		}
@@ -296,11 +296,21 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 		if len(t.Parameter) != 1 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for Maybe")
 		}
-		p, err := t.Parameter[0].toGolangType(knownTypes)
+		tag := "maybe"
+		param := t.Parameter[0]
+		if t.Parameter[0].CellRef != nil {
+			tag = "maybe^"
+			param = t.Parameter[0].CellRef.TypeExpression
+		}
+		p, err := param.toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
-		res.name = fmt.Sprintf("tlb.Maybe[%s]", p.String())
+		if len(p.tag) > 0 {
+			return golangType{}, fmt.Errorf("can't combine tags: %v and %v", tag, p.tag)
+		}
+		res.name = fmt.Sprintf("*%s", p.String())
+		res.tag = tag
 		return res, nil
 	case "VarUInteger":
 		if len(t.Parameter) != 1 {

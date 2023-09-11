@@ -1,34 +1,34 @@
 <abi>
-<!--    <types>-->
-<!--        native$0000 = DedustAsset;-->
-<!--        jetton$0001 workchain_id:int8 address:bits256 = DedustAsset;-->
-<!--        extra_currency$0010 currency_id:int32 = DedustAsset;-->
-<!--        swap_params#_ deadline:uint32 recipient_addr:MsgAddress referral_addr:MsgAddress-->
-<!--        fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = DedustSwapParams;-->
-<!--&lt;!&ndash;        step_params#_ kind_out:Bool limit:Coins next:(Maybe ^DedustSwapStep) = DedustSwapStepParams;&ndash;&gt;-->
+    <types>
+        native$0000 = DedustAsset;
+        jetton$0001 workchain_id:int8 address:bits256 = DedustAsset;
+        extra_currency$0010 currency_id:int32 = DedustAsset;
+        swap_params#_ deadline:uint32 recipient_addr:MsgAddress referral_addr:MsgAddress
+        fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = DedustSwapParams;
+        step_params#_ kind_out:Bool limit:Coins next:(Maybe ^DedustSwapStep) = DedustSwapStepParams;
 
-<!--        step#_ pool_addr:MsgAddress params:DedustSwapStepParams = DedustSwapStep;-->
-<!--    </types>-->
-<!--    <internal name="dedust_deposit_liquidity_all">-->
-<!--        deposit_liquidity_all#b56b9598 query_id:uint64 proof:^Cell-->
-<!--        owner_addr:MsgAddress min_lp_amount:Coins-->
-<!--        ^[ asset0:DedustAsset asset0_amount:Coins asset1:DedustAsset asset1_amount:Coins ]-->
-<!--        fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = InMsgBody;-->
-<!--    </internal>-->
-<!--    <internal name="dedust_swap_external">-->
-<!--        swap_external#61ee542d query_id:uint64 proof:^Cell amount:Coins-->
-<!--        sender_addr:MsgAddress current:DedustSwapStepParams-->
-<!--        swap_params:^DedustSwapParams = InMsgBody;-->
-<!--    </internal>-->
+        step#_ pool_addr:MsgAddress params:DedustSwapStepParams = DedustSwapStep;
+    </types>
+    <internal name="dedust_deposit_liquidity_all">
+        deposit_liquidity_all#b56b9598 query_id:uint64 proof:^Cell
+        owner_addr:MsgAddress min_lp_amount:Coins
+        ^[ asset0:DedustAsset asset0_amount:Coins asset1:DedustAsset asset1_amount:Coins ]
+        fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = InMsgBody;
+    </internal>
+    <internal name="dedust_swap_external">
+        swap_external#61ee542d query_id:uint64 proof:^Cell amount:Coins
+        sender_addr:MsgAddress current:DedustSwapStepParams
+        swap_params:^DedustSwapParams = InMsgBody;
+    </internal>
 
-<!--    <internal name="dedust_swap_peer" interface="dedust">-->
-<!--        swap_peer#72aca8aa query_id:uint64 proof:^Cell asset:DedustAsset amount:Coins-->
-<!--        sender_addr:MsgAddress current:DedustSwapStepParams-->
-<!--        swap_params:^DedustSwapParams = InMsgBody;-->
-<!--    </internal>-->
+    <internal name="dedust_swap_peer" interface="dedust">
+        swap_peer#72aca8aa query_id:uint64 proof:^Cell asset:DedustAsset amount:Coins
+        sender_addr:MsgAddress current:DedustSwapStepParams
+        swap_params:^DedustSwapParams = InMsgBody;
+    </internal>
 
-<!--    <jetton_payload name="dedust_swap" interface="dedust">-->
-<!--        dedust_swap#e3a0d482  step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;-->
-<!--    </jetton_payload>-->
+    <jetton_payload name="dedust_swap" interface="dedust">
+        dedust_swap#e3a0d482  step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
+    </jetton_payload>
 
 </abi>

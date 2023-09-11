@@ -36,6 +36,13 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 			j.Value = res
 			return nil
 		}
+	case DedustSwapJettonOpCode: // 0xe3a0d482
+		var res DedustSwapJettonPayload
+		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+			j.SumType = DedustSwapJettonOp
+			j.Value = res
+			return nil
+		}
 
 	}
 	j.SumType = UnknownJettonOp
@@ -47,18 +54,22 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 const (
 	TextCommentJettonOp JettonOpName = "TextComment"
 	StonfiSwapJettonOp  JettonOpName = "StonfiSwap"
+	DedustSwapJettonOp  JettonOpName = "DedustSwap"
 
 	TextCommentJettonOpCode JettonOpCode = 0x00000000
 	StonfiSwapJettonOpCode  JettonOpCode = 0x25938561
+	DedustSwapJettonOpCode  JettonOpCode = 0xe3a0d482
 )
 
 var KnownJettonTypes = map[string]any{
 	TextCommentJettonOp: TextCommentJettonPayload{},
 	StonfiSwapJettonOp:  StonfiSwapJettonPayload{},
+	DedustSwapJettonOp:  DedustSwapJettonPayload{},
 }
 var jettonOpCodes = map[JettonOpName]JettonOpCode{
 	TextCommentJettonOp: TextCommentJettonOpCode,
 	StonfiSwapJettonOp:  StonfiSwapJettonOpCode,
+	DedustSwapJettonOp:  DedustSwapJettonOpCode,
 }
 
 type TextCommentJettonPayload struct {
@@ -70,4 +81,9 @@ type StonfiSwapJettonPayload struct {
 	MinOut          tlb.VarUInteger16
 	ToAddress       tlb.MsgAddress
 	ReferralAddress tlb.Maybe[tlb.MsgAddress]
+}
+
+type DedustSwapJettonPayload struct {
+	Step       DedustSwapStep
+	SwapParams tlb.Ref[DedustSwapParams]
 }

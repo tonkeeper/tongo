@@ -6,6 +6,37 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+type DedustAsset struct {
+	tlb.SumType
+	Native struct{} `tlbSumType:"$0000"`
+	Jetton struct {
+		WorkchainId int8
+		Address     tlb.Bits256
+	} `tlbSumType:"$0001"`
+	ExtraCurrency struct {
+		CurrencyId int32
+	} `tlbSumType:"$0010"`
+}
+
+type DedustSwapParams struct {
+	Deadline       uint32
+	RecipientAddr  tlb.MsgAddress
+	ReferralAddr   tlb.MsgAddress
+	FulfillPayload tlb.Maybe[tlb.Ref[tlb.Any]]
+	RejectPayload  tlb.Maybe[tlb.Ref[tlb.Any]]
+}
+
+type DedustSwapStep struct {
+	PoolAddr tlb.MsgAddress
+	Params   DedustSwapStepParams
+}
+
+type DedustSwapStepParams struct {
+	KindOut bool
+	Limit   tlb.Grams
+	Next    tlb.Maybe[tlb.Ref[*DedustSwapStep]]
+}
+
 type ClosingConfig struct {
 	QuarantinDuration        uint32
 	MisbehaviorFine          tlb.Grams
@@ -437,6 +468,15 @@ type NftTransferMsgBody struct {
 	ForwardPayload      tlb.EitherRef[tlb.Any]
 }
 
+type DedustSwapExternalMsgBody struct {
+	QueryId    uint64
+	Proof      tlb.Ref[tlb.Any]
+	Amount     tlb.Grams
+	SenderAddr tlb.MsgAddress
+	Current    DedustSwapStepParams
+	SwapParams tlb.Ref[DedustSwapParams]
+}
+
 type TonstakeControllerSendRequestLoanMsgBody struct {
 	QueryId    uint64
 	MinLoan    tlb.Grams
@@ -474,6 +514,16 @@ type PaymentRequestMsgBody struct {
 
 type TonstakeControllerPoolUnhaltMsgBody struct {
 	QueryId uint64
+}
+
+type DedustSwapPeerMsgBody struct {
+	QueryId    uint64
+	Proof      tlb.Ref[tlb.Any]
+	Asset      DedustAsset
+	Amount     tlb.Grams
+	SenderAddr tlb.MsgAddress
+	Current    DedustSwapStepParams
+	SwapParams tlb.Ref[DedustSwapParams]
 }
 
 type JettonNotifyMsgBody struct {
@@ -606,6 +656,21 @@ type TonstakeImanagerRequestNotificationMsgBody struct {
 type TonstakePoolDeployControllerMsgBody struct {
 	ControllerId uint32
 	QueryId      uint64
+}
+
+type DedustDepositLiquidityAllMsgBody struct {
+	QueryId     uint64
+	Proof       tlb.Ref[tlb.Any]
+	OwnerAddr   tlb.MsgAddress
+	MinLpAmount tlb.Grams
+	Field4      struct {
+		Asset0       DedustAsset
+		Asset0Amount tlb.Grams
+		Asset1       DedustAsset
+		Asset1Amount tlb.Grams
+	} `tlb:"^"`
+	FulfillPayload tlb.Maybe[tlb.Ref[tlb.Any]]
+	RejectPayload  tlb.Maybe[tlb.Ref[tlb.Any]]
 }
 
 type StorageContractTerminatedMsgBody struct {

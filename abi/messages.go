@@ -310,6 +310,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return NftTransferMsgOp, nil, err
 		}
 		return NftTransferMsgOp, res, nil
+	case DedustSwapExternalMsgOpCode: // 0x61ee542d
+		var res DedustSwapExternalMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DedustSwapExternalMsgOp, nil, err
+		}
+		return DedustSwapExternalMsgOp, res, nil
 	case TonstakeControllerSendRequestLoanMsgOpCode: // 0x6335b11a
 		var res TonstakeControllerSendRequestLoanMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -358,6 +364,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakeControllerPoolUnhaltMsgOp, nil, err
 		}
 		return TonstakeControllerPoolUnhaltMsgOp, res, nil
+	case DedustSwapPeerMsgOpCode: // 0x72aca8aa
+		var res DedustSwapPeerMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DedustSwapPeerMsgOp, nil, err
+		}
+		return DedustSwapPeerMsgOp, res, nil
 	case JettonNotifyMsgOpCode: // 0x7362d09c
 		var res JettonNotifyMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -508,6 +520,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakePoolDeployControllerMsgOp, nil, err
 		}
 		return TonstakePoolDeployControllerMsgOp, res, nil
+	case DedustDepositLiquidityAllMsgOpCode: // 0xb56b9598
+		var res DedustDepositLiquidityAllMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DedustDepositLiquidityAllMsgOp, nil, err
+		}
+		return DedustDepositLiquidityAllMsgOp, res, nil
 	case StorageContractTerminatedMsgOpCode: // 0xb6236d63
 		var res StorageContractTerminatedMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -711,6 +729,7 @@ const (
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
+	DedustSwapExternalMsgOp                      MsgOpName = "DedustSwapExternal"
 	TonstakeControllerSendRequestLoanMsgOp       MsgOpName = "TonstakeControllerSendRequestLoan"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
 	SettleChannelConditionalsMsgOp               MsgOpName = "SettleChannelConditionals"
@@ -719,6 +738,7 @@ const (
 	SbtRevokeMsgOp                               MsgOpName = "SbtRevoke"
 	PaymentRequestMsgOp                          MsgOpName = "PaymentRequest"
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
+	DedustSwapPeerMsgOp                          MsgOpName = "DedustSwapPeer"
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
@@ -743,6 +763,7 @@ const (
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
+	DedustDepositLiquidityAllMsgOp               MsgOpName = "DedustDepositLiquidityAll"
 	StorageContractTerminatedMsgOp               MsgOpName = "StorageContractTerminated"
 	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
 	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
@@ -821,6 +842,7 @@ const (
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
+	DedustSwapExternalMsgOpCode                      MsgOpCode = 0x61ee542d
 	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x6335b11a
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
 	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
@@ -829,6 +851,7 @@ const (
 	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
 	PaymentRequestMsgOpCode                          MsgOpCode = 0x706c7567
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
+	DedustSwapPeerMsgOpCode                          MsgOpCode = 0x72aca8aa
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
@@ -853,6 +876,7 @@ const (
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
+	DedustDepositLiquidityAllMsgOpCode               MsgOpCode = 0xb56b9598
 	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
 	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
 	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
@@ -928,6 +952,7 @@ var KnownMsgTypes = map[string]any{
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},
+	DedustSwapExternalMsgOp:                      DedustSwapExternalMsgBody{},
 	TonstakeControllerSendRequestLoanMsgOp:       TonstakeControllerSendRequestLoanMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
 	SettleChannelConditionalsMsgOp:               SettleChannelConditionalsMsgBody{},
@@ -936,6 +961,7 @@ var KnownMsgTypes = map[string]any{
 	SbtRevokeMsgOp:                               SbtRevokeMsgBody{},
 	PaymentRequestMsgOp:                          PaymentRequestMsgBody{},
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
+	DedustSwapPeerMsgOp:                          DedustSwapPeerMsgBody{},
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
@@ -960,6 +986,7 @@ var KnownMsgTypes = map[string]any{
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
+	DedustDepositLiquidityAllMsgOp:               DedustDepositLiquidityAllMsgBody{},
 	StorageContractTerminatedMsgOp:               StorageContractTerminatedMsgBody{},
 	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
 	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},

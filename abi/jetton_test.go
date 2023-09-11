@@ -45,11 +45,11 @@ func TestJettonPayloadJSMarshaling(t *testing.T) {
 			boc:  "b5ee9c720101010100120000206f6c6f6c6f6c6f6c6f74726f6c6f6c6f",
 			want: `{"SumType":"Cell","OpCode":1869377388,"Value":"b5ee9c720101010100120000206f6c6f6c6f6c6f6c6f74726f6c6f6c6f"}`,
 		},
-		//{
-		//	name: "dedust swap",
-		//	boc:  "b5ee9c72010102010034000153e3a0d482801c2bfd75b91e3b5a9402036fdb733e5dc096f4c773a328dd33586324e0cdb4bd2307b6a7400100090000000002",
-		//	want: `{"SumType":"DedustSwap","OpCode":3818968194}}`,
-		//},
+		{
+			name: "dedust swap",
+			boc:  "b5ee9c72010102010034000153e3a0d482801c2bfd75b91e3b5a9402036fdb733e5dc096f4c773a328dd33586324e0cdb4bd2307b6a7400100090000000002",
+			want: `{"SumType":"DedustSwap","OpCode":3818968194}}`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

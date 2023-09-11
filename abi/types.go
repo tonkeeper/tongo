@@ -33,7 +33,7 @@ type DedustSwapStep struct {
 
 type DedustSwapStepParams struct {
 	KindOut bool
-	Limit   tlb.Grams
+	Limit   tlb.VarUInteger16
 	Next    tlb.Maybe[tlb.Ref[*DedustSwapStep]]
 }
 
@@ -386,6 +386,11 @@ type StorageWithdrawMsgBody struct {
 	QueryId uint64
 }
 
+type DedustPayoutMsgBody struct {
+	QueryId uint64
+	Payload tlb.Maybe[tlb.Ref[tlb.Any]]
+}
+
 type ElectorRecoverStakeRequestMsgBody struct {
 	QueryId uint64
 }
@@ -471,7 +476,7 @@ type NftTransferMsgBody struct {
 type DedustSwapExternalMsgBody struct {
 	QueryId    uint64
 	Proof      tlb.Ref[tlb.Any]
-	Amount     tlb.Grams
+	Amount     tlb.VarUInteger16
 	SenderAddr tlb.MsgAddress
 	Current    DedustSwapStepParams
 	SwapParams tlb.Ref[DedustSwapParams]
@@ -520,7 +525,7 @@ type DedustSwapPeerMsgBody struct {
 	QueryId    uint64
 	Proof      tlb.Ref[tlb.Any]
 	Asset      DedustAsset
-	Amount     tlb.Grams
+	Amount     tlb.VarUInteger16
 	SenderAddr tlb.MsgAddress
 	Current    DedustSwapStepParams
 	SwapParams tlb.Ref[DedustSwapParams]
@@ -646,6 +651,14 @@ type StorageRewardWithdrawalMsgBody struct {
 	QueryId uint64
 }
 
+type DedustPayoutFromPoolMsgBody struct {
+	QueryId       uint64
+	Proof         tlb.Ref[tlb.Any]
+	Amount        tlb.VarUInteger16
+	RecipientAddr tlb.MsgAddress
+	Payload       tlb.Maybe[tlb.Ref[tlb.Any]]
+}
+
 type TonstakeImanagerRequestNotificationMsgBody struct {
 	QueryId     uint64
 	MinLoan     tlb.Grams
@@ -662,12 +675,12 @@ type DedustDepositLiquidityAllMsgBody struct {
 	QueryId     uint64
 	Proof       tlb.Ref[tlb.Any]
 	OwnerAddr   tlb.MsgAddress
-	MinLpAmount tlb.Grams
+	MinLpAmount tlb.VarUInteger16
 	Field4      struct {
 		Asset0       DedustAsset
-		Asset0Amount tlb.Grams
+		Asset0Amount tlb.VarUInteger16
 		Asset1       DedustAsset
-		Asset1Amount tlb.Grams
+		Asset1Amount tlb.VarUInteger16
 	} `tlb:"^"`
 	FulfillPayload tlb.Maybe[tlb.Ref[tlb.Any]]
 	RejectPayload  tlb.Maybe[tlb.Ref[tlb.Any]]

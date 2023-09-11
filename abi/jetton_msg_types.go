@@ -43,6 +43,13 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 			j.Value = res
 			return nil
 		}
+	case StofiProvideLiquidityJettonOpCode: // 0xfcf9e58f
+		var res StofiProvideLiquidityJettonPayload
+		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+			j.SumType = StofiProvideLiquidityJettonOp
+			j.Value = res
+			return nil
+		}
 
 	}
 	j.SumType = UnknownJettonOp
@@ -52,24 +59,28 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 }
 
 const (
-	TextCommentJettonOp JettonOpName = "TextComment"
-	StonfiSwapJettonOp  JettonOpName = "StonfiSwap"
-	DedustSwapJettonOp  JettonOpName = "DedustSwap"
+	TextCommentJettonOp           JettonOpName = "TextComment"
+	StonfiSwapJettonOp            JettonOpName = "StonfiSwap"
+	DedustSwapJettonOp            JettonOpName = "DedustSwap"
+	StofiProvideLiquidityJettonOp JettonOpName = "StofiProvideLiquidity"
 
-	TextCommentJettonOpCode JettonOpCode = 0x00000000
-	StonfiSwapJettonOpCode  JettonOpCode = 0x25938561
-	DedustSwapJettonOpCode  JettonOpCode = 0xe3a0d482
+	TextCommentJettonOpCode           JettonOpCode = 0x00000000
+	StonfiSwapJettonOpCode            JettonOpCode = 0x25938561
+	DedustSwapJettonOpCode            JettonOpCode = 0xe3a0d482
+	StofiProvideLiquidityJettonOpCode JettonOpCode = 0xfcf9e58f
 )
 
 var KnownJettonTypes = map[string]any{
-	TextCommentJettonOp: TextCommentJettonPayload{},
-	StonfiSwapJettonOp:  StonfiSwapJettonPayload{},
-	DedustSwapJettonOp:  DedustSwapJettonPayload{},
+	TextCommentJettonOp:           TextCommentJettonPayload{},
+	StonfiSwapJettonOp:            StonfiSwapJettonPayload{},
+	DedustSwapJettonOp:            DedustSwapJettonPayload{},
+	StofiProvideLiquidityJettonOp: StofiProvideLiquidityJettonPayload{},
 }
 var jettonOpCodes = map[JettonOpName]JettonOpCode{
-	TextCommentJettonOp: TextCommentJettonOpCode,
-	StonfiSwapJettonOp:  StonfiSwapJettonOpCode,
-	DedustSwapJettonOp:  DedustSwapJettonOpCode,
+	TextCommentJettonOp:           TextCommentJettonOpCode,
+	StonfiSwapJettonOp:            StonfiSwapJettonOpCode,
+	DedustSwapJettonOp:            DedustSwapJettonOpCode,
+	StofiProvideLiquidityJettonOp: StofiProvideLiquidityJettonOpCode,
 }
 
 type TextCommentJettonPayload struct {
@@ -86,4 +97,8 @@ type StonfiSwapJettonPayload struct {
 type DedustSwapJettonPayload struct {
 	Step       DedustSwapStep
 	SwapParams tlb.Ref[DedustSwapParams]
+}
+
+type StofiProvideLiquidityJettonPayload struct {
+	MinLpOut tlb.VarUInteger16
 }

@@ -48,7 +48,7 @@ func TestJettonPayloadJSMarshaling(t *testing.T) {
 		{
 			name: "dedust swap",
 			boc:  "b5ee9c72010102010034000153e3a0d482801c2bfd75b91e3b5a9402036fdb733e5dc096f4c773a328dd33586324e0cdb4bd2307b6a7400100090000000002",
-			want: `{"SumType":"DedustSwap","OpCode":3818968194}}`,
+			want: `{"SumType":"DedustSwap","OpCode":3818968194,"Value":{"Step":{"PoolAddr":"0:e15febadc8f1dad4a0101b7edb99f2ee04b7a63b9d1946e99ac31927066da5e9","Params":{"KindOut":false,"Limit":"505511","Next":null}},"SwapParams":{"Value":{"Deadline":0,"RecipientAddr":"","ReferralAddr":"","FulfillPayload":null,"RejectPayload":null}}}}`,
 		},
 	}
 	for _, tt := range tests {

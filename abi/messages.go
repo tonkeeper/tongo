@@ -232,6 +232,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return StorageWithdrawMsgOp, nil, err
 		}
 		return StorageWithdrawMsgOp, res, nil
+	case DedustPayoutMsgOpCode: // 0x474f86cf
+		var res DedustPayoutMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DedustPayoutMsgOp, nil, err
+		}
+		return DedustPayoutMsgOp, res, nil
 	case ElectorRecoverStakeRequestMsgOpCode: // 0x47657424
 		var res ElectorRecoverStakeRequestMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -508,6 +514,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return StorageRewardWithdrawalMsgOp, nil, err
 		}
 		return StorageRewardWithdrawalMsgOp, res, nil
+	case DedustPayoutFromPoolMsgOpCode: // 0xad4eb6f5
+		var res DedustPayoutFromPoolMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DedustPayoutFromPoolMsgOp, nil, err
+		}
+		return DedustPayoutFromPoolMsgOp, res, nil
 	case TonstakeImanagerRequestNotificationMsgOpCode: // 0xb1ebae06
 		var res TonstakeImanagerRequestNotificationMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -716,6 +728,7 @@ const (
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
 	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
+	DedustPayoutMsgOp                            MsgOpName = "DedustPayout"
 	ElectorRecoverStakeRequestMsgOp              MsgOpName = "ElectorRecoverStakeRequest"
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
@@ -761,6 +774,7 @@ const (
 	TeleitemReturnBidMsgOp                       MsgOpName = "TeleitemReturnBid"
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
+	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
 	DedustDepositLiquidityAllMsgOp               MsgOpName = "DedustDepositLiquidityAll"
@@ -829,6 +843,7 @@ const (
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
 	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
+	DedustPayoutMsgOpCode                            MsgOpCode = 0x474f86cf
 	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
@@ -874,6 +889,7 @@ const (
 	TeleitemReturnBidMsgOpCode                       MsgOpCode = 0xa43227e1
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
+	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
 	DedustDepositLiquidityAllMsgOpCode               MsgOpCode = 0xb56b9598
@@ -939,6 +955,7 @@ var KnownMsgTypes = map[string]any{
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
 	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
+	DedustPayoutMsgOp:                            DedustPayoutMsgBody{},
 	ElectorRecoverStakeRequestMsgOp:              ElectorRecoverStakeRequestMsgBody{},
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
@@ -984,6 +1001,7 @@ var KnownMsgTypes = map[string]any{
 	TeleitemReturnBidMsgOp:                       TeleitemReturnBidMsgBody{},
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
+	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
 	DedustDepositLiquidityAllMsgOp:               DedustDepositLiquidityAllMsgBody{},

@@ -3,32 +3,59 @@
         native$0000 = DedustAsset;
         jetton$0001 workchain_id:int8 address:bits256 = DedustAsset;
         extra_currency$0010 currency_id:int32 = DedustAsset;
+
         swap_params#_ deadline:uint32 recipient_addr:MsgAddress referral_addr:MsgAddress
         fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = DedustSwapParams;
-        step_params#_ kind_out:Bool limit:Coins next:(Maybe ^DedustSwapStep) = DedustSwapStepParams;
+        step_params#_ kind_out:Bool limit:(VarUInteger 16) next:(Maybe ^DedustSwapStep) = DedustSwapStepParams;
 
         step#_ pool_addr:MsgAddress params:DedustSwapStepParams = DedustSwapStep;
     </types>
+
+    <get_method name="get_reserves" interface="dedust_pool">
+        <output version="dedust" fixed_length="true">
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_assets" interface="dedust_pool">
+        <output version="dedust" fixed_length="true">
+            <slice name="asset0">msgaddress</slice>
+            <slice name="asset1">msgaddress</slice>
+        </output>
+    </get_method>
+
     <internal name="dedust_deposit_liquidity_all">
         deposit_liquidity_all#b56b9598 query_id:uint64 proof:^Cell
-        owner_addr:MsgAddress min_lp_amount:Coins
-        ^[ asset0:DedustAsset asset0_amount:Coins asset1:DedustAsset asset1_amount:Coins ]
+        owner_addr:MsgAddress min_lp_amount:(VarUInteger 16)
+        ^[ asset0:DedustAsset asset0_amount:(VarUInteger 16) asset1:DedustAsset asset1_amount:(VarUInteger 16) ]
         fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = InMsgBody;
     </internal>
     <internal name="dedust_swap_external">
-        swap_external#61ee542d query_id:uint64 proof:^Cell amount:Coins
+        swap_external#61ee542d query_id:uint64 proof:^Cell amount:(VarUInteger 16)
         sender_addr:MsgAddress current:DedustSwapStepParams
         swap_params:^DedustSwapParams = InMsgBody;
     </internal>
 
     <internal name="dedust_swap_peer" interface="dedust">
-        swap_peer#72aca8aa query_id:uint64 proof:^Cell asset:DedustAsset amount:Coins
+        swap_peer#72aca8aa query_id:uint64 proof:^Cell asset:DedustAsset amount:(VarUInteger 16)
         sender_addr:MsgAddress current:DedustSwapStepParams
         swap_params:^DedustSwapParams = InMsgBody;
+    </internal>
+    <internal name="dedust_payout_from_pool" interface="dedust">
+        pay_out_from_pool#ad4eb6f5 query_id:uint64 proof:^Cell amount:(VarUInteger 16)
+        recipient_addr:MsgAddress payload:(Maybe ^Cell) = InMsgBody;
+    </internal>
+    <internal name="dedust_payout" interface="dedust">
+        payout#474f86cf query_id:uint64 payload:(Maybe ^Cell) = InMsgBody;
     </internal>
 
     <jetton_payload name="dedust_swap" interface="dedust">
         dedust_swap#e3a0d482  step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
     </jetton_payload>
 
-</abi>
+    <ext_out name="dedust_swap" interface="dedust"> <!-- todo: support for external out messages -->
+        swap#9c610de3 asset_in:Asset asset_out:Asset amount_in:Coins amount_out:Coins
+        ^[ sender_addr:MsgAddress referral_addr:MsgAddress
+        reserve0:Coins reserve1:Coins ] = ExtOutMsgBody;
+    </ext_out>
+</abi>Coins

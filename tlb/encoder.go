@@ -38,6 +38,7 @@ func encode(c *boc.Cell, o any, encoder *Encoder) error {
 	if err != nil {
 		return err
 	}
+	encoder.tag = ""
 	switch {
 	case t.IsMaybeRef:
 		if isNil(o) {

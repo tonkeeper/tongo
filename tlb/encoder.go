@@ -24,6 +24,15 @@ func (enc *Encoder) Marshal(c *boc.Cell, o any) error {
 	return encode(c, o, enc)
 }
 
+func isNil(o any) bool {
+	switch reflect.ValueOf(o).Kind() {
+	case reflect.Interface, reflect.Slice, reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer:
+		return reflect.ValueOf(o).IsNil()
+	}
+	return false
+
+}
+
 func encode(c *boc.Cell, o any, encoder *Encoder) error {
 	t, err := parseTag(encoder.tag)
 	if err != nil {
@@ -31,7 +40,7 @@ func encode(c *boc.Cell, o any, encoder *Encoder) error {
 	}
 	switch {
 	case t.IsMaybeRef:
-		if reflect.ValueOf(o).IsNil() {
+		if isNil(o) {
 			err := c.WriteBit(false)
 			return err
 		}
@@ -44,7 +53,7 @@ func encode(c *boc.Cell, o any, encoder *Encoder) error {
 		}
 
 	case t.IsMaybe:
-		if reflect.ValueOf(o).IsNil() {
+		if isNil(o) {
 			err := c.WriteBit(false)
 			return err
 		}

@@ -1,0 +1,5 @@
+<abi>
+    <nft_payload name="sale_nft_gg">
+        sell_nft#00fe0ede stateInit:^Cell msg:^uint32 = NFTMsgPayload;
+    </nft_payload>
+</abi>

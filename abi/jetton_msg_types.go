@@ -29,6 +29,13 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 			j.Value = res
 			return nil
 		}
+	case EncryptedTextCommentJettonOpCode: // 0x2167da4b
+		var res EncryptedTextCommentJettonPayload
+		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+			j.SumType = EncryptedTextCommentJettonOp
+			j.Value = res
+			return nil
+		}
 	case StonfiSwapJettonOpCode: // 0x25938561
 		var res StonfiSwapJettonPayload
 		if err := tlb.Unmarshal(tempCell, &res); err == nil {
@@ -60,11 +67,13 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 
 const (
 	TextCommentJettonOp           JettonOpName = "TextComment"
+	EncryptedTextCommentJettonOp  JettonOpName = "EncryptedTextComment"
 	StonfiSwapJettonOp            JettonOpName = "StonfiSwap"
 	DedustSwapJettonOp            JettonOpName = "DedustSwap"
 	StofiProvideLiquidityJettonOp JettonOpName = "StofiProvideLiquidity"
 
 	TextCommentJettonOpCode           JettonOpCode = 0x00000000
+	EncryptedTextCommentJettonOpCode  JettonOpCode = 0x2167da4b
 	StonfiSwapJettonOpCode            JettonOpCode = 0x25938561
 	DedustSwapJettonOpCode            JettonOpCode = 0xe3a0d482
 	StofiProvideLiquidityJettonOpCode JettonOpCode = 0xfcf9e58f
@@ -72,12 +81,14 @@ const (
 
 var KnownJettonTypes = map[string]any{
 	TextCommentJettonOp:           TextCommentJettonPayload{},
+	EncryptedTextCommentJettonOp:  EncryptedTextCommentJettonPayload{},
 	StonfiSwapJettonOp:            StonfiSwapJettonPayload{},
 	DedustSwapJettonOp:            DedustSwapJettonPayload{},
 	StofiProvideLiquidityJettonOp: StofiProvideLiquidityJettonPayload{},
 }
 var jettonOpCodes = map[JettonOpName]JettonOpCode{
 	TextCommentJettonOp:           TextCommentJettonOpCode,
+	EncryptedTextCommentJettonOp:  EncryptedTextCommentJettonOpCode,
 	StonfiSwapJettonOp:            StonfiSwapJettonOpCode,
 	DedustSwapJettonOp:            DedustSwapJettonOpCode,
 	StofiProvideLiquidityJettonOp: StofiProvideLiquidityJettonOpCode,
@@ -87,16 +98,20 @@ type TextCommentJettonPayload struct {
 	Text tlb.Text
 }
 
+type EncryptedTextCommentJettonPayload struct {
+	CipherText tlb.Bytes
+}
+
 type StonfiSwapJettonPayload struct {
 	TokenWallet     tlb.MsgAddress
 	MinOut          tlb.VarUInteger16
 	ToAddress       tlb.MsgAddress
-	ReferralAddress tlb.Maybe[tlb.MsgAddress]
+	ReferralAddress *tlb.MsgAddress `tlb:"maybe"`
 }
 
 type DedustSwapJettonPayload struct {
 	Step       DedustSwapStep
-	SwapParams tlb.Ref[DedustSwapParams]
+	SwapParams DedustSwapParams `tlb:"^"`
 }
 
 type StofiProvideLiquidityJettonPayload struct {

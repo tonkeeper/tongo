@@ -758,6 +758,15 @@
     <jetton_payload name="text_comment">
         jetton_payload#00000000 text:Text = JettonMsgPayload;
     </jetton_payload>
+    <jetton_payload name="encrypted_text_comment">
+        jetton_payload#2167da4b cipher_text:Bytes = JettonMsgPayload;
+    </jetton_payload>
+    <nft_payload name="text_comment">
+        nft_payload#00000000 text:Text = NFTMsgPayload;
+    </nft_payload>
+    <nft_payload name="encrypted_text_comment">
+        nft_payload#2167da4b cipher_text:Bytes = NFTMsgPayload;
+    </nft_payload>
 
     <external name="wallet_signed_v3" interface="wallet_v3">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =

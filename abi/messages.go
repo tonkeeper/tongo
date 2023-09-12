@@ -4,7 +4,6 @@ package abi
 
 import (
 	"fmt"
-
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )

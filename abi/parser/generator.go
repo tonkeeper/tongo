@@ -66,6 +66,7 @@ type Generator struct {
 	loadedTlbTypes        []string
 	loadedTlbMsgTypes     map[uint32]TLBMsgBody
 	loadedJettonsMsgTypes map[uint32]TLBMsgBody
+	loadedNFTsMsgTypes    map[uint32]TLBMsgBody
 	typeName              string
 }
 
@@ -580,78 +581,86 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 }
 
 func (g *Generator) RenderJetton() (string, error) {
+	return g.renderPayload("Jetton", g.loadedJettonsMsgTypes)
+}
+
+func (g *Generator) RenderNFT() (string, error) {
+	return g.renderPayload("NFT", g.loadedNFTsMsgTypes)
+}
+
+func (g *Generator) renderPayload(payloadName string, msgTypes map[uint32]TLBMsgBody) (string, error) {
 	var builder strings.Builder
 
-	builder.WriteString(`
+	fmt.Fprintf(&builder, `
 
-func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
+func (j *%sPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
 	if cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
 		return nil
 	}
 	tempCell := cell.CopyRemaining()
 	op64, err := tempCell.ReadUint(32)
 	if errors.Is(err, boc.ErrNotEnoughBits) {
-		j.SumType = UnknownJettonOp
+		j.SumType = Unknown%sOp
 		j.Value = cell.CopyRemaining()
 		return nil
 	}
 	op := uint32(op64)
 	j.OpCode = &op
 	switch  op {
-`)
+`, payloadName, payloadName)
 
 	var knownTypes [][2]string
 	var knownOpcodes []opCode
-	for _, k := range utils.GetOrderedKeys(g.loadedJettonsMsgTypes) {
-		tlbType := g.loadedJettonsMsgTypes[k]
-		fmt.Fprintf(&builder, "case %sJettonOpCode:  // 0x%08x\n", tlbType.OperationName, tlbType.Tag)
+	for _, k := range utils.GetOrderedKeys(msgTypes) {
+		tlbType := msgTypes[k]
+		fmt.Fprintf(&builder, "case %s%sOpCode:  // 0x%08x\n", tlbType.OperationName, payloadName, tlbType.Tag)
 		fmt.Fprintf(&builder, "var res %s\n", tlbType.TypeName)
 		fmt.Fprintf(&builder, `if err := tlb.Unmarshal(tempCell, &res); err == nil { 
-	j.SumType = %vJettonOp
+	j.SumType = %v%sOp
 	j.Value = res
 	return  nil 
-}`, tlbType.OperationName)
+}`, tlbType.OperationName, payloadName)
 		builder.WriteString("\n")
 		if tlbType.FixedLength {
-			builder.WriteString(fmt.Sprintf(`if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
+			builder.WriteString(fmt.Sprintf(` panic! if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
 			builder.WriteString("\n")
 		}
 		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
 		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
 	}
 
-	builder.WriteString(`
+	fmt.Fprintf(&builder, `
 }
-		j.SumType = UnknownJettonOp
+		j.SumType = Unknown%sOp
 		j.Value = cell.CopyRemaining()
 	
 	return nil
 }
 const (
-`)
+`, payloadName)
 	for _, v := range knownTypes {
-		fmt.Fprintf(&builder, `%vJettonOp JettonOpName = "%v"`+"\n", v[0], v[0])
+		fmt.Fprintf(&builder, `%v%sOp %sOpName = "%v"`+"\n", v[0], payloadName, payloadName, v[0])
 	}
 	builder.WriteString(`
 
 `)
 	for _, v := range knownOpcodes {
-		fmt.Fprintf(&builder, `%sJettonOpCode JettonOpCode = 0x%08x`+"\n", v.OperationName, v.Tag)
+		fmt.Fprintf(&builder, `%s%sOpCode %sOpCode = 0x%08x`+"\n", v.OperationName, payloadName, payloadName, v.Tag)
 	}
 	builder.WriteString(")\n")
-	builder.WriteString("var KnownJettonTypes = map[string]any{\n")
+	fmt.Fprintf(&builder, "var Known%sTypes = map[string]any{\n", payloadName)
 	for _, v := range knownTypes {
-		fmt.Fprintf(&builder, "%vJettonOp: %v{},\n", v[0], v[1])
+		fmt.Fprintf(&builder, "%v%sOp: %v{},\n", v[0], payloadName, v[1])
 	}
-	builder.WriteString(`}
-var jettonOpCodes = map[JettonOpName]JettonOpCode{
-`)
+	fmt.Fprintf(&builder, `}
+var %sOpCodes = map[%sOpName]%sOpCode{
+`, strings.ToLower(payloadName), payloadName, payloadName)
 	for _, v := range knownOpcodes {
-		fmt.Fprintf(&builder, "%sJettonOp: %sJettonOpCode,\n", v.OperationName, v.OperationName)
+		fmt.Fprintf(&builder, "%s%sOp: %s%sOpCode,\n", v.OperationName, payloadName, v.OperationName, payloadName)
 	}
 	builder.WriteString("\n}\n")
-	for _, k := range utils.GetOrderedKeys(g.loadedJettonsMsgTypes) {
-		builder.WriteString(g.loadedJettonsMsgTypes[k].Code)
+	for _, k := range utils.GetOrderedKeys(msgTypes) {
+		builder.WriteString(msgTypes[k].Code)
 		builder.WriteRune('\n')
 	}
 	builder.WriteRune('\n')

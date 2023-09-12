@@ -5,6 +5,7 @@ package abi
 import (
 	"context"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -234,8 +235,8 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 }
 
 type GetAssets_DedustResult struct {
-	Asset0 tlb.MsgAddress
-	Asset1 tlb.MsgAddress
+	Asset0 DedustAsset
+	Asset1 DedustAsset
 }
 
 func GetAssets(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {

@@ -19,8 +19,8 @@
     </get_method>
     <get_method name="get_assets" interface="dedust_pool">
         <output version="dedust" fixed_length="true">
-            <slice name="asset0">msgaddress</slice>
-            <slice name="asset1">msgaddress</slice>
+            <slice name="asset0">DedustAsset</slice>
+            <slice name="asset1">DedustAsset</slice>
         </output>
     </get_method>
 

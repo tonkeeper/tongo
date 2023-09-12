@@ -79,6 +79,7 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 		abi:                   abi,
 		loadedTlbMsgTypes:     make(map[uint32]TLBMsgBody),
 		loadedJettonsMsgTypes: make(map[uint32]TLBMsgBody),
+		loadedNFTsMsgTypes:    make(map[uint32]TLBMsgBody),
 		newTlbTypes:           make(map[string]struct{}),
 	}
 	err := g.registerABI()
@@ -177,6 +178,12 @@ func (g *Generator) registerABI() error {
 	}
 	for _, jetton := range g.abi.JettonPayloads {
 		err := registerMstType(g.loadedJettonsMsgTypes, "JettonPayload", jetton.Name, jetton.Input, jetton.FixedLength)
+		if err != nil {
+			return err
+		}
+	}
+	for _, nft := range g.abi.NFTPayloads {
+		err := registerMstType(g.loadedNFTsMsgTypes, "NFTPayload", nft.Name, nft.Input, nft.FixedLength)
 		if err != nil {
 			return err
 		}

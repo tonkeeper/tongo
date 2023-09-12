@@ -22,6 +22,20 @@ func (j *NFTPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	op := uint32(op64)
 	j.OpCode = &op
 	switch op {
+	case TextCommentNFTOpCode: // 0x00000000
+		var res TextCommentNFTPayload
+		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+			j.SumType = TextCommentNFTOp
+			j.Value = res
+			return nil
+		}
+	case EncryptedTextCommentNFTOpCode: // 0x2167da4b
+		var res EncryptedTextCommentNFTPayload
+		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+			j.SumType = EncryptedTextCommentNFTOp
+			j.Value = res
+			return nil
+		}
 
 	}
 	j.SumType = UnknownNFTOp
@@ -30,7 +44,27 @@ func (j *NFTPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	return nil
 }
 
-const ()
+const (
+	TextCommentNFTOp          NFTOpName = "TextComment"
+	EncryptedTextCommentNFTOp NFTOpName = "EncryptedTextComment"
 
-var KnownNFTTypes = map[string]any{}
-var nftOpCodes = map[NFTOpName]NFTOpCode{}
+	TextCommentNFTOpCode          NFTOpCode = 0x00000000
+	EncryptedTextCommentNFTOpCode NFTOpCode = 0x2167da4b
+)
+
+var KnownNFTTypes = map[string]any{
+	TextCommentNFTOp:          TextCommentNFTPayload{},
+	EncryptedTextCommentNFTOp: EncryptedTextCommentNFTPayload{},
+}
+var nftOpCodes = map[NFTOpName]NFTOpCode{
+	TextCommentNFTOp:          TextCommentNFTOpCode,
+	EncryptedTextCommentNFTOp: EncryptedTextCommentNFTOpCode,
+}
+
+type TextCommentNFTPayload struct {
+	Text tlb.Text
+}
+
+type EncryptedTextCommentNFTPayload struct {
+	CipherText tlb.Bytes
+}

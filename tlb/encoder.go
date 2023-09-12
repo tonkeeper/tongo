@@ -8,20 +8,23 @@ import (
 )
 
 type Encoder struct {
-	tag string
 }
 
 type MarshalerTLB interface {
 	MarshalTLB(c *boc.Cell, encoder *Encoder) error
 }
 
+type tagEncoder interface {
+	EncodeTag(c *boc.Cell, tag string) error
+}
+
 func Marshal(c *boc.Cell, o any) error {
 	encoder := Encoder{}
-	return encode(c, o, &encoder)
+	return encode(c, "", o, &encoder)
 }
 
 func (enc *Encoder) Marshal(c *boc.Cell, o any) error {
-	return encode(c, o, enc)
+	return encode(c, "", o, enc)
 }
 
 func isNil(o any) bool {
@@ -33,12 +36,15 @@ func isNil(o any) bool {
 
 }
 
-func encode(c *boc.Cell, o any, encoder *Encoder) error {
-	t, err := parseTag(encoder.tag)
+func encode(c *boc.Cell, tag string, o any, encoder *Encoder) error {
+	if m, ok := o.(tagEncoder); ok {
+		return m.EncodeTag(c, tag)
+	}
+	t, err := parseTag(tag)
 	if err != nil {
 		return err
 	}
-	encoder.tag = ""
+	tag = ""
 	switch {
 	case t.IsMaybeRef:
 		if isNil(o) {
@@ -107,7 +113,7 @@ func encode(c *boc.Cell, o any, encoder *Encoder) error {
 		if val.IsNil() && !t.IsOptional {
 			return fmt.Errorf("can't encode empty pointer %v if tlb scheme is not optional", val.Type())
 		}
-		return encode(c, val.Elem().Interface(), encoder)
+		return encode(c, tag, val.Elem().Interface(), encoder)
 	case reflect.Array:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
 			return fmt.Errorf("encoding array of %v not supported", val.Type().Elem().Kind())
@@ -140,8 +146,8 @@ func encodeStruct(c *boc.Cell, o any, encoder *Encoder) error {
 func encodeBasicStruct(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	for i := 0; i < val.NumField(); i++ {
-		encoder.tag = val.Type().Field(i).Tag.Get("tlb")
-		if err := encode(c, val.Field(i).Interface(), encoder); err != nil {
+		tag := val.Type().Field(i).Tag.Get("tlb")
+		if err := encode(c, tag, val.Field(i).Interface(), encoder); err != nil {
 			return err
 		}
 	}
@@ -163,8 +169,7 @@ func encodeSumType(c *boc.Cell, o any, encoder *Encoder) error {
 		if err != nil {
 			return err
 		}
-		encoder.tag = ""
-		err = encode(c, val.Field(i).Interface(), encoder)
+		err = encode(c, "", val.Field(i).Interface(), encoder)
 		if err != nil {
 			return err
 		}

@@ -25,7 +25,7 @@ type SignedCoins int64
 func (g Grams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var amount VarUInteger16
 	amount = VarUInteger16(*big.NewInt(int64(g)))
-	err := encode(c, amount, encoder)
+	err := encode(c, "", amount, encoder)
 	return err
 }
 
@@ -58,7 +58,7 @@ func (g SignedCoins) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 		g = -g
 	}
 	amount := VarUInteger16(*big.NewInt(int64(g)))
-	return encode(c, amount, encoder)
+	return encode(c, "", amount, encoder)
 }
 
 func (g *SignedCoins) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {

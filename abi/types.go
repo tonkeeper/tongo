@@ -194,7 +194,7 @@ type ProveOwnershipMsgBody struct {
 type NftOwnershipAssignedMsgBody struct {
 	QueryId        uint64
 	PrevOwner      tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[tlb.Any]
+	ForwardPayload tlb.EitherRef[NFTPayload]
 }
 
 type OwnershipProofMsgBody struct {
@@ -470,7 +470,7 @@ type NftTransferMsgBody struct {
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       *tlb.Any `tlb:"maybe^"`
 	ForwardAmount       tlb.VarUInteger16
-	ForwardPayload      tlb.EitherRef[tlb.Any]
+	ForwardPayload      tlb.EitherRef[NFTPayload]
 }
 
 type DedustSwapExternalMsgBody struct {

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/snksoft/crc"
+	"github.com/tonkeeper/tongo/abi"
 	"github.com/tonkeeper/tongo/contract/dns"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
@@ -47,13 +48,26 @@ func AccountIDFromTlb(a tlb.MsgAddress) (*AccountID, error) {
 	return ton.AccountIDFromTlb(a)
 }
 
+// mu protects defaultParser.
+var mu sync.RWMutex
 var defaultParser *addressParser
 
 // DefaultAddressParser returns a default address parser that works in the mainnet.
 // Currently, there is no way to change the network.
 // Take a look at NewAccountAddressParser to create a parser for a different network or with a different root address.
 func DefaultAddressParser() *addressParser {
+	mu.RLock()
+	defer mu.RUnlock()
 	return defaultParser
+}
+
+// SetDefaultExecutor sets the default executor for the default address parser.
+// The executor is used to resolve DNS records.
+func SetDefaultExecutor(executor abi.Executor) {
+	mu.Lock()
+	defer mu.Unlock()
+	resolver := dns.NewDNS(MustParseAccountID(DefaultRoot), executor)
+	defaultParser = NewAccountAddressParser(resolver)
 }
 
 func init() {

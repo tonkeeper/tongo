@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func (w *Wallet) CreateMessage(lifetime time.Duration, messages ...Sendable) (*tlb.Message, error) {
@@ -59,7 +59,7 @@ func (w *Wallet) CreateMessage(lifetime time.Duration, messages ...Sendable) (*t
 	if err = tlb.Marshal(signedBodyCell, signedBody); err != nil {
 		return nil, fmt.Errorf("can not marshal signed body: %v", err)
 	}
-	extMsg, err := tongo.CreateExternalMessage(w.address, signedBodyCell, nil, 0)
+	extMsg, err := ton.CreateExternalMessage(w.address, signedBodyCell, nil, 0)
 	if err != nil {
 		return nil, fmt.Errorf("can not create external message: %v", err)
 	}

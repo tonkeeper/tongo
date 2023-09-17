@@ -18,7 +18,7 @@ type AccountID struct {
 	Address   [32]byte
 }
 
-func NewAccountId(id int32, addr [32]byte) *AccountID {
+func NewAccountID(id int32, addr [32]byte) *AccountID {
 	return &AccountID{Workchain: id, Address: addr}
 }
 

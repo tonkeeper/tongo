@@ -63,7 +63,7 @@ func (itm ItemTransferMessage) ToInternal() (tlb.Message, byte, error) {
 	}
 	if itm.ForwardPayload != nil {
 		msgBody.ForwardPayload.IsRight = true
-		msgBody.ForwardPayload.Value = tlb.Any(*itm.ForwardPayload)
+		msgBody.ForwardPayload.Value = abi.NFTPayload{SumType: abi.UnknownNFTOp, Value: *itm.ForwardPayload}
 	}
 	if err := c.WriteUint(0x5fcc3d14, 32); err != nil {
 		return tlb.Message{}, 0, err

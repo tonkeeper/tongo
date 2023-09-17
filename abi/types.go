@@ -544,6 +544,11 @@ type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
 	QueryId int64
 }
 
+type MegatonWtonMintMsgBody struct {
+	QueryId uint64
+	Amount  tlb.Grams
+}
+
 type ChannelCooperativeCommitMsgBody struct {
 	SigA      tlb.Bits512 `tlb:"^"`
 	SigB      tlb.Bits512 `tlb:"^"`

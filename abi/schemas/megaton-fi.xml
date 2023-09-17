@@ -43,4 +43,7 @@
             <cell name="mining_rate_cell">any</cell>
         </output>
     </get_method>
+    <internal name="megaton_wton_mint">
+        mint#77a33521 query_id:uint64 amount:Coins = InternalMsgBody;
+    </internal>
 </abi>

@@ -397,6 +397,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return WhalesNominatorsStakeWithdrawDelayedMsgOp, nil, ErrStructSizeMismatch
 		}
 		return WhalesNominatorsStakeWithdrawDelayedMsgOp, res, nil
+	case MegatonWtonMintMsgOpCode: // 0x77a33521
+		var res MegatonWtonMintMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return MegatonWtonMintMsgOp, nil, err
+		}
+		return MegatonWtonMintMsgOp, res, nil
 	case ChannelCooperativeCommitMsgOpCode: // 0x79a126ef
 		var res ChannelCooperativeCommitMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -755,6 +761,7 @@ const (
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
+	MegatonWtonMintMsgOp                         MsgOpName = "MegatonWtonMint"
 	ChannelCooperativeCommitMsgOp                MsgOpName = "ChannelCooperativeCommit"
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
@@ -870,6 +877,7 @@ const (
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
+	MegatonWtonMintMsgOpCode                         MsgOpCode = 0x77a33521
 	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
@@ -982,6 +990,7 @@ var KnownMsgTypes = map[string]any{
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
+	MegatonWtonMintMsgOp:                         MegatonWtonMintMsgBody{},
 	ChannelCooperativeCommitMsgOp:                ChannelCooperativeCommitMsgBody{},
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},

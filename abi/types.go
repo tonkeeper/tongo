@@ -811,3 +811,4 @@ type ElectorRecoverStakeResponseMsgBody struct {
 type BounceMsgBody struct {
 	Payload tlb.Any
 }
+

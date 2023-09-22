@@ -3,6 +3,9 @@
         pay_to_params#_ amount0_out:(VarUInteger 16) token0_address:MsgAddress amount1_out:(VarUInteger 16) token1_address:MsgAddress = StonfiPayToParams;
         swap_addresses#_ from_user:MsgAddress = StonfiSwapAddrs;
     </types>
+    <interface name="stonfi_pool">
+        <get_method name="get_pool_data" version="stonfi"/>
+    </interface>
 
 <!--    <get_method name="get_router_data">-->
 <!--        <output version="stonfi" fixed_length="true" interface="stonfi_router">-->
@@ -16,7 +19,7 @@
 <!--    </get_method>-->
 
     <get_method name="get_pool_data">
-        <output version="stonfi" fixed_length="true" interface="stonfi_pool">
+        <output version="stonfi" fixed_length="true">
             <int name="reserve0">int257</int>
             <int name="reserve1">int257</int>
             <slice name="token0_address">msgaddress</slice>
@@ -30,18 +33,18 @@
         </output>
     </get_method>
 
-    <internal name="stonfi_swap" interface="stonfi_pool">
+    <internal name="stonfi_swap" >
         swap#25938561 query_id:uint64 to_address:MsgAddress sender_address:MsgAddress
         jetton_amount:(VarUInteger 16) min_out:(VarUInteger 16) has_ref_address:Bool addrs:^StonfiSwapAddrs = InternalMsgBody;
     </internal>
-    <internal name="stonfi_payment_request" fixed_length="true" interface="stonfi_router">
+    <internal name="stonfi_payment_request" fixed_length="true" >
         pay_to#f93bb43f query_id:uint64 owner:MsgAddress exit_code:uint32
         params:(Either StonfiPayToParams ^StonfiPayToParams) = InternalMsgBody;
     </internal>
-    <jetton_payload name="stonfi_swap" interface="stonfi_router">
+    <jetton_payload name="stonfi_swap" >
         swap#25938561 token_wallet:MsgAddress min_out:(VarUInteger 16) to_address:MsgAddress referral_address:(Maybe MsgAddress) = JettonPayload;
     </jetton_payload>
-    <jetton_payload name="stofi_provide_liquidity" interface="stonfi_pool">
+    <jetton_payload name="stofi_provide_liquidity">
         provide_liquidity#fcf9e58f min_lp_out:(VarUInteger 16) = JettonPayload;
     </jetton_payload>
 </abi>

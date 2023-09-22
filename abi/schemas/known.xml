@@ -93,60 +93,6 @@
     </get_method>
 
 
-    <!--        NFTs     -->
-    <get_method name="get_nft_data" callback="true" interface="tep62_item">
-        <output>
-            <int name="init">bool</int>
-            <int name="index">int257</int>
-            <slice name="collection_address">msgaddress</slice>
-            <slice name="owner_address">msgaddress</slice>
-            <cell name="individual_content">any</cell>
-        </output>
-    </get_method>
-    <get_method name="get_nft_content" interface="tep62">
-        <input>
-            <int name="index">int257</int>
-            <cell name="individual_content">any</cell>
-        </input>
-        <output>
-            <cell name="content">FullContent</cell>
-        </output>
-    </get_method>
-    <get_method name="get_collection_data" interface="tep62_collection">
-        <output>
-            <int name="next_item_index">int257</int>
-            <cell name="collection_content">any</cell>
-            <slice name="owner_address">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_nft_address_by_index" interface="tep62_collection">
-        <input>
-            <int name="index">int257</int>
-        </input>
-        <output>
-            <slice name="address">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="royalty_params" interface="tep66">
-        <output>
-            <int name="numerator">uint16</int>
-            <int name="denominator">uint16</int>
-            <slice name="destination">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_editor" interface="nft_editable">
-        <output>
-            <slice name="editor">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_auction_info" interface="auction">
-        <output>
-            <slice name="max_bid_address">msgaddress</slice>
-            <int name="max_bid_amount">uint64</int>
-            <int name="auction_end_time ">uint64</int>
-        </output>
-    </get_method>
-
     <!--    Subscriptions-->
     <get_method name="get_subscription_data" interface="subscription">
         <output>
@@ -169,32 +115,6 @@
         </output>
     </get_method>
 
-    <!--        Jettons    -->
-    <get_method name="get_jetton_data" interface="tep74">
-        <output>
-            <int name="total_supply">int257</int>
-            <int name="mintable">int8</int>
-            <slice name="admin_address">msgaddress</slice>
-            <cell name="jetton_content">any</cell>
-            <cell name="jetton_wallet_code">any</cell>
-        </output>
-    </get_method>
-    <get_method name="get_wallet_address" interface="tep74">
-        <input>
-            <slice name="owner_address">msgaddress</slice>
-        </input>
-        <output>
-            <slice name="jetton_wallet_address">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_wallet_data" interface="tep74">
-        <output>
-            <int name="balance">int257</int>
-            <slice name="owner">msgaddress</slice>
-            <slice name="jetton">msgaddress</slice>
-            <cell name="jetton_wallet_code">any</cell>
-        </output>
-    </get_method>
 
     <!--        DNS      -->
     <get_method name="dnsresolve" interface="tep81">
@@ -273,15 +193,11 @@
         </output>
     </get_method>
 
-    <!--        SBT    -->
-    <get_method name="get_authority_address" interface="tep85">
+    <get_method name="get_auction_info" interface="auction">
         <output>
-            <slice name="address">msgaddress</slice>
-        </output>
-    </get_method>
-    <get_method name="get_revoked_time" interface="tep85">
-        <output>
-            <int name="time">uint64</int>
+            <slice name="max_bid_address">msgaddress</slice>
+            <int name="max_bid_amount">uint64</int>
+            <int name="auction_end_time ">uint64</int>
         </output>
     </get_method>
 
@@ -513,83 +429,7 @@
     </internal>
 
 
-    <!--        NFTs       -->
-    <internal name="nft_transfer" interface="tep62">
-        transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
-        custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either NFTPayload ^NFTPayload) =
-        InternalMsgBody;
-    </internal>
-    <internal name="nft_ownership_assigned" interface="tep62">
-        ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either NFTPayload ^NFTPayload) =
-        InternalMsgBody;
-    </internal>
-    <internal name="get_static_data" interface="tep62">
-        get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
-    </internal>
-    <internal name="report_static_data" interface="tep62">
-        report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
-    </internal>
-    <internal name="get_royalty_params" interface="tep66">
-        get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
-    </internal>
-    <internal name="report_royalty_params" interface="tep66">
-        report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16
-        destination:MsgAddress = InternalMsgBody;
-    </internal>
 
-
-    <!--        Jettons    -->
-    <internal name="jetton_transfer" interface="tep74">
-        transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
-        response_destination:MsgAddress custom_payload:(Maybe ^Cell)
-        forward_ton_amount:(VarUInteger 16) forward_payload:(Either JettonPayload ^JettonPayload) <!-- todo: maybe replace custom non-standard types with xml like <JettonPayload>Cell</JettonPayload>-->
-        = InternalMsgBody;
-    </internal>
-    <internal name="jetton_internal_transfer" interface="tep74">
-        internal_transfer#178d4519 query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
-        response_address:MsgAddress
-        forward_ton_amount:(VarUInteger 16)
-        <!--                forward_payload:(Either Cell ^Cell)-->
-        = InternalMsgBody;
-    </internal>
-    <internal name="jetton_burn" interface="tep74">
-        burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
-        response_destination:MsgAddress custom_payload:(Maybe ^JettonPayload)
-        = InternalMsgBody;
-    </internal>
-    <internal name="jetton_burn_notification" interface="tep74">
-        burn_notification#7bdd97de query_id:uint64 amount:(VarUInteger 16)
-        sender:MsgAddress response_destination:MsgAddress = InternalMsgBody;
-    </internal>
-    <internal name="jetton_notify" interface="tep74">
-        transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
-        sender:MsgAddress forward_payload:(Either JettonPayload ^JettonPayload)
-        = InternalMsgBody;
-    </internal>
-
-    <!--    SBT     -->
-    <internal name="prove_ownership" interface="tep85">
-        prove_ownership#04ded148 query_id:uint64 dest:MsgAddress
-        forward_payload:^Cell with_content:Bool = InternalMsgBody;
-    </internal>
-    <internal name="ownership_proof" interface="tep85">
-        ownership_proof#0524c7ae query_id:uint64 item_id:uint256 owner:MsgAddress
-        data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
-    </internal>
-    <internal name="sbt_request_owner" interface="tep85">
-        request_owner#d0c3bfea query_id:uint64 dest:MsgAddress
-        forward_payload:^Cell with_content:Bool = InternalMsgBody;
-    </internal>
-    <internal name="sbt_owner_info" interface="tep85">
-        owner_info#0dd607e3 query_id:uint64 item_id:uint256 initiator:MsgAddress owner:MsgAddress
-        data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
-    </internal>
-    <internal name="sbt_destroy" interface="tep85">
-        destroy#1f04537a query_id:uint64 = InternalMsgBody;
-    </internal>
-    <internal name="sbt_revoke" interface="tep85">
-        revoke#6f89f5e3 query_id:uint64 = InternalMsgBody;
-    </internal>
 
 
     <!--        Payment channels     -->
@@ -723,37 +563,7 @@
         teleitem_return_bid#a43227e1 cur_lt:int64 = TeleitemMsg;
     </internal>
 
-    <internal name="whales_nominators_withdraw">
-        withdraw#da803efd query_id:int64 gas:Grams amount:Grams = Withdraw;
-    </internal>
-    <internal name="whales_nominators_deposit">
-        deposit#7bcd1fef query_id:int64 gas:Grams = Deposit;
-    </internal>
-    <internal name="whales_nominators_force_kick">
-        force_kick#1596920c query_id:int64 = InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_stake_withdraw_delayed" interface="whales_nominators" fixed_length="true">
-        stake_withdraw_delayed#74bb3427 query_id:int64 = InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_stake_withdraw_completed" interface="whales_nominators" fixed_length="true">
-        stake_withdraw_completed#23d421e1 query_id:int64 = InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_send_stake" interface="whales_nominators" fixed_length="true">
-        send_stake#a2065f2c query_id:uint64 gas_limit:Grams stake:Grams validator_pubkey:bits256 stake_at:uint32
-        max_factor:uint32 adnl_addr:bits256 signature:^bits512 = InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_withdraw_unowned" interface="whales_nominators" fixed_length="true">
-        withdraw_unowned#251d6a98 query_id:uint64 gas_limit:Grams = InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_withdraw_unowned_response" interface="whales_nominators">
-        withdraw_unowned_response#1d1715bf query_id:uint64 = InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_accept_stake" interface="whales_nominators">
-        accept_stake#99a811fb query_id:uint64 members:Cell= InternalMsgBody;
-    </internal>
-    <internal name="whales_nominators_accept_withdraws" interface="whales_nominators">
-        accept_withdraws#a19fd934 query_id:uint64 members:Cell= InternalMsgBody;
-    </internal>
+
 
     <jetton_payload name="text_comment">
         jetton_payload#00000000 text:Text = JettonMsgPayload;

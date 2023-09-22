@@ -4,7 +4,6 @@ package abi
 
 import (
 	"fmt"
-
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
@@ -629,6 +628,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return TonstakeControllerDisapproveMsgOp, nil, err
 		}
 		return TonstakeControllerDisapproveMsgOp, res, nil
+	case DedustSwapMsgOpCode: // 0xea06185d
+		var res DedustSwapMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DedustSwapMsgOp, nil, err
+		}
+		return DedustSwapMsgOp, res, nil
 	case TonstakeControllerRecoverStakeMsgOpCode: // 0xeb373a05
 		var res TonstakeControllerRecoverStakeMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -800,6 +805,7 @@ const (
 	DeployStorageContractMsgOp                   MsgOpName = "DeployStorageContract"
 	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
 	TonstakeControllerDisapproveMsgOp            MsgOpName = "TonstakeControllerDisapprove"
+	DedustSwapMsgOp                              MsgOpName = "DedustSwap"
 	TonstakeControllerRecoverStakeMsgOp          MsgOpName = "TonstakeControllerRecoverStake"
 	TonstakeNftBurnNotificationMsgOp             MsgOpName = "TonstakeNftBurnNotification"
 	TonstakeControllerReturnUnusedLoanMsgOp      MsgOpName = "TonstakeControllerReturnUnusedLoan"
@@ -916,6 +922,7 @@ const (
 	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
 	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0xe642c965
 	TonstakeControllerDisapproveMsgOpCode            MsgOpCode = 0xe8a0abfe
+	DedustSwapMsgOpCode                              MsgOpCode = 0xea06185d
 	TonstakeControllerRecoverStakeMsgOpCode          MsgOpCode = 0xeb373a05
 	TonstakeNftBurnNotificationMsgOpCode             MsgOpCode = 0xed58b0b2
 	TonstakeControllerReturnUnusedLoanMsgOpCode      MsgOpCode = 0xed7378a6
@@ -1029,6 +1036,7 @@ var KnownMsgTypes = map[string]any{
 	DeployStorageContractMsgOp:                   DeployStorageContractMsgBody{},
 	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},
 	TonstakeControllerDisapproveMsgOp:            TonstakeControllerDisapproveMsgBody{},
+	DedustSwapMsgOp:                              DedustSwapMsgBody{},
 	TonstakeControllerRecoverStakeMsgOp:          TonstakeControllerRecoverStakeMsgBody{},
 	TonstakeNftBurnNotificationMsgOp:             TonstakeNftBurnNotificationMsgBody{},
 	TonstakeControllerReturnUnusedLoanMsgOp:      TonstakeControllerReturnUnusedLoanMsgBody{},

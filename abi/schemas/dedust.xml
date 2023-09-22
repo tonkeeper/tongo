@@ -10,17 +10,49 @@
 
         step#_ pool_addr:MsgAddress params:DedustSwapStepParams = DedustSwapStep;
     </types>
+    <interface name="dedust_pool">
+        <get_method name="get_reserve" version="dedust"/>
+        <get_method name="get_assets" version="dedust"/>
+        <input>
+            <internal name="dedust_swap_external"/>
+            <internal name="dedust_swap_peer"/>
+        </input>
+        <output>
+            <internal name="dedust_payout_from_pool"/>
+            <internal name="dedust_swap_peer"/>
+        </output>
+    </interface>
+    <interface name="dedust_vault">
+        <get_method name="get_asset" version="dedust"/>
+        <input>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="dedust_swap"/>
+            <internal name="dedust_payout_from_pool"/>
+        </input>
+        <output>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="dedust_swap_external"/>
+            <internal name="dedust_payout"/>
+        </output>
+    </interface>
 
-    <get_method name="get_reserves" interface="dedust_pool">
+    <get_method name="get_reserves" >
         <output version="dedust" fixed_length="true">
             <int name="reserve0">int257</int>
             <int name="reserve1">int257</int>
         </output>
     </get_method>
-    <get_method name="get_assets" interface="dedust_pool">
+    <get_method name="get_assets" >
         <output version="dedust" fixed_length="true">
             <slice name="asset0">DedustAsset</slice>
             <slice name="asset1">DedustAsset</slice>
+        </output>
+    </get_method>
+    <get_method name="get_asset"> <!-- todo: add to index -->
+        <output version="dedust" fixed_length="true">
+            <slice name="asset">DedustAsset</slice>
         </output>
     </get_method>
 
@@ -36,26 +68,29 @@
         swap_params:^DedustSwapParams = InMsgBody;
     </internal>
 
-    <internal name="dedust_swap_peer" interface="dedust">
+    <internal name="dedust_swap_peer">
         swap_peer#72aca8aa query_id:uint64 proof:^Cell asset:DedustAsset amount:(VarUInteger 16)
         sender_addr:MsgAddress current:DedustSwapStepParams
         swap_params:^DedustSwapParams = InMsgBody;
     </internal>
-    <internal name="dedust_payout_from_pool" interface="dedust">
+    <internal name="dedust_payout_from_pool">
         pay_out_from_pool#ad4eb6f5 query_id:uint64 proof:^Cell amount:(VarUInteger 16)
         recipient_addr:MsgAddress payload:(Maybe ^Cell) = InMsgBody;
     </internal>
-    <internal name="dedust_payout" interface="dedust">
+    <internal name="dedust_payout">
         payout#474f86cf query_id:uint64 payload:(Maybe ^Cell) = InMsgBody;
     </internal>
+    <internal name="dedust_swap">
+        swap#ea06185d query_id:uint64 amount:Coins step:DedustSwapStep swap_params:^DedustSwapParams = InMsgBody;
+    </internal>
 
-    <jetton_payload name="dedust_swap" interface="dedust">
+    <jetton_payload name="dedust_swap">
         dedust_swap#e3a0d482  step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
     </jetton_payload>
 
-    <ext_out name="dedust_swap" interface="dedust"> <!-- todo: support for external out messages -->
+    <ext_out name="dedust_swap"> <!-- todo: support for external out messages -->
         swap#9c610de3 asset_in:Asset asset_out:Asset amount_in:Coins amount_out:Coins
         ^[ sender_addr:MsgAddress referral_addr:MsgAddress
         reserve0:Coins reserve1:Coins ] = ExtOutMsgBody;
     </ext_out>
-</abi>Coins
+</abi>

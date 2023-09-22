@@ -148,7 +148,7 @@ type Executor interface {
 	}
 	methodMap.WriteString("}\n\n")
 
-	resultMap.WriteString("var ResultTypes = []interface{}{\n")
+	resultMap.WriteString("var resultTypes = []interface{}{\n")
 	slices.Sort(resultTypes)
 	for _, r := range resultTypes {
 		resultMap.WriteString(fmt.Sprintf("&%s{}, \n", r))
@@ -512,6 +512,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 type templateContext struct {
 	Interfaces      map[string]string
 	InvocationOrder []methodDescription
+	InterfaceOrder  []interfacDescripion
 }
 
 type methodDescription struct {
@@ -519,6 +520,10 @@ type methodDescription struct {
 	InvokeFnName         string
 	InterfacePerTypeHint map[string]string // map[typeHint]ContractInterface
 	Interfaces           []string
+}
+type interfacDescripion struct {
+	Name    string
+	Results []string
 }
 
 func (g *Generator) RenderInvocationOrderList() (string, error) {
@@ -541,33 +546,24 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 		desc = methodDescription{
 			Name:         method.Name,
 			InvokeFnName: invokeFnName,
-			Interfaces:   make([]string, len(method.Interfaces)),
 		}
-		for i, iface := range method.Interfaces {
-			desc.Interfaces[i] = utils.ToCamelCase(iface)
-			context.Interfaces[utils.ToCamelCase(iface)] = iface
-		}
-		if len(method.Interfaces) == 0 {
-			// this means, interfaces are defined per "output":
-			//
-			// <get_method name="get_sale_data">
-			//    <output version="basic" fixed_length="true" interface="nft_sale">
-			//      <slice name="marketplace">msgaddress</slice>
-			//    </output>
-			//    <output version="getgems" fixed_length="true" interface="nft_sale_getgems">
-			//       <tinyint name="fix_price">uint64</tinyint>
-			//    </output>
-			// </get_method>
-
-			desc.InterfacePerTypeHint = make(map[string]string)
-			for _, output := range method.Output {
-				context.Interfaces[utils.ToCamelCase(output.Interface)] = output.Interface
-				methodName := method.GolangFunctionName()
-				desc.InterfacePerTypeHint[output.FullResultName(methodName)] = utils.ToCamelCase(output.Interface)
-			}
-		}
-		sort.Strings(desc.Interfaces)
 		descriptions[invokeFnName] = desc
+	}
+	for _, iface := range g.abi.Interfaces {
+		context.Interfaces[utils.ToCamelCase(iface.Name)] = iface.Name
+		descripion := interfacDescripion{
+			Name:    utils.ToCamelCase(iface.Name),
+			Results: []string{},
+		}
+		for _, method := range iface.Methods {
+			resultName := utils.ToCamelCase(method.Name) + "Result"
+			if method.Version != "" {
+				resultName = fmt.Sprintf("%s_%sResult", utils.ToCamelCase(method.Name), utils.ToCamelCase(method.Version))
+			}
+			descripion.Results = append(descripion.Results, resultName)
+		}
+		context.InterfaceOrder = append(context.InterfaceOrder, descripion)
+
 	}
 
 	for _, desc := range descriptions {

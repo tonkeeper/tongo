@@ -12,6 +12,7 @@ import (
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
 	"dnsresolve":                    {DecodeDnsresolve_RecordsResult},
+	"get_asset":                     {DecodeGetAsset_DedustResult},
 	"get_assets":                    {DecodeGetAssets_DedustResult},
 	"get_auction_info":              {DecodeGetAuctionInfoResult},
 	"get_authority_address":         {DecodeGetAuthorityAddressResult},
@@ -89,6 +90,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	86593:  {GetStorageContractData},
 	87878:  {GetBalances},
 	89295:  {GetMembersRaw},
+	89352:  {GetAsset},
 	90228:  {GetEditor},
 	91481:  {GetLastFillUpTime},
 	92229:  {GetPoolFullData},
@@ -121,8 +123,9 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	130309: {ListVotes},
 }
 
-var ResultTypes = []interface{}{
+var resultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
+	&GetAsset_DedustResult{},
 	&GetAssets_DedustResult{},
 	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
@@ -231,6 +234,39 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 	var result Dnsresolve_RecordsResult
 	err = stack.Unmarshal(&result)
 	return "Dnsresolve_RecordsResult", result, err
+}
+
+type GetAsset_DedustResult struct {
+	Asset DedustAsset
+}
+
+func GetAsset(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 89352 for "get_asset" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 89352, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAsset_DedustResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAsset_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAsset_DedustResult
+	err = stack.Unmarshal(&result)
+	return "GetAsset_DedustResult", result, err
 }
 
 type GetAssets_DedustResult struct {

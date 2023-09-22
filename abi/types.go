@@ -768,6 +768,13 @@ type TonstakeControllerDisapproveMsgBody struct {
 	QueryId uint64
 }
 
+type DedustSwapMsgBody struct {
+	QueryId    uint64
+	Amount     tlb.Grams
+	Step       DedustSwapStep
+	SwapParams DedustSwapParams `tlb:"^"`
+}
+
 type TonstakeControllerRecoverStakeMsgBody struct {
 	QueryId uint64
 }
@@ -811,4 +818,3 @@ type ElectorRecoverStakeResponseMsgBody struct {
 type BounceMsgBody struct {
 	Payload tlb.Any
 }
-

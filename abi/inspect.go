@@ -15,22 +15,52 @@ type MethodInvocation struct {
 	TypeHint string
 }
 
-type InterfaceDescription struct {
-	// GetMethods contains successfully executed methods and results of executions.
-	GetMethods map[string]MethodInvocation
-}
-
 type ContractDescription struct {
 	// Interfaces is a list of interfaces implemented by a contract.
-	Interfaces map[ContractInterface]InterfaceDescription
+	ContractInterfaces []ContractInterface
+	GetMethods         []MethodInvocation
+}
+
+func (d ContractDescription) hasAllResults(results []string) bool {
+	for _, r := range results {
+		found := false
+		for _, m := range d.GetMethods {
+			if m.TypeHint == r {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }
 
 type contractInspector struct {
-	knownMethods []MethodDescription
+	knownMethods    []MethodDescription
+	knownInterfaces []InterfaceDescription
 }
 
 type InspectorOptions struct {
 	additionalMethods []MethodDescription
+	knownInterfaces   []InterfaceDescription
+}
+
+type ContractInterface string
+
+type InvokeFn func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error)
+
+// MethodDescription describes a particular method and provides a function to execute it.
+type MethodDescription struct {
+	Name string
+	// InvokeFn executes this method on a contract and returns parsed execution results.
+	InvokeFn InvokeFn
+}
+
+type InterfaceDescription struct {
+	Name    ContractInterface
+	Results []string
 }
 
 type InspectorOption func(o *InspectorOptions)
@@ -47,7 +77,8 @@ func NewContractInspector(opts ...InspectorOption) *contractInspector {
 		o(options)
 	}
 	return &contractInspector{
-		knownMethods: append(methodInvocationOrder, options.additionalMethods...),
+		knownMethods:    append(methodInvocationOrder, options.additionalMethods...),
+		knownInterfaces: append(contractInterfacesOrder, options.knownInterfaces...),
 	}
 }
 
@@ -59,29 +90,28 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 	if len(code) == 0 {
 		return &ContractDescription{}, nil
 	}
+	desc := ContractDescription{}
 	info, err := getCodeInfo(code)
 	if err != nil {
 		return nil, err
 	}
-	var restricted map[ContractInterface]struct{}
-	implemented := make(map[ContractInterface]InterfaceDescription)
 
-	if wallets, ok := walletsByHashCode[info.hash.Hex()]; ok {
-		// ok, this is a wallet,
-		restricted = make(map[ContractInterface]struct{}, len(wallets))
-		for _, iface := range wallets {
-			restricted[iface] = struct{}{}
-			implemented[iface] = InterfaceDescription{
-				GetMethods: map[string]MethodInvocation{},
+	if contract, ok := knownContracts[info.hash]; ok { //for known contracts we just need to run get methods
+		desc.ContractInterfaces = contract.contractInterfaces
+		for _, method := range contract.getMethods {
+			typeHint, result, err := method(ctx, executor, reqAccountID)
+			if err != nil {
+				return &desc, nil
 			}
+			desc.GetMethods = append(desc.GetMethods, MethodInvocation{
+				Result:   result,
+				TypeHint: typeHint,
+			})
 		}
+		return &desc, nil
 	}
 
 	for _, method := range ci.knownMethods {
-		// if this is a wallet, we execute only wallet methods
-		if !isMethodAllowed(method.ImplementedBy, restricted) {
-			continue
-		}
 		// let's avoid running get methods that we know don't exist
 		if !info.isMethodOkToTry(method.Name) {
 			continue
@@ -90,76 +120,18 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		if err != nil {
 			continue
 		}
-		for _, ifaceName := range method.implementedInterfaces(typeHint) {
-			if !isInterfaceAllowed(ifaceName, restricted) {
-				continue
-			}
-			intr, ok := implemented[ifaceName]
-			if !ok {
-				intr = InterfaceDescription{
-					GetMethods: map[string]MethodInvocation{},
-				}
-				implemented[ifaceName] = intr
-			}
-			intr.GetMethods[method.Name] = MethodInvocation{
-				Result:   result,
-				TypeHint: typeHint,
-			}
+		desc.GetMethods = append(desc.GetMethods, MethodInvocation{
+			Result:   result,
+			TypeHint: typeHint,
+		})
+	}
+	for _, iface := range ci.knownInterfaces {
+		if desc.hasAllResults(iface.Results) {
+			desc.ContractInterfaces = append(desc.ContractInterfaces, iface.Name)
 		}
 	}
-	for ifaceName := range implemented {
-		if IsWallet(ifaceName) {
-			implemented[Wallet] = InterfaceDescription{
-				GetMethods: map[string]MethodInvocation{},
-			}
-			break
-		}
-	}
-	return &ContractDescription{
-		Interfaces: implemented,
-	}, nil
-}
 
-func (m MethodDescription) implementedInterfaces(typeHint string) []ContractInterface {
-	if m.ImplementedByFn != nil {
-		// implementedByFn is optional,
-		// if it's defined,
-		// we use typeHint to get the exact contract interface.
-		iface := m.ImplementedByFn(typeHint)
-		if len(iface) > 0 {
-			return []ContractInterface{iface}
-		}
-		return nil
-	}
-	return m.ImplementedBy
-}
-
-func isInterfaceAllowed(name ContractInterface, restricted map[ContractInterface]struct{}) bool {
-	if restricted == nil {
-		return true
-	}
-	_, ok := restricted[name]
-	return ok
-}
-
-func isMethodAllowed(implementedBy []ContractInterface, restricted map[ContractInterface]struct{}) bool {
-	if restricted == nil {
-		return true
-	}
-	for _, iface := range implementedBy {
-		if _, ok := restricted[iface]; ok {
-			return true
-		}
-	}
-	return false
-}
-
-func (ci ContractDescription) ImplementedInterfaces() []ContractInterface {
-	results := make([]ContractInterface, 0, len(ci.Interfaces))
-	for ifaceName := range ci.Interfaces {
-		results = append(results, ifaceName)
-	}
-	return results
+	return &desc, nil
 }
 
 type codeInfo struct {

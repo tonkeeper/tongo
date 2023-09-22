@@ -12,13 +12,27 @@ type ABI struct {
 	Externals      []Message   `xml:"external"`
 	JettonPayloads []Message   `xml:"jetton_payload"`
 	NFTPayloads    []Message   `xml:"nft_payload"`
+	Interfaces     []Interface `xml:"interface"`
 	Types          []string    `xml:"types"`
 }
 
+type Interface struct {
+	Name    string `xml:"name,attr"`
+	Methods []struct {
+		Name    string `xml:"name,attr"`
+		Version string `xml:"version,attr"`
+	} `xml:"get_method"`
+	Input  []InterfaceMessage `xml:"input"`
+	Output []InterfaceMessage `xml:"output"`
+}
+
+type InterfaceMessage struct {
+	Name string `xml:"name,attr"`
+}
+
 type Message struct {
-	Name       string   `xml:"name,attr"`
-	Input      string   `xml:",chardata"`
-	Interfaces []string `xml:"interface,attr"`
+	Name  string `xml:"name,attr"`
+	Input string `xml:",chardata"`
 	// FixedLength means that a destination type must have the same size in bits as the number of bits in a cell.
 	FixedLength bool `xml:"fixed_length,attr"`
 }
@@ -28,19 +42,15 @@ type GetMethod struct {
 	Input struct {
 		StackValues []StackRecord `xml:",any"`
 	} `xml:"input"`
-	Name       string            `xml:"name,attr"`
-	Interfaces []string          `xml:"interface,attr"`
-	ID         int               `xml:"id,attr"`
-	Output     []GetMethodOutput `xml:"output"`
-	// GolangName defines a name of a golang function generated to execute this get method.
-	GolangName string `xml:"golang_name,attr"`
+	Name   string            `xml:"name,attr"`
+	ID     int               `xml:"id,attr"`
+	Output []GetMethodOutput `xml:"output"`
 }
 
 type GetMethodOutput struct {
 	Version     string        `xml:"version,attr"`
 	FixedLength bool          `xml:"fixed_length,attr"`
 	Stack       []StackRecord `xml:",any"`
-	Interface   string        `xml:"interface,attr"`
 }
 
 func (o GetMethodOutput) FullResultName(methodName string) string {
@@ -66,9 +76,6 @@ func (m GetMethod) UsedByIntrospection() bool {
 }
 
 func (m GetMethod) GolangFunctionName() string {
-	if len(m.GolangName) > 0 {
-		return m.GolangName
-	}
 	return utils.ToCamelCase(m.Name)
 }
 

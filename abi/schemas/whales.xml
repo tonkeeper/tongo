@@ -1,0 +1,34 @@
+<abi>
+
+    <internal name="whales_nominators_withdraw">
+        withdraw#da803efd query_id:int64 gas:Grams amount:Grams = Withdraw;
+    </internal>
+    <internal name="whales_nominators_deposit">
+        deposit#7bcd1fef query_id:int64 gas:Grams = Deposit;
+    </internal>
+    <internal name="whales_nominators_force_kick">
+        force_kick#1596920c query_id:int64 = InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_stake_withdraw_delayed" interface="whales_nominators" fixed_length="true">
+        stake_withdraw_delayed#74bb3427 query_id:int64 = InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_stake_withdraw_completed" interface="whales_nominators" fixed_length="true">
+        stake_withdraw_completed#23d421e1 query_id:int64 = InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_send_stake" interface="whales_nominators" fixed_length="true">
+        send_stake#a2065f2c query_id:uint64 gas_limit:Grams stake:Grams validator_pubkey:bits256 stake_at:uint32
+        max_factor:uint32 adnl_addr:bits256 signature:^bits512 = InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_withdraw_unowned" interface="whales_nominators" fixed_length="true">
+        withdraw_unowned#251d6a98 query_id:uint64 gas_limit:Grams = InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_withdraw_unowned_response" interface="whales_nominators">
+        withdraw_unowned_response#1d1715bf query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_accept_stake" interface="whales_nominators">
+        accept_stake#99a811fb query_id:uint64 members:Cell= InternalMsgBody;
+    </internal>
+    <internal name="whales_nominators_accept_withdraws" interface="whales_nominators">
+        accept_withdraws#a19fd934 query_id:uint64 members:Cell= InternalMsgBody;
+    </internal>
+</abi>

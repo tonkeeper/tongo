@@ -60,12 +60,14 @@ type TLBMsgBody struct {
 }
 
 type Generator struct {
-	knownTypes        map[string]string
-	abi               ABI
-	newTlbTypes       map[string]struct{}
-	loadedTlbTypes    []string
-	loadedTlbMsgTypes map[uint32]TLBMsgBody
-	typeName          string
+	knownTypes            map[string]string
+	abi                   ABI
+	newTlbTypes           map[string]struct{}
+	loadedTlbTypes        []string
+	loadedTlbMsgTypes     map[uint32]TLBMsgBody
+	loadedJettonsMsgTypes map[uint32]TLBMsgBody
+	loadedNFTsMsgTypes    map[uint32]TLBMsgBody
+	typeName              string
 }
 
 func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
@@ -73,10 +75,12 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 		knownTypes = defaultKnownTypes
 	}
 	g := &Generator{
-		knownTypes:        knownTypes,
-		abi:               abi,
-		loadedTlbMsgTypes: make(map[uint32]TLBMsgBody),
-		newTlbTypes:       make(map[string]struct{}),
+		knownTypes:            knownTypes,
+		abi:                   abi,
+		loadedTlbMsgTypes:     make(map[uint32]TLBMsgBody),
+		loadedJettonsMsgTypes: make(map[uint32]TLBMsgBody),
+		loadedNFTsMsgTypes:    make(map[uint32]TLBMsgBody),
+		newTlbTypes:           make(map[string]struct{}),
 	}
 	err := g.registerABI()
 	return g, err
@@ -167,7 +171,19 @@ func (g *Generator) registerABI() error {
 		}
 	}
 	for _, internal := range g.abi.Internals {
-		err := g.registerMsgType(internal.Name, internal.Input, internal.FixedLength)
+		err := registerMstType(g.loadedTlbMsgTypes, "MsgBody", internal.Name, internal.Input, internal.FixedLength)
+		if err != nil {
+			return err
+		}
+	}
+	for _, jetton := range g.abi.JettonPayloads {
+		err := registerMstType(g.loadedJettonsMsgTypes, "JettonPayload", jetton.Name, jetton.Input, jetton.FixedLength)
+		if err != nil {
+			return err
+		}
+	}
+	for _, nft := range g.abi.NFTPayloads {
+		err := registerMstType(g.loadedNFTsMsgTypes, "NFTPayload", nft.Name, nft.Input, nft.FixedLength)
 		if err != nil {
 			return err
 		}
@@ -197,7 +213,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
+func registerMstType(known map[uint32]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -217,11 +233,11 @@ func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
 	}
 
 	var typePrefix string
-	_, ok := g.loadedTlbMsgTypes[uint32(tag.Val)]
+	_, ok := known[uint32(tag.Val)]
 	if ok {
 		typePrefix = utils.ToCamelCase(parsed.Declarations[0].Constructor.Name)
 	} else {
-		typePrefix = utils.ToCamelCase(name) + "MsgBody"
+		typePrefix = utils.ToCamelCase(name) + postfix
 	}
 
 	t, err := gen.GenerateGolangTypes(parsed.Declarations, typePrefix, true)
@@ -229,8 +245,8 @@ func (g *Generator) registerMsgType(name, s string, fixedLength bool) error {
 		return fmt.Errorf("can't decode %v error %w", s, err)
 	}
 
-	g.loadedTlbMsgTypes[uint32(tag.Val)] = TLBMsgBody{
-		TypeName:      utils.ToCamelCase(name) + "MsgBody",
+	known[uint32(tag.Val)] = TLBMsgBody{
+		TypeName:      utils.ToCamelCase(name) + postfix,
 		OperationName: utils.ToCamelCase(name),
 		Tag:           tag.Val,
 		Code:          t,
@@ -454,7 +470,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 	var knownOpcodes []opCode
 	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
 		tlbType := g.loadedTlbMsgTypes[k]
-		builder.WriteString(fmt.Sprintf("case %sMsgOpCode:  // 0x%x\n", tlbType.OperationName, tlbType.Tag))
+		builder.WriteString(fmt.Sprintf("case %sMsgOpCode:  // 0x%08x\n", tlbType.OperationName, tlbType.Tag))
 		builder.WriteString(fmt.Sprintf("var res %s\n", tlbType.TypeName))
 		builder.WriteString(fmt.Sprintf(`if err := tlb.Unmarshal(cell, &res); err != nil { return %sMsgOp, nil, err; }`, tlbType.OperationName))
 		builder.WriteString("\n")
@@ -482,7 +498,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 	builder.WriteString("type MsgOpCode = uint32\n")
 	builder.WriteString("const (\n")
 	for _, v := range knownOpcodes {
-		fmt.Fprintf(&builder, `%vMsgOpCode MsgOpCode = 0x%x`+"\n", v.OperationName, v.Tag)
+		fmt.Fprintf(&builder, `%vMsgOpCode MsgOpCode = 0x%08x`+"\n", v.OperationName, v.Tag)
 	}
 	builder.WriteString(")\n")
 	builder.WriteString("var KnownMsgTypes = map[string]any{\n")
@@ -490,11 +506,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 		fmt.Fprintf(&builder, "%vMsgOp: %v{},\n", v[0], v[1])
 	}
 	builder.WriteString("}\n\n")
-	b, err := format.Source([]byte(builder.String()))
-	if err != nil {
-		panic(err)
-	}
-	return string(b)
+	return builder.String()
 }
 
 type templateContext struct {
@@ -573,4 +585,91 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+func (g *Generator) RenderJetton() (string, error) {
+	return g.renderPayload("Jetton", g.loadedJettonsMsgTypes)
+}
+
+func (g *Generator) RenderNFT() (string, error) {
+	return g.renderPayload("NFT", g.loadedNFTsMsgTypes)
+}
+
+func (g *Generator) renderPayload(payloadName string, msgTypes map[uint32]TLBMsgBody) (string, error) {
+	var builder strings.Builder
+
+	fmt.Fprintf(&builder, `
+
+func (j *%sPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
+	if cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
+		return nil
+	}
+	tempCell := cell.CopyRemaining()
+	op64, err := tempCell.ReadUint(32)
+	if errors.Is(err, boc.ErrNotEnoughBits) {
+		j.SumType = Unknown%sOp
+		j.Value = cell.CopyRemaining()
+		return nil
+	}
+	op := uint32(op64)
+	j.OpCode = &op
+	switch  op {
+`, payloadName, payloadName)
+
+	var knownTypes [][2]string
+	var knownOpcodes []opCode
+	for _, k := range utils.GetOrderedKeys(msgTypes) {
+		tlbType := msgTypes[k]
+		fmt.Fprintf(&builder, "case %s%sOpCode:  // 0x%08x\n", tlbType.OperationName, payloadName, tlbType.Tag)
+		fmt.Fprintf(&builder, "var res %s\n", tlbType.TypeName)
+		fmt.Fprintf(&builder, `if err := tlb.Unmarshal(tempCell, &res); err == nil { 
+	j.SumType = %v%sOp
+	j.Value = res
+	return  nil 
+}`, tlbType.OperationName, payloadName)
+		builder.WriteString("\n")
+		if tlbType.FixedLength {
+			builder.WriteString(fmt.Sprintf(` panic! if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
+			builder.WriteString("\n")
+		}
+		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
+		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
+	}
+
+	fmt.Fprintf(&builder, `
+}
+		j.SumType = Unknown%sOp
+		j.Value = cell.CopyRemaining()
+	
+	return nil
+}
+const (
+`, payloadName)
+	for _, v := range knownTypes {
+		fmt.Fprintf(&builder, `%v%sOp %sOpName = "%v"`+"\n", v[0], payloadName, payloadName, v[0])
+	}
+	builder.WriteString(`
+
+`)
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, `%s%sOpCode %sOpCode = 0x%08x`+"\n", v.OperationName, payloadName, payloadName, v.Tag)
+	}
+	builder.WriteString(")\n")
+	fmt.Fprintf(&builder, "var Known%sTypes = map[string]any{\n", payloadName)
+	for _, v := range knownTypes {
+		fmt.Fprintf(&builder, "%v%sOp: %v{},\n", v[0], payloadName, v[1])
+	}
+	fmt.Fprintf(&builder, `}
+var %sOpCodes = map[%sOpName]%sOpCode{
+`, strings.ToLower(payloadName), payloadName, payloadName)
+	for _, v := range knownOpcodes {
+		fmt.Fprintf(&builder, "%s%sOp: %s%sOpCode,\n", v.OperationName, payloadName, v.OperationName, payloadName)
+	}
+	builder.WriteString("\n}\n")
+	for _, k := range utils.GetOrderedKeys(msgTypes) {
+		builder.WriteString(msgTypes[k].Code)
+		builder.WriteRune('\n')
+	}
+	builder.WriteRune('\n')
+	return builder.String(), nil
 }

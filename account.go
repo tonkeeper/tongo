@@ -18,42 +18,29 @@ import (
 )
 
 const (
-	// DefaultRoot is the default root address used by the addressParser.
+	// DefaultRoot is the default DNS root address used by the addressParser.
 	DefaultRoot = "-1:e56754f83426f69b09267bd876ac97c44821345b7e266bd956a7bfbfb98df35c"
 )
 
 type AccountID = ton.AccountID
 
-func NewAccountId(id int32, addr [32]byte) *AccountID {
-	return &AccountID{Workchain: id, Address: addr}
-}
+// Deprecated use ton.NewAccountID instead
+var NewAccountId = ton.NewAccountID
 
-func AccountIDFromBase64Url(s string) (AccountID, error) {
-	return ton.AccountIDFromBase64Url(s)
-}
+// Deprecated: use ParseAddress instead.
+var ParseAccountID = ton.ParseAccountID
 
-func AccountIDFromRaw(s string) (AccountID, error) {
-	return ton.AccountIDFromRaw(s)
-}
+// Deprecated: use MustParseAddress instead.
+var MustParseAccountID = ton.MustParseAccountID
 
-func ParseAccountID(s string) (AccountID, error) {
-	return ton.ParseAccountID(s)
-}
-
-func MustParseAccountID(s string) AccountID {
-	return ton.MustParseAccountID(s)
-}
-
-func AccountIDFromTlb(a tlb.MsgAddress) (*AccountID, error) {
-	return ton.AccountIDFromTlb(a)
-}
+var AccountIDFromTlb = ton.AccountIDFromTlb
 
 // mu protects defaultParser.
 var mu sync.RWMutex
 var defaultParser *addressParser
 
 // DefaultAddressParser returns a default address parser that works in the mainnet.
-// Currently, there is no way to change the network.
+// For other networks, use SetDefaultExecutor(testnetLiteapiClient).
 // Take a look at NewAccountAddressParser to create a parser for a different network or with a different root address.
 func DefaultAddressParser() *addressParser {
 	mu.RLock()
@@ -81,9 +68,19 @@ type addressParser struct {
 
 // ParseAddress parses a string of different formats to a ton.Address.
 func ParseAddress(a string) (ton.Address, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	return DefaultAddressParser().ParseAddress(ctx, a)
+}
+
+func MustParseAddress(a string) ton.Address {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	defer cancel()
+	addr, err := DefaultAddressParser().ParseAddress(ctx, a)
+	if err != nil {
+		panic(err)
+	}
+	return addr
 }
 
 // dnsResolver provides a method to resolve a domain name to a list of DNS records.

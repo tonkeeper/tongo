@@ -74,8 +74,8 @@ func (m *Magic) ValidateTag(c *boc.Cell, tag string) error {
 	return fmt.Errorf("unsupported tag: %v", tag)
 }
 
-func (m Magic) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	return encodeSumTag(c, encoder.tag)
+func (m Magic) EncodeTag(c *boc.Cell, tag string) error {
+	return encodeSumTag(c, tag)
 }
 
 func (m Maybe[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -84,7 +84,7 @@ func (m Maybe[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 		return err
 	}
 	if m.Exists {
-		err = Marshal(c, m.Value)
+		err = encoder.Marshal(c, m.Value)
 		if err != nil {
 			return err
 		}

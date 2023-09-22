@@ -58,12 +58,12 @@ func (itm ItemTransferMessage) ToInternal() (tlb.Message, byte, error) {
 		ForwardAmount:       tlb.VarUInteger16(*forwardTon),
 	}
 	if itm.CustomPayload != nil {
-		msgBody.CustomPayload.Exists = true
-		msgBody.CustomPayload.Value.Value = tlb.Any(*itm.CustomPayload)
+		payload := tlb.Any(*itm.CustomPayload)
+		msgBody.CustomPayload = &payload
 	}
 	if itm.ForwardPayload != nil {
 		msgBody.ForwardPayload.IsRight = true
-		msgBody.ForwardPayload.Value = tlb.Any(*itm.ForwardPayload)
+		msgBody.ForwardPayload.Value = abi.NFTPayload{SumType: abi.UnknownNFTOp, Value: *itm.ForwardPayload}
 	}
 	if err := c.WriteUint(0x5fcc3d14, 32); err != nil {
 		return tlb.Message{}, 0, err

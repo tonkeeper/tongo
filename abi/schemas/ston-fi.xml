@@ -17,16 +17,16 @@
 
     <get_method name="get_pool_data">
         <output version="stonfi" fixed_length="true" interface="stonfi_pool">
-            <int name="reserve0">uint64</int>
-            <int name="reserve1">uint64</int>
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
             <slice name="token0_address">msgaddress</slice>
             <slice name="token1_address">msgaddress</slice>
             <int name="lp_fee">uint8</int>
             <int name="protocol_fee">uint8</int>
             <int name="ref_fee">uint8</int>
             <slice name="protocol_fee_address">msgaddress</slice>
-            <int name="collected_token0_protocol_fee">uint64</int>
-            <int name="collected_token1_protocol_fee">uint64</int>
+            <int name="collected_token0_protocol_fee">int257</int>
+            <int name="collected_token1_protocol_fee">int257</int>
         </output>
     </get_method>
 
@@ -38,5 +38,10 @@
         pay_to#f93bb43f query_id:uint64 owner:MsgAddress exit_code:uint32
         params:(Either StonfiPayToParams ^StonfiPayToParams) = InternalMsgBody;
     </internal>
-
+    <jetton_payload name="stonfi_swap" interface="stonfi_router">
+        swap#25938561 token_wallet:MsgAddress min_out:(VarUInteger 16) to_address:MsgAddress referral_address:(Maybe MsgAddress) = JettonPayload;
+    </jetton_payload>
+    <jetton_payload name="stofi_provide_liquidity" interface="stonfi_pool">
+        provide_liquidity#fcf9e58f min_lp_out:(VarUInteger 16) = JettonPayload;
+    </jetton_payload>
 </abi>

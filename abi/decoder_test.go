@@ -178,7 +178,7 @@ func TestSimpleGetMethod(t *testing.T) {
 						continue
 					}
 					success = true
-					fmt.Printf("Result type: %s\n", s)
+					t.Logf("Result type: %s\n", s)
 				}
 				if !success {
 					t.Fatalf("failed to get execution results of %v", methodID)

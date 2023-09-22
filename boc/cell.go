@@ -286,6 +286,22 @@ func (c *Cell) ReadRemainingBits() BitString {
 	return c.bits.ReadRemainingBits()
 }
 
+func (c *Cell) CopyRemaining() *Cell {
+	rCursor := c.bits.rCursor
+	c2 := NewCellWithBits(c.bits.ReadRemainingBits())
+	c.bits.rCursor = rCursor
+	refCursor := c.refCursor
+	for c.RefsAvailableForRead() > 0 {
+		ref, err := c.NextRef()
+		if err != nil {
+			panic(err)
+		}
+		c2.AddRef(ref)
+	}
+	c.refCursor = refCursor
+	return c2
+}
+
 func (c *Cell) WriteBytes(b []byte) error {
 	return c.bits.WriteBytes(b)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/tonkeeper/tongo/tlb"
 	"reflect"
 	"sort"
 	"testing"
@@ -49,16 +50,16 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			wantValidate: func(d *ContractDescription) error {
 				result := d.Interfaces[StonfiPool].GetMethods["get_pool_data"].Result.(GetPoolData_StonfiResult)
 				expected := GetPoolData_StonfiResult{
-					Reserve0:                   609828329992,
-					Reserve1:                   442398556320807,
+					Reserve0:                   tlb.Int257FromInt64(609828329992),
+					Reserve1:                   tlb.Int257FromInt64(442398556320807),
 					Token0Address:              mustAccountIDToMsgAddress("0:14ac072c56291232d7cd93ddec120235c5e5cf5e2027f49bbc5aa276e5d224d8"),
 					Token1Address:              mustAccountIDToMsgAddress("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f"),
 					LpFee:                      20,
 					ProtocolFee:                10,
 					RefFee:                     10,
 					ProtocolFeeAddress:         mustAccountIDToMsgAddress("0:0000000000000000000000000000000000000000000000000000000000000000"),
-					CollectedToken0ProtocolFee: 818786014,
-					CollectedToken1ProtocolFee: 493020587698,
+					CollectedToken0ProtocolFee: tlb.Int257FromInt64(818786014),
+					CollectedToken1ProtocolFee: tlb.Int257FromInt64(493020587698),
 				}
 				if !reflect.DeepEqual(result, expected) {
 					return fmt.Errorf("got unexpected results")

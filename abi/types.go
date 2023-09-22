@@ -6,6 +6,37 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+type DedustAsset struct {
+	tlb.SumType
+	Native struct{} `tlbSumType:"$0000"`
+	Jetton struct {
+		WorkchainId int8
+		Address     tlb.Bits256
+	} `tlbSumType:"$0001"`
+	ExtraCurrency struct {
+		CurrencyId int32
+	} `tlbSumType:"$0010"`
+}
+
+type DedustSwapParams struct {
+	Deadline       uint32
+	RecipientAddr  tlb.MsgAddress
+	ReferralAddr   tlb.MsgAddress
+	FulfillPayload *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+}
+
+type DedustSwapStep struct {
+	PoolAddr tlb.MsgAddress
+	Params   DedustSwapStepParams
+}
+
+type DedustSwapStepParams struct {
+	KindOut bool
+	Limit   tlb.VarUInteger16
+	Next    *DedustSwapStep `tlb:"maybe^"`
+}
+
 type ClosingConfig struct {
 	QuarantinDuration        uint32
 	MisbehaviorFine          tlb.Grams
@@ -34,7 +65,7 @@ type SemiChannel struct {
 	Magic            tlb.Magic `tlb:"#43685374"`
 	ChannelId        tlb.Uint128
 	Data             SemiChannelBody
-	CounterpartyData tlb.Maybe[tlb.Ref[SemiChannelBody]]
+	CounterpartyData *SemiChannelBody `tlb:"maybe^"`
 }
 
 type SemiChannelBody struct {
@@ -54,11 +85,11 @@ type Storage struct {
 	KeyA           tlb.Uint256
 	KeyB           tlb.Uint256
 	ChannelId      tlb.Uint128
-	Config         tlb.Ref[ClosingConfig]
+	Config         ClosingConfig `tlb:"^"`
 	CommitedSeqnoA uint32
 	CommitedSeqnoB uint32
-	Quarantin      tlb.Maybe[tlb.Ref[QuarantinedState]]
-	Payments       tlb.Ref[PaymentConfig]
+	Quarantin      *QuarantinedState `tlb:"maybe^"`
+	Payments       PaymentConfig     `tlb:"^"`
 }
 
 type TorrentInfo struct {
@@ -67,7 +98,7 @@ type TorrentInfo struct {
 	RootHash       tlb.Uint256
 	HeaderSize     uint64
 	HeaderHash     tlb.Uint256
-	MicrochunkHash tlb.Maybe[tlb.Uint256]
+	MicrochunkHash *tlb.Uint256 `tlb:"maybe"`
 	Description    tlb.Text
 }
 
@@ -90,14 +121,14 @@ type TelemintData struct {
 	Touched           bool
 	SubwalletId       uint32
 	PublicKey         tlb.Bits256
-	CollectionContent tlb.Ref[tlb.Any]
-	NftItemCode       tlb.Ref[tlb.Any]
-	RoyaltyParams     tlb.Ref[NftRoyaltyParams]
+	CollectionContent tlb.Any          `tlb:"^"`
+	NftItemCode       tlb.Any          `tlb:"^"`
+	RoyaltyParams     NftRoyaltyParams `tlb:"^"`
 }
 
 type TelemintRestrictions struct {
-	ForceSenderAddress   tlb.Maybe[tlb.MsgAddress]
-	RewriteSenderAddress tlb.Maybe[tlb.MsgAddress]
+	ForceSenderAddress   *tlb.MsgAddress `tlb:"maybe"`
+	RewriteSenderAddress *tlb.MsgAddress `tlb:"maybe"`
 }
 
 type TelemintUnsignedDeploy struct {
@@ -105,9 +136,9 @@ type TelemintUnsignedDeploy struct {
 	ValidSince    uint32
 	ValidTill     uint32
 	Username      tlb.FixedLengthText
-	Content       tlb.Ref[tlb.Any]
-	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
-	RoyaltyParams tlb.Maybe[tlb.Ref[NftRoyaltyParams]]
+	Content       tlb.Any               `tlb:"^"`
+	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
+	RoyaltyParams *NftRoyaltyParams     `tlb:"maybe^"`
 }
 
 type TelemintUnsignedDeployV2 struct {
@@ -115,10 +146,10 @@ type TelemintUnsignedDeployV2 struct {
 	ValidSince    uint32
 	ValidTill     uint32
 	TokenName     tlb.FixedLengthText
-	Content       tlb.Ref[tlb.Any]
-	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
-	RoyaltyParams tlb.Maybe[tlb.Ref[NftRoyaltyParams]]
-	Restrictions  tlb.Maybe[tlb.Ref[TelemintRestrictions]]
+	Content       tlb.Any               `tlb:"^"`
+	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
+	RoyaltyParams *NftRoyaltyParams     `tlb:"maybe^"`
+	Restrictions  *TelemintRestrictions `tlb:"maybe^"`
 }
 
 type WhalesNominatorsMember struct {
@@ -156,23 +187,23 @@ type TextCommentMsgBody struct {
 type ProveOwnershipMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
-	ForwardPayload tlb.Ref[tlb.Any]
+	ForwardPayload tlb.Any `tlb:"^"`
 	WithContent    bool
 }
 
 type NftOwnershipAssignedMsgBody struct {
 	QueryId        uint64
 	PrevOwner      tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[tlb.Any]
+	ForwardPayload tlb.EitherRef[NFTPayload]
 }
 
 type OwnershipProofMsgBody struct {
 	QueryId   uint64
 	ItemId    tlb.Uint256
 	Owner     tlb.MsgAddress
-	Data      tlb.Ref[tlb.Any]
+	Data      tlb.Any `tlb:"^"`
 	RevokedAt uint64
-	Content   tlb.Maybe[tlb.Ref[tlb.Any]]
+	Content   *tlb.Any `tlb:"maybe^"`
 }
 
 type ChallengeQuarantinedChannelStateMsgBody struct {
@@ -180,8 +211,8 @@ type ChallengeQuarantinedChannelStateMsgBody struct {
 	Signature     tlb.Bits512
 	Tag           uint32
 	ChannelId     tlb.Uint128
-	SchA          tlb.Ref[SignedSemiChannel]
-	SchB          tlb.Ref[SignedSemiChannel]
+	SchA          SignedSemiChannel `tlb:"^"`
+	SchB          SignedSemiChannel `tlb:"^"`
 }
 
 type TonstakePoolWithdrawalMsgBody struct {
@@ -193,9 +224,9 @@ type SbtOwnerInfoMsgBody struct {
 	ItemId    tlb.Uint256
 	Initiator tlb.MsgAddress
 	Owner     tlb.MsgAddress
-	Data      tlb.Ref[tlb.Any]
+	Data      tlb.Any `tlb:"^"`
 	RevokedAt uint64
-	Content   tlb.Maybe[tlb.Ref[tlb.Any]]
+	Content   *tlb.Any `tlb:"maybe^"`
 }
 
 type InitPaymentChannelMsgBody struct {
@@ -212,9 +243,9 @@ type JettonTransferMsgBody struct {
 	Amount              tlb.VarUInteger16
 	Destination         tlb.MsgAddress
 	ResponseDestination tlb.MsgAddress
-	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
+	CustomPayload       *tlb.Any `tlb:"maybe^"`
 	ForwardTonAmount    tlb.VarUInteger16
-	ForwardPayload      tlb.EitherRef[tlb.Any]
+	ForwardPayload      tlb.EitherRef[JettonPayload]
 }
 
 type OfferStorageContractMsgBody struct {
@@ -263,8 +294,8 @@ type StartUncooperativeChannelCloseMsgBody struct {
 	Signature tlb.Bits512
 	Tag       uint32
 	ChannelId tlb.Uint128
-	SchA      tlb.Ref[SignedSemiChannel]
-	SchB      tlb.Ref[SignedSemiChannel]
+	SchA      SignedSemiChannel `tlb:"^"`
+	SchB      SignedSemiChannel `tlb:"^"`
 }
 
 type EncryptedTextCommentMsgBody struct {
@@ -289,22 +320,22 @@ type StonfiSwapMsgBody struct {
 	JettonAmount  tlb.VarUInteger16
 	MinOut        tlb.VarUInteger16
 	HasRefAddress bool
-	Addrs         tlb.Ref[StonfiSwapAddrs]
+	Addrs         StonfiSwapAddrs `tlb:"^"`
 }
 
 type TonstakeControllerPoolSendMessageMsgBody struct {
 	QueryId uint64
 	Mode    uint8
-	Msg     tlb.Ref[tlb.Any]
+	Msg     tlb.Any `tlb:"^"`
 }
 
 type TeleitemDeployMsgBody struct {
 	SenderAddress tlb.MsgAddress
 	Bid           tlb.Grams
 	Username      tlb.FixedLengthText
-	Content       tlb.Ref[tlb.Any]
-	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
-	RoyaltyParams tlb.Ref[NftRoyaltyParams]
+	Content       tlb.Any               `tlb:"^"`
+	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
+	RoyaltyParams NftRoyaltyParams      `tlb:"^"`
 }
 
 type TonstakePoolSetGovernanceFeeMsgBody struct {
@@ -338,7 +369,7 @@ type TeleitemCancelAuctionMsgBody struct {
 
 type ProofStorageMsgBody struct {
 	QueryId       uint64
-	FileDictProof tlb.Ref[tlb.Any]
+	FileDictProof tlb.Any `tlb:"^"`
 }
 
 type TelemintDeployMsgBody struct {
@@ -355,6 +386,11 @@ type StorageWithdrawMsgBody struct {
 	QueryId uint64
 }
 
+type DedustPayoutMsgBody struct {
+	QueryId uint64
+	Payload *tlb.Any `tlb:"maybe^"`
+}
+
 type ElectorRecoverStakeRequestMsgBody struct {
 	QueryId uint64
 }
@@ -365,7 +401,7 @@ type TonstakePoolDepositMsgBody struct {
 
 type TeleitemStartAuctionMsgBody struct {
 	QueryId       int64
-	AuctionConfig tlb.Ref[TeleitemAuctionConfig]
+	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
 }
 
 type TonstakePoolTouchMsgBody struct {
@@ -378,7 +414,7 @@ type ElectorNewStakeMsgBody struct {
 	StakeAt         uint32
 	MaxFactor       uint32
 	AdnlAddr        tlb.Bits256
-	Signature       tlb.Ref[tlb.Bits512]
+	Signature       tlb.Bits512 `tlb:"^"`
 }
 
 type UpdatePubkeyMsgBody struct {
@@ -400,8 +436,8 @@ type TonstakeImanagerOperationFeeMsgBody struct {
 }
 
 type ChannelCooperativeCloseMsgBody struct {
-	SigA      tlb.Ref[tlb.Bits512]
-	SigB      tlb.Ref[tlb.Bits512]
+	SigA      tlb.Bits512 `tlb:"^"`
+	SigB      tlb.Bits512 `tlb:"^"`
 	Tag       uint32
 	ChannelId tlb.Uint128
 	BalanceA  tlb.Grams
@@ -418,23 +454,32 @@ type JettonBurnMsgBody struct {
 	QueryId             uint64
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
-	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
+	CustomPayload       *JettonPayload `tlb:"maybe^"`
 }
 
 type TonstakePoolSetRolesMsgBody struct {
 	QueryId         uint64
-	Governor        tlb.Maybe[tlb.MsgAddress]
-	InterestManager tlb.Maybe[tlb.MsgAddress]
-	Halter          tlb.Maybe[tlb.MsgAddress]
+	Governor        *tlb.MsgAddress `tlb:"maybe"`
+	InterestManager *tlb.MsgAddress `tlb:"maybe"`
+	Halter          *tlb.MsgAddress `tlb:"maybe"`
 }
 
 type NftTransferMsgBody struct {
 	QueryId             uint64
 	NewOwner            tlb.MsgAddress
 	ResponseDestination tlb.MsgAddress
-	CustomPayload       tlb.Maybe[tlb.Ref[tlb.Any]]
+	CustomPayload       *tlb.Any `tlb:"maybe^"`
 	ForwardAmount       tlb.VarUInteger16
-	ForwardPayload      tlb.EitherRef[tlb.Any]
+	ForwardPayload      tlb.EitherRef[NFTPayload]
+}
+
+type DedustSwapExternalMsgBody struct {
+	QueryId    uint64
+	Proof      tlb.Any `tlb:"^"`
+	Amount     tlb.VarUInteger16
+	SenderAddr tlb.MsgAddress
+	Current    DedustSwapStepParams
+	SwapParams DedustSwapParams `tlb:"^"`
 }
 
 type TonstakeControllerSendRequestLoanMsgBody struct {
@@ -476,11 +521,21 @@ type TonstakeControllerPoolUnhaltMsgBody struct {
 	QueryId uint64
 }
 
+type DedustSwapPeerMsgBody struct {
+	QueryId    uint64
+	Proof      tlb.Any `tlb:"^"`
+	Asset      DedustAsset
+	Amount     tlb.VarUInteger16
+	SenderAddr tlb.MsgAddress
+	Current    DedustSwapStepParams
+	SwapParams DedustSwapParams `tlb:"^"`
+}
+
 type JettonNotifyMsgBody struct {
 	QueryId        uint64
 	Amount         tlb.VarUInteger16
 	Sender         tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[tlb.Any]
+	ForwardPayload tlb.EitherRef[JettonPayload]
 }
 
 type SubscriptionPaymentMsgBody struct{}
@@ -489,9 +544,14 @@ type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
 	QueryId int64
 }
 
+type MegatonWtonMintMsgBody struct {
+	QueryId uint64
+	Amount  tlb.Grams
+}
+
 type ChannelCooperativeCommitMsgBody struct {
-	SigA      tlb.Ref[tlb.Bits512]
-	SigB      tlb.Ref[tlb.Bits512]
+	SigA      tlb.Bits512 `tlb:"^"`
+	SigB      tlb.Bits512 `tlb:"^"`
 	Tag       uint32
 	ChannelId tlb.Uint128
 	SeqnoA    uint64
@@ -540,9 +600,9 @@ type TonstakeControllerWithdrawValidatorMsgBody struct {
 
 type TonstakeControllerPoolUpgradeMsgBody struct {
 	QueryId      uint64
-	Data         tlb.Maybe[tlb.Ref[tlb.Any]]
-	Code         tlb.Maybe[tlb.Ref[tlb.Any]]
-	AfterUpgrade tlb.Maybe[tlb.Ref[tlb.Any]]
+	Data         *tlb.Any `tlb:"maybe^"`
+	Code         *tlb.Any `tlb:"maybe^"`
+	AfterUpgrade *tlb.Any `tlb:"maybe^"`
 }
 
 type TonstakePoolPrepareGovernanceMigrationMsgBody struct {
@@ -574,7 +634,7 @@ type WhalesNominatorsSendStakeMsgBody struct {
 	StakeAt         uint32
 	MaxFactor       uint32
 	AdnlAddr        tlb.Bits256
-	Signature       tlb.Ref[tlb.Bits512]
+	Signature       tlb.Bits512 `tlb:"^"`
 }
 
 type TeleitemOkMsgBody struct {
@@ -596,6 +656,14 @@ type StorageRewardWithdrawalMsgBody struct {
 	QueryId uint64
 }
 
+type DedustPayoutFromPoolMsgBody struct {
+	QueryId       uint64
+	Proof         tlb.Any `tlb:"^"`
+	Amount        tlb.VarUInteger16
+	RecipientAddr tlb.MsgAddress
+	Payload       *tlb.Any `tlb:"maybe^"`
+}
+
 type TonstakeImanagerRequestNotificationMsgBody struct {
 	QueryId     uint64
 	MinLoan     tlb.Grams
@@ -606,6 +674,21 @@ type TonstakeImanagerRequestNotificationMsgBody struct {
 type TonstakePoolDeployControllerMsgBody struct {
 	ControllerId uint32
 	QueryId      uint64
+}
+
+type DedustDepositLiquidityAllMsgBody struct {
+	QueryId     uint64
+	Proof       tlb.Any `tlb:"^"`
+	OwnerAddr   tlb.MsgAddress
+	MinLpAmount tlb.VarUInteger16
+	Field4      struct {
+		Asset0       DedustAsset
+		Asset0Amount tlb.VarUInteger16
+		Asset1       DedustAsset
+		Asset1Amount tlb.VarUInteger16
+	}
+	FulfillPayload *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
 }
 
 type StorageContractTerminatedMsgBody struct {
@@ -631,7 +714,7 @@ type TonstakeImanagerSetInterestMsgBody struct {
 type SbtRequestOwnerMsgBody struct {
 	QueryId        uint64
 	Dest           tlb.MsgAddress
-	ForwardPayload tlb.Ref[tlb.Any]
+	ForwardPayload tlb.Any `tlb:"^"`
 	WithContent    bool
 }
 
@@ -666,7 +749,7 @@ type WalletPluginDestructResponseMsgBody struct{}
 
 type DeployStorageContractMsgBody struct {
 	QueryId         uint64
-	Info            tlb.Ref[TorrentInfo]
+	Info            TorrentInfo `tlb:"^"`
 	MerkleHash      tlb.Bits256
 	ExpectedRate    tlb.Grams
 	ExpectedMaxSpan uint32
@@ -728,3 +811,4 @@ type ElectorRecoverStakeResponseMsgBody struct {
 type BounceMsgBody struct {
 	Payload tlb.Any
 }
+

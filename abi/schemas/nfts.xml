@@ -4,23 +4,23 @@
         <get_method name="get_nft_content"/>
         <get_method name="get_collection_data"/>
         <get_method name="get_nft_address_by_index"/>
-        <input>
+        <msg_in>
             <internal name="get_royalty_params"/>
-        </input>
-        <input>
+        </msg_in>
+        <msg_out>
             <internal name="report_royalty_params"/>
-        </input>
+        </msg_out>
     </interface>
     <interface name="nft_item">
         <get_method name="get_nft_data"/>
-        <input>
+        <msg_in>
             <internal name="nft_transfer"/>
             <internal name="get_static_data"/>
-        </input>
-        <output>
+        </msg_in>
+        <msg_out>
             <internal name="nft_ownership_assigned"/>
             <internal name="report_static_data"/>
-        </output>
+        </msg_out>
     </interface>
     <interface name="editable">
         <get_method name="get_editor"/>
@@ -88,6 +88,8 @@
             <int name="time">uint64</int>
         </output>
     </get_method>
+
+
 
 
     <!--        NFTs       -->

@@ -1,0 +1,41 @@
+<abi>
+<!--    todo: attach all internal -->
+    <interface name="subscription_v1">
+        <get_method name="get_subscription_data"/>
+    </interface>
+    <get_method name="get_subscription_data">
+        <output>
+            <tuple name="wallet">
+                <int name="workchain">uint32</int>
+                <int name="address">bits256</int>
+            </tuple>
+            <tuple name="beneficiary">
+                <int name="workchain">uint32</int>
+                <int name="address">bits256</int>
+            </tuple>
+            <int name="amount">uint64</int>
+            <int name="period">uint64</int>
+            <int name="start_time">uint64</int>
+            <int name="timeout">uint64</int>
+            <int name="last_payment_time">uint64</int>
+            <int name="last_request_time">uint64</int>
+            <int name="failed_attempts">uint32</int>
+            <int name="subscription_id">uint64</int>
+        </output>
+    </get_method>
+    <internal name="payment_request" >
+        request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
+    </internal>
+    <internal name="payment_request_response">
+        payment_request_response#f06c7567 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_plugin_destruct" >
+        destruct#64737472 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_plugin_destruct_response" >
+        destruct_response#e4737472 = InternalMsgBody;
+    </internal>
+    <internal name="subscription_payment" >
+        subscription_payment#73756273 = InternalMsgBody;
+    </internal>
+</abi>

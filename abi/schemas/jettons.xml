@@ -2,22 +2,22 @@
     <interface name="jetton_master">
         <get_method name="get_jetton_data"/>
 <!--        <get_method name="get_wallet_address"/> todo: return it back-->
-        <input>
+        <msg_in>
             <internal name="jetton_burn_notification"/>
-        </input>
+        </msg_in>
     </interface>
     <interface name="jetton_wallet">
         <get_method name="get_wallet_data"/>
-        <input>
+        <msg_in>
             <internal name="jetton_transfer"/>
             <internal name="jetton_internal_transfer"/>
             <internal name="jetton_burn"/>
-        </input>
-        <output>
+        </msg_in>
+        <msg_out>
             <internal name="jetton_burn_notification"/>
             <internal name="jetton_internal_transfer"/>
             <internal name="jetton_notify"/>
-        </output>
+        </msg_out>
     </interface>
 
     <!--        Jettons    -->

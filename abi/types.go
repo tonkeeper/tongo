@@ -92,6 +92,17 @@ type Storage struct {
 	Payments       PaymentConfig     `tlb:"^"`
 }
 
+type StonfiPayToParams struct {
+	Amount0Out    tlb.VarUInteger16
+	Token0Address tlb.MsgAddress
+	Amount1Out    tlb.VarUInteger16
+	Token1Address tlb.MsgAddress
+}
+
+type StonfiSwapAddrs struct {
+	FromUser tlb.MsgAddress
+}
+
 type TorrentInfo struct {
 	PieceSize      uint32
 	FileSize       uint64
@@ -152,6 +163,10 @@ type TelemintUnsignedDeployV2 struct {
 	Restrictions  *TelemintRestrictions `tlb:"maybe^"`
 }
 
+type AccountLists struct {
+	List tlb.Hashmap[tlb.Bits256, tlb.Any]
+}
+
 type WhalesNominatorsMember struct {
 	ProfitPerCoin      tlb.Int128
 	Balance            tlb.Grams
@@ -163,21 +178,6 @@ type WhalesNominatorsMember struct {
 
 type WhalesNominatorsMembersList struct {
 	List tlb.Hashmap[tlb.Bits256, WhalesNominatorsMember]
-}
-
-type AccountLists struct {
-	List tlb.Hashmap[tlb.Bits256, tlb.Any]
-}
-
-type StonfiPayToParams struct {
-	Amount0Out    tlb.VarUInteger16
-	Token0Address tlb.MsgAddress
-	Amount1Out    tlb.VarUInteger16
-	Token1Address tlb.MsgAddress
-}
-
-type StonfiSwapAddrs struct {
-	FromUser tlb.MsgAddress
 }
 
 type TextCommentMsgBody struct {
@@ -372,6 +372,10 @@ type ProofStorageMsgBody struct {
 	FileDictProof tlb.Any `tlb:"^"`
 }
 
+type ProcessGovernanceDecisionMsgBody struct {
+	QueryId uint64
+}
+
 type TelemintDeployMsgBody struct {
 	Sig tlb.Bits512
 	Msg TelemintUnsignedDeploy
@@ -415,6 +419,16 @@ type ElectorNewStakeMsgBody struct {
 	MaxFactor       uint32
 	AdnlAddr        tlb.Bits256
 	Signature       tlb.Bits512 `tlb:"^"`
+}
+
+type ChangeDnsRecordMsgBody struct {
+	QueryId uint64
+	Key     tlb.Uint256
+	Value   tlb.DNSRecord `tlb:"^"`
+}
+
+type DnsBalanceReleaseMsgBody struct {
+	QueryId uint64
 }
 
 type UpdatePubkeyMsgBody struct {

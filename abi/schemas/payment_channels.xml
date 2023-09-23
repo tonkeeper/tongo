@@ -1,0 +1,105 @@
+<abi>
+    <types>
+        cp#_ amount:Coins condition:Cell = ConditionalPayment;
+        sc_body#_ seqno:uint64 sent:Coins conditionals:(HashmapE 32 ConditionalPayment)
+        = SemiChannelBody; // 64+132+1 = 197
+        semichannel_state#43685374 channel_id:uint128 data:SemiChannelBody counterparty_data:(Maybe ^SemiChannelBody)
+        = SemiChannel; // 32 + 128 + 197 + 1 = 358
+        signed_schs#_ signature:bits512 state:SemiChannel = SignedSemiChannel; // 512 + 358 = 870
+        quarantined_state#_ state_A:SemiChannelBody state_B:SemiChannelBody
+        quarantine_starts:uint32
+        state_commited_by_A:Bool
+        = QuarantinedState; // 358 + 358 + 32 + 1 = 749
+        conf#_ quarantin_duration:uint32
+        misbehavior_fine:Coins
+        conditional_close_duration:uint32 = ClosingConfig; // 32 + 132 + 132 + 32 = 296
+        payment_conf#_ excess_fee:Coins
+        dest_A:MsgAddress
+        dest_B:MsgAddress = PaymentConfig;
+        channel_state#_ balance_A:Coins balance_B:Coins
+        key_A:uint256 key_B:uint256
+        channel_id:uint128
+        config:^ClosingConfig
+        commited_seqno_A:uint32 commited_seqno_B:uint32
+        quarantin:(Maybe ^QuarantinedState)
+        payments:^PaymentConfig = Storage;
+        // 132 + 132 + 256 + 256 + 32 + 32 + 1 + 132 = 973
+    </types>
+    <!--      todo: attach internals to interfaces  -->
+    <interface name="payment_channel">
+        <get_method name="get_channel_data"/>
+    </interface>
+    <get_method name="get_channel_data">
+        <output>
+            <int name="state">int8</int>
+            <tuple name="balances">
+                <int name="a">int64</int>
+                <int name="b">int64</int>
+            </tuple>
+            <tuple name="keys">
+                <int name="a">bits256</int>
+                <int name="b">bits256</int>
+            </tuple>
+            <int name="channel_id">uint128</int>,
+            <tuple name="closure_config" >
+                <int name="quarantin_duration">uint32</int>
+                <int name="misbehavior_fine">int64</int>
+                <int name="conditional_close_duration">uint32</int>
+            </tuple>
+            <tuple name="committed_seqno">
+                <int name="a">uint32</int>
+                <int name="b">uint32</int>
+            </tuple>
+            <slice name="quarantine" nullable="true">cell</slice>  <!-- todo: find type. maybe ^QuarantinedState -->
+            <tuple name="addresses">
+                <int name="excess_fee">int64</int>
+                <slice name="addr_a">msgaddress</slice>
+                <slice name="addr_b">msgaddress</slice>
+            </tuple>
+        </output>
+    </get_method>
+
+
+
+    <!--        Payment channels     -->
+    <internal name="top_up_channel_balance">
+        top_up_balance#67c7d281 add_A:Coins add_B:Coins = InternalMsgBody;
+    </internal>
+    <internal name="init_payment_channel">
+        init_channel#0e0620c2 is_A:Bool signature:bits512 tag:# channel_id:uint128 balance_A:Coins
+        balance_B:Coins = InternalMsgBody;
+    </internal>
+    <internal name="channel_cooperative_close">
+        cooperative_close#5577587e sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 balance_A:Coins
+        balance_B:Coins seqno_A:uint64 seqno_B:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="channel_cooperative_commit">
+        cooperative_commit#79a126ef sig_A:^bits512 sig_B:^bits512 tag:# channel_id:uint128 seqno_A:uint64
+        seqno_B:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="start_uncooperative_channel_close">
+        start_uncooperative_close#1f151acf signed_by_A:Bool signature:bits512 tag:# channel_id:uint128
+        sch_A:^SignedSemiChannel
+        sch_B:^SignedSemiChannel = InternalMsgBody;
+    </internal>
+    <internal name="challenge_quarantined_channel_state">
+        challenge_quarantined_state#088eaa32
+        challenged_by_A:Bool signature:bits512 tag:# channel_id:uint128
+        sch_A:^SignedSemiChannel
+        sch_B:^SignedSemiChannel = InternalMsgBody;
+    </internal>
+    <internal name="settle_channel_conditionals">
+        settle_conditionals#66f6f069
+        from_A:Bool signature:bits512 tag:# channel_id:uint128
+        conditionals_to_settle:(HashmapE 32 Cell)
+        = InternalMsgBody;
+    </internal>
+    <internal name="finish_uncooperative_channel_close">
+        finish_uncooperative_close#25432a91 = InternalMsgBody;
+    </internal>
+    <internal name="channel_closed">
+        channel_closed#dddc88ba channel_id:uint128 = InternalMsgBody;
+    </internal>
+
+
+</abi>

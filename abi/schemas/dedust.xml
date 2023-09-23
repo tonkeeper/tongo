@@ -13,29 +13,30 @@
     <interface name="dedust_pool">
         <get_method name="get_reserve" version="dedust"/>
         <get_method name="get_assets" version="dedust"/>
-        <input>
+        <msg_in>
             <internal name="dedust_swap_external"/>
             <internal name="dedust_swap_peer"/>
-        </input>
-        <output>
+        </msg_in>
+        <msg_out>
             <internal name="dedust_payout_from_pool"/>
             <internal name="dedust_swap_peer"/>
-        </output>
+            <ext_out name="dedust_swap"/>
+        </msg_out>
     </interface>
     <interface name="dedust_vault">
         <get_method name="get_asset" version="dedust"/>
-        <input>
+        <msg_in>
             <internal name="jetton_notify"/>
             <internal name="jetton_transfer"/>
             <internal name="dedust_swap"/>
             <internal name="dedust_payout_from_pool"/>
-        </input>
-        <output>
+        </msg_in>
+        <msg_out>
             <internal name="jetton_notify"/>
             <internal name="jetton_transfer"/>
             <internal name="dedust_swap_external"/>
             <internal name="dedust_payout"/>
-        </output>
+        </msg_out>
     </interface>
 
     <get_method name="get_reserves" >

@@ -5,17 +5,34 @@ package abi
 import ()
 
 const (
-	DedustPool        ContractInterface = "dedust_pool"
-	DedustVault       ContractInterface = "dedust_vault"
-	Editable          ContractInterface = "editable"
-	JettonMaster      ContractInterface = "jetton_master"
-	JettonWallet      ContractInterface = "jetton_wallet"
-	MegatonfiExchange ContractInterface = "megatonfi_exchange"
-	MegatonfiRouter   ContractInterface = "megatonfi_router"
-	NftCollection     ContractInterface = "nft_collection"
-	NftItem           ContractInterface = "nft_item"
-	Sbt               ContractInterface = "sbt"
-	StonfiPool        ContractInterface = "stonfi_pool"
+	DedustPool          ContractInterface = "dedust_pool"
+	DedustVault         ContractInterface = "dedust_vault"
+	Dns                 ContractInterface = "dns"
+	Editable            ContractInterface = "editable"
+	JettonMaster        ContractInterface = "jetton_master"
+	JettonWallet        ContractInterface = "jetton_wallet"
+	Locker              ContractInterface = "locker"
+	LockerBill          ContractInterface = "locker_bill"
+	LockupUniversal     ContractInterface = "lockup_universal"
+	LockupVesting       ContractInterface = "lockup_vesting"
+	MegatonfiExchange   ContractInterface = "megatonfi_exchange"
+	MegatonfiRouter     ContractInterface = "megatonfi_router"
+	NftAuctionV1        ContractInterface = "nft_auction_v1"
+	NftCollection       ContractInterface = "nft_collection"
+	NftItem             ContractInterface = "nft_item"
+	NftSaleV1           ContractInterface = "nft_sale_v1"
+	NftSaleV2           ContractInterface = "nft_sale_v2"
+	PaymentChannel      ContractInterface = "payment_channel"
+	Sbt                 ContractInterface = "sbt"
+	StonfiPool          ContractInterface = "stonfi_pool"
+	StorageContract     ContractInterface = "storage_contract"
+	StorageProvider     ContractInterface = "storage_provider"
+	SubscriptionV1      ContractInterface = "subscription_v1"
+	Teleitem            ContractInterface = "teleitem"
+	TonstakePool        ContractInterface = "tonstake_pool"
+	TvPool              ContractInterface = "tv_pool"
+	ValidatorController ContractInterface = "validator_controller"
+	WhalesPool          ContractInterface = "whales_pool"
 )
 
 var methodInvocationOrder = []MethodDescription{
@@ -44,8 +61,8 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetBillAmount,
 	},
 	{
-		Name:     "get_channel_state",
-		InvokeFn: GetChannelState,
+		Name:     "get_channel_data",
+		InvokeFn: GetChannelData,
 	},
 	{
 		Name:     "get_collection_data",
@@ -232,6 +249,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: Dns,
+		Results: []string{
+			"Dnsresolve_RecordsResult",
+		},
+	},
+	{
 		Name: JettonMaster,
 		Results: []string{
 			"GetJettonDataResult",
@@ -241,6 +264,42 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: JettonWallet,
 		Results: []string{
 			"GetWalletDataResult",
+		},
+	},
+	{
+		Name: TonstakePool,
+		Results: []string{
+			"TonstakePoolResult",
+		},
+	},
+	{
+		Name: ValidatorController,
+		Results: []string{
+			"GetValidatorControllerDataResult",
+		},
+	},
+	{
+		Name: Locker,
+		Results: []string{
+			"GetLockerDataResult",
+		},
+	},
+	{
+		Name: LockerBill,
+		Results: []string{
+			"GetLockerBillDataResult",
+		},
+	},
+	{
+		Name: LockupVesting,
+		Results: []string{
+			"GetLockupDataResult",
+		},
+	},
+	{
+		Name: LockupUniversal,
+		Results: []string{
+			"GetBalancesResult",
 		},
 	},
 	{
@@ -255,6 +314,24 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Results: []string{
 			"GetLpSwapData_MegatonResult",
 			"GetLpMiningData_MegatonResult",
+		},
+	},
+	{
+		Name: NftSaleV1,
+		Results: []string{
+			"GetSaleData_BasicResult",
+		},
+	},
+	{
+		Name: NftSaleV2,
+		Results: []string{
+			"GetSaleData_GetgemsResult",
+		},
+	},
+	{
+		Name: NftAuctionV1,
+		Results: []string{
+			"GetSaleData_GetgemsAuctionResult",
 		},
 	},
 	{
@@ -285,9 +362,63 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: PaymentChannel,
+		Results: []string{
+			"GetChannelDataResult",
+		},
+	},
+	{
 		Name: StonfiPool,
 		Results: []string{
 			"GetPoolData_StonfiResult",
+		},
+	},
+	{
+		Name: StorageProvider,
+		Results: []string{
+			"GetWalletParamsResult",
+			"GetStorageParamsResult",
+			"SeqnoResult",
+			"GetPublicKeyResult",
+		},
+	},
+	{
+		Name: StorageContract,
+		Results: []string{
+			"GetStorageContractDataResult",
+			"GetTorrentHashResult",
+			"IsActiveResult",
+			"GetNextProofInfoResult",
+		},
+	},
+	{
+		Name: SubscriptionV1,
+		Results: []string{
+			"GetSubscriptionDataResult",
+		},
+	},
+	{
+		Name: Teleitem,
+		Results: []string{
+			"GetTelemintAuctionStateResult",
+			"GetTelemintAuctionConfigResult",
+			"GetTelemintTokenNameResult",
+		},
+	},
+	{
+		Name: TvPool,
+		Results: []string{
+			"GetPoolDataResult",
+			"ListNominatorsResult",
+			"ListVotesResult",
+		},
+	},
+	{
+		Name: WhalesPool,
+		Results: []string{
+			"GetStakingStatusResult",
+			"GetPoolStatusResult",
+			"GetParams_WhalesNominatorResult",
 		},
 	},
 }

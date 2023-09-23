@@ -27,6 +27,7 @@ var defaultKnownTypes = map[string]string{
 	"uint16":        "uint16",
 	"uint32":        "uint32",
 	"uint64":        "uint64",
+	"uint128":       "tlb.Uint128",
 	"int256":        "tlb.Int256",
 	"int257":        "tlb.Int257",
 	"bits256":       "tlb.Bits256",

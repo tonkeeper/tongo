@@ -1,0 +1,72 @@
+<abi>
+    <!--        DNS      -->
+    <interface name="dns">
+        <get_method name="dnsresolve" version="records"/>
+        <msg_in>
+            <internal name="dns_balance_release"/>
+            <internal name="change_dns_record"/>
+            <internal name="edit_content"/>
+            <internal name="process_governance_decision"/>
+        </msg_in>
+        <msg_out>
+            <internal name="dns_balance_release"/>
+        </msg_out>
+    </interface>
+    <get_method name="dnsresolve">
+        <input>
+            <slice name="domain">[]byte</slice>
+            <int name="category">int257</int>
+        </input>
+        <output version="records" fixed_length="true">
+            <int name="resolved_bits">int64</int>
+            <cell name="result">DNS_RecordSet</cell>
+        </output>
+    </get_method>
+    <get_method name="get_last_fill_up_time">
+        <output  fixed_length="true">
+            <int name="last_fill_up_time">int64</int>
+        </output>
+    </get_method>
+    <get_method name="get_domain">
+        <output>
+            <slice name="domain">string</slice>
+        </output>
+    </get_method>
+    <get_method name="get_full_domain">
+        <output>
+            <slice name="domain">string</slice>
+        </output>
+    </get_method>
+    <get_method name="get_auction_info">
+        <output>
+            <slice name="max_bid_address">msgaddress</slice>
+            <int name="max_bid_amount">uint64</int>
+            <int name="auction_end_time ">uint64</int>
+        </output>
+    </get_method>
+
+
+<!-- todo: TESTS!!!!!!!!!!!!!! -->
+    <internal name="dns_balance_release">
+        release_balance#4ed14b65 query_id:uint64 = InternalMsgBody;
+    </internal>
+<!--    <internal name="delete_dns_record" fixed_length="true">-->
+<!--        change_dns_record#4eb1f0f9 query_id:uint64 key:uint256 = InternalMsgBody;-->
+<!--    </internal>-->
+    <internal name="change_dns_record" fixed_length="true">
+        change_dns_record#4eb1f0f9 query_id:uint64 key:uint256 value:^DNSRecord = InternalMsgBody;
+    </internal>
+<!--    <internal name="edit_content">-->
+<!--        edit_content#1a0b9d51 query_id:uint64 content:^Cell todo: should be FullContent but with dns support = InternalMsgBody;-->
+<!--    </internal>-->
+    <internal name="process_governance_decision">
+        process_governance_decision#44beae41 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <!-- Auction -->
+    <internal name="auction_fill_up">
+        auction_fill_up#370fec51 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+
+</abi>

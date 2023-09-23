@@ -515,6 +515,8 @@ func (v VmStackValue) Uint64() uint64 {
 	}
 }
 
+var bigIntType = reflect.TypeOf(big.Int{})
+
 func (v VmStackValue) Unmarshal(dest any) error {
 	val := reflect.ValueOf(dest)
 	if val.Kind() != reflect.Pointer {
@@ -537,9 +539,9 @@ func (v VmStackValue) Unmarshal(dest any) error {
 	}
 	switch v.SumType {
 	case "VmStkTinyInt":
-		if _, ok := dest.(*Int257); ok {
+		if val.CanConvert(bigIntType) {
 			bi := big.NewInt(v.VmStkTinyInt)
-			val.Set(reflect.ValueOf(Int257(*bi)))
+			val.Set(reflect.ValueOf(*bi).Convert(val.Type()))
 		} else if val.Kind() == reflect.Bool {
 			val.SetBool(v.VmStkTinyInt != 0)
 		} else {

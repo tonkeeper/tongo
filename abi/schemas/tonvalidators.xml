@@ -1,0 +1,61 @@
+<abi>
+    <!--        Nominators     -->
+    <types>
+        account_lists#_ list:(Hashmap 256 Cell) = AccountLists;
+    </types>
+    <interface name="tv_pool">
+        <get_method name="get_pool_data"/>
+<!--        <get_method name="get_nominator_data"/> todo: uncomment-->
+        <get_method name="list_nominators"/>
+        <get_method name="list_votes"/>
+    </interface>
+    <get_method name="list_nominators">
+        <output>
+            <tuple name="nominators" list="true">
+                <int name="address">bits256</int>
+                <int name="amount">uint64</int>
+                <int name="pending_deposit_amount">uint64</int>
+                <int name="withdraw_requested">bool</int>
+            </tuple>
+        </output>
+    </get_method>
+    <get_method name="list_votes">
+        <output>
+            <tuple name="votes" list="true">
+                <int name="proposal_hash">bits256</int>
+                <int name="vote_create_time">uint32</int>
+            </tuple>
+        </output>
+    </get_method>
+    <get_method name="get_pool_data">
+        <output version="tf">
+            <int name="state">int8</int>
+            <int name="nominators_count">uint32</int>
+            <int name="stake_amount_sent">int64</int>
+            <int name="validator_amount">int64</int>
+            <int name="validator_address">bits256</int>
+            <int name="validator_reward_share">uint32</int>
+            <int name="max_nominators_count">uint32</int>
+            <int name="min_validator_stake">int64</int>
+            <int name="min_nominator_stake">int64</int>
+            <cell name="nominators">any</cell>
+            <cell name="withdraw_requests" nullable="true">AccountLists</cell>
+            <int name="stake_at">uint32</int>
+            <int name="saved_validator_set_hash">bits256</int>
+            <int name="validator_set_changes_count">uint32</int>
+            <int name="validator_set_change_time">uint32</int>
+            <int name="stake_held_for">uint32</int>
+            <tuple name="config_proposal_votings" list="true"/>
+        </output>
+    </get_method>
+    <get_method name="get_nominator_data">
+        <input>
+            <int name="address">int257</int>
+        </input>
+        <output>
+            <int name="amount">uint64</int>
+            <int name="pending_deposit_amount">uint64</int>
+            <int name="withdraw_found">bool</int>
+        </output>
+    </get_method>
+</abi>

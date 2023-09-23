@@ -1,5 +1,5 @@
 <abi>
-    <types interface="stonfi_router">
+    <types>
         pay_to_params#_ amount0_out:(VarUInteger 16) token0_address:MsgAddress amount1_out:(VarUInteger 16) token1_address:MsgAddress = StonfiPayToParams;
         swap_addresses#_ from_user:MsgAddress = StonfiSwapAddrs;
     </types>
@@ -8,7 +8,7 @@
     </interface>
 
 <!--    <get_method name="get_router_data">-->
-<!--        <output version="stonfi" fixed_length="true" interface="stonfi_router">-->
+<!--        <output version="stonfi" fixed_length="true">-->
 <!--            <int name="is_locked">bool</int>-->
 <!--            <slice name="admin_address">msgaddress</slice>-->
 <!--            <cell name="temp_upgrade">any</cell>-->

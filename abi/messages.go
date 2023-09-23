@@ -214,6 +214,12 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return ProofStorageMsgOp, nil, err
 		}
 		return ProofStorageMsgOp, res, nil
+	case ProcessGovernanceDecisionMsgOpCode: // 0x44beae41
+		var res ProcessGovernanceDecisionMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return ProcessGovernanceDecisionMsgOp, nil, err
+		}
+		return ProcessGovernanceDecisionMsgOp, res, nil
 	case TelemintDeployMsgOpCode: // 0x4637289a
 		var res TelemintDeployMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -268,6 +274,21 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 			return ElectorNewStakeMsgOp, nil, err
 		}
 		return ElectorNewStakeMsgOp, res, nil
+	case ChangeDnsRecordMsgOpCode: // 0x4eb1f0f9
+		var res ChangeDnsRecordMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return ChangeDnsRecordMsgOp, nil, err
+		}
+		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
+			return ChangeDnsRecordMsgOp, nil, ErrStructSizeMismatch
+		}
+		return ChangeDnsRecordMsgOp, res, nil
+	case DnsBalanceReleaseMsgOpCode: // 0x4ed14b65
+		var res DnsBalanceReleaseMsgBody
+		if err := tlb.Unmarshal(cell, &res); err != nil {
+			return DnsBalanceReleaseMsgOp, nil, err
+		}
+		return DnsBalanceReleaseMsgOp, res, nil
 	case UpdatePubkeyMsgOpCode: // 0x53f34cd6
 		var res UpdatePubkeyMsgBody
 		if err := tlb.Unmarshal(cell, &res); err != nil {
@@ -737,6 +758,7 @@ const (
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
+	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
 	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
@@ -746,6 +768,8 @@ const (
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
+	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
+	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
 	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
 	TonstakeImanagerOperationFeeMsgOp            MsgOpName = "TonstakeImanagerOperationFee"
@@ -854,6 +878,7 @@ const (
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
+	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
 	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
@@ -863,6 +888,8 @@ const (
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
+	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
+	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
 	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
 	TonstakeImanagerOperationFeeMsgOpCode            MsgOpCode = 0x54d37487
@@ -968,6 +995,7 @@ var KnownMsgTypes = map[string]any{
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
+	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
 	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
@@ -977,6 +1005,8 @@ var KnownMsgTypes = map[string]any{
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
+	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},
+	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
 	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
 	TonstakeImanagerOperationFeeMsgOp:            TonstakeImanagerOperationFeeMsgBody{},

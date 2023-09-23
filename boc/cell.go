@@ -177,7 +177,12 @@ func (c *Cell) NextRef() (*Cell, error) {
 }
 
 func (c *Cell) toStringImpl(ident string, iterationsLimit *int) string {
-	s := ident + "x{" + c.bits.ToFiftHex() + "}\n"
+	var s string
+	if c.IsExotic() {
+		s = ident + "!x{" + c.bits.ToFiftHex() + "}\n"
+	} else {
+		s = ident + "x{" + c.bits.ToFiftHex() + "}\n"
+	}
 	if *iterationsLimit == 0 {
 		return s
 	}

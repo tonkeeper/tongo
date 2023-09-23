@@ -89,11 +89,11 @@ func main() {
 	types := gen.CollectedTypes()
 	msgDecoder := gen.GenerateMsgDecoder()
 
-	getMethods, err := gen.GetMethods()
+	getMethods, simpleMethods, err := gen.GetMethods()
 	if err != nil {
 		panic(err)
 	}
-	invocationOrder, err := gen.RenderInvocationOrderList()
+	invocationOrder, err := gen.RenderInvocationOrderList(simpleMethods)
 	if err != nil {
 		panic(err)
 	}

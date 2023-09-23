@@ -87,7 +87,7 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 	return g, err
 }
 
-func (g *Generator) GetMethods() (string, error) {
+func (g *Generator) GetMethods() (string, []string, error) {
 	var builder, methodMap, resultMap, decodersMap strings.Builder
 	builder.WriteString(`
 type Executor interface {
@@ -101,7 +101,7 @@ type Executor interface {
 	var resultTypes []string
 
 	usedNames := map[string]struct{}{}
-
+	simpleMethods := []string{}
 	for _, m := range g.abi.Methods {
 		methodName := m.GolangFunctionName()
 		var methodID int
@@ -116,6 +116,7 @@ type Executor interface {
 		usedNames[methodName] = struct{}{}
 
 		if len(m.Input.StackValues) == 0 {
+			simpleMethods = append(simpleMethods, m.Name)
 			methods[methodID] = append(methods[methodID], methodName)
 		}
 		decodersMap.WriteString(fmt.Sprintf(`"%v":{`, m.Name))
@@ -125,7 +126,7 @@ type Executor interface {
 			resultTypes = append(resultTypes, resultTypeName)
 			r, err := g.buildResultType(resultTypeName, o.Stack)
 			if err != nil {
-				return "", err
+				return "", nil, err
 			}
 			builder.WriteString(r)
 			builder.WriteRune('\n')
@@ -133,7 +134,7 @@ type Executor interface {
 		decodersMap.WriteString("},\n")
 		s, err := g.getMethod(m, methodID, methodName)
 		if err != nil {
-			return "", err
+			return "", nil, err
 		}
 		builder.WriteString(s)
 		builder.WriteRune('\n')
@@ -157,9 +158,9 @@ type Executor interface {
 	resultMap.WriteString("}\n\n")
 	b, err := format.Source([]byte(decodersMap.String() + methodMap.String() + resultMap.String() + builder.String()))
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return string(b), nil
+	return string(b), simpleMethods, nil
 }
 
 func (g *Generator) registerABI() error {
@@ -527,7 +528,7 @@ type interfacDescripion struct {
 	Results []string
 }
 
-func (g *Generator) RenderInvocationOrderList() (string, error) {
+func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, error) {
 	context := templateContext{
 		Interfaces: map[string]string{},
 	}
@@ -557,6 +558,9 @@ func (g *Generator) RenderInvocationOrderList() (string, error) {
 			Results: []string{},
 		}
 		for _, method := range iface.Methods {
+			if !slices.Contains(simpleMethods, method.Name) {
+				continue
+			}
 			resultName := utils.ToCamelCase(method.Name) + "Result"
 			if method.Version != "" {
 				resultName = fmt.Sprintf("%s_%sResult", utils.ToCamelCase(method.Name), utils.ToCamelCase(method.Version))

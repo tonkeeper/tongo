@@ -11,7 +11,7 @@
         step#_ pool_addr:MsgAddress params:DedustSwapStepParams = DedustSwapStep;
     </types>
     <interface name="dedust_pool">
-        <get_method name="get_reserve" version="dedust"/>
+        <get_method name="get_reserves" version="dedust"/>
         <get_method name="get_assets" version="dedust"/>
         <msg_in>
             <internal name="dedust_swap_external"/>

@@ -238,7 +238,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: DedustPool,
 		Results: []string{
-			"GetReserve_DedustResult",
+			"GetReserves_DedustResult",
 			"GetAssets_DedustResult",
 		},
 	},
@@ -249,10 +249,8 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: Dns,
-		Results: []string{
-			"Dnsresolve_RecordsResult",
-		},
+		Name:    Dns,
+		Results: []string{},
 	},
 	{
 		Name: JettonMaster,
@@ -269,7 +267,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: TonstakePool,
 		Results: []string{
-			"TonstakePoolResult",
+			"GetPoolFullDataResult",
 		},
 	},
 	{
@@ -338,9 +336,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: NftCollection,
 		Results: []string{
 			"GetCollectionDataResult",
-			"GetNftContentResult",
-			"GetCollectionDataResult",
-			"GetNftAddressByIndexResult",
 		},
 	},
 	{

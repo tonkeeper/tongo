@@ -1,6 +1,5 @@
 <abi>
     <interface name="nft_collection">
-        <get_method name="get_collection_data"/>
         <get_method name="get_nft_content"/>
         <get_method name="get_collection_data"/>
         <get_method name="get_nft_address_by_index"/>

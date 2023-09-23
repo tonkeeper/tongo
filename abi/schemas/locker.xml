@@ -1,7 +1,7 @@
 <abi>
     <interface name="locker">
         <get_method name="get_locker_data"/>
-<!--        <get_method name="get_bill_address"/> todo: uncomment-->
+        <get_method name="get_bill_address"/>
     </interface>
     <interface name="locker_bill">
         <get_method name="get_locker_bill_data"/>

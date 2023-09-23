@@ -9,7 +9,7 @@
         <get_method name="get_storage_params"/>
         <get_method name="seqno"/>
         <get_method name="get_public_key"/>
-<!--        <get_method name="get_storage_contract_address"/> todo: uncomment-->
+        <get_method name="get_storage_contract_address"/>
     </interface>
     <interface name="storage_contract">
         <get_method name="get_storage_contract_data"/>

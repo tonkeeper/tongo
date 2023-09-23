@@ -126,6 +126,9 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		})
 	}
 	for _, iface := range ci.knownInterfaces {
+		if len(iface.Results) == 0 {
+			continue
+		}
 		if desc.hasAllResults(iface.Results) {
 			desc.ContractInterfaces = append(desc.ContractInterfaces, iface.Name)
 		}

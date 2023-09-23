@@ -1,7 +1,7 @@
 <abi>
     <interface name="jetton_master">
         <get_method name="get_jetton_data"/>
-<!--        <get_method name="get_wallet_address"/> todo: return it back-->
+        <get_method name="get_wallet_address"/>
         <msg_in>
             <internal name="jetton_burn_notification"/>
         </msg_in>

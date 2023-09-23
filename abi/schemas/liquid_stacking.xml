@@ -1,7 +1,7 @@
 <abi>
     <!--    Pool   todo: attach all internals to interfaces -->
     <interface name="tonstake_pool">
-        <get_method name="tonstake_pool"/>
+        <get_method name="get_pool_full_data"/>
     </interface>
     <interface name="validator_controller">
         <get_method name="get_validator_controller_data"/>
@@ -104,7 +104,7 @@
     <internal name="tonstake_controller_validator_withdrawal">
         validator_withdrawal#30026327 query_id:uint64 amount:Coins = InternalMsgBody;
     </internal>
-    <!--    <internal name="tonstake_controller_new_stake">  TODO: fix conflict with another new_stake-->
+    <!--    <internal name="tonstake_controller_new_stake">  TODO: fix conflict with another new_stake (i che ya etim hotel skazat? v upor ne pomnyu)-->
     <!--        new_stake#e0505d0e query_id:uint64 value:Coins validator_pubkey:uint256 stake_at:uint32 max_factor:uint32-->
     <!--        adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;-->
     <!--    </internal>-->

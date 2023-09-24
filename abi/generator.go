@@ -120,11 +120,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		code, err := format.Source([]byte(fmt.Sprintf(HEADER, strings.Join(f[2:], "\n")) + f[0]))
+		code := []byte(fmt.Sprintf(HEADER, strings.Join(f[2:], "\n")) + f[0])
+		formatedCode, err := format.Source(code)
 		if err != nil {
-			panic(err)
+			formatedCode = code
+			//panic(err)
 		}
-		_, err = file.Write(code)
+		_, err = file.Write(formatedCode)
 		if err != nil {
 			panic(err)
 		}

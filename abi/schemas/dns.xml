@@ -50,10 +50,10 @@
     <internal name="dns_balance_release">
         release_balance#4ed14b65 query_id:uint64 = InternalMsgBody;
     </internal>
-<!--    <internal name="delete_dns_record" fixed_length="true">-->
-<!--        change_dns_record#4eb1f0f9 query_id:uint64 key:uint256 = InternalMsgBody;-->
-<!--    </internal>-->
-    <internal name="change_dns_record" fixed_length="true">
+    <internal name="delete_dns_record" fixed_length="true">
+        change_dns_record#4eb1f0f9 query_id:uint64 key:uint256 = InternalMsgBody;
+    </internal>
+    <internal name="change_dns_record">
         change_dns_record#4eb1f0f9 query_id:uint64 key:uint256 value:^DNSRecord = InternalMsgBody;
     </internal>
 <!--    <internal name="edit_content">-->

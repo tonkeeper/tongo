@@ -421,6 +421,11 @@ type ElectorNewStakeMsgBody struct {
 	Signature       tlb.Bits512 `tlb:"^"`
 }
 
+type DeleteDnsRecordMsgBody struct {
+	QueryId uint64
+	Key     tlb.Uint256
+}
+
 type ChangeDnsRecordMsgBody struct {
 	QueryId uint64
 	Key     tlb.Uint256

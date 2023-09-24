@@ -17,709 +17,948 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 	}
 	switch uint32(tag) {
 	case TextCommentMsgOpCode: // 0x00000000
-		var res TextCommentMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TextCommentMsgOp, nil, err
+		var resTextCommentMsgBody TextCommentMsgBody
+		err = tlb.Unmarshal(cell, &resTextCommentMsgBody)
+		if err == nil {
+			return TextCommentMsgOp, resTextCommentMsgBody, nil
 		}
-		return TextCommentMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ProveOwnershipMsgOpCode: // 0x04ded148
-		var res ProveOwnershipMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ProveOwnershipMsgOp, nil, err
+		var resProveOwnershipMsgBody ProveOwnershipMsgBody
+		err = tlb.Unmarshal(cell, &resProveOwnershipMsgBody)
+		if err == nil {
+			return ProveOwnershipMsgOp, resProveOwnershipMsgBody, nil
 		}
-		return ProveOwnershipMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case NftOwnershipAssignedMsgOpCode: // 0x05138d91
-		var res NftOwnershipAssignedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return NftOwnershipAssignedMsgOp, nil, err
+		var resNftOwnershipAssignedMsgBody NftOwnershipAssignedMsgBody
+		err = tlb.Unmarshal(cell, &resNftOwnershipAssignedMsgBody)
+		if err == nil {
+			return NftOwnershipAssignedMsgOp, resNftOwnershipAssignedMsgBody, nil
 		}
-		return NftOwnershipAssignedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case OwnershipProofMsgOpCode: // 0x0524c7ae
-		var res OwnershipProofMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return OwnershipProofMsgOp, nil, err
+		var resOwnershipProofMsgBody OwnershipProofMsgBody
+		err = tlb.Unmarshal(cell, &resOwnershipProofMsgBody)
+		if err == nil {
+			return OwnershipProofMsgOp, resOwnershipProofMsgBody, nil
 		}
-		return OwnershipProofMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ChallengeQuarantinedChannelStateMsgOpCode: // 0x088eaa32
-		var res ChallengeQuarantinedChannelStateMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ChallengeQuarantinedChannelStateMsgOp, nil, err
+		var resChallengeQuarantinedChannelStateMsgBody ChallengeQuarantinedChannelStateMsgBody
+		err = tlb.Unmarshal(cell, &resChallengeQuarantinedChannelStateMsgBody)
+		if err == nil {
+			return ChallengeQuarantinedChannelStateMsgOp, resChallengeQuarantinedChannelStateMsgBody, nil
 		}
-		return ChallengeQuarantinedChannelStateMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolWithdrawalMsgOpCode: // 0x0a77535c
-		var res TonstakePoolWithdrawalMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolWithdrawalMsgOp, nil, err
+		var resTonstakePoolWithdrawalMsgBody TonstakePoolWithdrawalMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolWithdrawalMsgBody)
+		if err == nil {
+			return TonstakePoolWithdrawalMsgOp, resTonstakePoolWithdrawalMsgBody, nil
 		}
-		return TonstakePoolWithdrawalMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case SbtOwnerInfoMsgOpCode: // 0x0dd607e3
-		var res SbtOwnerInfoMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return SbtOwnerInfoMsgOp, nil, err
+		var resSbtOwnerInfoMsgBody SbtOwnerInfoMsgBody
+		err = tlb.Unmarshal(cell, &resSbtOwnerInfoMsgBody)
+		if err == nil {
+			return SbtOwnerInfoMsgOp, resSbtOwnerInfoMsgBody, nil
 		}
-		return SbtOwnerInfoMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case InitPaymentChannelMsgOpCode: // 0x0e0620c2
-		var res InitPaymentChannelMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return InitPaymentChannelMsgOp, nil, err
+		var resInitPaymentChannelMsgBody InitPaymentChannelMsgBody
+		err = tlb.Unmarshal(cell, &resInitPaymentChannelMsgBody)
+		if err == nil {
+			return InitPaymentChannelMsgOp, resInitPaymentChannelMsgBody, nil
 		}
-		return InitPaymentChannelMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case JettonTransferMsgOpCode: // 0x0f8a7ea5
-		var res JettonTransferMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return JettonTransferMsgOp, nil, err
+		var resJettonTransferMsgBody JettonTransferMsgBody
+		err = tlb.Unmarshal(cell, &resJettonTransferMsgBody)
+		if err == nil {
+			return JettonTransferMsgOp, resJettonTransferMsgBody, nil
 		}
-		return JettonTransferMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case OfferStorageContractMsgOpCode: // 0x107c49ef
-		var res OfferStorageContractMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return OfferStorageContractMsgOp, nil, err
+		var resOfferStorageContractMsgBody OfferStorageContractMsgBody
+		err = tlb.Unmarshal(cell, &resOfferStorageContractMsgBody)
+		if err == nil {
+			return OfferStorageContractMsgOp, resOfferStorageContractMsgBody, nil
 		}
-		return OfferStorageContractMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeNftInitMsgOpCode: // 0x132f9a45
-		var res TonstakeNftInitMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeNftInitMsgOp, nil, err
+		var resTonstakeNftInitMsgBody TonstakeNftInitMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeNftInitMsgBody)
+		if err == nil {
+			return TonstakeNftInitMsgOp, resTonstakeNftInitMsgBody, nil
 		}
-		return TonstakeNftInitMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerPoolHaltMsgOpCode: // 0x139a1b4e
-		var res TonstakeControllerPoolHaltMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerPoolHaltMsgOp, nil, err
+		var resTonstakeControllerPoolHaltMsgBody TonstakeControllerPoolHaltMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerPoolHaltMsgBody)
+		if err == nil {
+			return TonstakeControllerPoolHaltMsgOp, resTonstakeControllerPoolHaltMsgBody, nil
 		}
-		return TonstakeControllerPoolHaltMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsForceKickMsgOpCode: // 0x1596920c
-		var res WhalesNominatorsForceKickMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsForceKickMsgOp, nil, err
+		var resWhalesNominatorsForceKickMsgBody WhalesNominatorsForceKickMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsForceKickMsgBody)
+		if err == nil {
+			return WhalesNominatorsForceKickMsgOp, resWhalesNominatorsForceKickMsgBody, nil
 		}
-		return WhalesNominatorsForceKickMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerCreditMsgOpCode: // 0x1690c604
-		var res TonstakeControllerCreditMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerCreditMsgOp, nil, err
+		var resTonstakeControllerCreditMsgBody TonstakeControllerCreditMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerCreditMsgBody)
+		if err == nil {
+			return TonstakeControllerCreditMsgOp, resTonstakeControllerCreditMsgBody, nil
 		}
-		return TonstakeControllerCreditMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case JettonInternalTransferMsgOpCode: // 0x178d4519
-		var res JettonInternalTransferMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return JettonInternalTransferMsgOp, nil, err
+		var resJettonInternalTransferMsgBody JettonInternalTransferMsgBody
+		err = tlb.Unmarshal(cell, &resJettonInternalTransferMsgBody)
+		if err == nil {
+			return JettonInternalTransferMsgOp, resJettonInternalTransferMsgBody, nil
 		}
-		return JettonInternalTransferMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsWithdrawUnownedResponseMsgOpCode: // 0x1d1715bf
-		var res WhalesNominatorsWithdrawUnownedResponseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsWithdrawUnownedResponseMsgOp, nil, err
+		var resWhalesNominatorsWithdrawUnownedResponseMsgBody WhalesNominatorsWithdrawUnownedResponseMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsWithdrawUnownedResponseMsgBody)
+		if err == nil {
+			return WhalesNominatorsWithdrawUnownedResponseMsgOp, resWhalesNominatorsWithdrawUnownedResponseMsgBody, nil
 		}
-		return WhalesNominatorsWithdrawUnownedResponseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case SbtDestroyMsgOpCode: // 0x1f04537a
-		var res SbtDestroyMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return SbtDestroyMsgOp, nil, err
+		var resSbtDestroyMsgBody SbtDestroyMsgBody
+		err = tlb.Unmarshal(cell, &resSbtDestroyMsgBody)
+		if err == nil {
+			return SbtDestroyMsgOp, resSbtDestroyMsgBody, nil
 		}
-		return SbtDestroyMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StartUncooperativeChannelCloseMsgOpCode: // 0x1f151acf
-		var res StartUncooperativeChannelCloseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StartUncooperativeChannelCloseMsgOp, nil, err
+		var resStartUncooperativeChannelCloseMsgBody StartUncooperativeChannelCloseMsgBody
+		err = tlb.Unmarshal(cell, &resStartUncooperativeChannelCloseMsgBody)
+		if err == nil {
+			return StartUncooperativeChannelCloseMsgOp, resStartUncooperativeChannelCloseMsgBody, nil
 		}
-		return StartUncooperativeChannelCloseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case EncryptedTextCommentMsgOpCode: // 0x2167da4b
-		var res EncryptedTextCommentMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return EncryptedTextCommentMsgOp, nil, err
+		var resEncryptedTextCommentMsgBody EncryptedTextCommentMsgBody
+		err = tlb.Unmarshal(cell, &resEncryptedTextCommentMsgBody)
+		if err == nil {
+			return EncryptedTextCommentMsgOp, resEncryptedTextCommentMsgBody, nil
 		}
-		return EncryptedTextCommentMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsStakeWithdrawCompletedMsgOpCode: // 0x23d421e1
-		var res WhalesNominatorsStakeWithdrawCompletedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsStakeWithdrawCompletedMsgOp, nil, err
+		var resWhalesNominatorsStakeWithdrawCompletedMsgBody WhalesNominatorsStakeWithdrawCompletedMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsStakeWithdrawCompletedMsgBody)
+		if err == nil && !completedRead(cell) {
+			err = ErrStructSizeMismatch
 		}
-		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
-			return WhalesNominatorsStakeWithdrawCompletedMsgOp, nil, ErrStructSizeMismatch
+		if err == nil {
+			return WhalesNominatorsStakeWithdrawCompletedMsgOp, resWhalesNominatorsStakeWithdrawCompletedMsgBody, nil
 		}
-		return WhalesNominatorsStakeWithdrawCompletedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsWithdrawUnownedMsgOpCode: // 0x251d6a98
-		var res WhalesNominatorsWithdrawUnownedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsWithdrawUnownedMsgOp, nil, err
+		var resWhalesNominatorsWithdrawUnownedMsgBody WhalesNominatorsWithdrawUnownedMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsWithdrawUnownedMsgBody)
+		if err == nil && !completedRead(cell) {
+			err = ErrStructSizeMismatch
 		}
-		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
-			return WhalesNominatorsWithdrawUnownedMsgOp, nil, ErrStructSizeMismatch
+		if err == nil {
+			return WhalesNominatorsWithdrawUnownedMsgOp, resWhalesNominatorsWithdrawUnownedMsgBody, nil
 		}
-		return WhalesNominatorsWithdrawUnownedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case FinishUncooperativeChannelCloseMsgOpCode: // 0x25432a91
-		var res FinishUncooperativeChannelCloseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return FinishUncooperativeChannelCloseMsgOp, nil, err
+		var resFinishUncooperativeChannelCloseMsgBody FinishUncooperativeChannelCloseMsgBody
+		err = tlb.Unmarshal(cell, &resFinishUncooperativeChannelCloseMsgBody)
+		if err == nil {
+			return FinishUncooperativeChannelCloseMsgOp, resFinishUncooperativeChannelCloseMsgBody, nil
 		}
-		return FinishUncooperativeChannelCloseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StonfiSwapMsgOpCode: // 0x25938561
-		var res StonfiSwapMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StonfiSwapMsgOp, nil, err
+		var resStonfiSwapMsgBody StonfiSwapMsgBody
+		err = tlb.Unmarshal(cell, &resStonfiSwapMsgBody)
+		if err == nil {
+			return StonfiSwapMsgOp, resStonfiSwapMsgBody, nil
 		}
-		return StonfiSwapMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerPoolSendMessageMsgOpCode: // 0x270695fb
-		var res TonstakeControllerPoolSendMessageMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerPoolSendMessageMsgOp, nil, err
+		var resTonstakeControllerPoolSendMessageMsgBody TonstakeControllerPoolSendMessageMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerPoolSendMessageMsgBody)
+		if err == nil {
+			return TonstakeControllerPoolSendMessageMsgOp, resTonstakeControllerPoolSendMessageMsgBody, nil
 		}
-		return TonstakeControllerPoolSendMessageMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TeleitemDeployMsgOpCode: // 0x299a3e15
-		var res TeleitemDeployMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TeleitemDeployMsgOp, nil, err
+		var resTeleitemDeployMsgBody TeleitemDeployMsgBody
+		err = tlb.Unmarshal(cell, &resTeleitemDeployMsgBody)
+		if err == nil {
+			return TeleitemDeployMsgOp, resTeleitemDeployMsgBody, nil
 		}
-		return TeleitemDeployMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolSetGovernanceFeeMsgOpCode: // 0x2aaa96a0
-		var res TonstakePoolSetGovernanceFeeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolSetGovernanceFeeMsgOp, nil, err
+		var resTonstakePoolSetGovernanceFeeMsgBody TonstakePoolSetGovernanceFeeMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolSetGovernanceFeeMsgBody)
+		if err == nil {
+			return TonstakePoolSetGovernanceFeeMsgOp, resTonstakePoolSetGovernanceFeeMsgBody, nil
 		}
-		return TonstakePoolSetGovernanceFeeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case GetStaticDataMsgOpCode: // 0x2fcb26a2
-		var res GetStaticDataMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return GetStaticDataMsgOp, nil, err
+		var resGetStaticDataMsgBody GetStaticDataMsgBody
+		err = tlb.Unmarshal(cell, &resGetStaticDataMsgBody)
+		if err == nil {
+			return GetStaticDataMsgOp, resGetStaticDataMsgBody, nil
 		}
-		return GetStaticDataMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerValidatorWithdrawalMsgOpCode: // 0x30026327
-		var res TonstakeControllerValidatorWithdrawalMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerValidatorWithdrawalMsgOp, nil, err
+		var resTonstakeControllerValidatorWithdrawalMsgBody TonstakeControllerValidatorWithdrawalMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerValidatorWithdrawalMsgBody)
+		if err == nil {
+			return TonstakeControllerValidatorWithdrawalMsgOp, resTonstakeControllerValidatorWithdrawalMsgBody, nil
 		}
-		return TonstakeControllerValidatorWithdrawalMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolWithdrawMsgOpCode: // 0x319b0cdc
-		var res TonstakePoolWithdrawMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolWithdrawMsgOp, nil, err
+		var resTonstakePoolWithdrawMsgBody TonstakePoolWithdrawMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolWithdrawMsgBody)
+		if err == nil {
+			return TonstakePoolWithdrawMsgOp, resTonstakePoolWithdrawMsgBody, nil
 		}
-		return TonstakePoolWithdrawMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case AuctionFillUpMsgOpCode: // 0x370fec51
-		var res AuctionFillUpMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return AuctionFillUpMsgOp, nil, err
+		var resAuctionFillUpMsgBody AuctionFillUpMsgBody
+		err = tlb.Unmarshal(cell, &resAuctionFillUpMsgBody)
+		if err == nil {
+			return AuctionFillUpMsgOp, resAuctionFillUpMsgBody, nil
 		}
-		return AuctionFillUpMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TeleitemCancelAuctionMsgOpCode: // 0x371638ae
-		var res TeleitemCancelAuctionMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TeleitemCancelAuctionMsgOp, nil, err
+		var resTeleitemCancelAuctionMsgBody TeleitemCancelAuctionMsgBody
+		err = tlb.Unmarshal(cell, &resTeleitemCancelAuctionMsgBody)
+		if err == nil {
+			return TeleitemCancelAuctionMsgOp, resTeleitemCancelAuctionMsgBody, nil
 		}
-		return TeleitemCancelAuctionMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ProofStorageMsgOpCode: // 0x419d5d4d
-		var res ProofStorageMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ProofStorageMsgOp, nil, err
+		var resProofStorageMsgBody ProofStorageMsgBody
+		err = tlb.Unmarshal(cell, &resProofStorageMsgBody)
+		if err == nil {
+			return ProofStorageMsgOp, resProofStorageMsgBody, nil
 		}
-		return ProofStorageMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ProcessGovernanceDecisionMsgOpCode: // 0x44beae41
-		var res ProcessGovernanceDecisionMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ProcessGovernanceDecisionMsgOp, nil, err
+		var resProcessGovernanceDecisionMsgBody ProcessGovernanceDecisionMsgBody
+		err = tlb.Unmarshal(cell, &resProcessGovernanceDecisionMsgBody)
+		if err == nil {
+			return ProcessGovernanceDecisionMsgOp, resProcessGovernanceDecisionMsgBody, nil
 		}
-		return ProcessGovernanceDecisionMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TelemintDeployMsgOpCode: // 0x4637289a
-		var res TelemintDeployMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TelemintDeployMsgOp, nil, err
+		var resTelemintDeployMsgBody TelemintDeployMsgBody
+		err = tlb.Unmarshal(cell, &resTelemintDeployMsgBody)
+		if err == nil {
+			return TelemintDeployMsgOp, resTelemintDeployMsgBody, nil
 		}
-		return TelemintDeployMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TelemintDeployV2MsgOpCode: // 0x4637289b
-		var res TelemintDeployV2MsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TelemintDeployV2MsgOp, nil, err
+		var resTelemintDeployV2MsgBody TelemintDeployV2MsgBody
+		err = tlb.Unmarshal(cell, &resTelemintDeployV2MsgBody)
+		if err == nil {
+			return TelemintDeployV2MsgOp, resTelemintDeployV2MsgBody, nil
 		}
-		return TelemintDeployV2MsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StorageWithdrawMsgOpCode: // 0x46ed2e94
-		var res StorageWithdrawMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StorageWithdrawMsgOp, nil, err
+		var resStorageWithdrawMsgBody StorageWithdrawMsgBody
+		err = tlb.Unmarshal(cell, &resStorageWithdrawMsgBody)
+		if err == nil {
+			return StorageWithdrawMsgOp, resStorageWithdrawMsgBody, nil
 		}
-		return StorageWithdrawMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustPayoutMsgOpCode: // 0x474f86cf
-		var res DedustPayoutMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DedustPayoutMsgOp, nil, err
+		var resDedustPayoutMsgBody DedustPayoutMsgBody
+		err = tlb.Unmarshal(cell, &resDedustPayoutMsgBody)
+		if err == nil {
+			return DedustPayoutMsgOp, resDedustPayoutMsgBody, nil
 		}
-		return DedustPayoutMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ElectorRecoverStakeRequestMsgOpCode: // 0x47657424
-		var res ElectorRecoverStakeRequestMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ElectorRecoverStakeRequestMsgOp, nil, err
+		var resElectorRecoverStakeRequestMsgBody ElectorRecoverStakeRequestMsgBody
+		err = tlb.Unmarshal(cell, &resElectorRecoverStakeRequestMsgBody)
+		if err == nil {
+			return ElectorRecoverStakeRequestMsgOp, resElectorRecoverStakeRequestMsgBody, nil
 		}
-		return ElectorRecoverStakeRequestMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolDepositMsgOpCode: // 0x47d54391
-		var res TonstakePoolDepositMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolDepositMsgOp, nil, err
+		var resTonstakePoolDepositMsgBody TonstakePoolDepositMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolDepositMsgBody)
+		if err == nil {
+			return TonstakePoolDepositMsgOp, resTonstakePoolDepositMsgBody, nil
 		}
-		return TonstakePoolDepositMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TeleitemStartAuctionMsgOpCode: // 0x487a8e81
-		var res TeleitemStartAuctionMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TeleitemStartAuctionMsgOp, nil, err
+		var resTeleitemStartAuctionMsgBody TeleitemStartAuctionMsgBody
+		err = tlb.Unmarshal(cell, &resTeleitemStartAuctionMsgBody)
+		if err == nil {
+			return TeleitemStartAuctionMsgOp, resTeleitemStartAuctionMsgBody, nil
 		}
-		return TeleitemStartAuctionMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolTouchMsgOpCode: // 0x4bc7c2df
-		var res TonstakePoolTouchMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolTouchMsgOp, nil, err
+		var resTonstakePoolTouchMsgBody TonstakePoolTouchMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolTouchMsgBody)
+		if err == nil {
+			return TonstakePoolTouchMsgOp, resTonstakePoolTouchMsgBody, nil
 		}
-		return TonstakePoolTouchMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ElectorNewStakeMsgOpCode: // 0x4e73744b
-		var res ElectorNewStakeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ElectorNewStakeMsgOp, nil, err
+		var resElectorNewStakeMsgBody ElectorNewStakeMsgBody
+		err = tlb.Unmarshal(cell, &resElectorNewStakeMsgBody)
+		if err == nil {
+			return ElectorNewStakeMsgOp, resElectorNewStakeMsgBody, nil
 		}
-		return ElectorNewStakeMsgOp, res, nil
-	case ChangeDnsRecordMsgOpCode: // 0x4eb1f0f9
-		var res ChangeDnsRecordMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ChangeDnsRecordMsgOp, nil, err
+		cell.ResetCounters()
+		return "", nil, err
+	case 0x4eb1f0f9: //DeleteDnsRecord, ChangeDnsRecord,
+		cell = cell.CopyRemaining()
+		var resDeleteDnsRecordMsgBody DeleteDnsRecordMsgBody
+		err = tlb.Unmarshal(cell, &resDeleteDnsRecordMsgBody)
+		if err == nil && !completedRead(cell) {
+			err = ErrStructSizeMismatch
 		}
-		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
-			return ChangeDnsRecordMsgOp, nil, ErrStructSizeMismatch
+		if err == nil {
+			return DeleteDnsRecordMsgOp, resDeleteDnsRecordMsgBody, nil
 		}
-		return ChangeDnsRecordMsgOp, res, nil
+		cell.ResetCounters()
+		var resChangeDnsRecordMsgBody ChangeDnsRecordMsgBody
+		err = tlb.Unmarshal(cell, &resChangeDnsRecordMsgBody)
+		if err == nil {
+			return ChangeDnsRecordMsgOp, resChangeDnsRecordMsgBody, nil
+		}
+		cell.ResetCounters()
+		return "", nil, err
 	case DnsBalanceReleaseMsgOpCode: // 0x4ed14b65
-		var res DnsBalanceReleaseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DnsBalanceReleaseMsgOp, nil, err
+		var resDnsBalanceReleaseMsgBody DnsBalanceReleaseMsgBody
+		err = tlb.Unmarshal(cell, &resDnsBalanceReleaseMsgBody)
+		if err == nil {
+			return DnsBalanceReleaseMsgOp, resDnsBalanceReleaseMsgBody, nil
 		}
-		return DnsBalanceReleaseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case UpdatePubkeyMsgOpCode: // 0x53f34cd6
-		var res UpdatePubkeyMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return UpdatePubkeyMsgOp, nil, err
+		var resUpdatePubkeyMsgBody UpdatePubkeyMsgBody
+		err = tlb.Unmarshal(cell, &resUpdatePubkeyMsgBody)
+		if err == nil {
+			return UpdatePubkeyMsgOp, resUpdatePubkeyMsgBody, nil
 		}
-		return UpdatePubkeyMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case UpdateStorageParamsMsgOpCode: // 0x54cbf19b
-		var res UpdateStorageParamsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return UpdateStorageParamsMsgOp, nil, err
+		var resUpdateStorageParamsMsgBody UpdateStorageParamsMsgBody
+		err = tlb.Unmarshal(cell, &resUpdateStorageParamsMsgBody)
+		if err == nil {
+			return UpdateStorageParamsMsgOp, resUpdateStorageParamsMsgBody, nil
 		}
-		return UpdateStorageParamsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeImanagerOperationFeeMsgOpCode: // 0x54d37487
-		var res TonstakeImanagerOperationFeeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeImanagerOperationFeeMsgOp, nil, err
+		var resTonstakeImanagerOperationFeeMsgBody TonstakeImanagerOperationFeeMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeImanagerOperationFeeMsgBody)
+		if err == nil {
+			return TonstakeImanagerOperationFeeMsgOp, resTonstakeImanagerOperationFeeMsgBody, nil
 		}
-		return TonstakeImanagerOperationFeeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ChannelCooperativeCloseMsgOpCode: // 0x5577587e
-		var res ChannelCooperativeCloseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ChannelCooperativeCloseMsgOp, nil, err
+		var resChannelCooperativeCloseMsgBody ChannelCooperativeCloseMsgBody
+		err = tlb.Unmarshal(cell, &resChannelCooperativeCloseMsgBody)
+		if err == nil {
+			return ChannelCooperativeCloseMsgOp, resChannelCooperativeCloseMsgBody, nil
 		}
-		return ChannelCooperativeCloseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerReturnAvailableFundsMsgOpCode: // 0x55c26cd5
-		var res TonstakeControllerReturnAvailableFundsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerReturnAvailableFundsMsgOp, nil, err
+		var resTonstakeControllerReturnAvailableFundsMsgBody TonstakeControllerReturnAvailableFundsMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerReturnAvailableFundsMsgBody)
+		if err == nil {
+			return TonstakeControllerReturnAvailableFundsMsgOp, resTonstakeControllerReturnAvailableFundsMsgBody, nil
 		}
-		return TonstakeControllerReturnAvailableFundsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case JettonBurnMsgOpCode: // 0x595f07bc
-		var res JettonBurnMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return JettonBurnMsgOp, nil, err
+		var resJettonBurnMsgBody JettonBurnMsgBody
+		err = tlb.Unmarshal(cell, &resJettonBurnMsgBody)
+		if err == nil {
+			return JettonBurnMsgOp, resJettonBurnMsgBody, nil
 		}
-		return JettonBurnMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolSetRolesMsgOpCode: // 0x5e517f36
-		var res TonstakePoolSetRolesMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolSetRolesMsgOp, nil, err
+		var resTonstakePoolSetRolesMsgBody TonstakePoolSetRolesMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolSetRolesMsgBody)
+		if err == nil {
+			return TonstakePoolSetRolesMsgOp, resTonstakePoolSetRolesMsgBody, nil
 		}
-		return TonstakePoolSetRolesMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case NftTransferMsgOpCode: // 0x5fcc3d14
-		var res NftTransferMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return NftTransferMsgOp, nil, err
+		var resNftTransferMsgBody NftTransferMsgBody
+		err = tlb.Unmarshal(cell, &resNftTransferMsgBody)
+		if err == nil {
+			return NftTransferMsgOp, resNftTransferMsgBody, nil
 		}
-		return NftTransferMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustSwapExternalMsgOpCode: // 0x61ee542d
-		var res DedustSwapExternalMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DedustSwapExternalMsgOp, nil, err
+		var resDedustSwapExternalMsgBody DedustSwapExternalMsgBody
+		err = tlb.Unmarshal(cell, &resDedustSwapExternalMsgBody)
+		if err == nil {
+			return DedustSwapExternalMsgOp, resDedustSwapExternalMsgBody, nil
 		}
-		return DedustSwapExternalMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerSendRequestLoanMsgOpCode: // 0x6335b11a
-		var res TonstakeControllerSendRequestLoanMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerSendRequestLoanMsgOp, nil, err
+		var resTonstakeControllerSendRequestLoanMsgBody TonstakeControllerSendRequestLoanMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerSendRequestLoanMsgBody)
+		if err == nil {
+			return TonstakeControllerSendRequestLoanMsgOp, resTonstakeControllerSendRequestLoanMsgBody, nil
 		}
-		return TonstakeControllerSendRequestLoanMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WalletPluginDestructMsgOpCode: // 0x64737472
-		var res WalletPluginDestructMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WalletPluginDestructMsgOp, nil, err
+		var resWalletPluginDestructMsgBody WalletPluginDestructMsgBody
+		err = tlb.Unmarshal(cell, &resWalletPluginDestructMsgBody)
+		if err == nil {
+			return WalletPluginDestructMsgOp, resWalletPluginDestructMsgBody, nil
 		}
-		return WalletPluginDestructMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case SettleChannelConditionalsMsgOpCode: // 0x66f6f069
-		var res SettleChannelConditionalsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return SettleChannelConditionalsMsgOp, nil, err
+		var resSettleChannelConditionalsMsgBody SettleChannelConditionalsMsgBody
+		err = tlb.Unmarshal(cell, &resSettleChannelConditionalsMsgBody)
+		if err == nil {
+			return SettleChannelConditionalsMsgOp, resSettleChannelConditionalsMsgBody, nil
 		}
-		return SettleChannelConditionalsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TopUpChannelBalanceMsgOpCode: // 0x67c7d281
-		var res TopUpChannelBalanceMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TopUpChannelBalanceMsgOp, nil, err
+		var resTopUpChannelBalanceMsgBody TopUpChannelBalanceMsgBody
+		err = tlb.Unmarshal(cell, &resTopUpChannelBalanceMsgBody)
+		if err == nil {
+			return TopUpChannelBalanceMsgOp, resTopUpChannelBalanceMsgBody, nil
 		}
-		return TopUpChannelBalanceMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case GetRoyaltyParamsMsgOpCode: // 0x693d3950
-		var res GetRoyaltyParamsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return GetRoyaltyParamsMsgOp, nil, err
+		var resGetRoyaltyParamsMsgBody GetRoyaltyParamsMsgBody
+		err = tlb.Unmarshal(cell, &resGetRoyaltyParamsMsgBody)
+		if err == nil {
+			return GetRoyaltyParamsMsgOp, resGetRoyaltyParamsMsgBody, nil
 		}
-		return GetRoyaltyParamsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case SbtRevokeMsgOpCode: // 0x6f89f5e3
-		var res SbtRevokeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return SbtRevokeMsgOp, nil, err
+		var resSbtRevokeMsgBody SbtRevokeMsgBody
+		err = tlb.Unmarshal(cell, &resSbtRevokeMsgBody)
+		if err == nil {
+			return SbtRevokeMsgOp, resSbtRevokeMsgBody, nil
 		}
-		return SbtRevokeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case PaymentRequestMsgOpCode: // 0x706c7567
-		var res PaymentRequestMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return PaymentRequestMsgOp, nil, err
+		var resPaymentRequestMsgBody PaymentRequestMsgBody
+		err = tlb.Unmarshal(cell, &resPaymentRequestMsgBody)
+		if err == nil {
+			return PaymentRequestMsgOp, resPaymentRequestMsgBody, nil
 		}
-		return PaymentRequestMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerPoolUnhaltMsgOpCode: // 0x7247e7a5
-		var res TonstakeControllerPoolUnhaltMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerPoolUnhaltMsgOp, nil, err
+		var resTonstakeControllerPoolUnhaltMsgBody TonstakeControllerPoolUnhaltMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerPoolUnhaltMsgBody)
+		if err == nil {
+			return TonstakeControllerPoolUnhaltMsgOp, resTonstakeControllerPoolUnhaltMsgBody, nil
 		}
-		return TonstakeControllerPoolUnhaltMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustSwapPeerMsgOpCode: // 0x72aca8aa
-		var res DedustSwapPeerMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DedustSwapPeerMsgOp, nil, err
+		var resDedustSwapPeerMsgBody DedustSwapPeerMsgBody
+		err = tlb.Unmarshal(cell, &resDedustSwapPeerMsgBody)
+		if err == nil {
+			return DedustSwapPeerMsgOp, resDedustSwapPeerMsgBody, nil
 		}
-		return DedustSwapPeerMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case JettonNotifyMsgOpCode: // 0x7362d09c
-		var res JettonNotifyMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return JettonNotifyMsgOp, nil, err
+		var resJettonNotifyMsgBody JettonNotifyMsgBody
+		err = tlb.Unmarshal(cell, &resJettonNotifyMsgBody)
+		if err == nil {
+			return JettonNotifyMsgOp, resJettonNotifyMsgBody, nil
 		}
-		return JettonNotifyMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case SubscriptionPaymentMsgOpCode: // 0x73756273
-		var res SubscriptionPaymentMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return SubscriptionPaymentMsgOp, nil, err
+		var resSubscriptionPaymentMsgBody SubscriptionPaymentMsgBody
+		err = tlb.Unmarshal(cell, &resSubscriptionPaymentMsgBody)
+		if err == nil {
+			return SubscriptionPaymentMsgOp, resSubscriptionPaymentMsgBody, nil
 		}
-		return SubscriptionPaymentMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsStakeWithdrawDelayedMsgOpCode: // 0x74bb3427
-		var res WhalesNominatorsStakeWithdrawDelayedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsStakeWithdrawDelayedMsgOp, nil, err
+		var resWhalesNominatorsStakeWithdrawDelayedMsgBody WhalesNominatorsStakeWithdrawDelayedMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsStakeWithdrawDelayedMsgBody)
+		if err == nil && !completedRead(cell) {
+			err = ErrStructSizeMismatch
 		}
-		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
-			return WhalesNominatorsStakeWithdrawDelayedMsgOp, nil, ErrStructSizeMismatch
+		if err == nil {
+			return WhalesNominatorsStakeWithdrawDelayedMsgOp, resWhalesNominatorsStakeWithdrawDelayedMsgBody, nil
 		}
-		return WhalesNominatorsStakeWithdrawDelayedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case MegatonWtonMintMsgOpCode: // 0x77a33521
-		var res MegatonWtonMintMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return MegatonWtonMintMsgOp, nil, err
+		var resMegatonWtonMintMsgBody MegatonWtonMintMsgBody
+		err = tlb.Unmarshal(cell, &resMegatonWtonMintMsgBody)
+		if err == nil {
+			return MegatonWtonMintMsgOp, resMegatonWtonMintMsgBody, nil
 		}
-		return MegatonWtonMintMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ChannelCooperativeCommitMsgOpCode: // 0x79a126ef
-		var res ChannelCooperativeCommitMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ChannelCooperativeCommitMsgOp, nil, err
+		var resChannelCooperativeCommitMsgBody ChannelCooperativeCommitMsgBody
+		err = tlb.Unmarshal(cell, &resChannelCooperativeCommitMsgBody)
+		if err == nil {
+			return ChannelCooperativeCommitMsgOp, resChannelCooperativeCommitMsgBody, nil
 		}
-		return ChannelCooperativeCommitMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerPoolSetSudoerMsgOpCode: // 0x79e7c016
-		var res TonstakeControllerPoolSetSudoerMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerPoolSetSudoerMsgOp, nil, err
+		var resTonstakeControllerPoolSetSudoerMsgBody TonstakeControllerPoolSetSudoerMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerPoolSetSudoerMsgBody)
+		if err == nil {
+			return TonstakeControllerPoolSetSudoerMsgOp, resTonstakeControllerPoolSetSudoerMsgBody, nil
 		}
-		return TonstakeControllerPoolSetSudoerMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case CloseStorageContractMsgOpCode: // 0x79f937ea
-		var res CloseStorageContractMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return CloseStorageContractMsgOp, nil, err
+		var resCloseStorageContractMsgBody CloseStorageContractMsgBody
+		err = tlb.Unmarshal(cell, &resCloseStorageContractMsgBody)
+		if err == nil {
+			return CloseStorageContractMsgOp, resCloseStorageContractMsgBody, nil
 		}
-		return CloseStorageContractMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case AcceptStorageContractMsgOpCode: // 0x7a361688
-		var res AcceptStorageContractMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return AcceptStorageContractMsgOp, nil, err
+		var resAcceptStorageContractMsgBody AcceptStorageContractMsgBody
+		err = tlb.Unmarshal(cell, &resAcceptStorageContractMsgBody)
+		if err == nil {
+			return AcceptStorageContractMsgOp, resAcceptStorageContractMsgBody, nil
 		}
-		return AcceptStorageContractMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerApproveMsgOpCode: // 0x7b4b42e6
-		var res TonstakeControllerApproveMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerApproveMsgOp, nil, err
+		var resTonstakeControllerApproveMsgBody TonstakeControllerApproveMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerApproveMsgBody)
+		if err == nil {
+			return TonstakeControllerApproveMsgOp, resTonstakeControllerApproveMsgBody, nil
 		}
-		return TonstakeControllerApproveMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsDepositMsgOpCode: // 0x7bcd1fef
-		var res WhalesNominatorsDepositMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsDepositMsgOp, nil, err
+		var resWhalesNominatorsDepositMsgBody WhalesNominatorsDepositMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsDepositMsgBody)
+		if err == nil {
+			return WhalesNominatorsDepositMsgOp, resWhalesNominatorsDepositMsgBody, nil
 		}
-		return WhalesNominatorsDepositMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case JettonBurnNotificationMsgOpCode: // 0x7bdd97de
-		var res JettonBurnNotificationMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return JettonBurnNotificationMsgOp, nil, err
+		var resJettonBurnNotificationMsgBody JettonBurnNotificationMsgBody
+		err = tlb.Unmarshal(cell, &resJettonBurnNotificationMsgBody)
+		if err == nil {
+			return JettonBurnNotificationMsgOp, resJettonBurnNotificationMsgBody, nil
 		}
-		return JettonBurnNotificationMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ReportStaticDataMsgOpCode: // 0x8b771735
-		var res ReportStaticDataMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ReportStaticDataMsgOp, nil, err
+		var resReportStaticDataMsgBody ReportStaticDataMsgBody
+		err = tlb.Unmarshal(cell, &resReportStaticDataMsgBody)
+		if err == nil {
+			return ReportStaticDataMsgOp, resReportStaticDataMsgBody, nil
 		}
-		return ReportStaticDataMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerWithdrawValidatorMsgOpCode: // 0x8efed779
-		var res TonstakeControllerWithdrawValidatorMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerWithdrawValidatorMsgOp, nil, err
+		var resTonstakeControllerWithdrawValidatorMsgBody TonstakeControllerWithdrawValidatorMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerWithdrawValidatorMsgBody)
+		if err == nil {
+			return TonstakeControllerWithdrawValidatorMsgOp, resTonstakeControllerWithdrawValidatorMsgBody, nil
 		}
-		return TonstakeControllerWithdrawValidatorMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerPoolUpgradeMsgOpCode: // 0x96e7f528
-		var res TonstakeControllerPoolUpgradeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerPoolUpgradeMsgOp, nil, err
+		var resTonstakeControllerPoolUpgradeMsgBody TonstakeControllerPoolUpgradeMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerPoolUpgradeMsgBody)
+		if err == nil {
+			return TonstakeControllerPoolUpgradeMsgOp, resTonstakeControllerPoolUpgradeMsgBody, nil
 		}
-		return TonstakeControllerPoolUpgradeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolPrepareGovernanceMigrationMsgOpCode: // 0x9971881c
-		var res TonstakePoolPrepareGovernanceMigrationMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolPrepareGovernanceMigrationMsgOp, nil, err
+		var resTonstakePoolPrepareGovernanceMigrationMsgBody TonstakePoolPrepareGovernanceMigrationMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolPrepareGovernanceMigrationMsgBody)
+		if err == nil {
+			return TonstakePoolPrepareGovernanceMigrationMsgOp, resTonstakePoolPrepareGovernanceMigrationMsgBody, nil
 		}
-		return TonstakePoolPrepareGovernanceMigrationMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsAcceptStakeMsgOpCode: // 0x99a811fb
-		var res WhalesNominatorsAcceptStakeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsAcceptStakeMsgOp, nil, err
+		var resWhalesNominatorsAcceptStakeMsgBody WhalesNominatorsAcceptStakeMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsAcceptStakeMsgBody)
+		if err == nil {
+			return WhalesNominatorsAcceptStakeMsgOp, resWhalesNominatorsAcceptStakeMsgBody, nil
 		}
-		return WhalesNominatorsAcceptStakeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolSetDepositSettingsMsgOpCode: // 0x9bf5561c
-		var res TonstakePoolSetDepositSettingsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolSetDepositSettingsMsgOp, nil, err
+		var resTonstakePoolSetDepositSettingsMsgBody TonstakePoolSetDepositSettingsMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolSetDepositSettingsMsgBody)
+		if err == nil {
+			return TonstakePoolSetDepositSettingsMsgOp, resTonstakePoolSetDepositSettingsMsgBody, nil
 		}
-		return TonstakePoolSetDepositSettingsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsAcceptWithdrawsMsgOpCode: // 0xa19fd934
-		var res WhalesNominatorsAcceptWithdrawsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsAcceptWithdrawsMsgOp, nil, err
+		var resWhalesNominatorsAcceptWithdrawsMsgBody WhalesNominatorsAcceptWithdrawsMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsAcceptWithdrawsMsgBody)
+		if err == nil {
+			return WhalesNominatorsAcceptWithdrawsMsgOp, resWhalesNominatorsAcceptWithdrawsMsgBody, nil
 		}
-		return WhalesNominatorsAcceptWithdrawsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsSendStakeMsgOpCode: // 0xa2065f2c
-		var res WhalesNominatorsSendStakeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsSendStakeMsgOp, nil, err
+		var resWhalesNominatorsSendStakeMsgBody WhalesNominatorsSendStakeMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsSendStakeMsgBody)
+		if err == nil && !completedRead(cell) {
+			err = ErrStructSizeMismatch
 		}
-		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
-			return WhalesNominatorsSendStakeMsgOp, nil, ErrStructSizeMismatch
+		if err == nil {
+			return WhalesNominatorsSendStakeMsgOp, resWhalesNominatorsSendStakeMsgBody, nil
 		}
-		return WhalesNominatorsSendStakeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TeleitemOkMsgOpCode: // 0xa37a0983
-		var res TeleitemOkMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TeleitemOkMsgOp, nil, err
+		var resTeleitemOkMsgBody TeleitemOkMsgBody
+		err = tlb.Unmarshal(cell, &resTeleitemOkMsgBody)
+		if err == nil {
+			return TeleitemOkMsgOp, resTeleitemOkMsgBody, nil
 		}
-		return TeleitemOkMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TeleitemReturnBidMsgOpCode: // 0xa43227e1
-		var res TeleitemReturnBidMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TeleitemReturnBidMsgOp, nil, err
+		var resTeleitemReturnBidMsgBody TeleitemReturnBidMsgBody
+		err = tlb.Unmarshal(cell, &resTeleitemReturnBidMsgBody)
+		if err == nil {
+			return TeleitemReturnBidMsgOp, resTeleitemReturnBidMsgBody, nil
 		}
-		return TeleitemReturnBidMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ReportRoyaltyParamsMsgOpCode: // 0xa8cb00ad
-		var res ReportRoyaltyParamsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ReportRoyaltyParamsMsgOp, nil, err
+		var resReportRoyaltyParamsMsgBody ReportRoyaltyParamsMsgBody
+		err = tlb.Unmarshal(cell, &resReportRoyaltyParamsMsgBody)
+		if err == nil {
+			return ReportRoyaltyParamsMsgOp, resReportRoyaltyParamsMsgBody, nil
 		}
-		return ReportRoyaltyParamsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StorageRewardWithdrawalMsgOpCode: // 0xa91baf56
-		var res StorageRewardWithdrawalMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StorageRewardWithdrawalMsgOp, nil, err
+		var resStorageRewardWithdrawalMsgBody StorageRewardWithdrawalMsgBody
+		err = tlb.Unmarshal(cell, &resStorageRewardWithdrawalMsgBody)
+		if err == nil {
+			return StorageRewardWithdrawalMsgOp, resStorageRewardWithdrawalMsgBody, nil
 		}
-		return StorageRewardWithdrawalMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustPayoutFromPoolMsgOpCode: // 0xad4eb6f5
-		var res DedustPayoutFromPoolMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DedustPayoutFromPoolMsgOp, nil, err
+		var resDedustPayoutFromPoolMsgBody DedustPayoutFromPoolMsgBody
+		err = tlb.Unmarshal(cell, &resDedustPayoutFromPoolMsgBody)
+		if err == nil {
+			return DedustPayoutFromPoolMsgOp, resDedustPayoutFromPoolMsgBody, nil
 		}
-		return DedustPayoutFromPoolMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeImanagerRequestNotificationMsgOpCode: // 0xb1ebae06
-		var res TonstakeImanagerRequestNotificationMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeImanagerRequestNotificationMsgOp, nil, err
+		var resTonstakeImanagerRequestNotificationMsgBody TonstakeImanagerRequestNotificationMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeImanagerRequestNotificationMsgBody)
+		if err == nil {
+			return TonstakeImanagerRequestNotificationMsgOp, resTonstakeImanagerRequestNotificationMsgBody, nil
 		}
-		return TonstakeImanagerRequestNotificationMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolDeployControllerMsgOpCode: // 0xb27edcad
-		var res TonstakePoolDeployControllerMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolDeployControllerMsgOp, nil, err
+		var resTonstakePoolDeployControllerMsgBody TonstakePoolDeployControllerMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolDeployControllerMsgBody)
+		if err == nil {
+			return TonstakePoolDeployControllerMsgOp, resTonstakePoolDeployControllerMsgBody, nil
 		}
-		return TonstakePoolDeployControllerMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustDepositLiquidityAllMsgOpCode: // 0xb56b9598
-		var res DedustDepositLiquidityAllMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DedustDepositLiquidityAllMsgOp, nil, err
+		var resDedustDepositLiquidityAllMsgBody DedustDepositLiquidityAllMsgBody
+		err = tlb.Unmarshal(cell, &resDedustDepositLiquidityAllMsgBody)
+		if err == nil {
+			return DedustDepositLiquidityAllMsgOp, resDedustDepositLiquidityAllMsgBody, nil
 		}
-		return DedustDepositLiquidityAllMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StorageContractTerminatedMsgOpCode: // 0xb6236d63
-		var res StorageContractTerminatedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StorageContractTerminatedMsgOp, nil, err
+		var resStorageContractTerminatedMsgBody StorageContractTerminatedMsgBody
+		err = tlb.Unmarshal(cell, &resStorageContractTerminatedMsgBody)
+		if err == nil {
+			return StorageContractTerminatedMsgOp, resStorageContractTerminatedMsgBody, nil
 		}
-		return StorageContractTerminatedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeImanagerStatsMsgOpCode: // 0xc1344900
-		var res TonstakeImanagerStatsMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeImanagerStatsMsgOp, nil, err
+		var resTonstakeImanagerStatsMsgBody TonstakeImanagerStatsMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeImanagerStatsMsgBody)
+		if err == nil {
+			return TonstakeImanagerStatsMsgOp, resTonstakeImanagerStatsMsgBody, nil
 		}
-		return TonstakeImanagerStatsMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeImanagerSetInterestMsgOpCode: // 0xc9f04485
-		var res TonstakeImanagerSetInterestMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeImanagerSetInterestMsgOp, nil, err
+		var resTonstakeImanagerSetInterestMsgBody TonstakeImanagerSetInterestMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeImanagerSetInterestMsgBody)
+		if err == nil {
+			return TonstakeImanagerSetInterestMsgOp, resTonstakeImanagerSetInterestMsgBody, nil
 		}
-		return TonstakeImanagerSetInterestMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case SbtRequestOwnerMsgOpCode: // 0xd0c3bfea
-		var res SbtRequestOwnerMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return SbtRequestOwnerMsgOp, nil, err
+		var resSbtRequestOwnerMsgBody SbtRequestOwnerMsgBody
+		err = tlb.Unmarshal(cell, &resSbtRequestOwnerMsgBody)
+		if err == nil {
+			return SbtRequestOwnerMsgOp, resSbtRequestOwnerMsgBody, nil
 		}
-		return SbtRequestOwnerMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerTopUpMsgOpCode: // 0xd372158c
-		var res TonstakeControllerTopUpMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerTopUpMsgOp, nil, err
+		var resTonstakeControllerTopUpMsgBody TonstakeControllerTopUpMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerTopUpMsgBody)
+		if err == nil {
+			return TonstakeControllerTopUpMsgOp, resTonstakeControllerTopUpMsgBody, nil
 		}
-		return TonstakeControllerTopUpMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StorageContractConfirmedMsgOpCode: // 0xd4caedcd
-		var res StorageContractConfirmedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StorageContractConfirmedMsgOp, nil, err
+		var resStorageContractConfirmedMsgBody StorageContractConfirmedMsgBody
+		err = tlb.Unmarshal(cell, &resStorageContractConfirmedMsgBody)
+		if err == nil {
+			return StorageContractConfirmedMsgOp, resStorageContractConfirmedMsgBody, nil
 		}
-		return StorageContractConfirmedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ExcessMsgOpCode: // 0xd53276db
-		var res ExcessMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ExcessMsgOp, nil, err
+		var resExcessMsgBody ExcessMsgBody
+		err = tlb.Unmarshal(cell, &resExcessMsgBody)
+		if err == nil {
+			return ExcessMsgOp, resExcessMsgBody, nil
 		}
-		return ExcessMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WhalesNominatorsWithdrawMsgOpCode: // 0xda803efd
-		var res WhalesNominatorsWithdrawMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WhalesNominatorsWithdrawMsgOp, nil, err
+		var resWhalesNominatorsWithdrawMsgBody WhalesNominatorsWithdrawMsgBody
+		err = tlb.Unmarshal(cell, &resWhalesNominatorsWithdrawMsgBody)
+		if err == nil {
+			return WhalesNominatorsWithdrawMsgOp, resWhalesNominatorsWithdrawMsgBody, nil
 		}
-		return WhalesNominatorsWithdrawMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ChannelClosedMsgOpCode: // 0xdddc88ba
-		var res ChannelClosedMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ChannelClosedMsgOp, nil, err
+		var resChannelClosedMsgBody ChannelClosedMsgBody
+		err = tlb.Unmarshal(cell, &resChannelClosedMsgBody)
+		if err == nil {
+			return ChannelClosedMsgOp, resChannelClosedMsgBody, nil
 		}
-		return ChannelClosedMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolLoanRepaymentMsgOpCode: // 0xdfdca27b
-		var res TonstakePoolLoanRepaymentMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolLoanRepaymentMsgOp, nil, err
+		var resTonstakePoolLoanRepaymentMsgBody TonstakePoolLoanRepaymentMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolLoanRepaymentMsgBody)
+		if err == nil {
+			return TonstakePoolLoanRepaymentMsgOp, resTonstakePoolLoanRepaymentMsgBody, nil
 		}
-		return TonstakePoolLoanRepaymentMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case WalletPluginDestructResponseMsgOpCode: // 0xe4737472
-		var res WalletPluginDestructResponseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return WalletPluginDestructResponseMsgOp, nil, err
+		var resWalletPluginDestructResponseMsgBody WalletPluginDestructResponseMsgBody
+		err = tlb.Unmarshal(cell, &resWalletPluginDestructResponseMsgBody)
+		if err == nil {
+			return WalletPluginDestructResponseMsgOp, resWalletPluginDestructResponseMsgBody, nil
 		}
-		return WalletPluginDestructResponseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DeployStorageContractMsgOpCode: // 0xe4748df1
-		var res DeployStorageContractMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DeployStorageContractMsgOp, nil, err
+		var resDeployStorageContractMsgBody DeployStorageContractMsgBody
+		err = tlb.Unmarshal(cell, &resDeployStorageContractMsgBody)
+		if err == nil {
+			return DeployStorageContractMsgOp, resDeployStorageContractMsgBody, nil
 		}
-		return DeployStorageContractMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakePoolRequestLoanMsgOpCode: // 0xe642c965
-		var res TonstakePoolRequestLoanMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakePoolRequestLoanMsgOp, nil, err
+		var resTonstakePoolRequestLoanMsgBody TonstakePoolRequestLoanMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakePoolRequestLoanMsgBody)
+		if err == nil {
+			return TonstakePoolRequestLoanMsgOp, resTonstakePoolRequestLoanMsgBody, nil
 		}
-		return TonstakePoolRequestLoanMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerDisapproveMsgOpCode: // 0xe8a0abfe
-		var res TonstakeControllerDisapproveMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerDisapproveMsgOp, nil, err
+		var resTonstakeControllerDisapproveMsgBody TonstakeControllerDisapproveMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerDisapproveMsgBody)
+		if err == nil {
+			return TonstakeControllerDisapproveMsgOp, resTonstakeControllerDisapproveMsgBody, nil
 		}
-		return TonstakeControllerDisapproveMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustSwapMsgOpCode: // 0xea06185d
-		var res DedustSwapMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return DedustSwapMsgOp, nil, err
+		var resDedustSwapMsgBody DedustSwapMsgBody
+		err = tlb.Unmarshal(cell, &resDedustSwapMsgBody)
+		if err == nil {
+			return DedustSwapMsgOp, resDedustSwapMsgBody, nil
 		}
-		return DedustSwapMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerRecoverStakeMsgOpCode: // 0xeb373a05
-		var res TonstakeControllerRecoverStakeMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerRecoverStakeMsgOp, nil, err
+		var resTonstakeControllerRecoverStakeMsgBody TonstakeControllerRecoverStakeMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerRecoverStakeMsgBody)
+		if err == nil {
+			return TonstakeControllerRecoverStakeMsgOp, resTonstakeControllerRecoverStakeMsgBody, nil
 		}
-		return TonstakeControllerRecoverStakeMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeNftBurnNotificationMsgOpCode: // 0xed58b0b2
-		var res TonstakeNftBurnNotificationMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeNftBurnNotificationMsgOp, nil, err
+		var resTonstakeNftBurnNotificationMsgBody TonstakeNftBurnNotificationMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeNftBurnNotificationMsgBody)
+		if err == nil {
+			return TonstakeNftBurnNotificationMsgOp, resTonstakeNftBurnNotificationMsgBody, nil
 		}
-		return TonstakeNftBurnNotificationMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerReturnUnusedLoanMsgOpCode: // 0xed7378a6
-		var res TonstakeControllerReturnUnusedLoanMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerReturnUnusedLoanMsgOp, nil, err
+		var resTonstakeControllerReturnUnusedLoanMsgBody TonstakeControllerReturnUnusedLoanMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerReturnUnusedLoanMsgBody)
+		if err == nil {
+			return TonstakeControllerReturnUnusedLoanMsgOp, resTonstakeControllerReturnUnusedLoanMsgBody, nil
 		}
-		return TonstakeControllerReturnUnusedLoanMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case PaymentRequestResponseMsgOpCode: // 0xf06c7567
-		var res PaymentRequestResponseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return PaymentRequestResponseMsgOp, nil, err
+		var resPaymentRequestResponseMsgBody PaymentRequestResponseMsgBody
+		err = tlb.Unmarshal(cell, &resPaymentRequestResponseMsgBody)
+		if err == nil {
+			return PaymentRequestResponseMsgOp, resPaymentRequestResponseMsgBody, nil
 		}
-		return PaymentRequestResponseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerUpdateValidatorHashMsgOpCode: // 0xf0fd2250
-		var res TonstakeControllerUpdateValidatorHashMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeControllerUpdateValidatorHashMsgOp, nil, err
+		var resTonstakeControllerUpdateValidatorHashMsgBody TonstakeControllerUpdateValidatorHashMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeControllerUpdateValidatorHashMsgBody)
+		if err == nil {
+			return TonstakeControllerUpdateValidatorHashMsgOp, resTonstakeControllerUpdateValidatorHashMsgBody, nil
 		}
-		return TonstakeControllerUpdateValidatorHashMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeNftBurnMsgOpCode: // 0xf127fe4e
-		var res TonstakeNftBurnMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return TonstakeNftBurnMsgOp, nil, err
+		var resTonstakeNftBurnMsgBody TonstakeNftBurnMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeNftBurnMsgBody)
+		if err == nil {
+			return TonstakeNftBurnMsgOp, resTonstakeNftBurnMsgBody, nil
 		}
-		return TonstakeNftBurnMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ElectorNewStakeConfirmationMsgOpCode: // 0xf374484c
-		var res ElectorNewStakeConfirmationMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ElectorNewStakeConfirmationMsgOp, nil, err
+		var resElectorNewStakeConfirmationMsgBody ElectorNewStakeConfirmationMsgBody
+		err = tlb.Unmarshal(cell, &resElectorNewStakeConfirmationMsgBody)
+		if err == nil {
+			return ElectorNewStakeConfirmationMsgOp, resElectorNewStakeConfirmationMsgBody, nil
 		}
-		return ElectorNewStakeConfirmationMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case StonfiPaymentRequestMsgOpCode: // 0xf93bb43f
-		var res StonfiPaymentRequestMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return StonfiPaymentRequestMsgOp, nil, err
+		var resStonfiPaymentRequestMsgBody StonfiPaymentRequestMsgBody
+		err = tlb.Unmarshal(cell, &resStonfiPaymentRequestMsgBody)
+		if err == nil && !completedRead(cell) {
+			err = ErrStructSizeMismatch
 		}
-		if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 {
-			return StonfiPaymentRequestMsgOp, nil, ErrStructSizeMismatch
+		if err == nil {
+			return StonfiPaymentRequestMsgOp, resStonfiPaymentRequestMsgBody, nil
 		}
-		return StonfiPaymentRequestMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case ElectorRecoverStakeResponseMsgOpCode: // 0xf96f7324
-		var res ElectorRecoverStakeResponseMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return ElectorRecoverStakeResponseMsgOp, nil, err
+		var resElectorRecoverStakeResponseMsgBody ElectorRecoverStakeResponseMsgBody
+		err = tlb.Unmarshal(cell, &resElectorRecoverStakeResponseMsgBody)
+		if err == nil {
+			return ElectorRecoverStakeResponseMsgOp, resElectorRecoverStakeResponseMsgBody, nil
 		}
-		return ElectorRecoverStakeResponseMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	case BounceMsgOpCode: // 0xffffffff
-		var res BounceMsgBody
-		if err := tlb.Unmarshal(cell, &res); err != nil {
-			return BounceMsgOp, nil, err
+		var resBounceMsgBody BounceMsgBody
+		err = tlb.Unmarshal(cell, &resBounceMsgBody)
+		if err == nil {
+			return BounceMsgOp, resBounceMsgBody, nil
 		}
-		return BounceMsgOp, res, nil
+		cell.ResetCounters()
+		return "", nil, err
 	}
 	return "", nil, fmt.Errorf("invalid message tag")
+}
+
+func completedRead(cell *boc.Cell) bool {
+	return cell.RefsAvailableForRead() == 0 && cell.BitsAvailableForRead() == 0
 }
 
 // MsgOpName is a human-friendly name for a message's operation which is identified by the first 4 bytes of the message's body.
@@ -768,6 +1007,7 @@ const (
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
+	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
 	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
 	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
@@ -888,6 +1128,7 @@ const (
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
+	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
@@ -1005,6 +1246,7 @@ var KnownMsgTypes = map[string]any{
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
+	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},
 	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},
 	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},

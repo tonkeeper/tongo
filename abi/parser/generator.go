@@ -50,6 +50,8 @@ var (
 	returnStrNilErr     = "if err != nil {return \"\", nil, err}\n"
 	//go:embed invocation_order.tmpl
 	invocationOrderTemplate string
+	//go:embed get_methods.tmpl
+	getMethodsTemplate string
 )
 
 type TLBMsgBody struct {
@@ -87,23 +89,35 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 	return g, err
 }
 
-func (g *Generator) GetMethods() (string, []string, error) {
-	var builder, methodMap, resultMap, decodersMap strings.Builder
-	builder.WriteString(`
-type Executor interface {
-	RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
+type getMethodContext struct {
+	GetMethods    []getMethodDesc
+	SimpleMethods map[int][]string
+}
+type getMethodDesc struct {
+	Name        string
+	MethodName  string
+	ID          int
+	Body        string
+	Decoders    []string
+	ResultTypes map[string]string
 }
 
-	`)
-	decodersMap.WriteString("var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){\n")
-
-	methods := make(map[int][]string)
-	var resultTypes []string
+func (g *Generator) GetMethods() (string, []string, error) {
+	context := getMethodContext{
+		SimpleMethods: map[int][]string{},
+		GetMethods:    []getMethodDesc{},
+	}
 
 	usedNames := map[string]struct{}{}
 	simpleMethods := []string{}
 	for _, m := range g.abi.Methods {
 		methodName := m.GolangFunctionName()
+		var err error
+		desc := getMethodDesc{
+			Name:        m.Name,
+			MethodName:  methodName,
+			ResultTypes: make(map[string]string),
+		}
 		var methodID int
 		if m.ID != 0 {
 			methodID = m.ID
@@ -117,46 +131,35 @@ type Executor interface {
 
 		if len(m.Input.StackValues) == 0 {
 			simpleMethods = append(simpleMethods, m.Name)
-			methods[methodID] = append(methods[methodID], methodName)
+			context.SimpleMethods[methodID] = append(context.SimpleMethods[methodID], methodName)
 		}
-		decodersMap.WriteString(fmt.Sprintf(`"%v":{`, m.Name))
 		for _, o := range m.Output {
 			resultTypeName := o.FullResultName(methodName)
-			decodersMap.WriteString("Decode" + resultTypeName + ",")
-			resultTypes = append(resultTypes, resultTypeName)
-			r, err := g.buildResultType(resultTypeName, o.Stack)
+			desc.Decoders = append(desc.Decoders, "Decode"+resultTypeName)
+			r, err := g.buildStackStruct(o.Stack)
 			if err != nil {
 				return "", nil, err
 			}
-			builder.WriteString(r)
-			builder.WriteRune('\n')
+			desc.ResultTypes[resultTypeName] = r
 		}
-		decodersMap.WriteString("},\n")
-		s, err := g.getMethod(m, methodID, methodName)
+		desc.Body, err = g.getMethod(m, methodID, methodName)
 		if err != nil {
 			return "", nil, err
 		}
-		builder.WriteString(s)
-		builder.WriteRune('\n')
-	}
-	decodersMap.WriteString("}\n\n")
-	methodMap.WriteString("var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){\n")
-	for _, k := range utils.GetOrderedKeys(methods) {
-		methodMap.WriteString(fmt.Sprintf("%d: {", k))
-		for _, m := range methods[k] {
-			methodMap.WriteString(fmt.Sprintf("%s, ", m))
-		}
-		methodMap.WriteString("},\n")
-	}
-	methodMap.WriteString("}\n\n")
 
-	resultMap.WriteString("var resultTypes = []interface{}{\n")
-	slices.Sort(resultTypes)
-	for _, r := range resultTypes {
-		resultMap.WriteString(fmt.Sprintf("&%s{}, \n", r))
+		context.GetMethods = append(context.GetMethods, desc)
 	}
-	resultMap.WriteString("}\n\n")
-	b, err := format.Source([]byte(decodersMap.String() + methodMap.String() + resultMap.String() + builder.String()))
+
+	tmpl, err := template.New("getMethods").Parse(getMethodsTemplate)
+	if err != nil {
+		return "", nil, err
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, context); err != nil {
+		return "", nil, err
+	}
+
+	b, err := format.Source([]byte(buf.String()))
 	if err != nil {
 		return "", nil, err
 	}

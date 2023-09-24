@@ -190,7 +190,6 @@ var resultTypes = []interface{}{
 type Executor interface {
 	RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
-
 type Dnsresolve_RecordsResult struct {
 	ResolvedBits int64
 	Result       tlb.DNSRecordSet
@@ -1661,20 +1660,6 @@ type GetSaleData_BasicResult struct {
 	RoyaltyAmount  uint64
 }
 
-type GetSaleData_GetgemsResult struct {
-	Magic            uint64
-	IsComplete       bool
-	CreatedAt        uint64
-	Marketplace      tlb.MsgAddress
-	Nft              tlb.MsgAddress
-	Owner            tlb.MsgAddress
-	FullPrice        tlb.Int257
-	MarketFeeAddress tlb.MsgAddress
-	MarketFee        uint64
-	RoyaltyAddress   tlb.MsgAddress
-	RoyaltyAmount    uint64
-}
-
 type GetSaleData_GetgemsAuctionResult struct {
 	Magic            uint64
 	End              bool
@@ -1696,6 +1681,20 @@ type GetSaleData_GetgemsAuctionResult struct {
 	CreatedAt        uint32
 	LastBidAt        uint32
 	IsCanceled       bool
+}
+
+type GetSaleData_GetgemsResult struct {
+	Magic            uint64
+	IsComplete       bool
+	CreatedAt        uint64
+	Marketplace      tlb.MsgAddress
+	Nft              tlb.MsgAddress
+	Owner            tlb.MsgAddress
+	FullPrice        tlb.Int257
+	MarketFeeAddress tlb.MsgAddress
+	MarketFee        uint64
+	RoyaltyAddress   tlb.MsgAddress
+	RoyaltyAmount    uint64
 }
 
 func GetSaleData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {

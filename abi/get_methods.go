@@ -48,6 +48,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_public_key":                {DecodeGetPublicKeyResult},
 	"get_reserves":                  {DecodeGetReserves_DedustResult},
 	"get_revoked_time":              {DecodeGetRevokedTimeResult},
+	"get_router_data":               {DecodeGetRouterData_StonfiResult},
 	"get_sale_data":                 {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
 	"get_staking_status":            {DecodeGetStakingStatusResult},
 	"get_storage_contract_address":  {DecodeGetStorageContractAddressResult},
@@ -118,6 +119,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	122058: {IsActive},
 	122498: {GetTelemintAuctionState},
 	123928: {GetStakingStatus},
+	128085: {GetRouterData},
 	129619: {GetTelemintAuctionConfig},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
@@ -162,6 +164,7 @@ var resultTypes = []interface{}{
 	&GetPublicKeyResult{},
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
+	&GetRouterData_StonfiResult{},
 	&GetSaleData_BasicResult{},
 	&GetSaleData_GetgemsAuctionResult{},
 	&GetSaleData_GetgemsResult{},
@@ -1648,6 +1651,44 @@ func DecodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny
 	var result GetRevokedTimeResult
 	err = stack.Unmarshal(&result)
 	return "GetRevokedTimeResult", result, err
+}
+
+type GetRouterData_StonfiResult struct {
+	IsLocked           bool
+	AdminAddress       tlb.MsgAddress
+	TempUpgrade        tlb.Any
+	PoolCode           tlb.Any
+	JettonLpWalletCode tlb.Any
+	LpAccountCode      tlb.Any
+}
+
+func GetRouterData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 128085 for "get_router_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 128085, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRouterData_StonfiResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetRouterData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetRouterData_StonfiResult
+	err = stack.Unmarshal(&result)
+	return "GetRouterData_StonfiResult", result, err
 }
 
 type GetSaleData_BasicResult struct {

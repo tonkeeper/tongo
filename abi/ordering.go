@@ -25,6 +25,7 @@ const (
 	PaymentChannel      ContractInterface = "payment_channel"
 	Sbt                 ContractInterface = "sbt"
 	StonfiPool          ContractInterface = "stonfi_pool"
+	StonfiRouter        ContractInterface = "stonfi_router"
 	StorageContract     ContractInterface = "storage_contract"
 	StorageProvider     ContractInterface = "storage_provider"
 	SubscriptionV1      ContractInterface = "subscription_v1"
@@ -159,6 +160,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_revoked_time",
 		InvokeFn: GetRevokedTime,
+	},
+	{
+		Name:     "get_router_data",
+		InvokeFn: GetRouterData,
 	},
 	{
 		Name:     "get_sale_data",
@@ -366,6 +371,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: StonfiPool,
 		Results: []string{
 			"GetPoolData_StonfiResult",
+		},
+	},
+	{
+		Name: StonfiRouter,
+		Results: []string{
+			"GetRouterData_StonfiResult",
 		},
 	},
 	{

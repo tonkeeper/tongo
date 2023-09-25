@@ -6,17 +6,20 @@
     <interface name="stonfi_pool">
         <get_method name="get_pool_data" version="stonfi"/>
     </interface>
+    <interface name="stonfi_router">
+        <get_method name="get_router_data" version="stonfi"/>
+    </interface>
 
-<!--    <get_method name="get_router_data">-->
-<!--        <output version="stonfi" fixed_length="true">-->
-<!--            <int name="is_locked">bool</int>-->
-<!--            <slice name="admin_address">msgaddress</slice>-->
-<!--            <cell name="temp_upgrade">any</cell>-->
-<!--            <cell name="pool_code">any</cell>-->
-<!--            <cell name="jetton_lp_wallet_code">any</cell>-->
-<!--            <cell name="lp_account_code">any</cell>-->
-<!--        </output>-->
-<!--    </get_method>-->
+    <get_method name="get_router_data">
+        <output version="stonfi" fixed_length="true">
+            <int name="is_locked">bool</int>
+            <slice name="admin_address">msgaddress</slice>
+            <cell name="temp_upgrade">any</cell>
+            <cell name="pool_code">any</cell>
+            <cell name="jetton_lp_wallet_code">any</cell>
+            <cell name="lp_account_code">any</cell>
+        </output>
+    </get_method>
 
     <get_method name="get_pool_data">
         <output version="stonfi" fixed_length="true">

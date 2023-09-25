@@ -1,5 +1,12 @@
 <abi>
-    <get_method name="get_locker_bill_data" interface="locker_bill">
+    <interface name="locker">
+        <get_method name="get_locker_data"/>
+        <get_method name="get_bill_address"/>
+    </interface>
+    <interface name="locker_bill">
+        <get_method name="get_locker_bill_data"/>
+    </interface>
+    <get_method name="get_locker_bill_data" >
         <output fixed_length="true">
             <slice name="locker_address">msgaddress</slice>
             <int name="total_coins_deposit">uint64</int>
@@ -7,7 +14,7 @@
             <int name="last_withdraw_time">uint32</int>
         </output>
     </get_method>
-    <get_method name="get_locker_data" interface="locker">
+    <get_method name="get_locker_data" >
         <output fixed_length="true">
             <int name="total_coins_locked">uint64</int>
             <int name="total_reward">uint64</int>
@@ -17,7 +24,7 @@
             <int name="unlock_period">uint32</int>
         </output>
     </get_method>
-    <get_method name="get_bill_address" interface="locker">
+    <get_method name="get_bill_address">
         <input>
             <slice name="user_address">msgaddress</slice>
         </input>

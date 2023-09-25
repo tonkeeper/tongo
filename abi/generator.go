@@ -33,13 +33,6 @@ func mergeMethods(methods []parser.GetMethod) ([]parser.GetMethod, error) {
 			methodsMap[method.Name] = method
 			continue
 		}
-		if len(method.GolangName) > 0 {
-			golangNamedMethods = append(golangNamedMethods, method)
-			continue
-		}
-		if len(current.Interfaces) > 0 || len(method.Interfaces) > 0 {
-			return nil, fmt.Errorf("method '%s' must be defined without 'interface' attr because it has multiple version", method.Name)
-		}
 		if len(current.Input.StackValues) > 0 || len(method.Input.StackValues) > 0 {
 			return nil, fmt.Errorf("method '%s' has a version with input params, it has to be defined with golang_name to avoid collision", method.Name)
 		}
@@ -78,6 +71,7 @@ func main() {
 		abi.JettonPayloads = append(abi.JettonPayloads, a.JettonPayloads...)
 		abi.NFTPayloads = append(abi.NFTPayloads, a.NFTPayloads...)
 		abi.Types = append(abi.Types, a.Types...)
+		abi.Interfaces = append(abi.Interfaces, a.Interfaces...)
 		return nil
 	})
 
@@ -95,11 +89,11 @@ func main() {
 	types := gen.CollectedTypes()
 	msgDecoder := gen.GenerateMsgDecoder()
 
-	getMethods, err := gen.GetMethods()
+	getMethods, simpleMethods, err := gen.GetMethods()
 	if err != nil {
 		panic(err)
 	}
-	invocationOrder, err := gen.RenderInvocationOrderList()
+	invocationOrder, err := gen.RenderInvocationOrderList(simpleMethods)
 	if err != nil {
 		panic(err)
 	}
@@ -118,7 +112,7 @@ func main() {
 		{types, "types.go", `"github.com/tonkeeper/tongo/tlb"`},
 		{msgDecoder, "messages.go", `"fmt"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{getMethods, "get_methods.go", `"context"`, `"fmt"`, `"github.com/tonkeeper/tongo/ton"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
-		{invocationOrder, "ordering.go", `"context"`, `"github.com/tonkeeper/tongo/ton"`},
+		{invocationOrder, "ordering.go"},
 		{jettons, "jetton_msg_types.go", `"errors"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{nfts, "nfts_msg_types.go", `"errors"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 	} {
@@ -126,11 +120,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		code, err := format.Source([]byte(fmt.Sprintf(HEADER, strings.Join(f[2:], "\n")) + f[0]))
+		code := []byte(fmt.Sprintf(HEADER, strings.Join(f[2:], "\n")) + f[0])
+		formatedCode, err := format.Source(code)
 		if err != nil {
-			panic(err)
+			formatedCode = code
+			//panic(err)
 		}
-		_, err = file.Write(code)
+		_, err = file.Write(formatedCode)
 		if err != nil {
 			panic(err)
 		}

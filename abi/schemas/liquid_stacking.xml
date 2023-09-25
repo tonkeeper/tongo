@@ -1,6 +1,12 @@
 <abi>
-    <!--    Pool    -->
-    <get_method name="get_pool_full_data" interface="tonstake_pool">
+    <!--    Pool   todo: attach all internals to interfaces -->
+    <interface name="tonstake_pool">
+        <get_method name="get_pool_full_data"/>
+    </interface>
+    <interface name="validator_controller">
+        <get_method name="get_validator_controller_data"/>
+    </interface>
+    <get_method name="get_pool_full_data">
         <output fixed_length="true">
             <int name="state">int32</int> <!-- i=0 -->
             <int name="halted">bool</int>
@@ -51,7 +57,7 @@
         </output>
     </get_method>
     <!--    Validator-Controller    -->
-    <get_method name="get_validator_controller_data" interface="validator_controller">
+    <get_method name="get_validator_controller_data">
         <output>
             <int name="state">int32</int>
             <int name="approved">bool</int>
@@ -70,129 +76,128 @@
     </get_method>
 
     <!--   Payout NFTs     -->
-    <get_method name="get_bill_amount" interface="staking_nft">
+    <get_method name="get_bill_amount" >
         <output fixed_length="true">
             <int name="amount">int64</int>
         </output>
     </get_method>
 
     <!-- TonStake messages to controller -->
-    <internal name="tonstake_controller_credit" interface="tonstake_controller">
+    <internal name="tonstake_controller_credit">
         credit#1690c604 query_id:uint64 amount:Coins = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_approve" interface="tonstake_controller">
+    <internal name="tonstake_controller_approve">
         approve#7b4b42e6 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_disapprove" interface="tonstake_controller">
+    <internal name="tonstake_controller_disapprove">
         disapprove#e8a0abfe query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_recover_stake" interface="tonstake_controller">
+    <internal name="tonstake_controller_recover_stake">
         recover_stake#eb373a05 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_update_validator_hash" interface="tonstake_controller">
+    <internal name="tonstake_controller_update_validator_hash">
         update_validator_hash#f0fd2250 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_withdraw_validator" interface="tonstake_controller">
+    <internal name="tonstake_controller_withdraw_validator">
         withdraw_validator#8efed779 query_id:uint64 value:Coins = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_validator_withdrawal" interface="tonstake_controller">
+    <internal name="tonstake_controller_validator_withdrawal">
         validator_withdrawal#30026327 query_id:uint64 amount:Coins = InternalMsgBody;
     </internal>
-    <!--    <internal name="tonstake_controller_new_stake" interface="tonstake_controller">  TODO: fix conflict with another new_stake-->
+    <!--    <internal name="tonstake_controller_new_stake">  TODO: fix conflict with another new_stake (i che ya etim hotel skazat? v upor ne pomnyu)-->
     <!--        new_stake#e0505d0e query_id:uint64 value:Coins validator_pubkey:uint256 stake_at:uint32 max_factor:uint32-->
     <!--        adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;-->
     <!--    </internal>-->
-    <internal name="tonstake_controller_send_request_loan" interface="tonstake_controller">
+    <internal name="tonstake_controller_send_request_loan">
         send_request_loan#6335b11a query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint16 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_return_unused_loan" interface="tonstake_controller">
+    <internal name="tonstake_controller_return_unused_loan">
         return_unused_loan#ed7378a6 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_return_available_funds" interface="tonstake_controller">
+    <internal name="tonstake_controller_return_available_funds">
         return_available_funds#55c26cd5 query_id:uint64 = InternalMsgBody;
     </internal>
 
     <!--     TonStake messages to pool -->
-    <internal name="tonstake_pool_request_loan" interface="tonstake_pool">
+    <internal name="tonstake_pool_request_loan">
         request_loan#e642c965 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint16 controller_id:uint32 validator:MsgAddress = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_loan_repayment" interface="tonstake_pool">
+    <internal name="tonstake_pool_loan_repayment">
         loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_deposit" interface="tonstake_pool">
+    <internal name="tonstake_pool_deposit">
         deposit#47d54391 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_touch" interface="tonstake_pool">
+    <internal name="tonstake_pool_touch">
         touch#4bc7c2df query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_set_governance_fee" interface="tonstake_pool">
+    <internal name="tonstake_pool_set_governance_fee">
         set_governance_fee#2aaa96a0 query_id:uint64 governance_fee:uint16 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_withdraw" interface="tonstake_pool">
+    <internal name="tonstake_pool_withdraw">
         withdraw#319b0cdc query_id:uint64 jetton_amount:Coins from_address:MsgAddress response_address:MsgAddress =
         InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_withdrawal" interface="tonstake_pool">
+    <internal name="tonstake_pool_withdrawal">
         withdrawal#0a77535c query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_set_roles" interface="tonstake_pool">
+    <internal name="tonstake_pool_set_roles">
         set_roles#5e517f36 query_id:uint64 governor:(Maybe MsgAddress) interest_manager:(Maybe MsgAddress) halter:(Maybe MsgAddress) = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_set_deposit_settings" interface="tonstake_pool">
+    <internal name="tonstake_pool_set_deposit_settings">
         set_deposit_settings#9bf5561c query_id:uint64 optimistic_deposit_withdrawals:Bool deposits_open:Bool = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_deploy_controller" interface="tonstake_pool">
+    <internal name="tonstake_pool_deploy_controller">
         deploy_controller#b27edcad controller_id:uint32 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_pool_prepare_governance_migration" interface="tonstake_pool">
+    <internal name="tonstake_pool_prepare_governance_migration">
         prepare_governance_migration#9971881c query_id:uint64 governor_update_after:uint48 = InternalMsgBody;
     </internal>
 
 
     <!-- TonStake messages to pool and controller -->
-    <internal name="tonstake_controller_pool_send_message" interface="tonstake_controller" interface="tonstake_pool">
+    <internal name="tonstake_controller_pool_send_message">
         send_message#270695fb query_id:uint64 mode:uint8 msg:^Cell = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_pool_upgrade" interface="tonstake_controller" interface="tonstake_pool" >
+    <internal name="tonstake_controller_pool_upgrade" >
         upgrade#96e7f528 query_id:uint64 data:(Maybe ^Cell) code:(Maybe ^Cell) after_upgrade:(Maybe ^Cell) =
         InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_pool_set_sudoer" interface="tonstake_controller" interface="tonstake_pool">
+    <internal name="tonstake_controller_pool_set_sudoer">
         set_sudoer#79e7c016 query_id:uint64 sudoer:MsgAddress = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_pool_unhalt" interface="tonstake_controller" interface="tonstake_pool">
+    <internal name="tonstake_controller_pool_unhalt">
         unhalt#7247e7a5 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_pool_halt" interface="tonstake_controller" interface="tonstake_pool">
+    <internal name="tonstake_controller_pool_halt">
         halt#139a1b4e query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_controller_top_up" interface="tonstake_controller" interface="tonstake_pool">
+    <internal name="tonstake_controller_top_up">
         top_up#d372158c query_id:uint64 = InternalMsgBody;
     </internal>
 
-    <internal name="tonstake_imanager_set_interest" interface="tonstake_imanager">
+    <internal name="tonstake_imanager_set_interest" >
         set_interest#c9f04485 query_id:uint64 interest_rate:uint16 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_imanager_operation_fee" interface="tonstake_imanager">
+    <internal name="tonstake_imanager_operation_fee" >
         operation_fee#54d37487 query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_imanager_request_notification" interface="tonstake_imanager">
+    <internal name="tonstake_imanager_request_notification" >
         request_notification#b1ebae06 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint16 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_imanager_stats" interface="tonstake_imanager">
+    <internal name="tonstake_imanager_stats" >
         stats#c1344900 query_id:uint64 borrowed:Coins expected:Coins returned:Coins profit_sign:int1 profit:Coins total_balance:Coins = InternalMsgBody;
     </internal>
     
     
-    <internal name="tonstake_nft_burn" interface="tonstake_nft">
+    <internal name="tonstake_nft_burn">
         burn#f127fe4e query_id:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_nft_burn_notification" interface="tonstake_nft">
+    <internal name="tonstake_nft_burn_notification">
         burn_notification#ed58b0b2 query_id:uint64 amount:Coins owner:MsgAddress index:uint64 = InternalMsgBody;
     </internal>
-    <internal name="tonstake_nft_init" interface="tonstake_nft">
+    <internal name="tonstake_nft_init">
         init_nft#132f9a45 query_id:uint64 owner:MsgAddress amount:Coins prev:MsgAddress next:MsgAddress = InternalMsgBody;
     </internal>
 
-    <!--        Wallets     -->
 </abi>

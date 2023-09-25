@@ -1,0 +1,80 @@
+<abi>
+    <interface name="jetton_master">
+        <get_method name="get_jetton_data"/>
+        <get_method name="get_wallet_address"/>
+        <msg_in>
+            <internal name="jetton_burn_notification"/>
+        </msg_in>
+    </interface>
+    <interface name="jetton_wallet">
+        <get_method name="get_wallet_data"/>
+        <msg_in>
+            <internal name="jetton_transfer"/>
+            <internal name="jetton_internal_transfer"/>
+            <internal name="jetton_burn"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_burn_notification"/>
+            <internal name="jetton_internal_transfer"/>
+            <internal name="jetton_notify"/>
+        </msg_out>
+    </interface>
+
+    <!--        Jettons    -->
+    <get_method name="get_jetton_data">
+        <output>
+            <int name="total_supply">int257</int>
+            <int name="mintable">int8</int>
+            <slice name="admin_address">msgaddress</slice>
+            <cell name="jetton_content">any</cell>
+            <cell name="jetton_wallet_code">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_wallet_address" >
+        <input>
+            <slice name="owner_address">msgaddress</slice>
+        </input>
+        <output>
+            <slice name="jetton_wallet_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_wallet_data">
+        <output>
+            <int name="balance">int257</int>
+            <slice name="owner">msgaddress</slice>
+            <slice name="jetton">msgaddress</slice>
+            <cell name="jetton_wallet_code">any</cell>
+        </output>
+    </get_method>
+
+
+    <!--        Jettons    -->
+    <internal name="jetton_transfer" >
+        transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
+        response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+        forward_ton_amount:(VarUInteger 16) forward_payload:(Either JettonPayload ^JettonPayload) <!-- todo: maybe replace custom non-standard types with xml like <JettonPayload>Cell</JettonPayload>-->
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_internal_transfer">
+        internal_transfer#178d4519 query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
+        response_address:MsgAddress
+        forward_ton_amount:(VarUInteger 16)
+        <!--                forward_payload:(Either Cell ^Cell)-->
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_burn" >
+        burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
+        response_destination:MsgAddress custom_payload:(Maybe ^JettonPayload)
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_burn_notification" >
+        burn_notification#7bdd97de query_id:uint64 amount:(VarUInteger 16)
+        sender:MsgAddress response_destination:MsgAddress = InternalMsgBody;
+    </internal>
+    <internal name="jetton_notify" >
+        transfer_notification#7362d09c query_id:uint64 amount:(VarUInteger 16)
+        sender:MsgAddress forward_payload:(Either JettonPayload ^JettonPayload)
+        = InternalMsgBody;
+    </internal>
+
+</abi>

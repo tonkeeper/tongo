@@ -1,5 +1,11 @@
 <abi>
-    <get_method name="get_lockup_data" interface="lockup_wallet_vesting">
+    <interface name="lockup_vesting">
+        <get_method name="get_lockup_data"/>
+    </interface>
+    <interface name="lockup_universal">
+        <get_method name="get_balances"/>
+    </interface>
+    <get_method name="get_lockup_data" >
         <output fixed_length="true">
             <int name="start_time">int64</int>
             <int name="total_duration">int64</int>
@@ -9,7 +15,7 @@
             <int name="allow_elector">int64</int>
         </output>
     </get_method>
-    <get_method name="get_balances" interface="lockup_wallet_universal">
+    <get_method name="get_balances" >
         <output fixed_length="true">
             <int name="ton_balance">int64</int>
             <int name="total_restricted_value">int64</int>

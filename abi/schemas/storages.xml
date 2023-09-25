@@ -1,0 +1,128 @@
+<abi>
+    <types>
+        torrent_info piece_size:uint32 file_size:uint64 root_hash:(## 256) header_size:uint64 header_hash:(## 256)
+        microchunk_hash:(Maybe (## 256)) description:Text = TorrentInfo;
+    </types>
+    <!--      Storage  todo: attach internals to interfaces   -->
+    <interface name="storage_provider">
+        <get_method name="get_wallet_params"/>
+        <get_method name="get_storage_params"/>
+        <get_method name="seqno"/>
+        <get_method name="get_public_key"/>
+        <get_method name="get_storage_contract_address"/>
+    </interface>
+    <interface name="storage_contract">
+        <get_method name="get_storage_contract_data"/>
+        <get_method name="get_torrent_hash"/>
+        <get_method name="is_active"/>
+        <get_method name="get_next_proof_info"/>
+    </interface>
+    <get_method name="get_wallet_params">
+        <output>
+            <int name="seqno">uint32</int>
+            <int name="subwallet">uint32</int>
+            <int name="public_key">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_storage_params" >
+        <output>
+            <int name="accept_new_contracts">bool</int>
+            <int name="rate_per_mb_day">uint64</int>
+            <int name="max_span">uint32</int>
+            <int name="minimal_file_size">uint64</int>
+            <int name="maximal_file_size">uint64</int>
+        </output>
+    </get_method>
+    <get_method name="get_storage_contract_address" >
+        <input>
+            <int name="merkle_hash">int257</int>
+            <tinyint name="file_size">uint64</tinyint>
+            <slice name="client">msgaddress</slice>
+            <int name="torrent_hash">int257</int>
+        </input>
+        <output>
+            <slice name="storage_contract_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_storage_contract_data" >
+        <output>
+            <int name="active">bool</int>
+            <int name="balance">uint64</int>
+            <slice name="provider,">msgaddress</slice>
+            <int name="merkle_hash">int257</int>
+            <int name="file_size">uint64</int>
+            <int name="next_proof">uint64</int>
+            <int name="rate_per_mb_day">uint64</int>
+            <int name="max_span">uint32</int>
+            <int name="last_proof_time">uint32</int>
+            <slice name="client">msgaddress</slice>
+            <int name="torrent_hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_torrent_hash" >
+        <output>
+            <int name="torrent_hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="is_active" >
+        <output>
+            <int name="is_active">bool</int>
+        </output>
+    </get_method>
+    <get_method name="get_next_proof_info">
+        <output>
+            <int name="next_proof">uint64</int>
+            <int name="last_proof_time">uint32</int>
+            <int name="max_span">uint32</int>
+        </output>
+    </get_method>
+    <!--        Storage   -->
+    <internal name="deploy_storage_contract" >
+        deploy_storage_contract#e4748df1
+        query_id:uint64 info:^TorrentInfo merkle_hash:bits256 expected_rate:Coins expected_max_span:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="update_pubkey" >
+        update_pubkey#53f34cd6
+        query_id:uint64 new_pubkey:bits256 = InternalMsgBody;
+    </internal>
+    <internal name="update_storage_params" >
+        update_storage_params#54cbf19b
+        query_id:uint64 accept_new_contracts:Bool rate_per_mb_day:Coins max_span:uint32
+        minimal_file_size:uint64 maximal_file_size:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="offer_storage_contract">
+        offer_storage_contract#107c49ef
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="accept_storage_contract">
+        accept_storage_contract#7a361688
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="storage_contract_confirmed">
+        storage_contract_confirmed#d4caedcd
+        cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
+    </internal>
+    <internal name="close_storage_contract">
+        close_contract#79f937ea
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="storage_contract_terminated" >
+        storage_contract_terminated#b6236d63
+        cur_lt:uint64 torrent_hash:bits256 = InternalMsgBody;
+    </internal>
+    <internal name="storage_withdraw">
+        withdraw#46ed2e94
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="storage_reward_withdrawal">
+        reward_withdrawal#a91baf56
+        query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="proof_storage">
+        proof_storage#419d5d4d
+        query_id:uint64 file_dict_proof:^Cell = InternalMsgBody;
+    </internal>
+
+</abi>

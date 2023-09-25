@@ -1,0 +1,46 @@
+<abi>
+    <!--        Wallets      -->
+<!--    <interface name="wallet_v4">-->
+<!--        <code_hash></code_hash>-->
+<!--    </interface>-->
+    <get_method name="seqno">
+        <output>
+            <int name="state">uint32</int>
+        </output>
+    </get_method>
+    <get_method name="get_public_key">
+        <output>
+            <int name="public_key">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_subwallet_id" >
+        <output>
+            <int name="subwallet_id">uint32</int>
+        </output>
+    </get_method>
+    <get_method name="get_plugin_list">
+        <output>
+            <tuple name="plugins" list="true">
+                <int name="workchain">int32</int>
+                <int name="address">bits256</int>
+            </tuple>
+        </output>
+    </get_method>
+    <get_method name="is_plugin_installed">
+        <input>
+            <tinyint name="workchain">int32</tinyint>
+            <int name="addr_hash">int257</int>
+        </input>
+        <output>
+            <int name="success">bool</int>
+        </output>
+    </get_method>
+    <ext_in name="wallet_signed_v3">
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
+        ExternalMsgBody;
+    </ext_in>
+    <ext_in name="wallet_signed_v4">
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
+        payload:PayloadV1toV4 = ExternalMsgBody;
+    </ext_in>
+</abi>

@@ -1,0 +1,144 @@
+<abi>
+    <interface name="nft_collection">
+        <get_method name="get_nft_content"/>
+        <get_method name="get_collection_data"/>
+        <get_method name="get_nft_address_by_index"/>
+        <msg_in>
+            <internal name="get_royalty_params"/>
+        </msg_in>
+        <msg_out>
+            <internal name="report_royalty_params"/>
+        </msg_out>
+    </interface>
+    <interface name="nft_item">
+        <get_method name="get_nft_data"/>
+        <msg_in>
+            <internal name="nft_transfer"/>
+            <internal name="get_static_data"/>
+        </msg_in>
+        <msg_out>
+            <internal name="nft_ownership_assigned"/>
+            <internal name="report_static_data"/>
+        </msg_out>
+    </interface>
+    <interface name="editable">
+        <get_method name="get_editor"/>
+    </interface>
+    <interface name="sbt">
+        <get_method name="get_authority_address"/>
+    </interface>
+
+    <!--        NFTs     -->
+    <get_method name="get_nft_data">
+        <output>
+            <int name="init">bool</int>
+            <int name="index">int257</int>
+            <slice name="collection_address">msgaddress</slice>
+            <slice name="owner_address">msgaddress</slice>
+            <cell name="individual_content">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_nft_content" >
+        <input>
+            <int name="index">int257</int>
+            <cell name="individual_content">any</cell>
+        </input>
+        <output>
+            <cell name="content">FullContent</cell>
+        </output>
+    </get_method>
+    <get_method name="get_collection_data">
+        <output>
+            <int name="next_item_index">int257</int>
+            <cell name="collection_content">any</cell>
+            <slice name="owner_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_nft_address_by_index">
+        <input>
+            <int name="index">int257</int>
+        </input>
+        <output>
+            <slice name="address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="royalty_params">
+        <output>
+            <int name="numerator">uint16</int>
+            <int name="denominator">uint16</int>
+            <slice name="destination">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_editor">
+        <output>
+            <slice name="editor">msgaddress</slice>
+        </output>
+    </get_method>
+  
+
+    <!--        SBT    -->
+    <get_method name="get_authority_address">
+        <output>
+            <slice name="address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_revoked_time">
+        <output>
+            <int name="time">uint64</int>
+        </output>
+    </get_method>
+
+
+
+
+    <!--        NFTs       -->
+    <internal name="nft_transfer">
+        transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
+        custom_payload:(Maybe ^Cell) forward_amount:(VarUInteger 16) forward_payload:(Either NFTPayload ^NFTPayload) =
+        InternalMsgBody;
+    </internal>
+    <internal name="nft_ownership_assigned">
+        ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either NFTPayload ^NFTPayload) =
+        InternalMsgBody;
+    </internal>
+    <internal name="get_static_data">
+        get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="report_static_data">
+        report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
+    </internal>
+    <internal name="get_royalty_params">
+        get_royalty_params#693d3950 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="report_royalty_params">
+        report_royalty_params#a8cb00ad query_id:uint64 numerator:uint16 denominator:uint16
+        destination:MsgAddress = InternalMsgBody;
+    </internal>
+
+
+
+    <!--    SBT     -->
+    <internal name="prove_ownership" >
+        prove_ownership#04ded148 query_id:uint64 dest:MsgAddress
+        forward_payload:^Cell with_content:Bool = InternalMsgBody;
+    </internal>
+    <internal name="ownership_proof">
+        ownership_proof#0524c7ae query_id:uint64 item_id:uint256 owner:MsgAddress
+        data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+    <internal name="sbt_request_owner" >
+        request_owner#d0c3bfea query_id:uint64 dest:MsgAddress
+        forward_payload:^Cell with_content:Bool = InternalMsgBody;
+    </internal>
+    <internal name="sbt_owner_info">
+        owner_info#0dd607e3 query_id:uint64 item_id:uint256 initiator:MsgAddress owner:MsgAddress
+        data:^Cell revoked_at:uint64 content:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+    <internal name="sbt_destroy">
+        destroy#1f04537a query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="sbt_revoke">
+        revoke#6f89f5e3 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+</abi>

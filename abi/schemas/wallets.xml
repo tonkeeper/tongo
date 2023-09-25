@@ -1,5 +1,8 @@
 <abi>
     <!--        Wallets      -->
+<!--    <interface name="wallet_v4">-->
+<!--        <code_hash></code_hash>-->
+<!--    </interface>-->
     <get_method name="seqno">
         <output>
             <int name="state">uint32</int>

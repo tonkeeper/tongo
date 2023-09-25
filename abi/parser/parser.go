@@ -22,8 +22,14 @@ type Interface struct {
 		Name    string `xml:"name,attr"`
 		Version string `xml:"version,attr"`
 	} `xml:"get_method"`
-	Input  []InterfaceMessage `xml:"input"`
-	Output []InterfaceMessage `xml:"output"`
+	Input struct {
+		Internals []InterfaceMessage `xml:"internal"`
+		Externals []InterfaceMessage `xml:"ext_in"`
+	} `xml:"msg_in"`
+	Output struct {
+		Internals []InterfaceMessage `xml:"internal"`
+		Externals []InterfaceMessage `xml:"ext_out"`
+	} `xml:"msg_out"`
 }
 
 type InterfaceMessage struct {

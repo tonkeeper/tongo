@@ -40,6 +40,7 @@
         </output>
     </get_method>
 <!--    // TODO: figure out the exact types of ints-->
+<!--    a huli tut figure kogda 100% Coin ili uint128-->
     <get_method name="get_lp_mining_data">
         <output version="megaton" fixed_length="true" >
             <int name="mining_amount">uint64</int>

@@ -719,6 +719,34 @@ func TestMessageDecoder(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:       "dns delete record",
+			boc:        "te6ccgEBAQEALgAAWE6x8PkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+			wantOpName: DeleteDnsRecordMsgOp,
+			wantValue: DeleteDnsRecordMsgBody{
+				QueryId: 0,
+				Key:     [32]byte{},
+			},
+		},
+		{
+			name:       "change dns record",
+			boc:        "te6ccgEBAgEAVgABWE6x8PkAAAAAAAAAAOjUQFCHPbqGWqfBcKtMzmTZCDmjTc/Wz3HRTgIFRDsbAQBJn9OABZ52txkSPKL5Nbt7Q4Bw1BOZWXYcf17GFqOfkCpGS1lgEA==",
+			wantOpName: ChangeDnsRecordMsgOp,
+			wantValue: ChangeDnsRecordMsgBody{
+				QueryId: 0,
+				Key:     tlb.Bits256(ton.MustParseHash("e8d44050873dba865aa7c170ab4cce64d90839a34dcfd6cf71d14e0205443b1b")), //hash("wallet")
+				Value: tlb.DNSRecord{
+					SumType: "DNSSmcAddress",
+					DNSSmcAddress: struct {
+						Address       tlb.MsgAddress
+						SmcCapability tlb.SmcCapabilities
+					}{
+						Address:       pointer(ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")).ToMsgAddress(),
+						SmcCapability: tlb.SmcCapabilities{},
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -742,4 +770,8 @@ func TestMessageDecoder(t *testing.T) {
 			}
 		})
 	}
+}
+
+func pointer[t any](v t) *t {
+	return &v
 }

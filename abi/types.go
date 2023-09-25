@@ -423,12 +423,12 @@ type ElectorNewStakeMsgBody struct {
 
 type DeleteDnsRecordMsgBody struct {
 	QueryId uint64
-	Key     tlb.Uint256
+	Key     tlb.Bits256
 }
 
 type ChangeDnsRecordMsgBody struct {
 	QueryId uint64
-	Key     tlb.Uint256
+	Key     tlb.Bits256
 	Value   tlb.DNSRecord `tlb:"^"`
 }
 

@@ -1,9 +1,22 @@
 
 const (
+    IUnknown ContractInterface = iota
 {{- range $name, $iface := .Interfaces }}
-	{{ $name }} ContractInterface = "{{ $iface }}"
+	{{ $name }}
 {{- end }}
 )
+
+func (c ContractInterface) String() string {
+switch c {
+   {{- range $name, $iface := .Interfaces }}
+   case {{ $name }}:
+       return "{{ $iface }}"
+  {{- end }}
+  default:
+      return "unknown"
+  }
+}
+
 
 var methodInvocationOrder = []MethodDescription{
 {{- range $method := .InvocationOrder }}
@@ -17,6 +30,7 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 {{- range $interface := .InterfaceOrder }}
+{{- if $interface.Results }}
     {
         Name: {{ $interface.Name }},
         Results: []string{
@@ -25,5 +39,30 @@ var contractInterfacesOrder = []InterfaceDescription{
         {{- end }}
         },
     },
+{{- end }}
+{{- end }}
+}
+
+func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
+	switch c {
+	{{- range $interface, $inherits := .Inheritance }}
+	case {{ $interface }}:
+		return {{ $inherits }}.Implements(other)
+    {{- end }}
+	}
+	return false
+}
+
+var knownContracts = map[ton.Bits256]knownContractDescription{
+{{- range $hash, $interface := .KnownHashes }}
+    ton.MustParseHash("{{ $hash }}"):  {
+    contractInterfaces: []ContractInterface{ {{ $interface.Name }} },
+    getMethods: []InvokeFn{
+{{- range $method := $interface.GetMethods }}
+        {{ $method }},
+        {{- end }}
+    },
+    },
+
 {{- end }}
 }

@@ -1,12 +1,13 @@
 <abi>
     <!--        NFT sale   todo: add auction commands   -->
-    <interface name="nft_sale_v1">
+    <interface name="nft_sale"/>
+    <interface name="nft_sale_v1" inherits="nft_sale">
         <get_method name="get_sale_data" version="basic"/>
     </interface>
-    <interface name="nft_sale_v2">
+    <interface name="nft_sale_v2" inherits="nft_sale">
         <get_method name="get_sale_data" version="getgems"/>
     </interface>
-    <interface name="nft_auction_v1">
+    <interface name="nft_auction_v1" inherits="nft_sale">
         <get_method name="get_sale_data" version="getgems_auction"/>
     </interface>
     <get_method name="get_sale_data">

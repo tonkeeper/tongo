@@ -483,22 +483,25 @@ type templateContext struct {
 	Interfaces      map[string]string
 	InvocationOrder []methodDescription
 	InterfaceOrder  []interfacDescripion
+	KnownHashes     map[string]interfacDescripion
+	Inheritance     map[string]string
 }
 
 type methodDescription struct {
-	Name                 string
-	InvokeFnName         string
-	InterfacePerTypeHint map[string]string // map[typeHint]ContractInterface
-	Interfaces           []string
+	Name         string
+	InvokeFnName string
 }
 type interfacDescripion struct {
-	Name    string
-	Results []string
+	Name       string
+	Results    []string
+	GetMethods []string
 }
 
 func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, error) {
 	context := templateContext{
-		Interfaces: map[string]string{},
+		Interfaces:  map[string]string{},
+		KnownHashes: map[string]interfacDescripion{},
+		Inheritance: map[string]string{},
 	}
 	descriptions := map[string]methodDescription{}
 
@@ -520,22 +523,33 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		descriptions[invokeFnName] = desc
 	}
 	for _, iface := range g.abi.Interfaces {
-		context.Interfaces[utils.ToCamelCase(iface.Name)] = iface.Name
+		ifaceName := "I" + utils.ToCamelCase(iface.Name)
+		context.Interfaces[ifaceName] = iface.Name
 		descripion := interfacDescripion{
-			Name:    utils.ToCamelCase(iface.Name),
-			Results: []string{},
+			Name: ifaceName,
+		}
+		if iface.Inherits != "" {
+			context.Inheritance[ifaceName] = "I" + utils.ToCamelCase(iface.Inherits)
 		}
 		for _, method := range iface.Methods {
 			if !slices.Contains(simpleMethods, method.Name) {
 				continue
 			}
 			resultName := utils.ToCamelCase(method.Name) + "Result"
+			descripion.GetMethods = append(descripion.GetMethods, utils.ToCamelCase(method.Name))
 			if method.Version != "" {
 				resultName = fmt.Sprintf("%s_%sResult", utils.ToCamelCase(method.Name), utils.ToCamelCase(method.Version))
 			}
 			descripion.Results = append(descripion.Results, resultName)
 		}
-		context.InterfaceOrder = append(context.InterfaceOrder, descripion)
+		if len(iface.CodeHashes) > 0 { //we dont' need to detect interfaces with code hashes because we can them directly
+			for _, hash := range iface.CodeHashes {
+
+				context.KnownHashes[hash] = descripion
+			}
+		} else {
+			context.InterfaceOrder = append(context.InterfaceOrder, descripion)
+		}
 
 	}
 

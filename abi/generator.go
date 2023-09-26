@@ -112,7 +112,7 @@ func main() {
 		{types, "types.go", `"github.com/tonkeeper/tongo/tlb"`},
 		{msgDecoder, "messages.go", `"fmt"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{getMethods, "get_methods.go", `"context"`, `"fmt"`, `"github.com/tonkeeper/tongo/ton"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
-		{invocationOrder, "ordering.go"},
+		{invocationOrder, "ordering.go", `"github.com/tonkeeper/tongo/ton"`},
 		{jettons, "jetton_msg_types.go", `"errors"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{nfts, "nfts_msg_types.go", `"errors"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 	} {

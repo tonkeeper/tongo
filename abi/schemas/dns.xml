@@ -66,6 +66,8 @@
     <internal name="auction_fill_up">
         auction_fill_up#370fec51 query_id:uint64 = InternalMsgBody;
     </internal>
-
+    <internal name="outbid_notification">
+        outbid_notification#557cea20 query_id:uint64 = InternalMsgBody;
+    </internal>
 
 </abi>

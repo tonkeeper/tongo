@@ -416,6 +416,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		}
 		cell.ResetCounters()
 		return "", nil, err
+	case OutbidNotificationMsgOpCode: // 0x557cea20
+		var resOutbidNotificationMsgBody OutbidNotificationMsgBody
+		err = tlb.Unmarshal(cell, &resOutbidNotificationMsgBody)
+		if err == nil {
+			return OutbidNotificationMsgOp, resOutbidNotificationMsgBody, nil
+		}
+		cell.ResetCounters()
+		return "", nil, err
 	case TonstakeControllerReturnAvailableFundsMsgOpCode: // 0x55c26cd5
 		var resTonstakeControllerReturnAvailableFundsMsgBody TonstakeControllerReturnAvailableFundsMsgBody
 		err = tlb.Unmarshal(cell, &resTonstakeControllerReturnAvailableFundsMsgBody)
@@ -1014,6 +1022,7 @@ const (
 	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
 	TonstakeImanagerOperationFeeMsgOp            MsgOpName = "TonstakeImanagerOperationFee"
 	ChannelCooperativeCloseMsgOp                 MsgOpName = "ChannelCooperativeClose"
+	OutbidNotificationMsgOp                      MsgOpName = "OutbidNotification"
 	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
@@ -1135,6 +1144,7 @@ const (
 	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
 	TonstakeImanagerOperationFeeMsgOpCode            MsgOpCode = 0x54d37487
 	ChannelCooperativeCloseMsgOpCode                 MsgOpCode = 0x5577587e
+	OutbidNotificationMsgOpCode                      MsgOpCode = 0x557cea20
 	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
@@ -1253,6 +1263,7 @@ var KnownMsgTypes = map[string]any{
 	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
 	TonstakeImanagerOperationFeeMsgOp:            TonstakeImanagerOperationFeeMsgBody{},
 	ChannelCooperativeCloseMsgOp:                 ChannelCooperativeCloseMsgBody{},
+	OutbidNotificationMsgOp:                      OutbidNotificationMsgBody{},
 	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},

@@ -465,6 +465,10 @@ type ChannelCooperativeCloseMsgBody struct {
 	SeqnoB    uint64
 }
 
+type OutbidNotificationMsgBody struct {
+	QueryId uint64
+}
+
 type TonstakeControllerReturnAvailableFundsMsgBody struct {
 	QueryId uint64
 }

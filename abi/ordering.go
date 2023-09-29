@@ -8,144 +8,144 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
-	IDedustPool
-	IDedustVault
-	IDns
-	IEditable
-	IJettonMaster
-	IJettonWallet
-	ILocker
-	ILockerBill
-	ILockupUniversal
-	ILockupVesting
-	IMegatonfiExchange
-	IMegatonfiRouter
-	INftAuctionV1
-	INftCollection
-	INftItem
-	INftSale
-	INftSaleV1
-	INftSaleV2
-	IPaymentChannel
-	ISbt
-	IStonfiPool
-	IStonfiRouter
-	IStorageContract
-	IStorageProvider
-	ISubscriptionV1
-	ITeleitem
-	ITonstakePool
-	ITvPool
-	IValidatorController
-	IWallet
-	IWalletHighloadV1R1
-	IWalletHighloadV1R2
-	IWalletHighloadV2
-	IWalletHighloadV2R1
-	IWalletHighloadV2R2
-	IWalletV1R1
-	IWalletV1R2
-	IWalletV1R3
-	IWalletV2R1
-	IWalletV2R2
-	IWalletV3R1
-	IWalletV3R2
-	IWalletV4R1
-	IWalletV4R2
-	IWhalesPool
+	DedustPool
+	DedustVault
+	Dns
+	Editable
+	JettonMaster
+	JettonWallet
+	Locker
+	LockerBill
+	LockupUniversal
+	LockupVesting
+	MegatonfiExchange
+	MegatonfiRouter
+	NftAuctionV1
+	NftCollection
+	NftItem
+	NftSale
+	NftSaleV1
+	NftSaleV2
+	PaymentChannel
+	Sbt
+	StonfiPool
+	StonfiRouter
+	StorageContract
+	StorageProvider
+	SubscriptionV1
+	Teleitem
+	TonstakePool
+	TvPool
+	ValidatorController
+	Wallet
+	WalletHighloadV1R1
+	WalletHighloadV1R2
+	WalletHighloadV2
+	WalletHighloadV2R1
+	WalletHighloadV2R2
+	WalletV1R1
+	WalletV1R2
+	WalletV1R3
+	WalletV2R1
+	WalletV2R2
+	WalletV3R1
+	WalletV3R2
+	WalletV4R1
+	WalletV4R2
+	WhalesPool
 )
 
 func (c ContractInterface) String() string {
 	switch c {
-	case IDedustPool:
+	case DedustPool:
 		return "dedust_pool"
-	case IDedustVault:
+	case DedustVault:
 		return "dedust_vault"
-	case IDns:
+	case Dns:
 		return "dns"
-	case IEditable:
+	case Editable:
 		return "editable"
-	case IJettonMaster:
+	case JettonMaster:
 		return "jetton_master"
-	case IJettonWallet:
+	case JettonWallet:
 		return "jetton_wallet"
-	case ILocker:
+	case Locker:
 		return "locker"
-	case ILockerBill:
+	case LockerBill:
 		return "locker_bill"
-	case ILockupUniversal:
+	case LockupUniversal:
 		return "lockup_universal"
-	case ILockupVesting:
+	case LockupVesting:
 		return "lockup_vesting"
-	case IMegatonfiExchange:
+	case MegatonfiExchange:
 		return "megatonfi_exchange"
-	case IMegatonfiRouter:
+	case MegatonfiRouter:
 		return "megatonfi_router"
-	case INftAuctionV1:
+	case NftAuctionV1:
 		return "nft_auction_v1"
-	case INftCollection:
+	case NftCollection:
 		return "nft_collection"
-	case INftItem:
+	case NftItem:
 		return "nft_item"
-	case INftSale:
+	case NftSale:
 		return "nft_sale"
-	case INftSaleV1:
+	case NftSaleV1:
 		return "nft_sale_v1"
-	case INftSaleV2:
+	case NftSaleV2:
 		return "nft_sale_v2"
-	case IPaymentChannel:
+	case PaymentChannel:
 		return "payment_channel"
-	case ISbt:
+	case Sbt:
 		return "sbt"
-	case IStonfiPool:
+	case StonfiPool:
 		return "stonfi_pool"
-	case IStonfiRouter:
+	case StonfiRouter:
 		return "stonfi_router"
-	case IStorageContract:
+	case StorageContract:
 		return "storage_contract"
-	case IStorageProvider:
+	case StorageProvider:
 		return "storage_provider"
-	case ISubscriptionV1:
+	case SubscriptionV1:
 		return "subscription_v1"
-	case ITeleitem:
+	case Teleitem:
 		return "teleitem"
-	case ITonstakePool:
+	case TonstakePool:
 		return "tonstake_pool"
-	case ITvPool:
+	case TvPool:
 		return "tv_pool"
-	case IValidatorController:
+	case ValidatorController:
 		return "validator_controller"
-	case IWallet:
+	case Wallet:
 		return "wallet"
-	case IWalletHighloadV1R1:
+	case WalletHighloadV1R1:
 		return "wallet_highload_v1r1"
-	case IWalletHighloadV1R2:
+	case WalletHighloadV1R2:
 		return "wallet_highload_v1r2"
-	case IWalletHighloadV2:
+	case WalletHighloadV2:
 		return "wallet_highload_v2"
-	case IWalletHighloadV2R1:
+	case WalletHighloadV2R1:
 		return "wallet_highload_v2r1"
-	case IWalletHighloadV2R2:
+	case WalletHighloadV2R2:
 		return "wallet_highload_v2r2"
-	case IWalletV1R1:
+	case WalletV1R1:
 		return "wallet_v1r1"
-	case IWalletV1R2:
+	case WalletV1R2:
 		return "wallet_v1r2"
-	case IWalletV1R3:
+	case WalletV1R3:
 		return "wallet_v1r3"
-	case IWalletV2R1:
+	case WalletV2R1:
 		return "wallet_v2r1"
-	case IWalletV2R2:
+	case WalletV2R2:
 		return "wallet_v2r2"
-	case IWalletV3R1:
+	case WalletV3R1:
 		return "wallet_v3r1"
-	case IWalletV3R2:
+	case WalletV3R2:
 		return "wallet_v3r2"
-	case IWalletV4R1:
+	case WalletV4R1:
 		return "wallet_v4r1"
-	case IWalletV4R2:
+	case WalletV4R2:
 		return "wallet_v4r2"
-	case IWhalesPool:
+	case WhalesPool:
 		return "whales_pool"
 	default:
 		return "unknown"
@@ -357,142 +357,142 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 	{
-		Name: IDedustPool,
+		Name: DedustPool,
 		Results: []string{
 			"GetReserves_DedustResult",
 			"GetAssets_DedustResult",
 		},
 	},
 	{
-		Name: IDedustVault,
+		Name: DedustVault,
 		Results: []string{
 			"GetAsset_DedustResult",
 		},
 	},
 	{
-		Name: IJettonMaster,
+		Name: JettonMaster,
 		Results: []string{
 			"GetJettonDataResult",
 		},
 	},
 	{
-		Name: IJettonWallet,
+		Name: JettonWallet,
 		Results: []string{
 			"GetWalletDataResult",
 		},
 	},
 	{
-		Name: ITonstakePool,
+		Name: TonstakePool,
 		Results: []string{
 			"GetPoolFullDataResult",
 		},
 	},
 	{
-		Name: IValidatorController,
+		Name: ValidatorController,
 		Results: []string{
 			"GetValidatorControllerDataResult",
 		},
 	},
 	{
-		Name: ILocker,
+		Name: Locker,
 		Results: []string{
 			"GetLockerDataResult",
 		},
 	},
 	{
-		Name: ILockerBill,
+		Name: LockerBill,
 		Results: []string{
 			"GetLockerBillDataResult",
 		},
 	},
 	{
-		Name: ILockupVesting,
+		Name: LockupVesting,
 		Results: []string{
 			"GetLockupDataResult",
 		},
 	},
 	{
-		Name: ILockupUniversal,
+		Name: LockupUniversal,
 		Results: []string{
 			"GetBalancesResult",
 		},
 	},
 	{
-		Name: IMegatonfiRouter,
+		Name: MegatonfiRouter,
 		Results: []string{
 			"GetMiningData_MegatonResult",
 			"GetLpData_MegatonResult",
 		},
 	},
 	{
-		Name: IMegatonfiExchange,
+		Name: MegatonfiExchange,
 		Results: []string{
 			"GetLpSwapData_MegatonResult",
 			"GetLpMiningData_MegatonResult",
 		},
 	},
 	{
-		Name: INftSaleV1,
+		Name: NftSaleV1,
 		Results: []string{
 			"GetSaleData_BasicResult",
 		},
 	},
 	{
-		Name: INftSaleV2,
+		Name: NftSaleV2,
 		Results: []string{
 			"GetSaleData_GetgemsResult",
 		},
 	},
 	{
-		Name: INftAuctionV1,
+		Name: NftAuctionV1,
 		Results: []string{
 			"GetSaleData_GetgemsAuctionResult",
 		},
 	},
 	{
-		Name: INftCollection,
+		Name: NftCollection,
 		Results: []string{
 			"GetCollectionDataResult",
 		},
 	},
 	{
-		Name: INftItem,
+		Name: NftItem,
 		Results: []string{
 			"GetNftDataResult",
 		},
 	},
 	{
-		Name: IEditable,
+		Name: Editable,
 		Results: []string{
 			"GetEditorResult",
 		},
 	},
 	{
-		Name: ISbt,
+		Name: Sbt,
 		Results: []string{
 			"GetAuthorityAddressResult",
 		},
 	},
 	{
-		Name: IPaymentChannel,
+		Name: PaymentChannel,
 		Results: []string{
 			"GetChannelDataResult",
 		},
 	},
 	{
-		Name: IStonfiPool,
+		Name: StonfiPool,
 		Results: []string{
 			"GetPoolData_StonfiResult",
 		},
 	},
 	{
-		Name: IStonfiRouter,
+		Name: StonfiRouter,
 		Results: []string{
 			"GetRouterData_StonfiResult",
 		},
 	},
 	{
-		Name: IStorageProvider,
+		Name: StorageProvider,
 		Results: []string{
 			"GetWalletParamsResult",
 			"GetStorageParamsResult",
@@ -501,7 +501,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: IStorageContract,
+		Name: StorageContract,
 		Results: []string{
 			"GetStorageContractDataResult",
 			"GetTorrentHashResult",
@@ -510,13 +510,13 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: ISubscriptionV1,
+		Name: SubscriptionV1,
 		Results: []string{
 			"GetSubscriptionDataResult",
 		},
 	},
 	{
-		Name: ITeleitem,
+		Name: Teleitem,
 		Results: []string{
 			"GetTelemintAuctionStateResult",
 			"GetTelemintAuctionConfigResult",
@@ -524,7 +524,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: ITvPool,
+		Name: TvPool,
 		Results: []string{
 			"GetPoolDataResult",
 			"ListNominatorsResult",
@@ -532,7 +532,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: IWhalesPool,
+		Name: WhalesPool,
 		Results: []string{
 			"GetStakingStatusResult",
 			"GetPoolStatusResult",
@@ -543,102 +543,124 @@ var contractInterfacesOrder = []InterfaceDescription{
 
 func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 	switch c {
-	case INftAuctionV1:
-		return INftSale.Implements(other)
-	case INftSaleV1:
-		return INftSale.Implements(other)
-	case INftSaleV2:
-		return INftSale.Implements(other)
-	case IWalletHighloadV1R1:
-		return IWallet.Implements(other)
-	case IWalletHighloadV1R2:
-		return IWallet.Implements(other)
-	case IWalletHighloadV2:
-		return IWallet.Implements(other)
-	case IWalletHighloadV2R1:
-		return IWallet.Implements(other)
-	case IWalletHighloadV2R2:
-		return IWallet.Implements(other)
-	case IWalletV1R1:
-		return IWallet.Implements(other)
-	case IWalletV1R2:
-		return IWallet.Implements(other)
-	case IWalletV1R3:
-		return IWallet.Implements(other)
-	case IWalletV2R1:
-		return IWallet.Implements(other)
-	case IWalletV2R2:
-		return IWallet.Implements(other)
-	case IWalletV3R1:
-		return IWallet.Implements(other)
-	case IWalletV3R2:
-		return IWallet.Implements(other)
-	case IWalletV4R1:
-		return IWallet.Implements(other)
-	case IWalletV4R2:
-		return IWallet.Implements(other)
+	case NftAuctionV1:
+		return NftSale.Implements(other)
+	case NftSaleV1:
+		return NftSale.Implements(other)
+	case NftSaleV2:
+		return NftSale.Implements(other)
+	case WalletHighloadV1R1:
+		return Wallet.Implements(other)
+	case WalletHighloadV1R2:
+		return Wallet.Implements(other)
+	case WalletHighloadV2:
+		return Wallet.Implements(other)
+	case WalletHighloadV2R1:
+		return Wallet.Implements(other)
+	case WalletHighloadV2R2:
+		return Wallet.Implements(other)
+	case WalletV1R1:
+		return Wallet.Implements(other)
+	case WalletV1R2:
+		return Wallet.Implements(other)
+	case WalletV1R3:
+		return Wallet.Implements(other)
+	case WalletV2R1:
+		return Wallet.Implements(other)
+	case WalletV2R2:
+		return Wallet.Implements(other)
+	case WalletV3R1:
+		return Wallet.Implements(other)
+	case WalletV3R2:
+		return Wallet.Implements(other)
+	case WalletV4R1:
+		return Wallet.Implements(other)
+	case WalletV4R2:
+		return Wallet.Implements(other)
 	}
 	return false
 }
 
 var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("0dceed21269d66013e95b19fbb5c55a6f01adad40837baa8e521cde3a02aa46c"): {
-		contractInterfaces: []ContractInterface{IWalletHighloadV1R2},
+		contractInterfaces: []ContractInterface{WalletHighloadV1R2},
 		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("203dd4f358adb49993129aa925cac39916b68a0e4f78d26e8f2c2b69eafa5679"): {
-		contractInterfaces: []ContractInterface{IWalletHighloadV2R2},
+		contractInterfaces: []ContractInterface{WalletHighloadV2R2},
 		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("587cc789eff1c84f46ec3797e45fc809a14ff5ae24f1e0c7a6a99cc9dc9061ff"): {
-		contractInterfaces: []ContractInterface{IWalletV1R3},
-		getMethods:         []InvokeFn{},
+		contractInterfaces: []ContractInterface{WalletV1R3},
+		getMethods: []InvokeFn{
+			Seqno,
+			GetPublicKey,
+		},
 	},
 	ton.MustParseHash("5c9a5e68c108e18721a07c42f9956bfb39ad77ec6d624b60c576ec88eee65329"): {
-		contractInterfaces: []ContractInterface{IWalletV2R1},
-		getMethods:         []InvokeFn{},
+		contractInterfaces: []ContractInterface{WalletV2R1},
+		getMethods: []InvokeFn{
+			Seqno,
+		},
 	},
 	ton.MustParseHash("64dd54805522c5be8a9db59cea0105ccf0d08786ca79beb8cb79e880a8d7322d"): {
-		contractInterfaces: []ContractInterface{IWalletV4R1},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("84dafa449f98a6987789ba232358072bc0f76dc4524002a5d0918b9a75d2d599"): {
-		contractInterfaces: []ContractInterface{IWalletV3R2},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("8ceb45b3cd4b5cc60eaae1c13b9c092392677fe536b2e9b2d801b62eff931fe1"): {
-		contractInterfaces: []ContractInterface{IWalletHighloadV2R1},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812"): {
-		contractInterfaces: []ContractInterface{IWalletHighloadV2},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
-		contractInterfaces: []ContractInterface{IWalletV1R1},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("b61041a58a7980b946e8fb9e198e3c904d24799ffa36574ea4251c41a566f581"): {
-		contractInterfaces: []ContractInterface{IWalletV3R1},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c"): {
-		contractInterfaces: []ContractInterface{IWalletV1R2},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484"): {
-		contractInterfaces: []ContractInterface{IWalletHighloadV1R1},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("fe9530d3243853083ef2ef0b4c2908c0abf6fa1c31ea243aacaa5bf8c7d753f1"): {
-		contractInterfaces: []ContractInterface{IWalletV2R2},
-		getMethods:         []InvokeFn{},
-	},
-	ton.MustParseHash("feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0"): {
-		contractInterfaces: []ContractInterface{IWalletV4R2},
+		contractInterfaces: []ContractInterface{WalletV4R1},
 		getMethods: []InvokeFn{
 			GetPluginList,
 			GetPublicKey,
+			Seqno,
+			GetSubwalletId,
+		},
+	},
+	ton.MustParseHash("84dafa449f98a6987789ba232358072bc0f76dc4524002a5d0918b9a75d2d599"): {
+		contractInterfaces: []ContractInterface{WalletV3R2},
+		getMethods: []InvokeFn{
+			GetPublicKey,
+			Seqno,
+		},
+	},
+	ton.MustParseHash("8ceb45b3cd4b5cc60eaae1c13b9c092392677fe536b2e9b2d801b62eff931fe1"): {
+		contractInterfaces: []ContractInterface{WalletHighloadV2R1},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812"): {
+		contractInterfaces: []ContractInterface{WalletHighloadV2},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
+		contractInterfaces: []ContractInterface{WalletV1R1},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("b61041a58a7980b946e8fb9e198e3c904d24799ffa36574ea4251c41a566f581"): {
+		contractInterfaces: []ContractInterface{WalletV3R1},
+		getMethods: []InvokeFn{
+			Seqno,
+		},
+	},
+	ton.MustParseHash("d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c"): {
+		contractInterfaces: []ContractInterface{WalletV1R2},
+		getMethods: []InvokeFn{
+			Seqno,
+		},
+	},
+	ton.MustParseHash("d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484"): {
+		contractInterfaces: []ContractInterface{WalletHighloadV1R1},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("fe9530d3243853083ef2ef0b4c2908c0abf6fa1c31ea243aacaa5bf8c7d753f1"): {
+		contractInterfaces: []ContractInterface{WalletV2R2},
+		getMethods: []InvokeFn{
+			Seqno,
+			GetPublicKey,
+		},
+	},
+	ton.MustParseHash("feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0"): {
+		contractInterfaces: []ContractInterface{WalletV4R2},
+		getMethods: []InvokeFn{
+			GetPluginList,
+			GetPublicKey,
+			Seqno,
+			GetSubwalletId,
 		},
 	},
 }

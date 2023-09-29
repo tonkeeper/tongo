@@ -456,6 +456,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		}
 		cell.ResetCounters()
 		return "", nil, err
+	case TegroSwapTonMsgOpCode: // 0x600c00fd
+		var resTegroSwapTonMsgBody TegroSwapTonMsgBody
+		err = tlb.Unmarshal(cell, &resTegroSwapTonMsgBody)
+		if err == nil {
+			return TegroSwapTonMsgOp, resTegroSwapTonMsgBody, nil
+		}
+		cell.ResetCounters()
+		return "", nil, err
 	case DedustSwapExternalMsgOpCode: // 0x61ee542d
 		var resDedustSwapExternalMsgBody DedustSwapExternalMsgBody
 		err = tlb.Unmarshal(cell, &resDedustSwapExternalMsgBody)
@@ -1027,6 +1035,7 @@ const (
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
+	TegroSwapTonMsgOp                            MsgOpName = "TegroSwapTon"
 	DedustSwapExternalMsgOp                      MsgOpName = "DedustSwapExternal"
 	TonstakeControllerSendRequestLoanMsgOp       MsgOpName = "TonstakeControllerSendRequestLoan"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
@@ -1149,6 +1158,7 @@ const (
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
+	TegroSwapTonMsgOpCode                            MsgOpCode = 0x600c00fd
 	DedustSwapExternalMsgOpCode                      MsgOpCode = 0x61ee542d
 	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x6335b11a
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
@@ -1268,6 +1278,7 @@ var KnownMsgTypes = map[string]any{
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},
+	TegroSwapTonMsgOp:                            TegroSwapTonMsgBody{},
 	DedustSwapExternalMsgOp:                      DedustSwapExternalMsgBody{},
 	TonstakeControllerSendRequestLoanMsgOp:       TonstakeControllerSendRequestLoanMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},

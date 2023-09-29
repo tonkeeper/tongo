@@ -1,0 +1,14 @@
+<abi><!-- todo: tests -->
+    <!-- todo: get_methods https://github.com/TegroTON/DEX-pair-alpha-beta/blob/d4c8eb6fe8599953f6eff161b3fb783df833ea91/func/get-methods.func#L48 -->
+    <!-- todo: prev version https://github.com/TegroTON/DEX-TON-contracts/tree/main/contracts/func/exchange -->
+    <internal name="tegro_swap_ton">
+        tegro_swap_ton#600c00fd query_id:uint64 extract:Bool max_in:Coins min_out:Coins
+        destination:MsgAddress error_destination:MsgAddress ref:(Maybe ^MsgAddress) = InternalMsgBody;
+    </internal>
+    <jetton_payload name="tegro_add_liquidity">
+        add_liquidity#287e167a amount_a:(VarUInteger 16) abount_b:(VarUInteger 16) = JettonPayload;
+    </jetton_payload>
+    <jetton_payload name="tegro_jetton_swap">
+        swap_jetton#01fb7a25 extract:Bool max_in:(VarUInteger 16) min_out:(VarUInteger 16) destination:MsgAddress error_destination:MsgAddress payload:(Maybe ^Cell) = JettonPayload;
+    </jetton_payload>
+</abi>

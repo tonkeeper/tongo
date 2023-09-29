@@ -523,13 +523,13 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		descriptions[invokeFnName] = desc
 	}
 	for _, iface := range g.abi.Interfaces {
-		ifaceName := "I" + utils.ToCamelCase(iface.Name)
+		ifaceName := utils.ToCamelCase(iface.Name)
 		context.Interfaces[ifaceName] = iface.Name
 		descripion := interfacDescripion{
 			Name: ifaceName,
 		}
 		if iface.Inherits != "" {
-			context.Inheritance[ifaceName] = "I" + utils.ToCamelCase(iface.Inherits)
+			context.Inheritance[ifaceName] = utils.ToCamelCase(iface.Inherits)
 		}
 		for _, method := range iface.Methods {
 			if !slices.Contains(simpleMethods, method.Name) {
@@ -550,7 +550,6 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		} else {
 			context.InterfaceOrder = append(context.InterfaceOrder, descripion)
 		}
-
 	}
 
 	for _, desc := range descriptions {

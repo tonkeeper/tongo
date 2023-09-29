@@ -496,6 +496,16 @@ type NftTransferMsgBody struct {
 	ForwardPayload      tlb.EitherRef[NFTPayload]
 }
 
+type TegroSwapTonMsgBody struct {
+	QueryId          uint64
+	Extract          bool
+	MaxIn            tlb.Grams
+	MinOut           tlb.Grams
+	Destination      tlb.MsgAddress
+	ErrorDestination tlb.MsgAddress
+	Ref              *tlb.MsgAddress `tlb:"maybe^"`
+}
+
 type DedustSwapExternalMsgBody struct {
 	QueryId    uint64
 	Proof      tlb.Any `tlb:"^"`

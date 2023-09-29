@@ -50,4 +50,10 @@
     <jetton_payload name="stofi_provide_liquidity">
         provide_liquidity#fcf9e58f min_lp_out:(VarUInteger 16) = JettonPayload;
     </jetton_payload>
+    <jetton_payload name="stonfi_swap_ok" fixed_lengt="true">
+        swap_success#c64370e5 = JettonPayload;
+    </jetton_payload>
+    <jetton_payload name="stonfi_swap_ok_ref" fixed_lengt="true">
+        swap_success#45078540 = JettonPayload;
+    </jetton_payload>
 </abi>

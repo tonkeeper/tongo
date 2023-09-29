@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -19,8 +20,20 @@ func NewFunCCompiler() *FunCCompiler {
 }
 
 // Compile returns FIFT code, BoC with compiled code and error
-func (c *FunCCompiler) Compile(files map[string]string) (string, []byte, error) {
-	b, err := json.Marshal(map[string]any{"files": files})
+func (c *FunCCompiler) Compile(files [][2]string) (string, []byte, error) {
+	type file struct {
+		Filename string `json:"filename"`
+		Content  string `json:"content"`
+	}
+	var filess []file
+	for _, f := range files {
+		filess = append(filess, file{
+			Filename: f[0],
+			Content:  f[1],
+		})
+	}
+	b, err := json.Marshal(map[string]any{"files": filess})
+	fmt.Println(string(b))
 	if err != nil {
 		return "", nil, err
 	}
@@ -36,6 +49,8 @@ func (c *FunCCompiler) Compile(files map[string]string) (string, []byte, error) 
 		Success          bool
 		Hex, Fift, Error string
 	}
+	b, _ = io.ReadAll(resp.Body)
+	fmt.Println(string(b))
 	err = json.NewDecoder(resp.Body).Decode(&respBody)
 	if err != nil {
 		return "", nil, err

@@ -47,7 +47,14 @@ type InspectorOptions struct {
 	knownInterfaces   []InterfaceDescription
 }
 
-type ContractInterface string
+type ContractInterface uint32
+
+func (c ContractInterface) Implements(other ContractInterface) bool {
+	if c == other {
+		return true
+	}
+	return c.recursiveImplements(other)
+}
 
 type InvokeFn func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error)
 
@@ -56,6 +63,11 @@ type MethodDescription struct {
 	Name string
 	// InvokeFn executes this method on a contract and returns parsed execution results.
 	InvokeFn InvokeFn
+}
+
+type knownContractDescription struct {
+	contractInterfaces []ContractInterface
+	getMethods         []InvokeFn
 }
 
 type InterfaceDescription struct {
@@ -126,9 +138,6 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		})
 	}
 	for _, iface := range ci.knownInterfaces {
-		if len(iface.Results) == 0 {
-			continue
-		}
 		if desc.hasAllResults(iface.Results) {
 			desc.ContractInterfaces = append(desc.ContractInterfaces, iface.Name)
 		}
@@ -159,19 +168,15 @@ func getCodeInfo(code []byte) (*codeInfo, error) {
 	if len(cells) == 0 {
 		return nil, fmt.Errorf("failed to find a root cell")
 	}
-	h, err := cells[0].Hash()
+	h, err := cells[0].Hash256()
 	if err != nil {
-		return nil, err
-	}
-	var hash ton.Bits256
-	if err = hash.FromBytes(h); err != nil {
 		return nil, err
 	}
 	cells[0].ResetCounters()
 	c, err := cells[0].NextRef()
 	if err != nil {
 		// we are OK, if there is no information about get methods
-		return &codeInfo{hash: hash}, nil
+		return &codeInfo{hash: h}, nil
 	}
 	type GetMethods struct {
 		Hashmap tlb.Hashmap[tlb.Uint19, boc.Cell]
@@ -180,12 +185,12 @@ func getCodeInfo(code []byte) (*codeInfo, error) {
 	err = tlb.Unmarshal(c, &getMethods)
 	if err != nil {
 		// we are OK, if there is no information about get methods
-		return &codeInfo{hash: hash}, nil
+		return &codeInfo{hash: h}, nil
 	}
 	keys := getMethods.Hashmap.Keys()
 	methods := make(map[int64]struct{}, len(keys))
 	for _, key := range keys {
 		methods[int64(key)] = struct{}{}
 	}
-	return &codeInfo{hash: hash, methods: methods}, nil
+	return &codeInfo{hash: h, methods: methods}, nil
 }

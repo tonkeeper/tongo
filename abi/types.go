@@ -465,6 +465,10 @@ type ChannelCooperativeCloseMsgBody struct {
 	SeqnoB    uint64
 }
 
+type OutbidNotificationMsgBody struct {
+	QueryId uint64
+}
+
 type TonstakeControllerReturnAvailableFundsMsgBody struct {
 	QueryId uint64
 }
@@ -490,6 +494,16 @@ type NftTransferMsgBody struct {
 	CustomPayload       *tlb.Any `tlb:"maybe^"`
 	ForwardAmount       tlb.VarUInteger16
 	ForwardPayload      tlb.EitherRef[NFTPayload]
+}
+
+type TegroSwapTonMsgBody struct {
+	QueryId          uint64
+	Extract          bool
+	MaxIn            tlb.Grams
+	MinOut           tlb.Grams
+	Destination      tlb.MsgAddress
+	ErrorDestination tlb.MsgAddress
+	Ref              *tlb.MsgAddress `tlb:"maybe^"`
 }
 
 type DedustSwapExternalMsgBody struct {

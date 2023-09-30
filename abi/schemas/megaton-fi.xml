@@ -55,4 +55,30 @@
     <internal name="megaton_wton_mint">
         mint#77a33521 query_id:uint64 amount:Coins = InternalMsgBody;
     </internal>
+
+
+<!--
+   ext outs:
+
+
+mint#00000015 account_addr:MsgAddressInt
+              lp_supply_before_deposit:Coins lp_amount:Coins
+              token0_amount:Coins token1_amount:Coins = ExtOutMsgBody;
+
+claim#6b14cfe1 account_addr:MsgAddressInt _:Coins reward:Coins
+               ^[ last_index:uint256, _:uint256 time:uint64 ] = ExtOutMsgBody;
+
+burn#595f07bc account_addr:MsgAddressInt
+              lp_supply_before_burn:Coins lp_amount:Coins
+              token0_amount:Coins token1_amount:Coins = ExtOutMsgBody;-->
+    <ext_out name="megaton_swap">
+        swap#7362d09c account_addr:MsgAddressInt
+        in_token_addr:MsgAddressInt in_amount:Coins
+        ^[ out_token_addr:MsgAddressInt out_amount:Coins ] = ExtOutMsgBody;
+    </ext_out>
+    <ext_out name="megaton_update_mining_params">
+        update_mining_params#56a8e920 pool_addr:MsgAddressInt
+        last_mined:uint256 last_index:uint256
+        ^[ last_mined:uint256, last_index:uint256] = ExtOutMsgBody;
+    </ext_out>
 </abi>

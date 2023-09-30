@@ -72,4 +72,7 @@
         teleitem_return_bid#a43227e1 cur_lt:int64 = TeleitemMsg;
     </internal>
 
+    <nft_payload name="teleitem_bid_info">
+        nft_payload#38127de1 bid:Coins bid_ts:uint32 = NFTMsgPayload;
+    </nft_payload>
 </abi>

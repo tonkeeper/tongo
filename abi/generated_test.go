@@ -775,3 +775,23 @@ func TestMessageDecoder(t *testing.T) {
 func pointer[t any](v t) *t {
 	return &v
 }
+
+func TestImplements(t *testing.T) {
+	cases := []struct {
+		iface      ContractInterface
+		target     ContractInterface
+		implements bool
+	}{
+		{Wallet, Wallet, true},
+		{WalletV2R1, WalletV2R1, true},
+		{WalletV2R2, WalletV2R1, false},
+		{WalletV2R2, Wallet, true},
+		{Wallet, WalletV2R2, false},
+	}
+	for _, c := range cases {
+		if c.iface.Implements(c.target) != c.implements {
+			t.Fatalf("iface %v implements %v: %v", c.iface, c.target, c.implements)
+		}
+	}
+
+}

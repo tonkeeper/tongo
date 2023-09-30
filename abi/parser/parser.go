@@ -30,6 +30,8 @@ type Interface struct {
 		Internals []InterfaceMessage `xml:"internal"`
 		Externals []InterfaceMessage `xml:"ext_out"`
 	} `xml:"msg_out"`
+	CodeHashes []string `xml:"code_hash"`
+	Inherits   string   `xml:"inherits,attr"`
 }
 
 type InterfaceMessage struct {

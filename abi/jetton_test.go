@@ -50,6 +50,11 @@ func TestJettonPayloadJSMarshaling(t *testing.T) {
 			boc:  "b5ee9c72010102010034000153e3a0d482801c2bfd75b91e3b5a9402036fdb733e5dc096f4c773a328dd33586324e0cdb4bd2307b6a7400100090000000002",
 			want: `{"SumType":"DedustSwap","OpCode":3818968194,"Value":{"Step":{"PoolAddr":"0:e15febadc8f1dad4a0101b7edb99f2ee04b7a63b9d1946e99ac31927066da5e9","Params":{"KindOut":false,"Limit":"505511","Next":null}},"SwapParams":{"Deadline":0,"RecipientAddr":"","ReferralAddr":"","FulfillPayload":null,"RejectPayload":null}}}`,
 		},
+		{
+			name: "stonfi success",
+			boc:  "b5ee9c72010101010006000008c64370e5",
+			want: `{"SumType":"StonfiSwapOk","OpCode":3326308581,"Value":{}}`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

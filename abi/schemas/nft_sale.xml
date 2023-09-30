@@ -1,14 +1,20 @@
 <abi>
     <!--        NFT sale   todo: add auction commands   -->
-    <interface name="nft_sale_v1">
+    <interface name="nft_sale"/>
+    <interface name="nft_sale_v1" inherits="nft_sale">
         <get_method name="get_sale_data" version="basic"/>
     </interface>
-    <interface name="nft_sale_v2">
+    <interface name="nft_sale_v2" inherits="nft_sale">
         <get_method name="get_sale_data" version="getgems"/>
     </interface>
-    <interface name="nft_auction_v1">
+    <interface name="nft_auction_v1" inherits="nft_sale">
         <get_method name="get_sale_data" version="getgems_auction"/>
     </interface>
+<!--    <interface name="nft_sale_getgems" inherits="nft_sale_v2">  todo: uncomment but fix get methods inheritance-->
+<!--        <code_hash>8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9</code_hash>-->
+<!--        <code_hash>32050dfac44f64866bcc86f2cd9e1305fe9dcadb3959c002237cfb0902d44323</code_hash>-->
+<!--        <code_hash>deb53b6c5765c1e6cd238bf47bc5e83ba596bdcc04b0b84cd50ab1e474a08f31</code_hash>-->
+<!--    </interface>-->
     <get_method name="get_sale_data">
         <output version="basic" fixed_length="true">
             <slice name="marketplace">msgaddress</slice>

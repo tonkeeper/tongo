@@ -83,6 +83,12 @@ func InspectWithAdditionalMethods(list []MethodDescription) InspectorOption {
 	}
 }
 
+func InspectWithAdditionalInterfaces(list []InterfaceDescription) InspectorOption {
+	return func(o *InspectorOptions) {
+		o.knownInterfaces = list
+	}
+}
+
 func NewContractInspector(opts ...InspectorOption) *contractInspector {
 	options := &InspectorOptions{}
 	for _, o := range opts {

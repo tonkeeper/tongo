@@ -14,6 +14,7 @@
         token_name:FixedLengthText
         content:^Cell auction_config:^TeleitemAuctionConfig royalty_params:(Maybe ^NftRoyaltyParams) restrictions:(Maybe
         ^TelemintRestrictions) = TelemintUnsignedDeployV2;
+        telemint_token_info$_ name:FixedLengthText domain:FixedLengthText = TelemintTokenInfo;
     </types>
     <!--    Telegram   todo: attach internals to interfaces  -->
 
@@ -56,7 +57,7 @@
         telemint_msg_deploy_v2#4637289b sig:bits512 msg:TelemintUnsignedDeployV2 = TelemintMsgV2;
     </internal>
     <internal name="teleitem_deploy">
-        teleitem_msg_deploy#299a3e15 sender_address:MsgAddress bid:Grams username:FixedLengthText content:^Cell
+        teleitem_msg_deploy#299a3e15 sender_address:MsgAddress bid:Grams token_info:^TelemintTokenInfo nft_content:^Cell
         auction_config:^TeleitemAuctionConfig royalty_params:^NftRoyaltyParams = TeleitemMsg;
     </internal>
     <internal name="teleitem_start_auction">

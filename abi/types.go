@@ -142,6 +142,11 @@ type TelemintRestrictions struct {
 	RewriteSenderAddress *tlb.MsgAddress `tlb:"maybe"`
 }
 
+type TelemintTokenInfo struct {
+	Name   tlb.FixedLengthText
+	Domain tlb.FixedLengthText
+}
+
 type TelemintUnsignedDeploy struct {
 	SubwalletId   uint32
 	ValidSince    uint32
@@ -332,8 +337,8 @@ type TonstakeControllerPoolSendMessageMsgBody struct {
 type TeleitemDeployMsgBody struct {
 	SenderAddress tlb.MsgAddress
 	Bid           tlb.Grams
-	Username      tlb.FixedLengthText
-	Content       tlb.Any               `tlb:"^"`
+	TokenInfo     TelemintTokenInfo     `tlb:"^"`
+	NftContent    tlb.Any               `tlb:"^"`
 	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
 	RoyaltyParams NftRoyaltyParams      `tlb:"^"`
 }

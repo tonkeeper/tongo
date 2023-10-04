@@ -611,28 +611,48 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 		{
-			name:       "teleitem deploy",
-			boc:        "te6ccgECCQEAATMAA3Mpmj4VgAzs0ncMX6iyBS1zERGvUh6mNkf29/PiNb4SlqWFgjSNqHc1lAAe6Mrm6OrmyuTcwtrKYmRnAQIDAQMAwAQAaYAQsVaH72imjIQ1ZIjkVM5pBuccANLWQZkd7g3tnkSyO2h3NZQAoEqBfIAAoAAFRgAAfpAQAEsABQBkgBCxVofvaKaMhDVkiORUzmkG5xwA0tZBmR3uDe2eRLI7cAIBWAUGAUK/gqNTf/Dbzn7sNdae3DoYnubxfYLzU6VT+aqWywvjzokHAUK/iQRvejetDqfO5zNVmE+lQomC+LN8j3vOyR96xxp80QQIACoAdGVzdHVzZXJuYW1lMTIzLnQubWUAVABVc2VybmFtZSDCq3Rlc3R1c2VybmFtZTEyM8K7IGZvciBUZWxlZ3JhbQ==",
+			name: "teleitem deploy",
+			boc:  "b5ee9c720101050100c9000457299a3e15801b19b333f65636709cd944a9871066ebc46223516f1802b710c50d8637e23c53ac0cbba106e00101020304001604616c736f056d6500740000580168747470733a2f2f6e66742e667261676d656e742e636f6d2f757365726e616d652f616c736f2e6a736f6e0063800811b476516d80cb4b27c207224d3755538bf195d7818d3b3e155775655324ad6c092f96e9880000a00001c20001275010004b00050064800811b476516d80cb4b27c207224d3755538bf195d7818d3b3e155775655324ad70",
+			//msg:
+			//  subwallet_id: 3
+			//  valid_since: 1695343237
+			//  valid_till: 1695343387
+			//  username: also
+			//  content: b5ee9c7201010101002e0000580168747470733a2f2f6e66742e667261676d656e742e636f6d2f757365726e616d652f616c736f2e6a736f6e
+			//  auction_config:
+			//    beneficiar_address: 0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b
+			//    initial_min_bid: "5050000000000"
+			//    max_bid: "0"
+			//    min_bid_step: 5
+			//    min_extend_time: 3600
+			//    duration: 604800
+			//  royalty_params:
+			//    numerator: 5
+			//    denominator: 100
+			//    destination: 0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b
 			wantOpName: TeleitemDeployMsgOp,
 			wantValidate: func(t *testing.T, value any) {
 				got := value.(TeleitemDeployMsgBody)
-				got.Content = tlb.Any{}
+				got.NftContent = tlb.Any{}
 				expected := TeleitemDeployMsgBody{
-					SenderAddress: mustToMsgAddress("0:676693b862fd4590296b98888d7a90f531b23fb7bf9f11adf094b52c2c11a46d"),
-					Bid:           1000000000,
-					Username:      "testusername123",
+					SenderAddress: mustToMsgAddress("0:d8cd999fb2b1b384e6ca254c3883375e23111a8b78c015b886286c31bf11e29d\""),
+					Bid:           7000000000000,
+					TokenInfo: TelemintTokenInfo{
+						Name:   "also",
+						Domain: "me\u0000t\u0000",
+					},
 					AuctionConfig: TeleitemAuctionConfig{
-						BeneficiarAddress: mustToMsgAddress("0:858ab43f7b45346421ab244722a673483738e00696b20cc8ef706f6cf22591db"),
-						InitialMinBid:     1000000000,
-						MaxBid:            10000000000,
+						BeneficiarAddress: mustToMsgAddress("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"),
+						InitialMinBid:     5050000000000,
+						MaxBid:            0,
 						MinBidStep:        5,
-						MinExtendTime:     10800,
-						Duration:          259200,
+						MinExtendTime:     3600,
+						Duration:          604800,
 					},
 					RoyaltyParams: NftRoyaltyParams{
 						Numerator:   5,
 						Denominator: 100,
-						Destination: mustToMsgAddress("0:858ab43f7b45346421ab244722a673483738e00696b20cc8ef706f6cf22591db"),
+						Destination: mustToMsgAddress("0:408da3b28b6c065a593e10391269baaa9c5f8caebc0c69d9f0aabbab2a99256b"),
 					},
 				}
 				if !reflect.DeepEqual(got, expected) {
@@ -752,7 +772,11 @@ func TestMessageDecoder(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c, err := boc.DeserializeSinglRootBase64(tt.boc)
 			if err != nil {
-				return
+				cells, err := boc.DeserializeBocHex(tt.boc)
+				if err != nil {
+					t.Fatal(err)
+				}
+				c = cells[0]
 			}
 			opName, value, err := MessageDecoder(c)
 			if err != nil {

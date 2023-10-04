@@ -830,6 +830,14 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
 		}
 		cell.ResetCounters()
 		return "", nil, err
+	case TonstakeNftPayoutMsgOpCode: // 0xdb3b8abd
+		var resTonstakeNftPayoutMsgBody TonstakeNftPayoutMsgBody
+		err = tlb.Unmarshal(cell, &resTonstakeNftPayoutMsgBody)
+		if err == nil {
+			return TonstakeNftPayoutMsgOp, resTonstakeNftPayoutMsgBody, nil
+		}
+		cell.ResetCounters()
+		return "", nil, err
 	case ChannelClosedMsgOpCode: // 0xdddc88ba
 		var resChannelClosedMsgBody ChannelClosedMsgBody
 		err = tlb.Unmarshal(cell, &resChannelClosedMsgBody)
@@ -1081,6 +1089,7 @@ const (
 	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
 	ExcessMsgOp                                  MsgOpName = "Excess"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
+	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
 	TonstakePoolLoanRepaymentMsgOp               MsgOpName = "TonstakePoolLoanRepayment"
 	WalletPluginDestructResponseMsgOp            MsgOpName = "WalletPluginDestructResponse"
@@ -1204,6 +1213,7 @@ const (
 	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
+	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
 	TonstakePoolLoanRepaymentMsgOpCode               MsgOpCode = 0xdfdca27b
 	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
@@ -1324,6 +1334,7 @@ var KnownMsgTypes = map[string]any{
 	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
 	ExcessMsgOp:                                  ExcessMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
+	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},
 	TonstakePoolLoanRepaymentMsgOp:               TonstakePoolLoanRepaymentMsgBody{},
 	WalletPluginDestructResponseMsgOp:            WalletPluginDestructResponseMsgBody{},

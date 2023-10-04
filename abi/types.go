@@ -770,6 +770,10 @@ type WhalesNominatorsWithdrawMsgBody struct {
 	Amount  tlb.Grams
 }
 
+type TonstakeNftPayoutMsgBody struct {
+	QueryId uint64
+}
+
 type ChannelClosedMsgBody struct {
 	ChannelId tlb.Uint128
 }

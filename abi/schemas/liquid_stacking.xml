@@ -199,5 +199,8 @@
     <internal name="tonstake_nft_init">
         init_nft#132f9a45 query_id:uint64 owner:MsgAddress amount:Coins prev:MsgAddress next:MsgAddress = InternalMsgBody;
     </internal>
+    <internal name="tonstake_nft_payout">
+        tonstake_nft_payout#db3b8abd query_id:uint64 = InternalMsgBody;
+    </internal>
 
 </abi>

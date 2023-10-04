@@ -141,7 +141,7 @@ func (s *Server) GeneratePayload() (string, error) {
 func (s *Server) CheckProof(ctx context.Context, tp *Proof) (bool, ed25519.PublicKey, error) {
 	verified, err := s.checkPayload(tp.Proof.Payload)
 	if !verified {
-		return false, nil, fmt.Errorf("failed verify payload")
+		return false, nil, fmt.Errorf("failed to verify payload")
 	}
 
 	parsed, err := convertTonProofMessage(tp)
@@ -161,14 +161,18 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof) (bool, ed25519.Publi
 	pubKey, err := s.getWalletPubKey(ctx, accountID)
 	if err != nil {
 		if tp.Proof.StateInit == "" {
-			return false, nil, fmt.Errorf("failed get public key")
+			return false, nil, fmt.Errorf("failed to get public key")
 		}
-		if ok, err := compareStateInitWithAddress(accountID, tp.Proof.StateInit); err != nil || !ok {
-			return false, nil, fmt.Errorf("failed compare state init with address")
+		ok, err := compareStateInitWithAddress(accountID, tp.Proof.StateInit)
+		if err != nil {
+			return false, nil, err
+		}
+		if !ok {
+			return false, nil, fmt.Errorf("failed to compare state init with address")
 		}
 		pubKey, err = ParseStateInit(tp.Proof.StateInit)
 		if err != nil {
-			return false, nil, fmt.Errorf("failed get public key")
+			return false, nil, fmt.Errorf("failed to to get public key")
 		}
 	}
 
@@ -179,7 +183,7 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof) (bool, ed25519.Publi
 
 	check := signatureVerify(pubKey, mes, parsed.signature)
 	if !check {
-		return false, nil, fmt.Errorf("failed proof")
+		return false, nil, fmt.Errorf("failed to proof")
 	}
 
 	return true, pubKey, nil
@@ -253,12 +257,12 @@ func (s *Server) getWalletPubKey(ctx context.Context, address ton.AccountID) (ed
 		i := big.Int(r.PublicKey)
 		b := i.Bytes()
 		if len(b) < 24 || len(b) > 32 {
-			return nil, fmt.Errorf("invalid publock key")
+			return nil, fmt.Errorf("invalid public key")
 		}
 		return append(make([]byte, 32-len(b)), b...), nil
 	}
 
-	return nil, fmt.Errorf("can't get publick key")
+	return nil, fmt.Errorf("can't get public key")
 }
 
 func createMessage(message *parsedMessage) ([]byte, error) {
@@ -346,12 +350,15 @@ func ParseStateInit(stateInit string) ([]byte, error) {
 
 func compareStateInitWithAddress(a ton.AccountID, stateInit string) (bool, error) {
 	cells, err := boc.DeserializeBocBase64(stateInit)
-	if err != nil || len(cells) != 1 {
-		return false, err
+	if err != nil {
+		return false, fmt.Errorf("failed to deserialize state init: %w", err)
+	}
+	if len(cells) != 1 {
+		return false, fmt.Errorf("invalid state init")
 	}
 	h, err := cells[0].Hash()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to calculate hash of state init: %w", err)
 	}
 	return bytes.Equal(h, a.Address[:]), nil
 }

@@ -138,8 +138,8 @@ func (s *Server) GeneratePayload() (string, error) {
 // details see the frontend SDK: https://github.com/ton-connect/sdk/tree/main/packages/sdk
 // 3) User approves connection and client receives signed payload with additional prefixes.
 // 4) Client sends signed result (Proof) to the backend and CheckProof checks correctness of the all prefixes and signature correctness
-func (s *Server) CheckProof(ctx context.Context, tp *Proof) (bool, ed25519.PublicKey, error) {
-	verified, err := s.checkPayload(tp.Proof.Payload)
+func (s *Server) CheckProof(ctx context.Context, tp *Proof, checkPayload func(payload string) (bool, error)) (bool, ed25519.PublicKey, error) {
+	verified, err := checkPayload(tp.Proof.Payload)
 	if !verified {
 		return false, nil, fmt.Errorf("failed to verify payload")
 	}

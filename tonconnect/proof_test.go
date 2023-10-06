@@ -59,7 +59,7 @@ func TestCreateSignedProof(t *testing.T) {
 			if err != nil {
 				t.Fatalf("CreateSignedProof() failed: %v", err)
 			}
-			verified, _, err := srv.CheckProof(context.Background(), signedProof)
+			verified, _, err := srv.CheckProof(context.Background(), signedProof, srv.checkPayload)
 			if err != nil {
 				t.Fatalf("CheckProof() failed: %v", err)
 			}

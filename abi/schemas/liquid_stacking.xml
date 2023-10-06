@@ -60,6 +60,7 @@
     <get_method name="get_validator_controller_data">
         <output>
             <int name="state">int32</int>
+            <int name="halted">bool</int>
             <int name="approved">bool</int>
             <int name="stake_amount_sent">int64</int>
             <int name="stake_at">uint32</int>

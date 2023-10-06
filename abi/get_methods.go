@@ -2178,6 +2178,7 @@ func DecodeGetTorrentHashResult(stack tlb.VmStack) (resultType string, resultAny
 
 type GetValidatorControllerDataResult struct {
 	State                    int32
+	Halted                   bool
 	Approved                 bool
 	StakeAmountSent          int64
 	StakeAt                  uint32
@@ -2213,7 +2214,7 @@ func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkSlice") || (stack[11].SumType != "VmStkSlice") || (stack[12].SumType != "VmStkSlice") {
+	if len(stack) < 14 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkSlice") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetValidatorControllerDataResult

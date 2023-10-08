@@ -118,6 +118,8 @@ type parsedMessage struct {
 	stateInit string
 }
 
+type checkFunc func(s string) (bool, error)
+
 // GeneratePayload this is the first stage of the authorization process. Client fetches payload to be signed by wallet
 func (s *Server) GeneratePayload() (string, error) {
 	payload := make([]byte, 16, 48)
@@ -132,13 +134,42 @@ func (s *Server) GeneratePayload() (string, error) {
 	return hex.EncodeToString(payload[:32]), nil
 }
 
+func (s *Server) CheckPayload(payload string) (bool, error) {
+	bytesPayload, err := hex.DecodeString(payload)
+	if err != nil {
+		return false, err
+	}
+	if len(bytesPayload) != 32 {
+		return false, fmt.Errorf("invalid payload length")
+	}
+	hmacHash := hmac.New(sha256.New, []byte(s.secret))
+	hmacHash.Write(bytesPayload[:16])
+	computedSignature := hmacHash.Sum(nil)
+
+	if subtle.ConstantTimeCompare(bytesPayload[16:], computedSignature[:16]) != 1 {
+		return false, fmt.Errorf("invalid payload signature")
+	}
+
+	if time.Since(time.Unix(int64(binary.BigEndian.Uint64(bytesPayload[8:16])), 0)) > time.Duration(s.lifeTimePayload)*time.Second {
+		return false, fmt.Errorf("payload expired")
+	}
+
+	return true, nil
+}
+
+func StaticDomain(domain string) checkFunc {
+	return func(s string) (bool, error) {
+		return s == domain, nil
+	}
+}
+
 // CheckProof aggregated with ready-made data from TonConnect 2.0
 // 1) Client fetches payload from GeneratePayload to be signed by wallet
 // 2) Client connects to the wallet via TonConnect 2.0 and passes ton_proof request with specified payload, for more
 // details see the frontend SDK: https://github.com/ton-connect/sdk/tree/main/packages/sdk
 // 3) User approves connection and client receives signed payload with additional prefixes.
 // 4) Client sends signed result (Proof) to the backend and CheckProof checks correctness of the all prefixes and signature correctness
-func (s *Server) CheckProof(ctx context.Context, tp *Proof, checkPayload func(payload string) (bool, error)) (bool, ed25519.PublicKey, error) {
+func (s *Server) CheckProof(ctx context.Context, tp *Proof, checkPayload, checkDomain checkFunc) (bool, ed25519.PublicKey, error) {
 	verified, err := checkPayload(tp.Proof.Payload)
 	if !verified {
 		return false, nil, fmt.Errorf("failed to verify payload")
@@ -152,7 +183,13 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof, checkPayload func(pa
 	if time.Since(time.Unix(parsed.ts, 0)) > time.Duration(s.lifeTimeProof)*time.Second {
 		return false, nil, fmt.Errorf("proof has been expired")
 	}
-
+	ok, err := checkDomain(parsed.domain)
+	if err != nil {
+		return false, nil, err
+	}
+	if !ok {
+		return false, nil, fmt.Errorf("invalid domain")
+	}
 	accountID, err := ton.ParseAccountID(tp.Address)
 	if err != nil {
 		return false, nil, err
@@ -191,29 +228,6 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof, checkPayload func(pa
 
 func (s *Server) GetSecret() string {
 	return s.secret
-}
-
-func (s *Server) checkPayload(payload string) (bool, error) {
-	bytesPayload, err := hex.DecodeString(payload)
-	if err != nil {
-		return false, err
-	}
-	if len(bytesPayload) != 32 {
-		return false, fmt.Errorf("invalid payload length")
-	}
-	hmacHash := hmac.New(sha256.New, []byte(s.secret))
-	hmacHash.Write(bytesPayload[:16])
-	computedSignature := hmacHash.Sum(nil)
-
-	if subtle.ConstantTimeCompare(bytesPayload[16:], computedSignature[:16]) != 1 {
-		return false, fmt.Errorf("invalid payload signature")
-	}
-
-	if time.Since(time.Unix(int64(binary.BigEndian.Uint64(bytesPayload[8:16])), 0)) > time.Duration(s.lifeTimePayload)*time.Second {
-		return false, fmt.Errorf("payload expired")
-	}
-
-	return true, nil
 }
 
 func convertTonProofMessage(tp *Proof) (*parsedMessage, error) {

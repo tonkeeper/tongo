@@ -15,7 +15,7 @@ func TestGenerateAndVerifyPayload(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed generate payload: %v", err)
 	}
-	verify, err := tonConnect.checkPayload(payload)
+	verify, err := tonConnect.CheckPayload(payload)
 	if err != nil {
 		t.Fatalf("failed verify payload: %v", err)
 	}
@@ -36,7 +36,7 @@ func TestExpirePayload(t *testing.T) {
 
 	time.Sleep(2 * time.Second) // waiting expire
 
-	verify, _ := tonConnect.checkPayload(payload)
+	verify, _ := tonConnect.CheckPayload(payload)
 	if verify {
 		t.Fatalf("payload not expire")
 	}

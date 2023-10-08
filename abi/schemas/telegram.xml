@@ -49,7 +49,7 @@
         </output>
     </get_method>
 
-
+<!-- todo: check all types https://github.com/TelegramMessenger/telemint/blob/main/telemint.tlb -->
     <internal name="telemint_deploy">
         telemint_msg_deploy#4637289a sig:bits512 msg:TelemintUnsignedDeploy = TelemintMsg;
     </internal>

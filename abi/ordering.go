@@ -152,6 +152,103 @@ func (c ContractInterface) String() string {
 	}
 }
 
+func ContractInterfaceFromString(s string) ContractInterface {
+	switch s {
+	case "dedust_pool":
+		return DedustPool
+	case "dedust_vault":
+		return DedustVault
+	case "dns":
+		return Dns
+	case "editable":
+		return Editable
+	case "jetton_master":
+		return JettonMaster
+	case "jetton_wallet":
+		return JettonWallet
+	case "locker":
+		return Locker
+	case "locker_bill":
+		return LockerBill
+	case "lockup_universal":
+		return LockupUniversal
+	case "lockup_vesting":
+		return LockupVesting
+	case "megatonfi_exchange":
+		return MegatonfiExchange
+	case "megatonfi_router":
+		return MegatonfiRouter
+	case "nft_auction_v1":
+		return NftAuctionV1
+	case "nft_collection":
+		return NftCollection
+	case "nft_item":
+		return NftItem
+	case "nft_sale":
+		return NftSale
+	case "nft_sale_v1":
+		return NftSaleV1
+	case "nft_sale_v2":
+		return NftSaleV2
+	case "payment_channel":
+		return PaymentChannel
+	case "sbt":
+		return Sbt
+	case "stonfi_pool":
+		return StonfiPool
+	case "stonfi_router":
+		return StonfiRouter
+	case "storage_contract":
+		return StorageContract
+	case "storage_provider":
+		return StorageProvider
+	case "subscription_v1":
+		return SubscriptionV1
+	case "teleitem":
+		return Teleitem
+	case "tonstake_pool":
+		return TonstakePool
+	case "tv_pool":
+		return TvPool
+	case "validator_controller":
+		return ValidatorController
+	case "wallet":
+		return Wallet
+	case "wallet_highload_v1r1":
+		return WalletHighloadV1R1
+	case "wallet_highload_v1r2":
+		return WalletHighloadV1R2
+	case "wallet_highload_v2":
+		return WalletHighloadV2
+	case "wallet_highload_v2r1":
+		return WalletHighloadV2R1
+	case "wallet_highload_v2r2":
+		return WalletHighloadV2R2
+	case "wallet_v1r1":
+		return WalletV1R1
+	case "wallet_v1r2":
+		return WalletV1R2
+	case "wallet_v1r3":
+		return WalletV1R3
+	case "wallet_v2r1":
+		return WalletV2R1
+	case "wallet_v2r2":
+		return WalletV2R2
+	case "wallet_v3r1":
+		return WalletV3R1
+	case "wallet_v3r2":
+		return WalletV3R2
+	case "wallet_v4r1":
+		return WalletV4R1
+	case "wallet_v4r2":
+		return WalletV4R2
+	case "whales_pool":
+		return WhalesPool
+	default:
+		return IUnknown
+	}
+}
+
 var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_asset",

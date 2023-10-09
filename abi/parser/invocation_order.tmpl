@@ -17,6 +17,17 @@ switch c {
   }
 }
 
+func ContractInterfaceFromString(s string) ContractInterface {
+switch s {
+   {{- range $name, $iface := .Interfaces }}
+   case "{{ $iface }}":
+       return {{ $name }}
+  {{- end }}
+  default:
+      return IUnknown
+  }
+}
+
 
 var methodInvocationOrder = []MethodDescription{
 {{- range $method := .InvocationOrder }}

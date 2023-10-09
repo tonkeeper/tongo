@@ -623,7 +623,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: TvPool,
 		Results: []string{
-			"GetPoolDataResult",
+			"GetPoolData_TfResult",
 			"ListNominatorsResult",
 			"ListVotesResult",
 		},

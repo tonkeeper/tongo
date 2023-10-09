@@ -4,7 +4,7 @@
         account_lists#_ list:(Hashmap 256 Cell) = AccountLists;
     </types>
     <interface name="tv_pool">
-        <get_method name="get_pool_data"/>
+        <get_method name="get_pool_data" version="tf"/>
 <!--        <get_method name="get_nominator_data"/> todo: uncomment-->
         <get_method name="list_nominators"/>
         <get_method name="list_votes"/>

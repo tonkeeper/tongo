@@ -615,8 +615,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: Teleitem,
 		Results: []string{
-			"GetTelemintAuctionStateResult",
-			"GetTelemintAuctionConfigResult",
 			"GetTelemintTokenNameResult",
 		},
 	},

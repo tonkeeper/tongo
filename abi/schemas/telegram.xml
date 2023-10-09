@@ -20,8 +20,8 @@
 
 
     <interface name="teleitem">
-        <get_method name="get_telemint_auction_state" optional="true"/> <!-- when auction is not active returns error -->
-        <get_method name="get_telemint_auction_config" optional="true"/><!-- when auction is not active returns empty values -->
+        <!--  <get_method name="get_telemint_auction_state" optional="true"/> when auction is not active returns error -->
+        <!--  <get_method name="get_telemint_auction_config" optional="true"/> when auction is not active returns empty values -->
         <get_method name="get_telemint_token_name"/>
     </interface>
     <get_method name="get_telemint_auction_state">

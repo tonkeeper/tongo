@@ -21,6 +21,7 @@ jobs:
       - name: test
         env:
           LD_LIBRARY_PATH: ${{ github.workspace }}/libs
+          LITE_SERVERS: ${{ secrets.LITE_SERVERS }}
         run: |
           mkdir -p ${{ env.LD_LIBRARY_PATH}}
           wget https://github.com/tonkeeper/tongo/raw/master/lib/linux/libemulator.so -O ${{ env.LD_LIBRARY_PATH}}/libemulator.so

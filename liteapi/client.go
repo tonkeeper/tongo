@@ -24,6 +24,11 @@ import (
 const (
 	LiteServerEnvName           = "LITE_SERVERS"
 	defaultMaxConnectionsNumber = 1
+
+	// maxTransactionCount specifies a maximum number of transactions that can be requested from a lite server.
+	// This is a limitation of lite server:
+	// https://github.com/ton-blockchain/ton/blob/v2023.06/validator/impl/liteserver.hpp#L70
+	maxTransactionCount = 16
 )
 
 var (
@@ -628,13 +633,17 @@ func (c *Client) GetLastTransactions(ctx context.Context, a ton.AccountID, limit
 	if err != nil {
 		return nil, err
 	}
-	lastLt, lastHash := state.LastTransLt, state.LastTransHash
 	var res []ton.Transaction
+	lastLt, lastHash := state.LastTransLt, state.LastTransHash
 	for {
 		if lastLt == 0 {
 			break
 		}
-		txs, err := c.GetTransactions(ctx, 10, a, lastLt, ton.Bits256(lastHash))
+		transactionCount := maxTransactionCount
+		if limit-len(res) < transactionCount {
+			transactionCount = limit - len(res)
+		}
+		txs, err := c.GetTransactions(ctx, uint32(transactionCount), a, lastLt, ton.Bits256(lastHash))
 		if err != nil {
 			if e, ok := err.(liteclient.LiteServerErrorC); ok && int32(e.Code) == -400 { // liteserver can store not full history. in that case it return error -400 for old transactions
 				break
@@ -650,7 +659,6 @@ func (c *Client) GetLastTransactions(ctx context.Context, a ton.AccountID, limit
 			break
 		}
 		lastLt, lastHash = res[len(res)-1].PrevTransLt, res[len(res)-1].PrevTransHash
-
 	}
 	return res, nil
 }

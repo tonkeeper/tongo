@@ -33,19 +33,36 @@ func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 }
 
 func TestGetTransactions(t *testing.T) {
-	t.Skip() //TODO: switch tests to archive node
-	tongoClient, err := NewClientWithDefaultMainnet()
+	if len(os.Getenv("LITE_SERVERS")) == 0 {
+		t.Skip("LITE_SERVERS env is not set")
+	}
+	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
-	accountId, _ := ton.AccountIDFromRaw("-1:34517C7BDF5187C55AF4F8B61FDC321588C7AB768DEE24B006DF29106458D7CF")
-	var lt uint64 = 33973842000003
-	hash := ton.MustParseHash("8005AF92C0854B5A614427206673D120EA2914468C11C8F867F43740D6B4ACFB")
-	tx, err := tongoClient.GetTransactions(context.Background(), 100, accountId, lt, hash)
-	if err != nil {
-		log.Fatalf("Get transaction error: %v", err)
+	accountId, _ := ton.AccountIDFromRaw("0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb")
+	for i := 1; i < 77; i++ {
+		txs, err := tongoClient.GetLastTransactions(context.Background(), accountId, i)
+		if err != nil {
+			t.Fatalf("Get transaction error: %v", err)
+		}
+		if len(txs) != i {
+			t.Fatalf("expected #txs: %v, got: %v", i, len(txs))
+		}
+		hashes := make(map[string]struct{}, len(txs))
+		for i, tx := range txs {
+			if i > 0 {
+				if txs[i-1].Lt <= tx.Lt {
+					log.Fatalf("wrong order")
+				}
+			}
+			s := tx.Hash().Hex()
+			if _, ok := hashes[s]; ok {
+				log.Fatalf("duplicated hash: %v", s)
+			}
+			hashes[s] = struct{}{}
+		}
 	}
-	fmt.Printf("Tx qty: %v\n", len(tx))
 }
 
 func TestSendRawMessage(t *testing.T) {

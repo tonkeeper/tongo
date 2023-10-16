@@ -1216,7 +1216,7 @@ type GetNftDataResult struct {
 	Index             tlb.Int257
 	CollectionAddress tlb.MsgAddress
 	OwnerAddress      tlb.MsgAddress
-	IndividualContent tlb.Any
+	IndividualContent *tlb.Any
 }
 
 func GetNftData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -1240,7 +1240,7 @@ func GetNftData(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
+	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell" && stack[4].SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftDataResult

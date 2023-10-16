@@ -38,7 +38,7 @@
             <int name="index">int257</int>
             <slice name="collection_address">msgaddress</slice>
             <slice name="owner_address">msgaddress</slice>
-            <cell name="individual_content">any</cell>
+            <cell name="individual_content" nullable="true">any</cell>
         </output>
     </get_method>
     <get_method name="get_nft_content" >

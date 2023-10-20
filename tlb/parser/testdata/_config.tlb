@@ -10,3 +10,7 @@ wfmt_ext#0 min_addr_len:(## 12) max_addr_len:(## 12) addr_len_step:(## 12)
   { max_addr_len <= 1023 } { addr_len_step <= 1023 }
   workchain_type_id:(## 32) { workchain_type_id >= 1 }
   = WorkchainFormat 0;
+
+_#cc utime_since:uint32 bit_price_ps:uint64 cell_price_ps:uint64
+  mc_bit_price_ps:uint64 mc_cell_price_ps:uint64 = StoragePrices;
+_ (Hashmap 32 StoragePrices) = ConfigParam 18;

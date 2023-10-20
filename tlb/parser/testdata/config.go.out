@@ -24,3 +24,16 @@ type WorkchainFormat0 struct {
 	AddrLenStep     tlb.Uint12
 	WorkchainTypeId uint32
 }
+
+type StoragePrices struct {
+	Magic         tlb.Magic `tlb:"#cc"`
+	UtimeSince    uint32
+	BitPricePs    uint64
+	CellPricePs   uint64
+	McBitPricePs  uint64
+	McCellPricePs uint64
+}
+
+type ConfigParam18 struct {
+	tlb.Hashmap[tlb.Uint32, StoragePrices]
+}

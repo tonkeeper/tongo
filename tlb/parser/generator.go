@@ -138,7 +138,7 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skip
 	if !skipMagic && declaration.Constructor.Prefix != "" && declaration.Constructor.Prefix != "#_" && declaration.Constructor.Prefix != "$_" {
 		builder.WriteString(fmt.Sprintf("Magic tlb.Magic `tlb:\"%v\"`\n", declaration.Constructor.Prefix))
 	}
-	s, err := fieldDefintionsToStruct(declaration.FieldDefinitions, g.knownTypes)
+	s, err := fieldDefinitionsToStruct(declaration.FieldDefinitions, g.knownTypes)
 	if err != nil {
 		return "", err
 	}
@@ -148,7 +148,7 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skip
 	return builder.String(), nil
 }
 
-func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[string]DefaultType) (string, error) {
+func fieldDefinitionsToStruct(definitions []FieldDefinition, knownTypes map[string]DefaultType) (string, error) {
 	var builder strings.Builder
 	for i, field := range definitions {
 		if field.IsEmpty() {
@@ -166,6 +166,15 @@ func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[strin
 			e = field.NamedField.Expression
 		} else if field.TypeRef != nil {
 			builder.WriteString(fmt.Sprintf("%s\n", field.TypeRef.Name))
+			continue
+		}
+		if field.Anon != nil {
+			t, err := field.Anon.toGolangType(knownTypes)
+			if err != nil {
+				return "", err
+			}
+			value := fmt.Sprintf("%s\n", t.String())
+			builder.WriteString(value)
 			continue
 		}
 		if name == "" || name == "_" {
@@ -248,7 +257,7 @@ func (t TypeExpression) toGolangType(knownTypes map[string]DefaultType) (golangT
 		}, nil
 	}
 	if t.AnonymousConstructor != nil {
-		s, err := fieldDefintionsToStruct(t.AnonymousConstructor.Values, knownTypes)
+		s, err := fieldDefinitionsToStruct(t.AnonymousConstructor.Values, knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}

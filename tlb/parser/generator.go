@@ -37,6 +37,7 @@ var (
 		"uint32":             {"uint32", false},
 		"uint64":             {"uint64", false},
 		"Bool":               {"bool", false},
+		"True":               {"struct{}", false},
 		"Cell":               {"tlb.Any", false},
 		"MsgAddress":         {"tlb.MsgAddress", false},
 		"Coins":              {"tlb.Grams", false},
@@ -75,7 +76,17 @@ func (g *Generator) GetTlbTypes() []TlbType {
 func (g *Generator) GenerateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
 	dec := make([][]CombinatorDeclaration, 0)
 	for _, c := range declarations {
-		if len(c.Combinator.TypeExpressions) > 0 {
+		if len(c.Combinator.TypeExpressions) == 1 && c.Combinator.TypeExpressions[0].Number != nil {
+			c = CombinatorDeclaration{
+				Constructor:      c.Constructor,
+				FieldDefinitions: c.FieldDefinitions,
+				Equal:            c.Equal,
+				Combinator: Combinator{
+					Name: fmt.Sprintf("%v%v", c.Combinator.Name, *c.Combinator.TypeExpressions[0].Number),
+				},
+				End: c.End,
+			}
+		} else if len(c.Combinator.TypeExpressions) > 0 {
 			return "", fmt.Errorf("combinators with paramaters '%v' are not supported", c.Combinator.Name)
 		}
 		f := false
@@ -153,6 +164,9 @@ func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[strin
 		} else if field.NamedField != nil {
 			name = field.NamedField.Name
 			e = field.NamedField.Expression
+		} else if field.TypeRef != nil {
+			builder.WriteString(fmt.Sprintf("%s\n", field.TypeRef.Name))
+			continue
 		}
 		if name == "" || name == "_" {
 			name = fmt.Sprintf("Field%v", i)

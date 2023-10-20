@@ -24,6 +24,7 @@ var (
 type TLB struct {
 	Declarations []CombinatorDeclaration `@@*`
 }
+
 type CombinatorDeclaration struct {
 	Constructor      Constructor       `@@`
 	FieldDefinitions []FieldDefinition `@@*`
@@ -31,6 +32,7 @@ type CombinatorDeclaration struct {
 	Combinator       Combinator        `@@`
 	End              string            `";"`
 }
+
 type Constructor struct {
 	Name   string `@Ident`
 	Prefix string `@(HexTag|BinTag)?`
@@ -46,16 +48,21 @@ type FieldDefinition struct {
 	NamedField *NamedField         `| @@`
 	Anon       *ParenExpression    `| @@`
 	CellRef    *CellRef            `| @@`
+	TypeRef    *TypeRef            `| @@`
 }
 
 func (fd FieldDefinition) IsEmpty() bool {
-	return fd.NamedField == nil && fd.CellRef == nil && fd.Implicit == nil && fd.Anon == nil
+	return fd.NamedField == nil && fd.CellRef == nil && fd.Implicit == nil && fd.Anon == nil && fd.TypeRef == nil
 }
 
 type NamedField struct {
 	Name       string         `@(Ident|"_")`
 	Sep        string         `":"`
 	Expression TypeExpression `@@`
+}
+
+type TypeRef struct {
+	Name string `@Ident`
 }
 
 type ImplicitDefinition struct {

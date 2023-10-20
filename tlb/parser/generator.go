@@ -38,6 +38,7 @@ var (
 		"uint64":             {"uint64", false},
 		"Bool":               {"bool", false},
 		"True":               {"struct{}", false},
+		"Unit":               {"struct{}", false},
 		"Cell":               {"tlb.Any", false},
 		"MsgAddress":         {"tlb.MsgAddress", false},
 		"Coins":              {"tlb.Grams", false},

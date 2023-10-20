@@ -1,0 +1,245 @@
+
+
+type InternalMsgBody struct {
+	tlb.SumType
+	Transfer struct {
+		QueryId             uint64
+		NewOwner            tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+		ForwardAmount       tlb.VarUInteger16
+		ForwardPayload      tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#5fcc3d14"`
+	SettleConditionals struct {
+		FromA                bool
+		Signature            tlb.Bits512
+		Tag                  uint32
+		ChannelId            tlb.Uint128
+		ConditionalsToSettle tlb.HashmapE[tlb.Uint32, tlb.Any]
+	} `tlbSumType:""`
+	OwnershipAssigned struct {
+		QueryId        uint64
+		PrevOwner      tlb.MsgAddress
+		ForwardPayload tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#05138d91"`
+	Excesses struct {
+		QueryId uint64
+	} `tlbSumType:"#d53276db"`
+	GetStaticData struct {
+		QueryId uint64
+	} `tlbSumType:"#2fcb26a2"`
+	ReportStaticData struct {
+		QueryId    uint64
+		Index      tlb.Uint256
+		Collection tlb.MsgAddress
+	} `tlbSumType:"#8b771735"`
+	GetRoyaltyParams struct {
+		QueryId uint64
+	} `tlbSumType:"#693d3950"`
+	ReportRoyaltyParams struct {
+		QueryId     uint64
+		Numerator   uint16
+		Denominator uint16
+		Destination tlb.MsgAddress
+	} `tlbSumType:"#a8cb00ad"`
+	Transfer struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		Destination         tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+		ForwardTonAmount    tlb.VarUInteger16
+		ForwardPayload      tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#0f8a7ea5"`
+	TransferNotification struct {
+		QueryId        uint64
+		Amount         tlb.VarUInteger16
+		Sender         tlb.MsgAddress
+		ForwardPayload tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#7362d09c"`
+	Burn struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+	} `tlbSumType:"#595f07bc"`
+	ProveOwnership struct {
+		QueryId        uint64
+		Dest           tlb.MsgAddress
+		ForwardPayload tlb.Any `tlb:"^"`
+		WithContent    bool
+	} `tlbSumType:"#04ded148"`
+	OwnershipProof struct {
+		QueryId   uint64
+		ItemId    tlb.Uint256
+		Owner     tlb.MsgAddress
+		Data      tlb.Any `tlb:"^"`
+		RevokedAt uint64
+		Content   *tlb.Any `tlb:"maybe^"`
+	} `tlbSumType:"#0524c7ae"`
+	RequestOwner struct {
+		QueryId        uint64
+		Dest           tlb.MsgAddress
+		ForwardPayload tlb.Any `tlb:"^"`
+		WithContent    bool
+	} `tlbSumType:"#d0c3bfea"`
+	OwnerInfo struct {
+		QueryId   uint64
+		ItemId    tlb.Uint256
+		Initiator tlb.MsgAddress
+		Owner     tlb.MsgAddress
+		Data      tlb.Any `tlb:"^"`
+		RevokedAt uint64
+		Content   *tlb.Any `tlb:"maybe^"`
+	} `tlbSumType:"#0dd607e3"`
+	TopUpBalance struct {
+		AddA tlb.Grams
+		AddB tlb.Grams
+	} `tlbSumType:""`
+	FinishUncooperativeClose struct{} `tlbSumType:""`
+	InitChannel              struct {
+		IsA       bool
+		Signature tlb.Bits512
+		Tag       uint32
+		ChannelId tlb.Uint128
+		BalanceA  tlb.Grams
+		BalanceB  tlb.Grams
+	} `tlbSumType:""`
+	CooperativeClose struct {
+		SigA      tlb.Bits512 `tlb:"^"`
+		SigB      tlb.Bits512 `tlb:"^"`
+		Tag       uint32
+		ChannelId tlb.Uint128
+		BalanceA  tlb.Grams
+		BalanceB  tlb.Grams
+		SeqnoA    uint64
+		SeqnoB    uint64
+	} `tlbSumType:""`
+	CooperativeCommit struct {
+		SigA      tlb.Bits512 `tlb:"^"`
+		SigB      tlb.Bits512 `tlb:"^"`
+		Tag       uint32
+		ChannelId tlb.Uint128
+		SeqnoA    uint64
+		SeqnoB    uint64
+	} `tlbSumType:""`
+	StartUncooperativeClose struct {
+		SignedByA bool
+		Signature tlb.Bits512
+		Tag       uint32
+		ChannelId tlb.Uint128
+		SchA      SignedSemiChannel `tlb:"^"`
+		SchB      SignedSemiChannel `tlb:"^"`
+	} `tlbSumType:""`
+	ChallengeQuarantinedState struct {
+		ChallengedByA bool
+		Signature     tlb.Bits512
+		Tag           uint32
+		ChannelId     tlb.Uint128
+		SchA          SignedSemiChannel `tlb:"^"`
+		SchB          SignedSemiChannel `tlb:"^"`
+	} `tlbSumType:""`
+}
+
+type Text struct {
+	Data tlb.SnakeData
+}
+
+type ContentData struct {
+	tlb.SumType
+	Snake struct {
+		Data tlb.SnakeData
+	} `tlbSumType:"#00"`
+	Chunks struct {
+		Data tlb.ChunkedData
+	} `tlbSumType:"#01"`
+}
+
+type FullContent struct {
+	tlb.SumType
+	Onchain struct {
+		Data tlb.HashmapE[tlb.Bits256, ContentData]
+	} `tlbSumType:"#00"`
+	Offchain struct {
+		Uri tlb.Text
+	} `tlbSumType:"#01"`
+}
+
+type DNSRecord struct {
+	tlb.SumType
+	DnsText struct {
+		Field0 tlb.Text
+	} `tlbSumType:"#1eda"`
+	DnsNextResolver struct {
+		Resolver MsgAddressInt
+	} `tlbSumType:"#ba93"`
+	DnsAdnlAddress struct {
+		AdnlAddr  tlb.Bits256
+		Flags     uint8
+		ProtoList UnknownType
+	} `tlbSumType:"#ad01"`
+	DnsSmcAddress struct {
+		SmcAddr MsgAddressInt
+		Flags   uint8
+		CapList UnknownType
+	} `tlbSumType:"#9fd3"`
+}
+
+type DNS_RecordSet struct {
+	Field0 UnknownType
+}
+
+type ConditionalPayment struct {
+	Amount    tlb.Grams
+	Condition tlb.Any
+}
+
+type SemiChannelBody struct {
+	Seqno        uint64
+	Sent         tlb.Grams
+	Conditionals tlb.HashmapE[tlb.Uint32, ConditionalPayment]
+}
+
+type SemiChannel struct {
+	Magic            tlb.Magic `tlb:"#43685374"`
+	ChannelId        tlb.Uint128
+	Data             SemiChannelBody
+	CounterpartyData *SemiChannelBody `tlb:"maybe^"`
+}
+
+type SignedSemiChannel struct {
+	Signature tlb.Bits512
+	State     SemiChannel
+}
+
+type QuarantinedState struct {
+	StateA           SemiChannelBody
+	StateB           SemiChannelBody
+	QuarantineStarts uint32
+	StateCommitedByA bool
+}
+
+type ClosingConfig struct {
+	QuarantinDuration        uint32
+	MisbehaviorFine          tlb.Grams
+	ConditionalCloseDuration uint32
+}
+
+type PaymentConfig struct {
+	ExcessFee tlb.Grams
+	DestA     tlb.MsgAddress
+	DestB     tlb.MsgAddress
+}
+
+type Storage struct {
+	BalanceA       tlb.Grams
+	BalanceB       tlb.Grams
+	KeyA           tlb.Uint256
+	KeyB           tlb.Uint256
+	ChannelId      tlb.Uint128
+	Config         ClosingConfig `tlb:"^"`
+	CommitedSeqnoA uint32
+	CommitedSeqnoB uint32
+	Quarantin      *QuarantinedState `tlb:"maybe^"`
+	Payments       PaymentConfig     `tlb:"^"`
+}

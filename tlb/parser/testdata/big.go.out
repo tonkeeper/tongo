@@ -186,7 +186,7 @@ type DNSRecord struct {
 }
 
 type DNS_RecordSet struct {
-	Field0 UnknownType
+	Value tlb.Hashmap[tlb.Bits256, tlb.DNSRecord]
 }
 
 type ConditionalPayment struct {

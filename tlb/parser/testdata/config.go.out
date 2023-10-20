@@ -14,7 +14,7 @@ type BlockCreateFees struct {
 }
 
 type ConfigParam14 struct {
-	BlockCreateFees
+	BlockCreateFees BlockCreateFees
 }
 
 type WorkchainFormat0 struct {
@@ -35,5 +35,5 @@ type StoragePrices struct {
 }
 
 type ConfigParam18 struct {
-	tlb.Hashmap[tlb.Uint32, StoragePrices]
+	Value tlb.Hashmap[tlb.Uint32, StoragePrices]
 }

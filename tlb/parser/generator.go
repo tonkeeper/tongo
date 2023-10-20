@@ -166,7 +166,7 @@ func fieldDefinitionsToStruct(definitions []FieldDefinition, knownTypes map[stri
 			name = field.NamedField.Name
 			e = field.NamedField.Expression
 		} else if field.TypeRef != nil {
-			builder.WriteString(fmt.Sprintf("%s\n", field.TypeRef.Name))
+			builder.WriteString(fmt.Sprintf("%s %s\n", field.TypeRef.Name, field.TypeRef.Name))
 			continue
 		}
 		if field.Anon != nil {
@@ -174,7 +174,7 @@ func fieldDefinitionsToStruct(definitions []FieldDefinition, knownTypes map[stri
 			if err != nil {
 				return "", err
 			}
-			value := fmt.Sprintf("%s\n", t.String())
+			value := fmt.Sprintf("Value %s\n", t.String())
 			builder.WriteString(value)
 			continue
 		}

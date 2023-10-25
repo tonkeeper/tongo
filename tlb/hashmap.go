@@ -3,13 +3,14 @@ package tlb
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 )
 
 type fixedSize interface {
 	FixedSize() int
-	comparable
+	Equal(other any) bool
 }
 
 // HashmapItem represents a key-value pair stored in HashmapE[T].
@@ -194,7 +195,7 @@ func (h Hashmap[keyT, T]) Keys() []keyT {
 
 func (h Hashmap[keyT, T]) Get(key keyT) (T, bool) {
 	for i, k := range h.keys {
-		if k == key {
+		if k.Equal(key) {
 			return h.values[i], true
 		}
 	}
@@ -202,7 +203,7 @@ func (h Hashmap[keyT, T]) Get(key keyT) (T, bool) {
 }
 func (h Hashmap[keyT, T]) Put(key keyT, value T) {
 	for i, k := range h.keys {
-		if k == key {
+		if k.Equal(key) {
 			h.values[i] = value
 			return
 		}
@@ -545,7 +546,7 @@ func (h Hashmap[keyT, T]) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		m[string(key)] = item.Value
+		m[strings.Trim(string(key), "\"")] = item.Value
 	}
 	return json.Marshal(m)
 }

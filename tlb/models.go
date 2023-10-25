@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 	"strconv"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -138,7 +139,7 @@ func (h HashmapE[keyT, T]) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		m[string(key)] = item.Value
+		m[strings.Trim(string(key), "\"")] = item.Value
 	}
 	return json.Marshal(m)
 }

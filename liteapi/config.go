@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
@@ -56,6 +57,9 @@ type BlockchainConfig struct {
 	ConfigParam79 *tlb.ConfigParam79
 	ConfigParam81 *tlb.ConfigParam81
 	ConfigParam82 *tlb.ConfigParam82
+
+	ConfigParamNegative71  *boc.Cell
+	ConfigParamNegative999 *boc.Cell
 }
 
 func (conf *BlockchainConfig) ConfigAddr() (ton.AccountID, bool) {
@@ -119,16 +123,27 @@ func ConvertBlockchainConfig(params tlb.ConfigParams) (*BlockchainConfig, error)
 	conf := &BlockchainConfig{}
 	confVal := reflect.ValueOf(conf).Elem()
 	for _, item := range params.Config.Items() {
-		name := fmt.Sprintf("ConfigParam%d", item.Key)
+		key := int32(item.Key)
+		if key >= 0 {
+			name := fmt.Sprintf("ConfigParam%d", key)
+			field := confVal.FieldByName(name)
+			if !field.IsValid() {
+				continue
+			}
+			value := reflect.New(field.Type())
+			if err := tlb.Unmarshal(&item.Value.Value, value.Interface()); err != nil {
+				return nil, err
+			}
+			field.Set(value.Elem())
+			continue
+		}
+		// negative key
+		name := fmt.Sprintf("ConfigParamNegative%d", -key)
 		field := confVal.FieldByName(name)
 		if !field.IsValid() {
 			continue
 		}
-		value := reflect.New(field.Type())
-		if err := tlb.Unmarshal(&item.Value.Value, value.Interface()); err != nil {
-			return nil, err
-		}
-		field.Set(value.Elem())
+		field.Set(reflect.ValueOf(&item.Value.Value))
 	}
 	return conf, nil
 }

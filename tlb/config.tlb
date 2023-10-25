@@ -192,10 +192,10 @@ size_limits_config_v2#02 max_msg_bits:uint32 max_msg_cells:uint32 max_library_ce
 _ SizeLimitsConfig = ConfigParam 43;
 
 // key is [ wc:int32 addr:uint256 ]
-suspended_address_list#00 addresses:(HashmapE 288 Unit) suspended_until:uint32 = SuspendedAddressList;
+suspended_address_list#00 addresses:(HashmapE AddressWithWorkchain Unit) suspended_until:uint32 = SuspendedAddressList;
 _ SuspendedAddressList = ConfigParam 44;
 
-oracle_bridge_params#_ bridge_address:bits256 oracle_mutlisig_address:bits256 oracles:(HashmapE 256 uint256) external_chain_address:bits256 = OracleBridgeParams;
+oracle_bridge_params#_ bridge_address:bits256 oracle_mutlisig_address:bits256 oracles:(HashmapE 256 bits256) external_chain_address:bits256 = OracleBridgeParams;
 _ OracleBridgeParams = ConfigParam 71; // Ethereum bridge
 _ OracleBridgeParams = ConfigParam 72; // Binance Smart Chain bridge
 _ OracleBridgeParams = ConfigParam 73; // Polygon bridge
@@ -207,8 +207,8 @@ jetton_bridge_prices#_ bridge_burn_fee:Coins bridge_mint_fee:Coins
                        minter_min_tons_for_storage:Coins
                        discover_gas_consumption:Coins = JettonBridgePrices;
 
-jetton_bridge_params_v0#00 bridge_address:bits256 oracles_address:bits256 oracles:(HashmapE 256 uint256) state_flags:uint8 burn_bridge_fee:Coins = JettonBridgeParams;
-jetton_bridge_params_v1#01 bridge_address:bits256 oracles_address:bits256 oracles:(HashmapE 256 uint256) state_flags:uint8 prices:^JettonBridgePrices external_chain_address:bits256 = JettonBridgeParams;
+jetton_bridge_params_v0#00 bridge_address:bits256 oracles_address:bits256 oracles:(HashmapE 256 bits256) state_flags:uint8 burn_bridge_fee:Coins = JettonBridgeParams;
+jetton_bridge_params_v1#01 bridge_address:bits256 oracles_address:bits256 oracles:(HashmapE 256 bits256) state_flags:uint8 prices:^JettonBridgePrices external_chain_address:bits256 = JettonBridgeParams;
 
 _ JettonBridgeParams = ConfigParam 79; // ETH->TON token bridge
 _ JettonBridgeParams = ConfigParam 81; // BNB->TON token bridge

@@ -27,30 +27,31 @@ type Generator struct {
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":                  {"uint32", false},
-		"int8":               {"int8", false},
-		"int16":              {"int16", false},
-		"int32":              {"int32", false},
-		"int64":              {"int64", false},
-		"uint8":              {"uint8", false},
-		"uint16":             {"uint16", false},
-		"uint32":             {"uint32", false},
-		"uint64":             {"uint64", false},
-		"Bool":               {"bool", false},
-		"True":               {"struct{}", false},
-		"Unit":               {"struct{}", false},
-		"Cell":               {"tlb.Any", false},
-		"MsgAddress":         {"tlb.MsgAddress", false},
-		"Coins":              {"tlb.Grams", false},
-		"Grams":              {"tlb.Grams", false},
-		"Text":               {"tlb.Text", false},
-		"Bytes":              {"tlb.Bytes", false},
-		"FixedLengthText":    {"tlb.FixedLengthText", false},
-		"SnakeData":          {"tlb.SnakeData", false},
-		"ChunkedData":        {"tlb.ChunkedData", false},
-		"DNSRecord":          {"tlb.DNSRecord", false},
-		"DNS_RecordSet":      {"tlb.DNSRecordSet", false},
-		"CurrencyCollection": {"tlb.CurrencyCollection", false},
+		"#":                    {"uint32", false},
+		"int8":                 {"int8", false},
+		"int16":                {"int16", false},
+		"int32":                {"int32", false},
+		"int64":                {"int64", false},
+		"uint8":                {"uint8", false},
+		"uint16":               {"uint16", false},
+		"uint32":               {"uint32", false},
+		"uint64":               {"uint64", false},
+		"Bool":                 {"bool", false},
+		"True":                 {"struct{}", false},
+		"Unit":                 {"struct{}", false},
+		"Cell":                 {"tlb.Any", false},
+		"MsgAddress":           {"tlb.MsgAddress", false},
+		"AddressWithWorkchain": {"tlb.AddressWithWorkchain", false},
+		"Coins":                {"tlb.Grams", false},
+		"Grams":                {"tlb.Grams", false},
+		"Text":                 {"tlb.Text", false},
+		"Bytes":                {"tlb.Bytes", false},
+		"FixedLengthText":      {"tlb.FixedLengthText", false},
+		"SnakeData":            {"tlb.SnakeData", false},
+		"ChunkedData":          {"tlb.ChunkedData", false},
+		"DNSRecord":            {"tlb.DNSRecord", false},
+		"DNS_RecordSet":        {"tlb.DNSRecordSet", false},
+		"CurrencyCollection":   {"tlb.CurrencyCollection", false},
 	}
 )
 
@@ -306,15 +307,24 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 		if len(t.Parameter) != 2 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for HashmapE")
 		}
-		if t.Parameter[0].Number == nil {
+		if t.Parameter[0].Number == nil && t.Parameter[0].NamedRef == nil {
 			return golangType{}, fmt.Errorf("invalid bitsize type for HashmapE")
 		}
-		size := mapBitsSizeToType(*t.Parameter[0].Number)
 		p, err := t.Parameter[1].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
-		res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), size.String(), p.String())
+		if t.Parameter[0].Number != nil {
+			size := mapBitsSizeToType(*t.Parameter[0].Number)
+			res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), size.String(), p.String())
+			return res, nil
+		}
+
+		param0Type, ok := knownTypes[*t.Parameter[0].NamedRef]
+		if !ok {
+			return golangType{}, fmt.Errorf("unknown type %v", *t.Parameter[0].BuiltIn)
+		}
+		res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), param0Type.Name, p.String())
 		return res, nil
 	case "Maybe":
 		if len(t.Parameter) != 1 {

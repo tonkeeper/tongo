@@ -25,7 +25,7 @@ func main() {
 	file := parser.File{
 		Name:    "config.go",
 		Package: "tlb",
-		Imports: []string{},
+		Imports: []string{"encoding/json", "fmt"},
 		Code:    s,
 	}
 	if err := file.Save(); err != nil {

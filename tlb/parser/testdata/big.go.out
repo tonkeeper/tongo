@@ -141,6 +141,145 @@ type InternalMsgBody struct {
 	} `tlbSumType:""`
 }
 
+func (t *InternalMsgBody) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Transfer":
+		bytes, err := json.Marshal(t.Transfer)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Transfer","Transfer":%v}`, string(bytes))), nil
+	case "SettleConditionals":
+		bytes, err := json.Marshal(t.SettleConditionals)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SettleConditionals","SettleConditionals":%v}`, string(bytes))), nil
+	case "OwnershipAssigned":
+		bytes, err := json.Marshal(t.OwnershipAssigned)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "OwnershipAssigned","OwnershipAssigned":%v}`, string(bytes))), nil
+	case "Excesses":
+		bytes, err := json.Marshal(t.Excesses)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Excesses","Excesses":%v}`, string(bytes))), nil
+	case "GetStaticData":
+		bytes, err := json.Marshal(t.GetStaticData)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "GetStaticData","GetStaticData":%v}`, string(bytes))), nil
+	case "ReportStaticData":
+		bytes, err := json.Marshal(t.ReportStaticData)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ReportStaticData","ReportStaticData":%v}`, string(bytes))), nil
+	case "GetRoyaltyParams":
+		bytes, err := json.Marshal(t.GetRoyaltyParams)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "GetRoyaltyParams","GetRoyaltyParams":%v}`, string(bytes))), nil
+	case "ReportRoyaltyParams":
+		bytes, err := json.Marshal(t.ReportRoyaltyParams)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ReportRoyaltyParams","ReportRoyaltyParams":%v}`, string(bytes))), nil
+	case "Transfer":
+		bytes, err := json.Marshal(t.Transfer)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Transfer","Transfer":%v}`, string(bytes))), nil
+	case "TransferNotification":
+		bytes, err := json.Marshal(t.TransferNotification)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "TransferNotification","TransferNotification":%v}`, string(bytes))), nil
+	case "Burn":
+		bytes, err := json.Marshal(t.Burn)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Burn","Burn":%v}`, string(bytes))), nil
+	case "ProveOwnership":
+		bytes, err := json.Marshal(t.ProveOwnership)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ProveOwnership","ProveOwnership":%v}`, string(bytes))), nil
+	case "OwnershipProof":
+		bytes, err := json.Marshal(t.OwnershipProof)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "OwnershipProof","OwnershipProof":%v}`, string(bytes))), nil
+	case "RequestOwner":
+		bytes, err := json.Marshal(t.RequestOwner)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RequestOwner","RequestOwner":%v}`, string(bytes))), nil
+	case "OwnerInfo":
+		bytes, err := json.Marshal(t.OwnerInfo)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "OwnerInfo","OwnerInfo":%v}`, string(bytes))), nil
+	case "TopUpBalance":
+		bytes, err := json.Marshal(t.TopUpBalance)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "TopUpBalance","TopUpBalance":%v}`, string(bytes))), nil
+	case "FinishUncooperativeClose":
+		bytes, err := json.Marshal(t.FinishUncooperativeClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "FinishUncooperativeClose","FinishUncooperativeClose":%v}`, string(bytes))), nil
+	case "InitChannel":
+		bytes, err := json.Marshal(t.InitChannel)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "InitChannel","InitChannel":%v}`, string(bytes))), nil
+	case "CooperativeClose":
+		bytes, err := json.Marshal(t.CooperativeClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CooperativeClose","CooperativeClose":%v}`, string(bytes))), nil
+	case "CooperativeCommit":
+		bytes, err := json.Marshal(t.CooperativeCommit)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CooperativeCommit","CooperativeCommit":%v}`, string(bytes))), nil
+	case "StartUncooperativeClose":
+		bytes, err := json.Marshal(t.StartUncooperativeClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "StartUncooperativeClose","StartUncooperativeClose":%v}`, string(bytes))), nil
+	case "ChallengeQuarantinedState":
+		bytes, err := json.Marshal(t.ChallengeQuarantinedState)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ChallengeQuarantinedState","ChallengeQuarantinedState":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type Text struct {
 	Data tlb.SnakeData
 }
@@ -155,6 +294,25 @@ type ContentData struct {
 	} `tlbSumType:"#01"`
 }
 
+func (t *ContentData) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Snake":
+		bytes, err := json.Marshal(t.Snake)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Snake","Snake":%v}`, string(bytes))), nil
+	case "Chunks":
+		bytes, err := json.Marshal(t.Chunks)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Chunks","Chunks":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type FullContent struct {
 	tlb.SumType
 	Onchain struct {
@@ -163,6 +321,25 @@ type FullContent struct {
 	Offchain struct {
 		Uri tlb.Text
 	} `tlbSumType:"#01"`
+}
+
+func (t *FullContent) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Onchain":
+		bytes, err := json.Marshal(t.Onchain)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Onchain","Onchain":%v}`, string(bytes))), nil
+	case "Offchain":
+		bytes, err := json.Marshal(t.Offchain)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Offchain","Offchain":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
 }
 
 type DNSRecord struct {
@@ -183,6 +360,37 @@ type DNSRecord struct {
 		Flags   uint8
 		CapList UnknownType
 	} `tlbSumType:"#9fd3"`
+}
+
+func (t *DNSRecord) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "DnsText":
+		bytes, err := json.Marshal(t.DnsText)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsText","DnsText":%v}`, string(bytes))), nil
+	case "DnsNextResolver":
+		bytes, err := json.Marshal(t.DnsNextResolver)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsNextResolver","DnsNextResolver":%v}`, string(bytes))), nil
+	case "DnsAdnlAddress":
+		bytes, err := json.Marshal(t.DnsAdnlAddress)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsAdnlAddress","DnsAdnlAddress":%v}`, string(bytes))), nil
+	case "DnsSmcAddress":
+		bytes, err := json.Marshal(t.DnsSmcAddress)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsSmcAddress","DnsSmcAddress":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
 }
 
 type DNS_RecordSet struct {

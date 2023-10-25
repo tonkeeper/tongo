@@ -216,7 +216,25 @@ func (g *Generator) generateGolangSumType(declarations []CombinatorDeclaration, 
 		builder.WriteString(fmt.Sprintf(" `tlbSumType:\"%v\"`", d.Constructor.Prefix))
 		builder.WriteRune('\n')
 	}
-	builder.WriteRune('}')
+	builder.WriteString("}\n")
+
+	builder.WriteString(fmt.Sprintf(`func (t *%v) MarshalJSON() ([]byte, error) {`, typeName))
+	builder.WriteString(`    switch t.SumType {`)
+	for _, d := range declarations {
+		name := utils.ToCamelCase(d.Constructor.Name)
+		builder.WriteString(fmt.Sprintf(`case "%v": `, name))
+		builder.WriteString(fmt.Sprintf(`bytes, err := json.Marshal(t.%v)`+"\n", name))
+		builder.WriteString("if err != nil {\n")
+		builder.WriteString("return nil, err\n")
+		builder.WriteString("}\n")
+		//builder.WriteString("return []byte(fmt.Sprintf(`{\"SumType\": %v}`, string(bytes))), nil")
+		builder.WriteString("return []byte(fmt.Sprintf(`{\"SumType\": \"" + name + "\",\"" + name + "\":%v}`, string(bytes))), nil\n")
+	}
+
+	builder.WriteString("default: ")
+	builder.WriteString(`return nil, fmt.Errorf("unknown sum type %v", t.SumType)`)
+	builder.WriteString("}\n")
+	builder.WriteString("}\n")
 	return builder.String(), nil
 
 }

@@ -109,7 +109,7 @@ func main() {
 	}
 
 	for _, f := range [][]string{
-		{types, "types.go", `"github.com/tonkeeper/tongo/tlb"`},
+		{types, "types.go", `"github.com/tonkeeper/tongo/tlb"`, `"fmt"`, `"encoding/json"`},
 		{msgDecoder, "messages.go", `"fmt"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{getMethods, "get_methods.go", `"context"`, `"fmt"`, `"github.com/tonkeeper/tongo/ton"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{invocationOrder, "ordering.go", `"github.com/tonkeeper/tongo/ton"`},

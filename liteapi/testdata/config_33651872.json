@@ -174,36 +174,11 @@
   "ConfigParam20": {
     "GasLimitsPrices": {
       "SumType": "GasFlatPfx",
-      "GasPrices": {
-        "GasPrice": 0,
-        "GasLimit": 0,
-        "GasCredit": 0,
-        "BlockGasLimit": 0,
-        "FreezeDueLimit": 0,
-        "DeleteDueLimit": 0
-      },
-      "GasPricesExt": {
-        "GasPrice": 0,
-        "GasLimit": 0,
-        "SpecialGasLimit": 0,
-        "GasCredit": 0,
-        "BlockGasLimit": 0,
-        "FreezeDueLimit": 0,
-        "DeleteDueLimit": 0
-      },
       "GasFlatPfx": {
         "FlatGasLimit": 100,
         "FlatGasPrice": 1000000,
         "Other": {
           "SumType": "GasPricesExt",
-          "GasPrices": {
-            "GasPrice": 0,
-            "GasLimit": 0,
-            "GasCredit": 0,
-            "BlockGasLimit": 0,
-            "FreezeDueLimit": 0,
-            "DeleteDueLimit": 0
-          },
           "GasPricesExt": {
             "GasPrice": 655360000,
             "GasLimit": 1000000,
@@ -212,11 +187,6 @@
             "BlockGasLimit": 37000000,
             "FreezeDueLimit": 100000000,
             "DeleteDueLimit": 1000000000
-          },
-          "GasFlatPfx": {
-            "FlatGasLimit": 0,
-            "FlatGasPrice": 0,
-            "Other": null
           }
         }
       }
@@ -225,36 +195,11 @@
   "ConfigParam21": {
     "GasLimitsPrices": {
       "SumType": "GasFlatPfx",
-      "GasPrices": {
-        "GasPrice": 0,
-        "GasLimit": 0,
-        "GasCredit": 0,
-        "BlockGasLimit": 0,
-        "FreezeDueLimit": 0,
-        "DeleteDueLimit": 0
-      },
-      "GasPricesExt": {
-        "GasPrice": 0,
-        "GasLimit": 0,
-        "SpecialGasLimit": 0,
-        "GasCredit": 0,
-        "BlockGasLimit": 0,
-        "FreezeDueLimit": 0,
-        "DeleteDueLimit": 0
-      },
       "GasFlatPfx": {
         "FlatGasLimit": 100,
         "FlatGasPrice": 100000,
         "Other": {
           "SumType": "GasPricesExt",
-          "GasPrices": {
-            "GasPrice": 0,
-            "GasLimit": 0,
-            "GasCredit": 0,
-            "BlockGasLimit": 0,
-            "FreezeDueLimit": 0,
-            "DeleteDueLimit": 0
-          },
           "GasPricesExt": {
             "GasPrice": 65536000,
             "GasLimit": 1000000,
@@ -263,11 +208,6 @@
             "BlockGasLimit": 10000000,
             "FreezeDueLimit": 100000000,
             "DeleteDueLimit": 1000000000
-          },
-          "GasFlatPfx": {
-            "FlatGasLimit": 0,
-            "FlatGasPrice": 0,
-            "Other": null
           }
         }
       }
@@ -344,12 +284,6 @@
   "ConfigParam28": {
     "CatchainConfig": {
       "SumType": "CatchainConfigNew",
-      "CatchainConfig": {
-        "McCatchainLifetime": 0,
-        "ShardCatchainLifetime": 0,
-        "ShardValidatorsLifetime": 0,
-        "ShardValidatorsNum": 0
-      },
       "CatchainConfigNew": {
         "Flags": 0,
         "ShuffleMcValidators": true,
@@ -363,41 +297,6 @@
   "ConfigParam29": {
     "ConsensusConfig": {
       "SumType": "ConsensusConfigV4",
-      "ConsensusConfig": {
-        "RoundCandidates": 0,
-        "NextCandidateDelayMs": 0,
-        "ConsensusTimeoutMs": 0,
-        "FastAttempts": 0,
-        "AttemptDuration": 0,
-        "CatchainMaxDeps": 0,
-        "MaxBlockBytes": 0,
-        "MaxCollatedBytes": 0
-      },
-      "ConsensusConfigNew": {
-        "Flags": 0,
-        "NewCatchainIds": false,
-        "RoundCandidates": 0,
-        "NextCandidateDelayMs": 0,
-        "ConsensusTimeoutMs": 0,
-        "FastAttempts": 0,
-        "AttemptDuration": 0,
-        "CatchainMaxDeps": 0,
-        "MaxBlockBytes": 0,
-        "MaxCollatedBytes": 0
-      },
-      "ConsensusConfigV3": {
-        "Flags": 0,
-        "NewCatchainIds": false,
-        "RoundCandidates": 0,
-        "NextCandidateDelayMs": 0,
-        "ConsensusTimeoutMs": 0,
-        "FastAttempts": 0,
-        "AttemptDuration": 0,
-        "CatchainMaxDeps": 0,
-        "MaxBlockBytes": 0,
-        "MaxCollatedBytes": 0,
-        "ProtoVersion": 0
-      },
       "ConsensusConfigV4": {
         "Flags": 0,
         "NewCatchainIds": true,
@@ -427,13 +326,6 @@
   "ConfigParam32": {
     "PrevValidators": {
       "SumType": "ValidatorsExt",
-      "Validators": {
-        "UtimeSince": 0,
-        "UtimeUntil": 0,
-        "Total": 0,
-        "Main": 0,
-        "List": {}
-      },
       "ValidatorsExt": {
         "UtimeSince": 1698123528,
         "UtimeUntil": 1698189064,
@@ -4229,13 +4121,6 @@
   "ConfigParam34": {
     "CurValidators": {
       "SumType": "ValidatorsExt",
-      "Validators": {
-        "UtimeSince": 0,
-        "UtimeUntil": 0,
-        "Total": 0,
-        "Main": 0,
-        "List": {}
-      },
       "ValidatorsExt": {
         "UtimeSince": 1698189064,
         "UtimeUntil": 1698254600,
@@ -8309,13 +8194,6 @@
   "ConfigParam79": {
     "JettonBridgeParams": {
       "SumType": "JettonBridgeParamsV1",
-      "JettonBridgeParamsV0": {
-        "BridgeAddress": "0000000000000000000000000000000000000000000000000000000000000000",
-        "OraclesAddress": "0000000000000000000000000000000000000000000000000000000000000000",
-        "Oracles": {},
-        "StateFlags": 0,
-        "BurnBridgeFee": "0"
-      },
       "JettonBridgeParamsV1": {
         "BridgeAddress": "b525eb5b3c5f6e6dcd606bee7ba07a0ec83035212849b7e0559499c0f6bad54d",
         "OraclesAddress": "211f1574bf623d14787708c5fdd565e329a25abfa49095e984426f19bcf04974",

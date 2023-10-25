@@ -66,11 +66,11 @@ type ConfigParam8 struct {
 }
 
 type ConfigParam9 struct {
-	MandatoryParams Hashmap[Uint32, struct{}]
+	MandatoryParams Hashmap[Int32, struct{}]
 }
 
 type ConfigParam10 struct {
-	CriticalParams Hashmap[Uint32, struct{}]
+	CriticalParams Hashmap[Int32, struct{}]
 }
 
 type ConfigProposalSetup struct {
@@ -471,7 +471,7 @@ type ConfigParam43 struct {
 
 type SuspendedAddressList struct {
 	Magic          Magic `tlb:"#00"`
-	Addresses      HashmapE[Bits288, struct{}]
+	Addresses      HashmapE[AddressWithWorkchain, struct{}]
 	SuspendedUntil uint32
 }
 
@@ -482,7 +482,7 @@ type ConfigParam44 struct {
 type OracleBridgeParams struct {
 	BridgeAddress         Bits256
 	OracleMutlisigAddress Bits256
-	Oracles               HashmapE[Bits256, Uint256]
+	Oracles               HashmapE[Bits256, Bits256]
 	ExternalChainAddress  Bits256
 }
 
@@ -512,14 +512,14 @@ type JettonBridgeParams struct {
 	JettonBridgeParamsV0 struct {
 		BridgeAddress  Bits256
 		OraclesAddress Bits256
-		Oracles        HashmapE[Bits256, Uint256]
+		Oracles        HashmapE[Bits256, Bits256]
 		StateFlags     uint8
 		BurnBridgeFee  Grams
 	} `tlbSumType:"#00"`
 	JettonBridgeParamsV1 struct {
 		BridgeAddress        Bits256
 		OraclesAddress       Bits256
-		Oracles              HashmapE[Bits256, Uint256]
+		Oracles              HashmapE[Bits256, Bits256]
 		StateFlags           uint8
 		Prices               JettonBridgePrices `tlb:"^"`
 		ExternalChainAddress Bits256

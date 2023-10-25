@@ -49,7 +49,6 @@ func TestConvertBlockchainConfig(t *testing.T) {
 			if string(expected) != string(bs) {
 				t.Fatalf("expected: %s\nactual: %s", expected, bs)
 			}
-			t.Logf("config: %s", bs)
 		})
 	}
 }

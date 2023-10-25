@@ -1,6 +1,7 @@
 .idea
 liteapi/tmp
 liteapi/test.keys
+liteapi/testdata/*.output.json
 temp
 testdata/*.output.json
 tlb/testdata/*.output.json

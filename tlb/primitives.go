@@ -57,6 +57,7 @@ func (m *Magic) ValidateTag(c *boc.Cell, tag string) error {
 		if x != y {
 			return fmt.Errorf("magic prefix: %v not found ", tag)
 		}
+		*m = Magic(x)
 		return nil
 	}
 	a = strings.Split(tag, "#")
@@ -69,9 +70,14 @@ func (m *Magic) ValidateTag(c *boc.Cell, tag string) error {
 		if x != y {
 			return fmt.Errorf("magic prefix: %v not found ", tag)
 		}
+		*m = Magic(x)
 		return nil
 	}
 	return fmt.Errorf("unsupported tag: %v", tag)
+}
+
+func (m Magic) MarshalJSON() ([]byte, error) {
+	return json.Marshal(fmt.Sprintf("0x%x", uint32(m)))
 }
 
 func (m Magic) EncodeTag(c *boc.Cell, tag string) error {

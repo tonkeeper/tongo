@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -535,4 +536,16 @@ func (h HashmapE[keyT, T]) Get(key keyT) (T, bool) {
 
 func (h HashmapE[keyT, T]) Put(key keyT, value T) {
 	h.m.Put(key, value)
+}
+
+func (h Hashmap[keyT, T]) MarshalJSON() ([]byte, error) {
+	m := make(map[string]T, len(h.Keys()))
+	for _, item := range h.Items() {
+		key, err := json.Marshal(item.Key)
+		if err != nil {
+			return nil, err
+		}
+		m[string(key)] = item.Value
+	}
+	return json.Marshal(m)
 }

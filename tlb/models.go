@@ -132,9 +132,13 @@ type ExtraCurrencyCollection struct {
 }
 
 func (h HashmapE[keyT, T]) MarshalJSON() ([]byte, error) {
-	m := make(map[keyT]T, len(h.Keys()))
+	m := make(map[string]T, len(h.Keys()))
 	for _, item := range h.Items() {
-		m[item.Key] = item.Value
+		key, err := json.Marshal(item.Key)
+		if err != nil {
+			return nil, err
+		}
+		m[string(key)] = item.Value
 	}
 	return json.Marshal(m)
 }

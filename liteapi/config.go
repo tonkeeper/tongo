@@ -9,57 +9,66 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
+// BlockchainConfig represents the TON blockchain configuration stored inside key blocks.
+// This struct is a compromise between
+// a low-level cell-based representation of the config which is tlb.ConfigParams and something more convenient,
+// BlockchainConfig uses lots of tlb types but
+// 1. these tlb types are easy to navigate and
+// 2. BlockchainConfig can be easily serialized to JSON.
 type BlockchainConfig struct {
-	ConfigParam0  *tlb.ConfigParam0
-	ConfigParam1  *tlb.ConfigParam1
-	ConfigParam2  *tlb.ConfigParam2
-	ConfigParam3  *tlb.ConfigParam3
-	ConfigParam4  *tlb.ConfigParam4
-	ConfigParam5  *tlb.ConfigParam5
-	ConfigParam6  *tlb.ConfigParam6
-	ConfigParam7  *tlb.ConfigParam7
-	ConfigParam8  *tlb.ConfigParam8
-	ConfigParam9  *tlb.ConfigParam9
-	ConfigParam10 *tlb.ConfigParam10
-	ConfigParam11 *tlb.ConfigParam11
-	ConfigParam12 *tlb.ConfigParam12
-	ConfigParam13 *tlb.ConfigParam13
-	ConfigParam14 *tlb.ConfigParam14
-	ConfigParam15 *tlb.ConfigParam15
-	ConfigParam16 *tlb.ConfigParam16
-	ConfigParam17 *tlb.ConfigParam17
-	ConfigParam18 *tlb.ConfigParam18
-	ConfigParam20 *tlb.ConfigParam20
-	ConfigParam21 *tlb.ConfigParam21
-	ConfigParam22 *tlb.ConfigParam22
-	ConfigParam23 *tlb.ConfigParam23
-	ConfigParam24 *tlb.ConfigParam24
-	ConfigParam25 *tlb.ConfigParam25
+	ConfigParam0  *tlb.ConfigParam0  `json:",omitempty"`
+	ConfigParam1  *tlb.ConfigParam1  `json:",omitempty"`
+	ConfigParam2  *tlb.ConfigParam2  `json:",omitempty"`
+	ConfigParam3  *tlb.ConfigParam3  `json:",omitempty"`
+	ConfigParam4  *tlb.ConfigParam4  `json:",omitempty"`
+	ConfigParam5  *tlb.ConfigParam5  `json:",omitempty"`
+	ConfigParam6  *tlb.ConfigParam6  `json:",omitempty"`
+	ConfigParam7  *tlb.ConfigParam7  `json:",omitempty"`
+	ConfigParam8  *tlb.ConfigParam8  `json:",omitempty"`
+	ConfigParam9  *tlb.ConfigParam9  `json:",omitempty"`
+	ConfigParam10 *tlb.ConfigParam10 `json:",omitempty"`
+	ConfigParam11 *tlb.ConfigParam11 `json:",omitempty"`
+	ConfigParam12 *tlb.ConfigParam12 `json:",omitempty"`
+	ConfigParam13 *tlb.ConfigParam13 `json:",omitempty"`
+	ConfigParam14 *tlb.ConfigParam14 `json:",omitempty"`
+	ConfigParam15 *tlb.ConfigParam15 `json:",omitempty"`
+	ConfigParam16 *tlb.ConfigParam16 `json:",omitempty"`
+	ConfigParam17 *tlb.ConfigParam17 `json:",omitempty"`
+	ConfigParam18 *tlb.ConfigParam18 `json:",omitempty"`
+	ConfigParam20 *tlb.ConfigParam20 `json:",omitempty"`
+	ConfigParam21 *tlb.ConfigParam21 `json:",omitempty"`
+	ConfigParam22 *tlb.ConfigParam22 `json:",omitempty"`
+	ConfigParam23 *tlb.ConfigParam23 `json:",omitempty"`
+	ConfigParam24 *tlb.ConfigParam24 `json:",omitempty"`
+	ConfigParam25 *tlb.ConfigParam25 `json:",omitempty"`
 
-	ConfigParam28 *tlb.ConfigParam28
-	ConfigParam29 *tlb.ConfigParam29
-	ConfigParam31 *tlb.ConfigParam31
-	ConfigParam32 *tlb.ConfigParam32
-	ConfigParam33 *tlb.ConfigParam33
-	ConfigParam34 *tlb.ConfigParam34
-	ConfigParam35 *tlb.ConfigParam35
-	ConfigParam36 *tlb.ConfigParam36
-	ConfigParam37 *tlb.ConfigParam37
-	ConfigParam39 *tlb.ConfigParam39
-	ConfigParam40 *tlb.ConfigParam40
-	ConfigParam43 *tlb.ConfigParam43
-	ConfigParam44 *tlb.ConfigParam44
+	ConfigParam28 *tlb.ConfigParam28 `json:",omitempty"`
+	ConfigParam29 *tlb.ConfigParam29 `json:",omitempty"`
+	ConfigParam31 *tlb.ConfigParam31 `json:",omitempty"`
+	ConfigParam32 *tlb.ConfigParam32 `json:",omitempty"`
+	ConfigParam33 *tlb.ConfigParam33 `json:",omitempty"`
+	ConfigParam34 *tlb.ConfigParam34 `json:",omitempty"`
+	ConfigParam35 *tlb.ConfigParam35 `json:",omitempty"`
+	ConfigParam36 *tlb.ConfigParam36 `json:",omitempty"`
+	ConfigParam37 *tlb.ConfigParam37 `json:",omitempty"`
+	ConfigParam39 *tlb.ConfigParam39 `json:",omitempty"`
+	ConfigParam40 *tlb.ConfigParam40 `json:",omitempty"`
+	ConfigParam43 *tlb.ConfigParam43 `json:",omitempty"`
+	ConfigParam44 *tlb.ConfigParam44 `json:",omitempty"`
 
-	ConfigParam71 *tlb.ConfigParam71
-	ConfigParam72 *tlb.ConfigParam72
-	ConfigParam73 *tlb.ConfigParam73
+	ConfigParam71 *tlb.ConfigParam71 `json:",omitempty"`
+	ConfigParam72 *tlb.ConfigParam72 `json:",omitempty"`
+	ConfigParam73 *tlb.ConfigParam73 `json:",omitempty"`
 
-	ConfigParam79 *tlb.ConfigParam79
-	ConfigParam81 *tlb.ConfigParam81
-	ConfigParam82 *tlb.ConfigParam82
+	ConfigParam79 *tlb.ConfigParam79 `json:",omitempty"`
+	ConfigParam81 *tlb.ConfigParam81 `json:",omitempty"`
+	ConfigParam82 *tlb.ConfigParam82 `json:",omitempty"`
 
-	ConfigParamNegative71  *boc.Cell
-	ConfigParamNegative999 *boc.Cell
+	// Negative keys don't have a schema,
+	// so we store them as raw cells.
+
+	ConfigParamNegative71  *boc.Cell `json:",omitempty"`
+	ConfigParamNegative999 *boc.Cell `json:",omitempty"`
 }
 
 func (conf *BlockchainConfig) ConfigAddr() (ton.AccountID, bool) {

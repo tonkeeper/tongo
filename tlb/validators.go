@@ -1,5 +1,10 @@
 package tlb
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 // validator_info$_
 //
 //	validator_list_hash_short:uint32
@@ -70,6 +75,25 @@ type ValidatorDescr struct {
 		Weight    uint64
 		AdnlAddr  Bits256
 	} `tlbSumType:"validatoraddr#73"`
+}
+
+func (vd ValidatorDescr) MarshalJSON() ([]byte, error) {
+	switch vd.SumType {
+	case "Validator":
+		bytes, err := json.Marshal(vd.Validator)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Validator","Validator":%v}`, string(bytes))), nil
+	case "ValidatorAddr":
+		bytes, err := json.Marshal(vd.ValidatorAddr)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ValidatorAddr","ValidatorAddr":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", vd.SumType)
+	}
 }
 
 func (vd ValidatorDescr) PubKey() Bits256 {

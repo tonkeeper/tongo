@@ -152,7 +152,11 @@ func ConvertBlockchainConfig(params tlb.ConfigParams) (*BlockchainConfig, error)
 		if !field.IsValid() {
 			continue
 		}
-		field.Set(reflect.ValueOf(&item.Value.Value))
+		cell := boc.NewCell()
+		if err := tlb.Unmarshal(&item.Value.Value, cell); err != nil {
+			return nil, err
+		}
+		field.Set(reflect.ValueOf(cell))
 	}
 	return conf, nil
 }

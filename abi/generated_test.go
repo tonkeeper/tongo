@@ -699,6 +699,29 @@ func TestMessageDecoder(t *testing.T) {
 		},
 
 		{
+			name:       "stonfi - add liquidity msg",
+			boc:        "te6ccgEBAgEAaQABcQ+KfqUAG7D3vuOIZGBOjTVqXIgA7zuZAqJxsqAciTilI8/iTnGEeq62piAAHtRKd6wOcJwQOAdDAwEAVfz55Y+AAioWoxZMTVqjEz8xEP8QSW4AyorIq+/8UCfgJNM0gMPqAn/Zhg0=",
+			wantOpName: JettonTransferMsgOp,
+			wantValue: JettonTransferMsgBody{
+				QueryId:             7794402477181028,
+				Amount:              tlb.VarUInteger16(*big.NewInt(5398024594888)),
+				Destination:         mustAccountIDToMsgAddress("0:779dcc815138d9500e449c5291e7f12738c23d575b5310000f6a253bd607384e"),
+				ResponseDestination: tlb.MsgAddress{SumType: "AddrNone"},
+				ForwardTonAmount:    tlb.VarUInteger16(*big.NewInt(235000000)),
+				ForwardPayload: tlb.EitherRef[JettonPayload]{
+					IsRight: true,
+					Value: JettonPayload{
+						SumType: "StonfiProvideLiquidity",
+						OpCode:  pointer[uint32](4244235663),
+						Value: StonfiProvideLiquidityJettonPayload{
+							TokenWallet: mustAccountIDToMsgAddress("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f"),
+							MinLpOut:    tlb.VarUInteger16(*big.NewInt(5367448326)),
+						},
+					},
+				},
+			},
+		},
+		{
 			name:       "stonfi swap",
 			boc:        "te6ccgEBAgEAoQABsSWThWEAF9FtgGlyuYAVUoS5uZxArCUbLyf7phLgN5PBW9e9kIid2rJzK9oArXAARULUYsmJq1RiZ+YiH+IJLcAZUVkVff+KBPwEmmaQGH1EVt4eddAYMnVDAQCFgBVShLm5nECsJRsvJ/umEuA3k8Fb172QiJ3asnMr2gCtcAGyO71SfAD9PQh0Amu3lB+P3U1Zntjnpj9CbVcj8DiPLg==",
 			wantOpName: StonfiSwapMsgOp,

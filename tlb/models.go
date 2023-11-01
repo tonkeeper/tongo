@@ -358,6 +358,9 @@ type ShardDesc struct {
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
 		GenUTime           uint32
+		//todo: add   split_merge_at:FutureSplitMerge
+		//  ^[ fees_collected:CurrencyCollection
+		//     funds_created:CurrencyCollection ]
 	} `tlbSumType:"old#b"`
 	New struct {
 		SeqNo              uint32
@@ -376,6 +379,9 @@ type ShardDesc struct {
 		NextValidatorShard int64
 		MinRefMcSeqNo      uint32
 		GenUTime           uint32
+		//todo: add   split_merge_at:FutureSplitMerge
+		//  fees_collected:CurrencyCollection
+		//  funds_created:CurrencyCollection
 	} `tlbSumType:"new#a"`
 }
 

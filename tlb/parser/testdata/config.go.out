@@ -1,0 +1,39 @@
+
+
+type ParamLimits struct {
+	Magic     tlb.Magic `tlb:"#c3"`
+	Underload uint32
+	SoftLimit uint32
+	HardLimit uint32
+}
+
+type BlockCreateFees struct {
+	Magic               tlb.Magic `tlb:"#6b"`
+	MasterchainBlockFee tlb.Grams
+	BasechainBlockFee   tlb.Grams
+}
+
+type ConfigParam14 struct {
+	BlockCreateFees BlockCreateFees
+}
+
+type WorkchainFormat0 struct {
+	Magic           tlb.Magic `tlb:"#0"`
+	MinAddrLen      tlb.Uint12
+	MaxAddrLen      tlb.Uint12
+	AddrLenStep     tlb.Uint12
+	WorkchainTypeId uint32
+}
+
+type StoragePrices struct {
+	Magic         tlb.Magic `tlb:"#cc"`
+	UtimeSince    uint32
+	BitPricePs    uint64
+	CellPricePs   uint64
+	McBitPricePs  uint64
+	McCellPricePs uint64
+}
+
+type ConfigParam18 struct {
+	Value tlb.Hashmap[tlb.Uint32, StoragePrices]
+}

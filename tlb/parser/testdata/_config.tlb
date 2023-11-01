@@ -1,0 +1,16 @@
+param_limits#c3 underload:# soft_limit:# { underload <= soft_limit }
+  hard_limit:# { soft_limit <= hard_limit } = ParamLimits;
+
+block_grams_created#6b masterchain_block_fee:Grams basechain_block_fee:Grams
+  = BlockCreateFees;
+_ BlockCreateFees = ConfigParam 14;
+
+wfmt_ext#0 min_addr_len:(## 12) max_addr_len:(## 12) addr_len_step:(## 12)
+  { min_addr_len >= 64 } { min_addr_len <= max_addr_len }
+  { max_addr_len <= 1023 } { addr_len_step <= 1023 }
+  workchain_type_id:(## 32) { workchain_type_id >= 1 }
+  = WorkchainFormat 0;
+
+_#cc utime_since:uint32 bit_price_ps:uint64 cell_price_ps:uint64
+  mc_bit_price_ps:uint64 mc_cell_price_ps:uint64 = StoragePrices;
+_ (Hashmap 32 StoragePrices) = ConfigParam 18;

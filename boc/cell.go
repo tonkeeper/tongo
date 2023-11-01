@@ -299,9 +299,13 @@ func (c *Cell) CopyRemaining() *Cell {
 	for c.RefsAvailableForRead() > 0 {
 		ref, err := c.NextRef()
 		if err != nil {
+			// this should never happen but anyway
 			panic(err)
 		}
-		c2.AddRef(ref)
+		if err := c2.AddRef(ref); err != nil {
+			// this should never happen but anyway
+			panic(err)
+		}
 	}
 	c.refCursor = refCursor
 	return c2

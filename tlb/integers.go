@@ -1306,6 +1306,14 @@ func (u *Uint1) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint1) FixedSize() int {
 	return 1
 }
+
+func (u Uint1) Equal(other any) bool {
+	otherInt, ok := other.(Uint1)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint1) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1333,6 +1341,14 @@ func (u *Int1) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int1) FixedSize() int {
 	return 1
+}
+
+func (u Int1) Equal(other any) bool {
+	otherInt, ok := other.(Int1)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int1) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1362,6 +1378,14 @@ func (u *Uint2) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint2) FixedSize() int {
 	return 2
 }
+
+func (u Uint2) Equal(other any) bool {
+	otherInt, ok := other.(Uint2)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint2) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1389,6 +1413,14 @@ func (u *Int2) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int2) FixedSize() int {
 	return 2
+}
+
+func (u Int2) Equal(other any) bool {
+	otherInt, ok := other.(Int2)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int2) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1418,6 +1450,14 @@ func (u *Uint3) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint3) FixedSize() int {
 	return 3
 }
+
+func (u Uint3) Equal(other any) bool {
+	otherInt, ok := other.(Uint3)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint3) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1445,6 +1485,14 @@ func (u *Int3) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int3) FixedSize() int {
 	return 3
+}
+
+func (u Int3) Equal(other any) bool {
+	otherInt, ok := other.(Int3)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int3) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1474,6 +1522,14 @@ func (u *Uint4) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint4) FixedSize() int {
 	return 4
 }
+
+func (u Uint4) Equal(other any) bool {
+	otherInt, ok := other.(Uint4)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint4) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1501,6 +1557,14 @@ func (u *Int4) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int4) FixedSize() int {
 	return 4
+}
+
+func (u Int4) Equal(other any) bool {
+	otherInt, ok := other.(Int4)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int4) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1530,6 +1594,14 @@ func (u *Uint5) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint5) FixedSize() int {
 	return 5
 }
+
+func (u Uint5) Equal(other any) bool {
+	otherInt, ok := other.(Uint5)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint5) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1557,6 +1629,14 @@ func (u *Int5) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int5) FixedSize() int {
 	return 5
+}
+
+func (u Int5) Equal(other any) bool {
+	otherInt, ok := other.(Int5)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int5) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1586,6 +1666,14 @@ func (u *Uint6) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint6) FixedSize() int {
 	return 6
 }
+
+func (u Uint6) Equal(other any) bool {
+	otherInt, ok := other.(Uint6)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint6) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1613,6 +1701,14 @@ func (u *Int6) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int6) FixedSize() int {
 	return 6
+}
+
+func (u Int6) Equal(other any) bool {
+	otherInt, ok := other.(Int6)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int6) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1642,6 +1738,14 @@ func (u *Uint7) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint7) FixedSize() int {
 	return 7
 }
+
+func (u Uint7) Equal(other any) bool {
+	otherInt, ok := other.(Uint7)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint7) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1669,6 +1773,14 @@ func (u *Int7) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int7) FixedSize() int {
 	return 7
+}
+
+func (u Int7) Equal(other any) bool {
+	otherInt, ok := other.(Int7)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int7) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1698,6 +1810,14 @@ func (u *Uint8) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint8) FixedSize() int {
 	return 8
 }
+
+func (u Uint8) Equal(other any) bool {
+	otherInt, ok := other.(Uint8)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint8) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1725,6 +1845,14 @@ func (u *Int8) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int8) FixedSize() int {
 	return 8
+}
+
+func (u Int8) Equal(other any) bool {
+	otherInt, ok := other.(Int8)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int8) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1754,6 +1882,14 @@ func (u *Uint9) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint9) FixedSize() int {
 	return 9
 }
+
+func (u Uint9) Equal(other any) bool {
+	otherInt, ok := other.(Uint9)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint9) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1781,6 +1917,14 @@ func (u *Int9) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int9) FixedSize() int {
 	return 9
+}
+
+func (u Int9) Equal(other any) bool {
+	otherInt, ok := other.(Int9)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int9) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1810,6 +1954,14 @@ func (u *Uint10) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint10) FixedSize() int {
 	return 10
 }
+
+func (u Uint10) Equal(other any) bool {
+	otherInt, ok := other.(Uint10)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint10) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1837,6 +1989,14 @@ func (u *Int10) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int10) FixedSize() int {
 	return 10
+}
+
+func (u Int10) Equal(other any) bool {
+	otherInt, ok := other.(Int10)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int10) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1866,6 +2026,14 @@ func (u *Uint11) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint11) FixedSize() int {
 	return 11
 }
+
+func (u Uint11) Equal(other any) bool {
+	otherInt, ok := other.(Uint11)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint11) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1893,6 +2061,14 @@ func (u *Int11) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int11) FixedSize() int {
 	return 11
+}
+
+func (u Int11) Equal(other any) bool {
+	otherInt, ok := other.(Int11)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int11) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1922,6 +2098,14 @@ func (u *Uint12) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint12) FixedSize() int {
 	return 12
 }
+
+func (u Uint12) Equal(other any) bool {
+	otherInt, ok := other.(Uint12)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint12) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -1949,6 +2133,14 @@ func (u *Int12) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int12) FixedSize() int {
 	return 12
+}
+
+func (u Int12) Equal(other any) bool {
+	otherInt, ok := other.(Int12)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int12) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1978,6 +2170,14 @@ func (u *Uint13) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint13) FixedSize() int {
 	return 13
 }
+
+func (u Uint13) Equal(other any) bool {
+	otherInt, ok := other.(Uint13)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint13) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2005,6 +2205,14 @@ func (u *Int13) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int13) FixedSize() int {
 	return 13
+}
+
+func (u Int13) Equal(other any) bool {
+	otherInt, ok := other.(Int13)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int13) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2034,6 +2242,14 @@ func (u *Uint14) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint14) FixedSize() int {
 	return 14
 }
+
+func (u Uint14) Equal(other any) bool {
+	otherInt, ok := other.(Uint14)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint14) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2061,6 +2277,14 @@ func (u *Int14) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int14) FixedSize() int {
 	return 14
+}
+
+func (u Int14) Equal(other any) bool {
+	otherInt, ok := other.(Int14)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int14) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2090,6 +2314,14 @@ func (u *Uint15) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint15) FixedSize() int {
 	return 15
 }
+
+func (u Uint15) Equal(other any) bool {
+	otherInt, ok := other.(Uint15)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint15) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2117,6 +2349,14 @@ func (u *Int15) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int15) FixedSize() int {
 	return 15
+}
+
+func (u Int15) Equal(other any) bool {
+	otherInt, ok := other.(Int15)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int15) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2146,6 +2386,14 @@ func (u *Uint16) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint16) FixedSize() int {
 	return 16
 }
+
+func (u Uint16) Equal(other any) bool {
+	otherInt, ok := other.(Uint16)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint16) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2173,6 +2421,14 @@ func (u *Int16) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int16) FixedSize() int {
 	return 16
+}
+
+func (u Int16) Equal(other any) bool {
+	otherInt, ok := other.(Int16)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int16) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2202,6 +2458,14 @@ func (u *Uint17) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint17) FixedSize() int {
 	return 17
 }
+
+func (u Uint17) Equal(other any) bool {
+	otherInt, ok := other.(Uint17)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint17) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2229,6 +2493,14 @@ func (u *Int17) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int17) FixedSize() int {
 	return 17
+}
+
+func (u Int17) Equal(other any) bool {
+	otherInt, ok := other.(Int17)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int17) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2258,6 +2530,14 @@ func (u *Uint18) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint18) FixedSize() int {
 	return 18
 }
+
+func (u Uint18) Equal(other any) bool {
+	otherInt, ok := other.(Uint18)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint18) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2285,6 +2565,14 @@ func (u *Int18) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int18) FixedSize() int {
 	return 18
+}
+
+func (u Int18) Equal(other any) bool {
+	otherInt, ok := other.(Int18)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int18) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2314,6 +2602,14 @@ func (u *Uint19) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint19) FixedSize() int {
 	return 19
 }
+
+func (u Uint19) Equal(other any) bool {
+	otherInt, ok := other.(Uint19)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint19) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2341,6 +2637,14 @@ func (u *Int19) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int19) FixedSize() int {
 	return 19
+}
+
+func (u Int19) Equal(other any) bool {
+	otherInt, ok := other.(Int19)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int19) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2370,6 +2674,14 @@ func (u *Uint20) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint20) FixedSize() int {
 	return 20
 }
+
+func (u Uint20) Equal(other any) bool {
+	otherInt, ok := other.(Uint20)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint20) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2397,6 +2709,14 @@ func (u *Int20) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int20) FixedSize() int {
 	return 20
+}
+
+func (u Int20) Equal(other any) bool {
+	otherInt, ok := other.(Int20)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int20) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2426,6 +2746,14 @@ func (u *Uint21) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint21) FixedSize() int {
 	return 21
 }
+
+func (u Uint21) Equal(other any) bool {
+	otherInt, ok := other.(Uint21)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint21) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2453,6 +2781,14 @@ func (u *Int21) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int21) FixedSize() int {
 	return 21
+}
+
+func (u Int21) Equal(other any) bool {
+	otherInt, ok := other.(Int21)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int21) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2482,6 +2818,14 @@ func (u *Uint22) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint22) FixedSize() int {
 	return 22
 }
+
+func (u Uint22) Equal(other any) bool {
+	otherInt, ok := other.(Uint22)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint22) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2509,6 +2853,14 @@ func (u *Int22) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int22) FixedSize() int {
 	return 22
+}
+
+func (u Int22) Equal(other any) bool {
+	otherInt, ok := other.(Int22)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int22) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2538,6 +2890,14 @@ func (u *Uint23) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint23) FixedSize() int {
 	return 23
 }
+
+func (u Uint23) Equal(other any) bool {
+	otherInt, ok := other.(Uint23)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint23) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2565,6 +2925,14 @@ func (u *Int23) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int23) FixedSize() int {
 	return 23
+}
+
+func (u Int23) Equal(other any) bool {
+	otherInt, ok := other.(Int23)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int23) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2594,6 +2962,14 @@ func (u *Uint24) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint24) FixedSize() int {
 	return 24
 }
+
+func (u Uint24) Equal(other any) bool {
+	otherInt, ok := other.(Uint24)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint24) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2621,6 +2997,14 @@ func (u *Int24) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int24) FixedSize() int {
 	return 24
+}
+
+func (u Int24) Equal(other any) bool {
+	otherInt, ok := other.(Int24)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int24) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2650,6 +3034,14 @@ func (u *Uint25) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint25) FixedSize() int {
 	return 25
 }
+
+func (u Uint25) Equal(other any) bool {
+	otherInt, ok := other.(Uint25)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint25) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2677,6 +3069,14 @@ func (u *Int25) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int25) FixedSize() int {
 	return 25
+}
+
+func (u Int25) Equal(other any) bool {
+	otherInt, ok := other.(Int25)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int25) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2706,6 +3106,14 @@ func (u *Uint26) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint26) FixedSize() int {
 	return 26
 }
+
+func (u Uint26) Equal(other any) bool {
+	otherInt, ok := other.(Uint26)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint26) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2733,6 +3141,14 @@ func (u *Int26) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int26) FixedSize() int {
 	return 26
+}
+
+func (u Int26) Equal(other any) bool {
+	otherInt, ok := other.(Int26)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int26) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2762,6 +3178,14 @@ func (u *Uint27) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint27) FixedSize() int {
 	return 27
 }
+
+func (u Uint27) Equal(other any) bool {
+	otherInt, ok := other.(Uint27)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint27) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2789,6 +3213,14 @@ func (u *Int27) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int27) FixedSize() int {
 	return 27
+}
+
+func (u Int27) Equal(other any) bool {
+	otherInt, ok := other.(Int27)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int27) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2818,6 +3250,14 @@ func (u *Uint28) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint28) FixedSize() int {
 	return 28
 }
+
+func (u Uint28) Equal(other any) bool {
+	otherInt, ok := other.(Uint28)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint28) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2845,6 +3285,14 @@ func (u *Int28) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int28) FixedSize() int {
 	return 28
+}
+
+func (u Int28) Equal(other any) bool {
+	otherInt, ok := other.(Int28)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int28) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2874,6 +3322,14 @@ func (u *Uint29) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint29) FixedSize() int {
 	return 29
 }
+
+func (u Uint29) Equal(other any) bool {
+	otherInt, ok := other.(Uint29)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint29) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2901,6 +3357,14 @@ func (u *Int29) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int29) FixedSize() int {
 	return 29
+}
+
+func (u Int29) Equal(other any) bool {
+	otherInt, ok := other.(Int29)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int29) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2930,6 +3394,14 @@ func (u *Uint30) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint30) FixedSize() int {
 	return 30
 }
+
+func (u Uint30) Equal(other any) bool {
+	otherInt, ok := other.(Uint30)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint30) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -2957,6 +3429,14 @@ func (u *Int30) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int30) FixedSize() int {
 	return 30
+}
+
+func (u Int30) Equal(other any) bool {
+	otherInt, ok := other.(Int30)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int30) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2986,6 +3466,14 @@ func (u *Uint31) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint31) FixedSize() int {
 	return 31
 }
+
+func (u Uint31) Equal(other any) bool {
+	otherInt, ok := other.(Uint31)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint31) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3013,6 +3501,14 @@ func (u *Int31) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int31) FixedSize() int {
 	return 31
+}
+
+func (u Int31) Equal(other any) bool {
+	otherInt, ok := other.(Int31)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int31) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3042,6 +3538,14 @@ func (u *Uint32) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint32) FixedSize() int {
 	return 32
 }
+
+func (u Uint32) Equal(other any) bool {
+	otherInt, ok := other.(Uint32)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint32) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3069,6 +3573,14 @@ func (u *Int32) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int32) FixedSize() int {
 	return 32
+}
+
+func (u Int32) Equal(other any) bool {
+	otherInt, ok := other.(Int32)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int32) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3098,6 +3610,14 @@ func (u *Uint33) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint33) FixedSize() int {
 	return 33
 }
+
+func (u Uint33) Equal(other any) bool {
+	otherInt, ok := other.(Uint33)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint33) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3125,6 +3645,14 @@ func (u *Int33) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int33) FixedSize() int {
 	return 33
+}
+
+func (u Int33) Equal(other any) bool {
+	otherInt, ok := other.(Int33)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int33) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3154,6 +3682,14 @@ func (u *Uint34) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint34) FixedSize() int {
 	return 34
 }
+
+func (u Uint34) Equal(other any) bool {
+	otherInt, ok := other.(Uint34)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint34) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3181,6 +3717,14 @@ func (u *Int34) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int34) FixedSize() int {
 	return 34
+}
+
+func (u Int34) Equal(other any) bool {
+	otherInt, ok := other.(Int34)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int34) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3210,6 +3754,14 @@ func (u *Uint35) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint35) FixedSize() int {
 	return 35
 }
+
+func (u Uint35) Equal(other any) bool {
+	otherInt, ok := other.(Uint35)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint35) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3237,6 +3789,14 @@ func (u *Int35) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int35) FixedSize() int {
 	return 35
+}
+
+func (u Int35) Equal(other any) bool {
+	otherInt, ok := other.(Int35)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int35) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3266,6 +3826,14 @@ func (u *Uint36) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint36) FixedSize() int {
 	return 36
 }
+
+func (u Uint36) Equal(other any) bool {
+	otherInt, ok := other.(Uint36)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint36) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3293,6 +3861,14 @@ func (u *Int36) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int36) FixedSize() int {
 	return 36
+}
+
+func (u Int36) Equal(other any) bool {
+	otherInt, ok := other.(Int36)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int36) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3322,6 +3898,14 @@ func (u *Uint37) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint37) FixedSize() int {
 	return 37
 }
+
+func (u Uint37) Equal(other any) bool {
+	otherInt, ok := other.(Uint37)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint37) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3349,6 +3933,14 @@ func (u *Int37) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int37) FixedSize() int {
 	return 37
+}
+
+func (u Int37) Equal(other any) bool {
+	otherInt, ok := other.(Int37)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int37) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3378,6 +3970,14 @@ func (u *Uint38) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint38) FixedSize() int {
 	return 38
 }
+
+func (u Uint38) Equal(other any) bool {
+	otherInt, ok := other.(Uint38)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint38) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3405,6 +4005,14 @@ func (u *Int38) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int38) FixedSize() int {
 	return 38
+}
+
+func (u Int38) Equal(other any) bool {
+	otherInt, ok := other.(Int38)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int38) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3434,6 +4042,14 @@ func (u *Uint39) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint39) FixedSize() int {
 	return 39
 }
+
+func (u Uint39) Equal(other any) bool {
+	otherInt, ok := other.(Uint39)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint39) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3461,6 +4077,14 @@ func (u *Int39) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int39) FixedSize() int {
 	return 39
+}
+
+func (u Int39) Equal(other any) bool {
+	otherInt, ok := other.(Int39)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int39) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3490,6 +4114,14 @@ func (u *Uint40) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint40) FixedSize() int {
 	return 40
 }
+
+func (u Uint40) Equal(other any) bool {
+	otherInt, ok := other.(Uint40)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint40) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3517,6 +4149,14 @@ func (u *Int40) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int40) FixedSize() int {
 	return 40
+}
+
+func (u Int40) Equal(other any) bool {
+	otherInt, ok := other.(Int40)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int40) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3546,6 +4186,14 @@ func (u *Uint41) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint41) FixedSize() int {
 	return 41
 }
+
+func (u Uint41) Equal(other any) bool {
+	otherInt, ok := other.(Uint41)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint41) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3573,6 +4221,14 @@ func (u *Int41) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int41) FixedSize() int {
 	return 41
+}
+
+func (u Int41) Equal(other any) bool {
+	otherInt, ok := other.(Int41)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int41) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3602,6 +4258,14 @@ func (u *Uint42) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint42) FixedSize() int {
 	return 42
 }
+
+func (u Uint42) Equal(other any) bool {
+	otherInt, ok := other.(Uint42)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint42) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3629,6 +4293,14 @@ func (u *Int42) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int42) FixedSize() int {
 	return 42
+}
+
+func (u Int42) Equal(other any) bool {
+	otherInt, ok := other.(Int42)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int42) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3658,6 +4330,14 @@ func (u *Uint43) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint43) FixedSize() int {
 	return 43
 }
+
+func (u Uint43) Equal(other any) bool {
+	otherInt, ok := other.(Uint43)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint43) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3685,6 +4365,14 @@ func (u *Int43) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int43) FixedSize() int {
 	return 43
+}
+
+func (u Int43) Equal(other any) bool {
+	otherInt, ok := other.(Int43)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int43) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3714,6 +4402,14 @@ func (u *Uint44) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint44) FixedSize() int {
 	return 44
 }
+
+func (u Uint44) Equal(other any) bool {
+	otherInt, ok := other.(Uint44)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint44) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3741,6 +4437,14 @@ func (u *Int44) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int44) FixedSize() int {
 	return 44
+}
+
+func (u Int44) Equal(other any) bool {
+	otherInt, ok := other.(Int44)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int44) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3770,6 +4474,14 @@ func (u *Uint45) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint45) FixedSize() int {
 	return 45
 }
+
+func (u Uint45) Equal(other any) bool {
+	otherInt, ok := other.(Uint45)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint45) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3797,6 +4509,14 @@ func (u *Int45) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int45) FixedSize() int {
 	return 45
+}
+
+func (u Int45) Equal(other any) bool {
+	otherInt, ok := other.(Int45)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int45) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3826,6 +4546,14 @@ func (u *Uint46) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint46) FixedSize() int {
 	return 46
 }
+
+func (u Uint46) Equal(other any) bool {
+	otherInt, ok := other.(Uint46)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint46) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3853,6 +4581,14 @@ func (u *Int46) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int46) FixedSize() int {
 	return 46
+}
+
+func (u Int46) Equal(other any) bool {
+	otherInt, ok := other.(Int46)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int46) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3882,6 +4618,14 @@ func (u *Uint47) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint47) FixedSize() int {
 	return 47
 }
+
+func (u Uint47) Equal(other any) bool {
+	otherInt, ok := other.(Uint47)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint47) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3909,6 +4653,14 @@ func (u *Int47) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int47) FixedSize() int {
 	return 47
+}
+
+func (u Int47) Equal(other any) bool {
+	otherInt, ok := other.(Int47)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int47) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3938,6 +4690,14 @@ func (u *Uint48) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint48) FixedSize() int {
 	return 48
 }
+
+func (u Uint48) Equal(other any) bool {
+	otherInt, ok := other.(Uint48)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint48) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -3965,6 +4725,14 @@ func (u *Int48) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int48) FixedSize() int {
 	return 48
+}
+
+func (u Int48) Equal(other any) bool {
+	otherInt, ok := other.(Int48)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int48) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3994,6 +4762,14 @@ func (u *Uint49) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint49) FixedSize() int {
 	return 49
 }
+
+func (u Uint49) Equal(other any) bool {
+	otherInt, ok := other.(Uint49)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint49) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4021,6 +4797,14 @@ func (u *Int49) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int49) FixedSize() int {
 	return 49
+}
+
+func (u Int49) Equal(other any) bool {
+	otherInt, ok := other.(Int49)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int49) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4050,6 +4834,14 @@ func (u *Uint50) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint50) FixedSize() int {
 	return 50
 }
+
+func (u Uint50) Equal(other any) bool {
+	otherInt, ok := other.(Uint50)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint50) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4077,6 +4869,14 @@ func (u *Int50) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int50) FixedSize() int {
 	return 50
+}
+
+func (u Int50) Equal(other any) bool {
+	otherInt, ok := other.(Int50)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int50) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4106,6 +4906,14 @@ func (u *Uint51) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint51) FixedSize() int {
 	return 51
 }
+
+func (u Uint51) Equal(other any) bool {
+	otherInt, ok := other.(Uint51)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint51) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4133,6 +4941,14 @@ func (u *Int51) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int51) FixedSize() int {
 	return 51
+}
+
+func (u Int51) Equal(other any) bool {
+	otherInt, ok := other.(Int51)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int51) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4162,6 +4978,14 @@ func (u *Uint52) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint52) FixedSize() int {
 	return 52
 }
+
+func (u Uint52) Equal(other any) bool {
+	otherInt, ok := other.(Uint52)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint52) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4189,6 +5013,14 @@ func (u *Int52) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int52) FixedSize() int {
 	return 52
+}
+
+func (u Int52) Equal(other any) bool {
+	otherInt, ok := other.(Int52)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int52) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4218,6 +5050,14 @@ func (u *Uint53) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint53) FixedSize() int {
 	return 53
 }
+
+func (u Uint53) Equal(other any) bool {
+	otherInt, ok := other.(Uint53)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint53) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4245,6 +5085,14 @@ func (u *Int53) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int53) FixedSize() int {
 	return 53
+}
+
+func (u Int53) Equal(other any) bool {
+	otherInt, ok := other.(Int53)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int53) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4274,6 +5122,14 @@ func (u *Uint54) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint54) FixedSize() int {
 	return 54
 }
+
+func (u Uint54) Equal(other any) bool {
+	otherInt, ok := other.(Uint54)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint54) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4301,6 +5157,14 @@ func (u *Int54) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int54) FixedSize() int {
 	return 54
+}
+
+func (u Int54) Equal(other any) bool {
+	otherInt, ok := other.(Int54)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int54) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4330,6 +5194,14 @@ func (u *Uint55) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint55) FixedSize() int {
 	return 55
 }
+
+func (u Uint55) Equal(other any) bool {
+	otherInt, ok := other.(Uint55)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint55) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4357,6 +5229,14 @@ func (u *Int55) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int55) FixedSize() int {
 	return 55
+}
+
+func (u Int55) Equal(other any) bool {
+	otherInt, ok := other.(Int55)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int55) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4386,6 +5266,14 @@ func (u *Uint56) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint56) FixedSize() int {
 	return 56
 }
+
+func (u Uint56) Equal(other any) bool {
+	otherInt, ok := other.(Uint56)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint56) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
 }
@@ -4413,6 +5301,14 @@ func (u *Int56) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int56) FixedSize() int {
 	return 56
+}
+
+func (u Int56) Equal(other any) bool {
+	otherInt, ok := other.(Int56)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int56) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4442,6 +5338,14 @@ func (u *Uint57) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint57) FixedSize() int {
 	return 57
 }
+
+func (u Uint57) Equal(other any) bool {
+	otherInt, ok := other.(Uint57)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint57) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4469,6 +5373,14 @@ func (u *Int57) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int57) FixedSize() int {
 	return 57
+}
+
+func (u Int57) Equal(other any) bool {
+	otherInt, ok := other.(Int57)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int57) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4498,6 +5410,14 @@ func (u *Uint58) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint58) FixedSize() int {
 	return 58
 }
+
+func (u Uint58) Equal(other any) bool {
+	otherInt, ok := other.(Uint58)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint58) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4525,6 +5445,14 @@ func (u *Int58) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int58) FixedSize() int {
 	return 58
+}
+
+func (u Int58) Equal(other any) bool {
+	otherInt, ok := other.(Int58)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int58) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4554,6 +5482,14 @@ func (u *Uint59) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint59) FixedSize() int {
 	return 59
 }
+
+func (u Uint59) Equal(other any) bool {
+	otherInt, ok := other.(Uint59)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint59) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4581,6 +5517,14 @@ func (u *Int59) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int59) FixedSize() int {
 	return 59
+}
+
+func (u Int59) Equal(other any) bool {
+	otherInt, ok := other.(Int59)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int59) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4610,6 +5554,14 @@ func (u *Uint60) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint60) FixedSize() int {
 	return 60
 }
+
+func (u Uint60) Equal(other any) bool {
+	otherInt, ok := other.(Uint60)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint60) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4637,6 +5589,14 @@ func (u *Int60) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int60) FixedSize() int {
 	return 60
+}
+
+func (u Int60) Equal(other any) bool {
+	otherInt, ok := other.(Int60)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int60) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4666,6 +5626,14 @@ func (u *Uint61) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint61) FixedSize() int {
 	return 61
 }
+
+func (u Uint61) Equal(other any) bool {
+	otherInt, ok := other.(Uint61)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint61) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4693,6 +5661,14 @@ func (u *Int61) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int61) FixedSize() int {
 	return 61
+}
+
+func (u Int61) Equal(other any) bool {
+	otherInt, ok := other.(Int61)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int61) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4722,6 +5698,14 @@ func (u *Uint62) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint62) FixedSize() int {
 	return 62
 }
+
+func (u Uint62) Equal(other any) bool {
+	otherInt, ok := other.(Uint62)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint62) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4749,6 +5733,14 @@ func (u *Int62) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int62) FixedSize() int {
 	return 62
+}
+
+func (u Int62) Equal(other any) bool {
+	otherInt, ok := other.(Int62)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int62) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4778,6 +5770,14 @@ func (u *Uint63) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint63) FixedSize() int {
 	return 63
 }
+
+func (u Uint63) Equal(other any) bool {
+	otherInt, ok := other.(Uint63)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint63) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4805,6 +5805,14 @@ func (u *Int63) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int63) FixedSize() int {
 	return 63
+}
+
+func (u Int63) Equal(other any) bool {
+	otherInt, ok := other.(Int63)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int63) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -4834,6 +5842,14 @@ func (u *Uint64) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Uint64) FixedSize() int {
 	return 64
 }
+
+func (u Uint64) Equal(other any) bool {
+	otherInt, ok := other.(Uint64)
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
 func (u Uint64) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
 }
@@ -4861,6 +5877,14 @@ func (u *Int64) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int64) FixedSize() int {
 	return 64
+}
+
+func (u Int64) Equal(other any) bool {
+	otherInt, ok := other.(Int64)
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 func (u Int64) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -5098,6 +6122,14 @@ func (u *Bits96) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func (u Bits96) Equal(other any) bool {
+	otherBits, ok := other.(Bits96)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+
 type Bits256 [32]byte
 
 func (u Bits256) FixedSize() int {
@@ -5118,6 +6150,14 @@ func (u *Bits256) UnmarshalJSON(b []byte) error {
 	}
 	copy(u[:], bs)
 	return nil
+}
+
+func (u Bits256) Equal(other any) bool {
+	otherBits, ok := other.(Bits256)
+	if !ok {
+		return false
+	}
+	return u == otherBits
 }
 
 type Bits264 [33]byte
@@ -5142,6 +6182,14 @@ func (u *Bits264) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func (u Bits264) Equal(other any) bool {
+	otherBits, ok := other.(Bits264)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+
 type Bits320 [40]byte
 
 func (u Bits320) FixedSize() int {
@@ -5162,6 +6210,14 @@ func (u *Bits320) UnmarshalJSON(b []byte) error {
 	}
 	copy(u[:], bs)
 	return nil
+}
+
+func (u Bits320) Equal(other any) bool {
+	otherBits, ok := other.(Bits320)
+	if !ok {
+		return false
+	}
+	return u == otherBits
 }
 
 type Bits352 [44]byte
@@ -5186,6 +6242,14 @@ func (u *Bits352) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func (u Bits352) Equal(other any) bool {
+	otherBits, ok := other.(Bits352)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+
 type Bits512 [64]byte
 
 func (u Bits512) FixedSize() int {
@@ -5206,5 +6270,13 @@ func (u *Bits512) UnmarshalJSON(b []byte) error {
 	}
 	copy(u[:], bs)
 	return nil
+}
+
+func (u Bits512) Equal(other any) bool {
+	otherBits, ok := other.(Bits512)
+	if !ok {
+		return false
+	}
+	return u == otherBits
 }
 	

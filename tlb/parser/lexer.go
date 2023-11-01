@@ -11,6 +11,7 @@ var (
 		{`HexTag`, `#([0-9a-f]+_?|_)`},
 		{`BinTag`, `\$[01]*_?`},
 		{"BuiltIn", `(#<=|#<|##|#)`},
+		{"Comparison", `(<=|<|>=|>|!=|=)`},
 		{"NUMBER", `[\d]+`},
 		{`Punct`, `[][={};<>^~:.?)(]`},
 		{"comment", `//[^\n]*`},
@@ -24,6 +25,7 @@ var (
 type TLB struct {
 	Declarations []CombinatorDeclaration `@@*`
 }
+
 type CombinatorDeclaration struct {
 	Constructor      Constructor       `@@`
 	FieldDefinitions []FieldDefinition `@@*`
@@ -31,6 +33,7 @@ type CombinatorDeclaration struct {
 	Combinator       Combinator        `@@`
 	End              string            `";"`
 }
+
 type Constructor struct {
 	Name   string `@Ident`
 	Prefix string `@(HexTag|BinTag)?`
@@ -42,14 +45,15 @@ type Combinator struct {
 }
 
 type FieldDefinition struct {
-	Implicit   *ImplicitDefinition `@@`
-	NamedField *NamedField         `| @@`
-	Anon       *ParenExpression    `| @@`
-	CellRef    *CellRef            `| @@`
+	Implicit   *CurlyExpression `"{" @@ "}"`
+	NamedField *NamedField      `| @@`
+	Anon       *ParenExpression `| @@`
+	CellRef    *CellRef         `| @@`
+	TypeRef    *TypeRef         `| @@`
 }
 
 func (fd FieldDefinition) IsEmpty() bool {
-	return fd.NamedField == nil && fd.CellRef == nil && fd.Implicit == nil && fd.Anon == nil
+	return fd.NamedField == nil && fd.CellRef == nil && fd.Implicit == nil && fd.Anon == nil && fd.TypeRef == nil
 }
 
 type NamedField struct {
@@ -58,11 +62,18 @@ type NamedField struct {
 	Expression TypeExpression `@@`
 }
 
-type ImplicitDefinition struct {
-	Start      string          `"{"`
+type TypeRef struct {
+	Name string `@Ident`
+}
+
+type CurlyExpression struct {
+	CompareExpr    *CompareOperatorExpr `@@`
+	TypeDefinition *TypeDefinition      `| @@`
+}
+
+type TypeDefinition struct {
 	Implicit   *ImplicitField  `(@@`
 	Expression *TypeExpression `| @@)`
-	End        string          `"}"`
 }
 
 type ImplicitField struct {
@@ -101,6 +112,17 @@ type TypeExpression struct {
 	BuiltIn              *string          `| @BuiltIn`
 	Number               *int             `| @NUMBER`
 	NamedRef             *string          `| @Ident)`
+}
+
+type CompareOperatorExpr struct {
+	Left      *RefInner `@@`
+	Operation string    `@Comparison`
+	Right     *RefInner `@@`
+}
+
+type RefInner struct {
+	Ident  *string `@Ident`
+	Number *int    `| @NUMBER`
 }
 
 func Parse(tlb string) (*TLB, error) {

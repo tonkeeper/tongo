@@ -1,0 +1,453 @@
+
+
+type InternalMsgBody struct {
+	tlb.SumType
+	Transfer struct {
+		QueryId             uint64
+		NewOwner            tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+		ForwardAmount       tlb.VarUInteger16
+		ForwardPayload      tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#5fcc3d14"`
+	SettleConditionals struct {
+		FromA                bool
+		Signature            tlb.Bits512
+		Tag                  uint32
+		ChannelId            tlb.Uint128
+		ConditionalsToSettle tlb.HashmapE[tlb.Uint32, tlb.Any]
+	} `tlbSumType:""`
+	OwnershipAssigned struct {
+		QueryId        uint64
+		PrevOwner      tlb.MsgAddress
+		ForwardPayload tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#05138d91"`
+	Excesses struct {
+		QueryId uint64
+	} `tlbSumType:"#d53276db"`
+	GetStaticData struct {
+		QueryId uint64
+	} `tlbSumType:"#2fcb26a2"`
+	ReportStaticData struct {
+		QueryId    uint64
+		Index      tlb.Uint256
+		Collection tlb.MsgAddress
+	} `tlbSumType:"#8b771735"`
+	GetRoyaltyParams struct {
+		QueryId uint64
+	} `tlbSumType:"#693d3950"`
+	ReportRoyaltyParams struct {
+		QueryId     uint64
+		Numerator   uint16
+		Denominator uint16
+		Destination tlb.MsgAddress
+	} `tlbSumType:"#a8cb00ad"`
+	Transfer struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		Destination         tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+		ForwardTonAmount    tlb.VarUInteger16
+		ForwardPayload      tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#0f8a7ea5"`
+	TransferNotification struct {
+		QueryId        uint64
+		Amount         tlb.VarUInteger16
+		Sender         tlb.MsgAddress
+		ForwardPayload tlb.EitherRef[tlb.Any]
+	} `tlbSumType:"#7362d09c"`
+	Burn struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+	} `tlbSumType:"#595f07bc"`
+	ProveOwnership struct {
+		QueryId        uint64
+		Dest           tlb.MsgAddress
+		ForwardPayload tlb.Any `tlb:"^"`
+		WithContent    bool
+	} `tlbSumType:"#04ded148"`
+	OwnershipProof struct {
+		QueryId   uint64
+		ItemId    tlb.Uint256
+		Owner     tlb.MsgAddress
+		Data      tlb.Any `tlb:"^"`
+		RevokedAt uint64
+		Content   *tlb.Any `tlb:"maybe^"`
+	} `tlbSumType:"#0524c7ae"`
+	RequestOwner struct {
+		QueryId        uint64
+		Dest           tlb.MsgAddress
+		ForwardPayload tlb.Any `tlb:"^"`
+		WithContent    bool
+	} `tlbSumType:"#d0c3bfea"`
+	OwnerInfo struct {
+		QueryId   uint64
+		ItemId    tlb.Uint256
+		Initiator tlb.MsgAddress
+		Owner     tlb.MsgAddress
+		Data      tlb.Any `tlb:"^"`
+		RevokedAt uint64
+		Content   *tlb.Any `tlb:"maybe^"`
+	} `tlbSumType:"#0dd607e3"`
+	TopUpBalance struct {
+		AddA tlb.Grams
+		AddB tlb.Grams
+	} `tlbSumType:""`
+	FinishUncooperativeClose struct{} `tlbSumType:""`
+	InitChannel              struct {
+		IsA       bool
+		Signature tlb.Bits512
+		Tag       uint32
+		ChannelId tlb.Uint128
+		BalanceA  tlb.Grams
+		BalanceB  tlb.Grams
+	} `tlbSumType:""`
+	CooperativeClose struct {
+		SigA      tlb.Bits512 `tlb:"^"`
+		SigB      tlb.Bits512 `tlb:"^"`
+		Tag       uint32
+		ChannelId tlb.Uint128
+		BalanceA  tlb.Grams
+		BalanceB  tlb.Grams
+		SeqnoA    uint64
+		SeqnoB    uint64
+	} `tlbSumType:""`
+	CooperativeCommit struct {
+		SigA      tlb.Bits512 `tlb:"^"`
+		SigB      tlb.Bits512 `tlb:"^"`
+		Tag       uint32
+		ChannelId tlb.Uint128
+		SeqnoA    uint64
+		SeqnoB    uint64
+	} `tlbSumType:""`
+	StartUncooperativeClose struct {
+		SignedByA bool
+		Signature tlb.Bits512
+		Tag       uint32
+		ChannelId tlb.Uint128
+		SchA      SignedSemiChannel `tlb:"^"`
+		SchB      SignedSemiChannel `tlb:"^"`
+	} `tlbSumType:""`
+	ChallengeQuarantinedState struct {
+		ChallengedByA bool
+		Signature     tlb.Bits512
+		Tag           uint32
+		ChannelId     tlb.Uint128
+		SchA          SignedSemiChannel `tlb:"^"`
+		SchB          SignedSemiChannel `tlb:"^"`
+	} `tlbSumType:""`
+}
+
+func (t *InternalMsgBody) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Transfer":
+		bytes, err := json.Marshal(t.Transfer)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Transfer","Transfer":%v}`, string(bytes))), nil
+	case "SettleConditionals":
+		bytes, err := json.Marshal(t.SettleConditionals)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SettleConditionals","SettleConditionals":%v}`, string(bytes))), nil
+	case "OwnershipAssigned":
+		bytes, err := json.Marshal(t.OwnershipAssigned)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "OwnershipAssigned","OwnershipAssigned":%v}`, string(bytes))), nil
+	case "Excesses":
+		bytes, err := json.Marshal(t.Excesses)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Excesses","Excesses":%v}`, string(bytes))), nil
+	case "GetStaticData":
+		bytes, err := json.Marshal(t.GetStaticData)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "GetStaticData","GetStaticData":%v}`, string(bytes))), nil
+	case "ReportStaticData":
+		bytes, err := json.Marshal(t.ReportStaticData)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ReportStaticData","ReportStaticData":%v}`, string(bytes))), nil
+	case "GetRoyaltyParams":
+		bytes, err := json.Marshal(t.GetRoyaltyParams)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "GetRoyaltyParams","GetRoyaltyParams":%v}`, string(bytes))), nil
+	case "ReportRoyaltyParams":
+		bytes, err := json.Marshal(t.ReportRoyaltyParams)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ReportRoyaltyParams","ReportRoyaltyParams":%v}`, string(bytes))), nil
+	case "Transfer":
+		bytes, err := json.Marshal(t.Transfer)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Transfer","Transfer":%v}`, string(bytes))), nil
+	case "TransferNotification":
+		bytes, err := json.Marshal(t.TransferNotification)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "TransferNotification","TransferNotification":%v}`, string(bytes))), nil
+	case "Burn":
+		bytes, err := json.Marshal(t.Burn)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Burn","Burn":%v}`, string(bytes))), nil
+	case "ProveOwnership":
+		bytes, err := json.Marshal(t.ProveOwnership)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ProveOwnership","ProveOwnership":%v}`, string(bytes))), nil
+	case "OwnershipProof":
+		bytes, err := json.Marshal(t.OwnershipProof)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "OwnershipProof","OwnershipProof":%v}`, string(bytes))), nil
+	case "RequestOwner":
+		bytes, err := json.Marshal(t.RequestOwner)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RequestOwner","RequestOwner":%v}`, string(bytes))), nil
+	case "OwnerInfo":
+		bytes, err := json.Marshal(t.OwnerInfo)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "OwnerInfo","OwnerInfo":%v}`, string(bytes))), nil
+	case "TopUpBalance":
+		bytes, err := json.Marshal(t.TopUpBalance)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "TopUpBalance","TopUpBalance":%v}`, string(bytes))), nil
+	case "FinishUncooperativeClose":
+		bytes, err := json.Marshal(t.FinishUncooperativeClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "FinishUncooperativeClose","FinishUncooperativeClose":%v}`, string(bytes))), nil
+	case "InitChannel":
+		bytes, err := json.Marshal(t.InitChannel)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "InitChannel","InitChannel":%v}`, string(bytes))), nil
+	case "CooperativeClose":
+		bytes, err := json.Marshal(t.CooperativeClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CooperativeClose","CooperativeClose":%v}`, string(bytes))), nil
+	case "CooperativeCommit":
+		bytes, err := json.Marshal(t.CooperativeCommit)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CooperativeCommit","CooperativeCommit":%v}`, string(bytes))), nil
+	case "StartUncooperativeClose":
+		bytes, err := json.Marshal(t.StartUncooperativeClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "StartUncooperativeClose","StartUncooperativeClose":%v}`, string(bytes))), nil
+	case "ChallengeQuarantinedState":
+		bytes, err := json.Marshal(t.ChallengeQuarantinedState)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ChallengeQuarantinedState","ChallengeQuarantinedState":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type Text struct {
+	Data tlb.SnakeData
+}
+
+type ContentData struct {
+	tlb.SumType
+	Snake struct {
+		Data tlb.SnakeData
+	} `tlbSumType:"#00"`
+	Chunks struct {
+		Data tlb.ChunkedData
+	} `tlbSumType:"#01"`
+}
+
+func (t *ContentData) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Snake":
+		bytes, err := json.Marshal(t.Snake)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Snake","Snake":%v}`, string(bytes))), nil
+	case "Chunks":
+		bytes, err := json.Marshal(t.Chunks)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Chunks","Chunks":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type FullContent struct {
+	tlb.SumType
+	Onchain struct {
+		Data tlb.HashmapE[tlb.Bits256, ContentData]
+	} `tlbSumType:"#00"`
+	Offchain struct {
+		Uri tlb.Text
+	} `tlbSumType:"#01"`
+}
+
+func (t *FullContent) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Onchain":
+		bytes, err := json.Marshal(t.Onchain)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Onchain","Onchain":%v}`, string(bytes))), nil
+	case "Offchain":
+		bytes, err := json.Marshal(t.Offchain)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Offchain","Offchain":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type DNSRecord struct {
+	tlb.SumType
+	DnsText struct {
+		Field0 tlb.Text
+	} `tlbSumType:"#1eda"`
+	DnsNextResolver struct {
+		Resolver MsgAddressInt
+	} `tlbSumType:"#ba93"`
+	DnsAdnlAddress struct {
+		AdnlAddr  tlb.Bits256
+		Flags     uint8
+		ProtoList UnknownType
+	} `tlbSumType:"#ad01"`
+	DnsSmcAddress struct {
+		SmcAddr MsgAddressInt
+		Flags   uint8
+		CapList UnknownType
+	} `tlbSumType:"#9fd3"`
+}
+
+func (t *DNSRecord) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "DnsText":
+		bytes, err := json.Marshal(t.DnsText)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsText","DnsText":%v}`, string(bytes))), nil
+	case "DnsNextResolver":
+		bytes, err := json.Marshal(t.DnsNextResolver)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsNextResolver","DnsNextResolver":%v}`, string(bytes))), nil
+	case "DnsAdnlAddress":
+		bytes, err := json.Marshal(t.DnsAdnlAddress)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsAdnlAddress","DnsAdnlAddress":%v}`, string(bytes))), nil
+	case "DnsSmcAddress":
+		bytes, err := json.Marshal(t.DnsSmcAddress)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DnsSmcAddress","DnsSmcAddress":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type DNS_RecordSet struct {
+	Value tlb.Hashmap[tlb.Bits256, tlb.DNSRecord]
+}
+
+type ConditionalPayment struct {
+	Amount    tlb.Grams
+	Condition tlb.Any
+}
+
+type SemiChannelBody struct {
+	Seqno        uint64
+	Sent         tlb.Grams
+	Conditionals tlb.HashmapE[tlb.Uint32, ConditionalPayment]
+}
+
+type SemiChannel struct {
+	Magic            tlb.Magic `tlb:"#43685374"`
+	ChannelId        tlb.Uint128
+	Data             SemiChannelBody
+	CounterpartyData *SemiChannelBody `tlb:"maybe^"`
+}
+
+type SignedSemiChannel struct {
+	Signature tlb.Bits512
+	State     SemiChannel
+}
+
+type QuarantinedState struct {
+	StateA           SemiChannelBody
+	StateB           SemiChannelBody
+	QuarantineStarts uint32
+	StateCommitedByA bool
+}
+
+type ClosingConfig struct {
+	QuarantinDuration        uint32
+	MisbehaviorFine          tlb.Grams
+	ConditionalCloseDuration uint32
+}
+
+type PaymentConfig struct {
+	ExcessFee tlb.Grams
+	DestA     tlb.MsgAddress
+	DestB     tlb.MsgAddress
+}
+
+type Storage struct {
+	BalanceA       tlb.Grams
+	BalanceB       tlb.Grams
+	KeyA           tlb.Uint256
+	KeyB           tlb.Uint256
+	ChannelId      tlb.Uint128
+	Config         ClosingConfig `tlb:"^"`
+	CommitedSeqnoA uint32
+	CommitedSeqnoB uint32
+	Quarantin      *QuarantinedState `tlb:"maybe^"`
+	Payments       PaymentConfig     `tlb:"^"`
+}

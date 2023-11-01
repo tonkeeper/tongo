@@ -27,28 +27,31 @@ type Generator struct {
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"#":                  {"uint32", false},
-		"int8":               {"int8", false},
-		"int16":              {"int16", false},
-		"int32":              {"int32", false},
-		"int64":              {"int64", false},
-		"uint8":              {"uint8", false},
-		"uint16":             {"uint16", false},
-		"uint32":             {"uint32", false},
-		"uint64":             {"uint64", false},
-		"Bool":               {"bool", false},
-		"Cell":               {"tlb.Any", false},
-		"MsgAddress":         {"tlb.MsgAddress", false},
-		"Coins":              {"tlb.Grams", false},
-		"Grams":              {"tlb.Grams", false},
-		"Text":               {"tlb.Text", false},
-		"Bytes":              {"tlb.Bytes", false},
-		"FixedLengthText":    {"tlb.FixedLengthText", false},
-		"SnakeData":          {"tlb.SnakeData", false},
-		"ChunkedData":        {"tlb.ChunkedData", false},
-		"DNSRecord":          {"tlb.DNSRecord", false},
-		"DNS_RecordSet":      {"tlb.DNSRecordSet", false},
-		"CurrencyCollection": {"tlb.CurrencyCollection", false},
+		"#":                    {"uint32", false},
+		"int8":                 {"int8", false},
+		"int16":                {"int16", false},
+		"int32":                {"int32", false},
+		"int64":                {"int64", false},
+		"uint8":                {"uint8", false},
+		"uint16":               {"uint16", false},
+		"uint32":               {"uint32", false},
+		"uint64":               {"uint64", false},
+		"Bool":                 {"bool", false},
+		"True":                 {"struct{}", false},
+		"Unit":                 {"struct{}", false},
+		"Cell":                 {"tlb.Any", false},
+		"MsgAddress":           {"tlb.MsgAddress", false},
+		"AddressWithWorkchain": {"tlb.AddressWithWorkchain", false},
+		"Coins":                {"tlb.Grams", false},
+		"Grams":                {"tlb.Grams", false},
+		"Text":                 {"tlb.Text", false},
+		"Bytes":                {"tlb.Bytes", false},
+		"FixedLengthText":      {"tlb.FixedLengthText", false},
+		"SnakeData":            {"tlb.SnakeData", false},
+		"ChunkedData":          {"tlb.ChunkedData", false},
+		"DNSRecord":            {"tlb.DNSRecord", false},
+		"DNS_RecordSet":        {"tlb.DNSRecordSet", false},
+		"CurrencyCollection":   {"tlb.CurrencyCollection", false},
 	}
 )
 
@@ -75,7 +78,17 @@ func (g *Generator) GetTlbTypes() []TlbType {
 func (g *Generator) GenerateGolangTypes(declarations []CombinatorDeclaration, typePrefix string, skipMagic bool) (string, error) {
 	dec := make([][]CombinatorDeclaration, 0)
 	for _, c := range declarations {
-		if len(c.Combinator.TypeExpressions) > 0 {
+		if len(c.Combinator.TypeExpressions) == 1 && c.Combinator.TypeExpressions[0].Number != nil {
+			c = CombinatorDeclaration{
+				Constructor:      c.Constructor,
+				FieldDefinitions: c.FieldDefinitions,
+				Equal:            c.Equal,
+				Combinator: Combinator{
+					Name: fmt.Sprintf("%v%v", c.Combinator.Name, *c.Combinator.TypeExpressions[0].Number),
+				},
+				End: c.End,
+			}
+		} else if len(c.Combinator.TypeExpressions) > 0 {
 			return "", fmt.Errorf("combinators with paramaters '%v' are not supported", c.Combinator.Name)
 		}
 		f := false
@@ -127,7 +140,7 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skip
 	if !skipMagic && declaration.Constructor.Prefix != "" && declaration.Constructor.Prefix != "#_" && declaration.Constructor.Prefix != "$_" {
 		builder.WriteString(fmt.Sprintf("Magic tlb.Magic `tlb:\"%v\"`\n", declaration.Constructor.Prefix))
 	}
-	s, err := fieldDefintionsToStruct(declaration.FieldDefinitions, g.knownTypes)
+	s, err := fieldDefinitionsToStruct(declaration.FieldDefinitions, g.knownTypes)
 	if err != nil {
 		return "", err
 	}
@@ -137,7 +150,7 @@ func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skip
 	return builder.String(), nil
 }
 
-func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[string]DefaultType) (string, error) {
+func fieldDefinitionsToStruct(definitions []FieldDefinition, knownTypes map[string]DefaultType) (string, error) {
 	var builder strings.Builder
 	for i, field := range definitions {
 		if field.IsEmpty() {
@@ -153,6 +166,18 @@ func fieldDefintionsToStruct(definitions []FieldDefinition, knownTypes map[strin
 		} else if field.NamedField != nil {
 			name = field.NamedField.Name
 			e = field.NamedField.Expression
+		} else if field.TypeRef != nil {
+			builder.WriteString(fmt.Sprintf("%s %s\n", field.TypeRef.Name, field.TypeRef.Name))
+			continue
+		}
+		if field.Anon != nil {
+			t, err := field.Anon.toGolangType(knownTypes)
+			if err != nil {
+				return "", err
+			}
+			value := fmt.Sprintf("Value %s\n", t.String())
+			builder.WriteString(value)
+			continue
 		}
 		if name == "" || name == "_" {
 			name = fmt.Sprintf("Field%v", i)
@@ -191,7 +216,25 @@ func (g *Generator) generateGolangSumType(declarations []CombinatorDeclaration, 
 		builder.WriteString(fmt.Sprintf(" `tlbSumType:\"%v\"`", d.Constructor.Prefix))
 		builder.WriteRune('\n')
 	}
-	builder.WriteRune('}')
+	builder.WriteString("}\n")
+
+	builder.WriteString(fmt.Sprintf(`func (t *%v) MarshalJSON() ([]byte, error) {`, typeName))
+	builder.WriteString(`    switch t.SumType {`)
+	for _, d := range declarations {
+		name := utils.ToCamelCase(d.Constructor.Name)
+		builder.WriteString(fmt.Sprintf(`case "%v": `, name))
+		builder.WriteString(fmt.Sprintf(`bytes, err := json.Marshal(t.%v)`+"\n", name))
+		builder.WriteString("if err != nil {\n")
+		builder.WriteString("return nil, err\n")
+		builder.WriteString("}\n")
+		//builder.WriteString("return []byte(fmt.Sprintf(`{\"SumType\": %v}`, string(bytes))), nil")
+		builder.WriteString("return []byte(fmt.Sprintf(`{\"SumType\": \"" + name + "\",\"" + name + "\":%v}`, string(bytes))), nil\n")
+	}
+
+	builder.WriteString("default: ")
+	builder.WriteString(`return nil, fmt.Errorf("unknown sum type %v", t.SumType)`)
+	builder.WriteString("}\n")
+	builder.WriteString("}\n")
 	return builder.String(), nil
 
 }
@@ -234,7 +277,7 @@ func (t TypeExpression) toGolangType(knownTypes map[string]DefaultType) (golangT
 		}, nil
 	}
 	if t.AnonymousConstructor != nil {
-		s, err := fieldDefintionsToStruct(t.AnonymousConstructor.Values, knownTypes)
+		s, err := fieldDefinitionsToStruct(t.AnonymousConstructor.Values, knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
@@ -282,15 +325,24 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 		if len(t.Parameter) != 2 {
 			return golangType{}, fmt.Errorf("invalid parameters qty for HashmapE")
 		}
-		if t.Parameter[0].Number == nil {
+		if t.Parameter[0].Number == nil && t.Parameter[0].NamedRef == nil {
 			return golangType{}, fmt.Errorf("invalid bitsize type for HashmapE")
 		}
-		size := mapBitsSizeToType(*t.Parameter[0].Number)
 		p, err := t.Parameter[1].toGolangType(knownTypes)
 		if err != nil {
 			return golangType{}, err
 		}
-		res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), size.String(), p.String())
+		if t.Parameter[0].Number != nil {
+			size := mapBitsSizeToType(*t.Parameter[0].Number)
+			res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), size.String(), p.String())
+			return res, nil
+		}
+
+		param0Type, ok := knownTypes[*t.Parameter[0].NamedRef]
+		if !ok {
+			return golangType{}, fmt.Errorf("unknown type %v", *t.Parameter[0].BuiltIn)
+		}
+		res.name = fmt.Sprintf("tlb.%v[%s, %s]", name.String(), param0Type.Name, p.String())
 		return res, nil
 	case "Maybe":
 		if len(t.Parameter) != 1 {

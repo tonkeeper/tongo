@@ -90,6 +90,14 @@ func (u Uint{{.NameIndex}}) FixedSize() int {
 	return {{.NameIndex}}
 }
 
+func (u Uint{{.NameIndex}}) Equal(other any) bool {
+    otherInt, ok := other.(Uint{{.NameIndex}})
+	if !ok {
+		return false
+	}
+	return u == otherInt
+}
+
 {{- if lt .NameIndex 57 }}
 func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
     return []byte(fmt.Sprintf("%d", u)), nil
@@ -123,6 +131,14 @@ func (u *Int{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Int{{.NameIndex}}) FixedSize() int {
 	return {{.NameIndex}}
+}
+
+func (u Int{{.NameIndex}}) Equal(other any) bool {
+    otherInt, ok := other.(Int{{.NameIndex}})
+	if !ok {
+		return false
+	}
+	return u == otherInt
 }
 
 {{- if lt .NameIndex 57 }}
@@ -283,7 +299,15 @@ func (u *Bits%v) UnmarshalJSON(b []byte) error {
 	copy(u[:], bs)
     return nil
 }
-	`, i, i/8, i, i, i, i, i/8, i)
+
+func (u Bits%v) Equal(other any) bool {
+    otherBits, ok := other.(Bits%v)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+	`, i, i/8, i, i, i, i, i/8, i, i, i)
 		} else {
 			fmt.Fprintf(&b, `
 type Bits%v boc.BitString
@@ -301,6 +325,7 @@ func (u *Bits%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Bits%v) FixedSize() int {
 	return %v
 }
+
 	`, i, i, i, i, i, i, i)
 		}
 	}

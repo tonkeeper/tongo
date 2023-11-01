@@ -2,19 +2,54 @@
     <interface name="jetton_lockup">
         <get_method name="get_lockup_data"/>
     </interface>
+    <interface name="jetton-promise-wallet">
+        <get_method name="get_wallet_data"/>
+        <get_method name="get_unlocked_amount"/>
+        <get_method name="get_authentic_data"/>
+        <get_method name="get_lockups_data"/>
+    </interface>
     <get_method name="get_lockup_data" >
         <output fixed_length="true">
             <int name="is_initialized?">int2</int>
             <int name="total_supply">int124</int>
-            <slice name="regulator_address">msgaddress</int>
-            <cell name="content">cell</int>
-            <cell name="wallet_code">cell</int>
-            <slice name="authentic_jwall_addr">msgaddress</int>
-            <slice name="promise_jwall_addr">msgaddress</int>
+            <slice name="regulator_address">msgaddress</slice>
+            <cell name="content">cell</cell>
+            <cell name="wallet_code">cell</cell>
+            <slice name="authentic_jwall_addr">msgaddress</slice>
+            <slice name="promise_jwall_addr">msgaddress</slice>
             <int name="start_time">int32</int>
             <int name="end_time">int32</int>
             <int name="max_months">int4</int>
             <int name="redeemed_tokens">int16</int>
+        </output>
+    </get_method>
+    <get_method name="get_wallet_data" >
+        <output fixed_length="true">
+        <int name="total_tockens">int124</int>
+        <slice name="owner_address">slice</slice>
+        <slice name="jetton_master_address">msgaddress</slice>
+        <cell name="jetton_wallet_code">cell</cell>
+        </output>
+    </get_method>
+    <get_method name="get_unlocked_amount" >
+        <output fixed_length="true">
+        <cell name="locked_amounts_dict">cell</int>
+        <int name="unlocked_amount">int124</int>
+        </output>
+    </get_method>
+    <get_method name="get_authentic_data" >
+        <output fixed_length="true">
+        <slice name="jetton_wallet">msgaddress</slice>
+        <slice name="master">msgaddress</slice>
+        <int name="balance">int16</int>
+        <cell name="wallet_code">cell</int>
+        </output>
+    </get_method>
+    <get_method name="get_lockups_data" >
+        <output fixed_length="true">
+        <int name="tokens_available">int124</int>
+        <int name="tokens_locked">int124</int>
+        <cell name="wallet_code">cell</int>
         </output>
     </get_method>
 </abi>

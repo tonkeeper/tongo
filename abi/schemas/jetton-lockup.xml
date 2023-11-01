@@ -1,0 +1,20 @@
+<abi>
+    <interface name="jetton_lockup">
+        <get_method name="get_lockup_data"/>
+    </interface>
+    <get_method name="get_lockup_data" >
+        <output fixed_length="true">
+            <int name="is_initialized?">int2</int>
+            <int name="total_supply">int124</int>
+            <slice name="regulator_address">msgaddress</int>
+            <cell name="content">cell</int>
+            <cell name="wallet_code">cell</int>
+            <slice name="authentic_jwall_addr">msgaddress</int>
+            <slice name="promise_jwall_addr">msgaddress</int>
+            <int name="start_time">int32</int>
+            <int name="end_time">int32</int>
+            <int name="max_months">int4</int>
+            <int name="redeemed_tokens">int16</int>
+        </output>
+    </get_method>
+</abi>

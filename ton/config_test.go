@@ -1,4 +1,4 @@
-package liteapi
+package ton
 
 import (
 	"encoding/json"
@@ -25,9 +25,9 @@ func TestConvertBlockchainConfig(t *testing.T) {
 			if err != nil {
 				t.Fatalf("os.ReadFile() failed: %v", err)
 			}
-			params, err := decodeConfigParams(configProof)
+			params, err := DecodeConfigParams(configProof)
 			if err != nil {
-				t.Fatalf("decodeConfigParams() failed: %v", err)
+				t.Fatalf("DecodeConfigParams() failed: %v", err)
 			}
 			config, err := ConvertBlockchainConfig(params)
 			if err != nil {

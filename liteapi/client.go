@@ -744,7 +744,7 @@ func (c *Client) GetConfigAll(ctx context.Context, mode ConfigMode) (tlb.ConfigP
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	return decodeConfigParams(res.ConfigProof)
+	return ton.DecodeConfigParams(res.ConfigProof)
 }
 
 func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclient.LiteServerConfigInfoC, error) {
@@ -775,28 +775,7 @@ func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	return decodeConfigParams(r.ConfigProof)
-}
-
-func decodeConfigParams(b []byte) (tlb.ConfigParams, error) {
-	cells, err := boc.DeserializeBoc(b)
-	if err != nil {
-		return tlb.ConfigParams{}, err
-	}
-	if len(cells) != 1 {
-		return tlb.ConfigParams{}, boc.ErrNotSingleRoot
-	}
-	var proof struct {
-		Proof tlb.MerkleProof[tlb.ShardStateUnsplit]
-	}
-	err = tlb.Unmarshal(cells[0], &proof)
-	if err != nil {
-		return tlb.ConfigParams{}, err
-	}
-	if proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Exists {
-		return proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config, nil
-	}
-	return tlb.ConfigParams{}, fmt.Errorf("empty Custom field")
+	return ton.DecodeConfigParams(r.ConfigProof)
 }
 
 func (c *Client) GetValidatorStats(

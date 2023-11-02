@@ -1,4 +1,4 @@
-package liteapi
+package ton
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"github.com/tonkeeper/tongo/ton"
 )
 
 // BlockchainConfig represents the TON blockchain configuration stored inside key blocks.
@@ -71,39 +70,39 @@ type BlockchainConfig struct {
 	ConfigParamNegative999 *boc.Cell `json:",omitempty"`
 }
 
-func (conf *BlockchainConfig) ConfigAddr() (ton.AccountID, bool) {
+func (conf *BlockchainConfig) ConfigAddr() (AccountID, bool) {
 	if conf.ConfigParam0 != nil {
-		return ton.AccountID{Workchain: -1, Address: conf.ConfigParam0.ConfigAddr}, true
+		return AccountID{Workchain: -1, Address: conf.ConfigParam0.ConfigAddr}, true
 	}
-	return ton.AccountID{}, false
+	return AccountID{}, false
 }
 
-func (conf *BlockchainConfig) ElectorAddr() (ton.AccountID, bool) {
+func (conf *BlockchainConfig) ElectorAddr() (AccountID, bool) {
 	if conf.ConfigParam1 != nil {
-		return ton.AccountID{Workchain: -1, Address: conf.ConfigParam1.ElectorAddr}, true
+		return AccountID{Workchain: -1, Address: conf.ConfigParam1.ElectorAddr}, true
 	}
-	return ton.AccountID{}, false
+	return AccountID{}, false
 }
 
-func (conf *BlockchainConfig) MinterAddr() (ton.AccountID, bool) {
+func (conf *BlockchainConfig) MinterAddr() (AccountID, bool) {
 	if conf.ConfigParam2 != nil {
-		return ton.AccountID{Workchain: -1, Address: conf.ConfigParam2.MinterAddr}, true
+		return AccountID{Workchain: -1, Address: conf.ConfigParam2.MinterAddr}, true
 	}
-	return ton.AccountID{}, false
+	return AccountID{}, false
 }
 
-func (conf *BlockchainConfig) FeeCollectorAddr() (ton.AccountID, bool) {
+func (conf *BlockchainConfig) FeeCollectorAddr() (AccountID, bool) {
 	if conf.ConfigParam3 != nil {
-		return ton.AccountID{Workchain: -1, Address: conf.ConfigParam3.FeeCollectorAddr}, true
+		return AccountID{Workchain: -1, Address: conf.ConfigParam3.FeeCollectorAddr}, true
 	}
-	return ton.AccountID{}, false
+	return AccountID{}, false
 }
 
-func (conf *BlockchainConfig) DnsRootAddr() (ton.AccountID, bool) {
+func (conf *BlockchainConfig) DnsRootAddr() (AccountID, bool) {
 	if conf.ConfigParam4 != nil {
-		return ton.AccountID{Workchain: -1, Address: conf.ConfigParam4.DnsRootAddr}, true
+		return AccountID{Workchain: -1, Address: conf.ConfigParam4.DnsRootAddr}, true
 	}
-	return ton.AccountID{}, false
+	return AccountID{}, false
 }
 
 func (conf *BlockchainConfig) MandatoryParams() []int {
@@ -159,4 +158,25 @@ func ConvertBlockchainConfig(params tlb.ConfigParams) (*BlockchainConfig, error)
 		field.Set(reflect.ValueOf(cell))
 	}
 	return conf, nil
+}
+
+func DecodeConfigParams(b []byte) (tlb.ConfigParams, error) {
+	cells, err := boc.DeserializeBoc(b)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if len(cells) != 1 {
+		return tlb.ConfigParams{}, boc.ErrNotSingleRoot
+	}
+	var proof struct {
+		Proof tlb.MerkleProof[tlb.ShardStateUnsplit]
+	}
+	err = tlb.Unmarshal(cells[0], &proof)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Exists {
+		return proof.Proof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value.Config, nil
+	}
+	return tlb.ConfigParams{}, fmt.Errorf("empty Custom field")
 }

@@ -604,16 +604,17 @@ func (j *%sPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
 		tlbType := msgTypes[k][0] //todo: iterate
 		fmt.Fprintf(&builder, "case %s%sOpCode:  // 0x%08x\n", tlbType.OperationName, payloadName, tlbType.Tag)
 		fmt.Fprintf(&builder, "var res %s\n", tlbType.TypeName)
-		fmt.Fprintf(&builder, `if err := tlb.Unmarshal(tempCell, &res); err == nil { 
+		fmt.Fprintf(&builder, `if err := tlb.Unmarshal(tempCell, &res); err == nil `)
+		if tlbType.FixedLength {
+			builder.WriteString(` && (tempCell.BitsAvailableForRead()== 0 && tempCell.RefsAvailableForRead() == 0)`)
+		}
+		fmt.Fprintf(&builder, ` {
 	j.SumType = %v%sOp
 	j.Value = res
 	return  nil 
 }`, tlbType.OperationName, payloadName)
 		builder.WriteString("\n")
-		if tlbType.FixedLength {
-			builder.WriteString(fmt.Sprintf(` panic! if cell.RefsAvailableForRead() > 0 || cell.BitsAvailableForRead() > 0 { return %sMsgOp, nil, ErrStructSizeMismatch }`, tlbType.OperationName))
-			builder.WriteString("\n")
-		}
+
 		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
 		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
 	}

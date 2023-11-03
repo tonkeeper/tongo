@@ -47,13 +47,16 @@
     <jetton_payload name="stonfi_swap" >
         swap#25938561 token_wallet:MsgAddress min_out:(VarUInteger 16) to_address:MsgAddress referral_address:(Maybe MsgAddress) = JettonPayload;
     </jetton_payload>
+    <jetton_payload name="stofi_provide_liquidity" fixed_length="true">
+        provide_liquidity#8fe5f9fc min_lp_out:(VarUInteger 16) = JettonPayload; <!-- todo: remove kludge after reindex -->
+    </jetton_payload>
     <jetton_payload name="stonfi_provide_liquidity">
         provide_liquidity#fcf9e58f token_wallet:MsgAddress min_lp_out:(VarUInteger 16) = JettonPayload;
     </jetton_payload>
-    <jetton_payload name="stonfi_swap_ok" fixed_lengt="true">
+    <jetton_payload name="stonfi_swap_ok" fixed_length="true">
         swap_success#c64370e5 = JettonPayload;
     </jetton_payload>
-    <jetton_payload name="stonfi_swap_ok_ref" fixed_lengt="true">
+    <jetton_payload name="stonfi_swap_ok_ref" fixed_length="true">
         swap_success#45078540 = JettonPayload;
     </jetton_payload>
 </abi>

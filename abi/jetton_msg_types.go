@@ -4,7 +4,6 @@ package abi
 
 import (
 	"errors"
-
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
@@ -60,14 +59,21 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 		}
 	case StonfiSwapOkRefJettonOpCode: // 0x45078540
 		var res StonfiSwapOkRefJettonPayload
-		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+		if err := tlb.Unmarshal(tempCell, &res); err == nil && (tempCell.BitsAvailableForRead() == 0 && tempCell.RefsAvailableForRead() == 0) {
 			j.SumType = StonfiSwapOkRefJettonOp
+			j.Value = res
+			return nil
+		}
+	case StofiProvideLiquidityJettonOpCode: // 0x8fe5f9fc
+		var res StofiProvideLiquidityJettonPayload
+		if err := tlb.Unmarshal(tempCell, &res); err == nil && (tempCell.BitsAvailableForRead() == 0 && tempCell.RefsAvailableForRead() == 0) {
+			j.SumType = StofiProvideLiquidityJettonOp
 			j.Value = res
 			return nil
 		}
 	case StonfiSwapOkJettonOpCode: // 0xc64370e5
 		var res StonfiSwapOkJettonPayload
-		if err := tlb.Unmarshal(tempCell, &res); err == nil {
+		if err := tlb.Unmarshal(tempCell, &res); err == nil && (tempCell.BitsAvailableForRead() == 0 && tempCell.RefsAvailableForRead() == 0) {
 			j.SumType = StonfiSwapOkJettonOp
 			j.Value = res
 			return nil
@@ -101,6 +107,7 @@ const (
 	StonfiSwapJettonOp             JettonOpName = "StonfiSwap"
 	TegroAddLiquidityJettonOp      JettonOpName = "TegroAddLiquidity"
 	StonfiSwapOkRefJettonOp        JettonOpName = "StonfiSwapOkRef"
+	StofiProvideLiquidityJettonOp  JettonOpName = "StofiProvideLiquidity"
 	StonfiSwapOkJettonOp           JettonOpName = "StonfiSwapOk"
 	DedustSwapJettonOp             JettonOpName = "DedustSwap"
 	StonfiProvideLiquidityJettonOp JettonOpName = "StonfiProvideLiquidity"
@@ -111,6 +118,7 @@ const (
 	StonfiSwapJettonOpCode             JettonOpCode = 0x25938561
 	TegroAddLiquidityJettonOpCode      JettonOpCode = 0x287e167a
 	StonfiSwapOkRefJettonOpCode        JettonOpCode = 0x45078540
+	StofiProvideLiquidityJettonOpCode  JettonOpCode = 0x8fe5f9fc
 	StonfiSwapOkJettonOpCode           JettonOpCode = 0xc64370e5
 	DedustSwapJettonOpCode             JettonOpCode = 0xe3a0d482
 	StonfiProvideLiquidityJettonOpCode JettonOpCode = 0xfcf9e58f
@@ -123,6 +131,7 @@ var KnownJettonTypes = map[string]any{
 	StonfiSwapJettonOp:             StonfiSwapJettonPayload{},
 	TegroAddLiquidityJettonOp:      TegroAddLiquidityJettonPayload{},
 	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonPayload{},
+	StofiProvideLiquidityJettonOp:  StofiProvideLiquidityJettonPayload{},
 	StonfiSwapOkJettonOp:           StonfiSwapOkJettonPayload{},
 	DedustSwapJettonOp:             DedustSwapJettonPayload{},
 	StonfiProvideLiquidityJettonOp: StonfiProvideLiquidityJettonPayload{},
@@ -134,6 +143,7 @@ var jettonOpCodes = map[JettonOpName]JettonOpCode{
 	StonfiSwapJettonOp:             StonfiSwapJettonOpCode,
 	TegroAddLiquidityJettonOp:      TegroAddLiquidityJettonOpCode,
 	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonOpCode,
+	StofiProvideLiquidityJettonOp:  StofiProvideLiquidityJettonOpCode,
 	StonfiSwapOkJettonOp:           StonfiSwapOkJettonOpCode,
 	DedustSwapJettonOp:             DedustSwapJettonOpCode,
 	StonfiProvideLiquidityJettonOp: StonfiProvideLiquidityJettonOpCode,
@@ -169,6 +179,10 @@ type TegroAddLiquidityJettonPayload struct {
 }
 
 type StonfiSwapOkRefJettonPayload struct{}
+
+type StofiProvideLiquidityJettonPayload struct {
+	MinLpOut tlb.VarUInteger16
+}
 
 type StonfiSwapOkJettonPayload struct{}
 

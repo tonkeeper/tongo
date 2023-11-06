@@ -292,6 +292,9 @@ func (c *Cell) ReadRemainingBits() BitString {
 }
 
 func (c *Cell) CopyRemaining() *Cell {
+	if c == nil {
+		return nil
+	}
 	rCursor := c.bits.rCursor
 	c2 := NewCellWithBits(c.bits.ReadRemainingBits())
 	c.bits.rCursor = rCursor

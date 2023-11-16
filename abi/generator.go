@@ -97,6 +97,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	messagesMD, err := gen.RenderMessagesMD()
+	if err != nil {
+		panic(err)
+	}
 
 	jettons, err := gen.RenderJetton()
 	if err != nil {
@@ -134,5 +138,8 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+	}
+	if err := os.WriteFile("messages.md", []byte(messagesMD), 0644); err != nil {
+		panic(err)
 	}
 }

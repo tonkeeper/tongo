@@ -9,6 +9,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/tonkeeper/tongo/abi"
 	"golang.org/x/exp/slices"
 
 	"github.com/tonkeeper/tongo/tlb"
@@ -48,6 +49,8 @@ var (
 	msgDecoderReturnErr = "if err != nil {return \"\", nil, err}\n"
 	returnInvalidStack  = "{return \"\", nil, fmt.Errorf(\"invalid stack format\")}\n"
 	returnStrNilErr     = "if err != nil {return \"\", nil, err}\n"
+	//go:embed messages.md.tmpl
+	messagesMDTemplate string
 	//go:embed invocation_order.tmpl
 	invocationOrderTemplate string
 	//go:embed get_methods.tmpl
@@ -178,19 +181,19 @@ func (g *Generator) registerABI() error {
 		}
 	}
 	for _, internal := range g.abi.Internals {
-		err := registerMstType(g.loadedTlbMsgTypes, "MsgBody", internal.Name, internal.Input, internal.FixedLength)
+		err := registerMsgType(g.loadedTlbMsgTypes, "MsgBody", internal.Name, internal.Input, internal.FixedLength)
 		if err != nil {
 			return err
 		}
 	}
 	for _, jetton := range g.abi.JettonPayloads {
-		err := registerMstType(g.loadedJettonsMsgTypes, "JettonPayload", jetton.Name, jetton.Input, jetton.FixedLength)
+		err := registerMsgType(g.loadedJettonsMsgTypes, "JettonPayload", jetton.Name, jetton.Input, jetton.FixedLength)
 		if err != nil {
 			return err
 		}
 	}
 	for _, nft := range g.abi.NFTPayloads {
-		err := registerMstType(g.loadedNFTsMsgTypes, "NFTPayload", nft.Name, nft.Input, nft.FixedLength)
+		err := registerMsgType(g.loadedNFTsMsgTypes, "NFTPayload", nft.Name, nft.Input, nft.FixedLength)
 		if err != nil {
 			return err
 		}
@@ -220,7 +223,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func registerMstType(known map[uint32][]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
+func registerMsgType(known map[uint32][]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -466,7 +469,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 
 	context := messagesContext{g.loadedTlbMsgTypes}
 
-	tmpl, err := template.New("mesages").Parse(messagesTemplate)
+	tmpl, err := template.New("messages").Parse(messagesTemplate)
 	if err != nil {
 		panic(err)
 		return ""
@@ -477,6 +480,44 @@ func (g *Generator) GenerateMsgDecoder() string {
 		return ""
 	}
 	return buf.String()
+}
+
+type messageOperation struct {
+	Name   abi.MsgOpName
+	OpCode string
+}
+
+type messagesMDContext struct {
+	Operations []messageOperation
+}
+
+// RenderMessagesMD renders messages.md file with messages and their names + opcodes.
+func (g *Generator) RenderMessagesMD() (string, error) {
+	context := messagesMDContext{}
+	for opcode, bodies := range g.loadedTlbMsgTypes {
+		for _, body := range bodies {
+			operation := messageOperation{
+				Name:   body.OperationName,
+				OpCode: fmt.Sprintf("0x%08x", opcode),
+			}
+			context.Operations = append(context.Operations, operation)
+		}
+	}
+	sort.Slice(context.Operations, func(i, j int) bool {
+		if context.Operations[i].Name == context.Operations[j].Name {
+			return context.Operations[i].OpCode < context.Operations[j].OpCode
+		}
+		return context.Operations[i].Name < context.Operations[j].Name
+	})
+	tmpl, err := template.New("messagesMD").Parse(messagesMDTemplate)
+	if err != nil {
+		return "", err
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, context); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
 
 type templateContext struct {
@@ -491,6 +532,7 @@ type methodDescription struct {
 	Name         string
 	InvokeFnName string
 }
+
 type interfacDescripion struct {
 	Name       string
 	Results    []string

@@ -1,0 +1,12 @@
+
+# List of supported message opcodes
+
+The first 4 bytes of a message's body identify the `operation` to be performed, or the `method` of the smart contract to be invoked.
+
+The list below contains the supported message operations, their names and opcodes.
+
+| Name        | Message operation code |
+|-------------|------------------------|
+{{- range $_, $op := .Operations }}
+| {{ $op.Name }}| {{ $op.OpCode }} |
+{{- end }}

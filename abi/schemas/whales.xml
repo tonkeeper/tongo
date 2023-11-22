@@ -11,19 +11,19 @@
 <!--        <get_method name="get_member" version="whales_nominator"/> todo: uncomment-->
 <!--        <get_method name="get_members_raw" version="whales_nominator" todo: uncomment/>-->
         <get_method name="get_params" version="whales_nominator"/>
-        <in_msg>
+        <msg_in>
             <internal name="whales_nominators_withdraw"/>
             <internal name="whales_nominators_deposit"/>
             <internal name="whales_nominators_send_stake"/>
             <internal name="whales_nominators_withdraw_unowned"/>
             <internal name="whales_nominators_force_kick"/>
-        </in_msg>
-        <out_msg>
+        </msg_in>
+        <msg_out>
             <internal name="whales_nominators_accept_stake"/>
             <internal name="whales_nominators_accept_withdraws"/>
             <internal name="whales_nominators_withdraw_unowned_response"/>
             <internal name="whales_nominators_stake_withdraw_completed"/>
-        </out_msg>
+        </msg_out>
     </interface>
     <get_method name="get_staking_status" >
         <output fixed_length="true">

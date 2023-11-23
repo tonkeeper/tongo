@@ -104,10 +104,11 @@ func (p *addressParser) ParseAddress(ctx context.Context, address string) (ton.A
 	if len(bytesAddress) == 36 {
 		checksum := uint64(binary.BigEndian.Uint16(bytesAddress[34:36]))
 		if checksum == crc.CalculateCRC(crc.XMODEM, bytesAddress[0:34]) {
+			testnetOnly := bytesAddress[0]&0b10000000 != 0
 			bounce := bytesAddress[0]&0x11 == 0x11
 			accountID.Workchain = int32(int8(bytesAddress[1]))
 			copy(accountID.Address[:], bytesAddress[2:34])
-			return ton.Address{ID: accountID, Bounce: bounce, StateInit: nil}, nil
+			return ton.Address{ID: accountID, Bounce: bounce, StateInit: nil, TestnetOnly: testnetOnly}, nil
 		}
 	}
 	if !strings.Contains(address, ".") {

@@ -9,7 +9,8 @@ import (
 // Address is a high-level abstraction containing additional information besides AccountID,
 // which is useful for building more advanced workflows.
 type Address struct {
-	ID        AccountID
-	Bounce    bool
-	StateInit *tlb.StateInit
+	ID          AccountID
+	Bounce      bool
+	StateInit   *tlb.StateInit
+	TestnetOnly bool
 }

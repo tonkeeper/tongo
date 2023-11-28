@@ -106,6 +106,23 @@ func decodeMessageV3(body *SignedMsgBody) (*MessageV3, error) {
 	return &msgv3, nil
 }
 
+func DecodeHighloadV2Message(msg *boc.Cell) (*HighloadV2Message, error) {
+	signedMsgBody, err := extractSignedMsgBody(msg)
+	if err != nil {
+		return nil, err
+	}
+	return decodeHighloadV2Message(signedMsgBody)
+}
+
+func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
+	msg := HighloadV2Message{}
+	payloadCell := boc.Cell(body.Message)
+	if err := tlb.Unmarshal(&payloadCell, &msg); err != nil {
+		return nil, err
+	}
+	return &msg, nil
+}
+
 // ExtractRawMessages extracts a list of RawMessages from an external message.
 func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
 	switch ver {
@@ -122,6 +139,12 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
 			return nil, err
 		}
 		return v3.RawMessages, nil
+	case HighLoadV2R2:
+		hl, err := DecodeHighloadV2Message(msg)
+		if err != nil {
+			return nil, err
+		}
+		return []RawMessage(hl.RawMessages), nil
 	default:
 		return nil, fmt.Errorf("wallet version is not supported: %v", ver)
 	}
@@ -208,5 +231,31 @@ func (p PayloadHighload) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	if err := c.AddRef(dict); err != nil {
 		return err
 	}
+	return nil
+}
+
+func (p *PayloadHighload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var m tlb.HashmapE[tlb.Uint16, tlb.Any]
+	if err := decoder.Unmarshal(c, &m); err != nil {
+		return err
+	}
+	rawMessages := make([]RawMessage, 0, len(m.Values()))
+	for _, item := range m.Items() {
+		cell := boc.Cell(item.Value)
+		mode, err := cell.ReadUint(8)
+		if err != nil {
+			return fmt.Errorf("failed to read msg mode: %v", err)
+		}
+		msg, err := cell.NextRef()
+		if err != nil {
+			return fmt.Errorf("failed to read msg: %v", err)
+		}
+		rawMsg := RawMessage{
+			Message: msg,
+			Mode:    byte(mode),
+		}
+		rawMessages = append(rawMessages, rawMsg)
+	}
+	*p = rawMessages
 	return nil
 }

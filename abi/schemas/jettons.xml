@@ -24,7 +24,7 @@
     <get_method name="get_jetton_data">
         <output>
             <int name="total_supply">int257</int>
-            <int name="mintable">int8</int>
+            <int name="mintable">bool</int>
             <slice name="admin_address">msgaddress</slice>
             <cell name="jetton_content">any</cell>
             <cell name="jetton_wallet_code">any</cell>

@@ -680,7 +680,7 @@ func DecodeGetFullDomainResult(stack tlb.VmStack) (resultType string, resultAny 
 
 type GetJettonDataResult struct {
 	TotalSupply      tlb.Int257
-	Mintable         int8
+	Mintable         bool
 	AdminAddress     tlb.MsgAddress
 	JettonContent    tlb.Any
 	JettonWalletCode tlb.Any

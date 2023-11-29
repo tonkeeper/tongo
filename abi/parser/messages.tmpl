@@ -1,16 +1,19 @@
-// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
-// On success, it returns an operation name and a decoded body.
-func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
-    tag, err := cell.ReadUint(32)
-    if err != nil {return "", nil, err}
-    switch uint32(tag) {
-        {{- range $tag, $ops := .Operations }}
+func pointer[T any](t T) *T{
+	return &t
+}
+
+var messagesDecodingFunctions =map[uint32]func(cell *boc.Cell)  ( *MsgOpName, any, error) {
+{{- range $tag, $ops := .Operations }}
             {{- if gt (len $ops) 1 }}
-                case 0x{{ printf "%08x" $tag }}: // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
+            // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
+                0x{{ printf "%08x" $tag }}: func(cell *boc.Cell) (*MsgOpName, any, error) {
+                var err error
                 cell = cell.CopyRemaining()
             {{- else }}
                 {{- $op := index $ops 0 }}
-                case {{ $op.OperationName }}MsgOpCode:  // 0x{{ printf "%08x" $op.Tag }}
+                // 0x{{ printf "%08x" $op.Tag }}
+                {{ $op.OperationName }}MsgOpCode: func(cell *boc.Cell) (*MsgOpName, any, error) {
+                var err error
             {{- end }}
             {{- range $op := $ops }}
                 var res{{ $op.TypeName }} {{ $op.TypeName }}
@@ -19,14 +22,32 @@ func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
                 if err == nil  && !completedRead(cell) { err = ErrStructSizeMismatch ;}
                 {{- end }}
                if err == nil {
-                    return {{ $op.OperationName }}MsgOp, res{{ $op.TypeName }}, nil;
+                    return  pointer({{ $op.OperationName }}MsgOp), res{{ $op.TypeName }}, nil;
                 }
                 cell.ResetCounters()
             {{- end }}
-            return  "", nil, err
+            return nil, nil, err
+            },
         {{- end }}
-        }
-    return "", nil, fmt.Errorf("invalid message tag")
+}
+
+// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
+// It returns an opcode, an operation name and a decoded body.
+func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*uint32, *MsgOpName, any, error) {
+	if cell.BitsAvailableForRead() < 32 {
+		return nil, nil, nil, nil
+	}
+	tag64, err := cell.ReadUint(32)
+	if err != nil {
+		return nil, nil, nil,err
+	}
+	tag := uint32(tag64)
+	f := messagesDecodingFunctions[tag]
+    if f != nil {
+        name, a, err := f(cell)
+        return &tag, name, a, err
+    }
+    return &tag, nil, nil, nil
 }
 
 func completedRead(cell *boc.Cell) bool {

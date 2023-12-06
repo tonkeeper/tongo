@@ -423,13 +423,18 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
+// TransactionsQuantity returns the number of transactions in this block.
+func (b *Block) TransactionsQuantity() int {
+	quantity := 0
+	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
+		quantity += len(accountBlock.Transactions.keys)
+	}
+	return quantity
+}
+
 // AllTransactions returns all transactions in this block ordered by Lt.
 func (b *Block) AllTransactions() []*Transaction {
-	count := 0
-	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
-		count += len(accountBlock.Transactions.keys)
-	}
-	transactions := make([]*Transaction, 0, count)
+	transactions := make([]*Transaction, 0, b.TransactionsQuantity())
 	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
 		for i := range accountBlock.Transactions.values {
 			transactions = append(transactions, &accountBlock.Transactions.values[i].Value)

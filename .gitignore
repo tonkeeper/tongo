@@ -8,3 +8,4 @@ tlb/testdata/*.output.json
 tlb/parser/testdata/*.output.out
 vendor/
 cover.out
+*.output.json

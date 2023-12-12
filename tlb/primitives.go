@@ -257,21 +257,7 @@ func (a Any) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 }
 
 func (a *Any) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	x := boc.NewCell()
-	err := x.WriteBitString(c.ReadRemainingBits())
-	if err != nil {
-		return err
-	}
-	for c.RefsAvailableForRead() > 0 {
-		ref, err := c.NextRef()
-		if err != nil {
-			return err
-		}
-		err = x.AddRef(ref)
-		if err != nil {
-			return err
-		}
-	}
+	x := c.CopyRemaining()
 	*a = Any(*x)
 	return nil
 }

@@ -299,7 +299,8 @@ func (c *Cell) CopyRemaining() *Cell {
 	c2 := NewCellWithBits(c.bits.ReadRemainingBits())
 	c.bits.rCursor = rCursor
 	refCursor := c.refCursor
-	for c.RefsAvailableForRead() > 0 {
+	refsNums := c.RefsAvailableForRead()
+	for i := 0; i < refsNums; i++ {
 		ref, err := c.NextRef()
 		if err != nil {
 			// this should never happen but anyway

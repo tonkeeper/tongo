@@ -386,3 +386,57 @@ func TestAny_JSON(t *testing.T) {
 		t.Fatalf("want isRight: %v, got isRight: %v", data.Data.IsRight, unmarshalled.Data.IsRight)
 	}
 }
+
+func TestAny_UnmarshalTLB(t *testing.T) {
+	tests := []struct {
+		name       string
+		modifyCell func(cell *boc.Cell) error
+		wantBoc    string
+	}{
+		{
+			name: "test1",
+			modifyCell: func(cell *boc.Cell) error {
+				_, err := cell.ReadBytes(2)
+				return err
+			},
+			wantBoc: "te6ccgEBAwEAEAACBAwNAQIABgECAwAGBAUG",
+		},
+		{
+			name: "test2",
+			modifyCell: func(cell *boc.Cell) error {
+				if _, err := cell.ReadBytes(1); err != nil {
+					return err
+				}
+				if _, err := cell.NextRef(); err != nil {
+					return err
+				}
+				_, err := cell.NextRef()
+				return err
+			},
+			wantBoc: "te6ccgEBAQEABQAABgsMDQ==",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cell, err := boc.DeserializeSinglRootBase64("te6ccgEBAwEAEgACCAoLDA0BAgAGAQIDAAYEBQY=")
+			if err != nil {
+				t.Fatalf("DeserializeSinglRootBase64() failed: %v", err)
+			}
+			if err := tt.modifyCell(cell); err != nil {
+				t.Fatalf("modifyCell() failed: %v", err)
+			}
+			value := &Any{}
+			if err := value.UnmarshalTLB(cell, &Decoder{}); err != nil {
+				t.Fatalf("UnmarshalTLB() failed: %v", err)
+			}
+			res := boc.Cell(*value)
+			resultBoc, err := res.ToBocBase64()
+			if err != nil {
+				t.Fatalf("ToBocBase64() failed: %v", err)
+			}
+			if resultBoc != tt.wantBoc {
+				t.Errorf("UnmarshalTLB() got = %v, want %v", resultBoc, tt.wantBoc)
+			}
+		})
+	}
+}

@@ -216,6 +216,17 @@ type HashmapE[keyT fixedSize, T any] struct {
 	m Hashmap[keyT, T]
 }
 
+// NewHashmapE returns a new instance of HashmapE.
+// Make sure that a key at index "i" corresponds to a value at the same index.
+func NewHashmapE[keyT fixedSize, T any](keys []keyT, values []T) HashmapE[keyT, T] {
+	return HashmapE[keyT, T]{
+		m: Hashmap[keyT, T]{
+			keys:   keys,
+			values: values,
+		},
+	}
+}
+
 func (h HashmapE[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	var temp Maybe[Ref[Hashmap[keyT, T]]]
 	temp.Exists = len(h.m.keys) > 0

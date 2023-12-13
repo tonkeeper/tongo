@@ -82,7 +82,7 @@ func TestSendRawMessage(t *testing.T) {
 }
 
 func TestRunSmcMethod(t *testing.T) {
-	tongoClient, err := NewClientWithDefaultMainnet()
+	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -94,7 +94,7 @@ func TestRunSmcMethod(t *testing.T) {
 }
 
 func TestGetAllShards(t *testing.T) {
-	api, err := NewClientWithDefaultMainnet()
+	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +115,7 @@ func TestGetAllShards(t *testing.T) {
 }
 
 func TestGetBlock(t *testing.T) {
-	api, err := NewClientWithDefaultMainnet()
+	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -136,7 +136,7 @@ func TestGetBlock(t *testing.T) {
 }
 
 func TestGetConfigAll(t *testing.T) {
-	api, err := NewClientWithDefaultMainnet()
+	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -147,7 +147,7 @@ func TestGetConfigAll(t *testing.T) {
 }
 
 func TestGetAccountState(t *testing.T) {
-	api, err := NewClientWithDefaultMainnet()
+	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,7 +180,7 @@ func TestGetAccountState(t *testing.T) {
 }
 
 func TestLookupBlock(t *testing.T) {
-	api, err := NewClientWithDefaultMainnet()
+	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -202,7 +202,7 @@ func TestLookupBlock(t *testing.T) {
 }
 
 func TestGetOneTransaction(t *testing.T) {
-	tongoClient, err := NewClientWithDefaultMainnet()
+	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -242,7 +242,7 @@ func TestGetOneTransaction(t *testing.T) {
 }
 
 func TestGetLibraries(t *testing.T) {
-	tongoClient, err := NewClientWithDefaultMainnet()
+	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -323,7 +323,7 @@ func TestDnsResolve(t *testing.T) {
 }
 
 func TestGetRootDNS(t *testing.T) {
-	tongoClient, err := NewClientWithDefaultMainnet()
+	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
@@ -350,7 +350,7 @@ func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
 
 func TestMappingTransactionsToBlocks(t *testing.T) {
 	const limit = 100
-	c, err := NewClientWithDefaultMainnet()
+	c, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}

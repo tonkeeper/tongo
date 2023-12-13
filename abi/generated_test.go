@@ -377,7 +377,7 @@ func TestGetMethods(t *testing.T) {
 
 func TestWhalesNominators(t *testing.T) {
 	address := ton.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
-	client, err := liteapi.NewClientWithDefaultMainnet()
+	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		t.Fatal(err)
 	}

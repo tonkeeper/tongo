@@ -8,8 +8,14 @@ import (
 )
 
 func TestGenerateAndVerifyPayload(t *testing.T) {
-	liteApiClient, _ := liteapi.NewClientWithDefaultMainnet()
-	tonConnect, _ := NewTonConnect(liteApiClient, "my_secret", WithLifeTimePayload(300), WithLifeTimeProof(300))
+	liteApiClient, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
+	if err != nil {
+		t.Fatalf("failed create liteapi client: %v", err)
+	}
+	tonConnect, err := NewTonConnect(liteApiClient, "my_secret", WithLifeTimePayload(300), WithLifeTimeProof(300))
+	if err != nil {
+		t.Fatalf("failed create tonconnect: %v", err)
+	}
 
 	payload, err := tonConnect.GeneratePayload()
 	if err != nil {
@@ -26,8 +32,14 @@ func TestGenerateAndVerifyPayload(t *testing.T) {
 }
 
 func TestExpirePayload(t *testing.T) {
-	liteApiClient, _ := liteapi.NewClientWithDefaultMainnet()
-	tonConnect, _ := NewTonConnect(liteApiClient, "my_secret", WithLifeTimePayload(1), WithLifeTimeProof(1)) // set little lifetime
+	liteApiClient, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
+	if err != nil {
+		t.Fatalf("failed create liteapi client: %v", err)
+	}
+	tonConnect, err := NewTonConnect(liteApiClient, "my_secret", WithLifeTimePayload(1), WithLifeTimeProof(1)) // set little lifetime
+	if err != nil {
+		t.Fatalf("failed create tonconnect: %v", err)
+	}
 
 	payload, err := tonConnect.GeneratePayload()
 	if err != nil {

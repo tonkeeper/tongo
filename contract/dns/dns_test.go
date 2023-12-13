@@ -11,7 +11,7 @@ import (
 )
 
 func TestResolve(t *testing.T) {
-	client, err := liteapi.NewClientWithDefaultMainnet()
+	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}

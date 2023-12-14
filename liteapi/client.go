@@ -104,6 +104,50 @@ func WithInitializationContext(ctx context.Context) Option {
 	}
 }
 
+// FromEnvsOrMainnet configures a client to use lite servers from the LITE_SERVERS env variable.
+// If LITE_SERVERS is not set, it downloads public config for mainnet from ton.org.
+func FromEnvsOrMainnet() Option {
+	return func(o *Options) error {
+		if value, ok := os.LookupEnv(LiteServerEnvName); ok {
+			servers, err := config.ParseLiteServersEnvVar(value)
+			if err != nil {
+				return err
+			}
+			o.LiteServers = servers
+			o.MaxConnections = len(servers)
+			return nil
+		}
+		file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+		if err != nil {
+			return err
+		}
+		o.LiteServers = file.LiteServers
+		return nil
+	}
+}
+
+// FromEnvsOrTestnet configures a client to use lite servers from the LITE_SERVERS env variable.
+// If LITE_SERVERS is not set, it downloads public config for testnet from ton.org.
+func FromEnvsOrTestnet() Option {
+	return func(o *Options) error {
+		if value, ok := os.LookupEnv(LiteServerEnvName); ok {
+			servers, err := config.ParseLiteServersEnvVar(value)
+			if err != nil {
+				return err
+			}
+			o.LiteServers = servers
+			o.MaxConnections = len(servers)
+			return nil
+		}
+		file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+		if err != nil {
+			return err
+		}
+		o.LiteServers = file.LiteServers
+		return nil
+	}
+}
+
 // FromEnvs configures a Client based on the following environment variables:
 // LITE_SERVERS - a list of lite servers to use.
 // FromEnvs() also sets MaxConnectionsNumber to be equal to the number of servers in LITE_SERVERS.

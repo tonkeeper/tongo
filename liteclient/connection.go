@@ -137,7 +137,7 @@ func (c *Connection) ping() {
 		}
 		err = c.Send(p)
 		if err != nil && IsNotConnectedYet(err) {
-			fmt.Printf("ping error: %v\n", err)
+			fmt.Printf("%s ping error: %v\n", c.host, err)
 			continue
 		}
 	}

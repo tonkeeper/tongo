@@ -81,7 +81,11 @@ func TestExtractRawMessages(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			rawMessages, err := ExtractRawMessages(tt.ver, c[0])
+			var msg tlb.Message
+			if err := tlb.Unmarshal(c[0], &msg); err != nil {
+				t.Fatal(err)
+			}
+			rawMessages, err := ExtractRawMessages(tt.ver, &msg)
 			if err != nil {
 				t.Fatal(err)
 			}

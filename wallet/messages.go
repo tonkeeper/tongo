@@ -44,6 +44,15 @@ type RawMessage struct {
 	Mode    byte
 }
 
+// ToTlbMessage converts a RawMessage to a tlb.Message.
+func (rm *RawMessage) ToTlbMessage() (*tlb.Message, error) {
+	var msg tlb.Message
+	if err := tlb.Unmarshal(rm.Message, &msg); err != nil {
+		return nil, err
+	}
+	return &msg, nil
+}
+
 type PayloadV1toV4 []RawMessage
 type PayloadHighload []RawMessage
 
@@ -59,20 +68,16 @@ func (body *SignedMsgBody) Verify(publicKey ed25519.PublicKey) error {
 	return fmt.Errorf("failed to verify msg signature")
 }
 
-func extractSignedMsgBody(msg *boc.Cell) (*SignedMsgBody, error) {
-	var m tlb.Message
-	if err := tlb.Unmarshal(msg, &m); err != nil {
-		return nil, err
-	}
+func extractSignedMsgBody(msg *tlb.Message) (*SignedMsgBody, error) {
+	bodyCell := boc.Cell(msg.Body.Value)
 	msgBody := SignedMsgBody{}
-	bodyCell := boc.Cell(m.Body.Value)
 	if err := tlb.Unmarshal(&bodyCell, &msgBody); err != nil {
 		return nil, err
 	}
 	return &msgBody, nil
 }
 
-func DecodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
+func DecodeMessageV4(msg *tlb.Message) (*MessageV4, error) {
 	signedMsgBody, err := extractSignedMsgBody(msg)
 	if err != nil {
 		return nil, err
@@ -89,7 +94,7 @@ func decodeMessageV4(body *SignedMsgBody) (*MessageV4, error) {
 	return &msgv4, nil
 }
 
-func DecodeMessageV3(msg *boc.Cell) (*MessageV3, error) {
+func DecodeMessageV3(msg *tlb.Message) (*MessageV3, error) {
 	signedMsgBody, err := extractSignedMsgBody(msg)
 	if err != nil {
 		return nil, err
@@ -106,7 +111,7 @@ func decodeMessageV3(body *SignedMsgBody) (*MessageV3, error) {
 	return &msgv3, nil
 }
 
-func DecodeHighloadV2Message(msg *boc.Cell) (*HighloadV2Message, error) {
+func DecodeHighloadV2Message(msg *tlb.Message) (*HighloadV2Message, error) {
 	signedMsgBody, err := extractSignedMsgBody(msg)
 	if err != nil {
 		return nil, err
@@ -124,7 +129,10 @@ func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
 }
 
 // ExtractRawMessages extracts a list of RawMessages from an external message.
-func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
+func ExtractRawMessages(ver Version, msg *tlb.Message) (PayloadV1toV4, error) {
+	if msg == nil {
+		return nil, fmt.Errorf("msg is nil")
+	}
 	switch ver {
 	case V4R1, V4R2:
 		v4, err := DecodeMessageV4(msg)
@@ -154,7 +162,10 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
 // was signed by the given public key of a wallet contract.
 // On success, it returns nil.
 // Otherwise, it returns an error.
-func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) error {
+func VerifySignature(ver Version, msg *tlb.Message, publicKey ed25519.PublicKey) error {
+	if msg == nil {
+		return fmt.Errorf("msg is nil")
+	}
 	switch ver {
 	case V3R1, V3R2, V4R1, V4R2, HighLoadV2R2:
 		signedMsgBody, err := extractSignedMsgBody(msg)

@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"sync"
@@ -230,7 +231,12 @@ func NewClient(opts ...Option) (*Client, error) {
 		if err != nil {
 			continue
 		}
-		liteclients = append(liteclients, liteclient.NewClient(c, liteclient.OptionTimeout(options.Timeout)))
+		lc := liteclient.NewClient(c, liteclient.OptionTimeout(options.Timeout))
+		_, err = lc.LiteServerGetMasterchainInfo(options.InitCtx)
+		if err != nil {
+			continue
+		}
+		liteclients = append(liteclients, lc)
 		if len(liteclients) >= options.MaxConnections {
 			break
 		}
@@ -953,5 +959,8 @@ func downloadConfig(path string) (*config.GlobalConfigurationFile, error) {
 		configCache[path] = o
 		configCacheMutex.Unlock()
 	}
+	rand.Shuffle(len(o.LiteServers), func(i, j int) {
+		o.LiteServers[i], o.LiteServers[j] = o.LiteServers[j], o.LiteServers[i]
+	})
 	return o, err
 }

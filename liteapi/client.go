@@ -64,6 +64,8 @@ type Options struct {
 	Timeout     time.Duration
 	// MaxConnections specifies a number of connections to lite servers for a connections pool.
 	MaxConnections int
+	// InitCtx is used when opening a new connection to lite servers during the initialization.
+	InitCtx context.Context
 }
 
 type Option func(o *Options) error
@@ -89,6 +91,59 @@ func WithMaxConnectionsNumber(maxConns int) Option {
 func WithTimeout(timeout time.Duration) Option {
 	return func(o *Options) error {
 		o.Timeout = timeout
+		return nil
+	}
+}
+
+// WithInitializationContext specifies a context to be used
+// when opening a new connection to lite servers during the initialization.
+func WithInitializationContext(ctx context.Context) Option {
+	return func(o *Options) error {
+		o.InitCtx = ctx
+		return nil
+	}
+}
+
+// FromEnvsOrMainnet configures a client to use lite servers from the LITE_SERVERS env variable.
+// If LITE_SERVERS is not set, it downloads public config for mainnet from ton.org.
+func FromEnvsOrMainnet() Option {
+	return func(o *Options) error {
+		if value, ok := os.LookupEnv(LiteServerEnvName); ok {
+			servers, err := config.ParseLiteServersEnvVar(value)
+			if err != nil {
+				return err
+			}
+			o.LiteServers = servers
+			o.MaxConnections = len(servers)
+			return nil
+		}
+		file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+		if err != nil {
+			return err
+		}
+		o.LiteServers = file.LiteServers
+		return nil
+	}
+}
+
+// FromEnvsOrTestnet configures a client to use lite servers from the LITE_SERVERS env variable.
+// If LITE_SERVERS is not set, it downloads public config for testnet from ton.org.
+func FromEnvsOrTestnet() Option {
+	return func(o *Options) error {
+		if value, ok := os.LookupEnv(LiteServerEnvName); ok {
+			servers, err := config.ParseLiteServersEnvVar(value)
+			if err != nil {
+				return err
+			}
+			o.LiteServers = servers
+			o.MaxConnections = len(servers)
+			return nil
+		}
+		file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+		if err != nil {
+			return err
+		}
+		o.LiteServers = file.LiteServers
 		return nil
 	}
 }
@@ -155,6 +210,7 @@ func NewClient(opts ...Option) (*Client, error) {
 	options := &Options{
 		Timeout:        60 * time.Second,
 		MaxConnections: defaultMaxConnectionsNumber,
+		InitCtx:        context.Background(),
 	}
 	for _, o := range opts {
 		if err := o(options); err != nil {
@@ -170,7 +226,7 @@ func NewClient(opts ...Option) (*Client, error) {
 		if err != nil {
 			continue
 		}
-		c, err := liteclient.NewConnection(context.Background(), serverPubkey, ls.Host)
+		c, err := liteclient.NewConnection(options.InitCtx, serverPubkey, ls.Host)
 		if err != nil {
 			continue
 		}

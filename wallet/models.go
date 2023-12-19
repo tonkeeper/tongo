@@ -65,6 +65,40 @@ func init() {
 	}
 }
 
+// GetWalletVersion returns a wallet version by the given state of an account and an incoming message to the account.
+// An incoming message is needed in case when a wallet has not been initialized yet.
+// In this case, we take its code from the message's StateInit.
+func GetWalletVersion(state tlb.ShardAccount, msg tlb.Message) (Version, bool, error) {
+	if state.Account.SumType == "AccountNone" || state.Account.Account.Storage.State.SumType == "AccountUninit" {
+		if !msg.Init.Exists {
+			return 0, false, fmt.Errorf("account is not initialized")
+		}
+		if !msg.Init.Value.Value.Code.Exists {
+			return 0, false, fmt.Errorf("account is not initialized")
+		}
+		code := msg.Init.Value.Value.Code.Value.Value
+		hash, err := code.Hash256()
+		if err != nil {
+			return 0, false, err
+		}
+		ver, ok := GetVerByCodeHash(hash)
+		return ver, ok, nil
+	}
+	if state.Account.Account.Storage.State.SumType == "AccountFrozen" {
+		return 0, false, fmt.Errorf("account is frozen")
+	}
+	code := state.Account.Account.Storage.State.AccountActive.StateInit.Code
+	if code.Exists {
+		hash, err := code.Value.Value.Hash256()
+		if err != nil {
+			return 0, false, err
+		}
+		ver, ok := GetVerByCodeHash(hash)
+		return ver, ok, nil
+	}
+	return 0, false, fmt.Errorf("account is not initialized")
+}
+
 type blockchain interface {
 	GetSeqno(ctx context.Context, account ton.AccountID) (uint32, error)
 	SendMessage(ctx context.Context, payload []byte) (uint32, error)

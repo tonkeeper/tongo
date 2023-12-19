@@ -236,7 +236,11 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 		return nil, err
 	}
 	if result.Error != nil {
-		return nil, fmt.Errorf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, result.Error.ExitCode, result.Error.Text)
+		return nil, ErrorWithExitCode{
+			Message:   fmt.Sprintf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, result.Error.ExitCode, result.Error.Text),
+			ExitCode:  result.Error.ExitCode,
+			Iteration: t.counter,
+		}
 	}
 	if result.Emulation == nil {
 		return nil, fmt.Errorf("empty emulation result on iteration %v", t.counter)

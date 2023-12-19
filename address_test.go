@@ -3,10 +3,19 @@ package tongo
 import (
 	"context"
 	"testing"
+
+	"github.com/tonkeeper/tongo/contract/dns"
+	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func TestParseAddress(t *testing.T) {
-	parser := DefaultAddressParser()
+	cli, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
+	if err != nil {
+		t.Fatalf("failed to create liteapi client: %v", err)
+	}
+	resolver := dns.NewDNS(ton.MustParseAccountID(DefaultRoot), cli)
+	parser := NewAccountAddressParser(resolver)
 
 	const (
 		parseToHumanAddress = iota

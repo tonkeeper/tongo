@@ -39,6 +39,11 @@ const (
 	DefaultMessageMode     = 3
 )
 
+var (
+	ErrAccountIsFrozen         = fmt.Errorf("account is frozen")
+	ErrAccountIsNotInitialized = fmt.Errorf("account is not initialized")
+)
+
 var codes = map[Version]string{
 	V1R1:         "te6cckEBAQEARAAAhP8AIN2k8mCBAgDXGCDXCx/tRNDTH9P/0VESuvKhIvkBVBBE+RDyovgAAdMfMSDXSpbTB9QC+wDe0aTIyx/L/8ntVEH98Ik=",
 	V1R2:         "te6cckEBAQEAUwAAov8AIN0gggFMl7qXMO1E0NcLH+Ck8mCBAgDXGCDXCx/tRNDTH9P/0VESuvKhIvkBVBBE+RDyovgAAdMfMSDXSpbTB9QC+wDe0aTIyx/L/8ntVNDieG8=",
@@ -71,21 +76,21 @@ func init() {
 func GetWalletVersion(state tlb.ShardAccount, msg tlb.Message) (Version, bool, error) {
 	if state.Account.SumType == "AccountNone" || state.Account.Account.Storage.State.SumType == "AccountUninit" {
 		if !msg.Init.Exists {
-			return 0, false, fmt.Errorf("account is not initialized")
+			return 0, false, ErrAccountIsNotInitialized
 		}
 		if !msg.Init.Value.Value.Code.Exists {
-			return 0, false, fmt.Errorf("account is not initialized")
+			return 0, false, ErrAccountIsNotInitialized
 		}
 		code := msg.Init.Value.Value.Code.Value.Value
 		hash, err := code.Hash256()
 		if err != nil {
-			return 0, false, err
+			return 0, false, ErrAccountIsNotInitialized
 		}
 		ver, ok := GetVerByCodeHash(hash)
 		return ver, ok, nil
 	}
 	if state.Account.Account.Storage.State.SumType == "AccountFrozen" {
-		return 0, false, fmt.Errorf("account is frozen")
+		return 0, false, ErrAccountIsFrozen
 	}
 	code := state.Account.Account.Storage.State.AccountActive.StateInit.Code
 	if code.Exists {
@@ -96,7 +101,7 @@ func GetWalletVersion(state tlb.ShardAccount, msg tlb.Message) (Version, bool, e
 		ver, ok := GetVerByCodeHash(hash)
 		return ver, ok, nil
 	}
-	return 0, false, fmt.Errorf("account is not initialized")
+	return 0, false, ErrAccountIsNotInitialized
 }
 
 type blockchain interface {

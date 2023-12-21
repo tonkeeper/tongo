@@ -265,3 +265,9 @@ func decodeCell(c *boc.Cell, val reflect.Value) error {
 func decodeBitString(c *boc.Cell, val reflect.Value) error {
 	return fmt.Errorf("bigString decoding not supported")
 }
+
+// Hasher returns boc.Hasher that is used to calculate hashes when decoding.
+func (dec *Decoder) Hasher() *boc.Hasher {
+	return dec.hasher
+
+}

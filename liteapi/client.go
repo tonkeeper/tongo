@@ -36,6 +36,16 @@ var (
 	ErrAccountNotFound = errors.New("account not found")
 )
 
+// ProofPolicy specifies a policy for proof checks.
+// This feature is experimental and can be changed or removed in the future.
+type ProofPolicy uint32
+
+const (
+	// ProofPolicyUnsafe disables proof checks.
+	ProofPolicyUnsafe ProofPolicy = iota
+	ProofPolicyFast
+)
+
 // Client provides a convenient way to interact with TON blockchain.
 //
 // By default, it uses a single connection to a lite server.
@@ -53,7 +63,10 @@ var (
 // To avoid this, you can use WithBlock() method to specify a target block for all requests.
 type Client struct {
 	pool *pool.FailoverPool
+	// proofPolicy specifies a policy for proof checks.
+	proofPolicy ProofPolicy
 
+	// mu protects targetBlockID.
 	mu            sync.RWMutex
 	targetBlockID *ton.BlockIDExt
 }
@@ -66,6 +79,8 @@ type Options struct {
 	MaxConnections int
 	// InitCtx is used when opening a new connection to lite servers during the initialization.
 	InitCtx context.Context
+	// ProofPolicy specifies a policy for proof checks.
+	ProofPolicy ProofPolicy
 }
 
 type Option func(o *Options) error
@@ -91,6 +106,13 @@ func WithMaxConnectionsNumber(maxConns int) Option {
 func WithTimeout(timeout time.Duration) Option {
 	return func(o *Options) error {
 		o.Timeout = timeout
+		return nil
+	}
+}
+
+func WithProofPolicy(policy ProofPolicy) Option {
+	return func(o *Options) error {
+		o.ProofPolicy = policy
 		return nil
 	}
 }
@@ -211,6 +233,7 @@ func NewClient(opts ...Option) (*Client, error) {
 		Timeout:        60 * time.Second,
 		MaxConnections: defaultMaxConnectionsNumber,
 		InitCtx:        context.Background(),
+		ProofPolicy:    ProofPolicyUnsafe,
 	}
 	for _, o := range opts {
 		if err := o(options); err != nil {
@@ -239,7 +262,8 @@ func NewClient(opts ...Option) (*Client, error) {
 		return nil, fmt.Errorf("all liteservers are unavailable")
 	}
 	client := Client{
-		pool: pool.NewFailoverPool(liteclients),
+		pool:        pool.NewFailoverPool(liteclients),
+		proofPolicy: options.ProofPolicy,
 	}
 	go client.pool.Run(context.TODO())
 	return &client, nil
@@ -298,12 +322,25 @@ func (c *Client) GetBlock(ctx context.Context, blockID ton.BlockIDExt) (tlb.Bloc
 	if len(cells) != 1 {
 		return tlb.Block{}, boc.ErrNotSingleRoot
 	}
-	var data tlb.Block
-	err = tlb.NewDecoder().Unmarshal(cells[0], &data)
-	if err != nil {
+	decoder := tlb.NewDecoder()
+	var block tlb.Block
+	if err := decoder.Unmarshal(cells[0], &block); err != nil {
 		return tlb.Block{}, err
 	}
-	return data, nil
+	if c.proofPolicy == ProofPolicyUnsafe {
+		return block, nil
+	}
+	// this should be quite fast because
+	// when unmarshalling a block, we calculate hashes for transactions and messages.
+	// so most of the cells' hashes should be in the cache.
+	hash, err := decoder.Hasher().Hash(cells[0])
+	if err != nil {
+		return tlb.Block{}, fmt.Errorf("failed to calculate block hash: %w", err)
+	}
+	if !bytes.Equal(hash[:], blockID.RootHash[:]) {
+		return tlb.Block{}, fmt.Errorf("block hash mismatch")
+	}
+	return block, nil
 }
 
 func (c *Client) GetBlockRaw(ctx context.Context, blockID ton.BlockIDExt) (liteclient.LiteServerBlockDataC, error) {

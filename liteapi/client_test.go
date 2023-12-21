@@ -115,7 +115,7 @@ func TestGetAllShards(t *testing.T) {
 }
 
 func TestGetBlock(t *testing.T) {
-	api, err := NewClient(Mainnet(), FromEnvs())
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -89,20 +89,8 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 		x := sha256.New()
 		if hashIndex == offset {
 			// either i=0 or cellType=PrunedBranchCell
-
-			// we want to avoid slice allocations,
-			// that's why we don't use c.bocReprWithoutRefs(c.mask.Apply(i))
-			x.Write([]byte{d1(c, c.mask.Apply(i)), d2(c)})
-			if c.BitSize()%8 == 0 {
-				x.Write(c.getBuffer())
-			} else {
-				// a trick to store info about the cell's length in the last byte.
-				buf := c.getBuffer()
-				x.Write(buf[:len(buf)-1])
-				z := buf[len(buf)-1]
-				z |= 1 << (7 - c.BitSize()%8)
-				x.Write([]byte{z})
-			}
+			cellRepr := c.bocReprWithoutRefs(c.mask.Apply(i))
+			x.Write(cellRepr)
 		} else {
 			// i>0
 			x.Write([]byte{d1(c, c.mask.Apply(i)), d2(c)})

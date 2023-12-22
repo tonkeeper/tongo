@@ -13,6 +13,14 @@ func VerifySendMessagePayload(payload []byte) error {
 	return err
 }
 
+// VerifySendMessage verifies that the given message is an external message ready to be sent to the blockchain.
+func VerifySendMessage(msg *tlb.Message) error {
+	if msg.Info.SumType != "ExtInMsgInfo" {
+		return fmt.Errorf("external message must begin with ext_in_msg_info$10")
+	}
+	return nil
+}
+
 // ConvertSendMessagePayloadToMessage converts the given payload to a tlb.Message.
 // It also verifies that the message is an external message ready to be sent to the blockchain.
 func ConvertSendMessagePayloadToMessage(payload []byte) (*tlb.Message, error) {
@@ -31,8 +39,8 @@ func ConvertSendMessagePayloadToMessage(payload []byte) (*tlb.Message, error) {
 	if err := tlb.Unmarshal(root, &msg); err != nil {
 		return nil, fmt.Errorf("external message is not a tlb.Message")
 	}
-	if msg.Info.SumType != "ExtInMsgInfo" {
-		return nil, fmt.Errorf("external message must begin with ext_in_msg_info$10")
+	if err := VerifySendMessage(&msg); err != nil {
+		return nil, err
 	}
 	return &msg, nil
 }

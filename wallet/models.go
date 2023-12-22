@@ -73,8 +73,11 @@ func init() {
 // GetWalletVersion returns a wallet version by the given state of an account and an incoming message to the account.
 // An incoming message is needed in case when a wallet has not been initialized yet.
 // In this case, we take its code from the message's StateInit.
-func GetWalletVersion(state tlb.ShardAccount, msg tlb.Message) (Version, bool, error) {
+func GetWalletVersion(state tlb.ShardAccount, msg *tlb.Message) (Version, bool, error) {
 	if state.Account.SumType == "AccountNone" || state.Account.Account.Storage.State.SumType == "AccountUninit" {
+		if msg == nil {
+			return 0, false, fmt.Errorf("account is not initialized")
+		}
 		if !msg.Init.Exists {
 			return 0, false, ErrAccountIsNotInitialized
 		}

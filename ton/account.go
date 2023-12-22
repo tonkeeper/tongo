@@ -3,9 +3,11 @@ package ton
 import (
 	"encoding/base64"
 	"encoding/binary"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/snksoft/crc"
@@ -125,19 +127,29 @@ func AccountIDFromBase64Url(s string) (AccountID, error) {
 }
 
 func AccountIDFromRaw(s string) (AccountID, error) {
-	var (
-		workchain int32
-		address   []byte
-		aa        AccountID
-	)
-	_, err := fmt.Sscanf(s, "%d:%x", &workchain, &address)
+	var aa AccountID
+
+	colon := strings.IndexByte(s, ':')
+	if colon == -1 {
+		return AccountID{}, fmt.Errorf("invalid account id format")
+	}
+	if len(s)-colon-1 < 64 {
+		fmt.Println(s)
+		s = s[:colon] + ":" + strings.Repeat("0", 64-len(s)+colon+1) + s[colon+1:]
+		fmt.Println(s)
+	}
+	w, err := strconv.ParseInt(s[:colon], 10, 32)
+	if err != nil {
+		return AccountID{}, err
+	}
+	address, err := hex.DecodeString(s[colon+1:])
 	if err != nil {
 		return AccountID{}, err
 	}
 	if len(address) != 32 {
 		return AccountID{}, fmt.Errorf("address len must be 32 bytes")
 	}
-	aa.Workchain = workchain
+	aa.Workchain = int32(w)
 	copy(aa.Address[:], address)
 	return aa, nil
 }

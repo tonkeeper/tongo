@@ -82,7 +82,12 @@ func TestDeserializeBoc(t *testing.T) {
 		resultFilename string
 	}{
 		{
-			resultFilename: "testdata/deserialize_block.json",
+			name:           "block 1",
+			resultFilename: "testdata/deserialize-block-1.json",
+		},
+		{
+			name:           "block 2",
+			resultFilename: "testdata/deserialize-block-2.json",
 		},
 	}
 	for _, tc := range testCases {

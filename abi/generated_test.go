@@ -672,7 +672,7 @@ func TestMessageDecoder(t *testing.T) {
 				got := value.(TeleitemDeployMsgBody)
 				got.NftContent = tlb.Any{}
 				expected := TeleitemDeployMsgBody{
-					SenderAddress: mustToMsgAddress("0:d8cd999fb2b1b384e6ca254c3883375e23111a8b78c015b886286c31bf11e29d\""),
+					SenderAddress: mustToMsgAddress("0:d8cd999fb2b1b384e6ca254c3883375e23111a8b78c015b886286c31bf11e29d"),
 					Bid:           7000000000000,
 					TokenInfo: TelemintTokenInfo{
 						Name:   "also",

@@ -38,7 +38,7 @@ type participantList struct {
 	Validators []struct {
 		ID        tlb.Bits256
 		Validator struct {
-			Stake     uint32
+			Stake     tlb.Coins
 			MaxFactor uint32
 			Address   tlb.Bits256
 			AdnlAddr  tlb.Bits256

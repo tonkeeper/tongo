@@ -14,6 +14,7 @@ type executor interface {
 }
 
 type Validator struct {
+	Pubkey    tlb.Bits256
 	Stake     int64
 	MaxFactor int64
 	Address   ton.AccountID
@@ -67,6 +68,7 @@ func GetParticipantListExtended(ctx context.Context, electorAddr ton.AccountID, 
 		}
 		v.Validator.AdnlAddr.Hex()
 		validators = append(validators, Validator{
+			Pubkey:    v.ID,
 			Stake:     int64(v.Validator.Stake),
 			MaxFactor: int64(v.Validator.MaxFactor),
 			Address:   accountID,

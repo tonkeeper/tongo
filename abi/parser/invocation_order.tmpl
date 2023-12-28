@@ -77,3 +77,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 {{- end }}
 }
+
+func (c ContractInterface) IntMsgs() []msgDecoderFunc  {
+    return nil
+}

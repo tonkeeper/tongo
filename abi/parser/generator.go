@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/tonkeeper/tongo/abi"
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 
 	"github.com/tonkeeper/tongo/tlb"
@@ -72,9 +72,9 @@ type Generator struct {
 	abi                   ABI
 	newTlbTypes           map[string]struct{}
 	loadedTlbTypes        []string
-	loadedTlbMsgTypes     map[uint32][]TLBMsgBody
-	loadedJettonsMsgTypes map[uint32][]TLBMsgBody
-	loadedNFTsMsgTypes    map[uint32][]TLBMsgBody
+	loadedTlbMsgTypes     map[tlb.Tag][]TLBMsgBody
+	loadedJettonsMsgTypes map[tlb.Tag][]TLBMsgBody
+	loadedNFTsMsgTypes    map[tlb.Tag][]TLBMsgBody
 	typeName              string
 }
 
@@ -85,9 +85,9 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 	g := &Generator{
 		knownTypes:            knownTypes,
 		abi:                   abi,
-		loadedTlbMsgTypes:     make(map[uint32][]TLBMsgBody),
-		loadedJettonsMsgTypes: make(map[uint32][]TLBMsgBody),
-		loadedNFTsMsgTypes:    make(map[uint32][]TLBMsgBody),
+		loadedTlbMsgTypes:     make(map[tlb.Tag][]TLBMsgBody),
+		loadedJettonsMsgTypes: make(map[tlb.Tag][]TLBMsgBody),
+		loadedNFTsMsgTypes:    make(map[tlb.Tag][]TLBMsgBody),
 		newTlbTypes:           make(map[string]struct{}),
 	}
 	err := g.registerABI()
@@ -223,7 +223,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func registerMsgType(known map[uint32][]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
+func registerMsgType(known map[tlb.Tag][]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -238,8 +238,9 @@ func registerMsgType(known map[uint32][]TLBMsgBody, postfix, name, s string, fix
 	if err != nil {
 		return fmt.Errorf("can't decode tag error %w", err)
 	}
-	if tag.Len != 32 {
-		return fmt.Errorf("message %s body tag must be 32 bit lenght", parsed.Declarations[0].Constructor.Name)
+	key := tlb.Tag{
+		Len: tag.Len,
+		Val: tag.Val,
 	}
 
 	typePrefix := utils.ToCamelCase(name) + postfix
@@ -249,7 +250,7 @@ func registerMsgType(known map[uint32][]TLBMsgBody, postfix, name, s string, fix
 		return fmt.Errorf("can't decode %v error %w", s, err)
 	}
 
-	known[uint32(tag.Val)] = append(known[uint32(tag.Val)], TLBMsgBody{
+	known[key] = append(known[key], TLBMsgBody{
 		TypeName:      utils.ToCamelCase(name) + postfix,
 		OperationName: utils.ToCamelCase(name),
 		Tag:           tag.Val,
@@ -442,7 +443,7 @@ func (g *Generator) CollectedTypes() string {
 	var builder strings.Builder
 	builder.WriteString(strings.Join(g.loadedTlbTypes, "\n\n"))
 
-	for _, k := range utils.GetOrderedKeys(g.loadedTlbMsgTypes) {
+	for _, k := range getOrderedKeys(g.loadedTlbMsgTypes) {
 		for _, v := range g.loadedTlbMsgTypes[k] {
 			builder.WriteString(v.Code)
 			builder.WriteRune('\n')
@@ -462,7 +463,7 @@ type opCode struct {
 }
 
 type messagesContext struct {
-	Operations map[uint32][]TLBMsgBody
+	Operations map[tlb.Tag][]TLBMsgBody
 }
 
 func (g *Generator) GenerateMsgDecoder() string {
@@ -483,7 +484,7 @@ func (g *Generator) GenerateMsgDecoder() string {
 }
 
 type messageOperation struct {
-	Name   abi.MsgOpName
+	Name   string
 	OpCode string
 }
 
@@ -498,7 +499,7 @@ func (g *Generator) RenderMessagesMD() (string, error) {
 		for _, body := range bodies {
 			operation := messageOperation{
 				Name:   body.OperationName,
-				OpCode: fmt.Sprintf("0x%08x", opcode),
+				OpCode: fmt.Sprintf("0x%08x", opcode.Val),
 			}
 			context.Operations = append(context.Operations, operation)
 		}
@@ -526,6 +527,7 @@ type templateContext struct {
 	InterfaceOrder  []interfacDescripion
 	KnownHashes     map[string]interfacDescripion
 	Inheritance     map[string]string
+	ItnMsgs         map[tlb.Tag]string
 }
 
 type methodDescription struct {
@@ -619,7 +621,7 @@ func (g *Generator) RenderNFT() (string, error) {
 	return g.renderPayload("NFT", g.loadedNFTsMsgTypes)
 }
 
-func (g *Generator) renderPayload(payloadName string, msgTypes map[uint32][]TLBMsgBody) (string, error) {
+func (g *Generator) renderPayload(payloadName string, msgTypes map[tlb.Tag][]TLBMsgBody) (string, error) {
 	var builder strings.Builder
 
 	fmt.Fprintf(&builder, `
@@ -642,7 +644,7 @@ func (j *%sPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
 
 	var knownTypes [][2]string
 	var knownOpcodes []opCode
-	for _, k := range utils.GetOrderedKeys(msgTypes) {
+	for _, k := range getOrderedKeys(msgTypes) {
 		tlbType := msgTypes[k][0] //todo: iterate
 		fmt.Fprintf(&builder, "case %s%sOpCode:  // 0x%08x\n", tlbType.OperationName, payloadName, tlbType.Tag)
 		fmt.Fprintf(&builder, "var res %s\n", tlbType.TypeName)
@@ -691,10 +693,18 @@ var %sOpCodes = map[%sOpName]%sOpCode{
 		fmt.Fprintf(&builder, "%s%sOp: %s%sOpCode,\n", v.OperationName, payloadName, v.OperationName, payloadName)
 	}
 	builder.WriteString("\n}\n")
-	for _, k := range utils.GetOrderedKeys(msgTypes) {
+	for _, k := range getOrderedKeys(msgTypes) {
 		builder.WriteString(msgTypes[k][0].Code) //todo: iterate
 		builder.WriteRune('\n')
 	}
 	builder.WriteRune('\n')
 	return builder.String(), nil
+}
+
+func getOrderedKeys[M ~map[tlb.Tag]V, V any](m M) []tlb.Tag {
+	keys := maps.Keys(m)
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i].Val < keys[j].Val
+	})
+	return keys
 }

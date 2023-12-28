@@ -1,61 +1,18 @@
-func pointer[T any](t T) *T{
-	return &t
-}
 
-var messagesDecodingFunctions =map[uint32]func(cell *boc.Cell)  ( *MsgOpName, any, error) {
+var messagesDecodingFunctions = map[uint32]msgDecoderFunc {
 {{- range $tag, $ops := .Operations }}
             {{- if gt (len $ops) 1 }}
             // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
-                0x{{ printf "%08x" $tag }}: func(cell *boc.Cell) (*MsgOpName, any, error) {
-                var err error
-                cell = cell.CopyRemaining()
+                0x{{ printf "%08x" $tag.Val }}: decodeMultipleMsgs(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, []MsgOpName{ {{- range $op := $ops }} {{ $op.OperationName }}MsgOp,  {{ end }} }, []any{ {{- range $op := $ops }}{{ $op.TypeName }}{}, {{ end }} }),
             {{- else }}
                 {{- $op := index $ops 0 }}
-                // 0x{{ printf "%08x" $op.Tag }}
-                {{ $op.OperationName }}MsgOpCode: func(cell *boc.Cell) (*MsgOpName, any, error) {
-                var err error
+                // 0x{{ printf "%08x" $tag.Val }}
+                {{ $op.OperationName }}MsgOpCode: decodeMsg(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.OperationName }}MsgOp, {{ $op.TypeName }}{}),
             {{- end }}
-            {{- range $op := $ops }}
-                var res{{ $op.TypeName }} {{ $op.TypeName }}
-                err = tlb.Unmarshal(cell, &res{{ $op.TypeName }})
-               {{- if $op.FixedLength }}
-                if err == nil  && !completedRead(cell) { err = ErrStructSizeMismatch ;}
-                {{- end }}
-               if err == nil {
-                    return  pointer({{ $op.OperationName }}MsgOp), res{{ $op.TypeName }}, nil;
-                }
-                cell.ResetCounters()
-            {{- end }}
-            return nil, nil, err
-            },
         {{- end }}
 }
 
-// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
-// It returns an opcode, an operation name and a decoded body.
-func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*uint32, *MsgOpName, any, error) {
-	if cell.BitsAvailableForRead() < 32 {
-		return nil, nil, nil, nil
-	}
-	tag64, err := cell.ReadUint(32)
-	if err != nil {
-		return nil, nil, nil,err
-	}
-	tag := uint32(tag64)
-	f := messagesDecodingFunctions[tag]
-    if f != nil {
-        name, a, err := f(cell)
-        return &tag, name, a, err
-    }
-    return &tag, nil, nil, nil
-}
 
-func completedRead(cell *boc.Cell) bool {
-   return cell.RefsAvailableForRead() == 0 && cell.BitsAvailableForRead() == 0
-}
-
-// MsgOpName is a human-friendly name for a message's operation which is identified by the first 4 bytes of the message's body.
-type MsgOpName = string
 const (
 {{- range  $tag, $ops := .Operations }}
     {{- range $op := $ops}}
@@ -63,8 +20,7 @@ const (
     {{- end }}
 {{- end }}
 )
-// MsgOpCode is the first 4 bytes of a message body identifying an operation to be performed.
-type MsgOpCode = uint32
+
 const (
 {{- range  $tag, $ops := .Operations }}
     {{- range $op := $ops}}

@@ -23,11 +23,11 @@ func TestMsgDecoder(t *testing.T) {
 		h, _ := hex.DecodeString(m)
 		c, _ := boc.DeserializeBoc(h)
 
-		s, _, err := MessageDecoder(c[0])
+		_, s, _, err := InternalMessageDecoder(c[0], nil)
 		if err != nil {
 			t.Error(err)
 		}
-		fmt.Printf("%s\n", s)
+		fmt.Printf("%s\n", *s)
 	}
 }
 

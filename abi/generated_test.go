@@ -672,7 +672,7 @@ func TestMessageDecoder(t *testing.T) {
 				got := value.(TeleitemDeployMsgBody)
 				got.NftContent = tlb.Any{}
 				expected := TeleitemDeployMsgBody{
-					SenderAddress: mustToMsgAddress("0:d8cd999fb2b1b384e6ca254c3883375e23111a8b78c015b886286c31bf11e29d\""),
+					SenderAddress: mustToMsgAddress("0:d8cd999fb2b1b384e6ca254c3883375e23111a8b78c015b886286c31bf11e29d"),
 					Bid:           7000000000000,
 					TokenInfo: TelemintTokenInfo{
 						Name:   "also",
@@ -838,11 +838,11 @@ func TestMessageDecoder(t *testing.T) {
 				}
 				c = cells[0]
 			}
-			opName, value, err := MessageDecoder(c)
+			_, opName, value, err := InternalMessageDecoder(c, nil)
 			if err != nil {
 				t.Fatalf("MessageDecoder() error: %v", err)
 			}
-			if opName != tt.wantOpName {
+			if *opName != tt.wantOpName {
 				t.Fatalf("got opname: %v, want: %v", opName, tt.wantOpName)
 			}
 			if tt.wantValidate != nil {
@@ -854,10 +854,6 @@ func TestMessageDecoder(t *testing.T) {
 			}
 		})
 	}
-}
-
-func pointer[t any](v t) *t {
-	return &v
 }
 
 func TestImplements(t *testing.T) {

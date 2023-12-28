@@ -2,6 +2,7 @@ package elector
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	"github.com/tonkeeper/tongo/ton"
@@ -27,6 +28,9 @@ func TestGetExtendedParticipantList(t *testing.T) {
 		t.Fatalf("got: %v, want: 316", len(participants.Validators))
 	}
 	for _, validator := range participants.Validators {
+		if validator.Stake < math.MaxInt32 {
+			t.Fatalf("stake looks too low: %v", validator.Stake)
+		}
 		if validator.MaxFactor != 196608 {
 			t.Fatalf("got: %v, want: 196608", validator.MaxFactor)
 		}

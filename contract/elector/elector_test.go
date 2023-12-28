@@ -5,6 +5,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tvm"
 )
@@ -27,6 +28,7 @@ func TestGetExtendedParticipantList(t *testing.T) {
 	if len(participants.Validators) != 316 {
 		t.Fatalf("got: %v, want: 316", len(participants.Validators))
 	}
+	pubkeys := make(map[tlb.Bits256]struct{})
 	for _, validator := range participants.Validators {
 		if validator.Stake < math.MaxInt32 {
 			t.Fatalf("stake looks too low: %v", validator.Stake)
@@ -34,6 +36,10 @@ func TestGetExtendedParticipantList(t *testing.T) {
 		if validator.MaxFactor != 196608 {
 			t.Fatalf("got: %v, want: 196608", validator.MaxFactor)
 		}
+		if _, ok := pubkeys[validator.Pubkey]; ok {
+			t.Fatalf("two validators have the same pubkey")
+		}
+		pubkeys[validator.Pubkey] = struct{}{}
 	}
 
 }

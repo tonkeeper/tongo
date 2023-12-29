@@ -339,6 +339,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNextProofInfo,
 	},
 	{
+		Name:     "get_nft_api_info",
+		InvokeFn: GetNftApiInfo,
+	},
+	{
 		Name:     "get_nft_data",
 		InvokeFn: GetNftData,
 	},

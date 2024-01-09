@@ -25,11 +25,17 @@
     <interface name="wallet_v3r1" inherits="wallet">
         <code_hash>b61041a58a7980b946e8fb9e198e3c904d24799ffa36574ea4251c41a566f581</code_hash>
         <get_method name="seqno"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v3"/>
+        </msg_in>
     </interface>
     <interface name="wallet_v3r2" inherits="wallet">
         <code_hash>84dafa449f98a6987789ba232358072bc0f76dc4524002a5d0918b9a75d2d599</code_hash>
         <get_method name="get_public_key"/>
         <get_method name="seqno"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v3"/>
+        </msg_in>
     </interface>
     <interface name="wallet_v4r1" inherits="wallet">
         <code_hash>64dd54805522c5be8a9db59cea0105ccf0d08786ca79beb8cb79e880a8d7322d</code_hash>
@@ -38,6 +44,9 @@
         <get_method name="get_public_key"/>
         <get_method name="seqno"/>
         <get_method name="get_subwallet_id"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v4"/>
+        </msg_in>
     </interface>
     <interface name="wallet_v4r2" inherits="wallet">
         <code_hash>feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0</code_hash>
@@ -46,6 +55,9 @@
         <get_method name="get_public_key"/>
         <get_method name="seqno"/>
         <get_method name="get_subwallet_id"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v4"/>
+        </msg_in>
     </interface>
     <interface name="wallet_highload_v1r1" inherits="wallet">
         <code_hash>d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484</code_hash>

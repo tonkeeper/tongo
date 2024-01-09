@@ -521,15 +521,6 @@ func (g *Generator) RenderMessagesMD() (string, error) {
 	return buf.String(), nil
 }
 
-type templateContext struct {
-	Interfaces      map[string]string
-	InvocationOrder []methodDescription
-	InterfaceOrder  []interfacDescripion
-	KnownHashes     map[string]interfacDescripion
-	Inheritance     map[string]string
-	ItnMsgs         map[tlb.Tag]string
-}
-
 type methodDescription struct {
 	Name         string
 	InvokeFnName string
@@ -542,10 +533,20 @@ type interfacDescripion struct {
 }
 
 func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, error) {
-	context := templateContext{
+	context := struct {
+		Interfaces                     map[string]string
+		InvocationOrder                []methodDescription
+		InterfaceOrder                 []interfacDescripion
+		KnownHashes                    map[string]interfacDescripion
+		Inheritance                    map[string]string
+		IntMsgs, ExtInMsgs, ExtOutMsgs map[string][]string
+	}{
 		Interfaces:  map[string]string{},
 		KnownHashes: map[string]interfacDescripion{},
 		Inheritance: map[string]string{},
+		IntMsgs:     map[string][]string{},
+		ExtInMsgs:   map[string][]string{},
+		ExtOutMsgs:  map[string][]string{},
 	}
 	descriptions := map[string]methodDescription{}
 
@@ -585,6 +586,15 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 				resultName = fmt.Sprintf("%s_%sResult", utils.ToCamelCase(method.Name), utils.ToCamelCase(method.Version))
 			}
 			descripion.Results = append(descripion.Results, resultName)
+		}
+		for _, m := range iface.Input.Internals {
+			context.IntMsgs[ifaceName] = append(context.IntMsgs[ifaceName], utils.ToCamelCase(m.Name))
+		}
+		for _, m := range iface.Input.Externals {
+			context.ExtInMsgs[ifaceName] = append(context.ExtInMsgs[ifaceName], utils.ToCamelCase(m.Name))
+		}
+		for _, m := range iface.Output.Externals {
+			context.ExtOutMsgs[ifaceName] = append(context.ExtOutMsgs[ifaceName], utils.ToCamelCase(m.Name))
 		}
 		if len(iface.CodeHashes) > 0 { //we dont' need to detect interfaces with code hashes because we can them directly
 			for _, hash := range iface.CodeHashes {

@@ -765,5 +765,86 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 }
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
-	return nil
+	switch c {
+	case DedustPool:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncDedustSwapExternal,
+			inMsgDecodeFuncDedustSwapPeer,
+		}
+	case DedustVault:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncJettonNotify,
+			inMsgDecodeFuncJettonTransfer,
+			inMsgDecodeFuncDedustSwap,
+			inMsgDecodeFuncDedustPayoutFromPool,
+		}
+	case Dns:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncDnsBalanceRelease,
+			inMsgDecodeFuncProcessGovernanceDecision,
+		}
+	case JettonMaster:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncJettonBurnNotification,
+		}
+	case JettonWallet:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncJettonTransfer,
+			inMsgDecodeFuncJettonInternalTransfer,
+			inMsgDecodeFuncJettonBurn,
+		}
+	case NftCollection:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncGetRoyaltyParams,
+		}
+	case NftItem:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncNftTransfer,
+			inMsgDecodeFuncGetStaticData,
+		}
+	case WhalesPool:
+		return []msgDecoderFunc{
+			inMsgDecodeFuncWhalesNominatorsWithdraw,
+			inMsgDecodeFuncWhalesNominatorsDeposit,
+			inMsgDecodeFuncWhalesNominatorsSendStake,
+			inMsgDecodeFuncWhalesNominatorsWithdrawUnowned,
+			inMsgDecodeFuncWhalesNominatorsForceKick,
+		}
+	default:
+		return nil
+	}
+}
+
+func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
+	switch c {
+	case WalletV3R1:
+		return []msgDecoderFunc{
+			extInMsgDecodeFuncWalletSignedV3,
+		}
+	case WalletV3R2:
+		return []msgDecoderFunc{
+			extInMsgDecodeFuncWalletSignedV3,
+		}
+	case WalletV4R1:
+		return []msgDecoderFunc{
+			extInMsgDecodeFuncWalletSignedV4,
+		}
+	case WalletV4R2:
+		return []msgDecoderFunc{
+			extInMsgDecodeFuncWalletSignedV4,
+		}
+	default:
+		return nil
+	}
+}
+
+func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
+	switch c {
+	case DedustPool:
+		return []msgDecoderFunc{
+			extOutMsgDecodeFuncDedustSwap,
+		}
+	default:
+		return nil
+	}
 }

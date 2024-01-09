@@ -1,13 +1,27 @@
 
-var messagesDecodingFunctions = map[uint32]msgDecoderFunc {
+
+var (
 {{- range $tag, $ops := .Operations }}
             {{- if gt (len $ops) 1 }}
             // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
-                0x{{ printf "%08x" $tag.Val }}: decodeMultipleMsgs(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, []MsgOpName{ {{- range $op := $ops }} {{ $op.OperationName }}MsgOp,  {{ end }} }, []any{ {{- range $op := $ops }}{{ $op.TypeName }}{}, {{ end }} }),
+ inMsgDecodeFunc0x{{ printf "%08x" $tag.Val }} = decodeMultipleMsgs(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, []MsgOpName{ {{- range $op := $ops }} {{ $op.OperationName }}MsgOp,  {{ end }} }, []any{ {{- range $op := $ops }}{{ $op.TypeName }}{}, {{ end }} })
             {{- else }}
                 {{- $op := index $ops 0 }}
                 // 0x{{ printf "%08x" $tag.Val }}
-                {{ $op.OperationName }}MsgOpCode: decodeMsg(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.OperationName }}MsgOp, {{ $op.TypeName }}{}),
+ inMsgDecodeFunc{{ $op.OperationName }} = decodeMsg(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.OperationName }}MsgOp, {{ $op.TypeName }}{})
+            {{- end }}
+        {{- end }}
+)
+
+var opcodedInternalMessageDecodeFunctions = map[uint32]msgDecoderFunc {
+{{- range $tag, $ops := .Operations }}
+            {{- if gt (len $ops) 1 }}
+            // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
+                0x{{ printf "%08x" $tag.Val }}: inMsgDecodeFunc0x{{ printf "%08x" $tag.Val }},
+            {{- else }}
+                {{- $op := index $ops 0 }}
+                // 0x{{ printf "%08x" $tag.Val }}
+                {{ $op.OperationName }}MsgOpCode: inMsgDecodeFunc{{ $op.OperationName }},
             {{- end }}
         {{- end }}
 }

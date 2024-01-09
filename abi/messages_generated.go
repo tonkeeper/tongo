@@ -6,241 +6,478 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-var messagesDecodingFunctions = map[uint32]msgDecoderFunc{
+var (
 	// 0x00000000
-	TextCommentMsgOpCode: decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{}),
+	inMsgDecodeFuncTextComment = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
 	// 0x04ded148
-	ProveOwnershipMsgOpCode: decodeMsg(tlb.Tag{Val: 0x04ded148, Len: 32}, ProveOwnershipMsgOp, ProveOwnershipMsgBody{}),
+	inMsgDecodeFuncProveOwnership = decodeMsg(tlb.Tag{Val: 0x04ded148, Len: 32}, ProveOwnershipMsgOp, ProveOwnershipMsgBody{})
 	// 0x05138d91
-	NftOwnershipAssignedMsgOpCode: decodeMsg(tlb.Tag{Val: 0x05138d91, Len: 32}, NftOwnershipAssignedMsgOp, NftOwnershipAssignedMsgBody{}),
+	inMsgDecodeFuncNftOwnershipAssigned = decodeMsg(tlb.Tag{Val: 0x05138d91, Len: 32}, NftOwnershipAssignedMsgOp, NftOwnershipAssignedMsgBody{})
 	// 0x0524c7ae
-	OwnershipProofMsgOpCode: decodeMsg(tlb.Tag{Val: 0x0524c7ae, Len: 32}, OwnershipProofMsgOp, OwnershipProofMsgBody{}),
+	inMsgDecodeFuncOwnershipProof = decodeMsg(tlb.Tag{Val: 0x0524c7ae, Len: 32}, OwnershipProofMsgOp, OwnershipProofMsgBody{})
 	// 0x088eaa32
-	ChallengeQuarantinedChannelStateMsgOpCode: decodeMsg(tlb.Tag{Val: 0x088eaa32, Len: 32}, ChallengeQuarantinedChannelStateMsgOp, ChallengeQuarantinedChannelStateMsgBody{}),
+	inMsgDecodeFuncChallengeQuarantinedChannelState = decodeMsg(tlb.Tag{Val: 0x088eaa32, Len: 32}, ChallengeQuarantinedChannelStateMsgOp, ChallengeQuarantinedChannelStateMsgBody{})
 	// 0x0a77535c
-	TonstakePoolWithdrawalMsgOpCode: decodeMsg(tlb.Tag{Val: 0x0a77535c, Len: 32}, TonstakePoolWithdrawalMsgOp, TonstakePoolWithdrawalMsgBody{}),
+	inMsgDecodeFuncTonstakePoolWithdrawal = decodeMsg(tlb.Tag{Val: 0x0a77535c, Len: 32}, TonstakePoolWithdrawalMsgOp, TonstakePoolWithdrawalMsgBody{})
 	// 0x0dd607e3
-	SbtOwnerInfoMsgOpCode: decodeMsg(tlb.Tag{Val: 0x0dd607e3, Len: 32}, SbtOwnerInfoMsgOp, SbtOwnerInfoMsgBody{}),
+	inMsgDecodeFuncSbtOwnerInfo = decodeMsg(tlb.Tag{Val: 0x0dd607e3, Len: 32}, SbtOwnerInfoMsgOp, SbtOwnerInfoMsgBody{})
 	// 0x0e0620c2
-	InitPaymentChannelMsgOpCode: decodeMsg(tlb.Tag{Val: 0x0e0620c2, Len: 32}, InitPaymentChannelMsgOp, InitPaymentChannelMsgBody{}),
+	inMsgDecodeFuncInitPaymentChannel = decodeMsg(tlb.Tag{Val: 0x0e0620c2, Len: 32}, InitPaymentChannelMsgOp, InitPaymentChannelMsgBody{})
 	// 0x0f8a7ea5
-	JettonTransferMsgOpCode: decodeMsg(tlb.Tag{Val: 0x0f8a7ea5, Len: 32}, JettonTransferMsgOp, JettonTransferMsgBody{}),
+	inMsgDecodeFuncJettonTransfer = decodeMsg(tlb.Tag{Val: 0x0f8a7ea5, Len: 32}, JettonTransferMsgOp, JettonTransferMsgBody{})
 	// 0x107c49ef
-	OfferStorageContractMsgOpCode: decodeMsg(tlb.Tag{Val: 0x107c49ef, Len: 32}, OfferStorageContractMsgOp, OfferStorageContractMsgBody{}),
+	inMsgDecodeFuncOfferStorageContract = decodeMsg(tlb.Tag{Val: 0x107c49ef, Len: 32}, OfferStorageContractMsgOp, OfferStorageContractMsgBody{})
 	// 0x132f9a45
-	TonstakeNftInitMsgOpCode: decodeMsg(tlb.Tag{Val: 0x132f9a45, Len: 32}, TonstakeNftInitMsgOp, TonstakeNftInitMsgBody{}),
+	inMsgDecodeFuncTonstakeNftInit = decodeMsg(tlb.Tag{Val: 0x132f9a45, Len: 32}, TonstakeNftInitMsgOp, TonstakeNftInitMsgBody{})
 	// 0x139a1b4e
-	TonstakeControllerPoolHaltMsgOpCode: decodeMsg(tlb.Tag{Val: 0x139a1b4e, Len: 32}, TonstakeControllerPoolHaltMsgOp, TonstakeControllerPoolHaltMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerPoolHalt = decodeMsg(tlb.Tag{Val: 0x139a1b4e, Len: 32}, TonstakeControllerPoolHaltMsgOp, TonstakeControllerPoolHaltMsgBody{})
 	// 0x1596920c
-	WhalesNominatorsForceKickMsgOpCode: decodeMsg(tlb.Tag{Val: 0x1596920c, Len: 32}, WhalesNominatorsForceKickMsgOp, WhalesNominatorsForceKickMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsForceKick = decodeMsg(tlb.Tag{Val: 0x1596920c, Len: 32}, WhalesNominatorsForceKickMsgOp, WhalesNominatorsForceKickMsgBody{})
 	// 0x1690c604
-	TonstakeControllerCreditMsgOpCode: decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, TonstakeControllerCreditMsgOp, TonstakeControllerCreditMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerCredit = decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, TonstakeControllerCreditMsgOp, TonstakeControllerCreditMsgBody{})
 	// 0x178d4519
-	JettonInternalTransferMsgOpCode: decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, JettonInternalTransferMsgOp, JettonInternalTransferMsgBody{}),
+	inMsgDecodeFuncJettonInternalTransfer = decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, JettonInternalTransferMsgOp, JettonInternalTransferMsgBody{})
 	// 0x1d1715bf
-	WhalesNominatorsWithdrawUnownedResponseMsgOpCode: decodeMsg(tlb.Tag{Val: 0x1d1715bf, Len: 32}, WhalesNominatorsWithdrawUnownedResponseMsgOp, WhalesNominatorsWithdrawUnownedResponseMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsWithdrawUnownedResponse = decodeMsg(tlb.Tag{Val: 0x1d1715bf, Len: 32}, WhalesNominatorsWithdrawUnownedResponseMsgOp, WhalesNominatorsWithdrawUnownedResponseMsgBody{})
 	// 0x1f04537a
-	SbtDestroyMsgOpCode: decodeMsg(tlb.Tag{Val: 0x1f04537a, Len: 32}, SbtDestroyMsgOp, SbtDestroyMsgBody{}),
+	inMsgDecodeFuncSbtDestroy = decodeMsg(tlb.Tag{Val: 0x1f04537a, Len: 32}, SbtDestroyMsgOp, SbtDestroyMsgBody{})
 	// 0x1f151acf
-	StartUncooperativeChannelCloseMsgOpCode: decodeMsg(tlb.Tag{Val: 0x1f151acf, Len: 32}, StartUncooperativeChannelCloseMsgOp, StartUncooperativeChannelCloseMsgBody{}),
+	inMsgDecodeFuncStartUncooperativeChannelClose = decodeMsg(tlb.Tag{Val: 0x1f151acf, Len: 32}, StartUncooperativeChannelCloseMsgOp, StartUncooperativeChannelCloseMsgBody{})
 	// 0x2167da4b
-	EncryptedTextCommentMsgOpCode: decodeMsg(tlb.Tag{Val: 0x2167da4b, Len: 32}, EncryptedTextCommentMsgOp, EncryptedTextCommentMsgBody{}),
+	inMsgDecodeFuncEncryptedTextComment = decodeMsg(tlb.Tag{Val: 0x2167da4b, Len: 32}, EncryptedTextCommentMsgOp, EncryptedTextCommentMsgBody{})
 	// 0x23d421e1
-	WhalesNominatorsStakeWithdrawCompletedMsgOpCode: decodeMsg(tlb.Tag{Val: 0x23d421e1, Len: 32}, WhalesNominatorsStakeWithdrawCompletedMsgOp, WhalesNominatorsStakeWithdrawCompletedMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsStakeWithdrawCompleted = decodeMsg(tlb.Tag{Val: 0x23d421e1, Len: 32}, WhalesNominatorsStakeWithdrawCompletedMsgOp, WhalesNominatorsStakeWithdrawCompletedMsgBody{})
 	// 0x251d6a98
-	WhalesNominatorsWithdrawUnownedMsgOpCode: decodeMsg(tlb.Tag{Val: 0x251d6a98, Len: 32}, WhalesNominatorsWithdrawUnownedMsgOp, WhalesNominatorsWithdrawUnownedMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsWithdrawUnowned = decodeMsg(tlb.Tag{Val: 0x251d6a98, Len: 32}, WhalesNominatorsWithdrawUnownedMsgOp, WhalesNominatorsWithdrawUnownedMsgBody{})
 	// 0x25432a91
-	FinishUncooperativeChannelCloseMsgOpCode: decodeMsg(tlb.Tag{Val: 0x25432a91, Len: 32}, FinishUncooperativeChannelCloseMsgOp, FinishUncooperativeChannelCloseMsgBody{}),
+	inMsgDecodeFuncFinishUncooperativeChannelClose = decodeMsg(tlb.Tag{Val: 0x25432a91, Len: 32}, FinishUncooperativeChannelCloseMsgOp, FinishUncooperativeChannelCloseMsgBody{})
 	// 0x25938561
-	StonfiSwapMsgOpCode: decodeMsg(tlb.Tag{Val: 0x25938561, Len: 32}, StonfiSwapMsgOp, StonfiSwapMsgBody{}),
+	inMsgDecodeFuncStonfiSwap = decodeMsg(tlb.Tag{Val: 0x25938561, Len: 32}, StonfiSwapMsgOp, StonfiSwapMsgBody{})
 	// 0x270695fb
-	TonstakeControllerPoolSendMessageMsgOpCode: decodeMsg(tlb.Tag{Val: 0x270695fb, Len: 32}, TonstakeControllerPoolSendMessageMsgOp, TonstakeControllerPoolSendMessageMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerPoolSendMessage = decodeMsg(tlb.Tag{Val: 0x270695fb, Len: 32}, TonstakeControllerPoolSendMessageMsgOp, TonstakeControllerPoolSendMessageMsgBody{})
 	// 0x299a3e15
-	TeleitemDeployMsgOpCode: decodeMsg(tlb.Tag{Val: 0x299a3e15, Len: 32}, TeleitemDeployMsgOp, TeleitemDeployMsgBody{}),
+	inMsgDecodeFuncTeleitemDeploy = decodeMsg(tlb.Tag{Val: 0x299a3e15, Len: 32}, TeleitemDeployMsgOp, TeleitemDeployMsgBody{})
 	// 0x2aaa96a0
-	TonstakePoolSetGovernanceFeeMsgOpCode: decodeMsg(tlb.Tag{Val: 0x2aaa96a0, Len: 32}, TonstakePoolSetGovernanceFeeMsgOp, TonstakePoolSetGovernanceFeeMsgBody{}),
+	inMsgDecodeFuncTonstakePoolSetGovernanceFee = decodeMsg(tlb.Tag{Val: 0x2aaa96a0, Len: 32}, TonstakePoolSetGovernanceFeeMsgOp, TonstakePoolSetGovernanceFeeMsgBody{})
 	// 0x2fcb26a2
-	GetStaticDataMsgOpCode: decodeMsg(tlb.Tag{Val: 0x2fcb26a2, Len: 32}, GetStaticDataMsgOp, GetStaticDataMsgBody{}),
+	inMsgDecodeFuncGetStaticData = decodeMsg(tlb.Tag{Val: 0x2fcb26a2, Len: 32}, GetStaticDataMsgOp, GetStaticDataMsgBody{})
 	// 0x30026327
-	TonstakeControllerValidatorWithdrawalMsgOpCode: decodeMsg(tlb.Tag{Val: 0x30026327, Len: 32}, TonstakeControllerValidatorWithdrawalMsgOp, TonstakeControllerValidatorWithdrawalMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerValidatorWithdrawal = decodeMsg(tlb.Tag{Val: 0x30026327, Len: 32}, TonstakeControllerValidatorWithdrawalMsgOp, TonstakeControllerValidatorWithdrawalMsgBody{})
 	// 0x319b0cdc
-	TonstakePoolWithdrawMsgOpCode: decodeMsg(tlb.Tag{Val: 0x319b0cdc, Len: 32}, TonstakePoolWithdrawMsgOp, TonstakePoolWithdrawMsgBody{}),
+	inMsgDecodeFuncTonstakePoolWithdraw = decodeMsg(tlb.Tag{Val: 0x319b0cdc, Len: 32}, TonstakePoolWithdrawMsgOp, TonstakePoolWithdrawMsgBody{})
 	// 0x370fec51
-	AuctionFillUpMsgOpCode: decodeMsg(tlb.Tag{Val: 0x370fec51, Len: 32}, AuctionFillUpMsgOp, AuctionFillUpMsgBody{}),
+	inMsgDecodeFuncAuctionFillUp = decodeMsg(tlb.Tag{Val: 0x370fec51, Len: 32}, AuctionFillUpMsgOp, AuctionFillUpMsgBody{})
 	// 0x371638ae
-	TeleitemCancelAuctionMsgOpCode: decodeMsg(tlb.Tag{Val: 0x371638ae, Len: 32}, TeleitemCancelAuctionMsgOp, TeleitemCancelAuctionMsgBody{}),
+	inMsgDecodeFuncTeleitemCancelAuction = decodeMsg(tlb.Tag{Val: 0x371638ae, Len: 32}, TeleitemCancelAuctionMsgOp, TeleitemCancelAuctionMsgBody{})
 	// 0x419d5d4d
-	ProofStorageMsgOpCode: decodeMsg(tlb.Tag{Val: 0x419d5d4d, Len: 32}, ProofStorageMsgOp, ProofStorageMsgBody{}),
+	inMsgDecodeFuncProofStorage = decodeMsg(tlb.Tag{Val: 0x419d5d4d, Len: 32}, ProofStorageMsgOp, ProofStorageMsgBody{})
 	// 0x44beae41
-	ProcessGovernanceDecisionMsgOpCode: decodeMsg(tlb.Tag{Val: 0x44beae41, Len: 32}, ProcessGovernanceDecisionMsgOp, ProcessGovernanceDecisionMsgBody{}),
+	inMsgDecodeFuncProcessGovernanceDecision = decodeMsg(tlb.Tag{Val: 0x44beae41, Len: 32}, ProcessGovernanceDecisionMsgOp, ProcessGovernanceDecisionMsgBody{})
 	// 0x4637289a
-	TelemintDeployMsgOpCode: decodeMsg(tlb.Tag{Val: 0x4637289a, Len: 32}, TelemintDeployMsgOp, TelemintDeployMsgBody{}),
+	inMsgDecodeFuncTelemintDeploy = decodeMsg(tlb.Tag{Val: 0x4637289a, Len: 32}, TelemintDeployMsgOp, TelemintDeployMsgBody{})
 	// 0x4637289b
-	TelemintDeployV2MsgOpCode: decodeMsg(tlb.Tag{Val: 0x4637289b, Len: 32}, TelemintDeployV2MsgOp, TelemintDeployV2MsgBody{}),
+	inMsgDecodeFuncTelemintDeployV2 = decodeMsg(tlb.Tag{Val: 0x4637289b, Len: 32}, TelemintDeployV2MsgOp, TelemintDeployV2MsgBody{})
 	// 0x46ed2e94
-	StorageWithdrawMsgOpCode: decodeMsg(tlb.Tag{Val: 0x46ed2e94, Len: 32}, StorageWithdrawMsgOp, StorageWithdrawMsgBody{}),
+	inMsgDecodeFuncStorageWithdraw = decodeMsg(tlb.Tag{Val: 0x46ed2e94, Len: 32}, StorageWithdrawMsgOp, StorageWithdrawMsgBody{})
 	// 0x474f86cf
-	DedustPayoutMsgOpCode: decodeMsg(tlb.Tag{Val: 0x474f86cf, Len: 32}, DedustPayoutMsgOp, DedustPayoutMsgBody{}),
+	inMsgDecodeFuncDedustPayout = decodeMsg(tlb.Tag{Val: 0x474f86cf, Len: 32}, DedustPayoutMsgOp, DedustPayoutMsgBody{})
 	// 0x47657424
-	ElectorRecoverStakeRequestMsgOpCode: decodeMsg(tlb.Tag{Val: 0x47657424, Len: 32}, ElectorRecoverStakeRequestMsgOp, ElectorRecoverStakeRequestMsgBody{}),
+	inMsgDecodeFuncElectorRecoverStakeRequest = decodeMsg(tlb.Tag{Val: 0x47657424, Len: 32}, ElectorRecoverStakeRequestMsgOp, ElectorRecoverStakeRequestMsgBody{})
 	// 0x47d54391
-	TonstakePoolDepositMsgOpCode: decodeMsg(tlb.Tag{Val: 0x47d54391, Len: 32}, TonstakePoolDepositMsgOp, TonstakePoolDepositMsgBody{}),
+	inMsgDecodeFuncTonstakePoolDeposit = decodeMsg(tlb.Tag{Val: 0x47d54391, Len: 32}, TonstakePoolDepositMsgOp, TonstakePoolDepositMsgBody{})
 	// 0x487a8e81
-	TeleitemStartAuctionMsgOpCode: decodeMsg(tlb.Tag{Val: 0x487a8e81, Len: 32}, TeleitemStartAuctionMsgOp, TeleitemStartAuctionMsgBody{}),
+	inMsgDecodeFuncTeleitemStartAuction = decodeMsg(tlb.Tag{Val: 0x487a8e81, Len: 32}, TeleitemStartAuctionMsgOp, TeleitemStartAuctionMsgBody{})
 	// 0x4bc7c2df
-	TonstakePoolTouchMsgOpCode: decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{}),
+	inMsgDecodeFuncTonstakePoolTouch = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
 	// 0x4e73744b
-	ElectorNewStakeMsgOpCode: decodeMsg(tlb.Tag{Val: 0x4e73744b, Len: 32}, ElectorNewStakeMsgOp, ElectorNewStakeMsgBody{}),
+	inMsgDecodeFuncElectorNewStake = decodeMsg(tlb.Tag{Val: 0x4e73744b, Len: 32}, ElectorNewStakeMsgOp, ElectorNewStakeMsgBody{})
 	//DeleteDnsRecord, ChangeDnsRecord,
-	0x4eb1f0f9: decodeMultipleMsgs(tlb.Tag{Val: 0x4eb1f0f9, Len: 32}, []MsgOpName{DeleteDnsRecordMsgOp, ChangeDnsRecordMsgOp}, []any{DeleteDnsRecordMsgBody{}, ChangeDnsRecordMsgBody{}}),
+	inMsgDecodeFunc0x4eb1f0f9 = decodeMultipleMsgs(tlb.Tag{Val: 0x4eb1f0f9, Len: 32}, []MsgOpName{DeleteDnsRecordMsgOp, ChangeDnsRecordMsgOp}, []any{DeleteDnsRecordMsgBody{}, ChangeDnsRecordMsgBody{}})
 	// 0x4ed14b65
-	DnsBalanceReleaseMsgOpCode: decodeMsg(tlb.Tag{Val: 0x4ed14b65, Len: 32}, DnsBalanceReleaseMsgOp, DnsBalanceReleaseMsgBody{}),
+	inMsgDecodeFuncDnsBalanceRelease = decodeMsg(tlb.Tag{Val: 0x4ed14b65, Len: 32}, DnsBalanceReleaseMsgOp, DnsBalanceReleaseMsgBody{})
 	// 0x53f34cd6
-	UpdatePubkeyMsgOpCode: decodeMsg(tlb.Tag{Val: 0x53f34cd6, Len: 32}, UpdatePubkeyMsgOp, UpdatePubkeyMsgBody{}),
+	inMsgDecodeFuncUpdatePubkey = decodeMsg(tlb.Tag{Val: 0x53f34cd6, Len: 32}, UpdatePubkeyMsgOp, UpdatePubkeyMsgBody{})
 	// 0x54cbf19b
-	UpdateStorageParamsMsgOpCode: decodeMsg(tlb.Tag{Val: 0x54cbf19b, Len: 32}, UpdateStorageParamsMsgOp, UpdateStorageParamsMsgBody{}),
+	inMsgDecodeFuncUpdateStorageParams = decodeMsg(tlb.Tag{Val: 0x54cbf19b, Len: 32}, UpdateStorageParamsMsgOp, UpdateStorageParamsMsgBody{})
 	// 0x54d37487
-	TonstakeImanagerOperationFeeMsgOpCode: decodeMsg(tlb.Tag{Val: 0x54d37487, Len: 32}, TonstakeImanagerOperationFeeMsgOp, TonstakeImanagerOperationFeeMsgBody{}),
+	inMsgDecodeFuncTonstakeImanagerOperationFee = decodeMsg(tlb.Tag{Val: 0x54d37487, Len: 32}, TonstakeImanagerOperationFeeMsgOp, TonstakeImanagerOperationFeeMsgBody{})
 	// 0x5577587e
-	ChannelCooperativeCloseMsgOpCode: decodeMsg(tlb.Tag{Val: 0x5577587e, Len: 32}, ChannelCooperativeCloseMsgOp, ChannelCooperativeCloseMsgBody{}),
+	inMsgDecodeFuncChannelCooperativeClose = decodeMsg(tlb.Tag{Val: 0x5577587e, Len: 32}, ChannelCooperativeCloseMsgOp, ChannelCooperativeCloseMsgBody{})
 	// 0x557cea20
-	OutbidNotificationMsgOpCode: decodeMsg(tlb.Tag{Val: 0x557cea20, Len: 32}, OutbidNotificationMsgOp, OutbidNotificationMsgBody{}),
+	inMsgDecodeFuncOutbidNotification = decodeMsg(tlb.Tag{Val: 0x557cea20, Len: 32}, OutbidNotificationMsgOp, OutbidNotificationMsgBody{})
 	// 0x55c26cd5
-	TonstakeControllerReturnAvailableFundsMsgOpCode: decodeMsg(tlb.Tag{Val: 0x55c26cd5, Len: 32}, TonstakeControllerReturnAvailableFundsMsgOp, TonstakeControllerReturnAvailableFundsMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerReturnAvailableFunds = decodeMsg(tlb.Tag{Val: 0x55c26cd5, Len: 32}, TonstakeControllerReturnAvailableFundsMsgOp, TonstakeControllerReturnAvailableFundsMsgBody{})
 	// 0x595f07bc
-	JettonBurnMsgOpCode: decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, JettonBurnMsgOp, JettonBurnMsgBody{}),
+	inMsgDecodeFuncJettonBurn = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, JettonBurnMsgOp, JettonBurnMsgBody{})
 	// 0x5e517f36
-	TonstakePoolSetRolesMsgOpCode: decodeMsg(tlb.Tag{Val: 0x5e517f36, Len: 32}, TonstakePoolSetRolesMsgOp, TonstakePoolSetRolesMsgBody{}),
+	inMsgDecodeFuncTonstakePoolSetRoles = decodeMsg(tlb.Tag{Val: 0x5e517f36, Len: 32}, TonstakePoolSetRolesMsgOp, TonstakePoolSetRolesMsgBody{})
 	// 0x5fcc3d14
-	NftTransferMsgOpCode: decodeMsg(tlb.Tag{Val: 0x5fcc3d14, Len: 32}, NftTransferMsgOp, NftTransferMsgBody{}),
+	inMsgDecodeFuncNftTransfer = decodeMsg(tlb.Tag{Val: 0x5fcc3d14, Len: 32}, NftTransferMsgOp, NftTransferMsgBody{})
 	// 0x600c00fd
-	TegroSwapTonMsgOpCode: decodeMsg(tlb.Tag{Val: 0x600c00fd, Len: 32}, TegroSwapTonMsgOp, TegroSwapTonMsgBody{}),
+	inMsgDecodeFuncTegroSwapTon = decodeMsg(tlb.Tag{Val: 0x600c00fd, Len: 32}, TegroSwapTonMsgOp, TegroSwapTonMsgBody{})
 	// 0x61ee542d
-	DedustSwapExternalMsgOpCode: decodeMsg(tlb.Tag{Val: 0x61ee542d, Len: 32}, DedustSwapExternalMsgOp, DedustSwapExternalMsgBody{}),
+	inMsgDecodeFuncDedustSwapExternal = decodeMsg(tlb.Tag{Val: 0x61ee542d, Len: 32}, DedustSwapExternalMsgOp, DedustSwapExternalMsgBody{})
 	// 0x6335b11a
-	TonstakeControllerSendRequestLoanMsgOpCode: decodeMsg(tlb.Tag{Val: 0x6335b11a, Len: 32}, TonstakeControllerSendRequestLoanMsgOp, TonstakeControllerSendRequestLoanMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerSendRequestLoan = decodeMsg(tlb.Tag{Val: 0x6335b11a, Len: 32}, TonstakeControllerSendRequestLoanMsgOp, TonstakeControllerSendRequestLoanMsgBody{})
 	// 0x64737472
-	WalletPluginDestructMsgOpCode: decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, WalletPluginDestructMsgOp, WalletPluginDestructMsgBody{}),
+	inMsgDecodeFuncWalletPluginDestruct = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, WalletPluginDestructMsgOp, WalletPluginDestructMsgBody{})
 	// 0x66f6f069
-	SettleChannelConditionalsMsgOpCode: decodeMsg(tlb.Tag{Val: 0x66f6f069, Len: 32}, SettleChannelConditionalsMsgOp, SettleChannelConditionalsMsgBody{}),
+	inMsgDecodeFuncSettleChannelConditionals = decodeMsg(tlb.Tag{Val: 0x66f6f069, Len: 32}, SettleChannelConditionalsMsgOp, SettleChannelConditionalsMsgBody{})
 	// 0x67c7d281
-	TopUpChannelBalanceMsgOpCode: decodeMsg(tlb.Tag{Val: 0x67c7d281, Len: 32}, TopUpChannelBalanceMsgOp, TopUpChannelBalanceMsgBody{}),
+	inMsgDecodeFuncTopUpChannelBalance = decodeMsg(tlb.Tag{Val: 0x67c7d281, Len: 32}, TopUpChannelBalanceMsgOp, TopUpChannelBalanceMsgBody{})
 	// 0x693d3950
-	GetRoyaltyParamsMsgOpCode: decodeMsg(tlb.Tag{Val: 0x693d3950, Len: 32}, GetRoyaltyParamsMsgOp, GetRoyaltyParamsMsgBody{}),
+	inMsgDecodeFuncGetRoyaltyParams = decodeMsg(tlb.Tag{Val: 0x693d3950, Len: 32}, GetRoyaltyParamsMsgOp, GetRoyaltyParamsMsgBody{})
 	// 0x6f89f5e3
-	SbtRevokeMsgOpCode: decodeMsg(tlb.Tag{Val: 0x6f89f5e3, Len: 32}, SbtRevokeMsgOp, SbtRevokeMsgBody{}),
+	inMsgDecodeFuncSbtRevoke = decodeMsg(tlb.Tag{Val: 0x6f89f5e3, Len: 32}, SbtRevokeMsgOp, SbtRevokeMsgBody{})
 	// 0x706c7567
-	PaymentRequestMsgOpCode: decodeMsg(tlb.Tag{Val: 0x706c7567, Len: 32}, PaymentRequestMsgOp, PaymentRequestMsgBody{}),
+	inMsgDecodeFuncPaymentRequest = decodeMsg(tlb.Tag{Val: 0x706c7567, Len: 32}, PaymentRequestMsgOp, PaymentRequestMsgBody{})
 	// 0x7247e7a5
-	TonstakeControllerPoolUnhaltMsgOpCode: decodeMsg(tlb.Tag{Val: 0x7247e7a5, Len: 32}, TonstakeControllerPoolUnhaltMsgOp, TonstakeControllerPoolUnhaltMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerPoolUnhalt = decodeMsg(tlb.Tag{Val: 0x7247e7a5, Len: 32}, TonstakeControllerPoolUnhaltMsgOp, TonstakeControllerPoolUnhaltMsgBody{})
 	// 0x72aca8aa
-	DedustSwapPeerMsgOpCode: decodeMsg(tlb.Tag{Val: 0x72aca8aa, Len: 32}, DedustSwapPeerMsgOp, DedustSwapPeerMsgBody{}),
+	inMsgDecodeFuncDedustSwapPeer = decodeMsg(tlb.Tag{Val: 0x72aca8aa, Len: 32}, DedustSwapPeerMsgOp, DedustSwapPeerMsgBody{})
 	// 0x7362d09c
-	JettonNotifyMsgOpCode: decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, JettonNotifyMsgOp, JettonNotifyMsgBody{}),
+	inMsgDecodeFuncJettonNotify = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, JettonNotifyMsgOp, JettonNotifyMsgBody{})
 	// 0x73756273
-	SubscriptionPaymentMsgOpCode: decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{}),
+	inMsgDecodeFuncSubscriptionPayment = decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{})
 	// 0x74bb3427
-	WhalesNominatorsStakeWithdrawDelayedMsgOpCode: decodeMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsStakeWithdrawDelayed = decodeMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{})
 	// 0x77a33521
-	MegatonWtonMintMsgOpCode: decodeMsg(tlb.Tag{Val: 0x77a33521, Len: 32}, MegatonWtonMintMsgOp, MegatonWtonMintMsgBody{}),
+	inMsgDecodeFuncMegatonWtonMint = decodeMsg(tlb.Tag{Val: 0x77a33521, Len: 32}, MegatonWtonMintMsgOp, MegatonWtonMintMsgBody{})
 	// 0x79a126ef
-	ChannelCooperativeCommitMsgOpCode: decodeMsg(tlb.Tag{Val: 0x79a126ef, Len: 32}, ChannelCooperativeCommitMsgOp, ChannelCooperativeCommitMsgBody{}),
+	inMsgDecodeFuncChannelCooperativeCommit = decodeMsg(tlb.Tag{Val: 0x79a126ef, Len: 32}, ChannelCooperativeCommitMsgOp, ChannelCooperativeCommitMsgBody{})
 	// 0x79e7c016
-	TonstakeControllerPoolSetSudoerMsgOpCode: decodeMsg(tlb.Tag{Val: 0x79e7c016, Len: 32}, TonstakeControllerPoolSetSudoerMsgOp, TonstakeControllerPoolSetSudoerMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerPoolSetSudoer = decodeMsg(tlb.Tag{Val: 0x79e7c016, Len: 32}, TonstakeControllerPoolSetSudoerMsgOp, TonstakeControllerPoolSetSudoerMsgBody{})
 	// 0x79f937ea
-	CloseStorageContractMsgOpCode: decodeMsg(tlb.Tag{Val: 0x79f937ea, Len: 32}, CloseStorageContractMsgOp, CloseStorageContractMsgBody{}),
+	inMsgDecodeFuncCloseStorageContract = decodeMsg(tlb.Tag{Val: 0x79f937ea, Len: 32}, CloseStorageContractMsgOp, CloseStorageContractMsgBody{})
 	// 0x7a361688
-	AcceptStorageContractMsgOpCode: decodeMsg(tlb.Tag{Val: 0x7a361688, Len: 32}, AcceptStorageContractMsgOp, AcceptStorageContractMsgBody{}),
+	inMsgDecodeFuncAcceptStorageContract = decodeMsg(tlb.Tag{Val: 0x7a361688, Len: 32}, AcceptStorageContractMsgOp, AcceptStorageContractMsgBody{})
 	// 0x7b4b42e6
-	TonstakeControllerApproveMsgOpCode: decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, TonstakeControllerApproveMsgOp, TonstakeControllerApproveMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerApprove = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, TonstakeControllerApproveMsgOp, TonstakeControllerApproveMsgBody{})
 	// 0x7bcd1fef
-	WhalesNominatorsDepositMsgOpCode: decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsDeposit = decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{})
 	// 0x7bdd97de
-	JettonBurnNotificationMsgOpCode: decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, JettonBurnNotificationMsgOp, JettonBurnNotificationMsgBody{}),
+	inMsgDecodeFuncJettonBurnNotification = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, JettonBurnNotificationMsgOp, JettonBurnNotificationMsgBody{})
 	// 0x8b771735
-	ReportStaticDataMsgOpCode: decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{}),
+	inMsgDecodeFuncReportStaticData = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{})
 	// 0x8efed779
-	TonstakeControllerWithdrawValidatorMsgOpCode: decodeMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerWithdrawValidator = decodeMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{})
 	// 0x96e7f528
-	TonstakeControllerPoolUpgradeMsgOpCode: decodeMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerPoolUpgrade = decodeMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{})
 	// 0x9971881c
-	TonstakePoolPrepareGovernanceMigrationMsgOpCode: decodeMsg(tlb.Tag{Val: 0x9971881c, Len: 32}, TonstakePoolPrepareGovernanceMigrationMsgOp, TonstakePoolPrepareGovernanceMigrationMsgBody{}),
+	inMsgDecodeFuncTonstakePoolPrepareGovernanceMigration = decodeMsg(tlb.Tag{Val: 0x9971881c, Len: 32}, TonstakePoolPrepareGovernanceMigrationMsgOp, TonstakePoolPrepareGovernanceMigrationMsgBody{})
 	// 0x99a811fb
-	WhalesNominatorsAcceptStakeMsgOpCode: decodeMsg(tlb.Tag{Val: 0x99a811fb, Len: 32}, WhalesNominatorsAcceptStakeMsgOp, WhalesNominatorsAcceptStakeMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsAcceptStake = decodeMsg(tlb.Tag{Val: 0x99a811fb, Len: 32}, WhalesNominatorsAcceptStakeMsgOp, WhalesNominatorsAcceptStakeMsgBody{})
 	// 0x9bf5561c
-	TonstakePoolSetDepositSettingsMsgOpCode: decodeMsg(tlb.Tag{Val: 0x9bf5561c, Len: 32}, TonstakePoolSetDepositSettingsMsgOp, TonstakePoolSetDepositSettingsMsgBody{}),
+	inMsgDecodeFuncTonstakePoolSetDepositSettings = decodeMsg(tlb.Tag{Val: 0x9bf5561c, Len: 32}, TonstakePoolSetDepositSettingsMsgOp, TonstakePoolSetDepositSettingsMsgBody{})
 	// 0xa19fd934
-	WhalesNominatorsAcceptWithdrawsMsgOpCode: decodeMsg(tlb.Tag{Val: 0xa19fd934, Len: 32}, WhalesNominatorsAcceptWithdrawsMsgOp, WhalesNominatorsAcceptWithdrawsMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsAcceptWithdraws = decodeMsg(tlb.Tag{Val: 0xa19fd934, Len: 32}, WhalesNominatorsAcceptWithdrawsMsgOp, WhalesNominatorsAcceptWithdrawsMsgBody{})
 	// 0xa2065f2c
-	WhalesNominatorsSendStakeMsgOpCode: decodeMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsSendStake = decodeMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{})
 	// 0xa37a0983
-	TeleitemOkMsgOpCode: decodeMsg(tlb.Tag{Val: 0xa37a0983, Len: 32}, TeleitemOkMsgOp, TeleitemOkMsgBody{}),
+	inMsgDecodeFuncTeleitemOk = decodeMsg(tlb.Tag{Val: 0xa37a0983, Len: 32}, TeleitemOkMsgOp, TeleitemOkMsgBody{})
 	// 0xa43227e1
-	TeleitemReturnBidMsgOpCode: decodeMsg(tlb.Tag{Val: 0xa43227e1, Len: 32}, TeleitemReturnBidMsgOp, TeleitemReturnBidMsgBody{}),
+	inMsgDecodeFuncTeleitemReturnBid = decodeMsg(tlb.Tag{Val: 0xa43227e1, Len: 32}, TeleitemReturnBidMsgOp, TeleitemReturnBidMsgBody{})
 	// 0xa8cb00ad
-	ReportRoyaltyParamsMsgOpCode: decodeMsg(tlb.Tag{Val: 0xa8cb00ad, Len: 32}, ReportRoyaltyParamsMsgOp, ReportRoyaltyParamsMsgBody{}),
+	inMsgDecodeFuncReportRoyaltyParams = decodeMsg(tlb.Tag{Val: 0xa8cb00ad, Len: 32}, ReportRoyaltyParamsMsgOp, ReportRoyaltyParamsMsgBody{})
 	// 0xa91baf56
-	StorageRewardWithdrawalMsgOpCode: decodeMsg(tlb.Tag{Val: 0xa91baf56, Len: 32}, StorageRewardWithdrawalMsgOp, StorageRewardWithdrawalMsgBody{}),
+	inMsgDecodeFuncStorageRewardWithdrawal = decodeMsg(tlb.Tag{Val: 0xa91baf56, Len: 32}, StorageRewardWithdrawalMsgOp, StorageRewardWithdrawalMsgBody{})
 	// 0xad4eb6f5
-	DedustPayoutFromPoolMsgOpCode: decodeMsg(tlb.Tag{Val: 0xad4eb6f5, Len: 32}, DedustPayoutFromPoolMsgOp, DedustPayoutFromPoolMsgBody{}),
+	inMsgDecodeFuncDedustPayoutFromPool = decodeMsg(tlb.Tag{Val: 0xad4eb6f5, Len: 32}, DedustPayoutFromPoolMsgOp, DedustPayoutFromPoolMsgBody{})
 	// 0xb1ebae06
-	TonstakeImanagerRequestNotificationMsgOpCode: decodeMsg(tlb.Tag{Val: 0xb1ebae06, Len: 32}, TonstakeImanagerRequestNotificationMsgOp, TonstakeImanagerRequestNotificationMsgBody{}),
+	inMsgDecodeFuncTonstakeImanagerRequestNotification = decodeMsg(tlb.Tag{Val: 0xb1ebae06, Len: 32}, TonstakeImanagerRequestNotificationMsgOp, TonstakeImanagerRequestNotificationMsgBody{})
 	// 0xb27edcad
-	TonstakePoolDeployControllerMsgOpCode: decodeMsg(tlb.Tag{Val: 0xb27edcad, Len: 32}, TonstakePoolDeployControllerMsgOp, TonstakePoolDeployControllerMsgBody{}),
+	inMsgDecodeFuncTonstakePoolDeployController = decodeMsg(tlb.Tag{Val: 0xb27edcad, Len: 32}, TonstakePoolDeployControllerMsgOp, TonstakePoolDeployControllerMsgBody{})
 	// 0xb56b9598
-	DedustDepositLiquidityAllMsgOpCode: decodeMsg(tlb.Tag{Val: 0xb56b9598, Len: 32}, DedustDepositLiquidityAllMsgOp, DedustDepositLiquidityAllMsgBody{}),
+	inMsgDecodeFuncDedustDepositLiquidityAll = decodeMsg(tlb.Tag{Val: 0xb56b9598, Len: 32}, DedustDepositLiquidityAllMsgOp, DedustDepositLiquidityAllMsgBody{})
 	// 0xb6236d63
-	StorageContractTerminatedMsgOpCode: decodeMsg(tlb.Tag{Val: 0xb6236d63, Len: 32}, StorageContractTerminatedMsgOp, StorageContractTerminatedMsgBody{}),
+	inMsgDecodeFuncStorageContractTerminated = decodeMsg(tlb.Tag{Val: 0xb6236d63, Len: 32}, StorageContractTerminatedMsgOp, StorageContractTerminatedMsgBody{})
 	// 0xc1344900
-	TonstakeImanagerStatsMsgOpCode: decodeMsg(tlb.Tag{Val: 0xc1344900, Len: 32}, TonstakeImanagerStatsMsgOp, TonstakeImanagerStatsMsgBody{}),
+	inMsgDecodeFuncTonstakeImanagerStats = decodeMsg(tlb.Tag{Val: 0xc1344900, Len: 32}, TonstakeImanagerStatsMsgOp, TonstakeImanagerStatsMsgBody{})
 	// 0xc9f04485
-	TonstakeImanagerSetInterestMsgOpCode: decodeMsg(tlb.Tag{Val: 0xc9f04485, Len: 32}, TonstakeImanagerSetInterestMsgOp, TonstakeImanagerSetInterestMsgBody{}),
+	inMsgDecodeFuncTonstakeImanagerSetInterest = decodeMsg(tlb.Tag{Val: 0xc9f04485, Len: 32}, TonstakeImanagerSetInterestMsgOp, TonstakeImanagerSetInterestMsgBody{})
 	// 0xd0c3bfea
-	SbtRequestOwnerMsgOpCode: decodeMsg(tlb.Tag{Val: 0xd0c3bfea, Len: 32}, SbtRequestOwnerMsgOp, SbtRequestOwnerMsgBody{}),
+	inMsgDecodeFuncSbtRequestOwner = decodeMsg(tlb.Tag{Val: 0xd0c3bfea, Len: 32}, SbtRequestOwnerMsgOp, SbtRequestOwnerMsgBody{})
 	// 0xd372158c
-	TonstakeControllerTopUpMsgOpCode: decodeMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TonstakeControllerTopUpMsgOp, TonstakeControllerTopUpMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerTopUp = decodeMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TonstakeControllerTopUpMsgOp, TonstakeControllerTopUpMsgBody{})
 	// 0xd4caedcd
-	StorageContractConfirmedMsgOpCode: decodeMsg(tlb.Tag{Val: 0xd4caedcd, Len: 32}, StorageContractConfirmedMsgOp, StorageContractConfirmedMsgBody{}),
+	inMsgDecodeFuncStorageContractConfirmed = decodeMsg(tlb.Tag{Val: 0xd4caedcd, Len: 32}, StorageContractConfirmedMsgOp, StorageContractConfirmedMsgBody{})
 	// 0xd53276db
-	ExcessMsgOpCode: decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, ExcessMsgOp, ExcessMsgBody{}),
+	inMsgDecodeFuncExcess = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, ExcessMsgOp, ExcessMsgBody{})
 	// 0xda803efd
-	WhalesNominatorsWithdrawMsgOpCode: decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{}),
+	inMsgDecodeFuncWhalesNominatorsWithdraw = decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{})
 	// 0xdb3b8abd
-	TonstakeNftPayoutMsgOpCode: decodeMsg(tlb.Tag{Val: 0xdb3b8abd, Len: 32}, TonstakeNftPayoutMsgOp, TonstakeNftPayoutMsgBody{}),
+	inMsgDecodeFuncTonstakeNftPayout = decodeMsg(tlb.Tag{Val: 0xdb3b8abd, Len: 32}, TonstakeNftPayoutMsgOp, TonstakeNftPayoutMsgBody{})
 	// 0xdddc88ba
-	ChannelClosedMsgOpCode: decodeMsg(tlb.Tag{Val: 0xdddc88ba, Len: 32}, ChannelClosedMsgOp, ChannelClosedMsgBody{}),
+	inMsgDecodeFuncChannelClosed = decodeMsg(tlb.Tag{Val: 0xdddc88ba, Len: 32}, ChannelClosedMsgOp, ChannelClosedMsgBody{})
 	// 0xdfdca27b
-	TonstakePoolLoanRepaymentMsgOpCode: decodeMsg(tlb.Tag{Val: 0xdfdca27b, Len: 32}, TonstakePoolLoanRepaymentMsgOp, TonstakePoolLoanRepaymentMsgBody{}),
+	inMsgDecodeFuncTonstakePoolLoanRepayment = decodeMsg(tlb.Tag{Val: 0xdfdca27b, Len: 32}, TonstakePoolLoanRepaymentMsgOp, TonstakePoolLoanRepaymentMsgBody{})
 	// 0xe4737472
-	WalletPluginDestructResponseMsgOpCode: decodeMsg(tlb.Tag{Val: 0xe4737472, Len: 32}, WalletPluginDestructResponseMsgOp, WalletPluginDestructResponseMsgBody{}),
+	inMsgDecodeFuncWalletPluginDestructResponse = decodeMsg(tlb.Tag{Val: 0xe4737472, Len: 32}, WalletPluginDestructResponseMsgOp, WalletPluginDestructResponseMsgBody{})
 	// 0xe4748df1
-	DeployStorageContractMsgOpCode: decodeMsg(tlb.Tag{Val: 0xe4748df1, Len: 32}, DeployStorageContractMsgOp, DeployStorageContractMsgBody{}),
+	inMsgDecodeFuncDeployStorageContract = decodeMsg(tlb.Tag{Val: 0xe4748df1, Len: 32}, DeployStorageContractMsgOp, DeployStorageContractMsgBody{})
 	// 0xe642c965
-	TonstakePoolRequestLoanMsgOpCode: decodeMsg(tlb.Tag{Val: 0xe642c965, Len: 32}, TonstakePoolRequestLoanMsgOp, TonstakePoolRequestLoanMsgBody{}),
+	inMsgDecodeFuncTonstakePoolRequestLoan = decodeMsg(tlb.Tag{Val: 0xe642c965, Len: 32}, TonstakePoolRequestLoanMsgOp, TonstakePoolRequestLoanMsgBody{})
 	// 0xe8a0abfe
-	TonstakeControllerDisapproveMsgOpCode: decodeMsg(tlb.Tag{Val: 0xe8a0abfe, Len: 32}, TonstakeControllerDisapproveMsgOp, TonstakeControllerDisapproveMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerDisapprove = decodeMsg(tlb.Tag{Val: 0xe8a0abfe, Len: 32}, TonstakeControllerDisapproveMsgOp, TonstakeControllerDisapproveMsgBody{})
 	// 0xea06185d
-	DedustSwapMsgOpCode: decodeMsg(tlb.Tag{Val: 0xea06185d, Len: 32}, DedustSwapMsgOp, DedustSwapMsgBody{}),
+	inMsgDecodeFuncDedustSwap = decodeMsg(tlb.Tag{Val: 0xea06185d, Len: 32}, DedustSwapMsgOp, DedustSwapMsgBody{})
 	// 0xeb373a05
-	TonstakeControllerRecoverStakeMsgOpCode: decodeMsg(tlb.Tag{Val: 0xeb373a05, Len: 32}, TonstakeControllerRecoverStakeMsgOp, TonstakeControllerRecoverStakeMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerRecoverStake = decodeMsg(tlb.Tag{Val: 0xeb373a05, Len: 32}, TonstakeControllerRecoverStakeMsgOp, TonstakeControllerRecoverStakeMsgBody{})
 	// 0xed58b0b2
-	TonstakeNftBurnNotificationMsgOpCode: decodeMsg(tlb.Tag{Val: 0xed58b0b2, Len: 32}, TonstakeNftBurnNotificationMsgOp, TonstakeNftBurnNotificationMsgBody{}),
+	inMsgDecodeFuncTonstakeNftBurnNotification = decodeMsg(tlb.Tag{Val: 0xed58b0b2, Len: 32}, TonstakeNftBurnNotificationMsgOp, TonstakeNftBurnNotificationMsgBody{})
 	// 0xed7378a6
-	TonstakeControllerReturnUnusedLoanMsgOpCode: decodeMsg(tlb.Tag{Val: 0xed7378a6, Len: 32}, TonstakeControllerReturnUnusedLoanMsgOp, TonstakeControllerReturnUnusedLoanMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerReturnUnusedLoan = decodeMsg(tlb.Tag{Val: 0xed7378a6, Len: 32}, TonstakeControllerReturnUnusedLoanMsgOp, TonstakeControllerReturnUnusedLoanMsgBody{})
 	// 0xf06c7567
-	PaymentRequestResponseMsgOpCode: decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, PaymentRequestResponseMsgOp, PaymentRequestResponseMsgBody{}),
+	inMsgDecodeFuncPaymentRequestResponse = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, PaymentRequestResponseMsgOp, PaymentRequestResponseMsgBody{})
 	// 0xf0fd2250
-	TonstakeControllerUpdateValidatorHashMsgOpCode: decodeMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{}),
+	inMsgDecodeFuncTonstakeControllerUpdateValidatorHash = decodeMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{})
 	// 0xf127fe4e
-	TonstakeNftBurnMsgOpCode: decodeMsg(tlb.Tag{Val: 0xf127fe4e, Len: 32}, TonstakeNftBurnMsgOp, TonstakeNftBurnMsgBody{}),
+	inMsgDecodeFuncTonstakeNftBurn = decodeMsg(tlb.Tag{Val: 0xf127fe4e, Len: 32}, TonstakeNftBurnMsgOp, TonstakeNftBurnMsgBody{})
 	// 0xf374484c
-	ElectorNewStakeConfirmationMsgOpCode: decodeMsg(tlb.Tag{Val: 0xf374484c, Len: 32}, ElectorNewStakeConfirmationMsgOp, ElectorNewStakeConfirmationMsgBody{}),
+	inMsgDecodeFuncElectorNewStakeConfirmation = decodeMsg(tlb.Tag{Val: 0xf374484c, Len: 32}, ElectorNewStakeConfirmationMsgOp, ElectorNewStakeConfirmationMsgBody{})
 	// 0xf93bb43f
-	StonfiPaymentRequestMsgOpCode: decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{}),
+	inMsgDecodeFuncStonfiPaymentRequest = decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
 	// 0xf96f7324
-	ElectorRecoverStakeResponseMsgOpCode: decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{}),
+	inMsgDecodeFuncElectorRecoverStakeResponse = decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{})
 	// 0xffffffff
-	BounceMsgOpCode: decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{}),
+	inMsgDecodeFuncBounce = decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{})
+)
+
+var opcodedInternalMessageDecodeFunctions = map[uint32]msgDecoderFunc{
+	// 0x00000000
+	TextCommentMsgOpCode: inMsgDecodeFuncTextComment,
+	// 0x04ded148
+	ProveOwnershipMsgOpCode: inMsgDecodeFuncProveOwnership,
+	// 0x05138d91
+	NftOwnershipAssignedMsgOpCode: inMsgDecodeFuncNftOwnershipAssigned,
+	// 0x0524c7ae
+	OwnershipProofMsgOpCode: inMsgDecodeFuncOwnershipProof,
+	// 0x088eaa32
+	ChallengeQuarantinedChannelStateMsgOpCode: inMsgDecodeFuncChallengeQuarantinedChannelState,
+	// 0x0a77535c
+	TonstakePoolWithdrawalMsgOpCode: inMsgDecodeFuncTonstakePoolWithdrawal,
+	// 0x0dd607e3
+	SbtOwnerInfoMsgOpCode: inMsgDecodeFuncSbtOwnerInfo,
+	// 0x0e0620c2
+	InitPaymentChannelMsgOpCode: inMsgDecodeFuncInitPaymentChannel,
+	// 0x0f8a7ea5
+	JettonTransferMsgOpCode: inMsgDecodeFuncJettonTransfer,
+	// 0x107c49ef
+	OfferStorageContractMsgOpCode: inMsgDecodeFuncOfferStorageContract,
+	// 0x132f9a45
+	TonstakeNftInitMsgOpCode: inMsgDecodeFuncTonstakeNftInit,
+	// 0x139a1b4e
+	TonstakeControllerPoolHaltMsgOpCode: inMsgDecodeFuncTonstakeControllerPoolHalt,
+	// 0x1596920c
+	WhalesNominatorsForceKickMsgOpCode: inMsgDecodeFuncWhalesNominatorsForceKick,
+	// 0x1690c604
+	TonstakeControllerCreditMsgOpCode: inMsgDecodeFuncTonstakeControllerCredit,
+	// 0x178d4519
+	JettonInternalTransferMsgOpCode: inMsgDecodeFuncJettonInternalTransfer,
+	// 0x1d1715bf
+	WhalesNominatorsWithdrawUnownedResponseMsgOpCode: inMsgDecodeFuncWhalesNominatorsWithdrawUnownedResponse,
+	// 0x1f04537a
+	SbtDestroyMsgOpCode: inMsgDecodeFuncSbtDestroy,
+	// 0x1f151acf
+	StartUncooperativeChannelCloseMsgOpCode: inMsgDecodeFuncStartUncooperativeChannelClose,
+	// 0x2167da4b
+	EncryptedTextCommentMsgOpCode: inMsgDecodeFuncEncryptedTextComment,
+	// 0x23d421e1
+	WhalesNominatorsStakeWithdrawCompletedMsgOpCode: inMsgDecodeFuncWhalesNominatorsStakeWithdrawCompleted,
+	// 0x251d6a98
+	WhalesNominatorsWithdrawUnownedMsgOpCode: inMsgDecodeFuncWhalesNominatorsWithdrawUnowned,
+	// 0x25432a91
+	FinishUncooperativeChannelCloseMsgOpCode: inMsgDecodeFuncFinishUncooperativeChannelClose,
+	// 0x25938561
+	StonfiSwapMsgOpCode: inMsgDecodeFuncStonfiSwap,
+	// 0x270695fb
+	TonstakeControllerPoolSendMessageMsgOpCode: inMsgDecodeFuncTonstakeControllerPoolSendMessage,
+	// 0x299a3e15
+	TeleitemDeployMsgOpCode: inMsgDecodeFuncTeleitemDeploy,
+	// 0x2aaa96a0
+	TonstakePoolSetGovernanceFeeMsgOpCode: inMsgDecodeFuncTonstakePoolSetGovernanceFee,
+	// 0x2fcb26a2
+	GetStaticDataMsgOpCode: inMsgDecodeFuncGetStaticData,
+	// 0x30026327
+	TonstakeControllerValidatorWithdrawalMsgOpCode: inMsgDecodeFuncTonstakeControllerValidatorWithdrawal,
+	// 0x319b0cdc
+	TonstakePoolWithdrawMsgOpCode: inMsgDecodeFuncTonstakePoolWithdraw,
+	// 0x370fec51
+	AuctionFillUpMsgOpCode: inMsgDecodeFuncAuctionFillUp,
+	// 0x371638ae
+	TeleitemCancelAuctionMsgOpCode: inMsgDecodeFuncTeleitemCancelAuction,
+	// 0x419d5d4d
+	ProofStorageMsgOpCode: inMsgDecodeFuncProofStorage,
+	// 0x44beae41
+	ProcessGovernanceDecisionMsgOpCode: inMsgDecodeFuncProcessGovernanceDecision,
+	// 0x4637289a
+	TelemintDeployMsgOpCode: inMsgDecodeFuncTelemintDeploy,
+	// 0x4637289b
+	TelemintDeployV2MsgOpCode: inMsgDecodeFuncTelemintDeployV2,
+	// 0x46ed2e94
+	StorageWithdrawMsgOpCode: inMsgDecodeFuncStorageWithdraw,
+	// 0x474f86cf
+	DedustPayoutMsgOpCode: inMsgDecodeFuncDedustPayout,
+	// 0x47657424
+	ElectorRecoverStakeRequestMsgOpCode: inMsgDecodeFuncElectorRecoverStakeRequest,
+	// 0x47d54391
+	TonstakePoolDepositMsgOpCode: inMsgDecodeFuncTonstakePoolDeposit,
+	// 0x487a8e81
+	TeleitemStartAuctionMsgOpCode: inMsgDecodeFuncTeleitemStartAuction,
+	// 0x4bc7c2df
+	TonstakePoolTouchMsgOpCode: inMsgDecodeFuncTonstakePoolTouch,
+	// 0x4e73744b
+	ElectorNewStakeMsgOpCode: inMsgDecodeFuncElectorNewStake,
+	//DeleteDnsRecord, ChangeDnsRecord,
+	0x4eb1f0f9: inMsgDecodeFunc0x4eb1f0f9,
+	// 0x4ed14b65
+	DnsBalanceReleaseMsgOpCode: inMsgDecodeFuncDnsBalanceRelease,
+	// 0x53f34cd6
+	UpdatePubkeyMsgOpCode: inMsgDecodeFuncUpdatePubkey,
+	// 0x54cbf19b
+	UpdateStorageParamsMsgOpCode: inMsgDecodeFuncUpdateStorageParams,
+	// 0x54d37487
+	TonstakeImanagerOperationFeeMsgOpCode: inMsgDecodeFuncTonstakeImanagerOperationFee,
+	// 0x5577587e
+	ChannelCooperativeCloseMsgOpCode: inMsgDecodeFuncChannelCooperativeClose,
+	// 0x557cea20
+	OutbidNotificationMsgOpCode: inMsgDecodeFuncOutbidNotification,
+	// 0x55c26cd5
+	TonstakeControllerReturnAvailableFundsMsgOpCode: inMsgDecodeFuncTonstakeControllerReturnAvailableFunds,
+	// 0x595f07bc
+	JettonBurnMsgOpCode: inMsgDecodeFuncJettonBurn,
+	// 0x5e517f36
+	TonstakePoolSetRolesMsgOpCode: inMsgDecodeFuncTonstakePoolSetRoles,
+	// 0x5fcc3d14
+	NftTransferMsgOpCode: inMsgDecodeFuncNftTransfer,
+	// 0x600c00fd
+	TegroSwapTonMsgOpCode: inMsgDecodeFuncTegroSwapTon,
+	// 0x61ee542d
+	DedustSwapExternalMsgOpCode: inMsgDecodeFuncDedustSwapExternal,
+	// 0x6335b11a
+	TonstakeControllerSendRequestLoanMsgOpCode: inMsgDecodeFuncTonstakeControllerSendRequestLoan,
+	// 0x64737472
+	WalletPluginDestructMsgOpCode: inMsgDecodeFuncWalletPluginDestruct,
+	// 0x66f6f069
+	SettleChannelConditionalsMsgOpCode: inMsgDecodeFuncSettleChannelConditionals,
+	// 0x67c7d281
+	TopUpChannelBalanceMsgOpCode: inMsgDecodeFuncTopUpChannelBalance,
+	// 0x693d3950
+	GetRoyaltyParamsMsgOpCode: inMsgDecodeFuncGetRoyaltyParams,
+	// 0x6f89f5e3
+	SbtRevokeMsgOpCode: inMsgDecodeFuncSbtRevoke,
+	// 0x706c7567
+	PaymentRequestMsgOpCode: inMsgDecodeFuncPaymentRequest,
+	// 0x7247e7a5
+	TonstakeControllerPoolUnhaltMsgOpCode: inMsgDecodeFuncTonstakeControllerPoolUnhalt,
+	// 0x72aca8aa
+	DedustSwapPeerMsgOpCode: inMsgDecodeFuncDedustSwapPeer,
+	// 0x7362d09c
+	JettonNotifyMsgOpCode: inMsgDecodeFuncJettonNotify,
+	// 0x73756273
+	SubscriptionPaymentMsgOpCode: inMsgDecodeFuncSubscriptionPayment,
+	// 0x74bb3427
+	WhalesNominatorsStakeWithdrawDelayedMsgOpCode: inMsgDecodeFuncWhalesNominatorsStakeWithdrawDelayed,
+	// 0x77a33521
+	MegatonWtonMintMsgOpCode: inMsgDecodeFuncMegatonWtonMint,
+	// 0x79a126ef
+	ChannelCooperativeCommitMsgOpCode: inMsgDecodeFuncChannelCooperativeCommit,
+	// 0x79e7c016
+	TonstakeControllerPoolSetSudoerMsgOpCode: inMsgDecodeFuncTonstakeControllerPoolSetSudoer,
+	// 0x79f937ea
+	CloseStorageContractMsgOpCode: inMsgDecodeFuncCloseStorageContract,
+	// 0x7a361688
+	AcceptStorageContractMsgOpCode: inMsgDecodeFuncAcceptStorageContract,
+	// 0x7b4b42e6
+	TonstakeControllerApproveMsgOpCode: inMsgDecodeFuncTonstakeControllerApprove,
+	// 0x7bcd1fef
+	WhalesNominatorsDepositMsgOpCode: inMsgDecodeFuncWhalesNominatorsDeposit,
+	// 0x7bdd97de
+	JettonBurnNotificationMsgOpCode: inMsgDecodeFuncJettonBurnNotification,
+	// 0x8b771735
+	ReportStaticDataMsgOpCode: inMsgDecodeFuncReportStaticData,
+	// 0x8efed779
+	TonstakeControllerWithdrawValidatorMsgOpCode: inMsgDecodeFuncTonstakeControllerWithdrawValidator,
+	// 0x96e7f528
+	TonstakeControllerPoolUpgradeMsgOpCode: inMsgDecodeFuncTonstakeControllerPoolUpgrade,
+	// 0x9971881c
+	TonstakePoolPrepareGovernanceMigrationMsgOpCode: inMsgDecodeFuncTonstakePoolPrepareGovernanceMigration,
+	// 0x99a811fb
+	WhalesNominatorsAcceptStakeMsgOpCode: inMsgDecodeFuncWhalesNominatorsAcceptStake,
+	// 0x9bf5561c
+	TonstakePoolSetDepositSettingsMsgOpCode: inMsgDecodeFuncTonstakePoolSetDepositSettings,
+	// 0xa19fd934
+	WhalesNominatorsAcceptWithdrawsMsgOpCode: inMsgDecodeFuncWhalesNominatorsAcceptWithdraws,
+	// 0xa2065f2c
+	WhalesNominatorsSendStakeMsgOpCode: inMsgDecodeFuncWhalesNominatorsSendStake,
+	// 0xa37a0983
+	TeleitemOkMsgOpCode: inMsgDecodeFuncTeleitemOk,
+	// 0xa43227e1
+	TeleitemReturnBidMsgOpCode: inMsgDecodeFuncTeleitemReturnBid,
+	// 0xa8cb00ad
+	ReportRoyaltyParamsMsgOpCode: inMsgDecodeFuncReportRoyaltyParams,
+	// 0xa91baf56
+	StorageRewardWithdrawalMsgOpCode: inMsgDecodeFuncStorageRewardWithdrawal,
+	// 0xad4eb6f5
+	DedustPayoutFromPoolMsgOpCode: inMsgDecodeFuncDedustPayoutFromPool,
+	// 0xb1ebae06
+	TonstakeImanagerRequestNotificationMsgOpCode: inMsgDecodeFuncTonstakeImanagerRequestNotification,
+	// 0xb27edcad
+	TonstakePoolDeployControllerMsgOpCode: inMsgDecodeFuncTonstakePoolDeployController,
+	// 0xb56b9598
+	DedustDepositLiquidityAllMsgOpCode: inMsgDecodeFuncDedustDepositLiquidityAll,
+	// 0xb6236d63
+	StorageContractTerminatedMsgOpCode: inMsgDecodeFuncStorageContractTerminated,
+	// 0xc1344900
+	TonstakeImanagerStatsMsgOpCode: inMsgDecodeFuncTonstakeImanagerStats,
+	// 0xc9f04485
+	TonstakeImanagerSetInterestMsgOpCode: inMsgDecodeFuncTonstakeImanagerSetInterest,
+	// 0xd0c3bfea
+	SbtRequestOwnerMsgOpCode: inMsgDecodeFuncSbtRequestOwner,
+	// 0xd372158c
+	TonstakeControllerTopUpMsgOpCode: inMsgDecodeFuncTonstakeControllerTopUp,
+	// 0xd4caedcd
+	StorageContractConfirmedMsgOpCode: inMsgDecodeFuncStorageContractConfirmed,
+	// 0xd53276db
+	ExcessMsgOpCode: inMsgDecodeFuncExcess,
+	// 0xda803efd
+	WhalesNominatorsWithdrawMsgOpCode: inMsgDecodeFuncWhalesNominatorsWithdraw,
+	// 0xdb3b8abd
+	TonstakeNftPayoutMsgOpCode: inMsgDecodeFuncTonstakeNftPayout,
+	// 0xdddc88ba
+	ChannelClosedMsgOpCode: inMsgDecodeFuncChannelClosed,
+	// 0xdfdca27b
+	TonstakePoolLoanRepaymentMsgOpCode: inMsgDecodeFuncTonstakePoolLoanRepayment,
+	// 0xe4737472
+	WalletPluginDestructResponseMsgOpCode: inMsgDecodeFuncWalletPluginDestructResponse,
+	// 0xe4748df1
+	DeployStorageContractMsgOpCode: inMsgDecodeFuncDeployStorageContract,
+	// 0xe642c965
+	TonstakePoolRequestLoanMsgOpCode: inMsgDecodeFuncTonstakePoolRequestLoan,
+	// 0xe8a0abfe
+	TonstakeControllerDisapproveMsgOpCode: inMsgDecodeFuncTonstakeControllerDisapprove,
+	// 0xea06185d
+	DedustSwapMsgOpCode: inMsgDecodeFuncDedustSwap,
+	// 0xeb373a05
+	TonstakeControllerRecoverStakeMsgOpCode: inMsgDecodeFuncTonstakeControllerRecoverStake,
+	// 0xed58b0b2
+	TonstakeNftBurnNotificationMsgOpCode: inMsgDecodeFuncTonstakeNftBurnNotification,
+	// 0xed7378a6
+	TonstakeControllerReturnUnusedLoanMsgOpCode: inMsgDecodeFuncTonstakeControllerReturnUnusedLoan,
+	// 0xf06c7567
+	PaymentRequestResponseMsgOpCode: inMsgDecodeFuncPaymentRequestResponse,
+	// 0xf0fd2250
+	TonstakeControllerUpdateValidatorHashMsgOpCode: inMsgDecodeFuncTonstakeControllerUpdateValidatorHash,
+	// 0xf127fe4e
+	TonstakeNftBurnMsgOpCode: inMsgDecodeFuncTonstakeNftBurn,
+	// 0xf374484c
+	ElectorNewStakeConfirmationMsgOpCode: inMsgDecodeFuncElectorNewStakeConfirmation,
+	// 0xf93bb43f
+	StonfiPaymentRequestMsgOpCode: inMsgDecodeFuncStonfiPaymentRequest,
+	// 0xf96f7324
+	ElectorRecoverStakeResponseMsgOpCode: inMsgDecodeFuncElectorRecoverStakeResponse,
+	// 0xffffffff
+	BounceMsgOpCode: inMsgDecodeFuncBounce,
 }
 
 const (

@@ -64,7 +64,7 @@ func decodeMultipleMsgs(tag tlb.Tag, names []MsgOpName, types []any) msgDecoderF
 
 type msgDecoderFunc func(cell *boc.Cell) (*uint32, *MsgOpName, any, error)
 
-// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
+// MessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
 // It returns an opcode, an operation name and a decoded body.
 func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*uint32, *MsgOpName, any, error) {
 	if cell.BitsAvailableForRead() < 32 {
@@ -86,7 +86,7 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*ui
 		return nil, nil, nil, err
 	}
 	tag := uint32(tag64)
-	f := messagesDecodingFunctions[tag]
+	f := opcodedInternalMessageDecodeFunctions[tag]
 	if f != nil {
 		return f(cell)
 	}

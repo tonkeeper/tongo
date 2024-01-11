@@ -42,7 +42,12 @@ func (id AccountID) MarshalJSON() ([]byte, error) {
 }
 
 func (id *AccountID) UnmarshalJSON(data []byte) error {
-	a, err := ParseAccountID(strings.Trim(string(data), "\"\n "))
+	var s string
+	err := json.Unmarshal(data, &s)
+	if err != nil {
+		return err
+	}
+	a, err := ParseAccountID(s)
 	if err != nil {
 		return err
 	}
@@ -110,6 +115,16 @@ func (id *AccountID) ToMsgAddress() tlb.MsgAddress {
 
 func AccountIDFromBase64Url(s string) (AccountID, error) {
 	var aa AccountID
+	s = strings.Map(func(r rune) rune {
+		switch r {
+		case '+':
+			return '-'
+		case '/':
+			return '_'
+		default:
+			return r
+		}
+	}, s)
 	b, err := base64.URLEncoding.DecodeString(s)
 	if err != nil {
 		return AccountID{}, err

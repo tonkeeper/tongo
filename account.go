@@ -100,7 +100,16 @@ func (p *addressParser) ParseAddress(ctx context.Context, address string) (ton.A
 		return ton.Address{ID: accountID, Bounce: true, StateInit: nil}, nil
 	}
 	// ignore the error because we'll try dns in case of error
-	bytesAddress, _ := base64.URLEncoding.DecodeString(address)
+	bytesAddress, _ := base64.URLEncoding.DecodeString(strings.Map(func(r rune) rune {
+		switch r {
+		case '+':
+			return '-'
+		case '/':
+			return '_'
+		default:
+			return r
+		}
+	}, address))
 	if len(bytesAddress) == 36 {
 		checksum := uint64(binary.BigEndian.Uint16(bytesAddress[34:36]))
 		if checksum == crc.CalculateCRC(crc.XMODEM, bytesAddress[0:34]) {

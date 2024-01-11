@@ -73,6 +73,12 @@ func TestParseRawAccountID(t *testing.T) {
 			output:  "0:7014a79eb7a81cf37542a62b75defa99427580e6612f956d47caa0fe0ec5d05e",
 			success: false,
 		},
+		{
+			name:    "invalid3",
+			input:   "\nUQAs87W4yJHlF8mt29ocA4agnMrLsOP69j C1HPyBUjJay7Mg",
+			output:  "",
+			success: false,
+		},
 	}
 
 	for i := range cases {

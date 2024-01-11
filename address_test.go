@@ -55,6 +55,12 @@ func TestParseAddress(t *testing.T) {
 			request:   "subbotin.ton",
 			response:  "0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb",
 		},
+		{
+			name:      "url-unsafe",
+			typeParse: parseToRawAddress,
+			request:   "UQBDWnKuRx7eqYtr5Kr9HdFGHnBsUyX_jsPGC/RO/K4BaVdu",
+			response:  "0:435a72ae471edea98b6be4aafd1dd1461e706c5325ff8ec3c60bf44efcae0169",
+		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			account, err := parser.ParseAddress(context.Background(), test.request)

@@ -194,6 +194,10 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	withHashes := (d1 & 0b10000) != 0
 	mask := levelMask(d1 >> 5)
 
+	if withHashes {
+		offset := mask.HashesCount() * (hashSize + depthSize)
+		cellData = cellData[offset:]
+	}
 	var cell *Cell
 	if isExotic {
 		// the first byte of an exotic cell stores the cell's type.
@@ -203,10 +207,6 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	} else {
 		cell = NewCell()
 		cell.mask = mask
-	}
-	if withHashes {
-		offset := mask.HashesCount() * (hashSize + depthSize)
-		cellData = cellData[offset:]
 	}
 
 	if len(cellData) < dataBytesSize+referenceIndexSize*refNum {

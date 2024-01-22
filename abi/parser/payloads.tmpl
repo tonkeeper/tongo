@@ -1,0 +1,61 @@
+
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+      func decode{{ $op.GolangOpcodeName }}{{ $.WhatRender }}(j *{{ $.WhatRender }}Payload, c *boc.Cell) error {
+      var res {{ $op.GolangTypeName }}
+       err := tlb.Unmarshal(c, &res)
+       if err == nil {{if $op.FixedLength }}  && (c.BitsAvailableForRead() == 0 && c.RefsAvailableForRead() == 0) {{end}} {
+        j.SumType = {{ $op.GolangOpcodeName }}
+        j.Value = res
+        return nil
+      }
+      return err
+      }
+    {{ end }}
+{{- end }}
+
+
+const (
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }} {{ $.WhatRender }}OpName = "{{ $op.OperationName }}"
+    {{- end }}
+{{- end }}
+
+{{ range  $tag, $ops := .Operations -}}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}Code {{ $.WhatRender }}OpCode = 0x{{ printf "%08x" $op.Tag }}
+   {{- end }}
+{{- end }}
+)
+
+var Known{{ $.WhatRender }}Types = map[string]any{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}: {{ $op.GolangTypeName }}{},
+   {{- end }}
+{{- end }}
+
+}
+var {{ $.WhatRender }}OpCodes = map[{{ $.WhatRender }}OpName]{{ $.WhatRender }}OpCode{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}: {{ $op.GolangOpcodeName }}Code,
+   {{- end }}
+{{- end }}
+}
+
+var func{{ $.WhatRender }}DecodersMapping = map[{{ $.WhatRender }}OpCode]func(*{{ $.WhatRender }}Payload, *boc.Cell) error{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}Code: decode{{ $op.GolangOpcodeName }}{{ $.WhatRender }},
+   {{- end }}
+{{- end }}
+}
+
+
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.Code }}
+    {{- end }}
+{{- end }}

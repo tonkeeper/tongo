@@ -84,7 +84,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc  {
     case {{ $interface }}:
         return  []msgDecoderFunc{
         {{- range $msg := $msgs }}
-            inMsgDecodeFunc{{ $msg }},
+            decodeFunc{{ $msg }}MsgBody,
         {{- end }}
         }
     {{- end }}
@@ -99,7 +99,7 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc  {
     case {{ $interface }}:
         return  []msgDecoderFunc{
         {{- range $msg := $msgs }}
-            extInMsgDecodeFunc{{ $msg }},
+            decodeFunc{{ $msg }}ExtInMsgBody,
         {{- end }}
         }
     {{- end }}
@@ -114,7 +114,7 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc  {
     case {{ $interface }}:
         return  []msgDecoderFunc{
         {{- range $msg := $msgs }}
-            extOutMsgDecodeFunc{{ $msg }},
+            decodeFunc{{ $msg }}ExtOutMsgBody,
         {{- end }}
         }
     {{- end }}

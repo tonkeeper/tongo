@@ -348,7 +348,7 @@ type DNSRecord struct {
 		Field0 tlb.Text
 	} `tlbSumType:"#1eda"`
 	DnsNextResolver struct {
-		Resolver MsgAddressInt
+		Resolver tlb.MsgAddress
 	} `tlbSumType:"#ba93"`
 	DnsAdnlAddress struct {
 		AdnlAddr  tlb.Bits256
@@ -356,7 +356,7 @@ type DNSRecord struct {
 		ProtoList UnknownType
 	} `tlbSumType:"#ad01"`
 	DnsSmcAddress struct {
-		SmcAddr MsgAddressInt
+		SmcAddr tlb.MsgAddress
 		Flags   uint8
 		CapList UnknownType
 	} `tlbSumType:"#9fd3"`

@@ -768,47 +768,47 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
 	case DedustPool:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncDedustSwapExternal,
-			inMsgDecodeFuncDedustSwapPeer,
+			decodeFuncDedustSwapExternalMsgBody,
+			decodeFuncDedustSwapPeerMsgBody,
 		}
 	case DedustVault:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncJettonNotify,
-			inMsgDecodeFuncJettonTransfer,
-			inMsgDecodeFuncDedustSwap,
-			inMsgDecodeFuncDedustPayoutFromPool,
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncDedustSwapMsgBody,
+			decodeFuncDedustPayoutFromPoolMsgBody,
 		}
 	case Dns:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncDnsBalanceRelease,
-			inMsgDecodeFuncProcessGovernanceDecision,
+			decodeFuncDnsBalanceReleaseMsgBody,
+			decodeFuncProcessGovernanceDecisionMsgBody,
 		}
 	case JettonMaster:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncJettonBurnNotification,
+			decodeFuncJettonBurnNotificationMsgBody,
 		}
 	case JettonWallet:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncJettonTransfer,
-			inMsgDecodeFuncJettonInternalTransfer,
-			inMsgDecodeFuncJettonBurn,
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncJettonInternalTransferMsgBody,
+			decodeFuncJettonBurnMsgBody,
 		}
 	case NftCollection:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncGetRoyaltyParams,
+			decodeFuncGetRoyaltyParamsMsgBody,
 		}
 	case NftItem:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncNftTransfer,
-			inMsgDecodeFuncGetStaticData,
+			decodeFuncNftTransferMsgBody,
+			decodeFuncGetStaticDataMsgBody,
 		}
 	case WhalesPool:
 		return []msgDecoderFunc{
-			inMsgDecodeFuncWhalesNominatorsWithdraw,
-			inMsgDecodeFuncWhalesNominatorsDeposit,
-			inMsgDecodeFuncWhalesNominatorsSendStake,
-			inMsgDecodeFuncWhalesNominatorsWithdrawUnowned,
-			inMsgDecodeFuncWhalesNominatorsForceKick,
+			decodeFuncWhalesNominatorsWithdrawMsgBody,
+			decodeFuncWhalesNominatorsDepositMsgBody,
+			decodeFuncWhalesNominatorsSendStakeMsgBody,
+			decodeFuncWhalesNominatorsWithdrawUnownedMsgBody,
+			decodeFuncWhalesNominatorsForceKickMsgBody,
 		}
 	default:
 		return nil
@@ -819,19 +819,19 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
 	case WalletV3R1:
 		return []msgDecoderFunc{
-			extInMsgDecodeFuncWalletSignedV3,
+			decodeFuncWalletSignedV3ExtInMsgBody,
 		}
 	case WalletV3R2:
 		return []msgDecoderFunc{
-			extInMsgDecodeFuncWalletSignedV3,
+			decodeFuncWalletSignedV3ExtInMsgBody,
 		}
 	case WalletV4R1:
 		return []msgDecoderFunc{
-			extInMsgDecodeFuncWalletSignedV4,
+			decodeFuncWalletSignedV4ExtInMsgBody,
 		}
 	case WalletV4R2:
 		return []msgDecoderFunc{
-			extInMsgDecodeFuncWalletSignedV4,
+			decodeFuncWalletSignedV4ExtInMsgBody,
 		}
 	default:
 		return nil
@@ -842,7 +842,7 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 	switch c {
 	case DedustPool:
 		return []msgDecoderFunc{
-			extOutMsgDecodeFuncDedustSwap,
+			decodeFuncDedustSwapExtOutMsgBody,
 		}
 	default:
 		return nil

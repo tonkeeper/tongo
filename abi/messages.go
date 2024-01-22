@@ -36,29 +36,16 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 	}
 }
 
-func decodeMultipleMsgs(tag tlb.Tag, names []MsgOpName, types []any) msgDecoderFunc {
+func decodeMultipleMsgs(funcs []msgDecoderFunc, tag string) msgDecoderFunc {
 	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
-		for i := range names {
-			readTag, err := cell.ReadUint(tag.Len)
-			if err != nil {
-				return nil, nil, nil, err
-			}
-			var uintTag *uint32
-			if readTag != tag.Val {
-				cell.ResetCounters()
-				return nil, nil, nil, fmt.Errorf("invalid tag")
-			}
-			if tag.Len == 32 {
-				uintTag = pointer(uint32(readTag))
-			}
-			body := reflect.New(reflect.TypeOf(types[i]))
-			err = tlb.Unmarshal(cell, body.Interface())
+		for _, f := range funcs {
+			tag, opName, object, err := f(cell)
 			if err == nil && cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
-				return uintTag, pointer(names[i]), body.Elem().Interface(), nil
+				return tag, opName, object, err
 			}
 			cell.ResetCounters()
 		}
-		return nil, nil, nil, fmt.Errorf("no one message can be unmarshled from %v", names)
+		return nil, nil, nil, fmt.Errorf("no one message can be unmarshled for %v", tag)
 	}
 }
 
@@ -86,7 +73,7 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*ui
 		return nil, nil, nil, err
 	}
 	tag := uint32(tag64)
-	f := opcodedInternalMessageDecodeFunctions[tag]
+	f := opcodedMsgInDecodeFunctions[tag]
 	if f != nil {
 		return f(cell)
 	}

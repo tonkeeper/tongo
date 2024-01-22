@@ -19,6 +19,8 @@ The list below contains the supported message operations, their names and opcode
 | DedustDepositLiquidityAll| 0xb56b9598 |
 | DedustPayout| 0x474f86cf |
 | DedustPayoutFromPool| 0xad4eb6f5 |
+| DedustSwap| 0x9c610de3 |
+| DedustSwap| 0xe3a0d482 |
 | DedustSwap| 0xea06185d |
 | DedustSwapExternal| 0x61ee542d |
 | DedustSwapPeer| 0x72aca8aa |
@@ -30,6 +32,8 @@ The list below contains the supported message operations, their names and opcode
 | ElectorRecoverStakeRequest| 0x47657424 |
 | ElectorRecoverStakeResponse| 0xf96f7324 |
 | EncryptedTextComment| 0x2167da4b |
+| EncryptedTextComment| 0x2167da4b |
+| EncryptedTextComment| 0x2167da4b |
 | Excess| 0xd53276db |
 | FinishUncooperativeChannelClose| 0x25432a91 |
 | GetRoyaltyParams| 0x693d3950 |
@@ -40,6 +44,8 @@ The list below contains the supported message operations, their names and opcode
 | JettonInternalTransfer| 0x178d4519 |
 | JettonNotify| 0x7362d09c |
 | JettonTransfer| 0x0f8a7ea5 |
+| MegatonSwap| 0x7362d09c |
+| MegatonUpdateMiningParams| 0x56a8e920 |
 | MegatonWtonMint| 0x77a33521 |
 | NftOwnershipAssigned| 0x05138d91 |
 | NftTransfer| 0x5fcc3d14 |
@@ -59,14 +65,22 @@ The list below contains the supported message operations, their names and opcode
 | SbtRevoke| 0x6f89f5e3 |
 | SettleChannelConditionals| 0x66f6f069 |
 | StartUncooperativeChannelClose| 0x1f151acf |
+| StofiProvideLiquidity| 0x8fe5f9fc |
 | StonfiPaymentRequest| 0xf93bb43f |
+| StonfiProvideLiquidity| 0xfcf9e58f |
 | StonfiSwap| 0x25938561 |
+| StonfiSwap| 0x25938561 |
+| StonfiSwapOk| 0xc64370e5 |
+| StonfiSwapOkRef| 0x45078540 |
 | StorageContractConfirmed| 0xd4caedcd |
 | StorageContractTerminated| 0xb6236d63 |
 | StorageRewardWithdrawal| 0xa91baf56 |
 | StorageWithdraw| 0x46ed2e94 |
 | SubscriptionPayment| 0x73756273 |
+| TegroAddLiquidity| 0x287e167a |
+| TegroJettonSwap| 0x01fb7a25 |
 | TegroSwapTon| 0x600c00fd |
+| TeleitemBidInfo| 0x38127de1 |
 | TeleitemCancelAuction| 0x371638ae |
 | TeleitemDeploy| 0x299a3e15 |
 | TeleitemOk| 0xa37a0983 |
@@ -74,6 +88,8 @@ The list below contains the supported message operations, their names and opcode
 | TeleitemStartAuction| 0x487a8e81 |
 | TelemintDeploy| 0x4637289a |
 | TelemintDeployV2| 0x4637289b |
+| TextComment| 0x00000000 |
+| TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
 | TonstakeControllerApprove| 0x7b4b42e6 |
 | TonstakeControllerCredit| 0x1690c604 |
@@ -115,6 +131,8 @@ The list below contains the supported message operations, their names and opcode
 | UpdateStorageParams| 0x54cbf19b |
 | WalletPluginDestruct| 0x64737472 |
 | WalletPluginDestructResponse| 0xe4737472 |
+| WalletSignedV3| 0x00000000 |
+| WalletSignedV4| 0x00000000 |
 | WhalesNominatorsAcceptStake| 0x99a811fb |
 | WhalesNominatorsAcceptWithdraws| 0xa19fd934 |
 | WhalesNominatorsDeposit| 0x7bcd1fef |

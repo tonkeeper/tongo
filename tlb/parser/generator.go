@@ -41,6 +41,7 @@ var (
 		"Unit":                 {"struct{}", false},
 		"Cell":                 {"tlb.Any", false},
 		"MsgAddress":           {"tlb.MsgAddress", false},
+		"MsgAddressInt":        {"tlb.MsgAddress", false}, //todo: replace with MsgAddressInt after adding to tlb package
 		"AddressWithWorkchain": {"tlb.AddressWithWorkchain", false},
 		"Coins":                {"tlb.Grams", false},
 		"Grams":                {"tlb.Grams", false},
@@ -52,6 +53,7 @@ var (
 		"DNSRecord":            {"tlb.DNSRecord", false},
 		"DNS_RecordSet":        {"tlb.DNSRecordSet", false},
 		"CurrencyCollection":   {"tlb.CurrencyCollection", false},
+		"WalletPayload":        {"tlb.WalletPayloadV1toV4", false},
 	}
 )
 

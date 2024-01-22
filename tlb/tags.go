@@ -90,7 +90,9 @@ func ParseTag(tagString string) (Tag, error) {
 	if base == 0 || len(tagString) == separatorPlace+1 {
 		return Tag{}, ErrInvalidTag
 	}
-
+	if tagString[separatorPlace+1:] == "_" {
+		return Tag{Name: tagString[:separatorPlace], Len: 0}, nil
+	}
 	val, err := strconv.ParseUint(tagString[separatorPlace+1:], base, 32)
 	return Tag{Name: tagString[:separatorPlace], Len: length, Val: val}, err
 }

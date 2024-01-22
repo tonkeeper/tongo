@@ -79,6 +79,6 @@ burn#595f07bc account_addr:MsgAddressInt
     <ext_out name="megaton_update_mining_params">
         update_mining_params#56a8e920 pool_addr:MsgAddressInt
         last_mined:uint256 last_index:uint256
-        ^[ last_mined:uint256, last_index:uint256] = ExtOutMsgBody;
+        ^[ last_mined:uint256 last_index:uint256] = ExtOutMsgBody;
     </ext_out>
 </abi>

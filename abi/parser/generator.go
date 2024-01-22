@@ -57,25 +57,37 @@ var (
 	getMethodsTemplate string
 	//go:embed messages.tmpl
 	messagesTemplate string
+	//go:embed payloads.tmpl
+	payloadTmpl string
+)
+
+type MsgType int
+
+const (
+	MsgTypeIn            MsgType = 0
+	MsgTypeExtIn         MsgType = 1
+	MsgTypeExtOut        MsgType = 2
+	MsgTypeJettonPayload MsgType = 3
+	MsgTypeNFTPayload    MsgType = 4
 )
 
 type TLBMsgBody struct {
-	TypeName      string
-	OperationName string
-	Tag           uint64
-	Code          string
-	FixedLength   bool
+	Type             MsgType
+	GolangTypeName   string
+	GolangOpcodeName string
+	OperationName    string
+	Tag              uint64
+	Code             string
+	FixedLength      bool
 }
 
 type Generator struct {
-	knownTypes            map[string]string
-	abi                   ABI
-	newTlbTypes           map[string]struct{}
-	loadedTlbTypes        []string
-	loadedTlbMsgTypes     map[tlb.Tag][]TLBMsgBody
-	loadedJettonsMsgTypes map[tlb.Tag][]TLBMsgBody
-	loadedNFTsMsgTypes    map[tlb.Tag][]TLBMsgBody
-	typeName              string
+	knownTypes        map[string]string
+	abi               ABI
+	newTlbTypes       map[string]struct{}
+	loadedTlbTypes    []string
+	loadedTlbMsgTypes map[tlb.Tag][]TLBMsgBody
+	typeName          string
 }
 
 func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
@@ -83,12 +95,10 @@ func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
 		knownTypes = defaultKnownTypes
 	}
 	g := &Generator{
-		knownTypes:            knownTypes,
-		abi:                   abi,
-		loadedTlbMsgTypes:     make(map[tlb.Tag][]TLBMsgBody),
-		loadedJettonsMsgTypes: make(map[tlb.Tag][]TLBMsgBody),
-		loadedNFTsMsgTypes:    make(map[tlb.Tag][]TLBMsgBody),
-		newTlbTypes:           make(map[string]struct{}),
+		knownTypes:        knownTypes,
+		abi:               abi,
+		loadedTlbMsgTypes: make(map[tlb.Tag][]TLBMsgBody),
+		newTlbTypes:       make(map[string]struct{}),
 	}
 	err := g.registerABI()
 	return g, err
@@ -181,19 +191,31 @@ func (g *Generator) registerABI() error {
 		}
 	}
 	for _, internal := range g.abi.Internals {
-		err := registerMsgType(g.loadedTlbMsgTypes, "MsgBody", internal.Name, internal.Input, internal.FixedLength)
+		err := registerMsgType(g.loadedTlbMsgTypes, MsgTypeIn, internal.Name, internal.Input, internal.FixedLength)
+		if err != nil {
+			return err
+		}
+	}
+	for _, m := range g.abi.ExtIn {
+		err := registerMsgType(g.loadedTlbMsgTypes, MsgTypeExtIn, m.Name, m.Input, m.FixedLength)
+		if err != nil {
+			return err
+		}
+	}
+	for _, m := range g.abi.ExtOut {
+		err := registerMsgType(g.loadedTlbMsgTypes, MsgTypeExtOut, m.Name, m.Input, m.FixedLength)
 		if err != nil {
 			return err
 		}
 	}
 	for _, jetton := range g.abi.JettonPayloads {
-		err := registerMsgType(g.loadedJettonsMsgTypes, "JettonPayload", jetton.Name, jetton.Input, jetton.FixedLength)
+		err := registerMsgType(g.loadedTlbMsgTypes, MsgTypeJettonPayload, jetton.Name, jetton.Input, jetton.FixedLength)
 		if err != nil {
 			return err
 		}
 	}
 	for _, nft := range g.abi.NFTPayloads {
-		err := registerMsgType(g.loadedNFTsMsgTypes, "NFTPayload", nft.Name, nft.Input, nft.FixedLength)
+		err := registerMsgType(g.loadedTlbMsgTypes, MsgTypeNFTPayload, nft.Name, nft.Input, nft.FixedLength)
 		if err != nil {
 			return err
 		}
@@ -223,7 +245,7 @@ func (g *Generator) registerType(s string) error {
 	return nil
 }
 
-func registerMsgType(known map[tlb.Tag][]TLBMsgBody, postfix, name, s string, fixedLength bool) error {
+func registerMsgType(known map[tlb.Tag][]TLBMsgBody, mType MsgType, name, s string, fixedLength bool) error {
 	parsed, err := tlbParser.Parse(s)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
@@ -242,20 +264,40 @@ func registerMsgType(known map[tlb.Tag][]TLBMsgBody, postfix, name, s string, fi
 		Len: tag.Len,
 		Val: tag.Val,
 	}
+	var typeSuffix string
+	var opSuffix string
+	switch mType {
+	case MsgTypeIn:
+		opSuffix = "MsgOp"
+		typeSuffix = "MsgBody"
+	case MsgTypeExtIn:
+		opSuffix = "ExtInMsgOp"
+		typeSuffix = "ExtInMsgBody"
+	case MsgTypeExtOut:
+		opSuffix = "ExtOutMsgOp"
+		typeSuffix = "ExtOutMsgBody"
+	case MsgTypeJettonPayload:
+		opSuffix = "JettonOp"
+		typeSuffix = "JettonPayload"
+	case MsgTypeNFTPayload:
+		opSuffix = "NFTOp"
+		typeSuffix = "NFTPayload"
+	}
+	typePrefix := utils.ToCamelCase(name)
 
-	typePrefix := utils.ToCamelCase(name) + postfix
-
-	t, err := gen.GenerateGolangTypes(parsed.Declarations, typePrefix, true)
+	t, err := gen.GenerateGolangTypes(parsed.Declarations, typePrefix+typeSuffix, true)
 	if err != nil {
 		return fmt.Errorf("can't decode %v error %w", s, err)
 	}
 
 	known[key] = append(known[key], TLBMsgBody{
-		TypeName:      utils.ToCamelCase(name) + postfix,
-		OperationName: utils.ToCamelCase(name),
-		Tag:           tag.Val,
-		Code:          t,
-		FixedLength:   fixedLength,
+		Type:             mType,
+		GolangTypeName:   typePrefix + typeSuffix,
+		GolangOpcodeName: utils.ToCamelCase(name) + opSuffix,
+		OperationName:    utils.ToCamelCase(name),
+		Tag:              tag.Val,
+		Code:             t,
+		FixedLength:      fixedLength,
 	})
 
 	return nil
@@ -443,12 +485,6 @@ func (g *Generator) CollectedTypes() string {
 	var builder strings.Builder
 	builder.WriteString(strings.Join(g.loadedTlbTypes, "\n\n"))
 
-	for _, k := range getOrderedKeys(g.loadedTlbMsgTypes) {
-		for _, v := range g.loadedTlbMsgTypes[k] {
-			builder.WriteString(v.Code)
-			builder.WriteRune('\n')
-		}
-	}
 	builder.WriteRune('\n')
 	b, err := format.Source([]byte(builder.String()))
 	if err != nil {
@@ -464,12 +500,29 @@ type opCode struct {
 
 type messagesContext struct {
 	Operations map[tlb.Tag][]TLBMsgBody
+	WhatRender string
 }
 
 func (g *Generator) GenerateMsgDecoder() string {
+	s := g.generateMsgDecoder(MsgTypeIn, "MsgIn")
+	s += g.generateMsgDecoder(MsgTypeExtIn, "MsgExtIn")
+	s += g.generateMsgDecoder(MsgTypeExtOut, "MsgExtOut")
+	return s
+}
+func (g *Generator) generateMsgDecoder(msgType MsgType, what string) string {
 
-	context := messagesContext{g.loadedTlbMsgTypes}
-
+	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody), WhatRender: what}
+	for tag, operation := range g.loadedTlbMsgTypes {
+		filtered := make([]TLBMsgBody, 0, len(operation))
+		for _, body := range operation {
+			if body.Type == msgType {
+				filtered = append(filtered, body)
+			}
+		}
+		if len(filtered) > 0 {
+			context.Operations[tag] = filtered
+		}
+	}
 	tmpl, err := template.New("messages").Parse(messagesTemplate)
 	if err != nil {
 		panic(err)
@@ -484,8 +537,9 @@ func (g *Generator) GenerateMsgDecoder() string {
 }
 
 type messageOperation struct {
-	Name   string
-	OpCode string
+	Name      string
+	OpCode    string
+	OpCodeLen int
 }
 
 type messagesMDContext struct {
@@ -498,8 +552,9 @@ func (g *Generator) RenderMessagesMD() (string, error) {
 	for opcode, bodies := range g.loadedTlbMsgTypes {
 		for _, body := range bodies {
 			operation := messageOperation{
-				Name:   body.OperationName,
-				OpCode: fmt.Sprintf("0x%08x", opcode.Val),
+				Name:      body.OperationName,
+				OpCode:    fmt.Sprintf("0x%08x", opcode.Val),
+				OpCodeLen: opcode.Len,
 			}
 			context.Operations = append(context.Operations, operation)
 		}
@@ -624,91 +679,42 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 }
 
 func (g *Generator) RenderJetton() (string, error) {
-	return g.renderPayload("Jetton", g.loadedJettonsMsgTypes)
+	return g.renderPayload(MsgTypeJettonPayload)
 }
 
 func (g *Generator) RenderNFT() (string, error) {
-	return g.renderPayload("NFT", g.loadedNFTsMsgTypes)
+	return g.renderPayload(MsgTypeNFTPayload)
 }
 
-func (g *Generator) renderPayload(payloadName string, msgTypes map[tlb.Tag][]TLBMsgBody) (string, error) {
-	var builder strings.Builder
+func (g *Generator) renderPayload(mType MsgType) (string, error) {
 
-	fmt.Fprintf(&builder, `
-
-func (j *%sPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error  {
-	if cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
-		return nil
+	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody)}
+	switch mType {
+	case MsgTypeNFTPayload:
+		context.WhatRender = "NFT"
+	case MsgTypeJettonPayload:
+		context.WhatRender = "Jetton"
 	}
-	tempCell := cell.CopyRemaining()
-	op64, err := tempCell.ReadUint(32)
-	if errors.Is(err, boc.ErrNotEnoughBits) {
-		j.SumType = Unknown%sOp
-		j.Value = cell.CopyRemaining()
-		return nil
-	}
-	op := uint32(op64)
-	j.OpCode = &op
-	switch  op {
-`, payloadName, payloadName)
-
-	var knownTypes [][2]string
-	var knownOpcodes []opCode
-	for _, k := range getOrderedKeys(msgTypes) {
-		tlbType := msgTypes[k][0] //todo: iterate
-		fmt.Fprintf(&builder, "case %s%sOpCode:  // 0x%08x\n", tlbType.OperationName, payloadName, tlbType.Tag)
-		fmt.Fprintf(&builder, "var res %s\n", tlbType.TypeName)
-		fmt.Fprintf(&builder, `if err := tlb.Unmarshal(tempCell, &res); err == nil `)
-		if tlbType.FixedLength {
-			builder.WriteString(` && (tempCell.BitsAvailableForRead()== 0 && tempCell.RefsAvailableForRead() == 0)`)
+	for tag, operation := range g.loadedTlbMsgTypes {
+		filtered := make([]TLBMsgBody, 0, len(operation))
+		for _, body := range operation {
+			if body.Type == mType {
+				filtered = append(filtered, body)
+			}
 		}
-		fmt.Fprintf(&builder, ` {
-	j.SumType = %v%sOp
-	j.Value = res
-	return  nil 
-}`, tlbType.OperationName, payloadName)
-		builder.WriteString("\n")
-
-		knownTypes = append(knownTypes, [2]string{tlbType.OperationName, tlbType.TypeName})
-		knownOpcodes = append(knownOpcodes, opCode{OperationName: tlbType.OperationName, Tag: tlbType.Tag})
+		if len(filtered) > 0 {
+			context.Operations[tag] = filtered
+		}
 	}
-
-	fmt.Fprintf(&builder, `
-}
-		j.SumType = Unknown%sOp
-		j.Value = cell.CopyRemaining()
-	
-	return nil
-}
-const (
-`, payloadName)
-	for _, v := range knownTypes {
-		fmt.Fprintf(&builder, `%v%sOp %sOpName = "%v"`+"\n", v[0], payloadName, payloadName, v[0])
+	tmpl, err := template.New("jettons").Parse(payloadTmpl)
+	if err != nil {
+		return "", err
 	}
-	builder.WriteString(`
-
-`)
-	for _, v := range knownOpcodes {
-		fmt.Fprintf(&builder, `%s%sOpCode %sOpCode = 0x%08x`+"\n", v.OperationName, payloadName, payloadName, v.Tag)
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, context); err != nil {
+		return "", err
 	}
-	builder.WriteString(")\n")
-	fmt.Fprintf(&builder, "var Known%sTypes = map[string]any{\n", payloadName)
-	for _, v := range knownTypes {
-		fmt.Fprintf(&builder, "%v%sOp: %v{},\n", v[0], payloadName, v[1])
-	}
-	fmt.Fprintf(&builder, `}
-var %sOpCodes = map[%sOpName]%sOpCode{
-`, strings.ToLower(payloadName), payloadName, payloadName)
-	for _, v := range knownOpcodes {
-		fmt.Fprintf(&builder, "%s%sOp: %s%sOpCode,\n", v.OperationName, payloadName, v.OperationName, payloadName)
-	}
-	builder.WriteString("\n}\n")
-	for _, k := range getOrderedKeys(msgTypes) {
-		builder.WriteString(msgTypes[k][0].Code) //todo: iterate
-		builder.WriteRune('\n')
-	}
-	builder.WriteRune('\n')
-	return builder.String(), nil
+	return buf.String(), nil
 }
 
 func getOrderedKeys[M ~map[tlb.Tag]V, V any](m M) []tlb.Tag {

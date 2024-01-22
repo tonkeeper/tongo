@@ -108,11 +108,11 @@
         </output>
     </get_method>
     <ext_in name="wallet_signed_v3">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletPayload =
         ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_v4">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-        payload:PayloadV1toV4 = ExternalMsgBody;
+        payload:WalletPayload = ExternalMsgBody;
     </ext_in>
 </abi>

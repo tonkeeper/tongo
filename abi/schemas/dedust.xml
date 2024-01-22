@@ -90,7 +90,7 @@
     </jetton_payload>
 
     <ext_out name="dedust_swap">
-        swap#9c610de3 asset_in:Asset asset_out:Asset amount_in:Coins amount_out:Coins
+        swap#9c610de3 asset_in:DedustAsset asset_out:DedustAsset amount_in:Coins amount_out:Coins
         ^[ sender_addr:MsgAddress referral_addr:MsgAddress
         reserve0:Coins reserve1:Coins ] = ExtOutMsgBody;
     </ext_out>

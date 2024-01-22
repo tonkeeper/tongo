@@ -11,7 +11,7 @@ import (
 )
 
 func (w *Wallet) CreateMessage(lifetime time.Duration, messages ...Sendable) (*tlb.Message, error) {
-	var msgArray []RawMessage
+	var msgArray []tlb.RawMessage
 	for _, m := range messages {
 		intMsg, mode, err := m.ToInternal()
 		if err != nil {
@@ -22,7 +22,7 @@ func (w *Wallet) CreateMessage(lifetime time.Duration, messages ...Sendable) (*t
 		if err != nil {
 			return nil, err
 		}
-		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
+		msgArray = append(msgArray, tlb.RawMessage{Message: cell, Mode: mode})
 	}
 	err := checkMessagesLimit(len(msgArray), w.ver)
 	if err != nil {
@@ -35,7 +35,7 @@ func (w *Wallet) CreateMessage(lifetime time.Duration, messages ...Sendable) (*t
 		body := HighloadV2Message{
 			SubWalletId:    uint32(w.subWalletId),
 			BoundedQueryID: boundedID,
-			RawMessages:    PayloadHighload(msgArray),
+			RawMessages:    tlb.PayloadHighload(msgArray),
 		}
 		err = tlb.Marshal(bodyCell, body)
 	default:

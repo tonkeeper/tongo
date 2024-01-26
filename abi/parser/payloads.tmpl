@@ -4,7 +4,7 @@
       func decode{{ $op.GolangOpcodeName }}{{ $.WhatRender }}(j *{{ $.WhatRender }}Payload, c *boc.Cell) error {
       var res {{ $op.GolangTypeName }}
        err := tlb.Unmarshal(c, &res)
-       if err == nil {{if $op.FixedLength }}  && (c.BitsAvailableForRead() == 0 && c.RefsAvailableForRead() == 0) {{end}} {
+       if err == nil {{if $op.FixedLength }}  && completedRead(c) {{end}} {
         j.SumType = {{ $op.GolangOpcodeName }}
         j.Value = res
         return nil

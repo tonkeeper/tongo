@@ -5,6 +5,7 @@ package abi
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -197,6 +198,56 @@ type TelemintUnsignedDeployV2 struct {
 
 type AccountLists struct {
 	List tlb.Hashmap[tlb.Bits256, tlb.Any]
+}
+
+type MessageRelaxed struct {
+	tlb.SumType
+	MessageInternal struct {
+		IhrDisabled bool
+		Bounce      bool
+		Bounced     bool
+		Src         tlb.MsgAddress
+		Dest        tlb.MsgAddress
+		Value       tlb.CurrencyCollection
+		IhrFee      tlb.Grams
+		FwdFee      tlb.Grams
+		CreatedLt   uint64
+		CreatedAt   uint32
+		Init        *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+		Body        tlb.EitherRef[InMsgBody]
+	} `tlbSumType:"$0"`
+	MessageExtOut struct {
+		Src       tlb.MsgAddress
+		Dest      tlb.MsgAddress
+		CreatedLt uint64
+		CreatedAt uint32
+		Init      *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+		Body      tlb.EitherRef[ExtOutMsgBody]
+	} `tlbSumType:"$11"`
+}
+
+func (t *MessageRelaxed) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "MessageInternal":
+		bytes, err := json.Marshal(t.MessageInternal)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "MessageInternal","MessageInternal":%v}`, string(bytes))), nil
+	case "MessageExtOut":
+		bytes, err := json.Marshal(t.MessageExtOut)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "MessageExtOut","MessageExtOut":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type SendMessageAction struct {
+	Mode    uint8
+	Message MessageRelaxed `tlb:"^"`
 }
 
 type WhalesNominatorsMember struct {

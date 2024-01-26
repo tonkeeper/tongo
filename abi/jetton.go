@@ -21,8 +21,8 @@ type JettonPayload struct {
 type JettonOpName = string
 
 const (
-	EmptyJettonOp   = ""
-	UnknownJettonOp = "Cell"
+	EmptyJettonOp   JettonOpName = ""
+	UnknownJettonOp JettonOpName = "Cell"
 )
 
 // JettonOpCode is the first 4 bytes of a message body identifying an operation to be performed.
@@ -118,7 +118,7 @@ func (j JettonPayload) MarshalTLB(c *boc.Cell, e *tlb.Encoder) error {
 }
 
 func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
-	if cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
+	if completedRead(cell) {
 		return nil
 	}
 	tempCell := cell.CopyRemaining()

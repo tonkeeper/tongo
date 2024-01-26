@@ -17,32 +17,32 @@ import (
 	"github.com/tonkeeper/tongo/utils"
 )
 
-var defaultKnownTypes = map[string]string{
-	"accountid":     "ton.AccountID",
-	"cell":          "boc.Cell",
-	"int8":          "int8",
-	"int32":         "int32",
-	"int64":         "int64",
-	"bool":          "bool",
-	"uint8":         "uint8",
-	"uint16":        "uint16",
-	"uint32":        "uint32",
-	"uint64":        "uint64",
-	"uint128":       "tlb.Uint128",
-	"int256":        "tlb.Int256",
-	"int257":        "tlb.Int257",
-	"bits256":       "tlb.Bits256",
-	"any":           "tlb.Any",
-	"[]byte":        "[]byte",
-	"string":        "string",
-	"coins":         "tlb.Grams",
-	"big.int":       "big.Int",
-	"dnsrecord":     "tlb.DNSRecord",
-	"dns_recordset": "tlb.DNSRecordSet",
-	"msgaddress":    "tlb.MsgAddress",
-	"text":          "tlb.Text",
-	"fullcontent":   "tlb.FullContent",
-	"contentdata ":  "tlb.ContentData",
+var defaultKnownTypes = map[string]tlbParser.DefaultType{
+	"cell":          {"boc.Cell", false},
+	"int8":          {"int8", false},
+	"int32":         {"int32", false},
+	"int64":         {"int64", false},
+	"bool":          {"bool", false},
+	"uint8":         {"uint8", false},
+	"uint16":        {"uint16", false},
+	"uint32":        {"uint32", false},
+	"uint64":        {"uint64", false},
+	"uint128":       {"tlb.Uint128", false},
+	"int256":        {"tlb.Int256", false},
+	"int257":        {"tlb.Int257", false},
+	"bits256":       {"tlb.Bits256", false},
+	"any":           {"tlb.Any", false},
+	"[]byte":        {"[]byte", false},
+	"string":        {"string", false},
+	"coins":         {"tlb.Grams", false},
+	"big.int":       {"big.Int", false},
+	"dnsrecord":     {"tlb.DNSRecord", false},
+	"dns_recordset": {"tlb.DNSRecordSet", false},
+	"msgaddress":    {"tlb.MsgAddress", false},
+	"text":          {"tlb.Text", false},
+	"fullcontent":   {"tlb.FullContent", false},
+	"contentdata ":  {"tlb.ContentData", false},
+	"StateInit":     {"tlb.StateInit", false},
 }
 
 var (
@@ -51,7 +51,7 @@ var (
 	returnStrNilErr     = "if err != nil {return \"\", nil, err}\n"
 	//go:embed messages.md.tmpl
 	messagesMDTemplate string
-	//go:embed invocation_order.tmpl
+	//go:embed interfaces.tmpl
 	invocationOrderTemplate string
 	//go:embed get_methods.tmpl
 	getMethodsTemplate string
@@ -82,7 +82,7 @@ type TLBMsgBody struct {
 }
 
 type Generator struct {
-	knownTypes        map[string]string
+	knownTypes        map[string]tlbParser.DefaultType
 	abi               ABI
 	newTlbTypes       map[string]struct{}
 	loadedTlbTypes    []string
@@ -90,7 +90,7 @@ type Generator struct {
 	typeName          string
 }
 
-func NewGenerator(knownTypes map[string]string, abi ABI) (*Generator, error) {
+func NewGenerator(knownTypes map[string]tlbParser.DefaultType, abi ABI) (*Generator, error) {
 	if knownTypes == nil {
 		knownTypes = defaultKnownTypes
 	}
@@ -232,7 +232,7 @@ func (g *Generator) registerType(s string) error {
 		return fmt.Errorf("can't parse type %v", s)
 	}
 
-	gen := tlbParser.NewGenerator(nil, "")
+	gen := tlbParser.NewGenerator(tlbParser.WithDefaultTypes(defaultKnownTypes, false))
 	_, err = gen.GenerateGolangTypes(tlbData.Declarations, "", false)
 	if err != nil {
 		return fmt.Errorf("load types error: %v", err)
@@ -254,7 +254,7 @@ func registerMsgType(known map[tlb.Tag][]TLBMsgBody, mType MsgType, name, s stri
 		return fmt.Errorf("must be only one declaration for MsgBody %v", s)
 	}
 
-	gen := tlbParser.NewGenerator(nil, name)
+	gen := tlbParser.NewGenerator(tlbParser.WithDefaultTypes(defaultKnownTypes, false))
 
 	tag, err := tlb.ParseTag(parsed.Declarations[0].Constructor.Prefix)
 	if err != nil {
@@ -305,7 +305,7 @@ func registerMsgType(known map[tlb.Tag][]TLBMsgBody, mType MsgType, name, s stri
 
 func (g *Generator) checkType(s string) (string, error) {
 	if typeName, prs := g.knownTypes[strings.ToLower(s)]; prs {
-		return typeName, nil
+		return typeName.Name, nil
 	}
 	_, ok := g.newTlbTypes[s]
 	if !ok {

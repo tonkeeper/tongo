@@ -1666,7 +1666,7 @@ type WalletSignedV3ExtInMsgBody struct {
 	SubwalletId uint32
 	ValidUntil  uint32
 	Seqno       uint32
-	Payload     tlb.WalletPayloadV1toV4
+	Payload     WalletV1ToV4Payload
 }
 
 type WalletSignedV4ExtInMsgBody struct {
@@ -1675,7 +1675,7 @@ type WalletSignedV4ExtInMsgBody struct {
 	ValidUntil  uint32
 	Seqno       uint32
 	Op          int8
-	Payload     tlb.WalletPayloadV1toV4
+	Payload     WalletV1ToV4Payload
 }
 
 var KnownMsgExtInTypes = map[string]any{

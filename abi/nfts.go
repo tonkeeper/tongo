@@ -21,8 +21,8 @@ type NFTPayload struct {
 type NFTOpName = string
 
 const (
-	EmptyNFTOp   = ""
-	UnknownNFTOp = "Cell"
+	EmptyNFTOp   NFTOpName = ""
+	UnknownNFTOp NFTOpName = "Cell"
 )
 
 // NFTOpCode is the first 4 bytes of a message body identifying an operation to be performed.
@@ -118,7 +118,7 @@ func (p NFTPayload) MarshalTLB(c *boc.Cell, e *tlb.Encoder) error {
 }
 
 func (j *NFTPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
-	if cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() == 0 {
+	if completedRead(cell) {
 		return nil
 	}
 	tempCell := cell.CopyRemaining()

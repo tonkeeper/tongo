@@ -12,7 +12,7 @@ type MessageV3 struct {
 	SubWalletId uint32
 	ValidUntil  uint32
 	Seqno       uint32
-	RawMessages tlb.WalletPayloadV1toV4
+	RawMessages PayloadV1toV4
 }
 
 type MessageV4 struct {
@@ -21,13 +21,13 @@ type MessageV4 struct {
 	ValidUntil  uint32
 	Seqno       uint32
 	Op          int8
-	RawMessages tlb.WalletPayloadV1toV4
+	RawMessages PayloadV1toV4
 }
 
 type HighloadV2Message struct {
 	SubWalletId    uint32
 	BoundedQueryID uint64
-	RawMessages    tlb.PayloadHighload
+	RawMessages    PayloadHighload
 }
 
 // SignedMsgBody represents an external message's body sent by an offchain application to a wallet contract.
@@ -37,6 +37,15 @@ type SignedMsgBody struct {
 	Sign    tlb.Bits512
 	Message tlb.Any
 }
+
+// RawMessage when received by a wallet contract will be resent as an outgoing message.
+type RawMessage struct {
+	Message *boc.Cell
+	Mode    byte
+}
+
+type PayloadV1toV4 []RawMessage
+type PayloadHighload []RawMessage
 
 func (body *SignedMsgBody) Verify(publicKey ed25519.PublicKey) error {
 	msg := boc.Cell(body.Message)
@@ -115,7 +124,7 @@ func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
 }
 
 // ExtractRawMessages extracts a list of RawMessages from an external message.
-func ExtractRawMessages(ver Version, msg *boc.Cell) ([]tlb.RawMessage, error) {
+func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 	switch ver {
 	case V4R1, V4R2:
 		v4, err := DecodeMessageV4(msg)
@@ -156,4 +165,97 @@ func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) er
 	default:
 		return fmt.Errorf("wallet version is not supported: %v", ver)
 	}
+}
+
+func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if len(p) > 4 {
+		return fmt.Errorf("WalletPayloadV1toV4 supports only up to 4 messages")
+	}
+	for _, msg := range p {
+		err := c.WriteUint(uint64(msg.Mode), 8)
+		if err != nil {
+			return err
+		}
+		err = c.AddRef(msg.Message)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *PayloadV1toV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	for {
+		ref, err := c.NextRef()
+		if err != nil {
+			break
+		}
+		mode, err := c.ReadUint(8)
+		if err != nil {
+			return err
+		}
+		msg := RawMessage{
+			Message: ref,
+			Mode:    byte(mode),
+		}
+		*p = append(*p, msg)
+	}
+	return nil
+}
+
+func (p PayloadHighload) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if len(p) > 254 {
+		return fmt.Errorf("PayloadHighload supports only up to 254 messages")
+	}
+	var keys []tlb.Uint16
+	var values []tlb.Any
+	for i, msg := range p {
+		cell := boc.NewCell()
+		if err := cell.WriteUint(uint64(msg.Mode), 8); err != nil {
+			return err
+		}
+		if err := cell.AddRef(msg.Message); err != nil {
+			return err
+		}
+		keys = append(keys, tlb.Uint16(i))
+		values = append(values, tlb.Any(*cell))
+	}
+	hashmap := tlb.NewHashmap[tlb.Uint16, tlb.Any](keys, values)
+	dict := boc.NewCell()
+	if err := tlb.Marshal(dict, hashmap); err != nil {
+		return err
+	}
+	if err := c.WriteBit(true); err != nil {
+		return err
+	}
+	if err := c.AddRef(dict); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PayloadHighload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var m tlb.HashmapE[tlb.Uint16, tlb.Any]
+	if err := decoder.Unmarshal(c, &m); err != nil {
+		return err
+	}
+	rawMessages := make([]RawMessage, 0, len(m.Values()))
+	for _, item := range m.Items() {
+		cell := boc.Cell(item.Value)
+		mode, err := cell.ReadUint(8)
+		if err != nil {
+			return fmt.Errorf("failed to read msg mode: %v", err)
+		}
+		msg, err := cell.NextRef()
+		if err != nil {
+			return fmt.Errorf("failed to read msg: %v", err)
+		}
+		rawMsg := RawMessage{
+			Message: msg,
+			Mode:    byte(mode),
+		}
+		rawMessages = append(rawMessages, rawMsg)
+	}
+	*p = rawMessages
+	return nil
 }

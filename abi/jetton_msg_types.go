@@ -65,7 +65,7 @@ func decodeTegroAddLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error 
 func decodeStonfiSwapOkRefJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiSwapOkRefJettonPayload
 	err := tlb.Unmarshal(c, &res)
-	if err == nil && (c.BitsAvailableForRead() == 0 && c.RefsAvailableForRead() == 0) {
+	if err == nil && completedRead(c) {
 		j.SumType = StonfiSwapOkRefJettonOp
 		j.Value = res
 		return nil
@@ -76,7 +76,7 @@ func decodeStonfiSwapOkRefJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 func decodeStofiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StofiProvideLiquidityJettonPayload
 	err := tlb.Unmarshal(c, &res)
-	if err == nil && (c.BitsAvailableForRead() == 0 && c.RefsAvailableForRead() == 0) {
+	if err == nil && completedRead(c) {
 		j.SumType = StofiProvideLiquidityJettonOp
 		j.Value = res
 		return nil
@@ -87,7 +87,7 @@ func decodeStofiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) er
 func decodeStonfiSwapOkJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiSwapOkJettonPayload
 	err := tlb.Unmarshal(c, &res)
-	if err == nil && (c.BitsAvailableForRead() == 0 && c.RefsAvailableForRead() == 0) {
+	if err == nil && completedRead(c) {
 		j.SumType = StonfiSwapOkJettonOp
 		j.Value = res
 		return nil

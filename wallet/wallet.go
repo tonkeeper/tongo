@@ -143,7 +143,7 @@ func (w *Wallet) RawSendV2(
 	ctx context.Context,
 	seqno uint32,
 	validUntil time.Time,
-	internalMessages []tlb.RawMessage,
+	internalMessages []RawMessage,
 	init *tlb.StateInit,
 	waitingConfirmation time.Duration,
 ) (ton.Bits256, error) {
@@ -161,7 +161,7 @@ func (w *Wallet) RawSendV2(
 			SubWalletId: w.subWalletId,
 			ValidUntil:  uint32(validUntil.Unix()),
 			Seqno:       seqno,
-			RawMessages: tlb.WalletPayloadV1toV4(internalMessages),
+			RawMessages: PayloadV1toV4(internalMessages),
 		}
 		err = tlb.Marshal(bodyCell, body)
 	case V4R1, V4R2:
@@ -170,7 +170,7 @@ func (w *Wallet) RawSendV2(
 			ValidUntil:  uint32(validUntil.Unix()),
 			Seqno:       seqno,
 			Op:          0,
-			RawMessages: tlb.WalletPayloadV1toV4(internalMessages),
+			RawMessages: PayloadV1toV4(internalMessages),
 		}
 		err = tlb.Marshal(bodyCell, body)
 	case HighLoadV2R2:
@@ -178,7 +178,7 @@ func (w *Wallet) RawSendV2(
 		body := HighloadV2Message{
 			SubWalletId:    w.subWalletId,
 			BoundedQueryID: boundedID,
-			RawMessages:    tlb.PayloadHighload(internalMessages),
+			RawMessages:    PayloadHighload(internalMessages),
 		}
 		err = tlb.Marshal(bodyCell, body)
 	default:
@@ -250,7 +250,7 @@ func (w *Wallet) RawSend(
 	ctx context.Context,
 	seqno uint32,
 	validUntil time.Time,
-	internalMessages []tlb.RawMessage,
+	internalMessages []RawMessage,
 	init *tlb.StateInit,
 ) error {
 	_, err := w.RawSendV2(ctx, seqno, validUntil, internalMessages, init, 0)
@@ -316,7 +316,7 @@ func (w *Wallet) SendV2(
 		}
 		init = &i
 	}
-	var msgArray []tlb.RawMessage
+	var msgArray []RawMessage
 	for _, m := range messages {
 		intMsg, mode, err := m.ToInternal()
 		if err != nil {
@@ -327,7 +327,7 @@ func (w *Wallet) SendV2(
 		if err != nil {
 			return ton.Bits256{}, err
 		}
-		msgArray = append(msgArray, tlb.RawMessage{Message: cell, Mode: mode})
+		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
 	}
 	validUntil := time.Now().Add(DefaultMessageLifetime)
 	return w.RawSendV2(ctx, seqno, validUntil, msgArray, init, waitingConfirmation)

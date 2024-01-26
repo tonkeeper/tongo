@@ -17,7 +17,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	g := parser.NewGenerator(nil, "")
+	g := parser.NewGenerator()
 	s, err := g.GenerateGolangTypes(tlb.Declarations, "", false)
 	if err != nil {
 		panic(err)

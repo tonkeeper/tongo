@@ -1,4 +1,19 @@
 <abi>
+    <types>
+        send_msg#_ mode:uint8 message:^MessageRelaxed = SendMessageAction;
+
+        message_internal$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+        src:MsgAddress dest:MsgAddressInt
+        value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+        created_lt:uint64 created_at:uint32
+        init:(Maybe (Either StateInit ^StateInit))
+        body:(Either InMsgBody ^InMsgBody) = MessageRelaxed;
+
+        message_ext_out$11 src:MsgAddress dest:MsgAddressExt
+        created_lt:uint64 created_at:uint32
+        init:(Maybe (Either StateInit ^StateInit))
+        body:(Either ExtOutMsgBody ^ExtOutMsgBody) = MessageRelaxed;
+    </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
     <interface name="wallet_v1r1" inherits="wallet">
@@ -108,11 +123,11 @@
         </output>
     </get_method>
     <ext_in name="wallet_signed_v3">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletPayload =
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletV1toV4Payload =
         ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_v4">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-        payload:WalletPayload = ExternalMsgBody;
+        payload:WalletV1toV4Payload = ExternalMsgBody;
     </ext_in>
 </abi>

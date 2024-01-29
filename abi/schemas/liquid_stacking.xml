@@ -105,10 +105,10 @@
     <internal name="tonstake_controller_validator_withdrawal">
         validator_withdrawal#30026327 query_id:uint64 amount:Coins = InternalMsgBody;
     </internal>
-    <!--    <internal name="tonstake_controller_new_stake">  TODO: fix conflict with another new_stake (i che ya etim hotel skazat? v upor ne pomnyu)-->
-    <!--        new_stake#e0505d0e query_id:uint64 value:Coins validator_pubkey:uint256 stake_at:uint32 max_factor:uint32-->
-    <!--        adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;-->
-    <!--    </internal>-->
+    <internal name="tonstake_controller_new_stake">
+        new_stake#e0505d0e query_id:uint64 value:Coins validator_pubkey:uint256 stake_at:uint32 max_factor:uint32
+        adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;
+    </internal>
     <internal name="tonstake_controller_send_request_loan">
         send_request_loan#6335b11a query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint16 = InternalMsgBody;
     </internal>
@@ -121,13 +121,13 @@
 
     <!--     TonStake messages to pool -->
     <internal name="tonstake_pool_request_loan">
-        request_loan#e642c965 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint16 controller_id:uint32 validator:MsgAddress = InternalMsgBody;
+        request_loan#e642c965 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint24 = InternalMsgBody;
     </internal>
     <internal name="tonstake_pool_loan_repayment">
         loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;
     </internal>
     <internal name="tonstake_pool_deposit">
-        deposit#47d54391 query_id:uint64 = InternalMsgBody;
+        deposit#47d54391 query_id:uint64 referral:Cell = InternalMsgBody;
     </internal>
     <internal name="tonstake_pool_touch">
         touch#4bc7c2df query_id:uint64 = InternalMsgBody;
@@ -204,4 +204,8 @@
         tonstake_nft_payout#db3b8abd query_id:uint64 = InternalMsgBody;
     </internal>
 
+
+    <internal name="tonstake_payout_mint_jettons">
+        mint#1674b0a0 query_id:uint64 destination:MsgAddress amount:Coins notification:Coins forward:Coins = InternalMsgBody;
+    </internal>
 </abi>

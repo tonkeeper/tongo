@@ -33,6 +33,8 @@ var (
 	decodeFuncTonstakeControllerPoolHaltMsgBody = decodeMsg(tlb.Tag{Val: 0x139a1b4e, Len: 32}, TonstakeControllerPoolHaltMsgOp, TonstakeControllerPoolHaltMsgBody{})
 	// 0x1596920c
 	decodeFuncWhalesNominatorsForceKickMsgBody = decodeMsg(tlb.Tag{Val: 0x1596920c, Len: 32}, WhalesNominatorsForceKickMsgOp, WhalesNominatorsForceKickMsgBody{})
+	// 0x1674b0a0
+	decodeFuncTonstakePayoutMintJettonsMsgBody = decodeMsg(tlb.Tag{Val: 0x1674b0a0, Len: 32}, TonstakePayoutMintJettonsMsgOp, TonstakePayoutMintJettonsMsgBody{})
 	// 0x1690c604
 	decodeFuncTonstakeControllerCreditMsgBody = decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, TonstakeControllerCreditMsgOp, TonstakeControllerCreditMsgBody{})
 	// 0x178d4519
@@ -213,6 +215,8 @@ var (
 	decodeFuncChannelClosedMsgBody = decodeMsg(tlb.Tag{Val: 0xdddc88ba, Len: 32}, ChannelClosedMsgOp, ChannelClosedMsgBody{})
 	// 0xdfdca27b
 	decodeFuncTonstakePoolLoanRepaymentMsgBody = decodeMsg(tlb.Tag{Val: 0xdfdca27b, Len: 32}, TonstakePoolLoanRepaymentMsgOp, TonstakePoolLoanRepaymentMsgBody{})
+	// 0xe0505d0e
+	decodeFuncTonstakeControllerNewStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xe0505d0e, Len: 32}, TonstakeControllerNewStakeMsgOp, TonstakeControllerNewStakeMsgBody{})
 	// 0xe4737472
 	decodeFuncWalletPluginDestructResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xe4737472, Len: 32}, WalletPluginDestructResponseMsgOp, WalletPluginDestructResponseMsgBody{})
 	// 0xe4748df1
@@ -285,6 +289,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x1596920c
 	WhalesNominatorsForceKickMsgOpCode: decodeFuncWhalesNominatorsForceKickMsgBody,
+
+	// 0x1674b0a0
+	TonstakePayoutMintJettonsMsgOpCode: decodeFuncTonstakePayoutMintJettonsMsgBody,
 
 	// 0x1690c604
 	TonstakeControllerCreditMsgOpCode: decodeFuncTonstakeControllerCreditMsgBody,
@@ -557,6 +564,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xdfdca27b
 	TonstakePoolLoanRepaymentMsgOpCode: decodeFuncTonstakePoolLoanRepaymentMsgBody,
 
+	// 0xe0505d0e
+	TonstakeControllerNewStakeMsgOpCode: decodeFuncTonstakeControllerNewStakeMsgBody,
+
 	// 0xe4737472
 	WalletPluginDestructResponseMsgOpCode: decodeFuncWalletPluginDestructResponseMsgBody,
 
@@ -617,6 +627,7 @@ const (
 	TonstakeNftInitMsgOp                         MsgOpName = "TonstakeNftInit"
 	TonstakeControllerPoolHaltMsgOp              MsgOpName = "TonstakeControllerPoolHalt"
 	WhalesNominatorsForceKickMsgOp               MsgOpName = "WhalesNominatorsForceKick"
+	TonstakePayoutMintJettonsMsgOp               MsgOpName = "TonstakePayoutMintJettons"
 	TonstakeControllerCreditMsgOp                MsgOpName = "TonstakeControllerCredit"
 	JettonInternalTransferMsgOp                  MsgOpName = "JettonInternalTransfer"
 	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
@@ -707,6 +718,7 @@ const (
 	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
 	TonstakePoolLoanRepaymentMsgOp               MsgOpName = "TonstakePoolLoanRepayment"
+	TonstakeControllerNewStakeMsgOp              MsgOpName = "TonstakeControllerNewStake"
 	WalletPluginDestructResponseMsgOp            MsgOpName = "WalletPluginDestructResponse"
 	DeployStorageContractMsgOp                   MsgOpName = "DeployStorageContract"
 	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
@@ -738,6 +750,7 @@ const (
 	TonstakeNftInitMsgOpCode                         MsgOpCode = 0x132f9a45
 	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
 	WhalesNominatorsForceKickMsgOpCode               MsgOpCode = 0x1596920c
+	TonstakePayoutMintJettonsMsgOpCode               MsgOpCode = 0x1674b0a0
 	TonstakeControllerCreditMsgOpCode                MsgOpCode = 0x1690c604
 	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
@@ -828,6 +841,7 @@ const (
 	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
 	TonstakePoolLoanRepaymentMsgOpCode               MsgOpCode = 0xdfdca27b
+	TonstakeControllerNewStakeMsgOpCode              MsgOpCode = 0xe0505d0e
 	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
 	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
 	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0xe642c965
@@ -931,6 +945,14 @@ type TonstakeControllerPoolHaltMsgBody struct {
 
 type WhalesNominatorsForceKickMsgBody struct {
 	QueryId int64
+}
+
+type TonstakePayoutMintJettonsMsgBody struct {
+	QueryId      uint64
+	Destination  tlb.MsgAddress
+	Amount       tlb.Grams
+	Notification tlb.Grams
+	Forward      tlb.Grams
 }
 
 type TonstakeControllerCreditMsgBody struct {
@@ -1065,7 +1087,8 @@ type ElectorRecoverStakeRequestMsgBody struct {
 }
 
 type TonstakePoolDepositMsgBody struct {
-	QueryId uint64
+	QueryId  uint64
+	Referral tlb.Any
 }
 
 type TeleitemStartAuctionMsgBody struct {
@@ -1447,6 +1470,16 @@ type TonstakePoolLoanRepaymentMsgBody struct {
 	QueryId uint64
 }
 
+type TonstakeControllerNewStakeMsgBody struct {
+	QueryId         uint64
+	Value           tlb.Grams
+	ValidatorPubkey tlb.Uint256
+	StakeAt         uint32
+	MaxFactor       uint32
+	AdnlAddr        tlb.Uint256
+	Signature       tlb.Bits512 `tlb:"^"`
+}
+
 type WalletPluginDestructResponseMsgBody struct{}
 
 type DeployStorageContractMsgBody struct {
@@ -1458,12 +1491,10 @@ type DeployStorageContractMsgBody struct {
 }
 
 type TonstakePoolRequestLoanMsgBody struct {
-	QueryId      uint64
-	MinLoan      tlb.Grams
-	MaxLoan      tlb.Grams
-	MaxInterest  uint16
-	ControllerId uint32
-	Validator    tlb.MsgAddress
+	QueryId     uint64
+	MinLoan     tlb.Grams
+	MaxLoan     tlb.Grams
+	MaxInterest tlb.Uint24
 }
 
 type TonstakeControllerDisapproveMsgBody struct {
@@ -1535,6 +1566,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeNftInitMsgOp:                         TonstakeNftInitMsgBody{},
 	TonstakeControllerPoolHaltMsgOp:              TonstakeControllerPoolHaltMsgBody{},
 	WhalesNominatorsForceKickMsgOp:               WhalesNominatorsForceKickMsgBody{},
+	TonstakePayoutMintJettonsMsgOp:               TonstakePayoutMintJettonsMsgBody{},
 	TonstakeControllerCreditMsgOp:                TonstakeControllerCreditMsgBody{},
 	JettonInternalTransferMsgOp:                  JettonInternalTransferMsgBody{},
 	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
@@ -1625,6 +1657,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},
 	TonstakePoolLoanRepaymentMsgOp:               TonstakePoolLoanRepaymentMsgBody{},
+	TonstakeControllerNewStakeMsgOp:              TonstakeControllerNewStakeMsgBody{},
 	WalletPluginDestructResponseMsgOp:            WalletPluginDestructResponseMsgBody{},
 	DeployStorageContractMsgOp:                   DeployStorageContractMsgBody{},
 	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},

@@ -1,6 +1,7 @@
 package abi
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"encoding/json"
@@ -828,6 +829,46 @@ func TestMessageDecoder(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:       "tonstake_pool_request_loan",
+			boc:        "b5ee9c720101030100d200013ce642c9650000000065b6cf3b70110d9316ec000703ad53b757b0000013a90101d1000000019ffaeafb5c0a05c3cadf83c1b6bf92b8c4f1a1ed6cc85cb06966db625a3e5497a35002916c5fca10248a6de0d838ca41083c4f93f883e435f8afe312b19c0c96788bea004493230238b92a02599a423d9af26e70ff08bf68245f1e6313e2bfc57e94622640020085801828c8392b8937d23ca78d0868ca0b40108579448b2bb5616d3619b098252b3d1002ce8bb0922c22eefb1db577f26b5a7fc6747009655af89d6b3bb6c11ec785d7de",
+			wantOpName: TonstakePoolRequestLoanMsgOp,
+			wantValue: TonstakePoolRequestLoanMsgBody{ //not full body scheme described in xml
+				QueryId:     1706479419,
+				MinLoan:     300000000000000,
+				MaxLoan:     1035000000000000,
+				MaxInterest: 5033,
+			},
+		},
+		{
+			name:       "tonstakers deposit with ref",
+			boc:        "b5ee9c7201010101001600002847d54391000b9b404b36b1bb000000000005b7ce",
+			wantOpName: TonstakePoolDepositMsgOp,
+			wantValue: TonstakePoolDepositMsgBody{
+				QueryId:  0x000B9B404B36B1BB,
+				Referral: tlb.Any(mustHexToCell("b5ee9c7201010101000a000010000000000005b7ce")),
+			},
+		},
+		{
+			name:       "tonstakers deposit without ref",
+			boc:        "b5ee9c7201010101000e00001847d543910000000000000026",
+			wantOpName: TonstakePoolDepositMsgOp,
+			wantValue: TonstakePoolDepositMsgBody{
+				QueryId:  38,
+				Referral: tlb.Any{},
+			},
+		},
+		{
+			name:       "tonstakers mint payout",
+			boc:        "b5ee9c7201010101003b0000711674b0a000000000000000268009c314b9687e078372b58521f361c0ce20ea31bec6111dd3293eeeb3112f4972ecbdc9fd867cbc80bebc2001",
+			wantOpName: TonstakePayoutMintJettonsMsgOp,
+			wantValue: TonstakePayoutMintJettonsMsgBody{
+				QueryId:      38,
+				Destination:  mustAccountIDToMsgAddress("0:4e18a5cb43f03c1b95ac290f9b0e067107518df63088ee9949f77598897a4b97"),
+				Amount:       104337619762782,
+				Notification: 100000000,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -850,11 +891,25 @@ func TestMessageDecoder(t *testing.T) {
 				tt.wantValidate(t, value)
 				return
 			}
-			if !reflect.DeepEqual(tt.wantValue, value) {
-				t.Fatalf("want value: \n%v\n, got: \n%v", tt.wantValue, value)
+			b1, err1 := json.Marshal(value)
+			b2, err2 := json.Marshal(tt.wantValue)
+			if err1 != nil || err2 != nil {
+				t.Fatal(err1, err2)
+			}
+			if !bytes.Equal(b1, b2) {
+				t.Fatalf("want value: \n%v\n, got: \n%v", string(b1), string(b2))
 			}
 		})
 	}
+}
+
+func mustHexToCell(s string) boc.Cell {
+	c, err := boc.DeserializeBocHex(s)
+	if err != nil {
+		panic(err)
+	}
+	return *c[0]
+
 }
 
 func TestImplements(t *testing.T) {

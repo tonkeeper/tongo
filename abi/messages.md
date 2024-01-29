@@ -94,6 +94,7 @@ The list below contains the supported message operations, their names and opcode
 | TonstakeControllerApprove| 0x7b4b42e6 |
 | TonstakeControllerCredit| 0x1690c604 |
 | TonstakeControllerDisapprove| 0xe8a0abfe |
+| TonstakeControllerNewStake| 0xe0505d0e |
 | TonstakeControllerPoolHalt| 0x139a1b4e |
 | TonstakeControllerPoolSendMessage| 0x270695fb |
 | TonstakeControllerPoolSetSudoer| 0x79e7c016 |
@@ -115,6 +116,7 @@ The list below contains the supported message operations, their names and opcode
 | TonstakeNftBurnNotification| 0xed58b0b2 |
 | TonstakeNftInit| 0x132f9a45 |
 | TonstakeNftPayout| 0xdb3b8abd |
+| TonstakePayoutMintJettons| 0x1674b0a0 |
 | TonstakePoolDeployController| 0xb27edcad |
 | TonstakePoolDeposit| 0x47d54391 |
 | TonstakePoolLoanRepayment| 0xdfdca27b |

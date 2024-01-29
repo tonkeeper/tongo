@@ -5,6 +5,7 @@ package abi
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -62,6 +63,13 @@ type DedustSwapStepParams struct {
 	KindOut bool
 	Limit   tlb.VarUInteger16
 	Next    *DedustSwapStep `tlb:"maybe^"`
+}
+
+type TonstakersControllerData struct {
+	ControllerId uint32
+	Validator    tlb.MsgAddress
+	Pool         tlb.MsgAddress
+	Governor     tlb.MsgAddress
 }
 
 type ClosingConfig struct {

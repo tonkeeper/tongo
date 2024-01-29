@@ -1,4 +1,8 @@
 <abi>
+    <types>
+<!--   should be also ^[approver:MsgAddress halter:MsgAddress]  in the end but generator doesn't make it ref   -->
+        data#_ controller_id:uint32 validator:MsgAddress pool:MsgAddress governor:MsgAddress = TonstakersControllerData;
+    </types>
     <!--    Pool   todo: attach all internals to interfaces -->
     <interface name="tonstake_pool">
         <get_method name="get_pool_full_data"/>
@@ -110,7 +114,7 @@
         adnl_addr:uint256 signature:^(bits512) = InternalMsgBody;
     </internal>
     <internal name="tonstake_controller_send_request_loan">
-        send_request_loan#6335b11a query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint16 = InternalMsgBody;
+        send_request_loan#6335b11a query_id:uint64 min_loan:Coins max_loan:Coins max_interst:uint24 = InternalMsgBody;
     </internal>
     <internal name="tonstake_controller_return_unused_loan">
         return_unused_loan#ed7378a6 query_id:uint64 = InternalMsgBody;
@@ -121,7 +125,7 @@
 
     <!--     TonStake messages to pool -->
     <internal name="tonstake_pool_request_loan">
-        request_loan#e642c965 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint24 = InternalMsgBody;
+        request_loan#e642c965 query_id:uint64 min_loan:Coins max_loan:Coins max_interest:uint24 controller_data:^TonstakersControllerData= InternalMsgBody;
     </internal>
     <internal name="tonstake_pool_loan_repayment">
         loan_repayment#dfdca27b query_id:uint64 = InternalMsgBody;

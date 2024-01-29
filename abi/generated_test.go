@@ -838,6 +838,12 @@ func TestMessageDecoder(t *testing.T) {
 				MinLoan:     300000000000000,
 				MaxLoan:     1035000000000000,
 				MaxInterest: 5033,
+				ControllerData: TonstakersControllerData{
+					ControllerId: 1,
+					Validator:    mustAccountIDToMsgAddress("-1:d757dae0502e1e56fc1e0db5fc95c6278d0f6b6642e5834b36db12d1f2a4bd1a"),
+					Pool:         mustToMsgAddress("0:a45b17f28409229b78360e3290420f13e4fe20f90d7e2bf8c4ac6703259e22fa"),
+					Governor:     mustToMsgAddress("0:8926460471725404b334847b35e4dce1fe117ed048be3cc627c57f8afd28c44c"),
+				},
 			},
 		},
 		{

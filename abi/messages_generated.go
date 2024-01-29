@@ -1207,7 +1207,7 @@ type TonstakeControllerSendRequestLoanMsgBody struct {
 	QueryId    uint64
 	MinLoan    tlb.Grams
 	MaxLoan    tlb.Grams
-	MaxInterst uint16
+	MaxInterst tlb.Uint24
 }
 
 type WalletPluginDestructMsgBody struct{}
@@ -1491,10 +1491,11 @@ type DeployStorageContractMsgBody struct {
 }
 
 type TonstakePoolRequestLoanMsgBody struct {
-	QueryId     uint64
-	MinLoan     tlb.Grams
-	MaxLoan     tlb.Grams
-	MaxInterest tlb.Uint24
+	QueryId        uint64
+	MinLoan        tlb.Grams
+	MaxLoan        tlb.Grams
+	MaxInterest    tlb.Uint24
+	ControllerData TonstakersControllerData `tlb:"^"`
 }
 
 type TonstakeControllerDisapproveMsgBody struct {

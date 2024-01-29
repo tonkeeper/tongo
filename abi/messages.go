@@ -157,7 +157,7 @@ type ExtOutMsgBody struct {
 
 func (b *ExtOutMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	b.SumType = UnknownMsgOp
-	tag, name, value, err := InternalMessageDecoder(cell, nil)
+	tag, name, value, err := ExtOutMessageDecoder(cell, nil, tlb.MsgAddress{SumType: "AddrNone"})
 	if err != nil {
 		return err
 	}

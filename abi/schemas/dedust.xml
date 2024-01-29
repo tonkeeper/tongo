@@ -89,8 +89,8 @@
         dedust_swap#e3a0d482  step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
     </jetton_payload>
 
-    <ext_out name="dedust_swap"> <!-- todo: support for external out messages -->
-        swap#9c610de3 asset_in:Asset asset_out:Asset amount_in:Coins amount_out:Coins
+    <ext_out name="dedust_swap">
+        swap#9c610de3 asset_in:DedustAsset asset_out:DedustAsset amount_in:Coins amount_out:Coins
         ^[ sender_addr:MsgAddress referral_addr:MsgAddress
         reserve0:Coins reserve1:Coins ] = ExtOutMsgBody;
     </ext_out>

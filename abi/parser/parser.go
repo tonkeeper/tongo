@@ -9,7 +9,8 @@ import (
 type ABI struct {
 	Methods        []GetMethod `xml:"get_method"`
 	Internals      []Message   `xml:"internal"`
-	Externals      []Message   `xml:"external"`
+	ExtOut         []Message   `xml:"ext_out"`
+	ExtIn          []Message   `xml:"ext_in"`
 	JettonPayloads []Message   `xml:"jetton_payload"`
 	NFTPayloads    []Message   `xml:"nft_payload"`
 	Interfaces     []Interface `xml:"interface"`

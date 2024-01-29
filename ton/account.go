@@ -149,9 +149,7 @@ func AccountIDFromRaw(s string) (AccountID, error) {
 		return AccountID{}, fmt.Errorf("invalid account id format")
 	}
 	if len(s)-colon-1 < 64 {
-		fmt.Println(s)
 		s = s[:colon] + ":" + strings.Repeat("0", 64-len(s)+colon+1) + s[colon+1:]
-		fmt.Println(s)
 	}
 	w, err := strconv.ParseInt(s[:colon], 10, 32)
 	if err != nil {

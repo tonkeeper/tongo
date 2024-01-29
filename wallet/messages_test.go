@@ -23,7 +23,7 @@ func TestExtractRawMessages(t *testing.T) {
 		name    string
 		ver     Version
 		boc     string
-		want    PayloadV1toV4
+		want    []RawMessage
 		wantErr bool
 	}{
 		{
@@ -86,13 +86,19 @@ func TestExtractRawMessages(t *testing.T) {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(rawMessages, tt.want) {
-				for _, msg := range rawMessages {
+				for i, msg := range rawMessages {
 					bocBase64, err := msg.Message.ToBocBase64()
 					if err != nil {
 						t.Fatal(err)
 					}
-					fmt.Printf("got message: %v\n", bocBase64)
-					fmt.Printf("got mode: %v\n", msg.Mode)
+					wantBase64, err := tt.want[i].Message.ToBocBase64()
+					if err != nil {
+						t.Fatal(err)
+					}
+					fmt.Printf(" got message: %v\n", bocBase64)
+					fmt.Printf("want message: %v\n", wantBase64)
+					fmt.Printf(" got mode: %v\n", msg.Mode)
+					fmt.Printf("want mode: %v\n", tt.want[i].Mode)
 				}
 				t.Fatalf("wrong raw messages")
 			}

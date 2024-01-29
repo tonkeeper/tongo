@@ -3,6 +3,7 @@ package abi
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"reflect"
@@ -389,7 +390,7 @@ func TestWhalesNominators(t *testing.T) {
 	if len(members.List.Keys()) == 0 {
 		t.Fatal(len(members.List.Keys()))
 	}
-	memberAddress := ton.NewAccountID(0, members.List.Keys()[2])
+	memberAddress := ton.NewAccountID(0, members.List.Keys()[3])
 	_, v, err = GetMember(context.Background(), client, address, memberAddress.ToMsgAddress())
 	if err != nil {
 		t.Fatal(err)
@@ -838,11 +839,11 @@ func TestMessageDecoder(t *testing.T) {
 				}
 				c = cells[0]
 			}
-			opName, value, err := MessageDecoder(c)
+			_, opName, value, err := InternalMessageDecoder(c, nil)
 			if err != nil {
 				t.Fatalf("MessageDecoder() error: %v", err)
 			}
-			if opName != tt.wantOpName {
+			if *opName != tt.wantOpName {
 				t.Fatalf("got opname: %v, want: %v", opName, tt.wantOpName)
 			}
 			if tt.wantValidate != nil {
@@ -854,10 +855,6 @@ func TestMessageDecoder(t *testing.T) {
 			}
 		})
 	}
-}
-
-func pointer[t any](v t) *t {
-	return &v
 }
 
 func TestImplements(t *testing.T) {
@@ -877,5 +874,145 @@ func TestImplements(t *testing.T) {
 			t.Fatalf("iface %v implements %v: %v", c.iface, c.target, c.implements)
 		}
 	}
+}
 
+func TestDecodeExternalIn(t *testing.T) {
+	tests := []struct {
+		name       string
+		boc        string
+		interfaces []ContractInterface
+		wantOpName string
+		wantValue  func() any
+	}{
+		{
+			name:       "wallet v4",
+			interfaces: []ContractInterface{WalletV4R2},
+			wantOpName: "WalletSignedV4",
+			wantValue: func() any {
+				b := WalletSignedV4ExtInMsgBody{
+					SubwalletId: 698983191,
+					ValidUntil:  1706091360,
+					Seqno:       2037,
+					Op:          0,
+					Payload: WalletV1ToV4Payload{
+						{
+							Mode: 3,
+							Message: MessageRelaxed{
+								SumType: "MessageInternal",
+							},
+						},
+					},
+				}
+				sig, _ := hex.DecodeString("28B67B05683B74BFEB574B3E921C3376CF24BF6C95C93F9A8B7168F093350A01A313EA46307AC579D75DE99353B155C78351A6F554FD4A5EBF2AC3332F3F0503")
+				copy(b.Signature[:], sig)
+				b.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
+				b.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
+				b.Payload[0].Message.MessageInternal.IhrDisabled = true
+				b.Payload[0].Message.MessageInternal.Bounce = true
+				b.Payload[0].Message.MessageInternal.Value.Grams = 100000000
+				b.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
+					SumType: "TextComment",
+					OpCode:  pointer(uint32(0)),
+					Value:   TextCommentMsgBody{Text: "Я твой фанат"},
+				}
+				return b
+			},
+
+			boc: "b5ee9c720101020100a100019c28b67b05683b74bfeb574b3e921c3376cf24bf6c95c93f9a8b7168f093350a01a313ea46307ac579d75de99353b155c78351a6f554fd4a5ebf2ac3332f3f050329a9a31765b0e360000007f5000301009c62001679dadc6448f28be4d6eded0e01c3504e6565d871fd7b185a8e7e40a9192d65a02faf08000000000000000000000000000000000000d0af20d182d0b2d0bed0b920d184d0b0d0bdd0b0d182",
+		},
+		{
+			name:       "jetton swap",
+			boc:        "b5ee9c720102030100013000019c0e3a69e758992732f0d983de47db14547f1530f34ee356f7bb957b2383c6cfc37d4b0a307b0afd17a0bcfb691d1767585b6b4c000dedcd30dfe2c28d720b480f29a9a3176507a1e20000002a00030101d9620008a85a8c5931356a8c4cfcc443fc4125b8032a2b22afbff1409f80934cd2030fa85d99113400000000000000000000000000000f8a7ea5001d2bbe8bf62d3c50ba43b7400800ef3b9902a271b2a01c8938a523cfe24e71847aaeb6a620001ed44a77ac0e709c103b9aca030200d92593856180029580e58ac522465af9b27bbd824046b8bcb9ebc404fe93778b544edcba449b080db6e79f0036336667ecac6ce139b289530e20cdd788c446a2de30056e218a1b0c6fc478a77001b23bbd527c00fd3d0874026bb7941f8fdd4d599ed8e7a63f426d5723f0388f2e",
+			interfaces: []ContractInterface{WalletV4R2},
+			wantOpName: "WalletSignedV4",
+			wantValue: func() any {
+				b := WalletSignedV4ExtInMsgBody{
+					SubwalletId: 698983191,
+					ValidUntil:  1694999010,
+					Seqno:       42,
+					Op:          0,
+					Payload: WalletV1ToV4Payload{
+						{
+							Mode: 3,
+							Message: MessageRelaxed{
+								SumType: "MessageInternal",
+							},
+						},
+					},
+				}
+				sig, _ := hex.DecodeString("0e3a69e758992732f0d983de47db14547f1530f34ee356f7bb957b2383c6cfc37d4b0a307b0afd17a0bcfb691d1767585b6b4c000dedcd30dfe2c28d720b480f")
+				copy(b.Signature[:], sig)
+				b.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
+				b.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f")).ToMsgAddress()
+				b.Payload[0].Message.MessageInternal.IhrDisabled = true
+				b.Payload[0].Message.MessageInternal.Bounce = true
+				b.Payload[0].Message.MessageInternal.Value.Grams = 50250000000
+				b.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
+					SumType: "JettonTransfer",
+					OpCode:  pointer(uint32(260734629)),
+					Value: JettonTransferMsgBody{
+						QueryId:             8210871716556092,
+						Amount:              mustToVarUInteger16("50000000000"),
+						Destination:         pointer(ton.MustParseAccountID("0:779dcc815138d9500e449c5291e7f12738c23d575b5310000f6a253bd607384e")).ToMsgAddress(),
+						ResponseDestination: tlb.MsgAddress{SumType: "AddrNone"},
+						CustomPayload:       nil,
+						ForwardTonAmount:    mustToVarUInteger16("250000000"),
+						ForwardPayload: tlb.EitherRef[JettonPayload]{
+							IsRight: true,
+							Value: JettonPayload{
+								SumType: "StonfiSwap",
+								OpCode:  pointer(JettonOpCode(630424929)),
+								Value: StonfiSwapJettonPayload{
+									TokenWallet:     pointer(ton.MustParseAccountID("0:14ac072c56291232d7cd93ddec120235c5e5cf5e2027f49bbc5aa276e5d224d8")).ToMsgAddress(),
+									MinOut:          mustToVarUInteger16("115045327"),
+									ToAddress:       pointer(ton.MustParseAccountID("0:d8cd999fb2b1b384e6ca254c3883375e23111a8b78c015b886286c31bf11e29d")).ToMsgAddress(),
+									ReferralAddress: pointer(pointer(ton.MustParseAccountID("0:6c8eef549f003f4f421d009aede507e3f7535667b639e98fd09b55c8fc0e23cb")).ToMsgAddress()),
+								},
+							},
+						},
+					},
+				}
+				return b
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c, err := boc.DeserializeSinglRootBase64(tt.boc)
+			if err != nil {
+				cells, err := boc.DeserializeBocHex(tt.boc)
+				if err != nil {
+					t.Fatal(err)
+				}
+				c = cells[0]
+			}
+
+			_, opName, value, err := ExtInMessageDecoder(c, tt.interfaces)
+			if err != nil {
+				t.Fatalf("MessageDecoder() error: %v", err)
+			}
+			if *opName != tt.wantOpName {
+				t.Fatalf("got opname: %v, want: %v", opName, tt.wantOpName)
+			}
+			b, err := json.Marshal(value)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Println(string(b))
+			wantValue := tt.wantValue()
+			if !reflect.DeepEqual(wantValue, value) {
+				t.Fatalf("want value: \n%v\n, got: \n%v", wantValue, value)
+			}
+
+			var unnmarshaledValue WalletSignedV4ExtInMsgBody
+			err = json.Unmarshal(b, &unnmarshaledValue)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(unnmarshaledValue, value) {
+				t.Fatalf("got different result")
+			}
+		})
+	}
 }

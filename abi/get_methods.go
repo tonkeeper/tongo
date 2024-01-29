@@ -37,6 +37,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_mining_data":               {DecodeGetMiningData_MegatonResult},
 	"get_next_proof_info":           {DecodeGetNextProofInfoResult},
 	"get_nft_address_by_index":      {DecodeGetNftAddressByIndexResult},
+	"get_nft_api_info":              {DecodeGetNftApiInfoResult},
 	"get_nft_content":               {DecodeGetNftContentResult},
 	"get_nft_data":                  {DecodeGetNftDataResult},
 	"get_nominator_data":            {DecodeGetNominatorDataResult},
@@ -86,6 +87,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
+	83263:  {GetNftApiInfo},
 	84760:  {GetAuthorityAddress},
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
@@ -152,6 +154,7 @@ var resultTypes = []interface{}{
 	&GetMiningData_MegatonResult{},
 	&GetNextProofInfoResult{},
 	&GetNftAddressByIndexResult{},
+	&GetNftApiInfoResult{},
 	&GetNftContentResult{},
 	&GetNftDataResult{},
 	&GetNominatorDataResult{},
@@ -680,7 +683,7 @@ func DecodeGetFullDomainResult(stack tlb.VmStack) (resultType string, resultAny 
 
 type GetJettonDataResult struct {
 	TotalSupply      tlb.Int257
-	Mintable         int8
+	Mintable         bool
 	AdminAddress     tlb.MsgAddress
 	JettonContent    tlb.Any
 	JettonWalletCode tlb.Any
@@ -1165,6 +1168,40 @@ func DecodeGetNftAddressByIndexResult(stack tlb.VmStack) (resultType string, res
 	var result GetNftAddressByIndexResult
 	err = stack.Unmarshal(&result)
 	return "GetNftAddressByIndexResult", result, err
+}
+
+type GetNftApiInfoResult struct {
+	Version uint32
+	Uri     tlb.Text
+}
+
+func GetNftApiInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 83263 for "get_nft_api_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 83263, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNftApiInfoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNftApiInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetNftApiInfoResult
+	err = stack.Unmarshal(&result)
+	return "GetNftApiInfoResult", result, err
 }
 
 type GetNftContentResult struct {

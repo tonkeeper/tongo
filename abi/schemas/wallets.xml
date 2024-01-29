@@ -1,4 +1,19 @@
 <abi>
+    <types>
+        send_msg#_ mode:uint8 message:^MessageRelaxed = SendMessageAction;
+
+        message_internal$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+        src:MsgAddress dest:MsgAddressInt
+        value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+        created_lt:uint64 created_at:uint32
+        init:(Maybe (Either StateInit ^StateInit))
+        body:(Either InMsgBody ^InMsgBody) = MessageRelaxed;
+
+        message_ext_out$11 src:MsgAddress dest:MsgAddressExt
+        created_lt:uint64 created_at:uint32
+        init:(Maybe (Either StateInit ^StateInit))
+        body:(Either ExtOutMsgBody ^ExtOutMsgBody) = MessageRelaxed;
+    </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
     <interface name="wallet_v1r1" inherits="wallet">
@@ -25,11 +40,17 @@
     <interface name="wallet_v3r1" inherits="wallet">
         <code_hash>b61041a58a7980b946e8fb9e198e3c904d24799ffa36574ea4251c41a566f581</code_hash>
         <get_method name="seqno"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v3"/>
+        </msg_in>
     </interface>
     <interface name="wallet_v3r2" inherits="wallet">
         <code_hash>84dafa449f98a6987789ba232358072bc0f76dc4524002a5d0918b9a75d2d599</code_hash>
         <get_method name="get_public_key"/>
         <get_method name="seqno"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v3"/>
+        </msg_in>
     </interface>
     <interface name="wallet_v4r1" inherits="wallet">
         <code_hash>64dd54805522c5be8a9db59cea0105ccf0d08786ca79beb8cb79e880a8d7322d</code_hash>
@@ -38,6 +59,9 @@
         <get_method name="get_public_key"/>
         <get_method name="seqno"/>
         <get_method name="get_subwallet_id"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v4"/>
+        </msg_in>
     </interface>
     <interface name="wallet_v4r2" inherits="wallet">
         <code_hash>feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0</code_hash>
@@ -46,6 +70,9 @@
         <get_method name="get_public_key"/>
         <get_method name="seqno"/>
         <get_method name="get_subwallet_id"/>
+        <msg_in>
+            <ext_in name="wallet_signed_v4"/>
+        </msg_in>
     </interface>
     <interface name="wallet_highload_v1r1" inherits="wallet">
         <code_hash>d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484</code_hash>
@@ -96,11 +123,11 @@
         </output>
     </get_method>
     <ext_in name="wallet_signed_v3">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:PayloadV1toV4 =
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletV1toV4Payload =
         ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_v4">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-        payload:PayloadV1toV4 = ExternalMsgBody;
+        payload:WalletV1toV4Payload = ExternalMsgBody;
     </ext_in>
 </abi>

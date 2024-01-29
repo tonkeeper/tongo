@@ -66,7 +66,8 @@ func main() {
 			panic(err)
 		}
 		methods = append(methods, a.Methods...)
-		abi.Externals = append(abi.Externals, a.Externals...)
+		abi.ExtOut = append(abi.ExtOut, a.ExtOut...)
+		abi.ExtIn = append(abi.ExtIn, a.ExtIn...)
 		abi.Internals = append(abi.Internals, a.Internals...)
 		abi.JettonPayloads = append(abi.JettonPayloads, a.JettonPayloads...)
 		abi.NFTPayloads = append(abi.NFTPayloads, a.NFTPayloads...)
@@ -114,11 +115,11 @@ func main() {
 
 	for _, f := range [][]string{
 		{types, "types.go", `"github.com/tonkeeper/tongo/tlb"`, `"fmt"`, `"encoding/json"`},
-		{msgDecoder, "messages.go", `"fmt"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
+		{msgDecoder, "messages_generated.go", `"github.com/tonkeeper/tongo/tlb"`},
 		{getMethods, "get_methods.go", `"context"`, `"fmt"`, `"github.com/tonkeeper/tongo/ton"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
-		{invocationOrder, "ordering.go", `"github.com/tonkeeper/tongo/ton"`},
-		{jettons, "jetton_msg_types.go", `"errors"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
-		{nfts, "nfts_msg_types.go", `"errors"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
+		{invocationOrder, "interfaces.go", `"github.com/tonkeeper/tongo/ton"`},
+		{jettons, "jetton_msg_types.go", `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
+		{nfts, "nfts_msg_types.go", `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 	} {
 		file, err := os.Create(f[1])
 		if err != nil {

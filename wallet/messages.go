@@ -124,7 +124,7 @@ func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
 }
 
 // ExtractRawMessages extracts a list of RawMessages from an external message.
-func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
+func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 	switch ver {
 	case V4R1, V4R2:
 		v4, err := DecodeMessageV4(msg)
@@ -144,7 +144,7 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) (PayloadV1toV4, error) {
 		if err != nil {
 			return nil, err
 		}
-		return []RawMessage(hl.RawMessages), nil
+		return hl.RawMessages, nil
 	default:
 		return nil, fmt.Errorf("wallet version is not supported: %v", ver)
 	}
@@ -169,7 +169,7 @@ func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) er
 
 func (p PayloadV1toV4) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	if len(p) > 4 {
-		return fmt.Errorf("PayloadV1toV4 supports only up to 4 messages")
+		return fmt.Errorf("WalletPayloadV1toV4 supports only up to 4 messages")
 	}
 	for _, msg := range p {
 		err := c.WriteUint(uint64(msg.Mode), 8)

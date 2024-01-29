@@ -1,61 +1,60 @@
-// MessageDecoder takes in a message body as a cell and tries to decode it based on the first 4 bytes.
-// On success, it returns an operation name and a decoded body.
-func MessageDecoder(cell *boc.Cell) (MsgOpName, any, error) {
-    tag, err := cell.ReadUint(32)
-    if err != nil {return "", nil, err}
-    switch uint32(tag) {
-        {{- range $tag, $ops := .Operations }}
+
+
+var (
+{{- range $tag, $ops := .Operations }}
+                {{- range $op := $ops }}
+                // 0x{{ printf "%08x" $tag.Val }}
+ decodeFunc{{ $op.GolangTypeName }} = decodeMsg(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.GolangOpcodeName }}, {{ $op.GolangTypeName }}{})
+            {{- end }}
+        {{- end }}
+)
+
+var opcoded{{ $.WhatRender }}DecodeFunctions = map[uint32]msgDecoderFunc {
+{{- range $tag, $ops := .Operations }}
+            {{ if ne $tag.Len 32 }} {{continue}} {{end}}
             {{- if gt (len $ops) 1 }}
-                case 0x{{ printf "%08x" $tag }}: // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
-                cell = cell.CopyRemaining()
+            // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
+                0x{{ printf "%08x" $tag.Val }}:decodeMultipleMsgs([]msgDecoderFunc{
+                    {{- range $op := $ops }}
+                        decodeFunc{{ $op.GolangTypeName }},
+                    {{- end }} },
+                     "0x{{ printf "%08x" $tag.Val }}",
+                ),
             {{- else }}
                 {{- $op := index $ops 0 }}
-                case {{ $op.OperationName }}MsgOpCode:  // 0x{{ printf "%08x" $op.Tag }}
+                // 0x{{ printf "%08x" $tag.Val }}
+                {{ $op.GolangOpcodeName }}Code: decodeFunc{{ $op.GolangTypeName }},
             {{- end }}
-            {{- range $op := $ops }}
-                var res{{ $op.TypeName }} {{ $op.TypeName }}
-                err = tlb.Unmarshal(cell, &res{{ $op.TypeName }})
-               {{- if $op.FixedLength }}
-                if err == nil  && !completedRead(cell) { err = ErrStructSizeMismatch ;}
-                {{- end }}
-               if err == nil {
-                    return {{ $op.OperationName }}MsgOp, res{{ $op.TypeName }}, nil;
-                }
-                cell.ResetCounters()
-            {{- end }}
-            return  "", nil, err
         {{- end }}
-        }
-    return "", nil, fmt.Errorf("invalid message tag")
 }
 
-func completedRead(cell *boc.Cell) bool {
-   return cell.RefsAvailableForRead() == 0 && cell.BitsAvailableForRead() == 0
-}
 
-// MsgOpName is a human-friendly name for a message's operation which is identified by the first 4 bytes of the message's body.
-type MsgOpName = string
 const (
 {{- range  $tag, $ops := .Operations }}
     {{- range $op := $ops}}
-       {{ $op.OperationName }}MsgOp MsgOpName = "{{ $op.OperationName }}"
+       {{ $op.GolangOpcodeName }} MsgOpName = "{{ $op.OperationName }}"
     {{- end }}
 {{- end }}
 )
-// MsgOpCode is the first 4 bytes of a message body identifying an operation to be performed.
-type MsgOpCode = uint32
+
 const (
 {{- range  $tag, $ops := .Operations }}
     {{- range $op := $ops}}
-       {{ $op.OperationName }}MsgOpCode MsgOpCode = 0x{{ printf "%08x" $op.Tag }}
+       {{ $op.GolangOpcodeName }}Code MsgOpCode = 0x{{ printf "%08x" $op.Tag }}
    {{- end }}
 {{- end }}
 )
 
-var KnownMsgTypes = map[string]any{
 {{- range  $tag, $ops := .Operations }}
     {{- range $op := $ops}}
-       {{ $op.OperationName }}MsgOp: {{ $op.TypeName }}{},
+       {{ $op.Code }}
+    {{- end }}
+{{- end }}
+
+var Known{{ $.WhatRender }}Types = map[string]any{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}: {{ $op.GolangTypeName }}{},
     {{- end }}
 {{- end }}
 }

@@ -9,7 +9,14 @@ import (
 
 // Decoder unmarshals a cell into a golang type.
 type Decoder struct {
-	hasher *boc.Hasher
+	hasher    *boc.Hasher
+	withDebug bool
+	debugPath []string
+}
+
+func (d *Decoder) WithDebug() *Decoder {
+	d.withDebug = true
+	return d
 }
 
 // NewDecoder returns a new Decoder.
@@ -43,6 +50,12 @@ var bocCellType = reflect.TypeOf(boc.Cell{})
 var bitStringType = reflect.TypeOf(boc.BitString{})
 
 func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error {
+	if decoder.withDebug {
+		decoder.debugPath = append(decoder.debugPath, fmt.Sprintf("%v#%v", val.Type().Name(), tag))
+		defer func() {
+			decoder.debugPath = decoder.debugPath[:len(decoder.debugPath)-1]
+		}()
+	}
 	t, err := parseTag(tag)
 	if err != nil {
 		return err
@@ -198,6 +211,9 @@ func decodeStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 
 func decodeBasicStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 	for i := 0; i < val.NumField(); i++ {
+		if decoder.withDebug {
+			decoder.debugPath = append(decoder.debugPath, val.Type().Field(i).Name)
+		}
 		if !val.Field(i).CanSet() {
 			return fmt.Errorf("can't set field %v", i)
 		}
@@ -205,6 +221,9 @@ func decodeBasicStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 		err := decode(c, tag, val.Field(i), decoder)
 		if err != nil {
 			return err
+		}
+		if decoder.withDebug {
+			decoder.debugPath = decoder.debugPath[:len(decoder.debugPath)-1]
 		}
 	}
 	return nil
@@ -224,6 +243,12 @@ func decodeSumType(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 			return err
 		}
 		if ok {
+			if decoder.withDebug {
+				decoder.debugPath = append(decoder.debugPath, val.Type().Field(i).Name)
+				defer func() {
+					decoder.debugPath = decoder.debugPath[:len(decoder.debugPath)-1]
+				}()
+			}
 			val.FieldByName("SumType").SetString(val.Type().Field(i).Name)
 			err := decode(c, "", val.Field(i), decoder)
 			if err != nil {

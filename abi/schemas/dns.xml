@@ -4,8 +4,8 @@
         <get_method name="dnsresolve" version="records"/>
         <msg_in>
             <internal name="dns_balance_release"/>
-            <internal name="change_dns_record"/>
-            <internal name="edit_content"/>
+<!--            <internal name="change_dns_record"/>-->
+<!--            <internal name="edit_content"/>-->
             <internal name="process_governance_decision"/>
         </msg_in>
         <msg_out>

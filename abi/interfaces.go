@@ -339,6 +339,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNextProofInfo,
 	},
 	{
+		Name:     "get_nft_api_info",
+		InvokeFn: GetNftApiInfo,
+	},
+	{
 		Name:     "get_nft_data",
 		InvokeFn: GetNftData,
 	},
@@ -758,4 +762,89 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSubwalletId,
 		},
 	},
+}
+
+func (c ContractInterface) IntMsgs() []msgDecoderFunc {
+	switch c {
+	case DedustPool:
+		return []msgDecoderFunc{
+			decodeFuncDedustSwapExternalMsgBody,
+			decodeFuncDedustSwapPeerMsgBody,
+		}
+	case DedustVault:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncDedustSwapMsgBody,
+			decodeFuncDedustPayoutFromPoolMsgBody,
+		}
+	case Dns:
+		return []msgDecoderFunc{
+			decodeFuncDnsBalanceReleaseMsgBody,
+			decodeFuncProcessGovernanceDecisionMsgBody,
+		}
+	case JettonMaster:
+		return []msgDecoderFunc{
+			decodeFuncJettonBurnNotificationMsgBody,
+		}
+	case JettonWallet:
+		return []msgDecoderFunc{
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncJettonInternalTransferMsgBody,
+			decodeFuncJettonBurnMsgBody,
+		}
+	case NftCollection:
+		return []msgDecoderFunc{
+			decodeFuncGetRoyaltyParamsMsgBody,
+		}
+	case NftItem:
+		return []msgDecoderFunc{
+			decodeFuncNftTransferMsgBody,
+			decodeFuncGetStaticDataMsgBody,
+		}
+	case WhalesPool:
+		return []msgDecoderFunc{
+			decodeFuncWhalesNominatorsWithdrawMsgBody,
+			decodeFuncWhalesNominatorsDepositMsgBody,
+			decodeFuncWhalesNominatorsSendStakeMsgBody,
+			decodeFuncWhalesNominatorsWithdrawUnownedMsgBody,
+			decodeFuncWhalesNominatorsForceKickMsgBody,
+		}
+	default:
+		return nil
+	}
+}
+
+func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
+	switch c {
+	case WalletV3R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletSignedV3ExtInMsgBody,
+		}
+	case WalletV3R2:
+		return []msgDecoderFunc{
+			decodeFuncWalletSignedV3ExtInMsgBody,
+		}
+	case WalletV4R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletSignedV4ExtInMsgBody,
+		}
+	case WalletV4R2:
+		return []msgDecoderFunc{
+			decodeFuncWalletSignedV4ExtInMsgBody,
+		}
+	default:
+		return nil
+	}
+}
+
+func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
+	switch c {
+	case DedustPool:
+		return []msgDecoderFunc{
+			decodeFuncDedustSwapExtOutMsgBody,
+		}
+	default:
+		return nil
+	}
 }

@@ -77,3 +77,48 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 {{- end }}
 }
+
+func (c ContractInterface) IntMsgs() []msgDecoderFunc  {
+    switch c {
+    {{- range $interface, $msgs := .IntMsgs }}
+    case {{ $interface }}:
+        return  []msgDecoderFunc{
+        {{- range $msg := $msgs }}
+            decodeFunc{{ $msg }}MsgBody,
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}
+
+func (c ContractInterface) ExtInMsgs() []msgDecoderFunc  {
+    switch c {
+    {{- range $interface, $msgs := .ExtInMsgs }}
+    case {{ $interface }}:
+        return  []msgDecoderFunc{
+        {{- range $msg := $msgs }}
+            decodeFunc{{ $msg }}ExtInMsgBody,
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}
+
+func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc  {
+    switch c {
+    {{- range $interface, $msgs := .ExtOutMsgs }}
+    case {{ $interface }}:
+        return  []msgDecoderFunc{
+        {{- range $msg := $msgs }}
+            decodeFunc{{ $msg }}ExtOutMsgBody,
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}

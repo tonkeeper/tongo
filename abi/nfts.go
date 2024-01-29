@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"reflect"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"reflect"
 )
 
 type NFTPayload struct {
@@ -19,8 +21,8 @@ type NFTPayload struct {
 type NFTOpName = string
 
 const (
-	EmptyNFTOp   = ""
-	UnknownNFTOp = "Cell"
+	EmptyNFTOp   NFTOpName = ""
+	UnknownNFTOp NFTOpName = "Cell"
 )
 
 // NFTOpCode is the first 4 bytes of a message body identifying an operation to be performed.
@@ -106,11 +108,37 @@ func (p NFTPayload) MarshalTLB(c *boc.Cell, e *tlb.Encoder) error {
 		if err != nil {
 			return err
 		}
-	} else if op, ok := nftOpCodes[p.SumType]; ok {
+	} else if op, ok := NFTOpCodes[p.SumType]; ok {
 		err := c.WriteUint(uint64(op), 32)
 		if err != nil {
 			return err
 		}
 	}
 	return tlb.Marshal(c, p.Value)
+}
+
+func (j *NFTPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	if completedRead(cell) {
+		return nil
+	}
+	tempCell := cell.CopyRemaining()
+	op64, err := tempCell.ReadUint(32)
+	if errors.Is(err, boc.ErrNotEnoughBits) {
+		j.SumType = UnknownNFTOp
+		j.Value = cell.CopyRemaining()
+		return nil
+	}
+	op := uint32(op64)
+	j.OpCode = &op
+	f, ok := funcNFTDecodersMapping[NFTOpCode(op64)]
+	if ok && f != nil {
+		err = f(j, tempCell)
+		if err == nil {
+			return nil
+		}
+	}
+	j.SumType = UnknownNFTOp
+	j.Value = cell.CopyRemaining()
+
+	return nil
 }

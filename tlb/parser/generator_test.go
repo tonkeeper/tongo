@@ -35,7 +35,7 @@ func TestGenerateGolangTypes(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to parse tlb: %s", err)
 		}
-		g := NewGenerator(nil, "")
+		g := NewGenerator()
 		s, err := g.GenerateGolangTypes(parsed.Declarations, "", false)
 		if err != nil {
 			t.Fatalf("failed to generate golang types: %s", err)

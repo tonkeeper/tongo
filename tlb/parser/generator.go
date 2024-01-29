@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/tonkeeper/tongo/utils"
+	"golang.org/x/exp/maps"
 )
 
 type DefaultType struct {
@@ -22,7 +23,6 @@ type TlbType struct {
 type Generator struct {
 	knownTypes  map[string]DefaultType
 	newTlbTypes map[string]TlbType
-	typeName    string
 }
 
 var (
@@ -41,6 +41,8 @@ var (
 		"Unit":                 {"struct{}", false},
 		"Cell":                 {"tlb.Any", false},
 		"MsgAddress":           {"tlb.MsgAddress", false},
+		"MsgAddressInt":        {"tlb.MsgAddress", false}, //todo: replace with MsgAddressInt after adding to tlb package
+		"MsgAddressExt":        {"tlb.MsgAddress", false}, //todo: replace with MsgAddressExt after adding to tlb package
 		"AddressWithWorkchain": {"tlb.AddressWithWorkchain", false},
 		"Coins":                {"tlb.Grams", false},
 		"Grams":                {"tlb.Grams", false},
@@ -55,15 +57,29 @@ var (
 	}
 )
 
-func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator {
-	if knownTypes == nil {
-		knownTypes = defaultKnownTypes
+type Option func(*Generator)
+
+func WithDefaultTypes(types map[string]DefaultType, replace bool) Option {
+	return func(g *Generator) {
+		if replace {
+			g.knownTypes = make(map[string]DefaultType)
+		}
+		for k, v := range types {
+			g.knownTypes[k] = v
+		}
 	}
-	return &Generator{
-		knownTypes:  knownTypes,
-		typeName:    typeName,
+}
+
+func NewGenerator(options ...Option) *Generator {
+
+	g := &Generator{
+		knownTypes:  maps.Clone(defaultKnownTypes),
 		newTlbTypes: make(map[string]TlbType),
 	}
+	for _, o := range options {
+		o(g)
+	}
+	return g
 }
 
 func (g *Generator) GetTlbTypes() []TlbType {

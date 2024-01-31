@@ -69,9 +69,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
     ton.MustParseHash("{{ $hash }}"):  {
     contractInterfaces: []ContractInterface{ {{ $interface.Name }} },
     getMethods: []InvokeFn{
-{{- range $method := $interface.GetMethods }}
-        {{ $method }},
+        {{- range $method := $interface.GetMethods }}
+            {{ $method }},
         {{- end }}
+
     },
     },
 

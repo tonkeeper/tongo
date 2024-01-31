@@ -46,9 +46,8 @@ var defaultKnownTypes = map[string]tlbParser.DefaultType{
 }
 
 var (
-	msgDecoderReturnErr = "if err != nil {return \"\", nil, err}\n"
-	returnInvalidStack  = "{return \"\", nil, fmt.Errorf(\"invalid stack format\")}\n"
-	returnStrNilErr     = "if err != nil {return \"\", nil, err}\n"
+	returnInvalidStack = "{return \"\", nil, fmt.Errorf(\"invalid stack format\")}\n"
+	returnStrNilErr    = "if err != nil {return \"\", nil, err}\n"
 	//go:embed messages.md.tmpl
 	messagesMDTemplate string
 	//go:embed interfaces.tmpl
@@ -581,7 +580,7 @@ type methodDescription struct {
 	InvokeFnName string
 }
 
-type interfacDescripion struct {
+type interfaceDescription struct {
 	Name       string
 	Results    []string
 	GetMethods []string
@@ -591,13 +590,13 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 	context := struct {
 		Interfaces                     map[string]string
 		InvocationOrder                []methodDescription
-		InterfaceOrder                 []interfacDescripion
-		KnownHashes                    map[string]interfacDescripion
+		InterfaceOrder                 []interfaceDescription
+		KnownHashes                    map[string]interfaceDescription
 		Inheritance                    map[string]string
 		IntMsgs, ExtInMsgs, ExtOutMsgs map[string][]string
 	}{
 		Interfaces:  map[string]string{},
-		KnownHashes: map[string]interfacDescripion{},
+		KnownHashes: map[string]interfaceDescription{},
 		Inheritance: map[string]string{},
 		IntMsgs:     map[string][]string{},
 		ExtInMsgs:   map[string][]string{},
@@ -622,25 +621,51 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		}
 		descriptions[invokeFnName] = desc
 	}
+
+	inheritance := map[string]string{}               // interface name -> parent interface
+	methodsByIface := map[string]map[string]string{} // interface name -> method name -> result name
+
 	for _, iface := range g.abi.Interfaces {
 		ifaceName := utils.ToCamelCase(iface.Name)
-		context.Interfaces[ifaceName] = iface.Name
-		descripion := interfacDescripion{
-			Name: ifaceName,
-		}
+		methodsByIface[ifaceName] = map[string]string{}
 		if iface.Inherits != "" {
-			context.Inheritance[ifaceName] = utils.ToCamelCase(iface.Inherits)
+			inheritance[ifaceName] = utils.ToCamelCase(iface.Inherits)
 		}
 		for _, method := range iface.Methods {
 			if !slices.Contains(simpleMethods, method.Name) {
 				continue
 			}
-			resultName := utils.ToCamelCase(method.Name) + "Result"
-			descripion.GetMethods = append(descripion.GetMethods, utils.ToCamelCase(method.Name))
+			methodName := utils.ToCamelCase(method.Name)
+			resultName := methodName + "Result"
 			if method.Version != "" {
-				resultName = fmt.Sprintf("%s_%sResult", utils.ToCamelCase(method.Name), utils.ToCamelCase(method.Version))
+				resultName = fmt.Sprintf("%s_%sResult", methodName, utils.ToCamelCase(method.Version))
 			}
-			descripion.Results = append(descripion.Results, resultName)
+			if _, ok := methodsByIface[ifaceName][methodName]; ok {
+				return "", fmt.Errorf("method duplicate %v, interface %v", methodName, ifaceName)
+			}
+			methodsByIface[ifaceName][methodName] = resultName
+		}
+	}
+	context.Inheritance = inheritance
+
+	for _, iface := range g.abi.Interfaces {
+		ifaceName := utils.ToCamelCase(iface.Name)
+		context.Interfaces[ifaceName] = iface.Name
+		ifaceMethods := map[string]string{}
+		for currentIface := ifaceName; currentIface != ""; currentIface = inheritance[currentIface] {
+			currentMethods := methodsByIface[currentIface]
+			for methodName, resultName := range currentMethods {
+				ifaceMethods[methodName] = resultName
+			}
+		}
+		description := interfaceDescription{
+			Name: ifaceName,
+		}
+		methodNames := maps.Keys(ifaceMethods)
+		sort.Strings(methodNames)
+		for _, methodName := range methodNames {
+			description.GetMethods = append(description.GetMethods, methodName)
+			description.Results = append(description.Results, ifaceMethods[methodName])
 		}
 		for _, m := range iface.Input.Internals {
 			context.IntMsgs[ifaceName] = append(context.IntMsgs[ifaceName], utils.ToCamelCase(m.Name))
@@ -651,13 +676,12 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		for _, m := range iface.Output.Externals {
 			context.ExtOutMsgs[ifaceName] = append(context.ExtOutMsgs[ifaceName], utils.ToCamelCase(m.Name))
 		}
-		if len(iface.CodeHashes) > 0 { //we dont' need to detect interfaces with code hashes because we can them directly
+		if len(iface.CodeHashes) > 0 { //we don't need to detect interfaces with code hashes because we can them directly
 			for _, hash := range iface.CodeHashes {
-
-				context.KnownHashes[hash] = descripion
+				context.KnownHashes[hash] = description
 			}
 		} else {
-			context.InterfaceOrder = append(context.InterfaceOrder, descripion)
+			context.InterfaceOrder = append(context.InterfaceOrder, description)
 		}
 	}
 

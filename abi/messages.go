@@ -30,12 +30,11 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 			uintTag = pointer(uint32(readTag))
 		}
 		body := reflect.New(reflect.TypeOf(bodyType))
-		err = tlb.Unmarshal(cell, body.Interface())
-		if err == nil {
-			return uintTag, pointer(name), body.Elem().Interface(), nil
+		if err := tlb.Unmarshal(cell, body.Interface()); err != nil {
+			cell.ResetCounters()
+			return uintTag, nil, nil, err
 		}
-		cell.ResetCounters()
-		return nil, nil, nil, err
+		return uintTag, pointer(name), body.Elem().Interface(), nil
 	}
 }
 
@@ -245,7 +244,7 @@ func (body ExtOutMsgBody) MarshalJSON() ([]byte, error) {
 
 type msgDecoderFunc func(cell *boc.Cell) (*uint32, *MsgOpName, any, error)
 
-// MessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
+// InternalMessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
 // It returns an opcode, an operation name and a decoded body.
 func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOpCode, *MsgOpName, any, error) {
 	if cell.BitsAvailableForRead() < 32 {

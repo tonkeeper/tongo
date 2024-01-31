@@ -17,13 +17,13 @@ func pointer[T any](t T) *T {
 
 func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+		cell.ResetCounters()
 		readTag, err := cell.ReadUint(tag.Len)
 		if err != nil {
 			return nil, nil, nil, err
 		}
 		var uintTag *uint32
 		if readTag != tag.Val {
-			cell.ResetCounters()
 			return nil, nil, nil, fmt.Errorf("invalid tag")
 		}
 		if tag.Len == 32 {
@@ -34,8 +34,7 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 		if err == nil {
 			return uintTag, pointer(name), body.Elem().Interface(), nil
 		}
-		cell.ResetCounters()
-		return nil, nil, nil, err
+		return uintTag, nil, nil, err
 	}
 }
 
@@ -46,7 +45,6 @@ func decodeMultipleMsgs(funcs []msgDecoderFunc, tag string) msgDecoderFunc {
 			if err == nil && completedRead(cell) {
 				return tag, opName, object, err
 			}
-			cell.ResetCounters()
 		}
 		return nil, nil, nil, fmt.Errorf("no one message can be unmarshled for %v", tag)
 	}
@@ -245,7 +243,7 @@ func (body ExtOutMsgBody) MarshalJSON() ([]byte, error) {
 
 type msgDecoderFunc func(cell *boc.Cell) (*uint32, *MsgOpName, any, error)
 
-// MessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
+// InternalMessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
 // It returns an opcode, an operation name and a decoded body.
 func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOpCode, *MsgOpName, any, error) {
 	if cell.BitsAvailableForRead() < 32 {
@@ -269,7 +267,10 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*Ms
 	tag := uint32(tag64)
 	f := opcodedMsgInDecodeFunctions[tag]
 	if f != nil {
-		return f(cell)
+		t, o, b, err := f(cell)
+		if err == nil {
+			return t, o, b, nil
+		}
 	}
 	return &tag, nil, nil, nil
 }
@@ -296,7 +297,10 @@ func ExtInMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOp
 	tag := uint32(tag64)
 	f := opcodedMsgExtInDecodeFunctions[tag]
 	if f != nil {
-		return f(cell)
+		t, o, b, err := f(cell)
+		if err == nil {
+			return t, o, b, nil
+		}
 	}
 	return &tag, nil, nil, nil
 }
@@ -323,7 +327,10 @@ func ExtOutMessageDecoder(cell *boc.Cell, interfaces []ContractInterface, dest t
 	tag := uint32(tag64)
 	f := opcodedMsgExtOutDecodeFunctions[tag]
 	if f != nil {
-		return f(cell)
+		t, o, b, err := f(cell)
+		if err == nil {
+			return t, o, b, nil
+		}
 	}
 	return &tag, nil, nil, nil
 }

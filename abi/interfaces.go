@@ -23,6 +23,7 @@ const (
 	NftAuctionV1
 	NftCollection
 	NftItem
+	NftItemSimple
 	NftSale
 	NftSaleV1
 	NftSaleV2
@@ -87,6 +88,8 @@ func (c ContractInterface) String() string {
 		return "nft_collection"
 	case NftItem:
 		return "nft_item"
+	case NftItemSimple:
+		return "nft_item_simple"
 	case NftSale:
 		return "nft_sale"
 	case NftSaleV1:
@@ -184,6 +187,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return NftCollection
 	case "nft_item":
 		return NftItem
+	case "nft_item_simple":
+		return NftItemSimple
 	case "nft_sale":
 		return NftSale
 	case "nft_sale_v1":
@@ -460,8 +465,8 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: DedustPool,
 		Results: []string{
-			"GetReserves_DedustResult",
 			"GetAssets_DedustResult",
+			"GetReserves_DedustResult",
 		},
 	},
 	{
@@ -521,15 +526,15 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: MegatonfiRouter,
 		Results: []string{
-			"GetMiningData_MegatonResult",
 			"GetLpData_MegatonResult",
+			"GetMiningData_MegatonResult",
 		},
 	},
 	{
 		Name: MegatonfiExchange,
 		Results: []string{
-			"GetLpSwapData_MegatonResult",
 			"GetLpMiningData_MegatonResult",
+			"GetLpSwapData_MegatonResult",
 		},
 	},
 	{
@@ -595,19 +600,19 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: StorageProvider,
 		Results: []string{
-			"GetWalletParamsResult",
-			"GetStorageParamsResult",
-			"SeqnoResult",
 			"GetPublicKeyResult",
+			"GetStorageParamsResult",
+			"GetWalletParamsResult",
+			"SeqnoResult",
 		},
 	},
 	{
 		Name: StorageContract,
 		Results: []string{
+			"GetNextProofInfoResult",
 			"GetStorageContractDataResult",
 			"GetTorrentHashResult",
 			"IsActiveResult",
-			"GetNextProofInfoResult",
 		},
 	},
 	{
@@ -633,9 +638,9 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: WhalesPool,
 		Results: []string{
-			"GetStakingStatusResult",
-			"GetPoolStatusResult",
 			"GetParams_WhalesNominatorResult",
+			"GetPoolStatusResult",
+			"GetStakingStatusResult",
 		},
 	},
 }
@@ -644,6 +649,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 	switch c {
 	case NftAuctionV1:
 		return NftSale.Implements(other)
+	case NftItemSimple:
+		return NftItem.Implements(other)
 	case NftSaleV1:
 		return NftSale.Implements(other)
 	case NftSaleV2:
@@ -689,11 +696,17 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletHighloadV2R2},
 		getMethods:         []InvokeFn{},
 	},
+	ton.MustParseHash("4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42"): {
+		contractInterfaces: []ContractInterface{NftItemSimple},
+		getMethods: []InvokeFn{
+			GetNftData,
+		},
+	},
 	ton.MustParseHash("587cc789eff1c84f46ec3797e45fc809a14ff5ae24f1e0c7a6a99cc9dc9061ff"): {
 		contractInterfaces: []ContractInterface{WalletV1R3},
 		getMethods: []InvokeFn{
-			Seqno,
 			GetPublicKey,
+			Seqno,
 		},
 	},
 	ton.MustParseHash("5c9a5e68c108e18721a07c42f9956bfb39ad77ec6d624b60c576ec88eee65329"): {
@@ -707,8 +720,8 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			GetPluginList,
 			GetPublicKey,
-			Seqno,
 			GetSubwalletId,
+			Seqno,
 		},
 	},
 	ton.MustParseHash("84dafa449f98a6987789ba232358072bc0f76dc4524002a5d0918b9a75d2d599"): {
@@ -749,8 +762,8 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("fe9530d3243853083ef2ef0b4c2908c0abf6fa1c31ea243aacaa5bf8c7d753f1"): {
 		contractInterfaces: []ContractInterface{WalletV2R2},
 		getMethods: []InvokeFn{
-			Seqno,
 			GetPublicKey,
+			Seqno,
 		},
 	},
 	ton.MustParseHash("feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0"): {
@@ -758,8 +771,8 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			GetPluginList,
 			GetPublicKey,
-			Seqno,
 			GetSubwalletId,
+			Seqno,
 		},
 	},
 }

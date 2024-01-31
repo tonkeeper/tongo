@@ -21,9 +21,9 @@
             <internal name="report_static_data"/>
         </msg_out>
     </interface>
-<!--    <interface name="nft_item_simple" inherits="nft_item">  todo: uncomment but fix get methods inheritance-->
-<!--        <code_hash>4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42</code_hash>-->
-<!--    </interface>-->
+    <interface name="nft_item_simple" inherits="nft_item">
+        <code_hash>4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42</code_hash>
+    </interface>
     <interface name="editable">
         <get_method name="get_editor"/>
     </interface>

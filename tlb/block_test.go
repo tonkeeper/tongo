@@ -81,6 +81,9 @@ func Test_tlb_Unmarshal(t *testing.T) {
 						EndStatus:     tx.EndStatus,
 					}
 					txHashes = append(txHashes, tx.Hash().Hex())
+					if tx.Cell() == nil {
+						t.Errorf("tx.Cell() is nil")
+					}
 				}
 			}
 			sort.Slice(txHashes, func(i, j int) bool {

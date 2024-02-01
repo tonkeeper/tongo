@@ -33,11 +33,17 @@ type Transaction struct {
 	Description TransactionDescr `tlb:"^"`
 
 	hash Bits256
+	cell *boc.Cell
 }
 
 // Hash returns a hash of this transaction.
 func (tx *Transaction) Hash() Bits256 {
 	return tx.hash
+}
+
+// Cell returns a cell from which this transaction was unmarshalled.
+func (tx *Transaction) Cell() *boc.Cell {
+	return tx.cell
 }
 
 func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -55,6 +61,8 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 	copy(tx.hash[:], hash[:])
 	c.ResetCounters()
+
+	tx.cell = c
 
 	sumType, err := c.ReadUint(4)
 	if err != nil {

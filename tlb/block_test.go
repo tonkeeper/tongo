@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"os"
 	"path"
-	"reflect"
 	"sort"
 	"testing"
 
@@ -14,7 +13,7 @@ import (
 )
 
 func Test_tlb_Unmarshal(t *testing.T) {
-	type transaction struct {
+	type Transaction struct {
 		AccountAddr   string
 		Lt            uint64
 		PrevTransHash string
@@ -24,8 +23,15 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		OrigStatus    AccountStatus
 		EndStatus     AccountStatus
 	}
-	type accountBlock struct {
-		Transactions map[uint64]transaction
+	type AccountBlock struct {
+		Transactions map[uint64]Transaction
+	}
+	type BlockContent struct {
+		Accounts          map[string]*AccountBlock
+		TxHashes          []string
+		ValueFlow         ValueFlow
+		InMsgDescrLength  int
+		OutMsgDescrLength int
 	}
 	testCases := []struct {
 		name   string
@@ -60,17 +66,17 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			if err != nil {
 				t.Errorf("Unmarshal() failed: %v", err)
 			}
-			accounts := map[string]*accountBlock{}
+			accounts := map[string]*AccountBlock{}
 			var txHashes []string
 			for _, account := range block.Extra.AccountBlocks.Values() {
 				accBlock, ok := accounts[hex.EncodeToString(account.AccountAddr[:])]
 				if !ok {
-					accBlock = &accountBlock{Transactions: map[uint64]transaction{}}
+					accBlock = &AccountBlock{Transactions: map[uint64]Transaction{}}
 					accounts[hex.EncodeToString(account.AccountAddr[:])] = accBlock
 				}
 				for _, txRef := range account.Transactions.Values() {
 					tx := txRef.Value
-					accBlock.Transactions[txRef.Value.Lt] = transaction{
+					accBlock.Transactions[txRef.Value.Lt] = Transaction{
 						AccountAddr:   hex.EncodeToString(tx.AccountAddr[:]),
 						Lt:            tx.Lt,
 						PrevTransHash: hex.EncodeToString(tx.PrevTransHash[:]),
@@ -86,7 +92,14 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			sort.Slice(txHashes, func(i, j int) bool {
 				return txHashes[i] < txHashes[j]
 			})
-			bs, err := json.MarshalIndent(accounts, " ", "  ")
+			blk := BlockContent{
+				Accounts:          accounts,
+				TxHashes:          txHashes,
+				ValueFlow:         block.ValueFlow,
+				InMsgDescrLength:  len(block.Extra.InMsgDescr.Keys()),
+				OutMsgDescrLength: len(block.Extra.OutMsgDescr.Keys()),
+			}
+			bs, err := json.MarshalIndent(blk, " ", "  ")
 			if err != nil {
 				t.Errorf("json.MarshalIndent() failed: %v", err)
 			}
@@ -99,44 +112,7 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			if err != nil {
 				t.Errorf("ReadFile() failed: %v", err)
 			}
-			expectedAccounts := map[string]*accountBlock{}
-			if err := json.Unmarshal(content, &expectedAccounts); err != nil {
-				t.Errorf("json.Unmarshal() failed: %v", err)
-			}
-			if !reflect.DeepEqual(accounts, expectedAccounts) {
-				t.Errorf("expectedAccounts differs from accounts")
-			}
-			bs, err = json.MarshalIndent(block.ValueFlow, " ", "  ")
-			if err != nil {
-				t.Fatalf("MarshalIndent() failed: %v", err)
-			}
-			valueFlowOutput := path.Join(tc.folder, "value-flow.output.json")
-			if err := os.WriteFile(valueFlowOutput, bs, 0644); err != nil {
-				t.Fatalf("WriteFile() failed: %v", err)
-			}
-			expectedValueFlowFilename := path.Join(tc.folder, "value-flow.expected.json")
-			data, err = os.ReadFile(expectedValueFlowFilename)
-			if err != nil {
-				t.Fatalf("ReadFile() failed: %v", err)
-			}
-			if bytes.Compare(bytes.Trim(bs, " \n"), bytes.Trim(data, " \n")) != 0 {
-				t.Errorf("ValueFlows differ")
-			}
-			// compare hashes
-			bs, err = json.MarshalIndent(txHashes, " ", "  ")
-			if err != nil {
-				t.Fatalf("MarshalIndent() failed: %v", err)
-			}
-			hashesOutputFilename := path.Join(tc.folder, "tx-hashes.output.json")
-			if err := os.WriteFile(hashesOutputFilename, bs, 0644); err != nil {
-				t.Fatalf("WriteFile() failed: %v", err)
-			}
-			expectedHashesFilename := path.Join(tc.folder, "tx-hashes.expected.json")
-			data, err = os.ReadFile(expectedHashesFilename)
-			if err != nil {
-				t.Fatalf("ReadFile() failed: %v", err)
-			}
-			if bytes.Compare(bytes.Trim(bs, " \n"), bytes.Trim(data, " \n")) != 0 {
+			if bytes.Compare(bytes.Trim(content, " \n"), bytes.Trim(bs, " \n")) != 0 {
 				t.Errorf("tx hashes differ")
 			}
 		})

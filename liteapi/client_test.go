@@ -16,6 +16,7 @@ import (
 )
 
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
+	t.Skip("when public lite servers are down, this test will fail")
 	cli, err := NewClient(Mainnet())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -23,7 +24,7 @@ func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 	if cli.pool.ConnectionsNumber() != defaultMaxConnectionsNumber {
 		t.Fatalf("want connections number: %v, got: %v", defaultMaxConnectionsNumber, cli.pool.ConnectionsNumber())
 	}
-	cli, err = NewClient(Mainnet(), WithMaxConnectionsNumber(defaultMaxConnectionsNumber+1))
+	cli, err = NewClient(Mainnet(), FromEnvs(), WithMaxConnectionsNumber(defaultMaxConnectionsNumber+1))
 	if err != nil {
 		t.Fatalf("Unable to create tongo client: %v", err)
 	}

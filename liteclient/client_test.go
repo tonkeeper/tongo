@@ -5,17 +5,36 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"os"
 	"testing"
+
+	"github.com/tonkeeper/tongo/config"
 )
 
-func TestClient(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
-	if err != nil {
-		panic(err)
+func createTestLiteServerConnection() (*Connection, error) {
+	base64Key := "wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts="
+	host := "135.181.140.221:46995"
+	if serversEnv, ok := os.LookupEnv("LITE_SERVERS"); ok {
+		servers, err := config.ParseLiteServersEnvVar(serversEnv)
+		if err != nil {
+			return nil, err
+		}
+		if len(servers) > 0 {
+			base64Key = servers[0].Key
+			host = servers[0].Host
+		}
 	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
+	pubkey, err := base64.StdEncoding.DecodeString(base64Key)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	return NewConnection(context.Background(), pubkey, host)
+}
+
+func TestClient(t *testing.T) {
+	c, err := createTestLiteServerConnection()
+	if err != nil {
+		t.Fatalf("NewConnection() failed: %v", err)
 	}
 
 	client := NewClient(c)
@@ -28,13 +47,9 @@ func TestClient(t *testing.T) {
 }
 
 func TestGeneratedMethod(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	c, err := createTestLiteServerConnection()
 	if err != nil {
-		panic(err)
-	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
-	if err != nil {
-		panic(err)
+		t.Fatalf("NewConnection() failed: %v", err)
 	}
 
 	client := NewClient(c)
@@ -47,13 +62,9 @@ func TestGeneratedMethod(t *testing.T) {
 }
 
 func TestGeneratedMethod2(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	c, err := createTestLiteServerConnection()
 	if err != nil {
-		panic(err)
-	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
-	if err != nil {
-		panic(err)
+		t.Fatalf("NewConnection() failed: %v", err)
 	}
 
 	client := NewClient(c)
@@ -75,13 +86,9 @@ func TestGeneratedMethod2(t *testing.T) {
 }
 
 func TestGeneratedMethod3(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	c, err := createTestLiteServerConnection()
 	if err != nil {
-		panic(err)
-	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
-	if err != nil {
-		panic(err)
+		t.Fatalf("NewConnection() failed: %v", err)
 	}
 
 	client := NewClient(c)
@@ -107,13 +114,9 @@ func TestGeneratedMethod3(t *testing.T) {
 }
 
 func TestGeneratedMethod4(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	c, err := createTestLiteServerConnection()
 	if err != nil {
-		panic(err)
-	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
-	if err != nil {
-		panic(err)
+		t.Fatalf("NewConnection() failed: %v", err)
 	}
 
 	client := NewClient(c)
@@ -127,17 +130,12 @@ func TestGeneratedMethod4(t *testing.T) {
 }
 
 func TestGeneratedMethod5(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
+	c, err := createTestLiteServerConnection()
 	if err != nil {
-		panic(err)
-	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
-	if err != nil {
-		panic(err)
+		t.Fatalf("NewConnection() failed: %v", err)
 	}
 
 	client := NewClient(c)
-
 	r, err := client.LiteServerGetMasterchainInfo(context.Background())
 	if err != nil {
 		panic(err)
@@ -170,11 +168,7 @@ func TestGeneratedMethod5(t *testing.T) {
 }
 
 func TestClient_WaitMasterchainSeqno(t *testing.T) {
-	pubkey, err := base64.StdEncoding.DecodeString("wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=")
-	if err != nil {
-		t.Fatalf("DecodeString() failed: %v", err)
-	}
-	c, err := NewConnection(context.Background(), pubkey, "135.181.140.221:46995")
+	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
 	}

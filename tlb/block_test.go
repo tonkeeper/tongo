@@ -92,12 +92,20 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			sort.Slice(txHashes, func(i, j int) bool {
 				return txHashes[i] < txHashes[j]
 			})
+			inMsgLength, err := block.Extra.InMsgDescrLength()
+			if err != nil {
+				t.Errorf("InMsgDescrLength() failed: %v", err)
+			}
+			outMsgLength, err := block.Extra.OutMsgDescrLength()
+			if err != nil {
+				t.Errorf("InMsgDescrLength() failed: %v", err)
+			}
 			blk := BlockContent{
 				Accounts:          accounts,
 				TxHashes:          txHashes,
 				ValueFlow:         block.ValueFlow,
-				InMsgDescrLength:  len(block.Extra.InMsgDescr.Keys()),
-				OutMsgDescrLength: len(block.Extra.OutMsgDescr.Keys()),
+				InMsgDescrLength:  inMsgLength,
+				OutMsgDescrLength: outMsgLength,
 			}
 			bs, err := json.MarshalIndent(blk, " ", "  ")
 			if err != nil {

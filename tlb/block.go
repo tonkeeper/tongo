@@ -349,13 +349,41 @@ func (m *ValueFlow) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 // created_by:bits256
 // custom:(Maybe ^McBlockExtra) = BlockExtra;
 type BlockExtra struct {
-	Magic         Magic                                                  `tlb:"block_extra#4a33f6fd"`
-	InMsgDescr    HashmapAugE[Bits256, InMsg, ImportFees]                `tlb:"^"` // tlb.Any `tlb:"^"`
-	OutMsgDescr   HashmapAugE[Bits256, OutMsg, CurrencyCollection]       `tlb:"^"` // tlb.Any `tlb:"^"`
-	AccountBlocks HashmapAugE[Bits256, AccountBlock, CurrencyCollection] `tlb:"^"` // tlb.Any     `tlb:"^"` //
-	RandSeed      Bits256
-	CreatedBy     Bits256
-	Custom        Maybe[Ref[McBlockExtra]]
+	Magic           Magic                                                  `tlb:"block_extra#4a33f6fd"`
+	InMsgDescrCell  boc.Cell                                               `tlb:"^"`
+	OutMsgDescrCell boc.Cell                                               `tlb:"^"`
+	AccountBlocks   HashmapAugE[Bits256, AccountBlock, CurrencyCollection] `tlb:"^"`
+	RandSeed        Bits256
+	CreatedBy       Bits256
+	Custom          Maybe[Ref[McBlockExtra]]
+}
+
+func (extra *BlockExtra) InMsgDescrLength() (int, error) {
+	cell := boc.Cell(extra.InMsgDescrCell)
+	cell.ResetCounters()
+	return hashmapAugExtraCountLeafs[Bits256](&cell)
+}
+
+func (extra *BlockExtra) InMsgDescr() (HashmapAugE[Bits256, InMsg, ImportFees], error) {
+	var hashmap HashmapAugE[Bits256, InMsg, ImportFees]
+	if err := Unmarshal(&extra.InMsgDescrCell, &hashmap); err != nil {
+		return HashmapAugE[Bits256, InMsg, ImportFees]{}, err
+	}
+	return hashmap, nil
+}
+
+func (extra *BlockExtra) OutMsgDescrLength() (int, error) {
+	cell := boc.Cell(extra.OutMsgDescrCell)
+	cell.ResetCounters()
+	return hashmapAugExtraCountLeafs[Bits256](&cell)
+}
+
+func (extra *BlockExtra) OutMsgDescr() (HashmapAugE[Bits256, OutMsg, CurrencyCollection], error) {
+	var hashmap HashmapAugE[Bits256, OutMsg, CurrencyCollection]
+	if err := Unmarshal(&extra.OutMsgDescrCell, &hashmap); err != nil {
+		return HashmapAugE[Bits256, OutMsg, CurrencyCollection]{}, err
+	}
+	return hashmap, nil
 }
 
 // masterchain_block_extra#cca5

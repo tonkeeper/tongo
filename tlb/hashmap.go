@@ -2,6 +2,7 @@ package tlb
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -119,6 +120,55 @@ func (h *Hashmap[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	return nil
+}
+
+func hashmapAugExtraCountLeafs[keyT fixedSize](c *boc.Cell) (int, error) {
+	maybe, err := c.ReadBit()
+	if err != nil {
+		return 0, err
+	}
+	if !maybe {
+		return 0, nil
+	}
+	ref, err := c.NextRef()
+	if err != nil {
+		return 0, err
+	}
+	var s keyT
+	keySize := s.FixedSize()
+	return countLeafs(keySize, keySize, ref)
+}
+
+func countLeafs(keySize, leftKeySize int, c *boc.Cell) (int, error) {
+	if c.CellType() == boc.PrunedBranchCell {
+		return 0, errors.New("can't count leafs for hashmap with pruned branch cell")
+	}
+	size, err := loadLabelSize(leftKeySize, c)
+	if err != nil {
+		return 0, err
+	}
+	if keySize-leftKeySize+size < keySize {
+		// 0 bit branch
+		left, err := c.NextRef()
+		if err != nil {
+			return 0, err
+		}
+		leftCount, err := countLeafs(keySize, leftKeySize-(1+size), left)
+		if err != nil {
+			return 0, err
+		}
+		// 1 bit branch
+		right, err := c.NextRef()
+		if err != nil {
+			return 0, err
+		}
+		rightCount, err := countLeafs(keySize, leftKeySize-(1+size), right)
+		if err != nil {
+			return 0, err
+		}
+		return leftCount + rightCount, nil
+	}
+	return 1, nil
 }
 
 func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, decoder *Decoder) error {
@@ -456,6 +506,43 @@ func (h HashmapAugE[keyT, T1, T2]) Keys() []keyT {
 	return h.m.keys
 }
 
+func loadLabelSize(size int, c *boc.Cell) (int, error) {
+	first, err := c.ReadBit()
+	if err != nil {
+		return 0, err
+	}
+	// hml_short$0
+	if !first {
+		// Unary, while 1, add to ln
+		ln, err := c.ReadUnary()
+		if err != nil {
+			return 0, err
+		}
+		return int(ln), nil
+	}
+	second, err := c.ReadBit()
+	if err != nil {
+		return 0, err
+	}
+	// hml_long$10
+	if !second {
+		ln, err := c.ReadLimUint(size)
+		if err != nil {
+			return 0, err
+		}
+		return int(ln), nil
+	}
+	// hml_same$11
+	_, err = c.ReadBit()
+	if err != nil {
+		return 0, err
+	}
+	ln, err := c.ReadLimUint(size)
+	if err != nil {
+		return 0, err
+	}
+	return int(ln), nil
+}
 func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, error) {
 	first, err := c.ReadBit()
 	if err != nil {

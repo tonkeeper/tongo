@@ -44,4 +44,11 @@ func Test_block(b *testing.T) {
 	if err != nil {
 		b.Errorf("Unmarshal() failed: %v", err)
 	}
+
+	for _, tx := range block.AllTransactions() {
+		_, err := tx.SourceBoc()
+		if err != nil {
+			b.Errorf("SourceBoc() failed: %v", err)
+		}
+	}
 }

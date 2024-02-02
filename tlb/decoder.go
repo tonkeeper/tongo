@@ -294,5 +294,4 @@ func decodeBitString(c *boc.Cell, val reflect.Value) error {
 // Hasher returns boc.Hasher that is used to calculate hashes when decoding.
 func (dec *Decoder) Hasher() *boc.Hasher {
 	return dec.hasher
-
 }

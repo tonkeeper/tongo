@@ -132,6 +132,13 @@ func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) 
 	return bag.serializeBoc([]*Cell{c}, idx, hasCrc32, cacheBits, 0)
 }
 
+func (c *Cell) ToBocCustomWithHasher(hasher *Hasher, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+	bag := &bagOfCells{
+		hasher: hasher,
+	}
+	return bag.serializeBoc([]*Cell{c}, idx, hasCrc32, cacheBits, 0)
+}
+
 func (c *Cell) ToBocStringCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) (string, error) {
 	boc, err := c.ToBocCustom(idx, hasCrc32, cacheBits, flags)
 	if err != nil {

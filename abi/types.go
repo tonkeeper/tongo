@@ -69,6 +69,10 @@ type TonstakersControllerData struct {
 	Validator    tlb.MsgAddress
 	Pool         tlb.MsgAddress
 	Governor     tlb.MsgAddress
+	Field4       struct {
+		Approver tlb.MsgAddress
+		Halter   tlb.MsgAddress
+	} `tlb:"^"`
 }
 
 type ClosingConfig struct {

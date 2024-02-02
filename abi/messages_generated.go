@@ -1407,7 +1407,7 @@ type DedustDepositLiquidityAllMsgBody struct {
 		Asset0Amount tlb.VarUInteger16
 		Asset1       DedustAsset
 		Asset1Amount tlb.VarUInteger16
-	}
+	} `tlb:"^"`
 	FulfillPayload *tlb.Any `tlb:"maybe^"`
 	RejectPayload  *tlb.Any `tlb:"maybe^"`
 }
@@ -1757,7 +1757,7 @@ type MegatonUpdateMiningParamsExtOutMsgBody struct {
 	Field3    struct {
 		LastMined tlb.Uint256
 		LastIndex tlb.Uint256
-	}
+	} `tlb:"^"`
 }
 
 type MegatonSwapExtOutMsgBody struct {
@@ -1767,7 +1767,7 @@ type MegatonSwapExtOutMsgBody struct {
 	Field3      struct {
 		OutTokenAddr tlb.MsgAddress
 		OutAmount    tlb.Grams
-	}
+	} `tlb:"^"`
 }
 
 type DedustSwapExtOutMsgBody struct {
@@ -1780,7 +1780,7 @@ type DedustSwapExtOutMsgBody struct {
 		ReferralAddr tlb.MsgAddress
 		Reserve0     tlb.Grams
 		Reserve1     tlb.Grams
-	}
+	} `tlb:"^"`
 }
 
 var KnownMsgExtOutTypes = map[string]any{

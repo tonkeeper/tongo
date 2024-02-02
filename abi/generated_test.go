@@ -843,6 +843,13 @@ func TestMessageDecoder(t *testing.T) {
 					Validator:    mustAccountIDToMsgAddress("-1:d757dae0502e1e56fc1e0db5fc95c6278d0f6b6642e5834b36db12d1f2a4bd1a"),
 					Pool:         mustToMsgAddress("0:a45b17f28409229b78360e3290420f13e4fe20f90d7e2bf8c4ac6703259e22fa"),
 					Governor:     mustToMsgAddress("0:8926460471725404b334847b35e4dce1fe117ed048be3cc627c57f8afd28c44c"),
+					Field4: struct {
+						Approver tlb.MsgAddress
+						Halter   tlb.MsgAddress
+					}{
+						Approver: mustAccountIDToMsgAddress("0:c14641c95c49be91e53c684346505a00842bca24595dab0b69b0cd84c12959e8"),
+						Halter:   mustAccountIDToMsgAddress("0:b3a2ec248b08bbbec76d5dfc9ad69ff19d1c025956be275aceedb047b1e175f7"),
+					},
 				},
 			},
 		},
@@ -873,6 +880,38 @@ func TestMessageDecoder(t *testing.T) {
 				Destination:  mustAccountIDToMsgAddress("0:4e18a5cb43f03c1b95ac290f9b0e067107518df63088ee9949f77598897a4b97"),
 				Amount:       104337619762782,
 				Notification: 100000000,
+			},
+		},
+		{
+			name:       "dedust deposit liquidity",
+			boc:        "b5ee9c720101040100ce00025db56b95983224a117ce9426c78014a0fa97e77c3c3cc4402570a7e648bc20a19ff39a510758eb71a6feeb627218004001020145800be0ac9f6bec08f07b6ae0639c39ecd1511a9a9adb4dbc9b6445697241adfb00007003005a050128d4c5001009b28c4e61007529f3b0af392cea5a0e40c7dc78ee8c46d378f3127a2aef11a365027970ea4500878014a0fa97e77c3c3cc4402570a7e648bc20a19ff39a510758eb71a6feeb627218001009b28c4e61007529f3b0af392cea5a0e40c7dc78ee8c46d378f3127a2aef11a368",
+			wantOpName: DedustDepositLiquidityAllMsgOp,
+			wantValue: DedustDepositLiquidityAllMsgBody{
+				QueryId:     3613189924680115911,
+				Proof:       tlb.Any(mustHexToCell("b5ee9c7201010201006c000145800be0ac9f6bec08f07b6ae0639c39ecd1511a9a9adb4dbc9b6445697241adfb0000700100878014a0fa97e77c3c3cc4402570a7e648bc20a19ff39a510758eb71a6feeb627218001009b28c4e61007529f3b0af392cea5a0e40c7dc78ee8c46d378f3127a2aef11a368")),
+				OwnerAddr:   mustAccountIDToMsgAddress("0:a507d4bf3be1e1e622012b853f3245e1050cff9cd2883ac75b8d37f75b1390c0"),
+				MinLpAmount: mustToVarUInteger16("0"),
+				Field4: struct {
+					Asset0       DedustAsset
+					Asset0Amount tlb.VarUInteger16
+					Asset1       DedustAsset
+					Asset1Amount tlb.VarUInteger16
+				}{
+					Asset0: DedustAsset{
+						SumType: "Native",
+					},
+					Asset0Amount: mustToVarUInteger16("4980000000"),
+					Asset1: DedustAsset{
+						SumType: "Jetton",
+						Jetton: struct {
+							WorkchainId int8
+							Address     tlb.Bits256
+						}{WorkchainId: 0, Address: tlb.Bits256(ton.MustParseHash("9b28c4e61007529f3b0af392cea5a0e40c7dc78ee8c46d378f3127a2aef11a36"))},
+					},
+					Asset1Amount: mustToVarUInteger16("10627377733"),
+				},
+				FulfillPayload: nil,
+				RejectPayload:  nil,
 			},
 		},
 	}

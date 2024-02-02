@@ -1,7 +1,7 @@
 <abi>
     <types>
-<!--   should be also ^[approver:MsgAddress halter:MsgAddress]  in the end but generator doesn't make it ref   -->
-        data#_ controller_id:uint32 validator:MsgAddress pool:MsgAddress governor:MsgAddress = TonstakersControllerData;
+        data#_ controller_id:uint32 validator:MsgAddress pool:MsgAddress governor:MsgAddress
+        ^[approver:MsgAddress halter:MsgAddress] = TonstakersControllerData;
     </types>
     <!--    Pool   todo: attach all internals to interfaces -->
     <interface name="tonstake_pool">

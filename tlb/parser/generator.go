@@ -207,6 +207,8 @@ func fieldDefinitionsToStruct(definitions []FieldDefinition, knownTypes map[stri
 		builder.WriteString(t.String())
 		if len(t.tag) > 0 {
 			builder.WriteString(fmt.Sprintf("`tlb:\"%s\"`", t.tag))
+		} else if field.CellRef != nil {
+			builder.WriteString("`tlb:\"^\"`")
 		}
 		builder.WriteRune('\n')
 	}

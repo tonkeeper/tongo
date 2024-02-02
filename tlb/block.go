@@ -359,12 +359,9 @@ type BlockExtra struct {
 }
 
 func (extra *BlockExtra) InMsgDescrLength() (int, error) {
-	// TODO: come up with a better way to get the length of the hashmap
-	var hashmap HashmapAugE[Bits256, boc.Cell, boc.Cell]
-	if err := Unmarshal(&extra.InMsgDescrCell, &hashmap); err != nil {
-		return 0, err
-	}
-	return len(hashmap.Keys()), nil
+	cell := boc.Cell(extra.InMsgDescrCell)
+	cell.ResetCounters()
+	return hashmapAugExtraCountLeafs[Bits256](&cell)
 }
 
 func (extra *BlockExtra) InMsgDescr() (HashmapAugE[Bits256, InMsg, ImportFees], error) {
@@ -376,12 +373,9 @@ func (extra *BlockExtra) InMsgDescr() (HashmapAugE[Bits256, InMsg, ImportFees], 
 }
 
 func (extra *BlockExtra) OutMsgDescrLength() (int, error) {
-	// TODO: come up with a better way to get the length of the hashmap
-	var hashmap HashmapAugE[Bits256, boc.Cell, boc.Cell]
-	if err := Unmarshal(&extra.OutMsgDescrCell, &hashmap); err != nil {
-		return 0, err
-	}
-	return len(hashmap.Keys()), nil
+	cell := boc.Cell(extra.OutMsgDescrCell)
+	cell.ResetCounters()
+	return hashmapAugExtraCountLeafs[Bits256](&cell)
 }
 
 func (extra *BlockExtra) OutMsgDescr() (HashmapAugE[Bits256, OutMsg, CurrencyCollection], error) {

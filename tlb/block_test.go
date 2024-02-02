@@ -121,7 +121,7 @@ func Test_tlb_Unmarshal(t *testing.T) {
 				t.Errorf("ReadFile() failed: %v", err)
 			}
 			if bytes.Compare(bytes.Trim(content, " \n"), bytes.Trim(bs, " \n")) != 0 {
-				t.Errorf("tx hashes differ")
+				t.Errorf("block content mismatch")
 			}
 		})
 	}

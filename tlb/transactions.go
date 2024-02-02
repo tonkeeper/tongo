@@ -33,11 +33,22 @@ type Transaction struct {
 	Description TransactionDescr `tlb:"^"`
 
 	hash Bits256
+
+	lazySourceBoc func() ([]byte, error)
 }
 
 // Hash returns a hash of this transaction.
 func (tx *Transaction) Hash() Bits256 {
 	return tx.hash
+}
+
+// SourceBoc returns a BOC of this transaction.
+// It works only if the transaction was unmarshalled from a cell.
+func (tx *Transaction) SourceBoc() ([]byte, error) {
+	if tx.lazySourceBoc != nil {
+		return tx.lazySourceBoc()
+	}
+	return nil, fmt.Errorf("transaction was not unmarshalled from cell")
 }
 
 func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -46,8 +57,16 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		err  error
 	)
 	if decoder.hasher != nil {
+		tx.lazySourceBoc = func() ([]byte, error) {
+			c.ResetCounters()
+			return c.ToBocCustomWithHasher(decoder.Hasher(), false, false, false, 0)
+		}
 		hash, err = decoder.hasher.Hash(c)
 	} else {
+		tx.lazySourceBoc = func() ([]byte, error) {
+			c.ResetCounters()
+			return boc.SerializeBoc(c, false, false, false, 0)
+		}
 		hash, err = c.Hash()
 	}
 	if err != nil {

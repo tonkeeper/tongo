@@ -38,20 +38,21 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		folder string
 	}{
 		{
-			name:   "all good",
+			name:   "block (0,8000000000000000,30816553)",
 			folder: "testdata/block-1",
 		},
 		{
-			name:   "all good",
+			name:   "block (0,8000000000000000,40484416)",
 			folder: "testdata/block-2",
 		},
 		{
-			name:   "all good",
+			name:   "block (0,8000000000000000,40484438)",
 			folder: "testdata/block-3",
 		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+
 			inputFilename := path.Join(tc.folder, "block.bin")
 			data, err := os.ReadFile(inputFilename)
 			if err != nil {
@@ -71,7 +72,9 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			for _, account := range block.Extra.AccountBlocks.Values() {
 				accBlock, ok := accounts[hex.EncodeToString(account.AccountAddr[:])]
 				if !ok {
-					accBlock = &AccountBlock{Transactions: map[uint64]Transaction{}}
+					accBlock = &AccountBlock{
+						Transactions: map[uint64]Transaction{},
+					}
 					accounts[hex.EncodeToString(account.AccountAddr[:])] = accBlock
 				}
 				for _, txRef := range account.Transactions.Values() {

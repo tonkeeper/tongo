@@ -201,10 +201,10 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool, decoder *Decoder) e
 type Block struct {
 	Magic       Magic `tlb:"block#11ef55aa"`
 	GlobalId    int32
-	Info        BlockInfo  `tlb:"^"`
-	ValueFlow   ValueFlow  `tlb:"^"`
-	StateUpdate Any        `tlb:"^"` //MerkleUpdate[ShardState] `tlb:"^"` //
-	Extra       BlockExtra `tlb:"^"`
+	Info        BlockInfo                `tlb:"^"`
+	ValueFlow   ValueFlow                `tlb:"^"`
+	StateUpdate MerkleUpdate[ShardState] `tlb:"^"`
+	Extra       BlockExtra               `tlb:"^"`
 }
 
 // TODO: clarify the description of the structure

@@ -552,9 +552,9 @@ type OutMsg struct {
 // _ out_queue:OutMsgQueue proc_info:ProcessedInfo
 // ihr_pending:IhrPendingInfo = OutMsgQueueInfo;
 type OutMsgQueueInfo struct {
-	OutQueue  HashmapAugE[Bits352, EnqueuedMsg, uint64]
-	ProcInfo  HashmapE[Bits96, ProcessedUpto]
-	IhrPendig HashmapE[Bits320, IhrPendingSince]
+	OutQueue   HashmapAugE[Bits352, EnqueuedMsg, uint64]
+	ProcInfo   HashmapE[Bits96, ProcessedUpto]
+	IhrPending HashmapE[Bits320, IhrPendingSince]
 }
 
 // _ enqueued_lt:uint64 out_msg:^MsgEnvelope = EnqueuedMsg;

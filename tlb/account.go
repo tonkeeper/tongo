@@ -1,6 +1,8 @@
 package tlb
 
-import "github.com/tonkeeper/tongo/boc"
+import (
+	"github.com/tonkeeper/tongo/boc"
+)
 
 // ShardAccount
 // account_descr$_ account:^Account last_trans_hash:bits256
@@ -26,6 +28,17 @@ type ExistedAccount struct {
 	Addr        MsgAddress
 	StorageStat StorageInfo
 	Storage     AccountStorage
+}
+
+func (a Account) CurrencyCollection() (CurrencyCollection, bool) {
+	switch a.SumType {
+	case "AccountNone":
+		return CurrencyCollection{}, true
+	case "Account":
+		return a.Account.Storage.Balance, true
+	default:
+		return CurrencyCollection{}, false
+	}
 }
 
 func (a Account) Status() AccountStatus {

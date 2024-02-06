@@ -1,8 +1,11 @@
 package liteapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"math/big"
@@ -13,6 +16,7 @@ import (
 
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
+	"golang.org/x/exp/maps"
 )
 
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
@@ -115,25 +119,119 @@ func TestGetAllShards(t *testing.T) {
 	}
 }
 
+type BlockContent struct {
+	Balances map[string]int64
+}
+
+func createOutputFile(api *Client, extID ton.BlockIDExt, filename string, accounts []tlb.Bits256) {
+	content := BlockContent{
+		Balances: map[string]int64{},
+	}
+	for _, accountAddr := range accounts {
+		accountID := ton.AccountID{
+			Workchain: extID.Workchain,
+			Address:   accountAddr,
+		}
+		state, err := api.WithBlock(extID).GetAccountState(context.TODO(), accountID)
+		if err != nil {
+			panic(err)
+		}
+		collection, ok := state.Account.CurrencyCollection()
+		if !ok {
+			panic("failed to get currency collection from account state")
+		}
+		content.Balances[accountID.ToRaw()] = int64(collection.Grams)
+	}
+	bs, err := json.MarshalIndent(content, "", " ")
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(filename, bs, 0644); err != nil {
+		panic(err)
+	}
+}
+
 func TestGetBlock(t *testing.T) {
-	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	testCases := []struct {
+		name    string
+		blockID string
+		file    string
+	}{
+		{
+			name:    "block (0,4000000000000000,41731611)",
+			blockID: "(0,4000000000000000,41731611)",
+			file:    "block-41731611",
+		},
+		{
+			name:    "block (-1,8000000000000000,34606335)",
+			blockID: "(-1,8000000000000000,34606335)",
+			file:    "block-34606335",
+		},
+		{
+			name:    "block (0,8000000000000000,40429107)",
+			blockID: "(0,8000000000000000,40429107)",
+			file:    "block-40429107",
+		},
+		{
+			name:    "block (0,c000000000000000,41745429)",
+			blockID: "(0,c000000000000000,41745429)",
+			file:    "block-41745429",
+		},
+	}
+	api, err := NewClient(FromEnvs(), WithProofPolicy(ProofPolicyFast))
 	if err != nil {
 		t.Fatal(err)
 	}
-	info, err := api.GetMasterchainInfo(context.Background())
-	if err != nil {
-		t.Fatal(err)
+
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			blockID := ton.MustParseBlockID(tt.blockID)
+			extID, _, err := api.LookupBlock(context.TODO(), blockID, 1, nil, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			b, err := api.GetBlock(context.TODO(), extID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			content := BlockContent{
+				Balances: map[string]int64{},
+			}
+			balances := b.StateUpdate.ToRoot.AccountBalances()
+			for _, tx := range b.AllTransactions() {
+				_, ok := balances[tx.AccountAddr]
+				if !ok {
+					t.Fatalf("tx account not found in balances")
+				}
+			}
+			for accountAddr, currencyCollection := range balances {
+				accountID := ton.AccountID{
+					Workchain: blockID.Workchain,
+					Address:   accountAddr,
+				}
+				content.Balances[accountID.ToRaw()] = int64(currencyCollection.Grams)
+			}
+			outputFilename := fmt.Sprintf("testdata/%v.output.json", tt.file)
+			bs, err := json.MarshalIndent(content, "", " ")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(outputFilename, bs, 0644); err != nil {
+				t.Fatal(err)
+			}
+			expectedFilename := fmt.Sprintf("testdata/%v.expected.json", tt.file)
+			if _, err := os.Stat(expectedFilename); errors.Is(err, os.ErrNotExist) {
+				createOutputFile(api, extID, expectedFilename, maps.Keys(balances))
+			}
+			expected, err := os.ReadFile(expectedFilename)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if bytes.Compare(bytes.Trim(expected, " \n"), bytes.Trim(bs, " \n")) != 0 {
+				t.Fatalf("block content mismatch")
+			}
+		})
 	}
-	b, err := api.GetBlock(context.TODO(), info.Last.ToBlockIdExt())
-	if err != nil {
-		t.Fatal(err)
-	}
-	p, err := ton.GetParents(b.Info)
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Printf("Block seqno: %v\n", b.Info.SeqNo)
-	fmt.Printf("1st parent block seqno: %v\n", p[0].Seqno)
 }
 
 func TestGetConfigAll(t *testing.T) {

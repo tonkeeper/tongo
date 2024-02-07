@@ -18,6 +18,7 @@
 tonNode.blockId#b7cdb167 workchain:int shard:long seqno:int = tonNode.BlockId;
 tonNode.blockIdExt#6752eb78 workchain:int shard:long seqno:int root_hash:int256 file_hash:int256 = tonNode.BlockIdExt;
 tonNode.zeroStateIdExt#1d7235ae workchain:int root_hash:int256 file_hash:int256 = tonNode.ZeroStateIdExt;
+tonNode.shardPublicOverlayId#4d9ed329 workchain:int shard:long zero_state_file_hash:int256 = tonNode.ShardPublicOverlayId;
 
 adnl.message.query#b48bf97a query_id:int256 query:bytes = adnl.Message;
 adnl.message.answer#0fac8416 query_id:int256 answer:bytes = adnl.Message;

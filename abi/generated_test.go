@@ -1075,6 +1075,45 @@ func TestDecodeExternalIn(t *testing.T) {
 				return b
 			},
 		},
+		{
+			name:       "unknown op",
+			boc:        "b5ee9c7201010201006d00019a6aca8192dee134cc67db935e39d6fa04c0e6f28e895902c8b28af7d7900599e6e785f48f37d72a0a1709affe618c747cd9339246c2aefc57f34e31951eb8e309000000305ea5f8c500000006a0010036c4402468acf000000000000000000000000000000000626c617374",
+			interfaces: []ContractInterface{WalletV3R1},
+			wantOpName: "WalletSignedV3",
+			wantValue: func() any {
+				b := WalletSignedV3ExtInMsgBody{
+					SubwalletId: 48,
+					ValidUntil:  1587935429,
+					Seqno:       6,
+					Payload: WalletV1ToV4Payload{
+						{
+							Mode: 160,
+							Message: MessageRelaxed{
+								SumType: "MessageExtOut",
+							},
+						},
+					},
+				}
+				sig, _ := hex.DecodeString("6aca8192dee134cc67db935e39d6fa04c0e6f28e895902c8b28af7d7900599e6e785f48f37d72a0a1709affe618c747cd9339246c2aefc57f34e31951eb8e309")
+				copy(b.Signature[:], sig)
+				b.Payload[0].Message.MessageExtOut.Src.SumType = "AddrNone"
+				var addr tlb.MsgAddress
+				if err := json.Unmarshal([]byte("12345678"), &addr); err != nil {
+					t.Fatalf("can't unmarshal address: %v", err)
+				}
+				b.Payload[0].Message.MessageExtOut.Dest = addr
+				cells, _ := boc.DeserializeBocHex("b5ee9c7201010101000b00001100000000c4d8c2e6e9")
+				b.Payload[0].Message.MessageExtOut.Body = tlb.EitherRef[ExtOutMsgBody]{
+					IsRight: false,
+					Value: ExtOutMsgBody{
+						SumType: UnknownMsgOp,
+						OpCode:  pointer[uint32](0),
+						Value:   cells[0].CopyRemaining(),
+					},
+				}
+				return b
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -1104,15 +1143,20 @@ func TestDecodeExternalIn(t *testing.T) {
 			if !reflect.DeepEqual(wantValue, value) {
 				t.Fatalf("want value: \n%v\n, got: \n%v", wantValue, value)
 			}
+			switch value.(type) {
+			case WalletSignedV4ExtInMsgBody:
+				var unnmarshaledValue WalletSignedV4ExtInMsgBody
+				err = json.Unmarshal(b, &unnmarshaledValue)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !reflect.DeepEqual(unnmarshaledValue, value) {
+					t.Fatalf("got different result")
+				}
+			case WalletSignedV3ExtInMsgBody:
+				// TBD
+			}
 
-			var unnmarshaledValue WalletSignedV4ExtInMsgBody
-			err = json.Unmarshal(b, &unnmarshaledValue)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !reflect.DeepEqual(unnmarshaledValue, value) {
-				t.Fatalf("got different result")
-			}
 		})
 	}
 }

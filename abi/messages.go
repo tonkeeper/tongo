@@ -71,6 +71,9 @@ func (body *InMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error 
 		body.SumType = *name
 		body.Value = value
 	} else {
+		if cell.BitsAvailableForRead() != cell.BitSize() {
+			cell = cell.CopyRemaining() //because body can be part of the message cell
+		}
 		body.Value = cell
 	}
 	return nil
@@ -166,6 +169,11 @@ func (b *ExtOutMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 	if name != nil {
 		b.SumType = *name
 		b.Value = value
+	} else {
+		if cell.BitsAvailableForRead() != cell.BitSize() {
+			cell = cell.CopyRemaining() //because body can be part of the message cell
+		}
+		b.Value = cell
 	}
 	return nil
 }

@@ -86,17 +86,24 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		if err != nil {
 			return err
 		}
-		err = decoder.Unmarshal(c1, &s.SplitState.Left)
-		if err != nil {
-			return err
+		if c1.CellType() != boc.PrunedBranchCell {
+			err = decoder.Unmarshal(c1, &s.SplitState.Left)
+			if err != nil {
+				return err
+			}
+		} else {
+			s.SplitState.Left = ShardStateUnsplit{}
 		}
 		c1, err = c.NextRef()
 		if err != nil {
 			return err
 		}
-		err = decoder.Unmarshal(c1, &s.SplitState.Right)
-		if err != nil {
-			return err
+		if c1.CellType() != boc.PrunedBranchCell {
+			if err := decoder.Unmarshal(c1, &s.SplitState.Right); err != nil {
+				return err
+			}
+		} else {
+			s.SplitState.Right = ShardStateUnsplit{}
 		}
 		s.SumType = "SplitState"
 		break

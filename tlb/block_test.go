@@ -49,6 +49,10 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			name:   "block (0,8000000000000000,40484438)",
 			folder: "testdata/block-3",
 		},
+		{
+			name:   "block (0,D83800000000000,4168601)",
+			folder: "testdata/block-4",
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -56,16 +60,16 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			inputFilename := path.Join(tc.folder, "block.bin")
 			data, err := os.ReadFile(inputFilename)
 			if err != nil {
-				t.Errorf("ReadFile() failed: %v", err)
+				t.Fatalf("ReadFile() failed: %v", err)
 			}
 			cell, err := boc.DeserializeBoc(data)
 			if err != nil {
-				t.Errorf("boc.DeserializeBoc() failed: %v", err)
+				t.Fatalf("boc.DeserializeBoc() failed: %v", err)
 			}
 			var block Block
 			err = Unmarshal(cell[0], &block)
 			if err != nil {
-				t.Errorf("Unmarshal() failed: %v", err)
+				t.Fatalf("Unmarshal() failed: %v", err)
 			}
 			accounts := map[string]*AccountBlock{}
 			var txHashes []string

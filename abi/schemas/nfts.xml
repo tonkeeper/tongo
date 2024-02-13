@@ -93,7 +93,7 @@
     <get_method name="get_nft_api_info">
         <output>
             <int name="version">uint32</int>
-            <int name="uri">text</int>
+            <cell name="uri">text</cell>
         </output>
     </get_method>
 

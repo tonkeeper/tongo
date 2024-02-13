@@ -1,0 +1,45 @@
+{
+   "Accounts": {},
+   "TxHashes": null,
+   "ValueFlow": {
+     "FromPrevBlk": {
+       "Grams": "115778059391",
+       "Other": {}
+     },
+     "ToNextBlk": {
+       "Grams": "115778059391",
+       "Other": {}
+     },
+     "Imported": {
+       "Grams": "0",
+       "Other": {}
+     },
+     "Exported": {
+       "Grams": "0",
+       "Other": {}
+     },
+     "FeesCollected": {
+       "Grams": "15258",
+       "Other": {}
+     },
+     "Burned": null,
+     "FeesImported": {
+       "Grams": "0",
+       "Other": {}
+     },
+     "Recovered": {
+       "Grams": "0",
+       "Other": {}
+     },
+     "Created": {
+       "Grams": "15258",
+       "Other": {}
+     },
+     "Minted": {
+       "Grams": "0",
+       "Other": {}
+     }
+   },
+   "InMsgDescrLength": 0,
+   "OutMsgDescrLength": 0
+ }

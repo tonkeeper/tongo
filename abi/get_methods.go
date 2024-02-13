@@ -1196,7 +1196,7 @@ func GetNftApiInfo(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetNftApiInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftApiInfoResult

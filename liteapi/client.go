@@ -321,7 +321,13 @@ func (c *Client) GetBlock(ctx context.Context, blockID ton.BlockIDExt) (tlb.Bloc
 	if err != nil {
 		return tlb.Block{}, err
 	}
-	cells, err := boc.DeserializeBoc(res.Data)
+	return DecodeRawBlockWithHashVerification(blockID, res.Data, c.proofPolicy)
+}
+
+// DecodeRawBlockWithHashVerification converts a raw block to a tlb.Block,
+// verifying the block's hash if requested.
+func DecodeRawBlockWithHashVerification(blockID ton.BlockIDExt, rawBlock []byte, policy ProofPolicy) (tlb.Block, error) {
+	cells, err := boc.DeserializeBoc(rawBlock)
 	if err != nil {
 		return tlb.Block{}, err
 	}
@@ -333,7 +339,7 @@ func (c *Client) GetBlock(ctx context.Context, blockID ton.BlockIDExt) (tlb.Bloc
 	if err := decoder.Unmarshal(cells[0], &block); err != nil {
 		return tlb.Block{}, err
 	}
-	if c.proofPolicy == ProofPolicyUnsafe {
+	if policy == ProofPolicyUnsafe {
 		return block, nil
 	}
 	// this should be quite fast because

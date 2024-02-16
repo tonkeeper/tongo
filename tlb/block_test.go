@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path"
 	"sort"
@@ -32,6 +33,7 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		ValueFlow         ValueFlow
 		InMsgDescrLength  int
 		OutMsgDescrLength int
+		Libraries         map[string]map[string]struct{}
 	}
 	testCases := []struct {
 		name   string
@@ -117,6 +119,7 @@ func Test_tlb_Unmarshal(t *testing.T) {
 				ValueFlow:         block.ValueFlow,
 				InMsgDescrLength:  inMsgLength,
 				OutMsgDescrLength: outMsgLength,
+				Libraries:         libraries(&block.StateUpdate.ToRoot),
 			}
 			bs, err := json.MarshalIndent(blk, " ", "  ")
 			if err != nil {
@@ -136,4 +139,18 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			}
 		})
 	}
+}
+
+func libraries(s *ShardState) map[string]map[string]struct{} {
+	libs := map[string]map[string]struct{}{}
+	for _, item := range s.UnsplitState.Value.ShardStateUnsplit.Other.Libraries.Items() {
+		lib := fmt.Sprintf("%x", item.Key)
+		if _, ok := libs[lib]; !ok {
+			libs[lib] = map[string]struct{}{}
+		}
+		for _, pub := range item.Value.Publishers.Keys() {
+			libs[lib][fmt.Sprintf("%x", pub)] = struct{}{}
+		}
+	}
+	return libs
 }

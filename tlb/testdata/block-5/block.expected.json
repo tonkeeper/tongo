@@ -131,5 +131,10 @@
      }
    },
    "InMsgDescrLength": 2,
-   "OutMsgDescrLength": 0
+   "OutMsgDescrLength": 0,
+   "Libraries": {
+     "587cc789eff1c84f46ec3797e45fc809a14ff5ae24f1e0c7a6a99cc9dc9061ff": {
+       "8e421c91a3430717750901caa9754c43c8c63bd2a911194e5d5281f00a84613c": {}
+     }
+   }
  }

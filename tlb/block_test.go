@@ -53,6 +53,10 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			name:   "block (0,D83800000000000,4168601)",
 			folder: "testdata/block-4",
 		},
+		{
+			name:   "block (0,D83800000000000,(-1,8000000000000000,17734191)",
+			folder: "testdata/block-5",
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {

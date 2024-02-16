@@ -57,7 +57,7 @@ type ShardStateUnsplitData struct {
 	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
 	BeforeSplit     bool
 	Accounts        HashmapAugE[Bits256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
-	Other           ShardStateUnsplitOther                               `tlb:"^"`
+	Other           boc.Cell                                             `tlb:"^"` // ShardStateUnsplitOther
 	Custom          Maybe[Ref[McStateExtra]]
 }
 

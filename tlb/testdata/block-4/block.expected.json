@@ -41,5 +41,6 @@
      }
    },
    "InMsgDescrLength": 0,
-   "OutMsgDescrLength": 0
+   "OutMsgDescrLength": 0,
+   "Libraries": {}
  }

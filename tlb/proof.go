@@ -57,7 +57,7 @@ type ShardStateUnsplitData struct {
 	OutMsgQueueInfo OutMsgQueueInfo `tlb:"^"`
 	BeforeSplit     bool
 	Accounts        HashmapAugE[Bits256, ShardAccount, DepthBalanceInfo] `tlb:"^"`
-	Other           boc.Cell                                             `tlb:"^"` // ShardStateUnsplitOther
+	Other           ShardStateUnsplitOther                               `tlb:"^"`
 	Custom          Maybe[Ref[McStateExtra]]
 }
 
@@ -304,7 +304,7 @@ type ShardStateUnsplitOther struct {
 type LibDescr struct {
 	Magic      Magic    `tlb:"shared_lib_descr$00"`
 	Lib        boc.Cell `tlb:"^"`
-	Publishers Hashmap[Bits256, bool]
+	Publishers Hashmap[Bits256, struct{}]
 }
 
 // McStateExtra

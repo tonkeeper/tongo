@@ -51,7 +51,7 @@
             <slice name="asset1">DedustAsset</slice>
         </output>
     </get_method>
-    <get_method name="get_asset"> <!-- todo: add to index -->
+    <get_method name="get_asset">
         <output version="dedust" fixed_length="true">
             <slice name="asset">DedustAsset</slice>
         </output>

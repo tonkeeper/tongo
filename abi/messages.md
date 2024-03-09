@@ -65,7 +65,6 @@ The list below contains the supported message operations, their names and opcode
 | SbtRevoke| 0x6f89f5e3 |
 | SettleChannelConditionals| 0x66f6f069 |
 | StartUncooperativeChannelClose| 0x1f151acf |
-| StofiProvideLiquidity| 0x8fe5f9fc |
 | StonfiPaymentRequest| 0xf93bb43f |
 | StonfiProvideLiquidity| 0xfcf9e58f |
 | StonfiSwap| 0x25938561 |

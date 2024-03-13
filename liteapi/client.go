@@ -552,8 +552,8 @@ func decodeAccountDataFromProof(bocBytes []byte, account ton.AccountID) (uint64,
 	if err != nil {
 		return 0, tlb.Bits256{}, err
 	}
-	if len(cells) < 1 {
-		return 0, tlb.Bits256{}, fmt.Errorf("must be at least one root cell")
+	if len(cells) < 2 {
+		return 0, tlb.Bits256{}, fmt.Errorf("must be at least two root cells")
 	}
 	var proof struct {
 		Proof tlb.MerkleProof[tlb.ShardStateUnsplit]

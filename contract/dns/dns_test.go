@@ -2,6 +2,7 @@ package dns
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"testing"
@@ -28,7 +29,8 @@ func TestResolve(t *testing.T) {
 	}{
 		{"industries.ton", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", true},
 		{"oo0ili0oo.t.me", "0:afa066774812c345ff23ad53e04225e657134a087d133021b3fb8667a11efe74", true},
-		//{"thekiba.dolbaeb.t.me", "0:82683859071f85ed07d10016b19b8ecd183933a46987aed9fdc502f250d9404a", true}, //todo: fix. thekiba contract
+		{"packages.ton", "0:afa066774812c345ff23ad53e04225e657134a087d133021b3fb8667a11efe74", false},
+		{"thekiba.dolboeb.t.me", "0:82683859071f85ed07d10016b19b8ecd183933a46987aed9fdc502f250d9404a", true},
 		{"hfdshfkjshkjdhfklhldkfhlakjh.ton", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", false},
 		{"ololo.png", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", false},
 	} {
@@ -37,8 +39,14 @@ func TestResolve(t *testing.T) {
 			if (err == nil) != c.success {
 				t.Fatalf("Unable to resolve domain: %v", err)
 			}
+			if err != nil && !errors.Is(err, ErrNotResolved) && !errors.Is(err, liteapi.ErrAccountNotFound) {
+				t.Fatal(err)
+			}
 			if c.success {
-				a, _ := ton.AccountIDFromTlb(res[0].DNSSmcAddress.Address)
+				a, err := ton.AccountIDFromTlb(res[0].DNSSmcAddress.Address)
+				if err != nil {
+					t.Fatal(err)
+				}
 				if a.ToRaw() != c.wallet {
 					t.Fatal("invalid wallet")
 				}

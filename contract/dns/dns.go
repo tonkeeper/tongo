@@ -72,7 +72,7 @@ func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) (
 	}
 	err = stack.Unmarshal(&result)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", ErrNotResolved, err)
 	}
 	if result.ResolvedBits&0b111 != 0 {
 		return nil, fmt.Errorf("%w: invalid qty of resolved bits", ErrNotResolved)

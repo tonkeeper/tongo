@@ -68,7 +68,6 @@ The list below contains the supported message operations, their names and opcode
 | StonfiPaymentRequest| 0xf93bb43f |
 | StonfiProvideLiquidity| 0xfcf9e58f |
 | StonfiSwap| 0x25938561 |
-| StonfiSwap| 0x25938561 |
 | StonfiSwapOk| 0xc64370e5 |
 | StonfiSwapOkRef| 0x45078540 |
 | StorageContractConfirmed| 0xd4caedcd |

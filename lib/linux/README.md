@@ -1,10 +1,20 @@
-## Usage
+### Guide to build for Linux
+
+#### Install lib
+
+```
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F6A649124520E5F3
+sudo add-apt-repository ppa:ton-foundation/ppa
+sudo apt update
+sudo apt install ton
+```
+
+
+When you see the successful status of the build, you can find the `libemulator.so` file in the `/opt/homebrew/lib`
+folder.
+
+#### Usage
 
 Copy `libemulator.so` to /usr/lib or use environment variable `LD_LIBRARY_PATH`
 
-### Build guide for Linux
-
-    cd lib/linux
-    docker build . -t ton-emulator
-    docker create --name ton-emulator ton-emulator
-    docker cp ton-emulator:/output/libemulator.so .
+💡 Full information can be found at github.com/ton-blockchain/packages

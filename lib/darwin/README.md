@@ -1,9 +1,16 @@
-### Guide build for macOS
+### Guide to build for macOS
 
+#### Install lib
 
-1) `git clone --recurse-submodules -b master https://github.com/ton-blockchain/ton.git`
-2) `mkdir build && cd build`
-3) `cmake ..`
-4) `cmake --build . -- target emulator`
+1) `brew tap ton-blockchain/ton`
+2) `brew install ton`
 
-When you see the successful status of the build, you can find the `libemulator.dylib` file in the `build/emulator` folder.
+#### Upgrade lib
+
+1) brew update
+2) brew reinstall ton
+
+When you see the successful status of the build, you can find the `libemulator.dylib` file in the `/opt/homebrew/lib`
+folder.
+
+💡 Full information can be found at github.com/ton-blockchain/packages

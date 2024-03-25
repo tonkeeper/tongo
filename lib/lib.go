@@ -1,4 +1,4 @@
-package lib
+package main
 
 import (
 	_ "github.com/tonkeeper/tongo/lib/darwin"

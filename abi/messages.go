@@ -268,6 +268,7 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*Ms
 			}
 		}
 	}
+	cell.ResetCounters()
 	tag64, err := cell.PickUint(32)
 	if err != nil {
 		return nil, nil, nil, err
@@ -298,6 +299,7 @@ func ExtInMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOp
 			}
 		}
 	}
+	cell.ResetCounters()
 	tag64, err := cell.PickUint(32)
 	if err != nil {
 		return nil, nil, nil, err
@@ -328,6 +330,7 @@ func ExtOutMessageDecoder(cell *boc.Cell, interfaces []ContractInterface, dest t
 			}
 		}
 	}
+	cell.ResetCounters()
 	tag64, err := cell.PickUint(32)
 	if err != nil {
 		return nil, nil, nil, err

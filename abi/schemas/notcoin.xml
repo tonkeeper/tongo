@@ -1,0 +1,8 @@
+<abi>
+    <get_method name="jetton_wallet_lock_data">
+        <output>
+            <int name="full_balance">int257</int>
+            <int name="individual_unlock_time">uint32</int>
+        </output>
+    </get_method>
+</abi>

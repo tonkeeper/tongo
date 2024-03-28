@@ -8,6 +8,7 @@ The list below contains the supported message operations, their names and opcode
 | Name        | Message operation code |
 |-------------|------------------------|
 | AcceptStorageContract| 0x7a361688 |
+| Approve| 0x7b4b42e6 |
 | AuctionFillUp| 0x370fec51 |
 | Bounce| 0xffffffff |
 | ChallengeQuarantinedChannelState| 0x088eaa32 |
@@ -26,6 +27,7 @@ The list below contains the supported message operations, their names and opcode
 | DedustSwapPeer| 0x72aca8aa |
 | DeleteDnsRecord| 0x4eb1f0f9 |
 | DeployStorageContract| 0xe4748df1 |
+| Disapprove| 0xe8a0abfe |
 | DnsBalanceRelease| 0x4ed14b65 |
 | ElectorNewStake| 0x4e73744b |
 | ElectorNewStakeConfirmation| 0xf374484c |
@@ -90,9 +92,7 @@ The list below contains the supported message operations, their names and opcode
 | TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
-| TonstakeControllerApprove| 0x7b4b42e6 |
 | TonstakeControllerCredit| 0x1690c604 |
-| TonstakeControllerDisapprove| 0xe8a0abfe |
 | TonstakeControllerNewStake| 0xe0505d0e |
 | TonstakeControllerPoolHalt| 0x139a1b4e |
 | TonstakeControllerPoolSendMessage| 0x270695fb |
@@ -103,7 +103,6 @@ The list below contains the supported message operations, their names and opcode
 | TonstakeControllerReturnAvailableFunds| 0x55c26cd5 |
 | TonstakeControllerReturnUnusedLoan| 0xed7378a6 |
 | TonstakeControllerSendRequestLoan| 0x6335b11a |
-| TonstakeControllerTopUp| 0xd372158c |
 | TonstakeControllerUpdateValidatorHash| 0xf0fd2250 |
 | TonstakeControllerValidatorWithdrawal| 0x30026327 |
 | TonstakeControllerWithdrawValidator| 0x8efed779 |
@@ -127,6 +126,7 @@ The list below contains the supported message operations, their names and opcode
 | TonstakePoolTouch| 0x4bc7c2df |
 | TonstakePoolWithdraw| 0x319b0cdc |
 | TonstakePoolWithdrawal| 0x0a77535c |
+| TopUp| 0xd372158c |
 | TopUpChannelBalance| 0x67c7d281 |
 | UpdatePubkey| 0x53f34cd6 |
 | UpdateStorageParams| 0x54cbf19b |

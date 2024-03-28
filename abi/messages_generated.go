@@ -156,7 +156,7 @@ var (
 	// 0x7a361688
 	decodeFuncAcceptStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x7a361688, Len: 32}, AcceptStorageContractMsgOp, AcceptStorageContractMsgBody{})
 	// 0x7b4b42e6
-	decodeFuncTonstakeControllerApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, TonstakeControllerApproveMsgOp, TonstakeControllerApproveMsgBody{})
+	decodeFuncApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
 	// 0x7bcd1fef
 	decodeFuncWhalesNominatorsDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{})
 	// 0x7bdd97de
@@ -202,7 +202,7 @@ var (
 	// 0xd0c3bfea
 	decodeFuncSbtRequestOwnerMsgBody = decodeMsg(tlb.Tag{Val: 0xd0c3bfea, Len: 32}, SbtRequestOwnerMsgOp, SbtRequestOwnerMsgBody{})
 	// 0xd372158c
-	decodeFuncTonstakeControllerTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TonstakeControllerTopUpMsgOp, TonstakeControllerTopUpMsgBody{})
+	decodeFuncTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TopUpMsgOp, TopUpMsgBody{})
 	// 0xd4caedcd
 	decodeFuncStorageContractConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xd4caedcd, Len: 32}, StorageContractConfirmedMsgOp, StorageContractConfirmedMsgBody{})
 	// 0xd53276db
@@ -224,7 +224,7 @@ var (
 	// 0xe642c965
 	decodeFuncTonstakePoolRequestLoanMsgBody = decodeMsg(tlb.Tag{Val: 0xe642c965, Len: 32}, TonstakePoolRequestLoanMsgOp, TonstakePoolRequestLoanMsgBody{})
 	// 0xe8a0abfe
-	decodeFuncTonstakeControllerDisapproveMsgBody = decodeMsg(tlb.Tag{Val: 0xe8a0abfe, Len: 32}, TonstakeControllerDisapproveMsgOp, TonstakeControllerDisapproveMsgBody{})
+	decodeFuncDisapproveMsgBody = decodeMsg(tlb.Tag{Val: 0xe8a0abfe, Len: 32}, DisapproveMsgOp, DisapproveMsgBody{})
 	// 0xea06185d
 	decodeFuncDedustSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xea06185d, Len: 32}, DedustSwapMsgOp, DedustSwapMsgBody{})
 	// 0xeb373a05
@@ -475,7 +475,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	AcceptStorageContractMsgOpCode: decodeFuncAcceptStorageContractMsgBody,
 
 	// 0x7b4b42e6
-	TonstakeControllerApproveMsgOpCode: decodeFuncTonstakeControllerApproveMsgBody,
+	ApproveMsgOpCode: decodeFuncApproveMsgBody,
 
 	// 0x7bcd1fef
 	WhalesNominatorsDepositMsgOpCode: decodeFuncWhalesNominatorsDepositMsgBody,
@@ -544,7 +544,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	SbtRequestOwnerMsgOpCode: decodeFuncSbtRequestOwnerMsgBody,
 
 	// 0xd372158c
-	TonstakeControllerTopUpMsgOpCode: decodeFuncTonstakeControllerTopUpMsgBody,
+	TopUpMsgOpCode: decodeFuncTopUpMsgBody,
 
 	// 0xd4caedcd
 	StorageContractConfirmedMsgOpCode: decodeFuncStorageContractConfirmedMsgBody,
@@ -577,7 +577,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	TonstakePoolRequestLoanMsgOpCode: decodeFuncTonstakePoolRequestLoanMsgBody,
 
 	// 0xe8a0abfe
-	TonstakeControllerDisapproveMsgOpCode: decodeFuncTonstakeControllerDisapproveMsgBody,
+	DisapproveMsgOpCode: decodeFuncDisapproveMsgBody,
 
 	// 0xea06185d
 	DedustSwapMsgOpCode: decodeFuncDedustSwapMsgBody,
@@ -688,7 +688,7 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
-	TonstakeControllerApproveMsgOp               MsgOpName = "TonstakeControllerApprove"
+	ApproveMsgOp                                 MsgOpName = "Approve"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
 	JettonBurnNotificationMsgOp                  MsgOpName = "JettonBurnNotification"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
@@ -711,7 +711,7 @@ const (
 	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
 	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
 	SbtRequestOwnerMsgOp                         MsgOpName = "SbtRequestOwner"
-	TonstakeControllerTopUpMsgOp                 MsgOpName = "TonstakeControllerTopUp"
+	TopUpMsgOp                                   MsgOpName = "TopUp"
 	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
 	ExcessMsgOp                                  MsgOpName = "Excess"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
@@ -722,7 +722,7 @@ const (
 	WalletPluginDestructResponseMsgOp            MsgOpName = "WalletPluginDestructResponse"
 	DeployStorageContractMsgOp                   MsgOpName = "DeployStorageContract"
 	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
-	TonstakeControllerDisapproveMsgOp            MsgOpName = "TonstakeControllerDisapprove"
+	DisapproveMsgOp                              MsgOpName = "Disapprove"
 	DedustSwapMsgOp                              MsgOpName = "DedustSwap"
 	TonstakeControllerRecoverStakeMsgOp          MsgOpName = "TonstakeControllerRecoverStake"
 	TonstakeNftBurnNotificationMsgOp             MsgOpName = "TonstakeNftBurnNotification"
@@ -811,7 +811,7 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
-	TonstakeControllerApproveMsgOpCode               MsgOpCode = 0x7b4b42e6
+	ApproveMsgOpCode                                 MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
 	JettonBurnNotificationMsgOpCode                  MsgOpCode = 0x7bdd97de
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
@@ -834,7 +834,7 @@ const (
 	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
 	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
 	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
-	TonstakeControllerTopUpMsgOpCode                 MsgOpCode = 0xd372158c
+	TopUpMsgOpCode                                   MsgOpCode = 0xd372158c
 	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
@@ -845,7 +845,7 @@ const (
 	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
 	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
 	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0xe642c965
-	TonstakeControllerDisapproveMsgOpCode            MsgOpCode = 0xe8a0abfe
+	DisapproveMsgOpCode                              MsgOpCode = 0xe8a0abfe
 	DedustSwapMsgOpCode                              MsgOpCode = 0xea06185d
 	TonstakeControllerRecoverStakeMsgOpCode          MsgOpCode = 0xeb373a05
 	TonstakeNftBurnNotificationMsgOpCode             MsgOpCode = 0xed58b0b2
@@ -1292,7 +1292,7 @@ type AcceptStorageContractMsgBody struct {
 	QueryId uint64
 }
 
-type TonstakeControllerApproveMsgBody struct {
+type ApproveMsgBody struct {
 	QueryId uint64
 }
 
@@ -1439,7 +1439,7 @@ type SbtRequestOwnerMsgBody struct {
 	WithContent    bool
 }
 
-type TonstakeControllerTopUpMsgBody struct {
+type TopUpMsgBody struct {
 	QueryId uint64
 }
 
@@ -1498,7 +1498,7 @@ type TonstakePoolRequestLoanMsgBody struct {
 	ControllerData TonstakersControllerData `tlb:"^"`
 }
 
-type TonstakeControllerDisapproveMsgBody struct {
+type DisapproveMsgBody struct {
 	QueryId uint64
 }
 
@@ -1628,7 +1628,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
-	TonstakeControllerApproveMsgOp:               TonstakeControllerApproveMsgBody{},
+	ApproveMsgOp:                                 ApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
 	JettonBurnNotificationMsgOp:                  JettonBurnNotificationMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
@@ -1651,7 +1651,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
 	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},
 	SbtRequestOwnerMsgOp:                         SbtRequestOwnerMsgBody{},
-	TonstakeControllerTopUpMsgOp:                 TonstakeControllerTopUpMsgBody{},
+	TopUpMsgOp:                                   TopUpMsgBody{},
 	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
 	ExcessMsgOp:                                  ExcessMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
@@ -1662,7 +1662,7 @@ var KnownMsgInTypes = map[string]any{
 	WalletPluginDestructResponseMsgOp:            WalletPluginDestructResponseMsgBody{},
 	DeployStorageContractMsgOp:                   DeployStorageContractMsgBody{},
 	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},
-	TonstakeControllerDisapproveMsgOp:            TonstakeControllerDisapproveMsgBody{},
+	DisapproveMsgOp:                              DisapproveMsgBody{},
 	DedustSwapMsgOp:                              DedustSwapMsgBody{},
 	TonstakeControllerRecoverStakeMsgOp:          TonstakeControllerRecoverStakeMsgBody{},
 	TonstakeNftBurnNotificationMsgOp:             TonstakeNftBurnNotificationMsgBody{},

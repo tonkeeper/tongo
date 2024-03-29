@@ -17,6 +17,7 @@ The list below contains the supported message operations, their names and opcode
 | ChannelCooperativeClose| 0x5577587e |
 | ChannelCooperativeCommit| 0x79a126ef |
 | CloseStorageContract| 0x79f937ea |
+| Credit| 0x1690c604 |
 | DedustDepositLiquidityAll| 0xb56b9598 |
 | DedustPayout| 0x474f86cf |
 | DedustPayoutFromPool| 0xad4eb6f5 |
@@ -92,7 +93,6 @@ The list below contains the supported message operations, their names and opcode
 | TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
-| TonstakeControllerCredit| 0x1690c604 |
 | TonstakeControllerNewStake| 0xe0505d0e |
 | TonstakeControllerPoolHalt| 0x139a1b4e |
 | TonstakeControllerPoolSendMessage| 0x270695fb |

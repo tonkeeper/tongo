@@ -67,6 +67,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_wallet_params":             {DecodeGetWalletParamsResult},
 	"is_active":                     {DecodeIsActiveResult},
 	"is_plugin_installed":           {DecodeIsPluginInstalledResult},
+	"jetton_wallet_lock_data":       {DecodeJettonWalletLockDataResult},
 	"list_nominators":               {DecodeListNominatorsResult},
 	"list_votes":                    {DecodeListVotesResult},
 	"royalty_params":                {DecodeRoyaltyParamsResult},
@@ -122,6 +123,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	122498: {GetTelemintAuctionState},
 	123928: {GetStakingStatus},
 	128085: {GetRouterData},
+	128979: {JettonWalletLockData},
 	129619: {GetTelemintAuctionConfig},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
@@ -187,6 +189,7 @@ var resultTypes = []interface{}{
 	&GetWalletParamsResult{},
 	&IsActiveResult{},
 	&IsPluginInstalledResult{},
+	&JettonWalletLockDataResult{},
 	&ListNominatorsResult{},
 	&ListVotesResult{},
 	&RoyaltyParamsResult{},
@@ -2444,6 +2447,40 @@ func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, result
 	var result IsPluginInstalledResult
 	err = stack.Unmarshal(&result)
 	return "IsPluginInstalledResult", result, err
+}
+
+type JettonWalletLockDataResult struct {
+	FullBalance          tlb.Int257
+	IndividualUnlockTime uint32
+}
+
+func JettonWalletLockData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 128979 for "jetton_wallet_lock_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 128979, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeJettonWalletLockDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeJettonWalletLockDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result JettonWalletLockDataResult
+	err = stack.Unmarshal(&result)
+	return "JettonWalletLockDataResult", result, err
 }
 
 type ListNominatorsResult struct {

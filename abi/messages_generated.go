@@ -36,7 +36,7 @@ var (
 	// 0x1674b0a0
 	decodeFuncTonstakePayoutMintJettonsMsgBody = decodeMsg(tlb.Tag{Val: 0x1674b0a0, Len: 32}, TonstakePayoutMintJettonsMsgOp, TonstakePayoutMintJettonsMsgBody{})
 	// 0x1690c604
-	decodeFuncTonstakeControllerCreditMsgBody = decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, TonstakeControllerCreditMsgOp, TonstakeControllerCreditMsgBody{})
+	decodeFuncCreditMsgBody = decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, CreditMsgOp, CreditMsgBody{})
 	// 0x178d4519
 	decodeFuncJettonInternalTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, JettonInternalTransferMsgOp, JettonInternalTransferMsgBody{})
 	// 0x1d1715bf
@@ -294,7 +294,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	TonstakePayoutMintJettonsMsgOpCode: decodeFuncTonstakePayoutMintJettonsMsgBody,
 
 	// 0x1690c604
-	TonstakeControllerCreditMsgOpCode: decodeFuncTonstakeControllerCreditMsgBody,
+	CreditMsgOpCode: decodeFuncCreditMsgBody,
 
 	// 0x178d4519
 	JettonInternalTransferMsgOpCode: decodeFuncJettonInternalTransferMsgBody,
@@ -628,7 +628,7 @@ const (
 	TonstakeControllerPoolHaltMsgOp              MsgOpName = "TonstakeControllerPoolHalt"
 	WhalesNominatorsForceKickMsgOp               MsgOpName = "WhalesNominatorsForceKick"
 	TonstakePayoutMintJettonsMsgOp               MsgOpName = "TonstakePayoutMintJettons"
-	TonstakeControllerCreditMsgOp                MsgOpName = "TonstakeControllerCredit"
+	CreditMsgOp                                  MsgOpName = "Credit"
 	JettonInternalTransferMsgOp                  MsgOpName = "JettonInternalTransfer"
 	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
 	SbtDestroyMsgOp                              MsgOpName = "SbtDestroy"
@@ -751,7 +751,7 @@ const (
 	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
 	WhalesNominatorsForceKickMsgOpCode               MsgOpCode = 0x1596920c
 	TonstakePayoutMintJettonsMsgOpCode               MsgOpCode = 0x1674b0a0
-	TonstakeControllerCreditMsgOpCode                MsgOpCode = 0x1690c604
+	CreditMsgOpCode                                  MsgOpCode = 0x1690c604
 	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
 	SbtDestroyMsgOpCode                              MsgOpCode = 0x1f04537a
@@ -955,7 +955,7 @@ type TonstakePayoutMintJettonsMsgBody struct {
 	Forward      tlb.Grams
 }
 
-type TonstakeControllerCreditMsgBody struct {
+type CreditMsgBody struct {
 	QueryId uint64
 	Amount  tlb.Grams
 }
@@ -1568,7 +1568,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolHaltMsgOp:              TonstakeControllerPoolHaltMsgBody{},
 	WhalesNominatorsForceKickMsgOp:               WhalesNominatorsForceKickMsgBody{},
 	TonstakePayoutMintJettonsMsgOp:               TonstakePayoutMintJettonsMsgBody{},
-	TonstakeControllerCreditMsgOp:                TonstakeControllerCreditMsgBody{},
+	CreditMsgOp:                                  CreditMsgBody{},
 	JettonInternalTransferMsgOp:                  JettonInternalTransferMsgBody{},
 	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
 	SbtDestroyMsgOp:                              SbtDestroyMsgBody{},

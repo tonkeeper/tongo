@@ -19,6 +19,7 @@ type connection struct {
 	mu sync.RWMutex
 	// masterHead is the latest known masterchain head.
 	masterHead ton.BlockIDExt
+	isArchive  bool
 }
 
 type masterHeadUpdated struct {
@@ -26,7 +27,21 @@ type masterHeadUpdated struct {
 	Conn *connection
 }
 
-func (c *connection) Run(ctx context.Context) {
+func (c *connection) Run(ctx context.Context, detectArchive bool) {
+	if detectArchive {
+		go func() {
+			ctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
+			defer cancel()
+			// TODO: retry several times on error
+			seqno, err := c.FindMinAvailableMasterchainSeqno(ctx)
+			if err != nil {
+				return
+			}
+			if seqno == 2 {
+				c.setArchive(true)
+			}
+		}()
+	}
 	for {
 		var head ton.BlockIDExt
 		for {
@@ -99,4 +114,50 @@ func (c *connection) SetMasterHead(head ton.BlockIDExt) {
 			Conn: c,
 		}
 	}
+}
+
+func (c *connection) FindMinAvailableMasterchainSeqno(ctx context.Context) (uint32, error) {
+	info, err := c.client.LiteServerGetMasterchainInfo(ctx)
+	if err != nil {
+		return 0, err
+	}
+	max := info.Last.Seqno
+	min := uint32(2)
+
+	next := min
+	workchain := -1
+	for min+1 < max {
+		request := liteclient.LiteServerLookupBlockRequest{
+			Mode: 1,
+			Id: liteclient.TonNodeBlockIdC{
+				Workchain: uint32(workchain),
+				Shard:     0x8000000000000000,
+				Seqno:     next,
+			},
+		}
+		_, err := c.client.LiteServerLookupBlock(ctx, request)
+		if err != nil {
+			if e, ok := err.(liteclient.LiteServerErrorC); ok && e.Code == 651 {
+				min = next + 1
+				next = (min + max) / 2
+				continue
+			}
+			return 0, err
+		}
+		max = next - 1
+		next = (min + max) / 2
+	}
+	return min, nil
+}
+
+func (c *connection) IsArchiveNode() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.isArchive
+}
+
+func (c *connection) setArchive(archive bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.isArchive = archive
 }

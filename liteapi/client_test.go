@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tonkeeper/tongo/config"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 	"golang.org/x/exp/maps"
@@ -35,6 +36,31 @@ func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 	if cli.pool.ConnectionsNumber() != defaultMaxConnectionsNumber+1 {
 		t.Fatalf("want connections number: %v, got: %v", defaultMaxConnectionsNumber+1, cli.pool.ConnectionsNumber())
 	}
+}
+
+func TestGetTransactions_archive(t *testing.T) {
+	if len(os.Getenv("ARCHIVE_NODES_CONFIG")) == 0 {
+		t.Skip("ARCHIVE_NODES_CONFIG env is not set")
+	}
+	value := os.Getenv("ARCHIVE_NODES_CONFIG")
+	servers, err := config.ParseLiteServersEnvVar(value)
+	if err != nil {
+		t.Fatalf("ParseLiteServersEnvVar() failed: %v", err)
+	}
+	if len(servers) != 2 {
+		t.Fatalf("expected servers length: 2, got: %v", len(servers))
+	}
+	tongoClient, err := NewClient(WithLiteServers(servers), WithDetectArchiveNodes())
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	time.Sleep(15 * time.Second)
+	accountId, _ := ton.AccountIDFromRaw("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220")
+	txs, err := tongoClient.GetLastTransactions(context.Background(), accountId, 1000)
+	if err != nil {
+		t.Fatalf("Get transaction error: %v", err)
+	}
+	fmt.Printf("archive txs: %v\n", len(txs))
 }
 
 func TestGetTransactions(t *testing.T) {

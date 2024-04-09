@@ -67,6 +67,10 @@ type Client struct {
 	// proofPolicy specifies a policy for proof checks.
 	proofPolicy ProofPolicy
 
+	// archiveDetectionEnabled specifies whether
+	// the underlying connections pool maintains information about which nodes are archive nodes.
+	archiveDetectionEnabled bool
+
 	// mu protects targetBlockID.
 	mu            sync.RWMutex
 	targetBlockID *ton.BlockIDExt
@@ -82,6 +86,9 @@ type Options struct {
 	InitCtx context.Context
 	// ProofPolicy specifies a policy for proof checks.
 	ProofPolicy ProofPolicy
+	// DetectArchiveNodes specifies if a liteapi connection to a node
+	// should detect if its node is an archive node.
+	DetectArchiveNodes bool
 }
 
 type Option func(o *Options) error
@@ -114,6 +121,13 @@ func WithTimeout(timeout time.Duration) Option {
 func WithProofPolicy(policy ProofPolicy) Option {
 	return func(o *Options) error {
 		o.ProofPolicy = policy
+		return nil
+	}
+}
+
+func WithDetectArchiveNodes() Option {
+	return func(o *Options) error {
+		o.DetectArchiveNodes = true
 		return nil
 	}
 }
@@ -231,10 +245,11 @@ func NewClientWithDefaultTestnet() (*Client, error) {
 // Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
 func NewClient(opts ...Option) (*Client, error) {
 	options := &Options{
-		Timeout:        60 * time.Second,
-		MaxConnections: defaultMaxConnectionsNumber,
-		InitCtx:        context.Background(),
-		ProofPolicy:    ProofPolicyUnsafe,
+		Timeout:            60 * time.Second,
+		MaxConnections:     defaultMaxConnectionsNumber,
+		InitCtx:            context.Background(),
+		ProofPolicy:        ProofPolicyUnsafe,
+		DetectArchiveNodes: false,
 	}
 	for _, o := range opts {
 		if err := o(options); err != nil {
@@ -268,10 +283,11 @@ func NewClient(opts ...Option) (*Client, error) {
 		return nil, fmt.Errorf("all liteservers are unavailable")
 	}
 	client := Client{
-		pool:        pool.NewFailoverPool(liteclients),
-		proofPolicy: options.ProofPolicy,
+		pool:                    pool.NewFailoverPool(liteclients),
+		proofPolicy:             options.ProofPolicy,
+		archiveDetectionEnabled: options.DetectArchiveNodes,
 	}
-	go client.pool.Run(context.TODO())
+	go client.pool.Run(context.TODO(), options.DetectArchiveNodes)
 	return &client, nil
 }
 
@@ -468,7 +484,7 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-	client, masterHead, err := c.pool.BestClientByAccountID(ctx, accountID)
+	client, masterHead, err := c.pool.BestClientByAccountID(ctx, accountID, false)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
@@ -532,7 +548,7 @@ func (c *Client) GetAccountState(ctx context.Context, accountID ton.AccountID) (
 }
 
 func (c *Client) GetAccountStateRaw(ctx context.Context, accountID ton.AccountID) (liteclient.LiteServerAccountStateC, error) {
-	client, masterHead, err := c.pool.BestClientByAccountID(ctx, accountID)
+	client, masterHead, err := c.pool.BestClientByAccountID(ctx, accountID, false)
 	if err != nil {
 		return liteclient.LiteServerAccountStateC{}, err
 	}
@@ -649,7 +665,7 @@ func (c *Client) GetOneTransactionFromBlock(
 	blockId ton.BlockIDExt,
 	lt uint64,
 ) (ton.Transaction, error) {
-	client, _, err := c.pool.BestClientByAccountID(ctx, accountID)
+	client, _, err := c.pool.BestClientByAccountID(ctx, accountID, false)
 	if err != nil {
 		return ton.Transaction{}, err
 	}
@@ -711,20 +727,42 @@ func (c *Client) GetTransactions(
 }
 
 func (c *Client) GetTransactionsRaw(ctx context.Context, count uint32, accountID ton.AccountID, lt uint64, hash ton.Bits256) (liteclient.LiteServerTransactionListC, error) {
-	client, _, err := c.pool.BestClientByAccountID(ctx, accountID)
-	if err != nil {
-		return liteclient.LiteServerTransactionListC{}, err
+	archiveRequired := false
+	for {
+		client, _, err := c.pool.BestClientByAccountID(ctx, accountID, archiveRequired)
+		if err != nil {
+			return liteclient.LiteServerTransactionListC{}, err
+		}
+		res, err := client.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
+			Count:   count,
+			Account: liteclient.AccountID(accountID),
+			Lt:      lt,
+			Hash:    tl.Int256(hash),
+		})
+		if truncatedHistory(err) {
+			if !c.archiveDetectionEnabled {
+				return liteclient.LiteServerTransactionListC{}, err
+			}
+			if archiveRequired {
+				return liteclient.LiteServerTransactionListC{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return liteclient.LiteServerTransactionListC{}, err
+		}
+		return res, nil
+
 	}
-	res, err := client.LiteServerGetTransactions(ctx, liteclient.LiteServerGetTransactionsRequest{
-		Count:   count,
-		Account: liteclient.AccountID(accountID),
-		Lt:      lt,
-		Hash:    tl.Int256(hash),
-	})
-	if err != nil {
-		return liteclient.LiteServerTransactionListC{}, err
+}
+
+func truncatedHistory(err error) bool {
+	if err == nil {
+		return false
 	}
-	return res, nil
+	e, ok := err.(liteclient.LiteServerErrorC)
+	return ok && int32(e.Code) == -400
 }
 
 func (c *Client) GetLastTransactions(ctx context.Context, a ton.AccountID, limit int) ([]ton.Transaction, error) {

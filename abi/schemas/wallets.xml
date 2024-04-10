@@ -74,6 +74,10 @@
             <ext_in name="wallet_signed_v4"/>
         </msg_in>
     </interface>
+    <interface name="wallet_v5r1" inherits="wallet">
+        <code_hash>f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93</code_hash> <!-- with library -->
+        <code_hash>e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412</code_hash> <!-- without library -->
+    </interface>
     <interface name="wallet_highload_v1r1" inherits="wallet">
         <code_hash>d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484</code_hash>
     </interface>
@@ -88,6 +92,9 @@
     </interface>
     <interface name="wallet_highload_v2r2" inherits="wallet">
         <code_hash>203dd4f358adb49993129aa925cac39916b68a0e4f78d26e8f2c2b69eafa5679</code_hash>
+    </interface>
+    <interface name="wallet_highload_v3r1"  inherits="wallet">
+        <code_hash>11acad7955844090f283bf238bc1449871f783e7cc0979408d3f4859483e8525</code_hash>
     </interface>
 
     <get_method name="seqno">

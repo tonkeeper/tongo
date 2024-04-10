@@ -35,6 +35,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_member":                    {DecodeGetMember_WhalesNominatorResult},
 	"get_members_raw":               {DecodeGetMembersRaw_WhalesNominatorResult},
 	"get_mining_data":               {DecodeGetMiningData_MegatonResult},
+	"get_multisig_data":             {DecodeGetMultisigDataResult},
 	"get_next_proof_info":           {DecodeGetNextProofInfoResult},
 	"get_nft_address_by_index":      {DecodeGetNftAddressByIndexResult},
 	"get_nft_api_info":              {DecodeGetNftApiInfoResult},
@@ -111,6 +112,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	104346: {GetStorageParams},
 	106029: {GetJettonData},
 	107305: {GetLockupData},
+	107307: {GetMultisigData},
 	107653: {GetPluginList},
 	111161: {ListNominators},
 	115150: {GetParams},
@@ -154,6 +156,7 @@ var resultTypes = []interface{}{
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
 	&GetMiningData_MegatonResult{},
+	&GetMultisigDataResult{},
 	&GetNextProofInfoResult{},
 	&GetNftAddressByIndexResult{},
 	&GetNftApiInfoResult{},
@@ -1097,6 +1100,42 @@ func DecodeGetMiningData_MegatonResult(stack tlb.VmStack) (resultType string, re
 	var result GetMiningData_MegatonResult
 	err = stack.Unmarshal(&result)
 	return "GetMiningData_MegatonResult", result, err
+}
+
+type GetMultisigDataResult struct {
+	Seqno     tlb.Int257
+	Threshold uint8
+	Signers   MultisigSignersList
+	Proposers *MultisigProposersList
+}
+
+func GetMultisigData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 107307 for "get_multisig_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 107307, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetMultisigDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetMultisigDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell" && stack[3].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetMultisigDataResult
+	err = stack.Unmarshal(&result)
+	return "GetMultisigDataResult", result, err
 }
 
 type GetNextProofInfoResult struct {

@@ -140,7 +140,7 @@ func FromEnvsOrMainnet() Option {
 			o.MaxConnections = len(servers)
 			return nil
 		}
-		file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+		file, err := downloadConfig("https://ton.org/global.config.json")
 		if err != nil {
 			return err
 		}
@@ -162,7 +162,7 @@ func FromEnvsOrTestnet() Option {
 			o.MaxConnections = len(servers)
 			return nil
 		}
-		file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+		file, err := downloadConfig("https://ton.org/testnet-global.config.json")
 		if err != nil {
 			return err
 		}
@@ -191,7 +191,7 @@ func FromEnvs() Option {
 // Mainnet configures a client to use lite servers from the mainnet.
 func Mainnet() Option {
 	return func(o *Options) error {
-		file, err := downloadConfig("https://ton-blockchain.github.io/global.config.json")
+		file, err := downloadConfig("https://ton.org/global.config.json")
 		if err != nil {
 			return err
 		}
@@ -203,7 +203,7 @@ func Mainnet() Option {
 // Testnet configures a client to use lite servers from the testnet.
 func Testnet() Option {
 	return func(o *Options) error {
-		file, err := downloadConfig("https://ton-blockchain.github.io/testnet-global.config.json")
+		file, err := downloadConfig("https://ton.org/testnet-global.config.json")
 		if err != nil {
 			return err
 		}

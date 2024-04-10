@@ -20,6 +20,8 @@ const (
 	LockupVesting
 	MegatonfiExchange
 	MegatonfiRouter
+	MultisigOrderV2
+	MultisigV2
 	NftAuctionGetgemsV3
 	NftAuctionV1
 	NftCollection
@@ -47,6 +49,7 @@ const (
 	WalletHighloadV2
 	WalletHighloadV2R1
 	WalletHighloadV2R2
+	WalletHighloadV3R1
 	WalletV1R1
 	WalletV1R2
 	WalletV1R3
@@ -56,6 +59,7 @@ const (
 	WalletV3R2
 	WalletV4R1
 	WalletV4R2
+	WalletV5R1
 	WhalesPool
 )
 
@@ -85,6 +89,10 @@ func (c ContractInterface) String() string {
 		return "megatonfi_exchange"
 	case MegatonfiRouter:
 		return "megatonfi_router"
+	case MultisigOrderV2:
+		return "multisig_order_v2"
+	case MultisigV2:
+		return "multisig_v2"
 	case NftAuctionGetgemsV3:
 		return "nft_auction_getgems_v3"
 	case NftAuctionV1:
@@ -139,6 +147,8 @@ func (c ContractInterface) String() string {
 		return "wallet_highload_v2r1"
 	case WalletHighloadV2R2:
 		return "wallet_highload_v2r2"
+	case WalletHighloadV3R1:
+		return "wallet_highload_v3r1"
 	case WalletV1R1:
 		return "wallet_v1r1"
 	case WalletV1R2:
@@ -157,6 +167,8 @@ func (c ContractInterface) String() string {
 		return "wallet_v4r1"
 	case WalletV4R2:
 		return "wallet_v4r2"
+	case WalletV5R1:
+		return "wallet_v5r1"
 	case WhalesPool:
 		return "whales_pool"
 	default:
@@ -190,6 +202,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return MegatonfiExchange
 	case "megatonfi_router":
 		return MegatonfiRouter
+	case "multisig_order_v2":
+		return MultisigOrderV2
+	case "multisig_v2":
+		return MultisigV2
 	case "nft_auction_getgems_v3":
 		return NftAuctionGetgemsV3
 	case "nft_auction_v1":
@@ -244,6 +260,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletHighloadV2R1
 	case "wallet_highload_v2r2":
 		return WalletHighloadV2R2
+	case "wallet_highload_v3r1":
+		return WalletHighloadV3R1
 	case "wallet_v1r1":
 		return WalletV1R1
 	case "wallet_v1r2":
@@ -262,6 +280,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV4R1
 	case "wallet_v4r2":
 		return WalletV4R2
+	case "wallet_v5r1":
+		return WalletV5R1
 	case "whales_pool":
 		return WhalesPool
 	default:
@@ -353,6 +373,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_mining_data",
 		InvokeFn: GetMiningData,
+	},
+	{
+		Name:     "get_multisig_data",
+		InvokeFn: GetMultisigData,
 	},
 	{
 		Name:     "get_next_proof_info",
@@ -690,6 +714,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletHighloadV2R2:
 		return Wallet.Implements(other)
+	case WalletHighloadV3R1:
+		return Wallet.Implements(other)
 	case WalletV1R1:
 		return Wallet.Implements(other)
 	case WalletV1R2:
@@ -708,6 +734,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletV4R2:
 		return Wallet.Implements(other)
+	case WalletV5R1:
+		return Wallet.Implements(other)
 	}
 	return false
 }
@@ -715,6 +743,10 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("0dceed21269d66013e95b19fbb5c55a6f01adad40837baa8e521cde3a02aa46c"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV1R2},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("11acad7955844090f283bf238bc1449871f783e7cc0979408d3f4859483e8525"): {
+		contractInterfaces: []ContractInterface{WalletHighloadV3R1},
 		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("1bd9c5a39bffb7a0f341588b5dd92b813a842bf65ef14109382200ceaf8f72df"): {
@@ -739,6 +771,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetNftData,
 		},
 	},
+	ton.MustParseHash("4e84760554543d7fc12cc3882646070e8655ebcf324af77c5c3b3b68e3103997"): {
+		contractInterfaces: []ContractInterface{MultisigV2},
+		getMethods:         []InvokeFn{},
+	},
 	ton.MustParseHash("587cc789eff1c84f46ec3797e45fc809a14ff5ae24f1e0c7a6a99cc9dc9061ff"): {
 		contractInterfaces: []ContractInterface{WalletV1R3},
 		getMethods: []InvokeFn{
@@ -751,6 +787,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			Seqno,
 		},
+	},
+	ton.MustParseHash("6305a8061c856c2ccf05dcb0df5815c71475870567cab5f049e340bcf59251f3"): {
+		contractInterfaces: []ContractInterface{MultisigOrderV2},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("64dd54805522c5be8a9db59cea0105ccf0d08786ca79beb8cb79e880a8d7322d"): {
 		contractInterfaces: []ContractInterface{WalletV4R1},
@@ -813,6 +853,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			GetSaleData,
 		},
+	},
+	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
+		contractInterfaces: []ContractInterface{WalletV5R1},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
+		contractInterfaces: []ContractInterface{WalletV5R1},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("fe9530d3243853083ef2ef0b4c2908c0abf6fa1c31ea243aacaa5bf8c7d753f1"): {
 		contractInterfaces: []ContractInterface{WalletV2R2},

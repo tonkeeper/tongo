@@ -1,0 +1,87 @@
+<abi>
+    <types>
+
+        send_message#f1381e5b _:SendMessageAction = MultisigSendMessageAction;
+        update_multisig_param#1d0cfbd3 threshold:uint8
+        signers:^(Hashmap 8 MsgAddressInt)
+        proposers:(HashmapE 8 MsgAddressInt) = MultisigSendMessageAction;
+
+        _ _:(Hashmap 8 ^MultisigSendMessageAction) = MultisigOrder;
+
+        SignersList#_ signers:(Hashmap 8 MsgAddressInt) = MultisigSignersList;
+        ProposersList#_ proposers:(HashmapE 8 MsgAddressInt) = MultisigProposersList;
+    </types>
+
+
+    <interface name="multisig_v2">
+        <code_hash>4e84760554543d7fc12cc3882646070e8655ebcf324af77c5c3b3b68e3103997</code_hash>
+        <error code="1007">Unauthorized proposer</error>
+        <error code="1008">Invalid new order</error>
+        <error code="100">Not enough ton</error>
+        <error code="101">Unauthorized execute</error>
+        <error code="102">Signers outdated</error>
+        <error code="103">Invalid dictionary sequence</error>
+        <error code="108">Inconsistent data</error>
+        <error code="109">Invalid threshold</error>
+        <error code="110">Invalid signers</error>
+        <error code="111">Expired</error>
+    </interface>
+
+    <interface name="multisig_order_v2">
+        <code_hash>6305a8061c856c2ccf05dcb0df5815c71475870567cab5f049e340bcf59251f3</code_hash>
+        <error code="104">Unauthorized init</error>
+        <error code="105">Already inited</error>
+        <error code="106">Unauthorized sign</error>
+        <error code="107">Already approved</error>
+        <error code="111">Expired</error>
+        <error code="112">Already executed</error>
+        <error code="0xffff">Unknown op</error>
+    </interface>
+
+
+    <get_method name="get_multisig_data" fixed_length="true">
+        <output>
+            <int name="seqno">int257</int> <!-- its real int257 -->
+            <int name="threshold">uint8</int>
+            <cell name="signers">MultisigSignersList</cell>
+            <cell name="proposers" nullable="true">MultisigProposersList</cell>
+        </output>
+    </get_method>
+
+    <internal name="multisig_new_order">
+        new_order#f718510f query_id:uint64
+        order_seqno:uint256
+        signer:(## 1)
+        index:uint8
+        expiration_date:uint48
+        order:^MultisigOrder = InternalMsgBody;
+    </internal>
+    <internal name="multisig_execute">
+        execute#75097f5d query_id:uint64
+        order_seqno:uint256
+        expiration_date:uint48
+        approvals_num:uint8
+        signers_hash:bits256
+        order:^MultisigOrder = InternalMsgBody;
+    </internal>
+    <internal name="multisig_execute_internal">
+        execute_internal#a32c59bf query_id:uint64 order:^MultisigOrder = InternalMsgBody;
+    </internal>
+    <internal name="multisig_order_init">
+        init#9c73fba2 query_id:uint64
+        threshold:uint8
+        signers:^(Hashmap 8 MsgAddressInt)
+        expiration_date:uint48
+        order:^MultisigOrder
+        signer_index:(Maybe uint8) = InternalMsgBody;
+    </internal>
+    <internal name="multisig_approve">
+        approve#a762230f query_id:uint64 signer_index:uint8 = InternalMsgBody;
+    </internal>
+    <internal name="multisig_approve_accepted">
+        approve_accepted#82609bf6 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="multisig_approve_rejected">
+        approve_rejected#afaf283e query_id:uint64 exit_code:uint32 = InternalMsgBody;
+    </internal>
+</abi>

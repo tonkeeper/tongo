@@ -1,4 +1,17 @@
 <abi>
+    <types>
+        set_status#eed236d3
+        query_id:uint64
+        status:uint4
+        = JettonForceAction;
+        burn#595f07bc query_id:uint64 amount:(VarUInteger 16)
+        response_destination:MsgAddress custom_payload:(Maybe ^JettonPayload)
+        = JettonForceAction;
+        transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
+        response_destination:MsgAddress custom_payload:(Maybe ^Cell)
+        forward_ton_amount:(VarUInteger 16) forward_payload:(Either JettonPayload ^JettonPayload)
+        = JettonForceAction;
+    </types>
     <interface name="jetton_master">
         <get_method name="get_jetton_data"/>
         <get_method name="get_wallet_address"/>
@@ -76,5 +89,66 @@
         sender:MsgAddress forward_payload:(Either JettonPayload ^JettonPayload)
         = InternalMsgBody;
     </internal>
+
+
+    <!-- Governance jettons -->
+    <internal name="jetton_set_status">
+        set_status#eed236d3
+        query_id:uint64
+        status:uint4
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="jetton_mint">
+        mint#642b7d07
+        query_id:uint64
+        to_address:MsgAddressInt
+        ton_amount:Coins
+<!--        master_msg:^JettonInternalTransfer-->
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_change_admin">
+        change_admin#6501f354
+        query_id:uint64
+        new_admin_address:MsgAddress
+        = InternalMsgBody;
+    </internal>
+    <internal name="jetton_claim_admin">
+        claim_admin#fb88e119
+        query_id:uint64
+        = JettonMinterMsg;
+    </internal>
+    <internal name="jetton_call_to">
+        call_to#235caf52
+        query_id:uint64
+        to_address:MsgAddressInt
+        ton_amount:Coins
+        master_msg:^JettonForceAction
+        = JettonMinterMsg;
+    </internal>
+
+    <internal name="jetton_upgrade">
+        upgrade#2508d66a
+        query_id:uint64
+        new_data:^Cell
+        new_code:^Cell
+        = JettonMinterMsg;
+    </internal>
+    <internal name="jetton_change_metadata">
+        change_metadata_uri#cb862902
+        query_id:uint64
+        metadata:Cell
+        = JettonMinterMsg;
+    </internal>
+
+
+
+
+
+
+
+
+
+
 
 </abi>

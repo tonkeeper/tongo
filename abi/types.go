@@ -64,6 +64,54 @@ type DedustSwapStepParams struct {
 	Next    *DedustSwapStep `tlb:"maybe^"`
 }
 
+type JettonForceAction struct {
+	tlb.SumType
+	SetStatus struct {
+		QueryId uint64
+		Status  tlb.Uint4
+	} `tlbSumType:"#eed236d3"`
+	Burn struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *JettonPayload `tlb:"maybe^"`
+	} `tlbSumType:"#595f07bc"`
+	Transfer struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		Destination         tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+		CustomPayload       *tlb.Any `tlb:"maybe^"`
+		ForwardTonAmount    tlb.VarUInteger16
+		ForwardPayload      tlb.EitherRef[JettonPayload]
+	} `tlbSumType:"#0f8a7ea5"`
+}
+
+func (t *JettonForceAction) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "SetStatus":
+		bytes, err := json.Marshal(t.SetStatus)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SetStatus","SetStatus":%v}`, string(bytes))), nil
+	case "Burn":
+		bytes, err := json.Marshal(t.Burn)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Burn","Burn":%v}`, string(bytes))), nil
+	case "Transfer":
+		bytes, err := json.Marshal(t.Transfer)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Transfer","Transfer":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type TonstakersControllerData struct {
 	ControllerId uint32
 	Validator    tlb.MsgAddress
@@ -73,6 +121,49 @@ type TonstakersControllerData struct {
 		Approver tlb.MsgAddress
 		Halter   tlb.MsgAddress
 	} `tlb:"^"`
+}
+
+type MultisigOrder struct {
+	Field0 tlb.Hashmap[tlb.Uint8, tlb.Ref[MultisigSendMessageAction]]
+}
+
+type MultisigProposersList struct {
+	Proposers tlb.HashmapE[tlb.Uint8, tlb.MsgAddress]
+}
+
+type MultisigSendMessageAction struct {
+	tlb.SumType
+	SendMessage struct {
+		Field0 SendMessageAction
+	} `tlbSumType:"#f1381e5b"`
+	UpdateMultisigParam struct {
+		Threshold uint8
+		Signers   tlb.Hashmap[tlb.Uint8, tlb.MsgAddress] `tlb:"^"`
+		Proposers tlb.HashmapE[tlb.Uint8, tlb.MsgAddress]
+	} `tlbSumType:"#1d0cfbd3"`
+}
+
+func (t *MultisigSendMessageAction) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "SendMessage":
+		bytes, err := json.Marshal(t.SendMessage)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SendMessage","SendMessage":%v}`, string(bytes))), nil
+	case "UpdateMultisigParam":
+		bytes, err := json.Marshal(t.UpdateMultisigParam)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "UpdateMultisigParam","UpdateMultisigParam":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type MultisigSignersList struct {
+	Signers tlb.Hashmap[tlb.Uint8, tlb.MsgAddress]
 }
 
 type ClosingConfig struct {

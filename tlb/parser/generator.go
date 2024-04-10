@@ -347,6 +347,9 @@ func (t *ParenExpression) toGolangType(knownTypes map[string]DefaultType) (golan
 			return golangType{}, fmt.Errorf("invalid bitsize type for HashmapE")
 		}
 		p, err := t.Parameter[1].toGolangType(knownTypes)
+		if p.tag == "^" {
+			p.name = fmt.Sprintf("tlb.Ref[%s]", p.String())
+		}
 		if err != nil {
 			return golangType{}, err
 		}
@@ -489,8 +492,5 @@ func parseBuildInInt(s string) (golangType, bool) {
 }
 
 func (t golangType) String() string {
-	switch t.name {
-	default:
-		return t.name
-	}
+	return t.name
 }

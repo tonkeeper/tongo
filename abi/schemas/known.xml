@@ -16,6 +16,19 @@
         excesses#d53276db query_id:uint64 = InternalMsgBody;
     </internal>
 
+    <internal name="top_up" fixed_length="true">
+        top_up#d372158c query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="credit" fixed_length="true">
+        credit#1690c604 query_id:uint64 amount:Coins = InternalMsgBody;
+    </internal>
+    <internal name="approve" fixed_length="true">
+        approve#7b4b42e6 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="disapprove" fixed_length="true">
+        disapprove#e8a0abfe query_id:uint64 = InternalMsgBody;
+    </internal>
+
 
 
     <!--        elector     -->

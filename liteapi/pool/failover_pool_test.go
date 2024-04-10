@@ -15,6 +15,11 @@ type mockConn struct {
 	isOK  bool
 }
 
+func (m *mockConn) IsArchiveNode() bool {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (m *mockConn) ID() int {
 	return 0
 }
@@ -38,7 +43,7 @@ func (m *mockConn) Client() *liteclient.Client {
 	panic("implement me")
 }
 
-func (m *mockConn) Run(ctx context.Context) {
+func (m *mockConn) Run(ctx context.Context, detectArchiveNodes bool) {
 }
 
 var _ conn = &mockConn{}
@@ -102,7 +107,7 @@ func TestFailoverPool_updateBest(t *testing.T) {
 				updateBestInterval: time.Second,
 			}
 			ctx := context.Background()
-			go p.Run(ctx)
+			go p.Run(ctx, false)
 			p.updateBest()
 			c := p.bestConnection().(*mockConn)
 			if tt.wantID != c.id {

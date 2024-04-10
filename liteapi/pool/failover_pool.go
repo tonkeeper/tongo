@@ -43,7 +43,8 @@ type conn interface {
 	SetMasterHead(ton.BlockIDExt)
 	IsOK() bool
 	Client() *liteclient.Client
-	Run(ctx context.Context)
+	Run(ctx context.Context, detectArchive bool)
+	IsArchiveNode() bool
 }
 
 // NewFailoverPool returns a new instance of a failover pool.
@@ -71,9 +72,9 @@ func NewFailoverPool(clients []*liteclient.Client) *FailoverPool {
 	}
 }
 
-func (p *FailoverPool) Run(ctx context.Context) {
+func (p *FailoverPool) Run(ctx context.Context, detectArchiveNodes bool) {
 	for _, c := range p.conns {
-		go c.Run(ctx)
+		go c.Run(ctx, detectArchiveNodes)
 	}
 	tickTock := time.NewTicker(p.updateBestInterval)
 	defer tickTock.Stop()
@@ -170,9 +171,20 @@ func (p *FailoverPool) BestMasterchainClient(ctx context.Context) (*liteclient.C
 		return bestConnection.Client(), head, nil
 	}
 }
+func (p *FailoverPool) BestArchiveClient(ctx context.Context) (*liteclient.Client, ton.BlockIDExt, error) {
+	for _, c := range p.conns {
+		if c.IsOK() && c.IsArchiveNode() {
+			return c.Client(), c.MasterHead(), nil
+		}
+	}
+	return nil, ton.BlockIDExt{}, fmt.Errorf("no archive nodes available")
+}
 
 // BestClientByAccountID returns a liteclient and its known masterchain head.
-func (p *FailoverPool) BestClientByAccountID(ctx context.Context, accountID ton.AccountID) (*liteclient.Client, ton.BlockIDExt, error) {
+func (p *FailoverPool) BestClientByAccountID(ctx context.Context, accountID ton.AccountID, archiveRequired bool) (*liteclient.Client, ton.BlockIDExt, error) {
+	if archiveRequired {
+		return p.BestArchiveClient(ctx)
+	}
 	return p.BestMasterchainClient(ctx)
 }
 

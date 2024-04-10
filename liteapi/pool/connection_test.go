@@ -40,7 +40,7 @@ func Test_connection_Run(t *testing.T) {
 		client:              liteclient.NewClient(c),
 		masterHeadUpdatedCh: make(chan masterHeadUpdated, 100),
 	}
-	go conn.Run(context.Background())
+	go conn.Run(context.Background(), false)
 
 	time.Sleep(1 * time.Second)
 	res, err := conn.Client().LiteServerGetMasterchainInfo(context.Background())
@@ -60,5 +60,41 @@ func Test_connection_Run(t *testing.T) {
 	newMasterHead := conn.MasterHead()
 	if masterHead.Seqno+1 != newMasterHead.Seqno {
 		t.Fatalf("want seqno: %v, got: %v", res.Last.Seqno, newMasterHead.Seqno)
+	}
+}
+
+func Test_connection_FindMinAvailableMasterchainSeqno(t *testing.T) {
+	tests := []struct {
+		name         string
+		host         string
+		key          string
+		wantMinSeqno uint32
+	}{
+		{
+			name:         "querying regular node",
+			host:         "5.9.10.15:48014",
+			key:          "3XO67K/qi+gu3T9v8G2hx1yNmWZhccL3O7SoosFo8G0=",
+			wantMinSeqno: 36283540,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pubkey, err := base64.StdEncoding.DecodeString(tt.key)
+			if err != nil {
+				panic(err)
+			}
+			c, err := liteclient.NewConnection(context.Background(), pubkey, tt.host)
+			conn := &connection{
+				client:              liteclient.NewClient(c),
+				masterHeadUpdatedCh: make(chan masterHeadUpdated, 100),
+			}
+			seqno, err := conn.FindMinAvailableMasterchainSeqno(context.Background())
+			if err != nil {
+				t.Fatalf("FindMinAvailableMasterchainSeqno() failed: %v", err)
+			}
+			if seqno < tt.wantMinSeqno {
+				t.Fatalf("want seqno: %v, got: %v", tt.wantMinSeqno, seqno)
+			}
+		})
 	}
 }

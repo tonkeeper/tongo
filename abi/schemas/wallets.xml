@@ -13,6 +13,18 @@
         created_lt:uint64 created_at:uint32
         init:(Maybe (Either StateInit ^StateInit))
         body:(Either ExtOutMsgBody ^ExtOutMsgBody) = MessageRelaxed;
+
+        int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+        src:MsgAddress dest:MsgAddressInt
+        value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+        created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+
+        message$_ {X:Type} info:CommonMsgInfoRelaxed
+        init:(Maybe (Either StateInit ^StateInit))
+        body:(Either MessageRelaxed ^MessageRelaxed) = HighloadWalletV3MessageRelaxed;
+
+        query_id#_ shift:uint13 bit_number:(## 10) = HighloadV3QueryId;
+        msg_inner#_ {n:#}  subwallet_id:uint32 message_to_send:^MessageRelaxed send_mode:uint8 query_id:HighloadV3QueryId created_at:uint64 timeout:uint22 = HighloadV3MsgInner;
     </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
@@ -102,20 +114,26 @@
     </interface>
     <interface name="wallet_highload_v3r1"  inherits="wallet">
         <code_hash>11acad7955844090f283bf238bc1449871f783e7cc0979408d3f4859483e8525</code_hash>
+        <get_method name="get_public_key"/>
+        <get_method name="get_subwallet_id"/>
+        <get_method name="get_timeout"/>
+        <msg_in>
+            <ext_in name="highload_wallet_signed_v3"/>
+        </msg_in>
     </interface>
 
     <get_method name="seqno">
-        <output>
+        <output fixed_length="true">
             <int name="state">uint32</int>
         </output>
     </get_method>
     <get_method name="get_public_key">
-        <output>
+        <output fixed_length="true">
             <int name="public_key">int257</int>
         </output>
     </get_method>
     <get_method name="get_subwallet_id" >
-        <output>
+        <output fixed_length="true">
             <int name="subwallet_id">uint32</int>
         </output>
     </get_method>
@@ -136,6 +154,16 @@
             <int name="success">bool</int>
         </output>
     </get_method>
+    <get_method name="get_timeout">
+        <output fixed_length="true">
+            <int name="timeout">uint32</int>
+        </output>
+    </get_method>
+    <get_method name="get_last_clean_time">
+        <output fixed_length="true">
+            <int name="timestamp">uint64</int>
+        </output>
+    </get_method>
     <ext_in name="wallet_signed_v3">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletV1toV4Payload =
         ExternalMsgBody;
@@ -143,5 +171,8 @@
     <ext_in name="wallet_signed_v4">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
         payload:WalletV1toV4Payload = ExternalMsgBody;
+    </ext_in>
+    <ext_in name="highload_wallet_signed_v3">
+        signed#_ {n:#} signature:bits512 msg:^HighloadV3MsgInner = ExternalMsgBody;
     </ext_in>
 </abi>

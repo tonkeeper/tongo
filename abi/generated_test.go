@@ -1076,6 +1076,136 @@ func TestDecodeExternalIn(t *testing.T) {
 		wantValue  func() any
 	}{
 		{
+			name:       "highload wallet v3 - jetton transfer",
+			interfaces: []ContractInterface{WalletHighloadV3R1},
+			wantOpName: "HighloadWalletSignedV3",
+			boc:        "te6ccgECBAEAAQwAAcWIAdJ6F/XoVT62daLt612xzAWuJPA9cAk+F5bifcMnw3uuBJ4krVRznuQJVWa7b5YZXZbyhQ9ypfRice+gJkPTVJGL6qLnQi57P4N9vIIvjbTxPvBBeSn5Vdk4jbhh2DI5iDQBASUAAAABA//61AAAAADMMooIAB9EAgFoYgBch4rJB2cPeC7H+qWhc5NL4Tn35ZEO/PqhjjJtLxbjISC+vCAAAAAAAAAAAAAAAAAAAQMArg+KfqUAAAAAAAAAADD0JAgA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpEEAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgII8NGAA==",
+			wantValue: func() any {
+				b := HighloadWalletSignedV3ExtInMsgBody{
+					Signature: tlb.Bits512{},
+					Msg: HighloadV3MsgInner{
+						SubwalletId: 1,
+						SendMode:    3,
+						MessageToSend: MessageRelaxed{
+							SumType: "MessageInternal",
+							MessageInternal: struct {
+								IhrDisabled bool
+								Bounce      bool
+								Bounced     bool
+								Src         tlb.MsgAddress
+								Dest        tlb.MsgAddress
+								Value       tlb.CurrencyCollection
+								IhrFee      tlb.Grams
+								FwdFee      tlb.Grams
+								CreatedLt   uint64
+								CreatedAt   uint32
+								Init        *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+								Body        tlb.EitherRef[InMsgBody]
+							}{
+								IhrDisabled: true,
+								Bounce:      true,
+								Src:         tlb.MsgAddress{SumType: "AddrNone"},
+								Dest:        mustToMsgAddress("0:b90f15920ece1ef05d8ff54b42e72697c273efcb221df9f5431c64da5e2dc642"),
+								Value: tlb.CurrencyCollection{
+									Grams: tlb.Grams(400000000),
+								},
+								IhrFee:    0,
+								FwdFee:    0,
+								CreatedLt: 0,
+								CreatedAt: 0,
+								Init:      nil,
+								Body: tlb.EitherRef[InMsgBody]{
+									IsRight: true,
+									Value: InMsgBody{
+										SumType: "JettonTransfer",
+										OpCode:  pointer(uint32(260734629)),
+										Value: JettonTransferMsgBody{
+											QueryId:             0,
+											Amount:              mustToVarUInteger16("1000000"),
+											Destination:         pointer(ton.MustParseAccountID("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220")).ToMsgAddress(),
+											ResponseDestination: pointer(ton.MustParseAccountID("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220")).ToMsgAddress(),
+											CustomPayload:       nil,
+											ForwardTonAmount:    mustToVarUInteger16("300000000"),
+											ForwardPayload: tlb.EitherRef[JettonPayload]{
+												IsRight: false,
+											},
+										},
+									},
+								},
+							},
+						},
+						QueryId: HighloadV3QueryId{
+							Shift:     8191,
+							BitNumber: 362,
+						},
+						CreatedAt: 1712932100,
+						Timeout:   1000,
+					},
+				}
+				sig, _ := hex.DecodeString("8801d27a17f5e8553eb675a2edeb5db1cc05ae24f03d70093e1796e27dc327c37bae049e24ad54739ee4095566bb6f96195d96f2850f72a5f46271efa02643d3")
+				copy(b.Signature[:], sig)
+				return b
+			},
+		},
+		{
+			name:       "highload wallet v3 - ton transfer",
+			interfaces: []ContractInterface{WalletHighloadV3R1},
+			wantOpName: "HighloadWalletSignedV3",
+			boc:        "b5ee9c720101030100b10001c588004a3c91f996eb4f3f3799bde7f22005b44a622abcd3ab5ef4b793bf996422542c02b30423be3ecfd979bb1d41e0e8bf5154e58af1e3dea23e35edfd837919c34bb530f91a7c3ae7adc9aac317a5a630b2c52a82bf889a83a9a4a48471247bacd874010125000010ad0300219600000000cc27b04c0070840200664200126de9fd8617ede66d3dd8eb09d01259144017ca508a603776919e6a83ed24581cc4b40000000000000000000000000000",
+			wantValue: func() any {
+				b := HighloadWalletSignedV3ExtInMsgBody{
+					Signature: tlb.Bits512{},
+					Msg: HighloadV3MsgInner{
+						SubwalletId: 4269,
+						SendMode:    3,
+						MessageToSend: MessageRelaxed{
+							SumType: "MessageInternal",
+							MessageInternal: struct {
+								IhrDisabled bool
+								Bounce      bool
+								Bounced     bool
+								Src         tlb.MsgAddress
+								Dest        tlb.MsgAddress
+								Value       tlb.CurrencyCollection
+								IhrFee      tlb.Grams
+								FwdFee      tlb.Grams
+								CreatedLt   uint64
+								CreatedAt   uint32
+								Init        *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+								Body        tlb.EitherRef[InMsgBody]
+							}{
+								IhrDisabled: true,
+								Src: tlb.MsgAddress{
+									SumType: "AddrNone",
+								},
+								Dest: mustToMsgAddress("0:24dbd3fb0c2fdbccda7bb1d613a024b228802f94a114c06eed233cd507da48b0"),
+								Value: tlb.CurrencyCollection{
+									Grams: tlb.Grams(10000000),
+								},
+								IhrFee:    0,
+								FwdFee:    0,
+								CreatedLt: 0,
+								CreatedAt: 0,
+								Init:      nil,
+								Body: tlb.EitherRef[InMsgBody]{
+									IsRight: false,
+								},
+							},
+						},
+						QueryId: HighloadV3QueryId{
+							Shift:     4,
+							BitNumber: 203,
+						},
+						CreatedAt: 1712576550,
+						Timeout:   3600,
+					},
+				}
+				sig, _ := hex.DecodeString("88004a3c91f996eb4f3f3799bde7f22005b44a622abcd3ab5ef4b793bf996422542c02b30423be3ecfd979bb1d41e0e8bf5154e58af1e3dea23e35edfd837919")
+				copy(b.Signature[:], sig)
+				return b
+			},
+		},
+		{
 			name:       "wallet v4",
 			interfaces: []ContractInterface{WalletV4R2},
 			wantOpName: "WalletSignedV4",
@@ -1223,7 +1353,7 @@ func TestDecodeExternalIn(t *testing.T) {
 				t.Fatalf("MessageDecoder() error: %v", err)
 			}
 			if *opName != tt.wantOpName {
-				t.Fatalf("got opname: %v, want: %v", opName, tt.wantOpName)
+				t.Fatalf("got opname: %v, want: %v", *opName, tt.wantOpName)
 			}
 			b, err := json.Marshal(value)
 			if err != nil {

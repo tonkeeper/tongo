@@ -339,6 +339,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetJettonData,
 	},
 	{
+		Name:     "get_last_clean_time",
+		InvokeFn: GetLastCleanTime,
+	},
+	{
 		Name:     "get_last_fill_up_time",
 		InvokeFn: GetLastFillUpTime,
 	},
@@ -469,6 +473,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_telemint_token_name",
 		InvokeFn: GetTelemintTokenName,
+	},
+	{
+		Name:     "get_timeout",
+		InvokeFn: GetTimeout,
 	},
 	{
 		Name:     "get_torrent_hash",
@@ -755,7 +763,11 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("11acad7955844090f283bf238bc1449871f783e7cc0979408d3f4859483e8525"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV3R1},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			GetPublicKey,
+			GetSubwalletId,
+			GetTimeout,
+		},
 	},
 	ton.MustParseHash("1bd9c5a39bffb7a0f341588b5dd92b813a842bf65ef14109382200ceaf8f72df"): {
 		contractInterfaces: []ContractInterface{NftAuctionGetgemsV3},
@@ -941,6 +953,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
+	case WalletHighloadV3R1:
+		return []msgDecoderFunc{
+			decodeFuncHighloadWalletSignedV3ExtInMsgBody,
+		}
 	case WalletV3R1:
 		return []msgDecoderFunc{
 			decodeFuncWalletSignedV3ExtInMsgBody,

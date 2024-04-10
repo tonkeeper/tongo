@@ -1877,18 +1877,22 @@ var (
 	decodeFuncWalletSignedV3ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, WalletSignedV3ExtInMsgOp, WalletSignedV3ExtInMsgBody{})
 	// 0x00000000
 	decodeFuncWalletSignedV4ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, WalletSignedV4ExtInMsgOp, WalletSignedV4ExtInMsgBody{})
+	// 0x00000000
+	decodeFuncHighloadWalletSignedV3ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, HighloadWalletSignedV3ExtInMsgOp, HighloadWalletSignedV3ExtInMsgBody{})
 )
 
 var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{}
 
 const (
-	WalletSignedV3ExtInMsgOp MsgOpName = "WalletSignedV3"
-	WalletSignedV4ExtInMsgOp MsgOpName = "WalletSignedV4"
+	WalletSignedV3ExtInMsgOp         MsgOpName = "WalletSignedV3"
+	WalletSignedV4ExtInMsgOp         MsgOpName = "WalletSignedV4"
+	HighloadWalletSignedV3ExtInMsgOp MsgOpName = "HighloadWalletSignedV3"
 )
 
 const (
-	WalletSignedV3ExtInMsgOpCode MsgOpCode = 0x00000000
-	WalletSignedV4ExtInMsgOpCode MsgOpCode = 0x00000000
+	WalletSignedV3ExtInMsgOpCode         MsgOpCode = 0x00000000
+	WalletSignedV4ExtInMsgOpCode         MsgOpCode = 0x00000000
+	HighloadWalletSignedV3ExtInMsgOpCode MsgOpCode = 0x00000000
 )
 
 type WalletSignedV3ExtInMsgBody struct {
@@ -1908,9 +1912,15 @@ type WalletSignedV4ExtInMsgBody struct {
 	Payload     WalletV1ToV4Payload
 }
 
+type HighloadWalletSignedV3ExtInMsgBody struct {
+	Signature tlb.Bits512
+	Msg       HighloadV3MsgInner `tlb:"^"`
+}
+
 var KnownMsgExtInTypes = map[string]any{
-	WalletSignedV3ExtInMsgOp: WalletSignedV3ExtInMsgBody{},
-	WalletSignedV4ExtInMsgOp: WalletSignedV4ExtInMsgBody{},
+	WalletSignedV3ExtInMsgOp:         WalletSignedV3ExtInMsgBody{},
+	WalletSignedV4ExtInMsgOp:         WalletSignedV4ExtInMsgBody{},
+	HighloadWalletSignedV3ExtInMsgOp: HighloadWalletSignedV3ExtInMsgBody{},
 }
 
 var (

@@ -25,6 +25,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_editor":                    {DecodeGetEditorResult},
 	"get_full_domain":               {DecodeGetFullDomainResult},
 	"get_jetton_data":               {DecodeGetJettonDataResult},
+	"get_last_clean_time":           {DecodeGetLastCleanTimeResult},
 	"get_last_fill_up_time":         {DecodeGetLastFillUpTimeResult},
 	"get_locker_bill_data":          {DecodeGetLockerBillDataResult},
 	"get_locker_data":               {DecodeGetLockerDataResult},
@@ -63,6 +64,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_telemint_auction_config":   {DecodeGetTelemintAuctionConfigResult},
 	"get_telemint_auction_state":    {DecodeGetTelemintAuctionStateResult},
 	"get_telemint_token_name":       {DecodeGetTelemintTokenNameResult},
+	"get_timeout":                   {DecodeGetTimeoutResult},
 	"get_torrent_hash":              {DecodeGetTorrentHashResult},
 	"get_validator_controller_data": {DecodeGetValidatorControllerDataResult},
 	"get_wallet_address":            {DecodeGetWalletAddressResult},
@@ -89,6 +91,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	78748:  {GetPublicKey},
 	80035:  {GetLpData},
 	80697:  {GetAuctionInfo},
+	80822:  {GetLastCleanTime},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
@@ -114,6 +117,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	103232: {GetValidatorControllerData},
 	104122: {GetLpMiningData},
 	104346: {GetStorageParams},
+	105070: {GetTimeout},
 	106029: {GetJettonData},
 	107305: {GetLockupData},
 	107307: {GetMultisigData},
@@ -150,6 +154,7 @@ var resultTypes = []interface{}{
 	&GetEditorResult{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
+	&GetLastCleanTimeResult{},
 	&GetLastFillUpTimeResult{},
 	&GetLockerBillDataResult{},
 	&GetLockerDataResult{},
@@ -191,6 +196,7 @@ var resultTypes = []interface{}{
 	&GetTelemintAuctionConfigResult{},
 	&GetTelemintAuctionStateResult{},
 	&GetTelemintTokenNameResult{},
+	&GetTimeoutResult{},
 	&GetTorrentHashResult{},
 	&GetValidatorControllerDataResult{},
 	&GetWalletAddressResult{},
@@ -728,6 +734,39 @@ func DecodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	var result GetJettonDataResult
 	err = stack.Unmarshal(&result)
 	return "GetJettonDataResult", result, err
+}
+
+type GetLastCleanTimeResult struct {
+	Timestamp uint64
+}
+
+func GetLastCleanTime(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 80822 for "get_last_clean_time" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 80822, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLastCleanTimeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLastCleanTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLastCleanTimeResult
+	err = stack.Unmarshal(&result)
+	return "GetLastCleanTimeResult", result, err
 }
 
 type GetLastFillUpTimeResult struct {
@@ -2292,6 +2331,39 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 	var result GetTelemintTokenNameResult
 	err = stack.Unmarshal(&result)
 	return "GetTelemintTokenNameResult", result, err
+}
+
+type GetTimeoutResult struct {
+	Timeout uint32
+}
+
+func GetTimeout(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 105070 for "get_timeout" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 105070, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTimeoutResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetTimeoutResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetTimeoutResult
+	err = stack.Unmarshal(&result)
+	return "GetTimeoutResult", result, err
 }
 
 type GetTorrentHashResult struct {

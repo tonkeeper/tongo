@@ -301,6 +301,40 @@ type AccountLists struct {
 	List tlb.Hashmap[tlb.Bits256, tlb.Any]
 }
 
+type CommonMsgInfoRelaxed struct {
+	Magic       tlb.Magic `tlb:"$0"`
+	IhrDisabled bool
+	Bounce      bool
+	Bounced     bool
+	Src         tlb.MsgAddress
+	Dest        tlb.MsgAddress
+	Value       tlb.CurrencyCollection
+	IhrFee      tlb.Grams
+	FwdFee      tlb.Grams
+	CreatedLt   uint64
+	CreatedAt   uint32
+}
+
+type HighloadV3MsgInner struct {
+	SubwalletId   uint32
+	MessageToSend MessageRelaxed `tlb:"^"`
+	SendMode      uint8
+	QueryId       HighloadV3QueryId
+	CreatedAt     uint64
+	Timeout       tlb.Uint22
+}
+
+type HighloadV3QueryId struct {
+	Shift     tlb.Uint13
+	BitNumber tlb.Uint10
+}
+
+type HighloadWalletV3MessageRelaxed struct {
+	Info CommonMsgInfoRelaxed
+	Init *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+	Body tlb.EitherRef[MessageRelaxed]
+}
+
 type MessageRelaxed struct {
 	tlb.SumType
 	MessageInternal struct {

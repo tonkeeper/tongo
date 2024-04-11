@@ -14,7 +14,7 @@
 
 
     <interface name="multisig_v2">
-        <code_hash>4e84760554543d7fc12cc3882646070e8655ebcf324af77c5c3b3b68e3103997</code_hash>
+        <code_hash>d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac</code_hash>
         <error code="1007">Unauthorized proposer</error>
         <error code="1008">Invalid new order</error>
         <error code="100">Not enough ton</error>
@@ -28,14 +28,14 @@
     </interface>
 
     <interface name="multisig_order_v2">
-        <code_hash>6305a8061c856c2ccf05dcb0df5815c71475870567cab5f049e340bcf59251f3</code_hash>
+        <code_hash>a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc</code_hash> <!-- with library -->
         <error code="104">Unauthorized init</error>
         <error code="105">Already inited</error>
         <error code="106">Unauthorized sign</error>
         <error code="107">Already approved</error>
         <error code="111">Expired</error>
         <error code="112">Already executed</error>
-        <error code="0xffff">Unknown op</error>
+        <error code="65535">Unknown op</error>
     </interface>
 
 

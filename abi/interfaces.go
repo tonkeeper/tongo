@@ -771,10 +771,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetNftData,
 		},
 	},
-	ton.MustParseHash("4e84760554543d7fc12cc3882646070e8655ebcf324af77c5c3b3b68e3103997"): {
-		contractInterfaces: []ContractInterface{MultisigV2},
-		getMethods:         []InvokeFn{},
-	},
 	ton.MustParseHash("587cc789eff1c84f46ec3797e45fc809a14ff5ae24f1e0c7a6a99cc9dc9061ff"): {
 		contractInterfaces: []ContractInterface{WalletV1R3},
 		getMethods: []InvokeFn{
@@ -787,10 +783,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			Seqno,
 		},
-	},
-	ton.MustParseHash("6305a8061c856c2ccf05dcb0df5815c71475870567cab5f049e340bcf59251f3"): {
-		contractInterfaces: []ContractInterface{MultisigOrderV2},
-		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("64dd54805522c5be8a9db59cea0105ccf0d08786ca79beb8cb79e880a8d7322d"): {
 		contractInterfaces: []ContractInterface{WalletV4R1},
@@ -828,6 +820,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletHighloadV2},
 		getMethods:         []InvokeFn{},
 	},
+	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
+		contractInterfaces: []ContractInterface{MultisigOrderV2},
+		getMethods:         []InvokeFn{},
+	},
 	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
 		contractInterfaces: []ContractInterface{WalletV1R1},
 		getMethods:         []InvokeFn{},
@@ -837,6 +833,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			Seqno,
 		},
+	},
+	ton.MustParseHash("d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac"): {
+		contractInterfaces: []ContractInterface{MultisigV2},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c"): {
 		contractInterfaces: []ContractInterface{WalletV1R2},

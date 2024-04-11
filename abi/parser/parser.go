@@ -33,6 +33,10 @@ type Interface struct {
 	} `xml:"msg_out"`
 	CodeHashes []string `xml:"code_hash"`
 	Inherits   string   `xml:"inherits,attr"`
+	Errors     []struct {
+		Text string `xml:",chardata"`
+		Code int    `xml:"code,attr"`
+	} `xml:"error"`
 }
 
 type InterfaceMessage struct {

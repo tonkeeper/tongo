@@ -113,6 +113,11 @@ func main() {
 		panic(err)
 	}
 
+	contractErrors, err := gen.RenderContractErrors()
+	if err != nil {
+		panic(err)
+	}
+
 	for _, f := range [][]string{
 		{types, "types.go", `"github.com/tonkeeper/tongo/tlb"`, `"fmt"`, `"encoding/json"`},
 		{msgDecoder, "messages_generated.go", `"github.com/tonkeeper/tongo/tlb"`},
@@ -120,6 +125,7 @@ func main() {
 		{invocationOrder, "interfaces.go", `"github.com/tonkeeper/tongo/ton"`},
 		{jettons, "jetton_msg_types.go", `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{nfts, "nfts_msg_types.go", `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
+		{contractErrors, "contracts_errors.go"},
 	} {
 		file, err := os.Create(f[1])
 		if err != nil {

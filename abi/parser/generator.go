@@ -58,6 +58,8 @@ var (
 	messagesTemplate string
 	//go:embed payloads.tmpl
 	payloadTmpl string
+	//go:embed errors.tmpl
+	contractErrorsTmpl string
 )
 
 type MsgType int
@@ -747,4 +749,28 @@ func getOrderedKeys[M ~map[tlb.Tag]V, V any](m M) []tlb.Tag {
 		return keys[i].Val < keys[j].Val
 	})
 	return keys
+}
+
+func (g *Generator) RenderContractErrors() (string, error) {
+	tmpl, err := template.New("contractErrors").Parse(contractErrorsTmpl)
+	if err != nil {
+		return "", err
+	}
+	var context = struct {
+		Interfaces map[string]map[int]string
+	}{
+		Interfaces: map[string]map[int]string{},
+	}
+	for _, iface := range g.abi.Interfaces {
+		ifaceName := utils.ToCamelCase(iface.Name)
+		context.Interfaces[ifaceName] = map[int]string{}
+		for _, e := range iface.Errors {
+			context.Interfaces[ifaceName][e.Code] = e.Text
+		}
+	}
+	var buf bytes.Buffer
+
+	err = tmpl.Execute(&buf, context)
+	return buf.String(), err
+
 }

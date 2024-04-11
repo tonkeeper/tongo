@@ -458,6 +458,7 @@ func TestMessageDecoder(t *testing.T) {
 		boc          string
 		wantOpName   MsgOpName
 		wantValue    any
+		interfaces   []ContractInterface
 		wantValidate func(t *testing.T, value any)
 	}{
 		{
@@ -992,6 +993,18 @@ func TestMessageDecoder(t *testing.T) {
 				}
 			},
 		},
+		{
+			name:       "to call burn",
+			boc:        "b5ee9c72010102010068000163235caf5200000000000000008009c6cc9f5dd029f7b6d83966dae5758a5a2bc30d823d9acc9fc367e34f9fb003a805f5e101010062595f07bc00000000000000003989680800e5944d41c7c4db84cec5670a26da5cb9afe0adfbcaa0699923fe88638b558d0c",
+			wantOpName: JettonCallToMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				call := value.(JettonCallToMsgBody)
+				if call.MasterMsg.SumType != "Burn" {
+					t.Error("invalid master message type")
+				}
+			},
+			interfaces: []ContractInterface{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1003,7 +1016,7 @@ func TestMessageDecoder(t *testing.T) {
 				}
 				c = cells[0]
 			}
-			_, opName, value, err := InternalMessageDecoder(c, nil)
+			_, opName, value, err := InternalMessageDecoder(c, tt.interfaces)
 			if err != nil {
 				t.Fatalf("MessageDecoder() error: %v", err)
 			}

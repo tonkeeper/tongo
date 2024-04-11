@@ -53,7 +53,7 @@ func GetContractError(interfaces []ContractInterface, code int32) *string {
 	errors := defaultExitCodes
 	for _, i := range interfaces {
 		e, ok := contractErrors[i]
-		if !ok {
+		if ok {
 			errors = e
 			break
 		}

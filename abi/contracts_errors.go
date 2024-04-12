@@ -50,15 +50,14 @@ var defaultExitCodes = map[int32]string{
 }
 
 func GetContractError(interfaces []ContractInterface, code int32) *string {
-	errors := defaultExitCodes
 	for _, i := range interfaces {
-		e, ok := contractErrors[i]
-		if ok {
-			errors = e
-			break
+		if errors, ok := contractErrors[i]; ok {
+			if msg, ok := errors[code]; ok {
+				return &msg
+			}
 		}
 	}
-	if msg, ok := errors[code]; ok {
+	if msg, ok := defaultExitCodes[code]; ok {
 		return &msg
 	}
 	return nil

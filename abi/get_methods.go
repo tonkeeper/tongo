@@ -36,6 +36,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_members_raw":               {DecodeGetMembersRaw_WhalesNominatorResult},
 	"get_mining_data":               {DecodeGetMiningData_MegatonResult},
 	"get_multisig_data":             {DecodeGetMultisigDataResult},
+	"get_next_admin_address":        {DecodeGetNextAdminAddressResult},
 	"get_next_proof_info":           {DecodeGetNextProofInfoResult},
 	"get_nft_address_by_index":      {DecodeGetNftAddressByIndexResult},
 	"get_nft_api_info":              {DecodeGetNftApiInfoResult},
@@ -53,6 +54,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_router_data":               {DecodeGetRouterData_StonfiResult},
 	"get_sale_data":                 {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
 	"get_staking_status":            {DecodeGetStakingStatusResult},
+	"get_status":                    {DecodeGetStatusResult},
 	"get_storage_contract_address":  {DecodeGetStorageContractAddressResult},
 	"get_storage_contract_data":     {DecodeGetStorageContractDataResult},
 	"get_storage_params":            {DecodeGetStorageParamsResult},
@@ -83,6 +85,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
+	78683:  {GetNextAdminAddress},
 	78748:  {GetPublicKey},
 	80035:  {GetLpData},
 	80697:  {GetAuctionInfo},
@@ -105,6 +108,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	96705:  {GetBillAmount},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
+	100881: {GetStatus},
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
@@ -157,6 +161,7 @@ var resultTypes = []interface{}{
 	&GetMembersRaw_WhalesNominatorResult{},
 	&GetMiningData_MegatonResult{},
 	&GetMultisigDataResult{},
+	&GetNextAdminAddressResult{},
 	&GetNextProofInfoResult{},
 	&GetNftAddressByIndexResult{},
 	&GetNftApiInfoResult{},
@@ -177,6 +182,7 @@ var resultTypes = []interface{}{
 	&GetSaleData_GetgemsAuctionResult{},
 	&GetSaleData_GetgemsResult{},
 	&GetStakingStatusResult{},
+	&GetStatusResult{},
 	&GetStorageContractAddressResult{},
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
@@ -1138,6 +1144,39 @@ func DecodeGetMultisigDataResult(stack tlb.VmStack) (resultType string, resultAn
 	return "GetMultisigDataResult", result, err
 }
 
+type GetNextAdminAddressResult struct {
+	NextAdminAddress tlb.MsgAddress
+}
+
+func GetNextAdminAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 78683 for "get_next_admin_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 78683, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetNextAdminAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetNextAdminAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetNextAdminAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetNextAdminAddressResult", result, err
+}
+
 type GetNextProofInfoResult struct {
 	NextProof     uint64
 	LastProofTime uint32
@@ -1901,6 +1940,39 @@ func DecodeGetStakingStatusResult(stack tlb.VmStack) (resultType string, resultA
 	var result GetStakingStatusResult
 	err = stack.Unmarshal(&result)
 	return "GetStakingStatusResult", result, err
+}
+
+type GetStatusResult struct {
+	Status uint8
+}
+
+func GetStatus(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 100881 for "get_status" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 100881, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStatusResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetStatusResult
+	err = stack.Unmarshal(&result)
+	return "GetStatusResult", result, err
 }
 
 type GetStorageContractAddressResult struct {

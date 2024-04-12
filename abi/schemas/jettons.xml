@@ -60,6 +60,18 @@
         </output>
     </get_method>
 
+    <!-- governance jettons -->
+    <get_method name="get_status">
+        <output name="jetton"  fixed_length="true">
+            <int name="status">uint8</int>
+        </output>
+    </get_method>
+    <get_method name="get_next_admin_address">
+        <output name="jetton"  fixed_length="true">
+            <slice name="next_admin_address">msgaddress</slice>
+        </output>
+    </get_method>
+
 
     <!--        Jettons    -->
     <internal name="jetton_transfer" >

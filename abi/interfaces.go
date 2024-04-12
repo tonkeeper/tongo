@@ -379,6 +379,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetMultisigData,
 	},
 	{
+		Name:     "get_next_admin_address",
+		InvokeFn: GetNextAdminAddress,
+	},
+	{
 		Name:     "get_next_proof_info",
 		InvokeFn: GetNextProofInfo,
 	},
@@ -433,6 +437,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_staking_status",
 		InvokeFn: GetStakingStatus,
+	},
+	{
+		Name:     "get_status",
+		InvokeFn: GetStatus,
 	},
 	{
 		Name:     "get_storage_contract_data",

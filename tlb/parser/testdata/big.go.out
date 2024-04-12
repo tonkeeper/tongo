@@ -316,7 +316,7 @@ func (t *ContentData) MarshalJSON() ([]byte, error) {
 type FullContent struct {
 	tlb.SumType
 	Onchain struct {
-		Data tlb.HashmapE[tlb.Bits256, ContentData]
+		Data tlb.HashmapE[tlb.Bits256, tlb.Ref[ContentData]]
 	} `tlbSumType:"#00"`
 	Offchain struct {
 		Uri tlb.Text

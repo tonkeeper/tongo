@@ -11,15 +11,46 @@
         <get_method name="get_sale_data" version="getgems_auction"/>
     </interface>
     <interface name="nft_sale_getgems_v3" inherits="nft_sale_v2">
+        <code_hash>24221fa571e542e055c77bedfdbf527c7af460cfdc7f344c450787b4cfa1eb4d</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages%2Fcontracts%2Fsources%2Fnft-fixprice-sale-v3r3.fc -->
         <code_hash>deb53b6c5765c1e6cd238bf47bc5e83ba596bdcc04b0b84cd50ab1e474a08f31</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages%2Fcontracts%2Fsources%2Fnft-fixprice-sale-v3r2.fc -->
         <code_hash>32050dfac44f64866bcc86f2cd9e1305fe9dcadb3959c002237cfb0902d44323</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages%2Fcontracts%2Fsources%2Fnft-fixprice-sale-v3.fc -->
+        <error code="404">Already sold or cancelled</error>
+        <error code="405">Mode 32 not allowed</error>
+        <error code="406">Can't execute command at this time</error>
+        <error code="408">Inconsistent price and fees</error>
+        <error code="409">Inconsistent price and fees</error>
+        <error code="410">Inconsistent price and fees</error>
+        <error code="500">Unauthorized initiation</error>
+        <error code="501">Invalid op, expected ownership_assigned</error>
+        <error code="450">Not enough TONs for sale</error>
+        <error code="457">Not enough TONs for cancellation</error>
+        <error code="458">Unauthorized cancellation</error>
+        <error code="65535">Unknown operation</error>
     </interface>
     <interface name="nft_sale_getgems_v2" inherits="nft_sale_v2">
         <code_hash>8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages%2Fcontracts%2Fsources%2Fnft-fixprice-sale-v2.fc -->
+        <error code="404">Already sold or cancelled</error>
+        <error code="500">Unauthorized initiation</error>
+        <error code="501">Invalid op, expected ownership_assigned</error>
+        <error code="450">Not enough TONs for sale</error>
+        <error code="457">Not enough TONs for cancellation</error>
+        <error code="458">Unauthorized cancellation</error>
+        <error code="65535">Unknown operation</error>
     </interface>
     <interface name="nft_auction_getgems_v3" inherits="nft_auction_v1">
         <code_hash>1bd9c5a39bffb7a0f341588b5dd92b813a842bf65ef14109382200ceaf8f72df</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages%2Fcontracts%2Fsources%2Fnft-auction-v3r2%2Fnft-auction-v3r2.func -->
         <code_hash>6668872fa79705443ffd47523e8e9ea9f76ab99f9a0b59d27de8f81a1c27b9d4</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages%2Fcontracts%2Fsources%2Fnft-auction-v2%2Fnft-auction-v2.func -->
+        <error code="403">Unauthorized address</error>
+        <error code="1000">Low bid</error>
+        <error code="1001">Already initiated</error>
+        <error code="1002">Invalid op, expect ownership_assigned</error>
+        <error code="1003">Invalid op, expect ownership_assigned</error>
+        <error code="1005">Already executed</error>
+        <error code="1006">Already activated</error>
+        <error code="1008">Not enough TONs</error>
+        <error code="1009">Already has bid</error>
+        <error code="1010">Auction in progress</error>
+        <error code="65535">Unknown operation</error>
     </interface>
     <get_method name="get_sale_data">
         <output version="basic" fixed_length="true">

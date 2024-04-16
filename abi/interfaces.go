@@ -12,6 +12,7 @@ const (
 	DedustVault
 	Dns
 	Editable
+	GramMiner
 	JettonMaster
 	JettonWallet
 	Locker
@@ -73,6 +74,8 @@ func (c ContractInterface) String() string {
 		return "dns"
 	case Editable:
 		return "editable"
+	case GramMiner:
+		return "gram_miner"
 	case JettonMaster:
 		return "jetton_master"
 	case JettonWallet:
@@ -186,6 +189,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return Dns
 	case "editable":
 		return Editable
+	case "gram_miner":
+		return GramMiner
 	case "jetton_master":
 		return JettonMaster
 	case "jetton_wallet":
@@ -417,6 +422,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_pool_status",
 		InvokeFn: GetPoolStatus,
+	},
+	{
+		Name:     "get_pow_params",
+		InvokeFn: GetPowParams,
 	},
 	{
 		Name:     "get_public_key",
@@ -854,6 +863,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
+	ton.MustParseHash("ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1"): {
+		contractInterfaces: []ContractInterface{GramMiner},
+		getMethods: []InvokeFn{
+			GetPowParams,
+		},
+	},
 	ton.MustParseHash("d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac"): {
 		contractInterfaces: []ContractInterface{MultisigV2},
 		getMethods:         []InvokeFn{},
@@ -918,6 +933,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncDnsBalanceReleaseMsgBody,
 			decodeFuncProcessGovernanceDecisionMsgBody,
+		}
+	case GramMiner:
+		return []msgDecoderFunc{
+			decodeFuncSubmitProofOfWorkMsgBody,
 		}
 	case JettonMaster:
 		return []msgDecoderFunc{

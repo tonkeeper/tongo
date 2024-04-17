@@ -81,7 +81,7 @@ func (econn *encryptedConn) handshake(address Address, params params, keys x2551
 	return nil
 }
 
-func (econn *encryptedConn) handleIncomingPackages() chan Packet {
+func (econn *encryptedConn) handleIncomingPackets() chan Packet {
 	ch := make(chan Packet, 0)
 	go func() {
 		ioReader := bufio.NewReader(econn.conn)

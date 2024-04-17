@@ -29,10 +29,12 @@ type Connection struct {
 	host          string
 	resp          chan Packet
 
-	// mu protects status and econn.
-	mu     sync.Mutex
-	status ConnectionStatus
-	econn  *encryptedConn
+	// mu protects all fields below.
+	mu           sync.Mutex
+	status       ConnectionStatus
+	econn        *encryptedConn
+	pings        map[uint64]time.Time
+	avgRoundTrip time.Duration
 }
 
 func NewConnection(ctx context.Context, peerPublicKey []byte, host string) (*Connection, error) {
@@ -59,7 +61,8 @@ func (c *Connection) setupEncryptedConnection(ctx context.Context) error {
 
 	c.econn = econn
 	c.status = Connected
-	go c.reader(econn.handleIncomingPackages())
+	c.pings = make(map[uint64]time.Time, 5)
+	go c.reader(econn.handleIncomingPackets())
 	return nil
 }
 
@@ -82,7 +85,16 @@ func (c *Connection) reconnect() {
 	}
 }
 
+func averageRoundTrip(roundTrips []time.Duration) time.Duration {
+	total := time.Duration(0)
+	for _, rt := range roundTrips {
+		total += rt
+	}
+	return total / time.Duration(len(roundTrips))
+}
+
 func (c *Connection) reader(packetCh chan Packet) {
+	var roundTrips []time.Duration
 	for {
 		select {
 		case p, ok := <-packetCh:
@@ -91,7 +103,16 @@ func (c *Connection) reader(packetCh chan Packet) {
 				// setupEncryptedConnection will run another reader.
 				return
 			}
-			if p.MagicType() == magicTCPPong {
+			if p.MagicType() == magicTCPPong && len(p.Payload) == 12 {
+				roundTrip, ok := c.processPong(binary.LittleEndian.Uint64(p.Payload[4:]))
+				if ok {
+					roundTrips = append(roundTrips, roundTrip)
+					if len(roundTrips) > 5 {
+						roundTrips = roundTrips[1:]
+					}
+					avg := averageRoundTrip(roundTrips)
+					c.setAverageRoundTrip(avg)
+				}
 				// no need to do anything,
 				// the next iteration of this for loop will restart reconnect timeout.
 				continue
@@ -135,12 +156,48 @@ func (c *Connection) ping() {
 		if err != nil {
 			panic(err) // impossible if NewPacket function is correct
 		}
+		c.registerPing(binary.LittleEndian.Uint64(ping[4:]))
 		err = c.Send(p)
 		if err != nil && IsNotConnectedYet(err) {
 			fmt.Printf("%s ping error: %v\n", c.host, err)
 			continue
 		}
 	}
+}
+
+func (c *Connection) registerPing(randomID uint64) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	now := time.Now()
+	c.pings[randomID] = now
+	for id, t := range c.pings {
+		if t.Add(30 * time.Second).Before(now) {
+			delete(c.pings, id)
+		}
+	}
+}
+
+func (c *Connection) processPong(randomID uint64) (time.Duration, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if startTime, ok := c.pings[randomID]; ok {
+		delete(c.pings, randomID)
+		return time.Since(startTime), true
+	}
+	return 0, false
+}
+
+func (c *Connection) setAverageRoundTrip(avg time.Duration) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.avgRoundTrip = avg
+}
+
+// AverageRoundTrip returns an average round trip of the last several pings.
+func (c *Connection) AverageRoundTrip() time.Duration {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.avgRoundTrip
 }
 
 func (c *Connection) Status() ConnectionStatus {

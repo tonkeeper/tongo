@@ -3,7 +3,6 @@ package liteapi
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -63,7 +62,7 @@ const (
 // the account state can be obtained from a block that is earlier in the blockchain than the master head you obtained at step 1.
 // To avoid this, you can use WithBlock() method to specify a target block for all requests.
 type Client struct {
-	pool *pool.FailoverPool
+	pool *pool.ConnPool
 	// proofPolicy specifies a policy for proof checks.
 	proofPolicy ProofPolicy
 
@@ -89,6 +88,9 @@ type Options struct {
 	// DetectArchiveNodes specifies if a liteapi connection to a node
 	// should detect if its node is an archive node.
 	DetectArchiveNodes bool
+
+	SyncConnectionsInitialization bool
+	PoolStrategy                  pool.Strategy
 }
 
 type Option func(o *Options) error
@@ -107,6 +109,20 @@ func WithLiteServers(servers []config.LiteServer) Option {
 func WithMaxConnectionsNumber(maxConns int) Option {
 	return func(o *Options) error {
 		o.MaxConnections = maxConns
+		return nil
+	}
+}
+
+func WithAsyncConnectionsInit() Option {
+	return func(o *Options) error {
+		o.SyncConnectionsInitialization = false
+		return nil
+	}
+}
+
+func WithPoolStrategy(strategy pool.Strategy) Option {
+	return func(o *Options) error {
+		o.PoolStrategy = strategy
 		return nil
 	}
 }
@@ -243,51 +259,37 @@ func NewClientWithDefaultTestnet() (*Client, error) {
 
 // NewClient
 // Get options and create new lite client. If no options provided - download public config for mainnet from ton.org.
-func NewClient(opts ...Option) (*Client, error) {
-	options := &Options{
-		Timeout:            60 * time.Second,
-		MaxConnections:     defaultMaxConnectionsNumber,
-		InitCtx:            context.Background(),
-		ProofPolicy:        ProofPolicyUnsafe,
-		DetectArchiveNodes: false,
+func NewClient(options ...Option) (*Client, error) {
+	opts := &Options{
+		Timeout:                       60 * time.Second,
+		MaxConnections:                defaultMaxConnectionsNumber,
+		InitCtx:                       context.Background(),
+		ProofPolicy:                   ProofPolicyUnsafe,
+		DetectArchiveNodes:            false,
+		SyncConnectionsInitialization: true,
+		PoolStrategy:                  pool.BestPingStrategy,
 	}
-	for _, o := range opts {
-		if err := o(options); err != nil {
+	for _, o := range options {
+		if err := o(opts); err != nil {
 			return nil, err
 		}
 	}
-	if len(options.LiteServers) == 0 {
+	if len(opts.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
-	liteclients := make([]*liteclient.Client, 0, options.MaxConnections)
-	for _, ls := range options.LiteServers {
-		serverPubkey, err := base64.StdEncoding.DecodeString(ls.Key)
-		if err != nil {
-			continue
+	connPool := pool.New(opts.PoolStrategy)
+	initCh := connPool.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.DetectArchiveNodes, opts.LiteServers)
+	if opts.SyncConnectionsInitialization {
+		if err := <-initCh; err != nil {
+			return nil, err
 		}
-		c, err := liteclient.NewConnection(options.InitCtx, serverPubkey, ls.Host)
-		if err != nil {
-			continue
-		}
-		lc := liteclient.NewClient(c, liteclient.OptionTimeout(options.Timeout))
-		_, err = lc.LiteServerGetMasterchainInfo(options.InitCtx)
-		if err != nil {
-			continue
-		}
-		liteclients = append(liteclients, lc)
-		if len(liteclients) >= options.MaxConnections {
-			break
-		}
-	}
-	if len(liteclients) == 0 {
-		return nil, fmt.Errorf("all liteservers are unavailable")
 	}
 	client := Client{
-		pool:                    pool.NewFailoverPool(liteclients),
-		proofPolicy:             options.ProofPolicy,
-		archiveDetectionEnabled: options.DetectArchiveNodes,
+		pool:                    connPool,
+		proofPolicy:             opts.ProofPolicy,
+		archiveDetectionEnabled: opts.DetectArchiveNodes,
 	}
-	go client.pool.Run(context.TODO(), options.DetectArchiveNodes)
+	go client.pool.Run(context.TODO())
 	return &client, nil
 }
 
@@ -308,11 +310,19 @@ func (c *Client) WithBlock(block ton.BlockIDExt) *Client {
 }
 
 func (c *Client) GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerMasterchainInfoC, error) {
-	return c.pool.BestMasterchainInfoClient().LiteServerGetMasterchainInfo(ctx)
+	conn := c.pool.BestMasterchainInfoClient()
+	if conn == nil {
+		return liteclient.LiteServerMasterchainInfoC{}, pool.ErrNoConnections
+	}
+	return conn.LiteServerGetMasterchainInfo(ctx)
 }
 
 func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (liteclient.LiteServerMasterchainInfoExtC, error) {
-	return c.pool.BestMasterchainInfoClient().LiteServerGetMasterchainInfoExt(ctx, liteclient.LiteServerGetMasterchainInfoExtRequest{Mode: mode})
+	conn := c.pool.BestMasterchainInfoClient()
+	if conn == nil {
+		return liteclient.LiteServerMasterchainInfoExtC{}, pool.ErrNoConnections
+	}
+	return conn.LiteServerGetMasterchainInfoExt(ctx, liteclient.LiteServerGetMasterchainInfoExtRequest{Mode: mode})
 }
 
 func (c *Client) GetTime(ctx context.Context) (uint32, error) {

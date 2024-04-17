@@ -161,3 +161,7 @@ func (c *connection) setArchive(archive bool) {
 	defer c.mu.Unlock()
 	c.isArchive = archive
 }
+
+func (c *connection) AverageRoundTrip() time.Duration {
+	return c.client.AverageRoundTrip()
+}

@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/tonkeeper/tongo/config"
+	"github.com/tonkeeper/tongo/liteapi/pool"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 	"golang.org/x/exp/maps"
@@ -35,6 +36,75 @@ func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 	}
 	if cli.pool.ConnectionsNumber() != defaultMaxConnectionsNumber+1 {
 		t.Fatalf("want connections number: %v, got: %v", defaultMaxConnectionsNumber+1, cli.pool.ConnectionsNumber())
+	}
+}
+
+func TestAsyncInitialization(t *testing.T) {
+	accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+
+	cli, err := NewClient(Mainnet(),
+		WithMaxConnectionsNumber(10),
+		WithAsyncConnectionsInit())
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+
+	if cli.pool.ConnectionsNumber() != 0 {
+		t.Fatalf("expected 0 connections")
+	}
+
+	iterations := 0
+	noConnections := 0
+	for {
+		_, _, err = cli.RunSmcMethod(context.Background(), accountId, "seqno", tlb.VmStack{})
+		if errors.Is(err, pool.ErrNoConnections) {
+			noConnections += 1
+			fmt.Printf("No connections\n")
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		if err != nil {
+			log.Fatalf("Run smc error: %v", err)
+		}
+		if cli.pool.ConnectionsNumber() > 2 {
+			iterations += 1
+		}
+		if iterations > 3 {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+	if noConnections == 0 {
+		t.Fatalf("expected no connections error")
+	}
+}
+
+func TestSyncInitialization(t *testing.T) {
+	cli, err := NewClient(Mainnet(), WithMaxConnectionsNumber(2))
+	if err != nil {
+		log.Fatalf("Unable to create tongo client: %v", err)
+	}
+	if cli.pool.ConnectionsNumber() == 0 {
+		t.Fatalf("0 connections")
+	}
+
+	iterations := 0
+	for {
+		accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+		_, _, err = cli.RunSmcMethod(context.Background(), accountId, "seqno", tlb.VmStack{})
+		if errors.Is(err, pool.ErrNoConnections) {
+			t.Fatalf("no connections error")
+		}
+		if err != nil {
+			log.Fatalf("Run smc error: %v", err)
+		}
+		if cli.pool.ConnectionsNumber() > 1 {
+			iterations += 1
+		}
+		if iterations > 3 {
+			break
+		}
+		time.Sleep(1 * time.Second)
 	}
 }
 

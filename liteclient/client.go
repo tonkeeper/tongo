@@ -223,3 +223,7 @@ func (c *Client) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout
 	}
 	return fmt.Errorf("invalid tag")
 }
+
+func (c *Client) AverageRoundTrip() time.Duration {
+	return c.connection.AverageRoundTrip()
+}

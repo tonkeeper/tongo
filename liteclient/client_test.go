@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/tonkeeper/tongo/config"
 )
@@ -53,12 +54,14 @@ func TestGeneratedMethod(t *testing.T) {
 	}
 
 	client := NewClient(c)
-
-	resp, err := client.LiteServerGetMasterchainInfo(context.Background())
-	if err != nil {
-		panic(err)
+	for {
+		resp, err := client.LiteServerGetMasterchainInfo(context.Background())
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Last seqno: %d\n", resp.Last.Seqno)
+		time.Sleep(1 * time.Second)
 	}
-	fmt.Printf("Last seqno: %d\n", resp.Last.Seqno)
 }
 
 func TestGeneratedMethod2(t *testing.T) {

@@ -3,7 +3,7 @@ package liteclient
 import (
 	"context"
 	"encoding/binary"
-	"fmt"
+	"log/slog"
 	mrand "math/rand"
 	"sync"
 	"time"
@@ -159,7 +159,7 @@ func (c *Connection) ping() {
 		c.registerPing(binary.LittleEndian.Uint64(ping[4:]))
 		err = c.Send(p)
 		if err != nil && IsNotConnectedYet(err) {
-			fmt.Printf("%s ping error: %v\n", c.host, err)
+			slog.Info("ping error", "host", c.host, "error", err)
 			continue
 		}
 	}

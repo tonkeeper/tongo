@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
+	"log/slog"
 	"math/rand"
 	"sync"
 	"time"
@@ -144,12 +145,11 @@ func decodeLength(b []byte) (int, []byte, error) {
 func (c *Client) reader() {
 	for p := range c.connection.Responses() {
 		if p.MagicType() != magicADNLAnswer {
-			fmt.Println("unknown type", p.MagicType()) //todo: remove
 			continue
 		}
 		err := c.processQueryAnswer(p)
 		if err != nil {
-			fmt.Println(err) //todo: switch to debug logger
+			slog.Info("liteclient.reader() error", "err", err)
 		}
 	}
 }

@@ -1076,6 +1076,25 @@ func TestDecodeExternalIn(t *testing.T) {
 		wantValue  func() any
 	}{
 		{
+			name:       "gram miner - submit proof of work",
+			interfaces: []ContractInterface{GramMiner},
+			wantOpName: "SubmitProofOfWork",
+			boc:        "te6ccgEBAQEAewAA8k1pbmUAZh5n6Ko92S+6JcXv0vZh3JgmUoAzO2R8CeNp7hvCAYZUe9AHyiw3HOIN5fq3UWUTxJ2NzkQQ8n/18ag79sePGkYAAACknATyivxe2NapVEVFPsjSyiw3HOIN5fq3UWUTxJ2NzkQQ8n/18ag79sePGkYAAAA=",
+			wantValue: func() any {
+				seed := big.Int{}
+				seed.SetString("218803489964525407889229111495606847698", 10)
+				body := GramSubmitProofOfWorkMsgBody{
+					Flags:  0,
+					Expire: 1713268712,
+					Whom:   mustToBits256("aa3dd92fba25c5efd2f661dc98265280333b647c09e369ee1bc20186547bd007"),
+					Rdata1: mustToBits256("ca2c371ce20de5fab7516513c49d8dce4410f27ff5f1a83bf6c78f1a46000000"),
+					Rseed:  tlb.Uint128(seed),
+					Rdata2: mustToBits256("ca2c371ce20de5fab7516513c49d8dce4410f27ff5f1a83bf6c78f1a46000000"),
+				}
+				return body
+			},
+		},
+		{
 			name:       "highload wallet v3 - jetton transfer",
 			interfaces: []ContractInterface{WalletHighloadV3R1},
 			wantOpName: "HighloadWalletSignedV3",

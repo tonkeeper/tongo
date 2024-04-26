@@ -95,6 +95,8 @@ var (
 	decodeFuncTeleitemStartAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x487a8e81, Len: 32}, TeleitemStartAuctionMsgOp, TeleitemStartAuctionMsgBody{})
 	// 0x4bc7c2df
 	decodeFuncTonstakePoolTouchMsgBody = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
+	// 0x4d696e65
+	decodeFuncGramSubmitProofOfWorkMsgBody = decodeMsg(tlb.Tag{Val: 0x4d696e65, Len: 32}, GramSubmitProofOfWorkMsgOp, GramSubmitProofOfWorkMsgBody{})
 	// 0x4e73744b
 	decodeFuncElectorNewStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x4e73744b, Len: 32}, ElectorNewStakeMsgOp, ElectorNewStakeMsgBody{})
 	// 0x4eb1f0f9
@@ -410,6 +412,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x4bc7c2df
 	TonstakePoolTouchMsgOpCode: decodeFuncTonstakePoolTouchMsgBody,
+
+	// 0x4d696e65
+	GramSubmitProofOfWorkMsgOpCode: decodeFuncGramSubmitProofOfWorkMsgBody,
 
 	// 0x4e73744b
 	ElectorNewStakeMsgOpCode: decodeFuncElectorNewStakeMsgBody,
@@ -728,6 +733,7 @@ const (
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
+	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
 	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
 	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
@@ -865,6 +871,7 @@ const (
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
+	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
 	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
@@ -1209,6 +1216,15 @@ type TeleitemStartAuctionMsgBody struct {
 
 type TonstakePoolTouchMsgBody struct {
 	QueryId uint64
+}
+
+type GramSubmitProofOfWorkMsgBody struct {
+	Flags  uint8
+	Expire uint32
+	Whom   tlb.Bits256
+	Rdata1 tlb.Bits256
+	Rseed  tlb.Uint128
+	Rdata2 tlb.Bits256
 }
 
 type ElectorNewStakeMsgBody struct {
@@ -1780,6 +1796,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
+	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
 	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},
 	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},

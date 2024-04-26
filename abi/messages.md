@@ -41,6 +41,7 @@ The list below contains the supported message operations, their names and opcode
 | FinishUncooperativeChannelClose| 0x25432a91 |
 | GetRoyaltyParams| 0x693d3950 |
 | GetStaticData| 0x2fcb26a2 |
+| GramSubmitProofOfWork| 0x4d696e65 |
 | HighloadWalletSignedV3| 0x00000000 |
 | InitPaymentChannel| 0x0e0620c2 |
 | JettonBurn| 0x595f07bc |

@@ -49,6 +49,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_pool_data":                 {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":            {DecodeGetPoolFullDataResult},
 	"get_pool_status":               {DecodeGetPoolStatusResult},
+	"get_pow_params":                {DecodeGetPowParamsResult},
 	"get_public_key":                {DecodeGetPublicKeyResult},
 	"get_reserves":                  {DecodeGetReserves_DedustResult},
 	"get_revoked_time":              {DecodeGetRevokedTimeResult},
@@ -112,6 +113,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
 	100881: {GetStatus},
+	101616: {GetPowParams},
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
@@ -179,6 +181,7 @@ var resultTypes = []interface{}{
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
 	&GetPoolStatusResult{},
+	&GetPowParamsResult{},
 	&GetPublicKeyResult{},
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
@@ -761,7 +764,7 @@ func GetLastCleanTime(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetLastCleanTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLastCleanTimeResult
@@ -1710,6 +1713,42 @@ func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetPoolStatusResult", result, err
 }
 
+type GetPowParamsResult struct {
+	Seed          tlb.Uint128
+	PowComplexity tlb.Int256
+	Amount        uint64
+	Interval      uint32
+}
+
+func GetPowParams(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 101616 for "get_pow_params" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 101616, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPowParamsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPowParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPowParamsResult
+	err = stack.Unmarshal(&result)
+	return "GetPowParamsResult", result, err
+}
+
 type GetPublicKeyResult struct {
 	PublicKey tlb.Int257
 }
@@ -1735,7 +1774,7 @@ func GetPublicKey(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPublicKeyResult
@@ -2217,7 +2256,7 @@ func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetSubwalletIdResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubwalletIdResult
@@ -2358,7 +2397,7 @@ func GetTimeout(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetTimeoutResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTimeoutResult
@@ -2800,7 +2839,7 @@ func Seqno(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (
 }
 
 func DecodeSeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result SeqnoResult

@@ -1,0 +1,20 @@
+<abi>
+    <interface name="gram_miner">
+        <code_hash>ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1</code_hash>
+        <get_method name="get_pow_params"/>
+        <msg_in>
+            <internal name="submit_proof_of_work"/>
+        </msg_in>
+    </interface>
+    <get_method name="get_pow_params">
+        <output>
+            <int name="seed">uint128</int>
+            <int name="pow_complexity">int256</int>
+            <int name="amount">uint64</int>
+            <int name="interval">uint32</int>
+        </output>
+    </get_method>
+    <internal name="gram_submit_proof_of_work">
+        payload#4d696e65 flags:uint8 expire:uint32 whom:bits256 rdata1:bits256 rseed:uint128 rdata2:bits256 = ExternalMsgBody;
+    </internal>
+</abi>

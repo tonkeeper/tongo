@@ -3,7 +3,7 @@
         <code_hash>ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1</code_hash>
         <get_method name="get_pow_params"/>
         <msg_in>
-            <internal name="submit_proof_of_work"/>
+            <internal name="gram_submit_proof_of_work"/>
         </msg_in>
     </interface>
     <get_method name="get_pow_params">

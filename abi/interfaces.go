@@ -788,6 +788,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletHighloadV2R2},
 		getMethods:         []InvokeFn{},
 	},
+	ton.MustParseHash("24221fa571e542e055c77bedfdbf527c7af460cfdc7f344c450787b4cfa1eb4d"): {
+		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
+		getMethods: []InvokeFn{
+			GetSaleData,
+		},
+	},
 	ton.MustParseHash("32050dfac44f64866bcc86f2cd9e1305fe9dcadb3959c002237cfb0902d44323"): {
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
 		getMethods: []InvokeFn{
@@ -891,11 +897,15 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
 		contractInterfaces: []ContractInterface{WalletV5R1},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			Seqno,
+		},
 	},
 	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
 		contractInterfaces: []ContractInterface{WalletV5R1},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			Seqno,
+		},
 	},
 	ton.MustParseHash("fe9530d3243853083ef2ef0b4c2908c0abf6fa1c31ea243aacaa5bf8c7d753f1"): {
 		contractInterfaces: []ContractInterface{WalletV2R2},
@@ -936,7 +946,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		}
 	case GramMiner:
 		return []msgDecoderFunc{
-			decodeFuncSubmitProofOfWorkMsgBody,
+			decodeFuncGramSubmitProofOfWorkMsgBody,
 		}
 	case JettonMaster:
 		return []msgDecoderFunc{

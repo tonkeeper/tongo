@@ -1078,7 +1078,7 @@ func TestDecodeExternalIn(t *testing.T) {
 		{
 			name:       "gram miner - submit proof of work",
 			interfaces: []ContractInterface{GramMiner},
-			wantOpName: "SubmitProofOfWork",
+			wantOpName: "GramSubmitProofOfWork",
 			boc:        "te6ccgEBAQEAewAA8k1pbmUAZh5n6Ko92S+6JcXv0vZh3JgmUoAzO2R8CeNp7hvCAYZUe9AHyiw3HOIN5fq3UWUTxJ2NzkQQ8n/18ag79sePGkYAAACknATyivxe2NapVEVFPsjSyiw3HOIN5fq3UWUTxJ2NzkQQ8n/18ag79sePGkYAAAA=",
 			wantValue: func() any {
 				seed := big.Int{}

@@ -28,7 +28,7 @@ func DefaultWalletFromSeed(seed string, blockchain blockchain) (Wallet, error) {
 // (https://github.com/toncenter/tonweb/blob/master/src/contract/wallet/WalletSources.md)
 func New(key ed25519.PrivateKey, ver Version, workchain int, subWalletId *int, blockchain blockchain) (Wallet, error) {
 	publicKey := key.Public().(ed25519.PublicKey)
-	address, err := GenerateWalletAddress(publicKey, ver, workchain, subWalletId)
+	address, err := GenerateWalletAddress(publicKey, ver, workchain, subWalletId, nil)
 	if err != nil {
 		return Wallet{}, err
 	}
@@ -56,8 +56,9 @@ func GenerateWalletAddress(
 	ver Version,
 	workchain int,
 	subWalletId *int,
+	networkGlobalID *int,
 ) (ton.AccountID, error) {
-	state, err := GenerateStateInit(key, ver, workchain, subWalletId)
+	state, err := GenerateStateInit(key, ver, workchain, subWalletId, networkGlobalID)
 	if err != nil {
 		return ton.AccountID{}, fmt.Errorf("can not generate wallet state: %v", err)
 	}
@@ -83,6 +84,7 @@ func GenerateStateInit(
 	ver Version,
 	workchain int,
 	subWalletId *int,
+	networkGlobalID *int,
 ) (tlb.StateInit, error) {
 	var (
 		err       error
@@ -110,6 +112,26 @@ func GenerateStateInit(
 			Seqno:       0,
 			SubWalletId: uint32(*subWalletId),
 			PublicKey:   publicKey,
+		}
+		err = tlb.Marshal(dataCell, data)
+	case V5R1:
+		if subWalletId == nil {
+			id := 0
+			subWalletId = &id
+		}
+		if networkGlobalID == nil {
+			id := -239 // -3 for testnet
+			networkGlobalID = &id
+		}
+		data := DataV5{
+			Seqno: 0,
+			WalletID: WalletV5ID{
+				NetworkGlobalID: uint32(*networkGlobalID),
+				Workchain:       uint8(workchain),
+				WalletVersion:   0,
+				SubWalletID:     uint32(*subWalletId),
+			},
+			PublicKey: publicKey,
 		}
 		err = tlb.Marshal(dataCell, data)
 	case HighLoadV2R2:
@@ -260,7 +282,7 @@ func (w *Wallet) RawSend(
 func (w *Wallet) getInit() (tlb.StateInit, error) {
 	publicKey := w.key.Public().(ed25519.PublicKey)
 	id := int(w.subWalletId)
-	return GenerateStateInit(publicKey, w.ver, int(w.address.Workchain), &id)
+	return GenerateStateInit(publicKey, w.ver, int(w.address.Workchain), &id, nil)
 }
 
 func checkMessagesLimit(msgQty int, ver Version) error { // TODO: maybe return bool

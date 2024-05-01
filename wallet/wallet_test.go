@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"reflect"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -55,7 +56,7 @@ func TestGenerateWalletAddress(t *testing.T) {
 	for ver, data := range testData {
 		key, _ := hex.DecodeString(data.PublicKey)
 		publicKey := ed25519.PublicKey(key)
-		address, err := GenerateWalletAddress(publicKey, ver, 0, nil)
+		address, err := GenerateWalletAddress(publicKey, ver, 0, nil, nil)
 		if err != nil {
 			t.Fatalf("address generation failed: %v", err)
 		}
@@ -167,5 +168,42 @@ func TestDeserializeMessage(t *testing.T) {
 	err = tlb.Unmarshal(cells[0], &msg)
 	if err != nil {
 		panic(err)
+	}
+}
+func pointer[T any](t T) *T {
+	return &t
+}
+
+func TestGenerateWalletAddress1(t *testing.T) {
+	tests := []struct {
+		name            string
+		key             ed25519.PublicKey
+		ver             Version
+		workchain       int
+		subWalletId     *int
+		networkGlobalID *int
+		want            ton.AccountID
+		wantErr         bool
+	}{
+		{
+			name:            "V5R1",
+			ver:             V5R1,
+			workchain:       0,
+			networkGlobalID: pointer(-3),
+			key:             mustPubkeyFromHex("cfa50eeb1c3293c92bd33d5aa672c1717accd8a21b96033debb6d30b5bb230df"),
+			want:            ton.MustParseAccountID("EQCsa9xhVJCw2BRL07dhxwkOoAjNHRPLN2iPggZG_ZauRYt-"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GenerateWalletAddress(tt.key, tt.ver, tt.workchain, tt.subWalletId, tt.networkGlobalID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GenerateWalletAddress() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateWalletAddress() got = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

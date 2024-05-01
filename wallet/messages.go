@@ -2,11 +2,14 @@ package wallet
 
 import (
 	"crypto/ed25519"
+	"errors"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
+
+var ErrBadSignature = errors.New("failed to verify msg signature")
 
 type MessageV3 struct {
 	SubWalletId uint32
@@ -22,6 +25,39 @@ type MessageV4 struct {
 	Seqno       uint32
 	Op          int8
 	RawMessages PayloadV1toV4
+}
+
+type SendMessageAction struct {
+	Magic tlb.Magic `tlb:"#0ec3c86d"`
+	Mode  uint8
+	Msg   *boc.Cell `tlb:"^"`
+}
+
+type SendMessageList struct {
+	Actions []SendMessageAction
+}
+
+// MessageV5 is a message format used by wallet v5.
+type MessageV5 struct {
+	tlb.SumType
+	// Sint is an internal message authenticated by a signature.
+	Sint struct {
+		SubWalletId tlb.Bits80
+		ValidUntil  uint32
+		Seqno       uint32
+		Op          bool
+		Signature   tlb.Bits512
+		Actions     SendMessageList `tlb:"^"`
+	} `tlbSumType:"#73696e74"`
+	// Sign is an external message authenticated by a signature.
+	Sign struct {
+		SubWalletId tlb.Bits80
+		ValidUntil  uint32
+		Seqno       uint32
+		Op          bool
+		Signature   tlb.Bits512
+		Actions     SendMessageList `tlb:"^"`
+	} `tlbSumType:"#7369676e"`
 }
 
 type HighloadV2Message struct {
@@ -56,7 +92,7 @@ func (body *SignedMsgBody) Verify(publicKey ed25519.PublicKey) error {
 	if ed25519.Verify(publicKey, hash, body.Sign[:]) {
 		return nil
 	}
-	return fmt.Errorf("failed to verify msg signature")
+	return ErrBadSignature
 }
 
 func extractSignedMsgBody(msg *boc.Cell) (*SignedMsgBody, error) {
@@ -70,6 +106,19 @@ func extractSignedMsgBody(msg *boc.Cell) (*SignedMsgBody, error) {
 		return nil, err
 	}
 	return &msgBody, nil
+}
+
+func DecodeMessageV5(msg *boc.Cell) (*MessageV5, error) {
+	var m tlb.Message
+	if err := tlb.Unmarshal(msg, &m); err != nil {
+		return nil, err
+	}
+	var msgv5 MessageV5
+	bodyCell := boc.Cell(m.Body.Value)
+	if err := tlb.Unmarshal(&bodyCell, &msgv5); err != nil {
+		return nil, err
+	}
+	return &msgv5, nil
 }
 
 func DecodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
@@ -126,6 +175,12 @@ func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
 // ExtractRawMessages extracts a list of RawMessages from an external message.
 func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 	switch ver {
+	case V5R1:
+		v5, err := DecodeMessageV5(msg)
+		if err != nil {
+			return nil, err
+		}
+		return v5.RawMessages(), nil
 	case V4R1, V4R2:
 		v4, err := DecodeMessageV4(msg)
 		if err != nil {
@@ -258,4 +313,89 @@ func (p *PayloadHighload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error 
 	}
 	*p = rawMessages
 	return nil
+}
+
+func (l *SendMessageList) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var actions []SendMessageAction
+	for {
+		switch c.BitsAvailableForRead() {
+		case 0:
+			l.Actions = actions
+			return nil
+		case 40:
+			next, err := c.NextRef()
+			if err != nil {
+				return err
+			}
+			var action SendMessageAction
+			if err := decoder.Unmarshal(c, &action); err != nil {
+				return err
+			}
+			actions = append(actions, action)
+			c = next
+		default:
+			return fmt.Errorf("unexpected bits available: %v", c.BitsAvailableForRead())
+		}
+	}
+}
+
+func MessageV5VerifySignature(msgBody boc.Cell, publicKey ed25519.PublicKey) error {
+	totalBits := msgBody.BitsAvailableForRead()
+	if totalBits < 512 {
+		return fmt.Errorf("not enough bits in the cell")
+	}
+	bits, err := msgBody.ReadBits(totalBits - 512)
+	if err != nil {
+		return err
+	}
+	signature, err := msgBody.ReadBytes(64)
+	if err != nil {
+		return err
+	}
+	msgCopy := boc.NewCell()
+	if err := msgCopy.WriteBitString(bits); err != nil {
+		return err
+	}
+	for i := 0; i < msgBody.RefsSize(); i++ {
+		ref, err := msgBody.NextRef()
+		if err != nil {
+			return err
+		}
+		if err := msgCopy.AddRef(ref); err != nil {
+			return err
+		}
+	}
+	hash, err := msgCopy.Hash()
+	if err != nil {
+		return err
+	}
+	if ed25519.Verify(publicKey, hash, signature) {
+		return nil
+	}
+	return ErrBadSignature
+}
+
+func (m *MessageV5) RawMessages() []RawMessage {
+	switch m.SumType {
+	case "Sint":
+		msgs := make([]RawMessage, 0, len(m.Sint.Actions.Actions))
+		for _, action := range m.Sint.Actions.Actions {
+			msgs = append(msgs, RawMessage{
+				Message: action.Msg,
+				Mode:    action.Mode,
+			})
+		}
+		return msgs
+	case "Sign":
+		msgs := make([]RawMessage, 0, len(m.Sign.Actions.Actions))
+		for _, action := range m.Sign.Actions.Actions {
+			msgs = append(msgs, RawMessage{
+				Message: action.Msg,
+				Mode:    action.Mode,
+			})
+		}
+		return msgs
+	default:
+		return nil
+	}
 }

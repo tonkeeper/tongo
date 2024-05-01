@@ -6100,6 +6100,36 @@ func (u *Int257) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+type Bits80 [10]byte
+
+func (u Bits80) FixedSize() int {
+	return 80
+}
+
+func (u Bits80) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%x\"", u[:])), nil
+}
+
+func (u *Bits80) UnmarshalJSON(b []byte) error {
+	bs, err := hex.DecodeString(strings.Trim(string(b), "\""))
+	if err != nil {
+		return err
+	}
+	if len(bs) != 10 {
+		return fmt.Errorf("can't parse Bits80 %v", string(b))
+	}
+	copy(u[:], bs)
+	return nil
+}
+
+func (u Bits80) Equal(other any) bool {
+	otherBits, ok := other.(Bits80)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+
 type Bits96 [12]byte
 
 func (u Bits96) FixedSize() int {

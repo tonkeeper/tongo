@@ -15,6 +15,6 @@
         </output>
     </get_method>
     <internal name="gram_submit_proof_of_work">
-        payload#4d696e65 flags:uint8 expire:uint32 whom:bits256 rdata1:bits256 rseed:uint128 rdata2:bits256 = ExternalMsgBody;
+        payload#4d696e65 flags:uint8 expire:uint32 whom:bits256 rdata1:bits256 rseed:uint128 rdata2:bits256 = InternalMsgBody;
     </internal>
 </abi>

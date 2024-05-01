@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"crypto/ed25519"
+	"encoding/hex"
 	"fmt"
 	"reflect"
 	"testing"
@@ -16,6 +17,14 @@ func mustFromHex(msg string) *boc.Cell {
 		panic(err)
 	}
 	return c
+}
+
+func mustPubkeyFromHex(hexPubkey string) ed25519.PublicKey {
+	bytes, err := hex.DecodeString(hexPubkey)
+	if err != nil {
+		panic(err)
+	}
+	return ed25519.PublicKey(bytes)
 }
 
 func TestExtractRawMessages(t *testing.T) {
@@ -55,6 +64,25 @@ func TestExtractRawMessages(t *testing.T) {
 			want: []RawMessage{
 				{
 					Message: mustFromHex("te6ccgEBAgEAjAABaGIAYeITnAruocV3ZaCBjfbcIK27S8GFMv5jOh6XPwNuAUkgFykzCAAAAAAAAAAAAAAAAAEBAKVfzD0UAAAAAAAAAACACmfmG8rkQq9wjj6qB3P4sAGRsHL88uh+8tYjzBNbXNPwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAcxLQCA=="),
+					Mode:    3,
+				},
+			},
+		},
+		{
+			name: "v5",
+			boc:  "te6ccgECCAEAAZ4AAfGIAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24WA5tLO3f////oAAAAAAADMYd8kAAAAAEHzN670eqqNU3yWGkX1dOynyAbT7DN4cFDpE0r+nInTomGrifjPTaZvG3YxYzTHpLoNesGc9s5Q0tHlLNcFNQeAQIKDsPIbQMCAwIKDsPIbQMEBQCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAy3GwAAAAAAAAAAAAAAAAAAQAIKDsPIbQMGBwCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAx6EgAAAAAAAAAAAAAAAAAAQAAAAKloAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24XABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIDD0JAAAAAAAAAAAAAAAAAABA",
+			ver:  V5R1,
+			want: []RawMessage{
+				{
+					Message: mustFromHex("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMtxsAAAAAAAAAAAAAAAAAAEA="),
+					Mode:    3,
+				},
+				{
+					Message: mustFromHex("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMehIAAAAAAAAAAAAAAAAAAEA="),
+					Mode:    3,
+				},
+				{
+					Message: mustFromHex("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMPQkAAAAAAAAAAAAAAAAAAEA="),
 					Mode:    3,
 				},
 			},
@@ -156,6 +184,65 @@ func TestSignedMsgBody_Verify(t *testing.T) {
 			for _, invalidKey := range tt.invalidPublicKeys {
 				if err = signedBody.Verify(invalidKey); err == nil {
 					t.Fatalf("Verify() had to fail but it didn't")
+				}
+			}
+		})
+	}
+}
+
+func TestMessageV5VerifySignature(t *testing.T) {
+	tests := []struct {
+		name              string
+		boc               string
+		publicKey         ed25519.PublicKey
+		invalidPublicKeys []ed25519.PublicKey
+		wantErr           bool
+	}{
+		{
+			name:      "wallet v5",
+			boc:       "te6ccgECCAEAAZ4AAfGIAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24WA5tLO3f////oAAAAAAADMY8YiAAAADPkc94coPiaMQo1EI1uuJWlVQGxiffff96PyOTGiQhUjkr733UkT8rfdXxuYcb9SMykg8Tlo7LNBB187eI+ymw2AQIKDsPIbQMCAwIKDsPIbQMEBQCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAy3GwAAAAAAAAAAAAAAAAAAQAIKDsPIbQMGBwCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAx6EgAAAAAAAAAAAAAAAAAAQAAAAKloAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24XABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIDD0JAAAAAAAAAAAAAAAAAABA",
+			publicKey: mustPubkeyFromHex("406b63856ff6913fe2170a5c128113c6bd8256438a43340ea3bf6e0bbc56f9ca"),
+			invalidPublicKeys: []ed25519.PublicKey{
+				mustPubkeyFromHex("406b63856ff6913fe2170a5c128113c6bd8256438a43340ea3bf6e0bbc56f9bb"),
+				mustPubkeyFromHex("406b63856ff6913fe2170a5c128113c6bd8256438a43340ea3bf6e0bbc560000"),
+				mustPubkeyFromHex("cfa50eeb1c3293c92bd33d5aa672c1717accd8a21b96033debb6d30b5bb230df"),
+			},
+		},
+		{
+			name:      "wallet v5",
+			boc:       "te6ccgECCAEAAZ4AAfGIAVjXuMKpIWGwKJenbsOOEh1AEZo6J5Zu0R8EDI37LVyKA5tLO3f////oAAAAAAADMY9YuAAAAAFs/6Zj178nNgWPsbSM2UaEwrcyYPF0kSqZ4d+fhPMfynWRWKBCiVh2PtDewtHZ5FW1luvfXHDqGX0DtYSHfVwGAQIKDsPIbQMCAwIKDsPIbQMEBQCpaAFY17jCqSFhsCiXp27DjhIdQBGaOieWbtEfBAyN+y1ciwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAy3GwAAAAAAAAAAAAAAAAAAQAIKDsPIbQMGBwCpaAFY17jCqSFhsCiXp27DjhIdQBGaOieWbtEfBAyN+y1ciwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAx6EgAAAAAAAAAAAAAAAAAAQAAAAKloAVjXuMKpIWGwKJenbsOOEh1AEZo6J5Zu0R8EDI37LVyLABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIDD0JAAAAAAAAAAAAAAAAAABA",
+			publicKey: mustPubkeyFromHex("cfa50eeb1c3293c92bd33d5aa672c1717accd8a21b96033debb6d30b5bb230df"),
+			invalidPublicKeys: []ed25519.PublicKey{
+				mustPubkeyFromHex("406b63856ff6913fe2170a5c128113c6bd8256438a43340ea3bf6e0bbc56f9bb"),
+				mustPubkeyFromHex("406b63856ff6913fe2170a5c128113c6bd8256438a43340ea3bf6e0bbc56f9ca"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cell := mustFromHex(tt.boc)
+			var m tlb.Message
+			if err := tlb.Unmarshal(cell, &m); err != nil {
+				t.Fatalf("Unmarshal() failed: %v", err)
+			}
+			msgBody := boc.Cell(m.Body.Value)
+			err := MessageV5VerifySignature(msgBody, tt.publicKey)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("MessageV5VerifySignature() had to fail but it didn't")
+				}
+				if err.Error() != ErrBadSignature.Error() {
+					t.Fatalf("MessageV5VerifySignature() failed: %v", err)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("MessageV5VerifySignature() failed: %v", err)
+			}
+
+			for _, publicKey := range tt.invalidPublicKeys {
+				if err = MessageV5VerifySignature(msgBody, publicKey); err == nil {
+					t.Fatalf("MessageV5VerifySignature() had to fail but it didn't")
 				}
 			}
 		})

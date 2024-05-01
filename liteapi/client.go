@@ -1023,6 +1023,18 @@ func (c *Client) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout
 	return c.pool.WaitMasterchainSeqno(ctx, seqno, timeout)
 }
 
+func (c *Client) GetOutMsgQueueSizes(ctx context.Context) (liteclient.LiteServerOutMsgQueueSizesC, error) {
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return liteclient.LiteServerOutMsgQueueSizesC{}, err
+	}
+	res, err := client.LiteServerGetOutMsgQueueSizes(ctx, liteclient.LiteServerGetOutMsgQueueSizesRequest{})
+	if err != nil {
+		return liteclient.LiteServerOutMsgQueueSizesC{}, err
+	}
+	return res, nil
+}
+
 var configCache = make(map[string]*config.GlobalConfigurationFile)
 var configCacheMutex sync.RWMutex
 

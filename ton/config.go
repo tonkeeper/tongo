@@ -127,7 +127,8 @@ func (conf *BlockchainConfig) CriticalParams() []int {
 	return nil
 }
 
-func ConvertBlockchainConfig(params tlb.ConfigParams) (*BlockchainConfig, error) {
+func ConvertBlockchainConfig(params tlb.ConfigParams, ignoreBrokenParams bool) (*BlockchainConfig, []int, error) {
+	var brokenParams []int
 	conf := &BlockchainConfig{}
 	confVal := reflect.ValueOf(conf).Elem()
 	for _, item := range params.Config.Items() {
@@ -140,7 +141,11 @@ func ConvertBlockchainConfig(params tlb.ConfigParams) (*BlockchainConfig, error)
 			}
 			value := reflect.New(field.Type())
 			if err := tlb.Unmarshal(&item.Value.Value, value.Interface()); err != nil {
-				return nil, err
+				if ignoreBrokenParams {
+					brokenParams = append(brokenParams, int(key))
+					continue
+				}
+				return nil, nil, err
 			}
 			field.Set(value.Elem())
 			continue
@@ -153,9 +158,21 @@ func ConvertBlockchainConfig(params tlb.ConfigParams) (*BlockchainConfig, error)
 		}
 		cell := boc.NewCell()
 		if err := tlb.Unmarshal(&item.Value.Value, cell); err != nil {
-			return nil, err
+			if ignoreBrokenParams {
+				brokenParams = append(brokenParams, int(key))
+				continue
+			}
+			return nil, nil, err
 		}
 		field.Set(reflect.ValueOf(cell))
+	}
+	return conf, brokenParams, nil
+}
+
+func ConvertBlockchainConfigStrict(params tlb.ConfigParams) (*BlockchainConfig, error) {
+	conf, _, err := ConvertBlockchainConfig(params, false)
+	if err != nil {
+		return nil, err
 	}
 	return conf, nil
 }

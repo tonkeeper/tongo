@@ -1,0 +1,676 @@
+{
+  "ConfigParam0": {
+    "ConfigAddr": "5555555555555555555555555555555555555555555555555555555555555555"
+  },
+  "ConfigParam1": {
+    "ElectorAddr": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "ConfigParam2": {
+    "MinterAddr": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "ConfigParam4": {
+    "DnsRootAddr": "efe71d13860afaa6aeaeaf636f9168487f80f1031b0bf8d939ae49d3ea7f7da0"
+  },
+  "ConfigParam7": {
+    "ToMint": {
+      "239": "666666666666",
+      "4294967279": "1000000000000"
+    }
+  },
+  "ConfigParam8": {
+    "GlobalVersion": {
+      "Magic": "0xc4",
+      "Version": 1,
+      "Capabilities": 46
+    }
+  },
+  "ConfigParam9": {
+    "MandatoryParams": {
+      "0": {},
+      "1": {},
+      "10": {},
+      "12": {},
+      "14": {},
+      "15": {},
+      "16": {},
+      "17": {},
+      "18": {},
+      "20": {},
+      "21": {},
+      "22": {},
+      "23": {},
+      "24": {},
+      "25": {},
+      "28": {},
+      "34": {},
+      "9": {}
+    }
+  },
+  "ConfigParam10": {
+    "CriticalParams": {
+      "-1000": {},
+      "-1001": {},
+      "-999": {},
+      "0": {},
+      "1": {},
+      "10": {},
+      "12": {},
+      "14": {},
+      "15": {},
+      "16": {},
+      "17": {},
+      "32": {},
+      "34": {},
+      "36": {},
+      "9": {}
+    }
+  },
+  "ConfigParam11": {
+    "ConfigVotingSetup": {
+      "Magic": "0x91",
+      "NormalParams": {
+        "Magic": "0x36",
+        "MinTotRounds": 2,
+        "MaxTotRounds": 3,
+        "MinWins": 2,
+        "MaxLosses": 2,
+        "MinStoreSec": 1000000,
+        "MaxStoreSec": 10000000,
+        "BitPrice": 1,
+        "CellPrice": 500
+      },
+      "CriticalParams": {
+        "Magic": "0x36",
+        "MinTotRounds": 4,
+        "MaxTotRounds": 7,
+        "MinWins": 4,
+        "MaxLosses": 2,
+        "MinStoreSec": 5000000,
+        "MaxStoreSec": 20000000,
+        "BitPrice": 2,
+        "CellPrice": 1000
+      }
+    }
+  },
+  "ConfigParam12": {
+    "Workchains": {
+      "0": {
+        "SumType": "Workchain",
+        "Workchain": {
+          "EnabledSince": 1573821854,
+          "ActualMinSplit": 0,
+          "MinSplit": 0,
+          "MaxSplit": 3,
+          "Basic": 1,
+          "Active": true,
+          "AcceptMsgs": true,
+          "Flags": 0,
+          "ZerostateRootHash": "55b13f6d0e1d0c34c9c2160f6f918e92d82bf9ddcf8de2e4c94a3fdf39d15446",
+          "ZerostateFileHash": "ee0bedfe4b32761fb35e9e1d8818ea720cad1a0e7b4d2ed673c488e72e910342",
+          "Version": 0
+        },
+        "WorkchainV2": {
+          "EnabledSince": 0,
+          "ActualMinSplit": 0,
+          "MinSplit": 0,
+          "MaxSplit": 0,
+          "Basic": 0,
+          "Active": false,
+          "AcceptMsgs": false,
+          "Flags": 0,
+          "ZerostateRootHash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "ZerostateFileHash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "Version": 0
+        }
+      }
+    }
+  },
+  "ConfigParam13": {
+    "ComplaintPricing": {
+      "Magic": "0x1a",
+      "Deposit": "100000000000",
+      "BitPrice": "1",
+      "CellPrice": "500"
+    }
+  },
+  "ConfigParam14": {
+    "BlockCreateFees": {
+      "Magic": "0x6b",
+      "MasterchainBlockFee": "1700000000",
+      "BasechainBlockFee": "1000000000"
+    }
+  },
+  "ConfigParam15": {
+    "ValidatorsElectedFor": 7200,
+    "ElectionsStartBefore": 2400,
+    "ElectionsEndBefore": 180,
+    "StakeHeldFor": 900
+  },
+  "ConfigParam16": {
+    "MaxValidators": 1000,
+    "MaxMainValidators": 100,
+    "MinValidators": 3
+  },
+  "ConfigParam17": {
+    "MinStake": "10000000000000",
+    "MaxStake": "100000000000000",
+    "MinTotalStake": "30000000000000",
+    "MaxStakeFactor": 1310720
+  },
+  "ConfigParam18": {
+    "Value": {
+      "0": {
+        "Magic": "0xcc",
+        "UtimeSince": 0,
+        "BitPricePs": 1,
+        "CellPricePs": 500,
+        "McBitPricePs": 1000,
+        "McCellPricePs": 500000
+      }
+    }
+  },
+  "ConfigParam20": {
+    "GasLimitsPrices": {
+      "SumType": "GasFlatPfx",
+      "GasFlatPfx": {
+        "FlatGasLimit": 100,
+        "FlatGasPrice": 1000000,
+        "Other": {
+          "SumType": "GasPricesExt",
+          "GasPricesExt": {
+            "GasPrice": 655360000,
+            "GasLimit": 1000000,
+            "SpecialGasLimit": 20000000,
+            "GasCredit": 10000,
+            "BlockGasLimit": 22000000,
+            "FreezeDueLimit": 100000000,
+            "DeleteDueLimit": 1000000000
+          }
+        }
+      }
+    }
+  },
+  "ConfigParam21": {
+    "GasLimitsPrices": {
+      "SumType": "GasFlatPfx",
+      "GasFlatPfx": {
+        "FlatGasLimit": 100,
+        "FlatGasPrice": 100000,
+        "Other": {
+          "SumType": "GasPricesExt",
+          "GasPricesExt": {
+            "GasPrice": 65536000,
+            "GasLimit": 1000000,
+            "SpecialGasLimit": 1000000,
+            "GasCredit": 10000,
+            "BlockGasLimit": 10000000,
+            "FreezeDueLimit": 100000000,
+            "DeleteDueLimit": 1000000000
+          }
+        }
+      }
+    }
+  },
+  "ConfigParam22": {
+    "BlockLimits": {
+      "Magic": "0x5d",
+      "Bytes": {
+        "Magic": "0xc3",
+        "Underload": 131072,
+        "SoftLimit": 524288,
+        "HardLimit": 1048576
+      },
+      "Gas": {
+        "Magic": "0xc3",
+        "Underload": 100000,
+        "SoftLimit": 500000,
+        "HardLimit": 1000000
+      },
+      "LtDelta": {
+        "Magic": "0xc3",
+        "Underload": 10,
+        "SoftLimit": 15,
+        "HardLimit": 1000
+      }
+    }
+  },
+  "ConfigParam23": {
+    "BlockLimits": {
+      "Magic": "0x5d",
+      "Bytes": {
+        "Magic": "0xc3",
+        "Underload": 131072,
+        "SoftLimit": 524288,
+        "HardLimit": 1048576
+      },
+      "Gas": {
+        "Magic": "0xc3",
+        "Underload": 100000,
+        "SoftLimit": 500000,
+        "HardLimit": 1000000
+      },
+      "LtDelta": {
+        "Magic": "0xc3",
+        "Underload": 10,
+        "SoftLimit": 15,
+        "HardLimit": 1000
+      }
+    }
+  },
+  "ConfigParam24": {
+    "MsgForwardPrices": {
+      "Magic": "0xea",
+      "LumpPrice": 10000000,
+      "BitPrice": 655360000,
+      "CellPrice": 65536000000,
+      "IhrPriceFactor": 98304,
+      "FirstFrac": 21845,
+      "NextFrac": 21845
+    }
+  },
+  "ConfigParam25": {
+    "MsgForwardPrices": {
+      "Magic": "0xea",
+      "LumpPrice": 1000000,
+      "BitPrice": 65536000,
+      "CellPrice": 6553600000,
+      "IhrPriceFactor": 98304,
+      "FirstFrac": 21845,
+      "NextFrac": 21845
+    }
+  },
+  "ConfigParam28": {
+    "CatchainConfig": {
+      "SumType": "CatchainConfigNew",
+      "CatchainConfigNew": {
+        "Flags": 0,
+        "ShuffleMcValidators": true,
+        "McCatchainLifetime": 250,
+        "ShardCatchainLifetime": 250,
+        "ShardValidatorsLifetime": 5500,
+        "ShardValidatorsNum": 7
+      }
+    }
+  },
+  "ConfigParam29": {
+    "ConsensusConfig": {
+      "SumType": "ConsensusConfigNew",
+      "ConsensusConfigNew": {
+        "Flags": 0,
+        "NewCatchainIds": true,
+        "RoundCandidates": 3,
+        "NextCandidateDelayMs": 2000,
+        "ConsensusTimeoutMs": 16000,
+        "FastAttempts": 3,
+        "AttemptDuration": 8,
+        "CatchainMaxDeps": 4,
+        "MaxBlockBytes": 2097152,
+        "MaxCollatedBytes": 2097152
+      }
+    }
+  },
+  "ConfigParam31": {
+    "FundamentalSmcAddr": {
+      "0000000000000000000000000000000000000000000000000000000000000000": {},
+      "3333333333333333333333333333333333333333333333333333333333333333": {}
+    }
+  },
+  "ConfigParam32": {
+    "PrevValidators": {
+      "SumType": "ValidatorsExt",
+      "ValidatorsExt": {
+        "UtimeSince": 1666493192,
+        "UtimeUntil": 1666500392,
+        "Total": 15,
+        "Main": 15,
+        "TotalWeight": 1152921504606846975,
+        "List": {
+          "0": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "32aac64c6204feab9c1717ee2dadc1705ef37ddcda15a10dc4ecb847cb12c109"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "934d9695a384d5bcf5f8ee6525405865d15c8729f3c3fac3eb534be211f0a0c0"
+            }
+          },
+          "1": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "7ffd4cb6f99c836b1965d32a796d4c224ec995dba3caf0f9c68b799c725687d0"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "b097bfd36bbe285146bd72455a3db1b7e7e73a4f29c3d86ff99ddfd585b14295"
+            }
+          },
+          "10": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "fd6af643242fc611b63f20e26b49951f82a5323373a7a28d8daf45c2dd94d79e"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "7492ef4623f83fe9bf96bfebb51b0e44ee1340004701326fdb8e95d8e1c5130b"
+            }
+          },
+          "11": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "7b1c5028b9cbc9e378b71e8a19a0eee050eff01f71e434483d51168beb377b77"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "0f9a6d1f7764d6222e06245b9bbd6f90c8d95460adb24f762ad7e40acbc49613"
+            }
+          },
+          "12": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "a102e3cd667f35dc1064e7a4a1fcef3c9b43b5f8a7679be56c1fbc8ca52a4a32"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "b4babc788eab03b424d48ef3455f8bf1ef1dbb03cddde81dca896a7524fe4ce2"
+            }
+          },
+          "13": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "d78d1feacad9c2e6c57c821011818aa3d7e409128415ea50862dfd6f4158f100"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "ec0e4494b982873e06eeb37951bc78a01421ff0a475769197658ef05394f7e41"
+            }
+          },
+          "14": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "e0be90b691b9f2aa92932e42c15618e7c4622822cf4180da7e2863d35fed6bcd"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "434dcf45e5700b1d17c58048cc15534974a7cb37a232ae17ded67d55cb166d4a"
+            }
+          },
+          "2": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "8423a1e9edae15b98eb171e06776c3fa581e8ead21ca3c641e465217642f79ec"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "682da7b95ddf7923a1535f4abe3450ec382ac64c0812d3e78e83b15f09c8bd5f"
+            }
+          },
+          "3": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "35e9bcf555e06974708b31936b2e8711f5f994a07af19bb27f8887d387a5a196"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "0b36d104ee7b866a6cb6d79c2b03904499d1f0bfb8bb75bca8893c273e35af87"
+            }
+          },
+          "4": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "a01b30f821bc0bb23e4ac951ffd59f33f20555aba4bb4ffbb1640f11829f20ea"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "4c53aec8f08ef3c6b14587f7e3b1a8f4f6b5f446da681abe667e4eee4013869c"
+            }
+          },
+          "5": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "d22ef2767062e55946bef238c2620dd75d7b69ef02aad38e63dc523f002c5627"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "f5d5e6a21740e4cb17ae9d580373ac56e6cab925a349ed2e0319035aff981856"
+            }
+          },
+          "6": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "b6b99ff202b1bd1f24a62527d9a6300c39398149c0cd3406f18528f51aa4fff6"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "67c967ffc2c04e84200cfe7d7a4a83dda503e21061dbfc0ac3dc50b0b1e6f6f0"
+            }
+          },
+          "7": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "76680dedbf1cff50cd380916c2d80ae3a0938fac3159ae8bc30be62b3cef5e4d"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "98c8552b9d35cb2fc820086e23b234f6268ff3091b994c8d52e462de132040c2"
+            }
+          },
+          "8": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "06b1d7927eb669f51afa2c3d6501dbf075827b43309c4ef302df76b65f61fc3f"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "5539316477219c7805a4a17efdb6fd2629d9d9a224b79ce3a003372409980de3"
+            }
+          },
+          "9": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "38fc08864b80e62595716e93ab586cb2d866d2b6c130ea0f0dca846332cd665f"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "5ee490278a8fe0c1d4e73bed42c5185c661856ef977880bfbf99131c96209811"
+            }
+          }
+        }
+      }
+    }
+  },
+  "ConfigParam34": {
+    "CurValidators": {
+      "SumType": "ValidatorsExt",
+      "ValidatorsExt": {
+        "UtimeSince": 1666500392,
+        "UtimeUntil": 1666507592,
+        "Total": 15,
+        "Main": 15,
+        "TotalWeight": 1152921504606846975,
+        "List": {
+          "0": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "e9a600dd1c513508d55077a710d717b62a2d3d9b2ab370a0a2495053f17846ef"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "934d9695a384d5bcf5f8ee6525405865d15c8729f3c3fac3eb534be211f0a0c0"
+            }
+          },
+          "1": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "38f5d750c4f4976f618cfc7670beada4e54e916203e56b6df20ab8389ffcb921"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "b097bfd36bbe285146bd72455a3db1b7e7e73a4f29c3d86ff99ddfd585b14295"
+            }
+          },
+          "10": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "1b0f731eb3310c6684df9072c645424c50946528350a70684ceea528530dbb0d"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "5ee490278a8fe0c1d4e73bed42c5185c661856ef977880bfbf99131c96209811"
+            }
+          },
+          "11": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "ca74042d3d145238229764901b8483b3fbffea7e1ae7f1ccb9af62abfaddbd10"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "0f9a6d1f7764d6222e06245b9bbd6f90c8d95460adb24f762ad7e40acbc49613"
+            }
+          },
+          "12": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "b8113eff1415ac158d890f213f9982e794251cabd225e245fccd892bcdd34127"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "b4babc788eab03b424d48ef3455f8bf1ef1dbb03cddde81dca896a7524fe4ce2"
+            }
+          },
+          "13": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "ec4249f6cac975d55f6e6bd28822757b7d04b2d2b4a151a66f7f3a16a06878cf"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "ec0e4494b982873e06eeb37951bc78a01421ff0a475769197658ef05394f7e41"
+            }
+          },
+          "14": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "618a8cc1e4fd6109bb6706d84c01523c3418907284b38eed94f6e6218b558379"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "434dcf45e5700b1d17c58048cc15534974a7cb37a232ae17ded67d55cb166d4a"
+            }
+          },
+          "2": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "d9dea9f8f696fa22eb79e65c1ba25f4ff7d8c6b8d29f52d65acdb1384e26e60e"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "682da7b95ddf7923a1535f4abe3450ec382ac64c0812d3e78e83b15f09c8bd5f"
+            }
+          },
+          "3": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "7dd8ebc831386b86a7197b26bbcd474716070242ddc6ec600e6831e800fbcf3b"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "0b36d104ee7b866a6cb6d79c2b03904499d1f0bfb8bb75bca8893c273e35af87"
+            }
+          },
+          "4": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "7b76dad8bdfbfe38bb4ff0b3b2c4e614c788c8be06d86a0aa463645f6a540cd6"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "4c53aec8f08ef3c6b14587f7e3b1a8f4f6b5f446da681abe667e4eee4013869c"
+            }
+          },
+          "5": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "6d4b0f19bbbd1ef35abdbe43174c3f82ec4c8bfdc30c5307e3c37bae25dc8cbc"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "f5d5e6a21740e4cb17ae9d580373ac56e6cab925a349ed2e0319035aff981856"
+            }
+          },
+          "6": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "e53063cca2be084050cf3b0f43b60987ff8b042f0db13381dced7c3443ddc4d4"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "67c967ffc2c04e84200cfe7d7a4a83dda503e21061dbfc0ac3dc50b0b1e6f6f0"
+            }
+          },
+          "7": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "48540f125817a489b23e57b90690f9e6a31afd69165009d8f6cf738568c20776"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "98c8552b9d35cb2fc820086e23b234f6268ff3091b994c8d52e462de132040c2"
+            }
+          },
+          "8": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "b193e4411c266ee479d420c0c95edcca5f77d70ffb1b1499d08b6de1c1365e6a"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "5539316477219c7805a4a17efdb6fd2629d9d9a224b79ce3a003372409980de3"
+            }
+          },
+          "9": {
+            "SumType": "ValidatorAddr",
+            "ValidatorAddr": {
+              "PublicKey": {
+                "Magic": "0x8e81278a",
+                "PubKey": "9f0dc34ceb940ed8603c7a256d6ef74343ce0528324d793b0f3f954cf6c6cf33"
+              },
+              "Weight": 76861433640456465,
+              "AdnlAddr": "7492ef4623f83fe9bf96bfebb51b0e44ee1340004701326fdb8e95d8e1c5130b"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -89,7 +89,7 @@ func NewTonConnect(executor abi.Executor, secret string, opts ...Option) (*Serve
 var knownHashes = make(map[string]wallet.Version)
 
 func init() {
-	for i := wallet.Version(0); i <= wallet.V4R2; i++ {
+	for i := wallet.Version(0); i <= wallet.V5R1; i++ {
 		ver := wallet.GetCodeHashByVer(i)
 		knownHashes[hex.EncodeToString(ver[:])] = i
 	}
@@ -352,6 +352,13 @@ func ParseStateInit(stateInit string) ([]byte, error) {
 
 	case wallet.V3R1, wallet.V3R2, wallet.V4R1, wallet.V4R2:
 		var data wallet.DataV3
+		err = tlb.Unmarshal(&state.Data.Value.Value, &data)
+		if err != nil {
+			return nil, err
+		}
+		pubKey = data.PublicKey
+	case wallet.V5R1:
+		var data wallet.DataV5
 		err = tlb.Unmarshal(&state.Data.Value.Value, &data)
 		if err != nil {
 			return nil, err

@@ -176,6 +176,13 @@ type DataV3 struct {
 	PublicKey   tlb.Bits256
 }
 
+type DataV4 struct {
+	Seqno       uint32
+	SubWalletId uint32
+	PublicKey   tlb.Bits256
+	PluginDict  tlb.HashmapE[tlb.Bits264, tlb.Any] // TODO: find type and check size
+}
+
 type WalletV5ID struct {
 	NetworkGlobalID uint32
 	Workchain       uint8
@@ -188,13 +195,6 @@ type DataV5 struct {
 	WalletID   WalletV5ID
 	PublicKey  tlb.Bits256
 	PluginDict tlb.HashmapE[tlb.Bits264, tlb.Uint8] // TODO: find type and check size
-}
-
-type DataV4 struct {
-	Seqno       uint32
-	SubWalletId uint32
-	PublicKey   tlb.Bits256
-	PluginDict  tlb.HashmapE[tlb.Bits264, tlb.Any] // TODO: find type and check size
 }
 
 // DataHighloadV4 represents data of a highload-wallet contract.

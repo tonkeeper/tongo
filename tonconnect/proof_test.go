@@ -30,6 +30,11 @@ func TestCreateSignedProof(t *testing.T) {
 			version: wallet.V4R1,
 			secret:  "another-random-secret",
 		},
+		{
+			name:    "v5r1",
+			version: wallet.V5R1,
+			secret:  "random-secret",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,11 +52,11 @@ func TestCreateSignedProof(t *testing.T) {
 				t.Fatalf("SeedToPrivateKey() failed: %v", err)
 			}
 			publicKey := privateKey.Public().(ed25519.PublicKey)
-			stateInit, err := wallet.GenerateStateInit(publicKey, tt.version, 0, nil)
+			stateInit, err := wallet.GenerateStateInit(publicKey, tt.version, 0, nil, nil)
 			if err != nil {
 				t.Fatalf("GenerateStateInit() failed: %v", err)
 			}
-			accountID, err := wallet.GenerateWalletAddress(publicKey, tt.version, 0, nil)
+			accountID, err := wallet.GenerateWalletAddress(publicKey, tt.version, 0, nil, nil)
 			if err != nil {
 				t.Fatalf("GenerateWalletAddress() failed: %v", err)
 			}

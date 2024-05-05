@@ -1,7 +1,7 @@
 <abi>
     <types>
 
-        send_message#f1381e5b _:SendMessageAction = MultisigSendMessageAction;
+        send_message#f1381e5b mode:uint8 message:^Cell = MultisigSendMessageAction;
         update_multisig_param#1d0cfbd3 threshold:uint8
         signers:^(Hashmap 8 MsgAddressInt)
         proposers:(HashmapE 8 MsgAddressInt) = MultisigSendMessageAction;

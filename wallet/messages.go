@@ -42,21 +42,21 @@ type MessageV5 struct {
 	tlb.SumType
 	// Sint is an internal message authenticated by a signature.
 	Sint struct {
-		SubWalletId tlb.Bits80
-		ValidUntil  uint32
-		Seqno       uint32
-		Op          bool
-		Signature   tlb.Bits512
-		Actions     SendMessageList `tlb:"^"`
+		WalletId   tlb.Bits80
+		ValidUntil uint32
+		Seqno      uint32
+		Op         bool
+		Signature  tlb.Bits512
+		Actions    SendMessageList `tlb:"^"`
 	} `tlbSumType:"#73696e74"`
 	// Sign is an external message authenticated by a signature.
 	Sign struct {
-		SubWalletId tlb.Bits80
-		ValidUntil  uint32
-		Seqno       uint32
-		Op          bool
-		Signature   tlb.Bits512
-		Actions     SendMessageList `tlb:"^"`
+		WalletId   tlb.Bits80
+		ValidUntil uint32
+		Seqno      uint32
+		Op         bool
+		Signature  tlb.Bits512
+		Actions    SendMessageList `tlb:"^"`
 	} `tlbSumType:"#7369676e"`
 }
 
@@ -337,6 +337,33 @@ func (l *SendMessageList) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error 
 			return fmt.Errorf("unexpected bits available: %v", c.BitsAvailableForRead())
 		}
 	}
+}
+
+func (l SendMessageList) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if len(l.Actions) == 0 {
+		return nil
+	}
+	if err := c.WriteUint(0x0ec3c86d, 32); err != nil {
+		return err
+	}
+	action := l.Actions[0]
+	if err := c.WriteUint(uint64(action.Mode), 8); err != nil {
+		return err
+	}
+	cell := boc.NewCell()
+	next := SendMessageList{
+		Actions: l.Actions[1:],
+	}
+	if err := encoder.Marshal(cell, next); err != nil {
+		return err
+	}
+	if err := c.AddRef(cell); err != nil {
+		return err
+	}
+	if err := c.AddRef(action.Msg); err != nil {
+		return err
+	}
+	return nil
 }
 
 func MessageV5VerifySignature(msgBody boc.Cell, publicKey ed25519.PublicKey) error {

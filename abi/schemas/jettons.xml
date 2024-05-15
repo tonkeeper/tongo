@@ -32,6 +32,12 @@
             <internal name="jetton_notify"/>
         </msg_out>
     </interface>
+    <interface name="jetton_wallet_v2" inherits="jetton_wallet">
+        <code_hash>8d28ea421b77e805fea52acf335296499f03aec8e9fd21ddb5f2564aa65c48de</code_hash>
+    </interface>
+    <interface name="jetton_wallet_governed" inherits="jetton_wallet">
+        <code_hash>89468f02c78e570802e39979c8516fc38df07ea76a48357e0536f2ba7b3ee37b</code_hash>
+    </interface>
 
     <!--        Jettons    -->
     <get_method name="get_jetton_data">

@@ -15,6 +15,8 @@ const (
 	GramMiner
 	JettonMaster
 	JettonWallet
+	JettonWalletGoverned
+	JettonWalletV2
 	Locker
 	LockerBill
 	LockupUniversal
@@ -80,6 +82,10 @@ func (c ContractInterface) String() string {
 		return "jetton_master"
 	case JettonWallet:
 		return "jetton_wallet"
+	case JettonWalletGoverned:
+		return "jetton_wallet_governed"
+	case JettonWalletV2:
+		return "jetton_wallet_v2"
 	case Locker:
 		return "locker"
 	case LockerBill:
@@ -195,6 +201,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return JettonMaster
 	case "jetton_wallet":
 		return JettonWallet
+	case "jetton_wallet_governed":
+		return JettonWalletGoverned
+	case "jetton_wallet_v2":
+		return JettonWalletV2
 	case "locker":
 		return Locker
 	case "locker_bill":
@@ -715,6 +725,10 @@ var contractInterfacesOrder = []InterfaceDescription{
 
 func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 	switch c {
+	case JettonWalletGoverned:
+		return JettonWallet.Implements(other)
+	case JettonWalletV2:
+		return JettonWallet.Implements(other)
 	case NftAuctionGetgemsV3:
 		return NftAuctionV1.Implements(other)
 	case NftAuctionV1:
@@ -847,9 +861,21 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
+	ton.MustParseHash("89468f02c78e570802e39979c8516fc38df07ea76a48357e0536f2ba7b3ee37b"): {
+		contractInterfaces: []ContractInterface{JettonWalletGoverned},
+		getMethods: []InvokeFn{
+			GetWalletData,
+		},
+	},
 	ton.MustParseHash("8ceb45b3cd4b5cc60eaae1c13b9c092392677fe536b2e9b2d801b62eff931fe1"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV2R1},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("8d28ea421b77e805fea52acf335296499f03aec8e9fd21ddb5f2564aa65c48de"): {
+		contractInterfaces: []ContractInterface{JettonWalletV2},
+		getMethods: []InvokeFn{
+			GetWalletData,
+		},
 	},
 	ton.MustParseHash("9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV2},

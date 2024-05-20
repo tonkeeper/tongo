@@ -16,6 +16,7 @@ const (
 	JettonMaster
 	JettonWallet
 	JettonWalletGoverned
+	JettonWalletV1
 	JettonWalletV2
 	Locker
 	LockerBill
@@ -84,6 +85,8 @@ func (c ContractInterface) String() string {
 		return "jetton_wallet"
 	case JettonWalletGoverned:
 		return "jetton_wallet_governed"
+	case JettonWalletV1:
+		return "jetton_wallet_v1"
 	case JettonWalletV2:
 		return "jetton_wallet_v2"
 	case Locker:
@@ -203,6 +206,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return JettonWallet
 	case "jetton_wallet_governed":
 		return JettonWalletGoverned
+	case "jetton_wallet_v1":
+		return JettonWalletV1
 	case "jetton_wallet_v2":
 		return JettonWalletV2
 	case "locker":
@@ -727,6 +732,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 	switch c {
 	case JettonWalletGoverned:
 		return JettonWallet.Implements(other)
+	case JettonWalletV1:
+		return JettonWallet.Implements(other)
 	case JettonWalletV2:
 		return JettonWallet.Implements(other)
 	case NftAuctionGetgemsV3:
@@ -893,6 +900,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV3R1},
 		getMethods: []InvokeFn{
 			Seqno,
+		},
+	},
+	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {
+		contractInterfaces: []ContractInterface{JettonWalletV1},
+		getMethods: []InvokeFn{
+			GetWalletData,
 		},
 	},
 	ton.MustParseHash("ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1"): {

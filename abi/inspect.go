@@ -158,9 +158,6 @@ type codeInfo struct {
 }
 
 func (i codeInfo) isMethodOkToTry(name string) bool {
-	if i.methods == nil {
-		return true
-	}
 	methodID := utils.MethodIdFromName(name)
 	_, ok := i.methods[int64(methodID)]
 	return ok

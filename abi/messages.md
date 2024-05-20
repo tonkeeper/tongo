@@ -8,11 +8,13 @@ The list below contains the supported message operations, their names and opcode
 | Name        | Message operation code |
 |-------------|------------------------|
 | AcceptStorageContract| 0x7a361688 |
+| AddReferralAmount| 0x84dced7a |
 | Approve| 0x7b4b42e6 |
 | AuctionFillUp| 0x370fec51 |
 | Bounce| 0xffffffff |
 | ChallengeQuarantinedChannelState| 0x088eaa32 |
 | ChangeDnsRecord| 0x4eb1f0f9 |
+| ChangeSettings| 0xedcd36a6 |
 | ChannelClosed| 0xdddc88ba |
 | ChannelCooperativeClose| 0x5577587e |
 | ChannelCooperativeCommit| 0x79a126ef |
@@ -43,6 +45,7 @@ The list below contains the supported message operations, their names and opcode
 | GetStaticData| 0x2fcb26a2 |
 | GramSubmitProofOfWork| 0x4d696e65 |
 | HighloadWalletSignedV3| 0x00000000 |
+| Init| 0x29c102d1 |
 | InitPaymentChannel| 0x0e0620c2 |
 | JettonBurn| 0x595f07bc |
 | JettonBurnNotification| 0x7bdd97de |
@@ -59,6 +62,7 @@ The list below contains the supported message operations, their names and opcode
 | MegatonSwap| 0x7362d09c |
 | MegatonUpdateMiningParams| 0x56a8e920 |
 | MegatonWtonMint| 0x77a33521 |
+| MintReferral| 0xcb4ddc3c |
 | MultisigApprove| 0xa762230f |
 | MultisigApproveAccepted| 0x82609bf6 |
 | MultisigApproveRejected| 0xafaf283e |
@@ -66,11 +70,13 @@ The list below contains the supported message operations, their names and opcode
 | MultisigExecuteInternal| 0xa32c59bf |
 | MultisigNewOrder| 0xf718510f |
 | MultisigOrderInit| 0x9c73fba2 |
+| NftItemTransfer| 0x84dced7a |
 | NftOwnershipAssigned| 0x05138d91 |
 | NftTransfer| 0x5fcc3d14 |
 | OfferStorageContract| 0x107c49ef |
 | OutbidNotification| 0x557cea20 |
 | OwnershipProof| 0x0524c7ae |
+| PayFunding| 0xb652c441 |
 | PaymentRequest| 0x706c7567 |
 | PaymentRequestResponse| 0xf06c7567 |
 | ProcessGovernanceDecision| 0x44beae41 |
@@ -144,19 +150,10 @@ The list below contains the supported message operations, their names and opcode
 | TonstakePoolWithdrawal| 0x0a77535c |
 | TopUp| 0xd372158c |
 | TopUpChannelBalance| 0x67c7d281 |
+| Update| 0xe434967e |
 | UpdatePubkey| 0x53f34cd6 |
 | UpdateStorageParams| 0x54cbf19b |
 | WalletPluginDestruct| 0x64737472 |
 | WalletPluginDestructResponse| 0xe4737472 |
 | WalletSignedV3| 0x00000000 |
 | WalletSignedV4| 0x00000000 |
-| WhalesNominatorsAcceptStake| 0x99a811fb |
-| WhalesNominatorsAcceptWithdraws| 0xa19fd934 |
-| WhalesNominatorsDeposit| 0x7bcd1fef |
-| WhalesNominatorsForceKick| 0x1596920c |
-| WhalesNominatorsSendStake| 0xa2065f2c |
-| WhalesNominatorsStakeWithdrawCompleted| 0x23d421e1 |
-| WhalesNominatorsStakeWithdrawDelayed| 0x74bb3427 |
-| WhalesNominatorsWithdraw| 0xda803efd |
-| WhalesNominatorsWithdrawUnowned| 0x251d6a98 |
-| WhalesNominatorsWithdrawUnownedResponse| 0x1d1715bf |

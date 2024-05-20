@@ -1,0 +1,167 @@
+<abi>  
+
+    <types>
+        parameters#_  discount:uint32 rebate:uint32 = Parameters;
+
+        update_msg#_ price:Coins spread:Coins timestamp:uint32 asset_index:uint16 = UpdateMsg;
+                                                                                 
+        <!-- signatures#_ has_sig:uint1  = Signatures; -->
+
+        oracle_data#_ update_msg:^UpdateMsg signatures:^Cell = OracleData;
+
+        amm_settings#_ fee:uint32 rollover_fee:uint32 funding_period:uint32 init_margin_ratio:uint32 
+        maintenance_margin_ratio:uint32 liquidation_fee_ratio:uint32 partial_liquidation_ratio:uint32 
+        spread_limit:uint32 max_price_impact:uint32 max_price_spread:uint32 max_open_notional:uint32 
+        fee_to_stakers_percent:uint32 funding_mode:uint2 min_partial_liquidation_notional:Coins min_leverage:uint32 = AmmSettings;
+    </types>
+
+
+    <interface name="storm_vamm">
+        <get_method name="get_amm_name" version="storm"/>
+        <get_method name="get_amm_status" version="storm"/>
+        <msg_in>
+            <internal name="change_settings"/>
+            <internal name="pay_funding"/>
+            <internal name="init"/>
+        </msg_in>
+        <msg_out>
+            <internal name="update"/>
+        </msg_out>
+    </interface>
+
+    <interface name="referral">
+        <msg_in>
+            <internal name="mint_referral"/>
+            <internal name="add_referral_amount"/>
+            <internal name="nft_item_transfer"/>
+        </msg_in>
+    </interface>
+
+    
+    
+    
+    <get_method name="get_amm_contract_data">
+        <output>
+            <cell name="amm_contract_data">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_amm_name">
+        <output>
+            <slice name="vault_addr">msgaddress</slice>
+            <int name="asset_id">uint16</int>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_amm_status">
+        <output>
+            <int name="close_only">bool</int>
+            <int name="paused">bool</int>
+            <int name="direct_increase_enabled">bool</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_amm_state">
+        <output>
+
+            <int name="quote_asset_reserve">uint64</int>
+            <int name="base_asset_reserve">uint64</int>
+            <int name="quote_asset_weight">uint64</int>
+            <int name="total_long_position_size">uint64</int>
+            <int name="total_short_position_size">uint64</int>
+            
+            <int name="open_interest_long">uint64</int>
+            <int name="open_interest_short">uint64</int>
+            <int name="latest_long_cumulative_premium_fraction">int64</int>
+            <int name="latest_short_cumulative_premium_fraction">int64</int>
+            <int name="next_funding_block_timestamp">uint32</int>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_exchange_settings">
+        <output>
+            <int name="fee">uint32</int>
+            <int name="rollover_fee">uint32</int>
+            <int name="funding_period">uint32</int>
+            <int name="init_margin_ratio">uint32</int>
+            <int name="maintenance_margin_ratio">uint32</int>
+            <int name="liquidation_fee_ratio">uint32</int>
+            <int name="partial_liquidation_ratio">uint32</int>
+            <int name="spread_limit">uint32</int>
+            <int name="max_price_impact">uint32</int>
+            <int name="max_price_spread">uint32</int>
+            <int name="max_open_notional">uint64</int>
+            <int name="fee_to_stakers_percent">uint32</int>
+            <int name="funding_mode">uint32</int>
+            <int name="min_partial_liquidation_notional">uint64</int>
+            <int name="min_init_margin_ratio">uint32</int>
+
+            <int name="executor_fee">int32</int>
+            <int name="close_position_time_delta">int32</int>
+            <int name="max_unrealized_pnl">int32</int>
+
+            <int name="direct_increase_enabled">bool</int>
+            <int name="direct_close_enabled">bool</int>
+            <cell name="executors_whitelist">cell</cell>
+
+            <int name="low_funding_fn_a">int32</int>
+            <int name="low_funding_fn_b">int32</int>
+            <int name="high_funding_fn_a">int32</int>
+            <int name="high_funding_fn_b">int32</int>
+
+            <int name="inflection_point">int32</int>
+
+        </output>
+    </get_method>
+
+    <get_method name="get_spot_price">
+        <output>
+            <int name="spot_price">int64</int>
+        </output>
+    </get_method>
+
+    
+    <get_method name="get_executor_vaults_whitelist">
+        <output>
+            <int name="balances_dict">int64</int> <!-- int64 ??? -->
+        </output>
+    </get_method>
+
+
+    <internal name="change_settings">
+        change_settings#edcd36a6 redirect_addr:MsgAddress 
+        settings:^AmmSettings = InternalMsgBody;
+    </internal>
+
+    <internal name="pay_funding">
+        pay_funding#b652c441 oracle_ref:^OracleData = InternalMsgBody;
+    </internal>
+
+    <internal name="init">
+        init#29c102d1 redirect_addr:MsgAddress 
+        code:^Cell data:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="update">
+        update#e434967e origin_opcode:uint32 = InternalMsgBody;
+    </internal>
+
+    <internal name="mint_referral">
+        mint_referral#cb4ddc3c nft_owner:MsgAddress ref_type:uint2
+        redirect_address:MsgAddress parameters:^Parameters balances_dict:^(Hashmap 64 MsgAddress) = InternalMsgBody;
+    </internal>
+
+    <internal name="add_referral_amount">
+        add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="nft_item_transfer">
+        add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+
+
+
+</abi>

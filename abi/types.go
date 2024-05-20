@@ -242,6 +242,41 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
+type AmmSettings struct {
+	Fee                           uint32
+	RolloverFee                   uint32
+	FundingPeriod                 uint32
+	InitMarginRatio               uint32
+	MaintenanceMarginRatio        uint32
+	LiquidationFeeRatio           uint32
+	PartialLiquidationRatio       uint32
+	SpreadLimit                   uint32
+	MaxPriceImpact                uint32
+	MaxPriceSpread                uint32
+	MaxOpenNotional               uint32
+	FeeToStakersPercent           uint32
+	FundingMode                   tlb.Uint2
+	MinPartialLiquidationNotional tlb.Grams
+	MinLeverage                   uint32
+}
+
+type OracleData struct {
+	UpdateMsg  UpdateMsg `tlb:"^"`
+	Signatures tlb.Any   `tlb:"^"`
+}
+
+type Parameters struct {
+	Discount uint32
+	Rebate   uint32
+}
+
+type UpdateMsg struct {
+	Price      tlb.Grams
+	Spread     tlb.Grams
+	Timestamp  uint32
+	AssetIndex uint16
+}
+
 type NftRoyaltyParams struct {
 	Numerator   uint16
 	Denominator uint16
@@ -383,17 +418,4 @@ func (t *MessageRelaxed) MarshalJSON() ([]byte, error) {
 type SendMessageAction struct {
 	Mode    uint8
 	Message MessageRelaxed `tlb:"^"`
-}
-
-type WhalesNominatorsMember struct {
-	ProfitPerCoin      tlb.Int128
-	Balance            tlb.Grams
-	PendingWithdraw    tlb.Grams
-	PendingWithdrawAll bool
-	PendingDeposit     tlb.Grams
-	MemberWithdraw     tlb.Grams
-}
-
-type WhalesNominatorsMembersList struct {
-	List tlb.Hashmap[tlb.Bits256, WhalesNominatorsMember]
 }

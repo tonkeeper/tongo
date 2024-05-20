@@ -36,11 +36,13 @@ const (
 	NftSaleV1
 	NftSaleV2
 	PaymentChannel
+	Referral
 	Sbt
 	StonfiPool
 	StonfiRouter
 	StorageContract
 	StorageProvider
+	StormVamm
 	SubscriptionV1
 	Teleitem
 	TonstakePool
@@ -63,7 +65,6 @@ const (
 	WalletV4R1
 	WalletV4R2
 	WalletV5R1
-	WhalesPool
 )
 
 func (c ContractInterface) String() string {
@@ -124,6 +125,8 @@ func (c ContractInterface) String() string {
 		return "nft_sale_v2"
 	case PaymentChannel:
 		return "payment_channel"
+	case Referral:
+		return "referral"
 	case Sbt:
 		return "sbt"
 	case StonfiPool:
@@ -134,6 +137,8 @@ func (c ContractInterface) String() string {
 		return "storage_contract"
 	case StorageProvider:
 		return "storage_provider"
+	case StormVamm:
+		return "storm_vamm"
 	case SubscriptionV1:
 		return "subscription_v1"
 	case Teleitem:
@@ -178,8 +183,6 @@ func (c ContractInterface) String() string {
 		return "wallet_v4r2"
 	case WalletV5R1:
 		return "wallet_v5r1"
-	case WhalesPool:
-		return "whales_pool"
 	default:
 		return "unknown"
 	}
@@ -243,6 +246,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return NftSaleV2
 	case "payment_channel":
 		return PaymentChannel
+	case "referral":
+		return Referral
 	case "sbt":
 		return Sbt
 	case "stonfi_pool":
@@ -253,6 +258,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StorageContract
 	case "storage_provider":
 		return StorageProvider
+	case "storm_vamm":
+		return StormVamm
 	case "subscription_v1":
 		return SubscriptionV1
 	case "teleitem":
@@ -297,14 +304,28 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV4R2
 	case "wallet_v5r1":
 		return WalletV5R1
-	case "whales_pool":
-		return WhalesPool
 	default:
 		return IUnknown
 	}
 }
 
 var methodInvocationOrder = []MethodDescription{
+	{
+		Name:     "get_amm_contract_data",
+		InvokeFn: GetAmmContractData,
+	},
+	{
+		Name:     "get_amm_name",
+		InvokeFn: GetAmmName,
+	},
+	{
+		Name:     "get_amm_state",
+		InvokeFn: GetAmmState,
+	},
+	{
+		Name:     "get_amm_status",
+		InvokeFn: GetAmmStatus,
+	},
 	{
 		Name:     "get_asset",
 		InvokeFn: GetAsset,
@@ -344,6 +365,14 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_editor",
 		InvokeFn: GetEditor,
+	},
+	{
+		Name:     "get_exchange_settings",
+		InvokeFn: GetExchangeSettings,
+	},
+	{
+		Name:     "get_executor_vaults_whitelist",
+		InvokeFn: GetExecutorVaultsWhitelist,
 	},
 	{
 		Name:     "get_full_domain",
@@ -386,10 +415,6 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetLpSwapData,
 	},
 	{
-		Name:     "get_members_raw",
-		InvokeFn: GetMembersRaw,
-	},
-	{
 		Name:     "get_mining_data",
 		InvokeFn: GetMiningData,
 	},
@@ -414,10 +439,6 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNftData,
 	},
 	{
-		Name:     "get_params",
-		InvokeFn: GetParams,
-	},
-	{
 		Name:     "get_plugin_list",
 		InvokeFn: GetPluginList,
 	},
@@ -428,10 +449,6 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_pool_full_data",
 		InvokeFn: GetPoolFullData,
-	},
-	{
-		Name:     "get_pool_status",
-		InvokeFn: GetPoolStatus,
 	},
 	{
 		Name:     "get_pow_params",
@@ -458,8 +475,8 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetSaleData,
 	},
 	{
-		Name:     "get_staking_status",
-		InvokeFn: GetStakingStatus,
+		Name:     "get_spot_price",
+		InvokeFn: GetSpotPrice,
 	},
 	{
 		Name:     "get_status",
@@ -694,6 +711,13 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: StormVamm,
+		Results: []string{
+			"GetAmmName_StormResult",
+			"GetAmmStatus_StormResult",
+		},
+	},
+	{
 		Name: SubscriptionV1,
 		Results: []string{
 			"GetSubscriptionDataResult",
@@ -711,14 +735,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetPoolData_TfResult",
 			"ListNominatorsResult",
 			"ListVotesResult",
-		},
-	},
-	{
-		Name: WhalesPool,
-		Results: []string{
-			"GetParams_WhalesNominatorResult",
-			"GetPoolStatusResult",
-			"GetStakingStatusResult",
 		},
 	},
 }
@@ -993,13 +1009,17 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncNftTransferMsgBody,
 			decodeFuncGetStaticDataMsgBody,
 		}
-	case WhalesPool:
+	case Referral:
 		return []msgDecoderFunc{
-			decodeFuncWhalesNominatorsWithdrawMsgBody,
-			decodeFuncWhalesNominatorsDepositMsgBody,
-			decodeFuncWhalesNominatorsSendStakeMsgBody,
-			decodeFuncWhalesNominatorsWithdrawUnownedMsgBody,
-			decodeFuncWhalesNominatorsForceKickMsgBody,
+			decodeFuncMintReferralMsgBody,
+			decodeFuncAddReferralAmountMsgBody,
+			decodeFuncNftItemTransferMsgBody,
+		}
+	case StormVamm:
+		return []msgDecoderFunc{
+			decodeFuncChangeSettingsMsgBody,
+			decodeFuncPayFundingMsgBody,
+			decodeFuncInitMsgBody,
 		}
 	default:
 		return nil

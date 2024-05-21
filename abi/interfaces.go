@@ -1040,15 +1040,15 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		}
 	case Referral:
 		return []msgDecoderFunc{
-			decodeFuncMintReferralMsgBody,
-			decodeFuncAddReferralAmountMsgBody,
-			decodeFuncNftItemTransferMsgBody,
+			decodeFuncStormMintReferralMsgBody,
+			decodeFuncStormAddReferralAmountMsgBody,
+			decodeFuncStormNftItemTransferMsgBody,
 		}
 	case StormVamm:
 		return []msgDecoderFunc{
-			decodeFuncChangeSettingsMsgBody,
-			decodeFuncPayFundingMsgBody,
-			decodeFuncInitMsgBody,
+			decodeFuncStormChangeSettingsMsgBody,
+			decodeFuncStormPayFundingMsgBody,
+			decodeFuncStormInitMsgBody,
 		}
 	case WhalesPool:
 		return []msgDecoderFunc{

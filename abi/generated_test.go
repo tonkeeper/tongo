@@ -16,7 +16,6 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tvm"
 
-	"github.com/davecgh/go-spew/spew"
 )
 
 func mustToAddress(x string) ton.AccountID {
@@ -553,10 +552,10 @@ func TestMessageDecoder(t *testing.T) {
 		{
 			name: "storm pay funding",
 			interfaces: []ContractInterface{StormVamm},
-			wantOpName: "PayFunding",
+			wantOpName: "StormPayFunding",
 			boc: "b5ee9c72010104010060000108b652c441010202000203001e5017e965a303b507fc664ae632000a0081afaf9b048dc83a8d8bb41d9e1ed9e254121653a17723560fc92fd5e80613f5a8c5a3bdd5a8bf51ae4cfc9b7273ba0e1cb34ab50d9ff5aa700216acb23af77306e0",
 			wantValidate: func(t *testing.T, value any) {
-				body := PayFundingMsgBody{
+				body := StormPayFundingMsgBody{
 					OracleRef: 
 						OracleData{
 							UpdateMsg: 
@@ -566,7 +565,7 @@ func TestMessageDecoder(t *testing.T) {
 									Timestamp: 1716184626,
 									AssetIndex: 10,
 								},
-							Signatures: value.(PayFundingMsgBody).OracleRef.Signatures,
+							Signatures: value.(StormPayFundingMsgBody).OracleRef.Signatures,
 						},
 				}
 				

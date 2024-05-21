@@ -20,20 +20,20 @@
         <get_method name="get_amm_name" version="storm"/>
         <get_method name="get_amm_status" version="storm"/>
         <msg_in>
-            <internal name="change_settings"/>
-            <internal name="pay_funding"/>  <!--- test -->
-            <internal name="init"/>
+            <internal name="storm_change_settings"/>
+            <internal name="storm_pay_funding"/>  <!--- test -->
+            <internal name="storm_init"/>
         </msg_in>
         <msg_out>
-            <internal name="update"/>
+            <internal name="storm_update"/>
         </msg_out>
     </interface>
 
     <interface name="referral">
         <msg_in>
-            <internal name="mint_referral"/>
-            <internal name="add_referral_amount"/>
-            <internal name="nft_item_transfer"/>
+            <internal name="storm_mint_referral"/>
+            <internal name="storm_add_referral_amount"/>
+            <internal name="storm_nft_item_transfer"/>
         </msg_in>
     </interface>
 
@@ -130,34 +130,34 @@
     </get_method>
 
 
-    <internal name="change_settings">
+    <internal name="storm_change_settings">
         change_settings#edcd36a6 redirect_addr:MsgAddress 
         settings:^AmmSettings = InternalMsgBody;
     </internal>
 
-    <internal name="pay_funding">
+    <internal name="storm_pay_funding">
         pay_funding#b652c441 oracle_ref:^OracleData = InternalMsgBody;
     </internal>
 
-    <internal name="init">
+    <internal name="storm_init">
         init#29c102d1 redirect_addr:MsgAddress 
         code:^Cell data:^Cell = InternalMsgBody;
     </internal>
 
-    <internal name="update">
+    <internal name="storm_update">
         update#e434967e origin_opcode:uint32 = InternalMsgBody;
     </internal>
 
-    <internal name="mint_referral">
+    <internal name="storm_mint_referral">
         mint_referral#cb4ddc3c nft_owner:MsgAddress ref_type:uint2
         redirect_address:MsgAddress parameters:^Parameters balances_dict:^(Hashmap 64 MsgAddress) = InternalMsgBody;
     </internal>
 
-    <internal name="add_referral_amount">
+    <internal name="storm_add_referral_amount">
         add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
     </internal>
 
-    <internal name="nft_item_transfer">
+    <internal name="storm_nft_item_transfer">
         add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
     </internal>
 

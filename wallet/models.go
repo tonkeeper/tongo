@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"context"
-	"crypto/ed25519"
 	"fmt"
 	"time"
 
@@ -149,60 +148,6 @@ func (v Version) ToString() string {
 		panic("to string conversion for this ver not supported")
 	}
 	return names[v]
-}
-
-type Wallet struct {
-	key         ed25519.PrivateKey
-	address     ton.AccountID
-	ver         Version
-	subWalletId uint32
-	blockchain  blockchain
-}
-
-// GetAddress returns current wallet address but you can also call function GenerateWalletAddress
-// which returns same address but doesn't require blockchain connection for calling
-func (w *Wallet) GetAddress() ton.AccountID {
-	return w.address
-}
-
-type DataV1V2 struct {
-	Seqno     uint32
-	PublicKey tlb.Bits256
-}
-
-type DataV3 struct {
-	Seqno       uint32
-	SubWalletId uint32
-	PublicKey   tlb.Bits256
-}
-
-type WalletV5ID struct {
-	NetworkGlobalID uint32
-	Workchain       uint8
-	WalletVersion   uint8
-	SubWalletID     uint32
-}
-
-type DataV5 struct {
-	Seqno      tlb.Uint33
-	WalletID   WalletV5ID
-	PublicKey  tlb.Bits256
-	PluginDict tlb.HashmapE[tlb.Bits264, tlb.Uint8] // TODO: find type and check size
-}
-
-type DataV4 struct {
-	Seqno       uint32
-	SubWalletId uint32
-	PublicKey   tlb.Bits256
-	PluginDict  tlb.HashmapE[tlb.Bits264, tlb.Any] // TODO: find type and check size
-}
-
-// DataHighloadV4 represents data of a highload-wallet contract.
-type DataHighloadV4 struct {
-	SubWalletId     uint32
-	LastCleanedTime uint64
-	PublicKey       tlb.Bits256
-	Queries         tlb.HashmapE[tlb.Uint64, tlb.Any]
 }
 
 type Sendable interface {

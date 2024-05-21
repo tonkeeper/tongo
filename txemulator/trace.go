@@ -17,6 +17,7 @@ type Tracer struct {
 	blockchain          accountGetter
 	counter             int
 	limit               int
+	softLimit           int
 }
 
 type TxTree struct {
@@ -27,6 +28,7 @@ type TxTree struct {
 type TraceOptions struct {
 	config             string
 	limit              int
+	softLimit          int
 	blockchain         accountGetter
 	time               int64
 	checkSignature     bool
@@ -56,6 +58,13 @@ func WithConfigBase64(c string) TraceOption {
 func WithLimit(l int) TraceOption {
 	return func(o *TraceOptions) error {
 		o.limit = l
+		return nil
+	}
+}
+
+func WithSoftLimit(l int) TraceOption {
+	return func(o *TraceOptions) error {
+		o.softLimit = l
 		return nil
 	}
 }
@@ -146,6 +155,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		currentShardAccount: option.predefinedAccounts,
 		blockchain:          option.blockchain,
 		limit:               option.limit,
+		softLimit:           option.softLimit,
 	}, nil
 }
 
@@ -179,6 +189,9 @@ func msgStateInitCode(msg tlb.Message) *boc.Cell {
 func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) {
 	if t.counter >= t.limit {
 		return nil, fmt.Errorf("to many iterations: %v/%v", t.counter, t.limit)
+	}
+	if t.softLimit > 0 && t.counter >= t.softLimit {
+		return nil, nil
 	}
 	var a tlb.MsgAddress
 	switch message.Info.SumType {

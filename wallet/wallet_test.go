@@ -55,7 +55,7 @@ func TestGenerateWalletAddress(t *testing.T) {
 	for ver, data := range testData {
 		key, _ := hex.DecodeString(data.PublicKey)
 		publicKey := ed25519.PublicKey(key)
-		address, err := GenerateWalletAddress(publicKey, ver, 0, nil)
+		address, err := GenerateWalletAddress(publicKey, ver, nil, 0, nil)
 		if err != nil {
 			t.Fatalf("address generation failed: %v", err)
 		}
@@ -148,7 +148,7 @@ func TestMockBlockchain(t *testing.T) {
 func initDefaultWallet(blockchain blockchain) Wallet {
 	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 	privateKey := ed25519.NewKeyFromSeed(pk)
-	w, err := New(privateKey, V4R2, 0, nil, blockchain)
+	w, err := New(privateKey, V4R2, blockchain)
 	if err != nil {
 		panic("unable to create wallet")
 	}

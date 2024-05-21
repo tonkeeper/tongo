@@ -18,7 +18,7 @@ import (
 func initDefaultWallet(blockchain *liteapi.Client) wallet.Wallet {
 	pk, _ := base64.StdEncoding.DecodeString("OyAWIb4FeP1bY1VhALWrU2JN9/8O1Kv8kWZ0WfXXpOM=")
 	privateKey := ed25519.NewKeyFromSeed(pk)
-	w, err := wallet.New(privateKey, wallet.V4R2, 0, nil, blockchain)
+	w, err := wallet.New(privateKey, wallet.V4R2, blockchain)
 	if err != nil {
 		panic("unable to create wallet")
 	}

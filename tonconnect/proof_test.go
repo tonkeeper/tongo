@@ -47,11 +47,11 @@ func TestCreateSignedProof(t *testing.T) {
 				t.Fatalf("SeedToPrivateKey() failed: %v", err)
 			}
 			publicKey := privateKey.Public().(ed25519.PublicKey)
-			stateInit, err := wallet.GenerateStateInit(publicKey, tt.version, 0, nil)
+			stateInit, err := wallet.GenerateStateInit(publicKey, tt.version, nil, 0, nil)
 			if err != nil {
 				t.Fatalf("GenerateStateInit() failed: %v", err)
 			}
-			accountID, err := wallet.GenerateWalletAddress(publicKey, tt.version, 0, nil)
+			accountID, err := wallet.GenerateWalletAddress(publicKey, tt.version, nil, 0, nil)
 			if err != nil {
 				t.Fatalf("GenerateWalletAddress() failed: %v", err)
 			}

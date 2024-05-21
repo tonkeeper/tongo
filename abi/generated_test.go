@@ -566,20 +566,10 @@ func TestMessageDecoder(t *testing.T) {
 									Timestamp: 1716184626,
 									AssetIndex: 10,
 								},
-							Signatures: value.(PayFundingMsgBody).OracleRef.Signatures, //tlb.Any(mustHexToCell(("b5ee9c72410101010043000081afaf9b048dc83a8d8bb41d9e1ed9e254121653a17723560fc92fd5e80613f5a8c5a3bdd5a8bf51ae4cfc9b7273ba0e1cb34ab50d9ff5aa700216acb23af77306e0dc7ce9db"))),
+							Signatures: value.(PayFundingMsgBody).OracleRef.Signatures,
 						},
 				}
 				
-				
-				spew.Dump(body);
-				/*
-				v := value.(PayFundingMsgBody)
-
-				oldBuf := v.OracleRef.Signatures.bits.buf
-				newBuf := make([]uint8, len(oldBuf), 1023)
-				copy(newBuf, oldBuf)
-				v.OracleRef.Signatures.bits.buf = newBuf
-				*/
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
 				}

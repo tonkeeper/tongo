@@ -157,3 +157,13 @@ The list below contains the supported message operations, their names and opcode
 | WalletPluginDestructResponse| 0xe4737472 |
 | WalletSignedV3| 0x00000000 |
 | WalletSignedV4| 0x00000000 |
+| WhalesNominatorsAcceptStake| 0x99a811fb |
+| WhalesNominatorsAcceptWithdraws| 0xa19fd934 |
+| WhalesNominatorsDeposit| 0x7bcd1fef |
+| WhalesNominatorsForceKick| 0x1596920c |
+| WhalesNominatorsSendStake| 0xa2065f2c |
+| WhalesNominatorsStakeWithdrawCompleted| 0x23d421e1 |
+| WhalesNominatorsStakeWithdrawDelayed| 0x74bb3427 |
+| WhalesNominatorsWithdraw| 0xda803efd |
+| WhalesNominatorsWithdrawUnowned| 0x251d6a98 |
+| WhalesNominatorsWithdrawUnownedResponse| 0x1d1715bf |

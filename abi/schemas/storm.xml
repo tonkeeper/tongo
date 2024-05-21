@@ -21,7 +21,7 @@
         <get_method name="get_amm_status" version="storm"/>
         <msg_in>
             <internal name="change_settings"/>
-            <internal name="pay_funding"/>
+            <internal name="pay_funding"/>  <!--- test -->
             <internal name="init"/>
         </msg_in>
         <msg_out>

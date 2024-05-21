@@ -31,12 +31,16 @@ var (
 	decodeFuncTonstakeNftInitMsgBody = decodeMsg(tlb.Tag{Val: 0x132f9a45, Len: 32}, TonstakeNftInitMsgOp, TonstakeNftInitMsgBody{})
 	// 0x139a1b4e
 	decodeFuncTonstakeControllerPoolHaltMsgBody = decodeMsg(tlb.Tag{Val: 0x139a1b4e, Len: 32}, TonstakeControllerPoolHaltMsgOp, TonstakeControllerPoolHaltMsgBody{})
+	// 0x1596920c
+	decodeFuncWhalesNominatorsForceKickMsgBody = decodeMsg(tlb.Tag{Val: 0x1596920c, Len: 32}, WhalesNominatorsForceKickMsgOp, WhalesNominatorsForceKickMsgBody{})
 	// 0x1674b0a0
 	decodeFuncTonstakePayoutMintJettonsMsgBody = decodeMsg(tlb.Tag{Val: 0x1674b0a0, Len: 32}, TonstakePayoutMintJettonsMsgOp, TonstakePayoutMintJettonsMsgBody{})
 	// 0x1690c604
 	decodeFuncCreditMsgBody = decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, CreditMsgOp, CreditMsgBody{})
 	// 0x178d4519
 	decodeFuncJettonInternalTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, JettonInternalTransferMsgOp, JettonInternalTransferMsgBody{})
+	// 0x1d1715bf
+	decodeFuncWhalesNominatorsWithdrawUnownedResponseMsgBody = decodeMsg(tlb.Tag{Val: 0x1d1715bf, Len: 32}, WhalesNominatorsWithdrawUnownedResponseMsgOp, WhalesNominatorsWithdrawUnownedResponseMsgBody{})
 	// 0x1f04537a
 	decodeFuncSbtDestroyMsgBody = decodeMsg(tlb.Tag{Val: 0x1f04537a, Len: 32}, SbtDestroyMsgOp, SbtDestroyMsgBody{})
 	// 0x1f151acf
@@ -45,8 +49,12 @@ var (
 	decodeFuncEncryptedTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x2167da4b, Len: 32}, EncryptedTextCommentMsgOp, EncryptedTextCommentMsgBody{})
 	// 0x235caf52
 	decodeFuncJettonCallToMsgBody = decodeMsg(tlb.Tag{Val: 0x235caf52, Len: 32}, JettonCallToMsgOp, JettonCallToMsgBody{})
+	// 0x23d421e1
+	decodeFuncWhalesNominatorsStakeWithdrawCompletedMsgBody = decodeMsg(tlb.Tag{Val: 0x23d421e1, Len: 32}, WhalesNominatorsStakeWithdrawCompletedMsgOp, WhalesNominatorsStakeWithdrawCompletedMsgBody{})
 	// 0x2508d66a
 	decodeFuncJettonUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x2508d66a, Len: 32}, JettonUpgradeMsgOp, JettonUpgradeMsgBody{})
+	// 0x251d6a98
+	decodeFuncWhalesNominatorsWithdrawUnownedMsgBody = decodeMsg(tlb.Tag{Val: 0x251d6a98, Len: 32}, WhalesNominatorsWithdrawUnownedMsgOp, WhalesNominatorsWithdrawUnownedMsgBody{})
 	// 0x25432a91
 	decodeFuncFinishUncooperativeChannelCloseMsgBody = decodeMsg(tlb.Tag{Val: 0x25432a91, Len: 32}, FinishUncooperativeChannelCloseMsgOp, FinishUncooperativeChannelCloseMsgBody{})
 	// 0x25938561
@@ -147,6 +155,8 @@ var (
 	decodeFuncJettonNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, JettonNotifyMsgOp, JettonNotifyMsgBody{})
 	// 0x73756273
 	decodeFuncSubscriptionPaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{})
+	// 0x74bb3427
+	decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody = decodeMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{})
 	// 0x75097f5d
 	decodeFuncMultisigExecuteMsgBody = decodeMsg(tlb.Tag{Val: 0x75097f5d, Len: 32}, MultisigExecuteMsgOp, MultisigExecuteMsgBody{})
 	// 0x77a33521
@@ -161,6 +171,8 @@ var (
 	decodeFuncAcceptStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x7a361688, Len: 32}, AcceptStorageContractMsgOp, AcceptStorageContractMsgBody{})
 	// 0x7b4b42e6
 	decodeFuncApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
+	// 0x7bcd1fef
+	decodeFuncWhalesNominatorsDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{})
 	// 0x7bdd97de
 	decodeFuncJettonBurnNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, JettonBurnNotificationMsgOp, JettonBurnNotificationMsgBody{})
 	// 0x82609bf6
@@ -177,10 +189,16 @@ var (
 	decodeFuncTonstakeControllerPoolUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{})
 	// 0x9971881c
 	decodeFuncTonstakePoolPrepareGovernanceMigrationMsgBody = decodeMsg(tlb.Tag{Val: 0x9971881c, Len: 32}, TonstakePoolPrepareGovernanceMigrationMsgOp, TonstakePoolPrepareGovernanceMigrationMsgBody{})
+	// 0x99a811fb
+	decodeFuncWhalesNominatorsAcceptStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x99a811fb, Len: 32}, WhalesNominatorsAcceptStakeMsgOp, WhalesNominatorsAcceptStakeMsgBody{})
 	// 0x9bf5561c
 	decodeFuncTonstakePoolSetDepositSettingsMsgBody = decodeMsg(tlb.Tag{Val: 0x9bf5561c, Len: 32}, TonstakePoolSetDepositSettingsMsgOp, TonstakePoolSetDepositSettingsMsgBody{})
 	// 0x9c73fba2
 	decodeFuncMultisigOrderInitMsgBody = decodeMsg(tlb.Tag{Val: 0x9c73fba2, Len: 32}, MultisigOrderInitMsgOp, MultisigOrderInitMsgBody{})
+	// 0xa19fd934
+	decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody = decodeMsg(tlb.Tag{Val: 0xa19fd934, Len: 32}, WhalesNominatorsAcceptWithdrawsMsgOp, WhalesNominatorsAcceptWithdrawsMsgBody{})
+	// 0xa2065f2c
+	decodeFuncWhalesNominatorsSendStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{})
 	// 0xa32c59bf
 	decodeFuncMultisigExecuteInternalMsgBody = decodeMsg(tlb.Tag{Val: 0xa32c59bf, Len: 32}, MultisigExecuteInternalMsgOp, MultisigExecuteInternalMsgBody{})
 	// 0xa37a0983
@@ -223,6 +241,8 @@ var (
 	decodeFuncStorageContractConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xd4caedcd, Len: 32}, StorageContractConfirmedMsgOp, StorageContractConfirmedMsgBody{})
 	// 0xd53276db
 	decodeFuncExcessMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, ExcessMsgOp, ExcessMsgBody{})
+	// 0xda803efd
+	decodeFuncWhalesNominatorsWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{})
 	// 0xdb3b8abd
 	decodeFuncTonstakeNftPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xdb3b8abd, Len: 32}, TonstakeNftPayoutMsgOp, TonstakeNftPayoutMsgBody{})
 	// 0xdddc88ba
@@ -311,6 +331,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x139a1b4e
 	TonstakeControllerPoolHaltMsgOpCode: decodeFuncTonstakeControllerPoolHaltMsgBody,
 
+	// 0x1596920c
+	WhalesNominatorsForceKickMsgOpCode: decodeFuncWhalesNominatorsForceKickMsgBody,
+
 	// 0x1674b0a0
 	TonstakePayoutMintJettonsMsgOpCode: decodeFuncTonstakePayoutMintJettonsMsgBody,
 
@@ -319,6 +342,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x178d4519
 	JettonInternalTransferMsgOpCode: decodeFuncJettonInternalTransferMsgBody,
+
+	// 0x1d1715bf
+	WhalesNominatorsWithdrawUnownedResponseMsgOpCode: decodeFuncWhalesNominatorsWithdrawUnownedResponseMsgBody,
 
 	// 0x1f04537a
 	SbtDestroyMsgOpCode: decodeFuncSbtDestroyMsgBody,
@@ -332,8 +358,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x235caf52
 	JettonCallToMsgOpCode: decodeFuncJettonCallToMsgBody,
 
+	// 0x23d421e1
+	WhalesNominatorsStakeWithdrawCompletedMsgOpCode: decodeFuncWhalesNominatorsStakeWithdrawCompletedMsgBody,
+
 	// 0x2508d66a
 	JettonUpgradeMsgOpCode: decodeFuncJettonUpgradeMsgBody,
+
+	// 0x251d6a98
+	WhalesNominatorsWithdrawUnownedMsgOpCode: decodeFuncWhalesNominatorsWithdrawUnownedMsgBody,
 
 	// 0x25432a91
 	FinishUncooperativeChannelCloseMsgOpCode: decodeFuncFinishUncooperativeChannelCloseMsgBody,
@@ -486,6 +518,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x73756273
 	SubscriptionPaymentMsgOpCode: decodeFuncSubscriptionPaymentMsgBody,
 
+	// 0x74bb3427
+	WhalesNominatorsStakeWithdrawDelayedMsgOpCode: decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody,
+
 	// 0x75097f5d
 	MultisigExecuteMsgOpCode: decodeFuncMultisigExecuteMsgBody,
 
@@ -506,6 +541,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x7b4b42e6
 	ApproveMsgOpCode: decodeFuncApproveMsgBody,
+
+	// 0x7bcd1fef
+	WhalesNominatorsDepositMsgOpCode: decodeFuncWhalesNominatorsDepositMsgBody,
 
 	// 0x7bdd97de
 	JettonBurnNotificationMsgOpCode: decodeFuncJettonBurnNotificationMsgBody,
@@ -532,11 +570,20 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x9971881c
 	TonstakePoolPrepareGovernanceMigrationMsgOpCode: decodeFuncTonstakePoolPrepareGovernanceMigrationMsgBody,
 
+	// 0x99a811fb
+	WhalesNominatorsAcceptStakeMsgOpCode: decodeFuncWhalesNominatorsAcceptStakeMsgBody,
+
 	// 0x9bf5561c
 	TonstakePoolSetDepositSettingsMsgOpCode: decodeFuncTonstakePoolSetDepositSettingsMsgBody,
 
 	// 0x9c73fba2
 	MultisigOrderInitMsgOpCode: decodeFuncMultisigOrderInitMsgBody,
+
+	// 0xa19fd934
+	WhalesNominatorsAcceptWithdrawsMsgOpCode: decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody,
+
+	// 0xa2065f2c
+	WhalesNominatorsSendStakeMsgOpCode: decodeFuncWhalesNominatorsSendStakeMsgBody,
 
 	// 0xa32c59bf
 	MultisigExecuteInternalMsgOpCode: decodeFuncMultisigExecuteInternalMsgBody,
@@ -600,6 +647,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xd53276db
 	ExcessMsgOpCode: decodeFuncExcessMsgBody,
+
+	// 0xda803efd
+	WhalesNominatorsWithdrawMsgOpCode: decodeFuncWhalesNominatorsWithdrawMsgBody,
 
 	// 0xdb3b8abd
 	TonstakeNftPayoutMsgOpCode: decodeFuncTonstakeNftPayoutMsgBody,
@@ -675,273 +725,293 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 }
 
 const (
-	TextCommentMsgOp                            MsgOpName = "TextComment"
-	ProveOwnershipMsgOp                         MsgOpName = "ProveOwnership"
-	NftOwnershipAssignedMsgOp                   MsgOpName = "NftOwnershipAssigned"
-	OwnershipProofMsgOp                         MsgOpName = "OwnershipProof"
-	ChallengeQuarantinedChannelStateMsgOp       MsgOpName = "ChallengeQuarantinedChannelState"
-	TonstakePoolWithdrawalMsgOp                 MsgOpName = "TonstakePoolWithdrawal"
-	SbtOwnerInfoMsgOp                           MsgOpName = "SbtOwnerInfo"
-	InitPaymentChannelMsgOp                     MsgOpName = "InitPaymentChannel"
-	JettonTransferMsgOp                         MsgOpName = "JettonTransfer"
-	OfferStorageContractMsgOp                   MsgOpName = "OfferStorageContract"
-	TonstakeNftInitMsgOp                        MsgOpName = "TonstakeNftInit"
-	TonstakeControllerPoolHaltMsgOp             MsgOpName = "TonstakeControllerPoolHalt"
-	TonstakePayoutMintJettonsMsgOp              MsgOpName = "TonstakePayoutMintJettons"
-	CreditMsgOp                                 MsgOpName = "Credit"
-	JettonInternalTransferMsgOp                 MsgOpName = "JettonInternalTransfer"
-	SbtDestroyMsgOp                             MsgOpName = "SbtDestroy"
-	StartUncooperativeChannelCloseMsgOp         MsgOpName = "StartUncooperativeChannelClose"
-	EncryptedTextCommentMsgOp                   MsgOpName = "EncryptedTextComment"
-	JettonCallToMsgOp                           MsgOpName = "JettonCallTo"
-	JettonUpgradeMsgOp                          MsgOpName = "JettonUpgrade"
-	FinishUncooperativeChannelCloseMsgOp        MsgOpName = "FinishUncooperativeChannelClose"
-	StonfiSwapMsgOp                             MsgOpName = "StonfiSwap"
-	TonstakeControllerPoolSendMessageMsgOp      MsgOpName = "TonstakeControllerPoolSendMessage"
-	TeleitemDeployMsgOp                         MsgOpName = "TeleitemDeploy"
-	InitMsgOp                                   MsgOpName = "Init"
-	TonstakePoolSetGovernanceFeeMsgOp           MsgOpName = "TonstakePoolSetGovernanceFee"
-	GetStaticDataMsgOp                          MsgOpName = "GetStaticData"
-	TonstakeControllerValidatorWithdrawalMsgOp  MsgOpName = "TonstakeControllerValidatorWithdrawal"
-	TonstakePoolWithdrawMsgOp                   MsgOpName = "TonstakePoolWithdraw"
-	AuctionFillUpMsgOp                          MsgOpName = "AuctionFillUp"
-	TeleitemCancelAuctionMsgOp                  MsgOpName = "TeleitemCancelAuction"
-	ProofStorageMsgOp                           MsgOpName = "ProofStorage"
-	ProcessGovernanceDecisionMsgOp              MsgOpName = "ProcessGovernanceDecision"
-	TelemintDeployMsgOp                         MsgOpName = "TelemintDeploy"
-	TelemintDeployV2MsgOp                       MsgOpName = "TelemintDeployV2"
-	StorageWithdrawMsgOp                        MsgOpName = "StorageWithdraw"
-	DedustPayoutMsgOp                           MsgOpName = "DedustPayout"
-	ElectorRecoverStakeRequestMsgOp             MsgOpName = "ElectorRecoverStakeRequest"
-	TonstakePoolDepositMsgOp                    MsgOpName = "TonstakePoolDeposit"
-	TeleitemStartAuctionMsgOp                   MsgOpName = "TeleitemStartAuction"
-	TonstakePoolTouchMsgOp                      MsgOpName = "TonstakePoolTouch"
-	GramSubmitProofOfWorkMsgOp                  MsgOpName = "GramSubmitProofOfWork"
-	ElectorNewStakeMsgOp                        MsgOpName = "ElectorNewStake"
-	DeleteDnsRecordMsgOp                        MsgOpName = "DeleteDnsRecord"
-	ChangeDnsRecordMsgOp                        MsgOpName = "ChangeDnsRecord"
-	DnsBalanceReleaseMsgOp                      MsgOpName = "DnsBalanceRelease"
-	UpdatePubkeyMsgOp                           MsgOpName = "UpdatePubkey"
-	UpdateStorageParamsMsgOp                    MsgOpName = "UpdateStorageParams"
-	TonstakeImanagerOperationFeeMsgOp           MsgOpName = "TonstakeImanagerOperationFee"
-	ChannelCooperativeCloseMsgOp                MsgOpName = "ChannelCooperativeClose"
-	OutbidNotificationMsgOp                     MsgOpName = "OutbidNotification"
-	TonstakeControllerReturnAvailableFundsMsgOp MsgOpName = "TonstakeControllerReturnAvailableFunds"
-	JettonBurnMsgOp                             MsgOpName = "JettonBurn"
-	TonstakePoolSetRolesMsgOp                   MsgOpName = "TonstakePoolSetRoles"
-	NftTransferMsgOp                            MsgOpName = "NftTransfer"
-	TegroSwapTonMsgOp                           MsgOpName = "TegroSwapTon"
-	DedustSwapExternalMsgOp                     MsgOpName = "DedustSwapExternal"
-	TonstakeControllerSendRequestLoanMsgOp      MsgOpName = "TonstakeControllerSendRequestLoan"
-	JettonMintMsgOp                             MsgOpName = "JettonMint"
-	WalletPluginDestructMsgOp                   MsgOpName = "WalletPluginDestruct"
-	JettonChangeAdminMsgOp                      MsgOpName = "JettonChangeAdmin"
-	SettleChannelConditionalsMsgOp              MsgOpName = "SettleChannelConditionals"
-	TopUpChannelBalanceMsgOp                    MsgOpName = "TopUpChannelBalance"
-	GetRoyaltyParamsMsgOp                       MsgOpName = "GetRoyaltyParams"
-	SbtRevokeMsgOp                              MsgOpName = "SbtRevoke"
-	PaymentRequestMsgOp                         MsgOpName = "PaymentRequest"
-	TonstakeControllerPoolUnhaltMsgOp           MsgOpName = "TonstakeControllerPoolUnhalt"
-	DedustSwapPeerMsgOp                         MsgOpName = "DedustSwapPeer"
-	JettonNotifyMsgOp                           MsgOpName = "JettonNotify"
-	SubscriptionPaymentMsgOp                    MsgOpName = "SubscriptionPayment"
-	MultisigExecuteMsgOp                        MsgOpName = "MultisigExecute"
-	MegatonWtonMintMsgOp                        MsgOpName = "MegatonWtonMint"
-	ChannelCooperativeCommitMsgOp               MsgOpName = "ChannelCooperativeCommit"
-	TonstakeControllerPoolSetSudoerMsgOp        MsgOpName = "TonstakeControllerPoolSetSudoer"
-	CloseStorageContractMsgOp                   MsgOpName = "CloseStorageContract"
-	AcceptStorageContractMsgOp                  MsgOpName = "AcceptStorageContract"
-	ApproveMsgOp                                MsgOpName = "Approve"
-	JettonBurnNotificationMsgOp                 MsgOpName = "JettonBurnNotification"
-	MultisigApproveAcceptedMsgOp                MsgOpName = "MultisigApproveAccepted"
-	AddReferralAmountMsgOp                      MsgOpName = "AddReferralAmount"
-	NftItemTransferMsgOp                        MsgOpName = "NftItemTransfer"
-	ReportStaticDataMsgOp                       MsgOpName = "ReportStaticData"
-	TonstakeControllerWithdrawValidatorMsgOp    MsgOpName = "TonstakeControllerWithdrawValidator"
-	TonstakeControllerPoolUpgradeMsgOp          MsgOpName = "TonstakeControllerPoolUpgrade"
-	TonstakePoolPrepareGovernanceMigrationMsgOp MsgOpName = "TonstakePoolPrepareGovernanceMigration"
-	TonstakePoolSetDepositSettingsMsgOp         MsgOpName = "TonstakePoolSetDepositSettings"
-	MultisigOrderInitMsgOp                      MsgOpName = "MultisigOrderInit"
-	MultisigExecuteInternalMsgOp                MsgOpName = "MultisigExecuteInternal"
-	TeleitemOkMsgOp                             MsgOpName = "TeleitemOk"
-	TeleitemReturnBidMsgOp                      MsgOpName = "TeleitemReturnBid"
-	MultisigApproveMsgOp                        MsgOpName = "MultisigApprove"
-	ReportRoyaltyParamsMsgOp                    MsgOpName = "ReportRoyaltyParams"
-	StorageRewardWithdrawalMsgOp                MsgOpName = "StorageRewardWithdrawal"
-	DedustPayoutFromPoolMsgOp                   MsgOpName = "DedustPayoutFromPool"
-	MultisigApproveRejectedMsgOp                MsgOpName = "MultisigApproveRejected"
-	TonstakeImanagerRequestNotificationMsgOp    MsgOpName = "TonstakeImanagerRequestNotification"
-	TonstakePoolDeployControllerMsgOp           MsgOpName = "TonstakePoolDeployController"
-	DedustDepositLiquidityAllMsgOp              MsgOpName = "DedustDepositLiquidityAll"
-	StorageContractTerminatedMsgOp              MsgOpName = "StorageContractTerminated"
-	PayFundingMsgOp                             MsgOpName = "PayFunding"
-	TonstakeImanagerStatsMsgOp                  MsgOpName = "TonstakeImanagerStats"
-	TonstakeImanagerSetInterestMsgOp            MsgOpName = "TonstakeImanagerSetInterest"
-	MintReferralMsgOp                           MsgOpName = "MintReferral"
-	JettonChangeMetadataMsgOp                   MsgOpName = "JettonChangeMetadata"
-	SbtRequestOwnerMsgOp                        MsgOpName = "SbtRequestOwner"
-	TopUpMsgOp                                  MsgOpName = "TopUp"
-	StorageContractConfirmedMsgOp               MsgOpName = "StorageContractConfirmed"
-	ExcessMsgOp                                 MsgOpName = "Excess"
-	TonstakeNftPayoutMsgOp                      MsgOpName = "TonstakeNftPayout"
-	ChannelClosedMsgOp                          MsgOpName = "ChannelClosed"
-	TonstakePoolLoanRepaymentMsgOp              MsgOpName = "TonstakePoolLoanRepayment"
-	TonstakeControllerNewStakeMsgOp             MsgOpName = "TonstakeControllerNewStake"
-	UpdateMsgOp                                 MsgOpName = "Update"
-	WalletPluginDestructResponseMsgOp           MsgOpName = "WalletPluginDestructResponse"
-	DeployStorageContractMsgOp                  MsgOpName = "DeployStorageContract"
-	TonstakePoolRequestLoanMsgOp                MsgOpName = "TonstakePoolRequestLoan"
-	DisapproveMsgOp                             MsgOpName = "Disapprove"
-	DedustSwapMsgOp                             MsgOpName = "DedustSwap"
-	TonstakeControllerRecoverStakeMsgOp         MsgOpName = "TonstakeControllerRecoverStake"
-	TonstakeNftBurnNotificationMsgOp            MsgOpName = "TonstakeNftBurnNotification"
-	TonstakeControllerReturnUnusedLoanMsgOp     MsgOpName = "TonstakeControllerReturnUnusedLoan"
-	ChangeSettingsMsgOp                         MsgOpName = "ChangeSettings"
-	JettonSetStatusMsgOp                        MsgOpName = "JettonSetStatus"
-	PaymentRequestResponseMsgOp                 MsgOpName = "PaymentRequestResponse"
-	TonstakeControllerUpdateValidatorHashMsgOp  MsgOpName = "TonstakeControllerUpdateValidatorHash"
-	TonstakeNftBurnMsgOp                        MsgOpName = "TonstakeNftBurn"
-	ElectorNewStakeConfirmationMsgOp            MsgOpName = "ElectorNewStakeConfirmation"
-	MultisigNewOrderMsgOp                       MsgOpName = "MultisigNewOrder"
-	StonfiPaymentRequestMsgOp                   MsgOpName = "StonfiPaymentRequest"
-	ElectorRecoverStakeResponseMsgOp            MsgOpName = "ElectorRecoverStakeResponse"
-	JettonClaimAdminMsgOp                       MsgOpName = "JettonClaimAdmin"
-	BounceMsgOp                                 MsgOpName = "Bounce"
+	TextCommentMsgOp                             MsgOpName = "TextComment"
+	ProveOwnershipMsgOp                          MsgOpName = "ProveOwnership"
+	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
+	OwnershipProofMsgOp                          MsgOpName = "OwnershipProof"
+	ChallengeQuarantinedChannelStateMsgOp        MsgOpName = "ChallengeQuarantinedChannelState"
+	TonstakePoolWithdrawalMsgOp                  MsgOpName = "TonstakePoolWithdrawal"
+	SbtOwnerInfoMsgOp                            MsgOpName = "SbtOwnerInfo"
+	InitPaymentChannelMsgOp                      MsgOpName = "InitPaymentChannel"
+	JettonTransferMsgOp                          MsgOpName = "JettonTransfer"
+	OfferStorageContractMsgOp                    MsgOpName = "OfferStorageContract"
+	TonstakeNftInitMsgOp                         MsgOpName = "TonstakeNftInit"
+	TonstakeControllerPoolHaltMsgOp              MsgOpName = "TonstakeControllerPoolHalt"
+	WhalesNominatorsForceKickMsgOp               MsgOpName = "WhalesNominatorsForceKick"
+	TonstakePayoutMintJettonsMsgOp               MsgOpName = "TonstakePayoutMintJettons"
+	CreditMsgOp                                  MsgOpName = "Credit"
+	JettonInternalTransferMsgOp                  MsgOpName = "JettonInternalTransfer"
+	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
+	SbtDestroyMsgOp                              MsgOpName = "SbtDestroy"
+	StartUncooperativeChannelCloseMsgOp          MsgOpName = "StartUncooperativeChannelClose"
+	EncryptedTextCommentMsgOp                    MsgOpName = "EncryptedTextComment"
+	JettonCallToMsgOp                            MsgOpName = "JettonCallTo"
+	WhalesNominatorsStakeWithdrawCompletedMsgOp  MsgOpName = "WhalesNominatorsStakeWithdrawCompleted"
+	JettonUpgradeMsgOp                           MsgOpName = "JettonUpgrade"
+	WhalesNominatorsWithdrawUnownedMsgOp         MsgOpName = "WhalesNominatorsWithdrawUnowned"
+	FinishUncooperativeChannelCloseMsgOp         MsgOpName = "FinishUncooperativeChannelClose"
+	StonfiSwapMsgOp                              MsgOpName = "StonfiSwap"
+	TonstakeControllerPoolSendMessageMsgOp       MsgOpName = "TonstakeControllerPoolSendMessage"
+	TeleitemDeployMsgOp                          MsgOpName = "TeleitemDeploy"
+	InitMsgOp                                    MsgOpName = "Init"
+	TonstakePoolSetGovernanceFeeMsgOp            MsgOpName = "TonstakePoolSetGovernanceFee"
+	GetStaticDataMsgOp                           MsgOpName = "GetStaticData"
+	TonstakeControllerValidatorWithdrawalMsgOp   MsgOpName = "TonstakeControllerValidatorWithdrawal"
+	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
+	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
+	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
+	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
+	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
+	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
+	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
+	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
+	DedustPayoutMsgOp                            MsgOpName = "DedustPayout"
+	ElectorRecoverStakeRequestMsgOp              MsgOpName = "ElectorRecoverStakeRequest"
+	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
+	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
+	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
+	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
+	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
+	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
+	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
+	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
+	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
+	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
+	TonstakeImanagerOperationFeeMsgOp            MsgOpName = "TonstakeImanagerOperationFee"
+	ChannelCooperativeCloseMsgOp                 MsgOpName = "ChannelCooperativeClose"
+	OutbidNotificationMsgOp                      MsgOpName = "OutbidNotification"
+	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
+	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
+	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
+	NftTransferMsgOp                             MsgOpName = "NftTransfer"
+	TegroSwapTonMsgOp                            MsgOpName = "TegroSwapTon"
+	DedustSwapExternalMsgOp                      MsgOpName = "DedustSwapExternal"
+	TonstakeControllerSendRequestLoanMsgOp       MsgOpName = "TonstakeControllerSendRequestLoan"
+	JettonMintMsgOp                              MsgOpName = "JettonMint"
+	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
+	JettonChangeAdminMsgOp                       MsgOpName = "JettonChangeAdmin"
+	SettleChannelConditionalsMsgOp               MsgOpName = "SettleChannelConditionals"
+	TopUpChannelBalanceMsgOp                     MsgOpName = "TopUpChannelBalance"
+	GetRoyaltyParamsMsgOp                        MsgOpName = "GetRoyaltyParams"
+	SbtRevokeMsgOp                               MsgOpName = "SbtRevoke"
+	PaymentRequestMsgOp                          MsgOpName = "PaymentRequest"
+	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
+	DedustSwapPeerMsgOp                          MsgOpName = "DedustSwapPeer"
+	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
+	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
+	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
+	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
+	MegatonWtonMintMsgOp                         MsgOpName = "MegatonWtonMint"
+	ChannelCooperativeCommitMsgOp                MsgOpName = "ChannelCooperativeCommit"
+	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
+	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
+	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
+	ApproveMsgOp                                 MsgOpName = "Approve"
+	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
+	JettonBurnNotificationMsgOp                  MsgOpName = "JettonBurnNotification"
+	MultisigApproveAcceptedMsgOp                 MsgOpName = "MultisigApproveAccepted"
+	AddReferralAmountMsgOp                       MsgOpName = "AddReferralAmount"
+	NftItemTransferMsgOp                         MsgOpName = "NftItemTransfer"
+	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
+	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
+	TonstakeControllerPoolUpgradeMsgOp           MsgOpName = "TonstakeControllerPoolUpgrade"
+	TonstakePoolPrepareGovernanceMigrationMsgOp  MsgOpName = "TonstakePoolPrepareGovernanceMigration"
+	WhalesNominatorsAcceptStakeMsgOp             MsgOpName = "WhalesNominatorsAcceptStake"
+	TonstakePoolSetDepositSettingsMsgOp          MsgOpName = "TonstakePoolSetDepositSettings"
+	MultisigOrderInitMsgOp                       MsgOpName = "MultisigOrderInit"
+	WhalesNominatorsAcceptWithdrawsMsgOp         MsgOpName = "WhalesNominatorsAcceptWithdraws"
+	WhalesNominatorsSendStakeMsgOp               MsgOpName = "WhalesNominatorsSendStake"
+	MultisigExecuteInternalMsgOp                 MsgOpName = "MultisigExecuteInternal"
+	TeleitemOkMsgOp                              MsgOpName = "TeleitemOk"
+	TeleitemReturnBidMsgOp                       MsgOpName = "TeleitemReturnBid"
+	MultisigApproveMsgOp                         MsgOpName = "MultisigApprove"
+	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
+	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
+	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
+	MultisigApproveRejectedMsgOp                 MsgOpName = "MultisigApproveRejected"
+	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
+	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
+	DedustDepositLiquidityAllMsgOp               MsgOpName = "DedustDepositLiquidityAll"
+	StorageContractTerminatedMsgOp               MsgOpName = "StorageContractTerminated"
+	PayFundingMsgOp                              MsgOpName = "PayFunding"
+	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
+	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
+	MintReferralMsgOp                            MsgOpName = "MintReferral"
+	JettonChangeMetadataMsgOp                    MsgOpName = "JettonChangeMetadata"
+	SbtRequestOwnerMsgOp                         MsgOpName = "SbtRequestOwner"
+	TopUpMsgOp                                   MsgOpName = "TopUp"
+	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
+	ExcessMsgOp                                  MsgOpName = "Excess"
+	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
+	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
+	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
+	TonstakePoolLoanRepaymentMsgOp               MsgOpName = "TonstakePoolLoanRepayment"
+	TonstakeControllerNewStakeMsgOp              MsgOpName = "TonstakeControllerNewStake"
+	UpdateMsgOp                                  MsgOpName = "Update"
+	WalletPluginDestructResponseMsgOp            MsgOpName = "WalletPluginDestructResponse"
+	DeployStorageContractMsgOp                   MsgOpName = "DeployStorageContract"
+	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
+	DisapproveMsgOp                              MsgOpName = "Disapprove"
+	DedustSwapMsgOp                              MsgOpName = "DedustSwap"
+	TonstakeControllerRecoverStakeMsgOp          MsgOpName = "TonstakeControllerRecoverStake"
+	TonstakeNftBurnNotificationMsgOp             MsgOpName = "TonstakeNftBurnNotification"
+	TonstakeControllerReturnUnusedLoanMsgOp      MsgOpName = "TonstakeControllerReturnUnusedLoan"
+	ChangeSettingsMsgOp                          MsgOpName = "ChangeSettings"
+	JettonSetStatusMsgOp                         MsgOpName = "JettonSetStatus"
+	PaymentRequestResponseMsgOp                  MsgOpName = "PaymentRequestResponse"
+	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
+	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
+	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
+	MultisigNewOrderMsgOp                        MsgOpName = "MultisigNewOrder"
+	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
+	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
+	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
+	BounceMsgOp                                  MsgOpName = "Bounce"
 )
 
 const (
-	TextCommentMsgOpCode                            MsgOpCode = 0x00000000
-	ProveOwnershipMsgOpCode                         MsgOpCode = 0x04ded148
-	NftOwnershipAssignedMsgOpCode                   MsgOpCode = 0x05138d91
-	OwnershipProofMsgOpCode                         MsgOpCode = 0x0524c7ae
-	ChallengeQuarantinedChannelStateMsgOpCode       MsgOpCode = 0x088eaa32
-	TonstakePoolWithdrawalMsgOpCode                 MsgOpCode = 0x0a77535c
-	SbtOwnerInfoMsgOpCode                           MsgOpCode = 0x0dd607e3
-	InitPaymentChannelMsgOpCode                     MsgOpCode = 0x0e0620c2
-	JettonTransferMsgOpCode                         MsgOpCode = 0x0f8a7ea5
-	OfferStorageContractMsgOpCode                   MsgOpCode = 0x107c49ef
-	TonstakeNftInitMsgOpCode                        MsgOpCode = 0x132f9a45
-	TonstakeControllerPoolHaltMsgOpCode             MsgOpCode = 0x139a1b4e
-	TonstakePayoutMintJettonsMsgOpCode              MsgOpCode = 0x1674b0a0
-	CreditMsgOpCode                                 MsgOpCode = 0x1690c604
-	JettonInternalTransferMsgOpCode                 MsgOpCode = 0x178d4519
-	SbtDestroyMsgOpCode                             MsgOpCode = 0x1f04537a
-	StartUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x1f151acf
-	EncryptedTextCommentMsgOpCode                   MsgOpCode = 0x2167da4b
-	JettonCallToMsgOpCode                           MsgOpCode = 0x235caf52
-	JettonUpgradeMsgOpCode                          MsgOpCode = 0x2508d66a
-	FinishUncooperativeChannelCloseMsgOpCode        MsgOpCode = 0x25432a91
-	StonfiSwapMsgOpCode                             MsgOpCode = 0x25938561
-	TonstakeControllerPoolSendMessageMsgOpCode      MsgOpCode = 0x270695fb
-	TeleitemDeployMsgOpCode                         MsgOpCode = 0x299a3e15
-	InitMsgOpCode                                   MsgOpCode = 0x29c102d1
-	TonstakePoolSetGovernanceFeeMsgOpCode           MsgOpCode = 0x2aaa96a0
-	GetStaticDataMsgOpCode                          MsgOpCode = 0x2fcb26a2
-	TonstakeControllerValidatorWithdrawalMsgOpCode  MsgOpCode = 0x30026327
-	TonstakePoolWithdrawMsgOpCode                   MsgOpCode = 0x319b0cdc
-	AuctionFillUpMsgOpCode                          MsgOpCode = 0x370fec51
-	TeleitemCancelAuctionMsgOpCode                  MsgOpCode = 0x371638ae
-	ProofStorageMsgOpCode                           MsgOpCode = 0x419d5d4d
-	ProcessGovernanceDecisionMsgOpCode              MsgOpCode = 0x44beae41
-	TelemintDeployMsgOpCode                         MsgOpCode = 0x4637289a
-	TelemintDeployV2MsgOpCode                       MsgOpCode = 0x4637289b
-	StorageWithdrawMsgOpCode                        MsgOpCode = 0x46ed2e94
-	DedustPayoutMsgOpCode                           MsgOpCode = 0x474f86cf
-	ElectorRecoverStakeRequestMsgOpCode             MsgOpCode = 0x47657424
-	TonstakePoolDepositMsgOpCode                    MsgOpCode = 0x47d54391
-	TeleitemStartAuctionMsgOpCode                   MsgOpCode = 0x487a8e81
-	TonstakePoolTouchMsgOpCode                      MsgOpCode = 0x4bc7c2df
-	GramSubmitProofOfWorkMsgOpCode                  MsgOpCode = 0x4d696e65
-	ElectorNewStakeMsgOpCode                        MsgOpCode = 0x4e73744b
-	DeleteDnsRecordMsgOpCode                        MsgOpCode = 0x4eb1f0f9
-	ChangeDnsRecordMsgOpCode                        MsgOpCode = 0x4eb1f0f9
-	DnsBalanceReleaseMsgOpCode                      MsgOpCode = 0x4ed14b65
-	UpdatePubkeyMsgOpCode                           MsgOpCode = 0x53f34cd6
-	UpdateStorageParamsMsgOpCode                    MsgOpCode = 0x54cbf19b
-	TonstakeImanagerOperationFeeMsgOpCode           MsgOpCode = 0x54d37487
-	ChannelCooperativeCloseMsgOpCode                MsgOpCode = 0x5577587e
-	OutbidNotificationMsgOpCode                     MsgOpCode = 0x557cea20
-	TonstakeControllerReturnAvailableFundsMsgOpCode MsgOpCode = 0x55c26cd5
-	JettonBurnMsgOpCode                             MsgOpCode = 0x595f07bc
-	TonstakePoolSetRolesMsgOpCode                   MsgOpCode = 0x5e517f36
-	NftTransferMsgOpCode                            MsgOpCode = 0x5fcc3d14
-	TegroSwapTonMsgOpCode                           MsgOpCode = 0x600c00fd
-	DedustSwapExternalMsgOpCode                     MsgOpCode = 0x61ee542d
-	TonstakeControllerSendRequestLoanMsgOpCode      MsgOpCode = 0x6335b11a
-	JettonMintMsgOpCode                             MsgOpCode = 0x642b7d07
-	WalletPluginDestructMsgOpCode                   MsgOpCode = 0x64737472
-	JettonChangeAdminMsgOpCode                      MsgOpCode = 0x6501f354
-	SettleChannelConditionalsMsgOpCode              MsgOpCode = 0x66f6f069
-	TopUpChannelBalanceMsgOpCode                    MsgOpCode = 0x67c7d281
-	GetRoyaltyParamsMsgOpCode                       MsgOpCode = 0x693d3950
-	SbtRevokeMsgOpCode                              MsgOpCode = 0x6f89f5e3
-	PaymentRequestMsgOpCode                         MsgOpCode = 0x706c7567
-	TonstakeControllerPoolUnhaltMsgOpCode           MsgOpCode = 0x7247e7a5
-	DedustSwapPeerMsgOpCode                         MsgOpCode = 0x72aca8aa
-	JettonNotifyMsgOpCode                           MsgOpCode = 0x7362d09c
-	SubscriptionPaymentMsgOpCode                    MsgOpCode = 0x73756273
-	MultisigExecuteMsgOpCode                        MsgOpCode = 0x75097f5d
-	MegatonWtonMintMsgOpCode                        MsgOpCode = 0x77a33521
-	ChannelCooperativeCommitMsgOpCode               MsgOpCode = 0x79a126ef
-	TonstakeControllerPoolSetSudoerMsgOpCode        MsgOpCode = 0x79e7c016
-	CloseStorageContractMsgOpCode                   MsgOpCode = 0x79f937ea
-	AcceptStorageContractMsgOpCode                  MsgOpCode = 0x7a361688
-	ApproveMsgOpCode                                MsgOpCode = 0x7b4b42e6
-	JettonBurnNotificationMsgOpCode                 MsgOpCode = 0x7bdd97de
-	MultisigApproveAcceptedMsgOpCode                MsgOpCode = 0x82609bf6
-	AddReferralAmountMsgOpCode                      MsgOpCode = 0x84dced7a
-	NftItemTransferMsgOpCode                        MsgOpCode = 0x84dced7a
-	ReportStaticDataMsgOpCode                       MsgOpCode = 0x8b771735
-	TonstakeControllerWithdrawValidatorMsgOpCode    MsgOpCode = 0x8efed779
-	TonstakeControllerPoolUpgradeMsgOpCode          MsgOpCode = 0x96e7f528
-	TonstakePoolPrepareGovernanceMigrationMsgOpCode MsgOpCode = 0x9971881c
-	TonstakePoolSetDepositSettingsMsgOpCode         MsgOpCode = 0x9bf5561c
-	MultisigOrderInitMsgOpCode                      MsgOpCode = 0x9c73fba2
-	MultisigExecuteInternalMsgOpCode                MsgOpCode = 0xa32c59bf
-	TeleitemOkMsgOpCode                             MsgOpCode = 0xa37a0983
-	TeleitemReturnBidMsgOpCode                      MsgOpCode = 0xa43227e1
-	MultisigApproveMsgOpCode                        MsgOpCode = 0xa762230f
-	ReportRoyaltyParamsMsgOpCode                    MsgOpCode = 0xa8cb00ad
-	StorageRewardWithdrawalMsgOpCode                MsgOpCode = 0xa91baf56
-	DedustPayoutFromPoolMsgOpCode                   MsgOpCode = 0xad4eb6f5
-	MultisigApproveRejectedMsgOpCode                MsgOpCode = 0xafaf283e
-	TonstakeImanagerRequestNotificationMsgOpCode    MsgOpCode = 0xb1ebae06
-	TonstakePoolDeployControllerMsgOpCode           MsgOpCode = 0xb27edcad
-	DedustDepositLiquidityAllMsgOpCode              MsgOpCode = 0xb56b9598
-	StorageContractTerminatedMsgOpCode              MsgOpCode = 0xb6236d63
-	PayFundingMsgOpCode                             MsgOpCode = 0xb652c441
-	TonstakeImanagerStatsMsgOpCode                  MsgOpCode = 0xc1344900
-	TonstakeImanagerSetInterestMsgOpCode            MsgOpCode = 0xc9f04485
-	MintReferralMsgOpCode                           MsgOpCode = 0xcb4ddc3c
-	JettonChangeMetadataMsgOpCode                   MsgOpCode = 0xcb862902
-	SbtRequestOwnerMsgOpCode                        MsgOpCode = 0xd0c3bfea
-	TopUpMsgOpCode                                  MsgOpCode = 0xd372158c
-	StorageContractConfirmedMsgOpCode               MsgOpCode = 0xd4caedcd
-	ExcessMsgOpCode                                 MsgOpCode = 0xd53276db
-	TonstakeNftPayoutMsgOpCode                      MsgOpCode = 0xdb3b8abd
-	ChannelClosedMsgOpCode                          MsgOpCode = 0xdddc88ba
-	TonstakePoolLoanRepaymentMsgOpCode              MsgOpCode = 0xdfdca27b
-	TonstakeControllerNewStakeMsgOpCode             MsgOpCode = 0xe0505d0e
-	UpdateMsgOpCode                                 MsgOpCode = 0xe434967e
-	WalletPluginDestructResponseMsgOpCode           MsgOpCode = 0xe4737472
-	DeployStorageContractMsgOpCode                  MsgOpCode = 0xe4748df1
-	TonstakePoolRequestLoanMsgOpCode                MsgOpCode = 0xe642c965
-	DisapproveMsgOpCode                             MsgOpCode = 0xe8a0abfe
-	DedustSwapMsgOpCode                             MsgOpCode = 0xea06185d
-	TonstakeControllerRecoverStakeMsgOpCode         MsgOpCode = 0xeb373a05
-	TonstakeNftBurnNotificationMsgOpCode            MsgOpCode = 0xed58b0b2
-	TonstakeControllerReturnUnusedLoanMsgOpCode     MsgOpCode = 0xed7378a6
-	ChangeSettingsMsgOpCode                         MsgOpCode = 0xedcd36a6
-	JettonSetStatusMsgOpCode                        MsgOpCode = 0xeed236d3
-	PaymentRequestResponseMsgOpCode                 MsgOpCode = 0xf06c7567
-	TonstakeControllerUpdateValidatorHashMsgOpCode  MsgOpCode = 0xf0fd2250
-	TonstakeNftBurnMsgOpCode                        MsgOpCode = 0xf127fe4e
-	ElectorNewStakeConfirmationMsgOpCode            MsgOpCode = 0xf374484c
-	MultisigNewOrderMsgOpCode                       MsgOpCode = 0xf718510f
-	StonfiPaymentRequestMsgOpCode                   MsgOpCode = 0xf93bb43f
-	ElectorRecoverStakeResponseMsgOpCode            MsgOpCode = 0xf96f7324
-	JettonClaimAdminMsgOpCode                       MsgOpCode = 0xfb88e119
-	BounceMsgOpCode                                 MsgOpCode = 0xffffffff
+	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
+	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
+	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
+	OwnershipProofMsgOpCode                          MsgOpCode = 0x0524c7ae
+	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x088eaa32
+	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0x0a77535c
+	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0x0dd607e3
+	InitPaymentChannelMsgOpCode                      MsgOpCode = 0x0e0620c2
+	JettonTransferMsgOpCode                          MsgOpCode = 0x0f8a7ea5
+	OfferStorageContractMsgOpCode                    MsgOpCode = 0x107c49ef
+	TonstakeNftInitMsgOpCode                         MsgOpCode = 0x132f9a45
+	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
+	WhalesNominatorsForceKickMsgOpCode               MsgOpCode = 0x1596920c
+	TonstakePayoutMintJettonsMsgOpCode               MsgOpCode = 0x1674b0a0
+	CreditMsgOpCode                                  MsgOpCode = 0x1690c604
+	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
+	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
+	SbtDestroyMsgOpCode                              MsgOpCode = 0x1f04537a
+	StartUncooperativeChannelCloseMsgOpCode          MsgOpCode = 0x1f151acf
+	EncryptedTextCommentMsgOpCode                    MsgOpCode = 0x2167da4b
+	JettonCallToMsgOpCode                            MsgOpCode = 0x235caf52
+	WhalesNominatorsStakeWithdrawCompletedMsgOpCode  MsgOpCode = 0x23d421e1
+	JettonUpgradeMsgOpCode                           MsgOpCode = 0x2508d66a
+	WhalesNominatorsWithdrawUnownedMsgOpCode         MsgOpCode = 0x251d6a98
+	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
+	StonfiSwapMsgOpCode                              MsgOpCode = 0x25938561
+	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
+	TeleitemDeployMsgOpCode                          MsgOpCode = 0x299a3e15
+	InitMsgOpCode                                    MsgOpCode = 0x29c102d1
+	TonstakePoolSetGovernanceFeeMsgOpCode            MsgOpCode = 0x2aaa96a0
+	GetStaticDataMsgOpCode                           MsgOpCode = 0x2fcb26a2
+	TonstakeControllerValidatorWithdrawalMsgOpCode   MsgOpCode = 0x30026327
+	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
+	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
+	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
+	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
+	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
+	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
+	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
+	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
+	DedustPayoutMsgOpCode                            MsgOpCode = 0x474f86cf
+	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
+	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
+	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
+	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
+	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
+	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
+	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
+	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
+	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
+	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
+	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
+	TonstakeImanagerOperationFeeMsgOpCode            MsgOpCode = 0x54d37487
+	ChannelCooperativeCloseMsgOpCode                 MsgOpCode = 0x5577587e
+	OutbidNotificationMsgOpCode                      MsgOpCode = 0x557cea20
+	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
+	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
+	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
+	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
+	TegroSwapTonMsgOpCode                            MsgOpCode = 0x600c00fd
+	DedustSwapExternalMsgOpCode                      MsgOpCode = 0x61ee542d
+	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x6335b11a
+	JettonMintMsgOpCode                              MsgOpCode = 0x642b7d07
+	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
+	JettonChangeAdminMsgOpCode                       MsgOpCode = 0x6501f354
+	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
+	TopUpChannelBalanceMsgOpCode                     MsgOpCode = 0x67c7d281
+	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
+	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
+	PaymentRequestMsgOpCode                          MsgOpCode = 0x706c7567
+	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
+	DedustSwapPeerMsgOpCode                          MsgOpCode = 0x72aca8aa
+	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
+	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
+	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
+	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
+	MegatonWtonMintMsgOpCode                         MsgOpCode = 0x77a33521
+	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
+	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
+	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
+	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
+	ApproveMsgOpCode                                 MsgOpCode = 0x7b4b42e6
+	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
+	JettonBurnNotificationMsgOpCode                  MsgOpCode = 0x7bdd97de
+	MultisigApproveAcceptedMsgOpCode                 MsgOpCode = 0x82609bf6
+	AddReferralAmountMsgOpCode                       MsgOpCode = 0x84dced7a
+	NftItemTransferMsgOpCode                         MsgOpCode = 0x84dced7a
+	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
+	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
+	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
+	TonstakePoolPrepareGovernanceMigrationMsgOpCode  MsgOpCode = 0x9971881c
+	WhalesNominatorsAcceptStakeMsgOpCode             MsgOpCode = 0x99a811fb
+	TonstakePoolSetDepositSettingsMsgOpCode          MsgOpCode = 0x9bf5561c
+	MultisigOrderInitMsgOpCode                       MsgOpCode = 0x9c73fba2
+	WhalesNominatorsAcceptWithdrawsMsgOpCode         MsgOpCode = 0xa19fd934
+	WhalesNominatorsSendStakeMsgOpCode               MsgOpCode = 0xa2065f2c
+	MultisigExecuteInternalMsgOpCode                 MsgOpCode = 0xa32c59bf
+	TeleitemOkMsgOpCode                              MsgOpCode = 0xa37a0983
+	TeleitemReturnBidMsgOpCode                       MsgOpCode = 0xa43227e1
+	MultisigApproveMsgOpCode                         MsgOpCode = 0xa762230f
+	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
+	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
+	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
+	MultisigApproveRejectedMsgOpCode                 MsgOpCode = 0xafaf283e
+	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
+	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
+	DedustDepositLiquidityAllMsgOpCode               MsgOpCode = 0xb56b9598
+	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
+	PayFundingMsgOpCode                              MsgOpCode = 0xb652c441
+	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
+	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
+	MintReferralMsgOpCode                            MsgOpCode = 0xcb4ddc3c
+	JettonChangeMetadataMsgOpCode                    MsgOpCode = 0xcb862902
+	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
+	TopUpMsgOpCode                                   MsgOpCode = 0xd372158c
+	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
+	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
+	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
+	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
+	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
+	TonstakePoolLoanRepaymentMsgOpCode               MsgOpCode = 0xdfdca27b
+	TonstakeControllerNewStakeMsgOpCode              MsgOpCode = 0xe0505d0e
+	UpdateMsgOpCode                                  MsgOpCode = 0xe434967e
+	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
+	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
+	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0xe642c965
+	DisapproveMsgOpCode                              MsgOpCode = 0xe8a0abfe
+	DedustSwapMsgOpCode                              MsgOpCode = 0xea06185d
+	TonstakeControllerRecoverStakeMsgOpCode          MsgOpCode = 0xeb373a05
+	TonstakeNftBurnNotificationMsgOpCode             MsgOpCode = 0xed58b0b2
+	TonstakeControllerReturnUnusedLoanMsgOpCode      MsgOpCode = 0xed7378a6
+	ChangeSettingsMsgOpCode                          MsgOpCode = 0xedcd36a6
+	JettonSetStatusMsgOpCode                         MsgOpCode = 0xeed236d3
+	PaymentRequestResponseMsgOpCode                  MsgOpCode = 0xf06c7567
+	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
+	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
+	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
+	MultisigNewOrderMsgOpCode                        MsgOpCode = 0xf718510f
+	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
+	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
+	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
+	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
 type TextCommentMsgBody struct {
@@ -1028,6 +1098,10 @@ type TonstakeControllerPoolHaltMsgBody struct {
 	QueryId uint64
 }
 
+type WhalesNominatorsForceKickMsgBody struct {
+	QueryId int64
+}
+
 type TonstakePayoutMintJettonsMsgBody struct {
 	QueryId      uint64
 	Destination  tlb.MsgAddress
@@ -1047,6 +1121,10 @@ type JettonInternalTransferMsgBody struct {
 	From             tlb.MsgAddress
 	ResponseAddress  tlb.MsgAddress
 	ForwardTonAmount tlb.VarUInteger16
+}
+
+type WhalesNominatorsWithdrawUnownedResponseMsgBody struct {
+	QueryId uint64
 }
 
 type SbtDestroyMsgBody struct {
@@ -1073,10 +1151,19 @@ type JettonCallToMsgBody struct {
 	MasterMsg JettonForceAction `tlb:"^"`
 }
 
+type WhalesNominatorsStakeWithdrawCompletedMsgBody struct {
+	QueryId int64
+}
+
 type JettonUpgradeMsgBody struct {
 	QueryId uint64
 	NewData tlb.Any `tlb:"^"`
 	NewCode tlb.Any `tlb:"^"`
+}
+
+type WhalesNominatorsWithdrawUnownedMsgBody struct {
+	QueryId  uint64
+	GasLimit tlb.Grams
 }
 
 type FinishUncooperativeChannelCloseMsgBody struct{}
@@ -1368,6 +1455,10 @@ type JettonNotifyMsgBody struct {
 
 type SubscriptionPaymentMsgBody struct{}
 
+type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
+	QueryId int64
+}
+
 type MultisigExecuteMsgBody struct {
 	QueryId        uint64
 	OrderSeqno     tlb.Uint256
@@ -1406,6 +1497,11 @@ type AcceptStorageContractMsgBody struct {
 
 type ApproveMsgBody struct {
 	QueryId uint64
+}
+
+type WhalesNominatorsDepositMsgBody struct {
+	QueryId int64
+	Gas     tlb.Grams
 }
 
 type JettonBurnNotificationMsgBody struct {
@@ -1452,6 +1548,11 @@ type TonstakePoolPrepareGovernanceMigrationMsgBody struct {
 	GovernorUpdateAfter tlb.Uint48
 }
 
+type WhalesNominatorsAcceptStakeMsgBody struct {
+	QueryId uint64
+	Members tlb.Any
+}
+
 type TonstakePoolSetDepositSettingsMsgBody struct {
 	QueryId                      uint64
 	OptimisticDepositWithdrawals bool
@@ -1465,6 +1566,22 @@ type MultisigOrderInitMsgBody struct {
 	ExpirationDate tlb.Uint48
 	Order          MultisigOrder `tlb:"^"`
 	SignerIndex    *uint8        `tlb:"maybe"`
+}
+
+type WhalesNominatorsAcceptWithdrawsMsgBody struct {
+	QueryId uint64
+	Members tlb.Any
+}
+
+type WhalesNominatorsSendStakeMsgBody struct {
+	QueryId         uint64
+	GasLimit        tlb.Grams
+	Stake           tlb.Grams
+	ValidatorPubkey tlb.Bits256
+	StakeAt         uint32
+	MaxFactor       uint32
+	AdnlAddr        tlb.Bits256
+	Signature       tlb.Bits512 `tlb:"^"`
 }
 
 type MultisigExecuteInternalMsgBody struct {
@@ -1593,6 +1710,12 @@ type ExcessMsgBody struct {
 	QueryId uint64
 }
 
+type WhalesNominatorsWithdrawMsgBody struct {
+	QueryId int64
+	Gas     tlb.Grams
+	Amount  tlb.Grams
+}
+
 type TonstakeNftPayoutMsgBody struct {
 	QueryId uint64
 }
@@ -1716,138 +1839,148 @@ type BounceMsgBody struct {
 }
 
 var KnownMsgInTypes = map[string]any{
-	TextCommentMsgOp:                            TextCommentMsgBody{},
-	ProveOwnershipMsgOp:                         ProveOwnershipMsgBody{},
-	NftOwnershipAssignedMsgOp:                   NftOwnershipAssignedMsgBody{},
-	OwnershipProofMsgOp:                         OwnershipProofMsgBody{},
-	ChallengeQuarantinedChannelStateMsgOp:       ChallengeQuarantinedChannelStateMsgBody{},
-	TonstakePoolWithdrawalMsgOp:                 TonstakePoolWithdrawalMsgBody{},
-	SbtOwnerInfoMsgOp:                           SbtOwnerInfoMsgBody{},
-	InitPaymentChannelMsgOp:                     InitPaymentChannelMsgBody{},
-	JettonTransferMsgOp:                         JettonTransferMsgBody{},
-	OfferStorageContractMsgOp:                   OfferStorageContractMsgBody{},
-	TonstakeNftInitMsgOp:                        TonstakeNftInitMsgBody{},
-	TonstakeControllerPoolHaltMsgOp:             TonstakeControllerPoolHaltMsgBody{},
-	TonstakePayoutMintJettonsMsgOp:              TonstakePayoutMintJettonsMsgBody{},
-	CreditMsgOp:                                 CreditMsgBody{},
-	JettonInternalTransferMsgOp:                 JettonInternalTransferMsgBody{},
-	SbtDestroyMsgOp:                             SbtDestroyMsgBody{},
-	StartUncooperativeChannelCloseMsgOp:         StartUncooperativeChannelCloseMsgBody{},
-	EncryptedTextCommentMsgOp:                   EncryptedTextCommentMsgBody{},
-	JettonCallToMsgOp:                           JettonCallToMsgBody{},
-	JettonUpgradeMsgOp:                          JettonUpgradeMsgBody{},
-	FinishUncooperativeChannelCloseMsgOp:        FinishUncooperativeChannelCloseMsgBody{},
-	StonfiSwapMsgOp:                             StonfiSwapMsgBody{},
-	TonstakeControllerPoolSendMessageMsgOp:      TonstakeControllerPoolSendMessageMsgBody{},
-	TeleitemDeployMsgOp:                         TeleitemDeployMsgBody{},
-	InitMsgOp:                                   InitMsgBody{},
-	TonstakePoolSetGovernanceFeeMsgOp:           TonstakePoolSetGovernanceFeeMsgBody{},
-	GetStaticDataMsgOp:                          GetStaticDataMsgBody{},
-	TonstakeControllerValidatorWithdrawalMsgOp:  TonstakeControllerValidatorWithdrawalMsgBody{},
-	TonstakePoolWithdrawMsgOp:                   TonstakePoolWithdrawMsgBody{},
-	AuctionFillUpMsgOp:                          AuctionFillUpMsgBody{},
-	TeleitemCancelAuctionMsgOp:                  TeleitemCancelAuctionMsgBody{},
-	ProofStorageMsgOp:                           ProofStorageMsgBody{},
-	ProcessGovernanceDecisionMsgOp:              ProcessGovernanceDecisionMsgBody{},
-	TelemintDeployMsgOp:                         TelemintDeployMsgBody{},
-	TelemintDeployV2MsgOp:                       TelemintDeployV2MsgBody{},
-	StorageWithdrawMsgOp:                        StorageWithdrawMsgBody{},
-	DedustPayoutMsgOp:                           DedustPayoutMsgBody{},
-	ElectorRecoverStakeRequestMsgOp:             ElectorRecoverStakeRequestMsgBody{},
-	TonstakePoolDepositMsgOp:                    TonstakePoolDepositMsgBody{},
-	TeleitemStartAuctionMsgOp:                   TeleitemStartAuctionMsgBody{},
-	TonstakePoolTouchMsgOp:                      TonstakePoolTouchMsgBody{},
-	GramSubmitProofOfWorkMsgOp:                  GramSubmitProofOfWorkMsgBody{},
-	ElectorNewStakeMsgOp:                        ElectorNewStakeMsgBody{},
-	DeleteDnsRecordMsgOp:                        DeleteDnsRecordMsgBody{},
-	ChangeDnsRecordMsgOp:                        ChangeDnsRecordMsgBody{},
-	DnsBalanceReleaseMsgOp:                      DnsBalanceReleaseMsgBody{},
-	UpdatePubkeyMsgOp:                           UpdatePubkeyMsgBody{},
-	UpdateStorageParamsMsgOp:                    UpdateStorageParamsMsgBody{},
-	TonstakeImanagerOperationFeeMsgOp:           TonstakeImanagerOperationFeeMsgBody{},
-	ChannelCooperativeCloseMsgOp:                ChannelCooperativeCloseMsgBody{},
-	OutbidNotificationMsgOp:                     OutbidNotificationMsgBody{},
-	TonstakeControllerReturnAvailableFundsMsgOp: TonstakeControllerReturnAvailableFundsMsgBody{},
-	JettonBurnMsgOp:                             JettonBurnMsgBody{},
-	TonstakePoolSetRolesMsgOp:                   TonstakePoolSetRolesMsgBody{},
-	NftTransferMsgOp:                            NftTransferMsgBody{},
-	TegroSwapTonMsgOp:                           TegroSwapTonMsgBody{},
-	DedustSwapExternalMsgOp:                     DedustSwapExternalMsgBody{},
-	TonstakeControllerSendRequestLoanMsgOp:      TonstakeControllerSendRequestLoanMsgBody{},
-	JettonMintMsgOp:                             JettonMintMsgBody{},
-	WalletPluginDestructMsgOp:                   WalletPluginDestructMsgBody{},
-	JettonChangeAdminMsgOp:                      JettonChangeAdminMsgBody{},
-	SettleChannelConditionalsMsgOp:              SettleChannelConditionalsMsgBody{},
-	TopUpChannelBalanceMsgOp:                    TopUpChannelBalanceMsgBody{},
-	GetRoyaltyParamsMsgOp:                       GetRoyaltyParamsMsgBody{},
-	SbtRevokeMsgOp:                              SbtRevokeMsgBody{},
-	PaymentRequestMsgOp:                         PaymentRequestMsgBody{},
-	TonstakeControllerPoolUnhaltMsgOp:           TonstakeControllerPoolUnhaltMsgBody{},
-	DedustSwapPeerMsgOp:                         DedustSwapPeerMsgBody{},
-	JettonNotifyMsgOp:                           JettonNotifyMsgBody{},
-	SubscriptionPaymentMsgOp:                    SubscriptionPaymentMsgBody{},
-	MultisigExecuteMsgOp:                        MultisigExecuteMsgBody{},
-	MegatonWtonMintMsgOp:                        MegatonWtonMintMsgBody{},
-	ChannelCooperativeCommitMsgOp:               ChannelCooperativeCommitMsgBody{},
-	TonstakeControllerPoolSetSudoerMsgOp:        TonstakeControllerPoolSetSudoerMsgBody{},
-	CloseStorageContractMsgOp:                   CloseStorageContractMsgBody{},
-	AcceptStorageContractMsgOp:                  AcceptStorageContractMsgBody{},
-	ApproveMsgOp:                                ApproveMsgBody{},
-	JettonBurnNotificationMsgOp:                 JettonBurnNotificationMsgBody{},
-	MultisigApproveAcceptedMsgOp:                MultisigApproveAcceptedMsgBody{},
-	AddReferralAmountMsgOp:                      AddReferralAmountMsgBody{},
-	NftItemTransferMsgOp:                        NftItemTransferMsgBody{},
-	ReportStaticDataMsgOp:                       ReportStaticDataMsgBody{},
-	TonstakeControllerWithdrawValidatorMsgOp:    TonstakeControllerWithdrawValidatorMsgBody{},
-	TonstakeControllerPoolUpgradeMsgOp:          TonstakeControllerPoolUpgradeMsgBody{},
-	TonstakePoolPrepareGovernanceMigrationMsgOp: TonstakePoolPrepareGovernanceMigrationMsgBody{},
-	TonstakePoolSetDepositSettingsMsgOp:         TonstakePoolSetDepositSettingsMsgBody{},
-	MultisigOrderInitMsgOp:                      MultisigOrderInitMsgBody{},
-	MultisigExecuteInternalMsgOp:                MultisigExecuteInternalMsgBody{},
-	TeleitemOkMsgOp:                             TeleitemOkMsgBody{},
-	TeleitemReturnBidMsgOp:                      TeleitemReturnBidMsgBody{},
-	MultisigApproveMsgOp:                        MultisigApproveMsgBody{},
-	ReportRoyaltyParamsMsgOp:                    ReportRoyaltyParamsMsgBody{},
-	StorageRewardWithdrawalMsgOp:                StorageRewardWithdrawalMsgBody{},
-	DedustPayoutFromPoolMsgOp:                   DedustPayoutFromPoolMsgBody{},
-	MultisigApproveRejectedMsgOp:                MultisigApproveRejectedMsgBody{},
-	TonstakeImanagerRequestNotificationMsgOp:    TonstakeImanagerRequestNotificationMsgBody{},
-	TonstakePoolDeployControllerMsgOp:           TonstakePoolDeployControllerMsgBody{},
-	DedustDepositLiquidityAllMsgOp:              DedustDepositLiquidityAllMsgBody{},
-	StorageContractTerminatedMsgOp:              StorageContractTerminatedMsgBody{},
-	PayFundingMsgOp:                             PayFundingMsgBody{},
-	TonstakeImanagerStatsMsgOp:                  TonstakeImanagerStatsMsgBody{},
-	TonstakeImanagerSetInterestMsgOp:            TonstakeImanagerSetInterestMsgBody{},
-	MintReferralMsgOp:                           MintReferralMsgBody{},
-	JettonChangeMetadataMsgOp:                   JettonChangeMetadataMsgBody{},
-	SbtRequestOwnerMsgOp:                        SbtRequestOwnerMsgBody{},
-	TopUpMsgOp:                                  TopUpMsgBody{},
-	StorageContractConfirmedMsgOp:               StorageContractConfirmedMsgBody{},
-	ExcessMsgOp:                                 ExcessMsgBody{},
-	TonstakeNftPayoutMsgOp:                      TonstakeNftPayoutMsgBody{},
-	ChannelClosedMsgOp:                          ChannelClosedMsgBody{},
-	TonstakePoolLoanRepaymentMsgOp:              TonstakePoolLoanRepaymentMsgBody{},
-	TonstakeControllerNewStakeMsgOp:             TonstakeControllerNewStakeMsgBody{},
-	UpdateMsgOp:                                 UpdateMsgBody{},
-	WalletPluginDestructResponseMsgOp:           WalletPluginDestructResponseMsgBody{},
-	DeployStorageContractMsgOp:                  DeployStorageContractMsgBody{},
-	TonstakePoolRequestLoanMsgOp:                TonstakePoolRequestLoanMsgBody{},
-	DisapproveMsgOp:                             DisapproveMsgBody{},
-	DedustSwapMsgOp:                             DedustSwapMsgBody{},
-	TonstakeControllerRecoverStakeMsgOp:         TonstakeControllerRecoverStakeMsgBody{},
-	TonstakeNftBurnNotificationMsgOp:            TonstakeNftBurnNotificationMsgBody{},
-	TonstakeControllerReturnUnusedLoanMsgOp:     TonstakeControllerReturnUnusedLoanMsgBody{},
-	ChangeSettingsMsgOp:                         ChangeSettingsMsgBody{},
-	JettonSetStatusMsgOp:                        JettonSetStatusMsgBody{},
-	PaymentRequestResponseMsgOp:                 PaymentRequestResponseMsgBody{},
-	TonstakeControllerUpdateValidatorHashMsgOp:  TonstakeControllerUpdateValidatorHashMsgBody{},
-	TonstakeNftBurnMsgOp:                        TonstakeNftBurnMsgBody{},
-	ElectorNewStakeConfirmationMsgOp:            ElectorNewStakeConfirmationMsgBody{},
-	MultisigNewOrderMsgOp:                       MultisigNewOrderMsgBody{},
-	StonfiPaymentRequestMsgOp:                   StonfiPaymentRequestMsgBody{},
-	ElectorRecoverStakeResponseMsgOp:            ElectorRecoverStakeResponseMsgBody{},
-	JettonClaimAdminMsgOp:                       JettonClaimAdminMsgBody{},
-	BounceMsgOp:                                 BounceMsgBody{},
+	TextCommentMsgOp:                             TextCommentMsgBody{},
+	ProveOwnershipMsgOp:                          ProveOwnershipMsgBody{},
+	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
+	OwnershipProofMsgOp:                          OwnershipProofMsgBody{},
+	ChallengeQuarantinedChannelStateMsgOp:        ChallengeQuarantinedChannelStateMsgBody{},
+	TonstakePoolWithdrawalMsgOp:                  TonstakePoolWithdrawalMsgBody{},
+	SbtOwnerInfoMsgOp:                            SbtOwnerInfoMsgBody{},
+	InitPaymentChannelMsgOp:                      InitPaymentChannelMsgBody{},
+	JettonTransferMsgOp:                          JettonTransferMsgBody{},
+	OfferStorageContractMsgOp:                    OfferStorageContractMsgBody{},
+	TonstakeNftInitMsgOp:                         TonstakeNftInitMsgBody{},
+	TonstakeControllerPoolHaltMsgOp:              TonstakeControllerPoolHaltMsgBody{},
+	WhalesNominatorsForceKickMsgOp:               WhalesNominatorsForceKickMsgBody{},
+	TonstakePayoutMintJettonsMsgOp:               TonstakePayoutMintJettonsMsgBody{},
+	CreditMsgOp:                                  CreditMsgBody{},
+	JettonInternalTransferMsgOp:                  JettonInternalTransferMsgBody{},
+	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
+	SbtDestroyMsgOp:                              SbtDestroyMsgBody{},
+	StartUncooperativeChannelCloseMsgOp:          StartUncooperativeChannelCloseMsgBody{},
+	EncryptedTextCommentMsgOp:                    EncryptedTextCommentMsgBody{},
+	JettonCallToMsgOp:                            JettonCallToMsgBody{},
+	WhalesNominatorsStakeWithdrawCompletedMsgOp:  WhalesNominatorsStakeWithdrawCompletedMsgBody{},
+	JettonUpgradeMsgOp:                           JettonUpgradeMsgBody{},
+	WhalesNominatorsWithdrawUnownedMsgOp:         WhalesNominatorsWithdrawUnownedMsgBody{},
+	FinishUncooperativeChannelCloseMsgOp:         FinishUncooperativeChannelCloseMsgBody{},
+	StonfiSwapMsgOp:                              StonfiSwapMsgBody{},
+	TonstakeControllerPoolSendMessageMsgOp:       TonstakeControllerPoolSendMessageMsgBody{},
+	TeleitemDeployMsgOp:                          TeleitemDeployMsgBody{},
+	InitMsgOp:                                    InitMsgBody{},
+	TonstakePoolSetGovernanceFeeMsgOp:            TonstakePoolSetGovernanceFeeMsgBody{},
+	GetStaticDataMsgOp:                           GetStaticDataMsgBody{},
+	TonstakeControllerValidatorWithdrawalMsgOp:   TonstakeControllerValidatorWithdrawalMsgBody{},
+	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
+	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
+	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
+	ProofStorageMsgOp:                            ProofStorageMsgBody{},
+	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
+	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
+	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
+	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
+	DedustPayoutMsgOp:                            DedustPayoutMsgBody{},
+	ElectorRecoverStakeRequestMsgOp:              ElectorRecoverStakeRequestMsgBody{},
+	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
+	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
+	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
+	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
+	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
+	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},
+	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},
+	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
+	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
+	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
+	TonstakeImanagerOperationFeeMsgOp:            TonstakeImanagerOperationFeeMsgBody{},
+	ChannelCooperativeCloseMsgOp:                 ChannelCooperativeCloseMsgBody{},
+	OutbidNotificationMsgOp:                      OutbidNotificationMsgBody{},
+	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
+	JettonBurnMsgOp:                              JettonBurnMsgBody{},
+	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
+	NftTransferMsgOp:                             NftTransferMsgBody{},
+	TegroSwapTonMsgOp:                            TegroSwapTonMsgBody{},
+	DedustSwapExternalMsgOp:                      DedustSwapExternalMsgBody{},
+	TonstakeControllerSendRequestLoanMsgOp:       TonstakeControllerSendRequestLoanMsgBody{},
+	JettonMintMsgOp:                              JettonMintMsgBody{},
+	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
+	JettonChangeAdminMsgOp:                       JettonChangeAdminMsgBody{},
+	SettleChannelConditionalsMsgOp:               SettleChannelConditionalsMsgBody{},
+	TopUpChannelBalanceMsgOp:                     TopUpChannelBalanceMsgBody{},
+	GetRoyaltyParamsMsgOp:                        GetRoyaltyParamsMsgBody{},
+	SbtRevokeMsgOp:                               SbtRevokeMsgBody{},
+	PaymentRequestMsgOp:                          PaymentRequestMsgBody{},
+	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
+	DedustSwapPeerMsgOp:                          DedustSwapPeerMsgBody{},
+	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
+	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
+	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
+	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
+	MegatonWtonMintMsgOp:                         MegatonWtonMintMsgBody{},
+	ChannelCooperativeCommitMsgOp:                ChannelCooperativeCommitMsgBody{},
+	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
+	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},
+	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
+	ApproveMsgOp:                                 ApproveMsgBody{},
+	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
+	JettonBurnNotificationMsgOp:                  JettonBurnNotificationMsgBody{},
+	MultisigApproveAcceptedMsgOp:                 MultisigApproveAcceptedMsgBody{},
+	AddReferralAmountMsgOp:                       AddReferralAmountMsgBody{},
+	NftItemTransferMsgOp:                         NftItemTransferMsgBody{},
+	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
+	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
+	TonstakeControllerPoolUpgradeMsgOp:           TonstakeControllerPoolUpgradeMsgBody{},
+	TonstakePoolPrepareGovernanceMigrationMsgOp:  TonstakePoolPrepareGovernanceMigrationMsgBody{},
+	WhalesNominatorsAcceptStakeMsgOp:             WhalesNominatorsAcceptStakeMsgBody{},
+	TonstakePoolSetDepositSettingsMsgOp:          TonstakePoolSetDepositSettingsMsgBody{},
+	MultisigOrderInitMsgOp:                       MultisigOrderInitMsgBody{},
+	WhalesNominatorsAcceptWithdrawsMsgOp:         WhalesNominatorsAcceptWithdrawsMsgBody{},
+	WhalesNominatorsSendStakeMsgOp:               WhalesNominatorsSendStakeMsgBody{},
+	MultisigExecuteInternalMsgOp:                 MultisigExecuteInternalMsgBody{},
+	TeleitemOkMsgOp:                              TeleitemOkMsgBody{},
+	TeleitemReturnBidMsgOp:                       TeleitemReturnBidMsgBody{},
+	MultisigApproveMsgOp:                         MultisigApproveMsgBody{},
+	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
+	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
+	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},
+	MultisigApproveRejectedMsgOp:                 MultisigApproveRejectedMsgBody{},
+	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
+	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
+	DedustDepositLiquidityAllMsgOp:               DedustDepositLiquidityAllMsgBody{},
+	StorageContractTerminatedMsgOp:               StorageContractTerminatedMsgBody{},
+	PayFundingMsgOp:                              PayFundingMsgBody{},
+	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
+	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},
+	MintReferralMsgOp:                            MintReferralMsgBody{},
+	JettonChangeMetadataMsgOp:                    JettonChangeMetadataMsgBody{},
+	SbtRequestOwnerMsgOp:                         SbtRequestOwnerMsgBody{},
+	TopUpMsgOp:                                   TopUpMsgBody{},
+	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
+	ExcessMsgOp:                                  ExcessMsgBody{},
+	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
+	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},
+	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},
+	TonstakePoolLoanRepaymentMsgOp:               TonstakePoolLoanRepaymentMsgBody{},
+	TonstakeControllerNewStakeMsgOp:              TonstakeControllerNewStakeMsgBody{},
+	UpdateMsgOp:                                  UpdateMsgBody{},
+	WalletPluginDestructResponseMsgOp:            WalletPluginDestructResponseMsgBody{},
+	DeployStorageContractMsgOp:                   DeployStorageContractMsgBody{},
+	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},
+	DisapproveMsgOp:                              DisapproveMsgBody{},
+	DedustSwapMsgOp:                              DedustSwapMsgBody{},
+	TonstakeControllerRecoverStakeMsgOp:          TonstakeControllerRecoverStakeMsgBody{},
+	TonstakeNftBurnNotificationMsgOp:             TonstakeNftBurnNotificationMsgBody{},
+	TonstakeControllerReturnUnusedLoanMsgOp:      TonstakeControllerReturnUnusedLoanMsgBody{},
+	ChangeSettingsMsgOp:                          ChangeSettingsMsgBody{},
+	JettonSetStatusMsgOp:                         JettonSetStatusMsgBody{},
+	PaymentRequestResponseMsgOp:                  PaymentRequestResponseMsgBody{},
+	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
+	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
+	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
+	MultisigNewOrderMsgOp:                        MultisigNewOrderMsgBody{},
+	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
+	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
+	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
+	BounceMsgOp:                                  BounceMsgBody{},
 }
 
 var (

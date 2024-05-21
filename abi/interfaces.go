@@ -65,6 +65,7 @@ const (
 	WalletV4R1
 	WalletV4R2
 	WalletV5R1
+	WhalesPool
 )
 
 func (c ContractInterface) String() string {
@@ -183,6 +184,8 @@ func (c ContractInterface) String() string {
 		return "wallet_v4r2"
 	case WalletV5R1:
 		return "wallet_v5r1"
+	case WhalesPool:
+		return "whales_pool"
 	default:
 		return "unknown"
 	}
@@ -304,6 +307,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV4R2
 	case "wallet_v5r1":
 		return WalletV5R1
+	case "whales_pool":
+		return WhalesPool
 	default:
 		return IUnknown
 	}
@@ -415,6 +420,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetLpSwapData,
 	},
 	{
+		Name:     "get_members_raw",
+		InvokeFn: GetMembersRaw,
+	},
+	{
 		Name:     "get_mining_data",
 		InvokeFn: GetMiningData,
 	},
@@ -439,6 +448,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNftData,
 	},
 	{
+		Name:     "get_params",
+		InvokeFn: GetParams,
+	},
+	{
 		Name:     "get_plugin_list",
 		InvokeFn: GetPluginList,
 	},
@@ -449,6 +462,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_pool_full_data",
 		InvokeFn: GetPoolFullData,
+	},
+	{
+		Name:     "get_pool_status",
+		InvokeFn: GetPoolStatus,
 	},
 	{
 		Name:     "get_pow_params",
@@ -477,6 +494,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_spot_price",
 		InvokeFn: GetSpotPrice,
+	},
+	{
+		Name:     "get_staking_status",
+		InvokeFn: GetStakingStatus,
 	},
 	{
 		Name:     "get_status",
@@ -735,6 +756,14 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetPoolData_TfResult",
 			"ListNominatorsResult",
 			"ListVotesResult",
+		},
+	},
+	{
+		Name: WhalesPool,
+		Results: []string{
+			"GetParams_WhalesNominatorResult",
+			"GetPoolStatusResult",
+			"GetStakingStatusResult",
 		},
 	},
 }
@@ -1020,6 +1049,14 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncChangeSettingsMsgBody,
 			decodeFuncPayFundingMsgBody,
 			decodeFuncInitMsgBody,
+		}
+	case WhalesPool:
+		return []msgDecoderFunc{
+			decodeFuncWhalesNominatorsWithdrawMsgBody,
+			decodeFuncWhalesNominatorsDepositMsgBody,
+			decodeFuncWhalesNominatorsSendStakeMsgBody,
+			decodeFuncWhalesNominatorsWithdrawUnownedMsgBody,
+			decodeFuncWhalesNominatorsForceKickMsgBody,
 		}
 	default:
 		return nil

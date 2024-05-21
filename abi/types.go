@@ -419,3 +419,16 @@ type SendMessageAction struct {
 	Mode    uint8
 	Message MessageRelaxed `tlb:"^"`
 }
+
+type WhalesNominatorsMember struct {
+	ProfitPerCoin      tlb.Int128
+	Balance            tlb.Grams
+	PendingWithdraw    tlb.Grams
+	PendingWithdrawAll bool
+	PendingDeposit     tlb.Grams
+	MemberWithdraw     tlb.Grams
+}
+
+type WhalesNominatorsMembersList struct {
+	List tlb.Hashmap[tlb.Bits256, WhalesNominatorsMember]
+}

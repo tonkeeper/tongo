@@ -36,13 +36,14 @@ const (
 	NftSaleV1
 	NftSaleV2
 	PaymentChannel
-	Referral
 	Sbt
 	StonfiPool
 	StonfiRouter
 	StorageContract
 	StorageProvider
+	StormReferral
 	StormVamm
+	StormVault
 	SubscriptionV1
 	Teleitem
 	TonstakePool
@@ -126,8 +127,6 @@ func (c ContractInterface) String() string {
 		return "nft_sale_v2"
 	case PaymentChannel:
 		return "payment_channel"
-	case Referral:
-		return "referral"
 	case Sbt:
 		return "sbt"
 	case StonfiPool:
@@ -138,8 +137,12 @@ func (c ContractInterface) String() string {
 		return "storage_contract"
 	case StorageProvider:
 		return "storage_provider"
+	case StormReferral:
+		return "storm_referral"
 	case StormVamm:
 		return "storm_vamm"
+	case StormVault:
+		return "storm_vault"
 	case SubscriptionV1:
 		return "subscription_v1"
 	case Teleitem:
@@ -249,8 +252,6 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return NftSaleV2
 	case "payment_channel":
 		return PaymentChannel
-	case "referral":
-		return Referral
 	case "sbt":
 		return Sbt
 	case "stonfi_pool":
@@ -261,8 +262,12 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StorageContract
 	case "storage_provider":
 		return StorageProvider
+	case "storm_referral":
+		return StormReferral
 	case "storm_vamm":
 		return StormVamm
+	case "storm_vault":
+		return StormVault
 	case "subscription_v1":
 		return SubscriptionV1
 	case "teleitem":
@@ -1038,7 +1043,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncNftTransferMsgBody,
 			decodeFuncGetStaticDataMsgBody,
 		}
-	case Referral:
+	case StormReferral:
 		return []msgDecoderFunc{
 			decodeFuncStormMintReferralMsgBody,
 			decodeFuncStormAddReferralAmountMsgBody,
@@ -1048,7 +1053,15 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncStormChangeSettingsMsgBody,
 			decodeFuncStormPayFundingMsgBody,
-			decodeFuncStormInitMsgBody,
+			decodeFuncStormVammInitMsgBody,
+		}
+	case StormVault:
+		return []msgDecoderFunc{
+			decodeFuncStormExchangeMsgBody,
+			decodeFuncStormTransferNotificationMsgBody,
+			decodeFuncStormStakeMsgBody,
+			decodeFuncStormUnstakeMsgBody,
+			decodeFuncStormVaultInitMsgBody,
 		}
 	case WhalesPool:
 		return []msgDecoderFunc{

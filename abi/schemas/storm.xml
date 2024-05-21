@@ -13,8 +13,15 @@
         maintenance_margin_ratio:uint32 liquidation_fee_ratio:uint32 partial_liquidation_ratio:uint32 
         spread_limit:uint32 max_price_impact:uint32 max_price_spread:uint32 max_open_notional:uint32 
         fee_to_stakers_percent:uint32 funding_mode:uint2 min_partial_liquidation_notional:Coins min_leverage:uint32 = AmmSettings;
+
+        referral_data#_ amount:Coins index:uint32 = ReferralData;
+        executor_data#_ split_executor_rewards:uint8 amount:Coins index:uint32 = ExecutorData;
+
+        notification_payload#_ opcode:uint64 = NotificationPayload;
+
     </types>
 
+    <!-- INTERFACES -->
 
     <interface name="storm_vamm">
         <get_method name="get_amm_name" version="storm"/>
@@ -22,14 +29,14 @@
         <msg_in>
             <internal name="storm_change_settings"/>
             <internal name="storm_pay_funding"/>  <!--- test -->
-            <internal name="storm_init"/>
+            <internal name="storm_vamm_init"/>
         </msg_in>
         <msg_out>
             <internal name="storm_update"/>
         </msg_out>
     </interface>
 
-    <interface name="referral">
+    <interface name="storm_referral">
         <msg_in>
             <internal name="storm_mint_referral"/>
             <internal name="storm_add_referral_amount"/>
@@ -37,8 +44,21 @@
         </msg_in>
     </interface>
 
+
+    <interface name="storm_vault">
+        <msg_in>
+            <internal name="storm_exchange"/>
+            <internal name="storm_transfer_notification"/>
+            <internal name="storm_stake"/>
+            <internal name="storm_unstake"/>
+
+            <internal name="storm_vault_init"/>
+
+        </msg_in>
+    </interface>
+
     
-    
+    <!-- GET METHODS -->
     
     <get_method name="get_amm_contract_data">
         <output>
@@ -130,6 +150,9 @@
     </get_method>
 
 
+    <!-- INTERNALS -->
+
+
     <internal name="storm_change_settings">
         change_settings#edcd36a6 redirect_addr:MsgAddress 
         settings:^AmmSettings = InternalMsgBody;
@@ -139,7 +162,7 @@
         pay_funding#b652c441 oracle_ref:^OracleData = InternalMsgBody;
     </internal>
 
-    <internal name="storm_init">
+    <internal name="storm_vamm_init">
         init#29c102d1 redirect_addr:MsgAddress 
         code:^Cell data:^Cell = InternalMsgBody;
     </internal>
@@ -158,7 +181,31 @@
     </internal>
 
     <internal name="storm_nft_item_transfer">
-        add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+        nft_item_transfer#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_exchange">
+        exchange#3475fdd2 amm_index:uint16 free_amount:uint16 locked_amount:int64 exchange_amount:int64 withdraw_locked_amount:int64
+        fee_to_stakers:int64 withdraw_amount:int64 trader_addr:MsgAddress referral_params:(Maybe ^ReferralData) executor_params:(Maybe ^ExecutorData) = InternalMsgBody;
+    </internal>
+
+
+    <internal name="storm_transfer_notification">
+        transfer_notification#7362d09c query_id:uint64 amount:Coins 
+        sender:MsgAddress forward_payload:(Either NotificationPayload ^NotificationPayload) = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_stake">
+        stake#c89a3ee4 amount:Coins = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_unstake">
+        unstake#d5b5e9ad jetton_amount:Coins user_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+
+    <internal name="storm_vault_init">
+        vault_init#29c102d1 jetton_address:MsgAddress = InternalMsgBody;
     </internal>
 
 

@@ -64,7 +64,9 @@ var (
 	// 0x299a3e15
 	decodeFuncTeleitemDeployMsgBody = decodeMsg(tlb.Tag{Val: 0x299a3e15, Len: 32}, TeleitemDeployMsgOp, TeleitemDeployMsgBody{})
 	// 0x29c102d1
-	decodeFuncStormInitMsgBody = decodeMsg(tlb.Tag{Val: 0x29c102d1, Len: 32}, StormInitMsgOp, StormInitMsgBody{})
+	decodeFuncStormVammInitMsgBody = decodeMsg(tlb.Tag{Val: 0x29c102d1, Len: 32}, StormVammInitMsgOp, StormVammInitMsgBody{})
+	// 0x29c102d1
+	decodeFuncStormVaultInitMsgBody = decodeMsg(tlb.Tag{Val: 0x29c102d1, Len: 32}, StormVaultInitMsgOp, StormVaultInitMsgBody{})
 	// 0x2aaa96a0
 	decodeFuncTonstakePoolSetGovernanceFeeMsgBody = decodeMsg(tlb.Tag{Val: 0x2aaa96a0, Len: 32}, TonstakePoolSetGovernanceFeeMsgOp, TonstakePoolSetGovernanceFeeMsgBody{})
 	// 0x2fcb26a2
@@ -73,6 +75,8 @@ var (
 	decodeFuncTonstakeControllerValidatorWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0x30026327, Len: 32}, TonstakeControllerValidatorWithdrawalMsgOp, TonstakeControllerValidatorWithdrawalMsgBody{})
 	// 0x319b0cdc
 	decodeFuncTonstakePoolWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x319b0cdc, Len: 32}, TonstakePoolWithdrawMsgOp, TonstakePoolWithdrawMsgBody{})
+	// 0x3475fdd2
+	decodeFuncStormExchangeMsgBody = decodeMsg(tlb.Tag{Val: 0x3475fdd2, Len: 32}, StormExchangeMsgOp, StormExchangeMsgBody{})
 	// 0x370fec51
 	decodeFuncAuctionFillUpMsgBody = decodeMsg(tlb.Tag{Val: 0x370fec51, Len: 32}, AuctionFillUpMsgOp, AuctionFillUpMsgBody{})
 	// 0x371638ae
@@ -153,6 +157,8 @@ var (
 	decodeFuncDedustSwapPeerMsgBody = decodeMsg(tlb.Tag{Val: 0x72aca8aa, Len: 32}, DedustSwapPeerMsgOp, DedustSwapPeerMsgBody{})
 	// 0x7362d09c
 	decodeFuncJettonNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, JettonNotifyMsgOp, JettonNotifyMsgBody{})
+	// 0x7362d09c
+	decodeFuncStormTransferNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, StormTransferNotificationMsgOp, StormTransferNotificationMsgBody{})
 	// 0x73756273
 	decodeFuncSubscriptionPaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{})
 	// 0x74bb3427
@@ -227,6 +233,8 @@ var (
 	decodeFuncStormPayFundingMsgBody = decodeMsg(tlb.Tag{Val: 0xb652c441, Len: 32}, StormPayFundingMsgOp, StormPayFundingMsgBody{})
 	// 0xc1344900
 	decodeFuncTonstakeImanagerStatsMsgBody = decodeMsg(tlb.Tag{Val: 0xc1344900, Len: 32}, TonstakeImanagerStatsMsgOp, TonstakeImanagerStatsMsgBody{})
+	// 0xc89a3ee4
+	decodeFuncStormStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xc89a3ee4, Len: 32}, StormStakeMsgOp, StormStakeMsgBody{})
 	// 0xc9f04485
 	decodeFuncTonstakeImanagerSetInterestMsgBody = decodeMsg(tlb.Tag{Val: 0xc9f04485, Len: 32}, TonstakeImanagerSetInterestMsgOp, TonstakeImanagerSetInterestMsgBody{})
 	// 0xcb4ddc3c
@@ -241,6 +249,8 @@ var (
 	decodeFuncStorageContractConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xd4caedcd, Len: 32}, StorageContractConfirmedMsgOp, StorageContractConfirmedMsgBody{})
 	// 0xd53276db
 	decodeFuncExcessMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, ExcessMsgOp, ExcessMsgBody{})
+	// 0xd5b5e9ad
+	decodeFuncStormUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0xd5b5e9ad, Len: 32}, StormUnstakeMsgOp, StormUnstakeMsgBody{})
 	// 0xda803efd
 	decodeFuncWhalesNominatorsWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{})
 	// 0xdb3b8abd
@@ -379,8 +389,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x299a3e15
 	TeleitemDeployMsgOpCode: decodeFuncTeleitemDeployMsgBody,
 
-	// 0x29c102d1
-	StormInitMsgOpCode: decodeFuncStormInitMsgBody,
+	//StormVammInit, StormVaultInit,
+	0x29c102d1: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncStormVammInitMsgBody,
+		decodeFuncStormVaultInitMsgBody},
+		"0x29c102d1",
+	),
 
 	// 0x2aaa96a0
 	TonstakePoolSetGovernanceFeeMsgOpCode: decodeFuncTonstakePoolSetGovernanceFeeMsgBody,
@@ -393,6 +407,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x319b0cdc
 	TonstakePoolWithdrawMsgOpCode: decodeFuncTonstakePoolWithdrawMsgBody,
+
+	// 0x3475fdd2
+	StormExchangeMsgOpCode: decodeFuncStormExchangeMsgBody,
 
 	// 0x370fec51
 	AuctionFillUpMsgOpCode: decodeFuncAuctionFillUpMsgBody,
@@ -512,8 +529,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x72aca8aa
 	DedustSwapPeerMsgOpCode: decodeFuncDedustSwapPeerMsgBody,
 
-	// 0x7362d09c
-	JettonNotifyMsgOpCode: decodeFuncJettonNotifyMsgBody,
+	//JettonNotify, StormTransferNotification,
+	0x7362d09c: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncJettonNotifyMsgBody,
+		decodeFuncStormTransferNotificationMsgBody},
+		"0x7362d09c",
+	),
 
 	// 0x73756273
 	SubscriptionPaymentMsgOpCode: decodeFuncSubscriptionPaymentMsgBody,
@@ -627,6 +648,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xc1344900
 	TonstakeImanagerStatsMsgOpCode: decodeFuncTonstakeImanagerStatsMsgBody,
 
+	// 0xc89a3ee4
+	StormStakeMsgOpCode: decodeFuncStormStakeMsgBody,
+
 	// 0xc9f04485
 	TonstakeImanagerSetInterestMsgOpCode: decodeFuncTonstakeImanagerSetInterestMsgBody,
 
@@ -647,6 +671,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xd53276db
 	ExcessMsgOpCode: decodeFuncExcessMsgBody,
+
+	// 0xd5b5e9ad
+	StormUnstakeMsgOpCode: decodeFuncStormUnstakeMsgBody,
 
 	// 0xda803efd
 	WhalesNominatorsWithdrawMsgOpCode: decodeFuncWhalesNominatorsWithdrawMsgBody,
@@ -753,11 +780,13 @@ const (
 	StonfiSwapMsgOp                              MsgOpName = "StonfiSwap"
 	TonstakeControllerPoolSendMessageMsgOp       MsgOpName = "TonstakeControllerPoolSendMessage"
 	TeleitemDeployMsgOp                          MsgOpName = "TeleitemDeploy"
-	StormInitMsgOp                               MsgOpName = "StormInit"
+	StormVammInitMsgOp                           MsgOpName = "StormVammInit"
+	StormVaultInitMsgOp                          MsgOpName = "StormVaultInit"
 	TonstakePoolSetGovernanceFeeMsgOp            MsgOpName = "TonstakePoolSetGovernanceFee"
 	GetStaticDataMsgOp                           MsgOpName = "GetStaticData"
 	TonstakeControllerValidatorWithdrawalMsgOp   MsgOpName = "TonstakeControllerValidatorWithdrawal"
 	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
+	StormExchangeMsgOp                           MsgOpName = "StormExchange"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
@@ -798,6 +827,7 @@ const (
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
 	DedustSwapPeerMsgOp                          MsgOpName = "DedustSwapPeer"
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
+	StormTransferNotificationMsgOp               MsgOpName = "StormTransferNotification"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
 	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
@@ -835,6 +865,7 @@ const (
 	StorageContractTerminatedMsgOp               MsgOpName = "StorageContractTerminated"
 	StormPayFundingMsgOp                         MsgOpName = "StormPayFunding"
 	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
+	StormStakeMsgOp                              MsgOpName = "StormStake"
 	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
 	StormMintReferralMsgOp                       MsgOpName = "StormMintReferral"
 	JettonChangeMetadataMsgOp                    MsgOpName = "JettonChangeMetadata"
@@ -842,6 +873,7 @@ const (
 	TopUpMsgOp                                   MsgOpName = "TopUp"
 	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
 	ExcessMsgOp                                  MsgOpName = "Excess"
+	StormUnstakeMsgOp                            MsgOpName = "StormUnstake"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
 	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
@@ -898,11 +930,13 @@ const (
 	StonfiSwapMsgOpCode                              MsgOpCode = 0x25938561
 	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
 	TeleitemDeployMsgOpCode                          MsgOpCode = 0x299a3e15
-	StormInitMsgOpCode                               MsgOpCode = 0x29c102d1
+	StormVammInitMsgOpCode                           MsgOpCode = 0x29c102d1
+	StormVaultInitMsgOpCode                          MsgOpCode = 0x29c102d1
 	TonstakePoolSetGovernanceFeeMsgOpCode            MsgOpCode = 0x2aaa96a0
 	GetStaticDataMsgOpCode                           MsgOpCode = 0x2fcb26a2
 	TonstakeControllerValidatorWithdrawalMsgOpCode   MsgOpCode = 0x30026327
 	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
+	StormExchangeMsgOpCode                           MsgOpCode = 0x3475fdd2
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
@@ -943,6 +977,7 @@ const (
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
 	DedustSwapPeerMsgOpCode                          MsgOpCode = 0x72aca8aa
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
+	StormTransferNotificationMsgOpCode               MsgOpCode = 0x7362d09c
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
 	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
@@ -980,6 +1015,7 @@ const (
 	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
 	StormPayFundingMsgOpCode                         MsgOpCode = 0xb652c441
 	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
+	StormStakeMsgOpCode                              MsgOpCode = 0xc89a3ee4
 	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
 	StormMintReferralMsgOpCode                       MsgOpCode = 0xcb4ddc3c
 	JettonChangeMetadataMsgOpCode                    MsgOpCode = 0xcb862902
@@ -987,6 +1023,7 @@ const (
 	TopUpMsgOpCode                                   MsgOpCode = 0xd372158c
 	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
+	StormUnstakeMsgOpCode                            MsgOpCode = 0xd5b5e9ad
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
 	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
@@ -1193,10 +1230,14 @@ type TeleitemDeployMsgBody struct {
 	RoyaltyParams NftRoyaltyParams      `tlb:"^"`
 }
 
-type StormInitMsgBody struct {
+type StormVammInitMsgBody struct {
 	RedirectAddr tlb.MsgAddress
 	Code         tlb.Any `tlb:"^"`
 	Data         tlb.Any `tlb:"^"`
+}
+
+type StormVaultInitMsgBody struct {
+	JettonAddress tlb.MsgAddress
 }
 
 type TonstakePoolSetGovernanceFeeMsgBody struct {
@@ -1218,6 +1259,19 @@ type TonstakePoolWithdrawMsgBody struct {
 	JettonAmount    tlb.Grams
 	FromAddress     tlb.MsgAddress
 	ResponseAddress tlb.MsgAddress
+}
+
+type StormExchangeMsgBody struct {
+	AmmIndex             uint16
+	FreeAmount           uint16
+	LockedAmount         int64
+	ExchangeAmount       int64
+	WithdrawLockedAmount int64
+	FeeToStakers         int64
+	WithdrawAmount       int64
+	TraderAddr           tlb.MsgAddress
+	ReferralParams       *ReferralData `tlb:"maybe^"`
+	ExecutorParams       *ExecutorData `tlb:"maybe^"`
 }
 
 type AuctionFillUpMsgBody struct {
@@ -1453,6 +1507,13 @@ type JettonNotifyMsgBody struct {
 	ForwardPayload tlb.EitherRef[JettonPayload]
 }
 
+type StormTransferNotificationMsgBody struct {
+	QueryId        uint64
+	Amount         tlb.Grams
+	Sender         tlb.MsgAddress
+	ForwardPayload tlb.EitherRef[NotificationPayload]
+}
+
 type SubscriptionPaymentMsgBody struct{}
 
 type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
@@ -1672,6 +1733,10 @@ type TonstakeImanagerStatsMsgBody struct {
 	TotalBalance tlb.Grams
 }
 
+type StormStakeMsgBody struct {
+	Amount tlb.Grams
+}
+
 type TonstakeImanagerSetInterestMsgBody struct {
 	QueryId      uint64
 	InterestRate uint16
@@ -1708,6 +1773,11 @@ type StorageContractConfirmedMsgBody struct {
 
 type ExcessMsgBody struct {
 	QueryId uint64
+}
+
+type StormUnstakeMsgBody struct {
+	JettonAmount tlb.Grams
+	UserAddress  tlb.MsgAddress
 }
 
 type WhalesNominatorsWithdrawMsgBody struct {
@@ -1867,11 +1937,13 @@ var KnownMsgInTypes = map[string]any{
 	StonfiSwapMsgOp:                              StonfiSwapMsgBody{},
 	TonstakeControllerPoolSendMessageMsgOp:       TonstakeControllerPoolSendMessageMsgBody{},
 	TeleitemDeployMsgOp:                          TeleitemDeployMsgBody{},
-	StormInitMsgOp:                               StormInitMsgBody{},
+	StormVammInitMsgOp:                           StormVammInitMsgBody{},
+	StormVaultInitMsgOp:                          StormVaultInitMsgBody{},
 	TonstakePoolSetGovernanceFeeMsgOp:            TonstakePoolSetGovernanceFeeMsgBody{},
 	GetStaticDataMsgOp:                           GetStaticDataMsgBody{},
 	TonstakeControllerValidatorWithdrawalMsgOp:   TonstakeControllerValidatorWithdrawalMsgBody{},
 	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
+	StormExchangeMsgOp:                           StormExchangeMsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
@@ -1912,6 +1984,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
 	DedustSwapPeerMsgOp:                          DedustSwapPeerMsgBody{},
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
+	StormTransferNotificationMsgOp:               StormTransferNotificationMsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
 	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
@@ -1949,6 +2022,7 @@ var KnownMsgInTypes = map[string]any{
 	StorageContractTerminatedMsgOp:               StorageContractTerminatedMsgBody{},
 	StormPayFundingMsgOp:                         StormPayFundingMsgBody{},
 	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
+	StormStakeMsgOp:                              StormStakeMsgBody{},
 	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},
 	StormMintReferralMsgOp:                       StormMintReferralMsgBody{},
 	JettonChangeMetadataMsgOp:                    JettonChangeMetadataMsgBody{},
@@ -1956,6 +2030,7 @@ var KnownMsgInTypes = map[string]any{
 	TopUpMsgOp:                                   TopUpMsgBody{},
 	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
 	ExcessMsgOp:                                  ExcessMsgBody{},
+	StormUnstakeMsgOp:                            StormUnstakeMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
 	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},

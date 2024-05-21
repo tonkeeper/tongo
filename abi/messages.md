@@ -96,11 +96,16 @@ The list below contains the supported message operations, their names and opcode
 | StorageWithdraw| 0x46ed2e94 |
 | StormAddReferralAmount| 0x84dced7a |
 | StormChangeSettings| 0xedcd36a6 |
-| StormInit| 0x29c102d1 |
+| StormExchange| 0x3475fdd2 |
 | StormMintReferral| 0xcb4ddc3c |
 | StormNftItemTransfer| 0x84dced7a |
 | StormPayFunding| 0xb652c441 |
+| StormStake| 0xc89a3ee4 |
+| StormTransferNotification| 0x7362d09c |
+| StormUnstake| 0xd5b5e9ad |
 | StormUpdate| 0xe434967e |
+| StormVammInit| 0x29c102d1 |
+| StormVaultInit| 0x29c102d1 |
 | SubscriptionPayment| 0x73756273 |
 | TegroAddLiquidity| 0x287e167a |
 | TegroJettonSwap| 0x01fb7a25 |

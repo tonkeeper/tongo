@@ -260,6 +260,16 @@ type AmmSettings struct {
 	MinLeverage                   uint32
 }
 
+type ExecutorData struct {
+	SplitExecutorRewards uint8
+	Amount               tlb.Grams
+	Index                uint32
+}
+
+type NotificationPayload struct {
+	Opcode uint64
+}
+
 type OracleData struct {
 	UpdateMsg  UpdateMsg `tlb:"^"`
 	Signatures tlb.Any   `tlb:"^"`
@@ -268,6 +278,11 @@ type OracleData struct {
 type Parameters struct {
 	Discount uint32
 	Rebate   uint32
+}
+
+type ReferralData struct {
+	Amount tlb.Grams
+	Index  uint32
 }
 
 type UpdateMsg struct {

@@ -1048,6 +1048,8 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormMintReferralMsgBody,
 			decodeFuncStormAddReferralAmountMsgBody,
 			decodeFuncStormNftItemTransferMsgBody,
+			decodeFuncStormNftItemGetStaticDataMsgBody,
+			decodeFuncStormNftItemOwnershipAssignedMsgBody,
 		}
 	case StormVamm:
 		return []msgDecoderFunc{

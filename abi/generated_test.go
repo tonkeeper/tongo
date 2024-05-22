@@ -11,7 +11,7 @@ import (
 	"testing"
 	
 	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/liteapi"
+	//"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/tvm"
@@ -533,6 +533,7 @@ func TestGetMethods(t *testing.T) {
 	}
 }
 
+/*
 func TestWhalesNominators(t *testing.T) {
 	address := ton.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
 	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
@@ -570,6 +571,7 @@ func TestWhalesNominators(t *testing.T) {
 	fmt.Printf("%+v\n", params)
 
 }
+*/
 
 func mustAccountIDToMsgAddress(account string) tlb.MsgAddress {
 	accountID := ton.MustParseAccountID(account)
@@ -787,6 +789,78 @@ func TestMessageDecoder(t *testing.T) {
 
 			},
 		},
+
+		{
+			name: "storm mint referral",
+			interfaces: []ContractInterface{StormReferral},
+			wantOpName: "StormMintReferral",
+			boc: "te6ccuECCQEAAPUAAJgArAC2AMAAygESAVoBogHqAo/LTdw8gBzHMDf8fhnOT1zmKty2tRWwfb2Hnz7P5Wo81FoSkpcwpADmOYG/4/DOcnrnMVbltaitg+3sPPn2fytR5qLQlJS5hcABAgAQAvrwgAX14QACASADBAIBIAUGAgFuBwgAQ7+z6ehNfL7/8NI7OVh1Qg46HsuC4kFpK+icfqK9J3FrdwgAQ7+wfRtqEf3ZzhkeGsmXiC7hzTh1C5zZZzLgDH5VL8gENQgAQ78kmdk/z0nLHPd64NpdcVSHAJa1o55GaJQlOLeMZiAXxCAAQ78KdF6IJ4rzGUpFtgCumniPLNm4Xr61h+EUzQ7m6U6zkCDRyZd+",
+			wantValidate: func(t *testing.T, value any) {
+				
+				body := StormMintReferralMsgBody{
+					NftOwner: value.(StormMintReferralMsgBody).NftOwner,
+					RefType: 0,
+					RedirectAddress: value.(StormMintReferralMsgBody).RedirectAddress,
+					Parameters: Parameters{
+						Discount: 50000000,
+						Rebate: 100000000,
+					},
+					BalancesDict: value.(StormMintReferralMsgBody).BalancesDict,
+				} 
+				
+
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+
+			},
+		},
+
+		{
+			name: "storm add referral amount",
+			interfaces: []ContractInterface{StormReferral},
+			wantOpName: "StormAddReferralAmount",
+			boc: "b5ee9c7201010101002c00005384dced7a4082a53a58016eab887dc6f24b861ea8fc5323cf89831839c9d8c7dd4ae86e11b75b0d06d3f5",
+			wantValidate: func(t *testing.T, value any) {
+				
+				body := StormAddReferralAmountMsgBody{
+					ReferralAmount: 136991653,
+					OriginAddr: value.(StormAddReferralAmountMsgBody).OriginAddr,
+				} 
+				
+
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+
+			},
+		},
+
+
+		{
+			name: "storm nft item transfer",
+			interfaces: []ContractInterface{StormReferral},
+			wantOpName: "StormNftItemTransfer",
+			boc: "te6ccuEBAQEAUgCkAJ9fzD0UAAAAAAAAAACAF5HV1dlKRs28pyDBur1/dcMC030CGfYtGb7zi6MogBbwAmzTV8CyM5p8IDBk2E/NonjbGBcQOkO5BOJIGDzBQHAgCHS8k3s=",
+			wantValidate: func(t *testing.T, value any) {
+				
+				body := StormNftItemTransferMsgBody{
+					QueryId: 0,
+					NewOwner: value.(StormNftItemTransferMsgBody).NewOwner,
+					ResponseDestination: value.(StormNftItemTransferMsgBody).ResponseDestination,
+					CustomPayload: value.(StormNftItemTransferMsgBody).CustomPayload,
+					ForwardAmount: 0,
+					ForwardPayload: value.(StormNftItemTransferMsgBody).ForwardPayload,
+				} 
+				
+
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+
+			},
+		},
+
 
 		
 

@@ -98,7 +98,9 @@ The list below contains the supported message operations, their names and opcode
 | StormChangeSettings| 0xedcd36a6 |
 | StormExchange| 0x3475fdd2 |
 | StormMintReferral| 0xcb4ddc3c |
-| StormNftItemTransfer| 0x84dced7a |
+| StormNftItemGetStaticData| 0x2fcb26a2 |
+| StormNftItemOwnershipAssigned| 0x05138d91 |
+| StormNftItemTransfer| 0x5fcc3d14 |
 | StormPayFunding| 0xb652c441 |
 | StormStake| 0xc89a3ee4 |
 | StormTransferNotification| 0x7362d09c |

@@ -41,6 +41,8 @@
             <internal name="storm_mint_referral"/>
             <internal name="storm_add_referral_amount"/>
             <internal name="storm_nft_item_transfer"/>
+            <internal name="storm_nft_item_get_static_data"/>
+            <internal name="storm_nft_item_ownership_assigned"/>
         </msg_in>
     </interface>
 
@@ -173,7 +175,7 @@
 
     <internal name="storm_mint_referral">
         mint_referral#cb4ddc3c nft_owner:MsgAddress ref_type:uint2
-        redirect_address:MsgAddress parameters:^Parameters balances_dict:^(Hashmap 64 MsgAddress) = InternalMsgBody;
+        redirect_address:MsgAddress parameters:^Parameters balances_dict:^Cell = InternalMsgBody;
     </internal>
 
     <internal name="storm_add_referral_amount">
@@ -181,8 +183,20 @@
     </internal>
 
     <internal name="storm_nft_item_transfer">
-        nft_item_transfer#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+        nft_item_transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
+        custom_payload:(Maybe ^Cell) forward_amount:Coins forward_payload:(Either Cell ^Cell) = InternalMsgBody;
     </internal>
+
+    <internal name="storm_nft_item_get_static_data"> <!-- hard to find boc for test -->
+        nft_item_get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    
+    <internal name="storm_nft_item_ownership_assigned"> <!-- hard to find boc for test -->
+        nft_item_ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
+    </internal>
+
+
 
     <internal name="storm_exchange">
         exchange#3475fdd2 amm_index:uint16 free_amount:uint16 locked_amount:int64 exchange_amount:int64 withdraw_locked_amount:int64

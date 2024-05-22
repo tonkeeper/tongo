@@ -10,7 +10,7 @@
         referral_data#_ amount:Coins index:uint32 = ReferralData;
         executor_data#_ split_executor_rewards:uint8 amount:Coins index:uint32 = ExecutorData;
         notification_payload#_ opcode:uint64 = NotificationPayload;
-        position_change#_ size:uint128 direction:uint8 margin:Coins open_notional:Coins last_updated_cumulative_premium:int64 fee:uint64 discount:uint64 rebate:uint64 last_updated_timestamp:uint64 = PositionChange;
+        position_change#_ size:uint128 direction:uint1 margin:Coins open_notional:Coins last_updated_cumulative_premium:uint64 fee:uint32 discount:uint32 rebate:uint32 last_updated_timestamp:uint32 = PositionChange;
         amm_change#_ quote_asset_reserve:Coins quote_asset_reserve_weight:Coins base_asset_reserve:Coins total_long_position_size:Coins total_short_position_size:Coins open_interest_long:Coins open_interest_short:Coins = AmmChange;
         order_payload#_ order_type:uint8 order_index:uint8 direction:uint8 = OrderPayload;
 
@@ -69,6 +69,11 @@
         </msg_out>
     </interface>
 
+    <interface name="storm_executor_collection">
+         <get_method name="get_amm_name" version="storm"/>
+    </interface>
+        
+
     <interface name="storm_vault">
         <msg_in>
             <internal name="storm_exchange"/>
@@ -114,7 +119,7 @@
     </get_method>
 
     <get_method name="get_amm_status">
-        <output>
+        <output> 
             <int name="close_only">bool</int>
             <int name="paused">bool</int>
             <int name="direct_increase_enabled">bool</int>
@@ -175,7 +180,7 @@
 
     <get_method name="get_executor_vaults_whitelist">
         <output>
-            <int name="balances_dict">int64</int> <!-- check later -->
+            <cell name="balances_dict">cell</cell> <!-- check later -->
         </output>
     </get_method>
 
@@ -282,7 +287,7 @@
     </internal>
 
     <internal name="storm_complete_order">
-        complete_order#cf90d618 order_type:uint8 order_index:uint8 direction:uint8 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+        complete_order#cf90d618 order_type:uint4 order_index:uint3 direction:uint1 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
     </internal>
 
     <internal name="storm_activate_order">

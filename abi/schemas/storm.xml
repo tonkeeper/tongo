@@ -13,6 +13,14 @@
         position_change#_ size:uint128 direction:uint8 margin:Coins open_notional:Coins last_updated_cumulative_premium:int64 fee:uint64 discount:uint64 rebate:uint64 last_updated_timestamp:uint64 = PositionChange;
         amm_change#_ quote_asset_reserve:Coins quote_asset_reserve_weight:Coins base_asset_reserve:Coins total_long_position_size:Coins total_short_position_size:Coins open_interest_long:Coins open_interest_short:Coins = AmmChange;
         order_payload#_ order_type:uint8 order_index:uint8 direction:uint8 = OrderPayload;
+
+        <!-- 
+        amm_contract_data#_ balance:Coins vault_address:Address asset_id:uint16 close_only:bool paused:bool
+        oracle_last_price:Coins oracle_last_spread:Coins oracle_last_timestamp:uint32 oracle_max_deviation:Coins 
+        oracle_validity_period:uint32 oracle_public_keys_count:uint4 
+        -->
+
+
     </types>
 
     <!-- INTERFACES -->
@@ -20,6 +28,7 @@
     <interface name="storm_vamm">
         <get_method name="get_amm_name" version="storm"/>
         <get_method name="get_amm_status" version="storm"/>
+        <get_method name="get_amm_contract_data" version="storm"/>
         <msg_in>
             <internal name="storm_change_settings"/>
             <internal name="storm_pay_funding"/>
@@ -91,6 +100,9 @@
     <get_method name="get_amm_contract_data">
         <output>
             <cell name="amm_contract_data">cell</cell>
+            <!-- 
+            <cell name="amm_contract_data">AmmContractData</cell>
+            -->
         </output>
     </get_method>
 

@@ -749,6 +749,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: StormVamm,
 		Results: []string{
+			"GetAmmContractData_StormResult",
 			"GetAmmName_StormResult",
 			"GetAmmStatus_StormResult",
 		},

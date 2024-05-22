@@ -961,28 +961,29 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 
-		/* 
-		Бросает панику
+
 		{
 			name: "storm cancel order",
 			interfaces: []ContractInterface{StormPositionManager},
 			wantOpName: "StormCancelOrder",
 			boc: "te6ccuEBAQEACAAQAAtnE0YpAiA957iI",
 			wantValidate: func(t *testing.T, value any) {
+
 				body := StormCancelOrderMsgBody{
-					OrderType: 1,
-					OrderIndex: 3,
-					Direction: 1,
+					OrderType: 0,
+					OrderIndex: 1,
+					Direction: 0,
 					GasToAddress: value.(StormCancelOrderMsgBody).GasToAddress,
 				}
 				
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
 				}
+				
 		
 			},
 		},
-		*/
+		
 
 		{
 			name: "storm create order",

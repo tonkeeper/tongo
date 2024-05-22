@@ -279,7 +279,7 @@
     </internal>
 
     <internal name="storm_cancel_order">
-        cancel_order#67134629 order_type:uint8 order_index:uint8 direction:uint8 gas_to_address:MsgAddress = InternalMsgBody;
+        cancel_order#67134629 order_type:uint4 order_index:uint3 direction:uint1 gas_to_address:MsgAddress = InternalMsgBody;
     </internal>
 
     <internal name="storm_create_order">

@@ -1012,7 +1012,40 @@ func TestMessageDecoder(t *testing.T) {
 			wantOpName: "StormCompleteOrder",
 			boc: "b5ee9c7201010301007e000226cf90d61830a55bf9235017389770843b9aca000102006700000000000000000000000087bf36162808d43a0c1a81a7cae244800000000313b27e8008b290017d784008f0d1803326f6bd40005d8013f984dc1678e6e4414d59ce7381403aa7233e161931d1812e8360d19bcdbdb666a4d8858fdbea6507a5eac4dd18",
 			wantValidate: func(t *testing.T, value any) {
-				
+				body := StormCompleteOrderMsgBody{
+					OrderType: 3,
+					OrderIndex: 0,
+					Direction: 0,
+					OriginOpcode: 2774268195,
+					IndexPrice: 6233356040,
+					SettlementOraclePrice: value.(StormCompleteOrderMsgBody).SettlementOraclePrice,
+					Position: PositionChange{
+						Size: value.(StormCompleteOrderMsgBody).Position.Size,
+						Direction: 0,
+						Margin: 4740039043,
+						OpenNotional: 14220117129,
+						LastUpdatedCumulativePremium: 103245053,
+						Fee: 1140000,
+						Discount: 50000000,
+						Rebate: 300000000,
+						LastUpdatedTimestamp: 1716383098,
+					},
+					Amm: AmmChange{
+						QuoteAssetReserve: 89957977295392366,
+						QuoteAssetReserveWeight: 1095588302,
+						BaseAssetReserve: 15784604672865249,
+						TotalLongPositionSize: 27701758996099,
+						TotalShortPositionSize: 14404193868646,
+						OpenInterestLong: 181249860688874,
+						OpenInterestShort: 88486504582609,
+					},
+				}
+
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+
+
 			},
 		},
 		

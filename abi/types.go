@@ -298,14 +298,14 @@ type Parameters struct {
 
 type PositionChange struct {
 	Size                         tlb.Uint128
-	Direction                    uint8
+	Direction                    tlb.Uint1
 	Margin                       tlb.Grams
 	OpenNotional                 tlb.Grams
-	LastUpdatedCumulativePremium int64
-	Fee                          uint64
-	Discount                     uint64
-	Rebate                       uint64
-	LastUpdatedTimestamp         uint64
+	LastUpdatedCumulativePremium uint64
+	Fee                          uint32
+	Discount                     uint32
+	Rebate                       uint32
+	LastUpdatedTimestamp         uint32
 }
 
 type ReferralData struct {

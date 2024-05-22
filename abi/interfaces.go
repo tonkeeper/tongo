@@ -42,6 +42,7 @@ const (
 	StorageContract
 	StorageProvider
 	StormExecutor
+	StormExecutorCollection
 	StormPositionManager
 	StormReferral
 	StormVamm
@@ -141,6 +142,8 @@ func (c ContractInterface) String() string {
 		return "storage_provider"
 	case StormExecutor:
 		return "storm_executor"
+	case StormExecutorCollection:
+		return "storm_executor_collection"
 	case StormPositionManager:
 		return "storm_position_manager"
 	case StormReferral:
@@ -270,6 +273,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StorageProvider
 	case "storm_executor":
 		return StormExecutor
+	case "storm_executor_collection":
+		return StormExecutorCollection
 	case "storm_position_manager":
 		return StormPositionManager
 	case "storm_referral":
@@ -752,6 +757,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetAmmContractData_StormResult",
 			"GetAmmName_StormResult",
 			"GetAmmStatus_StormResult",
+		},
+	},
+	{
+		Name: StormExecutorCollection,
+		Results: []string{
+			"GetAmmName_StormResult",
 		},
 	},
 	{

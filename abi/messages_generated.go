@@ -1960,9 +1960,9 @@ type JettonChangeMetadataMsgBody struct {
 }
 
 type StormCompleteOrderMsgBody struct {
-	OrderType             uint8
-	OrderIndex            uint8
-	Direction             uint8
+	OrderType             tlb.Uint4
+	OrderIndex            tlb.Uint3
+	Direction             tlb.Uint1
 	OriginOpcode          uint32
 	IndexPrice            tlb.Grams
 	SettlementOraclePrice *tlb.Grams     `tlb:"maybe"`

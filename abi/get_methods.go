@@ -893,7 +893,7 @@ func DecodeGetExchangeSettingsResult(stack tlb.VmStack) (resultType string, resu
 }
 
 type GetExecutorVaultsWhitelistResult struct {
-	BalancesDict int64
+	BalancesDict boc.Cell
 }
 
 func GetExecutorVaultsWhitelist(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -917,7 +917,7 @@ func GetExecutorVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetExecutorVaultsWhitelistResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExecutorVaultsWhitelistResult

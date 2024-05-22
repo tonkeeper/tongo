@@ -41,6 +41,8 @@ const (
 	StonfiRouter
 	StorageContract
 	StorageProvider
+	StormExecutor
+	StormPositionManager
 	StormReferral
 	StormVamm
 	StormVault
@@ -137,6 +139,10 @@ func (c ContractInterface) String() string {
 		return "storage_contract"
 	case StorageProvider:
 		return "storage_provider"
+	case StormExecutor:
+		return "storm_executor"
+	case StormPositionManager:
+		return "storm_position_manager"
 	case StormReferral:
 		return "storm_referral"
 	case StormVamm:
@@ -262,6 +268,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StorageContract
 	case "storage_provider":
 		return StorageProvider
+	case "storm_executor":
+		return StormExecutor
+	case "storm_position_manager":
+		return StormPositionManager
 	case "storm_referral":
 		return StormReferral
 	case "storm_vamm":
@@ -1043,13 +1053,29 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncNftTransferMsgBody,
 			decodeFuncGetStaticDataMsgBody,
 		}
+	case StormExecutor:
+		return []msgDecoderFunc{
+			decodeFuncStormMintExecutorMsgBody,
+			decodeFuncStormAddExecutorAmountMsgBody,
+			decodeFuncStormNftItemTransferMsgBody,
+			decodeFuncStormNftItemGetStaticDataMsgBody,
+		}
+	case StormPositionManager:
+		return []msgDecoderFunc{
+			decodeFuncStormTakeReferralFeesMsgBody,
+			decodeFuncStormCancelOrderMsgBody,
+			decodeFuncStormCreateOrderMsgBody,
+			decodeFuncStormCompleteOrderMsgBody,
+			decodeFuncStormActivateOrderMsgBody,
+			decodeFuncStormUpdatePositionMsgBody,
+			decodeFuncStormUpdatePositionWithStopLossMsgBody,
+		}
 	case StormReferral:
 		return []msgDecoderFunc{
 			decodeFuncStormMintReferralMsgBody,
 			decodeFuncStormAddReferralAmountMsgBody,
 			decodeFuncStormNftItemTransferMsgBody,
 			decodeFuncStormNftItemGetStaticDataMsgBody,
-			decodeFuncStormNftItemOwnershipAssignedMsgBody,
 		}
 	case StormVamm:
 		return []msgDecoderFunc{

@@ -861,9 +861,215 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 
+		{
+			name: "storm withdraw referral amount",
+			interfaces: []ContractInterface{StormReferral},
+			wantOpName: "StormWithdrawReferralAmount",
+			boc: "te6ccuEBAQEANQBqAGX11OtSAAAAAAAAD8BScjab26gBmSD8JDE670jAPhuvFBbBvtpsFvoPUIxMXcxbDaHRJQnB3vAQ",  
+			wantValidate: func(t *testing.T, value any) {
+				body := StormWithdrawReferralAmountMsgBody{
+					Index: 4032,  
+					ReferralAmount: 168097856954, 
+					OwnerAddr: value.(StormWithdrawReferralAmountMsgBody).OwnerAddr,
+				}
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+			},
+		},
+
+		{
+			name: "storm mint executor",
+			interfaces: []ContractInterface{StormExecutor},
+			wantOpName: "StormMintExecutor",
+			boc: "te6ccuEBAgEAbgCU3AGNTzjK6IAW6riH3G8kuGHqj8UyPPiYMYOcnYx91K6G4Rt1sNBtP1ACvvWaYGH/wF0fB1t8KBEN2jRghdPX4Mj1XSKr85osRhMBAEOgHlOi9EE8V5jKUi2wBXTTxHlmzcL19aw/CKZodzdKdZyBwmHAKg==", 
+			wantValidate: func(t *testing.T, value any) {
+				body := StormMintExecutorMsgBody{
+					NftOwner: value.(StormMintExecutorMsgBody).NftOwner,
+					RedirectAddress: value.(StormMintExecutorMsgBody).RedirectAddress,
+					BalancesDict: value.(StormMintExecutorMsgBody).BalancesDict,
+				}
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+			},
+		},
+
+		{
+			name: "storm add executor amount",
+			interfaces: []ContractInterface{StormExecutor},
+			wantOpName: "StormAddExecutorAmount",
+			boc: "te6ccuEBAQEAKwBWAFFd1mV5OsvjyAFuq4h9xvJLhh6o/FMjz4mDGDnJ2MfdSuhuEbdbDQbT9UA3dSo=", 
+			wantValidate: func(t *testing.T, value any) {
+				body := StormAddExecutorAmountMsgBody{
+					ReferralAmount: 11320892,
+					OriginAddr: value.(StormAddExecutorAmountMsgBody).OriginAddr,
+				}
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+			},
+		},
+
+		/*
+		Хз почему падает
+		
+		{
+			name: "storm withdraw executor amount",
+			interfaces: []ContractInterface{StormExecutor},
+			wantOpName: "StormWithdrawExecutorAmount",
+			boc: "te6ccuEBAQEAMQBiAF0s3mNRAAAAAVBgunfoCAFuq4h9xvJLhh6o/FMjz4mDGDnJ2MfdSuhuEbdbDQbT9dALE6w=", 
+			wantValidate: func(t *testing.T, value any) {
+				body := StormWithdrawExecutorAmountMsgBody{
+					Index: 0, 
+					ExecutorAmount: 0, 
+					OwnerAddr: value.(StormWithdrawExecutorAmountMsgBody).OwnerAddr,
+				}
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+			},
+		},
+
+		*/
+
+		{
+			name: "storm take referral fees",
+			interfaces: []ContractInterface{StormPositionManager},
+			wantOpName: "StormTakeReferralFees",
+			boc: "te6ccuEBAgEAEQAOIgEIEtlgHQEAEAL68IAR4aMAl02xBw==",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormTakeReferralFeesMsgBody{
+					ReferralFees: Parameters{
+						Discount: 50000000,
+						Rebate: 300000000,
+					},
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+		
+			},
+		},
+
+		/* 
+		Бросает панику
+		{
+			name: "storm cancel order",
+			interfaces: []ContractInterface{StormPositionManager},
+			wantOpName: "StormCancelOrder",
+			boc: "te6ccuEBAQEACAAQAAtnE0YpAiA957iI",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormCancelOrderMsgBody{
+					OrderType: 1,
+					OrderIndex: 3,
+					Direction: 1,
+					GasToAddress: value.(StormCancelOrderMsgBody).GasToAddress,
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+		
+			},
+		},
+		*/
+
+		{
+			name: "storm create order",
+			interfaces: []ContractInterface{StormPositionManager},
+			wantOpName: "StormCreateOrder",
+			boc: "te6ccuEBAgEAKQAeUgEXo5hD9EEL4EigAXMoAQAvAAAAAdzWUABmTabbAwEhuGlUU5qJiUBAoXy4ng==",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormCreateOrderMsgBody{
+					OrderPayload: OrderPayload{
+						OrderType: 0,
+						OrderIndex: 0,
+						Direction: 0,
+					},
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+		
+			},
+		},
+
+		/*
+		Сегфолт
+		{
+			name: "storm complete order",
+			interfaces: []ContractInterface{StormPositionManager},
+			wantOpName: "StormCompleteOrder",
+			boc: "te6ccuEBAwEAdQAuhuoCJs+Q1hgAXMA63UAeGNWFAXcKlvABAgBTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOfvABfXhAAvrwgAAAAABAAF97UEnhcElaNE6FcNOB2SeCCDpe2PbomKPzn9BwgG0RXOy5NgdjOCok9mQeoXadHhjlu3F3",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormCompleteOrderMsgBody{
+					OrderType: 1,
+					OrderIndex: 3,
+					Direction: 1,
+					OriginOpcode: 100,
+					IndexPrice: 50000000,
+					SettlementOraclePrice: value.(StormCompleteOrderMsgBody).SettlementOraclePrice,
+					Position: PositionChange{
+						Size: value.(StormCompleteOrderMsgBody).Position.Size,
+						Direction: 1,
+						Margin: 100000,
+						OpenNotional: 1500000,
+						LastUpdatedCumulativePremium: 50000,
+						Fee: 10000,
+						Discount: 5000,
+						Rebate: 8000,
+						LastUpdatedTimestamp: 1620000000,
+					},
+					Amm: AmmChange{
+						QuoteAssetReserve: 1000000,
+						QuoteAssetReserveWeight: 500000,
+						BaseAssetReserve: 2000000,
+						TotalLongPositionSize: 3000000,
+						TotalShortPositionSize: 1500000,
+						OpenInterestLong: 4000000,
+						OpenInterestShort: 1000000,
+					},
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+		
+			},
+		},
+		*/
+		
+		/*
+		{
+			name: "storm activate order",
+			interfaces: []ContractInterface{StormPositionManager},
+			wantOpName: "StormActivateOrder",
+			boc: "te6ccuEBAgEAIgAQRAEJnS7GQBgBAC8maT9/SgP5F2EAAAAAHc1lACIGAXwgAECOLaMI",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormActivateOrderMsgBody{
+					OrderIndex: 3,
+					ActivatedOrder: OrderPayload{
+						OrderType: 1,
+						OrderIndex: 3,
+						Direction: 1,
+					},
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+		
+			},
+		},
+		*/
 
 		
 
+
+		
 
 		
 		

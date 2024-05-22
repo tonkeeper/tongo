@@ -242,6 +242,16 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
+type AmmChange struct {
+	QuoteAssetReserve       tlb.Grams
+	QuoteAssetReserveWeight tlb.Grams
+	BaseAssetReserve        tlb.Grams
+	TotalLongPositionSize   tlb.Grams
+	TotalShortPositionSize  tlb.Grams
+	OpenInterestLong        tlb.Grams
+	OpenInterestShort       tlb.Grams
+}
+
 type AmmSettings struct {
 	Fee                           uint32
 	RolloverFee                   uint32
@@ -275,9 +285,27 @@ type OracleData struct {
 	Signatures tlb.Any   `tlb:"^"`
 }
 
+type OrderPayload struct {
+	OrderType  uint8
+	OrderIndex uint8
+	Direction  uint8
+}
+
 type Parameters struct {
 	Discount uint32
 	Rebate   uint32
+}
+
+type PositionChange struct {
+	Size                         tlb.Uint128
+	Direction                    uint8
+	Margin                       tlb.Grams
+	OpenNotional                 tlb.Grams
+	LastUpdatedCumulativePremium int64
+	Fee                          uint64
+	Discount                     uint64
+	Rebate                       uint64
+	LastUpdatedTimestamp         uint64
 }
 
 type ReferralData struct {

@@ -1,24 +1,18 @@
 <abi>  
-
     <types>
-        parameters#_  discount:uint32 rebate:uint32 = Parameters;
-
+        parameters#_ discount:uint32 rebate:uint32 = Parameters;
         update_msg#_ price:Coins spread:Coins timestamp:uint32 asset_index:uint16 = UpdateMsg;
-                                                                                 
-        <!-- signatures#_ has_sig:uint1  = Signatures; -->
-
         oracle_data#_ update_msg:^UpdateMsg signatures:^Cell = OracleData;
-
         amm_settings#_ fee:uint32 rollover_fee:uint32 funding_period:uint32 init_margin_ratio:uint32 
         maintenance_margin_ratio:uint32 liquidation_fee_ratio:uint32 partial_liquidation_ratio:uint32 
         spread_limit:uint32 max_price_impact:uint32 max_price_spread:uint32 max_open_notional:uint32 
         fee_to_stakers_percent:uint32 funding_mode:uint2 min_partial_liquidation_notional:Coins min_leverage:uint32 = AmmSettings;
-
         referral_data#_ amount:Coins index:uint32 = ReferralData;
         executor_data#_ split_executor_rewards:uint8 amount:Coins index:uint32 = ExecutorData;
-
         notification_payload#_ opcode:uint64 = NotificationPayload;
-
+        position_change#_ size:uint128 direction:uint8 margin:Coins open_notional:Coins last_updated_cumulative_premium:int64 fee:uint64 discount:uint64 rebate:uint64 last_updated_timestamp:uint64 = PositionChange;
+        amm_change#_ quote_asset_reserve:Coins quote_asset_reserve_weight:Coins base_asset_reserve:Coins total_long_position_size:Coins total_short_position_size:Coins open_interest_long:Coins open_interest_short:Coins = AmmChange;
+        order_payload#_ order_type:uint8 order_index:uint8 direction:uint8 = OrderPayload;
     </types>
 
     <!-- INTERFACES -->
@@ -28,7 +22,7 @@
         <get_method name="get_amm_status" version="storm"/>
         <msg_in>
             <internal name="storm_change_settings"/>
-            <internal name="storm_pay_funding"/>  <!--- test -->
+            <internal name="storm_pay_funding"/>
             <internal name="storm_vamm_init"/>
         </msg_in>
         <msg_out>
@@ -42,10 +36,29 @@
             <internal name="storm_add_referral_amount"/>
             <internal name="storm_nft_item_transfer"/>
             <internal name="storm_nft_item_get_static_data"/>
-            <internal name="storm_nft_item_ownership_assigned"/>
         </msg_in>
+        <msg_out>
+            <internal name="storm_nft_item_ownership_assigned"/>
+            <internal name="storm_excesses"/>
+            <internal name="storm_nft_item_report_static_data"/>
+            <internal name="storm_withdraw_referral_amount"/>
+        </msg_out>
     </interface>
 
+    <interface name="storm_executor">
+        <msg_in>
+            <internal name="storm_mint_executor"/>
+            <internal name="storm_add_executor_amount"/>
+            <internal name="storm_nft_item_transfer"/>
+            <internal name="storm_nft_item_get_static_data"/>
+        </msg_in>
+        <msg_out>
+            <internal name="storm_nft_item_ownership_assigned"/>
+            <internal name="storm_excesses"/>
+            <internal name="storm_nft_item_report_static_data"/>
+            <internal name="storm_withdraw_executor_amount"/>
+        </msg_out>
+    </interface>
 
     <interface name="storm_vault">
         <msg_in>
@@ -53,15 +66,28 @@
             <internal name="storm_transfer_notification"/>
             <internal name="storm_stake"/>
             <internal name="storm_unstake"/>
-
             <internal name="storm_vault_init"/>
-
         </msg_in>
     </interface>
 
-    
+    <interface name="storm_position_manager">
+        <msg_in>
+            <internal name="storm_take_referral_fees"/>
+            <internal name="storm_cancel_order"/>
+            <internal name="storm_create_order"/>
+            <internal name="storm_complete_order"/>
+            <internal name="storm_activate_order"/>
+            <internal name="storm_update_position"/>
+            <internal name="storm_update_position_with_stop_loss"/>
+        </msg_in>
+        <msg_out>
+            <internal name="storm_order_created"/>
+            <internal name="storm_order_canceled"/>
+        </msg_out>
+    </interface>
+
     <!-- GET METHODS -->
-    
+
     <get_method name="get_amm_contract_data">
         <output>
             <cell name="amm_contract_data">cell</cell>
@@ -75,7 +101,6 @@
         </output>
     </get_method>
 
-
     <get_method name="get_amm_status">
         <output>
             <int name="close_only">bool</int>
@@ -86,13 +111,11 @@
 
     <get_method name="get_amm_state">
         <output>
-
             <int name="quote_asset_reserve">uint64</int>
             <int name="base_asset_reserve">uint64</int>
             <int name="quote_asset_weight">uint64</int>
             <int name="total_long_position_size">uint64</int>
             <int name="total_short_position_size">uint64</int>
-            
             <int name="open_interest_long">uint64</int>
             <int name="open_interest_short">uint64</int>
             <int name="latest_long_cumulative_premium_fraction">int64</int>
@@ -100,7 +123,6 @@
             <int name="next_funding_block_timestamp">uint32</int>
         </output>
     </get_method>
-
 
     <get_method name="get_exchange_settings">
         <output>
@@ -119,22 +141,17 @@
             <int name="funding_mode">uint32</int>
             <int name="min_partial_liquidation_notional">uint64</int>
             <int name="min_init_margin_ratio">uint32</int>
-
             <int name="executor_fee">int32</int>
             <int name="close_position_time_delta">int32</int>
             <int name="max_unrealized_pnl">int32</int>
-
             <int name="direct_increase_enabled">bool</int>
             <int name="direct_close_enabled">bool</int>
             <cell name="executors_whitelist">cell</cell>
-
             <int name="low_funding_fn_a">int32</int>
             <int name="low_funding_fn_b">int32</int>
             <int name="high_funding_fn_a">int32</int>
             <int name="high_funding_fn_b">int32</int>
-
             <int name="inflection_point">int32</int>
-
         </output>
     </get_method>
 
@@ -144,16 +161,13 @@
         </output>
     </get_method>
 
-    
     <get_method name="get_executor_vaults_whitelist">
         <output>
-            <int name="balances_dict">int64</int> <!-- int64 ??? -->
+            <int name="balances_dict">int64</int> <!-- check later -->
         </output>
     </get_method>
 
-
     <!-- INTERNALS -->
-
 
     <internal name="storm_change_settings">
         change_settings#edcd36a6 redirect_addr:MsgAddress 
@@ -187,22 +201,42 @@
         custom_payload:(Maybe ^Cell) forward_amount:Coins forward_payload:(Either Cell ^Cell) = InternalMsgBody;
     </internal>
 
-    <internal name="storm_nft_item_get_static_data"> <!-- hard to find boc for test -->
+    <internal name="storm_nft_item_get_static_data">
         nft_item_get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
     </internal>
 
-    
-    <internal name="storm_nft_item_ownership_assigned"> <!-- hard to find boc for test -->
+    <internal name="storm_nft_item_ownership_assigned">
         nft_item_ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
     </internal>
 
+    <internal name="storm_excesses">
+        excesses#d53276db query_id:uint64 = InternalMsgBody;
+    </internal>
 
+    <internal name="storm_nft_item_report_static_data">
+        nft_item_report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_withdraw_referral_amount">
+        withdraw_referral_amount#f5d4eb52 index:uint64 referral_amount:Coins owner_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_mint_executor">
+        mint_executor#4f38cae8 nft_owner:MsgAddress redirect_address:MsgAddress balances_dict:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_add_executor_amount">
+        add_executor_amount#5dd66579 referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_withdraw_executor_amount">
+        withdraw_executor_amount#2cde6351 index:uint64 executor_amount:Coins owner_addr:MsgAddress = InternalMsgBody;
+    </internal>
 
     <internal name="storm_exchange">
         exchange#3475fdd2 amm_index:uint16 free_amount:uint16 locked_amount:int64 exchange_amount:int64 withdraw_locked_amount:int64
         fee_to_stakers:int64 withdraw_amount:int64 trader_addr:MsgAddress referral_params:(Maybe ^ReferralData) executor_params:(Maybe ^ExecutorData) = InternalMsgBody;
     </internal>
-
 
     <internal name="storm_transfer_notification">
         transfer_notification#7362d09c query_id:uint64 amount:Coins 
@@ -217,12 +251,47 @@
         unstake#d5b5e9ad jetton_amount:Coins user_address:MsgAddress = InternalMsgBody;
     </internal>
 
-
     <internal name="storm_vault_init">
         vault_init#29c102d1 jetton_address:MsgAddress = InternalMsgBody;
     </internal>
 
 
+
+    <internal name="storm_take_referral_fees">
+        take_referral_fees#12d9601d referral_fees:^Parameters = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_cancel_order">
+        cancel_order#67134629 order_type:uint8 order_index:uint8 direction:uint8 gas_to_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_create_order">
+        create_order#a39843f4 order_payload:^OrderPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_complete_order">
+        complete_order#cf90d618 order_type:uint8 order_index:uint8 direction:uint8 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_activate_order">
+        activate_order#9d2ec640 order_index:uint8 activated_order:^OrderPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_update_position">
+        update_position#60dfc677 direction:uint8 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_update_position_with_stop_loss">
+        update_position_with_stop_loss#5d1b17b8 direction:uint8 stop_trigger_price:Coins take_trigger_price:Coins origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_order_created">
+        order_created#3a943ce6 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_order_canceled">
+        order_canceled#69d08679 = InternalMsgBody;
+    </internal>
 
 
 </abi>

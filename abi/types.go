@@ -286,9 +286,9 @@ type OracleData struct {
 }
 
 type OrderPayload struct {
-	OrderType  uint8
-	OrderIndex uint8
-	Direction  uint8
+	OrderType  tlb.Uint4
+	OrderIndex tlb.Uint3
+	Direction  tlb.Uint1
 }
 
 type Parameters struct {

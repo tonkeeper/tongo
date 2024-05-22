@@ -1051,8 +1051,6 @@ func TestMessageDecoder(t *testing.T) {
 		},
 		
 		
-		
-		/*
 		{
 			name: "storm activate order",
 			interfaces: []ContractInterface{StormPositionManager},
@@ -1060,11 +1058,11 @@ func TestMessageDecoder(t *testing.T) {
 			boc: "te6ccuEBAgEAIgAQRAEJnS7GQBgBAC8maT9/SgP5F2EAAAAAHc1lACIGAXwgAECOLaMI",
 			wantValidate: func(t *testing.T, value any) {
 				body := StormActivateOrderMsgBody{
-					OrderIndex: 3,
+					OrderIndex: 0,
 					ActivatedOrder: OrderPayload{
-						OrderType: 1,
+						OrderType: 2,
 						OrderIndex: 3,
-						Direction: 1,
+						Direction: 0,
 					},
 				}
 				
@@ -1074,7 +1072,47 @@ func TestMessageDecoder(t *testing.T) {
 		
 			},
 		},
-		*/
+
+		{
+			name: "storm update position",
+			interfaces: []ContractInterface{StormPositionManager},
+			wantOpName: "StormUpdatePosition",
+			boc: "te6ccuEBAwEAdQAshOoCI2DfxnfmKV1xmooQCoC+J1oQQAECAFMAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA9CQAAAAAAAAAAAAAAAAEAAYXsdp0VhftL0LOqC2IYhHXxKiijnNyCqcR3cTvRwHncMdlN4xi07//CGCmApGqsnd5hZ8lIq",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormUpdatePositionMsgBody{
+					Direction: 1,
+					OriginOpcode: 3427973859,
+					IndexPrice: 5325313,
+					SettlementOraclePrice: value.(StormUpdatePositionMsgBody).SettlementOraclePrice,
+					Position: PositionChange{
+						Size: value.(StormUpdatePositionMsgBody).Position.Size,
+						Direction: 1,
+						Margin: 0,
+						OpenNotional: 0,
+						LastUpdatedCumulativePremium: 0,
+						Fee: 2000000,
+						Discount: 0,
+						Rebate: 0,
+						LastUpdatedTimestamp: 0,
+					},
+					Amm: AmmChange{
+						QuoteAssetReserve: 50061264073256239,
+						QuoteAssetReserveWeight: 753566424,
+						BaseAssetReserve: 7066666529963806323,
+						TotalLongPositionSize: 9194602063744756,
+						TotalShortPositionSize: 535946544363404,
+						OpenInterestLong: 49735720273418,
+						OpenInterestShort: 2824657336185,
+					},
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+		
+			},
+		},
+		
 		
 
 		

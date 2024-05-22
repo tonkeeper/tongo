@@ -1608,7 +1608,7 @@ type TegroSwapTonMsgBody struct {
 }
 
 type StormUpdatePositionMsgBody struct {
-	Direction             uint8
+	Direction             tlb.Uint1
 	OriginOpcode          uint32
 	IndexPrice            tlb.Grams
 	SettlementOraclePrice *tlb.Grams     `tlb:"maybe"`
@@ -1825,7 +1825,7 @@ type MultisigOrderInitMsgBody struct {
 }
 
 type StormActivateOrderMsgBody struct {
-	OrderIndex     uint8
+	OrderIndex     tlb.Uint3
 	ActivatedOrder OrderPayload `tlb:"^"`
 }
 

@@ -299,7 +299,7 @@
     </internal>
 
     <internal name="storm_update_position_with_stop_loss">
-        update_position_with_stop_loss#5d1b17b8 direction:uint8 stop_trigger_price:Coins take_trigger_price:Coins origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+        update_position_with_stop_loss#5d1b17b8 direction:uint1 stop_trigger_price:Coins take_trigger_price:Coins origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
     </internal>
 
     <internal name="storm_order_created">

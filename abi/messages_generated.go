@@ -1557,7 +1557,7 @@ type JettonBurnMsgBody struct {
 }
 
 type StormUpdatePositionWithStopLossMsgBody struct {
-	Direction             uint8
+	Direction             tlb.Uint1
 	StopTriggerPrice      tlb.Grams
 	TakeTriggerPrice      tlb.Grams
 	OriginOpcode          uint32

@@ -86,7 +86,7 @@ var (
 	// 0x319b0cdc
 	decodeFuncTonstakePoolWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x319b0cdc, Len: 32}, TonstakePoolWithdrawMsgOp, TonstakePoolWithdrawMsgBody{})
 	// 0x3475fdd2
-	decodeFuncStormExchangeMsgBody = decodeMsg(tlb.Tag{Val: 0x3475fdd2, Len: 32}, StormExchangeMsgOp, StormExchangeMsgBody{})
+	decodeFuncStormVaultTradeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x3475fdd2, Len: 32}, StormVaultTradeNotificationMsgOp, StormVaultTradeNotificationMsgBody{})
 	// 0x370fec51
 	decodeFuncAuctionFillUpMsgBody = decodeMsg(tlb.Tag{Val: 0x370fec51, Len: 32}, AuctionFillUpMsgOp, AuctionFillUpMsgBody{})
 	// 0x371638ae
@@ -461,7 +461,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	TonstakePoolWithdrawMsgOpCode: decodeFuncTonstakePoolWithdrawMsgBody,
 
 	// 0x3475fdd2
-	StormExchangeMsgOpCode: decodeFuncStormExchangeMsgBody,
+	StormVaultTradeNotificationMsgOpCode: decodeFuncStormVaultTradeNotificationMsgBody,
 
 	// 0x370fec51
 	AuctionFillUpMsgOpCode: decodeFuncAuctionFillUpMsgBody,
@@ -887,7 +887,7 @@ const (
 	StormNftItemGetStaticDataMsgOp               MsgOpName = "StormNftItemGetStaticData"
 	TonstakeControllerValidatorWithdrawalMsgOp   MsgOpName = "TonstakeControllerValidatorWithdrawal"
 	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
-	StormExchangeMsgOp                           MsgOpName = "StormExchange"
+	StormVaultTradeNotificationMsgOp             MsgOpName = "StormVaultTradeNotification"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
@@ -1056,7 +1056,7 @@ const (
 	StormNftItemGetStaticDataMsgOpCode               MsgOpCode = 0x2fcb26a2
 	TonstakeControllerValidatorWithdrawalMsgOpCode   MsgOpCode = 0x30026327
 	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
-	StormExchangeMsgOpCode                           MsgOpCode = 0x3475fdd2
+	StormVaultTradeNotificationMsgOpCode             MsgOpCode = 0x3475fdd2
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
@@ -1423,7 +1423,7 @@ type TonstakePoolWithdrawMsgBody struct {
 	ResponseAddress tlb.MsgAddress
 }
 
-type StormExchangeMsgBody struct {
+type StormVaultTradeNotificationMsgBody struct {
 	AmmIndex             uint16
 	FreeAmount           uint16
 	LockedAmount         int64
@@ -2200,7 +2200,7 @@ var KnownMsgInTypes = map[string]any{
 	StormNftItemGetStaticDataMsgOp:               StormNftItemGetStaticDataMsgBody{},
 	TonstakeControllerValidatorWithdrawalMsgOp:   TonstakeControllerValidatorWithdrawalMsgBody{},
 	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
-	StormExchangeMsgOp:                           StormExchangeMsgBody{},
+	StormVaultTradeNotificationMsgOp:             StormVaultTradeNotificationMsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},

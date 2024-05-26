@@ -1098,7 +1098,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		}
 	case StormVault:
 		return []msgDecoderFunc{
-			decodeFuncStormExchangeMsgBody,
+			decodeFuncStormVaultTradeNotificationMsgBody,
 			decodeFuncStormTransferNotificationMsgBody,
 			decodeFuncStormStakeMsgBody,
 			decodeFuncStormUnstakeMsgBody,

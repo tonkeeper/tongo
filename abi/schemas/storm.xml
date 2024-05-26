@@ -80,7 +80,7 @@
 
     <interface name="storm_vault">
         <msg_in>
-            <internal name="storm_exchange"/>
+            <internal name="storm_vault_trade_notification"/>
             <internal name="storm_transfer_notification"/>
             <internal name="storm_stake"/>
             <internal name="storm_unstake"/>
@@ -257,7 +257,7 @@
         withdraw_executor_amount#2cde6351 index:uint64 executor_amount:Coins owner_addr:MsgAddress = InternalMsgBody;
     </internal>
 
-    <internal name="storm_exchange">
+    <internal name="storm_vault_trade_notification">
         exchange#3475fdd2 amm_index:uint16 free_amount:uint16 locked_amount:int64 exchange_amount:int64 withdraw_locked_amount:int64
         fee_to_stakers:int64 withdraw_amount:int64 trader_addr:MsgAddress referral_params:(Maybe ^ReferralData) executor_params:(Maybe ^ExecutorData) = InternalMsgBody;
     </internal>

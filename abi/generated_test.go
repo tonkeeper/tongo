@@ -629,12 +629,12 @@ func TestMessageDecoder(t *testing.T) {
 		},
 		
 		{
-			name: "storm exchange",
+			name: "storm vault trade notification",
 			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormExchange",
+			wantOpName: "StormVaultTradeNotification",
 			boc: "b5ee9c7201010101007b0000f23475fdd2000100000000000000000000000000000000ffffffffb75e4471000000001f20be19000000001f20be190000000000000000801576d5f94ebd5784744cde1f330df7a1b68ea01844e259cebf0f38607eb908a17002aedabf29d7aaf08e899bc3e661bef436d1d403089c4b39d7e1e70c0fd721142c",
 			wantValidate: func(t *testing.T, value any) {
-				body := StormExchangeMsgBody{
+				body := StormVaultTradeNotificationMsgBody{
 					AmmIndex: 1,
 					FreeAmount: 0,
 					LockedAmount: 0,
@@ -642,9 +642,9 @@ func TestMessageDecoder(t *testing.T) {
 					WithdrawLockedAmount: -79859473645568,
 					FeeToStakers: 34225488723968,
 					WithdrawAmount: 34225488723968,
-					TraderAddr: value.(StormExchangeMsgBody).TraderAddr,
-					ReferralParams: value.(StormExchangeMsgBody).ReferralParams,
-					ExecutorParams: value.(StormExchangeMsgBody).ExecutorParams,
+					TraderAddr: value.(StormVaultTradeNotificationMsgBody).TraderAddr,
+					ReferralParams: value.(StormVaultTradeNotificationMsgBody).ReferralParams,
+					ExecutorParams: value.(StormVaultTradeNotificationMsgBody).ExecutorParams,
 				}
 				
 				if !reflect.DeepEqual(value, body) {

@@ -285,6 +285,18 @@ type OracleData struct {
 	Signatures tlb.Any   `tlb:"^"`
 }
 
+type OraclePayload struct {
+	PriceData  OraclePriceData `tlb:"^"`
+	Signatures Signatures      `tlb:"^"`
+}
+
+type OraclePriceData struct {
+	Price         tlb.Grams
+	Spread        tlb.Grams
+	AnotherSpread uint32
+	AssetId       uint16
+}
+
 type OrderPayload struct {
 	OrderType  tlb.Uint4
 	OrderIndex tlb.Uint3
@@ -311,6 +323,10 @@ type PositionChange struct {
 type ReferralData struct {
 	Amount tlb.Grams
 	Index  uint32
+}
+
+type Signatures struct {
+	Data tlb.Any
 }
 
 type UpdateMsg struct {

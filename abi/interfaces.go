@@ -1081,6 +1081,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormActivateOrderMsgBody,
 			decodeFuncStormUpdatePositionMsgBody,
 			decodeFuncStormUpdatePositionWithStopLossMsgBody,
+			decodeFuncStormProvidePositionMsgBody,
 		}
 	case StormReferral:
 		return []msgDecoderFunc{
@@ -1102,6 +1103,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormStakeMsgBody,
 			decodeFuncStormUnstakeMsgBody,
 			decodeFuncStormVaultInitMsgBody,
+			decodeFuncStormRequestWithdrawPositionMsgBody,
 		}
 	case WhalesPool:
 		return []msgDecoderFunc{

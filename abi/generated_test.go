@@ -978,8 +978,7 @@ func TestMessageDecoder(t *testing.T) {
 				
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
-				}
-				
+				}			
 		
 			},
 		},
@@ -1079,6 +1078,7 @@ func TestMessageDecoder(t *testing.T) {
 			wantOpName: "StormUpdatePosition",
 			boc: "te6ccuEBAwEAdQAshOoCI2DfxnfmKV1xmooQCoC+J1oQQAECAFMAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA9CQAAAAAAAAAAAAAAAAEAAYXsdp0VhftL0LOqC2IYhHXxKiijnNyCqcR3cTvRwHncMdlN4xi07//CGCmApGqsnd5hZ8lIq",
 			wantValidate: func(t *testing.T, value any) {
+				
 				body := StormUpdatePositionMsgBody{
 					Direction: 1,
 					OriginOpcode: 3427973859,
@@ -1109,19 +1109,95 @@ func TestMessageDecoder(t *testing.T) {
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
 				}
+				
 		
 			},
 		},
+
+		/*
 		
+		{
+			name: "storm request withdraw position",
+			interfaces: []ContractInterface{StormVault},
+			wantOpName: "StormRequestWithdrawPosition",
+			boc: "te6ccuEBAQEAcgDkAN8CJt9mgBYMyTydSQevSZAUcgwn07KEWKz+4ioj+mr8UID7L/lhEAJ/C9b2rejmGPoRHi3YzZnxT19+5NUG1zYOIjHMj0gz5MtxsCAFuq4h9xvJLhh6o/FMjz4mDGDnJ2MfdSuhuEbdbDQbT9AAABAEUQhyZQ==",
+			wantValidate: func(t *testing.T, value any) {
+				
+				body := StormRequestWithdrawPositionMsgBody{
+					TraderAddr: value.(StormRequestWithdrawPositionMsgBody).TraderAddr,
+					VammAddr: value.(StormRequestWithdrawPositionMsgBody).VammAddr,
+					Amount: 0,
+					GasToAddr: value.(StormRequestWithdrawPositionMsgBody).GasToAddr,
+					Trash: 0,
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+				
+				
+			},
+		},
+
+		*/
+
+		
+		{
+			name: "storm provide position",
+			interfaces: []ContractInterface{StormVault},
+			wantOpName: "StormProvidePosition",
+			boc: "te6ccuECBgEAALgAABgAJgBCAMgA6gFwARKIZbQCMQAAAAEBBAIBAgMEBQAYNQt2cgMaZlKJUAAXAIHmXJUKDEFpmsCC52PR/KpFpZBNBaOvxSQkMJhsilOg+pKkYc4Gfo9W9pw0mTqzy+GjvwbQRJg8uqJ7tM4lC1eAYAAeUBfbeTfDcDZKZlKJTwAKAIGM6g/yu63OXMZfCTI1hzbMf1ImVE6il3Ncagioz0ea03CeZiZjH3kQ6oOwP2l9JPQRyYDJBbnxuu4XT1ayIPQHYLpFr+g=",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormProvidePositionMsgBody{
+					OrderType: 3,
+					OrderIndex: 0,
+					Direction: 1,
+					ExecutorIndex: 1,
+					OraclePayload: value.(StormProvidePositionMsgBody).OraclePayload,
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+				
+			},
+		},
+
+
+		
+		{
+			name: "storm provide position",
+			interfaces: []ContractInterface{StormVault},
+			wantOpName: "StormProvidePosition",
+			boc: "te6ccuECBgEAALgAABgAJgBCAMgA6gFwARKIZbQCMQAAAAEBBAIBAgMEBQAYNQt2cgMaZlKJUAAXAIHmXJUKDEFpmsCC52PR/KpFpZBNBaOvxSQkMJhsilOg+pKkYc4Gfo9W9pw0mTqzy+GjvwbQRJg8uqJ7tM4lC1eAYAAeUBfbeTfDcDZKZlKJTwAKAIGM6g/yu63OXMZfCTI1hzbMf1ImVE6il3Ncagioz0ea03CeZiZjH3kQ6oOwP2l9JPQRyYDJBbnxuu4XT1ayIPQHYLpFr+g=",
+			wantValidate: func(t *testing.T, value any) {
+				body := StormProvidePositionMsgBody{
+					OrderType: 3,
+					OrderIndex: 0,
+					Direction: 1,
+					ExecutorIndex: 1,
+					OraclePayload: OraclePayload{
+						PriceData: OraclePriceData{
+							Price: 5289831,
+							Spread: 794,
+							AnotherSpread: 1716685136,
+							AssetId: 23,
+						},
+						Signatures: value.(StormProvidePositionMsgBody).OraclePayload.Signatures,
+					},
+				}
+				
+				if !reflect.DeepEqual(value, body) {
+					t.Fatalf("got: %v, want: %v", value, body)
+				}
+				
+			},
+		},
 		
 
 		
-
-
 		
-
-		
-		
+	
 		{
 			name:       "gram miner - submit proof of work",
 			interfaces: []ContractInterface{GramMiner},

@@ -7,6 +7,8 @@ import (
 )
 
 var (
+	// 0x0226df66
+	decodeFuncStormRequestWithdrawPositionMsgBody = decodeMsg(tlb.Tag{Val: 0x0226df66, Len: 28}, StormRequestWithdrawPositionMsgOp, StormRequestWithdrawPositionMsgBody{})
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
 	// 0x04ded148
@@ -209,6 +211,8 @@ var (
 	decodeFuncMultisigApproveAcceptedMsgBody = decodeMsg(tlb.Tag{Val: 0x82609bf6, Len: 32}, MultisigApproveAcceptedMsgOp, MultisigApproveAcceptedMsgBody{})
 	// 0x84dced7a
 	decodeFuncStormAddReferralAmountMsgBody = decodeMsg(tlb.Tag{Val: 0x84dced7a, Len: 32}, StormAddReferralAmountMsgOp, StormAddReferralAmountMsgBody{})
+	// 0x8865b402
+	decodeFuncStormProvidePositionMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvidePositionMsgOp, StormProvidePositionMsgBody{})
 	// 0x8b771735
 	decodeFuncReportStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{})
 	// 0x8b771735
@@ -648,6 +652,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x84dced7a
 	StormAddReferralAmountMsgOpCode: decodeFuncStormAddReferralAmountMsgBody,
 
+	// 0x8865b402
+	StormProvidePositionMsgOpCode: decodeFuncStormProvidePositionMsgBody,
+
 	//ReportStaticData, StormNftItemReportStaticData,
 	0x8b771735: decodeMultipleMsgs([]msgDecoderFunc{
 		decodeFuncReportStaticDataMsgBody,
@@ -841,6 +848,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 }
 
 const (
+	StormRequestWithdrawPositionMsgOp            MsgOpName = "StormRequestWithdrawPosition"
 	TextCommentMsgOp                             MsgOpName = "TextComment"
 	ProveOwnershipMsgOp                          MsgOpName = "ProveOwnership"
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
@@ -942,6 +950,7 @@ const (
 	JettonBurnNotificationMsgOp                  MsgOpName = "JettonBurnNotification"
 	MultisigApproveAcceptedMsgOp                 MsgOpName = "MultisigApproveAccepted"
 	StormAddReferralAmountMsgOp                  MsgOpName = "StormAddReferralAmount"
+	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
 	StormNftItemReportStaticDataMsgOp            MsgOpName = "StormNftItemReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
@@ -1008,6 +1017,7 @@ const (
 )
 
 const (
+	StormRequestWithdrawPositionMsgOpCode            MsgOpCode = 0x0226df66
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
 	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
@@ -1109,6 +1119,7 @@ const (
 	JettonBurnNotificationMsgOpCode                  MsgOpCode = 0x7bdd97de
 	MultisigApproveAcceptedMsgOpCode                 MsgOpCode = 0x82609bf6
 	StormAddReferralAmountMsgOpCode                  MsgOpCode = 0x84dced7a
+	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
 	StormNftItemReportStaticDataMsgOpCode            MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
@@ -1173,6 +1184,14 @@ const (
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
+
+type StormRequestWithdrawPositionMsgBody struct {
+	TraderAddr     tlb.MsgAddress
+	VammAddr       tlb.MsgAddress
+	Amount         tlb.Grams
+	GasToAddr      tlb.MsgAddress
+	WithdrawReason uint32
+}
 
 type TextCommentMsgBody struct {
 	Text tlb.Text
@@ -1775,6 +1794,14 @@ type StormAddReferralAmountMsgBody struct {
 	OriginAddr     tlb.MsgAddress
 }
 
+type StormProvidePositionMsgBody struct {
+	OrderType     tlb.Uint4
+	OrderIndex    tlb.Uint3
+	Direction     tlb.Uint1
+	ExecutorIndex uint32
+	OraclePayload OraclePayload `tlb:"^"`
+}
+
 type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
@@ -2134,6 +2161,7 @@ type BounceMsgBody struct {
 }
 
 var KnownMsgInTypes = map[string]any{
+	StormRequestWithdrawPositionMsgOp:            StormRequestWithdrawPositionMsgBody{},
 	TextCommentMsgOp:                             TextCommentMsgBody{},
 	ProveOwnershipMsgOp:                          ProveOwnershipMsgBody{},
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
@@ -2235,6 +2263,7 @@ var KnownMsgInTypes = map[string]any{
 	JettonBurnNotificationMsgOp:                  JettonBurnNotificationMsgBody{},
 	MultisigApproveAcceptedMsgOp:                 MultisigApproveAcceptedMsgBody{},
 	StormAddReferralAmountMsgOp:                  StormAddReferralAmountMsgBody{},
+	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
 	StormNftItemReportStaticDataMsgOp:            StormNftItemReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},

@@ -112,6 +112,8 @@ The list below contains the supported message operations, their names and opcode
 | StormOrderCanceled| 0x69d08679 |
 | StormOrderCreated| 0x3a943ce6 |
 | StormPayFunding| 0xb652c441 |
+| StormProvidePosition| 0x8865b402 |
+| StormRequestWithdrawPosition| 0x0226df66 |
 | StormStake| 0xc89a3ee4 |
 | StormTakeReferralFees| 0x12d9601d |
 | StormTransferNotification| 0x7362d09c |

@@ -20,6 +20,10 @@
         oracle_validity_period:uint32 oracle_public_keys_count:uint4 
         -->
 
+        signatures#_ data:Cell = Signatures;
+        price_data#_ price:Coins spread:Coins another_spread:uint32 asset_id:uint16 = OraclePriceData; <!-- "another_spread" was "spread" before but we avoid conflicts: we already have "spread" -->
+        oracle_payload#_ price_data:^OraclePriceData signatures:^Signatures = OraclePayload;
+
 
     </types>
 
@@ -81,6 +85,7 @@
             <internal name="storm_stake"/>
             <internal name="storm_unstake"/>
             <internal name="storm_vault_init"/>
+            <internal name="storm_request_withdraw_position"/>
         </msg_in>
     </interface>
 
@@ -93,6 +98,8 @@
             <internal name="storm_activate_order"/>
             <internal name="storm_update_position"/>
             <internal name="storm_update_position_with_stop_loss"/>
+            <internal name="storm_provide_position"/>
+
         </msg_in>
         <msg_out>
             <internal name="storm_order_created"/>
@@ -309,6 +316,16 @@
     <internal name="storm_order_canceled">
         order_canceled#69d08679 = InternalMsgBody;
     </internal>
+
+    <internal name="storm_request_withdraw_position"> <!-- this thing doesn't want to work i think because of 7digit opcode-->
+        request_withdraw_position#226df66 trader_addr:MsgAddress vamm_addr:MsgAddress amount:Coins gas_to_addr:MsgAddress withdraw_reason:uint32 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_provide_position">
+        provide_order#8865b402 order_type:uint4 order_index:uint3 direction:uint1 executor_index:uint32 oracle_payload:^OraclePayload = InternalMsgBody;
+    </internal>
+    
+
 
 
 </abi>

@@ -705,24 +705,6 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 	
-
-		{
-			name: "storm update",
-			interfaces: []ContractInterface{StormVamm},
-			wantOpName: "StormUpdate",
-			boc: "te6ccuEBAQEACgAUABDkNJZ+tlLEQesFGl8=",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormUpdateMsgBody{
-					OriginOpcode: 3058877505,
-				}
-				
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
 		{
 			name: "storm transfer notification",
 			interfaces: []ContractInterface{StormVault},
@@ -1114,7 +1096,7 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 
-		/*
+		
 		
 		{
 			name: "storm request withdraw position",
@@ -1126,10 +1108,13 @@ func TestMessageDecoder(t *testing.T) {
 				body := StormRequestWithdrawPositionMsgBody{
 					TraderAddr: value.(StormRequestWithdrawPositionMsgBody).TraderAddr,
 					VammAddr: value.(StormRequestWithdrawPositionMsgBody).VammAddr,
-					Amount: 0,
+					Amount: 3000000,
 					GasToAddr: value.(StormRequestWithdrawPositionMsgBody).GasToAddr,
-					Trash: 0,
+					WithdrawReason: 512,
 				}
+
+				fmt.Println("HAHA!");
+				fmt.Println();
 				
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
@@ -1139,7 +1124,7 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 
-		*/
+		
 
 		
 		{

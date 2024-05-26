@@ -38,9 +38,6 @@
             <internal name="storm_pay_funding"/>
             <internal name="storm_vamm_init"/>
         </msg_in>
-        <msg_out>
-            <internal name="storm_update"/>
-        </msg_out>
     </interface>
 
     <interface name="storm_referral">
@@ -207,10 +204,6 @@
         code:^Cell data:^Cell = InternalMsgBody;
     </internal>
 
-    <internal name="storm_update">
-        update#e434967e origin_opcode:uint32 = InternalMsgBody;
-    </internal>
-
     <internal name="storm_mint_referral">
         mint_referral#cb4ddc3c nft_owner:MsgAddress ref_type:uint2
         redirect_address:MsgAddress parameters:^Parameters balances_dict:^Cell = InternalMsgBody;
@@ -317,8 +310,8 @@
         order_canceled#69d08679 = InternalMsgBody;
     </internal>
 
-    <internal name="storm_request_withdraw_position"> <!-- this thing doesn't want to work i think because of 7digit opcode-->
-        request_withdraw_position#226df66 trader_addr:MsgAddress vamm_addr:MsgAddress amount:Coins gas_to_addr:MsgAddress withdraw_reason:uint32 = InternalMsgBody;
+    <internal name="storm_request_withdraw_position">
+        request_withdraw_position#0226df66 trader_addr:MsgAddress vamm_addr:MsgAddress amount:Coins gas_to_addr:MsgAddress withdraw_reason:uint32 = InternalMsgBody;
     </internal>
 
     <internal name="storm_provide_position">

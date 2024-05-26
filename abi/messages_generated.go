@@ -7,10 +7,10 @@ import (
 )
 
 var (
-	// 0x0226df66
-	decodeFuncStormRequestWithdrawPositionMsgBody = decodeMsg(tlb.Tag{Val: 0x0226df66, Len: 28}, StormRequestWithdrawPositionMsgOp, StormRequestWithdrawPositionMsgBody{})
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
+	// 0x0226df66
+	decodeFuncStormRequestWithdrawPositionMsgBody = decodeMsg(tlb.Tag{Val: 0x0226df66, Len: 32}, StormRequestWithdrawPositionMsgOp, StormRequestWithdrawPositionMsgBody{})
 	// 0x04ded148
 	decodeFuncProveOwnershipMsgBody = decodeMsg(tlb.Tag{Val: 0x04ded148, Len: 32}, ProveOwnershipMsgOp, ProveOwnershipMsgBody{})
 	// 0x05138d91
@@ -297,8 +297,6 @@ var (
 	decodeFuncTonstakePoolLoanRepaymentMsgBody = decodeMsg(tlb.Tag{Val: 0xdfdca27b, Len: 32}, TonstakePoolLoanRepaymentMsgOp, TonstakePoolLoanRepaymentMsgBody{})
 	// 0xe0505d0e
 	decodeFuncTonstakeControllerNewStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xe0505d0e, Len: 32}, TonstakeControllerNewStakeMsgOp, TonstakeControllerNewStakeMsgBody{})
-	// 0xe434967e
-	decodeFuncStormUpdateMsgBody = decodeMsg(tlb.Tag{Val: 0xe434967e, Len: 32}, StormUpdateMsgOp, StormUpdateMsgBody{})
 	// 0xe4737472
 	decodeFuncWalletPluginDestructResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xe4737472, Len: 32}, WalletPluginDestructResponseMsgOp, WalletPluginDestructResponseMsgBody{})
 	// 0xe4748df1
@@ -345,6 +343,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x00000000
 	TextCommentMsgOpCode: decodeFuncTextCommentMsgBody,
+
+	// 0x0226df66
+	StormRequestWithdrawPositionMsgOpCode: decodeFuncStormRequestWithdrawPositionMsgBody,
 
 	// 0x04ded148
 	ProveOwnershipMsgOpCode: decodeFuncProveOwnershipMsgBody,
@@ -783,9 +784,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xe0505d0e
 	TonstakeControllerNewStakeMsgOpCode: decodeFuncTonstakeControllerNewStakeMsgBody,
 
-	// 0xe434967e
-	StormUpdateMsgOpCode: decodeFuncStormUpdateMsgBody,
-
 	// 0xe4737472
 	WalletPluginDestructResponseMsgOpCode: decodeFuncWalletPluginDestructResponseMsgBody,
 
@@ -848,8 +846,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 }
 
 const (
-	StormRequestWithdrawPositionMsgOp            MsgOpName = "StormRequestWithdrawPosition"
 	TextCommentMsgOp                             MsgOpName = "TextComment"
+	StormRequestWithdrawPositionMsgOp            MsgOpName = "StormRequestWithdrawPosition"
 	ProveOwnershipMsgOp                          MsgOpName = "ProveOwnership"
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
 	StormNftItemOwnershipAssignedMsgOp           MsgOpName = "StormNftItemOwnershipAssigned"
@@ -993,7 +991,6 @@ const (
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
 	TonstakePoolLoanRepaymentMsgOp               MsgOpName = "TonstakePoolLoanRepayment"
 	TonstakeControllerNewStakeMsgOp              MsgOpName = "TonstakeControllerNewStake"
-	StormUpdateMsgOp                             MsgOpName = "StormUpdate"
 	WalletPluginDestructResponseMsgOp            MsgOpName = "WalletPluginDestructResponse"
 	DeployStorageContractMsgOp                   MsgOpName = "DeployStorageContract"
 	TonstakePoolRequestLoanMsgOp                 MsgOpName = "TonstakePoolRequestLoan"
@@ -1017,8 +1014,8 @@ const (
 )
 
 const (
-	StormRequestWithdrawPositionMsgOpCode            MsgOpCode = 0x0226df66
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
+	StormRequestWithdrawPositionMsgOpCode            MsgOpCode = 0x0226df66
 	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
 	StormNftItemOwnershipAssignedMsgOpCode           MsgOpCode = 0x05138d91
@@ -1162,7 +1159,6 @@ const (
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
 	TonstakePoolLoanRepaymentMsgOpCode               MsgOpCode = 0xdfdca27b
 	TonstakeControllerNewStakeMsgOpCode              MsgOpCode = 0xe0505d0e
-	StormUpdateMsgOpCode                             MsgOpCode = 0xe434967e
 	WalletPluginDestructResponseMsgOpCode            MsgOpCode = 0xe4737472
 	DeployStorageContractMsgOpCode                   MsgOpCode = 0xe4748df1
 	TonstakePoolRequestLoanMsgOpCode                 MsgOpCode = 0xe642c965
@@ -1185,16 +1181,16 @@ const (
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
+type TextCommentMsgBody struct {
+	Text tlb.Text
+}
+
 type StormRequestWithdrawPositionMsgBody struct {
 	TraderAddr     tlb.MsgAddress
 	VammAddr       tlb.MsgAddress
 	Amount         tlb.Grams
 	GasToAddr      tlb.MsgAddress
 	WithdrawReason uint32
-}
-
-type TextCommentMsgBody struct {
-	Text tlb.Text
 }
 
 type ProveOwnershipMsgBody struct {
@@ -2054,10 +2050,6 @@ type TonstakeControllerNewStakeMsgBody struct {
 	Signature       tlb.Bits512 `tlb:"^"`
 }
 
-type StormUpdateMsgBody struct {
-	OriginOpcode uint32
-}
-
 type WalletPluginDestructResponseMsgBody struct{}
 
 type DeployStorageContractMsgBody struct {
@@ -2161,8 +2153,8 @@ type BounceMsgBody struct {
 }
 
 var KnownMsgInTypes = map[string]any{
-	StormRequestWithdrawPositionMsgOp:            StormRequestWithdrawPositionMsgBody{},
 	TextCommentMsgOp:                             TextCommentMsgBody{},
+	StormRequestWithdrawPositionMsgOp:            StormRequestWithdrawPositionMsgBody{},
 	ProveOwnershipMsgOp:                          ProveOwnershipMsgBody{},
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
 	StormNftItemOwnershipAssignedMsgOp:           StormNftItemOwnershipAssignedMsgBody{},
@@ -2306,7 +2298,6 @@ var KnownMsgInTypes = map[string]any{
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},
 	TonstakePoolLoanRepaymentMsgOp:               TonstakePoolLoanRepaymentMsgBody{},
 	TonstakeControllerNewStakeMsgOp:              TonstakeControllerNewStakeMsgBody{},
-	StormUpdateMsgOp:                             StormUpdateMsgBody{},
 	WalletPluginDestructResponseMsgOp:            WalletPluginDestructResponseMsgBody{},
 	DeployStorageContractMsgOp:                   DeployStorageContractMsgBody{},
 	TonstakePoolRequestLoanMsgOp:                 TonstakePoolRequestLoanMsgBody{},

@@ -117,7 +117,6 @@ The list below contains the supported message operations, their names and opcode
 | StormTakeReferralFees| 0x12d9601d |
 | StormTransferNotification| 0x7362d09c |
 | StormUnstake| 0xd5b5e9ad |
-| StormUpdate| 0xe434967e |
 | StormUpdatePosition| 0x60dfc677 |
 | StormUpdatePositionWithStopLoss| 0x5d1b17b8 |
 | StormVammInit| 0x29c102d1 |

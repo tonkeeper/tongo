@@ -1099,11 +1099,11 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case StormVault:
 		return []msgDecoderFunc{
 			decodeFuncStormVaultTradeNotificationMsgBody,
-			decodeFuncStormTransferNotificationMsgBody,
-			decodeFuncStormStakeMsgBody,
-			decodeFuncStormUnstakeMsgBody,
+			decodeFuncStormVaultTransferNotificationMsgBody,
+			decodeFuncStormVaultStakeMsgBody,
+			decodeFuncStormVaultUnstakeMsgBody,
 			decodeFuncStormVaultInitMsgBody,
-			decodeFuncStormRequestWithdrawPositionMsgBody,
+			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
 	case WhalesPool:
 		return []msgDecoderFunc{

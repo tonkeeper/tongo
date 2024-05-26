@@ -706,15 +706,15 @@ func TestMessageDecoder(t *testing.T) {
 		},
 	
 		{
-			name: "storm transfer notification",
+			name: "storm vault transfer notification",
 			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormTransferNotification",
+			wantOpName: "StormVaultTransferNotification",
 			boc: "te6ccuECAgEAAKYAAG4BTAFoc2LQnAAAErtGYPwoYWq03FYgCADY/t9qBwnVPjVeVntDbe2WP/YtNjjUoOOyThl+J1hcfwEA2SWThWGACd2SQ3OpqtQbKM7ALak4TWc2OvIDT8KnzMBn4o1BEN6ID7NXxQAbH9vtQOE6p8arys9obb2yx/7FpscalBx2ScMvxOsLj/ACwiRZrfUSlMM0dz+Hm4KW1IqaFz1Pwxg3+t0jQDt36qLHweyx",
 			wantValidate: func(t *testing.T, value any) {
-				body := StormTransferNotificationMsgBody{
+				body := StormVaultTransferNotificationMsgBody{
 					QueryId: 20595548945448,
 					Amount: 24925000000000,
-					Sender: value.(StormTransferNotificationMsgBody).Sender,
+					Sender: value.(StormVaultTransferNotificationMsgBody).Sender,
 					ForwardPayload: tlb.EitherRef[NotificationPayload]{
 						IsRight: true,
 						Value: NotificationPayload{
@@ -731,12 +731,12 @@ func TestMessageDecoder(t *testing.T) {
 		},
 
 		{
-			name: "storm stake",
+			name: "storm vault stake",
 			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormStake",
+			wantOpName: "StormVaultStake",
 			boc: "te6ccuEBAQEACwAWABHImj7kQJrWpmj2Fvf3",
 			wantValidate: func(t *testing.T, value any) {
-				body := StormStakeMsgBody{
+				body := StormVaultStakeMsgBody{
 					Amount: 162359910,
 				}
 				
@@ -748,14 +748,14 @@ func TestMessageDecoder(t *testing.T) {
 		},
 
 		{
-			name: "storm unstake",
+			name: "storm vault unstake",
 			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormUnstake",
+			wantOpName: "StormVaultUnstake",
 			boc: "te6ccuEBAQEALQBaAFXVtemtUFleuTGoAGoD4dV0XbiGEnOzJ2dABapfScHoViRZNNhArlczL9FfDmG6xA==",
 			wantValidate: func(t *testing.T, value any) {
-				body := StormUnstakeMsgBody{
+				body := StormVaultUnstakeMsgBody{
 					JettonAmount: 23990080282,
-					UserAddress: value.(StormUnstakeMsgBody).UserAddress,
+					UserAddress: value.(StormVaultUnstakeMsgBody).UserAddress,
 				} 
 				
 				if !reflect.DeepEqual(value, body) {
@@ -1099,17 +1099,17 @@ func TestMessageDecoder(t *testing.T) {
 		
 		
 		{
-			name: "storm request withdraw position",
+			name: "storm vault request withdraw position",
 			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormRequestWithdrawPosition",
+			wantOpName: "StormVaultRequestWithdrawPosition",
 			boc: "te6ccuEBAQEAcgDkAN8CJt9mgBYMyTydSQevSZAUcgwn07KEWKz+4ioj+mr8UID7L/lhEAJ/C9b2rejmGPoRHi3YzZnxT19+5NUG1zYOIjHMj0gz5MtxsCAFuq4h9xvJLhh6o/FMjz4mDGDnJ2MfdSuhuEbdbDQbT9AAABAEUQhyZQ==",
 			wantValidate: func(t *testing.T, value any) {
 				
-				body := StormRequestWithdrawPositionMsgBody{
-					TraderAddr: value.(StormRequestWithdrawPositionMsgBody).TraderAddr,
-					VammAddr: value.(StormRequestWithdrawPositionMsgBody).VammAddr,
+				body := StormVaultRequestWithdrawPositionMsgBody{
+					TraderAddr: value.(StormVaultRequestWithdrawPositionMsgBody).TraderAddr,
+					VammAddr: value.(StormVaultRequestWithdrawPositionMsgBody).VammAddr,
 					Amount: 3000000,
-					GasToAddr: value.(StormRequestWithdrawPositionMsgBody).GasToAddr,
+					GasToAddr: value.(StormVaultRequestWithdrawPositionMsgBody).GasToAddr,
 					WithdrawReason: 512,
 				}
 
@@ -1177,11 +1177,7 @@ func TestMessageDecoder(t *testing.T) {
 				}
 				
 			},
-		},
-		
-
-		
-		
+		},		
 	
 		{
 			name:       "gram miner - submit proof of work",

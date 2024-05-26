@@ -78,11 +78,11 @@
     <interface name="storm_vault">
         <msg_in>
             <internal name="storm_vault_trade_notification"/>
-            <internal name="storm_transfer_notification"/>
-            <internal name="storm_stake"/>
-            <internal name="storm_unstake"/>
+            <internal name="storm_vault_transfer_notification"/>
+            <internal name="storm_vault_stake"/>
+            <internal name="storm_vault_unstake"/>
             <internal name="storm_vault_init"/>
-            <internal name="storm_request_withdraw_position"/>
+            <internal name="storm_vault_request_withdraw_position"/>
         </msg_in>
     </interface>
 
@@ -255,16 +255,16 @@
         fee_to_stakers:int64 withdraw_amount:int64 trader_addr:MsgAddress referral_params:(Maybe ^ReferralData) executor_params:(Maybe ^ExecutorData) = InternalMsgBody;
     </internal>
 
-    <internal name="storm_transfer_notification">
+    <internal name="storm_vault_transfer_notification">
         transfer_notification#7362d09c query_id:uint64 amount:Coins 
         sender:MsgAddress forward_payload:(Either NotificationPayload ^NotificationPayload) = InternalMsgBody;
     </internal>
 
-    <internal name="storm_stake">
+    <internal name="storm_vault_stake">
         stake#c89a3ee4 amount:Coins = InternalMsgBody;
     </internal>
 
-    <internal name="storm_unstake">
+    <internal name="storm_vault_unstake">
         unstake#d5b5e9ad jetton_amount:Coins user_address:MsgAddress = InternalMsgBody;
     </internal>
 
@@ -310,7 +310,7 @@
         order_canceled#69d08679 = InternalMsgBody;
     </internal>
 
-    <internal name="storm_request_withdraw_position">
+    <internal name="storm_vault_request_withdraw_position">
         request_withdraw_position#0226df66 trader_addr:MsgAddress vamm_addr:MsgAddress amount:Coins gas_to_addr:MsgAddress withdraw_reason:uint32 = InternalMsgBody;
     </internal>
 

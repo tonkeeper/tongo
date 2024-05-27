@@ -64,6 +64,10 @@
          
     </interface>
 
+    <interface name="storm_referral_collection">
+        <get_method name="get_referral_vaults_whitelist"/> 
+    </interface>
+
     <interface name="storm_executor">
         <msg_in>
             <internal name="storm_mint_executor"/>
@@ -77,6 +81,9 @@
             <internal name="storm_nft_item_report_static_data"/>
             <internal name="storm_withdraw_executor_amount"/>
         </msg_out>
+
+        <get_method name="get_nft_data"/> 
+        <get_method name="get_executor_balances"/>
     </interface>
 
     <interface name="storm_executor_collection">
@@ -93,6 +100,15 @@
             <internal name="storm_vault_init"/>
             <internal name="storm_vault_request_withdraw_position"/>
         </msg_in>
+
+        <get_method name="get_executor_collection_address"/>
+        <get_method name="get_referral_collection_address"/>
+        <get_method name="get_vault_contract_data"/>
+        <get_method name="get_lp_minter_address"/>
+        <get_method name="get_vault_whitelisted_addresses"/>
+        <get_method name="get_vault_data"/>
+        <get_method name="get_vault_type"/>
+
     </interface>
 
     <interface name="storm_position_manager">
@@ -111,6 +127,9 @@
             <internal name="storm_order_created"/>
             <internal name="storm_order_canceled"/>
         </msg_out>
+
+        <get_method name="get_position_manager_contract_data"/> 
+
     </interface>
 
     <!-- GET METHODS -->
@@ -118,9 +137,6 @@
     <get_method name="get_amm_contract_data">
         <output>
             <cell name="amm_contract_data">cell</cell>
-            <!-- 
-            <cell name="amm_contract_data">AmmContractData</cell>
-            -->
         </output>
     </get_method>
 
@@ -145,7 +161,17 @@
         </output>
     </get_method>
 
+    <get_method name="get_referral_vaults_whitelist">
+        <output> 
+            <cell name="balances_dict">Cell</cell>
+        </output>
+    </get_method>
 
+    <get_method name="get_position_manager_contract_data">
+        <output>
+            <cell name="info">cell</cell>
+        </output>
+    </get_method>
 
     <get_method name="get_amm_state">
         <output>
@@ -207,7 +233,14 @@
 
     <get_method name="get_terminal_amm_price">
         <output>
-            <cell name="balances_dict">any</cell>
+            <int name="terminal_price">int64</int>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_executor_balances">
+        <output>
+            <cell name="balances_dict">Cell</cell>
         </output>
     </get_method>
 
@@ -229,6 +262,57 @@
             <int name="discount">uint32</int>
             <int name="rebate">uint32</int>
             <cell name="balances_dict">cell</cell>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_executor_collection_address">
+        <output>
+            <slice name="data">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_referral_collection_address">
+        <output>
+            <slice name="data">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_vault_contract_data">
+        <output>
+            <cell name="data">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_lp_minter_address">
+        <output>
+            <slice name="data">msgaddress</slice>
+        </output>
+    </get_method>
+
+
+
+    <get_method name="get_vault_whitelisted_addresses">
+        <output>
+            <cell name="whitelisted_addrs_dict">Cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_vault_data">
+        <output>
+            <slice name="jetton_wallet">msgaddress</slice>
+            <int name="rate">uint64</int>
+            <int name="total_supply">uint64</int>
+            <int name="free_balance">uint64</int>
+            <int name="locked_balance">uint64</int>
+            <int name="stakers_balance">uint64</int>
+            <int name="executors_balance">uint64</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_vault_type">
+        <output>
+            <int name="vault_type">uint32</int>
         </output>
     </get_method>
 

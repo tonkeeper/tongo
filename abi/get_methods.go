@@ -11,94 +11,106 @@ import (
 )
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
-	"dnsresolve":                    {DecodeDnsresolve_RecordsResult},
-	"get_amm_contract_data":         {DecodeGetAmmContractDataResult},
-	"get_amm_name":                  {DecodeGetAmmNameResult},
-	"get_amm_state":                 {DecodeGetAmmStateResult},
-	"get_amm_status":                {DecodeGetAmmStatusResult},
-	"get_asset":                     {DecodeGetAsset_DedustResult},
-	"get_assets":                    {DecodeGetAssets_DedustResult},
-	"get_auction_info":              {DecodeGetAuctionInfoResult},
-	"get_authority_address":         {DecodeGetAuthorityAddressResult},
-	"get_balances":                  {DecodeGetBalancesResult},
-	"get_bill_address":              {DecodeGetBillAddressResult},
-	"get_bill_amount":               {DecodeGetBillAmountResult},
-	"get_channel_data":              {DecodeGetChannelDataResult},
-	"get_collection_data":           {DecodeGetCollectionDataResult},
-	"get_domain":                    {DecodeGetDomainResult},
-	"get_editor":                    {DecodeGetEditorResult},
-	"get_exchange_settings":         {DecodeGetExchangeSettingsResult},
-	"get_executor_vaults_whitelist": {DecodeGetExecutorVaultsWhitelistResult},
-	"get_full_domain":               {DecodeGetFullDomainResult},
-	"get_jetton_data":               {DecodeGetJettonDataResult},
-	"get_last_clean_time":           {DecodeGetLastCleanTimeResult},
-	"get_last_fill_up_time":         {DecodeGetLastFillUpTimeResult},
-	"get_locker_bill_data":          {DecodeGetLockerBillDataResult},
-	"get_locker_data":               {DecodeGetLockerDataResult},
-	"get_lockup_data":               {DecodeGetLockupDataResult},
-	"get_lp_data":                   {DecodeGetLpData_MegatonResult},
-	"get_lp_mining_data":            {DecodeGetLpMiningData_MegatonResult},
-	"get_lp_swap_data":              {DecodeGetLpSwapData_MegatonResult},
-	"get_member":                    {DecodeGetMember_WhalesNominatorResult},
-	"get_members_raw":               {DecodeGetMembersRaw_WhalesNominatorResult},
-	"get_mining_data":               {DecodeGetMiningData_MegatonResult},
-	"get_multisig_data":             {DecodeGetMultisigDataResult},
-	"get_next_admin_address":        {DecodeGetNextAdminAddressResult},
-	"get_next_proof_info":           {DecodeGetNextProofInfoResult},
-	"get_nft_address_by_index":      {DecodeGetNftAddressByIndexResult},
-	"get_nft_api_info":              {DecodeGetNftApiInfoResult},
-	"get_nft_content":               {DecodeGetNftContentResult},
-	"get_nft_data":                  {DecodeGetNftDataResult},
-	"get_nominator_data":            {DecodeGetNominatorDataResult},
-	"get_oracle_data":               {DecodeGetOracleDataResult},
-	"get_params":                    {DecodeGetParams_WhalesNominatorResult},
-	"get_plugin_list":               {DecodeGetPluginListResult},
-	"get_pool_data":                 {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
-	"get_pool_full_data":            {DecodeGetPoolFullDataResult},
-	"get_pool_status":               {DecodeGetPoolStatusResult},
-	"get_pow_params":                {DecodeGetPowParamsResult},
-	"get_public_key":                {DecodeGetPublicKeyResult},
-	"get_referral_data":             {DecodeGetReferralDataResult},
-	"get_reserves":                  {DecodeGetReserves_DedustResult},
-	"get_revoked_time":              {DecodeGetRevokedTimeResult},
-	"get_router_data":               {DecodeGetRouterData_StonfiResult},
-	"get_sale_data":                 {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
-	"get_spot_price":                {DecodeGetSpotPriceResult},
-	"get_staking_status":            {DecodeGetStakingStatusResult},
-	"get_status":                    {DecodeGetStatusResult},
-	"get_storage_contract_address":  {DecodeGetStorageContractAddressResult},
-	"get_storage_contract_data":     {DecodeGetStorageContractDataResult},
-	"get_storage_params":            {DecodeGetStorageParamsResult},
-	"get_subscription_data":         {DecodeGetSubscriptionDataResult},
-	"get_subwallet_id":              {DecodeGetSubwalletIdResult},
-	"get_telemint_auction_config":   {DecodeGetTelemintAuctionConfigResult},
-	"get_telemint_auction_state":    {DecodeGetTelemintAuctionStateResult},
-	"get_telemint_token_name":       {DecodeGetTelemintTokenNameResult},
-	"get_terminal_amm_price":        {DecodeGetTerminalAmmPriceResult},
-	"get_timeout":                   {DecodeGetTimeoutResult},
-	"get_torrent_hash":              {DecodeGetTorrentHashResult},
-	"get_validator_controller_data": {DecodeGetValidatorControllerDataResult},
-	"get_vamm_type":                 {DecodeGetVammTypeResult},
-	"get_wallet_address":            {DecodeGetWalletAddressResult},
-	"get_wallet_data":               {DecodeGetWalletDataResult},
-	"get_wallet_params":             {DecodeGetWalletParamsResult},
-	"is_active":                     {DecodeIsActiveResult},
-	"is_plugin_installed":           {DecodeIsPluginInstalledResult},
-	"jetton_wallet_lock_data":       {DecodeJettonWalletLockDataResult},
-	"list_nominators":               {DecodeListNominatorsResult},
-	"list_votes":                    {DecodeListVotesResult},
-	"royalty_params":                {DecodeRoyaltyParamsResult},
-	"seqno":                         {DecodeSeqnoResult},
+	"dnsresolve":                         {DecodeDnsresolve_RecordsResult},
+	"get_amm_contract_data":              {DecodeGetAmmContractDataResult},
+	"get_amm_name":                       {DecodeGetAmmNameResult},
+	"get_amm_state":                      {DecodeGetAmmStateResult},
+	"get_amm_status":                     {DecodeGetAmmStatusResult},
+	"get_asset":                          {DecodeGetAsset_DedustResult},
+	"get_assets":                         {DecodeGetAssets_DedustResult},
+	"get_auction_info":                   {DecodeGetAuctionInfoResult},
+	"get_authority_address":              {DecodeGetAuthorityAddressResult},
+	"get_balances":                       {DecodeGetBalancesResult},
+	"get_bill_address":                   {DecodeGetBillAddressResult},
+	"get_bill_amount":                    {DecodeGetBillAmountResult},
+	"get_channel_data":                   {DecodeGetChannelDataResult},
+	"get_collection_data":                {DecodeGetCollectionDataResult},
+	"get_domain":                         {DecodeGetDomainResult},
+	"get_editor":                         {DecodeGetEditorResult},
+	"get_exchange_settings":              {DecodeGetExchangeSettingsResult},
+	"get_executor_balances":              {DecodeGetExecutorBalancesResult},
+	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddressResult},
+	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelistResult},
+	"get_full_domain":                    {DecodeGetFullDomainResult},
+	"get_jetton_data":                    {DecodeGetJettonDataResult},
+	"get_last_clean_time":                {DecodeGetLastCleanTimeResult},
+	"get_last_fill_up_time":              {DecodeGetLastFillUpTimeResult},
+	"get_locker_bill_data":               {DecodeGetLockerBillDataResult},
+	"get_locker_data":                    {DecodeGetLockerDataResult},
+	"get_lockup_data":                    {DecodeGetLockupDataResult},
+	"get_lp_data":                        {DecodeGetLpData_MegatonResult},
+	"get_lp_mining_data":                 {DecodeGetLpMiningData_MegatonResult},
+	"get_lp_minter_address":              {DecodeGetLpMinterAddressResult},
+	"get_lp_swap_data":                   {DecodeGetLpSwapData_MegatonResult},
+	"get_member":                         {DecodeGetMember_WhalesNominatorResult},
+	"get_members_raw":                    {DecodeGetMembersRaw_WhalesNominatorResult},
+	"get_mining_data":                    {DecodeGetMiningData_MegatonResult},
+	"get_multisig_data":                  {DecodeGetMultisigDataResult},
+	"get_next_admin_address":             {DecodeGetNextAdminAddressResult},
+	"get_next_proof_info":                {DecodeGetNextProofInfoResult},
+	"get_nft_address_by_index":           {DecodeGetNftAddressByIndexResult},
+	"get_nft_api_info":                   {DecodeGetNftApiInfoResult},
+	"get_nft_content":                    {DecodeGetNftContentResult},
+	"get_nft_data":                       {DecodeGetNftDataResult},
+	"get_nominator_data":                 {DecodeGetNominatorDataResult},
+	"get_oracle_data":                    {DecodeGetOracleDataResult},
+	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
+	"get_plugin_list":                    {DecodeGetPluginListResult},
+	"get_pool_data":                      {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
+	"get_pool_full_data":                 {DecodeGetPoolFullDataResult},
+	"get_pool_status":                    {DecodeGetPoolStatusResult},
+	"get_position_manager_contract_data": {DecodeGetPositionManagerContractDataResult},
+	"get_pow_params":                     {DecodeGetPowParamsResult},
+	"get_public_key":                     {DecodeGetPublicKeyResult},
+	"get_referral_collection_address":    {DecodeGetReferralCollectionAddressResult},
+	"get_referral_data":                  {DecodeGetReferralDataResult},
+	"get_referral_vaults_whitelist":      {DecodeGetReferralVaultsWhitelistResult},
+	"get_reserves":                       {DecodeGetReserves_DedustResult},
+	"get_revoked_time":                   {DecodeGetRevokedTimeResult},
+	"get_router_data":                    {DecodeGetRouterData_StonfiResult},
+	"get_sale_data":                      {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
+	"get_spot_price":                     {DecodeGetSpotPriceResult},
+	"get_staking_status":                 {DecodeGetStakingStatusResult},
+	"get_status":                         {DecodeGetStatusResult},
+	"get_storage_contract_address":       {DecodeGetStorageContractAddressResult},
+	"get_storage_contract_data":          {DecodeGetStorageContractDataResult},
+	"get_storage_params":                 {DecodeGetStorageParamsResult},
+	"get_subscription_data":              {DecodeGetSubscriptionDataResult},
+	"get_subwallet_id":                   {DecodeGetSubwalletIdResult},
+	"get_telemint_auction_config":        {DecodeGetTelemintAuctionConfigResult},
+	"get_telemint_auction_state":         {DecodeGetTelemintAuctionStateResult},
+	"get_telemint_token_name":            {DecodeGetTelemintTokenNameResult},
+	"get_terminal_amm_price":             {DecodeGetTerminalAmmPriceResult},
+	"get_timeout":                        {DecodeGetTimeoutResult},
+	"get_torrent_hash":                   {DecodeGetTorrentHashResult},
+	"get_validator_controller_data":      {DecodeGetValidatorControllerDataResult},
+	"get_vamm_type":                      {DecodeGetVammTypeResult},
+	"get_vault_contract_data":            {DecodeGetVaultContractDataResult},
+	"get_vault_data":                     {DecodeGetVaultDataResult},
+	"get_vault_type":                     {DecodeGetVaultTypeResult},
+	"get_vault_whitelisted_addresses":    {DecodeGetVaultWhitelistedAddressesResult},
+	"get_wallet_address":                 {DecodeGetWalletAddressResult},
+	"get_wallet_data":                    {DecodeGetWalletDataResult},
+	"get_wallet_params":                  {DecodeGetWalletParamsResult},
+	"is_active":                          {DecodeIsActiveResult},
+	"is_plugin_installed":                {DecodeIsPluginInstalledResult},
+	"jetton_wallet_lock_data":            {DecodeJettonWalletLockDataResult},
+	"list_nominators":                    {DecodeListNominatorsResult},
+	"list_votes":                         {DecodeListVotesResult},
+	"royalty_params":                     {DecodeRoyaltyParamsResult},
+	"seqno":                              {DecodeSeqnoResult},
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){
 	65971:  {GetReserves},
 	66763:  {GetFullDomain},
+	69018:  {GetVaultWhitelistedAddresses},
 	69506:  {GetTelemintTokenName},
 	69628:  {GetChannelData},
 	71463:  {GetTorrentHash},
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
+	75065:  {GetExecutorBalances},
 	75709:  {GetExecutorVaultsWhitelist},
 	78683:  {GetNextAdminAddress},
 	78748:  {GetPublicKey},
@@ -108,12 +120,15 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
+	83226:  {GetExecutorCollectionAddress},
 	83263:  {GetNftApiInfo},
+	83894:  {GetLpMinterAddress},
 	84760:  {GetAuthorityAddress},
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
 	86353:  {GetAmmState},
 	86593:  {GetStorageContractData},
+	86862:  {GetReferralCollectionAddress},
 	87635:  {GetAmmStatus},
 	87675:  {GetSpotPrice},
 	87878:  {GetBalances},
@@ -129,8 +144,10 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	96705:  {GetBillAmount},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
+	98607:  {GetVaultContractData},
 	100881: {GetStatus},
 	101616: {GetPowParams},
+	101877: {GetVaultType},
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
@@ -150,11 +167,14 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	118188: {GetAssets},
 	118274: {GetLockerBillData},
 	119378: {GetDomain},
+	119995: {GetPositionManagerContractData},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
 	122496: {GetAmmName},
 	122498: {GetTelemintAuctionState},
 	123928: {GetStakingStatus},
+	124861: {GetReferralVaultsWhitelist},
+	127184: {GetVaultData},
 	128085: {GetRouterData},
 	128979: {JettonWalletLockData},
 	129619: {GetTelemintAuctionConfig},
@@ -181,6 +201,8 @@ var resultTypes = []interface{}{
 	&GetDomainResult{},
 	&GetEditorResult{},
 	&GetExchangeSettingsResult{},
+	&GetExecutorBalancesResult{},
+	&GetExecutorCollectionAddressResult{},
 	&GetExecutorVaultsWhitelistResult{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
@@ -191,6 +213,7 @@ var resultTypes = []interface{}{
 	&GetLockupDataResult{},
 	&GetLpData_MegatonResult{},
 	&GetLpMiningData_MegatonResult{},
+	&GetLpMinterAddressResult{},
 	&GetLpSwapData_MegatonResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
@@ -210,9 +233,12 @@ var resultTypes = []interface{}{
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
 	&GetPoolStatusResult{},
+	&GetPositionManagerContractDataResult{},
 	&GetPowParamsResult{},
 	&GetPublicKeyResult{},
+	&GetReferralCollectionAddressResult{},
 	&GetReferralDataResult{},
+	&GetReferralVaultsWhitelistResult{},
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
 	&GetRouterData_StonfiResult{},
@@ -235,6 +261,10 @@ var resultTypes = []interface{}{
 	&GetTorrentHashResult{},
 	&GetValidatorControllerDataResult{},
 	&GetVammTypeResult{},
+	&GetVaultContractDataResult{},
+	&GetVaultDataResult{},
+	&GetVaultTypeResult{},
+	&GetVaultWhitelistedAddressesResult{},
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
@@ -904,6 +934,72 @@ func DecodeGetExchangeSettingsResult(stack tlb.VmStack) (resultType string, resu
 	return "GetExchangeSettingsResult", result, err
 }
 
+type GetExecutorBalancesResult struct {
+	BalancesDict boc.Cell
+}
+
+func GetExecutorBalances(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 75065 for "get_executor_balances" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 75065, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorBalancesResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetExecutorBalancesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetExecutorBalancesResult
+	err = stack.Unmarshal(&result)
+	return "GetExecutorBalancesResult", result, err
+}
+
+type GetExecutorCollectionAddressResult struct {
+	Data tlb.MsgAddress
+}
+
+func GetExecutorCollectionAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 83226 for "get_executor_collection_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 83226, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorCollectionAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetExecutorCollectionAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetExecutorCollectionAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetExecutorCollectionAddressResult", result, err
+}
+
 type GetExecutorVaultsWhitelistResult struct {
 	BalancesDict boc.Cell
 }
@@ -1257,6 +1353,39 @@ func DecodeGetLpMiningData_MegatonResult(stack tlb.VmStack) (resultType string, 
 	var result GetLpMiningData_MegatonResult
 	err = stack.Unmarshal(&result)
 	return "GetLpMiningData_MegatonResult", result, err
+}
+
+type GetLpMinterAddressResult struct {
+	Data tlb.MsgAddress
+}
+
+func GetLpMinterAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 83894 for "get_lp_minter_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 83894, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpMinterAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpMinterAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpMinterAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetLpMinterAddressResult", result, err
 }
 
 type GetLpSwapData_MegatonResult struct {
@@ -2020,6 +2149,39 @@ func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetPoolStatusResult", result, err
 }
 
+type GetPositionManagerContractDataResult struct {
+	Info boc.Cell
+}
+
+func GetPositionManagerContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 119995 for "get_position_manager_contract_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 119995, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPositionManagerContractDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPositionManagerContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPositionManagerContractDataResult
+	err = stack.Unmarshal(&result)
+	return "GetPositionManagerContractDataResult", result, err
+}
+
 type GetPowParamsResult struct {
 	Seed          tlb.Uint128
 	PowComplexity tlb.Int256
@@ -2089,6 +2251,39 @@ func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny a
 	return "GetPublicKeyResult", result, err
 }
 
+type GetReferralCollectionAddressResult struct {
+	Data tlb.MsgAddress
+}
+
+func GetReferralCollectionAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 86862 for "get_referral_collection_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 86862, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralCollectionAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetReferralCollectionAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetReferralCollectionAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetReferralCollectionAddressResult", result, err
+}
+
 type GetReferralDataResult struct {
 	ReferralType int32
 	Discount     uint32
@@ -2123,6 +2318,39 @@ func DecodeGetReferralDataResult(stack tlb.VmStack) (resultType string, resultAn
 	var result GetReferralDataResult
 	err = stack.Unmarshal(&result)
 	return "GetReferralDataResult", result, err
+}
+
+type GetReferralVaultsWhitelistResult struct {
+	BalancesDict boc.Cell
+}
+
+func GetReferralVaultsWhitelist(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 124861 for "get_referral_vaults_whitelist" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 124861, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralVaultsWhitelistResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetReferralVaultsWhitelistResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetReferralVaultsWhitelistResult
+	err = stack.Unmarshal(&result)
+	return "GetReferralVaultsWhitelistResult", result, err
 }
 
 type GetReserves_DedustResult struct {
@@ -2749,7 +2977,7 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 }
 
 type GetTerminalAmmPriceResult struct {
-	BalancesDict tlb.Any
+	TerminalPrice int64
 }
 
 func GetTerminalAmmPrice(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -2773,7 +3001,7 @@ func GetTerminalAmmPrice(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetTerminalAmmPriceResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTerminalAmmPriceResult
@@ -2924,6 +3152,144 @@ func DecodeGetVammTypeResult(stack tlb.VmStack) (resultType string, resultAny an
 	var result GetVammTypeResult
 	err = stack.Unmarshal(&result)
 	return "GetVammTypeResult", result, err
+}
+
+type GetVaultContractDataResult struct {
+	Data boc.Cell
+}
+
+func GetVaultContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 98607 for "get_vault_contract_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 98607, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultContractDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetVaultContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultContractDataResult
+	err = stack.Unmarshal(&result)
+	return "GetVaultContractDataResult", result, err
+}
+
+type GetVaultDataResult struct {
+	JettonWallet     tlb.MsgAddress
+	Rate             uint64
+	TotalSupply      uint64
+	FreeBalance      uint64
+	LockedBalance    uint64
+	StakersBalance   uint64
+	ExecutorsBalance uint64
+}
+
+func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 127184 for "get_vault_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 127184, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetVaultDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultDataResult
+	err = stack.Unmarshal(&result)
+	return "GetVaultDataResult", result, err
+}
+
+type GetVaultTypeResult struct {
+	VaultType uint32
+}
+
+func GetVaultType(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 101877 for "get_vault_type" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 101877, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultTypeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetVaultTypeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultTypeResult
+	err = stack.Unmarshal(&result)
+	return "GetVaultTypeResult", result, err
+}
+
+type GetVaultWhitelistedAddressesResult struct {
+	WhitelistedAddrsDict boc.Cell
+}
+
+func GetVaultWhitelistedAddresses(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 69018 for "get_vault_whitelisted_addresses" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 69018, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultWhitelistedAddressesResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetVaultWhitelistedAddressesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultWhitelistedAddressesResult
+	err = stack.Unmarshal(&result)
+	return "GetVaultWhitelistedAddressesResult", result, err
 }
 
 type GetWalletAddressResult struct {

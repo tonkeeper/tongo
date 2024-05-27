@@ -45,6 +45,7 @@ const (
 	StormExecutorCollection
 	StormPositionManager
 	StormReferral
+	StormReferralCollection
 	StormVamm
 	StormVault
 	SubscriptionV1
@@ -148,6 +149,8 @@ func (c ContractInterface) String() string {
 		return "storm_position_manager"
 	case StormReferral:
 		return "storm_referral"
+	case StormReferralCollection:
+		return "storm_referral_collection"
 	case StormVamm:
 		return "storm_vamm"
 	case StormVault:
@@ -279,6 +282,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StormPositionManager
 	case "storm_referral":
 		return StormReferral
+	case "storm_referral_collection":
+		return StormReferralCollection
 	case "storm_vamm":
 		return StormVamm
 	case "storm_vault":
@@ -396,6 +401,14 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetExchangeSettings,
 	},
 	{
+		Name:     "get_executor_balances",
+		InvokeFn: GetExecutorBalances,
+	},
+	{
+		Name:     "get_executor_collection_address",
+		InvokeFn: GetExecutorCollectionAddress,
+	},
+	{
 		Name:     "get_executor_vaults_whitelist",
 		InvokeFn: GetExecutorVaultsWhitelist,
 	},
@@ -434,6 +447,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_lp_mining_data",
 		InvokeFn: GetLpMiningData,
+	},
+	{
+		Name:     "get_lp_minter_address",
+		InvokeFn: GetLpMinterAddress,
 	},
 	{
 		Name:     "get_lp_swap_data",
@@ -492,6 +509,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPoolStatus,
 	},
 	{
+		Name:     "get_position_manager_contract_data",
+		InvokeFn: GetPositionManagerContractData,
+	},
+	{
 		Name:     "get_pow_params",
 		InvokeFn: GetPowParams,
 	},
@@ -500,8 +521,16 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPublicKey,
 	},
 	{
+		Name:     "get_referral_collection_address",
+		InvokeFn: GetReferralCollectionAddress,
+	},
+	{
 		Name:     "get_referral_data",
 		InvokeFn: GetReferralData,
+	},
+	{
+		Name:     "get_referral_vaults_whitelist",
+		InvokeFn: GetReferralVaultsWhitelist,
 	},
 	{
 		Name:     "get_reserves",
@@ -578,6 +607,22 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_vamm_type",
 		InvokeFn: GetVammType,
+	},
+	{
+		Name:     "get_vault_contract_data",
+		InvokeFn: GetVaultContractData,
+	},
+	{
+		Name:     "get_vault_data",
+		InvokeFn: GetVaultData,
+	},
+	{
+		Name:     "get_vault_type",
+		InvokeFn: GetVaultType,
+	},
+	{
+		Name:     "get_vault_whitelisted_addresses",
+		InvokeFn: GetVaultWhitelistedAddresses,
 	},
 	{
 		Name:     "get_wallet_data",
@@ -787,9 +832,40 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: StormReferralCollection,
+		Results: []string{
+			"GetReferralVaultsWhitelistResult",
+		},
+	},
+	{
+		Name: StormExecutor,
+		Results: []string{
+			"GetExecutorBalancesResult",
+			"GetNftDataResult",
+		},
+	},
+	{
 		Name: StormExecutorCollection,
 		Results: []string{
 			"GetAmmName_StormResult",
+		},
+	},
+	{
+		Name: StormVault,
+		Results: []string{
+			"GetExecutorCollectionAddressResult",
+			"GetLpMinterAddressResult",
+			"GetReferralCollectionAddressResult",
+			"GetVaultContractDataResult",
+			"GetVaultDataResult",
+			"GetVaultTypeResult",
+			"GetVaultWhitelistedAddressesResult",
+		},
+	},
+	{
+		Name: StormPositionManager,
+		Results: []string{
+			"GetPositionManagerContractDataResult",
 		},
 	},
 	{

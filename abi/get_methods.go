@@ -58,6 +58,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_pool_status":               {DecodeGetPoolStatusResult},
 	"get_pow_params":                {DecodeGetPowParamsResult},
 	"get_public_key":                {DecodeGetPublicKeyResult},
+	"get_referral_data":             {DecodeGetReferralDataResult},
 	"get_reserves":                  {DecodeGetReserves_DedustResult},
 	"get_revoked_time":              {DecodeGetRevokedTimeResult},
 	"get_router_data":               {DecodeGetRouterData_StonfiResult},
@@ -157,6 +158,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	128085: {GetRouterData},
 	128979: {JettonWalletLockData},
 	129619: {GetTelemintAuctionConfig},
+	129770: {GetReferralData},
 	130271: {GetWalletParams},
 	130309: {ListVotes},
 }
@@ -210,6 +212,7 @@ var resultTypes = []interface{}{
 	&GetPoolStatusResult{},
 	&GetPowParamsResult{},
 	&GetPublicKeyResult{},
+	&GetReferralDataResult{},
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
 	&GetRouterData_StonfiResult{},
@@ -2084,6 +2087,42 @@ func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny a
 	var result GetPublicKeyResult
 	err = stack.Unmarshal(&result)
 	return "GetPublicKeyResult", result, err
+}
+
+type GetReferralDataResult struct {
+	ReferralType int32
+	Discount     uint32
+	Rebate       uint32
+	BalancesDict boc.Cell
+}
+
+func GetReferralData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 129770 for "get_referral_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 129770, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetReferralDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetReferralDataResult
+	err = stack.Unmarshal(&result)
+	return "GetReferralDataResult", result, err
 }
 
 type GetReserves_DedustResult struct {

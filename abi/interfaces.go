@@ -500,6 +500,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPublicKey,
 	},
 	{
+		Name:     "get_referral_data",
+		InvokeFn: GetReferralData,
+	},
+	{
 		Name:     "get_reserves",
 		InvokeFn: GetReserves,
 	},
@@ -773,6 +777,13 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetSpotPrice_StormResult",
 			"GetTerminalAmmPrice_StormResult",
 			"GetVammType_StormResult",
+		},
+	},
+	{
+		Name: StormReferral,
+		Results: []string{
+			"GetNftDataResult",
+			"GetReferralData_StormResult",
 		},
 	},
 	{

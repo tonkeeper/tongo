@@ -468,6 +468,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNftData,
 	},
 	{
+		Name:     "get_oracle_data",
+		InvokeFn: GetOracleData,
+	},
+	{
 		Name:     "get_params",
 		InvokeFn: GetParams,
 	},
@@ -552,6 +556,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetTelemintTokenName,
 	},
 	{
+		Name:     "get_terminal_amm_price",
+		InvokeFn: GetTerminalAmmPrice,
+	},
+	{
 		Name:     "get_timeout",
 		InvokeFn: GetTimeout,
 	},
@@ -562,6 +570,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_validator_controller_data",
 		InvokeFn: GetValidatorControllerData,
+	},
+	{
+		Name:     "get_vamm_type",
+		InvokeFn: GetVammType,
 	},
 	{
 		Name:     "get_wallet_data",
@@ -757,6 +769,10 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetAmmContractData_StormResult",
 			"GetAmmName_StormResult",
 			"GetAmmStatus_StormResult",
+			"GetExchangeSettings_StormResult",
+			"GetSpotPrice_StormResult",
+			"GetTerminalAmmPrice_StormResult",
+			"GetVammType_StormResult",
 		},
 	},
 	{

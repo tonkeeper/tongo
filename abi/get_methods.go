@@ -50,6 +50,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nft_content":               {DecodeGetNftContentResult},
 	"get_nft_data":                  {DecodeGetNftDataResult},
 	"get_nominator_data":            {DecodeGetNominatorDataResult},
+	"get_oracle_data":               {DecodeGetOracleDataResult},
 	"get_params":                    {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":               {DecodeGetPluginListResult},
 	"get_pool_data":                 {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
@@ -72,9 +73,11 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_telemint_auction_config":   {DecodeGetTelemintAuctionConfigResult},
 	"get_telemint_auction_state":    {DecodeGetTelemintAuctionStateResult},
 	"get_telemint_token_name":       {DecodeGetTelemintTokenNameResult},
+	"get_terminal_amm_price":        {DecodeGetTerminalAmmPriceResult},
 	"get_timeout":                   {DecodeGetTimeoutResult},
 	"get_torrent_hash":              {DecodeGetTorrentHashResult},
 	"get_validator_controller_data": {DecodeGetValidatorControllerDataResult},
+	"get_vamm_type":                 {DecodeGetVammTypeResult},
 	"get_wallet_address":            {DecodeGetWalletAddressResult},
 	"get_wallet_data":               {DecodeGetWalletDataResult},
 	"get_wallet_params":             {DecodeGetWalletParamsResult},
@@ -113,6 +116,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	87635:  {GetAmmStatus},
 	87675:  {GetSpotPrice},
 	87878:  {GetBalances},
+	88817:  {GetOracleData},
 	89295:  {GetMembersRaw},
 	89352:  {GetAsset},
 	90228:  {GetEditor},
@@ -136,7 +140,9 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	106029: {GetJettonData},
 	107305: {GetLockupData},
 	107307: {GetMultisigData},
+	107494: {GetVammType},
 	107653: {GetPluginList},
+	108868: {GetTerminalAmmPrice},
 	111161: {ListNominators},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
@@ -195,6 +201,7 @@ var resultTypes = []interface{}{
 	&GetNftContentResult{},
 	&GetNftDataResult{},
 	&GetNominatorDataResult{},
+	&GetOracleDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
 	&GetPoolData_StonfiResult{},
@@ -220,9 +227,11 @@ var resultTypes = []interface{}{
 	&GetTelemintAuctionConfigResult{},
 	&GetTelemintAuctionStateResult{},
 	&GetTelemintTokenNameResult{},
+	&GetTerminalAmmPriceResult{},
 	&GetTimeoutResult{},
 	&GetTorrentHashResult{},
 	&GetValidatorControllerDataResult{},
+	&GetVammTypeResult{},
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
@@ -1705,6 +1714,45 @@ func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultA
 	return "GetNominatorDataResult", result, err
 }
 
+type GetOracleDataResult struct {
+	OracleLastPrice       uint64
+	OracleLastSpread      uint64
+	OracleLastTimestamp   uint32
+	OracleMaxDeviation    uint64
+	OracleValidityPeriod  uint32
+	OraclePublicKeysCount uint8
+	OraclePublicKeysRef   boc.Cell
+}
+
+func GetOracleData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 88817 for "get_oracle_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 88817, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOracleDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetOracleDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetOracleDataResult
+	err = stack.Unmarshal(&result)
+	return "GetOracleDataResult", result, err
+}
+
 type GetParams_WhalesNominatorResult struct {
 	Enabled        bool
 	UpdatesEnables bool
@@ -2238,7 +2286,7 @@ func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType strin
 }
 
 type GetSpotPriceResult struct {
-	SpotPrice int64
+	SpotPrice tlb.Grams
 }
 
 func GetSpotPrice(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -2661,6 +2709,39 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 	return "GetTelemintTokenNameResult", result, err
 }
 
+type GetTerminalAmmPriceResult struct {
+	BalancesDict tlb.Any
+}
+
+func GetTerminalAmmPrice(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 108868 for "get_terminal_amm_price" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 108868, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTerminalAmmPriceResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetTerminalAmmPriceResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetTerminalAmmPriceResult
+	err = stack.Unmarshal(&result)
+	return "GetTerminalAmmPriceResult", result, err
+}
+
 type GetTimeoutResult struct {
 	Timeout uint32
 }
@@ -2771,6 +2852,39 @@ func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType strin
 	var result GetValidatorControllerDataResult
 	err = stack.Unmarshal(&result)
 	return "GetValidatorControllerDataResult", result, err
+}
+
+type GetVammTypeResult struct {
+	VammType uint32
+}
+
+func GetVammType(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 107494 for "get_vamm_type" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 107494, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVammTypeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetVammTypeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVammTypeResult
+	err = stack.Unmarshal(&result)
+	return "GetVammTypeResult", result, err
 }
 
 type GetWalletAddressResult struct {

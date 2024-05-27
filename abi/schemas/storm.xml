@@ -33,6 +33,10 @@
         <get_method name="get_amm_name" version="storm"/>
         <get_method name="get_amm_status" version="storm"/>
         <get_method name="get_amm_contract_data" version="storm"/>
+        <get_method name="get_exchange_settings" version="storm"/>
+        <get_method name="get_spot_price" version="storm"/>
+        <get_method name="get_terminal_amm_price" version="storm"/>
+        <get_method name="get_vamm_type" version="storm"/>
         <msg_in>
             <internal name="storm_change_settings"/>
             <internal name="storm_pay_funding"/>
@@ -130,6 +134,14 @@
         </output>
     </get_method>
 
+    <get_method name="get_vamm_type">
+        <output> 
+            <int name="vamm_type">uint32</int>
+        </output>
+    </get_method>
+
+
+
     <get_method name="get_amm_state">
         <output>
             <int name="quote_asset_reserve">uint64</int>
@@ -178,13 +190,31 @@
 
     <get_method name="get_spot_price">
         <output>
-            <int name="spot_price">int64</int>
+            <int name="spot_price">Coins</int>
         </output>
     </get_method>
 
     <get_method name="get_executor_vaults_whitelist">
         <output>
             <cell name="balances_dict">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_terminal_amm_price">
+        <output>
+            <cell name="balances_dict">any</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_oracle_data">
+        <output>
+            <int name="oracle_last_price">uint64</int> 
+            <int name="oracle_last_spread">uint64</int> 
+            <int name="oracle_last_timestamp">uint32</int> 
+            <int name="oracle_max_deviation">uint64</int> 
+            <int name="oracle_validity_period">uint32</int> 
+            <int name="oracle_public_keys_count">uint8</int> <!-- actually we have uint4 here -->
+            <cell name="oracle_public_keys_ref">cell</cell>
         </output>
     </get_method>
 

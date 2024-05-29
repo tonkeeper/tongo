@@ -176,4 +176,7 @@
     <ext_in name="highload_wallet_signed_v3">
         signed#_ {n:#} signature:bits512 msg:^HighloadV3MsgInner = ExternalMsgBody;
     </ext_in>
+    <jetton_payload name="tonkeeper_relayer_fee">
+        tonkeeper_relayer_fee#878da6e3 = JettonPayload;
+    </jetton_payload>
 </abi>

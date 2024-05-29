@@ -109,6 +109,7 @@ The list below contains the supported message operations, their names and opcode
 | TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
 | TextComment| 0x00000000 |
+| TonkeeperRelayerFee| 0x878da6e3 |
 | TonstakeControllerNewStake| 0xe0505d0e |
 | TonstakeControllerPoolHalt| 0x139a1b4e |
 | TonstakeControllerPoolSendMessage| 0x270695fb |

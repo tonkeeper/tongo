@@ -175,7 +175,7 @@ func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
 // ExtractRawMessages extracts a list of RawMessages from an external message.
 func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 	switch ver {
-	case V5R1:
+	case V5Beta:
 		v5, err := DecodeMessageV5(msg)
 		if err != nil {
 			return nil, err

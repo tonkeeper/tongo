@@ -93,7 +93,7 @@
         <error code="39">Plugin not found</error>
         <error code="80">Not enough ton</error>
     </interface>
-    <interface name="wallet_v5r1" inherits="wallet">
+    <interface name="wallet_v5_beta" inherits="wallet">
         <code_hash>f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93</code_hash> <!-- with library -->
         <code_hash>e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412</code_hash> <!-- without library -->
         <get_method name="seqno"/>

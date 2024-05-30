@@ -63,7 +63,7 @@ const (
 	WalletV3R2
 	WalletV4R1
 	WalletV4R2
-	WalletV5R1
+	WalletV5Beta
 	WhalesPool
 )
 
@@ -179,8 +179,8 @@ func (c ContractInterface) String() string {
 		return "wallet_v4r1"
 	case WalletV4R2:
 		return "wallet_v4r2"
-	case WalletV5R1:
-		return "wallet_v5r1"
+	case WalletV5Beta:
+		return "wallet_v5_beta"
 	case WhalesPool:
 		return "whales_pool"
 	default:
@@ -300,8 +300,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV4R1
 	case "wallet_v4r2":
 		return WalletV4R2
-	case "wallet_v5r1":
-		return WalletV5R1
+	case "wallet_v5_beta":
+		return WalletV5Beta
 	case "whales_pool":
 		return WhalesPool
 	default:
@@ -780,7 +780,7 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletV4R2:
 		return Wallet.Implements(other)
-	case WalletV5R1:
+	case WalletV5Beta:
 		return Wallet.Implements(other)
 	}
 	return false
@@ -935,13 +935,13 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		},
 	},
 	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
-		contractInterfaces: []ContractInterface{WalletV5R1},
+		contractInterfaces: []ContractInterface{WalletV5Beta},
 		getMethods: []InvokeFn{
 			Seqno,
 		},
 	},
 	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
-		contractInterfaces: []ContractInterface{WalletV5R1},
+		contractInterfaces: []ContractInterface{WalletV5Beta},
 		getMethods: []InvokeFn{
 			Seqno,
 		},

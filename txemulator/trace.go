@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
+	codePkg "github.com/tonkeeper/tongo/code"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -221,7 +222,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 		if code == nil {
 			continue
 		}
-		hashes, err := FindLibraries(code)
+		hashes, err := codePkg.FindLibraries(code)
 		if err != nil {
 			return nil, err
 		}
@@ -236,7 +237,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 		}
 	}
 	if len(publicLibs) > 0 {
-		libsBoc, err := LibrariesToBase64(publicLibs)
+		libsBoc, err := codePkg.LibrariesToBase64(publicLibs)
 		if err != nil {
 			return nil, err
 		}

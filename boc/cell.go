@@ -77,6 +77,24 @@ func (c *Cell) IsExotic() bool {
 	return c.cellType != OrdinaryCell
 }
 
+func (c *Cell) IsLibrary() bool {
+	return c.cellType == LibraryCell
+}
+
+func (c *Cell) GetLibraryHash() ([32]byte, error) {
+	if !c.IsLibrary() {
+		return [32]byte{}, errors.New("not library cell")
+	}
+	bytes, err := c.ReadBytes(33)
+	if err != nil {
+		return [32]byte{}, err
+	}
+	var hash [32]byte
+	copy(hash[:], bytes[1:])
+	return hash, nil
+
+}
+
 func (c *Cell) CellType() CellType {
 	return c.cellType
 }

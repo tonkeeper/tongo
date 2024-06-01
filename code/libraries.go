@@ -1,4 +1,4 @@
-package txemulator
+package code
 
 import (
 	"github.com/tonkeeper/tongo/boc"

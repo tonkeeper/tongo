@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -112,8 +113,12 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			codeCell, _ := boc.DeserializeBoc(codeBytes)
 			dataCell, _ := boc.DeserializeBoc(dataBytes)
 			account := ton.MustParseAccountID(tt.account)
-			ci := NewContractInspector()
-			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], tvm.WithLazyC7Optimization())
+			cli, err := liteapi.NewClient(liteapi.FromEnvsOrMainnet())
+			if err != nil {
+				t.Fatalf("failed to create liteapi client: %v", err)
+			}
+			ci := NewContractInspector(InspectWithLibraryResolver(cli))
+			emulator, err := tvm.NewEmulator(codeCell[0], dataCell[0], mainnetConfig[0], tvm.WithLazyC7Optimization(), tvm.WithLibraryResolver(cli), tvm.WithIgnoreLibraryCells(true))
 			contractDescription, err := ci.InspectContract(context.Background(), codeBytes, emulator, account)
 			if err != nil {
 				t.Fatalf("InspectContract() failed: %v", err)
@@ -126,6 +131,9 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 				if err = tt.wantValidate(contractDescription); err != nil {
 					t.Fatalf("wantValidate() failed: %v", err)
 				}
+			}
+			for _, method := range contractDescription.GetMethods {
+				fmt.Printf("%v -> %#v\n", method.TypeHint, method.Result)
 			}
 		})
 	}
@@ -152,7 +160,7 @@ func Test_getCodeInfo(t *testing.T) {
 			if err != nil {
 				t.Fatalf("hex.DecodeString() failed: %v", err)
 			}
-			got, err := getCodeInfo(code)
+			got, err := getCodeInfo(context.Background(), code, nil)
 			if err != nil {
 				t.Fatalf("getCodeInfo() failed: %v", err)
 			}

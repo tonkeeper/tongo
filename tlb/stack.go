@@ -186,7 +186,7 @@ func (s *VmStack) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if depth == 0 {
 		return nil
 	}
-	list, err := getStackListItems(c, depth)
+	list, err := getStackListItems(c, depth, decoder)
 	if err != nil {
 		return err
 	}
@@ -194,7 +194,7 @@ func (s *VmStack) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
-func getStackListItems(c *boc.Cell, depth uint64) ([]VmStackValue, error) {
+func getStackListItems(c *boc.Cell, depth uint64, decoder *Decoder) ([]VmStackValue, error) {
 	var (
 		res []VmStackValue
 		tos VmStackValue
@@ -206,12 +206,12 @@ func getStackListItems(c *boc.Cell, depth uint64) ([]VmStackValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	rest, err := getStackListItems(restCell, depth-1)
+	rest, err := getStackListItems(restCell, depth-1, decoder)
 	if err != nil {
 		return nil, err
 	}
 	res = append(res, rest...)
-	err = Unmarshal(c, &tos)
+	err = decoder.Unmarshal(c, &tos)
 	if err != nil {
 		return nil, err
 	}

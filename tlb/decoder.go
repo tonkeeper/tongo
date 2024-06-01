@@ -7,15 +7,24 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 )
 
+type resolveLib func(hash Bits256) (*boc.Cell, error)
+
 // Decoder unmarshals a cell into a golang type.
 type Decoder struct {
-	hasher    *boc.Hasher
-	withDebug bool
-	debugPath []string
+	hasher     *boc.Hasher
+	withDebug  bool
+	debugPath  []string
+	resolveLib resolveLib
 }
 
 func (d *Decoder) WithDebug() *Decoder {
 	d.withDebug = true
+	return d
+}
+
+// WithLibraryResolver provides a function which is used to fetch a library cell by its hash.
+func (d *Decoder) WithLibraryResolver(resolveLib resolveLib) *Decoder {
+	d.resolveLib = resolveLib
 	return d
 }
 
@@ -47,6 +56,7 @@ func Unmarshal(c *boc.Cell, o any) error {
 }
 
 var bocCellType = reflect.TypeOf(boc.Cell{})
+var bocCellPointerType = reflect.TypeOf(&boc.Cell{})
 var bitStringType = reflect.TypeOf(boc.BitString{})
 
 func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error {
@@ -55,6 +65,27 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		defer func() {
 			decoder.debugPath = decoder.debugPath[:len(decoder.debugPath)-1]
 		}()
+	}
+	if c.IsLibrary() {
+		if val.Kind() == reflect.Ptr && val.Type() == bocCellPointerType {
+			// this is a library cell, and we unmarshal it to a cell.
+			// let's not resolve it and keep it as is
+			val.Elem().Set(reflect.ValueOf(c).Elem())
+			return nil
+		}
+		if decoder.resolveLib == nil {
+			// use WithLibraryResolver to provide a library resolver
+			return fmt.Errorf("library cell decoding is not configured properly")
+		}
+		hash, err := c.Hash256()
+		if err != nil {
+			return err
+		}
+		cell, err := decoder.resolveLib(hash)
+		if err != nil {
+			return err
+		}
+		c = cell
 	}
 	t, err := parseTag(tag)
 	if err != nil {
@@ -74,6 +105,9 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		if err != nil {
 			return err
 		}
+		if c.IsLibrary() {
+			return fmt.Errorf("library cell as a ref is not implemented")
+		}
 		if c.CellType() == boc.PrunedBranchCell {
 			return nil
 		}
@@ -91,6 +125,9 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		c, err = c.NextRef()
 		if err != nil {
 			return err
+		}
+		if c.IsLibrary() {
+			return fmt.Errorf("library cell as a ref is not implemented")
 		}
 		if c.CellType() == boc.PrunedBranchCell {
 			return nil

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
+	codePkg "github.com/tonkeeper/tongo/code"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/utils"
@@ -37,16 +38,22 @@ func (d ContractDescription) hasAllResults(results []string) bool {
 	return true
 }
 
+type libResolver interface {
+	GetLibraries(ctx context.Context, libraryList []ton.Bits256) (map[ton.Bits256]*boc.Cell, error)
+}
+
 type contractInspector struct {
 	knownMethods    []MethodDescription
 	knownInterfaces []InterfaceDescription
 	scanAllMethods  bool
+	libResolver     libResolver
 }
 
 type InspectorOptions struct {
 	additionalMethods []MethodDescription
 	knownInterfaces   []InterfaceDescription
 	scanAllMethods    bool
+	libResolver       libResolver
 }
 
 type ContractInterface uint32
@@ -90,8 +97,16 @@ func InspectWithAdditionalInterfaces(list []InterfaceDescription) InspectorOptio
 		o.knownInterfaces = list
 	}
 }
-func InspectWithAllMethods(o *InspectorOptions) {
-	o.scanAllMethods = true
+func InspectWithAllMethods() InspectorOption {
+	return func(o *InspectorOptions) {
+		o.scanAllMethods = true
+	}
+}
+
+func InspectWithLibraryResolver(resolver libResolver) InspectorOption {
+	return func(o *InspectorOptions) {
+		o.libResolver = resolver
+	}
 }
 
 func NewContractInspector(opts ...InspectorOption) *contractInspector {
@@ -103,6 +118,7 @@ func NewContractInspector(opts ...InspectorOption) *contractInspector {
 		knownMethods:    append(methodInvocationOrder, options.additionalMethods...),
 		knownInterfaces: append(contractInterfacesOrder, options.knownInterfaces...),
 		scanAllMethods:  options.scanAllMethods,
+		libResolver:     options.libResolver,
 	}
 }
 
@@ -115,7 +131,7 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		return &ContractDescription{}, nil
 	}
 	desc := ContractDescription{}
-	info, err := getCodeInfo(code)
+	info, err := getCodeInfo(ctx, code, ci.libResolver)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +188,7 @@ func (i codeInfo) isMethodOkToTry(name string) bool {
 	return ok
 }
 
-func getCodeInfo(code []byte) (*codeInfo, error) {
+func getCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*codeInfo, error) {
 	cells, err := boc.DeserializeBoc(code)
 	if err != nil {
 		return nil, err
@@ -180,12 +196,38 @@ func getCodeInfo(code []byte) (*codeInfo, error) {
 	if len(cells) == 0 {
 		return nil, fmt.Errorf("failed to find a root cell")
 	}
-	h, err := cells[0].Hash256()
+	root := cells[0]
+	libHashes, err := codePkg.FindLibraries(root)
+	if err != nil {
+		return nil, fmt.Errorf("failed while looking for libraries inside cell: %w", err)
+	}
+	var libs map[ton.Bits256]*boc.Cell
+	if len(libHashes) > 0 {
+		if resolver == nil {
+			return nil, fmt.Errorf("found libraries in cell, but no resolver provided")
+		}
+		libs, err = resolver.GetLibraries(ctx, libHashes)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch libraries: %w", err)
+		}
+	}
+	h, err := root.Hash256()
 	if err != nil {
 		return nil, err
 	}
-	cells[0].ResetCounters()
-	c, err := cells[0].NextRef()
+	root.ResetCounters()
+	if root.IsLibrary() {
+		hash, err := root.GetLibraryHash()
+		if err != nil {
+			return nil, err
+		}
+		cell, ok := libs[ton.Bits256(hash)]
+		if !ok {
+			return nil, fmt.Errorf("library not found")
+		}
+		root = cell
+	}
+	c, err := root.NextRef()
 	if err != nil {
 		// we are OK, if there is no information about get methods
 		return &codeInfo{hash: h}, nil
@@ -194,7 +236,25 @@ func getCodeInfo(code []byte) (*codeInfo, error) {
 		Hashmap tlb.Hashmap[tlb.Uint19, boc.Cell]
 	}
 	var getMethods GetMethods
-	err = tlb.Unmarshal(c, &getMethods)
+	decoder := tlb.NewDecoder().WithLibraryResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
+		if resolver == nil {
+			return nil, fmt.Errorf("failed to fetch library: no resolver provided")
+		}
+		cell, ok := libs[ton.Bits256(hash)]
+		if ok {
+			return cell, nil
+		}
+		localLibs, err := resolver.GetLibraries(ctx, []ton.Bits256{ton.Bits256(hash)})
+		if err != nil {
+			return nil, err
+		}
+		if len(localLibs) == 0 {
+			return nil, fmt.Errorf("library not found")
+		}
+		return localLibs[ton.Bits256(hash)], nil
+	})
+
+	err = decoder.Unmarshal(c, &getMethods)
 	if err != nil {
 		// we are OK, if there is no information about get methods
 		return &codeInfo{hash: h}, nil

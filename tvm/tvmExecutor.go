@@ -24,19 +24,27 @@ import (
 	"github.com/tonkeeper/tongo/utils"
 )
 
+type libResolver interface {
+	GetLibraries(ctx context.Context, libraryList []ton.Bits256) (map[ton.Bits256]*boc.Cell, error)
+}
+
 type Emulator struct {
-	emulator unsafe.Pointer
-	config   string
-	balance  uint64
-	lazyC7   bool
+	emulator           unsafe.Pointer
+	config             string
+	balance            uint64
+	lazyC7             bool
+	libResolver        libResolver
+	ignoreLibraryCells bool
 }
 
 type Options struct {
 	verbosityLevel txemulator.VerbosityLevel
 	balance        int64
 	// libraries is a list of available libraries encoded as a base64 string.
-	libraries string
-	lazyC7    bool
+	libraries          string
+	lazyC7             bool
+	libResolver        libResolver
+	ignoreLibraryCells bool
 }
 
 type Option func(o *Options)
@@ -73,11 +81,24 @@ func WithLazyC7Optimization() Option {
 	}
 }
 
+func WithLibraryResolver(resolver libResolver) Option {
+	return func(o *Options) {
+		o.libResolver = resolver
+	}
+}
+
+func WithIgnoreLibraryCells(ignore bool) Option {
+	return func(o *Options) {
+		o.ignoreLibraryCells = ignore
+	}
+}
+
 func defaultOptions() Options {
 	return Options{
-		lazyC7:         false,
-		balance:        1_000_000_000,
-		verbosityLevel: txemulator.LogTruncated,
+		lazyC7:             false,
+		balance:            1_000_000_000,
+		verbosityLevel:     txemulator.LogTruncated,
+		ignoreLibraryCells: true,
 	}
 }
 
@@ -119,10 +140,12 @@ func NewEmulatorFromBOCsBase64(code, data, config string, opts ...Option) (*Emul
 		return nil, fmt.Errorf("failed to create emulator")
 	}
 	e := Emulator{
-		emulator: emulator,
-		config:   config,
-		lazyC7:   options.lazyC7,
-		balance:  uint64(options.balance),
+		emulator:           emulator,
+		config:             config,
+		lazyC7:             options.lazyC7,
+		balance:            uint64(options.balance),
+		libResolver:        options.libResolver,
+		ignoreLibraryCells: options.ignoreLibraryCells,
 	}
 	if len(options.libraries) > 0 {
 		if err := e.setLibs(options.libraries); err != nil {
@@ -272,7 +295,23 @@ func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId ton.AccountID
 		return 0, tlb.VmStack{}, err
 	}
 	var stack tlb.VmStack
-	err = tlb.Unmarshal(c[0], &stack)
+	decoder := tlb.NewDecoder()
+	if e.libResolver != nil {
+		decoder = decoder.WithLibraryResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
+			if e.libResolver == nil {
+				return nil, fmt.Errorf("failed to fetch library: no resolver provided")
+			}
+			libs, err := e.libResolver.GetLibraries(ctx, []ton.Bits256{ton.Bits256(hash)})
+			if err != nil {
+				return nil, err
+			}
+			if len(libs) == 0 {
+				return nil, fmt.Errorf("library not found")
+			}
+			return libs[ton.Bits256(hash)], nil
+		})
+	}
+	err = decoder.Unmarshal(c[0], &stack)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}

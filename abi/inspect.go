@@ -40,11 +40,13 @@ func (d ContractDescription) hasAllResults(results []string) bool {
 type contractInspector struct {
 	knownMethods    []MethodDescription
 	knownInterfaces []InterfaceDescription
+	scanAllMethods  bool
 }
 
 type InspectorOptions struct {
 	additionalMethods []MethodDescription
 	knownInterfaces   []InterfaceDescription
+	scanAllMethods    bool
 }
 
 type ContractInterface uint32
@@ -88,6 +90,9 @@ func InspectWithAdditionalInterfaces(list []InterfaceDescription) InspectorOptio
 		o.knownInterfaces = list
 	}
 }
+func InspectWithAllMethods(o *InspectorOptions) {
+	o.scanAllMethods = true
+}
 
 func NewContractInspector(opts ...InspectorOption) *contractInspector {
 	options := &InspectorOptions{}
@@ -97,6 +102,7 @@ func NewContractInspector(opts ...InspectorOption) *contractInspector {
 	return &contractInspector{
 		knownMethods:    append(methodInvocationOrder, options.additionalMethods...),
 		knownInterfaces: append(contractInterfacesOrder, options.knownInterfaces...),
+		scanAllMethods:  options.scanAllMethods,
 	}
 }
 
@@ -131,7 +137,7 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 
 	for _, method := range ci.knownMethods {
 		// let's avoid running get methods that we know don't exist
-		if !info.isMethodOkToTry(method.Name) {
+		if !ci.scanAllMethods && !info.isMethodOkToTry(method.Name) {
 			continue
 		}
 		typeHint, result, err := method.InvokeFn(ctx, executor, reqAccountID)

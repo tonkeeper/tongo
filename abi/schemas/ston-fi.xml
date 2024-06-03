@@ -21,6 +21,28 @@
         </output>
     </get_method>
 
+    <get_method name="get_pool_address">
+        <input>
+            <slice name="token0">msgaddress</slice>
+            <slice name="token1">msgaddress</slice>
+        </input>
+        <output version="stonfi" fixed_length="true">
+            <slice name="pool_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_expected_outputs">
+        <input>
+            <int name="amount">int257</int>
+            <slice name="token_wallet">msgaddress</slice>
+        </input>
+        <output version="stonfi" fixed_length="true">
+            <int name="out">int257</int>
+            <int name="protocol_fee_out">int257</int>
+            <int name="ref_fee_out">int257</int>
+        </output>
+    </get_method>
+
     <get_method name="get_pool_data">
         <output version="stonfi" fixed_length="true">
             <int name="reserve0">int257</int>

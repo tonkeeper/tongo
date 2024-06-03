@@ -77,7 +77,7 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		if val.Kind() == reflect.Ptr && val.Type() == bocTlbANyPointerType {
 			//todo: remove
 			a := Any(*c)
-			val.Elem().Set(reflect.ValueOf(a).Elem())
+			val.Elem().Set(reflect.ValueOf(a))
 			return nil
 		}
 		if decoder.resolveLib == nil {

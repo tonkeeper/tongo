@@ -57,6 +57,7 @@ func Unmarshal(c *boc.Cell, o any) error {
 
 var bocCellType = reflect.TypeOf(boc.Cell{})
 var bocCellPointerType = reflect.TypeOf(&boc.Cell{})
+var bocTlbANyPointerType = reflect.TypeOf(&Any{})
 var bitStringType = reflect.TypeOf(boc.BitString{})
 
 func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error {
@@ -71,6 +72,12 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			// this is a library cell, and we unmarshal it to a cell.
 			// let's not resolve it and keep it as is
 			val.Elem().Set(reflect.ValueOf(c).Elem())
+			return nil
+		}
+		if val.Kind() == reflect.Ptr && val.Type() == bocTlbANyPointerType {
+			//todo: remove
+			a := Any(*c)
+			val.Elem().Set(reflect.ValueOf(a).Elem())
 			return nil
 		}
 		if decoder.resolveLib == nil {

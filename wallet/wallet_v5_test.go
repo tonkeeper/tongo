@@ -9,7 +9,7 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-func TestGetW5PluginList(t *testing.T) {
+func TestGetW5ExtensionsList(t *testing.T) {
 	tests := []struct {
 		name           string
 		accountID      string
@@ -36,12 +36,12 @@ func TestGetW5PluginList(t *testing.T) {
 			if err != nil {
 				t.Fatalf("GetAccountState() error = %v", err)
 			}
-			extensions, err := GetW5PluginList(state)
+			extensions, err := GetW5ExtensionsList(state)
 			if err != nil {
-				t.Fatalf("GetW5PluginList() error = %v", err)
+				t.Fatalf("GetW5ExtensionsList() error = %v", err)
 			}
 			if !reflect.DeepEqual(extensions, tt.wantExtensions) {
-				t.Errorf("GetW5PluginList() = %v, want %v", extensions, tt.wantExtensions)
+				t.Errorf("GetW5ExtensionsList() = %v, want %v", extensions, tt.wantExtensions)
 			}
 		})
 	}

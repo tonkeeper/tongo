@@ -69,20 +69,20 @@ func (w *walletV3) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, intern
 	return signBodyCell(*bodyCell, privateKey)
 }
 
-func (w *walletV3) nextMessageParams(state tlb.ShardAccount) (nextMsgParams, error) {
+func (w *walletV3) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	if state.Account.Status() == tlb.AccountActive {
 		var data DataV3
 		cell := boc.Cell(state.Account.Account.Storage.State.AccountActive.StateInit.Data.Value.Value)
 		if err := tlb.Unmarshal(&cell, &data); err != nil {
-			return nextMsgParams{}, err
+			return NextMsgParams{}, err
 		}
-		return nextMsgParams{
+		return NextMsgParams{
 			Seqno: data.Seqno,
 		}, nil
 	}
 	init, err := w.generateStateInit()
 	if err != nil {
-		return nextMsgParams{}, err
+		return NextMsgParams{}, err
 	}
-	return nextMsgParams{Init: init}, nil
+	return NextMsgParams{Init: init}, nil
 }

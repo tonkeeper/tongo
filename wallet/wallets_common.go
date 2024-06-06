@@ -9,7 +9,7 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-type nextMsgParams struct {
+type NextMsgParams struct {
 	Seqno uint32
 	Init  *tlb.StateInit
 }
@@ -19,7 +19,7 @@ type wallet interface {
 	generateStateInit() (*tlb.StateInit, error)
 	maxMessageNumber() int
 	createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error)
-	nextMessageParams(state tlb.ShardAccount) (nextMsgParams, error)
+	NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error)
 }
 
 func defaultOr[T any](value *T, defaultValue T) T {

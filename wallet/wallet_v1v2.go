@@ -54,6 +54,6 @@ func (w *walletV1V2) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, inte
 	panic("implement me")
 }
 
-func (w *walletV1V2) nextMessageParams(state tlb.ShardAccount) (nextMsgParams, error) {
+func (w *walletV1V2) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	panic("implement me")
 }

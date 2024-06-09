@@ -192,7 +192,17 @@ func AccountIDFromTlb(a tlb.MsgAddress) (*AccountID, error) {
 	case "AddrNone", "AddrExtern": //todo: make something with external addresses
 		return nil, nil
 	case "AddrStd":
-		return &AccountID{Workchain: int32(a.AddrStd.WorkchainId), Address: a.AddrStd.Address}, nil
+		address := a.AddrStd.Address
+		if a.AddrStd.Anycast.Exists {
+			prefix := binary.BigEndian.Uint32(address[:4])
+			maskLength := a.AddrStd.Anycast.Value.Depth
+			mask := uint32(1)<<(32-maskLength) - 1
+			rewrite := a.AddrStd.Anycast.Value.RewritePfx << (32 - maskLength)
+			prefix &= mask
+			prefix |= rewrite
+			binary.BigEndian.PutUint32(address[:4], prefix)
+		}
+		return &AccountID{Workchain: int32(a.AddrStd.WorkchainId), Address: address}, nil
 	}
 	return nil, fmt.Errorf("can not convert not std address to AccountId")
 }

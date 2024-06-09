@@ -20,7 +20,7 @@ type DataV5 struct {
 	Seqno      tlb.Uint33
 	WalletID   WalletV5ID
 	PublicKey  tlb.Bits256
-	PluginDict tlb.HashmapE[tlb.Bits264, tlb.Uint8] // TODO: find type and check size
+	Extensions tlb.HashmapE[tlb.Bits256, tlb.Uint8]
 }
 
 type walletV5 struct {
@@ -149,4 +149,32 @@ func (w *walletV5) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, intern
 		return nil, err
 	}
 	return bodyCell, nil
+}
+
+func unpackAddr(wc int8, addr [32]byte) ton.AccountID {
+	addr[31] = addr[31] ^ uint8(wc+1)
+	return ton.AccountID{
+		Workchain: int32(wc),
+		Address:   addr,
+	}
+}
+
+// GetW5ExtensionsList returns a list of wallet v5 extensions added to a specific wallet.
+func GetW5ExtensionsList(state tlb.ShardAccount) (map[ton.AccountID]struct{}, error) {
+	if state.Account.Status() == tlb.AccountActive {
+		var data DataV5
+		cell := boc.Cell(state.Account.Account.Storage.State.AccountActive.StateInit.Data.Value.Value)
+		if err := tlb.Unmarshal(&cell, &data); err != nil {
+			return nil, err
+		}
+		if len(data.Extensions.Keys()) == 0 {
+			return nil, nil
+		}
+		extensions := make(map[ton.AccountID]struct{}, len(data.Extensions.Keys()))
+		for _, item := range data.Extensions.Items() {
+			extensions[unpackAddr(int8(item.Value), item.Key)] = struct{}{}
+		}
+		return extensions, nil
+	}
+	return nil, nil
 }

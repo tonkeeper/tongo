@@ -419,6 +419,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetNftData,
 	},
 	{
+		Name:     "get_order_data",
+		InvokeFn: GetOrderData,
+	},
+	{
 		Name:     "get_params",
 		InvokeFn: GetParams,
 	},
@@ -890,7 +894,9 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
 		contractInterfaces: []ContractInterface{MultisigOrderV2},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			GetOrderData,
+		},
 	},
 	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
 		contractInterfaces: []ContractInterface{WalletV1R1},
@@ -916,7 +922,9 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac"): {
 		contractInterfaces: []ContractInterface{MultisigV2},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			GetMultisigData,
+		},
 	},
 	ton.MustParseHash("d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c"): {
 		contractInterfaces: []ContractInterface{WalletV1R2},

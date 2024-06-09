@@ -44,6 +44,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nft_content":               {DecodeGetNftContentResult},
 	"get_nft_data":                  {DecodeGetNftDataResult},
 	"get_nominator_data":            {DecodeGetNominatorDataResult},
+	"get_order_data":                {DecodeGetOrderDataResult},
 	"get_params":                    {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":               {DecodeGetPluginListResult},
 	"get_pool_data":                 {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
@@ -133,6 +134,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	120146: {GetPoolStatus},
 	122058: {IsActive},
 	122498: {GetTelemintAuctionState},
+	123832: {GetOrderData},
 	123928: {GetStakingStatus},
 	128085: {GetRouterData},
 	128979: {JettonWalletLockData},
@@ -175,6 +177,7 @@ var resultTypes = []interface{}{
 	&GetNftContentResult{},
 	&GetNftDataResult{},
 	&GetNominatorDataResult{},
+	&GetOrderDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
 	&GetPoolData_StonfiResult{},
@@ -1447,6 +1450,47 @@ func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultA
 	var result GetNominatorDataResult
 	err = stack.Unmarshal(&result)
 	return "GetNominatorDataResult", result, err
+}
+
+type GetOrderDataResult struct {
+	MultisigAddress  tlb.MsgAddress
+	OrderSeqno       tlb.Int256
+	Threshold        uint8
+	SentForExecution bool
+	Signers          tlb.Hashmap[tlb.Uint8, tlb.MsgAddress]
+	ApprovalsMask    tlb.Int256
+	ApprovalsNum     uint8
+	ExpirationDate   uint64
+	Order            MultisigOrder
+}
+
+func GetOrderData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 123832 for "get_order_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 123832, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOrderDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetOrderDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetOrderDataResult
+	err = stack.Unmarshal(&result)
+	return "GetOrderDataResult", result, err
 }
 
 type GetParams_WhalesNominatorResult struct {

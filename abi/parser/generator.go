@@ -308,6 +308,14 @@ func (g *Generator) checkType(s string) (string, error) {
 	if typeName, prs := g.knownTypes[strings.ToLower(s)]; prs {
 		return typeName.Name, nil
 	}
+	if strings.HasPrefix(s, "Hashmap") {
+		t := strings.Split(s, " ")
+		subType, err := g.checkType(t[2])
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("tlb.%v[tlb.Uint%s, %v]", t[0], t[1], subType), nil
+	}
 	_, ok := g.newTlbTypes[s]
 	if !ok {
 		return "", fmt.Errorf("not defined type: %s", s)

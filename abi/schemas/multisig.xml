@@ -15,6 +15,7 @@
 
     <interface name="multisig_v2">
         <code_hash>d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac</code_hash>
+        <get_method name="get_multisig_data"/>
         <error code="1007">Unauthorized proposer</error>
         <error code="1008">Invalid new order</error>
         <error code="100">Not enough ton</error>
@@ -29,6 +30,7 @@
 
     <interface name="multisig_order_v2">
         <code_hash>a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc</code_hash> <!-- with library -->
+        <get_method name="get_order_data"/>
         <error code="104">Unauthorized init</error>
         <error code="105">Already inited</error>
         <error code="106">Unauthorized sign</error>
@@ -45,6 +47,21 @@
             <int name="threshold">uint8</int>
             <cell name="signers">MultisigSignersList</cell>
             <cell name="proposers" nullable="true">MultisigProposersList</cell>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_order_data">
+        <output>
+            <slice name="multisig_address">msgaddress</slice>
+            <int name="order_seqno">int256</int>
+            <int name="threshold">uint8</int>
+            <int name="sent_for_execution">bool</int>
+            <cell name="signers">Hashmap 8 MsgAddress</cell>
+            <int name="approvals_mask">int256</int>
+            <int name="approvals_num">uint8</int>
+            <int name="expiration_date">uint64</int>
+            <cell name="order">MultisigOrder</cell>
         </output>
     </get_method>
 

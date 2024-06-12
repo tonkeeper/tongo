@@ -20,6 +20,7 @@ type ContractDescription struct {
 	// Interfaces is a list of interfaces implemented by a contract.
 	ContractInterfaces []ContractInterface
 	GetMethods         []MethodInvocation
+	MethodsInspected   int
 }
 
 func (d ContractDescription) hasAllResults(results []string) bool {
@@ -139,6 +140,7 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 	if contract, ok := knownContracts[info.hash]; ok { //for known contracts we just need to run get methods
 		desc.ContractInterfaces = contract.contractInterfaces
 		for _, method := range contract.getMethods {
+			desc.MethodsInspected += 1
 			typeHint, result, err := method(ctx, executor, reqAccountID)
 			if err != nil {
 				return &desc, nil
@@ -156,6 +158,7 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		if !ci.scanAllMethods && !info.isMethodOkToTry(method.Name) {
 			continue
 		}
+		desc.MethodsInspected += 1
 		typeHint, result, err := method.InvokeFn(ctx, executor, reqAccountID)
 		if err != nil {
 			continue

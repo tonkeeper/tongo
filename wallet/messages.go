@@ -188,7 +188,7 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 		}
 		// TODO: check opcode
 		return v4.RawMessages, nil
-	case V3R1, V3R2:
+	case V3R1, V3R2, V3R2Lockup:
 		v3, err := DecodeMessageV3(msg)
 		if err != nil {
 			return nil, err
@@ -211,7 +211,7 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 // Otherwise, it returns an error.
 func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) error {
 	switch ver {
-	case V3R1, V3R2, V4R1, V4R2, HighLoadV2R2:
+	case V3R1, V3R2, V3R2Lockup, V4R1, V4R2, HighLoadV2R2:
 		signedMsgBody, err := extractSignedMsgBody(msg)
 		if err != nil {
 			return err

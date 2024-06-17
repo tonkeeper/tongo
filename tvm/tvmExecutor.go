@@ -33,6 +33,7 @@ type Emulator struct {
 	config             string
 	balance            uint64
 	lazyC7             bool
+	c7Set              bool
 	libResolver        libResolver
 	ignoreLibraryCells bool
 }
@@ -224,6 +225,7 @@ func (e *Emulator) setC7(address string, unixTime uint32) error {
 	if !ok {
 		return fmt.Errorf("set C7 error")
 	}
+	e.c7Set = true
 	return nil
 }
 
@@ -263,7 +265,7 @@ func (e *Emulator) RunSmcMethod(ctx context.Context, accountId ton.AccountID, me
 }
 
 func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error) {
-	if !e.lazyC7 {
+	if !e.lazyC7 && !e.c7Set {
 		err := e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
 		if err != nil {
 			return 0, tlb.VmStack{}, err
@@ -273,7 +275,7 @@ func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId ton.AccountID
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
-	if res.Success && res.VmExitCode != 0 && res.VmExitCode != 1 && e.lazyC7 {
+	if res.Success && res.VmExitCode != 0 && res.VmExitCode != 1 && e.lazyC7 && !e.c7Set {
 		err = e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
 		if err != nil {
 			return 0, tlb.VmStack{}, err

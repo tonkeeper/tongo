@@ -29,5 +29,8 @@ var KnownMethods = map[MethodCode]tvmPrecompiled{
 	{MethodID: 107653, CodeHash: ton.MustParseHash("feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0")}: walletv4r2getPluginList,
 
 	//jetton v1 get_wallet_data
-	//{MethodID: 97026, CodeHash: ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce")}: jettonV1getWalletData,
+	{MethodID: 97026, CodeHash: ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce")}: jettonV1getWalletData,
+
+	//nft_item simple
+	{MethodID: 102351, CodeHash: ton.MustParseHash("4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42")}: nftV1getNftData,
 }

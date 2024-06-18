@@ -7,8 +7,6 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-// todo: need to cover test corner cases about int size near int64 max value
-// DO NOT USE UNTIL FIX TODO!!!
 var jettonV1getWalletData = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
 	var body struct {
 		Amount tlb.VarUInteger16

@@ -27,7 +27,18 @@ func TestSimpleEmulation(t *testing.T) {
 	w, err := wallet.DefaultWalletFromSeed(SEED, client)
 	seqno := uint32(0)
 
-	mock, messages := wallet.NewMockBlockchain(seqno, tontest.Account().Address(ton.AccountID{}).State(tlb.AccountActive).MustShardAccount())
+	data := wallet.DataV4{Seqno: 0}
+	dataCell := boc.NewCell()
+	if err := tlb.Marshal(dataCell, data); err != nil {
+		panic(err)
+	}
+	codeCell := wallet.GetCodeByVer(wallet.V4R2)
+	account := tontest.Account().
+		Address(ton.AccountID{}).
+		State(tlb.AccountUninit).
+		StateInit(codeCell, dataCell).
+		MustShardAccount()
+	mock, messages := wallet.NewMockBlockchain(seqno, account)
 	w, err = wallet.DefaultWalletFromSeed(SEED, mock)
 	if err != nil {
 		t.Fatal(err)

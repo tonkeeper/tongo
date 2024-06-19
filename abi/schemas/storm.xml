@@ -135,20 +135,20 @@
     <!-- GET METHODS -->
 
     <get_method name="get_amm_contract_data">
-        <output>
+        <output version="storm" fixed_length="true">
             <cell name="amm_contract_data">cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_amm_name">
-        <output>
+        <output version="storm" fixed_length="true">
             <slice name="vault_addr">msgaddress</slice>
             <int name="asset_id">uint16</int>
         </output>
     </get_method>
 
     <get_method name="get_amm_status">
-        <output> 
+        <output version="storm" fixed_length="true">
             <int name="close_only">bool</int>
             <int name="paused">bool</int>
             <int name="direct_increase_enabled">bool</int>
@@ -156,25 +156,25 @@
     </get_method>
 
     <get_method name="get_vamm_type">
-        <output> 
+        <output version="storm" fixed_length="true">
             <int name="vamm_type">uint32</int>
         </output>
     </get_method>
 
     <get_method name="get_referral_vaults_whitelist">
-        <output> 
+        <output version="storm" fixed_length="true">
             <cell name="balances_dict">Cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_position_manager_contract_data">
-        <output>
+        <output version="storm" fixed_length="true">
             <cell name="info">cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_amm_state">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="quote_asset_reserve">uint64</int>
             <int name="base_asset_reserve">uint64</int>
             <int name="quote_asset_weight">uint64</int>
@@ -189,7 +189,7 @@
     </get_method>
 
     <get_method name="get_exchange_settings">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="fee">uint32</int>
             <int name="rollover_fee">uint32</int>
             <int name="funding_period">uint32</int>
@@ -220,32 +220,32 @@
     </get_method>
 
     <get_method name="get_spot_price">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="spot_price">Coins</int>
         </output>
     </get_method>
 
     <get_method name="get_executor_vaults_whitelist">
-        <output>
+        <output version="storm" fixed_length="true">
             <cell name="balances_dict">cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_terminal_amm_price">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="terminal_price">int64</int>
         </output>
     </get_method>
 
 
     <get_method name="get_executor_balances">
-        <output>
+        <output version="storm" fixed_length="true">
             <cell name="balances_dict">Cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_oracle_data">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="oracle_last_price">uint64</int> 
             <int name="oracle_last_spread">uint64</int> 
             <int name="oracle_last_timestamp">uint32</int> 
@@ -257,7 +257,7 @@
     </get_method>
 
     <get_method name="get_referral_data">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="referral_type">int32</int> <!-- actually we have uint2 here -->
             <int name="discount">uint32</int>
             <int name="rebate">uint32</int>
@@ -267,25 +267,25 @@
 
 
     <get_method name="get_executor_collection_address">
-        <output>
+        <output version="storm" fixed_length="true">
             <slice name="data">msgaddress</slice>
         </output>
     </get_method>
 
     <get_method name="get_referral_collection_address">
-        <output>
+        <output version="storm" fixed_length="true">
             <slice name="data">msgaddress</slice>
         </output>
     </get_method>
 
     <get_method name="get_vault_contract_data">
-        <output>
+        <output version="storm" fixed_length="true">
             <cell name="data">cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_lp_minter_address">
-        <output>
+        <output version="storm" fixed_length="true">
             <slice name="data">msgaddress</slice>
         </output>
     </get_method>
@@ -293,13 +293,13 @@
 
 
     <get_method name="get_vault_whitelisted_addresses">
-        <output>
+        <output version="storm" fixed_length="true">
             <cell name="whitelisted_addrs_dict">Cell</cell>
         </output>
     </get_method>
 
     <get_method name="get_vault_data">
-        <output>
+        <output version="storm" fixed_length="true">
             <slice name="jetton_wallet">msgaddress</slice>
             <int name="rate">uint64</int>
             <int name="total_supply">uint64</int>
@@ -311,7 +311,7 @@
     </get_method>
 
     <get_method name="get_vault_type">
-        <output>
+        <output version="storm" fixed_length="true">
             <int name="vault_type">uint32</int>
         </output>
     </get_method>

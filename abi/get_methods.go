@@ -12,10 +12,10 @@ import (
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
 	"dnsresolve":                         {DecodeDnsresolve_RecordsResult},
-	"get_amm_contract_data":              {DecodeGetAmmContractDataResult},
-	"get_amm_name":                       {DecodeGetAmmNameResult},
-	"get_amm_state":                      {DecodeGetAmmStateResult},
-	"get_amm_status":                     {DecodeGetAmmStatusResult},
+	"get_amm_contract_data":              {DecodeGetAmmContractData_StormResult},
+	"get_amm_name":                       {DecodeGetAmmName_StormResult},
+	"get_amm_state":                      {DecodeGetAmmState_StormResult},
+	"get_amm_status":                     {DecodeGetAmmStatus_StormResult},
 	"get_asset":                          {DecodeGetAsset_DedustResult},
 	"get_assets":                         {DecodeGetAssets_DedustResult},
 	"get_auction_info":                   {DecodeGetAuctionInfoResult},
@@ -27,10 +27,10 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_collection_data":                {DecodeGetCollectionDataResult},
 	"get_domain":                         {DecodeGetDomainResult},
 	"get_editor":                         {DecodeGetEditorResult},
-	"get_exchange_settings":              {DecodeGetExchangeSettingsResult},
-	"get_executor_balances":              {DecodeGetExecutorBalancesResult},
-	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddressResult},
-	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelistResult},
+	"get_exchange_settings":              {DecodeGetExchangeSettings_StormResult},
+	"get_executor_balances":              {DecodeGetExecutorBalances_StormResult},
+	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddress_StormResult},
+	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelist_StormResult},
 	"get_full_domain":                    {DecodeGetFullDomainResult},
 	"get_jetton_data":                    {DecodeGetJettonDataResult},
 	"get_last_clean_time":                {DecodeGetLastCleanTimeResult},
@@ -40,7 +40,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_lockup_data":                    {DecodeGetLockupDataResult},
 	"get_lp_data":                        {DecodeGetLpData_MegatonResult},
 	"get_lp_mining_data":                 {DecodeGetLpMiningData_MegatonResult},
-	"get_lp_minter_address":              {DecodeGetLpMinterAddressResult},
+	"get_lp_minter_address":              {DecodeGetLpMinterAddress_StormResult},
 	"get_lp_swap_data":                   {DecodeGetLpSwapData_MegatonResult},
 	"get_member":                         {DecodeGetMember_WhalesNominatorResult},
 	"get_members_raw":                    {DecodeGetMembersRaw_WhalesNominatorResult},
@@ -53,23 +53,23 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nft_content":                    {DecodeGetNftContentResult},
 	"get_nft_data":                       {DecodeGetNftDataResult},
 	"get_nominator_data":                 {DecodeGetNominatorDataResult},
-	"get_oracle_data":                    {DecodeGetOracleDataResult},
+	"get_oracle_data":                    {DecodeGetOracleData_StormResult},
 	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":                    {DecodeGetPluginListResult},
 	"get_pool_data":                      {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                 {DecodeGetPoolFullDataResult},
 	"get_pool_status":                    {DecodeGetPoolStatusResult},
-	"get_position_manager_contract_data": {DecodeGetPositionManagerContractDataResult},
+	"get_position_manager_contract_data": {DecodeGetPositionManagerContractData_StormResult},
 	"get_pow_params":                     {DecodeGetPowParamsResult},
 	"get_public_key":                     {DecodeGetPublicKeyResult},
-	"get_referral_collection_address":    {DecodeGetReferralCollectionAddressResult},
-	"get_referral_data":                  {DecodeGetReferralDataResult},
-	"get_referral_vaults_whitelist":      {DecodeGetReferralVaultsWhitelistResult},
+	"get_referral_collection_address":    {DecodeGetReferralCollectionAddress_StormResult},
+	"get_referral_data":                  {DecodeGetReferralData_StormResult},
+	"get_referral_vaults_whitelist":      {DecodeGetReferralVaultsWhitelist_StormResult},
 	"get_reserves":                       {DecodeGetReserves_DedustResult},
 	"get_revoked_time":                   {DecodeGetRevokedTimeResult},
 	"get_router_data":                    {DecodeGetRouterData_StonfiResult},
 	"get_sale_data":                      {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
-	"get_spot_price":                     {DecodeGetSpotPriceResult},
+	"get_spot_price":                     {DecodeGetSpotPrice_StormResult},
 	"get_staking_status":                 {DecodeGetStakingStatusResult},
 	"get_status":                         {DecodeGetStatusResult},
 	"get_storage_contract_address":       {DecodeGetStorageContractAddressResult},
@@ -80,15 +80,15 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_telemint_auction_config":        {DecodeGetTelemintAuctionConfigResult},
 	"get_telemint_auction_state":         {DecodeGetTelemintAuctionStateResult},
 	"get_telemint_token_name":            {DecodeGetTelemintTokenNameResult},
-	"get_terminal_amm_price":             {DecodeGetTerminalAmmPriceResult},
+	"get_terminal_amm_price":             {DecodeGetTerminalAmmPrice_StormResult},
 	"get_timeout":                        {DecodeGetTimeoutResult},
 	"get_torrent_hash":                   {DecodeGetTorrentHashResult},
 	"get_validator_controller_data":      {DecodeGetValidatorControllerDataResult},
-	"get_vamm_type":                      {DecodeGetVammTypeResult},
-	"get_vault_contract_data":            {DecodeGetVaultContractDataResult},
-	"get_vault_data":                     {DecodeGetVaultDataResult},
-	"get_vault_type":                     {DecodeGetVaultTypeResult},
-	"get_vault_whitelisted_addresses":    {DecodeGetVaultWhitelistedAddressesResult},
+	"get_vamm_type":                      {DecodeGetVammType_StormResult},
+	"get_vault_contract_data":            {DecodeGetVaultContractData_StormResult},
+	"get_vault_data":                     {DecodeGetVaultData_StormResult},
+	"get_vault_type":                     {DecodeGetVaultType_StormResult},
+	"get_vault_whitelisted_addresses":    {DecodeGetVaultWhitelistedAddresses_StormResult},
 	"get_wallet_address":                 {DecodeGetWalletAddressResult},
 	"get_wallet_data":                    {DecodeGetWalletDataResult},
 	"get_wallet_params":                  {DecodeGetWalletParamsResult},
@@ -185,10 +185,10 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 
 var resultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
-	&GetAmmContractDataResult{},
-	&GetAmmNameResult{},
-	&GetAmmStateResult{},
-	&GetAmmStatusResult{},
+	&GetAmmContractData_StormResult{},
+	&GetAmmName_StormResult{},
+	&GetAmmState_StormResult{},
+	&GetAmmStatus_StormResult{},
 	&GetAsset_DedustResult{},
 	&GetAssets_DedustResult{},
 	&GetAuctionInfoResult{},
@@ -200,10 +200,10 @@ var resultTypes = []interface{}{
 	&GetCollectionDataResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
-	&GetExchangeSettingsResult{},
-	&GetExecutorBalancesResult{},
-	&GetExecutorCollectionAddressResult{},
-	&GetExecutorVaultsWhitelistResult{},
+	&GetExchangeSettings_StormResult{},
+	&GetExecutorBalances_StormResult{},
+	&GetExecutorCollectionAddress_StormResult{},
+	&GetExecutorVaultsWhitelist_StormResult{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
 	&GetLastCleanTimeResult{},
@@ -213,7 +213,7 @@ var resultTypes = []interface{}{
 	&GetLockupDataResult{},
 	&GetLpData_MegatonResult{},
 	&GetLpMiningData_MegatonResult{},
-	&GetLpMinterAddressResult{},
+	&GetLpMinterAddress_StormResult{},
 	&GetLpSwapData_MegatonResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
@@ -226,26 +226,26 @@ var resultTypes = []interface{}{
 	&GetNftContentResult{},
 	&GetNftDataResult{},
 	&GetNominatorDataResult{},
-	&GetOracleDataResult{},
+	&GetOracleData_StormResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
 	&GetPoolData_StonfiResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
 	&GetPoolStatusResult{},
-	&GetPositionManagerContractDataResult{},
+	&GetPositionManagerContractData_StormResult{},
 	&GetPowParamsResult{},
 	&GetPublicKeyResult{},
-	&GetReferralCollectionAddressResult{},
-	&GetReferralDataResult{},
-	&GetReferralVaultsWhitelistResult{},
+	&GetReferralCollectionAddress_StormResult{},
+	&GetReferralData_StormResult{},
+	&GetReferralVaultsWhitelist_StormResult{},
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
 	&GetRouterData_StonfiResult{},
 	&GetSaleData_BasicResult{},
 	&GetSaleData_GetgemsAuctionResult{},
 	&GetSaleData_GetgemsResult{},
-	&GetSpotPriceResult{},
+	&GetSpotPrice_StormResult{},
 	&GetStakingStatusResult{},
 	&GetStatusResult{},
 	&GetStorageContractAddressResult{},
@@ -256,15 +256,15 @@ var resultTypes = []interface{}{
 	&GetTelemintAuctionConfigResult{},
 	&GetTelemintAuctionStateResult{},
 	&GetTelemintTokenNameResult{},
-	&GetTerminalAmmPriceResult{},
+	&GetTerminalAmmPrice_StormResult{},
 	&GetTimeoutResult{},
 	&GetTorrentHashResult{},
 	&GetValidatorControllerDataResult{},
-	&GetVammTypeResult{},
-	&GetVaultContractDataResult{},
-	&GetVaultDataResult{},
-	&GetVaultTypeResult{},
-	&GetVaultWhitelistedAddressesResult{},
+	&GetVammType_StormResult{},
+	&GetVaultContractData_StormResult{},
+	&GetVaultData_StormResult{},
+	&GetVaultType_StormResult{},
+	&GetVaultWhitelistedAddresses_StormResult{},
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
@@ -325,7 +325,7 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 	return "Dnsresolve_RecordsResult", result, err
 }
 
-type GetAmmContractDataResult struct {
+type GetAmmContractData_StormResult struct {
 	AmmContractData boc.Cell
 }
 
@@ -340,7 +340,7 @@ func GetAmmContractData(ctx context.Context, executor Executor, reqAccountID ton
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmContractDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmContractData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -349,16 +349,16 @@ func GetAmmContractData(ctx context.Context, executor Executor, reqAccountID ton
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetAmmContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetAmmContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetAmmContractDataResult
+	var result GetAmmContractData_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetAmmContractDataResult", result, err
+	return "GetAmmContractData_StormResult", result, err
 }
 
-type GetAmmNameResult struct {
+type GetAmmName_StormResult struct {
 	VaultAddr tlb.MsgAddress
 	AssetId   uint16
 }
@@ -374,7 +374,7 @@ func GetAmmName(ctx context.Context, executor Executor, reqAccountID ton.Account
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmNameResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmName_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -383,16 +383,16 @@ func GetAmmName(ctx context.Context, executor Executor, reqAccountID ton.Account
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetAmmNameResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+func DecodeGetAmmName_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetAmmNameResult
+	var result GetAmmName_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetAmmNameResult", result, err
+	return "GetAmmName_StormResult", result, err
 }
 
-type GetAmmStateResult struct {
+type GetAmmState_StormResult struct {
 	QuoteAssetReserve                    uint64
 	BaseAssetReserve                     uint64
 	QuoteAssetWeight                     uint64
@@ -416,7 +416,7 @@ func GetAmmState(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmStateResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmState_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -425,16 +425,16 @@ func GetAmmState(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetAmmStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+func DecodeGetAmmState_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetAmmStateResult
+	var result GetAmmState_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetAmmStateResult", result, err
+	return "GetAmmState_StormResult", result, err
 }
 
-type GetAmmStatusResult struct {
+type GetAmmStatus_StormResult struct {
 	CloseOnly             bool
 	Paused                bool
 	DirectIncreaseEnabled bool
@@ -451,7 +451,7 @@ func GetAmmStatus(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmStatusResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAmmStatus_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -460,13 +460,13 @@ func GetAmmStatus(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetAmmStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+func DecodeGetAmmStatus_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetAmmStatusResult
+	var result GetAmmStatus_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetAmmStatusResult", result, err
+	return "GetAmmStatus_StormResult", result, err
 }
 
 type GetAsset_DedustResult struct {
@@ -876,7 +876,7 @@ func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any,
 	return "GetEditorResult", result, err
 }
 
-type GetExchangeSettingsResult struct {
+type GetExchangeSettings_StormResult struct {
 	Fee                           uint32
 	RolloverFee                   uint32
 	FundingPeriod                 uint32
@@ -916,7 +916,7 @@ func GetExchangeSettings(ctx context.Context, executor Executor, reqAccountID to
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExchangeSettingsResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExchangeSettings_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -925,16 +925,16 @@ func GetExchangeSettings(ctx context.Context, executor Executor, reqAccountID to
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetExchangeSettingsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 26 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkCell") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkTinyInt" && stack[22].SumType != "VmStkInt") || (stack[23].SumType != "VmStkTinyInt" && stack[23].SumType != "VmStkInt") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") || (stack[25].SumType != "VmStkTinyInt" && stack[25].SumType != "VmStkInt") {
+func DecodeGetExchangeSettings_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 26 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkCell") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkTinyInt" && stack[22].SumType != "VmStkInt") || (stack[23].SumType != "VmStkTinyInt" && stack[23].SumType != "VmStkInt") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") || (stack[25].SumType != "VmStkTinyInt" && stack[25].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetExchangeSettingsResult
+	var result GetExchangeSettings_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetExchangeSettingsResult", result, err
+	return "GetExchangeSettings_StormResult", result, err
 }
 
-type GetExecutorBalancesResult struct {
+type GetExecutorBalances_StormResult struct {
 	BalancesDict boc.Cell
 }
 
@@ -949,7 +949,7 @@ func GetExecutorBalances(ctx context.Context, executor Executor, reqAccountID to
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorBalancesResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorBalances_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -958,16 +958,16 @@ func GetExecutorBalances(ctx context.Context, executor Executor, reqAccountID to
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetExecutorBalancesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetExecutorBalances_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetExecutorBalancesResult
+	var result GetExecutorBalances_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetExecutorBalancesResult", result, err
+	return "GetExecutorBalances_StormResult", result, err
 }
 
-type GetExecutorCollectionAddressResult struct {
+type GetExecutorCollectionAddress_StormResult struct {
 	Data tlb.MsgAddress
 }
 
@@ -982,7 +982,7 @@ func GetExecutorCollectionAddress(ctx context.Context, executor Executor, reqAcc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorCollectionAddressResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorCollectionAddress_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -991,16 +991,16 @@ func GetExecutorCollectionAddress(ctx context.Context, executor Executor, reqAcc
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetExecutorCollectionAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+func DecodeGetExecutorCollectionAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetExecutorCollectionAddressResult
+	var result GetExecutorCollectionAddress_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetExecutorCollectionAddressResult", result, err
+	return "GetExecutorCollectionAddress_StormResult", result, err
 }
 
-type GetExecutorVaultsWhitelistResult struct {
+type GetExecutorVaultsWhitelist_StormResult struct {
 	BalancesDict boc.Cell
 }
 
@@ -1015,7 +1015,7 @@ func GetExecutorVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorVaultsWhitelistResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExecutorVaultsWhitelist_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1024,13 +1024,13 @@ func GetExecutorVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetExecutorVaultsWhitelistResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetExecutorVaultsWhitelist_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetExecutorVaultsWhitelistResult
+	var result GetExecutorVaultsWhitelist_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetExecutorVaultsWhitelistResult", result, err
+	return "GetExecutorVaultsWhitelist_StormResult", result, err
 }
 
 type GetFullDomainResult struct {
@@ -1355,7 +1355,7 @@ func DecodeGetLpMiningData_MegatonResult(stack tlb.VmStack) (resultType string, 
 	return "GetLpMiningData_MegatonResult", result, err
 }
 
-type GetLpMinterAddressResult struct {
+type GetLpMinterAddress_StormResult struct {
 	Data tlb.MsgAddress
 }
 
@@ -1370,7 +1370,7 @@ func GetLpMinterAddress(ctx context.Context, executor Executor, reqAccountID ton
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpMinterAddressResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpMinterAddress_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1379,13 +1379,13 @@ func GetLpMinterAddress(ctx context.Context, executor Executor, reqAccountID ton
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetLpMinterAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+func DecodeGetLpMinterAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetLpMinterAddressResult
+	var result GetLpMinterAddress_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetLpMinterAddressResult", result, err
+	return "GetLpMinterAddress_StormResult", result, err
 }
 
 type GetLpSwapData_MegatonResult struct {
@@ -1846,7 +1846,7 @@ func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultA
 	return "GetNominatorDataResult", result, err
 }
 
-type GetOracleDataResult struct {
+type GetOracleData_StormResult struct {
 	OracleLastPrice       uint64
 	OracleLastSpread      uint64
 	OracleLastTimestamp   uint32
@@ -1867,7 +1867,7 @@ func GetOracleData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOracleDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOracleData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1876,13 +1876,13 @@ func GetOracleData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetOracleDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
+func DecodeGetOracleData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetOracleDataResult
+	var result GetOracleData_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetOracleDataResult", result, err
+	return "GetOracleData_StormResult", result, err
 }
 
 type GetParams_WhalesNominatorResult struct {
@@ -2149,7 +2149,7 @@ func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetPoolStatusResult", result, err
 }
 
-type GetPositionManagerContractDataResult struct {
+type GetPositionManagerContractData_StormResult struct {
 	Info boc.Cell
 }
 
@@ -2164,7 +2164,7 @@ func GetPositionManagerContractData(ctx context.Context, executor Executor, reqA
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPositionManagerContractDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPositionManagerContractData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2173,13 +2173,13 @@ func GetPositionManagerContractData(ctx context.Context, executor Executor, reqA
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetPositionManagerContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetPositionManagerContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetPositionManagerContractDataResult
+	var result GetPositionManagerContractData_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetPositionManagerContractDataResult", result, err
+	return "GetPositionManagerContractData_StormResult", result, err
 }
 
 type GetPowParamsResult struct {
@@ -2251,7 +2251,7 @@ func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny a
 	return "GetPublicKeyResult", result, err
 }
 
-type GetReferralCollectionAddressResult struct {
+type GetReferralCollectionAddress_StormResult struct {
 	Data tlb.MsgAddress
 }
 
@@ -2266,7 +2266,7 @@ func GetReferralCollectionAddress(ctx context.Context, executor Executor, reqAcc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralCollectionAddressResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralCollectionAddress_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2275,16 +2275,16 @@ func GetReferralCollectionAddress(ctx context.Context, executor Executor, reqAcc
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetReferralCollectionAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+func DecodeGetReferralCollectionAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetReferralCollectionAddressResult
+	var result GetReferralCollectionAddress_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetReferralCollectionAddressResult", result, err
+	return "GetReferralCollectionAddress_StormResult", result, err
 }
 
-type GetReferralDataResult struct {
+type GetReferralData_StormResult struct {
 	ReferralType int32
 	Discount     uint32
 	Rebate       uint32
@@ -2302,7 +2302,7 @@ func GetReferralData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2311,16 +2311,16 @@ func GetReferralData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetReferralDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkCell") {
+func DecodeGetReferralData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetReferralDataResult
+	var result GetReferralData_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetReferralDataResult", result, err
+	return "GetReferralData_StormResult", result, err
 }
 
-type GetReferralVaultsWhitelistResult struct {
+type GetReferralVaultsWhitelist_StormResult struct {
 	BalancesDict boc.Cell
 }
 
@@ -2335,7 +2335,7 @@ func GetReferralVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralVaultsWhitelistResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReferralVaultsWhitelist_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2344,13 +2344,13 @@ func GetReferralVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetReferralVaultsWhitelistResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetReferralVaultsWhitelist_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetReferralVaultsWhitelistResult
+	var result GetReferralVaultsWhitelist_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetReferralVaultsWhitelistResult", result, err
+	return "GetReferralVaultsWhitelist_StormResult", result, err
 }
 
 type GetReserves_DedustResult struct {
@@ -2552,7 +2552,7 @@ func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType strin
 	return "GetSaleData_GetgemsAuctionResult", result, err
 }
 
-type GetSpotPriceResult struct {
+type GetSpotPrice_StormResult struct {
 	SpotPrice tlb.Grams
 }
 
@@ -2567,7 +2567,7 @@ func GetSpotPrice(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSpotPriceResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSpotPrice_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2576,13 +2576,13 @@ func GetSpotPrice(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetSpotPriceResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+func DecodeGetSpotPrice_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetSpotPriceResult
+	var result GetSpotPrice_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetSpotPriceResult", result, err
+	return "GetSpotPrice_StormResult", result, err
 }
 
 type GetStakingStatusResult struct {
@@ -2976,7 +2976,7 @@ func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, res
 	return "GetTelemintTokenNameResult", result, err
 }
 
-type GetTerminalAmmPriceResult struct {
+type GetTerminalAmmPrice_StormResult struct {
 	TerminalPrice int64
 }
 
@@ -2991,7 +2991,7 @@ func GetTerminalAmmPrice(ctx context.Context, executor Executor, reqAccountID to
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTerminalAmmPriceResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetTerminalAmmPrice_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3000,13 +3000,13 @@ func GetTerminalAmmPrice(ctx context.Context, executor Executor, reqAccountID to
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetTerminalAmmPriceResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+func DecodeGetTerminalAmmPrice_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetTerminalAmmPriceResult
+	var result GetTerminalAmmPrice_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetTerminalAmmPriceResult", result, err
+	return "GetTerminalAmmPrice_StormResult", result, err
 }
 
 type GetTimeoutResult struct {
@@ -3121,7 +3121,7 @@ func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType strin
 	return "GetValidatorControllerDataResult", result, err
 }
 
-type GetVammTypeResult struct {
+type GetVammType_StormResult struct {
 	VammType uint32
 }
 
@@ -3136,7 +3136,7 @@ func GetVammType(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVammTypeResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVammType_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3145,16 +3145,16 @@ func GetVammType(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetVammTypeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+func DecodeGetVammType_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetVammTypeResult
+	var result GetVammType_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetVammTypeResult", result, err
+	return "GetVammType_StormResult", result, err
 }
 
-type GetVaultContractDataResult struct {
+type GetVaultContractData_StormResult struct {
 	Data boc.Cell
 }
 
@@ -3169,7 +3169,7 @@ func GetVaultContractData(ctx context.Context, executor Executor, reqAccountID t
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultContractDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultContractData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3178,16 +3178,16 @@ func GetVaultContractData(ctx context.Context, executor Executor, reqAccountID t
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetVaultContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetVaultContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetVaultContractDataResult
+	var result GetVaultContractData_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetVaultContractDataResult", result, err
+	return "GetVaultContractData_StormResult", result, err
 }
 
-type GetVaultDataResult struct {
+type GetVaultData_StormResult struct {
 	JettonWallet     tlb.MsgAddress
 	Rate             uint64
 	TotalSupply      uint64
@@ -3208,7 +3208,7 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3217,16 +3217,16 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetVaultDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+func DecodeGetVaultData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetVaultDataResult
+	var result GetVaultData_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetVaultDataResult", result, err
+	return "GetVaultData_StormResult", result, err
 }
 
-type GetVaultTypeResult struct {
+type GetVaultType_StormResult struct {
 	VaultType uint32
 }
 
@@ -3241,7 +3241,7 @@ func GetVaultType(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultTypeResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultType_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3250,16 +3250,16 @@ func GetVaultType(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetVaultTypeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+func DecodeGetVaultType_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetVaultTypeResult
+	var result GetVaultType_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetVaultTypeResult", result, err
+	return "GetVaultType_StormResult", result, err
 }
 
-type GetVaultWhitelistedAddressesResult struct {
+type GetVaultWhitelistedAddresses_StormResult struct {
 	WhitelistedAddrsDict boc.Cell
 }
 
@@ -3274,7 +3274,7 @@ func GetVaultWhitelistedAddresses(ctx context.Context, executor Executor, reqAcc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultWhitelistedAddressesResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultWhitelistedAddresses_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3283,13 +3283,13 @@ func GetVaultWhitelistedAddresses(ctx context.Context, executor Executor, reqAcc
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetVaultWhitelistedAddressesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+func DecodeGetVaultWhitelistedAddresses_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetVaultWhitelistedAddressesResult
+	var result GetVaultWhitelistedAddresses_StormResult
 	err = stack.Unmarshal(&result)
-	return "GetVaultWhitelistedAddressesResult", result, err
+	return "GetVaultWhitelistedAddresses_StormResult", result, err
 }
 
 type GetWalletAddressResult struct {

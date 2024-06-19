@@ -30,7 +30,7 @@ func TestResolve(t *testing.T) {
 		{"industries.ton", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", true},
 		{"oo0ili0oo.t.me", "0:afa066774812c345ff23ad53e04225e657134a087d133021b3fb8667a11efe74", true},
 		{"packages.ton", "0:afa066774812c345ff23ad53e04225e657134a087d133021b3fb8667a11efe74", false},
-		{"thekiba.dolboeb.t.me", "0:82683859071f85ed07d10016b19b8ecd183933a46987aed9fdc502f250d9404a", true},
+		{"shibdev.dolboeb.t.me", "0:2c979f6a3b2f42d972f9e39da519b1d4f5b23797896145aa2978d67cd8d44af2", true},
 		{"hfdshfkjshkjdhfklhldkfhlakjh.ton", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", false},
 		{"ololo.png", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", false},
 	} {

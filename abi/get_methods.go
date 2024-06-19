@@ -5,7 +5,6 @@ package abi
 import (
 	"context"
 	"fmt"
-
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -24,7 +23,6 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_collection_data":           {DecodeGetCollectionDataResult},
 	"get_domain":                    {DecodeGetDomainResult},
 	"get_editor":                    {DecodeGetEditorResult},
-	"get_expected_outputs":          {DecodeGetExpectedOutputs_StonfiResult},
 	"get_full_domain":               {DecodeGetFullDomainResult},
 	"get_jetton_data":               {DecodeGetJettonDataResult},
 	"get_last_clean_time":           {DecodeGetLastCleanTimeResult},
@@ -46,10 +44,8 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nft_content":               {DecodeGetNftContentResult},
 	"get_nft_data":                  {DecodeGetNftDataResult},
 	"get_nominator_data":            {DecodeGetNominatorDataResult},
-	"get_order_data":                {DecodeGetOrderDataResult},
 	"get_params":                    {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":               {DecodeGetPluginListResult},
-	"get_pool_address":              {DecodeGetPoolAddress_StonfiResult},
 	"get_pool_data":                 {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":            {DecodeGetPoolFullDataResult},
 	"get_pool_status":               {DecodeGetPoolStatusResult},
@@ -137,7 +133,6 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	120146: {GetPoolStatus},
 	122058: {IsActive},
 	122498: {GetTelemintAuctionState},
-	123832: {GetOrderData},
 	123928: {GetStakingStatus},
 	128085: {GetRouterData},
 	128979: {JettonWalletLockData},
@@ -159,7 +154,6 @@ var resultTypes = []interface{}{
 	&GetCollectionDataResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
-	&GetExpectedOutputs_StonfiResult{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
 	&GetLastCleanTimeResult{},
@@ -181,10 +175,8 @@ var resultTypes = []interface{}{
 	&GetNftContentResult{},
 	&GetNftDataResult{},
 	&GetNominatorDataResult{},
-	&GetOrderDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
-	&GetPoolAddress_StonfiResult{},
 	&GetPoolData_StonfiResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
@@ -675,52 +667,6 @@ func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any,
 	var result GetEditorResult
 	err = stack.Unmarshal(&result)
 	return "GetEditorResult", result, err
-}
-
-type GetExpectedOutputs_StonfiResult struct {
-	Out            tlb.Int257
-	ProtocolFeeOut tlb.Int257
-	RefFeeOut      tlb.Int257
-}
-
-func GetExpectedOutputs(ctx context.Context, executor Executor, reqAccountID ton.AccountID, amount tlb.Int257, tokenWallet tlb.MsgAddress) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amount}
-	stack.Put(val)
-	val, err = tlb.TlbStructToVmCellSlice(tokenWallet)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-
-	// MethodID = 115709 for "get_expected_outputs" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 115709, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExpectedOutputs_StonfiResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetExpectedOutputs_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetExpectedOutputs_StonfiResult
-	err = stack.Unmarshal(&result)
-	return "GetExpectedOutputs_StonfiResult", result, err
 }
 
 type GetFullDomainResult struct {
@@ -1503,47 +1449,6 @@ func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultA
 	return "GetNominatorDataResult", result, err
 }
 
-type GetOrderDataResult struct {
-	MultisigAddress  tlb.MsgAddress
-	OrderSeqno       tlb.Int256
-	Threshold        uint8
-	SentForExecution bool
-	Signers          tlb.Hashmap[tlb.Uint8, tlb.MsgAddress]
-	ApprovalsMask    tlb.Int256
-	ApprovalsNum     uint8
-	ExpirationDate   uint64
-	Order            MultisigOrder
-}
-
-func GetOrderData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 123832 for "get_order_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 123832, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOrderDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetOrderDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetOrderDataResult
-	err = stack.Unmarshal(&result)
-	return "GetOrderDataResult", result, err
-}
-
 type GetParams_WhalesNominatorResult struct {
 	Enabled        bool
 	UpdatesEnables bool
@@ -1617,53 +1522,6 @@ func DecodeGetPluginListResult(stack tlb.VmStack) (resultType string, resultAny 
 	var result GetPluginListResult
 	err = stack.Unmarshal(&result)
 	return "GetPluginListResult", result, err
-}
-
-type GetPoolAddress_StonfiResult struct {
-	PoolAddress tlb.MsgAddress
-}
-
-func GetPoolAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, token0 tlb.MsgAddress, token1 tlb.MsgAddress) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val, err = tlb.TlbStructToVmCellSlice(token0)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-	val, err = tlb.TlbStructToVmCellSlice(token1)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-
-	// MethodID = 101789 for "get_pool_address" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 101789, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolAddress_StonfiResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetPoolAddress_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetPoolAddress_StonfiResult
-	err = stack.Unmarshal(&result)
-	return "GetPoolAddress_StonfiResult", result, err
 }
 
 type GetPoolData_StonfiResult struct {

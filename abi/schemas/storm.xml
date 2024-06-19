@@ -1,0 +1,452 @@
+<abi>  
+    <types>
+        parameters#_ discount:uint32 rebate:uint32 = Parameters;
+        update_msg#_ price:Coins spread:Coins timestamp:uint32 asset_index:uint16 = UpdateMsg;
+        oracle_data#_ update_msg:^UpdateMsg signatures:^Cell = OracleData;
+        amm_settings#_ fee:uint32 rollover_fee:uint32 funding_period:uint32 init_margin_ratio:uint32 
+        maintenance_margin_ratio:uint32 liquidation_fee_ratio:uint32 partial_liquidation_ratio:uint32 
+        spread_limit:uint32 max_price_impact:uint32 max_price_spread:uint32 max_open_notional:uint32 
+        fee_to_stakers_percent:uint32 funding_mode:uint2 min_partial_liquidation_notional:Coins min_leverage:uint32 = AmmSettings;
+        referral_data#_ amount:Coins index:uint32 = ReferralData;
+        executor_data#_ split_executor_rewards:uint8 amount:Coins index:uint32 = ExecutorData;
+        notification_payload#_ opcode:uint64 = NotificationPayload;
+        position_change#_ size:uint128 direction:uint1 margin:Coins open_notional:Coins last_updated_cumulative_premium:uint64 fee:uint32 discount:uint32 rebate:uint32 last_updated_timestamp:uint32 = PositionChange;
+        amm_change#_ quote_asset_reserve:Coins quote_asset_reserve_weight:Coins base_asset_reserve:Coins total_long_position_size:Coins total_short_position_size:Coins open_interest_long:Coins open_interest_short:Coins = AmmChange;
+        order_payload#_ order_type:uint4 order_index:uint3 direction:uint1 = OrderPayload;
+
+        
+        <!-- 
+        amm_contract_data#_ balance:Coins vault_address:Address asset_id:uint16 close_only:bool paused:bool
+        oracle_last_price:Coins oracle_last_spread:Coins oracle_last_timestamp:uint32 oracle_max_deviation:Coins 
+        oracle_validity_period:uint32 oracle_public_keys_count:uint4 
+        -->
+
+        signatures#_ data:Cell = Signatures;
+        price_data#_ price:Coins spread:Coins another_spread:uint32 asset_id:uint16 = OraclePriceData; <!-- "another_spread" was "spread" before but we avoid conflicts: we already have "spread" -->
+        oracle_payload#_ price_data:^OraclePriceData signatures:^Signatures = OraclePayload;
+
+
+    </types>
+
+    <!-- INTERFACES -->
+
+    <interface name="storm_vamm">
+        <get_method name="get_amm_name" version="storm"/>
+        <get_method name="get_amm_status" version="storm"/>
+        <get_method name="get_amm_contract_data" version="storm"/>
+        <get_method name="get_exchange_settings" version="storm"/>
+        <get_method name="get_spot_price" version="storm"/>
+        <get_method name="get_terminal_amm_price" version="storm"/>
+        <get_method name="get_vamm_type" version="storm"/>
+        <msg_in>
+            <internal name="storm_change_settings"/>
+            <internal name="storm_pay_funding"/>
+            <internal name="storm_vamm_init"/>
+        </msg_in>
+    </interface>
+
+    <interface name="storm_referral">
+        <msg_in>
+            <internal name="storm_mint_referral"/>
+            <internal name="storm_add_referral_amount"/>
+            <internal name="storm_nft_item_transfer"/>
+            <internal name="storm_nft_item_get_static_data"/>
+        </msg_in>
+        <msg_out>
+            <internal name="storm_nft_item_ownership_assigned"/>
+            <internal name="storm_excesses"/>
+            <internal name="storm_nft_item_report_static_data"/>
+            <internal name="storm_withdraw_referral_amount"/>
+        </msg_out>
+
+         <get_method name="get_nft_data"/> 
+         <get_method name="get_referral_data" version="storm"/> 
+         
+    </interface>
+
+    <interface name="storm_referral_collection">
+        <get_method name="get_referral_vaults_whitelist"/> 
+    </interface>
+
+    <interface name="storm_executor">
+        <msg_in>
+            <internal name="storm_mint_executor"/>
+            <internal name="storm_add_executor_amount"/>
+            <internal name="storm_nft_item_transfer"/>
+            <internal name="storm_nft_item_get_static_data"/>
+        </msg_in>
+        <msg_out>
+            <internal name="storm_nft_item_ownership_assigned"/>
+            <internal name="storm_excesses"/>
+            <internal name="storm_nft_item_report_static_data"/>
+            <internal name="storm_withdraw_executor_amount"/>
+        </msg_out>
+
+        <get_method name="get_nft_data"/> 
+        <get_method name="get_executor_balances"/>
+    </interface>
+
+    <interface name="storm_executor_collection">
+         <get_method name="get_amm_name" version="storm"/>
+    </interface>
+        
+
+    <interface name="storm_vault">
+        <msg_in>
+            <internal name="storm_vault_trade_notification"/>
+            <internal name="storm_vault_transfer_notification"/>
+            <internal name="storm_vault_stake"/>
+            <internal name="storm_vault_unstake"/>
+            <internal name="storm_vault_init"/>
+            <internal name="storm_vault_request_withdraw_position"/>
+        </msg_in>
+
+        <get_method name="get_executor_collection_address"/>
+        <get_method name="get_referral_collection_address"/>
+        <get_method name="get_vault_contract_data"/>
+        <get_method name="get_lp_minter_address"/>
+        <get_method name="get_vault_whitelisted_addresses"/>
+        <get_method name="get_vault_data"/>
+        <get_method name="get_vault_type"/>
+
+    </interface>
+
+    <interface name="storm_position_manager">
+        <msg_in>
+            <internal name="storm_take_referral_fees"/>
+            <internal name="storm_cancel_order"/>
+            <internal name="storm_create_order"/>
+            <internal name="storm_complete_order"/>
+            <internal name="storm_activate_order"/>
+            <internal name="storm_update_position"/>
+            <internal name="storm_update_position_with_stop_loss"/>
+            <internal name="storm_provide_position"/>
+
+        </msg_in>
+        <msg_out>
+            <internal name="storm_order_created"/>
+            <internal name="storm_order_canceled"/>
+        </msg_out>
+
+        <get_method name="get_position_manager_contract_data"/> 
+
+    </interface>
+
+    <!-- GET METHODS -->
+
+    <get_method name="get_amm_contract_data">
+        <output version="storm" fixed_length="true">
+            <cell name="amm_contract_data">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_amm_name">
+        <output version="storm" fixed_length="true">
+            <slice name="vault_addr">msgaddress</slice>
+            <int name="asset_id">uint16</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_amm_status">
+        <output version="storm" fixed_length="true">
+            <int name="close_only">bool</int>
+            <int name="paused">bool</int>
+            <int name="direct_increase_enabled">bool</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_vamm_type">
+        <output version="storm" fixed_length="true">
+            <int name="vamm_type">uint32</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_referral_vaults_whitelist">
+        <output version="storm" fixed_length="true">
+            <cell name="balances_dict">Cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_position_manager_contract_data">
+        <output version="storm" fixed_length="true">
+            <cell name="info">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_amm_state">
+        <output version="storm" fixed_length="true">
+            <int name="quote_asset_reserve">uint64</int>
+            <int name="base_asset_reserve">uint64</int>
+            <int name="quote_asset_weight">uint64</int>
+            <int name="total_long_position_size">uint64</int>
+            <int name="total_short_position_size">uint64</int>
+            <int name="open_interest_long">uint64</int>
+            <int name="open_interest_short">uint64</int>
+            <int name="latest_long_cumulative_premium_fraction">int64</int>
+            <int name="latest_short_cumulative_premium_fraction">int64</int>
+            <int name="next_funding_block_timestamp">uint32</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_exchange_settings">
+        <output version="storm" fixed_length="true">
+            <int name="fee">uint32</int>
+            <int name="rollover_fee">uint32</int>
+            <int name="funding_period">uint32</int>
+            <int name="init_margin_ratio">uint32</int>
+            <int name="maintenance_margin_ratio">uint32</int>
+            <int name="liquidation_fee_ratio">uint32</int>
+            <int name="partial_liquidation_ratio">uint32</int>
+            <int name="spread_limit">uint32</int>
+            <int name="max_price_impact">uint32</int>
+            <int name="max_price_spread">uint32</int>
+            <int name="max_open_notional">uint64</int>
+            <int name="fee_to_stakers_percent">uint32</int>
+            <int name="funding_mode">uint32</int>
+            <int name="min_partial_liquidation_notional">uint64</int>
+            <int name="min_init_margin_ratio">uint32</int>
+            <int name="executor_fee">int32</int>
+            <int name="close_position_time_delta">int32</int>
+            <int name="max_unrealized_pnl">int32</int>
+            <int name="direct_increase_enabled">bool</int>
+            <int name="direct_close_enabled">bool</int>
+            <cell name="executors_whitelist">cell</cell>
+            <int name="low_funding_fn_a">int32</int>
+            <int name="low_funding_fn_b">int32</int>
+            <int name="high_funding_fn_a">int32</int>
+            <int name="high_funding_fn_b">int32</int>
+            <int name="inflection_point">int32</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_spot_price">
+        <output version="storm" fixed_length="true">
+            <int name="spot_price">Coins</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_executor_vaults_whitelist">
+        <output version="storm" fixed_length="true">
+            <cell name="balances_dict">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_terminal_amm_price">
+        <output version="storm" fixed_length="true">
+            <int name="terminal_price">int64</int>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_executor_balances">
+        <output version="storm" fixed_length="true">
+            <cell name="balances_dict">Cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_oracle_data">
+        <output version="storm" fixed_length="true">
+            <int name="oracle_last_price">uint64</int> 
+            <int name="oracle_last_spread">uint64</int> 
+            <int name="oracle_last_timestamp">uint32</int> 
+            <int name="oracle_max_deviation">uint64</int> 
+            <int name="oracle_validity_period">uint32</int> 
+            <int name="oracle_public_keys_count">uint8</int> <!-- actually we have uint4 here -->
+            <cell name="oracle_public_keys_ref">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_referral_data">
+        <output version="storm" fixed_length="true">
+            <int name="referral_type">int32</int> <!-- actually we have uint2 here -->
+            <int name="discount">uint32</int>
+            <int name="rebate">uint32</int>
+            <cell name="balances_dict">cell</cell>
+        </output>
+    </get_method>
+
+
+    <get_method name="get_executor_collection_address">
+        <output version="storm" fixed_length="true">
+            <slice name="data">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_referral_collection_address">
+        <output version="storm" fixed_length="true">
+            <slice name="data">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_vault_contract_data">
+        <output version="storm" fixed_length="true">
+            <cell name="data">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_lp_minter_address">
+        <output version="storm" fixed_length="true">
+            <slice name="data">msgaddress</slice>
+        </output>
+    </get_method>
+
+
+
+    <get_method name="get_vault_whitelisted_addresses">
+        <output version="storm" fixed_length="true">
+            <cell name="whitelisted_addrs_dict">Cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_vault_data">
+        <output version="storm" fixed_length="true">
+            <slice name="jetton_wallet">msgaddress</slice>
+            <int name="rate">uint64</int>
+            <int name="total_supply">uint64</int>
+            <int name="free_balance">uint64</int>
+            <int name="locked_balance">uint64</int>
+            <int name="stakers_balance">uint64</int>
+            <int name="executors_balance">uint64</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_vault_type">
+        <output version="storm" fixed_length="true">
+            <int name="vault_type">uint32</int>
+        </output>
+    </get_method>
+
+    <!-- INTERNALS -->
+
+    <internal name="storm_change_settings">
+        change_settings#edcd36a6 redirect_addr:MsgAddress 
+        settings:^AmmSettings = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_pay_funding">
+        pay_funding#b652c441 oracle_ref:^OracleData = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vamm_init">
+        init#29c102d1 redirect_addr:MsgAddress 
+        code:^Cell data:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_mint_referral">
+        mint_referral#cb4ddc3c nft_owner:MsgAddress ref_type:uint2
+        redirect_address:MsgAddress parameters:^Parameters balances_dict:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_add_referral_amount">
+        add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_nft_item_transfer">
+        nft_item_transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
+        custom_payload:(Maybe ^Cell) forward_amount:Coins forward_payload:(Either Cell ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_nft_item_get_static_data">
+        nft_item_get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_nft_item_ownership_assigned">
+        nft_item_ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_excesses">
+        excesses#d53276db query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_nft_item_report_static_data">
+        nft_item_report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_withdraw_referral_amount">
+        withdraw_referral_amount#f5d4eb52 index:uint64 referral_amount:Coins owner_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_mint_executor">
+        mint_executor#4f38cae8 nft_owner:MsgAddress redirect_address:MsgAddress balances_dict:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_add_executor_amount">
+        add_executor_amount#5dd66579 referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_withdraw_executor_amount">
+        withdraw_executor_amount#2cde6351 index:uint64 executor_amount:Coins owner_addr:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vault_trade_notification">
+        exchange#3475fdd2 amm_index:uint16 free_amount:uint16 locked_amount:int64 exchange_amount:int64 withdraw_locked_amount:int64
+        fee_to_stakers:int64 withdraw_amount:int64 trader_addr:MsgAddress referral_params:(Maybe ^ReferralData) executor_params:(Maybe ^ExecutorData) = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vault_transfer_notification">
+        transfer_notification#7362d09c query_id:uint64 amount:Coins 
+        sender:MsgAddress forward_payload:(Either NotificationPayload ^NotificationPayload) = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vault_stake">
+        stake#c89a3ee4 amount:Coins = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vault_unstake">
+        unstake#d5b5e9ad jetton_amount:Coins user_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vault_init">
+        vault_init#29c102d1 jetton_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+
+
+    <internal name="storm_take_referral_fees">
+        take_referral_fees#12d9601d referral_fees:^Parameters = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_cancel_order">
+        cancel_order#67134629 order_type:uint4 order_index:uint3 direction:uint1 gas_to_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_create_order">
+        create_order#a39843f4 order_payload:^OrderPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_complete_order">
+        complete_order#cf90d618 order_type:uint4 order_index:uint3 direction:uint1 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_activate_order">
+        activate_order#9d2ec640 order_index:uint3 activated_order:^OrderPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_update_position">
+        update_position#60dfc677 direction:uint1 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_update_position_with_stop_loss">
+        update_position_with_stop_loss#5d1b17b8 direction:uint1 stop_trigger_price:Coins take_trigger_price:Coins origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_order_created">
+        order_created#3a943ce6 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_order_canceled">
+        order_canceled#69d08679 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_vault_request_withdraw_position">
+        request_withdraw_position#0226df66 trader_addr:MsgAddress vamm_addr:MsgAddress amount:Coins gas_to_addr:MsgAddress withdraw_reason:uint32 = InternalMsgBody;
+    </internal>
+
+    <internal name="storm_provide_position">
+        provide_order#8865b402 order_type:uint4 order_index:uint3 direction:uint1 executor_index:uint32 oracle_payload:^OraclePayload = InternalMsgBody;
+    </internal>
+    
+
+
+
+</abi>

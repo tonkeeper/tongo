@@ -16,7 +16,6 @@ const (
 	JettonMaster
 	JettonWallet
 	JettonWalletGoverned
-	JettonWalletV1
 	JettonWalletV2
 	Locker
 	LockerBill
@@ -63,7 +62,7 @@ const (
 	WalletV3R2
 	WalletV4R1
 	WalletV4R2
-	WalletV5Beta
+	WalletV5R1
 	WhalesPool
 )
 
@@ -85,8 +84,6 @@ func (c ContractInterface) String() string {
 		return "jetton_wallet"
 	case JettonWalletGoverned:
 		return "jetton_wallet_governed"
-	case JettonWalletV1:
-		return "jetton_wallet_v1"
 	case JettonWalletV2:
 		return "jetton_wallet_v2"
 	case Locker:
@@ -179,8 +176,8 @@ func (c ContractInterface) String() string {
 		return "wallet_v4r1"
 	case WalletV4R2:
 		return "wallet_v4r2"
-	case WalletV5Beta:
-		return "wallet_v5_beta"
+	case WalletV5R1:
+		return "wallet_v5r1"
 	case WhalesPool:
 		return "whales_pool"
 	default:
@@ -206,8 +203,6 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return JettonWallet
 	case "jetton_wallet_governed":
 		return JettonWalletGoverned
-	case "jetton_wallet_v1":
-		return JettonWalletV1
 	case "jetton_wallet_v2":
 		return JettonWalletV2
 	case "locker":
@@ -300,8 +295,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV4R1
 	case "wallet_v4r2":
 		return WalletV4R2
-	case "wallet_v5_beta":
-		return WalletV5Beta
+	case "wallet_v5r1":
+		return WalletV5R1
 	case "whales_pool":
 		return WhalesPool
 	default:
@@ -417,10 +412,6 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_nft_data",
 		InvokeFn: GetNftData,
-	},
-	{
-		Name:     "get_order_data",
-		InvokeFn: GetOrderData,
 	},
 	{
 		Name:     "get_params",
@@ -736,8 +727,6 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 	switch c {
 	case JettonWalletGoverned:
 		return JettonWallet.Implements(other)
-	case JettonWalletV1:
-		return JettonWallet.Implements(other)
 	case JettonWalletV2:
 		return JettonWallet.Implements(other)
 	case NftAuctionGetgemsV3:
@@ -784,7 +773,7 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletV4R2:
 		return Wallet.Implements(other)
-	case WalletV5Beta:
+	case WalletV5R1:
 		return Wallet.Implements(other)
 	}
 	return false
@@ -894,9 +883,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
 		contractInterfaces: []ContractInterface{MultisigOrderV2},
-		getMethods: []InvokeFn{
-			GetOrderData,
-		},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
 		contractInterfaces: []ContractInterface{WalletV1R1},
@@ -908,12 +895,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
-	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {
-		contractInterfaces: []ContractInterface{JettonWalletV1},
-		getMethods: []InvokeFn{
-			GetWalletData,
-		},
-	},
 	ton.MustParseHash("ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1"): {
 		contractInterfaces: []ContractInterface{GramMiner},
 		getMethods: []InvokeFn{
@@ -922,9 +903,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac"): {
 		contractInterfaces: []ContractInterface{MultisigV2},
-		getMethods: []InvokeFn{
-			GetMultisigData,
-		},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c"): {
 		contractInterfaces: []ContractInterface{WalletV1R2},
@@ -943,13 +922,13 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		},
 	},
 	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
-		contractInterfaces: []ContractInterface{WalletV5Beta},
+		contractInterfaces: []ContractInterface{WalletV5R1},
 		getMethods: []InvokeFn{
 			Seqno,
 		},
 	},
 	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
-		contractInterfaces: []ContractInterface{WalletV5Beta},
+		contractInterfaces: []ContractInterface{WalletV5R1},
 		getMethods: []InvokeFn{
 			Seqno,
 		},

@@ -242,6 +242,100 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
+type AmmChange struct {
+	QuoteAssetReserve       tlb.Grams
+	QuoteAssetReserveWeight tlb.Grams
+	BaseAssetReserve        tlb.Grams
+	TotalLongPositionSize   tlb.Grams
+	TotalShortPositionSize  tlb.Grams
+	OpenInterestLong        tlb.Grams
+	OpenInterestShort       tlb.Grams
+}
+
+type AmmSettings struct {
+	Fee                           uint32
+	RolloverFee                   uint32
+	FundingPeriod                 uint32
+	InitMarginRatio               uint32
+	MaintenanceMarginRatio        uint32
+	LiquidationFeeRatio           uint32
+	PartialLiquidationRatio       uint32
+	SpreadLimit                   uint32
+	MaxPriceImpact                uint32
+	MaxPriceSpread                uint32
+	MaxOpenNotional               uint32
+	FeeToStakersPercent           uint32
+	FundingMode                   tlb.Uint2
+	MinPartialLiquidationNotional tlb.Grams
+	MinLeverage                   uint32
+}
+
+type ExecutorData struct {
+	SplitExecutorRewards uint8
+	Amount               tlb.Grams
+	Index                uint32
+}
+
+type NotificationPayload struct {
+	Opcode uint64
+}
+
+type OracleData struct {
+	UpdateMsg  UpdateMsg `tlb:"^"`
+	Signatures tlb.Any   `tlb:"^"`
+}
+
+type OraclePayload struct {
+	PriceData  OraclePriceData `tlb:"^"`
+	Signatures Signatures      `tlb:"^"`
+}
+
+type OraclePriceData struct {
+	Price         tlb.Grams
+	Spread        tlb.Grams
+	AnotherSpread uint32
+	AssetId       uint16
+}
+
+type OrderPayload struct {
+	OrderType  tlb.Uint4
+	OrderIndex tlb.Uint3
+	Direction  tlb.Uint1
+}
+
+type Parameters struct {
+	Discount uint32
+	Rebate   uint32
+}
+
+type PositionChange struct {
+	Size                         tlb.Uint128
+	Direction                    tlb.Uint1
+	Margin                       tlb.Grams
+	OpenNotional                 tlb.Grams
+	LastUpdatedCumulativePremium uint64
+	Fee                          uint32
+	Discount                     uint32
+	Rebate                       uint32
+	LastUpdatedTimestamp         uint32
+}
+
+type ReferralData struct {
+	Amount tlb.Grams
+	Index  uint32
+}
+
+type Signatures struct {
+	Data tlb.Any
+}
+
+type UpdateMsg struct {
+	Price      tlb.Grams
+	Spread     tlb.Grams
+	Timestamp  uint32
+	AssetIndex uint16
+}
+
 type NftRoyaltyParams struct {
 	Numerator   uint16
 	Denominator uint16

@@ -33,4 +33,10 @@ var KnownMethods = map[MethodCode]tvmPrecompiled{
 
 	//nft_item simple
 	{MethodID: 102351, CodeHash: ton.MustParseHash("4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42")}: nftV1getNftData,
+
+	//nft_item notcoin
+	{MethodID: 97026, CodeHash: ton.MustParseHash("8d28ea421b77e805fea52acf335296499f03aec8e9fd21ddb5f2564aa65c48de")}: jettonV2getWalletData("te6cckEBAQEAIwAIQgK6KRjIlH6bJa+awbiDNXdUFz5YEvgHo9bmQqFHCVlTlSN648M="),
+
+	//nft_item usdt
+	{MethodID: 97026, CodeHash: ton.MustParseHash("89468f02c78e570802e39979c8516fc38df07ea76a48357e0536f2ba7b3ee37b")}: jettonV2getWalletData("te6ccgEBAQEAIwAIQgKPRS16Tf10BmtoI2UXclntBXNENb52tf1L1divK3w9aA=="),
 }

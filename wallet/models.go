@@ -145,11 +145,40 @@ func GetVerByCodeHash(hash tlb.Bits256) (Version, bool) {
 }
 
 func (v Version) ToString() string {
-	names := []string{"v1R1", "v1R2", "v1R3", "v2R1", "v2R2", "v3R1", "v3R2", "v4R1", "v4R2", "v5R1", "highload_v1R1", "highload_v1R2", "highload_v2", "highload_v2R1", "highload_v2R2"}
-	if int(v) > len(names) {
+	switch v {
+	case V1R1:
+		return "v1R1"
+	case V1R2:
+		return "v1R2"
+	case V1R3:
+		return "v1R3"
+	case V2R1:
+		return "v2R1"
+	case V2R2:
+		return "v2R2"
+	case V3R1:
+		return "v3R1"
+	case V3R2:
+		return "v3R2"
+	case V4R1:
+		return "v4R1"
+	case V4R2:
+		return "v4R2"
+	case V5Beta:
+		return "v5Beta"
+	case HighLoadV2:
+		return "highload_v2"
+	case HighLoadV1R1:
+		return "highload_v1R1"
+	case HighLoadV1R2:
+		return "highload_v1R2"
+	case HighLoadV2R1:
+		return "highload_v2R1"
+	case HighLoadV2R2:
+		return "highload_v2R2"
+	default:
 		panic("to string conversion for this ver not supported")
 	}
-	return names[v]
 }
 
 type Sendable interface {

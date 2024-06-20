@@ -13,6 +13,7 @@
     <interface name="dedust_pool">
         <get_method name="get_reserves" version="dedust"/>
         <get_method name="get_assets" version="dedust"/>
+        <get_method name="get_jetton_data"/>
         <msg_in>
             <internal name="dedust_swap_external"/>
             <internal name="dedust_swap_peer"/>

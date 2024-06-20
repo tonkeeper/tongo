@@ -8,7 +8,7 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-var walletv3r2seqno = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
+func walletv3seqno(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
 	var dataV3 struct {
 		Seqno       uint32
 		SubWalletId uint32

@@ -33,6 +33,13 @@ func TestPrecompiles(t *testing.T) {
 			account: "EQDoMW51I0vaQisLJpi2Kbj8zaN79TgyYM2PnyXr-x80Er5_",
 		},
 		{
+			name:    "v3r1_seqno",
+			code:    "te6ccgEBAQEAYgAAwP8AIN0gggFMl7qXMO1E0NcLH+Ck8mCDCNcYINMf0x/TH/gjE7vyY+1E0NMf0x/T/9FRMrryoVFEuvKiBPkBVBBV+RDyo/gAkyDXSpbTB9QC+wDo0QGkyMsfyx/L/8ntVA==",
+			data:    "te6ccgEBAQEAKgAAUAAAAAMAAAAA4CUsZ2TIxulSd8P1Q6/wbZA++VUQB2LKhup8XbejVrM=",
+			method:  85143,
+			account: "UQDD1gfN06Uae6iMsUmVoo7ctxMOm6B9pwJQfl5dmZBxrsG-",
+		},
+		{
 			name:    "v3r2_seqno",
 			code:    "te6ccgEBAQEAcQAA3v8AIN0gggFMl7ohggEznLqxn3Gw7UTQ0x/THzHXC//jBOCk8mCDCNcYINMf0x/TH/gjE7vyY+1E0NMf0x/T/9FRMrryoVFEuvKiBPkBVBBV+RDyo/gAkyDXSpbTB9QC+wDo0QGkyMsfyx/L/8ntVA==",
 			data:    "te6ccgEBAQEAKgAAUAADT0cpqaMXo8Z27iWqhR8JDtTvgvRKS5GHHxJLOEEoYs7914tnN7A=",

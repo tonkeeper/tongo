@@ -672,6 +672,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: DedustPool,
 		Results: []string{
 			"GetAssets_DedustResult",
+			"GetJettonDataResult",
 			"GetReserves_DedustResult",
 		},
 	},

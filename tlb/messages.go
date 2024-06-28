@@ -623,6 +623,7 @@ type MsgEnvelope struct {
 		NextAddress     IntermediateAddress
 		FwdFeeRemaining Grams
 		Msg             Message      `tlb:"^"`
+		EmittedLT       *uint64      `tlb:"maybe"`
 		Metadata        *MsgMetadata `tlb:"maybe"`
 	} `tlbSumType:"msg_envelope_v2#5"`
 }

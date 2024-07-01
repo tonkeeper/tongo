@@ -23,7 +23,7 @@ type DataV5 struct {
 	Extensions tlb.HashmapE[tlb.Bits256, tlb.Uint8]
 }
 
-type walletV5 struct {
+type walletV5Beta struct {
 	version         Version
 	publicKey       ed25519.PublicKey
 	workchain       int
@@ -45,14 +45,14 @@ type MessageConfigV5 struct {
 	MsgType V5MsgType
 }
 
-var _ wallet = &walletV5{}
+var _ wallet = &walletV5Beta{}
 
-func newWalletV5(version Version, publicKey ed25519.PublicKey, opts Options) *walletV5 {
+func NewWalletV5Beta(version Version, publicKey ed25519.PublicKey, opts Options) *walletV5Beta {
 	workchain := defaultOr(opts.Workchain, 0)
 	subWalletID := defaultOr(opts.SubWalletID, 0)
 
 	networkGlobalID := defaultOr[int32](opts.NetworkGlobalID, MainnetGlobalID)
-	return &walletV5{
+	return &walletV5Beta{
 		version:         version,
 		publicKey:       publicKey,
 		workchain:       workchain,
@@ -61,7 +61,7 @@ func newWalletV5(version Version, publicKey ed25519.PublicKey, opts Options) *wa
 	}
 }
 
-func (w *walletV5) generateAddress() (ton.AccountID, error) {
+func (w *walletV5Beta) generateAddress() (ton.AccountID, error) {
 	stateInit, err := w.generateStateInit()
 	if err != nil {
 		return ton.AccountID{}, fmt.Errorf("can not generate state init: %v", err)
@@ -69,7 +69,7 @@ func (w *walletV5) generateAddress() (ton.AccountID, error) {
 	return generateAddress(w.workchain, *stateInit)
 }
 
-func (w *walletV5) generateStateInit() (*tlb.StateInit, error) {
+func (w *walletV5Beta) generateStateInit() (*tlb.StateInit, error) {
 	data := DataV5{
 		Seqno: 0,
 		WalletID: WalletV5ID{
@@ -82,26 +82,26 @@ func (w *walletV5) generateStateInit() (*tlb.StateInit, error) {
 	return generateStateInit(w.version, data)
 }
 
-func (w *walletV5) maxMessageNumber() int {
+func (w *walletV5Beta) maxMessageNumber() int {
 	return 254
 }
 
-func (w *walletV5) nextMessageParams(state tlb.ShardAccount) (nextMsgParams, error) {
+func (w *walletV5Beta) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	if state.Account.Status() == tlb.AccountActive {
 		var data DataV5
 		cell := boc.Cell(state.Account.Account.Storage.State.AccountActive.StateInit.Data.Value.Value)
 		if err := tlb.Unmarshal(&cell, &data); err != nil {
-			return nextMsgParams{}, err
+			return NextMsgParams{}, err
 		}
-		return nextMsgParams{
+		return NextMsgParams{
 			Seqno: uint32(data.Seqno),
 		}, nil
 	}
 	init, err := w.generateStateInit()
 	if err != nil {
-		return nextMsgParams{}, err
+		return NextMsgParams{}, err
 	}
-	return nextMsgParams{Init: init}, nil
+	return NextMsgParams{Init: init}, nil
 
 }
 
@@ -113,7 +113,43 @@ type extSignedMessage struct {
 	Actions    SendMessageList `tlb:"^"`
 }
 
-func (w *walletV5) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
+func (w *walletV5Beta) CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
+	actions := SendMessageList{
+		Actions: make([]SendMessageAction, 0, len(internalMessages)),
+	}
+	for _, msg := range internalMessages {
+		actions.Actions = append(actions.Actions, SendMessageAction{
+			Msg:  msg.Message,
+			Mode: msg.Mode,
+		})
+	}
+	msg := extSignedMessage{
+		WalletId: WalletV5ID{
+			NetworkGlobalID: w.networkGlobalID,
+			Workchain:       uint8(w.workchain),
+			SubWalletID:     w.subWalletID,
+		},
+		ValidUntil: uint32(msgConfig.ValidUntil.Unix()),
+		Seqno:      msgConfig.Seqno,
+		Op:         false,
+		Actions:    actions,
+	}
+	bodyCell := boc.NewCell()
+	if err := bodyCell.WriteUint(uint64(msgConfig.V5MsgType), 32); err != nil {
+		return nil, err
+	}
+	if err := tlb.Marshal(bodyCell, msg); err != nil {
+		return nil, err
+	}
+	bytes := [64]byte{}
+	if err := bodyCell.WriteBytes(bytes[:]); err != nil {
+		return nil, err
+	}
+	return bodyCell, nil
+
+}
+
+func (w *walletV5Beta) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
 	actions := SendMessageList{
 		Actions: make([]SendMessageAction, 0, len(internalMessages)),
 	}

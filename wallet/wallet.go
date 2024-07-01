@@ -109,7 +109,7 @@ func newWallet(key ed25519.PublicKey, version Version, options Options) (wallet,
 	case V4R1, V4R2:
 		return newWalletV4(version, key, options), nil
 	case V5Beta:
-		return newWalletV5(version, key, options), nil
+		return NewWalletV5Beta(version, key, options), nil
 	case HighLoadV2R2:
 		return newWalletHighloadV2(version, key, options), nil
 	default:
@@ -258,7 +258,7 @@ func (w *Wallet) SendV2(ctx context.Context, waitingConfirmation time.Duration, 
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("get account state failed: %v", err)
 	}
-	params, err := w.intWallet.nextMessageParams(state)
+	params, err := w.intWallet.NextMessageParams(state)
 	if err != nil {
 		return ton.Bits256{}, err
 	}

@@ -1746,6 +1746,15 @@ func TestMessageDecoder(t *testing.T) {
 			},
 			interfaces: []ContractInterface{},
 		},
+		{
+			name:       "jetton notify",
+			boc:        "te6ccgEBAQEAOAAAbHNi0JwAAGOJkGVz10JVehoIAYPI7AAa87PEYTuyHkU03oMljNcetmkAm7wzEj0OKQHmAAAAAA==",
+			wantOpName: JettonNotifyMsgOp,
+			wantValidate: func(t *testing.T, value any) {
+				_ = value.(JettonNotifyMsgBody)
+			},
+			interfaces: []ContractInterface{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

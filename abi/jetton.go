@@ -126,6 +126,7 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 	if errors.Is(err, boc.ErrNotEnoughBits) {
 		j.SumType = UnknownJettonOp
 		j.Value = cell.CopyRemaining()
+		cell.ReadRemainingBits()
 		return nil
 	}
 	op := uint32(op64)
@@ -135,12 +136,14 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 	if ok && f != nil {
 		err = f(j, tempCell)
 		if err == nil {
+			cell.ReadRemainingBits()
 			return nil
 		}
 	}
 
 	j.SumType = UnknownJettonOp
 	j.Value = cell.CopyRemaining()
+	cell.ReadRemainingBits()
 
 	return nil
 }

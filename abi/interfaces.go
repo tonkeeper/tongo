@@ -1194,8 +1194,8 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncStormMintExecutorMsgBody,
 			decodeFuncStormAddExecutorAmountMsgBody,
-			decodeFuncStormNftItemTransferMsgBody,
-			decodeFuncStormNftItemGetStaticDataMsgBody,
+			decodeFuncNftTransferMsgBody,
+			decodeFuncGetStaticDataMsgBody,
 		}
 	case StormPositionManager:
 		return []msgDecoderFunc{
@@ -1212,8 +1212,8 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncStormMintReferralMsgBody,
 			decodeFuncStormAddReferralAmountMsgBody,
-			decodeFuncStormNftItemTransferMsgBody,
-			decodeFuncStormNftItemGetStaticDataMsgBody,
+			decodeFuncNftTransferMsgBody,
+			decodeFuncGetStaticDataMsgBody,
 		}
 	case StormVamm:
 		return []msgDecoderFunc{
@@ -1224,7 +1224,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case StormVault:
 		return []msgDecoderFunc{
 			decodeFuncStormVaultTradeNotificationMsgBody,
-			decodeFuncStormVaultTransferNotificationMsgBody,
+			decodeFuncJettonNotifyMsgBody,
 			decodeFuncStormVaultStakeMsgBody,
 			decodeFuncStormVaultUnstakeMsgBody,
 			decodeFuncStormVaultInitMsgBody,

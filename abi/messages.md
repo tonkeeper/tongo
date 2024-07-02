@@ -101,13 +101,8 @@ The list below contains the supported message operations, their names and opcode
 | StormChangeSettings| 0xedcd36a6 |
 | StormCompleteOrder| 0xcf90d618 |
 | StormCreateOrder| 0xa39843f4 |
-| StormExcesses| 0xd53276db |
 | StormMintExecutor| 0x4f38cae8 |
 | StormMintReferral| 0xcb4ddc3c |
-| StormNftItemGetStaticData| 0x2fcb26a2 |
-| StormNftItemOwnershipAssigned| 0x05138d91 |
-| StormNftItemReportStaticData| 0x8b771735 |
-| StormNftItemTransfer| 0x5fcc3d14 |
 | StormOrderCanceled| 0x69d08679 |
 | StormOrderCreated| 0x3a943ce6 |
 | StormPayFunding| 0xb652c441 |
@@ -120,7 +115,6 @@ The list below contains the supported message operations, their names and opcode
 | StormVaultRequestWithdrawPosition| 0x0226df66 |
 | StormVaultStake| 0xc89a3ee4 |
 | StormVaultTradeNotification| 0x3475fdd2 |
-| StormVaultTransferNotification| 0x7362d09c |
 | StormVaultUnstake| 0xd5b5e9ad |
 | StormWithdrawExecutorAmount| 0x2cde6351 |
 | StormWithdrawReferralAmount| 0xf5d4eb52 |

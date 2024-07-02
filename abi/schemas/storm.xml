@@ -49,13 +49,13 @@
         <msg_in>
             <internal name="storm_mint_referral"/>
             <internal name="storm_add_referral_amount"/>
-            <internal name="storm_nft_item_transfer"/>
-            <internal name="storm_nft_item_get_static_data"/>
+            <internal name="nft_transfer"/>
+            <internal name="get_static_data"/>
         </msg_in>
         <msg_out>
-            <internal name="storm_nft_item_ownership_assigned"/>
-            <internal name="storm_excesses"/>
-            <internal name="storm_nft_item_report_static_data"/>
+            <internal name="nft_ownership_assigned"/>
+            <internal name="excesses"/>
+            <internal name="report_static_data"/>
             <internal name="storm_withdraw_referral_amount"/>
         </msg_out>
 
@@ -72,13 +72,13 @@
         <msg_in>
             <internal name="storm_mint_executor"/>
             <internal name="storm_add_executor_amount"/>
-            <internal name="storm_nft_item_transfer"/>
-            <internal name="storm_nft_item_get_static_data"/>
+            <internal name="nft_transfer"/>
+            <internal name="get_static_data"/>
         </msg_in>
         <msg_out>
-            <internal name="storm_nft_item_ownership_assigned"/>
-            <internal name="storm_excesses"/>
-            <internal name="storm_nft_item_report_static_data"/>
+            <internal name="nft_ownership_assigned"/>
+            <internal name="excesses"/>
+            <internal name="report_static_data"/>
             <internal name="storm_withdraw_executor_amount"/>
         </msg_out>
 
@@ -94,7 +94,7 @@
     <interface name="storm_vault">
         <msg_in>
             <internal name="storm_vault_trade_notification"/>
-            <internal name="storm_vault_transfer_notification"/>
+            <internal name="jetton_notify"/>
             <internal name="storm_vault_stake"/>
             <internal name="storm_vault_unstake"/>
             <internal name="storm_vault_init"/>
@@ -341,27 +341,6 @@
         add_referral_amount#84dced7a referral_amount:Coins origin_addr:MsgAddress = InternalMsgBody;
     </internal>
 
-    <internal name="storm_nft_item_transfer">
-        nft_item_transfer#5fcc3d14 query_id:uint64 new_owner:MsgAddress response_destination:MsgAddress
-        custom_payload:(Maybe ^Cell) forward_amount:Coins forward_payload:(Either Cell ^Cell) = InternalMsgBody;
-    </internal>
-
-    <internal name="storm_nft_item_get_static_data">
-        nft_item_get_static_data#2fcb26a2 query_id:uint64 = InternalMsgBody;
-    </internal>
-
-    <internal name="storm_nft_item_ownership_assigned">
-        nft_item_ownership_assigned#05138d91 query_id:uint64 prev_owner:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
-    </internal>
-
-    <internal name="storm_excesses">
-        excesses#d53276db query_id:uint64 = InternalMsgBody;
-    </internal>
-
-    <internal name="storm_nft_item_report_static_data">
-        nft_item_report_static_data#8b771735 query_id:uint64 index:uint256 collection:MsgAddress = InternalMsgBody;
-    </internal>
-
     <internal name="storm_withdraw_referral_amount">
         withdraw_referral_amount#f5d4eb52 index:uint64 referral_amount:Coins owner_addr:MsgAddress = InternalMsgBody;
     </internal>
@@ -381,11 +360,6 @@
     <internal name="storm_vault_trade_notification">
         exchange#3475fdd2 amm_index:uint16 free_amount:uint16 locked_amount:int64 exchange_amount:int64 withdraw_locked_amount:int64
         fee_to_stakers:int64 withdraw_amount:int64 trader_addr:MsgAddress referral_params:(Maybe ^ReferralData) executor_params:(Maybe ^ExecutorData) = InternalMsgBody;
-    </internal>
-
-    <internal name="storm_vault_transfer_notification">
-        transfer_notification#7362d09c query_id:uint64 amount:Coins 
-        sender:MsgAddress forward_payload:(Either NotificationPayload ^NotificationPayload) = InternalMsgBody;
     </internal>
 
     <internal name="storm_vault_stake">

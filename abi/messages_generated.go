@@ -15,8 +15,6 @@ var (
 	decodeFuncProveOwnershipMsgBody = decodeMsg(tlb.Tag{Val: 0x04ded148, Len: 32}, ProveOwnershipMsgOp, ProveOwnershipMsgBody{})
 	// 0x05138d91
 	decodeFuncNftOwnershipAssignedMsgBody = decodeMsg(tlb.Tag{Val: 0x05138d91, Len: 32}, NftOwnershipAssignedMsgOp, NftOwnershipAssignedMsgBody{})
-	// 0x05138d91
-	decodeFuncStormNftItemOwnershipAssignedMsgBody = decodeMsg(tlb.Tag{Val: 0x05138d91, Len: 32}, StormNftItemOwnershipAssignedMsgOp, StormNftItemOwnershipAssignedMsgBody{})
 	// 0x0524c7ae
 	decodeFuncOwnershipProofMsgBody = decodeMsg(tlb.Tag{Val: 0x0524c7ae, Len: 32}, OwnershipProofMsgOp, OwnershipProofMsgBody{})
 	// 0x088eaa32
@@ -79,8 +77,6 @@ var (
 	decodeFuncStormWithdrawExecutorAmountMsgBody = decodeMsg(tlb.Tag{Val: 0x2cde6351, Len: 32}, StormWithdrawExecutorAmountMsgOp, StormWithdrawExecutorAmountMsgBody{})
 	// 0x2fcb26a2
 	decodeFuncGetStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x2fcb26a2, Len: 32}, GetStaticDataMsgOp, GetStaticDataMsgBody{})
-	// 0x2fcb26a2
-	decodeFuncStormNftItemGetStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x2fcb26a2, Len: 32}, StormNftItemGetStaticDataMsgOp, StormNftItemGetStaticDataMsgBody{})
 	// 0x30026327
 	decodeFuncTonstakeControllerValidatorWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0x30026327, Len: 32}, TonstakeControllerValidatorWithdrawalMsgOp, TonstakeControllerValidatorWithdrawalMsgBody{})
 	// 0x319b0cdc
@@ -147,8 +143,6 @@ var (
 	decodeFuncTonstakePoolSetRolesMsgBody = decodeMsg(tlb.Tag{Val: 0x5e517f36, Len: 32}, TonstakePoolSetRolesMsgOp, TonstakePoolSetRolesMsgBody{})
 	// 0x5fcc3d14
 	decodeFuncNftTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x5fcc3d14, Len: 32}, NftTransferMsgOp, NftTransferMsgBody{})
-	// 0x5fcc3d14
-	decodeFuncStormNftItemTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x5fcc3d14, Len: 32}, StormNftItemTransferMsgOp, StormNftItemTransferMsgBody{})
 	// 0x600c00fd
 	decodeFuncTegroSwapTonMsgBody = decodeMsg(tlb.Tag{Val: 0x600c00fd, Len: 32}, TegroSwapTonMsgOp, TegroSwapTonMsgBody{})
 	// 0x60dfc677
@@ -183,8 +177,6 @@ var (
 	decodeFuncDedustSwapPeerMsgBody = decodeMsg(tlb.Tag{Val: 0x72aca8aa, Len: 32}, DedustSwapPeerMsgOp, DedustSwapPeerMsgBody{})
 	// 0x7362d09c
 	decodeFuncJettonNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, JettonNotifyMsgOp, JettonNotifyMsgBody{})
-	// 0x7362d09c
-	decodeFuncStormVaultTransferNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, StormVaultTransferNotificationMsgOp, StormVaultTransferNotificationMsgBody{})
 	// 0x73756273
 	decodeFuncSubscriptionPaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{})
 	// 0x74bb3427
@@ -215,8 +207,6 @@ var (
 	decodeFuncStormProvidePositionMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvidePositionMsgOp, StormProvidePositionMsgBody{})
 	// 0x8b771735
 	decodeFuncReportStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{})
-	// 0x8b771735
-	decodeFuncStormNftItemReportStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, StormNftItemReportStaticDataMsgOp, StormNftItemReportStaticDataMsgBody{})
 	// 0x8efed779
 	decodeFuncTonstakeControllerWithdrawValidatorMsgBody = decodeMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{})
 	// 0x96e7f528
@@ -283,8 +273,6 @@ var (
 	decodeFuncStorageContractConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xd4caedcd, Len: 32}, StorageContractConfirmedMsgOp, StorageContractConfirmedMsgBody{})
 	// 0xd53276db
 	decodeFuncExcessMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, ExcessMsgOp, ExcessMsgBody{})
-	// 0xd53276db
-	decodeFuncStormExcessesMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, StormExcessesMsgOp, StormExcessesMsgBody{})
 	// 0xd5b5e9ad
 	decodeFuncStormVaultUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0xd5b5e9ad, Len: 32}, StormVaultUnstakeMsgOp, StormVaultUnstakeMsgBody{})
 	// 0xda803efd
@@ -350,12 +338,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x04ded148
 	ProveOwnershipMsgOpCode: decodeFuncProveOwnershipMsgBody,
 
-	//NftOwnershipAssigned, StormNftItemOwnershipAssigned,
-	0x05138d91: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncNftOwnershipAssignedMsgBody,
-		decodeFuncStormNftItemOwnershipAssignedMsgBody},
-		"0x05138d91",
-	),
+	// 0x05138d91
+	NftOwnershipAssignedMsgOpCode: decodeFuncNftOwnershipAssignedMsgBody,
 
 	// 0x0524c7ae
 	OwnershipProofMsgOpCode: decodeFuncOwnershipProofMsgBody,
@@ -448,12 +432,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x2cde6351
 	StormWithdrawExecutorAmountMsgOpCode: decodeFuncStormWithdrawExecutorAmountMsgBody,
 
-	//GetStaticData, StormNftItemGetStaticData,
-	0x2fcb26a2: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncGetStaticDataMsgBody,
-		decodeFuncStormNftItemGetStaticDataMsgBody},
-		"0x2fcb26a2",
-	),
+	// 0x2fcb26a2
+	GetStaticDataMsgOpCode: decodeFuncGetStaticDataMsgBody,
 
 	// 0x30026327
 	TonstakeControllerValidatorWithdrawalMsgOpCode: decodeFuncTonstakeControllerValidatorWithdrawalMsgBody,
@@ -552,12 +532,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x5e517f36
 	TonstakePoolSetRolesMsgOpCode: decodeFuncTonstakePoolSetRolesMsgBody,
 
-	//NftTransfer, StormNftItemTransfer,
-	0x5fcc3d14: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncNftTransferMsgBody,
-		decodeFuncStormNftItemTransferMsgBody},
-		"0x5fcc3d14",
-	),
+	// 0x5fcc3d14
+	NftTransferMsgOpCode: decodeFuncNftTransferMsgBody,
 
 	// 0x600c00fd
 	TegroSwapTonMsgOpCode: decodeFuncTegroSwapTonMsgBody,
@@ -607,12 +583,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x72aca8aa
 	DedustSwapPeerMsgOpCode: decodeFuncDedustSwapPeerMsgBody,
 
-	//JettonNotify, StormVaultTransferNotification,
-	0x7362d09c: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncJettonNotifyMsgBody,
-		decodeFuncStormVaultTransferNotificationMsgBody},
-		"0x7362d09c",
-	),
+	// 0x7362d09c
+	JettonNotifyMsgOpCode: decodeFuncJettonNotifyMsgBody,
 
 	// 0x73756273
 	SubscriptionPaymentMsgOpCode: decodeFuncSubscriptionPaymentMsgBody,
@@ -656,12 +628,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x8865b402
 	StormProvidePositionMsgOpCode: decodeFuncStormProvidePositionMsgBody,
 
-	//ReportStaticData, StormNftItemReportStaticData,
-	0x8b771735: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncReportStaticDataMsgBody,
-		decodeFuncStormNftItemReportStaticDataMsgBody},
-		"0x8b771735",
-	),
+	// 0x8b771735
+	ReportStaticDataMsgOpCode: decodeFuncReportStaticDataMsgBody,
 
 	// 0x8efed779
 	TonstakeControllerWithdrawValidatorMsgOpCode: decodeFuncTonstakeControllerWithdrawValidatorMsgBody,
@@ -759,12 +727,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xd4caedcd
 	StorageContractConfirmedMsgOpCode: decodeFuncStorageContractConfirmedMsgBody,
 
-	//Excess, StormExcesses,
-	0xd53276db: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncExcessMsgBody,
-		decodeFuncStormExcessesMsgBody},
-		"0xd53276db",
-	),
+	// 0xd53276db
+	ExcessMsgOpCode: decodeFuncExcessMsgBody,
 
 	// 0xd5b5e9ad
 	StormVaultUnstakeMsgOpCode: decodeFuncStormVaultUnstakeMsgBody,
@@ -850,7 +814,6 @@ const (
 	StormVaultRequestWithdrawPositionMsgOp       MsgOpName = "StormVaultRequestWithdrawPosition"
 	ProveOwnershipMsgOp                          MsgOpName = "ProveOwnership"
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
-	StormNftItemOwnershipAssignedMsgOp           MsgOpName = "StormNftItemOwnershipAssigned"
 	OwnershipProofMsgOp                          MsgOpName = "OwnershipProof"
 	ChallengeQuarantinedChannelStateMsgOp        MsgOpName = "ChallengeQuarantinedChannelState"
 	TonstakePoolWithdrawalMsgOp                  MsgOpName = "TonstakePoolWithdrawal"
@@ -882,7 +845,6 @@ const (
 	TonstakePoolSetGovernanceFeeMsgOp            MsgOpName = "TonstakePoolSetGovernanceFee"
 	StormWithdrawExecutorAmountMsgOp             MsgOpName = "StormWithdrawExecutorAmount"
 	GetStaticDataMsgOp                           MsgOpName = "GetStaticData"
-	StormNftItemGetStaticDataMsgOp               MsgOpName = "StormNftItemGetStaticData"
 	TonstakeControllerValidatorWithdrawalMsgOp   MsgOpName = "TonstakeControllerValidatorWithdrawal"
 	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
 	StormVaultTradeNotificationMsgOp             MsgOpName = "StormVaultTradeNotification"
@@ -916,7 +878,6 @@ const (
 	StormAddExecutorAmountMsgOp                  MsgOpName = "StormAddExecutorAmount"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
-	StormNftItemTransferMsgOp                    MsgOpName = "StormNftItemTransfer"
 	TegroSwapTonMsgOp                            MsgOpName = "TegroSwapTon"
 	StormUpdatePositionMsgOp                     MsgOpName = "StormUpdatePosition"
 	DedustSwapExternalMsgOp                      MsgOpName = "DedustSwapExternal"
@@ -934,7 +895,6 @@ const (
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
 	DedustSwapPeerMsgOp                          MsgOpName = "DedustSwapPeer"
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
-	StormVaultTransferNotificationMsgOp          MsgOpName = "StormVaultTransferNotification"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
 	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
@@ -950,7 +910,6 @@ const (
 	StormAddReferralAmountMsgOp                  MsgOpName = "StormAddReferralAmount"
 	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
-	StormNftItemReportStaticDataMsgOp            MsgOpName = "StormNftItemReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
 	TonstakeControllerPoolUpgradeMsgOp           MsgOpName = "TonstakeControllerPoolUpgrade"
 	TonstakePoolPrepareGovernanceMigrationMsgOp  MsgOpName = "TonstakePoolPrepareGovernanceMigration"
@@ -984,7 +943,6 @@ const (
 	TopUpMsgOp                                   MsgOpName = "TopUp"
 	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
 	ExcessMsgOp                                  MsgOpName = "Excess"
-	StormExcessesMsgOp                           MsgOpName = "StormExcesses"
 	StormVaultUnstakeMsgOp                       MsgOpName = "StormVaultUnstake"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
 	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
@@ -1018,7 +976,6 @@ const (
 	StormVaultRequestWithdrawPositionMsgOpCode       MsgOpCode = 0x0226df66
 	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
-	StormNftItemOwnershipAssignedMsgOpCode           MsgOpCode = 0x05138d91
 	OwnershipProofMsgOpCode                          MsgOpCode = 0x0524c7ae
 	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x088eaa32
 	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0x0a77535c
@@ -1050,7 +1007,6 @@ const (
 	TonstakePoolSetGovernanceFeeMsgOpCode            MsgOpCode = 0x2aaa96a0
 	StormWithdrawExecutorAmountMsgOpCode             MsgOpCode = 0x2cde6351
 	GetStaticDataMsgOpCode                           MsgOpCode = 0x2fcb26a2
-	StormNftItemGetStaticDataMsgOpCode               MsgOpCode = 0x2fcb26a2
 	TonstakeControllerValidatorWithdrawalMsgOpCode   MsgOpCode = 0x30026327
 	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
 	StormVaultTradeNotificationMsgOpCode             MsgOpCode = 0x3475fdd2
@@ -1084,7 +1040,6 @@ const (
 	StormAddExecutorAmountMsgOpCode                  MsgOpCode = 0x5dd66579
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
-	StormNftItemTransferMsgOpCode                    MsgOpCode = 0x5fcc3d14
 	TegroSwapTonMsgOpCode                            MsgOpCode = 0x600c00fd
 	StormUpdatePositionMsgOpCode                     MsgOpCode = 0x60dfc677
 	DedustSwapExternalMsgOpCode                      MsgOpCode = 0x61ee542d
@@ -1102,7 +1057,6 @@ const (
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
 	DedustSwapPeerMsgOpCode                          MsgOpCode = 0x72aca8aa
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
-	StormVaultTransferNotificationMsgOpCode          MsgOpCode = 0x7362d09c
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
 	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
@@ -1118,7 +1072,6 @@ const (
 	StormAddReferralAmountMsgOpCode                  MsgOpCode = 0x84dced7a
 	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
-	StormNftItemReportStaticDataMsgOpCode            MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
 	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
 	TonstakePoolPrepareGovernanceMigrationMsgOpCode  MsgOpCode = 0x9971881c
@@ -1152,7 +1105,6 @@ const (
 	TopUpMsgOpCode                                   MsgOpCode = 0xd372158c
 	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
-	StormExcessesMsgOpCode                           MsgOpCode = 0xd53276db
 	StormVaultUnstakeMsgOpCode                       MsgOpCode = 0xd5b5e9ad
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
 	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
@@ -1204,12 +1156,6 @@ type NftOwnershipAssignedMsgBody struct {
 	QueryId        uint64
 	PrevOwner      tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[NFTPayload]
-}
-
-type StormNftItemOwnershipAssignedMsgBody struct {
-	QueryId        uint64
-	PrevOwner      tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[tlb.Any]
 }
 
 type OwnershipProofMsgBody struct {
@@ -1400,10 +1346,6 @@ type StormWithdrawExecutorAmountMsgBody struct {
 }
 
 type GetStaticDataMsgBody struct {
-	QueryId uint64
-}
-
-type StormNftItemGetStaticDataMsgBody struct {
 	QueryId uint64
 }
 
@@ -1603,15 +1545,6 @@ type NftTransferMsgBody struct {
 	ForwardPayload      tlb.EitherRef[NFTPayload]
 }
 
-type StormNftItemTransferMsgBody struct {
-	QueryId             uint64
-	NewOwner            tlb.MsgAddress
-	ResponseDestination tlb.MsgAddress
-	CustomPayload       *tlb.Any `tlb:"maybe^"`
-	ForwardAmount       tlb.Grams
-	ForwardPayload      tlb.EitherRef[tlb.Any]
-}
-
 type TegroSwapTonMsgBody struct {
 	QueryId          uint64
 	Extract          bool
@@ -1716,13 +1649,6 @@ type JettonNotifyMsgBody struct {
 	ForwardPayload tlb.EitherRef[JettonPayload]
 }
 
-type StormVaultTransferNotificationMsgBody struct {
-	QueryId        uint64
-	Amount         tlb.Grams
-	Sender         tlb.MsgAddress
-	ForwardPayload tlb.EitherRef[NotificationPayload]
-}
-
 type SubscriptionPaymentMsgBody struct{}
 
 type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
@@ -1799,12 +1725,6 @@ type StormProvidePositionMsgBody struct {
 }
 
 type ReportStaticDataMsgBody struct {
-	QueryId    uint64
-	Index      tlb.Uint256
-	Collection tlb.MsgAddress
-}
-
-type StormNftItemReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
 	Collection tlb.MsgAddress
@@ -2013,10 +1933,6 @@ type ExcessMsgBody struct {
 	QueryId uint64
 }
 
-type StormExcessesMsgBody struct {
-	QueryId uint64
-}
-
 type StormVaultUnstakeMsgBody struct {
 	JettonAmount tlb.Grams
 	UserAddress  tlb.MsgAddress
@@ -2157,7 +2073,6 @@ var KnownMsgInTypes = map[string]any{
 	StormVaultRequestWithdrawPositionMsgOp:       StormVaultRequestWithdrawPositionMsgBody{},
 	ProveOwnershipMsgOp:                          ProveOwnershipMsgBody{},
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
-	StormNftItemOwnershipAssignedMsgOp:           StormNftItemOwnershipAssignedMsgBody{},
 	OwnershipProofMsgOp:                          OwnershipProofMsgBody{},
 	ChallengeQuarantinedChannelStateMsgOp:        ChallengeQuarantinedChannelStateMsgBody{},
 	TonstakePoolWithdrawalMsgOp:                  TonstakePoolWithdrawalMsgBody{},
@@ -2189,7 +2104,6 @@ var KnownMsgInTypes = map[string]any{
 	TonstakePoolSetGovernanceFeeMsgOp:            TonstakePoolSetGovernanceFeeMsgBody{},
 	StormWithdrawExecutorAmountMsgOp:             StormWithdrawExecutorAmountMsgBody{},
 	GetStaticDataMsgOp:                           GetStaticDataMsgBody{},
-	StormNftItemGetStaticDataMsgOp:               StormNftItemGetStaticDataMsgBody{},
 	TonstakeControllerValidatorWithdrawalMsgOp:   TonstakeControllerValidatorWithdrawalMsgBody{},
 	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
 	StormVaultTradeNotificationMsgOp:             StormVaultTradeNotificationMsgBody{},
@@ -2223,7 +2137,6 @@ var KnownMsgInTypes = map[string]any{
 	StormAddExecutorAmountMsgOp:                  StormAddExecutorAmountMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},
-	StormNftItemTransferMsgOp:                    StormNftItemTransferMsgBody{},
 	TegroSwapTonMsgOp:                            TegroSwapTonMsgBody{},
 	StormUpdatePositionMsgOp:                     StormUpdatePositionMsgBody{},
 	DedustSwapExternalMsgOp:                      DedustSwapExternalMsgBody{},
@@ -2241,7 +2154,6 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
 	DedustSwapPeerMsgOp:                          DedustSwapPeerMsgBody{},
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
-	StormVaultTransferNotificationMsgOp:          StormVaultTransferNotificationMsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
 	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
@@ -2257,7 +2169,6 @@ var KnownMsgInTypes = map[string]any{
 	StormAddReferralAmountMsgOp:                  StormAddReferralAmountMsgBody{},
 	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
-	StormNftItemReportStaticDataMsgOp:            StormNftItemReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
 	TonstakeControllerPoolUpgradeMsgOp:           TonstakeControllerPoolUpgradeMsgBody{},
 	TonstakePoolPrepareGovernanceMigrationMsgOp:  TonstakePoolPrepareGovernanceMigrationMsgBody{},
@@ -2291,7 +2202,6 @@ var KnownMsgInTypes = map[string]any{
 	TopUpMsgOp:                                   TopUpMsgBody{},
 	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
 	ExcessMsgOp:                                  ExcessMsgBody{},
-	StormExcessesMsgOp:                           StormExcessesMsgBody{},
 	StormVaultUnstakeMsgOp:                       StormVaultUnstakeMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
 	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},

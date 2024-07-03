@@ -71,14 +71,14 @@ func (w *walletHighloadV2) createSignedMsgBodyCell(privateKey ed25519.PrivateKey
 	return signBodyCell(*bodyCell, privateKey)
 }
 
-func (w *walletHighloadV2) nextMessageParams(state tlb.ShardAccount) (nextMsgParams, error) {
+func (w *walletHighloadV2) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	initRequired := state.Account.Status() == tlb.AccountUninit || state.Account.Status() == tlb.AccountNone
 	if !initRequired {
-		return nextMsgParams{}, nil
+		return NextMsgParams{}, nil
 	}
 	stateInit, err := w.generateStateInit()
 	if err != nil {
-		return nextMsgParams{}, err
+		return NextMsgParams{}, err
 	}
-	return nextMsgParams{Init: stateInit}, nil
+	return NextMsgParams{Init: stateInit}, nil
 }

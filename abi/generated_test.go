@@ -587,7 +587,7 @@ func TestWhalesNominators(t *testing.T) {
 	if len(members.List.Keys()) == 0 {
 		t.Fatal(len(members.List.Keys()))
 	}
-	memberAddress := ton.NewAccountID(0, members.List.Keys()[2])
+	memberAddress := ton.NewAccountID(0, members.List.Keys()[4])
 	_, v, err = GetMember(context.Background(), client, address, memberAddress.ToMsgAddress())
 	if err != nil {
 		t.Fatal(err)

@@ -17,34 +17,21 @@ var ErrGramsOverflow = errors.New("grams overflow")
 
 // Grams
 // nanograms$_ amount:(VarUInteger 16) = Grams;
-type Grams uint64 // total value fit to uint64
+type Grams VarUInteger16
 
 type Coins = Grams
 
 type SignedCoins int64
 
 func (g Grams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	var amount VarUInteger16
-	amount = VarUInteger16(*big.NewInt(int64(g)))
-	err := encode(c, "", amount, encoder)
-	return err
+	return VarUInteger16(g).MarshalTLB(c, encoder)
 }
 
 func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	ln, err := c.ReadLimUint(15)
+	var amount VarUInteger16
+	err := amount.UnmarshalTLB(c, decoder)
 	if err != nil {
 		return err
-	}
-	if ln > 8 {
-		return ErrGramsOverflow
-	}
-	var amount uint64
-	for i := 0; i < int(ln); i++ {
-		b, err := c.ReadUint(8)
-		if err != nil {
-			return err
-		}
-		amount = uint64(b) | (amount << 8)
 	}
 	*g = Grams(amount)
 	return nil
@@ -93,15 +80,16 @@ func (g *SignedCoins) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 }
 
 func (g Grams) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("\"%d\"", g)), nil
+	return VarUInteger16(g).MarshalJSON()
 }
 
 func (g *Grams) UnmarshalJSON(data []byte) error {
-	val, err := strconv.ParseUint(string(bytes.Trim(data, "\" \n")), 10, 64)
+	var amount VarUInteger16
+	err := amount.UnmarshalJSON(data)
 	if err != nil {
 		return err
 	}
-	*g = Grams(val)
+	*g = Grams(amount)
 	return nil
 }
 func (g SignedCoins) MarshalJSON() ([]byte, error) {

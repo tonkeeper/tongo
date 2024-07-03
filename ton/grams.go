@@ -1,5 +1,9 @@
 package ton
 
-import "github.com/tonkeeper/tongo/tlb"
+import (
+	"math/big"
 
-const OneTON tlb.Grams = 1_000_000_000
+	"github.com/tonkeeper/tongo/tlb"
+)
+
+var OneTON tlb.Grams = tlb.Grams(*big.NewInt(1_000_000_000))

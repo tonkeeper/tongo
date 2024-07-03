@@ -216,12 +216,12 @@ func TestGetAllShards(t *testing.T) {
 }
 
 type BlockContent struct {
-	Balances map[string]int64
+	Balances map[string]string
 }
 
 func createOutputFile(api *Client, extID ton.BlockIDExt, filename string, accounts []tlb.Bits256) {
 	content := BlockContent{
-		Balances: map[string]int64{},
+		Balances: map[string]string{},
 	}
 	for _, accountAddr := range accounts {
 		accountID := ton.AccountID{
@@ -236,7 +236,8 @@ func createOutputFile(api *Client, extID ton.BlockIDExt, filename string, accoun
 		if !ok {
 			panic("failed to get currency collection from account state")
 		}
-		content.Balances[accountID.ToRaw()] = int64(collection.Grams)
+		grams := big.Int(collection.Grams)
+		content.Balances[accountID.ToRaw()] = grams.String()
 	}
 	bs, err := json.MarshalIndent(content, "", " ")
 	if err != nil {
@@ -282,7 +283,8 @@ func TestGetBlock(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			blockID := ton.MustParseBlockID(tt.blockID)
-			extID, _, err := api.LookupBlock(context.TODO(), blockID, 1, nil, nil)
+			var extID ton.BlockIDExt
+			extID, _, err = api.LookupBlock(context.TODO(), blockID, 1, nil, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -291,7 +293,7 @@ func TestGetBlock(t *testing.T) {
 				t.Fatal(err)
 			}
 			content := BlockContent{
-				Balances: map[string]int64{},
+				Balances: map[string]string{},
 			}
 			balances := b.StateUpdate.ToRoot.AccountBalances()
 			for _, tx := range b.AllTransactions() {
@@ -305,7 +307,8 @@ func TestGetBlock(t *testing.T) {
 					Workchain: blockID.Workchain,
 					Address:   accountAddr,
 				}
-				content.Balances[accountID.ToRaw()] = int64(currencyCollection.Grams)
+				grams := big.Int(currencyCollection.Grams)
+				content.Balances[accountID.ToRaw()] = grams.String()
 			}
 			outputFilename := fmt.Sprintf("testdata/%v.output.json", tt.file)
 			bs, err := json.MarshalIndent(content, "", " ")

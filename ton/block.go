@@ -163,7 +163,7 @@ func ToBlockId(s tlb.ShardDesc, workchain int32) BlockIDExt {
 	}
 }
 
-func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateInit, importFee tlb.Grams) (tlb.Message, error) {
+func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateInit, importFee tlb.VarUInteger16) (tlb.Message, error) {
 	// TODO: add either selection algorithm
 	var msg = tlb.Message{
 		Info: tlb.CommonMsgInfo{
@@ -171,7 +171,7 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 			ExtInMsgInfo: &struct {
 				Src       tlb.MsgAddress
 				Dest      tlb.MsgAddress
-				ImportFee tlb.Grams
+				ImportFee tlb.VarUInteger16
 			}{
 				Src:       (*AccountID)(nil).ToMsgAddress(),
 				Dest:      address.ToMsgAddress(),

@@ -195,7 +195,7 @@ func (w *Wallet) RawSendV2(
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
-	extMsg, err := ton.CreateExternalMessage(w.address, signedBodyCell, init, 0)
+	extMsg, err := ton.CreateExternalMessage(w.address, signedBodyCell, init, tlb.VarUInteger16{})
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not create external message: %v", err)
 	}

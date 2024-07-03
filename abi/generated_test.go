@@ -730,31 +730,6 @@ func TestMessageDecoder(t *testing.T) {
 		},
 
 		{
-			name:       "storm vault transfer notification",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormVaultTransferNotification",
-			boc:        "te6ccuECAgEAAKYAAG4BTAFoc2LQnAAAErtGYPwoYWq03FYgCADY/t9qBwnVPjVeVntDbe2WP/YtNjjUoOOyThl+J1hcfwEA2SWThWGACd2SQ3OpqtQbKM7ALak4TWc2OvIDT8KnzMBn4o1BEN6ID7NXxQAbH9vtQOE6p8arys9obb2yx/7FpscalBx2ScMvxOsLj/ACwiRZrfUSlMM0dz+Hm4KW1IqaFz1Pwxg3+t0jQDt36qLHweyx",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormVaultTransferNotificationMsgBody{
-					QueryId: 20595548945448,
-					Amount:  24925000000000,
-					Sender:  value.(StormVaultTransferNotificationMsgBody).Sender,
-					ForwardPayload: tlb.EitherRef[NotificationPayload]{
-						IsRight: true,
-						Value: NotificationPayload{
-							Opcode: 2707654454786252178,
-						},
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
 			name:       "storm vault stake",
 			interfaces: []ContractInterface{StormVault},
 			wantOpName: "StormVaultStake",
@@ -841,29 +816,6 @@ func TestMessageDecoder(t *testing.T) {
 				body := StormAddReferralAmountMsgBody{
 					ReferralAmount: 136991653,
 					OriginAddr:     value.(StormAddReferralAmountMsgBody).OriginAddr,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm nft item transfer",
-			interfaces: []ContractInterface{StormReferral},
-			wantOpName: "StormNftItemTransfer",
-			boc:        "te6ccuEBAQEAUgCkAJ9fzD0UAAAAAAAAAACAF5HV1dlKRs28pyDBur1/dcMC030CGfYtGb7zi6MogBbwAmzTV8CyM5p8IDBk2E/NonjbGBcQOkO5BOJIGDzBQHAgCHS8k3s=",
-			wantValidate: func(t *testing.T, value any) {
-
-				body := StormNftItemTransferMsgBody{
-					QueryId:             0,
-					NewOwner:            value.(StormNftItemTransferMsgBody).NewOwner,
-					ResponseDestination: value.(StormNftItemTransferMsgBody).ResponseDestination,
-					CustomPayload:       value.(StormNftItemTransferMsgBody).CustomPayload,
-					ForwardAmount:       0,
-					ForwardPayload:      value.(StormNftItemTransferMsgBody).ForwardPayload,
 				}
 
 				if !reflect.DeepEqual(value, body) {

@@ -22,7 +22,7 @@ func ToBlockId(s tlb.ShardDesc, workchain int32) BlockIDExt {
 	return ton.ToBlockId(s, workchain)
 }
 
-func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateInit, importFee tlb.Grams) (tlb.Message, error) {
+func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateInit, importFee tlb.VarUInteger16) (tlb.Message, error) {
 	return ton.CreateExternalMessage(address, body, init, importFee)
 }
 

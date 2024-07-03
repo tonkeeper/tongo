@@ -252,7 +252,7 @@ func (b messageBuilder) Message() (tlb.Message, error) {
 		m.Info.SumType = "ExtInMsgInfo"
 		m.Info.ExtInMsgInfo = &struct {
 			Src, Dest tlb.MsgAddress
-			ImportFee tlb.Grams
+			ImportFee tlb.VarUInteger16
 		}{Src: tlb.MsgAddress{SumType: "AddrNone"}, Dest: b.to.ToMsgAddress()}
 	case Internal:
 		m.Info.SumType = "IntMsgInfo"

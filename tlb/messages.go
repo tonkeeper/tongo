@@ -95,7 +95,7 @@ type CommonMsgInfo struct {
 	ExtInMsgInfo *struct {
 		Src       MsgAddress
 		Dest      MsgAddress
-		ImportFee Grams
+		ImportFee VarUInteger16
 	} `tlbSumType:"ext_in_msg_info$10"`
 	ExtOutMsgInfo *struct {
 		Src       MsgAddress

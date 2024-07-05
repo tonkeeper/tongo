@@ -1707,6 +1707,34 @@ func TestMessageDecoder(t *testing.T) {
 			},
 			interfaces: []ContractInterface{},
 		},
+		{
+			name:       "w5 extension action",
+			boc:        "te6ccgEBBAEAUQABGWV4dG4AAAAAAAGIlKABAgoOw8htAwIDAAAAaEIANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RAgL68IAAAAAAAAAAAAAAAAAAA=",
+			wantOpName: WalletExtensionActionV5R1MsgOp,
+			wantValue: WalletExtensionActionV5R1MsgBody{
+				QueryId: 100500,
+				Actions: &W5Actions{
+					{
+						Magic: 0xec3c86d,
+						Mode:  uint8(3),
+						Msg:   mustHexToCellPtr("b5ee9c7201010101003600006842003666992d42c61bcb49fd715e5558e1483418d27085361dda27745b0ade50e910202faf080000000000000000000000000000"),
+					},
+				},
+			},
+			interfaces: []ContractInterface{WalletV5R1},
+		},
+		{
+			name:       "w5 extension action with disable signature",
+			boc:        "te6ccgEBAQEAEAAAG2V4dG4AAAAAAAGIlEEQ",
+			wantOpName: WalletExtensionActionV5R1MsgOp,
+			wantValue: WalletExtensionActionV5R1MsgBody{
+				QueryId: 100500,
+				Extended: &W5ExtendedActions{
+					{SumType: "SetSignatureAllowed", SetSignatureAllowed: &struct{ Allowed bool }{Allowed: false}},
+				},
+			},
+			interfaces: []ContractInterface{WalletV5R1},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1723,7 +1751,7 @@ func TestMessageDecoder(t *testing.T) {
 				t.Fatalf("MessageDecoder() error: %v", err)
 			}
 			if *opName != tt.wantOpName {
-				t.Fatalf("got opname: %v, want: %v", opName, tt.wantOpName)
+				t.Fatalf("got opname: %v, want: %v", *opName, tt.wantOpName)
 			}
 			if tt.wantValidate != nil {
 				tt.wantValidate(t, value)
@@ -1747,6 +1775,14 @@ func mustHexToCell(s string) boc.Cell {
 		panic(err)
 	}
 	return *c[0]
+}
+
+func mustHexToCellPtr(s string) *boc.Cell {
+	c, err := boc.DeserializeBocHex(s)
+	if err != nil {
+		panic(err)
+	}
+	return c[0]
 
 }
 
@@ -2037,6 +2073,77 @@ func TestDecodeExternalIn(t *testing.T) {
 				return b
 			},
 		},
+		{
+			name:       "ext in v5r1",
+			boc:        "te6ccgEBBgEA0gABoXNpZ25////9ZofzWAAAAAKWb/E2BkKquvrDod1MV/jFRE8U5f9dd2NCWyPu/4MLAvOTpIDuoyZUzxUTJe10/xbYPEFPSLwi2Bl9hEKJMqKDYAECCg7DyG0DAgMCCg7DyG0DBAUAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4aYloAAAAAAAAAAAAAAAAAAAAAAGZCAGucigP4G0rZ15oNlNWYm9RhNNWEjwAh2hgNCtAaQUcOHMS0AAAAAAAAAAAAAAAAAAA=",
+			wantOpName: WalletSignedExternalV5R1ExtInMsgOp,
+			interfaces: []ContractInterface{},
+			wantValue: func() any {
+				value := WalletSignedExternalV5R1ExtInMsgBody{
+					WalletId:   2147483645,
+					ValidUntil: 1720185688,
+					Seqno:      2,
+					Actions: &W5Actions{
+						{Magic: 0xec3c86d, Mode: 3, Msg: mustHexToCellPtr("b5ee9c7201010101003500006642006b9c8a03f81b4ad9d79a0d94d5989bd46134d5848f0021da180d0ad01a41470e1a625a0000000000000000000000000000")},
+						{Magic: 0xec3c86d, Mode: 3, Msg: mustHexToCellPtr("b5ee9c7201010101003500006642006b9c8a03f81b4ad9d79a0d94d5989bd46134d5848f0021da180d0ad01a41470e1cc4b40000000000000000000000000000")},
+					},
+					Extended:  nil,
+					Signature: mustToBits512("59bfc4d8190aaaebeb0e8775315fe315113c5397fd75dd8d096c8fbbfe0c2c0bce4e9203ba8c99533c544c97b5d3fc5b60f1053d22f08b6065f6110a24ca8a0d"),
+				}
+				return value
+			},
+		},
+		{
+			name:       "ext in v5r1 with extended actions",
+			boc:        "te6ccgEBAwEAngAC5XNpZ25////9Zou5owAAAAnAoANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RLZk/5rz5izz/olhcQbSqRWhAweQxAnXFUmMTIXmGXKyxktM4/e0E41uc2amcpBRcAg7768V3ayzr7K1hEVbI2DwBAgAAAEUCgA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpE0A==",
+			wantOpName: WalletSignedExternalV5R1ExtInMsgOp,
+			interfaces: []ContractInterface{},
+			wantValue: func() any {
+				addr1 := ton.MustParseAccountID("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d225")
+				addr2 := ton.MustParseAccountID("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d226")
+				value := WalletSignedExternalV5R1ExtInMsgBody{
+					WalletId:   2147483645,
+					ValidUntil: 1720433059,
+					Seqno:      9,
+					Actions:    nil,
+					Extended: &W5ExtendedActions{
+						{
+							SumType:      "AddExtension",
+							AddExtension: &struct{ Addr tlb.MsgAddress }{Addr: addr1.ToMsgAddress()},
+						},
+						{
+							SumType:      "AddExtension",
+							AddExtension: &struct{ Addr tlb.MsgAddress }{Addr: addr2.ToMsgAddress()},
+						},
+					},
+					Signature: mustToBits512("b327fcd79f31679ff44b0b88369548ad08183c86204eb8aa4c62642f30cb9596325a671fbda09c6b739b353394828b8041df7d78aeed659d7d95ac222ad91b07"),
+				}
+				return value
+			},
+		},
+		{
+			name:       "ext in v5r1 with extended remove action",
+			boc:        "te6ccgEBAgEAeAAB5XNpZ25////9Zou6hQAAAArA4ANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RMe3LvurIRvCkkoiXVYBZr7HW3bPdkYiU7iQqSmwscyANY2HLTt3nqLBd05aWzVdM//6qJyMsReC2ubeTH+QboFQBAAA=",
+			wantOpName: WalletSignedExternalV5R1ExtInMsgOp,
+			interfaces: []ContractInterface{},
+			wantValue: func() any {
+				addr1 := ton.MustParseAccountID("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d226")
+				value := WalletSignedExternalV5R1ExtInMsgBody{
+					WalletId:   2147483645,
+					ValidUntil: 1720433285,
+					Seqno:      10,
+					Actions:    nil,
+					Extended: &W5ExtendedActions{
+						{
+							SumType:         "RemoveExtension",
+							RemoveExtension: &struct{ Addr tlb.MsgAddress }{Addr: addr1.ToMsgAddress()},
+						},
+					},
+					Signature: mustToBits512("3db977dd5908de14925112eab00b35f63adbb67bb231129dc485494d858e6401ac6c3969dbbcf5160bba72d2d9aae99fffd544e46588bc16d736f263fc83740a"),
+				}
+				return value
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -2062,8 +2169,13 @@ func TestDecodeExternalIn(t *testing.T) {
 				t.Fatal(err)
 			}
 			fmt.Println(string(b))
+			wantValueJson, err := json.Marshal(tt.wantValue())
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Println(string(wantValueJson))
 			wantValue := tt.wantValue()
-			if !reflect.DeepEqual(wantValue, value) {
+			if !bytes.Equal(wantValueJson, b) {
 				t.Fatalf("want value: \n%v\n, got: \n%v", wantValue, value)
 			}
 			switch value.(type) {

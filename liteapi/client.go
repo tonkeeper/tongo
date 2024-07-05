@@ -70,9 +70,10 @@ type Client struct {
 	// the underlying connections pool maintains information about which nodes are archive nodes.
 	archiveDetectionEnabled bool
 
-	// mu protects targetBlockID.
-	mu            sync.RWMutex
-	targetBlockID *ton.BlockIDExt
+	// mu protects targetBlockID and networkGlobalID.
+	mu              sync.RWMutex
+	targetBlockID   *ton.BlockIDExt
+	networkGlobalID *int32
 }
 
 // Options holds parameters to configure a lite api instance.
@@ -1060,4 +1061,28 @@ func downloadConfig(path string) (*config.GlobalConfigurationFile, error) {
 		o.LiteServers[i], o.LiteServers[j] = o.LiteServers[j], o.LiteServers[i]
 	})
 	return o, err
+}
+
+func (c *Client) getNetworkGlobalID() *int32 {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.networkGlobalID
+}
+
+func (c *Client) GetNetworkGlobalID(ctx context.Context) (int32, error) {
+	if networkID := c.getNetworkGlobalID(); networkID != nil {
+		return *networkID, nil
+	}
+	_, blockID, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return 0, err
+	}
+	block, err := c.GetBlock(ctx, blockID)
+	if err != nil {
+		return 0, err
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.networkGlobalID = &block.GlobalId
+	return block.GlobalId, nil
 }

@@ -157,6 +157,8 @@ var (
 	decodeFuncWalletPluginDestructMsgBody = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, WalletPluginDestructMsgOp, WalletPluginDestructMsgBody{})
 	// 0x6501f354
 	decodeFuncJettonChangeAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x6501f354, Len: 32}, JettonChangeAdminMsgOp, JettonChangeAdminMsgBody{})
+	// 0x6578746e
+	decodeFuncWalletExtensionActionV5R1MsgBody = decodeMsg(tlb.Tag{Val: 0x6578746e, Len: 32}, WalletExtensionActionV5R1MsgOp, WalletExtensionActionV5R1MsgBody{})
 	// 0x66f6f069
 	decodeFuncSettleChannelConditionalsMsgBody = decodeMsg(tlb.Tag{Val: 0x66f6f069, Len: 32}, SettleChannelConditionalsMsgOp, SettleChannelConditionalsMsgBody{})
 	// 0x67134629
@@ -177,6 +179,8 @@ var (
 	decodeFuncDedustSwapPeerMsgBody = decodeMsg(tlb.Tag{Val: 0x72aca8aa, Len: 32}, DedustSwapPeerMsgOp, DedustSwapPeerMsgBody{})
 	// 0x7362d09c
 	decodeFuncJettonNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, JettonNotifyMsgOp, JettonNotifyMsgBody{})
+	// 0x73696e74
+	decodeFuncWalletSignedInternalV5R1MsgBody = decodeMsg(tlb.Tag{Val: 0x73696e74, Len: 32}, WalletSignedInternalV5R1MsgOp, WalletSignedInternalV5R1MsgBody{})
 	// 0x73756273
 	decodeFuncSubscriptionPaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{})
 	// 0x74bb3427
@@ -556,6 +560,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x6501f354
 	JettonChangeAdminMsgOpCode: decodeFuncJettonChangeAdminMsgBody,
 
+	// 0x6578746e
+	WalletExtensionActionV5R1MsgOpCode: decodeFuncWalletExtensionActionV5R1MsgBody,
+
 	// 0x66f6f069
 	SettleChannelConditionalsMsgOpCode: decodeFuncSettleChannelConditionalsMsgBody,
 
@@ -585,6 +592,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x7362d09c
 	JettonNotifyMsgOpCode: decodeFuncJettonNotifyMsgBody,
+
+	// 0x73696e74
+	WalletSignedInternalV5R1MsgOpCode: decodeFuncWalletSignedInternalV5R1MsgBody,
 
 	// 0x73756273
 	SubscriptionPaymentMsgOpCode: decodeFuncSubscriptionPaymentMsgBody,
@@ -885,6 +895,7 @@ const (
 	JettonMintMsgOp                              MsgOpName = "JettonMint"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
 	JettonChangeAdminMsgOp                       MsgOpName = "JettonChangeAdmin"
+	WalletExtensionActionV5R1MsgOp               MsgOpName = "WalletExtensionActionV5R1"
 	SettleChannelConditionalsMsgOp               MsgOpName = "SettleChannelConditionals"
 	StormCancelOrderMsgOp                        MsgOpName = "StormCancelOrder"
 	TopUpChannelBalanceMsgOp                     MsgOpName = "TopUpChannelBalance"
@@ -895,6 +906,7 @@ const (
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
 	DedustSwapPeerMsgOp                          MsgOpName = "DedustSwapPeer"
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
+	WalletSignedInternalV5R1MsgOp                MsgOpName = "WalletSignedInternalV5R1"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
 	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
@@ -1047,6 +1059,7 @@ const (
 	JettonMintMsgOpCode                              MsgOpCode = 0x642b7d07
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
 	JettonChangeAdminMsgOpCode                       MsgOpCode = 0x6501f354
+	WalletExtensionActionV5R1MsgOpCode               MsgOpCode = 0x6578746e
 	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
 	StormCancelOrderMsgOpCode                        MsgOpCode = 0x67134629
 	TopUpChannelBalanceMsgOpCode                     MsgOpCode = 0x67c7d281
@@ -1057,6 +1070,7 @@ const (
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
 	DedustSwapPeerMsgOpCode                          MsgOpCode = 0x72aca8aa
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
+	WalletSignedInternalV5R1MsgOpCode                MsgOpCode = 0x73696e74
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
 	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
@@ -1593,6 +1607,12 @@ type JettonChangeAdminMsgBody struct {
 	NewAdminAddress tlb.MsgAddress
 }
 
+type WalletExtensionActionV5R1MsgBody struct {
+	QueryId  uint64
+	Actions  *W5Actions         `tlb:"maybe^"`
+	Extended *W5ExtendedActions `tlb:"maybe"`
+}
+
 type SettleChannelConditionalsMsgBody struct {
 	FromA                bool
 	Signature            tlb.Bits512
@@ -1647,6 +1667,15 @@ type JettonNotifyMsgBody struct {
 	Amount         tlb.VarUInteger16
 	Sender         tlb.MsgAddress
 	ForwardPayload tlb.EitherRef[JettonPayload]
+}
+
+type WalletSignedInternalV5R1MsgBody struct {
+	WalletId   uint32
+	ValidUntil uint32
+	Seqno      uint32
+	Actions    *W5Actions         `tlb:"maybe^"`
+	Extended   *W5ExtendedActions `tlb:"maybe"`
+	Signature  tlb.Bits512
 }
 
 type SubscriptionPaymentMsgBody struct{}
@@ -2144,6 +2173,7 @@ var KnownMsgInTypes = map[string]any{
 	JettonMintMsgOp:                              JettonMintMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
 	JettonChangeAdminMsgOp:                       JettonChangeAdminMsgBody{},
+	WalletExtensionActionV5R1MsgOp:               WalletExtensionActionV5R1MsgBody{},
 	SettleChannelConditionalsMsgOp:               SettleChannelConditionalsMsgBody{},
 	StormCancelOrderMsgOp:                        StormCancelOrderMsgBody{},
 	TopUpChannelBalanceMsgOp:                     TopUpChannelBalanceMsgBody{},
@@ -2154,6 +2184,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
 	DedustSwapPeerMsgOp:                          DedustSwapPeerMsgBody{},
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
+	WalletSignedInternalV5R1MsgOp:                WalletSignedInternalV5R1MsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
 	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
@@ -2237,20 +2268,28 @@ var (
 	decodeFuncWalletSignedV4ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, WalletSignedV4ExtInMsgOp, WalletSignedV4ExtInMsgBody{})
 	// 0x00000000
 	decodeFuncHighloadWalletSignedV3ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, HighloadWalletSignedV3ExtInMsgOp, HighloadWalletSignedV3ExtInMsgBody{})
+	// 0x7369676e
+	decodeFuncWalletSignedExternalV5R1ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x7369676e, Len: 32}, WalletSignedExternalV5R1ExtInMsgOp, WalletSignedExternalV5R1ExtInMsgBody{})
 )
 
-var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{}
+var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{
+
+	// 0x7369676e
+	WalletSignedExternalV5R1ExtInMsgOpCode: decodeFuncWalletSignedExternalV5R1ExtInMsgBody,
+}
 
 const (
-	WalletSignedV3ExtInMsgOp         MsgOpName = "WalletSignedV3"
-	WalletSignedV4ExtInMsgOp         MsgOpName = "WalletSignedV4"
-	HighloadWalletSignedV3ExtInMsgOp MsgOpName = "HighloadWalletSignedV3"
+	WalletSignedV3ExtInMsgOp           MsgOpName = "WalletSignedV3"
+	WalletSignedV4ExtInMsgOp           MsgOpName = "WalletSignedV4"
+	HighloadWalletSignedV3ExtInMsgOp   MsgOpName = "HighloadWalletSignedV3"
+	WalletSignedExternalV5R1ExtInMsgOp MsgOpName = "WalletSignedExternalV5R1"
 )
 
 const (
-	WalletSignedV3ExtInMsgOpCode         MsgOpCode = 0x00000000
-	WalletSignedV4ExtInMsgOpCode         MsgOpCode = 0x00000000
-	HighloadWalletSignedV3ExtInMsgOpCode MsgOpCode = 0x00000000
+	WalletSignedV3ExtInMsgOpCode           MsgOpCode = 0x00000000
+	WalletSignedV4ExtInMsgOpCode           MsgOpCode = 0x00000000
+	HighloadWalletSignedV3ExtInMsgOpCode   MsgOpCode = 0x00000000
+	WalletSignedExternalV5R1ExtInMsgOpCode MsgOpCode = 0x7369676e
 )
 
 type WalletSignedV3ExtInMsgBody struct {
@@ -2275,10 +2314,20 @@ type HighloadWalletSignedV3ExtInMsgBody struct {
 	Msg       HighloadV3MsgInner `tlb:"^"`
 }
 
+type WalletSignedExternalV5R1ExtInMsgBody struct {
+	WalletId   uint32
+	ValidUntil uint32
+	Seqno      uint32
+	Actions    *W5Actions         `tlb:"maybe^"`
+	Extended   *W5ExtendedActions `tlb:"maybe"`
+	Signature  tlb.Bits512
+}
+
 var KnownMsgExtInTypes = map[string]any{
-	WalletSignedV3ExtInMsgOp:         WalletSignedV3ExtInMsgBody{},
-	WalletSignedV4ExtInMsgOp:         WalletSignedV4ExtInMsgBody{},
-	HighloadWalletSignedV3ExtInMsgOp: HighloadWalletSignedV3ExtInMsgBody{},
+	WalletSignedV3ExtInMsgOp:           WalletSignedV3ExtInMsgBody{},
+	WalletSignedV4ExtInMsgOp:           WalletSignedV4ExtInMsgBody{},
+	HighloadWalletSignedV3ExtInMsgOp:   HighloadWalletSignedV3ExtInMsgBody{},
+	WalletSignedExternalV5R1ExtInMsgOp: WalletSignedExternalV5R1ExtInMsgBody{},
 }
 
 var (

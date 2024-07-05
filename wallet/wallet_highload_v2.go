@@ -9,8 +9,8 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-// DataHighloadV4 represents data of a highload-wallet contract.
-type DataHighloadV4 struct {
+// DataHighloadV2 represents data of a highload-wallet contract.
+type DataHighloadV2 struct {
 	SubWalletId     uint32
 	LastCleanedTime uint64
 	PublicKey       tlb.Bits256
@@ -46,7 +46,7 @@ func (w *walletHighloadV2) generateAddress() (ton.AccountID, error) {
 }
 
 func (w *walletHighloadV2) generateStateInit() (*tlb.StateInit, error) {
-	data := DataHighloadV4{
+	data := DataHighloadV2{
 		SubWalletId: w.subWalletID,
 		PublicKey:   publicKeyToBits(w.publicKey),
 	}

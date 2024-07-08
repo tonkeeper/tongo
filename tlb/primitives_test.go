@@ -440,3 +440,27 @@ func TestAny_UnmarshalTLB(t *testing.T) {
 		})
 	}
 }
+
+func TestMagic_UnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		name      string
+		b         []byte
+		wantErr   bool
+		wantMagic Magic
+	}{
+		{
+			name:      "test1",
+			b:         []byte(`"0x0ec3c86d"`),
+			wantErr:   false,
+			wantMagic: Magic(0x0ec3c86d),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var m Magic
+			if err := m.UnmarshalJSON(tt.b); (err != nil) != tt.wantErr {
+				t.Errorf("UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

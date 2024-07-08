@@ -110,6 +110,8 @@ func newWallet(key ed25519.PublicKey, version Version, options Options) (wallet,
 		return newWalletV4(version, key, options), nil
 	case V5Beta:
 		return NewWalletV5Beta(version, key, options), nil
+	case V5R1:
+		return NewWalletV5R1(key, options), nil
 	case HighLoadV2R2:
 		return newWalletHighloadV2(version, key, options), nil
 	default:
@@ -189,7 +191,7 @@ func (w *Wallet) RawSendV2(
 	msgConfig := MessageConfig{
 		Seqno:      seqno,
 		ValidUntil: validUntil,
-		V5MsgType:  V5MsgTypeExternal,
+		V5MsgType:  V5MsgTypeSignedExternal,
 	}
 	signedBodyCell, err := w.intWallet.createSignedMsgBodyCell(w.key, internalMessages, msgConfig)
 	if err != nil {

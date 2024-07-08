@@ -27,37 +27,63 @@ type MessageV4 struct {
 	RawMessages PayloadV1toV4
 }
 
-type SendMessageAction struct {
+type W5SendMessageAction struct {
 	Magic tlb.Magic `tlb:"#0ec3c86d"`
 	Mode  uint8
 	Msg   *boc.Cell `tlb:"^"`
 }
 
-type SendMessageList struct {
-	Actions []SendMessageAction
+type W5Actions []W5SendMessageAction
+
+// MessageV5Beta is a message format used by wallet v5 beta.
+type MessageV5Beta struct {
+	tlb.SumType
+	// SignedInternal is an internal message authenticated by a signature.
+	SignedInternal struct {
+		WalletId   tlb.Bits80
+		ValidUntil uint32
+		Seqno      uint32
+		Op         bool
+		Signature  tlb.Bits512
+		Actions    W5Actions `tlb:"^"`
+	} `tlbSumType:"#73696e74"`
+	// SignedExternal is an external message authenticated by a signature.
+	SignedExternal struct {
+		WalletId   tlb.Bits80
+		ValidUntil uint32
+		Seqno      uint32
+		Op         bool
+		Signature  tlb.Bits512
+		Actions    W5Actions `tlb:"^"`
+	} `tlbSumType:"#7369676e"`
 }
 
 // MessageV5 is a message format used by wallet v5.
 type MessageV5 struct {
 	tlb.SumType
-	// Sint is an internal message authenticated by a signature.
-	Sint struct {
-		WalletId   tlb.Bits80
-		ValidUntil uint32
-		Seqno      uint32
-		Op         bool
-		Signature  tlb.Bits512
-		Actions    SendMessageList `tlb:"^"`
+	// SignedInternal is an internal message authenticated by a signature.
+	SignedInternal *struct {
+		WalletId        uint32
+		ValidUntil      uint32
+		Seqno           uint32
+		Actions         *W5Actions         `tlb:"maybe^"`
+		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
+		Signature       tlb.Bits512
 	} `tlbSumType:"#73696e74"`
-	// Sign is an external message authenticated by a signature.
-	Sign struct {
-		WalletId   tlb.Bits80
-		ValidUntil uint32
-		Seqno      uint32
-		Op         bool
-		Signature  tlb.Bits512
-		Actions    SendMessageList `tlb:"^"`
+	// SignedExternal is an external message authenticated by a signature.
+	SignedExternal *struct {
+		WalletId        uint32
+		ValidUntil      uint32
+		Seqno           uint32
+		Actions         *W5Actions         `tlb:"maybe^"`
+		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
+		Signature       tlb.Bits512
 	} `tlbSumType:"#7369676e"`
+	ExtensionAction *struct {
+		QueryID         uint64
+		Actions         *W5Actions         `tlb:"maybe^"`
+		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
+	} `tlbSumType:"#6578746e"`
 }
 
 type HighloadV2Message struct {
@@ -121,6 +147,19 @@ func DecodeMessageV5(msg *boc.Cell) (*MessageV5, error) {
 	return &msgv5, nil
 }
 
+func DecodeMessageV5Beta(msg *boc.Cell) (*MessageV5Beta, error) {
+	var m tlb.Message
+	if err := tlb.Unmarshal(msg, &m); err != nil {
+		return nil, err
+	}
+	var msgv5 MessageV5Beta
+	bodyCell := boc.Cell(m.Body.Value)
+	if err := tlb.Unmarshal(&bodyCell, &msgv5); err != nil {
+		return nil, err
+	}
+	return &msgv5, nil
+}
+
 func DecodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
 	signedMsgBody, err := extractSignedMsgBody(msg)
 	if err != nil {
@@ -176,6 +215,12 @@ func decodeHighloadV2Message(body *SignedMsgBody) (*HighloadV2Message, error) {
 func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 	switch ver {
 	case V5Beta:
+		v5, err := DecodeMessageV5Beta(msg)
+		if err != nil {
+			return nil, err
+		}
+		return v5.RawMessages(), nil
+	case V5R1:
 		v5, err := DecodeMessageV5(msg)
 		if err != nil {
 			return nil, err
@@ -315,19 +360,19 @@ func (p *PayloadHighload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error 
 	return nil
 }
 
-func (l *SendMessageList) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	var actions []SendMessageAction
+func (l *W5Actions) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var actions []W5SendMessageAction
 	for {
 		switch c.BitsAvailableForRead() {
 		case 0:
-			l.Actions = actions
+			*l = actions
 			return nil
 		case 40:
 			next, err := c.NextRef()
 			if err != nil {
 				return err
 			}
-			var action SendMessageAction
+			var action W5SendMessageAction
 			if err := decoder.Unmarshal(c, &action); err != nil {
 				return err
 			}
@@ -339,21 +384,19 @@ func (l *SendMessageList) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error 
 	}
 }
 
-func (l SendMessageList) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
-	if len(l.Actions) == 0 {
+func (l W5Actions) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if len(l) == 0 {
 		return nil
 	}
 	if err := c.WriteUint(0x0ec3c86d, 32); err != nil {
 		return err
 	}
-	action := l.Actions[0]
+	action := l[0]
 	if err := c.WriteUint(uint64(action.Mode), 8); err != nil {
 		return err
 	}
 	cell := boc.NewCell()
-	next := SendMessageList{
-		Actions: l.Actions[1:],
-	}
+	next := l[1:]
 	if err := encoder.Marshal(cell, next); err != nil {
 		return err
 	}
@@ -402,20 +445,20 @@ func MessageV5VerifySignature(msgBody boc.Cell, publicKey ed25519.PublicKey) err
 	return ErrBadSignature
 }
 
-func (m *MessageV5) RawMessages() []RawMessage {
+func (m *MessageV5Beta) RawMessages() []RawMessage {
 	switch m.SumType {
-	case "Sint":
-		msgs := make([]RawMessage, 0, len(m.Sint.Actions.Actions))
-		for _, action := range m.Sint.Actions.Actions {
+	case "SignedInternal":
+		msgs := make([]RawMessage, 0, len(m.SignedInternal.Actions))
+		for _, action := range m.SignedInternal.Actions {
 			msgs = append(msgs, RawMessage{
 				Message: action.Msg,
 				Mode:    action.Mode,
 			})
 		}
 		return msgs
-	case "Sign":
-		msgs := make([]RawMessage, 0, len(m.Sign.Actions.Actions))
-		for _, action := range m.Sign.Actions.Actions {
+	case "SignedExternal":
+		msgs := make([]RawMessage, 0, len(m.SignedExternal.Actions))
+		for _, action := range m.SignedExternal.Actions {
 			msgs = append(msgs, RawMessage{
 				Message: action.Msg,
 				Mode:    action.Mode,
@@ -425,4 +468,80 @@ func (m *MessageV5) RawMessages() []RawMessage {
 	default:
 		return nil
 	}
+}
+
+func (m *MessageV5) RawMessages() []RawMessage {
+	switch m.SumType {
+	case "SignedInternal":
+		msgs := make([]RawMessage, 0, len(*m.SignedInternal.Actions))
+		for _, action := range *m.SignedInternal.Actions {
+			msgs = append(msgs, RawMessage{
+				Message: action.Msg,
+				Mode:    action.Mode,
+			})
+		}
+		return msgs
+	case "SignedExternal":
+		msgs := make([]RawMessage, 0, len(*m.SignedExternal.Actions))
+		for _, action := range *m.SignedExternal.Actions {
+			msgs = append(msgs, RawMessage{
+				Message: action.Msg,
+				Mode:    action.Mode,
+			})
+		}
+		return msgs
+	default:
+		return nil
+	}
+}
+
+type W5ExtendedAction struct {
+	SumType      tlb.SumType
+	AddExtension *struct {
+		Addr tlb.MsgAddress
+	} `tlbSumType:"add_extension#02"`
+	RemoveExtension *struct {
+		Addr tlb.MsgAddress
+	} `tlbSumType:"remove_extension#03"`
+	SetSignatureAllowed *struct {
+		Allowed bool
+	} `tlbSumType:"set_signature_allowed#04"`
+}
+
+type W5ExtendedActions []W5ExtendedAction
+
+func (extendedActions *W5ExtendedActions) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var actions []W5ExtendedAction
+	for {
+		var action W5ExtendedAction
+		if err := decoder.Unmarshal(c, &action); err != nil {
+			return err
+		}
+		actions = append(actions, action)
+		nextRef, err := c.NextRef()
+		if err != nil {
+			if errors.Is(err, boc.ErrNotEnoughRefs) {
+				*extendedActions = actions
+				return nil
+			}
+			return err
+		}
+		c = nextRef
+	}
+}
+func (extendedActions W5ExtendedActions) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	for i, action := range extendedActions {
+		if err := encoder.Marshal(c, action); err != nil {
+			return err
+		}
+		if i == len(extendedActions)-1 {
+			break
+		}
+		cell := boc.NewCell()
+		if err := c.AddRef(cell); err != nil {
+			return err
+		}
+		c = cell
+	}
+	return nil
 }

@@ -98,6 +98,16 @@
         <code_hash>e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412</code_hash> <!-- without library -->
         <get_method name="seqno"/>
     </interface>
+    <interface name="wallet_v5r1" inherits="wallet">
+        <code_hash>20834b7b72b112147e1b2fb457b84e74d1a30f04f737d4f62a668e9552d2b72f</code_hash>
+        <get_method name="seqno"/>
+        <get_method name="get_public_key"/>
+        <msg_in>
+            <ext_in name="wallet_signed_external_v5r1"/>
+            <internal name="wallet_signed_internal_v5r1"/>
+            <internal name="wallet_extension_action_v5r1"/>
+        </msg_in>
+    </interface>
     <interface name="wallet_highload_v1r1" inherits="wallet">
         <code_hash>d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484</code_hash>
     </interface>
@@ -173,10 +183,21 @@
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
         payload:WalletV1toV4Payload = ExternalMsgBody;
     </ext_in>
+    <ext_in name="wallet_signed_external_v5r1">
+        signed_external#7369676e wallet_id:uint32 valid_until:uint32 seqno:uint32
+        actions:(Maybe ^W5Actions) extended:(Maybe W5ExtendedActions) signature:bits512 = ExternalMsgBody;
+    </ext_in>
     <ext_in name="highload_wallet_signed_v3">
         signed#_ {n:#} signature:bits512 msg:^HighloadV3MsgInner = ExternalMsgBody;
     </ext_in>
     <jetton_payload name="tonkeeper_relayer_fee">
         tonkeeper_relayer_fee#878da6e3 = JettonPayload;
     </jetton_payload>
+    <internal name="wallet_signed_internal_v5r1" >
+        signed_internal#73696e74 wallet_id:uint32 valid_until:uint32 seqno:uint32
+        actions:(Maybe ^W5Actions) extended:(Maybe W5ExtendedActions) signature:bits512 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_extension_action_v5r1" >
+        extension_action#6578746e query_id:uint64 actions:(Maybe ^W5Actions) extended:(Maybe W5ExtendedActions) = InternalMsgBody;
+    </internal>
 </abi>

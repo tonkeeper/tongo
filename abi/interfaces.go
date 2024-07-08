@@ -71,6 +71,7 @@ const (
 	WalletV4R1
 	WalletV4R2
 	WalletV5Beta
+	WalletV5R1
 	WhalesPool
 )
 
@@ -202,6 +203,8 @@ func (c ContractInterface) String() string {
 		return "wallet_v4r2"
 	case WalletV5Beta:
 		return "wallet_v5_beta"
+	case WalletV5R1:
+		return "wallet_v5r1"
 	case WhalesPool:
 		return "whales_pool"
 	default:
@@ -337,6 +340,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV4R2
 	case "wallet_v5_beta":
 		return WalletV5Beta
+	case "wallet_v5r1":
+		return WalletV5R1
 	case "whales_pool":
 		return WhalesPool
 	default:
@@ -962,6 +967,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletV5Beta:
 		return Wallet.Implements(other)
+	case WalletV5R1:
+		return Wallet.Implements(other)
 	}
 	return false
 }
@@ -988,6 +995,13 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("203dd4f358adb49993129aa925cac39916b68a0e4f78d26e8f2c2b69eafa5679"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV2R2},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("20834b7b72b112147e1b2fb457b84e74d1a30f04f737d4f62a668e9552d2b72f"): {
+		contractInterfaces: []ContractInterface{WalletV5R1},
+		getMethods: []InvokeFn{
+			GetPublicKey,
+			Seqno,
+		},
 	},
 	ton.MustParseHash("24221fa571e542e055c77bedfdbf527c7af460cfdc7f344c450787b4cfa1eb4d"): {
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
@@ -1230,6 +1244,11 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
+	case WalletV5R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletSignedInternalV5R1MsgBody,
+			decodeFuncWalletExtensionActionV5R1MsgBody,
+		}
 	case WhalesPool:
 		return []msgDecoderFunc{
 			decodeFuncWhalesNominatorsWithdrawMsgBody,
@@ -1264,6 +1283,10 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	case WalletV4R2:
 		return []msgDecoderFunc{
 			decodeFuncWalletSignedV4ExtInMsgBody,
+		}
+	case WalletV5R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletSignedExternalV5R1ExtInMsgBody,
 		}
 	default:
 		return nil

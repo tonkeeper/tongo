@@ -11,7 +11,7 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-func mustFromHex(msg string) *boc.Cell {
+func mustFromBase64(msg string) *boc.Cell {
 	c, err := boc.DeserializeSinglRootBase64(msg)
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func TestExtractRawMessages(t *testing.T) {
 			ver:  V4R1,
 			want: []RawMessage{
 				{
-					Message: mustFromHex("te6ccgEBAgEAkQABaGIAS1ZNypaCh7zgPRcvBcpDlS3gxPwxnEFWGfVBevyzhRwhMS0AAAAAAAAAAAAAAAAAAAEBALAPin6lAAAAAAAAAAAxtgM4AKZ+YbyuRCr3COPqoHc/iwAZGwcvzy6H7y1iPME1tc0/ABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIAgIAAAAA"),
+					Message: mustFromBase64("te6ccgEBAgEAkQABaGIAS1ZNypaCh7zgPRcvBcpDlS3gxPwxnEFWGfVBevyzhRwhMS0AAAAAAAAAAAAAAAAAAAEBALAPin6lAAAAAAAAAAAxtgM4AKZ+YbyuRCr3COPqoHc/iwAZGwcvzy6H7y1iPME1tc0/ABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIAgIAAAAA"),
 					Mode:    3,
 				},
 			},
@@ -52,7 +52,7 @@ func TestExtractRawMessages(t *testing.T) {
 			ver:  V4R1,
 			want: []RawMessage{
 				{
-					Message: mustFromHex("te6ccgEBAQEANgAAaEIAKZ+YbyuRCr3COPqoHc/iwAZGwcvzy6H7y1iPME1tc0+lloLwAAAAAAAAAAAAAAAAAAA="),
+					Message: mustFromBase64("te6ccgEBAQEANgAAaEIAKZ+YbyuRCr3COPqoHc/iwAZGwcvzy6H7y1iPME1tc0+lloLwAAAAAAAAAAAAAAAAAAA="),
 					Mode:    3,
 				},
 			},
@@ -63,26 +63,41 @@ func TestExtractRawMessages(t *testing.T) {
 			ver:  V4R1,
 			want: []RawMessage{
 				{
-					Message: mustFromHex("te6ccgEBAgEAjAABaGIAYeITnAruocV3ZaCBjfbcIK27S8GFMv5jOh6XPwNuAUkgFykzCAAAAAAAAAAAAAAAAAEBAKVfzD0UAAAAAAAAAACACmfmG8rkQq9wjj6qB3P4sAGRsHL88uh+8tYjzBNbXNPwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAcxLQCA=="),
+					Message: mustFromBase64("te6ccgEBAgEAjAABaGIAYeITnAruocV3ZaCBjfbcIK27S8GFMv5jOh6XPwNuAUkgFykzCAAAAAAAAAAAAAAAAAEBAKVfzD0UAAAAAAAAAACACmfmG8rkQq9wjj6qB3P4sAGRsHL88uh+8tYjzBNbXNPwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAcxLQCA=="),
 					Mode:    3,
 				},
 			},
 		},
 		{
-			name: "v5",
+			name: "v5beta",
 			boc:  "te6ccgECCAEAAZ4AAfGIAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24WA5tLO3f////oAAAAAAADMYd8kAAAAAEHzN670eqqNU3yWGkX1dOynyAbT7DN4cFDpE0r+nInTomGrifjPTaZvG3YxYzTHpLoNesGc9s5Q0tHlLNcFNQeAQIKDsPIbQMCAwIKDsPIbQMEBQCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAy3GwAAAAAAAAAAAAAAAAAAQAIKDsPIbQMGBwCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAx6EgAAAAAAAAAAAAAAAAAAQAAAAKloAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24XABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIDD0JAAAAAAAAAAAAAAAAAABA",
 			ver:  V5Beta,
 			want: []RawMessage{
 				{
-					Message: mustFromHex("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMtxsAAAAAAAAAAAAAAAAAAEA="),
+					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMtxsAAAAAAAAAAAAAAAAAAEA="),
 					Mode:    3,
 				},
 				{
-					Message: mustFromHex("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMehIAAAAAAAAAAAAAAAAAAEA="),
+					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMehIAAAAAAAAAAAAAAAAAAEA="),
 					Mode:    3,
 				},
 				{
-					Message: mustFromHex("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMPQkAAAAAAAAAAAAAAAAAAEA="),
+					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMPQkAAAAAAAAAAAAAAAAAAEA="),
+					Mode:    3,
+				},
+			},
+		},
+		{
+			name: "v5r1",
+			boc:  "te6ccgEBBwEA+AABRYgBrnIoD+BtK2deaDZTVmJvUYTTVhI8AIdoYDQrQGkFHDgMAQGhc2lnbn////1mh/NYAAAAApZv8TYGQqq6+sOh3UxX+MVETxTl/113Y0JbI+7/gwsC85OkgO6jJlTPFRMl7XT/Ftg8QU9IvCLYGX2EQokyooNgAgIKDsPIbQMDBAIKDsPIbQMFBgBmQgBrnIoD+BtK2deaDZTVmJvUYTTVhI8AIdoYDQrQGkFHDhpiWgAAAAAAAAAAAAAAAAAAAAAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4cxLQAAAAAAAAAAAAAAAAAAA==",
+			ver:  V5R1,
+			want: []RawMessage{
+				{
+					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4aYloAAAAAAAAAAAAAAAAAAA=="),
+					Mode:    3,
+				},
+				{
+					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4cxLQAAAAAAAAAAAAAAAAAAA=="),
 					Mode:    3,
 				},
 			},
@@ -93,11 +108,11 @@ func TestExtractRawMessages(t *testing.T) {
 			ver:  HighLoadV2R2,
 			want: []RawMessage{
 				{
-					Message: mustFromHex("te6ccgEBAgEAXgABYkIANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RAIoAAAAAAAAAAAAAAAAAEBAFAAAAAANzAzMGFjNDYtYjk1Yy00NGM3LThkN2ItNjEyMzI2ZTZlNTEy"),
+					Message: mustFromBase64("te6ccgEBAgEAXgABYkIANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RAIoAAAAAAAAAAAAAAAAAEBAFAAAAAANzAzMGFjNDYtYjk1Yy00NGM3LThkN2ItNjEyMzI2ZTZlNTEy"),
 					Mode:    3,
 				},
 				{
-					Message: mustFromHex("te6ccgEBAgEAXgABYkIANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RAJQAAAAAAAAAAAAAAAAAEBAFAAAAAAM2IwNjk1NWEtN2I0Yy00NWFhLTk1ZTctMDUyOGVmYWIwMjNh"),
+					Message: mustFromBase64("te6ccgEBAgEAXgABYkIANmaZLULGG8tJ/XFeVVjhSDQY0nCFNh3aJ3RbCt5Q6RAJQAAAAAAAAAAAAAAAAAEBAFAAAAAAM2IwNjk1NWEtN2I0Yy00NWFhLTk1ZTctMDUyOGVmYWIwMjNh"),
 					Mode:    3,
 				},
 			},
@@ -220,7 +235,7 @@ func TestMessageV5VerifySignature(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cell := mustFromHex(tt.boc)
+			cell := mustFromBase64(tt.boc)
 			var m tlb.Message
 			if err := tlb.Unmarshal(cell, &m); err != nil {
 				t.Fatalf("Unmarshal() failed: %v", err)

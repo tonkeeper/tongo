@@ -171,8 +171,11 @@ The list below contains the supported message operations, their names and opcode
 | TopUpChannelBalance| 0x67c7d281 |
 | UpdatePubkey| 0x53f34cd6 |
 | UpdateStorageParams| 0x54cbf19b |
+| WalletExtensionActionV5R1| 0x6578746e |
 | WalletPluginDestruct| 0x64737472 |
 | WalletPluginDestructResponse| 0xe4737472 |
+| WalletSignedExternalV5R1| 0x7369676e |
+| WalletSignedInternalV5R1| 0x73696e74 |
 | WalletSignedV3| 0x00000000 |
 | WalletSignedV4| 0x00000000 |
 | WhalesNominatorsAcceptStake| 0x99a811fb |

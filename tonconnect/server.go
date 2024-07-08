@@ -358,7 +358,14 @@ func ParseStateInit(stateInit string) ([]byte, error) {
 		}
 		pubKey = data.PublicKey
 	case wallet.V5Beta:
-		var data wallet.DataV5
+		var data wallet.DataV5Beta
+		err = tlb.Unmarshal(&state.Data.Value.Value, &data)
+		if err != nil {
+			return nil, err
+		}
+		pubKey = data.PublicKey
+	case wallet.V5R1:
+		var data wallet.DataV5R1
 		err = tlb.Unmarshal(&state.Data.Value.Value, &data)
 		if err != nil {
 			return nil, err

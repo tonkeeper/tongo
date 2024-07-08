@@ -1717,7 +1717,7 @@ func TestMessageDecoder(t *testing.T) {
 					{
 						Magic: 0xec3c86d,
 						Mode:  uint8(3),
-						Msg:   mustHexToCellPtr("b5ee9c7201010101003600006842003666992d42c61bcb49fd715e5558e1483418d27085361dda27745b0ade50e910202faf080000000000000000000000000000"),
+						Msg:   mustBocToMessageRelaxed("b5ee9c7201010101003600006842003666992d42c61bcb49fd715e5558e1483418d27085361dda27745b0ade50e910202faf080000000000000000000000000000"),
 					},
 				},
 			},
@@ -1803,6 +1803,18 @@ func TestImplements(t *testing.T) {
 			t.Fatalf("iface %v implements %v: %v", c.iface, c.target, c.implements)
 		}
 	}
+}
+
+func mustBocToMessageRelaxed(s string) MessageRelaxed {
+	c, err := boc.DeserializeBocHex(s)
+	if err != nil {
+		panic(err)
+	}
+	var msg MessageRelaxed
+	if err := tlb.Unmarshal(c[0], &msg); err != nil {
+		panic(err)
+	}
+	return msg
 }
 
 func TestDecodeExternalIn(t *testing.T) {
@@ -2084,8 +2096,8 @@ func TestDecodeExternalIn(t *testing.T) {
 					ValidUntil: 1720185688,
 					Seqno:      2,
 					Actions: &W5Actions{
-						{Magic: 0xec3c86d, Mode: 3, Msg: mustHexToCellPtr("b5ee9c7201010101003500006642006b9c8a03f81b4ad9d79a0d94d5989bd46134d5848f0021da180d0ad01a41470e1a625a0000000000000000000000000000")},
-						{Magic: 0xec3c86d, Mode: 3, Msg: mustHexToCellPtr("b5ee9c7201010101003500006642006b9c8a03f81b4ad9d79a0d94d5989bd46134d5848f0021da180d0ad01a41470e1cc4b40000000000000000000000000000")},
+						{Magic: 0xec3c86d, Mode: 3, Msg: mustBocToMessageRelaxed("b5ee9c7201010101003500006642006b9c8a03f81b4ad9d79a0d94d5989bd46134d5848f0021da180d0ad01a41470e1a625a0000000000000000000000000000")},
+						{Magic: 0xec3c86d, Mode: 3, Msg: mustBocToMessageRelaxed("b5ee9c7201010101003500006642006b9c8a03f81b4ad9d79a0d94d5989bd46134d5848f0021da180d0ad01a41470e1cc4b40000000000000000000000000000")},
 					},
 					Extended:  nil,
 					Signature: mustToBits512("59bfc4d8190aaaebeb0e8775315fe315113c5397fd75dd8d096c8fbbfe0c2c0bce4e9203ba8c99533c544c97b5d3fc5b60f1053d22f08b6065f6110a24ca8a0d"),

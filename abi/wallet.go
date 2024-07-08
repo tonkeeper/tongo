@@ -30,7 +30,7 @@ func (p *WalletV1ToV4Payload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) er
 type W5SendMessageAction struct {
 	Magic tlb.Magic `tlb:"#0ec3c86d"`
 	Mode  uint8
-	Msg   *boc.Cell `tlb:"^"`
+	Msg   MessageRelaxed `tlb:"^"`
 }
 
 type W5Actions []W5SendMessageAction

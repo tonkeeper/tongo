@@ -80,6 +80,19 @@ func (m Magic) MarshalJSON() ([]byte, error) {
 	return json.Marshal(fmt.Sprintf("0x%x", uint32(m)))
 }
 
+func (m *Magic) UnmarshalJSON(b []byte) error {
+	str := strings.Trim(string(b), "\"")
+	if strings.HasPrefix(str, "0x") {
+		str = str[2:]
+	}
+	magic, err := strconv.ParseUint(str, 16, 64)
+	if err != nil {
+		return err
+	}
+	*m = Magic(magic)
+	return nil
+}
+
 func (m Magic) EncodeTag(c *boc.Cell, tag string) error {
 	return encodeSumTag(c, tag)
 }

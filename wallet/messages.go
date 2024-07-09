@@ -473,8 +473,12 @@ func (m *MessageV5Beta) RawMessages() []RawMessage {
 func (m *MessageV5) RawMessages() []RawMessage {
 	switch m.SumType {
 	case "SignedInternal":
-		msgs := make([]RawMessage, 0, len(*m.SignedInternal.Actions))
-		for _, action := range *m.SignedInternal.Actions {
+		if m.SignedInternal == nil || m.SignedInternal.Actions == nil {
+			return nil
+		}
+		actions := m.SignedInternal.Actions
+		msgs := make([]RawMessage, 0, len(*actions))
+		for _, action := range *actions {
 			msgs = append(msgs, RawMessage{
 				Message: action.Msg,
 				Mode:    action.Mode,
@@ -482,6 +486,9 @@ func (m *MessageV5) RawMessages() []RawMessage {
 		}
 		return msgs
 	case "SignedExternal":
+		if m.SignedExternal == nil || m.SignedExternal.Actions == nil {
+			return nil
+		}
 		msgs := make([]RawMessage, 0, len(*m.SignedExternal.Actions))
 		for _, action := range *m.SignedExternal.Actions {
 			msgs = append(msgs, RawMessage{

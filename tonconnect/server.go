@@ -89,7 +89,7 @@ func NewTonConnect(executor abi.Executor, secret string, opts ...Option) (*Serve
 var knownHashes = make(map[string]wallet.Version)
 
 func init() {
-	for i := wallet.Version(0); i <= wallet.V5Beta; i++ {
+	for i := wallet.Version(0); i <= wallet.V5R1; i++ {
 		ver := wallet.GetCodeHashByVer(i)
 		knownHashes[hex.EncodeToString(ver[:])] = i
 	}

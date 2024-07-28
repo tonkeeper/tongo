@@ -231,7 +231,7 @@ func (w *Wallet) RawSendV2(
 		if err == nil {
 			continue
 		}
-		if newSeqno >= seqno {
+		if newSeqno > seqno {
 			return msgHash, nil //todo: check if it is the same message
 		}
 	}

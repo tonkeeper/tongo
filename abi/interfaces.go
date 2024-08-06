@@ -651,6 +651,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: IsActive,
 	},
 	{
+		Name:     "is_stable",
+		InvokeFn: IsStable,
+	},
+	{
 		Name:     "jetton_wallet_lock_data",
 		InvokeFn: JettonWalletLockData,
 	},

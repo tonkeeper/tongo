@@ -651,6 +651,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: IsActive,
 	},
 	{
+		Name:     "is_claimed",
+		InvokeFn: IsClaimed,
+	},
+	{
 		Name:     "is_stable",
 		InvokeFn: IsStable,
 	},

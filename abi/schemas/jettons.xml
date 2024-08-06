@@ -81,6 +81,11 @@
         </output>
     </get_method>
 
+    <get_method name="is_claimed">
+        <output name="simple"  fixed_length="true">
+            <int name="claimed">bool</int>
+        </output>
+    </get_method>
 
     <!--        Jettons    -->
     <internal name="jetton_transfer" >

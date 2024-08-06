@@ -96,6 +96,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_wallet_data":                    {DecodeGetWalletDataResult},
 	"get_wallet_params":                  {DecodeGetWalletParamsResult},
 	"is_active":                          {DecodeIsActiveResult},
+	"is_claimed":                         {DecodeIsClaimedResult},
 	"is_plugin_installed":                {DecodeIsPluginInstalledResult},
 	"is_stable":                          {DecodeIsStable_DedustResult},
 	"jetton_wallet_lock_data":            {DecodeJettonWalletLockDataResult},
@@ -175,6 +176,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	119995: {GetPositionManagerContractData},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
+	122284: {IsClaimed},
 	122496: {GetAmmName},
 	122498: {GetTelemintAuctionState},
 	123832: {GetOrderData},
@@ -278,6 +280,7 @@ var resultTypes = []interface{}{
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
 	&IsActiveResult{},
+	&IsClaimedResult{},
 	&IsPluginInstalledResult{},
 	&IsStable_DedustResult{},
 	&JettonWalletLockDataResult{},
@@ -3580,6 +3583,39 @@ func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, 
 	var result IsActiveResult
 	err = stack.Unmarshal(&result)
 	return "IsActiveResult", result, err
+}
+
+type IsClaimedResult struct {
+	Claimed bool
+}
+
+func IsClaimed(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 122284 for "is_claimed" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122284, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsClaimedResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeIsClaimedResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result IsClaimedResult
+	err = stack.Unmarshal(&result)
+	return "IsClaimedResult", result, err
 }
 
 type IsPluginInstalledResult struct {

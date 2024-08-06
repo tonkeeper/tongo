@@ -97,6 +97,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_wallet_params":                  {DecodeGetWalletParamsResult},
 	"is_active":                          {DecodeIsActiveResult},
 	"is_plugin_installed":                {DecodeIsPluginInstalledResult},
+	"is_stable":                          {DecodeIsStable_DedustResult},
 	"jetton_wallet_lock_data":            {DecodeJettonWalletLockDataResult},
 	"list_nominators":                    {DecodeListNominatorsResult},
 	"list_votes":                         {DecodeListVotesResult},
@@ -154,6 +155,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
+	103723: {IsStable},
 	104122: {GetLpMiningData},
 	104346: {GetStorageParams},
 	105070: {GetTimeout},
@@ -277,6 +279,7 @@ var resultTypes = []interface{}{
 	&GetWalletParamsResult{},
 	&IsActiveResult{},
 	&IsPluginInstalledResult{},
+	&IsStable_DedustResult{},
 	&JettonWalletLockDataResult{},
 	&ListNominatorsResult{},
 	&ListVotesResult{},
@@ -3618,6 +3621,39 @@ func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, result
 	var result IsPluginInstalledResult
 	err = stack.Unmarshal(&result)
 	return "IsPluginInstalledResult", result, err
+}
+
+type IsStable_DedustResult struct {
+	IsStable bool
+}
+
+func IsStable(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 103723 for "is_stable" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103723, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsStable_DedustResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeIsStable_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result IsStable_DedustResult
+	err = stack.Unmarshal(&result)
+	return "IsStable_DedustResult", result, err
 }
 
 type JettonWalletLockDataResult struct {

@@ -40,13 +40,13 @@
         </msg_out>
     </interface>
 
-    <get_method name="get_reserves" >
+    <get_method name="get_reserves">
         <output version="dedust" fixed_length="true">
             <int name="reserve0">int257</int>
             <int name="reserve1">int257</int>
         </output>
     </get_method>
-    <get_method name="get_assets" >
+    <get_method name="get_assets">
         <output version="dedust" fixed_length="true">
             <slice name="asset0">DedustAsset</slice>
             <slice name="asset1">DedustAsset</slice>
@@ -55,6 +55,11 @@
     <get_method name="get_asset">
         <output version="dedust" fixed_length="true">
             <slice name="asset">DedustAsset</slice>
+        </output>
+    </get_method>
+    <get_method name="is_stable">
+        <output version="dedust" fixed_length="true">
+            <int name="is_stable">bool</int>
         </output>
     </get_method>
 
@@ -87,7 +92,7 @@
     </internal>
 
     <jetton_payload name="dedust_swap">
-        dedust_swap#e3a0d482  step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
+        dedust_swap#e3a0d482 step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
     </jetton_payload>
 
     <ext_out name="dedust_swap">

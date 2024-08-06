@@ -61,6 +61,7 @@ const (
 	WalletHighloadV2R1
 	WalletHighloadV2R2
 	WalletHighloadV3R1
+	WalletPreprocessedV2
 	WalletV1R1
 	WalletV1R2
 	WalletV1R3
@@ -183,6 +184,8 @@ func (c ContractInterface) String() string {
 		return "wallet_highload_v2r2"
 	case WalletHighloadV3R1:
 		return "wallet_highload_v3r1"
+	case WalletPreprocessedV2:
+		return "wallet_preprocessed_v2"
 	case WalletV1R1:
 		return "wallet_v1r1"
 	case WalletV1R2:
@@ -320,6 +323,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletHighloadV2R2
 	case "wallet_highload_v3r1":
 		return WalletHighloadV3R1
+	case "wallet_preprocessed_v2":
+		return WalletPreprocessedV2
 	case "wallet_v1r1":
 		return WalletV1R1
 	case "wallet_v1r2":
@@ -955,6 +960,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletHighloadV3R1:
 		return Wallet.Implements(other)
+	case WalletPreprocessedV2:
+		return Wallet.Implements(other)
 	case WalletV1R1:
 		return Wallet.Implements(other)
 	case WalletV1R2:
@@ -1022,6 +1029,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			GetSaleData,
 		},
+	},
+	ton.MustParseHash("45ebbce9b5d235886cb6bfe1c3ad93b708de058244892365c9ee0dfe439cb7b5"): {
+		contractInterfaces: []ContractInterface{WalletPreprocessedV2},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42"): {
 		contractInterfaces: []ContractInterface{NftItemSimple},
@@ -1275,6 +1286,10 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	case WalletHighloadV3R1:
 		return []msgDecoderFunc{
 			decodeFuncHighloadWalletSignedV3ExtInMsgBody,
+		}
+	case WalletPreprocessedV2:
+		return []msgDecoderFunc{
+			decodeFuncPreprocessedWalletSignedV2ExtInMsgBody,
 		}
 	case WalletV3R1:
 		return []msgDecoderFunc{

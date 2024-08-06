@@ -2156,6 +2156,29 @@ func TestDecodeExternalIn(t *testing.T) {
 				return value
 			},
 		},
+		{
+			name:       "preprocessed wallet",
+			boc:        "b5ee9c7201010501008d0001801c23d2e03d23ed03e14ce94cbcc93ddf4e7a7f36024e72cf3dcad9215c5443469dedf0e117f36b5722b995073975bf8ebe21b3fdfcc421e6ec6a8c3e81a1620f010114000000006579f15d000202020a0ec3c86d82030400000060420001219022a5102428ee08d5ed2816d3fe51558e87b542e69d31791894aa03fa9e0000000000000000000000000000",
+			wantOpName: PreprocessedWalletSignedV2ExtInMsgOp,
+			interfaces: []ContractInterface{WalletPreprocessedV2},
+			wantValue: func() any {
+				value := PreprocessedWalletSignedV2ExtInMsgBody{
+					Sign: mustToBits512("1c23d2e03d23ed03e14ce94cbcc93ddf4e7a7f36024e72cf3dcad9215c5443469dedf0e117f36b5722b995073975bf8ebe21b3fdfcc421e6ec6a8c3e81a1620f"),
+					Msg: PreprocessedWalletV2MsgInner{
+						ValidUntil: 1702490461,
+						SeqNo:      2,
+						Actions: W5Actions{
+							{
+								Magic: 0xec3c86d,
+								Mode:  130,
+								Msg:   mustBocToMessageRelaxed("b5ee9c72010101010032000060420001219022a5102428ee08d5ed2816d3fe51558e87b542e69d31791894aa03fa9e0000000000000000000000000000"),
+							},
+						},
+					},
+				}
+				return value
+			},
+		},
 	}
 
 	for _, tt := range tests {

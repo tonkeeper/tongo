@@ -26,17 +26,7 @@
         query_id#_ shift:uint13 bit_number:(## 10) = HighloadV3QueryId;
         msg_inner#_ {n:#}  subwallet_id:uint32 message_to_send:^MessageRelaxed send_mode:uint8 query_id:HighloadV3QueryId created_at:uint64 timeout:uint22 = HighloadV3MsgInner;
 
-        action_send_msg#0ec3c86d mode:(## 8) out_msg:^(MessageRelaxed Any) = OutAction;
-        action_set_code#ad4de08e new_code:^Cell = OutAction;
-        action_reserve_currency#36e6b809 mode:(## 8) currency:CurrencyCollection = OutAction;
-        libref_hash$0 lib_hash:bits256 = LibRef;
-        libref_ref$1 library:^Cell = LibRef;
-        action_change_library#26fa1dd4 mode:(## 7) libref:LibRef = OutAction;
-        
-        out_list_empty$_ = OutList 0;
-        out_list$_ {n:#} prev:^(OutList n) action:OutAction = OutList (n + 1);
-        
-        msg_inner#_ {n:#} valid_until:uint64 seq_no:uint16 actions:^(OutList n) { n <= 255 } = PreprocessedWalletV2MsgInner n;
+        msg_inner#_ valid_until:uint64 seq_no:uint16 actions:^W5Actions  = PreprocessedWalletV2MsgInner;
     </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
@@ -145,10 +135,10 @@
         </msg_in>
     </interface>
 
-    <interface name="preprocessed_wallet_v2" inherits="wallet">
+    <interface name="wallet_preprocessed_v2" inherits="wallet">
         <code_hash>45ebbce9b5d235886cb6bfe1c3ad93b708de058244892365c9ee0dfe439cb7b5</code_hash>
         <msg_in>
-            <ext_in name="preprocessed_signed_v2"/>
+            <ext_in name="preprocessed_wallet_signed_v2"/>
         </msg_in>
     </interface>
 
@@ -209,8 +199,8 @@
     <ext_in name="highload_wallet_signed_v3">
         signed#_ {n:#} signature:bits512 msg:^HighloadV3MsgInner = ExternalMsgBody;
     </ext_in>
-    <ext_in name="preprocessed_signed_v2">
-        signed#_ {n:#} sign:bits512 msg:^(PreprocessedWalletV2MsgInner n) = ExternalMsgBody n;
+    <ext_in name="preprocessed_wallet_signed_v2">
+        signed#_ {n:#} sign:bits512 msg:^PreprocessedWalletV2MsgInner = ExternalMsgBody;
     </ext_in>
     <jetton_payload name="tonkeeper_relayer_fee">
         tonkeeper_relayer_fee#878da6e3 = JettonPayload;

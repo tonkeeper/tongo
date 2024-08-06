@@ -73,6 +73,7 @@ The list below contains the supported message operations, their names and opcode
 | OwnershipProof| 0x0524c7ae |
 | PaymentRequest| 0x706c7567 |
 | PaymentRequestResponse| 0xf06c7567 |
+| PreprocessedWalletSignedV2| 0x00000000 |
 | ProcessGovernanceDecision| 0x44beae41 |
 | ProofStorage| 0x419d5d4d |
 | ProveOwnership| 0x04ded148 |

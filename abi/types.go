@@ -474,6 +474,12 @@ func (t *MessageRelaxed) MarshalJSON() ([]byte, error) {
 	}
 }
 
+type PreprocessedWalletV2MsgInner struct {
+	ValidUntil uint64
+	SeqNo      uint16
+	Actions    W5Actions `tlb:"^"`
+}
+
 type SendMessageAction struct {
 	Mode    uint8
 	Message MessageRelaxed `tlb:"^"`

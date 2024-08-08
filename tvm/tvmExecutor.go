@@ -38,6 +38,10 @@ type Emulator struct {
 	ignoreLibraryCells bool
 }
 
+type Config struct {
+	config unsafe.Pointer
+}
+
 type Options struct {
 	verbosityLevel txemulator.VerbosityLevel
 	balance        int64
@@ -122,6 +126,18 @@ func NewEmulator(code, data, config *boc.Cell, opts ...Option) (*Emulator, error
 	return NewEmulatorFromBOCsBase64(codeBoc, dataBoc, configBoc, opts...)
 }
 
+func NewEmulatorWithEmptyConfig(code, data *boc.Cell, opts ...Option) (*Emulator, error) {
+	codeBoc, err := code.ToBocBase64()
+	if err != nil {
+		return nil, err
+	}
+	dataBoc, err := data.ToBocBase64()
+	if err != nil {
+		return nil, err
+	}
+	return NewEmulatorFromBOCsBase64(codeBoc, dataBoc, "", opts...)
+}
+
 // NewEmulatorFromBOCsBase64
 // Verbosity level of VM log. 0 - log truncated to last 256 characters. 1 - unlimited length log.
 // 2 - for each command prints its cell hash and offset. 3 - for each command log prints all stack values.
@@ -179,6 +195,20 @@ func SetVerbosityLevel(level int) error {
 	return nil
 }
 
+func createConfig(configRaw string) (*Config, error) {
+	config := C.emulator_config_create(C.CString(configRaw))
+	if config == nil {
+		return nil, fmt.Errorf("failed to create config")
+	}
+	c := Config{config: config}
+	runtime.SetFinalizer(&c, destroyConfig)
+	return &c, nil
+}
+
+func destroyConfig(c *Config) {
+	C.emulator_config_destroy(c.config)
+}
+
 func (e *Emulator) SetBalance(balance int64) {
 	e.balance = uint64(balance)
 }
@@ -216,6 +246,9 @@ func (e *Emulator) setC7(address string, unixTime uint32) error {
 		return err
 	}
 	cConfigStr := C.CString(e.config)
+	if e.config == "" {
+		cConfigStr = nil
+	}
 	defer C.free(unsafe.Pointer(cConfigStr))
 	cAddressStr := C.CString(address)
 	defer C.free(unsafe.Pointer(cAddressStr))
@@ -226,6 +259,19 @@ func (e *Emulator) setC7(address string, unixTime uint32) error {
 		return fmt.Errorf("set C7 error")
 	}
 	e.c7Set = true
+	return nil
+}
+
+func (e *Emulator) setConfig(config *Config) error {
+	var seed [32]byte
+	_, err := rand.Read(seed[:])
+	if err != nil {
+		return err
+	}
+	ok := C.tvm_emulator_set_config_object(e.emulator, config.config)
+	if !ok {
+		return fmt.Errorf("set config error")
+	}
 	return nil
 }
 
@@ -271,6 +317,68 @@ func (e *Emulator) RunSmcMethodByID(ctx context.Context, accountId ton.AccountID
 			return 0, tlb.VmStack{}, err
 		}
 	}
+	res, err := e.runGetMethod(methodID, params)
+	if err != nil {
+		return 0, tlb.VmStack{}, err
+	}
+	if res.Success && res.VmExitCode != 0 && res.VmExitCode != 1 && e.lazyC7 && !e.c7Set {
+		err = e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+		res, err = e.runGetMethod(methodID, params)
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+	}
+	if !res.Success {
+		return 0, tlb.VmStack{}, fmt.Errorf("TVM emulation error: %v", res.Error)
+	}
+	b, err := base64.StdEncoding.DecodeString(res.Stack)
+	if err != nil {
+		return 0, tlb.VmStack{}, err
+	}
+	c, err := boc.DeserializeBoc(b)
+	if err != nil {
+		return 0, tlb.VmStack{}, err
+	}
+	var stack tlb.VmStack
+	decoder := tlb.NewDecoder()
+	if e.libResolver != nil {
+		decoder = decoder.WithLibraryResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
+			if e.libResolver == nil {
+				return nil, fmt.Errorf("failed to fetch library: no resolver provided")
+			}
+			libs, err := e.libResolver.GetLibraries(ctx, []ton.Bits256{ton.Bits256(hash)})
+			if err != nil {
+				return nil, err
+			}
+			if len(libs) == 0 {
+				return nil, fmt.Errorf("library not found")
+			}
+			return libs[ton.Bits256(hash)], nil
+		})
+	}
+	err = decoder.Unmarshal(c[0], &stack)
+	if err != nil {
+		return 0, tlb.VmStack{}, err
+	}
+	return uint32(res.VmExitCode), stack, nil
+}
+
+func (e *Emulator) RunSmcMethodWithConfig(ctx context.Context, config *Config, accountId ton.AccountID, method string, params tlb.VmStack) (uint32, tlb.VmStack, error) {
+	methodID := utils.MethodIdFromName(method)
+	if !e.lazyC7 && !e.c7Set {
+		err := e.setC7(accountId.ToRaw(), uint32(time.Now().Unix()))
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+	}
+	err := e.setConfig(config)
+	if err != nil {
+		return 0, tlb.VmStack{}, err
+	}
+
 	res, err := e.runGetMethod(methodID, params)
 	if err != nil {
 		return 0, tlb.VmStack{}, err

@@ -26,6 +26,27 @@ EMULATOR_EXPORT void *transaction_emulator_create(const char *config_params_boc,
 EMULATOR_EXPORT bool transaction_emulator_set_unixtime(void *transaction_emulator, uint32_t unixtime);
 
 /**
+ * @brief Creates Config object from base64 encoded BoC
+ * @param config_params_boc Base64 encoded BoC serialized Config dictionary (Hashmap 32 ^Cell)
+ * @return Pointer to Config object or nullptr in case of error
+ */
+EMULATOR_EXPORT void *emulator_config_create(const char *config_params_boc);
+
+/**
+ * @brief Set config for TVM emulator
+ * @param tvm_emulator Pointer to TVM emulator
+ * @param config Pointer to Config object
+ * @return true in case of success, false in case of error
+ */
+EMULATOR_EXPORT bool tvm_emulator_set_config_object(void* tvm_emulator, void* config);
+
+/**
+ * @brief Destroy Config object
+ * @param tvm_emulator Pointer to Config object
+ */
+EMULATOR_EXPORT void emulator_config_destroy(void *config);
+
+/**
  * @brief Set lt for emulation
  * @param transaction_emulator Pointer to TransactionEmulator object
  * @param lt Logical time

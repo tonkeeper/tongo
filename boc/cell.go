@@ -424,3 +424,17 @@ func (c *Cell) bocReprWithoutRefs(mask levelMask) []byte {
 func (c *Cell) Level() int {
 	return c.mask.Level()
 }
+
+func (c *Cell) GetMerkleRoot() ([32]byte, error) {
+	if c.CellType() != MerkleProofCell {
+		return [32]byte{}, errors.New("not merkle proof cell")
+	}
+	bytes, err := c.ReadBytes(33)
+	if err != nil {
+		return [32]byte{}, err
+	}
+	var hash [32]byte
+	copy(hash[:], bytes[1:])
+	return hash, nil
+
+}

@@ -3,6 +3,7 @@ package boc
 import (
 	"crypto/sha256"
 	"encoding/binary"
+	"fmt"
 )
 
 // immutableCell provides a convenient way to calculate a cell's hash and depth.
@@ -13,9 +14,12 @@ type immutableCell struct {
 	hashes   [][]byte
 	depths   []int
 
-	// bitsBuf points to a content of this cell.
+	// bitsBuf points to the content of this cell.
 	// Used if this cell is a pruned branch cell to extract hashes and depth of an original cell.
 	bitsBuf []byte
+	// bitsLen is a length of the content of this cell in bits.
+	// it's not always equal to len(bitsBuf) because bitsBuf can contain more bytes than the actual content.
+	bitsLen int
 }
 
 // newImmutableCell returns a new instance of immutable cell.
@@ -31,6 +35,7 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 		hashes:   make([][]byte, 0, c.mask.HashesCount()),
 		depths:   make([]int, 0, c.mask.HashesCount()),
 		bitsBuf:  c.bits.buf,
+		bitsLen:  c.bits.len,
 	}
 	for _, ref := range c.refs {
 		if ref == nil {
@@ -153,4 +158,60 @@ func (ic *immutableCell) Depth(level int) int {
 		index = 0
 	}
 	return ic.depths[index]
+}
+
+// pruneCells return the current subtree (which this cell represents) with pruned cells.
+// if this cell is pruned, "pruneCells" returns a new pruned branch cell instead of this cell.
+// As of now, this function doesn't work with MerkleProofCell and MerkleUpdateCell.
+func (ic *immutableCell) pruneCells(pruned map[*immutableCell]struct{}) (*Cell, error) {
+	if ic.cellType == MerkleProofCell || ic.cellType == MerkleUpdateCell {
+		return nil, fmt.Errorf("unsupported cell type: %v", ic.cellType)
+	}
+	if _, ok := pruned[ic]; ok {
+		// we are pruned
+		// let's replace this cell with a pruned branch cell
+		prunedCell := NewCell()
+		prunedCell.mask = 1
+		prunedCell.cellType = PrunedBranchCell
+		if err := prunedCell.WriteUint(1, 8); err != nil {
+			return nil, err
+		}
+		if err := prunedCell.WriteUint(1, 8); err != nil {
+			return nil, err
+		}
+		if err := prunedCell.WriteBytes(ic.Hash(0)); err != nil {
+			return nil, err
+		}
+		if err := prunedCell.WriteUint(uint64(ic.Depth(0)), 16); err != nil {
+			return nil, err
+		}
+		prunedCell.ResetCounters()
+		return prunedCell, nil
+	}
+	// all good,
+	// going down the tree
+	bits := BitString{
+		buf: ic.bitsBuf,
+		cap: ic.bitsLen,
+		len: ic.bitsLen,
+	}
+	res := Cell{
+		bits:     bits,
+		refs:     [4]*Cell{},
+		cellType: ic.cellType,
+		mask:     ic.mask,
+	}
+	mask := ic.mask
+	for i, ref := range ic.refs {
+		cell, err := ref.pruneCells(pruned)
+		if err != nil {
+			return nil, err
+		}
+		if cell.mask > 0 {
+			mask |= cell.mask
+		}
+		res.refs[i] = cell
+	}
+	res.mask = mask
+	return &res, nil
 }

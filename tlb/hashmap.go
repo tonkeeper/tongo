@@ -171,6 +171,54 @@ func countLeafs(keySize, leftKeySize int, c *boc.Cell) (int, error) {
 	return 1, nil
 }
 
+func ProveKeyInHashmap(cell *boc.Cell, key boc.BitString) ([]byte, error) {
+	keySize := key.BitsAvailableForRead()
+	prover, err := boc.NewMerkleProver(cell)
+	if err != nil {
+		return nil, err
+	}
+	cursor := prover.Cursor()
+	bitString := boc.NewBitString(keySize)
+	prefix := &bitString
+	for {
+		var err error
+		var size int
+		size, prefix, err = loadLabel(keySize, cell, prefix)
+		if err != nil {
+			return nil, err
+		}
+		if keySize <= size {
+			break
+		}
+		if _, err = key.ReadBits(size); err != nil {
+			return nil, err
+		}
+
+		isRight, err := key.ReadBit()
+		if err != nil {
+			return nil, err
+		}
+		keySize = keySize - size - 1
+		next, err := cell.NextRef()
+		if err != nil {
+			return nil, err
+		}
+		if isRight {
+			cursor.Ref(0).Prune()
+			next, err = cell.NextRef()
+			if err != nil {
+				return nil, err
+			}
+			cursor = cursor.Ref(1)
+		} else {
+			cursor.Ref(1).Prune()
+			cursor = cursor.Ref(0)
+		}
+		cell = next
+	}
+	return prover.CreateProof()
+}
+
 func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, decoder *Decoder) error {
 	var err error
 	var size int

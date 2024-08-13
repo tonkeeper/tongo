@@ -171,43 +171,44 @@ func countLeafs(keySize, leftKeySize int, c *boc.Cell) (int, error) {
 	return 1, nil
 }
 
-func ProveKeyInHashmap(cell *boc.Cell, key boc.BitString) ([]byte, error) {
+func ProveKeyInHashmap[T any](prover *boc.MerkleProver, cell *boc.Cell, key boc.BitString) (T, []byte, error) {
 	keySize := key.BitsAvailableForRead()
-	prover, err := boc.NewMerkleProver(cell)
-	if err != nil {
-		return nil, err
-	}
-	cursor := prover.Cursor()
 	bitString := boc.NewBitString(keySize)
 	prefix := &bitString
+	cursor := prover.Cursor()
+	var t T
+	remaining := keySize
 	for {
 		var err error
 		var size int
-		size, prefix, err = loadLabel(keySize, cell, prefix)
+		size, prefix, err = loadLabel(remaining, cell, prefix)
 		if err != nil {
-			return nil, err
+			return t, nil, err
 		}
-		if keySize <= size {
+		_ = prefix
+		if remaining <= size {
 			break
 		}
 		if _, err = key.ReadBits(size); err != nil {
-			return nil, err
+			return t, nil, err
 		}
-
 		isRight, err := key.ReadBit()
 		if err != nil {
-			return nil, err
+			return t, nil, err
 		}
-		keySize = keySize - size - 1
+		if err := prefix.WriteBit(isRight); err != nil {
+			return t, nil, err
+		}
+		remaining = remaining - size - 1
 		next, err := cell.NextRef()
 		if err != nil {
-			return nil, err
+			return t, nil, err
 		}
 		if isRight {
 			cursor.Ref(0).Prune()
 			next, err = cell.NextRef()
 			if err != nil {
-				return nil, err
+				return t, nil, err
 			}
 			cursor = cursor.Ref(1)
 		} else {
@@ -215,8 +216,24 @@ func ProveKeyInHashmap(cell *boc.Cell, key boc.BitString) ([]byte, error) {
 			cursor = cursor.Ref(0)
 		}
 		cell = next
+		cell.ResetCounters()
 	}
-	return prover.CreateProof()
+	if err := Unmarshal(cell, &t); err != nil {
+		return t, nil, err
+	}
+	constructedKey, err := prefix.ReadBits(keySize)
+	if err != nil {
+		return t, nil, err
+	}
+	if constructedKey.ToFiftHex() != key.ToFiftHex() {
+		return t, nil, errors.New("key is not found")
+	}
+	proof, err := prover.CreateProof(cursor)
+	if err != nil {
+		return t, nil, err
+	}
+	return t, proof, nil
+
 }
 
 func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPrefix *boc.BitString, decoder *Decoder) error {

@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"math/big"
 	"testing"
+	"time"
 
 	"github.com/tonkeeper/tongo/boc"
 	codePkg "github.com/tonkeeper/tongo/code"
+	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
@@ -129,4 +131,112 @@ func TestEmulator_WithLibraries(t *testing.T) {
 	if code != 9 {
 		t.Fatalf("expected exit code: 9, got: %v", code)
 	}
+}
+
+func TestGet_Benchmark(t *testing.T) {
+	acc := "EQCq_bZJPkPoAxScGRqVfzCalamT3yYdQUURNDdjKkEvQ1yq"
+	methods := []string{"get_collection_data"}
+
+	client, err := liteapi.NewClientWithDefaultMainnet()
+	if err != nil {
+		panic(err)
+	}
+	config, err := client.GetConfigAll(context.Background(), 0)
+	if err != nil {
+		panic(err)
+	}
+	account, err := client.GetAccountState(context.Background(), ton.MustParseAccountID(acc))
+	if err != nil {
+		panic(err)
+	}
+	configCell := boc.NewCell()
+	err = tlb.Marshal(configCell, config.Config)
+	if err != nil {
+		panic(err)
+	}
+
+	init := account.Account.Account.Storage.State.AccountActive.StateInit
+	e, err := NewEmulator(&init.Code.Value.Value, &init.Data.Value.Value, configCell)
+	if err != nil {
+		panic(err)
+	}
+	if e == nil {
+		panic(err)
+	}
+
+	l, err := configCell.ToBocBase64()
+	fmt.Printf("conf size: %d\n", len(l))
+	l2, err := (&init.Data.Value.Value).ToBocBase64()
+	fmt.Printf("data size: %d\n", len(l2))
+	if err != nil {
+		panic(err)
+	}
+
+	num := 1000
+
+	start := time.Now()
+	for i := 0; i < num; i++ {
+		for _, method := range methods {
+			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, nil)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if exit != 0 {
+				fmt.Println(exit)
+			}
+		}
+	}
+	duration := time.Since(start)
+	fmt.Printf("Time 1 emulator: %v\n", duration)
+
+	start = time.Now()
+	for i := 0; i < num; i++ {
+		for _, method := range methods {
+			e, err := NewEmulator(&init.Code.Value.Value, &init.Data.Value.Value, configCell)
+			if err != nil {
+				panic(err)
+			}
+			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, nil)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if exit != 0 {
+				fmt.Println(exit)
+			}
+		}
+	}
+	duration = time.Since(start)
+	fmt.Printf("Time (config as string): %v\n", duration)
+
+	// reuse config
+	conf, err := configCell.ToBocBase64()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c, err := createConfig(conf)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if c == nil {
+		fmt.Println("Config object not created")
+	}
+
+	start = time.Now()
+	for i := 0; i < num; i++ {
+		for _, method := range methods {
+			e, err := NewEmulator(&init.Code.Value.Value, &init.Data.Value.Value, nil, WithConfig(c))
+			if err != nil {
+				panic(err)
+			}
+			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, nil)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if exit != 0 {
+				fmt.Println(exit)
+			}
+		}
+	}
+	duration = time.Since(start)
+	fmt.Printf("Time (config as object): %v\n", duration)
 }

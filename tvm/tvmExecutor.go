@@ -38,6 +38,10 @@ type Emulator struct {
 	ignoreLibraryCells bool
 }
 
+type Config struct {
+	data unsafe.Pointer
+}
+
 type Options struct {
 	verbosityLevel txemulator.VerbosityLevel
 	balance        int64
@@ -46,6 +50,7 @@ type Options struct {
 	lazyC7             bool
 	libResolver        libResolver
 	ignoreLibraryCells bool
+	config             *Config
 }
 
 type Option func(o *Options)
@@ -60,6 +65,12 @@ func WithVerbosityLevel(level txemulator.VerbosityLevel) Option {
 func WithBalance(balance int64) Option {
 	return func(o *Options) {
 		o.balance = balance
+	}
+}
+
+func WithConfig(config *Config) Option {
+	return func(o *Options) {
+		o.config = config
 	}
 }
 
@@ -115,9 +126,12 @@ func NewEmulator(code, data, config *boc.Cell, opts ...Option) (*Emulator, error
 	if err != nil {
 		return nil, err
 	}
-	configBoc, err := config.ToBocBase64()
-	if err != nil {
-		return nil, err
+	configBoc := ""
+	if config != nil {
+		configBoc, err = config.ToBocBase64()
+		if err != nil {
+			return nil, err
+		}
 	}
 	return NewEmulatorFromBOCsBase64(codeBoc, dataBoc, configBoc, opts...)
 }
@@ -153,6 +167,11 @@ func NewEmulatorFromBOCsBase64(code, data, config string, opts ...Option) (*Emul
 			return nil, err
 		}
 	}
+	if options.config != nil {
+		if err := e.setConfig(options.config); err != nil {
+			return nil, err
+		}
+	}
 	runtime.SetFinalizer(&e, destroy)
 	return &e, nil
 }
@@ -177,6 +196,20 @@ func SetVerbosityLevel(level int) error {
 		return fmt.Errorf("set VerbosityLevel error")
 	}
 	return nil
+}
+
+func createConfig(configRaw string) (*Config, error) {
+	config := C.emulator_config_create(C.CString(configRaw))
+	if config == nil {
+		return nil, fmt.Errorf("failed to create config")
+	}
+	c := Config{data: config}
+	runtime.SetFinalizer(&c, destroyConfig)
+	return &c, nil
+}
+
+func destroyConfig(c *Config) {
+	C.emulator_config_destroy(c.data)
 }
 
 func (e *Emulator) SetBalance(balance int64) {
@@ -209,6 +242,14 @@ func (e *Emulator) SetGasLimit(gasLimit int64) error {
 	return nil
 }
 
+func (e *Emulator) setConfig(config *Config) error {
+	ok := C.tvm_emulator_set_config_object(e.emulator, config.data)
+	if !ok {
+		return fmt.Errorf("set config error")
+	}
+	return nil
+}
+
 func (e *Emulator) setC7(address string, unixTime uint32) error {
 	var seed [32]byte
 	_, err := rand.Read(seed[:])
@@ -216,6 +257,9 @@ func (e *Emulator) setC7(address string, unixTime uint32) error {
 		return err
 	}
 	cConfigStr := C.CString(e.config)
+	if e.config == "" {
+		cConfigStr = nil
+	}
 	defer C.free(unsafe.Pointer(cConfigStr))
 	cAddressStr := C.CString(address)
 	defer C.free(unsafe.Pointer(cAddressStr))

@@ -2,8 +2,6 @@ package boc
 
 type MerkleProver struct {
 	root *immutableCell
-
-	pruned map[*immutableCell]struct{}
 }
 
 func NewMerkleProver(root *Cell) (*MerkleProver, error) {
@@ -11,20 +9,20 @@ func NewMerkleProver(root *Cell) (*MerkleProver, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &MerkleProver{root: immRoot, pruned: make(map[*immutableCell]struct{})}, nil
+	return &MerkleProver{root: immRoot}, nil
 }
 
 type Cursor struct {
 	cell   *immutableCell
-	prover *MerkleProver
+	pruned map[*immutableCell]struct{}
 }
 
 func (p *MerkleProver) Cursor() *Cursor {
-	return &Cursor{cell: p.root, prover: p}
+	return &Cursor{cell: p.root, pruned: make(map[*immutableCell]struct{})}
 }
 
-func (p *MerkleProver) CreateProof() ([]byte, error) {
-	immRoot, err := p.root.pruneCells(p.pruned)
+func (p *MerkleProver) CreateProof(cursor *Cursor) ([]byte, error) {
+	immRoot, err := p.root.pruneCells(cursor.pruned)
 	if err != nil {
 		return nil, err
 	}
@@ -47,9 +45,9 @@ func (p *MerkleProver) CreateProof() ([]byte, error) {
 }
 
 func (c *Cursor) Prune() {
-	c.prover.pruned[c.cell] = struct{}{}
+	c.pruned[c.cell] = struct{}{}
 }
 
 func (c *Cursor) Ref(ref int) *Cursor {
-	return &Cursor{cell: c.cell.refs[ref], prover: c.prover}
+	return &Cursor{cell: c.cell.refs[ref], pruned: c.pruned}
 }

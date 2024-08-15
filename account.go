@@ -48,12 +48,32 @@ func DefaultAddressParser() *addressParser {
 	return defaultParser
 }
 
+type ParserOptions struct {
+	RootDNS  AccountID
+	Executor abi.Executor
+}
+
+type ParserOption func(options *ParserOptions)
+
+func WithRootDNS(root AccountID) ParserOption {
+	return func(options *ParserOptions) {
+		options.RootDNS = root
+	}
+}
+
 // SetDefaultExecutor sets the default executor for the default address parser.
 // The executor is used to resolve DNS records.
-func SetDefaultExecutor(executor abi.Executor) {
+func SetDefaultExecutor(executor abi.Executor, opts ...ParserOption) {
+	options := &ParserOptions{
+		RootDNS:  MustParseAccountID(DefaultRoot),
+		Executor: executor,
+	}
+	for _, f := range opts {
+		f(options)
+	}
 	mu.Lock()
 	defer mu.Unlock()
-	resolver := dns.NewDNS(MustParseAccountID(DefaultRoot), executor)
+	resolver := dns.NewDNS(options.RootDNS, options.Executor)
 	defaultParser = NewAccountAddressParser(resolver)
 }
 

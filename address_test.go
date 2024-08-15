@@ -52,8 +52,8 @@ func TestParseAddress(t *testing.T) {
 		{
 			name:      "Parse dns to raw address",
 			typeParse: parseDnsToRawAddress,
-			request:   "subbotin.ton",
-			response:  "0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb",
+			request:   "wallet-ton.ton",
+			response:  "0:b9fa6045aee35c428b4f7fa9f0e6dfd2e51253a6e7c661b76d6803796ebf80c5",
 		},
 		{
 			name:      "url-unsafe",

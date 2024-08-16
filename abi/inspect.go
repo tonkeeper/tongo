@@ -235,6 +235,17 @@ func getCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*codeI
 		// we are OK, if there is no information about get methods
 		return &codeInfo{hash: h}, nil
 	}
+	if c.IsLibrary() {
+		hash, err := c.GetLibraryHash()
+		if err != nil {
+			return nil, err
+		}
+		cell, ok := libs[ton.Bits256(hash)]
+		if !ok {
+			return nil, fmt.Errorf("library not found")
+		}
+		c = cell
+	}
 	type GetMethods struct {
 		Hashmap tlb.Hashmap[tlb.Uint19, boc.Cell]
 	}

@@ -198,7 +198,7 @@ func SetVerbosityLevel(level int) error {
 	return nil
 }
 
-func createConfig(configRaw string) (*Config, error) {
+func CreateConfig(configRaw string) (*Config, error) {
 	config := C.emulator_config_create(C.CString(configRaw))
 	if config == nil {
 		return nil, fmt.Errorf("failed to create config")

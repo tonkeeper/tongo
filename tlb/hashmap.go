@@ -223,7 +223,11 @@ func (h *Hashmap[keyT, T]) mapInner(keySize, leftKeySize int, c *boc.Cell, keyPr
 	var err error
 	var size int
 	if c.CellType() == boc.PrunedBranchCell {
-		return nil
+		cell := resolvePrunedCell(c, decoder.resolvePruned)
+		if cell == nil {
+			return nil
+		}
+		c = cell
 	}
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
@@ -444,7 +448,11 @@ func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cel
 	var err error
 	var size int
 	if c.CellType() == boc.PrunedBranchCell {
-		return nil
+		cell := resolvePrunedCell(c, decoder.resolvePruned)
+		if cell == nil {
+			return nil
+		}
+		c = cell
 	}
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {

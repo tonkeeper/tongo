@@ -8,13 +8,15 @@ import (
 )
 
 type resolveLib func(hash Bits256) (*boc.Cell, error)
+type resolvePruned func(hash Bits256) (*boc.Cell, error)
 
 // Decoder unmarshals a cell into a golang type.
 type Decoder struct {
-	hasher     *boc.Hasher
-	withDebug  bool
-	debugPath  []string
-	resolveLib resolveLib
+	hasher        *boc.Hasher
+	withDebug     bool
+	debugPath     []string
+	resolveLib    resolveLib
+	resolvePruned resolvePruned
 }
 
 func (d *Decoder) WithDebug() *Decoder {
@@ -25,6 +27,12 @@ func (d *Decoder) WithDebug() *Decoder {
 // WithLibraryResolver provides a function which is used to fetch a library cell by its hash.
 func (d *Decoder) WithLibraryResolver(resolveLib resolveLib) *Decoder {
 	d.resolveLib = resolveLib
+	return d
+}
+
+// WithPrunedResolver provides a function which is used to fetch a pruned cell by its hash.
+func (d *Decoder) WithPrunedResolver(resolvePruned resolvePruned) *Decoder {
+	d.resolvePruned = resolvePruned
 	return d
 }
 
@@ -66,6 +74,25 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		defer func() {
 			decoder.debugPath = decoder.debugPath[:len(decoder.debugPath)-1]
 		}()
+	}
+	if c.CellType() == boc.PrunedBranchCell {
+		if val.Kind() == reflect.Ptr && val.Type() == bocCellPointerType {
+			// this is a pruned cell, and we unmarshal it to a cell.
+			// let's not resolve it and keep it as is
+			val.Elem().Set(reflect.ValueOf(c).Elem())
+			return nil
+		}
+		if val.Kind() == reflect.Ptr && val.Type() == bocTlbANyPointerType {
+			// same as lib resolve
+			//todo: remove
+			a := Any(*c)
+			val.Elem().Set(reflect.ValueOf(a))
+			return nil
+		}
+		cell := resolvePrunedCell(c, decoder.resolvePruned)
+		if cell != nil {
+			c = cell
+		}
 	}
 	if c.IsLibrary() {
 		if val.Kind() == reflect.Ptr && val.Type() == bocCellPointerType {
@@ -116,7 +143,14 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
 		if c.CellType() == boc.PrunedBranchCell {
-			return nil
+			cell := resolvePrunedCell(c, decoder.resolvePruned)
+			// TODO: maybe check for pointer too
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType {
+				return decodeCell(c, val)
+			} else if cell == nil {
+				return nil
+			}
+			c = cell
 		}
 	case t.IsMaybe:
 		tag = ""
@@ -137,7 +171,14 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
 		if c.CellType() == boc.PrunedBranchCell {
-			return nil
+			cell := resolvePrunedCell(c, decoder.resolvePruned)
+			// TODO: maybe check for pointer too
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType {
+				return decodeCell(c, val)
+			} else if cell == nil {
+				return nil
+			}
+			c = cell
 		}
 	}
 	i, ok := val.Interface().(UnmarshalerTLB)
@@ -338,4 +379,21 @@ func decodeBitString(c *boc.Cell, val reflect.Value) error {
 // Hasher returns boc.Hasher that is used to calculate hashes when decoding.
 func (dec *Decoder) Hasher() *boc.Hasher {
 	return dec.hasher
+}
+
+func resolvePrunedCell(c *boc.Cell, resolver resolvePruned) *boc.Cell {
+	if resolver == nil {
+		return nil
+	}
+	hash, err := c.Hash256WithLevel(0)
+	if err != nil {
+		return nil
+	}
+	cell, err := resolver(hash)
+	if err != nil {
+		return nil
+	}
+	// TODO: we need to reset all counters for cells or deep copy all cells
+	cell.ResetCounters()
+	return cell
 }

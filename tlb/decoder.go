@@ -116,6 +116,9 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
 		if c.CellType() == boc.PrunedBranchCell {
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType {
+				return decodeCell(c, val)
+			}
 			return nil
 		}
 	case t.IsMaybe:
@@ -137,6 +140,9 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
 		if c.CellType() == boc.PrunedBranchCell {
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType {
+				return decodeCell(c, val)
+			}
 			return nil
 		}
 	}

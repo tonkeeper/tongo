@@ -54,6 +54,9 @@ func (b *BinTree[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 	b.Values = make([]T, 0, len(dec))
 	for _, i := range dec {
+		if i.CellType() == boc.PrunedBranchCell {
+			continue
+		}
 		var t T
 		err := decoder.Unmarshal(i, &t)
 		if err != nil {

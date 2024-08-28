@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -13,6 +14,33 @@ type MerkleProof[T any] struct {
 	VirtualHash Bits256
 	Depth       uint16
 	VirtualRoot T `tlb:"^"`
+}
+
+func (p *MerkleProof[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	depth, hash, err := c.CalculateMerkleProofMeta()
+	if err != nil {
+		return err
+	}
+	// TODO: remove duplicates
+	type merkleProof[T any] struct {
+		Magic       Magic `tlb:"!merkle_proof#03"`
+		VirtualHash Bits256
+		Depth       uint16
+		VirtualRoot T `tlb:"^"`
+	}
+	var res merkleProof[T]
+	err = decoder.Unmarshal(c, &res)
+	if err != nil {
+		return err
+	}
+	if res.VirtualHash != hash {
+		return errors.New("invalid virtual hash")
+	}
+	if int(res.Depth) != depth {
+		return errors.New("invalid depth")
+	}
+	*p = MerkleProof[T](res)
+	return nil
 }
 
 type MerkleUpdate[T any] struct {

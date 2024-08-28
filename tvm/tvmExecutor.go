@@ -199,7 +199,10 @@ func SetVerbosityLevel(level int) error {
 }
 
 func CreateConfig(configRaw string) (*Config, error) {
-	config := C.emulator_config_create(C.CString(configRaw))
+	configStr := C.CString(configRaw)
+	defer C.free(unsafe.Pointer(configStr))
+
+	config := C.emulator_config_create(configStr)
 	if config == nil {
 		return nil, fmt.Errorf("failed to create config")
 	}
@@ -257,10 +260,10 @@ func (e *Emulator) setC7(address string, unixTime uint32) error {
 		return err
 	}
 	cConfigStr := C.CString(e.config)
+	defer C.free(unsafe.Pointer(cConfigStr))
 	if e.config == "" {
 		cConfigStr = nil
 	}
-	defer C.free(unsafe.Pointer(cConfigStr))
 	cAddressStr := C.CString(address)
 	defer C.free(unsafe.Pointer(cAddressStr))
 	cSeedStr := C.CString(hex.EncodeToString(seed[:]))

@@ -272,6 +272,11 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	return bag.serializeBoc([]*Cell{cell}, idx, hasCrc32, cacheBits, flags)
 }
 
+func SerializeMulitpleRootsBoc(roots []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+	bag := newBagOfCells()
+	return bag.serializeBoc(roots, idx, hasCrc32, cacheBits, flags)
+}
+
 // bagOfCells serializes cells to a boc.
 //
 // the serialization algorithms is a golang version of

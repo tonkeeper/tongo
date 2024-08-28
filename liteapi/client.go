@@ -577,6 +577,9 @@ func (c *Client) GetAccountStateRaw(ctx context.Context, accountID ton.AccountID
 	if err != nil {
 		return liteclient.LiteServerAccountStateC{}, err
 	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerAccountStateC{}, errors.New("invalid block ID")
+	}
 	return res, nil
 }
 

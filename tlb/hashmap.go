@@ -553,6 +553,16 @@ func (h *HashmapAug[keyT, T1, T2]) mapInner(keySize, leftKeySize int, c *boc.Cel
 	return nil
 }
 
+// todo cover with tests
+func (h HashmapAug[keyT, T1, T2]) GetWithoutExtra(key keyT) (T1, bool) {
+	for i, k := range h.keys {
+		if k.Equal(key) {
+			return h.values[i], true
+		}
+	}
+	return *new(T1), false
+}
+
 type HashmapAugE[keyT fixedSize, T1, T2 any] struct {
 	m     HashmapAug[keyT, T1, T2]
 	extra T2
@@ -586,6 +596,11 @@ func (h HashmapAugE[keyT, T1, T2]) Values() []T1 {
 
 func (h HashmapAugE[keyT, T1, T2]) Keys() []keyT {
 	return h.m.keys
+}
+
+// todo cover with tests
+func (h HashmapAugE[keyT, T1, T2]) GetWithoutExtra(key keyT) (T1, bool) {
+	return h.m.GetWithoutExtra(key)
 }
 
 func loadLabelSize(size int, c *boc.Cell) (int, error) {

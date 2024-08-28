@@ -62,6 +62,14 @@ func (vs ValidatorsSet) Common() ValidatorSetsCommon {
 	return vs.ValidatorsExt.ValidatorSetsCommon
 }
 
+// validator_addr#73 public_key:SigPubKey weight:uint64
+// adnl_addr:bits256 = ValidatorDescr;
+type ValidatorAddr struct {
+	PublicKey SigPubKey
+	Weight    uint64
+	AdnlAddr  Bits256
+}
+
 type ValidatorDescr struct {
 	SumType
 	// validator#53 public_key:SigPubKey weight:uint64 = ValidatorDescr;
@@ -69,12 +77,7 @@ type ValidatorDescr struct {
 		PublicKey SigPubKey
 		Weight    uint64
 	} `tlbSumType:"validator#53"`
-	// validator_addr#73 public_key:SigPubKey weight:uint64 adnl_addr:bits256 = ValidatorDescr;
-	ValidatorAddr *struct {
-		PublicKey SigPubKey
-		Weight    uint64
-		AdnlAddr  Bits256
-	} `tlbSumType:"validatoraddr#73"`
+	ValidatorAddr ValidatorAddr `tlbSumType:"validatoraddr#73"`
 }
 
 func (vd ValidatorDescr) MarshalJSON() ([]byte, error) {

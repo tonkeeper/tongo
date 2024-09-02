@@ -1099,7 +1099,9 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV2},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			GetPublicKey,
+		},
 	},
 	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
 		contractInterfaces: []ContractInterface{MultisigOrderV2},
@@ -1283,6 +1285,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
+	case WalletHighloadV2:
+		return []msgDecoderFunc{
+			decodeFuncHighloadWalletSignedV2ExtInMsgBody,
+		}
 	case WalletHighloadV3R1:
 		return []msgDecoderFunc{
 			decodeFuncHighloadWalletSignedV3ExtInMsgBody,

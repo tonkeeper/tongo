@@ -2270,6 +2270,8 @@ var (
 	decodeFuncHighloadWalletSignedV3ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, HighloadWalletSignedV3ExtInMsgOp, HighloadWalletSignedV3ExtInMsgBody{})
 	// 0x00000000
 	decodeFuncPreprocessedWalletSignedV2ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, PreprocessedWalletSignedV2ExtInMsgOp, PreprocessedWalletSignedV2ExtInMsgBody{})
+	// 0x00000000
+	decodeFuncHighloadWalletSignedV2ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, HighloadWalletSignedV2ExtInMsgOp, HighloadWalletSignedV2ExtInMsgBody{})
 	// 0x7369676e
 	decodeFuncWalletSignedExternalV5R1ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x7369676e, Len: 32}, WalletSignedExternalV5R1ExtInMsgOp, WalletSignedExternalV5R1ExtInMsgBody{})
 )
@@ -2285,6 +2287,7 @@ const (
 	WalletSignedV4ExtInMsgOp             MsgOpName = "WalletSignedV4"
 	HighloadWalletSignedV3ExtInMsgOp     MsgOpName = "HighloadWalletSignedV3"
 	PreprocessedWalletSignedV2ExtInMsgOp MsgOpName = "PreprocessedWalletSignedV2"
+	HighloadWalletSignedV2ExtInMsgOp     MsgOpName = "HighloadWalletSignedV2"
 	WalletSignedExternalV5R1ExtInMsgOp   MsgOpName = "WalletSignedExternalV5R1"
 )
 
@@ -2293,6 +2296,7 @@ const (
 	WalletSignedV4ExtInMsgOpCode             MsgOpCode = 0x00000000
 	HighloadWalletSignedV3ExtInMsgOpCode     MsgOpCode = 0x00000000
 	PreprocessedWalletSignedV2ExtInMsgOpCode MsgOpCode = 0x00000000
+	HighloadWalletSignedV2ExtInMsgOpCode     MsgOpCode = 0x00000000
 	WalletSignedExternalV5R1ExtInMsgOpCode   MsgOpCode = 0x7369676e
 )
 
@@ -2323,6 +2327,13 @@ type PreprocessedWalletSignedV2ExtInMsgBody struct {
 	Msg  PreprocessedWalletV2MsgInner `tlb:"^"`
 }
 
+type HighloadWalletSignedV2ExtInMsgBody struct {
+	Signature   tlb.Bits512
+	SubwalletId uint32
+	QueryId     uint64
+	Payload     WalletPayloadHighloadV2
+}
+
 type WalletSignedExternalV5R1ExtInMsgBody struct {
 	WalletId   uint32
 	ValidUntil uint32
@@ -2337,6 +2348,7 @@ var KnownMsgExtInTypes = map[string]any{
 	WalletSignedV4ExtInMsgOp:             WalletSignedV4ExtInMsgBody{},
 	HighloadWalletSignedV3ExtInMsgOp:     HighloadWalletSignedV3ExtInMsgBody{},
 	PreprocessedWalletSignedV2ExtInMsgOp: PreprocessedWalletSignedV2ExtInMsgBody{},
+	HighloadWalletSignedV2ExtInMsgOp:     HighloadWalletSignedV2ExtInMsgBody{},
 	WalletSignedExternalV5R1ExtInMsgOp:   WalletSignedExternalV5R1ExtInMsgBody{},
 }
 

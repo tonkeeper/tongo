@@ -120,7 +120,15 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 				return err
 			}
 		} else {
-			s.SplitState.Left = ShardStateUnsplit{}
+			cell := resolvePrunedCell(c, decoder.resolvePruned)
+			if cell == nil {
+				s.SplitState.Left = ShardStateUnsplit{}
+			} else {
+				err = decoder.Unmarshal(cell, &s.SplitState.Left)
+				if err != nil {
+					return err
+				}
+			}
 		}
 		c1, err = c.NextRef()
 		if err != nil {
@@ -131,7 +139,15 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 				return err
 			}
 		} else {
-			s.SplitState.Right = ShardStateUnsplit{}
+			cell := resolvePrunedCell(c, decoder.resolvePruned)
+			if cell == nil {
+				s.SplitState.Right = ShardStateUnsplit{}
+			} else {
+				err = decoder.Unmarshal(cell, &s.SplitState.Right)
+				if err != nil {
+					return err
+				}
+			}
 		}
 		s.SumType = "SplitState"
 		break

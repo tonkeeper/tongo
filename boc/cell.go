@@ -470,3 +470,40 @@ func (c *Cell) Hash256WithLevel(level int) ([32]byte, error) {
 	copy(h[:], b)
 	return h, nil
 }
+
+// NonPrunedCells returns a map of all non-pruned cells, where the key is the hash of the cell. It can be used to resolve cells in the proofs.
+func (c *Cell) NonPrunedCells() (map[[32]byte]*Cell, error) {
+	// TODO: mutable cell map may change during resolving. It may be necessary to make full copies of cells.
+	res := map[[32]byte]*Cell{}
+	if c.CellType() == PrunedBranchCell {
+		return res, nil
+	}
+	h, err := c.Hash256()
+	if err != nil {
+		return nil, err
+	}
+	res[h] = c
+	err = collectCells(c, res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func collectCells(c *Cell, m map[[32]byte]*Cell) error {
+	refs := c.refs
+	for _, r := range refs {
+		if r != nil && r.CellType() != PrunedBranchCell {
+			h, err := r.Hash256()
+			if err != nil {
+				return err
+			}
+			m[h] = c
+			err = collectCells(r, m)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}

@@ -58,6 +58,7 @@ func TestComputeSkipReason_MarshalTLB(t *testing.T) {
 		{reason: ComputeSkipReasonNoGas},
 		{reason: ComputeSkipReasonNoState},
 		{reason: ComputeSkipReasonBadState},
+		{reason: ComputeSkipSuspended},
 	}
 	for _, tt := range tests {
 		t.Run(string(tt.reason), func(t *testing.T) {

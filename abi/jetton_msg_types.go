@@ -62,6 +62,17 @@ func decodeTegroAddLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error 
 	return err
 }
 
+func decodeDedustDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res DedustDepositLiquidityJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = DedustDepositLiquidityJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiSwapOkRefJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiSwapOkRefJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -123,6 +134,7 @@ const (
 	EncryptedTextCommentJettonOp   JettonOpName = "EncryptedTextComment"
 	StonfiSwapJettonOp             JettonOpName = "StonfiSwap"
 	TegroAddLiquidityJettonOp      JettonOpName = "TegroAddLiquidity"
+	DedustDepositLiquidityJettonOp JettonOpName = "DedustDepositLiquidity"
 	StonfiSwapOkRefJettonOp        JettonOpName = "StonfiSwapOkRef"
 	TonkeeperRelayerFeeJettonOp    JettonOpName = "TonkeeperRelayerFee"
 	StonfiSwapOkJettonOp           JettonOpName = "StonfiSwapOk"
@@ -134,6 +146,7 @@ const (
 	EncryptedTextCommentJettonOpCode   JettonOpCode = 0x2167da4b
 	StonfiSwapJettonOpCode             JettonOpCode = 0x25938561
 	TegroAddLiquidityJettonOpCode      JettonOpCode = 0x287e167a
+	DedustDepositLiquidityJettonOpCode JettonOpCode = 0x40e108d6
 	StonfiSwapOkRefJettonOpCode        JettonOpCode = 0x45078540
 	TonkeeperRelayerFeeJettonOpCode    JettonOpCode = 0x878da6e3
 	StonfiSwapOkJettonOpCode           JettonOpCode = 0xc64370e5
@@ -147,6 +160,7 @@ var KnownJettonTypes = map[string]any{
 	EncryptedTextCommentJettonOp:   EncryptedTextCommentJettonPayload{},
 	StonfiSwapJettonOp:             StonfiSwapJettonPayload{},
 	TegroAddLiquidityJettonOp:      TegroAddLiquidityJettonPayload{},
+	DedustDepositLiquidityJettonOp: DedustDepositLiquidityJettonPayload{},
 	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonPayload{},
 	TonkeeperRelayerFeeJettonOp:    TonkeeperRelayerFeeJettonPayload{},
 	StonfiSwapOkJettonOp:           StonfiSwapOkJettonPayload{},
@@ -159,6 +173,7 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	EncryptedTextCommentJettonOp:   EncryptedTextCommentJettonOpCode,
 	StonfiSwapJettonOp:             StonfiSwapJettonOpCode,
 	TegroAddLiquidityJettonOp:      TegroAddLiquidityJettonOpCode,
+	DedustDepositLiquidityJettonOp: DedustDepositLiquidityJettonOpCode,
 	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonOpCode,
 	TonkeeperRelayerFeeJettonOp:    TonkeeperRelayerFeeJettonOpCode,
 	StonfiSwapOkJettonOp:           StonfiSwapOkJettonOpCode,
@@ -172,6 +187,7 @@ var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell)
 	EncryptedTextCommentJettonOpCode:   decodeEncryptedTextCommentJettonOpJetton,
 	StonfiSwapJettonOpCode:             decodeStonfiSwapJettonOpJetton,
 	TegroAddLiquidityJettonOpCode:      decodeTegroAddLiquidityJettonOpJetton,
+	DedustDepositLiquidityJettonOpCode: decodeDedustDepositLiquidityJettonOpJetton,
 	StonfiSwapOkRefJettonOpCode:        decodeStonfiSwapOkRefJettonOpJetton,
 	TonkeeperRelayerFeeJettonOpCode:    decodeTonkeeperRelayerFeeJettonOpJetton,
 	StonfiSwapOkJettonOpCode:           decodeStonfiSwapOkJettonOpJetton,
@@ -206,6 +222,15 @@ type StonfiSwapJettonPayload struct {
 type TegroAddLiquidityJettonPayload struct {
 	AmountA tlb.VarUInteger16
 	AbountB tlb.VarUInteger16
+}
+
+type DedustDepositLiquidityJettonPayload struct {
+	PoolParams          DedustPoolParams
+	MinLpAmount         tlb.Grams
+	Asset0TargetBalance tlb.Grams
+	Asset1TargetBalance tlb.Grams
+	FulfillPayload      *tlb.Any `tlb:"maybe^"`
+	RejectPayload       *tlb.Any `tlb:"maybe^"`
 }
 
 type StonfiSwapOkRefJettonPayload struct{}

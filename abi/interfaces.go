@@ -8,6 +8,8 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
+	DedustFactory
+	DedustLiquidityDeposit
 	DedustPool
 	DedustVault
 	Dns
@@ -78,6 +80,10 @@ const (
 
 func (c ContractInterface) String() string {
 	switch c {
+	case DedustFactory:
+		return "dedust_factory"
+	case DedustLiquidityDeposit:
+		return "dedust_liquidity_deposit "
 	case DedustPool:
 		return "dedust_pool"
 	case DedustVault:
@@ -217,6 +223,10 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
+	case "dedust_factory":
+		return DedustFactory
+	case "dedust_liquidity_deposit ":
+		return DedustLiquidityDeposit
 	case "dedust_pool":
 		return DedustPool
 	case "dedust_vault":
@@ -596,6 +606,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetSubwalletId,
 	},
 	{
+		Name:     "get_target_balances",
+		InvokeFn: GetTargetBalances,
+	},
+	{
 		Name:     "get_telemint_auction_config",
 		InvokeFn: GetTelemintAuctionConfig,
 	},
@@ -618,6 +632,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_torrent_hash",
 		InvokeFn: GetTorrentHash,
+	},
+	{
+		Name:     "get_trade_fee",
+		InvokeFn: GetTradeFee,
 	},
 	{
 		Name:     "get_validator_controller_data",
@@ -687,11 +705,20 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 	{
+		Name: DedustLiquidityDeposit,
+		Results: []string{
+			"GetBalances_DedustResult",
+			"GetTargetBalances_DedustResult",
+		},
+	},
+	{
 		Name: DedustPool,
 		Results: []string{
 			"GetAssets_DedustResult",
 			"GetJettonDataResult",
 			"GetReserves_DedustResult",
+			"GetTradeFee_DedustResult",
+			"IsStable_DedustResult",
 		},
 	},
 	{
@@ -1185,16 +1212,23 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case DedustFactory:
+		return []msgDecoderFunc{
+			decodeFuncDedustCreateVaultMsgBody,
+			decodeFuncDedustCreateVolatilePoolMsgBody,
+		}
 	case DedustPool:
 		return []msgDecoderFunc{
 			decodeFuncDedustSwapExternalMsgBody,
 			decodeFuncDedustSwapPeerMsgBody,
+			decodeFuncJettonBurnNotificationMsgBody,
 		}
 	case DedustVault:
 		return []msgDecoderFunc{
 			decodeFuncJettonNotifyMsgBody,
 			decodeFuncJettonTransferMsgBody,
 			decodeFuncDedustSwapMsgBody,
+			decodeFuncDedustDepositLiquidityMsgBody,
 			decodeFuncDedustPayoutFromPoolMsgBody,
 		}
 	case Dns:
@@ -1327,6 +1361,8 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 	case DedustPool:
 		return []msgDecoderFunc{
 			decodeFuncDedustSwapExtOutMsgBody,
+			decodeFuncDedustDepositExtOutMsgBody,
+			decodeFuncDedustWithdrawalExtOutMsgBody,
 		}
 	default:
 		return nil

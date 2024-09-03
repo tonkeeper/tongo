@@ -346,12 +346,14 @@ type TrComputePhase struct {
 // cskip_no_state$00 = ComputeSkipReason;
 // cskip_bad_state$01 = ComputeSkipReason;
 // cskip_no_gas$10 = ComputeSkipReason;
+// cskip_suspended$110 = ComputeSkipReason;
 type ComputeSkipReason string
 
 const (
 	ComputeSkipReasonNoState  ComputeSkipReason = "cskip_no_state"
 	ComputeSkipReasonBadState ComputeSkipReason = "cskip_bad_state"
 	ComputeSkipReasonNoGas    ComputeSkipReason = "cskip_no_gas"
+	ComputeSkipSuspended      ComputeSkipReason = "cskip_suspended"
 )
 
 func (a ComputeSkipReason) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -362,6 +364,11 @@ func (a ComputeSkipReason) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 		return c.WriteUint(1, 2)
 	case ComputeSkipReasonNoGas:
 		return c.WriteUint(2, 2)
+	case ComputeSkipSuspended:
+		if err := c.WriteUint(3, 2); err != nil {
+			return err
+		}
+		return c.WriteUint(0, 1)
 	}
 	return nil
 }
@@ -378,6 +385,16 @@ func (a *ComputeSkipReason) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		*a = ComputeSkipReasonBadState
 	case 2:
 		*a = ComputeSkipReasonNoGas
+	case 3:
+		nextBit, err := c.ReadUint(1)
+		if err != nil {
+			return err
+		}
+		if nextBit == 0 {
+			*a = ComputeSkipSuspended
+			return nil
+		}
+		return fmt.Errorf("unknown ComputeSkipReason")
 	}
 	return nil
 }

@@ -1,10 +1,10 @@
 package tep64
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/tonkeeper/tongo/ton"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -21,15 +21,16 @@ const (
 
 type Metadata struct {
 	// Uri points to JSON document with metadata. Used by SemiChain layout. ASCII string.
-	Uri         string `json:"uri,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Image       string `json:"image,omitempty"`
-	ImageData   []byte `json:"image_data,omitempty"`
-	Symbol      string `json:"symbol,omitempty"`
-	Decimals    string `json:"decimals,omitempty"`
-	RenderType  string `json:"render_type,omitempty"`
-	AmountStyle string `json:"amount_style,omitempty"`
+	Uri                 string `json:"uri,omitempty"`
+	Name                string `json:"name,omitempty"`
+	Description         string `json:"description,omitempty"`
+	Image               string `json:"image,omitempty"`
+	ImageData           []byte `json:"image_data,omitempty"`
+	Symbol              string `json:"symbol,omitempty"`
+	Decimals            string `json:"decimals,omitempty"`
+	RenderType          string `json:"render_type,omitempty"`
+	AmountStyle         string `json:"amount_style,omitempty"`
+	CustomPayloadAPIURL string `json:"custom_payload_api_uri,omitempty"`
 }
 
 func (m *Metadata) Merge(other *Metadata) {
@@ -63,6 +64,9 @@ func (m *Metadata) Merge(other *Metadata) {
 	if other.AmountStyle != "" {
 		m.AmountStyle = other.AmountStyle
 	}
+	if other.CustomPayloadAPIURL != "" {
+		m.CustomPayloadAPIURL = other.CustomPayloadAPIURL
+	}
 }
 
 // FullContent is either a link to metadata or metadata itself depending on the layout.
@@ -77,6 +81,17 @@ type FullContent struct {
 
 var (
 	ErrUnsupportedContentType = errors.New("unsupported content type")
+
+	sha256uri           = ton.MustParseHash("70e5d7b6a29b392f85076fe15ca2f2053c56c2338728c4e33c9e8ddb1ee827cc") // sha256(uri)
+	sha256name          = ton.MustParseHash("82a3537ff0dbce7eec35d69edc3a189ee6f17d82f353a553f9aa96cb0be3ce89") // sha256(name)
+	sha256description   = ton.MustParseHash("c9046f7a37ad0ea7cee73355984fa5428982f8b37c8f7bcec91f7ac71a7cd104") // sha256(description)
+	sha256image         = ton.MustParseHash("6105d6cc76af400325e94d588ce511be5bfdbb73b437dc51eca43917d7a43e3d") // sha256(image)
+	sha256imageData     = ton.MustParseHash("d9a88ccec79eef59c84b671136a20ece4cd00caaad5bc47e2c208829154ee9e4") // sha256(image_data)
+	sha256symbol        = ton.MustParseHash("b76a7ca153c24671658335bbd08946350ffc621fa1c516e7123095d4ffd5c581") // sha256(symbol)
+	sha256decimals      = ton.MustParseHash("ee80fd2f1e03480e2282363596ee752d7bb27f50776b95086a0279189675923e") // sha256(decimals)
+	sha256renderType    = ton.MustParseHash("d33ae06043036d0d1c3be27201ac15ee4c73da8cdb7c8f3462ce308026095ac0") // sha256(render_type)
+	sha256amountStyle   = ton.MustParseHash("8b10e058ce46c44bc1ba139bc9761721e49170e2c0a176129250a70af053b700") // sha256(amount_style)
+	sha256customPayload = ton.MustParseHash("4cf1ee9d2ab1c423ec93faa5614c717e669174dbc8c05faefaf0e4eccf2a4775") // sha256(custom_payload_api_uri)
 )
 
 // TEP-64 Token Data Standard
@@ -87,62 +102,31 @@ func ConvertOnchainData(content tlb.FullContent) (Metadata, error) {
 	}
 	var m Metadata
 	for i, v := range content.Onchain.Data.Values() {
-		keyS := hex.EncodeToString(content.Onchain.Data.Keys()[i][:])
-		switch keyS {
-		case "70e5d7b6a29b392f85076fe15ca2f2053c56c2338728c4e33c9e8ddb1ee827cc": // sha256(uri)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		b, err := v.Value.Bytes()
+		if err != nil {
+			return Metadata{}, err
+		}
+		switch ton.Bits256(content.Onchain.Data.Keys()[i]) {
+		case sha256uri:
 			m.Uri = string(b)
-		case "82a3537ff0dbce7eec35d69edc3a189ee6f17d82f353a553f9aa96cb0be3ce89": // sha256(name)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256name:
 			m.Name = string(b)
-		case "c9046f7a37ad0ea7cee73355984fa5428982f8b37c8f7bcec91f7ac71a7cd104": // sha256(description)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256description:
 			m.Description = string(b)
-		case "6105d6cc76af400325e94d588ce511be5bfdbb73b437dc51eca43917d7a43e3d": // sha256(image)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256image:
 			m.Image = string(b)
-		case "d9a88ccec79eef59c84b671136a20ece4cd00caaad5bc47e2c208829154ee9e4": // sha256(image_data)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256imageData:
 			m.ImageData = b
-		case "b76a7ca153c24671658335bbd08946350ffc621fa1c516e7123095d4ffd5c581": // sha256(symbol)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256symbol:
 			m.Symbol = string(b)
-		case "ee80fd2f1e03480e2282363596ee752d7bb27f50776b95086a0279189675923e": // sha256(decimals)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256decimals:
 			m.Decimals = string(b)
-		case "d33ae06043036d0d1c3be27201ac15ee4c73da8cdb7c8f3462ce308026095ac0": // sha256(render_type)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256renderType:
 			m.RenderType = string(b)
-		case "8b10e058ce46c44bc1ba139bc9761721e49170e2c0a176129250a70af053b700": // sha256(amount_style)
-			b, err := v.Value.Bytes()
-			if err != nil {
-				return Metadata{}, err
-			}
+		case sha256amountStyle:
 			m.AmountStyle = string(b)
+		case sha256customPayload:
+			m.CustomPayloadAPIURL = string(b)
 		}
 	}
 	return m, nil

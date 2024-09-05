@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"github.com/tonkeeper/tongo/ton"
 	"os"
 	"testing"
 
@@ -186,5 +187,44 @@ func TestClient_WaitMasterchainSeqno(t *testing.T) {
 	}
 	if resp.Last.Seqno != seqno {
 		t.Fatalf("want seqno: %v, got: %v", seqno, resp.Last.Seqno)
+	}
+}
+
+func TestGeneratedMethod6(t *testing.T) {
+	c, err := createTestLiteServerConnection()
+	if err != nil {
+		t.Fatalf("NewConnection() failed: %v", err)
+	}
+
+	client := NewClient(c)
+
+	rh, _ := hex.DecodeString("46AC090C863EE487711E4647F8D4A92C62229AC428D56E1DF8C3DB55558A19AC")
+	fh, _ := hex.DecodeString("858B89D5E8C74753371188EDD93B2B0F89DAA5F1CEB95C3D3647284041A8B3B0")
+
+	var rh1, fh1 [32]byte
+	copy(rh1[:], rh)
+	copy(fh1[:], fh)
+
+	// mainnet
+	block := TonNodeBlockIdExtC{
+		Workchain: 0,
+		Shard:     0xf000000000000000,
+		Seqno:     45481694,
+		RootHash:  rh1,
+		FileHash:  fh1,
+	}
+	req := LiteServerGetDispatchQueueInfoRequest{
+		Mode:        0,
+		Id:          block,
+		AfterAddr:   nil,
+		MaxAccounts: 10,
+	}
+	r, err := client.LiteServerGetDispatchQueueInfo(context.Background(), req)
+	if err != nil {
+		panic(err)
+	}
+	for _, a := range r.AccountDispatchQueues {
+		addr := ton.AccountID{Workchain: 0, Address: a.Addr}
+		fmt.Printf("Address: %s Queue size: %d\n", addr.String(), a.Size)
 	}
 }

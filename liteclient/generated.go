@@ -2696,6 +2696,163 @@ func (t *LiteServerOutMsgQueueSizesC) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
+type LiteServerAccountDispatchQueueInfoC struct {
+	Addr  tl.Int256
+	Size  uint64
+	MinLt uint64
+	MaxLt uint64
+}
+
+func (t LiteServerAccountDispatchQueueInfoC) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Addr)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Size)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.MinLt)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.MaxLt)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerAccountDispatchQueueInfoC) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Addr)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Size)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.MinLt)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.MaxLt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type LiteServerDispatchQueueInfoC struct {
+	Mode                  uint32
+	Id                    TonNodeBlockIdExtC
+	AccountDispatchQueues []LiteServerAccountDispatchQueueInfoC
+	Complete              bool
+	Proof                 []byte
+}
+
+func (t LiteServerDispatchQueueInfoC) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.AccountDispatchQueues)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Complete)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		b, err = tl.Marshal(t.Proof)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteServerDispatchQueueInfoC) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.AccountDispatchQueues)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Complete)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempProof []byte
+		err = tl.Unmarshal(r, &tempProof)
+		if err != nil {
+			return err
+		}
+		t.Proof = tempProof
+	}
+	return nil
+}
+
 type LiteServerDebugVerbosityC struct {
 	Value uint32
 }
@@ -4437,6 +4594,87 @@ func (c *Client) LiteServerGetOutMsgQueueSizes(ctx context.Context, request Lite
 		return res, errRes
 	}
 	if tag == 0xf8504a03 {
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
+		return res, err
+	}
+	return res, fmt.Errorf("invalid tag")
+}
+
+type LiteServerGetDispatchQueueInfoRequest struct {
+	Mode        uint32
+	Id          TonNodeBlockIdExtC
+	AfterAddr   *tl.Int256
+	MaxAccounts uint32
+}
+
+func (t LiteServerGetDispatchQueueInfoRequest) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Mode)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.Id)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	if (t.Mode>>1)&1 == 1 {
+		b, err = tl.Marshal(t.AfterAddr)
+		if err != nil {
+			return nil, err
+		}
+		_, err = buf.Write(b)
+		if err != nil {
+			return nil, err
+		}
+	}
+	b, err = tl.Marshal(t.MaxAccounts)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request LiteServerGetDispatchQueueInfoRequest) (res LiteServerDispatchQueueInfoC, err error) {
+	payload, err := tl.Marshal(struct {
+		tl.SumType
+		Req LiteServerGetDispatchQueueInfoRequest `tlSumType:"01e66bf3"`
+	}{SumType: "Req", Req: request})
+	if err != nil {
+		return res, err
+	}
+	resp, err := c.liteServerRequest(ctx, payload)
+	if err != nil {
+		return res, err
+	}
+	if len(resp) < 4 {
+		return res, fmt.Errorf("not enough bytes for tag")
+	}
+	tag := binary.LittleEndian.Uint32(resp[:4])
+	if tag == 0xbba9e148 {
+		var errRes LiteServerErrorC
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
+		if err != nil {
+			return res, err
+		}
+		return res, errRes
+	}
+	if tag == 0x5d1132d0 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
 		return res, err
 	}

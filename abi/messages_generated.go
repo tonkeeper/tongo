@@ -251,6 +251,8 @@ var (
 	decodeFuncStorageRewardWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0xa91baf56, Len: 32}, StorageRewardWithdrawalMsgOp, StorageRewardWithdrawalMsgBody{})
 	// 0xad4eb6f5
 	decodeFuncDedustPayoutFromPoolMsgBody = decodeMsg(tlb.Tag{Val: 0xad4eb6f5, Len: 32}, DedustPayoutFromPoolMsgOp, DedustPayoutFromPoolMsgBody{})
+	// 0xae42e5a4
+	decodeFuncHighloadWalletInternalTransferMsgBody = decodeMsg(tlb.Tag{Val: 0xae42e5a4, Len: 32}, HighloadWalletInternalTransferMsgOp, HighloadWalletInternalTransferMsgBody{})
 	// 0xafaf283e
 	decodeFuncMultisigApproveRejectedMsgBody = decodeMsg(tlb.Tag{Val: 0xafaf283e, Len: 32}, MultisigApproveRejectedMsgOp, MultisigApproveRejectedMsgBody{})
 	// 0xb1ebae06
@@ -709,6 +711,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xad4eb6f5
 	DedustPayoutFromPoolMsgOpCode: decodeFuncDedustPayoutFromPoolMsgBody,
 
+	// 0xae42e5a4
+	HighloadWalletInternalTransferMsgOpCode: decodeFuncHighloadWalletInternalTransferMsgBody,
+
 	// 0xafaf283e
 	MultisigApproveRejectedMsgOpCode: decodeFuncMultisigApproveRejectedMsgBody,
 
@@ -962,6 +967,7 @@ const (
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
 	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
+	HighloadWalletInternalTransferMsgOp          MsgOpName = "HighloadWalletInternalTransfer"
 	MultisigApproveRejectedMsgOp                 MsgOpName = "MultisigApproveRejected"
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
@@ -1130,6 +1136,7 @@ const (
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
 	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
+	HighloadWalletInternalTransferMsgOpCode          MsgOpCode = 0xae42e5a4
 	MultisigApproveRejectedMsgOpCode                 MsgOpCode = 0xafaf283e
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
@@ -1902,6 +1909,11 @@ type DedustPayoutFromPoolMsgBody struct {
 	Payload       *tlb.Any `tlb:"maybe^"`
 }
 
+type HighloadWalletInternalTransferMsgBody struct {
+	QueryId uint64
+	Actions W5Actions `tlb:"^"`
+}
+
 type MultisigApproveRejectedMsgBody struct {
 	QueryId  uint64
 	ExitCode uint32
@@ -2277,6 +2289,7 @@ var KnownMsgInTypes = map[string]any{
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
 	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},
+	HighloadWalletInternalTransferMsgOp:          HighloadWalletInternalTransferMsgBody{},
 	MultisigApproveRejectedMsgOp:                 MultisigApproveRejectedMsgBody{},
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},

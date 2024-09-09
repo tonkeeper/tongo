@@ -4,6 +4,7 @@ import (
 	"crypto/ed25519"
 	"errors"
 	"fmt"
+	"github.com/tonkeeper/tongo/ton"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -245,6 +246,12 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 			return nil, err
 		}
 		return hl.RawMessages, nil
+	case HighLoadV3R1:
+		hl, err := DecodeHighloadV3Message(msg)
+		if err != nil {
+			return nil, err
+		}
+		return hl.Messages, nil
 	default:
 		return nil, fmt.Errorf("wallet version is not supported: %v", ver)
 	}
@@ -551,4 +558,209 @@ func (extendedActions W5ExtendedActions) MarshalTLB(c *boc.Cell, encoder *tlb.En
 		c = cell
 	}
 	return nil
+}
+
+// HighloadV3InternalTransfer TLB: internal_transfer#ae42e5a4 {n:#} query_id:uint64 actions:^(OutList n) = InternalMsgBody n;
+type HighloadV3InternalTransfer struct {
+	Magic   tlb.Magic `tlb:"#ae42e5a4"`
+	QueryId uint64
+	Actions W5Actions `tlb:"^"`
+}
+
+type HighloadV3MsgInner struct {
+	SubwalletID   uint32
+	MessageToSend *boc.Cell `tlb:"^"`
+	SendMode      uint8
+	QueryID       tlb.Uint23 // _ shift:uint13 bit_number:(## 10) { bit_number >= 0 } { bit_number < 1023 } = QueryId;
+	CreatedAt     uint64
+	Timeout       tlb.Uint22
+}
+
+type HighloadV3Message struct {
+	SubwalletID uint32
+	Messages    []RawMessage
+	SendMode    uint8
+	QueryID     tlb.Uint23
+	CreatedAt   uint64
+	Timeout     tlb.Uint22
+	wallet      ton.AccountID // technical field for storing the wallet address for forming attached messages
+}
+
+func (p HighloadV3Message) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	var (
+		msg RawMessage
+		err error
+	)
+	ln := len(p.Messages)
+	switch {
+	case ln > 254*254:
+		return fmt.Errorf("PayloadHighloadV3 supports only up to 254*254 messages")
+	case ln < 1:
+		return fmt.Errorf("must be at least one message")
+	case ln == 1:
+		var m tlb.Message
+		err := tlb.Unmarshal(p.Messages[0].Message, &m)
+		if err != nil {
+			return err
+		}
+		// IntMsg with state init and extOutMsg must be packed because of message validation
+		// throw_if(error::invalid_message_to_send, maybe_state_init); ;; throw if state-init included (state-init not supported)
+		// throw_if(error::invalid_message_to_send, message_slice~load_uint(1)); ;; int_msg_info$0
+		if !m.Init.Exists && m.Info.SumType == "IntMsgInfo" { // no need to pack
+			msg = p.Messages[0]
+		} else {
+			msg, err = packHighloadV3Messages(uint64(p.QueryID), p.wallet, p.Messages, p.SendMode)
+			if err != nil {
+				return err
+			}
+		}
+	default:
+		msg, err = packHighloadV3Messages(uint64(p.QueryID), p.wallet, p.Messages, p.SendMode)
+		if err != nil {
+			return err
+		}
+	}
+	return tlb.Marshal(c, HighloadV3MsgInner{
+		SubwalletID:   p.SubwalletID,
+		MessageToSend: msg.Message,
+		SendMode:      msg.Mode,
+		QueryID:       p.QueryID,
+		CreatedAt:     p.CreatedAt,
+		Timeout:       p.Timeout,
+	})
+}
+
+func packHighloadV3Messages(queryID uint64, wallet ton.AccountID, msgs []RawMessage, mode uint8) (RawMessage, error) {
+	const messagesPerPack = 253
+	var (
+		totalAmount uint64 = 0
+		actions     W5Actions
+	)
+	rawMsgs := make([]RawMessage, len(msgs))
+	copy(rawMsgs, msgs) // to prevent corruption of msgs
+	if len(rawMsgs) > messagesPerPack {
+		rest, err := packHighloadV3Messages(queryID, wallet, rawMsgs[messagesPerPack:], mode)
+		if err != nil {
+			return RawMessage{}, err
+		}
+		rawMsgs = append(rawMsgs[:messagesPerPack], rest)
+	}
+	for _, rawMsg := range rawMsgs {
+		var m tlb.Message
+		err := tlb.Unmarshal(rawMsg.Message, &m)
+		if err != nil {
+			return RawMessage{}, err
+		}
+		if m.Info.SumType == "IntMsgInfo" {
+			totalAmount += uint64(m.Info.IntMsgInfo.Value.Grams)
+		} else {
+			totalAmount += uint64(1_000_000) // add some amount for execution
+		}
+		actions = append(actions, W5SendMessageAction{
+			Mode: rawMsg.Mode,
+			Msg:  rawMsg.Message,
+		})
+	}
+	body := boc.NewCell()
+	err := tlb.Marshal(body, HighloadV3InternalTransfer{
+		QueryId: queryID,
+		Actions: actions,
+	})
+	if err != nil {
+		return RawMessage{}, err
+	}
+	msgInt, _, err := Message{
+		Amount:  tlb.Grams(totalAmount),
+		Bounce:  false,
+		Address: wallet,
+		Body:    body,
+	}.ToInternal()
+	if err != nil {
+		return RawMessage{}, err
+	}
+	c := boc.NewCell()
+	err = tlb.Marshal(c, msgInt)
+	if err != nil {
+		return RawMessage{}, err
+	}
+	return RawMessage{
+		Mode:    mode,
+		Message: c,
+	}, nil
+}
+
+const highloadV3InternalTransferOp = 0xae42e5a4
+
+func (p *HighloadV3Message) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var msgInner HighloadV3MsgInner
+	err := tlb.Unmarshal(c, &msgInner)
+	if err != nil {
+		return err
+	}
+	res := HighloadV3Message{
+		SubwalletID: msgInner.SubwalletID,
+		SendMode:    msgInner.SendMode,
+		QueryID:     msgInner.QueryID,
+		CreatedAt:   msgInner.CreatedAt,
+		Timeout:     msgInner.Timeout,
+	}
+	var msgs []RawMessage
+	msgs, err = unpackHighloadV3Messages(msgInner.MessageToSend, msgInner.QueryID, msgInner.SendMode, msgs)
+	if err != nil {
+		return err
+	}
+	res.Messages = msgs
+	*p = res
+	return nil
+}
+
+func unpackHighloadV3Messages(msg *boc.Cell, queryID tlb.Uint23, mode uint8, messages []RawMessage) ([]RawMessage, error) {
+	var m tlb.Message
+	err := tlb.Unmarshal(msg, &m)
+	if err != nil {
+		return nil, err
+	}
+	if m.Info.SumType != "IntMsgInfo" {
+		// TODO: reset counters for msgInner.MessageToSend ?
+		messages = append(messages, RawMessage{msg, mode})
+		return messages, nil
+	}
+	body := boc.Cell(m.Body.Value)
+	op, err := body.PickUint(32)
+	if err != nil || op != highloadV3InternalTransferOp {
+		messages = append(messages, RawMessage{msg, mode})
+		return messages, nil
+	}
+	var intTransfer HighloadV3InternalTransfer
+	err = tlb.Unmarshal(&body, &intTransfer)
+	if err != nil {
+		return nil, err
+	}
+	if intTransfer.QueryId != uint64(queryID) {
+		return nil, errors.New("mismatch queryID for internal transfer") // TODO: need to check?
+	}
+	for _, a := range intTransfer.Actions {
+		messages, err = unpackHighloadV3Messages(a.Msg, queryID, a.Mode, messages)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return messages, nil
+}
+
+func DecodeHighloadV3Message(msg *boc.Cell) (*HighloadV3Message, error) {
+	var m tlb.Message
+	if err := tlb.Unmarshal(msg, &m); err != nil {
+		return nil, err
+	}
+	c := boc.Cell(m.Body.Value)
+	payloadCell, err := c.NextRef()
+	if err != nil {
+		return nil, err
+	}
+	var res HighloadV3Message
+	if err := tlb.Unmarshal(payloadCell, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
 }

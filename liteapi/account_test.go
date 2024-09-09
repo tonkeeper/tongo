@@ -92,15 +92,16 @@ func TestUnmarshallingProofWithPrunedResolver(t *testing.T) {
 			if err != nil {
 				t.Fatal("DeserializeBoc() failed: %w", err)
 			}
-			cellMap, err := stateCells[0].NonPrunedCells()
+			hash, err := stateCells[0].Hash256()
+			if err != nil {
+				t.Fatal("Get hash failed: %w", err)
+			}
+			cellsMap := map[[32]byte]*boc.Cell{hash: stateCells[0]}
 			if err != nil {
 				t.Fatal("Get NonPrunedCells() failed: %w", err)
 			}
 			decoder := tlb.NewDecoder().WithDebug().WithPrunedResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
-				if cellMap == nil {
-					return nil, fmt.Errorf("failed to fetch library: no resolver provided")
-				}
-				cell, ok := cellMap[hash]
+				cell, ok := cellsMap[hash]
 				if ok {
 					return cell, nil
 				}

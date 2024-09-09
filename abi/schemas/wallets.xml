@@ -217,6 +217,6 @@
         extension_action#6578746e query_id:uint64 actions:(Maybe ^W5Actions) extended:(Maybe W5ExtendedActions) = InternalMsgBody;
     </internal>
     <ext_in name="highload_wallet_signed_v2">
-        signed#_ signature:bits512 subwallet_id:uint32 query_id:uint64 payload:WalletPayloadHighloadV2 = ExternalMsgBody;
+        signed#_ signature:bits512 subwallet_id:uint32 query_id:uint64 payload:(HashmapE 16 SendMessageAction) = ExternalMsgBody;
     </ext_in>
 </abi>

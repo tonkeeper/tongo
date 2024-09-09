@@ -93,18 +93,3 @@ func (extendedActions *W5ExtendedActions) UnmarshalTLB(c *boc.Cell, decoder *tlb
 		c = nextRef
 	}
 }
-
-type WalletPayloadHighloadV2 []SendMessageAction
-
-func (p *WalletPayloadHighloadV2) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	var m tlb.HashmapE[tlb.Uint16, SendMessageAction]
-	if err := decoder.Unmarshal(c, &m); err != nil {
-		return err
-	}
-	msgs := make([]SendMessageAction, 0, len(m.Values()))
-	for _, item := range m.Items() {
-		msgs = append(msgs, item.Value)
-	}
-	*p = msgs
-	return nil
-}

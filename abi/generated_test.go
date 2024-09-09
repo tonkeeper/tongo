@@ -2140,7 +2140,6 @@ func TestDecodeExternalIn(t *testing.T) {
 				b := HighloadWalletSignedV2ExtInMsgBody{
 					SubwalletId: 698983191,
 					QueryId:     7410132206735873143,
-					Payload:     WalletPayloadHighloadV2{},
 				}
 				sig, _ := hex.DecodeString("f609105cc2671f490d8ab5ebdf93ac5a9189984a8a3015f9d7a3f2e07ff6f027c23e09f6fe2bdeeb489214149126c2a6f5a72daa4b3bbd31d068c6dc3d0fb601")
 				copy(b.Signature[:], sig)
@@ -2159,7 +2158,7 @@ func TestDecodeExternalIn(t *testing.T) {
 						Value:   TextCommentMsgBody{Text: "test"},
 					}
 					payload.Message.MessageInternal.Value.Grams = tlb.Grams(100 + uint64(i))
-					b.Payload = append(b.Payload, payload)
+					b.Payload.Put(tlb.Uint16(i), payload)
 				}
 				return b
 			},

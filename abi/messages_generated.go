@@ -2392,7 +2392,7 @@ type HighloadWalletSignedV2ExtInMsgBody struct {
 	Signature   tlb.Bits512
 	SubwalletId uint32
 	QueryId     uint64
-	Payload     WalletPayloadHighloadV2
+	Payload     tlb.HashmapE[tlb.Uint16, SendMessageAction]
 }
 
 type WalletSignedExternalV5R1ExtInMsgBody struct {

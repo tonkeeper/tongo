@@ -10,46 +10,6 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-// blockTrimmed stripped-down version of the tlb.Block with pruned cell instead of ShardState and skip some decoding
-type blockTrimmed struct {
-	Magic       tlb.Magic `tlb:"block#11ef55aa"`
-	GlobalId    int32
-	Info        boc.Cell                   `tlb:"^"`
-	ValueFlow   boc.Cell                   `tlb:"^"`
-	StateUpdate tlb.MerkleUpdate[boc.Cell] `tlb:"^"`
-	Extra       boc.Cell                   `tlb:"^"`
-}
-
-// shardAccountPruned stripped-down version of the tlb.ShardAccount with pruned cell instead of Account
-type shardAccountPruned struct {
-	Account       boc.Cell `tlb:"^"`
-	LastTransHash tlb.Bits256
-	LastTransLt   uint64
-}
-
-// shardStateUnsplitTrimmed stripped-down version of the ShardStateUnsplit structure for extracting Account proof
-type shardStateUnsplitTrimmed struct {
-	Magic           tlb.Magic `tlb:"shard_state#9023afe2"`
-	GlobalID        int32
-	ShardID         tlb.ShardIdent
-	SeqNo           uint32
-	VertSeqNo       uint32
-	GenUtime        uint32
-	GenLt           uint64
-	MinRefMcSeqno   uint32
-	OutMsgQueueInfo boc.Cell `tlb:"^"`
-	BeforeSplit     bool
-	Accounts        tlb.HashmapAugE[tlb.Bits256, shardAccountPruned, tlb.DepthBalanceInfo] `tlb:"^"`
-	Other           tlb.ShardStateUnsplitOther                                             `tlb:"^"`
-	Custom          tlb.Maybe[tlb.Ref[boc.Cell]]
-}
-
-// TODO: use proof merger instead of trimmed
-type shardStateUnsplit struct {
-	ShardStateTrimmed shardStateUnsplitTrimmed
-	ShardState        tlb.ShardStateUnsplit
-}
-
 // GetAccountWithProof
 // For safe operation, always use GetAccountWithProof with WithBlock(proofedBlock ton.BlockIDExt), as the proof of masterchain cashed blocks is not implemented yet!
 func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountID) (*tlb.ShardAccount, *tlb.ShardStateUnsplit, error) { // TODO: return merged tlb.ShardStateUnsplit (proof+account)
@@ -79,65 +39,44 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 		}
 		blockHash = *shardHash
 	}
-	shardState, err := checkBlockShardStateProof(res.Proof, blockHash)
+	cellsMap := make(map[[32]byte]*boc.Cell)
+	if len(res.State) > 0 {
+		stateCells, err := boc.DeserializeBoc(res.State)
+		if err != nil {
+			return nil, nil, fmt.Errorf("state deserialization failed: %w", err)
+		}
+		hash, err := stateCells[0].Hash256()
+		if err != nil {
+			return nil, nil, fmt.Errorf("get hash err: %w", err)
+		}
+		cellsMap[hash] = stateCells[0]
+	}
+	shardState, err := checkBlockShardStateProof(res.Proof, blockHash, cellsMap)
 	if err != nil {
 		return nil, nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
-	values := shardState.ShardStateTrimmed.Accounts.Values()
-	keys := shardState.ShardStateTrimmed.Accounts.Keys()
+	values := shardState.ShardStateUnsplit.Accounts.Values()
+	keys := shardState.ShardStateUnsplit.Accounts.Keys()
 	for i, k := range keys {
 		if bytes.Equal(k[:], accountID.Address[:]) {
-			acc, err := decodeAccount(res.State, values[i])
-			if err != nil {
-				return nil, nil, err
-			}
-			return acc, &shardState.ShardState, nil
+			return &values[i], shardState, nil
 		}
 	}
 	if len(res.State) == 0 {
-		return &tlb.ShardAccount{Account: tlb.Account{SumType: "AccountNone"}}, &shardState.ShardState, nil
+		return &tlb.ShardAccount{Account: tlb.Account{SumType: "AccountNone"}}, shardState, nil
 	}
 	return nil, nil, errors.New("invalid account state")
 }
 
-func decodeAccount(state []byte, shardAccount shardAccountPruned) (*tlb.ShardAccount, error) {
-	stateCells, err := boc.DeserializeBoc(state)
-	if err != nil {
-		return nil, err
-	}
-	if len(stateCells) != 1 {
-		return nil, boc.ErrNotSingleRoot
-	}
-	accountHash, err := stateCells[0].Hash256()
-	if err != nil {
-		return nil, err
-	}
-	shardAccountHash, err := shardAccount.Account.Hash256WithLevel(0)
-	if err != nil {
-		return nil, err
-	}
-	if accountHash != shardAccountHash {
-		return nil, errors.New("invalid account hash")
-	}
-	var acc tlb.Account
-	err = tlb.Unmarshal(stateCells[0], &acc)
-	if err != nil {
-		return nil, err
-	}
-	// do not check account balance from tlb.DepthBalanceInfo
-	res := tlb.ShardAccount{Account: acc, LastTransHash: shardAccount.LastTransHash, LastTransLt: shardAccount.LastTransLt}
-	return &res, nil
-}
-
 func checkShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain int32, shardRootHash ton.Bits256) error {
-	shardState, err := checkBlockShardStateProof(shardProof, master.RootHash)
+	shardState, err := checkBlockShardStateProof(shardProof, master.RootHash, nil)
 	if err != nil {
 		return fmt.Errorf("check block proof failed: %w", err)
 	}
-	if !shardState.ShardState.ShardStateUnsplit.Custom.Exists {
+	if !shardState.ShardStateUnsplit.Custom.Exists {
 		return fmt.Errorf("not a masterchain block")
 	}
-	stateExtra := shardState.ShardState.ShardStateUnsplit.Custom.Value.Value
+	stateExtra := shardState.ShardStateUnsplit.Custom.Value.Value
 	keys := stateExtra.ShardHashes.Keys()
 	values := stateExtra.ShardHashes.Values()
 	for i, k := range keys {
@@ -158,7 +97,7 @@ func checkShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain
 	return fmt.Errorf("required shard hash not found in proof")
 }
 
-func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256) (*shardStateUnsplit, error) {
+func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap map[[32]byte]*boc.Cell) (*tlb.ShardStateUnsplit, error) {
 	proofCells, err := boc.DeserializeBoc(proof)
 	if err != nil {
 		return nil, err
@@ -166,41 +105,46 @@ func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256) (*shardS
 	if len(proofCells) != 2 {
 		return nil, errors.New("must be two root cells")
 	}
-	block, err := checkBlockProof(proofCells[0], blockRootHash)
+	stateUpdate, err := checkBlockProof(proofCells[0], blockRootHash)
 	if err != nil {
 		return nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
-	var stateTrimmedProof struct {
-		Proof tlb.MerkleProof[shardStateUnsplitTrimmed]
-	}
-	err = tlb.Unmarshal(proofCells[1], &stateTrimmedProof) // cells order must be strictly defined
-	if err != nil {
-		return nil, err
-	}
-	proofCells[1].ResetCounters()
 	var stateProof struct {
 		Proof tlb.MerkleProof[tlb.ShardStateUnsplit]
 	}
-	err = tlb.Unmarshal(proofCells[1], &stateProof)
+	decoder := tlb.NewDecoder()
+	if cellsMap != nil {
+		decoder = decoder.WithPrunedResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
+			cell, ok := cellsMap[hash]
+			if ok {
+				return cell, nil
+			}
+			return nil, errors.New("not found")
+		})
+	}
+	err = decoder.Unmarshal(proofCells[1], &stateProof)
 	if err != nil {
 		return nil, err
 	}
-	toRootHash, err := block.StateUpdate.ToRoot.Hash256WithLevel(0)
+	toRootHash, err := stateUpdate.ToRoot.Hash256WithLevel(0)
 	if err != nil {
 		return nil, err
 	}
-	if stateTrimmedProof.Proof.VirtualHash != toRootHash {
+	if stateProof.Proof.VirtualHash != toRootHash {
 		return nil, errors.New("invalid virtual hash")
 	}
-	res := shardStateUnsplit{
-		ShardStateTrimmed: stateTrimmedProof.Proof.VirtualRoot,
-		ShardState:        stateProof.Proof.VirtualRoot,
-	}
-	return &res, nil
+	return &stateProof.Proof.VirtualRoot, nil
 }
 
-func checkBlockProof(proof *boc.Cell, blockRootHash ton.Bits256) (*blockTrimmed, error) {
-	var res tlb.MerkleProof[blockTrimmed]
+func checkBlockProof(proof *boc.Cell, blockRootHash ton.Bits256) (*tlb.MerkleUpdate[boc.Cell], error) {
+	// stripped-down version of the tlb.Block with pruned cell instead of ShardState and skip some decoding
+	var res tlb.MerkleProof[struct {
+		Magic       tlb.Magic `tlb:"block#11ef55aa"`
+		GlobalId    int32
+		Info        boc.Cell                   `tlb:"^"`
+		ValueFlow   boc.Cell                   `tlb:"^"`
+		StateUpdate tlb.MerkleUpdate[boc.Cell] `tlb:"^"`
+	}]
 	err := tlb.Unmarshal(proof, &res) // merkle hash and depth checks inside
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal block proof: %w", err)
@@ -208,6 +152,5 @@ func checkBlockProof(proof *boc.Cell, blockRootHash ton.Bits256) (*blockTrimmed,
 	if ton.Bits256(res.VirtualHash) != blockRootHash {
 		return nil, fmt.Errorf("invalid block root hash")
 	}
-	block := res.VirtualRoot
-	return &block, nil
+	return &res.VirtualRoot.StateUpdate, nil
 }

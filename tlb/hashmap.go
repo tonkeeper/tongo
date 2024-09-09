@@ -299,7 +299,7 @@ func (h Hashmap[keyT, T]) Get(key keyT) (T, bool) {
 	}
 	return *new(T), false
 }
-func (h Hashmap[keyT, T]) Put(key keyT, value T) {
+func (h *Hashmap[keyT, T]) Put(key keyT, value T) {
 	for i, k := range h.keys {
 		if k.Equal(key) {
 			h.values[i] = value
@@ -681,7 +681,7 @@ func (h HashmapE[keyT, T]) Get(key keyT) (T, bool) {
 	return h.m.Get(key)
 }
 
-func (h HashmapE[keyT, T]) Put(key keyT, value T) {
+func (h *HashmapE[keyT, T]) Put(key keyT, value T) {
 	h.m.Put(key, value)
 }
 

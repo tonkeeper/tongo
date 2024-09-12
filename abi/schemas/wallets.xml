@@ -118,6 +118,10 @@
     </interface>
     <interface name="wallet_highload_v2" inherits="wallet">
         <code_hash>9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812</code_hash>
+        <get_method name="get_public_key"/>
+        <msg_in>
+            <ext_in name="highload_wallet_signed_v2"/>
+        </msg_in>
     </interface>
     <interface name="wallet_highload_v2r1" inherits="wallet">
         <code_hash>8ceb45b3cd4b5cc60eaae1c13b9c092392677fe536b2e9b2d801b62eff931fe1</code_hash>
@@ -212,4 +216,7 @@
     <internal name="wallet_extension_action_v5r1" >
         extension_action#6578746e query_id:uint64 actions:(Maybe ^W5Actions) extended:(Maybe W5ExtendedActions) = InternalMsgBody;
     </internal>
+    <ext_in name="highload_wallet_signed_v2">
+        signed#_ signature:bits512 subwallet_id:uint32 query_id:uint64 payload:(HashmapE 16 SendMessageAction) = ExternalMsgBody;
+    </ext_in>
 </abi>

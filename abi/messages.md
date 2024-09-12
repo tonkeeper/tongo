@@ -18,6 +18,12 @@ The list below contains the supported message operations, their names and opcode
 | ChannelCooperativeCommit| 0x79a126ef |
 | CloseStorageContract| 0x79f937ea |
 | Credit| 0x1690c604 |
+| DedustCancelDeposit| 0x166cedee |
+| DedustCreateVault| 0x21cfe02b |
+| DedustCreateVolatilePool| 0x97d51f2f |
+| DedustDeposit| 0xb544f4a4 |
+| DedustDepositLiquidity| 0x40e108d6 |
+| DedustDepositLiquidity| 0xd55e4686 |
 | DedustDepositLiquidityAll| 0xb56b9598 |
 | DedustPayout| 0x474f86cf |
 | DedustPayoutFromPool| 0xad4eb6f5 |
@@ -26,6 +32,7 @@ The list below contains the supported message operations, their names and opcode
 | DedustSwap| 0xea06185d |
 | DedustSwapExternal| 0x61ee542d |
 | DedustSwapPeer| 0x72aca8aa |
+| DedustWithdrawal| 0x3aa870a6 |
 | DeleteDnsRecord| 0x4eb1f0f9 |
 | DeployStorageContract| 0xe4748df1 |
 | Disapprove| 0xe8a0abfe |
@@ -42,6 +49,7 @@ The list below contains the supported message operations, their names and opcode
 | GetRoyaltyParams| 0x693d3950 |
 | GetStaticData| 0x2fcb26a2 |
 | GramSubmitProofOfWork| 0x4d696e65 |
+| HighloadWalletSignedV2| 0x00000000 |
 | HighloadWalletSignedV3| 0x00000000 |
 | InitPaymentChannel| 0x0e0620c2 |
 | JettonBurn| 0x595f07bc |

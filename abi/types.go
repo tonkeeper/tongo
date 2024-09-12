@@ -45,6 +45,37 @@ func (t *DedustAsset) MarshalJSON() ([]byte, error) {
 	}
 }
 
+type DedustPoolParams struct {
+	PoolType DedustPoolType
+	Asset0   DedustAsset
+	Asset1   DedustAsset
+}
+
+type DedustPoolType struct {
+	tlb.SumType
+	Volatile struct{} `tlbSumType:"$0"`
+	Stable   struct{} `tlbSumType:"$1"`
+}
+
+func (t *DedustPoolType) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Volatile":
+		bytes, err := json.Marshal(t.Volatile)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Volatile","Volatile":%v}`, string(bytes))), nil
+	case "Stable":
+		bytes, err := json.Marshal(t.Stable)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Stable","Stable":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type DedustSwapParams struct {
 	Deadline       uint32
 	RecipientAddr  tlb.MsgAddress

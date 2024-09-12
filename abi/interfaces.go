@@ -8,6 +8,8 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
+	DedustFactory
+	DedustLiquidityDeposit
 	DedustPool
 	DedustVault
 	Dns
@@ -78,6 +80,10 @@ const (
 
 func (c ContractInterface) String() string {
 	switch c {
+	case DedustFactory:
+		return "dedust_factory"
+	case DedustLiquidityDeposit:
+		return "dedust_liquidity_deposit "
 	case DedustPool:
 		return "dedust_pool"
 	case DedustVault:
@@ -217,6 +223,10 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
+	case "dedust_factory":
+		return DedustFactory
+	case "dedust_liquidity_deposit ":
+		return DedustLiquidityDeposit
 	case "dedust_pool":
 		return DedustPool
 	case "dedust_vault":
@@ -596,6 +606,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetSubwalletId,
 	},
 	{
+		Name:     "get_target_balances",
+		InvokeFn: GetTargetBalances,
+	},
+	{
 		Name:     "get_telemint_auction_config",
 		InvokeFn: GetTelemintAuctionConfig,
 	},
@@ -618,6 +632,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_torrent_hash",
 		InvokeFn: GetTorrentHash,
+	},
+	{
+		Name:     "get_trade_fee",
+		InvokeFn: GetTradeFee,
 	},
 	{
 		Name:     "get_validator_controller_data",
@@ -687,11 +705,20 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 	{
+		Name: DedustLiquidityDeposit,
+		Results: []string{
+			"GetBalances_DedustResult",
+			"GetTargetBalances_DedustResult",
+		},
+	},
+	{
 		Name: DedustPool,
 		Results: []string{
 			"GetAssets_DedustResult",
 			"GetJettonDataResult",
 			"GetReserves_DedustResult",
+			"GetTradeFee_DedustResult",
+			"IsStable_DedustResult",
 		},
 	},
 	{
@@ -1099,7 +1126,9 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("9494d1cc8edf12f05671a1a9ba09921096eb50811e1924ec65c3c629fbb80812"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV2},
-		getMethods:         []InvokeFn{},
+		getMethods: []InvokeFn{
+			GetPublicKey,
+		},
 	},
 	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
 		contractInterfaces: []ContractInterface{MultisigOrderV2},
@@ -1183,16 +1212,23 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case DedustFactory:
+		return []msgDecoderFunc{
+			decodeFuncDedustCreateVaultMsgBody,
+			decodeFuncDedustCreateVolatilePoolMsgBody,
+		}
 	case DedustPool:
 		return []msgDecoderFunc{
 			decodeFuncDedustSwapExternalMsgBody,
 			decodeFuncDedustSwapPeerMsgBody,
+			decodeFuncJettonBurnNotificationMsgBody,
 		}
 	case DedustVault:
 		return []msgDecoderFunc{
 			decodeFuncJettonNotifyMsgBody,
 			decodeFuncJettonTransferMsgBody,
 			decodeFuncDedustSwapMsgBody,
+			decodeFuncDedustDepositLiquidityMsgBody,
 			decodeFuncDedustPayoutFromPoolMsgBody,
 		}
 	case Dns:
@@ -1283,6 +1319,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
+	case WalletHighloadV2:
+		return []msgDecoderFunc{
+			decodeFuncHighloadWalletSignedV2ExtInMsgBody,
+		}
 	case WalletHighloadV3R1:
 		return []msgDecoderFunc{
 			decodeFuncHighloadWalletSignedV3ExtInMsgBody,
@@ -1321,6 +1361,8 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 	case DedustPool:
 		return []msgDecoderFunc{
 			decodeFuncDedustSwapExtOutMsgBody,
+			decodeFuncDedustDepositExtOutMsgBody,
+			decodeFuncDedustWithdrawalExtOutMsgBody,
 		}
 	default:
 		return nil

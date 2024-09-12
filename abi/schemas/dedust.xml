@@ -9,19 +9,48 @@
         step_params#_ kind_out:Bool limit:(VarUInteger 16) next:(Maybe ^DedustSwapStep) = DedustSwapStepParams;
 
         step#_ pool_addr:MsgAddress params:DedustSwapStepParams = DedustSwapStep;
+
+        volatile$0 = DedustPoolType;
+        stable$1 = DedustPoolType;
+        pool_params#_ pool_type:DedustPoolType asset0:DedustAsset asset1:DedustAsset = DedustPoolParams;
     </types>
+
+    <interface name="dedust_factory">
+        <get_method name="get_vault_address" version="dedust"/>
+<!--        <get_method name="get_pool_address" version="dedust"/>-->
+        <get_method name="get_liquidity_deposit_address" version="dedust"/>
+        <msg_in>
+            <internal name="dedust_create_vault"/>
+            <internal name="dedust_create_volatile_pool"/>
+        </msg_in>
+    </interface>
+
+    <interface name="dedust_liquidity_deposit ">
+        <get_method name="get_balances" version="dedust"/>
+        <get_method name="get_target_balances" version="dedust"/>
+        <msg_out>
+            <internal name="dedust_deposit_liquidity_all"/>
+        </msg_out>
+    </interface>
+
     <interface name="dedust_pool">
         <get_method name="get_reserves" version="dedust"/>
         <get_method name="get_assets" version="dedust"/>
         <get_method name="get_jetton_data"/>
+        <get_method name="is_stable" version="dedust"/>
+        <get_method name="get_trade_fee" version="dedust"/>
+        <get_method name="estimate_swap_out" version="dedust"/>
         <msg_in>
             <internal name="dedust_swap_external"/>
             <internal name="dedust_swap_peer"/>
+            <internal name="jetton_burn_notification"/>
         </msg_in>
         <msg_out>
             <internal name="dedust_payout_from_pool"/>
             <internal name="dedust_swap_peer"/>
             <ext_out name="dedust_swap"/>
+            <ext_out name="dedust_deposit"/>
+            <ext_out name="dedust_withdrawal"/>
         </msg_out>
     </interface>
     <interface name="dedust_vault">
@@ -30,6 +59,7 @@
             <internal name="jetton_notify"/>
             <internal name="jetton_transfer"/>
             <internal name="dedust_swap"/>
+            <internal name="dedust_deposit_liquidity"/>
             <internal name="dedust_payout_from_pool"/>
         </msg_in>
         <msg_out>
@@ -62,6 +92,64 @@
             <int name="is_stable">bool</int>
         </output>
     </get_method>
+    <get_method name="get_vault_address">
+        <input>
+            <slice name="asset">DedustAsset</slice>
+        </input>
+        <output version="dedust" fixed_length="true">
+            <slice name="vault_addr">msgaddress</slice>
+        </output>
+    </get_method>
+<!--    <get_method name="get_pool_address">-->
+<!--        <input>-->
+<!--            <int name="pool_type">DedustPoolType</int>-->
+<!--            <slice name="asset0">DedustAsset</slice>-->
+<!--            <slice name="asset1">DedustAsset</slice>-->
+<!--        </input>-->
+<!--        <output version="dedust" fixed_length="true">-->
+<!--            <slice name="pool_addr">msgaddress</slice>-->
+<!--        </output>-->
+<!--    </get_method>-->
+    <get_method name="get_liquidity_deposit_address">
+        <input>
+            <slice name="owner_addr">msgaddress</slice>
+            <int name="pool_type">int257</int>
+            <slice name="asset0">DedustAsset</slice>
+            <slice name="asset1">DedustAsset</slice>
+        </input>
+        <output version="dedust" fixed_length="true">
+            <slice name="liquidity_deposit_addr">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_trade_fee">
+        <output version="dedust" fixed_length="true">
+            <int name="trade_fee_numerator">int257</int>
+            <int name="trade_fee_denominator">int257</int>
+        </output>
+    </get_method>
+    <get_method name="estimate_swap_out">
+        <input>
+            <slice name="asset_in">DedustAsset</slice>
+            <int name="amount_in">int257</int>
+        </input>
+        <output version="dedust" fixed_length="true">
+            <slice name="asset_out">DedustAsset</slice>
+            <int name="amount_out">int257</int>
+            <int name="trade_fee">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_balances">
+        <output version="dedust" fixed_length="true">
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_target_balances">
+        <output version="dedust" fixed_length="true">
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+        </output>
+    </get_method>
 
     <internal name="dedust_deposit_liquidity_all">
         deposit_liquidity_all#b56b9598 query_id:uint64 proof:^Cell
@@ -90,9 +178,22 @@
     <internal name="dedust_swap">
         swap#ea06185d query_id:uint64 amount:Coins step:DedustSwapStep swap_params:^DedustSwapParams = InMsgBody;
     </internal>
+    <internal name="dedust_deposit_liquidity">
+        deposit_liquidity#d55e4686 query_id:uint64 amount:Coins pool_params:DedustPoolParams
+        params:^[ min_lp_amount:Coins
+        asset0_target_balance:Coins asset1_target_balance:Coins ]
+        fulfill_payload:(Maybe ^Cell)
+        reject_payload:(Maybe ^Cell) = InMsgBody;
+    </internal>
 
     <jetton_payload name="dedust_swap">
         dedust_swap#e3a0d482 step:DedustSwapStep swap_params:^DedustSwapParams = ForwardPayload;
+    </jetton_payload>
+    <jetton_payload name="dedust_deposit_liquidity">
+        deposit_liquidity#40e108d6 pool_params:DedustPoolParams min_lp_amount:Coins
+        asset0_target_balance:Coins asset1_target_balance:Coins
+        fulfill_payload:(Maybe ^Cell)
+        reject_payload:(Maybe ^Cell) = ForwardPayload;
     </jetton_payload>
 
     <ext_out name="dedust_swap">
@@ -100,4 +201,24 @@
         ^[ sender_addr:MsgAddress referral_addr:MsgAddress
         reserve0:Coins reserve1:Coins ] = ExtOutMsgBody;
     </ext_out>
+    <ext_out name="dedust_deposit">
+        deposit#b544f4a4 sender_addr:MsgAddressInt amount0:Coins amount1:Coins
+        reserve0:Coins reserve1:Coins liquidity:Coins = ExtOutMsgBody;
+    </ext_out>
+    <ext_out name="dedust_withdrawal">
+        withdrawal#3aa870a6 sender_addr:MsgAddressInt liquidity:Coins
+        amount0:Coins amount1:Coins
+        reserve0:Coins reserve1:Coins = ExtOutMsgBody;
+    </ext_out>
+
+    <internal name="dedust_create_vault">
+        create_vault#21cfe02b query_id:uint64 asset:DedustAsset = InMsgBody;
+    </internal>
+    <internal name="dedust_create_volatile_pool">
+        create_volatile_pool#97d51f2f query_id:uint64 asset0:DedustAsset asset1:DedustAsset = InMsgBody;
+    </internal>
+    <internal name="dedust_cancel_deposit">
+        cancel_deposit#166cedee query_id:uint64 payload:(Maybe ^Cell) = InMsgBody;
+    </internal>
+
 </abi>

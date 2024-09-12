@@ -134,6 +134,12 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return err
 		}
 		if c.IsLibrary() {
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType {
+				// this is a library cell, and we unmarshal it to a cell.
+				// let's not resolve it and keep it as is
+				val.Set(reflect.ValueOf(c).Elem())
+				return nil
+			}
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
 		if c.CellType() == boc.PrunedBranchCell {

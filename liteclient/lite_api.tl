@@ -60,6 +60,8 @@ liteServer.shardBlockProof#1d62a07a masterchain_id:tonNode.blockIdExt links:(vec
 liteServer.lookupBlockResult#57c7ccc5 id:tonNode.blockIdExt mode:# mc_block_id:tonNode.blockIdExt client_mc_state_proof:bytes mc_block_proof:bytes shard_links:(vector liteServer.shardBlockLink) header:bytes prev_header:bytes = liteServer.LookupBlockResult;
 liteServer.outMsgQueueSize#a7c64c85 id:tonNode.blockIdExt size:int = liteServer.OutMsgQueueSize;
 liteServer.outMsgQueueSizes#f8504a03 shards:(vector liteServer.outMsgQueueSize) ext_msg_queue_size_limit:int = liteServer.OutMsgQueueSizes;
+liteServer.accountDispatchQueueInfo#9b52aabb addr:int256 size:long min_lt:long max_lt:long = liteServer.AccountDispatchQueueInfo;
+liteServer.dispatchQueueInfo#5d1132d0 mode:# id:tonNode.blockIdExt account_dispatch_queues:(vector liteServer.accountDispatchQueueInfo) complete:Bool proof:mode.0?bytes = liteServer.DispatchQueueInfo;
 
 liteServer.debug.verbosity#5d404733 value:int = liteServer.debug.Verbosity;
 
@@ -99,6 +101,7 @@ liteServer.getLibraries#d122b662 library_list:(vector int256) = liteServer.Libra
 liteServer.getLibrariesWithProof#8c026c31 id:tonNode.blockIdExt mode:# library_list:(vector int256) = liteServer.LibraryResultWithProof;
 liteServer.getShardBlockProof#4ca60350 id:tonNode.blockIdExt = liteServer.ShardBlockProof;
 liteServer.getOutMsgQueueSizes#7bc19c36 mode:# wc:mode.0?int shard:mode.0?long = liteServer.OutMsgQueueSizes;
+liteServer.getDispatchQueueInfo#01e66bf3 mode:# id:tonNode.blockIdExt after_addr:mode.1?int256 max_accounts:int want_proof:mode.0?true = liteServer.DispatchQueueInfo;
 
 // liteServer.nonfinal.getValidatorGroups mode:# wc:mode.0?int shard:mode.1?long = liteServer.nonfinal.ValidatorGroups;
 // liteServer.nonfinal.getCandidate id:liteServer.nonfinal.candidateId = liteServer.nonfinal.Candidate;

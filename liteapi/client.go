@@ -1057,10 +1057,13 @@ func downloadConfig(path string) (*config.GlobalConfigurationFile, error) {
 		configCache[path] = o
 		configCacheMutex.Unlock()
 	}
+	if err != nil {
+		return nil, err
+	}
 	rand.Shuffle(len(o.LiteServers), func(i, j int) {
 		o.LiteServers[i], o.LiteServers[j] = o.LiteServers[j], o.LiteServers[i]
 	})
-	return o, err
+	return o, nil
 }
 
 func (c *Client) getNetworkGlobalID() *int32 {

@@ -355,7 +355,17 @@ func (c *Client) GetBlock(ctx context.Context, blockID ton.BlockIDExt) (tlb.Bloc
 	if len(cells) != 1 {
 		return tlb.Block{}, boc.ErrNotSingleRoot
 	}
-	decoder := tlb.NewDecoder()
+	decoder := tlb.NewDecoder().WithLibraryResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
+		localLibs, err := c.GetLibraries(ctx, []ton.Bits256{ton.Bits256(hash)})
+		if err != nil {
+			return nil, err
+		}
+		if len(localLibs) == 0 {
+			return nil, fmt.Errorf("library not found")
+		}
+		return localLibs[ton.Bits256(hash)], nil
+
+	})
 	var block tlb.Block
 	if err := decoder.Unmarshal(cells[0], &block); err != nil {
 		return tlb.Block{}, err

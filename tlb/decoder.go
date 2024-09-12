@@ -113,7 +113,19 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return err
 		}
 		if c.IsLibrary() {
-			return fmt.Errorf("library cell as a ref is not implemented")
+			if decoder.resolveLib == nil {
+				// use WithLibraryResolver to provide a library resolver
+				return fmt.Errorf("library cell decoding is not configured properly")
+			}
+			hash, err := c.Hash256()
+			if err != nil {
+				return err
+			}
+			cell, err := decoder.resolveLib(hash)
+			if err != nil {
+				return err
+			}
+			c = cell
 		}
 		if c.CellType() == boc.PrunedBranchCell {
 			return nil
@@ -134,7 +146,19 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			return err
 		}
 		if c.IsLibrary() {
-			return fmt.Errorf("library cell as a ref is not implemented")
+			if decoder.resolveLib == nil {
+				// use WithLibraryResolver to provide a library resolver
+				return fmt.Errorf("library cell decoding is not configured properly")
+			}
+			hash, err := c.Hash256()
+			if err != nil {
+				return err
+			}
+			cell, err := decoder.resolveLib(hash)
+			if err != nil {
+				return err
+			}
+			c = cell
 		}
 		if c.CellType() == boc.PrunedBranchCell {
 			return nil

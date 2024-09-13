@@ -100,7 +100,6 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_wallet_address":                 {DecodeGetWalletAddressResult},
 	"get_wallet_data":                    {DecodeGetWalletDataResult},
 	"get_wallet_params":                  {DecodeGetWalletParamsResult},
-	"get_wallet_state_init_and_salt":     {DecodeGetWalletStateInitAndSaltResult},
 	"is_active":                          {DecodeIsActiveResult},
 	"is_claimed":                         {DecodeIsClaimedResult},
 	"is_plugin_installed":                {DecodeIsPluginInstalledResult},
@@ -293,7 +292,6 @@ var resultTypes = []interface{}{
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
-	&GetWalletStateInitAndSaltResult{},
 	&IsActiveResult{},
 	&IsClaimedResult{},
 	&IsPluginInstalledResult{},
@@ -3789,49 +3787,6 @@ func DecodeGetWalletParamsResult(stack tlb.VmStack) (resultType string, resultAn
 	var result GetWalletParamsResult
 	err = stack.Unmarshal(&result)
 	return "GetWalletParamsResult", result, err
-}
-
-type GetWalletStateInitAndSaltResult struct {
-	StateInit tlb.Any
-	Salt      int64
-}
-
-func GetWalletStateInitAndSalt(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val, err = tlb.TlbStructToVmCellSlice(ownerAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-
-	// MethodID = 69258 for "get_wallet_state_init_and_salt" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 69258, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetWalletStateInitAndSaltResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetWalletStateInitAndSaltResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetWalletStateInitAndSaltResult
-	err = stack.Unmarshal(&result)
-	return "GetWalletStateInitAndSaltResult", result, err
 }
 
 type IsActiveResult struct {

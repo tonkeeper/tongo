@@ -87,6 +87,16 @@
         </output>
     </get_method>
 
+    <get_method name="get_wallet_state_init_and_salt">
+        <input>
+            <slice name="owner_address">msgaddress</slice>
+        </input>
+        <output name="mintless"  fixed_length="true">
+            <cell name="state_init">any</cell>
+            <int name="salt">int64</int>
+        </output>
+    </get_method>
+
     <!--        Jettons    -->
     <internal name="jetton_transfer" >
         transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress

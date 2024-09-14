@@ -105,7 +105,7 @@ func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap
 	if len(proofCells) != 2 {
 		return nil, errors.New("must be two root cells")
 	}
-	stateUpdate, err := checkBlockProof(proofCells[0], blockRootHash)
+	newStateHash, err := checkBlockProof(proofCells[0], blockRootHash)
 	if err != nil {
 		return nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -126,25 +126,14 @@ func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap
 	if err != nil {
 		return nil, err
 	}
-	toRootHash, err := stateUpdate.ToRoot.Hash256WithLevel(0)
-	if err != nil {
-		return nil, err
-	}
-	if stateProof.Proof.VirtualHash != toRootHash {
+	if stateProof.Proof.VirtualHash != *newStateHash {
 		return nil, errors.New("invalid virtual hash")
 	}
 	return &stateProof.Proof.VirtualRoot, nil
 }
 
-func checkBlockProof(proof *boc.Cell, blockRootHash ton.Bits256) (*tlb.MerkleUpdate[boc.Cell], error) {
-	// stripped-down version of the tlb.Block with pruned cell instead of ShardState and skip some decoding
-	var res tlb.MerkleProof[struct {
-		Magic       tlb.Magic `tlb:"block#11ef55aa"`
-		GlobalId    int32
-		Info        boc.Cell                   `tlb:"^"`
-		ValueFlow   boc.Cell                   `tlb:"^"`
-		StateUpdate tlb.MerkleUpdate[boc.Cell] `tlb:"^"`
-	}]
+func checkBlockProof(proof *boc.Cell, blockRootHash ton.Bits256) (*tlb.Bits256, error) {
+	var res tlb.MerkleProof[tlb.Block]
 	err := tlb.Unmarshal(proof, &res) // merkle hash and depth checks inside
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal block proof: %w", err)
@@ -152,5 +141,5 @@ func checkBlockProof(proof *boc.Cell, blockRootHash ton.Bits256) (*tlb.MerkleUpd
 	if ton.Bits256(res.VirtualHash) != blockRootHash {
 		return nil, fmt.Errorf("invalid block root hash")
 	}
-	return &res.VirtualRoot.StateUpdate, nil
+	return &res.VirtualRoot.StateUpdate.ToHash, nil // return new_hash field of MerkleUpdate of ShardState
 }

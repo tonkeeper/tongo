@@ -21,23 +21,22 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 	if len(res.Proof) == 0 {
 		return nil, nil, errors.New("empty proof")
 	}
-	var shardHash *ton.Bits256
-	if accountID.Workchain != -1 { // TODO: set masterchain constant
+
+	var blockHash ton.Bits256
+	if accountID.Workchain == -1 || blockID == res.Shardblk.ToBlockIdExt() {
+		blockHash = blockID.RootHash
+	} else {
 		if len(res.ShardProof) == 0 {
 			return nil, nil, errors.New("empty shard proof")
-		} // TODO: change logic for shard blockID (proof shard to proofed master)
+		}
 		if res.Shardblk.RootHash == [32]byte{} { // TODO: how to check for empty shard?
 			return nil, nil, errors.New("shard block not passed")
 		}
-		h := ton.Bits256(res.Shardblk.RootHash)
-		shardHash = &h
-	}
-	blockHash := blockID.RootHash
-	if shardHash != nil { // we need shard proof only for not masterchain
-		if err := checkShardInMasterProof(blockID, res.ShardProof, accountID.Workchain, *shardHash); err != nil {
+		shardHash := ton.Bits256(res.Shardblk.RootHash)
+		if err := checkShardInMasterProof(blockID, res.ShardProof, accountID.Workchain, shardHash); err != nil {
 			return nil, nil, fmt.Errorf("shard proof is incorrect: %w", err)
 		}
-		blockHash = *shardHash
+		blockHash = shardHash
 	}
 	cellsMap := make(map[[32]byte]*boc.Cell)
 	if len(res.State) > 0 {

@@ -11,7 +11,7 @@ import (
 
 // GetAccountWithProof
 // For safe operation, always use GetAccountWithProof with WithBlock(proofedBlock ton.BlockIDExt), as the proof of masterchain cashed blocks is not implemented yet!
-func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountID) (*tlb.ShardAccount, *tlb.ShardStateUnsplit, error) { // TODO: return merged tlb.ShardStateUnsplit (proof+account)
+func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountID) (*tlb.ShardAccount, *tlb.ShardStateUnsplit, error) {
 	res, err := c.GetAccountStateRaw(ctx, accountID) // TODO: add proof check for masterHead
 	if err != nil {
 		return nil, nil, err

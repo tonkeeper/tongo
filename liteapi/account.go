@@ -1,7 +1,6 @@
 package liteapi
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -23,7 +22,7 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 	}
 
 	var blockHash ton.Bits256
-	if accountID.Workchain == -1 || blockID == res.Shardblk.ToBlockIdExt() {
+	if (accountID.Workchain == -1 && blockID.Workchain == -1) || blockID == res.Shardblk.ToBlockIdExt() {
 		blockHash = blockID.RootHash
 	} else {
 		if len(res.ShardProof) == 0 {
@@ -57,7 +56,7 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 	values := shardState.ShardStateUnsplit.Accounts.Values()
 	keys := shardState.ShardStateUnsplit.Accounts.Keys()
 	for i, k := range keys {
-		if bytes.Equal(k[:], accountID.Address[:]) {
+		if k == accountID.Address {
 			return &values[i], shardState, nil
 		}
 	}

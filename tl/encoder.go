@@ -45,6 +45,10 @@ func Marshal(o any) ([]byte, error) {
 			binary.BigEndian.PutUint32(b, 0x379779bc) // false
 		}
 		return b, nil
+	case reflect.String:
+		data := []byte(val.String())
+		b := append(EncodeLength(len(data)), data...)
+		return zeroPadding(b), nil
 	case reflect.Slice:
 		if val.Type().Elem().Kind() != reflect.Uint8 {
 			return encodeVector(val)

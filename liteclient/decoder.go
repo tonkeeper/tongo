@@ -40,17 +40,17 @@ func decodeRequest(tag uint32, name RequestName, msgType any) reqDecoderFunc {
 
 type reqDecoderFunc func(b []byte) (*RequestName, any, error)
 
-func LiteapiRequestDecoder(b []byte) (*uint32, *RequestName, any, error) {
+func LiteapiRequestDecoder(b []byte) (uint32, *RequestName, any, error) {
 	if len(b) < 4 {
-		return nil, nil, nil, errors.New("message too short")
+		return 0, nil, nil, errors.New("message too short")
 	}
 	tag := binary.LittleEndian.Uint32(b[:4])
 	f := taggedRequestDecodeFunctions[tag]
 	if f != nil {
 		o, d, err := f(b)
 		if err == nil {
-			return &tag, o, d, nil
+			return tag, o, d, nil
 		}
 	}
-	return &tag, pointer(UnknownRequest), nil, nil
+	return tag, pointer(UnknownRequest), nil, nil
 }

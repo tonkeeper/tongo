@@ -2853,6 +2853,49 @@ func (t *LiteServerDispatchQueueInfoC) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
+type LiteProxyRequestRateLimitC struct {
+	Limit   uint32
+	PerTime uint32
+}
+
+func (t LiteProxyRequestRateLimitC) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Limit)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.PerTime)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteProxyRequestRateLimitC) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Limit)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.PerTime)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type LiteServerDebugVerbosityC struct {
 	Value uint32
 }
@@ -5198,7 +5241,41 @@ func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request Lit
 	return res, fmt.Errorf("invalid tag")
 }
 
+type LiteProxyGetRequestRateLimitRequest struct{}
+
+func (t *LiteProxyGetRequestRateLimitRequest) UnmarshalTL(r io.Reader) error {
+	return nil
+}
+
+func (c *Client) LiteProxyGetRequestRateLimit(ctx context.Context) (res LiteProxyRequestRateLimitC, err error) {
+	payload := make([]byte, 4)
+	binary.LittleEndian.PutUint32(payload, 0xf0f83e86)
+	resp, err := c.liteServerRequest(ctx, payload)
+	if err != nil {
+		return res, err
+	}
+	if len(resp) < 4 {
+		return res, fmt.Errorf("not enough bytes for tag")
+	}
+	tag := binary.LittleEndian.Uint32(resp[:4])
+	if tag == 0xbba9e148 {
+		var errRes LiteServerErrorC
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
+		if err != nil {
+			return res, err
+		}
+		return res, errRes
+	}
+	if tag == 0x14cb3f0c {
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
+		return res, err
+	}
+	return res, fmt.Errorf("invalid tag")
+}
+
 var (
+	// 0xf0f83e86
+	decodeFuncLiteProxyGetRequestRateLimitRequest = decodeRequest(0xf0f83e86, LiteProxyGetRequestRateLimitRequestName, LiteProxyGetRequestRateLimitRequest{})
 	// 0x5a698507
 	decodeFuncLiteServerGetAccountStatePrunnedRequest = decodeRequest(0x5a698507, LiteServerGetAccountStatePrunnedRequestName, LiteServerGetAccountStatePrunnedRequest{})
 	// 0x6b890e25
@@ -5258,6 +5335,7 @@ var (
 )
 
 var taggedRequestDecodeFunctions = map[uint32]reqDecoderFunc{
+	0xf0f83e86: decodeFuncLiteProxyGetRequestRateLimitRequest,
 	0x5a698507: decodeFuncLiteServerGetAccountStatePrunnedRequest,
 	0x6b890e25: decodeFuncLiteServerGetAccountStateRequest,
 	0x74d3fd6b: decodeFuncLiteServerGetAllShardsInfoRequest,
@@ -5289,6 +5367,7 @@ var taggedRequestDecodeFunctions = map[uint32]reqDecoderFunc{
 }
 
 const (
+	LiteProxyGetRequestRateLimitRequestName       RequestName = "liteProxy.getRequestRateLimit"
 	LiteServerGetAccountStatePrunnedRequestName   RequestName = "liteServer.getAccountStatePrunned"
 	LiteServerGetAccountStateRequestName          RequestName = "liteServer.getAccountState"
 	LiteServerGetAllShardsInfoRequestName         RequestName = "liteServer.getAllShardsInfo"

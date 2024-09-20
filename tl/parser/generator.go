@@ -1,12 +1,15 @@
 package parser
 
 import (
+	"bytes"
+	_ "embed"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"github.com/tonkeeper/tongo/utils"
 	"go/format"
 	"strings"
+	"text/template"
 )
 
 type DefaultType struct {
@@ -36,21 +39,29 @@ var (
 	functionReturnErr    = "if err != nil {return res, %s}\n"
 )
 
+var (
+	//go:embed decoding.tmpl
+	decodingTemplate string
+)
+
 type Generator struct {
-	knownTypes map[string]DefaultType
-	newTlTypes map[string]tlType
-	typeName   string
+	knownTypes      map[string]DefaultType
+	newTlTypes      map[string]tlType
+	typeName        string
+	newRequestTypes map[string]tlType
 }
 
 func NewGenerator(knownTypes map[string]DefaultType, typeName string) *Generator {
 	tlTypes := make(map[string]tlType)
+	requestTypes := make(map[string]tlType)
 	if knownTypes == nil {
 		knownTypes = defaultKnownTypes
 	}
 	return &Generator{
-		knownTypes: knownTypes,
-		newTlTypes: tlTypes,
-		typeName:   typeName,
+		knownTypes:      knownTypes,
+		newTlTypes:      tlTypes,
+		typeName:        typeName,
+		newRequestTypes: requestTypes,
 	}
 }
 
@@ -105,24 +116,33 @@ func (g *Generator) LoadTypes(declarations []CombinatorDeclaration) (string, err
 func (g *Generator) LoadFunctions(functions []CombinatorDeclaration) (string, error) {
 	s := ""
 	for _, c := range functions {
+		requestType, err := g.generateGolangMethodRequestType(c)
+		if err != nil {
+			return "", err
+		}
+		g.newRequestTypes[c.Constructor] = requestType
+		s += "\n" + requestType.definition + "\n"
 		if len(c.FieldDefinitions) > 0 {
-			name, requestType, err := g.generateGolangMethodRequestType(c)
-			if err != nil {
-				return "", err
-			}
-			s += "\n" + requestType + "\n"
-			marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, name)
+			marshaler, err := g.generateMarshalers([]CombinatorDeclaration{c}, requestType.name)
 			if err != nil {
 				return "", err
 			}
 			s += "\n" + marshaler + "\n"
 		}
+		unmarshler, err := g.generateUnmarshalers([]CombinatorDeclaration{c}, requestType.name)
+		if err != nil {
+			return "", err
+		}
+		s += "\n" + unmarshler + "\n"
 		method, err := g.generateGolangMethod(g.typeName, c)
 		if err != nil {
 			return "", err
 		}
 		s += "\n" + method + "\n"
 	}
+	decoder := g.generateRequestDecoder()
+	s += "\n" + decoder + "\n"
+
 	b, err := format.Source([]byte(s))
 	if err != nil {
 		return s, err
@@ -288,14 +308,15 @@ func toGolangType(t TypeExpression, optional bool, defaultTypes map[string]Defau
 func (g *Generator) generateUnmarshalers(declarations []CombinatorDeclaration, receiverType string) (string, error) {
 	builder := strings.Builder{}
 	builder.WriteString(fmt.Sprintf("func (t *%s) UnmarshalTL(r io.Reader) error {\n", receiverType))
-	builder.WriteString("var err error\n")
-	if len(declarations) == 1 {
+	if len(declarations) == 1 && len(declarations[0].FieldDefinitions) > 0 {
+		builder.WriteString("var err error\n")
 		s, err := g.generateSimpleTypeUnmarshaler(declarations[0])
 		if err != nil {
 			return "", err
 		}
 		builder.WriteString(s)
-	} else {
+	} else if len(declarations) > 1 {
+		builder.WriteString("var err error\n")
 		s, err := g.generateSumTypeUnmarshaler(declarations)
 		if err != nil {
 			return "", err
@@ -306,7 +327,6 @@ func (g *Generator) generateUnmarshalers(declarations []CombinatorDeclaration, r
 	builder.WriteString("return nil\n")
 	builder.WriteRune('}')
 	return builder.String(), nil
-
 }
 
 func (g *Generator) generateSimpleTypeUnmarshaler(declaration CombinatorDeclaration) (string, error) {
@@ -332,6 +352,15 @@ func (g *Generator) generateUnmarshalerCode(declaration CombinatorDeclaration, r
 			typeString := gt.String()
 			builder.WriteString(fmt.Sprintf("if (t.%s>>%s)&1 == 1{\n",
 				utils.ToCamelCase(field.Modificator.Name), field.Modificator.Bit))
+			if typeString == "True" {
+				// TODO: add field?
+				builder.WriteString("var tTrue bool\n")
+				builder.WriteString("err = tl.Unmarshal(r, &tTrue)\n")
+				builder.WriteString(unmarshalerReturnErr)
+				builder.WriteString("if tTrue != true {return fmt.Errorf(\"not a True type\")}\n")
+				builder.WriteString("}\n")
+				continue
+			}
 			builder.WriteString(fmt.Sprintf("var temp%s %s\n", name, typeString))
 			builder.WriteString("err = tl.Unmarshal(r, &temp" + name + ")\n")
 			builder.WriteString(unmarshalerReturnErr)
@@ -562,8 +591,54 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	return builder.String(), nil
 }
 
-func (g *Generator) generateGolangMethodRequestType(c CombinatorDeclaration) (string, string, error) {
-	s, err := g.generateGolangStruct(c)
+func (g *Generator) generateGolangMethodRequestType(c CombinatorDeclaration) (tlType, error) {
 	name := utils.ToCamelCase(c.Constructor) + "Request"
-	return name, fmt.Sprintf("type %s %s", name, s), err
+	s, err := g.generateGolangStruct(c)
+	if err != nil {
+		return tlType{}, err
+	}
+	tag, err := tagToUint32(c.Tag)
+	if err != nil {
+		return tlType{}, err
+	}
+	return tlType{
+		name:       name,
+		tags:       []uint32{tag},
+		definition: fmt.Sprintf("type %s %s", name, s),
+	}, nil
+}
+
+func (g *Generator) generateRequestDecoder() string {
+	type msg struct {
+		TlName string
+		Name   string
+		Tag    uint32
+	}
+	type messagesContext struct {
+		Types      map[string]msg
+		WhatRender string
+	}
+	reqContext := messagesContext{Types: map[string]msg{}, WhatRender: "Request"}
+	for tlName, val := range g.newRequestTypes {
+		if len(val.tags) != 1 {
+			panic("sum type is not supported in the request")
+		}
+		reqContext.Types[val.name] = msg{
+			Name:   val.name,
+			Tag:    val.tags[0],
+			TlName: tlName,
+		}
+	}
+	tmpl, err := template.New("decoding").Parse(decodingTemplate)
+	if err != nil {
+		panic(err)
+		return ""
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, reqContext); err != nil {
+		panic(err)
+		return ""
+	}
+	fmt.Printf("%s", buf.String())
+	return buf.String()
 }

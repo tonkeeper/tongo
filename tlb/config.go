@@ -616,6 +616,20 @@ type ConfigParam44 struct {
 	SuspendedAddressList SuspendedAddressList
 }
 
+type PrecompiledSmc struct {
+	Magic    Magic `tlb:"#b0"`
+	GasUsage uint64
+}
+
+type PrecompiledContractsConfig struct {
+	Magic Magic `tlb:"#c0"`
+	List  HashmapE[Bits256, PrecompiledSmc]
+}
+
+type ConfigParam45 struct {
+	PrecompiledContractsConfig PrecompiledContractsConfig
+}
+
 type OracleBridgeParams struct {
 	BridgeAddress         Bits256
 	OracleMutlisigAddress Bits256

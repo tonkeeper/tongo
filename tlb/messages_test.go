@@ -194,6 +194,30 @@ func TestMsgAddress_UnmarshalJSON(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:       "AddrVar - all good",
+			addressStr: "-43464703:B36192BFD8DB3EABFCC47AE5EF2E7F4ED6AEFB1C2E8F0A3549A66FFC45051CD3:Anycast(30,927184944)",
+			wantAddr: &MsgAddress{
+				SumType: "AddrVar",
+				AddrVar: &struct {
+					Anycast     Maybe[Anycast]
+					AddrLen     Uint9
+					WorkchainId int32
+					Address     boc.BitString
+				}{
+					Anycast: Maybe[Anycast]{
+						Exists: true,
+						Value: Anycast{
+							Depth:      30,
+							RewritePfx: 927184944,
+						},
+					},
+					AddrLen:     256,
+					WorkchainId: -43464703,
+					Address:     mustFromFiftHex("B36192BFD8DB3EABFCC47AE5EF2E7F4ED6AEFB1C2E8F0A3549A66FFC45051CD3"),
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

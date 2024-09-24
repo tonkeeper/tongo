@@ -3,6 +3,7 @@ package tlb
 import (
 	"encoding/hex"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -330,7 +331,9 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 		}
 	}
 	// try AddrStd first
-	if len(parts[1]) == 64 {
+	num, err := strconv.ParseInt(parts[0], 10, 32)
+	isWorkchainInt8 := err == nil && num >= int64(math.MinInt8) && num <= int64(math.MaxInt8)
+	if len(parts[1]) == 64 && isWorkchainInt8 && !strings.HasSuffix(parts[1], "_") {
 		var dst [32]byte
 		_, err := hex.Decode(dst[:], []byte(parts[1]))
 		if err != nil {

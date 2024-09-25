@@ -183,6 +183,47 @@ func TestPrecompiles(t *testing.T) {
 			},
 		},
 		{
+			name:    "get_wallet_data_mintless",
+			code:    "te6ccgEBAQEAIwAIQgIPGtPYpGvSgzId3mORlftyYC6bMbFyf+zCXi7cEJZt9A==",
+			libs:    "te6ccgECGwEABSQAAUOgAeNaexSNelBmQ7vMcjK/bkwF02Y2Lk/9mEvF24ISzb6EAQEU/wD0pBP0vPLICwICAWIDBAICygUGAgEgFxgB9dQHQ0wMBcbCOWxNfA4Ag1yHtRNDTA/oA+kD6QNP/Afhh0wkB+GLRBNMfAYQPIYIQF41FGboCghB73ZfeuhKx8vSAQNch+gAwEqBAE/hB+EIFyMsDUAT6AljPFgHPFsv/ywnJ7VTg+kD6QDH6ADH0AfoAMfoAATFw+DoCgcCAWYTFAOE0x8BIIIQD4p+pbqOhTBENNs84DMighAXjUUZuo6EMlrbPOA0IYIQWV8HvLqOhDEB2zzgE18DghDTchWMutyED/LwCAkKA/YE0z8BAfoA+kAh+kQwwADy4U3tRNDTA/oA+kD6QNP/Afhh0wkB+GLRUhvHBfLgSfgq+EErEDdZ2zxvIjAg+QBwdMjLAsoHy/8E+kD0BIBQIm6SMjvjDgr6ACAg1wsAmtdLwAEBwAGw8rGRMOJRSKEgwv/yr8iCEBeNRRkNCwwE1u1E0NMD+gD6QPpA0/8B+GHTCQH4YtEH0z8BAfoAUUGgBPpA+kBTuscFIJE7jqAw+Cr4QSRUTjDbPG8iMPkAcHTIywLKB8v/ydBQC8cFCuIK8uBKCfoAIZJfBOMNJtcLAcAAs5MwbDPjDVUCDQ4PEAG67UTQ0wP6APpA+kDT/wH4YdMJAfhi0QbTPwEB+gD6QPQB0VFBoVI4xwXy4Ekmwv/yr8iCEHvdl94Byx9YAcs/AfoCIc8WWM8WyciAGAHLBSbPFnD6AgFxWMtqzMkDEgCsMAHQ0x8BghAN9gLWuvK5JfJ21DD4QSjwLPgjUgO+8re78rgUoARxsVGpofgvoHOBBROCEAlmAYBw+DdSELYJIIAQ+wKhgQCQ+Adw+DZYoBqhEDoJEDQB+AHLH1AKAcs/UAj6AibPFgHPFib6AljPFsnIgBgBywVQBM8XcPoCQBN3UAPLa8zMyUU4IZFykXHi+DkgbpOBeC6RIOIhbpQxgX7gkQHiUCOoE6BzgQStcPg8oAJw+DYSoAFw+Dagc4EFE4IQCWYBgHD4N6C88rBQU/sAQwMQAfaED39wJvpEMav7UxFJRhgEyMsDUAP6AgHPFgHPFsv/IIEAysjLDwHPFyT5ACXXZSWCAgE0yMsXEssPyw/L/44pBqRcAcsJcfkEAFJwAcv/cfkEAKv7KLJTBLmTNDQjkTDiIMAgJMAAsRfmECNfAzMzInADywnJIsjLARIRAGDIghBzYtCcAcsfJQHLP1AE+gJYzxZYzxbJyIAQAcsFJM8WWPoCAXFYy2rMyYAR+wAAelBUofgvoHOBBROCEAlmAYBw+De2CXL7AsiAEAHLBVAFzxZw+gJwActqghDVMnbbAcsfWAHLP8mBAIL7AFkAMvhB+EIFyMsDUAT6AljPFgHPFsv/ywnJ7VQAFPQA9ADLAMkBbwIAfvg5IG6UMIEYBN5xgQLycPg4AXD4NqCBcAhw+DagvPKwAoBQ+wAD+EH4QgXIywNQBPoCWM8WAc8Wy//LCcntVAIBWBUWACnSz4FcCAhfoFN9D5cDb9AGmX6ZeYQAIzXOfLgZ9MHAcAD8uBo1NP/MIAARAHwKli68uBpgADu/2BdqJoaYH9AH0gfSBp/4D8MOmEgPwxaJn8FSCYQCASAZGgA1uKEe1E0NMD+gD6QPpA0/8B+GHTCQH4YtFfA4ADW52s7UTQ0wP6APpA+kDT/wH4YdMJAfhi0V8Dg=",
+			data:    "te6ccgEBAQEAbwAA2ggY8bSzikFOoIASMQ4LN0rUBvIWDS2vSAVYDSO/7F+acx0Cfy+nZObfSxAAJ8uWd7EBqsmpSWaRdf/I+8R8+XHwh3gsNKhy+UrdrPUI0rXIU3k/T5YpIO61lji2qYaoATvD6VByERzLig6MRAQ=",
+			method:  97026,
+			account: "EQCR50nICun4QUzzXcOhrWyY1jsRNWwJm0mBHMtqlOcMSEAn",
+			compareFunc: func(stack1, stack2 tlb.VmStack) error {
+				if len(stack2) != len(stack1) {
+					return fmt.Errorf("stack length mismatch")
+				}
+				var a, b abi.GetWalletDataResult
+				if err := stack1.Unmarshal(&a); err != nil {
+					return err
+				}
+				if err := stack2.Unmarshal(&b); err != nil {
+					return err
+				}
+				if !reflect.DeepEqual(a, b) {
+					return fmt.Errorf("stack mismatch")
+				}
+				return nil
+			},
+		},
+		{
+			name:    "is_claimed_mintless",
+			code:    "te6ccgEBAQEAIwAIQgIPGtPYpGvSgzId3mORlftyYC6bMbFyf+zCXi7cEJZt9A==",
+			libs:    "te6ccgECGwEABSQAAUOgAeNaexSNelBmQ7vMcjK/bkwF02Y2Lk/9mEvF24ISzb6EAQEU/wD0pBP0vPLICwICAWIDBAICygUGAgEgFxgB9dQHQ0wMBcbCOWxNfA4Ag1yHtRNDTA/oA+kD6QNP/Afhh0wkB+GLRBNMfAYQPIYIQF41FGboCghB73ZfeuhKx8vSAQNch+gAwEqBAE/hB+EIFyMsDUAT6AljPFgHPFsv/ywnJ7VTg+kD6QDH6ADH0AfoAMfoAATFw+DoCgcCAWYTFAOE0x8BIIIQD4p+pbqOhTBENNs84DMighAXjUUZuo6EMlrbPOA0IYIQWV8HvLqOhDEB2zzgE18DghDTchWMutyED/LwCAkKA/YE0z8BAfoA+kAh+kQwwADy4U3tRNDTA/oA+kD6QNP/Afhh0wkB+GLRUhvHBfLgSfgq+EErEDdZ2zxvIjAg+QBwdMjLAsoHy/8E+kD0BIBQIm6SMjvjDgr6ACAg1wsAmtdLwAEBwAGw8rGRMOJRSKEgwv/yr8iCEBeNRRkNCwwE1u1E0NMD+gD6QPpA0/8B+GHTCQH4YtEH0z8BAfoAUUGgBPpA+kBTuscFIJE7jqAw+Cr4QSRUTjDbPG8iMPkAcHTIywLKB8v/ydBQC8cFCuIK8uBKCfoAIZJfBOMNJtcLAcAAs5MwbDPjDVUCDQ4PEAG67UTQ0wP6APpA+kDT/wH4YdMJAfhi0QbTPwEB+gD6QPQB0VFBoVI4xwXy4Ekmwv/yr8iCEHvdl94Byx9YAcs/AfoCIc8WWM8WyciAGAHLBSbPFnD6AgFxWMtqzMkDEgCsMAHQ0x8BghAN9gLWuvK5JfJ21DD4QSjwLPgjUgO+8re78rgUoARxsVGpofgvoHOBBROCEAlmAYBw+DdSELYJIIAQ+wKhgQCQ+Adw+DZYoBqhEDoJEDQB+AHLH1AKAcs/UAj6AibPFgHPFib6AljPFsnIgBgBywVQBM8XcPoCQBN3UAPLa8zMyUU4IZFykXHi+DkgbpOBeC6RIOIhbpQxgX7gkQHiUCOoE6BzgQStcPg8oAJw+DYSoAFw+Dagc4EFE4IQCWYBgHD4N6C88rBQU/sAQwMQAfaED39wJvpEMav7UxFJRhgEyMsDUAP6AgHPFgHPFsv/IIEAysjLDwHPFyT5ACXXZSWCAgE0yMsXEssPyw/L/44pBqRcAcsJcfkEAFJwAcv/cfkEAKv7KLJTBLmTNDQjkTDiIMAgJMAAsRfmECNfAzMzInADywnJIsjLARIRAGDIghBzYtCcAcsfJQHLP1AE+gJYzxZYzxbJyIAQAcsFJM8WWPoCAXFYy2rMyYAR+wAAelBUofgvoHOBBROCEAlmAYBw+De2CXL7AsiAEAHLBVAFzxZw+gJwActqghDVMnbbAcsfWAHLP8mBAIL7AFkAMvhB+EIFyMsDUAT6AljPFgHPFsv/ywnJ7VQAFPQA9ADLAMkBbwIAfvg5IG6UMIEYBN5xgQLycPg4AXD4NqCBcAhw+DagvPKwAoBQ+wAD+EH4QgXIywNQBPoCWM8WAc8Wy//LCcntVAIBWBUWACnSz4FcCAhfoFN9D5cDb9AGmX6ZeYQAIzXOfLgZ9MHAcAD8uBo1NP/MIAARAHwKli68uBpgADu/2BdqJoaYH9AH0gfSBp/4D8MOmEgPwxaJn8FSCYQCASAZGgA1uKEe1E0NMD+gD6QPpA0/8B+GHTCQH4YtFfA4ADW52s7UTQ0wP6APpA+kDT/wH4YdMJAfhi0V8Dg=",
+			data:    "te6ccgEBAQEAbwAA2ggY8bSzikFOoIASMQ4LN0rUBvIWDS2vSAVYDSO/7F+acx0Cfy+nZObfSxAAJ8uWd7EBqsmpSWaRdf/I+8R8+XHwh3gsNKhy+UrdrPUI0rXIU3k/T5YpIO61lji2qYaoATvD6VByERzLig6MRAQ=",
+			method:  122284,
+			account: "EQCR50nICun4QUzzXcOhrWyY1jsRNWwJm0mBHMtqlOcMSEAn",
+			compareFunc: func(stack1, stack2 tlb.VmStack) error {
+				if len(stack2) != len(stack1) {
+					return fmt.Errorf("stack length mismatch")
+				}
+				if !reflect.DeepEqual(stack1, stack2) {
+					return fmt.Errorf("stack mismatch")
+				}
+				return nil
+			},
+		},
+		{
 			name:    "get_nft_data_v1_simple",
 			code:    "te6ccgECDQEAAdAAART/APSkE/S88sgLAQIBYgIDAgLOBAUACaEfn+AFAgEgBgcCASALDALXDIhxwCSXwPg0NMDAXGwkl8D4PpA+kAx+gAxcdch+gAx+gAw8AIEs44UMGwiNFIyxwXy4ZUB+kDUMBAj8APgBtMf0z+CEF/MPRRSMLqOhzIQN14yQBPgMDQ0NTWCEC/LJqISuuMCXwSED/LwgCAkAET6RDBwuvLhTYAH2UTXHBfLhkfpAIfAB+kDSADH6AIIK+vCAG6EhlFMVoKHeItcLAcMAIJIGoZE24iDC//LhkiGOPoIQBRONkchQCc8WUAvPFnEkSRRURqBwgBDIywVQB88WUAX6AhXLahLLH8s/Im6zlFjPFwGRMuIByQH7ABBHlBAqN1viCgBycIIQi3cXNQXIy/9QBM8WECSAQHCAEMjLBVAHzxZQBfoCFctqEssfyz8ibrOUWM8XAZEy4gHJAfsAAIICjjUm8AGCENUydtsQN0QAbXFwgBDIywVQB88WUAX6AhXLahLLH8s/Im6zlFjPFwGRMuIByQH7AJMwMjTiVQLwAwA7O1E0NM/+kAg10nCAJp/AfpA1DAQJBAj4DBwWW1tgAB0A8jLP1jPFgHPFszJ7VSA=",
 			data:    "te6ccgEBAgEAVwABlQAAAAAAAABRgBtNY2zMdByaMZkK6ZmztqUtxs+7Jkjg3nd7PWOaWV4X8ACzztbjIkeUXya3b2hwDhqCcysuw4/r2MLUc/IFSMlrLgEADjgxLmpzb24=",
@@ -251,3 +292,22 @@ func TestPrecompiles(t *testing.T) {
 		})
 	}
 }
+
+// it's technical functions for requesting libs for new tests
+//func TestGetLib(t *testing.T) {
+//	c, _ := liteapi.NewClientWithDefaultMainnet()
+//	code, _ := boc.DeserializeSinglRootBase64("te6ccgEBAQEAIwAIQgIPGtPYpGvSgzId3mORlftyYC6bMbFyf+zCXi7cEJZt9A==")
+//	libs, err := tcode.FindLibraries(code)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	libmaps, err := c.GetLibraries(context.Background(), libs)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	b, err := tcode.LibrariesToBase64(libmaps)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	fmt.Println(b)
+//}

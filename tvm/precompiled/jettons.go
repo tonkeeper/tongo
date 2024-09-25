@@ -110,3 +110,22 @@ func jettonV2getWalletData(code string) func(data *boc.Cell, args tlb.VmStack) (
 		return result, nil
 	}
 }
+
+func isClaimed(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
+	var body struct {
+		Status tlb.Uint4
+		Amount tlb.VarUInteger16
+		Owner  tlb.MsgAddress
+		Master tlb.MsgAddress
+	}
+	err := tlb.Unmarshal(data, &body)
+	if err != nil {
+		return nil, err
+	}
+	var result = make([]tlb.VmStackValue, 1)
+	result[0] = tlb.VmStackValue{
+		SumType:      "VmStkTinyInt",
+		VmStkTinyInt: int64(body.Status),
+	}
+	return result, nil
+}

@@ -41,4 +41,9 @@ var KnownMethods = map[MethodCode]tvmPrecompiled{
 
 	//jetton v2 governed get_wallet_data
 	{MethodID: 97026, CodeHash: ton.MustParseHash("89468f02c78e570802e39979c8516fc38df07ea76a48357e0536f2ba7b3ee37b")}: jettonV2getWalletData("te6ccgEBAQEAIwAIQgKPRS16Tf10BmtoI2UXclntBXNENb52tf1L1divK3w9aA=="),
+
+	//jetton v2 mintless get_wallet_data
+	{MethodID: 97026, CodeHash: ton.MustParseHash("431e1485b326a1c600baf02dc3e4cb6339a1538a92ebc4e3ce5daa7100f6c79b")}: jettonV2getWalletData("te6ccgEBAQEAIwAIQgIPGtPYpGvSgzId3mORlftyYC6bMbFyf+zCXi7cEJZt9A=="),
+	//jetton v2 mintless is_claimed
+	{MethodID: 122284, CodeHash: ton.MustParseHash("431e1485b326a1c600baf02dc3e4cb6339a1538a92ebc4e3ce5daa7100f6c79b")}: isClaimed,
 }

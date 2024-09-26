@@ -230,6 +230,9 @@ func (u Int{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 
 func (u *Int{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	v, err := c.ReadBigInt({{.NameIndex}})
+	if err != nil {
+		return err
+	}
 	*u = Int{{.NameIndex}}(*v)
 	return err
 }

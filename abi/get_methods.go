@@ -41,6 +41,8 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_locker_bill_data":               {DecodeGetLockerBillDataResult},
 	"get_locker_data":                    {DecodeGetLockerDataResult},
 	"get_lockup_data":                    {DecodeGetLockupDataResult},
+	"get_lp_account_address":             {DecodeGetLpAccountAddress_StonfiResult},
+	"get_lp_account_data":                {DecodeGetLpAccountData_StonfiResult},
 	"get_lp_data":                        {DecodeGetLpData_MegatonResult},
 	"get_lp_mining_data":                 {DecodeGetLpMiningData_MegatonResult},
 	"get_lp_minter_address":              {DecodeGetLpMinterAddress_StormResult},
@@ -61,7 +63,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":                    {DecodeGetPluginListResult},
 	"get_pool_address":                   {DecodeGetPoolAddress_StonfiResult},
-	"get_pool_data":                      {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult},
+	"get_pool_data":                      {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                 {DecodeGetPoolFullDataResult},
 	"get_pool_status":                    {DecodeGetPoolStatusResult},
 	"get_position_manager_contract_data": {DecodeGetPositionManagerContractData_StormResult},
@@ -72,7 +74,8 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_referral_vaults_whitelist":      {DecodeGetReferralVaultsWhitelist_StormResult},
 	"get_reserves":                       {DecodeGetReserves_DedustResult},
 	"get_revoked_time":                   {DecodeGetRevokedTimeResult},
-	"get_router_data":                    {DecodeGetRouterData_StonfiResult},
+	"get_router_data":                    {DecodeGetRouterData_StonfiResult, DecodeGetRouterData_StonfiV2Result},
+	"get_router_version":                 {DecodeGetRouterVersion_StonfiV2Result},
 	"get_sale_data":                      {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
 	"get_spot_price":                     {DecodeGetSpotPrice_StormResult},
 	"get_staking_status":                 {DecodeGetStakingStatusResult},
@@ -94,7 +97,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_vamm_type":                      {DecodeGetVammType_StormResult},
 	"get_vault_address":                  {DecodeGetVaultAddress_DedustResult},
 	"get_vault_contract_data":            {DecodeGetVaultContractData_StormResult},
-	"get_vault_data":                     {DecodeGetVaultData_StormResult},
+	"get_vault_data":                     {DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
 	"get_vault_type":                     {DecodeGetVaultType_StormResult},
 	"get_vault_whitelisted_addresses":    {DecodeGetVaultWhitelistedAddresses_StormResult},
 	"get_wallet_address":                 {DecodeGetWalletAddressResult},
@@ -124,6 +127,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	75709:  {GetExecutorVaultsWhitelist},
 	78683:  {GetNextAdminAddress},
 	78748:  {GetPublicKey},
+	79661:  {GetRouterVersion},
 	80035:  {GetLpData},
 	80697:  {GetAuctionInfo},
 	80822:  {GetLastCleanTime},
@@ -183,6 +187,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	119995: {GetPositionManagerContractData},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
+	122166: {GetLpAccountData},
 	122284: {IsClaimed},
 	122496: {GetAmmName},
 	122498: {GetTelemintAuctionState},
@@ -230,6 +235,8 @@ var resultTypes = []interface{}{
 	&GetLockerBillDataResult{},
 	&GetLockerDataResult{},
 	&GetLockupDataResult{},
+	&GetLpAccountAddress_StonfiResult{},
+	&GetLpAccountData_StonfiResult{},
 	&GetLpData_MegatonResult{},
 	&GetLpMiningData_MegatonResult{},
 	&GetLpMinterAddress_StormResult{},
@@ -251,6 +258,7 @@ var resultTypes = []interface{}{
 	&GetPluginListResult{},
 	&GetPoolAddress_StonfiResult{},
 	&GetPoolData_StonfiResult{},
+	&GetPoolData_StonfiV2Result{},
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
 	&GetPoolStatusResult{},
@@ -263,6 +271,8 @@ var resultTypes = []interface{}{
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
 	&GetRouterData_StonfiResult{},
+	&GetRouterData_StonfiV2Result{},
+	&GetRouterVersion_StonfiV2Result{},
 	&GetSaleData_BasicResult{},
 	&GetSaleData_GetgemsAuctionResult{},
 	&GetSaleData_GetgemsResult{},
@@ -286,6 +296,7 @@ var resultTypes = []interface{}{
 	&GetVammType_StormResult{},
 	&GetVaultAddress_DedustResult{},
 	&GetVaultContractData_StormResult{},
+	&GetVaultData_StonfiV2Result{},
 	&GetVaultData_StormResult{},
 	&GetVaultType_StormResult{},
 	&GetVaultWhitelistedAddresses_StormResult{},
@@ -1467,6 +1478,84 @@ func DecodeGetLockupDataResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetLockupDataResult", result, err
 }
 
+type GetLpAccountAddress_StonfiResult struct {
+	LpAccountAddress tlb.MsgAddress
+}
+
+func GetLpAccountAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(ownerAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 87316 for "get_lp_account_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 87316, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpAccountAddress_StonfiResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpAccountAddress_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpAccountAddress_StonfiResult
+	err = stack.Unmarshal(&result)
+	return "GetLpAccountAddress_StonfiResult", result, err
+}
+
+type GetLpAccountData_StonfiResult struct {
+	UserAddress tlb.MsgAddress
+	PoolAddress tlb.MsgAddress
+	Amount0     tlb.Int257
+	Amount1     tlb.Int257
+}
+
+func GetLpAccountData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 122166 for "get_lp_account_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122166, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpAccountData_StonfiResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpAccountData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpAccountData_StonfiResult
+	err = stack.Unmarshal(&result)
+	return "GetLpAccountData_StonfiResult", result, err
+}
+
 type GetLpData_MegatonResult struct {
 	PoolCount      uint64
 	JettonPairToLp tlb.Any
@@ -2247,6 +2336,21 @@ type GetPoolData_StonfiResult struct {
 	CollectedToken1ProtocolFee tlb.Int257
 }
 
+type GetPoolData_StonfiV2Result struct {
+	IsLocked                   bool
+	RouterAddress              tlb.MsgAddress
+	TotalSupply                tlb.Int257
+	Reserve0                   tlb.Int257
+	Reserve1                   tlb.Int257
+	Token0WalletAddress        tlb.MsgAddress
+	Token1WalletAddress        tlb.MsgAddress
+	LpFee                      uint16
+	ProtocolFee                uint16
+	ProtocolFeeAddress         tlb.MsgAddress
+	CollectedToken0ProtocolFee tlb.Int257
+	CollectedToken1ProtocolFee tlb.Int257
+}
+
 type GetPoolData_TfResult struct {
 	State                    int8
 	NominatorsCount          uint32
@@ -2279,7 +2383,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_StonfiResult, DecodeGetPoolData_TfResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2295,6 +2399,15 @@ func DecodeGetPoolData_StonfiResult(stack tlb.VmStack) (resultType string, resul
 	var result GetPoolData_StonfiResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolData_StonfiResult", result, err
+}
+
+func DecodeGetPoolData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 12 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolData_StonfiV2Result
+	err = stack.Unmarshal(&result)
+	return "GetPoolData_StonfiV2Result", result, err
 }
 
 func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
@@ -2703,6 +2816,18 @@ type GetRouterData_StonfiResult struct {
 	LpAccountCode      tlb.Any
 }
 
+type GetRouterData_StonfiV2Result struct {
+	Id                 uint32
+	DexType            string
+	IsLocked           bool
+	AdminAddress       tlb.MsgAddress
+	TempUpgrade        tlb.Any
+	PoolCode           tlb.Any
+	JettonLpWalletCode tlb.Any
+	LpAccountCode      tlb.Any
+	VaultCode          tlb.Any
+}
+
 func GetRouterData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
@@ -2714,7 +2839,7 @@ func GetRouterData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRouterData_StonfiResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRouterData_StonfiResult, DecodeGetRouterData_StonfiV2Result} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2730,6 +2855,50 @@ func DecodeGetRouterData_StonfiResult(stack tlb.VmStack) (resultType string, res
 	var result GetRouterData_StonfiResult
 	err = stack.Unmarshal(&result)
 	return "GetRouterData_StonfiResult", result, err
+}
+
+func DecodeGetRouterData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 9 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") || (stack[7].SumType != "VmStkCell") || (stack[8].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetRouterData_StonfiV2Result
+	err = stack.Unmarshal(&result)
+	return "GetRouterData_StonfiV2Result", result, err
+}
+
+type GetRouterVersion_StonfiV2Result struct {
+	Major       uint32
+	Minor       uint32
+	Development string
+}
+
+func GetRouterVersion(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 79661 for "get_router_version" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 79661, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRouterVersion_StonfiV2Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetRouterVersion_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetRouterVersion_StonfiV2Result
+	err = stack.Unmarshal(&result)
+	return "GetRouterVersion_StonfiV2Result", result, err
 }
 
 type GetSaleData_BasicResult struct {
@@ -3571,6 +3740,13 @@ func DecodeGetVaultContractData_StormResult(stack tlb.VmStack) (resultType strin
 	return "GetVaultContractData_StormResult", result, err
 }
 
+type GetVaultData_StonfiV2Result struct {
+	OwnerAddress    tlb.MsgAddress
+	TokenAddress    tlb.MsgAddress
+	RouterAddress   tlb.MsgAddress
+	DepositedAmount tlb.Int257
+}
+
 type GetVaultData_StormResult struct {
 	JettonWallet     tlb.MsgAddress
 	Rate             uint64
@@ -3592,13 +3768,22 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultData_StormResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
 		}
 	}
 	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetVaultData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultData_StonfiV2Result
+	err = stack.Unmarshal(&result)
+	return "GetVaultData_StonfiV2Result", result, err
 }
 
 func DecodeGetVaultData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {

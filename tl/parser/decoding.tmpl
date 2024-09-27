@@ -1,0 +1,20 @@
+
+
+var (
+{{- range $name, $type := .Types }}
+    // 0x{{ printf "%08x" $type.Tag }}
+    decodeFunc{{ $type.Name }} = decodeRequest(0x{{ printf "%08x" $type.Tag }}, {{ $name }}Name, {{ $name }}{})
+{{- end }}
+)
+
+var tagged{{ $.WhatRender }}DecodeFunctions = map[uint32]reqDecoderFunc {
+{{- range $name, $type := .Types }}
+    0x{{ printf "%08x" $type.Tag }}: decodeFunc{{ $type.Name }},
+{{- end }}
+}
+
+const (
+{{- range  $name, $type := .Types }}
+    {{ $name }}Name RequestName = "{{ $type.TlName }}"
+{{- end }}
+)

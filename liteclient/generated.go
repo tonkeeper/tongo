@@ -2853,6 +2853,49 @@ func (t *LiteServerDispatchQueueInfoC) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
+type LiteProxyRequestRateLimitC struct {
+	Limit   uint32
+	PerTime uint32
+}
+
+func (t LiteProxyRequestRateLimitC) MarshalTL() ([]byte, error) {
+	var (
+		err error
+		b   []byte
+	)
+	buf := new(bytes.Buffer)
+	b, err = tl.Marshal(t.Limit)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	b, err = tl.Marshal(t.PerTime)
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(b)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *LiteProxyRequestRateLimitC) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Limit)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.PerTime)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type LiteServerDebugVerbosityC struct {
 	Value uint32
 }
@@ -2880,6 +2923,12 @@ func (t *LiteServerDebugVerbosityC) UnmarshalTL(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+type LiteServerGetMasterchainInfoRequest struct{}
+
+func (t *LiteServerGetMasterchainInfoRequest) UnmarshalTL(r io.Reader) error {
 	return nil
 }
 
@@ -2930,6 +2979,15 @@ func (t LiteServerGetMasterchainInfoExtRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetMasterchainInfoExtRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request LiteServerGetMasterchainInfoExtRequest) (res LiteServerMasterchainInfoExtC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -2961,6 +3019,12 @@ func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request Li
 	return res, fmt.Errorf("invalid tag")
 }
 
+type LiteServerGetTimeRequest struct{}
+
+func (t *LiteServerGetTimeRequest) UnmarshalTL(r io.Reader) error {
+	return nil
+}
+
 func (c *Client) LiteServerGetTime(ctx context.Context) (res LiteServerCurrentTimeC, err error) {
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0x16ad5a34)
@@ -2985,6 +3049,12 @@ func (c *Client) LiteServerGetTime(ctx context.Context) (res LiteServerCurrentTi
 		return res, err
 	}
 	return res, fmt.Errorf("invalid tag")
+}
+
+type LiteServerGetVersionRequest struct{}
+
+func (t *LiteServerGetVersionRequest) UnmarshalTL(r io.Reader) error {
+	return nil
 }
 
 func (c *Client) LiteServerGetVersion(ctx context.Context) (res LiteServerVersionC, err error) {
@@ -3032,6 +3102,15 @@ func (t LiteServerGetBlockRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetBlockRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetBlock(ctx context.Context, request LiteServerGetBlockRequest) (res LiteServerBlockDataC, err error) {
@@ -3084,6 +3163,15 @@ func (t LiteServerGetStateRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetStateRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetState(ctx context.Context, request LiteServerGetStateRequest) (res LiteServerBlockStateC, err error) {
@@ -3147,6 +3235,19 @@ func (t LiteServerGetBlockHeaderRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetBlockHeaderRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetBlockHeader(ctx context.Context, request LiteServerGetBlockHeaderRequest) (res LiteServerBlockHeaderC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -3197,6 +3298,15 @@ func (t LiteServerSendMessageRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerSendMessageRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Body)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerSendMessage(ctx context.Context, request LiteServerSendMessageRequest) (res LiteServerSendMsgStatusC, err error) {
@@ -3260,6 +3370,19 @@ func (t LiteServerGetAccountStateRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetAccountStateRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Account)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetAccountState(ctx context.Context, request LiteServerGetAccountStateRequest) (res LiteServerAccountStateC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -3319,6 +3442,19 @@ func (t LiteServerGetAccountStatePrunnedRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetAccountStatePrunnedRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Account)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetAccountStatePrunned(ctx context.Context, request LiteServerGetAccountStatePrunnedRequest) (res LiteServerAccountStateC, err error) {
@@ -3409,6 +3545,31 @@ func (t LiteServerRunSmcMethodRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerRunSmcMethodRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Account)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.MethodId)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) LiteServerRunSmcMethod(ctx context.Context, request LiteServerRunSmcMethodRequest) (res LiteServerRunMethodResultC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -3488,6 +3649,27 @@ func (t LiteServerGetShardInfoRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetShardInfoRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Workchain)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Shard)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Exact)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetShardInfo(ctx context.Context, request LiteServerGetShardInfoRequest) (res LiteServerShardInfoC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -3538,6 +3720,15 @@ func (t LiteServerGetAllShardsInfoRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetAllShardsInfoRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetAllShardsInfo(ctx context.Context, request LiteServerGetAllShardsInfoRequest) (res LiteServerAllShardsInfoC, err error) {
@@ -3608,6 +3799,23 @@ func (t LiteServerGetOneTransactionRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetOneTransactionRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Account)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Lt)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetOneTransaction(ctx context.Context, request LiteServerGetOneTransactionRequest) (res LiteServerTransactionInfoC, err error) {
@@ -3687,6 +3895,27 @@ func (t LiteServerGetTransactionsRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetTransactionsRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Count)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Account)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Lt)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Hash)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetTransactions(ctx context.Context, request LiteServerGetTransactionsRequest) (res LiteServerTransactionListC, err error) {
@@ -3770,6 +3999,35 @@ func (t LiteServerLookupBlockRequest) MarshalTL() ([]byte, error) {
 		}
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerLookupBlockRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>1)&1 == 1 {
+		var tempLt uint64
+		err = tl.Unmarshal(r, &tempLt)
+		if err != nil {
+			return err
+		}
+		t.Lt = &tempLt
+	}
+	if (t.Mode>>2)&1 == 1 {
+		var tempUtime uint32
+		err = tl.Unmarshal(r, &tempUtime)
+		if err != nil {
+			return err
+		}
+		t.Utime = &tempUtime
+	}
+	return nil
 }
 
 func (c *Client) LiteServerLookupBlock(ctx context.Context, request LiteServerLookupBlockRequest) (res LiteServerBlockHeaderC, err error) {
@@ -3864,6 +4122,39 @@ func (t LiteServerLookupBlockWithProofRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerLookupBlockWithProofRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.McBlockId)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>1)&1 == 1 {
+		var tempLt uint64
+		err = tl.Unmarshal(r, &tempLt)
+		if err != nil {
+			return err
+		}
+		t.Lt = &tempLt
+	}
+	if (t.Mode>>2)&1 == 1 {
+		var tempUtime uint32
+		err = tl.Unmarshal(r, &tempUtime)
+		if err != nil {
+			return err
+		}
+		t.Utime = &tempUtime
+	}
+	return nil
+}
+
 func (c *Client) LiteServerLookupBlockWithProof(ctx context.Context, request LiteServerLookupBlockWithProofRequest) (res LiteServerLookupBlockResultC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -3943,6 +4234,51 @@ func (t LiteServerListBlockTransactionsRequest) MarshalTL() ([]byte, error) {
 		}
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerListBlockTransactionsRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Count)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>7)&1 == 1 {
+		var tempAfter LiteServerTransactionId3C
+		err = tl.Unmarshal(r, &tempAfter)
+		if err != nil {
+			return err
+		}
+		t.After = &tempAfter
+	}
+	if (t.Mode>>6)&1 == 1 {
+		var tTrue bool
+		err = tl.Unmarshal(r, &tTrue)
+		if err != nil {
+			return err
+		}
+		if tTrue != true {
+			return fmt.Errorf("not a True type")
+		}
+	}
+	if (t.Mode>>5)&1 == 1 {
+		var tTrue bool
+		err = tl.Unmarshal(r, &tTrue)
+		if err != nil {
+			return err
+		}
+		if tTrue != true {
+			return fmt.Errorf("not a True type")
+		}
+	}
+	return nil
 }
 
 func (c *Client) LiteServerListBlockTransactions(ctx context.Context, request LiteServerListBlockTransactionsRequest) (res LiteServerBlockTransactionsC, err error) {
@@ -4026,6 +4362,51 @@ func (t LiteServerListBlockTransactionsExtRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerListBlockTransactionsExtRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Count)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>7)&1 == 1 {
+		var tempAfter LiteServerTransactionId3C
+		err = tl.Unmarshal(r, &tempAfter)
+		if err != nil {
+			return err
+		}
+		t.After = &tempAfter
+	}
+	if (t.Mode>>6)&1 == 1 {
+		var tTrue bool
+		err = tl.Unmarshal(r, &tTrue)
+		if err != nil {
+			return err
+		}
+		if tTrue != true {
+			return fmt.Errorf("not a True type")
+		}
+	}
+	if (t.Mode>>5)&1 == 1 {
+		var tTrue bool
+		err = tl.Unmarshal(r, &tTrue)
+		if err != nil {
+			return err
+		}
+		if tTrue != true {
+			return fmt.Errorf("not a True type")
+		}
+	}
+	return nil
+}
+
 func (c *Client) LiteServerListBlockTransactionsExt(ctx context.Context, request LiteServerListBlockTransactionsExtRequest) (res LiteServerBlockTransactionsExtC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -4098,6 +4479,27 @@ func (t LiteServerGetBlockProofRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetBlockProofRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.KnownBlock)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempTargetBlock TonNodeBlockIdExtC
+		err = tl.Unmarshal(r, &tempTargetBlock)
+		if err != nil {
+			return err
+		}
+		t.TargetBlock = &tempTargetBlock
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetBlockProof(ctx context.Context, request LiteServerGetBlockProofRequest) (res LiteServerPartialBlockProofC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -4157,6 +4559,19 @@ func (t LiteServerGetConfigAllRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetConfigAllRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetConfigAll(ctx context.Context, request LiteServerGetConfigAllRequest) (res LiteServerConfigInfoC, err error) {
@@ -4227,6 +4642,23 @@ func (t LiteServerGetConfigParamsRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetConfigParamsRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.ParamList)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetConfigParams(ctx context.Context, request LiteServerGetConfigParamsRequest) (res LiteServerConfigInfoC, err error) {
@@ -4321,6 +4753,39 @@ func (t LiteServerGetValidatorStatsRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetValidatorStatsRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Limit)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempStartAfter tl.Int256
+		err = tl.Unmarshal(r, &tempStartAfter)
+		if err != nil {
+			return err
+		}
+		t.StartAfter = &tempStartAfter
+	}
+	if (t.Mode>>2)&1 == 1 {
+		var tempModifiedAfter uint32
+		err = tl.Unmarshal(r, &tempModifiedAfter)
+		if err != nil {
+			return err
+		}
+		t.ModifiedAfter = &tempModifiedAfter
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetValidatorStats(ctx context.Context, request LiteServerGetValidatorStatsRequest) (res LiteServerValidatorStatsC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -4371,6 +4836,15 @@ func (t LiteServerGetLibrariesRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetLibrariesRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.LibraryList)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetLibraries(ctx context.Context, request LiteServerGetLibrariesRequest) (res LiteServerLibraryResultC, err error) {
@@ -4443,6 +4917,23 @@ func (t LiteServerGetLibrariesWithProofRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetLibrariesWithProofRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.LibraryList)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetLibrariesWithProof(ctx context.Context, request LiteServerGetLibrariesWithProofRequest) (res LiteServerLibraryResultWithProofC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -4493,6 +4984,15 @@ func (t LiteServerGetShardBlockProofRequest) MarshalTL() ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetShardBlockProofRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetShardBlockProof(ctx context.Context, request LiteServerGetShardBlockProofRequest) (res LiteServerShardBlockProofC, err error) {
@@ -4567,6 +5067,31 @@ func (t LiteServerGetOutMsgQueueSizesRequest) MarshalTL() ([]byte, error) {
 		}
 	}
 	return buf.Bytes(), nil
+}
+
+func (t *LiteServerGetOutMsgQueueSizesRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempWc uint32
+		err = tl.Unmarshal(r, &tempWc)
+		if err != nil {
+			return err
+		}
+		t.Wc = &tempWc
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tempShard uint64
+		err = tl.Unmarshal(r, &tempShard)
+		if err != nil {
+			return err
+		}
+		t.Shard = &tempShard
+	}
+	return nil
 }
 
 func (c *Client) LiteServerGetOutMsgQueueSizes(ctx context.Context, request LiteServerGetOutMsgQueueSizesRequest) (res LiteServerOutMsgQueueSizesC, err error) {
@@ -4650,6 +5175,41 @@ func (t LiteServerGetDispatchQueueInfoRequest) MarshalTL() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func (t *LiteServerGetDispatchQueueInfoRequest) UnmarshalTL(r io.Reader) error {
+	var err error
+	err = tl.Unmarshal(r, &t.Mode)
+	if err != nil {
+		return err
+	}
+	err = tl.Unmarshal(r, &t.Id)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>1)&1 == 1 {
+		var tempAfterAddr tl.Int256
+		err = tl.Unmarshal(r, &tempAfterAddr)
+		if err != nil {
+			return err
+		}
+		t.AfterAddr = &tempAfterAddr
+	}
+	err = tl.Unmarshal(r, &t.MaxAccounts)
+	if err != nil {
+		return err
+	}
+	if (t.Mode>>0)&1 == 1 {
+		var tTrue bool
+		err = tl.Unmarshal(r, &tTrue)
+		if err != nil {
+			return err
+		}
+		if tTrue != true {
+			return fmt.Errorf("not a True type")
+		}
+	}
+	return nil
+}
+
 func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request LiteServerGetDispatchQueueInfoRequest) (res LiteServerDispatchQueueInfoC, err error) {
 	payload, err := tl.Marshal(struct {
 		tl.SumType
@@ -4680,3 +5240,160 @@ func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request Lit
 	}
 	return res, fmt.Errorf("invalid tag")
 }
+
+type LiteProxyGetRequestRateLimitRequest struct{}
+
+func (t *LiteProxyGetRequestRateLimitRequest) UnmarshalTL(r io.Reader) error {
+	return nil
+}
+
+func (c *Client) LiteProxyGetRequestRateLimit(ctx context.Context) (res LiteProxyRequestRateLimitC, err error) {
+	payload := make([]byte, 4)
+	binary.LittleEndian.PutUint32(payload, 0xf0f83e86)
+	resp, err := c.liteServerRequest(ctx, payload)
+	if err != nil {
+		return res, err
+	}
+	if len(resp) < 4 {
+		return res, fmt.Errorf("not enough bytes for tag")
+	}
+	tag := binary.LittleEndian.Uint32(resp[:4])
+	if tag == 0xbba9e148 {
+		var errRes LiteServerErrorC
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)
+		if err != nil {
+			return res, err
+		}
+		return res, errRes
+	}
+	if tag == 0x14cb3f0c {
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
+		return res, err
+	}
+	return res, fmt.Errorf("invalid tag")
+}
+
+var (
+	// 0xf0f83e86
+	decodeFuncLiteProxyGetRequestRateLimitRequest = decodeRequest(0xf0f83e86, LiteProxyGetRequestRateLimitRequestName, LiteProxyGetRequestRateLimitRequest{})
+	// 0x5a698507
+	decodeFuncLiteServerGetAccountStatePrunnedRequest = decodeRequest(0x5a698507, LiteServerGetAccountStatePrunnedRequestName, LiteServerGetAccountStatePrunnedRequest{})
+	// 0x6b890e25
+	decodeFuncLiteServerGetAccountStateRequest = decodeRequest(0x6b890e25, LiteServerGetAccountStateRequestName, LiteServerGetAccountStateRequest{})
+	// 0x74d3fd6b
+	decodeFuncLiteServerGetAllShardsInfoRequest = decodeRequest(0x74d3fd6b, LiteServerGetAllShardsInfoRequestName, LiteServerGetAllShardsInfoRequest{})
+	// 0x21ec069e
+	decodeFuncLiteServerGetBlockHeaderRequest = decodeRequest(0x21ec069e, LiteServerGetBlockHeaderRequestName, LiteServerGetBlockHeaderRequest{})
+	// 0x8aea9c44
+	decodeFuncLiteServerGetBlockProofRequest = decodeRequest(0x8aea9c44, LiteServerGetBlockProofRequestName, LiteServerGetBlockProofRequest{})
+	// 0x6377cf0d
+	decodeFuncLiteServerGetBlockRequest = decodeRequest(0x6377cf0d, LiteServerGetBlockRequestName, LiteServerGetBlockRequest{})
+	// 0x911b26b7
+	decodeFuncLiteServerGetConfigAllRequest = decodeRequest(0x911b26b7, LiteServerGetConfigAllRequestName, LiteServerGetConfigAllRequest{})
+	// 0x2a111c19
+	decodeFuncLiteServerGetConfigParamsRequest = decodeRequest(0x2a111c19, LiteServerGetConfigParamsRequestName, LiteServerGetConfigParamsRequest{})
+	// 0x01e66bf3
+	decodeFuncLiteServerGetDispatchQueueInfoRequest = decodeRequest(0x01e66bf3, LiteServerGetDispatchQueueInfoRequestName, LiteServerGetDispatchQueueInfoRequest{})
+	// 0xd122b662
+	decodeFuncLiteServerGetLibrariesRequest = decodeRequest(0xd122b662, LiteServerGetLibrariesRequestName, LiteServerGetLibrariesRequest{})
+	// 0x8c026c31
+	decodeFuncLiteServerGetLibrariesWithProofRequest = decodeRequest(0x8c026c31, LiteServerGetLibrariesWithProofRequestName, LiteServerGetLibrariesWithProofRequest{})
+	// 0x70a671df
+	decodeFuncLiteServerGetMasterchainInfoExtRequest = decodeRequest(0x70a671df, LiteServerGetMasterchainInfoExtRequestName, LiteServerGetMasterchainInfoExtRequest{})
+	// 0x89b5e62e
+	decodeFuncLiteServerGetMasterchainInfoRequest = decodeRequest(0x89b5e62e, LiteServerGetMasterchainInfoRequestName, LiteServerGetMasterchainInfoRequest{})
+	// 0xd40f24ea
+	decodeFuncLiteServerGetOneTransactionRequest = decodeRequest(0xd40f24ea, LiteServerGetOneTransactionRequestName, LiteServerGetOneTransactionRequest{})
+	// 0x7bc19c36
+	decodeFuncLiteServerGetOutMsgQueueSizesRequest = decodeRequest(0x7bc19c36, LiteServerGetOutMsgQueueSizesRequestName, LiteServerGetOutMsgQueueSizesRequest{})
+	// 0x4ca60350
+	decodeFuncLiteServerGetShardBlockProofRequest = decodeRequest(0x4ca60350, LiteServerGetShardBlockProofRequestName, LiteServerGetShardBlockProofRequest{})
+	// 0x46a2f425
+	decodeFuncLiteServerGetShardInfoRequest = decodeRequest(0x46a2f425, LiteServerGetShardInfoRequestName, LiteServerGetShardInfoRequest{})
+	// 0xba6e2eb6
+	decodeFuncLiteServerGetStateRequest = decodeRequest(0xba6e2eb6, LiteServerGetStateRequestName, LiteServerGetStateRequest{})
+	// 0x16ad5a34
+	decodeFuncLiteServerGetTimeRequest = decodeRequest(0x16ad5a34, LiteServerGetTimeRequestName, LiteServerGetTimeRequest{})
+	// 0x1c40e7a1
+	decodeFuncLiteServerGetTransactionsRequest = decodeRequest(0x1c40e7a1, LiteServerGetTransactionsRequestName, LiteServerGetTransactionsRequest{})
+	// 0x091a58bc
+	decodeFuncLiteServerGetValidatorStatsRequest = decodeRequest(0x091a58bc, LiteServerGetValidatorStatsRequestName, LiteServerGetValidatorStatsRequest{})
+	// 0x232b940b
+	decodeFuncLiteServerGetVersionRequest = decodeRequest(0x232b940b, LiteServerGetVersionRequestName, LiteServerGetVersionRequest{})
+	// 0x0079dd5c
+	decodeFuncLiteServerListBlockTransactionsExtRequest = decodeRequest(0x0079dd5c, LiteServerListBlockTransactionsExtRequestName, LiteServerListBlockTransactionsExtRequest{})
+	// 0xadfcc7da
+	decodeFuncLiteServerListBlockTransactionsRequest = decodeRequest(0xadfcc7da, LiteServerListBlockTransactionsRequestName, LiteServerListBlockTransactionsRequest{})
+	// 0xfac8f71e
+	decodeFuncLiteServerLookupBlockRequest = decodeRequest(0xfac8f71e, LiteServerLookupBlockRequestName, LiteServerLookupBlockRequest{})
+	// 0x9c045ff8
+	decodeFuncLiteServerLookupBlockWithProofRequest = decodeRequest(0x9c045ff8, LiteServerLookupBlockWithProofRequestName, LiteServerLookupBlockWithProofRequest{})
+	// 0x5cc65dd2
+	decodeFuncLiteServerRunSmcMethodRequest = decodeRequest(0x5cc65dd2, LiteServerRunSmcMethodRequestName, LiteServerRunSmcMethodRequest{})
+	// 0x690ad482
+	decodeFuncLiteServerSendMessageRequest = decodeRequest(0x690ad482, LiteServerSendMessageRequestName, LiteServerSendMessageRequest{})
+)
+
+var taggedRequestDecodeFunctions = map[uint32]reqDecoderFunc{
+	0xf0f83e86: decodeFuncLiteProxyGetRequestRateLimitRequest,
+	0x5a698507: decodeFuncLiteServerGetAccountStatePrunnedRequest,
+	0x6b890e25: decodeFuncLiteServerGetAccountStateRequest,
+	0x74d3fd6b: decodeFuncLiteServerGetAllShardsInfoRequest,
+	0x21ec069e: decodeFuncLiteServerGetBlockHeaderRequest,
+	0x8aea9c44: decodeFuncLiteServerGetBlockProofRequest,
+	0x6377cf0d: decodeFuncLiteServerGetBlockRequest,
+	0x911b26b7: decodeFuncLiteServerGetConfigAllRequest,
+	0x2a111c19: decodeFuncLiteServerGetConfigParamsRequest,
+	0x01e66bf3: decodeFuncLiteServerGetDispatchQueueInfoRequest,
+	0xd122b662: decodeFuncLiteServerGetLibrariesRequest,
+	0x8c026c31: decodeFuncLiteServerGetLibrariesWithProofRequest,
+	0x70a671df: decodeFuncLiteServerGetMasterchainInfoExtRequest,
+	0x89b5e62e: decodeFuncLiteServerGetMasterchainInfoRequest,
+	0xd40f24ea: decodeFuncLiteServerGetOneTransactionRequest,
+	0x7bc19c36: decodeFuncLiteServerGetOutMsgQueueSizesRequest,
+	0x4ca60350: decodeFuncLiteServerGetShardBlockProofRequest,
+	0x46a2f425: decodeFuncLiteServerGetShardInfoRequest,
+	0xba6e2eb6: decodeFuncLiteServerGetStateRequest,
+	0x16ad5a34: decodeFuncLiteServerGetTimeRequest,
+	0x1c40e7a1: decodeFuncLiteServerGetTransactionsRequest,
+	0x091a58bc: decodeFuncLiteServerGetValidatorStatsRequest,
+	0x232b940b: decodeFuncLiteServerGetVersionRequest,
+	0x0079dd5c: decodeFuncLiteServerListBlockTransactionsExtRequest,
+	0xadfcc7da: decodeFuncLiteServerListBlockTransactionsRequest,
+	0xfac8f71e: decodeFuncLiteServerLookupBlockRequest,
+	0x9c045ff8: decodeFuncLiteServerLookupBlockWithProofRequest,
+	0x5cc65dd2: decodeFuncLiteServerRunSmcMethodRequest,
+	0x690ad482: decodeFuncLiteServerSendMessageRequest,
+}
+
+const (
+	LiteProxyGetRequestRateLimitRequestName       RequestName = "liteProxy.getRequestRateLimit"
+	LiteServerGetAccountStatePrunnedRequestName   RequestName = "liteServer.getAccountStatePrunned"
+	LiteServerGetAccountStateRequestName          RequestName = "liteServer.getAccountState"
+	LiteServerGetAllShardsInfoRequestName         RequestName = "liteServer.getAllShardsInfo"
+	LiteServerGetBlockHeaderRequestName           RequestName = "liteServer.getBlockHeader"
+	LiteServerGetBlockProofRequestName            RequestName = "liteServer.getBlockProof"
+	LiteServerGetBlockRequestName                 RequestName = "liteServer.getBlock"
+	LiteServerGetConfigAllRequestName             RequestName = "liteServer.getConfigAll"
+	LiteServerGetConfigParamsRequestName          RequestName = "liteServer.getConfigParams"
+	LiteServerGetDispatchQueueInfoRequestName     RequestName = "liteServer.getDispatchQueueInfo"
+	LiteServerGetLibrariesRequestName             RequestName = "liteServer.getLibraries"
+	LiteServerGetLibrariesWithProofRequestName    RequestName = "liteServer.getLibrariesWithProof"
+	LiteServerGetMasterchainInfoExtRequestName    RequestName = "liteServer.getMasterchainInfoExt"
+	LiteServerGetMasterchainInfoRequestName       RequestName = "liteServer.getMasterchainInfo"
+	LiteServerGetOneTransactionRequestName        RequestName = "liteServer.getOneTransaction"
+	LiteServerGetOutMsgQueueSizesRequestName      RequestName = "liteServer.getOutMsgQueueSizes"
+	LiteServerGetShardBlockProofRequestName       RequestName = "liteServer.getShardBlockProof"
+	LiteServerGetShardInfoRequestName             RequestName = "liteServer.getShardInfo"
+	LiteServerGetStateRequestName                 RequestName = "liteServer.getState"
+	LiteServerGetTimeRequestName                  RequestName = "liteServer.getTime"
+	LiteServerGetTransactionsRequestName          RequestName = "liteServer.getTransactions"
+	LiteServerGetValidatorStatsRequestName        RequestName = "liteServer.getValidatorStats"
+	LiteServerGetVersionRequestName               RequestName = "liteServer.getVersion"
+	LiteServerListBlockTransactionsExtRequestName RequestName = "liteServer.listBlockTransactionsExt"
+	LiteServerListBlockTransactionsRequestName    RequestName = "liteServer.listBlockTransactions"
+	LiteServerLookupBlockRequestName              RequestName = "liteServer.lookupBlock"
+	LiteServerLookupBlockWithProofRequestName     RequestName = "liteServer.lookupBlockWithProof"
+	LiteServerRunSmcMethodRequestName             RequestName = "liteServer.runSmcMethod"
+	LiteServerSendMessageRequestName              RequestName = "liteServer.sendMessage"
+)

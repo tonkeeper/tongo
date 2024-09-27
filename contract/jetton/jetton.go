@@ -36,6 +36,7 @@ type TransferMessage struct {
 	ForwardTonAmount    tlb.Grams
 	ForwardPayload      *boc.Cell
 	CustomPayload       *boc.Cell
+	StateInit           *tlb.StateInit
 }
 
 func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
@@ -72,6 +73,14 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 		Bounce:  true,
 		Mode:    wallet.DefaultMessageMode,
 		Body:    c,
+	}
+	if tm.StateInit != nil {
+		if tm.StateInit.Code.Exists {
+			m.Code = &tm.StateInit.Code.Value.Value
+		}
+		if tm.StateInit.Data.Exists {
+			m.Data = &tm.StateInit.Data.Value.Value
+		}
 	}
 	return m.ToInternal()
 }

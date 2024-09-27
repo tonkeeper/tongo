@@ -1876,6 +1876,27 @@ func TestMessageDecoder(t *testing.T) {
 			},
 			interfaces: []ContractInterface{WalletV5R1},
 		},
+		{
+			name:       "highload V3 internal transfer",
+			boc:        "te6ccgEBBQEAWQABGK5C5aQAAAAAADVe6gECCg7DyG0DAgQCCg7DyG0DAwQAAABoQgA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpECAvrwgAAAAAAAAAAAAAAAAAAA==",
+			wantOpName: HighloadWalletInternalTransferMsgOp,
+			wantValue: HighloadWalletInternalTransferMsgBody{
+				QueryId: 3497706,
+				Actions: W5Actions{
+					W5SendMessageAction{
+						Magic: 0xec3c86d,
+						Mode:  3,
+						Msg:   mustBocToMessageRelaxed("b5ee9c7201010101003600006842003666992d42c61bcb49fd715e5558e1483418d27085361dda27745b0ade50e910202faf080000000000000000000000000000"),
+					},
+					W5SendMessageAction{
+						Magic: 0xec3c86d,
+						Mode:  3,
+						Msg:   mustBocToMessageRelaxed("b5ee9c7201010101003600006842003666992d42c61bcb49fd715e5558e1483418d27085361dda27745b0ade50e910202faf080000000000000000000000000000"),
+					},
+				},
+			},
+			interfaces: []ContractInterface{WalletHighloadV3R1},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

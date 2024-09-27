@@ -136,6 +136,7 @@
         <get_method name="get_timeout"/>
         <msg_in>
             <ext_in name="highload_wallet_signed_v3"/>
+            <internal name="highload_wallet_internal_transfer"/>
         </msg_in>
     </interface>
 
@@ -215,6 +216,9 @@
     </internal>
     <internal name="wallet_extension_action_v5r1" >
         extension_action#6578746e query_id:uint64 actions:(Maybe ^W5Actions) extended:(Maybe W5ExtendedActions) = InternalMsgBody;
+    </internal>
+    <internal name="highload_wallet_internal_transfer" >
+        internal_transfer#ae42e5a4 query_id:uint64 actions:^W5Actions = InternalMsgBody;
     </internal>
     <ext_in name="highload_wallet_signed_v2">
         signed#_ signature:bits512 subwallet_id:uint32 query_id:uint64 payload:(HashmapE 16 SendMessageAction) = ExternalMsgBody;

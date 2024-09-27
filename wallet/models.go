@@ -30,6 +30,7 @@ const (
 	HighLoadV2
 	HighLoadV2R1
 	HighLoadV2R2
+	HighLoadV3R1
 	// TODO: maybe add lockup wallet
 )
 
@@ -64,6 +65,8 @@ var codes = map[Version]string{
 	HighLoadV2:   "te6ccgEBCQEA5QABFP8A9KQT9LzyyAsBAgEgAgcCAUgDBAAE0DACASAFBgAXvZznaiaGmvmOuF/8AEG+X5dqJoaY+Y6Z/p/5j6AmipEEAgegc30JjJLb/JXdHxQB6vKDCNcYINMf0z/4I6ofUyC58mPtRNDTH9M/0//0BNFTYIBA9A5voTHyYFFzuvKiB/kBVBCH+RDyowL0BNH4AH+OFiGAEPR4b6UgmALTB9QwAfsAkTLiAbPmW4MlochANIBA9EOK5jEByMsfE8s/y//0AMntVAgANCCAQPSWb6VsEiCUMFMDud4gkzM2AZJsIeKz",
 	HighLoadV2R1: "te6ccgEBBwEA1gABFP8A9KQT9KDyyAsBAgEgAgMCAUgEBQHu8oMI1xgg0x/TP/gjqh9TILnyY+1E0NMf0z/T//QE0VNggED0Dm+hMfJgUXO68qIH+QFUEIf5EPKjAvQE0fgAf44YIYAQ9HhvoW+hIJgC0wfUMAH7AJEy4gGz5luDJaHIQDSAQPRDiuYxyBLLHxPLP8v/9ADJ7VQGAATQMABBoZfl2omhpj5jpn+n/mPoCaKkQQCB6BzfQmMktv8ld0fFADgggED0lm+hb6EyURCUMFMDud4gkzM2AZIyMOKz",
 	HighLoadV2R2: "te6ccgEBCQEA6QABFP8A9KQT9LzyyAsBAgEgAgMCAUgEBQHu8oMI1xgg0x/TP/gjqh9TILnyY+1E0NMf0z/T//QE0VNggED0Dm+hMfJgUXO68qIH+QFUEIf5EPKjAvQE0fgAf44YIYAQ9HhvoW+hIJgC0wfUMAH7AJEy4gGz5luDJaHIQDSAQPRDiuYxyBLLHxPLP8v/9ADJ7VQIAATQMAIBIAYHABe9nOdqJoaa+Y64X/wAQb5fl2omhpj5jpn+n/mPoCaKkQQCB6BzfQmMktv8ld0fFAA4IIBA9JZvoW+hMlEQlDBTA7neIJMzNgGSMjDisw==",
+	// HighLoadV3 code hex from https://github.com/ton-blockchain/highload-wallet-contract-v3/commit/3d2843747b14bc2a8915606df736d47490cd3d49
+	HighLoadV3R1: "te6cckECEAEAAigAART/APSkE/S88sgLAQIBIAINAgFIAwQAeNAg10vAAQHAYLCRW+EB0NMDAXGwkVvg+kAw+CjHBbORMODTHwGCEK5C5aS6nYBA1yHXTPgqAe1V+wTgMAIBIAUKAgJzBgcAEa3OdqJoa4X/wAIBIAgJABqrtu1E0IEBItch1ws/ABiqO+1E0IMH1yHXCx8CASALDAAbuabu1E0IEBYtch1wsVgA5bi/Ltou37IasJAoQJsO1E0IEBINch9AT0BNM/0xXRBY4b+CMloVIQuZ8ybfgjBaoAFaESuZIwbd6SMDPikjAz4lIwgA30D2+hntAh1yHXCgCVXwN/2zHgkTDiWYAN9A9voZzQAdch1woAk3/bMeCRW+JwgB9vLUgwjXGNEh+QDtRNDT/9Mf9AT0BNM/0xXR+CMhoVIguY4SM234IySqAKESuZJtMt5Y+CMB3lQWdfkQ8qEG0NMf1NMH0wzTCdM/0xXRUWi68qJRWrrypvgjKqFSULzyowT4I7vyo1MEgA30D2+hmdAk1yHXCgDyZJEw4g4B/lMJgA30D2+hjhPQUATXGNIAAfJkyFjPFs+DAc8WjhAwyCTPQM+DhAlQBaGlFM9A4vgAyUA5gA30FwTIy/8Tyx/0ABL0ABLLPxLLFcntVPgPIdDTAAHyZdMCAXGwkl8D4PpAAdcLAcAA8qX6QDH6ADH0AfoAMfoAMYBg1yHTAAEPACDyZdIAAZPUMdGRMOJysfsAtYW/Aw==",
 }
 
 // codeHashToVersion maps code's hash to a wallet version.
@@ -180,6 +183,8 @@ func (v Version) ToString() string {
 		return "highload_v2R1"
 	case HighLoadV2R2:
 		return "highload_v2R2"
+	case HighLoadV3R1:
+		return "highload_v3R1"
 	default:
 		panic("to string conversion for this ver not supported")
 	}
@@ -315,4 +320,37 @@ func (t *TextComment) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error { //
 	}
 	*t = TextComment(text)
 	return nil
+}
+
+type LogMessage struct {
+	Comment string
+	// TODO: add support of external address
+}
+
+func (m LogMessage) ToInternal() (message tlb.Message, mode uint8, err error) {
+	info := tlb.CommonMsgInfo{
+		SumType: "ExtOutMsgInfo",
+	}
+	info.ExtOutMsgInfo = &struct {
+		Src       tlb.MsgAddress
+		Dest      tlb.MsgAddress
+		CreatedLt uint64
+		CreatedAt uint32
+	}{
+		Src:  (*ton.AccountID)(nil).ToMsgAddress(),
+		Dest: (*ton.AccountID)(nil).ToMsgAddress(),
+	}
+	extMsg := tlb.Message{
+		Info: info,
+	}
+	if m.Comment != "" {
+		body := boc.NewCell()
+		err := tlb.Marshal(body, TextComment(m.Comment))
+		if err != nil {
+			return tlb.Message{}, 0, err
+		}
+		extMsg.Body.IsRight = true //todo: check length and
+		extMsg.Body.Value = tlb.Any(*body)
+	}
+	return extMsg, DefaultMessageMode, nil
 }

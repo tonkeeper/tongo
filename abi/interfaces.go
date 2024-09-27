@@ -1299,6 +1299,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
+	case WalletHighloadV3R1:
+		return []msgDecoderFunc{
+			decodeFuncHighloadWalletInternalTransferMsgBody,
+		}
 	case WalletV5R1:
 		return []msgDecoderFunc{
 			decodeFuncWalletSignedInternalV5R1MsgBody,

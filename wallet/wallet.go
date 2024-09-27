@@ -67,7 +67,7 @@ func WithMessageLifetime(lifetime time.Duration) Option {
 
 func applyOptions(opts ...Option) Options {
 	options := Options{
-		MsgLifetime: DefaultMessageLifetime,
+		MsgLifetime: DefaultMessageLifetime, // TODO: default value maybe too small for HighloadV3
 	}
 	for _, o := range opts {
 		o(&options)
@@ -114,6 +114,8 @@ func newWallet(key ed25519.PublicKey, version Version, options Options) (wallet,
 		return NewWalletV5R1(key, options), nil
 	case HighLoadV2R2:
 		return newWalletHighloadV2(version, key, options), nil
+	case HighLoadV3R1:
+		return newWalletHighloadV3(version, key, options), nil
 	default:
 		return nil, fmt.Errorf("unsupported wallet version: %v", version)
 	}

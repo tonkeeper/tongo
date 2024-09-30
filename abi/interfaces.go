@@ -40,8 +40,12 @@ const (
 	NftSaleV2
 	PaymentChannel
 	Sbt
+	StonfiLpAccountV2
 	StonfiPool
+	StonfiPoolV2
 	StonfiRouter
+	StonfiRouterV2
+	StonfiVaultV2
 	StorageContract
 	StorageProvider
 	StormExecutor
@@ -144,10 +148,18 @@ func (c ContractInterface) String() string {
 		return "payment_channel"
 	case Sbt:
 		return "sbt"
+	case StonfiLpAccountV2:
+		return "stonfi_lp_account_v2"
 	case StonfiPool:
 		return "stonfi_pool"
+	case StonfiPoolV2:
+		return "stonfi_pool_v2"
 	case StonfiRouter:
 		return "stonfi_router"
+	case StonfiRouterV2:
+		return "stonfi_router_v2"
+	case StonfiVaultV2:
+		return "stonfi_vault_v2"
 	case StorageContract:
 		return "storage_contract"
 	case StorageProvider:
@@ -287,10 +299,18 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return PaymentChannel
 	case "sbt":
 		return Sbt
+	case "stonfi_lp_account_v2":
+		return StonfiLpAccountV2
 	case "stonfi_pool":
 		return StonfiPool
+	case "stonfi_pool_v2":
+		return StonfiPoolV2
 	case "stonfi_router":
 		return StonfiRouter
+	case "stonfi_router_v2":
+		return StonfiRouterV2
+	case "stonfi_vault_v2":
+		return StonfiVaultV2
 	case "storage_contract":
 		return StorageContract
 	case "storage_provider":
@@ -466,6 +486,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetLockupData,
 	},
 	{
+		Name:     "get_lp_account_data",
+		InvokeFn: GetLpAccountData,
+	},
+	{
 		Name:     "get_lp_data",
 		InvokeFn: GetLpData,
 	},
@@ -572,6 +596,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_router_data",
 		InvokeFn: GetRouterData,
+	},
+	{
+		Name:     "get_router_version",
+		InvokeFn: GetRouterVersion,
 	},
 	{
 		Name:     "get_sale_data",
@@ -844,9 +872,34 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: StonfiPoolV2,
+		Results: []string{
+			"GetPoolData_StonfiV2Result",
+		},
+	},
+	{
 		Name: StonfiRouter,
 		Results: []string{
 			"GetRouterData_StonfiResult",
+		},
+	},
+	{
+		Name: StonfiRouterV2,
+		Results: []string{
+			"GetRouterData_StonfiV2Result",
+			"GetRouterVersion_StonfiV2Result",
+		},
+	},
+	{
+		Name: StonfiLpAccountV2,
+		Results: []string{
+			"GetLpAccountData_StonfiResult",
+		},
+	},
+	{
+		Name: StonfiVaultV2,
+		Results: []string{
+			"GetVaultData_StonfiV2Result",
 		},
 	},
 	{
@@ -1258,6 +1311,32 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncNftTransferMsgBody,
 			decodeFuncGetStaticDataMsgBody,
+		}
+	case StonfiLpAccountV2:
+		return []msgDecoderFunc{
+			decodeFuncStonfiAddLiquidityV2MsgBody,
+			decodeFuncPtonResetGasMsgBody,
+		}
+	case StonfiPoolV2:
+		return []msgDecoderFunc{
+			decodeFuncStonfiBurnNotificationExtV2MsgBody,
+			decodeFuncStonfiSwapV2MsgBody,
+			decodeFuncStonfiProvideLpV2MsgBody,
+			decodeFuncPtonResetGasMsgBody,
+			decodeFuncStonfiCbAddLiquidityV2MsgBody,
+		}
+	case StonfiRouterV2:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncPtonResetGasMsgBody,
+			decodeFuncStonfiPayToV2MsgBody,
+			decodeFuncStonfiPayVaultV2MsgBody,
+			decodeFuncStonfiVaultPayToV2MsgBody,
+		}
+	case StonfiVaultV2:
+		return []msgDecoderFunc{
+			decodeFuncStonfiWithdrawFeeV2MsgBody,
+			decodeFuncStonfiDepositRefFeeV2MsgBody,
 		}
 	case StormExecutor:
 		return []msgDecoderFunc{

@@ -9,14 +9,20 @@ import (
 var (
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
+	// 0x01f3835d
+	decodeFuncPtonTonTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x01f3835d, Len: 32}, PtonTonTransferMsgOp, PtonTonTransferMsgBody{})
 	// 0x0226df66
 	decodeFuncStormVaultRequestWithdrawPositionMsgBody = decodeMsg(tlb.Tag{Val: 0x0226df66, Len: 32}, StormVaultRequestWithdrawPositionMsgOp, StormVaultRequestWithdrawPositionMsgBody{})
+	// 0x0490f09b
+	decodeFuncStonfiDepositRefFeeV2MsgBody = decodeMsg(tlb.Tag{Val: 0x0490f09b, Len: 32}, StonfiDepositRefFeeV2MsgOp, StonfiDepositRefFeeV2MsgBody{})
 	// 0x04ded148
 	decodeFuncProveOwnershipMsgBody = decodeMsg(tlb.Tag{Val: 0x04ded148, Len: 32}, ProveOwnershipMsgOp, ProveOwnershipMsgBody{})
 	// 0x05138d91
 	decodeFuncNftOwnershipAssignedMsgBody = decodeMsg(tlb.Tag{Val: 0x05138d91, Len: 32}, NftOwnershipAssignedMsgOp, NftOwnershipAssignedMsgBody{})
 	// 0x0524c7ae
 	decodeFuncOwnershipProofMsgBody = decodeMsg(tlb.Tag{Val: 0x0524c7ae, Len: 32}, OwnershipProofMsgOp, OwnershipProofMsgBody{})
+	// 0x06ecd527
+	decodeFuncStonfiCbAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x06ecd527, Len: 32}, StonfiCbAddLiquidityV2MsgOp, StonfiCbAddLiquidityV2MsgBody{})
 	// 0x088eaa32
 	decodeFuncChallengeQuarantinedChannelStateMsgBody = decodeMsg(tlb.Tag{Val: 0x088eaa32, Len: 32}, ChallengeQuarantinedChannelStateMsgOp, ChallengeQuarantinedChannelStateMsgBody{})
 	// 0x0a77535c
@@ -51,6 +57,8 @@ var (
 	decodeFuncSbtDestroyMsgBody = decodeMsg(tlb.Tag{Val: 0x1f04537a, Len: 32}, SbtDestroyMsgOp, SbtDestroyMsgBody{})
 	// 0x1f151acf
 	decodeFuncStartUncooperativeChannelCloseMsgBody = decodeMsg(tlb.Tag{Val: 0x1f151acf, Len: 32}, StartUncooperativeChannelCloseMsgOp, StartUncooperativeChannelCloseMsgBody{})
+	// 0x2100c922
+	decodeFuncStonfiVaultPayToV2MsgBody = decodeMsg(tlb.Tag{Val: 0x2100c922, Len: 32}, StonfiVaultPayToV2MsgOp, StonfiVaultPayToV2MsgBody{})
 	// 0x2167da4b
 	decodeFuncEncryptedTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x2167da4b, Len: 32}, EncryptedTextCommentMsgOp, EncryptedTextCommentMsgBody{})
 	// 0x21cfe02b
@@ -69,12 +77,16 @@ var (
 	decodeFuncStonfiSwapMsgBody = decodeMsg(tlb.Tag{Val: 0x25938561, Len: 32}, StonfiSwapMsgOp, StonfiSwapMsgBody{})
 	// 0x270695fb
 	decodeFuncTonstakeControllerPoolSendMessageMsgBody = decodeMsg(tlb.Tag{Val: 0x270695fb, Len: 32}, TonstakeControllerPoolSendMessageMsgOp, TonstakeControllerPoolSendMessageMsgBody{})
+	// 0x297437cf
+	decodeFuncStonfiBurnNotificationExtV2MsgBody = decodeMsg(tlb.Tag{Val: 0x297437cf, Len: 32}, StonfiBurnNotificationExtV2MsgOp, StonfiBurnNotificationExtV2MsgBody{})
 	// 0x299a3e15
 	decodeFuncTeleitemDeployMsgBody = decodeMsg(tlb.Tag{Val: 0x299a3e15, Len: 32}, TeleitemDeployMsgOp, TeleitemDeployMsgBody{})
 	// 0x29c102d1
 	decodeFuncStormVammInitMsgBody = decodeMsg(tlb.Tag{Val: 0x29c102d1, Len: 32}, StormVammInitMsgOp, StormVammInitMsgBody{})
 	// 0x29c102d1
 	decodeFuncStormVaultInitMsgBody = decodeMsg(tlb.Tag{Val: 0x29c102d1, Len: 32}, StormVaultInitMsgOp, StormVaultInitMsgBody{})
+	// 0x29d22935
+	decodeFuncPtonResetGasMsgBody = decodeMsg(tlb.Tag{Val: 0x29d22935, Len: 32}, PtonResetGasMsgOp, PtonResetGasMsgBody{})
 	// 0x2aaa96a0
 	decodeFuncTonstakePoolSetGovernanceFeeMsgBody = decodeMsg(tlb.Tag{Val: 0x2aaa96a0, Len: 32}, TonstakePoolSetGovernanceFeeMsgOp, TonstakePoolSetGovernanceFeeMsgBody{})
 	// 0x2cde6351
@@ -87,10 +99,14 @@ var (
 	decodeFuncTonstakePoolWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x319b0cdc, Len: 32}, TonstakePoolWithdrawMsgOp, TonstakePoolWithdrawMsgBody{})
 	// 0x3475fdd2
 	decodeFuncStormVaultTradeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x3475fdd2, Len: 32}, StormVaultTradeNotificationMsgOp, StormVaultTradeNotificationMsgBody{})
+	// 0x354bcdf4
+	decodeFuncStonfiWithdrawFeeV2MsgBody = decodeMsg(tlb.Tag{Val: 0x354bcdf4, Len: 32}, StonfiWithdrawFeeV2MsgOp, StonfiWithdrawFeeV2MsgBody{})
 	// 0x370fec51
 	decodeFuncAuctionFillUpMsgBody = decodeMsg(tlb.Tag{Val: 0x370fec51, Len: 32}, AuctionFillUpMsgOp, AuctionFillUpMsgBody{})
 	// 0x371638ae
 	decodeFuncTeleitemCancelAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x371638ae, Len: 32}, TeleitemCancelAuctionMsgOp, TeleitemCancelAuctionMsgBody{})
+	// 0x37c096df
+	decodeFuncStonfiProvideLpV2MsgBody = decodeMsg(tlb.Tag{Val: 0x37c096df, Len: 32}, StonfiProvideLpV2MsgOp, StonfiProvideLpV2MsgBody{})
 	// 0x3a943ce6
 	decodeFuncStormOrderCreatedMsgBody = decodeMsg(tlb.Tag{Val: 0x3a943ce6, Len: 32}, StormOrderCreatedMsgOp, StormOrderCreatedMsgBody{})
 	// 0x419d5d4d
@@ -125,6 +141,10 @@ var (
 	decodeFuncDnsBalanceReleaseMsgBody = decodeMsg(tlb.Tag{Val: 0x4ed14b65, Len: 32}, DnsBalanceReleaseMsgOp, DnsBalanceReleaseMsgBody{})
 	// 0x4f38cae8
 	decodeFuncStormMintExecutorMsgBody = decodeMsg(tlb.Tag{Val: 0x4f38cae8, Len: 32}, StormMintExecutorMsgOp, StormMintExecutorMsgBody{})
+	// 0x4f5f4313
+	decodeFuncPtonDeployWalletMsgBody = decodeMsg(tlb.Tag{Val: 0x4f5f4313, Len: 32}, PtonDeployWalletMsgOp, PtonDeployWalletMsgBody{})
+	// 0x50c6a654
+	decodeFuncStonfiAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x50c6a654, Len: 32}, StonfiAddLiquidityV2MsgOp, StonfiAddLiquidityV2MsgBody{})
 	// 0x53f34cd6
 	decodeFuncUpdatePubkeyMsgBody = decodeMsg(tlb.Tag{Val: 0x53f34cd6, Len: 32}, UpdatePubkeyMsgOp, UpdatePubkeyMsgBody{})
 	// 0x54cbf19b
@@ -155,14 +175,22 @@ var (
 	decodeFuncDedustSwapExternalMsgBody = decodeMsg(tlb.Tag{Val: 0x61ee542d, Len: 32}, DedustSwapExternalMsgOp, DedustSwapExternalMsgBody{})
 	// 0x6335b11a
 	decodeFuncTonstakeControllerSendRequestLoanMsgBody = decodeMsg(tlb.Tag{Val: 0x6335b11a, Len: 32}, TonstakeControllerSendRequestLoanMsgOp, TonstakeControllerSendRequestLoanMsgBody{})
+	// 0x63381632
+	decodeFuncStonfiPayVaultV2MsgBody = decodeMsg(tlb.Tag{Val: 0x63381632, Len: 32}, StonfiPayVaultV2MsgOp, StonfiPayVaultV2MsgBody{})
 	// 0x642b7d07
 	decodeFuncJettonMintMsgBody = decodeMsg(tlb.Tag{Val: 0x642b7d07, Len: 32}, JettonMintMsgOp, JettonMintMsgBody{})
 	// 0x64737472
 	decodeFuncWalletPluginDestructMsgBody = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, WalletPluginDestructMsgOp, WalletPluginDestructMsgBody{})
 	// 0x6501f354
 	decodeFuncJettonChangeAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x6501f354, Len: 32}, JettonChangeAdminMsgOp, JettonChangeAdminMsgBody{})
+	// 0x6540cf85
+	decodeFuncPtonInternalDeployMsgBody = decodeMsg(tlb.Tag{Val: 0x6540cf85, Len: 32}, PtonInternalDeployMsgOp, PtonInternalDeployMsgBody{})
 	// 0x6578746e
 	decodeFuncWalletExtensionActionV5R1MsgBody = decodeMsg(tlb.Tag{Val: 0x6578746e, Len: 32}, WalletExtensionActionV5R1MsgOp, WalletExtensionActionV5R1MsgBody{})
+	// 0x657b54f5
+	decodeFuncStonfiPayToV2MsgBody = decodeMsg(tlb.Tag{Val: 0x657b54f5, Len: 32}, StonfiPayToV2MsgOp, StonfiPayToV2MsgBody{})
+	// 0x6664de2a
+	decodeFuncStonfiSwapV2MsgBody = decodeMsg(tlb.Tag{Val: 0x6664de2a, Len: 32}, StonfiSwapV2MsgOp, StonfiSwapV2MsgBody{})
 	// 0x66f6f069
 	decodeFuncSettleChannelConditionalsMsgBody = decodeMsg(tlb.Tag{Val: 0x66f6f069, Len: 32}, SettleChannelConditionalsMsgOp, SettleChannelConditionalsMsgBody{})
 	// 0x67134629
@@ -251,6 +279,8 @@ var (
 	decodeFuncStorageRewardWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0xa91baf56, Len: 32}, StorageRewardWithdrawalMsgOp, StorageRewardWithdrawalMsgBody{})
 	// 0xad4eb6f5
 	decodeFuncDedustPayoutFromPoolMsgBody = decodeMsg(tlb.Tag{Val: 0xad4eb6f5, Len: 32}, DedustPayoutFromPoolMsgOp, DedustPayoutFromPoolMsgBody{})
+	// 0xae25d79e
+	decodeFuncPtonTonRefundMsgBody = decodeMsg(tlb.Tag{Val: 0xae25d79e, Len: 32}, PtonTonRefundMsgOp, PtonTonRefundMsgBody{})
 	// 0xafaf283e
 	decodeFuncMultisigApproveRejectedMsgBody = decodeMsg(tlb.Tag{Val: 0xafaf283e, Len: 32}, MultisigApproveRejectedMsgOp, MultisigApproveRejectedMsgBody{})
 	// 0xb1ebae06
@@ -344,8 +374,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x00000000
 	TextCommentMsgOpCode: decodeFuncTextCommentMsgBody,
 
+	// 0x01f3835d
+	PtonTonTransferMsgOpCode: decodeFuncPtonTonTransferMsgBody,
+
 	// 0x0226df66
 	StormVaultRequestWithdrawPositionMsgOpCode: decodeFuncStormVaultRequestWithdrawPositionMsgBody,
+
+	// 0x0490f09b
+	StonfiDepositRefFeeV2MsgOpCode: decodeFuncStonfiDepositRefFeeV2MsgBody,
 
 	// 0x04ded148
 	ProveOwnershipMsgOpCode: decodeFuncProveOwnershipMsgBody,
@@ -355,6 +391,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x0524c7ae
 	OwnershipProofMsgOpCode: decodeFuncOwnershipProofMsgBody,
+
+	// 0x06ecd527
+	StonfiCbAddLiquidityV2MsgOpCode: decodeFuncStonfiCbAddLiquidityV2MsgBody,
 
 	// 0x088eaa32
 	ChallengeQuarantinedChannelStateMsgOpCode: decodeFuncChallengeQuarantinedChannelStateMsgBody,
@@ -407,6 +446,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x1f151acf
 	StartUncooperativeChannelCloseMsgOpCode: decodeFuncStartUncooperativeChannelCloseMsgBody,
 
+	// 0x2100c922
+	StonfiVaultPayToV2MsgOpCode: decodeFuncStonfiVaultPayToV2MsgBody,
+
 	// 0x2167da4b
 	EncryptedTextCommentMsgOpCode: decodeFuncEncryptedTextCommentMsgBody,
 
@@ -434,6 +476,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x270695fb
 	TonstakeControllerPoolSendMessageMsgOpCode: decodeFuncTonstakeControllerPoolSendMessageMsgBody,
 
+	// 0x297437cf
+	StonfiBurnNotificationExtV2MsgOpCode: decodeFuncStonfiBurnNotificationExtV2MsgBody,
+
 	// 0x299a3e15
 	TeleitemDeployMsgOpCode: decodeFuncTeleitemDeployMsgBody,
 
@@ -443,6 +488,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 		decodeFuncStormVaultInitMsgBody},
 		"0x29c102d1",
 	),
+
+	// 0x29d22935
+	PtonResetGasMsgOpCode: decodeFuncPtonResetGasMsgBody,
 
 	// 0x2aaa96a0
 	TonstakePoolSetGovernanceFeeMsgOpCode: decodeFuncTonstakePoolSetGovernanceFeeMsgBody,
@@ -462,11 +510,17 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x3475fdd2
 	StormVaultTradeNotificationMsgOpCode: decodeFuncStormVaultTradeNotificationMsgBody,
 
+	// 0x354bcdf4
+	StonfiWithdrawFeeV2MsgOpCode: decodeFuncStonfiWithdrawFeeV2MsgBody,
+
 	// 0x370fec51
 	AuctionFillUpMsgOpCode: decodeFuncAuctionFillUpMsgBody,
 
 	// 0x371638ae
 	TeleitemCancelAuctionMsgOpCode: decodeFuncTeleitemCancelAuctionMsgBody,
+
+	// 0x37c096df
+	StonfiProvideLpV2MsgOpCode: decodeFuncStonfiProvideLpV2MsgBody,
 
 	// 0x3a943ce6
 	StormOrderCreatedMsgOpCode: decodeFuncStormOrderCreatedMsgBody,
@@ -520,6 +574,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x4f38cae8
 	StormMintExecutorMsgOpCode: decodeFuncStormMintExecutorMsgBody,
 
+	// 0x4f5f4313
+	PtonDeployWalletMsgOpCode: decodeFuncPtonDeployWalletMsgBody,
+
+	// 0x50c6a654
+	StonfiAddLiquidityV2MsgOpCode: decodeFuncStonfiAddLiquidityV2MsgBody,
+
 	// 0x53f34cd6
 	UpdatePubkeyMsgOpCode: decodeFuncUpdatePubkeyMsgBody,
 
@@ -565,6 +625,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x6335b11a
 	TonstakeControllerSendRequestLoanMsgOpCode: decodeFuncTonstakeControllerSendRequestLoanMsgBody,
 
+	// 0x63381632
+	StonfiPayVaultV2MsgOpCode: decodeFuncStonfiPayVaultV2MsgBody,
+
 	// 0x642b7d07
 	JettonMintMsgOpCode: decodeFuncJettonMintMsgBody,
 
@@ -574,8 +637,17 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x6501f354
 	JettonChangeAdminMsgOpCode: decodeFuncJettonChangeAdminMsgBody,
 
+	// 0x6540cf85
+	PtonInternalDeployMsgOpCode: decodeFuncPtonInternalDeployMsgBody,
+
 	// 0x6578746e
 	WalletExtensionActionV5R1MsgOpCode: decodeFuncWalletExtensionActionV5R1MsgBody,
+
+	// 0x657b54f5
+	StonfiPayToV2MsgOpCode: decodeFuncStonfiPayToV2MsgBody,
+
+	// 0x6664de2a
+	StonfiSwapV2MsgOpCode: decodeFuncStonfiSwapV2MsgBody,
 
 	// 0x66f6f069
 	SettleChannelConditionalsMsgOpCode: decodeFuncSettleChannelConditionalsMsgBody,
@@ -709,6 +781,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xad4eb6f5
 	DedustPayoutFromPoolMsgOpCode: decodeFuncDedustPayoutFromPoolMsgBody,
 
+	// 0xae25d79e
+	PtonTonRefundMsgOpCode: decodeFuncPtonTonRefundMsgBody,
+
 	// 0xafaf283e
 	MultisigApproveRejectedMsgOpCode: decodeFuncMultisigApproveRejectedMsgBody,
 
@@ -841,10 +916,13 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 const (
 	TextCommentMsgOp                             MsgOpName = "TextComment"
+	PtonTonTransferMsgOp                         MsgOpName = "PtonTonTransfer"
 	StormVaultRequestWithdrawPositionMsgOp       MsgOpName = "StormVaultRequestWithdrawPosition"
+	StonfiDepositRefFeeV2MsgOp                   MsgOpName = "StonfiDepositRefFeeV2"
 	ProveOwnershipMsgOp                          MsgOpName = "ProveOwnership"
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
 	OwnershipProofMsgOp                          MsgOpName = "OwnershipProof"
+	StonfiCbAddLiquidityV2MsgOp                  MsgOpName = "StonfiCbAddLiquidityV2"
 	ChallengeQuarantinedChannelStateMsgOp        MsgOpName = "ChallengeQuarantinedChannelState"
 	TonstakePoolWithdrawalMsgOp                  MsgOpName = "TonstakePoolWithdrawal"
 	SbtOwnerInfoMsgOp                            MsgOpName = "SbtOwnerInfo"
@@ -862,6 +940,7 @@ const (
 	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
 	SbtDestroyMsgOp                              MsgOpName = "SbtDestroy"
 	StartUncooperativeChannelCloseMsgOp          MsgOpName = "StartUncooperativeChannelClose"
+	StonfiVaultPayToV2MsgOp                      MsgOpName = "StonfiVaultPayToV2"
 	EncryptedTextCommentMsgOp                    MsgOpName = "EncryptedTextComment"
 	DedustCreateVaultMsgOp                       MsgOpName = "DedustCreateVault"
 	JettonCallToMsgOp                            MsgOpName = "JettonCallTo"
@@ -871,17 +950,21 @@ const (
 	FinishUncooperativeChannelCloseMsgOp         MsgOpName = "FinishUncooperativeChannelClose"
 	StonfiSwapMsgOp                              MsgOpName = "StonfiSwap"
 	TonstakeControllerPoolSendMessageMsgOp       MsgOpName = "TonstakeControllerPoolSendMessage"
+	StonfiBurnNotificationExtV2MsgOp             MsgOpName = "StonfiBurnNotificationExtV2"
 	TeleitemDeployMsgOp                          MsgOpName = "TeleitemDeploy"
 	StormVammInitMsgOp                           MsgOpName = "StormVammInit"
 	StormVaultInitMsgOp                          MsgOpName = "StormVaultInit"
+	PtonResetGasMsgOp                            MsgOpName = "PtonResetGas"
 	TonstakePoolSetGovernanceFeeMsgOp            MsgOpName = "TonstakePoolSetGovernanceFee"
 	StormWithdrawExecutorAmountMsgOp             MsgOpName = "StormWithdrawExecutorAmount"
 	GetStaticDataMsgOp                           MsgOpName = "GetStaticData"
 	TonstakeControllerValidatorWithdrawalMsgOp   MsgOpName = "TonstakeControllerValidatorWithdrawal"
 	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
 	StormVaultTradeNotificationMsgOp             MsgOpName = "StormVaultTradeNotification"
+	StonfiWithdrawFeeV2MsgOp                     MsgOpName = "StonfiWithdrawFeeV2"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
+	StonfiProvideLpV2MsgOp                       MsgOpName = "StonfiProvideLpV2"
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
 	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
@@ -899,6 +982,8 @@ const (
 	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
 	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
 	StormMintExecutorMsgOp                       MsgOpName = "StormMintExecutor"
+	PtonDeployWalletMsgOp                        MsgOpName = "PtonDeployWallet"
+	StonfiAddLiquidityV2MsgOp                    MsgOpName = "StonfiAddLiquidityV2"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
 	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
 	TonstakeImanagerOperationFeeMsgOp            MsgOpName = "TonstakeImanagerOperationFee"
@@ -914,10 +999,14 @@ const (
 	StormUpdatePositionMsgOp                     MsgOpName = "StormUpdatePosition"
 	DedustSwapExternalMsgOp                      MsgOpName = "DedustSwapExternal"
 	TonstakeControllerSendRequestLoanMsgOp       MsgOpName = "TonstakeControllerSendRequestLoan"
+	StonfiPayVaultV2MsgOp                        MsgOpName = "StonfiPayVaultV2"
 	JettonMintMsgOp                              MsgOpName = "JettonMint"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
 	JettonChangeAdminMsgOp                       MsgOpName = "JettonChangeAdmin"
+	PtonInternalDeployMsgOp                      MsgOpName = "PtonInternalDeploy"
 	WalletExtensionActionV5R1MsgOp               MsgOpName = "WalletExtensionActionV5R1"
+	StonfiPayToV2MsgOp                           MsgOpName = "StonfiPayToV2"
+	StonfiSwapV2MsgOp                            MsgOpName = "StonfiSwapV2"
 	SettleChannelConditionalsMsgOp               MsgOpName = "SettleChannelConditionals"
 	StormCancelOrderMsgOp                        MsgOpName = "StormCancelOrder"
 	TopUpChannelBalanceMsgOp                     MsgOpName = "TopUpChannelBalance"
@@ -962,6 +1051,7 @@ const (
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
 	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
+	PtonTonRefundMsgOp                           MsgOpName = "PtonTonRefund"
 	MultisigApproveRejectedMsgOp                 MsgOpName = "MultisigApproveRejected"
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
@@ -1009,10 +1099,13 @@ const (
 
 const (
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
+	PtonTonTransferMsgOpCode                         MsgOpCode = 0x01f3835d
 	StormVaultRequestWithdrawPositionMsgOpCode       MsgOpCode = 0x0226df66
+	StonfiDepositRefFeeV2MsgOpCode                   MsgOpCode = 0x0490f09b
 	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
 	OwnershipProofMsgOpCode                          MsgOpCode = 0x0524c7ae
+	StonfiCbAddLiquidityV2MsgOpCode                  MsgOpCode = 0x06ecd527
 	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x088eaa32
 	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0x0a77535c
 	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0x0dd607e3
@@ -1030,6 +1123,7 @@ const (
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
 	SbtDestroyMsgOpCode                              MsgOpCode = 0x1f04537a
 	StartUncooperativeChannelCloseMsgOpCode          MsgOpCode = 0x1f151acf
+	StonfiVaultPayToV2MsgOpCode                      MsgOpCode = 0x2100c922
 	EncryptedTextCommentMsgOpCode                    MsgOpCode = 0x2167da4b
 	DedustCreateVaultMsgOpCode                       MsgOpCode = 0x21cfe02b
 	JettonCallToMsgOpCode                            MsgOpCode = 0x235caf52
@@ -1039,17 +1133,21 @@ const (
 	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
 	StonfiSwapMsgOpCode                              MsgOpCode = 0x25938561
 	TonstakeControllerPoolSendMessageMsgOpCode       MsgOpCode = 0x270695fb
+	StonfiBurnNotificationExtV2MsgOpCode             MsgOpCode = 0x297437cf
 	TeleitemDeployMsgOpCode                          MsgOpCode = 0x299a3e15
 	StormVammInitMsgOpCode                           MsgOpCode = 0x29c102d1
 	StormVaultInitMsgOpCode                          MsgOpCode = 0x29c102d1
+	PtonResetGasMsgOpCode                            MsgOpCode = 0x29d22935
 	TonstakePoolSetGovernanceFeeMsgOpCode            MsgOpCode = 0x2aaa96a0
 	StormWithdrawExecutorAmountMsgOpCode             MsgOpCode = 0x2cde6351
 	GetStaticDataMsgOpCode                           MsgOpCode = 0x2fcb26a2
 	TonstakeControllerValidatorWithdrawalMsgOpCode   MsgOpCode = 0x30026327
 	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
 	StormVaultTradeNotificationMsgOpCode             MsgOpCode = 0x3475fdd2
+	StonfiWithdrawFeeV2MsgOpCode                     MsgOpCode = 0x354bcdf4
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
+	StonfiProvideLpV2MsgOpCode                       MsgOpCode = 0x37c096df
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
 	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
@@ -1067,6 +1165,8 @@ const (
 	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
 	StormMintExecutorMsgOpCode                       MsgOpCode = 0x4f38cae8
+	PtonDeployWalletMsgOpCode                        MsgOpCode = 0x4f5f4313
+	StonfiAddLiquidityV2MsgOpCode                    MsgOpCode = 0x50c6a654
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
 	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
 	TonstakeImanagerOperationFeeMsgOpCode            MsgOpCode = 0x54d37487
@@ -1082,10 +1182,14 @@ const (
 	StormUpdatePositionMsgOpCode                     MsgOpCode = 0x60dfc677
 	DedustSwapExternalMsgOpCode                      MsgOpCode = 0x61ee542d
 	TonstakeControllerSendRequestLoanMsgOpCode       MsgOpCode = 0x6335b11a
+	StonfiPayVaultV2MsgOpCode                        MsgOpCode = 0x63381632
 	JettonMintMsgOpCode                              MsgOpCode = 0x642b7d07
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
 	JettonChangeAdminMsgOpCode                       MsgOpCode = 0x6501f354
+	PtonInternalDeployMsgOpCode                      MsgOpCode = 0x6540cf85
 	WalletExtensionActionV5R1MsgOpCode               MsgOpCode = 0x6578746e
+	StonfiPayToV2MsgOpCode                           MsgOpCode = 0x657b54f5
+	StonfiSwapV2MsgOpCode                            MsgOpCode = 0x6664de2a
 	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
 	StormCancelOrderMsgOpCode                        MsgOpCode = 0x67134629
 	TopUpChannelBalanceMsgOpCode                     MsgOpCode = 0x67c7d281
@@ -1130,6 +1234,7 @@ const (
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
 	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
+	PtonTonRefundMsgOpCode                           MsgOpCode = 0xae25d79e
 	MultisigApproveRejectedMsgOpCode                 MsgOpCode = 0xafaf283e
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
@@ -1179,12 +1284,25 @@ type TextCommentMsgBody struct {
 	Text tlb.Text
 }
 
+type PtonTonTransferMsgBody struct {
+	QueryId        uint64
+	TonAmount      tlb.Grams
+	RefundAddress  tlb.MsgAddress
+	ForwardPayload tlb.EitherRef[tlb.Any]
+}
+
 type StormVaultRequestWithdrawPositionMsgBody struct {
 	TraderAddr     tlb.MsgAddress
 	VammAddr       tlb.MsgAddress
 	Amount         tlb.Grams
 	GasToAddr      tlb.MsgAddress
 	WithdrawReason uint32
+}
+
+type StonfiDepositRefFeeV2MsgBody struct {
+	QueryId         uint64
+	JettonAmount    tlb.VarUInteger16
+	ExcessesAddress tlb.MsgAddress
 }
 
 type ProveOwnershipMsgBody struct {
@@ -1207,6 +1325,21 @@ type OwnershipProofMsgBody struct {
 	Data      tlb.Any `tlb:"^"`
 	RevokedAt uint64
 	Content   *tlb.Any `tlb:"maybe^"`
+}
+
+type StonfiCbAddLiquidityV2MsgBody struct {
+	QueryId          uint64
+	TotAm0           tlb.VarUInteger16
+	TotAm1           tlb.VarUInteger16
+	UserAddress      tlb.MsgAddress
+	MinLpOut         tlb.VarUInteger16
+	FwdAmount        tlb.Grams
+	CustomPayloadCs  *tlb.Any `tlb:"maybe^"`
+	AdditionalFields struct {
+		ToUserAddress tlb.MsgAddress
+		RefundAddress tlb.MsgAddress
+		ExcessAddress tlb.MsgAddress
+	} `tlb:"^"`
 }
 
 type ChallengeQuarantinedChannelStateMsgBody struct {
@@ -1318,6 +1451,13 @@ type StartUncooperativeChannelCloseMsgBody struct {
 	SchB      SignedSemiChannel `tlb:"^"`
 }
 
+type StonfiVaultPayToV2MsgBody struct {
+	QueryId      uint64
+	AmountOut    tlb.VarUInteger16
+	TokenAddress tlb.MsgAddress
+	ToAddress    tlb.MsgAddress
+}
+
 type EncryptedTextCommentMsgBody struct {
 	CipherText tlb.Bytes
 }
@@ -1367,6 +1507,14 @@ type TonstakeControllerPoolSendMessageMsgBody struct {
 	Msg     tlb.Any `tlb:"^"`
 }
 
+type StonfiBurnNotificationExtV2MsgBody struct {
+	QueryId            uint64
+	JettonAmount       tlb.VarUInteger16
+	FromAddress        tlb.MsgAddress
+	ResponseAddress    tlb.MsgAddress
+	MaybeCustomPayload *tlb.Any `tlb:"maybe^"`
+}
+
 type TeleitemDeployMsgBody struct {
 	SenderAddress tlb.MsgAddress
 	Bid           tlb.Grams
@@ -1384,6 +1532,10 @@ type StormVammInitMsgBody struct {
 
 type StormVaultInitMsgBody struct {
 	JettonAddress tlb.MsgAddress
+}
+
+type PtonResetGasMsgBody struct {
+	QueryId uint64
 }
 
 type TonstakePoolSetGovernanceFeeMsgBody struct {
@@ -1426,12 +1578,37 @@ type StormVaultTradeNotificationMsgBody struct {
 	ExecutorParams       *ExecutorData `tlb:"maybe^"`
 }
 
+type StonfiWithdrawFeeV2MsgBody struct {
+	QueryId uint64
+}
+
 type AuctionFillUpMsgBody struct {
 	QueryId uint64
 }
 
 type TeleitemCancelAuctionMsgBody struct {
 	QueryId int64
+}
+
+type StonfiProvideLpV2MsgBody struct {
+	QueryId     uint64
+	FromUser    tlb.MsgAddress
+	LeftAmount  tlb.VarUInteger16
+	RightAmount tlb.VarUInteger16
+	DexPayload  struct {
+		TransferredOp   uint32
+		TokenWallet1    tlb.MsgAddress
+		RefundAddress   tlb.MsgAddress
+		ExcessesAddress tlb.MsgAddress
+		TxDeadline      uint64
+		ProvideLpBody   struct {
+			MinLpOut      tlb.VarUInteger16
+			ToAddress     tlb.MsgAddress
+			BothPositive  tlb.Uint1
+			FwdAmount     tlb.Grams
+			CustomPayload *tlb.Any `tlb:"maybe^"`
+		} `tlb:"^"`
+	} `tlb:"^"`
 }
 
 type StormOrderCreatedMsgBody struct{}
@@ -1519,6 +1696,27 @@ type StormMintExecutorMsgBody struct {
 	NftOwner        tlb.MsgAddress
 	RedirectAddress tlb.MsgAddress
 	BalancesDict    tlb.Any `tlb:"^"`
+}
+
+type PtonDeployWalletMsgBody struct {
+	QueryId         uint64
+	OwnerAddress    tlb.MsgAddress
+	ExcessesAddress tlb.MsgAddress
+}
+
+type StonfiAddLiquidityV2MsgBody struct {
+	QueryId          uint64
+	NewAmount0       tlb.VarUInteger16
+	NewAmount1       tlb.VarUInteger16
+	MinLpOut         tlb.VarUInteger16
+	FwdAmount        tlb.Grams
+	BothPositive     tlb.Uint1
+	ToUser           tlb.MsgAddress
+	CustomPayloadCs  *tlb.Any `tlb:"maybe^"`
+	AdditionalFields struct {
+		RefundAddress tlb.MsgAddress
+		ExcessAddress tlb.MsgAddress
+	} `tlb:"^"`
 }
 
 type UpdatePubkeyMsgBody struct {
@@ -1632,6 +1830,18 @@ type TonstakeControllerSendRequestLoanMsgBody struct {
 	MaxInterst tlb.Uint24
 }
 
+type StonfiPayVaultV2MsgBody struct {
+	QueryId         uint64
+	Owner           tlb.MsgAddress
+	ExcessesAddress tlb.MsgAddress
+	AdditionalInfo  struct {
+		Amount0Out    tlb.VarUInteger16
+		Token0Address tlb.MsgAddress
+		Amount1Out    tlb.VarUInteger16
+		Token1Address tlb.MsgAddress
+	} `tlb:"^"`
+}
+
 type JettonMintMsgBody struct {
 	QueryId   uint64
 	ToAddress tlb.MsgAddress
@@ -1645,10 +1855,55 @@ type JettonChangeAdminMsgBody struct {
 	NewAdminAddress tlb.MsgAddress
 }
 
+type PtonInternalDeployMsgBody struct {
+	QueryId         uint64
+	ExcessesAddress tlb.MsgAddress
+}
+
 type WalletExtensionActionV5R1MsgBody struct {
 	QueryId  uint64
 	Actions  *W5Actions         `tlb:"maybe^"`
 	Extended *W5ExtendedActions `tlb:"maybe"`
+}
+
+type StonfiPayToV2MsgBody struct {
+	QueryId         uint64
+	ToAddress       tlb.MsgAddress
+	ExcessesAddress tlb.MsgAddress
+	OriginalCaller  tlb.MsgAddress
+	ExitCode        uint32
+	CustomPayload   *tlb.Any `tlb:"maybe^"`
+	AdditionalInfo  struct {
+		FwdTonAmount  tlb.Grams
+		Amount0Out    tlb.VarUInteger16
+		Token0Address tlb.MsgAddress
+		Amount1Out    tlb.VarUInteger16
+		Token1Address tlb.MsgAddress
+	} `tlb:"^"`
+}
+
+type StonfiSwapV2MsgBody struct {
+	QueryId     uint64
+	FromUser    tlb.MsgAddress
+	LeftAmount  tlb.VarUInteger16
+	RightAmount tlb.VarUInteger16
+	DexPayload  struct {
+		TransferredOp   uint32
+		TokenWallet1    tlb.MsgAddress
+		RefundAddress   tlb.MsgAddress
+		ExcessesAddress tlb.MsgAddress
+		TxDeadline      uint64
+		SwapBody        struct {
+			MinOut        tlb.VarUInteger16
+			Receiver      tlb.MsgAddress
+			FwdGas        tlb.Grams
+			CustomPayload *tlb.Any `tlb:"maybe^"`
+			RefundFwdGas  tlb.Grams
+			RefundPayload *tlb.Any `tlb:"maybe^"`
+			RefFee        uint16
+			RefAddress    tlb.MsgAddress
+		} `tlb:"^"`
+	} `tlb:"^"`
 }
 
 type SettleChannelConditionalsMsgBody struct {
@@ -1900,6 +2155,10 @@ type DedustPayoutFromPoolMsgBody struct {
 	Amount        tlb.VarUInteger16
 	RecipientAddr tlb.MsgAddress
 	Payload       *tlb.Any `tlb:"maybe^"`
+}
+
+type PtonTonRefundMsgBody struct {
+	QueryId uint64
 }
 
 type MultisigApproveRejectedMsgBody struct {
@@ -2156,10 +2415,13 @@ type BounceMsgBody struct {
 
 var KnownMsgInTypes = map[string]any{
 	TextCommentMsgOp:                             TextCommentMsgBody{},
+	PtonTonTransferMsgOp:                         PtonTonTransferMsgBody{},
 	StormVaultRequestWithdrawPositionMsgOp:       StormVaultRequestWithdrawPositionMsgBody{},
+	StonfiDepositRefFeeV2MsgOp:                   StonfiDepositRefFeeV2MsgBody{},
 	ProveOwnershipMsgOp:                          ProveOwnershipMsgBody{},
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
 	OwnershipProofMsgOp:                          OwnershipProofMsgBody{},
+	StonfiCbAddLiquidityV2MsgOp:                  StonfiCbAddLiquidityV2MsgBody{},
 	ChallengeQuarantinedChannelStateMsgOp:        ChallengeQuarantinedChannelStateMsgBody{},
 	TonstakePoolWithdrawalMsgOp:                  TonstakePoolWithdrawalMsgBody{},
 	SbtOwnerInfoMsgOp:                            SbtOwnerInfoMsgBody{},
@@ -2177,6 +2439,7 @@ var KnownMsgInTypes = map[string]any{
 	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
 	SbtDestroyMsgOp:                              SbtDestroyMsgBody{},
 	StartUncooperativeChannelCloseMsgOp:          StartUncooperativeChannelCloseMsgBody{},
+	StonfiVaultPayToV2MsgOp:                      StonfiVaultPayToV2MsgBody{},
 	EncryptedTextCommentMsgOp:                    EncryptedTextCommentMsgBody{},
 	DedustCreateVaultMsgOp:                       DedustCreateVaultMsgBody{},
 	JettonCallToMsgOp:                            JettonCallToMsgBody{},
@@ -2186,17 +2449,21 @@ var KnownMsgInTypes = map[string]any{
 	FinishUncooperativeChannelCloseMsgOp:         FinishUncooperativeChannelCloseMsgBody{},
 	StonfiSwapMsgOp:                              StonfiSwapMsgBody{},
 	TonstakeControllerPoolSendMessageMsgOp:       TonstakeControllerPoolSendMessageMsgBody{},
+	StonfiBurnNotificationExtV2MsgOp:             StonfiBurnNotificationExtV2MsgBody{},
 	TeleitemDeployMsgOp:                          TeleitemDeployMsgBody{},
 	StormVammInitMsgOp:                           StormVammInitMsgBody{},
 	StormVaultInitMsgOp:                          StormVaultInitMsgBody{},
+	PtonResetGasMsgOp:                            PtonResetGasMsgBody{},
 	TonstakePoolSetGovernanceFeeMsgOp:            TonstakePoolSetGovernanceFeeMsgBody{},
 	StormWithdrawExecutorAmountMsgOp:             StormWithdrawExecutorAmountMsgBody{},
 	GetStaticDataMsgOp:                           GetStaticDataMsgBody{},
 	TonstakeControllerValidatorWithdrawalMsgOp:   TonstakeControllerValidatorWithdrawalMsgBody{},
 	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
 	StormVaultTradeNotificationMsgOp:             StormVaultTradeNotificationMsgBody{},
+	StonfiWithdrawFeeV2MsgOp:                     StonfiWithdrawFeeV2MsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
+	StonfiProvideLpV2MsgOp:                       StonfiProvideLpV2MsgBody{},
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
 	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
@@ -2214,6 +2481,8 @@ var KnownMsgInTypes = map[string]any{
 	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},
 	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
 	StormMintExecutorMsgOp:                       StormMintExecutorMsgBody{},
+	PtonDeployWalletMsgOp:                        PtonDeployWalletMsgBody{},
+	StonfiAddLiquidityV2MsgOp:                    StonfiAddLiquidityV2MsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
 	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
 	TonstakeImanagerOperationFeeMsgOp:            TonstakeImanagerOperationFeeMsgBody{},
@@ -2229,10 +2498,14 @@ var KnownMsgInTypes = map[string]any{
 	StormUpdatePositionMsgOp:                     StormUpdatePositionMsgBody{},
 	DedustSwapExternalMsgOp:                      DedustSwapExternalMsgBody{},
 	TonstakeControllerSendRequestLoanMsgOp:       TonstakeControllerSendRequestLoanMsgBody{},
+	StonfiPayVaultV2MsgOp:                        StonfiPayVaultV2MsgBody{},
 	JettonMintMsgOp:                              JettonMintMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
 	JettonChangeAdminMsgOp:                       JettonChangeAdminMsgBody{},
+	PtonInternalDeployMsgOp:                      PtonInternalDeployMsgBody{},
 	WalletExtensionActionV5R1MsgOp:               WalletExtensionActionV5R1MsgBody{},
+	StonfiPayToV2MsgOp:                           StonfiPayToV2MsgBody{},
+	StonfiSwapV2MsgOp:                            StonfiSwapV2MsgBody{},
 	SettleChannelConditionalsMsgOp:               SettleChannelConditionalsMsgBody{},
 	StormCancelOrderMsgOp:                        StormCancelOrderMsgBody{},
 	TopUpChannelBalanceMsgOp:                     TopUpChannelBalanceMsgBody{},
@@ -2277,6 +2550,7 @@ var KnownMsgInTypes = map[string]any{
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
 	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},
+	PtonTonRefundMsgOp:                           PtonTonRefundMsgBody{},
 	MultisigApproveRejectedMsgOp:                 MultisigApproveRejectedMsgBody{},
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},

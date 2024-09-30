@@ -6,9 +6,73 @@
     <interface name="stonfi_pool">
         <get_method name="get_pool_data" version="stonfi"/>
     </interface>
+    <interface name="stonfi_pool_v2">
+        <get_method name="get_pool_data" version="stonfi_v2"/>
+        <get_method name="get_lp_account_address" version="stonfi"/>
+        <msg_in>
+            <internal name="stonfi_burn_notification_ext_v2"/>
+            <internal name="stonfi_swap_v2"/>
+            <internal name="stonfi_provide_lp_v2"/>
+            <internal name="pton_reset_gas"/>
+            <internal name="stonfi_cb_add_liquidity_v2"/>
+        </msg_in>
+    </interface>
     <interface name="stonfi_router">
         <get_method name="get_router_data" version="stonfi"/>
     </interface>
+    <interface name="stonfi_router_v2">
+<!--        <get_method name="get_vault_address" version="stonfi_v2"/> // collision-->
+        <get_method name="get_pool_address" version="stonfi"/>
+        <get_method name="get_router_data" version="stonfi_v2"/>
+        <get_method name="get_router_version" version="stonfi_v2"/>
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="pton_reset_gas"/>
+            <internal name="stonfi_pay_to_v2"/>
+            <internal name="stonfi_pay_vault_v2"/>
+            <internal name="stonfi_vault_pay_to_v2"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_transfer"/>
+            <internal name="stonfi_deposit_ref_fee_v2"/>
+            <internal name="stonfi_swap_v2"/>
+        </msg_out>
+    </interface>
+    <interface name="stonfi_lp_account_v2">
+        <get_method name="get_lp_account_data" version="stonfi"/>
+        <msg_in>
+            <internal name="stonfi_add_liquidity_v2"/>
+            <internal name="pton_reset_gas"/>
+        </msg_in>
+    </interface>
+    <interface name="stonfi_vault_v2">
+        <get_method name="get_vault_data" version="stonfi_v2"/>
+        <msg_in>
+            <internal name="stonfi_withdraw_fee_v2"/>
+            <internal name="stonfi_deposit_ref_fee_v2"/>
+        </msg_in>
+        <msg_out>
+            <internal name="stonfi_vault_pay_to_v2"/>
+        </msg_out>
+    </interface>
+
+    <get_method name="get_vault_data">
+        <output version="stonfi_v2" fixed_length="true">
+            <slice name="owner_address">msgaddress</slice>
+            <slice name="token_address">msgaddress</slice>
+            <slice name="router_address">msgaddress</slice>
+            <int name="deposited_amount">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_lp_account_data">
+        <output version="stonfi" fixed_length="true">
+            <slice name="user_address">msgaddress</slice>
+            <slice name="pool_address">msgaddress</slice>
+            <int name="amount0">int257</int>
+            <int name="amount1">int257</int>
+        </output>
+    </get_method>
 
     <get_method name="get_router_data">
         <output version="stonfi" fixed_length="true">
@@ -21,6 +85,28 @@
         </output>
     </get_method>
 
+    <get_method name="get_router_data">
+        <output version="stonfi_v2" fixed_length="true">
+            <int name="id">uint32</int>
+            <slice name="dex_type">string</slice>
+            <int name="is_locked">bool</int>
+            <slice name="admin_address">msgaddress</slice>
+            <cell name="temp_upgrade">any</cell>
+            <cell name="pool_code">any</cell>
+            <cell name="jetton_lp_wallet_code">any</cell>
+            <cell name="lp_account_code">any</cell>
+            <cell name="vault_code">any</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_router_version">
+        <output version="stonfi_v2" fixed_length="true">
+            <int name="major">uint32</int>
+            <int name="minor">uint32</int>
+            <slice name="development">string</slice>
+        </output>
+    </get_method>
+
     <get_method name="get_pool_address">
         <input>
             <slice name="token0">msgaddress</slice>
@@ -28,6 +114,15 @@
         </input>
         <output version="stonfi" fixed_length="true">
             <slice name="pool_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_lp_account_address">
+        <input>
+            <slice name="owner_address">msgaddress</slice>
+        </input>
+        <output version="stonfi" fixed_length="true">
+            <slice name="lp_account_address">msgaddress</slice>
         </output>
     </get_method>
 
@@ -58,6 +153,23 @@
         </output>
     </get_method>
 
+    <get_method name="get_pool_data">
+        <output version="stonfi_v2" fixed_length="true">
+            <int name="is_locked">bool</int>
+            <slice name="router_address">msgaddress</slice>
+            <int name="total_supply">int257</int>
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+            <slice name="token0_wallet_address">msgaddress</slice>
+            <slice name="token1_wallet_address">msgaddress</slice>
+            <int name="lp_fee">uint16</int>
+            <int name="protocol_fee">uint16</int>
+            <slice name="protocol_fee_address">msgaddress</slice>
+            <int name="collected_token0_protocol_fee">int257</int>
+            <int name="collected_token1_protocol_fee">int257</int>
+        </output>
+    </get_method>
+
     <internal name="stonfi_swap" >
         swap#25938561 query_id:uint64 to_address:MsgAddress sender_address:MsgAddress
         jetton_amount:(VarUInteger 16) min_out:(VarUInteger 16) has_ref_address:Bool addrs:^StonfiSwapAddrs = InternalMsgBody;
@@ -78,4 +190,75 @@
     <jetton_payload name="stonfi_swap_ok_ref" fixed_length="true">
         swap_success#45078540 = JettonPayload;
     </jetton_payload>
+
+    <!--    TEP 161-->
+    <internal name="pton_ton_transfer" >
+        ton_transfer#01f3835d query_id:uint64 ton_amount:Coins refund_address:MsgAddress forward_payload:(Either Cell ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="pton_ton_refund" >
+        ton_refund#ae25d79e query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="pton_reset_gas" >
+        reset_gas#29d22935 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="pton_deploy_wallet" >
+        deploy_wallet#4f5f4313 query_id:uint64 owner_address:MsgAddress excesses_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="pton_internal_deploy" >
+        internal_deploy#6540cf85 query_id:uint64 excesses_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <!--    Ston-fi API V2-->
+    <internal name="stonfi_cb_add_liquidity_v2" >
+        cb_add_liquidity#06ecd527 query_id:uint64 tot_am0:(VarUInteger 16) tot_am1:(VarUInteger 16) user_address:MsgAddress min_lp_out:(VarUInteger 16)
+        fwd_amount:Coins custom_payload_cs:(Maybe ^Cell) additional_fields:^[to_user_address:MsgAddress refund_address:MsgAddress excess_address:MsgAddress] = InternalMsgBody;
+    </internal>
+
+    <internal name="stonfi_provide_lp_v2" >
+        provide_lp#37c096df query_id:uint64 from_user:MsgAddress left_amount:(VarUInteger 16) right_amount:(VarUInteger 16) dex_payload:^[transferred_op:uint32 token_wallet1:MsgAddress refund_address:MsgAddress excesses_address:MsgAddress tx_deadline:uint64 provide_lp_body:^[min_lp_out:(VarUInteger 16) to_address:MsgAddress both_positive:uint1 fwd_amount:Coins custom_payload:(Maybe ^Cell)]] = InternalMsgBody;
+    </internal>
+
+    <internal name="stonfi_add_liquidity_v2" >
+        add_liquidity#50c6a654 query_id:uint64 new_amount0:(VarUInteger 16) new_amount1:(VarUInteger 16) min_lp_out:(VarUInteger 16) fwd_amount:Coins
+        both_positive:uint1 to_user:MsgAddress custom_payload_cs:(Maybe ^Cell) additional_fields:^[refund_address:MsgAddress excess_address:MsgAddress] = InternalMsgBody;
+    </internal>
+
+    <internal name="stonfi_pay_to_v2" >
+        pay_to#657b54f5 query_id:uint64 to_address:MsgAddress excesses_address:MsgAddress original_caller:MsgAddress exit_code:uint32 custom_payload:(Maybe ^Cell)
+        additional_info:^[fwd_ton_amount:Coins amount0_out:(VarUInteger 16) token0_address:MsgAddress amount1_out:(VarUInteger 16) token1_address:MsgAddress] = InternalMsgBody;
+    </internal>
+
+    <internal name="stonfi_swap_v2" >
+        swap#6664de2a query_id:uint64 from_user:MsgAddress left_amount:(VarUInteger 16) right_amount:(VarUInteger 16)
+        dex_payload:^[transferred_op:uint32 token_wallet1:MsgAddress refund_address:MsgAddress excesses_address:MsgAddress tx_deadline:uint64
+        swap_body:^[min_out:(VarUInteger 16) receiver:MsgAddress fwd_gas:Coins custom_payload:(Maybe ^Cell) refund_fwd_gas:Coins refund_payload:(Maybe ^Cell) ref_fee:uint16 ref_address:MsgAddress]] = InternalMsgBody;
+    </internal>
+
+    <jetton_payload name="stonfi_swap_v2" >
+        swap#6664de2a token_wallet1:MsgAddress refund_address:MsgAddress excesses_address:MsgAddress tx_deadline:uint64 cross_swap_body:^[min_out:(VarUInteger 16) receiver:MsgAddress fwd_gas:Coins custom_payload:(Maybe ^Cell) refund_fwd_gas:Coins refund_payload:(Maybe ^Cell) ref_fee:uint16 ref_address:MsgAddress] = JettonPayload;
+    </jetton_payload>
+    <jetton_payload name="stonfi_provide_lp_v2">
+        provide_lp#37c096df token_wallet1:MsgAddress refund_address:MsgAddress excesses_address:MsgAddress tx_deadline:uint64 cross_provide_lp_body:^[min_lp_out:(VarUInteger 16) to_address:MsgAddress both_positive:uint1 fwd_amount:Coins custom_payload:(Maybe ^Cell)] = JettonPayload;
+    </jetton_payload>
+
+    <internal name="stonfi_withdraw_fee_v2" >
+        withdraw_fee#354bcdf4 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="stonfi_deposit_ref_fee_v2" >
+        deposit_ref_fee#0490f09b query_id:uint64 jetton_amount:(VarUInteger 16) excesses_address:MsgAddress = InternalMsgBody;
+    </internal>
+    <internal name="stonfi_vault_pay_to_v2" >
+        vault_pay_to#2100c922 query_id:uint64 amount_out:(VarUInteger 16) token_address:MsgAddress to_address:MsgAddress = InternalMsgBody;
+    </internal>
+    <internal name="stonfi_pay_vault_v2" >
+        pay_vault#63381632 query_id:uint64 owner:MsgAddress excesses_address:MsgAddress additional_info:^[amount0_out:(VarUInteger 16) token0_address:MsgAddress amount1_out:(VarUInteger 16) token1_address:MsgAddress] = InternalMsgBody;
+    </internal>
+    <internal name="stonfi_burn_notification_ext_v2" >
+        burn_notification_ext#297437cf query_id:uint64 jetton_amount:(VarUInteger 16) from_address:MsgAddress response_address:MsgAddress maybe_custom_payload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
 </abi>

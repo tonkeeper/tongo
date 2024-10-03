@@ -60,13 +60,6 @@ func (body InMsgBody) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	if body.SumType == EmptyMsgOp {
 		return nil
 	}
-	if body.SumType == UnknownMsgOp {
-		c, ok := body.Value.(*boc.Cell)
-		if !ok {
-			return fmt.Errorf("unknown MsgBody should be Cell")
-		}
-		return tlb.Marshal(c, body.Value)
-	}
 	if body.OpCode != nil {
 		err := c.WriteUint(uint64(*body.OpCode), 32)
 		if err != nil {

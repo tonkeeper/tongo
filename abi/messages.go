@@ -56,6 +56,19 @@ type InMsgBody struct {
 	Value   any
 }
 
+func (body InMsgBody) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if body.SumType == "" {
+		return nil
+	}
+	if body.OpCode != nil {
+		err := c.WriteUint(uint64(*body.OpCode), 32)
+		if err != nil {
+			return err
+		}
+	}
+	return tlb.Marshal(c, body.Value)
+}
+
 func (body *InMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	body.SumType = UnknownMsgOp
 	tag, name, value, err := InternalMessageDecoder(cell, nil)
@@ -139,7 +152,7 @@ func (body InMsgBody) MarshalJSON() ([]byte, error) {
 		return buf.Bytes(), nil
 	}
 	if KnownMsgInTypes[body.SumType] == nil {
-		return nil, fmt.Errorf("unknown MsgBosy type %v", body.SumType)
+		return nil, fmt.Errorf("unknown MsgBody type %v", body.SumType)
 	}
 	b, err := json.Marshal(body.Value)
 	if err != nil {

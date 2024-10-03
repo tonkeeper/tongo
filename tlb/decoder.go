@@ -51,7 +51,7 @@ type tagValidator interface {
 }
 
 func Unmarshal(c *boc.Cell, o any) error {
-	dec := Decoder{}
+	dec := Decoder{withDebug: true}
 	return decode(c, "", reflect.ValueOf(o), &dec)
 }
 

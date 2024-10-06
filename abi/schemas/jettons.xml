@@ -98,7 +98,7 @@
         internal_transfer#178d4519 query_id:uint64 amount:(VarUInteger 16) from:MsgAddress
         response_address:MsgAddress
         forward_ton_amount:(VarUInteger 16)
-        <!--                forward_payload:(Either Cell ^Cell)-->
+        forward_payload:(Either JettonPayload ^JettonPayload)
         = InternalMsgBody;
     </internal>
     <internal name="jetton_burn" >

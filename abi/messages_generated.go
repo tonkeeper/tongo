@@ -1432,6 +1432,7 @@ type JettonInternalTransferMsgBody struct {
 	From             tlb.MsgAddress
 	ResponseAddress  tlb.MsgAddress
 	ForwardTonAmount tlb.VarUInteger16
+	ForwardPayload   tlb.EitherRef[JettonPayload]
 }
 
 type WhalesNominatorsWithdrawUnownedResponseMsgBody struct {

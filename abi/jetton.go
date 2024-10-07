@@ -224,6 +224,7 @@ func (j *JettonInternalTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tl
 	j.Amount = res.Amount
 	j.From = res.From
 	j.ResponseAddress = res.ResponseAddress
+	j.ForwardTonAmount = res.ForwardTonAmount
 	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
 	return nil
 }

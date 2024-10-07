@@ -176,23 +176,18 @@ func (j *JettonTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decode
 	if err != nil {
 		return err
 	}
-	isCustomPayload, err := cell.PickUint(1)
+	isCustomPayload, err := cell.ReadUint(1)
 	if err != nil {
 		return err
 	}
 	var (
-		customPayload struct {
-			CustomPayload *tlb.Any `tlb:"maybe^"`
-		}
+		customPayload    *tlb.Any
 		forwardTonAmount tlb.VarUInteger16
 	)
 	if isCustomPayload == 1 && cell.RefsAvailableForRead() > 0 {
-		err = decoder.Unmarshal(cell, &customPayload)
-		if err != nil {
-			return err
-		}
-	} else {
-		_ = cell.Skip(1)
+		ref, _ := cell.NextRef()
+		a := tlb.Any(*ref)
+		customPayload = &a
 	}
 	err = decoder.Unmarshal(cell, &forwardTonAmount)
 	if err != nil {
@@ -202,7 +197,7 @@ func (j *JettonTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decode
 	j.Amount = prefix.Amount
 	j.Destination = prefix.Destination
 	j.ResponseDestination = prefix.ResponseDestination
-	j.CustomPayload = customPayload.CustomPayload
+	j.CustomPayload = customPayload
 	j.ForwardTonAmount = forwardTonAmount
 	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
 	return nil
@@ -230,7 +225,7 @@ func (j *JettonInternalTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tl
 }
 
 func failsafeJettonPayloadEitherRef(cell *boc.Cell, decoder *tlb.Decoder) tlb.EitherRef[JettonPayload] {
-	isRight, err := cell.PickUint(1)
+	isRight, err := cell.ReadUint(1)
 	switch {
 	case err != nil:
 		return tlb.EitherRef[JettonPayload]{} // empty either
@@ -238,14 +233,13 @@ func failsafeJettonPayloadEitherRef(cell *boc.Cell, decoder *tlb.Decoder) tlb.Ei
 		return tlb.EitherRef[JettonPayload]{
 			IsRight: true,
 		}
-	default:
-		var res tlb.EitherRef[JettonPayload]
-		err = decoder.Unmarshal(cell, &res)
-		if err != nil {
-			return tlb.EitherRef[JettonPayload]{
-				IsRight: isRight == 1,
-			}
-		}
-		return res
+	case isRight == 1: // cell.RefsAvailableForRead() >= 1
+		cell, _ = cell.NextRef()
+	}
+	var res JettonPayload
+	err = decoder.Unmarshal(cell, &res)
+	return tlb.EitherRef[JettonPayload]{
+		IsRight: isRight == 1,
+		Value:   res,
 	}
 }

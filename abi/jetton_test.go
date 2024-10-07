@@ -1,6 +1,7 @@
 package abi
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -266,8 +267,10 @@ func TestJettonCustomUnmarshalling(t *testing.T) {
 				assert(t, err)
 				err = tlb.Unmarshal(c[0], &j)
 				assert(t, err)
-				if !reflect.DeepEqual(j, tt.want) {
-					t.Errorf("\nMsg = %v\n want %v", j, tt.want)
+				r1, _ := json.Marshal(j)
+				r2, _ := json.Marshal(tt.want)
+				if !bytes.Equal(r1, r2) {
+					t.Errorf("\nMsg = %v\n want %v", string(r1), string(r2))
 				}
 			case JettonNotifyMsgBody:
 				var j JettonNotifyMsgBody
@@ -275,8 +278,10 @@ func TestJettonCustomUnmarshalling(t *testing.T) {
 				assert(t, err)
 				err = tlb.Unmarshal(c[0], &j)
 				assert(t, err)
-				if !reflect.DeepEqual(j, tt.want) {
-					t.Errorf("\nMsg = %v\n want %v", j, tt.want)
+				r1, _ := json.Marshal(j)
+				r2, _ := json.Marshal(tt.want)
+				if !bytes.Equal(r1, r2) {
+					t.Errorf("\nMsg = %v\n want %v", string(r1), string(r2))
 				}
 			case JettonInternalTransferMsgBody:
 				var j JettonInternalTransferMsgBody
@@ -284,8 +289,10 @@ func TestJettonCustomUnmarshalling(t *testing.T) {
 				assert(t, err)
 				err = tlb.Unmarshal(c[0], &j)
 				assert(t, err)
-				if !reflect.DeepEqual(j, tt.want) {
-					t.Errorf("\nMsg = %v\n want %v", j, tt.want)
+				r1, _ := json.Marshal(j)
+				r2, _ := json.Marshal(tt.want)
+				if !bytes.Equal(r1, r2) {
+					t.Errorf("\nMsg = %v\n want %v", string(r1), string(r2))
 				}
 			}
 		})

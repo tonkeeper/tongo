@@ -147,3 +147,99 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 
 	return nil
 }
+
+func (j *JettonNotifyMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	var prefix struct {
+		QueryId uint64
+		Amount  tlb.VarUInteger16
+		Sender  tlb.MsgAddress
+	}
+	err := decoder.Unmarshal(cell, &prefix)
+	if err != nil {
+		return err
+	}
+	j.QueryId = prefix.QueryId
+	j.Amount = prefix.Amount
+	j.Sender = prefix.Sender
+	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
+	return nil
+}
+
+func (j *JettonTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	var prefix struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		Destination         tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+	}
+	err := decoder.Unmarshal(cell, &prefix)
+	if err != nil {
+		return err
+	}
+	isCustomPayload, err := cell.ReadUint(1)
+	if err != nil {
+		return err
+	}
+	var (
+		customPayload    *tlb.Any
+		forwardTonAmount tlb.VarUInteger16
+	)
+	if isCustomPayload == 1 && cell.RefsAvailableForRead() > 0 {
+		ref, _ := cell.NextRef()
+		a := tlb.Any(*ref)
+		customPayload = &a
+	}
+	err = decoder.Unmarshal(cell, &forwardTonAmount)
+	if err != nil {
+		return err
+	}
+	j.QueryId = prefix.QueryId
+	j.Amount = prefix.Amount
+	j.Destination = prefix.Destination
+	j.ResponseDestination = prefix.ResponseDestination
+	j.CustomPayload = customPayload
+	j.ForwardTonAmount = forwardTonAmount
+	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
+	return nil
+}
+
+func (j *JettonInternalTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	var res struct {
+		QueryId          uint64
+		Amount           tlb.VarUInteger16
+		From             tlb.MsgAddress
+		ResponseAddress  tlb.MsgAddress
+		ForwardTonAmount tlb.VarUInteger16
+	}
+	err := decoder.Unmarshal(cell, &res)
+	if err != nil {
+		return err
+	}
+	j.QueryId = res.QueryId
+	j.Amount = res.Amount
+	j.From = res.From
+	j.ResponseAddress = res.ResponseAddress
+	j.ForwardTonAmount = res.ForwardTonAmount
+	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
+	return nil
+}
+
+func failsafeJettonPayloadEitherRef(cell *boc.Cell, decoder *tlb.Decoder) tlb.EitherRef[JettonPayload] {
+	isRight, err := cell.ReadUint(1)
+	switch {
+	case err != nil:
+		return tlb.EitherRef[JettonPayload]{} // empty either
+	case isRight == 1 && cell.RefsAvailableForRead() < 1: // invalid either
+		return tlb.EitherRef[JettonPayload]{
+			IsRight: true,
+		}
+	case isRight == 1: // cell.RefsAvailableForRead() >= 1
+		cell, _ = cell.NextRef()
+	}
+	var res JettonPayload
+	err = decoder.Unmarshal(cell, &res)
+	return tlb.EitherRef[JettonPayload]{
+		IsRight: isRight == 1,
+		Value:   res,
+	}
+}

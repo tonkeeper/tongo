@@ -2190,6 +2190,40 @@ func TestMessageDecoder(t *testing.T) {
 				FromAddress:  mustAccountIDToMsgAddress("0:31448f1327e6819eb7d52210e9b22ef2859db9d233dfb802faf8ed2831da847f"),
 			},
 		},
+		{
+			name:       "hipo_finance_deposit_coins",
+			boc:        "te6ccgEBAQEAFQAAJT03YaYAAAAAAAAAABDuaygAQEg=",
+			wantOpName: HipoFinanceDepositCoinsMsgOp,
+			wantValue: HipoFinanceDepositCoinsMsgBody{
+				QueryId:                 0,
+				Coins:                   mustToVarUInteger16("1000000000"),
+				OwnershipAssignedAmount: mustToVarUInteger16("1"),
+			},
+		},
+		{
+			name:       "hipo_finance_proxy_tokens_minted",
+			boc:        "te6ccgEBAQEAPQAAdVvldiYAAAAAAAAAAEOZsE5kO5rKAIAP5X1kydd61QPxdyzm5ynnAUduvhhB1qobiYJiW6wcGYAAAAAQ",
+			wantOpName: HipoFinanceProxyTokensMintedMsgOp,
+			wantValue: HipoFinanceProxyTokensMintedMsgBody{
+				QueryId:    0,
+				Tokens:     mustToVarUInteger16("966460646"),
+				Coins:      mustToVarUInteger16("1000000000"),
+				Owner:      mustAccountIDToMsgAddress("0:7f2beb264ebbd6a81f8bb96737394f380a3b75f0c20eb550dc4c1312dd60e0cc"),
+				RoundSince: 0,
+			},
+		},
+		{
+			name:       "hipo_finance_tokens_minted",
+			boc:        "te6ccgEBAQEAPQAAdVRF7+4AAAAAAAAAAEOZsE5kO5rKAIAP5X1kydd61QPxdyzm5ynnAUduvhhB1qobiYJiW6wcGYAAAAAQ",
+			wantOpName: HipoFinanceTokensMintedMsgOp,
+			wantValue: HipoFinanceTokensMintedMsgBody{
+				QueryId:    0,
+				Tokens:     mustToVarUInteger16("966460646"),
+				Coins:      mustToVarUInteger16("1000000000"),
+				Owner:      mustAccountIDToMsgAddress("0:7f2beb264ebbd6a81f8bb96737394f380a3b75f0c20eb550dc4c1312dd60e0cc"),
+				RoundSince: 0,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -109,6 +109,8 @@ var (
 	decodeFuncStonfiProvideLpV2MsgBody = decodeMsg(tlb.Tag{Val: 0x37c096df, Len: 32}, StonfiProvideLpV2MsgOp, StonfiProvideLpV2MsgBody{})
 	// 0x3a943ce6
 	decodeFuncStormOrderCreatedMsgBody = decodeMsg(tlb.Tag{Val: 0x3a943ce6, Len: 32}, StormOrderCreatedMsgOp, StormOrderCreatedMsgBody{})
+	// 0x3d3761a6
+	decodeFuncHipoFinanceDepositCoinsMsgBody = decodeMsg(tlb.Tag{Val: 0x3d3761a6, Len: 32}, HipoFinanceDepositCoinsMsgOp, HipoFinanceDepositCoinsMsgBody{})
 	// 0x419d5d4d
 	decodeFuncProofStorageMsgBody = decodeMsg(tlb.Tag{Val: 0x419d5d4d, Len: 32}, ProofStorageMsgOp, ProofStorageMsgBody{})
 	// 0x44beae41
@@ -147,6 +149,8 @@ var (
 	decodeFuncStonfiAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x50c6a654, Len: 32}, StonfiAddLiquidityV2MsgOp, StonfiAddLiquidityV2MsgBody{})
 	// 0x53f34cd6
 	decodeFuncUpdatePubkeyMsgBody = decodeMsg(tlb.Tag{Val: 0x53f34cd6, Len: 32}, UpdatePubkeyMsgOp, UpdatePubkeyMsgBody{})
+	// 0x5445efee
+	decodeFuncHipoFinanceTokensMintedMsgBody = decodeMsg(tlb.Tag{Val: 0x5445efee, Len: 32}, HipoFinanceTokensMintedMsgOp, HipoFinanceTokensMintedMsgBody{})
 	// 0x54cbf19b
 	decodeFuncUpdateStorageParamsMsgBody = decodeMsg(tlb.Tag{Val: 0x54cbf19b, Len: 32}, UpdateStorageParamsMsgOp, UpdateStorageParamsMsgBody{})
 	// 0x54d37487
@@ -159,6 +163,8 @@ var (
 	decodeFuncTonstakeControllerReturnAvailableFundsMsgBody = decodeMsg(tlb.Tag{Val: 0x55c26cd5, Len: 32}, TonstakeControllerReturnAvailableFundsMsgOp, TonstakeControllerReturnAvailableFundsMsgBody{})
 	// 0x595f07bc
 	decodeFuncJettonBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, JettonBurnMsgOp, JettonBurnMsgBody{})
+	// 0x5be57626
+	decodeFuncHipoFinanceProxyTokensMintedMsgBody = decodeMsg(tlb.Tag{Val: 0x5be57626, Len: 32}, HipoFinanceProxyTokensMintedMsgOp, HipoFinanceProxyTokensMintedMsgBody{})
 	// 0x5d1b17b8
 	decodeFuncStormUpdatePositionWithStopLossMsgBody = decodeMsg(tlb.Tag{Val: 0x5d1b17b8, Len: 32}, StormUpdatePositionWithStopLossMsgOp, StormUpdatePositionWithStopLossMsgBody{})
 	// 0x5dd66579
@@ -525,6 +531,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x3a943ce6
 	StormOrderCreatedMsgOpCode: decodeFuncStormOrderCreatedMsgBody,
 
+	// 0x3d3761a6
+	HipoFinanceDepositCoinsMsgOpCode: decodeFuncHipoFinanceDepositCoinsMsgBody,
+
 	// 0x419d5d4d
 	ProofStorageMsgOpCode: decodeFuncProofStorageMsgBody,
 
@@ -583,6 +592,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x53f34cd6
 	UpdatePubkeyMsgOpCode: decodeFuncUpdatePubkeyMsgBody,
 
+	// 0x5445efee
+	HipoFinanceTokensMintedMsgOpCode: decodeFuncHipoFinanceTokensMintedMsgBody,
+
 	// 0x54cbf19b
 	UpdateStorageParamsMsgOpCode: decodeFuncUpdateStorageParamsMsgBody,
 
@@ -600,6 +612,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x595f07bc
 	JettonBurnMsgOpCode: decodeFuncJettonBurnMsgBody,
+
+	// 0x5be57626
+	HipoFinanceProxyTokensMintedMsgOpCode: decodeFuncHipoFinanceProxyTokensMintedMsgBody,
 
 	// 0x5d1b17b8
 	StormUpdatePositionWithStopLossMsgOpCode: decodeFuncStormUpdatePositionWithStopLossMsgBody,
@@ -966,6 +981,7 @@ const (
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	StonfiProvideLpV2MsgOp                       MsgOpName = "StonfiProvideLpV2"
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
+	HipoFinanceDepositCoinsMsgOp                 MsgOpName = "HipoFinanceDepositCoins"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
 	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
@@ -985,12 +1001,14 @@ const (
 	PtonDeployWalletMsgOp                        MsgOpName = "PtonDeployWallet"
 	StonfiAddLiquidityV2MsgOp                    MsgOpName = "StonfiAddLiquidityV2"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
+	HipoFinanceTokensMintedMsgOp                 MsgOpName = "HipoFinanceTokensMinted"
 	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
 	TonstakeImanagerOperationFeeMsgOp            MsgOpName = "TonstakeImanagerOperationFee"
 	ChannelCooperativeCloseMsgOp                 MsgOpName = "ChannelCooperativeClose"
 	OutbidNotificationMsgOp                      MsgOpName = "OutbidNotification"
 	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
+	HipoFinanceProxyTokensMintedMsgOp            MsgOpName = "HipoFinanceProxyTokensMinted"
 	StormUpdatePositionWithStopLossMsgOp         MsgOpName = "StormUpdatePositionWithStopLoss"
 	StormAddExecutorAmountMsgOp                  MsgOpName = "StormAddExecutorAmount"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
@@ -1149,6 +1167,7 @@ const (
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	StonfiProvideLpV2MsgOpCode                       MsgOpCode = 0x37c096df
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
+	HipoFinanceDepositCoinsMsgOpCode                 MsgOpCode = 0x3d3761a6
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
 	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
@@ -1168,12 +1187,14 @@ const (
 	PtonDeployWalletMsgOpCode                        MsgOpCode = 0x4f5f4313
 	StonfiAddLiquidityV2MsgOpCode                    MsgOpCode = 0x50c6a654
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
+	HipoFinanceTokensMintedMsgOpCode                 MsgOpCode = 0x5445efee
 	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
 	TonstakeImanagerOperationFeeMsgOpCode            MsgOpCode = 0x54d37487
 	ChannelCooperativeCloseMsgOpCode                 MsgOpCode = 0x5577587e
 	OutbidNotificationMsgOpCode                      MsgOpCode = 0x557cea20
 	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
+	HipoFinanceProxyTokensMintedMsgOpCode            MsgOpCode = 0x5be57626
 	StormUpdatePositionWithStopLossMsgOpCode         MsgOpCode = 0x5d1b17b8
 	StormAddExecutorAmountMsgOpCode                  MsgOpCode = 0x5dd66579
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
@@ -1614,6 +1635,14 @@ type StonfiProvideLpV2MsgBody struct {
 
 type StormOrderCreatedMsgBody struct{}
 
+type HipoFinanceDepositCoinsMsgBody struct {
+	QueryId                 uint64
+	Owner                   tlb.MsgAddress
+	Coins                   tlb.VarUInteger16
+	OwnershipAssignedAmount tlb.VarUInteger16
+	Referrer                tlb.MsgAddress
+}
+
 type ProofStorageMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Any `tlb:"^"`
@@ -1725,6 +1754,14 @@ type UpdatePubkeyMsgBody struct {
 	NewPubkey tlb.Bits256
 }
 
+type HipoFinanceTokensMintedMsgBody struct {
+	QueryId    uint64
+	Tokens     tlb.VarUInteger16
+	Coins      tlb.VarUInteger16
+	Owner      tlb.MsgAddress
+	RoundSince uint32
+}
+
 type UpdateStorageParamsMsgBody struct {
 	QueryId            uint64
 	AcceptNewContracts bool
@@ -1762,6 +1799,14 @@ type JettonBurnMsgBody struct {
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       *JettonPayload `tlb:"maybe^"`
+}
+
+type HipoFinanceProxyTokensMintedMsgBody struct {
+	QueryId    uint64
+	Tokens     tlb.VarUInteger16
+	Coins      tlb.VarUInteger16
+	Owner      tlb.MsgAddress
+	RoundSince uint32
 }
 
 type StormUpdatePositionWithStopLossMsgBody struct {
@@ -2466,6 +2511,7 @@ var KnownMsgInTypes = map[string]any{
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	StonfiProvideLpV2MsgOp:                       StonfiProvideLpV2MsgBody{},
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},
+	HipoFinanceDepositCoinsMsgOp:                 HipoFinanceDepositCoinsMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
 	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
@@ -2485,12 +2531,14 @@ var KnownMsgInTypes = map[string]any{
 	PtonDeployWalletMsgOp:                        PtonDeployWalletMsgBody{},
 	StonfiAddLiquidityV2MsgOp:                    StonfiAddLiquidityV2MsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
+	HipoFinanceTokensMintedMsgOp:                 HipoFinanceTokensMintedMsgBody{},
 	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
 	TonstakeImanagerOperationFeeMsgOp:            TonstakeImanagerOperationFeeMsgBody{},
 	ChannelCooperativeCloseMsgOp:                 ChannelCooperativeCloseMsgBody{},
 	OutbidNotificationMsgOp:                      OutbidNotificationMsgBody{},
 	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
+	HipoFinanceProxyTokensMintedMsgOp:            HipoFinanceProxyTokensMintedMsgBody{},
 	StormUpdatePositionWithStopLossMsgOp:         StormUpdatePositionWithStopLossMsgBody{},
 	StormAddExecutorAmountMsgOp:                  StormAddExecutorAmountMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},

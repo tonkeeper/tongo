@@ -51,6 +51,9 @@ The list below contains the supported message operations, their names and opcode
 | GramSubmitProofOfWork| 0x4d696e65 |
 | HighloadWalletSignedV2| 0x00000000 |
 | HighloadWalletSignedV3| 0x00000000 |
+| HipoFinanceDepositCoins| 0x3d3761a6 |
+| HipoFinanceProxyTokensMinted| 0x5be57626 |
+| HipoFinanceTokensMinted| 0x5445efee |
 | InitPaymentChannel| 0x0e0620c2 |
 | JettonBurn| 0x595f07bc |
 | JettonBurnNotification| 0x7bdd97de |

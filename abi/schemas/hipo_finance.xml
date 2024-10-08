@@ -1,0 +1,29 @@
+<abi>
+    <internal name="hipo_finance_deposit_coins">
+        deposit_coins#3d3761a6
+        query_id:uint64
+        owner:MsgAddress
+        coins:(VarUInteger 16)
+        ownership_assigned_amount:(VarUInteger 16)
+        referrer:MsgAddress
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_proxy_tokens_minted">
+        proxy_tokens_minted#5be57626
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        coins:(VarUInteger 16)
+        owner:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_tokens_minted">
+        tokens_minted#5445efee
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        coins:(VarUInteger 16)
+        owner:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+</abi>

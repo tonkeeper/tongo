@@ -38,7 +38,7 @@
             <int name="max_nominators_count">uint32</int>
             <int name="min_validator_stake">int64</int>
             <int name="min_nominator_stake">int64</int>
-            <cell name="nominators">any</cell>
+            <cell name="nominators" nullable="true">any</cell>
             <cell name="withdraw_requests" nullable="true">AccountLists</cell>
             <int name="stake_at">uint32</int>
             <int name="saved_validator_set_hash">bits256</int>

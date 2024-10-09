@@ -168,7 +168,7 @@ func TestGetMethods(t *testing.T) {
 				MaxNominatorsCount:       0x1,
 				MinValidatorStake:        1001000000000,
 				MinNominatorStake:        300000000000000,
-				Nominators:               tlb.Any(*boc.NewCell()),
+				Nominators:               pointer(tlb.Any(*boc.NewCell())),
 				WithdrawRequests:         nil,
 				StakeAt:                  0x64104f08,
 				SavedValidatorSetHash:    tlb.Bits256{0xe2, 0x70, 0x3, 0xa2, 0xcb, 0x1a, 0xa9, 0xad, 0xd7, 0xe4, 0xc, 0xe, 0x5, 0x2e, 0x37, 0xb6, 0x61, 0xb, 0x18, 0xfc, 0xf5, 0x77, 0x8b, 0x87, 0x26, 0x28, 0x45, 0x28, 0x54, 0xbb, 0x34, 0x6c},
@@ -644,7 +644,7 @@ func TestGetMethods(t *testing.T) {
 			case GetPoolData_TfResult:
 				// comparing two cells don't work well with reflect.DeepEqual()
 				// because of the internal fields like refCursor
-				x.Nominators = tlb.Any(*boc.NewCell())
+				x.Nominators = pointer(tlb.Any(*boc.NewCell()))
 				got = x
 			case GetAssets_DedustResult:
 				addr := ton.AccountID{

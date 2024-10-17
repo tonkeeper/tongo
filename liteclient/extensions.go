@@ -74,20 +74,20 @@ func (t TonNodeBlockIdExtC) ToBlockIdExt() ton.BlockIDExt {
 	}
 	res.Seqno = t.Seqno
 	res.Shard = t.Shard
-	res.Workchain = int32(t.Workchain)
+	res.Workchain = t.Workchain
 	return res
 }
 
 func AccountID(id ton.AccountID) LiteServerAccountIdC {
 	return LiteServerAccountIdC{
-		Workchain: uint32(id.Workchain),
+		Workchain: id.Workchain,
 		Id:        id.Address,
 	}
 }
 
 func BlockIDExt(id ton.BlockIDExt) TonNodeBlockIdExtC {
 	return TonNodeBlockIdExtC{
-		Workchain: uint32(id.Workchain),
+		Workchain: id.Workchain,
 		Shard:     id.Shard,
 		Seqno:     id.Seqno,
 		RootHash:  tl.Int256(id.RootHash),

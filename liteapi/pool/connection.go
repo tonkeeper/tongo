@@ -130,7 +130,7 @@ func (c *connection) FindMinAvailableMasterchainSeqno(ctx context.Context) (uint
 		request := liteclient.LiteServerLookupBlockRequest{
 			Mode: 1,
 			Id: liteclient.TonNodeBlockIdC{
-				Workchain: uint32(workchain),
+				Workchain: int32(workchain),
 				Shard:     0x8000000000000000,
 				Seqno:     next,
 			},

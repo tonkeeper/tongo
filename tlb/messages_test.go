@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"os"
 	"reflect"
 	"testing"
@@ -17,6 +18,65 @@ func byte32FromHex(x string) [32]byte {
 	var result [32]byte
 	copy(result[:], address)
 	return result
+}
+
+func TestMessage_normalized_hash(t *testing.T) {
+	info := struct {
+		Src       MsgAddress
+		Dest      MsgAddress
+		ImportFee VarUInteger16
+	}{
+		Src: MsgAddress{
+			SumType: "AddrStd",
+			AddrStd: struct {
+				Anycast     Maybe[Anycast]
+				WorkchainId int8
+				Address     Bits256
+			}{
+				WorkchainId: -1,
+				Address:     byte32FromHex("adfd5f1d28db13e50591d5c76a976c15d8ab6cad90554748ab254871390d9334"),
+			},
+		},
+		Dest: MsgAddress{
+			SumType: "AddrStd",
+			AddrStd: struct {
+				Anycast     Maybe[Anycast]
+				WorkchainId int8
+				Address     Bits256
+			}{
+				Anycast: Maybe[Anycast]{
+					Exists: true,
+					Value: Anycast{
+						Depth:      16,
+						RewritePfx: 9,
+					},
+				},
+				WorkchainId: -1,
+				Address:     byte32FromHex("adfd5f1d28db13e50591d5c76a976c15d8ab6cad90554748ab254871390d9334"),
+			},
+		},
+		ImportFee: VarUInteger16(*big.NewInt(12364)),
+	}
+	msg := Message{
+		Info: CommonMsgInfo{
+			SumType:      "ExtInMsgInfo",
+			ExtInMsgInfo: &info,
+		},
+	}
+	msg.Init.Exists = true
+	msg.Init.Value.IsRight = true
+	msg.Init.Value.Value.Code.Exists = true
+	code := boc.NewCell()
+	_ = code.WriteUint(102, 32)
+	msg.Init.Value.Value.Code.Value.Value = *code
+
+	body := boc.NewCell()
+	_ = body.WriteUint(200, 32)
+	msg.Body.Value = Any(*body)
+
+	if msg.Hash().Hex() != "4fa6ab2c6fa87a22eeb458acee34cefababeb328e5a9fb37846be730ba8305e2" {
+		t.Fatalf("invalid mesg hash")
+	}
 }
 
 func TestMsgAddress_JSON(t *testing.T) {

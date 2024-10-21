@@ -304,7 +304,7 @@ func TestMessage_Marshal_and_Unmarshal(t *testing.T) {
 			name:     "ExtInMsg with body",
 			boc:      "te6ccgEBAgEAqgAB4YgA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpEAFG8W4Jpf7AeOqfzL9vZ79mX3eM6UEBxZvN6+QmpYwXBq32QOBIrP4lF5ijGgQmZbC6KDeiiptxmTNwl5f59OAGU1NGLsixYlYAAAA2AAcAQBoYgBZQOG7qXmeA/2Tw1pLX2IkcQ5h5fxWzzcBskMJbVVRsKNaTpAAAAAAAAAAAAAAAAAAAA==",
 			filename: "testdata/message-1",
-			wantHash: "d5376cf6e9de8813d0640016545000e17bcc399bd654826f4fd7a3000b2fad68",
+			wantHash: "23ff6f150d573f64d5599a57813f991882b7b4d5ae0550ebd08ea658431e62f6",
 		},
 		{
 			name:     "IntMsg with body",

@@ -56,18 +56,7 @@ func (c *connection) Run(ctx context.Context, detectArchive bool) {
 		}
 		c.SetMasterHead(head)
 		for {
-			if err := c.client.WaitMasterchainSeqno(ctx, head.Seqno+1, 15_000); err != nil {
-				// TODO: log error
-				time.Sleep(1000 * time.Millisecond)
-				// we want to request seqno again with LiteServerGetMasterchainInfo
-				// to avoid situation when this server has been offline for too long,
-				// and it doesn't contain a block with the latest known seqno anymore.
-				break
-			}
-			if ctx.Err() != nil {
-				return
-			}
-			res, err := c.client.LiteServerGetMasterchainInfo(ctx)
+			res, err := c.client.WaitMasterchainBlock(ctx, head.Seqno+1, 15_000)
 			if err != nil {
 				// TODO: log error
 				time.Sleep(1000 * time.Millisecond)
@@ -79,7 +68,7 @@ func (c *connection) Run(ctx context.Context, detectArchive bool) {
 			if ctx.Err() != nil {
 				return
 			}
-			head = res.Last.ToBlockIdExt()
+			head = res.Id.ToBlockIdExt()
 			c.SetMasterHead(head)
 		}
 	}

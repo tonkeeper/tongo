@@ -227,3 +227,50 @@ func (c *Client) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout
 func (c *Client) AverageRoundTrip() time.Duration {
 	return c.connection.AverageRoundTrip()
 }
+
+func (c *Client) WaitMasterchainBlock(ctx context.Context, seqno uint32, timeout uint32) (res LiteServerBlockHeaderC, err error) {
+	var (
+		mc     int    = -1
+		uintMc uint32 = uint32(mc)
+	)
+	request := LiteServerLookupBlockRequest{
+		Mode: 1,
+		Id: TonNodeBlockIdC{
+			Workchain: uintMc,
+			Shard:     0x8000000000000000,
+			Seqno:     seqno,
+		},
+	}
+	data := make([]byte, 0, 38)
+	data = binary.LittleEndian.AppendUint32(data, magicLiteServerWaitMasterchainSeqno)
+	data = binary.LittleEndian.AppendUint32(data, seqno)
+	data = binary.LittleEndian.AppendUint32(data, timeout)
+	payload, err := tl.Marshal(struct {
+		tl.SumType
+		Req LiteServerLookupBlockRequest `tlSumType:"fac8f71e"`
+	}{SumType: "Req", Req: request})
+	if err != nil {
+		return res, err
+	}
+	data = append(data, payload...)
+	resp, err := c.liteServerRequest(ctx, data)
+	if err != nil {
+		return res, err
+	}
+	if len(resp) < 4 {
+		return res, fmt.Errorf("not enough bytes for tag")
+	}
+	tag := binary.LittleEndian.Uint32(resp[:4])
+	if tag == 0xbba9e148 {
+		var errRes LiteServerErrorC
+		if err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes); err != nil {
+			return res, err
+		}
+		return res, errRes
+	}
+	if tag == 0x752d8219 {
+		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
+		return res, err
+	}
+	return res, fmt.Errorf("invalid tag")
+}

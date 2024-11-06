@@ -228,3 +228,25 @@ func TestGeneratedMethod6(t *testing.T) {
 		fmt.Printf("Address: %s Queue size: %d\n", addr.String(), a.Size)
 	}
 }
+
+func TestClient_WaitMasterchainBlock(t *testing.T) {
+	c, err := createTestLiteServerConnection()
+	if err != nil {
+		t.Fatalf("NewConnection() failed: %v", err)
+	}
+	client := NewClient(c)
+	resp, err := client.LiteServerGetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
+	}
+	seqno := resp.Last.Seqno + 2
+	//fmt.Printf("Current seqno: %d waiting seqno: %d\n", resp.Last.Seqno, seqno)
+	resp1, err := client.WaitMasterchainBlock(context.Background(), seqno, 15000)
+	if err != nil {
+		t.Fatalf("WaitMasterchainSeqno() failed: %v", err)
+	}
+	//fmt.Printf("Result seqno: %d\n", resp1.Id.Seqno)
+	if resp1.Id.Seqno != seqno {
+		t.Fatalf("Invalid result seqno")
+	}
+}

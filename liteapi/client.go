@@ -1089,3 +1089,7 @@ func (c *Client) GetNetworkGlobalID(ctx context.Context) (int32, error) {
 	c.networkGlobalID = &block.GlobalId
 	return block.GlobalId, nil
 }
+
+func (c *Client) GetPoolStatus() pool.Status {
+	return c.pool.Status()
+}

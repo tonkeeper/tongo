@@ -10,8 +10,9 @@ import (
 )
 
 type connection struct {
-	id     int
-	client *liteclient.Client
+	id         int
+	serverHost string
+	client     *liteclient.Client
 
 	// masterHeadUpdatedCh is used to send a notification when a known master head is changed.
 	masterHeadUpdatedCh chan masterHeadUpdated
@@ -153,4 +154,18 @@ func (c *connection) setArchive(archive bool) {
 
 func (c *connection) AverageRoundTrip() time.Duration {
 	return c.client.AverageRoundTrip()
+}
+
+type ConnStatus struct {
+	ServerHost string
+	Connected  bool
+	Archive    bool
+}
+
+func (c *connection) Status() ConnStatus {
+	return ConnStatus{
+		ServerHost: c.serverHost,
+		Connected:  c.IsOK(),
+		Archive:    c.IsArchiveNode(),
+	}
 }

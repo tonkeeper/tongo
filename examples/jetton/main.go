@@ -46,20 +46,22 @@ func main() {
 
 	log.Printf("Jetton balance: %v", b)
 	log.Printf("Jetton decimals: %v", d)
-	log.Printf("Jetton wallet owner address: %v", w.GetAddress().String())
+	log.Printf("Jetton wallet owner address: %s", w.GetAddress().ToHuman(false, true))
 	log.Printf("Jetton wallet address: %v", jw.String())
 
 	amount := big.NewInt(1000)
 	if amount.Cmp(b) == 1 {
 		log.Fatalf("%v jettons needed, but only %v on balance", amount, b)
 	}
-
+	ownerAddress := w.GetAddress()
 	jettonTransfer := jetton.TransferMessage{
-		Jetton:           j,
-		JettonAmount:     amount,
-		Destination:      recipientAddr.ID,
-		AttachedTon:      400_000_000,
-		ForwardTonAmount: 200_000_000,
+		Jetton:              j,
+		JettonAmount:        amount,
+		Destination:         recipientAddr.ID,
+		AttachedTon:         400_000_000,
+		ForwardTonAmount:    200_000_000,
+		Sender:              w.GetAddress(),
+		ResponseDestination: &ownerAddress,
 	}
 	err = w.Send(context.Background(), jettonTransfer)
 	if err != nil {

@@ -24,7 +24,21 @@ type Message struct {
 
 // Hash returns a hash of this Message.
 func (m *Message) Hash() Bits256 {
-	return m.hash
+	if m.Info.SumType != "ExtInMsgInfo" {
+		return m.hash
+	}
+	// normalize ExtIn message
+	c := boc.NewCell()
+	_ = c.WriteUint(2, 2)                    // message$_ -> info:CommonMsgInfo -> ext_in_msg_info$10
+	_ = c.WriteUint(0, 2)                    // message$_ -> info:CommonMsgInfo -> src:MsgAddressExt -> addr_none$00
+	_ = Marshal(c, m.Info.ExtInMsgInfo.Dest) // message$_ -> info:CommonMsgInfo -> dest:MsgAddressInt
+	_ = c.WriteUint(0, 4)                    // message$_ -> info:CommonMsgInfo -> import_fee:Grams -> 0
+	_ = c.WriteBit(false)                    // message$_ -> init:(Maybe (Either StateInit ^StateInit)) -> nothing$0
+	_ = c.WriteBit(true)                     // message$_ -> body:(Either X ^X) -> right$1
+	body := boc.Cell(m.Body.Value)
+	_ = c.AddRef(&body)
+	hash, _ := c.Hash256()
+	return hash
 }
 
 func (m *Message) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {

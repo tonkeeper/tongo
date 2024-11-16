@@ -213,7 +213,7 @@ func TestGet_Benchmark(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	c, err := createConfig(conf)
+	c, err := CreateConfig(conf)
 	if err != nil {
 		fmt.Println(err)
 	}

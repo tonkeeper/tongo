@@ -141,14 +141,8 @@ func TestMsgAddress_JSON(t *testing.T) {
 		{
 			name: "AddrExtern",
 			addr: MsgAddress{
-				SumType: "AddrExtern",
-				AddrExtern: &struct {
-					Len             Uint9
-					ExternalAddress boc.BitString
-				}{
-					Len:             16,
-					ExternalAddress: bitstr,
-				},
+				SumType:    "AddrExtern",
+				AddrExtern: &bitstr,
 			},
 			want: []byte(`"FF2C"`),
 		},

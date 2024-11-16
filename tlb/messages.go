@@ -29,12 +29,12 @@ func (m *Message) Hash() Bits256 {
 	}
 	// normalize ExtIn message
 	c := boc.NewCell()
-	_ = c.WriteUint(2, 2)                    // message$_ -> info:CommonMsgInfo -> ext_in_msg_info$10
-	_ = c.WriteUint(0, 2)                    // message$_ -> info:CommonMsgInfo -> src:MsgAddressExt -> addr_none$00
-	_ = Marshal(c, m.Info.ExtInMsgInfo.Dest) // message$_ -> info:CommonMsgInfo -> dest:MsgAddressInt
-	_ = c.WriteUint(0, 4)                    // message$_ -> info:CommonMsgInfo -> import_fee:Grams -> 0
-	_ = c.WriteBit(false)                    // message$_ -> init:(Maybe (Either StateInit ^StateInit)) -> nothing$0
-	_ = c.WriteBit(true)                     // message$_ -> body:(Either X ^X) -> right$1
+	_ = c.WriteUint(2, 2)                           // message$_ -> info:CommonMsgInfo -> ext_in_msg_info$10
+	_ = c.WriteUint(0, 2)                           // message$_ -> info:CommonMsgInfo -> src:MsgAddressExt -> addr_none$00
+	_ = m.Info.ExtInMsgInfo.Dest.MarshalTLB(c, nil) // message$_ -> info:CommonMsgInfo -> dest:MsgAddressInt
+	_ = c.WriteUint(0, 4)                           // message$_ -> info:CommonMsgInfo -> import_fee:Grams -> 0
+	_ = c.WriteBit(false)                           // message$_ -> init:(Maybe (Either StateInit ^StateInit)) -> nothing$0
+	_ = c.WriteBit(true)                            // message$_ -> body:(Either X ^X) -> right$1
 	body := boc.Cell(m.Body.Value)
 	_ = c.AddRef(&body)
 	hash, _ := c.Hash256()
@@ -183,11 +183,8 @@ type MsgAddress struct {
 	SumType
 	AddrNone struct {
 	} `tlbSumType:"addr_none$00"`
-	AddrExtern *struct {
-		Len             Uint9
-		ExternalAddress boc.BitString
-	} `tlbSumType:"addr_extern$01"`
-	AddrStd struct {
+	AddrExtern *boc.BitString `tlbSumType:"addr_extern$01"`
+	AddrStd    struct {
 		Anycast     Maybe[Anycast]
 		WorkchainId int8
 		Address     Bits256
@@ -219,13 +216,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			return err
 		}
 		a.SumType = "AddrExtern"
-		a.AddrExtern = &struct {
-			Len             Uint9
-			ExternalAddress boc.BitString
-		}{
-			Len:             Uint9(ln),
-			ExternalAddress: addr,
-		}
+		a.AddrExtern = &addr
 		return nil
 	case 2:
 		var anycast Maybe[Anycast]
@@ -276,6 +267,54 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return fmt.Errorf("invalid tag")
 }
 
+func (a MsgAddress) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	switch a.SumType {
+	case "AddrNone":
+		return c.WriteUint(0, 2)
+	case "AddrExtern":
+		err := c.WriteUint(1, 2)
+		if err != nil {
+			return err
+		}
+		a.AddrExtern.ResetCounter()
+		l := a.AddrExtern.BitsAvailableForRead()
+		if l > 511 {
+			return fmt.Errorf("external address is too long")
+		}
+		err = c.WriteUint(uint64(l), 9)
+		if err != nil {
+			return err
+		}
+		return c.WriteBitString(*a.AddrExtern)
+	case "AddrStd":
+		if err := c.WriteUint(2, 2); err != nil {
+			return err
+		}
+		if err := a.AddrStd.Anycast.MarshalTLB(c, encoder); err != nil {
+			return err
+		}
+		if err := c.WriteInt(int64(a.AddrStd.WorkchainId), 8); err != nil {
+			return err
+		}
+		return c.WriteBytes(a.AddrStd.Address[:])
+	case "AddrVar":
+		if err := c.WriteUint(3, 2); err != nil {
+			return err
+		}
+		if err := a.AddrVar.Anycast.MarshalTLB(c, encoder); err != nil {
+			return err
+		}
+		if err := c.WriteUint(uint64(a.AddrVar.AddrLen), 9); err != nil {
+			return err
+		}
+		if err := c.WriteInt(int64(a.AddrVar.WorkchainId), 32); err != nil {
+			return err
+		}
+		return c.WriteBitString(a.AddrVar.Address)
+	}
+	return fmt.Errorf("invalid tag")
+}
+
 func (a MsgAddress) MarshalJSON() ([]byte, error) {
 	var x string
 	var extra string
@@ -283,7 +322,7 @@ func (a MsgAddress) MarshalJSON() ([]byte, error) {
 	case "AddrExtern":
 		// we assume that AddrExtern.ExternalAddress has exactly AddrExtern.Len bits
 		// that's always true, if the current MsgAddress was deserialized from TL-B.
-		x = a.AddrExtern.ExternalAddress.ToFiftHex()
+		x = a.AddrExtern.ToFiftHex()
 	case "AddrStd":
 		if a.AddrStd.Anycast.Exists {
 			extra = fmt.Sprintf(":Anycast(%d,%d)", a.AddrStd.Anycast.Value.Depth, a.AddrStd.Anycast.Value.RewritePfx)
@@ -313,14 +352,8 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 			return err
 		}
 		*a = MsgAddress{
-			SumType: "AddrExtern",
-			AddrExtern: &struct {
-				Len             Uint9
-				ExternalAddress boc.BitString
-			}{
-				Len:             Uint9(externalAddr.BitsAvailableForRead()),
-				ExternalAddress: *externalAddr,
-			},
+			SumType:    "AddrExtern",
+			AddrExtern: externalAddr,
 		}
 		return nil
 	}

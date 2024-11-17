@@ -195,29 +195,19 @@ func TestGeneratedMethod6(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
 	}
-
 	client := NewClient(c)
-
-	rh, _ := hex.DecodeString("46AC090C863EE487711E4647F8D4A92C62229AC428D56E1DF8C3DB55558A19AC")
-	fh, _ := hex.DecodeString("858B89D5E8C74753371188EDD93B2B0F89DAA5F1CEB95C3D3647284041A8B3B0")
-
-	var rh1, fh1 [32]byte
-	copy(rh1[:], rh)
-	copy(fh1[:], fh)
-
-	// mainnet
-	block := TonNodeBlockIdExtC{
-		Workchain: 0,
-		Shard:     0xf000000000000000,
-		Seqno:     45481694,
-		RootHash:  rh1,
-		FileHash:  fh1,
+	resp, err := client.LiteServerGetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
 	}
 	req := LiteServerGetDispatchQueueInfoRequest{
 		Mode:        0,
-		Id:          block,
+		Id:          resp.Last,
 		AfterAddr:   nil,
 		MaxAccounts: 10,
+	}
+	if err := client.WaitMasterchainSeqno(context.Background(), resp.Last.Seqno, 15000); err != nil {
+		t.Fatalf("WaitMasterchainSeqno() failed: %v", err)
 	}
 	r, err := client.LiteServerGetDispatchQueueInfo(context.Background(), req)
 	if err != nil {

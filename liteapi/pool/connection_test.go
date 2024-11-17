@@ -81,9 +81,12 @@ func Test_connection_FindMinAvailableMasterchainSeqno(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			pubkey, err := base64.StdEncoding.DecodeString(tt.key)
 			if err != nil {
-				panic(err)
+				t.Fatalf("pubkey decoding failed: %v", err)
 			}
 			c, err := liteclient.NewConnection(context.Background(), pubkey, tt.host)
+			if err != nil {
+				t.Fatalf("NewConnection() failed: %v", err)
+			}
 			conn := &connection{
 				client:              liteclient.NewClient(c),
 				masterHeadUpdatedCh: make(chan masterHeadUpdated, 100),

@@ -221,7 +221,7 @@ func TestGeneratedMethod6(t *testing.T) {
 	}
 	r, err := client.LiteServerGetDispatchQueueInfo(context.Background(), req)
 	if err != nil {
-		panic(err)
+		t.Fatalf("GetDispatchQueueInfo failed: %v", err)
 	}
 	for _, a := range r.AccountDispatchQueues {
 		addr := ton.AccountID{Workchain: 0, Address: a.Addr}

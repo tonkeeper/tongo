@@ -2,9 +2,7 @@ package boc
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/binary"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"hash/crc32"
@@ -267,33 +265,6 @@ func DeserializeBoc(boc []byte) ([]*Cell, error) {
 		rootCells = append(rootCells, cellsArray[item])
 	}
 	return rootCells, nil
-}
-
-func DeserializeBocBase64(boc string) ([]*Cell, error) {
-	bocData, err := base64.StdEncoding.DecodeString(boc)
-	if err != nil {
-		return nil, err
-	}
-	return DeserializeBoc(bocData)
-}
-
-func DeserializeSinglRootBase64(boc string) (*Cell, error) {
-	cells, err := DeserializeBocBase64(boc)
-	if err != nil {
-		return nil, err
-	}
-	if len(cells) != 1 {
-		return nil, fmt.Errorf("invalid boc roots number %v", len(cells))
-	}
-	return cells[0], nil
-}
-
-func DeserializeBocHex(boc string) ([]*Cell, error) {
-	bocData, err := hex.DecodeString(boc)
-	if err != nil {
-		return nil, err
-	}
-	return DeserializeBoc(bocData)
 }
 
 func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {

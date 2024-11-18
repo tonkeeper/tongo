@@ -3,7 +3,6 @@ package utils
 import (
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
@@ -21,23 +20,17 @@ func AnyToCell(i any) (*boc.Cell, error) {
 				return nil, err
 			}
 		}
-		cells, err := boc.DeserializeBoc(b)
+		cell, err := boc.DeserializeSingleRootBoc(b)
 		if err != nil {
 			return nil, err
 		}
-		if len(cells) != 1 {
-			return nil, fmt.Errorf("invalid number of cells: %v", len(cells))
-		}
-		return cells[0], nil
+		return cell, nil
 	case []byte:
-		cells, err := boc.DeserializeBoc(v)
+		cell, err := boc.DeserializeSingleRootBoc(v)
 		if err != nil {
 			return nil, err
 		}
-		if len(cells) != 1 {
-			return nil, fmt.Errorf("invalid number of cells: %v", len(cells))
-		}
-		return cells[0], nil
+		return cell, nil
 	case *boc.Cell:
 		return v, nil
 	case boc.Cell:

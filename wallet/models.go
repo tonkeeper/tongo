@@ -3,6 +3,7 @@ package wallet
 import (
 	"context"
 	"fmt"
+	"github.com/tonkeeper/tongo/utils"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -315,4 +316,54 @@ func (t *TextComment) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error { //
 	}
 	*t = TextComment(text)
 	return nil
+}
+
+type ContractDeploy struct {
+	Workchain int32
+	Code      any
+	Data      any
+	Body      any
+	Amount    tlb.Grams
+}
+
+func (cd ContractDeploy) ToInternal() (tlb.Message, uint8, error) {
+	code, err := utils.AnyToCell(cd.Code)
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	data, err := utils.AnyToCell(cd.Data)
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	body, err := utils.AnyToCell(cd.Body)
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	if data == nil || code == nil {
+		return tlb.Message{}, 0, fmt.Errorf("code and data must be set")
+	}
+	var init tlb.StateInit
+	init.Code.Exists = true
+	init.Data.Exists = true
+	init.Code.Value.Value = *code
+	init.Data.Value.Value = *data
+	c := boc.NewCell()
+	err = tlb.Marshal(c, init)
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	hash, err := c.Hash256()
+	if err != nil {
+		return tlb.Message{}, 0, err
+	}
+	m := Message{
+		Amount:  cd.Amount,
+		Address: ton.AccountID{cd.Workchain, hash},
+		Body:    body,
+		Code:    code,
+		Data:    data,
+		Bounce:  true,
+		Mode:    3,
+	}
+	return m.ToInternal()
 }

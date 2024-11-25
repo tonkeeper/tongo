@@ -34,6 +34,26 @@ const (
 	// TODO: maybe add lockup wallet
 )
 
+var codeVersionToString = map[Version]string{
+	V1R1:         "v1R1",
+	V1R2:         "v1R2",
+	V1R3:         "v1R3",
+	V2R1:         "v2R1",
+	V2R2:         "v2R2",
+	V3R1:         "v3R1",
+	V3R2:         "v3R2",
+	V4R1:         "v4R1",
+	V4R2:         "v4R2",
+	V5Beta:       "v5Beta",
+	V5R1:         "v5R1",
+	HighLoadV2:   "highload_v2",
+	HighLoadV1R1: "highload_v1R1",
+	HighLoadV1R2: "highload_v1R2",
+	HighLoadV2R1: "highload_v2R1",
+	HighLoadV2R2: "highload_v2R2",
+}
+var stringToVersion = map[string]Version{}
+
 const (
 	// DefaultSubWallet is a recommended default value of subWalletID according to
 	// https://docs.ton.org/develop/smart-contracts/tutorials/wallet#subwallet-ids.
@@ -73,6 +93,9 @@ var codeHashToVersion = map[tlb.Bits256]Version{}
 func init() {
 	for ver := range codes {
 		codeHashToVersion[GetCodeHashByVer(ver)] = ver
+	}
+	for v, s := range codeVersionToString {
+		stringToVersion[s] = v
 	}
 }
 
@@ -148,42 +171,19 @@ func GetVerByCodeHash(hash tlb.Bits256) (Version, bool) {
 }
 
 func (v Version) ToString() string {
-	switch v {
-	case V1R1:
-		return "v1R1"
-	case V1R2:
-		return "v1R2"
-	case V1R3:
-		return "v1R3"
-	case V2R1:
-		return "v2R1"
-	case V2R2:
-		return "v2R2"
-	case V3R1:
-		return "v3R1"
-	case V3R2:
-		return "v3R2"
-	case V4R1:
-		return "v4R1"
-	case V4R2:
-		return "v4R2"
-	case V5Beta:
-		return "v5Beta"
-	case V5R1:
-		return "v5R1"
-	case HighLoadV2:
-		return "highload_v2"
-	case HighLoadV1R1:
-		return "highload_v1R1"
-	case HighLoadV1R2:
-		return "highload_v1R2"
-	case HighLoadV2R1:
-		return "highload_v2R1"
-	case HighLoadV2R2:
-		return "highload_v2R2"
-	default:
+	s, ok := codeVersionToString[v]
+	if !ok {
 		panic("to string conversion for this ver not supported")
 	}
+	return s
+}
+
+func VersionFromString(s string) (Version, error) {
+	v, ok := stringToVersion[s]
+	if !ok {
+		return 0, fmt.Errorf("invalid wallet version")
+	}
+	return v, nil
 }
 
 type Sendable interface {

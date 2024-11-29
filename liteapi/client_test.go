@@ -621,3 +621,24 @@ func TestFromEnvs(t *testing.T) {
 		t.Fatal("expected 0 lite server")
 	}
 }
+
+func TestWaitMasterchainBlock(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs())
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Current block seqno : %v\n", info.Last.Seqno)
+	nextSeqno := info.Last.Seqno + 1
+	bl, err := api.WaitMasterchainBlock(context.TODO(), nextSeqno, time.Second*15)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bl.Seqno != nextSeqno {
+		t.Fatal("wrong block seqno")
+	}
+	fmt.Printf("Next block seqno    : %v\n", bl.Seqno)
+}

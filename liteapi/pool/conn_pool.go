@@ -58,6 +58,7 @@ type conn interface {
 	Run(ctx context.Context, detectArchive bool)
 	IsArchiveNode() bool
 	AverageRoundTrip() time.Duration
+	Status() ConnStatus
 }
 
 // New returns a new instance of a connections pool.
@@ -79,8 +80,9 @@ func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Durat
 				cli, _ := connect(ctx, timeout, server)
 				// TODO: log error
 				clientsCh <- clientWrapper{
-					connID: connID,
-					cli:    cli,
+					connID:     connID,
+					cli:        cli,
+					serverHost: server.Host,
 				}
 			}(connID, server)
 		}
@@ -99,7 +101,7 @@ func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Durat
 					continue
 				}
 				if p.ConnectionsNumber() < maxConnections {
-					c := p.addConnection(wrapper.connID, wrapper.cli)
+					c := p.addConnection(wrapper.connID, wrapper.cli, wrapper.serverHost)
 					go c.Run(context.TODO(), detectArchiveNodes)
 				}
 				if p.ConnectionsNumber() == maxConnections {
@@ -134,15 +136,17 @@ func connect(ctx context.Context, timeout time.Duration, server config.LiteServe
 }
 
 type clientWrapper struct {
-	connID int
-	cli    *liteclient.Client
+	connID     int
+	cli        *liteclient.Client
+	serverHost string
 }
 
-func (p *ConnPool) addConnection(connID int, cli *liteclient.Client) *connection {
+func (p *ConnPool) addConnection(connID int, cli *liteclient.Client, serverHost string) *connection {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	c := &connection{
 		id:                  connID,
+		serverHost:          serverHost,
 		client:              cli,
 		masterHeadUpdatedCh: p.masterHeadUpdatedCh,
 	}
@@ -367,5 +371,22 @@ func (p *ConnPool) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeo
 				return nil
 			}
 		}
+	}
+}
+
+type Status struct {
+	Connections []ConnStatus
+}
+
+func (p *ConnPool) Status() Status {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	connStatuses := make([]ConnStatus, 0, len(p.conns))
+	for _, c := range p.conns {
+		connStatuses = append(connStatuses, c.Status())
+	}
+	return Status{
+		Connections: connStatuses,
 	}
 }

@@ -47,6 +47,10 @@ func (m *mockConn) Client() *liteclient.Client {
 	panic("implement me")
 }
 
+func (m *mockConn) Status() ConnStatus {
+	panic("implement me")
+}
+
 func (m *mockConn) Run(ctx context.Context, detectArchiveNodes bool) {
 }
 

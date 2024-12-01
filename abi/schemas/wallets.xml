@@ -104,6 +104,7 @@
         <code_hash>20834b7b72b112147e1b2fb457b84e74d1a30f04f737d4f62a668e9552d2b72f</code_hash>
         <get_method name="seqno"/>
         <get_method name="get_public_key"/>
+        <get_method name="get_subwallet_id"/>
         <msg_in>
             <ext_in name="wallet_signed_external_v5r1"/>
             <internal name="wallet_signed_internal_v5r1"/>

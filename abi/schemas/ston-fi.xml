@@ -151,9 +151,7 @@
             <int name="collected_token0_protocol_fee">int257</int>
             <int name="collected_token1_protocol_fee">int257</int>
         </output>
-    </get_method>
 
-    <get_method name="get_pool_data">
         <output version="stonfi_v2" fixed_length="true">
             <int name="is_locked">bool</int>
             <slice name="router_address">msgaddress</slice>

@@ -1095,6 +1095,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV5R1},
 		getMethods: []InvokeFn{
 			GetPublicKey,
+			GetSubwalletId,
 			Seqno,
 		},
 	},

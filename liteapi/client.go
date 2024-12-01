@@ -1093,3 +1093,16 @@ func (c *Client) GetNetworkGlobalID(ctx context.Context) (int32, error) {
 func (c *Client) GetPoolStatus() pool.Status {
 	return c.pool.Status()
 }
+
+func (c *Client) WaitMasterchainBlock(ctx context.Context, seqno uint32, timeout time.Duration) (ton.BlockIDExt, error) {
+	t := uint32(timeout.Milliseconds())
+	client, _, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return ton.BlockIDExt{}, err
+	}
+	res, err := client.WaitMasterchainBlock(ctx, seqno, t)
+	if err != nil {
+		return ton.BlockIDExt{}, err
+	}
+	return res.Id.ToBlockIdExt(), nil
+}

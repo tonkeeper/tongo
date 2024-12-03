@@ -8,6 +8,7 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
+	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
 	DedustPool
@@ -84,6 +85,8 @@ const (
 
 func (c ContractInterface) String() string {
 	switch c {
+	case DaolamaVault:
+		return "daolama_vault"
 	case DedustFactory:
 		return "dedust_factory"
 	case DedustLiquidityDeposit:
@@ -235,6 +238,8 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
+	case "daolama_vault":
+		return DaolamaVault
 	case "dedust_factory":
 		return DedustFactory
 	case "dedust_liquidity_deposit ":
@@ -732,6 +737,12 @@ var methodInvocationOrder = []MethodDescription{
 }
 
 var contractInterfacesOrder = []InterfaceDescription{
+	{
+		Name: DaolamaVault,
+		Results: []string{
+			"GetPoolDataResult",
+		},
+	},
 	{
 		Name: DedustLiquidityDeposit,
 		Results: []string{
@@ -1266,6 +1277,11 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case DaolamaVault:
+		return []msgDecoderFunc{
+			decodeFuncDaolamaVaultSupplyMsgBody,
+			decodeFuncDaolamaVaultWithdrawMsgBody,
+		}
 	case DedustFactory:
 		return []msgDecoderFunc{
 			decodeFuncDedustCreateVaultMsgBody,

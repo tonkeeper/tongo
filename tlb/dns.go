@@ -35,6 +35,150 @@ type DNSRecord struct {
 	NotStandard       *boc.Cell // only for custom unmarshaling
 }
 
+func (r DNSRecord) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	switch r.SumType {
+	case "DNSText":
+		err := c.WriteUint(0x1eda, 16) // dns_text#1eda
+		if err != nil {
+			return err
+		}
+		return Marshal(c, r.DNSText)
+	case "DNSNextResolver":
+		err := c.WriteUint(0xba93, 16) // dns_next_resolver#ba93
+		if err != nil {
+			return err
+		}
+		return Marshal(c, r.DNSNextResolver)
+	case "DNSAdnlAddress":
+		err := c.WriteUint(0xad01, 16) // dns_adnl_address#ad01
+		if err != nil {
+			return err
+		}
+		err = c.WriteBytes(r.DNSAdnlAddress.Address[:])
+		if err != nil {
+			return err
+		}
+		flags := uint8(len(r.DNSAdnlAddress.ProtoList))
+		err = c.WriteUint(uint64(flags), 8)
+		if err != nil {
+			return err
+		}
+		for _, proto := range r.DNSAdnlAddress.ProtoList {
+			switch proto {
+			case "http":
+				err = c.WriteUint(0x4854, 16) // proto_http#4854
+				if err != nil {
+					return err
+				}
+			}
+		}
+	case "DNSSmcAddress":
+		err := c.WriteUint(0x9fd3, 16) // dns_smc_address#9fd3
+		if err != nil {
+			return err
+		}
+		err = Marshal(c, r.DNSSmcAddress.Address)
+		if err != nil {
+			return err
+		}
+		flags := uint8(len(r.DNSSmcAddress.SmcCapability.Interfaces))
+		err = c.WriteUint(uint64(flags), 8)
+		if err != nil {
+			return err
+		}
+		for _, iface := range r.DNSSmcAddress.SmcCapability.Interfaces {
+			switch iface {
+			case "seqno":
+				err = c.WriteUint(0x5371, 16) // cap_method_seqno#5371
+				if err != nil {
+					return err
+				}
+			case "pubkey":
+				err = c.WriteUint(0x71f4, 16) // cap_method_pubkey#71f4
+				if err != nil {
+					return err
+				}
+			case "wallet":
+				err = c.WriteUint(0x2177, 16) // cap_is_wallet#2177
+				if err != nil {
+					return err
+				}
+			}
+		}
+		for _, name := range r.DNSSmcAddress.SmcCapability.Name {
+			err = c.WriteUint(0xff, 8) // cap_name#ff
+			if err != nil {
+				return err
+			}
+			err = Marshal(c, DNSText(name))
+			if err != nil {
+				return err
+			}
+		}
+	case "DNSStorageAddress":
+		err := c.WriteUint(0x7473, 16) // dns_storage_address#7473
+		if err != nil {
+			return err
+		}
+		return c.WriteBytes(r.DNSStorageAddress[:])
+	case "NotStandard":
+		c = r.NotStandard.CopyRemaining()
+	}
+	return nil
+}
+
+func (t DNSText) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	text := string(t)
+	if len(text) == 0 {
+		return c.WriteUint(0, 8) // chunks:(## 8) = 0
+	}
+
+	chunks := (len(text) + 7) / 8
+	err := c.WriteUint(uint64(chunks), 8)
+	if err != nil {
+		return err
+	}
+
+	chunkSize := min(len(text), 8)
+	err = c.WriteUint(uint64(chunkSize), 8)
+	if err != nil {
+		return err
+	}
+	err = c.WriteBytes([]byte(text[:chunkSize]))
+	if err != nil {
+		return err
+	}
+
+	remaining := text[chunkSize:]
+	for len(remaining) > 0 {
+		newCell := boc.NewCell()
+		chunkSize = min(len(remaining), 8)
+		err = newCell.WriteUint(uint64(chunkSize), 8)
+		if err != nil {
+			return err
+		}
+		err = newCell.WriteBytes([]byte(remaining[:chunkSize]))
+		if err != nil {
+			return err
+		}
+		err = c.AddRef(newCell)
+		if err != nil {
+			return err
+		}
+		remaining = remaining[chunkSize:]
+		c = newCell
+	}
+
+	return nil
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	t, err := c.ReadUint(16)
 	if err != nil {

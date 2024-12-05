@@ -81,8 +81,8 @@ type Options struct {
 	LiteServers []config.LiteServer
 	Timeout     time.Duration
 	// MaxConnections specifies a number of connections to lite servers for a connections pool.
-	MaxConnections   int
-	NumPerConnection int
+	MaxConnections       int
+	WorkersPerConnection int
 	// InitCtx is used when opening a new connection to lite servers during the initialization.
 	InitCtx context.Context
 	// ProofPolicy specifies a policy for proof checks.
@@ -115,9 +115,9 @@ func WithMaxConnectionsNumber(maxConns int) Option {
 	}
 }
 
-func WithNumPerConnection(numPerConn int) Option {
+func WithWorkersPerConnection(workersNum int) Option {
 	return func(o *Options) error {
-		o.NumPerConnection = numPerConn
+		o.WorkersPerConnection = workersNum
 		return nil
 	}
 }
@@ -277,7 +277,7 @@ func NewClient(options ...Option) (*Client, error) {
 		DetectArchiveNodes:            false,
 		SyncConnectionsInitialization: true,
 		PoolStrategy:                  pool.BestPingStrategy,
-		NumPerConnection:              1,
+		WorkersPerConnection:          1,
 	}
 	for _, o := range options {
 		if err := o(opts); err != nil {
@@ -288,7 +288,7 @@ func NewClient(options ...Option) (*Client, error) {
 		return nil, fmt.Errorf("server list empty")
 	}
 	connPool := pool.New(opts.PoolStrategy)
-	initCh := connPool.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.NumPerConnection, opts.DetectArchiveNodes, opts.LiteServers)
+	initCh := connPool.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.WorkersPerConnection, opts.DetectArchiveNodes, opts.LiteServers)
 	if opts.SyncConnectionsInitialization {
 		if err := <-initCh; err != nil {
 			return nil, err

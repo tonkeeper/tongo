@@ -46,7 +46,7 @@ func OptionTimeout(t time.Duration) Options {
 	}
 }
 
-func OptionConnectionsNum(n int) Options {
+func OptionWorkersPerConnection(n int) Options {
 	return func(c *Client) {
 		if n < 1 {
 			n = 1

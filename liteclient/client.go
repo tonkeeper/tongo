@@ -55,7 +55,7 @@ func OptionConnectionsNum(n int) Options {
 		for i := 1; i < n-1; i++ {
 			conn, err := NewConnection(context.Background(), connFirst.peerPublicKey, connFirst.host)
 			if err != nil {
-				slog.Warn("liteclient.reader() error", "err", err)
+				slog.Warn("liteclient clone connection error", err)
 				continue
 			}
 			c.connections = append(c.connections, conn)

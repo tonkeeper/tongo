@@ -222,24 +222,21 @@ func FromEnvs() Option {
 // Mainnet configures a client to use lite servers from the mainnet.
 func Mainnet() Option {
 	return func(o *Options) error {
-		file, err := downloadConfig("https://ton.org/global.config.json")
-		if err != nil {
-			return err
-		}
-		o.LiteServers = file.LiteServers
-		return nil
+		return setLiteServersFromURL("https://ton.org/global.config.json", o)
 	}
 }
 
 // Testnet configures a client to use lite servers from the testnet.
 func Testnet() Option {
 	return func(o *Options) error {
-		file, err := downloadConfig("https://ton.org/testnet-global.config.json")
-		if err != nil {
-			return err
-		}
-		o.LiteServers = file.LiteServers
-		return nil
+		return setLiteServersFromURL("https://ton.org/testnet-global.config.json", o)
+	}
+}
+
+// WithConfigurationUrl configures a client using a custom configuration URL.
+func WithConfigurationUrl(url string) Option {
+	return func(o *Options) error {
+		return setLiteServersFromURL(url, o)
 	}
 }
 
@@ -1064,6 +1061,15 @@ func downloadConfig(path string) (*config.GlobalConfigurationFile, error) {
 		o.LiteServers[i], o.LiteServers[j] = o.LiteServers[j], o.LiteServers[i]
 	})
 	return o, nil
+}
+
+func setLiteServersFromURL(url string, o *Options) error {
+	file, err := downloadConfig(url)
+	if err != nil {
+		return err
+	}
+	o.LiteServers = file.LiteServers
+	return nil
 }
 
 func (c *Client) getNetworkGlobalID() *int32 {

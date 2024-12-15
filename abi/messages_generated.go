@@ -119,6 +119,8 @@ var (
 	decodeFuncTelemintDeployMsgBody = decodeMsg(tlb.Tag{Val: 0x4637289a, Len: 32}, TelemintDeployMsgOp, TelemintDeployMsgBody{})
 	// 0x4637289b
 	decodeFuncTelemintDeployV2MsgBody = decodeMsg(tlb.Tag{Val: 0x4637289b, Len: 32}, TelemintDeployV2MsgOp, TelemintDeployV2MsgBody{})
+	// 0x46e9f1db
+	decodeFuncBclSetDataMsgBody = decodeMsg(tlb.Tag{Val: 0x46e9f1db, Len: 32}, BclSetDataMsgOp, BclSetDataMsgBody{})
 	// 0x46ed2e94
 	decodeFuncStorageWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x46ed2e94, Len: 32}, StorageWithdrawMsgOp, StorageWithdrawMsgBody{})
 	// 0x474f86cf
@@ -129,8 +131,14 @@ var (
 	decodeFuncTonstakePoolDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x47d54391, Len: 32}, TonstakePoolDepositMsgOp, TonstakePoolDepositMsgBody{})
 	// 0x487a8e81
 	decodeFuncTeleitemStartAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x487a8e81, Len: 32}, TeleitemStartAuctionMsgOp, TeleitemStartAuctionMsgBody{})
+	// 0x4b89c3d4
+	decodeFuncBclSetFeesMsgBody = decodeMsg(tlb.Tag{Val: 0x4b89c3d4, Len: 32}, BclSetFeesMsgOp, BclSetFeesMsgBody{})
 	// 0x4bc7c2df
 	decodeFuncTonstakePoolTouchMsgBody = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
+	// 0x4d583549
+	decodeFuncBclUnlockWalletCallbackMsgBody = decodeMsg(tlb.Tag{Val: 0x4d583549, Len: 32}, BclUnlockWalletCallbackMsgOp, BclUnlockWalletCallbackMsgBody{})
+	// 0x4d5f2cca
+	decodeFuncBclSetAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x4d5f2cca, Len: 32}, BclSetAdminMsgOp, BclSetAdminMsgBody{})
 	// 0x4d696e65
 	decodeFuncGramSubmitProofOfWorkMsgBody = decodeMsg(tlb.Tag{Val: 0x4d696e65, Len: 32}, GramSubmitProofOfWorkMsgOp, GramSubmitProofOfWorkMsgBody{})
 	// 0x4e73744b
@@ -203,6 +211,8 @@ var (
 	decodeFuncStormCancelOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x67134629, Len: 32}, StormCancelOrderMsgOp, StormCancelOrderMsgBody{})
 	// 0x67c7d281
 	decodeFuncTopUpChannelBalanceMsgBody = decodeMsg(tlb.Tag{Val: 0x67c7d281, Len: 32}, TopUpChannelBalanceMsgOp, TopUpChannelBalanceMsgBody{})
+	// 0x68e870fe
+	decodeFuncBclSellCoinsNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x68e870fe, Len: 32}, BclSellCoinsNotificationMsgOp, BclSellCoinsNotificationMsgBody{})
 	// 0x693d3950
 	decodeFuncGetRoyaltyParamsMsgBody = decodeMsg(tlb.Tag{Val: 0x693d3950, Len: 32}, GetRoyaltyParamsMsgOp, GetRoyaltyParamsMsgBody{})
 	// 0x69d08679
@@ -221,6 +231,8 @@ var (
 	decodeFuncWalletSignedInternalV5R1MsgBody = decodeMsg(tlb.Tag{Val: 0x73696e74, Len: 32}, WalletSignedInternalV5R1MsgOp, WalletSignedInternalV5R1MsgBody{})
 	// 0x73756273
 	decodeFuncSubscriptionPaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x73756273, Len: 32}, SubscriptionPaymentMsgOp, SubscriptionPaymentMsgBody{})
+	// 0x742b36d8
+	decodeFuncBclSellMsgBody = decodeMsg(tlb.Tag{Val: 0x742b36d8, Len: 32}, BclSellMsgOp, BclSellMsgBody{})
 	// 0x74bb3427
 	decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody = decodeMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{})
 	// 0x75097f5d
@@ -241,6 +253,8 @@ var (
 	decodeFuncWhalesNominatorsDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{})
 	// 0x7bdd97de
 	decodeFuncJettonBurnNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, JettonBurnNotificationMsgOp, JettonBurnNotificationMsgBody{})
+	// 0x7fbd764e
+	decodeFuncBclSetAuthorMsgBody = decodeMsg(tlb.Tag{Val: 0x7fbd764e, Len: 32}, BclSetAuthorMsgOp, BclSetAuthorMsgBody{})
 	// 0x82609bf6
 	decodeFuncMultisigApproveAcceptedMsgBody = decodeMsg(tlb.Tag{Val: 0x82609bf6, Len: 32}, MultisigApproveAcceptedMsgOp, MultisigApproveAcceptedMsgBody{})
 	// 0x84dced7a
@@ -261,10 +275,14 @@ var (
 	decodeFuncWhalesNominatorsAcceptStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x99a811fb, Len: 32}, WhalesNominatorsAcceptStakeMsgOp, WhalesNominatorsAcceptStakeMsgBody{})
 	// 0x9bf5561c
 	decodeFuncTonstakePoolSetDepositSettingsMsgBody = decodeMsg(tlb.Tag{Val: 0x9bf5561c, Len: 32}, TonstakePoolSetDepositSettingsMsgOp, TonstakePoolSetDepositSettingsMsgBody{})
+	// 0x9c0f3220
+	decodeFuncBclSetCodeMsgBody = decodeMsg(tlb.Tag{Val: 0x9c0f3220, Len: 32}, BclSetCodeMsgOp, BclSetCodeMsgBody{})
 	// 0x9c73fba2
 	decodeFuncMultisigOrderInitMsgBody = decodeMsg(tlb.Tag{Val: 0x9c73fba2, Len: 32}, MultisigOrderInitMsgOp, MultisigOrderInitMsgBody{})
 	// 0x9d2ec640
 	decodeFuncStormActivateOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x9d2ec640, Len: 32}, StormActivateOrderMsgOp, StormActivateOrderMsgBody{})
+	// 0x9d65e47a
+	decodeFuncBclUnlockWalletMsgBody = decodeMsg(tlb.Tag{Val: 0x9d65e47a, Len: 32}, BclUnlockWalletMsgOp, BclUnlockWalletMsgBody{})
 	// 0xa19fd934
 	decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody = decodeMsg(tlb.Tag{Val: 0xa19fd934, Len: 32}, WhalesNominatorsAcceptWithdrawsMsgOp, WhalesNominatorsAcceptWithdrawsMsgBody{})
 	// 0xa2065f2c
@@ -281,12 +299,16 @@ var (
 	decodeFuncMultisigApproveMsgBody = decodeMsg(tlb.Tag{Val: 0xa762230f, Len: 32}, MultisigApproveMsgOp, MultisigApproveMsgBody{})
 	// 0xa8cb00ad
 	decodeFuncReportRoyaltyParamsMsgBody = decodeMsg(tlb.Tag{Val: 0xa8cb00ad, Len: 32}, ReportRoyaltyParamsMsgOp, ReportRoyaltyParamsMsgBody{})
+	// 0xa8ce3fe7
+	decodeFuncBclUnlockWalletExcessMsgBody = decodeMsg(tlb.Tag{Val: 0xa8ce3fe7, Len: 32}, BclUnlockWalletExcessMsgOp, BclUnlockWalletExcessMsgBody{})
 	// 0xa91baf56
 	decodeFuncStorageRewardWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0xa91baf56, Len: 32}, StorageRewardWithdrawalMsgOp, StorageRewardWithdrawalMsgBody{})
 	// 0xad4eb6f5
 	decodeFuncDedustPayoutFromPoolMsgBody = decodeMsg(tlb.Tag{Val: 0xad4eb6f5, Len: 32}, DedustPayoutFromPoolMsgOp, DedustPayoutFromPoolMsgBody{})
 	// 0xae25d79e
 	decodeFuncPtonTonRefundMsgBody = decodeMsg(tlb.Tag{Val: 0xae25d79e, Len: 32}, PtonTonRefundMsgOp, PtonTonRefundMsgBody{})
+	// 0xaf750d34
+	decodeFuncBclBuyMsgBody = decodeMsg(tlb.Tag{Val: 0xaf750d34, Len: 32}, BclBuyMsgOp, BclBuyMsgBody{})
 	// 0xafaf283e
 	decodeFuncMultisigApproveRejectedMsgBody = decodeMsg(tlb.Tag{Val: 0xafaf283e, Len: 32}, MultisigApproveRejectedMsgOp, MultisigApproveRejectedMsgBody{})
 	// 0xb1ebae06
@@ -299,6 +321,8 @@ var (
 	decodeFuncStorageContractTerminatedMsgBody = decodeMsg(tlb.Tag{Val: 0xb6236d63, Len: 32}, StorageContractTerminatedMsgOp, StorageContractTerminatedMsgBody{})
 	// 0xb652c441
 	decodeFuncStormPayFundingMsgBody = decodeMsg(tlb.Tag{Val: 0xb652c441, Len: 32}, StormPayFundingMsgOp, StormPayFundingMsgBody{})
+	// 0xbd9d1e7d
+	decodeFuncBclSetCodeDataMsgBody = decodeMsg(tlb.Tag{Val: 0xbd9d1e7d, Len: 32}, BclSetCodeDataMsgOp, BclSetCodeDataMsgBody{})
 	// 0xc1344900
 	decodeFuncTonstakeImanagerStatsMsgBody = decodeMsg(tlb.Tag{Val: 0xc1344900, Len: 32}, TonstakeImanagerStatsMsgOp, TonstakeImanagerStatsMsgBody{})
 	// 0xc89a3ee4
@@ -323,6 +347,8 @@ var (
 	decodeFuncDedustDepositLiquidityMsgBody = decodeMsg(tlb.Tag{Val: 0xd55e4686, Len: 32}, DedustDepositLiquidityMsgOp, DedustDepositLiquidityMsgBody{})
 	// 0xd5b5e9ad
 	decodeFuncStormVaultUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0xd5b5e9ad, Len: 32}, StormVaultUnstakeMsgOp, StormVaultUnstakeMsgBody{})
+	// 0xd7ab4f41
+	decodeFuncBclDeployCoinMsgBody = decodeMsg(tlb.Tag{Val: 0xd7ab4f41, Len: 32}, BclDeployCoinMsgOp, BclDeployCoinMsgBody{})
 	// 0xda803efd
 	decodeFuncWhalesNominatorsWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{})
 	// 0xdb3b8abd
@@ -369,8 +395,12 @@ var (
 	decodeFuncStonfiPaymentRequestMsgBody = decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
 	// 0xf96f7324
 	decodeFuncElectorRecoverStakeResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{})
+	// 0xfadc0412
+	decodeFuncBclSetContentMsgBody = decodeMsg(tlb.Tag{Val: 0xfadc0412, Len: 32}, BclSetContentMsgOp, BclSetContentMsgBody{})
 	// 0xfb88e119
 	decodeFuncJettonClaimAdminMsgBody = decodeMsg(tlb.Tag{Val: 0xfb88e119, Len: 32}, JettonClaimAdminMsgOp, JettonClaimAdminMsgBody{})
+	// 0xfdaa7c9d
+	decodeFuncBclFeePayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xfdaa7c9d, Len: 32}, BclFeePayoutMsgOp, BclFeePayoutMsgBody{})
 	// 0xffffffff
 	decodeFuncBounceMsgBody = decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{})
 )
@@ -546,6 +576,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x4637289b
 	TelemintDeployV2MsgOpCode: decodeFuncTelemintDeployV2MsgBody,
 
+	// 0x46e9f1db
+	BclSetDataMsgOpCode: decodeFuncBclSetDataMsgBody,
+
 	// 0x46ed2e94
 	StorageWithdrawMsgOpCode: decodeFuncStorageWithdrawMsgBody,
 
@@ -561,8 +594,17 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x487a8e81
 	TeleitemStartAuctionMsgOpCode: decodeFuncTeleitemStartAuctionMsgBody,
 
+	// 0x4b89c3d4
+	BclSetFeesMsgOpCode: decodeFuncBclSetFeesMsgBody,
+
 	// 0x4bc7c2df
 	TonstakePoolTouchMsgOpCode: decodeFuncTonstakePoolTouchMsgBody,
+
+	// 0x4d583549
+	BclUnlockWalletCallbackMsgOpCode: decodeFuncBclUnlockWalletCallbackMsgBody,
+
+	// 0x4d5f2cca
+	BclSetAdminMsgOpCode: decodeFuncBclSetAdminMsgBody,
 
 	// 0x4d696e65
 	GramSubmitProofOfWorkMsgOpCode: decodeFuncGramSubmitProofOfWorkMsgBody,
@@ -673,6 +715,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x67c7d281
 	TopUpChannelBalanceMsgOpCode: decodeFuncTopUpChannelBalanceMsgBody,
 
+	// 0x68e870fe
+	BclSellCoinsNotificationMsgOpCode: decodeFuncBclSellCoinsNotificationMsgBody,
+
 	// 0x693d3950
 	GetRoyaltyParamsMsgOpCode: decodeFuncGetRoyaltyParamsMsgBody,
 
@@ -699,6 +744,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x73756273
 	SubscriptionPaymentMsgOpCode: decodeFuncSubscriptionPaymentMsgBody,
+
+	// 0x742b36d8
+	BclSellMsgOpCode: decodeFuncBclSellMsgBody,
 
 	// 0x74bb3427
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode: decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody,
@@ -730,6 +778,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x7bdd97de
 	JettonBurnNotificationMsgOpCode: decodeFuncJettonBurnNotificationMsgBody,
 
+	// 0x7fbd764e
+	BclSetAuthorMsgOpCode: decodeFuncBclSetAuthorMsgBody,
+
 	// 0x82609bf6
 	MultisigApproveAcceptedMsgOpCode: decodeFuncMultisigApproveAcceptedMsgBody,
 
@@ -760,11 +811,17 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x9bf5561c
 	TonstakePoolSetDepositSettingsMsgOpCode: decodeFuncTonstakePoolSetDepositSettingsMsgBody,
 
+	// 0x9c0f3220
+	BclSetCodeMsgOpCode: decodeFuncBclSetCodeMsgBody,
+
 	// 0x9c73fba2
 	MultisigOrderInitMsgOpCode: decodeFuncMultisigOrderInitMsgBody,
 
 	// 0x9d2ec640
 	StormActivateOrderMsgOpCode: decodeFuncStormActivateOrderMsgBody,
+
+	// 0x9d65e47a
+	BclUnlockWalletMsgOpCode: decodeFuncBclUnlockWalletMsgBody,
 
 	// 0xa19fd934
 	WhalesNominatorsAcceptWithdrawsMsgOpCode: decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody,
@@ -790,6 +847,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xa8cb00ad
 	ReportRoyaltyParamsMsgOpCode: decodeFuncReportRoyaltyParamsMsgBody,
 
+	// 0xa8ce3fe7
+	BclUnlockWalletExcessMsgOpCode: decodeFuncBclUnlockWalletExcessMsgBody,
+
 	// 0xa91baf56
 	StorageRewardWithdrawalMsgOpCode: decodeFuncStorageRewardWithdrawalMsgBody,
 
@@ -798,6 +858,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xae25d79e
 	PtonTonRefundMsgOpCode: decodeFuncPtonTonRefundMsgBody,
+
+	// 0xaf750d34
+	BclBuyMsgOpCode: decodeFuncBclBuyMsgBody,
 
 	// 0xafaf283e
 	MultisigApproveRejectedMsgOpCode: decodeFuncMultisigApproveRejectedMsgBody,
@@ -816,6 +879,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xb652c441
 	StormPayFundingMsgOpCode: decodeFuncStormPayFundingMsgBody,
+
+	// 0xbd9d1e7d
+	BclSetCodeDataMsgOpCode: decodeFuncBclSetCodeDataMsgBody,
 
 	// 0xc1344900
 	TonstakeImanagerStatsMsgOpCode: decodeFuncTonstakeImanagerStatsMsgBody,
@@ -852,6 +918,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xd5b5e9ad
 	StormVaultUnstakeMsgOpCode: decodeFuncStormVaultUnstakeMsgBody,
+
+	// 0xd7ab4f41
+	BclDeployCoinMsgOpCode: decodeFuncBclDeployCoinMsgBody,
 
 	// 0xda803efd
 	WhalesNominatorsWithdrawMsgOpCode: decodeFuncWhalesNominatorsWithdrawMsgBody,
@@ -922,8 +991,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xf96f7324
 	ElectorRecoverStakeResponseMsgOpCode: decodeFuncElectorRecoverStakeResponseMsgBody,
 
+	// 0xfadc0412
+	BclSetContentMsgOpCode: decodeFuncBclSetContentMsgBody,
+
 	// 0xfb88e119
 	JettonClaimAdminMsgOpCode: decodeFuncJettonClaimAdminMsgBody,
+
+	// 0xfdaa7c9d
+	BclFeePayoutMsgOpCode: decodeFuncBclFeePayoutMsgBody,
 
 	// 0xffffffff
 	BounceMsgOpCode: decodeFuncBounceMsgBody,
@@ -986,12 +1061,16 @@ const (
 	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
+	BclSetDataMsgOp                              MsgOpName = "BclSetData"
 	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
 	DedustPayoutMsgOp                            MsgOpName = "DedustPayout"
 	ElectorRecoverStakeRequestMsgOp              MsgOpName = "ElectorRecoverStakeRequest"
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
+	BclSetFeesMsgOp                              MsgOpName = "BclSetFees"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
+	BclUnlockWalletCallbackMsgOp                 MsgOpName = "BclUnlockWalletCallback"
+	BclSetAdminMsgOp                             MsgOpName = "BclSetAdmin"
 	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
 	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
@@ -1028,6 +1107,7 @@ const (
 	SettleChannelConditionalsMsgOp               MsgOpName = "SettleChannelConditionals"
 	StormCancelOrderMsgOp                        MsgOpName = "StormCancelOrder"
 	TopUpChannelBalanceMsgOp                     MsgOpName = "TopUpChannelBalance"
+	BclSellCoinsNotificationMsgOp                MsgOpName = "BclSellCoinsNotification"
 	GetRoyaltyParamsMsgOp                        MsgOpName = "GetRoyaltyParams"
 	StormOrderCanceledMsgOp                      MsgOpName = "StormOrderCanceled"
 	SbtRevokeMsgOp                               MsgOpName = "SbtRevoke"
@@ -1037,6 +1117,7 @@ const (
 	JettonNotifyMsgOp                            MsgOpName = "JettonNotify"
 	WalletSignedInternalV5R1MsgOp                MsgOpName = "WalletSignedInternalV5R1"
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
+	BclSellMsgOp                                 MsgOpName = "BclSell"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
 	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
 	MegatonWtonMintMsgOp                         MsgOpName = "MegatonWtonMint"
@@ -1047,6 +1128,7 @@ const (
 	ApproveMsgOp                                 MsgOpName = "Approve"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
 	JettonBurnNotificationMsgOp                  MsgOpName = "JettonBurnNotification"
+	BclSetAuthorMsgOp                            MsgOpName = "BclSetAuthor"
 	MultisigApproveAcceptedMsgOp                 MsgOpName = "MultisigApproveAccepted"
 	StormAddReferralAmountMsgOp                  MsgOpName = "StormAddReferralAmount"
 	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
@@ -1057,8 +1139,10 @@ const (
 	TonstakePoolPrepareGovernanceMigrationMsgOp  MsgOpName = "TonstakePoolPrepareGovernanceMigration"
 	WhalesNominatorsAcceptStakeMsgOp             MsgOpName = "WhalesNominatorsAcceptStake"
 	TonstakePoolSetDepositSettingsMsgOp          MsgOpName = "TonstakePoolSetDepositSettings"
+	BclSetCodeMsgOp                              MsgOpName = "BclSetCode"
 	MultisigOrderInitMsgOp                       MsgOpName = "MultisigOrderInit"
 	StormActivateOrderMsgOp                      MsgOpName = "StormActivateOrder"
+	BclUnlockWalletMsgOp                         MsgOpName = "BclUnlockWallet"
 	WhalesNominatorsAcceptWithdrawsMsgOp         MsgOpName = "WhalesNominatorsAcceptWithdraws"
 	WhalesNominatorsSendStakeMsgOp               MsgOpName = "WhalesNominatorsSendStake"
 	MultisigExecuteInternalMsgOp                 MsgOpName = "MultisigExecuteInternal"
@@ -1067,15 +1151,18 @@ const (
 	TeleitemReturnBidMsgOp                       MsgOpName = "TeleitemReturnBid"
 	MultisigApproveMsgOp                         MsgOpName = "MultisigApprove"
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
+	BclUnlockWalletExcessMsgOp                   MsgOpName = "BclUnlockWalletExcess"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
 	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
 	PtonTonRefundMsgOp                           MsgOpName = "PtonTonRefund"
+	BclBuyMsgOp                                  MsgOpName = "BclBuy"
 	MultisigApproveRejectedMsgOp                 MsgOpName = "MultisigApproveRejected"
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
 	DedustDepositLiquidityAllMsgOp               MsgOpName = "DedustDepositLiquidityAll"
 	StorageContractTerminatedMsgOp               MsgOpName = "StorageContractTerminated"
 	StormPayFundingMsgOp                         MsgOpName = "StormPayFunding"
+	BclSetCodeDataMsgOp                          MsgOpName = "BclSetCodeData"
 	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
 	StormVaultStakeMsgOp                         MsgOpName = "StormVaultStake"
 	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
@@ -1088,6 +1175,7 @@ const (
 	ExcessMsgOp                                  MsgOpName = "Excess"
 	DedustDepositLiquidityMsgOp                  MsgOpName = "DedustDepositLiquidity"
 	StormVaultUnstakeMsgOp                       MsgOpName = "StormVaultUnstake"
+	BclDeployCoinMsgOp                           MsgOpName = "BclDeployCoin"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
 	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
@@ -1111,7 +1199,9 @@ const (
 	MultisigNewOrderMsgOp                        MsgOpName = "MultisigNewOrder"
 	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
+	BclSetContentMsgOp                           MsgOpName = "BclSetContent"
 	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
+	BclFeePayoutMsgOp                            MsgOpName = "BclFeePayout"
 	BounceMsgOp                                  MsgOpName = "Bounce"
 )
 
@@ -1172,12 +1262,16 @@ const (
 	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
+	BclSetDataMsgOpCode                              MsgOpCode = 0x46e9f1db
 	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
 	DedustPayoutMsgOpCode                            MsgOpCode = 0x474f86cf
 	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
+	BclSetFeesMsgOpCode                              MsgOpCode = 0x4b89c3d4
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
+	BclUnlockWalletCallbackMsgOpCode                 MsgOpCode = 0x4d583549
+	BclSetAdminMsgOpCode                             MsgOpCode = 0x4d5f2cca
 	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
 	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
@@ -1214,6 +1308,7 @@ const (
 	SettleChannelConditionalsMsgOpCode               MsgOpCode = 0x66f6f069
 	StormCancelOrderMsgOpCode                        MsgOpCode = 0x67134629
 	TopUpChannelBalanceMsgOpCode                     MsgOpCode = 0x67c7d281
+	BclSellCoinsNotificationMsgOpCode                MsgOpCode = 0x68e870fe
 	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
 	StormOrderCanceledMsgOpCode                      MsgOpCode = 0x69d08679
 	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
@@ -1223,6 +1318,7 @@ const (
 	JettonNotifyMsgOpCode                            MsgOpCode = 0x7362d09c
 	WalletSignedInternalV5R1MsgOpCode                MsgOpCode = 0x73696e74
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
+	BclSellMsgOpCode                                 MsgOpCode = 0x742b36d8
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
 	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
 	MegatonWtonMintMsgOpCode                         MsgOpCode = 0x77a33521
@@ -1233,6 +1329,7 @@ const (
 	ApproveMsgOpCode                                 MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
 	JettonBurnNotificationMsgOpCode                  MsgOpCode = 0x7bdd97de
+	BclSetAuthorMsgOpCode                            MsgOpCode = 0x7fbd764e
 	MultisigApproveAcceptedMsgOpCode                 MsgOpCode = 0x82609bf6
 	StormAddReferralAmountMsgOpCode                  MsgOpCode = 0x84dced7a
 	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
@@ -1243,8 +1340,10 @@ const (
 	TonstakePoolPrepareGovernanceMigrationMsgOpCode  MsgOpCode = 0x9971881c
 	WhalesNominatorsAcceptStakeMsgOpCode             MsgOpCode = 0x99a811fb
 	TonstakePoolSetDepositSettingsMsgOpCode          MsgOpCode = 0x9bf5561c
+	BclSetCodeMsgOpCode                              MsgOpCode = 0x9c0f3220
 	MultisigOrderInitMsgOpCode                       MsgOpCode = 0x9c73fba2
 	StormActivateOrderMsgOpCode                      MsgOpCode = 0x9d2ec640
+	BclUnlockWalletMsgOpCode                         MsgOpCode = 0x9d65e47a
 	WhalesNominatorsAcceptWithdrawsMsgOpCode         MsgOpCode = 0xa19fd934
 	WhalesNominatorsSendStakeMsgOpCode               MsgOpCode = 0xa2065f2c
 	MultisigExecuteInternalMsgOpCode                 MsgOpCode = 0xa32c59bf
@@ -1253,15 +1352,18 @@ const (
 	TeleitemReturnBidMsgOpCode                       MsgOpCode = 0xa43227e1
 	MultisigApproveMsgOpCode                         MsgOpCode = 0xa762230f
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
+	BclUnlockWalletExcessMsgOpCode                   MsgOpCode = 0xa8ce3fe7
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
 	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
 	PtonTonRefundMsgOpCode                           MsgOpCode = 0xae25d79e
+	BclBuyMsgOpCode                                  MsgOpCode = 0xaf750d34
 	MultisigApproveRejectedMsgOpCode                 MsgOpCode = 0xafaf283e
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
 	DedustDepositLiquidityAllMsgOpCode               MsgOpCode = 0xb56b9598
 	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
 	StormPayFundingMsgOpCode                         MsgOpCode = 0xb652c441
+	BclSetCodeDataMsgOpCode                          MsgOpCode = 0xbd9d1e7d
 	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
 	StormVaultStakeMsgOpCode                         MsgOpCode = 0xc89a3ee4
 	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
@@ -1274,6 +1376,7 @@ const (
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
 	DedustDepositLiquidityMsgOpCode                  MsgOpCode = 0xd55e4686
 	StormVaultUnstakeMsgOpCode                       MsgOpCode = 0xd5b5e9ad
+	BclDeployCoinMsgOpCode                           MsgOpCode = 0xd7ab4f41
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
 	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
@@ -1297,7 +1400,9 @@ const (
 	MultisigNewOrderMsgOpCode                        MsgOpCode = 0xf718510f
 	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
+	BclSetContentMsgOpCode                           MsgOpCode = 0xfadc0412
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
+	BclFeePayoutMsgOpCode                            MsgOpCode = 0xfdaa7c9d
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
@@ -1662,6 +1767,11 @@ type TelemintDeployV2MsgBody struct {
 	Msg TelemintUnsignedDeployV2
 }
 
+type BclSetDataMsgBody struct {
+	QueryId uint64
+	Data    tlb.Any `tlb:"^"`
+}
+
 type StorageWithdrawMsgBody struct {
 	QueryId uint64
 }
@@ -1685,8 +1795,25 @@ type TeleitemStartAuctionMsgBody struct {
 	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
 }
 
+type BclSetFeesMsgBody struct {
+	QueryId                uint64
+	FeeAddress             tlb.MsgAddress
+	TradeFeeNumerator      uint16
+	CtxTradeFeeDenominator uint16
+}
+
 type TonstakePoolTouchMsgBody struct {
 	QueryId uint64
+}
+
+type BclUnlockWalletCallbackMsgBody struct {
+	QueryId     uint64
+	FromAddress tlb.MsgAddress
+}
+
+type BclSetAdminMsgBody struct {
+	QueryId      uint64
+	AdminAddress tlb.MsgAddress
 }
 
 type GramSubmitProofOfWorkMsgBody struct {
@@ -1972,6 +2099,14 @@ type TopUpChannelBalanceMsgBody struct {
 	AddB tlb.Grams
 }
 
+type BclSellCoinsNotificationMsgBody struct {
+	QueryId      uint64
+	JettonAmount tlb.VarUInteger16
+	MinReceive   tlb.Grams
+	FromAddress  tlb.MsgAddress
+	Referral     *BclReferralData `tlb:"maybe^"`
+}
+
 type GetRoyaltyParamsMsgBody struct {
 	QueryId uint64
 }
@@ -2018,6 +2153,13 @@ type WalletSignedInternalV5R1MsgBody struct {
 }
 
 type SubscriptionPaymentMsgBody struct{}
+
+type BclSellMsgBody struct {
+	QueryId    uint64
+	Amount     tlb.VarUInteger16
+	MinReceive tlb.Grams
+	Referral   *BclReferralData `tlb:"maybe^"`
+}
 
 type WhalesNominatorsStakeWithdrawDelayedMsgBody struct {
 	QueryId int64
@@ -2073,6 +2215,11 @@ type JettonBurnNotificationMsgBody struct {
 	Amount              tlb.VarUInteger16
 	Sender              tlb.MsgAddress
 	ResponseDestination tlb.MsgAddress
+}
+
+type BclSetAuthorMsgBody struct {
+	QueryId       uint64
+	AuthorAddress tlb.MsgAddress
 }
 
 type MultisigApproveAcceptedMsgBody struct {
@@ -2132,6 +2279,11 @@ type TonstakePoolSetDepositSettingsMsgBody struct {
 	DepositsOpen                 bool
 }
 
+type BclSetCodeMsgBody struct {
+	QueryId uint64
+	Code    tlb.Any `tlb:"^"`
+}
+
 type MultisigOrderInitMsgBody struct {
 	QueryId        uint64
 	Threshold      uint8
@@ -2144,6 +2296,10 @@ type MultisigOrderInitMsgBody struct {
 type StormActivateOrderMsgBody struct {
 	OrderIndex     tlb.Uint3
 	ActivatedOrder OrderPayload `tlb:"^"`
+}
+
+type BclUnlockWalletMsgBody struct {
+	QueryId uint64
 }
 
 type WhalesNominatorsAcceptWithdrawsMsgBody struct {
@@ -2191,6 +2347,10 @@ type ReportRoyaltyParamsMsgBody struct {
 	Destination tlb.MsgAddress
 }
 
+type BclUnlockWalletExcessMsgBody struct {
+	QueryId uint64
+}
+
 type StorageRewardWithdrawalMsgBody struct {
 	QueryId uint64
 }
@@ -2205,6 +2365,13 @@ type DedustPayoutFromPoolMsgBody struct {
 
 type PtonTonRefundMsgBody struct {
 	QueryId uint64
+}
+
+type BclBuyMsgBody struct {
+	QueryId      uint64
+	MinReceive   tlb.VarUInteger16
+	Referral     *BclReferralData `tlb:"maybe^"`
+	BuyerAddress BclBuyerAddress
 }
 
 type MultisigApproveRejectedMsgBody struct {
@@ -2246,6 +2413,12 @@ type StorageContractTerminatedMsgBody struct {
 
 type StormPayFundingMsgBody struct {
 	OracleRef OracleData `tlb:"^"`
+}
+
+type BclSetCodeDataMsgBody struct {
+	QueryId uint64
+	Code    tlb.Any `tlb:"^"`
+	Data    tlb.Any `tlb:"^"`
 }
 
 type TonstakeImanagerStatsMsgBody struct {
@@ -2327,6 +2500,14 @@ type DedustDepositLiquidityMsgBody struct {
 type StormVaultUnstakeMsgBody struct {
 	JettonAmount tlb.Grams
 	UserAddress  tlb.MsgAddress
+}
+
+type BclDeployCoinMsgBody struct {
+	QueryId       uint64
+	Content       tlb.Any `tlb:"^"`
+	AuthorAddress tlb.MsgAddress
+	Referral      BclReferralData   `tlb:"^"`
+	DeployOptions *BclDeployOptions `tlb:"maybe^"`
 }
 
 type WhalesNominatorsWithdrawMsgBody struct {
@@ -2451,8 +2632,17 @@ type ElectorRecoverStakeResponseMsgBody struct {
 	QueryId uint64
 }
 
+type BclSetContentMsgBody struct {
+	QueryId uint64
+	Content tlb.Any `tlb:"^"`
+}
+
 type JettonClaimAdminMsgBody struct {
 	QueryId uint64
+}
+
+type BclFeePayoutMsgBody struct {
+	Referral BclReferralData `tlb:"^"`
 }
 
 type BounceMsgBody struct {
@@ -2516,12 +2706,16 @@ var KnownMsgInTypes = map[string]any{
 	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
+	BclSetDataMsgOp:                              BclSetDataMsgBody{},
 	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
 	DedustPayoutMsgOp:                            DedustPayoutMsgBody{},
 	ElectorRecoverStakeRequestMsgOp:              ElectorRecoverStakeRequestMsgBody{},
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
+	BclSetFeesMsgOp:                              BclSetFeesMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
+	BclUnlockWalletCallbackMsgOp:                 BclUnlockWalletCallbackMsgBody{},
+	BclSetAdminMsgOp:                             BclSetAdminMsgBody{},
 	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
 	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},
@@ -2558,6 +2752,7 @@ var KnownMsgInTypes = map[string]any{
 	SettleChannelConditionalsMsgOp:               SettleChannelConditionalsMsgBody{},
 	StormCancelOrderMsgOp:                        StormCancelOrderMsgBody{},
 	TopUpChannelBalanceMsgOp:                     TopUpChannelBalanceMsgBody{},
+	BclSellCoinsNotificationMsgOp:                BclSellCoinsNotificationMsgBody{},
 	GetRoyaltyParamsMsgOp:                        GetRoyaltyParamsMsgBody{},
 	StormOrderCanceledMsgOp:                      StormOrderCanceledMsgBody{},
 	SbtRevokeMsgOp:                               SbtRevokeMsgBody{},
@@ -2567,6 +2762,7 @@ var KnownMsgInTypes = map[string]any{
 	JettonNotifyMsgOp:                            JettonNotifyMsgBody{},
 	WalletSignedInternalV5R1MsgOp:                WalletSignedInternalV5R1MsgBody{},
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
+	BclSellMsgOp:                                 BclSellMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
 	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
 	MegatonWtonMintMsgOp:                         MegatonWtonMintMsgBody{},
@@ -2577,6 +2773,7 @@ var KnownMsgInTypes = map[string]any{
 	ApproveMsgOp:                                 ApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
 	JettonBurnNotificationMsgOp:                  JettonBurnNotificationMsgBody{},
+	BclSetAuthorMsgOp:                            BclSetAuthorMsgBody{},
 	MultisigApproveAcceptedMsgOp:                 MultisigApproveAcceptedMsgBody{},
 	StormAddReferralAmountMsgOp:                  StormAddReferralAmountMsgBody{},
 	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
@@ -2587,8 +2784,10 @@ var KnownMsgInTypes = map[string]any{
 	TonstakePoolPrepareGovernanceMigrationMsgOp:  TonstakePoolPrepareGovernanceMigrationMsgBody{},
 	WhalesNominatorsAcceptStakeMsgOp:             WhalesNominatorsAcceptStakeMsgBody{},
 	TonstakePoolSetDepositSettingsMsgOp:          TonstakePoolSetDepositSettingsMsgBody{},
+	BclSetCodeMsgOp:                              BclSetCodeMsgBody{},
 	MultisigOrderInitMsgOp:                       MultisigOrderInitMsgBody{},
 	StormActivateOrderMsgOp:                      StormActivateOrderMsgBody{},
+	BclUnlockWalletMsgOp:                         BclUnlockWalletMsgBody{},
 	WhalesNominatorsAcceptWithdrawsMsgOp:         WhalesNominatorsAcceptWithdrawsMsgBody{},
 	WhalesNominatorsSendStakeMsgOp:               WhalesNominatorsSendStakeMsgBody{},
 	MultisigExecuteInternalMsgOp:                 MultisigExecuteInternalMsgBody{},
@@ -2597,15 +2796,18 @@ var KnownMsgInTypes = map[string]any{
 	TeleitemReturnBidMsgOp:                       TeleitemReturnBidMsgBody{},
 	MultisigApproveMsgOp:                         MultisigApproveMsgBody{},
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
+	BclUnlockWalletExcessMsgOp:                   BclUnlockWalletExcessMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
 	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},
 	PtonTonRefundMsgOp:                           PtonTonRefundMsgBody{},
+	BclBuyMsgOp:                                  BclBuyMsgBody{},
 	MultisigApproveRejectedMsgOp:                 MultisigApproveRejectedMsgBody{},
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
 	DedustDepositLiquidityAllMsgOp:               DedustDepositLiquidityAllMsgBody{},
 	StorageContractTerminatedMsgOp:               StorageContractTerminatedMsgBody{},
 	StormPayFundingMsgOp:                         StormPayFundingMsgBody{},
+	BclSetCodeDataMsgOp:                          BclSetCodeDataMsgBody{},
 	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
 	StormVaultStakeMsgOp:                         StormVaultStakeMsgBody{},
 	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},
@@ -2618,6 +2820,7 @@ var KnownMsgInTypes = map[string]any{
 	ExcessMsgOp:                                  ExcessMsgBody{},
 	DedustDepositLiquidityMsgOp:                  DedustDepositLiquidityMsgBody{},
 	StormVaultUnstakeMsgOp:                       StormVaultUnstakeMsgBody{},
+	BclDeployCoinMsgOp:                           BclDeployCoinMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
 	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},
@@ -2641,7 +2844,9 @@ var KnownMsgInTypes = map[string]any{
 	MultisigNewOrderMsgOp:                        MultisigNewOrderMsgBody{},
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
+	BclSetContentMsgOp:                           BclSetContentMsgBody{},
 	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
+	BclFeePayoutMsgOp:                            BclFeePayoutMsgBody{},
 	BounceMsgOp:                                  BounceMsgBody{},
 }
 
@@ -2737,25 +2942,37 @@ var KnownMsgExtInTypes = map[string]any{
 }
 
 var (
+	// 0x0f6ab54f
+	decodeFuncBclSendLiqLogExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x0f6ab54f, Len: 32}, BclSendLiqLogExtOutMsgOp, BclSendLiqLogExtOutMsgBody{})
 	// 0x3aa870a6
 	decodeFuncDedustWithdrawalExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x3aa870a6, Len: 32}, DedustWithdrawalExtOutMsgOp, DedustWithdrawalExtOutMsgBody{})
 	// 0x56a8e920
 	decodeFuncMegatonUpdateMiningParamsExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x56a8e920, Len: 32}, MegatonUpdateMiningParamsExtOutMsgOp, MegatonUpdateMiningParamsExtOutMsgBody{})
+	// 0x5e97d116
+	decodeFuncBclSellLogExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x5e97d116, Len: 32}, BclSellLogExtOutMsgOp, BclSellLogExtOutMsgBody{})
 	// 0x7362d09c
 	decodeFuncMegatonSwapExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, MegatonSwapExtOutMsgOp, MegatonSwapExtOutMsgBody{})
 	// 0x9c610de3
 	decodeFuncDedustSwapExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x9c610de3, Len: 32}, DedustSwapExtOutMsgOp, DedustSwapExtOutMsgBody{})
 	// 0xb544f4a4
 	decodeFuncDedustDepositExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0xb544f4a4, Len: 32}, DedustDepositExtOutMsgOp, DedustDepositExtOutMsgBody{})
+	// 0xcd78325d
+	decodeFuncBclBuyLogExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0xcd78325d, Len: 32}, BclBuyLogExtOutMsgOp, BclBuyLogExtOutMsgBody{})
 )
 
 var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
+
+	// 0x0f6ab54f
+	BclSendLiqLogExtOutMsgOpCode: decodeFuncBclSendLiqLogExtOutMsgBody,
 
 	// 0x3aa870a6
 	DedustWithdrawalExtOutMsgOpCode: decodeFuncDedustWithdrawalExtOutMsgBody,
 
 	// 0x56a8e920
 	MegatonUpdateMiningParamsExtOutMsgOpCode: decodeFuncMegatonUpdateMiningParamsExtOutMsgBody,
+
+	// 0x5e97d116
+	BclSellLogExtOutMsgOpCode: decodeFuncBclSellLogExtOutMsgBody,
 
 	// 0x7362d09c
 	MegatonSwapExtOutMsgOpCode: decodeFuncMegatonSwapExtOutMsgBody,
@@ -2765,23 +2982,37 @@ var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xb544f4a4
 	DedustDepositExtOutMsgOpCode: decodeFuncDedustDepositExtOutMsgBody,
+
+	// 0xcd78325d
+	BclBuyLogExtOutMsgOpCode: decodeFuncBclBuyLogExtOutMsgBody,
 }
 
 const (
+	BclSendLiqLogExtOutMsgOp             MsgOpName = "BclSendLiqLog"
 	DedustWithdrawalExtOutMsgOp          MsgOpName = "DedustWithdrawal"
 	MegatonUpdateMiningParamsExtOutMsgOp MsgOpName = "MegatonUpdateMiningParams"
+	BclSellLogExtOutMsgOp                MsgOpName = "BclSellLog"
 	MegatonSwapExtOutMsgOp               MsgOpName = "MegatonSwap"
 	DedustSwapExtOutMsgOp                MsgOpName = "DedustSwap"
 	DedustDepositExtOutMsgOp             MsgOpName = "DedustDeposit"
+	BclBuyLogExtOutMsgOp                 MsgOpName = "BclBuyLog"
 )
 
 const (
+	BclSendLiqLogExtOutMsgOpCode             MsgOpCode = 0x0f6ab54f
 	DedustWithdrawalExtOutMsgOpCode          MsgOpCode = 0x3aa870a6
 	MegatonUpdateMiningParamsExtOutMsgOpCode MsgOpCode = 0x56a8e920
+	BclSellLogExtOutMsgOpCode                MsgOpCode = 0x5e97d116
 	MegatonSwapExtOutMsgOpCode               MsgOpCode = 0x7362d09c
 	DedustSwapExtOutMsgOpCode                MsgOpCode = 0x9c610de3
 	DedustDepositExtOutMsgOpCode             MsgOpCode = 0xb544f4a4
+	BclBuyLogExtOutMsgOpCode                 MsgOpCode = 0xcd78325d
 )
+
+type BclSendLiqLogExtOutMsgBody struct {
+	TonAmount    tlb.Grams
+	JettonAmount tlb.VarUInteger16
+}
 
 type DedustWithdrawalExtOutMsgBody struct {
 	SenderAddr tlb.MsgAddress
@@ -2800,6 +3031,15 @@ type MegatonUpdateMiningParamsExtOutMsgBody struct {
 		LastMined tlb.Uint256
 		LastIndex tlb.Uint256
 	} `tlb:"^"`
+}
+
+type BclSellLogExtOutMsgBody struct {
+	FromAddress     tlb.MsgAddress
+	TonsToReturn    tlb.Grams
+	JettonAmount    tlb.VarUInteger16
+	NewSupply       tlb.VarUInteger16
+	TonLiqCollected tlb.Grams
+	Referral        *BclReferralData `tlb:"maybe^"`
 }
 
 type MegatonSwapExtOutMsgBody struct {
@@ -2834,10 +3074,22 @@ type DedustDepositExtOutMsgBody struct {
 	Liquidity  tlb.Grams
 }
 
+type BclBuyLogExtOutMsgBody struct {
+	BuyerAddress    tlb.MsgAddress
+	TonsConsumed    tlb.Grams
+	SupplyDelta     tlb.VarUInteger16
+	NewSupply       tlb.VarUInteger16
+	TonLiqCollected tlb.Grams
+	Referral        *BclReferralData `tlb:"maybe^"`
+}
+
 var KnownMsgExtOutTypes = map[string]any{
+	BclSendLiqLogExtOutMsgOp:             BclSendLiqLogExtOutMsgBody{},
 	DedustWithdrawalExtOutMsgOp:          DedustWithdrawalExtOutMsgBody{},
 	MegatonUpdateMiningParamsExtOutMsgOp: MegatonUpdateMiningParamsExtOutMsgBody{},
+	BclSellLogExtOutMsgOp:                BclSellLogExtOutMsgBody{},
 	MegatonSwapExtOutMsgOp:               MegatonSwapExtOutMsgBody{},
 	DedustSwapExtOutMsgOp:                DedustSwapExtOutMsgBody{},
 	DedustDepositExtOutMsgOp:             DedustDepositExtOutMsgBody{},
+	BclBuyLogExtOutMsgOp:                 BclBuyLogExtOutMsgBody{},
 }

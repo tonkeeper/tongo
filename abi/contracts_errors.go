@@ -5,6 +5,22 @@ package abi
 import ()
 
 var contractErrors = map[ContractInterface]map[int32]string{
+	BclJetton: {47: "Balance error",
+		48:    "Not enough gas",
+		49:    "Invalid message",
+		73:    "Not owner",
+		333:   "Wrong workchain",
+		707:   "Slippage error",
+		708:   "Too many coins to buy",
+		709:   "No funds for gas",
+		711:   "Trading disabled",
+		712:   "Trading enabled",
+		713:   "Invalid wallet",
+		714:   "Too many coins to sell",
+		715:   "Not admin",
+		716:   "Not author",
+		65535: "Wrong op",
+	},
 	MultisigOrderV2: {104: "Unauthorized init",
 		105:   "Already inited",
 		106:   "Unauthorized sign",

@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -19,6 +20,14 @@ func (addr AddressWithWorkchain) Equal(other any) bool {
 		return false
 	}
 	return addr.Workchain == otherAddr.Workchain && addr.Address == otherAddr.Address
+}
+
+func (addr AddressWithWorkchain) Compare(other any) int {
+	otherAddr, ok := other.(AddressWithWorkchain)
+	if !ok {
+		return 0
+	}
+	return bytes.Compare(addr.Address[:], otherAddr.Address[:])
 }
 
 func (addr AddressWithWorkchain) FixedSize() int {

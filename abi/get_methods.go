@@ -67,7 +67,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
 	"get_plugin_list":                    {DecodeGetPluginListResult},
 	"get_pool_address":                   {DecodeGetPoolAddress_StonfiResult},
-	"get_pool_data":                      {DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult},
+	"get_pool_data":                      {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                 {DecodeGetPoolFullDataResult},
 	"get_pool_status":                    {DecodeGetPoolStatusResult},
 	"get_position_manager_contract_data": {DecodeGetPositionManagerContractData_StormResult},
@@ -271,6 +271,7 @@ var resultTypes = []interface{}{
 	&GetParams_WhalesNominatorResult{},
 	&GetPluginListResult{},
 	&GetPoolAddress_StonfiResult{},
+	&GetPoolData_DaolamaResult{},
 	&GetPoolData_StonfiResult{},
 	&GetPoolData_StonfiV2Result{},
 	&GetPoolData_TfResult{},
@@ -2511,6 +2512,14 @@ func DecodeGetPoolAddress_StonfiResult(stack tlb.VmStack) (resultType string, re
 	return "GetPoolAddress_StonfiResult", result, err
 }
 
+type GetPoolData_DaolamaResult struct {
+	Halted         bool
+	Balance        uint64
+	Borrowed       uint64
+	LpTokenBalance uint64
+	FeeCollected   uint64
+}
+
 type GetPoolData_StonfiResult struct {
 	Reserve0                   tlb.Int257
 	Reserve1                   tlb.Int257
@@ -2571,13 +2580,22 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
 		}
 	}
 	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolData_DaolamaResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolData_DaolamaResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolData_DaolamaResult", result, err
 }
 
 func DecodeGetPoolData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {

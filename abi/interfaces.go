@@ -11,6 +11,7 @@ const (
 	BclJetton
 	BclMaster
 	BclWallet
+	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
 	DedustPool
@@ -93,6 +94,8 @@ func (c ContractInterface) String() string {
 		return "bcl_master"
 	case BclWallet:
 		return "bcl_wallet"
+	case DaolamaVault:
+		return "daolama_vault"
 	case DedustFactory:
 		return "dedust_factory"
 	case DedustLiquidityDeposit:
@@ -250,6 +253,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return BclMaster
 	case "bcl_wallet":
 		return BclWallet
+	case "daolama_vault":
+		return DaolamaVault
 	case "dedust_factory":
 		return DedustFactory
 	case "dedust_liquidity_deposit ":
@@ -780,6 +785,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: BclWallet,
 		Results: []string{
 			"GetTransfersEnabled_BclResult",
+		},
+	},
+	{
+		Name: DaolamaVault,
+		Results: []string{
+			"GetPoolData_DaolamaResult",
 		},
 	},
 	{
@@ -1338,6 +1349,11 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncBclUnlockWalletMsgBody,
 			decodeFuncBclUnlockWalletExcessMsgBody,
 			decodeFuncBclSellMsgBody,
+		}
+	case DaolamaVault:
+		return []msgDecoderFunc{
+			decodeFuncDaolamaVaultSupplyMsgBody,
+			decodeFuncDaolamaVaultWithdrawMsgBody,
 		}
 	case DedustFactory:
 		return []msgDecoderFunc{

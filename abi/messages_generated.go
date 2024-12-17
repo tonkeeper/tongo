@@ -173,6 +173,8 @@ var (
 	decodeFuncJettonBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, JettonBurnMsgOp, JettonBurnMsgBody{})
 	// 0x5be57626
 	decodeFuncHipoFinanceProxyTokensMintedMsgBody = decodeMsg(tlb.Tag{Val: 0x5be57626, Len: 32}, HipoFinanceProxyTokensMintedMsgOp, HipoFinanceProxyTokensMintedMsgBody{})
+	// 0x5c11ada9
+	decodeFuncDaolamaVaultSupplyMsgBody = decodeMsg(tlb.Tag{Val: 0x5c11ada9, Len: 32}, DaolamaVaultSupplyMsgOp, DaolamaVaultSupplyMsgBody{})
 	// 0x5d1b17b8
 	decodeFuncStormUpdatePositionWithStopLossMsgBody = decodeMsg(tlb.Tag{Val: 0x5d1b17b8, Len: 32}, StormUpdatePositionWithStopLossMsgOp, StormUpdatePositionWithStopLossMsgBody{})
 	// 0x5dd66579
@@ -251,6 +253,8 @@ var (
 	decodeFuncApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
 	// 0x7bcd1fef
 	decodeFuncWhalesNominatorsDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{})
+	// 0x7bdd97de
+	decodeFuncDaolamaVaultWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, DaolamaVaultWithdrawMsgOp, DaolamaVaultWithdrawMsgBody{})
 	// 0x7bdd97de
 	decodeFuncJettonBurnNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, JettonBurnNotificationMsgOp, JettonBurnNotificationMsgBody{})
 	// 0x7fbd764e
@@ -658,6 +662,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x5be57626
 	HipoFinanceProxyTokensMintedMsgOpCode: decodeFuncHipoFinanceProxyTokensMintedMsgBody,
 
+	// 0x5c11ada9
+	DaolamaVaultSupplyMsgOpCode: decodeFuncDaolamaVaultSupplyMsgBody,
+
 	// 0x5d1b17b8
 	StormUpdatePositionWithStopLossMsgOpCode: decodeFuncStormUpdatePositionWithStopLossMsgBody,
 
@@ -775,8 +782,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x7bcd1fef
 	WhalesNominatorsDepositMsgOpCode: decodeFuncWhalesNominatorsDepositMsgBody,
 
-	// 0x7bdd97de
-	JettonBurnNotificationMsgOpCode: decodeFuncJettonBurnNotificationMsgBody,
+	//DaolamaVaultWithdraw, JettonBurnNotification,
+	0x7bdd97de: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncDaolamaVaultWithdrawMsgBody,
+		decodeFuncJettonBurnNotificationMsgBody},
+		"0x7bdd97de",
+	),
 
 	// 0x7fbd764e
 	BclSetAuthorMsgOpCode: decodeFuncBclSetAuthorMsgBody,
@@ -1088,6 +1099,7 @@ const (
 	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
 	HipoFinanceProxyTokensMintedMsgOp            MsgOpName = "HipoFinanceProxyTokensMinted"
+	DaolamaVaultSupplyMsgOp                      MsgOpName = "DaolamaVaultSupply"
 	StormUpdatePositionWithStopLossMsgOp         MsgOpName = "StormUpdatePositionWithStopLoss"
 	StormAddExecutorAmountMsgOp                  MsgOpName = "StormAddExecutorAmount"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
@@ -1127,6 +1139,7 @@ const (
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
 	ApproveMsgOp                                 MsgOpName = "Approve"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
+	DaolamaVaultWithdrawMsgOp                    MsgOpName = "DaolamaVaultWithdraw"
 	JettonBurnNotificationMsgOp                  MsgOpName = "JettonBurnNotification"
 	BclSetAuthorMsgOp                            MsgOpName = "BclSetAuthor"
 	MultisigApproveAcceptedMsgOp                 MsgOpName = "MultisigApproveAccepted"
@@ -1289,6 +1302,7 @@ const (
 	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
 	HipoFinanceProxyTokensMintedMsgOpCode            MsgOpCode = 0x5be57626
+	DaolamaVaultSupplyMsgOpCode                      MsgOpCode = 0x5c11ada9
 	StormUpdatePositionWithStopLossMsgOpCode         MsgOpCode = 0x5d1b17b8
 	StormAddExecutorAmountMsgOpCode                  MsgOpCode = 0x5dd66579
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
@@ -1328,6 +1342,7 @@ const (
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
 	ApproveMsgOpCode                                 MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
+	DaolamaVaultWithdrawMsgOpCode                    MsgOpCode = 0x7bdd97de
 	JettonBurnNotificationMsgOpCode                  MsgOpCode = 0x7bdd97de
 	BclSetAuthorMsgOpCode                            MsgOpCode = 0x7fbd764e
 	MultisigApproveAcceptedMsgOpCode                 MsgOpCode = 0x82609bf6
@@ -1936,6 +1951,10 @@ type HipoFinanceProxyTokensMintedMsgBody struct {
 	RoundSince uint32
 }
 
+type DaolamaVaultSupplyMsgBody struct {
+	Amount tlb.Grams
+}
+
 type StormUpdatePositionWithStopLossMsgBody struct {
 	Direction             tlb.Uint1
 	StopTriggerPrice      tlb.Grams
@@ -2208,6 +2227,11 @@ type ApproveMsgBody struct {
 type WhalesNominatorsDepositMsgBody struct {
 	QueryId int64
 	Gas     tlb.Grams
+}
+
+type DaolamaVaultWithdrawMsgBody struct {
+	JettonAmount tlb.Grams
+	UserAddress  tlb.MsgAddress
 }
 
 type JettonBurnNotificationMsgBody struct {
@@ -2733,6 +2757,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
 	HipoFinanceProxyTokensMintedMsgOp:            HipoFinanceProxyTokensMintedMsgBody{},
+	DaolamaVaultSupplyMsgOp:                      DaolamaVaultSupplyMsgBody{},
 	StormUpdatePositionWithStopLossMsgOp:         StormUpdatePositionWithStopLossMsgBody{},
 	StormAddExecutorAmountMsgOp:                  StormAddExecutorAmountMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
@@ -2772,6 +2797,7 @@ var KnownMsgInTypes = map[string]any{
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
 	ApproveMsgOp:                                 ApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
+	DaolamaVaultWithdrawMsgOp:                    DaolamaVaultWithdrawMsgBody{},
 	JettonBurnNotificationMsgOp:                  JettonBurnNotificationMsgBody{},
 	BclSetAuthorMsgOp:                            BclSetAuthorMsgBody{},
 	MultisigApproveAcceptedMsgOp:                 MultisigApproveAcceptedMsgBody{},

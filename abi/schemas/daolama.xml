@@ -1,0 +1,28 @@
+<abi>
+    <interface name="daolama_vault">
+        <msg_in>
+            <internal name="daolama_vault_supply"/>
+            <internal name="daolama_vault_withdraw"/>
+        </msg_in>
+
+        <get_method name="get_pool_data"  version="daolama"/>
+    </interface>
+
+    <internal name="daolama_vault_supply">
+        supply#5c11ada9 amount:Coins = InternalMsgBody;
+    </internal>
+
+    <internal name="daolama_vault_withdraw">
+        withdraw#7bdd97de jetton_amount:Coins user_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <get_method name="get_pool_data">
+        <output version="daolama" fixed_length="true">
+            <int name="halted">bool</int>
+            <int name="balance">uint64</int>
+            <int name="borrowed">uint64</int>
+            <int name="lp_token_balance">uint64</int>
+            <int name="fee_collected">uint64</int>
+        </output>
+    </get_method>
+</abi>

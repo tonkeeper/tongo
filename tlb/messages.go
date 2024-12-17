@@ -24,6 +24,7 @@ type Message struct {
 
 // Hash returns a hash of this Message.
 func (m *Message) Hash() Bits256 {
+	return m.hash //todo: remove
 	if m.Info.SumType != "ExtInMsgInfo" {
 		return m.hash
 	}

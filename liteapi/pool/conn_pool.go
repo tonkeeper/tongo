@@ -71,13 +71,13 @@ func New(strategy Strategy) *ConnPool {
 	}
 }
 
-func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Duration, maxConnections int, detectArchiveNodes bool, servers []config.LiteServer) chan error {
+func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Duration, maxConnections int, workersPerConnection int, detectArchiveNodes bool, servers []config.LiteServer) chan error {
 	ch := make(chan error, 1)
 	go func() {
 		clientsCh := make(chan clientWrapper, len(servers))
 		for connID, server := range servers {
 			go func(connID int, server config.LiteServer) {
-				cli, _ := connect(ctx, timeout, server)
+				cli, _ := connect(ctx, timeout, server, workersPerConnection)
 				// TODO: log error
 				clientsCh <- clientWrapper{
 					connID:     connID,
@@ -119,7 +119,7 @@ func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Durat
 	return ch
 }
 
-func connect(ctx context.Context, timeout time.Duration, server config.LiteServer) (*liteclient.Client, error) {
+func connect(ctx context.Context, timeout time.Duration, server config.LiteServer, n int) (*liteclient.Client, error) {
 	serverPubkey, err := base64.StdEncoding.DecodeString(server.Key)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func connect(ctx context.Context, timeout time.Duration, server config.LiteServe
 	if err != nil {
 		return nil, err
 	}
-	cli := liteclient.NewClient(c, liteclient.OptionTimeout(timeout))
+	cli := liteclient.NewClient(c, liteclient.OptionTimeout(timeout), liteclient.OptionWorkersPerConnection(n))
 	if _, err := cli.LiteServerGetMasterchainInfo(ctx); err != nil {
 		return nil, err
 	}

@@ -5,7 +5,7 @@
             <internal name="daolama_vault_withdraw"/>
         </msg_in>
 
-        <get_method name="get_pool_data"/>
+        <get_method name="get_pool_data"  version="daolama"/>
     </interface>
 
     <internal name="daolama_vault_supply">

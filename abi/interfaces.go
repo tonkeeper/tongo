@@ -740,7 +740,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: DaolamaVault,
 		Results: []string{
-			"GetPoolDataResult",
+			"GetPoolData_DaolamaResult",
 		},
 	},
 	{

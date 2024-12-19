@@ -8,6 +8,9 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
+	BclJetton
+	BclMaster
+	BclWallet
 	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
@@ -85,6 +88,12 @@ const (
 
 func (c ContractInterface) String() string {
 	switch c {
+	case BclJetton:
+		return "bcl_jetton"
+	case BclMaster:
+		return "bcl_master"
+	case BclWallet:
+		return "bcl_wallet"
 	case DaolamaVault:
 		return "daolama_vault"
 	case DedustFactory:
@@ -238,6 +247,12 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
+	case "bcl_jetton":
+		return BclJetton
+	case "bcl_master":
+		return BclMaster
+	case "bcl_wallet":
+		return BclWallet
 	case "daolama_vault":
 		return DaolamaVault
 	case "dedust_factory":
@@ -391,6 +406,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 
 var methodInvocationOrder = []MethodDescription{
 	{
+		Name:     "coin_price",
+		InvokeFn: CoinPrice,
+	},
+	{
 		Name:     "get_amm_contract_data",
 		InvokeFn: GetAmmContractData,
 	},
@@ -427,6 +446,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetBalances,
 	},
 	{
+		Name:     "get_bcl_data",
+		InvokeFn: GetBclData,
+	},
+	{
 		Name:     "get_bill_amount",
 		InvokeFn: GetBillAmount,
 	},
@@ -461,6 +484,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_executor_vaults_whitelist",
 		InvokeFn: GetExecutorVaultsWhitelist,
+	},
+	{
+		Name:     "get_factory_data",
+		InvokeFn: GetFactoryData,
 	},
 	{
 		Name:     "get_full_domain",
@@ -671,6 +698,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetTradeFee,
 	},
 	{
+		Name:     "get_transfers_enabled",
+		InvokeFn: GetTransfersEnabled,
+	},
+	{
 		Name:     "get_validator_controller_data",
 		InvokeFn: GetValidatorControllerData,
 	},
@@ -737,6 +768,25 @@ var methodInvocationOrder = []MethodDescription{
 }
 
 var contractInterfacesOrder = []InterfaceDescription{
+	{
+		Name: BclMaster,
+		Results: []string{
+			"GetFactoryData_BclResult",
+		},
+	},
+	{
+		Name: BclJetton,
+		Results: []string{
+			"CoinPrice_BclResult",
+			"GetBclData_BclResult",
+		},
+	},
+	{
+		Name: BclWallet,
+		Results: []string{
+			"GetTransfersEnabled_BclResult",
+		},
+	},
 	{
 		Name: DaolamaVault,
 		Results: []string{
@@ -1277,6 +1327,29 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case BclJetton:
+		return []msgDecoderFunc{
+			decodeFuncBclBuyMsgBody,
+			decodeFuncBclSellCoinsNotificationMsgBody,
+			decodeFuncBclUnlockWalletCallbackMsgBody,
+			decodeFuncBclSetAdminMsgBody,
+			decodeFuncBclSetAuthorMsgBody,
+			decodeFuncBclSetContentMsgBody,
+			decodeFuncBclSetFeesMsgBody,
+			decodeFuncBclSetCodeMsgBody,
+			decodeFuncBclSetDataMsgBody,
+			decodeFuncBclSetCodeDataMsgBody,
+		}
+	case BclMaster:
+		return []msgDecoderFunc{
+			decodeFuncBclDeployCoinMsgBody,
+		}
+	case BclWallet:
+		return []msgDecoderFunc{
+			decodeFuncBclUnlockWalletMsgBody,
+			decodeFuncBclUnlockWalletExcessMsgBody,
+			decodeFuncBclSellMsgBody,
+		}
 	case DaolamaVault:
 		return []msgDecoderFunc{
 			decodeFuncDaolamaVaultSupplyMsgBody,
@@ -1454,6 +1527,12 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 	switch c {
+	case BclJetton:
+		return []msgDecoderFunc{
+			decodeFuncBclBuyLogExtOutMsgBody,
+			decodeFuncBclSellLogExtOutMsgBody,
+			decodeFuncBclSendLiqLogExtOutMsgBody,
+		}
 	case DedustPool:
 		return []msgDecoderFunc{
 			decodeFuncDedustSwapExtOutMsgBody,

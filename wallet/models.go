@@ -191,10 +191,11 @@ type Sendable interface {
 }
 
 type SimpleTransfer struct {
-	Amount     tlb.Grams
-	Address    ton.AccountID
-	Comment    string
-	Bounceable bool
+	Amount        tlb.Grams
+	Address       ton.AccountID
+	Comment       string
+	Bounceable    bool
+	ExtraCurrency map[int32]tlb.VarUInteger32
 }
 
 func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error) {
@@ -220,6 +221,9 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		Dest:        m.Address.ToMsgAddress(),
 	}
 	info.IntMsgInfo.Value.Grams = m.Amount
+	for k, v := range m.ExtraCurrency {
+		info.IntMsgInfo.Value.Other.Dict.Put(tlb.Uint32(k), v)
+	}
 
 	intMsg := tlb.Message{
 		Info: info,

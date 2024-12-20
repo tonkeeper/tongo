@@ -102,7 +102,7 @@ func decode(buf io.Reader, val reflect.Value) error {
 			return err
 		}
 		if val.Type().Len() != len(data) {
-			return fmt.Errorf("mismatched lenghth of decoded byte slice (%v) and array (%v)", len(data), val.Type().Len())
+			return fmt.Errorf("mismatched length of decoded byte slice (%v) and array (%v)", len(data), val.Type().Len())
 		}
 		reflect.Copy(val, reflect.ValueOf(data))
 		return nil

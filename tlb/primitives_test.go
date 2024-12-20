@@ -110,7 +110,7 @@ func TestHashMapE(t *testing.T) {
 		t.Fatalf("error: %v", err)
 	}
 	if len(res.OutMsgs.Keys()) != int(msgCount) {
-		t.Fatalf("ivalid number of out messages")
+		t.Fatalf("invalid number of out messages")
 	}
 }
 

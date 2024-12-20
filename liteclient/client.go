@@ -166,7 +166,7 @@ func decodeLength(b []byte) (int, []byte, error) {
 		panic("how it cat be possible? you are fucking wizard!")
 	}
 	if len(b) < 4 {
-		return 0, nil, fmt.Errorf("not enought bytes for decoding size")
+		return 0, nil, fmt.Errorf("not enough bytes for decoding size")
 	}
 	b[0] = 0
 	i := binary.LittleEndian.Uint32(b[:4])

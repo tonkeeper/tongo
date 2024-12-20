@@ -209,7 +209,7 @@ func (s *Server) CheckProof(ctx context.Context, tp *Proof, checkPayload, checkD
 		}
 		pubKey, err = ParseStateInit(tp.Proof.StateInit)
 		if err != nil {
-			return false, nil, fmt.Errorf("failed to to get public key")
+			return false, nil, fmt.Errorf("failed to get public key")
 		}
 	}
 

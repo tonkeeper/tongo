@@ -503,7 +503,7 @@ func tagToUint32(tag string) (uint32, error) {
 	tag = strings.TrimPrefix(tag, "#")
 	b, err := hex.DecodeString(tag)
 	if err != nil {
-		return 0, fmt.Errorf("ivalid tag %s err: %s", tag, err.Error())
+		return 0, fmt.Errorf("invalid tag %s err: %s", tag, err.Error())
 	}
 	b1 := make([]byte, 4)
 	copy(b1[:], b)

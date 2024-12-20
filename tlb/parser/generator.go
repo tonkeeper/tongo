@@ -105,7 +105,7 @@ func (g *Generator) GenerateGolangTypes(declarations []CombinatorDeclaration, ty
 				End: c.End,
 			}
 		} else if len(c.Combinator.TypeExpressions) > 0 {
-			return "", fmt.Errorf("combinators with paramaters '%v' are not supported", c.Combinator.Name)
+			return "", fmt.Errorf("combinators with parameters '%v' are not supported", c.Combinator.Name)
 		}
 		f := false
 		for i, c1 := range dec {

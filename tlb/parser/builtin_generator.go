@@ -98,19 +98,18 @@ func (u Uint{{.NameIndex}}) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint{{.NameIndex}}) Compare(other any) int {
+func (u Uint{{.NameIndex}}) Compare(other any) (int, bool) {
     otherInt, ok := other.(Uint{{.NameIndex}})
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 
 {{- if lt .NameIndex 57 }}
@@ -156,19 +155,18 @@ func (u Int{{.NameIndex}}) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int{{.NameIndex}}) Compare(other any) int {
+func (u Int{{.NameIndex}}) Compare(other any) (int, bool) {
     otherInt, ok := other.(Int{{.NameIndex}})
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 
 {{- if lt .NameIndex 57 }}
@@ -341,12 +339,12 @@ func (u Bits%v) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits%v) Compare(other any) int {
+func (u Bits%v) Compare(other any) (int, bool) {
     otherBits, ok := other.(Bits%v)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 	`, i, i/8, i, i, i, i, i/8, i, i, i, i, i)
 		} else {

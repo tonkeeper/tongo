@@ -22,12 +22,12 @@ func (addr AddressWithWorkchain) Equal(other any) bool {
 	return addr.Workchain == otherAddr.Workchain && addr.Address == otherAddr.Address
 }
 
-func (addr AddressWithWorkchain) Compare(other any) int {
+func (addr AddressWithWorkchain) Compare(other any) (int, bool) {
 	otherAddr, ok := other.(AddressWithWorkchain)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(addr.Address[:], otherAddr.Address[:])
+	return bytes.Compare(addr.Address[:], otherAddr.Address[:]), true
 }
 
 func (addr AddressWithWorkchain) FixedSize() int {

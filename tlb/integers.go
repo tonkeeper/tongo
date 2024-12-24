@@ -1316,19 +1316,18 @@ func (u Uint1) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint1) Compare(other any) int {
+func (u Uint1) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint1)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint1) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1367,19 +1366,18 @@ func (u Int1) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int1) Compare(other any) int {
+func (u Int1) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int1)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int1) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1418,19 +1416,18 @@ func (u Uint2) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint2) Compare(other any) int {
+func (u Uint2) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint2)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint2) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1469,19 +1466,18 @@ func (u Int2) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int2) Compare(other any) int {
+func (u Int2) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int2)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int2) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1520,19 +1516,18 @@ func (u Uint3) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint3) Compare(other any) int {
+func (u Uint3) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint3)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint3) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1571,19 +1566,18 @@ func (u Int3) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int3) Compare(other any) int {
+func (u Int3) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int3)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int3) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1622,19 +1616,18 @@ func (u Uint4) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint4) Compare(other any) int {
+func (u Uint4) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint4)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint4) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1673,19 +1666,18 @@ func (u Int4) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int4) Compare(other any) int {
+func (u Int4) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int4)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int4) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1724,19 +1716,18 @@ func (u Uint5) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint5) Compare(other any) int {
+func (u Uint5) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint5)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint5) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1775,19 +1766,18 @@ func (u Int5) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int5) Compare(other any) int {
+func (u Int5) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int5)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int5) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1826,19 +1816,18 @@ func (u Uint6) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint6) Compare(other any) int {
+func (u Uint6) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint6)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint6) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1877,19 +1866,18 @@ func (u Int6) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int6) Compare(other any) int {
+func (u Int6) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int6)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int6) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1928,19 +1916,18 @@ func (u Uint7) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint7) Compare(other any) int {
+func (u Uint7) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint7)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint7) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -1979,19 +1966,18 @@ func (u Int7) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int7) Compare(other any) int {
+func (u Int7) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int7)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int7) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2030,19 +2016,18 @@ func (u Uint8) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint8) Compare(other any) int {
+func (u Uint8) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint8)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint8) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2081,19 +2066,18 @@ func (u Int8) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int8) Compare(other any) int {
+func (u Int8) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int8)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int8) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2132,19 +2116,18 @@ func (u Uint9) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint9) Compare(other any) int {
+func (u Uint9) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint9)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint9) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2183,19 +2166,18 @@ func (u Int9) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int9) Compare(other any) int {
+func (u Int9) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int9)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int9) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2234,19 +2216,18 @@ func (u Uint10) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint10) Compare(other any) int {
+func (u Uint10) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint10)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint10) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2285,19 +2266,18 @@ func (u Int10) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int10) Compare(other any) int {
+func (u Int10) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int10)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int10) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2336,19 +2316,18 @@ func (u Uint11) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint11) Compare(other any) int {
+func (u Uint11) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint11)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint11) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2387,19 +2366,18 @@ func (u Int11) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int11) Compare(other any) int {
+func (u Int11) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int11)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int11) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2438,19 +2416,18 @@ func (u Uint12) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint12) Compare(other any) int {
+func (u Uint12) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint12)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint12) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2489,19 +2466,18 @@ func (u Int12) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int12) Compare(other any) int {
+func (u Int12) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int12)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int12) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2540,19 +2516,18 @@ func (u Uint13) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint13) Compare(other any) int {
+func (u Uint13) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint13)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint13) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2591,19 +2566,18 @@ func (u Int13) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int13) Compare(other any) int {
+func (u Int13) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int13)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int13) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2642,19 +2616,18 @@ func (u Uint14) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint14) Compare(other any) int {
+func (u Uint14) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint14)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint14) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2693,19 +2666,18 @@ func (u Int14) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int14) Compare(other any) int {
+func (u Int14) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int14)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int14) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2744,19 +2716,18 @@ func (u Uint15) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint15) Compare(other any) int {
+func (u Uint15) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint15)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint15) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2795,19 +2766,18 @@ func (u Int15) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int15) Compare(other any) int {
+func (u Int15) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int15)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int15) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2846,19 +2816,18 @@ func (u Uint16) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint16) Compare(other any) int {
+func (u Uint16) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint16)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint16) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2897,19 +2866,18 @@ func (u Int16) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int16) Compare(other any) int {
+func (u Int16) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int16)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int16) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2948,19 +2916,18 @@ func (u Uint17) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint17) Compare(other any) int {
+func (u Uint17) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint17)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint17) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -2999,19 +2966,18 @@ func (u Int17) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int17) Compare(other any) int {
+func (u Int17) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int17)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int17) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3050,19 +3016,18 @@ func (u Uint18) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint18) Compare(other any) int {
+func (u Uint18) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint18)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint18) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3101,19 +3066,18 @@ func (u Int18) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int18) Compare(other any) int {
+func (u Int18) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int18)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int18) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3152,19 +3116,18 @@ func (u Uint19) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint19) Compare(other any) int {
+func (u Uint19) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint19)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint19) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3203,19 +3166,18 @@ func (u Int19) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int19) Compare(other any) int {
+func (u Int19) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int19)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int19) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3254,19 +3216,18 @@ func (u Uint20) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint20) Compare(other any) int {
+func (u Uint20) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint20)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint20) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3305,19 +3266,18 @@ func (u Int20) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int20) Compare(other any) int {
+func (u Int20) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int20)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int20) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3356,19 +3316,18 @@ func (u Uint21) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint21) Compare(other any) int {
+func (u Uint21) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint21)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint21) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3407,19 +3366,18 @@ func (u Int21) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int21) Compare(other any) int {
+func (u Int21) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int21)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int21) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3458,19 +3416,18 @@ func (u Uint22) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint22) Compare(other any) int {
+func (u Uint22) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint22)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint22) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3509,19 +3466,18 @@ func (u Int22) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int22) Compare(other any) int {
+func (u Int22) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int22)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int22) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3560,19 +3516,18 @@ func (u Uint23) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint23) Compare(other any) int {
+func (u Uint23) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint23)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint23) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3611,19 +3566,18 @@ func (u Int23) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int23) Compare(other any) int {
+func (u Int23) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int23)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int23) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3662,19 +3616,18 @@ func (u Uint24) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint24) Compare(other any) int {
+func (u Uint24) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint24)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint24) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3713,19 +3666,18 @@ func (u Int24) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int24) Compare(other any) int {
+func (u Int24) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int24)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int24) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3764,19 +3716,18 @@ func (u Uint25) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint25) Compare(other any) int {
+func (u Uint25) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint25)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint25) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3815,19 +3766,18 @@ func (u Int25) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int25) Compare(other any) int {
+func (u Int25) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int25)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int25) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3866,19 +3816,18 @@ func (u Uint26) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint26) Compare(other any) int {
+func (u Uint26) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint26)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint26) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3917,19 +3866,18 @@ func (u Int26) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int26) Compare(other any) int {
+func (u Int26) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int26)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int26) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -3968,19 +3916,18 @@ func (u Uint27) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint27) Compare(other any) int {
+func (u Uint27) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint27)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint27) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4019,19 +3966,18 @@ func (u Int27) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int27) Compare(other any) int {
+func (u Int27) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int27)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int27) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4070,19 +4016,18 @@ func (u Uint28) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint28) Compare(other any) int {
+func (u Uint28) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint28)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint28) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4121,19 +4066,18 @@ func (u Int28) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int28) Compare(other any) int {
+func (u Int28) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int28)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int28) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4172,19 +4116,18 @@ func (u Uint29) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint29) Compare(other any) int {
+func (u Uint29) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint29)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint29) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4223,19 +4166,18 @@ func (u Int29) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int29) Compare(other any) int {
+func (u Int29) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int29)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int29) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4274,19 +4216,18 @@ func (u Uint30) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint30) Compare(other any) int {
+func (u Uint30) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint30)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint30) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4325,19 +4266,18 @@ func (u Int30) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int30) Compare(other any) int {
+func (u Int30) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int30)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int30) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4376,19 +4316,18 @@ func (u Uint31) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint31) Compare(other any) int {
+func (u Uint31) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint31)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint31) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4427,19 +4366,18 @@ func (u Int31) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int31) Compare(other any) int {
+func (u Int31) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int31)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int31) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4478,19 +4416,18 @@ func (u Uint32) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint32) Compare(other any) int {
+func (u Uint32) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint32)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint32) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4529,19 +4466,18 @@ func (u Int32) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int32) Compare(other any) int {
+func (u Int32) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int32)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int32) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4580,19 +4516,18 @@ func (u Uint33) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint33) Compare(other any) int {
+func (u Uint33) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint33)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint33) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4631,19 +4566,18 @@ func (u Int33) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int33) Compare(other any) int {
+func (u Int33) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int33)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int33) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4682,19 +4616,18 @@ func (u Uint34) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint34) Compare(other any) int {
+func (u Uint34) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint34)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint34) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4733,19 +4666,18 @@ func (u Int34) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int34) Compare(other any) int {
+func (u Int34) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int34)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int34) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4784,19 +4716,18 @@ func (u Uint35) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint35) Compare(other any) int {
+func (u Uint35) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint35)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint35) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4835,19 +4766,18 @@ func (u Int35) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int35) Compare(other any) int {
+func (u Int35) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int35)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int35) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4886,19 +4816,18 @@ func (u Uint36) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint36) Compare(other any) int {
+func (u Uint36) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint36)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint36) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4937,19 +4866,18 @@ func (u Int36) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int36) Compare(other any) int {
+func (u Int36) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int36)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int36) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -4988,19 +4916,18 @@ func (u Uint37) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint37) Compare(other any) int {
+func (u Uint37) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint37)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint37) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5039,19 +4966,18 @@ func (u Int37) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int37) Compare(other any) int {
+func (u Int37) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int37)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int37) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5090,19 +5016,18 @@ func (u Uint38) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint38) Compare(other any) int {
+func (u Uint38) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint38)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint38) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5141,19 +5066,18 @@ func (u Int38) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int38) Compare(other any) int {
+func (u Int38) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int38)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int38) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5192,19 +5116,18 @@ func (u Uint39) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint39) Compare(other any) int {
+func (u Uint39) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint39)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint39) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5243,19 +5166,18 @@ func (u Int39) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int39) Compare(other any) int {
+func (u Int39) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int39)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int39) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5294,19 +5216,18 @@ func (u Uint40) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint40) Compare(other any) int {
+func (u Uint40) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint40)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint40) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5345,19 +5266,18 @@ func (u Int40) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int40) Compare(other any) int {
+func (u Int40) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int40)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int40) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5396,19 +5316,18 @@ func (u Uint41) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint41) Compare(other any) int {
+func (u Uint41) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint41)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint41) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5447,19 +5366,18 @@ func (u Int41) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int41) Compare(other any) int {
+func (u Int41) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int41)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int41) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5498,19 +5416,18 @@ func (u Uint42) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint42) Compare(other any) int {
+func (u Uint42) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint42)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint42) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5549,19 +5466,18 @@ func (u Int42) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int42) Compare(other any) int {
+func (u Int42) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int42)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int42) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5600,19 +5516,18 @@ func (u Uint43) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint43) Compare(other any) int {
+func (u Uint43) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint43)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint43) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5651,19 +5566,18 @@ func (u Int43) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int43) Compare(other any) int {
+func (u Int43) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int43)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int43) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5702,19 +5616,18 @@ func (u Uint44) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint44) Compare(other any) int {
+func (u Uint44) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint44)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint44) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5753,19 +5666,18 @@ func (u Int44) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int44) Compare(other any) int {
+func (u Int44) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int44)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int44) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5804,19 +5716,18 @@ func (u Uint45) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint45) Compare(other any) int {
+func (u Uint45) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint45)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint45) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5855,19 +5766,18 @@ func (u Int45) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int45) Compare(other any) int {
+func (u Int45) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int45)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int45) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5906,19 +5816,18 @@ func (u Uint46) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint46) Compare(other any) int {
+func (u Uint46) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint46)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint46) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -5957,19 +5866,18 @@ func (u Int46) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int46) Compare(other any) int {
+func (u Int46) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int46)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int46) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6008,19 +5916,18 @@ func (u Uint47) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint47) Compare(other any) int {
+func (u Uint47) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint47)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint47) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6059,19 +5966,18 @@ func (u Int47) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int47) Compare(other any) int {
+func (u Int47) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int47)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int47) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6110,19 +6016,18 @@ func (u Uint48) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint48) Compare(other any) int {
+func (u Uint48) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint48)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint48) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6161,19 +6066,18 @@ func (u Int48) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int48) Compare(other any) int {
+func (u Int48) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int48)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int48) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6212,19 +6116,18 @@ func (u Uint49) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint49) Compare(other any) int {
+func (u Uint49) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint49)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint49) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6263,19 +6166,18 @@ func (u Int49) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int49) Compare(other any) int {
+func (u Int49) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int49)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int49) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6314,19 +6216,18 @@ func (u Uint50) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint50) Compare(other any) int {
+func (u Uint50) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint50)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint50) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6365,19 +6266,18 @@ func (u Int50) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int50) Compare(other any) int {
+func (u Int50) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int50)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int50) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6416,19 +6316,18 @@ func (u Uint51) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint51) Compare(other any) int {
+func (u Uint51) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint51)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint51) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6467,19 +6366,18 @@ func (u Int51) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int51) Compare(other any) int {
+func (u Int51) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int51)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int51) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6518,19 +6416,18 @@ func (u Uint52) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint52) Compare(other any) int {
+func (u Uint52) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint52)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint52) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6569,19 +6466,18 @@ func (u Int52) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int52) Compare(other any) int {
+func (u Int52) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int52)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int52) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6620,19 +6516,18 @@ func (u Uint53) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint53) Compare(other any) int {
+func (u Uint53) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint53)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint53) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6671,19 +6566,18 @@ func (u Int53) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int53) Compare(other any) int {
+func (u Int53) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int53)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int53) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6722,19 +6616,18 @@ func (u Uint54) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint54) Compare(other any) int {
+func (u Uint54) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint54)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint54) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6773,19 +6666,18 @@ func (u Int54) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int54) Compare(other any) int {
+func (u Int54) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int54)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int54) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6824,19 +6716,18 @@ func (u Uint55) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint55) Compare(other any) int {
+func (u Uint55) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint55)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint55) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6875,19 +6766,18 @@ func (u Int55) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int55) Compare(other any) int {
+func (u Int55) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int55)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int55) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6926,19 +6816,18 @@ func (u Uint56) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint56) Compare(other any) int {
+func (u Uint56) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint56)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint56) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -6977,19 +6866,18 @@ func (u Int56) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int56) Compare(other any) int {
+func (u Int56) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int56)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int56) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("%d", u)), nil
@@ -7028,19 +6916,18 @@ func (u Uint57) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint57) Compare(other any) int {
+func (u Uint57) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint57)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint57) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7079,19 +6966,18 @@ func (u Int57) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int57) Compare(other any) int {
+func (u Int57) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int57)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int57) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7130,19 +7016,18 @@ func (u Uint58) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint58) Compare(other any) int {
+func (u Uint58) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint58)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint58) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7181,19 +7066,18 @@ func (u Int58) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int58) Compare(other any) int {
+func (u Int58) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int58)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int58) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7232,19 +7116,18 @@ func (u Uint59) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint59) Compare(other any) int {
+func (u Uint59) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint59)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint59) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7283,19 +7166,18 @@ func (u Int59) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int59) Compare(other any) int {
+func (u Int59) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int59)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int59) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7334,19 +7216,18 @@ func (u Uint60) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint60) Compare(other any) int {
+func (u Uint60) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint60)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint60) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7385,19 +7266,18 @@ func (u Int60) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int60) Compare(other any) int {
+func (u Int60) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int60)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int60) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7436,19 +7316,18 @@ func (u Uint61) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint61) Compare(other any) int {
+func (u Uint61) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint61)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint61) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7487,19 +7366,18 @@ func (u Int61) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int61) Compare(other any) int {
+func (u Int61) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int61)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int61) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7538,19 +7416,18 @@ func (u Uint62) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint62) Compare(other any) int {
+func (u Uint62) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint62)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint62) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7589,19 +7466,18 @@ func (u Int62) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int62) Compare(other any) int {
+func (u Int62) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int62)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int62) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7640,19 +7516,18 @@ func (u Uint63) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint63) Compare(other any) int {
+func (u Uint63) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint63)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint63) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7691,19 +7566,18 @@ func (u Int63) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int63) Compare(other any) int {
+func (u Int63) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int63)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int63) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7742,19 +7616,18 @@ func (u Uint64) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Uint64) Compare(other any) int {
+func (u Uint64) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Uint64)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Uint64) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -7793,19 +7666,18 @@ func (u Int64) Equal(other any) bool {
 	return u == otherInt
 }
 
-func (u Int64) Compare(other any) int {
+func (u Int64) Compare(other any) (int, bool) {
 	otherInt, ok := other.(Int64)
 	if !ok {
-		return 0
+		return 0, false
 	}
-
 	if u == otherInt {
-		return 0
+		return 0, true
 	}
 	if u < otherInt {
-		return -1
+		return -1, true
 	}
-	return 1
+	return 1, true
 }
 func (u Int64) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%d\"", u)), nil
@@ -8060,12 +7932,12 @@ func (u Bits80) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits80) Compare(other any) int {
+func (u Bits80) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits80)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 
 type Bits96 [12]byte
@@ -8098,12 +7970,12 @@ func (u Bits96) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits96) Compare(other any) int {
+func (u Bits96) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits96)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 
 type Bits256 [32]byte
@@ -8136,12 +8008,12 @@ func (u Bits256) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits256) Compare(other any) int {
+func (u Bits256) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits256)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 
 type Bits264 [33]byte
@@ -8174,12 +8046,12 @@ func (u Bits264) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits264) Compare(other any) int {
+func (u Bits264) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits264)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 
 type Bits320 [40]byte
@@ -8212,12 +8084,12 @@ func (u Bits320) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits320) Compare(other any) int {
+func (u Bits320) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits320)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 
 type Bits352 [44]byte
@@ -8250,12 +8122,12 @@ func (u Bits352) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits352) Compare(other any) int {
+func (u Bits352) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits352)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 
 type Bits512 [64]byte
@@ -8288,11 +8160,11 @@ func (u Bits512) Equal(other any) bool {
 	return u == otherBits
 }
 
-func (u Bits512) Compare(other any) int {
+func (u Bits512) Compare(other any) (int, bool) {
 	otherBits, ok := other.(Bits512)
 	if !ok {
-		return 0
+		return 0, false
 	}
-	return bytes.Compare(u[:], otherBits[:])
+	return bytes.Compare(u[:], otherBits[:]), true
 }
 	

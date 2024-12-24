@@ -13,7 +13,7 @@ import (
 type fixedSize interface {
 	FixedSize() int
 	Equal(other any) bool
-	Compare(other any) int
+	Compare(other any) (int, bool)
 }
 
 // HashmapItem represents a key-value pair stored in HashmapE[T].
@@ -328,7 +328,13 @@ func (h *Hashmap[keyT, T]) Put(key keyT, value T) {
 
 	index := len(h.keys)
 	for idx, other := range h.keys {
-		if key.Compare(other) < 0 {
+		cmp, ok := key.Compare(other)
+		if !ok {
+			// only happens when the user implements their own
+			// fixedSize interface and intentionally returns false
+			panic("key type mismatch")
+		}
+		if cmp < 0 {
 			index = idx
 			break
 		}

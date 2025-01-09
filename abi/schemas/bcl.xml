@@ -1,0 +1,271 @@
+<abi>
+    <types>
+        ref_v1#f7ecea4c address:MsgAddress = BclReferralData;
+        ref_none#_ = BclReferralData;
+
+        addr_std$100 workchain_id:int8 address:bits256 = BclBuyerAddress;
+        addr_none#_ = BclBuyerAddress;
+
+        deploy_buy#af750d34 query_id:uint64 min_receive:(VarUInteger 16) referral:(Maybe ^BclReferralData) buyer_address:BclBuyerAddress = BclDeployOptions;
+        deploy_top_up#d372158c query_id:uint64 = BclDeployOptions;
+        deploy_none#_ = BclDeployOptions;
+
+
+        bcl_jetton_additional_storage#_
+        bcl_supply:(VarUInteger 16)
+        liq_supply:(VarUInteger 16)
+        author_address:MsgAddress
+        fee_address:MsgAddress
+        trade_fee_numerator:uint16
+        trade_fee_denominator:uint16
+        trading_enabled:bool
+        referral:^BclReferralData
+        seed:uint64
+        trading_close_fee:Coins
+        router_info:^[router_address:MsgAddress router_pton_wallet_address:MsgAddress]
+        = BclJettonAdditionalStorage;
+
+        bcl_jetton_storage_v1#_
+        total_supply:(VarUInteger 16)
+        admin:MsgAddress
+        content:^Cell
+        wallet_code:^Cell
+        ttl:uint32
+        last_trade_date:uint32
+        ton_liq_collected:Coins
+        max_ton:(VarUInteger 16)
+        additional:^BclJettonAdditionalStorage
+        = BclJettonStorageV1;
+
+        bcl_jetton_storage_v2#_
+        total_supply:(VarUInteger 16)
+        admin:MsgAddress
+        content:^Cell
+        wallet_code:^Cell
+        last_trade_date:uint32
+        ton_liq_collected:Coins
+        max_ton:(VarUInteger 16)
+        lp_receiver:MsgAddress
+        additional:^BclJettonAdditionalStorage
+        = BclJettonStorageV2;
+    </types>
+
+    <interface name="bcl_master">
+        <get_method name="get_factory_data" version="bcl" />
+        <get_method name="coins_for_tons" version="bcl" />
+        <msg_in>
+            <internal name="bcl_deploy_coin" />
+        </msg_in>
+    </interface>
+
+    <interface name="bcl_jetton">
+        <!-- <code_hash>0196d7fcc720254282347d98d1e723de0e9d5b90918695a8ecf69af91bbb4fa0</code_hash> --> <!-- contract v1 -->
+        <!-- <code_hash>912b0317bfb5c79760eac245efcc709245aa382a1332dadb5a4524e7834e1dcf</code_hash> --> <!-- contract v2 -->
+        <get_method name="coin_price" version="bcl" />
+        <get_method name="coins_for_tons" version="bcl" />
+        <get_method name="tons_for_coins" version="bcl" />
+        <get_method name="get_bcl_data" version="bcl" />
+        <msg_in>
+            <internal name="bcl_buy" />
+            <internal name="bcl_sell_coins_notification" />
+            <internal name="bcl_unlock_wallet_callback" />
+            <internal name="bcl_set_admin" />
+            <internal name="bcl_set_author" />
+            <internal name="bcl_set_content" />
+            <internal name="bcl_set_fees" />
+            <internal name="bcl_set_code" />
+            <internal name="bcl_set_data" />
+            <internal name="bcl_set_code_data" />
+        </msg_in>
+        <msg_out>
+            <ext_out name="bcl_buy_log" />
+            <ext_out name="bcl_sell_log" />
+            <ext_out name="bcl_send_liq_log" />
+            <internal name="bcl_fee_payout" />
+        </msg_out>
+        <error code="707">Slippage error</error>
+        <error code="708">Too many coins to buy</error>
+        <error code="709">No funds for gas</error>
+        <error code="711">Trading disabled</error>
+        <error code="712">Trading enabled</error>
+        <error code="713">Invalid wallet</error>
+        <error code="714">Too many coins to sell</error>
+        <error code="715">Not admin</error>
+        <error code="716">Not author</error>
+        <error code="333">Wrong workchain</error>
+        <error code="73">Not owner</error>
+        <error code="47">Balance error</error>
+        <error code="48">Not enough gas</error>
+        <error code="49">Invalid message</error>
+        <error code="65535">Wrong op</error>
+    </interface>
+
+    <interface name="bcl_wallet">
+        <get_method name="get_transfers_enabled" version="bcl" />
+        <msg_in>
+            <internal name="bcl_unlock_wallet" />
+            <internal name="bcl_unlock_wallet_excess" />
+            <internal name="bcl_sell" />
+        </msg_in>
+    </interface>
+
+    <get_method name="get_factory_data">
+        <output version="bcl" fixed_length="true">
+            <slice name="admin">msgaddress</slice>
+            <int name="deployment_fee">int257</int>
+            <slice name="coin_admin">msgaddress</slice>
+            <tinyint name="coin_ttl">uint32</tinyint>
+            <int name="bcl_supply">int257</int>
+            <int name="liq_supply">int257</int>
+            <slice name="fee_address">msgaddress</slice>
+            <tinyint name="fee_numerator">uint16</tinyint>
+            <tinyint name="fee_denominator">uint16</tinyint>
+            <int name="trading_close_fee">int257</int>
+            <int name="full_price_ton">int257</int>
+            <int name="full_price_ton_fees">int257</int>
+            <bool name="is_enabled">bool</bool>
+            <int name="seed">int257</int>
+            <cell name="coin_code">cell</cell>
+            <cell name="wallet_code">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="coins_for_tons">
+        <input>
+            <tinyint name="tons">coins</tinyint>
+        </input>
+        <output version="bcl" fixed_length="true">
+            <int name="fees">int257</int>
+            <int name="coins">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="tons_for_coins">
+        <input>
+            <int name="coins">int257</int>
+        </input>
+        <output version="bcl" fixed_length="true">
+            <int name="fees">int257</int>
+            <tinyint name="tons">coins</tinyint>
+        </output>
+    </get_method>
+
+    <get_method name="coin_price">
+        <output version="bcl" fixed_length="true">
+            <int name="price">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_bcl_data">
+        <output version="bcl" fixed_length="true">
+            <int name="total_supply">int257</int>
+            <int name="bcl_supply">int257</int>
+            <int name="liq_supply">int257</int>
+            <slice name="admin">msgaddress</slice>
+            <slice name="author">msgaddress</slice>
+            <cell name="content">cell</cell>
+            <slice name="fee_address">msgaddress</slice>
+            <tinyint name="trade_fee_numerator">uint16</tinyint>
+            <tinyint name="trade_fee_denominator">uint16</tinyint>
+            <tinyint name="ttl">uint32</tinyint>
+            <tinyint name="last_trade_date">uint32</tinyint>
+            <bool name="trading_enabled">bool</bool>
+            <int name="ton_liq_collected">int257</int>
+            <cell name="referral">BclReferralData</cell>
+            <int name="trading_close_fee">int257</int>
+            <int name="full_price_ton">int257</int>
+            <int name="full_price_ton_fees">int257</int>
+            <slice name="router_address">msgaddress</slice>
+            <slice name="router_pton_wallet_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_transfers_enabled">
+        <output version="bcl" fixed_length="true">
+            <bool name="enabled">bool</bool>
+        </output>
+    </get_method>
+
+    <internal name="bcl_deploy_coin">
+        deploy_coin#d7ab4f41 query_id:uint64 content:^Cell
+        author_address:MsgAddress referral:^BclReferralData
+        deploy_options:(Maybe ^BclDeployOptions) = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_unlock_wallet">
+        unlock_wallet#9d65e47a query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_unlock_wallet_excess">
+        unlock_wallet_excess#a8ce3fe7 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_buy">
+        buy#af750d34 query_id:uint64 min_receive:(VarUInteger 16)
+        referral:(Maybe ^BclReferralData) buyer_address:BclBuyerAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_sell">
+        sell#742b36d8 query_id:uint64 amount:(VarUInteger 16) min_receive:Coins
+        referral:(Maybe ^BclReferralData) = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_sell_coins_notification">
+        sell_coins_notification#68e870fe query_id:uint64 jetton_amount:(VarUInteger 16)
+        min_receive:Coins from_address:MsgAddress referral:(Maybe ^BclReferralData) =
+        InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_unlock_wallet_callback">
+        unlock_wallet_callback#4d583549 query_id:uint64 from_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_admin">
+        set_admin#4d5f2cca query_id:uint64 admin_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_author">
+        set_author#7fbd764e query_id:uint64 author_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_content">
+        set_content#fadc0412 query_id:uint64 content:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_fees">
+        set_fees#4b89c3d4 query_id:uint64 fee_address:MsgAddress trade_fee_numerator:uint16
+        ctx_trade_fee_denominator:uint16 = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_code">
+        set_code#9c0f3220 query_id:uint64 code:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_data">
+        set_data#46e9f1db query_id:uint64 data:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_set_code_data">
+        set_code_data#bd9d1e7d query_id:uint64 code:^Cell data:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="bcl_fee_payout">
+        fee_payout#fdaa7c9d referral:^BclReferralData = InternalMsgBody;
+    </internal>
+
+    <ext_out name="bcl_buy_log">
+        buy_log#cd78325d buyer_address:MsgAddress tons_consumed:Coins
+        supply_delta:(VarUInteger 16) new_supply:(VarUInteger 16)
+        ton_liq_collected:Coins referral:(Maybe ^BclReferralData) = ExtOutMsgBody;
+    </ext_out>
+
+    <ext_out name="bcl_sell_log">
+        sell_log#5e97d116 from_address:MsgAddress tons_to_return:Coins
+        jetton_amount:(VarUInteger 16) new_supply:(VarUInteger 16)
+        ton_liq_collected:Coins referral:(Maybe ^BclReferralData) = ExtOutMsgBody;
+    </ext_out>
+
+    <ext_out name="bcl_send_liq_log">
+        send_liq_log#0f6ab54f ton_amount:Coins jetton_amount:(VarUInteger 16) = ExtOutMsgBody;
+    </ext_out>
+</abi>

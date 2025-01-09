@@ -22,10 +22,20 @@ func (addr AddressWithWorkchain) Equal(other any) bool {
 	return addr.Workchain == otherAddr.Workchain && addr.Address == otherAddr.Address
 }
 
+// Compare returns an integer comparing two addresses lexicographically.
+// The result will be 0 if both are equal, -1 if addr < other, and +1 if addr > other.
 func (addr AddressWithWorkchain) Compare(other any) (int, bool) {
 	otherAddr, ok := other.(AddressWithWorkchain)
 	if !ok {
 		return 0, false
+	}
+	workchain := uint32(addr.Workchain)
+	otherWorkchain := uint32(otherAddr.Workchain)
+	if workchain < otherWorkchain {
+		return -1, true
+	}
+	if workchain > otherWorkchain {
+		return 1, true
 	}
 	return bytes.Compare(addr.Address[:], otherAddr.Address[:]), true
 }

@@ -9,7 +9,7 @@ import (
 
 func GenerateVarUintTypes(max int) string {
 	var b bytes.Buffer
-	templateStr := ` 
+	templateStr := `
 type VarUInteger{{.NameIndex}} big.Int
 
 func (u VarUInteger{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -98,6 +98,20 @@ func (u Uint{{.NameIndex}}) Equal(other any) bool {
 	return u == otherInt
 }
 
+func (u Uint{{.NameIndex}}) Compare(other any) (int, bool) {
+    otherInt, ok := other.(Uint{{.NameIndex}})
+	if !ok {
+		return 0, false
+	}
+	if u == otherInt {
+		return 0, true
+	}
+	if u < otherInt {
+		return -1, true
+	}
+	return 1, true
+}
+
 {{- if lt .NameIndex 57 }}
 func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
     return []byte(fmt.Sprintf("%d", u)), nil
@@ -139,6 +153,20 @@ func (u Int{{.NameIndex}}) Equal(other any) bool {
 		return false
 	}
 	return u == otherInt
+}
+
+func (u Int{{.NameIndex}}) Compare(other any) (int, bool) {
+    otherInt, ok := other.(Int{{.NameIndex}})
+	if !ok {
+		return 0, false
+	}
+	if u == otherInt {
+		return 0, true
+	}
+	if u < otherInt {
+		return -1, true
+	}
+	return 1, true
 }
 
 {{- if lt .NameIndex 57 }}
@@ -310,7 +338,15 @@ func (u Bits%v) Equal(other any) bool {
 	}
 	return u == otherBits
 }
-	`, i, i/8, i, i, i, i, i/8, i, i, i)
+
+func (u Bits%v) Compare(other any) (int, bool) {
+    otherBits, ok := other.(Bits%v)
+	if !ok {
+		return 0, false
+	}
+	return bytes.Compare(u[:], otherBits[:]), true
+}
+	`, i, i/8, i, i, i, i, i/8, i, i, i, i, i)
 		} else {
 			fmt.Fprintf(&b, `
 type Bits%v boc.BitString

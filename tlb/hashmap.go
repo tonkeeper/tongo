@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -12,6 +13,7 @@ import (
 type fixedSize interface {
 	FixedSize() int
 	Equal(other any) bool
+	Compare(other any) (int, bool)
 }
 
 // HashmapItem represents a key-value pair stored in HashmapE[T].
@@ -323,8 +325,23 @@ func (h *Hashmap[keyT, T]) Put(key keyT, value T) {
 			return
 		}
 	}
-	h.values = append(h.values, value)
-	h.keys = append(h.keys, key) //todo: i think we need to sort keys
+
+	index := len(h.keys)
+	for idx, other := range h.keys {
+		cmp, ok := key.Compare(other)
+		if !ok {
+			// only happens when the user implements their own
+			// fixedSize interface and intentionally returns false
+			panic("key type mismatch")
+		}
+		if cmp < 0 {
+			index = idx
+			break
+		}
+	}
+
+	h.keys = slices.Insert(h.keys, index, key)
+	h.values = slices.Insert(h.values, index, value)
 }
 
 type HashmapE[keyT fixedSize, T any] struct {

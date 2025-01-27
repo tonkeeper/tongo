@@ -23,9 +23,9 @@ type Message struct {
 }
 
 // Hash returns a hash of this Message.
-func (m *Message) Hash() Bits256 {
-	return m.hash //todo: remove
-	if m.Info.SumType != "ExtInMsgInfo" {
+// it's strongly recommended to normalize hash
+func (m *Message) Hash(normalizeExternal bool) Bits256 {
+	if !normalizeExternal || m.Info.SumType != "ExtInMsgInfo" {
 		return m.hash
 	}
 	// normalize ExtIn message
@@ -37,7 +37,7 @@ func (m *Message) Hash() Bits256 {
 	_ = c.WriteBit(false)                           // message$_ -> init:(Maybe (Either StateInit ^StateInit)) -> nothing$0
 	_ = c.WriteBit(true)                            // message$_ -> body:(Either X ^X) -> right$1
 	body := boc.Cell(m.Body.Value)
-	_ = c.AddRef(&body)
+	_ = c.AddRef(body.CopyRemaining())
 	hash, _ := c.Hash256()
 	return hash
 }

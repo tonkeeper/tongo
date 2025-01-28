@@ -8,6 +8,141 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+type BclBuyerAddress struct {
+	tlb.SumType
+	AddrStd struct {
+		WorkchainId int8
+		Address     tlb.Bits256
+	} `tlbSumType:"$100"`
+	AddrNone struct{} `tlbSumType:"#_"`
+}
+
+func (t *BclBuyerAddress) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "AddrStd":
+		bytes, err := json.Marshal(t.AddrStd)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "AddrStd","AddrStd":%v}`, string(bytes))), nil
+	case "AddrNone":
+		bytes, err := json.Marshal(t.AddrNone)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "AddrNone","AddrNone":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type BclDeployOptions struct {
+	tlb.SumType
+	DeployBuy struct {
+		QueryId      uint64
+		MinReceive   tlb.VarUInteger16
+		Referral     *BclReferralData `tlb:"maybe^"`
+		BuyerAddress BclBuyerAddress
+	} `tlbSumType:"#af750d34"`
+	DeployTopUp struct {
+		QueryId uint64
+	} `tlbSumType:"#d372158c"`
+	DeployNone struct{} `tlbSumType:"#_"`
+}
+
+func (t *BclDeployOptions) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "DeployBuy":
+		bytes, err := json.Marshal(t.DeployBuy)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DeployBuy","DeployBuy":%v}`, string(bytes))), nil
+	case "DeployTopUp":
+		bytes, err := json.Marshal(t.DeployTopUp)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DeployTopUp","DeployTopUp":%v}`, string(bytes))), nil
+	case "DeployNone":
+		bytes, err := json.Marshal(t.DeployNone)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DeployNone","DeployNone":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type BclJettonAdditionalStorage struct {
+	BclSupply           tlb.VarUInteger16
+	LiqSupply           tlb.VarUInteger16
+	AuthorAddress       tlb.MsgAddress
+	FeeAddress          tlb.MsgAddress
+	TradeFeeNumerator   uint16
+	TradeFeeDenominator uint16
+	TradingEnabled      bool
+	Referral            BclReferralData `tlb:"^"`
+	Seed                uint64
+	TradingCloseFee     tlb.Grams
+	RouterInfo          struct {
+		RouterAddress           tlb.MsgAddress
+		RouterPtonWalletAddress tlb.MsgAddress
+	} `tlb:"^"`
+}
+
+type BclJettonStorageV1 struct {
+	TotalSupply     tlb.VarUInteger16
+	Admin           tlb.MsgAddress
+	Content         tlb.Any `tlb:"^"`
+	WalletCode      tlb.Any `tlb:"^"`
+	Ttl             uint32
+	LastTradeDate   uint32
+	TonLiqCollected tlb.Grams
+	MaxTon          tlb.VarUInteger16
+	Additional      BclJettonAdditionalStorage `tlb:"^"`
+}
+
+type BclJettonStorageV2 struct {
+	TotalSupply     tlb.VarUInteger16
+	Admin           tlb.MsgAddress
+	Content         tlb.Any `tlb:"^"`
+	WalletCode      tlb.Any `tlb:"^"`
+	LastTradeDate   uint32
+	TonLiqCollected tlb.Grams
+	MaxTon          tlb.VarUInteger16
+	LpReceiver      tlb.MsgAddress
+	Additional      BclJettonAdditionalStorage `tlb:"^"`
+}
+
+type BclReferralData struct {
+	tlb.SumType
+	RefV1 struct {
+		Address tlb.MsgAddress
+	} `tlbSumType:"#f7ecea4c"`
+	RefNone struct{} `tlbSumType:"#_"`
+}
+
+func (t *BclReferralData) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "RefV1":
+		bytes, err := json.Marshal(t.RefV1)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RefV1","RefV1":%v}`, string(bytes))), nil
+	case "RefNone":
+		bytes, err := json.Marshal(t.RefNone)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RefNone","RefNone":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type DedustAsset struct {
 	tlb.SumType
 	Native struct{} `tlbSumType:"$0000"`

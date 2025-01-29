@@ -33,6 +33,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddress_StormResult},
 	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelist_StormResult},
 	"get_expected_outputs":               {DecodeGetExpectedOutputs_StonfiResult},
+	"get_fix_price_data_v4":              {DecodeGetFixPriceDataV4Result},
 	"get_full_domain":                    {DecodeGetFullDomainResult},
 	"get_jetton_data":                    {DecodeGetJettonDataResult},
 	"get_last_clean_time":                {DecodeGetLastCleanTimeResult},
@@ -189,6 +190,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	122058: {IsActive},
 	122166: {GetLpAccountData},
 	122284: {IsClaimed},
+	122483: {GetFixPriceDataV4},
 	122496: {GetAmmName},
 	122498: {GetTelemintAuctionState},
 	123832: {GetOrderData},
@@ -227,6 +229,7 @@ var resultTypes = []interface{}{
 	&GetExecutorCollectionAddress_StormResult{},
 	&GetExecutorVaultsWhitelist_StormResult{},
 	&GetExpectedOutputs_StonfiResult{},
+	&GetFixPriceDataV4Result{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
 	&GetLastCleanTimeResult{},
@@ -1175,6 +1178,51 @@ func DecodeGetExpectedOutputs_StonfiResult(stack tlb.VmStack) (resultType string
 	var result GetExpectedOutputs_StonfiResult
 	err = stack.Unmarshal(&result)
 	return "GetExpectedOutputs_StonfiResult", result, err
+}
+
+type GetFixPriceDataV4Result struct {
+	IsComplete         bool
+	CreatedAt          uint32
+	MarketplaceAddress tlb.MsgAddress
+	NftAddress         tlb.MsgAddress
+	NftOwnerAddress    *tlb.MsgAddress
+	FullPrice          tlb.Int257
+	FeeAddress         tlb.MsgAddress
+	FeePercent         uint32
+	RoyaltyAddress     tlb.MsgAddress
+	RoyaltyPercent     uint32
+	SoldAt             uint32
+	SoldQueryId        uint64
+	JettonPriceDict    *boc.Cell
+}
+
+func GetFixPriceDataV4(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 122483 for "get_fix_price_data_v4" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122483, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetFixPriceDataV4Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetFixPriceDataV4Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice" && stack[4].SumType != "VmStkNull") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkSlice") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkCell" && stack[12].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetFixPriceDataV4Result
+	err = stack.Unmarshal(&result)
+	return "GetFixPriceDataV4Result", result, err
 }
 
 type GetFullDomainResult struct {

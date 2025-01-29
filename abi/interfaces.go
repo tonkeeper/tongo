@@ -34,9 +34,11 @@ const (
 	NftCollection
 	NftItem
 	NftItemSimple
+	NftOfferGetgemsV1
 	NftSale
 	NftSaleGetgemsV2
 	NftSaleGetgemsV3
+	NftSaleGetgemsV4
 	NftSaleV1
 	NftSaleV2
 	PaymentChannel
@@ -137,12 +139,16 @@ func (c ContractInterface) String() string {
 		return "nft_item"
 	case NftItemSimple:
 		return "nft_item_simple"
+	case NftOfferGetgemsV1:
+		return "nft_offer_getgems_v1"
 	case NftSale:
 		return "nft_sale"
 	case NftSaleGetgemsV2:
 		return "nft_sale_getgems_v2"
 	case NftSaleGetgemsV3:
 		return "nft_sale_getgems_v3"
+	case NftSaleGetgemsV4:
+		return "nft_sale_getgems_v4"
 	case NftSaleV1:
 		return "nft_sale_v1"
 	case NftSaleV2:
@@ -290,12 +296,16 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return NftItem
 	case "nft_item_simple":
 		return NftItemSimple
+	case "nft_offer_getgems_v1":
+		return NftOfferGetgemsV1
 	case "nft_sale":
 		return NftSale
 	case "nft_sale_getgems_v2":
 		return NftSaleGetgemsV2
 	case "nft_sale_getgems_v3":
 		return NftSaleGetgemsV3
+	case "nft_sale_getgems_v4":
+		return NftSaleGetgemsV4
 	case "nft_sale_v1":
 		return NftSaleV1
 	case "nft_sale_v2":
@@ -461,6 +471,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_executor_vaults_whitelist",
 		InvokeFn: GetExecutorVaultsWhitelist,
+	},
+	{
+		Name:     "get_fix_price_data_v4",
+		InvokeFn: GetFixPriceDataV4,
 	},
 	{
 		Name:     "get_full_domain",
@@ -1159,6 +1173,16 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			GetSaleData,
 		},
+	},
+	ton.MustParseHash("6b95a6418b9c9d2359045d1e7559b8d549ae0e506f24caab58fa30c8fb1feb86"): {
+		contractInterfaces: []ContractInterface{NftSaleGetgemsV4},
+		getMethods: []InvokeFn{
+			GetFixPriceDataV4,
+		},
+	},
+	ton.MustParseHash("6e5d667fa6efa8187c6d029efd4015601232fd2e36c291dbc346dedab6dc8024"): {
+		contractInterfaces: []ContractInterface{NftOfferGetgemsV1},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9"): {
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV2},

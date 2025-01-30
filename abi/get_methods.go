@@ -68,6 +68,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_pool_status":                    {DecodeGetPoolStatusResult},
 	"get_position_manager_contract_data": {DecodeGetPositionManagerContractData_StormResult},
 	"get_pow_params":                     {DecodeGetPowParamsResult},
+	"get_proxy":                          {DecodeGetProxy_WhalesNominatorResult},
 	"get_public_key":                     {DecodeGetPublicKeyResult},
 	"get_referral_collection_address":    {DecodeGetReferralCollectionAddress_StormResult},
 	"get_referral_data":                  {DecodeGetReferralData_StormResult},
@@ -121,6 +122,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	69506:  {GetTelemintTokenName},
 	69628:  {GetChannelData},
 	71463:  {GetTorrentHash},
+	71479:  {GetProxy},
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
 	75065:  {GetExecutorBalances},
@@ -265,6 +267,7 @@ var resultTypes = []interface{}{
 	&GetPoolStatusResult{},
 	&GetPositionManagerContractData_StormResult{},
 	&GetPowParamsResult{},
+	&GetProxy_WhalesNominatorResult{},
 	&GetPublicKeyResult{},
 	&GetReferralCollectionAddress_StormResult{},
 	&GetReferralData_StormResult{},
@@ -2621,6 +2624,39 @@ func DecodeGetPowParamsResult(stack tlb.VmStack) (resultType string, resultAny a
 	var result GetPowParamsResult
 	err = stack.Unmarshal(&result)
 	return "GetPowParamsResult", result, err
+}
+
+type GetProxy_WhalesNominatorResult struct {
+	Address tlb.MsgAddress
+}
+
+func GetProxy(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 71479 for "get_proxy" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 71479, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetProxy_WhalesNominatorResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetProxy_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetProxy_WhalesNominatorResult
+	err = stack.Unmarshal(&result)
+	return "GetProxy_WhalesNominatorResult", result, err
 }
 
 type GetPublicKeyResult struct {

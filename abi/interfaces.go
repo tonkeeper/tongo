@@ -575,6 +575,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPowParams,
 	},
 	{
+		Name:     "get_proxy",
+		InvokeFn: GetProxy,
+	},
+	{
 		Name:     "get_public_key",
 		InvokeFn: GetPublicKey,
 	},

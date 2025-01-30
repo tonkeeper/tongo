@@ -72,6 +72,11 @@
             <int name="receipt_price">int64</int>
         </output>
     </get_method>
+    <get_method name="get_proxy">
+        <output version="whales_nominator"  fixed_length="true">
+            <slice name="proxy">msgaddress</slice>
+        </output>
+    </get_method>
 
     <internal name="whales_nominators_withdraw">
         withdraw#da803efd query_id:int64 gas:Grams amount:Grams = Withdraw;

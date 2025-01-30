@@ -74,7 +74,7 @@
     </get_method>
     <get_method name="get_proxy">
         <output version="whales_nominator"  fixed_length="true">
-            <int name="address">msgaddress</int>
+            <slice name="proxy">msgaddress</slice>
         </output>
     </get_method>
 

@@ -2627,7 +2627,7 @@ func DecodeGetPowParamsResult(stack tlb.VmStack) (resultType string, resultAny a
 }
 
 type GetProxy_WhalesNominatorResult struct {
-	Address tlb.MsgAddress
+	Proxy tlb.MsgAddress
 }
 
 func GetProxy(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -2651,7 +2651,7 @@ func GetProxy(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 }
 
 func DecodeGetProxy_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetProxy_WhalesNominatorResult

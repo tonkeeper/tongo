@@ -25,8 +25,11 @@
         <error code="500">Unauthorized initiation</error>
         <error code="501">Invalid op, expected ownership_assigned</error>
         <error code="450">Not enough TONs for sale</error>
+        <error code="451">This sale is broken: royalty, fee, or profit is less than zero</error>
         <error code="457">Not enough TONs for cancellation</error>
         <error code="458">Unauthorized cancellation</error>
+        <error code="459">This sale is only for a jetton</error>
+        <error code="4501">Not enough funds for sale</error>
         <error code="65535">Unknown operation</error>
     </interface>
     <interface name="nft_sale_getgems_v3" inherits="nft_sale_v2">
@@ -135,5 +138,55 @@
             <int name="last_bid_at">uint32</int>
             <int name="is_canceled">bool</int>
         </output>
+    </get_method>
+
+    <interface name="nft_auction_getgems_v4">
+      <code_hash>80e3c419d72d5c12df01ad2c6564725c3fac328f40ad4311cd4dbf7b83c53fc5</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-auction-v4r1.func -->
+      <get_method name="get_auction_data_v4"/>
+      <error code="403">Unauthorized address</error>
+      <error code="1000">Low bid</error>
+      <error code="1001">Already initiated</error>
+      <error code="1002">Invalid op, expect ownership_assigned</error>
+      <error code="1003">Invalid op, expect ownership_assigned</error>
+      <error code="1005">Already executed</error>
+      <error code="1006">Already activated</error>
+      <error code="1008">Not enough TONs</error>
+      <error code="1009">Already has bid</error>
+      <error code="1010">Auction in progress</error>
+      <error code="1014">Auction is in a broken state: auction duration is too long</error>
+      <error code="1015">Auction has not been activated yet</error>
+      <error code="1016">Auction is in a broken state</error>
+      <error code="1017">Wrong currency</error>
+      <error code="65535">Unknown operation</error>
+    </interface>
+    <get_method name="get_auction_data_v4">
+      <output fixed_length="true">
+        <int name="activated">bool</int>
+        <int name="end">bool</int>
+        <int name="end_time">uint32</int>
+        <slice name="marketplace">msgaddress</slice>
+        <slice name="nft">msgaddress</slice>
+        <slice name="owner">msgaddress</slice>
+        <int name="last_bid">uint257</int>
+        <slice name="last_member">msgaddress</slice>
+        <int name="min_step">uint32</int>
+        <slice name="market_fee_address">msgaddress</slice>
+        <int name="mp_fee_factor">uint32</int>
+        <int name="mp_fee_base">uint32</int>
+        <slice name="royalty_address">msgaddress</slice>
+        <int name="royalty_fee_factor">uint32</int>
+        <int name="royalty_fee_base">uint32</int>
+        <int name="max_bid">uint257</int>
+        <int name="min_bid">uint257</int>
+        <int name="created_at">uint32</int>
+        <int name="last_bid_at">uint32</int>
+        <int name="is_canceled">bool</int>
+        <int name="step_time">uint32</int>
+        <int name="last_query_id">uint64</int>
+        <slice name="jetton_wallet">msgaddress</slice>
+        <slice name="jetton_master">msgaddress</slice>
+        <int name="is_broken_state">bool</int>
+        <int name="public_key">uint257</int>
+      </output>
     </get_method>
 </abi>

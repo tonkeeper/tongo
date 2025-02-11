@@ -178,15 +178,15 @@ func Test_getCodeInfo(t *testing.T) {
 			if err != nil {
 				t.Fatalf("hex.DecodeString() failed: %v", err)
 			}
-			got, err := getCodeInfo(context.Background(), code, nil)
+			got, err := GetCodeInfo(context.Background(), code, nil)
 			if err != nil {
-				t.Fatalf("getCodeInfo() failed: %v", err)
+				t.Fatalf("GetCodeInfo() failed: %v", err)
 			}
-			if got.hash.Hex() != tt.wantHash {
-				t.Fatalf("getCodeInfo() got = %v, want %v", got.hash.Hex(), tt.wantHash)
+			if got.Hash.Hex() != tt.wantHash {
+				t.Fatalf("GetCodeInfo() got = %v, want %v", got.Hash.Hex(), tt.wantHash)
 			}
-			if !reflect.DeepEqual(got.methods, tt.wantMethods) {
-				t.Errorf("getCodeInfo() got = %v, want %v", got.methods, tt.wantMethods)
+			if !reflect.DeepEqual(got.Methods, tt.wantMethods) {
+				t.Errorf("GetCodeInfo() got = %v, want %v", got.Methods, tt.wantMethods)
 			}
 		})
 	}

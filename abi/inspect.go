@@ -132,12 +132,12 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		return &ContractDescription{}, nil
 	}
 	desc := ContractDescription{}
-	info, err := getCodeInfo(ctx, code, ci.libResolver)
+	info, err := GetCodeInfo(ctx, code, ci.libResolver)
 	if err != nil {
 		return nil, err
 	}
 
-	if contract, ok := knownContracts[info.hash]; ok { //for known contracts we just need to run get methods
+	if contract, ok := knownContracts[info.Hash]; ok { //for known contracts we just need to run get methods
 		desc.ContractInterfaces = contract.contractInterfaces
 		for _, method := range contract.getMethods {
 			desc.MethodsInspected += 1
@@ -177,21 +177,21 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 	return &desc, nil
 }
 
-type codeInfo struct {
-	hash    ton.Bits256
-	methods map[int64]struct{}
+type CodeInfo struct {
+	Hash    ton.Bits256
+	Methods map[int64]struct{}
 }
 
-func (i codeInfo) isMethodOkToTry(name string) bool {
-	if i.methods == nil {
+func (i CodeInfo) isMethodOkToTry(name string) bool {
+	if i.Methods == nil {
 		return false
 	}
 	methodID := utils.MethodIdFromName(name)
-	_, ok := i.methods[int64(methodID)]
+	_, ok := i.Methods[int64(methodID)]
 	return ok
 }
 
-func getCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*codeInfo, error) {
+func GetCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*CodeInfo, error) {
 	cells, err := boc.DeserializeBoc(code)
 	if err != nil {
 		return nil, err
@@ -233,7 +233,7 @@ func getCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*codeI
 	c, err := root.NextRef()
 	if err != nil {
 		// we are OK, if there is no information about get methods
-		return &codeInfo{hash: h}, nil
+		return &CodeInfo{Hash: h}, nil
 	}
 	if c.IsLibrary() {
 		hash, err := c.GetLibraryHash()
@@ -271,12 +271,12 @@ func getCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*codeI
 	err = decoder.Unmarshal(c, &getMethods)
 	if err != nil {
 		// we are OK, if there is no information about get methods
-		return &codeInfo{hash: h}, nil
+		return &CodeInfo{Hash: h}, nil
 	}
 	keys := getMethods.Hashmap.Keys()
 	methods := make(map[int64]struct{}, len(keys))
 	for _, key := range keys {
 		methods[int64(key)] = struct{}{}
 	}
-	return &codeInfo{hash: h, methods: methods}, nil
+	return &CodeInfo{Hash: h, Methods: methods}, nil
 }

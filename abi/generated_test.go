@@ -1393,6 +1393,7 @@ func TestMessageDecoder(t *testing.T) {
 		{
 			name:       "jetton burn notification",
 			boc:        "te6ccgEBAQEASAAAi3vdl952mKNkA9fVjzGM4ygA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpEB64AEuSPMwX2JvQ+QTUtfXxYKTyMA=",
+			interfaces: []ContractInterface{JettonMaster},
 			wantOpName: JettonBurnNotificationMsgOp,
 			wantValue: JettonBurnNotificationMsgBody{
 				QueryId:             8545759942892049807,

@@ -1,0 +1,62 @@
+<abi>
+    <interface name="subscription_v2_ton">
+        <get_method name="get_payment_info"/>
+        <get_method name="get_subscription_info"/>
+        <msg_in>
+            <ext_in name="subscription_v2_prolong"/>
+            <internal name="subscription_v2_deploy"/>
+            <internal name="subscription_v2_destruct"/>
+            <internal name="subscription_v2_reduce_payment"/>
+            <internal name="subscription_v2_payment_confirmed"/>
+            <internal name="subscription_v2_withdraw_to_beneficiary"/>
+        </msg_in>
+        <error code="460">Not enough funds</error>
+        <error code="461">Too early request</error>
+        <error code="462">Too many requests</error>
+        <error code="463">Sender is not wallet</error>
+        <error code="464">Not initialized</error>
+        <error code="465">Initialized</error>
+        <error code="466">Sender is not owner</error>
+        <error code="467">Sender is not beneficiary</error>
+        <error code="468">Invalid charging date</error>
+        <error code="469">Invalid reduce payment amount</error>
+    </interface>
+    <get_method name="get_payment_info">
+        <output fixed_length="true">
+            <int name="active">bool</int>
+            <int name="payment_per_period">uint64</int>
+            <int name="period">uint32</int>
+            <int name="charge_date">uint32</int>
+            <int name="grace_period">uint32</int>
+            <int name="last_request_time">uint32</int>
+            <int name="caller_fee">uint64</int>
+        </output>
+    </get_method>
+    <get_method name="get_subscription_info">
+        <output fixed_length="true">
+            <slice name="wallet">msgaddress</slice>
+            <int name="wallet_version">uint8</int>
+            <slice name="beneficiary">msgaddress</slice>
+            <int name="subscription_id">uint64</int>
+            <cell name="metadata">any</cell>
+        </output>
+    </get_method>
+    <internal name="subscription_v2_deploy" >
+        subscription_deploy#f71783cb query_id:uint64 first_charging_date:uint32 payment_per_period:Grams period:uint32 grace_period:uint32 caller_fee:Grams metadata:^Cell = InternalMsgBody;
+    </internal>
+    <internal name="subscription_v2_destruct" >
+        subscription_destruct#64737472 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="subscription_v2_reduce_payment" >
+        reduce_payment#508238ec query_id:uint64 new_payment:Grams = InternalMsgBody;
+    </internal>
+    <internal name="subscription_v2_payment_confirmed" >
+        payment_confirmed#f06c7567 = InternalMsgBody;
+    </internal>
+    <internal name="subscription_v2_withdraw_to_beneficiary" >
+        withdraw_to_beneficiary#f852254e subscription_id:uint64 = InternalMsgBody;
+    </internal>
+    <ext_in name="subscription_v2_prolong" >
+        prolong#43d0ed9a = ExternalMsgBody;
+    </ext_in>
+</abi>

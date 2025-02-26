@@ -150,6 +150,12 @@ The list below contains the supported message operations, their names and opcode
 | StormWithdrawExecutorAmount| 0x2cde6351 |
 | StormWithdrawReferralAmount| 0xf5d4eb52 |
 | SubscriptionPayment| 0x73756273 |
+| SubscriptionV2Deploy| 0xf71783cb |
+| SubscriptionV2Destruct| 0x64737472 |
+| SubscriptionV2PaymentConfirmed| 0xf06c7567 |
+| SubscriptionV2Prolong| 0x43d0ed9a |
+| SubscriptionV2ReducePayment| 0x508238ec |
+| SubscriptionV2WithdrawToBeneficiary| 0xf852254e |
 | TegroAddLiquidity| 0x287e167a |
 | TegroJettonSwap| 0x01fb7a25 |
 | TegroSwapTon| 0x600c00fd |

@@ -59,6 +59,7 @@ const (
 	StormVamm
 	StormVault
 	SubscriptionV1
+	SubscriptionV2Ton
 	Teleitem
 	TonstakePool
 	TvPool
@@ -189,6 +190,8 @@ func (c ContractInterface) String() string {
 		return "storm_vault"
 	case SubscriptionV1:
 		return "subscription_v1"
+	case SubscriptionV2Ton:
+		return "subscription_v2_ton"
 	case Teleitem:
 		return "teleitem"
 	case TonstakePool:
@@ -346,6 +349,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StormVault
 	case "subscription_v1":
 		return SubscriptionV1
+	case "subscription_v2_ton":
+		return SubscriptionV2Ton
 	case "teleitem":
 		return Teleitem
 	case "tonstake_pool":
@@ -565,6 +570,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetParams,
 	},
 	{
+		Name:     "get_payment_info",
+		InvokeFn: GetPaymentInfo,
+	},
+	{
 		Name:     "get_plugin_list",
 		InvokeFn: GetPluginList,
 	},
@@ -647,6 +656,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_subscription_data",
 		InvokeFn: GetSubscriptionData,
+	},
+	{
+		Name:     "get_subscription_info",
+		InvokeFn: GetSubscriptionInfo,
 	},
 	{
 		Name:     "get_subwallet_id",
@@ -1005,6 +1018,13 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: SubscriptionV1,
 		Results: []string{
 			"GetSubscriptionDataResult",
+		},
+	},
+	{
+		Name: SubscriptionV2Ton,
+		Results: []string{
+			"GetPaymentInfoResult",
+			"GetSubscriptionInfoResult",
 		},
 	},
 	{
@@ -1419,6 +1439,14 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
+	case SubscriptionV2Ton:
+		return []msgDecoderFunc{
+			decodeFuncSubscriptionV2DeployMsgBody,
+			decodeFuncSubscriptionV2DestructMsgBody,
+			decodeFuncSubscriptionV2ReducePaymentMsgBody,
+			decodeFuncSubscriptionV2PaymentConfirmedMsgBody,
+			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
+		}
 	case WalletV5R1:
 		return []msgDecoderFunc{
 			decodeFuncWalletSignedInternalV5R1MsgBody,
@@ -1439,6 +1467,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
+	case SubscriptionV2Ton:
+		return []msgDecoderFunc{
+			decodeFuncSubscriptionV2ProlongExtInMsgBody,
+		}
 	case WalletHighloadV2:
 		return []msgDecoderFunc{
 			decodeFuncHighloadWalletSignedV2ExtInMsgBody,

@@ -28,6 +28,11 @@ const (
 	reconnectTimeout = 10 * time.Second
 )
 
+const (
+	ClientNonceSize    = 32
+	MaxServerNonceSize = 512
+)
+
 type Connection struct {
 	peerPublicKey    []byte
 	host             string
@@ -260,22 +265,21 @@ func (c *Connection) Status() ConnectionStatus {
 }
 
 func (c *Connection) sendAuthRequest() error {
-	nonce := make([]byte, 32)
+	payload := make([]byte, 4+ClientNonceSize)
+	binary.LittleEndian.PutUint32(payload[:4], magicTcpAuthentificate)
+
+	nonce := payload[4:]
 	if _, err := rand.Read(nonce); err != nil {
-		panic(err) // impossible if source of randomness is correct
+		return fmt.Errorf("error generating nonce: %w", err)
 	}
 
 	c.mu.Lock()
 	c.nonce = nonce
 	c.mu.Unlock()
 
-	payload := make([]byte, 36) // 4 bytes magic + 32 bytes nonce
-	binary.LittleEndian.PutUint32(payload[:4], magicTcpAuthentificate)
-	copy(payload[4:], nonce)
-
 	p, err := NewPacket(payload)
 	if err != nil {
-		return fmt.Errorf("failed to create packet: %w", err)
+		return fmt.Errorf("failed to create auth packet: %w", err)
 	}
 	b := p.marshal()
 	return c.econn.send(b)
@@ -303,17 +307,17 @@ func (c *Connection) sendAuthComplete(received Packet) error {
 	}
 
 	nonce := received.Payload[4:]
-	if len(nonce) > 512 {
+	if len(nonce) > MaxServerNonceSize {
 		return fmt.Errorf("too long nonce")
 	}
 
 	pubKey := c.authKey.Public().(ed25519.PublicKey)
 	signature := ed25519.Sign(c.authKey, append(append([]byte{}, c.nonce...), nonce...))
 
-	payload := make([]byte, 4+32+64) // magic(4) + pubkey(32) + signature(64)
+	payload := make([]byte, 4+ed25519.PublicKeySize+ed25519.SignatureSize)
 	binary.LittleEndian.PutUint32(payload[:4], magicTcpAuthentificationComplete)
-	copy(payload[4:36], pubKey)
-	copy(payload[36:], signature)
+	copy(payload[4:4+ed25519.PublicKeySize], pubKey)
+	copy(payload[4+ed25519.PublicKeySize:], signature)
 
 	p, err := NewPacket(payload)
 	if err != nil {

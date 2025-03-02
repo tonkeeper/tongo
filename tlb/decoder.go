@@ -55,6 +55,35 @@ func Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, "", reflect.ValueOf(o), &dec)
 }
 
+// UnmarshalMessage decodes the given cell using TL-B schema and stores the result in the value pointed to by o.
+func UnmarshalMessage(c *boc.Cell, o any) (opCode uint32, err error) {
+	// create a new struct with OpCode and Data fields
+	newStructType := reflect.StructOf([]reflect.StructField{
+		{
+			Name: "OpCode",
+			Type: reflect.TypeOf(opCode),
+		},
+		{
+			Name: "Data",
+			Type: reflect.TypeOf(o).Elem(),
+		},
+	})
+
+	newStructPtr := reflect.New(newStructType)
+	newStruct := newStructPtr.Elem()
+	newStruct.Field(1).Set(reflect.ValueOf(o).Elem())
+	// unmarshal the cell into the new struct
+	err = Unmarshal(c, newStruct.Addr().Interface())
+	if err != nil {
+		return
+	}
+	// set the OpCode and Data fields to the original struct
+	opCode = uint32(newStruct.Field(0).Uint())
+	reflect.ValueOf(o).Elem().Set(newStruct.Field(1))
+
+	return
+}
+
 var bocCellType = reflect.TypeOf(boc.Cell{})
 var bocCellPointerType = reflect.TypeOf(&boc.Cell{})
 var bocTlbANyPointerType = reflect.TypeOf(&Any{})

@@ -145,6 +145,8 @@ var (
 	decodeFuncStormMintExecutorMsgBody = decodeMsg(tlb.Tag{Val: 0x4f38cae8, Len: 32}, StormMintExecutorMsgOp, StormMintExecutorMsgBody{})
 	// 0x4f5f4313
 	decodeFuncPtonDeployWalletMsgBody = decodeMsg(tlb.Tag{Val: 0x4f5f4313, Len: 32}, PtonDeployWalletMsgOp, PtonDeployWalletMsgBody{})
+	// 0x508238ec
+	decodeFuncSubscriptionV2ReducePaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x508238ec, Len: 32}, SubscriptionV2ReducePaymentMsgOp, SubscriptionV2ReducePaymentMsgBody{})
 	// 0x50c6a654
 	decodeFuncStonfiAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x50c6a654, Len: 32}, StonfiAddLiquidityV2MsgOp, StonfiAddLiquidityV2MsgBody{})
 	// 0x53f34cd6
@@ -189,6 +191,8 @@ var (
 	decodeFuncJettonMintMsgBody = decodeMsg(tlb.Tag{Val: 0x642b7d07, Len: 32}, JettonMintMsgOp, JettonMintMsgBody{})
 	// 0x64737472
 	decodeFuncWalletPluginDestructMsgBody = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, WalletPluginDestructMsgOp, WalletPluginDestructMsgBody{})
+	// 0x64737472
+	decodeFuncSubscriptionV2DestructMsgBody = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, SubscriptionV2DestructMsgOp, SubscriptionV2DestructMsgBody{})
 	// 0x6501f354
 	decodeFuncJettonChangeAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x6501f354, Len: 32}, JettonChangeAdminMsgOp, JettonChangeAdminMsgBody{})
 	// 0x6540cf85
@@ -359,6 +363,8 @@ var (
 	decodeFuncJettonSetStatusMsgBody = decodeMsg(tlb.Tag{Val: 0xeed236d3, Len: 32}, JettonSetStatusMsgOp, JettonSetStatusMsgBody{})
 	// 0xf06c7567
 	decodeFuncPaymentRequestResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, PaymentRequestResponseMsgOp, PaymentRequestResponseMsgBody{})
+	// 0xf06c7567
+	decodeFuncSubscriptionV2PaymentConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, SubscriptionV2PaymentConfirmedMsgOp, SubscriptionV2PaymentConfirmedMsgBody{})
 	// 0xf0fd2250
 	decodeFuncTonstakeControllerUpdateValidatorHashMsgBody = decodeMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{})
 	// 0xf127fe4e
@@ -367,8 +373,12 @@ var (
 	decodeFuncElectorNewStakeConfirmationMsgBody = decodeMsg(tlb.Tag{Val: 0xf374484c, Len: 32}, ElectorNewStakeConfirmationMsgOp, ElectorNewStakeConfirmationMsgBody{})
 	// 0xf5d4eb52
 	decodeFuncStormWithdrawReferralAmountMsgBody = decodeMsg(tlb.Tag{Val: 0xf5d4eb52, Len: 32}, StormWithdrawReferralAmountMsgOp, StormWithdrawReferralAmountMsgBody{})
+	// 0xf71783cb
+	decodeFuncSubscriptionV2DeployMsgBody = decodeMsg(tlb.Tag{Val: 0xf71783cb, Len: 32}, SubscriptionV2DeployMsgOp, SubscriptionV2DeployMsgBody{})
 	// 0xf718510f
 	decodeFuncMultisigNewOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xf718510f, Len: 32}, MultisigNewOrderMsgOp, MultisigNewOrderMsgBody{})
+	// 0xf852254e
+	decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody = decodeMsg(tlb.Tag{Val: 0xf852254e, Len: 32}, SubscriptionV2WithdrawToBeneficiaryMsgOp, SubscriptionV2WithdrawToBeneficiaryMsgBody{})
 	// 0xf93bb43f
 	decodeFuncStonfiPaymentRequestMsgBody = decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
 	// 0xf96f7324
@@ -590,6 +600,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x4f5f4313
 	PtonDeployWalletMsgOpCode: decodeFuncPtonDeployWalletMsgBody,
 
+	// 0x508238ec
+	SubscriptionV2ReducePaymentMsgOpCode: decodeFuncSubscriptionV2ReducePaymentMsgBody,
+
 	// 0x50c6a654
 	StonfiAddLiquidityV2MsgOpCode: decodeFuncStonfiAddLiquidityV2MsgBody,
 
@@ -653,8 +666,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x642b7d07
 	JettonMintMsgOpCode: decodeFuncJettonMintMsgBody,
 
-	// 0x64737472
-	WalletPluginDestructMsgOpCode: decodeFuncWalletPluginDestructMsgBody,
+	//WalletPluginDestruct, SubscriptionV2Destruct,
+	0x64737472: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncWalletPluginDestructMsgBody,
+		decodeFuncSubscriptionV2DestructMsgBody},
+		"0x64737472",
+	),
 
 	// 0x6501f354
 	JettonChangeAdminMsgOpCode: decodeFuncJettonChangeAdminMsgBody,
@@ -909,8 +926,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xeed236d3
 	JettonSetStatusMsgOpCode: decodeFuncJettonSetStatusMsgBody,
 
-	// 0xf06c7567
-	PaymentRequestResponseMsgOpCode: decodeFuncPaymentRequestResponseMsgBody,
+	//PaymentRequestResponse, SubscriptionV2PaymentConfirmed,
+	0xf06c7567: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncPaymentRequestResponseMsgBody,
+		decodeFuncSubscriptionV2PaymentConfirmedMsgBody},
+		"0xf06c7567",
+	),
 
 	// 0xf0fd2250
 	TonstakeControllerUpdateValidatorHashMsgOpCode: decodeFuncTonstakeControllerUpdateValidatorHashMsgBody,
@@ -924,8 +945,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xf5d4eb52
 	StormWithdrawReferralAmountMsgOpCode: decodeFuncStormWithdrawReferralAmountMsgBody,
 
+	// 0xf71783cb
+	SubscriptionV2DeployMsgOpCode: decodeFuncSubscriptionV2DeployMsgBody,
+
 	// 0xf718510f
 	MultisigNewOrderMsgOpCode: decodeFuncMultisigNewOrderMsgBody,
+
+	// 0xf852254e
+	SubscriptionV2WithdrawToBeneficiaryMsgOpCode: decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
 
 	// 0xf93bb43f
 	StonfiPaymentRequestMsgOpCode: decodeFuncStonfiPaymentRequestMsgBody,
@@ -1010,6 +1037,7 @@ const (
 	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
 	StormMintExecutorMsgOp                       MsgOpName = "StormMintExecutor"
 	PtonDeployWalletMsgOp                        MsgOpName = "PtonDeployWallet"
+	SubscriptionV2ReducePaymentMsgOp             MsgOpName = "SubscriptionV2ReducePayment"
 	StonfiAddLiquidityV2MsgOp                    MsgOpName = "StonfiAddLiquidityV2"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
 	HipoFinanceTokensMintedMsgOp                 MsgOpName = "HipoFinanceTokensMinted"
@@ -1032,6 +1060,7 @@ const (
 	StonfiPayVaultV2MsgOp                        MsgOpName = "StonfiPayVaultV2"
 	JettonMintMsgOp                              MsgOpName = "JettonMint"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
+	SubscriptionV2DestructMsgOp                  MsgOpName = "SubscriptionV2Destruct"
 	JettonChangeAdminMsgOp                       MsgOpName = "JettonChangeAdmin"
 	PtonInternalDeployMsgOp                      MsgOpName = "PtonInternalDeploy"
 	WalletExtensionActionV5R1MsgOp               MsgOpName = "WalletExtensionActionV5R1"
@@ -1117,11 +1146,14 @@ const (
 	StormChangeSettingsMsgOp                     MsgOpName = "StormChangeSettings"
 	JettonSetStatusMsgOp                         MsgOpName = "JettonSetStatus"
 	PaymentRequestResponseMsgOp                  MsgOpName = "PaymentRequestResponse"
+	SubscriptionV2PaymentConfirmedMsgOp          MsgOpName = "SubscriptionV2PaymentConfirmed"
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
 	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
 	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
 	StormWithdrawReferralAmountMsgOp             MsgOpName = "StormWithdrawReferralAmount"
+	SubscriptionV2DeployMsgOp                    MsgOpName = "SubscriptionV2Deploy"
 	MultisigNewOrderMsgOp                        MsgOpName = "MultisigNewOrder"
+	SubscriptionV2WithdrawToBeneficiaryMsgOp     MsgOpName = "SubscriptionV2WithdrawToBeneficiary"
 	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
@@ -1198,6 +1230,7 @@ const (
 	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
 	StormMintExecutorMsgOpCode                       MsgOpCode = 0x4f38cae8
 	PtonDeployWalletMsgOpCode                        MsgOpCode = 0x4f5f4313
+	SubscriptionV2ReducePaymentMsgOpCode             MsgOpCode = 0x508238ec
 	StonfiAddLiquidityV2MsgOpCode                    MsgOpCode = 0x50c6a654
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
 	HipoFinanceTokensMintedMsgOpCode                 MsgOpCode = 0x5445efee
@@ -1220,6 +1253,7 @@ const (
 	StonfiPayVaultV2MsgOpCode                        MsgOpCode = 0x63381632
 	JettonMintMsgOpCode                              MsgOpCode = 0x642b7d07
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
+	SubscriptionV2DestructMsgOpCode                  MsgOpCode = 0x64737472
 	JettonChangeAdminMsgOpCode                       MsgOpCode = 0x6501f354
 	PtonInternalDeployMsgOpCode                      MsgOpCode = 0x6540cf85
 	WalletExtensionActionV5R1MsgOpCode               MsgOpCode = 0x6578746e
@@ -1305,11 +1339,14 @@ const (
 	StormChangeSettingsMsgOpCode                     MsgOpCode = 0xedcd36a6
 	JettonSetStatusMsgOpCode                         MsgOpCode = 0xeed236d3
 	PaymentRequestResponseMsgOpCode                  MsgOpCode = 0xf06c7567
+	SubscriptionV2PaymentConfirmedMsgOpCode          MsgOpCode = 0xf06c7567
 	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
 	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
 	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
 	StormWithdrawReferralAmountMsgOpCode             MsgOpCode = 0xf5d4eb52
+	SubscriptionV2DeployMsgOpCode                    MsgOpCode = 0xf71783cb
 	MultisigNewOrderMsgOpCode                        MsgOpCode = 0xf718510f
+	SubscriptionV2WithdrawToBeneficiaryMsgOpCode     MsgOpCode = 0xf852254e
 	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
@@ -1749,6 +1786,11 @@ type PtonDeployWalletMsgBody struct {
 	ExcessesAddress tlb.MsgAddress
 }
 
+type SubscriptionV2ReducePaymentMsgBody struct {
+	QueryId    uint64
+	NewPayment tlb.Grams
+}
+
 type StonfiAddLiquidityV2MsgBody struct {
 	QueryId          uint64
 	NewAmount0       tlb.VarUInteger16
@@ -1914,6 +1956,10 @@ type JettonMintMsgBody struct {
 }
 
 type WalletPluginDestructMsgBody struct{}
+
+type SubscriptionV2DestructMsgBody struct {
+	QueryId uint64
+}
 
 type JettonChangeAdminMsgBody struct {
 	QueryId         uint64
@@ -2437,6 +2483,8 @@ type JettonSetStatusMsgBody struct {
 
 type PaymentRequestResponseMsgBody struct{}
 
+type SubscriptionV2PaymentConfirmedMsgBody struct{}
+
 type TonstakeControllerUpdateValidatorHashMsgBody struct {
 	QueryId uint64
 }
@@ -2455,6 +2503,16 @@ type StormWithdrawReferralAmountMsgBody struct {
 	OwnerAddr      tlb.MsgAddress
 }
 
+type SubscriptionV2DeployMsgBody struct {
+	QueryId           uint64
+	FirstChargingDate uint32
+	PaymentPerPeriod  tlb.Grams
+	Period            uint32
+	GracePeriod       uint32
+	CallerFee         tlb.Grams
+	Metadata          tlb.Any `tlb:"^"`
+}
+
 type MultisigNewOrderMsgBody struct {
 	QueryId        uint64
 	OrderSeqno     tlb.Uint256
@@ -2462,6 +2520,10 @@ type MultisigNewOrderMsgBody struct {
 	Index          uint8
 	ExpirationDate tlb.Uint48
 	Order          MultisigOrder `tlb:"^"`
+}
+
+type SubscriptionV2WithdrawToBeneficiaryMsgBody struct {
+	SubscriptionId uint64
 }
 
 type StonfiPaymentRequestMsgBody struct {
@@ -2553,6 +2615,7 @@ var KnownMsgInTypes = map[string]any{
 	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
 	StormMintExecutorMsgOp:                       StormMintExecutorMsgBody{},
 	PtonDeployWalletMsgOp:                        PtonDeployWalletMsgBody{},
+	SubscriptionV2ReducePaymentMsgOp:             SubscriptionV2ReducePaymentMsgBody{},
 	StonfiAddLiquidityV2MsgOp:                    StonfiAddLiquidityV2MsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
 	HipoFinanceTokensMintedMsgOp:                 HipoFinanceTokensMintedMsgBody{},
@@ -2575,6 +2638,7 @@ var KnownMsgInTypes = map[string]any{
 	StonfiPayVaultV2MsgOp:                        StonfiPayVaultV2MsgBody{},
 	JettonMintMsgOp:                              JettonMintMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
+	SubscriptionV2DestructMsgOp:                  SubscriptionV2DestructMsgBody{},
 	JettonChangeAdminMsgOp:                       JettonChangeAdminMsgBody{},
 	PtonInternalDeployMsgOp:                      PtonInternalDeployMsgBody{},
 	WalletExtensionActionV5R1MsgOp:               WalletExtensionActionV5R1MsgBody{},
@@ -2660,11 +2724,14 @@ var KnownMsgInTypes = map[string]any{
 	StormChangeSettingsMsgOp:                     StormChangeSettingsMsgBody{},
 	JettonSetStatusMsgOp:                         JettonSetStatusMsgBody{},
 	PaymentRequestResponseMsgOp:                  PaymentRequestResponseMsgBody{},
+	SubscriptionV2PaymentConfirmedMsgOp:          SubscriptionV2PaymentConfirmedMsgBody{},
 	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
 	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
 	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
 	StormWithdrawReferralAmountMsgOp:             StormWithdrawReferralAmountMsgBody{},
+	SubscriptionV2DeployMsgOp:                    SubscriptionV2DeployMsgBody{},
 	MultisigNewOrderMsgOp:                        MultisigNewOrderMsgBody{},
+	SubscriptionV2WithdrawToBeneficiaryMsgOp:     SubscriptionV2WithdrawToBeneficiaryMsgBody{},
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
@@ -2682,11 +2749,16 @@ var (
 	decodeFuncPreprocessedWalletSignedV2ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, PreprocessedWalletSignedV2ExtInMsgOp, PreprocessedWalletSignedV2ExtInMsgBody{})
 	// 0x00000000
 	decodeFuncHighloadWalletSignedV2ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, HighloadWalletSignedV2ExtInMsgOp, HighloadWalletSignedV2ExtInMsgBody{})
+	// 0x43d0ed9a
+	decodeFuncSubscriptionV2ProlongExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x43d0ed9a, Len: 32}, SubscriptionV2ProlongExtInMsgOp, SubscriptionV2ProlongExtInMsgBody{})
 	// 0x7369676e
 	decodeFuncWalletSignedExternalV5R1ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x7369676e, Len: 32}, WalletSignedExternalV5R1ExtInMsgOp, WalletSignedExternalV5R1ExtInMsgBody{})
 )
 
 var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{
+
+	// 0x43d0ed9a
+	SubscriptionV2ProlongExtInMsgOpCode: decodeFuncSubscriptionV2ProlongExtInMsgBody,
 
 	// 0x7369676e
 	WalletSignedExternalV5R1ExtInMsgOpCode: decodeFuncWalletSignedExternalV5R1ExtInMsgBody,
@@ -2698,6 +2770,7 @@ const (
 	HighloadWalletSignedV3ExtInMsgOp     MsgOpName = "HighloadWalletSignedV3"
 	PreprocessedWalletSignedV2ExtInMsgOp MsgOpName = "PreprocessedWalletSignedV2"
 	HighloadWalletSignedV2ExtInMsgOp     MsgOpName = "HighloadWalletSignedV2"
+	SubscriptionV2ProlongExtInMsgOp      MsgOpName = "SubscriptionV2Prolong"
 	WalletSignedExternalV5R1ExtInMsgOp   MsgOpName = "WalletSignedExternalV5R1"
 )
 
@@ -2707,6 +2780,7 @@ const (
 	HighloadWalletSignedV3ExtInMsgOpCode     MsgOpCode = 0x00000000
 	PreprocessedWalletSignedV2ExtInMsgOpCode MsgOpCode = 0x00000000
 	HighloadWalletSignedV2ExtInMsgOpCode     MsgOpCode = 0x00000000
+	SubscriptionV2ProlongExtInMsgOpCode      MsgOpCode = 0x43d0ed9a
 	WalletSignedExternalV5R1ExtInMsgOpCode   MsgOpCode = 0x7369676e
 )
 
@@ -2744,6 +2818,8 @@ type HighloadWalletSignedV2ExtInMsgBody struct {
 	Payload     tlb.HashmapE[tlb.Uint16, SendMessageAction]
 }
 
+type SubscriptionV2ProlongExtInMsgBody struct{}
+
 type WalletSignedExternalV5R1ExtInMsgBody struct {
 	WalletId   uint32
 	ValidUntil uint32
@@ -2759,6 +2835,7 @@ var KnownMsgExtInTypes = map[string]any{
 	HighloadWalletSignedV3ExtInMsgOp:     HighloadWalletSignedV3ExtInMsgBody{},
 	PreprocessedWalletSignedV2ExtInMsgOp: PreprocessedWalletSignedV2ExtInMsgBody{},
 	HighloadWalletSignedV2ExtInMsgOp:     HighloadWalletSignedV2ExtInMsgBody{},
+	SubscriptionV2ProlongExtInMsgOp:      SubscriptionV2ProlongExtInMsgBody{},
 	WalletSignedExternalV5R1ExtInMsgOp:   WalletSignedExternalV5R1ExtInMsgBody{},
 }
 

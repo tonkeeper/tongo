@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
 	"github.com/tonkeeper/tongo/tl"
@@ -306,14 +305,12 @@ func (c *Connection) handleAuthResponse(p Packet) error {
 	return nil
 }
 
-func buildPublicKey(key ed25519.PrivateKey) [32]byte {
+func buildPublicKey(key ed25519.PrivateKey) []byte {
 	// TL: pub.ed25519#c6b41348 key:int256 = PublicKey;
 	pubKey := key.Public().(ed25519.PublicKey)
-	h := sha256.New()
-	h.Write([]byte{0xc6, 0xb4, 0x13, 0x48})
-	h.Write(pubKey[:])
-	var res [32]byte
-	copy(res[:], h.Sum(nil))
+	var res []byte
+	res = append([]byte{0xc6, 0xb4, 0x13, 0x48})
+	res = append(pubKey[:])
 	return res
 }
 
@@ -341,8 +338,7 @@ func (c *Connection) sendAuthComplete(received Packet) error {
 
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, magicTcpAuthentificationComplete)
-	pubKeyBytes := buildPublicKey(c.authKey)
-	payload = append(payload, pubKeyBytes[:]...)
+	payload = append(payload, buildPublicKey(c.authKey)...)
 	payload = append(payload, tl.EncodeLength(len(signature))...)
 	payload = append(payload, signature...)
 	payload = alignBytes(payload)

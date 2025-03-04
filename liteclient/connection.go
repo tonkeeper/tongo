@@ -17,6 +17,7 @@ const (
 	magicTcpAuthentificate           = 0x445bab12 //crc32(tcp.authentificate nonce:bytes = tcp.Message)
 	magicTcpAuthentificationNonce    = 0xe35d4ab6 //crc32(tcp.authentificationNonce nonce:bytes = tcp.Message)
 	magicTcpAuthentificationComplete = 0xf7ad9ea6 //crc32(tcp.authentificationComplete key:PublicKey signature:bytes = tcp.Message)
+	magicPubKey                      = 0xc6b41348 //crc32(pub.ed25519#c6b41348 key:int256 = PublicKey)
 )
 
 type ConnectionStatus int
@@ -305,15 +306,6 @@ func (c *Connection) handleAuthResponse(p Packet) error {
 	return nil
 }
 
-func buildPublicKey(key ed25519.PrivateKey) []byte {
-	// TL: pub.ed25519#c6b41348 key:int256 = PublicKey;
-	pubKey := key.Public().(ed25519.PublicKey)
-	var res []byte
-	res = append(res, []byte{0xc6, 0xb4, 0x13, 0x48}...)
-	res = append(res, pubKey[:]...)
-	return res
-}
-
 func (c *Connection) sendAuthComplete(received Packet) error {
 	if c.authKey == nil {
 		return fmt.Errorf("no auth key available")
@@ -338,7 +330,9 @@ func (c *Connection) sendAuthComplete(received Packet) error {
 
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, magicTcpAuthentificationComplete)
-	payload = append(payload, buildPublicKey(c.authKey)...)
+	binary.LittleEndian.PutUint32(payload, magicPubKey)
+	pubKey := c.authKey.Public().(ed25519.PublicKey)
+	payload = append(payload, pubKey[:]...)
 	payload = append(payload, tl.EncodeLength(len(signature))...)
 	payload = append(payload, signature...)
 	payload = alignBytes(payload)

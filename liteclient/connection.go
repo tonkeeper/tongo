@@ -4,8 +4,10 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"github.com/tonkeeper/tongo/tl"
 	"sync"
 	"time"
 )
@@ -265,10 +267,7 @@ func (c *Connection) Status() ConnectionStatus {
 }
 
 func (c *Connection) sendAuthRequest() error {
-	payload := make([]byte, 4+ClientNonceSize)
-	binary.LittleEndian.PutUint32(payload[:4], magicTcpAuthentificate)
-
-	nonce := payload[4:]
+	nonce := make([]byte, ClientNonceSize)
 	if _, err := rand.Read(nonce); err != nil {
 		return fmt.Errorf("error generating nonce: %w", err)
 	}
@@ -276,6 +275,12 @@ func (c *Connection) sendAuthRequest() error {
 	c.mu.Lock()
 	c.nonce = nonce
 	c.mu.Unlock()
+
+	payload := make([]byte, 4)
+	binary.LittleEndian.PutUint32(payload, magicTcpAuthentificate)
+	payload = append(payload, tl.EncodeLength(len(nonce))...)
+	payload = append(payload, nonce...)
+	payload = alignBytes(payload)
 
 	p, err := NewPacket(payload)
 	if err != nil {
@@ -301,23 +306,46 @@ func (c *Connection) handleAuthResponse(p Packet) error {
 	return nil
 }
 
+func buildPublicKey(key ed25519.PrivateKey) [32]byte {
+	// TL: pub.ed25519#c6b41348 key:int256 = PublicKey;
+	pubKey := key.Public().(ed25519.PublicKey)
+	h := sha256.New()
+	h.Write([]byte{0xc6, 0xb4, 0x13, 0x48})
+	h.Write(pubKey[:])
+	var res [32]byte
+	copy(res[:], h.Sum(nil))
+	return res
+}
+
 func (c *Connection) sendAuthComplete(received Packet) error {
 	if c.authKey == nil {
 		return fmt.Errorf("no auth key available")
 	}
 
-	nonce := received.Payload[4:]
+	if len(received.Payload) < 37 {
+		return fmt.Errorf("too short payload")
+	}
+	length, data, err := decodeLength(received.Payload[4:])
+	if err != nil {
+		return err
+	}
+	if len(data) < length {
+		return fmt.Errorf("payload is smaller than should be according to length")
+	}
+	nonce := data[:length]
 	if len(nonce) > MaxServerNonceSize {
 		return fmt.Errorf("too long nonce")
 	}
 
-	pubKey := c.authKey.Public().(ed25519.PublicKey)
 	signature := ed25519.Sign(c.authKey, append(append([]byte{}, c.nonce...), nonce...))
 
-	payload := make([]byte, 4+ed25519.PublicKeySize+ed25519.SignatureSize)
-	binary.LittleEndian.PutUint32(payload[:4], magicTcpAuthentificationComplete)
-	copy(payload[4:4+ed25519.PublicKeySize], pubKey)
-	copy(payload[4+ed25519.PublicKeySize:], signature)
+	payload := make([]byte, 4)
+	binary.LittleEndian.PutUint32(payload, magicTcpAuthentificationComplete)
+	pubKeyBytes := buildPublicKey(c.authKey)
+	payload = append(payload, pubKeyBytes[:]...)
+	payload = append(payload, tl.EncodeLength(len(signature))...)
+	payload = append(payload, signature...)
+	payload = alignBytes(payload)
 
 	p, err := NewPacket(payload)
 	if err != nil {

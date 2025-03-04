@@ -309,8 +309,8 @@ func buildPublicKey(key ed25519.PrivateKey) []byte {
 	// TL: pub.ed25519#c6b41348 key:int256 = PublicKey;
 	pubKey := key.Public().(ed25519.PublicKey)
 	var res []byte
-	res = append([]byte{0xc6, 0xb4, 0x13, 0x48})
-	res = append(pubKey[:])
+	res = append(res, []byte{0xc6, 0xb4, 0x13, 0x48}...)
+	res = append(res, pubKey[:]...)
 	return res
 }
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"math/big"
 	"reflect"
+	"slices"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -276,23 +277,12 @@ func TestHashmapAug(t *testing.T) {
 			t.Fatal("invalid suffix", c.Name)
 		}
 
-		if !equal(h.H.Values(), c.values) {
+		if !slices.Equal(h.H.Values(), c.values) {
 			t.Fatal("invalid values", c.Name)
 		}
 	}
 }
 
-func equal[T comparable](a, b []T) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
-}
 
 func testJSON[T any](t *testing.T, data T) {
 	bytes, err := json.Marshal(data)

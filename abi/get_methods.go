@@ -26,6 +26,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_bill_amount":                    {DecodeGetBillAmountResult},
 	"get_channel_data":                   {DecodeGetChannelDataResult},
 	"get_collection_data":                {DecodeGetCollectionDataResult},
+	"get_cron_info":                      {DecodeGetCronInfo_SubscriptionV2Result},
 	"get_domain":                         {DecodeGetDomainResult},
 	"get_editor":                         {DecodeGetEditorResult},
 	"get_exchange_settings":              {DecodeGetExchangeSettings_StormResult},
@@ -62,7 +63,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_oracle_data":                    {DecodeGetOracleData_StormResult},
 	"get_order_data":                     {DecodeGetOrderDataResult},
 	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
-	"get_payment_info":                   {DecodeGetPaymentInfoResult},
+	"get_payment_info":                   {DecodeGetPaymentInfo_SubscriptionV2Result},
 	"get_plugin_list":                    {DecodeGetPluginListResult},
 	"get_pool_address":                   {DecodeGetPoolAddress_StonfiResult},
 	"get_pool_data":                      {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult},
@@ -86,7 +87,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_storage_contract_data":          {DecodeGetStorageContractDataResult},
 	"get_storage_params":                 {DecodeGetStorageParamsResult},
 	"get_subscription_data":              {DecodeGetSubscriptionDataResult},
-	"get_subscription_info":              {DecodeGetSubscriptionInfoResult},
+	"get_subscription_info":              {DecodeGetSubscriptionInfo_V2Result},
 	"get_subwallet_id":                   {DecodeGetSubwalletIdResult},
 	"get_target_balances":                {DecodeGetTargetBalances_DedustResult},
 	"get_telemint_auction_config":        {DecodeGetTelemintAuctionConfigResult},
@@ -128,6 +129,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	73490:  {GetLockerData},
 	75065:  {GetExecutorBalances},
 	75709:  {GetExecutorVaultsWhitelist},
+	77915:  {GetCronInfo},
 	78683:  {GetNextAdminAddress},
 	78748:  {GetPublicKey},
 	79661:  {GetRouterVersion},
@@ -226,6 +228,7 @@ var resultTypes = []interface{}{
 	&GetBillAmountResult{},
 	&GetChannelDataResult{},
 	&GetCollectionDataResult{},
+	&GetCronInfo_SubscriptionV2Result{},
 	&GetDomainResult{},
 	&GetEditorResult{},
 	&GetExchangeSettings_StormResult{},
@@ -262,7 +265,7 @@ var resultTypes = []interface{}{
 	&GetOracleData_StormResult{},
 	&GetOrderDataResult{},
 	&GetParams_WhalesNominatorResult{},
-	&GetPaymentInfoResult{},
+	&GetPaymentInfo_SubscriptionV2Result{},
 	&GetPluginListResult{},
 	&GetPoolAddress_StonfiResult{},
 	&GetPoolData_DaolamaResult{},
@@ -292,7 +295,7 @@ var resultTypes = []interface{}{
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
 	&GetSubscriptionDataResult{},
-	&GetSubscriptionInfoResult{},
+	&GetSubscriptionInfo_V2Result{},
 	&GetSubwalletIdResult{},
 	&GetTargetBalances_DedustResult{},
 	&GetTelemintAuctionConfigResult{},
@@ -915,6 +918,42 @@ func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, result
 	var result GetCollectionDataResult
 	err = stack.Unmarshal(&result)
 	return "GetCollectionDataResult", result, err
+}
+
+type GetCronInfo_SubscriptionV2Result struct {
+	ChargeDate               uint32
+	CallerFee                uint64
+	BalanceAfterMinusAmounts uint64
+	Period                   uint32
+}
+
+func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 77915 for "get_cron_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 77915, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCronInfo_SubscriptionV2Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCronInfo_SubscriptionV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCronInfo_SubscriptionV2Result
+	err = stack.Unmarshal(&result)
+	return "GetCronInfo_SubscriptionV2Result", result, err
 }
 
 type GetDomainResult struct {
@@ -2295,7 +2334,7 @@ func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string
 	return "GetParams_WhalesNominatorResult", result, err
 }
 
-type GetPaymentInfoResult struct {
+type GetPaymentInfo_SubscriptionV2Result struct {
 	Active           bool
 	PaymentPerPeriod uint64
 	Period           uint32
@@ -2316,7 +2355,7 @@ func GetPaymentInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPaymentInfoResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPaymentInfo_SubscriptionV2Result} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2325,13 +2364,13 @@ func GetPaymentInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetPaymentInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetPaymentInfo_SubscriptionV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetPaymentInfoResult
+	var result GetPaymentInfo_SubscriptionV2Result
 	err = stack.Unmarshal(&result)
-	return "GetPaymentInfoResult", result, err
+	return "GetPaymentInfo_SubscriptionV2Result", result, err
 }
 
 type GetPluginListResult struct {
@@ -3389,7 +3428,7 @@ func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resu
 	return "GetSubscriptionDataResult", result, err
 }
 
-type GetSubscriptionInfoResult struct {
+type GetSubscriptionInfo_V2Result struct {
 	Wallet         tlb.MsgAddress
 	WalletVersion  uint8
 	Beneficiary    tlb.MsgAddress
@@ -3408,7 +3447,7 @@ func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID to
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSubscriptionInfoResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSubscriptionInfo_V2Result} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3417,13 +3456,13 @@ func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID to
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetSubscriptionInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetSubscriptionInfo_V2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetSubscriptionInfoResult
+	var result GetSubscriptionInfo_V2Result
 	err = stack.Unmarshal(&result)
-	return "GetSubscriptionInfoResult", result, err
+	return "GetSubscriptionInfo_V2Result", result, err
 }
 
 type GetSubwalletIdResult struct {

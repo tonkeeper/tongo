@@ -70,7 +70,7 @@ var contractErrors = map[ContractInterface]map[int32]string{
 		501:   "Invalid op, expected ownership_assigned",
 		65535: "Unknown operation",
 	},
-	SubscriptionV2Ton: {460: "Not enough funds",
+	SubscriptionV2: {460: "Not enough funds",
 		461: "Too early request",
 		462: "Too many requests",
 		463: "Sender is not wallet",

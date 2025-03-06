@@ -59,7 +59,7 @@ const (
 	StormVamm
 	StormVault
 	SubscriptionV1
-	SubscriptionV2Ton
+	SubscriptionV2
 	Teleitem
 	TonstakePool
 	TvPool
@@ -190,8 +190,8 @@ func (c ContractInterface) String() string {
 		return "storm_vault"
 	case SubscriptionV1:
 		return "subscription_v1"
-	case SubscriptionV2Ton:
-		return "subscription_v2_ton"
+	case SubscriptionV2:
+		return "subscription_v2"
 	case Teleitem:
 		return "teleitem"
 	case TonstakePool:
@@ -349,8 +349,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StormVault
 	case "subscription_v1":
 		return SubscriptionV1
-	case "subscription_v2_ton":
-		return SubscriptionV2Ton
+	case "subscription_v2":
+		return SubscriptionV2
 	case "teleitem":
 		return Teleitem
 	case "tonstake_pool":
@@ -452,6 +452,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_collection_data",
 		InvokeFn: GetCollectionData,
+	},
+	{
+		Name:     "get_cron_info",
+		InvokeFn: GetCronInfo,
 	},
 	{
 		Name:     "get_domain",
@@ -1021,10 +1025,11 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: SubscriptionV2Ton,
+		Name: SubscriptionV2,
 		Results: []string{
-			"GetPaymentInfoResult",
-			"GetSubscriptionInfoResult",
+			"GetCronInfo_SubscriptionV2Result",
+			"GetPaymentInfo_SubscriptionV2Result",
+			"GetSubscriptionInfo_V2Result",
 		},
 	},
 	{
@@ -1439,7 +1444,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
-	case SubscriptionV2Ton:
+	case SubscriptionV2:
 		return []msgDecoderFunc{
 			decodeFuncSubscriptionV2DeployMsgBody,
 			decodeFuncSubscriptionV2DestructMsgBody,
@@ -1467,7 +1472,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
-	case SubscriptionV2Ton:
+	case SubscriptionV2:
 		return []msgDecoderFunc{
 			decodeFuncSubscriptionV2ProlongExtInMsgBody,
 		}

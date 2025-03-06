@@ -109,8 +109,8 @@ func TestGetMethods(t *testing.T) {
 			data:         "b5ee9c72010207010001050002c233deeeafb3deee8d400001c2020043eeaf9aaac0799fe765d927a4233abc8b8ebeadb938398c04b3559c44d102c119c006ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220000000000000001940ee6b28000000258010501073493e00802020a0ec3c86d000503017f620043eeaf9aaac0799fe765d927a4233abc8b8ebeadb938398c04b3559c44d102c11a49f000000000000000000000000000006578746e0000000000000000a004020a0ec3c86d42050600000080620062c75cd10d0561d3989b32fb779721b67e47b2dececf332643831eb9015da7a3a07735940000000000000000000000000000f06c756700001ce2631c84c1",
 			account:      "0:c58eb9a21a0ac3a7313665f6ef2e436cfc8f65bd9d9e664c87063d7202bb4f47",
 			method:       GetPaymentInfo,
-			wantTypeHint: "GetPaymentInfoResult",
-			want: GetPaymentInfoResult{
+			wantTypeHint: "GetPaymentInfo_SubscriptionV2Result",
+			want: GetPaymentInfo_SubscriptionV2Result{
 				Active:           true,
 				PaymentPerPeriod: 250_000_000,
 				Period:           600,
@@ -126,8 +126,8 @@ func TestGetMethods(t *testing.T) {
 			data:         "b5ee9c72010207010001050002c233deeeafb3deee8d400001c2020043eeaf9aaac0799fe765d927a4233abc8b8ebeadb938398c04b3559c44d102c119c006ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220000000000000001940ee6b28000000258010501073493e00802020a0ec3c86d000503017f620043eeaf9aaac0799fe765d927a4233abc8b8ebeadb938398c04b3559c44d102c11a49f000000000000000000000000000006578746e0000000000000000a004020a0ec3c86d42050600000080620062c75cd10d0561d3989b32fb779721b67e47b2dececf332643831eb9015da7a3a07735940000000000000000000000000000f06c756700001ce2631c84c1",
 			account:      "0:c58eb9a21a0ac3a7313665f6ef2e436cfc8f65bd9d9e664c87063d7202bb4f47",
 			method:       GetSubscriptionInfo,
-			wantTypeHint: "GetSubscriptionInfoResult",
-			want: GetSubscriptionInfoResult{
+			wantTypeHint: "GetSubscriptionInfo_V2Result",
+			want: GetSubscriptionInfo_V2Result{
 				Wallet:         mustToMsgAddress("0:87dd5f355580f33fcecbb24f48467579171d7d5b727073180966ab3889a20582"),
 				WalletVersion:  51,
 				Beneficiary:    mustToMsgAddress("0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220"),
@@ -711,7 +711,7 @@ func TestGetMethods(t *testing.T) {
 			case GetRouterData_StonfiV2Result:
 				// skip this test because we need a library cell
 				return
-			case GetSubscriptionInfoResult:
+			case GetSubscriptionInfo_V2Result:
 				x.Metadata = tlb.Any{}
 				got = x
 			}
@@ -2760,7 +2760,7 @@ func TestDecodeExternalIn(t *testing.T) {
 		},
 		{
 			name:       "subscription v2 SubscriptionProlong",
-			interfaces: []ContractInterface{SubscriptionV2Ton},
+			interfaces: []ContractInterface{SubscriptionV2},
 			wantOpName: "SubscriptionV2Prolong",
 			wantValue: func() any {
 				return SubscriptionV2ProlongExtInMsgBody{}

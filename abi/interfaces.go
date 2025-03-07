@@ -1027,7 +1027,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: SubscriptionV2,
 		Results: []string{
-			"GetCronInfo_SubscriptionV2Result",
+			"GetCronInfoResult",
 			"GetPaymentInfo_SubscriptionV2Result",
 			"GetSubscriptionInfo_V2Result",
 		},

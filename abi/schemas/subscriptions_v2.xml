@@ -2,7 +2,7 @@
     <interface name="subscription_v2">
         <get_method name="get_payment_info" version="subscription_v2"/>
         <get_method name="get_subscription_info" version="v2"/>
-        <get_method name="get_cron_info" version="subscription_v2"/>
+        <get_method name="get_cron_info" />
         <msg_in>
             <ext_in name="subscription_v2_prolong"/>
             <internal name="subscription_v2_deploy"/>
@@ -43,7 +43,7 @@
         </output>
     </get_method>
     <get_method name="get_cron_info">
-        <output fixed_length="true" version="subscription_v2">
+        <output fixed_length="true">
             <int name="charge_date">uint32</int>
             <int name="caller_fee">uint64</int>
             <int name="balance_after_minus_amounts">uint64</int>

@@ -26,7 +26,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_bill_amount":                    {DecodeGetBillAmountResult},
 	"get_channel_data":                   {DecodeGetChannelDataResult},
 	"get_collection_data":                {DecodeGetCollectionDataResult},
-	"get_cron_info":                      {DecodeGetCronInfo_SubscriptionV2Result},
+	"get_cron_info":                      {DecodeGetCronInfoResult},
 	"get_domain":                         {DecodeGetDomainResult},
 	"get_editor":                         {DecodeGetEditorResult},
 	"get_exchange_settings":              {DecodeGetExchangeSettings_StormResult},
@@ -228,7 +228,7 @@ var resultTypes = []interface{}{
 	&GetBillAmountResult{},
 	&GetChannelDataResult{},
 	&GetCollectionDataResult{},
-	&GetCronInfo_SubscriptionV2Result{},
+	&GetCronInfoResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
 	&GetExchangeSettings_StormResult{},
@@ -920,7 +920,7 @@ func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, result
 	return "GetCollectionDataResult", result, err
 }
 
-type GetCronInfo_SubscriptionV2Result struct {
+type GetCronInfoResult struct {
 	ChargeDate               uint32
 	CallerFee                uint64
 	BalanceAfterMinusAmounts uint64
@@ -938,7 +938,7 @@ func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCronInfo_SubscriptionV2Result} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCronInfoResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -947,13 +947,13 @@ func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetCronInfo_SubscriptionV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetCronInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetCronInfo_SubscriptionV2Result
+	var result GetCronInfoResult
 	err = stack.Unmarshal(&result)
-	return "GetCronInfo_SubscriptionV2Result", result, err
+	return "GetCronInfoResult", result, err
 }
 
 type GetDomainResult struct {

@@ -25,12 +25,12 @@
     <get_method name="get_payment_info">
         <output fixed_length="true" version="subscription_v2">
             <int name="active">bool</int>
-            <int name="payment_per_period">uint64</int>
+            <int name="payment_per_period">coins</int>
             <int name="period">uint32</int>
             <int name="charge_date">uint32</int>
             <int name="grace_period">uint32</int>
             <int name="last_request_time">uint32</int>
-            <int name="caller_fee">uint64</int>
+            <int name="caller_fee">coins</int>
         </output>
     </get_method>
     <get_method name="get_subscription_info">

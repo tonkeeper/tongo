@@ -2336,12 +2336,12 @@ func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string
 
 type GetPaymentInfo_SubscriptionV2Result struct {
 	Active           bool
-	PaymentPerPeriod uint64
+	PaymentPerPeriod tlb.Grams
 	Period           uint32
 	ChargeDate       uint32
 	GracePeriod      uint32
 	LastRequestTime  uint32
-	CallerFee        uint64
+	CallerFee        tlb.Grams
 }
 
 func GetPaymentInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {

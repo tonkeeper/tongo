@@ -27,6 +27,8 @@
         msg_inner#_ {n:#}  subwallet_id:uint32 message_to_send:^MessageRelaxed send_mode:uint8 query_id:HighloadV3QueryId created_at:uint64 timeout:uint22 = HighloadV3MsgInner;
 
         msg_inner#_ valid_until:uint64 seq_no:uint16 actions:^W5Actions  = PreprocessedWalletV2MsgInner;
+
+        extensions#_ extensions:(Hashmap 256 uint1) = WalletV5ExtensionsList;
     </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
@@ -105,6 +107,7 @@
         <get_method name="seqno"/>
         <get_method name="get_public_key"/>
         <get_method name="get_subwallet_id"/>
+        <get_method name="get_extensions"/>
         <msg_in>
             <ext_in name="wallet_signed_external_v5r1"/>
             <internal name="wallet_signed_internal_v5r1"/>
@@ -187,6 +190,11 @@
     <get_method name="get_last_clean_time">
         <output fixed_length="true">
             <int name="timestamp">uint64</int>
+        </output>
+    </get_method>
+    <get_method name="get_extensions">
+        <output fixed_length="true">
+            <cell name="extensions" nullable="true">WalletV5ExtensionsList</cell>
         </output>
     </get_method>
     <ext_in name="wallet_signed_v3">

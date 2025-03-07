@@ -482,6 +482,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetExecutorVaultsWhitelist,
 	},
 	{
+		Name:     "get_extensions",
+		InvokeFn: GetExtensions,
+	},
+	{
 		Name:     "get_fix_price_data_v4",
 		InvokeFn: GetFixPriceDataV4,
 	},
@@ -1144,6 +1148,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("20834b7b72b112147e1b2fb457b84e74d1a30f04f737d4f62a668e9552d2b72f"): {
 		contractInterfaces: []ContractInterface{WalletV5R1},
 		getMethods: []InvokeFn{
+			GetExtensions,
 			GetPublicKey,
 			GetSubwalletId,
 			Seqno,

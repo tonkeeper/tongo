@@ -516,6 +516,10 @@ type SendMessageAction struct {
 	Message MessageRelaxed `tlb:"^"`
 }
 
+type WalletV5ExtensionsList struct {
+	Extensions tlb.Hashmap[tlb.Bits256, tlb.Uint1]
+}
+
 type WhalesNominatorsMember struct {
 	ProfitPerCoin      tlb.Int128
 	Balance            tlb.Grams

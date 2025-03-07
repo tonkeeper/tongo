@@ -34,6 +34,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddress_StormResult},
 	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelist_StormResult},
 	"get_expected_outputs":               {DecodeGetExpectedOutputs_StonfiResult},
+	"get_extensions":                     {DecodeGetExtensionsResult},
 	"get_fix_price_data_v4":              {DecodeGetFixPriceDataV4Result},
 	"get_full_domain":                    {DecodeGetFullDomainResult},
 	"get_jetton_data":                    {DecodeGetJettonDataResult},
@@ -187,6 +188,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	111161: {ListNominators},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
+	117729: {GetExtensions},
 	118188: {GetAssets},
 	118274: {GetLockerBillData},
 	119378: {GetDomain},
@@ -236,6 +238,7 @@ var resultTypes = []interface{}{
 	&GetExecutorCollectionAddress_StormResult{},
 	&GetExecutorVaultsWhitelist_StormResult{},
 	&GetExpectedOutputs_StonfiResult{},
+	&GetExtensionsResult{},
 	&GetFixPriceDataV4Result{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
@@ -1223,6 +1226,39 @@ func DecodeGetExpectedOutputs_StonfiResult(stack tlb.VmStack) (resultType string
 	var result GetExpectedOutputs_StonfiResult
 	err = stack.Unmarshal(&result)
 	return "GetExpectedOutputs_StonfiResult", result, err
+}
+
+type GetExtensionsResult struct {
+	Extensions *WalletV5ExtensionsList
+}
+
+func GetExtensions(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 117729 for "get_extensions" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 117729, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExtensionsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetExtensionsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell" && stack[0].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetExtensionsResult
+	err = stack.Unmarshal(&result)
+	return "GetExtensionsResult", result, err
 }
 
 type GetFixPriceDataV4Result struct {

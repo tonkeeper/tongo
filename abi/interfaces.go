@@ -1029,14 +1029,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: SubscriptionV2,
-		Results: []string{
-			"GetCronInfoResult",
-			"GetPaymentInfo_SubscriptionV2Result",
-			"GetSubscriptionInfo_V2Result",
-		},
-	},
-	{
 		Name: Teleitem,
 		Results: []string{
 			"GetTelemintTokenNameResult",
@@ -1263,6 +1255,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV3R1},
 		getMethods: []InvokeFn{
 			Seqno,
+		},
+	},
+	ton.MustParseHash("ba8bc168aac0f73d5914f6c4802085a136d94eb221cbb6f70b8fe653694da3bf"): {
+		contractInterfaces: []ContractInterface{SubscriptionV2},
+		getMethods: []InvokeFn{
+			GetCronInfo,
+			GetPaymentInfo,
+			GetSubscriptionInfo,
 		},
 	},
 	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {

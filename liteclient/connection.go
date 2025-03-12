@@ -17,7 +17,7 @@ const (
 	magicTcpAuthentificate           = 0x445bab12 //crc32(tcp.authentificate nonce:bytes = tcp.Message)
 	magicTcpAuthentificationNonce    = 0xe35d4ab6 //crc32(tcp.authentificationNonce nonce:bytes = tcp.Message)
 	magicTcpAuthentificationComplete = 0xf7ad9ea6 //crc32(tcp.authentificationComplete key:PublicKey signature:bytes = tcp.Message)
-	magicPubKey                      = 0xc6b41348 //crc32(pub.ed25519#c6b41348 key:int256 = PublicKey)
+	magicPubKey                      = 0x4813b4c6 //crc32(pub.ed25519 key:int256 = PublicKey)
 )
 
 type ConnectionStatus int

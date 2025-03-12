@@ -8,6 +8,7 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
+	AirdropInterlockerV1
 	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
@@ -88,6 +89,8 @@ const (
 
 func (c ContractInterface) String() string {
 	switch c {
+	case AirdropInterlockerV1:
+		return "airdrop_interlocker_v1"
 	case DaolamaVault:
 		return "daolama_vault"
 	case DedustFactory:
@@ -247,6 +250,8 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
+	case "airdrop_interlocker_v1":
+		return AirdropInterlockerV1
 	case "daolama_vault":
 		return DaolamaVault
 	case "dedust_factory":
@@ -452,6 +457,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_collection_data",
 		InvokeFn: GetCollectionData,
+	},
+	{
+		Name:     "get_contract_data",
+		InvokeFn: GetContractData,
 	},
 	{
 		Name:     "get_cron_info",
@@ -1250,6 +1259,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
 		contractInterfaces: []ContractInterface{WalletV1R1},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("acd2b8ec4db7414396fa53698653ecc04a416ee3649d8f5b20b41f176ad833f0"): {
+		contractInterfaces: []ContractInterface{AirdropInterlockerV1},
+		getMethods: []InvokeFn{
+			GetContractData,
+		},
 	},
 	ton.MustParseHash("b61041a58a7980b946e8fb9e198e3c904d24799ffa36574ea4251c41a566f581"): {
 		contractInterfaces: []ContractInterface{WalletV3R1},

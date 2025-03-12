@@ -26,6 +26,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_bill_amount":                    {DecodeGetBillAmountResult},
 	"get_channel_data":                   {DecodeGetChannelDataResult},
 	"get_collection_data":                {DecodeGetCollectionDataResult},
+	"get_contract_data":                  {DecodeGetContractData_AirdropInterlockerV1Result},
 	"get_cron_info":                      {DecodeGetCronInfoResult},
 	"get_domain":                         {DecodeGetDomainResult},
 	"get_editor":                         {DecodeGetEditorResult},
@@ -160,6 +161,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	91481:  {GetLastFillUpTime},
 	92229:  {GetPoolFullData},
 	92260:  {GetSubscriptionData},
+	94150:  {GetContractData},
 	96219:  {GetMiningData},
 	96263:  {GetExchangeSettings},
 	96705:  {GetBillAmount},
@@ -230,6 +232,7 @@ var resultTypes = []interface{}{
 	&GetBillAmountResult{},
 	&GetChannelDataResult{},
 	&GetCollectionDataResult{},
+	&GetContractData_AirdropInterlockerV1Result{},
 	&GetCronInfoResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
@@ -921,6 +924,42 @@ func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, result
 	var result GetCollectionDataResult
 	err = stack.Unmarshal(&result)
 	return "GetCollectionDataResult", result, err
+}
+
+type GetContractData_AirdropInterlockerV1Result struct {
+	IsClaimed   bool
+	MerkleRoot  tlb.Bits256
+	Receiver    tlb.MsgAddress
+	Distributor tlb.MsgAddress
+}
+
+func GetContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 94150 for "get_contract_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 94150, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetContractData_AirdropInterlockerV1Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetContractData_AirdropInterlockerV1Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetContractData_AirdropInterlockerV1Result
+	err = stack.Unmarshal(&result)
+	return "GetContractData_AirdropInterlockerV1Result", result, err
 }
 
 type GetCronInfoResult struct {

@@ -1,0 +1,14 @@
+<abi>
+    <interface name="airdrop_interlocker_v1">
+        <code_hash>acd2b8ec4db7414396fa53698653ecc04a416ee3649d8f5b20b41f176ad833f0</code_hash>
+        <get_method name="get_contract_data" version="airdrop_interlocker_v1"/>
+    </interface>
+    <get_method name="get_contract_data">
+        <output fixed_length="true" version="airdrop_interlocker_v1">
+            <int name="is_claimed">bool</int>
+            <int name="merkle_root">bits256</int>
+            <slice name="receiver">msgaddress</slice>
+            <slice name="distributor">msgaddress</slice>
+        </output>
+    </get_method>
+</abi>

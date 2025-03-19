@@ -149,6 +149,8 @@ var (
 	decodeFuncSubscriptionV2ReducePaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x508238ec, Len: 32}, SubscriptionV2ReducePaymentMsgOp, SubscriptionV2ReducePaymentMsgBody{})
 	// 0x50c6a654
 	decodeFuncStonfiAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x50c6a654, Len: 32}, StonfiAddLiquidityV2MsgOp, StonfiAddLiquidityV2MsgBody{})
+	// 0x53684037
+	decodeFuncTonkeeper2FaSignedMsgBody = decodeMsg(tlb.Tag{Val: 0x53684037, Len: 32}, Tonkeeper2FaSignedMsgOp, Tonkeeper2FaSignedMsgBody{})
 	// 0x53f34cd6
 	decodeFuncUpdatePubkeyMsgBody = decodeMsg(tlb.Tag{Val: 0x53f34cd6, Len: 32}, UpdatePubkeyMsgOp, UpdatePubkeyMsgBody{})
 	// 0x5445efee
@@ -606,6 +608,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x50c6a654
 	StonfiAddLiquidityV2MsgOpCode: decodeFuncStonfiAddLiquidityV2MsgBody,
 
+	// 0x53684037
+	Tonkeeper2FaSignedMsgOpCode: decodeFuncTonkeeper2FaSignedMsgBody,
+
 	// 0x53f34cd6
 	UpdatePubkeyMsgOpCode: decodeFuncUpdatePubkeyMsgBody,
 
@@ -1039,6 +1044,7 @@ const (
 	PtonDeployWalletMsgOp                        MsgOpName = "PtonDeployWallet"
 	SubscriptionV2ReducePaymentMsgOp             MsgOpName = "SubscriptionV2ReducePayment"
 	StonfiAddLiquidityV2MsgOp                    MsgOpName = "StonfiAddLiquidityV2"
+	Tonkeeper2FaSignedMsgOp                      MsgOpName = "Tonkeeper2FaSigned"
 	UpdatePubkeyMsgOp                            MsgOpName = "UpdatePubkey"
 	HipoFinanceTokensMintedMsgOp                 MsgOpName = "HipoFinanceTokensMinted"
 	UpdateStorageParamsMsgOp                     MsgOpName = "UpdateStorageParams"
@@ -1232,6 +1238,7 @@ const (
 	PtonDeployWalletMsgOpCode                        MsgOpCode = 0x4f5f4313
 	SubscriptionV2ReducePaymentMsgOpCode             MsgOpCode = 0x508238ec
 	StonfiAddLiquidityV2MsgOpCode                    MsgOpCode = 0x50c6a654
+	Tonkeeper2FaSignedMsgOpCode                      MsgOpCode = 0x53684037
 	UpdatePubkeyMsgOpCode                            MsgOpCode = 0x53f34cd6
 	HipoFinanceTokensMintedMsgOpCode                 MsgOpCode = 0x5445efee
 	UpdateStorageParamsMsgOpCode                     MsgOpCode = 0x54cbf19b
@@ -1804,6 +1811,15 @@ type StonfiAddLiquidityV2MsgBody struct {
 		RefundAddress tlb.MsgAddress
 		ExcessAddress tlb.MsgAddress
 	} `tlb:"^"`
+}
+
+type Tonkeeper2FaSignedMsgBody struct {
+	RefWithCertificate   Certificate2Fa `tlb:"^"`
+	RefWithSeedSignature struct {
+		SeedSignature tlb.Bits512
+	} `tlb:"^"`
+	Payload              Payload2Fa
+	CertificateSignature tlb.Bits512
 }
 
 type UpdatePubkeyMsgBody struct {
@@ -2617,6 +2633,7 @@ var KnownMsgInTypes = map[string]any{
 	PtonDeployWalletMsgOp:                        PtonDeployWalletMsgBody{},
 	SubscriptionV2ReducePaymentMsgOp:             SubscriptionV2ReducePaymentMsgBody{},
 	StonfiAddLiquidityV2MsgOp:                    StonfiAddLiquidityV2MsgBody{},
+	Tonkeeper2FaSignedMsgOp:                      Tonkeeper2FaSignedMsgBody{},
 	UpdatePubkeyMsgOp:                            UpdatePubkeyMsgBody{},
 	HipoFinanceTokensMintedMsgOp:                 HipoFinanceTokensMintedMsgBody{},
 	UpdateStorageParamsMsgOp:                     UpdateStorageParamsMsgBody{},
@@ -2740,6 +2757,8 @@ var KnownMsgInTypes = map[string]any{
 
 var (
 	// 0x00000000
+	decodeFuncTonkeeper2FaSignedExternalExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, Tonkeeper2FaSignedExternalExtInMsgOp, Tonkeeper2FaSignedExternalExtInMsgBody{})
+	// 0x00000000
 	decodeFuncWalletSignedV3ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, WalletSignedV3ExtInMsgOp, WalletSignedV3ExtInMsgBody{})
 	// 0x00000000
 	decodeFuncWalletSignedV4ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, WalletSignedV4ExtInMsgOp, WalletSignedV4ExtInMsgBody{})
@@ -2765,6 +2784,7 @@ var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{
 }
 
 const (
+	Tonkeeper2FaSignedExternalExtInMsgOp MsgOpName = "Tonkeeper2FaSignedExternal"
 	WalletSignedV3ExtInMsgOp             MsgOpName = "WalletSignedV3"
 	WalletSignedV4ExtInMsgOp             MsgOpName = "WalletSignedV4"
 	HighloadWalletSignedV3ExtInMsgOp     MsgOpName = "HighloadWalletSignedV3"
@@ -2775,6 +2795,7 @@ const (
 )
 
 const (
+	Tonkeeper2FaSignedExternalExtInMsgOpCode MsgOpCode = 0x00000000
 	WalletSignedV3ExtInMsgOpCode             MsgOpCode = 0x00000000
 	WalletSignedV4ExtInMsgOpCode             MsgOpCode = 0x00000000
 	HighloadWalletSignedV3ExtInMsgOpCode     MsgOpCode = 0x00000000
@@ -2783,6 +2804,15 @@ const (
 	SubscriptionV2ProlongExtInMsgOpCode      MsgOpCode = 0x43d0ed9a
 	WalletSignedExternalV5R1ExtInMsgOpCode   MsgOpCode = 0x7369676e
 )
+
+type Tonkeeper2FaSignedExternalExtInMsgBody struct {
+	RefWithCertificate   Certificate2Fa `tlb:"^"`
+	RefWithSeedSignature struct {
+		SeedSignature tlb.Bits512
+	} `tlb:"^"`
+	Payload              Payload2Fa
+	CertificateSignature tlb.Bits512
+}
 
 type WalletSignedV3ExtInMsgBody struct {
 	Signature   tlb.Bits512
@@ -2830,6 +2860,7 @@ type WalletSignedExternalV5R1ExtInMsgBody struct {
 }
 
 var KnownMsgExtInTypes = map[string]any{
+	Tonkeeper2FaSignedExternalExtInMsgOp: Tonkeeper2FaSignedExternalExtInMsgBody{},
 	WalletSignedV3ExtInMsgOp:             WalletSignedV3ExtInMsgBody{},
 	WalletSignedV4ExtInMsgOp:             WalletSignedV4ExtInMsgBody{},
 	HighloadWalletSignedV3ExtInMsgOp:     HighloadWalletSignedV3ExtInMsgBody{},

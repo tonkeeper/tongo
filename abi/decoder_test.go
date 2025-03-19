@@ -72,7 +72,7 @@ func TestSimpleGetMethod(t *testing.T) {
 			IsMainnet:  true,
 		},
 
-		
+
 		// Jetton master
 		{
 			Name:       "Jetton master",

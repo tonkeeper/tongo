@@ -140,8 +140,8 @@
         </output>
     </get_method>
 
-    <interface name="nft_auction_getgems_v4">
-      <code_hash>80e3c419d72d5c12df01ad2c6564725c3fac328f40ad4311cd4dbf7b83c53fc5</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-auction-v4r1.func -->
+    <interface name="nft_auction_getgems_v4" inherits="nft_sale">
+      <code_hash>ce5a78534eaaa6ceed8dafd486d076eb60a9b0d6dbfb53676f662649c0689956</code_hash> <!-- https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-auction-v4r1.func -->
       <get_method name="get_auction_data_v4"/>
       <error code="403">Unauthorized address</error>
       <error code="1000">Low bid</error>

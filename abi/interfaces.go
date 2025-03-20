@@ -62,6 +62,7 @@ const (
 	SubscriptionV1
 	SubscriptionV2
 	Teleitem
+	Tonkeeper2Fa
 	TonstakePool
 	TvPool
 	ValidatorController
@@ -197,6 +198,8 @@ func (c ContractInterface) String() string {
 		return "subscription_v2"
 	case Teleitem:
 		return "teleitem"
+	case Tonkeeper2Fa:
+		return "tonkeeper_2fa"
 	case TonstakePool:
 		return "tonstake_pool"
 	case TvPool:
@@ -358,6 +361,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return SubscriptionV2
 	case "teleitem":
 		return Teleitem
+	case "tonkeeper_2fa":
+		return Tonkeeper2Fa
 	case "tonstake_pool":
 		return TonstakePool
 	case "tv_pool":
@@ -465,6 +470,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_cron_info",
 		InvokeFn: GetCronInfo,
+	},
+	{
+		Name:     "get_delegation_state",
+		InvokeFn: GetDelegationState,
 	},
 	{
 		Name:     "get_domain",
@@ -639,6 +648,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetRevokedTime,
 	},
 	{
+		Name:     "get_root_pubkey",
+		InvokeFn: GetRootPubkey,
+	},
+	{
 		Name:     "get_router_data",
 		InvokeFn: GetRouterData,
 	},
@@ -649,6 +662,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_sale_data",
 		InvokeFn: GetSaleData,
+	},
+	{
+		Name:     "get_seed_pubkey",
+		InvokeFn: GetSeedPubkey,
 	},
 	{
 		Name:     "get_spot_price",
@@ -737,6 +754,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_vault_whitelisted_addresses",
 		InvokeFn: GetVaultWhitelistedAddresses,
+	},
+	{
+		Name:     "get_wallet_addr",
+		InvokeFn: GetWalletAddr,
 	},
 	{
 		Name:     "get_wallet_data",
@@ -1286,6 +1307,15 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetWalletData,
 		},
 	},
+	ton.MustParseHash("c5ef19df22aee8b707bd7a181174e400a4225223c5ae40d8320f5ddd707d34a1"): {
+		contractInterfaces: []ContractInterface{Tonkeeper2Fa},
+		getMethods: []InvokeFn{
+			GetDelegationState,
+			GetRootPubkey,
+			GetSeedPubkey,
+			GetWalletAddr,
+		},
+	},
 	ton.MustParseHash("ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1"): {
 		contractInterfaces: []ContractInterface{GramMiner},
 		getMethods: []InvokeFn{
@@ -1472,6 +1502,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncSubscriptionV2PaymentConfirmedMsgBody,
 			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
 		}
+	case Tonkeeper2Fa:
+		return []msgDecoderFunc{
+			decodeFuncTonkeeper2FaSignedMsgBody,
+		}
 	case WalletV5R1:
 		return []msgDecoderFunc{
 			decodeFuncWalletSignedInternalV5R1MsgBody,
@@ -1495,6 +1529,10 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	case SubscriptionV2:
 		return []msgDecoderFunc{
 			decodeFuncSubscriptionV2ProlongExtInMsgBody,
+		}
+	case Tonkeeper2Fa:
+		return []msgDecoderFunc{
+			decodeFuncTonkeeper2FaSignedExternalExtInMsgBody,
 		}
 	case WalletHighloadV2:
 		return []msgDecoderFunc{

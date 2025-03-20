@@ -1,0 +1,85 @@
+<abi>
+    <types>
+        certificate_data$_ valid_until:uint64 pubkey:bits256 = CertificateData2Fa;
+        certificate$_ data:CertificateData2Fa signature:bits512 = Certificate2Fa;
+
+        send_actions#b15f2c8c seqno:uint32 valid_until:uint64 msg:^Cell mode:uint8 = Payload2Fa;
+        remove_extension#9d8084d6 seqno:uint32 valid_until:uint64 = Payload2Fa;
+        delegation#23d9c15c seqno:uint32 valid_until:uint64 new_state_init:^Cell forward_amount:Coins = Payload2Fa;
+        cancel_delegation#de82b501 seqno:uint32 valid_until:uint64 = Payload2Fa;
+    </types>
+
+    <interface name="tonkeeper_2fa">
+        <get_method name="get_wallet_addr"/>
+        <get_method name="get_root_pubkey"/>
+        <get_method name="get_seed_pubkey"/>
+        <get_method name="get_delegation_state"/>
+        <get_method name="get_estimated_attached_value"/>
+        <code_hash>c5ef19df22aee8b707bd7a181174e400a4225223c5ae40d8320f5ddd707d34a1</code_hash>
+        <msg_in>
+            <ext_in name="tonkeeper_2fa_signed_external"/>
+            <internal name="tonkeeper_2fa_signed"/>
+        </msg_in>
+    </interface>
+
+    <!-- Get Methods -->
+    <get_method name="get_wallet_addr">
+        <output fixed_length="true">
+            <slice name="wallet_addr">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_root_pubkey">
+        <output fixed_length="true">
+            <int name="root_pubkey">bits256</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_seed_pubkey">
+        <output fixed_length="true">
+            <int name="seed_pubkey">bits256</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_delegation_state">
+        <output fixed_length="true">
+            <int name="delegation_started">bool</int>
+            <int name="recovery_blocked_until">uint64</int>
+            <tuple name="state_params">
+                <cell name="new_state_init">cell</cell>
+                <int name="payment_per_period">coins</int>
+            </tuple>
+        </output>
+    </get_method>
+
+    <get_method name="get_estimated_attached_value">
+        <input>
+            <cell name="forward_msg">cell</cell>
+            <int name="msg_actions">int257</int>
+            <int name="extended_actions">int257</int>
+        </input>
+        <output fixed_length="true">
+            <int name="attached_value">coins</int>
+        </output>
+    </get_method>
+
+    <!-- External messages -->
+    <ext_in name="tonkeeper_2fa_signed_external">
+        signed_2fa_external$_
+        ref_with_certificate:^Certificate2Fa
+        ref_with_seed_signature:^[seed_signature:bits512]
+        payload:Payload2Fa
+        certificate_signature:bits512
+        = ExternalMsgBody;
+    </ext_in>
+
+    <!-- Internal messages -->
+    <internal name="tonkeeper_2fa_signed">
+        signed_2fa_internal#53684037
+        ref_with_certificate:^Certificate2Fa
+        ref_with_seed_signature:^[seed_signature:bits512]
+        payload:Payload2Fa
+        certificate_signature:bits512
+        = InternalMsgBody;
+    </internal>
+</abi>

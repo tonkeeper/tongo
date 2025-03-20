@@ -30,8 +30,9 @@ func (m *Message) Hash(normalizeExternal bool) Bits256 {
 	}
 	// normalize ExtIn message
 	c := boc.NewCell()
-	_ = c.WriteUint(2, 2)                           // message$_ -> info:CommonMsgInfo -> ext_in_msg_info$10
-	_ = c.WriteUint(0, 2)                           // message$_ -> info:CommonMsgInfo -> src:MsgAddressExt -> addr_none$00
+	_ = c.WriteUint(2, 2) // message$_ -> info:CommonMsgInfo -> ext_in_msg_info$10
+	_ = c.WriteUint(0, 2) // message$_ -> info:CommonMsgInfo -> src:MsgAddressExt -> addr_none$00
+	m.Info.ExtInMsgInfo.Dest.AddrStd.Anycast.Exists = false
 	_ = m.Info.ExtInMsgInfo.Dest.MarshalTLB(c, nil) // message$_ -> info:CommonMsgInfo -> dest:MsgAddressInt
 	_ = c.WriteUint(0, 4)                           // message$_ -> info:CommonMsgInfo -> import_fee:Grams -> 0
 	_ = c.WriteBit(false)                           // message$_ -> init:(Maybe (Either StateInit ^StateInit)) -> nothing$0

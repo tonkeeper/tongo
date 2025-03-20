@@ -224,6 +224,40 @@ func (j *JettonInternalTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tl
 	return nil
 }
 
+func (j *JettonBurnMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	var prefix struct {
+		QueryId             uint64
+		Amount              tlb.VarUInteger16
+		ResponseDestination tlb.MsgAddress
+	}
+	err := decoder.Unmarshal(cell, &prefix)
+	if err != nil {
+		return err
+	}
+	j.QueryId = prefix.QueryId
+	j.Amount = prefix.Amount
+	j.ResponseDestination = prefix.ResponseDestination
+	maybe, err := cell.ReadUint(1)
+	switch {
+	case err != nil:
+		return nil // empty maybe
+	case maybe == 0: // no custom payload
+		return nil
+	default: // maybe = true
+		cell, err = cell.NextRef()
+		if err != nil {
+			return err
+		}
+		var res JettonPayload
+		err = decoder.Unmarshal(cell, &res)
+		if err != nil {
+			return err
+		}
+		j.CustomPayload = &res
+	}
+	return nil
+}
+
 func failsafeJettonPayloadEitherRef(cell *boc.Cell, decoder *tlb.Decoder) tlb.EitherRef[JettonPayload] {
 	isRight, err := cell.ReadUint(1)
 	switch {

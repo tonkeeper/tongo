@@ -74,8 +74,8 @@ func TestMessage_normalized_hash(t *testing.T) {
 	_ = body.WriteUint(200, 32)
 	msg.Body.Value = Any(*body)
 
-	if msg.Hash().Hex() != "4fa6ab2c6fa87a22eeb458acee34cefababeb328e5a9fb37846be730ba8305e2" {
-		t.Fatalf("invalid mesg hash")
+	if msg.Hash(true).Hex() != "dfacc0b48826e33a5a127ee1def710a449d8ce79def7c19f43e57b7996e870df" {
+		t.Fatalf("invalid mesg hash %s", msg.Hash(true).Hex())
 	}
 }
 
@@ -317,7 +317,7 @@ func TestMessage_Marshal_and_Unmarshal(t *testing.T) {
 			if err := Unmarshal(msgCell, &msg); err != nil {
 				t.Fatalf("Unmarshal(() failed: %v", err)
 			}
-			hash := fmt.Sprintf("%x", msg.Hash())
+			hash := fmt.Sprintf("%x", msg.Hash(true))
 			if hash != tt.wantHash {
 				t.Fatalf("want hash: %v, got: %v", tt.wantHash, hash)
 			}

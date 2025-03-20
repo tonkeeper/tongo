@@ -26,13 +26,18 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_bill_amount":                    {DecodeGetBillAmountResult},
 	"get_channel_data":                   {DecodeGetChannelDataResult},
 	"get_collection_data":                {DecodeGetCollectionDataResult},
+	"get_contract_data":                  {DecodeGetContractData_AirdropInterlockerV1Result},
+	"get_cron_info":                      {DecodeGetCronInfoResult},
+	"get_delegation_state":               {DecodeGetDelegationStateResult},
 	"get_domain":                         {DecodeGetDomainResult},
 	"get_editor":                         {DecodeGetEditorResult},
+	"get_estimated_attached_value":       {DecodeGetEstimatedAttachedValueResult},
 	"get_exchange_settings":              {DecodeGetExchangeSettings_StormResult},
 	"get_executor_balances":              {DecodeGetExecutorBalances_StormResult},
 	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddress_StormResult},
 	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelist_StormResult},
 	"get_expected_outputs":               {DecodeGetExpectedOutputs_StonfiResult},
+	"get_extensions":                     {DecodeGetExtensionsResult},
 	"get_fix_price_data_v4":              {DecodeGetFixPriceDataV4Result},
 	"get_full_domain":                    {DecodeGetFullDomainResult},
 	"get_jetton_data":                    {DecodeGetJettonDataResult},
@@ -62,6 +67,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_oracle_data":                    {DecodeGetOracleData_StormResult},
 	"get_order_data":                     {DecodeGetOrderDataResult},
 	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
+	"get_payment_info":                   {DecodeGetPaymentInfo_SubscriptionV2Result},
 	"get_plugin_list":                    {DecodeGetPluginListResult},
 	"get_pool_address":                   {DecodeGetPoolAddress_StonfiResult},
 	"get_pool_data":                      {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult},
@@ -75,9 +81,11 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_referral_vaults_whitelist":      {DecodeGetReferralVaultsWhitelist_StormResult},
 	"get_reserves":                       {DecodeGetReserves_DedustResult},
 	"get_revoked_time":                   {DecodeGetRevokedTimeResult},
+	"get_root_pubkey":                    {DecodeGetRootPubkeyResult},
 	"get_router_data":                    {DecodeGetRouterData_StonfiResult, DecodeGetRouterData_StonfiV2Result},
 	"get_router_version":                 {DecodeGetRouterVersion_StonfiV2Result},
 	"get_sale_data":                      {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
+	"get_seed_pubkey":                    {DecodeGetSeedPubkeyResult},
 	"get_spot_price":                     {DecodeGetSpotPrice_StormResult},
 	"get_staking_status":                 {DecodeGetStakingStatusResult},
 	"get_status":                         {DecodeGetStatusResult},
@@ -85,6 +93,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_storage_contract_data":          {DecodeGetStorageContractDataResult},
 	"get_storage_params":                 {DecodeGetStorageParamsResult},
 	"get_subscription_data":              {DecodeGetSubscriptionDataResult},
+	"get_subscription_info":              {DecodeGetSubscriptionInfo_V2Result},
 	"get_subwallet_id":                   {DecodeGetSubwalletIdResult},
 	"get_target_balances":                {DecodeGetTargetBalances_DedustResult},
 	"get_telemint_auction_config":        {DecodeGetTelemintAuctionConfigResult},
@@ -101,6 +110,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_vault_data":                     {DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
 	"get_vault_type":                     {DecodeGetVaultType_StormResult},
 	"get_vault_whitelisted_addresses":    {DecodeGetVaultWhitelistedAddresses_StormResult},
+	"get_wallet_addr":                    {DecodeGetWalletAddrResult},
 	"get_wallet_address":                 {DecodeGetWalletAddressResult},
 	"get_wallet_data":                    {DecodeGetWalletDataResult},
 	"get_wallet_params":                  {DecodeGetWalletParamsResult},
@@ -118,6 +128,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){
 	65971:  {GetReserves},
 	66763:  {GetFullDomain},
+	69014:  {GetWalletAddr},
 	69018:  {GetVaultWhitelistedAddresses},
 	69506:  {GetTelemintTokenName},
 	69628:  {GetChannelData},
@@ -126,6 +137,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	73490:  {GetLockerData},
 	75065:  {GetExecutorBalances},
 	75709:  {GetExecutorVaultsWhitelist},
+	77915:  {GetCronInfo},
 	78683:  {GetNextAdminAddress},
 	78748:  {GetPublicKey},
 	79661:  {GetRouterVersion},
@@ -152,9 +164,11 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	89295:  {GetMembersRaw},
 	89352:  {GetAsset},
 	90228:  {GetEditor},
+	91273:  {GetRootPubkey},
 	91481:  {GetLastFillUpTime},
 	92229:  {GetPoolFullData},
 	92260:  {GetSubscriptionData},
+	94150:  {GetContractData},
 	96219:  {GetMiningData},
 	96263:  {GetExchangeSettings},
 	96705:  {GetBillAmount},
@@ -174,14 +188,17 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	105070: {GetTimeout},
 	105875: {GetAmmContractData},
 	106029: {GetJettonData},
+	106144: {GetDelegationState},
 	107305: {GetLockupData},
 	107307: {GetMultisigData},
 	107494: {GetVammType},
 	107653: {GetPluginList},
 	108868: {GetTerminalAmmPrice},
+	110403: {GetPaymentInfo},
 	111161: {ListNominators},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
+	117729: {GetExtensions},
 	118188: {GetAssets},
 	118274: {GetLockerBillData},
 	119378: {GetDomain},
@@ -199,6 +216,8 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	127184: {GetVaultData},
 	128085: {GetRouterData},
 	128979: {JettonWalletLockData},
+	129292: {GetSubscriptionInfo},
+	129581: {GetSeedPubkey},
 	129619: {GetTelemintAuctionConfig},
 	129770: {GetReferralData},
 	130271: {GetWalletParams},
@@ -222,13 +241,18 @@ var resultTypes = []interface{}{
 	&GetBillAmountResult{},
 	&GetChannelDataResult{},
 	&GetCollectionDataResult{},
+	&GetContractData_AirdropInterlockerV1Result{},
+	&GetCronInfoResult{},
+	&GetDelegationStateResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
+	&GetEstimatedAttachedValueResult{},
 	&GetExchangeSettings_StormResult{},
 	&GetExecutorBalances_StormResult{},
 	&GetExecutorCollectionAddress_StormResult{},
 	&GetExecutorVaultsWhitelist_StormResult{},
 	&GetExpectedOutputs_StonfiResult{},
+	&GetExtensionsResult{},
 	&GetFixPriceDataV4Result{},
 	&GetFullDomainResult{},
 	&GetJettonDataResult{},
@@ -258,6 +282,7 @@ var resultTypes = []interface{}{
 	&GetOracleData_StormResult{},
 	&GetOrderDataResult{},
 	&GetParams_WhalesNominatorResult{},
+	&GetPaymentInfo_SubscriptionV2Result{},
 	&GetPluginListResult{},
 	&GetPoolAddress_StonfiResult{},
 	&GetPoolData_DaolamaResult{},
@@ -274,12 +299,14 @@ var resultTypes = []interface{}{
 	&GetReferralVaultsWhitelist_StormResult{},
 	&GetReserves_DedustResult{},
 	&GetRevokedTimeResult{},
+	&GetRootPubkeyResult{},
 	&GetRouterData_StonfiResult{},
 	&GetRouterData_StonfiV2Result{},
 	&GetRouterVersion_StonfiV2Result{},
 	&GetSaleData_BasicResult{},
 	&GetSaleData_GetgemsAuctionResult{},
 	&GetSaleData_GetgemsResult{},
+	&GetSeedPubkeyResult{},
 	&GetSpotPrice_StormResult{},
 	&GetStakingStatusResult{},
 	&GetStatusResult{},
@@ -287,6 +314,7 @@ var resultTypes = []interface{}{
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
 	&GetSubscriptionDataResult{},
+	&GetSubscriptionInfo_V2Result{},
 	&GetSubwalletIdResult{},
 	&GetTargetBalances_DedustResult{},
 	&GetTelemintAuctionConfigResult{},
@@ -304,6 +332,7 @@ var resultTypes = []interface{}{
 	&GetVaultData_StormResult{},
 	&GetVaultType_StormResult{},
 	&GetVaultWhitelistedAddresses_StormResult{},
+	&GetWalletAddrResult{},
 	&GetWalletAddressResult{},
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
@@ -911,6 +940,116 @@ func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, result
 	return "GetCollectionDataResult", result, err
 }
 
+type GetContractData_AirdropInterlockerV1Result struct {
+	IsClaimed   bool
+	MerkleRoot  tlb.Bits256
+	Receiver    tlb.MsgAddress
+	Distributor tlb.MsgAddress
+}
+
+func GetContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 94150 for "get_contract_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 94150, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetContractData_AirdropInterlockerV1Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetContractData_AirdropInterlockerV1Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetContractData_AirdropInterlockerV1Result
+	err = stack.Unmarshal(&result)
+	return "GetContractData_AirdropInterlockerV1Result", result, err
+}
+
+type GetCronInfoResult struct {
+	ChargeDate               uint32
+	CallerFee                uint64
+	BalanceAfterMinusAmounts uint64
+	Period                   uint32
+}
+
+func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 77915 for "get_cron_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 77915, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCronInfoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCronInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCronInfoResult
+	err = stack.Unmarshal(&result)
+	return "GetCronInfoResult", result, err
+}
+
+type GetDelegationStateResult struct {
+	DelegationStarted    bool
+	RecoveryBlockedUntil uint64
+	StateParams          struct {
+		NewStateInit     boc.Cell
+		PaymentPerPeriod tlb.Grams
+	}
+}
+
+func GetDelegationState(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 106144 for "get_delegation_state" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106144, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetDelegationStateResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetDelegationStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTuple") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetDelegationStateResult
+	err = stack.Unmarshal(&result)
+	return "GetDelegationStateResult", result, err
+}
+
 type GetDomainResult struct {
 	Domain string
 }
@@ -975,6 +1114,52 @@ func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any,
 	var result GetEditorResult
 	err = stack.Unmarshal(&result)
 	return "GetEditorResult", result, err
+}
+
+type GetEstimatedAttachedValueResult struct {
+	AttachedValue tlb.Grams
+}
+
+func GetEstimatedAttachedValue(ctx context.Context, executor Executor, reqAccountID ton.AccountID, forwardMsg boc.Cell, msgActions tlb.Int257, extendedActions tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCell(forwardMsg)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: msgActions}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: extendedActions}
+	stack.Put(val)
+
+	// MethodID = 94318 for "get_estimated_attached_value" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 94318, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetEstimatedAttachedValueResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetEstimatedAttachedValueResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetEstimatedAttachedValueResult
+	err = stack.Unmarshal(&result)
+	return "GetEstimatedAttachedValueResult", result, err
 }
 
 type GetExchangeSettings_StormResult struct {
@@ -1178,6 +1363,39 @@ func DecodeGetExpectedOutputs_StonfiResult(stack tlb.VmStack) (resultType string
 	var result GetExpectedOutputs_StonfiResult
 	err = stack.Unmarshal(&result)
 	return "GetExpectedOutputs_StonfiResult", result, err
+}
+
+type GetExtensionsResult struct {
+	Extensions *WalletV5ExtensionsList
+}
+
+func GetExtensions(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 117729 for "get_extensions" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 117729, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExtensionsResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetExtensionsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell" && stack[0].SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetExtensionsResult
+	err = stack.Unmarshal(&result)
+	return "GetExtensionsResult", result, err
 }
 
 type GetFixPriceDataV4Result struct {
@@ -2289,6 +2507,45 @@ func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string
 	return "GetParams_WhalesNominatorResult", result, err
 }
 
+type GetPaymentInfo_SubscriptionV2Result struct {
+	Active           bool
+	PaymentPerPeriod tlb.Grams
+	Period           uint32
+	ChargeDate       uint32
+	GracePeriod      uint32
+	LastRequestTime  uint32
+	CallerFee        tlb.Grams
+}
+
+func GetPaymentInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 110403 for "get_payment_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 110403, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPaymentInfo_SubscriptionV2Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPaymentInfo_SubscriptionV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPaymentInfo_SubscriptionV2Result
+	err = stack.Unmarshal(&result)
+	return "GetPaymentInfo_SubscriptionV2Result", result, err
+}
+
 type GetPluginListResult struct {
 	Plugins []struct {
 		Workchain int32
@@ -2873,6 +3130,39 @@ func DecodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny
 	return "GetRevokedTimeResult", result, err
 }
 
+type GetRootPubkeyResult struct {
+	RootPubkey tlb.Bits256
+}
+
+func GetRootPubkey(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 91273 for "get_root_pubkey" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 91273, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRootPubkeyResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetRootPubkeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetRootPubkeyResult
+	err = stack.Unmarshal(&result)
+	return "GetRootPubkeyResult", result, err
+}
+
 type GetRouterData_StonfiResult struct {
 	IsLocked           bool
 	AdminAddress       tlb.MsgAddress
@@ -3059,6 +3349,39 @@ func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType strin
 	var result GetSaleData_GetgemsAuctionResult
 	err = stack.Unmarshal(&result)
 	return "GetSaleData_GetgemsAuctionResult", result, err
+}
+
+type GetSeedPubkeyResult struct {
+	SeedPubkey tlb.Bits256
+}
+
+func GetSeedPubkey(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 129581 for "get_seed_pubkey" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 129581, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSeedPubkeyResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetSeedPubkeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetSeedPubkeyResult
+	err = stack.Unmarshal(&result)
+	return "GetSeedPubkeyResult", result, err
 }
 
 type GetSpotPrice_StormResult struct {
@@ -3342,6 +3665,43 @@ func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resu
 	var result GetSubscriptionDataResult
 	err = stack.Unmarshal(&result)
 	return "GetSubscriptionDataResult", result, err
+}
+
+type GetSubscriptionInfo_V2Result struct {
+	Wallet         tlb.MsgAddress
+	WalletVersion  uint8
+	Beneficiary    tlb.MsgAddress
+	SubscriptionId uint64
+	Metadata       tlb.Any
+}
+
+func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 129292 for "get_subscription_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 129292, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSubscriptionInfo_V2Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetSubscriptionInfo_V2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetSubscriptionInfo_V2Result
+	err = stack.Unmarshal(&result)
+	return "GetSubscriptionInfo_V2Result", result, err
 }
 
 type GetSubwalletIdResult struct {
@@ -3925,6 +4285,39 @@ func DecodeGetVaultWhitelistedAddresses_StormResult(stack tlb.VmStack) (resultTy
 	var result GetVaultWhitelistedAddresses_StormResult
 	err = stack.Unmarshal(&result)
 	return "GetVaultWhitelistedAddresses_StormResult", result, err
+}
+
+type GetWalletAddrResult struct {
+	WalletAddr tlb.MsgAddress
+}
+
+func GetWalletAddr(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 69014 for "get_wallet_addr" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 69014, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetWalletAddrResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetWalletAddrResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetWalletAddrResult
+	err = stack.Unmarshal(&result)
+	return "GetWalletAddrResult", result, err
 }
 
 type GetWalletAddressResult struct {

@@ -421,13 +421,13 @@ type TrActionPhase struct {
 	SkippedActions  uint16
 	MsgsCreated     uint16
 	ActionListHash  Bits256
-	TotMsgSize      StorageUsedShort
+	TotMsgSize      StorageUsed
 }
 
-// StorageUsedShort
-// storage_used_short$_ cells:(VarUInteger 7)
-// bits:(VarUInteger 7) = StorageUsedShort;
-type StorageUsedShort struct {
+// StorageUsed
+// storage_used$_ cells:(VarUInteger 7)
+// bits:(VarUInteger 7) = StorageUsed;
+type StorageUsed struct {
 	Cells VarUInteger7
 	Bits  VarUInteger7
 }
@@ -443,11 +443,11 @@ type TrBouncePhase struct {
 	TrPhaseBounceNegfunds struct {
 	} `tlbSumType:"tr_phase_bounce_negfunds$00"`
 	TrPhaseBounceNofunds struct {
-		MsgSize    StorageUsedShort
+		MsgSize    StorageUsed
 		ReqFwdFees Grams
 	} `tlbSumType:"tr_phase_bounce_nofunds$01"`
 	TrPhaseBounceOk struct {
-		MsgSize StorageUsedShort
+		MsgSize StorageUsed
 		MsgFees Grams
 		FwdFees Grams
 	} `tlbSumType:"tr_phase_bounce_ok$1"`

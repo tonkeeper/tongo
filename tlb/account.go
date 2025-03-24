@@ -82,22 +82,25 @@ type AccountState struct {
 	} `tlbSumType:"account_frozen$01"`
 }
 
-// StorageInfo
-// storage_info$_ used:StorageUsed last_paid:uint32
-// due_payment:(Maybe Grams) = StorageInfo;
-type StorageInfo struct {
-	Used       StorageUsed
-	LastPaid   uint32
-	DuePayment Maybe[Grams]
+// storage_extra_none$000 = StorageExtraInfo;
+// storage_extra_info$001 dict_hash:uint256 = StorageExtraInfo;
+type StorageExtraInfo struct {
+	SumType
+	StorageExtraNone struct {
+	} `tlbSumType:"storage_extra_none$000"`
+	StorageExtraInfo struct {
+		DictHash Bits256
+	} `tlbSumType:"storage_extra_info$001"`
 }
 
-// StorageUsed
-// storage_used$_ cells:(VarUInteger 7) bits:(VarUInteger 7)
-// public_cells:(VarUInteger 7) = StorageUsed;
-type StorageUsed struct {
-	Cells       VarUInteger7
-	Bits        VarUInteger7
-	PublicCells VarUInteger7
+// StorageInfo
+// storage_info$_ used:StorageUsed storage_extra:StorageExtraInfo last_paid:uint32
+// due_payment:(Maybe Grams) = StorageInfo;
+type StorageInfo struct {
+	Used         StorageUsed
+	StorageExtra StorageExtraInfo
+	LastPaid     uint32
+	DuePayment   Maybe[Grams]
 }
 
 // AccountStatus

@@ -113,7 +113,7 @@ func (c *Cell) Hash256() ([32]byte, error) {
 	}
 	var h [32]byte
 	copy(h[:], b)
-	return h, err
+	return h, nil
 }
 
 func (c *Cell) HashString() (string, error) {
@@ -121,7 +121,7 @@ func (c *Cell) HashString() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return hex.EncodeToString(h), err
+	return hex.EncodeToString(h), nil
 }
 
 func (c *Cell) hash(cache map[*Cell]*immutableCell) ([]byte, error) {

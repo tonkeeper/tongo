@@ -1,0 +1,13 @@
+<abi>
+    <types>
+        adnl$01 address:bits256 = PaymentProviderUrl;
+    </types>
+
+    <internal name="invoice_payload" >
+        invoice_payload#5d2beb8d id:uint128 url:PaymentProviderUrl = InternalMsgBody;
+    </internal>
+
+    <jetton_payload name="invoice_payload">
+        jetton_payload#5d2beb8d id:uint128 url:PaymentProviderUrl = JettonMsgPayload;
+    </jetton_payload>
+</abi>

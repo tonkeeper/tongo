@@ -173,6 +173,8 @@ var (
 	decodeFuncDaolamaVaultSupplyMsgBody = decodeMsg(tlb.Tag{Val: 0x5c11ada9, Len: 32}, DaolamaVaultSupplyMsgOp, DaolamaVaultSupplyMsgBody{})
 	// 0x5d1b17b8
 	decodeFuncStormUpdatePositionWithStopLossMsgBody = decodeMsg(tlb.Tag{Val: 0x5d1b17b8, Len: 32}, StormUpdatePositionWithStopLossMsgOp, StormUpdatePositionWithStopLossMsgBody{})
+	// 0x5d2beb8d
+	decodeFuncInvoicePayloadMsgBody = decodeMsg(tlb.Tag{Val: 0x5d2beb8d, Len: 32}, InvoicePayloadMsgOp, InvoicePayloadMsgBody{})
 	// 0x5dd66579
 	decodeFuncStormAddExecutorAmountMsgBody = decodeMsg(tlb.Tag{Val: 0x5dd66579, Len: 32}, StormAddExecutorAmountMsgOp, StormAddExecutorAmountMsgBody{})
 	// 0x5e517f36
@@ -644,6 +646,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x5d1b17b8
 	StormUpdatePositionWithStopLossMsgOpCode: decodeFuncStormUpdatePositionWithStopLossMsgBody,
 
+	// 0x5d2beb8d
+	InvoicePayloadMsgOpCode: decodeFuncInvoicePayloadMsgBody,
+
 	// 0x5dd66579
 	StormAddExecutorAmountMsgOpCode: decodeFuncStormAddExecutorAmountMsgBody,
 
@@ -1056,6 +1061,7 @@ const (
 	HipoFinanceProxyTokensMintedMsgOp            MsgOpName = "HipoFinanceProxyTokensMinted"
 	DaolamaVaultSupplyMsgOp                      MsgOpName = "DaolamaVaultSupply"
 	StormUpdatePositionWithStopLossMsgOp         MsgOpName = "StormUpdatePositionWithStopLoss"
+	InvoicePayloadMsgOp                          MsgOpName = "InvoicePayload"
 	StormAddExecutorAmountMsgOp                  MsgOpName = "StormAddExecutorAmount"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
@@ -1250,6 +1256,7 @@ const (
 	HipoFinanceProxyTokensMintedMsgOpCode            MsgOpCode = 0x5be57626
 	DaolamaVaultSupplyMsgOpCode                      MsgOpCode = 0x5c11ada9
 	StormUpdatePositionWithStopLossMsgOpCode         MsgOpCode = 0x5d1b17b8
+	InvoicePayloadMsgOpCode                          MsgOpCode = 0x5d2beb8d
 	StormAddExecutorAmountMsgOpCode                  MsgOpCode = 0x5dd66579
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
@@ -1895,6 +1902,11 @@ type StormUpdatePositionWithStopLossMsgBody struct {
 	SettlementOraclePrice *tlb.Grams     `tlb:"maybe"`
 	Position              PositionChange `tlb:"^"`
 	Amm                   AmmChange      `tlb:"^"`
+}
+
+type InvoicePayloadMsgBody struct {
+	Id  tlb.Uint128
+	Url PaymentProviderUrl
 }
 
 type StormAddExecutorAmountMsgBody struct {
@@ -2645,6 +2657,7 @@ var KnownMsgInTypes = map[string]any{
 	HipoFinanceProxyTokensMintedMsgOp:            HipoFinanceProxyTokensMintedMsgBody{},
 	DaolamaVaultSupplyMsgOp:                      DaolamaVaultSupplyMsgBody{},
 	StormUpdatePositionWithStopLossMsgOp:         StormUpdatePositionWithStopLossMsgBody{},
+	InvoicePayloadMsgOp:                          InvoicePayloadMsgBody{},
 	StormAddExecutorAmountMsgOp:                  StormAddExecutorAmountMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},

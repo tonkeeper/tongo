@@ -57,6 +57,8 @@ The list below contains the supported message operations, their names and opcode
 | HipoFinanceProxyTokensMinted| 0x5be57626 |
 | HipoFinanceTokensMinted| 0x5445efee |
 | InitPaymentChannel| 0x0e0620c2 |
+| InvoicePayload| 0x5d2beb8d |
+| InvoicePayload| 0x5d2beb8d |
 | JettonBurn| 0x595f07bc |
 | JettonBurnNotification| 0x7bdd97de |
 | JettonCallTo| 0x235caf52 |

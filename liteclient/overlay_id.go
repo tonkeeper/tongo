@@ -17,7 +17,7 @@ type OverlayID struct {
 // FullID computes an ID of the overlay that is used to represent overlay in the TON overlay network.
 func (o OverlayID) FullID() ([]byte, error) {
 	overlayID := TonNodeShardPublicOverlayIdC{
-		Workchain:         uint32(o.Workchain),
+		Workchain:         o.Workchain,
 		Shard:             uint64(o.Shard),
 		ZeroStateFileHash: tl.Int256(o.ZeroStateFileHash),
 	}

@@ -447,7 +447,7 @@ func (c *Client) LookupBlock(ctx context.Context, blockID ton.BlockID, mode uint
 	res, err := client.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
 		Mode: mode,
 		Id: liteclient.TonNodeBlockIdC{
-			Workchain: uint32(blockID.Workchain),
+			Workchain: blockID.Workchain,
 			Shard:     blockID.Shard,
 			Seqno:     blockID.Seqno,
 		},
@@ -608,7 +608,7 @@ func decodeAccountDataFromProof(bocBytes []byte, account ton.AccountID) (uint64,
 func (c *Client) GetShardInfo(
 	ctx context.Context,
 	blockID ton.BlockIDExt,
-	workchain uint32,
+	workchain int32,
 	shard uint64,
 	exact bool,
 ) (ton.BlockIDExt, error) {
@@ -619,7 +619,7 @@ func (c *Client) GetShardInfo(
 	return res.Id.ToBlockIdExt(), nil
 }
 
-func (c *Client) GetShardInfoRaw(ctx context.Context, blockID ton.BlockIDExt, workchain uint32, shard uint64, exact bool) (liteclient.LiteServerShardInfoC, error) {
+func (c *Client) GetShardInfoRaw(ctx context.Context, blockID ton.BlockIDExt, workchain int32, shard uint64, exact bool) (liteclient.LiteServerShardInfoC, error) {
 	client, _, err := c.pool.BestMasterchainClient(ctx)
 	if err != nil {
 		return liteclient.LiteServerShardInfoC{}, err

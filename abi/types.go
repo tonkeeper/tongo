@@ -95,6 +95,11 @@ type DedustSwapStepParams struct {
 	Next    *DedustSwapStep `tlb:"maybe^"`
 }
 
+type PaymentProviderUrl struct {
+	Magic   tlb.Magic `tlb:"#01"`
+	Address tlb.Bits256
+}
+
 type JettonForceAction struct {
 	tlb.SumType
 	SetStatus struct {

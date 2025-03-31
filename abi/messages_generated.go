@@ -243,6 +243,8 @@ var (
 	decodeFuncCloseStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x79f937ea, Len: 32}, CloseStorageContractMsgOp, CloseStorageContractMsgBody{})
 	// 0x7a361688
 	decodeFuncAcceptStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x7a361688, Len: 32}, AcceptStorageContractMsgOp, AcceptStorageContractMsgBody{})
+	// 0x7aa23eb5
+	decodeFuncInvoicePayloadMsgBody = decodeMsg(tlb.Tag{Val: 0x7aa23eb5, Len: 32}, InvoicePayloadMsgOp, InvoicePayloadMsgBody{})
 	// 0x7b4b42e6
 	decodeFuncApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
 	// 0x7bcd1fef
@@ -750,6 +752,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x7a361688
 	AcceptStorageContractMsgOpCode: decodeFuncAcceptStorageContractMsgBody,
 
+	// 0x7aa23eb5
+	InvoicePayloadMsgOpCode: decodeFuncInvoicePayloadMsgBody,
+
 	// 0x7b4b42e6
 	ApproveMsgOpCode: decodeFuncApproveMsgBody,
 
@@ -1091,6 +1096,7 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
+	InvoicePayloadMsgOp                          MsgOpName = "InvoicePayload"
 	ApproveMsgOp                                 MsgOpName = "Approve"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
 	DaolamaVaultWithdrawMsgOp                    MsgOpName = "DaolamaVaultWithdraw"
@@ -1285,6 +1291,7 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
+	InvoicePayloadMsgOpCode                          MsgOpCode = 0x7aa23eb5
 	ApproveMsgOpCode                                 MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
 	DaolamaVaultWithdrawMsgOpCode                    MsgOpCode = 0x7bdd97de
@@ -2140,6 +2147,11 @@ type AcceptStorageContractMsgBody struct {
 	QueryId uint64
 }
 
+type InvoicePayloadMsgBody struct {
+	Id  tlb.Bits128
+	Url PaymentProviderUrl
+}
+
 type ApproveMsgBody struct {
 	QueryId uint64
 }
@@ -2680,6 +2692,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
+	InvoicePayloadMsgOp:                          InvoicePayloadMsgBody{},
 	ApproveMsgOp:                                 ApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
 	DaolamaVaultWithdrawMsgOp:                    DaolamaVaultWithdrawMsgBody{},

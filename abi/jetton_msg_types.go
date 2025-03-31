@@ -106,6 +106,17 @@ func decodeStonfiSwapV2JettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	return err
 }
 
+func decodeInvoicePayloadJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res InvoicePayloadJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = InvoicePayloadJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeTonkeeperRelayerFeeJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res TonkeeperRelayerFeeJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -160,6 +171,7 @@ const (
 	DedustDepositLiquidityJettonOp JettonOpName = "DedustDepositLiquidity"
 	StonfiSwapOkRefJettonOp        JettonOpName = "StonfiSwapOkRef"
 	StonfiSwapV2JettonOp           JettonOpName = "StonfiSwapV2"
+	InvoicePayloadJettonOp         JettonOpName = "InvoicePayload"
 	TonkeeperRelayerFeeJettonOp    JettonOpName = "TonkeeperRelayerFee"
 	StonfiSwapOkJettonOp           JettonOpName = "StonfiSwapOk"
 	DedustSwapJettonOp             JettonOpName = "DedustSwap"
@@ -174,6 +186,7 @@ const (
 	DedustDepositLiquidityJettonOpCode JettonOpCode = 0x40e108d6
 	StonfiSwapOkRefJettonOpCode        JettonOpCode = 0x45078540
 	StonfiSwapV2JettonOpCode           JettonOpCode = 0x6664de2a
+	InvoicePayloadJettonOpCode         JettonOpCode = 0x7aa23eb5
 	TonkeeperRelayerFeeJettonOpCode    JettonOpCode = 0x878da6e3
 	StonfiSwapOkJettonOpCode           JettonOpCode = 0xc64370e5
 	DedustSwapJettonOpCode             JettonOpCode = 0xe3a0d482
@@ -190,6 +203,7 @@ var KnownJettonTypes = map[string]any{
 	DedustDepositLiquidityJettonOp: DedustDepositLiquidityJettonPayload{},
 	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonPayload{},
 	StonfiSwapV2JettonOp:           StonfiSwapV2JettonPayload{},
+	InvoicePayloadJettonOp:         InvoicePayloadJettonPayload{},
 	TonkeeperRelayerFeeJettonOp:    TonkeeperRelayerFeeJettonPayload{},
 	StonfiSwapOkJettonOp:           StonfiSwapOkJettonPayload{},
 	DedustSwapJettonOp:             DedustSwapJettonPayload{},
@@ -205,6 +219,7 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	DedustDepositLiquidityJettonOp: DedustDepositLiquidityJettonOpCode,
 	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonOpCode,
 	StonfiSwapV2JettonOp:           StonfiSwapV2JettonOpCode,
+	InvoicePayloadJettonOp:         InvoicePayloadJettonOpCode,
 	TonkeeperRelayerFeeJettonOp:    TonkeeperRelayerFeeJettonOpCode,
 	StonfiSwapOkJettonOp:           StonfiSwapOkJettonOpCode,
 	DedustSwapJettonOp:             DedustSwapJettonOpCode,
@@ -221,6 +236,7 @@ var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell)
 	DedustDepositLiquidityJettonOpCode: decodeDedustDepositLiquidityJettonOpJetton,
 	StonfiSwapOkRefJettonOpCode:        decodeStonfiSwapOkRefJettonOpJetton,
 	StonfiSwapV2JettonOpCode:           decodeStonfiSwapV2JettonOpJetton,
+	InvoicePayloadJettonOpCode:         decodeInvoicePayloadJettonOpJetton,
 	TonkeeperRelayerFeeJettonOpCode:    decodeTonkeeperRelayerFeeJettonOpJetton,
 	StonfiSwapOkJettonOpCode:           decodeStonfiSwapOkJettonOpJetton,
 	DedustSwapJettonOpCode:             decodeDedustSwapJettonOpJetton,
@@ -296,6 +312,11 @@ type StonfiSwapV2JettonPayload struct {
 		RefFee        uint16
 		RefAddress    tlb.MsgAddress
 	} `tlb:"^"`
+}
+
+type InvoicePayloadJettonPayload struct {
+	Id  tlb.Bits128
+	Url PaymentProviderUrl
 }
 
 type TonkeeperRelayerFeeJettonPayload struct{}

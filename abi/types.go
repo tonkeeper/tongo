@@ -96,7 +96,7 @@ type DedustSwapStepParams struct {
 }
 
 type PaymentProviderUrl struct {
-	Magic   tlb.Magic `tlb:"$01"`
+	Magic   tlb.Magic `tlb:"#01"`
 	Address tlb.Bits256
 }
 

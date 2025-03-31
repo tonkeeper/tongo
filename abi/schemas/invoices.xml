@@ -1,6 +1,6 @@
 <abi>
     <types>
-        adnl$01 address:bits256 = PaymentProviderUrl;
+        tonsite#01 address:bits256 = PaymentProviderUrl;
     </types>
 
     <internal name="invoice_payload" >

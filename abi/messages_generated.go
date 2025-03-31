@@ -173,8 +173,6 @@ var (
 	decodeFuncDaolamaVaultSupplyMsgBody = decodeMsg(tlb.Tag{Val: 0x5c11ada9, Len: 32}, DaolamaVaultSupplyMsgOp, DaolamaVaultSupplyMsgBody{})
 	// 0x5d1b17b8
 	decodeFuncStormUpdatePositionWithStopLossMsgBody = decodeMsg(tlb.Tag{Val: 0x5d1b17b8, Len: 32}, StormUpdatePositionWithStopLossMsgOp, StormUpdatePositionWithStopLossMsgBody{})
-	// 0x5d2beb8d
-	decodeFuncInvoicePayloadMsgBody = decodeMsg(tlb.Tag{Val: 0x5d2beb8d, Len: 32}, InvoicePayloadMsgOp, InvoicePayloadMsgBody{})
 	// 0x5dd66579
 	decodeFuncStormAddExecutorAmountMsgBody = decodeMsg(tlb.Tag{Val: 0x5dd66579, Len: 32}, StormAddExecutorAmountMsgOp, StormAddExecutorAmountMsgBody{})
 	// 0x5e517f36
@@ -245,6 +243,8 @@ var (
 	decodeFuncCloseStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x79f937ea, Len: 32}, CloseStorageContractMsgOp, CloseStorageContractMsgBody{})
 	// 0x7a361688
 	decodeFuncAcceptStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x7a361688, Len: 32}, AcceptStorageContractMsgOp, AcceptStorageContractMsgBody{})
+	// 0x7aa23eb5
+	decodeFuncInvoicePayloadMsgBody = decodeMsg(tlb.Tag{Val: 0x7aa23eb5, Len: 32}, InvoicePayloadMsgOp, InvoicePayloadMsgBody{})
 	// 0x7b4b42e6
 	decodeFuncApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
 	// 0x7bcd1fef
@@ -646,9 +646,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x5d1b17b8
 	StormUpdatePositionWithStopLossMsgOpCode: decodeFuncStormUpdatePositionWithStopLossMsgBody,
 
-	// 0x5d2beb8d
-	InvoicePayloadMsgOpCode: decodeFuncInvoicePayloadMsgBody,
-
 	// 0x5dd66579
 	StormAddExecutorAmountMsgOpCode: decodeFuncStormAddExecutorAmountMsgBody,
 
@@ -754,6 +751,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x7a361688
 	AcceptStorageContractMsgOpCode: decodeFuncAcceptStorageContractMsgBody,
+
+	// 0x7aa23eb5
+	InvoicePayloadMsgOpCode: decodeFuncInvoicePayloadMsgBody,
 
 	// 0x7b4b42e6
 	ApproveMsgOpCode: decodeFuncApproveMsgBody,
@@ -1061,7 +1061,6 @@ const (
 	HipoFinanceProxyTokensMintedMsgOp            MsgOpName = "HipoFinanceProxyTokensMinted"
 	DaolamaVaultSupplyMsgOp                      MsgOpName = "DaolamaVaultSupply"
 	StormUpdatePositionWithStopLossMsgOp         MsgOpName = "StormUpdatePositionWithStopLoss"
-	InvoicePayloadMsgOp                          MsgOpName = "InvoicePayload"
 	StormAddExecutorAmountMsgOp                  MsgOpName = "StormAddExecutorAmount"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
@@ -1097,6 +1096,7 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
+	InvoicePayloadMsgOp                          MsgOpName = "InvoicePayload"
 	ApproveMsgOp                                 MsgOpName = "Approve"
 	WhalesNominatorsDepositMsgOp                 MsgOpName = "WhalesNominatorsDeposit"
 	DaolamaVaultWithdrawMsgOp                    MsgOpName = "DaolamaVaultWithdraw"
@@ -1256,7 +1256,6 @@ const (
 	HipoFinanceProxyTokensMintedMsgOpCode            MsgOpCode = 0x5be57626
 	DaolamaVaultSupplyMsgOpCode                      MsgOpCode = 0x5c11ada9
 	StormUpdatePositionWithStopLossMsgOpCode         MsgOpCode = 0x5d1b17b8
-	InvoicePayloadMsgOpCode                          MsgOpCode = 0x5d2beb8d
 	StormAddExecutorAmountMsgOpCode                  MsgOpCode = 0x5dd66579
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
@@ -1292,6 +1291,7 @@ const (
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
+	InvoicePayloadMsgOpCode                          MsgOpCode = 0x7aa23eb5
 	ApproveMsgOpCode                                 MsgOpCode = 0x7b4b42e6
 	WhalesNominatorsDepositMsgOpCode                 MsgOpCode = 0x7bcd1fef
 	DaolamaVaultWithdrawMsgOpCode                    MsgOpCode = 0x7bdd97de
@@ -1904,11 +1904,6 @@ type StormUpdatePositionWithStopLossMsgBody struct {
 	Amm                   AmmChange      `tlb:"^"`
 }
 
-type InvoicePayloadMsgBody struct {
-	Id  tlb.Uint128
-	Url PaymentProviderUrl
-}
-
 type StormAddExecutorAmountMsgBody struct {
 	ReferralAmount tlb.Grams
 	OriginAddr     tlb.MsgAddress
@@ -2150,6 +2145,11 @@ type CloseStorageContractMsgBody struct {
 
 type AcceptStorageContractMsgBody struct {
 	QueryId uint64
+}
+
+type InvoicePayloadMsgBody struct {
+	Id  tlb.Bits128
+	Url PaymentProviderUrl
 }
 
 type ApproveMsgBody struct {
@@ -2657,7 +2657,6 @@ var KnownMsgInTypes = map[string]any{
 	HipoFinanceProxyTokensMintedMsgOp:            HipoFinanceProxyTokensMintedMsgBody{},
 	DaolamaVaultSupplyMsgOp:                      DaolamaVaultSupplyMsgBody{},
 	StormUpdatePositionWithStopLossMsgOp:         StormUpdatePositionWithStopLossMsgBody{},
-	InvoicePayloadMsgOp:                          InvoicePayloadMsgBody{},
 	StormAddExecutorAmountMsgOp:                  StormAddExecutorAmountMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},
@@ -2693,6 +2692,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},
+	InvoicePayloadMsgOp:                          InvoicePayloadMsgBody{},
 	ApproveMsgOp:                                 ApproveMsgBody{},
 	WhalesNominatorsDepositMsgOp:                 WhalesNominatorsDepositMsgBody{},
 	DaolamaVaultWithdrawMsgOp:                    DaolamaVaultWithdrawMsgBody{},

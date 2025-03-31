@@ -2349,6 +2349,21 @@ func TestMessageDecoder(t *testing.T) {
 				RoundSince: 0,
 			},
 		},
+		{
+			name:       "invoice_paylaod",
+			boc:        "te6ccgEBAQEANwAAal0r640BlewLh7195IICfiwmwDiiARMdDGUFXwTpwZ1oe1G8cPlS/Zym8CwoAdO4mWSned+F",
+			wantOpName: InvoicePayloadMsgOp,
+			wantValue: InvoicePayloadMsgBody{
+				Id: tlb.Uint128(func() big.Int {
+					x, _ := new(big.Int).SetString("2107667789892412457507561699893328034", 10)
+					return *x
+				}()),
+				Url: PaymentProviderUrl{
+					Magic:   1,
+					Address: mustToBits256("131D0C65055F04E9C19D687B51BC70F952FD9CA6F02C2801D3B89964A779DF85"),
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -2351,13 +2351,16 @@ func TestMessageDecoder(t *testing.T) {
 		},
 		{
 			name:       "invoice_paylaod",
-			boc:        "te6ccgEBAQEANwAAal0r640BlewLh7195IICfiwmwDiiARMdDGUFXwTpwZ1oe1G8cPlS/Zym8CwoAdO4mWSned+F",
+			boc:        "te6ccgEBAQEANwAAanqiPrUBlew87kB1for3+z3Dd6cmARMdDGUFXwTpwZ1oe1G8cPlS/Zym8CwoAdO4mWSned+F",
 			wantOpName: InvoicePayloadMsgOp,
 			wantValue: InvoicePayloadMsgBody{
-				Id: tlb.Uint128(func() big.Int {
-					x, _ := new(big.Int).SetString("2107667789892412457507561699893328034", 10)
-					return *x
-				}()),
+				Id: tlb.Bits128(
+					func() [16]byte {
+						x, _ := hex.DecodeString("0195ec3cee40757e8af7fb3dc377a726")
+						var res [16]byte
+						copy(res[:], x)
+						return res
+					}()),
 				Url: PaymentProviderUrl{
 					Magic:   1,
 					Address: mustToBits256("131D0C65055F04E9C19D687B51BC70F952FD9CA6F02C2801D3B89964A779DF85"),

@@ -130,6 +130,9 @@ func (b accountBuilder) ShardAccount() (tlb.ShardAccount, error) {
 				Addr: address.ToMsgAddress(),
 				StorageStat: tlb.StorageInfo{
 					LastPaid: uint32(time.Now().Unix()),
+					StorageExtra: tlb.StorageExtraInfo{
+						SumType: "StorageExtraNone",
+					},
 				},
 				Storage: tlb.AccountStorage{
 					LastTransLt: lastLt,

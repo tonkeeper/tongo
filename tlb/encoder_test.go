@@ -85,6 +85,25 @@ func TestEnum(t *testing.T) {
 	}
 }
 
+func TestEnumFail(t *testing.T) {
+	var cases = []testSumType{
+		{
+			B: testCase{4, 6},
+		},
+		{
+			SumType: "C",
+			B:       testCase{4, 6},
+		},
+	}
+	for i, enum := range cases {
+		b1 := boc.NewCell()
+		err := Marshal(b1, enum)
+		if err == nil {
+			t.Fatalf("case %d should fail but didn't", i)
+		}
+	}
+}
+
 func TestRef(t *testing.T) {
 	type A struct {
 		A uint8

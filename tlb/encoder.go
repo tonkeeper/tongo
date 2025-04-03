@@ -157,24 +157,33 @@ func encodeBasicStruct(c *boc.Cell, o any, encoder *Encoder) error {
 func encodeSumType(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	name := val.FieldByName("SumType").String()
+
+	if name == "" {
+		return fmt.Errorf("empty SumType value")
+	}
+
+	found := false
 	for i := 0; i < val.NumField(); i++ {
 		if val.Field(i).Type().Name() == "SumType" {
 			continue
 		}
-		tag := val.Type().Field(i).Tag.Get("tlbSumType")
-		if name != val.Type().Field(i).Name {
-			continue
+		if name == val.Type().Field(i).Name {
+			found = true
+			tag := val.Type().Field(i).Tag.Get("tlbSumType")
+			if err := encodeSumTag(c, tag); err != nil {
+				return err
+			}
+			if err := encode(c, "", val.Field(i).Interface(), encoder); err != nil {
+				return err
+			}
+			break
 		}
-		err := encodeSumTag(c, tag)
-		if err != nil {
-			return err
-		}
-		err = encode(c, "", val.Field(i).Interface(), encoder)
-		if err != nil {
-			return err
-		}
-		break
 	}
+
+	if !found {
+		return fmt.Errorf("invalid SumType value: %s", name)
+	}
+
 	return nil
 }
 

@@ -96,8 +96,30 @@ type DedustSwapStepParams struct {
 }
 
 type PaymentProviderUrl struct {
-	Magic   tlb.Magic `tlb:"#01"`
-	Address tlb.Bits256
+	tlb.SumType
+	None    struct{} `tlbSumType:"#00"`
+	Tonsite struct {
+		Address tlb.Bits256
+	} `tlbSumType:"#01"`
+}
+
+func (t *PaymentProviderUrl) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "None":
+		bytes, err := json.Marshal(t.None)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "None","None":%v}`, string(bytes))), nil
+	case "Tonsite":
+		bytes, err := json.Marshal(t.Tonsite)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Tonsite","Tonsite":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
 }
 
 type JettonForceAction struct {

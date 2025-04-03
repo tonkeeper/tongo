@@ -1,5 +1,6 @@
 <abi>
     <types>
+        none#00 = PaymentProviderUrl;
         tonsite#01 address:bits256 = PaymentProviderUrl;
     </types>
 

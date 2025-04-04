@@ -2362,8 +2362,10 @@ func TestMessageDecoder(t *testing.T) {
 						return res
 					}()),
 				Url: PaymentProviderUrl{
-					Magic:   1,
-					Address: mustToBits256("131D0C65055F04E9C19D687B51BC70F952FD9CA6F02C2801D3B89964A779DF85"),
+					SumType: "Tonsite",
+					Tonsite: struct {
+						Address tlb.Bits256
+					}{Address: mustToBits256("131D0C65055F04E9C19D687B51BC70F952FD9CA6F02C2801D3B89964A779DF85")},
 				},
 			},
 		},

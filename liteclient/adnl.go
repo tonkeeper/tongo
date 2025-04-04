@@ -6,9 +6,14 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base32"
 	"encoding/binary"
+	"errors"
 	"fmt"
+	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/utils"
 	"io"
+	"strings"
 )
 
 type params [160]byte
@@ -132,4 +137,35 @@ func (a Address) hash() []byte {
 	h.Write([]byte{0xc6, 0xb4, 0x13, 0x48})
 	h.Write(a.pubkey[:])
 	return h.Sum(nil)
+}
+
+// ADNL address is equal Address.hash()
+
+func ADNLAddressToBase32(addr ton.Bits256) string {
+	a := append([]byte{0x2d}, addr[:]...)
+	crcBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(crcBytes, utils.Crc16(a))
+	return strings.ToLower(base32.StdEncoding.EncodeToString(append(a, crcBytes...))[1:])
+}
+
+func ParseADNLAddress(addr string) (ton.Bits256, error) {
+	addr = strings.TrimSuffix(addr, ".adnl")
+	if len(addr) != 55 {
+		return [32]byte{}, errors.New("wrong adnl address length")
+	}
+	buf, err := base32.StdEncoding.DecodeString("F" + strings.ToUpper(addr))
+	if err != nil {
+		return [32]byte{}, fmt.Errorf("failed to decode address: %w", err)
+	}
+	if buf[0] != 0x2d {
+		return [32]byte{}, errors.New("invalid first byte")
+	}
+	hash := binary.BigEndian.Uint16(buf[33:])
+	calculatedHash := utils.Crc16(buf[:33])
+	if hash != calculatedHash {
+		return [32]byte{}, errors.New("invalid address")
+	}
+	var res ton.Bits256
+	copy(res[:], buf[1:33])
+	return res, nil
 }

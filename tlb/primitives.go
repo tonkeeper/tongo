@@ -39,6 +39,11 @@ type Unary uint
 
 type Any boc.Cell
 
+func (a Any) ToCell() *boc.Cell {
+	c := boc.Cell(a)
+	return c.CopyRemaining()
+}
+
 func (m Maybe[T]) Pointer() *T {
 	if m.Exists {
 		return &m.Value

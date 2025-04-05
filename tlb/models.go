@@ -290,8 +290,8 @@ type FullContent struct {
 // snake#00 data:(SnakeData ~n) = ContentData;
 // chunks#01 data:ChunkedData = ContentData;
 type ContentData struct {
-	SumType
-	Snake struct {
+	SumType `tlb:"skip_not_found"`
+	Snake   struct {
 		Data SnakeData
 	} `tlbSumType:"snake#00"`
 	Chunks struct {

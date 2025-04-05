@@ -252,8 +252,8 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 }
 
 func decodeStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
-	if _, ok := val.Type().FieldByName("SumType"); ok {
-		return decodeSumType(c, val, decoder)
+	if field, ok := val.Type().FieldByName("SumType"); ok {
+		return decodeSumType(c, val, decoder, field)
 	} else {
 		return decodeBasicStruct(c, val, decoder)
 	}
@@ -279,7 +279,7 @@ func decodeBasicStruct(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 	return nil
 }
 
-func decodeSumType(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
+func decodeSumType(c *boc.Cell, val reflect.Value, decoder *Decoder, sumTypeField reflect.StructField) error {
 	for i := 0; i < val.NumField(); i++ {
 		if !val.Field(i).CanSet() {
 			return fmt.Errorf("can't set field %v", i)
@@ -306,6 +306,9 @@ func decodeSumType(c *boc.Cell, val reflect.Value, decoder *Decoder) error {
 			}
 			return nil
 		}
+	}
+	if sumTypeField.Tag.Get("tlb") == "skip_not_found" {
+		return nil
 	}
 	return fmt.Errorf("can not decode sumtype %v", val.Type().Name())
 }

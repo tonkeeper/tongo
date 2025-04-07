@@ -1,4 +1,4 @@
-package ton
+package toncrypto
 
 import (
 	"crypto/rand"

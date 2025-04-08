@@ -4259,24 +4259,10 @@ func (t *LiteServerListBlockTransactionsRequest) UnmarshalTL(r io.Reader) error 
 		t.After = &tempAfter
 	}
 	if (t.Mode>>6)&1 == 1 {
-		var tTrue bool
-		err = tl.Unmarshal(r, &tTrue)
-		if err != nil {
-			return err
-		}
-		if tTrue != true {
-			return fmt.Errorf("not a True type")
-		}
+		// TODO: set optional field for True type
 	}
 	if (t.Mode>>5)&1 == 1 {
-		var tTrue bool
-		err = tl.Unmarshal(r, &tTrue)
-		if err != nil {
-			return err
-		}
-		if tTrue != true {
-			return fmt.Errorf("not a True type")
-		}
+		// TODO: set optional field for True type
 	}
 	return nil
 }
@@ -4385,24 +4371,10 @@ func (t *LiteServerListBlockTransactionsExtRequest) UnmarshalTL(r io.Reader) err
 		t.After = &tempAfter
 	}
 	if (t.Mode>>6)&1 == 1 {
-		var tTrue bool
-		err = tl.Unmarshal(r, &tTrue)
-		if err != nil {
-			return err
-		}
-		if tTrue != true {
-			return fmt.Errorf("not a True type")
-		}
+		// TODO: set optional field for True type
 	}
 	if (t.Mode>>5)&1 == 1 {
-		var tTrue bool
-		err = tl.Unmarshal(r, &tTrue)
-		if err != nil {
-			return err
-		}
-		if tTrue != true {
-			return fmt.Errorf("not a True type")
-		}
+		// TODO: set optional field for True type
 	}
 	return nil
 }
@@ -5198,14 +5170,7 @@ func (t *LiteServerGetDispatchQueueInfoRequest) UnmarshalTL(r io.Reader) error {
 		return err
 	}
 	if (t.Mode>>0)&1 == 1 {
-		var tTrue bool
-		err = tl.Unmarshal(r, &tTrue)
-		if err != nil {
-			return err
-		}
-		if tTrue != true {
-			return fmt.Errorf("not a True type")
-		}
+		// TODO: set optional field for True type
 	}
 	return nil
 }

@@ -354,10 +354,7 @@ func (g *Generator) generateUnmarshalerCode(declaration CombinatorDeclaration, r
 				utils.ToCamelCase(field.Modificator.Name), field.Modificator.Bit))
 			if typeString == "True" {
 				// TODO: add field?
-				builder.WriteString("var tTrue bool\n")
-				builder.WriteString("err = tl.Unmarshal(r, &tTrue)\n")
-				builder.WriteString(unmarshalerReturnErr)
-				builder.WriteString("if tTrue != true {return fmt.Errorf(\"not a True type\")}\n")
+				builder.WriteString("// TODO: set optional field for True type \n")
 				builder.WriteString("}\n")
 				continue
 			}

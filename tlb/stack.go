@@ -544,6 +544,8 @@ func (v VmStackValue) Unmarshal(dest any) error {
 			val.Set(reflect.ValueOf(*bi).Convert(val.Type()))
 		} else if val.Kind() == reflect.Bool {
 			val.SetBool(v.VmStkTinyInt != 0)
+		} else if _, ok := dest.(*Bits256); ok && v.VmStkTinyInt == 0 {
+			return nil
 		} else {
 			err := toInt(val, v.VmStkTinyInt)
 			if err != nil {

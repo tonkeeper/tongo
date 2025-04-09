@@ -101,6 +101,9 @@ func ParsePacket(r io.Reader, decryptor cipher.Stream) (Packet, error) {
 	}
 	decryptor.XORKeyStream(size, size)
 	length := int(binary.LittleEndian.Uint32(size))
+	if length < 64 || length > 8<<20 {
+		return Packet{}, fmt.Errorf("invalid length of data: %d bytes", length)
+	}
 	data := make([]byte, length)
 	n, err = io.ReadFull(r, data)
 	if err != nil {

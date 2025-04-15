@@ -1,0 +1,39 @@
+<abi>
+    <internal name="bemo_stake">
+        stake#4253c4d5
+        query_id:uint64
+        forward_ton_amount:(VarUInteger 16)
+        forward_payload:(Maybe ^Cell)
+        = InternalMsgBody;
+    </internal>
+    <internal name="bemo_unstake">
+        unstake#492ab1b3
+        index:uint64 
+        owner:MsgAddress
+        ton_amount:(VarUInteger 16) 
+        jetton_amount:(VarUInteger 16)
+        forward_payload:(Maybe ^Cell) 
+        = InternalMsgBody;
+    </internal>
+    <internal name="bemo_deploy_unstake_request">
+        deploy_unstake_request#10a1ce75 
+        query_id:uint64 
+        owner_address:MsgAddress 
+        withdraw_ton_amount:(VarUInteger 16)
+        withdraw_jetton_amount:(VarUInteger 16)
+        forward_payload:(Maybe ^Cell) 
+        lockup_timestamp:uint32 
+        = InternalMsgBody;
+    </internal>
+    <internal name="bemo_unstake_notification">
+        unstake_notification#90c80a07 
+        query_id:uint64 
+        forward_payload:(Maybe ^Cell)
+        = InternalMsgBody;
+    </internal>
+    <internal name="bemo_return_unstake_request">
+        return_unstake_request#38633538 
+        lockup_timestamp:uint32 
+        = InternalMsgBody;
+    </internal>
+</abi>

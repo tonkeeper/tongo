@@ -2350,6 +2350,16 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 		{
+			name: 		"bemo_stake",
+			boc:        "b5ee9c7201010101001200001f4253c4d5000000000000000030186a04",
+			wantOpName: BemoStakeMsgOp,
+			wantValue: BemoStakeMsgBody{
+				QueryId:	      0,
+				ForwardTonAmount: mustToVarUInteger16("100000"),
+				ForwardPayload:   nil,
+			},
+		},
+		{
 			name:       "invoice_paylaod",
 			boc:        "te6ccgEBAQEANwAAanqiPrUBlew87kB1for3+z3Dd6cmARMdDGUFXwTpwZ1oe1G8cPlS/Zym8CwoAdO4mWSned+F",
 			wantOpName: InvoicePayloadMsgOp,

@@ -389,6 +389,16 @@ var (
 	decodeFuncElectorRecoverStakeResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{})
 	// 0xfb88e119
 	decodeFuncJettonClaimAdminMsgBody = decodeMsg(tlb.Tag{Val: 0xfb88e119, Len: 32}, JettonClaimAdminMsgOp, JettonClaimAdminMsgBody{})
+	// 0x10a1ce75
+	decodeFuncBemoDeployUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x10a1ce75, Len: 32}, BemoDeployUnstakeRequestMsgOp, BemoDeployUnstakeRequestMsgBody{})
+	// 0x38633538
+	decodeFuncBemoReturnUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x38633538, Len: 32}, BemoReturnUnstakeRequestMsgOp, BemoReturnUnstakeRequestMsgBody{})
+	// 0x4253c4d5
+	decodeFuncBemoStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x4253c4d5, Len: 32}, BemoStakeMsgOp, BemoStakeMsgBody{})
+	// 0x492ab1b3
+	decodeFuncBemoUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0x492ab1b3, Len: 32}, BemoUnstakeMsgOp, BemoUnstakeMsgBody{})
+	// 0x90c80a07
+	decodeFuncBemoUnstakeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x90c80a07, Len: 32}, BemoUnstakeNotificationMsgOp, BemoUnstakeNotificationMsgBody{})
 	// 0xffffffff
 	decodeFuncBounceMsgBody = decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{})
 )
@@ -973,6 +983,21 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xfb88e119
 	JettonClaimAdminMsgOpCode: decodeFuncJettonClaimAdminMsgBody,
 
+	// 0x10a1ce75
+	BemoDeployUnstakeRequestMsgOpCode: decodeFuncBemoDeployUnstakeRequestMsgBody,
+
+	// 0x38633538
+	BemoReturnUnstakeRequestMsgOpCode: decodeFuncBemoReturnUnstakeRequestMsgBody,
+
+	// 0x4253c4d5
+	BemoStakeMsgOpCode: decodeFuncBemoStakeMsgBody,
+
+	// 0x492ab1b3
+	BemoUnstakeMsgOpCode: decodeFuncBemoUnstakeMsgBody,
+
+	// 0x90c80a07
+	BemoUnstakeNotificationMsgOpCode: decodeFuncBemoUnstakeNotificationMsgBody,
+
 	// 0xffffffff
 	BounceMsgOpCode: decodeFuncBounceMsgBody,
 }
@@ -1169,6 +1194,11 @@ const (
 	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
+	BemoDeployUnstakeRequestMsgOp 				 MsgOpName = "BemoDeployUnstakeRequest"
+	BemoReturnUnstakeRequestMsgOp 				 MsgOpName = "BemoReturnUnstakeRequest"
+	BemoStakeMsgOp                				 MsgOpName = "BemoStake"
+	BemoUnstakeMsgOp              				 MsgOpName = "BemoUnstake"
+	BemoUnstakeNotificationMsgOp  				 MsgOpName = "BemoUnstakeNotification"
 	BounceMsgOp                                  MsgOpName = "Bounce"
 )
 
@@ -1364,6 +1394,11 @@ const (
 	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
+	BemoDeployUnstakeRequestMsgOpCode 				 MsgOpCode = 0x10a1ce75
+	BemoReturnUnstakeRequestMsgOpCode 				 MsgOpCode = 0x38633538
+	BemoStakeMsgOpCode                				 MsgOpCode = 0x4253c4d5
+	BemoUnstakeMsgOpCode              				 MsgOpCode = 0x492ab1b3
+	BemoUnstakeNotificationMsgOpCode  				 MsgOpCode = 0x90c80a07
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
@@ -2569,6 +2604,38 @@ type JettonClaimAdminMsgBody struct {
 	QueryId uint64
 }
 
+type BemoDeployUnstakeRequestMsgBody struct {
+	QueryId              uint64
+	OwnerAddress         tlb.MsgAddress
+	WithdrawTonAmount    tlb.VarUInteger16
+	WithdrawJettonAmount tlb.VarUInteger16
+	ForwardPayload       *tlb.Any `tlb:"maybe^"`
+	LockupTimestamp      uint32
+}
+
+type BemoReturnUnstakeRequestMsgBody struct {
+	LockupTimestamp uint32
+}
+
+type BemoStakeMsgBody struct {
+	QueryId          uint64
+	ForwardTonAmount tlb.VarUInteger16
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+}
+
+type BemoUnstakeMsgBody struct {
+	Index          uint64
+	Owner          tlb.MsgAddress
+	TonAmount      tlb.VarUInteger16
+	JettonAmount   tlb.VarUInteger16
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
+type BemoUnstakeNotificationMsgBody struct {
+	QueryId        uint64
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
 type BounceMsgBody struct {
 	Payload tlb.Any
 }
@@ -2765,6 +2832,11 @@ var KnownMsgInTypes = map[string]any{
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
+	BemoDeployUnstakeRequestMsgOp: 				  BemoDeployUnstakeRequestMsgBody{},
+	BemoReturnUnstakeRequestMsgOp: 				  BemoReturnUnstakeRequestMsgBody{},
+	BemoStakeMsgOp:                				  BemoStakeMsgBody{},
+	BemoUnstakeMsgOp:              				  BemoUnstakeMsgBody{},
+	BemoUnstakeNotificationMsgOp:  				  BemoUnstakeNotificationMsgBody{},
 	BounceMsgOp:                                  BounceMsgBody{},
 }
 

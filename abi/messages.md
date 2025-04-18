@@ -10,6 +10,11 @@ The list below contains the supported message operations, their names and opcode
 | AcceptStorageContract| 0x7a361688 |
 | Approve| 0x7b4b42e6 |
 | AuctionFillUp| 0x370fec51 |
+| BemoDeployUnstakeRequest| 0x10a1ce75 |
+| BemoReturnUnstakeRequest| 0x38633538 |
+| BemoStake| 0x4253c4d5 |
+| BemoUnstake| 0x492ab1b3 |
+| BemoUnstakeNotification| 0x90c80a07 |
 | Bounce| 0xffffffff |
 | ChallengeQuarantinedChannelState| 0x088eaa32 |
 | ChangeDnsRecord| 0x4eb1f0f9 |

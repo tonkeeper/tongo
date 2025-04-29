@@ -197,6 +197,7 @@ func (w *Wallet) RawSendV2(
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
+	w.address = ton.MustParseAccountID("kQDaJW6wJyc_Fpn042zXsRJcpdkomc-J-bYucBClO3N6KWny")
 	extMsg, err := ton.CreateExternalMessage(w.address, signedBodyCell, init, tlb.VarUInteger16{})
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not create external message: %v", err)
@@ -214,6 +215,8 @@ func (w *Wallet) RawSendV2(
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not serialize external message cell: %v", err)
 	}
+	//fmt.Println(base64.StdEncoding.EncodeToString(payload))
+
 	t := time.Now()
 	_, err = w.blockchain.SendMessage(ctx, payload) // TODO: add result code check
 	if err != nil {

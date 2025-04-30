@@ -61,29 +61,94 @@ type MessageV5Beta struct {
 // MessageV5 is a message format used by wallet v5.
 type MessageV5 struct {
 	tlb.SumType
-	// SignedInternal is an internal message authenticated by a signature.
 	SignedInternal *struct {
-		WalletId        uint32
-		ValidUntil      uint32
-		Seqno           uint32
-		Actions         *W5Actions         `tlb:"maybe^"`
-		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
-		Signature       tlb.Bits512
-	} `tlbSumType:"#73696e74"`
-	// SignedExternal is an external message authenticated by a signature.
+		WalletId   uint32
+		ValidUntil uint32
+		Seqno      uint32
+		Actions    *BlumActions `tlb:"maybe^"`
+		Signature  tlb.Bits512
+	} `tlbSumType:"#73696e74"` // op::internal_signed
+
 	SignedExternal *struct {
-		WalletId        uint32
-		ValidUntil      uint32
-		Seqno           uint32
-		Actions         *W5Actions         `tlb:"maybe^"`
-		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
-		Signature       tlb.Bits512
-	} `tlbSumType:"#7369676e"`
-	ExtensionAction *struct {
-		QueryID         uint64
-		Actions         *W5Actions         `tlb:"maybe^"`
-		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
-	} `tlbSumType:"#6578746e"`
+		WalletId   uint32
+		ValidUntil uint32
+		Seqno      uint32
+		Actions    *BlumActions `tlb:"maybe^"`
+		Signature  tlb.Bits512
+	} `tlbSumType:"#7369676e"` // op::external_signed
+
+	AdminMessage *struct {
+		WalletId   uint32
+		ValidUntil uint32
+		Seqno      uint32
+		Op         uint32       //update_code, mass_suspend, single_suspend
+		Actions    *BlumActions `tlb:"maybe^"`
+		Signatures tlb.HashmapE[tlb.Bits256, tlb.Bits512]
+	} `tlbSumType:"#5f1dc312"` // op::external_admin
+
+	SessionKeyMessage *struct {
+		PublicKey  tlb.Bits256
+		Address    tlb.MsgAddress
+		Commission tlb.Coins
+		Actions    *BlumActions `tlb:"maybe^"`
+	} `tlbSumType:"#9083118"` // op::internal_execute_with_session_key
+}
+
+type BlumActions []BlumSendMessageAction
+
+type BlumSendMessageAction struct {
+	Magic tlb.Magic `tlb:"#0ec3c86d"` // action_send_msg
+	Mode  uint8
+	Msg   *boc.Cell `tlb:"^"`
+}
+
+func (l BlumActions) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if len(l) == 0 {
+		return nil
+	}
+	if err := c.WriteUint(0x0ec3c86d, 32); err != nil {
+		return err
+	}
+	action := l[0]
+	if err := c.WriteUint(uint64(action.Mode), 8); err != nil {
+		return err
+	}
+	cell := boc.NewCell()
+	next := l[1:]
+	if err := encoder.Marshal(cell, next); err != nil {
+		return err
+	}
+	if err := c.AddRef(cell); err != nil {
+		return err
+	}
+	if err := c.AddRef(action.Msg); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *BlumActions) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var actions []BlumSendMessageAction
+	for {
+		switch c.BitsAvailableForRead() {
+		case 0:
+			*l = actions
+			return nil
+		case 40:
+			next, err := c.NextRef()
+			if err != nil {
+				return err
+			}
+			var action BlumSendMessageAction
+			if err := decoder.Unmarshal(c, &action); err != nil {
+				return err
+			}
+			actions = append(actions, action)
+			c = next
+		default:
+			return fmt.Errorf("unexpected bits available: %v", c.BitsAvailableForRead())
+		}
+	}
 }
 
 type HighloadV2Message struct {
@@ -262,12 +327,6 @@ func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) er
 			return err
 		}
 		return signedMsgBody.Verify(publicKey)
-	case V5R1:
-		var m tlb.Message
-		if err := tlb.Unmarshal(msg, &m); err != nil {
-			return err
-		}
-		return MessageV5VerifySignature(boc.Cell(m.Body.Value), publicKey)
 	default:
 		return fmt.Errorf("wallet version is not supported: %v", ver)
 	}

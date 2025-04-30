@@ -192,6 +192,35 @@ func (w *walletV5R1) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, e
 	return NextMsgParams{Init: init}, nil
 }
 
+func (w *walletV5R1) CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
+	actions := make([]W5SendMessageAction, 0, len(internalMessages))
+	for _, msg := range internalMessages {
+		actions = append(actions, W5SendMessageAction{
+			Msg:  msg.Message,
+			Mode: msg.Mode,
+		})
+	}
+	w5Actions := W5Actions(actions)
+	msg := extV5R1SignedMessage{
+		WalletId:   w.walletID,
+		ValidUntil: uint32(msgConfig.ValidUntil.Unix()),
+		Seqno:      msgConfig.Seqno,
+		Actions:    &w5Actions,
+	}
+	bodyCell := boc.NewCell()
+	if err := bodyCell.WriteUint(uint64(msgConfig.V5MsgType), 32); err != nil {
+		return nil, err
+	}
+	if err := tlb.Marshal(bodyCell, msg); err != nil {
+		return nil, err
+	}
+	bytes := [64]byte{}
+	if err := bodyCell.WriteBytes(bytes[:]); err != nil {
+		return nil, err
+	}
+	return bodyCell, nil
+}
+
 // GetW5R1ExtensionsList returns a list of wallet v5 extensions added to a specific wallet.
 func GetW5R1ExtensionsList(state tlb.ShardAccount, workchain int) (map[ton.AccountID]struct{}, error) {
 	if state.Account.Status() == tlb.AccountActive {

@@ -327,6 +327,12 @@ func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) er
 			return err
 		}
 		return signedMsgBody.Verify(publicKey)
+	case V5R1:
+		var m tlb.Message
+		if err := tlb.Unmarshal(msg, &m); err != nil {
+			return err
+		}
+		return MessageV5VerifySignature(boc.Cell(m.Body.Value), publicKey)
 	default:
 		return fmt.Errorf("wallet version is not supported: %v", ver)
 	}

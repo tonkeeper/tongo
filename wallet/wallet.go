@@ -215,9 +215,8 @@ func (w *Wallet) RawSendV2(
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not serialize external message cell: %v", err)
 	}
-	//fmt.Println(base64.StdEncoding.EncodeToString(payload))
-
 	t := time.Now()
+	fmt.Printf("%x\n", payload)
 	_, err = w.blockchain.SendMessage(ctx, payload) // TODO: add result code check
 	if err != nil {
 		return msgHash, err
@@ -259,7 +258,8 @@ func (w *Wallet) SendV2(ctx context.Context, waitingConfirmation time.Duration, 
 	if w.blockchain == nil {
 		return ton.Bits256{}, errors.New("blockchain interface is nil")
 	}
-	state, err := w.blockchain.GetAccountState(ctx, w.GetAddress())
+	walletAddress := ton.MustParseAccountID("kQDaJW6wJyc_Fpn042zXsRJcpdkomc-J-bYucBClO3N6KWny")
+	state, err := w.blockchain.GetAccountState(ctx, walletAddress)
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("get account state failed: %v", err)
 	}

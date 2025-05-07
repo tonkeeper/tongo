@@ -730,3 +730,21 @@ func (h Hashmap[keyT, T]) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(m)
 }
+
+func (h *Hashmap[keyT, T]) UnmarshalJSON(data []byte) error {
+	var m map[string]T
+	if err := json.Unmarshal(data, &m); err != nil {
+		return err
+	}
+	h.keys = make([]keyT, 0, len(m))
+	h.values = make([]T, 0, len(m))
+	for k, v := range m {
+		var key keyT
+		if err := json.Unmarshal([]byte(k), &key); err != nil {
+			return err
+		}
+		h.keys = append(h.keys, key)
+		h.values = append(h.values, v)
+	}
+	return nil
+}

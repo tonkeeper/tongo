@@ -1,8 +1,9 @@
 <abi>
     <interface name="subscription_v2">
-        <code_hash>ba8bc168aac0f73d5914f6c4802085a136d94eb221cbb6f70b8fe653694da3bf</code_hash>
+        <code_hash>421f0242b785d9a10a3382cb0cad28dad769703f7f22c19437b97aad3f1e5de8</code_hash>
         <get_method name="get_payment_info" version="subscription_v2"/>
         <get_method name="get_subscription_info" version="v2"/>
+        <get_method name="get_is_subscription_active" version="subscription_v2"/>
         <get_method name="get_cron_info" />
         <msg_in>
             <ext_in name="subscription_v2_prolong"/>
@@ -10,7 +11,6 @@
             <internal name="subscription_v2_destruct"/>
             <internal name="subscription_v2_reduce_payment"/>
             <internal name="subscription_v2_payment_confirmed"/>
-            <internal name="subscription_v2_withdraw_to_beneficiary"/>
         </msg_in>
         <error code="460">Not enough funds</error>
         <error code="461">Too early request</error>
@@ -22,10 +22,12 @@
         <error code="467">Sender is not beneficiary</error>
         <error code="468">Invalid charging date</error>
         <error code="469">Invalid reduce payment amount</error>
+        <error code="470">Subscription is unitialized or cancelled</error>
+        <error code="471">Owner address should not be equal to withdraw address</error>
     </interface>
     <get_method name="get_payment_info">
         <output fixed_length="true" version="subscription_v2">
-            <int name="active">bool</int>
+            <int name="subscription_state">unt2</int>
             <int name="payment_per_period">coins</int>
             <int name="period">uint32</int>
             <int name="charge_date">uint32</int>
@@ -40,7 +42,14 @@
             <int name="wallet_version">uint8</int>
             <slice name="beneficiary">msgaddress</slice>
             <int name="subscription_id">uint64</int>
+            <slice name="withdraw_address">msgaddress</slice>
+            <cell name="withdraw_msg_body">any</slice>
             <cell name="metadata">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_is_subscription_active">
+        <output fixed_length="true" version="subscription_v2">
+            <int name="is_active">bool</int>
         </output>
     </get_method>
     <get_method name="get_cron_info">
@@ -52,7 +61,7 @@
         </output>
     </get_method>
     <internal name="subscription_v2_deploy" >
-        subscription_deploy#f71783cb query_id:uint64 first_charging_date:uint32 payment_per_period:Grams period:uint32 grace_period:uint32 caller_fee:Grams metadata:^Cell = InternalMsgBody;
+        subscription_deploy#f71783cb query_id:uint64 first_charging_date:uint32 payment_per_period:Grams period:uint32 grace_period:uint32 caller_fee:Grams withdraw_address: MsgAddressInt withdraw_msg_body: ^Cell metadata:^Cell = InternalMsgBody;
     </internal>
     <internal name="subscription_v2_destruct" >
         subscription_destruct#64737472 query_id:uint64 = InternalMsgBody;
@@ -62,9 +71,6 @@
     </internal>
     <internal name="subscription_v2_payment_confirmed" >
         payment_confirmed#f06c7567 = InternalMsgBody;
-    </internal>
-    <internal name="subscription_v2_withdraw_to_beneficiary" >
-        withdraw_to_beneficiary#f852254e subscription_id:uint64 = InternalMsgBody;
     </internal>
     <ext_in name="subscription_v2_prolong" >
         prolong#43d0ed9a = ExternalMsgBody;

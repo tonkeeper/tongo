@@ -11,12 +11,14 @@ import (
 
 var bitsSizes = []int{80, 96, 128, 256, 264, 320, 352, 512}
 var intSizes = []int{128, 256, 257}
+var uintSizes = []int{128, 256}
 
 func main() {
 	s1 := parser.GenerateVarUintTypes(32)
 	s2 := parser.GenerateConstantInts(64)
 	s3 := parser.GenerateConstantBigInts(intSizes)
-	s4 := parser.GenerateBitsTypes(bitsSizes)
+	s4 := parser.GenerateConstantBigUints(uintSizes)
+	s5 := parser.GenerateBitsTypes(bitsSizes)
 	f, err := os.Create("integers.go")
 	if err != nil {
 		panic(err)
@@ -51,6 +53,10 @@ import (
 		panic(err)
 	}
 	_, err = f.WriteString(s4)
+	if err != nil {
+		panic(err)
+	}
+	_, err = f.WriteString(s5)
 	if err != nil {
 		panic(err)
 	}

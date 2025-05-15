@@ -214,41 +214,6 @@ func GenerateConstantBigInts(sizes []int) string {
 	var b bytes.Buffer
 
 	templateStr := `
-type Uint{{.NameIndex}} big.Int
-
-func (u Uint{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	x := big.Int(u)
-	return c.WriteBigUint(&x, {{.NameIndex}})
-}
-
-func (u *Uint{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	v, err := c.ReadBigUint({{.NameIndex}})
-	if err != nil {
-		return err
-	}
-	*u = Uint{{.NameIndex}}(*v)
-	return err
-}
-
-func (u Uint{{.NameIndex}}) FixedSize() int {
-	return {{.NameIndex}}
-}
-
-func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
-    i := big.Int(u)
-    return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
-}
-
-func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
-    var z big.Int
-    _, ok := z.SetString(strings.Trim(string(p), "\""), 10)
-    if !ok {
-        return fmt.Errorf("invalid integer: %s", p)
-    }
-    *u = Uint{{.NameIndex}}(z)
-    return nil
-}
-
 type Int{{.NameIndex}} big.Int
 
 func (u Int{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -281,6 +246,65 @@ func (u *Int{{.NameIndex}}) UnmarshalJSON(p []byte) error {
         return fmt.Errorf("invalid integer: %s", p)
     }
     *u = Int{{.NameIndex}}(z)
+    return nil
+}
+`
+	tpl, err := template.New("bigInts").Parse(templateStr)
+	if err != nil {
+		panic(err)
+	}
+	type context struct {
+		NameIndex int
+	}
+	for _, i := range sizes {
+		ctx := context{NameIndex: i}
+		if err := tpl.Execute(&b, ctx); err != nil {
+			panic(err)
+		}
+	}
+	bytes, err := format.Source(b.Bytes())
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
+}
+
+func GenerateConstantBigUints(sizes []int) string {
+	var b bytes.Buffer
+
+	templateStr := `
+type Uint{{.NameIndex}} big.Int
+
+func (u Uint{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, {{.NameIndex}})
+}
+
+func (u *Uint{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadBigUint({{.NameIndex}})
+	if err != nil {
+		return err
+	}
+	*u = Uint{{.NameIndex}}(*v)
+	return err
+}
+
+func (u Uint{{.NameIndex}}) FixedSize() int {
+	return {{.NameIndex}}
+}
+
+func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {
+    i := big.Int(u)
+    return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
+}
+
+func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
+    var z big.Int
+    _, ok := z.SetString(strings.Trim(string(p), "\""), 10)
+    if !ok {
+        return fmt.Errorf("invalid integer: %s", p)
+    }
+    *u = Uint{{.NameIndex}}(z)
     return nil
 }
 `

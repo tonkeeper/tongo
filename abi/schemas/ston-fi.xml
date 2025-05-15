@@ -117,6 +117,12 @@
         </output>
     </get_method>
 
+    <get_method name="get_pool_type">
+        <output version="stonfi_v2" fixed_length="true">
+            <slice name="pool_type">string</slice>
+        </output>
+    </get_method>
+
     <get_method name="get_lp_account_address">
         <input>
             <slice name="owner_address">msgaddress</slice>

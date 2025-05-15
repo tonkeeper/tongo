@@ -35,6 +35,8 @@ var (
 	decodeFuncJettonTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x0f8a7ea5, Len: 32}, JettonTransferMsgOp, JettonTransferMsgBody{})
 	// 0x107c49ef
 	decodeFuncOfferStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x107c49ef, Len: 32}, OfferStorageContractMsgOp, OfferStorageContractMsgBody{})
+	// 0x10a1ce75
+	decodeFuncBemoDeployUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x10a1ce75, Len: 32}, BemoDeployUnstakeRequestMsgOp, BemoDeployUnstakeRequestMsgBody{})
 	// 0x12d9601d
 	decodeFuncStormTakeReferralFeesMsgBody = decodeMsg(tlb.Tag{Val: 0x12d9601d, Len: 32}, StormTakeReferralFeesMsgOp, StormTakeReferralFeesMsgBody{})
 	// 0x132f9a45
@@ -107,12 +109,16 @@ var (
 	decodeFuncTeleitemCancelAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x371638ae, Len: 32}, TeleitemCancelAuctionMsgOp, TeleitemCancelAuctionMsgBody{})
 	// 0x37c096df
 	decodeFuncStonfiProvideLpV2MsgBody = decodeMsg(tlb.Tag{Val: 0x37c096df, Len: 32}, StonfiProvideLpV2MsgOp, StonfiProvideLpV2MsgBody{})
+	// 0x38633538
+	decodeFuncBemoReturnUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x38633538, Len: 32}, BemoReturnUnstakeRequestMsgOp, BemoReturnUnstakeRequestMsgBody{})
 	// 0x3a943ce6
 	decodeFuncStormOrderCreatedMsgBody = decodeMsg(tlb.Tag{Val: 0x3a943ce6, Len: 32}, StormOrderCreatedMsgOp, StormOrderCreatedMsgBody{})
 	// 0x3d3761a6
 	decodeFuncHipoFinanceDepositCoinsMsgBody = decodeMsg(tlb.Tag{Val: 0x3d3761a6, Len: 32}, HipoFinanceDepositCoinsMsgOp, HipoFinanceDepositCoinsMsgBody{})
 	// 0x419d5d4d
 	decodeFuncProofStorageMsgBody = decodeMsg(tlb.Tag{Val: 0x419d5d4d, Len: 32}, ProofStorageMsgOp, ProofStorageMsgBody{})
+	// 0x4253c4d5
+	decodeFuncBemoStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x4253c4d5, Len: 32}, BemoStakeMsgOp, BemoStakeMsgBody{})
 	// 0x44beae41
 	decodeFuncProcessGovernanceDecisionMsgBody = decodeMsg(tlb.Tag{Val: 0x44beae41, Len: 32}, ProcessGovernanceDecisionMsgOp, ProcessGovernanceDecisionMsgBody{})
 	// 0x4637289a
@@ -129,6 +135,8 @@ var (
 	decodeFuncTonstakePoolDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x47d54391, Len: 32}, TonstakePoolDepositMsgOp, TonstakePoolDepositMsgBody{})
 	// 0x487a8e81
 	decodeFuncTeleitemStartAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x487a8e81, Len: 32}, TeleitemStartAuctionMsgOp, TeleitemStartAuctionMsgBody{})
+	// 0x492ab1b3
+	decodeFuncBemoUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0x492ab1b3, Len: 32}, BemoUnstakeMsgOp, BemoUnstakeMsgBody{})
 	// 0x4bc7c2df
 	decodeFuncTonstakePoolTouchMsgBody = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
 	// 0x4d696e65
@@ -263,6 +271,8 @@ var (
 	decodeFuncReportStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{})
 	// 0x8efed779
 	decodeFuncTonstakeControllerWithdrawValidatorMsgBody = decodeMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{})
+	// 0x90c80a07
+	decodeFuncBemoUnstakeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x90c80a07, Len: 32}, BemoUnstakeNotificationMsgOp, BemoUnstakeNotificationMsgBody{})
 	// 0x96e7f528
 	decodeFuncTonstakeControllerPoolUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{})
 	// 0x97d51f2f
@@ -389,16 +399,6 @@ var (
 	decodeFuncElectorRecoverStakeResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{})
 	// 0xfb88e119
 	decodeFuncJettonClaimAdminMsgBody = decodeMsg(tlb.Tag{Val: 0xfb88e119, Len: 32}, JettonClaimAdminMsgOp, JettonClaimAdminMsgBody{})
-	// 0x10a1ce75
-	decodeFuncBemoDeployUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x10a1ce75, Len: 32}, BemoDeployUnstakeRequestMsgOp, BemoDeployUnstakeRequestMsgBody{})
-	// 0x38633538
-	decodeFuncBemoReturnUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x38633538, Len: 32}, BemoReturnUnstakeRequestMsgOp, BemoReturnUnstakeRequestMsgBody{})
-	// 0x4253c4d5
-	decodeFuncBemoStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x4253c4d5, Len: 32}, BemoStakeMsgOp, BemoStakeMsgBody{})
-	// 0x492ab1b3
-	decodeFuncBemoUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0x492ab1b3, Len: 32}, BemoUnstakeMsgOp, BemoUnstakeMsgBody{})
-	// 0x90c80a07
-	decodeFuncBemoUnstakeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x90c80a07, Len: 32}, BemoUnstakeNotificationMsgOp, BemoUnstakeNotificationMsgBody{})
 	// 0xffffffff
 	decodeFuncBounceMsgBody = decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{})
 )
@@ -446,6 +446,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x107c49ef
 	OfferStorageContractMsgOpCode: decodeFuncOfferStorageContractMsgBody,
+
+	// 0x10a1ce75
+	BemoDeployUnstakeRequestMsgOpCode: decodeFuncBemoDeployUnstakeRequestMsgBody,
 
 	// 0x12d9601d
 	StormTakeReferralFeesMsgOpCode: decodeFuncStormTakeReferralFeesMsgBody,
@@ -556,6 +559,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x37c096df
 	StonfiProvideLpV2MsgOpCode: decodeFuncStonfiProvideLpV2MsgBody,
 
+	// 0x38633538
+	BemoReturnUnstakeRequestMsgOpCode: decodeFuncBemoReturnUnstakeRequestMsgBody,
+
 	// 0x3a943ce6
 	StormOrderCreatedMsgOpCode: decodeFuncStormOrderCreatedMsgBody,
 
@@ -564,6 +570,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x419d5d4d
 	ProofStorageMsgOpCode: decodeFuncProofStorageMsgBody,
+
+	// 0x4253c4d5
+	BemoStakeMsgOpCode: decodeFuncBemoStakeMsgBody,
 
 	// 0x44beae41
 	ProcessGovernanceDecisionMsgOpCode: decodeFuncProcessGovernanceDecisionMsgBody,
@@ -588,6 +597,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x487a8e81
 	TeleitemStartAuctionMsgOpCode: decodeFuncTeleitemStartAuctionMsgBody,
+
+	// 0x492ab1b3
+	BemoUnstakeMsgOpCode: decodeFuncBemoUnstakeMsgBody,
 
 	// 0x4bc7c2df
 	TonstakePoolTouchMsgOpCode: decodeFuncTonstakePoolTouchMsgBody,
@@ -793,6 +805,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x8efed779
 	TonstakeControllerWithdrawValidatorMsgOpCode: decodeFuncTonstakeControllerWithdrawValidatorMsgBody,
 
+	// 0x90c80a07
+	BemoUnstakeNotificationMsgOpCode: decodeFuncBemoUnstakeNotificationMsgBody,
+
 	// 0x96e7f528
 	TonstakeControllerPoolUpgradeMsgOpCode: decodeFuncTonstakeControllerPoolUpgradeMsgBody,
 
@@ -983,21 +998,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xfb88e119
 	JettonClaimAdminMsgOpCode: decodeFuncJettonClaimAdminMsgBody,
 
-	// 0x10a1ce75
-	BemoDeployUnstakeRequestMsgOpCode: decodeFuncBemoDeployUnstakeRequestMsgBody,
-
-	// 0x38633538
-	BemoReturnUnstakeRequestMsgOpCode: decodeFuncBemoReturnUnstakeRequestMsgBody,
-
-	// 0x4253c4d5
-	BemoStakeMsgOpCode: decodeFuncBemoStakeMsgBody,
-
-	// 0x492ab1b3
-	BemoUnstakeMsgOpCode: decodeFuncBemoUnstakeMsgBody,
-
-	// 0x90c80a07
-	BemoUnstakeNotificationMsgOpCode: decodeFuncBemoUnstakeNotificationMsgBody,
-
 	// 0xffffffff
 	BounceMsgOpCode: decodeFuncBounceMsgBody,
 }
@@ -1017,6 +1017,7 @@ const (
 	InitPaymentChannelMsgOp                      MsgOpName = "InitPaymentChannel"
 	JettonTransferMsgOp                          MsgOpName = "JettonTransfer"
 	OfferStorageContractMsgOp                    MsgOpName = "OfferStorageContract"
+	BemoDeployUnstakeRequestMsgOp                MsgOpName = "BemoDeployUnstakeRequest"
 	StormTakeReferralFeesMsgOp                   MsgOpName = "StormTakeReferralFees"
 	TonstakeNftInitMsgOp                         MsgOpName = "TonstakeNftInit"
 	TonstakeControllerPoolHaltMsgOp              MsgOpName = "TonstakeControllerPoolHalt"
@@ -1053,9 +1054,11 @@ const (
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	StonfiProvideLpV2MsgOp                       MsgOpName = "StonfiProvideLpV2"
+	BemoReturnUnstakeRequestMsgOp                MsgOpName = "BemoReturnUnstakeRequest"
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
 	HipoFinanceDepositCoinsMsgOp                 MsgOpName = "HipoFinanceDepositCoins"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
+	BemoStakeMsgOp                               MsgOpName = "BemoStake"
 	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
@@ -1064,6 +1067,7 @@ const (
 	ElectorRecoverStakeRequestMsgOp              MsgOpName = "ElectorRecoverStakeRequest"
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
+	BemoUnstakeMsgOp                             MsgOpName = "BemoUnstake"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
 	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
@@ -1131,6 +1135,7 @@ const (
 	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
+	BemoUnstakeNotificationMsgOp                 MsgOpName = "BemoUnstakeNotification"
 	TonstakeControllerPoolUpgradeMsgOp           MsgOpName = "TonstakeControllerPoolUpgrade"
 	DedustCreateVolatilePoolMsgOp                MsgOpName = "DedustCreateVolatilePool"
 	TonstakePoolPrepareGovernanceMigrationMsgOp  MsgOpName = "TonstakePoolPrepareGovernanceMigration"
@@ -1194,11 +1199,6 @@ const (
 	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
-	BemoDeployUnstakeRequestMsgOp 				 MsgOpName = "BemoDeployUnstakeRequest"
-	BemoReturnUnstakeRequestMsgOp 				 MsgOpName = "BemoReturnUnstakeRequest"
-	BemoStakeMsgOp                				 MsgOpName = "BemoStake"
-	BemoUnstakeMsgOp              				 MsgOpName = "BemoUnstake"
-	BemoUnstakeNotificationMsgOp  				 MsgOpName = "BemoUnstakeNotification"
 	BounceMsgOp                                  MsgOpName = "Bounce"
 )
 
@@ -1217,6 +1217,7 @@ const (
 	InitPaymentChannelMsgOpCode                      MsgOpCode = 0x0e0620c2
 	JettonTransferMsgOpCode                          MsgOpCode = 0x0f8a7ea5
 	OfferStorageContractMsgOpCode                    MsgOpCode = 0x107c49ef
+	BemoDeployUnstakeRequestMsgOpCode                MsgOpCode = 0x10a1ce75
 	StormTakeReferralFeesMsgOpCode                   MsgOpCode = 0x12d9601d
 	TonstakeNftInitMsgOpCode                         MsgOpCode = 0x132f9a45
 	TonstakeControllerPoolHaltMsgOpCode              MsgOpCode = 0x139a1b4e
@@ -1253,9 +1254,11 @@ const (
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	StonfiProvideLpV2MsgOpCode                       MsgOpCode = 0x37c096df
+	BemoReturnUnstakeRequestMsgOpCode                MsgOpCode = 0x38633538
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
 	HipoFinanceDepositCoinsMsgOpCode                 MsgOpCode = 0x3d3761a6
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
+	BemoStakeMsgOpCode                               MsgOpCode = 0x4253c4d5
 	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
@@ -1264,6 +1267,7 @@ const (
 	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
+	BemoUnstakeMsgOpCode                             MsgOpCode = 0x492ab1b3
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
 	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
@@ -1331,6 +1335,7 @@ const (
 	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
+	BemoUnstakeNotificationMsgOpCode                 MsgOpCode = 0x90c80a07
 	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
 	DedustCreateVolatilePoolMsgOpCode                MsgOpCode = 0x97d51f2f
 	TonstakePoolPrepareGovernanceMigrationMsgOpCode  MsgOpCode = 0x9971881c
@@ -1394,11 +1399,6 @@ const (
 	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
-	BemoDeployUnstakeRequestMsgOpCode 				 MsgOpCode = 0x10a1ce75
-	BemoReturnUnstakeRequestMsgOpCode 				 MsgOpCode = 0x38633538
-	BemoStakeMsgOpCode                				 MsgOpCode = 0x4253c4d5
-	BemoUnstakeMsgOpCode              				 MsgOpCode = 0x492ab1b3
-	BemoUnstakeNotificationMsgOpCode  				 MsgOpCode = 0x90c80a07
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
@@ -1508,6 +1508,15 @@ type JettonTransferMsgBody struct {
 
 type OfferStorageContractMsgBody struct {
 	QueryId uint64
+}
+
+type BemoDeployUnstakeRequestMsgBody struct {
+	QueryId              uint64
+	OwnerAddress         tlb.MsgAddress
+	WithdrawTonAmount    tlb.VarUInteger16
+	WithdrawJettonAmount tlb.VarUInteger16
+	ForwardPayload       *tlb.Any `tlb:"maybe^"`
+	LockupTimestamp      uint32
 }
 
 type StormTakeReferralFeesMsgBody struct {
@@ -1734,6 +1743,10 @@ type StonfiProvideLpV2MsgBody struct {
 	} `tlb:"^"`
 }
 
+type BemoReturnUnstakeRequestMsgBody struct {
+	LockupTimestamp uint32
+}
+
 type StormOrderCreatedMsgBody struct{}
 
 type HipoFinanceDepositCoinsMsgBody struct {
@@ -1747,6 +1760,12 @@ type HipoFinanceDepositCoinsMsgBody struct {
 type ProofStorageMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Any `tlb:"^"`
+}
+
+type BemoStakeMsgBody struct {
+	QueryId          uint64
+	ForwardTonAmount tlb.VarUInteger16
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
 }
 
 type ProcessGovernanceDecisionMsgBody struct {
@@ -1784,6 +1803,14 @@ type TonstakePoolDepositMsgBody struct {
 type TeleitemStartAuctionMsgBody struct {
 	QueryId       int64
 	AuctionConfig TeleitemAuctionConfig `tlb:"^"`
+}
+
+type BemoUnstakeMsgBody struct {
+	Index          uint64
+	Owner          tlb.MsgAddress
+	TonAmount      tlb.VarUInteger16
+	JettonAmount   tlb.VarUInteger16
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonstakePoolTouchMsgBody struct {
@@ -2236,6 +2263,11 @@ type TonstakeControllerWithdrawValidatorMsgBody struct {
 	Value   tlb.Grams
 }
 
+type BemoUnstakeNotificationMsgBody struct {
+	QueryId        uint64
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
 type TonstakeControllerPoolUpgradeMsgBody struct {
 	QueryId      uint64
 	Data         *tlb.Any `tlb:"maybe^"`
@@ -2604,38 +2636,6 @@ type JettonClaimAdminMsgBody struct {
 	QueryId uint64
 }
 
-type BemoDeployUnstakeRequestMsgBody struct {
-	QueryId              uint64
-	OwnerAddress         tlb.MsgAddress
-	WithdrawTonAmount    tlb.VarUInteger16
-	WithdrawJettonAmount tlb.VarUInteger16
-	ForwardPayload       *tlb.Any `tlb:"maybe^"`
-	LockupTimestamp      uint32
-}
-
-type BemoReturnUnstakeRequestMsgBody struct {
-	LockupTimestamp uint32
-}
-
-type BemoStakeMsgBody struct {
-	QueryId          uint64
-	ForwardTonAmount tlb.VarUInteger16
-	ForwardPayload   *tlb.Any `tlb:"maybe^"`
-}
-
-type BemoUnstakeMsgBody struct {
-	Index          uint64
-	Owner          tlb.MsgAddress
-	TonAmount      tlb.VarUInteger16
-	JettonAmount   tlb.VarUInteger16
-	ForwardPayload *tlb.Any `tlb:"maybe^"`
-}
-
-type BemoUnstakeNotificationMsgBody struct {
-	QueryId        uint64
-	ForwardPayload *tlb.Any `tlb:"maybe^"`
-}
-
 type BounceMsgBody struct {
 	Payload tlb.Any
 }
@@ -2655,6 +2655,7 @@ var KnownMsgInTypes = map[string]any{
 	InitPaymentChannelMsgOp:                      InitPaymentChannelMsgBody{},
 	JettonTransferMsgOp:                          JettonTransferMsgBody{},
 	OfferStorageContractMsgOp:                    OfferStorageContractMsgBody{},
+	BemoDeployUnstakeRequestMsgOp:                BemoDeployUnstakeRequestMsgBody{},
 	StormTakeReferralFeesMsgOp:                   StormTakeReferralFeesMsgBody{},
 	TonstakeNftInitMsgOp:                         TonstakeNftInitMsgBody{},
 	TonstakeControllerPoolHaltMsgOp:              TonstakeControllerPoolHaltMsgBody{},
@@ -2691,9 +2692,11 @@ var KnownMsgInTypes = map[string]any{
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	StonfiProvideLpV2MsgOp:                       StonfiProvideLpV2MsgBody{},
+	BemoReturnUnstakeRequestMsgOp:                BemoReturnUnstakeRequestMsgBody{},
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},
 	HipoFinanceDepositCoinsMsgOp:                 HipoFinanceDepositCoinsMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
+	BemoStakeMsgOp:                               BemoStakeMsgBody{},
 	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
@@ -2702,6 +2705,7 @@ var KnownMsgInTypes = map[string]any{
 	ElectorRecoverStakeRequestMsgOp:              ElectorRecoverStakeRequestMsgBody{},
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
+	BemoUnstakeMsgOp:                             BemoUnstakeMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
 	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
@@ -2769,6 +2773,7 @@ var KnownMsgInTypes = map[string]any{
 	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
+	BemoUnstakeNotificationMsgOp:                 BemoUnstakeNotificationMsgBody{},
 	TonstakeControllerPoolUpgradeMsgOp:           TonstakeControllerPoolUpgradeMsgBody{},
 	DedustCreateVolatilePoolMsgOp:                DedustCreateVolatilePoolMsgBody{},
 	TonstakePoolPrepareGovernanceMigrationMsgOp:  TonstakePoolPrepareGovernanceMigrationMsgBody{},
@@ -2832,11 +2837,6 @@ var KnownMsgInTypes = map[string]any{
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
-	BemoDeployUnstakeRequestMsgOp: 				  BemoDeployUnstakeRequestMsgBody{},
-	BemoReturnUnstakeRequestMsgOp: 				  BemoReturnUnstakeRequestMsgBody{},
-	BemoStakeMsgOp:                				  BemoStakeMsgBody{},
-	BemoUnstakeMsgOp:              				  BemoUnstakeMsgBody{},
-	BemoUnstakeNotificationMsgOp:  				  BemoUnstakeNotificationMsgBody{},
 	BounceMsgOp:                                  BounceMsgBody{},
 }
 

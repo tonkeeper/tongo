@@ -167,7 +167,7 @@
         <slice name="marketplace">msgaddress</slice>
         <slice name="nft">msgaddress</slice>
         <slice name="owner">msgaddress</slice>
-        <int name="last_bid">uint257</int>
+        <int name="last_bid">int257</int>
         <slice name="last_member">msgaddress</slice>
         <int name="min_step">uint32</int>
         <slice name="market_fee_address">msgaddress</slice>
@@ -176,8 +176,8 @@
         <slice name="royalty_address">msgaddress</slice>
         <int name="royalty_fee_factor">uint32</int>
         <int name="royalty_fee_base">uint32</int>
-        <int name="max_bid">uint257</int>
-        <int name="min_bid">uint257</int>
+        <int name="max_bid">int257</int>
+        <int name="min_bid">int257</int>
         <int name="created_at">uint32</int>
         <int name="last_bid_at">uint32</int>
         <int name="is_canceled">bool</int>
@@ -186,7 +186,7 @@
         <slice name="jetton_wallet">msgaddress</slice>
         <slice name="jetton_master">msgaddress</slice>
         <int name="is_broken_state">bool</int>
-        <int name="public_key">uint257</int>
+        <int name="public_key">int257</int>
       </output>
     </get_method>
 </abi>

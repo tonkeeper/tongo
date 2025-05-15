@@ -31,6 +31,7 @@ const (
 	MultisigOrderV2
 	MultisigV2
 	NftAuctionGetgemsV3
+	NftAuctionGetgemsV4
 	NftAuctionV1
 	NftCollection
 	NftItem
@@ -136,6 +137,8 @@ func (c ContractInterface) String() string {
 		return "multisig_v2"
 	case NftAuctionGetgemsV3:
 		return "nft_auction_getgems_v3"
+	case NftAuctionGetgemsV4:
+		return "nft_auction_getgems_v4"
 	case NftAuctionV1:
 		return "nft_auction_v1"
 	case NftCollection:
@@ -299,6 +302,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return MultisigV2
 	case "nft_auction_getgems_v3":
 		return NftAuctionGetgemsV3
+	case "nft_auction_getgems_v4":
+		return NftAuctionGetgemsV4
 	case "nft_auction_v1":
 		return NftAuctionV1
 	case "nft_collection":
@@ -438,6 +443,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_assets",
 		InvokeFn: GetAssets,
+	},
+	{
+		Name:     "get_auction_data_v4",
+		InvokeFn: GetAuctionDataV4,
 	},
 	{
 		Name:     "get_auction_info",
@@ -614,6 +623,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_pool_status",
 		InvokeFn: GetPoolStatus,
+	},
+	{
+		Name:     "get_pool_type",
+		InvokeFn: GetPoolType,
 	},
 	{
 		Name:     "get_position_manager_contract_data",
@@ -1092,6 +1105,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return JettonWallet.Implements(other)
 	case NftAuctionGetgemsV3:
 		return NftAuctionV1.Implements(other)
+	case NftAuctionGetgemsV4:
+		return NftSale.Implements(other)
 	case NftAuctionV1:
 		return NftSale.Implements(other)
 	case NftItemSimple:
@@ -1320,6 +1335,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{GramMiner},
 		getMethods: []InvokeFn{
 			GetPowParams,
+		},
+	},
+	ton.MustParseHash("ce5a78534eaaa6ceed8dafd486d076eb60a9b0d6dbfb53676f662649c0689956"): {
+		contractInterfaces: []ContractInterface{NftAuctionGetgemsV4},
+		getMethods: []InvokeFn{
+			GetAuctionDataV4,
 		},
 	},
 	ton.MustParseHash("d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac"): {

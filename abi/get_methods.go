@@ -19,6 +19,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_amm_status":                     {DecodeGetAmmStatus_StormResult},
 	"get_asset":                          {DecodeGetAsset_DedustResult},
 	"get_assets":                         {DecodeGetAssets_DedustResult},
+	"get_auction_data_v4":                {DecodeGetAuctionDataV4Result},
 	"get_auction_info":                   {DecodeGetAuctionInfoResult},
 	"get_authority_address":              {DecodeGetAuthorityAddressResult},
 	"get_balances":                       {DecodeGetBalances_DedustResult, DecodeGetBalancesResult},
@@ -73,6 +74,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_pool_data":                      {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                 {DecodeGetPoolFullDataResult},
 	"get_pool_status":                    {DecodeGetPoolStatusResult},
+	"get_pool_type":                      {DecodeGetPoolType_StonfiV2Result},
 	"get_position_manager_contract_data": {DecodeGetPositionManagerContractData_StormResult},
 	"get_pow_params":                     {DecodeGetPowParamsResult},
 	"get_public_key":                     {DecodeGetPublicKeyResult},
@@ -147,6 +149,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
+	82492:  {GetPoolType},
 	83226:  {GetExecutorCollectionAddress},
 	83263:  {GetNftApiInfo},
 	83894:  {GetLpMinterAddress},
@@ -210,6 +213,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	122483: {GetFixPriceDataV4},
 	122496: {GetAmmName},
 	122498: {GetTelemintAuctionState},
+	123140: {GetAuctionDataV4},
 	123832: {GetOrderData},
 	123928: {GetStakingStatus},
 	124861: {GetReferralVaultsWhitelist},
@@ -233,6 +237,7 @@ var resultTypes = []interface{}{
 	&GetAmmStatus_StormResult{},
 	&GetAsset_DedustResult{},
 	&GetAssets_DedustResult{},
+	&GetAuctionDataV4Result{},
 	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
 	&GetBalancesResult{},
@@ -291,6 +296,7 @@ var resultTypes = []interface{}{
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
 	&GetPoolStatusResult{},
+	&GetPoolType_StonfiV2Result{},
 	&GetPositionManagerContractData_StormResult{},
 	&GetPowParamsResult{},
 	&GetPublicKeyResult{},
@@ -650,6 +656,64 @@ func DecodeGetAssets_DedustResult(stack tlb.VmStack) (resultType string, resultA
 	var result GetAssets_DedustResult
 	err = stack.Unmarshal(&result)
 	return "GetAssets_DedustResult", result, err
+}
+
+type GetAuctionDataV4Result struct {
+	Activated        bool
+	End              bool
+	EndTime          uint32
+	Marketplace      tlb.MsgAddress
+	Nft              tlb.MsgAddress
+	Owner            tlb.MsgAddress
+	LastBid          tlb.Int257
+	LastMember       tlb.MsgAddress
+	MinStep          uint32
+	MarketFeeAddress tlb.MsgAddress
+	MpFeeFactor      uint32
+	MpFeeBase        uint32
+	RoyaltyAddress   tlb.MsgAddress
+	RoyaltyFeeFactor uint32
+	RoyaltyFeeBase   uint32
+	MaxBid           tlb.Int257
+	MinBid           tlb.Int257
+	CreatedAt        uint32
+	LastBidAt        uint32
+	IsCanceled       bool
+	StepTime         uint32
+	LastQueryId      uint64
+	JettonWallet     tlb.MsgAddress
+	JettonMaster     tlb.MsgAddress
+	IsBrokenState    bool
+	PublicKey        tlb.Int257
+}
+
+func GetAuctionDataV4(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 123140 for "get_auction_data_v4" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 123140, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAuctionDataV4Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAuctionDataV4Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 26 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkTinyInt" && stack[20].SumType != "VmStkInt") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkSlice") || (stack[23].SumType != "VmStkSlice") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") || (stack[25].SumType != "VmStkTinyInt" && stack[25].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAuctionDataV4Result
+	err = stack.Unmarshal(&result)
+	return "GetAuctionDataV4Result", result, err
 }
 
 type GetAuctionInfoResult struct {
@@ -2857,6 +2921,39 @@ func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny 
 	var result GetPoolStatusResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolStatusResult", result, err
+}
+
+type GetPoolType_StonfiV2Result struct {
+	PoolType string
+}
+
+func GetPoolType(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 82492 for "get_pool_type" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 82492, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolType_StonfiV2Result} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolType_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolType_StonfiV2Result
+	err = stack.Unmarshal(&result)
+	return "GetPoolType_StonfiV2Result", result, err
 }
 
 type GetPositionManagerContractData_StormResult struct {

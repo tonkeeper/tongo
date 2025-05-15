@@ -2350,11 +2350,11 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 		{
-			name: 		"bemo_stake",
+			name:       "bemo_stake",
 			boc:        "b5ee9c7201010101001200001f4253c4d5000000000000000030186a04",
 			wantOpName: BemoStakeMsgOp,
 			wantValue: BemoStakeMsgBody{
-				QueryId:	      0,
+				QueryId:          0,
 				ForwardTonAmount: mustToVarUInteger16("100000"),
 				ForwardPayload:   nil,
 			},

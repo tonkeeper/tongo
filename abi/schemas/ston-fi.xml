@@ -172,6 +172,39 @@
             <int name="collected_token0_protocol_fee">int257</int>
             <int name="collected_token1_protocol_fee">int257</int>
         </output>
+        <output version="stonfi_v2_stableswap" fixed_length="true">
+            <int name="is_locked">bool</int>
+            <slice name="router_address">msgaddress</slice>
+            <int name="total_supply">int257</int>
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+            <slice name="token0_wallet_address">msgaddress</slice>
+            <slice name="token1_wallet_address">msgaddress</slice>
+            <int name="lp_fee">uint16</int>
+            <int name="protocol_fee">uint16</int>
+            <slice name="protocol_fee_address">msgaddress</slice>
+            <int name="collected_token0_protocol_fee">int257</int>
+            <int name="collected_token1_protocol_fee">int257</int>
+            <int name="additional">uint128</int>
+        </output>
+        <output version="stonfi_v2_weighted_stableswap" fixed_length="true">
+            <int name="is_locked">bool</int>
+            <slice name="router_address">msgaddress</slice>
+            <int name="total_supply">int257</int>
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+            <slice name="token0_wallet_address">msgaddress</slice>
+            <slice name="token1_wallet_address">msgaddress</slice>
+            <int name="lp_fee">uint16</int>
+            <int name="protocol_fee">uint16</int>
+            <slice name="protocol_fee_address">msgaddress</slice>
+            <int name="collected_token0_protocol_fee">int257</int>
+            <int name="collected_token1_protocol_fee">int257</int>
+            <int name="amp">uint128</int>
+            <int name="rate">uint128</int>
+            <int name="w0">uint128</int>
+            <slice name="rate_setter">msgaddress</slice>
+        </output>
     </get_method>
 
     <internal name="stonfi_swap" >

@@ -3,6 +3,7 @@ package txemulator
 import (
 	"context"
 	"fmt"
+	"github.com/tonkeeper/tongo/liteclient"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -10,15 +11,19 @@ import (
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
+	"math/rand"
 )
 
 type Tracer struct {
-	e                   *Emulator
-	currentShardAccount map[ton.AccountID]tlb.ShardAccount
-	blockchain          accountGetter
-	counter             int
-	limit               int
-	softLimit           int
+	e                     *Emulator
+	currentShardAccount   map[ton.AccountID]tlb.ShardAccount
+	blockchain            accountGetter
+	counter               int
+	limit                 int
+	softLimit             int
+	signatureCheckEnabled bool
+	currentTime           uint32
+	shardConfig           map[ton.ShardID]struct{}
 }
 
 type TxTree struct {
@@ -39,6 +44,8 @@ type TraceOptions struct {
 type accountGetter interface {
 	GetAccountState(ctx context.Context, a ton.AccountID) (tlb.ShardAccount, error)
 	GetLibraries(ctx context.Context, libraries []ton.Bits256) (map[ton.Bits256]*boc.Cell, error)
+	GetAllShardsInfo(ctx context.Context, blockID ton.BlockIDExt) ([]ton.BlockIDExt, error)
+	GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerMasterchainInfoC, error)
 }
 
 func WithConfig(c *boc.Cell) TraceOption {
@@ -150,13 +157,33 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	block, err := option.blockchain.GetMasterchainInfo(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get masterchain info: %v", err)
+	}
+	shards, err := option.blockchain.GetAllShardsInfo(context.Background(), block.Last.ToBlockIdExt())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get shards info: %v", err)
+	}
+	shardConfig := make(map[ton.ShardID]struct{})
+	for _, shard := range shards {
+		shardID, err := ton.ParseShardID(int64(shard.Shard))
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse shard ID: %v", err)
+		}
+		shardConfig[shardID] = struct{}{}
+	}
+
 	// TODO: set gas limit, currently, the transaction emulator doesn't support that
 	return &Tracer{
-		e:                   e,
-		currentShardAccount: option.predefinedAccounts,
-		blockchain:          option.blockchain,
-		limit:               option.limit,
-		softLimit:           option.softLimit,
+		e:                     e,
+		currentShardAccount:   option.predefinedAccounts,
+		blockchain:            option.blockchain,
+		limit:                 option.limit,
+		softLimit:             option.softLimit,
+		signatureCheckEnabled: false,
+		currentTime:           uint32(option.time),
 	}, nil
 }
 
@@ -210,6 +237,11 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 	if accountAddr == nil {
 		return nil, fmt.Errorf("destination account is null")
 	}
+	sourceShard, err := t.getAccountShard(*accountAddr)
+	if err != nil {
+		return nil, err
+	}
+
 	state, prs := t.currentShardAccount[*accountAddr]
 	if !prs {
 		state, err = t.blockchain.GetAccountState(ctx, *accountAddr)
@@ -235,6 +267,14 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 				publicLibs[hash] = cell
 			}
 		}
+	}
+	// enable signature check with the first internal message
+	if !t.signatureCheckEnabled && message.Info.SumType == "IntMsgInfo" {
+		err := t.e.SetIgnoreSignatureCheck(false)
+		if err != nil {
+			return nil, err
+		}
+		t.signatureCheckEnabled = true
 	}
 	if len(publicLibs) > 0 {
 		libsBoc, err := codePkg.LibrariesToBase64(publicLibs)
@@ -264,10 +304,25 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 	tree := &TxTree{
 		TX: result.Emulation.Transaction,
 	}
+	localTime := t.currentTime
 	for _, m := range result.Emulation.Transaction.Msgs.OutMsgs.Values() {
 		if m.Value.Info.SumType == "ExtOutMsgInfo" {
 			continue
 		}
+		destAddr, err := ton.AccountIDFromTlb(m.Value.Info.IntMsgInfo.Dest)
+		if destAddr == nil {
+			return nil, fmt.Errorf("destination account is null")
+		}
+		destShard, err := t.getAccountShard(*destAddr)
+		if err != nil {
+			return nil, err
+		}
+		if destShard != sourceShard {
+			if err := t.addRandomDelay(localTime); err != nil {
+				return nil, fmt.Errorf("failed to add random delay: %v", err)
+			}
+		}
+		t.currentTime = localTime
 		child, err := t.Run(ctx, m.Value)
 		if err != nil {
 			return tree, err
@@ -275,6 +330,22 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 		tree.Children = append(tree.Children, child)
 	}
 	return tree, err
+}
+
+func (t *Tracer) addRandomDelay(currentTime uint32) error {
+	delay := rand.Intn(11) + 5 // random number between 5 and 15
+	currentTime += uint32(delay)
+	t.currentTime = currentTime
+	return t.e.SetUnixtime(currentTime)
+}
+
+func (t *Tracer) getAccountShard(account ton.AccountID) (ton.ShardID, error) {
+	for shardID := range t.shardConfig {
+		if shardID.MatchAccountID(account) {
+			return shardID, nil
+		}
+	}
+	return ton.ShardID{}, fmt.Errorf("account %v does not belong to any known shard", account)
 }
 
 func (t *Tracer) FinalStates() map[ton.AccountID]tlb.ShardAccount {

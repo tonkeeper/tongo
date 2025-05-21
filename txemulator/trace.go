@@ -184,6 +184,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		softLimit:             option.softLimit,
 		signatureCheckEnabled: false,
 		currentTime:           uint32(option.time),
+		shardConfig:           shardConfig,
 	}, nil
 }
 

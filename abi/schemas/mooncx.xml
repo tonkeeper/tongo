@@ -8,21 +8,6 @@
 
     </types>
 
-    <!-- https://tonviewer.com/EQAvQ6jA2QJhq5ebGxULLA225htp4RwykDBHimp-GCvrWnyU  -->
-    <interface name="moon_dex_factory">
-
-        <get_method name="get_pool" version="moon">
-            <input>
-                <slice name="asset1_id">msgaddress</slice>
-                <slice name="asset2_id">msgaddress</slice>
-            </input>
-            <output version="moon" fixed_length="true">
-                <slice name="pool_address">msgaddress</slice>
-            </output>
-        </get_method>
-
-    </interface>
-
     <!-- https://tonviewer.com/EQCMpWCnDHVhMnUspAaKxagkXuW0NGhMq6Y-HCW_BO20e-Ju  -->
     <interface name="moon_pool">
 

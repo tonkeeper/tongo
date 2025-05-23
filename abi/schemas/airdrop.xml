@@ -11,4 +11,31 @@
             <slice name="distributor">msgaddress</slice>
         </output>
     </get_method>
+    <interface name="airdrop_interlocker_v2">
+        <code_hash>0ff44a96fc2481111236d8d9920fd6e29b6108215e3ec5ba761ead9602adada4</code_hash>
+        <get_method name="get_distribution_info"/>
+        <get_method name="get_unlocks_info"/>
+        <get_method name="get_available_claim_amount"/>
+    </interface>
+    <get_method name="get_distribution_info">
+        <output fixed_length="true">
+            <int name="merkle_root">bits256</int>
+            <slice name="receiver">msgaddress</slice>
+            <slice name="distributor">msgaddress</slice>
+            <int name="min_commission">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_unlocks_info">
+        <output fixed_length="true">
+            <int name="claimed">bool</int>
+            <int name="total_amount">int257</int>
+            <int name="claimed_amount">int257</int>
+            <cell name="unlocks">cell</cell>
+        </output>
+    </get_method>
+    <get_method name="get_available_claim_amount">
+        <output fixed_length="true">
+            <int name="amount">int257</int>
+        </output>
+    </get_method>
 </abi>

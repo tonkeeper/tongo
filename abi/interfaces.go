@@ -9,6 +9,7 @@ import (
 const (
 	IUnknown ContractInterface = iota
 	AirdropInterlockerV1
+	AirdropInterlockerV2
 	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
@@ -93,6 +94,8 @@ func (c ContractInterface) String() string {
 	switch c {
 	case AirdropInterlockerV1:
 		return "airdrop_interlocker_v1"
+	case AirdropInterlockerV2:
+		return "airdrop_interlocker_v2"
 	case DaolamaVault:
 		return "daolama_vault"
 	case DedustFactory:
@@ -258,6 +261,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
 	case "airdrop_interlocker_v1":
 		return AirdropInterlockerV1
+	case "airdrop_interlocker_v2":
+		return AirdropInterlockerV2
 	case "daolama_vault":
 		return DaolamaVault
 	case "dedust_factory":
@@ -457,6 +462,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetAuthorityAddress,
 	},
 	{
+		Name:     "get_available_claim_amount",
+		InvokeFn: GetAvailableClaimAmount,
+	},
+	{
 		Name:     "get_balances",
 		InvokeFn: GetBalances,
 	},
@@ -483,6 +492,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_delegation_state",
 		InvokeFn: GetDelegationState,
+	},
+	{
+		Name:     "get_distribution_info",
+		InvokeFn: GetDistributionInfo,
 	},
 	{
 		Name:     "get_domain",
@@ -743,6 +756,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_trade_fee",
 		InvokeFn: GetTradeFee,
+	},
+	{
+		Name:     "get_unlocks_info",
+		InvokeFn: GetUnlocksInfo,
 	},
 	{
 		Name:     "get_validator_controller_data",
@@ -1163,6 +1180,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("0dceed21269d66013e95b19fbb5c55a6f01adad40837baa8e521cde3a02aa46c"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV1R2},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("0ff44a96fc2481111236d8d9920fd6e29b6108215e3ec5ba761ead9602adada4"): {
+		contractInterfaces: []ContractInterface{AirdropInterlockerV2},
+		getMethods: []InvokeFn{
+			GetAvailableClaimAmount,
+			GetDistributionInfo,
+			GetUnlocksInfo,
+		},
 	},
 	ton.MustParseHash("11acad7955844090f283bf238bc1449871f783e7cc0979408d3f4859483e8525"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV3R1},

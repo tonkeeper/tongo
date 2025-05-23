@@ -22,6 +22,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_auction_data_v4":                {DecodeGetAuctionDataV4Result},
 	"get_auction_info":                   {DecodeGetAuctionInfoResult},
 	"get_authority_address":              {DecodeGetAuthorityAddressResult},
+	"get_available_claim_amount":         {DecodeGetAvailableClaimAmountResult},
 	"get_balances":                       {DecodeGetBalances_DedustResult, DecodeGetBalancesResult},
 	"get_bill_address":                   {DecodeGetBillAddressResult},
 	"get_bill_amount":                    {DecodeGetBillAmountResult},
@@ -30,6 +31,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_contract_data":                  {DecodeGetContractData_AirdropInterlockerV1Result},
 	"get_cron_info":                      {DecodeGetCronInfoResult},
 	"get_delegation_state":               {DecodeGetDelegationStateResult},
+	"get_distribution_info":              {DecodeGetDistributionInfoResult},
 	"get_domain":                         {DecodeGetDomainResult},
 	"get_editor":                         {DecodeGetEditorResult},
 	"get_estimated_attached_value":       {DecodeGetEstimatedAttachedValueResult},
@@ -105,6 +107,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_timeout":                        {DecodeGetTimeoutResult},
 	"get_torrent_hash":                   {DecodeGetTorrentHashResult},
 	"get_trade_fee":                      {DecodeGetTradeFee_DedustResult},
+	"get_unlocks_info":                   {DecodeGetUnlocksInfoResult},
 	"get_validator_controller_data":      {DecodeGetValidatorControllerDataResult},
 	"get_vamm_type":                      {DecodeGetVammType_StormResult},
 	"get_vault_address":                  {DecodeGetVaultAddress_DedustResult},
@@ -138,6 +141,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
 	75065:  {GetExecutorBalances},
+	75286:  {GetAvailableClaimAmount},
 	75709:  {GetExecutorVaultsWhitelist},
 	77915:  {GetCronInfo},
 	78683:  {GetNextAdminAddress},
@@ -180,6 +184,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	97667:  {GetRevokedTime},
 	98607:  {GetVaultContractData},
 	100881: {GetStatus},
+	101245: {GetUnlocksInfo},
 	101616: {GetPowParams},
 	101877: {GetVaultType},
 	102351: {GetNftData},
@@ -206,6 +211,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	118274: {GetLockerBillData},
 	119378: {GetDomain},
 	119995: {GetPositionManagerContractData},
+	120122: {GetDistributionInfo},
 	120146: {GetPoolStatus},
 	122058: {IsActive},
 	122166: {GetLpAccountData},
@@ -240,6 +246,7 @@ var resultTypes = []interface{}{
 	&GetAuctionDataV4Result{},
 	&GetAuctionInfoResult{},
 	&GetAuthorityAddressResult{},
+	&GetAvailableClaimAmountResult{},
 	&GetBalancesResult{},
 	&GetBalances_DedustResult{},
 	&GetBillAddressResult{},
@@ -249,6 +256,7 @@ var resultTypes = []interface{}{
 	&GetContractData_AirdropInterlockerV1Result{},
 	&GetCronInfoResult{},
 	&GetDelegationStateResult{},
+	&GetDistributionInfoResult{},
 	&GetDomainResult{},
 	&GetEditorResult{},
 	&GetEstimatedAttachedValueResult{},
@@ -332,6 +340,7 @@ var resultTypes = []interface{}{
 	&GetTimeoutResult{},
 	&GetTorrentHashResult{},
 	&GetTradeFee_DedustResult{},
+	&GetUnlocksInfoResult{},
 	&GetValidatorControllerDataResult{},
 	&GetVammType_StormResult{},
 	&GetVaultAddress_DedustResult{},
@@ -786,6 +795,39 @@ func DecodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resu
 	return "GetAuthorityAddressResult", result, err
 }
 
+type GetAvailableClaimAmountResult struct {
+	Amount tlb.Int257
+}
+
+func GetAvailableClaimAmount(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 75286 for "get_available_claim_amount" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 75286, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAvailableClaimAmountResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAvailableClaimAmountResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAvailableClaimAmountResult
+	err = stack.Unmarshal(&result)
+	return "GetAvailableClaimAmountResult", result, err
+}
+
 type GetBalancesResult struct {
 	TonBalance           int64
 	TotalRestrictedValue int64
@@ -1114,6 +1156,42 @@ func DecodeGetDelegationStateResult(stack tlb.VmStack) (resultType string, resul
 	var result GetDelegationStateResult
 	err = stack.Unmarshal(&result)
 	return "GetDelegationStateResult", result, err
+}
+
+type GetDistributionInfoResult struct {
+	MerkleRoot    tlb.Bits256
+	Receiver      tlb.MsgAddress
+	Distributor   tlb.MsgAddress
+	MinCommission tlb.Int257
+}
+
+func GetDistributionInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 120122 for "get_distribution_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 120122, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetDistributionInfoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetDistributionInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetDistributionInfoResult
+	err = stack.Unmarshal(&result)
+	return "GetDistributionInfoResult", result, err
 }
 
 type GetDomainResult struct {
@@ -4162,6 +4240,42 @@ func DecodeGetTradeFee_DedustResult(stack tlb.VmStack) (resultType string, resul
 	var result GetTradeFee_DedustResult
 	err = stack.Unmarshal(&result)
 	return "GetTradeFee_DedustResult", result, err
+}
+
+type GetUnlocksInfoResult struct {
+	Claimed       bool
+	TotalAmount   tlb.Int257
+	ClaimedAmount tlb.Int257
+	Unlocks       boc.Cell
+}
+
+func GetUnlocksInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 101245 for "get_unlocks_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 101245, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetUnlocksInfoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetUnlocksInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetUnlocksInfoResult
+	err = stack.Unmarshal(&result)
+	return "GetUnlocksInfoResult", result, err
 }
 
 type GetValidatorControllerDataResult struct {

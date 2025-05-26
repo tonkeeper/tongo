@@ -167,6 +167,13 @@
         = JettonMinterMsg;
     </internal>
 
+    <internal name="jetton_provide_wallet">
+        provide_wallet#2c76b973 query_id:uint64 owner:MsgAddressInt include_owner_in_response:uint1 = InMsgBody;
+    </internal>
+    <internal name="jetton_take_wallet">
+        take_wallet#d1735400 query_id:uint64 wallet:MsgAddressInt owner:(Maybe ^[address:MsgAddressInt]) = InMsgBody;
+    </internal>
+
 
 
 

@@ -243,7 +243,7 @@
         <msg_out>
             <internal name="jetton_internal_transfer"/>
             <internal name="jetton_take_wallet"/>
-            <internal name="excesses"/>
+            <internal name="excess"/>
             <internal name="coffee_payout_internal"/>
             <internal name="coffee_swap_internal"/>
             <internal name="coffee_notification"/>

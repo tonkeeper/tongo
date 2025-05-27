@@ -1089,7 +1089,7 @@ func DecodeGetContractData_AirdropInterlockerV1Result(stack tlb.VmStack) (result
 type GetCronInfoResult struct {
 	ChargeDate               uint32
 	CallerFee                uint64
-	BalanceAfterMinusAmounts uint64
+	BalanceAfterMinusAmounts int64
 	Period                   uint32
 }
 

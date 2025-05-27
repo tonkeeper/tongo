@@ -51,7 +51,7 @@
         <output fixed_length="true">
             <int name="charge_date">uint32</int>
             <int name="caller_fee">uint64</int>
-            <int name="balance_after_minus_amounts">uint64</int>
+            <int name="balance_after_minus_amounts">int64</int>
             <int name="period">uint32</int>
         </output>
     </get_method>

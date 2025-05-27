@@ -2857,16 +2857,16 @@ var (
 	decodeFuncPreprocessedWalletSignedV2ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, PreprocessedWalletSignedV2ExtInMsgOp, PreprocessedWalletSignedV2ExtInMsgBody{})
 	// 0x00000000
 	decodeFuncHighloadWalletSignedV2ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 0}, HighloadWalletSignedV2ExtInMsgOp, HighloadWalletSignedV2ExtInMsgBody{})
-	// 0x43d0ed9a
-	decodeFuncSubscriptionV2ProlongExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x43d0ed9a, Len: 32}, SubscriptionV2ProlongExtInMsgOp, SubscriptionV2ProlongExtInMsgBody{})
+	// 0x2114702d
+	decodeFuncCronTriggerExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x2114702d, Len: 32}, CronTriggerExtInMsgOp, CronTriggerExtInMsgBody{})
 	// 0x7369676e
 	decodeFuncWalletSignedExternalV5R1ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x7369676e, Len: 32}, WalletSignedExternalV5R1ExtInMsgOp, WalletSignedExternalV5R1ExtInMsgBody{})
 )
 
 var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{
 
-	// 0x43d0ed9a
-	SubscriptionV2ProlongExtInMsgOpCode: decodeFuncSubscriptionV2ProlongExtInMsgBody,
+	// 0x2114702d
+	CronTriggerExtInMsgOpCode: decodeFuncCronTriggerExtInMsgBody,
 
 	// 0x7369676e
 	WalletSignedExternalV5R1ExtInMsgOpCode: decodeFuncWalletSignedExternalV5R1ExtInMsgBody,
@@ -2879,7 +2879,7 @@ const (
 	HighloadWalletSignedV3ExtInMsgOp     MsgOpName = "HighloadWalletSignedV3"
 	PreprocessedWalletSignedV2ExtInMsgOp MsgOpName = "PreprocessedWalletSignedV2"
 	HighloadWalletSignedV2ExtInMsgOp     MsgOpName = "HighloadWalletSignedV2"
-	SubscriptionV2ProlongExtInMsgOp      MsgOpName = "SubscriptionV2Prolong"
+	CronTriggerExtInMsgOp                MsgOpName = "CronTrigger"
 	WalletSignedExternalV5R1ExtInMsgOp   MsgOpName = "WalletSignedExternalV5R1"
 )
 
@@ -2890,7 +2890,7 @@ const (
 	HighloadWalletSignedV3ExtInMsgOpCode     MsgOpCode = 0x00000000
 	PreprocessedWalletSignedV2ExtInMsgOpCode MsgOpCode = 0x00000000
 	HighloadWalletSignedV2ExtInMsgOpCode     MsgOpCode = 0x00000000
-	SubscriptionV2ProlongExtInMsgOpCode      MsgOpCode = 0x43d0ed9a
+	CronTriggerExtInMsgOpCode                MsgOpCode = 0x2114702d
 	WalletSignedExternalV5R1ExtInMsgOpCode   MsgOpCode = 0x7369676e
 )
 
@@ -2937,8 +2937,9 @@ type HighloadWalletSignedV2ExtInMsgBody struct {
 	Payload     tlb.HashmapE[tlb.Uint16, SendMessageAction]
 }
 
-type SubscriptionV2ProlongExtInMsgBody struct {
-	CallerAddress tlb.MsgAddress
+type CronTriggerExtInMsgBody struct {
+	RewardAddress tlb.MsgAddress
+	Salt          uint32
 }
 
 type WalletSignedExternalV5R1ExtInMsgBody struct {
@@ -2957,7 +2958,7 @@ var KnownMsgExtInTypes = map[string]any{
 	HighloadWalletSignedV3ExtInMsgOp:     HighloadWalletSignedV3ExtInMsgBody{},
 	PreprocessedWalletSignedV2ExtInMsgOp: PreprocessedWalletSignedV2ExtInMsgBody{},
 	HighloadWalletSignedV2ExtInMsgOp:     HighloadWalletSignedV2ExtInMsgBody{},
-	SubscriptionV2ProlongExtInMsgOp:      SubscriptionV2ProlongExtInMsgBody{},
+	CronTriggerExtInMsgOp:                CronTriggerExtInMsgBody{},
 	WalletSignedExternalV5R1ExtInMsgOp:   WalletSignedExternalV5R1ExtInMsgBody{},
 }
 

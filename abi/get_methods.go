@@ -1087,10 +1087,10 @@ func DecodeGetContractData_AirdropInterlockerV1Result(stack tlb.VmStack) (result
 }
 
 type GetCronInfoResult struct {
-	ChargeDate               uint32
-	CallerFee                uint64
-	BalanceAfterMinusAmounts int64
-	Period                   uint32
+	NextCallTime        uint32
+	Reward              tlb.Grams
+	BalanceMinusAmounts int64
+	RepeatEvery         uint32
 }
 
 func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {

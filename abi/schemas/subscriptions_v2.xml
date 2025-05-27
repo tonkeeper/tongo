@@ -5,7 +5,7 @@
         <get_method name="get_payment_info" version="subscription_v2"/>
         <get_method name="get_cron_info" />
         <msg_in>
-            <ext_in name="subscription_v2_prolong"/>
+            <ext_in name="cron_trigger"/>
             <internal name="subscription_v2_deploy"/>
             <internal name="subscription_v2_destruct"/>
             <internal name="subscription_v2_reduce_payment"/>
@@ -47,14 +47,6 @@
             <cell name="metadata">any</cell>
         </output>
     </get_method>
-    <get_method name="get_cron_info">
-        <output fixed_length="true">
-            <int name="charge_date">uint32</int>
-            <int name="caller_fee">uint64</int>
-            <int name="balance_after_minus_amounts">int64</int>
-            <int name="period">uint32</int>
-        </output>
-    </get_method>
     <internal name="subscription_v2_deploy" >
         subscription_deploy#f71783cb query_id:uint64 first_charging_date:uint32 payment_per_period:Grams period:uint32 grace_period:uint32 caller_fee:Grams withdraw_address:MsgAddressInt withdraw_msg_body:^Cell metadata:^Cell = InternalMsgBody;
     </internal>
@@ -70,7 +62,4 @@
     <internal name="subscription_v2_withdraw_to_beneficiary" >
         withdraw_to_beneficiary#f852254e subscription_id:uint64 = InternalMsgBody;
     </internal>
-    <ext_in name="subscription_v2_prolong" >
-        prolong#43d0ed9a caller_address:MsgAddressInt = ExternalMsgBody;
-    </ext_in>
 </abi>

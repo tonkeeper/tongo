@@ -10,6 +10,7 @@ const (
 	IUnknown ContractInterface = iota
 	AirdropInterlockerV1
 	AirdropInterlockerV2
+	Cron
 	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
@@ -96,6 +97,8 @@ func (c ContractInterface) String() string {
 		return "airdrop_interlocker_v1"
 	case AirdropInterlockerV2:
 		return "airdrop_interlocker_v2"
+	case Cron:
+		return "cron"
 	case DaolamaVault:
 		return "daolama_vault"
 	case DedustFactory:
@@ -263,6 +266,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return AirdropInterlockerV1
 	case "airdrop_interlocker_v2":
 		return AirdropInterlockerV2
+	case "cron":
+		return Cron
 	case "daolama_vault":
 		return DaolamaVault
 	case "dedust_factory":
@@ -832,6 +837,12 @@ var methodInvocationOrder = []MethodDescription{
 }
 
 var contractInterfacesOrder = []InterfaceDescription{
+	{
+		Name: Cron,
+		Results: []string{
+			"GetCronInfoResult",
+		},
+	},
 	{
 		Name: DaolamaVault,
 		Results: []string{
@@ -1572,9 +1583,13 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
+	case Cron:
+		return []msgDecoderFunc{
+			decodeFuncCronTriggerExtInMsgBody,
+		}
 	case SubscriptionV2:
 		return []msgDecoderFunc{
-			decodeFuncSubscriptionV2ProlongExtInMsgBody,
+			decodeFuncCronTriggerExtInMsgBody,
 		}
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{

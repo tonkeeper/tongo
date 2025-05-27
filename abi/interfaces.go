@@ -1228,6 +1228,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSaleData,
 		},
 	},
+	ton.MustParseHash("421f0242b785d9a10a3382cb0cad28dad769703f7f22c19437b97aad3f1e5de8"): {
+		contractInterfaces: []ContractInterface{SubscriptionV2},
+		getMethods: []InvokeFn{
+			GetCronInfo,
+			GetPaymentInfo,
+			GetSubscriptionInfo,
+		},
+	},
 	ton.MustParseHash("45ebbce9b5d235886cb6bfe1c3ad93b708de058244892365c9ee0dfe439cb7b5"): {
 		contractInterfaces: []ContractInterface{WalletPreprocessedV2},
 		getMethods:         []InvokeFn{},
@@ -1331,14 +1339,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV3R1},
 		getMethods: []InvokeFn{
 			Seqno,
-		},
-	},
-	ton.MustParseHash("ba8bc168aac0f73d5914f6c4802085a136d94eb221cbb6f70b8fe653694da3bf"): {
-		contractInterfaces: []ContractInterface{SubscriptionV2},
-		getMethods: []InvokeFn{
-			GetCronInfo,
-			GetPaymentInfo,
-			GetSubscriptionInfo,
 		},
 	},
 	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {

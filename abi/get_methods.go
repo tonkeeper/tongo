@@ -2693,7 +2693,7 @@ func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string
 }
 
 type GetPaymentInfo_SubscriptionV2Result struct {
-	Active           bool
+	ContractState    uint8
 	PaymentPerPeriod tlb.Grams
 	Period           uint32
 	ChargeDate       uint32
@@ -3939,11 +3939,13 @@ func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resu
 }
 
 type GetSubscriptionInfo_V2Result struct {
-	Wallet         tlb.MsgAddress
-	WalletVersion  uint8
-	Beneficiary    tlb.MsgAddress
-	SubscriptionId uint64
-	Metadata       tlb.Any
+	Wallet          tlb.MsgAddress
+	WalletVersion   uint8
+	Beneficiary     tlb.MsgAddress
+	SubscriptionId  uint64
+	WithdrawAddress tlb.MsgAddress
+	WithdrawMsgBody tlb.Any
+	Metadata        tlb.Any
 }
 
 func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -3967,7 +3969,7 @@ func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetSubscriptionInfo_V2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubscriptionInfo_V2Result

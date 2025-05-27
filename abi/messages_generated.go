@@ -2578,7 +2578,9 @@ type JettonSetStatusMsgBody struct {
 
 type PaymentRequestResponseMsgBody struct{}
 
-type SubscriptionV2PaymentConfirmedMsgBody struct{}
+type SubscriptionV2PaymentConfirmedMsgBody struct {
+	QueryId uint64
+}
 
 type TonstakeControllerUpdateValidatorHashMsgBody struct {
 	QueryId uint64
@@ -2605,6 +2607,8 @@ type SubscriptionV2DeployMsgBody struct {
 	Period            uint32
 	GracePeriod       uint32
 	CallerFee         tlb.Grams
+	WithdrawAddress   tlb.MsgAddress
+	WithdrawMsgBody   tlb.Any `tlb:"^"`
 	Metadata          tlb.Any `tlb:"^"`
 }
 
@@ -2933,7 +2937,9 @@ type HighloadWalletSignedV2ExtInMsgBody struct {
 	Payload     tlb.HashmapE[tlb.Uint16, SendMessageAction]
 }
 
-type SubscriptionV2ProlongExtInMsgBody struct{}
+type SubscriptionV2ProlongExtInMsgBody struct {
+	CallerAddress tlb.MsgAddress
+}
 
 type WalletSignedExternalV5R1ExtInMsgBody struct {
 	WalletId   uint32

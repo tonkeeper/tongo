@@ -105,9 +105,7 @@
     </interface>
     <interface name="coffee_staking_item">
         <get_method name="get_stored_data" version="coffee_staking_item"/>
-        <get_method name="get_collection_data"/>
-        <get_method name="get_nft_address_by_index"/>
-        <get_method name="get_nft_content"/>
+        <get_method name="get_nft_data"/>
         <msg_in>
             <internal name="coffee_staking_init"/>
         </msg_in>

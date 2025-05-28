@@ -9,13 +9,14 @@
         _ _:(Hashmap 8 ^MultisigSendMessageAction) = MultisigOrder;
 
         SignersList#_ signers:(Hashmap 8 MsgAddressInt) = MultisigSignersList;
-        ProposersList#_ proposers:(HashmapE 8 MsgAddressInt) = MultisigProposersList;
+        ProposersList#_ proposers:(Hashmap 8 MsgAddressInt) = MultisigProposersList;
     </types>
 
 
     <interface name="multisig_v2">
         <code_hash>d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac</code_hash>
         <get_method name="get_multisig_data"/>
+        <get_method name="get_order_address"/>
         <error code="1007">Unauthorized proposer</error>
         <error code="1008">Invalid new order</error>
         <error code="100">Not enough ton</error>
@@ -47,6 +48,15 @@
             <int name="threshold">uint8</int>
             <cell name="signers">MultisigSignersList</cell>
             <cell name="proposers" nullable="true">MultisigProposersList</cell>
+        </output>
+    </get_method>
+
+    <get_method name="get_order_address" fixed_length="true">
+        <input>
+            <int name="order_seqno">int257</int>
+        </input>
+        <output>
+            <slice name="order_address">msgaddress</slice>
         </output>
     </get_method>
 

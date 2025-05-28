@@ -142,7 +142,7 @@ func TestGetMethods(t *testing.T) {
 			method:       GetPaymentInfo,
 			wantTypeHint: "GetPaymentInfo_SubscriptionV2Result",
 			want: GetPaymentInfo_SubscriptionV2Result{
-				Active:           true,
+				ContractState:    1,
 				PaymentPerPeriod: 250_000_000,
 				Period:           600,
 				ChargeDate:       1740496154,
@@ -766,6 +766,20 @@ func TestGetMethods(t *testing.T) {
 				Amount: tlb.Int257FromInt64(0),
 			},
 		},
+		//{
+		//	name:         "Cron get_cron_info",
+		//	code:         "b5ee9c7201021001000253000114ff00f4a413f4bcf2c80b010201200203020148040500c2f2f001d31f0182102114702dbaf823f842beb08e49fa4021d70b0a8309baf2e190d31f31d1f800f823f843a0f862f002f844c2008e1fc8801001cb0501cf16f844fa027001cb6a82102e04891a01cb1fc973fb08309130e2f84773fb08309130e20202cd06070041a060b7e003f08fa1020223ae43f40061f04ede21f088254143f085f089f08682610201200809006fd64400800e582c18480e5854108383123f200e5ffc10407a1207d013800e5b541086813f7f280e58ffc2400e5fffc2480e584e4b8fd841840201200a0b0201200e0f026d3b68bb7ec07434c0fe900c005c6c2497c0f83c004875d2708024c074c7e49c16388860840b9074eb2eb8c080700038c097c0e103fcbc200c0d005f3b513434c0007e1874c7c07e18b4c7c07e18f4c7c07e197e80007e193e90007e19b5007e19f4ffc07e1a34c24c3e1a6000aa10235f03f841f2d193f8276f10821005f5e100bef2e0c8f842c000f2e0c9f843c200f2e0caf84601c705f2e0cbf848c000f2e0ccf849c000f2e0cdf847f003ed4420d765f869f900f868f823f843a0f862f002f00400aa20d749c0388e3fd71d378b764657374726f798c7058e2d31f846c705f2e191f004c8801001cb05f846cf1670fa027001cb6a8210bbe2782101cb1fc98100a0fb0830db31e030915be2820afaf080be92f004dedb31005b321c4072c03e108072c7fe10c072c7fe114072c7fe113e80be11b3c5be11c0733e120072fffe124072c2727b552000353434c148700600b00404ac7cb8193e900c35d2604042eebcb81960",
+		//	data:         "b5ee9c720101020100ba0001a5b41ed95680049d40000001849a625a0400c0bf061f0071f8285e2e60d3c3dc49c1aaf72ec5b419b4f07c8c21800369ad55a1e4afd3f0d5a0fd3c4b2747de0c4182f630afd7d4737db5ad3de87832241d6a00600100c44200437165fc0cf99f7e50ce5a93d088bd5bd771fed32d90466eb00e136cff38b6052812a05f20000000000000000000000000000000000000d094d0bed0bdd0b0d18220d0bed18220d0bad180d0bed0bdd0b02028efbfa3e296bdefbfa329e3838e",
+		//	account:      "0:c91f98c50ce49cc86f3b06fd269c6efeea94364174a2c68f20e463478de2fa8f",
+		//	method:       GetCronInfo,
+		//	wantTypeHint: "GetCronInfo",
+		//	want: GetCronInfoResult{
+		//		NextCallTime:        1748873901,
+		//		Reward:              5000000,
+		//		BalanceMinusAmounts: 789809227355, // fail to check balance. need to set balance at emulator
+		//		RepeatEvery:         604800,
+		//	},
+		//},
 	}
 
 	for _, tt := range tests {
@@ -2895,13 +2909,16 @@ func TestDecodeExternalIn(t *testing.T) {
 			},
 		},
 		{
-			name:       "subscription v2 SubscriptionProlong",
-			interfaces: []ContractInterface{SubscriptionV2},
-			wantOpName: "SubscriptionV2Prolong",
+			name:       "cron trigger",
+			interfaces: []ContractInterface{Cron},
+			wantOpName: "CronTrigger",
 			wantValue: func() any {
-				return SubscriptionV2ProlongExtInMsgBody{}
+				return CronTriggerExtInMsgBody{
+					RewardAddress: mustAccountIDToMsgAddress("0:3de94780c4d6b551264cc290021851e8e38cadf43eae7b1f4d5e135ef02053ef"),
+					Salt:          1748269101,
+				}
 			},
-			boc: "b5ee9c7201010101000600000843d0ed9a",
+			boc: "b5ee9c7201010101002c0000532114702d8007bd28f0189ad6aa24c9985200430a3d1c7195be87d5cf63e9abc26bde040a7ded068f05b0",
 		},
 		{
 			name:       "send actions through 2fa tonkeeper",

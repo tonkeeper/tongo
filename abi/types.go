@@ -186,7 +186,7 @@ type MultisigOrder struct {
 }
 
 type MultisigProposersList struct {
-	Proposers tlb.HashmapE[tlb.Uint8, tlb.MsgAddress]
+	Proposers tlb.Hashmap[tlb.Uint8, tlb.MsgAddress]
 }
 
 type MultisigSendMessageAction struct {

@@ -68,6 +68,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_nft_data":                       {DecodeGetNftDataResult},
 	"get_nominator_data":                 {DecodeGetNominatorDataResult},
 	"get_oracle_data":                    {DecodeGetOracleData_StormResult},
+	"get_order_address":                  {DecodeGetOrderAddressResult},
 	"get_order_data":                     {DecodeGetOrderDataResult},
 	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
 	"get_payment_info":                   {DecodeGetPaymentInfo_SubscriptionV2Result},
@@ -293,6 +294,7 @@ var resultTypes = []interface{}{
 	&GetNftDataResult{},
 	&GetNominatorDataResult{},
 	&GetOracleData_StormResult{},
+	&GetOrderAddressResult{},
 	&GetOrderDataResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPaymentInfo_SubscriptionV2Result{},
@@ -2569,6 +2571,45 @@ func DecodeGetOracleData_StormResult(stack tlb.VmStack) (resultType string, resu
 	var result GetOracleData_StormResult
 	err = stack.Unmarshal(&result)
 	return "GetOracleData_StormResult", result, err
+}
+
+type GetOrderAddressResult struct {
+	OrderAddress tlb.MsgAddress
+}
+
+func GetOrderAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, orderSeqno tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: orderSeqno}
+	stack.Put(val)
+
+	// MethodID = 111399 for "get_order_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 111399, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOrderAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetOrderAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetOrderAddressResult
+	err = stack.Unmarshal(&result)
+	return "GetOrderAddressResult", result, err
 }
 
 type GetOrderDataResult struct {

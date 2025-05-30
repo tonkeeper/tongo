@@ -655,8 +655,8 @@
     <internal name="coffee_withdraw_internal">
         withdraw_internal#c0ffee2d query_id:uint64 asset:CoffeeAsset amount:Coins receiver:MsgAddressInt = InMsgBody;
     </internal>
-    <internal name="coffee_update_code_cell">
-        update_code_cell#c0ffee44 query_id:uint64 first:^Cell second:^Cell = InMsgBody;
+    <internal name="coffee_update_code_cells">
+        update_code_cells#c0ffee44 query_id:uint64 first:^Cell second:^Cell = InMsgBody;
     </internal>
     <internal name="coffee_update_contract">
         update_contract#c0ffee45 query_id:uint64 contract_address:MsgAddressInt _:CoffeeContractUpdate = InMsgBody;

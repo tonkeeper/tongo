@@ -10,6 +10,17 @@ const (
 	IUnknown ContractInterface = iota
 	AirdropInterlockerV1
 	AirdropInterlockerV2
+	CoffeeCrossDex
+	CoffeeFactory
+	CoffeeMevProtector
+	CoffeePool
+	CoffeeStakingItem
+	CoffeeStakingMaster
+	CoffeeStakingVault
+	CoffeeVault
+	CoffeeVaultExtra
+	CoffeeVaultJetton
+	CoffeeVaultNative
 	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
@@ -20,6 +31,7 @@ const (
 	GramMiner
 	JettonMaster
 	JettonWallet
+	JettonWalletCoffeeLp
 	JettonWalletGoverned
 	JettonWalletV1
 	JettonWalletV2
@@ -96,6 +108,28 @@ func (c ContractInterface) String() string {
 		return "airdrop_interlocker_v1"
 	case AirdropInterlockerV2:
 		return "airdrop_interlocker_v2"
+	case CoffeeCrossDex:
+		return "coffee_cross_dex"
+	case CoffeeFactory:
+		return "coffee_factory"
+	case CoffeeMevProtector:
+		return "coffee_mev_protector"
+	case CoffeePool:
+		return "coffee_pool"
+	case CoffeeStakingItem:
+		return "coffee_staking_item"
+	case CoffeeStakingMaster:
+		return "coffee_staking_master"
+	case CoffeeStakingVault:
+		return "coffee_staking_vault"
+	case CoffeeVault:
+		return "coffee_vault"
+	case CoffeeVaultExtra:
+		return "coffee_vault_extra"
+	case CoffeeVaultJetton:
+		return "coffee_vault_jetton"
+	case CoffeeVaultNative:
+		return "coffee_vault_native"
 	case DaolamaVault:
 		return "daolama_vault"
 	case DedustFactory:
@@ -116,6 +150,8 @@ func (c ContractInterface) String() string {
 		return "jetton_master"
 	case JettonWallet:
 		return "jetton_wallet"
+	case JettonWalletCoffeeLp:
+		return "jetton_wallet_coffee_lp"
 	case JettonWalletGoverned:
 		return "jetton_wallet_governed"
 	case JettonWalletV1:
@@ -263,6 +299,28 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return AirdropInterlockerV1
 	case "airdrop_interlocker_v2":
 		return AirdropInterlockerV2
+	case "coffee_cross_dex":
+		return CoffeeCrossDex
+	case "coffee_factory":
+		return CoffeeFactory
+	case "coffee_mev_protector":
+		return CoffeeMevProtector
+	case "coffee_pool":
+		return CoffeePool
+	case "coffee_staking_item":
+		return CoffeeStakingItem
+	case "coffee_staking_master":
+		return CoffeeStakingMaster
+	case "coffee_staking_vault":
+		return CoffeeStakingVault
+	case "coffee_vault":
+		return CoffeeVault
+	case "coffee_vault_extra":
+		return CoffeeVaultExtra
+	case "coffee_vault_jetton":
+		return CoffeeVaultJetton
+	case "coffee_vault_native":
+		return CoffeeVaultNative
 	case "daolama_vault":
 		return DaolamaVault
 	case "dedust_factory":
@@ -283,6 +341,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return JettonMaster
 	case "jetton_wallet":
 		return JettonWallet
+	case "jetton_wallet_coffee_lp":
+		return JettonWalletCoffeeLp
 	case "jetton_wallet_governed":
 		return JettonWalletGoverned
 	case "jetton_wallet_v1":
@@ -426,6 +486,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 
 var methodInvocationOrder = []MethodDescription{
 	{
+		Name:     "get_admin_address",
+		InvokeFn: GetAdminAddress,
+	},
+	{
 		Name:     "get_amm_contract_data",
 		InvokeFn: GetAmmContractData,
 	},
@@ -476,6 +540,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_channel_data",
 		InvokeFn: GetChannelData,
+	},
+	{
+		Name:     "get_code",
+		InvokeFn: GetCode,
 	},
 	{
 		Name:     "get_collection_data",
@@ -576,6 +644,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_lp_swap_data",
 		InvokeFn: GetLpSwapData,
+	},
+	{
+		Name:     "get_master_address",
+		InvokeFn: GetMasterAddress,
 	},
 	{
 		Name:     "get_members_raw",
@@ -712,6 +784,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_storage_params",
 		InvokeFn: GetStorageParams,
+	},
+	{
+		Name:     "get_stored_data",
+		InvokeFn: GetStoredData,
 	},
 	{
 		Name:     "get_subscription_data",
@@ -1089,6 +1165,69 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: CoffeeStakingMaster,
+		Results: []string{
+			"GetCollectionDataResult",
+			"GetStoredData_CoffeeStakingMasterResult",
+		},
+	},
+	{
+		Name: CoffeeStakingVault,
+		Results: []string{
+			"GetMasterAddress_CoffeeStakingVaultResult",
+			"GetStoredData_CoffeeStakingVaultResult",
+		},
+	},
+	{
+		Name: CoffeeStakingItem,
+		Results: []string{
+			"GetNftDataResult",
+			"GetStoredData_CoffeeStakingItemResult",
+		},
+	},
+	{
+		Name: CoffeeFactory,
+		Results: []string{
+			"GetAdminAddress_CoffeeResult",
+			"GetCode_CoffeeResult",
+		},
+	},
+	{
+		Name: CoffeeVault,
+		Results: []string{
+			"GetAsset_CoffeeResult",
+			"IsActive_CoffeeResult",
+		},
+	},
+	{
+		Name: CoffeeVaultNative,
+		Results: []string{
+			"GetAsset_CoffeeResult",
+			"IsActive_CoffeeResult",
+		},
+	},
+	{
+		Name: CoffeeVaultJetton,
+		Results: []string{
+			"GetAsset_CoffeeResult",
+			"IsActive_CoffeeResult",
+		},
+	},
+	{
+		Name: CoffeeVaultExtra,
+		Results: []string{
+			"GetAsset_CoffeeResult",
+			"IsActive_CoffeeResult",
+		},
+	},
+	{
+		Name: CoffeePool,
+		Results: []string{
+			"GetJettonDataResult",
+			"GetPoolData_CoffeeResult",
+		},
+	},
+	{
 		Name: Teleitem,
 		Results: []string{
 			"GetTelemintTokenNameResult",
@@ -1114,6 +1253,14 @@ var contractInterfacesOrder = []InterfaceDescription{
 
 func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 	switch c {
+	case CoffeeVaultExtra:
+		return CoffeeVault.Implements(other)
+	case CoffeeVaultJetton:
+		return CoffeeVault.Implements(other)
+	case CoffeeVaultNative:
+		return CoffeeVault.Implements(other)
+	case JettonWalletCoffeeLp:
+		return JettonWallet.Implements(other)
 	case JettonWalletGoverned:
 		return JettonWallet.Implements(other)
 	case JettonWalletV1:
@@ -1244,6 +1391,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetPublicKey,
 			Seqno,
 		},
+	},
+	ton.MustParseHash("58fbc2dba2684d38b80bfce3dc5a9ffce00af9b464c7b4dc21cf57e3aae11f1c"): {
+		contractInterfaces: []ContractInterface{CoffeeMevProtector},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("5c9a5e68c108e18721a07c42f9956bfb39ad77ec6d624b60c576ec88eee65329"): {
 		contractInterfaces: []ContractInterface{WalletV2R1},
@@ -1380,6 +1531,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
+	ton.MustParseHash("d7c38fa994a8282657209f93ebc5dfe908a5f06d2e41f0c085e917bc4f54a2b3"): {
+		contractInterfaces: []ContractInterface{JettonWalletCoffeeLp},
+		getMethods: []InvokeFn{
+			GetWalletData,
+		},
+	},
 	ton.MustParseHash("d8cdbbb79f2c5caa677ac450770be0351be21e1250486de85cc52aa33dd16484"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV1R1},
 		getMethods:         []InvokeFn{},
@@ -1409,6 +1566,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
+	ton.MustParseHash("fea9c6a1ef5eab2c5ca94d6bef1e33994c5786abeb5264760e150da33bfb3677"): {
+		contractInterfaces: []ContractInterface{CoffeeCrossDex},
+		getMethods:         []InvokeFn{},
+	},
 	ton.MustParseHash("feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0"): {
 		contractInterfaces: []ContractInterface{WalletV4R2},
 		getMethods: []InvokeFn{
@@ -1422,6 +1583,83 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case CoffeeCrossDex:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncCoffeeCrossDexResendMsgBody,
+			decodeFuncCoffeeCrossDexFailureMsgBody,
+		}
+	case CoffeeFactory:
+		return []msgDecoderFunc{
+			decodeFuncCoffeeCreatePoolCreatorRequestMsgBody,
+			decodeFuncCoffeeCreateLiquidityDepositoryRequestMsgBody,
+			decodeFuncCoffeeCreatePoolRequestMsgBody,
+			decodeFuncCoffeeCreateVaultMsgBody,
+			decodeFuncCoffeeUpdateAdminMsgBody,
+			decodeFuncCoffeeUpdateWithdrawerMsgBody,
+			decodeFuncCoffeeUpdateCodeCellsMsgBody,
+			decodeFuncCoffeeUpdateContractMsgBody,
+			decodeFuncCoffeeActivateVaultMsgBody,
+			decodeFuncCoffeeWithdrawMsgBody,
+		}
+	case CoffeeMevProtector:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncCoffeeMevProtectHoldFundsMsgBody,
+			decodeFuncCoffeeMevProtectFailedSwapMsgBody,
+		}
+	case CoffeePool:
+		return []msgDecoderFunc{
+			decodeFuncJettonBurnNotificationMsgBody,
+			decodeFuncJettonProvideWalletMsgBody,
+			decodeFuncCoffeeSwapInternalMsgBody,
+			decodeFuncCoffeeDepositLiquidityInternalMsgBody,
+			decodeFuncCoffeeWithdrawInternalMsgBody,
+			decodeFuncCoffeeUpdateContractInternalMsgBody,
+			decodeFuncCoffeeCreatePoolInternalMsgBody,
+			decodeFuncCoffeeDeployMsgBody,
+		}
+	case CoffeeStakingItem:
+		return []msgDecoderFunc{
+			decodeFuncCoffeeStakingInitMsgBody,
+		}
+	case CoffeeStakingMaster:
+		return []msgDecoderFunc{
+			decodeFuncCoffeeStakingInitMsgBody,
+			decodeFuncCoffeeStakingDepositMsgBody,
+			decodeFuncCoffeeStakingUpdateRewardsMsgBody,
+			decodeFuncCoffeeStakingClaimRewardsMsgBody,
+		}
+	case CoffeeStakingVault:
+		return []msgDecoderFunc{
+			decodeFuncCoffeeStakingInitMsgBody,
+			decodeFuncJettonNotifyMsgBody,
+		}
+	case CoffeeVaultExtra:
+		return []msgDecoderFunc{
+			decodeFuncCoffeePayoutInternalMsgBody,
+			decodeFuncCoffeeSwapExtraMsgBody,
+			decodeFuncCoffeeDepositLiquidityExtraMsgBody,
+			decodeFuncCoffeeCreatePoolExtraMsgBody,
+			decodeFuncCoffeeUpdateContractInternalMsgBody,
+		}
+	case CoffeeVaultJetton:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonProvideWalletMsgBody,
+			decodeFuncCoffeePayoutInternalMsgBody,
+			decodeFuncCoffeeCreateVaultInternalMsgBody,
+			decodeFuncCoffeeActivateVaultInternalMsgBody,
+			decodeFuncCoffeeUpdateContractInternalMsgBody,
+		}
+	case CoffeeVaultNative:
+		return []msgDecoderFunc{
+			decodeFuncCoffeePayoutInternalMsgBody,
+			decodeFuncCoffeeSwapMsgBody,
+			decodeFuncCoffeeDepositLiquidityMsgBody,
+			decodeFuncCoffeeCreatePoolMsgBody,
+			decodeFuncCoffeeUpdateContractInternalMsgBody,
+		}
 	case DaolamaVault:
 		return []msgDecoderFunc{
 			decodeFuncDaolamaVaultSupplyMsgBody,
@@ -1619,6 +1857,19 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 	switch c {
+	case CoffeePool:
+		return []msgDecoderFunc{
+			decodeFuncCoffeeSwapSucceededExtOutMsgBody,
+			decodeFuncCoffeeSwapFailedExtOutMsgBody,
+			decodeFuncCoffeeDepositLiquiditySucceededExtOutMsgBody,
+			decodeFuncCoffeeDepositLiquidityFailedExtOutMsgBody,
+			decodeFuncCoffeeWithdrawLiquiditySucceededExtOutMsgBody,
+		}
+	case CoffeeStakingMaster:
+		return []msgDecoderFunc{
+			decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody,
+			decodeFuncCoffeeStakingRewardsClaimedExtOutMsgBody,
+		}
 	case DedustPool:
 		return []msgDecoderFunc{
 			decodeFuncDedustSwapExtOutMsgBody,

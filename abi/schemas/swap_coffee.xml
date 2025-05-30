@@ -27,7 +27,10 @@
         pool_creation_params#_ public:CoffeePublicPoolCreationParams private:CoffeePrivatePoolCreationParams = CoffeePoolCreationParams;
         notification_data_single#_ receiver:MsgAddressInt fwd_gas:Coins payload:^Cell = CoffeeNotificationDataSingle;
         notification_data#_ on_success:(Maybe ^CoffeeNotificationDataSingle) on_failure:(Maybe ^CoffeeNotificationDataSingle) = CoffeeNotificationData;
-        pool_update_params#_ flags:(## 2) protocol_fee:flags.0?uint16 lp_fee:flags.0?uint16 is_active:flags.1?uint1 = CoffeePoolUpdateParams;
+
+        <!--        bit selection is not supported -->
+        <!--        pool_update_params#_ flags:(## 2) protocol_fee:flags.0?uint16 lp_fee:flags.0?uint16 is_active:flags.1?uint1 = CoffeePoolUpdateParams;-->
+
         swap_params#_ deadline:uint32 recipient:MsgAddressInt referral:MsgAddressInt notification_data:(Maybe ^CoffeeNotificationData) = CoffeeSwapParams;
         swap_step_params#_ pool_address_hash:uint256 min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepParams;
         swap_step_internal_params#_ previous_amount:Coins previous_asset_hint:(Maybe CoffeeAsset) min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepInternalParams;
@@ -116,8 +119,11 @@
         <error code="502">Zero points</error>
     </interface>
     <interface name="coffee_factory">
-        <get_method name="get_vault_address" version="coffee"/>
-        <get_method name="get_pool_address" version="coffee"/>
+
+        <!--        collision-->
+        <!--        <get_method name="get_vault_address" version="coffee"/>-->
+        <!--        <get_method name="get_pool_address" version="coffee"/>-->
+
         <get_method name="get_pool_address_no_settings" version="coffee"/>
         <get_method name="get_pool_creator_address" version="coffee"/>
         <get_method name="get_pool_creator_address_no_settings" version="coffee"/>
@@ -134,14 +140,14 @@
             <internal name="coffee_update_withdrawer"/>
             <internal name="coffee_update_code_cells"/>
             <internal name="coffee_update_contract"/>
-            <internal name="coffee_update_pool"/>
+            <!--            <internal name="coffee_update_pool"/>-->
             <internal name="coffee_activate_vault"/>
             <internal name="coffee_withdraw"/>
         </msg_in>
         <msg_out>
             <internal name="coffee_deploy"/>
             <internal name="coffee_update_contract_internal"/>
-            <internal name="coffee_update_pool_internal"/>
+            <!--            <internal name="coffee_update_pool_internal"/>-->
             <internal name="coffee_activate_vault_internal"/>
             <internal name="coffee_withdraw_internal"/>
         </msg_out>
@@ -233,7 +239,7 @@
             <internal name="coffee_swap_internal"/>
             <internal name="coffee_deposit_liquidity_internal"/>
             <internal name="coffee_withdraw_internal"/>
-            <internal name="coffee_update_pool_internal"/>
+            <!--            <internal name="coffee_update_pool_internal"/>-->
             <internal name="coffee_update_contract_internal"/>
             <internal name="coffee_create_pool_internal"/>
             <internal name="coffee_deploy"/>
@@ -311,33 +317,36 @@
             <slice name="address">msgaddress</slice>
         </output>
     </get_method>
-    <get_method name="get_vault_address">
-        <input>
-            <slice name="asset">CoffeeAsset</slice>
-        </input>
-        <output version="coffee" fixed_length="true">
-            <slice name="address">msgaddress</slice>
-            <int name="hash">int257</int>
-        </output>
-    </get_method>
-    <get_method name="get_pool_address">
-        <input>
-            <slice name="asset1">CoffeeAsset</slice>
-            <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
-            <int name="amm">int257</int>
-            <cell name="amm_settings">any</cell>
-        </input>
-        <output version="coffee" fixed_length="true">
-            <slice name="address">msgaddress</slice>
-            <int name="hash">int257</int>
-        </output>
-    </get_method>
+
+    <!--    collision-->
+    <!--    <get_method name="get_vault_address">-->
+    <!--        <input>-->
+    <!--            <slice name="asset">CoffeeAsset</slice>-->
+    <!--        </input>-->
+    <!--        <output version="coffee" fixed_length="true">-->
+    <!--            <slice name="address">msgaddress</slice>-->
+    <!--            <int name="hash">int257</int>-->
+    <!--        </output>-->
+    <!--    </get_method>-->
+    <!--    <get_method name="get_pool_address">-->
+    <!--        <input>-->
+    <!--            <slice name="asset1">CoffeeAsset</slice>-->
+    <!--            <slice name="asset2">CoffeeAsset</slice>-->
+    <!--            <int name="amm">CoffeeAMM</int>-->
+    <!--            <int name="amm">int257</int>-->
+    <!--            <cell name="amm_settings">any</cell>-->
+    <!--        </input>-->
+    <!--        <output version="coffee" fixed_length="true">-->
+    <!--            <slice name="address">msgaddress</slice>-->
+    <!--            <int name="hash">int257</int>-->
+    <!--        </output>-->
+    <!--    </get_method>-->
+
     <get_method name="get_pool_address_no_settings">
         <input>
             <slice name="asset1">CoffeeAsset</slice>
             <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
+            <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
         </input>
         <output version="coffee" fixed_length="true">
@@ -350,7 +359,7 @@
             <slice name="owner">msgaddress</slice>
             <slice name="asset1">CoffeeAsset</slice>
             <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
+            <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
             <cell name="amm_settings">any</cell>
         </input>
@@ -364,7 +373,7 @@
             <slice name="owner">msgaddress</slice>
             <slice name="asset1">CoffeeAsset</slice>
             <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
+            <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
         </input>
         <output version="coffee" fixed_length="true">
@@ -377,7 +386,7 @@
             <slice name="owner">msgaddress</slice>
             <slice name="asset1">CoffeeAsset</slice>
             <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
+            <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
             <cell name="amm_settings">any</cell>
         </input>
@@ -391,7 +400,7 @@
             <slice name="owner">msgaddress</slice>
             <slice name="asset1">CoffeeAsset</slice>
             <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
+            <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
         </input>
         <output version="coffee" fixed_length="true">
@@ -425,7 +434,7 @@
             <int name="pool_version">int257</int>
             <slice name="asset1">CoffeeAsset</slice>
             <slice name="asset2">CoffeeAsset</slice>
-<!--            <int name="amm">CoffeeAMM</int>-->
+            <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
             <cell name="amm_settings">any</cell>
             <int name="active">bool</int>
@@ -635,13 +644,16 @@
     <internal name="coffee_update_admin">
         update_admin#c0ffee40 query_id:uint64 address:MsgAddressInt = InMsgBody;
     </internal>
-    <internal name="coffee_update_pool">
-        update_pool#c0ffee41 query_id:uint64 pool_params:CoffeePoolParams params:^CoffeePoolUpdateParams = InMsgBody;
-    </internal>
-    <internal name="coffee_update_pool_internal">
-        update_pool_internal#c0ffee2b query_id:uint64 excesses_receiver:MsgAddressInt
-        params:^CoffeePoolUpdateParams = InMsgBody;
-    </internal>
+
+    <!--    unsupported CoffeePoolUpdateParams -->
+    <!--    <internal name="coffee_update_pool">-->
+    <!--        update_pool#c0ffee41 query_id:uint64 pool_params:CoffeePoolParams params:^CoffeePoolUpdateParams = InMsgBody;-->
+    <!--    </internal>-->
+    <!--    <internal name="coffee_update_pool_internal">-->
+    <!--        update_pool_internal#c0ffee2b query_id:uint64 excesses_receiver:MsgAddressInt-->
+    <!--        params:^CoffeePoolUpdateParams = InMsgBody;-->
+    <!--    </internal>-->
+
     <internal name="coffee_activate_vault">
         activate_vault#c0ffee42 query_id:uint64 asset:CoffeeAsset wallet:MsgAddressInt = InMsgBody;
     </internal>

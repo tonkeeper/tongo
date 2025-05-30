@@ -99,6 +99,8 @@ var contractErrors = map[ContractInterface]map[int32]string{
 		467: "Sender is not beneficiary",
 		468: "Invalid charging date",
 		469: "Invalid reduce payment amount",
+		470: "Subscription is not activated",
+		471: "Wallet address is withdraw address",
 	},
 	WalletV4R2: {33: "Invalid seqno",
 		34: "Invalid subwallet ID",

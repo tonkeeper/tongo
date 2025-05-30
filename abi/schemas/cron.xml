@@ -1,0 +1,19 @@
+<abi>
+    <interface name="cron">
+        <get_method name="get_cron_info" />
+        <msg_in>
+            <ext_in name="cron_trigger"/>
+        </msg_in>
+    </interface>
+    <get_method name="get_cron_info">
+        <output fixed_length="true">
+            <int name="next_call_time">uint32</int>
+            <int name="reward">coins</int>
+            <int name="balance_minus_amounts">int64</int>
+            <int name="repeat_every">uint32</int>
+        </output>
+    </get_method>
+    <ext_in name="cron_trigger" >
+        cron_trigger#2114702d reward_address:MsgAddress salt:uint32 = ExternalMsgBody;
+    </ext_in>
+</abi>

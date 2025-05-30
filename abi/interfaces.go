@@ -10,6 +10,7 @@ const (
 	IUnknown ContractInterface = iota
 	AirdropInterlockerV1
 	AirdropInterlockerV2
+	Cron
 	DaolamaVault
 	DedustFactory
 	DedustLiquidityDeposit
@@ -96,6 +97,8 @@ func (c ContractInterface) String() string {
 		return "airdrop_interlocker_v1"
 	case AirdropInterlockerV2:
 		return "airdrop_interlocker_v2"
+	case Cron:
+		return "cron"
 	case DaolamaVault:
 		return "daolama_vault"
 	case DedustFactory:
@@ -263,6 +266,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return AirdropInterlockerV1
 	case "airdrop_interlocker_v2":
 		return AirdropInterlockerV2
+	case "cron":
+		return Cron
 	case "daolama_vault":
 		return DaolamaVault
 	case "dedust_factory":
@@ -833,6 +838,12 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 	{
+		Name: Cron,
+		Results: []string{
+			"GetCronInfoResult",
+		},
+	},
+	{
 		Name: DaolamaVault,
 		Results: []string{
 			"GetPoolData_DaolamaResult",
@@ -1333,14 +1344,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
-	ton.MustParseHash("ba8bc168aac0f73d5914f6c4802085a136d94eb221cbb6f70b8fe653694da3bf"): {
-		contractInterfaces: []ContractInterface{SubscriptionV2},
-		getMethods: []InvokeFn{
-			GetCronInfo,
-			GetPaymentInfo,
-			GetSubscriptionInfo,
-		},
-	},
 	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {
 		contractInterfaces: []ContractInterface{JettonWalletV1},
 		getMethods: []InvokeFn{
@@ -1388,6 +1391,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
 		getMethods: []InvokeFn{
 			GetSaleData,
+		},
+	},
+	ton.MustParseHash("e47cee2a24e535150db4bc15e145fd732fa81543f29f1374ac2c058e6b60819f"): {
+		contractInterfaces: []ContractInterface{SubscriptionV2},
+		getMethods: []InvokeFn{
+			GetCronInfo,
+			GetPaymentInfo,
+			GetSubscriptionInfo,
 		},
 	},
 	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
@@ -1572,9 +1583,13 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 
 func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 	switch c {
+	case Cron:
+		return []msgDecoderFunc{
+			decodeFuncCronTriggerExtInMsgBody,
+		}
 	case SubscriptionV2:
 		return []msgDecoderFunc{
-			decodeFuncSubscriptionV2ProlongExtInMsgBody,
+			decodeFuncCronTriggerExtInMsgBody,
 		}
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{

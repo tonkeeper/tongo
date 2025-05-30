@@ -23,6 +23,7 @@ The list below contains the supported message operations, their names and opcode
 | ChannelCooperativeCommit| 0x79a126ef |
 | CloseStorageContract| 0x79f937ea |
 | Credit| 0x1690c604 |
+| CronTrigger| 0x2114702d |
 | DaolamaVaultSupply| 0x5c11ada9 |
 | DaolamaVaultWithdraw| 0x7bdd97de |
 | DedustCancelDeposit| 0x166cedee |
@@ -160,7 +161,6 @@ The list below contains the supported message operations, their names and opcode
 | SubscriptionV2Deploy| 0xf71783cb |
 | SubscriptionV2Destruct| 0x64737472 |
 | SubscriptionV2PaymentConfirmed| 0xf06c7567 |
-| SubscriptionV2Prolong| 0x43d0ed9a |
 | SubscriptionV2ReducePayment| 0x508238ec |
 | SubscriptionV2WithdrawToBeneficiary| 0xf852254e |
 | TegroAddLiquidity| 0x287e167a |

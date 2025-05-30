@@ -11,124 +11,136 @@ import (
 )
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
-	"dnsresolve":                         {DecodeDnsresolve_RecordsResult},
-	"estimate_swap_out":                  {DecodeEstimateSwapOut_DedustResult},
-	"get_amm_contract_data":              {DecodeGetAmmContractData_StormResult},
-	"get_amm_name":                       {DecodeGetAmmName_StormResult},
-	"get_amm_state":                      {DecodeGetAmmState_StormResult},
-	"get_amm_status":                     {DecodeGetAmmStatus_StormResult},
-	"get_asset":                          {DecodeGetAsset_DedustResult},
-	"get_assets":                         {DecodeGetAssets_DedustResult},
-	"get_auction_data_v4":                {DecodeGetAuctionDataV4Result},
-	"get_auction_info":                   {DecodeGetAuctionInfoResult},
-	"get_authority_address":              {DecodeGetAuthorityAddressResult},
-	"get_available_claim_amount":         {DecodeGetAvailableClaimAmountResult},
-	"get_balances":                       {DecodeGetBalances_DedustResult, DecodeGetBalancesResult},
-	"get_bill_address":                   {DecodeGetBillAddressResult},
-	"get_bill_amount":                    {DecodeGetBillAmountResult},
-	"get_channel_data":                   {DecodeGetChannelDataResult},
-	"get_collection_data":                {DecodeGetCollectionDataResult},
-	"get_contract_data":                  {DecodeGetContractData_AirdropInterlockerV1Result},
-	"get_cron_info":                      {DecodeGetCronInfoResult},
-	"get_delegation_state":               {DecodeGetDelegationStateResult},
-	"get_distribution_info":              {DecodeGetDistributionInfoResult},
-	"get_domain":                         {DecodeGetDomainResult},
-	"get_editor":                         {DecodeGetEditorResult},
-	"get_estimated_attached_value":       {DecodeGetEstimatedAttachedValueResult},
-	"get_exchange_settings":              {DecodeGetExchangeSettings_StormResult},
-	"get_executor_balances":              {DecodeGetExecutorBalances_StormResult},
-	"get_executor_collection_address":    {DecodeGetExecutorCollectionAddress_StormResult},
-	"get_executor_vaults_whitelist":      {DecodeGetExecutorVaultsWhitelist_StormResult},
-	"get_expected_outputs":               {DecodeGetExpectedOutputs_StonfiResult},
-	"get_extensions":                     {DecodeGetExtensionsResult},
-	"get_fix_price_data_v4":              {DecodeGetFixPriceDataV4Result},
-	"get_full_domain":                    {DecodeGetFullDomainResult},
-	"get_jetton_data":                    {DecodeGetJettonDataResult},
-	"get_last_clean_time":                {DecodeGetLastCleanTimeResult},
-	"get_last_fill_up_time":              {DecodeGetLastFillUpTimeResult},
-	"get_liquidity_deposit_address":      {DecodeGetLiquidityDepositAddress_DedustResult},
-	"get_locker_bill_data":               {DecodeGetLockerBillDataResult},
-	"get_locker_data":                    {DecodeGetLockerDataResult},
-	"get_lockup_data":                    {DecodeGetLockupDataResult},
-	"get_lp_account_address":             {DecodeGetLpAccountAddress_StonfiResult},
-	"get_lp_account_data":                {DecodeGetLpAccountData_StonfiResult},
-	"get_lp_data":                        {DecodeGetLpData_MegatonResult},
-	"get_lp_mining_data":                 {DecodeGetLpMiningData_MegatonResult},
-	"get_lp_minter_address":              {DecodeGetLpMinterAddress_StormResult},
-	"get_lp_swap_data":                   {DecodeGetLpSwapData_MegatonResult},
-	"get_member":                         {DecodeGetMember_WhalesNominatorResult},
-	"get_members_raw":                    {DecodeGetMembersRaw_WhalesNominatorResult},
-	"get_mining_data":                    {DecodeGetMiningData_MegatonResult},
-	"get_multisig_data":                  {DecodeGetMultisigDataResult},
-	"get_next_admin_address":             {DecodeGetNextAdminAddressResult},
-	"get_next_proof_info":                {DecodeGetNextProofInfoResult},
-	"get_nft_address_by_index":           {DecodeGetNftAddressByIndexResult},
-	"get_nft_api_info":                   {DecodeGetNftApiInfoResult},
-	"get_nft_content":                    {DecodeGetNftContentResult},
-	"get_nft_data":                       {DecodeGetNftDataResult},
-	"get_nominator_data":                 {DecodeGetNominatorDataResult},
-	"get_oracle_data":                    {DecodeGetOracleData_StormResult},
-	"get_order_address":                  {DecodeGetOrderAddressResult},
-	"get_order_data":                     {DecodeGetOrderDataResult},
-	"get_params":                         {DecodeGetParams_WhalesNominatorResult},
-	"get_payment_info":                   {DecodeGetPaymentInfo_SubscriptionV2Result},
-	"get_plugin_list":                    {DecodeGetPluginListResult},
-	"get_pool_address":                   {DecodeGetPoolAddress_StonfiResult},
-	"get_pool_data":                      {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_TfResult},
-	"get_pool_full_data":                 {DecodeGetPoolFullDataResult},
-	"get_pool_status":                    {DecodeGetPoolStatusResult},
-	"get_pool_type":                      {DecodeGetPoolType_StonfiV2Result},
-	"get_position_manager_contract_data": {DecodeGetPositionManagerContractData_StormResult},
-	"get_pow_params":                     {DecodeGetPowParamsResult},
-	"get_public_key":                     {DecodeGetPublicKeyResult},
-	"get_referral_collection_address":    {DecodeGetReferralCollectionAddress_StormResult},
-	"get_referral_data":                  {DecodeGetReferralData_StormResult},
-	"get_referral_vaults_whitelist":      {DecodeGetReferralVaultsWhitelist_StormResult},
-	"get_reserves":                       {DecodeGetReserves_DedustResult},
-	"get_revoked_time":                   {DecodeGetRevokedTimeResult},
-	"get_root_pubkey":                    {DecodeGetRootPubkeyResult},
-	"get_router_data":                    {DecodeGetRouterData_StonfiResult, DecodeGetRouterData_StonfiV2Result},
-	"get_router_version":                 {DecodeGetRouterVersion_StonfiV2Result},
-	"get_sale_data":                      {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
-	"get_seed_pubkey":                    {DecodeGetSeedPubkeyResult},
-	"get_spot_price":                     {DecodeGetSpotPrice_StormResult},
-	"get_staking_status":                 {DecodeGetStakingStatusResult},
-	"get_status":                         {DecodeGetStatusResult},
-	"get_storage_contract_address":       {DecodeGetStorageContractAddressResult},
-	"get_storage_contract_data":          {DecodeGetStorageContractDataResult},
-	"get_storage_params":                 {DecodeGetStorageParamsResult},
-	"get_subscription_data":              {DecodeGetSubscriptionDataResult},
-	"get_subscription_info":              {DecodeGetSubscriptionInfo_V2Result},
-	"get_subwallet_id":                   {DecodeGetSubwalletIdResult},
-	"get_target_balances":                {DecodeGetTargetBalances_DedustResult},
-	"get_telemint_auction_config":        {DecodeGetTelemintAuctionConfigResult},
-	"get_telemint_auction_state":         {DecodeGetTelemintAuctionStateResult},
-	"get_telemint_token_name":            {DecodeGetTelemintTokenNameResult},
-	"get_terminal_amm_price":             {DecodeGetTerminalAmmPrice_StormResult},
-	"get_timeout":                        {DecodeGetTimeoutResult},
-	"get_torrent_hash":                   {DecodeGetTorrentHashResult},
-	"get_trade_fee":                      {DecodeGetTradeFee_DedustResult},
-	"get_unlocks_info":                   {DecodeGetUnlocksInfoResult},
-	"get_validator_controller_data":      {DecodeGetValidatorControllerDataResult},
-	"get_vamm_type":                      {DecodeGetVammType_StormResult},
-	"get_vault_address":                  {DecodeGetVaultAddress_DedustResult},
-	"get_vault_contract_data":            {DecodeGetVaultContractData_StormResult},
-	"get_vault_data":                     {DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
-	"get_vault_type":                     {DecodeGetVaultType_StormResult},
-	"get_vault_whitelisted_addresses":    {DecodeGetVaultWhitelistedAddresses_StormResult},
-	"get_wallet_addr":                    {DecodeGetWalletAddrResult},
-	"get_wallet_address":                 {DecodeGetWalletAddressResult},
-	"get_wallet_data":                    {DecodeGetWalletDataResult},
-	"get_wallet_params":                  {DecodeGetWalletParamsResult},
-	"is_active":                          {DecodeIsActiveResult},
-	"is_claimed":                         {DecodeIsClaimedResult},
-	"is_plugin_installed":                {DecodeIsPluginInstalledResult},
-	"is_stable":                          {DecodeIsStable_DedustResult},
-	"jetton_wallet_lock_data":            {DecodeJettonWalletLockDataResult},
-	"list_nominators":                    {DecodeListNominatorsResult},
-	"list_votes":                         {DecodeListVotesResult},
-	"royalty_params":                     {DecodeRoyaltyParamsResult},
-	"seqno":                              {DecodeSeqnoResult},
+	"dnsresolve":                                   {DecodeDnsresolve_RecordsResult},
+	"estimate_liquidity_deposit_amount":            {DecodeEstimateLiquidityDepositAmount_CoffeeResult},
+	"estimate_liquidity_withdraw_amount":           {DecodeEstimateLiquidityWithdrawAmount_CoffeeResult},
+	"estimate_swap_amount":                         {DecodeEstimateSwapAmount_CoffeeResult},
+	"estimate_swap_out":                            {DecodeEstimateSwapOut_DedustResult},
+	"get_admin_address":                            {DecodeGetAdminAddress_CoffeeResult},
+	"get_amm_contract_data":                        {DecodeGetAmmContractData_StormResult},
+	"get_amm_name":                                 {DecodeGetAmmName_StormResult},
+	"get_amm_state":                                {DecodeGetAmmState_StormResult},
+	"get_amm_status":                               {DecodeGetAmmStatus_StormResult},
+	"get_asset":                                    {DecodeGetAsset_DedustResult, DecodeGetAsset_CoffeeResult},
+	"get_assets":                                   {DecodeGetAssets_DedustResult},
+	"get_auction_data_v4":                          {DecodeGetAuctionDataV4Result},
+	"get_auction_info":                             {DecodeGetAuctionInfoResult},
+	"get_authority_address":                        {DecodeGetAuthorityAddressResult},
+	"get_available_claim_amount":                   {DecodeGetAvailableClaimAmountResult},
+	"get_balances":                                 {DecodeGetBalances_DedustResult, DecodeGetBalancesResult},
+	"get_bill_address":                             {DecodeGetBillAddressResult},
+	"get_bill_amount":                              {DecodeGetBillAmountResult},
+	"get_channel_data":                             {DecodeGetChannelDataResult},
+	"get_code":                                     {DecodeGetCode_CoffeeResult},
+	"get_collection_data":                          {DecodeGetCollectionDataResult},
+	"get_contract_data":                            {DecodeGetContractData_AirdropInterlockerV1Result},
+	"get_cron_info":                                {DecodeGetCronInfoResult},
+	"get_delegation_state":                         {DecodeGetDelegationStateResult},
+	"get_distribution_info":                        {DecodeGetDistributionInfoResult},
+	"get_domain":                                   {DecodeGetDomainResult},
+	"get_editor":                                   {DecodeGetEditorResult},
+	"get_estimated_attached_value":                 {DecodeGetEstimatedAttachedValueResult},
+	"get_exchange_settings":                        {DecodeGetExchangeSettings_StormResult},
+	"get_executor_balances":                        {DecodeGetExecutorBalances_StormResult},
+	"get_executor_collection_address":              {DecodeGetExecutorCollectionAddress_StormResult},
+	"get_executor_vaults_whitelist":                {DecodeGetExecutorVaultsWhitelist_StormResult},
+	"get_expected_outputs":                         {DecodeGetExpectedOutputs_StonfiResult},
+	"get_extensions":                               {DecodeGetExtensionsResult},
+	"get_fix_price_data_v4":                        {DecodeGetFixPriceDataV4Result},
+	"get_full_domain":                              {DecodeGetFullDomainResult},
+	"get_jetton_data":                              {DecodeGetJettonDataResult},
+	"get_last_clean_time":                          {DecodeGetLastCleanTimeResult},
+	"get_last_fill_up_time":                        {DecodeGetLastFillUpTimeResult},
+	"get_liquidity_deposit_address":                {DecodeGetLiquidityDepositAddress_DedustResult},
+	"get_liquidity_depository_address":             {DecodeGetLiquidityDepositoryAddress_CoffeeResult},
+	"get_liquidity_depository_address_no_settings": {DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult},
+	"get_locker_bill_data":                         {DecodeGetLockerBillDataResult},
+	"get_locker_data":                              {DecodeGetLockerDataResult},
+	"get_lockup_data":                              {DecodeGetLockupDataResult},
+	"get_lp_account_address":                       {DecodeGetLpAccountAddress_StonfiResult},
+	"get_lp_account_data":                          {DecodeGetLpAccountData_StonfiResult},
+	"get_lp_data":                                  {DecodeGetLpData_MegatonResult},
+	"get_lp_mining_data":                           {DecodeGetLpMiningData_MegatonResult},
+	"get_lp_minter_address":                        {DecodeGetLpMinterAddress_StormResult},
+	"get_lp_swap_data":                             {DecodeGetLpSwapData_MegatonResult},
+	"get_master_address":                           {DecodeGetMasterAddress_CoffeeStakingVaultResult},
+	"get_member":                                   {DecodeGetMember_WhalesNominatorResult},
+	"get_members_raw":                              {DecodeGetMembersRaw_WhalesNominatorResult},
+	"get_mining_data":                              {DecodeGetMiningData_MegatonResult},
+	"get_multisig_data":                            {DecodeGetMultisigDataResult},
+	"get_next_admin_address":                       {DecodeGetNextAdminAddressResult},
+	"get_next_proof_info":                          {DecodeGetNextProofInfoResult},
+	"get_nft_address_by_index":                     {DecodeGetNftAddressByIndexResult},
+	"get_nft_api_info":                             {DecodeGetNftApiInfoResult},
+	"get_nft_content":                              {DecodeGetNftContentResult},
+	"get_nft_data":                                 {DecodeGetNftDataResult},
+	"get_nominator_data":                           {DecodeGetNominatorDataResult},
+	"get_oracle_data":                              {DecodeGetOracleData_StormResult},
+	"get_order_address":                            {DecodeGetOrderAddressResult},
+	"get_order_data":                               {DecodeGetOrderDataResult},
+	"get_params":                                   {DecodeGetParams_WhalesNominatorResult},
+	"get_payment_info":                             {DecodeGetPaymentInfo_SubscriptionV2Result},
+	"get_plugin_list":                              {DecodeGetPluginListResult},
+	"get_pool_address":                             {DecodeGetPoolAddress_StonfiResult},
+	"get_pool_address_no_settings":                 {DecodeGetPoolAddressNoSettings_CoffeeResult},
+	"get_pool_creator_address":                     {DecodeGetPoolCreatorAddress_CoffeeResult},
+	"get_pool_creator_address_no_settings":         {DecodeGetPoolCreatorAddressNoSettings_CoffeeResult},
+	"get_pool_data":                                {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult},
+	"get_pool_full_data":                           {DecodeGetPoolFullDataResult},
+	"get_pool_status":                              {DecodeGetPoolStatusResult},
+	"get_pool_type":                                {DecodeGetPoolType_StonfiV2Result},
+	"get_position_manager_contract_data":           {DecodeGetPositionManagerContractData_StormResult},
+	"get_pow_params":                               {DecodeGetPowParamsResult},
+	"get_public_key":                               {DecodeGetPublicKeyResult},
+	"get_referral_collection_address":              {DecodeGetReferralCollectionAddress_StormResult},
+	"get_referral_data":                            {DecodeGetReferralData_StormResult},
+	"get_referral_vaults_whitelist":                {DecodeGetReferralVaultsWhitelist_StormResult},
+	"get_reserves":                                 {DecodeGetReserves_DedustResult},
+	"get_revoked_time":                             {DecodeGetRevokedTimeResult},
+	"get_root_pubkey":                              {DecodeGetRootPubkeyResult},
+	"get_router_data":                              {DecodeGetRouterData_StonfiResult, DecodeGetRouterData_StonfiV2Result},
+	"get_router_version":                           {DecodeGetRouterVersion_StonfiV2Result},
+	"get_sale_data":                                {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
+	"get_seed_pubkey":                              {DecodeGetSeedPubkeyResult},
+	"get_spot_price":                               {DecodeGetSpotPrice_StormResult},
+	"get_staking_status":                           {DecodeGetStakingStatusResult},
+	"get_status":                                   {DecodeGetStatusResult},
+	"get_storage_contract_address":                 {DecodeGetStorageContractAddressResult},
+	"get_storage_contract_data":                    {DecodeGetStorageContractDataResult},
+	"get_storage_params":                           {DecodeGetStorageParamsResult},
+	"get_stored_data":                              {DecodeGetStoredData_CoffeeStakingMasterResult, DecodeGetStoredData_CoffeeStakingVaultResult, DecodeGetStoredData_CoffeeStakingItemResult},
+	"get_subscription_data":                        {DecodeGetSubscriptionDataResult},
+	"get_subscription_info":                        {DecodeGetSubscriptionInfo_V2Result},
+	"get_subwallet_id":                             {DecodeGetSubwalletIdResult},
+	"get_target_balances":                          {DecodeGetTargetBalances_DedustResult},
+	"get_telemint_auction_config":                  {DecodeGetTelemintAuctionConfigResult},
+	"get_telemint_auction_state":                   {DecodeGetTelemintAuctionStateResult},
+	"get_telemint_token_name":                      {DecodeGetTelemintTokenNameResult},
+	"get_terminal_amm_price":                       {DecodeGetTerminalAmmPrice_StormResult},
+	"get_timeout":                                  {DecodeGetTimeoutResult},
+	"get_torrent_hash":                             {DecodeGetTorrentHashResult},
+	"get_trade_fee":                                {DecodeGetTradeFee_DedustResult},
+	"get_unlocks_info":                             {DecodeGetUnlocksInfoResult},
+	"get_validator_controller_data":                {DecodeGetValidatorControllerDataResult},
+	"get_vamm_type":                                {DecodeGetVammType_StormResult},
+	"get_vault_address":                            {DecodeGetVaultAddress_DedustResult},
+	"get_vault_contract_data":                      {DecodeGetVaultContractData_StormResult},
+	"get_vault_data":                               {DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
+	"get_vault_type":                               {DecodeGetVaultType_StormResult},
+	"get_vault_whitelisted_addresses":              {DecodeGetVaultWhitelistedAddresses_StormResult},
+	"get_wallet_addr":                              {DecodeGetWalletAddrResult},
+	"get_wallet_address":                           {DecodeGetWalletAddressResult},
+	"get_wallet_data":                              {DecodeGetWalletDataResult},
+	"get_wallet_params":                            {DecodeGetWalletParamsResult},
+	"is_active":                                    {DecodeIsActiveResult, DecodeIsActive_CoffeeResult},
+	"is_claimed":                                   {DecodeIsClaimedResult},
+	"is_plugin_installed":                          {DecodeIsPluginInstalledResult},
+	"is_stable":                                    {DecodeIsStable_DedustResult},
+	"jetton_wallet_lock_data":                      {DecodeJettonWalletLockDataResult},
+	"list_nominators":                              {DecodeListNominatorsResult},
+	"list_votes":                                   {DecodeListVotesResult},
+	"royalty_params":                               {DecodeRoyaltyParamsResult},
+	"seqno":                                        {DecodeSeqnoResult},
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){
@@ -151,6 +163,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	80035:  {GetLpData},
 	80697:  {GetAuctionInfo},
 	80822:  {GetLastCleanTime},
+	81234:  {GetCode},
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
@@ -177,6 +190,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	92229:  {GetPoolFullData},
 	92260:  {GetSubscriptionData},
 	94150:  {GetContractData},
+	94255:  {GetAdminAddress},
 	96219:  {GetMiningData},
 	96263:  {GetExchangeSettings},
 	96705:  {GetBillAmount},
@@ -205,6 +219,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	108868: {GetTerminalAmmPrice},
 	110403: {GetPaymentInfo},
 	111161: {ListNominators},
+	115119: {GetMasterAddress},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
 	117729: {GetExtensions},
@@ -224,6 +239,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	123832: {GetOrderData},
 	123928: {GetStakingStatus},
 	124861: {GetReferralVaultsWhitelist},
+	125126: {GetStoredData},
 	127184: {GetVaultData},
 	128085: {GetRouterData},
 	128979: {JettonWalletLockData},
@@ -237,11 +253,16 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 
 var resultTypes = []interface{}{
 	&Dnsresolve_RecordsResult{},
+	&EstimateLiquidityDepositAmount_CoffeeResult{},
+	&EstimateLiquidityWithdrawAmount_CoffeeResult{},
+	&EstimateSwapAmount_CoffeeResult{},
 	&EstimateSwapOut_DedustResult{},
+	&GetAdminAddress_CoffeeResult{},
 	&GetAmmContractData_StormResult{},
 	&GetAmmName_StormResult{},
 	&GetAmmState_StormResult{},
 	&GetAmmStatus_StormResult{},
+	&GetAsset_CoffeeResult{},
 	&GetAsset_DedustResult{},
 	&GetAssets_DedustResult{},
 	&GetAuctionDataV4Result{},
@@ -253,6 +274,7 @@ var resultTypes = []interface{}{
 	&GetBillAddressResult{},
 	&GetBillAmountResult{},
 	&GetChannelDataResult{},
+	&GetCode_CoffeeResult{},
 	&GetCollectionDataResult{},
 	&GetContractData_AirdropInterlockerV1Result{},
 	&GetCronInfoResult{},
@@ -273,6 +295,8 @@ var resultTypes = []interface{}{
 	&GetLastCleanTimeResult{},
 	&GetLastFillUpTimeResult{},
 	&GetLiquidityDepositAddress_DedustResult{},
+	&GetLiquidityDepositoryAddress_CoffeeResult{},
+	&GetLiquidityDepositoryAddressNoSettings_CoffeeResult{},
 	&GetLockerBillDataResult{},
 	&GetLockerDataResult{},
 	&GetLockupDataResult{},
@@ -282,6 +306,7 @@ var resultTypes = []interface{}{
 	&GetLpMiningData_MegatonResult{},
 	&GetLpMinterAddress_StormResult{},
 	&GetLpSwapData_MegatonResult{},
+	&GetMasterAddress_CoffeeStakingVaultResult{},
 	&GetMember_WhalesNominatorResult{},
 	&GetMembersRaw_WhalesNominatorResult{},
 	&GetMiningData_MegatonResult{},
@@ -300,6 +325,10 @@ var resultTypes = []interface{}{
 	&GetPaymentInfo_SubscriptionV2Result{},
 	&GetPluginListResult{},
 	&GetPoolAddress_StonfiResult{},
+	&GetPoolAddressNoSettings_CoffeeResult{},
+	&GetPoolCreatorAddress_CoffeeResult{},
+	&GetPoolCreatorAddressNoSettings_CoffeeResult{},
+	&GetPoolData_CoffeeResult{},
 	&GetPoolData_DaolamaResult{},
 	&GetPoolData_StonfiResult{},
 	&GetPoolData_StonfiV2Result{},
@@ -331,6 +360,9 @@ var resultTypes = []interface{}{
 	&GetStorageContractAddressResult{},
 	&GetStorageContractDataResult{},
 	&GetStorageParamsResult{},
+	&GetStoredData_CoffeeStakingItemResult{},
+	&GetStoredData_CoffeeStakingMasterResult{},
+	&GetStoredData_CoffeeStakingVaultResult{},
 	&GetSubscriptionDataResult{},
 	&GetSubscriptionInfo_V2Result{},
 	&GetSubwalletIdResult{},
@@ -356,6 +388,7 @@ var resultTypes = []interface{}{
 	&GetWalletDataResult{},
 	&GetWalletParamsResult{},
 	&IsActiveResult{},
+	&IsActive_CoffeeResult{},
 	&IsClaimedResult{},
 	&IsPluginInstalledResult{},
 	&IsStable_DedustResult{},
@@ -414,6 +447,135 @@ func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resul
 	return "Dnsresolve_RecordsResult", result, err
 }
 
+type EstimateLiquidityDepositAmount_CoffeeResult struct {
+	Amount1Used tlb.Int257
+	Amount2Used tlb.Int257
+	LpAmount    tlb.Int257
+	LpToLock    tlb.Int257
+}
+
+func EstimateLiquidityDepositAmount(ctx context.Context, executor Executor, reqAccountID ton.AccountID, amount1 tlb.Int257, amount2 tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amount1}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amount2}
+	stack.Put(val)
+
+	// MethodID = 113529 for "estimate_liquidity_deposit_amount" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 113529, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeEstimateLiquidityDepositAmount_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeEstimateLiquidityDepositAmount_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result EstimateLiquidityDepositAmount_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "EstimateLiquidityDepositAmount_CoffeeResult", result, err
+}
+
+type EstimateLiquidityWithdrawAmount_CoffeeResult struct {
+	Amount1 tlb.Int257
+	Amount2 tlb.Int257
+}
+
+func EstimateLiquidityWithdrawAmount(ctx context.Context, executor Executor, reqAccountID ton.AccountID, lpAmount tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: lpAmount}
+	stack.Put(val)
+
+	// MethodID = 114037 for "estimate_liquidity_withdraw_amount" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 114037, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeEstimateLiquidityWithdrawAmount_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeEstimateLiquidityWithdrawAmount_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result EstimateLiquidityWithdrawAmount_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "EstimateLiquidityWithdrawAmount_CoffeeResult", result, err
+}
+
+type EstimateSwapAmount_CoffeeResult struct {
+	InputAmount  tlb.Int257
+	OutputAmount tlb.Int257
+}
+
+func EstimateSwapAmount(ctx context.Context, executor Executor, reqAccountID ton.AccountID, asset CoffeeAsset, amount tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(asset)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amount}
+	stack.Put(val)
+
+	// MethodID = 87113 for "estimate_swap_amount" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 87113, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeEstimateSwapAmount_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeEstimateSwapAmount_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result EstimateSwapAmount_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "EstimateSwapAmount_CoffeeResult", result, err
+}
+
 type EstimateSwapOut_DedustResult struct {
 	AssetOut  DedustAsset
 	AmountOut tlb.Int257
@@ -458,6 +620,39 @@ func DecodeEstimateSwapOut_DedustResult(stack tlb.VmStack) (resultType string, r
 	var result EstimateSwapOut_DedustResult
 	err = stack.Unmarshal(&result)
 	return "EstimateSwapOut_DedustResult", result, err
+}
+
+type GetAdminAddress_CoffeeResult struct {
+	Address tlb.MsgAddress
+}
+
+func GetAdminAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 94255 for "get_admin_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 94255, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAdminAddress_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAdminAddress_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAdminAddress_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetAdminAddress_CoffeeResult", result, err
 }
 
 type GetAmmContractData_StormResult struct {
@@ -604,6 +799,10 @@ func DecodeGetAmmStatus_StormResult(stack tlb.VmStack) (resultType string, resul
 	return "GetAmmStatus_StormResult", result, err
 }
 
+type GetAsset_CoffeeResult struct {
+	Asset CoffeeAsset
+}
+
 type GetAsset_DedustResult struct {
 	Asset DedustAsset
 }
@@ -619,7 +818,7 @@ func GetAsset(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAsset_DedustResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAsset_DedustResult, DecodeGetAsset_CoffeeResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -635,6 +834,15 @@ func DecodeGetAsset_DedustResult(stack tlb.VmStack) (resultType string, resultAn
 	var result GetAsset_DedustResult
 	err = stack.Unmarshal(&result)
 	return "GetAsset_DedustResult", result, err
+}
+
+func DecodeGetAsset_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAsset_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetAsset_CoffeeResult", result, err
 }
 
 type GetAssets_DedustResult struct {
@@ -1013,6 +1221,40 @@ func DecodeGetChannelDataResult(stack tlb.VmStack) (resultType string, resultAny
 	var result GetChannelDataResult
 	err = stack.Unmarshal(&result)
 	return "GetChannelDataResult", result, err
+}
+
+type GetCode_CoffeeResult struct {
+	First  tlb.Any
+	Second tlb.Any
+}
+
+func GetCode(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 81234 for "get_code" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 81234, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCode_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCode_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCode_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetCode_CoffeeResult", result, err
 }
 
 type GetCollectionDataResult struct {
@@ -1779,6 +2021,121 @@ func DecodeGetLiquidityDepositAddress_DedustResult(stack tlb.VmStack) (resultTyp
 	return "GetLiquidityDepositAddress_DedustResult", result, err
 }
 
+type GetLiquidityDepositoryAddress_CoffeeResult struct {
+	Address tlb.MsgAddress
+	Hash    tlb.Int257
+}
+
+func GetLiquidityDepositoryAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, owner tlb.MsgAddress, asset1 CoffeeAsset, asset2 CoffeeAsset, amm tlb.Int257, ammSettings tlb.Any) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(owner)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset1)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset2)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amm}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCell(ammSettings)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 94971 for "get_liquidity_depository_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 94971, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLiquidityDepositoryAddress_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLiquidityDepositoryAddress_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLiquidityDepositoryAddress_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetLiquidityDepositoryAddress_CoffeeResult", result, err
+}
+
+type GetLiquidityDepositoryAddressNoSettings_CoffeeResult struct {
+	Address tlb.MsgAddress
+	Hash    tlb.Int257
+}
+
+func GetLiquidityDepositoryAddressNoSettings(ctx context.Context, executor Executor, reqAccountID ton.AccountID, owner tlb.MsgAddress, asset1 CoffeeAsset, asset2 CoffeeAsset, amm tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(owner)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset1)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset2)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amm}
+	stack.Put(val)
+
+	// MethodID = 78874 for "get_liquidity_depository_address_no_settings" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 78874, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLiquidityDepositoryAddressNoSettings_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetLiquidityDepositoryAddressNoSettings_CoffeeResult", result, err
+}
+
 type GetLockerBillDataResult struct {
 	LockerAddress     tlb.MsgAddress
 	TotalCoinsDeposit uint64
@@ -2117,6 +2474,39 @@ func DecodeGetLpSwapData_MegatonResult(stack tlb.VmStack) (resultType string, re
 	var result GetLpSwapData_MegatonResult
 	err = stack.Unmarshal(&result)
 	return "GetLpSwapData_MegatonResult", result, err
+}
+
+type GetMasterAddress_CoffeeStakingVaultResult struct {
+	Address tlb.MsgAddress
+}
+
+func GetMasterAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 115119 for "get_master_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 115119, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetMasterAddress_CoffeeStakingVaultResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetMasterAddress_CoffeeStakingVaultResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetMasterAddress_CoffeeStakingVaultResult
+	err = stack.Unmarshal(&result)
+	return "GetMasterAddress_CoffeeStakingVaultResult", result, err
 }
 
 type GetMember_WhalesNominatorResult struct {
@@ -2814,6 +3204,185 @@ func DecodeGetPoolAddress_StonfiResult(stack tlb.VmStack) (resultType string, re
 	return "GetPoolAddress_StonfiResult", result, err
 }
 
+type GetPoolAddressNoSettings_CoffeeResult struct {
+	Address tlb.MsgAddress
+	Hash    tlb.Int257
+}
+
+func GetPoolAddressNoSettings(ctx context.Context, executor Executor, reqAccountID ton.AccountID, asset1 CoffeeAsset, asset2 CoffeeAsset, amm tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(asset1)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset2)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amm}
+	stack.Put(val)
+
+	// MethodID = 71347 for "get_pool_address_no_settings" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 71347, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolAddressNoSettings_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolAddressNoSettings_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolAddressNoSettings_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolAddressNoSettings_CoffeeResult", result, err
+}
+
+type GetPoolCreatorAddress_CoffeeResult struct {
+	Address tlb.MsgAddress
+	Hash    tlb.Int257
+}
+
+func GetPoolCreatorAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, owner tlb.MsgAddress, asset1 CoffeeAsset, asset2 CoffeeAsset, amm tlb.Int257, ammSettings tlb.Any) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(owner)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset1)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset2)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amm}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCell(ammSettings)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 74737 for "get_pool_creator_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 74737, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolCreatorAddress_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolCreatorAddress_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolCreatorAddress_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolCreatorAddress_CoffeeResult", result, err
+}
+
+type GetPoolCreatorAddressNoSettings_CoffeeResult struct {
+	Address tlb.MsgAddress
+	Hash    tlb.Int257
+}
+
+func GetPoolCreatorAddressNoSettings(ctx context.Context, executor Executor, reqAccountID ton.AccountID, owner tlb.MsgAddress, asset1 CoffeeAsset, asset2 CoffeeAsset, amm tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(owner)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset1)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(asset2)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amm}
+	stack.Put(val)
+
+	// MethodID = 122690 for "get_pool_creator_address_no_settings" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 122690, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolCreatorAddressNoSettings_CoffeeResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolCreatorAddressNoSettings_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolCreatorAddressNoSettings_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolCreatorAddressNoSettings_CoffeeResult", result, err
+}
+
+type GetPoolData_CoffeeResult struct {
+	PoolVersion tlb.Int257
+	Asset1      CoffeeAsset
+	Asset2      CoffeeAsset
+	Amm         tlb.Int257
+	AmmSettings tlb.Any
+	Active      bool
+	Reserve1    tlb.Int257
+	Reserve2    tlb.Int257
+	TotalSupply tlb.Int257
+	ProtocolFee tlb.Int257
+	LpFee       tlb.Int257
+}
+
 type GetPoolData_DaolamaResult struct {
 	Halted         bool
 	Balance        uint64
@@ -2917,7 +3486,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_TfResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2969,6 +3538,15 @@ func DecodeGetPoolData_StonfiV2WeightedStableswapResult(stack tlb.VmStack) (resu
 	var result GetPoolData_StonfiV2WeightedStableswapResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolData_StonfiV2WeightedStableswapResult", result, err
+}
+
+func DecodeGetPoolData_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolData_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolData_CoffeeResult", result, err
 }
 
 func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
@@ -3888,6 +4466,83 @@ func DecodeGetStorageParamsResult(stack tlb.VmStack) (resultType string, resultA
 	return "GetStorageParamsResult", result, err
 }
 
+type GetStoredData_CoffeeStakingItemResult struct {
+	Initialized bool
+	NftId       uint64
+	Master      tlb.MsgAddress
+	Owner       tlb.MsgAddress
+	Asset       tlb.Any
+	Info        tlb.Any
+	Periods     tlb.Any
+}
+
+type GetStoredData_CoffeeStakingMasterResult struct {
+	Initialized bool
+	Owner       tlb.MsgAddress
+	Distributor tlb.MsgAddress
+	Vault       tlb.MsgAddress
+	State       tlb.Any
+	Rewards     tlb.Any
+	Jettons     tlb.Any
+	Periods     tlb.Any
+}
+
+type GetStoredData_CoffeeStakingVaultResult struct {
+	Initialized bool
+	Owner       tlb.MsgAddress
+	Jettons     tlb.Any
+	Periods     tlb.Any
+	MasterCode  tlb.Any
+	ItemCode    tlb.Any
+}
+
+func GetStoredData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 125126 for "get_stored_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 125126, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStoredData_CoffeeStakingMasterResult, DecodeGetStoredData_CoffeeStakingVaultResult, DecodeGetStoredData_CoffeeStakingItemResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStoredData_CoffeeStakingMasterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 8 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") || (stack[7].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetStoredData_CoffeeStakingMasterResult
+	err = stack.Unmarshal(&result)
+	return "GetStoredData_CoffeeStakingMasterResult", result, err
+}
+
+func DecodeGetStoredData_CoffeeStakingVaultResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetStoredData_CoffeeStakingVaultResult
+	err = stack.Unmarshal(&result)
+	return "GetStoredData_CoffeeStakingVaultResult", result, err
+}
+
+func DecodeGetStoredData_CoffeeStakingItemResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetStoredData_CoffeeStakingItemResult
+	err = stack.Unmarshal(&result)
+	return "GetStoredData_CoffeeStakingItemResult", result, err
+}
+
 type GetSubscriptionDataResult struct {
 	Wallet struct {
 		Workchain uint32
@@ -4746,6 +5401,10 @@ type IsActiveResult struct {
 	IsActive bool
 }
 
+type IsActive_CoffeeResult struct {
+	Active bool
+}
+
 func IsActive(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
 	stack := tlb.VmStack{}
 
@@ -4757,7 +5416,7 @@ func IsActive(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsActiveResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsActiveResult, DecodeIsActive_CoffeeResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -4773,6 +5432,15 @@ func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, 
 	var result IsActiveResult
 	err = stack.Unmarshal(&result)
 	return "IsActiveResult", result, err
+}
+
+func DecodeIsActive_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result IsActive_CoffeeResult
+	err = stack.Unmarshal(&result)
+	return "IsActive_CoffeeResult", result, err
 }
 
 type IsClaimedResult struct {

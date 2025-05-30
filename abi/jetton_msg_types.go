@@ -7,6 +7,17 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+func decodeCoffeeStakingLockJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeStakingLockJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeStakingLockJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeTextCommentJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res TextCommentJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -95,6 +106,17 @@ func decodeStonfiSwapOkRefJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	return err
 }
 
+func decodeCoffeeCrossDexResendJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeCrossDexResendJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeCrossDexResendJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiSwapV2JettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiSwapV2JettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -128,6 +150,61 @@ func decodeTonkeeperRelayerFeeJettonOpJetton(j *JettonPayload, c *boc.Cell) erro
 	return err
 }
 
+func decodeCoffeeCrossDexFailureJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeCrossDexFailureJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeCrossDexFailureJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeCoffeeSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeSwapJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeSwapJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeCoffeeCreatePoolJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeCreatePoolJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeCreatePoolJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeCoffeeDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeDepositLiquidityJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeDepositLiquidityJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeCoffeeNotificationJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeNotificationJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeNotificationJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiSwapOkJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiSwapOkJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -150,6 +227,17 @@ func decodeDedustSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	return err
 }
 
+func decodeCoffeeMevProtectFailedSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res CoffeeMevProtectFailedSwapJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = CoffeeMevProtectFailedSwapJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiProvideLiquidityJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -162,85 +250,129 @@ func decodeStonfiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) e
 }
 
 const (
-	TextCommentJettonOp            JettonOpName = "TextComment"
-	TegroJettonSwapJettonOp        JettonOpName = "TegroJettonSwap"
-	EncryptedTextCommentJettonOp   JettonOpName = "EncryptedTextComment"
-	StonfiSwapJettonOp             JettonOpName = "StonfiSwap"
-	TegroAddLiquidityJettonOp      JettonOpName = "TegroAddLiquidity"
-	StonfiProvideLpV2JettonOp      JettonOpName = "StonfiProvideLpV2"
-	DedustDepositLiquidityJettonOp JettonOpName = "DedustDepositLiquidity"
-	StonfiSwapOkRefJettonOp        JettonOpName = "StonfiSwapOkRef"
-	StonfiSwapV2JettonOp           JettonOpName = "StonfiSwapV2"
-	InvoicePayloadJettonOp         JettonOpName = "InvoicePayload"
-	TonkeeperRelayerFeeJettonOp    JettonOpName = "TonkeeperRelayerFee"
-	StonfiSwapOkJettonOp           JettonOpName = "StonfiSwapOk"
-	DedustSwapJettonOp             JettonOpName = "DedustSwap"
-	StonfiProvideLiquidityJettonOp JettonOpName = "StonfiProvideLiquidity"
+	CoffeeStakingLockJettonOp          JettonOpName = "CoffeeStakingLock"
+	TextCommentJettonOp                JettonOpName = "TextComment"
+	TegroJettonSwapJettonOp            JettonOpName = "TegroJettonSwap"
+	EncryptedTextCommentJettonOp       JettonOpName = "EncryptedTextComment"
+	StonfiSwapJettonOp                 JettonOpName = "StonfiSwap"
+	TegroAddLiquidityJettonOp          JettonOpName = "TegroAddLiquidity"
+	StonfiProvideLpV2JettonOp          JettonOpName = "StonfiProvideLpV2"
+	DedustDepositLiquidityJettonOp     JettonOpName = "DedustDepositLiquidity"
+	StonfiSwapOkRefJettonOp            JettonOpName = "StonfiSwapOkRef"
+	CoffeeCrossDexResendJettonOp       JettonOpName = "CoffeeCrossDexResend"
+	StonfiSwapV2JettonOp               JettonOpName = "StonfiSwapV2"
+	InvoicePayloadJettonOp             JettonOpName = "InvoicePayload"
+	TonkeeperRelayerFeeJettonOp        JettonOpName = "TonkeeperRelayerFee"
+	CoffeeCrossDexFailureJettonOp      JettonOpName = "CoffeeCrossDexFailure"
+	CoffeeSwapJettonOp                 JettonOpName = "CoffeeSwap"
+	CoffeeCreatePoolJettonOp           JettonOpName = "CoffeeCreatePool"
+	CoffeeDepositLiquidityJettonOp     JettonOpName = "CoffeeDepositLiquidity"
+	CoffeeNotificationJettonOp         JettonOpName = "CoffeeNotification"
+	StonfiSwapOkJettonOp               JettonOpName = "StonfiSwapOk"
+	DedustSwapJettonOp                 JettonOpName = "DedustSwap"
+	CoffeeMevProtectFailedSwapJettonOp JettonOpName = "CoffeeMevProtectFailedSwap"
+	StonfiProvideLiquidityJettonOp     JettonOpName = "StonfiProvideLiquidity"
 
-	TextCommentJettonOpCode            JettonOpCode = 0x00000000
-	TegroJettonSwapJettonOpCode        JettonOpCode = 0x01fb7a25
-	EncryptedTextCommentJettonOpCode   JettonOpCode = 0x2167da4b
-	StonfiSwapJettonOpCode             JettonOpCode = 0x25938561
-	TegroAddLiquidityJettonOpCode      JettonOpCode = 0x287e167a
-	StonfiProvideLpV2JettonOpCode      JettonOpCode = 0x37c096df
-	DedustDepositLiquidityJettonOpCode JettonOpCode = 0x40e108d6
-	StonfiSwapOkRefJettonOpCode        JettonOpCode = 0x45078540
-	StonfiSwapV2JettonOpCode           JettonOpCode = 0x6664de2a
-	InvoicePayloadJettonOpCode         JettonOpCode = 0x7aa23eb5
-	TonkeeperRelayerFeeJettonOpCode    JettonOpCode = 0x878da6e3
-	StonfiSwapOkJettonOpCode           JettonOpCode = 0xc64370e5
-	DedustSwapJettonOpCode             JettonOpCode = 0xe3a0d482
-	StonfiProvideLiquidityJettonOpCode JettonOpCode = 0xfcf9e58f
+	CoffeeStakingLockJettonOpCode          JettonOpCode = 0x0c0ffede
+	TextCommentJettonOpCode                JettonOpCode = 0x00000000
+	TegroJettonSwapJettonOpCode            JettonOpCode = 0x01fb7a25
+	EncryptedTextCommentJettonOpCode       JettonOpCode = 0x2167da4b
+	StonfiSwapJettonOpCode                 JettonOpCode = 0x25938561
+	TegroAddLiquidityJettonOpCode          JettonOpCode = 0x287e167a
+	StonfiProvideLpV2JettonOpCode          JettonOpCode = 0x37c096df
+	DedustDepositLiquidityJettonOpCode     JettonOpCode = 0x40e108d6
+	StonfiSwapOkRefJettonOpCode            JettonOpCode = 0x45078540
+	CoffeeCrossDexResendJettonOpCode       JettonOpCode = 0x4ee9b106
+	StonfiSwapV2JettonOpCode               JettonOpCode = 0x6664de2a
+	InvoicePayloadJettonOpCode             JettonOpCode = 0x7aa23eb5
+	TonkeeperRelayerFeeJettonOpCode        JettonOpCode = 0x878da6e3
+	CoffeeCrossDexFailureJettonOpCode      JettonOpCode = 0xb902e61a
+	CoffeeSwapJettonOpCode                 JettonOpCode = 0xc0ffee10
+	CoffeeCreatePoolJettonOpCode           JettonOpCode = 0xc0ffee11
+	CoffeeDepositLiquidityJettonOpCode     JettonOpCode = 0xc0ffee12
+	CoffeeNotificationJettonOpCode         JettonOpCode = 0xc0ffee36
+	StonfiSwapOkJettonOpCode               JettonOpCode = 0xc64370e5
+	DedustSwapJettonOpCode                 JettonOpCode = 0xe3a0d482
+	CoffeeMevProtectFailedSwapJettonOpCode JettonOpCode = 0xee51ce51
+	StonfiProvideLiquidityJettonOpCode     JettonOpCode = 0xfcf9e58f
 )
 
 var KnownJettonTypes = map[string]any{
-	TextCommentJettonOp:            TextCommentJettonPayload{},
-	TegroJettonSwapJettonOp:        TegroJettonSwapJettonPayload{},
-	EncryptedTextCommentJettonOp:   EncryptedTextCommentJettonPayload{},
-	StonfiSwapJettonOp:             StonfiSwapJettonPayload{},
-	TegroAddLiquidityJettonOp:      TegroAddLiquidityJettonPayload{},
-	StonfiProvideLpV2JettonOp:      StonfiProvideLpV2JettonPayload{},
-	DedustDepositLiquidityJettonOp: DedustDepositLiquidityJettonPayload{},
-	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonPayload{},
-	StonfiSwapV2JettonOp:           StonfiSwapV2JettonPayload{},
-	InvoicePayloadJettonOp:         InvoicePayloadJettonPayload{},
-	TonkeeperRelayerFeeJettonOp:    TonkeeperRelayerFeeJettonPayload{},
-	StonfiSwapOkJettonOp:           StonfiSwapOkJettonPayload{},
-	DedustSwapJettonOp:             DedustSwapJettonPayload{},
-	StonfiProvideLiquidityJettonOp: StonfiProvideLiquidityJettonPayload{},
+	CoffeeStakingLockJettonOp:          CoffeeStakingLockJettonPayload{},
+	TextCommentJettonOp:                TextCommentJettonPayload{},
+	TegroJettonSwapJettonOp:            TegroJettonSwapJettonPayload{},
+	EncryptedTextCommentJettonOp:       EncryptedTextCommentJettonPayload{},
+	StonfiSwapJettonOp:                 StonfiSwapJettonPayload{},
+	TegroAddLiquidityJettonOp:          TegroAddLiquidityJettonPayload{},
+	StonfiProvideLpV2JettonOp:          StonfiProvideLpV2JettonPayload{},
+	DedustDepositLiquidityJettonOp:     DedustDepositLiquidityJettonPayload{},
+	StonfiSwapOkRefJettonOp:            StonfiSwapOkRefJettonPayload{},
+	CoffeeCrossDexResendJettonOp:       CoffeeCrossDexResendJettonPayload{},
+	StonfiSwapV2JettonOp:               StonfiSwapV2JettonPayload{},
+	InvoicePayloadJettonOp:             InvoicePayloadJettonPayload{},
+	TonkeeperRelayerFeeJettonOp:        TonkeeperRelayerFeeJettonPayload{},
+	CoffeeCrossDexFailureJettonOp:      CoffeeCrossDexFailureJettonPayload{},
+	CoffeeSwapJettonOp:                 CoffeeSwapJettonPayload{},
+	CoffeeCreatePoolJettonOp:           CoffeeCreatePoolJettonPayload{},
+	CoffeeDepositLiquidityJettonOp:     CoffeeDepositLiquidityJettonPayload{},
+	CoffeeNotificationJettonOp:         CoffeeNotificationJettonPayload{},
+	StonfiSwapOkJettonOp:               StonfiSwapOkJettonPayload{},
+	DedustSwapJettonOp:                 DedustSwapJettonPayload{},
+	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonPayload{},
+	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonPayload{},
 }
 var JettonOpCodes = map[JettonOpName]JettonOpCode{
-	TextCommentJettonOp:            TextCommentJettonOpCode,
-	TegroJettonSwapJettonOp:        TegroJettonSwapJettonOpCode,
-	EncryptedTextCommentJettonOp:   EncryptedTextCommentJettonOpCode,
-	StonfiSwapJettonOp:             StonfiSwapJettonOpCode,
-	TegroAddLiquidityJettonOp:      TegroAddLiquidityJettonOpCode,
-	StonfiProvideLpV2JettonOp:      StonfiProvideLpV2JettonOpCode,
-	DedustDepositLiquidityJettonOp: DedustDepositLiquidityJettonOpCode,
-	StonfiSwapOkRefJettonOp:        StonfiSwapOkRefJettonOpCode,
-	StonfiSwapV2JettonOp:           StonfiSwapV2JettonOpCode,
-	InvoicePayloadJettonOp:         InvoicePayloadJettonOpCode,
-	TonkeeperRelayerFeeJettonOp:    TonkeeperRelayerFeeJettonOpCode,
-	StonfiSwapOkJettonOp:           StonfiSwapOkJettonOpCode,
-	DedustSwapJettonOp:             DedustSwapJettonOpCode,
-	StonfiProvideLiquidityJettonOp: StonfiProvideLiquidityJettonOpCode,
+	CoffeeStakingLockJettonOp:          CoffeeStakingLockJettonOpCode,
+	TextCommentJettonOp:                TextCommentJettonOpCode,
+	TegroJettonSwapJettonOp:            TegroJettonSwapJettonOpCode,
+	EncryptedTextCommentJettonOp:       EncryptedTextCommentJettonOpCode,
+	StonfiSwapJettonOp:                 StonfiSwapJettonOpCode,
+	TegroAddLiquidityJettonOp:          TegroAddLiquidityJettonOpCode,
+	StonfiProvideLpV2JettonOp:          StonfiProvideLpV2JettonOpCode,
+	DedustDepositLiquidityJettonOp:     DedustDepositLiquidityJettonOpCode,
+	StonfiSwapOkRefJettonOp:            StonfiSwapOkRefJettonOpCode,
+	CoffeeCrossDexResendJettonOp:       CoffeeCrossDexResendJettonOpCode,
+	StonfiSwapV2JettonOp:               StonfiSwapV2JettonOpCode,
+	InvoicePayloadJettonOp:             InvoicePayloadJettonOpCode,
+	TonkeeperRelayerFeeJettonOp:        TonkeeperRelayerFeeJettonOpCode,
+	CoffeeCrossDexFailureJettonOp:      CoffeeCrossDexFailureJettonOpCode,
+	CoffeeSwapJettonOp:                 CoffeeSwapJettonOpCode,
+	CoffeeCreatePoolJettonOp:           CoffeeCreatePoolJettonOpCode,
+	CoffeeDepositLiquidityJettonOp:     CoffeeDepositLiquidityJettonOpCode,
+	CoffeeNotificationJettonOp:         CoffeeNotificationJettonOpCode,
+	StonfiSwapOkJettonOp:               StonfiSwapOkJettonOpCode,
+	DedustSwapJettonOp:                 DedustSwapJettonOpCode,
+	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonOpCode,
+	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonOpCode,
 }
 
 var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell) error{
-	TextCommentJettonOpCode:            decodeTextCommentJettonOpJetton,
-	TegroJettonSwapJettonOpCode:        decodeTegroJettonSwapJettonOpJetton,
-	EncryptedTextCommentJettonOpCode:   decodeEncryptedTextCommentJettonOpJetton,
-	StonfiSwapJettonOpCode:             decodeStonfiSwapJettonOpJetton,
-	TegroAddLiquidityJettonOpCode:      decodeTegroAddLiquidityJettonOpJetton,
-	StonfiProvideLpV2JettonOpCode:      decodeStonfiProvideLpV2JettonOpJetton,
-	DedustDepositLiquidityJettonOpCode: decodeDedustDepositLiquidityJettonOpJetton,
-	StonfiSwapOkRefJettonOpCode:        decodeStonfiSwapOkRefJettonOpJetton,
-	StonfiSwapV2JettonOpCode:           decodeStonfiSwapV2JettonOpJetton,
-	InvoicePayloadJettonOpCode:         decodeInvoicePayloadJettonOpJetton,
-	TonkeeperRelayerFeeJettonOpCode:    decodeTonkeeperRelayerFeeJettonOpJetton,
-	StonfiSwapOkJettonOpCode:           decodeStonfiSwapOkJettonOpJetton,
-	DedustSwapJettonOpCode:             decodeDedustSwapJettonOpJetton,
-	StonfiProvideLiquidityJettonOpCode: decodeStonfiProvideLiquidityJettonOpJetton,
+	CoffeeStakingLockJettonOpCode:          decodeCoffeeStakingLockJettonOpJetton,
+	TextCommentJettonOpCode:                decodeTextCommentJettonOpJetton,
+	TegroJettonSwapJettonOpCode:            decodeTegroJettonSwapJettonOpJetton,
+	EncryptedTextCommentJettonOpCode:       decodeEncryptedTextCommentJettonOpJetton,
+	StonfiSwapJettonOpCode:                 decodeStonfiSwapJettonOpJetton,
+	TegroAddLiquidityJettonOpCode:          decodeTegroAddLiquidityJettonOpJetton,
+	StonfiProvideLpV2JettonOpCode:          decodeStonfiProvideLpV2JettonOpJetton,
+	DedustDepositLiquidityJettonOpCode:     decodeDedustDepositLiquidityJettonOpJetton,
+	StonfiSwapOkRefJettonOpCode:            decodeStonfiSwapOkRefJettonOpJetton,
+	CoffeeCrossDexResendJettonOpCode:       decodeCoffeeCrossDexResendJettonOpJetton,
+	StonfiSwapV2JettonOpCode:               decodeStonfiSwapV2JettonOpJetton,
+	InvoicePayloadJettonOpCode:             decodeInvoicePayloadJettonOpJetton,
+	TonkeeperRelayerFeeJettonOpCode:        decodeTonkeeperRelayerFeeJettonOpJetton,
+	CoffeeCrossDexFailureJettonOpCode:      decodeCoffeeCrossDexFailureJettonOpJetton,
+	CoffeeSwapJettonOpCode:                 decodeCoffeeSwapJettonOpJetton,
+	CoffeeCreatePoolJettonOpCode:           decodeCoffeeCreatePoolJettonOpJetton,
+	CoffeeDepositLiquidityJettonOpCode:     decodeCoffeeDepositLiquidityJettonOpJetton,
+	CoffeeNotificationJettonOpCode:         decodeCoffeeNotificationJettonOpJetton,
+	StonfiSwapOkJettonOpCode:               decodeStonfiSwapOkJettonOpJetton,
+	DedustSwapJettonOpCode:                 decodeDedustSwapJettonOpJetton,
+	CoffeeMevProtectFailedSwapJettonOpCode: decodeCoffeeMevProtectFailedSwapJettonOpJetton,
+	StonfiProvideLiquidityJettonOpCode:     decodeStonfiProvideLiquidityJettonOpJetton,
+}
+
+type CoffeeStakingLockJettonPayload struct {
+	PeriodId uint32
 }
 
 type TextCommentJettonPayload struct {
@@ -297,6 +429,10 @@ type DedustDepositLiquidityJettonPayload struct {
 
 type StonfiSwapOkRefJettonPayload struct{}
 
+type CoffeeCrossDexResendJettonPayload struct {
+	Next tlb.Any `tlb:"^"`
+}
+
 type StonfiSwapV2JettonPayload struct {
 	TokenWallet1    tlb.MsgAddress
 	RefundAddress   tlb.MsgAddress
@@ -321,11 +457,40 @@ type InvoicePayloadJettonPayload struct {
 
 type TonkeeperRelayerFeeJettonPayload struct{}
 
+type CoffeeCrossDexFailureJettonPayload struct {
+	QueryId   uint64
+	Recipient tlb.MsgAddress
+}
+
+type CoffeeSwapJettonPayload struct {
+	Field0 CoffeeSwapStepParams
+	Params CoffeeSwapParams `tlb:"^"`
+}
+
+type CoffeeCreatePoolJettonPayload struct {
+	Params         CoffeePoolParams
+	CreationParams CoffeePoolCreationParams
+}
+
+type CoffeeDepositLiquidityJettonPayload struct {
+	Params CoffeeDepositLiquidityParams
+}
+
+type CoffeeNotificationJettonPayload struct {
+	QueryId uint64
+	Body    tlb.Any `tlb:"^"`
+}
+
 type StonfiSwapOkJettonPayload struct{}
 
 type DedustSwapJettonPayload struct {
 	Step       DedustSwapStep
 	SwapParams DedustSwapParams `tlb:"^"`
+}
+
+type CoffeeMevProtectFailedSwapJettonPayload struct {
+	QueryId   uint64
+	Recipient tlb.MsgAddress
 }
 
 type StonfiProvideLiquidityJettonPayload struct {

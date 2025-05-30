@@ -394,6 +394,284 @@ type UpdateMsg struct {
 	AssetIndex uint16
 }
 
+type CoffeeAMM struct {
+	tlb.SumType
+	ConstantProduct struct{} `tlbSumType:"$000"`
+	CurveFiStable   struct{} `tlbSumType:"$001"`
+}
+
+func (t *CoffeeAMM) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "ConstantProduct":
+		bytes, err := json.Marshal(t.ConstantProduct)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ConstantProduct","ConstantProduct":%v}`, string(bytes))), nil
+	case "CurveFiStable":
+		bytes, err := json.Marshal(t.CurveFiStable)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CurveFiStable","CurveFiStable":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type CoffeeAsset struct {
+	tlb.SumType
+	Native struct{} `tlbSumType:"$00"`
+	Jetton struct {
+		Chain uint8
+		Hash  tlb.Uint256
+	} `tlbSumType:"$01"`
+	Extra struct {
+		Id uint32
+	} `tlbSumType:"$10"`
+}
+
+func (t *CoffeeAsset) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Native":
+		bytes, err := json.Marshal(t.Native)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Native","Native":%v}`, string(bytes))), nil
+	case "Jetton":
+		bytes, err := json.Marshal(t.Jetton)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Jetton","Jetton":%v}`, string(bytes))), nil
+	case "Extra":
+		bytes, err := json.Marshal(t.Extra)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Extra","Extra":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type CoffeeContractUpdate struct {
+	Code *tlb.Any `tlb:"maybe^"`
+	Data *tlb.Any `tlb:"maybe^"`
+}
+
+type CoffeeDepositLiquidityCondition struct {
+	tlb.SumType
+	None       struct{} `tlbSumType:"$00"`
+	LpQuantity struct {
+		MinLpAmount tlb.Grams
+	} `tlbSumType:"$01"`
+	ReservesRatio struct {
+		Denominator  uint16
+		MinNominator uint16
+		MaxNominator uint16
+	} `tlbSumType:"$10"`
+	Complex struct {
+		MinLpAmount  tlb.Grams
+		Denominator  uint16
+		MinNominator uint16
+		MaxNominator uint16
+	} `tlbSumType:"$11"`
+}
+
+func (t *CoffeeDepositLiquidityCondition) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "None":
+		bytes, err := json.Marshal(t.None)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "None","None":%v}`, string(bytes))), nil
+	case "LpQuantity":
+		bytes, err := json.Marshal(t.LpQuantity)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "LpQuantity","LpQuantity":%v}`, string(bytes))), nil
+	case "ReservesRatio":
+		bytes, err := json.Marshal(t.ReservesRatio)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ReservesRatio","ReservesRatio":%v}`, string(bytes))), nil
+	case "Complex":
+		bytes, err := json.Marshal(t.Complex)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Complex","Complex":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type CoffeeDepositLiquidityParams struct {
+	Params     CoffeeDepositLiquidityParamsTrimmed `tlb:"^"`
+	PoolParams CoffeePoolParams                    `tlb:"^"`
+}
+
+type CoffeeDepositLiquidityParamsTrimmed struct {
+	Recipient             tlb.MsgAddress
+	UseRecipientOnFailure tlb.Int1
+	Referral              tlb.MsgAddress
+	Deadline              uint32
+	Condition             CoffeeDepositLiquidityCondition
+	ExtraSettings         *tlb.Any                `tlb:"maybe^"`
+	NotificationData      *CoffeeNotificationData `tlb:"maybe^"`
+}
+
+type CoffeeNotificationData struct {
+	OnSuccess *CoffeeNotificationDataSingle `tlb:"maybe^"`
+	OnFailure *CoffeeNotificationDataSingle `tlb:"maybe^"`
+}
+
+type CoffeeNotificationDataSingle struct {
+	Receiver tlb.MsgAddress
+	FwdGas   tlb.Grams
+	Payload  tlb.Any `tlb:"^"`
+}
+
+type CoffeePoolCreationParams struct {
+	Public  CoffeePublicPoolCreationParams
+	Private CoffeePrivatePoolCreationParams
+}
+
+type CoffeePoolParams struct {
+	First       CoffeeAsset
+	Second      CoffeeAsset
+	Amm         CoffeeAMM
+	AmmSettings *tlb.Any `tlb:"maybe^"`
+}
+
+type CoffeePoolReserves struct {
+	InputReserve  tlb.Grams
+	OutputReserve tlb.Grams
+}
+
+type CoffeePrivatePoolCreationParams struct {
+	IsActive      tlb.Uint1
+	ExtraSettings *tlb.Any `tlb:"maybe^"`
+}
+
+type CoffeePublicPoolCreationParams struct {
+	Recipient             tlb.MsgAddress
+	UseRecipientOnFailure tlb.Int1
+	NotificationData      *tlb.Any `tlb:"maybe^"`
+}
+
+type CoffeeStakingAssetData struct {
+	Wallet tlb.MsgAddress
+	Amount tlb.Grams
+}
+
+type CoffeeStakingForwardData struct {
+	Gas     tlb.Grams
+	Payload tlb.Any `tlb:"^"`
+}
+
+type CoffeeStakingPositionData struct {
+	UserPoints       tlb.Grams
+	AdditionalPoints tlb.Grams
+	StartTimestamp   uint64
+	EndTimestamp     uint64
+	PeriodId         uint32
+}
+
+type CoffeeSwapFees struct {
+	Lp       CoffeeSwapGenericFee
+	Protocol CoffeeSwapGenericFee
+	Referral *CoffeeSwapReferralFee `tlb:"maybe^"`
+}
+
+type CoffeeSwapGenericFee struct {
+	InputAmount  tlb.Grams
+	OutputAmount tlb.Grams
+}
+
+type CoffeeSwapParams struct {
+	Deadline         uint32
+	Recipient        tlb.MsgAddress
+	Referral         tlb.MsgAddress
+	NotificationData *CoffeeNotificationData `tlb:"maybe^"`
+}
+
+type CoffeeSwapReferralFee struct {
+	Referral     tlb.MsgAddress
+	InputAmount  tlb.Grams
+	OutputAmount tlb.Grams
+}
+
+type CoffeeSwapStepInternalParams struct {
+	PreviousAmount    tlb.Grams
+	PreviousAssetHint *CoffeeAsset `tlb:"maybe"`
+	MinOutputAmount   tlb.Grams
+	Next              *CoffeeSwapStepParams `tlb:"maybe^"`
+}
+
+type CoffeeSwapStepParams struct {
+	PoolAddressHash tlb.Uint256
+	MinOutputAmount tlb.Grams
+	Next            *CoffeeSwapStepParams `tlb:"maybe^"`
+}
+
+type CoffeeWithdrawLiquidityCondition struct {
+	tlb.SumType
+	None           struct{} `tlbSumType:"$00"`
+	AssetsQuantity struct {
+		MinFirstAmount  tlb.Grams
+		MinSecondAmount tlb.Grams
+	} `tlbSumType:"$01"`
+	ReservesRatio struct {
+		Denominator  uint16
+		MinNominator uint16
+		MaxNominator uint16
+	} `tlbSumType:"$10"`
+	Complex struct {
+		MinFirstAmount  tlb.Grams
+		MinSecondAmount tlb.Grams
+		Denominator     uint16
+		MinNominator    uint16
+		MaxNominator    uint16
+	} `tlbSumType:"$11"`
+}
+
+func (t *CoffeeWithdrawLiquidityCondition) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "None":
+		bytes, err := json.Marshal(t.None)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "None","None":%v}`, string(bytes))), nil
+	case "AssetsQuantity":
+		bytes, err := json.Marshal(t.AssetsQuantity)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "AssetsQuantity","AssetsQuantity":%v}`, string(bytes))), nil
+	case "ReservesRatio":
+		bytes, err := json.Marshal(t.ReservesRatio)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ReservesRatio","ReservesRatio":%v}`, string(bytes))), nil
+	case "Complex":
+		bytes, err := json.Marshal(t.Complex)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Complex","Complex":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type NftRoyaltyParams struct {
 	Numerator   uint16
 	Denominator uint16

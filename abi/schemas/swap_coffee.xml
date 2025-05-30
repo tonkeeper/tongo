@@ -1,0 +1,684 @@
+<abi>
+    <types>
+        staking_asset_data#_ wallet:MsgAddressInt amount:Coins = CoffeeStakingAssetData;
+        staking_position_data#_ user_points:Coins additional_points:Coins start_timestamp:uint64 end_timestamp:uint64 period_id:uint32 = CoffeeStakingPositionData;
+        staking_forward_data#_ gas:Coins payload:^Cell = CoffeeStakingForwardData;
+
+        constant_product$000 = CoffeeAMM;
+        curve_fi_stable$001 = CoffeeAMM;
+
+        none$00 = CoffeeDepositLiquidityCondition;
+        lp_quantity$01 min_lp_amount:Coins = CoffeeDepositLiquidityCondition;
+        reserves_ratio$10 denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeDepositLiquidityCondition;
+        complex$11 min_lp_amount:Coins denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeDepositLiquidityCondition;
+
+        none$00 = CoffeeWithdrawLiquidityCondition;
+        assets_quantity$01 min_first_amount:Coins min_second_amount:Coins = CoffeeWithdrawLiquidityCondition;
+        reserves_ratio$10 denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeWithdrawLiquidityCondition;
+        complex$11 min_first_amount:Coins min_second_amount:Coins denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeWithdrawLiquidityCondition;
+
+        native$00 = CoffeeAsset;
+        jetton$01 chain:uint8 hash:uint256 = CoffeeAsset;
+        extra$10 id:uint32 = CoffeeAsset;
+
+        pool_params#_ first:CoffeeAsset second:CoffeeAsset amm:CoffeeAMM amm_settings:(Maybe ^Cell) = CoffeePoolParams;
+        public_pool_creation_params#_ recipient:MsgAddressInt use_recipient_on_failure:int1 notification_data:(Maybe ^Cell) = CoffeePublicPoolCreationParams;
+        private_pool_creation_params#_ is_active:uint1 extra_settings:(Maybe ^Cell) = CoffeePrivatePoolCreationParams;
+        pool_creation_params#_ public:CoffeePublicPoolCreationParams private:CoffeePrivatePoolCreationParams = CoffeePoolCreationParams;
+        notification_data_single#_ receiver:MsgAddressInt fwd_gas:Coins payload:^Cell = CoffeeNotificationDataSingle;
+        notification_data#_ on_success:(Maybe ^CoffeeNotificationDataSingle) on_failure:(Maybe ^CoffeeNotificationDataSingle) = CoffeeNotificationData;
+
+        <!--        bit selection is not supported -->
+        <!--        pool_update_params#_ flags:(## 2) protocol_fee:flags.0?uint16 lp_fee:flags.0?uint16 is_active:flags.1?uint1 = CoffeePoolUpdateParams;-->
+
+        swap_params#_ deadline:uint32 recipient:MsgAddressInt referral:MsgAddressInt notification_data:(Maybe ^CoffeeNotificationData) = CoffeeSwapParams;
+        swap_step_params#_ pool_address_hash:uint256 min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepParams;
+        swap_step_internal_params#_ previous_amount:Coins previous_asset_hint:(Maybe CoffeeAsset) min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepInternalParams;
+        swap_generic_fee#_ input_amount:Coins output_amount:Coins = CoffeeSwapGenericFee;
+        swap_referral_fee#_ referral:MsgAddressInt input_amount:Coins output_amount:Coins = CoffeeSwapReferralFee;
+        swap_fees#_ lp:CoffeeSwapGenericFee protocol:CoffeeSwapGenericFee referral:(Maybe ^CoffeeSwapReferralFee) = CoffeeSwapFees;
+        pool_reserves#_ input_reserve:Coins output_reserve:Coins = CoffeePoolReserves;
+        deposit_liquidity_params_trimmed#_ recipient:MsgAddressInt use_recipient_on_failure:int1 referral:MsgAddressInt deadline:uint32 condition:CoffeeDepositLiquidityCondition extra_settings:(Maybe ^Cell) notification_data:(Maybe ^CoffeeNotificationData) = CoffeeDepositLiquidityParamsTrimmed;
+        deposit_liquidity_params#_ params:^CoffeeDepositLiquidityParamsTrimmed pool_params:^CoffeePoolParams = CoffeeDepositLiquidityParams;
+        contract_update#_ code:(Maybe ^Cell) data:(Maybe ^Cell) = CoffeeContractUpdate;
+    </types>
+
+    <interface name="coffee_mev_protector">
+        <code_hash>58fbc2dba2684d38b80bfce3dc5a9ffce00af9b464c7b4dc21cf57e3aae11f1c</code_hash>
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="coffee_mev_protect_hold_funds"/>
+            <internal name="coffee_mev_protect_failed_swap"/>
+        </msg_in>
+        <error code="100">Empty tx to resend</error>
+        <error code="101">Dedust payload is empty</error>
+        <error code="200">Invalid jetton forward payload</error>
+        <error code="201">Invalid native payload</error>
+        <error code="300">Not an admin</error>
+    </interface>
+    <interface name="coffee_cross_dex">
+        <code_hash>fea9c6a1ef5eab2c5ca94d6bef1e33994c5786abeb5264760e150da33bfb3677</code_hash>
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="coffee_cross_dex_resend"/>
+            <internal name="coffee_cross_dex_failure"/>
+        </msg_in>
+        <error code="100">Invalid payload to resent</error>
+        <error code="101">Dedust payload is empty</error>
+        <error code="102">ProxyTON payload is empty</error>
+        <error code="200">Not an admin</error>
+    </interface>
+    <interface name="coffee_staking_master">
+        <get_method name="get_stored_data" version="coffee_staking_master"/>
+        <get_method name="get_collection_data"/>
+        <get_method name="get_nft_address_by_index"/>
+        <get_method name="get_nft_content"/>
+        <msg_in>
+            <internal name="coffee_staking_init"/>
+            <internal name="coffee_staking_deposit"/>
+            <internal name="coffee_staking_update_rewards"/>
+            <internal name="coffee_staking_claim_rewards"/>
+        </msg_in>
+        <msg_out>
+            <internal name="coffee_staking_init"/>
+            <ext_out name="coffee_staking_rewards_updated"/>
+            <ext_out name="coffee_staking_rewards_claimed"/>
+        </msg_out>
+        <error code="81">Unknown jetton wallet</error>
+        <error code="99">Not initialized</error>
+        <error code="100">Already initialized</error>
+        <error code="110">Mismatching duration</error>
+        <error code="111">Zero reward rate</error>
+        <error code="200">Token not distributed</error>
+    </interface>
+    <interface name="coffee_staking_vault">
+        <get_method name="get_stored_data" version="coffee_staking_vault"/>
+        <get_method name="get_master_address" version="coffee_staking_vault"/>
+        <msg_in>
+            <internal name="coffee_staking_init"/>
+            <internal name="jetton_notify"/>
+        </msg_in>
+        <error code="80">Invalid amount</error>
+        <error code="82">Invalid dictionary value</error>
+        <error code="99">Not initialized</error>
+        <error code="100">Already initialized</error>
+        <error code="403">Unauthorized access</error>
+        <error code="503">Wrong period</error>
+        <error code="504">Unexpected forward opcode</error>
+    </interface>
+    <interface name="coffee_staking_item">
+        <get_method name="get_stored_data" version="coffee_staking_item"/>
+        <get_method name="get_nft_data"/>
+        <msg_in>
+            <internal name="coffee_staking_init"/>
+        </msg_in>
+        <error code="99">Not initialized</error>
+        <error code="100">Already initialized</error>
+        <error code="500">Too early to unlock</error>
+        <error code="501">Too late to extend</error>
+        <error code="502">Zero points</error>
+    </interface>
+    <interface name="coffee_factory">
+
+        <!--        collision-->
+        <!--        <get_method name="get_vault_address" version="coffee"/>-->
+        <!--        <get_method name="get_pool_address" version="coffee"/>-->
+
+        <get_method name="get_pool_address_no_settings" version="coffee"/>
+        <get_method name="get_pool_creator_address" version="coffee"/>
+        <get_method name="get_pool_creator_address_no_settings" version="coffee"/>
+        <get_method name="get_liquidity_depository_address" version="coffee"/>
+        <get_method name="get_liquidity_depository_address_no_settings" version="coffee"/>
+        <get_method name="get_admin_address" version="coffee"/>
+        <get_method name="get_code" version="coffee"/>
+        <msg_in>
+            <internal name="coffee_create_pool_creator_request"/>
+            <internal name="coffee_create_liquidity_depository_request"/>
+            <internal name="coffee_create_pool_request"/>
+            <internal name="coffee_create_vault"/>
+            <internal name="coffee_update_admin"/>
+            <internal name="coffee_update_withdrawer"/>
+            <internal name="coffee_update_code_cells"/>
+            <internal name="coffee_update_contract"/>
+            <!--            <internal name="coffee_update_pool"/>-->
+            <internal name="coffee_activate_vault"/>
+            <internal name="coffee_withdraw"/>
+        </msg_in>
+        <msg_out>
+            <internal name="coffee_deploy"/>
+            <internal name="coffee_update_contract_internal"/>
+            <!--            <internal name="coffee_update_pool_internal"/>-->
+            <internal name="coffee_activate_vault_internal"/>
+            <internal name="coffee_withdraw_internal"/>
+        </msg_out>
+        <error code="250">Unexpected</error>
+        <error code="252">Wrong sender</error>
+        <error code="254">Not an admin</error>
+        <error code="255">Wrong chain</error>
+        <error code="256">Wrong assets</error>
+        <error code="257">Same assets</error>
+        <error code="258">Wrong signature</error>
+        <error code="267">Invalid asset type</error>
+    </interface>
+    <interface name="coffee_vault">
+        <get_method name="get_asset" version="coffee"/>
+        <get_method name="is_active" version="coffee"/>
+        <error code="250">Unexpected</error>
+        <error code="252">Wrong sender</error>
+        <error code="253">Not a factory</error>
+        <error code="255">Wrong chain</error>
+        <error code="256">Wrong assets</error>
+        <error code="257">Same assets</error>
+        <error code="258">Wrong signature</error>
+        <error code="259">Invalid balance</error>
+        <error code="267">Invalid asset type</error>
+    </interface>
+    <interface name="coffee_vault_native" inherits="coffee_vault">
+        <msg_in>
+            <internal name="coffee_payout_internal"/>
+            <internal name="coffee_swap"/>
+            <internal name="coffee_deposit_liquidity"/>
+            <internal name="coffee_create_pool"/>
+            <internal name="coffee_update_contract_internal"/>
+        </msg_in>
+        <msg_out>
+            <internal name="coffee_notification"/>
+            <internal name="coffee_payout"/>
+            <internal name="coffee_swap_internal"/>
+            <internal name="coffee_create_liquidity_depository_request"/>
+            <internal name="coffee_create_pool_creator_request"/>
+        </msg_out>
+    </interface>
+    <interface name="coffee_vault_jetton" inherits="coffee_vault">
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_provide_wallet"/>
+            <internal name="coffee_payout_internal"/>
+            <internal name="coffee_create_vault_internal"/>
+            <internal name="coffee_activate_vault_internal"/>
+            <internal name="coffee_update_contract_internal"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_transfer"/>
+            <internal name="jetton_take_wallet"/>
+            <internal name="coffee_notification"/>
+            <internal name="coffee_swap_internal"/>
+            <internal name="coffee_create_liquidity_depository_request"/>
+            <internal name="coffee_create_pool_creator_request"/>
+        </msg_out>
+        <error code="260">Invalid jetton master</error>
+        <error code="272">Already active</error>
+        <error code="273">Not active</error>
+    </interface>
+    <interface name="coffee_vault_extra" inherits="coffee_vault">
+        <msg_in>
+            <internal name="coffee_payout_internal"/>
+            <internal name="coffee_swap_extra"/>
+            <internal name="coffee_deposit_liquidity_extra"/>
+            <internal name="coffee_create_pool_extra"/>
+            <internal name="coffee_update_contract_internal"/>
+        </msg_in>
+        <msg_out>
+            <internal name="coffee_notification"/>
+            <internal name="coffee_payout"/>
+            <internal name="coffee_swap_internal"/>
+            <internal name="coffee_create_liquidity_depository_request"/>
+            <internal name="coffee_create_pool_creator_request"/>
+        </msg_out>
+    </interface>
+    <interface name="coffee_pool">
+        <get_method name="get_jetton_data"/>
+        <get_method name="get_wallet_address"/>
+        <get_method name="get_pool_data" version="coffee"/>
+        <get_method name="estimate_swap_amount" version="coffee"/>
+        <get_method name="estimate_liquidity_withdraw_amount" version="coffee"/>
+        <get_method name="estimate_liquidity_deposit_amount" version="coffee"/>
+        <msg_in>
+            <internal name="jetton_burn_notification"/>
+            <internal name="jetton_provide_wallet"/>
+            <internal name="coffee_swap_internal"/>
+            <internal name="coffee_deposit_liquidity_internal"/>
+            <internal name="coffee_withdraw_internal"/>
+            <!--            <internal name="coffee_update_pool_internal"/>-->
+            <internal name="coffee_update_contract_internal"/>
+            <internal name="coffee_create_pool_internal"/>
+            <internal name="coffee_deploy"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_internal_transfer"/>
+            <internal name="jetton_take_wallet"/>
+            <internal name="excess"/>
+            <internal name="coffee_payout_internal"/>
+            <internal name="coffee_swap_internal"/>
+            <internal name="coffee_notification"/>
+            <ext_out name="coffee_swap_succeeded"/>
+            <ext_out name="coffee_swap_failed"/>
+            <ext_out name="coffee_deposit_liquidity_succeeded"/>
+            <ext_out name="coffee_deposit_liquidity_failed"/>
+            <ext_out name="coffee_withdraw_liquidity_succeeded"/>
+        </msg_out>
+        <error code="250">Unexpected</error>
+        <error code="252">Wrong sender</error>
+        <error code="255">Wrong chain</error>
+        <error code="256">Wrong assets</error>
+        <error code="258">Wrong signature</error>
+        <error code="262">AMM failed</error>
+        <error code="263">Invalid AMM settings</error>
+        <error code="264">Invalid liquidity</error>
+        <error code="265">Invalid fee</error>
+        <error code="266">Invalid condition</error>
+        <error code="267">Invalid asset type</error>
+        <error code="268">Deadline exceeded</error>
+        <error code="269">Slippage tolerated</error>
+        <error code="270">Pool already exists</error>
+        <error code="271">Reserves ratio failed</error>
+        <error code="272">Already active</error>
+        <error code="273">Not active</error>
+    </interface>
+    <interface name="jetton_wallet_coffee_lp" inherits="jetton_wallet">
+        <code_hash>d7c38fa994a8282657209f93ebc5dfe908a5f06d2e41f0c085e917bc4f54a2b3</code_hash>
+    </interface>
+
+    <get_method name="get_stored_data">
+        <output version="coffee_staking_master" fixed_length="true">
+            <int name="initialized">bool</int>
+            <slice name="owner">msgaddress</slice>
+            <slice name="distributor">msgaddress</slice>
+            <slice name="vault">msgaddress</slice>
+            <cell name="state">any</cell>
+            <cell name="rewards">any</cell>
+            <cell name="jettons">any</cell>
+            <cell name="periods">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_stored_data">
+        <output version="coffee_staking_vault" fixed_length="true">
+            <int name="initialized">bool</int>
+            <slice name="owner">msgaddress</slice>
+            <cell name="jettons">any</cell>
+            <cell name="periods">any</cell>
+            <cell name="master_code">any</cell>
+            <cell name="item_code">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_stored_data">
+        <output version="coffee_staking_item" fixed_length="true">
+            <int name="initialized">bool</int>
+            <int name="nft_id">uint64</int>
+            <slice name="master">msgaddress</slice>
+            <slice name="owner">msgaddress</slice>
+            <cell name="asset">any</cell>
+            <cell name="info">any</cell>
+            <cell name="periods">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_master_address">
+        <output version="coffee_staking_vault" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <!--    collision-->
+    <!--    <get_method name="get_vault_address">-->
+    <!--        <input>-->
+    <!--            <slice name="asset">CoffeeAsset</slice>-->
+    <!--        </input>-->
+    <!--        <output version="coffee" fixed_length="true">-->
+    <!--            <slice name="address">msgaddress</slice>-->
+    <!--            <int name="hash">int257</int>-->
+    <!--        </output>-->
+    <!--    </get_method>-->
+    <!--    <get_method name="get_pool_address">-->
+    <!--        <input>-->
+    <!--            <slice name="asset1">CoffeeAsset</slice>-->
+    <!--            <slice name="asset2">CoffeeAsset</slice>-->
+    <!--            <int name="amm">CoffeeAMM</int>-->
+    <!--            <int name="amm">int257</int>-->
+    <!--            <cell name="amm_settings">any</cell>-->
+    <!--        </input>-->
+    <!--        <output version="coffee" fixed_length="true">-->
+    <!--            <slice name="address">msgaddress</slice>-->
+    <!--            <int name="hash">int257</int>-->
+    <!--        </output>-->
+    <!--    </get_method>-->
+
+    <get_method name="get_pool_address_no_settings">
+        <input>
+            <slice name="asset1">CoffeeAsset</slice>
+            <slice name="asset2">CoffeeAsset</slice>
+            <!--            <int name="amm">CoffeeAMM</int>-->
+            <int name="amm">int257</int>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+            <int name="hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_pool_creator_address">
+        <input>
+            <slice name="owner">msgaddress</slice>
+            <slice name="asset1">CoffeeAsset</slice>
+            <slice name="asset2">CoffeeAsset</slice>
+            <!--            <int name="amm">CoffeeAMM</int>-->
+            <int name="amm">int257</int>
+            <cell name="amm_settings">any</cell>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+            <int name="hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_pool_creator_address_no_settings">
+        <input>
+            <slice name="owner">msgaddress</slice>
+            <slice name="asset1">CoffeeAsset</slice>
+            <slice name="asset2">CoffeeAsset</slice>
+            <!--            <int name="amm">CoffeeAMM</int>-->
+            <int name="amm">int257</int>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+            <int name="hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_liquidity_depository_address">
+        <input>
+            <slice name="owner">msgaddress</slice>
+            <slice name="asset1">CoffeeAsset</slice>
+            <slice name="asset2">CoffeeAsset</slice>
+            <!--            <int name="amm">CoffeeAMM</int>-->
+            <int name="amm">int257</int>
+            <cell name="amm_settings">any</cell>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+            <int name="hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_liquidity_depository_address_no_settings">
+        <input>
+            <slice name="owner">msgaddress</slice>
+            <slice name="asset1">CoffeeAsset</slice>
+            <slice name="asset2">CoffeeAsset</slice>
+            <!--            <int name="amm">CoffeeAMM</int>-->
+            <int name="amm">int257</int>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+            <int name="hash">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_admin_address">
+        <output version="coffee" fixed_length="true">
+            <slice name="address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_code">
+        <output version="coffee" fixed_length="true">
+            <cell name="first">any</cell>
+            <cell name="second">any</cell>
+        </output>
+    </get_method>
+    <get_method name="get_asset">
+        <output version="coffee" fixed_length="true">
+            <slice name="asset">CoffeeAsset</slice>
+        </output>
+    </get_method>
+    <get_method name="is_active">
+        <output version="coffee" fixed_length="true">
+            <int name="active">bool</int>
+        </output>
+    </get_method>
+    <get_method name="get_pool_data">
+        <output version="coffee" fixed_length="true">
+            <int name="pool_version">int257</int>
+            <slice name="asset1">CoffeeAsset</slice>
+            <slice name="asset2">CoffeeAsset</slice>
+            <!--            <int name="amm">CoffeeAMM</int>-->
+            <int name="amm">int257</int>
+            <cell name="amm_settings">any</cell>
+            <int name="active">bool</int>
+            <int name="reserve1">int257</int>
+            <int name="reserve2">int257</int>
+            <int name="total_supply">int257</int>
+            <int name="protocol_fee">int257</int>
+            <int name="lp_fee">int257</int>
+        </output>
+    </get_method>
+    <get_method name="estimate_swap_amount">
+        <input>
+            <slice name="asset">CoffeeAsset</slice>
+            <int name="amount">int257</int>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <int name="input_amount">int257</int>
+            <int name="output_amount">int257</int>
+        </output>
+    </get_method>
+    <get_method name="estimate_liquidity_withdraw_amount">
+        <input>
+            <int name="lp_amount">int257</int>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <int name="amount1">int257</int>
+            <int name="amount2">int257</int>
+        </output>
+    </get_method>
+    <get_method name="estimate_liquidity_deposit_amount">
+        <input>
+            <int name="amount1">int257</int>
+            <int name="amount2">int257</int>
+        </input>
+        <output version="coffee" fixed_length="true">
+            <int name="amount1_used">int257</int>
+            <int name="amount2_used">int257</int>
+            <int name="lp_amount">int257</int>
+            <int name="lp_to_lock">int257</int>
+        </output>
+    </get_method>
+
+    <!-- MEV-PROTECTION -->
+    <internal name="coffee_mev_protect_hold_funds">
+        mev_protect_hold_funds#6bc79e7e query_id:uint64 = InMsgBody;
+    </internal>
+    <internal name="coffee_mev_protect_failed_swap">
+        mev_protect_failed_swap#ee51ce51 query_id:uint64 recipient:MsgAddressInt = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_mev_protect_failed_swap">
+        mev_protect_failed_swap#ee51ce51 query_id:uint64 recipient:MsgAddressInt = ForwardPayload;
+    </jetton_payload>
+
+    <!-- CROSS-DEX -->
+    <internal name="coffee_cross_dex_resend">
+        cross_dex_resend_native#200f9086 query_id:uint64 next_recipient:MsgAddressInt next:^Cell total_gas:Coins
+        next_gas:Coins = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_cross_dex_resend">
+        cross_dex_resend_jetton#4ee9b106 next:^Cell = ForwardPayload;
+    </jetton_payload>
+    <internal name="coffee_cross_dex_failure">
+        cross_dex_failure#b902e61a query_id:uint64 recipient:MsgAddressInt = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_cross_dex_failure">
+        cross_dex_failure#b902e61a query_id:uint64 recipient:MsgAddressInt = ForwardPayload;
+    </jetton_payload>
+
+    <!-- STAKING -->
+    <jetton_payload name="coffee_staking_lock">
+        staking_lock#c0ffede period_id:uint32 = ForwardPayload;
+    </jetton_payload>
+    <internal name="coffee_staking_init">
+        staking_initialize#be5a7595 query_id:uint64 owner:MsgAddressInt jetton_data:^CoffeeStakingAssetData
+        position_data:^CoffeeStakingPositionData periods:^Cell = InMsgBody;
+    </internal>
+    <internal name="coffee_staking_deposit">
+        staking_deposit#f9471134 query_id:uint64 sender:MsgAddressInt jetton_amount:Coins from_user:MsgAddressInt
+        period_id:uint32 = InMsgBody;
+    </internal>
+    <internal name="coffee_staking_update_rewards">
+        staking_update_rewards#a9577f0 query_id:uint64 jetton_wallet:MsgAddressInt jetton_amount:Coins
+        duration:uint64 = InMsgBody;
+    </internal>
+    <ext_out name="coffee_staking_rewards_updated">
+        staking_rewards_updated#a9577f0 query_id:uint64 jetton_wallet:MsgAddressInt duration:uint64 finish_at:uint64
+        rewards_rate:Coins = ExtOutMsgBody;
+    </ext_out>
+    <internal name="coffee_staking_claim_rewards">
+        staking_claim_rewards#b30c7310 query_id:uint64 jetton_wallet:MsgAddressInt jetton_amount:Coins
+        receiver:MsgAddressInt payload:(Maybe ^CoffeeStakingForwardData) = InMsgBody;
+    </internal>
+    <ext_out name="coffee_staking_rewards_claimed">
+        staking_rewards_claimed#b30c7310 query_id:uint64 jetton_wallet:MsgAddressInt amount:Coins
+        receiver:MsgAddressInt = ExtOutMsgBody;
+    </ext_out>
+
+    <!-- DEX -->
+    <internal name="coffee_swap">
+        swap_native#c0ffee00 query_id:uint64 amount:Coins _:CoffeeSwapStepParams params:^CoffeeSwapParams = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_swap">
+        swap_jetton#c0ffee10 _:CoffeeSwapStepParams params:^CoffeeSwapParams = ForwardPayload;
+    </jetton_payload>
+    <internal name="coffee_swap_extra">
+        swap_extra#c0ffee01 query_id:uint64 _:CoffeeSwapStepParams params:^CoffeeSwapParams = InMsgBody;
+    </internal>
+    <internal name="coffee_swap_internal">
+        swap_internal#c0ffee20 query_id:uint64 _:CoffeeSwapStepInternalParams params:^CoffeeSwapParams
+        proof:^Cell = InMsgBody;
+    </internal>
+    <ext_out name="coffee_swap_succeeded">
+        swap_successful_event#c0ffee30 query_id:uint64 input:CoffeeAsset input_amount:Coins output_amount:Coins
+        reserves:CoffeePoolReserves protocol_fee:Coins = ExtOutMsgBody;
+    </ext_out>
+    <ext_out name="coffee_swap_failed">
+        swap_failed_event#c0ffee31 query_id:uint64 input:CoffeeAsset input_amount:Coins
+        reserves:(Maybe ^CoffeePoolReserves) = ExtOutMsgBody;
+    </ext_out>
+    <internal name="coffee_payout">
+        payout#c0ffee32 query_id:uint64 = InMsgBody;
+    </internal>
+    <internal name="coffee_payout_internal">
+        payout_internal#c0ffee21 query_id:uint64 recipient:MsgAddressInt amount:Coins
+        notification_data:(Maybe ^CoffeeNotificationDataSingle) proof:(Maybe ^Cell) = InMsgBody;
+    </internal>
+    <internal name="coffee_deploy">
+        deploy#c0ffee22 code:^Cell data:^Cell action:(Maybe ^Cell) = InMsgBody;
+    </internal>
+    <internal name="coffee_create_pool">
+        create_pool_native#c0ffee02 query_id:uint64 amount:Coins params:CoffeePoolParams
+        creation_params:CoffeePoolCreationParams = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_create_pool">
+        create_pool_jetton#c0ffee11 params:CoffeePoolParams creation_params:CoffeePoolCreationParams = ForwardPayload;
+    </jetton_payload>
+    <internal name="coffee_create_pool_extra">
+        create_pool_extra#c0ffee03 query_id:uint64 params:CoffeePoolParams
+        creation_params:CoffeePoolCreationParams = InMsgBody;
+    </internal>
+    <internal name="coffee_create_pool_creator_request">
+        create_pool_creator_request#c0ffee23 query_id:uint64 amount:Coins params:CoffeePoolParams
+        creation_params:^CoffeePoolCreationParams sender:MsgAddressInt proof:^Cell = InMsgBody;
+    </internal>
+    <internal name="coffee_create_pool_creator_internal">
+        create_pool_creator_internal#c0ffee24 query_id:uint64 asset:CoffeeAsset amount:Coins
+        creation_params:^CoffeePoolCreationParams = InMsgBody;
+    </internal>
+    <internal name="coffee_create_pool_request">
+        create_pool_request#c0ffee25 query_id:uint64 amount1:Coins amount2:Coins tx_initiator:MsgAddressInt
+        creation_params:^CoffeePoolCreationParams proof:^Cell = InMsgBody;
+    </internal>
+    <internal name="coffee_create_pool_internal">
+        create_pool_internal#c0ffee26 query_id:uint64 amount1:Coins amount2:Coins tx_initiator:MsgAddressInt
+        recipient:MsgAddressInt use_recipient_on_failure:int1 extra_settings:(Maybe ^Cell)
+        notification_data:(Maybe ^CoffeeNotificationData) = InMsgBody;
+    </internal>
+    <internal name="coffee_deposit_liquidity">
+        deposit_liquidity_native#c0ffee04 query_id:uint64 input_amount:Coins
+        params:CoffeeDepositLiquidityParams = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_deposit_liquidity">
+        deposit_liquidity_jetton#c0ffee12 params:CoffeeDepositLiquidityParams = ForwardPayload;
+    </jetton_payload>
+    <internal name="coffee_deposit_liquidity_extra">
+        deposit_liquidity_extra#c0ffee05 query_id:uint64 params:CoffeeDepositLiquidityParams = InMsgBody;
+    </internal>
+    <internal name="coffee_create_liquidity_depository_request">
+        create_liquidity_depository_request#c0ffee27 query_id:uint64 amount:Coins params:CoffeeDepositLiquidityParams
+        sender:MsgAddressInt proof:^Cell = InMsgBody;
+    </internal>
+    <internal name="coffee_create_liquidity_depository_internal">
+        create_liquidity_depository_internal#c0ffee28 query_id:uint64 asset:CoffeeAsset amount:Coins
+        params:^CoffeeDepositLiquidityParamsTrimmed = InMsgBody;
+    </internal>
+    <internal name="coffee_deposit_liquidity_internal">
+        deposit_liquidity_internal#c0ffee29 query_id:uint64 amount1:Coins amount2:Coins tx_initiator:MsgAddressInt
+        params:^CoffeeDepositLiquidityParamsTrimmed proof:^Cell = InMsgBody;
+    </internal>
+    <ext_out name="coffee_deposit_liquidity_succeeded">
+        deposit_liquidity_successful_event#c0ffee33 query_id:uint64 amount1:Coins amount2:Coins lp_amount:Coins
+        total_supply:CoffeePoolReserves reserves:CoffeePoolReserves = ExtOutMsgBody;
+    </ext_out>
+    <ext_out name="coffee_deposit_liquidity_failed">
+        deposit_liquidity_failed_event#c0ffee34 query_id:uint64 amount1:Coins amount2:Coins min_lp_amount:Coins
+        total_supply:Coins reserves:CoffeePoolReserves = ExtOutMsgBody;
+    </ext_out>
+    <ext_out name="coffee_withdraw_liquidity_succeeded">
+        liquidity_withdrawal_event#c0ffee35 query_id:uint64 amount1:Coins amount2:Coins lp_amount:Coins
+        total_supply:CoffeePoolReserves reserves:CoffeePoolReserves = ExtOutMsgBody;
+    </ext_out>
+    <internal name="coffee_create_vault">
+        create_vault#c0ffee06 query_id:uint64 asset:CoffeeAsset = InMsgBody;
+    </internal>
+    <internal name="coffee_create_vault_internal">
+        create_vault_internal#c0ffee2a query_id:uint64 = InMsgBody;
+    </internal>
+    <internal name="coffee_withdraw_deposit">
+        withdraw_deposit#c0ffee07 query_id:uint64 = InMsgBody;
+    </internal>
+    <internal name="coffee_notification">
+        notification#c0ffee36 query_id:uint64 body:^Cell = InMsgBody;
+    </internal>
+    <jetton_payload name="coffee_notification">
+        notification#c0ffee36 query_id:uint64 body:^Cell = ForwardPayload;
+    </jetton_payload>
+    <internal name="coffee_update_admin">
+        update_admin#c0ffee40 query_id:uint64 address:MsgAddressInt = InMsgBody;
+    </internal>
+
+    <!--    unsupported CoffeePoolUpdateParams -->
+    <!--    <internal name="coffee_update_pool">-->
+    <!--        update_pool#c0ffee41 query_id:uint64 pool_params:CoffeePoolParams params:^CoffeePoolUpdateParams = InMsgBody;-->
+    <!--    </internal>-->
+    <!--    <internal name="coffee_update_pool_internal">-->
+    <!--        update_pool_internal#c0ffee2b query_id:uint64 excesses_receiver:MsgAddressInt-->
+    <!--        params:^CoffeePoolUpdateParams = InMsgBody;-->
+    <!--    </internal>-->
+
+    <internal name="coffee_activate_vault">
+        activate_vault#c0ffee42 query_id:uint64 asset:CoffeeAsset wallet:MsgAddressInt = InMsgBody;
+    </internal>
+    <internal name="coffee_activate_vault_internal">
+        activate_vault_internal#c0ffee2c query_id:uint64 wallet:MsgAddressInt = InMsgBody;
+    </internal>
+    <internal name="coffee_withdraw">
+        withdraw#c0ffee43 query_id:uint64 pool_address:MsgAddressInt asset:CoffeeAsset amount:Coins
+        receiver:MsgAddressInt = InMsgBody;
+    </internal>
+    <internal name="coffee_withdraw_internal">
+        withdraw_internal#c0ffee2d query_id:uint64 asset:CoffeeAsset amount:Coins receiver:MsgAddressInt = InMsgBody;
+    </internal>
+    <internal name="coffee_update_code_cells">
+        update_code_cells#c0ffee44 query_id:uint64 first:^Cell second:^Cell = InMsgBody;
+    </internal>
+    <internal name="coffee_update_contract">
+        update_contract#c0ffee45 query_id:uint64 contract_address:MsgAddressInt _:CoffeeContractUpdate = InMsgBody;
+    </internal>
+    <internal name="coffee_update_contract_internal">
+        update_contract_internal#c0ffee2e query_id:uint64 excesses_receiver:MsgAddressInt
+        _:CoffeeContractUpdate = InMsgBody;
+    </internal>
+    <internal name="coffee_update_withdrawer">
+        update_withdrawer#c0ffee46 query_id:uint64 address:MsgAddressInt = InMsgBody;
+    </internal>
+
+</abi>

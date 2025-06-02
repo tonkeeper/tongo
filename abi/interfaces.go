@@ -1622,7 +1622,6 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case CoffeePool:
 		return []msgDecoderFunc{
 			decodeFuncJettonBurnNotificationMsgBody,
-			decodeFuncJettonProvideWalletMsgBody,
 			decodeFuncCoffeeSwapInternalMsgBody,
 			decodeFuncCoffeeDepositLiquidityInternalMsgBody,
 			decodeFuncCoffeeWithdrawInternalMsgBody,
@@ -1657,7 +1656,6 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case CoffeeVaultJetton:
 		return []msgDecoderFunc{
 			decodeFuncJettonNotifyMsgBody,
-			decodeFuncJettonProvideWalletMsgBody,
 			decodeFuncCoffeePayoutInternalMsgBody,
 			decodeFuncCoffeeCreateVaultInternalMsgBody,
 			decodeFuncCoffeeActivateVaultInternalMsgBody,

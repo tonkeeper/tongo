@@ -1,7 +1,8 @@
 <abi>
     <types>
         staking_asset_data#_ wallet:MsgAddressInt amount:Coins = CoffeeStakingAssetData;
-        staking_position_data#_ user_points:Coins additional_points:Coins start_timestamp:uint64 end_timestamp:uint64 period_id:uint32 = CoffeeStakingPositionData;
+        staking_position_data#_ user_points:Coins additional_points:Coins start_timestamp:uint64 end_timestamp:uint64
+        period_id:uint32 = CoffeeStakingPositionData;
         staking_forward_data#_ gas:Coins payload:^Cell = CoffeeStakingForwardData;
 
         constant_product$000 = CoffeeAMM;
@@ -9,37 +10,51 @@
 
         none$00 = CoffeeDepositLiquidityCondition;
         lp_quantity$01 min_lp_amount:Coins = CoffeeDepositLiquidityCondition;
-        reserves_ratio$10 denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeDepositLiquidityCondition;
-        complex$11 min_lp_amount:Coins denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeDepositLiquidityCondition;
+        reserves_ratio$10 denominator:uint16 min_nominator:uint16 max_nominator:uint16 =
+        CoffeeDepositLiquidityCondition;
+        complex$11 min_lp_amount:Coins denominator:uint16 min_nominator:uint16 max_nominator:uint16 =
+        CoffeeDepositLiquidityCondition;
 
         none$00 = CoffeeWithdrawLiquidityCondition;
         assets_quantity$01 min_first_amount:Coins min_second_amount:Coins = CoffeeWithdrawLiquidityCondition;
-        reserves_ratio$10 denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeWithdrawLiquidityCondition;
-        complex$11 min_first_amount:Coins min_second_amount:Coins denominator:uint16 min_nominator:uint16 max_nominator:uint16 = CoffeeWithdrawLiquidityCondition;
+        reserves_ratio$10 denominator:uint16 min_nominator:uint16 max_nominator:uint16 =
+        CoffeeWithdrawLiquidityCondition;
+        complex$11 min_first_amount:Coins min_second_amount:Coins denominator:uint16 min_nominator:uint16
+        max_nominator:uint16 = CoffeeWithdrawLiquidityCondition;
 
         native$00 = CoffeeAsset;
         jetton$01 chain:uint8 hash:uint256 = CoffeeAsset;
         extra$10 id:uint32 = CoffeeAsset;
 
         pool_params#_ first:CoffeeAsset second:CoffeeAsset amm:CoffeeAMM amm_settings:(Maybe ^Cell) = CoffeePoolParams;
-        public_pool_creation_params#_ recipient:MsgAddressInt use_recipient_on_failure:int1 notification_data:(Maybe ^Cell) = CoffeePublicPoolCreationParams;
+        public_pool_creation_params#_ recipient:MsgAddressInt use_recipient_on_failure:int1 notification_data:(Maybe
+        ^Cell) = CoffeePublicPoolCreationParams;
         private_pool_creation_params#_ is_active:uint1 extra_settings:(Maybe ^Cell) = CoffeePrivatePoolCreationParams;
-        pool_creation_params#_ public:CoffeePublicPoolCreationParams private:CoffeePrivatePoolCreationParams = CoffeePoolCreationParams;
+        pool_creation_params#_ public:CoffeePublicPoolCreationParams private:CoffeePrivatePoolCreationParams =
+        CoffeePoolCreationParams;
         notification_data_single#_ receiver:MsgAddressInt fwd_gas:Coins payload:^Cell = CoffeeNotificationDataSingle;
-        notification_data#_ on_success:(Maybe ^CoffeeNotificationDataSingle) on_failure:(Maybe ^CoffeeNotificationDataSingle) = CoffeeNotificationData;
+        notification_data#_ on_success:(Maybe ^CoffeeNotificationDataSingle) on_failure:(Maybe
+        ^CoffeeNotificationDataSingle) = CoffeeNotificationData;
 
         <!--        bit selection is not supported -->
         <!--        pool_update_params#_ flags:(## 2) protocol_fee:flags.0?uint16 lp_fee:flags.0?uint16 is_active:flags.1?uint1 = CoffeePoolUpdateParams;-->
 
-        swap_params#_ deadline:uint32 recipient:MsgAddressInt referral:MsgAddressInt notification_data:(Maybe ^CoffeeNotificationData) = CoffeeSwapParams;
-        swap_step_params#_ pool_address_hash:uint256 min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepParams;
-        swap_step_internal_params#_ previous_amount:Coins previous_asset_hint:(Maybe CoffeeAsset) min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepInternalParams;
+        swap_params#_ deadline:uint32 recipient:MsgAddressInt referral:MsgAddressInt notification_data:(Maybe
+        ^CoffeeNotificationData) = CoffeeSwapParams;
+        swap_step_params#_ pool_address_hash:uint256 min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) =
+        CoffeeSwapStepParams;
+        swap_step_internal_params#_ previous_amount:Coins previous_asset_hint:(Maybe CoffeeAsset)
+        min_output_amount:Coins next:(Maybe ^CoffeeSwapStepParams) = CoffeeSwapStepInternalParams;
         swap_generic_fee#_ input_amount:Coins output_amount:Coins = CoffeeSwapGenericFee;
         swap_referral_fee#_ referral:MsgAddressInt input_amount:Coins output_amount:Coins = CoffeeSwapReferralFee;
-        swap_fees#_ lp:CoffeeSwapGenericFee protocol:CoffeeSwapGenericFee referral:(Maybe ^CoffeeSwapReferralFee) = CoffeeSwapFees;
+        swap_fees#_ lp:CoffeeSwapGenericFee protocol:CoffeeSwapGenericFee referral:(Maybe ^CoffeeSwapReferralFee) =
+        CoffeeSwapFees;
         pool_reserves#_ input_reserve:Coins output_reserve:Coins = CoffeePoolReserves;
-        deposit_liquidity_params_trimmed#_ recipient:MsgAddressInt use_recipient_on_failure:int1 referral:MsgAddressInt deadline:uint32 condition:CoffeeDepositLiquidityCondition extra_settings:(Maybe ^Cell) notification_data:(Maybe ^CoffeeNotificationData) = CoffeeDepositLiquidityParamsTrimmed;
-        deposit_liquidity_params#_ params:^CoffeeDepositLiquidityParamsTrimmed pool_params:^CoffeePoolParams = CoffeeDepositLiquidityParams;
+        deposit_liquidity_params_trimmed#_ recipient:MsgAddressInt use_recipient_on_failure:int1 referral:MsgAddressInt
+        deadline:uint32 condition:CoffeeDepositLiquidityCondition extra_settings:(Maybe ^Cell) notification_data:(Maybe
+        ^CoffeeNotificationData) = CoffeeDepositLiquidityParamsTrimmed;
+        deposit_liquidity_params#_ params:^CoffeeDepositLiquidityParamsTrimmed pool_params:^CoffeePoolParams =
+        CoffeeDepositLiquidityParams;
         contract_update#_ code:(Maybe ^Cell) data:(Maybe ^Cell) = CoffeeContractUpdate;
     </types>
 
@@ -192,7 +207,7 @@
     <interface name="coffee_vault_jetton" inherits="coffee_vault">
         <msg_in>
             <internal name="jetton_notify"/>
-            <internal name="jetton_provide_wallet"/>
+            <!--            <internal name="jetton_provide_wallet"/>-->
             <internal name="coffee_payout_internal"/>
             <internal name="coffee_create_vault_internal"/>
             <internal name="coffee_activate_vault_internal"/>
@@ -235,7 +250,7 @@
         <get_method name="estimate_liquidity_deposit_amount" version="coffee"/>
         <msg_in>
             <internal name="jetton_burn_notification"/>
-            <internal name="jetton_provide_wallet"/>
+            <!--            <internal name="jetton_provide_wallet"/>-->
             <internal name="coffee_swap_internal"/>
             <internal name="coffee_deposit_liquidity_internal"/>
             <internal name="coffee_withdraw_internal"/>

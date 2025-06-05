@@ -44,7 +44,7 @@
             <int name="subscription_id">uint64</int>
             <slice name="withdraw_address">msgaddress</slice>
             <cell name="withdraw_msg_body">any</cell>
-            <cell name="metadata">any</cell>
+            <cell name="metadata">bytes</cell>
         </output>
     </get_method>
     <internal name="subscription_v2_deploy" >

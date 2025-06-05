@@ -4600,7 +4600,7 @@ type GetSubscriptionInfo_V2Result struct {
 	SubscriptionId  uint64
 	WithdrawAddress tlb.MsgAddress
 	WithdrawMsgBody tlb.Any
-	Metadata        tlb.Any
+	Metadata        tlb.Bytes
 }
 
 func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {

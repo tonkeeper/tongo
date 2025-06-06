@@ -32,17 +32,17 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 	isForward := source.Seqno < target.Seqno
 
 	for source.Seqno != target.Seqno {
-		sourceLc := liteclient.BlockIDExt(source)
-		targetLc := liteclient.BlockIDExt(target)
+		tonNodeSource := liteclient.BlockIDExt(source)
+		tonNodeTarget := liteclient.BlockIDExt(target)
 		partialBlockProof, err := c.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
 			Mode:        1,
-			KnownBlock:  sourceLc,
-			TargetBlock: &targetLc,
+			KnownBlock:  tonNodeSource,
+			TargetBlock: &tonNodeTarget,
 		})
 		if err != nil {
 			return fmt.Errorf("cannot get partial block proof from liteserver: %w", err)
 		}
-		if partialBlockProof.From != sourceLc {
+		if partialBlockProof.From != tonNodeSource {
 			return fmt.Errorf("incorrect source partial block: got %v, want %v", partialBlockProof.From.Seqno, source.Seqno)
 		}
 

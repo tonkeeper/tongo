@@ -32,7 +32,7 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 			return nil, nil, errors.New("shard block not passed")
 		}
 		shardHash := ton.Bits256(res.Shardblk.RootHash)
-		if _, err := CheckShardInMasterProof(blockID, res.ShardProof, accountID.Workchain, shardHash); err != nil {
+		if _, err := checkShardInMasterProof(blockID, res.ShardProof, accountID.Workchain, shardHash); err != nil {
 			return nil, nil, fmt.Errorf("shard proof is incorrect: %w", err)
 		}
 		blockHash = shardHash
@@ -49,7 +49,7 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 		}
 		cellsMap[hash] = stateCells[0]
 	}
-	shardState, err := CheckBlockShardStateProof(res.Proof, blockHash, cellsMap)
+	shardState, err := checkBlockShardStateProof(res.Proof, blockHash, cellsMap)
 	if err != nil {
 		return nil, nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -66,8 +66,8 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 	return nil, nil, errors.New("invalid account state")
 }
 
-func CheckShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain int32, shardRootHash ton.Bits256) (*tlb.McStateExtra, error) {
-	shardState, err := CheckBlockShardStateProof(shardProof, master.RootHash, nil)
+func checkShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain int32, shardRootHash ton.Bits256) (*tlb.McStateExtra, error) {
+	shardState, err := checkBlockShardStateProof(shardProof, master.RootHash, nil)
 	if err != nil {
 		return nil, fmt.Errorf("check block proof failed: %w", err)
 	}
@@ -95,7 +95,7 @@ func CheckShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain
 	return nil, fmt.Errorf("required shard hash not found in proof")
 }
 
-func CheckBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap map[[32]byte]*boc.Cell) (*tlb.ShardStateUnsplit, error) {
+func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap map[[32]byte]*boc.Cell) (*tlb.ShardStateUnsplit, error) {
 	proofCells, err := boc.DeserializeBoc(proof)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func CheckBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap
 	if len(proofCells) != 2 {
 		return nil, errors.New("must be two root cells")
 	}
-	newStateHash, err := CheckBlockProof(*proofCells[0], blockRootHash)
+	newStateHash, err := checkBlockProof(*proofCells[0], blockRootHash)
 	if err != nil {
 		return nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -130,7 +130,7 @@ func CheckBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap
 	return &stateProof.Proof.VirtualRoot, nil
 }
 
-func CheckBlockProof(proof boc.Cell, blockRootHash ton.Bits256) (*tlb.Bits256, error) {
+func checkBlockProof(proof boc.Cell, blockRootHash ton.Bits256) (*tlb.Bits256, error) {
 	var res tlb.MerkleProof[tlb.Block]
 	err := tlb.Unmarshal(&proof, &res) // merkle hash and depth checks inside
 	if err != nil {

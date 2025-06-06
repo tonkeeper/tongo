@@ -473,7 +473,7 @@ func signaturesMapper(sigs liteclient.LiteServerSignatureSet) *signatures {
 			nodeIdShort: make([]byte, 32),
 			signature:   make([]byte, 64),
 		}
-		// todo maybe i can avoid copies?
+
 		copy(curr.signature, sig.Signature)
 		copy(curr.nodeIdShort, sig.NodeIdShort[:])
 		sigSet = append(sigSet, curr)

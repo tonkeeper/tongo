@@ -260,9 +260,11 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 	isShuffle := false
 	var validatorsNum int
 
-	// todo use sumtype when i understand what does it mean
-	// default value of bool == false, so even is catchain config is old, then it will work properly
-	isShuffle = catchainConfig.CatchainConfigNew.ShuffleMcValidators
+	// set isShuffle only for new catchain config, if its old, then isShuffle is always false
+	switch catchainConfig.SumType {
+	case "CatchainConfigNew":
+		isShuffle = catchainConfig.CatchainConfigNew.ShuffleMcValidators
+	}
 
 	type validatorWithKey struct {
 		descr tlb.ValidatorAddr

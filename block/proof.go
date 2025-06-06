@@ -28,7 +28,6 @@ type signatures struct {
 	signatures             []signature
 }
 
-// todo maybe create some struct to store client in it?
 func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target *ton.BlockIDExt) error {
 	isForward := source.Seqno < target.Seqno
 
@@ -340,10 +339,12 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 
 	totalWeight := uint64(0)
 	keyToValidator := map[[32]byte]*tlb.ValidatorAddr{}
+	// todo work on magic prefixes
 	magicPrefix := make([]byte, 4)
 	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("pub.ed25519 key:int256 = PublicKey"), crc32.MakeTable(crc32.IEEE))) // todo why?
 	for _, v := range validators {
 		pubKey := v.PublicKey.PubKey[:]
+		// add some magic prefix for each validator's pub keys
 		hashKey := sha256.Sum256(append(magicPrefix, pubKey...))
 
 		totalWeight += v.Weight
@@ -358,6 +359,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 		RootHash tl.Int256
 		FileHash tl.Int256
 	}
+	// todo work on magic prefixes
 	magicPrefix = make([]byte, 4)
 	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("ton.blockId root_cell_hash:int256 file_hash:int256 = ton.BlockId"), crc32.MakeTable(crc32.IEEE)))
 	blockBytes, err := tl.Marshal(tlBlockId{RootHash: tl.Int256(block.RootHash), FileHash: tl.Int256(block.FileHash)})
@@ -374,7 +376,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 				return fmt.Errorf("duplicated node signatures found")
 			}
 		}
-		
+
 		v, ok := keyToValidator[sig.nodeIdShort]
 		if !ok {
 			return fmt.Errorf("unknown validator signatures: %v", hex.EncodeToString(sig.nodeIdShort[:]))
@@ -429,6 +431,7 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAd
 		return 0, fmt.Errorf("unable to marshal validator set: %w", err)
 	}
 
+	// todo work on magic prefixes
 	const magicPrefix = "ed601690" // reversed 901660ed
 	decodedMagicPrefix, err := hex.DecodeString(magicPrefix)
 	if err != nil {

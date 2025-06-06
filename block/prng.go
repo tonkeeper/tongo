@@ -8,7 +8,7 @@ import (
 )
 
 type ValidatorPRNGDescr struct {
-	seed          [32]byte //seed for validator set computation, set to zero if none
+	seed          [32]byte // seed for validator set computation, set to zero if none
 	shard         uint64
 	workchain     int32
 	catchainSeqno uint32
@@ -16,7 +16,7 @@ type ValidatorPRNGDescr struct {
 	hash []byte
 }
 
-// ValidatorPRNG represents pseudorandom number generator to randomize Validators
+// ValidatorPRNG is a pseudorandom number generator to randomize validators order
 type ValidatorPRNG struct {
 	descr ValidatorPRNGDescr
 

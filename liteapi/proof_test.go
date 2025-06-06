@@ -61,12 +61,12 @@ func TestVerifyProofChain(t *testing.T) {
 	}
 	tests := []Test{
 		{
-			name: "test forward proof chain",
+			name: "test verify forward proof chain",
 			from: from,
 			to:   to,
 		},
 		{
-			name: "test backward proof chain",
+			name: "test verify backward proof chain",
 			from: to,
 			to:   from,
 		},

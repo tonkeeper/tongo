@@ -22,7 +22,7 @@
     </interface>
     <interface name="stonfi_router_v2">
 <!--        <get_method name="get_vault_address" version="stonfi_v2"/> // collision-->
-        <get_method name="get_pool_address" version="stonfi"/>
+<!--        <get_method name="get_pool_address" version="stonfi"/>-->
         <get_method name="get_router_data" version="stonfi_v2"/>
         <get_method name="get_router_version" version="stonfi_v2"/>
         <msg_in>

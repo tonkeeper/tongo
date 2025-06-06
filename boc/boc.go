@@ -272,7 +272,7 @@ func SerializeBoc(cell *Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uin
 	return bag.serializeBoc([]*Cell{cell}, idx, hasCrc32, cacheBits, flags)
 }
 
-func SerializeBocWithMulitplRoots(roots []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
+func SerializeMulitpleRootsBoc(roots []*Cell, idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
 	bag := newBagOfCells()
 	return bag.serializeBoc(roots, idx, hasCrc32, cacheBits, flags)
 }

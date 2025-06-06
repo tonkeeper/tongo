@@ -108,8 +108,7 @@ func VerifyBackwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, des
 		return fmt.Errorf("source seqno must be > target seqno for backward link")
 	}
 
-	// todo have we already have serialization for multiple roots?
-	proofsBoc, err := boc.SerializeBocWithMulitplRoots([]*boc.Cell{proof, stateProof}, false, false, false, 0)
+	proofsBoc, err := boc.SerializeMulitpleRootsBoc([]*boc.Cell{proof, stateProof}, false, false, false, 0)
 	if err != nil {
 		return fmt.Errorf("unable to serialize proof: %w", err)
 	}

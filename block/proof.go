@@ -19,7 +19,7 @@ import (
 )
 
 type signature struct {
-	nodeIdShort []byte
+	nodeIdShort [32]byte
 	signature   []byte
 }
 type signatures struct {
@@ -339,7 +339,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	}
 
 	totalWeight := uint64(0)
-	keyToValidator := map[string]*tlb.ValidatorAddr{}
+	keyToValidator := map[[32]byte]*tlb.ValidatorAddr{}
 	magicPrefix := make([]byte, 4)
 	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("pub.ed25519 key:int256 = PublicKey"), crc32.MakeTable(crc32.IEEE))) // todo why?
 	for _, v := range validators {
@@ -347,11 +347,11 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 		hashKey := sha256.Sum256(append(magicPrefix, pubKey...))
 
 		totalWeight += v.Weight
-		keyToValidator[string(hashKey[:])] = v
+		keyToValidator[hashKey] = v
 	}
 
 	sort.Slice(signatures.signatures, func(i, j int) bool {
-		return bytes.Compare(signatures.signatures[i].nodeIdShort, signatures.signatures[j].nodeIdShort) < 0
+		return bytes.Compare(signatures.signatures[i].nodeIdShort[:], signatures.signatures[j].nodeIdShort[:]) < 0
 	})
 
 	type tlBlockId struct {
@@ -370,21 +370,20 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	for i, sig := range signatures.signatures {
 		if i > 0 {
 			prevSig := signatures.signatures[i-1]
-			if bytes.Equal(sig.nodeIdShort, prevSig.nodeIdShort) {
+			if sig.nodeIdShort == prevSig.nodeIdShort {
 				return fmt.Errorf("duplicated node signatures found")
 			}
 		}
-
-		// todo maybe dont convert to string? looks weird
-		v, ok := keyToValidator[string(sig.nodeIdShort)]
+		
+		v, ok := keyToValidator[sig.nodeIdShort]
 		if !ok {
-			return fmt.Errorf("unknown validator signatures: %v", hex.EncodeToString(sig.nodeIdShort))
+			return fmt.Errorf("unknown validator signatures: %v", hex.EncodeToString(sig.nodeIdShort[:]))
 		}
 
 		var pubKey [32]byte
 		pubKey = v.PublicKey.PubKey
 		if !ed25519.Verify(pubKey[:], blockBytes, sig.signature) {
-			return fmt.Errorf("invalid validator signature: %v", hex.EncodeToString(sig.nodeIdShort))
+			return fmt.Errorf("invalid validator signature: %v", hex.EncodeToString(sig.nodeIdShort[:]))
 		}
 
 		signedWeight += v.Weight
@@ -456,12 +455,11 @@ func signaturesMapper(sigs liteclient.LiteServerSignatureSet) *signatures {
 	sigSet := make([]signature, 0, len(sigs.Signatures))
 	for _, sig := range sigs.Signatures {
 		curr := signature{
-			nodeIdShort: make([]byte, 32),
+			nodeIdShort: sig.NodeIdShort,
 			signature:   make([]byte, 64),
 		}
 
 		copy(curr.signature, sig.Signature)
-		copy(curr.nodeIdShort, sig.NodeIdShort[:])
 		sigSet = append(sigSet, curr)
 	}
 

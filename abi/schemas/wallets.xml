@@ -108,6 +108,7 @@
         <get_method name="get_public_key"/>
         <get_method name="get_subwallet_id"/>
         <get_method name="get_extensions"/>
+        <get_method name="is_signature_allowed"/>
         <msg_in>
             <ext_in name="wallet_signed_external_v5r1"/>
             <internal name="wallet_signed_internal_v5r1"/>
@@ -197,6 +198,12 @@
             <cell name="extensions" nullable="true">WalletV5ExtensionsList</cell>
         </output>
     </get_method>
+    <get_method name="is_signature_allowed">
+        <output fixed_length="true">
+            <int name="allowed">bool</int>
+        </output>
+    </get_method>
+
     <ext_in name="wallet_signed_v3">
         signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletV1toV4Payload =
         ExternalMsgBody;

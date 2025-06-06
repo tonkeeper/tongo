@@ -887,6 +887,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: IsClaimed,
 	},
 	{
+		Name:     "is_signature_allowed",
+		InvokeFn: IsSignatureAllowed,
+	},
+	{
 		Name:     "is_stable",
 		InvokeFn: IsStable,
 	},
@@ -1371,6 +1375,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetExtensions,
 			GetPublicKey,
 			GetSubwalletId,
+			IsSignatureAllowed,
 			Seqno,
 		},
 	},

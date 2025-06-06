@@ -135,6 +135,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"is_active":                                    {DecodeIsActiveResult, DecodeIsActive_CoffeeResult},
 	"is_claimed":                                   {DecodeIsClaimedResult},
 	"is_plugin_installed":                          {DecodeIsPluginInstalledResult},
+	"is_signature_allowed":                         {DecodeIsSignatureAllowedResult},
 	"is_stable":                                    {DecodeIsStable_DedustResult},
 	"jetton_wallet_lock_data":                      {DecodeJettonWalletLockDataResult},
 	"list_nominators":                              {DecodeListNominatorsResult},
@@ -181,6 +182,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	87635:  {GetAmmStatus},
 	87675:  {GetSpotPrice},
 	87878:  {GetBalances},
+	88459:  {IsSignatureAllowed},
 	88817:  {GetOracleData},
 	89295:  {GetMembersRaw},
 	89352:  {GetAsset},
@@ -391,6 +393,7 @@ var resultTypes = []interface{}{
 	&IsActive_CoffeeResult{},
 	&IsClaimedResult{},
 	&IsPluginInstalledResult{},
+	&IsSignatureAllowedResult{},
 	&IsStable_DedustResult{},
 	&JettonWalletLockDataResult{},
 	&ListNominatorsResult{},
@@ -5515,6 +5518,39 @@ func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, result
 	var result IsPluginInstalledResult
 	err = stack.Unmarshal(&result)
 	return "IsPluginInstalledResult", result, err
+}
+
+type IsSignatureAllowedResult struct {
+	Allowed bool
+}
+
+func IsSignatureAllowed(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 88459 for "is_signature_allowed" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 88459, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsSignatureAllowedResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeIsSignatureAllowedResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result IsSignatureAllowedResult
+	err = stack.Unmarshal(&result)
+	return "IsSignatureAllowedResult", result, err
 }
 
 type IsStable_DedustResult struct {

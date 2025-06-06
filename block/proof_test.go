@@ -65,7 +65,8 @@ func getLastBlockInMasterchain(c *liteapi.Client) (*ton.BlockIDExt, error) {
 	if err != nil {
 		return nil, err
 	}
-	return blockIdExtMapper(lst.Last), nil
+	blk := lst.Last.ToBlockIdExt()
+	return &blk, nil
 }
 
 func TestVerifyProofChain(t *testing.T) {

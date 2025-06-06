@@ -252,7 +252,7 @@ func VerifyForwardProofLink(toKeyBlock bool, from, to ton.BlockIDExt, destProof,
 	return nil
 }
 
-func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig, validatorsSet tlb.ValidatorsSet, catchainSeqno uint32) ([]*tlb.ValidatorDescr, error) {
+func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig, validatorsSet tlb.ValidatorsSet, catchainSeqno uint32) ([]*tlb.ValidatorAddr, error) {
 	if block.Workchain != -1 {
 		return nil, fmt.Errorf("block must be from the masterchain")
 	}
@@ -265,7 +265,7 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 	isShuffle = catchainConfig.CatchainConfigNew.ShuffleMcValidators
 
 	type validatorWithKey struct {
-		descr tlb.ValidatorDescr // todo maybe add struct for validator Addr inside validator descr
+		descr tlb.ValidatorAddr
 		key   uint16
 	}
 	var validatorsKeys []validatorWithKey
@@ -275,7 +275,7 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 		validatorsKeys = make([]validatorWithKey, len(validatorsSet.Validators.List.Items()))
 		for i, item := range validatorsSet.Validators.List.Items() {
 			validatorsKeys[i].key = uint16(item.Key.FixedSize())
-			validatorsKeys[i].descr = item.Value
+			validatorsKeys[i].descr = item.Value.ValidatorAddr
 		}
 	case "ValidatorsExt":
 		validatorsNum = int(validatorsSet.ValidatorsExt.Main)
@@ -284,7 +284,7 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 		for i, item := range validatorsSet.ValidatorsExt.List.Items() {
 			totalWeight += item.Value.ValidatorAddr.Weight
 			validatorsKeys[i].key = uint16(item.Key.FixedSize())
-			validatorsKeys[i].descr = item.Value
+			validatorsKeys[i].descr = item.Value.ValidatorAddr
 		}
 
 		if totalWeight != validatorsSet.ValidatorsExt.TotalWeight {
@@ -303,7 +303,7 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 
 	sort.Slice(validatorsKeys, func(i, j int) bool { return validatorsKeys[i].key < validatorsKeys[j].key })
 
-	var validators = make([]*tlb.ValidatorDescr, validatorsNum)
+	var validators = make([]*tlb.ValidatorAddr, validatorsNum)
 	if isShuffle {
 		prng, err := NewValidatorPRNG(nil, block.Shard, block.Workchain, catchainSeqno)
 		if err != nil {
@@ -331,7 +331,7 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 	return validators, nil
 }
 
-func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validators []*tlb.ValidatorDescr) error {
+func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validators []*tlb.ValidatorAddr) error {
 	if len(validators) == 0 {
 		return fmt.Errorf("zero Validators")
 	}
@@ -350,14 +350,14 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	}
 
 	totalWeight := uint64(0)
-	keyToValidator := map[string]*tlb.ValidatorDescr{}
+	keyToValidator := map[string]*tlb.ValidatorAddr{}
 	magicPrefix := make([]byte, 4)
-	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("pub.ed25519 key:int256 = PublicKey"), crc32.MakeTable(crc32.IEEE))) // why?
+	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("pub.ed25519 key:int256 = PublicKey"), crc32.MakeTable(crc32.IEEE))) // todo why?
 	for _, v := range validators {
-		pubKey := v.ValidatorAddr.PublicKey.PubKey[:]
+		pubKey := v.PublicKey.PubKey[:]
 		hashKey := sha256.Sum256(append(magicPrefix, pubKey...))
 
-		totalWeight += v.ValidatorAddr.Weight
+		totalWeight += v.Weight
 		keyToValidator[string(hashKey[:])] = v
 	}
 
@@ -393,12 +393,12 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 		}
 
 		var pubKey [32]byte
-		pubKey = v.PubKey()
+		pubKey = v.PublicKey.PubKey
 		if !ed25519.Verify(pubKey[:], blockBytes, sig.signature) {
 			return fmt.Errorf("invalid signatures of validator: %v", hex.EncodeToString(sig.nodeIdShort))
 		}
 
-		signedWeight += v.ValidatorAddr.Weight
+		signedWeight += v.Weight
 
 		if signedWeight > totalWeight {
 			break
@@ -412,7 +412,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	return nil
 }
 
-func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorDescr) (uint32, error) {
+func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAddr) (uint32, error) {
 	type tlValidator struct {
 		Key    tl.Int256
 		Weight uint64
@@ -426,9 +426,9 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorDe
 
 	tlValidators := make([]tlValidator, len(validators))
 	for i, currValidator := range validators {
-		tlValidators[i].Key = tl.Int256(currValidator.ValidatorAddr.PublicKey.PubKey)
-		tlValidators[i].Weight = currValidator.ValidatorAddr.Weight
-		tlValidators[i].Addr = tl.Int256(currValidator.ValidatorAddr.AdnlAddr)
+		tlValidators[i].Key = tl.Int256(currValidator.PublicKey.PubKey)
+		tlValidators[i].Weight = currValidator.Weight
+		tlValidators[i].Addr = tl.Int256(currValidator.AdnlAddr)
 	}
 
 	tlValSet := tlValidatorSet{

@@ -53,8 +53,8 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 					return fmt.Errorf("blocks can be linked forward if direction is backward")
 				}
 				toKeyBlock := step.LiteServerBlockLinkBack.ToKeyBlock
-				sourceBlock := blockIdExtMapper(step.LiteServerBlockLinkBack.From)
-				targetBlock := blockIdExtMapper(step.LiteServerBlockLinkBack.To)
+				sourceBlock := step.LiteServerBlockLinkBack.From.ToBlockIdExt()
+				targetBlock := step.LiteServerBlockLinkBack.To.ToBlockIdExt()
 				destProof, err := boc.DeserializeBoc(step.LiteServerBlockLinkBack.DestProof)
 				if err != nil {
 					return fmt.Errorf("unable to deserialize dest proof boc: %w", err)
@@ -73,8 +73,8 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 				}
 			case "LiteServerBlockLinkForward":
 				toKeyBlock := step.LiteServerBlockLinkForward.ToKeyBlock
-				sourceBlock := blockIdExtMapper(step.LiteServerBlockLinkForward.From)
-				targetBlock := blockIdExtMapper(step.LiteServerBlockLinkForward.To)
+				sourceBlock := step.LiteServerBlockLinkForward.From.ToBlockIdExt()
+				targetBlock := step.LiteServerBlockLinkForward.To.ToBlockIdExt()
 				destProof, err := boc.DeserializeBoc(step.LiteServerBlockLinkForward.DestProof)
 				if err != nil {
 					return fmt.Errorf("unable to deserialize dest proof boc: %w", err)
@@ -85,21 +85,21 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 				}
 				signatures := signaturesMapper(step.LiteServerBlockLinkForward.Signatures)
 
-				err = VerifyForwardProofLink(toKeyBlock, *sourceBlock, *targetBlock, destProof[0], configProof[0], *signatures)
+				err = VerifyForwardProofLink(toKeyBlock, sourceBlock, targetBlock, destProof[0], configProof[0], *signatures)
 				if err != nil {
 					return fmt.Errorf("failed to verify forward proof: %w", err)
 				}
 				// Go to next step
-				sourceBlock = blockIdExtMapper(step.LiteServerBlockLinkForward.To)
+				sourceBlock = step.LiteServerBlockLinkForward.To.ToBlockIdExt()
 			}
 		}
-		source = *blockIdExtMapper(partialBlockProof.To)
+		source = partialBlockProof.To.ToBlockIdExt()
 	}
 
 	return nil
 }
 
-func VerifyBackwardProofLink(toKeyBlock bool, source, target *ton.BlockIDExt, destProof, stateProof, proof *boc.Cell) error {
+func VerifyBackwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, destProof, stateProof, proof *boc.Cell) error {
 	if source.Workchain != -1 && target.Workchain != -1 {
 		return fmt.Errorf("both blocks must be from the masterchain")
 	}
@@ -429,18 +429,6 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAd
 	validatorSetBytes = append(decodedMagicPrefix, validatorSetBytes...)
 
 	return crc32.Checksum(validatorSetBytes, crc32.MakeTable(crc32.Castagnoli)), nil
-}
-
-func blockIdExtMapper(blockId liteclient.TonNodeBlockIdExtC) *ton.BlockIDExt {
-	return &ton.BlockIDExt{
-		BlockID: ton.BlockID{
-			Workchain: int32(blockId.Workchain),
-			Shard:     blockId.Shard,
-			Seqno:     blockId.Seqno,
-		},
-		RootHash: ton.Bits256(blockId.RootHash),
-		FileHash: ton.Bits256(blockId.FileHash),
-	}
 }
 
 func signaturesMapper(sigs liteclient.LiteServerSignatureSet) *signatures {

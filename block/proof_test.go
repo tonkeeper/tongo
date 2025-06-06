@@ -106,7 +106,7 @@ func TestVerifyProofChain(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			err = VerifyProofChain(context.Background(), lc, test.from, test.to)
+			err = VerifyProofChain(context.Background(), lc, *test.from, *test.to)
 			if err != nil {
 				t.Errorf("proof chain failed from %v, to %v: %v", test.from.Seqno, test.to.Seqno, err)
 			}

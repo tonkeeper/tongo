@@ -28,32 +28,21 @@ type signatures struct {
 	signatures             []signature
 }
 
-func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target *ton.BlockIDExt) error {
+func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target ton.BlockIDExt) error {
 	isForward := source.Seqno < target.Seqno
 
 	for source.Seqno != target.Seqno {
-		sourceTL := liteclient.TonNodeBlockIdExtC{
-			Workchain: uint32(source.Workchain),
-			Shard:     source.Shard,
-			Seqno:     source.Seqno,
-			RootHash:  tl.Int256(source.RootHash),
-			FileHash:  tl.Int256(source.FileHash),
-		}
+		sourceLc := liteclient.BlockIDExt(source)
+		targetLc := liteclient.BlockIDExt(target)
 		partialBlockProof, err := c.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
-			Mode:       1,
-			KnownBlock: sourceTL,
-			TargetBlock: &liteclient.TonNodeBlockIdExtC{
-				Workchain: uint32(target.Workchain),
-				Shard:     target.Shard,
-				Seqno:     target.Seqno,
-				RootHash:  tl.Int256(target.RootHash),
-				FileHash:  tl.Int256(target.FileHash),
-			},
+			Mode:        1,
+			KnownBlock:  sourceLc,
+			TargetBlock: &targetLc,
 		})
 		if err != nil {
 			return fmt.Errorf("cannot get partial block proof from liteserver: %w", err)
 		}
-		if partialBlockProof.From != sourceTL {
+		if partialBlockProof.From != sourceLc {
 			return fmt.Errorf("incorrect source partial block: got %v, want %v", partialBlockProof.From.Seqno, source.Seqno)
 		}
 
@@ -104,7 +93,7 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 				sourceBlock = blockIdExtMapper(step.LiteServerBlockLinkForward.To)
 			}
 		}
-		source = blockIdExtMapper(partialBlockProof.To)
+		source = *blockIdExtMapper(partialBlockProof.To)
 	}
 
 	return nil

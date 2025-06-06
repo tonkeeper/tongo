@@ -17,6 +17,12 @@ import (
 	"sort"
 )
 
+const (
+	magicTonBlockID   = 0xc50b6e70 // crc32(ton.blockId root_cell_hash:int256 file_hash:int256 = ton.BlockId)
+	magicValidatorSet = 0x901660ed // crc32(???) todo find out where this opcode came from
+	magicPublicKey    = 0x4813b4c6 // crc32(pub.ed25519 key:int256 = PublicKey)
+)
+
 type signature struct {
 	nodeIdShort [32]byte
 	signature   []byte
@@ -322,9 +328,8 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 
 	totalWeight := uint64(0)
 	keyToValidator := map[[32]byte]*tlb.ValidatorAddr{}
-	// todo work on magic prefixes
 	magicPrefix := make([]byte, 4)
-	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("pub.ed25519 key:int256 = PublicKey"), crc32.MakeTable(crc32.IEEE))) // todo why?
+	binary.LittleEndian.PutUint32(magicPrefix, magicPublicKey)
 	for _, v := range validators {
 		pubKey := v.PublicKey.PubKey[:]
 		// add some magic prefix for each validator's pub keys
@@ -342,9 +347,9 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 		RootHash tl.Int256
 		FileHash tl.Int256
 	}
-	// todo work on magic prefixes
+
 	magicPrefix = make([]byte, 4)
-	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("ton.blockId root_cell_hash:int256 file_hash:int256 = ton.BlockId"), crc32.MakeTable(crc32.IEEE)))
+	binary.LittleEndian.PutUint32(magicPrefix, magicTonBlockID)
 	blockBytes, err := tl.Marshal(tlBlockId{RootHash: tl.Int256(block.RootHash), FileHash: tl.Int256(block.FileHash)})
 	if err != nil {
 		return fmt.Errorf("unable to marshal block id: %w", err)
@@ -414,13 +419,12 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAd
 		return 0, fmt.Errorf("unable to marshal validator set: %w", err)
 	}
 
-	// todo work on magic prefixes
-	const magicPrefix = "ed601690" // reversed 901660ed
-	decodedMagicPrefix, err := hex.DecodeString(magicPrefix)
+	magicPrefix := make([]byte, 4)
+	binary.LittleEndian.PutUint32(magicPrefix, magicValidatorSet)
 	if err != nil {
 		return 0, fmt.Errorf("unable to decode magic prefix: %w", err)
 	}
-	validatorSetBytes = append(decodedMagicPrefix, validatorSetBytes...)
+	validatorSetBytes = append(magicPrefix, validatorSetBytes...)
 
 	return crc32.Checksum(validatorSetBytes, crc32.MakeTable(crc32.Castagnoli)), nil
 }

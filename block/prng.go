@@ -52,7 +52,7 @@ func (v *ValidatorPRNG) NextUInt64() uint64 {
 	v.pos = 1
 	v.limit = 8
 
-	return binary.BigEndian.Uint64(v.descr.hash[0:]) // todo hash[:] does the same thing?
+	return binary.BigEndian.Uint64(v.descr.hash)
 }
 
 func (v *ValidatorPRNG) NextRanged(rng uint64) uint64 {

@@ -362,10 +362,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	}
 
 	sort.Slice(signatures.signatures, func(i, j int) bool {
-		// todo change string() to .Hex() in all the parts
-		// todo is hex the same as string()
-		// todo maybe just some method to compare []byte?
-		return string(signatures.signatures[i].nodeIdShort) < string(signatures.signatures[j].nodeIdShort)
+		return bytes.Compare(signatures.signatures[i].nodeIdShort, signatures.signatures[j].nodeIdShort) < 0
 	})
 
 	type tlBlockId struct {
@@ -389,7 +386,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 			}
 		}
 
-		// todo probably incorrect since Key to validator have another type of Key
+		// todo maybe dont convert to string? looks weird
 		v, ok := keyToValidator[string(sig.nodeIdShort)]
 		if !ok {
 			return fmt.Errorf("unknown validator signatures: %v", hex.EncodeToString(sig.nodeIdShort))

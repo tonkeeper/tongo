@@ -28,7 +28,6 @@ type signatures struct {
 	signatures             []signature
 }
 
-// todo work on errors
 // todo maybe create some struct to store client in it?
 func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target *ton.BlockIDExt) error {
 	isForward := source.Seqno < target.Seqno
@@ -53,62 +52,56 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 			},
 		})
 		if err != nil {
-			return fmt.Errorf("cannot get partial block proof source liteserver: %w", err)
+			return fmt.Errorf("cannot get partial block proof from liteserver: %w", err)
 		}
-		// todo is ok to compare structures?
 		if partialBlockProof.From != sourceTL {
-			return fmt.Errorf("incorrect source partial block, got %v", partialBlockProof.From.Seqno)
+			return fmt.Errorf("incorrect source partial block: got %v, want %v", partialBlockProof.From.Seqno, source.Seqno)
 		}
 
 		for _, step := range partialBlockProof.Steps {
 			switch step.SumType {
 			case "LiteServerBlockLinkBack":
 				if isForward {
-					return fmt.Errorf("wrong direction in backward sequence")
+					return fmt.Errorf("blocks can be linked forward if direction is backward")
 				}
 				toKeyBlock := step.LiteServerBlockLinkBack.ToKeyBlock
 				sourceBlock := blockIdExtMapper(step.LiteServerBlockLinkBack.From)
 				targetBlock := blockIdExtMapper(step.LiteServerBlockLinkBack.To)
-				cells, err := boc.DeserializeBoc(step.LiteServerBlockLinkBack.DestProof)
+				destProof, err := boc.DeserializeBoc(step.LiteServerBlockLinkBack.DestProof)
 				if err != nil {
-					return fmt.Errorf("cannot deserialize dest proof boc: %w", err)
+					return fmt.Errorf("unable to deserialize dest proof boc: %w", err)
 				}
-				destProof := cells[0]
-				cells, err = boc.DeserializeBoc(step.LiteServerBlockLinkBack.StateProof)
+				stateProof, err := boc.DeserializeBoc(step.LiteServerBlockLinkBack.StateProof)
 				if err != nil {
-					return fmt.Errorf("cannot deserialize state proof boc: %w", err)
+					return fmt.Errorf("unable to deserialize state proof boc: %w", err)
 				}
-				stateProof := cells[0]
-				cells, err = boc.DeserializeBoc(step.LiteServerBlockLinkBack.Proof)
+				proof, err := boc.DeserializeBoc(step.LiteServerBlockLinkBack.Proof)
 				if err != nil {
-					return fmt.Errorf("cannot deserialize proof boc: %w", err)
+					return fmt.Errorf("unable to deserialize proof boc: %w", err)
 				}
-				proof := cells[0]
-
-				if err := VerifyBackwardProofLink(toKeyBlock, sourceBlock, targetBlock, destProof, stateProof, proof); err != nil {
+				err = VerifyBackwardProofLink(toKeyBlock, sourceBlock, targetBlock, destProof[0], stateProof[0], proof[0])
+				if err != nil {
 					return fmt.Errorf("failed to verify backward proof: %w", err)
 				}
-
 			case "LiteServerBlockLinkForward":
 				toKeyBlock := step.LiteServerBlockLinkForward.ToKeyBlock
 				sourceBlock := blockIdExtMapper(step.LiteServerBlockLinkForward.From)
 				targetBlock := blockIdExtMapper(step.LiteServerBlockLinkForward.To)
-				cells, err := boc.DeserializeBoc(step.LiteServerBlockLinkForward.DestProof)
+				destProof, err := boc.DeserializeBoc(step.LiteServerBlockLinkForward.DestProof)
 				if err != nil {
-					return fmt.Errorf("cannot deserialize dest proof boc: %w", err)
+					return fmt.Errorf("unable to deserialize dest proof boc: %w", err)
 				}
-				destProof := cells[0]
-				cells, err = boc.DeserializeBoc(step.LiteServerBlockLinkForward.ConfigProof)
+				configProof, err := boc.DeserializeBoc(step.LiteServerBlockLinkForward.ConfigProof)
 				if err != nil {
-					return fmt.Errorf("cannot deserialize state proof boc: %w", err)
+					return fmt.Errorf("unable to deserialize state proof boc: %w", err)
 				}
-				configProof := cells[0]
 				signatures := signaturesMapper(step.LiteServerBlockLinkForward.Signatures)
 
-				if err := VerifyForwardProofLink(toKeyBlock, *sourceBlock, *targetBlock, destProof, configProof, *signatures); err != nil {
+				err = VerifyForwardProofLink(toKeyBlock, *sourceBlock, *targetBlock, destProof[0], configProof[0], *signatures)
+				if err != nil {
 					return fmt.Errorf("failed to verify forward proof: %w", err)
 				}
-
+				// Go to next step
 				sourceBlock = blockIdExtMapper(step.LiteServerBlockLinkForward.To)
 			}
 		}
@@ -120,51 +113,49 @@ func VerifyProofChain(ctx context.Context, c *liteclient.Client, source, target 
 
 func VerifyBackwardProofLink(toKeyBlock bool, source, target *ton.BlockIDExt, destProof, stateProof, proof *boc.Cell) error {
 	if source.Workchain != -1 && target.Workchain != -1 {
-		return fmt.Errorf("both blocks must be source the masterchain")
+		return fmt.Errorf("both blocks must be from the masterchain")
 	}
 
 	if source.Seqno <= target.Seqno {
-		return fmt.Errorf("source seqno must be > target seqno")
+		return fmt.Errorf("source seqno must be > target seqno for backward link")
 	}
 
 	// todo have we already have serialization for multiple roots?
-	prf, err := boc.SerializeBocWithMulitplRoots([]*boc.Cell{proof, stateProof}, false, false, false, 0)
-	stateExtra, err := liteapi.CheckBlockShardStateProof(prf, source.RootHash, nil)
+	proofsBoc, err := boc.SerializeBocWithMulitplRoots([]*boc.Cell{proof, stateProof}, false, false, false, 0)
 	if err != nil {
-		return fmt.Errorf("cannot check proof for shard in the masterchain: %w", err)
+		return fmt.Errorf("unable to serialize proof: %w", err)
+	}
+	stateExtra, err := liteapi.CheckBlockShardStateProof(proofsBoc, source.RootHash, nil)
+	if err != nil {
+		return fmt.Errorf("failed to check proof for shard in the masterchain: %w", err)
 	}
 	if !stateExtra.ShardStateUnsplit.Custom.Exists {
-		return fmt.Errorf("not a masterchain block")
+		return fmt.Errorf("source block is not a masterchain block")
 	}
 	keyBlock, ok := stateExtra.ShardStateUnsplit.Custom.Value.Value.Other.PrevBlocks.GetWithoutExtra(tlb.Uint32(target.Seqno))
 	if !ok {
 		return fmt.Errorf("target block not found in state proof")
 	}
 	if keyBlock.Key != toKeyBlock {
-		// todo set more clear error value
-		return fmt.Errorf("expected target block is Key block = %v, but it's %v", toKeyBlock, keyBlock.Key)
+		return fmt.Errorf("unexpected target block in proof isKey value: got = %v, want %v", keyBlock.Key, toKeyBlock)
 	}
 	if keyBlock.BlkRef.RootHash.Equal(target.RootHash) {
 		return fmt.Errorf("incorrect target block hash in proof")
 	}
 
 	// proof target block
-	// https://github.com/tact-lang/lite-proof/blob/9a6f3efa938ff67d86b7c4c74e355984da962f2b/src/proof/verify.ts#L68
-
 	_, err = liteapi.CheckBlockProof(*destProof, target.RootHash)
 	if err != nil {
-		return fmt.Errorf("target block proof failed: %w", err)
+		return fmt.Errorf("failed to check target block proof: %w", err)
 	}
-
 	var targetBlock tlb.MerkleProof[tlb.Block]
 	err = tlb.Unmarshal(destProof, &targetBlock)
 	if err != nil {
-		return fmt.Errorf("failed to get target block source proof: %w", err)
+		return fmt.Errorf("failed to unmashal target block from proof: %w", err)
 	}
 
 	if targetBlock.VirtualRoot.Info.KeyBlock != toKeyBlock {
-		// todo set more clear error value
-		return fmt.Errorf("expected target block is Key block = %v, but it's %v", toKeyBlock, targetBlock.VirtualRoot.Info.KeyBlock)
+		return fmt.Errorf("unexpected target block isKey value: got = %v, want %v", targetBlock.VirtualRoot.Info.KeyBlock, toKeyBlock)
 	}
 
 	return nil
@@ -176,58 +167,57 @@ func VerifyForwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, dest
 	}
 
 	if source.Seqno >= target.Seqno {
-		return fmt.Errorf("source seqno must be < target seqno")
+		return fmt.Errorf("source seqno must be < target seqno for forward link")
 	}
 
-	// proof source block (source)
+	// proof source block
 	_, err := liteapi.CheckBlockProof(*configProof, source.RootHash)
 	if err != nil {
-		return fmt.Errorf("source block proof failed: %w", err)
+		return fmt.Errorf("failed to check source block proof: %w", err)
 	}
 
 	var sourceBlock tlb.MerkleProof[tlb.Block]
 	err = tlb.Unmarshal(configProof, &sourceBlock)
 	if err != nil {
-		return fmt.Errorf("failed to get source block source proof: %w", err)
+		return fmt.Errorf("failed to unmashal source block from proof: %w", err)
 	}
 
 	if !sourceBlock.VirtualRoot.Extra.Custom.Exists {
-		return fmt.Errorf("source block proof missing extra info")
+		return fmt.Errorf("source block is lack of extra info")
 	}
 
 	blockValidatorsCell, ok := sourceBlock.VirtualRoot.Extra.Custom.Value.Value.Config.Config.Get(tlb.Uint32(34))
 	if !ok {
-		return fmt.Errorf("source block proof missing block Validators cell")
+		return fmt.Errorf("source block is lack of 34 config param")
 	}
 	var blockValidators = &tlb.ValidatorsSet{}
 	if err := tlb.Unmarshal(&blockValidatorsCell.Value, blockValidators); err != nil {
-		return fmt.Errorf("cannot get Validators set: %w", err)
+		return fmt.Errorf("unbale to unmashal validators set: %w", err)
 	}
 
 	catchainConfigCell, ok := sourceBlock.VirtualRoot.Extra.Custom.Value.Value.Config.Config.Get(tlb.Uint32(28))
 	if !ok {
-		return fmt.Errorf("source block proof missing catchain config cell")
+		return fmt.Errorf("source block is lack of catchain config cell")
 	}
 	var catchainConfig = &tlb.CatchainConfig{}
 	if err := tlb.Unmarshal(&catchainConfigCell.Value, catchainConfig); err != nil {
-		return fmt.Errorf("cannot get catchain config: %w", err)
+		return fmt.Errorf("unable to unmashal catchain config: %w", err)
 	}
 
 	// proof target block
 	_, err = liteapi.CheckBlockProof(*destProof, target.RootHash)
 	if err != nil {
-		return fmt.Errorf("target block proof failed: %w", err)
+		return fmt.Errorf("failed to check target block proof: %w", err)
 	}
 
 	var targetBlock tlb.MerkleProof[tlb.Block]
 	err = tlb.Unmarshal(destProof, &targetBlock)
 	if err != nil {
-		return fmt.Errorf("failed to get target block source proof: %w", err)
+		return fmt.Errorf("failed to unmarshal target block from proof: %w", err)
 	}
 
 	if targetBlock.VirtualRoot.Info.KeyBlock != toKeyBlock {
-		// todo set more clear error value
-		return fmt.Errorf("expected target block is Key block = %v, but it's %v", toKeyBlock, targetBlock.VirtualRoot.Info.KeyBlock)
+		return fmt.Errorf("unexpected target block in proof isKey value: got = %v, want %v", targetBlock.VirtualRoot.Info.KeyBlock, toKeyBlock)
 	}
 
 	if targetBlock.VirtualRoot.Info.GenValidatorListHashShort != signatures.validatorListHashShort {
@@ -239,11 +229,11 @@ func VerifyForwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, dest
 	}
 	validators, err := GetMainValidators(&target, *catchainConfig, *blockValidators, targetBlock.VirtualRoot.Info.GenCatchainSeqno)
 	if err != nil {
-		return fmt.Errorf("failed to get main Validators: %w", err)
+		return fmt.Errorf("failed to get main validators: %w", err)
 	}
 
 	if err = CheckBlockSignatures(&target, signatures, validators); err != nil {
-		return fmt.Errorf("block signatures verification failed: %w", err)
+		return fmt.Errorf("failed to check block signatures: %w", err)
 	}
 
 	return nil
@@ -287,14 +277,14 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 		}
 
 		if totalWeight != validatorsSet.ValidatorsExt.TotalWeight {
-			return nil, fmt.Errorf("incorrect sum of Validators weights")
+			return nil, fmt.Errorf("incorrect sum of validators weights")
 		}
 	default:
-		return nil, fmt.Errorf("unknown Validators set sumType")
+		return nil, fmt.Errorf("unknown validators set sumtype")
 	}
 
 	if len(validatorsKeys) == 0 {
-		return nil, fmt.Errorf("Validators set has no Validators")
+		return nil, fmt.Errorf("zero validators found")
 	}
 	if validatorsNum > len(validatorsKeys) {
 		validatorsNum = len(validatorsKeys)
@@ -306,7 +296,7 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 	if isShuffle {
 		prng, err := NewValidatorPRNG(nil, block.Shard, block.Workchain, catchainSeqno)
 		if err != nil {
-			return nil, fmt.Errorf("cannot create validator prng: %w", err)
+			return nil, fmt.Errorf("unable to create validator prng: %w", err)
 		}
 
 		idx := make([]uint32, validatorsNum)
@@ -332,20 +322,20 @@ func GetMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 
 func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validators []*tlb.ValidatorAddr) error {
 	if len(validators) == 0 {
-		return fmt.Errorf("zero Validators")
+		return fmt.Errorf("zero validators found")
 	}
 
 	if len(signatures.signatures) == 0 {
-		return fmt.Errorf("zero signatures")
+		return fmt.Errorf("zero signatures found")
 	}
 
 	validatorSetHash, err := computeValidatorSetHash(signatures.catchainSeqno, validators)
 	if err != nil {
-		return fmt.Errorf("cannot compute validator set hash: %w", err)
+		return fmt.Errorf("unable to compute validator set hash: %w", err)
 	}
 
 	if validatorSetHash != signatures.validatorListHashShort {
-		return fmt.Errorf("incorrect validator set hash")
+		return fmt.Errorf("invalid validator set hash")
 	}
 
 	totalWeight := uint64(0)
@@ -372,7 +362,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	binary.LittleEndian.PutUint32(magicPrefix, crc32.Checksum([]byte("ton.blockId root_cell_hash:int256 file_hash:int256 = ton.BlockId"), crc32.MakeTable(crc32.IEEE)))
 	blockBytes, err := tl.Marshal(tlBlockId{RootHash: tl.Int256(block.RootHash), FileHash: tl.Int256(block.FileHash)})
 	if err != nil {
-		return fmt.Errorf("cannot marshal block id: %w", err)
+		return fmt.Errorf("unable to marshal block id: %w", err)
 	}
 	blockBytes = append(magicPrefix, blockBytes...) // add magic prefix
 
@@ -381,7 +371,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 		if i > 0 {
 			prevSig := signatures.signatures[i-1]
 			if bytes.Equal(sig.nodeIdShort, prevSig.nodeIdShort) {
-				return fmt.Errorf("duplicated node signatures")
+				return fmt.Errorf("duplicated node signatures found")
 			}
 		}
 
@@ -394,7 +384,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 		var pubKey [32]byte
 		pubKey = v.PublicKey.PubKey
 		if !ed25519.Verify(pubKey[:], blockBytes, sig.signature) {
-			return fmt.Errorf("invalid signatures of validator: %v", hex.EncodeToString(sig.nodeIdShort))
+			return fmt.Errorf("invalid validator signature: %v", hex.EncodeToString(sig.nodeIdShort))
 		}
 
 		signedWeight += v.Weight
@@ -405,7 +395,7 @@ func CheckBlockSignatures(block *ton.BlockIDExt, signatures signatures, validato
 	}
 
 	if 3*signedWeight < 2*totalWeight {
-		return fmt.Errorf("not enoght signed Weight: %v/%v < 2/3", signedWeight, totalWeight)
+		return fmt.Errorf("not enoght signed weights: %v/%v < 2/3", signedWeight, totalWeight)
 	}
 
 	return nil
@@ -437,13 +427,13 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAd
 
 	validatorSetBytes, err := tl.Marshal(tlValSet)
 	if err != nil {
-		return 0, fmt.Errorf("cannot marshal validator set: %w", err)
+		return 0, fmt.Errorf("unable to marshal validator set: %w", err)
 	}
 
 	const magicPrefix = "ed601690" // reversed 901660ed
 	decodedMagicPrefix, err := hex.DecodeString(magicPrefix)
 	if err != nil {
-		return 0, fmt.Errorf("cannot decode magic prefix: %w", err)
+		return 0, fmt.Errorf("unable to decode magic prefix: %w", err)
 	}
 	validatorSetBytes = append(decodedMagicPrefix, validatorSetBytes...)
 

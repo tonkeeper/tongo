@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func createTestLiteServerConnection() (*liteclient.Connection, error) {
+func createLiteClientClient() (*liteclient.Client, error) {
 	base64Key := ""
 	host := ""
 	if serversEnv, ok := os.LookupEnv("LITE_SERVERS"); ok {
@@ -29,7 +29,11 @@ func createTestLiteServerConnection() (*liteclient.Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	return liteclient.NewConnection(context.Background(), pubkey, host)
+	connections, err := liteclient.NewConnection(context.Background(), pubkey, host)
+	if err != nil {
+		return nil, err
+	}
+	return liteclient.NewClient(connections), err
 }
 
 func getInitBlock() (*ton.BlockIDExt, error) {
@@ -56,29 +60,56 @@ func getInitBlock() (*ton.BlockIDExt, error) {
 	}, nil
 }
 
-func Test(t *testing.T) {
+func getLastBlockInMasterchain(c *liteapi.Client) (*ton.BlockIDExt, error) {
+	lst, err := c.GetMasterchainInfo(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return blockIdExtMapper(lst.Last), nil
+}
+
+func TestVerifyProofChain(t *testing.T) {
 	c, err := liteapi.NewClientWithDefaultMainnet()
 	if err != nil {
-		fmt.Printf("Unable to create tongo client: %v", err)
+		t.Fatalf("unable to create liteclient: %v", err)
 	}
-
+	lc, err := createLiteClientClient()
+	if err != nil {
+		t.Fatalf("unable to connect to liteserver: %v", err)
+	}
 	from, err := getInitBlock()
 	if err != nil {
-		t.Fatal("cannot get init block: %w", err)
+		t.Fatalf("unable to get init block: %v", err)
 	}
-
-	a, err := createTestLiteServerConnection()
+	to, err := getLastBlockInMasterchain(c)
 	if err != nil {
-		t.Fatal("cannot get")
+		t.Fatalf("unable to get last block: %v", err)
 	}
-	lst, err := c.GetMasterchainInfo(context.Background())
-	to := blockIdExtMapper(lst.Last)
 
-	// make backward
-	//from, to = to, from
-	//err = VerifyProofChain(context.Background(), liteclient.NewClient(a), from, to)
+	type Test struct {
+		name string
+		from *ton.BlockIDExt
+		to   *ton.BlockIDExt
+	}
+	tests := []Test{
+		{
+			name: "test forward proof chain",
+			from: from,
+			to:   to,
+		},
+		{
+			name: "test backward proof chain",
+			from: to,
+			to:   from,
+		},
+	}
 
-	lst, err = c.GetMasterchainInfo(context.Background())
-	to = blockIdExtMapper(lst.Last)
-	err = VerifyProofChain(context.Background(), liteclient.NewClient(a), from, to)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			err = VerifyProofChain(context.Background(), lc, test.from, test.to)
+			if err != nil {
+				t.Errorf("proof chain failed from %v, to %v", test.from.Seqno, test.to.Seqno)
+			}
+		})
+	}
 }

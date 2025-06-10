@@ -1699,6 +1699,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case BidaskRange:
 		return []msgDecoderFunc{
 			decodeFuncBidaskInternalSwapMsgBody,
+			decodeFuncBidaskInternalContinueSwapMsgBody,
 			decodeFuncBidaskInternalProvideMsgBody,
 			decodeFuncBidaskInternalContinueProvideMsgBody,
 			decodeFuncBidaskInternalBurnMsgBody,

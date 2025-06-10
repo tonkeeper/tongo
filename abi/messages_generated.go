@@ -11,6 +11,8 @@ var (
 	decodeFuncBidaskProvideRefundMsgBody = decodeMsg(tlb.Tag{Val: 0x02422cbe, Len: 28}, BidaskProvideRefundMsgOp, BidaskProvideRefundMsgBody{})
 	// 0x0a9577f0
 	decodeFuncCoffeeStakingUpdateRewardsMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 28}, CoffeeStakingUpdateRewardsMsgOp, CoffeeStakingUpdateRewardsMsgBody{})
+	// 0x0c09445a
+	decodeFuncBidaskInternalContinueProvideMsgBody = decodeMsg(tlb.Tag{Val: 0x0c09445a, Len: 28}, BidaskInternalContinueProvideMsgOp, BidaskInternalContinueProvideMsgBody{})
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
 	// 0x01f3835d
@@ -193,6 +195,8 @@ var (
 	decodeFuncTonstakeControllerReturnAvailableFundsMsgBody = decodeMsg(tlb.Tag{Val: 0x55c26cd5, Len: 32}, TonstakeControllerReturnAvailableFundsMsgOp, TonstakeControllerReturnAvailableFundsMsgBody{})
 	// 0x595f07bc
 	decodeFuncJettonBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, JettonBurnMsgOp, JettonBurnMsgBody{})
+	// 0x59699475
+	decodeFuncBidaskInternalContinueSwapMsgBody = decodeMsg(tlb.Tag{Val: 0x59699475, Len: 32}, BidaskInternalContinueSwapMsgOp, BidaskInternalContinueSwapMsgBody{})
 	// 0x5be57626
 	decodeFuncHipoFinanceProxyTokensMintedMsgBody = decodeMsg(tlb.Tag{Val: 0x5be57626, Len: 32}, HipoFinanceProxyTokensMintedMsgOp, HipoFinanceProxyTokensMintedMsgBody{})
 	// 0x5c11ada9
@@ -784,6 +788,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x595f07bc
 	JettonBurnMsgOpCode: decodeFuncJettonBurnMsgBody,
 
+	// 0x59699475
+	BidaskInternalContinueSwapMsgOpCode: decodeFuncBidaskInternalContinueSwapMsgBody,
+
 	// 0x5be57626
 	HipoFinanceProxyTokensMintedMsgOpCode: decodeFuncHipoFinanceProxyTokensMintedMsgBody,
 
@@ -1259,6 +1266,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 const (
 	BidaskProvideRefundMsgOp                     MsgOpName = "BidaskProvideRefund"
 	CoffeeStakingUpdateRewardsMsgOp              MsgOpName = "CoffeeStakingUpdateRewards"
+	BidaskInternalContinueProvideMsgOp           MsgOpName = "BidaskInternalContinueProvide"
 	TextCommentMsgOp                             MsgOpName = "TextComment"
 	PtonTonTransferMsgOp                         MsgOpName = "PtonTonTransfer"
 	StormVaultRequestWithdrawPositionMsgOp       MsgOpName = "StormVaultRequestWithdrawPosition"
@@ -1350,6 +1358,7 @@ const (
 	OutbidNotificationMsgOp                      MsgOpName = "OutbidNotification"
 	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
+	BidaskInternalContinueSwapMsgOp              MsgOpName = "BidaskInternalContinueSwap"
 	HipoFinanceProxyTokensMintedMsgOp            MsgOpName = "HipoFinanceProxyTokensMinted"
 	DaolamaVaultSupplyMsgOp                      MsgOpName = "DaolamaVaultSupply"
 	StormUpdatePositionWithStopLossMsgOp         MsgOpName = "StormUpdatePositionWithStopLoss"
@@ -1511,6 +1520,7 @@ const (
 const (
 	BidaskProvideRefundMsgOpCode                     MsgOpCode = 0x02422cbe
 	CoffeeStakingUpdateRewardsMsgOpCode              MsgOpCode = 0x0a9577f0
+	BidaskInternalContinueProvideMsgOpCode           MsgOpCode = 0x0c09445a
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
 	PtonTonTransferMsgOpCode                         MsgOpCode = 0x01f3835d
 	StormVaultRequestWithdrawPositionMsgOpCode       MsgOpCode = 0x0226df66
@@ -1602,6 +1612,7 @@ const (
 	OutbidNotificationMsgOpCode                      MsgOpCode = 0x557cea20
 	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
+	BidaskInternalContinueSwapMsgOpCode              MsgOpCode = 0x59699475
 	HipoFinanceProxyTokensMintedMsgOpCode            MsgOpCode = 0x5be57626
 	DaolamaVaultSupplyMsgOpCode                      MsgOpCode = 0x5c11ada9
 	StormUpdatePositionWithStopLossMsgOpCode         MsgOpCode = 0x5d1b17b8
@@ -1775,6 +1786,22 @@ type CoffeeStakingUpdateRewardsMsgBody struct {
 	JettonWallet tlb.MsgAddress
 	JettonAmount tlb.Grams
 	Duration     uint64
+}
+
+type BidaskInternalContinueProvideMsgBody struct {
+	QueryId        uint64
+	AmountX        tlb.Grams
+	AmountY        tlb.Grams
+	ExcessX        tlb.Grams
+	ExcessY        tlb.Grams
+	UserAddress    tlb.MsgAddress
+	FirstBin       int32
+	NumberOfBins   uint32
+	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
+	LpTokens       tlb.HashmapE[tlb.Uint32, int32]
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+	Order          bool
 }
 
 type TextCommentMsgBody struct {
@@ -2388,6 +2415,22 @@ type JettonBurnMsgBody struct {
 	Amount              tlb.VarUInteger16
 	ResponseDestination tlb.MsgAddress
 	CustomPayload       *JettonPayload `tlb:"maybe^"`
+}
+
+type BidaskInternalContinueSwapMsgBody struct {
+	QueryId          uint64
+	ToAddress        tlb.MsgAddress
+	Order            bool
+	IsX              bool
+	AmountIn         tlb.Grams
+	AmountOut        tlb.Grams
+	ExactOut         tlb.Grams
+	PartialExecution bool
+	Slippage         tlb.Either[tlb.Grams, tlb.Uint256]
+	RefCell          *tlb.Any `tlb:"maybe^"`
+	AdditionalData   *tlb.Any `tlb:"maybe^"`
+	RejectPayload    *tlb.Any `tlb:"maybe^"`
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
 }
 
 type HipoFinanceProxyTokensMintedMsgBody struct {
@@ -3182,13 +3225,13 @@ type BidaskInternalProvideMsgBody struct {
 		FirstBin      int32
 		LiquidityDict tlb.HashmapE[tlb.Uint32, int32]
 		CurrentBin    int32
+		Order         bool
+		IsX           bool
+		AmountIn      tlb.Grams
+		AmountOut     tlb.Grams
+		ExactOut      tlb.Grams
+		Remaining     tlb.Any
 	} `tlb:"^"`
-	Order     bool
-	IsX       bool
-	AmountIn  tlb.Grams
-	AmountOut tlb.Grams
-	ExactOut  tlb.Grams
-	Remaining tlb.Any
 }
 
 type TopUpMsgBody struct {
@@ -3405,6 +3448,7 @@ type BounceMsgBody struct {
 var KnownMsgInTypes = map[string]any{
 	BidaskProvideRefundMsgOp:                     BidaskProvideRefundMsgBody{},
 	CoffeeStakingUpdateRewardsMsgOp:              CoffeeStakingUpdateRewardsMsgBody{},
+	BidaskInternalContinueProvideMsgOp:           BidaskInternalContinueProvideMsgBody{},
 	TextCommentMsgOp:                             TextCommentMsgBody{},
 	PtonTonTransferMsgOp:                         PtonTonTransferMsgBody{},
 	StormVaultRequestWithdrawPositionMsgOp:       StormVaultRequestWithdrawPositionMsgBody{},
@@ -3496,6 +3540,7 @@ var KnownMsgInTypes = map[string]any{
 	OutbidNotificationMsgOp:                      OutbidNotificationMsgBody{},
 	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
+	BidaskInternalContinueSwapMsgOp:              BidaskInternalContinueSwapMsgBody{},
 	HipoFinanceProxyTokensMintedMsgOp:            HipoFinanceProxyTokensMintedMsgBody{},
 	DaolamaVaultSupplyMsgOp:                      DaolamaVaultSupplyMsgBody{},
 	StormUpdatePositionWithStopLossMsgOp:         StormUpdatePositionWithStopLossMsgBody{},

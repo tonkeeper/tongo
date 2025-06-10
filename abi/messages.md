@@ -20,12 +20,14 @@ The list below contains the supported message operations, their names and opcode
 | BidaskBurnAll| 0xebd6ec83 |
 | BidaskBurnPayout| 0x42062d62 |
 | BidaskInternalBurn| 0x16e09400 |
+| BidaskInternalContinueProvide| 0x0c09445a |
+| BidaskInternalContinueSwap| 0x59699475 |
 | BidaskInternalProvide| 0xd1b02ea5 |
 | BidaskInternalSwap| 0x66210c65 |
 | BidaskMultitokenMint| 0x250ad226 |
 | BidaskProvide| 0x96feef7b |
 | BidaskProvide| 0x96feef7b |
-| BidaskProvideBoth| 0x96feef7b |
+| BidaskProvideBoth| 0x3ea0bafc |
 | BidaskProvideRefund| 0x02422cbe |
 | BidaskSaveLiquidityInfo| 0x214ad1d2 |
 | BidaskSwap| 0xf2ef6c1b |

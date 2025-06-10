@@ -10,6 +10,10 @@ const (
 	IUnknown ContractInterface = iota
 	AirdropInterlockerV1
 	AirdropInterlockerV2
+	BidaskInternalLiquidityVault
+	BidaskLpMultitoken
+	BidaskPool
+	BidaskRange
 	CoffeeCrossDex
 	CoffeeFactory
 	CoffeeMevProtector
@@ -109,6 +113,14 @@ func (c ContractInterface) String() string {
 		return "airdrop_interlocker_v1"
 	case AirdropInterlockerV2:
 		return "airdrop_interlocker_v2"
+	case BidaskInternalLiquidityVault:
+		return "bidask_internal_liquidity_vault"
+	case BidaskLpMultitoken:
+		return "bidask_lp_multitoken"
+	case BidaskPool:
+		return "bidask_pool"
+	case BidaskRange:
+		return "bidask_range"
 	case CoffeeCrossDex:
 		return "coffee_cross_dex"
 	case CoffeeFactory:
@@ -302,6 +314,14 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return AirdropInterlockerV1
 	case "airdrop_interlocker_v2":
 		return AirdropInterlockerV2
+	case "bidask_internal_liquidity_vault":
+		return BidaskInternalLiquidityVault
+	case "bidask_lp_multitoken":
+		return BidaskLpMultitoken
+	case "bidask_pool":
+		return BidaskPool
+	case "bidask_range":
+		return BidaskRange
 	case "coffee_cross_dex":
 		return CoffeeCrossDex
 	case "coffee_factory":
@@ -491,6 +511,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 
 var methodInvocationOrder = []MethodDescription{
 	{
+		Name:     "get_active_range",
+		InvokeFn: GetActiveRange,
+	},
+	{
 		Name:     "get_admin_address",
 		InvokeFn: GetAdminAddress,
 	},
@@ -543,6 +567,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetBillAmount,
 	},
 	{
+		Name:     "get_bins_number",
+		InvokeFn: GetBinsNumber,
+	},
+	{
 		Name:     "get_channel_data",
 		InvokeFn: GetChannelData,
 	},
@@ -561,6 +589,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_cron_info",
 		InvokeFn: GetCronInfo,
+	},
+	{
+		Name:     "get_current_bin",
+		InvokeFn: GetCurrentBin,
 	},
 	{
 		Name:     "get_delegation_state",
@@ -617,6 +649,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_last_fill_up_time",
 		InvokeFn: GetLastFillUpTime,
+	},
+	{
+		Name:     "get_liquidity_data",
+		InvokeFn: GetLiquidityData,
 	},
 	{
 		Name:     "get_locker_bill_data",
@@ -703,12 +739,20 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPluginList,
 	},
 	{
+		Name:     "get_pool_addr",
+		InvokeFn: GetPoolAddr,
+	},
+	{
 		Name:     "get_pool_data",
 		InvokeFn: GetPoolData,
 	},
 	{
 		Name:     "get_pool_full_data",
 		InvokeFn: GetPoolFullData,
+	},
+	{
+		Name:     "get_pool_info",
+		InvokeFn: GetPoolInfo,
 	},
 	{
 		Name:     "get_pool_status",
@@ -773,6 +817,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_spot_price",
 		InvokeFn: GetSpotPrice,
+	},
+	{
+		Name:     "get_sqrt_p",
+		InvokeFn: GetSqrtP,
 	},
 	{
 		Name:     "get_staking_status",
@@ -917,6 +965,34 @@ var methodInvocationOrder = []MethodDescription{
 }
 
 var contractInterfacesOrder = []InterfaceDescription{
+	{
+		Name: BidaskPool,
+		Results: []string{
+			"GetActiveRange_BidaskResult",
+			"GetCurrentBin_BidaskResult",
+			"GetPoolInfo_BidaskResult",
+			"GetSqrtP_BidaskResult",
+		},
+	},
+	{
+		Name: BidaskRange,
+		Results: []string{
+			"GetPoolAddr_BidaskResult",
+		},
+	},
+	{
+		Name: BidaskLpMultitoken,
+		Results: []string{
+			"GetBinsNumber_BidaskResult",
+			"GetNftDataResult",
+		},
+	},
+	{
+		Name: BidaskInternalLiquidityVault,
+		Results: []string{
+			"GetLiquidityData_BidaskResult",
+		},
+	},
 	{
 		Name: Cron,
 		Results: []string{
@@ -1599,6 +1675,35 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case BidaskInternalLiquidityVault:
+		return []msgDecoderFunc{
+			decodeFuncBidaskSaveLiquidityInfoMsgBody,
+		}
+	case BidaskLpMultitoken:
+		return []msgDecoderFunc{
+			decodeFuncBidaskMultitokenMintMsgBody,
+			decodeFuncBidaskBurnMsgBody,
+			decodeFuncBidaskBurnAllMsgBody,
+		}
+	case BidaskPool:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncBidaskSwapMsgBody,
+			decodeFuncBidaskProvideMsgBody,
+			decodeFuncBidaskSwapSuccessMsgBody,
+			decodeFuncBidaskSwapFallbackMsgBody,
+			decodeFuncBidaskProvideRefundMsgBody,
+			decodeFuncBidaskBurnPayoutMsgBody,
+			decodeFuncBidaskAddingLiquidityNotifyMsgBody,
+		}
+	case BidaskRange:
+		return []msgDecoderFunc{
+			decodeFuncBidaskInternalSwapMsgBody,
+			decodeFuncBidaskInternalContinueSwapMsgBody,
+			decodeFuncBidaskInternalProvideMsgBody,
+			decodeFuncBidaskInternalContinueProvideMsgBody,
+			decodeFuncBidaskInternalBurnMsgBody,
+		}
 	case CoffeeCrossDex:
 		return []msgDecoderFunc{
 			decodeFuncJettonNotifyMsgBody,

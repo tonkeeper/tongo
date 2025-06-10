@@ -16,6 +16,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"estimate_liquidity_withdraw_amount":           {DecodeEstimateLiquidityWithdrawAmount_CoffeeResult},
 	"estimate_swap_amount":                         {DecodeEstimateSwapAmount_CoffeeResult},
 	"estimate_swap_out":                            {DecodeEstimateSwapOut_DedustResult},
+	"get_active_range":                             {DecodeGetActiveRange_BidaskResult},
 	"get_admin_address":                            {DecodeGetAdminAddress_CoffeeResult},
 	"get_amm_contract_data":                        {DecodeGetAmmContractData_StormResult},
 	"get_amm_name":                                 {DecodeGetAmmName_StormResult},
@@ -30,11 +31,13 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_balances":                                 {DecodeGetBalances_DedustResult, DecodeGetBalancesResult},
 	"get_bill_address":                             {DecodeGetBillAddressResult},
 	"get_bill_amount":                              {DecodeGetBillAmountResult},
+	"get_bins_number":                              {DecodeGetBinsNumber_BidaskResult},
 	"get_channel_data":                             {DecodeGetChannelDataResult},
 	"get_code":                                     {DecodeGetCode_CoffeeResult},
 	"get_collection_data":                          {DecodeGetCollectionDataResult},
 	"get_contract_data":                            {DecodeGetContractData_AirdropInterlockerV1Result},
 	"get_cron_info":                                {DecodeGetCronInfoResult},
+	"get_current_bin":                              {DecodeGetCurrentBin_BidaskResult},
 	"get_delegation_state":                         {DecodeGetDelegationStateResult},
 	"get_distribution_info":                        {DecodeGetDistributionInfoResult},
 	"get_domain":                                   {DecodeGetDomainResult},
@@ -51,6 +54,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_jetton_data":                              {DecodeGetJettonDataResult},
 	"get_last_clean_time":                          {DecodeGetLastCleanTimeResult},
 	"get_last_fill_up_time":                        {DecodeGetLastFillUpTimeResult},
+	"get_liquidity_data":                           {DecodeGetLiquidityData_BidaskResult},
 	"get_liquidity_deposit_address":                {DecodeGetLiquidityDepositAddress_DedustResult},
 	"get_liquidity_depository_address":             {DecodeGetLiquidityDepositoryAddress_CoffeeResult},
 	"get_liquidity_depository_address_no_settings": {DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult},
@@ -62,6 +66,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_lp_data":                                  {DecodeGetLpData_MegatonResult},
 	"get_lp_mining_data":                           {DecodeGetLpMiningData_MegatonResult},
 	"get_lp_minter_address":                        {DecodeGetLpMinterAddress_StormResult},
+	"get_lp_multitoken_wallet":                     {DecodeGetLpMultitokenWallet_BidaskResult},
 	"get_lp_swap_data":                             {DecodeGetLpSwapData_MegatonResult},
 	"get_master_address":                           {DecodeGetMasterAddress_CoffeeStakingVaultResult},
 	"get_member":                                   {DecodeGetMember_WhalesNominatorResult},
@@ -81,12 +86,14 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_params":                                   {DecodeGetParams_WhalesNominatorResult},
 	"get_payment_info":                             {DecodeGetPaymentInfo_SubscriptionV2Result},
 	"get_plugin_list":                              {DecodeGetPluginListResult},
+	"get_pool_addr":                                {DecodeGetPoolAddr_BidaskResult},
 	"get_pool_address":                             {DecodeGetPoolAddress_StonfiResult},
 	"get_pool_address_no_settings":                 {DecodeGetPoolAddressNoSettings_CoffeeResult},
 	"get_pool_creator_address":                     {DecodeGetPoolCreatorAddress_CoffeeResult},
 	"get_pool_creator_address_no_settings":         {DecodeGetPoolCreatorAddressNoSettings_CoffeeResult},
 	"get_pool_data":                                {DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                           {DecodeGetPoolFullDataResult},
+	"get_pool_info":                                {DecodeGetPoolInfo_BidaskResult},
 	"get_pool_status":                              {DecodeGetPoolStatusResult},
 	"get_pool_type":                                {DecodeGetPoolType_StonfiV2Result},
 	"get_position_manager_contract_data":           {DecodeGetPositionManagerContractData_StormResult},
@@ -103,6 +110,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_sale_data":                                {DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult},
 	"get_seed_pubkey":                              {DecodeGetSeedPubkeyResult},
 	"get_spot_price":                               {DecodeGetSpotPrice_StormResult},
+	"get_sqrt_p":                                   {DecodeGetSqrtP_BidaskResult},
 	"get_staking_status":                           {DecodeGetStakingStatusResult},
 	"get_status":                                   {DecodeGetStatusResult},
 	"get_storage_contract_address":                 {DecodeGetStorageContractAddressResult},
@@ -149,6 +157,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	66763:  {GetFullDomain},
 	69014:  {GetWalletAddr},
 	69018:  {GetVaultWhitelistedAddresses},
+	69379:  {GetBinsNumber},
 	69506:  {GetTelemintTokenName},
 	69628:  {GetChannelData},
 	71463:  {GetTorrentHash},
@@ -173,15 +182,18 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	83263:  {GetNftApiInfo},
 	83894:  {GetLpMinterAddress},
 	84232:  {GetTargetBalances},
+	84365:  {GetPoolAddr},
 	84760:  {GetAuthorityAddress},
 	85143:  {Seqno},
 	85719:  {RoyaltyParams},
 	86353:  {GetAmmState},
 	86593:  {GetStorageContractData},
+	86620:  {GetCurrentBin},
 	86862:  {GetReferralCollectionAddress},
 	87635:  {GetAmmStatus},
 	87675:  {GetSpotPrice},
 	87878:  {GetBalances},
+	88371:  {GetActiveRange},
 	88459:  {IsSignatureAllowed},
 	88817:  {GetOracleData},
 	89295:  {GetMembersRaw},
@@ -219,6 +231,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	107494: {GetVammType},
 	107653: {GetPluginList},
 	108868: {GetTerminalAmmPrice},
+	110193: {GetPoolInfo},
 	110403: {GetPaymentInfo},
 	111161: {ListNominators},
 	115119: {GetMasterAddress},
@@ -242,8 +255,10 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	123928: {GetStakingStatus},
 	124861: {GetReferralVaultsWhitelist},
 	125126: {GetStoredData},
+	127091: {GetSqrtP},
 	127184: {GetVaultData},
 	128085: {GetRouterData},
+	128568: {GetLiquidityData},
 	128979: {JettonWalletLockData},
 	129292: {GetSubscriptionInfo},
 	129581: {GetSeedPubkey},
@@ -259,6 +274,7 @@ var resultTypes = []interface{}{
 	&EstimateLiquidityWithdrawAmount_CoffeeResult{},
 	&EstimateSwapAmount_CoffeeResult{},
 	&EstimateSwapOut_DedustResult{},
+	&GetActiveRange_BidaskResult{},
 	&GetAdminAddress_CoffeeResult{},
 	&GetAmmContractData_StormResult{},
 	&GetAmmName_StormResult{},
@@ -275,11 +291,13 @@ var resultTypes = []interface{}{
 	&GetBalances_DedustResult{},
 	&GetBillAddressResult{},
 	&GetBillAmountResult{},
+	&GetBinsNumber_BidaskResult{},
 	&GetChannelDataResult{},
 	&GetCode_CoffeeResult{},
 	&GetCollectionDataResult{},
 	&GetContractData_AirdropInterlockerV1Result{},
 	&GetCronInfoResult{},
+	&GetCurrentBin_BidaskResult{},
 	&GetDelegationStateResult{},
 	&GetDistributionInfoResult{},
 	&GetDomainResult{},
@@ -296,6 +314,7 @@ var resultTypes = []interface{}{
 	&GetJettonDataResult{},
 	&GetLastCleanTimeResult{},
 	&GetLastFillUpTimeResult{},
+	&GetLiquidityData_BidaskResult{},
 	&GetLiquidityDepositAddress_DedustResult{},
 	&GetLiquidityDepositoryAddress_CoffeeResult{},
 	&GetLiquidityDepositoryAddressNoSettings_CoffeeResult{},
@@ -307,6 +326,7 @@ var resultTypes = []interface{}{
 	&GetLpData_MegatonResult{},
 	&GetLpMiningData_MegatonResult{},
 	&GetLpMinterAddress_StormResult{},
+	&GetLpMultitokenWallet_BidaskResult{},
 	&GetLpSwapData_MegatonResult{},
 	&GetMasterAddress_CoffeeStakingVaultResult{},
 	&GetMember_WhalesNominatorResult{},
@@ -326,6 +346,7 @@ var resultTypes = []interface{}{
 	&GetParams_WhalesNominatorResult{},
 	&GetPaymentInfo_SubscriptionV2Result{},
 	&GetPluginListResult{},
+	&GetPoolAddr_BidaskResult{},
 	&GetPoolAddress_StonfiResult{},
 	&GetPoolAddressNoSettings_CoffeeResult{},
 	&GetPoolCreatorAddress_CoffeeResult{},
@@ -338,6 +359,7 @@ var resultTypes = []interface{}{
 	&GetPoolData_StonfiV2WeightedStableswapResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
+	&GetPoolInfo_BidaskResult{},
 	&GetPoolStatusResult{},
 	&GetPoolType_StonfiV2Result{},
 	&GetPositionManagerContractData_StormResult{},
@@ -357,6 +379,7 @@ var resultTypes = []interface{}{
 	&GetSaleData_GetgemsResult{},
 	&GetSeedPubkeyResult{},
 	&GetSpotPrice_StormResult{},
+	&GetSqrtP_BidaskResult{},
 	&GetStakingStatusResult{},
 	&GetStatusResult{},
 	&GetStorageContractAddressResult{},
@@ -623,6 +646,39 @@ func DecodeEstimateSwapOut_DedustResult(stack tlb.VmStack) (resultType string, r
 	var result EstimateSwapOut_DedustResult
 	err = stack.Unmarshal(&result)
 	return "EstimateSwapOut_DedustResult", result, err
+}
+
+type GetActiveRange_BidaskResult struct {
+	RangeAddress tlb.MsgAddress
+}
+
+func GetActiveRange(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 88371 for "get_active_range" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 88371, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetActiveRange_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetActiveRange_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetActiveRange_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetActiveRange_BidaskResult", result, err
 }
 
 type GetAdminAddress_CoffeeResult struct {
@@ -1165,6 +1221,39 @@ func DecodeGetBillAmountResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetBillAmountResult", result, err
 }
 
+type GetBinsNumber_BidaskResult struct {
+	BinsNumber tlb.Int257
+}
+
+func GetBinsNumber(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 69379 for "get_bins_number" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 69379, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetBinsNumber_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetBinsNumber_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetBinsNumber_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetBinsNumber_BidaskResult", result, err
+}
+
 type GetChannelDataResult struct {
 	State    int8
 	Balances struct {
@@ -1365,6 +1454,39 @@ func DecodeGetCronInfoResult(stack tlb.VmStack) (resultType string, resultAny an
 	var result GetCronInfoResult
 	err = stack.Unmarshal(&result)
 	return "GetCronInfoResult", result, err
+}
+
+type GetCurrentBin_BidaskResult struct {
+	CurrentBin tlb.Int257
+}
+
+func GetCurrentBin(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 86620 for "get_current_bin" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 86620, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCurrentBin_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCurrentBin_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCurrentBin_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetCurrentBin_BidaskResult", result, err
 }
 
 type GetDelegationStateResult struct {
@@ -1970,6 +2092,42 @@ func DecodeGetLastFillUpTimeResult(stack tlb.VmStack) (resultType string, result
 	return "GetLastFillUpTimeResult", result, err
 }
 
+type GetLiquidityData_BidaskResult struct {
+	UserAddress tlb.MsgAddress
+	PoolAddress tlb.MsgAddress
+	AmountX     tlb.Int257
+	AmountY     tlb.Int257
+}
+
+func GetLiquidityData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 128568 for "get_liquidity_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 128568, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLiquidityData_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLiquidityData_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLiquidityData_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetLiquidityData_BidaskResult", result, err
+}
+
 type GetLiquidityDepositAddress_DedustResult struct {
 	LiquidityDepositAddr tlb.MsgAddress
 }
@@ -2434,6 +2592,48 @@ func DecodeGetLpMinterAddress_StormResult(stack tlb.VmStack) (resultType string,
 	var result GetLpMinterAddress_StormResult
 	err = stack.Unmarshal(&result)
 	return "GetLpMinterAddress_StormResult", result, err
+}
+
+type GetLpMultitokenWallet_BidaskResult struct {
+	MultitokenAddress tlb.MsgAddress
+}
+
+func GetLpMultitokenWallet(ctx context.Context, executor Executor, reqAccountID ton.AccountID, userAddress tlb.MsgAddress) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(userAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 96620 for "get_lp_multitoken_wallet" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96620, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLpMultitokenWallet_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLpMultitokenWallet_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLpMultitokenWallet_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetLpMultitokenWallet_BidaskResult", result, err
 }
 
 type GetLpSwapData_MegatonResult struct {
@@ -3160,6 +3360,39 @@ func DecodeGetPluginListResult(stack tlb.VmStack) (resultType string, resultAny 
 	return "GetPluginListResult", result, err
 }
 
+type GetPoolAddr_BidaskResult struct {
+	PoolAddress tlb.MsgAddress
+}
+
+func GetPoolAddr(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 84365 for "get_pool_addr" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 84365, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolAddr_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolAddr_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolAddr_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolAddr_BidaskResult", result, err
+}
+
 type GetPoolAddress_StonfiResult struct {
 	PoolAddress tlb.MsgAddress
 }
@@ -3639,6 +3872,42 @@ func DecodeGetPoolFullDataResult(stack tlb.VmStack) (resultType string, resultAn
 	var result GetPoolFullDataResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolFullDataResult", result, err
+}
+
+type GetPoolInfo_BidaskResult struct {
+	JettonWalletX tlb.MsgAddress
+	JettonWalletY tlb.MsgAddress
+	BinStep       tlb.Int257
+	LpFee         tlb.Int257
+}
+
+func GetPoolInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 110193 for "get_pool_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 110193, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolInfo_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolInfo_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolInfo_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolInfo_BidaskResult", result, err
 }
 
 type GetPoolStatusResult struct {
@@ -4267,6 +4536,39 @@ func DecodeGetSpotPrice_StormResult(stack tlb.VmStack) (resultType string, resul
 	var result GetSpotPrice_StormResult
 	err = stack.Unmarshal(&result)
 	return "GetSpotPrice_StormResult", result, err
+}
+
+type GetSqrtP_BidaskResult struct {
+	SqrtPrice tlb.Int257
+}
+
+func GetSqrtP(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 127091 for "get_sqrt_p" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 127091, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSqrtP_BidaskResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetSqrtP_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetSqrtP_BidaskResult
+	err = stack.Unmarshal(&result)
+	return "GetSqrtP_BidaskResult", result, err
 }
 
 type GetStakingStatusResult struct {

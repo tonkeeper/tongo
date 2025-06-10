@@ -45,6 +45,7 @@
 
     <interface name="bidask_lp_multitoken">
         <get_method name="get_bins_number" version="bidask"/>
+        <get_method name="get_nft_data"/>
         <msg_in>
             <internal name="bidask_multitoken_mint"/>
             <internal name="bidask_burn"/>

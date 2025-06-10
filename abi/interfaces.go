@@ -984,6 +984,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: BidaskLpMultitoken,
 		Results: []string{
 			"GetBinsNumber_BidaskResult",
+			"GetNftDataResult",
 		},
 	},
 	{

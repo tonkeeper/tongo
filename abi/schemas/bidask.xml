@@ -138,11 +138,11 @@
 
     <jetton_payload name="bidask_provide" >
         bidask_provide#96feef7b query_id:uint64 deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
-    </internal>
+    </jetton_payload>
 
     <jetton_payload name="bidask_provide_both" >
         bidask_provide_both#96feef7b query_id:uint64 ton_amount:Coins deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
-    </internal>
+    </jetton_payload>
 
     <internal name="bidask_swap_success" >
         bidask_swap_success#520e4831 query_id:uint64 new_current_bin:int32 new_sqrt_price:uint256 order:Bool amount_x:Coins amount_y:Coins 
@@ -175,31 +175,31 @@
         remaining:Cell  = InternalMsgBody;
     </internal>
 
-    <jetton_payload name="bidask_save_liquidity_info" >
+    <internal name="bidask_save_liquidity_info" >
         bidask_save_liquidity_info#214ad1d2 query_id:uint64 amount_x:Coins amount_y:Coins deposit_type:uint3 
         liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
-    <jetton_payload name="bidask_adding_liquidity_notify" >
+    <internal name="bidask_adding_liquidity_notify" >
         bidask_adding_liquidity_notify#af31d23f query_id:uint64 user_address:MsgAddress amount_x:Coins amount_y:Coins deposit_type:uint3 
         liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
-    <jetton_payload name="bidask_internal_burn" >
+    <internal name="bidask_internal_burn" >
         bidask_internal_burn#16e09400 query_id:uint64 owner_address:MsgAddress amount_x:Coins amount_y:Coins first_bin:int32 
         tokens_to_burn:(HashmapE 32 int32) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
-    <jetton_payload name="bidask_multitoken_mint" >
+    <internal name="bidask_multitoken_mint" >
         bidask_multitoken_mint#250ad226 query_id:uint64 cell:(Maybe ^Cell) cell:(Maybe ^Cell) liquidity_dict:(HashmapE 32 int32) 
         number_of_bins:uint32 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
-    <jetton_payload name="bidask_burn" >
+    <internal name="bidask_burn" >
         bidask_burn#73403c43 query_id:uint64 tokens_to_burn:(HashmapE 32 int32) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
-    <jetton_payload name="bidask_burn_all" >
+    <internal name="bidask_burn_all" >
         bidask_burn_all#ebd6ec83 query_id:uint64 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 </abi>

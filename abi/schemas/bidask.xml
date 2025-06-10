@@ -1,5 +1,5 @@
 <abi>
-    <interface name="bidask_clmm_pool">
+    <interface name="bidask_pool">
         <get_method name="get_pool_info" version="bidask"/>
         <get_method name="get_current_bin" version="bidask"/>
         <get_method name="get_sqrt_p" version="bidask"/>

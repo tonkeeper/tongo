@@ -10,9 +10,9 @@ const (
 	IUnknown ContractInterface = iota
 	AirdropInterlockerV1
 	AirdropInterlockerV2
-	BidaskClmmPool
 	BidaskInternalLiquidityVault
 	BidaskLpMultitoken
+	BidaskPool
 	BidaskRange
 	CoffeeCrossDex
 	CoffeeFactory
@@ -113,12 +113,12 @@ func (c ContractInterface) String() string {
 		return "airdrop_interlocker_v1"
 	case AirdropInterlockerV2:
 		return "airdrop_interlocker_v2"
-	case BidaskClmmPool:
-		return "bidask_clmm_pool"
 	case BidaskInternalLiquidityVault:
 		return "bidask_internal_liquidity_vault"
 	case BidaskLpMultitoken:
 		return "bidask_lp_multitoken"
+	case BidaskPool:
+		return "bidask_pool"
 	case BidaskRange:
 		return "bidask_range"
 	case CoffeeCrossDex:
@@ -314,12 +314,12 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return AirdropInterlockerV1
 	case "airdrop_interlocker_v2":
 		return AirdropInterlockerV2
-	case "bidask_clmm_pool":
-		return BidaskClmmPool
 	case "bidask_internal_liquidity_vault":
 		return BidaskInternalLiquidityVault
 	case "bidask_lp_multitoken":
 		return BidaskLpMultitoken
+	case "bidask_pool":
+		return BidaskPool
 	case "bidask_range":
 		return BidaskRange
 	case "coffee_cross_dex":
@@ -966,7 +966,7 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 	{
-		Name: BidaskClmmPool,
+		Name: BidaskPool,
 		Results: []string{
 			"GetActiveRange_BidaskResult",
 			"GetCurrentBin_BidaskResult",
@@ -1674,17 +1674,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
-	case BidaskClmmPool:
-		return []msgDecoderFunc{
-			decodeFuncJettonNotifyMsgBody,
-			decodeFuncBidaskSwapMsgBody,
-			decodeFuncBidaskProvideMsgBody,
-			decodeFuncBidaskSwapSuccessMsgBody,
-			decodeFuncBidaskSwapFallbackMsgBody,
-			decodeFuncBidaskProvideRefundMsgBody,
-			decodeFuncBidaskBurnPayoutMsgBody,
-			decodeFuncBidaskAddingLiquidityNotifyMsgBody,
-		}
 	case BidaskInternalLiquidityVault:
 		return []msgDecoderFunc{
 			decodeFuncBidaskSaveLiquidityInfoMsgBody,
@@ -1694,6 +1683,17 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncBidaskMultitokenMintMsgBody,
 			decodeFuncBidaskBurnMsgBody,
 			decodeFuncBidaskBurnAllMsgBody,
+		}
+	case BidaskPool:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncBidaskSwapMsgBody,
+			decodeFuncBidaskProvideMsgBody,
+			decodeFuncBidaskSwapSuccessMsgBody,
+			decodeFuncBidaskSwapFallbackMsgBody,
+			decodeFuncBidaskProvideRefundMsgBody,
+			decodeFuncBidaskBurnPayoutMsgBody,
+			decodeFuncBidaskAddingLiquidityNotifyMsgBody,
 		}
 	case BidaskRange:
 		return []msgDecoderFunc{

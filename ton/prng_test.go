@@ -6,7 +6,7 @@ import (
 )
 
 func createValidatorPRNG() (*ValidatorPRNG, error) {
-	return NewValidatorPRNG(nil, 0x8000000000000000, -1, 0)
+	return NewValidatorPRNG([32]byte{}, 0x8000000000000000, -1, 0)
 }
 
 func TestNextUInt64(t *testing.T) {

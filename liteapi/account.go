@@ -49,7 +49,11 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 		}
 		cellsMap[hash] = stateCells[0]
 	}
-	shardState, err := checkBlockShardStateProof(res.Proof, blockHash, cellsMap)
+	proofCells, err := boc.DeserializeBoc(res.Proof)
+	if err != nil {
+		return nil, nil, err
+	}
+	shardState, err := checkBlockShardStateProof(proofCells, blockHash, cellsMap)
 	if err != nil {
 		return nil, nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -67,7 +71,11 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 }
 
 func checkShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain int32, shardRootHash ton.Bits256) (*tlb.McStateExtra, error) {
-	shardState, err := checkBlockShardStateProof(shardProof, master.RootHash, nil)
+	shardProofCells, err := boc.DeserializeBoc(shardProof)
+	if err != nil {
+		return nil, err
+	}
+	shardState, err := checkBlockShardStateProof(shardProofCells, master.RootHash, nil)
 	if err != nil {
 		return nil, fmt.Errorf("check block proof failed: %w", err)
 	}
@@ -95,15 +103,11 @@ func checkShardInMasterProof(master ton.BlockIDExt, shardProof []byte, workchain
 	return nil, fmt.Errorf("required shard hash not found in proof")
 }
 
-func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap map[[32]byte]*boc.Cell) (*tlb.ShardStateUnsplit, error) {
-	proofCells, err := boc.DeserializeBoc(proof)
-	if err != nil {
-		return nil, err
-	}
-	if len(proofCells) != 2 {
+func checkBlockShardStateProof(proof []*boc.Cell, blockRootHash ton.Bits256, cellsMap map[[32]byte]*boc.Cell) (*tlb.ShardStateUnsplit, error) {
+	if len(proof) != 2 {
 		return nil, errors.New("must be two root cells")
 	}
-	newStateHash, err := checkBlockProof(*proofCells[0], blockRootHash)
+	block, err := checkBlockProof(*proof[0], blockRootHash)
 	if err != nil {
 		return nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -120,17 +124,17 @@ func checkBlockShardStateProof(proof []byte, blockRootHash ton.Bits256, cellsMap
 			return nil, errors.New("not found")
 		})
 	}
-	err = decoder.Unmarshal(proofCells[1], &stateProof)
+	err = decoder.Unmarshal(proof[1], &stateProof)
 	if err != nil {
 		return nil, err
 	}
-	if stateProof.Proof.VirtualHash != *newStateHash {
+	if stateProof.Proof.VirtualHash != block.VirtualRoot.StateUpdate.ToHash {
 		return nil, errors.New("invalid virtual hash")
 	}
 	return &stateProof.Proof.VirtualRoot, nil
 }
 
-func checkBlockProof(proof boc.Cell, blockRootHash ton.Bits256) (*tlb.Bits256, error) {
+func checkBlockProof(proof boc.Cell, blockRootHash ton.Bits256) (*tlb.MerkleProof[tlb.Block], error) {
 	var res tlb.MerkleProof[tlb.Block]
 	err := tlb.Unmarshal(&proof, &res) // merkle hash and depth checks inside
 	if err != nil {
@@ -139,5 +143,5 @@ func checkBlockProof(proof boc.Cell, blockRootHash ton.Bits256) (*tlb.Bits256, e
 	if ton.Bits256(res.VirtualHash) != blockRootHash {
 		return nil, fmt.Errorf("invalid block root hash")
 	}
-	return &res.VirtualRoot.StateUpdate.ToHash, nil // return new_hash field of MerkleUpdate of ShardState
+	return &res, nil // return new_hash field of MerkleUpdate of ShardState
 }

@@ -77,7 +77,7 @@ type ValidatorDescr struct {
 		PublicKey SigPubKey
 		Weight    uint64
 	} `tlbSumType:"validator#53"`
-	ValidatorAddr ValidatorAddr `tlbSumType:"validatoraddr#73"`
+	ValidatorAddr *ValidatorAddr `tlbSumType:"validatoraddr#73"`
 }
 
 func (vd ValidatorDescr) MarshalJSON() ([]byte, error) {

@@ -3,7 +3,6 @@ package ton
 import (
 	"crypto/sha512"
 	"encoding/binary"
-	"fmt"
 	"math/big"
 )
 
@@ -22,16 +21,13 @@ type ValidatorPRNG struct {
 	limit int
 }
 
-func NewValidatorPRNG(seed []byte, shard uint64, workchain int32, catchainSeqno uint32) (*ValidatorPRNG, error) {
-	if len(seed) != 0 && len(seed) != 32 {
-		return nil, fmt.Errorf("invalid seed")
-	}
+func NewValidatorPRNG(seed [32]byte, shard uint64, workchain int32, catchainSeqno uint32) (*ValidatorPRNG, error) {
 	descr := ValidatorPRNGDescr{
+		seed:          seed,
 		shard:         shard,
 		workchain:     workchain,
 		catchainSeqno: catchainSeqno,
 	}
-	copy(descr.seed[:], seed)
 	return &ValidatorPRNG{
 		descr: descr,
 	}, nil

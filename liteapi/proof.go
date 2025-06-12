@@ -317,13 +317,12 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAd
 		Weight uint64
 		Addr   tl.Int256
 	}
-	type validatorSet struct {
-		CatchainSeqno uint32
-		Validators    []tlValidator
-	}
 	type tlValidatorSet struct { // SumType with one field for magic prefix
 		SumType      tl.SumType
-		ValidatorSet validatorSet `tlSumType:"901660ed"`
+		ValidatorSet struct {
+			CatchainSeqno uint32
+			Validators    []tlValidator
+		} `tlSumType:"901660ed"`
 	}
 	tlValidators := make([]tlValidator, len(validators))
 	for i, currValidator := range validators {
@@ -331,13 +330,12 @@ func computeValidatorSetHash(catchainSeqno uint32, validators []*tlb.ValidatorAd
 		tlValidators[i].Weight = currValidator.Weight
 		tlValidators[i].Addr = tl.Int256(currValidator.AdnlAddr)
 	}
-	valSet := validatorSet{
-		CatchainSeqno: catchainSeqno,
-		Validators:    tlValidators,
-	}
 	tlValSet := tlValidatorSet{
-		SumType:      "ValidatorSet",
-		ValidatorSet: valSet,
+		SumType: "ValidatorSet",
+		ValidatorSet: struct {
+			CatchainSeqno uint32
+			Validators    []tlValidator
+		}{CatchainSeqno: catchainSeqno, Validators: tlValidators},
 	}
 	validatorSetBytes, err := tl.Marshal(tlValSet)
 	if err != nil {

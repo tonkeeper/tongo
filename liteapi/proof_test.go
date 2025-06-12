@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/tonkeeper/tongo/ton"
 	"testing"
+	"time"
 )
 
 func getInitBlock() (*ton.BlockIDExt, error) {
@@ -75,5 +76,28 @@ func TestVerifyProofChain(t *testing.T) {
 				t.Errorf("proof chain failed from %v, to %v: %v", test.from.Seqno, test.to.Seqno, err)
 			}
 		})
+	}
+}
+
+func TestVerifyProofChainFor5NewBlocks(t *testing.T) {
+	c, err := NewClientWithDefaultMainnet()
+	if err != nil {
+		t.Fatalf("unable to create liteclient: %v", err)
+	}
+	from, err := getLastBlockInMasterchain(c)
+	if err != nil {
+		t.Fatalf("unable to get source block: %v", err)
+	}
+	for i := 0; i < 5; i++ {
+		time.Sleep(5 * time.Second) // delay to wait for new blocks
+		to, err := getLastBlockInMasterchain(c)
+		if err != nil {
+			t.Fatalf("unable to get target block: %v", err)
+		}
+		err = c.VerifyProofChain(context.Background(), *from, *to)
+		if err != nil {
+			t.Errorf("proof chain failed from %v, to %v: %v", from.Seqno, to.Seqno, err)
+		}
+		from = to
 	}
 }

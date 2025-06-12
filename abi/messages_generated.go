@@ -2418,19 +2418,18 @@ type JettonBurnMsgBody struct {
 }
 
 type BidaskInternalContinueSwapMsgBody struct {
-	QueryId          uint64
-	ToAddress        tlb.MsgAddress
-	Order            bool
-	IsX              bool
-	AmountIn         tlb.Grams
-	AmountOut        tlb.Grams
-	ExactOut         tlb.Grams
-	PartialExecution bool
-	Slippage         tlb.Either[tlb.Grams, tlb.Uint256]
-	RefCell          *tlb.Any `tlb:"maybe^"`
-	AdditionalData   *tlb.Any `tlb:"maybe^"`
-	RejectPayload    *tlb.Any `tlb:"maybe^"`
-	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+	QueryId        uint64
+	ToAddress      tlb.MsgAddress
+	Order          bool
+	IsX            bool
+	AmountIn       tlb.Grams
+	AmountOut      tlb.Grams
+	ExactOut       tlb.Grams
+	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
+	RefCell        *tlb.Any `tlb:"maybe^"`
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type HipoFinanceProxyTokensMintedMsgBody struct {
@@ -2569,19 +2568,18 @@ type StonfiPayToV2MsgBody struct {
 }
 
 type BidaskInternalSwapMsgBody struct {
-	QueryId          uint64
-	ToAddress        tlb.MsgAddress
-	Order            bool
-	IsX              bool
-	AmountIn         tlb.Grams
-	AmountOut        tlb.Grams
-	ExactOut         tlb.Grams
-	PartialExecution bool
-	Slippage         tlb.Either[tlb.Grams, tlb.Uint256]
-	RefCell          *tlb.Any `tlb:"maybe^"`
-	AdditionalData   *tlb.Any `tlb:"maybe^"`
-	RejectPayload    *tlb.Any `tlb:"maybe^"`
-	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+	QueryId        uint64
+	ToAddress      tlb.MsgAddress
+	Order          bool
+	IsX            bool
+	AmountIn       tlb.Grams
+	AmountOut      tlb.Grams
+	ExactOut       tlb.Grams
+	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
+	RefCell        *tlb.Any `tlb:"maybe^"`
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type StonfiSwapV2MsgBody struct {
@@ -3225,11 +3223,6 @@ type BidaskInternalProvideMsgBody struct {
 		FirstBin      int32
 		LiquidityDict tlb.HashmapE[tlb.Uint32, int32]
 		CurrentBin    int32
-		Order         bool
-		IsX           bool
-		AmountIn      tlb.Grams
-		AmountOut     tlb.Grams
-		ExactOut      tlb.Grams
 		Remaining     tlb.Any
 	} `tlb:"^"`
 }
@@ -3372,15 +3365,14 @@ type TonstakeNftBurnMsgBody struct {
 }
 
 type BidaskSwapMsgBody struct {
-	QueryId          uint64
-	ToAddress        tlb.MsgAddress
-	PartialExecution bool
-	Slippage         tlb.Either[tlb.Grams, tlb.Uint256]
-	ExactOut         tlb.Grams
-	RefAddress       tlb.MsgAddress
-	AdditionalData   *tlb.Any `tlb:"maybe^"`
-	RejectPayload    *tlb.Any `tlb:"maybe^"`
-	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+	QueryId        uint64
+	ToAddress      tlb.MsgAddress
+	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
+	ExactOut       tlb.Grams
+	RefAddress     tlb.MsgAddress
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type ElectorNewStakeConfirmationMsgBody struct {

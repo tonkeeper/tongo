@@ -126,12 +126,12 @@
     </get_method>
 
     <internal name="bidask_swap" >
-        bidask_swap#f2ef6c1b query_id:uint64 to_address:MsgAddress partial_execution:Bool slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#f2ef6c1b query_id:uint64 to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         ref_address:MsgAddress additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <jetton_payload name="bidask_swap" >
-        bidask_swap#f2ef6c1b query_id:uint64 native_amount:Coins to_address:MsgAddress partial_execution:Bool slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#f2ef6c1b query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         ref_address:MsgAddress additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
@@ -169,18 +169,17 @@
 
     <internal name="bidask_internal_swap" >
         bidask_internal_swap#66210c65 query_id:uint64 to_address:MsgAddress order:Bool is_x:Bool amount_in:Coins amount_out:Coins exact_out:Coins 
-        partial_execution:Bool slippage:(Either Coins uint256) ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+        slippage:(Either Coins uint256) ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_internal_continue_swap" >
         bidask_internal_continue_swap#59699475 query_id:uint64 to_address:MsgAddress order:Bool is_x:Bool amount_in:Coins amount_out:Coins exact_out:Coins 
-        partial_execution:Bool slippage:(Either Coins uint256) ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+        slippage:(Either Coins uint256) ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_internal_provide" >
         bidask_internal_provide#d1b02ea5 query_id:uint64 cell:(Maybe ^Cell) cell:(Maybe ^Cell) cell:(Maybe ^Cell) amount_x:Coins amount_y:Coins to_address:MsgAddress
-        dex_payload:^[first_bin:int32 liquidity_dict:(HashmapE 32 int32) current_bin:int32 order:Bool is_x:Bool amount_in:Coins amount_out:Coins exact_out:Coins 
-        remaining:Cell]  = InternalMsgBody;
+        dex_payload:^[first_bin:int32 liquidity_dict:(HashmapE 32 int32) current_bin:int32 remaining:Cell]  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_internal_continue_provide" >

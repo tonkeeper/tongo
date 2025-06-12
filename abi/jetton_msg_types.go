@@ -559,16 +559,15 @@ type CoffeeMevProtectFailedSwapJettonPayload struct {
 }
 
 type BidaskSwapJettonPayload struct {
-	QueryId          uint64
-	NativeAmount     tlb.Grams
-	ToAddress        tlb.MsgAddress
-	PartialExecution bool
-	Slippage         tlb.Either[tlb.Grams, tlb.Uint256]
-	ExactOut         tlb.Grams
-	RefAddress       tlb.MsgAddress
-	AdditionalData   *tlb.Any `tlb:"maybe^"`
-	RejectPayload    *tlb.Any `tlb:"maybe^"`
-	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+	QueryId        uint64
+	NativeAmount   tlb.Grams
+	ToAddress      tlb.MsgAddress
+	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
+	ExactOut       tlb.Grams
+	RefAddress     tlb.MsgAddress
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type StonfiProvideLiquidityJettonPayload struct {

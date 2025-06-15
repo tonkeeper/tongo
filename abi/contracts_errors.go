@@ -5,6 +5,7 @@ package abi
 import ()
 
 var contractErrors = map[ContractInterface]map[int32]string{
+	BidaskPool: {83: "Insufficient gas for operation"},
 	CoffeeCrossDex: {100: "Invalid payload to resent",
 		101: "Dedust payload is empty",
 		102: "ProxyTON payload is empty",

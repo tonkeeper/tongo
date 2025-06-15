@@ -84,6 +84,17 @@ func decodeStonfiProvideLpV2JettonOpJetton(j *JettonPayload, c *boc.Cell) error 
 	return err
 }
 
+func decodeBidaskProvideBothJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res BidaskProvideBothJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = BidaskProvideBothJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeDedustDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res DedustDepositLiquidityJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -144,6 +155,17 @@ func decodeTonkeeperRelayerFeeJettonOpJetton(j *JettonPayload, c *boc.Cell) erro
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
 		j.SumType = TonkeeperRelayerFeeJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeBidaskProvideJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res BidaskProvideJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = BidaskProvideJettonOp
 		j.Value = res
 		return nil
 	}
@@ -238,6 +260,17 @@ func decodeCoffeeMevProtectFailedSwapJettonOpJetton(j *JettonPayload, c *boc.Cel
 	return err
 }
 
+func decodeBidaskSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res BidaskSwapJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = BidaskSwapJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiProvideLiquidityJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -257,12 +290,14 @@ const (
 	StonfiSwapJettonOp                 JettonOpName = "StonfiSwap"
 	TegroAddLiquidityJettonOp          JettonOpName = "TegroAddLiquidity"
 	StonfiProvideLpV2JettonOp          JettonOpName = "StonfiProvideLpV2"
+	BidaskProvideBothJettonOp          JettonOpName = "BidaskProvideBoth"
 	DedustDepositLiquidityJettonOp     JettonOpName = "DedustDepositLiquidity"
 	StonfiSwapOkRefJettonOp            JettonOpName = "StonfiSwapOkRef"
 	CoffeeCrossDexResendJettonOp       JettonOpName = "CoffeeCrossDexResend"
 	StonfiSwapV2JettonOp               JettonOpName = "StonfiSwapV2"
 	InvoicePayloadJettonOp             JettonOpName = "InvoicePayload"
 	TonkeeperRelayerFeeJettonOp        JettonOpName = "TonkeeperRelayerFee"
+	BidaskProvideJettonOp              JettonOpName = "BidaskProvide"
 	CoffeeCrossDexFailureJettonOp      JettonOpName = "CoffeeCrossDexFailure"
 	CoffeeSwapJettonOp                 JettonOpName = "CoffeeSwap"
 	CoffeeCreatePoolJettonOp           JettonOpName = "CoffeeCreatePool"
@@ -271,6 +306,7 @@ const (
 	StonfiSwapOkJettonOp               JettonOpName = "StonfiSwapOk"
 	DedustSwapJettonOp                 JettonOpName = "DedustSwap"
 	CoffeeMevProtectFailedSwapJettonOp JettonOpName = "CoffeeMevProtectFailedSwap"
+	BidaskSwapJettonOp                 JettonOpName = "BidaskSwap"
 	StonfiProvideLiquidityJettonOp     JettonOpName = "StonfiProvideLiquidity"
 
 	CoffeeStakingLockJettonOpCode          JettonOpCode = 0x0c0ffede
@@ -280,12 +316,14 @@ const (
 	StonfiSwapJettonOpCode                 JettonOpCode = 0x25938561
 	TegroAddLiquidityJettonOpCode          JettonOpCode = 0x287e167a
 	StonfiProvideLpV2JettonOpCode          JettonOpCode = 0x37c096df
+	BidaskProvideBothJettonOpCode          JettonOpCode = 0x3ea0bafc
 	DedustDepositLiquidityJettonOpCode     JettonOpCode = 0x40e108d6
 	StonfiSwapOkRefJettonOpCode            JettonOpCode = 0x45078540
 	CoffeeCrossDexResendJettonOpCode       JettonOpCode = 0x4ee9b106
 	StonfiSwapV2JettonOpCode               JettonOpCode = 0x6664de2a
 	InvoicePayloadJettonOpCode             JettonOpCode = 0x7aa23eb5
 	TonkeeperRelayerFeeJettonOpCode        JettonOpCode = 0x878da6e3
+	BidaskProvideJettonOpCode              JettonOpCode = 0x96feef7b
 	CoffeeCrossDexFailureJettonOpCode      JettonOpCode = 0xb902e61a
 	CoffeeSwapJettonOpCode                 JettonOpCode = 0xc0ffee10
 	CoffeeCreatePoolJettonOpCode           JettonOpCode = 0xc0ffee11
@@ -294,6 +332,7 @@ const (
 	StonfiSwapOkJettonOpCode               JettonOpCode = 0xc64370e5
 	DedustSwapJettonOpCode                 JettonOpCode = 0xe3a0d482
 	CoffeeMevProtectFailedSwapJettonOpCode JettonOpCode = 0xee51ce51
+	BidaskSwapJettonOpCode                 JettonOpCode = 0xf2ef6c1b
 	StonfiProvideLiquidityJettonOpCode     JettonOpCode = 0xfcf9e58f
 )
 
@@ -305,12 +344,14 @@ var KnownJettonTypes = map[string]any{
 	StonfiSwapJettonOp:                 StonfiSwapJettonPayload{},
 	TegroAddLiquidityJettonOp:          TegroAddLiquidityJettonPayload{},
 	StonfiProvideLpV2JettonOp:          StonfiProvideLpV2JettonPayload{},
+	BidaskProvideBothJettonOp:          BidaskProvideBothJettonPayload{},
 	DedustDepositLiquidityJettonOp:     DedustDepositLiquidityJettonPayload{},
 	StonfiSwapOkRefJettonOp:            StonfiSwapOkRefJettonPayload{},
 	CoffeeCrossDexResendJettonOp:       CoffeeCrossDexResendJettonPayload{},
 	StonfiSwapV2JettonOp:               StonfiSwapV2JettonPayload{},
 	InvoicePayloadJettonOp:             InvoicePayloadJettonPayload{},
 	TonkeeperRelayerFeeJettonOp:        TonkeeperRelayerFeeJettonPayload{},
+	BidaskProvideJettonOp:              BidaskProvideJettonPayload{},
 	CoffeeCrossDexFailureJettonOp:      CoffeeCrossDexFailureJettonPayload{},
 	CoffeeSwapJettonOp:                 CoffeeSwapJettonPayload{},
 	CoffeeCreatePoolJettonOp:           CoffeeCreatePoolJettonPayload{},
@@ -319,6 +360,7 @@ var KnownJettonTypes = map[string]any{
 	StonfiSwapOkJettonOp:               StonfiSwapOkJettonPayload{},
 	DedustSwapJettonOp:                 DedustSwapJettonPayload{},
 	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonPayload{},
+	BidaskSwapJettonOp:                 BidaskSwapJettonPayload{},
 	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonPayload{},
 }
 var JettonOpCodes = map[JettonOpName]JettonOpCode{
@@ -329,12 +371,14 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	StonfiSwapJettonOp:                 StonfiSwapJettonOpCode,
 	TegroAddLiquidityJettonOp:          TegroAddLiquidityJettonOpCode,
 	StonfiProvideLpV2JettonOp:          StonfiProvideLpV2JettonOpCode,
+	BidaskProvideBothJettonOp:          BidaskProvideBothJettonOpCode,
 	DedustDepositLiquidityJettonOp:     DedustDepositLiquidityJettonOpCode,
 	StonfiSwapOkRefJettonOp:            StonfiSwapOkRefJettonOpCode,
 	CoffeeCrossDexResendJettonOp:       CoffeeCrossDexResendJettonOpCode,
 	StonfiSwapV2JettonOp:               StonfiSwapV2JettonOpCode,
 	InvoicePayloadJettonOp:             InvoicePayloadJettonOpCode,
 	TonkeeperRelayerFeeJettonOp:        TonkeeperRelayerFeeJettonOpCode,
+	BidaskProvideJettonOp:              BidaskProvideJettonOpCode,
 	CoffeeCrossDexFailureJettonOp:      CoffeeCrossDexFailureJettonOpCode,
 	CoffeeSwapJettonOp:                 CoffeeSwapJettonOpCode,
 	CoffeeCreatePoolJettonOp:           CoffeeCreatePoolJettonOpCode,
@@ -343,6 +387,7 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	StonfiSwapOkJettonOp:               StonfiSwapOkJettonOpCode,
 	DedustSwapJettonOp:                 DedustSwapJettonOpCode,
 	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonOpCode,
+	BidaskSwapJettonOp:                 BidaskSwapJettonOpCode,
 	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonOpCode,
 }
 
@@ -354,12 +399,14 @@ var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell)
 	StonfiSwapJettonOpCode:                 decodeStonfiSwapJettonOpJetton,
 	TegroAddLiquidityJettonOpCode:          decodeTegroAddLiquidityJettonOpJetton,
 	StonfiProvideLpV2JettonOpCode:          decodeStonfiProvideLpV2JettonOpJetton,
+	BidaskProvideBothJettonOpCode:          decodeBidaskProvideBothJettonOpJetton,
 	DedustDepositLiquidityJettonOpCode:     decodeDedustDepositLiquidityJettonOpJetton,
 	StonfiSwapOkRefJettonOpCode:            decodeStonfiSwapOkRefJettonOpJetton,
 	CoffeeCrossDexResendJettonOpCode:       decodeCoffeeCrossDexResendJettonOpJetton,
 	StonfiSwapV2JettonOpCode:               decodeStonfiSwapV2JettonOpJetton,
 	InvoicePayloadJettonOpCode:             decodeInvoicePayloadJettonOpJetton,
 	TonkeeperRelayerFeeJettonOpCode:        decodeTonkeeperRelayerFeeJettonOpJetton,
+	BidaskProvideJettonOpCode:              decodeBidaskProvideJettonOpJetton,
 	CoffeeCrossDexFailureJettonOpCode:      decodeCoffeeCrossDexFailureJettonOpJetton,
 	CoffeeSwapJettonOpCode:                 decodeCoffeeSwapJettonOpJetton,
 	CoffeeCreatePoolJettonOpCode:           decodeCoffeeCreatePoolJettonOpJetton,
@@ -368,6 +415,7 @@ var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell)
 	StonfiSwapOkJettonOpCode:               decodeStonfiSwapOkJettonOpJetton,
 	DedustSwapJettonOpCode:                 decodeDedustSwapJettonOpJetton,
 	CoffeeMevProtectFailedSwapJettonOpCode: decodeCoffeeMevProtectFailedSwapJettonOpJetton,
+	BidaskSwapJettonOpCode:                 decodeBidaskSwapJettonOpJetton,
 	StonfiProvideLiquidityJettonOpCode:     decodeStonfiProvideLiquidityJettonOpJetton,
 }
 
@@ -418,6 +466,15 @@ type StonfiProvideLpV2JettonPayload struct {
 	} `tlb:"^"`
 }
 
+type BidaskProvideBothJettonPayload struct {
+	QueryId        uint64
+	TonAmount      tlb.Grams
+	DepositType    tlb.Uint4
+	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
 type DedustDepositLiquidityJettonPayload struct {
 	PoolParams          DedustPoolParams
 	MinLpAmount         tlb.Grams
@@ -457,6 +514,14 @@ type InvoicePayloadJettonPayload struct {
 
 type TonkeeperRelayerFeeJettonPayload struct{}
 
+type BidaskProvideJettonPayload struct {
+	QueryId        uint64
+	DepositType    tlb.Uint4
+	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
 type CoffeeCrossDexFailureJettonPayload struct {
 	QueryId   uint64
 	Recipient tlb.MsgAddress
@@ -491,6 +556,18 @@ type DedustSwapJettonPayload struct {
 type CoffeeMevProtectFailedSwapJettonPayload struct {
 	QueryId   uint64
 	Recipient tlb.MsgAddress
+}
+
+type BidaskSwapJettonPayload struct {
+	QueryId        uint64
+	NativeAmount   tlb.Grams
+	ToAddress      tlb.MsgAddress
+	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
+	ExactOut       tlb.Grams
+	RefAddress     tlb.MsgAddress
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type StonfiProvideLiquidityJettonPayload struct {

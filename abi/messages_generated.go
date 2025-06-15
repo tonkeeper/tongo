@@ -13,6 +13,8 @@ var (
 	decodeFuncCoffeeStakingUpdateRewardsMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 28}, CoffeeStakingUpdateRewardsMsgOp, CoffeeStakingUpdateRewardsMsgBody{})
 	// 0x0c09445a
 	decodeFuncBidaskInternalContinueProvideMsgBody = decodeMsg(tlb.Tag{Val: 0x0c09445a, Len: 28}, BidaskInternalContinueProvideMsgOp, BidaskInternalContinueProvideMsgBody{})
+	// 0x0dc8bb28
+	decodeFuncBidaskLiquidityAddedNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x0dc8bb28, Len: 28}, BidaskLiquidityAddedNotifyMsgOp, BidaskLiquidityAddedNotifyMsgBody{})
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
 	// 0x01f3835d
@@ -1267,6 +1269,7 @@ const (
 	BidaskProvideRefundMsgOp                     MsgOpName = "BidaskProvideRefund"
 	CoffeeStakingUpdateRewardsMsgOp              MsgOpName = "CoffeeStakingUpdateRewards"
 	BidaskInternalContinueProvideMsgOp           MsgOpName = "BidaskInternalContinueProvide"
+	BidaskLiquidityAddedNotifyMsgOp              MsgOpName = "BidaskLiquidityAddedNotify"
 	TextCommentMsgOp                             MsgOpName = "TextComment"
 	PtonTonTransferMsgOp                         MsgOpName = "PtonTonTransfer"
 	StormVaultRequestWithdrawPositionMsgOp       MsgOpName = "StormVaultRequestWithdrawPosition"
@@ -1521,6 +1524,7 @@ const (
 	BidaskProvideRefundMsgOpCode                     MsgOpCode = 0x02422cbe
 	CoffeeStakingUpdateRewardsMsgOpCode              MsgOpCode = 0x0a9577f0
 	BidaskInternalContinueProvideMsgOpCode           MsgOpCode = 0x0c09445a
+	BidaskLiquidityAddedNotifyMsgOpCode              MsgOpCode = 0x0dc8bb28
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
 	PtonTonTransferMsgOpCode                         MsgOpCode = 0x01f3835d
 	StormVaultRequestWithdrawPositionMsgOpCode       MsgOpCode = 0x0226df66
@@ -1802,6 +1806,11 @@ type BidaskInternalContinueProvideMsgBody struct {
 	RejectPayload  *tlb.Any `tlb:"maybe^"`
 	ForwardPayload *tlb.Any `tlb:"maybe^"`
 	Order          bool
+}
+
+type BidaskLiquidityAddedNotifyMsgBody struct {
+	QueryId        uint64
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TextCommentMsgBody struct {
@@ -3441,6 +3450,7 @@ var KnownMsgInTypes = map[string]any{
 	BidaskProvideRefundMsgOp:                     BidaskProvideRefundMsgBody{},
 	CoffeeStakingUpdateRewardsMsgOp:              CoffeeStakingUpdateRewardsMsgBody{},
 	BidaskInternalContinueProvideMsgOp:           BidaskInternalContinueProvideMsgBody{},
+	BidaskLiquidityAddedNotifyMsgOp:              BidaskLiquidityAddedNotifyMsgBody{},
 	TextCommentMsgOp:                             TextCommentMsgBody{},
 	PtonTonTransferMsgOp:                         PtonTonTransferMsgBody{},
 	StormVaultRequestWithdrawPositionMsgOp:       StormVaultRequestWithdrawPositionMsgBody{},

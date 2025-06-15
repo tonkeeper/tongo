@@ -55,6 +55,7 @@
         </msg_in>
         <msg_out>
             <internal name="bidask_internal_burn"/>
+            <internal name="bidask_liquidity_added_notify"/>
         </msg_out>
     </interface>
 
@@ -213,5 +214,9 @@
 
     <internal name="bidask_burn_all" >
         bidask_burn_all#ebd6ec83 query_id:uint64 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_liquidity_added_notify" >
+        bidask_liquidity_added_notify#dc8bb28 query_id:uint64 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 </abi>

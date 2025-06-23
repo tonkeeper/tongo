@@ -1003,6 +1003,13 @@ func (c *Client) GetLibraries(ctx context.Context, libraryList []ton.Bits256) (m
 		if len(data) != 1 {
 			return nil, fmt.Errorf("multiroot lib is not supported")
 		}
+		dataHash, err := data[0].Hash()
+		if err != nil {
+			return nil, err
+		}
+		if !bytes.Equal(lib.Hash[:], dataHash) {
+			return nil, fmt.Errorf("got wrong library data from liteserver")
+		}
 		libs[ton.Bits256(lib.Hash)] = data[0]
 	}
 	return libs, nil

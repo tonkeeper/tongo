@@ -1,6 +1,6 @@
 <abi>
     <interface name="subscription_v2">
-        <code_hash>e47cee2a24e535150db4bc15e145fd732fa81543f29f1374ac2c058e6b60819f</code_hash>
+        <code_hash>5d41bb7062ecff2aafeff205a6912d7c5cb22308db1d12c2087dc8cc0391c32e</code_hash>
         <get_method name="get_subscription_info" version="v2"/>
         <get_method name="get_payment_info" version="subscription_v2"/>
         <get_method name="get_cron_info" />

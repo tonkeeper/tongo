@@ -1,17 +1,19 @@
 <abi>
     <interface name="subscription_v2">
-        <code_hash>e47cee2a24e535150db4bc15e145fd732fa81543f29f1374ac2c058e6b60819f</code_hash>
+        <code_hash>5d41bb7062ecff2aafeff205a6912d7c5cb22308db1d12c2087dc8cc0391c32e</code_hash>
         <get_method name="get_subscription_info" version="v2"/>
         <get_method name="get_payment_info" version="subscription_v2"/>
         <get_method name="get_cron_info" />
         <msg_in>
             <ext_in name="cron_trigger"/>
-            <internal name="subscription_v2_deploy"/>
-            <internal name="subscription_v2_destruct"/>
-            <internal name="subscription_v2_reduce_payment"/>
-            <internal name="subscription_v2_payment_confirmed"/>
-            <internal name="subscription_v2_withdraw_to_beneficiary"/>
+            <internal name="payment_confirmed"/>
+            <internal name="wallet_plugin_destruct"/>
+            <internal name="subscription_reduce_payment"/>
+            <internal name="subscription_deploy"/>
         </msg_in>
+        <msg_out>
+            <internal name="payment_request"/>
+        </msg_out>
         <error code="460">Not enough funds</error>
         <error code="461">Too early request</error>
         <error code="462">Too many requests</error>
@@ -47,19 +49,10 @@
             <cell name="metadata">bytes</cell>
         </output>
     </get_method>
-    <internal name="subscription_v2_deploy" >
+    <internal name="subscription_deploy" >
         subscription_deploy#f71783cb query_id:uint64 first_charging_date:uint32 payment_per_period:Grams period:uint32 grace_period:uint32 caller_fee:Grams withdraw_address:MsgAddressInt withdraw_msg_body:^Cell metadata:^Cell = InternalMsgBody;
     </internal>
-    <internal name="subscription_v2_destruct" >
-        subscription_destruct#64737472 query_id:uint64 = InternalMsgBody;
-    </internal>
-    <internal name="subscription_v2_reduce_payment" >
+    <internal name="subscription_reduce_payment" >
         reduce_payment#508238ec query_id:uint64 new_payment:Grams = InternalMsgBody;
-    </internal>
-    <internal name="subscription_v2_payment_confirmed" >
-        payment_confirmed#f06c7567 query_id:uint64 = InternalMsgBody;
-    </internal>
-    <internal name="subscription_v2_withdraw_to_beneficiary" >
-        withdraw_to_beneficiary#f852254e subscription_id:uint64 = InternalMsgBody;
     </internal>
 </abi>

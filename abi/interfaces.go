@@ -1579,6 +1579,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
+	ton.MustParseHash("5d41bb7062ecff2aafeff205a6912d7c5cb22308db1d12c2087dc8cc0391c32e"): {
+		contractInterfaces: []ContractInterface{SubscriptionV2},
+		getMethods: []InvokeFn{
+			GetCronInfo,
+			GetPaymentInfo,
+			GetSubscriptionInfo,
+		},
+	},
 	ton.MustParseHash("64dd54805522c5be8a9db59cea0105ccf0d08786ca79beb8cb79e880a8d7322d"): {
 		contractInterfaces: []ContractInterface{WalletV4R1},
 		getMethods: []InvokeFn{
@@ -1756,14 +1764,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
 		getMethods: []InvokeFn{
 			GetSaleData,
-		},
-	},
-	ton.MustParseHash("e47cee2a24e535150db4bc15e145fd732fa81543f29f1374ac2c058e6b60819f"): {
-		contractInterfaces: []ContractInterface{SubscriptionV2},
-		getMethods: []InvokeFn{
-			GetCronInfo,
-			GetPaymentInfo,
-			GetSubscriptionInfo,
 		},
 	},
 	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
@@ -2057,13 +2057,17 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
+	case SubscriptionV1:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentConfirmedMsgBody,
+		}
 	case SubscriptionV2:
 		return []msgDecoderFunc{
-			decodeFuncSubscriptionV2DeployMsgBody,
-			decodeFuncSubscriptionV2DestructMsgBody,
-			decodeFuncSubscriptionV2ReducePaymentMsgBody,
-			decodeFuncSubscriptionV2PaymentConfirmedMsgBody,
-			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
+			decodeFuncPaymentConfirmedMsgBody,
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncSubscriptionReducePaymentMsgBody,
+			decodeFuncSubscriptionDeployMsgBody,
 		}
 	case ToncoPool:
 		return []msgDecoderFunc{
@@ -2077,6 +2081,16 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{
 			decodeFuncTonkeeper2FaSignedMsgBody,
+		}
+	case WalletV4R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentRequestMsgBody,
+		}
+	case WalletV4R2:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentRequestMsgBody,
 		}
 	case WalletV5R1:
 		return []msgDecoderFunc{

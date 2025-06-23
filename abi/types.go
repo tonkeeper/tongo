@@ -983,6 +983,62 @@ type SendMessageAction struct {
 	Message MessageRelaxed `tlb:"^"`
 }
 
+type WalletV4Payload struct {
+	tlb.SumType
+	SimpleSend struct {
+		Payload WalletV1ToV4Payload
+	} `tlbSumType:"$00000000"`
+	DeployAndInstallPlugin struct {
+		PluginWorkchain int8
+		PluginBalance   tlb.Grams
+		StateInit       tlb.StateInit `tlb:"^"`
+		Body            InMsgBody     `tlb:"^"`
+	} `tlbSumType:"$00000001"`
+	InstallPlugin struct {
+		PluginWorkchain int8
+		PluginAddress   tlb.Bits256
+		Amount          tlb.Grams
+		QueryId         uint64
+	} `tlbSumType:"$00000010"`
+	RemovePlugin struct {
+		PluginWorkchain int8
+		PluginAddress   tlb.Bits256
+		Amount          tlb.Grams
+		QueryId         uint64
+	} `tlbSumType:"$00000011"`
+}
+
+func (t *WalletV4Payload) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "SimpleSend":
+		bytes, err := json.Marshal(t.SimpleSend)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SimpleSend","SimpleSend":%v}`, string(bytes))), nil
+	case "DeployAndInstallPlugin":
+		bytes, err := json.Marshal(t.DeployAndInstallPlugin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DeployAndInstallPlugin","DeployAndInstallPlugin":%v}`, string(bytes))), nil
+	case "InstallPlugin":
+		bytes, err := json.Marshal(t.InstallPlugin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "InstallPlugin","InstallPlugin":%v}`, string(bytes))), nil
+	case "RemovePlugin":
+		bytes, err := json.Marshal(t.RemovePlugin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RemovePlugin","RemovePlugin":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type WalletV5ExtensionsList struct {
 	Extensions tlb.Hashmap[tlb.Bits256, tlb.Uint1]
 }

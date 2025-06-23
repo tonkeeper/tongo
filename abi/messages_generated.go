@@ -3773,8 +3773,7 @@ type WalletSignedV4ExtInMsgBody struct {
 	SubwalletId uint32
 	ValidUntil  uint32
 	Seqno       uint32
-	Op          int8
-	Payload     WalletV1ToV4Payload
+	Payload     WalletV4Payload
 }
 
 type HighloadWalletSignedV3ExtInMsgBody struct {

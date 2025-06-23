@@ -29,6 +29,11 @@
         msg_inner#_ valid_until:uint64 seq_no:uint16 actions:^W5Actions  = PreprocessedWalletV2MsgInner;
 
         extensions#_ extensions:(Hashmap 256 uint1) = WalletV5ExtensionsList;
+
+        simple_send$00000000 payload:WalletV1toV4Payload = WalletV4Payload;
+        deploy_and_install_plugin$00000001 plugin_workchain:int8 plugin_balance:Coins state_init:^StateInit body:^InMsgBody = WalletV4Payload;
+        install_plugin$00000010 plugin_workchain:int8 plugin_address:bits256 amount:Coins query_id:uint64 = WalletV4Payload;
+        remove_plugin$00000011 plugin_workchain:int8 plugin_address:bits256 amount:Coins query_id:uint64 = WalletV4Payload;
     </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
@@ -209,8 +214,7 @@
         ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_v4">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-        payload:WalletV1toV4Payload = ExternalMsgBody;
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletV4Payload = ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_external_v5r1">
         signed_external#7369676e wallet_id:uint32 valid_until:uint32 seqno:uint32

@@ -2661,24 +2661,24 @@ func TestDecodeExternalIn(t *testing.T) {
 					SubwalletId: 698983191,
 					ValidUntil:  1706091360,
 					Seqno:       2037,
-					Op:          0,
-					Payload: WalletV1ToV4Payload{
-						{
-							Mode: 3,
-							Message: MessageRelaxed{
-								SumType: "MessageInternal",
-							},
+					Payload:     WalletV4Payload{SumType: "SimpleSend"},
+				}
+				b.Payload.SimpleSend.Payload = WalletV1ToV4Payload{
+					{
+						Mode: 3,
+						Message: MessageRelaxed{
+							SumType: "MessageInternal",
 						},
 					},
 				}
 				sig, _ := hex.DecodeString("28B67B05683B74BFEB574B3E921C3376CF24BF6C95C93F9A8B7168F093350A01A313EA46307AC579D75DE99353B155C78351A6F554FD4A5EBF2AC3332F3F0503")
 				copy(b.Signature[:], sig)
-				b.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
-				b.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
-				b.Payload[0].Message.MessageInternal.IhrDisabled = true
-				b.Payload[0].Message.MessageInternal.Bounce = true
-				b.Payload[0].Message.MessageInternal.Value.Grams = 100000000
-				b.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.IhrDisabled = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Bounce = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Value.Grams = 100000000
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
 					SumType: "TextComment",
 					OpCode:  pointer(uint32(0)),
 					Value:   TextCommentMsgBody{Text: "Я твой фанат"},
@@ -2730,24 +2730,24 @@ func TestDecodeExternalIn(t *testing.T) {
 					SubwalletId: 698983191,
 					ValidUntil:  1694999010,
 					Seqno:       42,
-					Op:          0,
-					Payload: WalletV1ToV4Payload{
-						{
-							Mode: 3,
-							Message: MessageRelaxed{
-								SumType: "MessageInternal",
-							},
+					Payload:     WalletV4Payload{SumType: "SimpleSend"},
+				}
+				b.Payload.SimpleSend.Payload = WalletV1ToV4Payload{
+					{
+						Mode: 3,
+						Message: MessageRelaxed{
+							SumType: "MessageInternal",
 						},
 					},
 				}
 				sig, _ := hex.DecodeString("0e3a69e758992732f0d983de47db14547f1530f34ee356f7bb957b2383c6cfc37d4b0a307b0afd17a0bcfb691d1767585b6b4c000dedcd30dfe2c28d720b480f")
 				copy(b.Signature[:], sig)
-				b.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
-				b.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f")).ToMsgAddress()
-				b.Payload[0].Message.MessageInternal.IhrDisabled = true
-				b.Payload[0].Message.MessageInternal.Bounce = true
-				b.Payload[0].Message.MessageInternal.Value.Grams = 50250000000
-				b.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f")).ToMsgAddress()
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.IhrDisabled = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Bounce = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Value.Grams = 50250000000
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
 					SumType: "JettonTransfer",
 					OpCode:  pointer(uint32(260734629)),
 					Value: JettonTransferMsgBody{

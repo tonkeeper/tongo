@@ -901,28 +901,31 @@ func (c *Client) GetConfigAll(ctx context.Context, mode ConfigMode) (tlb.ConfigP
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	stateProofCell, err := boc.DeserializeBoc(res.StateProof)
-	if err != nil {
-		return tlb.ConfigParams{}, err
+	if c.proofPolicy != ProofPolicyUnsafe {
+		stateProofCell, err := boc.DeserializeBoc(res.StateProof)
+		if err != nil {
+			return tlb.ConfigParams{}, err
+		}
+		if len(stateProofCell) != 1 {
+			return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in state proof boc")
+		}
+		configProofCell, err := boc.DeserializeBoc(res.ConfigProof)
+		if err != nil {
+			return tlb.ConfigParams{}, err
+		}
+		if len(configProofCell) != 1 {
+			return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in config proof boc")
+		}
+		shardState, err := checkBlockShardStateProof([]*boc.Cell{stateProofCell[0], configProofCell[0]}, ton.Bits256(res.Id.RootHash), nil)
+		if err != nil {
+			return tlb.ConfigParams{}, err
+		}
+		if !shardState.ShardStateUnsplit.Custom.Exists {
+			return tlb.ConfigParams{}, fmt.Errorf("missing master chain state extra value")
+		}
+		return shardState.ShardStateUnsplit.Custom.Value.Value.Config, nil
 	}
-	if len(stateProofCell) != 1 {
-		return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in state proof boc")
-	}
-	configProofCell, err := boc.DeserializeBoc(res.ConfigProof)
-	if err != nil {
-		return tlb.ConfigParams{}, err
-	}
-	if len(configProofCell) != 1 {
-		return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in config proof boc")
-	}
-	shardState, err := checkBlockShardStateProof([]*boc.Cell{stateProofCell[0], configProofCell[0]}, ton.Bits256(res.Id.RootHash), nil)
-	if err != nil {
-		return tlb.ConfigParams{}, err
-	}
-	if !shardState.ShardStateUnsplit.Custom.Exists {
-		return tlb.ConfigParams{}, fmt.Errorf("missing master chain state extra value")
-	}
-	return shardState.ShardStateUnsplit.Custom.Value.Value.Config, nil
+	return ton.DecodeConfigParams(res.ConfigProof)
 }
 
 func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclient.LiteServerConfigInfoC, error) {

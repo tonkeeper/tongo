@@ -341,6 +341,17 @@ func TestGetConfigAll(t *testing.T) {
 	}
 }
 
+func TestGetConfigAllWithUnsafePolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = api.GetConfigAll(context.TODO(), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestGetAccountState(t *testing.T) {
 	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {

@@ -1,7 +1,13 @@
 <abi>
-<!--    todo: attach all internal -->
     <interface name="subscription_v1">
         <get_method name="get_subscription_data"/>
+        <msg_in>
+            <internal name="wallet_plugin_destruct"/>
+            <internal name="payment_confirmed"/>
+        </msg_in>
+        <msg_out>
+            <internal name="subscription_fallback"/>
+        </msg_out>
     </interface>
     <get_method name="get_subscription_data">
         <output>
@@ -23,19 +29,10 @@
             <int name="subscription_id">uint64</int>
         </output>
     </get_method>
-    <internal name="payment_request" >
-        request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
-    </internal>
-    <internal name="payment_request_response">
-        payment_request_response#f06c7567 = InternalMsgBody;
-    </internal>
-    <internal name="wallet_plugin_destruct" >
-        destruct#64737472 = InternalMsgBody;
-    </internal>
-    <internal name="wallet_plugin_destruct_response" >
-        destruct_response#e4737472 = InternalMsgBody;
-    </internal>
     <internal name="subscription_payment" >
         subscription_payment#73756273 = InternalMsgBody;
+    </internal>
+    <internal name="subscription_fallback" >
+        fallback#756e6b77 = InternalMsgBody;
     </internal>
 </abi>

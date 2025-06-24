@@ -15,15 +15,15 @@ import (
 )
 
 type Tracer struct {
-	e                     *Emulator
-	currentShardAccount   map[ton.AccountID]tlb.ShardAccount
-	blockchain            accountGetter
-	counter               int
-	limit                 int
-	softLimit             int
-	signatureCheckEnabled bool
-	currentTime           uint32
-	shardConfig           map[ton.ShardID]struct{}
+	e                   *Emulator
+	currentShardAccount map[ton.AccountID]tlb.ShardAccount
+	blockchain          accountGetter
+	counter             int
+	limit               int
+	softLimit           int
+	checkSignature      bool
+	currentTime         uint32
+	shardConfig         map[ton.ShardID]struct{}
 }
 
 type TxTree struct {
@@ -153,7 +153,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = e.SetIgnoreSignatureCheck(!option.checkSignature)
+	err = e.SetIgnoreSignatureCheck(true)
 	if err != nil {
 		return nil, err
 	}
@@ -177,14 +177,14 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 
 	// TODO: set gas limit, currently, the transaction emulator doesn't support that
 	return &Tracer{
-		e:                     e,
-		currentShardAccount:   option.predefinedAccounts,
-		blockchain:            option.blockchain,
-		limit:                 option.limit,
-		softLimit:             option.softLimit,
-		signatureCheckEnabled: false,
-		currentTime:           uint32(option.time),
-		shardConfig:           shardConfig,
+		e:                   e,
+		currentShardAccount: option.predefinedAccounts,
+		blockchain:          option.blockchain,
+		limit:               option.limit,
+		softLimit:           option.softLimit,
+		checkSignature:      option.checkSignature,
+		currentTime:         uint32(option.time),
+		shardConfig:         shardConfig,
 	}, nil
 }
 
@@ -270,12 +270,11 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 		}
 	}
 	// enable signature check with the first internal message
-	if !t.signatureCheckEnabled && message.Info.SumType == "IntMsgInfo" {
+	if t.checkSignature && message.Info.SumType == "IntMsgInfo" {
 		err := t.e.SetIgnoreSignatureCheck(false)
 		if err != nil {
 			return nil, err
 		}
-		t.signatureCheckEnabled = true
 	}
 	if len(publicLibs) > 0 {
 		libsBoc, err := codePkg.LibrariesToBase64(publicLibs)

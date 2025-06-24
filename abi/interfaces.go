@@ -1900,14 +1900,24 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case SubscriptionV2:
 		return []msgDecoderFunc{
 			decodeFuncSubscriptionV2DeployMsgBody,
-			decodeFuncSubscriptionV2DestructMsgBody,
+			decodeFuncWalletPluginDestructMsgBody,
 			decodeFuncSubscriptionV2ReducePaymentMsgBody,
-			decodeFuncSubscriptionV2PaymentConfirmedMsgBody,
+			decodeFuncPaymentRequestResponseMsgBody,
 			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
 		}
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{
 			decodeFuncTonkeeper2FaSignedMsgBody,
+		}
+	case WalletV4R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentRequestMsgBody,
+		}
+	case WalletV4R2:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentRequestMsgBody,
 		}
 	case WalletV5R1:
 		return []msgDecoderFunc{

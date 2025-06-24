@@ -7,9 +7,9 @@
         <msg_in>
             <ext_in name="cron_trigger"/>
             <internal name="subscription_v2_deploy"/>
-            <internal name="subscription_v2_destruct"/>
+            <internal name="wallet_plugin_destruct"/>
             <internal name="subscription_v2_reduce_payment"/>
-            <internal name="subscription_v2_payment_confirmed"/>
+            <internal name="payment_request_response"/>
             <internal name="subscription_v2_withdraw_to_beneficiary"/>
         </msg_in>
         <error code="460">Not enough funds</error>
@@ -50,14 +50,8 @@
     <internal name="subscription_v2_deploy" >
         subscription_deploy#f71783cb query_id:uint64 first_charging_date:uint32 payment_per_period:Grams period:uint32 grace_period:uint32 caller_fee:Grams withdraw_address:MsgAddressInt withdraw_msg_body:^Cell metadata:^Cell = InternalMsgBody;
     </internal>
-    <internal name="subscription_v2_destruct" >
-        subscription_destruct#64737472 query_id:uint64 = InternalMsgBody;
-    </internal>
     <internal name="subscription_v2_reduce_payment" >
         reduce_payment#508238ec query_id:uint64 new_payment:Grams = InternalMsgBody;
-    </internal>
-    <internal name="subscription_v2_payment_confirmed" >
-        payment_confirmed#f06c7567 query_id:uint64 = InternalMsgBody;
     </internal>
     <internal name="subscription_v2_withdraw_to_beneficiary" >
         withdraw_to_beneficiary#f852254e subscription_id:uint64 = InternalMsgBody;

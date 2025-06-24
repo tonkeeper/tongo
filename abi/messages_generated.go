@@ -225,8 +225,6 @@ var (
 	decodeFuncJettonMintMsgBody = decodeMsg(tlb.Tag{Val: 0x642b7d07, Len: 32}, JettonMintMsgOp, JettonMintMsgBody{})
 	// 0x64737472
 	decodeFuncWalletPluginDestructMsgBody = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, WalletPluginDestructMsgOp, WalletPluginDestructMsgBody{})
-	// 0x64737472
-	decodeFuncSubscriptionV2DestructMsgBody = decodeMsg(tlb.Tag{Val: 0x64737472, Len: 32}, SubscriptionV2DestructMsgOp, SubscriptionV2DestructMsgBody{})
 	// 0x6501f354
 	decodeFuncJettonChangeAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x6501f354, Len: 32}, JettonChangeAdminMsgOp, JettonChangeAdminMsgBody{})
 	// 0x6540cf85
@@ -251,6 +249,8 @@ var (
 	decodeFuncStormOrderCanceledMsgBody = decodeMsg(tlb.Tag{Val: 0x69d08679, Len: 32}, StormOrderCanceledMsgOp, StormOrderCanceledMsgBody{})
 	// 0x6bc79e7e
 	decodeFuncCoffeeMevProtectHoldFundsMsgBody = decodeMsg(tlb.Tag{Val: 0x6bc79e7e, Len: 32}, CoffeeMevProtectHoldFundsMsgOp, CoffeeMevProtectHoldFundsMsgBody{})
+	// 0x6e6f7465
+	decodeFuncPluginInstallationNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x6e6f7465, Len: 32}, PluginInstallationNotificationMsgOp, PluginInstallationNotificationMsgBody{})
 	// 0x6f89f5e3
 	decodeFuncSbtRevokeMsgBody = decodeMsg(tlb.Tag{Val: 0x6f89f5e3, Len: 32}, SbtRevokeMsgOp, SbtRevokeMsgBody{})
 	// 0x706c7567
@@ -483,8 +483,6 @@ var (
 	decodeFuncJettonSetStatusMsgBody = decodeMsg(tlb.Tag{Val: 0xeed236d3, Len: 32}, JettonSetStatusMsgOp, JettonSetStatusMsgBody{})
 	// 0xf06c7567
 	decodeFuncPaymentRequestResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, PaymentRequestResponseMsgOp, PaymentRequestResponseMsgBody{})
-	// 0xf06c7567
-	decodeFuncSubscriptionV2PaymentConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, SubscriptionV2PaymentConfirmedMsgOp, SubscriptionV2PaymentConfirmedMsgBody{})
 	// 0xf0fd2250
 	decodeFuncTonstakeControllerUpdateValidatorHashMsgBody = decodeMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{})
 	// 0xf127fe4e
@@ -829,12 +827,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x642b7d07
 	JettonMintMsgOpCode: decodeFuncJettonMintMsgBody,
 
-	//WalletPluginDestruct, SubscriptionV2Destruct,
-	0x64737472: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncWalletPluginDestructMsgBody,
-		decodeFuncSubscriptionV2DestructMsgBody},
-		"0x64737472",
-	),
+	// 0x64737472
+	WalletPluginDestructMsgOpCode: decodeFuncWalletPluginDestructMsgBody,
 
 	// 0x6501f354
 	JettonChangeAdminMsgOpCode: decodeFuncJettonChangeAdminMsgBody,
@@ -871,6 +865,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x6bc79e7e
 	CoffeeMevProtectHoldFundsMsgOpCode: decodeFuncCoffeeMevProtectHoldFundsMsgBody,
+
+	// 0x6e6f7465
+	PluginInstallationNotificationMsgOpCode: decodeFuncPluginInstallationNotificationMsgBody,
 
 	// 0x6f89f5e3
 	SbtRevokeMsgOpCode: decodeFuncSbtRevokeMsgBody,
@@ -1218,12 +1215,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xeed236d3
 	JettonSetStatusMsgOpCode: decodeFuncJettonSetStatusMsgBody,
 
-	//PaymentRequestResponse, SubscriptionV2PaymentConfirmed,
-	0xf06c7567: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncPaymentRequestResponseMsgBody,
-		decodeFuncSubscriptionV2PaymentConfirmedMsgBody},
-		"0xf06c7567",
-	),
+	// 0xf06c7567
+	PaymentRequestResponseMsgOpCode: decodeFuncPaymentRequestResponseMsgBody,
 
 	// 0xf0fd2250
 	TonstakeControllerUpdateValidatorHashMsgOpCode: decodeFuncTonstakeControllerUpdateValidatorHashMsgBody,
@@ -1375,7 +1368,6 @@ const (
 	StonfiPayVaultV2MsgOp                        MsgOpName = "StonfiPayVaultV2"
 	JettonMintMsgOp                              MsgOpName = "JettonMint"
 	WalletPluginDestructMsgOp                    MsgOpName = "WalletPluginDestruct"
-	SubscriptionV2DestructMsgOp                  MsgOpName = "SubscriptionV2Destruct"
 	JettonChangeAdminMsgOp                       MsgOpName = "JettonChangeAdmin"
 	PtonInternalDeployMsgOp                      MsgOpName = "PtonInternalDeploy"
 	WalletExtensionActionV5R1MsgOp               MsgOpName = "WalletExtensionActionV5R1"
@@ -1388,6 +1380,7 @@ const (
 	GetRoyaltyParamsMsgOp                        MsgOpName = "GetRoyaltyParams"
 	StormOrderCanceledMsgOp                      MsgOpName = "StormOrderCanceled"
 	CoffeeMevProtectHoldFundsMsgOp               MsgOpName = "CoffeeMevProtectHoldFunds"
+	PluginInstallationNotificationMsgOp          MsgOpName = "PluginInstallationNotification"
 	SbtRevokeMsgOp                               MsgOpName = "SbtRevoke"
 	PaymentRequestMsgOp                          MsgOpName = "PaymentRequest"
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
@@ -1504,7 +1497,6 @@ const (
 	CoffeeMevProtectFailedSwapMsgOp              MsgOpName = "CoffeeMevProtectFailedSwap"
 	JettonSetStatusMsgOp                         MsgOpName = "JettonSetStatus"
 	PaymentRequestResponseMsgOp                  MsgOpName = "PaymentRequestResponse"
-	SubscriptionV2PaymentConfirmedMsgOp          MsgOpName = "SubscriptionV2PaymentConfirmed"
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
 	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
 	BidaskSwapMsgOp                              MsgOpName = "BidaskSwap"
@@ -1630,7 +1622,6 @@ const (
 	StonfiPayVaultV2MsgOpCode                        MsgOpCode = 0x63381632
 	JettonMintMsgOpCode                              MsgOpCode = 0x642b7d07
 	WalletPluginDestructMsgOpCode                    MsgOpCode = 0x64737472
-	SubscriptionV2DestructMsgOpCode                  MsgOpCode = 0x64737472
 	JettonChangeAdminMsgOpCode                       MsgOpCode = 0x6501f354
 	PtonInternalDeployMsgOpCode                      MsgOpCode = 0x6540cf85
 	WalletExtensionActionV5R1MsgOpCode               MsgOpCode = 0x6578746e
@@ -1643,6 +1634,7 @@ const (
 	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
 	StormOrderCanceledMsgOpCode                      MsgOpCode = 0x69d08679
 	CoffeeMevProtectHoldFundsMsgOpCode               MsgOpCode = 0x6bc79e7e
+	PluginInstallationNotificationMsgOpCode          MsgOpCode = 0x6e6f7465
 	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
 	PaymentRequestMsgOpCode                          MsgOpCode = 0x706c7567
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
@@ -1759,7 +1751,6 @@ const (
 	CoffeeMevProtectFailedSwapMsgOpCode              MsgOpCode = 0xee51ce51
 	JettonSetStatusMsgOpCode                         MsgOpCode = 0xeed236d3
 	PaymentRequestResponseMsgOpCode                  MsgOpCode = 0xf06c7567
-	SubscriptionV2PaymentConfirmedMsgOpCode          MsgOpCode = 0xf06c7567
 	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
 	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
 	BidaskSwapMsgOpCode                              MsgOpCode = 0xf2ef6c1b
@@ -2538,9 +2529,7 @@ type JettonMintMsgBody struct {
 	TonAmount tlb.Grams
 }
 
-type WalletPluginDestructMsgBody struct{}
-
-type SubscriptionV2DestructMsgBody struct {
+type WalletPluginDestructMsgBody struct {
 	QueryId uint64
 }
 
@@ -2642,6 +2631,10 @@ type GetRoyaltyParamsMsgBody struct {
 type StormOrderCanceledMsgBody struct{}
 
 type CoffeeMevProtectHoldFundsMsgBody struct {
+	QueryId uint64
+}
+
+type PluginInstallationNotificationMsgBody struct {
 	QueryId uint64
 }
 
@@ -3295,7 +3288,9 @@ type TonstakeControllerNewStakeMsgBody struct {
 	Signature       tlb.Bits512 `tlb:"^"`
 }
 
-type WalletPluginDestructResponseMsgBody struct{}
+type WalletPluginDestructResponseMsgBody struct {
+	QueryId uint64
+}
 
 type DeployStorageContractMsgBody struct {
 	QueryId         uint64
@@ -3359,9 +3354,7 @@ type JettonSetStatusMsgBody struct {
 	Status  tlb.Uint4
 }
 
-type PaymentRequestResponseMsgBody struct{}
-
-type SubscriptionV2PaymentConfirmedMsgBody struct {
+type PaymentRequestResponseMsgBody struct {
 	QueryId uint64
 }
 
@@ -3556,7 +3549,6 @@ var KnownMsgInTypes = map[string]any{
 	StonfiPayVaultV2MsgOp:                        StonfiPayVaultV2MsgBody{},
 	JettonMintMsgOp:                              JettonMintMsgBody{},
 	WalletPluginDestructMsgOp:                    WalletPluginDestructMsgBody{},
-	SubscriptionV2DestructMsgOp:                  SubscriptionV2DestructMsgBody{},
 	JettonChangeAdminMsgOp:                       JettonChangeAdminMsgBody{},
 	PtonInternalDeployMsgOp:                      PtonInternalDeployMsgBody{},
 	WalletExtensionActionV5R1MsgOp:               WalletExtensionActionV5R1MsgBody{},
@@ -3569,6 +3561,7 @@ var KnownMsgInTypes = map[string]any{
 	GetRoyaltyParamsMsgOp:                        GetRoyaltyParamsMsgBody{},
 	StormOrderCanceledMsgOp:                      StormOrderCanceledMsgBody{},
 	CoffeeMevProtectHoldFundsMsgOp:               CoffeeMevProtectHoldFundsMsgBody{},
+	PluginInstallationNotificationMsgOp:          PluginInstallationNotificationMsgBody{},
 	SbtRevokeMsgOp:                               SbtRevokeMsgBody{},
 	PaymentRequestMsgOp:                          PaymentRequestMsgBody{},
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
@@ -3685,7 +3678,6 @@ var KnownMsgInTypes = map[string]any{
 	CoffeeMevProtectFailedSwapMsgOp:              CoffeeMevProtectFailedSwapMsgBody{},
 	JettonSetStatusMsgOp:                         JettonSetStatusMsgBody{},
 	PaymentRequestResponseMsgOp:                  PaymentRequestResponseMsgBody{},
-	SubscriptionV2PaymentConfirmedMsgOp:          SubscriptionV2PaymentConfirmedMsgBody{},
 	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
 	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
 	BidaskSwapMsgOp:                              BidaskSwapMsgBody{},

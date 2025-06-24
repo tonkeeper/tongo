@@ -174,7 +174,7 @@ var (
 	// 0x4f5f4313
 	decodeFuncPtonDeployWalletMsgBody = decodeMsg(tlb.Tag{Val: 0x4f5f4313, Len: 32}, PtonDeployWalletMsgOp, PtonDeployWalletMsgBody{})
 	// 0x508238ec
-	decodeFuncSubscriptionV2ReducePaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x508238ec, Len: 32}, SubscriptionV2ReducePaymentMsgOp, SubscriptionV2ReducePaymentMsgBody{})
+	decodeFuncSubscriptionReducePaymentMsgBody = decodeMsg(tlb.Tag{Val: 0x508238ec, Len: 32}, SubscriptionReducePaymentMsgOp, SubscriptionReducePaymentMsgBody{})
 	// 0x50c6a654
 	decodeFuncStonfiAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x50c6a654, Len: 32}, StonfiAddLiquidityV2MsgOp, StonfiAddLiquidityV2MsgBody{})
 	// 0x520e4831
@@ -250,7 +250,7 @@ var (
 	// 0x6bc79e7e
 	decodeFuncCoffeeMevProtectHoldFundsMsgBody = decodeMsg(tlb.Tag{Val: 0x6bc79e7e, Len: 32}, CoffeeMevProtectHoldFundsMsgOp, CoffeeMevProtectHoldFundsMsgBody{})
 	// 0x6e6f7465
-	decodeFuncPluginInstallationNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x6e6f7465, Len: 32}, PluginInstallationNotificationMsgOp, PluginInstallationNotificationMsgBody{})
+	decodeFuncWalletPluginInstallationNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x6e6f7465, Len: 32}, WalletPluginInstallationNotificationMsgOp, WalletPluginInstallationNotificationMsgBody{})
 	// 0x6f89f5e3
 	decodeFuncSbtRevokeMsgBody = decodeMsg(tlb.Tag{Val: 0x6f89f5e3, Len: 32}, SbtRevokeMsgOp, SbtRevokeMsgBody{})
 	// 0x706c7567
@@ -271,6 +271,8 @@ var (
 	decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody = decodeMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{})
 	// 0x75097f5d
 	decodeFuncMultisigExecuteMsgBody = decodeMsg(tlb.Tag{Val: 0x75097f5d, Len: 32}, MultisigExecuteMsgOp, MultisigExecuteMsgBody{})
+	// 0x756e6b77
+	decodeFuncSubscriptionFallbackMsgBody = decodeMsg(tlb.Tag{Val: 0x756e6b77, Len: 32}, SubscriptionFallbackMsgOp, SubscriptionFallbackMsgBody{})
 	// 0x77a33521
 	decodeFuncMegatonWtonMintMsgBody = decodeMsg(tlb.Tag{Val: 0x77a33521, Len: 32}, MegatonWtonMintMsgOp, MegatonWtonMintMsgBody{})
 	// 0x79a126ef
@@ -482,7 +484,7 @@ var (
 	// 0xeed236d3
 	decodeFuncJettonSetStatusMsgBody = decodeMsg(tlb.Tag{Val: 0xeed236d3, Len: 32}, JettonSetStatusMsgOp, JettonSetStatusMsgBody{})
 	// 0xf06c7567
-	decodeFuncPaymentRequestResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, PaymentRequestResponseMsgOp, PaymentRequestResponseMsgBody{})
+	decodeFuncPaymentConfirmedMsgBody = decodeMsg(tlb.Tag{Val: 0xf06c7567, Len: 32}, PaymentConfirmedMsgOp, PaymentConfirmedMsgBody{})
 	// 0xf0fd2250
 	decodeFuncTonstakeControllerUpdateValidatorHashMsgBody = decodeMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{})
 	// 0xf127fe4e
@@ -494,11 +496,9 @@ var (
 	// 0xf5d4eb52
 	decodeFuncStormWithdrawReferralAmountMsgBody = decodeMsg(tlb.Tag{Val: 0xf5d4eb52, Len: 32}, StormWithdrawReferralAmountMsgOp, StormWithdrawReferralAmountMsgBody{})
 	// 0xf71783cb
-	decodeFuncSubscriptionV2DeployMsgBody = decodeMsg(tlb.Tag{Val: 0xf71783cb, Len: 32}, SubscriptionV2DeployMsgOp, SubscriptionV2DeployMsgBody{})
+	decodeFuncSubscriptionDeployMsgBody = decodeMsg(tlb.Tag{Val: 0xf71783cb, Len: 32}, SubscriptionDeployMsgOp, SubscriptionDeployMsgBody{})
 	// 0xf718510f
 	decodeFuncMultisigNewOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xf718510f, Len: 32}, MultisigNewOrderMsgOp, MultisigNewOrderMsgBody{})
-	// 0xf852254e
-	decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody = decodeMsg(tlb.Tag{Val: 0xf852254e, Len: 32}, SubscriptionV2WithdrawToBeneficiaryMsgOp, SubscriptionV2WithdrawToBeneficiaryMsgBody{})
 	// 0xf93bb43f
 	decodeFuncStonfiPaymentRequestMsgBody = decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
 	// 0xf9471134
@@ -753,7 +753,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	PtonDeployWalletMsgOpCode: decodeFuncPtonDeployWalletMsgBody,
 
 	// 0x508238ec
-	SubscriptionV2ReducePaymentMsgOpCode: decodeFuncSubscriptionV2ReducePaymentMsgBody,
+	SubscriptionReducePaymentMsgOpCode: decodeFuncSubscriptionReducePaymentMsgBody,
 
 	// 0x50c6a654
 	StonfiAddLiquidityV2MsgOpCode: decodeFuncStonfiAddLiquidityV2MsgBody,
@@ -867,7 +867,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	CoffeeMevProtectHoldFundsMsgOpCode: decodeFuncCoffeeMevProtectHoldFundsMsgBody,
 
 	// 0x6e6f7465
-	PluginInstallationNotificationMsgOpCode: decodeFuncPluginInstallationNotificationMsgBody,
+	WalletPluginInstallationNotificationMsgOpCode: decodeFuncWalletPluginInstallationNotificationMsgBody,
 
 	// 0x6f89f5e3
 	SbtRevokeMsgOpCode: decodeFuncSbtRevokeMsgBody,
@@ -898,6 +898,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x75097f5d
 	MultisigExecuteMsgOpCode: decodeFuncMultisigExecuteMsgBody,
+
+	// 0x756e6b77
+	SubscriptionFallbackMsgOpCode: decodeFuncSubscriptionFallbackMsgBody,
 
 	// 0x77a33521
 	MegatonWtonMintMsgOpCode: decodeFuncMegatonWtonMintMsgBody,
@@ -1216,7 +1219,7 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	JettonSetStatusMsgOpCode: decodeFuncJettonSetStatusMsgBody,
 
 	// 0xf06c7567
-	PaymentRequestResponseMsgOpCode: decodeFuncPaymentRequestResponseMsgBody,
+	PaymentConfirmedMsgOpCode: decodeFuncPaymentConfirmedMsgBody,
 
 	// 0xf0fd2250
 	TonstakeControllerUpdateValidatorHashMsgOpCode: decodeFuncTonstakeControllerUpdateValidatorHashMsgBody,
@@ -1234,13 +1237,10 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	StormWithdrawReferralAmountMsgOpCode: decodeFuncStormWithdrawReferralAmountMsgBody,
 
 	// 0xf71783cb
-	SubscriptionV2DeployMsgOpCode: decodeFuncSubscriptionV2DeployMsgBody,
+	SubscriptionDeployMsgOpCode: decodeFuncSubscriptionDeployMsgBody,
 
 	// 0xf718510f
 	MultisigNewOrderMsgOpCode: decodeFuncMultisigNewOrderMsgBody,
-
-	// 0xf852254e
-	SubscriptionV2WithdrawToBeneficiaryMsgOpCode: decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
 
 	// 0xf93bb43f
 	StonfiPaymentRequestMsgOpCode: decodeFuncStonfiPaymentRequestMsgBody,
@@ -1342,7 +1342,7 @@ const (
 	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
 	StormMintExecutorMsgOp                       MsgOpName = "StormMintExecutor"
 	PtonDeployWalletMsgOp                        MsgOpName = "PtonDeployWallet"
-	SubscriptionV2ReducePaymentMsgOp             MsgOpName = "SubscriptionV2ReducePayment"
+	SubscriptionReducePaymentMsgOp               MsgOpName = "SubscriptionReducePayment"
 	StonfiAddLiquidityV2MsgOp                    MsgOpName = "StonfiAddLiquidityV2"
 	BidaskSwapSuccessMsgOp                       MsgOpName = "BidaskSwapSuccess"
 	Tonkeeper2FaSignedMsgOp                      MsgOpName = "Tonkeeper2FaSigned"
@@ -1380,7 +1380,7 @@ const (
 	GetRoyaltyParamsMsgOp                        MsgOpName = "GetRoyaltyParams"
 	StormOrderCanceledMsgOp                      MsgOpName = "StormOrderCanceled"
 	CoffeeMevProtectHoldFundsMsgOp               MsgOpName = "CoffeeMevProtectHoldFunds"
-	PluginInstallationNotificationMsgOp          MsgOpName = "PluginInstallationNotification"
+	WalletPluginInstallationNotificationMsgOp    MsgOpName = "WalletPluginInstallationNotification"
 	SbtRevokeMsgOp                               MsgOpName = "SbtRevoke"
 	PaymentRequestMsgOp                          MsgOpName = "PaymentRequest"
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
@@ -1391,6 +1391,7 @@ const (
 	SubscriptionPaymentMsgOp                     MsgOpName = "SubscriptionPayment"
 	WhalesNominatorsStakeWithdrawDelayedMsgOp    MsgOpName = "WhalesNominatorsStakeWithdrawDelayed"
 	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
+	SubscriptionFallbackMsgOp                    MsgOpName = "SubscriptionFallback"
 	MegatonWtonMintMsgOp                         MsgOpName = "MegatonWtonMint"
 	ChannelCooperativeCommitMsgOp                MsgOpName = "ChannelCooperativeCommit"
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
@@ -1496,15 +1497,14 @@ const (
 	StormChangeSettingsMsgOp                     MsgOpName = "StormChangeSettings"
 	CoffeeMevProtectFailedSwapMsgOp              MsgOpName = "CoffeeMevProtectFailedSwap"
 	JettonSetStatusMsgOp                         MsgOpName = "JettonSetStatus"
-	PaymentRequestResponseMsgOp                  MsgOpName = "PaymentRequestResponse"
+	PaymentConfirmedMsgOp                        MsgOpName = "PaymentConfirmed"
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
 	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
 	BidaskSwapMsgOp                              MsgOpName = "BidaskSwap"
 	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
 	StormWithdrawReferralAmountMsgOp             MsgOpName = "StormWithdrawReferralAmount"
-	SubscriptionV2DeployMsgOp                    MsgOpName = "SubscriptionV2Deploy"
+	SubscriptionDeployMsgOp                      MsgOpName = "SubscriptionDeploy"
 	MultisigNewOrderMsgOp                        MsgOpName = "MultisigNewOrder"
-	SubscriptionV2WithdrawToBeneficiaryMsgOp     MsgOpName = "SubscriptionV2WithdrawToBeneficiary"
 	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	CoffeeStakingDepositMsgOp                    MsgOpName = "CoffeeStakingDeposit"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
@@ -1596,7 +1596,7 @@ const (
 	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
 	StormMintExecutorMsgOpCode                       MsgOpCode = 0x4f38cae8
 	PtonDeployWalletMsgOpCode                        MsgOpCode = 0x4f5f4313
-	SubscriptionV2ReducePaymentMsgOpCode             MsgOpCode = 0x508238ec
+	SubscriptionReducePaymentMsgOpCode               MsgOpCode = 0x508238ec
 	StonfiAddLiquidityV2MsgOpCode                    MsgOpCode = 0x50c6a654
 	BidaskSwapSuccessMsgOpCode                       MsgOpCode = 0x520e4831
 	Tonkeeper2FaSignedMsgOpCode                      MsgOpCode = 0x53684037
@@ -1634,7 +1634,7 @@ const (
 	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
 	StormOrderCanceledMsgOpCode                      MsgOpCode = 0x69d08679
 	CoffeeMevProtectHoldFundsMsgOpCode               MsgOpCode = 0x6bc79e7e
-	PluginInstallationNotificationMsgOpCode          MsgOpCode = 0x6e6f7465
+	WalletPluginInstallationNotificationMsgOpCode    MsgOpCode = 0x6e6f7465
 	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
 	PaymentRequestMsgOpCode                          MsgOpCode = 0x706c7567
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
@@ -1645,6 +1645,7 @@ const (
 	SubscriptionPaymentMsgOpCode                     MsgOpCode = 0x73756273
 	WhalesNominatorsStakeWithdrawDelayedMsgOpCode    MsgOpCode = 0x74bb3427
 	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
+	SubscriptionFallbackMsgOpCode                    MsgOpCode = 0x756e6b77
 	MegatonWtonMintMsgOpCode                         MsgOpCode = 0x77a33521
 	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
@@ -1750,15 +1751,14 @@ const (
 	StormChangeSettingsMsgOpCode                     MsgOpCode = 0xedcd36a6
 	CoffeeMevProtectFailedSwapMsgOpCode              MsgOpCode = 0xee51ce51
 	JettonSetStatusMsgOpCode                         MsgOpCode = 0xeed236d3
-	PaymentRequestResponseMsgOpCode                  MsgOpCode = 0xf06c7567
+	PaymentConfirmedMsgOpCode                        MsgOpCode = 0xf06c7567
 	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
 	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
 	BidaskSwapMsgOpCode                              MsgOpCode = 0xf2ef6c1b
 	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
 	StormWithdrawReferralAmountMsgOpCode             MsgOpCode = 0xf5d4eb52
-	SubscriptionV2DeployMsgOpCode                    MsgOpCode = 0xf71783cb
+	SubscriptionDeployMsgOpCode                      MsgOpCode = 0xf71783cb
 	MultisigNewOrderMsgOpCode                        MsgOpCode = 0xf718510f
-	SubscriptionV2WithdrawToBeneficiaryMsgOpCode     MsgOpCode = 0xf852254e
 	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	CoffeeStakingDepositMsgOpCode                    MsgOpCode = 0xf9471134
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
@@ -2321,7 +2321,7 @@ type PtonDeployWalletMsgBody struct {
 	ExcessesAddress tlb.MsgAddress
 }
 
-type SubscriptionV2ReducePaymentMsgBody struct {
+type SubscriptionReducePaymentMsgBody struct {
 	QueryId    uint64
 	NewPayment tlb.Grams
 }
@@ -2634,7 +2634,7 @@ type CoffeeMevProtectHoldFundsMsgBody struct {
 	QueryId uint64
 }
 
-type PluginInstallationNotificationMsgBody struct {
+type WalletPluginInstallationNotificationMsgBody struct {
 	QueryId uint64
 }
 
@@ -2697,6 +2697,8 @@ type MultisigExecuteMsgBody struct {
 	SignersHash    tlb.Bits256
 	Order          MultisigOrder `tlb:"^"`
 }
+
+type SubscriptionFallbackMsgBody struct{}
 
 type MegatonWtonMintMsgBody struct {
 	QueryId uint64
@@ -3354,7 +3356,7 @@ type JettonSetStatusMsgBody struct {
 	Status  tlb.Uint4
 }
 
-type PaymentRequestResponseMsgBody struct {
+type PaymentConfirmedMsgBody struct {
 	QueryId uint64
 }
 
@@ -3387,7 +3389,7 @@ type StormWithdrawReferralAmountMsgBody struct {
 	OwnerAddr      tlb.MsgAddress
 }
 
-type SubscriptionV2DeployMsgBody struct {
+type SubscriptionDeployMsgBody struct {
 	QueryId           uint64
 	FirstChargingDate uint32
 	PaymentPerPeriod  tlb.Grams
@@ -3406,10 +3408,6 @@ type MultisigNewOrderMsgBody struct {
 	Index          uint8
 	ExpirationDate tlb.Uint48
 	Order          MultisigOrder `tlb:"^"`
-}
-
-type SubscriptionV2WithdrawToBeneficiaryMsgBody struct {
-	SubscriptionId uint64
 }
 
 type StonfiPaymentRequestMsgBody struct {
@@ -3523,7 +3521,7 @@ var KnownMsgInTypes = map[string]any{
 	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
 	StormMintExecutorMsgOp:                       StormMintExecutorMsgBody{},
 	PtonDeployWalletMsgOp:                        PtonDeployWalletMsgBody{},
-	SubscriptionV2ReducePaymentMsgOp:             SubscriptionV2ReducePaymentMsgBody{},
+	SubscriptionReducePaymentMsgOp:               SubscriptionReducePaymentMsgBody{},
 	StonfiAddLiquidityV2MsgOp:                    StonfiAddLiquidityV2MsgBody{},
 	BidaskSwapSuccessMsgOp:                       BidaskSwapSuccessMsgBody{},
 	Tonkeeper2FaSignedMsgOp:                      Tonkeeper2FaSignedMsgBody{},
@@ -3561,7 +3559,7 @@ var KnownMsgInTypes = map[string]any{
 	GetRoyaltyParamsMsgOp:                        GetRoyaltyParamsMsgBody{},
 	StormOrderCanceledMsgOp:                      StormOrderCanceledMsgBody{},
 	CoffeeMevProtectHoldFundsMsgOp:               CoffeeMevProtectHoldFundsMsgBody{},
-	PluginInstallationNotificationMsgOp:          PluginInstallationNotificationMsgBody{},
+	WalletPluginInstallationNotificationMsgOp:    WalletPluginInstallationNotificationMsgBody{},
 	SbtRevokeMsgOp:                               SbtRevokeMsgBody{},
 	PaymentRequestMsgOp:                          PaymentRequestMsgBody{},
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},
@@ -3572,6 +3570,7 @@ var KnownMsgInTypes = map[string]any{
 	SubscriptionPaymentMsgOp:                     SubscriptionPaymentMsgBody{},
 	WhalesNominatorsStakeWithdrawDelayedMsgOp:    WhalesNominatorsStakeWithdrawDelayedMsgBody{},
 	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
+	SubscriptionFallbackMsgOp:                    SubscriptionFallbackMsgBody{},
 	MegatonWtonMintMsgOp:                         MegatonWtonMintMsgBody{},
 	ChannelCooperativeCommitMsgOp:                ChannelCooperativeCommitMsgBody{},
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
@@ -3677,15 +3676,14 @@ var KnownMsgInTypes = map[string]any{
 	StormChangeSettingsMsgOp:                     StormChangeSettingsMsgBody{},
 	CoffeeMevProtectFailedSwapMsgOp:              CoffeeMevProtectFailedSwapMsgBody{},
 	JettonSetStatusMsgOp:                         JettonSetStatusMsgBody{},
-	PaymentRequestResponseMsgOp:                  PaymentRequestResponseMsgBody{},
+	PaymentConfirmedMsgOp:                        PaymentConfirmedMsgBody{},
 	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
 	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
 	BidaskSwapMsgOp:                              BidaskSwapMsgBody{},
 	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
 	StormWithdrawReferralAmountMsgOp:             StormWithdrawReferralAmountMsgBody{},
-	SubscriptionV2DeployMsgOp:                    SubscriptionV2DeployMsgBody{},
+	SubscriptionDeployMsgOp:                      SubscriptionDeployMsgBody{},
 	MultisigNewOrderMsgOp:                        MultisigNewOrderMsgBody{},
-	SubscriptionV2WithdrawToBeneficiaryMsgOp:     SubscriptionV2WithdrawToBeneficiaryMsgBody{},
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	CoffeeStakingDepositMsgOp:                    CoffeeStakingDepositMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},

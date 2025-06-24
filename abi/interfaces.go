@@ -1897,13 +1897,17 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
+	case SubscriptionV1:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentConfirmedMsgBody,
+		}
 	case SubscriptionV2:
 		return []msgDecoderFunc{
-			decodeFuncSubscriptionV2DeployMsgBody,
+			decodeFuncPaymentConfirmedMsgBody,
 			decodeFuncWalletPluginDestructMsgBody,
-			decodeFuncSubscriptionV2ReducePaymentMsgBody,
-			decodeFuncPaymentRequestResponseMsgBody,
-			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
+			decodeFuncSubscriptionReducePaymentMsgBody,
+			decodeFuncSubscriptionDeployMsgBody,
 		}
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{

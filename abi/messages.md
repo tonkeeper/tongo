@@ -165,9 +165,8 @@ The list below contains the supported message operations, their names and opcode
 | OfferStorageContract| 0x107c49ef |
 | OutbidNotification| 0x557cea20 |
 | OwnershipProof| 0x0524c7ae |
+| PaymentConfirmed| 0xf06c7567 |
 | PaymentRequest| 0x706c7567 |
-| PaymentRequestResponse| 0xf06c7567 |
-| PluginInstallationNotification| 0x6e6f7465 |
 | PreprocessedWalletSignedV2| 0x00000000 |
 | ProcessGovernanceDecision| 0x44beae41 |
 | ProofStorage| 0x419d5d4d |
@@ -231,10 +230,10 @@ The list below contains the supported message operations, their names and opcode
 | StormVaultUnstake| 0xd5b5e9ad |
 | StormWithdrawExecutorAmount| 0x2cde6351 |
 | StormWithdrawReferralAmount| 0xf5d4eb52 |
+| SubscriptionDeploy| 0xf71783cb |
+| SubscriptionFallback| 0x756e6b77 |
 | SubscriptionPayment| 0x73756273 |
-| SubscriptionV2Deploy| 0xf71783cb |
-| SubscriptionV2ReducePayment| 0x508238ec |
-| SubscriptionV2WithdrawToBeneficiary| 0xf852254e |
+| SubscriptionReducePayment| 0x508238ec |
 | TegroAddLiquidity| 0x287e167a |
 | TegroJettonSwap| 0x01fb7a25 |
 | TegroSwapTon| 0x600c00fd |
@@ -292,6 +291,7 @@ The list below contains the supported message operations, their names and opcode
 | WalletExtensionActionV5R1| 0x6578746e |
 | WalletPluginDestruct| 0x64737472 |
 | WalletPluginDestructResponse| 0xe4737472 |
+| WalletPluginInstallationNotification| 0x6e6f7465 |
 | WalletSignedExternalV5R1| 0x7369676e |
 | WalletSignedInternalV5R1| 0x73696e74 |
 | WalletSignedV3| 0x00000000 |

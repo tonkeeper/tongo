@@ -86,10 +86,10 @@
             <internal name="payment_request"/>
         </msg_in>
         <msg_out>
-            <internal name="plugin_installation_notification"/>
+            <internal name="wallet_plugin_installation_notification"/>
             <internal name="wallet_plugin_destruct"/>
-            <internal name="payment_request_response"/>
             <internal name="wallet_plugin_destruct_response"/>
+            <internal name="payment_confirmed"/>
         </msg_out>
     </interface>
     <interface name="wallet_v4r2" inherits="wallet">
@@ -105,10 +105,10 @@
             <internal name="payment_request"/>
         </msg_in>
         <msg_out>
-            <internal name="plugin_installation_notification"/>
+            <internal name="wallet_plugin_installation_notification"/>
             <internal name="wallet_plugin_destruct"/>
-            <internal name="payment_request_response"/>
             <internal name="wallet_plugin_destruct_response"/>
+            <internal name="payment_confirmed"/>
         </msg_out>
         <error code="33">Invalid seqno</error>
         <error code="34">Invalid subwallet ID</error>
@@ -254,7 +254,7 @@
     <ext_in name="highload_wallet_signed_v2">
         signed#_ signature:bits512 subwallet_id:uint32 query_id:uint64 payload:(HashmapE 16 SendMessageAction) = ExternalMsgBody;
     </ext_in>
-    <internal name="plugin_installation_notification" >
+    <internal name="wallet_plugin_installation_notification" >
         plugin_installation_notification#6e6f7465 query_id:uint64 = InternalMsgBody;
     </internal>
     <internal name="wallet_plugin_destruct" >
@@ -266,7 +266,7 @@
     <internal name="payment_request" >
         request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
     </internal>
-    <internal name="payment_request_response">
-        payment_request_response#f06c7567 query_id:uint64 = InternalMsgBody;
+    <internal name="payment_confirmed">
+        payment_confirmed#f06c7567 query_id:uint64 = InternalMsgBody;
     </internal>
 </abi>

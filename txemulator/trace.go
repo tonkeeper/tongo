@@ -15,15 +15,15 @@ import (
 )
 
 type Tracer struct {
-	e                   *Emulator
-	currentShardAccount map[ton.AccountID]tlb.ShardAccount
-	blockchain          accountGetter
-	counter             int
-	limit               int
-	softLimit           int
-	checkSignature      bool
-	currentTime         uint32
-	shardConfig         map[ton.ShardID]struct{}
+	e                    *Emulator
+	currentShardAccount  map[ton.AccountID]tlb.ShardAccount
+	blockchain           accountGetter
+	counter              int
+	limit                int
+	softLimit            int
+	ignoreCheckSignature bool
+	currentTime          uint32
+	shardConfig          map[ton.ShardID]struct{}
 }
 
 type TxTree struct {
@@ -32,13 +32,13 @@ type TxTree struct {
 }
 
 type TraceOptions struct {
-	config             string
-	limit              int
-	softLimit          int
-	blockchain         accountGetter
-	time               int64
-	checkSignature     bool
-	predefinedAccounts map[ton.AccountID]tlb.ShardAccount
+	config               string
+	limit                int
+	softLimit            int
+	blockchain           accountGetter
+	time                 int64
+	ignoreCheckSignature bool
+	predefinedAccounts   map[ton.AccountID]tlb.ShardAccount
 }
 
 type accountGetter interface {
@@ -118,9 +118,9 @@ func WithAccountsSource(b accountGetter) TraceOption {
 	}
 }
 
-func WithSignatureCheck() TraceOption {
+func WithIgnoreSignatureCheck() TraceOption {
 	return func(o *TraceOptions) error {
-		o.checkSignature = true
+		o.ignoreCheckSignature = true
 		return nil
 	}
 }
@@ -129,12 +129,12 @@ type TraceOption func(o *TraceOptions) error
 
 func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	option := TraceOptions{
-		config:             DefaultConfig,
-		limit:              100,
-		blockchain:         nil,
-		time:               time.Now().Unix(),
-		checkSignature:     false,
-		predefinedAccounts: make(map[ton.AccountID]tlb.ShardAccount),
+		config:               DefaultConfig,
+		limit:                100,
+		blockchain:           nil,
+		time:                 time.Now().Unix(),
+		ignoreCheckSignature: false,
+		predefinedAccounts:   make(map[ton.AccountID]tlb.ShardAccount),
 	}
 	for _, o := range options {
 		err := o(&option)
@@ -177,14 +177,14 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 
 	// TODO: set gas limit, currently, the transaction emulator doesn't support that
 	return &Tracer{
-		e:                   e,
-		currentShardAccount: option.predefinedAccounts,
-		blockchain:          option.blockchain,
-		limit:               option.limit,
-		softLimit:           option.softLimit,
-		checkSignature:      option.checkSignature,
-		currentTime:         uint32(option.time),
-		shardConfig:         shardConfig,
+		e:                    e,
+		currentShardAccount:  option.predefinedAccounts,
+		blockchain:           option.blockchain,
+		limit:                option.limit,
+		softLimit:            option.softLimit,
+		ignoreCheckSignature: option.ignoreCheckSignature,
+		currentTime:          uint32(option.time),
+		shardConfig:          shardConfig,
 	}, nil
 }
 
@@ -269,8 +269,8 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			}
 		}
 	}
-	// enable signature check with the first internal message
-	if t.checkSignature && message.Info.SumType == "IntMsgInfo" {
+	// if ignore check signature is false and the message is not external-in then just check signatures for current and all next messages
+	if !t.ignoreCheckSignature && message.Info.SumType == "IntMsgInfo" {
 		err := t.e.SetIgnoreSignatureCheck(false)
 		if err != nil {
 			return nil, err

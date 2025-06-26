@@ -38,4 +38,8 @@
             <int name="amount">int257</int>
         </output>
     </get_method>
+
+    <internal name="lock_and_claim">
+        lock_and_claim#3a86f1a0 query_id:uint64 proof:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
 </abi>

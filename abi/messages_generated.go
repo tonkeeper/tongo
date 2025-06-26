@@ -129,6 +129,8 @@ var (
 	decodeFuncStonfiProvideLpV2MsgBody = decodeMsg(tlb.Tag{Val: 0x37c096df, Len: 32}, StonfiProvideLpV2MsgOp, StonfiProvideLpV2MsgBody{})
 	// 0x38633538
 	decodeFuncBemoReturnUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x38633538, Len: 32}, BemoReturnUnstakeRequestMsgOp, BemoReturnUnstakeRequestMsgBody{})
+	// 0x3a86f1a0
+	decodeFuncLockAndClaimMsgBody = decodeMsg(tlb.Tag{Val: 0x3a86f1a0, Len: 32}, LockAndClaimMsgOp, LockAndClaimMsgBody{})
 	// 0x3a943ce6
 	decodeFuncStormOrderCreatedMsgBody = decodeMsg(tlb.Tag{Val: 0x3a943ce6, Len: 32}, StormOrderCreatedMsgOp, StormOrderCreatedMsgBody{})
 	// 0x3d3761a6
@@ -688,6 +690,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x38633538
 	BemoReturnUnstakeRequestMsgOpCode: decodeFuncBemoReturnUnstakeRequestMsgBody,
+
+	// 0x3a86f1a0
+	LockAndClaimMsgOpCode: decodeFuncLockAndClaimMsgBody,
 
 	// 0x3a943ce6
 	StormOrderCreatedMsgOpCode: decodeFuncStormOrderCreatedMsgBody,
@@ -1332,6 +1337,7 @@ const (
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	StonfiProvideLpV2MsgOp                       MsgOpName = "StonfiProvideLpV2"
 	BemoReturnUnstakeRequestMsgOp                MsgOpName = "BemoReturnUnstakeRequest"
+	LockAndClaimMsgOp                            MsgOpName = "LockAndClaim"
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
 	HipoFinanceDepositCoinsMsgOp                 MsgOpName = "HipoFinanceDepositCoins"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
@@ -1588,6 +1594,7 @@ const (
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	StonfiProvideLpV2MsgOpCode                       MsgOpCode = 0x37c096df
 	BemoReturnUnstakeRequestMsgOpCode                MsgOpCode = 0x38633538
+	LockAndClaimMsgOpCode                            MsgOpCode = 0x3a86f1a0
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
 	HipoFinanceDepositCoinsMsgOpCode                 MsgOpCode = 0x3d3761a6
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
@@ -2211,6 +2218,11 @@ type StonfiProvideLpV2MsgBody struct {
 
 type BemoReturnUnstakeRequestMsgBody struct {
 	LockupTimestamp uint32
+}
+
+type LockAndClaimMsgBody struct {
+	QueryId uint64
+	Proof   *tlb.Any `tlb:"maybe^"`
 }
 
 type StormOrderCreatedMsgBody struct{}
@@ -3522,6 +3534,7 @@ var KnownMsgInTypes = map[string]any{
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	StonfiProvideLpV2MsgOp:                       StonfiProvideLpV2MsgBody{},
 	BemoReturnUnstakeRequestMsgOp:                BemoReturnUnstakeRequestMsgBody{},
+	LockAndClaimMsgOp:                            LockAndClaimMsgBody{},
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},
 	HipoFinanceDepositCoinsMsgOp:                 HipoFinanceDepositCoinsMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},

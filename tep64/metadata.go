@@ -102,30 +102,66 @@ func ConvertOnchainData(content tlb.FullContent) (Metadata, error) {
 	}
 	var m Metadata
 	for i, v := range content.Onchain.Data.Values() {
-		b, err := v.Value.Bytes()
-		if err != nil {
-			return Metadata{}, err
-		}
 		switch ton.Bits256(content.Onchain.Data.Keys()[i]) {
 		case sha256uri:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.Uri = string(b)
 		case sha256name:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.Name = string(b)
 		case sha256description:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.Description = string(b)
 		case sha256image:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.Image = string(b)
 		case sha256imageData:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.ImageData = b
 		case sha256symbol:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.Symbol = string(b)
 		case sha256decimals:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.Decimals = string(b)
 		case sha256renderType:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.RenderType = string(b)
 		case sha256amountStyle:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.AmountStyle = string(b)
 		case sha256customPayload:
+			b, err := v.Value.Bytes()
+			if err != nil {
+				return Metadata{}, err
+			}
 			m.CustomPayloadAPIURL = string(b)
 		}
 	}

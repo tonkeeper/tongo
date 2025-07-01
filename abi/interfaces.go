@@ -61,6 +61,7 @@ const (
 	NftSaleGetgemsV4
 	NftSaleV1
 	NftSaleV2
+	OmnistonReferral
 	PaymentChannel
 	Sbt
 	StonfiLpAccountV2
@@ -215,6 +216,8 @@ func (c ContractInterface) String() string {
 		return "nft_sale_v1"
 	case NftSaleV2:
 		return "nft_sale_v2"
+	case OmnistonReferral:
+		return "omniston_referral"
 	case PaymentChannel:
 		return "payment_channel"
 	case Sbt:
@@ -416,6 +419,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return NftSaleV1
 	case "nft_sale_v2":
 		return NftSaleV2
+	case "omniston_referral":
+		return OmnistonReferral
 	case "payment_channel":
 		return PaymentChannel
 	case "sbt":
@@ -1644,6 +1649,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			Seqno,
 		},
+	},
+	ton.MustParseHash("edcc62f1752297fbda2408c09ca420b3af9528102e33b9e0a0ebe38553c18fec"): {
+		contractInterfaces: []ContractInterface{OmnistonReferral},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
 		contractInterfaces: []ContractInterface{WalletV5Beta},

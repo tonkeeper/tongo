@@ -55,6 +55,9 @@
             <internal name="stonfi_vault_pay_to_v2"/>
         </msg_out>
     </interface>
+    <interface name="omniston_referral">
+        <code_hash>edcc62f1752297fbda2408c09ca420b3af9528102e33b9e0a0ebe38553c18fec</code_hash>
+    </interface>
 
     <get_method name="get_vault_data">
         <output version="stonfi_v2" fixed_length="true">

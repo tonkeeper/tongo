@@ -19,6 +19,7 @@
             <internal name="bidask_internal_swap"/>
             <internal name="bidask_internal_provide"/>
             <internal name="bidask_save_liquidity_info"/>
+            <internal name="bidask_native_transfer_notification"/>
         </msg_out>
         <error code="83">Insufficient gas for operation</error>
     </interface>
@@ -127,12 +128,12 @@
     </get_method>
 
     <internal name="bidask_swap" >
-        bidask_swap#f2ef6c1b query_id:uint64 to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#f2ef6c1b query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         ref_address:MsgAddress additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <jetton_payload name="bidask_swap" >
-        bidask_swap#f2ef6c1b query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#f2ef6c1b query_id:uint64 to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         ref_address:MsgAddress additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
@@ -218,5 +219,9 @@
 
     <internal name="bidask_liquidity_added_notify" >
         bidask_liquidity_added_notify#dc8bb28 query_id:uint64 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_native_transfer_notification" >
+        bidask_native_transfer_notification#6edd65f0 query_id:uint64 native_amount:Coins forward_payload:(Maybe ^Cell) = InternalMsgBody;
     </internal>
 </abi>

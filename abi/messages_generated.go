@@ -251,6 +251,8 @@ var (
 	decodeFuncStormOrderCanceledMsgBody = decodeMsg(tlb.Tag{Val: 0x69d08679, Len: 32}, StormOrderCanceledMsgOp, StormOrderCanceledMsgBody{})
 	// 0x6bc79e7e
 	decodeFuncCoffeeMevProtectHoldFundsMsgBody = decodeMsg(tlb.Tag{Val: 0x6bc79e7e, Len: 32}, CoffeeMevProtectHoldFundsMsgOp, CoffeeMevProtectHoldFundsMsgBody{})
+	// 0x6edd65f0
+	decodeFuncBidaskNativeTransferNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x6edd65f0, Len: 32}, BidaskNativeTransferNotificationMsgOp, BidaskNativeTransferNotificationMsgBody{})
 	// 0x6f89f5e3
 	decodeFuncSbtRevokeMsgBody = decodeMsg(tlb.Tag{Val: 0x6f89f5e3, Len: 32}, SbtRevokeMsgOp, SbtRevokeMsgBody{})
 	// 0x706c7567
@@ -872,6 +874,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x6bc79e7e
 	CoffeeMevProtectHoldFundsMsgOpCode: decodeFuncCoffeeMevProtectHoldFundsMsgBody,
 
+	// 0x6edd65f0
+	BidaskNativeTransferNotificationMsgOpCode: decodeFuncBidaskNativeTransferNotificationMsgBody,
+
 	// 0x6f89f5e3
 	SbtRevokeMsgOpCode: decodeFuncSbtRevokeMsgBody,
 
@@ -1388,6 +1393,7 @@ const (
 	GetRoyaltyParamsMsgOp                        MsgOpName = "GetRoyaltyParams"
 	StormOrderCanceledMsgOp                      MsgOpName = "StormOrderCanceled"
 	CoffeeMevProtectHoldFundsMsgOp               MsgOpName = "CoffeeMevProtectHoldFunds"
+	BidaskNativeTransferNotificationMsgOp        MsgOpName = "BidaskNativeTransferNotification"
 	SbtRevokeMsgOp                               MsgOpName = "SbtRevoke"
 	PaymentRequestMsgOp                          MsgOpName = "PaymentRequest"
 	TonstakeControllerPoolUnhaltMsgOp            MsgOpName = "TonstakeControllerPoolUnhalt"
@@ -1643,6 +1649,7 @@ const (
 	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
 	StormOrderCanceledMsgOpCode                      MsgOpCode = 0x69d08679
 	CoffeeMevProtectHoldFundsMsgOpCode               MsgOpCode = 0x6bc79e7e
+	BidaskNativeTransferNotificationMsgOpCode        MsgOpCode = 0x6edd65f0
 	SbtRevokeMsgOpCode                               MsgOpCode = 0x6f89f5e3
 	PaymentRequestMsgOpCode                          MsgOpCode = 0x706c7567
 	TonstakeControllerPoolUnhaltMsgOpCode            MsgOpCode = 0x7247e7a5
@@ -2645,6 +2652,12 @@ type CoffeeMevProtectHoldFundsMsgBody struct {
 	QueryId uint64
 }
 
+type BidaskNativeTransferNotificationMsgBody struct {
+	QueryId        uint64
+	NativeAmount   tlb.Grams
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
 type SbtRevokeMsgBody struct {
 	QueryId uint64
 }
@@ -3375,6 +3388,7 @@ type TonstakeNftBurnMsgBody struct {
 
 type BidaskSwapMsgBody struct {
 	QueryId        uint64
+	NativeAmount   tlb.Grams
 	ToAddress      tlb.MsgAddress
 	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
 	ExactOut       tlb.Grams
@@ -3569,6 +3583,7 @@ var KnownMsgInTypes = map[string]any{
 	GetRoyaltyParamsMsgOp:                        GetRoyaltyParamsMsgBody{},
 	StormOrderCanceledMsgOp:                      StormOrderCanceledMsgBody{},
 	CoffeeMevProtectHoldFundsMsgOp:               CoffeeMevProtectHoldFundsMsgBody{},
+	BidaskNativeTransferNotificationMsgOp:        BidaskNativeTransferNotificationMsgBody{},
 	SbtRevokeMsgOp:                               SbtRevokeMsgBody{},
 	PaymentRequestMsgOp:                          PaymentRequestMsgBody{},
 	TonstakeControllerPoolUnhaltMsgOp:            TonstakeControllerPoolUnhaltMsgBody{},

@@ -560,7 +560,6 @@ type CoffeeMevProtectFailedSwapJettonPayload struct {
 
 type BidaskSwapJettonPayload struct {
 	QueryId        uint64
-	NativeAmount   tlb.Grams
 	ToAddress      tlb.MsgAddress
 	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
 	ExactOut       tlb.Grams

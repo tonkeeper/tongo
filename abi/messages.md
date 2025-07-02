@@ -151,6 +151,7 @@ The list below contains the supported message operations, their names and opcode
 | JettonSetStatus| 0xeed236d3 |
 | JettonTransfer| 0x0f8a7ea5 |
 | JettonUpgrade| 0x2508d66a |
+| LockAndClaim| 0x3a86f1a0 |
 | MegatonSwap| 0x7362d09c |
 | MegatonUpdateMiningParams| 0x56a8e920 |
 | MegatonWtonMint| 0x77a33521 |

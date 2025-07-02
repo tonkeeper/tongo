@@ -34,6 +34,7 @@ const (
 var (
 	// ErrAccountNotFound is returned by lite server when executing a method for an account that has not been deployed to the blockchain.
 	ErrAccountNotFound = errors.New("account not found")
+	BlockMismatch      = errors.New("got invalid block from liteserver")
 )
 
 // ProofPolicy specifies a policy for proof checks.
@@ -391,6 +392,9 @@ func (c *Client) GetBlockRaw(ctx context.Context, blockID ton.BlockIDExt) (litec
 	if err != nil {
 		return liteclient.LiteServerBlockDataC{}, err
 	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerBlockDataC{}, BlockMismatch
+	}
 	return res, err
 }
 
@@ -411,6 +415,9 @@ func (c *Client) GetStateRaw(ctx context.Context, blockID ton.BlockIDExt) (litec
 	res, err := client.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
 	if err != nil {
 		return liteclient.LiteServerBlockStateC{}, err
+	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerBlockStateC{}, BlockMismatch
 	}
 	return res, nil
 }
@@ -436,6 +443,9 @@ func (c *Client) GetBlockHeaderRaw(ctx context.Context, blockID ton.BlockIDExt, 
 	if err != nil {
 		return liteclient.LiteServerBlockHeaderC{}, err
 	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerBlockHeaderC{}, BlockMismatch
+	}
 	return res, nil
 }
 
@@ -456,6 +466,9 @@ func (c *Client) LookupBlock(ctx context.Context, blockID ton.BlockID, mode uint
 	})
 	if err != nil {
 		return ton.BlockIDExt{}, tlb.BlockInfo{}, err
+	}
+	if res.Id.ToBlockIdExt().BlockID != blockID {
+		return ton.BlockIDExt{}, tlb.BlockInfo{}, BlockMismatch
 	}
 	return decodeBlockHeader(res)
 }
@@ -505,9 +518,10 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 	if err != nil {
 		return 0, tlb.VmStack{}, err
 	}
+	blockID := c.targetBlockOr(masterHead)
 	req := liteclient.LiteServerRunSmcMethodRequest{
 		Mode:     4,
-		Id:       liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
+		Id:       liteclient.BlockIDExt(blockID),
 		Account:  liteclient.AccountID(accountID),
 		MethodId: uint64(methodID),
 		Params:   b,
@@ -515,6 +529,9 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 	res, err := client.LiteServerRunSmcMethod(ctx, req)
 	if err != nil {
 		return 0, tlb.VmStack{}, err
+	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return 0, tlb.VmStack{}, BlockMismatch
 	}
 	var result tlb.VmStack
 	if res.ExitCode == 4294967040 { //-256
@@ -578,7 +595,7 @@ func (c *Client) GetAccountStateRaw(ctx context.Context, accountID ton.AccountID
 		return liteclient.LiteServerAccountStateC{}, err
 	}
 	if res.Id.ToBlockIdExt() != blockID {
-		return liteclient.LiteServerAccountStateC{}, errors.New("invalid block ID")
+		return liteclient.LiteServerAccountStateC{}, BlockMismatch
 	}
 	return res, nil
 }
@@ -636,6 +653,9 @@ func (c *Client) GetShardInfoRaw(ctx context.Context, blockID ton.BlockIDExt, wo
 	if err != nil {
 		return liteclient.LiteServerShardInfoC{}, err
 	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerShardInfoC{}, BlockMismatch
+	}
 	return res, nil
 }
 
@@ -676,6 +696,9 @@ func (c *Client) GetAllShardsInfoRaw(ctx context.Context, blockID ton.BlockIDExt
 	if err != nil {
 		return liteclient.LiteServerAllShardsInfoC{}, err
 	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerAllShardsInfoC{}, BlockMismatch
+	}
 	return res, nil
 }
 
@@ -696,6 +719,9 @@ func (c *Client) GetOneTransactionFromBlock(
 	})
 	if err != nil {
 		return ton.Transaction{}, err
+	}
+	if r.Id.ToBlockIdExt() != blockId {
+		return ton.Transaction{}, BlockMismatch
 	}
 	if len(r.Transaction) == 0 {
 		return ton.Transaction{}, fmt.Errorf("transaction not found")
@@ -848,6 +874,9 @@ func (c *Client) ListBlockTransactionsRaw(ctx context.Context, blockID ton.Block
 	if err != nil {
 		return liteclient.LiteServerBlockTransactionsC{}, err
 	}
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerBlockTransactionsC{}, BlockMismatch
+	}
 	return res, nil
 }
 
@@ -933,15 +962,16 @@ func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclie
 	if err != nil {
 		return liteclient.LiteServerConfigInfoC{}, err
 	}
+	blockID := c.targetBlockOr(masterHead)
 	res, err := client.LiteServerGetConfigAll(ctx, liteclient.LiteServerGetConfigAllRequest{
 		Mode: uint32(mode),
-		Id:   liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
+		Id:   liteclient.BlockIDExt(blockID),
 	})
 	if err != nil {
 		return liteclient.LiteServerConfigInfoC{}, err
 	}
-	if res.Id.ToBlockIdExt() != masterHead {
-		return liteclient.LiteServerConfigInfoC{}, fmt.Errorf("got invalid block from liteserver")
+	if res.Id.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerConfigInfoC{}, BlockMismatch
 	}
 	return res, nil
 }
@@ -951,13 +981,17 @@ func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
+	blockID := c.targetBlockOr(masterHead)
 	r, err := client.LiteServerGetConfigParams(ctx, liteclient.LiteServerGetConfigParamsRequest{
 		Mode:      uint32(mode),
-		Id:        liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
+		Id:        liteclient.BlockIDExt(blockID),
 		ParamList: paramList,
 	})
 	if err != nil {
 		return tlb.ConfigParams{}, err
+	}
+	if r.Id.ToBlockIdExt() != blockID {
+		return tlb.ConfigParams{}, BlockMismatch
 	}
 	return ton.DecodeConfigParams(r.ConfigProof)
 }
@@ -977,15 +1011,19 @@ func (c *Client) GetValidatorStats(
 		b := tl.Int256(*startAfter)
 		sa = &b
 	}
+	blockID := c.targetBlockOr(masterHead)
 	r, err := client.LiteServerGetValidatorStats(ctx, liteclient.LiteServerGetValidatorStatsRequest{
 		Mode:          mode,
-		Id:            liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
+		Id:            liteclient.BlockIDExt(blockID),
 		Limit:         limit,
 		StartAfter:    sa,
 		ModifiedAfter: modifiedAfter,
 	})
 	if err != nil {
 		return nil, err
+	}
+	if r.Id.ToBlockIdExt() != blockID {
+		return nil, BlockMismatch
 	}
 	cells, err := boc.DeserializeBoc(r.DataProof)
 	if err != nil {
@@ -1055,9 +1093,17 @@ func (c *Client) GetShardBlockProofRaw(ctx context.Context) (liteclient.LiteServ
 	if err != nil {
 		return liteclient.LiteServerShardBlockProofC{}, err
 	}
-	return client.LiteServerGetShardBlockProof(ctx, liteclient.LiteServerGetShardBlockProofRequest{
-		Id: liteclient.BlockIDExt(c.targetBlockOr(masterHead)),
+	blockID := c.targetBlockOr(masterHead)
+	res, err := client.LiteServerGetShardBlockProof(ctx, liteclient.LiteServerGetShardBlockProofRequest{
+		Id: liteclient.BlockIDExt(blockID),
 	})
+	if err != nil {
+		return liteclient.LiteServerShardBlockProofC{}, err
+	}
+	if res.MasterchainId.ToBlockIdExt() != blockID {
+		return liteclient.LiteServerShardBlockProofC{}, BlockMismatch
+	}
+	return res, nil
 }
 
 // WaitMasterchainSeqno waits for a masterchain block with the given seqno.

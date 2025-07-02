@@ -341,7 +341,7 @@ func TestGetConfigAll(t *testing.T) {
 	}
 }
 
-func TestGetConfigAllWithUnsafePolicy(t *testing.T) {
+func TestGetConfigAllWithSafePolicy(t *testing.T) {
 	api, err := NewClient(Mainnet(), FromEnvsOrMainnet(), WithProofPolicy(ProofPolicyFast))
 	if err != nil {
 		t.Fatal(err)

@@ -930,31 +930,31 @@ func (c *Client) GetConfigAll(ctx context.Context, mode ConfigMode) (tlb.ConfigP
 	if err != nil {
 		return tlb.ConfigParams{}, err
 	}
-	if c.proofPolicy != ProofPolicyUnsafe {
-		stateProofCell, err := boc.DeserializeBoc(res.StateProof)
-		if err != nil {
-			return tlb.ConfigParams{}, err
-		}
-		if len(stateProofCell) != 1 {
-			return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in state proof boc")
-		}
-		configProofCell, err := boc.DeserializeBoc(res.ConfigProof)
-		if err != nil {
-			return tlb.ConfigParams{}, err
-		}
-		if len(configProofCell) != 1 {
-			return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in config proof boc")
-		}
-		shardState, err := checkBlockShardStateProof([]*boc.Cell{stateProofCell[0], configProofCell[0]}, ton.Bits256(res.Id.RootHash), nil)
-		if err != nil {
-			return tlb.ConfigParams{}, err
-		}
-		if !shardState.ShardStateUnsplit.Custom.Exists {
-			return tlb.ConfigParams{}, fmt.Errorf("missing master chain state extra value")
-		}
-		return shardState.ShardStateUnsplit.Custom.Value.Value.Config, nil
+	if c.proofPolicy == ProofPolicyUnsafe {
+		return ton.DecodeConfigParams(res.ConfigProof)
 	}
-	return ton.DecodeConfigParams(res.ConfigProof)
+	stateProofCell, err := boc.DeserializeBoc(res.StateProof)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if len(stateProofCell) != 1 {
+		return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in state proof boc")
+	}
+	configProofCell, err := boc.DeserializeBoc(res.ConfigProof)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if len(configProofCell) != 1 {
+		return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in config proof boc")
+	}
+	shardState, err := checkBlockShardStateProof([]*boc.Cell{stateProofCell[0], configProofCell[0]}, ton.Bits256(res.Id.RootHash), nil)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if !shardState.ShardStateUnsplit.Custom.Exists {
+		return tlb.ConfigParams{}, fmt.Errorf("missing master chain state extra value")
+	}
+	return shardState.ShardStateUnsplit.Custom.Value.Value.Config, nil
 }
 
 func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclient.LiteServerConfigInfoC, error) {
@@ -1068,14 +1068,14 @@ func (c *Client) GetLibraries(ctx context.Context, libraryList []ton.Bits256) (m
 		if len(data) != 1 {
 			return nil, fmt.Errorf("multiroot lib is not supported")
 		}
-		dataHash, err := data[0].Hash()
+		dataHash, err := data[0].Hash256()
 		if err != nil {
 			return nil, err
 		}
-		if !bytes.Equal(lib.Hash[:], dataHash) {
+		if lib.Hash != dataHash {
 			return nil, fmt.Errorf("got wrong library data from liteserver")
 		}
-		libs[ton.Bits256(lib.Hash)] = data[0]
+		libs[dataHash] = data[0]
 	}
 	return libs, nil
 }

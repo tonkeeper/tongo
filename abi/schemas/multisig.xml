@@ -13,7 +13,7 @@
     </types>
 
 
-    <interface name="multisig_v2">
+    <interface name="multisig_v2" inherits="wallet">
         <code_hash>d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac</code_hash>
         <get_method name="get_multisig_data"/>
         <get_method name="get_order_address"/>

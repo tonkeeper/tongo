@@ -580,6 +580,10 @@ func (v VmStackValue) Unmarshal(dest any) error {
 		}
 		if val.CanConvert(bigIntType) {
 			bi := big.Int(v.VmStkInt)
+			err := fitCheck(val, &bi)
+			if err != nil {
+				return err
+			}
 			val.Set(reflect.ValueOf(bi).Convert(val.Type()))
 			return nil
 		}
@@ -628,6 +632,23 @@ func (s VmStack) Unmarshal(dest any) error {
 			return err
 		}
 		val.Elem().Field(i).Set(value.Elem())
+	}
+	return nil
+}
+
+func fitCheck(val reflect.Value, bigInt *big.Int) error {
+	method := val.MethodByName("FixedSize")
+	if !method.IsValid() {
+		return nil
+	}
+	vals := method.Call(nil)
+	if len(vals) != 1 || vals[0].Kind() != reflect.Int {
+		return fmt.Errorf("unsupported FixedSize method")
+	}
+	size := vals[0].Interface().(int)
+	bigLen := bigInt.BitLen()
+	if bigLen > size {
+		return fmt.Errorf("%d bits do not fit into type %s", bigLen, val.Type().Name())
 	}
 	return nil
 }

@@ -579,8 +579,8 @@ func (v VmStackValue) Unmarshal(dest any) error {
 			return nil
 		}
 		if val.CanConvert(bigIntType) {
-			bi := big.NewInt(v.VmStkTinyInt)
-			val.Set(reflect.ValueOf(*bi).Convert(val.Type()))
+			bi := big.Int(v.VmStkInt)
+			val.Set(reflect.ValueOf(bi).Convert(val.Type()))
 			return nil
 		}
 		return fmt.Errorf("maping integer257 to %v is not supported", val.Kind())

@@ -2,6 +2,7 @@ package abi
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -58,6 +59,20 @@ type InspectorOptions struct {
 }
 
 type ContractInterface uint32
+
+func (c ContractInterface) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.String())
+}
+
+func (c *ContractInterface) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+
+	*c = ContractInterfaceFromString(s)
+	return nil
+}
 
 func (c ContractInterface) Implements(other ContractInterface) bool {
 	if c == other {

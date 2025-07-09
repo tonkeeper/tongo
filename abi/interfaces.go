@@ -1363,6 +1363,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return JettonWallet.Implements(other)
 	case JettonWalletV2:
 		return JettonWallet.Implements(other)
+	case MultisigV2:
+		return Wallet.Implements(other)
 	case NftAuctionGetgemsV3:
 		return NftAuctionV1.Implements(other)
 	case NftAuctionGetgemsV4:

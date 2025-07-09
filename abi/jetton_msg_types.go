@@ -467,7 +467,6 @@ type StonfiProvideLpV2JettonPayload struct {
 }
 
 type BidaskProvideBothJettonPayload struct {
-	QueryId        uint64
 	TonAmount      tlb.Grams
 	DepositType    tlb.Uint4
 	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
@@ -515,7 +514,6 @@ type InvoicePayloadJettonPayload struct {
 type TonkeeperRelayerFeeJettonPayload struct{}
 
 type BidaskProvideJettonPayload struct {
-	QueryId        uint64
 	DepositType    tlb.Uint4
 	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
 	RejectPayload  *tlb.Any `tlb:"maybe^"`
@@ -559,7 +557,6 @@ type CoffeeMevProtectFailedSwapJettonPayload struct {
 }
 
 type BidaskSwapJettonPayload struct {
-	QueryId        uint64
 	ToAddress      tlb.MsgAddress
 	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
 	ExactOut       tlb.Grams

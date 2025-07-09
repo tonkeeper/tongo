@@ -133,7 +133,7 @@
     </internal>
 
     <jetton_payload name="bidask_swap" >
-        bidask_swap#f2ef6c1b query_id:uint64 to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#f2ef6c1b to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         ref_address:MsgAddress additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
@@ -142,11 +142,11 @@
     </internal>
 
     <jetton_payload name="bidask_provide" >
-        bidask_provide#96feef7b query_id:uint64 deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+        bidask_provide#96feef7b deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
     <jetton_payload name="bidask_provide_both" >
-        bidask_provide_both#3ea0bafc query_id:uint64 ton_amount:Coins deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+        bidask_provide_both#3ea0bafc ton_amount:Coins deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
     <internal name="bidask_swap_success" >

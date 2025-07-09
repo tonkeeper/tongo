@@ -1,8 +1,8 @@
 <abi>
-    <interface name="lockup_vesting">
+    <interface name="lockup_vesting"><!--    old vesting    -->
         <get_method name="get_lockup_data"/>
     </interface>
-    <interface name="lockup_universal">
+    <interface name="lockup_universal"><!--    old vesting    -->
         <get_method name="get_balances"/>
     </interface>
     <get_method name="get_lockup_data" >

@@ -196,21 +196,26 @@ func getMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 	case "CatchainConfigNew":
 		isShuffle = catchainConfig.CatchainConfigNew.ShuffleMcValidators
 	}
-	var validatorAddrs []tlb.ValidatorAddr
+	var (
+		validatorAddrs []tlb.ValidatorAddr
+		keys           []tlb.Uint16
+	)
 	switch validatorsSet.SumType {
 	case "Validators":
 		validatorsNum = int(validatorsSet.Validators.Main)
-		validatorAddrs = make([]tlb.ValidatorAddr, len(validatorsSet.Validators.List.Items()))
-		for i, item := range validatorsSet.Validators.List.Items() {
-			validatorAddrs[i] = *item.Value.ValidatorAddr
+		validatorAddrs = make([]tlb.ValidatorAddr, len(validatorsSet.Validators.List.Keys()))
+		keys = validatorsSet.Validators.List.Keys()
+		for i, v := range validatorsSet.Validators.List.Values() {
+			validatorAddrs[i] = *v.ValidatorAddr
 		}
 	case "ValidatorsExt":
 		validatorsNum = int(validatorsSet.ValidatorsExt.Main)
 		totalWeight := uint64(0)
-		validatorAddrs = make([]tlb.ValidatorAddr, len(validatorsSet.ValidatorsExt.List.Items()))
-		for i, item := range validatorsSet.ValidatorsExt.List.Items() {
-			totalWeight += item.Value.ValidatorAddr.Weight
-			validatorAddrs[i] = *item.Value.ValidatorAddr
+		validatorAddrs = make([]tlb.ValidatorAddr, len(validatorsSet.ValidatorsExt.List.Keys()))
+		keys = validatorsSet.ValidatorsExt.List.Keys()
+		for i, v := range validatorsSet.ValidatorsExt.List.Values() {
+			totalWeight += v.ValidatorAddr.Weight
+			validatorAddrs[i] = *v.ValidatorAddr
 		}
 		if totalWeight != validatorsSet.ValidatorsExt.TotalWeight {
 			return nil, fmt.Errorf("incorrect sum of validators weights")
@@ -219,7 +224,7 @@ func getMainValidators(block *ton.BlockIDExt, catchainConfig tlb.CatchainConfig,
 		return nil, fmt.Errorf("unknown validators set sumtype")
 	}
 	sort.Slice(validatorAddrs, func(i, j int) bool {
-		return validatorAddrs[i].Weight > validatorAddrs[j].Weight // reversed order
+		return keys[i] < keys[j]
 	})
 	if len(validatorAddrs) == 0 {
 		return nil, fmt.Errorf("zero validators found")

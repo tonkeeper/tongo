@@ -21,7 +21,7 @@ type Tracer struct {
 	counter              int
 	limit                int
 	softLimit            int
-	ignoreCheckSignature bool
+	signatureIgnoreDepth int
 	currentTime          uint32
 	shardConfig          map[ton.ShardID]struct{}
 }
@@ -37,7 +37,7 @@ type TraceOptions struct {
 	softLimit            int
 	blockchain           accountGetter
 	time                 int64
-	ignoreCheckSignature bool
+	signatureIgnoreDepth int
 	predefinedAccounts   map[ton.AccountID]tlb.ShardAccount
 }
 
@@ -118,9 +118,9 @@ func WithAccountsSource(b accountGetter) TraceOption {
 	}
 }
 
-func WithIgnoreSignatureCheck() TraceOption {
+func WithSignatureIgnoreDepth(depth int) TraceOption {
 	return func(o *TraceOptions) error {
-		o.ignoreCheckSignature = true
+		o.signatureIgnoreDepth = depth
 		return nil
 	}
 }
@@ -133,7 +133,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		limit:                100,
 		blockchain:           nil,
 		time:                 time.Now().Unix(),
-		ignoreCheckSignature: false,
+		signatureIgnoreDepth: 1,
 		predefinedAccounts:   make(map[ton.AccountID]tlb.ShardAccount),
 	}
 	for _, o := range options {
@@ -182,7 +182,7 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 		blockchain:           option.blockchain,
 		limit:                option.limit,
 		softLimit:            option.softLimit,
-		ignoreCheckSignature: option.ignoreCheckSignature,
+		signatureIgnoreDepth: option.signatureIgnoreDepth,
 		currentTime:          uint32(option.time),
 		shardConfig:          shardConfig,
 	}, nil
@@ -269,8 +269,8 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			}
 		}
 	}
-	// if ignore check signature is false and the message is not external-in then just check signatures for current and all next messages
-	if !t.ignoreCheckSignature && message.Info.SumType == "IntMsgInfo" {
+	// enable signature check when we reach given depth
+	if t.signatureIgnoreDepth == t.counter {
 		err := t.e.SetIgnoreSignatureCheck(false)
 		if err != nil {
 			return nil, err

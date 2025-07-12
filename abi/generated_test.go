@@ -881,6 +881,13 @@ func TestWhalesNominators(t *testing.T) {
 	params := v.(GetParams_WhalesNominatorResult)
 	fmt.Printf("%+v\n", params)
 
+	_, v, err = GetProxy(context.Background(), client, address)
+	if err != nil {
+		t.Fatal(err)
+	}
+	proxy := v.(GetProxy_WhalesNominatorResult)
+	fmt.Printf("%+v\n", proxy)
+
 }
 
 func TestDedustFactory(t *testing.T) {

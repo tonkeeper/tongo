@@ -15,15 +15,14 @@ import (
 )
 
 type Tracer struct {
-	e                    *Emulator
-	currentShardAccount  map[ton.AccountID]tlb.ShardAccount
-	blockchain           accountGetter
-	counter              int
-	limit                int
-	softLimit            int
-	signatureIgnoreDepth int
-	currentTime          uint32
-	shardConfig          map[ton.ShardID]struct{}
+	e                   *Emulator
+	currentShardAccount map[ton.AccountID]tlb.ShardAccount
+	blockchain          accountGetter
+	counter             int
+	limit               int
+	softLimit           int
+	currentTime         uint32
+	shardConfig         map[ton.ShardID]struct{}
 }
 
 type TxTree struct {
@@ -32,13 +31,12 @@ type TxTree struct {
 }
 
 type TraceOptions struct {
-	config               string
-	limit                int
-	softLimit            int
-	blockchain           accountGetter
-	time                 int64
-	signatureIgnoreDepth int
-	predefinedAccounts   map[ton.AccountID]tlb.ShardAccount
+	config             string
+	limit              int
+	softLimit          int
+	blockchain         accountGetter
+	time               int64
+	predefinedAccounts map[ton.AccountID]tlb.ShardAccount
 }
 
 type accountGetter interface {
@@ -118,23 +116,15 @@ func WithAccountsSource(b accountGetter) TraceOption {
 	}
 }
 
-func WithSignatureIgnoreDepth(depth int) TraceOption {
-	return func(o *TraceOptions) error {
-		o.signatureIgnoreDepth = depth
-		return nil
-	}
-}
-
 type TraceOption func(o *TraceOptions) error
 
 func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 	option := TraceOptions{
-		config:               DefaultConfig,
-		limit:                100,
-		blockchain:           nil,
-		time:                 time.Now().Unix(),
-		signatureIgnoreDepth: 1,
-		predefinedAccounts:   make(map[ton.AccountID]tlb.ShardAccount),
+		config:             DefaultConfig,
+		limit:              100,
+		blockchain:         nil,
+		time:               time.Now().Unix(),
+		predefinedAccounts: make(map[ton.AccountID]tlb.ShardAccount),
 	}
 	for _, o := range options {
 		err := o(&option)
@@ -177,14 +167,13 @@ func NewTraceBuilder(options ...TraceOption) (*Tracer, error) {
 
 	// TODO: set gas limit, currently, the transaction emulator doesn't support that
 	return &Tracer{
-		e:                    e,
-		currentShardAccount:  option.predefinedAccounts,
-		blockchain:           option.blockchain,
-		limit:                option.limit,
-		softLimit:            option.softLimit,
-		signatureIgnoreDepth: option.signatureIgnoreDepth,
-		currentTime:          uint32(option.time),
-		shardConfig:          shardConfig,
+		e:                   e,
+		currentShardAccount: option.predefinedAccounts,
+		blockchain:          option.blockchain,
+		limit:               option.limit,
+		softLimit:           option.softLimit,
+		currentTime:         uint32(option.time),
+		shardConfig:         shardConfig,
 	}, nil
 }
 
@@ -215,7 +204,7 @@ func msgStateInitCode(msg tlb.Message) *boc.Cell {
 	return &cell
 }
 
-func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) {
+func (t *Tracer) Run(ctx context.Context, message tlb.Message, currDepth, signatureIgnoreDepth int) (*TxTree, error) {
 	if t.counter >= t.limit {
 		return nil, fmt.Errorf("to many iterations: %v/%v", t.counter, t.limit)
 	}
@@ -269,13 +258,12 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			}
 		}
 	}
-	// enable signature check when we reach given depth
-	if t.signatureIgnoreDepth == t.counter {
-		err := t.e.SetIgnoreSignatureCheck(false)
-		if err != nil {
-			return nil, err
-		}
+	// if we reach given depth then enable signature check otherwise ignore
+	err = t.e.SetIgnoreSignatureCheck(currDepth < signatureIgnoreDepth)
+	if err != nil {
+		return nil, err
 	}
+
 	if len(publicLibs) > 0 {
 		libsBoc, err := codePkg.LibrariesToBase64(publicLibs)
 		if err != nil {
@@ -323,7 +311,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			}
 		}
 		t.currentTime = localTime
-		child, err := t.Run(ctx, m.Value)
+		child, err := t.Run(ctx, m.Value, currDepth+1, signatureIgnoreDepth)
 		if err != nil {
 			return tree, err
 		}

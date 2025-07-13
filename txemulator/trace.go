@@ -204,7 +204,7 @@ func msgStateInitCode(msg tlb.Message) *boc.Cell {
 	return &cell
 }
 
-func (t *Tracer) Run(ctx context.Context, message tlb.Message, currDepth, signatureIgnoreDepth int) (*TxTree, error) {
+func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDepth int) (*TxTree, error) {
 	if t.counter >= t.limit {
 		return nil, fmt.Errorf("to many iterations: %v/%v", t.counter, t.limit)
 	}
@@ -258,8 +258,8 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, currDepth, signat
 			}
 		}
 	}
-	// if we reach given depth then enable signature check otherwise ignore
-	err = t.e.SetIgnoreSignatureCheck(currDepth < signatureIgnoreDepth)
+	// if remaining signature ignore depth > 0 then ignore signature check, otherwise enable
+	err = t.e.SetIgnoreSignatureCheck(signatureIgnoreDepth > 0)
 	if err != nil {
 		return nil, err
 	}
@@ -311,7 +311,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, currDepth, signat
 			}
 		}
 		t.currentTime = localTime
-		child, err := t.Run(ctx, m.Value, currDepth+1, signatureIgnoreDepth)
+		child, err := t.Run(ctx, m.Value, signatureIgnoreDepth-1)
 		if err != nil {
 			return tree, err
 		}

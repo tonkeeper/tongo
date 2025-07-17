@@ -1,0 +1,291 @@
+<abi>
+
+    <types>
+        swap_params#_ min_out:(VarUInteger 16) deadline:uint64 excess:(Maybe MsgAddress) referral:(Maybe MsgAddress)
+        next_fulfill:(Maybe ^Cell) next_reject:(Maybe ^Cell) = MoonSwapParams;
+
+        order_data#_ rate:uint256 lock:uint2 vesting_time:uint64 = MoonOrderParams;
+
+    </types>
+
+    <!-- https://tonviewer.com/EQCMpWCnDHVhMnUspAaKxagkXuW0NGhMq6Y-HCW_BO20e-Ju  -->
+    <interface name="moon_pool">
+
+        <get_method name="get_jetton_data"/>
+
+        <get_method name="get_reserves" version="moon">
+            <output version="moon" fixed_length="true">
+                <cell name="unknown_cell1">cell</cell>
+                <int name="reserve1">int257</int>
+                <cell name="unknown_cell2">cell</cell>
+                <int name="reserve2">int257</int>
+            </output>
+        </get_method>
+
+        <get_method name="get_assets" version="moon">
+            <output version="moon" fixed_length="true">
+                <slice name="asset1_id">msgaddress</slice>
+                <slice name="asset2_id">msgaddress</slice>
+            </output>
+        </get_method>
+
+        <get_method name="get_wallet_address"/>
+
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="moon_swap"/> <!-- TON: https://tonviewer.com/transaction/79b5f0c733d8d19f92b6dee74206b83c384a83744372c8116088739df6c94b71 JETTON: https://tonviewer.com/transaction/6822964e3f54a6df48a7436254ba40639399f8b00caaeea3e348d02e31f8c73d  -->
+            <internal name="moon_deposit_liquidity"/> <!-- https://tonviewer.com/transaction/44cafbf7f7f63baf4e7cb3faae8cd652f0b50376f747a633707726c67304981c  -->
+            <internal name="moon_boost_pool"/> <!-- https://tonviewer.com/transaction/9c5bfaf9249eb43b5100bb6e67285e518992c61b67d76e9a2c282715c20e7644  -->
+        </msg_in>
+
+        <msg_out>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="moon_swap_succeed"/> <!-- https://tonviewer.com/transaction/9a6bc49bf1018bf64341c263350aec98f5bad21821bde295c4e881f017f05486  -->
+            <internal name="moon_swap_failed"/> <!-- https://tonviewer.com/transaction/0ed4bf1a11d76f8108b62df6e45aa73dd1a882b706f116c29af4c2c598f77582  -->
+        </msg_out>
+
+    </interface>
+
+    <!-- https://tonviewer.com/UQAyAz5tgCe2HVeJnYG9WN_sJ9ozkfAJEomnGTRpqMuOOb5q  -->
+    <interface name="moon_booster">
+
+        <get_method name="get_status">
+            <output version="moon" fixed_length="true">
+                <int name="status">uint8</int>
+            </output>
+        </get_method>
+
+        <get_method name="get_pool" version="moon">
+            <output version="moon" fixed_length="true">
+                <slice name="pool_address">msgaddress</slice>
+            </output>
+        </get_method>
+
+        <msg_out>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="moon_boost_pool"/> <!-- TON: https://tonviewer.com/transaction/9c5bfaf9249eb43b5100bb6e67285e518992c61b67d76e9a2c282715c20e7644 JETTON: https://tonviewer.com/transaction/f4cbfc804b150e6f4d92c6f594745093ae82e9802bacb601ceaf6bb074c455b7  -->
+        </msg_out>
+
+    </interface>
+
+    <!-- https://tonviewer.com/EQDuOyjg09BybyuafSWAe9ILURk_uPJ9uzkUBPmDNmvZUOlA -->
+    <interface name="moon_order_factory">
+
+        <get_method name="get_id">
+            <output version="moon" fixed_length="true">
+                <int name="id">uint64</int>
+            </output>
+        </get_method>
+
+        <get_method name="get_pipe">
+            <input>
+                <slice name="asset_id">msgaddress</slice>
+            </input>
+            <output version="moon" fixed_length="true">
+                <slice name="pipe_address">msgaddress</slice>
+            </output>
+        </get_method>
+
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="moon_create_order"/> <!-- TON: https://tonviewer.com/transaction/675a719ec55be1b1e757c98a69f823c9beb65a412e7c30430e8199a88ae7f530 JETTON: https://tonviewer.com/transaction/9d717a8b2b2f6786223e6d3f389354317c6571e940968e14c1e0c6d80365991a -->
+        </msg_in>
+
+        <msg_out>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="moon_deploy_order"/> <!-- https://tonviewer.com/transaction/adde43eb7a317571a0240c3ff31b4ca7bd73205849d3169b91ce80cd6184f28a -->
+        </msg_out>
+
+    </interface>
+
+    <!-- https://tonviewer.com/EQDQeCYJNktokS2tXsFJygtva_XmBN1FZI1GKvbkO3R3IQaG -->
+    <interface name="moon_order">
+
+        <get_method name="get_status">
+            <output version="moon" fixed_length="true">
+                <int name="status">uint8</int>
+            </output>
+        </get_method>
+
+        <get_method name="get_order_amount">
+            <output version="moon" fixed_length="true">
+                <int name="amount">int257</int>
+            </output>
+        </get_method>
+
+        <get_method name="get_fill_out">
+            <input>
+                <int name="amount_in">int257</int>
+            </input>
+            <output version="moon" fixed_length="true">
+                <int name="amount_out">int257</int>
+            </output>
+        </get_method>
+
+        <get_method name="get_vesting_data">
+            <output version="moon" fixed_length="true">
+                <int name="vesting_start_time">uint64</int>
+                <int name="vesting_time">uint64</int>
+                <slice name="recipient">msgaddress</slice>
+            </output>
+        </get_method>
+
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+            <internal name="moon_cancel_order"/> <!-- https://tonviewer.com/transaction/1923eceba7d106a383b90d2d952a0af3b780132ffac17fd8f63c168a644f24e0 -->
+            <internal name="moon_fill_order"/> <!-- TON: https://tonviewer.com/transaction/e071525e6803b7dca7b666dc32192b0907576e4a9929582f574085a8843ee185 JETTON: https://tonviewer.com/transaction/3ec49eb9410a1ebcf3aba293cf1519079109fd0c933a8dc79a985d54d6fc1591 -->
+        </msg_in>
+
+        <msg_out>
+            <internal name="moon_order_cancelled"/>
+            <internal name="excess"/> <!-- https://tonviewer.com/transaction/41d8992137278e188f296259127078219827f672210aa008cc9caa164c9a802e -->
+            <internal name="moon_order_payout"/> <!-- https://tonviewer.com/transaction/e7ade8890af4c0bdcfe6de2f6d1e37ed33da0e6b996c4a10f24c55898eb189b5 -->
+            <internal name="moon_vesting_payout"/> <!-- https://tonviewer.com/transaction/febce0013454ddbda8ae6d3bd26c229efb4abd5bf9dd959b285168913a68d90c -->
+        </msg_out>
+
+    </interface>
+
+    <get_method name="get_reserves" version="moon">
+        <output version="moon" fixed_length="true">
+            <slice name="unknown_cell1">cell</slice>
+            <int name="reserve1">int257</int>
+            <slice name="unknown_cell2">cell</slice>
+            <int name="reserve2">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_assets" version="moon">
+        <output version="moon" fixed_length="true">
+            <slice name="asset1_id">msgaddress</slice>
+            <slice name="asset2_id">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_status">
+        <output version="moon" fixed_length="true">
+            <int name="status">uint8</int>
+        </output>
+    </get_method>
+    <get_method name="get_pool">
+        <output version="moon" fixed_length="true">
+            <slice name="pool_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_id">
+        <output version="moon" fixed_length="true">
+            <int name="id">uint64</int>
+        </output>
+    </get_method>
+    <get_method name="get_pipe">
+        <input>
+            <slice name="asset_id">msgaddress</slice>
+        </input>
+        <output version="moon" fixed_length="true">
+            <slice name="pipe_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="get_order_amount">
+        <output version="moon" fixed_length="true">
+            <int name="amount">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_fill_out">
+        <input>
+            <int name="amount_in">int257</int>
+        </input>
+        <output version="moon" fixed_length="true">
+            <int name="amount_out">int257</int>
+        </output>
+    </get_method>
+    <get_method name="get_vesting_data">
+        <output version="moon" fixed_length="true">
+            <int name="vesting_start_time">uint64</int>
+            <int name="vesting_time">uint64</int>
+            <slice name="recipient">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <internal name="moon_swap">
+        moon_swap#b37a900b query_id:uint64 amount:(VarUInteger 16) swap_params:MoonSwapParams = InMsgBody;
+    </internal>
+
+    <internal name="moon_swap_succeed">
+        moon_swap_succeed#cb7f38d6 = InMsgBody;
+    </internal>
+
+    <internal name="moon_swap_failed">
+        moon_swap_failed#c47c1f57 = InMsgBody;
+    </internal>
+
+    <internal name="moon_deposit_liquidity">
+        moon_deposit_liquidity#b31db781 query_id:uint64 min_lp_out:(VarUInteger 16) = InMsgBody;
+    </internal>
+
+    <internal name="moon_boost_pool">
+        moon_boost_pool#96aa1586 query_id:uint64 = InMsgBody;
+    </internal>
+
+    <internal name="moon_create_order">
+        moon_create_order#da067c19 query_id:uint64 asset2_id:MsgAddress order_data:MoonOrderParams = InMsgBody;
+    </internal>
+
+    <internal name="moon_deploy_order">
+        moon_deploy_order#983432e2 query_id:uint64 order_fee:uint8 order_data:MoonOrderParams pipes:^Cell = InMsgBody;
+    </internal>
+
+    <internal name="moon_fill_order">
+        moon_fill_order#99b49842 query_id:uint64 recipient:MsgAddress recipient_payload:(Maybe ^Cell)
+        reject_address:MsgAddress = InMsgBody;
+    </internal>
+
+    <internal name="moon_order_payout">
+        moon_order_payout#96612e37 query_id:uint64 = InMsgBody;
+    </internal>
+
+    <internal name="moon_vesting_payout">
+        moon_vesting_payout#b4fc3916 query_id:uint64 = InMsgBody;
+    </internal>
+
+    <internal name="moon_cancel_order">
+        moon_cancel_order#1e8d79c4 query_id:uint64 = InMsgBody;
+    </internal>
+
+    <internal name="moon_order_cancelled">
+        moon_order_cancelled#49f48ee9 query_id:uint64 = InMsgBody;
+    </internal>
+
+
+    <jetton_payload name="moon_swap">
+        moon_swap#b37a900b swap_params:MoonSwapParams = ForwardPayload;
+    </jetton_payload>
+
+    <jetton_payload name="moon_swap_succeed">
+        moon_swap_succeed#cb7f38d6 = ForwardPayload;
+    </jetton_payload>
+
+    <jetton_payload name="moon_swap_failed">
+        moon_swap_failed#c47c1f57 = ForwardPayload;
+    </jetton_payload>
+
+    <jetton_payload name="moon_deposit_liquidity">
+        moon_deposit_liquidity#b31db781 min_lp_out:(VarUInteger 16) = ForwardPayload;
+    </jetton_payload>
+
+    <jetton_payload name="moon_boost_pool">
+        moon_boost_pool#96aa1586 = ForwardPayload;
+    </jetton_payload>
+
+    <jetton_payload name="moon_create_order">
+        moon_create_order#da067c19 asset1_id:MsgAddress asset2_id:MsgAddress order_data:MoonOrderParams = ForwardPayload;
+    </jetton_payload>
+
+    <jetton_payload name="moon_fill_order">
+        moon_fill_order#99b49842 recipient:MsgAddress recipient_payload:(Maybe ^Cell)
+        reject_address:MsgAddress = ForwardPayload;
+    </jetton_payload>
+
+</abi>

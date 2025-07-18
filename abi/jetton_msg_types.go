@@ -161,11 +161,55 @@ func decodeTonkeeperRelayerFeeJettonOpJetton(j *JettonPayload, c *boc.Cell) erro
 	return err
 }
 
+func decodeMoonBoostPoolJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonBoostPoolJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonBoostPoolJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeBidaskProvideJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res BidaskProvideJettonPayload
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
 		j.SumType = BidaskProvideJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeMoonFillOrderJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonFillOrderJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonFillOrderJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeMoonDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonDepositLiquidityJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonDepositLiquidityJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeMoonSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonSwapJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonSwapJettonOp
 		j.Value = res
 		return nil
 	}
@@ -227,11 +271,44 @@ func decodeCoffeeNotificationJettonOpJetton(j *JettonPayload, c *boc.Cell) error
 	return err
 }
 
+func decodeMoonSwapFailedJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonSwapFailedJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonSwapFailedJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiSwapOkJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiSwapOkJettonPayload
 	err := tlb.Unmarshal(c, &res)
 	if err == nil && completedRead(c) {
 		j.SumType = StonfiSwapOkJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeMoonSwapSucceedJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonSwapSucceedJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonSwapSucceedJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeMoonCreateOrderJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res MoonCreateOrderJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = MoonCreateOrderJettonOp
 		j.Value = res
 		return nil
 	}
@@ -297,13 +374,20 @@ const (
 	StonfiSwapV2JettonOp               JettonOpName = "StonfiSwapV2"
 	InvoicePayloadJettonOp             JettonOpName = "InvoicePayload"
 	TonkeeperRelayerFeeJettonOp        JettonOpName = "TonkeeperRelayerFee"
+	MoonBoostPoolJettonOp              JettonOpName = "MoonBoostPool"
 	BidaskProvideJettonOp              JettonOpName = "BidaskProvide"
+	MoonFillOrderJettonOp              JettonOpName = "MoonFillOrder"
+	MoonDepositLiquidityJettonOp       JettonOpName = "MoonDepositLiquidity"
+	MoonSwapJettonOp                   JettonOpName = "MoonSwap"
 	CoffeeCrossDexFailureJettonOp      JettonOpName = "CoffeeCrossDexFailure"
 	CoffeeSwapJettonOp                 JettonOpName = "CoffeeSwap"
 	CoffeeCreatePoolJettonOp           JettonOpName = "CoffeeCreatePool"
 	CoffeeDepositLiquidityJettonOp     JettonOpName = "CoffeeDepositLiquidity"
 	CoffeeNotificationJettonOp         JettonOpName = "CoffeeNotification"
+	MoonSwapFailedJettonOp             JettonOpName = "MoonSwapFailed"
 	StonfiSwapOkJettonOp               JettonOpName = "StonfiSwapOk"
+	MoonSwapSucceedJettonOp            JettonOpName = "MoonSwapSucceed"
+	MoonCreateOrderJettonOp            JettonOpName = "MoonCreateOrder"
 	DedustSwapJettonOp                 JettonOpName = "DedustSwap"
 	CoffeeMevProtectFailedSwapJettonOp JettonOpName = "CoffeeMevProtectFailedSwap"
 	BidaskSwapJettonOp                 JettonOpName = "BidaskSwap"
@@ -323,13 +407,20 @@ const (
 	StonfiSwapV2JettonOpCode               JettonOpCode = 0x6664de2a
 	InvoicePayloadJettonOpCode             JettonOpCode = 0x7aa23eb5
 	TonkeeperRelayerFeeJettonOpCode        JettonOpCode = 0x878da6e3
+	MoonBoostPoolJettonOpCode              JettonOpCode = 0x96aa1586
 	BidaskProvideJettonOpCode              JettonOpCode = 0x96feef7b
+	MoonFillOrderJettonOpCode              JettonOpCode = 0x99b49842
+	MoonDepositLiquidityJettonOpCode       JettonOpCode = 0xb31db781
+	MoonSwapJettonOpCode                   JettonOpCode = 0xb37a900b
 	CoffeeCrossDexFailureJettonOpCode      JettonOpCode = 0xb902e61a
 	CoffeeSwapJettonOpCode                 JettonOpCode = 0xc0ffee10
 	CoffeeCreatePoolJettonOpCode           JettonOpCode = 0xc0ffee11
 	CoffeeDepositLiquidityJettonOpCode     JettonOpCode = 0xc0ffee12
 	CoffeeNotificationJettonOpCode         JettonOpCode = 0xc0ffee36
+	MoonSwapFailedJettonOpCode             JettonOpCode = 0xc47c1f57
 	StonfiSwapOkJettonOpCode               JettonOpCode = 0xc64370e5
+	MoonSwapSucceedJettonOpCode            JettonOpCode = 0xcb7f38d6
+	MoonCreateOrderJettonOpCode            JettonOpCode = 0xda067c19
 	DedustSwapJettonOpCode                 JettonOpCode = 0xe3a0d482
 	CoffeeMevProtectFailedSwapJettonOpCode JettonOpCode = 0xee51ce51
 	BidaskSwapJettonOpCode                 JettonOpCode = 0xf2ef6c1b
@@ -351,13 +442,20 @@ var KnownJettonTypes = map[string]any{
 	StonfiSwapV2JettonOp:               StonfiSwapV2JettonPayload{},
 	InvoicePayloadJettonOp:             InvoicePayloadJettonPayload{},
 	TonkeeperRelayerFeeJettonOp:        TonkeeperRelayerFeeJettonPayload{},
+	MoonBoostPoolJettonOp:              MoonBoostPoolJettonPayload{},
 	BidaskProvideJettonOp:              BidaskProvideJettonPayload{},
+	MoonFillOrderJettonOp:              MoonFillOrderJettonPayload{},
+	MoonDepositLiquidityJettonOp:       MoonDepositLiquidityJettonPayload{},
+	MoonSwapJettonOp:                   MoonSwapJettonPayload{},
 	CoffeeCrossDexFailureJettonOp:      CoffeeCrossDexFailureJettonPayload{},
 	CoffeeSwapJettonOp:                 CoffeeSwapJettonPayload{},
 	CoffeeCreatePoolJettonOp:           CoffeeCreatePoolJettonPayload{},
 	CoffeeDepositLiquidityJettonOp:     CoffeeDepositLiquidityJettonPayload{},
 	CoffeeNotificationJettonOp:         CoffeeNotificationJettonPayload{},
+	MoonSwapFailedJettonOp:             MoonSwapFailedJettonPayload{},
 	StonfiSwapOkJettonOp:               StonfiSwapOkJettonPayload{},
+	MoonSwapSucceedJettonOp:            MoonSwapSucceedJettonPayload{},
+	MoonCreateOrderJettonOp:            MoonCreateOrderJettonPayload{},
 	DedustSwapJettonOp:                 DedustSwapJettonPayload{},
 	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonPayload{},
 	BidaskSwapJettonOp:                 BidaskSwapJettonPayload{},
@@ -378,13 +476,20 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	StonfiSwapV2JettonOp:               StonfiSwapV2JettonOpCode,
 	InvoicePayloadJettonOp:             InvoicePayloadJettonOpCode,
 	TonkeeperRelayerFeeJettonOp:        TonkeeperRelayerFeeJettonOpCode,
+	MoonBoostPoolJettonOp:              MoonBoostPoolJettonOpCode,
 	BidaskProvideJettonOp:              BidaskProvideJettonOpCode,
+	MoonFillOrderJettonOp:              MoonFillOrderJettonOpCode,
+	MoonDepositLiquidityJettonOp:       MoonDepositLiquidityJettonOpCode,
+	MoonSwapJettonOp:                   MoonSwapJettonOpCode,
 	CoffeeCrossDexFailureJettonOp:      CoffeeCrossDexFailureJettonOpCode,
 	CoffeeSwapJettonOp:                 CoffeeSwapJettonOpCode,
 	CoffeeCreatePoolJettonOp:           CoffeeCreatePoolJettonOpCode,
 	CoffeeDepositLiquidityJettonOp:     CoffeeDepositLiquidityJettonOpCode,
 	CoffeeNotificationJettonOp:         CoffeeNotificationJettonOpCode,
+	MoonSwapFailedJettonOp:             MoonSwapFailedJettonOpCode,
 	StonfiSwapOkJettonOp:               StonfiSwapOkJettonOpCode,
+	MoonSwapSucceedJettonOp:            MoonSwapSucceedJettonOpCode,
+	MoonCreateOrderJettonOp:            MoonCreateOrderJettonOpCode,
 	DedustSwapJettonOp:                 DedustSwapJettonOpCode,
 	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonOpCode,
 	BidaskSwapJettonOp:                 BidaskSwapJettonOpCode,
@@ -406,13 +511,20 @@ var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell)
 	StonfiSwapV2JettonOpCode:               decodeStonfiSwapV2JettonOpJetton,
 	InvoicePayloadJettonOpCode:             decodeInvoicePayloadJettonOpJetton,
 	TonkeeperRelayerFeeJettonOpCode:        decodeTonkeeperRelayerFeeJettonOpJetton,
+	MoonBoostPoolJettonOpCode:              decodeMoonBoostPoolJettonOpJetton,
 	BidaskProvideJettonOpCode:              decodeBidaskProvideJettonOpJetton,
+	MoonFillOrderJettonOpCode:              decodeMoonFillOrderJettonOpJetton,
+	MoonDepositLiquidityJettonOpCode:       decodeMoonDepositLiquidityJettonOpJetton,
+	MoonSwapJettonOpCode:                   decodeMoonSwapJettonOpJetton,
 	CoffeeCrossDexFailureJettonOpCode:      decodeCoffeeCrossDexFailureJettonOpJetton,
 	CoffeeSwapJettonOpCode:                 decodeCoffeeSwapJettonOpJetton,
 	CoffeeCreatePoolJettonOpCode:           decodeCoffeeCreatePoolJettonOpJetton,
 	CoffeeDepositLiquidityJettonOpCode:     decodeCoffeeDepositLiquidityJettonOpJetton,
 	CoffeeNotificationJettonOpCode:         decodeCoffeeNotificationJettonOpJetton,
+	MoonSwapFailedJettonOpCode:             decodeMoonSwapFailedJettonOpJetton,
 	StonfiSwapOkJettonOpCode:               decodeStonfiSwapOkJettonOpJetton,
+	MoonSwapSucceedJettonOpCode:            decodeMoonSwapSucceedJettonOpJetton,
+	MoonCreateOrderJettonOpCode:            decodeMoonCreateOrderJettonOpJetton,
 	DedustSwapJettonOpCode:                 decodeDedustSwapJettonOpJetton,
 	CoffeeMevProtectFailedSwapJettonOpCode: decodeCoffeeMevProtectFailedSwapJettonOpJetton,
 	BidaskSwapJettonOpCode:                 decodeBidaskSwapJettonOpJetton,
@@ -513,11 +625,27 @@ type InvoicePayloadJettonPayload struct {
 
 type TonkeeperRelayerFeeJettonPayload struct{}
 
+type MoonBoostPoolJettonPayload struct{}
+
 type BidaskProvideJettonPayload struct {
 	DepositType    tlb.Uint4
 	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
 	RejectPayload  *tlb.Any `tlb:"maybe^"`
 	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
+type MoonFillOrderJettonPayload struct {
+	Recipient        tlb.MsgAddress
+	RecipientPayload *tlb.Any `tlb:"maybe^"`
+	RejectAddress    tlb.MsgAddress
+}
+
+type MoonDepositLiquidityJettonPayload struct {
+	MinLpOut tlb.VarUInteger16
+}
+
+type MoonSwapJettonPayload struct {
+	SwapParams MoonSwapParams
 }
 
 type CoffeeCrossDexFailureJettonPayload struct {
@@ -544,7 +672,17 @@ type CoffeeNotificationJettonPayload struct {
 	Body    tlb.Any `tlb:"^"`
 }
 
+type MoonSwapFailedJettonPayload struct{}
+
 type StonfiSwapOkJettonPayload struct{}
+
+type MoonSwapSucceedJettonPayload struct{}
+
+type MoonCreateOrderJettonPayload struct {
+	Asset1Id  tlb.MsgAddress
+	Asset2Id  tlb.MsgAddress
+	OrderData MoonOrderParams
+}
 
 type DedustSwapJettonPayload struct {
 	Step       DedustSwapStep

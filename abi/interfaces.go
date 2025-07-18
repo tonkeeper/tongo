@@ -46,6 +46,10 @@ const (
 	LockupVesting
 	MegatonfiExchange
 	MegatonfiRouter
+	MoonBooster
+	MoonOrder
+	MoonOrderFactory
+	MoonPool
 	MultisigOrderV2
 	MultisigV2
 	NftAuctionGetgemsV3
@@ -186,6 +190,14 @@ func (c ContractInterface) String() string {
 		return "megatonfi_exchange"
 	case MegatonfiRouter:
 		return "megatonfi_router"
+	case MoonBooster:
+		return "moon_booster"
+	case MoonOrder:
+		return "moon_order"
+	case MoonOrderFactory:
+		return "moon_order_factory"
+	case MoonPool:
+		return "moon_pool"
 	case MultisigOrderV2:
 		return "multisig_order_v2"
 	case MultisigV2:
@@ -389,6 +401,14 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return MegatonfiExchange
 	case "megatonfi_router":
 		return MegatonfiRouter
+	case "moon_booster":
+		return MoonBooster
+	case "moon_order":
+		return MoonOrder
+	case "moon_order_factory":
+		return MoonOrderFactory
+	case "moon_pool":
+		return MoonPool
 	case "multisig_order_v2":
 		return MultisigOrderV2
 	case "multisig_v2":
@@ -644,6 +664,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetFullDomain,
 	},
 	{
+		Name:     "get_id",
+		InvokeFn: GetId,
+	},
+	{
 		Name:     "get_jetton_data",
 		InvokeFn: GetJettonData,
 	},
@@ -728,6 +752,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetOracleData,
 	},
 	{
+		Name:     "get_order_amount",
+		InvokeFn: GetOrderAmount,
+	},
+	{
 		Name:     "get_order_data",
 		InvokeFn: GetOrderData,
 	},
@@ -742,6 +770,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_plugin_list",
 		InvokeFn: GetPluginList,
+	},
+	{
+		Name:     "get_pool",
+		InvokeFn: GetPool,
 	},
 	{
 		Name:     "get_pool_addr",
@@ -922,6 +954,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_vault_whitelisted_addresses",
 		InvokeFn: GetVaultWhitelistedAddresses,
+	},
+	{
+		Name:     "get_vesting_data",
+		InvokeFn: GetVestingData,
 	},
 	{
 		Name:     "get_wallet_addr",
@@ -1472,6 +1508,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSaleData,
 		},
 	},
+	ton.MustParseHash("2808165253286a1e4fe63efab9ba35481137aac0b1a0f9edccb8f6442dde46c4"): {
+		contractInterfaces: []ContractInterface{MoonPool},
+		getMethods: []InvokeFn{
+			GetAssets,
+			GetJettonData,
+			GetReserves,
+		},
+	},
 	ton.MustParseHash("32050dfac44f64866bcc86f2cd9e1305fe9dcadb3959c002237cfb0902d44323"): {
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
 		getMethods: []InvokeFn{
@@ -1541,6 +1585,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			GetPublicKey,
 			Seqno,
+		},
+	},
+	ton.MustParseHash("88c38d29586b5d748badbc7b4dbfe239c25cb85ca9c4586a44e05507a6edf6a6"): {
+		contractInterfaces: []ContractInterface{MoonOrder},
+		getMethods: []InvokeFn{
+			GetOrderAmount,
+			GetStatus,
+			GetVestingData,
 		},
 	},
 	ton.MustParseHash("89468f02c78e570802e39979c8516fc38df07ea76a48357e0536f2ba7b3ee37b"): {
@@ -1614,6 +1666,19 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetAuctionDataV4,
 		},
 	},
+	ton.MustParseHash("ce84c382c8b6ac0d05212bbaa34d05e54e1e30e2cc9289f2d9c9d64726a112a8"): {
+		contractInterfaces: []ContractInterface{MoonBooster},
+		getMethods: []InvokeFn{
+			GetPool,
+			GetStatus,
+		},
+	},
+	ton.MustParseHash("d04737d6f678103a9e448c22109919d0f9cbe05ef1b1a83c5e7b886683a54704"): {
+		contractInterfaces: []ContractInterface{MoonOrderFactory},
+		getMethods: []InvokeFn{
+			GetId,
+		},
+	},
 	ton.MustParseHash("d3d14da9a627f0ec3533341829762af92b9540b21bf03665fac09c2b46eabbac"): {
 		contractInterfaces: []ContractInterface{MultisigV2},
 		getMethods: []InvokeFn{
@@ -1659,6 +1724,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("edcc62f1752297fbda2408c09ca420b3af9528102e33b9e0a0ebe38553c18fec"): {
 		contractInterfaces: []ContractInterface{OmnistonReferral},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("ee07140b3ccfe261ed28580f60a16bda4c4b9c6d7da7ae05f5b7c7e2b1dfe226"): {
+		contractInterfaces: []ContractInterface{MoonOrder},
+		getMethods: []InvokeFn{
+			GetOrderAmount,
+			GetStatus,
+			GetVestingData,
+		},
 	},
 	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
 		contractInterfaces: []ContractInterface{WalletV5Beta},
@@ -1836,6 +1909,27 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncJettonTransferMsgBody,
 			decodeFuncJettonInternalTransferMsgBody,
 			decodeFuncJettonBurnMsgBody,
+		}
+	case MoonOrder:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncMoonCancelOrderMsgBody,
+			decodeFuncMoonFillOrderMsgBody,
+		}
+	case MoonOrderFactory:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncMoonCreateOrderMsgBody,
+		}
+	case MoonPool:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonTransferMsgBody,
+			decodeFuncMoonSwapMsgBody,
+			decodeFuncMoonDepositLiquidityMsgBody,
+			decodeFuncMoonBoostPoolMsgBody,
 		}
 	case NftCollection:
 		return []msgDecoderFunc{

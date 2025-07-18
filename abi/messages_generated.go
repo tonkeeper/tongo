@@ -67,6 +67,8 @@ var (
 	decodeFuncBidaskSwapFallbackMsgBody = decodeMsg(tlb.Tag{Val: 0x1bba3896, Len: 32}, BidaskSwapFallbackMsgOp, BidaskSwapFallbackMsgBody{})
 	// 0x1d1715bf
 	decodeFuncWhalesNominatorsWithdrawUnownedResponseMsgBody = decodeMsg(tlb.Tag{Val: 0x1d1715bf, Len: 32}, WhalesNominatorsWithdrawUnownedResponseMsgOp, WhalesNominatorsWithdrawUnownedResponseMsgBody{})
+	// 0x1e8d79c4
+	decodeFuncMoonCancelOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x1e8d79c4, Len: 32}, MoonCancelOrderMsgOp, MoonCancelOrderMsgBody{})
 	// 0x1f04537a
 	decodeFuncSbtDestroyMsgBody = decodeMsg(tlb.Tag{Val: 0x1f04537a, Len: 32}, SbtDestroyMsgOp, SbtDestroyMsgBody{})
 	// 0x1f151acf
@@ -159,6 +161,8 @@ var (
 	decodeFuncTeleitemStartAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x487a8e81, Len: 32}, TeleitemStartAuctionMsgOp, TeleitemStartAuctionMsgBody{})
 	// 0x492ab1b3
 	decodeFuncBemoUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0x492ab1b3, Len: 32}, BemoUnstakeMsgOp, BemoUnstakeMsgBody{})
+	// 0x49f48ee9
+	decodeFuncMoonOrderCancelledMsgBody = decodeMsg(tlb.Tag{Val: 0x49f48ee9, Len: 32}, MoonOrderCancelledMsgOp, MoonOrderCancelledMsgBody{})
 	// 0x4bc7c2df
 	decodeFuncTonstakePoolTouchMsgBody = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
 	// 0x4d696e65
@@ -307,16 +311,24 @@ var (
 	decodeFuncTonstakeControllerWithdrawValidatorMsgBody = decodeMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{})
 	// 0x90c80a07
 	decodeFuncBemoUnstakeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x90c80a07, Len: 32}, BemoUnstakeNotificationMsgOp, BemoUnstakeNotificationMsgBody{})
+	// 0x96612e37
+	decodeFuncMoonOrderPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0x96612e37, Len: 32}, MoonOrderPayoutMsgOp, MoonOrderPayoutMsgBody{})
+	// 0x96aa1586
+	decodeFuncMoonBoostPoolMsgBody = decodeMsg(tlb.Tag{Val: 0x96aa1586, Len: 32}, MoonBoostPoolMsgOp, MoonBoostPoolMsgBody{})
 	// 0x96e7f528
 	decodeFuncTonstakeControllerPoolUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{})
 	// 0x96feef7b
 	decodeFuncBidaskProvideMsgBody = decodeMsg(tlb.Tag{Val: 0x96feef7b, Len: 32}, BidaskProvideMsgOp, BidaskProvideMsgBody{})
 	// 0x97d51f2f
 	decodeFuncDedustCreateVolatilePoolMsgBody = decodeMsg(tlb.Tag{Val: 0x97d51f2f, Len: 32}, DedustCreateVolatilePoolMsgOp, DedustCreateVolatilePoolMsgBody{})
+	// 0x983432e2
+	decodeFuncMoonDeployOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x983432e2, Len: 32}, MoonDeployOrderMsgOp, MoonDeployOrderMsgBody{})
 	// 0x9971881c
 	decodeFuncTonstakePoolPrepareGovernanceMigrationMsgBody = decodeMsg(tlb.Tag{Val: 0x9971881c, Len: 32}, TonstakePoolPrepareGovernanceMigrationMsgOp, TonstakePoolPrepareGovernanceMigrationMsgBody{})
 	// 0x99a811fb
 	decodeFuncWhalesNominatorsAcceptStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x99a811fb, Len: 32}, WhalesNominatorsAcceptStakeMsgOp, WhalesNominatorsAcceptStakeMsgBody{})
+	// 0x99b49842
+	decodeFuncMoonFillOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x99b49842, Len: 32}, MoonFillOrderMsgOp, MoonFillOrderMsgBody{})
 	// 0x9bf5561c
 	decodeFuncTonstakePoolSetDepositSettingsMsgBody = decodeMsg(tlb.Tag{Val: 0x9bf5561c, Len: 32}, TonstakePoolSetDepositSettingsMsgOp, TonstakePoolSetDepositSettingsMsgBody{})
 	// 0x9c73fba2
@@ -355,6 +367,12 @@ var (
 	decodeFuncTonstakePoolDeployControllerMsgBody = decodeMsg(tlb.Tag{Val: 0xb27edcad, Len: 32}, TonstakePoolDeployControllerMsgOp, TonstakePoolDeployControllerMsgBody{})
 	// 0xb30c7310
 	decodeFuncCoffeeStakingClaimRewardsMsgBody = decodeMsg(tlb.Tag{Val: 0xb30c7310, Len: 32}, CoffeeStakingClaimRewardsMsgOp, CoffeeStakingClaimRewardsMsgBody{})
+	// 0xb31db781
+	decodeFuncMoonDepositLiquidityMsgBody = decodeMsg(tlb.Tag{Val: 0xb31db781, Len: 32}, MoonDepositLiquidityMsgOp, MoonDepositLiquidityMsgBody{})
+	// 0xb37a900b
+	decodeFuncMoonSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xb37a900b, Len: 32}, MoonSwapMsgOp, MoonSwapMsgBody{})
+	// 0xb4fc3916
+	decodeFuncMoonVestingPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xb4fc3916, Len: 32}, MoonVestingPayoutMsgOp, MoonVestingPayoutMsgBody{})
 	// 0xb56b9598
 	decodeFuncDedustDepositLiquidityAllMsgBody = decodeMsg(tlb.Tag{Val: 0xb56b9598, Len: 32}, DedustDepositLiquidityAllMsgOp, DedustDepositLiquidityAllMsgBody{})
 	// 0xb6236d63
@@ -427,12 +445,16 @@ var (
 	decodeFuncCoffeeUpdateWithdrawerMsgBody = decodeMsg(tlb.Tag{Val: 0xc0ffee46, Len: 32}, CoffeeUpdateWithdrawerMsgOp, CoffeeUpdateWithdrawerMsgBody{})
 	// 0xc1344900
 	decodeFuncTonstakeImanagerStatsMsgBody = decodeMsg(tlb.Tag{Val: 0xc1344900, Len: 32}, TonstakeImanagerStatsMsgOp, TonstakeImanagerStatsMsgBody{})
+	// 0xc47c1f57
+	decodeFuncMoonSwapFailedMsgBody = decodeMsg(tlb.Tag{Val: 0xc47c1f57, Len: 32}, MoonSwapFailedMsgOp, MoonSwapFailedMsgBody{})
 	// 0xc89a3ee4
 	decodeFuncStormVaultStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xc89a3ee4, Len: 32}, StormVaultStakeMsgOp, StormVaultStakeMsgBody{})
 	// 0xc9f04485
 	decodeFuncTonstakeImanagerSetInterestMsgBody = decodeMsg(tlb.Tag{Val: 0xc9f04485, Len: 32}, TonstakeImanagerSetInterestMsgOp, TonstakeImanagerSetInterestMsgBody{})
 	// 0xcb4ddc3c
 	decodeFuncStormMintReferralMsgBody = decodeMsg(tlb.Tag{Val: 0xcb4ddc3c, Len: 32}, StormMintReferralMsgOp, StormMintReferralMsgBody{})
+	// 0xcb7f38d6
+	decodeFuncMoonSwapSucceedMsgBody = decodeMsg(tlb.Tag{Val: 0xcb7f38d6, Len: 32}, MoonSwapSucceedMsgOp, MoonSwapSucceedMsgBody{})
 	// 0xcb862902
 	decodeFuncJettonChangeMetadataMsgBody = decodeMsg(tlb.Tag{Val: 0xcb862902, Len: 32}, JettonChangeMetadataMsgOp, JettonChangeMetadataMsgBody{})
 	// 0xcf90d618
@@ -451,6 +473,8 @@ var (
 	decodeFuncDedustDepositLiquidityMsgBody = decodeMsg(tlb.Tag{Val: 0xd55e4686, Len: 32}, DedustDepositLiquidityMsgOp, DedustDepositLiquidityMsgBody{})
 	// 0xd5b5e9ad
 	decodeFuncStormVaultUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0xd5b5e9ad, Len: 32}, StormVaultUnstakeMsgOp, StormVaultUnstakeMsgBody{})
+	// 0xda067c19
+	decodeFuncMoonCreateOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xda067c19, Len: 32}, MoonCreateOrderMsgOp, MoonCreateOrderMsgBody{})
 	// 0xda803efd
 	decodeFuncWhalesNominatorsWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{})
 	// 0xdb3b8abd
@@ -597,6 +621,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x1d1715bf
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode: decodeFuncWhalesNominatorsWithdrawUnownedResponseMsgBody,
 
+	// 0x1e8d79c4
+	MoonCancelOrderMsgOpCode: decodeFuncMoonCancelOrderMsgBody,
+
 	// 0x1f04537a
 	SbtDestroyMsgOpCode: decodeFuncSbtDestroyMsgBody,
 
@@ -735,6 +762,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x492ab1b3
 	BemoUnstakeMsgOpCode: decodeFuncBemoUnstakeMsgBody,
+
+	// 0x49f48ee9
+	MoonOrderCancelledMsgOpCode: decodeFuncMoonOrderCancelledMsgBody,
 
 	// 0x4bc7c2df
 	TonstakePoolTouchMsgOpCode: decodeFuncTonstakePoolTouchMsgBody,
@@ -961,6 +991,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x90c80a07
 	BemoUnstakeNotificationMsgOpCode: decodeFuncBemoUnstakeNotificationMsgBody,
 
+	// 0x96612e37
+	MoonOrderPayoutMsgOpCode: decodeFuncMoonOrderPayoutMsgBody,
+
+	// 0x96aa1586
+	MoonBoostPoolMsgOpCode: decodeFuncMoonBoostPoolMsgBody,
+
 	// 0x96e7f528
 	TonstakeControllerPoolUpgradeMsgOpCode: decodeFuncTonstakeControllerPoolUpgradeMsgBody,
 
@@ -970,11 +1006,17 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x97d51f2f
 	DedustCreateVolatilePoolMsgOpCode: decodeFuncDedustCreateVolatilePoolMsgBody,
 
+	// 0x983432e2
+	MoonDeployOrderMsgOpCode: decodeFuncMoonDeployOrderMsgBody,
+
 	// 0x9971881c
 	TonstakePoolPrepareGovernanceMigrationMsgOpCode: decodeFuncTonstakePoolPrepareGovernanceMigrationMsgBody,
 
 	// 0x99a811fb
 	WhalesNominatorsAcceptStakeMsgOpCode: decodeFuncWhalesNominatorsAcceptStakeMsgBody,
+
+	// 0x99b49842
+	MoonFillOrderMsgOpCode: decodeFuncMoonFillOrderMsgBody,
 
 	// 0x9bf5561c
 	TonstakePoolSetDepositSettingsMsgOpCode: decodeFuncTonstakePoolSetDepositSettingsMsgBody,
@@ -1032,6 +1074,15 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xb30c7310
 	CoffeeStakingClaimRewardsMsgOpCode: decodeFuncCoffeeStakingClaimRewardsMsgBody,
+
+	// 0xb31db781
+	MoonDepositLiquidityMsgOpCode: decodeFuncMoonDepositLiquidityMsgBody,
+
+	// 0xb37a900b
+	MoonSwapMsgOpCode: decodeFuncMoonSwapMsgBody,
+
+	// 0xb4fc3916
+	MoonVestingPayoutMsgOpCode: decodeFuncMoonVestingPayoutMsgBody,
 
 	// 0xb56b9598
 	DedustDepositLiquidityAllMsgOpCode: decodeFuncDedustDepositLiquidityAllMsgBody,
@@ -1141,6 +1192,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xc1344900
 	TonstakeImanagerStatsMsgOpCode: decodeFuncTonstakeImanagerStatsMsgBody,
 
+	// 0xc47c1f57
+	MoonSwapFailedMsgOpCode: decodeFuncMoonSwapFailedMsgBody,
+
 	// 0xc89a3ee4
 	StormVaultStakeMsgOpCode: decodeFuncStormVaultStakeMsgBody,
 
@@ -1149,6 +1203,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xcb4ddc3c
 	StormMintReferralMsgOpCode: decodeFuncStormMintReferralMsgBody,
+
+	// 0xcb7f38d6
+	MoonSwapSucceedMsgOpCode: decodeFuncMoonSwapSucceedMsgBody,
 
 	// 0xcb862902
 	JettonChangeMetadataMsgOpCode: decodeFuncJettonChangeMetadataMsgBody,
@@ -1176,6 +1233,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xd5b5e9ad
 	StormVaultUnstakeMsgOpCode: decodeFuncStormVaultUnstakeMsgBody,
+
+	// 0xda067c19
+	MoonCreateOrderMsgOpCode: decodeFuncMoonCreateOrderMsgBody,
 
 	// 0xda803efd
 	WhalesNominatorsWithdrawMsgOpCode: decodeFuncWhalesNominatorsWithdrawMsgBody,
@@ -1306,6 +1366,7 @@ const (
 	JettonInternalTransferMsgOp                  MsgOpName = "JettonInternalTransfer"
 	BidaskSwapFallbackMsgOp                      MsgOpName = "BidaskSwapFallback"
 	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
+	MoonCancelOrderMsgOp                         MsgOpName = "MoonCancelOrder"
 	SbtDestroyMsgOp                              MsgOpName = "SbtDestroy"
 	StartUncooperativeChannelCloseMsgOp          MsgOpName = "StartUncooperativeChannelClose"
 	CoffeeCrossDexResendMsgOp                    MsgOpName = "CoffeeCrossDexResend"
@@ -1352,6 +1413,7 @@ const (
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
 	BemoUnstakeMsgOp                             MsgOpName = "BemoUnstake"
+	MoonOrderCancelledMsgOp                      MsgOpName = "MoonOrderCancelled"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
 	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
@@ -1426,11 +1488,15 @@ const (
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
 	BemoUnstakeNotificationMsgOp                 MsgOpName = "BemoUnstakeNotification"
+	MoonOrderPayoutMsgOp                         MsgOpName = "MoonOrderPayout"
+	MoonBoostPoolMsgOp                           MsgOpName = "MoonBoostPool"
 	TonstakeControllerPoolUpgradeMsgOp           MsgOpName = "TonstakeControllerPoolUpgrade"
 	BidaskProvideMsgOp                           MsgOpName = "BidaskProvide"
 	DedustCreateVolatilePoolMsgOp                MsgOpName = "DedustCreateVolatilePool"
+	MoonDeployOrderMsgOp                         MsgOpName = "MoonDeployOrder"
 	TonstakePoolPrepareGovernanceMigrationMsgOp  MsgOpName = "TonstakePoolPrepareGovernanceMigration"
 	WhalesNominatorsAcceptStakeMsgOp             MsgOpName = "WhalesNominatorsAcceptStake"
+	MoonFillOrderMsgOp                           MsgOpName = "MoonFillOrder"
 	TonstakePoolSetDepositSettingsMsgOp          MsgOpName = "TonstakePoolSetDepositSettings"
 	MultisigOrderInitMsgOp                       MsgOpName = "MultisigOrderInit"
 	StormActivateOrderMsgOp                      MsgOpName = "StormActivateOrder"
@@ -1450,6 +1516,9 @@ const (
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
 	CoffeeStakingClaimRewardsMsgOp               MsgOpName = "CoffeeStakingClaimRewards"
+	MoonDepositLiquidityMsgOp                    MsgOpName = "MoonDepositLiquidity"
+	MoonSwapMsgOp                                MsgOpName = "MoonSwap"
+	MoonVestingPayoutMsgOp                       MsgOpName = "MoonVestingPayout"
 	DedustDepositLiquidityAllMsgOp               MsgOpName = "DedustDepositLiquidityAll"
 	StorageContractTerminatedMsgOp               MsgOpName = "StorageContractTerminated"
 	StormPayFundingMsgOp                         MsgOpName = "StormPayFunding"
@@ -1486,9 +1555,11 @@ const (
 	CoffeeUpdateContractMsgOp                    MsgOpName = "CoffeeUpdateContract"
 	CoffeeUpdateWithdrawerMsgOp                  MsgOpName = "CoffeeUpdateWithdrawer"
 	TonstakeImanagerStatsMsgOp                   MsgOpName = "TonstakeImanagerStats"
+	MoonSwapFailedMsgOp                          MsgOpName = "MoonSwapFailed"
 	StormVaultStakeMsgOp                         MsgOpName = "StormVaultStake"
 	TonstakeImanagerSetInterestMsgOp             MsgOpName = "TonstakeImanagerSetInterest"
 	StormMintReferralMsgOp                       MsgOpName = "StormMintReferral"
+	MoonSwapSucceedMsgOp                         MsgOpName = "MoonSwapSucceed"
 	JettonChangeMetadataMsgOp                    MsgOpName = "JettonChangeMetadata"
 	StormCompleteOrderMsgOp                      MsgOpName = "StormCompleteOrder"
 	SbtRequestOwnerMsgOp                         MsgOpName = "SbtRequestOwner"
@@ -1498,6 +1569,7 @@ const (
 	ExcessMsgOp                                  MsgOpName = "Excess"
 	DedustDepositLiquidityMsgOp                  MsgOpName = "DedustDepositLiquidity"
 	StormVaultUnstakeMsgOp                       MsgOpName = "StormVaultUnstake"
+	MoonCreateOrderMsgOp                         MsgOpName = "MoonCreateOrder"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
 	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
 	ChannelClosedMsgOp                           MsgOpName = "ChannelClosed"
@@ -1563,6 +1635,7 @@ const (
 	JettonInternalTransferMsgOpCode                  MsgOpCode = 0x178d4519
 	BidaskSwapFallbackMsgOpCode                      MsgOpCode = 0x1bba3896
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
+	MoonCancelOrderMsgOpCode                         MsgOpCode = 0x1e8d79c4
 	SbtDestroyMsgOpCode                              MsgOpCode = 0x1f04537a
 	StartUncooperativeChannelCloseMsgOpCode          MsgOpCode = 0x1f151acf
 	CoffeeCrossDexResendMsgOpCode                    MsgOpCode = 0x200f9086
@@ -1609,6 +1682,7 @@ const (
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
 	BemoUnstakeMsgOpCode                             MsgOpCode = 0x492ab1b3
+	MoonOrderCancelledMsgOpCode                      MsgOpCode = 0x49f48ee9
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
 	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
@@ -1683,11 +1757,15 @@ const (
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
 	BemoUnstakeNotificationMsgOpCode                 MsgOpCode = 0x90c80a07
+	MoonOrderPayoutMsgOpCode                         MsgOpCode = 0x96612e37
+	MoonBoostPoolMsgOpCode                           MsgOpCode = 0x96aa1586
 	TonstakeControllerPoolUpgradeMsgOpCode           MsgOpCode = 0x96e7f528
 	BidaskProvideMsgOpCode                           MsgOpCode = 0x96feef7b
 	DedustCreateVolatilePoolMsgOpCode                MsgOpCode = 0x97d51f2f
+	MoonDeployOrderMsgOpCode                         MsgOpCode = 0x983432e2
 	TonstakePoolPrepareGovernanceMigrationMsgOpCode  MsgOpCode = 0x9971881c
 	WhalesNominatorsAcceptStakeMsgOpCode             MsgOpCode = 0x99a811fb
+	MoonFillOrderMsgOpCode                           MsgOpCode = 0x99b49842
 	TonstakePoolSetDepositSettingsMsgOpCode          MsgOpCode = 0x9bf5561c
 	MultisigOrderInitMsgOpCode                       MsgOpCode = 0x9c73fba2
 	StormActivateOrderMsgOpCode                      MsgOpCode = 0x9d2ec640
@@ -1707,6 +1785,9 @@ const (
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
 	CoffeeStakingClaimRewardsMsgOpCode               MsgOpCode = 0xb30c7310
+	MoonDepositLiquidityMsgOpCode                    MsgOpCode = 0xb31db781
+	MoonSwapMsgOpCode                                MsgOpCode = 0xb37a900b
+	MoonVestingPayoutMsgOpCode                       MsgOpCode = 0xb4fc3916
 	DedustDepositLiquidityAllMsgOpCode               MsgOpCode = 0xb56b9598
 	StorageContractTerminatedMsgOpCode               MsgOpCode = 0xb6236d63
 	StormPayFundingMsgOpCode                         MsgOpCode = 0xb652c441
@@ -1743,9 +1824,11 @@ const (
 	CoffeeUpdateContractMsgOpCode                    MsgOpCode = 0xc0ffee45
 	CoffeeUpdateWithdrawerMsgOpCode                  MsgOpCode = 0xc0ffee46
 	TonstakeImanagerStatsMsgOpCode                   MsgOpCode = 0xc1344900
+	MoonSwapFailedMsgOpCode                          MsgOpCode = 0xc47c1f57
 	StormVaultStakeMsgOpCode                         MsgOpCode = 0xc89a3ee4
 	TonstakeImanagerSetInterestMsgOpCode             MsgOpCode = 0xc9f04485
 	StormMintReferralMsgOpCode                       MsgOpCode = 0xcb4ddc3c
+	MoonSwapSucceedMsgOpCode                         MsgOpCode = 0xcb7f38d6
 	JettonChangeMetadataMsgOpCode                    MsgOpCode = 0xcb862902
 	StormCompleteOrderMsgOpCode                      MsgOpCode = 0xcf90d618
 	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
@@ -1755,6 +1838,7 @@ const (
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
 	DedustDepositLiquidityMsgOpCode                  MsgOpCode = 0xd55e4686
 	StormVaultUnstakeMsgOpCode                       MsgOpCode = 0xd5b5e9ad
+	MoonCreateOrderMsgOpCode                         MsgOpCode = 0xda067c19
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
 	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
 	ChannelClosedMsgOpCode                           MsgOpCode = 0xdddc88ba
@@ -2013,6 +2097,10 @@ type BidaskSwapFallbackMsgBody struct {
 }
 
 type WhalesNominatorsWithdrawUnownedResponseMsgBody struct {
+	QueryId uint64
+}
+
+type MoonCancelOrderMsgBody struct {
 	QueryId uint64
 }
 
@@ -2298,6 +2386,10 @@ type BemoUnstakeMsgBody struct {
 	TonAmount      tlb.VarUInteger16
 	JettonAmount   tlb.VarUInteger16
 	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
+type MoonOrderCancelledMsgBody struct {
+	QueryId uint64
 }
 
 type TonstakePoolTouchMsgBody struct {
@@ -2816,6 +2908,14 @@ type BemoUnstakeNotificationMsgBody struct {
 	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
+type MoonOrderPayoutMsgBody struct {
+	QueryId uint64
+}
+
+type MoonBoostPoolMsgBody struct {
+	QueryId uint64
+}
+
 type TonstakeControllerPoolUpgradeMsgBody struct {
 	QueryId      uint64
 	Data         *tlb.Any `tlb:"maybe^"`
@@ -2837,6 +2937,13 @@ type DedustCreateVolatilePoolMsgBody struct {
 	Asset1  DedustAsset
 }
 
+type MoonDeployOrderMsgBody struct {
+	QueryId   uint64
+	OrderFee  uint8
+	OrderData MoonOrderParams
+	Pipes     tlb.Any `tlb:"^"`
+}
+
 type TonstakePoolPrepareGovernanceMigrationMsgBody struct {
 	QueryId             uint64
 	GovernorUpdateAfter tlb.Uint48
@@ -2845,6 +2952,13 @@ type TonstakePoolPrepareGovernanceMigrationMsgBody struct {
 type WhalesNominatorsAcceptStakeMsgBody struct {
 	QueryId uint64
 	Members tlb.Any
+}
+
+type MoonFillOrderMsgBody struct {
+	QueryId          uint64
+	Recipient        tlb.MsgAddress
+	RecipientPayload *tlb.Any `tlb:"maybe^"`
+	RejectAddress    tlb.MsgAddress
 }
 
 type TonstakePoolSetDepositSettingsMsgBody struct {
@@ -2962,6 +3076,21 @@ type CoffeeStakingClaimRewardsMsgBody struct {
 	JettonAmount tlb.Grams
 	Receiver     tlb.MsgAddress
 	Payload      *CoffeeStakingForwardData `tlb:"maybe^"`
+}
+
+type MoonDepositLiquidityMsgBody struct {
+	QueryId  uint64
+	MinLpOut tlb.VarUInteger16
+}
+
+type MoonSwapMsgBody struct {
+	QueryId    uint64
+	Amount     tlb.VarUInteger16
+	SwapParams MoonSwapParams
+}
+
+type MoonVestingPayoutMsgBody struct {
+	QueryId uint64
 }
 
 type DedustDepositLiquidityAllMsgBody struct {
@@ -3205,6 +3334,8 @@ type TonstakeImanagerStatsMsgBody struct {
 	TotalBalance tlb.Grams
 }
 
+type MoonSwapFailedMsgBody struct{}
+
 type StormVaultStakeMsgBody struct {
 	Amount tlb.Grams
 }
@@ -3221,6 +3352,8 @@ type StormMintReferralMsgBody struct {
 	Parameters      Parameters `tlb:"^"`
 	BalancesDict    tlb.Any    `tlb:"^"`
 }
+
+type MoonSwapSucceedMsgBody struct{}
 
 type JettonChangeMetadataMsgBody struct {
 	QueryId  uint64
@@ -3290,6 +3423,12 @@ type DedustDepositLiquidityMsgBody struct {
 type StormVaultUnstakeMsgBody struct {
 	JettonAmount tlb.Grams
 	UserAddress  tlb.MsgAddress
+}
+
+type MoonCreateOrderMsgBody struct {
+	QueryId   uint64
+	Asset2Id  tlb.MsgAddress
+	OrderData MoonOrderParams
 }
 
 type WhalesNominatorsWithdrawMsgBody struct {
@@ -3503,6 +3642,7 @@ var KnownMsgInTypes = map[string]any{
 	JettonInternalTransferMsgOp:                  JettonInternalTransferMsgBody{},
 	BidaskSwapFallbackMsgOp:                      BidaskSwapFallbackMsgBody{},
 	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
+	MoonCancelOrderMsgOp:                         MoonCancelOrderMsgBody{},
 	SbtDestroyMsgOp:                              SbtDestroyMsgBody{},
 	StartUncooperativeChannelCloseMsgOp:          StartUncooperativeChannelCloseMsgBody{},
 	CoffeeCrossDexResendMsgOp:                    CoffeeCrossDexResendMsgBody{},
@@ -3549,6 +3689,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
 	BemoUnstakeMsgOp:                             BemoUnstakeMsgBody{},
+	MoonOrderCancelledMsgOp:                      MoonOrderCancelledMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
 	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
@@ -3623,11 +3764,15 @@ var KnownMsgInTypes = map[string]any{
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
 	BemoUnstakeNotificationMsgOp:                 BemoUnstakeNotificationMsgBody{},
+	MoonOrderPayoutMsgOp:                         MoonOrderPayoutMsgBody{},
+	MoonBoostPoolMsgOp:                           MoonBoostPoolMsgBody{},
 	TonstakeControllerPoolUpgradeMsgOp:           TonstakeControllerPoolUpgradeMsgBody{},
 	BidaskProvideMsgOp:                           BidaskProvideMsgBody{},
 	DedustCreateVolatilePoolMsgOp:                DedustCreateVolatilePoolMsgBody{},
+	MoonDeployOrderMsgOp:                         MoonDeployOrderMsgBody{},
 	TonstakePoolPrepareGovernanceMigrationMsgOp:  TonstakePoolPrepareGovernanceMigrationMsgBody{},
 	WhalesNominatorsAcceptStakeMsgOp:             WhalesNominatorsAcceptStakeMsgBody{},
+	MoonFillOrderMsgOp:                           MoonFillOrderMsgBody{},
 	TonstakePoolSetDepositSettingsMsgOp:          TonstakePoolSetDepositSettingsMsgBody{},
 	MultisigOrderInitMsgOp:                       MultisigOrderInitMsgBody{},
 	StormActivateOrderMsgOp:                      StormActivateOrderMsgBody{},
@@ -3647,6 +3792,9 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
 	CoffeeStakingClaimRewardsMsgOp:               CoffeeStakingClaimRewardsMsgBody{},
+	MoonDepositLiquidityMsgOp:                    MoonDepositLiquidityMsgBody{},
+	MoonSwapMsgOp:                                MoonSwapMsgBody{},
+	MoonVestingPayoutMsgOp:                       MoonVestingPayoutMsgBody{},
 	DedustDepositLiquidityAllMsgOp:               DedustDepositLiquidityAllMsgBody{},
 	StorageContractTerminatedMsgOp:               StorageContractTerminatedMsgBody{},
 	StormPayFundingMsgOp:                         StormPayFundingMsgBody{},
@@ -3683,9 +3831,11 @@ var KnownMsgInTypes = map[string]any{
 	CoffeeUpdateContractMsgOp:                    CoffeeUpdateContractMsgBody{},
 	CoffeeUpdateWithdrawerMsgOp:                  CoffeeUpdateWithdrawerMsgBody{},
 	TonstakeImanagerStatsMsgOp:                   TonstakeImanagerStatsMsgBody{},
+	MoonSwapFailedMsgOp:                          MoonSwapFailedMsgBody{},
 	StormVaultStakeMsgOp:                         StormVaultStakeMsgBody{},
 	TonstakeImanagerSetInterestMsgOp:             TonstakeImanagerSetInterestMsgBody{},
 	StormMintReferralMsgOp:                       StormMintReferralMsgBody{},
+	MoonSwapSucceedMsgOp:                         MoonSwapSucceedMsgBody{},
 	JettonChangeMetadataMsgOp:                    JettonChangeMetadataMsgBody{},
 	StormCompleteOrderMsgOp:                      StormCompleteOrderMsgBody{},
 	SbtRequestOwnerMsgOp:                         SbtRequestOwnerMsgBody{},
@@ -3695,6 +3845,7 @@ var KnownMsgInTypes = map[string]any{
 	ExcessMsgOp:                                  ExcessMsgBody{},
 	DedustDepositLiquidityMsgOp:                  DedustDepositLiquidityMsgBody{},
 	StormVaultUnstakeMsgOp:                       StormVaultUnstakeMsgBody{},
+	MoonCreateOrderMsgOp:                         MoonCreateOrderMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
 	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},
 	ChannelClosedMsgOp:                           ChannelClosedMsgBody{},

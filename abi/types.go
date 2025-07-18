@@ -181,6 +181,21 @@ type TonstakersControllerData struct {
 	} `tlb:"^"`
 }
 
+type MoonOrderParams struct {
+	Rate        tlb.Uint256
+	Lock        tlb.Uint2
+	VestingTime uint64
+}
+
+type MoonSwapParams struct {
+	MinOut      tlb.VarUInteger16
+	Deadline    uint64
+	Excess      *tlb.MsgAddress `tlb:"maybe"`
+	Referral    *tlb.MsgAddress `tlb:"maybe"`
+	NextFulfill *tlb.Any        `tlb:"maybe^"`
+	NextReject  *tlb.Any        `tlb:"maybe^"`
+}
+
 type MultisigOrder struct {
 	Field0 tlb.Hashmap[tlb.Uint8, tlb.Ref[MultisigSendMessageAction]]
 }

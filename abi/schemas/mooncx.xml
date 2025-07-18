@@ -10,14 +10,15 @@
 
     <!-- https://tonviewer.com/EQCMpWCnDHVhMnUspAaKxagkXuW0NGhMq6Y-HCW_BO20e-Ju  -->
     <interface name="moon_pool">
+        <code_hash>2808165253286a1e4fe63efab9ba35481137aac0b1a0f9edccb8f6442dde46c4</code_hash>
 
         <get_method name="get_jetton_data"/>
 
         <get_method name="get_reserves" version="moon">
             <output version="moon" fixed_length="true">
-                <cell name="unknown_cell1">cell</cell>
+                <cell name="asset_id1">msgaddress</cell>
                 <int name="reserve1">int257</int>
-                <cell name="unknown_cell2">cell</cell>
+                <cell name="asset_id2">msgaddress</cell>
                 <int name="reserve2">int257</int>
             </output>
         </get_method>
@@ -50,6 +51,7 @@
 
     <!-- https://tonviewer.com/UQAyAz5tgCe2HVeJnYG9WN_sJ9ozkfAJEomnGTRpqMuOOb5q  -->
     <interface name="moon_booster">
+        <code_hash>ce84c382c8b6ac0d05212bbaa34d05e54e1e30e2cc9289f2d9c9d64726a112a8</code_hash>
 
         <get_method name="get_status">
             <output version="moon" fixed_length="true">
@@ -73,6 +75,7 @@
 
     <!-- https://tonviewer.com/EQDuOyjg09BybyuafSWAe9ILURk_uPJ9uzkUBPmDNmvZUOlA -->
     <interface name="moon_order_factory">
+        <code_hash>d04737d6f678103a9e448c22109919d0f9cbe05ef1b1a83c5e7b886683a54704</code_hash>
 
         <get_method name="get_id">
             <output version="moon" fixed_length="true">
@@ -105,6 +108,8 @@
 
     <!-- https://tonviewer.com/EQDQeCYJNktokS2tXsFJygtva_XmBN1FZI1GKvbkO3R3IQaG -->
     <interface name="moon_order">
+        <code_hash>88c38d29586b5d748badbc7b4dbfe239c25cb85ca9c4586a44e05507a6edf6a6</code_hash>
+        <code_hash>ee07140b3ccfe261ed28580f60a16bda4c4b9c6d7da7ae05f5b7c7e2b1dfe226</code_hash>
 
         <get_method name="get_status">
             <output version="moon" fixed_length="true">
@@ -153,9 +158,9 @@
 
     <get_method name="get_reserves" version="moon">
         <output version="moon" fixed_length="true">
-            <slice name="unknown_cell1">cell</slice>
+            <cell name="asset_id1">msgaddress</cell>
             <int name="reserve1">int257</int>
-            <slice name="unknown_cell2">cell</slice>
+            <cell name="asset_id2">msgaddress</cell>
             <int name="reserve2">int257</int>
         </output>
     </get_method>

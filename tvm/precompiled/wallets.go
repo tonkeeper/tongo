@@ -119,7 +119,7 @@ var walletv4r2getPluginList = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStac
 		}, nil
 	}
 	//todo: implement
-	return nil, fmt.Errorf("not implented not empty dict")
+	return nil, fmt.Errorf("not implemented not empty dict")
 }
 
 func walletv5r1seqno(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {

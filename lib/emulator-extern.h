@@ -125,7 +125,7 @@ EMULATOR_EXPORT bool tvm_emulator_set_libraries(void *tvm_emulator, const char *
 /**
  * @brief Set c7 parameters
  * @param tvm_emulator Pointer to TVM emulator
- * @param address Adress of smart contract
+ * @param address Address of smart contract
  * @param unixtime Unix timestamp
  * @param balance Smart contract balance
  * @param rand_seed_hex Random seed as hex string of length 64

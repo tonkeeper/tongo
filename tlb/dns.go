@@ -24,7 +24,7 @@ type DNSRecord struct {
 	DNSText         DNSText    `tlbSumType:"dns_text#1eda"`
 	DNSNextResolver MsgAddress `tlbSumType:"dns_next_resolver#ba93"`
 	DNSAdnlAddress  struct {
-		Address   [32]byte
+		Address   Bits256
 		ProtoList []string
 	} `tlbSumType:"dns_adnl_address#ad01"`
 	DNSSmcAddress struct {

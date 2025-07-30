@@ -337,6 +337,12 @@ var (
 	decodeFuncStormActivateOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x9d2ec640, Len: 32}, StormActivateOrderMsgOp, StormActivateOrderMsgBody{})
 	// 0xa19fd934
 	decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody = decodeMsg(tlb.Tag{Val: 0xa19fd934, Len: 32}, WhalesNominatorsAcceptWithdrawsMsgOp, WhalesNominatorsAcceptWithdrawsMsgBody{})
+	// 0xa1daa96d
+	decodeFuncPayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, PayToMsgOp, PayToMsgBody{})
+	// 0xa1daa96d
+	decodeFuncExitCode200PayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, ExitCode200PayToMsgOp, ExitCode200PayToMsgBody{})
+	// 0xa1daa96d
+	decodeFuncExitCode201PayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, ExitCode201PayToMsgOp, ExitCode201PayToMsgBody{})
 	// 0xa2065f2c
 	decodeFuncWhalesNominatorsSendStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{})
 	// 0xa32c59bf
@@ -349,6 +355,8 @@ var (
 	decodeFuncTeleitemReturnBidMsgBody = decodeMsg(tlb.Tag{Val: 0xa43227e1, Len: 32}, TeleitemReturnBidMsgOp, TeleitemReturnBidMsgBody{})
 	// 0xa762230f
 	decodeFuncMultisigApproveMsgBody = decodeMsg(tlb.Tag{Val: 0xa762230f, Len: 32}, MultisigApproveMsgOp, MultisigApproveMsgBody{})
+	// 0xa7fb58f8
+	decodeFuncPoolv3SwapMsgBody = decodeMsg(tlb.Tag{Val: 0xa7fb58f8, Len: 32}, Poolv3SwapMsgOp, Poolv3SwapMsgBody{})
 	// 0xa8cb00ad
 	decodeFuncReportRoyaltyParamsMsgBody = decodeMsg(tlb.Tag{Val: 0xa8cb00ad, Len: 32}, ReportRoyaltyParamsMsgOp, ReportRoyaltyParamsMsgBody{})
 	// 0xa91baf56
@@ -1030,6 +1038,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xa19fd934
 	WhalesNominatorsAcceptWithdrawsMsgOpCode: decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody,
 
+	//PayTo, ExitCode200PayTo, ExitCode201PayTo,
+	0xa1daa96d: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncPayToMsgBody,
+		decodeFuncExitCode200PayToMsgBody,
+		decodeFuncExitCode201PayToMsgBody},
+		"0xa1daa96d",
+	),
+
 	// 0xa2065f2c
 	WhalesNominatorsSendStakeMsgOpCode: decodeFuncWhalesNominatorsSendStakeMsgBody,
 
@@ -1047,6 +1063,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xa762230f
 	MultisigApproveMsgOpCode: decodeFuncMultisigApproveMsgBody,
+
+	// 0xa7fb58f8
+	Poolv3SwapMsgOpCode: decodeFuncPoolv3SwapMsgBody,
 
 	// 0xa8cb00ad
 	ReportRoyaltyParamsMsgOpCode: decodeFuncReportRoyaltyParamsMsgBody,
@@ -1501,12 +1520,16 @@ const (
 	MultisigOrderInitMsgOp                       MsgOpName = "MultisigOrderInit"
 	StormActivateOrderMsgOp                      MsgOpName = "StormActivateOrder"
 	WhalesNominatorsAcceptWithdrawsMsgOp         MsgOpName = "WhalesNominatorsAcceptWithdraws"
+	PayToMsgOp                                   MsgOpName = "PayTo"
+	ExitCode200PayToMsgOp                        MsgOpName = "ExitCode200PayTo"
+	ExitCode201PayToMsgOp                        MsgOpName = "ExitCode201PayTo"
 	WhalesNominatorsSendStakeMsgOp               MsgOpName = "WhalesNominatorsSendStake"
 	MultisigExecuteInternalMsgOp                 MsgOpName = "MultisigExecuteInternal"
 	TeleitemOkMsgOp                              MsgOpName = "TeleitemOk"
 	StormCreateOrderMsgOp                        MsgOpName = "StormCreateOrder"
 	TeleitemReturnBidMsgOp                       MsgOpName = "TeleitemReturnBid"
 	MultisigApproveMsgOp                         MsgOpName = "MultisigApprove"
+	Poolv3SwapMsgOp                              MsgOpName = "Poolv3Swap"
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
 	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
@@ -1770,12 +1793,16 @@ const (
 	MultisigOrderInitMsgOpCode                       MsgOpCode = 0x9c73fba2
 	StormActivateOrderMsgOpCode                      MsgOpCode = 0x9d2ec640
 	WhalesNominatorsAcceptWithdrawsMsgOpCode         MsgOpCode = 0xa19fd934
+	PayToMsgOpCode                                   MsgOpCode = 0xa1daa96d
+	ExitCode200PayToMsgOpCode                        MsgOpCode = 0xa1daa96d
+	ExitCode201PayToMsgOpCode                        MsgOpCode = 0xa1daa96d
 	WhalesNominatorsSendStakeMsgOpCode               MsgOpCode = 0xa2065f2c
 	MultisigExecuteInternalMsgOpCode                 MsgOpCode = 0xa32c59bf
 	TeleitemOkMsgOpCode                              MsgOpCode = 0xa37a0983
 	StormCreateOrderMsgOpCode                        MsgOpCode = 0xa39843f4
 	TeleitemReturnBidMsgOpCode                       MsgOpCode = 0xa43227e1
 	MultisigApproveMsgOpCode                         MsgOpCode = 0xa762230f
+	Poolv3SwapMsgOpCode                              MsgOpCode = 0xa7fb58f8
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
 	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
@@ -2986,6 +3013,62 @@ type WhalesNominatorsAcceptWithdrawsMsgBody struct {
 	Members tlb.Any
 }
 
+type PayToMsgBody struct {
+	QueryId       uint64
+	Reciever0     tlb.MsgAddress
+	Reciever1     tlb.MsgAddress
+	ExitCode      uint32
+	Seqno         uint64
+	CoinsinfoCell *struct {
+		Amount0        tlb.VarUInteger16
+		Jetton0Address tlb.MsgAddress
+		Amount1        tlb.VarUInteger16
+		Jetton1Address tlb.MsgAddress
+	} `tlb:"maybe^"`
+}
+
+type ExitCode200PayToMsgBody struct {
+	QueryId       uint64
+	Reciever0     tlb.MsgAddress
+	Reciever1     tlb.MsgAddress
+	ExitCode      uint32
+	Seqno         uint64
+	CoinsinfoCell *struct {
+		Amount0        tlb.VarUInteger16
+		Jetton0Address tlb.MsgAddress
+		Amount1        tlb.VarUInteger16
+		Jetton1Address tlb.MsgAddress
+	} `tlb:"maybe^"`
+	IndexerSwapInfoCell *struct {
+		Liquidity            tlb.Uint128
+		PriceSqrt            tlb.Uint160
+		Tick                 tlb.Int24
+		FeeGrowthGlobal0X128 tlb.Int256
+		FeeGrowthGlobal1X128 tlb.Int256
+	} `tlb:"maybe^"`
+}
+
+type ExitCode201PayToMsgBody struct {
+	QueryId       uint64
+	Reciever0     tlb.MsgAddress
+	Reciever1     tlb.MsgAddress
+	ExitCode      uint32
+	Seqno         uint64
+	CoinsinfoCell *struct {
+		Amount0        tlb.VarUInteger16
+		Jetton0Address tlb.MsgAddress
+		Amount1        tlb.VarUInteger16
+		Jetton1Address tlb.MsgAddress
+	} `tlb:"maybe^"`
+	IndexerBurnInfoCell *struct {
+		NftIndex        uint64
+		LiquidityBurned tlb.Uint128
+		TickLower       tlb.Int24
+		TickUpper       tlb.Int24
+		Tick            tlb.Int24
+	} `tlb:"maybe^"`
+}
+
 type WhalesNominatorsSendStakeMsgBody struct {
 	QueryId         uint64
 	GasLimit        tlb.Grams
@@ -3017,6 +3100,24 @@ type TeleitemReturnBidMsgBody struct {
 type MultisigApproveMsgBody struct {
 	QueryId     uint64
 	SignerIndex uint8
+}
+
+type Poolv3SwapMsgBody struct {
+	QueryId      uint64
+	OwnerAddress tlb.MsgAddress
+	SourceWallet tlb.MsgAddress
+	ParamsCell   struct {
+		Amount            tlb.VarUInteger16
+		SqrtPriceLimitX96 tlb.Uint160
+		MinOutAmount      tlb.VarUInteger16
+	} `tlb:"^"`
+	PayloadsCell struct {
+		TargetAddress     tlb.MsgAddress
+		OkForwardAmount   tlb.VarUInteger16
+		OkForwardPayload  *tlb.Any `tlb:"maybe^"`
+		RetForwardAmount  tlb.VarUInteger16
+		RetForwardPayload *tlb.Any `tlb:"maybe^"`
+	} `tlb:"^"`
 }
 
 type ReportRoyaltyParamsMsgBody struct {
@@ -3777,12 +3878,16 @@ var KnownMsgInTypes = map[string]any{
 	MultisigOrderInitMsgOp:                       MultisigOrderInitMsgBody{},
 	StormActivateOrderMsgOp:                      StormActivateOrderMsgBody{},
 	WhalesNominatorsAcceptWithdrawsMsgOp:         WhalesNominatorsAcceptWithdrawsMsgBody{},
+	PayToMsgOp:                                   PayToMsgBody{},
+	ExitCode200PayToMsgOp:                        ExitCode200PayToMsgBody{},
+	ExitCode201PayToMsgOp:                        ExitCode201PayToMsgBody{},
 	WhalesNominatorsSendStakeMsgOp:               WhalesNominatorsSendStakeMsgBody{},
 	MultisigExecuteInternalMsgOp:                 MultisigExecuteInternalMsgBody{},
 	TeleitemOkMsgOp:                              TeleitemOkMsgBody{},
 	StormCreateOrderMsgOp:                        StormCreateOrderMsgBody{},
 	TeleitemReturnBidMsgOp:                       TeleitemReturnBidMsgBody{},
 	MultisigApproveMsgOp:                         MultisigApproveMsgBody{},
+	Poolv3SwapMsgOp:                              Poolv3SwapMsgBody{},
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
 	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},

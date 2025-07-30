@@ -86,6 +86,8 @@ const (
 	SubscriptionV1
 	SubscriptionV2
 	Teleitem
+	ToncoPool
+	ToncoRouter
 	Tonkeeper2Fa
 	TonstakePool
 	TvPool
@@ -270,6 +272,10 @@ func (c ContractInterface) String() string {
 		return "subscription_v2"
 	case Teleitem:
 		return "teleitem"
+	case ToncoPool:
+		return "tonco_pool"
+	case ToncoRouter:
+		return "tonco_router"
 	case Tonkeeper2Fa:
 		return "tonkeeper_2fa"
 	case TonstakePool:
@@ -481,6 +487,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return SubscriptionV2
 	case "teleitem":
 		return Teleitem
+	case "tonco_pool":
+		return ToncoPool
+	case "tonco_router":
+		return ToncoRouter
 	case "tonkeeper_2fa":
 		return Tonkeeper2Fa
 	case "tonstake_pool":
@@ -535,6 +545,26 @@ func ContractInterfaceFromString(s string) ContractInterface {
 }
 
 var methodInvocationOrder = []MethodDescription{
+	{
+		Name:     "getAllTickInfos",
+		InvokeFn: GetAllTickInfos,
+	},
+	{
+		Name:     "getChildContracts",
+		InvokeFn: GetChildContracts,
+	},
+	{
+		Name:     "getIsActive",
+		InvokeFn: GetIsActive,
+	},
+	{
+		Name:     "getPoolStateAndConfiguration",
+		InvokeFn: GetPoolStateAndConfiguration,
+	},
+	{
+		Name:     "getRouterState",
+		InvokeFn: GetRouterState,
+	},
 	{
 		Name:     "get_active_range",
 		InvokeFn: GetActiveRange,
@@ -1617,6 +1647,13 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetPublicKey,
 		},
 	},
+	ton.MustParseHash("9b9891eaa7db7becc6ccdda1bd9a8d25dc3df2817d57e4b27ec003daf81a4439"): {
+		contractInterfaces: []ContractInterface{ToncoRouter},
+		getMethods: []InvokeFn{
+			GetChildContracts,
+			GetRouterState,
+		},
+	},
 	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
 		contractInterfaces: []ContractInterface{MultisigOrderV2},
 		getMethods: []InvokeFn{
@@ -1637,6 +1674,16 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV3R1},
 		getMethods: []InvokeFn{
 			Seqno,
+		},
+	},
+	ton.MustParseHash("bc947d16346c2fdc845b7a446382f59c86acb075e2a31dbfa956cd0c9e54678e"): {
+		contractInterfaces: []ContractInterface{ToncoPool},
+		getMethods: []InvokeFn{
+			GetAllTickInfos,
+			GetChildContracts,
+			GetCollectionData,
+			GetIsActive,
+			GetPoolStateAndConfiguration,
 		},
 	},
 	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {
@@ -2013,6 +2060,17 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncSubscriptionV2ReducePaymentMsgBody,
 			decodeFuncSubscriptionV2PaymentConfirmedMsgBody,
 			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
+		}
+	case ToncoPool:
+		return []msgDecoderFunc{
+			decodeFuncPoolv3SwapMsgBody,
+		}
+	case ToncoRouter:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncPayToMsgBody,
+			decodeFuncExitCode200PayToMsgBody,
+			decodeFuncExitCode201PayToMsgBody,
 		}
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{

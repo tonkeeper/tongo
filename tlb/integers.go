@@ -7832,6 +7832,41 @@ func (u *Uint128) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+type Uint160 big.Int
+
+func (u Uint160) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, 160)
+}
+
+func (u *Uint160) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadBigUint(160)
+	if err != nil {
+		return err
+	}
+	*u = Uint160(*v)
+	return err
+}
+
+func (u Uint160) FixedSize() int {
+	return 160
+}
+
+func (u Uint160) MarshalJSON() ([]byte, error) {
+	i := big.Int(u)
+	return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
+}
+
+func (u *Uint160) UnmarshalJSON(p []byte) error {
+	var z big.Int
+	_, ok := z.SetString(strings.Trim(string(p), "\""), 10)
+	if !ok {
+		return fmt.Errorf("invalid integer: %s", p)
+	}
+	*u = Uint160(z)
+	return nil
+}
+
 type Uint256 big.Int
 
 func (u Uint256) MarshalTLB(c *boc.Cell, encoder *Encoder) error {

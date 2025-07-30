@@ -1,0 +1,251 @@
+<abi>
+
+    <!-- https://tonviewer.com/EQBk33mIwYXYAytv4beERPqjfdNHaQuSfpaRY7KmNmHqpVLY  -->
+    <interface name="tonco_pool">
+        <code_hash>bc947d16346c2fdc845b7a446382f59c86acb075e2a31dbfa956cd0c9e54678e</code_hash>
+
+        <get_method name="get_collection_data"/>
+
+        <get_method name="getIsActive" version="tonco">
+            <output version="tonco" fixed_length="true">
+                <int name="is_active">bool</int>
+            </output>
+        </get_method>
+
+        <get_method name="getPoolStateAndConfiguration" version="tonco">
+            <output version="tonco" fixed_length="true">
+                <slice name="router_address">msgaddress</slice>
+                <slice name="admin_address">msgaddress</slice>
+                <slice name="controller_address">msgaddress</slice>
+                <slice name="jetton_wallet0">msgaddress</slice>
+                <slice name="jetton_wallet1">msgaddress</slice>
+                <slice name="jetton_minter0">msgaddress</slice>
+                <slice name="jetton_minter1">msgaddress</slice>
+                <int name="is_active">bool</int>
+                <int name="tick_spacing">int257</int>
+                <int name="base_fee">int257</int>
+                <int name="protocol_fee">int257</int>
+                <int name="active_fee">int257</int>
+                <int name="current_tick">int257</int>
+                <int name="current_price">int257</int>
+                <int name="current_liquidity">int257</int>
+                <int name="fee_grows_global0">int257</int>
+                <int name="fee_grows_global1">int257</int>
+                <int name="collected_token0_protocol_fee">int257</int>
+                <int name="collected_token1_protocol_fee">int257</int>
+                <int name="minted_nft_positions">int257</int>
+                <int name="reserve0">int257</int>
+                <int name="reserve1">int257</int>
+                <int name="active_nft_positions">int257</int>
+                <int name="occupied_tickets">int257</int>
+                <int name="operations_since_deploy">int257</int>
+            </output>
+        </get_method>
+
+        <get_method name="getChildContracts" version="tonco_pool">
+            <output version="tonco_pool" fixed_length="true">
+                <cell name="account_code">cell</cell>
+                <cell name="nft_position_code">cell</cell>
+                <cell name="nft_collection_metadata">cell</cell>
+                <cell name="nft_item_metadata">cell</cell>
+            </output>
+        </get_method>
+
+        <get_method name="getAllTickInfos" version="tonco">
+            <output version="tonco" fixed_length="true">
+                <cell name="ticks_dict">cell</cell>
+            </output>
+        </get_method>
+
+        <msg_in>
+            <internal name="poolv3_swap"/>
+        </msg_in>
+
+        <msg_out>
+            <internal name="pay_to_no_exit_code"/>
+            <internal name="exit_code_200_pay_to"/>
+            <internal name="exit_code_201_pay_to"/>
+        </msg_out>
+
+    </interface>
+
+    <!-- https://tonviewer.com/EQC_-t0nCnOFMdp7E7qPxAOCbCWGFz-e3pwxb6tTvFmshjt5  -->
+    <interface name="tonco_router">
+        <code_hash>9b9891eaa7db7becc6ccdda1bd9a8d25dc3df2817d57e4b27ec003daf81a4439</code_hash>
+
+        <get_method name="getRouterState" version="tonco">
+            <output version="tonco" fixed_length="true">
+                <slice name="router_admin_address">msgaddress</slice>
+                <slice name="pool_admin_address">msgaddress</slice>
+                <slice name="pool_factory_address">msgaddress</slice>
+                <int name="active_flags">int257</int>
+                <int name="internal_number">int257</int>
+            </output>
+        </get_method>
+
+        <get_method name="getPoolAddress" version="tonco">
+            <input version="tonco" fixed_length="true">
+                <slice name="jetton_wallet0">msgaddress</slice>
+                <slice name="jetton_wallet0">msgaddress</slice>
+            </input>
+            <output version="tonco" fixed_length="true">
+                <slice name="pool_address">msgaddress</slice>
+            </output>
+        </get_method>
+
+        <get_method name="getChildContracts" version="tonco_router">
+            <output version="tonco_router" fixed_length="true">
+                <cell name="pool_code">cell</cell>
+                <cell name="account_code">cell</cell>
+                <cell name="nft_position_code">cell</cell>
+            </output>
+        </get_method>
+
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="pay_to"/>
+            <internal name="exit_code_200_pay_to"/>
+            <internal name="exit_code_201_pay_to"/>
+        </msg_in>
+
+        <msg_out>
+            <internal name="poolv3_swap"/>
+        </msg_out>
+
+    </interface>
+
+    <get_method name="getIsActive" version="tonco">
+        <output version="tonco" fixed_length="true">
+            <int name="is_active">bool</int>
+        </output>
+    </get_method>
+    <get_method name="getPoolStateAndConfiguration" version="tonco">
+        <output version="tonco" fixed_length="true">
+            <slice name="router_address">msgaddress</slice>
+            <slice name="admin_address">msgaddress</slice>
+            <slice name="controller_address">msgaddress</slice>
+            <slice name="jetton_wallet0">msgaddress</slice>
+            <slice name="jetton_wallet1">msgaddress</slice>
+            <slice name="jetton_minter0">msgaddress</slice>
+            <slice name="jetton_minter1">msgaddress</slice>
+            <int name="is_active">bool</int>
+            <int name="tick_spacing">int257</int>
+            <int name="base_fee">int257</int>
+            <int name="protocol_fee">int257</int>
+            <int name="active_fee">int257</int>
+            <int name="current_tick">int257</int>
+            <int name="current_price">int257</int>
+            <int name="current_liquidity">int257</int>
+            <int name="fee_grows_global0">int257</int>
+            <int name="fee_grows_global1">int257</int>
+            <int name="collected_token0_protocol_fee">int257</int>
+            <int name="collected_token1_protocol_fee">int257</int>
+            <int name="minted_nft_positions">int257</int>
+            <int name="reserve0">int257</int>
+            <int name="reserve1">int257</int>
+            <int name="active_nft_positions">int257</int>
+            <int name="occupied_tickets">int257</int>
+            <int name="operations_since_deploy">int257</int>
+        </output>
+    </get_method>
+    <get_method name="getChildContracts" version="tonco_pool">
+        <output version="tonco_pool" fixed_length="true">
+            <cell name="account_code">cell</cell>
+            <cell name="nft_position_code">cell</cell>
+            <cell name="nft_collection_metadata">cell</cell>
+            <cell name="nft_item_metadata">cell</cell>
+        </output>
+    </get_method>
+    <get_method name="getAllTickInfos" version="tonco">
+        <output version="tonco" fixed_length="true">
+            <cell name="ticks_dict">cell</cell>
+        </output>
+    </get_method>
+    <get_method name="getRouterState">
+        <output version="tonco" fixed_length="true">
+            <slice name="router_admin_address">msgaddress</slice>
+            <slice name="pool_admin_address">msgaddress</slice>
+            <slice name="pool_factory_address">msgaddress</slice>
+            <int name="active_flags">int257</int>
+            <int name="internal_number">int257</int>
+        </output>
+    </get_method>
+    <get_method name="getPoolAddress" version="tonco">
+        <input version="tonco" fixed_length="true">
+            <slice name="jetton_wallet0">msgaddress</slice>
+            <slice name="jetton_wallet1">msgaddress</slice>
+        </input>
+        <output version="tonco" fixed_length="true">
+            <slice name="pool_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="getChildContracts" version="tonco_router">
+        <output version="tonco_router" fixed_length="true">
+            <cell name="pool_code">cell</cell>
+            <cell name="account_code">cell</cell>
+            <cell name="nft_position_code">cell</cell>
+        </output>
+    </get_method>
+
+    <internal name="poolv3_swap">
+        poolv3_swap#a7fb58f8 query_id:uint64 owner_address:MsgAddress source_wallet:MsgAddress
+        params_cell:^[
+            amount:(VarUInteger 16)
+            sqrtPriceLimitX96:uint160
+            minOutAmount:(VarUInteger 16)
+        ]
+        payloads_cell:^[
+            target_address:MsgAddress
+            ok_forward_amount:(VarUInteger 16)
+            ok_forward_payload:(Maybe ^Cell)
+            ret_forward_amount:(VarUInteger 16)
+            ret_forward_payload:(Maybe ^Cell)
+        ] = InMsgBody;
+    </internal>
+
+
+    <internal name="pay_to">
+        routerv3_pay_to_no_exit_code#a1daa96d query_id:uint64 reciever0:MsgAddress reciever1:MsgAddress exit_code:uint32 seqno:uint64
+        coinsinfo_cell:(Maybe ^[
+            amount0:(VarUInteger 16)
+            jetton0_address:MsgAddress
+            amount1:(VarUInteger 16)
+            jetton1_address:MsgAddress
+        ] ) = InMsgBody;
+    </internal>
+
+    <internal name="exit_code_200_pay_to">
+        routerv3_pay_to_exit_code200#a1daa96d query_id:uint64 reciever0:MsgAddress reciever1:MsgAddress exit_code:uint32 seqno:uint64
+        coinsinfo_cell:(Maybe ^[
+            amount0:(VarUInteger 16)
+            jetton0_address:MsgAddress
+            amount1:(VarUInteger 16)
+            jetton1_address:MsgAddress
+        ] )
+        indexer_swap_info_cell:(Maybe ^[
+            liquidity:uint128
+            price_sqrt:uint160
+            tick:int24
+            feeGrowthGlobal0X128:int256
+            feeGrowthGlobal1X128:int256
+        ] ) = InMsgBody;
+    </internal>
+
+    <internal name="exit_code_201_pay_to">
+        routerv3_pay_to_exit_code201#a1daa96d query_id:uint64 reciever0:MsgAddress reciever1:MsgAddress exit_code:uint32 seqno:uint64
+        coinsinfo_cell:(Maybe ^[
+            amount0:(VarUInteger 16)
+            jetton0_address:MsgAddress
+            amount1:(VarUInteger 16)
+            jetton1_address:MsgAddress
+        ] )
+        indexer_burn_info_cell:(Maybe ^[
+            nftIndex:uint64
+            liquidityBurned:uint128
+            tickLower:int24
+            tickUpper:int24
+            tick:int24
+        ] ) = InMsgBody;
+    </internal>
+
+</abi>

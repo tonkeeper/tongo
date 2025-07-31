@@ -3038,6 +3038,12 @@ type ExitCode200PayToMsgBody struct {
 		Jetton0Address tlb.MsgAddress
 		Amount1        tlb.VarUInteger16
 		Jetton1Address tlb.MsgAddress
+		PayloadCell    struct {
+			PayloadAmount0 tlb.VarUInteger16
+			PayloadCell0   *tlb.Any `tlb:"maybe^"`
+			PayloadAmount1 tlb.VarUInteger16
+			PayloadCell1   *tlb.Any `tlb:"maybe^"`
+		} `tlb:"^"`
 	} `tlb:"maybe^"`
 	IndexerSwapInfoCell *struct {
 		Liquidity            tlb.Uint128

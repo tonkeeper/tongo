@@ -339,10 +339,6 @@ var (
 	decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody = decodeMsg(tlb.Tag{Val: 0xa19fd934, Len: 32}, WhalesNominatorsAcceptWithdrawsMsgOp, WhalesNominatorsAcceptWithdrawsMsgBody{})
 	// 0xa1daa96d
 	decodeFuncPayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, PayToMsgOp, PayToMsgBody{})
-	// 0xa1daa96d
-	decodeFuncExitCode200PayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, ExitCode200PayToMsgOp, ExitCode200PayToMsgBody{})
-	// 0xa1daa96d
-	decodeFuncExitCode201PayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, ExitCode201PayToMsgOp, ExitCode201PayToMsgBody{})
 	// 0xa2065f2c
 	decodeFuncWhalesNominatorsSendStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{})
 	// 0xa32c59bf
@@ -1038,13 +1034,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xa19fd934
 	WhalesNominatorsAcceptWithdrawsMsgOpCode: decodeFuncWhalesNominatorsAcceptWithdrawsMsgBody,
 
-	//PayTo, ExitCode200PayTo, ExitCode201PayTo,
-	0xa1daa96d: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncPayToMsgBody,
-		decodeFuncExitCode200PayToMsgBody,
-		decodeFuncExitCode201PayToMsgBody},
-		"0xa1daa96d",
-	),
+	// 0xa1daa96d
+	PayToMsgOpCode: decodeFuncPayToMsgBody,
 
 	// 0xa2065f2c
 	WhalesNominatorsSendStakeMsgOpCode: decodeFuncWhalesNominatorsSendStakeMsgBody,
@@ -1521,8 +1512,6 @@ const (
 	StormActivateOrderMsgOp                      MsgOpName = "StormActivateOrder"
 	WhalesNominatorsAcceptWithdrawsMsgOp         MsgOpName = "WhalesNominatorsAcceptWithdraws"
 	PayToMsgOp                                   MsgOpName = "PayTo"
-	ExitCode200PayToMsgOp                        MsgOpName = "ExitCode200PayTo"
-	ExitCode201PayToMsgOp                        MsgOpName = "ExitCode201PayTo"
 	WhalesNominatorsSendStakeMsgOp               MsgOpName = "WhalesNominatorsSendStake"
 	MultisigExecuteInternalMsgOp                 MsgOpName = "MultisigExecuteInternal"
 	TeleitemOkMsgOp                              MsgOpName = "TeleitemOk"
@@ -1794,8 +1783,6 @@ const (
 	StormActivateOrderMsgOpCode                      MsgOpCode = 0x9d2ec640
 	WhalesNominatorsAcceptWithdrawsMsgOpCode         MsgOpCode = 0xa19fd934
 	PayToMsgOpCode                                   MsgOpCode = 0xa1daa96d
-	ExitCode200PayToMsgOpCode                        MsgOpCode = 0xa1daa96d
-	ExitCode201PayToMsgOpCode                        MsgOpCode = 0xa1daa96d
 	WhalesNominatorsSendStakeMsgOpCode               MsgOpCode = 0xa2065f2c
 	MultisigExecuteInternalMsgOpCode                 MsgOpCode = 0xa32c59bf
 	TeleitemOkMsgOpCode                              MsgOpCode = 0xa37a0983
@@ -3014,65 +3001,10 @@ type WhalesNominatorsAcceptWithdrawsMsgBody struct {
 }
 
 type PayToMsgBody struct {
-	QueryId       uint64
-	Reciever0     tlb.MsgAddress
-	Reciever1     tlb.MsgAddress
-	ExitCode      uint32
-	Seqno         uint64
-	CoinsinfoCell *struct {
-		Amount0        tlb.VarUInteger16
-		Jetton0Address tlb.MsgAddress
-		Amount1        tlb.VarUInteger16
-		Jetton1Address tlb.MsgAddress
-	} `tlb:"maybe^"`
-}
-
-type ExitCode200PayToMsgBody struct {
-	QueryId       uint64
-	Reciever0     tlb.MsgAddress
-	Reciever1     tlb.MsgAddress
-	ExitCode      uint32
-	Seqno         uint64
-	CoinsinfoCell *struct {
-		Amount0        tlb.VarUInteger16
-		Jetton0Address tlb.MsgAddress
-		Amount1        tlb.VarUInteger16
-		Jetton1Address tlb.MsgAddress
-		PayloadCell    struct {
-			PayloadAmount0 tlb.VarUInteger16
-			PayloadCell0   *tlb.Any `tlb:"maybe^"`
-			PayloadAmount1 tlb.VarUInteger16
-			PayloadCell1   *tlb.Any `tlb:"maybe^"`
-		} `tlb:"^"`
-	} `tlb:"maybe^"`
-	IndexerSwapInfoCell *struct {
-		Liquidity            tlb.Uint128
-		PriceSqrt            tlb.Uint160
-		Tick                 tlb.Int24
-		FeeGrowthGlobal0X128 tlb.Int256
-		FeeGrowthGlobal1X128 tlb.Int256
-	} `tlb:"maybe^"`
-}
-
-type ExitCode201PayToMsgBody struct {
-	QueryId       uint64
-	Reciever0     tlb.MsgAddress
-	Reciever1     tlb.MsgAddress
-	ExitCode      uint32
-	Seqno         uint64
-	CoinsinfoCell *struct {
-		Amount0        tlb.VarUInteger16
-		Jetton0Address tlb.MsgAddress
-		Amount1        tlb.VarUInteger16
-		Jetton1Address tlb.MsgAddress
-	} `tlb:"maybe^"`
-	IndexerBurnInfoCell *struct {
-		NftIndex        uint64
-		LiquidityBurned tlb.Uint128
-		TickLower       tlb.Int24
-		TickUpper       tlb.Int24
-		Tick            tlb.Int24
-	} `tlb:"maybe^"`
+	QueryId   uint64
+	Reciever0 tlb.MsgAddress
+	Reciever1 tlb.MsgAddress
+	PayTo     PayTo
 }
 
 type WhalesNominatorsSendStakeMsgBody struct {
@@ -3885,8 +3817,6 @@ var KnownMsgInTypes = map[string]any{
 	StormActivateOrderMsgOp:                      StormActivateOrderMsgBody{},
 	WhalesNominatorsAcceptWithdrawsMsgOp:         WhalesNominatorsAcceptWithdrawsMsgBody{},
 	PayToMsgOp:                                   PayToMsgBody{},
-	ExitCode200PayToMsgOp:                        ExitCode200PayToMsgBody{},
-	ExitCode201PayToMsgOp:                        ExitCode201PayToMsgBody{},
 	WhalesNominatorsSendStakeMsgOp:               WhalesNominatorsSendStakeMsgBody{},
 	MultisigExecuteInternalMsgOp:                 MultisigExecuteInternalMsgBody{},
 	TeleitemOkMsgOp:                              TeleitemOkMsgBody{},

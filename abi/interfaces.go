@@ -2069,8 +2069,6 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncJettonNotifyMsgBody,
 			decodeFuncPayToMsgBody,
-			decodeFuncExitCode200PayToMsgBody,
-			decodeFuncExitCode201PayToMsgBody,
 		}
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{

@@ -127,8 +127,6 @@ The list below contains the supported message operations, their names and opcode
 | EncryptedTextComment| 0x2167da4b |
 | EncryptedTextComment| 0x2167da4b |
 | Excess| 0xd53276db |
-| ExitCode200PayTo| 0xa1daa96d |
-| ExitCode201PayTo| 0xa1daa96d |
 | FinishUncooperativeChannelClose| 0x25432a91 |
 | GetRoyaltyParams| 0x693d3950 |
 | GetStaticData| 0x2fcb26a2 |

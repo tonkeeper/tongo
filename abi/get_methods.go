@@ -16,6 +16,12 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"estimate_liquidity_withdraw_amount":           {DecodeEstimateLiquidityWithdrawAmount_CoffeeResult},
 	"estimate_swap_amount":                         {DecodeEstimateSwapAmount_CoffeeResult},
 	"estimate_swap_out":                            {DecodeEstimateSwapOut_DedustResult},
+	"getAllTickInfos":                              {DecodeGetAllTickInfos_ToncoResult},
+	"getChildContracts":                            {DecodeGetChildContracts_ToncoPoolResult, DecodeGetChildContracts_ToncoRouterResult},
+	"getIsActive":                                  {DecodeGetIsActive_ToncoResult},
+	"getPoolAddress":                               {DecodeGetPoolAddress_ToncoResult},
+	"getPoolStateAndConfiguration":                 {DecodeGetPoolStateAndConfiguration_ToncoResult},
+	"getRouterState":                               {DecodeGetRouterState_ToncoResult},
 	"get_active_range":                             {DecodeGetActiveRange_BidaskResult},
 	"get_admin_address":                            {DecodeGetAdminAddress_CoffeeResult},
 	"get_amm_contract_data":                        {DecodeGetAmmContractData_StormResult},
@@ -92,7 +98,6 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_plugin_list":                              {DecodeGetPluginListResult},
 	"get_pool":                                     {DecodeGetPool_MoonResult},
 	"get_pool_addr":                                {DecodeGetPoolAddr_BidaskResult},
-	"get_pool_address":                             {DecodeGetPoolAddress_StonfiResult},
 	"get_pool_address_no_settings":                 {DecodeGetPoolAddressNoSettings_CoffeeResult},
 	"get_pool_creator_address":                     {DecodeGetPoolCreatorAddress_CoffeeResult},
 	"get_pool_creator_address_no_settings":         {DecodeGetPoolCreatorAddressNoSettings_CoffeeResult},
@@ -186,6 +191,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	81467:  {GetSubwalletId},
 	81490:  {GetNextProofInfo},
 	81689:  {GetPoolData},
+	82247:  {GetIsActive},
 	82492:  {GetPoolType},
 	83226:  {GetExecutorCollectionAddress},
 	83263:  {GetNftApiInfo},
@@ -216,6 +222,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	94255:  {GetAdminAddress},
 	96219:  {GetMiningData},
 	96263:  {GetExchangeSettings},
+	96585:  {GetAllTickInfos},
 	96705:  {GetBillAmount},
 	96780:  {GetTradeFee},
 	97026:  {GetWalletData},
@@ -228,6 +235,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	103232: {GetValidatorControllerData},
+	103471: {GetRouterState},
 	103723: {IsStable},
 	104122: {GetLpMiningData},
 	104346: {GetStorageParams},
@@ -251,6 +259,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	117729: {GetExtensions},
 	118188: {GetAssets},
 	118274: {GetLockerBillData},
+	118400: {GetPoolStateAndConfiguration},
 	119378: {GetDomain},
 	119995: {GetPositionManagerContractData},
 	120122: {GetDistributionInfo},
@@ -264,6 +273,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	123140: {GetAuctionDataV4},
 	123832: {GetOrderData},
 	123928: {GetStakingStatus},
+	124601: {GetChildContracts},
 	124861: {GetReferralVaultsWhitelist},
 	125126: {GetStoredData},
 	127091: {GetSqrtP},
@@ -286,6 +296,13 @@ var resultTypes = []interface{}{
 	&EstimateLiquidityWithdrawAmount_CoffeeResult{},
 	&EstimateSwapAmount_CoffeeResult{},
 	&EstimateSwapOut_DedustResult{},
+	&GetAllTickInfos_ToncoResult{},
+	&GetChildContracts_ToncoPoolResult{},
+	&GetChildContracts_ToncoRouterResult{},
+	&GetIsActive_ToncoResult{},
+	&GetPoolAddress_ToncoResult{},
+	&GetPoolStateAndConfiguration_ToncoResult{},
+	&GetRouterState_ToncoResult{},
 	&GetActiveRange_BidaskResult{},
 	&GetAdminAddress_CoffeeResult{},
 	&GetAmmContractData_StormResult{},
@@ -365,7 +382,6 @@ var resultTypes = []interface{}{
 	&GetPluginListResult{},
 	&GetPool_MoonResult{},
 	&GetPoolAddr_BidaskResult{},
-	&GetPoolAddress_StonfiResult{},
 	&GetPoolAddressNoSettings_CoffeeResult{},
 	&GetPoolCreatorAddress_CoffeeResult{},
 	&GetPoolCreatorAddressNoSettings_CoffeeResult{},
@@ -668,6 +684,264 @@ func DecodeEstimateSwapOut_DedustResult(stack tlb.VmStack) (resultType string, r
 	var result EstimateSwapOut_DedustResult
 	err = stack.Unmarshal(&result)
 	return "EstimateSwapOut_DedustResult", result, err
+}
+
+type GetAllTickInfos_ToncoResult struct {
+	TicksDict boc.Cell
+}
+
+func GetAllTickInfos(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 96585 for "getAllTickInfos" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96585, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAllTickInfos_ToncoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetAllTickInfos_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetAllTickInfos_ToncoResult
+	err = stack.Unmarshal(&result)
+	return "GetAllTickInfos_ToncoResult", result, err
+}
+
+type GetChildContracts_ToncoPoolResult struct {
+	AccountCode           boc.Cell
+	NftPositionCode       boc.Cell
+	NftCollectionMetadata boc.Cell
+	NftItemMetadata       boc.Cell
+}
+
+type GetChildContracts_ToncoRouterResult struct {
+	PoolCode        boc.Cell
+	AccountCode     boc.Cell
+	NftPositionCode boc.Cell
+}
+
+func GetChildContracts(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 124601 for "getChildContracts" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 124601, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetChildContracts_ToncoPoolResult, DecodeGetChildContracts_ToncoRouterResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetChildContracts_ToncoPoolResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetChildContracts_ToncoPoolResult
+	err = stack.Unmarshal(&result)
+	return "GetChildContracts_ToncoPoolResult", result, err
+}
+
+func DecodeGetChildContracts_ToncoRouterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetChildContracts_ToncoRouterResult
+	err = stack.Unmarshal(&result)
+	return "GetChildContracts_ToncoRouterResult", result, err
+}
+
+type GetIsActive_ToncoResult struct {
+	IsActive bool
+}
+
+func GetIsActive(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 82247 for "getIsActive" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 82247, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetIsActive_ToncoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetIsActive_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetIsActive_ToncoResult
+	err = stack.Unmarshal(&result)
+	return "GetIsActive_ToncoResult", result, err
+}
+
+type GetPoolAddress_ToncoResult struct {
+	PoolAddress tlb.MsgAddress
+}
+
+func GetPoolAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, jettonWallet0 tlb.MsgAddress, jettonWallet1 tlb.MsgAddress) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(jettonWallet0)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(jettonWallet1)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 125122 for "getPoolAddress" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 125122, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolAddress_ToncoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolAddress_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolAddress_ToncoResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolAddress_ToncoResult", result, err
+}
+
+type GetPoolStateAndConfiguration_ToncoResult struct {
+	RouterAddress              tlb.MsgAddress
+	AdminAddress               tlb.MsgAddress
+	ControllerAddress          tlb.MsgAddress
+	JettonWallet0              tlb.MsgAddress
+	JettonWallet1              tlb.MsgAddress
+	JettonMinter0              tlb.MsgAddress
+	JettonMinter1              tlb.MsgAddress
+	IsActive                   bool
+	TickSpacing                tlb.Int257
+	BaseFee                    tlb.Int257
+	ProtocolFee                tlb.Int257
+	ActiveFee                  tlb.Int257
+	CurrentTick                tlb.Int257
+	CurrentPrice               tlb.Int257
+	CurrentLiquidity           tlb.Int257
+	FeeGrowsGlobal0            tlb.Int257
+	FeeGrowsGlobal1            tlb.Int257
+	CollectedToken0ProtocolFee tlb.Int257
+	CollectedToken1ProtocolFee tlb.Int257
+	MintedNftPositions         tlb.Int257
+	Reserve0                   tlb.Int257
+	Reserve1                   tlb.Int257
+	ActiveNftPositions         tlb.Int257
+	OccupiedTickets            tlb.Int257
+	OperationsSinceDeploy      tlb.Int257
+}
+
+func GetPoolStateAndConfiguration(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 118400 for "getPoolStateAndConfiguration" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 118400, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolStateAndConfiguration_ToncoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetPoolStateAndConfiguration_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 25 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkTinyInt" && stack[20].SumType != "VmStkInt") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkTinyInt" && stack[22].SumType != "VmStkInt") || (stack[23].SumType != "VmStkTinyInt" && stack[23].SumType != "VmStkInt") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolStateAndConfiguration_ToncoResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolStateAndConfiguration_ToncoResult", result, err
+}
+
+type GetRouterState_ToncoResult struct {
+	RouterAdminAddress tlb.MsgAddress
+	PoolAdminAddress   tlb.MsgAddress
+	PoolFactoryAddress tlb.MsgAddress
+	ActiveFlags        tlb.Int257
+	InternalNumber     tlb.Int257
+}
+
+func GetRouterState(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 103471 for "getRouterState" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103471, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRouterState_ToncoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetRouterState_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetRouterState_ToncoResult
+	err = stack.Unmarshal(&result)
+	return "GetRouterState_ToncoResult", result, err
 }
 
 type GetActiveRange_BidaskResult struct {
@@ -3607,53 +3881,6 @@ func DecodeGetPoolAddr_BidaskResult(stack tlb.VmStack) (resultType string, resul
 	var result GetPoolAddr_BidaskResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolAddr_BidaskResult", result, err
-}
-
-type GetPoolAddress_StonfiResult struct {
-	PoolAddress tlb.MsgAddress
-}
-
-func GetPoolAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, token0 tlb.MsgAddress, token1 tlb.MsgAddress) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val, err = tlb.TlbStructToVmCellSlice(token0)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-	val, err = tlb.TlbStructToVmCellSlice(token1)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-
-	// MethodID = 101789 for "get_pool_address" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 101789, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolAddress_StonfiResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeGetPoolAddress_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result GetPoolAddress_StonfiResult
-	err = stack.Unmarshal(&result)
-	return "GetPoolAddress_StonfiResult", result, err
 }
 
 type GetPoolAddressNoSettings_CoffeeResult struct {

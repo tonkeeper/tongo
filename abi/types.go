@@ -742,6 +742,88 @@ type TelemintUnsignedDeployV2 struct {
 	Restrictions  *TelemintRestrictions `tlb:"maybe^"`
 }
 
+type PayTo struct {
+	tlb.SumType
+	PayToCode0 struct {
+		Seqno         uint64
+		CoinsinfoCell *struct {
+			Amount0        tlb.VarUInteger16
+			Jetton0Address tlb.MsgAddress
+			Amount1        tlb.VarUInteger16
+			Jetton1Address tlb.MsgAddress
+		} `tlb:"maybe^"`
+	} `tlbSumType:"#00000000"`
+	PayToCode200 struct {
+		Seqno         uint64
+		CoinsinfoCell *struct {
+			Amount0        tlb.VarUInteger16
+			Jetton0Address tlb.MsgAddress
+			Amount1        tlb.VarUInteger16
+			Jetton1Address tlb.MsgAddress
+			PayloadCell    struct {
+				PayloadAmount0 tlb.VarUInteger16
+				PayloadCell0   *tlb.Any `tlb:"maybe^"`
+				PayloadAmount1 tlb.VarUInteger16
+				PayloadCell1   *tlb.Any `tlb:"maybe^"`
+			} `tlb:"^"`
+		} `tlb:"maybe^"`
+		IndexerSwapInfoCell *struct {
+			Liquidity            tlb.Uint128
+			PriceSqrt            tlb.Uint160
+			Tick                 tlb.Int24
+			FeeGrowthGlobal0X128 tlb.Int256
+			FeeGrowthGlobal1X128 tlb.Int256
+		} `tlb:"maybe^"`
+	} `tlbSumType:"#000000c8"`
+	PayToCode201 struct {
+		Seqno         uint64
+		CoinsinfoCell *struct {
+			Amount0        tlb.VarUInteger16
+			Jetton0Address tlb.MsgAddress
+			Amount1        tlb.VarUInteger16
+			Jetton1Address tlb.MsgAddress
+			PayloadCell    struct {
+				PayloadAmount0 tlb.VarUInteger16
+				PayloadCell0   *tlb.Any `tlb:"maybe^"`
+				PayloadAmount1 tlb.VarUInteger16
+				PayloadCell1   *tlb.Any `tlb:"maybe^"`
+			} `tlb:"^"`
+		} `tlb:"maybe^"`
+		IndexerBurnInfoCell *struct {
+			NftIndex        uint64
+			LiquidityBurned tlb.Uint128
+			TickLower       tlb.Int24
+			TickUpper       tlb.Int24
+			Tick            tlb.Int24
+		} `tlb:"maybe^"`
+	} `tlbSumType:"#000000c9"`
+}
+
+func (t *PayTo) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "PayToCode0":
+		bytes, err := json.Marshal(t.PayToCode0)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "PayToCode0","PayToCode0":%v}`, string(bytes))), nil
+	case "PayToCode200":
+		bytes, err := json.Marshal(t.PayToCode200)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "PayToCode200","PayToCode200":%v}`, string(bytes))), nil
+	case "PayToCode201":
+		bytes, err := json.Marshal(t.PayToCode201)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "PayToCode201","PayToCode201":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
 type Certificate2Fa struct {
 	Data      CertificateData2Fa
 	Signature tlb.Bits512

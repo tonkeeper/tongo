@@ -1600,6 +1600,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetFixPriceDataV4,
 		},
 	},
+	ton.MustParseHash("6cda351c3c0ee368873a5ea10f53b9a47a55aacdc8deb3fd103c2f968c952527"): {
+		contractInterfaces: []ContractInterface{OmnistonReferral},
+		getMethods:         []InvokeFn{},
+	},
 	ton.MustParseHash("6e5d667fa6efa8187c6d029efd4015601232fd2e36c291dbc346dedab6dc8024"): {
 		contractInterfaces: []ContractInterface{NftOfferGetgemsV1},
 		getMethods:         []InvokeFn{},

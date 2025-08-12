@@ -111,6 +111,7 @@ const (
 	WalletV4R2
 	WalletV5Beta
 	WalletV5R1
+	WalletVesting
 	WhalesPool
 )
 
@@ -322,6 +323,8 @@ func (c ContractInterface) String() string {
 		return "wallet_v5_beta"
 	case WalletV5R1:
 		return "wallet_v5r1"
+	case WalletVesting:
+		return "wallet_vesting"
 	case WhalesPool:
 		return "whales_pool"
 	default:
@@ -537,6 +540,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return WalletV5Beta
 	case "wallet_v5r1":
 		return WalletV5R1
+	case "wallet_vesting":
+		return WalletVesting
 	case "whales_pool":
 		return WhalesPool
 	default:
@@ -1487,6 +1492,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return Wallet.Implements(other)
 	case WalletV5R1:
 		return Wallet.Implements(other)
+	case WalletVesting:
+		return Wallet.Implements(other)
 	}
 	return false
 }
@@ -1672,6 +1679,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{AirdropInterlockerV1},
 		getMethods: []InvokeFn{
 			GetContractData,
+		},
+	},
+	ton.MustParseHash("b48b531abec3b714638291f7d77ed6dc9f6a2729efca20477137374d4ae8b590"): {
+		contractInterfaces: []ContractInterface{WalletVesting},
+		getMethods: []InvokeFn{
+			GetPublicKey,
+			GetVestingData,
+			Seqno,
 		},
 	},
 	ton.MustParseHash("b61041a58a7980b946e8fb9e198e3c904d24799ffa36574ea4251c41a566f581"): {

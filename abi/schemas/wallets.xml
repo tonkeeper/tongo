@@ -151,6 +151,13 @@
         </msg_in>
     </interface>
 
+    <interface name="wallet_vesting" inherits="wallet">
+        <code_hash>b48b531abec3b714638291f7d77ed6dc9f6a2729efca20477137374d4ae8b590</code_hash>
+        <get_method name="seqno"/>
+        <get_method name="get_public_key"/>
+        <get_method name="get_vesting_data"/>
+    </interface>
+
     <get_method name="seqno">
         <output fixed_length="true">
             <int name="state">uint32</int>
@@ -201,6 +208,18 @@
     <get_method name="is_signature_allowed">
         <output fixed_length="true">
             <int name="allowed">bool</int>
+        </output>
+    </get_method>
+    <get_method name="get_vesting_data">
+        <output fixed_length="true">
+            <int name="vesting_start_time">int257</int>
+            <int name="vesting_total_duration">int257</int>
+            <int name="unlock_period">int257</int>
+            <int name="cliff_duration">int257</int>
+            <int name="vesting_total_amount">int257</int>
+            <slice name="vesting_sender_address">msgaddress</slice>
+            <slice name="owner_address">msgaddress</slice>
+            <cell name="whitelist">cell</cell>
         </output>
     </get_method>
 

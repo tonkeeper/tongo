@@ -186,8 +186,8 @@ The list below contains the supported message operations, their names and opcode
 | OfferStorageContract| 0x107c49ef |
 | OutbidNotification| 0x557cea20 |
 | OwnershipProof| 0x0524c7ae |
-| PaymentConfirmed| 0xf06c7567 |
 | PayTo| 0xa1daa96d |
+| PaymentConfirmed| 0xf06c7567 |
 | PaymentRequest| 0x706c7567 |
 | Poolv3Swap| 0xa7fb58f8 |
 | PreprocessedWalletSignedV2| 0x00000000 |

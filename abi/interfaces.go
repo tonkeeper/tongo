@@ -1331,6 +1331,14 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: SubscriptionV2,
+		Results: []string{
+			"GetCronInfoResult",
+			"GetPaymentInfo_SubscriptionV2Result",
+			"GetSubscriptionInfo_V2Result",
+		},
+	},
+	{
 		Name: CoffeeStakingMaster,
 		Results: []string{
 			"GetCollectionDataResult",
@@ -1758,14 +1766,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSaleData,
 		},
 	},
-	ton.MustParseHash("e47cee2a24e535150db4bc15e145fd732fa81543f29f1374ac2c058e6b60819f"): {
-		contractInterfaces: []ContractInterface{SubscriptionV2},
-		getMethods: []InvokeFn{
-			GetCronInfo,
-			GetPaymentInfo,
-			GetSubscriptionInfo,
-		},
-	},
 	ton.MustParseHash("e4cf3b2f4c6d6a61ea0f2b5447d266785b26af3637db2deee6bcd1aa826f3412"): {
 		contractInterfaces: []ContractInterface{WalletV5Beta},
 		getMethods: []InvokeFn{
@@ -2057,13 +2057,17 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormVaultInitMsgBody,
 			decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 		}
+	case SubscriptionV1:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentConfirmedMsgBody,
+		}
 	case SubscriptionV2:
 		return []msgDecoderFunc{
-			decodeFuncSubscriptionV2DeployMsgBody,
-			decodeFuncSubscriptionV2DestructMsgBody,
-			decodeFuncSubscriptionV2ReducePaymentMsgBody,
-			decodeFuncSubscriptionV2PaymentConfirmedMsgBody,
-			decodeFuncSubscriptionV2WithdrawToBeneficiaryMsgBody,
+			decodeFuncPaymentConfirmedMsgBody,
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncSubscriptionReducePaymentMsgBody,
+			decodeFuncSubscriptionDeployMsgBody,
 		}
 	case ToncoPool:
 		return []msgDecoderFunc{
@@ -2077,6 +2081,16 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case Tonkeeper2Fa:
 		return []msgDecoderFunc{
 			decodeFuncTonkeeper2FaSignedMsgBody,
+		}
+	case WalletV4R1:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentRequestMsgBody,
+		}
+	case WalletV4R2:
+		return []msgDecoderFunc{
+			decodeFuncWalletPluginDestructMsgBody,
+			decodeFuncPaymentRequestMsgBody,
 		}
 	case WalletV5R1:
 		return []msgDecoderFunc{

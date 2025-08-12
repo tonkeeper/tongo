@@ -29,6 +29,11 @@
         msg_inner#_ valid_until:uint64 seq_no:uint16 actions:^W5Actions  = PreprocessedWalletV2MsgInner;
 
         extensions#_ extensions:(Hashmap 256 uint1) = WalletV5ExtensionsList;
+
+        simple_send$00000000 payload:WalletV1toV4Payload = WalletV4Payload;
+        deploy_and_install_plugin$00000001 plugin_workchain:int8 plugin_balance:Coins state_init:^StateInit body:^InMsgBody = WalletV4Payload;
+        install_plugin$00000010 plugin_workchain:int8 plugin_address:bits256 amount:Coins query_id:uint64 = WalletV4Payload;
+        remove_plugin$00000011 plugin_workchain:int8 plugin_address:bits256 amount:Coins query_id:uint64 = WalletV4Payload;
     </types>
     <!--        Wallets      -->
 <interface name="wallet"/>
@@ -77,7 +82,15 @@
         <get_method name="get_subwallet_id"/>
         <msg_in>
             <ext_in name="wallet_signed_v4"/>
+            <internal name="wallet_plugin_destruct"/>
+            <internal name="payment_request"/>
         </msg_in>
+        <msg_out>
+            <internal name="wallet_plugin_installation_notification"/>
+            <internal name="wallet_plugin_destruct"/>
+            <internal name="wallet_plugin_destruct_response"/>
+            <internal name="payment_confirmed"/>
+        </msg_out>
     </interface>
     <interface name="wallet_v4r2" inherits="wallet">
         <code_hash>feb5ff6820e2ff0d9483e7e0d62c817d846789fb4ae580c878866d959dabd5c0</code_hash>
@@ -88,8 +101,15 @@
         <get_method name="get_subwallet_id"/>
         <msg_in>
             <ext_in name="wallet_signed_v4"/>
+            <internal name="wallet_plugin_destruct"/>
+            <internal name="payment_request"/>
         </msg_in>
-
+        <msg_out>
+            <internal name="wallet_plugin_installation_notification"/>
+            <internal name="wallet_plugin_destruct"/>
+            <internal name="wallet_plugin_destruct_response"/>
+            <internal name="payment_confirmed"/>
+        </msg_out>
         <error code="33">Invalid seqno</error>
         <error code="34">Invalid subwallet ID</error>
         <error code="35">Invalid signature</error>
@@ -209,8 +229,7 @@
         ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_v4">
-        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 op:int8
-        payload:WalletV1toV4Payload = ExternalMsgBody;
+        signed#_ signature:bits512 subwallet_id:uint32 valid_until:uint32 seqno:uint32 payload:WalletV4Payload = ExternalMsgBody;
     </ext_in>
     <ext_in name="wallet_signed_external_v5r1">
         signed_external#7369676e wallet_id:uint32 valid_until:uint32 seqno:uint32
@@ -235,4 +254,19 @@
     <ext_in name="highload_wallet_signed_v2">
         signed#_ signature:bits512 subwallet_id:uint32 query_id:uint64 payload:(HashmapE 16 SendMessageAction) = ExternalMsgBody;
     </ext_in>
+    <internal name="wallet_plugin_installation_notification" >
+        plugin_installation_notification#6e6f7465 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_plugin_destruct" >
+        destruct#64737472 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="wallet_plugin_destruct_response" >
+        destruct_response#e4737472 query_id:uint64 = InternalMsgBody;
+    </internal>
+    <internal name="payment_request" >
+        request_funds#706c7567 query_id:uint64 amount:CurrencyCollection = InternalMsgBody;
+    </internal>
+    <internal name="payment_confirmed">
+        payment_confirmed#f06c7567 query_id:uint64 = InternalMsgBody;
+    </internal>
 </abi>

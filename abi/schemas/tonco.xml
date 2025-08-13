@@ -132,15 +132,15 @@
             </output>
         </get_method>
 
-        <get_method name="getPoolAddress" version="tonco">
-            <input version="tonco" fixed_length="true">
-                <slice name="jetton_wallet0">msgaddress</slice>
-                <slice name="jetton_wallet0">msgaddress</slice>
-            </input>
-            <output version="tonco" fixed_length="true">
-                <slice name="pool_address">msgaddress</slice>
-            </output>
-        </get_method>
+<!--        <get_method name="getPoolAddress" version="tonco">-->
+<!--            <input version="tonco" fixed_length="true">-->
+<!--                <slice name="jetton_wallet0">msgaddress</slice>-->
+<!--                <slice name="jetton_wallet0">msgaddress</slice>-->
+<!--            </input>-->
+<!--            <output version="tonco" fixed_length="true">-->
+<!--                <slice name="pool_address">msgaddress</slice>-->
+<!--            </output>-->
+<!--        </get_method>-->
 
         <get_method name="getChildContracts" version="tonco_router">
             <output version="tonco_router" fixed_length="true">
@@ -217,15 +217,15 @@
             <int name="internal_number">int257</int>
         </output>
     </get_method>
-    <get_method name="getPoolAddress" version="tonco">
-        <input version="tonco" fixed_length="true">
-            <slice name="jetton_wallet0">msgaddress</slice>
-            <slice name="jetton_wallet1">msgaddress</slice>
-        </input>
-        <output version="tonco" fixed_length="true">
-            <slice name="pool_address">msgaddress</slice>
-        </output>
-    </get_method>
+<!--    <get_method name="getPoolAddress" version="tonco">-->
+<!--        <input version="tonco" fixed_length="true">-->
+<!--            <slice name="jetton_wallet0">msgaddress</slice>-->
+<!--            <slice name="jetton_wallet1">msgaddress</slice>-->
+<!--        </input>-->
+<!--        <output version="tonco" fixed_length="true">-->
+<!--            <slice name="pool_address">msgaddress</slice>-->
+<!--        </output>-->
+<!--    </get_method>-->
     <get_method name="getChildContracts" version="tonco_router">
         <output version="tonco_router" fixed_length="true">
             <cell name="pool_code">cell</cell>

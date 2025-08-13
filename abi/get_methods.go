@@ -147,7 +147,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_vault_data":                               {DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
 	"get_vault_type":                               {DecodeGetVaultType_StormResult},
 	"get_vault_whitelisted_addresses":              {DecodeGetVaultWhitelistedAddresses_StormResult},
-	"get_vesting_data":                             {DecodeGetVestingData_MoonResult},
+	"get_vesting_data":                             {DecodeGetVestingData_MoonResult, DecodeGetVestingDataResult},
 	"get_wallet_addr":                              {DecodeGetWalletAddrResult},
 	"get_wallet_address":                           {DecodeGetWalletAddressResult},
 	"get_wallet_data":                              {DecodeGetWalletDataResult},
@@ -445,6 +445,7 @@ var resultTypes = []interface{}{
 	&GetVaultData_StormResult{},
 	&GetVaultType_StormResult{},
 	&GetVaultWhitelistedAddresses_StormResult{},
+	&GetVestingDataResult{},
 	&GetVestingData_MoonResult{},
 	&GetWalletAddrResult{},
 	&GetWalletAddressResult{},
@@ -6061,6 +6062,17 @@ func DecodeGetVaultWhitelistedAddresses_StormResult(stack tlb.VmStack) (resultTy
 	return "GetVaultWhitelistedAddresses_StormResult", result, err
 }
 
+type GetVestingDataResult struct {
+	VestingStartTime     int32
+	VestingTotalDuration int32
+	UnlockPeriod         int32
+	CliffDuration        int32
+	VestingTotalAmount   int64
+	VestingSenderAddress tlb.MsgAddress
+	OwnerAddress         tlb.MsgAddress
+	Whitelist            boc.Cell
+}
+
 type GetVestingData_MoonResult struct {
 	VestingStartTime uint64
 	VestingTime      uint64
@@ -6078,7 +6090,7 @@ func GetVestingData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVestingData_MoonResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVestingData_MoonResult, DecodeGetVestingDataResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -6094,6 +6106,15 @@ func DecodeGetVestingData_MoonResult(stack tlb.VmStack) (resultType string, resu
 	var result GetVestingData_MoonResult
 	err = stack.Unmarshal(&result)
 	return "GetVestingData_MoonResult", result, err
+}
+
+func DecodeGetVestingDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 8 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVestingDataResult
+	err = stack.Unmarshal(&result)
+	return "GetVestingDataResult", result, err
 }
 
 type GetWalletAddrResult struct {

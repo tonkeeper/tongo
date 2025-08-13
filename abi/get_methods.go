@@ -6063,11 +6063,11 @@ func DecodeGetVaultWhitelistedAddresses_StormResult(stack tlb.VmStack) (resultTy
 }
 
 type GetVestingDataResult struct {
-	VestingStartTime     tlb.Int257
-	VestingTotalDuration tlb.Int257
-	UnlockPeriod         tlb.Int257
-	CliffDuration        tlb.Int257
-	VestingTotalAmount   tlb.Int257
+	VestingStartTime     int32
+	VestingTotalDuration int32
+	UnlockPeriod         int32
+	CliffDuration        int32
+	VestingTotalAmount   int64
 	VestingSenderAddress tlb.MsgAddress
 	OwnerAddress         tlb.MsgAddress
 	Whitelist            boc.Cell

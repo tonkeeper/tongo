@@ -181,6 +181,11 @@ type TonstakersControllerData struct {
 	} `tlb:"^"`
 }
 
+type MoonNextPayload struct {
+	Recipient tlb.MsgAddress
+	Payload   *tlb.Any `tlb:"maybe^"`
+}
+
 type MoonOrderParams struct {
 	Rate        tlb.Uint256
 	Lock        tlb.Uint2
@@ -190,10 +195,10 @@ type MoonOrderParams struct {
 type MoonSwapParams struct {
 	MinOut      tlb.VarUInteger16
 	Deadline    uint64
-	Excess      *tlb.MsgAddress `tlb:"maybe"`
-	Referral    *tlb.MsgAddress `tlb:"maybe"`
-	NextFulfill *tlb.Any        `tlb:"maybe^"`
-	NextReject  *tlb.Any        `tlb:"maybe^"`
+	Excess      *tlb.MsgAddress  `tlb:"maybe"`
+	Referral    *tlb.MsgAddress  `tlb:"maybe"`
+	NextFulfill *MoonNextPayload `tlb:"maybe^"`
+	NextReject  *MoonNextPayload `tlb:"maybe^"`
 }
 
 type MultisigOrder struct {

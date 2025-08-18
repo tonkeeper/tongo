@@ -43,7 +43,7 @@
         <output fixed_length="true" version="v2">
             <slice name="wallet">msgaddress</slice>
             <int name="wallet_version">uint8</int>
-            <slice name="beneficiary">msgaddress</slice>
+            <slice name="admin">msgaddress</slice>
             <int name="subscription_id">uint64</int>
             <slice name="withdraw_address">msgaddress</slice>
             <cell name="withdraw_msg_body">any</cell>

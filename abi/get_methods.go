@@ -5407,7 +5407,7 @@ func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resu
 type GetSubscriptionInfo_V2Result struct {
 	Wallet          tlb.MsgAddress
 	WalletVersion   uint8
-	Beneficiary     tlb.MsgAddress
+	Admin           tlb.MsgAddress
 	SubscriptionId  uint64
 	WithdrawAddress tlb.MsgAddress
 	WithdrawMsgBody tlb.Any

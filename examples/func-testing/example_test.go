@@ -120,7 +120,7 @@ func TestExample(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err := tracer.Run(ctx, m)
+	result, err := tracer.Run(ctx, m, 0)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2712,9 +2712,9 @@ func TestDecodeExternalIn(t *testing.T) {
 				b.Payload.DeployAndInstallPlugin.StateInit.Data.Exists = true
 				b.Payload.DeployAndInstallPlugin.StateInit.Data.Value.Value = *boc.MustDeserializeSinglRootHex("b5ee9c7201010401006d0003bb000000000000000000000000010008ece6a0fba4a25a2e56d038590bd9864c1772d6a3f4ea46f7ef0510f0590a59cce002e3e85179b630ab02d5dc494ddfc1fcd7da82344fd23f643efd1057084652f2800000000000000020000000004001020301010803010120030000")
 				b.Payload.DeployAndInstallPlugin.Body = InMsgBody{
-					SumType: SubscriptionV2DeployMsgOp,
-					OpCode:  pointer(SubscriptionV2DeployMsgOpCode),
-					Value: SubscriptionV2DeployMsgBody{
+					SumType: SubscriptionDeployMsgOp,
+					OpCode:  pointer(SubscriptionDeployMsgOpCode),
+					Value: SubscriptionDeployMsgBody{
 						QueryId:           0,
 						FirstChargingDate: 0,
 						PaymentPerPeriod:  20_000_000,

@@ -41,6 +41,11 @@ func TestMooncxSwapParams(t *testing.T) {
 			json: `{"MinOut":"3","Deadline":0,"Excess":"","Referral":null,"NextFulfill":{"Recipient":"0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb","Payload":"b5ee9c7201010101000800000b0000177beb90"},"NextReject":null}`,
 			want: `{"MinOut":"3","Deadline":0,"Excess":"","Referral":"","NextFulfill":{"Recipient":"0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb","Payload":"b5ee9c7201010101000800000b0000177beb90"},"NextReject":null}`,
 		},
+		{
+			name: "normal",
+			json: `{"MinOut":"3","Deadline":0,"Excess":"0:05ea635b2a168cadfca174d72b12744a5b57d70378e6912e8a33b6b39bd3ee9d","Referral":"0:05ea635b2a168cadfca174d72b12744a5b57d70378e6912e8a33b6b39bd3ee9d","NextFulfill":{"Recipient":"0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb","Payload":"b5ee9c7201010101000800000b0000177beb90"},"NextReject":null}`,
+			want: `{"MinOut":"3","Deadline":0,"Excess":"0:05ea635b2a168cadfca174d72b12744a5b57d70378e6912e8a33b6b39bd3ee9d","Referral":"0:05ea635b2a168cadfca174d72b12744a5b57d70378e6912e8a33b6b39bd3ee9d","NextFulfill":{"Recipient":"0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb","Payload":"b5ee9c7201010101000800000b0000177beb90"},"NextReject":null}`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

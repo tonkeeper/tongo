@@ -17,6 +17,28 @@
             <internal name="stonfi_cb_add_liquidity_v2"/>
         </msg_in>
     </interface>
+    <interface name="stonfi_pool_v2_stableswap">
+        <get_method name="get_pool_data" version="stonfi_v2_stableswap"/>
+        <get_method name="get_lp_account_address" version="stonfi"/>
+        <msg_in>
+            <internal name="stonfi_burn_notification_ext_v2"/>
+            <internal name="stonfi_swap_v2"/>
+            <internal name="stonfi_provide_lp_v2"/>
+            <internal name="pton_reset_gas"/>
+            <internal name="stonfi_cb_add_liquidity_v2"/>
+        </msg_in>
+    </interface>
+    <interface name="stonfi_pool_v2_weighted_stableswap">
+        <get_method name="get_pool_data" version="stonfi_v2_weighted_stableswap"/>
+        <get_method name="get_lp_account_address" version="stonfi"/>
+        <msg_in>
+            <internal name="stonfi_burn_notification_ext_v2"/>
+            <internal name="stonfi_swap_v2"/>
+            <internal name="stonfi_provide_lp_v2"/>
+            <internal name="pton_reset_gas"/>
+            <internal name="stonfi_cb_add_liquidity_v2"/>
+        </msg_in>
+    </interface>
     <interface name="stonfi_router">
         <get_method name="get_router_data" version="stonfi"/>
     </interface>

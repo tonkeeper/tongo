@@ -71,6 +71,8 @@ const (
 	StonfiLpAccountV2
 	StonfiPool
 	StonfiPoolV2
+	StonfiPoolV2Stableswap
+	StonfiPoolV2WeightedStableswap
 	StonfiRouter
 	StonfiRouterV2
 	StonfiVaultV2
@@ -243,6 +245,10 @@ func (c ContractInterface) String() string {
 		return "stonfi_pool"
 	case StonfiPoolV2:
 		return "stonfi_pool_v2"
+	case StonfiPoolV2Stableswap:
+		return "stonfi_pool_v2_stableswap"
+	case StonfiPoolV2WeightedStableswap:
+		return "stonfi_pool_v2_weighted_stableswap"
 	case StonfiRouter:
 		return "stonfi_router"
 	case StonfiRouterV2:
@@ -460,6 +466,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StonfiPool
 	case "stonfi_pool_v2":
 		return StonfiPoolV2
+	case "stonfi_pool_v2_stableswap":
+		return StonfiPoolV2Stableswap
+	case "stonfi_pool_v2_weighted_stableswap":
+		return StonfiPoolV2WeightedStableswap
 	case "stonfi_router":
 		return StonfiRouter
 	case "stonfi_router_v2":
@@ -1228,6 +1238,18 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: StonfiPoolV2,
 		Results: []string{
 			"GetPoolData_StonfiV2Result",
+		},
+	},
+	{
+		Name: StonfiPoolV2Stableswap,
+		Results: []string{
+			"GetPoolData_StonfiV2StableswapResult",
+		},
+	},
+	{
+		Name: StonfiPoolV2WeightedStableswap,
+		Results: []string{
+			"GetPoolData_StonfiV2WeightedStableswapResult",
 		},
 	},
 	{
@@ -2012,6 +2034,22 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncPtonResetGasMsgBody,
 		}
 	case StonfiPoolV2:
+		return []msgDecoderFunc{
+			decodeFuncStonfiBurnNotificationExtV2MsgBody,
+			decodeFuncStonfiSwapV2MsgBody,
+			decodeFuncStonfiProvideLpV2MsgBody,
+			decodeFuncPtonResetGasMsgBody,
+			decodeFuncStonfiCbAddLiquidityV2MsgBody,
+		}
+	case StonfiPoolV2Stableswap:
+		return []msgDecoderFunc{
+			decodeFuncStonfiBurnNotificationExtV2MsgBody,
+			decodeFuncStonfiSwapV2MsgBody,
+			decodeFuncStonfiProvideLpV2MsgBody,
+			decodeFuncPtonResetGasMsgBody,
+			decodeFuncStonfiCbAddLiquidityV2MsgBody,
+		}
+	case StonfiPoolV2WeightedStableswap:
 		return []msgDecoderFunc{
 			decodeFuncStonfiBurnNotificationExtV2MsgBody,
 			decodeFuncStonfiSwapV2MsgBody,

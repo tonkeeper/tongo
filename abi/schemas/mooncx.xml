@@ -3,7 +3,7 @@
     <types>
         next_payload#_ recipient:MsgAddress payload:(Maybe ^Cell) = MoonNextPayload;
 
-        swap_params#_ min_out:(VarUInteger 16) deadline:uint64 excess:(Maybe MsgAddress) referral:(Maybe MsgAddress)
+        swap_params#_ min_out:(VarUInteger 16) deadline:uint64 excess:MsgAddress referral:MsgAddress
         next_fulfill:(Maybe ^MoonNextPayload) next_reject:(Maybe ^MoonNextPayload) = MoonSwapParams;
 
         order_data#_ rate:uint256 lock:uint2 vesting_time:uint64 = MoonOrderParams;

@@ -89,8 +89,6 @@ var (
 	decodeFuncWhalesNominatorsStakeWithdrawCompletedMsgBody = decodeMsg(tlb.Tag{Val: 0x23d421e1, Len: 32}, WhalesNominatorsStakeWithdrawCompletedMsgOp, WhalesNominatorsStakeWithdrawCompletedMsgBody{})
 	// 0x2508d66a
 	decodeFuncJettonUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x2508d66a, Len: 32}, JettonUpgradeMsgOp, JettonUpgradeMsgBody{})
-	// 0x250ad226
-	decodeFuncBidaskMultitokenMintMsgBody = decodeMsg(tlb.Tag{Val: 0x250ad226, Len: 32}, BidaskMultitokenMintMsgOp, BidaskMultitokenMintMsgBody{})
 	// 0x251d6a98
 	decodeFuncWhalesNominatorsWithdrawUnownedMsgBody = decodeMsg(tlb.Tag{Val: 0x251d6a98, Len: 32}, WhalesNominatorsWithdrawUnownedMsgOp, WhalesNominatorsWithdrawUnownedMsgBody{})
 	// 0x25432a91
@@ -467,8 +465,6 @@ var (
 	decodeFuncStormCompleteOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xcf90d618, Len: 32}, StormCompleteOrderMsgOp, StormCompleteOrderMsgBody{})
 	// 0xd0c3bfea
 	decodeFuncSbtRequestOwnerMsgBody = decodeMsg(tlb.Tag{Val: 0xd0c3bfea, Len: 32}, SbtRequestOwnerMsgOp, SbtRequestOwnerMsgBody{})
-	// 0xd1b02ea5
-	decodeFuncBidaskInternalProvideMsgBody = decodeMsg(tlb.Tag{Val: 0xd1b02ea5, Len: 32}, BidaskInternalProvideMsgOp, BidaskInternalProvideMsgBody{})
 	// 0xd372158c
 	decodeFuncTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TopUpMsgOp, TopUpMsgBody{})
 	// 0xd4caedcd
@@ -667,9 +663,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x2508d66a
 	JettonUpgradeMsgOpCode: decodeFuncJettonUpgradeMsgBody,
-
-	// 0x250ad226
-	BidaskMultitokenMintMsgOpCode: decodeFuncBidaskMultitokenMintMsgBody,
 
 	// 0x251d6a98
 	WhalesNominatorsWithdrawUnownedMsgOpCode: decodeFuncWhalesNominatorsWithdrawUnownedMsgBody,
@@ -1238,9 +1231,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xd0c3bfea
 	SbtRequestOwnerMsgOpCode: decodeFuncSbtRequestOwnerMsgBody,
 
-	// 0xd1b02ea5
-	BidaskInternalProvideMsgOpCode: decodeFuncBidaskInternalProvideMsgBody,
-
 	// 0xd372158c
 	TopUpMsgOpCode: decodeFuncTopUpMsgBody,
 
@@ -1392,7 +1382,6 @@ const (
 	JettonCallToMsgOp                            MsgOpName = "JettonCallTo"
 	WhalesNominatorsStakeWithdrawCompletedMsgOp  MsgOpName = "WhalesNominatorsStakeWithdrawCompleted"
 	JettonUpgradeMsgOp                           MsgOpName = "JettonUpgrade"
-	BidaskMultitokenMintMsgOp                    MsgOpName = "BidaskMultitokenMint"
 	WhalesNominatorsWithdrawUnownedMsgOp         MsgOpName = "WhalesNominatorsWithdrawUnowned"
 	FinishUncooperativeChannelCloseMsgOp         MsgOpName = "FinishUncooperativeChannelClose"
 	StonfiSwapMsgOp                              MsgOpName = "StonfiSwap"
@@ -1581,7 +1570,6 @@ const (
 	JettonChangeMetadataMsgOp                    MsgOpName = "JettonChangeMetadata"
 	StormCompleteOrderMsgOp                      MsgOpName = "StormCompleteOrder"
 	SbtRequestOwnerMsgOp                         MsgOpName = "SbtRequestOwner"
-	BidaskInternalProvideMsgOp                   MsgOpName = "BidaskInternalProvide"
 	TopUpMsgOp                                   MsgOpName = "TopUp"
 	StorageContractConfirmedMsgOp                MsgOpName = "StorageContractConfirmed"
 	ExcessMsgOp                                  MsgOpName = "Excess"
@@ -1662,7 +1650,6 @@ const (
 	JettonCallToMsgOpCode                            MsgOpCode = 0x235caf52
 	WhalesNominatorsStakeWithdrawCompletedMsgOpCode  MsgOpCode = 0x23d421e1
 	JettonUpgradeMsgOpCode                           MsgOpCode = 0x2508d66a
-	BidaskMultitokenMintMsgOpCode                    MsgOpCode = 0x250ad226
 	WhalesNominatorsWithdrawUnownedMsgOpCode         MsgOpCode = 0x251d6a98
 	FinishUncooperativeChannelCloseMsgOpCode         MsgOpCode = 0x25432a91
 	StonfiSwapMsgOpCode                              MsgOpCode = 0x25938561
@@ -1851,7 +1838,6 @@ const (
 	JettonChangeMetadataMsgOpCode                    MsgOpCode = 0xcb862902
 	StormCompleteOrderMsgOpCode                      MsgOpCode = 0xcf90d618
 	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
-	BidaskInternalProvideMsgOpCode                   MsgOpCode = 0xd1b02ea5
 	TopUpMsgOpCode                                   MsgOpCode = 0xd372158c
 	StorageContractConfirmedMsgOpCode                MsgOpCode = 0xd4caedcd
 	ExcessMsgOpCode                                  MsgOpCode = 0xd53276db
@@ -2183,15 +2169,6 @@ type JettonUpgradeMsgBody struct {
 	QueryId uint64
 	NewData tlb.Any `tlb:"^"`
 	NewCode tlb.Any `tlb:"^"`
-}
-
-type BidaskMultitokenMintMsgBody struct {
-	QueryId        uint64
-	Field1         *tlb.Any `tlb:"maybe^"`
-	Field2         *tlb.Any `tlb:"maybe^"`
-	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
-	NumberOfBins   uint32
-	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type WhalesNominatorsWithdrawUnownedMsgBody struct {
@@ -3424,22 +3401,6 @@ type SbtRequestOwnerMsgBody struct {
 	WithContent    bool
 }
 
-type BidaskInternalProvideMsgBody struct {
-	QueryId    uint64
-	Field1     *tlb.Any `tlb:"maybe^"`
-	Field2     *tlb.Any `tlb:"maybe^"`
-	Field3     *tlb.Any `tlb:"maybe^"`
-	AmountX    tlb.Grams
-	AmountY    tlb.Grams
-	ToAddress  tlb.MsgAddress
-	DexPayload struct {
-		FirstBin      int32
-		LiquidityDict tlb.HashmapE[tlb.Uint32, int32]
-		CurrentBin    int32
-		Remaining     tlb.Any
-	} `tlb:"^"`
-}
-
 type TopUpMsgBody struct {
 	QueryId uint64
 }
@@ -3695,7 +3656,6 @@ var KnownMsgInTypes = map[string]any{
 	JettonCallToMsgOp:                            JettonCallToMsgBody{},
 	WhalesNominatorsStakeWithdrawCompletedMsgOp:  WhalesNominatorsStakeWithdrawCompletedMsgBody{},
 	JettonUpgradeMsgOp:                           JettonUpgradeMsgBody{},
-	BidaskMultitokenMintMsgOp:                    BidaskMultitokenMintMsgBody{},
 	WhalesNominatorsWithdrawUnownedMsgOp:         WhalesNominatorsWithdrawUnownedMsgBody{},
 	FinishUncooperativeChannelCloseMsgOp:         FinishUncooperativeChannelCloseMsgBody{},
 	StonfiSwapMsgOp:                              StonfiSwapMsgBody{},
@@ -3884,7 +3844,6 @@ var KnownMsgInTypes = map[string]any{
 	JettonChangeMetadataMsgOp:                    JettonChangeMetadataMsgBody{},
 	StormCompleteOrderMsgOp:                      StormCompleteOrderMsgBody{},
 	SbtRequestOwnerMsgOp:                         SbtRequestOwnerMsgBody{},
-	BidaskInternalProvideMsgOp:                   BidaskInternalProvideMsgBody{},
 	TopUpMsgOp:                                   TopUpMsgBody{},
 	StorageContractConfirmedMsgOp:                StorageContractConfirmedMsgBody{},
 	ExcessMsgOp:                                  ExcessMsgBody{},

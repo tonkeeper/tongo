@@ -3428,7 +3428,7 @@ type BidaskInternalProvideMsgBody struct {
 	QueryId    uint64
 	Field1     *tlb.Any `tlb:"maybe^"`
 	Field2     *tlb.Any `tlb:"maybe^"`
-	Field3     *tlb.Any `tlb:"maybe^"`
+	Field3     tlb.Any  `tlb:"^"`
 	AmountX    tlb.Grams
 	AmountY    tlb.Grams
 	ToAddress  tlb.MsgAddress

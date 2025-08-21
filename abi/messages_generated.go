@@ -7,20 +7,14 @@ import (
 )
 
 var (
-	// 0x02422cbe
-	decodeFuncBidaskProvideRefundMsgBody = decodeMsg(tlb.Tag{Val: 0x02422cbe, Len: 28}, BidaskProvideRefundMsgOp, BidaskProvideRefundMsgBody{})
-	// 0x0a9577f0
-	decodeFuncCoffeeStakingUpdateRewardsMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 28}, CoffeeStakingUpdateRewardsMsgOp, CoffeeStakingUpdateRewardsMsgBody{})
-	// 0x0c09445a
-	decodeFuncBidaskInternalContinueProvideMsgBody = decodeMsg(tlb.Tag{Val: 0x0c09445a, Len: 28}, BidaskInternalContinueProvideMsgOp, BidaskInternalContinueProvideMsgBody{})
-	// 0x0dc8bb28
-	decodeFuncBidaskLiquidityAddedNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x0dc8bb28, Len: 28}, BidaskLiquidityAddedNotifyMsgOp, BidaskLiquidityAddedNotifyMsgBody{})
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
 	// 0x01f3835d
 	decodeFuncPtonTonTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x01f3835d, Len: 32}, PtonTonTransferMsgOp, PtonTonTransferMsgBody{})
 	// 0x0226df66
 	decodeFuncStormVaultRequestWithdrawPositionMsgBody = decodeMsg(tlb.Tag{Val: 0x0226df66, Len: 32}, StormVaultRequestWithdrawPositionMsgOp, StormVaultRequestWithdrawPositionMsgBody{})
+	// 0x02422cbe
+	decodeFuncBidaskProvideRefundMsgBody = decodeMsg(tlb.Tag{Val: 0x02422cbe, Len: 32}, BidaskProvideRefundMsgOp, BidaskProvideRefundMsgBody{})
 	// 0x0490f09b
 	decodeFuncStonfiDepositRefFeeV2MsgBody = decodeMsg(tlb.Tag{Val: 0x0490f09b, Len: 32}, StonfiDepositRefFeeV2MsgOp, StonfiDepositRefFeeV2MsgBody{})
 	// 0x04ded148
@@ -35,6 +29,12 @@ var (
 	decodeFuncChallengeQuarantinedChannelStateMsgBody = decodeMsg(tlb.Tag{Val: 0x088eaa32, Len: 32}, ChallengeQuarantinedChannelStateMsgOp, ChallengeQuarantinedChannelStateMsgBody{})
 	// 0x0a77535c
 	decodeFuncTonstakePoolWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0x0a77535c, Len: 32}, TonstakePoolWithdrawalMsgOp, TonstakePoolWithdrawalMsgBody{})
+	// 0x0a9577f0
+	decodeFuncCoffeeStakingUpdateRewardsMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 32}, CoffeeStakingUpdateRewardsMsgOp, CoffeeStakingUpdateRewardsMsgBody{})
+	// 0x0c09445a
+	decodeFuncBidaskInternalContinueProvideMsgBody = decodeMsg(tlb.Tag{Val: 0x0c09445a, Len: 32}, BidaskInternalContinueProvideMsgOp, BidaskInternalContinueProvideMsgBody{})
+	// 0x0dc8bb28
+	decodeFuncBidaskLiquidityAddedNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0x0dc8bb28, Len: 32}, BidaskLiquidityAddedNotifyMsgOp, BidaskLiquidityAddedNotifyMsgBody{})
 	// 0x0dd607e3
 	decodeFuncSbtOwnerInfoMsgBody = decodeMsg(tlb.Tag{Val: 0x0dd607e3, Len: 32}, SbtOwnerInfoMsgOp, SbtOwnerInfoMsgBody{})
 	// 0x0e0620c2
@@ -554,6 +554,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x0226df66
 	StormVaultRequestWithdrawPositionMsgOpCode: decodeFuncStormVaultRequestWithdrawPositionMsgBody,
 
+	// 0x02422cbe
+	BidaskProvideRefundMsgOpCode: decodeFuncBidaskProvideRefundMsgBody,
+
 	// 0x0490f09b
 	StonfiDepositRefFeeV2MsgOpCode: decodeFuncStonfiDepositRefFeeV2MsgBody,
 
@@ -574,6 +577,15 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x0a77535c
 	TonstakePoolWithdrawalMsgOpCode: decodeFuncTonstakePoolWithdrawalMsgBody,
+
+	// 0x0a9577f0
+	CoffeeStakingUpdateRewardsMsgOpCode: decodeFuncCoffeeStakingUpdateRewardsMsgBody,
+
+	// 0x0c09445a
+	BidaskInternalContinueProvideMsgOpCode: decodeFuncBidaskInternalContinueProvideMsgBody,
+
+	// 0x0dc8bb28
+	BidaskLiquidityAddedNotifyMsgOpCode: decodeFuncBidaskLiquidityAddedNotifyMsgBody,
 
 	// 0x0dd607e3
 	SbtOwnerInfoMsgOpCode: decodeFuncSbtOwnerInfoMsgBody,
@@ -1339,13 +1351,10 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 }
 
 const (
-	BidaskProvideRefundMsgOp                     MsgOpName = "BidaskProvideRefund"
-	CoffeeStakingUpdateRewardsMsgOp              MsgOpName = "CoffeeStakingUpdateRewards"
-	BidaskInternalContinueProvideMsgOp           MsgOpName = "BidaskInternalContinueProvide"
-	BidaskLiquidityAddedNotifyMsgOp              MsgOpName = "BidaskLiquidityAddedNotify"
 	TextCommentMsgOp                             MsgOpName = "TextComment"
 	PtonTonTransferMsgOp                         MsgOpName = "PtonTonTransfer"
 	StormVaultRequestWithdrawPositionMsgOp       MsgOpName = "StormVaultRequestWithdrawPosition"
+	BidaskProvideRefundMsgOp                     MsgOpName = "BidaskProvideRefund"
 	StonfiDepositRefFeeV2MsgOp                   MsgOpName = "StonfiDepositRefFeeV2"
 	ProveOwnershipMsgOp                          MsgOpName = "ProveOwnership"
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
@@ -1353,6 +1362,9 @@ const (
 	StonfiCbAddLiquidityV2MsgOp                  MsgOpName = "StonfiCbAddLiquidityV2"
 	ChallengeQuarantinedChannelStateMsgOp        MsgOpName = "ChallengeQuarantinedChannelState"
 	TonstakePoolWithdrawalMsgOp                  MsgOpName = "TonstakePoolWithdrawal"
+	CoffeeStakingUpdateRewardsMsgOp              MsgOpName = "CoffeeStakingUpdateRewards"
+	BidaskInternalContinueProvideMsgOp           MsgOpName = "BidaskInternalContinueProvide"
+	BidaskLiquidityAddedNotifyMsgOp              MsgOpName = "BidaskLiquidityAddedNotify"
 	SbtOwnerInfoMsgOp                            MsgOpName = "SbtOwnerInfo"
 	InitPaymentChannelMsgOp                      MsgOpName = "InitPaymentChannel"
 	JettonTransferMsgOp                          MsgOpName = "JettonTransfer"
@@ -1609,13 +1621,10 @@ const (
 )
 
 const (
-	BidaskProvideRefundMsgOpCode                     MsgOpCode = 0x02422cbe
-	CoffeeStakingUpdateRewardsMsgOpCode              MsgOpCode = 0x0a9577f0
-	BidaskInternalContinueProvideMsgOpCode           MsgOpCode = 0x0c09445a
-	BidaskLiquidityAddedNotifyMsgOpCode              MsgOpCode = 0x0dc8bb28
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
 	PtonTonTransferMsgOpCode                         MsgOpCode = 0x01f3835d
 	StormVaultRequestWithdrawPositionMsgOpCode       MsgOpCode = 0x0226df66
+	BidaskProvideRefundMsgOpCode                     MsgOpCode = 0x02422cbe
 	StonfiDepositRefFeeV2MsgOpCode                   MsgOpCode = 0x0490f09b
 	ProveOwnershipMsgOpCode                          MsgOpCode = 0x04ded148
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
@@ -1623,6 +1632,9 @@ const (
 	StonfiCbAddLiquidityV2MsgOpCode                  MsgOpCode = 0x06ecd527
 	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x088eaa32
 	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0x0a77535c
+	CoffeeStakingUpdateRewardsMsgOpCode              MsgOpCode = 0x0a9577f0
+	BidaskInternalContinueProvideMsgOpCode           MsgOpCode = 0x0c09445a
+	BidaskLiquidityAddedNotifyMsgOpCode              MsgOpCode = 0x0dc8bb28
 	SbtOwnerInfoMsgOpCode                            MsgOpCode = 0x0dd607e3
 	InitPaymentChannelMsgOpCode                      MsgOpCode = 0x0e0620c2
 	JettonTransferMsgOpCode                          MsgOpCode = 0x0f8a7ea5
@@ -1878,44 +1890,6 @@ const (
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
-type BidaskProvideRefundMsgBody struct {
-	QueryId       uint64
-	FirstRangeBin int32
-	XExcess       tlb.Grams
-	YExcess       tlb.Grams
-	UserAddress   tlb.MsgAddress
-	RejectPayload *tlb.Any `tlb:"maybe^"`
-	Order         bool
-}
-
-type CoffeeStakingUpdateRewardsMsgBody struct {
-	QueryId      uint64
-	JettonWallet tlb.MsgAddress
-	JettonAmount tlb.Grams
-	Duration     uint64
-}
-
-type BidaskInternalContinueProvideMsgBody struct {
-	QueryId        uint64
-	AmountX        tlb.Grams
-	AmountY        tlb.Grams
-	ExcessX        tlb.Grams
-	ExcessY        tlb.Grams
-	UserAddress    tlb.MsgAddress
-	FirstBin       int32
-	NumberOfBins   uint32
-	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
-	LpTokens       tlb.HashmapE[tlb.Uint32, int32]
-	RejectPayload  *tlb.Any `tlb:"maybe^"`
-	ForwardPayload *tlb.Any `tlb:"maybe^"`
-	Order          bool
-}
-
-type BidaskLiquidityAddedNotifyMsgBody struct {
-	QueryId        uint64
-	ForwardPayload *tlb.Any `tlb:"maybe^"`
-}
-
 type TextCommentMsgBody struct {
 	Text tlb.Text
 }
@@ -1933,6 +1907,16 @@ type StormVaultRequestWithdrawPositionMsgBody struct {
 	Amount         tlb.Grams
 	GasToAddr      tlb.MsgAddress
 	WithdrawReason uint32
+}
+
+type BidaskProvideRefundMsgBody struct {
+	QueryId       uint64
+	FirstRangeBin int32
+	XExcess       tlb.Grams
+	YExcess       tlb.Grams
+	UserAddress   tlb.MsgAddress
+	RejectPayload *tlb.Any `tlb:"maybe^"`
+	Order         bool
 }
 
 type StonfiDepositRefFeeV2MsgBody struct {
@@ -1989,6 +1973,34 @@ type ChallengeQuarantinedChannelStateMsgBody struct {
 
 type TonstakePoolWithdrawalMsgBody struct {
 	QueryId uint64
+}
+
+type CoffeeStakingUpdateRewardsMsgBody struct {
+	QueryId      uint64
+	JettonWallet tlb.MsgAddress
+	JettonAmount tlb.Grams
+	Duration     uint64
+}
+
+type BidaskInternalContinueProvideMsgBody struct {
+	QueryId        uint64
+	AmountX        tlb.Grams
+	AmountY        tlb.Grams
+	ExcessX        tlb.Grams
+	ExcessY        tlb.Grams
+	UserAddress    tlb.MsgAddress
+	FirstBin       int32
+	NumberOfBins   uint32
+	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
+	LpTokens       tlb.HashmapE[tlb.Uint32, int32]
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
+	Order          bool
+}
+
+type BidaskLiquidityAddedNotifyMsgBody struct {
+	QueryId        uint64
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type SbtOwnerInfoMsgBody struct {
@@ -3642,13 +3654,10 @@ type BounceMsgBody struct {
 }
 
 var KnownMsgInTypes = map[string]any{
-	BidaskProvideRefundMsgOp:                     BidaskProvideRefundMsgBody{},
-	CoffeeStakingUpdateRewardsMsgOp:              CoffeeStakingUpdateRewardsMsgBody{},
-	BidaskInternalContinueProvideMsgOp:           BidaskInternalContinueProvideMsgBody{},
-	BidaskLiquidityAddedNotifyMsgOp:              BidaskLiquidityAddedNotifyMsgBody{},
 	TextCommentMsgOp:                             TextCommentMsgBody{},
 	PtonTonTransferMsgOp:                         PtonTonTransferMsgBody{},
 	StormVaultRequestWithdrawPositionMsgOp:       StormVaultRequestWithdrawPositionMsgBody{},
+	BidaskProvideRefundMsgOp:                     BidaskProvideRefundMsgBody{},
 	StonfiDepositRefFeeV2MsgOp:                   StonfiDepositRefFeeV2MsgBody{},
 	ProveOwnershipMsgOp:                          ProveOwnershipMsgBody{},
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
@@ -3656,6 +3665,9 @@ var KnownMsgInTypes = map[string]any{
 	StonfiCbAddLiquidityV2MsgOp:                  StonfiCbAddLiquidityV2MsgBody{},
 	ChallengeQuarantinedChannelStateMsgOp:        ChallengeQuarantinedChannelStateMsgBody{},
 	TonstakePoolWithdrawalMsgOp:                  TonstakePoolWithdrawalMsgBody{},
+	CoffeeStakingUpdateRewardsMsgOp:              CoffeeStakingUpdateRewardsMsgBody{},
+	BidaskInternalContinueProvideMsgOp:           BidaskInternalContinueProvideMsgBody{},
+	BidaskLiquidityAddedNotifyMsgOp:              BidaskLiquidityAddedNotifyMsgBody{},
 	SbtOwnerInfoMsgOp:                            SbtOwnerInfoMsgBody{},
 	InitPaymentChannelMsgOp:                      InitPaymentChannelMsgBody{},
 	JettonTransferMsgOp:                          JettonTransferMsgBody{},
@@ -4030,7 +4042,7 @@ var KnownMsgExtInTypes = map[string]any{
 
 var (
 	// 0x0a9577f0
-	decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 28}, CoffeeStakingRewardsUpdatedExtOutMsgOp, CoffeeStakingRewardsUpdatedExtOutMsgBody{})
+	decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 32}, CoffeeStakingRewardsUpdatedExtOutMsgOp, CoffeeStakingRewardsUpdatedExtOutMsgBody{})
 	// 0x3aa870a6
 	decodeFuncDedustWithdrawalExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x3aa870a6, Len: 32}, DedustWithdrawalExtOutMsgOp, DedustWithdrawalExtOutMsgBody{})
 	// 0x56a8e920
@@ -4056,6 +4068,9 @@ var (
 )
 
 var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
+
+	// 0x0a9577f0
+	CoffeeStakingRewardsUpdatedExtOutMsgOpCode: decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody,
 
 	// 0x3aa870a6
 	DedustWithdrawalExtOutMsgOpCode: decodeFuncDedustWithdrawalExtOutMsgBody,

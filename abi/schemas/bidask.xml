@@ -179,11 +179,6 @@
         slippage:(Either Coins uint256) ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
-    <internal name="bidask_internal_provide" >
-        bidask_internal_provide#d1b02ea5 query_id:uint64 _:(Maybe ^Cell) _:(Maybe ^Cell) _:(Maybe ^Cell) amount_x:Coins amount_y:Coins to_address:MsgAddress
-        dex_payload:^[first_bin:int32 liquidity_dict:(HashmapE 32 int32) current_bin:int32 remaining:Cell]  = InternalMsgBody;
-    </internal>
-
     <internal name="bidask_internal_continue_provide" >
         bidask_internal_continue_provide#0c09445a query_id:uint64 amount_x:Coins amount_y:Coins excess_x:Coins excess_y:Coins user_address:MsgAddress
         first_bin:int32 number_of_bins:uint32 liquidity_dict:(HashmapE 32 int32) lp_tokens:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell) order:Bool = InternalMsgBody;
@@ -202,11 +197,6 @@
     <internal name="bidask_internal_burn" >
         bidask_internal_burn#16e09400 query_id:uint64 owner_address:MsgAddress amount_x:Coins amount_y:Coins first_bin:int32 
         tokens_to_burn:(HashmapE 32 int32) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
-    </internal>
-
-    <internal name="bidask_multitoken_mint" >
-        bidask_multitoken_mint#250ad226 query_id:uint64 _:(Maybe ^Cell) _:(Maybe ^Cell) liquidity_dict:(HashmapE 32 int32) 
-        number_of_bins:uint32 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_burn" >

@@ -3,15 +3,16 @@ package txemulator
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/liteclient"
 	"time"
+
+	"math/rand"
 
 	"github.com/tonkeeper/tongo/boc"
 	codePkg "github.com/tonkeeper/tongo/code"
 	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/liteclient"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
-	"math/rand"
 )
 
 type Tracer struct {
@@ -292,7 +293,6 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 	tree := &TxTree{
 		TX: result.Emulation.Transaction,
 	}
-	localTime := t.currentTime
 	for _, m := range result.Emulation.Transaction.Msgs.OutMsgs.Values() {
 		if m.Value.Info.SumType == "ExtOutMsgInfo" {
 			continue
@@ -306,11 +306,10 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 			return nil, err
 		}
 		if destShard != sourceShard {
-			if err := t.addRandomDelay(localTime); err != nil {
+			if err := t.addRandomDelay(); err != nil {
 				return nil, fmt.Errorf("failed to add random delay: %v", err)
 			}
 		}
-		t.currentTime = localTime
 		child, err := t.Run(ctx, m.Value, signatureIgnoreDepth-1)
 		if err != nil {
 			return tree, err
@@ -320,11 +319,10 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 	return tree, err
 }
 
-func (t *Tracer) addRandomDelay(currentTime uint32) error {
+func (t *Tracer) addRandomDelay() error {
 	delay := rand.Intn(11) + 5 // random number between 5 and 15
-	currentTime += uint32(delay)
-	t.currentTime = currentTime
-	return t.e.SetUnixtime(currentTime)
+	t.currentTime += uint32(delay)
+	return t.e.SetUnixtime(t.currentTime)
 }
 
 func (t *Tracer) getAccountShard(account ton.AccountID) (ton.ShardID, error) {

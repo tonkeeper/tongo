@@ -228,7 +228,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 		for _, task := range tasks {
 			child, err := task.run()
 			if err != nil {
-				return root, err
+				return nil, err
 			}
 			task.parent.Children[task.idx] = child
 		}
@@ -305,29 +305,29 @@ func (t *Tracer) run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 			return nil, err
 		}
 	}
-	result, err := t.e.Emulate(state, message)
+	emulationRes, err := t.e.Emulate(state, message)
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != nil {
+	if emulationRes.Error != nil {
 		return nil, ErrorWithExitCode{
-			Message:   fmt.Sprintf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, result.Error.ExitCode, result.Error.Text),
-			ExitCode:  result.Error.ExitCode,
+			Message:   fmt.Sprintf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, emulationRes.Error.ExitCode, emulationRes.Error.Text),
+			ExitCode:  emulationRes.Error.ExitCode,
 			Iteration: t.counter,
 		}
 	}
-	if result.Emulation == nil {
+	if emulationRes.Emulation == nil {
 		return nil, fmt.Errorf("empty emulation result on iteration %v", t.counter)
 	}
 	t.counter++
-	t.currentShardAccount[*accountAddr] = result.Emulation.ShardAccount
+	t.currentShardAccount[*accountAddr] = emulationRes.Emulation.ShardAccount
 
 	tree := &TxTree{
-		TX: result.Emulation.Transaction,
+		TX: emulationRes.Emulation.Transaction,
 	}
 
 	var outs []tlb.Message
-	for _, m := range result.Emulation.Transaction.Msgs.OutMsgs.Values() {
+	for _, m := range emulationRes.Emulation.Transaction.Msgs.OutMsgs.Values() {
 		if m.Value.Info.SumType == "ExtOutMsgInfo" {
 			continue
 		}
@@ -361,11 +361,11 @@ func (t *Tracer) run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 		}
 		child, err := t.run(ctx, msg, childDepth)
 		if err != nil {
-			return tree, err
+			return nil, err
 		}
 		tree.Children[i] = child
 	}
-	return tree, err
+	return tree, nil
 }
 
 func (t *Tracer) addRandomDelay() error {

@@ -74,6 +74,9 @@ func (t *VmStkTuple) RecursiveToSlice() ([]VmStackValue, error) {
 func (t VmTuple) RecursiveToSlice(depth int) ([]VmStackValue, error) {
 	var sl []VmStackValue
 	var err error
+	if depth == 1 {
+		return append(sl, t.Tail), nil
+	}
 	if depth == 2 {
 		if t.Head.Entry == nil {
 			return nil, fmt.Errorf("stack tuple invalid depth")

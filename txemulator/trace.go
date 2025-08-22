@@ -219,9 +219,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 		return nil, err
 	}
 	for len(t.pending) > 0 {
-		delay := rand.Intn(11) + 5 // random number between 5 and 15
-		t.currentTime += uint32(delay)
-		err = t.e.SetUnixtime(t.currentTime)
+		err = t.addRandomDelay()
 		if err != nil {
 			return nil, err
 		}
@@ -370,11 +368,10 @@ func (t *Tracer) run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 	return tree, err
 }
 
-func (t *Tracer) addRandomDelay(currentTime uint32) error {
+func (t *Tracer) addRandomDelay() error {
 	delay := rand.Intn(11) + 5 // random number between 5 and 15
-	currentTime += uint32(delay)
-	t.currentTime = currentTime
-	return t.e.SetUnixtime(currentTime)
+	t.currentTime += uint32(delay)
+	return t.e.SetUnixtime(t.currentTime)
 }
 
 func (t *Tracer) getAccountShard(account ton.AccountID) (ton.ShardID, error) {

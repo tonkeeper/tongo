@@ -3,15 +3,17 @@ package txemulator
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/liteclient"
 	"time"
+
+	"github.com/tonkeeper/tongo/liteclient"
+
+	"math/rand"
 
 	"github.com/tonkeeper/tongo/boc"
 	codePkg "github.com/tonkeeper/tongo/code"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
-	"math/rand"
 )
 
 type Tracer struct {
@@ -23,6 +25,13 @@ type Tracer struct {
 	softLimit           int
 	currentTime         uint32
 	shardConfig         map[ton.ShardID]struct{}
+	pending             []pendingTask
+}
+
+type pendingTask struct {
+	parent *TxTree
+	idx    int
+	run    func() (*TxTree, error)
 }
 
 type TxTree struct {
@@ -205,6 +214,29 @@ func msgStateInitCode(msg tlb.Message) *boc.Cell {
 }
 
 func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDepth int) (*TxTree, error) {
+	root, err := t.run(ctx, message, signatureIgnoreDepth)
+	if err != nil {
+		return nil, err
+	}
+	for len(t.pending) > 0 {
+		err = t.addRandomDelay()
+		if err != nil {
+			return nil, err
+		}
+		tasks := t.pending
+		t.pending = nil
+		for _, task := range tasks {
+			child, err := task.run()
+			if err != nil {
+				return nil, err
+			}
+			task.parent.Children[task.idx] = child
+		}
+	}
+	return root, nil
+}
+
+func (t *Tracer) run(ctx context.Context, message tlb.Message, signatureIgnoreDepth int) (*TxTree, error) {
 	if t.counter >= t.limit {
 		return nil, fmt.Errorf("to many iterations: %v/%v", t.counter, t.limit)
 	}
@@ -273,31 +305,43 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 			return nil, err
 		}
 	}
-	result, err := t.e.Emulate(state, message)
+	emulationRes, err := t.e.Emulate(state, message)
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != nil {
+	if emulationRes.Error != nil {
 		return nil, ErrorWithExitCode{
-			Message:   fmt.Sprintf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, result.Error.ExitCode, result.Error.Text),
-			ExitCode:  result.Error.ExitCode,
+			Message:   fmt.Sprintf("iteration: %v, exitCode: %v, Text: %v, ", t.counter, emulationRes.Error.ExitCode, emulationRes.Error.Text),
+			ExitCode:  emulationRes.Error.ExitCode,
 			Iteration: t.counter,
 		}
 	}
-	if result.Emulation == nil {
+	if emulationRes.Emulation == nil {
 		return nil, fmt.Errorf("empty emulation result on iteration %v", t.counter)
 	}
 	t.counter++
-	t.currentShardAccount[*accountAddr] = result.Emulation.ShardAccount
+	t.currentShardAccount[*accountAddr] = emulationRes.Emulation.ShardAccount
+
 	tree := &TxTree{
-		TX: result.Emulation.Transaction,
+		TX: emulationRes.Emulation.Transaction,
 	}
-	localTime := t.currentTime
-	for _, m := range result.Emulation.Transaction.Msgs.OutMsgs.Values() {
+
+	var outs []tlb.Message
+	for _, m := range emulationRes.Emulation.Transaction.Msgs.OutMsgs.Values() {
 		if m.Value.Info.SumType == "ExtOutMsgInfo" {
 			continue
 		}
-		destAddr, err := ton.AccountIDFromTlb(m.Value.Info.IntMsgInfo.Dest)
+		outs = append(outs, m.Value)
+	}
+	if len(outs) > 0 {
+		tree.Children = make([]*TxTree, len(outs))
+	}
+
+	for i, m := range outs {
+		msg := m
+		childDepth := signatureIgnoreDepth - 1
+
+		destAddr, err := ton.AccountIDFromTlb(msg.Info.IntMsgInfo.Dest)
 		if destAddr == nil {
 			return nil, fmt.Errorf("destination account is null")
 		}
@@ -306,25 +350,28 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 			return nil, err
 		}
 		if destShard != sourceShard {
-			if err := t.addRandomDelay(localTime); err != nil {
-				return nil, fmt.Errorf("failed to add random delay: %v", err)
-			}
+			t.pending = append(t.pending, pendingTask{
+				parent: tree,
+				idx:    i,
+				run: func() (*TxTree, error) {
+					return t.run(ctx, msg, childDepth)
+				},
+			})
+			continue
 		}
-		t.currentTime = localTime
-		child, err := t.Run(ctx, m.Value, signatureIgnoreDepth-1)
+		child, err := t.run(ctx, msg, childDepth)
 		if err != nil {
-			return tree, err
+			return nil, err
 		}
-		tree.Children = append(tree.Children, child)
+		tree.Children[i] = child
 	}
-	return tree, err
+	return tree, nil
 }
 
-func (t *Tracer) addRandomDelay(currentTime uint32) error {
+func (t *Tracer) addRandomDelay() error {
 	delay := rand.Intn(11) + 5 // random number between 5 and 15
-	currentTime += uint32(delay)
-	t.currentTime = currentTime
-	return t.e.SetUnixtime(currentTime)
+	t.currentTime += uint32(delay)
+	return t.e.SetUnixtime(t.currentTime)
 }
 
 func (t *Tracer) getAccountShard(account ton.AccountID) (ton.ShardID, error) {

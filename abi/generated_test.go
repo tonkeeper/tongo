@@ -161,7 +161,7 @@ func TestGetMethods(t *testing.T) {
 			want: GetSubscriptionInfo_V2Result{
 				Wallet:         mustToMsgAddress("0:ab09122ffb940fade96b6026c6e78216a8bd12840041a53fe84d3591cad90156"),
 				WalletVersion:  4,
-				Beneficiary:    mustToMsgAddress("0:fd27a762fdf204f7643b29a211a729e7426bc09414e3a7932f628895a4f795f3"),
+				Admin:          mustToMsgAddress("0:fd27a762fdf204f7643b29a211a729e7426bc09414e3a7932f628895a4f795f3"),
 				SubscriptionId: 0,
 				Metadata:       []byte{},
 			},

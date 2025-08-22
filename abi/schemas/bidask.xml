@@ -160,7 +160,7 @@
     </internal>
 
     <internal name="bidask_provide_refund" >
-        bidask_provide_refund#2422cbe query_id:uint64 first_range_bin:int32 x_excess:Coins y_excess:Coins user_address:MsgAddress 
+        bidask_provide_refund#02422cbe query_id:uint64 first_range_bin:int32 x_excess:Coins y_excess:Coins user_address:MsgAddress
         reject_payload:(Maybe ^Cell) order:Bool  = InternalMsgBody;
     </internal>
 
@@ -185,7 +185,7 @@
     </internal>
 
     <internal name="bidask_internal_continue_provide" >
-        bidask_internal_continue_provide#c09445a query_id:uint64 amount_x:Coins amount_y:Coins excess_x:Coins excess_y:Coins user_address:MsgAddress
+        bidask_internal_continue_provide#0c09445a query_id:uint64 amount_x:Coins amount_y:Coins excess_x:Coins excess_y:Coins user_address:MsgAddress
         first_bin:int32 number_of_bins:uint32 liquidity_dict:(HashmapE 32 int32) lp_tokens:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell) order:Bool = InternalMsgBody;
     </internal>
 
@@ -218,7 +218,7 @@
     </internal>
 
     <internal name="bidask_liquidity_added_notify" >
-        bidask_liquidity_added_notify#dc8bb28 query_id:uint64 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+        bidask_liquidity_added_notify#0dc8bb28 query_id:uint64 forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_native_transfer_notification" >

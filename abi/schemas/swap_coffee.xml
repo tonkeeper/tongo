@@ -531,11 +531,11 @@
         period_id:uint32 = InMsgBody;
     </internal>
     <internal name="coffee_staking_update_rewards">
-        staking_update_rewards#a9577f0 query_id:uint64 jetton_wallet:MsgAddressInt jetton_amount:Coins
+        staking_update_rewards#0a9577f0 query_id:uint64 jetton_wallet:MsgAddressInt jetton_amount:Coins
         duration:uint64 = InMsgBody;
     </internal>
     <ext_out name="coffee_staking_rewards_updated">
-        staking_rewards_updated#a9577f0 query_id:uint64 jetton_wallet:MsgAddressInt duration:uint64 finish_at:uint64
+        staking_rewards_updated#0a9577f0 query_id:uint64 jetton_wallet:MsgAddressInt duration:uint64 finish_at:uint64
         rewards_rate:Coins = ExtOutMsgBody;
     </ext_out>
     <internal name="coffee_staking_claim_rewards">

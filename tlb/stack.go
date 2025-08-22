@@ -89,16 +89,18 @@ func vmTupleInner(n uint16, c *boc.Cell) (*VmTuple, error) {
 		if head != nil {
 			vmTuple.Head = *head
 		}
-		c1, err := c.NextRef()
-		if err != nil {
-			return nil, err
+		if n > 0 { // if input n was 1 then we dont have any tail
+			c1, err := c.NextRef()
+			if err != nil {
+				return nil, err
+			}
+			vmStackValue := VmStackValue{}
+			err = Unmarshal(c1, &vmStackValue)
+			if err != nil {
+				return nil, err
+			}
+			vmTuple.Tail = vmStackValue
 		}
-		vmStackValue := VmStackValue{}
-		err = Unmarshal(c1, &vmStackValue)
-		if err != nil {
-			return nil, err
-		}
-		vmTuple.Tail = vmStackValue
 		return &vmTuple, nil
 	}
 	return nil, nil
@@ -106,7 +108,7 @@ func vmTupleInner(n uint16, c *boc.Cell) (*VmTuple, error) {
 
 func vmTupleRefInner(n uint16, c *boc.Cell) (*VmTupleRef, error) {
 	vmTupleRef := VmTupleRef{}
-	if n == 1 {
+	if n == 0 || n == 1 {
 		c1, err := c.NextRef()
 		if err != nil {
 			return nil, err

@@ -1,9 +1,10 @@
 package tlb
 
 import (
-	"github.com/tonkeeper/tongo/boc"
 	"math/big"
 	"testing"
+
+	"github.com/tonkeeper/tongo/boc"
 )
 
 func TestInt257(t *testing.T) {
@@ -72,4 +73,76 @@ func Test_StackUnmarshal(t *testing.T) {
 		t.Fatalf("invalid decoding")
 	}
 
+}
+
+func Test_IntTupleUnmarshal(t *testing.T) {
+	type test struct {
+		name       string
+		hex        string
+		intsResult []int64
+	}
+
+	tests := []test{
+		{
+			name:       "tuple with 0 items",
+			hex:        "b5ee9c7201010201000b00010c000001070000010000",
+			intsResult: []int64{},
+		},
+		{
+			name:       "tuple with 1 item",
+			hex:        "b5ee9c7201010301001700020c000001070001010200000012010000000000000003",
+			intsResult: []int64{3},
+		},
+		{
+			name:       "tuple with 2 items",
+			hex:        "b5ee9c7201010401002300030c000001070002010203000000120100000000000000030012010000000000000004",
+			intsResult: []int64{3, 4},
+		},
+		{
+			name:       "tuple with 3 items",
+			hex:        "b5ee9c7201010601003200030c000001070003010203000002000405001201000000000000000500120100000000000000030012010000000000000004",
+			intsResult: []int64{3, 4, 5},
+		},
+		{
+			name:       "tuple with 4 items",
+			hex:        "b5ee9c7201010801004100030c000001070004010203000002000405001201000000000000000602000607001201000000000000000500120100000000000000030012010000000000000004",
+			intsResult: []int64{3, 4, 5, 6},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cell, err := boc.DeserializeSinglRootHex(tt.hex)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var stack VmStack
+			err = Unmarshal(cell, &stack)
+			if err != nil {
+				t.Fatal(err)
+			}
+			val := stack[0]
+			if val.SumType != "VmStkTuple" {
+				t.Fatalf("Stack value must be tuple, got %v", val.SumType)
+			}
+			tuple := val.VmStkTuple
+			if int(tuple.Len) != len(tt.intsResult) {
+				t.Fatalf("want %v tuple len, got %v", len(tt.intsResult), tuple.Len)
+			}
+			if tuple.Data == nil { // for test case with 0 values in a tuple
+				return
+			}
+			values, err := tuple.Data.RecursiveToSlice(len(tt.intsResult))
+			if err != nil {
+				t.Fatal(err)
+			}
+			for i, v := range values {
+				if v.SumType != "VmStkTinyInt" {
+					t.Fatalf("want values[%v] to be VmStkTinyInt, got %v", i, v.SumType)
+				}
+				if v.VmStkTinyInt != tt.intsResult[i] {
+					t.Fatalf("want values[%v] == %v, got %v", i, tt.intsResult[i], v.VmStkTinyInt)
+				}
+			}
+		})
+	}
 }

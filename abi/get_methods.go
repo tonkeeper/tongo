@@ -4703,7 +4703,7 @@ func DecodeGetReserves_DedustResult(stack tlb.VmStack) (resultType string, resul
 }
 
 func DecodeGetReserves_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReserves_MoonResult

@@ -1171,6 +1171,14 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: MoonPool,
+		Results: []string{
+			"GetAssets_MoonResult",
+			"GetJettonDataResult",
+			"GetReserves_MoonResult",
+		},
+	},
+	{
 		Name: NftSaleV1,
 		Results: []string{
 			"GetSaleData_BasicResult",
@@ -1551,14 +1559,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV3},
 		getMethods: []InvokeFn{
 			GetSaleData,
-		},
-	},
-	ton.MustParseHash("2808165253286a1e4fe63efab9ba35481137aac0b1a0f9edccb8f6442dde46c4"): {
-		contractInterfaces: []ContractInterface{MoonPool},
-		getMethods: []InvokeFn{
-			GetAssets,
-			GetJettonData,
-			GetReserves,
 		},
 	},
 	ton.MustParseHash("32050dfac44f64866bcc86f2cd9e1305fe9dcadb3959c002237cfb0902d44323"): {

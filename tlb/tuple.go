@@ -72,20 +72,22 @@ func (t *VmStkTuple) RecursiveToSlice() ([]VmStackValue, error) {
 }
 
 func (t VmTuple) RecursiveToSlice(depth int) ([]VmStackValue, error) {
+	if t.Head.Entry == nil && t.Head.Ref == nil {
+		return nil, fmt.Errorf("can't decode tuple by unknown reason")
+	}
+
 	var sl []VmStackValue
 	var err error
-	if depth == 1 {
-		return append(sl, t.Tail), nil
-	}
-	if depth == 2 {
-		if t.Head.Entry == nil {
-			return nil, fmt.Errorf("stack tuple invalid depth")
-		}
+	if t.Head.Ref == nil {
 		sl = append(sl, *t.Head.Entry)
-	} else if t.Head.Ref == nil {
-		return nil, fmt.Errorf("can't decode tuple by unknown reason")
 	} else {
 		sl, err = t.Head.Ref.RecursiveToSlice(depth - 1)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return append(sl, t.Tail), err
+	if t.Tail.SumType != "" { // tail can be null only if len(tuple) <= 1
+		sl = append(sl, t.Tail)
+	}
+	return sl, nil
 }

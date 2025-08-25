@@ -604,11 +604,13 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		InterfaceOrder                 []interfaceDescription
 		KnownHashes                    map[string]interfaceDescription
 		Inheritance                    map[string]string
+		TransformTo                    map[string]string
 		IntMsgs, ExtInMsgs, ExtOutMsgs map[string][]string
 	}{
 		Interfaces:  map[string]string{},
 		KnownHashes: map[string]interfaceDescription{},
 		Inheritance: map[string]string{},
+		TransformTo: map[string]string{},
 		IntMsgs:     map[string][]string{},
 		ExtInMsgs:   map[string][]string{},
 		ExtOutMsgs:  map[string][]string{},
@@ -633,6 +635,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		descriptions[invokeFnName] = desc
 	}
 
+	transformTo := map[string]string{}
 	inheritance := map[string]string{}               // interface name -> parent interface
 	methodsByIface := map[string]map[string]string{} // interface name -> method name -> result name
 
@@ -641,6 +644,9 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		methodsByIface[ifaceName] = map[string]string{}
 		if iface.Inherits != "" {
 			inheritance[ifaceName] = utils.ToCamelCase(iface.Inherits)
+		}
+		if iface.TransformTo != "" {
+			transformTo[ifaceName] = utils.ToCamelCase(iface.TransformTo)
 		}
 		for _, method := range iface.Methods {
 			if !slices.Contains(simpleMethods, method.Name) {
@@ -657,6 +663,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 			methodsByIface[ifaceName][methodName] = resultName
 		}
 	}
+	context.TransformTo = transformTo
 	context.Inheritance = inheritance
 
 	for _, iface := range g.abi.Interfaces {
@@ -669,8 +676,12 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 				ifaceMethods[methodName] = resultName
 			}
 		}
+		ifaceDescrName := ifaceName
+		if transformToName, ok := context.TransformTo[ifaceName]; ok {
+			ifaceDescrName = transformToName
+		}
 		description := interfaceDescription{
-			Name: ifaceName,
+			Name: ifaceDescrName,
 		}
 		methodNames := maps.Keys(ifaceMethods)
 		sort.Strings(methodNames)

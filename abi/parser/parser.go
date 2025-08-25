@@ -31,9 +31,10 @@ type Interface struct {
 		Internals []InterfaceMessage `xml:"internal"`
 		Externals []InterfaceMessage `xml:"ext_out"`
 	} `xml:"msg_out"`
-	CodeHashes []string `xml:"code_hash"`
-	Inherits   string   `xml:"inherits,attr"`
-	Errors     []struct {
+	CodeHashes  []string `xml:"code_hash"`
+	Inherits    string   `xml:"inherits,attr"`
+	TransformTo string   `xml:"transform_to,attr"`
+	Errors      []struct {
 		Text string `xml:",chardata"`
 		Code int    `xml:"code,attr"`
 	} `xml:"error"`

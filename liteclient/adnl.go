@@ -10,10 +10,11 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/tonkeeper/tongo/ton"
-	"github.com/tonkeeper/tongo/utils"
 	"io"
 	"strings"
+
+	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type params [160]byte
@@ -101,7 +102,7 @@ func ParsePacket(r io.Reader, decryptor cipher.Stream) (Packet, error) {
 	}
 	decryptor.XORKeyStream(size, size)
 	length := int(binary.LittleEndian.Uint32(size))
-	if length < 64 || length > 8<<20 {
+	if length < 64 || length > 10<<20 {
 		return Packet{}, fmt.Errorf("invalid length of data: %d bytes", length)
 	}
 	data := make([]byte, length)

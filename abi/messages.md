@@ -22,10 +22,8 @@ The list below contains the supported message operations, their names and opcode
 | BidaskInternalBurn| 0x16e09400 |
 | BidaskInternalContinueProvide| 0x0c09445a |
 | BidaskInternalContinueSwap| 0x59699475 |
-| BidaskInternalProvide| 0xd1b02ea5 |
 | BidaskInternalSwap| 0x66210c65 |
 | BidaskLiquidityAddedNotify| 0x0dc8bb28 |
-| BidaskMultitokenMint| 0x250ad226 |
 | BidaskNativeTransferNotification| 0x6edd65f0 |
 | BidaskProvide| 0x96feef7b |
 | BidaskProvide| 0x96feef7b |

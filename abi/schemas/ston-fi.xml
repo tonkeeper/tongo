@@ -17,7 +17,7 @@
             <internal name="stonfi_cb_add_liquidity_v2"/>
         </msg_in>
     </interface>
-    <interface name="stonfi_pool_v2_stableswap">
+    <interface name="stonfi_pool_v2_stableswap" transform_to="stonfi_pool_v2">
         <get_method name="get_pool_data" version="stonfi_v2_stableswap"/>
         <get_method name="get_lp_account_address" version="stonfi"/>
         <msg_in>
@@ -28,7 +28,7 @@
             <internal name="stonfi_cb_add_liquidity_v2"/>
         </msg_in>
     </interface>
-    <interface name="stonfi_pool_v2_weighted_stableswap">
+    <interface name="stonfi_pool_v2_weighted_stableswap" transform_to="stonfi_pool_v2">
         <get_method name="get_pool_data" version="stonfi_v2_weighted_stableswap"/>
         <get_method name="get_lp_account_address" version="stonfi"/>
         <msg_in>

@@ -1241,13 +1241,13 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: StonfiPoolV2Stableswap,
+		Name: StonfiPoolV2,
 		Results: []string{
 			"GetPoolData_StonfiV2StableswapResult",
 		},
 	},
 	{
-		Name: StonfiPoolV2WeightedStableswap,
+		Name: StonfiPoolV2,
 		Results: []string{
 			"GetPoolData_StonfiV2WeightedStableswapResult",
 		},

@@ -34,7 +34,7 @@ func (m *MoonSwapParams) UnmarshalJSON(data []byte) error {
 	}
 	m.Excess = excess
 	var referral tlb.MsgAddress
-	if err := referral.UnmarshalJSON([]byte(r.Excess)); err != nil {
+	if err := referral.UnmarshalJSON([]byte(r.Referral)); err != nil {
 		return err
 	}
 	m.Referral = referral

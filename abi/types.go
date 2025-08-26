@@ -5,6 +5,7 @@ package abi
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -195,8 +196,8 @@ type MoonOrderParams struct {
 type MoonSwapParams struct {
 	MinOut      tlb.VarUInteger16
 	Deadline    uint64
-	Excess      *tlb.MsgAddress  `tlb:"maybe"`
-	Referral    *tlb.MsgAddress  `tlb:"maybe"`
+	Excess      tlb.MsgAddress
+	Referral    tlb.MsgAddress
 	NextFulfill *MoonNextPayload `tlb:"maybe^"`
 	NextReject  *MoonNextPayload `tlb:"maybe^"`
 }

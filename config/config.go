@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/tonkeeper/tongo/ton"
 	"io"
 	"os"
 )
@@ -19,21 +20,38 @@ type liteServerId struct {
 	Key  string `json:"key"`
 }
 
+type initBlockConfig struct {
+	Workchain int32  `json:"workchain"`
+	Shard     int64  `json:"shard"`
+	Seqno     int64  `json:"seqno"`
+	RootHash  []byte `json:"root_hash"`
+	FileHash  []byte `json:"file_hash"`
+}
+
+type validatorConfig struct {
+	InitBlock initBlockConfig `json:"init_block"`
+}
+
 type configGlobal struct {
 	LiteServers []liteServerConfig `json:"liteservers"`
-	//Validator   ValidatorConfig  `json:"validator"`
+	Validator   validatorConfig    `json:"validator"`
 }
 
 // GlobalConfigurationFile contains global configuration of the TON Blockchain.
 // It is shared by all nodes and includes information about network, init block, hardforks, etc.
 type GlobalConfigurationFile struct {
 	LiteServers []LiteServer
+	Validator   Validator
 }
 
 // LiteServer TODO: clarify struct
 type LiteServer struct {
 	Host string
 	Key  string
+}
+
+type Validator struct {
+	InitBlock ton.BlockIDExt
 }
 
 func ParseConfigFile(path string) (*GlobalConfigurationFile, error) {
@@ -73,6 +91,19 @@ func ParseConfig(data io.Reader) (*GlobalConfigurationFile, error) {
 			continue
 		}
 		options.LiteServers = append(options.LiteServers, ls)
+	}
+	var rootHash [32]byte
+	copy(rootHash[:], conf.Validator.InitBlock.RootHash)
+	var fileHash [32]byte
+	copy(fileHash[:], conf.Validator.InitBlock.FileHash)
+	options.Validator.InitBlock = ton.BlockIDExt{
+		BlockID: ton.BlockID{
+			Workchain: conf.Validator.InitBlock.Workchain,
+			Shard:     uint64(conf.Validator.InitBlock.Shard),
+			Seqno:     uint32(conf.Validator.InitBlock.Seqno),
+		},
+		RootHash: rootHash,
+		FileHash: fileHash,
 	}
 	if len(options.LiteServers) == 0 {
 		return nil, fmt.Errorf("no one supported liteservers")

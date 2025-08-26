@@ -17,7 +17,6 @@
         <msg_out>
             <internal name="jetton_transfer"/>
             <internal name="bidask_internal_swap"/>
-            <internal name="bidask_internal_provide"/>
             <internal name="bidask_save_liquidity_info"/>
             <internal name="bidask_native_transfer_notification"/>
         </msg_out>
@@ -30,7 +29,6 @@
         <msg_in>
             <internal name="bidask_internal_swap"/>
             <internal name="bidask_internal_continue_swap"/>
-            <internal name="bidask_internal_provide"/>
             <internal name="bidask_internal_continue_provide"/>
             <internal name="bidask_internal_burn"/>
         </msg_in>
@@ -42,7 +40,6 @@
             <internal name="bidask_provide_refund"/>
             <internal name="bidask_burn_payout"/>
             <internal name="bidask_internal_burn"/>
-            <internal name="bidask_multitoken_mint"/>
         </msg_out>
     </interface>
 
@@ -50,7 +47,6 @@
         <get_method name="get_bins_number" version="bidask"/>
         <get_method name="get_nft_data"/>
         <msg_in>
-            <internal name="bidask_multitoken_mint"/>
             <internal name="bidask_burn"/>
             <internal name="bidask_burn_all"/>
         </msg_in>

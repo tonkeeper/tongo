@@ -1835,7 +1835,6 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		}
 	case BidaskLpMultitoken:
 		return []msgDecoderFunc{
-			decodeFuncBidaskMultitokenMintMsgBody,
 			decodeFuncBidaskBurnMsgBody,
 			decodeFuncBidaskBurnAllMsgBody,
 		}
@@ -1854,7 +1853,6 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncBidaskInternalSwapMsgBody,
 			decodeFuncBidaskInternalContinueSwapMsgBody,
-			decodeFuncBidaskInternalProvideMsgBody,
 			decodeFuncBidaskInternalContinueProvideMsgBody,
 			decodeFuncBidaskInternalBurnMsgBody,
 		}

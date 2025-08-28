@@ -4054,7 +4054,7 @@ type GetPoolData_CoffeeResult struct {
 	Asset1      CoffeeAsset
 	Asset2      CoffeeAsset
 	Amm         tlb.Int257
-	AmmSettings tlb.Any
+	AmmSettings *tlb.Any
 	Active      bool
 	Reserve1    tlb.Int257
 	Reserve2    tlb.Int257
@@ -4221,7 +4221,7 @@ func DecodeGetPoolData_StonfiV2WeightedStableswapResult(stack tlb.VmStack) (resu
 }
 
 func DecodeGetPoolData_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell" && stack[4].SumType != "VmStkNull") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_CoffeeResult

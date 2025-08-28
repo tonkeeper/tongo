@@ -32,6 +32,7 @@ var defaultKnownTypes = map[string]tlbParser.DefaultType{
 	"int257":        {"tlb.Int257", false},
 	"bits256":       {"tlb.Bits256", false},
 	"any":           {"tlb.Any", false},
+	"null":          {"tlb.Any", true},
 	"[]byte":        {"[]byte", false},
 	"bytes":         {"tlb.Bytes", false},
 	"string":        {"string", false},

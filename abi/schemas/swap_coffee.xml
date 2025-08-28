@@ -451,7 +451,7 @@
             <slice name="asset2">CoffeeAsset</slice>
             <!--            <int name="amm">CoffeeAMM</int>-->
             <int name="amm">int257</int>
-            <cell name="amm_settings">any</cell>
+            <cell name="amm_settings" nullable="true">any</cell>
             <int name="active">bool</int>
             <int name="reserve1">int257</int>
             <int name="reserve2">int257</int>

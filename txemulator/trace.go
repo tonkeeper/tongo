@@ -3,15 +3,15 @@ package txemulator
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/liteclient"
 	"time"
+
+	"github.com/tonkeeper/tongo/liteclient"
 
 	"github.com/tonkeeper/tongo/boc"
 	codePkg "github.com/tonkeeper/tongo/code"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
-	"math/rand"
 )
 
 type Tracer struct {
@@ -321,10 +321,12 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message, signatureIgnoreDe
 }
 
 func (t *Tracer) addRandomDelay(currentTime uint32) error {
-	delay := rand.Intn(11) + 5 // random number between 5 and 15
-	currentTime += uint32(delay)
-	t.currentTime = currentTime
-	return t.e.SetUnixtime(currentTime)
+	//delay := rand.Intn(11) + 5 // random number between 5 and 15
+	//currentTime += uint32(delay)
+	//t.currentTime = currentTime
+	//return t.e.SetUnixtime(currentTime)
+	// TODO: implement new delay logic
+	return nil
 }
 
 func (t *Tracer) getAccountShard(account ton.AccountID) (ton.ShardID, error) {

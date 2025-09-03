@@ -76,8 +76,12 @@ func (m *MoonNextPayload) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &r); err != nil {
 		return err
 	}
-	id := ton.MustParseAccountID(r.Recipient)
-	m.Recipient = id.ToMsgAddress()
+	if r.Recipient == "" {
+		m.Recipient = tlb.MsgAddress{SumType: "AddrNone"}
+	} else {
+		id := ton.MustParseAccountID(r.Recipient)
+		m.Recipient = id.ToMsgAddress()
+	}
 	if r.Payload != "" {
 		c, err := boc.DeserializeBocHex(r.Payload)
 		if err != nil {

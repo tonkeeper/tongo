@@ -72,8 +72,8 @@ func Test_connection_FindMinAvailableMasterchainSeqno(t *testing.T) {
 	}{
 		{
 			name:         "querying regular node",
-			host:         "5.9.10.15:48014",
-			key:          "3XO67K/qi+gu3T9v8G2hx1yNmWZhccL3O7SoosFo8G0=",
+			host:         "135.181.140.221:46995",
+			key:          "wQE0MVhXNWUXpWiW5Bk8cAirIh5NNG3cZM1/fSVKIts=",
 			wantMinSeqno: 36283540,
 		},
 	}

@@ -262,13 +262,13 @@ func (t *Tracer) emulationLoop(ctx context.Context) error {
 				if m.Value.Info.SumType == "ExtOutMsgInfo" {
 					continue
 				}
-				msg, err := toEmulatedMessage(m.Value, message.parentTrace)
+				msg, err := toEmulatedMessage(m.Value, trace)
 				if err != nil {
 					return err
 				}
 				t.unprocessed++
 				if t.routeMessage(msg) == shardIndex {
-					t.shards[shardIndex].input = append(shard.input, msg)
+					t.shards[shardIndex].input = append(t.shards[shardIndex].input, msg)
 				} else {
 					t.shards[shardIndex].output = append(t.shards[shardIndex].output, msg)
 				}

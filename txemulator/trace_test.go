@@ -20,7 +20,7 @@ func TestSimpleEmulation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tracer, err := NewTraceBuilder(WithAccountsSource(client))
+	tracer, err := NewTraceBuilder(WithAccountsSource(client), WithIgnoreSignatureDepth(1))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +63,7 @@ func TestSimpleEmulation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tree, err := tracer.Run(ctx, m, 1)
+	tree, err := tracer.Run(ctx, m)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,11 +89,11 @@ func TestEmulate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	emulator, err := NewTraceBuilder(WithAccountsSource(client))
+	emulator, err := NewTraceBuilder(WithAccountsSource(client), WithIgnoreSignatureDepth(1))
 	if err != nil {
 		t.Fatalf("NewTraceBuilder() failed: %v", err)
 	}
-	tree, err := emulator.Run(context.Background(), m, 1)
+	tree, err := emulator.Run(context.Background(), m)
 	if err != nil {
 		t.Fatalf("Run() failed: %v", err)
 	}
@@ -123,11 +123,11 @@ func TestEmulate_To16ParamInC7(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	emulator, err := NewTraceBuilder(WithAccountsSource(client))
+	emulator, err := NewTraceBuilder(WithAccountsSource(client), WithIgnoreSignatureDepth(1))
 	if err != nil {
 		t.Fatalf("NewTraceBuilder() failed: %v", err)
 	}
-	tree, err := emulator.Run(context.Background(), m, 1)
+	tree, err := emulator.Run(context.Background(), m)
 	if err != nil {
 		t.Fatalf("Run() failed: %v", err)
 	}
@@ -150,11 +150,11 @@ func TestEmulate_ToUninitContract(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	emulator, err := NewTraceBuilder(WithAccountsSource(client))
+	emulator, err := NewTraceBuilder(WithAccountsSource(client), WithIgnoreSignatureDepth(1))
 	if err != nil {
 		t.Fatalf("NewTraceBuilder() failed: %v", err)
 	}
-	tree, err := emulator.Run(context.Background(), m, 1)
+	tree, err := emulator.Run(context.Background(), m)
 	if err != nil {
 		t.Fatalf("Run() failed: %v", err)
 	}
@@ -180,11 +180,11 @@ func TestEmulate_WithIgnoreAllSignatures(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	emulator, err := NewTraceBuilder(WithAccountsSource(client))
+	emulator, err := NewTraceBuilder(WithAccountsSource(client), WithIgnoreSignatureDepth(1000))
 	if err != nil {
 		t.Fatalf("NewTraceBuilder() failed: %v", err)
 	}
-	tree, err := emulator.Run(context.Background(), m, 1000)
+	tree, err := emulator.Run(context.Background(), m)
 	if err != nil {
 		t.Fatalf("Run() failed: %v", err)
 	}
@@ -211,11 +211,11 @@ func TestEmulate_WithDefaultSignatureIgnoreDepth(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	emulator, err := NewTraceBuilder(WithAccountsSource(client))
+	emulator, err := NewTraceBuilder(WithAccountsSource(client), WithIgnoreSignatureDepth(1))
 	if err != nil {
 		t.Fatalf("NewTraceBuilder() failed: %v", err)
 	}
-	tree, err := emulator.Run(context.Background(), m, 1)
+	tree, err := emulator.Run(context.Background(), m)
 	if err != nil {
 		t.Fatalf("Run() failed: %v", err)
 	}

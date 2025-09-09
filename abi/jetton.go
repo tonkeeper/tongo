@@ -161,7 +161,7 @@ func (j *JettonNotifyMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder)
 	j.QueryId = prefix.QueryId
 	j.Amount = prefix.Amount
 	j.Sender = prefix.Sender
-	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
+	j.ForwardPayload = failsafeForwardPayloadEitherRef[JettonPayload](cell, decoder)
 	return nil
 }
 
@@ -199,7 +199,7 @@ func (j *JettonTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decode
 	j.ResponseDestination = prefix.ResponseDestination
 	j.CustomPayload = customPayload
 	j.ForwardTonAmount = forwardTonAmount
-	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
+	j.ForwardPayload = failsafeForwardPayloadEitherRef[JettonPayload](cell, decoder)
 	return nil
 }
 
@@ -220,7 +220,7 @@ func (j *JettonInternalTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tl
 	j.From = res.From
 	j.ResponseAddress = res.ResponseAddress
 	j.ForwardTonAmount = res.ForwardTonAmount
-	j.ForwardPayload = failsafeJettonPayloadEitherRef(cell, decoder)
+	j.ForwardPayload = failsafeForwardPayloadEitherRef[JettonPayload](cell, decoder)
 	return nil
 }
 
@@ -258,21 +258,21 @@ func (j *JettonBurnMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) e
 	return nil
 }
 
-func failsafeJettonPayloadEitherRef(cell *boc.Cell, decoder *tlb.Decoder) tlb.EitherRef[JettonPayload] {
+func failsafeForwardPayloadEitherRef[T any](cell *boc.Cell, decoder *tlb.Decoder) tlb.EitherRef[T] {
 	isRight, err := cell.ReadUint(1)
 	switch {
 	case err != nil:
-		return tlb.EitherRef[JettonPayload]{} // empty either
+		return tlb.EitherRef[T]{} // empty either
 	case isRight == 1 && cell.RefsAvailableForRead() < 1: // invalid either
-		return tlb.EitherRef[JettonPayload]{
+		return tlb.EitherRef[T]{
 			IsRight: true,
 		}
 	case isRight == 1: // cell.RefsAvailableForRead() >= 1
 		cell, _ = cell.NextRef()
 	}
-	var res JettonPayload
+	var res T
 	err = decoder.Unmarshal(cell, &res)
-	return tlb.EitherRef[JettonPayload]{
+	return tlb.EitherRef[T]{
 		IsRight: isRight == 1,
 		Value:   res,
 	}

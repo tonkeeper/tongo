@@ -142,3 +142,54 @@ func (j *NFTPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 
 	return nil
 }
+
+func (n *NftOwnershipAssignedMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	var prefix struct {
+		QueryId   uint64
+		PrevOwner tlb.MsgAddress
+	}
+	err := decoder.Unmarshal(cell, &prefix)
+	if err != nil {
+		return err
+	}
+	n.QueryId = prefix.QueryId
+	n.PrevOwner = prefix.PrevOwner
+	n.ForwardPayload = failsafeForwardPayloadEitherRef[NFTPayload](cell, decoder)
+	return nil
+}
+
+func (n *NftTransferMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
+	var prefix struct {
+		QueryId             uint64
+		NewOwner            tlb.MsgAddress
+		ResponseDestination tlb.MsgAddress
+	}
+	err := decoder.Unmarshal(cell, &prefix)
+	if err != nil {
+		return err
+	}
+	isCustomPayload, err := cell.ReadUint(1)
+	if err != nil {
+		return err
+	}
+	var (
+		customPayload    *tlb.Any
+		forwardTonAmount tlb.VarUInteger16
+	)
+	if isCustomPayload == 1 && cell.RefsAvailableForRead() > 0 {
+		ref, _ := cell.NextRef()
+		a := tlb.Any(*ref)
+		customPayload = &a
+	}
+	err = decoder.Unmarshal(cell, &forwardTonAmount)
+	if err != nil {
+		return err
+	}
+	n.QueryId = prefix.QueryId
+	n.NewOwner = prefix.NewOwner
+	n.ResponseDestination = prefix.ResponseDestination
+	n.CustomPayload = customPayload
+	n.ForwardAmount = forwardTonAmount
+	n.ForwardPayload = failsafeForwardPayloadEitherRef[NFTPayload](cell, decoder)
+	return nil
+}

@@ -49,6 +49,27 @@
             tickUpper:int24
             tick:int24
         ] ) = PayTo;
+
+        pay_to_code230#000000e6 seqno:uint64
+        coinsinfo_cell:(Maybe ^[
+            amount0:(VarUInteger 16)
+            jetton0_address:MsgAddress
+            amount1:(VarUInteger 16)
+            jetton1_address:MsgAddress
+            payload_cell:^[
+                payload_amount0:(VarUInteger 16)
+                payload_cell0:(Maybe ^Cell)
+                payload_amount1:(VarUInteger 16)
+                payload_cell1:(Maybe ^Cell)
+            ]
+        ] )
+        indexer_swap_info_cell:(Maybe ^[
+            liquidity:uint128
+            price_sqrt:uint160
+            tick:int24
+            feeGrowthGlobal0X128:int256
+            feeGrowthGlobal1X128:int256
+        ] )= PayTo;
     </types>
 
     <!-- https://tonviewer.com/EQBk33mIwYXYAytv4beERPqjfdNHaQuSfpaRY7KmNmHqpVLY  -->

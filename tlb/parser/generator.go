@@ -119,7 +119,7 @@ func (g *Generator) GenerateGolangTypes(declarations []CombinatorDeclaration, ty
 			dec = append(dec, []CombinatorDeclaration{c})
 		}
 	}
-	s := ""
+	var s strings.Builder
 
 	for _, v := range dec {
 		name := v[0].Combinator.Name
@@ -140,10 +140,10 @@ func (g *Generator) GenerateGolangTypes(declarations []CombinatorDeclaration, ty
 			Name:       name,
 			Definition: string(b),
 		}
-		s += "\n\n" + t
+		s.WriteString("\n\n" + t)
 	}
 
-	return s, nil
+	return s.String(), nil
 }
 
 func (g *Generator) generateGolangStruct(declaration CombinatorDeclaration, skipMagic bool) (string, error) {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 var ErrBadSignature = errors.New("failed to verify msg signature")
@@ -25,6 +26,128 @@ type MessageV4 struct {
 	Seqno       uint32
 	Op          int8
 	RawMessages PayloadV1toV4
+}
+
+type v4Payload struct {
+	tlb.SumType
+	SimpleSend struct {
+		Payload PayloadV1toV4
+	} `tlbSumType:"$00000000"`
+	DeployAndInstallPlugin struct {
+		PluginWorkchain int8
+		PluginBalance   tlb.Grams
+		StateInit       tlb.StateInit `tlb:"^"`
+		Body            boc.Cell      `tlb:"^"`
+	} `tlbSumType:"$00000001"`
+	InstallPlugin struct {
+		PluginWorkchain int8
+		PluginAddress   tlb.Bits256
+		Amount          tlb.Grams
+		QueryId         uint64
+	} `tlbSumType:"$00000010"`
+	RemovePlugin struct {
+		PluginWorkchain int8
+		PluginAddress   tlb.Bits256
+		Amount          tlb.Grams
+		QueryId         uint64
+	} `tlbSumType:"$00000011"`
+}
+
+func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var msg struct {
+		SubWalletId uint32
+		ValidUntil  uint32
+		Seqno       uint32
+		Payload     v4Payload
+	}
+	err := decoder.Unmarshal(c, &msg)
+	if err != nil {
+		return err
+	}
+	m.SubWalletId = msg.SubWalletId
+	m.ValidUntil = msg.ValidUntil
+	m.Seqno = msg.Seqno
+	var out Message
+	switch msg.Payload.SumType {
+	case "SimpleSend":
+		m.Op = 0
+		m.RawMessages = msg.Payload.SimpleSend.Payload
+		return nil
+	case "DeployAndInstallPlugin":
+		m.Op = 1
+		stateCell := boc.NewCell()
+		err := tlb.Marshal(stateCell, msg.Payload.DeployAndInstallPlugin.StateInit)
+		if err != nil {
+			return fmt.Errorf("can not marshal state init: %v", err)
+		}
+		h, err := stateCell.Hash()
+		if err != nil {
+			return err
+		}
+		addr := ton.AccountID{
+			Workchain: int32(msg.Payload.DeployAndInstallPlugin.PluginWorkchain),
+		}
+		copy(addr.Address[:], h[:])
+		out = Message{
+			Amount:  msg.Payload.DeployAndInstallPlugin.PluginBalance,
+			Address: addr,
+			Body:    &msg.Payload.DeployAndInstallPlugin.Body,
+			Bounce:  true,
+			Mode:    3,
+		}
+		if msg.Payload.DeployAndInstallPlugin.StateInit.Code.Exists {
+			out.Code = &msg.Payload.DeployAndInstallPlugin.StateInit.Code.Value.Value
+		}
+		if msg.Payload.DeployAndInstallPlugin.StateInit.Data.Exists {
+			out.Data = &msg.Payload.DeployAndInstallPlugin.StateInit.Data.Value.Value
+		}
+	case "InstallPlugin":
+		m.Op = 2
+		body := boc.NewCell()
+		_ = body.WriteUint(0x6e6f7465, 32)
+		_ = body.WriteUint(msg.Payload.InstallPlugin.QueryId, 64)
+		out = Message{
+			Amount: msg.Payload.InstallPlugin.Amount,
+			Address: ton.AccountID{
+				Workchain: int32(msg.Payload.InstallPlugin.PluginWorkchain),
+				Address:   msg.Payload.InstallPlugin.PluginAddress,
+			},
+			Bounce: true,
+			Mode:   3,
+		}
+	case "RemovePlugin":
+		m.Op = 3
+		body := boc.NewCell()
+		_ = body.WriteUint(0x64737472, 32)
+		_ = body.WriteUint(msg.Payload.RemovePlugin.QueryId, 64)
+		out = Message{
+			Amount: msg.Payload.RemovePlugin.Amount,
+			Address: ton.AccountID{
+				Workchain: int32(msg.Payload.RemovePlugin.PluginWorkchain),
+				Address:   msg.Payload.RemovePlugin.PluginAddress,
+			},
+			Bounce: true,
+			Mode:   3,
+		}
+	default:
+		return errors.New("unknown wallet V4 message")
+	}
+	outTlb, mode, err := out.ToInternal()
+	if err != nil {
+		return err
+	}
+	outCell := boc.NewCell()
+	err = tlb.Marshal(outCell, outTlb)
+	if err != nil {
+		return err
+	}
+	m.RawMessages = []RawMessage{
+		{
+			Message: outCell,
+			Mode:    mode,
+		},
+	}
+	return nil
 }
 
 type W5SendMessageAction struct {

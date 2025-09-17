@@ -4,7 +4,6 @@ import (
 	"crypto/ed25519"
 	"encoding/hex"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -69,6 +68,39 @@ func TestExtractRawMessages(t *testing.T) {
 			},
 		},
 		{
+			name: "v4 install and deploy plugin",
+			boc:  "te6ccgECEwEAA0wAAu2IAKkQ+vgD1aMG0jTgdf/hFbj2yn90QEW+dJLHtcouNUWUAhHhpMegls27yhPXYD1iWgJsQjxFtQoPyEZOXfSfhGEcDFHzHD6SJmIWUxiA5OQHJYff3KvukTinYUv9Wdn3sFlNTRi7EuNEcAAAEPAIAoCVAvkAQAECAgE0AwQACPBsdWcBFP8A9KQT9LzyyAsFAMOACpEPr4A9WjBtI04HX/4RW49sp/dEBFvnSSx7XKLjVFlQAjGFwYX/gQyR1A5hCZpuoeo5GxQZPXUdGDHN9MeU8pBZQEqBfIAACggqGJcaFIAACowAAAAAAAAAAAAAAL7BIAIBIAYHAgFICAkDavIw2zxTNaEnqQT4IyehKKkEAbxRNaD4I7kTsPKe+AByUhC+lFOH8AeOhVOG2zyk4vgjAts8DxARAgLNCgsBIaDQybZ4E/SI3gQR9IjeBBATDwSP1tngXoaYGY/SAYKYRjgsdOL4QZmemPmEEIMjm6OV1JeAPwGLhBCDq3NbvtnnAphOOC2cdGiEYvhjhBCDq3NbvtnnAVa6TgkEDw4ODAJp8Q/SIYQJOIbZ58EsEIMjm6OThACGRlgqgDZ4soAf0BCmW1ZY+JZZ/kuf2AP8EIMjm6OW2eQSDgTwjo0QjF8McIIQdW5rd9s84ArTHzCCEHBsdWeDHrFSELqPSDBTJKEmqQT4IyahJ6kEvvJxCfpEMKYZ+DPQeNch1ws/UmChG76OkjA2+CNwcIIQc3VicydZ2zxQd94QaRBYEEcQNkUTUELbPOA5XwdsIjKCEGRzdHK6Dg4RDQEajol/ghBkc3Ry2zzgMA4AaCGzmYIQBAAAAHL7At5w+CdvEYAQyMsFUAXPFiH6AhT0ABPLaRLLH4MGApSBAKAy3skB+wAAMO1E0PpA+kD6ANMf0x/TH9Mf0x/TB9MfMAGAIfpEMCCBOpjbPAGmGfgz0HjXIdcLP6Bw+CWCEHBsdWcigBjIywVQB88WUAT6AhXLahLLHxPLPwH6AssAyXP7ABIAQMhQCs8WUAjPFlAG+gIUyx8Syx/LH8sfyx/LB8sfye1UAFgBphX4M9Ag1wsHgQDRupWBAIjXId7TByGBAN26AoEA3roSsfLgR9M/MKirDw==",
+			ver:  V4R2,
+			want: []RawMessage{
+				{
+					Message: mustFromBase64("te6ccgECEwEAAwsAAmtiACOsBuplWwBTqMOoOPe6QWzOcufW05SfT14+HwOJLCN7KAlQL5AAAAAAAAAAAAAAAAAAA8ABAgIBNAMEAAjwbHVnART/APSkE/S88sgLBQDDgAqRD6+APVowbSNOB1/+EVuPbKf3RARb50kse1yi41RZUAIxhcGF/4EMkdQOYQmabqHqORsUGT11HRgxzfTHlPKQWUBKgXyAAAoIKhiXGhSAAAqMAAAAAAAAAAAAAAC+wSACASAGBwIBSAgJA2ryMNs8UzWhJ6kE+CMnoSipBAG8UTWg+CO5E7DynvgAclIQvpRTh/AHjoVThts8pOL4IwLbPA8QEQICzQoLASGg0Mm2eBP0iN4EEfSI3gQQEw8Ej9bZ4F6GmBmP0gGCmEY4LHTi+EGZnpj5hBCDI5ujldSXgD8Bi4QQg6tzW77Z5wKYTjgtnHRohGL4Y4QQg6tzW77Z5wFWuk4JBA8ODgwCafEP0iGECTiG2efBLBCDI5ujk4QAhkZYKoA2eLKAH9AQpltWWPiWWf5Ln9gD/BCDI5ujltnkEg4E8I6NEIxfDHCCEHVua3fbPOAK0x8wghBwbHVngx6xUhC6j0gwUyShJqkE+CMmoSepBL7ycQn6RDCmGfgz0HjXIdcLP1JgoRu+jpIwNvgjcHCCEHN1YnMnWds8UHfeEGkQWBBHEDZFE1BC2zzgOV8HbCIyghBkc3Ryug4OEQ0BGo6Jf4IQZHN0cts84DAOAGghs5mCEAQAAABy+wLecPgnbxGAEMjLBVAFzxYh+gIU9AATy2kSyx+DBgKUgQCgMt7JAfsAADDtRND6QPpA+gDTH9Mf0x/TH9Mf0wfTHzABgCH6RDAggTqY2zwBphn4M9B41yHXCz+gcPglghBwbHVnIoAYyMsFUAfPFlAE+gIVy2oSyx8Tyz8B+gLLAMlz+wASAEDIUArPFlAIzxZQBvoCFMsfEssfyx/LH8sfywfLH8ntVABYAaYV+DPQINcLB4EA0bqVgQCI1yHe0wchgQDdugKBAN66ErHy4EfTPzCoqw8="),
+					Mode:    3,
+				},
+			},
+		},
+		{
+			name: "v4 install plugin",
+			boc:  "te6ccgEBAgEAoAABRYgAR2c1B90lEtFytoHCyF7MMmC7lrUfp1I3v3goh4LIUs4MAQDvUudMLc5BnAQW6JoINt455rjKROSk80QKtrNoU/EUdOvcusy55c8+8wsONLHgESrgZ5G4WRLaDUsmTB7w7EVaAympoxdoynr2AAAANAIAnaZ0tIDRWKrdotfuhtiy5aeQIKV+Eg+hN8MtWoyfiFgWQAAAAAAAAAe4",
+			ver:  V4R2,
+			want: []RawMessage{
+				{
+					Message: mustFromBase64("te6ccgEBAQEAPwAAemIATtM6WkBorFVu0Wv3Q2xZctPIEFK/CQfQm+GWrUZPxCwLIAAAAAAAAAAAAAAAAABub3RlAAAAAAAAAHs="),
+					Mode:    3,
+				},
+			},
+		},
+		{
+			name: "v4 remove plugin",
+			boc:  "te6ccgEBAgEAoAABRYgAR2c1B90lEtFytoHCyF7MMmC7lrUfp1I3v3goh4LIUs4MAQDvBre5SuHlxab7S2Pi+kpjFG2pnyRk1d0NMuJV8z6Ox1I4F4oamXVZP8Wl9UMlRegz03cT13TTAlG4UAE25GLKBympoxdoyo3gAAAANQMAnaZ0tIDRWKrdotfuhtiy5aeQIKV+Eg+hN8MtWoyfiFgWQAAAAAAAAAe4",
+			ver:  V4R2,
+			want: []RawMessage{
+				{
+					Message: mustFromBase64("te6ccgEBAQEAPwAAemIATtM6WkBorFVu0Wv3Q2xZctPIEFK/CQfQm+GWrUZPxCwLIAAAAAAAAAAAAAAAAABkc3RyAAAAAAAAAHs="),
+					Mode:    3,
+				},
+			},
+		},
+		{
 			name: "v5beta",
 			boc:  "te6ccgECCAEAAZ4AAfGIAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24WA5tLO3f////oAAAAAAADMYd8kAAAAAEHzN670eqqNU3yWGkX1dOynyAbT7DN4cFDpE0r+nInTomGrifjPTaZvG3YxYzTHpLoNesGc9s5Q0tHlLNcFNQeAQIKDsPIbQMCAwIKDsPIbQMEBQCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAy3GwAAAAAAAAAAAAAAAAAAQAIKDsPIbQMGBwCpaAHob6hz4kNkbvs5KMIycf+6CW6hGEZ5Qjrj3uftoJtuFwAbM0yWoWMN5aT+uK8qrHCkGgxpOEKbDu0Tui2Fbyh0iAx6EgAAAAAAAAAAAAAAAAAAQAAAAKloAehvqHPiQ2Ru+zkowjJx/7oJbqEYRnlCOuPe5+2gm24XABszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSIDD0JAAAAAAAAAAAAAAAAAABA",
 			ver:  V5Beta,
@@ -128,22 +160,31 @@ func TestExtractRawMessages(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(rawMessages, tt.want) {
-				for i, msg := range rawMessages {
-					bocBase64, err := msg.Message.ToBocBase64()
+			for i, msg := range rawMessages {
+				bocHash, err := msg.Message.Hash256()
+				if err != nil {
+					t.Fatal(err)
+				}
+				wantHash, err := tt.want[i].Message.Hash256()
+				if err != nil {
+					t.Fatal(err)
+				}
+				if bocHash != wantHash || msg.Mode != tt.want[i].Mode {
+					var m1, m2 tlb.Message
+					err := tlb.Unmarshal(msg.Message, &m1)
 					if err != nil {
 						t.Fatal(err)
 					}
-					wantBase64, err := tt.want[i].Message.ToBocBase64()
+					err = tlb.Unmarshal(tt.want[i].Message, &m2)
 					if err != nil {
 						t.Fatal(err)
 					}
-					fmt.Printf(" got message: %v\n", bocBase64)
-					fmt.Printf("want message: %v\n", wantBase64)
+					fmt.Printf(" got message: %v\n", m1)
+					fmt.Printf("want message: %v\n", m2)
 					fmt.Printf(" got mode: %v\n", msg.Mode)
 					fmt.Printf("want mode: %v\n", tt.want[i].Mode)
+					t.Fatalf("wrong raw messages")
 				}
-				t.Fatalf("wrong raw messages")
 			}
 		})
 	}

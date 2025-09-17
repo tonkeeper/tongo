@@ -112,6 +112,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 				Workchain: int32(msg.Payload.InstallPlugin.PluginWorkchain),
 				Address:   msg.Payload.InstallPlugin.PluginAddress,
 			},
+			Body:   body,
 			Bounce: true,
 			Mode:   3,
 		}
@@ -126,6 +127,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 				Workchain: int32(msg.Payload.RemovePlugin.PluginWorkchain),
 				Address:   msg.Payload.RemovePlugin.PluginAddress,
 			},
+			Body:   body,
 			Bounce: true,
 			Mode:   3,
 		}
@@ -354,7 +356,6 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 		if err != nil {
 			return nil, err
 		}
-		// TODO: check opcode
 		return v4.RawMessages, nil
 	case V3R1, V3R2, V3R2Lockup:
 		v3, err := DecodeMessageV3(msg)

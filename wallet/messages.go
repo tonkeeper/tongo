@@ -68,6 +68,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	m.ValidUntil = msg.ValidUntil
 	m.Seqno = msg.Seqno
 	var out Message
+	bodyRef := true // put body to ref
 	switch msg.Payload.SumType {
 	case "SimpleSend":
 		m.Op = 0
@@ -103,6 +104,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 		}
 	case "InstallPlugin":
 		m.Op = 2
+		bodyRef = false
 		body := boc.NewCell()
 		_ = body.WriteUint(0x6e6f7465, 32)
 		_ = body.WriteUint(msg.Payload.InstallPlugin.QueryId, 64)
@@ -118,6 +120,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 		}
 	case "RemovePlugin":
 		m.Op = 3
+		bodyRef = false
 		body := boc.NewCell()
 		_ = body.WriteUint(0x64737472, 32)
 		_ = body.WriteUint(msg.Payload.RemovePlugin.QueryId, 64)
@@ -138,6 +141,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	if err != nil {
 		return err
 	}
+	outTlb.Body.IsRight = bodyRef
 	outCell := boc.NewCell()
 	err = tlb.Marshal(outCell, outTlb)
 	if err != nil {

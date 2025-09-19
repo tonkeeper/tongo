@@ -228,7 +228,7 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 	t.shards[i].input = append(t.shards[i].input, m)
 	t.unprocessed++
 
-	for t.unprocessed > 0 && (t.softLimit == 0 || t.softLimit < t.counter) {
+	for t.unprocessed > 0 && (t.softLimit == 0 || t.softLimit > t.counter) {
 		err = t.emulationLoop(ctx)
 		if err != nil {
 			return nil, err

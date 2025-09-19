@@ -234,6 +234,9 @@ func (t *Tracer) Run(ctx context.Context, message tlb.Message) (*TxTree, error) 
 			return nil, err
 		}
 	}
+	if len(fakeRoot.Children) == 0 {
+		return nil, fmt.Errorf("no transactions were processed")
+	}
 	return fakeRoot.Children[0], nil
 }
 

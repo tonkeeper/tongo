@@ -239,6 +239,36 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 				JettonMaster, CoffeePool,
 			},
 		},
+		{
+			name:       "stonfi v2 const product",
+			account:    "EQCGScrZe1xbyWqWDvdI6mzP-GAcAWFv6ZXuaJOuSqemxku4",
+			code:       "b5ee9c7201010101002300084202a9338ecd624ca15d37e4a8d9bf677ddc9b84f0e98f05f2fb84c7afe332a281b4",
+			data:       "b5ee9c720101040100d7000149301a140f832fdb823ba1bfb5be3f31b7c3443fd0faa362f8616032132169133960002800150102c980125c28235ca8d125e676591513d520721b1fe99f7722f4c87723ce7ee0dfb73a300248b589f5f63b6f4039388ef6c31529dbb9787d195ce86bd105e15fe8f88fa47e00491060c0d367f56688dbdc7b109c6f8ddce6415b769330e97afd7710259f7d90400203084202c00836440d084e44fb94316132ac5a21417ef4f429ee09b5560b5678b334c3e8084202c95a2ed22ab516f77f9d4898dc4578e72f18a2448e8f6832334b0b4bf501bc79",
+			hasLibrary: true,
+			want: []ContractInterface{
+				JettonMaster, StonfiPoolV2ConstProduct,
+			},
+		},
+		{
+			name:       "stonfi v2 stableswap",
+			account:    "EQBSUY4UWGJFAps0KwHY4tpOGqzU41DZhyrT8OuyAWWtnezy",
+			code:       "b5ee9c72010101010023000842023c882eb9ede6be2459b2d2e469680af9f8e48ab16ec0726f0d07b0e5686be718",
+			data:       "b5ee9c720101040100f800018c301d364b8c6e5b01e9cb72c7ffb03bd138d8a68a36b9f0f3a375b46f1c00000000000000000000000000000000000000000000000000000000000000000000000001000000640102c9800a46afff33251480ab6dab42434437a3fe464a9dbe5f525f9642ab4d2ef6eac89001466aa0b3a89e00a1dd7ccf9e8a225962fc32536722c3351274978f9861d9e8ee0029ee48e6b746e6db45008d68a4de088ac64064b6fcbb98f3a46f9583bb409e2a400203084202c00836440d084e44fb94316132ac5a21417ef4f429ee09b5560b5678b334c3e8084202c3b3ef256ddc9bd4e35db3e3863c048b18465c9f403f1d5a2b559395e11cfee6",
+			hasLibrary: true,
+			want: []ContractInterface{
+				JettonMaster, StonfiPoolV2Stableswap,
+			},
+		},
+		{
+			name:       "stonfi v2 weighted stableswap",
+			account:    "EQAF6mNbKhaMrfyhdNcrEnRKW1fXA3jmkS6KM7azm9PunYx5",
+			code:       "b5ee9c72010101010023000842029e5038ab735973d5450fae1a14e7707b332dcd8e744f5dbb3b6a0d994d400c59",
+			data:       "b5ee9c72010205010001280002413008a53a7fe1e300cd07f2d7d5320e45240c65220ff1049ba08971348000080003010200a30000000000000002b5e3af16b188000000000000000000001131cfef7cb58000000000000000000003782dace9d900008000000000000000000000000000000000000000000000000000000000000000001002c98000cafb7e1aeb694b6c81c13012e24c43b95cf99bd3c84fb900ee31e9b144096fb0001aa0db2d3fc8f1224da5badf8994c74a05048d50963e42b0d8d71fe2b849569a0003770d21f96c46cd550df24da7d76c88d13cbed0cc691d4e91c69706ae47137bc00304084202c00836440d084e44fb94316132ac5a21417ef4f429ee09b5560b5678b334c3e8084202e398c874e2bb0017b7447c3cbc534ca368d96533c1b120101d4c8c097d12c6e3",
+			hasLibrary: true,
+			want: []ContractInterface{
+				JettonMaster, StonfiPoolV2WeightedStableswap,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -251,7 +281,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			if tt.emulatorConfig == nil {
 				emulatorConfig = mainnetConfig[0]
 			}
-			cli, err := liteapi.NewClient(liteapi.Testnet())
+			cli, err := liteapi.NewClient(liteapi.Mainnet())
 			if err != nil {
 				t.Fatalf("failed to create liteapi client: %v", err)
 			}
@@ -276,7 +306,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 				if err != nil {
 					t.Fatalf("LibrariesToBase64() failed: %v", err)
 				}
-				emulator, err = tvm.NewEmulator(codeCell[0], dataCell[0], emulatorConfig, tvm.WithLazyC7Optimization(), tvm.WithLibraryResolver(cli), tvm.WithIgnoreLibraryCells(true), tvm.WithLibrariesBase64(base64Libs))
+				emulator, err = tvm.NewEmulator(codeCell[0], dataCell[0], emulatorConfig, tvm.WithLibraryResolver(cli), tvm.WithIgnoreLibraryCells(true), tvm.WithLibrariesBase64(base64Libs))
 				if err != nil {
 					t.Fatalf("NewEmulator() with library failed: %v", err)
 				}

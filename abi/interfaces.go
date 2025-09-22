@@ -71,6 +71,9 @@ const (
 	StonfiLpAccountV2
 	StonfiPool
 	StonfiPoolV2
+	StonfiPoolV2ConstProduct
+	StonfiPoolV2Stableswap
+	StonfiPoolV2WeightedStableswap
 	StonfiRouter
 	StonfiRouterV2
 	StonfiVaultV2
@@ -243,6 +246,12 @@ func (c ContractInterface) String() string {
 		return "stonfi_pool"
 	case StonfiPoolV2:
 		return "stonfi_pool_v2"
+	case StonfiPoolV2ConstProduct:
+		return "stonfi_pool_v2_const_product"
+	case StonfiPoolV2Stableswap:
+		return "stonfi_pool_v2_stableswap"
+	case StonfiPoolV2WeightedStableswap:
+		return "stonfi_pool_v2_weighted_stableswap"
 	case StonfiRouter:
 		return "stonfi_router"
 	case StonfiRouterV2:
@@ -460,6 +469,12 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return StonfiPool
 	case "stonfi_pool_v2":
 		return StonfiPoolV2
+	case "stonfi_pool_v2_const_product":
+		return StonfiPoolV2ConstProduct
+	case "stonfi_pool_v2_stableswap":
+		return StonfiPoolV2Stableswap
+	case "stonfi_pool_v2_weighted_stableswap":
+		return StonfiPoolV2WeightedStableswap
 	case "stonfi_router":
 		return StonfiRouter
 	case "stonfi_router_v2":
@@ -1233,9 +1248,21 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: StonfiPoolV2,
+		Name: StonfiPoolV2ConstProduct,
 		Results: []string{
-			"GetPoolData_StonfiV2Result",
+			"GetPoolData_StonfiV2ConstProductResult",
+		},
+	},
+	{
+		Name: StonfiPoolV2Stableswap,
+		Results: []string{
+			"GetPoolData_StonfiV2StableswapResult",
+		},
+	},
+	{
+		Name: StonfiPoolV2WeightedStableswap,
+		Results: []string{
+			"GetPoolData_StonfiV2WeightedStableswapResult",
 		},
 	},
 	{
@@ -1472,6 +1499,12 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return NftSale.Implements(other)
 	case NftSaleV2:
 		return NftSale.Implements(other)
+	case StonfiPoolV2ConstProduct:
+		return StonfiPoolV2.Implements(other)
+	case StonfiPoolV2Stableswap:
+		return StonfiPoolV2.Implements(other)
+	case StonfiPoolV2WeightedStableswap:
+		return StonfiPoolV2.Implements(other)
 	case WalletHighloadV1R1:
 		return Wallet.Implements(other)
 	case WalletHighloadV1R2:

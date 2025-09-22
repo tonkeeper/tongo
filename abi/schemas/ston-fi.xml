@@ -7,7 +7,6 @@
         <get_method name="get_pool_data" version="stonfi"/>
     </interface>
     <interface name="stonfi_pool_v2">
-        <get_method name="get_pool_data" version="stonfi_v2"/>
         <get_method name="get_lp_account_address" version="stonfi"/>
         <msg_in>
             <internal name="stonfi_burn_notification_ext_v2"/>
@@ -16,6 +15,15 @@
             <internal name="pton_reset_gas"/>
             <internal name="stonfi_cb_add_liquidity_v2"/>
         </msg_in>
+    </interface>
+    <interface name="stonfi_pool_v2_const_product" inherits="stonfi_pool_v2">
+        <get_method name="get_pool_data" version="stonfi_v2_const_product"/>
+    </interface>
+    <interface name="stonfi_pool_v2_stableswap" inherits="stonfi_pool_v2">
+        <get_method name="get_pool_data" version="stonfi_v2_stableswap"/>
+    </interface>
+    <interface name="stonfi_pool_v2_weighted_stableswap" inherits="stonfi_pool_v2">
+        <get_method name="get_pool_data" version="stonfi_v2_weighted_stableswap"/>
     </interface>
     <interface name="stonfi_router">
         <get_method name="get_router_data" version="stonfi"/>
@@ -162,7 +170,7 @@
             <int name="collected_token1_protocol_fee">int257</int>
         </output>
 
-        <output version="stonfi_v2" fixed_length="true">
+        <output version="stonfi_v2_const_product" fixed_length="true">
             <int name="is_locked">bool</int>
             <slice name="router_address">msgaddress</slice>
             <int name="total_supply">int257</int>

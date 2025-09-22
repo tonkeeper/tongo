@@ -17,7 +17,7 @@
         </msg_in>
     </interface>
     <interface name="stonfi_pool_v2_const_product" inherits="stonfi_pool_v2">
-        <get_method name="get_pool_data" version="stonfi_v2_const_product"/>
+        <get_method name="get_pool_data" version="stonfi_v2"/>
     </interface>
     <interface name="stonfi_pool_v2_stableswap" inherits="stonfi_pool_v2">
         <get_method name="get_pool_data" version="stonfi_v2_stableswap"/>
@@ -170,7 +170,7 @@
             <int name="collected_token1_protocol_fee">int257</int>
         </output>
 
-        <output version="stonfi_v2_const_product" fixed_length="true">
+        <output version="stonfi_v2" fixed_length="true">
             <int name="is_locked">bool</int>
             <slice name="router_address">msgaddress</slice>
             <int name="total_supply">int257</int>

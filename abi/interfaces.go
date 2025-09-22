@@ -1250,7 +1250,7 @@ var contractInterfacesOrder = []InterfaceDescription{
 	{
 		Name: StonfiPoolV2ConstProduct,
 		Results: []string{
-			"GetPoolData_StonfiV2ConstProductResult",
+			"GetPoolData_StonfiV2Result",
 		},
 	},
 	{

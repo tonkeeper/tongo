@@ -607,7 +607,7 @@ func TestGetMethods(t *testing.T) {
 			account:      "0:228829d720692d8247906d717772f84b14631269157efddc55f06130cde523bc",
 			method:       GetPoolData,
 			wantTypeHint: "GetPoolData_StonfiV2ConstProductResult",
-			want: GetPoolData_StonfiV2ConstProductResult{
+			want: GetPoolData_StonfiV2Result{
 				IsLocked:                   false,
 				RouterAddress:              mustToMsgAddress("0:f0ca38239d35c954f8d78e2dce3ed52295c0a371e19540e2c6c2bf7fb112e322"),
 				TotalSupply:                tlb.Int257FromInt64(200000000),

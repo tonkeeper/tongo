@@ -8,6 +8,7 @@ The list below contains the supported message operations, their names and opcode
 | Name        | Message operation code |
 |-------------|------------------------|
 | AcceptStorageContract| 0x7a361688 |
+| Accountv3AddLiquidity| 0x3ebe5431 |
 | Approve| 0x7b4b42e6 |
 | AuctionFillUp| 0x370fec51 |
 | BemoDeployUnstakeRequest| 0x10a1ce75 |
@@ -187,7 +188,11 @@ The list below contains the supported message operations, their names and opcode
 | PayTo| 0xa1daa96d |
 | PaymentConfirmed| 0xf06c7567 |
 | PaymentRequest| 0x706c7567 |
+| PoolFundAccount| 0x4468de77 |
+| Poolv3FundAccount| 0x4468de77 |
+| Poolv3Mint| 0x81702ef8 |
 | Poolv3Swap| 0xa7fb58f8 |
+| PositionnftV3PositionInit| 0xd5ecca2a |
 | PreprocessedWalletSignedV2| 0x00000000 |
 | ProcessGovernanceDecision| 0x44beae41 |
 | ProofStorage| 0x419d5d4d |

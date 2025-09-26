@@ -89,6 +89,7 @@ const (
 	SubscriptionV1
 	SubscriptionV2
 	Teleitem
+	ToncoAccount
 	ToncoPool
 	ToncoRouter
 	Tonkeeper2Fa
@@ -282,6 +283,8 @@ func (c ContractInterface) String() string {
 		return "subscription_v2"
 	case Teleitem:
 		return "teleitem"
+	case ToncoAccount:
+		return "tonco_account"
 	case ToncoPool:
 		return "tonco_pool"
 	case ToncoRouter:
@@ -505,6 +508,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return SubscriptionV2
 	case "teleitem":
 		return Teleitem
+	case "tonco_account":
+		return ToncoAccount
 	case "tonco_pool":
 		return ToncoPool
 	case "tonco_router":
@@ -584,6 +589,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "getRouterState",
 		InvokeFn: GetRouterState,
+	},
+	{
+		Name:     "get_account_data",
+		InvokeFn: GetAccountData,
 	},
 	{
 		Name:     "get_active_range",
@@ -1448,6 +1457,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: ToncoAccount,
+		Results: []string{
+			"GetAccountData_ToncoResult",
+		},
+	},
+	{
 		Name: TvPool,
 		Results: []string{
 			"GetPoolData_TfResult",
@@ -2114,6 +2129,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncWalletPluginDestructMsgBody,
 			decodeFuncSubscriptionReducePaymentMsgBody,
 			decodeFuncSubscriptionDeployMsgBody,
+		}
+	case ToncoAccount:
+		return []msgDecoderFunc{
+			decodeFuncAccountv3AddLiquidityMsgBody,
 		}
 	case ToncoPool:
 		return []msgDecoderFunc{

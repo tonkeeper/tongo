@@ -209,7 +209,7 @@
         </output>
     </get_method>
     <get_method name="get_account_data" version="tonco">
-        <output fixed_length="true">
+        <output version="tonco" fixed_length="true">
             <slice name="user_address">msgaddress</slice>
             <slice name="pool_address">msgaddress</slice>
             <int name="amount0">int257</int>

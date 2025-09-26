@@ -21,7 +21,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"getIsActive":                                  {DecodeGetIsActive_ToncoResult},
 	"getPoolStateAndConfiguration":                 {DecodeGetPoolStateAndConfiguration_ToncoResult},
 	"getRouterState":                               {DecodeGetRouterState_ToncoResult},
-	"get_account_data":                             {DecodeGetAccountDataResult},
+	"get_account_data":                             {DecodeGetAccountData_ToncoResult},
 	"get_active_range":                             {DecodeGetActiveRange_BidaskResult},
 	"get_admin_address":                            {DecodeGetAdminAddress_CoffeeResult},
 	"get_amm_contract_data":                        {DecodeGetAmmContractData_StormResult},
@@ -304,7 +304,7 @@ var resultTypes = []interface{}{
 	&GetIsActive_ToncoResult{},
 	&GetPoolStateAndConfiguration_ToncoResult{},
 	&GetRouterState_ToncoResult{},
-	&GetAccountDataResult{},
+	&GetAccountData_ToncoResult{},
 	&GetActiveRange_BidaskResult{},
 	&GetAdminAddress_CoffeeResult{},
 	&GetAmmContractData_StormResult{},
@@ -901,7 +901,7 @@ func DecodeGetRouterState_ToncoResult(stack tlb.VmStack) (resultType string, res
 	return "GetRouterState_ToncoResult", result, err
 }
 
-type GetAccountDataResult struct {
+type GetAccountData_ToncoResult struct {
 	UserAddress tlb.MsgAddress
 	PoolAddress tlb.MsgAddress
 	Amount0     tlb.Int257
@@ -921,7 +921,7 @@ func GetAccountData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAccountDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAccountData_ToncoResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -930,13 +930,13 @@ func GetAccountData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	return "", nil, fmt.Errorf("can not decode outputs")
 }
 
-func DecodeGetAccountDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+func DecodeGetAccountData_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
 	if len(stack) != 6 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
-	var result GetAccountDataResult
+	var result GetAccountData_ToncoResult
 	err = stack.Unmarshal(&result)
-	return "GetAccountDataResult", result, err
+	return "GetAccountData_ToncoResult", result, err
 }
 
 type GetActiveRange_BidaskResult struct {

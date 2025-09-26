@@ -1,15 +1,26 @@
 <abi>
+    <types>
+        additional_data#_ from_address:MsgAddress ref_address:MsgAddress = AdditionalData;
+        farming_data#_ distributed_x_amount:Coins distributed_y_amount:Coins = FarmingData;
+        swap_additional#_ previous_time:uint64 start_price:uint256 actual_fee:uint16 distributed_x_amount:Coins distributed_y_amount:Coins = SwapAdditionalData;
+    </types>
     <interface name="bidask_pool">
         <get_method name="get_pool_info" version="bidask"/>
         <get_method name="get_current_bin" version="bidask"/>
         <get_method name="get_sqrt_p" version="bidask"/>
         <get_method name="get_active_range" version="bidask"/>
+        <get_method name="whoami" version="bidask"/>
+        <get_method name="get_dynamic_fees_info" version="bidask"/>
+        <get_method name="get_farming_info" version="bidask"/>
         <msg_in>
             <internal name="jetton_notify"/>
             <internal name="bidask_swap"/>
+            <internal name="bidask_swap_v2"/>
             <internal name="bidask_provide"/>
             <internal name="bidask_swap_success"/>
+            <internal name="bidask_swap_success_v2"/>
             <internal name="bidask_swap_fallback"/>
+            <internal name="bidask_swap_fallback_v2"/>
             <internal name="bidask_provide_refund"/>
             <internal name="bidask_burn_payout"/>
             <internal name="bidask_adding_liquidity_notify"/>
@@ -17,6 +28,7 @@
         <msg_out>
             <internal name="jetton_transfer"/>
             <internal name="bidask_internal_swap"/>
+            <internal name="bidask_internal_swap_v2"/>
             <internal name="bidask_save_liquidity_info"/>
             <internal name="bidask_native_transfer_notification"/>
         </msg_out>
@@ -26,20 +38,28 @@
     <interface name="bidask_range">
         <get_method name="get_pool_addr" version="bidask"/>
         <get_method name="get_lp_multitoken_wallet" version="bidask"/>
+        <get_method name="get_bin_assets" version="bidask"/>
+        <get_method name="get_user_bin_assets" version="bidask"/>
         <msg_in>
             <internal name="bidask_internal_swap"/>
+            <internal name="bidask_internal_swap_v2"/>
             <internal name="bidask_internal_continue_swap"/>
+            <internal name="bidask_internal_continue_swap_v2"/>
             <internal name="bidask_internal_continue_provide"/>
             <internal name="bidask_internal_burn"/>
         </msg_in>
         <msg_out>
             <internal name="bidask_internal_continue_swap"/>
+            <internal name="bidask_internal_continue_swap_v2"/>
             <internal name="bidask_internal_continue_provide"/>
             <internal name="bidask_swap_success"/>
+            <internal name="bidask_swap_success_v2"/>
             <internal name="bidask_swap_fallback"/>
+            <internal name="bidask_swap_fallback_v2"/>
             <internal name="bidask_provide_refund"/>
             <internal name="bidask_burn_payout"/>
             <internal name="bidask_internal_burn"/>
+            <internal name="bidask_multitoken_mint"/>
         </msg_out>
     </interface>
 
@@ -54,6 +74,7 @@
             <internal name="bidask_internal_burn"/>
             <internal name="bidask_liquidity_added_notify"/>
         </msg_out>
+        <error code="83">Insufficient gas for operation</error>
     </interface>
 
     <interface name="bidask_internal_liquidity_vault">
@@ -75,6 +96,26 @@
         </output>
     </get_method>
 
+    <get_method name="get_farming_info">
+        <output version="bidask" fixed_length="true">
+            <int name="distributed_x_amount">int257</int>
+            <int name="distributed_y_amount">int257</int>
+            <int name="farming_x_per_second">int257</int>
+            <int name="farming_y_per_second">int257</int>
+            <int name="previous_call">int257</int>
+            <int name="end_of_farming">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_dynamic_fees_info">
+        <output version="bidask" fixed_length="true">
+            <int name="base_fee">int257</int>
+            <int name="dynamic_fee_factor">int257</int>
+            <int name="time_filter">int257</int>
+            <int name="time_decay">int257</int>
+        </output>
+    </get_method>
+
     <get_method name="get_current_bin">
         <output version="bidask" fixed_length="true">
             <int name="current_bin">int257</int>
@@ -93,6 +134,12 @@
         </output>
     </get_method>
 
+    <get_method name="whoami">
+        <output version="bidask" fixed_length="true">
+            <slice name="pool_type">string</slice>
+        </output>
+    </get_method>
+
     <get_method name="get_pool_addr">
         <output version="bidask" fixed_length="true">
             <slice name="pool_address">msgaddress</slice>
@@ -105,6 +152,27 @@
         </input>
         <output version="bidask" fixed_length="true">
             <slice name="multitoken_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_bin_assets">
+        <input>
+            <int name="bin_number">int257</int>
+        </input>
+        <output version="bidask" fixed_length="true">
+            <int name="amount_x">int257</int>
+            <int name="amount_y">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_user_bin_assets">
+        <input>
+            <int name="bin_number">int257</int>
+            <int name="user_lp">int257</int>
+        </input>
+        <output version="bidask" fixed_length="true">
+            <int name="amount_x">int257</int>
+            <int name="amount_y">int257</int>
         </output>
     </get_method>
 
@@ -133,6 +201,16 @@
         ref_address:MsgAddress additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
+    <internal name="bidask_swap_v2" >
+        bidask_swap#87d36990 query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
+    <jetton_payload name="bidask_swap_v2" >
+        bidask_swap#87d36990 to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </jetton_payload>
+
     <internal name="bidask_provide" >
         bidask_provide#96feef7b query_id:uint64 deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
@@ -150,9 +228,19 @@
         is_x:Bool user_address:MsgAddress ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
+    <internal name="bidask_swap_success_v2" >
+        bidask_swap_success#d3a25890 query_id:uint64 new_current_bin:int32 new_sqrt_price:uint256 order:Bool amount_x:Coins amount_y:Coins
+        is_x:Bool user_address:MsgAddress dynamic_fee:uint16 additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
     <internal name="bidask_swap_fallback" >
         bidask_swap_fallback#1bba3896 query_id:uint64 first_range_bin:int32 order:Bool user_address:MsgAddress is_x:Bool 
         amount_in:Coins additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_swap_fallback_v2" >
+        bidask_swap_fallback#1bba3896 query_id:uint64 first_range_bin:int32 order:Bool user_address:MsgAddress is_x:Bool
+        amount_in:Coins distributed_x_amount:Coins distributed_y_amount:Coins additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_provide_refund" >
@@ -173,6 +261,16 @@
     <internal name="bidask_internal_continue_swap" >
         bidask_internal_continue_swap#59699475 query_id:uint64 to_address:MsgAddress order:Bool is_x:Bool amount_in:Coins amount_out:Coins exact_out:Coins 
         slippage:(Either Coins uint256) ref_cell:(Maybe ^Cell) additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_internal_swap_v2" >
+        bidask_internal_swap#87d36990 query_id:uint64 to_address:MsgAddress order:Bool is_x:Bool amount_in:Coins amount_out:Coins exact_out:Coins
+        slippage:(Either Coins uint256) farming_cell:(Maybe ^FarmingData) additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_internal_continue_swap_v2" >
+        bidask_internal_continue_swap#5a6a036f query_id:uint64 to_address:MsgAddress order:Bool is_x:Bool amount_in:Coins amount_out:Coins exact_out:Coins
+        slippage:(Either Coins uint256) swap_additional_data:(Maybe ^SwapAdditionalData) additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <internal name="bidask_internal_continue_provide" >

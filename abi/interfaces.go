@@ -691,6 +691,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetDomain,
 	},
 	{
+		Name:     "get_dynamic_fees_info",
+		InvokeFn: GetDynamicFeesInfo,
+	},
+	{
 		Name:     "get_editor",
 		InvokeFn: GetEditor,
 	},
@@ -713,6 +717,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_extensions",
 		InvokeFn: GetExtensions,
+	},
+	{
+		Name:     "get_farming_info",
+		InvokeFn: GetFarmingInfo,
 	},
 	{
 		Name:     "get_fix_price_data_v4",
@@ -1066,6 +1074,10 @@ var methodInvocationOrder = []MethodDescription{
 		Name:     "seqno",
 		InvokeFn: Seqno,
 	},
+	{
+		Name:     "whoami",
+		InvokeFn: Whoami,
+	},
 }
 
 var contractInterfacesOrder = []InterfaceDescription{
@@ -1074,8 +1086,11 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Results: []string{
 			"GetActiveRange_BidaskResult",
 			"GetCurrentBin_BidaskResult",
+			"GetDynamicFeesInfo_BidaskResult",
+			"GetFarmingInfo_BidaskResult",
 			"GetPoolInfo_BidaskResult",
 			"GetSqrtP_BidaskResult",
+			"Whoami_BidaskResult",
 		},
 	},
 	{
@@ -1890,9 +1905,12 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 		return []msgDecoderFunc{
 			decodeFuncJettonNotifyMsgBody,
 			decodeFuncBidaskSwapMsgBody,
+			decodeFuncBidaskSwapV2MsgBody,
 			decodeFuncBidaskProvideMsgBody,
 			decodeFuncBidaskSwapSuccessMsgBody,
+			decodeFuncBidaskSwapSuccessV2MsgBody,
 			decodeFuncBidaskSwapFallbackMsgBody,
+			decodeFuncBidaskSwapFallbackV2MsgBody,
 			decodeFuncBidaskProvideRefundMsgBody,
 			decodeFuncBidaskBurnPayoutMsgBody,
 			decodeFuncBidaskAddingLiquidityNotifyMsgBody,
@@ -1900,7 +1918,9 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	case BidaskRange:
 		return []msgDecoderFunc{
 			decodeFuncBidaskInternalSwapMsgBody,
+			decodeFuncBidaskInternalSwapV2MsgBody,
 			decodeFuncBidaskInternalContinueSwapMsgBody,
+			decodeFuncBidaskInternalContinueSwapV2MsgBody,
 			decodeFuncBidaskInternalContinueProvideMsgBody,
 			decodeFuncBidaskInternalBurnMsgBody,
 		}

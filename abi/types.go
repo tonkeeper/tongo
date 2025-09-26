@@ -8,6 +8,24 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+type AdditionalData struct {
+	FromAddress tlb.MsgAddress
+	RefAddress  tlb.MsgAddress
+}
+
+type FarmingData struct {
+	DistributedXAmount tlb.Grams
+	DistributedYAmount tlb.Grams
+}
+
+type SwapAdditionalData struct {
+	PreviousTime       uint64
+	StartPrice         tlb.Uint256
+	ActualFee          uint16
+	DistributedXAmount tlb.Grams
+	DistributedYAmount tlb.Grams
+}
+
 type DedustAsset struct {
 	tlb.SumType
 	Native struct{} `tlbSumType:"$0000"`

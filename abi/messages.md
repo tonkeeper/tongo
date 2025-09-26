@@ -23,7 +23,9 @@ The list below contains the supported message operations, their names and opcode
 | BidaskInternalBurn| 0x16e09400 |
 | BidaskInternalContinueProvide| 0x0c09445a |
 | BidaskInternalContinueSwap| 0x59699475 |
+| BidaskInternalContinueSwapV2| 0x5a6a036f |
 | BidaskInternalSwap| 0x66210c65 |
+| BidaskInternalSwapV2| 0x87d36990 |
 | BidaskLiquidityAddedNotify| 0x0dc8bb28 |
 | BidaskNativeTransferNotification| 0x6edd65f0 |
 | BidaskProvide| 0x96feef7b |
@@ -34,7 +36,11 @@ The list below contains the supported message operations, their names and opcode
 | BidaskSwap| 0xf2ef6c1b |
 | BidaskSwap| 0xf2ef6c1b |
 | BidaskSwapFallback| 0x1bba3896 |
+| BidaskSwapFallbackV2| 0x1bba3896 |
 | BidaskSwapSuccess| 0x520e4831 |
+| BidaskSwapSuccessV2| 0xd3a25890 |
+| BidaskSwapV2| 0x87d36990 |
+| BidaskSwapV2| 0x87d36990 |
 | Bounce| 0xffffffff |
 | ChallengeQuarantinedChannelState| 0x088eaa32 |
 | ChangeDnsRecord| 0x4eb1f0f9 |

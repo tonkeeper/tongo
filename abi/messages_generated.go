@@ -371,6 +371,8 @@ var (
 	decodeFuncReportRoyaltyParamsMsgBody = decodeMsg(tlb.Tag{Val: 0xa8cb00ad, Len: 32}, ReportRoyaltyParamsMsgOp, ReportRoyaltyParamsMsgBody{})
 	// 0xa91baf56
 	decodeFuncStorageRewardWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0xa91baf56, Len: 32}, StorageRewardWithdrawalMsgOp, StorageRewardWithdrawalMsgBody{})
+	// 0xab7bef17
+	decodeFuncTakeAggregatedDataDepositMsgBody = decodeMsg(tlb.Tag{Val: 0xab7bef17, Len: 32}, TakeAggregatedDataDepositMsgOp, TakeAggregatedDataDepositMsgBody{})
 	// 0xad4eb6f5
 	decodeFuncDedustPayoutFromPoolMsgBody = decodeMsg(tlb.Tag{Val: 0xad4eb6f5, Len: 32}, DedustPayoutFromPoolMsgOp, DedustPayoutFromPoolMsgBody{})
 	// 0xae25d79e
@@ -379,6 +381,10 @@ var (
 	decodeFuncBidaskAddingLiquidityNotifyMsgBody = decodeMsg(tlb.Tag{Val: 0xaf31d23f, Len: 32}, BidaskAddingLiquidityNotifyMsgOp, BidaskAddingLiquidityNotifyMsgBody{})
 	// 0xafaf283e
 	decodeFuncMultisigApproveRejectedMsgBody = decodeMsg(tlb.Tag{Val: 0xafaf283e, Len: 32}, MultisigApproveRejectedMsgOp, MultisigApproveRejectedMsgBody{})
+	// 0xb0c69ffe
+	decodeFuncProvideAggregatedDataDepositMsgBody = decodeMsg(tlb.Tag{Val: 0xb0c69ffe, Len: 32}, ProvideAggregatedDataDepositMsgOp, ProvideAggregatedDataDepositMsgBody{})
+	// 0xb0c69ffe
+	decodeFuncProvideAggregatedDataWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xb0c69ffe, Len: 32}, ProvideAggregatedDataWithdrawMsgOp, ProvideAggregatedDataWithdrawMsgBody{})
 	// 0xb1ebae06
 	decodeFuncTonstakeImanagerRequestNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0xb1ebae06, Len: 32}, TonstakeImanagerRequestNotificationMsgOp, TonstakeImanagerRequestNotificationMsgBody{})
 	// 0xb27edcad
@@ -493,6 +499,8 @@ var (
 	decodeFuncStormVaultUnstakeMsgBody = decodeMsg(tlb.Tag{Val: 0xd5b5e9ad, Len: 32}, StormVaultUnstakeMsgOp, StormVaultUnstakeMsgBody{})
 	// 0xd5ecca2a
 	decodeFuncPositionnftV3PositionInitMsgBody = decodeMsg(tlb.Tag{Val: 0xd5ecca2a, Len: 32}, PositionnftV3PositionInitMsgOp, PositionnftV3PositionInitMsgBody{})
+	// 0xd9cf8c91
+	decodeFuncTakeAggregatedDataWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xd9cf8c91, Len: 32}, TakeAggregatedDataWithdrawMsgOp, TakeAggregatedDataWithdrawMsgBody{})
 	// 0xda067c19
 	decodeFuncMoonCreateOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xda067c19, Len: 32}, MoonCreateOrderMsgOp, MoonCreateOrderMsgBody{})
 	// 0xda803efd
@@ -1110,6 +1118,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xa91baf56
 	StorageRewardWithdrawalMsgOpCode: decodeFuncStorageRewardWithdrawalMsgBody,
 
+	// 0xab7bef17
+	TakeAggregatedDataDepositMsgOpCode: decodeFuncTakeAggregatedDataDepositMsgBody,
+
 	// 0xad4eb6f5
 	DedustPayoutFromPoolMsgOpCode: decodeFuncDedustPayoutFromPoolMsgBody,
 
@@ -1121,6 +1132,13 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xafaf283e
 	MultisigApproveRejectedMsgOpCode: decodeFuncMultisigApproveRejectedMsgBody,
+
+	//ProvideAggregatedDataDeposit, ProvideAggregatedDataWithdraw,
+	0xb0c69ffe: decodeMultipleMsgs([]msgDecoderFunc{
+		decodeFuncProvideAggregatedDataDepositMsgBody,
+		decodeFuncProvideAggregatedDataWithdrawMsgBody},
+		"0xb0c69ffe",
+	),
 
 	// 0xb1ebae06
 	TonstakeImanagerRequestNotificationMsgOpCode: decodeFuncTonstakeImanagerRequestNotificationMsgBody,
@@ -1292,6 +1310,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xd5ecca2a
 	PositionnftV3PositionInitMsgOpCode: decodeFuncPositionnftV3PositionInitMsgBody,
+
+	// 0xd9cf8c91
+	TakeAggregatedDataWithdrawMsgOpCode: decodeFuncTakeAggregatedDataWithdrawMsgBody,
 
 	// 0xda067c19
 	MoonCreateOrderMsgOpCode: decodeFuncMoonCreateOrderMsgBody,
@@ -1570,10 +1591,13 @@ const (
 	Poolv3SwapMsgOp                              MsgOpName = "Poolv3Swap"
 	ReportRoyaltyParamsMsgOp                     MsgOpName = "ReportRoyaltyParams"
 	StorageRewardWithdrawalMsgOp                 MsgOpName = "StorageRewardWithdrawal"
+	TakeAggregatedDataDepositMsgOp               MsgOpName = "TakeAggregatedDataDeposit"
 	DedustPayoutFromPoolMsgOp                    MsgOpName = "DedustPayoutFromPool"
 	PtonTonRefundMsgOp                           MsgOpName = "PtonTonRefund"
 	BidaskAddingLiquidityNotifyMsgOp             MsgOpName = "BidaskAddingLiquidityNotify"
 	MultisigApproveRejectedMsgOp                 MsgOpName = "MultisigApproveRejected"
+	ProvideAggregatedDataDepositMsgOp            MsgOpName = "ProvideAggregatedDataDeposit"
+	ProvideAggregatedDataWithdrawMsgOp           MsgOpName = "ProvideAggregatedDataWithdraw"
 	TonstakeImanagerRequestNotificationMsgOp     MsgOpName = "TonstakeImanagerRequestNotification"
 	TonstakePoolDeployControllerMsgOp            MsgOpName = "TonstakePoolDeployController"
 	CoffeeStakingClaimRewardsMsgOp               MsgOpName = "CoffeeStakingClaimRewards"
@@ -1631,6 +1655,7 @@ const (
 	DedustDepositLiquidityMsgOp                  MsgOpName = "DedustDepositLiquidity"
 	StormVaultUnstakeMsgOp                       MsgOpName = "StormVaultUnstake"
 	PositionnftV3PositionInitMsgOp               MsgOpName = "PositionnftV3PositionInit"
+	TakeAggregatedDataWithdrawMsgOp              MsgOpName = "TakeAggregatedDataWithdraw"
 	MoonCreateOrderMsgOp                         MsgOpName = "MoonCreateOrder"
 	WhalesNominatorsWithdrawMsgOp                MsgOpName = "WhalesNominatorsWithdraw"
 	TonstakeNftPayoutMsgOp                       MsgOpName = "TonstakeNftPayout"
@@ -1847,10 +1872,13 @@ const (
 	Poolv3SwapMsgOpCode                              MsgOpCode = 0xa7fb58f8
 	ReportRoyaltyParamsMsgOpCode                     MsgOpCode = 0xa8cb00ad
 	StorageRewardWithdrawalMsgOpCode                 MsgOpCode = 0xa91baf56
+	TakeAggregatedDataDepositMsgOpCode               MsgOpCode = 0xab7bef17
 	DedustPayoutFromPoolMsgOpCode                    MsgOpCode = 0xad4eb6f5
 	PtonTonRefundMsgOpCode                           MsgOpCode = 0xae25d79e
 	BidaskAddingLiquidityNotifyMsgOpCode             MsgOpCode = 0xaf31d23f
 	MultisigApproveRejectedMsgOpCode                 MsgOpCode = 0xafaf283e
+	ProvideAggregatedDataDepositMsgOpCode            MsgOpCode = 0xb0c69ffe
+	ProvideAggregatedDataWithdrawMsgOpCode           MsgOpCode = 0xb0c69ffe
 	TonstakeImanagerRequestNotificationMsgOpCode     MsgOpCode = 0xb1ebae06
 	TonstakePoolDeployControllerMsgOpCode            MsgOpCode = 0xb27edcad
 	CoffeeStakingClaimRewardsMsgOpCode               MsgOpCode = 0xb30c7310
@@ -1908,6 +1936,7 @@ const (
 	DedustDepositLiquidityMsgOpCode                  MsgOpCode = 0xd55e4686
 	StormVaultUnstakeMsgOpCode                       MsgOpCode = 0xd5b5e9ad
 	PositionnftV3PositionInitMsgOpCode               MsgOpCode = 0xd5ecca2a
+	TakeAggregatedDataWithdrawMsgOpCode              MsgOpCode = 0xd9cf8c91
 	MoonCreateOrderMsgOpCode                         MsgOpCode = 0xda067c19
 	WhalesNominatorsWithdrawMsgOpCode                MsgOpCode = 0xda803efd
 	TonstakeNftPayoutMsgOpCode                       MsgOpCode = 0xdb3b8abd
@@ -3205,6 +3234,15 @@ type StorageRewardWithdrawalMsgBody struct {
 	QueryId uint64
 }
 
+type TakeAggregatedDataDepositMsgBody struct {
+	QueryId        uint64
+	Index          tlb.Grams
+	AssetData      *tlb.Any `tlb:"maybe^"`
+	PoolData       *tlb.Any `tlb:"maybe^"`
+	VaultData      *tlb.Any `tlb:"maybe^"`
+	ContextPayload DepositContext
+}
+
 type DedustPayoutFromPoolMsgBody struct {
 	QueryId       uint64
 	Proof         tlb.Any `tlb:"^"`
@@ -3231,6 +3269,22 @@ type BidaskAddingLiquidityNotifyMsgBody struct {
 type MultisigApproveRejectedMsgBody struct {
 	QueryId  uint64
 	ExitCode uint32
+}
+
+type ProvideAggregatedDataDepositMsgBody struct {
+	QueryId        uint64
+	AssetRequests  *tlb.Any `tlb:"maybe^"`
+	PoolRequests   *tlb.Any `tlb:"maybe^"`
+	VaultRequests  *tlb.Any `tlb:"maybe^"`
+	ContextPayload DepositContext
+}
+
+type ProvideAggregatedDataWithdrawMsgBody struct {
+	QueryId        uint64
+	AssetRequests  *tlb.Any `tlb:"maybe^"`
+	PoolRequests   *tlb.Any `tlb:"maybe^"`
+	VaultRequests  *tlb.Any `tlb:"maybe^"`
+	ContextPayload WithdrawContext
 }
 
 type TonstakeImanagerRequestNotificationMsgBody struct {
@@ -3615,6 +3669,15 @@ type PositionnftV3PositionInitMsgBody struct {
 	} `tlb:"^"`
 }
 
+type TakeAggregatedDataWithdrawMsgBody struct {
+	QueryId        uint64
+	Index          tlb.Grams
+	AssetData      *tlb.Any `tlb:"maybe^"`
+	PoolData       *tlb.Any `tlb:"maybe^"`
+	VaultData      *tlb.Any `tlb:"maybe^"`
+	ContextPayload WithdrawContext
+}
+
 type MoonCreateOrderMsgBody struct {
 	QueryId   uint64
 	Asset2Id  tlb.MsgAddress
@@ -3980,10 +4043,13 @@ var KnownMsgInTypes = map[string]any{
 	Poolv3SwapMsgOp:                              Poolv3SwapMsgBody{},
 	ReportRoyaltyParamsMsgOp:                     ReportRoyaltyParamsMsgBody{},
 	StorageRewardWithdrawalMsgOp:                 StorageRewardWithdrawalMsgBody{},
+	TakeAggregatedDataDepositMsgOp:               TakeAggregatedDataDepositMsgBody{},
 	DedustPayoutFromPoolMsgOp:                    DedustPayoutFromPoolMsgBody{},
 	PtonTonRefundMsgOp:                           PtonTonRefundMsgBody{},
 	BidaskAddingLiquidityNotifyMsgOp:             BidaskAddingLiquidityNotifyMsgBody{},
 	MultisigApproveRejectedMsgOp:                 MultisigApproveRejectedMsgBody{},
+	ProvideAggregatedDataDepositMsgOp:            ProvideAggregatedDataDepositMsgBody{},
+	ProvideAggregatedDataWithdrawMsgOp:           ProvideAggregatedDataWithdrawMsgBody{},
 	TonstakeImanagerRequestNotificationMsgOp:     TonstakeImanagerRequestNotificationMsgBody{},
 	TonstakePoolDeployControllerMsgOp:            TonstakePoolDeployControllerMsgBody{},
 	CoffeeStakingClaimRewardsMsgOp:               CoffeeStakingClaimRewardsMsgBody{},
@@ -4041,6 +4107,7 @@ var KnownMsgInTypes = map[string]any{
 	DedustDepositLiquidityMsgOp:                  DedustDepositLiquidityMsgBody{},
 	StormVaultUnstakeMsgOp:                       StormVaultUnstakeMsgBody{},
 	PositionnftV3PositionInitMsgOp:               PositionnftV3PositionInitMsgBody{},
+	TakeAggregatedDataWithdrawMsgOp:              TakeAggregatedDataWithdrawMsgBody{},
 	MoonCreateOrderMsgOp:                         MoonCreateOrderMsgBody{},
 	WhalesNominatorsWithdrawMsgOp:                WhalesNominatorsWithdrawMsgBody{},
 	TonstakeNftPayoutMsgOp:                       TonstakeNftPayoutMsgBody{},

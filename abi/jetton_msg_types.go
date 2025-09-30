@@ -315,6 +315,17 @@ func decodeStonfiSwapOkJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	return err
 }
 
+func decodeWithdrawPayloadJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res WithdrawPayloadJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil && completedRead(c) {
+		j.SumType = WithdrawPayloadJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeMoonSwapSucceedJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res MoonSwapSucceedJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -370,6 +381,17 @@ func decodeBidaskSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	return err
 }
 
+func decodeDepositPayloadJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
+	var res DepositPayloadJettonPayload
+	err := tlb.Unmarshal(c, &res)
+	if err == nil && completedRead(c) {
+		j.SumType = DepositPayloadJettonOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
 func decodeStonfiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
 	var res StonfiProvideLiquidityJettonPayload
 	err := tlb.Unmarshal(c, &res)
@@ -410,11 +432,13 @@ const (
 	CoffeeNotificationJettonOp         JettonOpName = "CoffeeNotification"
 	MoonSwapFailedJettonOp             JettonOpName = "MoonSwapFailed"
 	StonfiSwapOkJettonOp               JettonOpName = "StonfiSwapOk"
+	WithdrawPayloadJettonOp            JettonOpName = "WithdrawPayload"
 	MoonSwapSucceedJettonOp            JettonOpName = "MoonSwapSucceed"
 	MoonCreateOrderJettonOp            JettonOpName = "MoonCreateOrder"
 	DedustSwapJettonOp                 JettonOpName = "DedustSwap"
 	CoffeeMevProtectFailedSwapJettonOp JettonOpName = "CoffeeMevProtectFailedSwap"
 	BidaskSwapJettonOp                 JettonOpName = "BidaskSwap"
+	DepositPayloadJettonOp             JettonOpName = "DepositPayload"
 	StonfiProvideLiquidityJettonOp     JettonOpName = "StonfiProvideLiquidity"
 
 	CoffeeStakingLockJettonOpCode          JettonOpCode = 0x0c0ffede
@@ -445,11 +469,13 @@ const (
 	CoffeeNotificationJettonOpCode         JettonOpCode = 0xc0ffee36
 	MoonSwapFailedJettonOpCode             JettonOpCode = 0xc47c1f57
 	StonfiSwapOkJettonOpCode               JettonOpCode = 0xc64370e5
+	WithdrawPayloadJettonOpCode            JettonOpCode = 0xcb03bfaf
 	MoonSwapSucceedJettonOpCode            JettonOpCode = 0xcb7f38d6
 	MoonCreateOrderJettonOpCode            JettonOpCode = 0xda067c19
 	DedustSwapJettonOpCode                 JettonOpCode = 0xe3a0d482
 	CoffeeMevProtectFailedSwapJettonOpCode JettonOpCode = 0xee51ce51
 	BidaskSwapJettonOpCode                 JettonOpCode = 0xf2ef6c1b
+	DepositPayloadJettonOpCode             JettonOpCode = 0xf9471134
 	StonfiProvideLiquidityJettonOpCode     JettonOpCode = 0xfcf9e58f
 )
 
@@ -482,11 +508,13 @@ var KnownJettonTypes = map[string]any{
 	CoffeeNotificationJettonOp:         CoffeeNotificationJettonPayload{},
 	MoonSwapFailedJettonOp:             MoonSwapFailedJettonPayload{},
 	StonfiSwapOkJettonOp:               StonfiSwapOkJettonPayload{},
+	WithdrawPayloadJettonOp:            WithdrawPayloadJettonPayload{},
 	MoonSwapSucceedJettonOp:            MoonSwapSucceedJettonPayload{},
 	MoonCreateOrderJettonOp:            MoonCreateOrderJettonPayload{},
 	DedustSwapJettonOp:                 DedustSwapJettonPayload{},
 	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonPayload{},
 	BidaskSwapJettonOp:                 BidaskSwapJettonPayload{},
+	DepositPayloadJettonOp:             DepositPayloadJettonPayload{},
 	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonPayload{},
 }
 var JettonOpCodes = map[JettonOpName]JettonOpCode{
@@ -518,11 +546,13 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	CoffeeNotificationJettonOp:         CoffeeNotificationJettonOpCode,
 	MoonSwapFailedJettonOp:             MoonSwapFailedJettonOpCode,
 	StonfiSwapOkJettonOp:               StonfiSwapOkJettonOpCode,
+	WithdrawPayloadJettonOp:            WithdrawPayloadJettonOpCode,
 	MoonSwapSucceedJettonOp:            MoonSwapSucceedJettonOpCode,
 	MoonCreateOrderJettonOp:            MoonCreateOrderJettonOpCode,
 	DedustSwapJettonOp:                 DedustSwapJettonOpCode,
 	CoffeeMevProtectFailedSwapJettonOp: CoffeeMevProtectFailedSwapJettonOpCode,
 	BidaskSwapJettonOp:                 BidaskSwapJettonOpCode,
+	DepositPayloadJettonOp:             DepositPayloadJettonOpCode,
 	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonOpCode,
 }
 
@@ -555,11 +585,13 @@ var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell)
 	CoffeeNotificationJettonOpCode:         decodeCoffeeNotificationJettonOpJetton,
 	MoonSwapFailedJettonOpCode:             decodeMoonSwapFailedJettonOpJetton,
 	StonfiSwapOkJettonOpCode:               decodeStonfiSwapOkJettonOpJetton,
+	WithdrawPayloadJettonOpCode:            decodeWithdrawPayloadJettonOpJetton,
 	MoonSwapSucceedJettonOpCode:            decodeMoonSwapSucceedJettonOpJetton,
 	MoonCreateOrderJettonOpCode:            decodeMoonCreateOrderJettonOpJetton,
 	DedustSwapJettonOpCode:                 decodeDedustSwapJettonOpJetton,
 	CoffeeMevProtectFailedSwapJettonOpCode: decodeCoffeeMevProtectFailedSwapJettonOpJetton,
 	BidaskSwapJettonOpCode:                 decodeBidaskSwapJettonOpJetton,
+	DepositPayloadJettonOpCode:             decodeDepositPayloadJettonOpJetton,
 	StonfiProvideLiquidityJettonOpCode:     decodeStonfiProvideLiquidityJettonOpJetton,
 }
 
@@ -726,6 +758,13 @@ type MoonSwapFailedJettonPayload struct{}
 
 type StonfiSwapOkJettonPayload struct{}
 
+type WithdrawPayloadJettonPayload struct {
+	AssetAddress     tlb.MsgAddress
+	OracleParams     *tlb.Any `tlb:"maybe^"`
+	ForwardTonAmount tlb.Grams
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+}
+
 type MoonSwapSucceedJettonPayload struct{}
 
 type MoonCreateOrderJettonPayload struct {
@@ -752,6 +791,12 @@ type BidaskSwapJettonPayload struct {
 	AdditionalData *tlb.Any `tlb:"maybe^"`
 	RejectPayload  *tlb.Any `tlb:"maybe^"`
 	ForwardPayload *tlb.Any `tlb:"maybe^"`
+}
+
+type DepositPayloadJettonPayload struct {
+	OracleParams     *tlb.Any `tlb:"maybe^"`
+	ForwardTonAmount tlb.Grams
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
 }
 
 type StonfiProvideLiquidityJettonPayload struct {

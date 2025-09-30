@@ -153,6 +153,10 @@
     </interface>
     <interface name="wallet_highload_v2r2" inherits="wallet">
         <code_hash>203dd4f358adb49993129aa925cac39916b68a0e4f78d26e8f2c2b69eafa5679</code_hash>
+        <get_method name="get_public_key"/>
+        <msg_in>
+            <ext_in name="highload_wallet_signed_v2"/>
+        </msg_in>
     </interface>
     <interface name="wallet_highload_v3r1"  inherits="wallet">
         <code_hash>11acad7955844090f283bf238bc1449871f783e7cc0979408d3f4859483e8525</code_hash>

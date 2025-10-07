@@ -338,6 +338,12 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
+type AddressesData struct {
+	TraderAddress              tlb.MsgAddress
+	SmartAccountFactoryAddress tlb.MsgAddress
+	VaultAddress               tlb.MsgAddress
+}
+
 type AmmChange struct {
 	QuoteAssetReserve       tlb.Grams
 	QuoteAssetReserveWeight tlb.Grams
@@ -348,49 +354,663 @@ type AmmChange struct {
 	OpenInterestShort       tlb.Grams
 }
 
-type AmmSettings struct {
-	Fee                           uint32
-	RolloverFee                   uint32
-	FundingPeriod                 uint32
-	InitMarginRatio               uint32
-	MaintenanceMarginRatio        uint32
-	LiquidationFeeRatio           uint32
-	PartialLiquidationRatio       uint32
-	SpreadLimit                   uint32
-	MaxPriceImpact                uint32
-	MaxPriceSpread                uint32
-	MaxOpenNotional               uint32
-	FeeToStakersPercent           uint32
-	FundingMode                   tlb.Uint2
-	MinPartialLiquidationNotional tlb.Grams
-	MinLeverage                   uint32
+type AmmState struct {
+	QuoteAssetReserve                    tlb.Grams
+	BaseAssetReserve                     tlb.Grams
+	QuoteAssetWeight                     uint64
+	TotalLongPositionSize                tlb.Grams
+	TotalShortPositionSize               tlb.Grams
+	OpenInterestLong                     tlb.Grams
+	OpenInterestShort                    tlb.Grams
+	LatestLongCumulativePremiumFraction  uint64
+	LatestShortCumulativePremiumFraction uint64
+	NextFundingBlockTimestamp            uint32
 }
 
-type ExecutorData struct {
-	SplitExecutorRewards uint8
-	Amount               tlb.Grams
-	Index                uint32
+type AmmStateLog struct {
+	QuoteAssetReserve      tlb.Grams
+	QuoteAssetWeight       tlb.Grams
+	BaseAssetReserve       tlb.Grams
+	TotalLongPositionSize  tlb.Grams
+	TotalShortPositionSize tlb.Grams
+	OpenInterestLong       tlb.Grams
+	OpenInterestShort      tlb.Grams
+}
+
+type AmmStorage struct {
+	Balance               tlb.Grams
+	VaultAddress          tlb.MsgAddress
+	AssetId               uint16
+	CloseOnly             bool
+	Paused                bool
+	OracleLastPrice       tlb.Grams
+	OracleLastSpread      tlb.Grams
+	OracleLastTimestamp   uint32
+	OracleMaxDeviation    tlb.Grams
+	OracleValidityPeriod  uint32
+	OraclePublicKeysCount tlb.Uint4
+	PausedAt              uint32
+	AmmState              AmmState         `tlb:"^"`
+	ExchangeSettings      ExchangeSettings `tlb:"^"`
+	OraclePublicKeysRef   tlb.Any          `tlb:"^"`
+	SettlementOracleData  EmptyCell        `tlb:"^"`
+	UnpauseAt             uint32
+	MaxLeverage           uint32
+	OracleFlag            OracleType
+	IndexAssetPythId      uint32
+}
+
+type CoinAmmStorage struct {
+	VaultAddress          tlb.MsgAddress
+	AssetId               uint16
+	CloseOnly             bool
+	Paused                bool
+	OracleLastPrice       tlb.Grams
+	OracleLastSpread      tlb.Grams
+	OracleLastTimestamp   uint32
+	OracleMaxDeviation    tlb.Grams
+	OracleValidityPeriod  uint32
+	OraclePublicKeysCount tlb.Uint4
+	PausedAt              uint32
+	AmmState              AmmState             `tlb:"^"`
+	ExchangeSettings      ExchangeSettings     `tlb:"^"`
+	OraclePublicKeysRef   tlb.Any              `tlb:"^"`
+	SettlementOracleData  SettlementOracleData `tlb:"^"`
+	UnpauseAt             uint32
+	MaxLeverage           uint32
+	OracleFlag            OracleType
+	IndexAssetPythId      uint32
+	SettlementAssetPythId uint32
+}
+
+type CreateOrder struct {
+	tlb.SumType
+	LimitOrder struct {
+		Expiration       uint32
+		Direction        Direction
+		Amount           tlb.Grams
+		Leverage         uint64
+		LimitPrice       tlb.Grams
+		StopPrice        tlb.Grams
+		StopTriggerPrice tlb.Grams
+		TakeTriggerPrice tlb.Grams
+	} `tlbSumType:"#2"`
+	MarketOrder struct {
+		Expiration       uint32
+		Direction        Direction
+		Amount           tlb.Grams
+		Leverage         uint64
+		LimitPrice       tlb.Grams
+		StopPrice        tlb.Grams
+		StopTriggerPrice tlb.Grams
+		TakeTriggerPrice tlb.Grams
+	} `tlbSumType:"#3"`
+}
+
+func (t *CreateOrder) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "LimitOrder":
+		bytes, err := json.Marshal(t.LimitOrder)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "LimitOrder","LimitOrder":%v}`, string(bytes))), nil
+	case "MarketOrder":
+		bytes, err := json.Marshal(t.MarketOrder)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "MarketOrder","MarketOrder":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type CreatedOraclePayload struct {
+	tlb.SumType
+	CreatedPrice struct {
+		UpdateMsg  UpdateMsg `tlb:"^"`
+		Signatures tlb.Any   `tlb:"^"`
+	} `tlbSumType:"#00"`
+	CreatedPriceWithSettlement struct {
+		UpdateMsg            UpdateMsg `tlb:"^"`
+		Signatures           tlb.Any   `tlb:"^"`
+		SettlementUpdateMsg  UpdateMsg `tlb:"^"`
+		SettlementSignatures tlb.Any   `tlb:"^"`
+	} `tlbSumType:"#01"`
+}
+
+func (t *CreatedOraclePayload) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "CreatedPrice":
+		bytes, err := json.Marshal(t.CreatedPrice)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CreatedPrice","CreatedPrice":%v}`, string(bytes))), nil
+	case "CreatedPriceWithSettlement":
+		bytes, err := json.Marshal(t.CreatedPriceWithSettlement)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "CreatedPriceWithSettlement","CreatedPriceWithSettlement":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type Direction struct {
+	tlb.SumType
+	Long  struct{} `tlbSumType:"$0"`
+	Short struct{} `tlbSumType:"$1"`
+}
+
+func (t *Direction) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Long":
+		bytes, err := json.Marshal(t.Long)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Long","Long":%v}`, string(bytes))), nil
+	case "Short":
+		bytes, err := json.Marshal(t.Short)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Short","Short":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type DoubleOraclePayload struct {
+	UpdateMsg            UpdateMsg `tlb:"^"`
+	Signatures           tlb.Any   `tlb:"^"`
+	SettlementUpdateMsg  UpdateMsg `tlb:"^"`
+	SettlementSignatures tlb.Any   `tlb:"^"`
+}
+
+type EmptyCell struct{}
+
+type ExchangeSettings struct {
+	tlb.SumType
+	AmmSettings struct {
+		Fee                           uint32
+		RolloverFee                   uint32
+		FundingPeriod                 uint32
+		InitMarginRatio               uint32
+		MaintenanceMarginRatio        uint32
+		LiquidationFeeRatio           uint32
+		PartialLiquidationRatio       uint32
+		SpreadLimit                   uint32
+		MaxPriceImpact                uint32
+		MaxPriceSpread                uint32
+		MaxOpenNotional               tlb.Grams
+		FeeToStakersPercent           uint32
+		FundingMode                   tlb.Uint2
+		MinPartialLiquidationNotional tlb.Grams
+		MinInitMarginRatio            uint32
+		DirectIncreaseEnabled         bool
+		DirectCloseEnabled            bool
+		ExecutorsWhitelist            tlb.HashmapE[tlb.Bits256, tlb.Any]
+		LowFundingFnA                 uint64
+		LowFundingFnB                 uint64
+		HighFundingFnA                int64
+		HighFundingFnB                uint64
+		InflectionPoint               uint64
+	} `tlbSumType:"#_"`
+	ExchangeSettings struct {
+		Fee                           uint32
+		RolloverFee                   uint32
+		FundingPeriod                 uint32
+		InitMarginRatio               uint32
+		MaintenanceMarginRatio        uint32
+		LiquidationFeeRatio           uint32
+		PartialLiquidationRatio       uint32
+		SpreadLimit                   uint32
+		MaxPriceImpact                uint32
+		MaxPriceSpread                uint32
+		MaxOpenNotional               tlb.Grams
+		FeeToStakersPercent           uint32
+		FundingMode                   tlb.Uint2
+		MinPartialLiquidationNotional tlb.Grams
+		MinInitMarginRatio            uint32
+		DirectIncreaseEnabled         bool
+		DirectCloseEnabled            bool
+		ExecutorsWhitelist            tlb.HashmapE[tlb.Bits256, tlb.Any]
+		LowFundingFnA                 uint64
+		LowFundingFnB                 uint64
+		HighFundingFnA                int64
+		HighFundingFnB                uint64
+		InflectionPoint               uint64
+	} `tlbSumType:"#_"`
+}
+
+func (t *ExchangeSettings) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "AmmSettings":
+		bytes, err := json.Marshal(t.AmmSettings)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "AmmSettings","AmmSettings":%v}`, string(bytes))), nil
+	case "ExchangeSettings":
+		bytes, err := json.Marshal(t.ExchangeSettings)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ExchangeSettings","ExchangeSettings":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type ExecuteSelector struct {
+	tlb.SumType
+	ExecuteStop struct{} `tlbSumType:"$0"`
+	ExecuteTake struct{} `tlbSumType:"$1"`
+}
+
+func (t *ExecuteSelector) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "ExecuteStop":
+		bytes, err := json.Marshal(t.ExecuteStop)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ExecuteStop","ExecuteStop":%v}`, string(bytes))), nil
+	case "ExecuteTake":
+		bytes, err := json.Marshal(t.ExecuteTake)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ExecuteTake","ExecuteTake":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type ExecutorIntent struct {
+	AmmAddress tlb.MsgAddress
+	SaAddress  tlb.MsgAddress
+	Order      ExecutorOrder `tlb:"^"`
+}
+
+type ExecutorOrder struct {
+	tlb.SumType
+	Liquidate struct {
+		Direction Direction
+	} `tlbSumType:"#6"`
+	ForceClose struct {
+		Direction Direction
+	} `tlbSumType:"#7"`
+	ForceCloseMaxLeverage struct {
+		Direction Direction
+	} `tlbSumType:"#9"`
+}
+
+func (t *ExecutorOrder) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Liquidate":
+		bytes, err := json.Marshal(t.Liquidate)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Liquidate","Liquidate":%v}`, string(bytes))), nil
+	case "ForceClose":
+		bytes, err := json.Marshal(t.ForceClose)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ForceClose","ForceClose":%v}`, string(bytes))), nil
+	case "ForceCloseMaxLeverage":
+		bytes, err := json.Marshal(t.ForceCloseMaxLeverage)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ForceCloseMaxLeverage","ForceCloseMaxLeverage":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type ExecutorQueryId struct {
+	Shift     tlb.Uint13
+	BitNumber tlb.Uint10
+}
+
+type ExternalMsgPayload struct {
+	QueryId        ExecutorQueryId
+	CreatedAt      uint32
+	SaAddress      tlb.MsgAddress
+	ActualVersion  uint8
+	UpgradePayload *SignedUpgradePayload `tlb:"maybe^"`
+	Msg            *PreparedMessage      `tlb:"maybe^"`
+}
+
+type HighloadData struct {
+	OldQueries    tlb.HashmapE[tlb.Uint13, tlb.Ref[tlb.Any]]
+	Queries       tlb.HashmapE[tlb.Uint13, tlb.Ref[tlb.Any]]
+	LastCleanTime uint64
+	Timeout       tlb.Uint24
+}
+
+type InitializationData struct {
+	HighloadTimeout tlb.Uint24
+	Keys            Keys `tlb:"^"`
+	Version         uint8
+	NewCode         tlb.Any `tlb:"^"`
+}
+
+type InitializationRequest struct {
+	tlb.SumType
+	NeedKeyInit struct {
+		UserPublicKeys tlb.HashmapE[tlb.Bits256, tlb.Any]
+	} `tlbSumType:"$1"`
+	NoKeyInit struct{} `tlbSumType:"$0"`
+}
+
+func (t *InitializationRequest) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "NeedKeyInit":
+		bytes, err := json.Marshal(t.NeedKeyInit)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "NeedKeyInit","NeedKeyInit":%v}`, string(bytes))), nil
+	case "NoKeyInit":
+		bytes, err := json.Marshal(t.NoKeyInit)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "NoKeyInit","NoKeyInit":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type Intent struct {
+	tlb.SumType
+	UserIntent struct {
+		Signature     tlb.Bits512
+		Intent        UserIntent    `tlb:"^"`
+		OraclePayload OraclePayload `tlb:"^"`
+		NextIntent    *Intent       `tlb:"maybe^"`
+	} `tlbSumType:"$0"`
+	ExecutorIntent struct {
+		Intent        ExecutorIntent `tlb:"^"`
+		OraclePayload OraclePayload  `tlb:"^"`
+		NextIntent    *Intent        `tlb:"maybe^"`
+	} `tlbSumType:"$1"`
+}
+
+func (t *Intent) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "UserIntent":
+		bytes, err := json.Marshal(t.UserIntent)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "UserIntent","UserIntent":%v}`, string(bytes))), nil
+	case "ExecutorIntent":
+		bytes, err := json.Marshal(t.ExecutorIntent)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ExecutorIntent","ExecutorIntent":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type IntentLog struct {
+	Type                LogType
+	Size                tlb.Uint128
+	Margin              tlb.Grams
+	OpenNotional        tlb.Grams
+	LastUpdatedCpf      int64
+	RealizedPnl         int64
+	FundingPayment      int64
+	RolloverFee         uint64
+	PositionFeeRate     uint32
+	ExecutorFeeRate     uint32
+	PositionFeeAmount   tlb.Grams
+	ExecutorFeeAmount   tlb.Grams
+	FeeToStakersPercent uint32
+}
+
+type InternalMessageInfoRelaxed struct {
+	Magic       tlb.Magic `tlb:"$0"`
+	IhrDisabled bool
+	Bounce      bool
+	Bounced     bool
+	Src         tlb.MsgAddress
+	Dest        tlb.MsgAddress
+	Value       tlb.CurrencyCollection
+	IhrFee      tlb.Grams
+	FwdFee      tlb.Grams
+	CreatedLt   uint64
+	CreatedAt   uint32
+}
+
+type Keys struct {
+	HotPublicKey   tlb.Uint256
+	ColdPublicKey  tlb.Uint256
+	UserPublicKeys tlb.HashmapE[tlb.Bits256, tlb.Any]
+	KeysCount      uint8
+}
+
+type LazerFeed struct {
+	NumberOfProperties    uint8
+	PricePropertyId       uint8
+	PricePropertyValue    uint64
+	ExponentPropertyId    uint8
+	ExponentPropertyValue int16
+}
+
+type LazerMessage struct {
+	Magic         uint32
+	R             tlb.Uint256
+	S             tlb.Uint256
+	V             uint8
+	PayloadLength uint16
+	Payload       LazerPayload
+}
+
+type LazerMessageWithCreated struct {
+	LazerMessage        LazerMessage `tlb:"^"`
+	CreatedLazerMessage LazerMessage `tlb:"^"`
+}
+
+type LazerPayload struct {
+	tlb.SumType
+	Single struct {
+		Magic         uint32
+		Timestamp     uint64
+		ChannelId     uint8
+		NumberOfFeeds uint8
+		IndexFeedId   uint32
+		IndexFeed     LazerFeed
+	} `tlbSumType:"$0"`
+	Double struct {
+		Magic            uint32
+		Timestamp        uint64
+		ChannelId        uint8
+		NumberOfFeeds    uint8
+		IndexFeedId      uint32
+		IndexFeed        LazerFeed
+		SettlementFeedId uint32
+		SettlementFeed   LazerFeed
+	} `tlbSumType:"$1"`
+}
+
+func (t *LazerPayload) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Single":
+		bytes, err := json.Marshal(t.Single)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Single","Single":%v}`, string(bytes))), nil
+	case "Double":
+		bytes, err := json.Marshal(t.Double)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Double","Double":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type LogType struct {
+	tlb.SumType
+	Increase     struct{} `tlbSumType:"#00"`
+	Close        struct{} `tlbSumType:"#01"`
+	AddMargin    struct{} `tlbSumType:"#02"`
+	RemoveMargin struct{} `tlbSumType:"#03"`
+}
+
+func (t *LogType) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Increase":
+		bytes, err := json.Marshal(t.Increase)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Increase","Increase":%v}`, string(bytes))), nil
+	case "Close":
+		bytes, err := json.Marshal(t.Close)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Close","Close":%v}`, string(bytes))), nil
+	case "AddMargin":
+		bytes, err := json.Marshal(t.AddMargin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "AddMargin","AddMargin":%v}`, string(bytes))), nil
+	case "RemoveMargin":
+		bytes, err := json.Marshal(t.RemoveMargin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RemoveMargin","RemoveMargin":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type MarketDepth struct {
+	VpiSpread           tlb.Grams
+	VpiMarketDepthLong  tlb.Grams
+	VpiMarketDepthShort tlb.Grams
+	VpiCoefficient      uint64
+}
+
+type NoInitRefBody struct {
+	Magic tlb.Magic `tlb:"$01"`
+}
+
+type NotificationExecutorParams struct {
+	SplitExecutorReward tlb.Uint1
+	ExecutorAmount      tlb.Grams
+	ExecutorIndex       uint32
 }
 
 type NotificationPayload struct {
-	Opcode uint64
+	BundleSenderAddress tlb.MsgAddress
+	BalanceDelta        tlb.Grams
+	AmmAddress          tlb.MsgAddress
+	Direction           Direction
+	PositionData        *PositionData `tlb:"maybe^"`
 }
 
-type OracleData struct {
-	UpdateMsg  UpdateMsg `tlb:"^"`
-	Signatures tlb.Any   `tlb:"^"`
+type NotificationReferralParams struct {
+	ReferralAmount tlb.Grams
+	ReferralAddr   tlb.MsgAddress
 }
 
 type OraclePayload struct {
-	PriceData  OraclePriceData `tlb:"^"`
-	Signatures Signatures      `tlb:"^"`
+	tlb.SumType
+	Single struct {
+		PriceOraclePayload SingleOraclePayload `tlb:"^"`
+		LazerMessage       *LazerMessage       `tlb:"maybe^"`
+	} `tlbSumType:"#00"`
+	Double struct {
+		PriceOraclePayload DoubleOraclePayload `tlb:"^"`
+		LazerMessage       *LazerMessage       `tlb:"maybe^"`
+	} `tlbSumType:"#01"`
+	SingleWithCreated struct {
+		PriceOraclePayload   SingleOraclePayload  `tlb:"^"`
+		CreatedOraclePayload CreatedOraclePayload `tlb:"^"`
+		LazerMessage         *LazerMessage        `tlb:"maybe^"`
+		CreatedLazerMessage  *LazerMessage        `tlb:"maybe^"`
+	} `tlbSumType:"#02"`
+	DoubleWithCreated struct {
+		PriceOraclePayload   DoubleOraclePayload  `tlb:"^"`
+		CreatedOraclePayload CreatedOraclePayload `tlb:"^"`
+		LazerMessage         *LazerMessage        `tlb:"maybe^"`
+		CreatedLazerMessage  *LazerMessage        `tlb:"maybe^"`
+	} `tlbSumType:"#03"`
 }
 
-type OraclePriceData struct {
-	Price         tlb.Grams
-	Spread        tlb.Grams
-	AnotherSpread uint32
-	AssetId       uint16
+func (t *OraclePayload) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Single":
+		bytes, err := json.Marshal(t.Single)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Single","Single":%v}`, string(bytes))), nil
+	case "Double":
+		bytes, err := json.Marshal(t.Double)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Double","Double":%v}`, string(bytes))), nil
+	case "SingleWithCreated":
+		bytes, err := json.Marshal(t.SingleWithCreated)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SingleWithCreated","SingleWithCreated":%v}`, string(bytes))), nil
+	case "DoubleWithCreated":
+		bytes, err := json.Marshal(t.DoubleWithCreated)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "DoubleWithCreated","DoubleWithCreated":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type OracleType struct {
+	tlb.SumType
+	Storm struct{} `tlbSumType:"#0"`
+	Lazer struct{} `tlbSumType:"#1"`
+}
+
+func (t *OracleType) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Storm":
+		bytes, err := json.Marshal(t.Storm)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Storm","Storm":%v}`, string(bytes))), nil
+	case "Lazer":
+		bytes, err := json.Marshal(t.Lazer)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Lazer","Lazer":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
 }
 
 type OrderPayload struct {
@@ -416,20 +1036,241 @@ type PositionChange struct {
 	LastUpdatedTimestamp         uint32
 }
 
-type ReferralData struct {
-	Amount tlb.Grams
-	Index  uint32
+type PositionData struct {
+	Size                         tlb.Int128
+	Direction                    Direction
+	Margin                       tlb.Grams
+	OpenNotional                 tlb.Grams
+	LastUpdatedCumulativePremium int64
+	Fee                          uint32
+	Discount                     uint32
+	Rebate                       uint32
+	LastUpdatedTimestamp         uint32
 }
 
-type Signatures struct {
-	Data tlb.Any
+type PositionRecord struct {
+	tlb.SumType
+	Free struct {
+		PositionData PositionData `tlb:"^"`
+	} `tlbSumType:"$0"`
+	Locked struct {
+		PositionData PositionData `tlb:"^"`
+	} `tlbSumType:"$1"`
+}
+
+func (t *PositionRecord) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "Free":
+		bytes, err := json.Marshal(t.Free)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Free","Free":%v}`, string(bytes))), nil
+	case "Locked":
+		bytes, err := json.Marshal(t.Locked)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "Locked","Locked":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type PreparedMessage struct {
+	Info    InternalMessageInfoRelaxed
+	Field1  NoInitRefBody
+	MsgBody PreparedMessageBody `tlb:"^"`
+}
+
+type PreparedMessageBody struct {
+	Magic               tlb.Magic `tlb:"#56b30b52"`
+	QueryId             uint64
+	BundleSenderAddress tlb.MsgAddress
+	AmmAddress          tlb.MsgAddress
+	Direction           Direction
+	SpentAmount         tlb.Grams
+	Addresses           AddressesData `tlb:"^"`
+	Ref                 RefData
+	Position            PositionData `tlb:"^"`
+	Intent              Intent       `tlb:"^"`
+}
+
+type RefData struct {
+	tlb.SumType
+	RefData0 struct{} `tlbSumType:"#0"`
+	RefData1 struct {
+		Data ReferrralData
+	} `tlbSumType:"#1"`
+	RefData2 struct {
+		Data ReferrralData
+	} `tlbSumType:"#2"`
+}
+
+func (t *RefData) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "RefData0":
+		bytes, err := json.Marshal(t.RefData0)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RefData0","RefData0":%v}`, string(bytes))), nil
+	case "RefData1":
+		bytes, err := json.Marshal(t.RefData1)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RefData1","RefData1":%v}`, string(bytes))), nil
+	case "RefData2":
+		bytes, err := json.Marshal(t.RefData2)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RefData2","RefData2":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type ReferrerData struct {
+	ReferrerAddress tlb.MsgAddress
+	ReferrerPart    uint8
+}
+
+type ReferrralData struct {
+	Discount uint32
+	Rebate   uint32
+	RefInfo  tlb.HashmapE[tlb.Uint4, ReferrerData]
+}
+
+type SettlementOracleData struct {
+	SettlementLastPrice      tlb.Grams
+	SettlementLastSpread     tlb.Grams
+	SettlementLastTimestamp  uint32
+	SettlementMaxDeviation   tlb.Grams
+	SettlementValidityPeriod uint32
+	SettlementAssetId        uint16
+}
+
+type SignedUpgradePayload struct {
+	Signature tlb.Bits512
+	Payload   tlb.HashmapE[tlb.Uint8, UpgradePayload]
+}
+
+type SingleOraclePayload struct {
+	UpdateMsg  UpdateMsg `tlb:"^"`
+	Signatures tlb.Any   `tlb:"^"`
 }
 
 type UpdateMsg struct {
-	Price      tlb.Grams
-	Spread     tlb.Grams
-	Timestamp  uint32
-	AssetIndex uint16
+	Price               tlb.Grams
+	Spread              tlb.Grams
+	Timestamp           uint32
+	AssetIndex          uint16
+	PauseAt             uint32
+	UnpauseAt           uint32
+	VpiSpread           tlb.Grams
+	VpiMarketDepthLong  tlb.Grams
+	VpiMarketDepthShort tlb.Grams
+	VpiCoefficient      uint64
+}
+
+type UpgradePayload struct {
+	MigrateCode *tlb.Any `tlb:"maybe^"`
+	NewCode     *tlb.Any `tlb:"maybe^"`
+}
+
+type UserIntent struct {
+	QueryId          UserQueryId
+	CreatedAt        uint32
+	ReferenceQueryId *UserQueryId `tlb:"maybe"`
+	PublicKey        tlb.Bits256
+	Intent           UserIntentPayload `tlb:"^"`
+}
+
+type UserIntentPayload struct {
+	AmmAddress tlb.MsgAddress
+	SaAddress  tlb.MsgAddress
+	Order      UserOrder `tlb:"^"`
+}
+
+type UserOrder struct {
+	tlb.SumType
+	StopLossOrder struct {
+		Expiration   uint32
+		Direction    Direction
+		Amount       tlb.Grams
+		TriggerPrice tlb.Grams
+	} `tlbSumType:"#0"`
+	TakeProfitOrder struct {
+		Expiration   uint32
+		Direction    Direction
+		Amount       tlb.Grams
+		TriggerPrice tlb.Grams
+	} `tlbSumType:"#1"`
+	LimitMarketOrder struct {
+		Order CreateOrder
+	} `tlbSumType:"#_"`
+	AddMargin struct {
+		Direction Direction
+		Amount    tlb.Grams
+	} `tlbSumType:"#4"`
+	RemoveMargin struct {
+		Direction Direction
+		Amount    tlb.Grams
+	} `tlbSumType:"#5"`
+	RequestOrder struct {
+		Selector ExecuteSelector
+		Order    CreateOrder
+	} `tlbSumType:"#8"`
+}
+
+func (t *UserOrder) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "StopLossOrder":
+		bytes, err := json.Marshal(t.StopLossOrder)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "StopLossOrder","StopLossOrder":%v}`, string(bytes))), nil
+	case "TakeProfitOrder":
+		bytes, err := json.Marshal(t.TakeProfitOrder)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "TakeProfitOrder","TakeProfitOrder":%v}`, string(bytes))), nil
+	case "LimitMarketOrder":
+		bytes, err := json.Marshal(t.LimitMarketOrder)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "LimitMarketOrder","LimitMarketOrder":%v}`, string(bytes))), nil
+	case "AddMargin":
+		bytes, err := json.Marshal(t.AddMargin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "AddMargin","AddMargin":%v}`, string(bytes))), nil
+	case "RemoveMargin":
+		bytes, err := json.Marshal(t.RemoveMargin)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RemoveMargin","RemoveMargin":%v}`, string(bytes))), nil
+	case "RequestOrder":
+		bytes, err := json.Marshal(t.RequestOrder)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "RequestOrder","RequestOrder":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type UserQueryId struct {
+	Shift     tlb.Uint13
+	BitNumber tlb.Uint10
 }
 
 type CoffeeAMM struct {

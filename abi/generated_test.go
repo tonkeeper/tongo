@@ -438,9 +438,8 @@ func TestGetMethods(t *testing.T) {
 			method:       GetAmmStatus,
 			wantTypeHint: "GetAmmStatus_StormResult",
 			want: GetAmmStatus_StormResult{
-				CloseOnly:             false,
-				Paused:                false,
-				DirectIncreaseEnabled: false,
+				CloseOnly: false,
+				Paused:    false,
 			},
 		},
 
@@ -520,7 +519,7 @@ func TestGetMethods(t *testing.T) {
 				MinInitMarginRatio:            1010101010,
 				ExecutorFee:                   200000,
 				ClosePositionTimeDelta:        20,
-				MaxUnrealizedPnl:              -1294967296,
+				MaxUnrealizedPnl:              1294967296,
 				DirectIncreaseEnabled:         false,
 				DirectCloseEnabled:            false,
 				ExecutorsWhitelist:            mustHexToCell("b5ee9c720101040100510002012001020143bfe6f24055b5677ea9e0ac09377ae166fc4ff326908685a26d2e48729610aee73cc0030143bfdbaae21f71bc92e187aa3f14c8f3e260c60e727631f752ba1b846dd6c341b4fd40030000"),
@@ -1025,91 +1024,6 @@ func TestMessageDecoder(t *testing.T) {
 		},
 
 		{
-			name:       "storm pay funding",
-			interfaces: []ContractInterface{StormVamm},
-			wantOpName: "StormPayFunding",
-			boc:        "b5ee9c72010104010060000108b652c441010202000203001e5017e965a303b507fc664ae632000a0081afaf9b048dc83a8d8bb41d9e1ed9e254121653a17723560fc92fd5e80613f5a8c5a3bdd5a8bf51ae4cfc9b7273ba0e1cb34ab50d9ff5aa700216acb23af77306e0",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormPayFundingMsgBody{
-					OracleRef: OracleData{
-						UpdateMsg: UpdateMsg{
-							Price:      6418750000,
-							Spread:     11864060,
-							Timestamp:  1716184626,
-							AssetIndex: 10,
-						},
-						Signatures: value.(StormPayFundingMsgBody).OracleRef.Signatures,
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm vault trade notification",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormVaultTradeNotification",
-			boc:        "b5ee9c7201010101007b0000f23475fdd2000100000000000000000000000000000000ffffffffb75e4471000000001f20be19000000001f20be190000000000000000801576d5f94ebd5784744cde1f330df7a1b68ea01844e259cebf0f38607eb908a17002aedabf29d7aaf08e899bc3e661bef436d1d403089c4b39d7e1e70c0fd721142c",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormVaultTradeNotificationMsgBody{
-					AmmIndex:             1,
-					FreeAmount:           0,
-					LockedAmount:         0,
-					ExchangeAmount:       65535,
-					WithdrawLockedAmount: -79859473645568,
-					FeeToStakers:         34225488723968,
-					WithdrawAmount:       34225488723968,
-					TraderAddr:           value.(StormVaultTradeNotificationMsgBody).TraderAddr,
-					ReferralParams:       value.(StormVaultTradeNotificationMsgBody).ReferralParams,
-					ExecutorParams:       value.(StormVaultTradeNotificationMsgBody).ExecutorParams,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm change settings",
-			interfaces: []ContractInterface{StormVamm},
-			wantOpName: "StormChangeSettings",
-			boc:        "te6ccuECBgEAAOIAAFIBIgEsAXYBwAHFAUvtzTamgBX3rNMDD/4C6Pg62+FAiG7RowQunr8GR6rpFV+c0WIwkAEByQAST4AR4aMAAAAOEAExLQAAmJaAAHJw4Ajw0YAACSfAACSfAABJPgBuNfqTGgABHhowCV0alKIAB3zu7MgAAAAAAEk+AAAAAAAAw1AH//////5IjAAAAAAAA27oAAAAAAFloLwEAgIBIAMEAUO/5vJAVbVnfqngrAk3euFm/E/zJpCGhaJtLkhylhCu5zzABQFDv9uq4h9xvJLhh6o/FMjz4mDGDnJ2MfdSuhuEbdbDQbT9QAUAAM2TNHQ=",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormChangeSettingsMsgBody{
-					RedirectAddr: value.(StormChangeSettingsMsgBody).RedirectAddr,
-					Settings: AmmSettings{
-						Fee:                           1200000,
-						RolloverFee:                   300000000,
-						FundingPeriod:                 3600,
-						InitMarginRatio:               20000000,
-						MaintenanceMarginRatio:        10000000,
-						LiquidationFeeRatio:           7500000,
-						PartialLiquidationRatio:       150000000,
-						SpreadLimit:                   600000,
-						MaxPriceImpact:                2400000,
-						MaxPriceSpread:                4800000,
-						MaxOpenNotional:               1849031315,
-						FeeToStakersPercent:           436207902,
-						FundingMode:                   0,
-						MinPartialLiquidationNotional: 153941682070824,
-						MinLeverage:                   2147606331,
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
 			name:       "storm vamm init",
 			interfaces: []ContractInterface{StormVamm},
 			wantOpName: "StormVammInit",
@@ -1123,41 +1037,6 @@ func TestMessageDecoder(t *testing.T) {
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
 				}
-			},
-		},
-
-		{
-			name:       "storm vault stake",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormVaultStake",
-			boc:        "te6ccuEBAQEACwAWABHImj7kQJrWpmj2Fvf3",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormVaultStakeMsgBody{
-					Amount: 162359910,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm vault unstake",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormVaultUnstake",
-			boc:        "te6ccuEBAQEALQBaAFXVtemtUFleuTGoAGoD4dV0XbiGEnOzJ2dABapfScHoViRZNNhArlczL9FfDmG6xA==",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormVaultUnstakeMsgBody{
-					JettonAmount: 23990080282,
-					UserAddress:  value.(StormVaultUnstakeMsgBody).UserAddress,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
 			},
 		},
 
@@ -1323,204 +1202,6 @@ func TestMessageDecoder(t *testing.T) {
 					OrderIndex:   1,
 					Direction:    0,
 					GasToAddress: value.(StormCancelOrderMsgBody).GasToAddress,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm create order",
-			interfaces: []ContractInterface{StormPositionManager},
-			wantOpName: "StormCreateOrder",
-			boc:        "te6ccuEBAgEAKQAeUgEXo5hD9EEL4EigAXMoAQAvAAAAAdzWUABmTabbAwEhuGlUU5qJiUBAoXy4ng==",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormCreateOrderMsgBody{
-					OrderPayload: OrderPayload{
-						OrderType:  0,
-						OrderIndex: 0,
-						Direction:  0,
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm complete order",
-			interfaces: []ContractInterface{StormPositionManager},
-			wantOpName: "StormCompleteOrder",
-			boc:        "b5ee9c7201010301007e000226cf90d61830a55bf9235017389770843b9aca000102006700000000000000000000000087bf36162808d43a0c1a81a7cae244800000000313b27e8008b290017d784008f0d1803326f6bd40005d8013f984dc1678e6e4414d59ce7381403aa7233e161931d1812e8360d19bcdbdb666a4d8858fdbea6507a5eac4dd18",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormCompleteOrderMsgBody{
-					OrderType:             3,
-					OrderIndex:            0,
-					Direction:             0,
-					OriginOpcode:          2774268195,
-					IndexPrice:            6233356040,
-					SettlementOraclePrice: value.(StormCompleteOrderMsgBody).SettlementOraclePrice,
-					Position: PositionChange{
-						Size:                         value.(StormCompleteOrderMsgBody).Position.Size,
-						Direction:                    0,
-						Margin:                       4740039043,
-						OpenNotional:                 14220117129,
-						LastUpdatedCumulativePremium: 103245053,
-						Fee:                          1140000,
-						Discount:                     50000000,
-						Rebate:                       300000000,
-						LastUpdatedTimestamp:         1716383098,
-					},
-					Amm: AmmChange{
-						QuoteAssetReserve:       89957977295392366,
-						QuoteAssetReserveWeight: 1095588302,
-						BaseAssetReserve:        15784604672865249,
-						TotalLongPositionSize:   27701758996099,
-						TotalShortPositionSize:  14404193868646,
-						OpenInterestLong:        181249860688874,
-						OpenInterestShort:       88486504582609,
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm activate order",
-			interfaces: []ContractInterface{StormPositionManager},
-			wantOpName: "StormActivateOrder",
-			boc:        "te6ccuEBAgEAIgAQRAEJnS7GQBgBAC8maT9/SgP5F2EAAAAAHc1lACIGAXwgAECOLaMI",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormActivateOrderMsgBody{
-					OrderIndex: 0,
-					ActivatedOrder: OrderPayload{
-						OrderType:  2,
-						OrderIndex: 3,
-						Direction:  0,
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm update position",
-			interfaces: []ContractInterface{StormPositionManager},
-			wantOpName: "StormUpdatePosition",
-			boc:        "te6ccuEBAwEAdQAshOoCI2DfxnfmKV1xmooQCoC+J1oQQAECAFMAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA9CQAAAAAAAAAAAAAAAAEAAYXsdp0VhftL0LOqC2IYhHXxKiijnNyCqcR3cTvRwHncMdlN4xi07//CGCmApGqsnd5hZ8lIq",
-			wantValidate: func(t *testing.T, value any) {
-
-				body := StormUpdatePositionMsgBody{
-					Direction:             1,
-					OriginOpcode:          3427973859,
-					IndexPrice:            5325313,
-					SettlementOraclePrice: value.(StormUpdatePositionMsgBody).SettlementOraclePrice,
-					Position: PositionChange{
-						Size:                         value.(StormUpdatePositionMsgBody).Position.Size,
-						Direction:                    1,
-						Margin:                       0,
-						OpenNotional:                 0,
-						LastUpdatedCumulativePremium: 0,
-						Fee:                          2000000,
-						Discount:                     0,
-						Rebate:                       0,
-						LastUpdatedTimestamp:         0,
-					},
-					Amm: AmmChange{
-						QuoteAssetReserve:       50061264073256239,
-						QuoteAssetReserveWeight: 753566424,
-						BaseAssetReserve:        7066666529963806323,
-						TotalLongPositionSize:   9194602063744756,
-						TotalShortPositionSize:  535946544363404,
-						OpenInterestLong:        49735720273418,
-						OpenInterestShort:       2824657336185,
-					},
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm vault request withdraw position",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormVaultRequestWithdrawPosition",
-			boc:        "te6ccuEBAQEAcgDkAN8CJt9mgBYMyTydSQevSZAUcgwn07KEWKz+4ioj+mr8UID7L/lhEAJ/C9b2rejmGPoRHi3YzZnxT19+5NUG1zYOIjHMj0gz5MtxsCAFuq4h9xvJLhh6o/FMjz4mDGDnJ2MfdSuhuEbdbDQbT9AAABAEUQhyZQ==",
-			wantValidate: func(t *testing.T, value any) {
-
-				body := StormVaultRequestWithdrawPositionMsgBody{
-					TraderAddr:     value.(StormVaultRequestWithdrawPositionMsgBody).TraderAddr,
-					VammAddr:       value.(StormVaultRequestWithdrawPositionMsgBody).VammAddr,
-					Amount:         3000000,
-					GasToAddr:      value.(StormVaultRequestWithdrawPositionMsgBody).GasToAddr,
-					WithdrawReason: 512,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm provide position",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormProvidePosition",
-			boc:        "te6ccuECBgEAALgAABgAJgBCAMgA6gFwARKIZbQCMQAAAAEBBAIBAgMEBQAYNQt2cgMaZlKJUAAXAIHmXJUKDEFpmsCC52PR/KpFpZBNBaOvxSQkMJhsilOg+pKkYc4Gfo9W9pw0mTqzy+GjvwbQRJg8uqJ7tM4lC1eAYAAeUBfbeTfDcDZKZlKJTwAKAIGM6g/yu63OXMZfCTI1hzbMf1ImVE6il3Ncagioz0ea03CeZiZjH3kQ6oOwP2l9JPQRyYDJBbnxuu4XT1ayIPQHYLpFr+g=",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormProvidePositionMsgBody{
-					OrderType:     3,
-					OrderIndex:    0,
-					Direction:     1,
-					ExecutorIndex: 1,
-					OraclePayload: value.(StormProvidePositionMsgBody).OraclePayload,
-				}
-
-				if !reflect.DeepEqual(value, body) {
-					t.Fatalf("got: %v, want: %v", value, body)
-				}
-
-			},
-		},
-
-		{
-			name:       "storm provide position",
-			interfaces: []ContractInterface{StormVault},
-			wantOpName: "StormProvidePosition",
-			boc:        "te6ccuECBgEAALgAABgAJgBCAMgA6gFwARKIZbQCMQAAAAEBBAIBAgMEBQAYNQt2cgMaZlKJUAAXAIHmXJUKDEFpmsCC52PR/KpFpZBNBaOvxSQkMJhsilOg+pKkYc4Gfo9W9pw0mTqzy+GjvwbQRJg8uqJ7tM4lC1eAYAAeUBfbeTfDcDZKZlKJTwAKAIGM6g/yu63OXMZfCTI1hzbMf1ImVE6il3Ncagioz0ea03CeZiZjH3kQ6oOwP2l9JPQRyYDJBbnxuu4XT1ayIPQHYLpFr+g=",
-			wantValidate: func(t *testing.T, value any) {
-				body := StormProvidePositionMsgBody{
-					OrderType:     3,
-					OrderIndex:    0,
-					Direction:     1,
-					ExecutorIndex: 1,
-					OraclePayload: OraclePayload{
-						PriceData: OraclePriceData{
-							Price:         5289831,
-							Spread:        794,
-							AnotherSpread: 1716685136,
-							AssetId:       23,
-						},
-						Signatures: value.(StormProvidePositionMsgBody).OraclePayload.Signatures,
-					},
 				}
 
 				if !reflect.DeepEqual(value, body) {

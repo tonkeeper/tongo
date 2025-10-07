@@ -2,6 +2,7 @@ package tvm
 
 // #cgo darwin LDFLAGS: -L ../lib/darwin/ -Wl,-rpath,../lib/darwin/ -l emulator
 // #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
+// #cgo windows LDFLAGS: -L ../lib/windows -l emulator
 // #include "../lib/emulator-extern.h"
 // #include <stdlib.h>
 // #include <stdbool.h>

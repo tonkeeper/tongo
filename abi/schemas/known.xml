@@ -1,8 +1,16 @@
 <abi>
+    <types>
+        _ value:CurrencyCollection created_lt:uint64 created_at:uint32 = NewBounceOriginalInfo;
+        _ gas_used:uint32 vm_steps:uint32 = NewBounceComputePhaseInfo;
+    </types>
 
     <!--   Internal messages    -->
     <internal name="bounce">
         bounce_message#ffffffff payload:Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="bounce_v2">
+        new_bounce_body#fffffffe original_body:^Cell original_info:^NewBounceOriginalInfo bounced_by_phase:uint8 exit_code:int32 compute_phase:(Maybe NewBounceComputePhaseInfo) = InternalMsgBody;
     </internal>
 
     <!--    Text    -->

@@ -42,6 +42,7 @@ The list below contains the supported message operations, their names and opcode
 | BidaskSwapV2| 0x87d36990 |
 | BidaskSwapV2| 0x87d36990 |
 | Bounce| 0xffffffff |
+| BounceV2| 0xfffffffe |
 | ChallengeQuarantinedChannelState| 0x088eaa32 |
 | ChangeDnsRecord| 0x4eb1f0f9 |
 | ChannelClosed| 0xdddc88ba |

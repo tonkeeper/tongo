@@ -8,6 +8,24 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+type DepositContext struct {
+	Magic            tlb.Magic `tlb:"#f9471134"`
+	AssetAddress     tlb.MsgAddress
+	FromAddress      tlb.MsgAddress
+	Amount           tlb.Grams
+	ForwardTonAmount tlb.Grams
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+}
+
+type WithdrawContext struct {
+	Magic            tlb.Magic `tlb:"#cb03bfaf"`
+	AssetAddress     tlb.MsgAddress
+	FromAddress      tlb.MsgAddress
+	Amount           tlb.Grams
+	ForwardTonAmount tlb.Grams
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+}
+
 type AdditionalData struct {
 	FromAddress tlb.MsgAddress
 	RefAddress  tlb.MsgAddress

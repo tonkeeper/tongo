@@ -122,6 +122,7 @@ The list below contains the supported message operations, their names and opcode
 | DedustWithdrawal| 0x3aa870a6 |
 | DeleteDnsRecord| 0x4eb1f0f9 |
 | DeployStorageContract| 0xe4748df1 |
+| DepositPayload| 0xf9471134 |
 | Disapprove| 0xe8a0abfe |
 | DnsBalanceRelease| 0x4ed14b65 |
 | ElectorNewStake| 0x4e73744b |
@@ -203,6 +204,8 @@ The list below contains the supported message operations, their names and opcode
 | ProcessGovernanceDecision| 0x44beae41 |
 | ProofStorage| 0x419d5d4d |
 | ProveOwnership| 0x04ded148 |
+| ProvideAggregatedDataDeposit| 0xb0c69ffe |
+| ProvideAggregatedDataWithdraw| 0xb0c69ffe |
 | PtonDeployWallet| 0x4f5f4313 |
 | PtonInternalDeploy| 0x6540cf85 |
 | PtonResetGas| 0x29d22935 |
@@ -266,6 +269,8 @@ The list below contains the supported message operations, their names and opcode
 | SubscriptionFallback| 0x756e6b77 |
 | SubscriptionPayment| 0x73756273 |
 | SubscriptionReducePayment| 0x508238ec |
+| TakeAggregatedDataDeposit| 0xab7bef17 |
+| TakeAggregatedDataWithdraw| 0xd9cf8c91 |
 | TegroAddLiquidity| 0x287e167a |
 | TegroJettonSwap| 0x01fb7a25 |
 | TegroSwapTon| 0x600c00fd |
@@ -338,3 +343,4 @@ The list below contains the supported message operations, their names and opcode
 | WhalesNominatorsWithdraw| 0xda803efd |
 | WhalesNominatorsWithdrawUnowned| 0x251d6a98 |
 | WhalesNominatorsWithdrawUnownedResponse| 0x1d1715bf |
+| WithdrawPayload| 0xcb03bfaf |

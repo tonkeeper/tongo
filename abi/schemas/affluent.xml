@@ -1,0 +1,187 @@
+<abi>
+    <types>
+        deposit_context#f9471134 asset_address:MsgAddress from_address:MsgAddress amount:Coins
+        forward_ton_amount:Coins forward_payload:(Maybe ^Cell) = DepositContext;
+
+        withdraw_context#cb03bfaf asset_address:MsgAddress from_address:MsgAddress amount:Coins
+        forward_ton_amount:Coins forward_payload:(Maybe ^Cell) = WithdrawContext;
+    </types>
+
+    <!-- https://tonviewer.com/EQCrEHHG4Ff8TD3PzuH5tFSwHBD3zxeXaosz48jGLebwiiNx  -->
+    <interface name="affluent_pool">
+        <get_method name="get_pool_data" version="affluent"/>
+    </interface>
+
+    <!-- https://tonviewer.com/EQD3F7Ex_uxBjxEub8FgeDoYYUSIbAUVyehCb_JSiCVL369T  -->
+    <interface name="affluent_multiply_vault">
+        <get_method name="get_jetton_data"/>
+        <get_method name="get_wallet_address"/>
+        <get_method name="get_vault_data" version="affluent_multiply_vault"/>
+        <get_method name="is_strategy_vault" version="affluent"/>
+        <get_method name="get_rfq_address" version="affluent"/>
+
+        <msg_out>
+            <internal name="jetton_transfer"/>
+        </msg_out>
+    </interface>
+
+    <!-- https://tonviewer.com/EQAGtgnr1G0XDilGURcOB3pUhl-Lo__J-TaJP0K4ey8cuSaW  -->
+    <interface name="affluent_lending_vault">
+        <get_method name="get_jetton_data"/>
+        <get_method name="get_wallet_address"/>
+        <get_method name="get_vault_data" version="affluent_lending_vault"/>
+
+        <msg_out>
+            <internal name="jetton_transfer"/>
+            <internal name="jetton_internal_transfer"/>
+            <internal name="take_aggregated_data_deposit"/>
+            <internal name="provide_aggregated_data_deposit"/>
+            <internal name="withdraw_payload"/>
+            <internal name="take_aggregated_data_deposit"/>
+        </msg_out>
+    </interface>
+
+    <get_method name="get_pool_data" version="affluent">
+        <output version="affluent" fixed_length="true">
+            <int name="is_initialized">bool</int>
+            <int name="id">int257</int>
+            <slice name="owner_address" nullable="true">msgaddress</slice>
+            <slice name="fee_configurer_address" nullable="true">msgaddress</slice>
+            <int name="protocol_fee_rate">int257</int>
+            <slice name="oracle_address" nullable="true">msgaddress</slice>
+            <cell name="oracle_config" nullable="true">cell</cell>
+            <int name="max_loan_leverage_ratio">int257</int>
+            <int name="max_loan_var_ratio">int257</int>
+            <int name="liquidate_leverage_ratio">int257</int>
+            <int name="liquidate_var_ratio">int257</int>
+            <int name="min_liquidate_close_ratio">int257</int>
+            <int name="max_liquidate_close_ratio">int257</int>
+            <tuple name="assets" list="true">
+                <int name="last_updated_time">int32</int>
+                <int name="stored_interest_rate">int257</int>
+                <int name="collected_protocol_fee">int257</int>
+                <int name="cash">int257</int>
+                <int name="total_supply">int257</int>
+                <int name="total_borrow">int257</int>
+                <int name="supply_share">int257</int>
+                <int name="borrow_share">int257</int>
+                <slice name="wallet">msgaddress</slice>
+                <slice name="irm_address">msgaddress</slice>
+                <cell name="irm_data">cell</cell>
+                <int name="risk_factor">int257</int>
+                <int name="liquidation_incentive">int257</int>
+                <int name="is_collateral">bool</int>
+                <int name="is_borrowable">bool</int>
+                <slice name="asset_address">msgaddress</slice>
+            </tuple>
+            <cell name="gas_cell" nullable="true">cell</cell>
+            <cell name="account_code">cell</cell>
+        </output>
+    </get_method>
+    <get_method name="get_vault_data" version="affluent_lending_vault">
+        <output version="affluent_lending_vault" fixed_length="true">
+            <int name="total_supply">int257</int>
+            <slice name="owner_address">msgaddress</slice>
+            <slice name="manager_address">msgaddress</slice>
+            <slice name="asset_address">msgaddress</slice>
+            <int name="balance">int257</int>
+            <int name="cash">int257</int>
+            <int name="total_target_weight">int257</int>
+            <slice name="asset_wallet_address">msgaddress</slice>
+            <tuple name="whitelisted_pool" list="true">
+                    <slice name="pool_address">msgaddress</slice>
+                    <int name="is_whitelisted">bool</int>
+                    <int name="target_weight">int257</int>
+                    <int name="supply_share">int257</int>
+                    <int name="supply_amount">int257</int>
+                    <int name="pool_cash">int257</int>
+            </tuple>
+            <cell name="jetton_wallet_code">cell</cell>
+            <cell name="pool_aggregator_code">cell</cell>
+        </output>
+    </get_method>
+    <get_method name="get_vault_data" version="affluent_multiply_vault">
+        <output version="affluent_multiply_vault" fixed_length="true">
+            <tuple name="affluent_vault_data">
+                <slice name="owner_address">msgaddress</slice>
+                <cell name="assets">cell</cell>
+                <cell name="factorial_pools">cell</cell>
+                <int name="aggregator_index">int257</int>
+                <int name="rfq_index">int257</int>
+                <int name="total_supply">int257</int>
+                <int name="collected_management_fee">int257</int>
+                <int name="collected_protocol_fee">int257</int>
+                <int name="is_executing_strategy">bool</int>
+                <cell name="config">cell</cell>
+                <cell name="code">cell</cell>
+                <slice name="protocol_fee_manager_address">msgaddress</slice>
+                <slice name="manager">msgaddress</slice>
+                <int name="is_private_vault">bool</int>
+                <int name="deposit_close_timestamp">int64</int>
+                <int name="withdraw_close_timestamp">int64</int>
+                <cell name="whitelisted_minters" nullable="true">cell</cell>
+                <int name="last_collected_time">int64</int>
+                <int name="management_fee_rate_per_year">int32</int>
+                <int name="protocol_fee_rate_per_year">int32</int>
+                <int name="max_leverage_ratio">int32</int>
+                <cell name="asset_wallet_dict">any</cell>
+                <cell name="wallet_asset_dict">any</cell>
+                <cell name="rfq_config" nullable="true">cell</cell>
+                <cell name="gas_config" nullable="true">cell</cell>
+                <cell name="oracle_config" nullable="true">cell</cell>
+                <cell name="management_fee_recipient_address" nullable="true">msgaddress</cell>
+                <cell name="guardian_address" nullable="true">msgaddress</cell>
+                <int name="timelock">int257</int>
+                <int name="pending_owner_action_index">int257</int>
+                <int name="pending_owner_action_count">int257</int>
+                <cell name="pending_owner_action" nullable="true">msgaddress</cell>
+                <cell name="wallet_code">cell</cell>
+                <cell name="data_aggregator_code">cell</cell>
+                <cell name="rfq_code">cell</cell>
+                <cell name="content">cell</cell>
+            </tuple>
+        </output>
+    </get_method>
+    <get_method name="is_strategy_vault" version="affluent">
+        <output version="affluent" fixed_length="true">
+            <int name="is_strategy_vault">bool</int>
+        </output>
+    </get_method>
+    <get_method name="get_rfq_address" version="affluent">
+        <input version="affluent">
+            <int name="index">int257</int>
+        </input>
+        <output version="affluent" fixed_length="true">
+            <slice name="auction_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <internal name="provide_aggregated_data_deposit">
+        provide_aggregated_data#b0c69ffe query_id:uint64 asset_requests:(Maybe ^Cell) pool_requests:(Maybe ^Cell)
+        vault_requests:(Maybe ^Cell) context_payload:DepositContext = InMsgBody;
+    </internal>
+
+    <internal name="provide_aggregated_data_withdraw">
+        provide_aggregated_data#b0c69ffe query_id:uint64 asset_requests:(Maybe ^Cell) pool_requests:(Maybe ^Cell)
+        vault_requests:(Maybe ^Cell) context_payload:WithdrawContext = InMsgBody;
+    </internal>
+
+    <internal name="take_aggregated_data_deposit">
+        take_aggregated_data_deposit#ab7bef17 query_id:uint64 index:Coins asset_data:(Maybe ^Cell)
+        pool_data:(Maybe ^Cell) vault_data:(Maybe ^Cell) context_payload:DepositContext = InMsgBody;
+    </internal>
+
+    <internal name="take_aggregated_data_withdraw">
+        take_aggregated_data_withdraw#d9cf8c91 query_id:uint64 index:Coins asset_data:(Maybe ^Cell) pool_data:(Maybe ^Cell)
+        vault_data:(Maybe ^Cell) context_payload:WithdrawContext = TakeAggregatedDataMsgBody;
+    </internal>
+
+    <jetton_payload name="deposit_payload" fixed_length="true">
+        deposit_payload#f9471134 oracle_params:(Maybe ^Cell) forward_ton_amount:Coins forward_payload:(Maybe ^Cell) = JettonPayload;
+    </jetton_payload>
+
+    <jetton_payload name="withdraw_payload" fixed_length="true">
+        withdraw_payload#cb03bfaf asset_address:MsgAddress oracle_params:(Maybe ^Cell) forward_ton_amount:Coins
+        forward_payload:(Maybe ^Cell) = JettonPayload;
+    </jetton_payload>
+</abi>

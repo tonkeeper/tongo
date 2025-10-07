@@ -1631,21 +1631,6 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 }
 
 var knownContracts = map[ton.Bits256]knownContractDescription{
-	ton.MustParseHash("00340a103ece49e460d7ff7804f6af034901f35c7634d7def4c1d6123c0951d5"): {
-		contractInterfaces: []ContractInterface{StormVault},
-		getMethods: []InvokeFn{
-			GetBufferData,
-			GetClaimerAddress,
-			GetExecutorCollectionAddress,
-			GetLastPositionManagerCode,
-			GetLpMinterAddress,
-			GetReferralCollectionAddress,
-			GetVaultContractData,
-			GetVaultData,
-			GetVaultType,
-			GetVaultWhitelistedAddresses,
-		},
-	},
 	ton.MustParseHash("09710d08920dfd156edfd98e70e3e6312ed2c8c7eb754e061060d23d810e27ef"): {
 		contractInterfaces: []ContractInterface{SmartAccountBlank},
 		getMethods: []InvokeFn{
@@ -1697,17 +1682,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSaleData,
 		},
 	},
-	ton.MustParseHash("1f13e25180a3669e5f380875261a6fc722e7f4d71071d08909f847523631dc10"): {
-		contractInterfaces: []ContractInterface{SmartAccount},
-		getMethods: []InvokeFn{
-			GetHighloadData,
-			GetKeysData,
-			GetNftData,
-			GetPosition,
-			GetStorageData,
-			GetUserPublicKeys,
-		},
-	},
 	ton.MustParseHash("203dd4f358adb49993129aa925cac39916b68a0e4f78d26e8f2c2b69eafa5679"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV2R2},
 		getMethods: []InvokeFn{
@@ -1736,7 +1710,7 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSaleData,
 		},
 	},
-	ton.MustParseHash("45104732f139af18dd2529075a72588c58dfd41eea004b9d12422f1160cbe991"): {
+	ton.MustParseHash("3c1da399fc6350031dff1a5fa328ed2f74121ee777c89314cdb47b6d259e8a2b"): {
 		contractInterfaces: []ContractInterface{StormVammCoinm},
 		getMethods: []InvokeFn{
 			GetAmmContractData,
@@ -1754,6 +1728,17 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSpotPrice,
 			GetTerminalAmmPrice,
 			GetVammType,
+		},
+	},
+	ton.MustParseHash("43c78f03b04864ab54e958070745db7cd050578c3d6950326a7e4a9f31268cf1"): {
+		contractInterfaces: []ContractInterface{SmartAccount},
+		getMethods: []InvokeFn{
+			GetHighloadData,
+			GetKeysData,
+			GetNftData,
+			GetPosition,
+			GetStorageData,
+			GetUserPublicKeys,
 		},
 	},
 	ton.MustParseHash("45ebbce9b5d235886cb6bfe1c3ad93b708de058244892365c9ee0dfe439cb7b5"): {
@@ -1828,6 +1813,21 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetReferralData,
 		},
 	},
+	ton.MustParseHash("78ba001d199dd8185820f635e16e5c2f1dc7cfacea80bc5eb260f084f88084df"): {
+		contractInterfaces: []ContractInterface{StormVaultNative},
+		getMethods: []InvokeFn{
+			GetBufferData,
+			GetClaimerAddress,
+			GetExecutorCollectionAddress,
+			GetLastPositionManagerCode,
+			GetLpMinterAddress,
+			GetReferralCollectionAddress,
+			GetVaultContractData,
+			GetVaultData,
+			GetVaultType,
+			GetVaultWhitelistedAddresses,
+		},
+	},
 	ton.MustParseHash("8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9"): {
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV2},
 		getMethods: []InvokeFn{
@@ -1855,8 +1855,8 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetWalletData,
 		},
 	},
-	ton.MustParseHash("8cad543fe8faa2e7950261cba0150cd1b82eda41eeb5f0a8830ad52d7a5c006a"): {
-		contractInterfaces: []ContractInterface{StormVaultNative},
+	ton.MustParseHash("8b987d55003bc13de062368e732291c010fb25af4c8b776337a4b398c30eb79a"): {
+		contractInterfaces: []ContractInterface{StormVault},
 		getMethods: []InvokeFn{
 			GetBufferData,
 			GetClaimerAddress,
@@ -1907,25 +1907,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{AirdropInterlockerV1},
 		getMethods: []InvokeFn{
 			GetContractData,
-		},
-	},
-	ton.MustParseHash("b2eeac171ad0fce9b3171fe24254c79473d18a4cdcd4a0418fbb8d531ffdc82d"): {
-		contractInterfaces: []ContractInterface{StormVamm},
-		getMethods: []InvokeFn{
-			GetAmmContractData,
-			GetAmmName,
-			GetAmmState,
-			GetAmmStatus,
-			GetDayTradingData,
-			GetExchangeSettings,
-			GetFundingSettings,
-			GetLazerData,
-			GetOracleData,
-			GetPauseTime,
-			GetPositionManagerAddress,
-			GetSpotPrice,
-			GetTerminalAmmPrice,
-			GetVammType,
 		},
 	},
 	ton.MustParseHash("b48b531abec3b714638291f7d77ed6dc9f6a2729efca20477137374d4ae8b590"): {
@@ -2017,6 +1998,25 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV1R2},
 		getMethods: []InvokeFn{
 			Seqno,
+		},
+	},
+	ton.MustParseHash("d7a54e7e8d602c407176e2ebdbdbe4b77f86d260ef7e4930c0eff76e37dfaa0e"): {
+		contractInterfaces: []ContractInterface{StormVamm},
+		getMethods: []InvokeFn{
+			GetAmmContractData,
+			GetAmmName,
+			GetAmmState,
+			GetAmmStatus,
+			GetDayTradingData,
+			GetExchangeSettings,
+			GetFundingSettings,
+			GetLazerData,
+			GetOracleData,
+			GetPauseTime,
+			GetPositionManagerAddress,
+			GetSpotPrice,
+			GetTerminalAmmPrice,
+			GetVammType,
 		},
 	},
 	ton.MustParseHash("d7c38fa994a8282657209f93ebc5dfe908a5f06d2e41f0c085e917bc4f54a2b3"): {

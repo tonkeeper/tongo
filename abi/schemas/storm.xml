@@ -174,7 +174,7 @@
     <!-- INTERFACES -->
 
     <interface name="storm_vamm">
-        <code_hash>b2eeac171ad0fce9b3171fe24254c79473d18a4cdcd4a0418fbb8d531ffdc82d</code_hash>
+        <code_hash>d7a54e7e8d602c407176e2ebdbdbe4b77f86d260ef7e4930c0eff76e37dfaa0e</code_hash>
         <msg_in>
             <internal name="storm_set_exchange_settings"/>
             <internal name="storm_pay_funding"/>
@@ -288,7 +288,7 @@
     </interface>
 
     <interface name="storm_vamm_coinm">
-        <code_hash>45104732f139af18dd2529075a72588c58dfd41eea004b9d12422f1160cbe991</code_hash>
+        <code_hash>3c1da399fc6350031dff1a5fa328ed2f74121ee777c89314cdb47b6d259e8a2b</code_hash>
         <msg_in>
             <internal name="storm_set_exchange_settings"/>
             <internal name="storm_pay_funding"/>
@@ -404,7 +404,7 @@
     </interface>
 
     <interface name="storm_vault">
-        <code_hash>00340a103ece49e460d7ff7804f6af034901f35c7634d7def4c1d6123c0951d5</code_hash>
+        <code_hash>8b987d55003bc13de062368e732291c010fb25af4c8b776337a4b398c30eb79a</code_hash>
         <msg_in>
             <internal name="storm_withdraw_referral_amount"/>
             <internal name="storm_withdraw_executor_amount"/>
@@ -463,7 +463,7 @@
     </interface>
 
     <interface name="storm_vault_native">
-        <code_hash>8cad543fe8faa2e7950261cba0150cd1b82eda41eeb5f0a8830ad52d7a5c006a</code_hash>
+        <code_hash>78ba001d199dd8185820f635e16e5c2f1dc7cfacea80bc5eb260f084f88084df</code_hash>
         <msg_in>
             <internal name="storm_withdraw_referral_amount"/>
             <internal name="storm_withdraw_executor_amount"/>
@@ -540,7 +540,7 @@
     </interface>
 
     <interface name="smart_account">
-        <code_hash>1f13e25180a3669e5f380875261a6fc722e7f4d71071d08909f847523631dc10</code_hash>
+        <code_hash>43c78f03b04864ab54e958070745db7cd050578c3d6950326a7e4a9f31268cf1</code_hash>
         <msg_in>
             <internal name="storm_notify_update_position"/>
             <internal name="storm_deposit_notify"/>

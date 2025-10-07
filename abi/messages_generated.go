@@ -314,8 +314,6 @@ var (
 	// 0x84dced7a
 	decodeFuncStormAddReferralAmountMsgBody = decodeMsg(tlb.Tag{Val: 0x84dced7a, Len: 32}, StormAddReferralAmountMsgOp, StormAddReferralAmountMsgBody{})
 	// 0x87d36990
-	decodeFuncBidaskSwapV2MsgBody = decodeMsg(tlb.Tag{Val: 0x87d36990, Len: 32}, BidaskSwapV2MsgOp, BidaskSwapV2MsgBody{})
-	// 0x87d36990
 	decodeFuncBidaskInternalSwapV2MsgBody = decodeMsg(tlb.Tag{Val: 0x87d36990, Len: 32}, BidaskInternalSwapV2MsgOp, BidaskInternalSwapV2MsgBody{})
 	// 0x8865b402
 	decodeFuncStormProvidePositionMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvidePositionMsgOp, StormProvidePositionMsgBody{})
@@ -407,6 +405,8 @@ var (
 	decodeFuncCoffeeCrossDexFailureMsgBody = decodeMsg(tlb.Tag{Val: 0xb902e61a, Len: 32}, CoffeeCrossDexFailureMsgOp, CoffeeCrossDexFailureMsgBody{})
 	// 0xbe5a7595
 	decodeFuncCoffeeStakingInitMsgBody = decodeMsg(tlb.Tag{Val: 0xbe5a7595, Len: 32}, CoffeeStakingInitMsgOp, CoffeeStakingInitMsgBody{})
+	// 0xc09da84e
+	decodeFuncBidaskSwapV2MsgBody = decodeMsg(tlb.Tag{Val: 0xc09da84e, Len: 32}, BidaskSwapV2MsgOp, BidaskSwapV2MsgBody{})
 	// 0xc0ffee00
 	decodeFuncCoffeeSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xc0ffee00, Len: 32}, CoffeeSwapMsgOp, CoffeeSwapMsgBody{})
 	// 0xc0ffee01
@@ -1030,12 +1030,8 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x84dced7a
 	StormAddReferralAmountMsgOpCode: decodeFuncStormAddReferralAmountMsgBody,
 
-	//BidaskSwapV2, BidaskInternalSwapV2,
-	0x87d36990: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncBidaskSwapV2MsgBody,
-		decodeFuncBidaskInternalSwapV2MsgBody},
-		"0x87d36990",
-	),
+	// 0x87d36990
+	BidaskInternalSwapV2MsgOpCode: decodeFuncBidaskInternalSwapV2MsgBody,
 
 	// 0x8865b402
 	StormProvidePositionMsgOpCode: decodeFuncStormProvidePositionMsgBody,
@@ -1172,6 +1168,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0xbe5a7595
 	CoffeeStakingInitMsgOpCode: decodeFuncCoffeeStakingInitMsgBody,
+
+	// 0xc09da84e
+	BidaskSwapV2MsgOpCode: decodeFuncBidaskSwapV2MsgBody,
 
 	// 0xc0ffee00
 	CoffeeSwapMsgOpCode: decodeFuncCoffeeSwapMsgBody,
@@ -1562,7 +1561,6 @@ const (
 	Poolv3MintMsgOp                              MsgOpName = "Poolv3Mint"
 	MultisigApproveAcceptedMsgOp                 MsgOpName = "MultisigApproveAccepted"
 	StormAddReferralAmountMsgOp                  MsgOpName = "StormAddReferralAmount"
-	BidaskSwapV2MsgOp                            MsgOpName = "BidaskSwapV2"
 	BidaskInternalSwapV2MsgOp                    MsgOpName = "BidaskInternalSwapV2"
 	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
@@ -1609,6 +1607,7 @@ const (
 	StormPayFundingMsgOp                         MsgOpName = "StormPayFunding"
 	CoffeeCrossDexFailureMsgOp                   MsgOpName = "CoffeeCrossDexFailure"
 	CoffeeStakingInitMsgOp                       MsgOpName = "CoffeeStakingInit"
+	BidaskSwapV2MsgOp                            MsgOpName = "BidaskSwapV2"
 	CoffeeSwapMsgOp                              MsgOpName = "CoffeeSwap"
 	CoffeeSwapExtraMsgOp                         MsgOpName = "CoffeeSwapExtra"
 	CoffeeCreatePoolMsgOp                        MsgOpName = "CoffeeCreatePool"
@@ -1843,7 +1842,6 @@ const (
 	Poolv3MintMsgOpCode                              MsgOpCode = 0x81702ef8
 	MultisigApproveAcceptedMsgOpCode                 MsgOpCode = 0x82609bf6
 	StormAddReferralAmountMsgOpCode                  MsgOpCode = 0x84dced7a
-	BidaskSwapV2MsgOpCode                            MsgOpCode = 0x87d36990
 	BidaskInternalSwapV2MsgOpCode                    MsgOpCode = 0x87d36990
 	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
@@ -1890,6 +1888,7 @@ const (
 	StormPayFundingMsgOpCode                         MsgOpCode = 0xb652c441
 	CoffeeCrossDexFailureMsgOpCode                   MsgOpCode = 0xb902e61a
 	CoffeeStakingInitMsgOpCode                       MsgOpCode = 0xbe5a7595
+	BidaskSwapV2MsgOpCode                            MsgOpCode = 0xc09da84e
 	CoffeeSwapMsgOpCode                              MsgOpCode = 0xc0ffee00
 	CoffeeSwapExtraMsgOpCode                         MsgOpCode = 0xc0ffee01
 	CoffeeCreatePoolMsgOpCode                        MsgOpCode = 0xc0ffee02
@@ -3037,17 +3036,6 @@ type StormAddReferralAmountMsgBody struct {
 	OriginAddr     tlb.MsgAddress
 }
 
-type BidaskSwapV2MsgBody struct {
-	QueryId        uint64
-	NativeAmount   tlb.Grams
-	ToAddress      tlb.MsgAddress
-	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
-	ExactOut       tlb.Grams
-	AdditionalData *AdditionalData `tlb:"maybe^"`
-	RejectPayload  *tlb.Any        `tlb:"maybe^"`
-	ForwardPayload *tlb.Any        `tlb:"maybe^"`
-}
-
 type BidaskInternalSwapV2MsgBody struct {
 	QueryId        uint64
 	ToAddress      tlb.MsgAddress
@@ -3357,6 +3345,17 @@ type CoffeeStakingInitMsgBody struct {
 	JettonData   CoffeeStakingAssetData    `tlb:"^"`
 	PositionData CoffeeStakingPositionData `tlb:"^"`
 	Periods      tlb.Any                   `tlb:"^"`
+}
+
+type BidaskSwapV2MsgBody struct {
+	QueryId        uint64
+	NativeAmount   tlb.Grams
+	ToAddress      tlb.MsgAddress
+	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
+	ExactOut       tlb.Grams
+	AdditionalData *AdditionalData `tlb:"maybe^"`
+	RejectPayload  *tlb.Any        `tlb:"maybe^"`
+	ForwardPayload *tlb.Any        `tlb:"maybe^"`
 }
 
 type CoffeeSwapMsgBody struct {
@@ -4014,7 +4013,6 @@ var KnownMsgInTypes = map[string]any{
 	Poolv3MintMsgOp:                              Poolv3MintMsgBody{},
 	MultisigApproveAcceptedMsgOp:                 MultisigApproveAcceptedMsgBody{},
 	StormAddReferralAmountMsgOp:                  StormAddReferralAmountMsgBody{},
-	BidaskSwapV2MsgOp:                            BidaskSwapV2MsgBody{},
 	BidaskInternalSwapV2MsgOp:                    BidaskInternalSwapV2MsgBody{},
 	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
@@ -4061,6 +4059,7 @@ var KnownMsgInTypes = map[string]any{
 	StormPayFundingMsgOp:                         StormPayFundingMsgBody{},
 	CoffeeCrossDexFailureMsgOp:                   CoffeeCrossDexFailureMsgBody{},
 	CoffeeStakingInitMsgOp:                       CoffeeStakingInitMsgBody{},
+	BidaskSwapV2MsgOp:                            BidaskSwapV2MsgBody{},
 	CoffeeSwapMsgOp:                              CoffeeSwapMsgBody{},
 	CoffeeSwapExtraMsgOp:                         CoffeeSwapExtraMsgBody{},
 	CoffeeCreatePoolMsgOp:                        CoffeeCreatePoolMsgBody{},

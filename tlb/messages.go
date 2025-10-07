@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -98,16 +99,9 @@ func (m Message) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 type CommonMsgInfo struct {
 	SumType
 	IntMsgInfo *struct {
-		IhrDisabled bool
-		Bounce      bool
-		Bounced     bool
-		Src         MsgAddress
-		Dest        MsgAddress
-		Value       CurrencyCollection
-		IhrFee      Grams
-		FwdFee      Grams
-		CreatedLt   uint64
-		CreatedAt   uint32
+		SumType
+		V1 *IntMsgInfoV1 `tlbSumType:"v1$0"`
+		V2 *IntMsgInfoV2 `tlbSumType:"v2$1"`
 	} `tlbSumType:"int_msg_info$0"`
 	ExtInMsgInfo *struct {
 		Src       MsgAddress
@@ -120,6 +114,66 @@ type CommonMsgInfo struct {
 		CreatedLt uint64
 		CreatedAt uint32
 	} `tlbSumType:"ext_out_msg_info$11"`
+}
+
+type IntMsgInfoV1 struct {
+	Bounce    bool
+	Bounced   bool
+	Src       MsgAddress
+	Dest      MsgAddress
+	Value     CurrencyCollection
+	IhrFee    Grams
+	FwdFee    Grams
+	CreatedLt uint64
+	CreatedAt uint32
+}
+
+type IntMsgInfoV2 struct {
+	Bounce     bool
+	Bounced    bool
+	Src        MsgAddress
+	Dest       MsgAddress
+	Value      CurrencyCollection
+	ExtraFlags InMsgExtraFlags
+	FwdFee     Grams
+	CreatedLt  uint64
+	CreatedAt  uint32
+}
+
+type BouncedMessageFormat string
+
+const (
+	OldFormat BouncedMessageFormat = "old"
+	BodyRoot  BouncedMessageFormat = "body_root"
+	WholeBody BouncedMessageFormat = "whole_body"
+)
+
+type InMsgExtraFlags struct {
+	RawFlags             VarUInteger16
+	BouncedMessageFormat BouncedMessageFormat
+}
+
+func (i *InMsgExtraFlags) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	err := decoder.Unmarshal(c, &i.RawFlags)
+	if err != nil {
+		return err
+	}
+	flags := big.Int(i.RawFlags)
+	if flags.Bit(0) == 0 { // ...0
+		i.BouncedMessageFormat = OldFormat
+		return nil
+	}
+	if flags.Bit(1) == 0 { // ...01 = 1
+		i.BouncedMessageFormat = BodyRoot
+		return nil
+	} else { // ...11 = 3
+		i.BouncedMessageFormat = WholeBody
+		return nil
+	}
+}
+
+func (i InMsgExtraFlags) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return encoder.Marshal(c, i.RawFlags)
 }
 
 // StateInit

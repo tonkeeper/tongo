@@ -1,0 +1,30 @@
+{
+   "Info": {
+     "SumType": "IntMsgInfo",
+     "IntMsgInfo": {
+       "SumType": "V1",
+       "V1": {
+         "Bounce": true,
+         "Bounced": false,
+         "Src": "0:0bfe2f05a7ccf04aa326cb3ae08c2bb7d9729ddec7fc04a5f9d01007d9c65f9f",
+         "Dest": "0:a2ac9fc7149b84a4dd0976d28c0aef18784b71a8e375a5d5426efed887d14ac1",
+         "Value": {
+           "Grams": "10500000",
+           "Other": {}
+         },
+         "IhrFee": "900000",
+         "FwdFee": "400004",
+         "CreatedLt": 35002669000002,
+         "CreatedAt": 1748185343
+       },
+       "V2": null
+     },
+     "ExtInMsgInfo": null,
+     "ExtOutMsgInfo": null
+   },
+   "Init": null,
+   "Body": {
+     "IsRight": true,
+     "Value": "b5ee9c7201010101003400006423b056416908ff48cfec30c01fa2b7b435aa650bfd4b5a44a2b647f453046b3dbbc6ee82ed37c4ccea145e5f0000683330f4"
+   }
+ }

@@ -301,10 +301,40 @@ func TestMessage_Marshal_and_Unmarshal(t *testing.T) {
 			wantHash: "23ff6f150d573f64d5599a57813f991882b7b4d5ae0550ebd08ea658431e62f6",
 		},
 		{
-			name:     "IntMsg with body",
+			name:     "IntMsg with body without ihr fee",
 			boc:      "te6ccgEBAgEAjAABsUgALXKEDiSWLCdVuhCWy/hYz3hnzF93uwd93pYymUX+v88AGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgQBycOAAYdyRAAAEQo20NHEsixYeDAAQBbBRONkQAAAAAAAAAAgBZQOG7qXmeA/2Tw1pLX2IkcQ5h5fxWzzcBskMJbVVRsKA==",
 			filename: "testdata/message-2",
 			wantHash: "b55e0995ab2428b7ccffa4d417ff78caca62dc4d33bc0e33b2d9bcf0c396f08c",
+		},
+		{
+			name:     "IntMsg with ihr fee",
+			boc:      "te6ccgEBAgEAkgABtSgAF/xeC0+Z4JVGTZZ1wRhXb7LlO72P+AlL86AgD7OMvz8AKKsn8cUm4Sk3Ql20owK7xh4S3Go43Wl1UJu/tiH0UrBOgN6AYbd0Bgw1CAAAP6tjTcqE0GZh/sABAGQjsFZBaQj/SM/sMMAfore0NaplC/1LWkSitkf0UwRrPbvG7oLtN8TM6hReXwAAaDMw9A==",
+			filename: "testdata/message-3",
+			wantHash: "d0ac48e7bd45ab1e2612b9b34dd61d819caa93519fd78343fe2671f4669651e1",
+		},
+		{
+			name:     "IntMsg with extra flags: flag 3",
+			boc:      "te6ccgEBAwEAtAABs2gBYqR801amEcWPEqykRMeNbQq1nQkyHZStEyBBnWaWQKU/1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ6MY8ACBneJb+AABIh5nK9YjRynviwAEBY25DU2wAAAAAAAAAAP///ACAEzaGxPYq5VZDsyPobYQJ9FdB3Ks7FbJX8SODYzN6WKBQAgBAIP1FYVtaLm1bwsfi0pEzUpDxKI/Sjw36lANz1WAnOLg=",
+			filename: "testdata/message-4",
+			wantHash: "6282b35168e81b57184e1cd095599be4659b47e7f06c2d1c393c0da1604aea75",
+		},
+		{
+			name:     "IntMsg with extra flags: flag 1",
+			boc:      "te6ccgEBAwEAtAABs2gBYqR801amEcWPEqykRMeNbQq1nQkyHZStEyBBnWaWQKU/1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ6MY8ACAneJb+AABIh5nK9YjRynviwAEBY25DU2wAAAAAAAAAAP///ACAEzaGxPYq5VZDsyPobYQJ9FdB3Ks7FbJX8SODYzN6WKBQAgBAIP1FYVtaLm1bwsfi0pEzUpDxKI/Sjw36lANz1WAnOLg=",
+			filename: "testdata/message-5",
+			wantHash: "0388917b66f8685eb1851a302ec3495e46cfa4ca805708c5f221299835069df2",
+		},
+		{
+			name:     "IntMsg with extra flags: flag 2",
+			boc:      "te6ccgEBAwEAtAABs2gBYqR801amEcWPEqykRMeNbQq1nQkyHZStEyBBnWaWQKU/1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ6MY8ACBHeJb+AABIh5nK9YjRynviwAEBY25DU2wAAAAAAAAAAP///ACAEzaGxPYq5VZDsyPobYQJ9FdB3Ks7FbJX8SODYzN6WKBQAgBAIP1FYVtaLm1bwsfi0pEzUpDxKI/Sjw36lANz1WAnOLg=",
+			filename: "testdata/message-6",
+			wantHash: "1d9c0b411914c309eafc5b804e4bb786574f07729fbc51c5d77572e9d212fabe",
+		},
+		{
+			name:     "IntMsg with extra flags: flag random",
+			boc:      "te6ccgEBAwEAtQABtWgBYqR801amEcWPEqykRMeNbQq1nQkyHZStEyBBnWaWQKU/1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ6MY8AEYHJ3iW/gAASIeZyvWI0cp74sABAWNuQ1NsAAAAAAAAAAD///wAgBM2hsT2KuVWQ7Mj6G2ECfRXQdyrOxWyV/Ejg2MzeligUAIAQCD9RWFbWi5tW8LH4tKRM1KQ8SiP0o8N+pQDc9VgJzi4",
+			filename: "testdata/message-7",
+			wantHash: "3399d38ccd1099d98bc5fab725c29b63815ae4041c9ba756d2d619bae9035b49",
 		},
 	}
 	for _, tt := range tests {

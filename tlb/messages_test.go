@@ -381,3 +381,46 @@ func TestMessage_Marshal_and_Unmarshal(t *testing.T) {
 		})
 	}
 }
+
+func TestInMsgExtraFlags_BouncedMessageFormat(t *testing.T) {
+	tests := []struct {
+		name       string
+		flags      int64
+		wantFormat BouncedMessageFormat
+	}{
+		{
+			name:       "old",
+			flags:      0,
+			wantFormat: OldFormat,
+		},
+		{
+			name:       "root",
+			flags:      1,
+			wantFormat: BodyRoot,
+		},
+		{
+			name:       "old",
+			flags:      2,
+			wantFormat: OldFormat,
+		},
+		{
+			name:       "full",
+			flags:      3,
+			wantFormat: WholeBody,
+		},
+		{
+			name:       "random",
+			flags:      12145624761,
+			wantFormat: BodyRoot,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			x := InMsgExtraFlags(*big.NewInt(tt.flags))
+			res := x.BouncedMessageFormat()
+			if res != tt.wantFormat {
+				t.Fatalf("want format: %v, got: %v", tt.wantFormat, res)
+			}
+		})
+	}
+}

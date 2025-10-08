@@ -1,26 +1,20 @@
 {
    "Info": {
-     "SumType": "IntMsgInfo",
-     "IntMsgInfo": {
-       "SumType": "V2",
-       "V1": null,
-       "V2": {
-         "Bounce": true,
-         "Bounced": false,
-         "Src": "0:b1523e69ab5308e2c78956522263c6b6855ace84990eca56899020ceb34b2052",
-         "Dest": "-1:5555555555555555555555555555555555555555555555555555555555555555",
-         "Value": {
-           "Grams": "976326400",
-           "Other": {}
-         },
-         "ExtraFlags": {
-           "RawFlags": "12345",
-           "BouncedMessageFormat": "body_root"
-         },
-         "FwdFee": "12340095",
-         "CreatedLt": 39873619000004,
-         "CreatedAt": 1759854065
-       }
+     "SumType": "IntMsgInfoNoIhr",
+     "IntMsgInfoIhr": null,
+     "IntMsgInfoNoIhr": {
+       "Bounce": true,
+       "Bounced": false,
+       "Src": "0:b1523e69ab5308e2c78956522263c6b6855ace84990eca56899020ceb34b2052",
+       "Dest": "-1:5555555555555555555555555555555555555555555555555555555555555555",
+       "Value": {
+         "Grams": "976326400",
+         "Other": {}
+       },
+       "ExtraFlags": "12345",
+       "FwdFee": "12340095",
+       "CreatedLt": 39873619000004,
+       "CreatedAt": 1759854065
      },
      "ExtInMsgInfo": null,
      "ExtOutMsgInfo": null

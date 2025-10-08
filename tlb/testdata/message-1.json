@@ -1,7 +1,8 @@
 {
    "Info": {
      "SumType": "ExtInMsgInfo",
-     "IntMsgInfo": null,
+     "IntMsgInfoIhr": null,
+     "IntMsgInfoNoIhr": null,
      "ExtInMsgInfo": {
        "Src": "",
        "Dest": "0:6ccd325a858c379693fae2bcaab1c2906831a4e10a6c3bb44ee8b615bca1d220",

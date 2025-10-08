@@ -156,6 +156,16 @@ func (f InMsgExtraFlags) BouncedMessageFormat() BouncedMessageFormat {
 	}
 }
 
+func (f BouncedMessageFormat) ToFlags() InMsgExtraFlags {
+	switch f {
+	case BodyRoot:
+		return InMsgExtraFlags(*big.NewInt(1))
+	case WholeBody:
+		return InMsgExtraFlags(*big.NewInt(3))
+	}
+	return InMsgExtraFlags(*big.NewInt(0))
+}
+
 func (f *InMsgExtraFlags) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return decoder.Unmarshal(c, (*VarUInteger16)(f))
 }

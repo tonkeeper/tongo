@@ -3,6 +3,7 @@ package tontest
 import (
 	"crypto/rand"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -258,29 +259,27 @@ func (b messageBuilder) Message() (tlb.Message, error) {
 			ImportFee tlb.VarUInteger16
 		}{Src: tlb.MsgAddress{SumType: "AddrNone"}, Dest: b.to.ToMsgAddress()}
 	case Internal:
-		m.Info.SumType = "IntMsgInfo"
-		m.Info.IntMsgInfo = &struct {
-			IhrDisabled bool
-			Bounce      bool
-			Bounced     bool
-			Src         tlb.MsgAddress
-			Dest        tlb.MsgAddress
-			Value       tlb.CurrencyCollection
-			IhrFee      tlb.Grams
-			FwdFee      tlb.Grams
-			CreatedLt   uint64
-			CreatedAt   uint32
+		m.Info.SumType = "IntMsgInfoNoIhr"
+		m.Info.IntMsgInfoNoIhr = &struct {
+			Bounce     bool
+			Bounced    bool
+			Src        tlb.MsgAddress
+			Dest       tlb.MsgAddress
+			Value      tlb.CurrencyCollection
+			ExtraFlags tlb.InMsgExtraFlags
+			FwdFee     tlb.Grams
+			CreatedLt  uint64
+			CreatedAt  uint32
 		}{
-			IhrDisabled: true,
-			Bounce:      b.bounce,
-			Bounced:     b.bounced,
-			Src:         b.from.ToMsgAddress(),
-			Dest:        b.to.ToMsgAddress(),
-			Value:       tlb.CurrencyCollection{Grams: b.value},
-			IhrFee:      0,
-			FwdFee:      0,
-			CreatedLt:   100500,
-			CreatedAt:   uint32(time.Now().Unix())}
+			Bounce:     b.bounce,
+			Bounced:    b.bounced,
+			Src:        b.from.ToMsgAddress(),
+			Dest:       b.to.ToMsgAddress(),
+			Value:      tlb.CurrencyCollection{Grams: b.value},
+			ExtraFlags: tlb.InMsgExtraFlags(*big.NewInt(0)),
+			FwdFee:     0,
+			CreatedLt:  100500,
+			CreatedAt:  uint32(time.Now().Unix())}
 	}
 	if b.body != nil {
 		m.Body.Value = tlb.Any(*b.body)

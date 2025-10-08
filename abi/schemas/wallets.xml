@@ -2,9 +2,16 @@
     <types>
         send_msg#_ mode:uint8 message:^MessageRelaxed = SendMessageAction;
 
-        message_internal$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+        message_internal_ihr$00 bounce:Bool bounced:Bool
         src:MsgAddress dest:MsgAddressInt
         value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+        created_lt:uint64 created_at:uint32
+        init:(Maybe (Either StateInit ^StateInit))
+        body:(Either InMsgBody ^InMsgBody) = MessageRelaxed;
+
+        message_internal_no_ihr$01 bounce:Bool bounced:Bool
+        src:MsgAddress dest:MsgAddressInt
+        value:CurrencyCollection extra_flags:InMsgExtraFlags fwd_fee:Grams
         created_lt:uint64 created_at:uint32
         init:(Maybe (Either StateInit ^StateInit))
         body:(Either InMsgBody ^InMsgBody) = MessageRelaxed;
@@ -14,9 +21,14 @@
         init:(Maybe (Either StateInit ^StateInit))
         body:(Either ExtOutMsgBody ^ExtOutMsgBody) = MessageRelaxed;
 
-        int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+        int_msg_info_ihr$00 bounce:Bool bounced:Bool
         src:MsgAddress dest:MsgAddressInt
         value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+        created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+
+        int_msg_info_no_ihr$01 bounce:Bool bounced:Bool
+        src:MsgAddress dest:MsgAddressInt
+        value:CurrencyCollection extra_flags:InMsgExtraFlags fwd_fee:Grams
         created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
 
         message$_ {X:Type} info:CommonMsgInfoRelaxed

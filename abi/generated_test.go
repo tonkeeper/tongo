@@ -2439,6 +2439,40 @@ func TestMessageDecoder(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:       "new_bounce_flag_1",
+			boc:        "b5ee9c720101030100a3000213fffffffe00ffffffff40010200ff000000007364676c6b647368676a736168676b6a61736468676a6b647368676b6a7368616a6b676864736b6a6768736b6a6468676b6a736468676a6b647368676b6a736864676a68736468736a6b68676b6a736468677368646b6a67686473676a6b6873646b6a676873646b6a68676b6a736867646a6b7364686b6a676873650021405f5e10000001225ea9938c134733ab6c",
+			wantOpName: BounceV2MsgOp,
+			wantValue: BounceV2MsgBody{
+				OriginalBody: tlb.Any(mustHexToCell("b5ee9c720101010100820000ff000000007364676c6b647368676a736168676b6a61736468676a6b647368676b6a7368616a6b676864736b6a6768736b6a6468676b6a736468676a6b647368676b6a736864676a68736468736a6b68676b6a736468677368646b6a67686473676a6b6873646b6a676873646b6a68676b6a736867646a6b7364686b6a67687365")),
+				OriginalInfo: NewBounceOriginalInfo{
+					Value: tlb.CurrencyCollection{
+						Grams: tlb.Grams(100000000),
+					},
+					CreatedLt: 39908118000002,
+					CreatedAt: 1759933805,
+				},
+				BouncedByPhase: 0,
+				ExitCode:       -1,
+			},
+		},
+		{
+			name:       "new_bounce_flag_3",
+			boc:        "b5ee9c72010103010054000213fffffffe00ffffffff40010200620000000068692120686f70652069742077696c6c20626520656e6f75676820666f7220627579696e6720612079616368740021405f5e10000001225d27569813473370b4",
+			wantOpName: BounceV2MsgOp,
+			wantValue: BounceV2MsgBody{
+				OriginalBody: tlb.Any(mustHexToCell("b5ee9c720101010100330000620000000068692120686f70652069742077696c6c20626520656e6f75676820666f7220627579696e672061207961636874")),
+				OriginalInfo: NewBounceOriginalInfo{
+					Value: tlb.CurrencyCollection{
+						Grams: tlb.Grams(100000000),
+					},
+					CreatedLt: 39907308000002,
+					CreatedAt: 1759931926,
+				},
+				BouncedByPhase: 0,
+				ExitCode:       -1,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

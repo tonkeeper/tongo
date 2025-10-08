@@ -165,7 +165,7 @@
         <!-- V3 Trading -->
         _ bundle_sender_address:MsgAddress balance_delta:Coins amm_address:MsgAddressInt direction:Direction position_data:(Maybe ^PositionData) = NotificationPayload;
 
-        _ type:LogType size:uint128 margin:Coins open_notional:Coins last_updated_cpf:int64 realized_pnl:int64 funding_payment:int64
+        _ type:LogType size:int128 margin:Coins open_notional:Coins last_updated_cpf:int64 realized_pnl:int64 funding_payment:int64
         rollover_fee:uint64 position_fee_rate:uint32 executor_fee_rate:uint32 position_fee_amount:Coins executor_fee_amount:Coins
         fee_to_stakers_percent:uint32 = IntentLog;
 

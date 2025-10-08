@@ -766,7 +766,7 @@ func (t *Intent) MarshalJSON() ([]byte, error) {
 
 type IntentLog struct {
 	Type                LogType
-	Size                tlb.Uint128
+	Size                tlb.Int128
 	Margin              tlb.Grams
 	OpenNotional        tlb.Grams
 	LastUpdatedCpf      int64

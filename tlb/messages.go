@@ -104,7 +104,7 @@ type CommonMsgInfo struct {
 		Src         MsgAddress
 		Dest        MsgAddress
 		Value       CurrencyCollection
-		IhrFee      Grams
+		IhrFee      VarUInteger16
 		FwdFee      Grams
 		CreatedLt   uint64
 		CreatedAt   uint32

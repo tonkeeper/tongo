@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/tonkeeper/tongo/utils"
+	"math/big"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -210,7 +211,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		Src         tlb.MsgAddress
 		Dest        tlb.MsgAddress
 		Value       tlb.CurrencyCollection
-		IhrFee      tlb.Grams
+		IhrFee      tlb.VarUInteger16
 		FwdFee      tlb.Grams
 		CreatedLt   uint64
 		CreatedAt   uint32
@@ -219,6 +220,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 		Bounce:      m.Bounceable,
 		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
+		IhrFee:      tlb.VarUInteger16(*big.NewInt(0)),
 	}
 	info.IntMsgInfo.Value.Grams = m.Amount
 	for k, v := range m.ExtraCurrency {
@@ -263,7 +265,7 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 		Src         tlb.MsgAddress
 		Dest        tlb.MsgAddress
 		Value       tlb.CurrencyCollection
-		IhrFee      tlb.Grams
+		IhrFee      tlb.VarUInteger16
 		FwdFee      tlb.Grams
 		CreatedLt   uint64
 		CreatedAt   uint32
@@ -272,6 +274,7 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 		Bounce:      m.Bounce,
 		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
+		IhrFee:      tlb.VarUInteger16(*big.NewInt(0)),
 	}
 	info.IntMsgInfo.Value.Grams = m.Amount
 

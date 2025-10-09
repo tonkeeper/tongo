@@ -274,7 +274,7 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 		Src:        (*ton.AccountID)(nil).ToMsgAddress(),
 		Dest:       m.Address.ToMsgAddress(),
 	}
-	info.IntMsgInfoIhr.Value.Grams = m.Amount
+	info.IntMsgInfoNoIhr.Value.Grams = m.Amount
 
 	intMsg := tlb.Message{
 		Info: info,

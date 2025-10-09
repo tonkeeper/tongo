@@ -2050,7 +2050,7 @@ func TestMessageDecoder(t *testing.T) {
 				if seqno.Cmp(big.NewInt(696969)) != 0 {
 					t.Error("got wrong order seqno")
 				}
-				if got.Order.Field0.Values()[0].Value.SendMessage.Field0.Message.SumType != "MessageInternalIhr" {
+				if got.Order.Field0.Values()[0].Value.SendMessage.Field0.Message.SumType != "MessageInternal" {
 					t.Error("invalid message type")
 				}
 			},
@@ -2065,10 +2065,10 @@ func TestMessageDecoder(t *testing.T) {
 					t.Error("got wrong transaction threshold")
 				}
 				message := got.Order.Field0.Values()[0].Value.SendMessage.Field0.Message
-				if message.SumType != "MessageInternalIhr" {
+				if message.SumType != "MessageInternal" {
 					t.Error("invalid message type")
 				}
-				if message.MessageInternalIhr.Value.Grams != 100000000 {
+				if message.MessageInternal.Value.Grams != 100000000 {
 					t.Error("invalid grams amount")
 				}
 			},
@@ -2079,7 +2079,7 @@ func TestMessageDecoder(t *testing.T) {
 			wantOpName: MultisigExecuteMsgOp,
 			wantValidate: func(t *testing.T, value any) {
 				got := value.(MultisigExecuteMsgBody)
-				if got.Order.Field0.Values()[0].Value.SendMessage.Field0.Message.SumType != "MessageInternalIhr" {
+				if got.Order.Field0.Values()[0].Value.SendMessage.Field0.Message.SumType != "MessageInternal" {
 					t.Error("invalid message type")
 				}
 			},
@@ -2575,31 +2575,33 @@ func TestDecodeExternalIn(t *testing.T) {
 						SubwalletId: 1,
 						SendMode:    3,
 						MessageToSend: MessageRelaxed{
-							SumType: "MessageInternalNoIhr",
-							MessageInternalNoIhr: struct {
-								Bounce     bool
-								Bounced    bool
-								Src        tlb.MsgAddress
-								Dest       tlb.MsgAddress
-								Value      tlb.CurrencyCollection
-								ExtraFlags tlb.InMsgExtraFlags
-								FwdFee     tlb.Grams
-								CreatedLt  uint64
-								CreatedAt  uint32
-								Init       *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
-								Body       tlb.EitherRef[InMsgBody]
+							SumType: "MessageInternal",
+							MessageInternal: struct {
+								IhrDisabled bool
+								Bounce      bool
+								Bounced     bool
+								Src         tlb.MsgAddress
+								Dest        tlb.MsgAddress
+								Value       tlb.CurrencyCollection
+								IhrFee      tlb.Grams
+								FwdFee      tlb.Grams
+								CreatedLt   uint64
+								CreatedAt   uint32
+								Init        *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+								Body        tlb.EitherRef[InMsgBody]
 							}{
-								Bounce: true,
-								Src:    tlb.MsgAddress{SumType: "AddrNone"},
-								Dest:   mustToMsgAddress("0:b90f15920ece1ef05d8ff54b42e72697c273efcb221df9f5431c64da5e2dc642"),
+								IhrDisabled: true,
+								Bounce:      true,
+								Src:         tlb.MsgAddress{SumType: "AddrNone"},
+								Dest:        mustToMsgAddress("0:b90f15920ece1ef05d8ff54b42e72697c273efcb221df9f5431c64da5e2dc642"),
 								Value: tlb.CurrencyCollection{
 									Grams: tlb.Grams(400000000),
 								},
-								ExtraFlags: tlb.InMsgExtraFlags(*big.NewInt(0)),
-								FwdFee:     0,
-								CreatedLt:  0,
-								CreatedAt:  0,
-								Init:       nil,
+								IhrFee:    0,
+								FwdFee:    0,
+								CreatedLt: 0,
+								CreatedAt: 0,
+								Init:      nil,
 								Body: tlb.EitherRef[InMsgBody]{
 									IsRight: true,
 									Value: InMsgBody{
@@ -2645,20 +2647,22 @@ func TestDecodeExternalIn(t *testing.T) {
 						SubwalletId: 4269,
 						SendMode:    3,
 						MessageToSend: MessageRelaxed{
-							SumType: "MessageInternalNoIhr",
-							MessageInternalNoIhr: struct {
-								Bounce     bool
-								Bounced    bool
-								Src        tlb.MsgAddress
-								Dest       tlb.MsgAddress
-								Value      tlb.CurrencyCollection
-								ExtraFlags tlb.InMsgExtraFlags
-								FwdFee     tlb.Grams
-								CreatedLt  uint64
-								CreatedAt  uint32
-								Init       *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
-								Body       tlb.EitherRef[InMsgBody]
+							SumType: "MessageInternal",
+							MessageInternal: struct {
+								IhrDisabled bool
+								Bounce      bool
+								Bounced     bool
+								Src         tlb.MsgAddress
+								Dest        tlb.MsgAddress
+								Value       tlb.CurrencyCollection
+								IhrFee      tlb.Grams
+								FwdFee      tlb.Grams
+								CreatedLt   uint64
+								CreatedAt   uint32
+								Init        *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+								Body        tlb.EitherRef[InMsgBody]
 							}{
+								IhrDisabled: true,
 								Src: tlb.MsgAddress{
 									SumType: "AddrNone",
 								},
@@ -2666,11 +2670,11 @@ func TestDecodeExternalIn(t *testing.T) {
 								Value: tlb.CurrencyCollection{
 									Grams: tlb.Grams(10000000),
 								},
-								ExtraFlags: tlb.InMsgExtraFlags(*big.NewInt(0)),
-								FwdFee:     0,
-								CreatedLt:  0,
-								CreatedAt:  0,
-								Init:       nil,
+								IhrFee:    0,
+								FwdFee:    0,
+								CreatedLt: 0,
+								CreatedAt: 0,
+								Init:      nil,
 								Body: tlb.EitherRef[InMsgBody]{
 									IsRight: false,
 								},
@@ -2704,17 +2708,18 @@ func TestDecodeExternalIn(t *testing.T) {
 					{
 						Mode: 3,
 						Message: MessageRelaxed{
-							SumType: "MessageInternalNoIhr",
+							SumType: "MessageInternal",
 						},
 					},
 				}
 				sig, _ := hex.DecodeString("28B67B05683B74BFEB574B3E921C3376CF24BF6C95C93F9A8B7168F093350A01A313EA46307AC579D75DE99353B155C78351A6F554FD4A5EBF2AC3332F3F0503")
 				copy(b.Signature[:], sig)
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Src.SumType = "AddrNone"
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Bounce = true
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Value.Grams = 100000000
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Body.Value = InMsgBody{
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.IhrDisabled = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Bounce = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Value.Grams = 100000000
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
 					SumType: "TextComment",
 					OpCode:  pointer(uint32(0)),
 					Value:   TextCommentMsgBody{Text: "Я твой фанат"},
@@ -2817,17 +2822,18 @@ func TestDecodeExternalIn(t *testing.T) {
 				for i := 0; i < 10; i++ {
 					payload := SendMessageAction{
 						Mode:    3,
-						Message: MessageRelaxed{SumType: "MessageInternalNoIhr"},
+						Message: MessageRelaxed{SumType: "MessageInternal"},
 					}
-					payload.Message.MessageInternalNoIhr.Src.SumType = "AddrNone"
-					payload.Message.MessageInternalNoIhr.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
-					payload.Message.MessageInternalNoIhr.Bounce = false
-					payload.Message.MessageInternalNoIhr.Body.Value = InMsgBody{
+					payload.Message.MessageInternal.Src.SumType = "AddrNone"
+					payload.Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
+					payload.Message.MessageInternal.IhrDisabled = true
+					payload.Message.MessageInternal.Bounce = false
+					payload.Message.MessageInternal.Body.Value = InMsgBody{
 						SumType: "TextComment",
 						OpCode:  pointer(uint32(0)),
 						Value:   TextCommentMsgBody{Text: "test"},
 					}
-					payload.Message.MessageInternalNoIhr.Value.Grams = tlb.Grams(100 + uint64(i))
+					payload.Message.MessageInternal.Value.Grams = tlb.Grams(100 + uint64(i))
 					b.Payload.Put(tlb.Uint16(i), payload)
 				}
 				return b
@@ -2848,17 +2854,18 @@ func TestDecodeExternalIn(t *testing.T) {
 				for i := 0; i < 10; i++ {
 					payload := SendMessageAction{
 						Mode:    3,
-						Message: MessageRelaxed{SumType: "MessageInternalNoIhr"},
+						Message: MessageRelaxed{SumType: "MessageInternal"},
 					}
-					payload.Message.MessageInternalNoIhr.Src.SumType = "AddrNone"
-					payload.Message.MessageInternalNoIhr.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
-					payload.Message.MessageInternalNoIhr.Bounce = false
-					payload.Message.MessageInternalNoIhr.Body.Value = InMsgBody{
+					payload.Message.MessageInternal.Src.SumType = "AddrNone"
+					payload.Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("UQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay7Mg")).ToMsgAddress()
+					payload.Message.MessageInternal.IhrDisabled = true
+					payload.Message.MessageInternal.Bounce = false
+					payload.Message.MessageInternal.Body.Value = InMsgBody{
 						SumType: "TextComment",
 						OpCode:  pointer(uint32(0)),
 						Value:   TextCommentMsgBody{Text: "test"},
 					}
-					payload.Message.MessageInternalNoIhr.Value.Grams = tlb.Grams(100 + uint64(i))
+					payload.Message.MessageInternal.Value.Grams = tlb.Grams(100 + uint64(i))
 					b.Payload.Put(tlb.Uint16(i), payload)
 				}
 				return b
@@ -2881,17 +2888,18 @@ func TestDecodeExternalIn(t *testing.T) {
 					{
 						Mode: 3,
 						Message: MessageRelaxed{
-							SumType: "MessageInternalNoIhr",
+							SumType: "MessageInternal",
 						},
 					},
 				}
 				sig, _ := hex.DecodeString("0e3a69e758992732f0d983de47db14547f1530f34ee356f7bb957b2383c6cfc37d4b0a307b0afd17a0bcfb691d1767585b6b4c000dedcd30dfe2c28d720b480f")
 				copy(b.Signature[:], sig)
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Src.SumType = "AddrNone"
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Dest = pointer(ton.MustParseAccountID("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f")).ToMsgAddress()
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Bounce = true
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Value.Grams = 50250000000
-				b.Payload.SimpleSend.Payload[0].Message.MessageInternalNoIhr.Body.Value = InMsgBody{
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Src.SumType = "AddrNone"
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Dest = pointer(ton.MustParseAccountID("0:1150b518b2626ad51899f98887f8824b70065456455f7fe2813f012699a4061f")).ToMsgAddress()
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.IhrDisabled = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Bounce = true
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Value.Grams = 50250000000
+				b.Payload.SimpleSend.Payload[0].Message.MessageInternal.Body.Value = InMsgBody{
 					SumType: "JettonTransfer",
 					OpCode:  pointer(uint32(260734629)),
 					Value: JettonTransferMsgBody{

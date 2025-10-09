@@ -956,48 +956,17 @@ type AccountLists struct {
 }
 
 type CommonMsgInfoRelaxed struct {
-	tlb.SumType
-	IntMsgInfoIhr struct {
-		Bounce    bool
-		Bounced   bool
-		Src       tlb.MsgAddress
-		Dest      tlb.MsgAddress
-		Value     tlb.CurrencyCollection
-		IhrFee    tlb.Grams
-		FwdFee    tlb.Grams
-		CreatedLt uint64
-		CreatedAt uint32
-	} `tlbSumType:"$00"`
-	IntMsgInfoNoIhr struct {
-		Bounce     bool
-		Bounced    bool
-		Src        tlb.MsgAddress
-		Dest       tlb.MsgAddress
-		Value      tlb.CurrencyCollection
-		ExtraFlags tlb.InMsgExtraFlags
-		FwdFee     tlb.Grams
-		CreatedLt  uint64
-		CreatedAt  uint32
-	} `tlbSumType:"$01"`
-}
-
-func (t *CommonMsgInfoRelaxed) MarshalJSON() ([]byte, error) {
-	switch t.SumType {
-	case "IntMsgInfoIhr":
-		bytes, err := json.Marshal(t.IntMsgInfoIhr)
-		if err != nil {
-			return nil, err
-		}
-		return []byte(fmt.Sprintf(`{"SumType": "IntMsgInfoIhr","IntMsgInfoIhr":%v}`, string(bytes))), nil
-	case "IntMsgInfoNoIhr":
-		bytes, err := json.Marshal(t.IntMsgInfoNoIhr)
-		if err != nil {
-			return nil, err
-		}
-		return []byte(fmt.Sprintf(`{"SumType": "IntMsgInfoNoIhr","IntMsgInfoNoIhr":%v}`, string(bytes))), nil
-	default:
-		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
-	}
+	Magic       tlb.Magic `tlb:"$0"`
+	IhrDisabled bool
+	Bounce      bool
+	Bounced     bool
+	Src         tlb.MsgAddress
+	Dest        tlb.MsgAddress
+	Value       tlb.CurrencyCollection
+	IhrFee      tlb.Grams
+	FwdFee      tlb.Grams
+	CreatedLt   uint64
+	CreatedAt   uint32
 }
 
 type HighloadV3MsgInner struct {
@@ -1022,32 +991,20 @@ type HighloadWalletV3MessageRelaxed struct {
 
 type MessageRelaxed struct {
 	tlb.SumType
-	MessageInternalIhr struct {
-		Bounce    bool
-		Bounced   bool
-		Src       tlb.MsgAddress
-		Dest      tlb.MsgAddress
-		Value     tlb.CurrencyCollection
-		IhrFee    tlb.Grams
-		FwdFee    tlb.Grams
-		CreatedLt uint64
-		CreatedAt uint32
-		Init      *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
-		Body      tlb.EitherRef[InMsgBody]
-	} `tlbSumType:"$00"`
-	MessageInternalNoIhr struct {
-		Bounce     bool
-		Bounced    bool
-		Src        tlb.MsgAddress
-		Dest       tlb.MsgAddress
-		Value      tlb.CurrencyCollection
-		ExtraFlags tlb.InMsgExtraFlags
-		FwdFee     tlb.Grams
-		CreatedLt  uint64
-		CreatedAt  uint32
-		Init       *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
-		Body       tlb.EitherRef[InMsgBody]
-	} `tlbSumType:"$01"`
+	MessageInternal struct {
+		IhrDisabled bool
+		Bounce      bool
+		Bounced     bool
+		Src         tlb.MsgAddress
+		Dest        tlb.MsgAddress
+		Value       tlb.CurrencyCollection
+		IhrFee      tlb.Grams
+		FwdFee      tlb.Grams
+		CreatedLt   uint64
+		CreatedAt   uint32
+		Init        *tlb.EitherRef[tlb.StateInit] `tlb:"maybe"`
+		Body        tlb.EitherRef[InMsgBody]
+	} `tlbSumType:"$0"`
 	MessageExtOut struct {
 		Src       tlb.MsgAddress
 		Dest      tlb.MsgAddress
@@ -1060,18 +1017,12 @@ type MessageRelaxed struct {
 
 func (t *MessageRelaxed) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
-	case "MessageInternalIhr":
-		bytes, err := json.Marshal(t.MessageInternalIhr)
+	case "MessageInternal":
+		bytes, err := json.Marshal(t.MessageInternal)
 		if err != nil {
 			return nil, err
 		}
-		return []byte(fmt.Sprintf(`{"SumType": "MessageInternalIhr","MessageInternalIhr":%v}`, string(bytes))), nil
-	case "MessageInternalNoIhr":
-		bytes, err := json.Marshal(t.MessageInternalNoIhr)
-		if err != nil {
-			return nil, err
-		}
-		return []byte(fmt.Sprintf(`{"SumType": "MessageInternalNoIhr","MessageInternalNoIhr":%v}`, string(bytes))), nil
+		return []byte(fmt.Sprintf(`{"SumType": "MessageInternal","MessageInternal":%v}`, string(bytes))), nil
 	case "MessageExtOut":
 		bytes, err := json.Marshal(t.MessageExtOut)
 		if err != nil {

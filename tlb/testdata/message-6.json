@@ -1,0 +1,27 @@
+{
+   "Info": {
+     "SumType": "IntMsgInfoNoIhr",
+     "IntMsgInfoIhr": null,
+     "IntMsgInfoNoIhr": {
+       "Bounce": true,
+       "Bounced": false,
+       "Src": "0:b1523e69ab5308e2c78956522263c6b6855ace84990eca56899020ceb34b2052",
+       "Dest": "-1:5555555555555555555555555555555555555555555555555555555555555555",
+       "Value": {
+         "Grams": "976326400",
+         "Other": {}
+       },
+       "ExtraFlags": "2",
+       "FwdFee": "12340095",
+       "CreatedLt": 39873619000004,
+       "CreatedAt": 1759854065
+     },
+     "ExtInMsgInfo": null,
+     "ExtOutMsgInfo": null
+   },
+   "Init": null,
+   "Body": {
+     "IsRight": true,
+     "Value": "b5ee9c720101020100570001636e43536c0000000000000000fffffc0080133686c4f62ae55643b323e86d8409f45741dcab3b15b257f1238363337a58a05001004020fd45615b5a2e6d5bc2c7e2d291335290f1288fd28f0dfa940373d5602738b8"
+   }
+ }

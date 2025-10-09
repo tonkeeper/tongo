@@ -70,7 +70,7 @@ func TestSimpleEmulation(t *testing.T) {
 	if len(tree.Children) != 2 {
 		t.Fatal(len(tree.Children))
 	}
-	if tree.Children[0].TX.Msgs.InMsg.Value.Value.Info.IntMsgInfo.Value.Grams != ton.OneTON/10 {
+	if tree.Children[0].TX.Msgs.InMsg.Value.Value.Info.IntMsgInfoNoIhr.Value.Grams != ton.OneTON/10 {
 		t.Fatal("invalid amount")
 	}
 }

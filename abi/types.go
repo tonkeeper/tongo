@@ -223,6 +223,17 @@ func (t *JettonForceAction) MarshalJSON() ([]byte, error) {
 	}
 }
 
+type NewBounceComputePhaseInfo struct {
+	GasUsed uint32
+	VmSteps uint32
+}
+
+type NewBounceOriginalInfo struct {
+	Value     tlb.CurrencyCollection
+	CreatedLt uint64
+	CreatedAt uint32
+}
+
 type TonstakersControllerData struct {
 	ControllerId uint32
 	Validator    tlb.MsgAddress

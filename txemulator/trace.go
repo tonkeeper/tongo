@@ -374,8 +374,10 @@ type emulatedMessage struct {
 func toEmulatedMessage(m tlb.Message, parentTx *TxTree) (emulatedMessage, error) {
 	var a tlb.MsgAddress
 	switch m.Info.SumType {
-	case "IntMsgInfo":
-		a = m.Info.IntMsgInfo.Dest
+	case "IntMsgInfoNoIhr":
+		a = m.Info.IntMsgInfoNoIhr.Dest
+	case "IntMsgInfoIhr":
+		a = m.Info.IntMsgInfoIhr.Dest
 	case "ExtInMsgInfo":
 		a = m.Info.ExtInMsgInfo.Dest
 	default:

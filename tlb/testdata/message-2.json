@@ -1,8 +1,8 @@
 {
    "Info": {
-     "SumType": "IntMsgInfo",
-     "IntMsgInfo": {
-       "IhrDisabled": true,
+     "SumType": "IntMsgInfoNoIhr",
+     "IntMsgInfoIhr": null,
+     "IntMsgInfoNoIhr": {
        "Bounce": false,
        "Bounced": false,
        "Src": "0:16b94207124b1613aadd084b65fc2c67bc33e62fbbdd83beef4b194ca2ff5fe7",
@@ -11,7 +11,7 @@
          "Grams": "30000000",
          "Other": {}
        },
-       "IhrFee": "0",
+       "ExtraFlags": "0",
        "FwdFee": "976008",
        "CreatedLt": 37471134000009,
        "CreatedAt": 1683534064

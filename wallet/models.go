@@ -3,8 +3,10 @@ package wallet
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/utils"
+	"math/big"
 	"time"
+
+	"github.com/tonkeeper/tongo/utils"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -200,29 +202,28 @@ type SimpleTransfer struct {
 
 func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error) {
 	info := tlb.CommonMsgInfo{
-		SumType: "IntMsgInfo",
+		SumType: "IntMsgInfoNoIhr",
 	}
 
-	info.IntMsgInfo = &struct {
-		IhrDisabled bool
-		Bounce      bool
-		Bounced     bool
-		Src         tlb.MsgAddress
-		Dest        tlb.MsgAddress
-		Value       tlb.CurrencyCollection
-		IhrFee      tlb.Grams
-		FwdFee      tlb.Grams
-		CreatedLt   uint64
-		CreatedAt   uint32
+	info.IntMsgInfoNoIhr = &struct {
+		Bounce     bool
+		Bounced    bool
+		Src        tlb.MsgAddress
+		Dest       tlb.MsgAddress
+		Value      tlb.CurrencyCollection
+		ExtraFlags tlb.InMsgExtraFlags
+		FwdFee     tlb.Grams
+		CreatedLt  uint64
+		CreatedAt  uint32
 	}{
-		IhrDisabled: true,
-		Bounce:      m.Bounceable,
-		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
-		Dest:        m.Address.ToMsgAddress(),
+		Bounce:     m.Bounceable,
+		Src:        (*ton.AccountID)(nil).ToMsgAddress(),
+		Dest:       m.Address.ToMsgAddress(),
+		ExtraFlags: tlb.InMsgExtraFlags(*big.NewInt(0)),
 	}
-	info.IntMsgInfo.Value.Grams = m.Amount
+	info.IntMsgInfoNoIhr.Value.Grams = m.Amount
 	for k, v := range m.ExtraCurrency {
-		info.IntMsgInfo.Value.Other.Dict.Put(tlb.Uint32(k), v)
+		info.IntMsgInfoNoIhr.Value.Other.Dict.Put(tlb.Uint32(k), v)
 	}
 
 	intMsg := tlb.Message{
@@ -242,38 +243,38 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 }
 
 type Message struct {
-	Amount  tlb.Grams
-	Address ton.AccountID
-	Body    *boc.Cell
-	Code    *boc.Cell
-	Data    *boc.Cell
-	Bounce  bool
-	Mode    uint8
+	Amount               tlb.Grams
+	Address              ton.AccountID
+	Body                 *boc.Cell
+	Code                 *boc.Cell
+	Data                 *boc.Cell
+	Bounce               bool
+	BouncedMessageFormat tlb.BouncedMessageFormat
+	Mode                 uint8
 }
 
 func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 	info := tlb.CommonMsgInfo{
-		SumType: "IntMsgInfo",
+		SumType: "IntMsgInfoNoIhr",
 	}
 
-	info.IntMsgInfo = &struct {
-		IhrDisabled bool
-		Bounce      bool
-		Bounced     bool
-		Src         tlb.MsgAddress
-		Dest        tlb.MsgAddress
-		Value       tlb.CurrencyCollection
-		IhrFee      tlb.Grams
-		FwdFee      tlb.Grams
-		CreatedLt   uint64
-		CreatedAt   uint32
+	info.IntMsgInfoNoIhr = &struct {
+		Bounce     bool
+		Bounced    bool
+		Src        tlb.MsgAddress
+		Dest       tlb.MsgAddress
+		Value      tlb.CurrencyCollection
+		ExtraFlags tlb.InMsgExtraFlags
+		FwdFee     tlb.Grams
+		CreatedLt  uint64
+		CreatedAt  uint32
 	}{
-		IhrDisabled: true,
-		Bounce:      m.Bounce,
-		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
-		Dest:        m.Address.ToMsgAddress(),
+		Bounce:     m.Bounce,
+		ExtraFlags: m.BouncedMessageFormat.ToFlags(),
+		Src:        (*ton.AccountID)(nil).ToMsgAddress(),
+		Dest:       m.Address.ToMsgAddress(),
 	}
-	info.IntMsgInfo.Value.Grams = m.Amount
+	info.IntMsgInfoNoIhr.Value.Grams = m.Amount
 
 	intMsg := tlb.Message{
 		Info: info,

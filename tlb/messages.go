@@ -2,8 +2,10 @@ package tlb
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -97,18 +99,28 @@ func (m Message) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 // created_lt:uint64 created_at:uint32 = CommonMsgInfo;
 type CommonMsgInfo struct {
 	SumType
-	IntMsgInfo *struct {
-		IhrDisabled bool
-		Bounce      bool
-		Bounced     bool
-		Src         MsgAddress
-		Dest        MsgAddress
-		Value       CurrencyCollection
-		IhrFee      Grams
-		FwdFee      Grams
-		CreatedLt   uint64
-		CreatedAt   uint32
-	} `tlbSumType:"int_msg_info$0"`
+	IntMsgInfoIhr *struct {
+		Bounce    bool
+		Bounced   bool
+		Src       MsgAddress
+		Dest      MsgAddress
+		Value     CurrencyCollection
+		IhrFee    Grams
+		FwdFee    Grams
+		CreatedLt uint64
+		CreatedAt uint32
+	} `tlbSumType:"int_msg_info_ihr$00"`
+	IntMsgInfoNoIhr *struct {
+		Bounce     bool
+		Bounced    bool
+		Src        MsgAddress
+		Dest       MsgAddress
+		Value      CurrencyCollection
+		ExtraFlags InMsgExtraFlags
+		FwdFee     Grams
+		CreatedLt  uint64
+		CreatedAt  uint32
+	} `tlbSumType:"int_msg_info_no_ihr$01"`
 	ExtInMsgInfo *struct {
 		Src       MsgAddress
 		Dest      MsgAddress
@@ -120,6 +132,54 @@ type CommonMsgInfo struct {
 		CreatedLt uint64
 		CreatedAt uint32
 	} `tlbSumType:"ext_out_msg_info$11"`
+}
+
+type BouncedMessageFormat string
+
+const (
+	OldFormat BouncedMessageFormat = "old"
+	BodyRoot  BouncedMessageFormat = "body_root"
+	WholeBody BouncedMessageFormat = "whole_body"
+)
+
+type InMsgExtraFlags VarUInteger16
+
+func (f InMsgExtraFlags) BouncedMessageFormat() BouncedMessageFormat {
+	flags := big.Int(f)
+	if flags.Bit(0) == 0 { // ...0
+		return OldFormat
+	}
+	if flags.Bit(1) == 0 { // ...01 = 1
+		return BodyRoot
+	} else { // ...11 = 3
+		return WholeBody
+	}
+}
+
+func (f BouncedMessageFormat) ToFlags() InMsgExtraFlags {
+	switch f {
+	case BodyRoot:
+		return InMsgExtraFlags(*big.NewInt(1))
+	case WholeBody:
+		return InMsgExtraFlags(*big.NewInt(3))
+	}
+	return InMsgExtraFlags(*big.NewInt(0))
+}
+
+func (f *InMsgExtraFlags) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	return decoder.Unmarshal(c, (*VarUInteger16)(f))
+}
+
+func (f InMsgExtraFlags) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return encoder.Marshal(c, VarUInteger16(f))
+}
+
+func (f InMsgExtraFlags) MarshalJSON() ([]byte, error) {
+	return json.Marshal(VarUInteger16(f))
+}
+
+func (f *InMsgExtraFlags) UnmarshalJSON(p []byte) error {
+	return json.Unmarshal(p, (*VarUInteger16)(f))
 }
 
 // StateInit

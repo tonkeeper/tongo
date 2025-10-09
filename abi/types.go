@@ -5,8 +5,18 @@ package abi
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/tlb"
 )
+
+type AssetData struct {
+	Cash           tlb.Grams
+	Balance        tlb.Grams
+	IsDepositable  bool
+	IsWhitelisted  bool
+	IsWithdrawable bool
+	ExposureCap    tlb.Uint20
+}
 
 type DepositContext struct {
 	Magic            tlb.Magic `tlb:"#f9471134"`
@@ -15,6 +25,13 @@ type DepositContext struct {
 	Amount           tlb.Grams
 	ForwardTonAmount tlb.Grams
 	ForwardPayload   *tlb.Any `tlb:"maybe^"`
+}
+
+type FactorialPoolAsset struct {
+	Supply       tlb.Grams
+	Borrow       tlb.Grams
+	IsSupplyable bool
+	IsBorrowable bool
 }
 
 type WithdrawContext struct {

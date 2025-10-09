@@ -5,6 +5,10 @@
 
         withdraw_context#cb03bfaf asset_address:MsgAddress from_address:MsgAddress amount:Coins
         forward_ton_amount:Coins forward_payload:(Maybe ^Cell) = WithdrawContext;
+
+        asset_data#_ cash:Coins balance:Coins is_depositable:Bool is_whitelisted:Bool
+        is_withdrawable:Bool exposure_cap:uint20 = AssetData;
+        factorial_pool_asset#_ supply:Coins borrow:Coins is_supplyable:Bool is_borrowable:Bool = FactorialPoolAsset;
     </types>
 
     <!-- https://tonviewer.com/EQCrEHHG4Ff8TD3PzuH5tFSwHBD3zxeXaosz48jGLebwiiNx  -->

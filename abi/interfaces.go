@@ -1435,14 +1435,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: SubscriptionV2,
-		Results: []string{
-			"GetCronInfoResult",
-			"GetPaymentInfo_SubscriptionV2Result",
-			"GetSubscriptionInfo_V2Result",
-		},
-	},
-	{
 		Name: CoffeeStakingMaster,
 		Results: []string{
 			"GetCollectionDataResult",
@@ -1675,6 +1667,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("45ebbce9b5d235886cb6bfe1c3ad93b708de058244892365c9ee0dfe439cb7b5"): {
 		contractInterfaces: []ContractInterface{WalletPreprocessedV2},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("48942963827c5147fe935cd22e88ba418011fe656eab78b79c5c6343d84d421a"): {
+		contractInterfaces: []ContractInterface{SubscriptionV2},
+		getMethods: []InvokeFn{
+			GetCronInfo,
+			GetPaymentInfo,
+			GetSubscriptionInfo,
+		},
 	},
 	ton.MustParseHash("4c9123828682fa6f43797ab41732bca890cae01766e0674100250516e0bf8d42"): {
 		contractInterfaces: []ContractInterface{NftItemSimple},

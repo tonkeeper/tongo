@@ -3,6 +3,7 @@ package tontest
 import (
 	"crypto/rand"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -266,7 +267,7 @@ func (b messageBuilder) Message() (tlb.Message, error) {
 			Src         tlb.MsgAddress
 			Dest        tlb.MsgAddress
 			Value       tlb.CurrencyCollection
-			IhrFee      tlb.Grams
+			IhrFee      tlb.VarUInteger16
 			FwdFee      tlb.Grams
 			CreatedLt   uint64
 			CreatedAt   uint32
@@ -277,7 +278,7 @@ func (b messageBuilder) Message() (tlb.Message, error) {
 			Src:         b.from.ToMsgAddress(),
 			Dest:        b.to.ToMsgAddress(),
 			Value:       tlb.CurrencyCollection{Grams: b.value},
-			IhrFee:      0,
+			IhrFee:      tlb.VarUInteger16(*big.NewInt(0)),
 			FwdFee:      0,
 			CreatedLt:   100500,
 			CreatedAt:   uint32(time.Now().Unix())}

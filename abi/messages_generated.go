@@ -561,6 +561,8 @@ var (
 	decodeFuncElectorRecoverStakeResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{})
 	// 0xfb88e119
 	decodeFuncJettonClaimAdminMsgBody = decodeMsg(tlb.Tag{Val: 0xfb88e119, Len: 32}, JettonClaimAdminMsgOp, JettonClaimAdminMsgBody{})
+	// 0xfffffffe
+	decodeFuncBounceV2MsgBody = decodeMsg(tlb.Tag{Val: 0xfffffffe, Len: 32}, BounceV2MsgOp, BounceV2MsgBody{})
 	// 0xffffffff
 	decodeFuncBounceMsgBody = decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{})
 )
@@ -1404,6 +1406,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0xfb88e119
 	JettonClaimAdminMsgOpCode: decodeFuncJettonClaimAdminMsgBody,
 
+	// 0xfffffffe
+	BounceV2MsgOpCode: decodeFuncBounceV2MsgBody,
+
 	// 0xffffffff
 	BounceMsgOpCode: decodeFuncBounceMsgBody,
 }
@@ -1686,6 +1691,7 @@ const (
 	CoffeeStakingDepositMsgOp                    MsgOpName = "CoffeeStakingDeposit"
 	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
+	BounceV2MsgOp                                MsgOpName = "BounceV2"
 	BounceMsgOp                                  MsgOpName = "Bounce"
 )
 
@@ -1967,6 +1973,7 @@ const (
 	CoffeeStakingDepositMsgOpCode                    MsgOpCode = 0xf9471134
 	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
+	BounceV2MsgOpCode                                MsgOpCode = 0xfffffffe
 	BounceMsgOpCode                                  MsgOpCode = 0xffffffff
 )
 
@@ -3856,6 +3863,14 @@ type JettonClaimAdminMsgBody struct {
 	QueryId uint64
 }
 
+type BounceV2MsgBody struct {
+	OriginalBody   tlb.Any               `tlb:"^"`
+	OriginalInfo   NewBounceOriginalInfo `tlb:"^"`
+	BouncedByPhase uint8
+	ExitCode       int32
+	ComputePhase   *NewBounceComputePhaseInfo `tlb:"maybe"`
+}
+
 type BounceMsgBody struct {
 	Payload tlb.Any
 }
@@ -4138,6 +4153,7 @@ var KnownMsgInTypes = map[string]any{
 	CoffeeStakingDepositMsgOp:                    CoffeeStakingDepositMsgBody{},
 	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
+	BounceV2MsgOp:                                BounceV2MsgBody{},
 	BounceMsgOp:                                  BounceMsgBody{},
 }
 

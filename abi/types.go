@@ -5,7 +5,6 @@ package abi
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/tonkeeper/tongo/tlb"
 )
 
@@ -221,6 +220,17 @@ func (t *JettonForceAction) MarshalJSON() ([]byte, error) {
 	default:
 		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
 	}
+}
+
+type NewBounceComputePhaseInfo struct {
+	GasUsed uint32
+	VmSteps uint32
+}
+
+type NewBounceOriginalInfo struct {
+	Value     tlb.CurrencyCollection
+	CreatedLt uint64
+	CreatedAt uint32
 }
 
 type TonstakersControllerData struct {

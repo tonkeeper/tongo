@@ -1567,6 +1567,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return StonfiPoolV2.Implements(other)
 	case StonfiPoolV2WeightedStableswap:
 		return StonfiPoolV2.Implements(other)
+	case SubscriptionV2:
+		return Cron.Implements(other)
 	case WalletHighloadV1R1:
 		return Wallet.Implements(other)
 	case WalletHighloadV1R2:

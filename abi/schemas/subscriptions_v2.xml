@@ -1,9 +1,8 @@
 <abi>
-    <interface name="subscription_v2">
+    <interface name="subscription_v2" inherits="cron">
         <code_hash>48942963827c5147fe935cd22e88ba418011fe656eab78b79c5c6343d84d421a</code_hash>
         <get_method name="get_subscription_info" version="v2"/>
         <get_method name="get_payment_info" version="subscription_v2"/>
-        <get_method name="get_cron_info" />
         <msg_in>
             <ext_in name="cron_trigger"/>
             <internal name="payment_confirmed"/>

@@ -258,7 +258,7 @@ The list below contains the supported message operations, their names and opcode
 | StormExecuteOrdersBundleExternal| 0x04c52fd2 |
 | StormExecuteOrdersBundleExternal| 0x04c52fd2 |
 | StormExecuteOrdersBundleInternal| 0x5f40f1ec |
-| StormFailNotification| 0x79ae3a66 |
+| StormFailNotification| 0x367f2743 |
 | StormFailedBundleExecution| 0x666392ee |
 | StormInitSa| 0x5b0dd9f4 |
 | StormMintExecutor| 0x4f38cae8 |
@@ -295,7 +295,7 @@ The list below contains the supported message operations, their names and opcode
 | SubscriptionFallback| 0x756e6b77 |
 | SubscriptionPayment| 0x73756273 |
 | SubscriptionReducePayment| 0x508238ec |
-| TakePositionV2| 0x56b30b52 |
+| TakePositionV2| 0x1bea50f1 |
 | TegroAddLiquidity| 0x287e167a |
 | TegroJettonSwap| 0x01fb7a25 |
 | TegroSwapTon| 0x600c00fd |

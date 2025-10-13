@@ -79,6 +79,8 @@ var (
 	decodeFuncBidaskSwapFallbackMsgBody = decodeMsg(tlb.Tag{Val: 0x1bba3896, Len: 32}, BidaskSwapFallbackMsgOp, BidaskSwapFallbackMsgBody{})
 	// 0x1bba3896
 	decodeFuncBidaskSwapFallbackV2MsgBody = decodeMsg(tlb.Tag{Val: 0x1bba3896, Len: 32}, BidaskSwapFallbackV2MsgOp, BidaskSwapFallbackV2MsgBody{})
+	// 0x1bea50f1
+	decodeFuncTakePositionV2MsgBody = decodeMsg(tlb.Tag{Val: 0x1bea50f1, Len: 32}, TakePositionV2MsgOp, TakePositionV2MsgBody{})
 	// 0x1ca43d2f
 	decodeFuncStormNotifyUpdatePositionMsgBody = decodeMsg(tlb.Tag{Val: 0x1ca43d2f, Len: 32}, StormNotifyUpdatePositionMsgOp, StormNotifyUpdatePositionMsgBody{})
 	// 0x1d1715bf
@@ -145,6 +147,8 @@ var (
 	decodeFuncStormTradeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x3475fdd2, Len: 32}, StormTradeNotificationMsgOp, StormTradeNotificationMsgBody{})
 	// 0x354bcdf4
 	decodeFuncStonfiWithdrawFeeV2MsgBody = decodeMsg(tlb.Tag{Val: 0x354bcdf4, Len: 32}, StonfiWithdrawFeeV2MsgOp, StonfiWithdrawFeeV2MsgBody{})
+	// 0x367f2743
+	decodeFuncStormFailNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x367f2743, Len: 32}, StormFailNotificationMsgOp, StormFailNotificationMsgBody{})
 	// 0x370fec51
 	decodeFuncAuctionFillUpMsgBody = decodeMsg(tlb.Tag{Val: 0x370fec51, Len: 32}, AuctionFillUpMsgOp, AuctionFillUpMsgBody{})
 	// 0x371638ae
@@ -231,8 +235,6 @@ var (
 	decodeFuncOutbidNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x557cea20, Len: 32}, OutbidNotificationMsgOp, OutbidNotificationMsgBody{})
 	// 0x55c26cd5
 	decodeFuncTonstakeControllerReturnAvailableFundsMsgBody = decodeMsg(tlb.Tag{Val: 0x55c26cd5, Len: 32}, TonstakeControllerReturnAvailableFundsMsgOp, TonstakeControllerReturnAvailableFundsMsgBody{})
-	// 0x56b30b52
-	decodeFuncTakePositionV2MsgBody = decodeMsg(tlb.Tag{Val: 0x56b30b52, Len: 32}, TakePositionV2MsgOp, TakePositionV2MsgBody{})
 	// 0x595f07bc
 	decodeFuncJettonBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, JettonBurnMsgOp, JettonBurnMsgBody{})
 	// 0x59699475
@@ -339,8 +341,6 @@ var (
 	decodeFuncMegatonWtonMintMsgBody = decodeMsg(tlb.Tag{Val: 0x77a33521, Len: 32}, MegatonWtonMintMsgOp, MegatonWtonMintMsgBody{})
 	// 0x79a126ef
 	decodeFuncChannelCooperativeCommitMsgBody = decodeMsg(tlb.Tag{Val: 0x79a126ef, Len: 32}, ChannelCooperativeCommitMsgOp, ChannelCooperativeCommitMsgBody{})
-	// 0x79ae3a66
-	decodeFuncStormFailNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x79ae3a66, Len: 32}, StormFailNotificationMsgOp, StormFailNotificationMsgBody{})
 	// 0x79e7c016
 	decodeFuncTonstakeControllerPoolSetSudoerMsgBody = decodeMsg(tlb.Tag{Val: 0x79e7c016, Len: 32}, TonstakeControllerPoolSetSudoerMsgOp, TonstakeControllerPoolSetSudoerMsgBody{})
 	// 0x79f937ea
@@ -720,6 +720,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 		"0x1bba3896",
 	),
 
+	// 0x1bea50f1
+	TakePositionV2MsgOpCode: decodeFuncTakePositionV2MsgBody,
+
 	// 0x1ca43d2f
 	StormNotifyUpdatePositionMsgOpCode: decodeFuncStormNotifyUpdatePositionMsgBody,
 
@@ -819,6 +822,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x354bcdf4
 	StonfiWithdrawFeeV2MsgOpCode: decodeFuncStonfiWithdrawFeeV2MsgBody,
+
+	// 0x367f2743
+	StormFailNotificationMsgOpCode: decodeFuncStormFailNotificationMsgBody,
 
 	// 0x370fec51
 	AuctionFillUpMsgOpCode: decodeFuncAuctionFillUpMsgBody,
@@ -949,9 +955,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x55c26cd5
 	TonstakeControllerReturnAvailableFundsMsgOpCode: decodeFuncTonstakeControllerReturnAvailableFundsMsgBody,
-
-	// 0x56b30b52
-	TakePositionV2MsgOpCode: decodeFuncTakePositionV2MsgBody,
 
 	// 0x595f07bc
 	JettonBurnMsgOpCode: decodeFuncJettonBurnMsgBody,
@@ -1111,9 +1114,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x79a126ef
 	ChannelCooperativeCommitMsgOpCode: decodeFuncChannelCooperativeCommitMsgBody,
-
-	// 0x79ae3a66
-	StormFailNotificationMsgOpCode: decodeFuncStormFailNotificationMsgBody,
 
 	// 0x79e7c016
 	TonstakeControllerPoolSetSudoerMsgOpCode: decodeFuncTonstakeControllerPoolSetSudoerMsgBody,
@@ -1554,6 +1554,7 @@ const (
 	StormDepositNotifyWithDeployMsgOp            MsgOpName = "StormDepositNotifyWithDeploy"
 	BidaskSwapFallbackMsgOp                      MsgOpName = "BidaskSwapFallback"
 	BidaskSwapFallbackV2MsgOp                    MsgOpName = "BidaskSwapFallbackV2"
+	TakePositionV2MsgOp                          MsgOpName = "TakePositionV2"
 	StormNotifyUpdatePositionMsgOp               MsgOpName = "StormNotifyUpdatePosition"
 	WhalesNominatorsWithdrawUnownedResponseMsgOp MsgOpName = "WhalesNominatorsWithdrawUnownedResponse"
 	MoonCancelOrderMsgOp                         MsgOpName = "MoonCancelOrder"
@@ -1587,6 +1588,7 @@ const (
 	TonstakePoolWithdrawMsgOp                    MsgOpName = "TonstakePoolWithdraw"
 	StormTradeNotificationMsgOp                  MsgOpName = "StormTradeNotification"
 	StonfiWithdrawFeeV2MsgOp                     MsgOpName = "StonfiWithdrawFeeV2"
+	StormFailNotificationMsgOp                   MsgOpName = "StormFailNotification"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	StonfiProvideLpV2MsgOp                       MsgOpName = "StonfiProvideLpV2"
@@ -1630,7 +1632,6 @@ const (
 	ChannelCooperativeCloseMsgOp                 MsgOpName = "ChannelCooperativeClose"
 	OutbidNotificationMsgOp                      MsgOpName = "OutbidNotification"
 	TonstakeControllerReturnAvailableFundsMsgOp  MsgOpName = "TonstakeControllerReturnAvailableFunds"
-	TakePositionV2MsgOp                          MsgOpName = "TakePositionV2"
 	JettonBurnMsgOp                              MsgOpName = "JettonBurn"
 	BidaskInternalContinueSwapMsgOp              MsgOpName = "BidaskInternalContinueSwap"
 	StormDepositTonMsgOp                         MsgOpName = "StormDepositTon"
@@ -1684,7 +1685,6 @@ const (
 	StormRemovePublicKeyMsgOp                    MsgOpName = "StormRemovePublicKey"
 	MegatonWtonMintMsgOp                         MsgOpName = "MegatonWtonMint"
 	ChannelCooperativeCommitMsgOp                MsgOpName = "ChannelCooperativeCommit"
-	StormFailNotificationMsgOp                   MsgOpName = "StormFailNotification"
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
 	CloseStorageContractMsgOp                    MsgOpName = "CloseStorageContract"
 	AcceptStorageContractMsgOp                   MsgOpName = "AcceptStorageContract"
@@ -1857,6 +1857,7 @@ const (
 	StormDepositNotifyWithDeployMsgOpCode            MsgOpCode = 0x18a092f7
 	BidaskSwapFallbackMsgOpCode                      MsgOpCode = 0x1bba3896
 	BidaskSwapFallbackV2MsgOpCode                    MsgOpCode = 0x1bba3896
+	TakePositionV2MsgOpCode                          MsgOpCode = 0x1bea50f1
 	StormNotifyUpdatePositionMsgOpCode               MsgOpCode = 0x1ca43d2f
 	WhalesNominatorsWithdrawUnownedResponseMsgOpCode MsgOpCode = 0x1d1715bf
 	MoonCancelOrderMsgOpCode                         MsgOpCode = 0x1e8d79c4
@@ -1890,6 +1891,7 @@ const (
 	TonstakePoolWithdrawMsgOpCode                    MsgOpCode = 0x319b0cdc
 	StormTradeNotificationMsgOpCode                  MsgOpCode = 0x3475fdd2
 	StonfiWithdrawFeeV2MsgOpCode                     MsgOpCode = 0x354bcdf4
+	StormFailNotificationMsgOpCode                   MsgOpCode = 0x367f2743
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	StonfiProvideLpV2MsgOpCode                       MsgOpCode = 0x37c096df
@@ -1933,7 +1935,6 @@ const (
 	ChannelCooperativeCloseMsgOpCode                 MsgOpCode = 0x5577587e
 	OutbidNotificationMsgOpCode                      MsgOpCode = 0x557cea20
 	TonstakeControllerReturnAvailableFundsMsgOpCode  MsgOpCode = 0x55c26cd5
-	TakePositionV2MsgOpCode                          MsgOpCode = 0x56b30b52
 	JettonBurnMsgOpCode                              MsgOpCode = 0x595f07bc
 	BidaskInternalContinueSwapMsgOpCode              MsgOpCode = 0x59699475
 	StormDepositTonMsgOpCode                         MsgOpCode = 0x5a091c43
@@ -1987,7 +1988,6 @@ const (
 	StormRemovePublicKeyMsgOpCode                    MsgOpCode = 0x76519f8b
 	MegatonWtonMintMsgOpCode                         MsgOpCode = 0x77a33521
 	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
-	StormFailNotificationMsgOpCode                   MsgOpCode = 0x79ae3a66
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
 	CloseStorageContractMsgOpCode                    MsgOpCode = 0x79f937ea
 	AcceptStorageContractMsgOpCode                   MsgOpCode = 0x7a361688
@@ -2397,6 +2397,18 @@ type BidaskSwapFallbackV2MsgBody struct {
 	RejectPayload      *tlb.Any        `tlb:"maybe^"`
 }
 
+type TakePositionV2MsgBody struct {
+	QueryId             uint64
+	BundleSenderAddress tlb.MsgAddress
+	AmmAddress          tlb.MsgAddress
+	Direction           Direction
+	SpentAmount         tlb.Grams
+	Addresses           AddressesData `tlb:"^"`
+	Ref                 RefData
+	Position            PositionData `tlb:"^"`
+	Intent              Intent       `tlb:"^"`
+}
+
 type StormNotifyUpdatePositionMsgBody struct {
 	QueryId             uint64
 	JettonMinterAddress tlb.MsgAddress
@@ -2607,6 +2619,16 @@ type StormTradeNotificationMsgBody struct {
 
 type StonfiWithdrawFeeV2MsgBody struct {
 	QueryId uint64
+}
+
+type StormFailNotificationMsgBody struct {
+	Query               uint64
+	SpentAmount         tlb.Grams
+	JettonMinterAddress tlb.MsgAddress
+	AmmAddress          tlb.MsgAddress
+	Direction           Direction
+	BundleSenderAddress tlb.MsgAddress
+	Intent              Intent `tlb:"^"`
 }
 
 type AuctionFillUpMsgBody struct {
@@ -2903,18 +2925,6 @@ type OutbidNotificationMsgBody struct {
 
 type TonstakeControllerReturnAvailableFundsMsgBody struct {
 	QueryId uint64
-}
-
-type TakePositionV2MsgBody struct {
-	QueryId             uint64
-	BundleSenderAddress tlb.MsgAddress
-	AmmAddress          tlb.MsgAddress
-	Direction           Direction
-	SpentAmount         tlb.Grams
-	Addresses           AddressesData `tlb:"^"`
-	Ref                 RefData
-	Position            PositionData `tlb:"^"`
-	Intent              Intent       `tlb:"^"`
 }
 
 type JettonBurnMsgBody struct {
@@ -3307,16 +3317,6 @@ type ChannelCooperativeCommitMsgBody struct {
 	ChannelId tlb.Uint128
 	SeqnoA    uint64
 	SeqnoB    uint64
-}
-
-type StormFailNotificationMsgBody struct {
-	Query               uint64
-	SpentAmount         tlb.Grams
-	JettonMinterAddress tlb.MsgAddress
-	AmmAddress          tlb.MsgAddress
-	Direction           Direction
-	BundleSenderAddress tlb.MsgAddress
-	Intent              Intent `tlb:"^"`
 }
 
 type TonstakeControllerPoolSetSudoerMsgBody struct {
@@ -4219,6 +4219,7 @@ var KnownMsgInTypes = map[string]any{
 	StormDepositNotifyWithDeployMsgOp:            StormDepositNotifyWithDeployMsgBody{},
 	BidaskSwapFallbackMsgOp:                      BidaskSwapFallbackMsgBody{},
 	BidaskSwapFallbackV2MsgOp:                    BidaskSwapFallbackV2MsgBody{},
+	TakePositionV2MsgOp:                          TakePositionV2MsgBody{},
 	StormNotifyUpdatePositionMsgOp:               StormNotifyUpdatePositionMsgBody{},
 	WhalesNominatorsWithdrawUnownedResponseMsgOp: WhalesNominatorsWithdrawUnownedResponseMsgBody{},
 	MoonCancelOrderMsgOp:                         MoonCancelOrderMsgBody{},
@@ -4252,6 +4253,7 @@ var KnownMsgInTypes = map[string]any{
 	TonstakePoolWithdrawMsgOp:                    TonstakePoolWithdrawMsgBody{},
 	StormTradeNotificationMsgOp:                  StormTradeNotificationMsgBody{},
 	StonfiWithdrawFeeV2MsgOp:                     StonfiWithdrawFeeV2MsgBody{},
+	StormFailNotificationMsgOp:                   StormFailNotificationMsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	StonfiProvideLpV2MsgOp:                       StonfiProvideLpV2MsgBody{},
@@ -4295,7 +4297,6 @@ var KnownMsgInTypes = map[string]any{
 	ChannelCooperativeCloseMsgOp:                 ChannelCooperativeCloseMsgBody{},
 	OutbidNotificationMsgOp:                      OutbidNotificationMsgBody{},
 	TonstakeControllerReturnAvailableFundsMsgOp:  TonstakeControllerReturnAvailableFundsMsgBody{},
-	TakePositionV2MsgOp:                          TakePositionV2MsgBody{},
 	JettonBurnMsgOp:                              JettonBurnMsgBody{},
 	BidaskInternalContinueSwapMsgOp:              BidaskInternalContinueSwapMsgBody{},
 	StormDepositTonMsgOp:                         StormDepositTonMsgBody{},
@@ -4349,7 +4350,6 @@ var KnownMsgInTypes = map[string]any{
 	StormRemovePublicKeyMsgOp:                    StormRemovePublicKeyMsgBody{},
 	MegatonWtonMintMsgOp:                         MegatonWtonMintMsgBody{},
 	ChannelCooperativeCommitMsgOp:                ChannelCooperativeCommitMsgBody{},
-	StormFailNotificationMsgOp:                   StormFailNotificationMsgBody{},
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
 	CloseStorageContractMsgOp:                    CloseStorageContractMsgBody{},
 	AcceptStorageContractMsgOp:                   AcceptStorageContractMsgBody{},

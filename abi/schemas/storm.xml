@@ -140,16 +140,16 @@
 
 
         _ referrer_address:MsgAddressInt referrer_part:uint8 = ReferrerData;
-        _ discount:uint32 rebate:uint32 ref_info:(HashmapE 4 ReferrerData) = ReferrralData;
+        _ discount:uint32 rebate:uint32 ref_info:(HashmapE 4 ReferrerData) = ReferralData;
 
         <!--        temporary solution-->
         ref_data_0#0 = RefData;
-        ref_data_1#1 data:ReferrralData = RefData;
-        ref_data_2#2 data:ReferrralData = RefData;
+        ref_data_1#1 data:ReferralData = RefData;
+        ref_data_2#2 data:ReferralData = RefData;
 
         _ trader_address:MsgAddressInt smart_account_factory_address:MsgAddressInt vault_address:MsgAddress = AddressesData;
-        take_position_v2#56b30b52 query_id:uint64 bundle_sender_address:MsgAddress amm_address:MsgAddressInt direction:Direction spent_amount:Coins
-        <!--        addresses:^AddressesData ref_count:(## 4) ref_data:ref_count?(ReferrralData) position:^PositionData intent:^Intent = PreparedMessageBody;-->
+        take_position_v2#1bea50f1 query_id:uint64 bundle_sender_address:MsgAddress amm_address:MsgAddressInt direction:Direction spent_amount:Coins
+        <!--        addresses:^AddressesData ref_count:(## 4) ref_data:ref_count?(ReferralData) position:^PositionData intent:^Intent = PreparedMessageBody;-->
         <!-- todo: restore ref_data when support for optional fields will be added -->
         addresses:^AddressesData ref:RefData position:^PositionData intent:^Intent = PreparedMessageBody;
         _ info:InternalMessageInfoRelaxed _:NoInitRefBody msg_body:^PreparedMessageBody = PreparedMessage;
@@ -174,7 +174,7 @@
     <!-- INTERFACES -->
 
     <interface name="storm_vamm">
-        <code_hash>d7a54e7e8d602c407176e2ebdbdbe4b77f86d260ef7e4930c0eff76e37dfaa0e</code_hash>
+        <code_hash>f335666f8708c02a437559bd413e9edb3c1fbc49cf0c325f36fe8cb70f37ca3a</code_hash>
         <msg_in>
             <internal name="storm_set_exchange_settings"/>
             <internal name="storm_pay_funding"/>
@@ -288,7 +288,7 @@
     </interface>
 
     <interface name="storm_vamm_coinm">
-        <code_hash>3c1da399fc6350031dff1a5fa328ed2f74121ee777c89314cdb47b6d259e8a2b</code_hash>
+        <code_hash>4e67ce61bfe254ce8a42d6f7a26dd6b7df07c4c4a7c92f9508ac18a883f16832</code_hash>
         <msg_in>
             <internal name="storm_set_exchange_settings"/>
             <internal name="storm_pay_funding"/>
@@ -1381,8 +1381,8 @@
     </internal>
 
     <internal name="take_position_v2">
-        take_position_v2#56b30b52 query_id:uint64 bundle_sender_address:MsgAddress amm_address:MsgAddressInt direction:Direction spent_amount:Coins
-        <!--        addresses:^AddressesData ref_count:(## 4) ref_data:ref_count?(ReferrralData) position:^PositionData intent:^Intent = PreparedMessageBody;-->
+        take_position_v2#1bea50f1 query_id:uint64 bundle_sender_address:MsgAddress amm_address:MsgAddressInt direction:Direction spent_amount:Coins
+        <!--        addresses:^AddressesData ref_count:(## 4) ref_data:ref_count?(ReferralData) position:^PositionData intent:^Intent = PreparedMessageBody;-->
         <!-- todo: restore ref_data when support for optional fields will be added -->
         addresses:^AddressesData ref:RefData position:^PositionData intent:^Intent = PreparedMessageBody;
     </internal>
@@ -1602,7 +1602,7 @@
     </internal>
 
     <internal name="storm_fail_notification">
-        fail_notification#79ae3a66 query:uint64 spent_amount:Coins jetton_minter_address:MsgAddressInt amm_address:MsgAddressInt direction:Direction
+        fail_notification#367f2743 query:uint64 spent_amount:Coins jetton_minter_address:MsgAddressInt amm_address:MsgAddressInt direction:Direction
         bundle_sender_address:MsgAddress intent:^Intent = InternalMsgBody;
     </internal>
 

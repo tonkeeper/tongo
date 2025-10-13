@@ -1084,7 +1084,7 @@ type PreparedMessage struct {
 }
 
 type PreparedMessageBody struct {
-	Magic               tlb.Magic `tlb:"#56b30b52"`
+	Magic               tlb.Magic `tlb:"#1bea50f1"`
 	QueryId             uint64
 	BundleSenderAddress tlb.MsgAddress
 	AmmAddress          tlb.MsgAddress
@@ -1100,10 +1100,10 @@ type RefData struct {
 	tlb.SumType
 	RefData0 struct{} `tlbSumType:"#0"`
 	RefData1 struct {
-		Data ReferrralData
+		Data ReferralData
 	} `tlbSumType:"#1"`
 	RefData2 struct {
-		Data ReferrralData
+		Data ReferralData
 	} `tlbSumType:"#2"`
 }
 
@@ -1132,15 +1132,15 @@ func (t *RefData) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ReferrerData struct {
-	ReferrerAddress tlb.MsgAddress
-	ReferrerPart    uint8
-}
-
-type ReferrralData struct {
+type ReferralData struct {
 	Discount uint32
 	Rebate   uint32
 	RefInfo  tlb.HashmapE[tlb.Uint4, ReferrerData]
+}
+
+type ReferrerData struct {
+	ReferrerAddress tlb.MsgAddress
+	ReferrerPart    uint8
 }
 
 type SettlementOracleData struct {

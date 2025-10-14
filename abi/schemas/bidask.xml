@@ -202,12 +202,12 @@
     </jetton_payload>
 
     <internal name="bidask_swap_v2" >
-        bidask_swap#87d36990 query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#c09da84e query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
 
     <jetton_payload name="bidask_swap_v2" >
-        bidask_swap#87d36990 to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
+        bidask_swap#c09da84e to_address:MsgAddress slippage:(Either Coins uint256) exact_out:Coins
         additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 

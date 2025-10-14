@@ -39,8 +39,8 @@ The list below contains the supported message operations, their names and opcode
 | BidaskSwapFallbackV2| 0x1bba3896 |
 | BidaskSwapSuccess| 0x520e4831 |
 | BidaskSwapSuccessV2| 0xd3a25890 |
-| BidaskSwapV2| 0x87d36990 |
-| BidaskSwapV2| 0x87d36990 |
+| BidaskSwapV2| 0xc09da84e |
+| BidaskSwapV2| 0xc09da84e |
 | Bounce| 0xffffffff |
 | BounceV2| 0xfffffffe |
 | ChallengeQuarantinedChannelState| 0x088eaa32 |

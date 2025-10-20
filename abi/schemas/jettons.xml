@@ -19,6 +19,12 @@
             <internal name="jetton_burn_notification"/>
         </msg_in>
     </interface>
+    <interface name="scaled_ui">
+        <get_method name="get_display_multiplier"/>
+        <msg_out>
+            <ext_out name="display_multiplier_changed"/>
+        </msg_out>
+    </interface>
     <interface name="jetton_wallet">
         <get_method name="get_wallet_data"/>
         <msg_in>
@@ -86,7 +92,6 @@
             <int name="claimed">bool</int>
         </output>
     </get_method>
-
     <!--        Jettons    -->
     <internal name="jetton_transfer" >
         transfer#0f8a7ea5 query_id:uint64 amount:(VarUInteger 16) destination:MsgAddress
@@ -167,14 +172,15 @@
         = JettonMinterMsg;
     </internal>
 
-
-
-
-
-
-
-
-
-
+    <!-- scaled_ui_jetton -->
+    <get_method name="get_display_multiplier">
+        <output>
+            <int name="numerator">int257</int>
+            <int name="denominator">int257</int>
+        </output>
+    </get_method>
+    <ext_out name="display_multiplier_changed">
+        display_multiplier_changed#ac392598 numerator:(VarUInteger 32) denominator:(VarUInteger 32) comment:Text = ExtOutMsgBody;
+    </ext_out>
 
 </abi>

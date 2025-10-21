@@ -473,3 +473,68 @@ func (b *Block) AllTransactions() []*Transaction {
 	})
 	return transactions
 }
+
+type MessageID struct {
+	Address MsgAddress
+	Lt      uint64
+}
+
+// GetInMsgsMetadata returns a map {in msg -> initiator msg}
+func (b *Block) GetInMsgsMetadata() (map[MessageID]MessageID, error) {
+	inMsgs, err := b.Extra.InMsgDescr()
+	if err != nil {
+		return nil, err
+	}
+	inMsgsMetadata := map[MessageID]MessageID{} // in msg -> metadata
+	for _, v := range inMsgs.Values() {
+		var msgEnvelope MsgEnvelope
+		switch v.SumType {
+		case "MsgImportImm":
+			msgEnvelope = v.MsgImportImm.InMsg
+		case "MsgImportFin":
+			msgEnvelope = v.MsgImportFin.InMsg
+		case "MsgImportTr":
+			msgEnvelope = v.MsgImportTr.InMsg
+		case "MsgDiscardFin":
+			msgEnvelope = v.MsgDiscardFin.InMsg
+		case "MsgDiscardTr":
+			msgEnvelope = v.MsgDiscardTr.InMsg
+		case "MsgImportDeferredFin":
+			msgEnvelope = v.MsgImportDeferredFin.InMsg
+		case "MsgImportDeferredTr":
+			msgEnvelope = v.MsgImportDeferredTr.InMsg
+		default:
+			continue
+		}
+
+		if msgEnvelope.SumType == "V1" {
+			continue
+		}
+		msgInfo := msgEnvelope.V2.Msg.Info
+
+		metadata := MessageID{
+			Address: msgEnvelope.V2.Metadata.InitiatorAddr,
+			Lt:      msgEnvelope.V2.Metadata.InitiatorLT,
+		}
+
+		var msg MessageID
+		switch msgInfo.SumType {
+		case "IntMsgInfo":
+			msg = MessageID{
+				Address: msgInfo.IntMsgInfo.Src,
+				Lt:      msgInfo.IntMsgInfo.CreatedLt,
+			}
+		case "ExtOutMsgInfo":
+			msg = MessageID{
+				Address: msgInfo.ExtOutMsgInfo.Src,
+				Lt:      msgInfo.ExtOutMsgInfo.CreatedLt,
+			}
+		default:
+			continue
+		}
+
+		inMsgsMetadata[msg] = metadata
+	}
+
+	return inMsgsMetadata, nil
+}

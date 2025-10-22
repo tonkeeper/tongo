@@ -180,7 +180,7 @@
         </output>
     </get_method>
     <ext_out name="display_multiplier_changed">
-        display_multiplier_changed#ac392598 numerator:(VarUInteger 32) denominator:(VarUInteger 32) comment:Text = ExtOutMsgBody;
+        display_multiplier_changed#ac392598 numerator:(VarUInteger 32) denominator:(VarUInteger 32) comment:(Maybe Text) = ExtOutMsgBody;
     </ext_out>
 
 </abi>

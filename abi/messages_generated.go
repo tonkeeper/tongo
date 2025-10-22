@@ -4853,7 +4853,7 @@ type DedustSwapExtOutMsgBody struct {
 type DisplayMultiplierChangedExtOutMsgBody struct {
 	Numerator   tlb.VarUInteger32
 	Denominator tlb.VarUInteger32
-	Comment     tlb.Text
+	Comment     *tlb.Text `tlb:"maybe"`
 }
 
 type CoffeeStakingRewardsClaimedExtOutMsgBody struct {

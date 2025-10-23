@@ -507,7 +507,7 @@ func (b *Block) GetInMsgsMetadata() (map[MessageID]MessageID, error) {
 			continue
 		}
 
-		if msgEnvelope.SumType == "V1" {
+		if msgEnvelope.SumType != "V2" {
 			continue
 		}
 		msgInfo := msgEnvelope.V2.Msg.Info

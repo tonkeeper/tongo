@@ -125,6 +125,7 @@ The list below contains the supported message operations, their names and opcode
 | DeployStorageContract| 0xe4748df1 |
 | DepositPayload| 0xf9471134 |
 | Disapprove| 0xe8a0abfe |
+| DisplayMultiplierChanged| 0xac392598 |
 | DnsBalanceRelease| 0x4ed14b65 |
 | ElectorNewStake| 0x4e73744b |
 | ElectorNewStakeConfirmation| 0xf374484c |

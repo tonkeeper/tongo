@@ -71,6 +71,7 @@ const (
 	OmnistonReferral
 	PaymentChannel
 	Sbt
+	ScaledUi
 	SmartAccount
 	SmartAccountBlank
 	SmartAccountFactory
@@ -255,6 +256,8 @@ func (c ContractInterface) String() string {
 		return "payment_channel"
 	case Sbt:
 		return "sbt"
+	case ScaledUi:
+		return "scaled_ui"
 	case SmartAccount:
 		return "smart_account"
 	case SmartAccountBlank:
@@ -496,6 +499,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return PaymentChannel
 	case "sbt":
 		return Sbt
+	case "scaled_ui":
+		return ScaledUi
 	case "smart_account":
 		return SmartAccount
 	case "smart_account_blank":
@@ -741,6 +746,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_delegation_state",
 		InvokeFn: GetDelegationState,
+	},
+	{
+		Name:     "get_display_multiplier",
+		InvokeFn: GetDisplayMultiplier,
 	},
 	{
 		Name:     "get_distribution_info",
@@ -1300,6 +1309,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: JettonMaster,
 		Results: []string{
 			"GetJettonDataResult",
+		},
+	},
+	{
+		Name: ScaledUi,
+		Results: []string{
+			"GetDisplayMultiplierResult",
 		},
 	},
 	{
@@ -2560,6 +2575,10 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 			decodeFuncDedustSwapExtOutMsgBody,
 			decodeFuncDedustDepositExtOutMsgBody,
 			decodeFuncDedustWithdrawalExtOutMsgBody,
+		}
+	case ScaledUi:
+		return []msgDecoderFunc{
+			decodeFuncDisplayMultiplierChangedExtOutMsgBody,
 		}
 	case StormVamm:
 		return []msgDecoderFunc{

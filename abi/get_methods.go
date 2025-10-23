@@ -56,6 +56,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_day_trading_data":                         {DecodeGetDayTradingData_StormResult},
 	"get_default_referral_fees":                    {DecodeGetDefaultReferralFees_StormResult},
 	"get_delegation_state":                         {DecodeGetDelegationStateResult},
+	"get_display_multiplier":                       {DecodeGetDisplayMultiplierResult},
 	"get_distribution_info":                        {DecodeGetDistributionInfoResult},
 	"get_domain":                                   {DecodeGetDomainResult},
 	"get_dynamic_fees_info":                        {DecodeGetDynamicFeesInfo_BidaskResult},
@@ -318,6 +319,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	110721: {GetStorageData},
 	110841: {GetKeysData},
 	111161: {ListNominators},
+	111569: {GetDisplayMultiplier},
 	115119: {GetMasterAddress},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
@@ -412,6 +414,7 @@ var resultTypes = []interface{}{
 	&GetDayTradingData_StormResult{},
 	&GetDefaultReferralFees_StormResult{},
 	&GetDelegationStateResult{},
+	&GetDisplayMultiplierResult{},
 	&GetDistributionInfoResult{},
 	&GetDomainResult{},
 	&GetDynamicFeesInfo_BidaskResult{},
@@ -2422,6 +2425,40 @@ func DecodeGetDelegationStateResult(stack tlb.VmStack) (resultType string, resul
 	var result GetDelegationStateResult
 	err = stack.Unmarshal(&result)
 	return "GetDelegationStateResult", result, err
+}
+
+type GetDisplayMultiplierResult struct {
+	Numerator   tlb.Int257
+	Denominator tlb.Int257
+}
+
+func GetDisplayMultiplier(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 111569 for "get_display_multiplier" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 111569, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetDisplayMultiplierResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetDisplayMultiplierResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetDisplayMultiplierResult
+	err = stack.Unmarshal(&result)
+	return "GetDisplayMultiplierResult", result, err
 }
 
 type GetDistributionInfoResult struct {

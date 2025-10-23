@@ -4699,6 +4699,8 @@ var (
 	decodeFuncMegatonSwapExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, MegatonSwapExtOutMsgOp, MegatonSwapExtOutMsgBody{})
 	// 0x9c610de3
 	decodeFuncDedustSwapExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x9c610de3, Len: 32}, DedustSwapExtOutMsgOp, DedustSwapExtOutMsgBody{})
+	// 0xac392598
+	decodeFuncDisplayMultiplierChangedExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0xac392598, Len: 32}, DisplayMultiplierChangedExtOutMsgOp, DisplayMultiplierChangedExtOutMsgBody{})
 	// 0xb30c7310
 	decodeFuncCoffeeStakingRewardsClaimedExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0xb30c7310, Len: 32}, CoffeeStakingRewardsClaimedExtOutMsgOp, CoffeeStakingRewardsClaimedExtOutMsgBody{})
 	// 0xb544f4a4
@@ -4735,6 +4737,9 @@ var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x9c610de3
 	DedustSwapExtOutMsgOpCode: decodeFuncDedustSwapExtOutMsgBody,
 
+	// 0xac392598
+	DisplayMultiplierChangedExtOutMsgOpCode: decodeFuncDisplayMultiplierChangedExtOutMsgBody,
+
 	// 0xb30c7310
 	CoffeeStakingRewardsClaimedExtOutMsgOpCode: decodeFuncCoffeeStakingRewardsClaimedExtOutMsgBody,
 
@@ -4764,6 +4769,7 @@ const (
 	MegatonUpdateMiningParamsExtOutMsgOp        MsgOpName = "MegatonUpdateMiningParams"
 	MegatonSwapExtOutMsgOp                      MsgOpName = "MegatonSwap"
 	DedustSwapExtOutMsgOp                       MsgOpName = "DedustSwap"
+	DisplayMultiplierChangedExtOutMsgOp         MsgOpName = "DisplayMultiplierChanged"
 	CoffeeStakingRewardsClaimedExtOutMsgOp      MsgOpName = "CoffeeStakingRewardsClaimed"
 	DedustDepositExtOutMsgOp                    MsgOpName = "DedustDeposit"
 	CoffeeSwapSucceededExtOutMsgOp              MsgOpName = "CoffeeSwapSucceeded"
@@ -4780,6 +4786,7 @@ const (
 	MegatonUpdateMiningParamsExtOutMsgOpCode        MsgOpCode = 0x56a8e920
 	MegatonSwapExtOutMsgOpCode                      MsgOpCode = 0x7362d09c
 	DedustSwapExtOutMsgOpCode                       MsgOpCode = 0x9c610de3
+	DisplayMultiplierChangedExtOutMsgOpCode         MsgOpCode = 0xac392598
 	CoffeeStakingRewardsClaimedExtOutMsgOpCode      MsgOpCode = 0xb30c7310
 	DedustDepositExtOutMsgOpCode                    MsgOpCode = 0xb544f4a4
 	CoffeeSwapSucceededExtOutMsgOpCode              MsgOpCode = 0xc0ffee30
@@ -4841,6 +4848,12 @@ type DedustSwapExtOutMsgBody struct {
 		Reserve0     tlb.Grams
 		Reserve1     tlb.Grams
 	} `tlb:"^"`
+}
+
+type DisplayMultiplierChangedExtOutMsgBody struct {
+	Numerator   tlb.VarUInteger32
+	Denominator tlb.VarUInteger32
+	Comment     *tlb.Text `tlb:"maybe"`
 }
 
 type CoffeeStakingRewardsClaimedExtOutMsgBody struct {
@@ -4909,6 +4922,7 @@ var KnownMsgExtOutTypes = map[string]any{
 	MegatonUpdateMiningParamsExtOutMsgOp:        MegatonUpdateMiningParamsExtOutMsgBody{},
 	MegatonSwapExtOutMsgOp:                      MegatonSwapExtOutMsgBody{},
 	DedustSwapExtOutMsgOp:                       DedustSwapExtOutMsgBody{},
+	DisplayMultiplierChangedExtOutMsgOp:         DisplayMultiplierChangedExtOutMsgBody{},
 	CoffeeStakingRewardsClaimedExtOutMsgOp:      CoffeeStakingRewardsClaimedExtOutMsgBody{},
 	DedustDepositExtOutMsgOp:                    DedustDepositExtOutMsgBody{},
 	CoffeeSwapSucceededExtOutMsgOp:              CoffeeSwapSucceededExtOutMsgBody{},

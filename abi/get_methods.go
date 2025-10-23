@@ -6894,10 +6894,10 @@ type GetStorageData_StormResult struct {
 	FactoryAddress tlb.MsgAddress
 	OwnerAddress   tlb.MsgAddress
 	Balances       *boc.Cell
-	uint8
-	Keys         Keys
-	Positions    *boc.Cell
-	HighloadData HighloadData
+	Version        uint8
+	Keys           Keys
+	Positions      *boc.Cell
+	HighloadData   HighloadData
 }
 
 func GetStorageData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {

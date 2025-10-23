@@ -1297,7 +1297,7 @@
             <slice name="factory_address">msgaddress</slice>
             <slice name="owner_address">msgaddress</slice>
             <cell name="balances" nullable="true">cell</cell>
-            <int version="version">uint8</int>
+            <int name="version">uint8</int>
             <cell name="keys">Keys</cell>
             <cell name="positions" nullable="true">cell</cell>
             <cell name="highload_data">HighloadData</cell>

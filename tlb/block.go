@@ -475,8 +475,9 @@ func (b *Block) AllTransactions() []*Transaction {
 }
 
 type MessageID struct {
-	Address MsgAddress
-	Lt      uint64
+	Workchain int8
+	Address   Bits256
+	Lt        uint64
 }
 
 // GetInMsgsMetadata returns a map {in msg -> initiator msg}
@@ -512,22 +513,34 @@ func (b *Block) GetInMsgsMetadata() (map[MessageID]MessageID, error) {
 		}
 		msgInfo := msgEnvelope.V2.Msg.Info
 
+		if msgEnvelope.V2.Metadata.InitiatorAddr.SumType != "AddrStd" {
+			continue
+		}
 		metadata := MessageID{
-			Address: msgEnvelope.V2.Metadata.InitiatorAddr,
-			Lt:      msgEnvelope.V2.Metadata.InitiatorLT,
+			Workchain: msgEnvelope.V2.Metadata.InitiatorAddr.AddrStd.WorkchainId,
+			Address:   msgEnvelope.V2.Metadata.InitiatorAddr.AddrStd.Address,
+			Lt:        msgEnvelope.V2.Metadata.InitiatorLT,
 		}
 
 		var msg MessageID
 		switch msgInfo.SumType {
 		case "IntMsgInfo":
+			if msgInfo.IntMsgInfo.Src.SumType != "AddrStd" {
+				continue
+			}
 			msg = MessageID{
-				Address: msgInfo.IntMsgInfo.Src,
-				Lt:      msgInfo.IntMsgInfo.CreatedLt,
+				Workchain: msgInfo.IntMsgInfo.Src.AddrStd.WorkchainId,
+				Address:   msgInfo.IntMsgInfo.Src.AddrStd.Address,
+				Lt:        msgInfo.IntMsgInfo.CreatedLt,
 			}
 		case "ExtOutMsgInfo":
+			if msgInfo.ExtOutMsgInfo.Src.SumType != "AddrStd" {
+				continue
+			}
 			msg = MessageID{
-				Address: msgInfo.ExtOutMsgInfo.Src,
-				Lt:      msgInfo.ExtOutMsgInfo.CreatedLt,
+				Workchain: msgInfo.ExtOutMsgInfo.Src.AddrStd.WorkchainId,
+				Address:   msgInfo.ExtOutMsgInfo.Src.AddrStd.Address,
+				Lt:        msgInfo.ExtOutMsgInfo.CreatedLt,
 			}
 		default:
 			continue

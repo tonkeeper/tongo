@@ -301,7 +301,7 @@ func Test_GetInMsgsMetadata(t *testing.T) {
 				return
 			}
 			for k, v := range inMsgsMetadata {
-				rawKAddr := "0:" + k.Address.AddrStd.Address.Hex()
+				rawKAddr := fmt.Sprintf("%v:%v", k.Workchain, k.Address.Hex())
 				actualV, ok := tc.actual[MessageIDSimple{
 					Address: rawKAddr,
 					Lt:      k.Lt,
@@ -310,7 +310,7 @@ func Test_GetInMsgsMetadata(t *testing.T) {
 					t.Errorf("Extra metadata found (%v, %v)", rawKAddr, k.Lt)
 					continue
 				}
-				rawVAddr := "0:" + v.Address.AddrStd.Address.Hex()
+				rawVAddr := fmt.Sprintf("%v:%v", v.Workchain, v.Address.Hex())
 				if rawVAddr != actualV.Address {
 					t.Errorf("Addresses haven't matched: expected %v, got %v", actualV.Address, rawVAddr)
 				}

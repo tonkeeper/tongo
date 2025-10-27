@@ -1540,6 +1540,7 @@
         order_canceled#69d08679 = InternalMsgBody;
     </internal>
 
+    <!-- old name: storm_provide_position   -->
     <internal name="storm_provide_order">
         provide_order#8865b402 order_type:uint4 order_index:uint3 direction:uint1 executor_index:uint32 oracle_payload:^OraclePayload = InternalMsgBody;
     </internal>
@@ -1549,9 +1550,7 @@
     </internal>
 
     <internal name="storm_complete_order">
-        complete_order#cf90d618 order_type:uint4 order_index:uint3 direction:Direction origin_op:uint32 oracle_price:Coins
-        settlement_oracle_price:Coins new_position_ref:^PositionData amm_state_log:^AmmStateLog
-        market_depth_log_ref:^MarketDepth = InternalMsgBody;
+        complete_order#cf90d618 order_type:uint4 order_index:uint3 direction:uint1 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
     </internal>
 
     <internal name="storm_provide_position">

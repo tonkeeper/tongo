@@ -3958,13 +3958,12 @@ type JettonChangeMetadataMsgBody struct {
 type StormCompleteOrderMsgBody struct {
 	OrderType             tlb.Uint4
 	OrderIndex            tlb.Uint3
-	Direction             Direction
-	OriginOp              uint32
-	OraclePrice           tlb.Grams
-	SettlementOraclePrice tlb.Grams
-	NewPositionRef        PositionData `tlb:"^"`
-	AmmStateLog           AmmStateLog  `tlb:"^"`
-	MarketDepthLogRef     MarketDepth  `tlb:"^"`
+	Direction             tlb.Uint1
+	OriginOpcode          uint32
+	IndexPrice            tlb.Grams
+	SettlementOraclePrice *tlb.Grams     `tlb:"maybe"`
+	Position              PositionChange `tlb:"^"`
+	Amm                   AmmChange      `tlb:"^"`
 }
 
 type SbtRequestOwnerMsgBody struct {

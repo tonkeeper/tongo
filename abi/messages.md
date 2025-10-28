@@ -20,6 +20,17 @@ The list below contains the supported message operations, their names and opcode
 | BidaskBurn| 0x73403c43 |
 | BidaskBurnAll| 0xebd6ec83 |
 | BidaskBurnPayout| 0x42062d62 |
+| BidaskDammBurn| 0x71e4a09a |
+| BidaskDammClaimFees| 0x26fa12a4 |
+| BidaskDammInternalBurn| 0xadb8eb49 |
+| BidaskDammInternalClaim| 0x983b6933 |
+| BidaskDammMint| 0x27ae4eff |
+| BidaskDammProvide| 0x63ec24ae |
+| BidaskDammProvideBoth| 0xa8904134 |
+| BidaskDammProvideOneSide| 0x729c04c8 |
+| BidaskDammProvideOneSide| 0x729c04c8 |
+| BidaskDammSwap| 0xdd79732c |
+| BidaskDammSwap| 0xdd79732c |
 | BidaskInternalBurn| 0x16e09400 |
 | BidaskInternalContinueProvide| 0x0c09445a |
 | BidaskInternalContinueSwap| 0x59699475 |

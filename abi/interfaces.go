@@ -13,6 +13,8 @@ const (
 	AffluentPool
 	AirdropInterlockerV1
 	AirdropInterlockerV2
+	BidaskDammLpWallet
+	BidaskDammPool
 	BidaskInternalLiquidityVault
 	BidaskLpMultitoken
 	BidaskPool
@@ -140,6 +142,10 @@ func (c ContractInterface) String() string {
 		return "airdrop_interlocker_v1"
 	case AirdropInterlockerV2:
 		return "airdrop_interlocker_v2"
+	case BidaskDammLpWallet:
+		return "bidask_damm_lp_wallet"
+	case BidaskDammPool:
+		return "bidask_damm_pool"
 	case BidaskInternalLiquidityVault:
 		return "bidask_internal_liquidity_vault"
 	case BidaskLpMultitoken:
@@ -383,6 +389,10 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return AirdropInterlockerV1
 	case "airdrop_interlocker_v2":
 		return AirdropInterlockerV2
+	case "bidask_damm_lp_wallet":
+		return BidaskDammLpWallet
+	case "bidask_damm_pool":
+		return BidaskDammPool
 	case "bidask_internal_liquidity_vault":
 		return BidaskInternalLiquidityVault
 	case "bidask_lp_multitoken":
@@ -720,6 +730,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetCode,
 	},
 	{
+		Name:     "get_collected_fees_info",
+		InvokeFn: GetCollectedFeesInfo,
+	},
+	{
 		Name:     "get_collection_data",
 		InvokeFn: GetCollectionData,
 	},
@@ -796,6 +810,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetFarmingInfo,
 	},
 	{
+		Name:     "get_fees_info",
+		InvokeFn: GetFeesInfo,
+	},
+	{
 		Name:     "get_fix_price_data_v4",
 		InvokeFn: GetFixPriceDataV4,
 	},
@@ -846,6 +864,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_liquidity_data",
 		InvokeFn: GetLiquidityData,
+	},
+	{
+		Name:     "get_liquidity_info",
+		InvokeFn: GetLiquidityInfo,
 	},
 	{
 		Name:     "get_locker_bill_data",
@@ -1056,6 +1078,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetStakingStatus,
 	},
 	{
+		Name:     "get_start_trade_time",
+		InvokeFn: GetStartTradeTime,
+	},
+	{
 		Name:     "get_status",
 		InvokeFn: GetStatus,
 	},
@@ -1122,6 +1148,10 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_unlocks_info",
 		InvokeFn: GetUnlocksInfo,
+	},
+	{
+		Name:     "get_user_fees_info",
+		InvokeFn: GetUserFeesInfo,
 	},
 	{
 		Name:     "get_user_public_keys",
@@ -1268,6 +1298,26 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: BidaskInternalLiquidityVault,
 		Results: []string{
 			"GetLiquidityData_BidaskResult",
+		},
+	},
+	{
+		Name: BidaskDammPool,
+		Results: []string{
+			"GetCollectedFeesInfo_BidaskDammResult",
+			"GetFarmingInfo_BidaskDammResult",
+			"GetFeesInfo_BidaskDammResult",
+			"GetJettonDataResult",
+			"GetLiquidityInfo_BidaskDammResult",
+			"GetPoolInfo_BidaskDammResult",
+			"GetStartTradeTime_BidaskDammResult",
+			"Whoami_BidaskResult",
+		},
+	},
+	{
+		Name: BidaskDammLpWallet,
+		Results: []string{
+			"GetUserFeesInfo_BidaskDammResult",
+			"GetWalletDataResult",
 		},
 	},
 	{
@@ -2140,6 +2190,19 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
+	case BidaskDammLpWallet:
+		return []msgDecoderFunc{
+			decodeFuncBidaskDammBurnMsgBody,
+			decodeFuncBidaskDammClaimFeesMsgBody,
+		}
+	case BidaskDammPool:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncBidaskDammSwapMsgBody,
+			decodeFuncBidaskDammProvideOneSideMsgBody,
+			decodeFuncBidaskDammInternalBurnMsgBody,
+			decodeFuncBidaskDammInternalClaimMsgBody,
+		}
 	case BidaskInternalLiquidityVault:
 		return []msgDecoderFunc{
 			decodeFuncBidaskSaveLiquidityInfoMsgBody,

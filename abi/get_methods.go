@@ -5,6 +5,7 @@ package abi
 import (
 	"context"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -48,6 +49,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_channel_data":                             {DecodeGetChannelDataResult},
 	"get_claimer_address":                          {DecodeGetClaimerAddress_StormResult},
 	"get_code":                                     {DecodeGetCode_CoffeeResult},
+	"get_collected_fees_info":                      {DecodeGetCollectedFeesInfo_BidaskDammResult},
 	"get_collection_data":                          {DecodeGetCollectionDataResult},
 	"get_compute_funding_data":                     {DecodeGetComputeFundingData_StormResult},
 	"get_contract_data":                            {DecodeGetContractData_AirdropInterlockerV1Result},
@@ -68,9 +70,11 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_executor_item_addr":                       {DecodeGetExecutorItemAddr_StormResult},
 	"get_executor_vaults_whitelist":                {DecodeGetExecutorVaultsWhitelist_StormResult},
 	"get_expected_outputs":                         {DecodeGetExpectedOutputs_StonfiResult},
+	"get_expected_swap_result":                     {DecodeGetExpectedSwapResult_BidaskDammResult},
 	"get_extensions":                               {DecodeGetExtensionsResult},
 	"get_factory_data":                             {DecodeGetFactoryData_StormResult},
-	"get_farming_info":                             {DecodeGetFarmingInfo_BidaskResult},
+	"get_farming_info":                             {DecodeGetFarmingInfo_BidaskResult, DecodeGetFarmingInfo_BidaskDammResult},
+	"get_fees_info":                                {DecodeGetFeesInfo_BidaskDammResult},
 	"get_fill_out":                                 {DecodeGetFillOut_MoonResult},
 	"get_fix_price_data_v4":                        {DecodeGetFixPriceDataV4Result},
 	"get_full_domain":                              {DecodeGetFullDomainResult},
@@ -90,6 +94,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_liquidity_deposit_address":                {DecodeGetLiquidityDepositAddress_DedustResult},
 	"get_liquidity_depository_address":             {DecodeGetLiquidityDepositoryAddress_CoffeeResult},
 	"get_liquidity_depository_address_no_settings": {DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult},
+	"get_liquidity_info":                           {DecodeGetLiquidityInfo_BidaskDammResult},
 	"get_locker_bill_data":                         {DecodeGetLockerBillDataResult},
 	"get_locker_data":                              {DecodeGetLockerDataResult},
 	"get_lockup_data":                              {DecodeGetLockupDataResult},
@@ -131,7 +136,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_pool_creator_address_no_settings":         {DecodeGetPoolCreatorAddressNoSettings_CoffeeResult},
 	"get_pool_data":                                {DecodeGetPoolData_AffluentResult, DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                           {DecodeGetPoolFullDataResult},
-	"get_pool_info":                                {DecodeGetPoolInfo_BidaskResult},
+	"get_pool_info":                                {DecodeGetPoolInfo_BidaskResult, DecodeGetPoolInfo_BidaskDammResult},
 	"get_pool_status":                              {DecodeGetPoolStatusResult},
 	"get_pool_type":                                {DecodeGetPoolType_StonfiV2Result},
 	"get_position":                                 {DecodeGetPosition_StormResult},
@@ -160,6 +165,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_spot_price":                               {DecodeGetSpotPrice_StormResult},
 	"get_sqrt_p":                                   {DecodeGetSqrtP_BidaskResult},
 	"get_staking_status":                           {DecodeGetStakingStatusResult},
+	"get_start_trade_time":                         {DecodeGetStartTradeTime_BidaskDammResult},
 	"get_status":                                   {DecodeGetStatusResult, DecodeGetStatus_MoonResult},
 	"get_storage_contract_address":                 {DecodeGetStorageContractAddressResult},
 	"get_storage_contract_data":                    {DecodeGetStorageContractDataResult},
@@ -179,6 +185,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_trade_fee":                                {DecodeGetTradeFee_DedustResult},
 	"get_unlocks_info":                             {DecodeGetUnlocksInfoResult},
 	"get_user_bin_assets":                          {DecodeGetUserBinAssets_BidaskResult},
+	"get_user_fees_info":                           {DecodeGetUserFeesInfo_BidaskDammResult},
 	"get_user_public_keys":                         {DecodeGetUserPublicKeys_StormResult},
 	"get_validate_signatures":                      {DecodeGetValidateSignatures_StormResult},
 	"get_validator_controller_data":                {DecodeGetValidatorControllerDataResult},
@@ -224,6 +231,8 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	69727:  {GetBlankStorageData},
 	71463:  {GetTorrentHash},
 	71479:  {GetProxy},
+	72370:  {GetFeesInfo},
+	72419:  {GetStartTradeTime},
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
 	75065:  {GetExecutorBalances},
@@ -273,6 +282,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	90700:  {GetMinFees},
 	91273:  {GetRootPubkey},
 	91481:  {GetLastFillUpTime},
+	91984:  {GetLiquidityInfo},
 	92095:  {GetSettlementOracleData},
 	92229:  {GetPoolFullData},
 	92260:  {GetSubscriptionData},
@@ -320,10 +330,12 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	110841: {GetKeysData},
 	111161: {ListNominators},
 	111569: {GetDisplayMultiplier},
+	111952: {GetUserFeesInfo},
 	115119: {GetMasterAddress},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
 	117305: {GetId},
+	117680: {GetCollectedFeesInfo},
 	117729: {GetExtensions},
 	118188: {GetAssets},
 	118274: {GetLockerBillData},
@@ -406,6 +418,7 @@ var resultTypes = []interface{}{
 	&GetChannelDataResult{},
 	&GetClaimerAddress_StormResult{},
 	&GetCode_CoffeeResult{},
+	&GetCollectedFeesInfo_BidaskDammResult{},
 	&GetCollectionDataResult{},
 	&GetComputeFundingData_StormResult{},
 	&GetContractData_AirdropInterlockerV1Result{},
@@ -426,9 +439,12 @@ var resultTypes = []interface{}{
 	&GetExecutorItemAddr_StormResult{},
 	&GetExecutorVaultsWhitelist_StormResult{},
 	&GetExpectedOutputs_StonfiResult{},
+	&GetExpectedSwapResult_BidaskDammResult{},
 	&GetExtensionsResult{},
 	&GetFactoryData_StormResult{},
+	&GetFarmingInfo_BidaskDammResult{},
 	&GetFarmingInfo_BidaskResult{},
+	&GetFeesInfo_BidaskDammResult{},
 	&GetFillOut_MoonResult{},
 	&GetFixPriceDataV4Result{},
 	&GetFullDomainResult{},
@@ -448,6 +464,7 @@ var resultTypes = []interface{}{
 	&GetLiquidityDepositAddress_DedustResult{},
 	&GetLiquidityDepositoryAddress_CoffeeResult{},
 	&GetLiquidityDepositoryAddressNoSettings_CoffeeResult{},
+	&GetLiquidityInfo_BidaskDammResult{},
 	&GetLockerBillDataResult{},
 	&GetLockerDataResult{},
 	&GetLockupDataResult{},
@@ -496,6 +513,7 @@ var resultTypes = []interface{}{
 	&GetPoolData_StonfiV2WeightedStableswapResult{},
 	&GetPoolData_TfResult{},
 	&GetPoolFullDataResult{},
+	&GetPoolInfo_BidaskDammResult{},
 	&GetPoolInfo_BidaskResult{},
 	&GetPoolStatusResult{},
 	&GetPoolType_StonfiV2Result{},
@@ -529,6 +547,7 @@ var resultTypes = []interface{}{
 	&GetSpotPrice_StormResult{},
 	&GetSqrtP_BidaskResult{},
 	&GetStakingStatusResult{},
+	&GetStartTradeTime_BidaskDammResult{},
 	&GetStatusResult{},
 	&GetStatus_MoonResult{},
 	&GetStorageContractAddressResult{},
@@ -551,6 +570,7 @@ var resultTypes = []interface{}{
 	&GetTradeFee_DedustResult{},
 	&GetUnlocksInfoResult{},
 	&GetUserBinAssets_BidaskResult{},
+	&GetUserFeesInfo_BidaskDammResult{},
 	&GetUserPublicKeys_StormResult{},
 	&GetValidateSignatures_StormResult{},
 	&GetValidatorControllerDataResult{},
@@ -2137,6 +2157,40 @@ func DecodeGetCode_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny
 	return "GetCode_CoffeeResult", result, err
 }
 
+type GetCollectedFeesInfo_BidaskDammResult struct {
+	FeesPerLpX tlb.Int257
+	FeesPerLpY tlb.Int257
+}
+
+func GetCollectedFeesInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 117680 for "get_collected_fees_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 117680, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCollectedFeesInfo_BidaskDammResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCollectedFeesInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCollectedFeesInfo_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetCollectedFeesInfo_BidaskDammResult", result, err
+}
+
 type GetCollectionDataResult struct {
 	NextItemIndex     tlb.Int257
 	CollectionContent tlb.Any
@@ -2887,6 +2941,62 @@ func DecodeGetExpectedOutputs_StonfiResult(stack tlb.VmStack) (resultType string
 	return "GetExpectedOutputs_StonfiResult", result, err
 }
 
+type GetExpectedSwapResult_BidaskDammResult struct {
+	Out              tlb.Int257
+	Excess           tlb.Int257
+	LpFee            tlb.Int257
+	ProtocolFee      tlb.Int257
+	RefFee           tlb.Int257
+	LiquidityXAmount tlb.Int257
+	LiquidityYAmount tlb.Int257
+}
+
+func GetExpectedSwapResult(ctx context.Context, executor Executor, reqAccountID ton.AccountID, amount tlb.Int257, exactOut tlb.Int257, tokenWallet tlb.MsgAddress, refFee tlb.Int257, timestamp tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: amount}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: exactOut}
+	stack.Put(val)
+	val, err = tlb.TlbStructToVmCellSlice(tokenWallet)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: refFee}
+	stack.Put(val)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: timestamp}
+	stack.Put(val)
+
+	// MethodID = 104116 for "get_expected_swap_result" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 104116, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetExpectedSwapResult_BidaskDammResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetExpectedSwapResult_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetExpectedSwapResult_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetExpectedSwapResult_BidaskDammResult", result, err
+}
+
 type GetExtensionsResult struct {
 	Extensions *WalletV5ExtensionsList
 }
@@ -2959,6 +3069,13 @@ func DecodeGetFactoryData_StormResult(stack tlb.VmStack) (resultType string, res
 	return "GetFactoryData_StormResult", result, err
 }
 
+type GetFarmingInfo_BidaskDammResult struct {
+	FarmingXPerSecond tlb.Int257
+	FarmingYPerSecond tlb.Int257
+	PreviousCall      tlb.Int257
+	EndOfFarming      tlb.Int257
+}
+
 type GetFarmingInfo_BidaskResult struct {
 	DistributedXAmount tlb.Int257
 	DistributedYAmount tlb.Int257
@@ -2979,7 +3096,7 @@ func GetFarmingInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetFarmingInfo_BidaskResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetFarmingInfo_BidaskResult, DecodeGetFarmingInfo_BidaskDammResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -2995,6 +3112,53 @@ func DecodeGetFarmingInfo_BidaskResult(stack tlb.VmStack) (resultType string, re
 	var result GetFarmingInfo_BidaskResult
 	err = stack.Unmarshal(&result)
 	return "GetFarmingInfo_BidaskResult", result, err
+}
+
+func DecodeGetFarmingInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetFarmingInfo_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetFarmingInfo_BidaskDammResult", result, err
+}
+
+type GetFeesInfo_BidaskDammResult struct {
+	DynamicFee                 tlb.Int257
+	DynamicFeeFactor           tlb.Int257
+	PreviousSwapTime           tlb.Int257
+	TimeFilter                 tlb.Int257
+	TimeDecay                  tlb.Int257
+	ProtocolFeeReductionFactor tlb.Int257
+}
+
+func GetFeesInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 72370 for "get_fees_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72370, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetFeesInfo_BidaskDammResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetFeesInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetFeesInfo_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetFeesInfo_BidaskDammResult", result, err
 }
 
 type GetFillOut_MoonResult struct {
@@ -3761,6 +3925,44 @@ func DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult(stack tlb.VmStac
 	var result GetLiquidityDepositoryAddressNoSettings_CoffeeResult
 	err = stack.Unmarshal(&result)
 	return "GetLiquidityDepositoryAddressNoSettings_CoffeeResult", result, err
+}
+
+type GetLiquidityInfo_BidaskDammResult struct {
+	LiquidityXAmount tlb.Int257
+	LiquidityYAmount tlb.Int257
+	VirtualXAmount   tlb.Int257
+	VirtualYAmount   tlb.Int257
+	TotalSupplyLp    tlb.Int257
+	LockedLp         tlb.Int257
+}
+
+func GetLiquidityInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 91984 for "get_liquidity_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 91984, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetLiquidityInfo_BidaskDammResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetLiquidityInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetLiquidityInfo_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetLiquidityInfo_BidaskDammResult", result, err
 }
 
 type GetLockerBillDataResult struct {
@@ -5604,6 +5806,12 @@ func DecodeGetPoolFullDataResult(stack tlb.VmStack) (resultType string, resultAn
 	return "GetPoolFullDataResult", result, err
 }
 
+type GetPoolInfo_BidaskDammResult struct {
+	JettonWalletX tlb.MsgAddress
+	JettonWalletY tlb.MsgAddress
+	BaseFee       tlb.Int257
+}
+
 type GetPoolInfo_BidaskResult struct {
 	JettonWalletX tlb.MsgAddress
 	JettonWalletY tlb.MsgAddress
@@ -5622,7 +5830,7 @@ func GetPoolInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolInfo_BidaskResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolInfo_BidaskResult, DecodeGetPoolInfo_BidaskDammResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -5638,6 +5846,15 @@ func DecodeGetPoolInfo_BidaskResult(stack tlb.VmStack) (resultType string, resul
 	var result GetPoolInfo_BidaskResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolInfo_BidaskResult", result, err
+}
+
+func DecodeGetPoolInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolInfo_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetPoolInfo_BidaskDammResult", result, err
 }
 
 type GetPoolStatusResult struct {
@@ -6752,6 +6969,39 @@ func DecodeGetStakingStatusResult(stack tlb.VmStack) (resultType string, resultA
 	return "GetStakingStatusResult", result, err
 }
 
+type GetStartTradeTime_BidaskDammResult struct {
+	TimePoolStart tlb.Int257
+}
+
+func GetStartTradeTime(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 72419 for "get_start_trade_time" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72419, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStartTradeTime_BidaskDammResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetStartTradeTime_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetStartTradeTime_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetStartTradeTime_BidaskDammResult", result, err
+}
+
 type GetStatusResult struct {
 	Status uint8
 }
@@ -7516,6 +7766,42 @@ func DecodeGetUserBinAssets_BidaskResult(stack tlb.VmStack) (resultType string, 
 	var result GetUserBinAssets_BidaskResult
 	err = stack.Unmarshal(&result)
 	return "GetUserBinAssets_BidaskResult", result, err
+}
+
+type GetUserFeesInfo_BidaskDammResult struct {
+	FeesPerLpXLast tlb.Int257
+	FeesPerLpYLast tlb.Int257
+	ClaimedX       tlb.Int257
+	ClaimedY       tlb.Int257
+}
+
+func GetUserFeesInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 111952 for "get_user_fees_info" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 111952, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetUserFeesInfo_BidaskDammResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetUserFeesInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetUserFeesInfo_BidaskDammResult
+	err = stack.Unmarshal(&result)
+	return "GetUserFeesInfo_BidaskDammResult", result, err
 }
 
 type GetUserPublicKeys_StormResult struct {

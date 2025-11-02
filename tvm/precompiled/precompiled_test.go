@@ -3,9 +3,10 @@ package precompiled
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/abi"
 	"reflect"
 	"testing"
+
+	"github.com/tonkeeper/tongo/abi"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -162,6 +163,29 @@ func TestPrecompiles(t *testing.T) {
 			data:    "te6ccgEBAQEASwAAkQVlSAU+AIAaTD9UIf2WiY+qHZktPTabWDVjwBuQa0x80kagNg6aoVAAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM//I=",
 			method:  97026,
 			account: "EQCJgWrPFPqHhJHTu0ISbIaZuc3OkQH8p7ePnmAtsIjpl3rP",
+			compareFunc: func(stack1, stack2 tlb.VmStack) error {
+				if len(stack2) != len(stack1) {
+					return fmt.Errorf("stack length mismatch")
+				}
+				var a, b abi.GetWalletDataResult
+				if err := stack1.Unmarshal(&a); err != nil {
+					return err
+				}
+				if err := stack2.Unmarshal(&b); err != nil {
+					return err
+				}
+				if !reflect.DeepEqual(a, b) {
+					return fmt.Errorf("stack mismatch")
+				}
+				return nil
+			},
+		},
+		{
+			name:    "get_wallet_data_v3",
+			code:    "te6ccgEBAQEAHAAANHLIyweB/AD4MjDQgQEA1wMBy/9xzyPQ7R7Y",
+			data:    "te6ccgEBAQEASwAAkQEgw/rmBADDiuJ7W0npzdc2+qXknukRpAFPxjf2AcS2gISpTVNoToAEc0Rr0i5ggf7Xx9neEMzED7qe+zPv8hAmcnIv4M8P0bA=",
+			method:  97026,
+			account: "kQDDNHHLAWzRDIci7_jD1An79w80ER5SzueZHmusWgJs_fG2",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
 				if len(stack2) != len(stack1) {
 					return fmt.Errorf("stack length mismatch")

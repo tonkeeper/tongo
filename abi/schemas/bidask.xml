@@ -87,12 +87,57 @@
         </msg_out>
     </interface>
 
+    <interface name="bidask_damm_pool">
+        <get_method name="get_jetton_data"/>
+        <get_method name="get_pool_info" version="bidask_damm"/>
+        <get_method name="whoami" version="bidask"/>
+        <get_method name="get_fees_info" version="bidask_damm"/>
+        <get_method name="get_farming_info" version="bidask_damm"/>
+        <get_method name="get_collected_fees_info" version="bidask_damm"/>
+        <get_method name="get_liquidity_info" version="bidask_damm"/>
+        <get_method name="get_start_trade_time" version="bidask_damm"/>
+        <get_method name="get_expected_swap_result" version="bidask_damm"/>
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="bidask_damm_swap"/>
+            <internal name="bidask_damm_provide_one_side"/>
+            <internal name="bidask_damm_internal_burn"/>
+            <internal name="bidask_damm_internal_claim"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_transfer"/>
+            <internal name="bidask_damm_mint"/>
+            <internal name="bidask_native_transfer_notification"/>
+        </msg_out>
+    </interface>
+
+    <interface name="bidask_damm_lp_wallet">
+        <get_method name="get_wallet_data"/>
+        <get_method name="get_user_fees_info" version="bidask_damm"/>
+        <msg_in>
+            <internal name="bidask_damm_burn"/>
+            <internal name="bidask_damm_claim_fees"/>
+        </msg_in>
+        <msg_out>
+            <internal name="bidask_damm_internal_burn"/>
+            <internal name="bidask_damm_internal_claim"/>
+        </msg_out>
+    </interface>
+
     <get_method name="get_pool_info">
         <output version="bidask" fixed_length="true">
             <slice name="jetton_wallet_x">msgaddress</slice>
             <slice name="jetton_wallet_y">msgaddress</slice>
             <int name="bin_step">int257</int>
             <int name="lp_fee">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_pool_info">
+        <output version="bidask_damm" fixed_length="true">
+            <slice name="jetton_wallet_x">msgaddress</slice>
+            <slice name="jetton_wallet_y">msgaddress</slice>
+            <int name="base_fee">int257</int>
         </output>
     </get_method>
 
@@ -107,12 +152,45 @@
         </output>
     </get_method>
 
+    <get_method name="get_farming_info">
+        <output version="bidask_damm" fixed_length="true">
+            <int name="farming_x_per_second">int257</int>
+            <int name="farming_y_per_second">int257</int>
+            <int name="previous_call">int257</int>
+            <int name="end_of_farming">int257</int>
+        </output>
+    </get_method>
+
     <get_method name="get_dynamic_fees_info">
         <output version="bidask" fixed_length="true">
             <int name="base_fee">int257</int>
             <int name="dynamic_fee_factor">int257</int>
             <int name="time_filter">int257</int>
             <int name="time_decay">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_fees_info">
+        <output version="bidask_damm" fixed_length="true">
+            <int name="dynamic_fee">int257</int>
+            <int name="dynamic_fee_factor">int257</int>
+            <int name="previous_swap_time">int257</int>
+            <int name="time_filter">int257</int>
+            <int name="time_decay">int257</int>
+            <int name="protocol_fee_reduction_factor">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_collected_fees_info">
+        <output version="bidask_damm" fixed_length="true">
+            <int name="fees_per_lp_x">int257</int>
+            <int name="fees_per_lp_y">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_start_trade_time">
+        <output version="bidask_damm" fixed_length="true">
+            <int name="time_pool_start">int257</int>
         </output>
     </get_method>
 
@@ -185,9 +263,48 @@
         </output>
     </get_method>
 
+    <get_method name="get_liquidity_info">
+        <output version="bidask_damm" fixed_length="true">
+            <int name="liquidity_x_amount">int257</int>
+            <int name="liquidity_y_amount">int257</int>
+            <int name="virtual_x_amount">int257</int>
+            <int name="virtual_y_amount">int257</int>
+            <int name="total_supply_lp">int257</int>
+            <int name="locked_lp">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_expected_swap_result">
+        <input>
+            <int name="amount">int257</int>
+            <int name="exact_out">int257</int>
+            <slice name="token_wallet">msgaddress</slice>
+            <int name="ref_fee">int257</int>
+            <int name="timestamp">int257</int>
+        </input>
+        <output version="bidask_damm" fixed_length="true">
+            <int name="out">int257</int>
+            <int name="excess">int257</int>
+            <int name="lp_fee">int257</int>
+            <int name="protocol_fee">int257</int>
+            <int name="ref_fee">int257</int>
+            <int name="liquidity_x_amount">int257</int>
+            <int name="liquidity_y_amount">int257</int>
+        </output>
+    </get_method>
+
     <get_method name="get_bins_number">
         <output version="bidask" fixed_length="true">
             <int name="bins_number">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_user_fees_info">
+        <output version="bidask_damm" fixed_length="true">
+            <int name="fees_per_lp_x_last">int257</int>
+            <int name="fees_per_lp_y_last">int257</int>
+            <int name="claimed_x">int257</int>
+            <int name="claimed_y">int257</int>
         </output>
     </get_method>
 
@@ -211,6 +328,16 @@
         additional_data:(Maybe ^AdditionalData) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
 
+    <jetton_payload name="bidask_damm_swap" >
+        bidask_damm_swap#dd79732c to_address:MsgAddress slippage:Coins from_address:MsgAddress exact_out:Coins
+        additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </jetton_payload>
+
+    <internal name="bidask_damm_swap" >
+        bidask_damm_swap#dd79732c query_id:uint64 native_amount:Coins to_address:MsgAddress slippage:Coins from_address:MsgAddress exact_out:Coins
+        additional_data:(Maybe ^Cell) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
+
     <internal name="bidask_provide" >
         bidask_provide#96feef7b query_id:uint64 deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </internal>
@@ -222,6 +349,22 @@
     <jetton_payload name="bidask_provide_both" >
         bidask_provide_both#3ea0bafc ton_amount:Coins deposit_type:uint4 liquidity_dict:(HashmapE 32 int32) reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
     </jetton_payload>
+
+    <jetton_payload name="bidask_damm_provide" >
+        bidask_damm_provide#63ec24ae receiver:MsgAddress lock_liquidity:Bool reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </jetton_payload>
+
+    <jetton_payload name="bidask_damm_provide_both" >
+        bidask_damm_provide_both#a8904134 native_amount:Coins receiver:MsgAddress lock_liquidity:Bool reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </jetton_payload>
+
+    <jetton_payload name="bidask_damm_provide_one_side" >
+        bidask_damm_provide_one_side#729c04c8 receiver:MsgAddress lock_liquidity:Bool reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </jetton_payload>
+
+    <internal name="bidask_damm_provide_one_side" >
+        bidask_damm_provide_one_side#729c04c8 query_id:uint64 native_amount:Coins receiver:MsgAddress lock_liquidity:Bool reject_payload:(Maybe ^Cell) forward_payload:(Maybe ^Cell)  = InternalMsgBody;
+    </internal>
 
     <internal name="bidask_swap_success" >
         bidask_swap_success#520e4831 query_id:uint64 new_current_bin:int32 new_sqrt_price:uint256 order:Bool amount_x:Coins amount_y:Coins 
@@ -307,5 +450,28 @@
 
     <internal name="bidask_native_transfer_notification" >
         bidask_native_transfer_notification#6edd65f0 query_id:uint64 native_amount:Coins forward_payload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_damm_mint" >
+        bidask_damm_mint#27ae4eff query_id:uint64 mint_amount:Coins from_address:MsgAddress
+        response_address:MsgAddress fees:^[fees_per_lp_x_last:uint220 fees_per_lp_y_last:uint220] forward_payload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_damm_claim_fees" >
+        bidask_damm_claim_fees#26fa12a4 query_id:uint64 is_account:Bool receiver:MsgAddress forward_payload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_damm_burn" >
+        bidask_damm_burn#71e4a09a query_id:uint64 burn_amount:Coins is_account:Bool receiver:MsgAddress additional_data:(Maybe ^Cell) forward_payload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_damm_internal_claim" >
+        bidask_damm_internal_claim#983b6933 query_id:uint64 owner:MsgAddress is_account:Bool receiver:MsgAddress wallet_balance:Coins
+        fees:^[fees_per_lp_x_last:uint220 fees_per_lp_y_last:uint220 claimed_x:uint220 claimed_y:uint220] forward_payload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="bidask_damm_internal_burn" >
+        bidask_damm_internal_burn#adb8eb49 query_id:uint64 burner:MsgAddress burn_amount:Coins is_account:Bool receiver:MsgAddress
+        fees:^[fees_per_lp_x_last:uint220 fees_per_lp_y_last:uint220 claimed_x:uint220 claimed_y:uint220] additional_data:(Maybe ^Cell) forward_payload:(Maybe ^Cell) = InternalMsgBody;
     </internal>
 </abi>

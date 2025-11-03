@@ -184,10 +184,13 @@ The list below contains the supported message operations, their names and opcode
 | MoonDeployOrder| 0x983432e2 |
 | MoonDepositLiquidity| 0xb31db781 |
 | MoonDepositLiquidity| 0xb31db781 |
+| MoonDepositRecord| 0xbaaa2c1b |
 | MoonFillOrder| 0x99b49842 |
 | MoonFillOrder| 0x99b49842 |
 | MoonOrderCancelled| 0x49f48ee9 |
 | MoonOrderPayout| 0x96612e37 |
+| MoonProvideLiquidity| 0x6b1b8a3f |
+| MoonProvideLiquiditySucceed| 0x737b4eb6 |
 | MoonSwap| 0xb37a900b |
 | MoonSwap| 0xb37a900b |
 | MoonSwapFailed| 0xc47c1f57 |
@@ -195,6 +198,8 @@ The list below contains the supported message operations, their names and opcode
 | MoonSwapSucceed| 0xcb7f38d6 |
 | MoonSwapSucceed| 0xcb7f38d6 |
 | MoonVestingPayout| 0xb4fc3916 |
+| MoonWithdrawLiquidityNotify| 0xff86f067 |
+| MoonWithdrawLiquidityPayout| 0x90d3b4ad |
 | MultisigApprove| 0xa762230f |
 | MultisigApproveAccepted| 0x82609bf6 |
 | MultisigApproveRejected| 0xafaf283e |

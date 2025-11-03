@@ -47,7 +47,7 @@
     <interface name="jetton_wallet_governed" inherits="jetton_wallet">
         <code_hash>89468f02c78e570802e39979c8516fc38df07ea76a48357e0536f2ba7b3ee37b</code_hash>
     </interface>
-    <interface name="jetton_wallet_governed_v2" inherits="jetton_wallet">
+    <interface name="jetton_wallet_regulated" inherits="jetton_wallet">
         <code_hash>e9aa0c02aafd5b38a295cc489019882439cf35c9738cc6dbeece4403dd066a5a</code_hash>
     </interface>
 

@@ -43,6 +43,7 @@ const (
 	JettonWallet
 	JettonWalletCoffeeLp
 	JettonWalletGoverned
+	JettonWalletGovernedV2
 	JettonWalletV1
 	JettonWalletV2
 	Locker
@@ -202,6 +203,8 @@ func (c ContractInterface) String() string {
 		return "jetton_wallet_coffee_lp"
 	case JettonWalletGoverned:
 		return "jetton_wallet_governed"
+	case JettonWalletGovernedV2:
+		return "jetton_wallet_governed_v2"
 	case JettonWalletV1:
 		return "jetton_wallet_v1"
 	case JettonWalletV2:
@@ -449,6 +452,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return JettonWalletCoffeeLp
 	case "jetton_wallet_governed":
 		return JettonWalletGoverned
+	case "jetton_wallet_governed_v2":
+		return JettonWalletGovernedV2
 	case "jetton_wallet_v1":
 		return JettonWalletV1
 	case "jetton_wallet_v2":
@@ -1657,6 +1662,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return JettonWallet.Implements(other)
 	case JettonWalletGoverned:
 		return JettonWallet.Implements(other)
+	case JettonWalletGovernedV2:
+		return JettonWallet.Implements(other)
 	case JettonWalletV1:
 		return JettonWallet.Implements(other)
 	case JettonWalletV2:
@@ -2127,6 +2134,12 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV5Beta},
 		getMethods: []InvokeFn{
 			Seqno,
+		},
+	},
+	ton.MustParseHash("e9aa0c02aafd5b38a295cc489019882439cf35c9738cc6dbeece4403dd066a5a"): {
+		contractInterfaces: []ContractInterface{JettonWalletGovernedV2},
+		getMethods: []InvokeFn{
+			GetWalletData,
 		},
 	},
 	ton.MustParseHash("edcc62f1752297fbda2408c09ca420b3af9528102e33b9e0a0ebe38553c18fec"): {

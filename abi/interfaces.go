@@ -2386,6 +2386,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncMoonSwapMsgBody,
 			decodeFuncMoonDepositLiquidityMsgBody,
 			decodeFuncMoonBoostPoolMsgBody,
+			decodeFuncMoonProvideLiquidityMsgBody,
 		}
 	case NftCollection:
 		return []msgDecoderFunc{

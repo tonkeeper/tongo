@@ -22,6 +22,7 @@
             <internal name="moon_swap"/> <!-- TON: https://tonviewer.com/transaction/79b5f0c733d8d19f92b6dee74206b83c384a83744372c8116088739df6c94b71 JETTON: https://tonviewer.com/transaction/6822964e3f54a6df48a7436254ba40639399f8b00caaeea3e348d02e31f8c73d  -->
             <internal name="moon_deposit_liquidity"/> <!-- https://tonviewer.com/transaction/44cafbf7f7f63baf4e7cb3faae8cd652f0b50376f747a633707726c67304981c  -->
             <internal name="moon_boost_pool"/> <!-- https://tonviewer.com/transaction/9c5bfaf9249eb43b5100bb6e67285e518992c61b67d76e9a2c282715c20e7644  -->
+            <internal name="moon_provide_liquidity"/> <!-- https://tonviewer.com/transaction/4dc08ead5577d140fca17464352cacb9c7e42f6a579dcbcdc94c7e21f4aa61b9  -->
         </msg_in>
 
         <msg_out>
@@ -29,6 +30,10 @@
             <internal name="jetton_transfer"/>
             <internal name="moon_swap_succeed"/> <!-- https://tonviewer.com/transaction/9a6bc49bf1018bf64341c263350aec98f5bad21821bde295c4e881f017f05486  -->
             <internal name="moon_swap_failed"/> <!-- https://tonviewer.com/transaction/0ed4bf1a11d76f8108b62df6e45aa73dd1a882b706f116c29af4c2c598f77582  -->
+            <internal name="moon_provide_liquidity_succeed"/> <!-- https://tonviewer.com/transaction/dd8c58a1e8b921c2bf2f072a19dff2ec52875e251c5c6f195202e8a26295f0ee  -->
+            <internal name="moon_deposit_record"/> <!-- https://tonviewer.com/transaction/331c3d946bde0f34892842671c6d99038586419002334559b7112fc0e613e397  -->
+            <internal name="moon_withdraw_liquidity_payout"/> <!-- https://tonviewer.com/transaction/58747ac5bbf4bfc7ce9932118f82fb4cfa6a0915a5364cf7608f1f500a83464d  -->
+            <internal name="moon_withdraw_liquidity_notify"/> <!-- https://tonviewer.com/transaction/aff787cafe9f18ab7f1dc25e588fb23a1d79bd9389116aec6693db6be54ebf9c  -->
         </msg_out>
 
     </interface>
@@ -200,6 +205,26 @@
 
     <internal name="moon_order_cancelled">
         moon_order_cancelled#49f48ee9 query_id:uint64 = InMsgBody;
+    </internal>
+
+    <internal name="moon_deposit_record">
+        moon_deposit_record#baaa2c1b query_id:uint64 asset_number:uint8 deposit_amount:coins min_lp_amount:coins = InMsgBody;
+    </internal>
+
+    <internal name="moon_provide_liquidity">
+        moon_provide_liquidity#6b1b8a3f query_id:uint64 amount1:coins amount2:coins user:MsgAddress min_lp_amount:coins = InMsgBody;
+    </internal>
+
+    <internal name="moon_provide_liquidity_succeed">
+        moon_provide_liquidity_succeed#737b4eb6 = InMsgBody;
+    </internal>
+
+    <internal name="moon_withdraw_liquidity_payout">
+        moon_withdraw_liquidity_payout#90d3b4ad query_id:uint64 = InMsgBody;
+    </internal>
+
+    <internal name="moon_withdraw_liquidity_notify">
+        moon_withdraw_liquidity_notify#ff86f067 query_id:uint64 = InMsgBody;
     </internal>
 
 

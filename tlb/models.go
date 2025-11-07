@@ -144,6 +144,28 @@ func (h HashmapE[keyT, T]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
+func (h *HashmapE[keyT, T]) UnmarshalJSON(data []byte) error {
+	var (
+		m    map[string]T
+		hInt Hashmap[keyT, T]
+	)
+	if err := json.Unmarshal(data, &m); err != nil {
+		return err
+	}
+	hInt.keys = make([]keyT, 0, len(m))
+	hInt.values = make([]T, 0, len(m))
+	for k, v := range m {
+		var key keyT
+		if err := json.Unmarshal([]byte(k), &key); err != nil {
+			return err
+		}
+		hInt.keys = append(hInt.keys, key)
+		hInt.values = append(hInt.values, v)
+	}
+	h.m = hInt
+	return nil
+}
+
 func (f ExtraCurrencyCollection) MarshalJSON() ([]byte, error) {
 	return f.Dict.MarshalJSON()
 }

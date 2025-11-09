@@ -148,3 +148,10 @@ func (s *ShardAccountInfo) String() string {
 
 	return result
 }
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}

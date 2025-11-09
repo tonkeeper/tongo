@@ -1,0 +1,13 @@
+{
+  "workchain": 0,
+  "address_hex": "2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb",
+  "mc_seqno": 8302897,
+  "mc_lt": 17264194000004,
+  "mc_utime": 1762725057,
+  "account_state": "",
+  "account_type": "none",
+  "last_trans_lt": 0,
+  "last_trans_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "account_found": false,
+  "with_proof": false
+}

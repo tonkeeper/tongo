@@ -1,0 +1,14 @@
+{
+  "description": "Tycho testnet shard account fixture",
+  "workchain": 0,
+  "address": "779926153d87ec8217be3b57e38dde3e8e1f02e77c2580dc0c397598bbafadbe",
+  "with_proof": false,
+  "mc_state_info": {
+    "lt": 17264644000004,
+    "mc_seqno": 8303322,
+    "utime": 1762726562
+  },
+  "account_found": true,
+  "account_state": "te6ccgECCAEAAWMAAnHAB3mSYVPYfsghe+O1fjjd4+jh8C53wlgNwMOXWYu6+tviEIJBQ0h7ypAAAD5IzSAYEUukTJskE0ACAQBQHzEfBtZQuEEWGTz9i2m1SjGCvaFhx3u6o8CBOEcUMAAAAAGaX1audwEU/wD0pBP0vPLICwMCASAHBALm8nHXAQHAAPJ6gwjXGO1E0IMH1wHXCz/I+CjPFiPPFsn5AANx1wEBwwCagwfXAVETuvLgZN6AQNcBgCDXAYAg1wFUFnX5EPKo+CO78nlmvvgjgQcIoIED6KhSILyx8nQCIIIQTO5kbLrjDwHIy//LP8ntVAYFAD6CEBaePhG6jhH4AAKTINdKl3jXAdQC+wDo0ZMy8jziAJgwAtdM0PpAgwbXAXHXAXjXAddM+ABwgBAEqgIUscjLBVAFzxZQA/oCy2ki0CHPMSHXSaCECbmYM3ABywBYzxaXMHEBywASzOLJAfsAAATSMA==",
+  "account_type": "unknown_parse_error"
+}

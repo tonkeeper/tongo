@@ -9,6 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/tonkeeper/tongo/tychoclient/proto"
 )
@@ -31,15 +32,17 @@ type Client struct {
 
 // NewClient creates a new Tycho client with default settings
 func NewClient() (*Client, error) {
-	return NewClientWithEndpoint(DefaultEndpoint)
+	return NewClientWithEndpoint(DefaultEndpoint, true)
 }
 
-// NewClientWithEndpoint creates a new Tycho client with custom endpoint
-func NewClientWithEndpoint(endpoint string) (*Client, error) {
+// NewClientWithEndpoint creates a new Tycho client with a custom endpoint
+func NewClientWithEndpoint(endpoint string, withTLS bool) (*Client, error) {
 	// Use TLS for secure connection
-	creds := credentials.NewTLS(&tls.Config{})
-
-	conn, err := grpc.Dial(endpoint, grpc.WithTransportCredentials(creds))
+	creds := grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{}))
+	if !withTLS {
+		creds = grpc.WithTransportCredentials(insecure.NewCredentials())
+	}
+	conn, err := grpc.Dial(endpoint, creds)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to %s: %w", endpoint, err)
 	}

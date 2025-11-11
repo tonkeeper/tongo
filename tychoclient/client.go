@@ -3,6 +3,7 @@ package tychoclient
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"time"
 
@@ -19,6 +20,8 @@ const (
 	// DefaultTimeout for gRPC calls
 	DefaultTimeout = 30 * time.Second
 )
+
+var BlockNotFoundErr = errors.New("block not found")
 
 // Client provides access to Tycho blockchain data via gRPC
 type Client struct {
@@ -122,7 +125,7 @@ func (c *Client) readBlockFromStream(stream proto.TychoIndexer_GetBlockClient) (
 
 		switch msg := resp.Msg.(type) {
 		case *proto.GetBlockResponse_NotFound:
-			return nil, fmt.Errorf("block not found")
+			return nil, BlockNotFoundErr
 		case *proto.GetBlockResponse_Found:
 			// First chunk with metadata
 			if msg.Found.FirstChunk != nil {

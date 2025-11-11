@@ -1,0 +1,227 @@
+syntax = "proto3";
+
+package indexer;
+
+option go_package = "./proto";
+
+service TychoIndexer {
+    // Indexer node status.
+    rpc GetStatus (GetStatusRequest) returns (GetStatusResponse);
+    // Subscribe for block events.
+    rpc WatchBlockIds (WatchBlockIdsRequest) returns (stream WatchBlockIdsEvent);
+    // Returns a stream of BOC-encoded block data chunks if found,
+    // otherwise returns a stream with a single block-not-found message.
+    rpc GetBlock (GetBlockRequest) returns (stream GetBlockResponse);
+    // Search for a shard account state.
+    rpc GetShardAccount (GetShardAccountRequest) returns (GetShardAccountResponse);
+    // Search for a library code.
+    rpc GetLibraryCell (GetLibraryCellRequest) returns (GetLibraryCellResponse);
+}
+
+// === Get status ===
+
+message GetStatusRequest {
+}
+
+message GetStatusResponse {
+    // Latest known masterchain info, or "None" if the node is not ready yet.
+    optional McStateInfo mcStateInfo = 1;
+    // Local server unix timestamp in milliseconds.
+    uint64 timestamp = 2;
+    // Blockchain zerostate id.
+    bytes zerostateRootHash = 3;
+    // Blockchain zerostate id.
+    bytes zerostateFileHash = 4;
+    // From which masterchain block the node started working.
+    uint32 initBlockSeqno = 5;
+    // Node version (encoded as octets, e.g. version 1.2.3 will be 0x00010203)
+    uint32 version = 6;
+}
+
+// === Watch block ids ===
+
+message WatchBlockIdsRequest {
+    // Seqno of the first masterchain block event to send.
+    // If the seqno is too far in the past, "range-skipped" event is sent.
+    uint32 sinceMcSeqno = 1;
+}
+
+message WatchBlockIdsEvent {
+    oneof event {
+        BlocksRangeSkipped rangeSkipped = 1;
+        NewMasterchainBlock newMcBlock = 2;
+    }
+}
+
+message BlocksRangeSkipped {
+    // Brief masterchain info at the moment of accessing the state.
+    McStateInfo mcStateInfo = 1;
+    // Seqno of the first masterchain block in the skipped range (included).
+    uint32 from = 2;
+    // Seqno of the last masterchain block in the skipped range (included).
+    uint32 to = 3;
+}
+
+message NewMasterchainBlock {
+    // Brief masterchain info at the moment of accessing the state.
+    McStateInfo mcStateInfo = 1;
+    // The id of the masterchain block.
+    BlockId mcBlockId = 2;
+    // Brief info for all shards in all workchains other than masterchain.
+    repeated ShardDescription shardDescription = 3;
+    // All shard block ids since the previous masterchain block.
+    // (can be empty if no new shard blocks were produced).
+    repeated BlockId shardBlockIds = 4;
+}
+
+message ShardDescription {
+    // Id of the latest block in that shard.
+    BlockId latestBlockId = 1;
+    // LT of the latest block in that shard.
+    uint64 endLt = 2;
+    // Unix timestamp when the latest block was generated.
+    uint32 utime = 3;
+    // The latest known masterchain block at the time of shard generation.
+    uint32 regMcSeqno = 4;
+}
+
+// === Get block ===
+
+message GetBlockRequest {
+    oneof query {
+        // Searches for a block by seqno.
+        BlockBySeqno bySeqno = 1;
+        // Searches for a block by its id.
+        BlockById byId = 2;
+    }
+}
+
+message GetBlockResponse {
+    oneof msg {
+        // First and last message in stream if not found.
+        BlockNotFound notFound = 1;
+        // First message in stream if found.
+        BlockFound found = 2;
+        // Subsequent messages in stream if it didn't fit into one chunk.
+        BlockChunk chunk = 3;
+    }
+}
+
+message BlockNotFound {
+    McStateInfo mcStateInfo = 1;
+}
+
+message BlockFound {
+    McStateInfo mcStateInfo = 1;
+    uint64 totalSize = 2;
+    uint64 maxChunkSize = 3;
+    BlockChunk firstChunk = 4;
+}
+
+message BlockChunk {
+    uint64 offset = 1;
+    bytes data = 2;
+}
+
+// === Get shard account ===
+
+message GetShardAccountRequest {
+    // Workchain part of the address (int8 actually).
+    int32 workchain = 1;
+    // 32 bytes of the hash part of the address.
+    bytes address = 2;
+    // Whether to compute a separate proof that account state is included into a shard state.
+    bool withProof = 3;
+    // Find account state at the time of a specific block
+    oneof atBlock {
+        // Uses the latest states "edge".
+        LatestBlock latest = 4;
+        // Searches for a block by seqno.
+        BlockBySeqno bySeqno = 5;
+        // Searches for a block by its id.
+        BlockById byId = 6;
+    }
+}
+
+message GetShardAccountResponse {
+    oneof account {
+        // Specified block not found.
+        BlockNotFound blockNotFound = 1;
+        // Shard account info.
+        ShardAccount accessed = 2;
+    }
+}
+
+message ShardAccountNotFound {
+    // Brief masterchain info at the moment of accessing the state.
+    McStateInfo mcStateInfo = 1;
+}
+
+message ShardAccount {
+    // Brief masterchain info at the moment of accessing the state.
+    McStateInfo mcStateInfo = 1;
+    // BOC-encoded `ShardAccount` (if found).
+    optional bytes accountState = 2;
+    // BOC-encoded collection of proofs. Consists of two roots,
+    // the first one is shard state root proof cell
+    // and the second is account-in-state proof.
+    optional bytes proof = 3;
+}
+
+// === Get library cell ===
+
+message GetLibraryCellRequest {
+    // 32 bytes of the library cell root hash.
+    bytes hash = 1;
+}
+
+message GetLibraryCellResponse {
+    oneof library {
+        LibraryCellNotFound notFound = 1;
+        LibraryCellFound found = 2;
+    }
+}
+
+message LibraryCellNotFound {
+    // Brief masterchain info at the moment of accessing the state.
+    McStateInfo mcStateInfo = 1;
+}
+
+message LibraryCellFound {
+    // Brief masterchain info at the moment of accessing the state.
+    McStateInfo mcStateInfo = 1;
+    // BOC-encoded library code.
+    bytes cell = 2;
+}
+
+// === Common stuff ===
+
+message McStateInfo {
+    // Masterchain block seqno.
+    uint32 mcSeqno = 1;
+    // Masterchain LT (end_lt).
+    uint64 lt = 2;
+    // Masterchain unix timestamp.
+    uint32 utime = 3;
+}
+
+message BlockBySeqno {
+    int32 workchain = 1;
+    uint64 shard = 2;
+    uint32 seqno = 3;
+}
+
+message BlockById {
+    BlockId id = 1;
+}
+
+message LatestBlock {
+}
+
+message BlockId {
+    int32 workchain = 1;
+    uint64 shard = 2;
+    uint32 seqno = 3;
+    bytes rootHash = 4;
+    bytes fileHash = 5;
+}

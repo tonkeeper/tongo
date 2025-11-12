@@ -659,7 +659,7 @@ func (extra *TychoBlockExtra) InMsgDescrLength() (int, error) {
 	// TODO: refactor
 	// construct a dummy extra with necessary fields for BlockExtra.InMsgDescrLength
 	dummyExtra := tlb.BlockExtra{
-		OutMsgDescrCell: extra.InMsgDescrCell,
+		InMsgDescrCell: extra.InMsgDescrCell,
 	}
 	return dummyExtra.InMsgDescrLength()
 }

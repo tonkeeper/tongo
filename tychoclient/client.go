@@ -32,14 +32,14 @@ type Client struct {
 
 // NewClient creates a new Tycho client with default settings
 func NewClient() (*Client, error) {
-	return NewClientWithEndpoint(DefaultEndpoint, true)
+	return NewClientWithEndpoint(DefaultEndpoint, false)
 }
 
 // NewClientWithEndpoint creates a new Tycho client with a custom endpoint
-func NewClientWithEndpoint(endpoint string, withTLS bool) (*Client, error) {
+func NewClientWithEndpoint(endpoint string, disableTLS bool) (*Client, error) {
 	// Use TLS for secure connection
 	creds := grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{}))
-	if !withTLS {
+	if disableTLS {
 		creds = grpc.WithTransportCredentials(insecure.NewCredentials())
 	}
 	conn, err := grpc.Dial(endpoint, creds)

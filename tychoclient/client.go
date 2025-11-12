@@ -60,7 +60,7 @@ func (c *Client) Close() error {
 
 // GetStatus returns the current status of the Tycho node
 func (c *Client) GetStatus(ctx context.Context) (*proto.GetStatusResponse, error) {
-	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
+	ctx, cancel := limitedContext(ctx)
 	defer cancel()
 
 	return c.client.GetStatus(ctx, &proto.GetStatusRequest{})
@@ -68,7 +68,7 @@ func (c *Client) GetStatus(ctx context.Context) (*proto.GetStatusResponse, error
 
 // GetLibraryCell fetches a library cell by hash
 func (c *Client) GetLibraryCell(ctx context.Context, hash []byte) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
+	ctx, cancel := limitedContext(ctx)
 	defer cancel()
 
 	req := &proto.GetLibraryCellRequest{
@@ -92,7 +92,7 @@ func (c *Client) GetLibraryCell(ctx context.Context, hash []byte) ([]byte, error
 
 // GetRawBlockData fetches raw BOC data for debugging purposes
 func (c *Client) GetRawBlockData(ctx context.Context, workchain int32, shard uint64, seqno uint32) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
+	ctx, cancel := limitedContext(ctx)
 	defer cancel()
 
 	req := &proto.GetBlockRequest{
@@ -147,4 +147,12 @@ func (c *Client) readBlockFromStream(stream proto.TychoIndexer_GetBlockClient) (
 	}
 
 	return totalData, nil
+}
+
+func limitedContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	_, hasDeadline := ctx.Deadline()
+	if hasDeadline {
+		return context.WithCancel(ctx)
+	}
+	return context.WithTimeout(ctx, DefaultTimeout)
 }

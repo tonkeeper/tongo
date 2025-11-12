@@ -40,7 +40,7 @@ func (c *Client) GetShardAccountByBlockId(ctx context.Context, workchain int32, 
 
 // getShardAccountInternal is the internal implementation for getting shard account
 func (c *Client) getShardAccountInternal(ctx context.Context, workchain int32, address []byte, atBlock interface{}) (*ShardAccountInfo, uint64, error) {
-	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
+	ctx, cancel := limitedContext(ctx)
 	defer cancel()
 
 	req := &proto.GetShardAccountRequest{

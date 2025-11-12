@@ -1,6 +1,7 @@
 package tychoclient
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"fmt"
@@ -10,16 +11,16 @@ import (
 	"github.com/tonkeeper/tongo/tychoclient/proto"
 )
 
-// GetShardAccount gets account state from a specific shard at the latest block
-func (c *Client) GetShardAccount(ctx context.Context, workchain int32, address []byte, withProof bool) (*ShardAccountInfo, error) {
-	return c.getShardAccountInternal(ctx, workchain, address, withProof, &proto.GetShardAccountRequest_Latest{
+// GetShardAccount gets account state and proof LT from a specific shard at the latest block
+func (c *Client) GetShardAccount(ctx context.Context, workchain int32, address []byte) (*ShardAccountInfo, uint64, error) {
+	return c.getShardAccountInternal(ctx, workchain, address, &proto.GetShardAccountRequest_Latest{
 		Latest: &proto.LatestBlock{},
 	})
 }
 
-// GetShardAccountAtSeqno gets account state at a specific block seqno
-func (c *Client) GetShardAccountAtSeqno(ctx context.Context, workchain int32, address []byte, withProof bool, blockWorkchain int32, shard uint64, seqno uint32) (*ShardAccountInfo, error) {
-	return c.getShardAccountInternal(ctx, workchain, address, withProof, &proto.GetShardAccountRequest_BySeqno{
+// GetShardAccountAtSeqno gets account state and proof LT at a specific block seqno
+func (c *Client) GetShardAccountAtSeqno(ctx context.Context, workchain int32, address []byte, blockWorkchain int32, shard uint64, seqno uint32) (*ShardAccountInfo, uint64, error) {
+	return c.getShardAccountInternal(ctx, workchain, address, &proto.GetShardAccountRequest_BySeqno{
 		BySeqno: &proto.BlockBySeqno{
 			Workchain: blockWorkchain,
 			Shard:     shard,
@@ -28,9 +29,9 @@ func (c *Client) GetShardAccountAtSeqno(ctx context.Context, workchain int32, ad
 	})
 }
 
-// GetShardAccountByBlockId gets account state at a specific block
-func (c *Client) GetShardAccountByBlockId(ctx context.Context, workchain int32, address []byte, withProof bool, blockId *proto.BlockId) (*ShardAccountInfo, error) {
-	return c.getShardAccountInternal(ctx, workchain, address, withProof, &proto.GetShardAccountRequest_ById{
+// GetShardAccountByBlockId gets account state and proof LT at a specific block
+func (c *Client) GetShardAccountByBlockId(ctx context.Context, workchain int32, address []byte, blockId *proto.BlockId) (*ShardAccountInfo, uint64, error) {
+	return c.getShardAccountInternal(ctx, workchain, address, &proto.GetShardAccountRequest_ById{
 		ById: &proto.BlockById{
 			Id: blockId,
 		},
@@ -38,14 +39,14 @@ func (c *Client) GetShardAccountByBlockId(ctx context.Context, workchain int32, 
 }
 
 // getShardAccountInternal is the internal implementation for getting shard account
-func (c *Client) getShardAccountInternal(ctx context.Context, workchain int32, address []byte, withProof bool, atBlock interface{}) (*ShardAccountInfo, error) {
+func (c *Client) getShardAccountInternal(ctx context.Context, workchain int32, address []byte, atBlock interface{}) (*ShardAccountInfo, uint64, error) {
 	ctx, cancel := context.WithTimeout(ctx, DefaultTimeout)
 	defer cancel()
 
 	req := &proto.GetShardAccountRequest{
 		Workchain: workchain,
 		Address:   address,
-		WithProof: withProof,
+		WithProof: true,
 	}
 
 	// Set the atBlock field based on the interface type
@@ -57,38 +58,33 @@ func (c *Client) getShardAccountInternal(ctx context.Context, workchain int32, a
 	case *proto.GetShardAccountRequest_ById:
 		req.AtBlock = v
 	default:
-		return nil, fmt.Errorf("unsupported atBlock type")
+		return nil, 0, fmt.Errorf("unsupported atBlock type")
 	}
 
 	resp, err := c.client.GetShardAccount(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get shard account: %w", err)
+		return nil, 0, fmt.Errorf("failed to get shard account: %w", err)
 	}
 
 	switch result := resp.Account.(type) {
 	case *proto.GetShardAccountResponse_BlockNotFound:
 		mcInfo := result.BlockNotFound.McStateInfo
-		return nil, fmt.Errorf("block not found at MC seqno %d (LT: %d, utime: %d)",
+		return nil, 0, fmt.Errorf("block not found at MC seqno %d (LT: %d, utime: %d)",
 			mcInfo.McSeqno, mcInfo.Lt, mcInfo.Utime)
 	case *proto.GetShardAccountResponse_Accessed:
-		info := &ShardAccountInfo{
+		info := ShardAccountInfo{
 			McStateInfo:  result.Accessed.McStateInfo,
 			AccountState: result.Accessed.AccountState,
 			Proof:        result.Accessed.Proof,
 		}
-
-		// Parse account state if present
-		if len(result.Accessed.AccountState) > 0 {
-			parsed, err := ParseShardAccount(result.Accessed.AccountState)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse account state: %w", err)
-			}
-			info.ParsedAccountState = parsed
+		parsed, proofLT, err := ParseShardAccount(result.Accessed.AccountState, result.Accessed.Proof, address)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to parse account state: %w", err)
 		}
-
-		return info, nil
+		info.ParsedAccountState = &parsed
+		return &info, proofLT, nil
 	default:
-		return nil, fmt.Errorf("unexpected response type: %T", result)
+		return nil, 0, fmt.Errorf("unexpected response type: %T", result)
 	}
 }
 
@@ -137,29 +133,50 @@ type ShardAccountInfo struct {
 }
 
 // ParseShardAccount parses BOC-encoded ShardAccount data
-func ParseShardAccount(bocData []byte) (*tlb.ShardAccount, error) {
-	if len(bocData) == 0 {
-		return nil, fmt.Errorf("empty BOC data")
-	}
-
-	cells, err := boc.DeserializeBoc(bocData)
+func ParseShardAccount(state, proof, accountAddress []byte) (tlb.ShardAccount, uint64, error) {
+	lt, hash, dataProofLT, err := decodeAccountDataFromProof(proof, accountAddress)
 	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize BOC: %w", err)
+		return tlb.ShardAccount{}, 0, fmt.Errorf("failed to decode account data from proof: %w", err)
 	}
-
-	if len(cells) == 0 {
-		return nil, fmt.Errorf("no cells in BOC")
+	if len(state) == 0 {
+		return tlb.ShardAccount{Account: tlb.Account{SumType: "AccountNone"}}, dataProofLT, nil
 	}
-
-	var account tlb.ShardAccount
-	decoder := tlb.NewDecoder()
-	decoder.WithDebug()
-	err = decoder.Unmarshal(cells[0], &account)
+	cell, err := boc.DeserializeSingleRootBoc(state)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal shard account: %w", err)
+		return tlb.ShardAccount{}, 0, fmt.Errorf("failed to deserialize cell: %w", err)
 	}
+	var acc tlb.Account
+	err = tlb.Unmarshal(cell, &acc)
+	if err != nil {
+		return tlb.ShardAccount{}, 0, fmt.Errorf("failed to unmarshal to tlb.Account: %w", err)
+	}
+	return tlb.ShardAccount{Account: acc, LastTransHash: hash, LastTransLt: lt}, dataProofLT, nil
+}
 
-	return &account, nil
+func decodeAccountDataFromProof(proofBytes []byte, accountAddress []byte) (uint64, tlb.Bits256, uint64, error) {
+	cells, err := boc.DeserializeBoc(proofBytes)
+	if err != nil {
+		return 0, tlb.Bits256{}, 0, err
+	}
+	if len(cells) < 2 {
+		return 0, tlb.Bits256{}, 0, fmt.Errorf("must be at least one root cell")
+	}
+	var proof struct {
+		Proof tlb.MerkleProof[TychoShardStateUnsplit]
+	}
+	err = tlb.Unmarshal(cells[1], &proof) // cells order must be strictly defined
+	if err != nil {
+		return 0, tlb.Bits256{}, 0, err
+	}
+	dataProofLT := proof.Proof.VirtualRoot.GenLt
+	values := proof.Proof.VirtualRoot.Accounts.Values()
+	keys := proof.Proof.VirtualRoot.Accounts.Keys()
+	for i, k := range keys {
+		if bytes.Equal(k[:], accountAddress) {
+			return values[i].LastTransLt, values[i].LastTransHash, dataProofLT, nil
+		}
+	}
+	return 0, tlb.Bits256{}, dataProofLT, nil
 }
 
 // String returns a human-readable representation of ShardAccountInfo

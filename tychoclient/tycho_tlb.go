@@ -2,9 +2,11 @@ package tychoclient
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 // Tycho Block - uses automatic TLB parsing with struct tags
@@ -586,4 +588,127 @@ func (m *McBlockExtraTycho) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) erro
 	}
 
 	return nil
+}
+
+func (s *TychoShardState) AccountBalances() map[tlb.Bits256]tlb.CurrencyCollection {
+	switch s.SumType {
+	case "UnsplitState":
+		accounts := s.UnsplitState.Value.Accounts.Keys()
+		balances := make(map[tlb.Bits256]tlb.CurrencyCollection, len(accounts))
+		for i, shardAccount := range s.UnsplitState.Value.Accounts.Values() {
+			c, ok := shardAccount.Account.CurrencyCollection()
+			if !ok {
+				continue
+			}
+			balances[accounts[i]] = c
+		}
+		return balances
+	default:
+		leftAccounts := s.SplitState.Left.Accounts.Keys()
+		rightAccounts := s.SplitState.Right.Accounts.Keys()
+		balances := make(map[tlb.Bits256]tlb.CurrencyCollection, len(leftAccounts)+len(rightAccounts))
+		for i, shardAccount := range s.SplitState.Left.Accounts.Values() {
+			c, ok := shardAccount.Account.CurrencyCollection()
+			if !ok {
+				continue
+			}
+			balances[leftAccounts[i]] = c
+		}
+		for i, shardAccount := range s.SplitState.Right.Accounts.Values() {
+			c, ok := shardAccount.Account.CurrencyCollection()
+			if !ok {
+				continue
+			}
+			balances[rightAccounts[i]] = c
+		}
+		return balances
+	}
+}
+
+func (b *TychoBlock) TransactionsQuantity() int {
+	quantity := 0
+	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
+		quantity += len(accountBlock.Transactions.Keys())
+	}
+	return quantity
+}
+
+func (b *TychoBlock) AllTransactions() []*tlb.Transaction {
+	transactions := make([]*tlb.Transaction, 0, b.TransactionsQuantity())
+	for _, accountBlock := range b.Extra.AccountBlocks.Values() {
+		for i := range accountBlock.Transactions.Values() {
+			transactions = append(transactions, &accountBlock.Transactions.Values()[i].Value)
+		}
+	}
+	sort.Slice(transactions, func(i, j int) bool {
+		return transactions[i].Lt < transactions[j].Lt
+	})
+	return transactions
+}
+
+func (extra *TychoBlockExtra) OutMsgDescrLength() (int, error) {
+	// TODO: refactor
+	// construct a dummy extra with necessary fields for BlockExtra.OutMsgDescrLength
+	dummyExtra := tlb.BlockExtra{
+		OutMsgDescrCell: extra.OutMsgDescrCell,
+	}
+	return dummyExtra.OutMsgDescrLength()
+}
+
+func (extra *TychoBlockExtra) InMsgDescrLength() (int, error) {
+	// TODO: refactor
+	// construct a dummy extra with necessary fields for BlockExtra.InMsgDescrLength
+	dummyExtra := tlb.BlockExtra{
+		OutMsgDescrCell: extra.InMsgDescrCell,
+	}
+	return dummyExtra.InMsgDescrLength()
+}
+
+func GetParents(i TychoBlockInfo) ([]ton.BlockIDExt, error) {
+	// TODO: refactor
+	// construct a dummy block with necessary fields for tongo.GetParents
+	var dummyBlock tlb.BlockInfo
+	dummyBlock.Shard = i.Shard
+	dummyBlock.PrevRef = i.PrevRef
+	dummyBlock.AfterSplit = i.AfterSplit
+	dummyBlock.AfterMerge = i.AfterMerge
+	return ton.GetParents(dummyBlock)
+}
+
+func ShardIDs(extra McBlockExtraTycho) []ton.BlockIDExt {
+	items := extra.ShardHashes.Items()
+	shardsCount := 0
+	for _, item := range items {
+		for _, x := range item.Value.Value.BinTree.Values {
+			if x.SeqNo == 0 {
+				continue
+			}
+			shardsCount += 1
+		}
+	}
+	if shardsCount == 0 {
+		return nil
+	}
+	shards := make([]ton.BlockIDExt, 0, shardsCount)
+	for _, item := range items {
+		for _, shardDesc := range item.Value.Value.BinTree.Values {
+			if shardDesc.SeqNo == 0 {
+				continue
+			}
+			shards = append(shards, toBlockID(shardDesc, int32(item.Key)))
+		}
+	}
+	return shards
+}
+
+func toBlockID(s TychoShardDescr, workchain int32) ton.BlockIDExt {
+	return ton.BlockIDExt{
+		BlockID: ton.BlockID{
+			Workchain: workchain,
+			Shard:     0x8000000000000000, // no sharding, the field containing shard information was removed from the block
+			Seqno:     s.SeqNo,
+		},
+		RootHash: ton.Bits256(s.RootHash),
+		FileHash: ton.Bits256(s.FileHash),
+	}
 }

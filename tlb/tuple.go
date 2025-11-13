@@ -14,9 +14,13 @@ func (t *VmStkTuple) Unmarshal(v any) error {
 	case reflect.Slice:
 		items, err := t.RecursiveToSlice()
 		if err != nil {
-			items, err = t.Data.RecursiveToSlice(int(t.Len))
-			if err != nil {
-				return err
+			if t.Data != nil {
+				items, err = t.Data.RecursiveToSlice(int(t.Len))
+				if err != nil {
+					return err
+				}
+			} else {
+				items = []VmStackValue{}
 			}
 		}
 		sl := reflect.MakeSlice(val.Elem().Type(), 0, len(items))

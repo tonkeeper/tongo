@@ -16,6 +16,11 @@
         <get_method name="get_pool_data" version="affluent"/>
     </interface>
 
+    <!-- https://tonviewer.com/EQA2zgb-gK0JBknK5aN63dora40GmO2wRpQDhkL2cz1H2ZKq  -->
+    <interface name="affluent_batch">
+        <code_hash>0432bae477ebbfe5c75ebfa7db38c6cd6c1f96d40227de6838f7007e5c503f94</code_hash>
+    </interface>
+
     <!-- https://tonviewer.com/EQD3F7Ex_uxBjxEub8FgeDoYYUSIbAUVyehCb_JSiCVL369T  -->
     <interface name="affluent_multiply_vault">
         <get_method name="get_jetton_data"/>

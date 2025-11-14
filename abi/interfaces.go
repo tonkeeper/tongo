@@ -8,6 +8,7 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
+	AffluentBatch
 	AffluentLendingVault
 	AffluentMultiplyVault
 	AffluentPool
@@ -133,6 +134,8 @@ const (
 
 func (c ContractInterface) String() string {
 	switch c {
+	case AffluentBatch:
+		return "affluent_batch"
 	case AffluentLendingVault:
 		return "affluent_lending_vault"
 	case AffluentMultiplyVault:
@@ -382,6 +385,8 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
+	case "affluent_batch":
+		return AffluentBatch
 	case "affluent_lending_vault":
 		return AffluentLendingVault
 	case "affluent_multiply_vault":
@@ -1737,6 +1742,10 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 }
 
 var knownContracts = map[ton.Bits256]knownContractDescription{
+	ton.MustParseHash("0432bae477ebbfe5c75ebfa7db38c6cd6c1f96d40227de6838f7007e5c503f94"): {
+		contractInterfaces: []ContractInterface{AffluentBatch},
+		getMethods:         []InvokeFn{},
+	},
 	ton.MustParseHash("09710d08920dfd156edfd98e70e3e6312ed2c8c7eb754e061060d23d810e27ef"): {
 		contractInterfaces: []ContractInterface{SmartAccountBlank},
 		getMethods: []InvokeFn{

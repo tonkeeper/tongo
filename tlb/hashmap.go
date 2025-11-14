@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -745,7 +746,7 @@ func (h *Hashmap[keyT, T]) UnmarshalJSON(data []byte) error {
 	h.values = make([]T, 0, len(m))
 	for k, v := range m {
 		var key keyT
-		if err := json.Unmarshal([]byte(k), &key); err != nil {
+		if err := json.Unmarshal([]byte(strconv.Quote(k)), &key); err != nil {
 			return err
 		}
 		h.keys = append(h.keys, key)

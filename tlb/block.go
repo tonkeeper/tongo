@@ -473,3 +473,81 @@ func (b *Block) AllTransactions() []*Transaction {
 	})
 	return transactions
 }
+
+type MessageID struct {
+	Workchain int8
+	Address   Bits256
+	Lt        uint64
+}
+
+// GetInMsgsMetadata returns a map {in msg -> initiator msg}
+func (b *Block) GetInMsgsMetadata() (map[MessageID]MessageID, error) {
+	inMsgs, err := b.Extra.InMsgDescr()
+	if err != nil {
+		return nil, err
+	}
+	inMsgsMetadata := map[MessageID]MessageID{} // in msg -> metadata
+	for _, v := range inMsgs.Values() {
+		var msgEnvelope MsgEnvelope
+		switch v.SumType {
+		case "MsgImportImm":
+			msgEnvelope = v.MsgImportImm.InMsg
+		case "MsgImportFin":
+			msgEnvelope = v.MsgImportFin.InMsg
+		case "MsgImportTr":
+			msgEnvelope = v.MsgImportTr.InMsg
+		case "MsgDiscardFin":
+			msgEnvelope = v.MsgDiscardFin.InMsg
+		case "MsgDiscardTr":
+			msgEnvelope = v.MsgDiscardTr.InMsg
+		case "MsgImportDeferredFin":
+			msgEnvelope = v.MsgImportDeferredFin.InMsg
+		case "MsgImportDeferredTr":
+			msgEnvelope = v.MsgImportDeferredTr.InMsg
+		default:
+			continue
+		}
+
+		if msgEnvelope.SumType != "V2" {
+			continue
+		}
+		msgInfo := msgEnvelope.V2.Msg.Info
+
+		if msgEnvelope.V2.Metadata.InitiatorAddr.SumType != "AddrStd" {
+			continue
+		}
+		metadata := MessageID{
+			Workchain: msgEnvelope.V2.Metadata.InitiatorAddr.AddrStd.WorkchainId,
+			Address:   msgEnvelope.V2.Metadata.InitiatorAddr.AddrStd.Address,
+			Lt:        msgEnvelope.V2.Metadata.InitiatorLT,
+		}
+
+		var msg MessageID
+		switch msgInfo.SumType {
+		case "IntMsgInfo":
+			if msgInfo.IntMsgInfo.Src.SumType != "AddrStd" {
+				continue
+			}
+			msg = MessageID{
+				Workchain: msgInfo.IntMsgInfo.Src.AddrStd.WorkchainId,
+				Address:   msgInfo.IntMsgInfo.Src.AddrStd.Address,
+				Lt:        msgInfo.IntMsgInfo.CreatedLt,
+			}
+		case "ExtOutMsgInfo":
+			if msgInfo.ExtOutMsgInfo.Src.SumType != "AddrStd" {
+				continue
+			}
+			msg = MessageID{
+				Workchain: msgInfo.ExtOutMsgInfo.Src.AddrStd.WorkchainId,
+				Address:   msgInfo.ExtOutMsgInfo.Src.AddrStd.Address,
+				Lt:        msgInfo.ExtOutMsgInfo.CreatedLt,
+			}
+		default:
+			continue
+		}
+
+		inMsgsMetadata[msg] = metadata
+	}
+
+	return inMsgsMetadata, nil
+}

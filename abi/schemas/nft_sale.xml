@@ -13,7 +13,7 @@
     <interface name="nft_offer_getgems_v1">
         <code_hash>6e5d667fa6efa8187c6d029efd4015601232fd2e36c291dbc346dedab6dc8024</code_hash>
     </interface>
-    <interface name="nft_sale_getgems_v4">
+    <interface name="nft_sale_getgems_v4" inherits="nft_sale">
         <code_hash>6b95a6418b9c9d2359045d1e7559b8d549ae0e506f24caab58fa30c8fb1feb86</code_hash>
         <get_method name="get_fix_price_data_v4"/>
         <error code="404">Already sold or cancelled</error>

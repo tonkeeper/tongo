@@ -1687,6 +1687,8 @@ func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
 		return NftSaleV2.Implements(other)
 	case NftSaleGetgemsV3:
 		return NftSaleV2.Implements(other)
+	case NftSaleGetgemsV4:
+		return NftSale.Implements(other)
 	case NftSaleV1:
 		return NftSale.Implements(other)
 	case NftSaleV2:

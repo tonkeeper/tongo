@@ -157,6 +157,8 @@ var (
 	decodeFuncTeleitemCancelAuctionMsgBody = decodeMsg(tlb.Tag{Val: 0x371638ae, Len: 32}, TeleitemCancelAuctionMsgOp, TeleitemCancelAuctionMsgBody{})
 	// 0x37c096df
 	decodeFuncStonfiProvideLpV2MsgBody = decodeMsg(tlb.Tag{Val: 0x37c096df, Len: 32}, StonfiProvideLpV2MsgOp, StonfiProvideLpV2MsgBody{})
+	// 0x37d3af9e
+	decodeFuncDedustTonExcessesMsgBody = decodeMsg(tlb.Tag{Val: 0x37d3af9e, Len: 32}, DedustTonExcessesMsgOp, DedustTonExcessesMsgBody{})
 	// 0x38633538
 	decodeFuncBemoReturnUnstakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x38633538, Len: 32}, BemoReturnUnstakeRequestMsgOp, BemoReturnUnstakeRequestMsgBody{})
 	// 0x3a86f1a0
@@ -197,6 +199,8 @@ var (
 	decodeFuncMoonOrderCancelledMsgBody = decodeMsg(tlb.Tag{Val: 0x49f48ee9, Len: 32}, MoonOrderCancelledMsgOp, MoonOrderCancelledMsgBody{})
 	// 0x4bc7c2df
 	decodeFuncTonstakePoolTouchMsgBody = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
+	// 0x4c3e12d7
+	decodeFuncDedustTonPayMsgBody = decodeMsg(tlb.Tag{Val: 0x4c3e12d7, Len: 32}, DedustTonPayMsgOp, DedustTonPayMsgBody{})
 	// 0x4d696e65
 	decodeFuncGramSubmitProofOfWorkMsgBody = decodeMsg(tlb.Tag{Val: 0x4d696e65, Len: 32}, GramSubmitProofOfWorkMsgOp, GramSubmitProofOfWorkMsgBody{})
 	// 0x4e73744b
@@ -872,6 +876,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	// 0x37c096df
 	StonfiProvideLpV2MsgOpCode: decodeFuncStonfiProvideLpV2MsgBody,
 
+	// 0x37d3af9e
+	DedustTonExcessesMsgOpCode: decodeFuncDedustTonExcessesMsgBody,
+
 	// 0x38633538
 	BemoReturnUnstakeRequestMsgOpCode: decodeFuncBemoReturnUnstakeRequestMsgBody,
 
@@ -931,6 +938,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x4bc7c2df
 	TonstakePoolTouchMsgOpCode: decodeFuncTonstakePoolTouchMsgBody,
+
+	// 0x4c3e12d7
+	DedustTonPayMsgOpCode: decodeFuncDedustTonPayMsgBody,
 
 	// 0x4d696e65
 	GramSubmitProofOfWorkMsgOpCode: decodeFuncGramSubmitProofOfWorkMsgBody,
@@ -1680,6 +1690,7 @@ const (
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
 	StonfiProvideLpV2MsgOp                       MsgOpName = "StonfiProvideLpV2"
+	DedustTonExcessesMsgOp                       MsgOpName = "DedustTonExcesses"
 	BemoReturnUnstakeRequestMsgOp                MsgOpName = "BemoReturnUnstakeRequest"
 	LockAndClaimMsgOp                            MsgOpName = "LockAndClaim"
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
@@ -1700,6 +1711,7 @@ const (
 	BemoUnstakeMsgOp                             MsgOpName = "BemoUnstake"
 	MoonOrderCancelledMsgOp                      MsgOpName = "MoonOrderCancelled"
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
+	DedustTonPayMsgOp                            MsgOpName = "DedustTonPay"
 	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
 	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
 	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
@@ -2000,6 +2012,7 @@ const (
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
 	StonfiProvideLpV2MsgOpCode                       MsgOpCode = 0x37c096df
+	DedustTonExcessesMsgOpCode                       MsgOpCode = 0x37d3af9e
 	BemoReturnUnstakeRequestMsgOpCode                MsgOpCode = 0x38633538
 	LockAndClaimMsgOpCode                            MsgOpCode = 0x3a86f1a0
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
@@ -2020,6 +2033,7 @@ const (
 	BemoUnstakeMsgOpCode                             MsgOpCode = 0x492ab1b3
 	MoonOrderCancelledMsgOpCode                      MsgOpCode = 0x49f48ee9
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
+	DedustTonPayMsgOpCode                            MsgOpCode = 0x4c3e12d7
 	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
 	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
 	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
@@ -2789,6 +2803,10 @@ type StonfiProvideLpV2MsgBody struct {
 	} `tlb:"^"`
 }
 
+type DedustTonExcessesMsgBody struct {
+	QueryId uint64
+}
+
 type BemoReturnUnstakeRequestMsgBody struct {
 	LockupTimestamp uint32
 }
@@ -2902,6 +2920,11 @@ type MoonOrderCancelledMsgBody struct {
 
 type TonstakePoolTouchMsgBody struct {
 	QueryId uint64
+}
+
+type DedustTonPayMsgBody struct {
+	QueryId  uint64
+	ExitCode uint32
 }
 
 type GramSubmitProofOfWorkMsgBody struct {
@@ -4511,6 +4534,7 @@ var KnownMsgInTypes = map[string]any{
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
 	StonfiProvideLpV2MsgOp:                       StonfiProvideLpV2MsgBody{},
+	DedustTonExcessesMsgOp:                       DedustTonExcessesMsgBody{},
 	BemoReturnUnstakeRequestMsgOp:                BemoReturnUnstakeRequestMsgBody{},
 	LockAndClaimMsgOp:                            LockAndClaimMsgBody{},
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},
@@ -4531,6 +4555,7 @@ var KnownMsgInTypes = map[string]any{
 	BemoUnstakeMsgOp:                             BemoUnstakeMsgBody{},
 	MoonOrderCancelledMsgOp:                      MoonOrderCancelledMsgBody{},
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
+	DedustTonPayMsgOp:                            DedustTonPayMsgBody{},
 	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
 	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
 	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},

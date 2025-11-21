@@ -131,6 +131,8 @@ The list below contains the supported message operations, their names and opcode
 | DedustSwap| 0xea06185d |
 | DedustSwapExternal| 0x61ee542d |
 | DedustSwapPeer| 0x72aca8aa |
+| DedustTonExcesses| 0x37d3af9e |
+| DedustTonPay| 0x4c3e12d7 |
 | DedustWithdrawal| 0x3aa870a6 |
 | DeleteDnsRecord| 0x4eb1f0f9 |
 | DeployStorageContract| 0xe4748df1 |

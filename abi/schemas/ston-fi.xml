@@ -311,4 +311,11 @@
         burn_notification_ext#297437cf query_id:uint64 jetton_amount:(VarUInteger 16) from_address:MsgAddress response_address:MsgAddress maybe_custom_payload:(Maybe ^Cell) = InternalMsgBody;
     </internal>
 
+    <internal name="dedust_ton_excesses">
+        dd_ton_excesses#37d3af9e query_id:uint64 = InMsgBody;
+    </internal>
+    <internal name="dedust_ton_pay">
+        dd_ton_pay#4c3e12d7 query_id:uint64 exit_code:uint32 = InMsgBody;
+    </internal>
+
 </abi>

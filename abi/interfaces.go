@@ -2192,6 +2192,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			Seqno,
 		},
 	},
+	ton.MustParseHash("fc8df8be21d83d3876984d7859c078c916dfd7654bc465bf9cd64602eeb4c587"): {
+		contractInterfaces: []ContractInterface{OmnistonReferral},
+		getMethods:         []InvokeFn{},
+	},
 	ton.MustParseHash("fe9530d3243853083ef2ef0b4c2908c0abf6fa1c31ea243aacaa5bf8c7d753f1"): {
 		contractInterfaces: []ContractInterface{WalletV2R2},
 		getMethods: []InvokeFn{

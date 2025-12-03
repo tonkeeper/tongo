@@ -47,12 +47,17 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_can_liquidate":                            {DecodeGetCanLiquidate_StormResult},
 	"get_channel_data":                             {DecodeGetChannelDataResult},
 	"get_claimer_address":                          {DecodeGetClaimerAddress_StormResult},
+	"get_cocoon_client_data":                       {DecodeGetCocoonClientData_CocoonResult},
+	"get_cocoon_data":                              {DecodeGetCocoonData_CocoonResult},
+	"get_cocoon_proxy_data":                        {DecodeGetCocoonProxyData_CocoonResult},
+	"get_cocoon_worker_data":                       {DecodeGetCocoonWorkerData_CocoonResult},
 	"get_code":                                     {DecodeGetCode_CoffeeResult},
 	"get_collected_fees_info":                      {DecodeGetCollectedFeesInfo_BidaskDammResult},
 	"get_collection_data":                          {DecodeGetCollectionDataResult},
 	"get_compute_funding_data":                     {DecodeGetComputeFundingData_StormResult},
 	"get_contract_data":                            {DecodeGetContractData_AirdropInterlockerV1Result},
 	"get_cron_info":                                {DecodeGetCronInfoResult},
+	"get_cur_params":                               {DecodeGetCurParams_CocoonResult},
 	"get_current_bin":                              {DecodeGetCurrentBin_BidaskResult},
 	"get_day_trading_data":                         {DecodeGetDayTradingData_StormResult},
 	"get_default_referral_fees":                    {DecodeGetDefaultReferralFees_StormResult},
@@ -121,6 +126,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_order_address":                            {DecodeGetOrderAddressResult},
 	"get_order_amount":                             {DecodeGetOrderAmount_MoonResult},
 	"get_order_data":                               {DecodeGetOrderDataResult},
+	"get_owner_address":                            {DecodeGetOwnerAddress_CocoonResult},
 	"get_params":                                   {DecodeGetParams_WhalesNominatorResult},
 	"get_pause_time":                               {DecodeGetPauseTime_StormResult},
 	"get_payment_info":                             {DecodeGetPaymentInfo_SubscriptionV2Result},
@@ -209,6 +215,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"is_stable":                                    {DecodeIsStable_DedustResult},
 	"is_strategy_vault":                            {DecodeIsStrategyVault_AffluentResult},
 	"jetton_wallet_lock_data":                      {DecodeJettonWalletLockDataResult},
+	"last_proxy_seqno":                             {DecodeLastProxySeqno_CocoonResult},
 	"list_nominators":                              {DecodeListNominatorsResult},
 	"list_votes":                                   {DecodeListVotesResult},
 	"processed?":                                   {DecodeProcessed_StormResult},
@@ -218,6 +225,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){
+	65647:  {LastProxySeqno},
 	65971:  {GetReserves},
 	66763:  {GetFullDomain},
 	66792:  {GetUserPublicKeys},
@@ -235,6 +243,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	72748:  {GetSaleData},
 	73490:  {GetLockerData},
 	75065:  {GetExecutorBalances},
+	75156:  {GetCocoonClientData},
 	75286:  {GetAvailableClaimAmount},
 	75573:  {GetOrderAmount},
 	75709:  {GetExecutorVaultsWhitelist},
@@ -277,6 +286,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	88817:  {GetOracleData},
 	89295:  {GetMembersRaw},
 	89352:  {GetAsset},
+	89457:  {GetCurParams},
 	90228:  {GetEditor},
 	90700:  {GetMinFees},
 	91273:  {GetRootPubkey},
@@ -293,10 +303,12 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	96219:  {GetMiningData},
 	96263:  {GetExchangeSettings},
 	96585:  {GetAllTickInfos},
+	96613:  {GetCocoonData},
 	96705:  {GetBillAmount},
 	96780:  {GetTradeFee},
 	97026:  {GetWalletData},
 	97667:  {GetRevokedTime},
+	97687:  {GetCocoonProxyData},
 	98607:  {GetVaultContractData},
 	100881: {GetStatus},
 	101245: {GetUnlocksInfo},
@@ -316,6 +328,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	105875: {GetAmmContractData},
 	106029: {GetJettonData},
 	106144: {GetDelegationState},
+	106427: {GetCocoonWorkerData},
 	107305: {GetLockupData},
 	107307: {GetMultisigData},
 	107494: {GetVammType},
@@ -330,6 +343,7 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	111161: {ListNominators},
 	111569: {GetDisplayMultiplier},
 	111952: {GetUserFeesInfo},
+	114619: {GetOwnerAddress},
 	115119: {GetMasterAddress},
 	115150: {GetParams},
 	116242: {GetLpSwapData},
@@ -416,12 +430,17 @@ var resultTypes = []interface{}{
 	&GetCanLiquidate_StormResult{},
 	&GetChannelDataResult{},
 	&GetClaimerAddress_StormResult{},
+	&GetCocoonClientData_CocoonResult{},
+	&GetCocoonData_CocoonResult{},
+	&GetCocoonProxyData_CocoonResult{},
+	&GetCocoonWorkerData_CocoonResult{},
 	&GetCode_CoffeeResult{},
 	&GetCollectedFeesInfo_BidaskDammResult{},
 	&GetCollectionDataResult{},
 	&GetComputeFundingData_StormResult{},
 	&GetContractData_AirdropInterlockerV1Result{},
 	&GetCronInfoResult{},
+	&GetCurParams_CocoonResult{},
 	&GetCurrentBin_BidaskResult{},
 	&GetDayTradingData_StormResult{},
 	&GetDefaultReferralFees_StormResult{},
@@ -491,6 +510,7 @@ var resultTypes = []interface{}{
 	&GetOrderAddressResult{},
 	&GetOrderAmount_MoonResult{},
 	&GetOrderDataResult{},
+	&GetOwnerAddress_CocoonResult{},
 	&GetParams_WhalesNominatorResult{},
 	&GetPauseTime_StormResult{},
 	&GetPaymentInfo_SubscriptionV2Result{},
@@ -599,6 +619,7 @@ var resultTypes = []interface{}{
 	&IsStable_DedustResult{},
 	&IsStrategyVault_AffluentResult{},
 	&JettonWalletLockDataResult{},
+	&LastProxySeqno_CocoonResult{},
 	&ListNominatorsResult{},
 	&ListVotesResult{},
 	&Processed_StormResult{},
@@ -2122,6 +2143,170 @@ func DecodeGetClaimerAddress_StormResult(stack tlb.VmStack) (resultType string, 
 	return "GetClaimerAddress_StormResult", result, err
 }
 
+type GetCocoonClientData_CocoonResult struct {
+	OwnerAddress    tlb.MsgAddress
+	ProxyAddress    tlb.MsgAddress
+	ProxyPublicKey  tlb.Bits256
+	State           int8
+	Balance         tlb.Int257
+	Stake           tlb.Int257
+	TokensUsed      uint64
+	UnlockTimestamp uint32
+	SecretHash      tlb.Bits256
+}
+
+func GetCocoonClientData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 75156 for "get_cocoon_client_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 75156, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCocoonClientData_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCocoonClientData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCocoonClientData_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "GetCocoonClientData_CocoonResult", result, err
+}
+
+type GetCocoonData_CocoonResult struct {
+	Version           uint32
+	LastProxySeqno    uint32
+	ParamsVersion     uint32
+	UniqueId          uint32
+	IsTest            bool
+	PricePerToken     tlb.Int257
+	WorkedFeePerToken tlb.Int257
+	MinProxyStake     tlb.Int257
+	MinClientStake    tlb.Int257
+	OwnerAddress      tlb.MsgAddress
+}
+
+func GetCocoonData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 96613 for "get_cocoon_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96613, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCocoonData_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCocoonData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCocoonData_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "GetCocoonData_CocoonResult", result, err
+}
+
+type GetCocoonProxyData_CocoonResult struct {
+	OwnerAddress      tlb.MsgAddress
+	ProxyPublicKey    tlb.Bits256
+	RootAddress       tlb.MsgAddress
+	State             int8
+	Balance           tlb.Grams
+	Stake             tlb.Grams
+	UnlockTimestamp   uint32
+	PricePerToken     tlb.Int257
+	WorkedFeePerToken tlb.Int257
+	MinProxyStake     tlb.Int257
+	MinClientStake    tlb.Int257
+	ParamsVersion     uint32
+}
+
+func GetCocoonProxyData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 97687 for "get_cocoon_proxy_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97687, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCocoonProxyData_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCocoonProxyData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 12 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCocoonProxyData_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "GetCocoonProxyData_CocoonResult", result, err
+}
+
+type GetCocoonWorkerData_CocoonResult struct {
+	OwnerAddress   tlb.MsgAddress
+	ProxyAddress   tlb.MsgAddress
+	ProxyPublicKey tlb.Bits256
+	State          int8
+	Tokens         uint64
+}
+
+func GetCocoonWorkerData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 106427 for "get_cocoon_worker_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106427, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCocoonWorkerData_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCocoonWorkerData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCocoonWorkerData_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "GetCocoonWorkerData_CocoonResult", result, err
+}
+
 type GetCode_CoffeeResult struct {
 	First  tlb.Any
 	Second tlb.Any
@@ -2339,6 +2524,52 @@ func DecodeGetCronInfoResult(stack tlb.VmStack) (resultType string, resultAny an
 	var result GetCronInfoResult
 	err = stack.Unmarshal(&result)
 	return "GetCronInfoResult", result, err
+}
+
+type GetCurParams_CocoonResult struct {
+	ParamsVersion                  uint32
+	UniqueId                       uint32
+	IsTest                         bool
+	PricePerToken                  tlb.Int257
+	WorkedFeePerToken              tlb.Int257
+	CachedTokensPriceMultiplier    uint32
+	ReasoningTokensPriceMultiplier uint32
+	ProxyDelayBeforeClose          uint32
+	ClientDelayBeforeClose         uint32
+	MinProxyStake                  tlb.Int257
+	MinClientStake                 tlb.Int257
+	ProxyScHash                    tlb.Bits256
+	WorkerScHash                   tlb.Bits256
+	ClientScHash                   tlb.Bits256
+}
+
+func GetCurParams(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 89457 for "get_cur_params" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 89457, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetCurParams_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetCurParams_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 14 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetCurParams_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "GetCurParams_CocoonResult", result, err
 }
 
 type GetCurrentBin_BidaskResult struct {
@@ -4982,6 +5213,39 @@ func DecodeGetOrderDataResult(stack tlb.VmStack) (resultType string, resultAny a
 	var result GetOrderDataResult
 	err = stack.Unmarshal(&result)
 	return "GetOrderDataResult", result, err
+}
+
+type GetOwnerAddress_CocoonResult struct {
+	OwnerAddress tlb.MsgAddress
+}
+
+func GetOwnerAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 114619 for "get_owner_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 114619, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetOwnerAddress_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeGetOwnerAddress_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetOwnerAddress_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "GetOwnerAddress_CocoonResult", result, err
 }
 
 type GetParams_WhalesNominatorResult struct {
@@ -8806,6 +9070,39 @@ func DecodeJettonWalletLockDataResult(stack tlb.VmStack) (resultType string, res
 	var result JettonWalletLockDataResult
 	err = stack.Unmarshal(&result)
 	return "JettonWalletLockDataResult", result, err
+}
+
+type LastProxySeqno_CocoonResult struct {
+	LastProxySeqno uint32
+}
+
+func LastProxySeqno(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 65647 for "last_proxy_seqno" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 65647, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeLastProxySeqno_CocoonResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeLastProxySeqno_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result LastProxySeqno_CocoonResult
+	err = stack.Unmarshal(&result)
+	return "LastProxySeqno_CocoonResult", result, err
 }
 
 type ListNominatorsResult struct {

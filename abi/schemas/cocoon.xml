@@ -1,0 +1,358 @@
+<abi>
+    <types>
+        worker_proxy_payout_request_payload#08e7d036 coins_to_pay:Coins coins_to_save:Coins send_excess_to:MsgAddress = WorkerProxyPayload;
+
+        client_proxy_request_data#_ state:uint2 balance:Coins tokens:uint64 secret_hash:uint256 = ClientProxyRequestData;
+        client_proxy_request_top_up_payload#5cfc6b87 top_up_coins:Coins send_excess_to:MsgAddress = ClientProxyPayload;
+        client_proxy_register_payload#a35cb580 = ClientProxyPayload;
+        client_proxy_refund_granted_payload#c68ebc7b coins:Coins send_excess_to:MsgAddress = ClientProxyPayload;
+        client_proxy_refund_force_payload#f4c354c9 coins:Coins send_excess_to:MsgAddress = ClientProxyPayload;
+
+        ext_proxy_close_request_signed_payload#_ op_copy:uint32 query_id_copy:uint64 expected_proxy_address:MsgAddress = ExtProxyCloseRequestSignedPayload;
+
+        ext_client_charge_signed#_ op_copy:uint32 query_id_copy:uint64 new_token_used:uint64 expected_client_address:MsgAddress = ExtClientSignedPayload;
+
+        ext_worker_payout_request_signed#_ op_copy:uint32 query_id_copy:uint64 new_tokens:uint64 expected_worker_address:MsgAddress = ExtWorkerPayoutRequestSignedPayload;
+    </types>
+
+    <interface name="cocoon_root">
+        <get_method name="get_cocoon_data" version="cocoon"/>
+        <get_method name="last_proxy_seqno" version="cocoon"/>
+        <get_method name="get_cur_params" version="cocoon"/>
+
+        <msg_in>
+            <internal name="root_add_worker_type"/>
+            <internal name="root_del_worker_type"/>
+            <internal name="root_add_model_type"/>
+            <internal name="root_del_model_type"/>
+            <internal name="root_add_proxy_type"/>
+            <internal name="root_del_proxy_type"/>
+            <internal name="root_unregister_proxy"/>
+            <internal name="root_change_price"/>
+            <internal name="root_change_params"/>
+            <internal name="root_upgrade_contracts"/>
+            <internal name="root_upgrade"/>
+            <internal name="root_reset"/>
+            <internal name="root_upgrade_full"/>
+            <internal name="root_change_owner"/>
+        </msg_in>
+        <error code="1004">Message address format mismatch</error>
+        <error code="1010">Message is not from owner</error>
+        <error code="1012">Unknown opcode</error>
+        <error code="2000">Unknown proxy type</error>
+    </interface>
+    <interface name="cocoon_proxy">
+        <get_method name="get_cocoon_proxy_data" version="cocoon"/>
+        <msg_in>
+            <internal name="worker_proxy_request"/>
+            <internal name="client_proxy_request"/>
+            <internal name="ext_proxy_payout_request"/>
+            <internal name="ext_proxy_increase_stake"/>
+            <internal name="ext_proxy_close_request_signed"/>
+            <internal name="ext_proxy_close_complete_request_signed"/>
+            <internal name="owner_proxy_close"/>
+        </msg_in>
+        <msg_out>
+            <internal name="payout"/>
+            <internal name="excesses"/>
+        </msg_out>
+        <error code="1003">Too low message value</error>
+        <error code="1006">Closed</error>
+        <error code="1011">Not locked yet</error>
+        <error code="1012">Unknown opcode</error>
+        <error code="1014">Contract address format mismatch</error>
+    </interface>
+    <interface name="cocoon_worker">
+        <get_method name="get_cocoon_worker_data" version="cocoon"/>
+        <msg_in>
+            <internal name="ext_worker_payout_request_signed"/>
+            <internal name="ext_worker_last_payout_request_signed"/>
+            <internal name="owner_worker_register"/>
+        </msg_in>
+        <msg_out>
+            <internal name="worker_proxy_request"/>
+        </msg_out>
+        <error code="1000">Old Message</error>
+        <error code="1003">Too low message value</error>
+        <error code="1006">Closed</error>
+        <error code="1009">Expected message from owner</error>
+        <error code="1012">Unknown opcode</error>
+        <error code="1015">Expected message from this contract</error>
+    </interface>
+    <interface name="cocoon_client">
+        <get_method name="get_cocoon_client_data" version="cocoon"/>
+        <msg_in>
+            <internal name="ext_client_top_up"/>
+            <internal name="owner_client_change_secret_hash_and_top_up"/>
+            <internal name="owner_client_register"/>
+            <internal name="owner_client_change_secret_hash"/>
+            <internal name="owner_client_increase_stake"/>
+            <internal name="owner_client_withdraw"/>
+            <internal name="owner_client_request_refund"/>
+            <internal name="ext_client_charge_signed"/>
+            <internal name="ext_client_grant_refund_signed"/>
+        </msg_in>
+        <msg_out>
+            <internal name="client_proxy_request"/>
+        </msg_out>
+        <error code="1000">Old Message</error>
+        <error code="1001">Too low contract's balance</error>
+        <error code="1003">Too low message value</error>
+        <error code="1006">Closed</error>
+        <error code="1009">Expected message from owner</error>
+        <error code="1010">Message is not from owner</error>
+        <error code="1011">Not locked yet</error>
+        <error code="1012">Unknown opcode</error>
+        <error code="1015">Expected message from this contract</error>
+    </interface>
+    <interface name="cocoon_wallet">
+        <get_method name="get_seqno"/>
+        <get_method name="get_public_key"/>
+        <get_method name="get_owner_address" version="cocoon"/>
+        <msg_in>
+            <internal name="owner_wallet_send_message"/>
+        </msg_in>
+        <error code="1030">Valid until expired</error>
+        <error code="1031">Wallet is blocked</error>
+        <error code="1032">Invalid seqno</error>
+        <error code="1033">Invalid subwallet id</error>
+        <error code="1034">Invalid signature</error>
+        <error code="1035">Too low wallet's balance</error>
+        <error code="1040">Message is not from owner</error>
+        <error code="1041">Invalid opcode or action</error>
+    </interface>
+
+    <get_method name="get_cocoon_data">
+        <output version="cocoon" fixed_length="true">
+            <int name="version">uint32</int>
+            <int name="last_proxy_seqno">uint32</int>
+            <int name="params_version">uint32</int>
+            <int name="unique_id">uint32</int>
+            <int name="is_test">bool</int>
+            <int name="price_per_token">int257</int>
+            <int name="worked_fee_per_token">int257</int>
+            <int name="min_proxy_stake">int257</int>
+            <int name="min_client_stake">int257</int>
+            <slice name="owner_address">msgaddress</slice>
+        </output>
+    </get_method>
+    <get_method name="last_proxy_seqno">
+        <output version="cocoon" fixed_length="true">
+            <int name="last_proxy_seqno">uint32</int>
+        </output>
+    </get_method>
+    <get_method name="get_cur_params">
+        <output version="cocoon" fixed_length="true">
+            <int name="params_version">uint32</int>
+            <int name="unique_id">uint32</int>
+            <int name="is_test">bool</int>
+            <int name="price_per_token">int257</int>
+            <int name="worked_fee_per_token">int257</int>
+            <int name="cached_tokens_price_multiplier">uint32</int>
+            <int name="reasoning_tokens_price_multiplier">uint32</int>
+            <int name="proxy_delay_before_close">uint32</int>
+            <int name="client_delay_before_close">uint32</int>
+            <int name="min_proxy_stake">int257</int>
+            <int name="min_client_stake">int257</int>
+            <int name="proxy_sc_hash">bits256</int>
+            <int name="worker_sc_hash">bits256</int>
+            <int name="client_sc_hash">bits256</int>
+        </output>
+    </get_method>
+    <get_method name="get_cocoon_proxy_data">
+        <output version="cocoon" fixed_length="true">
+            <slice name="owner_address">msgaddress</slice>
+            <int name="proxy_public_key">bits256</int>
+            <slice name="root_address">msgaddress</slice>
+            <int name="state">int8</int>
+            <int name="balance">coins</int>
+            <int name="stake">coins</int>
+            <int name="unlock_timestamp">uint32</int>
+            <int name="price_per_token">int257</int>
+            <int name="worked_fee_per_token">int257</int>
+            <int name="min_proxy_stake">int257</int>
+            <int name="min_client_stake">int257</int>
+            <int name="params_version">uint32</int>
+        </output>
+    </get_method>
+    <get_method name="get_cocoon_worker_data">
+        <output version="cocoon" fixed_length="true">
+            <slice name="owner_address">msgaddress</slice>
+            <slice name="proxy_address">msgaddress</slice>
+            <int name="proxy_public_key">bits256</int>
+            <int name="state">int8</int>
+            <int name="tokens">uint64</int>
+        </output>
+    </get_method>
+    <get_method name="get_cocoon_client_data">
+        <output version="cocoon" fixed_length="true">
+            <slice name="owner_address">msgaddress</slice>
+            <slice name="proxy_address">msgaddress</slice>
+            <int name="proxy_public_key">bits256</int>
+            <int name="state">int8</int>
+            <int name="balance">int257</int>
+            <int name="stake">int257</int>
+            <int name="tokens_used">uint64</int>
+            <int name="unlock_timestamp">uint32</int>
+            <int name="secret_hash">bits256</int>
+        </output>
+    </get_method>
+    <get_method name="get_owner_address">
+        <output version="cocoon" fixed_length="true">
+            <slice name="owner_address">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <internal name="payout">
+        cocoon_payout#c59a7cd3 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="excesses">
+        cocoon_excesses#2565934c query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_add_worker_type">
+        cocoon_root_add_worker_type#e34b1c60 query_id:uint64 worker_hash:uint256 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_del_worker_type">
+        cocoon_root_del_worker_type#8d94a79a query_id:uint64 worker_hash:uint256 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_add_model_type">
+        cocoon_root_add_model_type#c146134d query_id:uint64 model_hash:uint256 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_del_model_type">
+        cocoon_root_del_model_type#92b11c18 query_id:uint64 model_hash:uint256 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_add_proxy_type">
+        cocoon_root_add_proxy_type#71860e80 query_id:uint64 proxy_hash:uint256 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_del_proxy_type">
+        cocoon_root_del_proxy_type#3c41d0b2 query_id:uint64 proxy_hash:uint256 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_unregister_proxy">
+        cocoon_root_unregister_proxy#6d49eaf2 query_id:uint64 seqno:uint32 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_change_price">
+        cocoon_root_change_price#c52ed8d4 query_id:uint64 price_per_token:Coins worker_fee_per_token:Coins = InternalMsgBody;
+    </internal>
+
+    <internal name="root_change_params">
+        cocoon_root_change_params#022fa189 query_id:uint64 price_per_token:Coins worker_fee_per_token:Coins
+        proxy_delay_before_close:uint32 client_delay_before_close:uint32 min_proxy_stake:Coins min_client_stake:Coins= InternalMsgBody;
+    </internal>
+
+    <internal name="root_upgrade_contracts">
+        cocoon_root_upgrade_contracts#a2370f61 query_id:uint64 proxy_sc_code:^Cell worker_sc_code:^Cell client_sc_code:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="root_upgrade">
+        cocoon_root_upgrade#11aefd51 query_id:uint64 new_code:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="root_reset">
+        cocoon_root_reset#563c1d96 query_id:uint64 = InternalMsgBody;
+    </internal>
+
+    <internal name="root_upgrade_full">
+        cocoon_root_upgrade_full#4f7c5789 query_id:uint64 new_data:^Cell new_code:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="root_change_owner">
+        cocoon_root_change_owner#c4a1ae54 query_id:uint64 owner_address:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="worker_proxy_request">
+        cocoon_worker_proxy_request#4d725d2c query_id:uint64 worker_owner_address:MsgAddress state:uint2 tokens:uint64
+        payload:(Maybe ^WorkerProxyPayload) = InternalMsgBody;
+    </internal>
+
+    <internal name="client_proxy_request">
+        cocoon_client_proxy_request#65448ff4 query_id:uint64 client_proxy_request_data:^ClientProxyRequestData
+        payload:(Maybe ^ClientProxyPayload) = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_proxy_payout_request">
+        cocoon_ext_proxy_payout_request#7610e6eb query_id:uint64 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_proxy_increase_stake">
+        cocoon_ext_proxy_increase_stake#9713f187 query_id:uint64 grams:Coins send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_proxy_close_request_signed">
+        cocoon_ext_proxy_close_request_signed#636a4391 query_id:uint64 send_excess_to:MsgAddress signature:bits512
+        payload:^ExtProxyCloseRequestSignedPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_proxy_close_complete_request_signed">
+        cocoon_ext_proxy_close_complete_request_signed#e511abc7 query_id:uint64 send_excess_to:MsgAddress signature:bits512
+        payload:^ExtProxyCloseRequestSignedPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_proxy_close">
+        cocoon_owner_proxy_close#b51d5a01 query_id:uint64 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_client_top_up">
+        cocoon_ext_client_top_up#f172e6c2 query_id:uint64 top_up_amount:Coins send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_client_change_secret_hash_and_top_up">
+        cocoon_owner_client_change_secret_hash_and_top_up#8473b408 query_id:uint64 top_up_amount:Coins new_secret_hash:uint256 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_client_register">
+        cocoon_owner_client_register#c45f9f3b query_id:uint64 nonce:uint64 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_client_change_secret_hash">
+        cocoon_owner_client_change_secret_hash#a9357034 query_id:uint64 secret_hash:uint256 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_client_increase_stake">
+        cocoon_owner_client_increase_stake#6a1f6a60 query_id:uint64 new_stake:Coins send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_client_withdraw">
+        cocoon_owner_client_withdraw#da068e78 query_id:uint64 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_client_request_refund">
+        cocoon_owner_client_request_refund#fafa6cc1 query_id:uint64 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_client_charge_signed">
+        cocoon_ext_client_charge_signed#bb63ff93 query_id:uint64 send_excess_to:MsgAddress signature:bits512
+        payload:^ExtClientSignedPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_client_grant_refund_signed">
+        cocoon_ext_client_grant_refund_signed#efd711e1 query_id:uint64 send_excess_to:MsgAddress signature:bits512
+        payload:^ExtClientSignedPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_worker_payout_request_signed">
+        cocoon_ext_worker_payout_request_signed#a040ad28 query_id:uint64 send_excess_to:MsgAddress signature:bits512
+        payload:^ExtWorkerPayoutRequestSignedPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="ext_worker_last_payout_request_signed">
+        cocoon_ext_worker_last_payout_request_signed#f5f26a36 query_id:uint64 send_excess_to:MsgAddress signature:bits512
+        payload:^ExtWorkerPayoutRequestSignedPayload = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_worker_register">
+        cocoon_owner_worker_register#26ed7f65 query_id:uint64 send_excess_to:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="owner_wallet_send_message">
+        cocoon_owner_wallet_send_message#9c69f376 query_id:uint64 mode:uint8 body:^Cell = InternalMsgBody;
+    </internal>
+</abi>

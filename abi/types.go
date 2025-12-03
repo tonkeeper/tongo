@@ -60,6 +60,88 @@ type SwapAdditionalData struct {
 	DistributedYAmount tlb.Grams
 }
 
+type ClientProxyPayload struct {
+	tlb.SumType
+	ClientProxyRequestTopUpPayload struct {
+		TopUpCoins   tlb.Grams
+		SendExcessTo tlb.MsgAddress
+	} `tlbSumType:"#5cfc6b87"`
+	ClientProxyRegisterPayload      struct{} `tlbSumType:"#a35cb580"`
+	ClientProxyRefundGrantedPayload struct {
+		Coins        tlb.Grams
+		SendExcessTo tlb.MsgAddress
+	} `tlbSumType:"#c68ebc7b"`
+	ClientProxyRefundForcePayload struct {
+		Coins        tlb.Grams
+		SendExcessTo tlb.MsgAddress
+	} `tlbSumType:"#f4c354c9"`
+}
+
+func (t *ClientProxyPayload) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "ClientProxyRequestTopUpPayload":
+		bytes, err := json.Marshal(t.ClientProxyRequestTopUpPayload)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ClientProxyRequestTopUpPayload","ClientProxyRequestTopUpPayload":%v}`, string(bytes))), nil
+	case "ClientProxyRegisterPayload":
+		bytes, err := json.Marshal(t.ClientProxyRegisterPayload)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ClientProxyRegisterPayload","ClientProxyRegisterPayload":%v}`, string(bytes))), nil
+	case "ClientProxyRefundGrantedPayload":
+		bytes, err := json.Marshal(t.ClientProxyRefundGrantedPayload)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ClientProxyRefundGrantedPayload","ClientProxyRefundGrantedPayload":%v}`, string(bytes))), nil
+	case "ClientProxyRefundForcePayload":
+		bytes, err := json.Marshal(t.ClientProxyRefundForcePayload)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "ClientProxyRefundForcePayload","ClientProxyRefundForcePayload":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type ClientProxyRequestData struct {
+	State      tlb.Uint2
+	Balance    tlb.Grams
+	Tokens     uint64
+	SecretHash tlb.Uint256
+}
+
+type ExtClientSignedPayload struct {
+	OpCopy                uint32
+	QueryIdCopy           uint64
+	NewTokenUsed          uint64
+	ExpectedClientAddress tlb.MsgAddress
+}
+
+type ExtProxyCloseRequestSignedPayload struct {
+	OpCopy               uint32
+	QueryIdCopy          uint64
+	ExpectedProxyAddress tlb.MsgAddress
+}
+
+type ExtWorkerPayoutRequestSignedPayload struct {
+	OpCopy                uint32
+	QueryIdCopy           uint64
+	NewTokens             uint64
+	ExpectedWorkerAddress tlb.MsgAddress
+}
+
+type WorkerProxyPayload struct {
+	Magic        tlb.Magic `tlb:"#08e7d036"`
+	CoinsToPay   tlb.Grams
+	CoinsToSave  tlb.Grams
+	SendExcessTo tlb.MsgAddress
+}
+
 type DedustAsset struct {
 	tlb.SumType
 	Native struct{} `tlbSumType:"$0000"`

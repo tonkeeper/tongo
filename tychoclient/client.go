@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/ton"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
@@ -58,6 +60,24 @@ func (c *Client) Close() error {
 	return c.conn.Close()
 }
 
+// SendMessage sends a message to the blockchain
+func (c *Client) SendMessage(ctx context.Context, payload []byte) (uint32, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	req := &proto.SendMessageRequest{
+		Message: payload,
+	}
+	resp, err := c.client.SendMessage(ctx, req)
+	if err != nil {
+		return 0, fmt.Errorf("failed to send message: %w", err)
+	}
+	if resp.DeliveredTo == 0 {
+		return 0, fmt.Errorf("message not delivered")
+	}
+	return 0, nil
+}
+
 // GetStatus returns the current status of the Tycho node
 func (c *Client) GetStatus(ctx context.Context) (*proto.GetStatusResponse, error) {
 	ctx, cancel := limitedContext(ctx)
@@ -88,6 +108,38 @@ func (c *Client) GetLibraryCell(ctx context.Context, hash []byte) ([]byte, error
 	default:
 		return nil, fmt.Errorf("unexpected response type")
 	}
+}
+
+// GetLibraries fetches library cells by hash
+func (c *Client) GetLibraries(ctx context.Context, libraryList []ton.Bits256) (map[ton.Bits256]*boc.Cell, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	hashes := make([][]byte, len(libraryList))
+	for i, hash := range libraryList {
+		hashes[i] = hash[:]
+	}
+	req := &proto.GetLibraryCellsRequest{
+		Hashes: hashes,
+	}
+	resp, err := c.client.GetLibraryCells(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get library cells: %w", err)
+	}
+	res := make(map[ton.Bits256]*boc.Cell)
+	for _, l := range resp.Entries {
+		var hash ton.Bits256
+		err = hash.FromBytes(l.Hash)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse library hash: %w", err)
+		}
+		cell, err := boc.DeserializeSingleRootBoc(l.Cell)
+		if err != nil {
+			return nil, fmt.Errorf("failed to deserialize library cell: %w", err)
+		}
+		res[hash] = cell
+	}
+	return res, nil
 }
 
 // GetRawBlockData fetches raw BOC data for debugging purposes

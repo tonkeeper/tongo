@@ -1643,6 +1643,142 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
+		Name: StormVamm,
+		Results: []string{
+			"GetAmmContractData_StormResult",
+			"GetAmmName_StormResult",
+			"GetAmmState_StormResult",
+			"GetAmmStatus_StormResult",
+			"GetDayTradingData_StormResult",
+			"GetExchangeSettings_StormResult",
+			"GetFundingSettings_StormResult",
+			"GetLazerData_StormResult",
+			"GetOracleData_StormResult",
+			"GetPauseTime_StormResult",
+			"GetPositionManagerAddress_StormResult",
+			"GetSpotPrice_StormResult",
+			"GetTerminalAmmPrice_StormResult",
+			"GetVammType_StormResult",
+		},
+	},
+	{
+		Name: StormVammCoinm,
+		Results: []string{
+			"GetAmmContractData_StormResult",
+			"GetAmmName_StormResult",
+			"GetAmmState_StormResult",
+			"GetAmmStatus_StormResult",
+			"GetDayTradingData_StormResult",
+			"GetExchangeSettings_StormResult",
+			"GetFundingSettings_StormResult",
+			"GetLazerData_StormResult",
+			"GetOracleData_StormResult",
+			"GetPauseTime_StormResult",
+			"GetPositionManagerAddress_StormResult",
+			"GetSettlementOracleData_StormResult",
+			"GetSpotPrice_StormResult",
+			"GetTerminalAmmPrice_StormResult",
+			"GetVammType_StormResult",
+		},
+	},
+	{
+		Name: StormVault,
+		Results: []string{
+			"GetBufferDataResult",
+			"GetClaimerAddressResult",
+			"GetExecutorCollectionAddressResult",
+			"GetLastPositionManagerCodeResult",
+			"GetLpMinterAddressResult",
+			"GetReferralCollectionAddressResult",
+			"GetVaultContractDataResult",
+			"GetVaultDataResult",
+			"GetVaultTypeResult",
+			"GetVaultWhitelistedAddressesResult",
+		},
+	},
+	{
+		Name: StormVaultNative,
+		Results: []string{
+			"GetBufferDataResult",
+			"GetClaimerAddressResult",
+			"GetExecutorCollectionAddressResult",
+			"GetLastPositionManagerCodeResult",
+			"GetLpMinterAddressResult",
+			"GetReferralCollectionAddressResult",
+			"GetVaultContractDataResult",
+			"GetVaultDataResult",
+			"GetVaultTypeResult",
+			"GetVaultWhitelistedAddressesResult",
+		},
+	},
+	{
+		Name: SmartAccountBlank,
+		Results: []string{
+			"GetBlankStorageData_StormResult",
+			"GetNftDataResult",
+		},
+	},
+	{
+		Name: SmartAccount,
+		Results: []string{
+			"GetHighloadData_StormResult",
+			"GetKeysData_StormResult",
+			"GetNftDataResult",
+			"GetPosition_StormResult",
+			"GetStorageData_StormResult",
+			"GetUserPublicKeys_StormResult",
+		},
+	},
+	{
+		Name: SmartAccountFactory,
+		Results: []string{
+			"GetCollectionDataResult",
+			"GetFactoryDataResult",
+			"GetMinFeesResult",
+			"RoyaltyParamsResult",
+		},
+	},
+	{
+		Name: StormReferral,
+		Results: []string{
+			"GetNftDataResult",
+			"GetReferralData_StormResult",
+		},
+	},
+	{
+		Name: StormReferralCollection,
+		Results: []string{
+			"GetCollectionDataResult",
+			"GetDefaultReferralFeesResult",
+			"GetReferralVaultsWhitelistResult",
+			"RoyaltyParamsResult",
+		},
+	},
+	{
+		Name: StormExecutor,
+		Results: []string{
+			"GetExecutorBalancesResult",
+			"GetNftDataResult",
+		},
+	},
+	{
+		Name: StormExecutorCollection,
+		Results: []string{
+			"GetCollectionDataResult",
+			"GetExecutorVaultsWhitelistResult",
+			"RoyaltyParamsResult",
+		},
+	},
+	{
+		Name: StormPositionManager,
+		Results: []string{
+			"GetIsInitedResult",
+			"GetPositionManagerContractDataResult",
+			"GetPositionManagerDataResult",
+			"GetVersionResult",
+		},
+	},
+	{
 		Name: SubscriptionV1,
 		Results: []string{
 			"GetSubscriptionDataResult",
@@ -1832,13 +1968,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{AffluentBatch},
 		getMethods:         []InvokeFn{},
 	},
-	ton.MustParseHash("09710d08920dfd156edfd98e70e3e6312ed2c8c7eb754e061060d23d810e27ef"): {
-		contractInterfaces: []ContractInterface{SmartAccountBlank},
-		getMethods: []InvokeFn{
-			GetBlankStorageData,
-			GetNftData,
-		},
-	},
 	ton.MustParseHash("0dceed21269d66013e95b19fbb5c55a6f01adad40837baa8e521cde3a02aa46c"): {
 		contractInterfaces: []ContractInterface{WalletHighloadV1R2},
 		getMethods:         []InvokeFn{},
@@ -1857,24 +1986,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetPublicKey,
 			GetSubwalletId,
 			GetTimeout,
-		},
-	},
-	ton.MustParseHash("18c7ed8bf5d65996f0a19ec48e93c5f674cc0fbad210ca5b8e06ff7e03c7589e"): {
-		contractInterfaces: []ContractInterface{StormPositionManager},
-		getMethods: []InvokeFn{
-			GetIsInited,
-			GetPositionManagerContractData,
-			GetPositionManagerData,
-			GetVersion,
-		},
-	},
-	ton.MustParseHash("1aa509693f70c885619e5e7de744902ecac10a32a6506fb6ed05c7c8bdb2cb3a"): {
-		contractInterfaces: []ContractInterface{SmartAccountFactory},
-		getMethods: []InvokeFn{
-			GetCollectionData,
-			GetFactoryData,
-			GetMinFees,
-			RoyaltyParams,
 		},
 	},
 	ton.MustParseHash("1bd9c5a39bffb7a0f341588b5dd92b813a842bf65ef14109382200ceaf8f72df"): {
@@ -1911,17 +2022,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSaleData,
 		},
 	},
-	ton.MustParseHash("43c78f03b04864ab54e958070745db7cd050578c3d6950326a7e4a9f31268cf1"): {
-		contractInterfaces: []ContractInterface{SmartAccount},
-		getMethods: []InvokeFn{
-			GetHighloadData,
-			GetKeysData,
-			GetNftData,
-			GetPosition,
-			GetStorageData,
-			GetUserPublicKeys,
-		},
-	},
 	ton.MustParseHash("45ebbce9b5d235886cb6bfe1c3ad93b708de058244892365c9ee0dfe439cb7b5"): {
 		contractInterfaces: []ContractInterface{WalletPreprocessedV2},
 		getMethods:         []InvokeFn{},
@@ -1938,35 +2038,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{NftItemSimple},
 		getMethods: []InvokeFn{
 			GetNftData,
-		},
-	},
-	ton.MustParseHash("4e67ce61bfe254ce8a42d6f7a26dd6b7df07c4c4a7c92f9508ac18a883f16832"): {
-		contractInterfaces: []ContractInterface{StormVammCoinm},
-		getMethods: []InvokeFn{
-			GetAmmContractData,
-			GetAmmName,
-			GetAmmState,
-			GetAmmStatus,
-			GetDayTradingData,
-			GetExchangeSettings,
-			GetFundingSettings,
-			GetLazerData,
-			GetOracleData,
-			GetPauseTime,
-			GetPositionManagerAddress,
-			GetSettlementOracleData,
-			GetSpotPrice,
-			GetTerminalAmmPrice,
-			GetVammType,
-		},
-	},
-	ton.MustParseHash("518171cff3fa6aa54e64e4984b37e2f247a31aa2c48b9a31ca8620aee77e70c4"): {
-		contractInterfaces: []ContractInterface{StormReferralCollection},
-		getMethods: []InvokeFn{
-			GetCollectionData,
-			GetDefaultReferralFees,
-			GetReferralVaultsWhitelist,
-			RoyaltyParams,
 		},
 	},
 	ton.MustParseHash("587cc789eff1c84f46ec3797e45fc809a14ff5ae24f1e0c7a6a99cc9dc9061ff"): {
@@ -2015,28 +2086,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{NftOfferGetgemsV1},
 		getMethods:         []InvokeFn{},
 	},
-	ton.MustParseHash("74a1820688a6a15ce05a3f5ee0ec6a0675478d2d89a43026e2ede3bce11a28ef"): {
-		contractInterfaces: []ContractInterface{StormReferral},
-		getMethods: []InvokeFn{
-			GetNftData,
-			GetReferralData,
-		},
-	},
-	ton.MustParseHash("78ba001d199dd8185820f635e16e5c2f1dc7cfacea80bc5eb260f084f88084df"): {
-		contractInterfaces: []ContractInterface{StormVaultNative},
-		getMethods: []InvokeFn{
-			GetBufferData,
-			GetClaimerAddress,
-			GetExecutorCollectionAddress,
-			GetLastPositionManagerCode,
-			GetLpMinterAddress,
-			GetReferralCollectionAddress,
-			GetVaultContractData,
-			GetVaultData,
-			GetVaultType,
-			GetVaultWhitelistedAddresses,
-		},
-	},
 	ton.MustParseHash("8278f4c5233de6fbedc969af519344a7a9bffc544856dba986a95c0bcf8571c9"): {
 		contractInterfaces: []ContractInterface{NftSaleGetgemsV2},
 		getMethods: []InvokeFn{
@@ -2062,21 +2111,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{JettonWalletGoverned},
 		getMethods: []InvokeFn{
 			GetWalletData,
-		},
-	},
-	ton.MustParseHash("8b987d55003bc13de062368e732291c010fb25af4c8b776337a4b398c30eb79a"): {
-		contractInterfaces: []ContractInterface{StormVault},
-		getMethods: []InvokeFn{
-			GetBufferData,
-			GetClaimerAddress,
-			GetExecutorCollectionAddress,
-			GetLastPositionManagerCode,
-			GetLpMinterAddress,
-			GetReferralCollectionAddress,
-			GetVaultContractData,
-			GetVaultData,
-			GetVaultType,
-			GetVaultWhitelistedAddresses,
 		},
 	},
 	ton.MustParseHash("8ceb45b3cd4b5cc60eaae1c13b9c092392677fe536b2e9b2d801b62eff931fe1"): {
@@ -2142,13 +2176,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetPoolStateAndConfiguration,
 		},
 	},
-	ton.MustParseHash("be28e274ea141a4a1e77302dc4ff2ff0f07c9e87dd066780b1bea6b4a35eb729"): {
-		contractInterfaces: []ContractInterface{StormExecutor},
-		getMethods: []InvokeFn{
-			GetExecutorBalances,
-			GetNftData,
-		},
-	},
 	ton.MustParseHash("beb0683ebeb8927fe9fc8ec0a18bc7dd17899689825a121eab46c5a3a860d0ce"): {
 		contractInterfaces: []ContractInterface{JettonWalletV1},
 		getMethods: []InvokeFn{
@@ -2162,14 +2189,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetRootPubkey,
 			GetSeedPubkey,
 			GetWalletAddr,
-		},
-	},
-	ton.MustParseHash("cb72c40ff4be9937dd32c289af4084a2c7f8d48d47a0a6d158957d5a29dc0df8"): {
-		contractInterfaces: []ContractInterface{StormExecutorCollection},
-		getMethods: []InvokeFn{
-			GetCollectionData,
-			GetExecutorVaultsWhitelist,
-			RoyaltyParams,
 		},
 	},
 	ton.MustParseHash("ccae6ffb603c7d3e779ab59ec267ffc22dc1ebe0af9839902289a7a83e4c00f1"): {
@@ -2251,25 +2270,6 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetOrderAmount,
 			GetStatus,
 			GetVestingData,
-		},
-	},
-	ton.MustParseHash("f335666f8708c02a437559bd413e9edb3c1fbc49cf0c325f36fe8cb70f37ca3a"): {
-		contractInterfaces: []ContractInterface{StormVamm},
-		getMethods: []InvokeFn{
-			GetAmmContractData,
-			GetAmmName,
-			GetAmmState,
-			GetAmmStatus,
-			GetDayTradingData,
-			GetExchangeSettings,
-			GetFundingSettings,
-			GetLazerData,
-			GetOracleData,
-			GetPauseTime,
-			GetPositionManagerAddress,
-			GetSpotPrice,
-			GetTerminalAmmPrice,
-			GetVammType,
 		},
 	},
 	ton.MustParseHash("f3d7ca53493deedac28b381986a849403cbac3d2c584779af081065af0ac4b93"): {
@@ -2560,6 +2560,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormAddPublicKeyMsgBody,
 			decodeFuncStormRemovePublicKeyMsgBody,
 			decodeFuncStormRemoveAllKeysExceptCurrentMsgBody,
+			decodeFuncStormDepositTonMsgBody,
 		}
 	case SmartAccountBlank:
 		return []msgDecoderFunc{

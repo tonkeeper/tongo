@@ -465,6 +465,10 @@ type TorrentInfo struct {
 	Description    tlb.Text
 }
 
+type AdditionalLogData struct {
+	IndexPrice tlb.Grams
+}
+
 type AddressesData struct {
 	TraderAddress              tlb.MsgAddress
 	SmartAccountFactoryAddress tlb.MsgAddress
@@ -704,6 +708,8 @@ type ExchangeSettings struct {
 		HighFundingFnA                int64
 		HighFundingFnB                uint64
 		InflectionPoint               uint64
+		ExecutorFee                   uint32
+		V3CloseDelay                  uint32
 	} `tlbSumType:"#_"`
 	ExchangeSettings struct {
 		Fee                           uint32
@@ -929,6 +935,7 @@ type IntentLog struct {
 	PositionFeeAmount   tlb.Grams
 	ExecutorFeeAmount   tlb.Grams
 	FeeToStakersPercent uint32
+	AdditionalData      AdditionalLogData `tlb:"^"`
 }
 
 type InternalMessageInfoRelaxed struct {

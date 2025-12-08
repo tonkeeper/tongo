@@ -169,8 +169,7 @@ The list below contains the supported message operations, their names and opcode
 | HipoFinanceProxyTokensMinted| 0x5be57626 |
 | HipoFinanceTokensMinted| 0x5445efee |
 | InitPaymentChannel| 0x0e0620c2 |
-| IntentLog| 0x012e8f40 |
-| IntentLog| 0x012e8f40 |
+| IntentLog| 0x812e8f40 |
 | InvoicePayload| 0x7aa23eb5 |
 | InvoicePayload| 0x7aa23eb5 |
 | JettonBurn| 0x595f07bc |

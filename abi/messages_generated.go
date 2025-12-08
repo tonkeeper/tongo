@@ -9,8 +9,6 @@ import (
 var (
 	// 0x00000000
 	decodeFuncTextCommentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TextCommentMsgOp, TextCommentMsgBody{})
-	// 0x012e8f40
-	decodeFuncIntentLogMsgBody = decodeMsg(tlb.Tag{Val: 0x012e8f40, Len: 32}, IntentLogMsgOp, IntentLogMsgBody{})
 	// 0x01f3835d
 	decodeFuncPtonTonTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x01f3835d, Len: 32}, PtonTonTransferMsgOp, PtonTonTransferMsgBody{})
 	// 0x0226df66
@@ -723,9 +721,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x00000000
 	TextCommentMsgOpCode: decodeFuncTextCommentMsgBody,
-
-	// 0x012e8f40
-	IntentLogMsgOpCode: decodeFuncIntentLogMsgBody,
 
 	// 0x01f3835d
 	PtonTonTransferMsgOpCode: decodeFuncPtonTonTransferMsgBody,
@@ -1796,7 +1791,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 const (
 	TextCommentMsgOp                             MsgOpName = "TextComment"
-	IntentLogMsgOp                               MsgOpName = "IntentLog"
 	PtonTonTransferMsgOp                         MsgOpName = "PtonTonTransfer"
 	StormRequestWithdrawPositionMsgOp            MsgOpName = "StormRequestWithdrawPosition"
 	RootChangeParamsMsgOp                        MsgOpName = "RootChangeParams"
@@ -2154,7 +2148,6 @@ const (
 
 const (
 	TextCommentMsgOpCode                             MsgOpCode = 0x00000000
-	IntentLogMsgOpCode                               MsgOpCode = 0x012e8f40
 	PtonTonTransferMsgOpCode                         MsgOpCode = 0x01f3835d
 	StormRequestWithdrawPositionMsgOpCode            MsgOpCode = 0x0226df66
 	RootChangeParamsMsgOpCode                        MsgOpCode = 0x022fa189
@@ -2512,10 +2505,6 @@ const (
 
 type TextCommentMsgBody struct {
 	Text tlb.Text
-}
-
-type IntentLogMsgBody struct {
-	LogDict tlb.HashmapE[tlb.Uint8, IntentLog]
 }
 
 type PtonTonTransferMsgBody struct {
@@ -2944,9 +2933,9 @@ type BidaskDammMintMsgBody struct {
 type StormTradeNotificationV2MsgBody struct {
 	QueryId              uint64
 	AssetId              uint16
-	FreeAmount           uint64
-	LockedAmount         uint64
-	ExchangeAmount       uint64
+	FreeAmount           int64
+	LockedAmount         int64
+	ExchangeAmount       int64
 	WithdrawLockedAmount uint64
 	FeeToStakers         uint64
 	ExecutorAmount       uint64
@@ -4922,7 +4911,6 @@ type BounceMsgBody struct {
 
 var KnownMsgInTypes = map[string]any{
 	TextCommentMsgOp:                             TextCommentMsgBody{},
-	IntentLogMsgOp:                               IntentLogMsgBody{},
 	PtonTonTransferMsgOp:                         PtonTonTransferMsgBody{},
 	StormRequestWithdrawPositionMsgOp:            StormRequestWithdrawPositionMsgBody{},
 	RootChangeParamsMsgOp:                        RootChangeParamsMsgBody{},
@@ -5410,8 +5398,6 @@ var KnownMsgExtInTypes = map[string]any{
 }
 
 var (
-	// 0x012e8f40
-	decodeFuncIntentLogExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x012e8f40, Len: 32}, IntentLogExtOutMsgOp, IntentLogExtOutMsgBody{})
 	// 0x0a9577f0
 	decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 32}, CoffeeStakingRewardsUpdatedExtOutMsgOp, CoffeeStakingRewardsUpdatedExtOutMsgBody{})
 	// 0x3aa870a6
@@ -5420,6 +5406,8 @@ var (
 	decodeFuncMegatonUpdateMiningParamsExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x56a8e920, Len: 32}, MegatonUpdateMiningParamsExtOutMsgOp, MegatonUpdateMiningParamsExtOutMsgBody{})
 	// 0x7362d09c
 	decodeFuncMegatonSwapExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, MegatonSwapExtOutMsgOp, MegatonSwapExtOutMsgBody{})
+	// 0x812e8f40
+	decodeFuncIntentLogExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x812e8f40, Len: 32}, IntentLogExtOutMsgOp, IntentLogExtOutMsgBody{})
 	// 0x9c610de3
 	decodeFuncDedustSwapExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0x9c610de3, Len: 32}, DedustSwapExtOutMsgOp, DedustSwapExtOutMsgBody{})
 	// 0xac392598
@@ -5442,9 +5430,6 @@ var (
 
 var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
 
-	// 0x012e8f40
-	IntentLogExtOutMsgOpCode: decodeFuncIntentLogExtOutMsgBody,
-
 	// 0x0a9577f0
 	CoffeeStakingRewardsUpdatedExtOutMsgOpCode: decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody,
 
@@ -5456,6 +5441,9 @@ var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x7362d09c
 	MegatonSwapExtOutMsgOpCode: decodeFuncMegatonSwapExtOutMsgBody,
+
+	// 0x812e8f40
+	IntentLogExtOutMsgOpCode: decodeFuncIntentLogExtOutMsgBody,
 
 	// 0x9c610de3
 	DedustSwapExtOutMsgOpCode: decodeFuncDedustSwapExtOutMsgBody,
@@ -5486,11 +5474,11 @@ var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
 }
 
 const (
-	IntentLogExtOutMsgOp                        MsgOpName = "IntentLog"
 	CoffeeStakingRewardsUpdatedExtOutMsgOp      MsgOpName = "CoffeeStakingRewardsUpdated"
 	DedustWithdrawalExtOutMsgOp                 MsgOpName = "DedustWithdrawal"
 	MegatonUpdateMiningParamsExtOutMsgOp        MsgOpName = "MegatonUpdateMiningParams"
 	MegatonSwapExtOutMsgOp                      MsgOpName = "MegatonSwap"
+	IntentLogExtOutMsgOp                        MsgOpName = "IntentLog"
 	DedustSwapExtOutMsgOp                       MsgOpName = "DedustSwap"
 	DisplayMultiplierChangedExtOutMsgOp         MsgOpName = "DisplayMultiplierChanged"
 	CoffeeStakingRewardsClaimedExtOutMsgOp      MsgOpName = "CoffeeStakingRewardsClaimed"
@@ -5503,11 +5491,11 @@ const (
 )
 
 const (
-	IntentLogExtOutMsgOpCode                        MsgOpCode = 0x012e8f40
 	CoffeeStakingRewardsUpdatedExtOutMsgOpCode      MsgOpCode = 0x0a9577f0
 	DedustWithdrawalExtOutMsgOpCode                 MsgOpCode = 0x3aa870a6
 	MegatonUpdateMiningParamsExtOutMsgOpCode        MsgOpCode = 0x56a8e920
 	MegatonSwapExtOutMsgOpCode                      MsgOpCode = 0x7362d09c
+	IntentLogExtOutMsgOpCode                        MsgOpCode = 0x812e8f40
 	DedustSwapExtOutMsgOpCode                       MsgOpCode = 0x9c610de3
 	DisplayMultiplierChangedExtOutMsgOpCode         MsgOpCode = 0xac392598
 	CoffeeStakingRewardsClaimedExtOutMsgOpCode      MsgOpCode = 0xb30c7310
@@ -5518,10 +5506,6 @@ const (
 	CoffeeDepositLiquidityFailedExtOutMsgOpCode     MsgOpCode = 0xc0ffee34
 	CoffeeWithdrawLiquiditySucceededExtOutMsgOpCode MsgOpCode = 0xc0ffee35
 )
-
-type IntentLogExtOutMsgBody struct {
-	LogDict tlb.HashmapE[tlb.Uint8, IntentLog]
-}
 
 type CoffeeStakingRewardsUpdatedExtOutMsgBody struct {
 	QueryId      uint64
@@ -5558,6 +5542,10 @@ type MegatonSwapExtOutMsgBody struct {
 		OutTokenAddr tlb.MsgAddress
 		OutAmount    tlb.Grams
 	} `tlb:"^"`
+}
+
+type IntentLogExtOutMsgBody struct {
+	LogDict tlb.HashmapE[tlb.Uint8, IntentLog]
 }
 
 type DedustSwapExtOutMsgBody struct {
@@ -5639,11 +5627,11 @@ type CoffeeWithdrawLiquiditySucceededExtOutMsgBody struct {
 }
 
 var KnownMsgExtOutTypes = map[string]any{
-	IntentLogExtOutMsgOp:                        IntentLogExtOutMsgBody{},
 	CoffeeStakingRewardsUpdatedExtOutMsgOp:      CoffeeStakingRewardsUpdatedExtOutMsgBody{},
 	DedustWithdrawalExtOutMsgOp:                 DedustWithdrawalExtOutMsgBody{},
 	MegatonUpdateMiningParamsExtOutMsgOp:        MegatonUpdateMiningParamsExtOutMsgBody{},
 	MegatonSwapExtOutMsgOp:                      MegatonSwapExtOutMsgBody{},
+	IntentLogExtOutMsgOp:                        IntentLogExtOutMsgBody{},
 	DedustSwapExtOutMsgOp:                       DedustSwapExtOutMsgBody{},
 	DisplayMultiplierChangedExtOutMsgOp:         DisplayMultiplierChangedExtOutMsgBody{},
 	CoffeeStakingRewardsClaimedExtOutMsgOp:      CoffeeStakingRewardsClaimedExtOutMsgBody{},

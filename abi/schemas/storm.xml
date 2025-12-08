@@ -32,7 +32,7 @@
         partial_liquidation_ratio:uint32 spread_limit:uint32 max_price_impact:uint32 max_price_spread:uint32 max_open_notional:Coins fee_to_stakers_percent:uint32
         funding_mode:uint2 min_partial_liquidation_notional:Coins min_init_margin_ratio:uint32 direct_increase_enabled:Bool direct_close_enabled:Bool
         executors_whitelist:(HashmapE 256 Cell) low_funding_fn_a:uint64 low_funding_fn_b:uint64 high_funding_fn_a:int64 high_funding_fn_b:uint64
-        inflection_point:uint64 = ExchangeSettings;
+        inflection_point:uint64 executor_fee:uint32 v3_close_delay:uint32 = ExchangeSettings;
 
         long$0 = Direction;
         short$1 = Direction;
@@ -189,16 +189,16 @@
         <!-- V3 Trading -->
         _ bundle_sender_address:MsgAddress balance_delta:Coins amm_address:MsgAddressInt direction:Direction position_data:(Maybe ^PositionData) = NotificationPayloadV2;
 
+
+        _ index_price:Coins = AdditionalLogData;
         _ type:LogType size:int128 margin:Coins open_notional:Coins last_updated_cpf:int64 realized_pnl:int64 funding_payment:int64
         rollover_fee:uint64 position_fee_rate:uint32 executor_fee_rate:uint32 position_fee_amount:Coins executor_fee_amount:Coins
-        fee_to_stakers_percent:uint32 = IntentLog;
-
+        fee_to_stakers_percent:uint32 additional_data:^AdditionalLogData = IntentLog;
     </types>
 
     <!-- INTERFACES -->
 
     <interface name="storm_vamm">
-        <code_hash>f335666f8708c02a437559bd413e9edb3c1fbc49cf0c325f36fe8cb70f37ca3a</code_hash>
         <msg_in>
             <internal name="storm_change_settings"/>
             <internal name="storm_pay_funding"/>
@@ -298,8 +298,10 @@
         <error code="460">Not close to pause</error>
         <error code="461">Not enough leverage</error>
         <error code="462">Invalid oracle timestamp</error>
-        <error code="463">Margin above maintenance</error>
+        <error code="463">Margin is sufficient</error>
+        <error code="464">Invalid VPI price</error>
         <error code="470">Wrong smart account address</error>
+        <error code="471">V3 close cooldown</error>
         <error code="1000">Invalid message magic</error>
         <error code="1001">Invalid payload magic</error>
         <error code="1002">Invalid feeds count</error>
@@ -312,7 +314,6 @@
     </interface>
 
     <interface name="storm_vamm_coinm">
-        <code_hash>4e67ce61bfe254ce8a42d6f7a26dd6b7df07c4c4a7c92f9508ac18a883f16832</code_hash>
         <msg_in>
             <internal name="storm_change_settings"/>
             <internal name="storm_pay_funding"/>
@@ -413,8 +414,10 @@
         <error code="460">Not close to pause</error>
         <error code="461">Not enough leverage</error>
         <error code="462">Invalid oracle timestamp</error>
-        <error code="463">Margin above maintenance</error>
+        <error code="463">Margin is sufficient</error>
+        <error code="464">Invalid VPI price</error>
         <error code="470">Wrong smart account address</error>
+        <error code="471">V3 close cooldown</error>
         <error code="1000">Invalid message magic</error>
         <error code="1001">Invalid payload magic</error>
         <error code="1002">Invalid feeds count</error>
@@ -428,7 +431,6 @@
     </interface>
 
     <interface name="storm_vault">
-        <code_hash>8b987d55003bc13de062368e732291c010fb25af4c8b776337a4b398c30eb79a</code_hash>
         <msg_in>
             <internal name="storm_withdraw_referral_amount"/>
             <internal name="storm_withdraw_executor_amount"/>
@@ -487,7 +489,6 @@
     </interface>
 
     <interface name="storm_vault_native">
-        <code_hash>78ba001d199dd8185820f635e16e5c2f1dc7cfacea80bc5eb260f084f88084df</code_hash>
         <msg_in>
             <internal name="storm_withdraw_referral_amount"/>
             <internal name="storm_withdraw_executor_amount"/>
@@ -546,7 +547,6 @@
     </interface>
 
     <interface name="smart_account_blank">
-        <code_hash>09710d08920dfd156edfd98e70e3e6312ed2c8c7eb754e061060d23d810e27ef</code_hash>
         <msg_in>
             <internal name="storm_deposit_notify"/>
             <internal name="storm_referral_fees"/>
@@ -564,7 +564,6 @@
     </interface>
 
     <interface name="smart_account">
-        <code_hash>43c78f03b04864ab54e958070745db7cd050578c3d6950326a7e4a9f31268cf1</code_hash>
         <msg_in>
             <internal name="storm_notify_update_position"/>
             <internal name="storm_deposit_notify"/>
@@ -575,6 +574,7 @@
             <internal name="storm_add_public_key"/>
             <internal name="storm_remove_public_key"/>
             <internal name="storm_remove_all_keys_except_current"/>
+            <internal name="storm_deposit_ton"/>
             <ext_in name="storm_execute_orders_bundle_external"/>
         </msg_in>
         <msg_out>
@@ -617,6 +617,7 @@
         <error code="424">Invalid referrer parts</error>
         <error code="425">Incorrect spent amount</error>
         <error code="426">Too many intents</error>
+        <error code="427">Not enough real balance</error>
         <error code="170">Invalid created at</error>
         <error code="171">Query already processed</error>
         <error code="172">Invalid smart account address</error>
@@ -631,7 +632,6 @@
     </interface>
 
     <interface name="smart_account_factory">
-        <code_hash>1aa509693f70c885619e5e7de744902ecac10a32a6506fb6ed05c7c8bdb2cb3a</code_hash>
         <msg_in>
             <internal name="storm_notify_with_deploy"/>
             <internal name="storm_deploy_ordinary_sa"/>
@@ -654,7 +654,6 @@
     </interface>
 
     <interface name="storm_referral">
-        <code_hash>74a1820688a6a15ce05a3f5ee0ec6a0675478d2d89a43026e2ede3bce11a28ef</code_hash>
         <msg_in>
             <internal name="storm_mint_referral"/>
             <internal name="storm_add_referral_amount"/>
@@ -684,7 +683,6 @@
     </interface>
 
     <interface name="storm_referral_collection">
-        <code_hash>518171cff3fa6aa54e64e4984b37e2f247a31aa2c48b9a31ca8620aee77e70c4</code_hash>
         <get_method name="get_collection_data"/>
         <get_method name="get_nft_address_by_index"/>
         <get_method name="royalty_params"/>
@@ -701,7 +699,6 @@
     </interface>
 
     <interface name="storm_executor">
-        <code_hash>be28e274ea141a4a1e77302dc4ff2ff0f07c9e87dd066780b1bea6b4a35eb729</code_hash>
         <msg_in>
             <internal name="storm_mint_executor"/>
             <internal name="storm_add_executor_amount"/>
@@ -728,7 +725,6 @@
     </interface>
 
     <interface name="storm_executor_collection">
-        <code_hash>cb72c40ff4be9937dd32c289af4084a2c7f8d48d47a0a6d158957d5a29dc0df8</code_hash>
         <get_method name="get_collection_data"/>
         <get_method name="get_nft_address_by_index"/>
         <get_method name="royalty_params"/>
@@ -743,7 +739,6 @@
     </interface>
 
     <interface name="storm_position_manager">
-        <code_hash>18c7ed8bf5d65996f0a19ec48e93c5f674cc0fbad210ca5b8e06ff7e03c7589e</code_hash> <!-- library -->
         <msg_in>
             <internal name="storm_take_referral_fees"/>
             <internal name="storm_cancel_order"/>
@@ -867,6 +862,7 @@
             <int name="high_funding_fn_a">int64</int>
             <int name="high_funding_fn_b">uint64</int>
             <int name="inflection_point">uint64</int>
+            <int name="v3_close_delay">uint32</int>
         </output>
     </get_method>
 
@@ -1412,12 +1408,8 @@
     </internal>
 
     <ext_out name="intent_log">
-        logs#012e8f40 log_dict:(HashmapE 8 IntentLog) = ExtOutMsgBody;
+        logs#812e8f40 log_dict:(HashmapE 8 IntentLog) = ExtOutMsgBody;
     </ext_out>
-
-    <internal name="intent_log">
-        intent_log#012e8f40 log_dict:(HashmapE 8 IntentLog) = InternalMsgBody;
-    </internal>
 
     <!-- Referral item -->
     <internal name="storm_add_referral_amount">
@@ -1501,7 +1493,7 @@
     </internal>
 
     <internal name="storm_trade_notification_v2">
-        trade_notification_v2#28d36491 query_id:uint64 asset_id:uint16 free_amount:uint64 locked_amount:uint64 exchange_amount:uint64
+        trade_notification_v2#28d36491 query_id:uint64 asset_id:uint16 free_amount:int64 locked_amount:int64 exchange_amount:int64
         withdraw_locked_amount:uint64 fee_to_stakers:uint64 executor_amount:uint64 total_referrer_amount:uint64 ref_count:uint4
         referral_data:(HashmapE 4 ReferrerData) sa_address:MsgAddressInt notification_payload:^NotificationPayloadV2 = InternalMsgBody;
     </internal>

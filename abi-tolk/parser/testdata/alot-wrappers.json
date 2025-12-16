@@ -1,0 +1,3572 @@
+{
+   "contractName": "LotsOfWrappers",
+   "declarations": [
+     {
+       "kind": "Struct",
+       "name": "JustUint5",
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "uintN",
+             "n": 5
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "JustInt32",
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "JustMaybeInt32",
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "intN",
+               "n": 32
+             }
+           },
+           "defaultValue": {
+             "kind": "null"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TwoInts32AndCoins",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "amount",
+           "ty": {
+             "kind": "coins"
+           },
+           "defaultValue": {
+             "kind": "int",
+             "v": "1000000000"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TwoInts32And64",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "query_id",
+           "ty": {
+             "kind": "uintN",
+             "n": 64
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TwoInts32AndRef64",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "query_id_ref",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "uintN",
+               "n": 64
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TwoInts32AndMaybe64",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "query_id",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "uintN",
+               "n": 64
+             }
+           }
+         },
+         {
+           "name": "demo_bool_field",
+           "ty": {
+             "kind": "bool"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "JustAddress",
+       "fields": [
+         {
+           "name": "addr",
+           "ty": {
+             "kind": "address"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TwoInts32And64SepByAddress",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "addr_e",
+           "ty": {
+             "kind": "addressAny"
+           }
+         },
+         {
+           "name": "query_id",
+           "ty": {
+             "kind": "uintN",
+             "n": 64
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndEitherInt8Or256",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "i8or256",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "intN",
+                   "n": 8
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "intN",
+                   "n": 256
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Inner1",
+       "fields": [
+         {
+           "name": "query_id_ref",
+           "ty": {
+             "kind": "uintN",
+             "n": 64
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Inner2",
+       "fields": [
+         {
+           "name": "i64_in_ref",
+           "ty": {
+             "kind": "intN",
+             "n": 64
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndEither32OrRef64",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "i32orRef",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "intN",
+                   "n": 32
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cellOf",
+                   "inner": {
+                     "kind": "StructRef",
+                     "structName": "Inner2"
+                   }
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "query_id_maybe_ref",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "StructRef",
+                 "structName": "Inner1"
+               }
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "EitherLeft",
+       "typeParams": [
+         "T"
+       ],
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "genericT",
+             "nameT": "T"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "EitherRight",
+       "typeParams": [
+         "T"
+       ],
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "genericT",
+             "nameT": "T"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndEither8OrMaybe256",
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Either",
+             "typeArgs": [
+               {
+                 "kind": "intN",
+                 "n": 8
+               },
+               {
+                 "kind": "nullable",
+                 "inner": {
+                   "kind": "intN",
+                   "n": 256
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "MaybeNothing",
+       "fields": []
+     },
+     {
+       "kind": "Struct",
+       "name": "MaybeJust",
+       "typeParams": [
+         "T"
+       ],
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "genericT",
+             "nameT": "T"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndMaybeMaybe8",
+       "fields": [
+         {
+           "name": "value",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Maybe",
+             "typeArgs": [
+               {
+                 "kind": "AliasRef",
+                 "aliasName": "Maybe",
+                 "typeArgs": [
+                   {
+                     "kind": "intN",
+                     "n": 8
+                   }
+                 ]
+               }
+             ]
+           }
+         },
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "SomeBytesFields",
+       "fields": [
+         {
+           "name": "f1",
+           "ty": {
+             "kind": "bitsN",
+             "n": 8
+           }
+         },
+         {
+           "name": "f2",
+           "ty": {
+             "kind": "bitsN",
+             "n": 3
+           }
+         },
+         {
+           "name": "f3",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "bitsN",
+               "n": 20
+             }
+           }
+         },
+         {
+           "name": "f4",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "bitsN",
+                   "n": 100
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "bitsN",
+                   "n": 200
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndRestInlineCell",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "remaining"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndRestRefCell",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "cell"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "IntAndRestEitherCellOrRefCell",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "remaining"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cell"
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "DifferentMaybeRefs",
+       "fields": [
+         {
+           "name": "op",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           },
+           "defaultValue": {
+             "kind": "int",
+             "v": "123"
+           }
+         },
+         {
+           "name": "ref1m",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cell"
+             }
+           }
+         },
+         {
+           "name": "ref2m",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "dict"
+           }
+         },
+         {
+           "name": "ref3",
+           "ty": {
+             "kind": "cell"
+           }
+         },
+         {
+           "name": "ref4m32",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "StructRef",
+                 "structName": "JustInt32"
+               }
+             }
+           }
+         },
+         {
+           "name": "query_id",
+           "ty": {
+             "kind": "intN",
+             "n": 64
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "DifferentIntsWithMaybe",
+       "fields": [
+         {
+           "name": "ji",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "JustInt32"
+           }
+         },
+         {
+           "name": "jmi",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "JustMaybeInt32"
+           }
+         },
+         {
+           "name": "jiMaybe",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "JustInt32"
+             }
+           }
+         },
+         {
+           "name": "jmiMaybe",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "JustMaybeInt32"
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "DifferentMix1",
+       "fields": [
+         {
+           "name": "ja1",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "JustAddress"
+           }
+         },
+         {
+           "name": "ja2m",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "JustAddress"
+             }
+           }
+         },
+         {
+           "name": "ext_nn",
+           "ty": {
+             "kind": "addressAny"
+           }
+         },
+         {
+           "name": "imm",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "IntAndMaybeMaybe8"
+           }
+         },
+         {
+           "name": "tis",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "TwoInts32And64SepByAddress"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "DifferentMix2",
+       "fields": [
+         {
+           "name": "iae",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "IntAndEither32OrRef64"
+             }
+           }
+         },
+         {
+           "name": "tic",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "TwoInts32AndCoins"
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "remaining"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "DifferentMix3",
+       "fields": [
+         {
+           "name": "bod",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cellOf",
+                   "inner": {
+                     "kind": "StructRef",
+                     "structName": "TwoInts32AndCoins"
+                   }
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cellOf",
+                   "inner": {
+                     "kind": "StructRef",
+                     "structName": "JustInt32"
+                   }
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "tim",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "TwoInts32AndCoins"
+             }
+           }
+         },
+         {
+           "name": "pairm",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "tensor",
+               "items": [
+                 {
+                   "kind": "intN",
+                   "n": 32
+                 },
+                 {
+                   "kind": "intN",
+                   "n": 64
+                 }
+               ]
+             }
+           },
+           "defaultValue": {
+             "kind": "null"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithVariadicInts",
+       "fields": [
+         {
+           "name": "ui16",
+           "ty": {
+             "kind": "varuintN",
+             "n": 16
+           }
+         },
+         {
+           "name": "i16",
+           "ty": {
+             "kind": "varintN",
+             "n": 16
+           }
+         },
+         {
+           "name": "ui32",
+           "ty": {
+             "kind": "varuintN",
+             "n": 32
+           }
+         },
+         {
+           "name": "i32",
+           "ty": {
+             "kind": "varintN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "EdgeCaseInts",
+       "fields": [
+         {
+           "name": "maxUint",
+           "ty": {
+             "kind": "uintN",
+             "n": 256
+           },
+           "defaultValue": {
+             "kind": "int",
+             "v": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+           }
+         },
+         {
+           "name": "maxInt",
+           "ty": {
+             "kind": "intN",
+             "n": 257
+           },
+           "defaultValue": {
+             "kind": "int",
+             "v": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+           }
+         },
+         {
+           "name": "minInt",
+           "ty": {
+             "kind": "intN",
+             "n": 257
+           },
+           "defaultValue": {
+             "kind": "int",
+             "v": "-115792089237316195423570985008687907853269984665640564039457584007913129639936"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WriteWithBuilder",
+       "fields": [
+         {
+           "name": "f1",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "builder"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WriteWithSlice",
+       "fields": [
+         {
+           "name": "f1",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "slice"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "ReadWrittenWithBuilder",
+       "fields": [
+         {
+           "name": "f1",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "someInt",
+           "ty": {
+             "kind": "uintN",
+             "n": 32
+           }
+         },
+         {
+           "name": "someCell",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cell"
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "ReadWriteRest",
+       "typeParams": [
+         "T"
+       ],
+       "fields": [
+         {
+           "name": "f1",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "f2",
+           "ty": {
+             "kind": "coins"
+           }
+         },
+         {
+           "name": "rest",
+           "ty": {
+             "kind": "genericT",
+             "nameT": "T"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Tail224",
+       "fields": [
+         {
+           "name": "ji",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "JustInt32"
+           }
+         },
+         {
+           "name": "addr",
+           "ty": {
+             "kind": "address"
+           }
+         },
+         {
+           "name": "ref1",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "intN",
+                 "n": 32
+               }
+             }
+           }
+         },
+         {
+           "name": "ref2",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "JustAddress"
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "ReadWriteMid",
+       "typeParams": [
+         "T"
+       ],
+       "fields": [
+         {
+           "name": "f1",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "mid",
+           "ty": {
+             "kind": "genericT",
+             "nameT": "T"
+           }
+         },
+         {
+           "name": "f3",
+           "ty": {
+             "kind": "coins"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithTwoRestFields",
+       "fields": [
+         {
+           "name": "i32",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rest1",
+           "ty": {
+             "kind": "remaining"
+           }
+         },
+         {
+           "name": "rest2",
+           "ty": {
+             "kind": "remaining"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "MoreTrickyCells",
+       "typeParams": [
+         "T3",
+         "T4"
+       ],
+       "fields": [
+         {
+           "name": "c1",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "union",
+               "variants": [
+                 {
+                   "prefixStr": "0",
+                   "prefixLen": 1,
+                   "prefixEatInPlace": true,
+                   "variantTy": {
+                     "kind": "intN",
+                     "n": 32
+                   }
+                 },
+                 {
+                   "prefixStr": "1",
+                   "prefixLen": 1,
+                   "prefixEatInPlace": true,
+                   "variantTy": {
+                     "kind": "intN",
+                     "n": 64
+                   }
+                 }
+               ]
+             }
+           }
+         },
+         {
+           "name": "c2",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "addressAny"
+               }
+             }
+           }
+         },
+         {
+           "name": "c3",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "genericT",
+                 "nameT": "T3"
+               }
+             }
+           }
+         },
+         {
+           "name": "c4",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cellOf",
+                   "inner": {
+                     "kind": "genericT",
+                     "nameT": "T4"
+                   }
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "bool"
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithMoreTrickyCells",
+       "fields": [
+         {
+           "name": "before",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "tricky",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "MoreTrickyCells",
+             "typeArgs": [
+               {
+                 "kind": "StructRef",
+                 "structName": "TwoInts32And64"
+               },
+               {
+                 "kind": "union",
+                 "variants": [
+                   {
+                     "prefixStr": "0b00",
+                     "prefixLen": 2,
+                     "prefixEatInPlace": true,
+                     "variantTy": {
+                       "kind": "StructRef",
+                       "structName": "MaybeJust",
+                       "typeArgs": [
+                         {
+                           "kind": "intN",
+                           "n": 8
+                         }
+                       ]
+                     }
+                   },
+                   {
+                     "prefixStr": "0b01",
+                     "prefixLen": 2,
+                     "prefixEatInPlace": true,
+                     "variantTy": {
+                       "kind": "intN",
+                       "n": 16
+                     }
+                   },
+                   {
+                     "prefixStr": "0b10",
+                     "prefixLen": 2,
+                     "prefixEatInPlace": true,
+                     "variantTy": {
+                       "kind": "StructRef",
+                       "structName": "MaybeNothing"
+                     }
+                   }
+                 ]
+               }
+             ]
+           }
+         },
+         {
+           "name": "after",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithMoreTrickyAddresses1",
+       "fields": [
+         {
+           "name": "a1",
+           "ty": {
+             "kind": "addressOpt"
+           }
+         },
+         {
+           "name": "a2",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0b00",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "address"
+                 }
+               },
+               {
+                 "prefixStr": "0b01",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "AliasRef",
+                   "aliasName": "MyInt32"
+                 }
+               },
+               {
+                 "prefixStr": "0b10",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "StructRef",
+                   "structName": "MaybeNothing"
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "a3",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "StructRef",
+                   "structName": "TwoInts32And64"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "AliasRef",
+                   "aliasName": "MaybeJustOfAddress"
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "a4",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "addressOpt"
+               }
+             }
+           }
+         },
+         {
+           "name": "a5",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "address"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cellOf",
+                   "inner": {
+                     "kind": "addressAny"
+                   }
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithMoreTrickyAddresses2",
+       "fields": [
+         {
+           "name": "a1",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Maybe",
+             "typeArgs": [
+               {
+                 "kind": "address"
+               }
+             ]
+           }
+         },
+         {
+           "name": "a2",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Maybe",
+             "typeArgs": [
+               {
+                 "kind": "addressOpt"
+               }
+             ]
+           }
+         },
+         {
+           "name": "a3",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "JustAddress"
+             }
+           }
+         },
+         {
+           "name": "a4",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0b10",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "address"
+                 }
+               },
+               {
+                 "prefixStr": "0b11",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "intN",
+                   "n": 64
+                 }
+               },
+               {
+                 "prefixStr": "0b0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "nullLiteral"
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "a5",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "address"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "cellOf",
+                   "inner": {
+                     "kind": "address"
+                   }
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithAnyAddress",
+       "fields": [
+         {
+           "name": "a1",
+           "ty": {
+             "kind": "addressAny"
+           }
+         },
+         {
+           "name": "a2",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "addressAny"
+             }
+           }
+         },
+         {
+           "name": "a3",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "addressAny"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "intN",
+                   "n": 64
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "a4",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "address"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "addressAny"
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "a5",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Maybe",
+             "typeArgs": [
+               {
+                 "kind": "addressAny"
+               }
+             ]
+           }
+         },
+         {
+           "name": "a6",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "addressAny"
+             }
+           }
+         },
+         {
+           "name": "a7",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "cellOf",
+               "inner": {
+                 "kind": "nullable",
+                 "inner": {
+                   "kind": "addressAny"
+                 }
+               }
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "MsgSinglePrefix32",
+       "prefix": {
+         "prefixStr": "0x87654321",
+         "prefixLen": 32
+       },
+       "fields": [
+         {
+           "name": "amount1",
+           "ty": {
+             "kind": "coins"
+           }
+         },
+         {
+           "name": "amount2",
+           "ty": {
+             "kind": "coins"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "MsgSinglePrefix48",
+       "prefix": {
+         "prefixStr": "0x876543211234",
+         "prefixLen": 48
+       },
+       "fields": [
+         {
+           "name": "amount",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "coins"
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "uintN",
+                   "n": 64
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "CounterIncrement",
+       "prefix": {
+         "prefixStr": "0x12345678",
+         "prefixLen": 32
+       },
+       "fields": [
+         {
+           "name": "counter_id",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "inc_by",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "CounterDecrement",
+       "prefix": {
+         "prefixStr": "0x23456789",
+         "prefixLen": 32
+       },
+       "fields": [
+         {
+           "name": "counter_id",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "dec_by",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "CounterReset0",
+       "prefix": {
+         "prefixStr": "0x34567890",
+         "prefixLen": 32
+       },
+       "fields": [
+         {
+           "name": "counter_id",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "CounterResetTo",
+       "prefix": {
+         "prefixStr": "0x00184300",
+         "prefixLen": 32
+       },
+       "fields": [
+         {
+           "name": "counter_id",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "initial_value",
+           "ty": {
+             "kind": "intN",
+             "n": 64
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "CounterIncrementAlias",
+       "targetTy": {
+         "kind": "StructRef",
+         "structName": "CounterIncrement"
+       }
+     },
+     {
+       "kind": "Struct",
+       "name": "BodyPayload1",
+       "prefix": {
+         "prefixStr": "0b001",
+         "prefixLen": 3
+       },
+       "fields": [
+         {
+           "name": "should_forward",
+           "ty": {
+             "kind": "bool"
+           }
+         },
+         {
+           "name": "n_times",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "content",
+           "ty": {
+             "kind": "remaining"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "BodyPayload2",
+       "prefix": {
+         "prefixStr": "0b01",
+         "prefixLen": 2
+       },
+       "fields": [
+         {
+           "name": "master_id",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "owner_address",
+           "ty": {
+             "kind": "address"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "SayHiAndGoodbye",
+       "prefix": {
+         "prefixStr": "0x89",
+         "prefixLen": 8
+       },
+       "fields": [
+         {
+           "name": "dest_addr",
+           "ty": {
+             "kind": "addressOpt"
+           }
+         },
+         {
+           "name": "body",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "BodyPayload"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "SayStoreInChain",
+       "prefix": {
+         "prefixStr": "0x0013",
+         "prefixLen": 16
+       },
+       "fields": [
+         {
+           "name": "in_masterchain",
+           "ty": {
+             "kind": "bool"
+           }
+         },
+         {
+           "name": "contents",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "AliasRef",
+               "aliasName": "BodyPayload"
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TransferParams1",
+       "prefix": {
+         "prefixStr": "0x794",
+         "prefixLen": 12
+       },
+       "fields": [
+         {
+           "name": "dest_int",
+           "ty": {
+             "kind": "address"
+           }
+         },
+         {
+           "name": "amount",
+           "ty": {
+             "kind": "coins"
+           }
+         },
+         {
+           "name": "dest_ext",
+           "ty": {
+             "kind": "addressAny"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "TransferParams2",
+       "prefix": {
+         "prefixStr": "0x9",
+         "prefixLen": 4
+       },
+       "fields": [
+         {
+           "name": "intVector",
+           "ty": {
+             "kind": "tensor",
+             "items": [
+               {
+                 "kind": "intN",
+                 "n": 32
+               },
+               {
+                 "kind": "nullable",
+                 "inner": {
+                   "kind": "coins"
+                 }
+               },
+               {
+                 "kind": "uintN",
+                 "n": 64
+               }
+             ]
+           }
+         },
+         {
+           "name": "needs_more",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "bool"
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "MsgTransfer",
+       "prefix": {
+         "prefixStr": "0xFB3701FF",
+         "prefixLen": 32
+       },
+       "fields": [
+         {
+           "name": "params",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Either",
+             "typeArgs": [
+               {
+                 "kind": "AliasRef",
+                 "aliasName": "TransferParams"
+               },
+               {
+                 "kind": "cellOf",
+                 "inner": {
+                   "kind": "AliasRef",
+                   "aliasName": "TransferParams"
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "ReadRest_Remaining",
+       "targetTy": {
+         "kind": "StructRef",
+         "structName": "ReadWriteRest",
+         "typeArgs": [
+           {
+             "kind": "remaining"
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "MyInt32",
+       "targetTy": {
+         "kind": "intN",
+         "n": 32
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "MaybeJustOfAddress",
+       "targetTy": {
+         "kind": "StructRef",
+         "structName": "MaybeJust",
+         "typeArgs": [
+           {
+             "kind": "address"
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "AddressAlias",
+       "targetTy": {
+         "kind": "address"
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "Either",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0",
+             "prefixLen": 1,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "EitherLeft",
+               "typeArgs": [
+                 {
+                   "kind": "genericT",
+                   "nameT": "L"
+                 }
+               ]
+             }
+           },
+           {
+             "prefixStr": "1",
+             "prefixLen": 1,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "EitherRight",
+               "typeArgs": [
+                 {
+                   "kind": "genericT",
+                   "nameT": "R"
+                 }
+               ]
+             }
+           }
+         ]
+       },
+       "typeParams": [
+         "L",
+         "R"
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "Maybe",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0",
+             "prefixLen": 1,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "MaybeNothing"
+             }
+           },
+           {
+             "prefixStr": "1",
+             "prefixLen": 1,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "MaybeJust",
+               "typeArgs": [
+                 {
+                   "kind": "genericT",
+                   "nameT": "T"
+                 }
+               ]
+             }
+           }
+         ]
+       },
+       "typeParams": [
+         "T"
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "MsgCounter1",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0x12345678",
+             "prefixLen": 32,
+             "variantTy": {
+               "kind": "AliasRef",
+               "aliasName": "CounterIncrementAlias"
+             }
+           },
+           {
+             "prefixStr": "0x23456789",
+             "prefixLen": 32,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "CounterDecrement"
+             }
+           },
+           {
+             "prefixStr": "0x34567890",
+             "prefixLen": 32,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "CounterReset0"
+             }
+           },
+           {
+             "prefixStr": "0x00184300",
+             "prefixLen": 32,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "CounterResetTo"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "BodyPayload",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b001",
+             "prefixLen": 3,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "BodyPayload1"
+             }
+           },
+           {
+             "prefixStr": "0b01",
+             "prefixLen": 2,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "BodyPayload2"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "MsgExternal1",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0x89",
+             "prefixLen": 8,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "SayHiAndGoodbye"
+             }
+           },
+           {
+             "prefixStr": "0x0013",
+             "prefixLen": 16,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "SayStoreInChain"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "TransferParams",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0x794",
+             "prefixLen": 12,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "TransferParams1"
+             }
+           },
+           {
+             "prefixStr": "0x9",
+             "prefixLen": 4,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "TransferParams2"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "Union_8_16_32",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b00",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 8
+             }
+           },
+           {
+             "prefixStr": "0b01",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 16
+             }
+           },
+           {
+             "prefixStr": "0b10",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 32
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "Union_8_16_32_n",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b100",
+             "prefixLen": 3,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 8
+             }
+           },
+           {
+             "prefixStr": "0b101",
+             "prefixLen": 3,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 16
+             }
+           },
+           {
+             "prefixStr": "0b110",
+             "prefixLen": 3,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 32
+             }
+           },
+           {
+             "prefixStr": "0b0",
+             "prefixLen": 1,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "nullLiteral"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Enum",
+       "name": "EStoredAsInt8",
+       "encodedAs": {
+         "kind": "intN",
+         "n": 8
+       },
+       "members": [
+         {
+           "name": "M100",
+           "value": "-100"
+         },
+         {
+           "name": "Z",
+           "value": "0"
+         },
+         {
+           "name": "P100",
+           "value": "100"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EStoredAsUint1",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 1
+       },
+       "members": [
+         {
+           "name": "ZERO",
+           "value": "0"
+         },
+         {
+           "name": "ONE",
+           "value": "1"
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithEnums",
+       "fields": [
+         {
+           "name": "e1",
+           "ty": {
+             "kind": "EnumRef",
+             "enumName": "EStoredAsInt8"
+           }
+         },
+         {
+           "name": "e2",
+           "ty": {
+             "kind": "EnumRef",
+             "enumName": "EStoredAsUint1"
+           }
+         },
+         {
+           "name": "rem",
+           "ty": {
+             "kind": "uintN",
+             "n": 7
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Test4_8",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Test4_16",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "intN",
+             "n": 16
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Test4_32",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "StorWithStr",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "str",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "TelegramString"
+           }
+         },
+         {
+           "name": "b",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "PointWithCustomInt",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "Custom8"
+           }
+         },
+         {
+           "name": "b",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithMyBorder",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "b",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "MyBorderedInt"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithFakeWriter",
+       "fields": [
+         {
+           "name": "a",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "fake",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "MyCustomNothing"
+           }
+         },
+         {
+           "name": "b",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithEnumsUnion",
+       "fields": [
+         {
+           "name": "u",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0b10",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "EnumRef",
+                   "enumName": "EFits8Bits"
+                 }
+               },
+               {
+                 "prefixStr": "0b11",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "EnumRef",
+                   "enumName": "EStartFromM2"
+                 }
+               },
+               {
+                 "prefixStr": "0b0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "nullLiteral"
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "UnionStructs_8_16_32",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b00",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 8
+             }
+           },
+           {
+             "prefixStr": "0b01",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "Test4_16"
+             }
+           },
+           {
+             "prefixStr": "0b10",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "Test4_32"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "UnionStructs_8_16_32_n",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b100",
+             "prefixLen": 3,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "StructRef",
+               "structName": "Test4_8"
+             }
+           },
+           {
+             "prefixStr": "0b101",
+             "prefixLen": 3,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 16
+             }
+           },
+           {
+             "prefixStr": "0b110",
+             "prefixLen": 3,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 32
+             }
+           },
+           {
+             "prefixStr": "0b0",
+             "prefixLen": 1,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "nullLiteral"
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "U105",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b00",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 8
+             }
+           },
+           {
+             "prefixStr": "0b01",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 32
+             }
+           },
+           {
+             "prefixStr": "0b10",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 64
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "U106",
+       "targetTy": {
+         "kind": "union",
+         "variants": [
+           {
+             "prefixStr": "0b00",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 8
+             }
+           },
+           {
+             "prefixStr": "0b01",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 16
+             }
+           },
+           {
+             "prefixStr": "0b10",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 32
+             }
+           },
+           {
+             "prefixStr": "0b11",
+             "prefixLen": 2,
+             "prefixEatInPlace": true,
+             "variantTy": {
+               "kind": "intN",
+               "n": 64
+             }
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "TelegramString",
+       "targetTy": {
+         "kind": "slice"
+       },
+       "customPackToBuilder": true,
+       "customUnpackFromSlice": true
+     },
+     {
+       "kind": "Alias",
+       "name": "Custom8",
+       "targetTy": {
+         "kind": "uintN",
+         "n": 8
+       },
+       "customPackToBuilder": true,
+       "customUnpackFromSlice": true
+     },
+     {
+       "kind": "Alias",
+       "name": "MyBorderedInt",
+       "targetTy": {
+         "kind": "intN",
+         "n": 257
+       },
+       "customPackToBuilder": true,
+       "customUnpackFromSlice": true
+     },
+     {
+       "kind": "Alias",
+       "name": "MyCustomNothing",
+       "targetTy": {
+         "kind": "tensor",
+         "items": []
+       },
+       "customPackToBuilder": true
+     },
+     {
+       "kind": "Alias",
+       "name": "Tensor3Skipping1",
+       "targetTy": {
+         "kind": "tensor",
+         "items": [
+           {
+             "kind": "uintN",
+             "n": 8
+           },
+           {
+             "kind": "uintN",
+             "n": 8
+           },
+           {
+             "kind": "uintN",
+             "n": 8
+           }
+         ]
+       },
+       "customPackToBuilder": true,
+       "customUnpackFromSlice": true
+     },
+     {
+       "kind": "Alias",
+       "name": "UnsafeColor",
+       "targetTy": {
+         "kind": "EnumRef",
+         "enumName": "Color"
+       },
+       "customPackToBuilder": true,
+       "customUnpackFromSlice": true
+     },
+     {
+       "kind": "Alias",
+       "name": "TwoRoles",
+       "targetTy": {
+         "kind": "tensor",
+         "items": [
+           {
+             "kind": "EnumRef",
+             "enumName": "Role"
+           },
+           {
+             "kind": "EnumRef",
+             "enumName": "Role"
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Enum",
+       "name": "Color",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 2
+       },
+       "members": [
+         {
+           "name": "Red",
+           "value": "0"
+         },
+         {
+           "name": "Green",
+           "value": "1"
+         },
+         {
+           "name": "Blue",
+           "value": "2"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EFits2Bits",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 2
+       },
+       "members": [
+         {
+           "name": "ZERO",
+           "value": "0"
+         },
+         {
+           "name": "ONE",
+           "value": "1"
+         },
+         {
+           "name": "TWO",
+           "value": "2"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EStartFrom1",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 2
+       },
+       "members": [
+         {
+           "name": "ONE",
+           "value": "1"
+         },
+         {
+           "name": "TWO",
+           "value": "2"
+         },
+         {
+           "name": "THREE",
+           "value": "3"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EStartFromM2",
+       "encodedAs": {
+         "kind": "intN",
+         "n": 3
+       },
+       "members": [
+         {
+           "name": "M2",
+           "value": "-2"
+         },
+         {
+           "name": "M1",
+           "value": "-1"
+         },
+         {
+           "name": "ZERO",
+           "value": "0"
+         },
+         {
+           "name": "P1",
+           "value": "1"
+         },
+         {
+           "name": "P2",
+           "value": "2"
+         },
+         {
+           "name": "P3",
+           "value": "3"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EFits8Bits",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 8
+       },
+       "members": [
+         {
+           "name": "E0",
+           "value": "0"
+         },
+         {
+           "name": "E110",
+           "value": "110"
+         },
+         {
+           "name": "E220",
+           "value": "220"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EMinMax",
+       "encodedAs": {
+         "kind": "intN",
+         "n": 257
+       },
+       "members": [
+         {
+           "name": "MIN_INT",
+           "value": "-115792089237316195423570985008687907853269984665640564039457584007913129639936"
+         },
+         {
+           "name": "MAX_INT",
+           "value": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "E0Max",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 256
+       },
+       "members": [
+         {
+           "name": "ZERO",
+           "value": "0"
+         },
+         {
+           "name": "MAX_INT",
+           "value": "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "Role",
+       "encodedAs": {
+         "kind": "intN",
+         "n": 8
+       },
+       "members": [
+         {
+           "name": "Admin",
+           "value": "0"
+         },
+         {
+           "name": "User",
+           "value": "1"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "EncodedVari",
+       "encodedAs": {
+         "kind": "varintN",
+         "n": 16
+       },
+       "members": [
+         {
+           "name": "ONE",
+           "value": "1"
+         },
+         {
+           "name": "TWO",
+           "value": "2"
+         },
+         {
+           "name": "MANY",
+           "value": "1267650600228229401496703205376"
+         }
+       ]
+     },
+     {
+       "kind": "Enum",
+       "name": "ECollisionNames",
+       "encodedAs": {
+         "kind": "uintN",
+         "n": 2
+       },
+       "members": [
+         {
+           "name": "fromSlice",
+           "value": "0"
+         },
+         {
+           "name": "store",
+           "value": "1"
+         },
+         {
+           "name": "toCell",
+           "value": "2"
+         },
+         {
+           "name": "ToCell",
+           "value": "3"
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "Wrapper",
+       "typeParams": [
+         "T"
+       ],
+       "fields": [
+         {
+           "name": "item",
+           "ty": {
+             "kind": "genericT",
+             "nameT": "T"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithMaps0",
+       "fields": [
+         {
+           "name": "m1",
+           "ty": {
+             "kind": "mapKV",
+             "k": {
+               "kind": "intN",
+               "n": 16
+             },
+             "v": {
+               "kind": "intN",
+               "n": 32
+             }
+           }
+         },
+         {
+           "name": "m2",
+           "ty": {
+             "kind": "mapKV",
+             "k": {
+               "kind": "intN",
+               "n": 16
+             },
+             "v": {
+               "kind": "tensor",
+               "items": [
+                 {
+                   "kind": "intN",
+                   "n": 8
+                 },
+                 {
+                   "kind": "intN",
+                   "n": 8
+                 }
+               ]
+             }
+           }
+         },
+         {
+           "name": "m3",
+           "ty": {
+             "kind": "mapKV",
+             "k": {
+               "kind": "uintN",
+               "n": 16
+             },
+             "v": {
+               "kind": "addressAny"
+             }
+           }
+         },
+         {
+           "name": "m4",
+           "ty": {
+             "kind": "mapKV",
+             "k": {
+               "kind": "address"
+             },
+             "v": {
+               "kind": "remaining"
+             }
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithNullableMaps",
+       "fields": [
+         {
+           "name": "m1",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "mapKV",
+               "k": {
+                 "kind": "intN",
+                 "n": 32
+               },
+               "v": {
+                 "kind": "intN",
+                 "n": 64
+               }
+             }
+           }
+         },
+         {
+           "name": "m2",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "mapKV",
+               "k": {
+                 "kind": "intN",
+                 "n": 32
+               },
+               "v": {
+                 "kind": "intN",
+                 "n": 64
+               }
+             }
+           }
+         },
+         {
+           "name": "m3",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "mapKV",
+               "k": {
+                 "kind": "intN",
+                 "n": 32
+               },
+               "v": {
+                 "kind": "intN",
+                 "n": 64
+               }
+             }
+           }
+         },
+         {
+           "name": "m4",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "mapKV",
+                   "k": {
+                     "kind": "intN",
+                     "n": 32
+                   },
+                   "v": {
+                     "kind": "intN",
+                     "n": 64
+                   }
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "intN",
+                   "n": 32
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "m5",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0b00",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "mapKV",
+                   "k": {
+                     "kind": "intN",
+                     "n": 8
+                   },
+                   "v": {
+                     "kind": "intN",
+                     "n": 8
+                   }
+                 }
+               },
+               {
+                 "prefixStr": "0b01",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "mapKV",
+                   "k": {
+                     "kind": "intN",
+                     "n": 16
+                   },
+                   "v": {
+                     "kind": "intN",
+                     "n": 16
+                   }
+                 }
+               },
+               {
+                 "prefixStr": "0b10",
+                 "prefixLen": 2,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "mapKV",
+                   "k": {
+                     "kind": "intN",
+                     "n": 32
+                   },
+                   "v": {
+                     "kind": "intN",
+                     "n": 32
+                   }
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithMoreTrickyTypes",
+       "fields": [
+         {
+           "name": "uni1",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "tensor",
+                   "items": [
+                     {
+                       "kind": "intN",
+                       "n": 8
+                     },
+                     {
+                       "kind": "intN",
+                       "n": 16
+                     }
+                   ]
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "tensor",
+                   "items": [
+                     {
+                       "kind": "intN",
+                       "n": 8
+                     },
+                     {
+                       "kind": "intN",
+                       "n": 16
+                     },
+                     {
+                       "kind": "intN",
+                       "n": 32
+                     }
+                   ]
+                 }
+               }
+             ]
+           }
+         },
+         {
+           "name": "r1",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "StructRef",
+               "structName": "Wrapper",
+               "typeArgs": [
+                 {
+                   "kind": "intN",
+                   "n": 8
+                 }
+               ]
+             }
+           }
+         },
+         {
+           "name": "r2",
+           "ty": {
+             "kind": "cellOf",
+             "inner": {
+               "kind": "union",
+               "variants": [
+                 {
+                   "prefixStr": "0",
+                   "prefixLen": 1,
+                   "prefixEatInPlace": true,
+                   "variantTy": {
+                     "kind": "addressAny"
+                   }
+                 },
+                 {
+                   "prefixStr": "1",
+                   "prefixLen": 1,
+                   "prefixEatInPlace": true,
+                   "variantTy": {
+                     "kind": "StructRef",
+                     "structName": "Wrapper",
+                     "typeArgs": [
+                       {
+                         "kind": "addressAny"
+                       }
+                     ]
+                   }
+                 }
+               ]
+             }
+           }
+         },
+         {
+           "name": "nullable1",
+           "ty": {
+             "kind": "nullable",
+             "inner": {
+               "kind": "AliasRef",
+               "aliasName": "CounterIncrementAlias"
+             }
+           }
+         },
+         {
+           "name": "nestedM",
+           "ty": {
+             "kind": "mapKV",
+             "k": {
+               "kind": "intN",
+               "n": 8
+             },
+             "v": {
+               "kind": "mapKV",
+               "k": {
+                 "kind": "uintN",
+                 "n": 16
+               },
+               "v": {
+                 "kind": "StructRef",
+                 "structName": "JustInt32"
+               }
+             }
+           }
+         },
+         {
+           "name": "uni2",
+           "ty": {
+             "kind": "union",
+             "variants": [
+               {
+                 "prefixStr": "0",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "StructRef",
+                   "structName": "Wrapper",
+                   "typeArgs": [
+                     {
+                       "kind": "intN",
+                       "n": 8
+                     }
+                   ]
+                 }
+               },
+               {
+                 "prefixStr": "1",
+                 "prefixLen": 1,
+                 "prefixEatInPlace": true,
+                 "variantTy": {
+                   "kind": "StructRef",
+                   "structName": "Wrapper",
+                   "typeArgs": [
+                     {
+                       "kind": "intN",
+                       "n": 16
+                     }
+                   ]
+                 }
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "invalid-js-naming%",
+       "fields": [
+         {
+           "name": "foo-bar",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "rule()",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "A^@'\"B",
+           "ty": {
+             "kind": "intN",
+             "n": 32
+           }
+         },
+         {
+           "name": "void",
+           "ty": {
+             "kind": "void"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "NotPackable1",
+       "fields": [
+         {
+           "name": "n",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "a",
+           "ty": {
+             "kind": "tensor",
+             "items": [
+               {
+                 "kind": "intN",
+                 "n": 8
+               },
+               {
+                 "kind": "int"
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "NotPackable3",
+       "fields": [
+         {
+           "name": "t",
+           "ty": {
+             "kind": "tupleAny"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "NotPackable5",
+       "fields": [
+         {
+           "name": "t",
+           "ty": {
+             "kind": "tupleWith",
+             "items": [
+               {
+                 "kind": "intN",
+                 "n": 8
+               },
+               {
+                 "kind": "builder"
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "NotPackable6",
+       "fields": [
+         {
+           "name": "c",
+           "ty": {
+             "kind": "callable"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "NotPackable7",
+       "fields": [
+         {
+           "name": "f",
+           "ty": {
+             "kind": "callable"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "NotUnpackable1",
+       "fields": [
+         {
+           "name": "e",
+           "ty": {
+             "kind": "tensor",
+             "items": [
+               {
+                 "kind": "intN",
+                 "n": 8
+               },
+               {
+                 "kind": "tensor",
+                 "items": [
+                   {
+                     "kind": "intN",
+                     "n": 8
+                   },
+                   {
+                     "kind": "builder"
+                   }
+                 ]
+               }
+             ]
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Struct",
+       "name": "WithNotPackable",
+       "fields": [
+         {
+           "name": "k",
+           "ty": {
+             "kind": "intN",
+             "n": 8
+           }
+         },
+         {
+           "name": "nestedNot",
+           "ty": {
+             "kind": "StructRef",
+             "structName": "NotPackable3"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "NotPackable3Alias",
+       "targetTy": {
+         "kind": "StructRef",
+         "structName": "NotPackable3"
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "NotPackable4Alias",
+       "targetTy": {
+         "kind": "tensor",
+         "items": [
+           {
+             "kind": "intN",
+             "n": 8
+           },
+           {
+             "kind": "intN",
+             "n": 16
+           },
+           {
+             "kind": "int"
+           }
+         ]
+       }
+     },
+     {
+       "kind": "Alias",
+       "name": "OnlyWithPack",
+       "targetTy": {
+         "kind": "intN",
+         "n": 8
+       },
+       "customPackToBuilder": true
+     },
+     {
+       "kind": "Alias",
+       "name": "OnlyWithUnpack",
+       "targetTy": {
+         "kind": "int"
+       },
+       "customUnpackFromSlice": true
+     },
+     {
+       "kind": "Struct",
+       "name": "HasOnlyWithUnpack",
+       "fields": [
+         {
+           "name": "wu",
+           "ty": {
+             "kind": "AliasRef",
+             "aliasName": "OnlyWithUnpack"
+           }
+         }
+       ]
+     },
+     {
+       "kind": "Alias",
+       "name": "dict",
+       "targetTy": {
+         "kind": "nullable",
+         "inner": {
+           "kind": "cell"
+         }
+       }
+     }
+   ],
+   "incomingMessages": [],
+   "outgoingMessages": [],
+   "emittedEvents": [],
+   "getMethods": [],
+   "thrownErrors": [
+     {
+       "constName": "",
+       "errCode": 123
+     }
+   ],
+   "compilerName": "tolk",
+   "compilerVersion": "1.2.0",
+   "codeBoc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+ }

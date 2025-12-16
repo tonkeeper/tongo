@@ -1,0 +1,141 @@
+
+const (
+    IUnknown ContractInterface = iota
+{{- range $name, $iface := .Interfaces }}
+	{{ $name }}
+{{- end }}
+)
+
+const (
+    NUnknown contractNamespace = iota
+{{- range $namespace, $ifaces := .NamespaceToInterfaces }}
+	{{ $namespace }}
+{{- end }}
+)
+
+var namespaceByInterface = map[ContractInterface]contractNamespace{
+	IUnknown:                          NUnknown,
+	{{- range $namespace, $ifaces := .NamespaceToInterfaces }}
+	    {{- range $iface := $ifaces }}
+	        {{ $iface }}: {{ $namespace }},
+	    {{- end }}
+    {{- end }}
+}
+
+func (c ContractInterface) String() string {
+switch c {
+   {{- range $name, $iface := .Interfaces }}
+   case {{ $name }}:
+       return "{{ $iface }}"
+  {{- end }}
+  default:
+      return "unknown"
+  }
+}
+
+func ContractInterfaceFromString(s string) ContractInterface {
+switch s {
+   {{- range $name, $iface := .Interfaces }}
+   case "{{ $iface }}":
+       return {{ $name }}
+  {{- end }}
+  default:
+      return IUnknown
+  }
+}
+
+
+var methodInvocationOrder = []MethodDescription{
+{{- range $method := .InvocationOrder }}
+	{
+	    Name: "{{ $method.Name }}",
+		InvokeFn: {{ $method.InvokeFnName }},
+
+	},
+{{- end }}
+}
+
+var contractInterfacesOrder = []InterfaceDescription{
+{{- range $interface := .InterfaceOrder }}
+{{- if $interface.Results }}
+    {
+        Name: {{ $interface.Name }},
+        Results: []string{
+        {{- range $r := $interface.Results }}
+            "{{ $r }}",
+        {{- end }}
+        },
+    },
+{{- end }}
+{{- end }}
+}
+
+func (c ContractInterface) recursiveImplements(other ContractInterface) bool {
+	switch c {
+	{{- range $interface, $inherits := .Inheritance }}
+	case {{ $interface }}:
+		return {{ $inherits }}.Implements(other)
+    {{- end }}
+	}
+	return false
+}
+
+var knownContracts = map[ton.Bits256]knownContractDescription{
+{{- range $hash, $interface := .KnownHashes }}
+    ton.MustParseHash("{{ $hash }}"):  {
+    contractInterfaces: []ContractInterface{ {{ $interface.Name }} },
+    getMethods: []InvokeFn{
+        {{- range $method := $interface.GetMethods }}
+            {{ $method }},
+        {{- end }}
+
+    },
+    },
+
+{{- end }}
+}
+
+func (c ContractInterface) IntMsgs() []msgDecoderFunc  {
+    switch c {
+    {{- range $interface, $msgs := .IntMsgs }}
+    case {{ $interface }}:
+        return  []msgDecoderFunc{
+        {{- range $msg := $msgs }}
+            decodeFunc{{ $msg }}MsgBody,
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}
+
+func (c ContractInterface) ExtInMsgs() []msgDecoderFunc  {
+    switch c {
+    {{- range $interface, $msgs := .ExtInMsgs }}
+    case {{ $interface }}:
+        return  []msgDecoderFunc{
+        {{- range $msg := $msgs }}
+            decodeFunc{{ $msg }}ExtInMsgBody,
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}
+
+func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc  {
+    switch c {
+    {{- range $interface, $msgs := .ExtOutMsgs }}
+    case {{ $interface }}:
+        return  []msgDecoderFunc{
+        {{- range $msg := $msgs }}
+            decodeFunc{{ $msg }}ExtOutMsgBody,
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}

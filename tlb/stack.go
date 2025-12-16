@@ -621,6 +621,14 @@ func (s VmStack) Unmarshal(dest any) error {
 		return fmt.Errorf("not enough values in stack")
 	}
 	for i := 0; i < val.Elem().Type().NumField(); i++ {
+		tag := val.Elem().Type().Field(i).Tag.Get("vmStackHint")
+		if tag == "tensor" {
+			err := s.Unmarshal(val.Elem().Field(i).Addr().Interface())
+			if err != nil {
+				return err
+			}
+			continue
+		}
 		fieldType := val.Elem().Field(i).Type()
 		if s[i].SumType == "VmStkNull" {
 			kind := fieldType.Kind()

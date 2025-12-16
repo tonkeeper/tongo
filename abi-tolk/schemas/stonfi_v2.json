@@ -1,0 +1,140 @@
+{
+  "namespace": "ton.stonfi.v2",
+  "contractName": "Pool",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "GetLpAccountAddressResult",
+      "fields": [
+        {
+          "name": "lpAccountAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiProvideLpV2",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x37c096df",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet1",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refundAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "txDeadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "crossProvideLpBody",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "CrossProvideLpBody"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapV2",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x6664de2a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet1",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refundAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "txDeadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "crossSwapBody",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "CrossSwapBody"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [
+    {
+      "tvmMethodId": 87316,
+      "name": "get_lp_account_address",
+      "parameters": [
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "GetLpAccountAddressResult"
+      }
+    }
+  ],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBBAEARAABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQABPoKooYRoQwAGCXVPSRUXCgMDGb9zKg9EFYwRDBjv+JoMDibUwTh0duQ=="
+}

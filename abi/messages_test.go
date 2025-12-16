@@ -2,11 +2,12 @@ package abi
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
-	"reflect"
-	"testing"
 )
 
 func TestEncodeAndDecodeInMsgBody(t *testing.T) {
@@ -42,7 +43,7 @@ func TestEncodeAndDecodeInMsgBody(t *testing.T) {
 }
 
 func TestDecodeAndEncodeUnknownInMsgBody(t *testing.T) {
-	data := "b5ee9c720101010100350000650000022800000000000000005012a05f200800c46663fd6592a0ca9ff0f04ed928fe74019bac1756d06092c14464fb3ce8d373"
+	data := "b5ee9c7201010101005c0000b3178d45190000000000000000a0165ceda7f1e7eda8000801b26778d9535dc370f56d2e34225d4619deb1e0f4080a7bdde114618639d1574b001643971209f95b121f5600b0fd68e03bdb7b0994f0dfdd4a9550a2a3e56e23f382"
 	boc1, _ := boc.DeserializeBocHex(data)
 
 	var x InMsgBody

@@ -1,9 +1,11 @@
-package parser_tolk
+package tolkAbi
 
 import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type Kind struct {
@@ -12,20 +14,22 @@ type Kind struct {
 
 type ABI struct {
 	ContractName     string            `json:"contractName"`
+	IsGeneral        bool              `json:"isGeneral,omitempty"`
+	InheritsContract string            `json:"inheritsContract,omitempty"`
 	Author           string            `json:"author,omitempty"`
 	Version          string            `json:"version,omitempty"`
-	Description      string            `json:"description,omitempty"` // todo: find out, will it be useful
+	Description      string            `json:"description,omitempty"`
 	Declarations     []Declaration     `json:"declarations"`
 	IncomingMessages []IncomingMessage `json:"incomingMessages"`
 	IncomingExternal *IncomingExternal `json:"incomingExternal,omitempty"`
 	OutgoingMessages []OutgoingMessage `json:"outgoingMessages"`
-	EmittedMessages  []OutgoingMessage `json:"emittedEvents"` // todo maybe rename it? for ex: offchain messages?
-	// todo: do we need storage?
-	GetMethods      []GetMethod   `json:"getMethods"`
-	ThrownErrors    []ThrownError `json:"thrownErrors"`
-	CompilerName    string        `json:"compilerName"`
-	CompilerVersion string        `json:"compilerVersion"`
-	CodeBoc64       string        `json:"codeBoc64"`
+	EmittedMessages  []OutgoingMessage `json:"emittedEvents"`
+	GetMethods       []GetMethod       `json:"getMethods"`
+	ThrownErrors     []ThrownError     `json:"thrownErrors"`
+	CompilerName     string            `json:"compilerName"`
+	CompilerVersion  string            `json:"compilerVersion"`
+	CodeBoc64        string            `json:"codeBoc64"`
+	CodeHashes       []string          `json:"codeHashes,omitempty"`
 }
 
 type Declaration struct {
@@ -443,14 +447,37 @@ type IncomingMessage struct {
 	PreferredSendMode int16    `json:"preferredSendMode,omitempty"`
 }
 
+func (m *IncomingMessage) GetMsgName() (string, error) {
+	return getMsgName(m.BodyTy)
+}
+
 type IncomingExternal struct {
 	BodyTy      Ty     `json:"bodyTy"`
 	Description string `json:"description,omitempty"`
 }
 
+func (m *IncomingExternal) GetMsgName() (string, error) {
+	return getMsgName(m.BodyTy)
+}
+
 type OutgoingMessage struct {
 	BodyTy      Ty     `json:"bodyTy"`
 	Description string `json:"description,omitempty"`
+}
+
+func (m *OutgoingMessage) GetMsgName() (string, error) {
+	return getMsgName(m.BodyTy)
+}
+
+func getMsgName(ty Ty) (string, error) {
+	switch ty.SumType {
+	case "StructRef":
+		return ty.StructRefTy.StructName, nil
+	case "AliasRef":
+		return ty.AliasRefTy.AliasName, nil
+	default:
+		return "", fmt.Errorf("cannot get name for %q body", ty.SumType)
+	}
 }
 
 type GetMethod struct {
@@ -459,6 +486,22 @@ type GetMethod struct {
 	Parameters  []Parameter `json:"parameters"`
 	ReturnTy    Ty          `json:"returnTy"`
 	Description string      `json:"description,omitempty"`
+}
+
+func (g GetMethod) GolangFunctionName() string {
+	return utils.ToCamelCase(g.Name)
+}
+
+func (g GetMethod) FullResultName(contractName string) string {
+	res := utils.ToCamelCase(g.Name)
+	if contractName != "" {
+		res += "_" + contractName
+	}
+	return res + "Result"
+}
+
+func (g GetMethod) UsedByIntrospection() bool {
+	return len(g.Parameters) == 0
 }
 
 type Parameter struct {
@@ -478,10 +521,4 @@ func concatPrefixAndPayload(prefix, payload []byte) []byte {
 	result = append(result, prefix...)
 	result = append(result, payload...)
 	return result
-}
-
-func ParseABI(s []byte) (ABI, error) {
-	var abi ABI
-	err := json.Unmarshal(s, &abi)
-	return abi, err
 }

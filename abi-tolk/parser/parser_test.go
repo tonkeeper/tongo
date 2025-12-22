@@ -1,4 +1,4 @@
-package parser_tolk
+package parser
 
 import (
 	"bytes"

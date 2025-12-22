@@ -1,0 +1,60 @@
+
+
+var (
+{{- range $tag, $ops := .Operations }}
+                {{- range $op := $ops }}
+                // 0x{{ printf "%08x" $tag.Val }}
+ decodeFunc{{ $op.GolangTypeName }} = decodeMsg(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.GolangOpcodeName }}, {{ $op.GolangTypeName }}{})
+            {{- end }}
+        {{- end }}
+)
+
+var opcoded{{ $.WhatRender }}DecodeFunctions = map[uint32]msgDecoderFunc {
+{{- range $tag, $ops := .Operations }}
+            {{ if ne $tag.Len 32 }} {{continue}} {{end}}
+            {{- if gt (len $ops) 1 }}
+            // {{- range $op := $ops}}{{ $op.OperationName }}, {{ end }}
+                0x{{ printf "%08x" $tag.Val }}:decodeMultipleMsgs([]msgDecoderFunc{
+                    {{- range $op := $ops }}
+                        decodeFunc{{ $op.GolangTypeName }},
+                    {{- end }} },
+                     "0x{{ printf "%08x" $tag.Val }}",
+                ),
+            {{- else }}
+                {{- $op := index $ops 0 }}
+                // 0x{{ printf "%08x" $tag.Val }}
+                {{ $op.GolangOpcodeName }}Code: decodeFunc{{ $op.GolangTypeName }},
+            {{- end }}
+        {{- end }}
+}
+
+
+const (
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }} MsgOpName = "{{ $op.OperationName }}"
+    {{- end }}
+{{- end }}
+)
+
+const (
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}Code MsgOpCode = 0x{{ printf "%08x" $op.Tag }}
+   {{- end }}
+{{- end }}
+)
+
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.Code }}
+    {{- end }}
+{{- end }}
+
+var Known{{ $.WhatRender }}Types = map[string]any{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+       {{ $op.GolangOpcodeName }}: {{ $op.GolangTypeName }}{},
+    {{- end }}
+{{- end }}
+}

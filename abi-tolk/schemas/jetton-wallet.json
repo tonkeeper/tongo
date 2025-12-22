@@ -1,0 +1,650 @@
+{
+  "contractName": "JettonWallet",
+  "isGeneral": true,
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "WalletStorage",
+      "fields": [
+        {
+          "name": "jettonBalance",
+          "ty": {
+            "kind": "coins"
+          },
+          "defaultValue": {
+            "kind": "int",
+            "v": "0"
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "minterAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MinterStorage",
+      "fields": [
+        {
+          "name": "totalSupply",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "adminAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "jettonWalletCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "ForwardPayloadRemainder",
+      "targetTy": {
+        "kind": "remaining"
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "AskToTransfer",
+      "prefix": {
+        "prefixStr": "0x0f8a7ea5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "transferRecipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TransferNotificationForRecipient",
+      "prefix": {
+        "prefixStr": "0x7362d09c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "transferInitiator",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InternalTransferStep",
+      "prefix": {
+        "prefixStr": "0x178d4519",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "transferInitiator",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0xd53276db",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AskToBurn",
+      "prefix": {
+        "prefixStr": "0x595f07bc",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BurnNotificationForMinter",
+      "prefix": {
+        "prefixStr": "0x7bdd97de",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "burnInitiator",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RequestWalletAddress",
+      "prefix": {
+        "prefixStr": "0x2c76b973",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "includeOwnerAddress",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ResponseWalletAddress",
+      "prefix": {
+        "prefixStr": "0xd1735400",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonWalletAddress",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "address"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MintNewJettons",
+      "prefix": {
+        "prefixStr": "0x00000015",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "mintRecipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "tonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "internalTransferMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "InternalTransferStep"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeMinterAdmin",
+      "prefix": {
+        "prefixStr": "0x00000003",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newAdminAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeMinterContent",
+      "prefix": {
+        "prefixStr": "0x00000004",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newContent",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "AboaLisa",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "ReturnExcessesBack"
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "AllowedMessageToWallet",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AskToTransfer"
+            },
+            "prefixStr": "0x0f8a7ea5",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AskToBurn"
+            },
+            "prefixStr": "0x595f07bc",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InternalTransferStep"
+            },
+            "prefixStr": "0x178d4519",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "BounceOpToHandle",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InternalTransferStep"
+            },
+            "prefixStr": "0x178d4519",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "BurnNotificationForMinter"
+            },
+            "prefixStr": "0x7bdd97de",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "JettonWalletDataReply",
+      "fields": [
+        {
+          "name": "jettonBalance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "minterAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "jettonWalletCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AskToTransfer"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AskToBurn"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "InternalTransferStep"
+      }
+    }
+  ],
+  "outgoingMessages": [
+    {
+      "bodyTy": {
+        "kind": "AliasRef",
+        "aliasName": "AboaLisa"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TransferNotificationForRecipient"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ReturnExcessesBack"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "InternalTransferStep"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "BurnNotificationForMinter"
+      }
+    }
+  ],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "StructRef",
+      "structName": "WalletStorage"
+    }
+  },
+  "getMethods": [
+    {
+      "tvmMethodId": 97026,
+      "name": "get_wallet_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "JettonWalletDataReply"
+      }
+    }
+  ],
+  "thrownErrors": [
+    {
+      "constName": "ERR_WRONG_WORKCHAIN",
+      "errCode": 333
+    },
+    {
+      "constName": "ERR_NOT_FROM_OWNER",
+      "errCode": 705
+    },
+    {
+      "constName": "ERR_NOT_ENOUGH_BALANCE",
+      "errCode": 706
+    },
+    {
+      "constName": "ERR_INVALID_WALLET",
+      "errCode": 707
+    },
+    {
+      "constName": "ERR_INVALID_PAYLOAD",
+      "errCode": 708
+    },
+    {
+      "constName": "ERR_NOT_ENOUGH_TON",
+      "errCode": 709
+    },
+    {
+      "constName": "",
+      "errCode": 65535
+    }
+  ],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgECCwEAAm4AART/APSkE/S88sgLAQIBYgIDA7zQ+JGONNMfMdcsILxqKMyW0z8x+gAwjhHXLCPe7L70kvI/4dM/MfoAMOLtRND6AAKgyAH6As7J7VTgINcsILxqKMzjAtcsIHxT9SzjAtcsIsr4PeTjAjCEDwHHAPL0BAUGAB2g9gXaiaH0AfSR9JBh8FUD+DHtRNAB0z/6APpQ+lD6AAb6ACD6SPpIMPiSIccFkTCOJviS+CooyM+EIPpSE/pSyVjIz4TQzMz5FsjPigBAy//PUMcF8uLD4lEmoMgB+gLOye1U+Jf4J28QIaGCCJiWgGa2CKGCCOThwKChIpQ3W2wh4w0gbrMjwgCw4w8HCAkB/jHTP/oA+kj6UPQB+gAg10ny4sQj+kQw8tFN7UTQ+gAg+kj6SDD4kiLHBfLiwVM4vvLiwlE4ocgB+gISzsntVCNyceME+Jf4k3D4OhKoJaCCCmJaAKC88uLF+CrIz4QgF/pSEvpSycjPkF41FGYYyz9QBvoCFfpUEvpUAfoCEs4KAKAx7UTQ+gAg+kj6SDD4kiLHBfLiwQTTP/oA+lAwU1G+8uLCUVGhyAH6AhTOye1UyM+R73Zfess/WPoC+lL6VMnIz4WIEvpScc8LbszJgFD7AACe+JNw+DojoKHIz4UIUiD6UiP6AoIQ1TJ2288LiifPCz/JgBD7AMjPkc2LQnInzws/UAb6AhT6VBbOycjPhQgT+lJQBfoCcc8LaszJcfsAAgAwyM+FCPpSWPoCghDVMnbbzwuKyz/JcvsAAARfAwBEycjPiYgBXcjPhNDMzPkWzwv/gQCNzwt0EswSzMzJgED7AA=="
+}

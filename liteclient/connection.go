@@ -6,9 +6,10 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
-	"github.com/tonkeeper/tongo/tl"
 	"sync"
 	"time"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 const (

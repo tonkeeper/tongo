@@ -3,11 +3,12 @@ package abi
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/tlb"
 	"math/big"
 	"reflect"
 	"testing"
+
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func assert(t *testing.T, err error) {

@@ -5,8 +5,9 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/tonkeeper/tongo/tl"
 	"reflect"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 func pointer[T any](t T) *T {

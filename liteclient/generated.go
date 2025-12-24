@@ -7,8 +7,9 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
-	"github.com/tonkeeper/tongo/tl"
 	"io"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 type TonNodeBlockIdC struct {

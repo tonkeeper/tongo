@@ -5,11 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/tonkeeper/tongo/ton"
 	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/config"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func createTestLiteServerConnection() (*Connection, error) {

@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/tonkeeper/tongo/connect"
 	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"regexp"
 	"strings"
+
+	"github.com/tonkeeper/tongo/connect"
 )
 
 func main() {

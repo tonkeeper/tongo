@@ -1,6 +1,6 @@
 {
+  "namespace": "ton.tep74",
   "contractName": "JettonMinter",
-  "isGeneral": true,
   "declarations": [
     {
       "kind": "Struct",

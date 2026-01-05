@@ -8,15 +8,15 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-type ReturnExcessesBack struct {
+type TonCocoonReturnExcessesBack struct {
 	QueryId uint64
 }
 
-type Payout struct {
+type TonCocoonPayout struct {
 	QueryId uint64
 }
 
-type WorkerProxyRequest struct {
+type TonCocoonWorkerProxyRequest struct {
 	QueryId      uint64
 	OwnerAddress tlb.MsgAddress
 	State        tlb.Uint2
@@ -24,13 +24,13 @@ type WorkerProxyRequest struct {
 	Payload      *tlb.Any `tlb:"maybe"`
 }
 
-type WorkerProxyPayoutRequest struct {
+type TonCocoonWorkerProxyPayoutRequest struct {
 	WorkerPart     tlb.Grams
 	ProxyPart      tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type ClientStateData struct {
+type TonCocoonClientStateData struct {
 	State      tlb.Uint2
 	Balance    tlb.Grams
 	Stake      tlb.Grams
@@ -38,37 +38,37 @@ type ClientStateData struct {
 	SecretHash tlb.Uint256
 }
 
-type ClientProxyRequest struct {
+type TonCocoonClientProxyRequest struct {
 	QueryId      uint64
 	OwnerAddress tlb.MsgAddress
-	StateData    ClientStateData `tlb:"^"`
-	Payload      *tlb.Any        `tlb:"maybe"`
+	StateData    TonCocoonClientStateData `tlb:"^"`
+	Payload      *tlb.Any                 `tlb:"maybe"`
 }
 
-type ClientProxyTopUp struct {
+type TonCocoonClientProxyTopUp struct {
 	TopUpCoins     tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type ClientProxyRegister struct {
+type TonCocoonClientProxyRegister struct {
 }
 
-type ClientProxyRefundGranted struct {
+type TonCocoonClientProxyRefundGranted struct {
 	Coins          tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type ClientProxyRefundForce struct {
+type TonCocoonClientProxyRefundForce struct {
 	Coins          tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type QueryHeader struct {
+type TonCocoonQueryHeader struct {
 	Op      uint32
 	QueryId uint64
 }
 
-type SignedMessage struct {
+type TonCocoonSignedMessage struct {
 	Op             uint32
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
@@ -76,73 +76,73 @@ type SignedMessage struct {
 	SignedDataCell tlb.Any
 }
 
-type PayoutPayloadData struct {
+type TonCocoonPayoutPayloadData struct {
 	QueryId           uint64
 	NewTokens         uint64
 	ExpectedMyAddress tlb.MsgAddress
 }
 
-type PayoutPayload struct {
-	Data PayoutPayloadData
+type TonCocoonPayoutPayload struct {
+	Data TonCocoonPayoutPayloadData
 }
 
-type LastPayoutPayload struct {
-	Data PayoutPayloadData
+type TonCocoonLastPayoutPayload struct {
+	Data TonCocoonPayoutPayloadData
 }
 
-type AddWorkerType struct {
+type TonCocoonAddWorkerType struct {
 	QueryId    uint64
 	WorkerHash tlb.Uint256
 }
 
-type DelWorkerType struct {
+type TonCocoonDelWorkerType struct {
 	QueryId    uint64
 	WorkerHash tlb.Uint256
 }
 
-type AddModelType struct {
+type TonCocoonAddModelType struct {
 	QueryId   uint64
 	ModelHash tlb.Uint256
 }
 
-type DelModelType struct {
+type TonCocoonDelModelType struct {
 	QueryId   uint64
 	ModelHash tlb.Uint256
 }
 
-type AddProxyType struct {
+type TonCocoonAddProxyType struct {
 	QueryId   uint64
 	ProxyHash tlb.Uint256
 }
 
-type DelProxyType struct {
+type TonCocoonDelProxyType struct {
 	QueryId   uint64
 	ProxyHash tlb.Uint256
 }
 
-type RegisterProxy struct {
+type TonCocoonRegisterProxy struct {
 	QueryId   uint64
 	ProxyInfo tlb.Any
 }
 
-type UnregisterProxy struct {
+type TonCocoonUnregisterProxy struct {
 	QueryId uint64
 	Seqno   uint32
 }
 
-type UpdateProxy struct {
+type TonCocoonUpdateProxy struct {
 	QueryId   uint64
 	Seqno     uint32
 	ProxyAddr tlb.Any
 }
 
-type ChangeFees struct {
+type TonCocoonChangeFees struct {
 	QueryId           uint64
 	PricePerToken     tlb.Grams
 	WorkerFeePerToken tlb.Grams
 }
 
-type ChangeParams struct {
+type TonCocoonChangeParams struct {
 	QueryId                uint64
 	PricePerToken          tlb.Grams
 	WorkerFeePerToken      tlb.Grams
@@ -152,118 +152,118 @@ type ChangeParams struct {
 	MinClientStake         tlb.Grams
 }
 
-type UpgradeContracts struct {
+type TonCocoonUpgradeContracts struct {
 	QueryId    uint64
 	ProxyCode  tlb.Any
 	WorkerCode tlb.Any
 	ClientCode tlb.Any
 }
 
-type UpgradeCode struct {
+type TonCocoonUpgradeCode struct {
 	QueryId uint64
 	NewCode tlb.Any
 }
 
-type ResetRoot struct {
+type TonCocoonResetRoot struct {
 	QueryId uint64
 }
 
-type UpgradeFull struct {
+type TonCocoonUpgradeFull struct {
 	QueryId uint64
 	NewData tlb.Any
 	NewCode tlb.Any
 }
 
-type ChangeOwner struct {
+type TonCocoonChangeOwner struct {
 	QueryId         uint64
 	NewOwnerAddress tlb.MsgAddress
 }
 
-type OwnerWorkerRegister struct {
+type TonCocoonOwnerWorkerRegister struct {
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
 }
 
-type ExtProxyPayoutRequest struct {
+type TonCocoonExtProxyPayoutRequest struct {
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
 }
 
-type ExtProxyIncreaseStake struct {
+type TonCocoonExtProxyIncreaseStake struct {
 	QueryId        uint64
 	Grams          tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerProxyClose struct {
+type TonCocoonOwnerProxyClose struct {
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
 }
 
-type CloseRequestPayload struct {
+type TonCocoonCloseRequestPayload struct {
 	QueryId           uint64
 	ExpectedMyAddress tlb.MsgAddress
 }
 
-type CloseCompleteRequestPayload struct {
+type TonCocoonCloseCompleteRequestPayload struct {
 	QueryId           uint64
 	ExpectedMyAddress tlb.MsgAddress
 }
 
-type ExtClientTopUp struct {
+type TonCocoonExtClientTopUp struct {
 	QueryId        uint64
 	TopUpAmount    tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerClientChangeSecretHashAndTopUp struct {
+type TonCocoonOwnerClientChangeSecretHashAndTopUp struct {
 	QueryId        uint64
 	TopUpAmount    tlb.Grams
 	NewSecretHash  tlb.Uint256
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerClientRegister struct {
+type TonCocoonOwnerClientRegister struct {
 	QueryId        uint64
 	Nonce          uint64
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerClientChangeSecretHash struct {
+type TonCocoonOwnerClientChangeSecretHash struct {
 	QueryId        uint64
 	NewSecretHash  tlb.Uint256
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerClientIncreaseStake struct {
+type TonCocoonOwnerClientIncreaseStake struct {
 	QueryId        uint64
 	NewStake       tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerClientWithdraw struct {
+type TonCocoonOwnerClientWithdraw struct {
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
 }
 
-type OwnerClientRequestRefund struct {
+type TonCocoonOwnerClientRequestRefund struct {
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
 }
 
-type ChargePayload struct {
+type TonCocoonChargePayload struct {
 	QueryId           uint64
 	NewTokensUsed     uint64
 	ExpectedMyAddress tlb.MsgAddress
 }
 
-type GrantRefundPayload struct {
+type TonCocoonGrantRefundPayload struct {
 	QueryId           uint64
 	NewTokensUsed     uint64
 	ExpectedMyAddress tlb.MsgAddress
 }
 
-type CocoonParams struct {
+type TonCocoonCocoonParams struct {
 	StructVersion                   uint8
 	ParamsVersion                   uint32
 	UniqueId                        uint32
@@ -283,22 +283,22 @@ type CocoonParams struct {
 	ClientScCode                    *tlb.Any `tlb:"maybe"`
 }
 
-type RootData struct {
-	ProxyHashes       Dict
-	WorkerHashes      Dict
+type TonCocoonRootData struct {
+	ProxyHashes       TonCocoonDict
+	WorkerHashes      TonCocoonDict
 	LastProxySeqno    uint32
-	RegisteredProxies Dict
-	ModelHashes       Dict
+	RegisteredProxies TonCocoonDict
+	ModelHashes       TonCocoonDict
 }
 
-type RootStorage struct {
+type TonCocoonRootStorage struct {
 	OwnerAddress tlb.MsgAddress
 	Version      uint32
-	Data         RootData     `tlb:"^"`
-	Params       CocoonParams `tlb:"^"`
+	Data         TonCocoonRootData     `tlb:"^"`
+	Params       TonCocoonCocoonParams `tlb:"^"`
 }
 
-type ProxyStorage struct {
+type TonCocoonProxyStorage struct {
 	OwnerAddress   tlb.MsgAddress
 	ProxyPublicKey tlb.Uint256
 	RootAddress    tlb.MsgAddress
@@ -306,36 +306,36 @@ type ProxyStorage struct {
 	Balance        tlb.Grams
 	Stake          tlb.Grams
 	UnlockTs       uint32
-	Params         CocoonParams `tlb:"^"`
+	Params         TonCocoonCocoonParams `tlb:"^"`
 }
 
-type WorkerStorage struct {
+type TonCocoonWorkerStorage struct {
 	OwnerAddress   tlb.MsgAddress
 	ProxyAddress   tlb.MsgAddress
 	ProxyPublicKey tlb.Uint256
 	State          tlb.Uint2
 	Tokens         uint64
-	Params         CocoonParams `tlb:"^"`
+	Params         TonCocoonCocoonParams `tlb:"^"`
 }
 
-type ClientConstData struct {
+type TonCocoonClientConstData struct {
 	OwnerAddress   tlb.MsgAddress
 	ProxyAddress   tlb.MsgAddress
 	ProxyPublicKey tlb.Uint256
 }
 
-type ClientStorage struct {
+type TonCocoonClientStorage struct {
 	State        tlb.Uint2
 	Balance      tlb.Grams
 	Stake        tlb.Grams
 	TokensUsed   uint64
 	UnlockTs     uint32
 	SecretHash   tlb.Uint256
-	ConstDataRef ClientConstData `tlb:"^"`
-	Params       CocoonParams    `tlb:"^"`
+	ConstDataRef TonCocoonClientConstData `tlb:"^"`
+	Params       TonCocoonCocoonParams    `tlb:"^"`
 }
 
-type WalletStorage struct {
+type TonCocoonWalletStorage struct {
 	Seqno        uint32
 	SubwalletId  uint32
 	PublicKey    tlb.Uint256
@@ -343,21 +343,21 @@ type WalletStorage struct {
 	OwnerAddress tlb.MsgAddress
 }
 
-type ExtClientChargeSigned struct {
+type TonCocoonExtClientChargeSigned struct {
 	Rest tlb.Any
 }
 
-type ExtClientGrantRefundSigned struct {
+type TonCocoonExtClientGrantRefundSigned struct {
 	Rest tlb.Any
 }
 
-type SignedClientMessage struct {
+type TonCocoonSignedClientMessage struct {
 	tlb.SumType
-	UnionVariant0 ExtClientChargeSigned      `tlbSumType:"#bb63ff93"`
-	UnionVariant1 ExtClientGrantRefundSigned `tlbSumType:"#efd711e1"`
+	UnionVariant0 TonCocoonExtClientChargeSigned      `tlbSumType:"#bb63ff93"`
+	UnionVariant1 TonCocoonExtClientGrantRefundSigned `tlbSumType:"#efd711e1"`
 }
 
-func (t *SignedClientMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonSignedClientMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -376,13 +376,13 @@ func (t *SignedClientMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ClientSignedPayload struct {
+type TonCocoonClientSignedPayload struct {
 	tlb.SumType
-	UnionVariant0 ChargePayload      `tlbSumType:"#bb63ff93"`
-	UnionVariant1 GrantRefundPayload `tlbSumType:"#efd711e1"`
+	UnionVariant0 TonCocoonChargePayload      `tlbSumType:"#bb63ff93"`
+	UnionVariant1 TonCocoonGrantRefundPayload `tlbSumType:"#efd711e1"`
 }
 
-func (t *ClientSignedPayload) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonClientSignedPayload) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -401,20 +401,20 @@ func (t *ClientSignedPayload) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ClientMessage struct {
+type TonCocoonClientMessage struct {
 	tlb.SumType
-	UnionVariant0 ExtClientChargeSigned               `tlbSumType:"#bb63ff93"`
-	UnionVariant1 ExtClientGrantRefundSigned          `tlbSumType:"#efd711e1"`
-	UnionVariant2 ExtClientTopUp                      `tlbSumType:"#f172e6c2"`
-	UnionVariant3 OwnerClientChangeSecretHashAndTopUp `tlbSumType:"#8473b408"`
-	UnionVariant4 OwnerClientRegister                 `tlbSumType:"#c45f9f3b"`
-	UnionVariant5 OwnerClientChangeSecretHash         `tlbSumType:"#a9357034"`
-	UnionVariant6 OwnerClientIncreaseStake            `tlbSumType:"#6a1f6a60"`
-	UnionVariant7 OwnerClientWithdraw                 `tlbSumType:"#da068e78"`
-	UnionVariant8 OwnerClientRequestRefund            `tlbSumType:"#fafa6cc1"`
+	UnionVariant0 TonCocoonExtClientChargeSigned               `tlbSumType:"#bb63ff93"`
+	UnionVariant1 TonCocoonExtClientGrantRefundSigned          `tlbSumType:"#efd711e1"`
+	UnionVariant2 TonCocoonExtClientTopUp                      `tlbSumType:"#f172e6c2"`
+	UnionVariant3 TonCocoonOwnerClientChangeSecretHashAndTopUp `tlbSumType:"#8473b408"`
+	UnionVariant4 TonCocoonOwnerClientRegister                 `tlbSumType:"#c45f9f3b"`
+	UnionVariant5 TonCocoonOwnerClientChangeSecretHash         `tlbSumType:"#a9357034"`
+	UnionVariant6 TonCocoonOwnerClientIncreaseStake            `tlbSumType:"#6a1f6a60"`
+	UnionVariant7 TonCocoonOwnerClientWithdraw                 `tlbSumType:"#da068e78"`
+	UnionVariant8 TonCocoonOwnerClientRequestRefund            `tlbSumType:"#fafa6cc1"`
 }
 
-func (t *ClientMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonClientMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -475,19 +475,19 @@ func (t *ClientMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type Dict tlb.Maybe[tlb.Any]
+type TonCocoonDict tlb.Maybe[tlb.Any]
 
-type TextCmd struct {
+type TonCocoonTextCmd struct {
 	Action uint8
 }
 
-type SignedProxyPayload struct {
+type TonCocoonSignedProxyPayload struct {
 	tlb.SumType
-	UnionVariant0 CloseRequestPayload         `tlbSumType:"#636a4391"`
-	UnionVariant1 CloseCompleteRequestPayload `tlbSumType:"#e511abc7"`
+	UnionVariant0 TonCocoonCloseRequestPayload         `tlbSumType:"#636a4391"`
+	UnionVariant1 TonCocoonCloseCompleteRequestPayload `tlbSumType:"#e511abc7"`
 }
 
-func (t *SignedProxyPayload) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonSignedProxyPayload) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -506,21 +506,21 @@ func (t *SignedProxyPayload) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ExtProxyCloseRequestSigned struct {
+type TonCocoonExtProxyCloseRequestSigned struct {
 	Rest tlb.Any
 }
 
-type ExtProxyCloseCompleteRequestSigned struct {
+type TonCocoonExtProxyCloseCompleteRequestSigned struct {
 	Rest tlb.Any
 }
 
-type SignedProxyMessage struct {
+type TonCocoonSignedProxyMessage struct {
 	tlb.SumType
-	UnionVariant0 ExtProxyCloseRequestSigned         `tlbSumType:"#636a4391"`
-	UnionVariant1 ExtProxyCloseCompleteRequestSigned `tlbSumType:"#e511abc7"`
+	UnionVariant0 TonCocoonExtProxyCloseRequestSigned         `tlbSumType:"#636a4391"`
+	UnionVariant1 TonCocoonExtProxyCloseCompleteRequestSigned `tlbSumType:"#e511abc7"`
 }
 
-func (t *SignedProxyMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonSignedProxyMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -539,15 +539,15 @@ func (t *SignedProxyMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ClientProxyPayload struct {
+type TonCocoonClientProxyPayload struct {
 	tlb.SumType
-	UnionVariant0 ClientProxyTopUp         `tlbSumType:"#5cfc6b87"`
-	UnionVariant1 ClientProxyRegister      `tlbSumType:"#a35cb580"`
-	UnionVariant2 ClientProxyRefundGranted `tlbSumType:"#c68ebc7b"`
-	UnionVariant3 ClientProxyRefundForce   `tlbSumType:"#f4c354c9"`
+	UnionVariant0 TonCocoonClientProxyTopUp         `tlbSumType:"#5cfc6b87"`
+	UnionVariant1 TonCocoonClientProxyRegister      `tlbSumType:"#a35cb580"`
+	UnionVariant2 TonCocoonClientProxyRefundGranted `tlbSumType:"#c68ebc7b"`
+	UnionVariant3 TonCocoonClientProxyRefundForce   `tlbSumType:"#f4c354c9"`
 }
 
-func (t *ClientProxyPayload) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonClientProxyPayload) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -578,21 +578,21 @@ func (t *ClientProxyPayload) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type WorkerProxyPayload WorkerProxyPayoutRequest
+type TonCocoonWorkerProxyPayload TonCocoonWorkerProxyPayoutRequest
 
-type ProxyMessage struct {
+type TonCocoonProxyMessage struct {
 	tlb.SumType
-	UnionVariant0 TextCmd                            `tlbSumType:"#00000000"`
-	UnionVariant1 ExtProxyCloseRequestSigned         `tlbSumType:"#636a4391"`
-	UnionVariant2 ExtProxyCloseCompleteRequestSigned `tlbSumType:"#e511abc7"`
-	UnionVariant3 ExtProxyPayoutRequest              `tlbSumType:"#7610e6eb"`
-	UnionVariant4 ExtProxyIncreaseStake              `tlbSumType:"#9713f187"`
-	UnionVariant5 OwnerProxyClose                    `tlbSumType:"#b51d5a01"`
-	UnionVariant6 WorkerProxyRequest                 `tlbSumType:"#4d725d2c"`
-	UnionVariant7 ClientProxyRequest                 `tlbSumType:"#65448ff4"`
+	UnionVariant0 TonCocoonTextCmd                            `tlbSumType:"#00000000"`
+	UnionVariant1 TonCocoonExtProxyCloseRequestSigned         `tlbSumType:"#636a4391"`
+	UnionVariant2 TonCocoonExtProxyCloseCompleteRequestSigned `tlbSumType:"#e511abc7"`
+	UnionVariant3 TonCocoonExtProxyPayoutRequest              `tlbSumType:"#7610e6eb"`
+	UnionVariant4 TonCocoonExtProxyIncreaseStake              `tlbSumType:"#9713f187"`
+	UnionVariant5 TonCocoonOwnerProxyClose                    `tlbSumType:"#b51d5a01"`
+	UnionVariant6 TonCocoonWorkerProxyRequest                 `tlbSumType:"#4d725d2c"`
+	UnionVariant7 TonCocoonClientProxyRequest                 `tlbSumType:"#65448ff4"`
 }
 
-func (t *ProxyMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonProxyMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -647,27 +647,27 @@ func (t *ProxyMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type RootMessage struct {
+type TonCocoonRootMessage struct {
 	tlb.SumType
-	UnionVariant0  AddWorkerType    `tlbSumType:"#e34b1c60"`
-	UnionVariant1  DelWorkerType    `tlbSumType:"#8d94a79a"`
-	UnionVariant2  AddModelType     `tlbSumType:"#c146134d"`
-	UnionVariant3  DelModelType     `tlbSumType:"#92b11c18"`
-	UnionVariant4  AddProxyType     `tlbSumType:"#71860e80"`
-	UnionVariant5  DelProxyType     `tlbSumType:"#3c41d0b2"`
-	UnionVariant6  RegisterProxy    `tlbSumType:"#927c7cb5"`
-	UnionVariant7  UnregisterProxy  `tlbSumType:"#6d49eaf2"`
-	UnionVariant8  UpdateProxy      `tlbSumType:"#9c7924ba"`
-	UnionVariant9  ChangeFees       `tlbSumType:"#c52ed8d4"`
-	UnionVariant10 ChangeParams     `tlbSumType:"#022fa189"`
-	UnionVariant11 UpgradeContracts `tlbSumType:"#a2370f61"`
-	UnionVariant12 UpgradeCode      `tlbSumType:"#11aefd51"`
-	UnionVariant13 ResetRoot        `tlbSumType:"#563c1d96"`
-	UnionVariant14 UpgradeFull      `tlbSumType:"#4f7c5789"`
-	UnionVariant15 ChangeOwner      `tlbSumType:"#c4a1ae54"`
+	UnionVariant0  TonCocoonAddWorkerType    `tlbSumType:"#e34b1c60"`
+	UnionVariant1  TonCocoonDelWorkerType    `tlbSumType:"#8d94a79a"`
+	UnionVariant2  TonCocoonAddModelType     `tlbSumType:"#c146134d"`
+	UnionVariant3  TonCocoonDelModelType     `tlbSumType:"#92b11c18"`
+	UnionVariant4  TonCocoonAddProxyType     `tlbSumType:"#71860e80"`
+	UnionVariant5  TonCocoonDelProxyType     `tlbSumType:"#3c41d0b2"`
+	UnionVariant6  TonCocoonRegisterProxy    `tlbSumType:"#927c7cb5"`
+	UnionVariant7  TonCocoonUnregisterProxy  `tlbSumType:"#6d49eaf2"`
+	UnionVariant8  TonCocoonUpdateProxy      `tlbSumType:"#9c7924ba"`
+	UnionVariant9  TonCocoonChangeFees       `tlbSumType:"#c52ed8d4"`
+	UnionVariant10 TonCocoonChangeParams     `tlbSumType:"#022fa189"`
+	UnionVariant11 TonCocoonUpgradeContracts `tlbSumType:"#a2370f61"`
+	UnionVariant12 TonCocoonUpgradeCode      `tlbSumType:"#11aefd51"`
+	UnionVariant13 TonCocoonResetRoot        `tlbSumType:"#563c1d96"`
+	UnionVariant14 TonCocoonUpgradeFull      `tlbSumType:"#4f7c5789"`
+	UnionVariant15 TonCocoonChangeOwner      `tlbSumType:"#c4a1ae54"`
 }
 
-func (t *RootMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonRootMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -770,30 +770,30 @@ func (t *RootMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ExternalSignedMessage struct {
+type TonCocoonExternalSignedMessage struct {
 	SubwalletId uint32
 	ValidUntil  uint32
 	MsgSeqno    uint32
 	Rest        tlb.Any
 }
 
-type OwnerWalletSendMessage struct {
+type TonCocoonOwnerWalletSendMessage struct {
 	QueryId uint64
 	Mode    uint8
 	Body    tlb.Any
 }
 
-type TextCommand struct {
+type TonCocoonTextCommand struct {
 	Action uint8
 }
 
-type AllowedInternalMessage struct {
+type TonCocoonAllowedInternalMessage struct {
 	tlb.SumType
-	UnionVariant0 OwnerWalletSendMessage `tlbSumType:"#9c69f376"`
-	UnionVariant1 TextCommand            `tlbSumType:"#00000000"`
+	UnionVariant0 TonCocoonOwnerWalletSendMessage `tlbSumType:"#9c69f376"`
+	UnionVariant1 TonCocoonTextCommand            `tlbSumType:"#00000000"`
 }
 
-func (t *AllowedInternalMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonAllowedInternalMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -812,21 +812,21 @@ func (t *AllowedInternalMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type ExtWorkerPayoutRequestSigned struct {
+type TonCocoonExtWorkerPayoutRequestSigned struct {
 	Rest tlb.Any
 }
 
-type ExtWorkerLastPayoutRequestSigned struct {
+type TonCocoonExtWorkerLastPayoutRequestSigned struct {
 	Rest tlb.Any
 }
 
-type SignedWorkerMessage struct {
+type TonCocoonSignedWorkerMessage struct {
 	tlb.SumType
-	UnionVariant0 ExtWorkerPayoutRequestSigned     `tlbSumType:"#a040ad28"`
-	UnionVariant1 ExtWorkerLastPayoutRequestSigned `tlbSumType:"#f5f26a36"`
+	UnionVariant0 TonCocoonExtWorkerPayoutRequestSigned     `tlbSumType:"#a040ad28"`
+	UnionVariant1 TonCocoonExtWorkerLastPayoutRequestSigned `tlbSumType:"#f5f26a36"`
 }
 
-func (t *SignedWorkerMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonSignedWorkerMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -845,13 +845,13 @@ func (t *SignedWorkerMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type SignedPayload struct {
+type TonCocoonSignedPayload struct {
 	tlb.SumType
-	UnionVariant0 PayoutPayload     `tlbSumType:"#a040ad28"`
-	UnionVariant1 LastPayoutPayload `tlbSumType:"#f5f26a36"`
+	UnionVariant0 TonCocoonPayoutPayload     `tlbSumType:"#a040ad28"`
+	UnionVariant1 TonCocoonLastPayoutPayload `tlbSumType:"#f5f26a36"`
 }
 
-func (t *SignedPayload) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonSignedPayload) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -870,14 +870,14 @@ func (t *SignedPayload) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type WorkerMessage struct {
+type TonCocoonWorkerMessage struct {
 	tlb.SumType
-	UnionVariant0 ExtWorkerPayoutRequestSigned     `tlbSumType:"#a040ad28"`
-	UnionVariant1 ExtWorkerLastPayoutRequestSigned `tlbSumType:"#f5f26a36"`
-	UnionVariant2 OwnerWorkerRegister              `tlbSumType:"#26ed7f65"`
+	UnionVariant0 TonCocoonExtWorkerPayoutRequestSigned     `tlbSumType:"#a040ad28"`
+	UnionVariant1 TonCocoonExtWorkerLastPayoutRequestSigned `tlbSumType:"#f5f26a36"`
+	UnionVariant2 TonCocoonOwnerWorkerRegister              `tlbSumType:"#26ed7f65"`
 }
 
-func (t *WorkerMessage) MarshalJSON() ([]byte, error) {
+func (t *TonCocoonWorkerMessage) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -902,94 +902,104 @@ func (t *WorkerMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type MinterStorage struct {
+type TonTep74WalletStorage struct {
+	JettonBalance tlb.Grams
+	OwnerAddress  tlb.MsgAddress
+	MinterAddress tlb.MsgAddress
+}
+
+type TonTep74MinterStorage struct {
 	TotalSupply      tlb.Grams
 	AdminAddress     tlb.MsgAddress
 	Content          tlb.Any
 	JettonWalletCode tlb.Any
 }
 
-type ForwardPayloadRemainder tlb.Any
+type TonTep74ForwardPayloadRemainder tlb.Any
 
-type AskToTransfer struct {
+type TonTep74AskToTransfer struct {
 	QueryId           uint64
 	JettonAmount      tlb.Grams
 	TransferRecipient tlb.MsgAddress
 	SendExcessesTo    tlb.MsgAddress
 	CustomPayload     *tlb.Any `tlb:"maybe"`
 	ForwardTonAmount  tlb.Grams
-	ForwardPayload    ForwardPayloadRemainder
+	ForwardPayload    TonTep74ForwardPayloadRemainder
 }
 
-type TransferNotificationForRecipient struct {
+type TonTep74TransferNotificationForRecipient struct {
 	QueryId           uint64
 	JettonAmount      tlb.Grams
 	TransferInitiator tlb.MsgAddress
-	ForwardPayload    ForwardPayloadRemainder
+	ForwardPayload    TonTep74ForwardPayloadRemainder
 }
 
-type InternalTransferStep struct {
+type TonTep74InternalTransferStep struct {
 	QueryId           uint64
 	JettonAmount      tlb.Grams
 	TransferInitiator tlb.MsgAddress
 	SendExcessesTo    tlb.MsgAddress
 	ForwardTonAmount  tlb.Grams
-	ForwardPayload    ForwardPayloadRemainder
+	ForwardPayload    TonTep74ForwardPayloadRemainder
 }
 
-type AskToBurn struct {
+type TonTep74ReturnExcessesBack struct {
+	QueryId uint64
+}
+
+type TonTep74AskToBurn struct {
 	QueryId        uint64
 	JettonAmount   tlb.Grams
 	SendExcessesTo tlb.MsgAddress
 	CustomPayload  *tlb.Any `tlb:"maybe"`
 }
 
-type BurnNotificationForMinter struct {
+type TonTep74BurnNotificationForMinter struct {
 	QueryId        uint64
 	JettonAmount   tlb.Grams
 	BurnInitiator  tlb.MsgAddress
 	SendExcessesTo tlb.MsgAddress
 }
 
-type RequestWalletAddress struct {
+type TonTep74RequestWalletAddress struct {
 	QueryId             uint64
 	OwnerAddress        tlb.MsgAddress
 	IncludeOwnerAddress bool
 }
 
-type ResponseWalletAddress struct {
+type TonTep74ResponseWalletAddress struct {
 	QueryId             uint64
 	JettonWalletAddress tlb.MsgAddress
 	OwnerAddress        *tlb.MsgAddress `tlb:"maybe^"`
 }
 
-type MintNewJettons struct {
+type TonTep74MintNewJettons struct {
 	QueryId             uint64
 	MintRecipient       tlb.MsgAddress
 	TonAmount           tlb.Grams
-	InternalTransferMsg InternalTransferStep `tlb:"^"`
+	InternalTransferMsg TonTep74InternalTransferStep `tlb:"^"`
 }
 
-type ChangeMinterAdmin struct {
+type TonTep74ChangeMinterAdmin struct {
 	QueryId         uint64
 	NewAdminAddress tlb.MsgAddress
 }
 
-type ChangeMinterContent struct {
+type TonTep74ChangeMinterContent struct {
 	QueryId    uint64
 	NewContent tlb.Any
 }
 
-type AllowedMessageToMinter struct {
+type TonTep74AllowedMessageToMinter struct {
 	tlb.SumType
-	UnionVariant0 MintNewJettons            `tlbSumType:"#00000015"`
-	UnionVariant1 BurnNotificationForMinter `tlbSumType:"#7bdd97de"`
-	UnionVariant2 RequestWalletAddress      `tlbSumType:"#2c76b973"`
-	UnionVariant3 ChangeMinterAdmin         `tlbSumType:"#00000003"`
-	UnionVariant4 ChangeMinterContent       `tlbSumType:"#00000004"`
+	UnionVariant0 TonTep74MintNewJettons            `tlbSumType:"#00000015"`
+	UnionVariant1 TonTep74BurnNotificationForMinter `tlbSumType:"#7bdd97de"`
+	UnionVariant2 TonTep74RequestWalletAddress      `tlbSumType:"#2c76b973"`
+	UnionVariant3 TonTep74ChangeMinterAdmin         `tlbSumType:"#00000003"`
+	UnionVariant4 TonTep74ChangeMinterContent       `tlbSumType:"#00000004"`
 }
 
-func (t *AllowedMessageToMinter) MarshalJSON() ([]byte, error) {
+func (t *TonTep74AllowedMessageToMinter) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -1026,7 +1036,7 @@ func (t *AllowedMessageToMinter) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type JettonDataReply struct {
+type TonTep74JettonDataReply struct {
 	TotalSupply      tlb.Int257
 	Mintable         bool
 	AdminAddress     tlb.MsgAddress
@@ -1034,16 +1044,16 @@ type JettonDataReply struct {
 	JettonWalletCode tlb.Any
 }
 
-type AboaLisa ReturnExcessesBack
+type TonTep74AboaLisa TonTep74ReturnExcessesBack
 
-type AllowedMessageToWallet struct {
+type TonTep74AllowedMessageToWallet struct {
 	tlb.SumType
-	UnionVariant0 AskToTransfer        `tlbSumType:"#0f8a7ea5"`
-	UnionVariant1 AskToBurn            `tlbSumType:"#595f07bc"`
-	UnionVariant2 InternalTransferStep `tlbSumType:"#178d4519"`
+	UnionVariant0 TonTep74AskToTransfer        `tlbSumType:"#0f8a7ea5"`
+	UnionVariant1 TonTep74AskToBurn            `tlbSumType:"#595f07bc"`
+	UnionVariant2 TonTep74InternalTransferStep `tlbSumType:"#178d4519"`
 }
 
-func (t *AllowedMessageToWallet) MarshalJSON() ([]byte, error) {
+func (t *TonTep74AllowedMessageToWallet) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -1068,13 +1078,13 @@ func (t *AllowedMessageToWallet) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type BounceOpToHandle struct {
+type TonTep74BounceOpToHandle struct {
 	tlb.SumType
-	UnionVariant0 InternalTransferStep      `tlbSumType:"#178d4519"`
-	UnionVariant1 BurnNotificationForMinter `tlbSumType:"#7bdd97de"`
+	UnionVariant0 TonTep74InternalTransferStep      `tlbSumType:"#178d4519"`
+	UnionVariant1 TonTep74BurnNotificationForMinter `tlbSumType:"#7bdd97de"`
 }
 
-func (t *BounceOpToHandle) MarshalJSON() ([]byte, error) {
+func (t *TonTep74BounceOpToHandle) MarshalJSON() ([]byte, error) {
 	switch t.SumType {
 	case "UnionVariant0":
 		bytes, err := json.Marshal(t.UnionVariant0)
@@ -1093,9 +1103,76 @@ func (t *BounceOpToHandle) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type JettonWalletDataReply struct {
+type TonTep74JettonWalletDataReply struct {
 	JettonBalance    tlb.Grams
 	OwnerAddress     tlb.MsgAddress
 	MinterAddress    tlb.MsgAddress
 	JettonWalletCode tlb.Any
+}
+
+type TonStonfiV1GetPoolDataStonfiV1 struct {
+	Reserve0                   tlb.Grams
+	Reserve1                   tlb.Grams
+	Token0Address              tlb.MsgAddress
+	Token1Address              tlb.MsgAddress
+	LpFee                      uint8
+	ProtocolFee                uint8
+	RefFee                     uint8
+	ProtocolFeeAddress         tlb.MsgAddress
+	CollectedToken0ProtocolFee tlb.Grams
+	CollectedToken1ProtocolFee tlb.Grams
+}
+
+type TonStonfiV2GetLpAccountAddressResult struct {
+	LpAccountAddress tlb.MsgAddress
+}
+
+type TonStonfiV2GetPoolDataStonfiV2 struct {
+	IsLocked                   bool
+	RouterAddress              tlb.MsgAddress
+	TotalSupply                tlb.Grams
+	Reserve0                   tlb.Grams
+	Reserve1                   tlb.Grams
+	Token0Address              tlb.MsgAddress
+	Token1Address              tlb.MsgAddress
+	LpFee                      uint8
+	ProtocolFee                uint8
+	ProtocolFeeAddress         tlb.MsgAddress
+	CollectedToken0ProtocolFee tlb.Grams
+	CollectedToken1ProtocolFee tlb.Grams
+}
+
+type TonStonfiV2GetPoolDataStonfiV2StableSwap struct {
+	IsLocked                   bool
+	RouterAddress              tlb.MsgAddress
+	TotalSupply                tlb.Grams
+	Reserve0                   tlb.Grams
+	Reserve1                   tlb.Grams
+	Token0Address              tlb.MsgAddress
+	Token1Address              tlb.MsgAddress
+	LpFee                      uint8
+	ProtocolFee                uint8
+	ProtocolFeeAddress         tlb.MsgAddress
+	CollectedToken0ProtocolFee tlb.Grams
+	CollectedToken1ProtocolFee tlb.Grams
+	Additional                 tlb.Uint128
+}
+
+type TonStonfiV2GetPoolDataStonfiV2WeightedStableSwap struct {
+	IsLocked                   bool
+	RouterAddress              tlb.MsgAddress
+	TotalSupply                tlb.Grams
+	Reserve0                   tlb.Grams
+	Reserve1                   tlb.Grams
+	Token0Address              tlb.MsgAddress
+	Token1Address              tlb.MsgAddress
+	LpFee                      uint8
+	ProtocolFee                uint8
+	ProtocolFeeAddress         tlb.MsgAddress
+	CollectedToken0ProtocolFee tlb.Grams
+	CollectedToken1ProtocolFee tlb.Grams
+	Amp                        tlb.Uint128
+	Rate                       tlb.Uint128
+	W0                         tlb.Uint128
+	RateSetter                 tlb.MsgAddress
 }

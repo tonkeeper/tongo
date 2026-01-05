@@ -1,5 +1,6 @@
 {
-  "contractName": "CocoonWallet",
+  "namespace": "ton.cocoon",
+  "contractName": "Wallet",
   "declarations": [
     {
       "kind": "Struct",

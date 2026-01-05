@@ -8,31 +8,46 @@ import (
 
 const (
 	IUnknown ContractInterface = iota
-	CocoonClient
-	CocoonProxy
-	CocoonRoot
-	CocoonWallet
-	CocoonWorker
-	JettonMinter
-	JettonWallet
+	TonCocoonClient
+	TonCocoonProxy
+	TonCocoonRoot
+	TonCocoonWallet
+	TonCocoonWorker
+	TonStonfiV1Pool
+	TonStonfiV2Pool
+	TonStonfiV2PoolConstProduct
+	TonStonfiV2PoolStableSwap
+	TonStonfiV2PoolWeightedStableSwap
+	TonTep74JettonMinter
+	TonTep74JettonWallet
 )
 
 func (c ContractInterface) String() string {
 	switch c {
-	case CocoonClient:
-		return "CocoonClient"
-	case CocoonProxy:
-		return "CocoonProxy"
-	case CocoonRoot:
-		return "CocoonRoot"
-	case CocoonWallet:
-		return "CocoonWallet"
-	case CocoonWorker:
-		return "CocoonWorker"
-	case JettonMinter:
-		return "JettonMinter"
-	case JettonWallet:
-		return "JettonWallet"
+	case TonCocoonClient:
+		return "ton_cocoon_client"
+	case TonCocoonProxy:
+		return "ton_cocoon_proxy"
+	case TonCocoonRoot:
+		return "ton_cocoon_root"
+	case TonCocoonWallet:
+		return "ton_cocoon_wallet"
+	case TonCocoonWorker:
+		return "ton_cocoon_worker"
+	case TonStonfiV1Pool:
+		return "ton_stonfi_v1_pool"
+	case TonStonfiV2Pool:
+		return "ton_stonfi_v2_pool"
+	case TonStonfiV2PoolConstProduct:
+		return "ton_stonfi_v2_pool_const_product"
+	case TonStonfiV2PoolStableSwap:
+		return "ton_stonfi_v2_pool_stable_swap"
+	case TonStonfiV2PoolWeightedStableSwap:
+		return "ton_stonfi_v2_pool_weighted_stable_swap"
+	case TonTep74JettonMinter:
+		return "ton_tep74_jetton_minter"
+	case TonTep74JettonWallet:
+		return "ton_tep74_jetton_wallet"
 	default:
 		return "unknown"
 	}
@@ -40,20 +55,30 @@ func (c ContractInterface) String() string {
 
 func ContractInterfaceFromString(s string) ContractInterface {
 	switch s {
-	case "CocoonClient":
-		return CocoonClient
-	case "CocoonProxy":
-		return CocoonProxy
-	case "CocoonRoot":
-		return CocoonRoot
-	case "CocoonWallet":
-		return CocoonWallet
-	case "CocoonWorker":
-		return CocoonWorker
-	case "JettonMinter":
-		return JettonMinter
-	case "JettonWallet":
-		return JettonWallet
+	case "ton_cocoon_client":
+		return TonCocoonClient
+	case "ton_cocoon_proxy":
+		return TonCocoonProxy
+	case "ton_cocoon_root":
+		return TonCocoonRoot
+	case "ton_cocoon_wallet":
+		return TonCocoonWallet
+	case "ton_cocoon_worker":
+		return TonCocoonWorker
+	case "ton_stonfi_v1_pool":
+		return TonStonfiV1Pool
+	case "ton_stonfi_v2_pool":
+		return TonStonfiV2Pool
+	case "ton_stonfi_v2_pool_const_product":
+		return TonStonfiV2PoolConstProduct
+	case "ton_stonfi_v2_pool_stable_swap":
+		return TonStonfiV2PoolStableSwap
+	case "ton_stonfi_v2_pool_weighted_stable_swap":
+		return TonStonfiV2PoolWeightedStableSwap
+	case "ton_tep74_jetton_minter":
+		return TonTep74JettonMinter
+	case "ton_tep74_jetton_wallet":
+		return TonTep74JettonWallet
 	default:
 		return IUnknown
 	}
@@ -89,6 +114,10 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetOwnerAddress,
 	},
 	{
+		Name:     "get_pool_data",
+		InvokeFn: GetPoolData,
+	},
+	{
 		Name:     "get_public_key",
 		InvokeFn: GetPublicKey,
 	},
@@ -108,49 +137,73 @@ var methodInvocationOrder = []MethodDescription{
 
 var contractInterfacesOrder = []InterfaceDescription{
 	{
-		Name: CocoonClient,
+		Name: TonCocoonClient,
 		Results: []string{
-			"GetCocoonClientData_CocoonClientResult",
+			"TonCocoonClient_GetCocoonClientDataResult",
 		},
 	},
 	{
-		Name: CocoonProxy,
+		Name: TonCocoonProxy,
 		Results: []string{
-			"GetCocoonProxyData_CocoonProxyResult",
+			"TonCocoonProxy_GetCocoonProxyDataResult",
 		},
 	},
 	{
-		Name: CocoonRoot,
+		Name: TonCocoonRoot,
 		Results: []string{
-			"GetCocoonData_CocoonRootResult",
-			"GetCurParams_CocoonRootResult",
-			"LastProxySeqno_CocoonRootResult",
+			"TonCocoonRoot_GetCocoonDataResult",
+			"TonCocoonRoot_GetCurParamsResult",
+			"TonCocoonRoot_LastProxySeqnoResult",
 		},
 	},
 	{
-		Name: CocoonWallet,
+		Name: TonCocoonWallet,
 		Results: []string{
-			"GetOwnerAddress_CocoonWalletResult",
-			"GetPublicKey_CocoonWalletResult",
-			"Seqno_CocoonWalletResult",
+			"TonCocoonWallet_GetOwnerAddressResult",
+			"TonCocoonWallet_GetPublicKeyResult",
+			"TonCocoonWallet_SeqnoResult",
 		},
 	},
 	{
-		Name: CocoonWorker,
+		Name: TonCocoonWorker,
 		Results: []string{
-			"GetCocoonWorkerData_CocoonWorkerResult",
+			"TonCocoonWorker_GetCocoonWorkerDataResult",
 		},
 	},
 	{
-		Name: JettonMinter,
+		Name: TonTep74JettonMinter,
 		Results: []string{
-			"GetJettonDataResult",
+			"TonTep74JettonMinter_GetJettonDataResult",
 		},
 	},
 	{
-		Name: JettonWallet,
+		Name: TonTep74JettonWallet,
 		Results: []string{
-			"GetWalletDataResult",
+			"TonTep74JettonWallet_GetWalletDataResult",
+		},
+	},
+	{
+		Name: TonStonfiV1Pool,
+		Results: []string{
+			"TonStonfiV1Pool_GetPoolDataResult",
+		},
+	},
+	{
+		Name: TonStonfiV2PoolConstProduct,
+		Results: []string{
+			"TonStonfiV2PoolConstProduct_GetPoolDataResult",
+		},
+	},
+	{
+		Name: TonStonfiV2PoolStableSwap,
+		Results: []string{
+			"TonStonfiV2PoolStableSwap_GetPoolDataResult",
+		},
+	},
+	{
+		Name: TonStonfiV2PoolWeightedStableSwap,
+		Results: []string{
+			"TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult",
 		},
 	},
 }
@@ -165,93 +218,93 @@ var knownContracts = map[ton.Bits256]knownContractDescription{}
 
 func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 	switch c {
-	case CocoonClient:
+	case TonCocoonClient:
 		return []msgDecoderFunc{
-			decodeFuncCocoonClientExtClientChargeSignedMsgBody,
-			decodeFuncCocoonClientExtClientGrantRefundSignedMsgBody,
-			decodeFuncCocoonClientExtClientTopUpMsgBody,
-			decodeFuncCocoonClientOwnerClientChangeSecretHashAndTopUpMsgBody,
-			decodeFuncCocoonClientOwnerClientRegisterMsgBody,
-			decodeFuncCocoonClientOwnerClientChangeSecretHashMsgBody,
-			decodeFuncCocoonClientOwnerClientIncreaseStakeMsgBody,
-			decodeFuncCocoonClientOwnerClientWithdrawMsgBody,
-			decodeFuncCocoonClientOwnerClientRequestRefundMsgBody,
-			decodeFuncCocoonClientReturnExcessesBackMsgBody,
-			decodeFuncCocoonClientPayoutMsgBody,
-			decodeFuncCocoonClientClientProxyRequestMsgBody,
+			decodeFuncTonCocoonExtClientChargeSignedMsgBody,
+			decodeFuncTonCocoonExtClientGrantRefundSignedMsgBody,
+			decodeFuncTonCocoonExtClientTopUpMsgBody,
+			decodeFuncTonCocoonOwnerClientChangeSecretHashAndTopUpMsgBody,
+			decodeFuncTonCocoonOwnerClientRegisterMsgBody,
+			decodeFuncTonCocoonOwnerClientChangeSecretHashMsgBody,
+			decodeFuncTonCocoonOwnerClientIncreaseStakeMsgBody,
+			decodeFuncTonCocoonOwnerClientWithdrawMsgBody,
+			decodeFuncTonCocoonOwnerClientRequestRefundMsgBody,
+			decodeFuncTonCocoonReturnExcessesBackMsgBody,
+			decodeFuncTonCocoonPayoutMsgBody,
+			decodeFuncTonCocoonClientProxyRequestMsgBody,
 		}
-	case CocoonProxy:
+	case TonCocoonProxy:
 		return []msgDecoderFunc{
-			decodeFuncCocoonProxyTextCmdMsgBody,
-			decodeFuncCocoonProxyExtProxyCloseRequestSignedMsgBody,
-			decodeFuncCocoonProxyExtProxyCloseCompleteRequestSignedMsgBody,
-			decodeFuncCocoonProxyExtProxyPayoutRequestMsgBody,
-			decodeFuncCocoonProxyExtProxyIncreaseStakeMsgBody,
-			decodeFuncCocoonProxyOwnerProxyCloseMsgBody,
-			decodeFuncCocoonProxyWorkerProxyRequestMsgBody,
-			decodeFuncCocoonProxyClientProxyRequestMsgBody,
-			decodeFuncCocoonProxyReturnExcessesBackMsgBody,
-			decodeFuncCocoonProxyPayoutMsgBody,
+			decodeFuncTonCocoonTextCmdMsgBody,
+			decodeFuncTonCocoonExtProxyCloseRequestSignedMsgBody,
+			decodeFuncTonCocoonExtProxyCloseCompleteRequestSignedMsgBody,
+			decodeFuncTonCocoonExtProxyPayoutRequestMsgBody,
+			decodeFuncTonCocoonExtProxyIncreaseStakeMsgBody,
+			decodeFuncTonCocoonOwnerProxyCloseMsgBody,
+			decodeFuncTonCocoonWorkerProxyRequestMsgBody,
+			decodeFuncTonCocoonClientProxyRequestMsgBody,
+			decodeFuncTonCocoonReturnExcessesBackMsgBody,
+			decodeFuncTonCocoonPayoutMsgBody,
 		}
-	case CocoonRoot:
+	case TonCocoonRoot:
 		return []msgDecoderFunc{
-			decodeFuncCocoonRootAddWorkerTypeMsgBody,
-			decodeFuncCocoonRootDelWorkerTypeMsgBody,
-			decodeFuncCocoonRootAddModelTypeMsgBody,
-			decodeFuncCocoonRootDelModelTypeMsgBody,
-			decodeFuncCocoonRootAddProxyTypeMsgBody,
-			decodeFuncCocoonRootDelProxyTypeMsgBody,
-			decodeFuncCocoonRootRegisterProxyMsgBody,
-			decodeFuncCocoonRootUnregisterProxyMsgBody,
-			decodeFuncCocoonRootUpdateProxyMsgBody,
-			decodeFuncCocoonRootChangeFeesMsgBody,
-			decodeFuncCocoonRootChangeParamsMsgBody,
-			decodeFuncCocoonRootUpgradeContractsMsgBody,
-			decodeFuncCocoonRootUpgradeCodeMsgBody,
-			decodeFuncCocoonRootResetRootMsgBody,
-			decodeFuncCocoonRootUpgradeFullMsgBody,
-			decodeFuncCocoonRootChangeOwnerMsgBody,
-			decodeFuncCocoonRootReturnExcessesBackMsgBody,
-			decodeFuncCocoonRootPayoutMsgBody,
+			decodeFuncTonCocoonAddWorkerTypeMsgBody,
+			decodeFuncTonCocoonDelWorkerTypeMsgBody,
+			decodeFuncTonCocoonAddModelTypeMsgBody,
+			decodeFuncTonCocoonDelModelTypeMsgBody,
+			decodeFuncTonCocoonAddProxyTypeMsgBody,
+			decodeFuncTonCocoonDelProxyTypeMsgBody,
+			decodeFuncTonCocoonRegisterProxyMsgBody,
+			decodeFuncTonCocoonUnregisterProxyMsgBody,
+			decodeFuncTonCocoonUpdateProxyMsgBody,
+			decodeFuncTonCocoonChangeFeesMsgBody,
+			decodeFuncTonCocoonChangeParamsMsgBody,
+			decodeFuncTonCocoonUpgradeContractsMsgBody,
+			decodeFuncTonCocoonUpgradeCodeMsgBody,
+			decodeFuncTonCocoonResetRootMsgBody,
+			decodeFuncTonCocoonUpgradeFullMsgBody,
+			decodeFuncTonCocoonChangeOwnerMsgBody,
+			decodeFuncTonCocoonReturnExcessesBackMsgBody,
+			decodeFuncTonCocoonPayoutMsgBody,
 		}
-	case CocoonWallet:
+	case TonCocoonWallet:
 		return []msgDecoderFunc{
-			decodeFuncCocoonWalletOwnerWalletSendMessageMsgBody,
-			decodeFuncCocoonWalletTextCommandMsgBody,
-			decodeFuncCocoonWalletReturnExcessesBackMsgBody,
-			decodeFuncCocoonWalletPayoutMsgBody,
-			decodeFuncCocoonWalletTextCommandMsgBody,
+			decodeFuncTonCocoonOwnerWalletSendMessageMsgBody,
+			decodeFuncTonCocoonTextCommandMsgBody,
+			decodeFuncTonCocoonReturnExcessesBackMsgBody,
+			decodeFuncTonCocoonPayoutMsgBody,
+			decodeFuncTonCocoonTextCommandMsgBody,
 		}
-	case CocoonWorker:
+	case TonCocoonWorker:
 		return []msgDecoderFunc{
-			decodeFuncCocoonWorkerExtWorkerPayoutRequestSignedMsgBody,
-			decodeFuncCocoonWorkerExtWorkerLastPayoutRequestSignedMsgBody,
-			decodeFuncCocoonWorkerOwnerWorkerRegisterMsgBody,
-			decodeFuncCocoonWorkerReturnExcessesBackMsgBody,
-			decodeFuncCocoonWorkerPayoutMsgBody,
-			decodeFuncCocoonWorkerWorkerProxyRequestMsgBody,
+			decodeFuncTonCocoonExtWorkerPayoutRequestSignedMsgBody,
+			decodeFuncTonCocoonExtWorkerLastPayoutRequestSignedMsgBody,
+			decodeFuncTonCocoonOwnerWorkerRegisterMsgBody,
+			decodeFuncTonCocoonReturnExcessesBackMsgBody,
+			decodeFuncTonCocoonPayoutMsgBody,
+			decodeFuncTonCocoonWorkerProxyRequestMsgBody,
 		}
-	case JettonMinter:
+	case TonTep74JettonMinter:
 		return []msgDecoderFunc{
-			decodeFuncMintNewJettonsMsgBody,
-			decodeFuncBurnNotificationForMinterMsgBody,
-			decodeFuncRequestWalletAddressMsgBody,
-			decodeFuncChangeMinterAdminMsgBody,
-			decodeFuncChangeMinterContentMsgBody,
-			decodeFuncReturnExcessesBackMsgBody,
-			decodeFuncResponseWalletAddressMsgBody,
-			decodeFuncInternalTransferStepMsgBody,
+			decodeFuncTonTep74MintNewJettonsMsgBody,
+			decodeFuncTonTep74BurnNotificationForMinterMsgBody,
+			decodeFuncTonTep74RequestWalletAddressMsgBody,
+			decodeFuncTonTep74ChangeMinterAdminMsgBody,
+			decodeFuncTonTep74ChangeMinterContentMsgBody,
+			decodeFuncTonTep74ReturnExcessesBackMsgBody,
+			decodeFuncTonTep74ResponseWalletAddressMsgBody,
+			decodeFuncTonTep74InternalTransferStepMsgBody,
 		}
-	case JettonWallet:
+	case TonTep74JettonWallet:
 		return []msgDecoderFunc{
-			decodeFuncAskToTransferMsgBody,
-			decodeFuncAskToBurnMsgBody,
-			decodeFuncInternalTransferStepMsgBody,
-			decodeFuncAboaLisaMsgBody,
-			decodeFuncTransferNotificationForRecipientMsgBody,
-			decodeFuncReturnExcessesBackMsgBody,
-			decodeFuncInternalTransferStepMsgBody,
-			decodeFuncBurnNotificationForMinterMsgBody,
+			decodeFuncTonTep74AskToTransferMsgBody,
+			decodeFuncTonTep74AskToBurnMsgBody,
+			decodeFuncTonTep74InternalTransferStepMsgBody,
+			decodeFuncTonTep74AboaLisaMsgBody,
+			decodeFuncTonTep74TransferNotificationForRecipientMsgBody,
+			decodeFuncTonTep74ReturnExcessesBackMsgBody,
+			decodeFuncTonTep74InternalTransferStepMsgBody,
+			decodeFuncTonTep74BurnNotificationForMinterMsgBody,
 		}
 	default:
 		return nil

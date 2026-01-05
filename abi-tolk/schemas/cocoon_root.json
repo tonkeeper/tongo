@@ -1,5 +1,6 @@
 {
-  "contractName": "CocoonRoot",
+  "namespace": "ton.cocoon",
+  "contractName": "Root",
   "declarations": [
     {
       "kind": "Struct",

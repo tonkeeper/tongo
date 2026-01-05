@@ -8,626 +8,537 @@ import (
 
 var (
 	// 0x00000000
-	decodeFuncCocoonProxyTextCmdMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, CocoonProxyTextCmdMsgOp, CocoonProxyTextCmdMsgBody{})
+	decodeFuncTonCocoonTextCmdMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TonCocoonTextCmdMsgOp, TonCocoonTextCmdMsgBody{})
 	// 0x00000000
-	decodeFuncCocoonWalletTextCommandMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, CocoonWalletTextCommandMsgOp, CocoonWalletTextCommandMsgBody{})
+	decodeFuncTonCocoonTextCommandMsgBody = decodeMsg(tlb.Tag{Val: 0x00000000, Len: 32}, TonCocoonTextCommandMsgOp, TonCocoonTextCommandMsgBody{})
 	// 0x00000003
-	decodeFuncChangeMinterAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x00000003, Len: 32}, ChangeMinterAdminMsgOp, ChangeMinterAdminMsgBody{})
+	decodeFuncTonTep74ChangeMinterAdminMsgBody = decodeMsg(tlb.Tag{Val: 0x00000003, Len: 32}, TonTep74ChangeMinterAdminMsgOp, TonTep74ChangeMinterAdminMsgBody{})
 	// 0x00000004
-	decodeFuncChangeMinterContentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000004, Len: 32}, ChangeMinterContentMsgOp, ChangeMinterContentMsgBody{})
+	decodeFuncTonTep74ChangeMinterContentMsgBody = decodeMsg(tlb.Tag{Val: 0x00000004, Len: 32}, TonTep74ChangeMinterContentMsgOp, TonTep74ChangeMinterContentMsgBody{})
 	// 0x00000015
-	decodeFuncMintNewJettonsMsgBody = decodeMsg(tlb.Tag{Val: 0x00000015, Len: 32}, MintNewJettonsMsgOp, MintNewJettonsMsgBody{})
+	decodeFuncTonTep74MintNewJettonsMsgBody = decodeMsg(tlb.Tag{Val: 0x00000015, Len: 32}, TonTep74MintNewJettonsMsgOp, TonTep74MintNewJettonsMsgBody{})
 	// 0x022fa189
-	decodeFuncCocoonRootChangeParamsMsgBody = decodeMsg(tlb.Tag{Val: 0x022fa189, Len: 32}, CocoonRootChangeParamsMsgOp, CocoonRootChangeParamsMsgBody{})
+	decodeFuncTonCocoonChangeParamsMsgBody = decodeMsg(tlb.Tag{Val: 0x022fa189, Len: 32}, TonCocoonChangeParamsMsgOp, TonCocoonChangeParamsMsgBody{})
 	// 0x0f8a7ea5
-	decodeFuncAskToTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x0f8a7ea5, Len: 32}, AskToTransferMsgOp, AskToTransferMsgBody{})
+	decodeFuncTonTep74AskToTransferMsgBody = decodeMsg(tlb.Tag{Val: 0x0f8a7ea5, Len: 32}, TonTep74AskToTransferMsgOp, TonTep74AskToTransferMsgBody{})
 	// 0x11aefd51
-	decodeFuncCocoonRootUpgradeCodeMsgBody = decodeMsg(tlb.Tag{Val: 0x11aefd51, Len: 32}, CocoonRootUpgradeCodeMsgOp, CocoonRootUpgradeCodeMsgBody{})
+	decodeFuncTonCocoonUpgradeCodeMsgBody = decodeMsg(tlb.Tag{Val: 0x11aefd51, Len: 32}, TonCocoonUpgradeCodeMsgOp, TonCocoonUpgradeCodeMsgBody{})
 	// 0x178d4519
-	decodeFuncInternalTransferStepMsgBody = decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, InternalTransferStepMsgOp, InternalTransferStepMsgBody{})
+	decodeFuncTonTep74InternalTransferStepMsgBody = decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, TonTep74InternalTransferStepMsgOp, TonTep74InternalTransferStepMsgBody{})
 	// 0x26ed7f65
-	decodeFuncCocoonWorkerOwnerWorkerRegisterMsgBody = decodeMsg(tlb.Tag{Val: 0x26ed7f65, Len: 32}, CocoonWorkerOwnerWorkerRegisterMsgOp, CocoonWorkerOwnerWorkerRegisterMsgBody{})
+	decodeFuncTonCocoonOwnerWorkerRegisterMsgBody = decodeMsg(tlb.Tag{Val: 0x26ed7f65, Len: 32}, TonCocoonOwnerWorkerRegisterMsgOp, TonCocoonOwnerWorkerRegisterMsgBody{})
 	// 0x2c76b973
-	decodeFuncRequestWalletAddressMsgBody = decodeMsg(tlb.Tag{Val: 0x2c76b973, Len: 32}, RequestWalletAddressMsgOp, RequestWalletAddressMsgBody{})
+	decodeFuncTonTep74RequestWalletAddressMsgBody = decodeMsg(tlb.Tag{Val: 0x2c76b973, Len: 32}, TonTep74RequestWalletAddressMsgOp, TonTep74RequestWalletAddressMsgBody{})
 	// 0x3c41d0b2
-	decodeFuncCocoonRootDelProxyTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x3c41d0b2, Len: 32}, CocoonRootDelProxyTypeMsgOp, CocoonRootDelProxyTypeMsgBody{})
+	decodeFuncTonCocoonDelProxyTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x3c41d0b2, Len: 32}, TonCocoonDelProxyTypeMsgOp, TonCocoonDelProxyTypeMsgBody{})
 	// 0x4d725d2c
-	decodeFuncCocoonProxyWorkerProxyRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x4d725d2c, Len: 32}, CocoonProxyWorkerProxyRequestMsgOp, CocoonProxyWorkerProxyRequestMsgBody{})
-	// 0x4d725d2c
-	decodeFuncCocoonWorkerWorkerProxyRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x4d725d2c, Len: 32}, CocoonWorkerWorkerProxyRequestMsgOp, CocoonWorkerWorkerProxyRequestMsgBody{})
+	decodeFuncTonCocoonWorkerProxyRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x4d725d2c, Len: 32}, TonCocoonWorkerProxyRequestMsgOp, TonCocoonWorkerProxyRequestMsgBody{})
 	// 0x4f7c5789
-	decodeFuncCocoonRootUpgradeFullMsgBody = decodeMsg(tlb.Tag{Val: 0x4f7c5789, Len: 32}, CocoonRootUpgradeFullMsgOp, CocoonRootUpgradeFullMsgBody{})
+	decodeFuncTonCocoonUpgradeFullMsgBody = decodeMsg(tlb.Tag{Val: 0x4f7c5789, Len: 32}, TonCocoonUpgradeFullMsgOp, TonCocoonUpgradeFullMsgBody{})
 	// 0x563c1d96
-	decodeFuncCocoonRootResetRootMsgBody = decodeMsg(tlb.Tag{Val: 0x563c1d96, Len: 32}, CocoonRootResetRootMsgOp, CocoonRootResetRootMsgBody{})
+	decodeFuncTonCocoonResetRootMsgBody = decodeMsg(tlb.Tag{Val: 0x563c1d96, Len: 32}, TonCocoonResetRootMsgOp, TonCocoonResetRootMsgBody{})
 	// 0x595f07bc
-	decodeFuncAskToBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, AskToBurnMsgOp, AskToBurnMsgBody{})
+	decodeFuncTonTep74AskToBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x595f07bc, Len: 32}, TonTep74AskToBurnMsgOp, TonTep74AskToBurnMsgBody{})
 	// 0x636a4391
-	decodeFuncCocoonProxyExtProxyCloseRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0x636a4391, Len: 32}, CocoonProxyExtProxyCloseRequestSignedMsgOp, CocoonProxyExtProxyCloseRequestSignedMsgBody{})
+	decodeFuncTonCocoonExtProxyCloseRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0x636a4391, Len: 32}, TonCocoonExtProxyCloseRequestSignedMsgOp, TonCocoonExtProxyCloseRequestSignedMsgBody{})
 	// 0x65448ff4
-	decodeFuncCocoonClientClientProxyRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x65448ff4, Len: 32}, CocoonClientClientProxyRequestMsgOp, CocoonClientClientProxyRequestMsgBody{})
-	// 0x65448ff4
-	decodeFuncCocoonProxyClientProxyRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x65448ff4, Len: 32}, CocoonProxyClientProxyRequestMsgOp, CocoonProxyClientProxyRequestMsgBody{})
+	decodeFuncTonCocoonClientProxyRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x65448ff4, Len: 32}, TonCocoonClientProxyRequestMsgOp, TonCocoonClientProxyRequestMsgBody{})
 	// 0x6a1f6a60
-	decodeFuncCocoonClientOwnerClientIncreaseStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x6a1f6a60, Len: 32}, CocoonClientOwnerClientIncreaseStakeMsgOp, CocoonClientOwnerClientIncreaseStakeMsgBody{})
+	decodeFuncTonCocoonOwnerClientIncreaseStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x6a1f6a60, Len: 32}, TonCocoonOwnerClientIncreaseStakeMsgOp, TonCocoonOwnerClientIncreaseStakeMsgBody{})
 	// 0x6d49eaf2
-	decodeFuncCocoonRootUnregisterProxyMsgBody = decodeMsg(tlb.Tag{Val: 0x6d49eaf2, Len: 32}, CocoonRootUnregisterProxyMsgOp, CocoonRootUnregisterProxyMsgBody{})
+	decodeFuncTonCocoonUnregisterProxyMsgBody = decodeMsg(tlb.Tag{Val: 0x6d49eaf2, Len: 32}, TonCocoonUnregisterProxyMsgOp, TonCocoonUnregisterProxyMsgBody{})
 	// 0x71860e80
-	decodeFuncCocoonRootAddProxyTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x71860e80, Len: 32}, CocoonRootAddProxyTypeMsgOp, CocoonRootAddProxyTypeMsgBody{})
+	decodeFuncTonCocoonAddProxyTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x71860e80, Len: 32}, TonCocoonAddProxyTypeMsgOp, TonCocoonAddProxyTypeMsgBody{})
 	// 0x7362d09c
-	decodeFuncTransferNotificationForRecipientMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, TransferNotificationForRecipientMsgOp, TransferNotificationForRecipientMsgBody{})
+	decodeFuncTonTep74TransferNotificationForRecipientMsgBody = decodeMsg(tlb.Tag{Val: 0x7362d09c, Len: 32}, TonTep74TransferNotificationForRecipientMsgOp, TonTep74TransferNotificationForRecipientMsgBody{})
 	// 0x7610e6eb
-	decodeFuncCocoonProxyExtProxyPayoutRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x7610e6eb, Len: 32}, CocoonProxyExtProxyPayoutRequestMsgOp, CocoonProxyExtProxyPayoutRequestMsgBody{})
+	decodeFuncTonCocoonExtProxyPayoutRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x7610e6eb, Len: 32}, TonCocoonExtProxyPayoutRequestMsgOp, TonCocoonExtProxyPayoutRequestMsgBody{})
 	// 0x7bdd97de
-	decodeFuncBurnNotificationForMinterMsgBody = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, BurnNotificationForMinterMsgOp, BurnNotificationForMinterMsgBody{})
+	decodeFuncTonTep74BurnNotificationForMinterMsgBody = decodeMsg(tlb.Tag{Val: 0x7bdd97de, Len: 32}, TonTep74BurnNotificationForMinterMsgOp, TonTep74BurnNotificationForMinterMsgBody{})
 	// 0x8473b408
-	decodeFuncCocoonClientOwnerClientChangeSecretHashAndTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0x8473b408, Len: 32}, CocoonClientOwnerClientChangeSecretHashAndTopUpMsgOp, CocoonClientOwnerClientChangeSecretHashAndTopUpMsgBody{})
+	decodeFuncTonCocoonOwnerClientChangeSecretHashAndTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0x8473b408, Len: 32}, TonCocoonOwnerClientChangeSecretHashAndTopUpMsgOp, TonCocoonOwnerClientChangeSecretHashAndTopUpMsgBody{})
 	// 0x8d94a79a
-	decodeFuncCocoonRootDelWorkerTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x8d94a79a, Len: 32}, CocoonRootDelWorkerTypeMsgOp, CocoonRootDelWorkerTypeMsgBody{})
+	decodeFuncTonCocoonDelWorkerTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x8d94a79a, Len: 32}, TonCocoonDelWorkerTypeMsgOp, TonCocoonDelWorkerTypeMsgBody{})
 	// 0x927c7cb5
-	decodeFuncCocoonRootRegisterProxyMsgBody = decodeMsg(tlb.Tag{Val: 0x927c7cb5, Len: 32}, CocoonRootRegisterProxyMsgOp, CocoonRootRegisterProxyMsgBody{})
+	decodeFuncTonCocoonRegisterProxyMsgBody = decodeMsg(tlb.Tag{Val: 0x927c7cb5, Len: 32}, TonCocoonRegisterProxyMsgOp, TonCocoonRegisterProxyMsgBody{})
 	// 0x92b11c18
-	decodeFuncCocoonRootDelModelTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x92b11c18, Len: 32}, CocoonRootDelModelTypeMsgOp, CocoonRootDelModelTypeMsgBody{})
+	decodeFuncTonCocoonDelModelTypeMsgBody = decodeMsg(tlb.Tag{Val: 0x92b11c18, Len: 32}, TonCocoonDelModelTypeMsgOp, TonCocoonDelModelTypeMsgBody{})
 	// 0x9713f187
-	decodeFuncCocoonProxyExtProxyIncreaseStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x9713f187, Len: 32}, CocoonProxyExtProxyIncreaseStakeMsgOp, CocoonProxyExtProxyIncreaseStakeMsgBody{})
+	decodeFuncTonCocoonExtProxyIncreaseStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x9713f187, Len: 32}, TonCocoonExtProxyIncreaseStakeMsgOp, TonCocoonExtProxyIncreaseStakeMsgBody{})
 	// 0x9c69f376
-	decodeFuncCocoonWalletOwnerWalletSendMessageMsgBody = decodeMsg(tlb.Tag{Val: 0x9c69f376, Len: 32}, CocoonWalletOwnerWalletSendMessageMsgOp, CocoonWalletOwnerWalletSendMessageMsgBody{})
+	decodeFuncTonCocoonOwnerWalletSendMessageMsgBody = decodeMsg(tlb.Tag{Val: 0x9c69f376, Len: 32}, TonCocoonOwnerWalletSendMessageMsgOp, TonCocoonOwnerWalletSendMessageMsgBody{})
 	// 0x9c7924ba
-	decodeFuncCocoonRootUpdateProxyMsgBody = decodeMsg(tlb.Tag{Val: 0x9c7924ba, Len: 32}, CocoonRootUpdateProxyMsgOp, CocoonRootUpdateProxyMsgBody{})
+	decodeFuncTonCocoonUpdateProxyMsgBody = decodeMsg(tlb.Tag{Val: 0x9c7924ba, Len: 32}, TonCocoonUpdateProxyMsgOp, TonCocoonUpdateProxyMsgBody{})
 	// 0xa040ad28
-	decodeFuncCocoonWorkerExtWorkerPayoutRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xa040ad28, Len: 32}, CocoonWorkerExtWorkerPayoutRequestSignedMsgOp, CocoonWorkerExtWorkerPayoutRequestSignedMsgBody{})
+	decodeFuncTonCocoonExtWorkerPayoutRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xa040ad28, Len: 32}, TonCocoonExtWorkerPayoutRequestSignedMsgOp, TonCocoonExtWorkerPayoutRequestSignedMsgBody{})
 	// 0xa2370f61
-	decodeFuncCocoonRootUpgradeContractsMsgBody = decodeMsg(tlb.Tag{Val: 0xa2370f61, Len: 32}, CocoonRootUpgradeContractsMsgOp, CocoonRootUpgradeContractsMsgBody{})
+	decodeFuncTonCocoonUpgradeContractsMsgBody = decodeMsg(tlb.Tag{Val: 0xa2370f61, Len: 32}, TonCocoonUpgradeContractsMsgOp, TonCocoonUpgradeContractsMsgBody{})
 	// 0xa9357034
-	decodeFuncCocoonClientOwnerClientChangeSecretHashMsgBody = decodeMsg(tlb.Tag{Val: 0xa9357034, Len: 32}, CocoonClientOwnerClientChangeSecretHashMsgOp, CocoonClientOwnerClientChangeSecretHashMsgBody{})
+	decodeFuncTonCocoonOwnerClientChangeSecretHashMsgBody = decodeMsg(tlb.Tag{Val: 0xa9357034, Len: 32}, TonCocoonOwnerClientChangeSecretHashMsgOp, TonCocoonOwnerClientChangeSecretHashMsgBody{})
 	// 0xb51d5a01
-	decodeFuncCocoonProxyOwnerProxyCloseMsgBody = decodeMsg(tlb.Tag{Val: 0xb51d5a01, Len: 32}, CocoonProxyOwnerProxyCloseMsgOp, CocoonProxyOwnerProxyCloseMsgBody{})
+	decodeFuncTonCocoonOwnerProxyCloseMsgBody = decodeMsg(tlb.Tag{Val: 0xb51d5a01, Len: 32}, TonCocoonOwnerProxyCloseMsgOp, TonCocoonOwnerProxyCloseMsgBody{})
 	// 0xbb63ff93
-	decodeFuncCocoonClientExtClientChargeSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xbb63ff93, Len: 32}, CocoonClientExtClientChargeSignedMsgOp, CocoonClientExtClientChargeSignedMsgBody{})
+	decodeFuncTonCocoonExtClientChargeSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xbb63ff93, Len: 32}, TonCocoonExtClientChargeSignedMsgOp, TonCocoonExtClientChargeSignedMsgBody{})
 	// 0xc146134d
-	decodeFuncCocoonRootAddModelTypeMsgBody = decodeMsg(tlb.Tag{Val: 0xc146134d, Len: 32}, CocoonRootAddModelTypeMsgOp, CocoonRootAddModelTypeMsgBody{})
+	decodeFuncTonCocoonAddModelTypeMsgBody = decodeMsg(tlb.Tag{Val: 0xc146134d, Len: 32}, TonCocoonAddModelTypeMsgOp, TonCocoonAddModelTypeMsgBody{})
 	// 0xc45f9f3b
-	decodeFuncCocoonClientOwnerClientRegisterMsgBody = decodeMsg(tlb.Tag{Val: 0xc45f9f3b, Len: 32}, CocoonClientOwnerClientRegisterMsgOp, CocoonClientOwnerClientRegisterMsgBody{})
+	decodeFuncTonCocoonOwnerClientRegisterMsgBody = decodeMsg(tlb.Tag{Val: 0xc45f9f3b, Len: 32}, TonCocoonOwnerClientRegisterMsgOp, TonCocoonOwnerClientRegisterMsgBody{})
 	// 0xc4a1ae54
-	decodeFuncCocoonRootChangeOwnerMsgBody = decodeMsg(tlb.Tag{Val: 0xc4a1ae54, Len: 32}, CocoonRootChangeOwnerMsgOp, CocoonRootChangeOwnerMsgBody{})
+	decodeFuncTonCocoonChangeOwnerMsgBody = decodeMsg(tlb.Tag{Val: 0xc4a1ae54, Len: 32}, TonCocoonChangeOwnerMsgOp, TonCocoonChangeOwnerMsgBody{})
 	// 0xc52ed8d4
-	decodeFuncCocoonRootChangeFeesMsgBody = decodeMsg(tlb.Tag{Val: 0xc52ed8d4, Len: 32}, CocoonRootChangeFeesMsgOp, CocoonRootChangeFeesMsgBody{})
+	decodeFuncTonCocoonChangeFeesMsgBody = decodeMsg(tlb.Tag{Val: 0xc52ed8d4, Len: 32}, TonCocoonChangeFeesMsgOp, TonCocoonChangeFeesMsgBody{})
 	// 0xc59a7cd3
-	decodeFuncCocoonClientPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xc59a7cd3, Len: 32}, CocoonClientPayoutMsgOp, CocoonClientPayoutMsgBody{})
-	// 0xc59a7cd3
-	decodeFuncCocoonProxyPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xc59a7cd3, Len: 32}, CocoonProxyPayoutMsgOp, CocoonProxyPayoutMsgBody{})
-	// 0xc59a7cd3
-	decodeFuncCocoonRootPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xc59a7cd3, Len: 32}, CocoonRootPayoutMsgOp, CocoonRootPayoutMsgBody{})
-	// 0xc59a7cd3
-	decodeFuncCocoonWalletPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xc59a7cd3, Len: 32}, CocoonWalletPayoutMsgOp, CocoonWalletPayoutMsgBody{})
-	// 0xc59a7cd3
-	decodeFuncCocoonWorkerPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xc59a7cd3, Len: 32}, CocoonWorkerPayoutMsgOp, CocoonWorkerPayoutMsgBody{})
+	decodeFuncTonCocoonPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xc59a7cd3, Len: 32}, TonCocoonPayoutMsgOp, TonCocoonPayoutMsgBody{})
 	// 0xd1735400
-	decodeFuncResponseWalletAddressMsgBody = decodeMsg(tlb.Tag{Val: 0xd1735400, Len: 32}, ResponseWalletAddressMsgOp, ResponseWalletAddressMsgBody{})
+	decodeFuncTonTep74ResponseWalletAddressMsgBody = decodeMsg(tlb.Tag{Val: 0xd1735400, Len: 32}, TonTep74ResponseWalletAddressMsgOp, TonTep74ResponseWalletAddressMsgBody{})
 	// 0xd53276db
-	decodeFuncCocoonClientReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, CocoonClientReturnExcessesBackMsgOp, CocoonClientReturnExcessesBackMsgBody{})
+	decodeFuncTonCocoonReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, TonCocoonReturnExcessesBackMsgOp, TonCocoonReturnExcessesBackMsgBody{})
 	// 0xd53276db
-	decodeFuncCocoonProxyReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, CocoonProxyReturnExcessesBackMsgOp, CocoonProxyReturnExcessesBackMsgBody{})
+	decodeFuncTonTep74ReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, TonTep74ReturnExcessesBackMsgOp, TonTep74ReturnExcessesBackMsgBody{})
 	// 0xd53276db
-	decodeFuncCocoonRootReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, CocoonRootReturnExcessesBackMsgOp, CocoonRootReturnExcessesBackMsgBody{})
-	// 0xd53276db
-	decodeFuncCocoonWalletReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, CocoonWalletReturnExcessesBackMsgOp, CocoonWalletReturnExcessesBackMsgBody{})
-	// 0xd53276db
-	decodeFuncCocoonWorkerReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, CocoonWorkerReturnExcessesBackMsgOp, CocoonWorkerReturnExcessesBackMsgBody{})
-	// 0xd53276db
-	decodeFuncReturnExcessesBackMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, ReturnExcessesBackMsgOp, ReturnExcessesBackMsgBody{})
-	// 0xd53276db
-	decodeFuncAboaLisaMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, AboaLisaMsgOp, AboaLisaMsgBody{})
+	decodeFuncTonTep74AboaLisaMsgBody = decodeMsg(tlb.Tag{Val: 0xd53276db, Len: 32}, TonTep74AboaLisaMsgOp, TonTep74AboaLisaMsgBody{})
 	// 0xda068e78
-	decodeFuncCocoonClientOwnerClientWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda068e78, Len: 32}, CocoonClientOwnerClientWithdrawMsgOp, CocoonClientOwnerClientWithdrawMsgBody{})
+	decodeFuncTonCocoonOwnerClientWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda068e78, Len: 32}, TonCocoonOwnerClientWithdrawMsgOp, TonCocoonOwnerClientWithdrawMsgBody{})
 	// 0xe34b1c60
-	decodeFuncCocoonRootAddWorkerTypeMsgBody = decodeMsg(tlb.Tag{Val: 0xe34b1c60, Len: 32}, CocoonRootAddWorkerTypeMsgOp, CocoonRootAddWorkerTypeMsgBody{})
+	decodeFuncTonCocoonAddWorkerTypeMsgBody = decodeMsg(tlb.Tag{Val: 0xe34b1c60, Len: 32}, TonCocoonAddWorkerTypeMsgOp, TonCocoonAddWorkerTypeMsgBody{})
 	// 0xe511abc7
-	decodeFuncCocoonProxyExtProxyCloseCompleteRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xe511abc7, Len: 32}, CocoonProxyExtProxyCloseCompleteRequestSignedMsgOp, CocoonProxyExtProxyCloseCompleteRequestSignedMsgBody{})
+	decodeFuncTonCocoonExtProxyCloseCompleteRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xe511abc7, Len: 32}, TonCocoonExtProxyCloseCompleteRequestSignedMsgOp, TonCocoonExtProxyCloseCompleteRequestSignedMsgBody{})
 	// 0xefd711e1
-	decodeFuncCocoonClientExtClientGrantRefundSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xefd711e1, Len: 32}, CocoonClientExtClientGrantRefundSignedMsgOp, CocoonClientExtClientGrantRefundSignedMsgBody{})
+	decodeFuncTonCocoonExtClientGrantRefundSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xefd711e1, Len: 32}, TonCocoonExtClientGrantRefundSignedMsgOp, TonCocoonExtClientGrantRefundSignedMsgBody{})
 	// 0xf172e6c2
-	decodeFuncCocoonClientExtClientTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0xf172e6c2, Len: 32}, CocoonClientExtClientTopUpMsgOp, CocoonClientExtClientTopUpMsgBody{})
+	decodeFuncTonCocoonExtClientTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0xf172e6c2, Len: 32}, TonCocoonExtClientTopUpMsgOp, TonCocoonExtClientTopUpMsgBody{})
 	// 0xf5f26a36
-	decodeFuncCocoonWorkerExtWorkerLastPayoutRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xf5f26a36, Len: 32}, CocoonWorkerExtWorkerLastPayoutRequestSignedMsgOp, CocoonWorkerExtWorkerLastPayoutRequestSignedMsgBody{})
+	decodeFuncTonCocoonExtWorkerLastPayoutRequestSignedMsgBody = decodeMsg(tlb.Tag{Val: 0xf5f26a36, Len: 32}, TonCocoonExtWorkerLastPayoutRequestSignedMsgOp, TonCocoonExtWorkerLastPayoutRequestSignedMsgBody{})
 	// 0xfafa6cc1
-	decodeFuncCocoonClientOwnerClientRequestRefundMsgBody = decodeMsg(tlb.Tag{Val: 0xfafa6cc1, Len: 32}, CocoonClientOwnerClientRequestRefundMsgOp, CocoonClientOwnerClientRequestRefundMsgBody{})
+	decodeFuncTonCocoonOwnerClientRequestRefundMsgBody = decodeMsg(tlb.Tag{Val: 0xfafa6cc1, Len: 32}, TonCocoonOwnerClientRequestRefundMsgOp, TonCocoonOwnerClientRequestRefundMsgBody{})
 )
 
 var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
-	//CocoonProxyTextCmd, CocoonWalletTextCommand,
+	//TonCocoonTextCmd, TonCocoonTextCommand,
 	0x00000000: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncCocoonProxyTextCmdMsgBody,
-		decodeFuncCocoonWalletTextCommandMsgBody},
+		decodeFuncTonCocoonTextCmdMsgBody,
+		decodeFuncTonCocoonTextCommandMsgBody},
 		"0x00000000",
 	),
 
 	// 0x00000003
-	ChangeMinterAdminMsgOpCode: decodeFuncChangeMinterAdminMsgBody,
+	TonTep74ChangeMinterAdminMsgOpCode: decodeFuncTonTep74ChangeMinterAdminMsgBody,
 
 	// 0x00000004
-	ChangeMinterContentMsgOpCode: decodeFuncChangeMinterContentMsgBody,
+	TonTep74ChangeMinterContentMsgOpCode: decodeFuncTonTep74ChangeMinterContentMsgBody,
 
 	// 0x00000015
-	MintNewJettonsMsgOpCode: decodeFuncMintNewJettonsMsgBody,
+	TonTep74MintNewJettonsMsgOpCode: decodeFuncTonTep74MintNewJettonsMsgBody,
 
 	// 0x022fa189
-	CocoonRootChangeParamsMsgOpCode: decodeFuncCocoonRootChangeParamsMsgBody,
+	TonCocoonChangeParamsMsgOpCode: decodeFuncTonCocoonChangeParamsMsgBody,
 
 	// 0x0f8a7ea5
-	AskToTransferMsgOpCode: decodeFuncAskToTransferMsgBody,
+	TonTep74AskToTransferMsgOpCode: decodeFuncTonTep74AskToTransferMsgBody,
 
 	// 0x11aefd51
-	CocoonRootUpgradeCodeMsgOpCode: decodeFuncCocoonRootUpgradeCodeMsgBody,
+	TonCocoonUpgradeCodeMsgOpCode: decodeFuncTonCocoonUpgradeCodeMsgBody,
 
 	// 0x178d4519
-	InternalTransferStepMsgOpCode: decodeFuncInternalTransferStepMsgBody,
+	TonTep74InternalTransferStepMsgOpCode: decodeFuncTonTep74InternalTransferStepMsgBody,
 
 	// 0x26ed7f65
-	CocoonWorkerOwnerWorkerRegisterMsgOpCode: decodeFuncCocoonWorkerOwnerWorkerRegisterMsgBody,
+	TonCocoonOwnerWorkerRegisterMsgOpCode: decodeFuncTonCocoonOwnerWorkerRegisterMsgBody,
 
 	// 0x2c76b973
-	RequestWalletAddressMsgOpCode: decodeFuncRequestWalletAddressMsgBody,
+	TonTep74RequestWalletAddressMsgOpCode: decodeFuncTonTep74RequestWalletAddressMsgBody,
 
 	// 0x3c41d0b2
-	CocoonRootDelProxyTypeMsgOpCode: decodeFuncCocoonRootDelProxyTypeMsgBody,
+	TonCocoonDelProxyTypeMsgOpCode: decodeFuncTonCocoonDelProxyTypeMsgBody,
 
-	//CocoonProxyWorkerProxyRequest, CocoonWorkerWorkerProxyRequest,
-	0x4d725d2c: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncCocoonProxyWorkerProxyRequestMsgBody,
-		decodeFuncCocoonWorkerWorkerProxyRequestMsgBody},
-		"0x4d725d2c",
-	),
+	// 0x4d725d2c
+	TonCocoonWorkerProxyRequestMsgOpCode: decodeFuncTonCocoonWorkerProxyRequestMsgBody,
 
 	// 0x4f7c5789
-	CocoonRootUpgradeFullMsgOpCode: decodeFuncCocoonRootUpgradeFullMsgBody,
+	TonCocoonUpgradeFullMsgOpCode: decodeFuncTonCocoonUpgradeFullMsgBody,
 
 	// 0x563c1d96
-	CocoonRootResetRootMsgOpCode: decodeFuncCocoonRootResetRootMsgBody,
+	TonCocoonResetRootMsgOpCode: decodeFuncTonCocoonResetRootMsgBody,
 
 	// 0x595f07bc
-	AskToBurnMsgOpCode: decodeFuncAskToBurnMsgBody,
+	TonTep74AskToBurnMsgOpCode: decodeFuncTonTep74AskToBurnMsgBody,
 
 	// 0x636a4391
-	CocoonProxyExtProxyCloseRequestSignedMsgOpCode: decodeFuncCocoonProxyExtProxyCloseRequestSignedMsgBody,
+	TonCocoonExtProxyCloseRequestSignedMsgOpCode: decodeFuncTonCocoonExtProxyCloseRequestSignedMsgBody,
 
-	//CocoonClientClientProxyRequest, CocoonProxyClientProxyRequest,
-	0x65448ff4: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncCocoonClientClientProxyRequestMsgBody,
-		decodeFuncCocoonProxyClientProxyRequestMsgBody},
-		"0x65448ff4",
-	),
+	// 0x65448ff4
+	TonCocoonClientProxyRequestMsgOpCode: decodeFuncTonCocoonClientProxyRequestMsgBody,
 
 	// 0x6a1f6a60
-	CocoonClientOwnerClientIncreaseStakeMsgOpCode: decodeFuncCocoonClientOwnerClientIncreaseStakeMsgBody,
+	TonCocoonOwnerClientIncreaseStakeMsgOpCode: decodeFuncTonCocoonOwnerClientIncreaseStakeMsgBody,
 
 	// 0x6d49eaf2
-	CocoonRootUnregisterProxyMsgOpCode: decodeFuncCocoonRootUnregisterProxyMsgBody,
+	TonCocoonUnregisterProxyMsgOpCode: decodeFuncTonCocoonUnregisterProxyMsgBody,
 
 	// 0x71860e80
-	CocoonRootAddProxyTypeMsgOpCode: decodeFuncCocoonRootAddProxyTypeMsgBody,
+	TonCocoonAddProxyTypeMsgOpCode: decodeFuncTonCocoonAddProxyTypeMsgBody,
 
 	// 0x7362d09c
-	TransferNotificationForRecipientMsgOpCode: decodeFuncTransferNotificationForRecipientMsgBody,
+	TonTep74TransferNotificationForRecipientMsgOpCode: decodeFuncTonTep74TransferNotificationForRecipientMsgBody,
 
 	// 0x7610e6eb
-	CocoonProxyExtProxyPayoutRequestMsgOpCode: decodeFuncCocoonProxyExtProxyPayoutRequestMsgBody,
+	TonCocoonExtProxyPayoutRequestMsgOpCode: decodeFuncTonCocoonExtProxyPayoutRequestMsgBody,
 
 	// 0x7bdd97de
-	BurnNotificationForMinterMsgOpCode: decodeFuncBurnNotificationForMinterMsgBody,
+	TonTep74BurnNotificationForMinterMsgOpCode: decodeFuncTonTep74BurnNotificationForMinterMsgBody,
 
 	// 0x8473b408
-	CocoonClientOwnerClientChangeSecretHashAndTopUpMsgOpCode: decodeFuncCocoonClientOwnerClientChangeSecretHashAndTopUpMsgBody,
+	TonCocoonOwnerClientChangeSecretHashAndTopUpMsgOpCode: decodeFuncTonCocoonOwnerClientChangeSecretHashAndTopUpMsgBody,
 
 	// 0x8d94a79a
-	CocoonRootDelWorkerTypeMsgOpCode: decodeFuncCocoonRootDelWorkerTypeMsgBody,
+	TonCocoonDelWorkerTypeMsgOpCode: decodeFuncTonCocoonDelWorkerTypeMsgBody,
 
 	// 0x927c7cb5
-	CocoonRootRegisterProxyMsgOpCode: decodeFuncCocoonRootRegisterProxyMsgBody,
+	TonCocoonRegisterProxyMsgOpCode: decodeFuncTonCocoonRegisterProxyMsgBody,
 
 	// 0x92b11c18
-	CocoonRootDelModelTypeMsgOpCode: decodeFuncCocoonRootDelModelTypeMsgBody,
+	TonCocoonDelModelTypeMsgOpCode: decodeFuncTonCocoonDelModelTypeMsgBody,
 
 	// 0x9713f187
-	CocoonProxyExtProxyIncreaseStakeMsgOpCode: decodeFuncCocoonProxyExtProxyIncreaseStakeMsgBody,
+	TonCocoonExtProxyIncreaseStakeMsgOpCode: decodeFuncTonCocoonExtProxyIncreaseStakeMsgBody,
 
 	// 0x9c69f376
-	CocoonWalletOwnerWalletSendMessageMsgOpCode: decodeFuncCocoonWalletOwnerWalletSendMessageMsgBody,
+	TonCocoonOwnerWalletSendMessageMsgOpCode: decodeFuncTonCocoonOwnerWalletSendMessageMsgBody,
 
 	// 0x9c7924ba
-	CocoonRootUpdateProxyMsgOpCode: decodeFuncCocoonRootUpdateProxyMsgBody,
+	TonCocoonUpdateProxyMsgOpCode: decodeFuncTonCocoonUpdateProxyMsgBody,
 
 	// 0xa040ad28
-	CocoonWorkerExtWorkerPayoutRequestSignedMsgOpCode: decodeFuncCocoonWorkerExtWorkerPayoutRequestSignedMsgBody,
+	TonCocoonExtWorkerPayoutRequestSignedMsgOpCode: decodeFuncTonCocoonExtWorkerPayoutRequestSignedMsgBody,
 
 	// 0xa2370f61
-	CocoonRootUpgradeContractsMsgOpCode: decodeFuncCocoonRootUpgradeContractsMsgBody,
+	TonCocoonUpgradeContractsMsgOpCode: decodeFuncTonCocoonUpgradeContractsMsgBody,
 
 	// 0xa9357034
-	CocoonClientOwnerClientChangeSecretHashMsgOpCode: decodeFuncCocoonClientOwnerClientChangeSecretHashMsgBody,
+	TonCocoonOwnerClientChangeSecretHashMsgOpCode: decodeFuncTonCocoonOwnerClientChangeSecretHashMsgBody,
 
 	// 0xb51d5a01
-	CocoonProxyOwnerProxyCloseMsgOpCode: decodeFuncCocoonProxyOwnerProxyCloseMsgBody,
+	TonCocoonOwnerProxyCloseMsgOpCode: decodeFuncTonCocoonOwnerProxyCloseMsgBody,
 
 	// 0xbb63ff93
-	CocoonClientExtClientChargeSignedMsgOpCode: decodeFuncCocoonClientExtClientChargeSignedMsgBody,
+	TonCocoonExtClientChargeSignedMsgOpCode: decodeFuncTonCocoonExtClientChargeSignedMsgBody,
 
 	// 0xc146134d
-	CocoonRootAddModelTypeMsgOpCode: decodeFuncCocoonRootAddModelTypeMsgBody,
+	TonCocoonAddModelTypeMsgOpCode: decodeFuncTonCocoonAddModelTypeMsgBody,
 
 	// 0xc45f9f3b
-	CocoonClientOwnerClientRegisterMsgOpCode: decodeFuncCocoonClientOwnerClientRegisterMsgBody,
+	TonCocoonOwnerClientRegisterMsgOpCode: decodeFuncTonCocoonOwnerClientRegisterMsgBody,
 
 	// 0xc4a1ae54
-	CocoonRootChangeOwnerMsgOpCode: decodeFuncCocoonRootChangeOwnerMsgBody,
+	TonCocoonChangeOwnerMsgOpCode: decodeFuncTonCocoonChangeOwnerMsgBody,
 
 	// 0xc52ed8d4
-	CocoonRootChangeFeesMsgOpCode: decodeFuncCocoonRootChangeFeesMsgBody,
+	TonCocoonChangeFeesMsgOpCode: decodeFuncTonCocoonChangeFeesMsgBody,
 
-	//CocoonClientPayout, CocoonProxyPayout, CocoonRootPayout, CocoonWalletPayout, CocoonWorkerPayout,
-	0xc59a7cd3: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncCocoonClientPayoutMsgBody,
-		decodeFuncCocoonProxyPayoutMsgBody,
-		decodeFuncCocoonRootPayoutMsgBody,
-		decodeFuncCocoonWalletPayoutMsgBody,
-		decodeFuncCocoonWorkerPayoutMsgBody},
-		"0xc59a7cd3",
-	),
+	// 0xc59a7cd3
+	TonCocoonPayoutMsgOpCode: decodeFuncTonCocoonPayoutMsgBody,
 
 	// 0xd1735400
-	ResponseWalletAddressMsgOpCode: decodeFuncResponseWalletAddressMsgBody,
+	TonTep74ResponseWalletAddressMsgOpCode: decodeFuncTonTep74ResponseWalletAddressMsgBody,
 
-	//CocoonClientReturnExcessesBack, CocoonProxyReturnExcessesBack, CocoonRootReturnExcessesBack, CocoonWalletReturnExcessesBack, CocoonWorkerReturnExcessesBack, ReturnExcessesBack, AboaLisa,
+	//TonCocoonReturnExcessesBack, TonTep74ReturnExcessesBack, TonTep74AboaLisa,
 	0xd53276db: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncCocoonClientReturnExcessesBackMsgBody,
-		decodeFuncCocoonProxyReturnExcessesBackMsgBody,
-		decodeFuncCocoonRootReturnExcessesBackMsgBody,
-		decodeFuncCocoonWalletReturnExcessesBackMsgBody,
-		decodeFuncCocoonWorkerReturnExcessesBackMsgBody,
-		decodeFuncReturnExcessesBackMsgBody,
-		decodeFuncAboaLisaMsgBody},
+		decodeFuncTonCocoonReturnExcessesBackMsgBody,
+		decodeFuncTonTep74ReturnExcessesBackMsgBody,
+		decodeFuncTonTep74AboaLisaMsgBody},
 		"0xd53276db",
 	),
 
 	// 0xda068e78
-	CocoonClientOwnerClientWithdrawMsgOpCode: decodeFuncCocoonClientOwnerClientWithdrawMsgBody,
+	TonCocoonOwnerClientWithdrawMsgOpCode: decodeFuncTonCocoonOwnerClientWithdrawMsgBody,
 
 	// 0xe34b1c60
-	CocoonRootAddWorkerTypeMsgOpCode: decodeFuncCocoonRootAddWorkerTypeMsgBody,
+	TonCocoonAddWorkerTypeMsgOpCode: decodeFuncTonCocoonAddWorkerTypeMsgBody,
 
 	// 0xe511abc7
-	CocoonProxyExtProxyCloseCompleteRequestSignedMsgOpCode: decodeFuncCocoonProxyExtProxyCloseCompleteRequestSignedMsgBody,
+	TonCocoonExtProxyCloseCompleteRequestSignedMsgOpCode: decodeFuncTonCocoonExtProxyCloseCompleteRequestSignedMsgBody,
 
 	// 0xefd711e1
-	CocoonClientExtClientGrantRefundSignedMsgOpCode: decodeFuncCocoonClientExtClientGrantRefundSignedMsgBody,
+	TonCocoonExtClientGrantRefundSignedMsgOpCode: decodeFuncTonCocoonExtClientGrantRefundSignedMsgBody,
 
 	// 0xf172e6c2
-	CocoonClientExtClientTopUpMsgOpCode: decodeFuncCocoonClientExtClientTopUpMsgBody,
+	TonCocoonExtClientTopUpMsgOpCode: decodeFuncTonCocoonExtClientTopUpMsgBody,
 
 	// 0xf5f26a36
-	CocoonWorkerExtWorkerLastPayoutRequestSignedMsgOpCode: decodeFuncCocoonWorkerExtWorkerLastPayoutRequestSignedMsgBody,
+	TonCocoonExtWorkerLastPayoutRequestSignedMsgOpCode: decodeFuncTonCocoonExtWorkerLastPayoutRequestSignedMsgBody,
 
 	// 0xfafa6cc1
-	CocoonClientOwnerClientRequestRefundMsgOpCode: decodeFuncCocoonClientOwnerClientRequestRefundMsgBody,
+	TonCocoonOwnerClientRequestRefundMsgOpCode: decodeFuncTonCocoonOwnerClientRequestRefundMsgBody,
 }
 
 const (
-	CocoonProxyTextCmdMsgOp                              MsgOpName = "CocoonProxyTextCmd"
-	CocoonWalletTextCommandMsgOp                         MsgOpName = "CocoonWalletTextCommand"
-	ChangeMinterAdminMsgOp                               MsgOpName = "ChangeMinterAdmin"
-	ChangeMinterContentMsgOp                             MsgOpName = "ChangeMinterContent"
-	MintNewJettonsMsgOp                                  MsgOpName = "MintNewJettons"
-	CocoonRootChangeParamsMsgOp                          MsgOpName = "CocoonRootChangeParams"
-	AskToTransferMsgOp                                   MsgOpName = "AskToTransfer"
-	CocoonRootUpgradeCodeMsgOp                           MsgOpName = "CocoonRootUpgradeCode"
-	InternalTransferStepMsgOp                            MsgOpName = "InternalTransferStep"
-	CocoonWorkerOwnerWorkerRegisterMsgOp                 MsgOpName = "CocoonWorkerOwnerWorkerRegister"
-	RequestWalletAddressMsgOp                            MsgOpName = "RequestWalletAddress"
-	CocoonRootDelProxyTypeMsgOp                          MsgOpName = "CocoonRootDelProxyType"
-	CocoonProxyWorkerProxyRequestMsgOp                   MsgOpName = "CocoonProxyWorkerProxyRequest"
-	CocoonWorkerWorkerProxyRequestMsgOp                  MsgOpName = "CocoonWorkerWorkerProxyRequest"
-	CocoonRootUpgradeFullMsgOp                           MsgOpName = "CocoonRootUpgradeFull"
-	CocoonRootResetRootMsgOp                             MsgOpName = "CocoonRootResetRoot"
-	AskToBurnMsgOp                                       MsgOpName = "AskToBurn"
-	CocoonProxyExtProxyCloseRequestSignedMsgOp           MsgOpName = "CocoonProxyExtProxyCloseRequestSigned"
-	CocoonClientClientProxyRequestMsgOp                  MsgOpName = "CocoonClientClientProxyRequest"
-	CocoonProxyClientProxyRequestMsgOp                   MsgOpName = "CocoonProxyClientProxyRequest"
-	CocoonClientOwnerClientIncreaseStakeMsgOp            MsgOpName = "CocoonClientOwnerClientIncreaseStake"
-	CocoonRootUnregisterProxyMsgOp                       MsgOpName = "CocoonRootUnregisterProxy"
-	CocoonRootAddProxyTypeMsgOp                          MsgOpName = "CocoonRootAddProxyType"
-	TransferNotificationForRecipientMsgOp                MsgOpName = "TransferNotificationForRecipient"
-	CocoonProxyExtProxyPayoutRequestMsgOp                MsgOpName = "CocoonProxyExtProxyPayoutRequest"
-	BurnNotificationForMinterMsgOp                       MsgOpName = "BurnNotificationForMinter"
-	CocoonClientOwnerClientChangeSecretHashAndTopUpMsgOp MsgOpName = "CocoonClientOwnerClientChangeSecretHashAndTopUp"
-	CocoonRootDelWorkerTypeMsgOp                         MsgOpName = "CocoonRootDelWorkerType"
-	CocoonRootRegisterProxyMsgOp                         MsgOpName = "CocoonRootRegisterProxy"
-	CocoonRootDelModelTypeMsgOp                          MsgOpName = "CocoonRootDelModelType"
-	CocoonProxyExtProxyIncreaseStakeMsgOp                MsgOpName = "CocoonProxyExtProxyIncreaseStake"
-	CocoonWalletOwnerWalletSendMessageMsgOp              MsgOpName = "CocoonWalletOwnerWalletSendMessage"
-	CocoonRootUpdateProxyMsgOp                           MsgOpName = "CocoonRootUpdateProxy"
-	CocoonWorkerExtWorkerPayoutRequestSignedMsgOp        MsgOpName = "CocoonWorkerExtWorkerPayoutRequestSigned"
-	CocoonRootUpgradeContractsMsgOp                      MsgOpName = "CocoonRootUpgradeContracts"
-	CocoonClientOwnerClientChangeSecretHashMsgOp         MsgOpName = "CocoonClientOwnerClientChangeSecretHash"
-	CocoonProxyOwnerProxyCloseMsgOp                      MsgOpName = "CocoonProxyOwnerProxyClose"
-	CocoonClientExtClientChargeSignedMsgOp               MsgOpName = "CocoonClientExtClientChargeSigned"
-	CocoonRootAddModelTypeMsgOp                          MsgOpName = "CocoonRootAddModelType"
-	CocoonClientOwnerClientRegisterMsgOp                 MsgOpName = "CocoonClientOwnerClientRegister"
-	CocoonRootChangeOwnerMsgOp                           MsgOpName = "CocoonRootChangeOwner"
-	CocoonRootChangeFeesMsgOp                            MsgOpName = "CocoonRootChangeFees"
-	CocoonClientPayoutMsgOp                              MsgOpName = "CocoonClientPayout"
-	CocoonProxyPayoutMsgOp                               MsgOpName = "CocoonProxyPayout"
-	CocoonRootPayoutMsgOp                                MsgOpName = "CocoonRootPayout"
-	CocoonWalletPayoutMsgOp                              MsgOpName = "CocoonWalletPayout"
-	CocoonWorkerPayoutMsgOp                              MsgOpName = "CocoonWorkerPayout"
-	ResponseWalletAddressMsgOp                           MsgOpName = "ResponseWalletAddress"
-	CocoonClientReturnExcessesBackMsgOp                  MsgOpName = "CocoonClientReturnExcessesBack"
-	CocoonProxyReturnExcessesBackMsgOp                   MsgOpName = "CocoonProxyReturnExcessesBack"
-	CocoonRootReturnExcessesBackMsgOp                    MsgOpName = "CocoonRootReturnExcessesBack"
-	CocoonWalletReturnExcessesBackMsgOp                  MsgOpName = "CocoonWalletReturnExcessesBack"
-	CocoonWorkerReturnExcessesBackMsgOp                  MsgOpName = "CocoonWorkerReturnExcessesBack"
-	ReturnExcessesBackMsgOp                              MsgOpName = "ReturnExcessesBack"
-	AboaLisaMsgOp                                        MsgOpName = "AboaLisa"
-	CocoonClientOwnerClientWithdrawMsgOp                 MsgOpName = "CocoonClientOwnerClientWithdraw"
-	CocoonRootAddWorkerTypeMsgOp                         MsgOpName = "CocoonRootAddWorkerType"
-	CocoonProxyExtProxyCloseCompleteRequestSignedMsgOp   MsgOpName = "CocoonProxyExtProxyCloseCompleteRequestSigned"
-	CocoonClientExtClientGrantRefundSignedMsgOp          MsgOpName = "CocoonClientExtClientGrantRefundSigned"
-	CocoonClientExtClientTopUpMsgOp                      MsgOpName = "CocoonClientExtClientTopUp"
-	CocoonWorkerExtWorkerLastPayoutRequestSignedMsgOp    MsgOpName = "CocoonWorkerExtWorkerLastPayoutRequestSigned"
-	CocoonClientOwnerClientRequestRefundMsgOp            MsgOpName = "CocoonClientOwnerClientRequestRefund"
+	TonCocoonTextCmdMsgOp                             MsgOpName = "TonCocoonTextCmd"
+	TonCocoonTextCommandMsgOp                         MsgOpName = "TonCocoonTextCommand"
+	TonTep74ChangeMinterAdminMsgOp                    MsgOpName = "TonTep74ChangeMinterAdmin"
+	TonTep74ChangeMinterContentMsgOp                  MsgOpName = "TonTep74ChangeMinterContent"
+	TonTep74MintNewJettonsMsgOp                       MsgOpName = "TonTep74MintNewJettons"
+	TonCocoonChangeParamsMsgOp                        MsgOpName = "TonCocoonChangeParams"
+	TonTep74AskToTransferMsgOp                        MsgOpName = "TonTep74AskToTransfer"
+	TonCocoonUpgradeCodeMsgOp                         MsgOpName = "TonCocoonUpgradeCode"
+	TonTep74InternalTransferStepMsgOp                 MsgOpName = "TonTep74InternalTransferStep"
+	TonCocoonOwnerWorkerRegisterMsgOp                 MsgOpName = "TonCocoonOwnerWorkerRegister"
+	TonTep74RequestWalletAddressMsgOp                 MsgOpName = "TonTep74RequestWalletAddress"
+	TonCocoonDelProxyTypeMsgOp                        MsgOpName = "TonCocoonDelProxyType"
+	TonCocoonWorkerProxyRequestMsgOp                  MsgOpName = "TonCocoonWorkerProxyRequest"
+	TonCocoonUpgradeFullMsgOp                         MsgOpName = "TonCocoonUpgradeFull"
+	TonCocoonResetRootMsgOp                           MsgOpName = "TonCocoonResetRoot"
+	TonTep74AskToBurnMsgOp                            MsgOpName = "TonTep74AskToBurn"
+	TonCocoonExtProxyCloseRequestSignedMsgOp          MsgOpName = "TonCocoonExtProxyCloseRequestSigned"
+	TonCocoonClientProxyRequestMsgOp                  MsgOpName = "TonCocoonClientProxyRequest"
+	TonCocoonOwnerClientIncreaseStakeMsgOp            MsgOpName = "TonCocoonOwnerClientIncreaseStake"
+	TonCocoonUnregisterProxyMsgOp                     MsgOpName = "TonCocoonUnregisterProxy"
+	TonCocoonAddProxyTypeMsgOp                        MsgOpName = "TonCocoonAddProxyType"
+	TonTep74TransferNotificationForRecipientMsgOp     MsgOpName = "TonTep74TransferNotificationForRecipient"
+	TonCocoonExtProxyPayoutRequestMsgOp               MsgOpName = "TonCocoonExtProxyPayoutRequest"
+	TonTep74BurnNotificationForMinterMsgOp            MsgOpName = "TonTep74BurnNotificationForMinter"
+	TonCocoonOwnerClientChangeSecretHashAndTopUpMsgOp MsgOpName = "TonCocoonOwnerClientChangeSecretHashAndTopUp"
+	TonCocoonDelWorkerTypeMsgOp                       MsgOpName = "TonCocoonDelWorkerType"
+	TonCocoonRegisterProxyMsgOp                       MsgOpName = "TonCocoonRegisterProxy"
+	TonCocoonDelModelTypeMsgOp                        MsgOpName = "TonCocoonDelModelType"
+	TonCocoonExtProxyIncreaseStakeMsgOp               MsgOpName = "TonCocoonExtProxyIncreaseStake"
+	TonCocoonOwnerWalletSendMessageMsgOp              MsgOpName = "TonCocoonOwnerWalletSendMessage"
+	TonCocoonUpdateProxyMsgOp                         MsgOpName = "TonCocoonUpdateProxy"
+	TonCocoonExtWorkerPayoutRequestSignedMsgOp        MsgOpName = "TonCocoonExtWorkerPayoutRequestSigned"
+	TonCocoonUpgradeContractsMsgOp                    MsgOpName = "TonCocoonUpgradeContracts"
+	TonCocoonOwnerClientChangeSecretHashMsgOp         MsgOpName = "TonCocoonOwnerClientChangeSecretHash"
+	TonCocoonOwnerProxyCloseMsgOp                     MsgOpName = "TonCocoonOwnerProxyClose"
+	TonCocoonExtClientChargeSignedMsgOp               MsgOpName = "TonCocoonExtClientChargeSigned"
+	TonCocoonAddModelTypeMsgOp                        MsgOpName = "TonCocoonAddModelType"
+	TonCocoonOwnerClientRegisterMsgOp                 MsgOpName = "TonCocoonOwnerClientRegister"
+	TonCocoonChangeOwnerMsgOp                         MsgOpName = "TonCocoonChangeOwner"
+	TonCocoonChangeFeesMsgOp                          MsgOpName = "TonCocoonChangeFees"
+	TonCocoonPayoutMsgOp                              MsgOpName = "TonCocoonPayout"
+	TonTep74ResponseWalletAddressMsgOp                MsgOpName = "TonTep74ResponseWalletAddress"
+	TonCocoonReturnExcessesBackMsgOp                  MsgOpName = "TonCocoonReturnExcessesBack"
+	TonTep74ReturnExcessesBackMsgOp                   MsgOpName = "TonTep74ReturnExcessesBack"
+	TonTep74AboaLisaMsgOp                             MsgOpName = "TonTep74AboaLisa"
+	TonCocoonOwnerClientWithdrawMsgOp                 MsgOpName = "TonCocoonOwnerClientWithdraw"
+	TonCocoonAddWorkerTypeMsgOp                       MsgOpName = "TonCocoonAddWorkerType"
+	TonCocoonExtProxyCloseCompleteRequestSignedMsgOp  MsgOpName = "TonCocoonExtProxyCloseCompleteRequestSigned"
+	TonCocoonExtClientGrantRefundSignedMsgOp          MsgOpName = "TonCocoonExtClientGrantRefundSigned"
+	TonCocoonExtClientTopUpMsgOp                      MsgOpName = "TonCocoonExtClientTopUp"
+	TonCocoonExtWorkerLastPayoutRequestSignedMsgOp    MsgOpName = "TonCocoonExtWorkerLastPayoutRequestSigned"
+	TonCocoonOwnerClientRequestRefundMsgOp            MsgOpName = "TonCocoonOwnerClientRequestRefund"
 )
 
 const (
-	CocoonProxyTextCmdMsgOpCode                              MsgOpCode = 0x00000000
-	CocoonWalletTextCommandMsgOpCode                         MsgOpCode = 0x00000000
-	ChangeMinterAdminMsgOpCode                               MsgOpCode = 0x00000003
-	ChangeMinterContentMsgOpCode                             MsgOpCode = 0x00000004
-	MintNewJettonsMsgOpCode                                  MsgOpCode = 0x00000015
-	CocoonRootChangeParamsMsgOpCode                          MsgOpCode = 0x022fa189
-	AskToTransferMsgOpCode                                   MsgOpCode = 0x0f8a7ea5
-	CocoonRootUpgradeCodeMsgOpCode                           MsgOpCode = 0x11aefd51
-	InternalTransferStepMsgOpCode                            MsgOpCode = 0x178d4519
-	CocoonWorkerOwnerWorkerRegisterMsgOpCode                 MsgOpCode = 0x26ed7f65
-	RequestWalletAddressMsgOpCode                            MsgOpCode = 0x2c76b973
-	CocoonRootDelProxyTypeMsgOpCode                          MsgOpCode = 0x3c41d0b2
-	CocoonProxyWorkerProxyRequestMsgOpCode                   MsgOpCode = 0x4d725d2c
-	CocoonWorkerWorkerProxyRequestMsgOpCode                  MsgOpCode = 0x4d725d2c
-	CocoonRootUpgradeFullMsgOpCode                           MsgOpCode = 0x4f7c5789
-	CocoonRootResetRootMsgOpCode                             MsgOpCode = 0x563c1d96
-	AskToBurnMsgOpCode                                       MsgOpCode = 0x595f07bc
-	CocoonProxyExtProxyCloseRequestSignedMsgOpCode           MsgOpCode = 0x636a4391
-	CocoonClientClientProxyRequestMsgOpCode                  MsgOpCode = 0x65448ff4
-	CocoonProxyClientProxyRequestMsgOpCode                   MsgOpCode = 0x65448ff4
-	CocoonClientOwnerClientIncreaseStakeMsgOpCode            MsgOpCode = 0x6a1f6a60
-	CocoonRootUnregisterProxyMsgOpCode                       MsgOpCode = 0x6d49eaf2
-	CocoonRootAddProxyTypeMsgOpCode                          MsgOpCode = 0x71860e80
-	TransferNotificationForRecipientMsgOpCode                MsgOpCode = 0x7362d09c
-	CocoonProxyExtProxyPayoutRequestMsgOpCode                MsgOpCode = 0x7610e6eb
-	BurnNotificationForMinterMsgOpCode                       MsgOpCode = 0x7bdd97de
-	CocoonClientOwnerClientChangeSecretHashAndTopUpMsgOpCode MsgOpCode = 0x8473b408
-	CocoonRootDelWorkerTypeMsgOpCode                         MsgOpCode = 0x8d94a79a
-	CocoonRootRegisterProxyMsgOpCode                         MsgOpCode = 0x927c7cb5
-	CocoonRootDelModelTypeMsgOpCode                          MsgOpCode = 0x92b11c18
-	CocoonProxyExtProxyIncreaseStakeMsgOpCode                MsgOpCode = 0x9713f187
-	CocoonWalletOwnerWalletSendMessageMsgOpCode              MsgOpCode = 0x9c69f376
-	CocoonRootUpdateProxyMsgOpCode                           MsgOpCode = 0x9c7924ba
-	CocoonWorkerExtWorkerPayoutRequestSignedMsgOpCode        MsgOpCode = 0xa040ad28
-	CocoonRootUpgradeContractsMsgOpCode                      MsgOpCode = 0xa2370f61
-	CocoonClientOwnerClientChangeSecretHashMsgOpCode         MsgOpCode = 0xa9357034
-	CocoonProxyOwnerProxyCloseMsgOpCode                      MsgOpCode = 0xb51d5a01
-	CocoonClientExtClientChargeSignedMsgOpCode               MsgOpCode = 0xbb63ff93
-	CocoonRootAddModelTypeMsgOpCode                          MsgOpCode = 0xc146134d
-	CocoonClientOwnerClientRegisterMsgOpCode                 MsgOpCode = 0xc45f9f3b
-	CocoonRootChangeOwnerMsgOpCode                           MsgOpCode = 0xc4a1ae54
-	CocoonRootChangeFeesMsgOpCode                            MsgOpCode = 0xc52ed8d4
-	CocoonClientPayoutMsgOpCode                              MsgOpCode = 0xc59a7cd3
-	CocoonProxyPayoutMsgOpCode                               MsgOpCode = 0xc59a7cd3
-	CocoonRootPayoutMsgOpCode                                MsgOpCode = 0xc59a7cd3
-	CocoonWalletPayoutMsgOpCode                              MsgOpCode = 0xc59a7cd3
-	CocoonWorkerPayoutMsgOpCode                              MsgOpCode = 0xc59a7cd3
-	ResponseWalletAddressMsgOpCode                           MsgOpCode = 0xd1735400
-	CocoonClientReturnExcessesBackMsgOpCode                  MsgOpCode = 0xd53276db
-	CocoonProxyReturnExcessesBackMsgOpCode                   MsgOpCode = 0xd53276db
-	CocoonRootReturnExcessesBackMsgOpCode                    MsgOpCode = 0xd53276db
-	CocoonWalletReturnExcessesBackMsgOpCode                  MsgOpCode = 0xd53276db
-	CocoonWorkerReturnExcessesBackMsgOpCode                  MsgOpCode = 0xd53276db
-	ReturnExcessesBackMsgOpCode                              MsgOpCode = 0xd53276db
-	AboaLisaMsgOpCode                                        MsgOpCode = 0xd53276db
-	CocoonClientOwnerClientWithdrawMsgOpCode                 MsgOpCode = 0xda068e78
-	CocoonRootAddWorkerTypeMsgOpCode                         MsgOpCode = 0xe34b1c60
-	CocoonProxyExtProxyCloseCompleteRequestSignedMsgOpCode   MsgOpCode = 0xe511abc7
-	CocoonClientExtClientGrantRefundSignedMsgOpCode          MsgOpCode = 0xefd711e1
-	CocoonClientExtClientTopUpMsgOpCode                      MsgOpCode = 0xf172e6c2
-	CocoonWorkerExtWorkerLastPayoutRequestSignedMsgOpCode    MsgOpCode = 0xf5f26a36
-	CocoonClientOwnerClientRequestRefundMsgOpCode            MsgOpCode = 0xfafa6cc1
+	TonCocoonTextCmdMsgOpCode                             MsgOpCode = 0x00000000
+	TonCocoonTextCommandMsgOpCode                         MsgOpCode = 0x00000000
+	TonTep74ChangeMinterAdminMsgOpCode                    MsgOpCode = 0x00000003
+	TonTep74ChangeMinterContentMsgOpCode                  MsgOpCode = 0x00000004
+	TonTep74MintNewJettonsMsgOpCode                       MsgOpCode = 0x00000015
+	TonCocoonChangeParamsMsgOpCode                        MsgOpCode = 0x022fa189
+	TonTep74AskToTransferMsgOpCode                        MsgOpCode = 0x0f8a7ea5
+	TonCocoonUpgradeCodeMsgOpCode                         MsgOpCode = 0x11aefd51
+	TonTep74InternalTransferStepMsgOpCode                 MsgOpCode = 0x178d4519
+	TonCocoonOwnerWorkerRegisterMsgOpCode                 MsgOpCode = 0x26ed7f65
+	TonTep74RequestWalletAddressMsgOpCode                 MsgOpCode = 0x2c76b973
+	TonCocoonDelProxyTypeMsgOpCode                        MsgOpCode = 0x3c41d0b2
+	TonCocoonWorkerProxyRequestMsgOpCode                  MsgOpCode = 0x4d725d2c
+	TonCocoonUpgradeFullMsgOpCode                         MsgOpCode = 0x4f7c5789
+	TonCocoonResetRootMsgOpCode                           MsgOpCode = 0x563c1d96
+	TonTep74AskToBurnMsgOpCode                            MsgOpCode = 0x595f07bc
+	TonCocoonExtProxyCloseRequestSignedMsgOpCode          MsgOpCode = 0x636a4391
+	TonCocoonClientProxyRequestMsgOpCode                  MsgOpCode = 0x65448ff4
+	TonCocoonOwnerClientIncreaseStakeMsgOpCode            MsgOpCode = 0x6a1f6a60
+	TonCocoonUnregisterProxyMsgOpCode                     MsgOpCode = 0x6d49eaf2
+	TonCocoonAddProxyTypeMsgOpCode                        MsgOpCode = 0x71860e80
+	TonTep74TransferNotificationForRecipientMsgOpCode     MsgOpCode = 0x7362d09c
+	TonCocoonExtProxyPayoutRequestMsgOpCode               MsgOpCode = 0x7610e6eb
+	TonTep74BurnNotificationForMinterMsgOpCode            MsgOpCode = 0x7bdd97de
+	TonCocoonOwnerClientChangeSecretHashAndTopUpMsgOpCode MsgOpCode = 0x8473b408
+	TonCocoonDelWorkerTypeMsgOpCode                       MsgOpCode = 0x8d94a79a
+	TonCocoonRegisterProxyMsgOpCode                       MsgOpCode = 0x927c7cb5
+	TonCocoonDelModelTypeMsgOpCode                        MsgOpCode = 0x92b11c18
+	TonCocoonExtProxyIncreaseStakeMsgOpCode               MsgOpCode = 0x9713f187
+	TonCocoonOwnerWalletSendMessageMsgOpCode              MsgOpCode = 0x9c69f376
+	TonCocoonUpdateProxyMsgOpCode                         MsgOpCode = 0x9c7924ba
+	TonCocoonExtWorkerPayoutRequestSignedMsgOpCode        MsgOpCode = 0xa040ad28
+	TonCocoonUpgradeContractsMsgOpCode                    MsgOpCode = 0xa2370f61
+	TonCocoonOwnerClientChangeSecretHashMsgOpCode         MsgOpCode = 0xa9357034
+	TonCocoonOwnerProxyCloseMsgOpCode                     MsgOpCode = 0xb51d5a01
+	TonCocoonExtClientChargeSignedMsgOpCode               MsgOpCode = 0xbb63ff93
+	TonCocoonAddModelTypeMsgOpCode                        MsgOpCode = 0xc146134d
+	TonCocoonOwnerClientRegisterMsgOpCode                 MsgOpCode = 0xc45f9f3b
+	TonCocoonChangeOwnerMsgOpCode                         MsgOpCode = 0xc4a1ae54
+	TonCocoonChangeFeesMsgOpCode                          MsgOpCode = 0xc52ed8d4
+	TonCocoonPayoutMsgOpCode                              MsgOpCode = 0xc59a7cd3
+	TonTep74ResponseWalletAddressMsgOpCode                MsgOpCode = 0xd1735400
+	TonCocoonReturnExcessesBackMsgOpCode                  MsgOpCode = 0xd53276db
+	TonTep74ReturnExcessesBackMsgOpCode                   MsgOpCode = 0xd53276db
+	TonTep74AboaLisaMsgOpCode                             MsgOpCode = 0xd53276db
+	TonCocoonOwnerClientWithdrawMsgOpCode                 MsgOpCode = 0xda068e78
+	TonCocoonAddWorkerTypeMsgOpCode                       MsgOpCode = 0xe34b1c60
+	TonCocoonExtProxyCloseCompleteRequestSignedMsgOpCode  MsgOpCode = 0xe511abc7
+	TonCocoonExtClientGrantRefundSignedMsgOpCode          MsgOpCode = 0xefd711e1
+	TonCocoonExtClientTopUpMsgOpCode                      MsgOpCode = 0xf172e6c2
+	TonCocoonExtWorkerLastPayoutRequestSignedMsgOpCode    MsgOpCode = 0xf5f26a36
+	TonCocoonOwnerClientRequestRefundMsgOpCode            MsgOpCode = 0xfafa6cc1
 )
 
-type CocoonProxyTextCmdMsgBody = TextCmd
+type TonCocoonTextCmdMsgBody = TonCocoonTextCmd
 
-type CocoonWalletTextCommandMsgBody = TextCommand
+type TonCocoonTextCommandMsgBody = TonCocoonTextCommand
 
-type ChangeMinterAdminMsgBody = ChangeMinterAdmin
+type TonTep74ChangeMinterAdminMsgBody = TonTep74ChangeMinterAdmin
 
-type ChangeMinterContentMsgBody = ChangeMinterContent
+type TonTep74ChangeMinterContentMsgBody = TonTep74ChangeMinterContent
 
-type MintNewJettonsMsgBody = MintNewJettons
+type TonTep74MintNewJettonsMsgBody = TonTep74MintNewJettons
 
-type CocoonRootChangeParamsMsgBody = ChangeParams
+type TonCocoonChangeParamsMsgBody = TonCocoonChangeParams
 
-type AskToTransferMsgBody = AskToTransfer
+type TonTep74AskToTransferMsgBody = TonTep74AskToTransfer
 
-type CocoonRootUpgradeCodeMsgBody = UpgradeCode
+type TonCocoonUpgradeCodeMsgBody = TonCocoonUpgradeCode
 
-type InternalTransferStepMsgBody = InternalTransferStep
+type TonTep74InternalTransferStepMsgBody = TonTep74InternalTransferStep
 
-type CocoonWorkerOwnerWorkerRegisterMsgBody = OwnerWorkerRegister
+type TonCocoonOwnerWorkerRegisterMsgBody = TonCocoonOwnerWorkerRegister
 
-type RequestWalletAddressMsgBody = RequestWalletAddress
+type TonTep74RequestWalletAddressMsgBody = TonTep74RequestWalletAddress
 
-type CocoonRootDelProxyTypeMsgBody = DelProxyType
+type TonCocoonDelProxyTypeMsgBody = TonCocoonDelProxyType
 
-type CocoonProxyWorkerProxyRequestMsgBody = WorkerProxyRequest
+type TonCocoonWorkerProxyRequestMsgBody = TonCocoonWorkerProxyRequest
 
-type CocoonWorkerWorkerProxyRequestMsgBody = WorkerProxyRequest
+type TonCocoonUpgradeFullMsgBody = TonCocoonUpgradeFull
 
-type CocoonRootUpgradeFullMsgBody = UpgradeFull
+type TonCocoonResetRootMsgBody = TonCocoonResetRoot
 
-type CocoonRootResetRootMsgBody = ResetRoot
+type TonTep74AskToBurnMsgBody = TonTep74AskToBurn
 
-type AskToBurnMsgBody = AskToBurn
+type TonCocoonExtProxyCloseRequestSignedMsgBody = TonCocoonExtProxyCloseRequestSigned
 
-type CocoonProxyExtProxyCloseRequestSignedMsgBody = ExtProxyCloseRequestSigned
+type TonCocoonClientProxyRequestMsgBody = TonCocoonClientProxyRequest
 
-type CocoonClientClientProxyRequestMsgBody = ClientProxyRequest
+type TonCocoonOwnerClientIncreaseStakeMsgBody = TonCocoonOwnerClientIncreaseStake
 
-type CocoonProxyClientProxyRequestMsgBody = ClientProxyRequest
+type TonCocoonUnregisterProxyMsgBody = TonCocoonUnregisterProxy
 
-type CocoonClientOwnerClientIncreaseStakeMsgBody = OwnerClientIncreaseStake
+type TonCocoonAddProxyTypeMsgBody = TonCocoonAddProxyType
 
-type CocoonRootUnregisterProxyMsgBody = UnregisterProxy
+type TonTep74TransferNotificationForRecipientMsgBody = TonTep74TransferNotificationForRecipient
 
-type CocoonRootAddProxyTypeMsgBody = AddProxyType
+type TonCocoonExtProxyPayoutRequestMsgBody = TonCocoonExtProxyPayoutRequest
 
-type TransferNotificationForRecipientMsgBody = TransferNotificationForRecipient
+type TonTep74BurnNotificationForMinterMsgBody = TonTep74BurnNotificationForMinter
 
-type CocoonProxyExtProxyPayoutRequestMsgBody = ExtProxyPayoutRequest
+type TonCocoonOwnerClientChangeSecretHashAndTopUpMsgBody = TonCocoonOwnerClientChangeSecretHashAndTopUp
 
-type BurnNotificationForMinterMsgBody = BurnNotificationForMinter
+type TonCocoonDelWorkerTypeMsgBody = TonCocoonDelWorkerType
 
-type CocoonClientOwnerClientChangeSecretHashAndTopUpMsgBody = OwnerClientChangeSecretHashAndTopUp
+type TonCocoonRegisterProxyMsgBody = TonCocoonRegisterProxy
 
-type CocoonRootDelWorkerTypeMsgBody = DelWorkerType
+type TonCocoonDelModelTypeMsgBody = TonCocoonDelModelType
 
-type CocoonRootRegisterProxyMsgBody = RegisterProxy
+type TonCocoonExtProxyIncreaseStakeMsgBody = TonCocoonExtProxyIncreaseStake
 
-type CocoonRootDelModelTypeMsgBody = DelModelType
+type TonCocoonOwnerWalletSendMessageMsgBody = TonCocoonOwnerWalletSendMessage
 
-type CocoonProxyExtProxyIncreaseStakeMsgBody = ExtProxyIncreaseStake
+type TonCocoonUpdateProxyMsgBody = TonCocoonUpdateProxy
 
-type CocoonWalletOwnerWalletSendMessageMsgBody = OwnerWalletSendMessage
+type TonCocoonExtWorkerPayoutRequestSignedMsgBody = TonCocoonExtWorkerPayoutRequestSigned
 
-type CocoonRootUpdateProxyMsgBody = UpdateProxy
+type TonCocoonUpgradeContractsMsgBody = TonCocoonUpgradeContracts
 
-type CocoonWorkerExtWorkerPayoutRequestSignedMsgBody = ExtWorkerPayoutRequestSigned
+type TonCocoonOwnerClientChangeSecretHashMsgBody = TonCocoonOwnerClientChangeSecretHash
 
-type CocoonRootUpgradeContractsMsgBody = UpgradeContracts
+type TonCocoonOwnerProxyCloseMsgBody = TonCocoonOwnerProxyClose
 
-type CocoonClientOwnerClientChangeSecretHashMsgBody = OwnerClientChangeSecretHash
+type TonCocoonExtClientChargeSignedMsgBody = TonCocoonExtClientChargeSigned
 
-type CocoonProxyOwnerProxyCloseMsgBody = OwnerProxyClose
+type TonCocoonAddModelTypeMsgBody = TonCocoonAddModelType
 
-type CocoonClientExtClientChargeSignedMsgBody = ExtClientChargeSigned
+type TonCocoonOwnerClientRegisterMsgBody = TonCocoonOwnerClientRegister
 
-type CocoonRootAddModelTypeMsgBody = AddModelType
+type TonCocoonChangeOwnerMsgBody = TonCocoonChangeOwner
 
-type CocoonClientOwnerClientRegisterMsgBody = OwnerClientRegister
+type TonCocoonChangeFeesMsgBody = TonCocoonChangeFees
 
-type CocoonRootChangeOwnerMsgBody = ChangeOwner
+type TonCocoonPayoutMsgBody = TonCocoonPayout
 
-type CocoonRootChangeFeesMsgBody = ChangeFees
+type TonTep74ResponseWalletAddressMsgBody = TonTep74ResponseWalletAddress
 
-type CocoonClientPayoutMsgBody = Payout
+type TonCocoonReturnExcessesBackMsgBody = TonCocoonReturnExcessesBack
 
-type CocoonProxyPayoutMsgBody = Payout
+type TonTep74ReturnExcessesBackMsgBody = TonTep74ReturnExcessesBack
 
-type CocoonRootPayoutMsgBody = Payout
+type TonTep74AboaLisaMsgBody = TonTep74AboaLisa
 
-type CocoonWalletPayoutMsgBody = Payout
+type TonCocoonOwnerClientWithdrawMsgBody = TonCocoonOwnerClientWithdraw
 
-type CocoonWorkerPayoutMsgBody = Payout
+type TonCocoonAddWorkerTypeMsgBody = TonCocoonAddWorkerType
 
-type ResponseWalletAddressMsgBody = ResponseWalletAddress
+type TonCocoonExtProxyCloseCompleteRequestSignedMsgBody = TonCocoonExtProxyCloseCompleteRequestSigned
 
-type CocoonClientReturnExcessesBackMsgBody = ReturnExcessesBack
+type TonCocoonExtClientGrantRefundSignedMsgBody = TonCocoonExtClientGrantRefundSigned
 
-type CocoonProxyReturnExcessesBackMsgBody = ReturnExcessesBack
+type TonCocoonExtClientTopUpMsgBody = TonCocoonExtClientTopUp
 
-type CocoonRootReturnExcessesBackMsgBody = ReturnExcessesBack
+type TonCocoonExtWorkerLastPayoutRequestSignedMsgBody = TonCocoonExtWorkerLastPayoutRequestSigned
 
-type CocoonWalletReturnExcessesBackMsgBody = ReturnExcessesBack
-
-type CocoonWorkerReturnExcessesBackMsgBody = ReturnExcessesBack
-
-type ReturnExcessesBackMsgBody = ReturnExcessesBack
-
-type AboaLisaMsgBody = AboaLisa
-
-type CocoonClientOwnerClientWithdrawMsgBody = OwnerClientWithdraw
-
-type CocoonRootAddWorkerTypeMsgBody = AddWorkerType
-
-type CocoonProxyExtProxyCloseCompleteRequestSignedMsgBody = ExtProxyCloseCompleteRequestSigned
-
-type CocoonClientExtClientGrantRefundSignedMsgBody = ExtClientGrantRefundSigned
-
-type CocoonClientExtClientTopUpMsgBody = ExtClientTopUp
-
-type CocoonWorkerExtWorkerLastPayoutRequestSignedMsgBody = ExtWorkerLastPayoutRequestSigned
-
-type CocoonClientOwnerClientRequestRefundMsgBody = OwnerClientRequestRefund
+type TonCocoonOwnerClientRequestRefundMsgBody = TonCocoonOwnerClientRequestRefund
 
 var KnownMsgInTypes = map[string]any{
-	CocoonProxyTextCmdMsgOp:                              CocoonProxyTextCmdMsgBody{},
-	CocoonWalletTextCommandMsgOp:                         CocoonWalletTextCommandMsgBody{},
-	ChangeMinterAdminMsgOp:                               ChangeMinterAdminMsgBody{},
-	ChangeMinterContentMsgOp:                             ChangeMinterContentMsgBody{},
-	MintNewJettonsMsgOp:                                  MintNewJettonsMsgBody{},
-	CocoonRootChangeParamsMsgOp:                          CocoonRootChangeParamsMsgBody{},
-	AskToTransferMsgOp:                                   AskToTransferMsgBody{},
-	CocoonRootUpgradeCodeMsgOp:                           CocoonRootUpgradeCodeMsgBody{},
-	InternalTransferStepMsgOp:                            InternalTransferStepMsgBody{},
-	CocoonWorkerOwnerWorkerRegisterMsgOp:                 CocoonWorkerOwnerWorkerRegisterMsgBody{},
-	RequestWalletAddressMsgOp:                            RequestWalletAddressMsgBody{},
-	CocoonRootDelProxyTypeMsgOp:                          CocoonRootDelProxyTypeMsgBody{},
-	CocoonProxyWorkerProxyRequestMsgOp:                   CocoonProxyWorkerProxyRequestMsgBody{},
-	CocoonWorkerWorkerProxyRequestMsgOp:                  CocoonWorkerWorkerProxyRequestMsgBody{},
-	CocoonRootUpgradeFullMsgOp:                           CocoonRootUpgradeFullMsgBody{},
-	CocoonRootResetRootMsgOp:                             CocoonRootResetRootMsgBody{},
-	AskToBurnMsgOp:                                       AskToBurnMsgBody{},
-	CocoonProxyExtProxyCloseRequestSignedMsgOp:           CocoonProxyExtProxyCloseRequestSignedMsgBody{},
-	CocoonClientClientProxyRequestMsgOp:                  CocoonClientClientProxyRequestMsgBody{},
-	CocoonProxyClientProxyRequestMsgOp:                   CocoonProxyClientProxyRequestMsgBody{},
-	CocoonClientOwnerClientIncreaseStakeMsgOp:            CocoonClientOwnerClientIncreaseStakeMsgBody{},
-	CocoonRootUnregisterProxyMsgOp:                       CocoonRootUnregisterProxyMsgBody{},
-	CocoonRootAddProxyTypeMsgOp:                          CocoonRootAddProxyTypeMsgBody{},
-	TransferNotificationForRecipientMsgOp:                TransferNotificationForRecipientMsgBody{},
-	CocoonProxyExtProxyPayoutRequestMsgOp:                CocoonProxyExtProxyPayoutRequestMsgBody{},
-	BurnNotificationForMinterMsgOp:                       BurnNotificationForMinterMsgBody{},
-	CocoonClientOwnerClientChangeSecretHashAndTopUpMsgOp: CocoonClientOwnerClientChangeSecretHashAndTopUpMsgBody{},
-	CocoonRootDelWorkerTypeMsgOp:                         CocoonRootDelWorkerTypeMsgBody{},
-	CocoonRootRegisterProxyMsgOp:                         CocoonRootRegisterProxyMsgBody{},
-	CocoonRootDelModelTypeMsgOp:                          CocoonRootDelModelTypeMsgBody{},
-	CocoonProxyExtProxyIncreaseStakeMsgOp:                CocoonProxyExtProxyIncreaseStakeMsgBody{},
-	CocoonWalletOwnerWalletSendMessageMsgOp:              CocoonWalletOwnerWalletSendMessageMsgBody{},
-	CocoonRootUpdateProxyMsgOp:                           CocoonRootUpdateProxyMsgBody{},
-	CocoonWorkerExtWorkerPayoutRequestSignedMsgOp:        CocoonWorkerExtWorkerPayoutRequestSignedMsgBody{},
-	CocoonRootUpgradeContractsMsgOp:                      CocoonRootUpgradeContractsMsgBody{},
-	CocoonClientOwnerClientChangeSecretHashMsgOp:         CocoonClientOwnerClientChangeSecretHashMsgBody{},
-	CocoonProxyOwnerProxyCloseMsgOp:                      CocoonProxyOwnerProxyCloseMsgBody{},
-	CocoonClientExtClientChargeSignedMsgOp:               CocoonClientExtClientChargeSignedMsgBody{},
-	CocoonRootAddModelTypeMsgOp:                          CocoonRootAddModelTypeMsgBody{},
-	CocoonClientOwnerClientRegisterMsgOp:                 CocoonClientOwnerClientRegisterMsgBody{},
-	CocoonRootChangeOwnerMsgOp:                           CocoonRootChangeOwnerMsgBody{},
-	CocoonRootChangeFeesMsgOp:                            CocoonRootChangeFeesMsgBody{},
-	CocoonClientPayoutMsgOp:                              CocoonClientPayoutMsgBody{},
-	CocoonProxyPayoutMsgOp:                               CocoonProxyPayoutMsgBody{},
-	CocoonRootPayoutMsgOp:                                CocoonRootPayoutMsgBody{},
-	CocoonWalletPayoutMsgOp:                              CocoonWalletPayoutMsgBody{},
-	CocoonWorkerPayoutMsgOp:                              CocoonWorkerPayoutMsgBody{},
-	ResponseWalletAddressMsgOp:                           ResponseWalletAddressMsgBody{},
-	CocoonClientReturnExcessesBackMsgOp:                  CocoonClientReturnExcessesBackMsgBody{},
-	CocoonProxyReturnExcessesBackMsgOp:                   CocoonProxyReturnExcessesBackMsgBody{},
-	CocoonRootReturnExcessesBackMsgOp:                    CocoonRootReturnExcessesBackMsgBody{},
-	CocoonWalletReturnExcessesBackMsgOp:                  CocoonWalletReturnExcessesBackMsgBody{},
-	CocoonWorkerReturnExcessesBackMsgOp:                  CocoonWorkerReturnExcessesBackMsgBody{},
-	ReturnExcessesBackMsgOp:                              ReturnExcessesBackMsgBody{},
-	AboaLisaMsgOp:                                        AboaLisaMsgBody{},
-	CocoonClientOwnerClientWithdrawMsgOp:                 CocoonClientOwnerClientWithdrawMsgBody{},
-	CocoonRootAddWorkerTypeMsgOp:                         CocoonRootAddWorkerTypeMsgBody{},
-	CocoonProxyExtProxyCloseCompleteRequestSignedMsgOp:   CocoonProxyExtProxyCloseCompleteRequestSignedMsgBody{},
-	CocoonClientExtClientGrantRefundSignedMsgOp:          CocoonClientExtClientGrantRefundSignedMsgBody{},
-	CocoonClientExtClientTopUpMsgOp:                      CocoonClientExtClientTopUpMsgBody{},
-	CocoonWorkerExtWorkerLastPayoutRequestSignedMsgOp:    CocoonWorkerExtWorkerLastPayoutRequestSignedMsgBody{},
-	CocoonClientOwnerClientRequestRefundMsgOp:            CocoonClientOwnerClientRequestRefundMsgBody{},
+	TonCocoonTextCmdMsgOp:                             TonCocoonTextCmdMsgBody{},
+	TonCocoonTextCommandMsgOp:                         TonCocoonTextCommandMsgBody{},
+	TonTep74ChangeMinterAdminMsgOp:                    TonTep74ChangeMinterAdminMsgBody{},
+	TonTep74ChangeMinterContentMsgOp:                  TonTep74ChangeMinterContentMsgBody{},
+	TonTep74MintNewJettonsMsgOp:                       TonTep74MintNewJettonsMsgBody{},
+	TonCocoonChangeParamsMsgOp:                        TonCocoonChangeParamsMsgBody{},
+	TonTep74AskToTransferMsgOp:                        TonTep74AskToTransferMsgBody{},
+	TonCocoonUpgradeCodeMsgOp:                         TonCocoonUpgradeCodeMsgBody{},
+	TonTep74InternalTransferStepMsgOp:                 TonTep74InternalTransferStepMsgBody{},
+	TonCocoonOwnerWorkerRegisterMsgOp:                 TonCocoonOwnerWorkerRegisterMsgBody{},
+	TonTep74RequestWalletAddressMsgOp:                 TonTep74RequestWalletAddressMsgBody{},
+	TonCocoonDelProxyTypeMsgOp:                        TonCocoonDelProxyTypeMsgBody{},
+	TonCocoonWorkerProxyRequestMsgOp:                  TonCocoonWorkerProxyRequestMsgBody{},
+	TonCocoonUpgradeFullMsgOp:                         TonCocoonUpgradeFullMsgBody{},
+	TonCocoonResetRootMsgOp:                           TonCocoonResetRootMsgBody{},
+	TonTep74AskToBurnMsgOp:                            TonTep74AskToBurnMsgBody{},
+	TonCocoonExtProxyCloseRequestSignedMsgOp:          TonCocoonExtProxyCloseRequestSignedMsgBody{},
+	TonCocoonClientProxyRequestMsgOp:                  TonCocoonClientProxyRequestMsgBody{},
+	TonCocoonOwnerClientIncreaseStakeMsgOp:            TonCocoonOwnerClientIncreaseStakeMsgBody{},
+	TonCocoonUnregisterProxyMsgOp:                     TonCocoonUnregisterProxyMsgBody{},
+	TonCocoonAddProxyTypeMsgOp:                        TonCocoonAddProxyTypeMsgBody{},
+	TonTep74TransferNotificationForRecipientMsgOp:     TonTep74TransferNotificationForRecipientMsgBody{},
+	TonCocoonExtProxyPayoutRequestMsgOp:               TonCocoonExtProxyPayoutRequestMsgBody{},
+	TonTep74BurnNotificationForMinterMsgOp:            TonTep74BurnNotificationForMinterMsgBody{},
+	TonCocoonOwnerClientChangeSecretHashAndTopUpMsgOp: TonCocoonOwnerClientChangeSecretHashAndTopUpMsgBody{},
+	TonCocoonDelWorkerTypeMsgOp:                       TonCocoonDelWorkerTypeMsgBody{},
+	TonCocoonRegisterProxyMsgOp:                       TonCocoonRegisterProxyMsgBody{},
+	TonCocoonDelModelTypeMsgOp:                        TonCocoonDelModelTypeMsgBody{},
+	TonCocoonExtProxyIncreaseStakeMsgOp:               TonCocoonExtProxyIncreaseStakeMsgBody{},
+	TonCocoonOwnerWalletSendMessageMsgOp:              TonCocoonOwnerWalletSendMessageMsgBody{},
+	TonCocoonUpdateProxyMsgOp:                         TonCocoonUpdateProxyMsgBody{},
+	TonCocoonExtWorkerPayoutRequestSignedMsgOp:        TonCocoonExtWorkerPayoutRequestSignedMsgBody{},
+	TonCocoonUpgradeContractsMsgOp:                    TonCocoonUpgradeContractsMsgBody{},
+	TonCocoonOwnerClientChangeSecretHashMsgOp:         TonCocoonOwnerClientChangeSecretHashMsgBody{},
+	TonCocoonOwnerProxyCloseMsgOp:                     TonCocoonOwnerProxyCloseMsgBody{},
+	TonCocoonExtClientChargeSignedMsgOp:               TonCocoonExtClientChargeSignedMsgBody{},
+	TonCocoonAddModelTypeMsgOp:                        TonCocoonAddModelTypeMsgBody{},
+	TonCocoonOwnerClientRegisterMsgOp:                 TonCocoonOwnerClientRegisterMsgBody{},
+	TonCocoonChangeOwnerMsgOp:                         TonCocoonChangeOwnerMsgBody{},
+	TonCocoonChangeFeesMsgOp:                          TonCocoonChangeFeesMsgBody{},
+	TonCocoonPayoutMsgOp:                              TonCocoonPayoutMsgBody{},
+	TonTep74ResponseWalletAddressMsgOp:                TonTep74ResponseWalletAddressMsgBody{},
+	TonCocoonReturnExcessesBackMsgOp:                  TonCocoonReturnExcessesBackMsgBody{},
+	TonTep74ReturnExcessesBackMsgOp:                   TonTep74ReturnExcessesBackMsgBody{},
+	TonTep74AboaLisaMsgOp:                             TonTep74AboaLisaMsgBody{},
+	TonCocoonOwnerClientWithdrawMsgOp:                 TonCocoonOwnerClientWithdrawMsgBody{},
+	TonCocoonAddWorkerTypeMsgOp:                       TonCocoonAddWorkerTypeMsgBody{},
+	TonCocoonExtProxyCloseCompleteRequestSignedMsgOp:  TonCocoonExtProxyCloseCompleteRequestSignedMsgBody{},
+	TonCocoonExtClientGrantRefundSignedMsgOp:          TonCocoonExtClientGrantRefundSignedMsgBody{},
+	TonCocoonExtClientTopUpMsgOp:                      TonCocoonExtClientTopUpMsgBody{},
+	TonCocoonExtWorkerLastPayoutRequestSignedMsgOp:    TonCocoonExtWorkerLastPayoutRequestSignedMsgBody{},
+	TonCocoonOwnerClientRequestRefundMsgOp:            TonCocoonOwnerClientRequestRefundMsgBody{},
 }
 
 var ()

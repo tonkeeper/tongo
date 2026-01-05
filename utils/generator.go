@@ -52,6 +52,35 @@ func ToCamelCasePrivate(s string) string {
 	return res
 }
 
+func ToSnakeCase(s string) string {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return s
+	}
+
+	n := strings.Builder{}
+	n.Grow(len(s))
+	for i, v := range []byte(s) {
+		vIsCap := v >= 'A' && v <= 'Z'
+		vIsLow := v >= 'a' && v <= 'z'
+		vIsNum := v >= '0' && v <= '9'
+
+		if i != 0 && (vIsCap || v == '_' || v == ' ' || v == '-' || v == '.') {
+			n.WriteByte('_')
+		}
+
+		if vIsCap {
+			v += 'a'
+			v -= 'A'
+		}
+
+		if vIsLow || vIsCap || vIsNum {
+			n.WriteByte(v)
+		}
+	}
+	return n.String()
+}
+
 func GetOrderedKeys[M ~map[K]V, K constraints.Ordered, V any](m M) []K {
 	keys := maps.Keys(m)
 	slices.Sort(keys)

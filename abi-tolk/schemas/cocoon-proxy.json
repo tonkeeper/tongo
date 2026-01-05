@@ -1,5 +1,6 @@
 {
-  "contractName": "CocoonProxy",
+  "namespace": "ton.cocoon",
+  "contractName": "Proxy",
   "declarations": [
     {
       "kind": "Struct",

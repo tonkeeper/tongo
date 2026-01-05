@@ -24,6 +24,32 @@ import (
 `
 const SCHEMAS_PATH = "schemas/"
 
+func mergeMethods(abis []tolkAbi.ABI) (map[string][]parser.GetMethodWithAbi, error) {
+	methodsMap := map[string][]parser.GetMethodWithAbi{}
+	for _, abi := range abis {
+		for _, method := range abi.GetMethods {
+			current, ok := methodsMap[method.Name]
+			if !ok {
+				methodsMap[method.Name] = append(methodsMap[method.Name], parser.GetMethodWithAbi{
+					ABI:       abi,
+					GetMethod: method,
+				})
+				continue
+			}
+			if len(current[0].GetMethod.Parameters) != len(method.Parameters) {
+				return nil, fmt.Errorf("method '%s' has a version with input params, it has to be defined with golang_name to avoid collision", method.Name)
+			}
+			current = append(current, parser.GetMethodWithAbi{
+				ABI:       abi,
+				GetMethod: method,
+			})
+			methodsMap[method.Name] = current
+		}
+	}
+
+	return methodsMap, nil
+}
+
 func main() {
 	var abi []tolkAbi.ABI
 	filepath.Walk(SCHEMAS_PATH, func(path string, info fs.FileInfo, err error) error {
@@ -42,7 +68,12 @@ func main() {
 		return nil
 	})
 
-	gen := parser.NewGenerator(abi)
+	uniqueGetMethods, err := mergeMethods(abi)
+	if err != nil {
+		panic(err)
+	}
+
+	gen := parser.NewGenerator(abi, uniqueGetMethods)
 	types := gen.CollectedTypes()
 	msgDecoder := gen.GenerateMsgDecoder()
 

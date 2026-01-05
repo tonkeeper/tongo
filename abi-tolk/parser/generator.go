@@ -50,11 +50,17 @@ type TLBMsgBody struct {
 	FixedLength      bool
 }
 
+type GetMethodWithAbi struct {
+	ABI       tolkAbi.ABI
+	GetMethod tolkAbi.GetMethod
+}
+
 type Generator struct {
 	structRefs        map[string]tolkAbi.StructDeclaration
 	aliasRefs         map[string]tolkAbi.AliasDeclaration
 	enumRefs          map[string]tolkAbi.EnumDeclaration
 	abi               []tolkAbi.ABI
+	abiByGetMethod    map[string][]GetMethodWithAbi
 	newTlbTypes       map[string]struct{}
 	loadedTlbTypes    []string
 	loadedTlbMsgTypes map[tlb.Tag][]TLBMsgBody
@@ -62,7 +68,7 @@ type Generator struct {
 
 type MsgType int
 
-func NewGenerator(abi []tolkAbi.ABI) *Generator {
+func NewGenerator(abi []tolkAbi.ABI, abiByGetMethod map[string][]GetMethodWithAbi) *Generator {
 	g := &Generator{
 		structRefs:        make(map[string]tolkAbi.StructDeclaration),
 		aliasRefs:         make(map[string]tolkAbi.AliasDeclaration),
@@ -70,6 +76,7 @@ func NewGenerator(abi []tolkAbi.ABI) *Generator {
 		loadedTlbMsgTypes: make(map[tlb.Tag][]TLBMsgBody),
 		newTlbTypes:       make(map[string]struct{}),
 		abi:               abi,
+		abiByGetMethod:    abiByGetMethod,
 	}
 	err := g.registerABI()
 	if err != nil {
@@ -86,37 +93,35 @@ func (g *Generator) registerABI() error {
 
 	msgsName := make(map[string]struct{})
 	for _, abi := range g.abi {
+		contractName := abi.GetGolangNamespace()
+
 		for _, declr := range abi.Declarations {
-			err := g.registerType(declr)
+			err := g.registerType(declr, contractName)
 			if err != nil {
 				return err
 			}
 		}
 
-		typePrefix := abi.ContractName
-		if abi.IsGeneral {
-			typePrefix = ""
-		}
 		for _, intMsg := range abi.IncomingMessages {
-			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, typePrefix, msgsName)
+			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, contractName, msgsName)
 			if err != nil {
 				return err
 			}
 		}
 		for _, intMsg := range abi.OutgoingMessages {
-			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, typePrefix, msgsName)
+			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, contractName, msgsName)
 			if err != nil {
 				return err
 			}
 		}
 		for _, extOutMsg := range abi.EmittedMessages {
-			err := g.registerMsgType(MsgTypeExtOut, extOutMsg.BodyTy, typePrefix, msgsName)
+			err := g.registerMsgType(MsgTypeExtOut, extOutMsg.BodyTy, contractName, msgsName)
 			if err != nil {
 				return err
 			}
 		}
 		if abi.IncomingExternal != nil {
-			err := g.registerMsgType(MsgTypeExtIn, abi.IncomingExternal.BodyTy, typePrefix, msgsName)
+			err := g.registerMsgType(MsgTypeExtIn, abi.IncomingExternal.BodyTy, contractName, msgsName)
 			if err != nil {
 				return err
 			}
@@ -126,22 +131,22 @@ func (g *Generator) registerABI() error {
 	return nil
 }
 
-func (g *Generator) registerType(declr tolkAbi.Declaration) error {
+func (g *Generator) registerType(declr tolkAbi.Declaration, namespace string) error {
 	var result *tolkParser.DeclrResult
 	var err error
 	switch declr.SumType {
 	case "Struct":
-		result, err = tolkParser.ParseStructDeclr(declr.StructDeclaration)
+		result, err = tolkParser.ParseStructDeclr(declr.StructDeclaration, namespace)
 		if err != nil {
 			return err
 		}
 	case "Alias":
-		result, err = tolkParser.ParseAliasDeclr(declr.AliasDeclaration)
+		result, err = tolkParser.ParseAliasDeclr(declr.AliasDeclaration, namespace)
 		if err != nil {
 			return err
 		}
 	case "Enum":
-		result, err = tolkParser.ParseEnumDeclr(declr.EnumDeclaration)
+		result, err = tolkParser.ParseEnumDeclr(declr.EnumDeclaration, namespace)
 		if err != nil {
 			return err
 		}
@@ -159,9 +164,7 @@ func (g *Generator) registerType(declr tolkAbi.Declaration) error {
 	return nil
 }
 
-func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, abiName string, msgsName map[string]struct{}) error {
-	golangAbiName := utils.ToCamelCase(abiName)
-
+func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace string, msgsName map[string]struct{}) error {
 	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs)
 	if err != nil {
 		return fmt.Errorf("can't decode tag error %w", err)
@@ -190,15 +193,15 @@ func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, abiName string
 	switch ty.SumType {
 	case "StructRef":
 		typePrefix = utils.ToCamelCase(ty.StructRefTy.StructName)
-		msgName = golangAbiName + typePrefix + typeSuffix
-		res, err = tolkParser.ParseStructMsg(ty, msgName)
+		msgName = namespace + typePrefix + typeSuffix
+		res, err = tolkParser.ParseStructMsg(ty, msgName, namespace)
 		if err != nil {
 			return err
 		}
 	case "AliasRef":
 		typePrefix = utils.ToCamelCase(ty.AliasRefTy.AliasName)
-		msgName = golangAbiName + typePrefix + typeSuffix
-		res, err = tolkParser.ParseAliasMsg(ty, msgName)
+		msgName = namespace + typePrefix + typeSuffix
+		res, err = tolkParser.ParseAliasMsg(ty, msgName, namespace)
 		if err != nil {
 			return err
 		}
@@ -213,8 +216,8 @@ func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, abiName string
 	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], TLBMsgBody{
 		Type:             mType,
 		GolangTypeName:   msgName,
-		GolangOpcodeName: golangAbiName + typePrefix + opSuffix,
-		OperationName:    golangAbiName + typePrefix,
+		GolangOpcodeName: namespace + typePrefix + opSuffix,
+		OperationName:    namespace + typePrefix,
 		Tag:              tag.Val,
 		Code:             res.Code,
 	})
@@ -312,49 +315,48 @@ func (g *Generator) GetMethods() (string, []string, error) {
 
 	usedNames := map[string]struct{}{}
 	var simpleMethods []string
-	for _, abi := range g.abi {
-		for _, m := range abi.GetMethods {
-			methodName := m.GolangFunctionName()
-			var err error
-			desc := getMethodDesc{
-				Name:        m.Name,
-				MethodName:  methodName,
-				ResultTypes: make(map[string]string),
-			}
-			var methodID int
-			if m.TvmMethodID != 0 {
-				methodID = m.TvmMethodID
-			} else {
-				methodID = utils.MethodIdFromName(m.Name)
-			}
-			if _, ok := usedNames[methodName]; ok {
-				continue
-			}
-			usedNames[methodName] = struct{}{}
+	for name, methods := range g.abiByGetMethod {
+		m0 := methods[0]
+		methodName := m0.GetMethod.GolangFunctionName()
+		var err error
+		desc := getMethodDesc{
+			Name:        name,
+			MethodName:  methodName,
+			ResultTypes: make(map[string]string),
+		}
+		var methodID int
+		if m0.GetMethod.TvmMethodID != 0 {
+			methodID = m0.GetMethod.TvmMethodID
+		} else {
+			methodID = utils.MethodIdFromName(name)
+		}
+		if _, ok := usedNames[methodName]; ok {
+			continue
+		}
+		usedNames[methodName] = struct{}{}
 
-			if len(m.Parameters) == 0 {
-				simpleMethods = append(simpleMethods, m.Name)
-				context.SimpleMethods[methodID] = append(context.SimpleMethods[methodID], methodName)
-			}
+		if len(m0.GetMethod.Parameters) == 0 {
+			simpleMethods = append(simpleMethods, m0.GetMethod.Name)
+			context.SimpleMethods[methodID] = append(context.SimpleMethods[methodID], methodName)
+		}
 
-			contractName := abi.ContractName
-			if abi.IsGeneral {
-				contractName = ""
-			}
-			resultTypeName := m.FullResultName(contractName)
+		desc.Body, err = g.getMethod(name, methodID, methods)
+		if err != nil {
+			return "", nil, err
+		}
+
+		for _, m := range methods {
+			contractNamespace := m.ABI.GetGolangContractName()
+			resultTypeName := m.GetMethod.FullResultName(contractNamespace)
 			desc.Decoders = append(desc.Decoders, "Decode"+resultTypeName)
-			r, err := tolkParser.ParseGetMethodCode(m.ReturnTy)
+			r, err := tolkParser.ParseGetMethodCode(m.GetMethod.ReturnTy, m.ABI.GetGolangNamespace())
 			if err != nil {
 				return "", nil, err
 			}
 			desc.ResultTypes[resultTypeName] = r
-			desc.Body, err = g.getMethod(m, methodID, contractName)
-			if err != nil {
-				return "", nil, err
-			}
-
-			context.GetMethods = append(context.GetMethods, desc)
 		}
+
+		context.GetMethods = append(context.GetMethods, desc)
 	}
 
 	tmpl, err := template.New("getMethods").Parse(getMethodsTemplate)
@@ -372,14 +374,14 @@ func (g *Generator) GetMethods() (string, []string, error) {
 	return string(b), simpleMethods, nil
 }
 
-func (g *Generator) getMethod(m tolkAbi.GetMethod, methodID int, contractName string) (string, error) {
+func (g *Generator) getMethod(methodName string, methodID int, m []GetMethodWithAbi) (string, error) {
 	var builder strings.Builder
 	var args []string
 
-	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ", m.GolangFunctionName()))
+	builder.WriteString(fmt.Sprintf("func %v(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ", m[0].GetMethod.GolangFunctionName()))
 
-	for _, p := range m.Parameters {
-		t, err := tolkParser.ParseType(p.Ty)
+	for _, p := range m[0].GetMethod.Parameters {
+		t, err := tolkParser.ParseType(p.Ty, m[0].ABI.GetGolangNamespace())
 		if err != nil {
 			return "", err
 		}
@@ -388,10 +390,10 @@ func (g *Generator) getMethod(m tolkAbi.GetMethod, methodID int, contractName st
 	builder.WriteString(strings.Join(args, ", "))
 	builder.WriteString(") (string, any, error) {\n")
 
-	builder.WriteString(buildInputStackValues(m.Parameters))
+	builder.WriteString(buildInputStackValues(m[0].GetMethod.Parameters))
 	builder.WriteRune('\n')
 
-	builder.WriteString(fmt.Sprintf("// MethodID = %d for \"%s\" method\n", methodID, m.Name))
+	builder.WriteString(fmt.Sprintf("// MethodID = %d for \"%s\" method\n", methodID, methodName))
 	builder.WriteString(fmt.Sprintf("errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, %d, stack)\n", methodID))
 	builder.WriteString(returnStrNilErr)
 	builder.WriteString("if errCode != 0 && errCode != 1 {return \"\", nil, fmt.Errorf(\"method execution failed with code: %v\", errCode)}\n")
@@ -399,13 +401,15 @@ func (g *Generator) getMethod(m tolkAbi.GetMethod, methodID int, contractName st
 	decoders := ""
 	builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
 
-	name := m.FullResultName(contractName)
-	builder.WriteString(fmt.Sprintf("Decode%s, ", name))
-	resDecoder, err := g.buildOutputDecoder(name, m.ReturnTy)
-	if err != nil {
-		return "", err
+	for _, curr := range m {
+		name := curr.GetMethod.FullResultName(curr.ABI.GetGolangContractName())
+		builder.WriteString(fmt.Sprintf("Decode%s, ", name))
+		resDecoder, err := g.buildOutputDecoder(name, curr.GetMethod.ReturnTy)
+		if err != nil {
+			return "", err
+		}
+		decoders = decoders + "\n\n" + resDecoder
 	}
-	decoders = decoders + "\n\n" + resDecoder
 
 	builder.WriteString("} {\n")
 	builder.WriteString("s, r, err := f(stack)\n")
@@ -496,7 +500,6 @@ func (g *Generator) buildOutputDecoder(name string, ty tolkAbi.Ty) (string, erro
 
 func (g *Generator) buildOutputStackCheck(ty tolkAbi.Ty) (string, error) {
 	var builder strings.Builder
-	// todo: what to do with is fixed? is it really needed? if so, maybe add some annotation to tolk
 
 	var checksBuilder strings.Builder
 	res, err := g.buildOutputStackTy(ty, &checksBuilder, 0, false, make(map[string]tolkAbi.Ty))
@@ -504,7 +507,7 @@ func (g *Generator) buildOutputStackCheck(ty tolkAbi.Ty) (string, error) {
 		return "", err
 	}
 
-	builder.WriteString(fmt.Sprintf("if len(stack) < %d ", res+1))
+	builder.WriteString(fmt.Sprintf("if len(stack) != %d ", res+1))
 	builder.WriteString(checksBuilder.String())
 	builder.WriteString(returnInvalidStack)
 	return builder.String(), nil
@@ -676,26 +679,26 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 	inheritance := map[string]string{}               // interface name -> parent interface
 	methodsByIface := map[string]map[string]string{} // interface name -> method name -> result name
 
-	for _, abi := range g.abi {
-		for _, method := range abi.GetMethods {
-			if !method.UsedByIntrospection() {
-				continue
-			}
-
-			invokeFnName := method.GolangFunctionName()
-			desc, ok := descriptions[invokeFnName]
-			if ok {
-				return "", fmt.Errorf("method duplicate %v", invokeFnName)
-			}
-
-			desc = methodDescription{
-				Name:         method.Name,
-				InvokeFnName: invokeFnName,
-			}
-			descriptions[invokeFnName] = desc
+	for _, methods := range g.abiByGetMethod {
+		method := methods[0]
+		if !method.GetMethod.UsedByIntrospection() {
+			continue
 		}
 
-		ifaceName := utils.ToCamelCase(abi.ContractName)
+		invokeFnName := method.GetMethod.GolangFunctionName()
+		desc, ok := descriptions[invokeFnName]
+		if ok {
+			return "", fmt.Errorf("method duplicate %v", invokeFnName)
+		}
+
+		desc = methodDescription{
+			Name:         method.GetMethod.Name,
+			InvokeFnName: invokeFnName,
+		}
+		descriptions[invokeFnName] = desc
+	}
+	for _, abi := range g.abi {
+		ifaceName := abi.GetGolangContractName()
 		methodsByIface[ifaceName] = map[string]string{}
 		if abi.InheritsContract != "" {
 			inheritance[ifaceName] = utils.ToCamelCase(abi.InheritsContract)
@@ -705,12 +708,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 				continue
 			}
 			methodName := utils.ToCamelCase(method.Name)
-			var resultName string
-			if abi.IsGeneral {
-				resultName = methodName + "Result"
-			} else {
-				resultName = fmt.Sprintf("%s_%sResult", methodName, ifaceName)
-			}
+			resultName := fmt.Sprintf("%s_%sResult", ifaceName, methodName)
 			if _, ok := methodsByIface[ifaceName][methodName]; ok {
 				return "", fmt.Errorf("method duplicate %v, interface %v", methodName, ifaceName)
 			}
@@ -721,8 +719,8 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 	context.Inheritance = inheritance
 
 	for _, abi := range g.abi {
-		ifaceName := utils.ToCamelCase(abi.ContractName)
-		context.Interfaces[ifaceName] = abi.ContractName
+		ifaceName := abi.GetGolangContractName()
+		context.Interfaces[ifaceName] = utils.ToSnakeCase(ifaceName)
 		ifaceMethods := map[string]string{}
 		for currentIface := ifaceName; currentIface != ""; currentIface = inheritance[currentIface] {
 			currentMethods := methodsByIface[currentIface]
@@ -744,9 +742,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 			if err != nil {
 				return "", err
 			}
-			if !abi.IsGeneral {
-				name = abi.ContractName + name
-			}
+			name = abi.GetGolangNamespace() + name
 			context.IntMsgs[ifaceName] = append(context.IntMsgs[ifaceName], utils.ToCamelCase(name))
 		}
 		for _, m := range abi.OutgoingMessages {
@@ -754,9 +750,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 			if err != nil {
 				return "", err
 			}
-			if !abi.IsGeneral {
-				name = abi.ContractName + name
-			}
+			name = abi.GetGolangNamespace() + name
 			context.IntMsgs[ifaceName] = append(context.IntMsgs[ifaceName], utils.ToCamelCase(name))
 		}
 		for _, m := range abi.EmittedMessages {
@@ -764,9 +758,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 			if err != nil {
 				return "", err
 			}
-			if !abi.IsGeneral {
-				name = abi.ContractName + name
-			}
+			name = abi.GetGolangNamespace() + name
 			context.ExtOutMsgs[ifaceName] = append(context.ExtOutMsgs[ifaceName], utils.ToCamelCase(name))
 		}
 		if abi.IncomingExternal != nil {
@@ -774,9 +766,7 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 			if err != nil {
 				return "", err
 			}
-			if !abi.IsGeneral {
-				name = abi.ContractName + name
-			}
+			name = abi.GetGolangNamespace() + name
 			context.ExtInMsgs[ifaceName] = append(context.ExtInMsgs[ifaceName], utils.ToCamelCase(name))
 		}
 		if len(abi.CodeHashes) > 0 { //we don't need to detect interfaces with code hashes because we can them directly
@@ -856,7 +846,7 @@ func (g *Generator) RenderContractErrors() (string, error) {
 		Interfaces: map[string]map[int]string{},
 	}
 	for _, abi := range g.abi {
-		ifaceName := utils.ToCamelCase(abi.ContractName)
+		ifaceName := abi.GetGolangContractName()
 		context.Interfaces[ifaceName] = map[int]string{}
 		for _, e := range abi.ThrownErrors {
 			if e.Name == "" {

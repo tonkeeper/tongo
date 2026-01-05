@@ -1,5 +1,6 @@
 {
-  "contractName": "CocoonClient",
+  "namespace": "ton.cocoon",
+  "contractName": "Client",
   "declarations": [
     {
       "kind": "Struct",

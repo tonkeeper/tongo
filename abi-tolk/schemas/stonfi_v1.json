@@ -1,0 +1,98 @@
+{
+  "namespace": "ton.stonfi.v1",
+  "contractName": "Pool",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "GetPoolDataStonfiV1",
+      "fields": [
+        {
+          "name": "reserve0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reserve1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "token0Address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "token1Address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lpFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "protocolFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "refFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "protocolFeeAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "collectedToken0ProtocolFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "collectedToken1ProtocolFee",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [
+    {
+      "tvmMethodId": 81689,
+      "name": "get_pool_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "GetPoolDataStonfiV1"
+      }
+    }
+  ],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBBAEAlwABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQAD1oH4zBCAL68IAQRoQwAGCXVPSRUXCgMDGb9zKg9EFYwRDBjv+JoMDibUwTh0duRoQwAGCXVPSRUXCgMDGb9zKg9EFYwRDBjv+JoMDibUwTh0duOCmARoQwAGCXVPSRUXCgMDGb9zKg9EFYwRDBjv+JoMDibUwTh0duKYt"
+}

@@ -47,12 +47,12 @@ type Tag struct {
 	Val uint64
 }
 
-func ParseStructMsg(ty tolkAbi.Ty, msgName string) (*MsgResult, error) {
+func ParseStructMsg(ty tolkAbi.Ty, msgName, contractName string) (*MsgResult, error) {
 	var res strings.Builder
 	res.WriteString("type ")
 	res.WriteString(msgName)
 	res.WriteRune(' ')
-	code, err := createGolangAlias(ty.StructRefTy.StructName, ty.StructRefTy.TypeArgs)
+	code, err := createGolangAlias(ty.StructRefTy.StructName, ty.StructRefTy.TypeArgs, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +63,12 @@ func ParseStructMsg(ty tolkAbi.Ty, msgName string) (*MsgResult, error) {
 	}, nil
 }
 
-func ParseAliasMsg(ty tolkAbi.Ty, msgName string) (*MsgResult, error) {
+func ParseAliasMsg(ty tolkAbi.Ty, msgName, contractName string) (*MsgResult, error) {
 	var res strings.Builder
 	res.WriteString("type ")
 	res.WriteString(msgName)
 	res.WriteRune(' ')
-	code, err := createGolangAlias(ty.AliasRefTy.AliasName, ty.AliasRefTy.TypeArgs)
+	code, err := createGolangAlias(ty.AliasRefTy.AliasName, ty.AliasRefTy.TypeArgs, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -79,16 +79,18 @@ func ParseAliasMsg(ty tolkAbi.Ty, msgName string) (*MsgResult, error) {
 	}, nil
 }
 
-func ParseGetMethodCode(ty tolkAbi.Ty) (string, error) {
+func ParseGetMethodCode(ty tolkAbi.Ty, contractName string) (string, error) {
 	switch ty.SumType {
 	case "StructRef":
-		return createGolangAlias(ty.StructRefTy.StructName, ty.StructRefTy.TypeArgs)
+		name := utils.ToCamelCase(ty.StructRefTy.StructName)
+		return createGolangAlias(name, ty.StructRefTy.TypeArgs, contractName)
 	case "AliasRef":
-		return createGolangAlias(ty.AliasRefTy.AliasName, ty.AliasRefTy.TypeArgs)
+		name := utils.ToCamelCase(ty.AliasRefTy.AliasName)
+		return createGolangAlias(name, ty.AliasRefTy.TypeArgs, contractName)
 	case "tensor":
 		var res strings.Builder
 		res.WriteString("struct {\nField ")
-		tlbType, _, err := parseTy(ty)
+		tlbType, _, err := parseTy(ty, contractName)
 		if err != nil {
 			return "", err
 		}
@@ -99,7 +101,7 @@ func ParseGetMethodCode(ty tolkAbi.Ty) (string, error) {
 	case "tupleWith":
 		var res strings.Builder
 		res.WriteString("struct {\nField ")
-		tlbType, _, err := parseTy(ty)
+		tlbType, _, err := parseTy(ty, contractName)
 		if err != nil {
 			return "", err
 		}
@@ -109,8 +111,8 @@ func ParseGetMethodCode(ty tolkAbi.Ty) (string, error) {
 		return res.String(), nil
 	default:
 		var res strings.Builder
-		res.WriteString("struct {\nField ")
-		tlbType, tlbTag, err := parseTy(ty)
+		res.WriteString("struct {\nValue ")
+		tlbType, tlbTag, err := parseTy(ty, contractName)
 		if err != nil {
 			return "", err
 		}
@@ -122,12 +124,12 @@ func ParseGetMethodCode(ty tolkAbi.Ty) (string, error) {
 	}
 }
 
-func createGolangAlias(aliasType string, typeArgs []tolkAbi.Ty) (string, error) {
+func createGolangAlias(aliasType string, typeArgs []tolkAbi.Ty, contractName string) (string, error) {
 	var res strings.Builder
 	res.WriteString(" = ")
-	res.WriteString(aliasType)
+	res.WriteString(contractName + aliasType)
 
-	err := writeGenericTypesPart(&res, typeArgs)
+	err := writeGenericTypesPart(&res, typeArgs, contractName)
 	if err != nil {
 		return "", err
 	}
@@ -163,7 +165,7 @@ func ParseTag(
 	}
 }
 
-func ParseStructDeclr(declr tolkAbi.StructDeclaration) (*DeclrResult, error) {
+func ParseStructDeclr(declr tolkAbi.StructDeclaration, contractName string) (*DeclrResult, error) {
 	result := DeclrResult{}
 
 	unionStructs := make([]string, 0)
@@ -175,12 +177,13 @@ func ParseStructDeclr(declr tolkAbi.StructDeclaration) (*DeclrResult, error) {
 		}
 		result.Tag = *convertedTag
 	}
+	typeName := contractName + utils.ToCamelCase(declr.Name)
 	res.WriteString("type ")
-	res.WriteString(utils.ToCamelCase(declr.Name))
+	res.WriteString(typeName)
 	writeGenericStructPart(&res, declr.TypeParams)
 	res.WriteString(" struct {\n")
 	for _, field := range declr.Fields {
-		tlbField, unionStruct, err := parseField(field)
+		tlbField, unionStruct, err := parseField(field, contractName)
 		if err != nil {
 			return nil, err
 		}
@@ -198,25 +201,25 @@ func ParseStructDeclr(declr tolkAbi.StructDeclaration) (*DeclrResult, error) {
 	}
 
 	result.Code = res.String()
-	result.Name = declr.Name
+	result.Name = typeName
 
 	return &result, nil
 }
 
-func ParseAliasDeclr(declr tolkAbi.AliasDeclaration) (*DeclrResult, error) {
+func ParseAliasDeclr(declr tolkAbi.AliasDeclaration, contractName string) (*DeclrResult, error) {
 	result := DeclrResult{}
 
 	if declr.TargetTy == nil {
 		return nil, errors.New("target ty cannot be null")
 	}
 
-	typeName := utils.ToCamelCase(declr.Name)
+	typeName := contractName + utils.ToCamelCase(declr.Name)
 	var res strings.Builder
 	res.WriteString("type ")
 	res.WriteString(typeName)
 	writeGenericStructPart(&res, declr.TypeParams)
 	res.WriteRune(' ')
-	tlbType, tlbTag, err := parseTy(*declr.TargetTy)
+	tlbType, tlbTag, err := parseTy(*declr.TargetTy, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -230,12 +233,12 @@ func ParseAliasDeclr(declr tolkAbi.AliasDeclaration) (*DeclrResult, error) {
 	}
 
 	result.Code = res.String()
-	result.Name = declr.Name
+	result.Name = typeName
 
 	return &result, nil
 }
 
-func ParseEnumDeclr(declr tolkAbi.EnumDeclaration) (*DeclrResult, error) {
+func ParseEnumDeclr(declr tolkAbi.EnumDeclaration, contractName string) (*DeclrResult, error) {
 	result := DeclrResult{}
 
 	if declr.EncodedAs == nil {
@@ -250,12 +253,12 @@ func ParseEnumDeclr(declr tolkAbi.EnumDeclaration) (*DeclrResult, error) {
 	}
 
 	var res strings.Builder
-	enumName := utils.ToCamelCase(declr.Name)
+	enumName := contractName + utils.ToCamelCase(declr.Name)
 	res.WriteString("type ")
 	res.WriteString(enumName)
 	res.WriteString(" = ")
 
-	tlbType, tlbTag, err := parseTy(*declr.EncodedAs)
+	tlbType, tlbTag, err := parseTy(*declr.EncodedAs, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -286,19 +289,19 @@ func ParseEnumDeclr(declr tolkAbi.EnumDeclaration) (*DeclrResult, error) {
 	res.WriteString(")\n\n")
 
 	result.Code = res.String()
-	result.Name = declr.Name
+	result.Name = enumName
 
 	return &result, nil
 }
 
-func parseField(field tolkAbi.Field) (string, string, error) {
+func parseField(field tolkAbi.Field, contractName string) (string, string, error) {
 	var res strings.Builder
 	var unionStruct strings.Builder
 	name := utils.ToCamelCase(field.Name)
 	res.WriteString(name)
 	res.WriteRune(' ')
 
-	tlbTypePart, tlbTagPart, err := parseTy(field.Ty)
+	tlbTypePart, tlbTagPart, err := parseTy(field.Ty, contractName)
 	if err != nil {
 		return "", "", err
 	}
@@ -343,8 +346,8 @@ func generateJSONMarshalForUnion(union tolkAbi.Ty, structName string) string {
 	return res.String()
 }
 
-func ParseType(ty tolkAbi.Ty) (string, error) {
-	tlbType, tlbTag, err := parseTy(ty)
+func ParseType(ty tolkAbi.Ty, contractName string) (string, error) {
+	tlbType, tlbTag, err := parseTy(ty, contractName)
 	if err != nil {
 		return "", err
 	}
@@ -352,7 +355,7 @@ func ParseType(ty tolkAbi.Ty) (string, error) {
 	return wrapTlbTypeIntoTlbTag(tlbType, tlbTag), nil
 }
 
-func parseTy(ty tolkAbi.Ty) (string, string, error) {
+func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 	var tlbType strings.Builder
 	var tlbTag strings.Builder
 	defaultType, ok := defaultKnownTypes[ty.SumType]
@@ -401,7 +404,7 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 		if ty.NullableTy.Inner == nil {
 			return "", "", fmt.Errorf("inner nullable type cannot be null")
 		}
-		tlbMaybeType, tlbMaybeTag, err := parseTy(*ty.NullableTy.Inner)
+		tlbMaybeType, tlbMaybeTag, err := parseTy(*ty.NullableTy.Inner, contractName)
 		if err != nil {
 			return "", "", err
 		}
@@ -416,7 +419,7 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 		if ty.CellOf.Inner == nil {
 			return "", "", fmt.Errorf("inner cell type cannot be null")
 		}
-		tlbRefType, tlbRefTag, err := parseTy(*ty.CellOf.Inner)
+		tlbRefType, tlbRefTag, err := parseTy(*ty.CellOf.Inner, contractName)
 		if err != nil {
 			return "", "", err
 		}
@@ -428,7 +431,7 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 	case "tensor":
 		tlbType.WriteString("struct{\n")
 		for i, innerTy := range ty.TensorTy.Items {
-			innerTlbType, innerTlbTag, err := parseTy(innerTy)
+			innerTlbType, innerTlbTag, err := parseTy(innerTy, contractName)
 			if err != nil {
 				return "", "", err
 			}
@@ -445,7 +448,7 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 	case "tupleWith":
 		tlbType.WriteString("struct{\n")
 		for i, innerTy := range ty.TupleWithTy.Items {
-			innerTlbType, innerTlbTag, err := parseTy(innerTy)
+			innerTlbType, innerTlbTag, err := parseTy(innerTy, contractName)
 			if err != nil {
 				return "", "", err
 			}
@@ -471,7 +474,7 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 		if err != nil {
 			return "", "", err
 		}
-		valueType, valueTypeTag, err := parseTy(*ty.MapTy.V)
+		valueType, valueTypeTag, err := parseTy(*ty.MapTy.V, contractName)
 		wrappedType := wrapTlbTypeIntoTlbTag(valueType, valueTypeTag)
 
 		tlbType.WriteString(fixedType)
@@ -479,19 +482,19 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 		tlbType.WriteString(wrappedType)
 		tlbType.WriteRune(']')
 	case "EnumRef":
-		name := ty.EnumRefTy.EnumName
-		tlbType.WriteString(utils.ToCamelCase(name))
+		name := contractName + utils.ToCamelCase(ty.EnumRefTy.EnumName)
+		tlbType.WriteString(name)
 	case "StructRef":
-		name := ty.StructRefTy.StructName
-		tlbType.WriteString(utils.ToCamelCase(name))
-		err := writeGenericTypesPart(&tlbType, ty.StructRefTy.TypeArgs)
+		name := contractName + utils.ToCamelCase(ty.StructRefTy.StructName)
+		tlbType.WriteString(name)
+		err := writeGenericTypesPart(&tlbType, ty.StructRefTy.TypeArgs, contractName)
 		if err != nil {
 			return "", "", err
 		}
 	case "AliasRef":
-		name := ty.AliasRefTy.AliasName
-		tlbType.WriteString(utils.ToCamelCase(name))
-		err := writeGenericTypesPart(&tlbType, ty.AliasRefTy.TypeArgs)
+		name := contractName + utils.ToCamelCase(ty.AliasRefTy.AliasName)
+		tlbType.WriteString(name)
+		err := writeGenericTypesPart(&tlbType, ty.AliasRefTy.TypeArgs, contractName)
 		if err != nil {
 			return "", "", err
 		}
@@ -503,7 +506,7 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 			tlbType.WriteString("tlb.Either[")
 
 			for _, variant := range ty.Union.Variants {
-				tlbTypeArg, tlbTagArg, err := parseTy(variant.VariantTy)
+				tlbTypeArg, tlbTagArg, err := parseTy(variant.VariantTy, contractName)
 				if err != nil {
 					return "", "", err
 				}
@@ -524,12 +527,10 @@ func parseTy(ty tolkAbi.Ty) (string, string, error) {
 
 				tlbType.WriteString(fmt.Sprintf("UnionVariant%v ", i))
 
-				tlbTypeArg, tlbTagArg, err := parseTy(variant.VariantTy)
+				tlbTypeArg, tlbTagArg, err := parseTy(variant.VariantTy, contractName)
 				if err != nil {
 					return "", "", err
 				}
-				//wrappedType := wrapTlbTypeIntoTlbTag(tlbTypeArg, tlbTagArg)
-				//tlbType.WriteString(wrappedType)
 				tlbType.WriteString(tlbTypeArg)
 
 				tlbType.WriteString(fmt.Sprintf(" `tlbSumType:\"%v%v\"`\n", sumTypeSymbol, variant.PrefixStr[2:]))
@@ -644,11 +645,11 @@ func writeGenericStructPart(builder *strings.Builder, typeParams []string) {
 	}
 }
 
-func writeGenericTypesPart(builder *strings.Builder, typeArgs []tolkAbi.Ty) error {
+func writeGenericTypesPart(builder *strings.Builder, typeArgs []tolkAbi.Ty, contractName string) error {
 	if len(typeArgs) > 0 {
 		builder.WriteRune('[')
 		for _, typeArg := range typeArgs {
-			tlbType, tlbTag, err := parseTy(typeArg)
+			tlbType, tlbTag, err := parseTy(typeArg, contractName)
 			if err != nil {
 				return err
 			}

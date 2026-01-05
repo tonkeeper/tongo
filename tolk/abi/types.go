@@ -13,8 +13,8 @@ type Kind struct {
 }
 
 type ABI struct {
+	Namespace        string            `json:"namespace"`
 	ContractName     string            `json:"contractName"`
-	IsGeneral        bool              `json:"isGeneral,omitempty"`
 	InheritsContract string            `json:"inheritsContract,omitempty"`
 	Author           string            `json:"author,omitempty"`
 	Version          string            `json:"version,omitempty"`
@@ -30,6 +30,14 @@ type ABI struct {
 	CompilerVersion  string            `json:"compilerVersion"`
 	CodeBoc64        string            `json:"codeBoc64"`
 	CodeHashes       []string          `json:"codeHashes,omitempty"`
+}
+
+func (a *ABI) GetGolangNamespace() string {
+	return utils.ToCamelCase(a.Namespace)
+}
+
+func (a *ABI) GetGolangContractName() string {
+	return a.GetGolangNamespace() + utils.ToCamelCase(a.ContractName)
 }
 
 type Declaration struct {
@@ -493,10 +501,12 @@ func (g GetMethod) GolangFunctionName() string {
 }
 
 func (g GetMethod) FullResultName(contractName string) string {
-	res := utils.ToCamelCase(g.Name)
+	res := ""
 	if contractName != "" {
-		res += "_" + contractName
+		res = contractName + "_"
 	}
+	res += utils.ToCamelCase(g.Name)
+
 	return res + "Result"
 }
 

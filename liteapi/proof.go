@@ -8,13 +8,14 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"hash/crc32"
+	"sort"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteclient"
 	"github.com/tonkeeper/tongo/tl"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
-	"hash/crc32"
-	"sort"
 )
 
 var castagnoliTable = crc32.MakeTable(crc32.Castagnoli)
@@ -124,7 +125,7 @@ func verifyBackwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, des
 		return fmt.Errorf("incorrect target block hash in proof")
 	}
 	// proof target block
-	targetBlock, err := checkBlockProof(*destProof, target.RootHash)
+	targetBlock, err := checkProof[tlb.Block](*destProof, target.RootHash, nil)
 	if err != nil {
 		return fmt.Errorf("failed to check target block proof: %w", err)
 	}
@@ -142,7 +143,7 @@ func verifyForwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, dest
 		return fmt.Errorf("source seqno must be < target seqno for forward link")
 	}
 	// proof source block
-	sourceBlock, err := checkBlockProof(*configProof, source.RootHash)
+	sourceBlock, err := checkProof[tlb.Block](*configProof, source.RootHash, nil)
 	if err != nil {
 		return fmt.Errorf("failed to check source block proof: %w", err)
 	}
@@ -162,7 +163,7 @@ func verifyForwardProofLink(toKeyBlock bool, source, target ton.BlockIDExt, dest
 	}
 	catchainConfig := cfg.ConfigParam28.CatchainConfig
 	// proof target block
-	targetBlock, err := checkBlockProof(*destProof, target.RootHash)
+	targetBlock, err := checkProof[tlb.Block](*destProof, target.RootHash, nil)
 	if err != nil {
 		return fmt.Errorf("failed to check target block proof: %w", err)
 	}

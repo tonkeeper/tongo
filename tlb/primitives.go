@@ -228,7 +228,7 @@ func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	if r.CellType() == boc.PrunedBranchCell {
-		cell := resolvePrunedCell(c, decoder.resolvePruned)
+		cell := resolvePrunedCell(r, decoder.resolvePruned)
 		if cell == nil {
 			var value T
 			m.Value = value

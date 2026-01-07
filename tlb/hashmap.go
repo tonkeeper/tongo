@@ -695,6 +695,11 @@ func (h HashmapAug[_, T1, _]) Values() []T1 {
 	return h.values
 }
 
+// Keys returns a list of keys of this hashmap.
+func (h HashmapAug[keyT, _, _]) Keys() []keyT {
+	return h.keys
+}
+
 // Items returns key-value pairs of this hashmap.
 func (h HashmapE[keyT, T]) Items() []HashmapItem[keyT, T] {
 	return h.m.Items()

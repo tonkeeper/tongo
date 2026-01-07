@@ -45,6 +45,7 @@ const (
 	// ProofPolicyUnsafe disables proof checks.
 	ProofPolicyUnsafe ProofPolicy = iota
 	ProofPolicyFast
+	ProofPolicySafe
 )
 
 // Client provides a convenient way to interact with TON blockchain.
@@ -71,6 +72,9 @@ type Client struct {
 	// the underlying connections pool maintains information about which nodes are archive nodes.
 	archiveDetectionEnabled bool
 
+	// trustedBlock is a block that will be used in proof chain verification as source block
+	trustedBlock *ton.BlockIDExt
+
 	// mu protects targetBlockID and networkGlobalID.
 	mu              sync.RWMutex
 	targetBlockID   *ton.BlockIDExt
@@ -92,6 +96,8 @@ type Options struct {
 	// should detect if its node is an archive node.
 	DetectArchiveNodes bool
 
+	TrustedBlock *ton.BlockIDExt
+
 	SyncConnectionsInitialization bool
 	PoolStrategy                  pool.Strategy
 }
@@ -112,6 +118,13 @@ func WithLiteServers(servers []config.LiteServer) Option {
 func WithMaxConnectionsNumber(maxConns int) Option {
 	return func(o *Options) error {
 		o.MaxConnections = maxConns
+		return nil
+	}
+}
+
+func WithTrustedBlock(block *ton.BlockIDExt) Option {
+	return func(o *Options) error {
+		o.TrustedBlock = block
 		return nil
 	}
 }
@@ -296,6 +309,7 @@ func NewClient(options ...Option) (*Client, error) {
 		pool:                    connPool,
 		proofPolicy:             opts.ProofPolicy,
 		archiveDetectionEnabled: opts.DetectArchiveNodes,
+		trustedBlock:            opts.TrustedBlock,
 	}
 	go client.pool.Run(context.TODO())
 	return &client, nil
@@ -322,7 +336,20 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerM
 	if conn == nil {
 		return liteclient.LiteServerMasterchainInfoC{}, pool.ErrNoConnections
 	}
-	return conn.LiteServerGetMasterchainInfo(ctx)
+	mcInfo, err := conn.LiteServerGetMasterchainInfo(ctx)
+	if err != nil {
+		return liteclient.LiteServerMasterchainInfoC{}, err
+	}
+	if c.proofPolicy == ProofPolicySafe {
+		if c.trustedBlock == nil {
+			return liteclient.LiteServerMasterchainInfoC{}, fmt.Errorf("trusted block nil")
+		}
+
+		if err = c.VerifyProofChain(ctx, *c.trustedBlock, mcInfo.Last.ToBlockIdExt()); err != nil {
+			return liteclient.LiteServerMasterchainInfoC{}, fmt.Errorf("failed to verify proof chain: %v", err)
+		}
+	}
+	return mcInfo, nil
 }
 
 func (c *Client) GetMasterchainInfoExt(ctx context.Context, mode uint32) (liteclient.LiteServerMasterchainInfoExtC, error) {
@@ -427,7 +454,7 @@ func (c *Client) GetBlockHeader(ctx context.Context, blockID ton.BlockIDExt, mod
 	if err != nil {
 		return tlb.BlockInfo{}, err
 	}
-	_, info, err := decodeBlockHeader(res)
+	_, info, err := decodeBlockHeader(res, c.proofPolicy)
 	return info, err
 }
 
@@ -470,16 +497,24 @@ func (c *Client) LookupBlock(ctx context.Context, blockID ton.BlockID, mode uint
 	if res.Id.ToBlockIdExt().BlockID != blockID {
 		return ton.BlockIDExt{}, tlb.BlockInfo{}, BlockMismatch
 	}
-	return decodeBlockHeader(res)
+	return decodeBlockHeader(res, c.proofPolicy)
 }
 
-func decodeBlockHeader(header liteclient.LiteServerBlockHeaderC) (ton.BlockIDExt, tlb.BlockInfo, error) {
+func decodeBlockHeader(header liteclient.LiteServerBlockHeaderC, policy ProofPolicy) (ton.BlockIDExt, tlb.BlockInfo, error) {
 	cells, err := boc.DeserializeBoc(header.HeaderProof)
 	if err != nil {
 		return ton.BlockIDExt{}, tlb.BlockInfo{}, err
 	}
 	if len(cells) != 1 {
 		return ton.BlockIDExt{}, tlb.BlockInfo{}, boc.ErrNotSingleRoot
+	}
+	if policy != ProofPolicyUnsafe {
+		headerProof, err := checkProof[tlb.BlockHeader](*cells[0], header.Id.ToBlockIdExt().RootHash, nil)
+		if err != nil {
+			return ton.BlockIDExt{}, tlb.BlockInfo{}, fmt.Errorf("failed to verify block header: %w", err)
+		}
+
+		return header.Id.ToBlockIdExt(), headerProof.VirtualRoot.Info, nil
 	}
 	var proof struct {
 		Proof tlb.MerkleProof[tlb.BlockHeader]
@@ -519,8 +554,12 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 		return 0, tlb.VmStack{}, err
 	}
 	blockID := c.targetBlockOr(masterHead)
+	mode := uint32(4)
+	if c.proofPolicy != ProofPolicyUnsafe {
+		mode += 3 // 0100 + 0011
+	}
 	req := liteclient.LiteServerRunSmcMethodRequest{
-		Mode:     4,
+		Mode:     mode,
 		Id:       liteclient.BlockIDExt(blockID),
 		Account:  liteclient.AccountID(accountID),
 		MethodId: uint64(methodID),
@@ -544,6 +583,49 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 	if len(cells) != 1 {
 		return 0, tlb.VmStack{}, boc.ErrNotSingleRoot
 	}
+	if c.proofPolicy != ProofPolicyUnsafe {
+		proof, err := boc.DeserializeBoc(res.Proof)
+		if err != nil {
+			return 0, tlb.VmStack{}, fmt.Errorf("failed to deserialize proof: %w", err)
+		}
+
+		var shardProof []byte
+		var shardHash ton.Bits256
+		if accountID.Workchain != -1 && blockID.Workchain == -1 {
+			shardProof = res.ShardProof
+			copy(shardHash[:], res.Shardblk.RootHash[:])
+		}
+
+		if len(res.StateProof) == 0 {
+			return 0, tlb.VmStack{}, fmt.Errorf("no account state found")
+		}
+
+		stateProof, err := boc.DeserializeBoc(res.StateProof)
+		if err != nil {
+			return 0, tlb.VmStack{}, fmt.Errorf("failed to deserialize state proof: %w", err)
+		}
+		if len(stateProof) != 1 {
+			return 0, tlb.VmStack{}, boc.ErrNotSingleRoot
+		}
+
+		acc, _, err := checkAccountProof(accountID, blockID, proof, shardProof, shardHash, stateProof[0])
+		if err != nil {
+			return 0, tlb.VmStack{}, fmt.Errorf("failed to check account proof: %w", err)
+		}
+
+		accCell := boc.NewCell()
+		if err := tlb.Marshal(accCell, &acc.Account); err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+		accHash, err := accCell.Hash256()
+		if err != nil {
+			return 0, tlb.VmStack{}, err
+		}
+		_, err = checkProof[tlb.Account](*stateProof[0], accHash, nil)
+		if err != nil {
+			return 0, tlb.VmStack{}, fmt.Errorf("failed to proof account state hash: %w", err)
+		}
+	}
 	err = tlb.Unmarshal(cells[0], &result)
 	return res.ExitCode, result, err
 }
@@ -558,6 +640,14 @@ func (c *Client) RunSmcMethod(
 }
 
 func (c *Client) GetAccountState(ctx context.Context, accountID ton.AccountID) (tlb.ShardAccount, error) {
+	if c.proofPolicy != ProofPolicyUnsafe {
+		acc, _, err := c.GetAccountWithProof(ctx, accountID)
+		if err != nil {
+			return tlb.ShardAccount{}, err
+		}
+		return *acc, nil
+	}
+
 	res, err := c.GetAccountStateRaw(ctx, accountID)
 	if err != nil {
 		return tlb.ShardAccount{}, err
@@ -636,6 +726,12 @@ func (c *Client) GetShardInfo(
 	if err != nil {
 		return ton.BlockIDExt{}, err
 	}
+	if c.proofPolicy != ProofPolicyUnsafe {
+		_, err = checkShardInMasterProof(blockID, res.ShardProof, int32(res.Shardblk.Workchain), ton.Bits256(res.Shardblk.RootHash))
+		if err != nil {
+			return ton.BlockIDExt{}, fmt.Errorf("invalid proof: %v", err)
+		}
+	}
 	return res.Id.ToBlockIdExt(), nil
 }
 
@@ -676,6 +772,40 @@ func (c *Client) GetAllShardsInfo(ctx context.Context, blockID ton.BlockIDExt) (
 	if err != nil {
 		return nil, err
 	}
+
+	if c.proofPolicy != ProofPolicyUnsafe {
+		proofCell, err := boc.DeserializeBoc(res.Proof)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(proofCell) == 1 {
+			merkleProof, err := checkProof[tlb.Block](*proofCell[0], blockID.RootHash, nil)
+			if err != nil {
+				return nil, err
+			}
+
+			proofShardHashesHash, err := getShardHashesHash(*proofCell[0], merkleProof)
+			if err != nil {
+				return nil, err
+			}
+
+			shardHashesHash, err := cells[0].Hash()
+			if err != nil {
+				return nil, err
+			}
+
+			if !bytes.Equal(shardHashesHash, proofShardHashesHash[:]) {
+				return nil, fmt.Errorf("invalid shard hashes")
+			}
+		} else { // 2 refs
+			_, err = checkShardInMasterProof(blockID, res.Proof, blockID.Workchain, blockID.RootHash)
+			if err != nil {
+				return nil, fmt.Errorf("invalid proof: %v", err)
+			}
+		}
+	}
+
 	var shards []ton.BlockIDExt
 	for i, v := range inf.ShardHashes.Values() {
 		wc := inf.ShardHashes.Keys()[i]
@@ -735,6 +865,37 @@ func (c *Client) GetOneTransactionFromBlock(
 	}
 	var t tlb.Transaction
 	err = tlb.Unmarshal(cells[0], &t)
+	if err != nil {
+		return ton.Transaction{}, err
+	}
+	txMap := map[[32]byte]*boc.Cell{
+		t.Hash(): cells[0],
+	}
+
+	if c.proofPolicy != ProofPolicyUnsafe {
+		txProof, err := boc.DeserializeBoc(r.Proof)
+		if err != nil {
+			return ton.Transaction{}, fmt.Errorf("failed to parse tx proof cell: %v", err)
+		}
+
+		decoder := tlb.NewDecoder()
+		decoder = decoder.WithPrunedResolver(func(hash tlb.Bits256) (*boc.Cell, error) {
+			cl, ok := txMap[hash]
+			if ok {
+				return cl, nil
+			}
+			return nil, fmt.Errorf("not found")
+		})
+		blockProof, err := checkProof[tlb.Block](*txProof[0], blockId.RootHash, decoder)
+		if err != nil {
+			return ton.Transaction{}, fmt.Errorf("failed to check block proof: %v", err)
+		}
+
+		if err = checkTxProof(blockProof.VirtualRoot.Extra.AccountBlocks, t.AccountAddr, t.Lt, ton.Bits256(t.Hash())); err != nil {
+			return ton.Transaction{}, fmt.Errorf("failed to check tx proof: %v", err)
+		}
+	}
+
 	return ton.Transaction{Transaction: t, BlockID: r.Id.ToBlockIdExt()}, err
 }
 
@@ -852,11 +1013,41 @@ func (c *Client) ListBlockTransactions(
 	mode, count uint32,
 	after *liteclient.LiteServerTransactionId3C,
 ) ([]liteclient.LiteServerTransactionIdC, bool, error) {
-	// TODO: replace with tongo types
+	if c.proofPolicy != ProofPolicyUnsafe {
+		mode |= 1 << 5
+	}
 	res, err := c.ListBlockTransactionsRaw(ctx, blockID, mode, count, after)
 	if err != nil {
 		return nil, false, err
 	}
+	var shardAccounts tlb.HashmapAugE[tlb.Bits256, tlb.AccountBlock, tlb.CurrencyCollection]
+	if c.proofPolicy != ProofPolicyUnsafe {
+		txProof, err := boc.DeserializeBoc(res.Proof)
+		if err != nil {
+			return nil, false, fmt.Errorf("invalid tx proof: %v", err)
+		}
+
+		blockProof, err := checkProof[tlb.Block](*txProof[0], res.Id.ToBlockIdExt().RootHash, nil)
+		if err != nil {
+			return nil, false, fmt.Errorf("invalid block proof: %v", err)
+		}
+
+		shardAccounts = blockProof.VirtualRoot.Extra.AccountBlocks
+	}
+
+	for _, id := range res.Ids {
+		// TODO: convert to tongo type
+		if id.Lt == nil || id.Hash == nil || id.Account == nil {
+			return nil, false, fmt.Errorf("invalid liteserver tx response")
+		}
+
+		if c.proofPolicy != ProofPolicyUnsafe {
+			if err = checkTxProof(shardAccounts, tlb.Bits256(*id.Account), *id.Lt, ton.Bits256(*id.Hash)); err != nil {
+				return nil, false, err
+			}
+		}
+	}
+
 	return res.Ids, res.Incomplete, nil
 }
 
@@ -977,9 +1168,41 @@ func (c *Client) GetConfigAllRaw(ctx context.Context, mode ConfigMode) (liteclie
 }
 
 func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList []uint32) (tlb.ConfigParams, error) {
-	client, masterHead, err := c.pool.BestMasterchainClient(ctx)
+	res, err := c.GetConfigParamsRaw(ctx, mode, paramList)
 	if err != nil {
 		return tlb.ConfigParams{}, err
+	}
+	if c.proofPolicy == ProofPolicyUnsafe {
+		return ton.DecodeConfigParams(res.ConfigProof)
+	}
+	stateProofCell, err := boc.DeserializeBoc(res.StateProof)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if len(stateProofCell) != 1 {
+		return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in state proof boc")
+	}
+	configProofCell, err := boc.DeserializeBoc(res.ConfigProof)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if len(configProofCell) != 1 {
+		return tlb.ConfigParams{}, fmt.Errorf("invalid number of roots in config proof boc")
+	}
+	shardState, err := checkBlockShardStateProof([]*boc.Cell{stateProofCell[0], configProofCell[0]}, ton.Bits256(res.Id.RootHash), nil)
+	if err != nil {
+		return tlb.ConfigParams{}, err
+	}
+	if !shardState.ShardStateUnsplit.Custom.Exists {
+		return tlb.ConfigParams{}, fmt.Errorf("missing master chain state extra value")
+	}
+	return shardState.ShardStateUnsplit.Custom.Value.Value.Config, nil
+}
+
+func (c *Client) GetConfigParamsRaw(ctx context.Context, mode ConfigMode, paramList []uint32) (liteclient.LiteServerConfigInfoC, error) {
+	client, masterHead, err := c.pool.BestMasterchainClient(ctx)
+	if err != nil {
+		return liteclient.LiteServerConfigInfoC{}, err
 	}
 	blockID := c.targetBlockOr(masterHead)
 	r, err := client.LiteServerGetConfigParams(ctx, liteclient.LiteServerGetConfigParamsRequest{
@@ -988,12 +1211,12 @@ func (c *Client) GetConfigParams(ctx context.Context, mode ConfigMode, paramList
 		ParamList: paramList,
 	})
 	if err != nil {
-		return tlb.ConfigParams{}, err
+		return liteclient.LiteServerConfigInfoC{}, err
 	}
 	if r.Id.ToBlockIdExt() != blockID {
-		return tlb.ConfigParams{}, BlockMismatch
+		return liteclient.LiteServerConfigInfoC{}, BlockMismatch
 	}
-	return ton.DecodeConfigParams(r.ConfigProof)
+	return r, nil
 }
 
 func (c *Client) GetValidatorStats(
@@ -1025,23 +1248,38 @@ func (c *Client) GetValidatorStats(
 	if r.Id.ToBlockIdExt() != blockID {
 		return nil, BlockMismatch
 	}
-	cells, err := boc.DeserializeBoc(r.DataProof)
+	dataProof, err := boc.DeserializeBoc(r.DataProof)
 	if err != nil {
 		return nil, err
 	}
-	if len(cells) != 1 {
+	if len(dataProof) != 1 {
 		return nil, boc.ErrNotSingleRoot
 	}
-	var proof struct {
-		Proof tlb.MerkleProof[tlb.ShardState] // TODO: or ton.ShardStateUnsplit
-	}
-	err = tlb.Unmarshal(cells[0], &proof)
-	if err != nil {
+	var shardStateProof *tlb.MerkleProof[tlb.ShardStateUnsplit]
+	if err = tlb.Unmarshal(dataProof[0], &shardStateProof); err != nil {
 		return nil, err
 	}
-	// TODO: extract validator stats params from ShardState
-	// return &proof.Proof.VirtualRoot, nil //shards, nil
-	return nil, fmt.Errorf("not implemented")
+	if c.proofPolicy != ProofPolicyUnsafe {
+		stateProof, err := boc.DeserializeBoc(r.StateProof)
+		if err != nil {
+			return nil, err
+		}
+
+		blockProof, err := checkProof[tlb.Block](*stateProof[0], masterHead.RootHash, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		if ton.Bits256(shardStateProof.VirtualHash) != ton.Bits256(blockProof.VirtualRoot.StateUpdate.ToHash) {
+			return nil, fmt.Errorf("invalid shard state hash")
+		}
+	}
+
+	if shardStateProof == nil || !shardStateProof.VirtualRoot.ShardStateUnsplit.Custom.Exists {
+		return nil, fmt.Errorf("missing validator stats in shard state")
+	}
+
+	return &shardStateProof.VirtualRoot.ShardStateUnsplit.Custom.Value.Value, nil
 }
 
 func (c *Client) GetLibraries(ctx context.Context, libraryList []ton.Bits256) (map[ton.Bits256]*boc.Cell, error) {

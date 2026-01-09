@@ -142,6 +142,7 @@ func ParseTag(
 	ty tolkAbi.Ty,
 	structRefs map[string]tolkAbi.StructDeclaration,
 	aliasRefs map[string]tolkAbi.AliasDeclaration,
+	enumRefs map[string]tolkAbi.EnumDeclaration,
 ) (*Tag, error) {
 	switch ty.SumType {
 	case "StructRef":
@@ -157,9 +158,15 @@ func ParseTag(
 	case "AliasRef":
 		aliasRef := aliasRefs[ty.AliasRefTy.AliasName]
 		if aliasRef.TargetTy == nil {
-			return nil, fmt.Errorf("aliad ref ty cannot be null")
+			return nil, fmt.Errorf("alias ref ty cannot be nil")
 		}
-		return ParseTag(*aliasRef.TargetTy, structRefs, aliasRefs)
+		return ParseTag(*aliasRef.TargetTy, structRefs, aliasRefs, enumRefs)
+	case "EnumRef":
+		enumRef := enumRefs[ty.EnumRefTy.EnumName]
+		if enumRef.EncodedAs == nil {
+			return nil, fmt.Errorf("enum ref ty cannot be nil")
+		}
+		return ParseTag(*enumRef.EncodedAs, structRefs, aliasRefs, enumRefs)
 	default:
 		return nil, fmt.Errorf("cannot get tag from %s type", ty.SumType)
 	}
@@ -183,7 +190,7 @@ func ParseStructDeclr(declr tolkAbi.StructDeclaration, contractName string) (*De
 	writeGenericStructPart(&res, declr.TypeParams)
 	res.WriteString(" struct {\n")
 	for _, field := range declr.Fields {
-		tlbField, unionStruct, err := parseField(field, contractName)
+		tlbField, unionStruct, err := parseField(typeName, field, contractName)
 		if err != nil {
 			return nil, err
 		}
@@ -294,7 +301,7 @@ func ParseEnumDeclr(declr tolkAbi.EnumDeclaration, contractName string) (*DeclrR
 	return &result, nil
 }
 
-func parseField(field tolkAbi.Field, contractName string) (string, string, error) {
+func parseField(structName string, field tolkAbi.Field, contractName string) (string, string, error) {
 	var res strings.Builder
 	var unionStruct strings.Builder
 	name := utils.ToCamelCase(field.Name)
@@ -305,11 +312,12 @@ func parseField(field tolkAbi.Field, contractName string) (string, string, error
 	if err != nil {
 		return "", "", err
 	}
-	if field.Ty.SumType == "union" {
-		res.WriteString(name)
+	// union and not tlb.Either
+	if field.Ty.SumType == "union" && len(field.Ty.Union.Variants) > 2 {
+		res.WriteString(structName + name)
 
 		unionStruct.WriteString("type ")
-		unionStruct.WriteString(name)
+		unionStruct.WriteString(structName + name)
 		unionStruct.WriteString(" ")
 		unionStruct.WriteString(tlbTypePart)
 		unionStruct.WriteString("\n\n")
@@ -327,6 +335,9 @@ func parseField(field tolkAbi.Field, contractName string) (string, string, error
 }
 
 func generateJSONMarshalForUnion(union tolkAbi.Ty, structName string) string {
+	if len(union.Union.Variants) == 2 { // tlb.Either
+		return ""
+	}
 	var res strings.Builder
 	res.WriteString(fmt.Sprintf("func (t *%v) MarshalJSON() ([]byte, error) {\n", structName))
 	res.WriteString("    switch t.SumType {")

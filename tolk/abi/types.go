@@ -41,20 +41,24 @@ func (a *ABI) GetGolangContractName() string {
 }
 
 type Declaration struct {
-	SumType           string `json:"kind"`
+	SumType           string  `json:"kind"`
+	PayloadType       *string `json:"payloadType,omitempty"` // todo: think abt naming
 	StructDeclaration StructDeclaration
 	AliasDeclaration  AliasDeclaration
 	EnumDeclaration   EnumDeclaration
 }
 
 func (d *Declaration) UnmarshalJSON(b []byte) error {
-	var kind Kind
-
-	if err := json.Unmarshal(b, &kind); err != nil {
+	var r struct {
+		Kind        string  `json:"kind"`
+		PayloadType *string `json:"payloadType,omitempty"`
+	}
+	if err := json.Unmarshal(b, &r); err != nil {
 		return err
 	}
 
-	d.SumType = kind.Kind
+	d.SumType = r.Kind
+	d.PayloadType = r.PayloadType
 	switch d.SumType {
 	case "Struct":
 		if err := json.Unmarshal(b, &d.StructDeclaration); err != nil {

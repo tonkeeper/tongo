@@ -9,12 +9,15 @@ import (
 
 type resolveLib func(hash Bits256) (*boc.Cell, error)
 
+type ContractInterface uint32
+
 // Decoder unmarshals a cell into a golang type.
 type Decoder struct {
-	hasher     *boc.Hasher
-	withDebug  bool
-	debugPath  []string
-	resolveLib resolveLib
+	hasher             *boc.Hasher
+	withDebug          bool
+	debugPath          []string
+	resolveLib         resolveLib
+	contractInterfaces []ContractInterface
 }
 
 func (d *Decoder) WithDebug() *Decoder {
@@ -25,6 +28,11 @@ func (d *Decoder) WithDebug() *Decoder {
 // WithLibraryResolver provides a function which is used to fetch a library cell by its hash.
 func (d *Decoder) WithLibraryResolver(resolveLib resolveLib) *Decoder {
 	d.resolveLib = resolveLib
+	return d
+}
+
+func (d *Decoder) WithContractInterfaces(contractInterfaces []ContractInterface) *Decoder {
+	d.contractInterfaces = contractInterfaces
 	return d
 }
 

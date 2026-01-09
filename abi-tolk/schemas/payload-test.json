@@ -1,0 +1,2464 @@
+{
+  "namespace": "ton.tolk.tests",
+  "contractName": "Payloads",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CoffeeStakingLock",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x0c0ffede",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "periodID",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TextComment",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x00000000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "text",
+          "ty": {
+            "kind": "slice"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "payloadType": "jetton",
+      "name": "TegroJettonSwap",
+      "prefix": {
+        "prefixStr": "0x01fb7a25",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "extract",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "maxIn",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "destination",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "errorDestination",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "EncryptedTextComment",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x2167da4b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "cipherText",
+          "ty": {
+            "kind": "slice"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x25938561",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referralAddress",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TegroAddLiquidity",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x287e167a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "amountA",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountB",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiProvideLpV2",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x37c096df",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet1",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refundAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "txDeadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "crossProvideLpBody",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "CrossProvideLpBody"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CrossProvideLpBody",
+      "fields": [
+        {
+          "name": "minLpOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "bothPositive",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "fwdAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskProvideBoth",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x3ea0bafc",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustVolatile",
+      "prefix": {
+        "prefixStr": "0b0",
+        "prefixLen": 1
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustStable",
+      "prefix": {
+        "prefixStr": "0b1",
+        "prefixLen": 1
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustAssetNative",
+      "prefix": {
+        "prefixStr": "0b0000",
+        "prefixLen": 4
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustAssetJetton",
+      "prefix": {
+        "prefixStr": "0b0001",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "workchain",
+          "ty": {
+            "kind": "intN",
+            "n": 8
+          }
+        },
+        {
+          "name": "hash",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustAssetExtraCurrency",
+      "prefix": {
+        "prefixStr": "0b0010",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "currencyId",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DedustPoolType",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustVolatile"
+            },
+            "prefixStr": "0b0",
+            "prefixLen": 1
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustStable"
+            },
+            "prefixStr": "0b1",
+            "prefixLen": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "DedustAsset",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustAssetNative"
+            },
+            "prefixStr": "0b0000",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustAssetJetton"
+            },
+            "prefixStr": "0b0001",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustAssetExtraCurrency"
+            },
+            "prefixStr": "0b0010",
+            "prefixLen": 4
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustDepositLiquidity",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x40e108d6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "poolType",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DedustPoolType"
+          }
+        },
+        {
+          "name": "asset0",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DedustAsset"
+          }
+        },
+        {
+          "name": "asset1",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DedustAsset"
+          }
+        },
+        {
+          "name": "asset0TargetBalance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "asset1TargetBalance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fulfillPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolFundAccount",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x4468de77",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "jettonTarget",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "enough0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "enough1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "tickLower",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        },
+        {
+          "name": "tickUpper",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapOkRef",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x45078540",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeCrossDexResend",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x4ee9b106",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvide",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x63ec24ae",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "receiver",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapV2",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x6664de2a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet1",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refundAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "txDeadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "crossSwapBody",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "CrossSwapBody"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CrossSwapBody",
+      "fields": [
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "receiver",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "refundFwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "refundPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "refFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvideOneSide",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x729c04c8",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "receiver",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StormNoKeyInit",
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "StormNeedKeyInit",
+      "fields": [
+        {
+          "name": "userPublicKeys",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "InitializationRequest",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "prefixStr": "0",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StormNoKeyInit"
+            }
+          },
+          {
+            "prefixStr": "1",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StormNeedKeyInit"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "StormDepositJetton",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x76840119",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "receiverAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "init",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "keyInit",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "InitializationRequest"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InvoiceUrlNone",
+      "prefix": {
+        "prefixStr": "0x00",
+        "prefixLen": 8
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "InvoiceUrlTonsite",
+      "prefix": {
+        "prefixStr": "0x01",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "address",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "InvoiceUrl",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InvoiceUrlNone"
+            },
+            "prefixStr": "0x00",
+            "prefixLen": 8
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InvoiceUrlTonsite"
+            },
+            "prefixStr": "0x01",
+            "prefixLen": 8
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "InvoicePayload",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x7aa23eb5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "id",
+          "ty": {
+            "kind": "bitsN",
+            "n": 128
+          }
+        },
+        {
+          "name": "url",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "InvoiceUrl"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TonkeeperRelayerFee",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x878da6e3",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "AdditionalData",
+      "fields": [
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapV2",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x87d36990",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "AdditionalData"
+              }
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonBoostPool",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x96aa1586",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskProvide",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x96feef7b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonFillOrder",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x99b49842",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "recipientPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "rejectAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvideBoth",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xa8904134",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonDepositLiquidity",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xb31db781",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "minLpOut",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonNextPayload",
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonSwapParams",
+      "fields": [
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "excess",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "nextFulfill",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "MoonNextPayload"
+              }
+            }
+          }
+        },
+        {
+          "name": "nextReject",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "MoonNextPayload"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xb37a900b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "moonSwap",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "MoonSwapParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeCrossDexFailure",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xb902e61a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeSwapStepParams",
+      "fields": [
+        {
+          "name": "poolAddressHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "minOutAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeSwapStepParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeNotificationDataSingle",
+      "fields": [
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeNotificationData",
+      "fields": [
+        {
+          "name": "onSuccess",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeNotificationDataSingle"
+              }
+            }
+          }
+        },
+        {
+          "name": "onFailure",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeNotificationDataSingle"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeSwapParams",
+      "fields": [
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeNotificationData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc0ffee10",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "step",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeeSwapStepParams"
+          }
+        },
+        {
+          "name": "params",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "CoffeeSwapParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeAssetNative",
+      "prefix": {
+        "prefixStr": "0b00",
+        "prefixLen": 2
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeAssetJetton",
+      "prefix": {
+        "prefixStr": "0b01",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "chain",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "hash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeAssetExtra",
+      "prefix": {
+        "prefixStr": "0b10",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "id",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "CoffeeAsset",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeAssetNative"
+            },
+            "prefixStr": "0b00",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeAssetJetton"
+            },
+            "prefixStr": "0b01",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeAssetExtra"
+            },
+            "prefixStr": "0b10",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeAmmConstProd",
+      "prefix": {
+        "prefixStr": "0b000",
+        "prefixLen": 3
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeAmmCurveFiStable",
+      "prefix": {
+        "prefixStr": "0b001",
+        "prefixLen": 3
+      },
+      "fields": []
+    },
+    {
+      "kind": "Alias",
+      "name": "CoffeeAmm",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeAmmConstProd"
+            },
+            "prefixStr": "0b000",
+            "prefixLen": 3
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeAmmCurveFiStable"
+            },
+            "prefixStr": "0b001",
+            "prefixLen": 3
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeePoolParams",
+      "fields": [
+        {
+          "name": "first",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "CoffeeAsset"
+          }
+        },
+        {
+          "name": "second",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "CoffeeAsset"
+          }
+        },
+        {
+          "name": "amm",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "CoffeeAmm"
+          }
+        },
+        {
+          "name": "ammSettings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeePublicPoolCreationParams",
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "useRecipientOnFailure",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeePrivatePoolCreationParams",
+      "fields": [
+        {
+          "name": "isActive",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "extraSettings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeePoolCreationParams",
+      "fields": [
+        {
+          "name": "public",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeePublicPoolCreationParams"
+          }
+        },
+        {
+          "name": "privateP",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeePrivatePoolCreationParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeCreatePool",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc0ffee11",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "params",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeePoolParams"
+          }
+        },
+        {
+          "name": "creationParams",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeePoolCreationParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidityConditionNone",
+      "prefix": {
+        "prefixStr": "0b00",
+        "prefixLen": 2
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidityConditionLpQuantity",
+      "prefix": {
+        "prefixStr": "0b01",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "minLpAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidityConditionReservedRatio",
+      "prefix": {
+        "prefixStr": "0b10",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minNominator",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxNominator",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidityConditionComplex",
+      "prefix": {
+        "prefixStr": "0b11",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "minLpAmoint",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minNominator",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxNominator",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "CoffeeDepositLiquidityCondition",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeDepositLiquidityConditionNone"
+            },
+            "prefixStr": "0b00",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeDepositLiquidityConditionLpQuantity"
+            },
+            "prefixStr": "0b01",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeDepositLiquidityConditionReservedRatio"
+            },
+            "prefixStr": "0b10",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CoffeeDepositLiquidityConditionComplex"
+            },
+            "prefixStr": "0b11",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidityParamsTrimmed",
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "useRecipientOnFailure",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "condition",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "CoffeeDepositLiquidityCondition"
+          }
+        },
+        {
+          "name": "extraSettings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeNotificationData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidityParams",
+      "fields": [
+        {
+          "name": "params",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeeDepositLiquidityParamsTrimmed"
+          }
+        },
+        {
+          "name": "poolParmas",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeePoolParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeDepositLiquidity",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc0ffee12",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "params",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeeDepositLiquidityParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeNotification",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc0ffee36",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "body",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonSwapFailed",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc47c1f57",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapOk",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc64370e5",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "StormStake",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc89a3ee4",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawPayload",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xcb03bfaf",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "assetAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "oracleParams",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonSwapSucceed",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xcb7f38d6",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonOrderParams",
+      "fields": [
+        {
+          "name": "rate",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "lock",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "vestingTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MoonCreateOrder",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xda067c19",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "asset1",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "asset2",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "orderData",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "MoonOrderParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xdd79732c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapStepParams",
+      "fields": [
+        {
+          "name": "kindOut",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "limit",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "DedustSwapStep"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapStep",
+      "fields": [
+        {
+          "name": "poolAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "params",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DedustSwapStepParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapParams",
+      "fields": [
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "recipientAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referralAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fulfillPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xe3a0d482",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "step",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DedustSwapStep"
+          }
+        },
+        {
+          "name": "swapParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DedustSwapParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeMevProtectFailedSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xee51ce51",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xf2ef6c1b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DepositPayload",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xf9471134",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "oracleParams",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiProvideLiquidity",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xfcf9e58f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "minLpOut",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

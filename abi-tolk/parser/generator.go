@@ -35,9 +35,10 @@ var (
 )
 
 const (
-	MsgTypeInt    MsgType = 0
-	MsgTypeExtIn  MsgType = 1
-	MsgTypeExtOut MsgType = 2
+	MsgTypeInt     MsgType = 0
+	MsgTypeExtIn   MsgType = 1
+	MsgTypeExtOut  MsgType = 2
+	MsgTypePayload MsgType = 3
 )
 
 type TLBMsgBody struct {
@@ -159,13 +160,67 @@ func (g *Generator) registerType(declr tolkAbi.Declaration, namespace string) er
 	}
 
 	g.newTlbTypes[result.Name] = struct{}{}
-	g.loadedTlbTypes = append(g.loadedTlbTypes, result.Code)
+	if declr.PayloadType == nil {
+		g.loadedTlbTypes = append(g.loadedTlbTypes, result.Code)
+	} else {
+		err = g.registerPayload(result, declr, namespace)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (g *Generator) registerPayload(result *tolkParser.DeclrResult, declr tolkAbi.Declaration, namespace string) error {
+	var ty tolkAbi.Ty
+	switch declr.SumType {
+	case "Struct":
+		ty = tolkAbi.Ty{
+			SumType: "StructRef",
+			StructRefTy: struct {
+				StructName string       `json:"structName"`
+				TypeArgs   []tolkAbi.Ty `json:"typeArgs,omitempty"`
+			}{
+				StructName: declr.StructDeclaration.Name,
+			},
+		}
+	case "Alias":
+		if declr.AliasDeclaration.TargetTy == nil {
+			return fmt.Errorf("alias target ty cannot be nil")
+		}
+		ty = *declr.AliasDeclaration.TargetTy
+	case "Enum":
+		if declr.EnumDeclaration.EncodedAs == nil {
+			return fmt.Errorf("enum ty cannot be nil")
+		}
+		ty = *declr.EnumDeclaration.EncodedAs
+	}
+	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs, g.enumRefs)
+	if err != nil {
+		return fmt.Errorf("can't decode tag error %w", err)
+	}
+	key := tlb.Tag{
+		Len: tag.Len,
+		Val: tag.Val,
+	}
+
+	payloadName := utils.ToCamelCase(*declr.PayloadType)
+
+	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], TLBMsgBody{
+		Type:             MsgTypePayload,
+		GolangTypeName:   result.Name,
+		GolangOpcodeName: result.Name + payloadName + "PayloadOp",
+		OperationName:    result.Name + payloadName + "Payload",
+		Tag:              tag.Val,
+		Code:             result.Code,
+	})
 
 	return nil
 }
 
 func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace string, msgsName map[string]struct{}) error {
-	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs)
+	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs, g.enumRefs)
 	if err != nil {
 		return fmt.Errorf("can't decode tag error %w", err)
 	}
@@ -785,6 +840,26 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		return context.InvocationOrder[i].Name < context.InvocationOrder[j].Name
 	})
 	tmpl, err := template.New("invocationOrder").Parse(invocationOrderTemplate)
+	if err != nil {
+		return "", err
+	}
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, context); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func (g *Generator) RenderPayload() (string, error) {
+	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody)}
+	for tag, operation := range g.loadedTlbMsgTypes {
+		for _, body := range operation {
+			if body.Type == MsgTypePayload {
+				context.Operations[tag] = append(context.Operations[tag], body)
+			}
+		}
+	}
+	tmpl, err := template.New("payloads").Parse(payloadTmpl)
 	if err != nil {
 		return "", err
 	}

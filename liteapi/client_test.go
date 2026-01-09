@@ -790,7 +790,7 @@ func TestListBlockTransactionsWithFastPolicy(t *testing.T) {
 	fmt.Printf("Is block complete: %v\n", !isIncomplete)
 	for _, tx := range txs {
 		fmt.Printf("Tx hash: %v\n", hex.EncodeToString(tx.Hash[:]))
-		fmt.Printf("Tx lt: %v\n", tx.Lt)
+		fmt.Printf("Tx lt: %v\n", *tx.Lt)
 	}
 }
 
@@ -840,4 +840,80 @@ func TestGetValidatorStatsWithFastPolicy(t *testing.T) {
 
 	fmt.Printf("Catchain seqno: %v\n", stats.Other.ValidatorInfo.CatchainSeqno)
 	fmt.Printf("Global balance in nano tons: %v\n", stats.GlobalBalance.Grams)
+}
+
+func TestGetAccountWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Testnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+	testCases := []struct {
+		name      string
+		accountID string
+	}{
+		{
+			name:      "account from masterchain",
+			accountID: "-1:34517c7bdf5187c55af4f8b61fdc321588c7ab768dee24b006df29106458d7cf",
+		},
+		{
+			name:      "active account from basechain",
+			accountID: "0:e33ed33a42eb2032059f97d90c706f8400bb256d32139ca707f1564ad699c7dd",
+		},
+		{
+			name:      "nonexisted from basechain",
+			accountID: "0:5f00decb7da51881764dc3959cec60609045f6ca1b89e646bde49d492705d77c",
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			accountID, err := ton.AccountIDFromRaw(tt.accountID)
+			if err != nil {
+				t.Fatal("AccountIDFromRaw() failed: %w", err)
+			}
+			acc, err := api.GetAccountState(context.TODO(), accountID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Printf("Account status: %v\n", acc.Account.Status())
+		})
+	}
+}
+
+func TestGetAccountWithProofForBlockWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Testnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+	testCases := []struct {
+		name      string
+		accountID string
+		block     string
+	}{
+		{
+			name:      "account from masterchain",
+			accountID: "-1:34517c7bdf5187c55af4f8b61fdc321588c7ab768dee24b006df29106458d7cf",
+			block:     "(-1,8000000000000000,23040403)",
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			accountID, err := ton.AccountIDFromRaw(tt.accountID)
+			if err != nil {
+				t.Fatal("AccountIDFromRaw() failed: %w", err)
+			}
+			b, err := ton.ParseBlockID(tt.block)
+			if err != nil {
+				t.Fatal("ParseBlockID() failed: %w", err)
+			}
+			block, _, err := api.LookupBlock(context.TODO(), b, 1, nil, nil)
+			if err != nil {
+				t.Fatalf("LookupBlock() failed: %v", err)
+			}
+			acc, err := api.WithBlock(block).GetAccountState(context.TODO(), accountID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Printf("Account status: %v\n", acc.Account.Status())
+		})
+	}
 }

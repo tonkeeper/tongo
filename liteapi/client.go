@@ -583,49 +583,6 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 	if len(cells) != 1 {
 		return 0, tlb.VmStack{}, boc.ErrNotSingleRoot
 	}
-	if c.proofPolicy != ProofPolicyUnsafe {
-		proof, err := boc.DeserializeBoc(res.Proof)
-		if err != nil {
-			return 0, tlb.VmStack{}, fmt.Errorf("failed to deserialize proof: %w", err)
-		}
-
-		var shardProof []byte
-		var shardHash ton.Bits256
-		if accountID.Workchain != -1 && blockID.Workchain == -1 {
-			shardProof = res.ShardProof
-			copy(shardHash[:], res.Shardblk.RootHash[:])
-		}
-
-		if len(res.StateProof) == 0 {
-			return 0, tlb.VmStack{}, fmt.Errorf("no account state found")
-		}
-
-		stateProof, err := boc.DeserializeBoc(res.StateProof)
-		if err != nil {
-			return 0, tlb.VmStack{}, fmt.Errorf("failed to deserialize state proof: %w", err)
-		}
-		if len(stateProof) != 1 {
-			return 0, tlb.VmStack{}, boc.ErrNotSingleRoot
-		}
-
-		acc, _, err := checkAccountProof(accountID, blockID, proof, shardProof, shardHash, stateProof[0])
-		if err != nil {
-			return 0, tlb.VmStack{}, fmt.Errorf("failed to check account proof: %w", err)
-		}
-
-		accCell := boc.NewCell()
-		if err := tlb.Marshal(accCell, &acc.Account); err != nil {
-			return 0, tlb.VmStack{}, err
-		}
-		accHash, err := accCell.Hash256()
-		if err != nil {
-			return 0, tlb.VmStack{}, err
-		}
-		_, err = checkProof[tlb.Account](*stateProof[0], accHash, nil)
-		if err != nil {
-			return 0, tlb.VmStack{}, fmt.Errorf("failed to proof account state hash: %w", err)
-		}
-	}
 	err = tlb.Unmarshal(cells[0], &result)
 	return res.ExitCode, result, err
 }
@@ -640,14 +597,6 @@ func (c *Client) RunSmcMethod(
 }
 
 func (c *Client) GetAccountState(ctx context.Context, accountID ton.AccountID) (tlb.ShardAccount, error) {
-	if c.proofPolicy != ProofPolicyUnsafe {
-		acc, _, err := c.GetAccountWithProof(ctx, accountID)
-		if err != nil {
-			return tlb.ShardAccount{}, err
-		}
-		return *acc, nil
-	}
-
 	res, err := c.GetAccountStateRaw(ctx, accountID)
 	if err != nil {
 		return tlb.ShardAccount{}, err
@@ -661,6 +610,19 @@ func (c *Client) GetAccountState(ctx context.Context, accountID ton.AccountID) (
 	}
 	if len(cells) != 1 {
 		return tlb.ShardAccount{}, boc.ErrNotSingleRoot
+	}
+	if c.proofPolicy != ProofPolicyUnsafe {
+		proof, err := boc.DeserializeBoc(res.Proof)
+		if err != nil {
+			return tlb.ShardAccount{}, fmt.Errorf("failed to deserialize proof: %w", err)
+		}
+
+		acc, _, err := checkAccountProof(accountID, res.Id.ToBlockIdExt(), res.Shardblk.ToBlockIdExt(), proof, res.ShardProof, cells[0])
+		if err != nil {
+			return tlb.ShardAccount{}, fmt.Errorf("failed to check account proof: %w", err)
+		}
+
+		return *acc, nil
 	}
 	var acc tlb.Account
 	err = tlb.Unmarshal(cells[0], &acc)
@@ -782,17 +744,17 @@ func (c *Client) GetAllShardsInfo(ctx context.Context, blockID ton.BlockIDExt) (
 		if len(proofCell) == 1 {
 			merkleProof, err := checkProof[tlb.Block](*proofCell[0], blockID.RootHash, nil)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("invalid block proof: %v", err)
 			}
 
 			proofShardHashesHash, err := getShardHashesHash(*proofCell[0], merkleProof)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to get shard hash from proof: %v", err)
 			}
 
 			shardHashesHash, err := cells[0].Hash()
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to get shard hash: %v", err)
 			}
 
 			if !bytes.Equal(shardHashesHash, proofShardHashesHash[:]) {
@@ -1020,14 +982,14 @@ func (c *Client) ListBlockTransactions(
 	if err != nil {
 		return nil, false, err
 	}
-	var shardAccounts tlb.HashmapAugE[tlb.Bits256, tlb.AccountBlock, tlb.CurrencyCollection]
+	var shardAccounts tlb.HashmapAugE[tlb.Bits256, prunedAccountBlock, tlb.CurrencyCollection]
 	if c.proofPolicy != ProofPolicyUnsafe {
 		txProof, err := boc.DeserializeBoc(res.Proof)
 		if err != nil {
 			return nil, false, fmt.Errorf("invalid tx proof: %v", err)
 		}
 
-		blockProof, err := checkProof[tlb.Block](*txProof[0], res.Id.ToBlockIdExt().RootHash, nil)
+		blockProof, err := checkProof[prunedBlock](*txProof[0], res.Id.ToBlockIdExt().RootHash, nil)
 		if err != nil {
 			return nil, false, fmt.Errorf("invalid block proof: %v", err)
 		}
@@ -1042,8 +1004,8 @@ func (c *Client) ListBlockTransactions(
 		}
 
 		if c.proofPolicy != ProofPolicyUnsafe {
-			if err = checkTxProof(shardAccounts, tlb.Bits256(*id.Account), *id.Lt, ton.Bits256(*id.Hash)); err != nil {
-				return nil, false, err
+			if err = checkPrunedTxProof(shardAccounts, tlb.Bits256(*id.Account), *id.Lt, ton.Bits256(*id.Hash)); err != nil {
+				return nil, false, fmt.Errorf("failed to check tx proof: %v", err)
 			}
 		}
 	}
@@ -1262,12 +1224,12 @@ func (c *Client) GetValidatorStats(
 	if c.proofPolicy != ProofPolicyUnsafe {
 		stateProof, err := boc.DeserializeBoc(r.StateProof)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to deserialize state proof: %w", err)
 		}
 
 		blockProof, err := checkProof[tlb.Block](*stateProof[0], masterHead.RootHash, nil)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to check block proof: %w", err)
 		}
 
 		if ton.Bits256(shardStateProof.VirtualHash) != ton.Bits256(blockProof.VirtualRoot.StateUpdate.ToHash) {

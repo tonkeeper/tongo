@@ -21,6 +21,28 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+func getOldTrustedBlock() (*ton.BlockIDExt, error) {
+	var rootHash ton.Bits256
+	err := rootHash.FromBase64("VpWyfNOLm8Rqt6CZZ9dZGqJRO3NyrlHHYN1k1oLbJ6g=")
+	if err != nil {
+		return nil, fmt.Errorf("incorrect root hash")
+	}
+	var fileHash ton.Bits256
+	err = fileHash.FromBase64("8o12KX54BtJM8RERD1J97Qe1ZWk61LIIyXydlBnixK8=")
+	if err != nil {
+		return nil, fmt.Errorf("incorrect file hash")
+	}
+	return &ton.BlockIDExt{
+		BlockID: ton.BlockID{
+			Workchain: -1,
+			Shard:     9223372036854775808,
+			Seqno:     34835953,
+		},
+		RootHash: rootHash,
+		FileHash: fileHash,
+	}, nil
+}
+
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 	t.Skip("when public lite servers are down, this test will fail")
 	cli, err := NewClient(Mainnet())
@@ -652,4 +674,299 @@ func TestWaitMasterchainBlock(t *testing.T) {
 		t.Fatal("wrong block seqno")
 	}
 	fmt.Printf("Next block seqno    : %v\n", bl.Seqno)
+}
+
+func TestGetMasterChainInfoWithSafePolicy(t *testing.T) {
+	unsafeAPI, err := NewClient(Mainnet(), FromEnvs())
+	if err != nil {
+		t.Fatal(err)
+	}
+	trustedMcInfo, err := unsafeAPI.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	trustedBlock := trustedMcInfo.Last.ToBlockIdExt()
+
+	fmt.Printf("Trusted block seqno : %v\n", trustedBlock.Seqno)
+
+	// wait for new block
+	time.Sleep(7 * time.Second)
+
+	safeAPI, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicySafe), WithTrustedBlock(trustedBlock))
+	if err != nil {
+		t.Fatal(err)
+	}
+	latest, err := safeAPI.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Latest block seqno : %v\n", latest.Last.Seqno)
+}
+
+func TestGetMasterchainInfoTrustedBlockUpdateWithSafePolicy(t *testing.T) {
+	trustedBlock, err := getOldTrustedBlock()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Trusted block seqno : %v\n", trustedBlock.Seqno)
+
+	safeAPI, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicySafe), WithTrustedBlock(*trustedBlock))
+	if err != nil {
+		t.Fatal(err)
+	}
+	latest, err := safeAPI.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Latest block seqno : %v\n", latest.Last.Seqno)
+
+	time.Sleep(7 * time.Second) // wait for new block
+
+	start := time.Now().Unix()
+	latest, err = safeAPI.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	end := time.Now().Unix()
+	if end-start > 20 {
+		t.Fatal("too long for few blocks proof")
+	}
+	fmt.Printf("Latest block seqno : %v\n", latest.Last.Seqno)
+}
+
+func TestRunSmcMethodWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	_, _, err = api.RunSmcMethod(context.Background(), accountId, "seqno", tlb.VmStack{})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetAccountStateWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+	state, err := api.GetAccountState(context.Background(), accountId)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("Last tx lt: %v\n", state.LastTransLt)
+	fmt.Printf("Account status: %v\n", state.Account.Status())
+}
+
+func TestGetAllShardsInfoWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mcInfo, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	info, err := api.GetAllShardsInfo(context.Background(), mcInfo.Last.ToBlockIdExt())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, blk := range info {
+		fmt.Printf("Block's shard %v\n", blk.Shard)
+		fmt.Printf("Block's seqno %v\n", blk.Seqno)
+	}
+}
+
+func TestGetOneTransactionFromBlockWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
+
+	var blockRootHash ton.Bits256
+	blockRootHashByte, err := hex.DecodeString("6819eae0d10bb43fc6ff25a24cbbeeda67ab0fa798c42e12251c267955486cc1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	copy(blockRootHash[:], blockRootHashByte)
+
+	var blockFileHash ton.Bits256
+	blockFileHashByte, err := hex.DecodeString("afc33a098806c62f4e8d84ecbb8405ace9cd3babbdb1dde5f09f4e01bd87af34")
+	if err != nil {
+		t.Fatal(err)
+	}
+	copy(blockFileHash[:], blockFileHashByte)
+	blockId := ton.BlockIDExt{
+		BlockID: ton.BlockID{
+			Workchain: 0,
+			Shard:     9223372036854775808,
+			Seqno:     57911816,
+		},
+		RootHash: blockRootHash,
+		FileHash: blockFileHash,
+	}
+
+	tx, err := api.GetOneTransactionFromBlock(context.Background(), accountId, blockId, 62522595000001)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("Transaction lt %v\n", tx.Lt)
+}
+
+func TestListBlockTransactionsWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mcInfo, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	txs, isIncomplete, err := api.ListBlockTransactions(context.Background(), mcInfo.Last.ToBlockIdExt(), 7, 1000, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("Is block complete: %v\n", !isIncomplete)
+	for _, tx := range txs {
+		fmt.Printf("Tx hash: %v\n", hex.EncodeToString(tx.Hash[:]))
+		fmt.Printf("Tx lt: %v\n", *tx.Lt)
+	}
+}
+
+func TestGetShardInfoWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mcInfo, err := api.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	shrd, err := api.GetShardInfo(context.Background(), mcInfo.Last.ToBlockIdExt(), 0, 9223372036854775808, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Shard: %v\n", shrd.Shard)
+	fmt.Printf("Shard seqno: %v\n", shrd.Seqno)
+}
+
+func TestGetConfigParamsWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	params, err := api.GetConfigParams(context.Background(), NeedStateExtraRoot, []uint32{1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("Config addr: %v\n", params.ConfigAddr.Hex())
+}
+
+func TestGetValidatorStatsWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	stats, err := api.GetValidatorStats(context.Background(), 0, 100, nil, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("Catchain seqno: %v\n", stats.Other.ValidatorInfo.CatchainSeqno)
+	fmt.Printf("Global balance in nano tons: %v\n", stats.GlobalBalance.Grams)
+}
+
+func TestGetAccountWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Testnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+	testCases := []struct {
+		name      string
+		accountID string
+	}{
+		{
+			name:      "account from masterchain",
+			accountID: "-1:34517c7bdf5187c55af4f8b61fdc321588c7ab768dee24b006df29106458d7cf",
+		},
+		{
+			name:      "active account from basechain",
+			accountID: "0:e33ed33a42eb2032059f97d90c706f8400bb256d32139ca707f1564ad699c7dd",
+		},
+		{
+			name:      "nonexisted from basechain",
+			accountID: "0:5f00decb7da51881764dc3959cec60609045f6ca1b89e646bde49d492705d77c",
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			accountID, err := ton.AccountIDFromRaw(tt.accountID)
+			if err != nil {
+				t.Fatal("AccountIDFromRaw() failed: %w", err)
+			}
+			acc, err := api.GetAccountState(context.TODO(), accountID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Printf("Account status: %v\n", acc.Account.Status())
+		})
+	}
+}
+
+func TestGetAccountWithProofForBlockWithFastPolicy(t *testing.T) {
+	api, err := NewClient(Testnet(), FromEnvs(), WithProofPolicy(ProofPolicyFast))
+	if err != nil {
+		t.Fatal(err)
+	}
+	testCases := []struct {
+		name      string
+		accountID string
+		block     string
+	}{
+		{
+			name:      "account from masterchain",
+			accountID: "-1:34517c7bdf5187c55af4f8b61fdc321588c7ab768dee24b006df29106458d7cf",
+			block:     "(-1,8000000000000000,23040403)",
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			accountID, err := ton.AccountIDFromRaw(tt.accountID)
+			if err != nil {
+				t.Fatal("AccountIDFromRaw() failed: %w", err)
+			}
+			b, err := ton.ParseBlockID(tt.block)
+			if err != nil {
+				t.Fatal("ParseBlockID() failed: %w", err)
+			}
+			block, _, err := api.LookupBlock(context.TODO(), b, 1, nil, nil)
+			if err != nil {
+				t.Fatalf("LookupBlock() failed: %v", err)
+			}
+			acc, err := api.WithBlock(block).GetAccountState(context.TODO(), accountID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fmt.Printf("Account status: %v\n", acc.Account.Status())
+		})
+	}
 }

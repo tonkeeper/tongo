@@ -1,59 +1,37 @@
 package liteapi
 
 import (
-	"context"
+	"bytes"
 	"errors"
 	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
 
-// GetAccountWithProof
-// For safe operation, always use GetAccountWithProof with WithBlock(proofedBlock ton.BlockIDExt), as the proof of masterchain cashed blocks is not implemented yet!
-func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountID) (*tlb.ShardAccount, *tlb.ShardStateUnsplit, error) {
-	res, err := c.GetAccountStateRaw(ctx, accountID) // TODO: add proof check for masterHead
-	if err != nil {
-		return nil, nil, err
-	}
-	blockID := res.Id.ToBlockIdExt()
-	if len(res.Proof) == 0 {
-		return nil, nil, errors.New("empty proof")
-	}
-
+func checkAccountProof(accountID ton.AccountID, blockID ton.BlockIDExt, shardBlock ton.BlockIDExt, proof []*boc.Cell, shardProof []byte, stateProof *boc.Cell) (*tlb.ShardAccount, *tlb.ShardStateUnsplit, error) {
 	var blockHash ton.Bits256
-	if (accountID.Workchain == -1 && blockID.Workchain == -1) || blockID == res.Shardblk.ToBlockIdExt() {
+	if accountID.Workchain == -1 && blockID.Workchain == -1 || blockID == shardBlock {
 		blockHash = blockID.RootHash
 	} else {
-		if len(res.ShardProof) == 0 {
+		if len(shardProof) == 0 {
 			return nil, nil, errors.New("empty shard proof")
 		}
-		if res.Shardblk.RootHash == [32]byte{} { // TODO: how to check for empty shard?
-			return nil, nil, errors.New("shard block not passed")
-		}
-		shardHash := ton.Bits256(res.Shardblk.RootHash)
-		if _, err := checkShardInMasterProof(blockID, res.ShardProof, accountID.Workchain, shardHash); err != nil {
+		shardHash := shardBlock.RootHash
+		if _, err := checkShardInMasterProof(blockID, shardProof, accountID.Workchain, shardHash); err != nil {
 			return nil, nil, fmt.Errorf("shard proof is incorrect: %w", err)
 		}
 		blockHash = shardHash
 	}
 	cellsMap := make(map[[32]byte]*boc.Cell)
-	if len(res.State) > 0 {
-		stateCells, err := boc.DeserializeBoc(res.State)
-		if err != nil {
-			return nil, nil, fmt.Errorf("state deserialization failed: %w", err)
-		}
-		hash, err := stateCells[0].Hash256()
-		if err != nil {
-			return nil, nil, fmt.Errorf("get hash err: %w", err)
-		}
-		cellsMap[hash] = stateCells[0]
-	}
-	proofCells, err := boc.DeserializeBoc(res.Proof)
+	hash, err := stateProof.Hash256WithLevel(0)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to get state hash: %w", err)
 	}
-	shardState, err := checkBlockShardStateProof(proofCells, blockHash, cellsMap)
+	cellsMap[hash] = stateProof
+
+	shardState, err := checkBlockShardStateProof(proof, blockHash, cellsMap)
 	if err != nil {
 		return nil, nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -64,9 +42,7 @@ func (c *Client) GetAccountWithProof(ctx context.Context, accountID ton.AccountI
 			return &values[i], shardState, nil
 		}
 	}
-	if len(res.State) == 0 {
-		return &tlb.ShardAccount{Account: tlb.Account{SumType: "AccountNone"}}, shardState, nil
-	}
+
 	return nil, nil, errors.New("invalid account state")
 }
 
@@ -107,7 +83,7 @@ func checkBlockShardStateProof(proof []*boc.Cell, blockRootHash ton.Bits256, cel
 	if len(proof) != 2 {
 		return nil, errors.New("must be two root cells")
 	}
-	block, err := checkBlockProof(*proof[0], blockRootHash)
+	block, err := checkProof[tlb.Block](*proof[0], blockRootHash, nil)
 	if err != nil {
 		return nil, fmt.Errorf("incorrect block proof: %w", err)
 	}
@@ -134,14 +110,148 @@ func checkBlockShardStateProof(proof []*boc.Cell, blockRootHash ton.Bits256, cel
 	return &stateProof.Proof.VirtualRoot, nil
 }
 
-func checkBlockProof(proof boc.Cell, blockRootHash ton.Bits256) (*tlb.MerkleProof[tlb.Block], error) {
-	var res tlb.MerkleProof[tlb.Block]
-	err := tlb.Unmarshal(&proof, &res) // merkle hash and depth checks inside
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal block proof: %w", err)
+func checkProof[T any](proof boc.Cell, hash ton.Bits256, decoder *tlb.Decoder) (*tlb.MerkleProof[T], error) {
+	if decoder == nil {
+		decoder = tlb.NewDecoder()
 	}
-	if ton.Bits256(res.VirtualHash) != blockRootHash {
-		return nil, fmt.Errorf("invalid block root hash")
+	var res tlb.MerkleProof[T]
+	err := decoder.Unmarshal(&proof, &res) // merkle hash and depth checks inside
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal proof: %w", err)
+	}
+	if ton.Bits256(res.VirtualHash) != hash {
+		return nil, fmt.Errorf("invalid hash")
 	}
 	return &res, nil // return new_hash field of MerkleUpdate of ShardState
+}
+
+func checkTxProof(
+	shardAccount tlb.HashmapAugE[tlb.Bits256, tlb.AccountBlock, tlb.CurrencyCollection],
+	accountAddr tlb.Bits256,
+	lt uint64,
+	hash ton.Bits256,
+) error {
+	var accountBlock tlb.AccountBlock
+	for i, key := range shardAccount.Keys() {
+		if key.Equal(accountAddr) {
+			accountBlock = shardAccount.Values()[i]
+			break
+		}
+	}
+
+	var accountTx *tlb.Transaction
+	for i, key := range accountBlock.Transactions.Keys() {
+		if uint64(key) == lt {
+			accountTx = &accountBlock.Transactions.Values()[i].Value
+		}
+	}
+
+	if accountTx == nil {
+		return fmt.Errorf("tx not found")
+	}
+
+	txHash := accountTx.Hash()
+	if !bytes.Equal(txHash[:], hash[:]) {
+		return fmt.Errorf("invalid tx hash")
+	}
+
+	return nil
+}
+
+type prunedBlock struct {
+	Magic       tlb.Magic `tlb:"block#11ef55aa"`
+	GlobalId    int32
+	Info        tlb.BlockInfo                    `tlb:"^"`
+	ValueFlow   tlb.ValueFlow                    `tlb:"^"`
+	StateUpdate tlb.MerkleUpdate[tlb.ShardState] `tlb:"^"`
+	Extra       prunedBlockExtra                 `tlb:"^"`
+}
+
+type prunedBlockExtra struct {
+	Magic           tlb.Magic                                                                `tlb:"block_extra#4a33f6fd"`
+	InMsgDescrCell  boc.Cell                                                                 `tlb:"^"`
+	OutMsgDescrCell boc.Cell                                                                 `tlb:"^"`
+	AccountBlocks   tlb.HashmapAugE[tlb.Bits256, prunedAccountBlock, tlb.CurrencyCollection] `tlb:"^"`
+	RandSeed        tlb.Bits256
+	CreatedBy       tlb.Bits256
+	Custom          tlb.Maybe[tlb.Ref[tlb.McBlockExtra]]
+}
+
+type prunedAccountBlock struct {
+	Magic        tlb.Magic `tlb:"acc_trans#5"`
+	AccountAddr  tlb.Bits256
+	Transactions tlb.HashmapAug[tlb.Uint64, boc.Cell, tlb.CurrencyCollection]
+	StateUpdate  tlb.HashUpdate `tlb:"^"`
+}
+
+// this function doing same proof as checkTxProof but for pruned transactions that cannot be resolved
+func checkPrunedTxProof(
+	shardAccount tlb.HashmapAugE[tlb.Bits256, prunedAccountBlock, tlb.CurrencyCollection],
+	accountAddr tlb.Bits256,
+	lt uint64,
+	hash ton.Bits256,
+) error {
+	var accountBlock prunedAccountBlock
+	for i, key := range shardAccount.Keys() {
+		if key.Equal(accountAddr) {
+			accountBlock = shardAccount.Values()[i]
+			break
+		}
+	}
+
+	var accountTx *boc.Cell
+	for i, key := range accountBlock.Transactions.Keys() {
+		if uint64(key) == lt {
+			accountTx = &accountBlock.Transactions.Values()[i]
+		}
+	}
+
+	if accountTx == nil {
+		return fmt.Errorf("tx not found")
+	}
+	if len(accountTx.Refs()) == 0 {
+		return fmt.Errorf("shard account must have at least one ref in value")
+	}
+
+	txHash, err := accountTx.Refs()[0].Hash256WithLevel(0)
+	if err != nil {
+		return err
+	}
+	if !bytes.Equal(txHash[:], hash[:]) {
+		return fmt.Errorf("invalid tx hash")
+	}
+
+	return nil
+}
+
+func getShardHashesHash(proofBlock boc.Cell, merkleProof *tlb.MerkleProof[tlb.Block]) (ton.Bits256, error) {
+	if !merkleProof.VirtualRoot.Extra.Custom.Exists {
+		return ton.Bits256{}, fmt.Errorf("mc block extra is missing in block")
+	}
+
+	mcExtraCell := proofBlock.Refs()[0].Refs()[3].Refs()[3]
+	mcExtraCell.ResetCounters()
+	err := mcExtraCell.Skip(17) // 16 + 1
+	if err != nil {
+		return ton.Bits256{}, err
+	}
+	hasShardHashesMap, err := mcExtraCell.ReadBit()
+	if err != nil {
+		return ton.Bits256{}, err
+	}
+
+	mapCell := boc.NewCell()
+	err = mapCell.WriteBit(hasShardHashesMap)
+	if err != nil {
+		return ton.Bits256{}, err
+	}
+
+	if hasShardHashesMap {
+		err = mapCell.AddRef(mcExtraCell.Refs()[0])
+		if err != nil {
+			return ton.Bits256{}, err
+		}
+	}
+
+	return mapCell.Hash256WithLevel(0)
 }

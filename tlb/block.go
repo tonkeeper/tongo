@@ -419,6 +419,7 @@ func (m *McBlockExtra) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return fmt.Errorf("invalid tag")
 	}
 
+	m.Magic = Magic(sumType)
 	err = decoder.Unmarshal(c, &m.KeyBlock)
 	if err != nil {
 		return err

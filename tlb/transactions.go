@@ -82,6 +82,7 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if sumType != 0b0111 {
 		return fmt.Errorf("invalid tag")
 	}
+	tx.Magic = Magic(sumType)
 	if err = decoder.Unmarshal(c, &tx.AccountAddr); err != nil {
 		return err
 	}

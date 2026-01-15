@@ -122,9 +122,9 @@ func WithMaxConnectionsNumber(maxConns int) Option {
 	}
 }
 
-func WithTrustedBlock(block *ton.BlockIDExt) Option {
+func WithTrustedBlock(block ton.BlockIDExt) Option {
 	return func(o *Options) error {
-		o.TrustedBlock = block
+		o.TrustedBlock = &block
 		return nil
 	}
 }
@@ -347,6 +347,11 @@ func (c *Client) GetMasterchainInfo(ctx context.Context) (liteclient.LiteServerM
 
 		if err = c.VerifyProofChain(ctx, *c.trustedBlock, mcInfo.Last.ToBlockIdExt()); err != nil {
 			return liteclient.LiteServerMasterchainInfoC{}, fmt.Errorf("failed to verify proof chain: %v", err)
+		}
+
+		if mcInfo.Last.Seqno > c.trustedBlock.Seqno {
+			lastBlock := mcInfo.Last.ToBlockIdExt()
+			c.trustedBlock = &lastBlock
 		}
 	}
 	return mcInfo, nil

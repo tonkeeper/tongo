@@ -21,6 +21,28 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+func getOldTrustedBlock() (*ton.BlockIDExt, error) {
+	var rootHash ton.Bits256
+	err := rootHash.FromBase64("VpWyfNOLm8Rqt6CZZ9dZGqJRO3NyrlHHYN1k1oLbJ6g=")
+	if err != nil {
+		return nil, fmt.Errorf("incorrect root hash")
+	}
+	var fileHash ton.Bits256
+	err = fileHash.FromBase64("8o12KX54BtJM8RERD1J97Qe1ZWk61LIIyXydlBnixK8=")
+	if err != nil {
+		return nil, fmt.Errorf("incorrect file hash")
+	}
+	return &ton.BlockIDExt{
+		BlockID: ton.BlockID{
+			Workchain: -1,
+			Shard:     9223372036854775808,
+			Seqno:     34835953,
+		},
+		RootHash: rootHash,
+		FileHash: fileHash,
+	}, nil
+}
+
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 	t.Skip("when public lite servers are down, this test will fail")
 	cli, err := NewClient(Mainnet())
@@ -670,13 +692,44 @@ func TestGetMasterChainInfoWithSafePolicy(t *testing.T) {
 	// wait for new block
 	time.Sleep(7 * time.Second)
 
-	safeAPI, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicySafe), WithTrustedBlock(&trustedBlock))
+	safeAPI, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicySafe), WithTrustedBlock(trustedBlock))
 	if err != nil {
 		t.Fatal(err)
 	}
 	latest, err := safeAPI.GetMasterchainInfo(context.Background())
 	if err != nil {
 		t.Fatal(err)
+	}
+	fmt.Printf("Latest block seqno : %v\n", latest.Last.Seqno)
+}
+
+func TestGetMasterchainInfoTrustedBlockUpdateWithSafePolicy(t *testing.T) {
+	trustedBlock, err := getOldTrustedBlock()
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Trusted block seqno : %v\n", trustedBlock.Seqno)
+
+	safeAPI, err := NewClient(Mainnet(), FromEnvs(), WithProofPolicy(ProofPolicySafe), WithTrustedBlock(*trustedBlock))
+	if err != nil {
+		t.Fatal(err)
+	}
+	latest, err := safeAPI.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Latest block seqno : %v\n", latest.Last.Seqno)
+
+	time.Sleep(7 * time.Second) // wait for new block
+
+	start := time.Now().Unix()
+	latest, err = safeAPI.GetMasterchainInfo(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	end := time.Now().Unix()
+	if end-start > 20 {
+		t.Fatal("too long for few blocks proof")
 	}
 	fmt.Printf("Latest block seqno : %v\n", latest.Last.Seqno)
 }

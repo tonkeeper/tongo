@@ -360,16 +360,27 @@ func (p *ConnPool) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeo
 	waitID, ch := p.subscribe(seqno)
 	defer p.unsubscribe(waitID)
 
+	timer := time.NewTimer(timeout)
+	defer timer.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(timeout):
+		case <-timer.C:
 			return fmt.Errorf("timeout")
 		case head := <-ch:
 			if head.Seqno >= seqno {
 				return nil
 			}
+			// Reset timer for next iteration
+			if !timer.Stop() {
+				select {
+				case <-timer.C:
+				default:
+				}
+			}
+			timer.Reset(timeout)
 		}
 	}
 }

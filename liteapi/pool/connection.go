@@ -46,11 +46,20 @@ func (c *connection) Run(ctx context.Context, detectArchive bool) {
 	for {
 		var head ton.BlockIDExt
 		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+
 			res, err := c.client.LiteServerGetMasterchainInfo(ctx)
 			if err != nil {
-				// TODO: log error
-				time.Sleep(1000 * time.Millisecond)
-				continue
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(1000 * time.Millisecond):
+					continue
+				}
 			}
 			head = res.Last.ToBlockIdExt()
 			break
@@ -59,11 +68,15 @@ func (c *connection) Run(ctx context.Context, detectArchive bool) {
 		for {
 			res, err := c.client.WaitMasterchainBlock(ctx, head.Seqno+1, 15_000)
 			if err != nil {
-				// TODO: log error
-				time.Sleep(1000 * time.Millisecond)
-				// we want to request seqno again with LiteServerGetMasterchainInfo
-				// to avoid situation when this server has been offline for too long,
-				// and it doesn't contain a block with the latest known seqno anymore.
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(1000 * time.Millisecond):
+					// we want to request seqno again with LiteServerGetMasterchainInfo
+					// to avoid situation when this server has been offline for too long,
+					// and it doesn't contain a block with the latest known seqno anymore.
+					break
+				}
 				break
 			}
 			if ctx.Err() != nil {
@@ -96,13 +109,20 @@ func (c *connection) MasterHead() ton.BlockIDExt {
 
 func (c *connection) SetMasterHead(head ton.BlockIDExt) {
 	c.mu.Lock()
-	defer c.mu.Unlock()
-	if head.Seqno > c.masterHead.Seqno {
-		c.masterHead = head
-		c.masterHeadUpdatedCh <- masterHeadUpdated{
-			Head: head,
-			Conn: c,
-		}
+	if head.Seqno <= c.masterHead.Seqno {
+		c.mu.Unlock()
+		return
+	}
+	c.masterHead = head
+	c.mu.Unlock()
+
+	select {
+	case c.masterHeadUpdatedCh <- masterHeadUpdated{
+		Head: head,
+		Conn: c,
+	}:
+	default:
+		// Channel full - skip notification, pool will catch up on next update
 	}
 }
 

@@ -34,6 +34,7 @@ func (p *Payload) UnmarshalJSON(data []byte) error {
 		OpCode  *uint32
 		Value   json.RawMessage
 	}
+
 	if err := json.Unmarshal(data, &r); err != nil {
 		return err
 	}
@@ -131,6 +132,20 @@ func (p *Payload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	}
 	op := uint32(op64)
 	p.OpCode = &op
+	ifaces := decoder.GetContractInterfaces()
+	for _, iface := range ifaces {
+		ifacePayloads := ContractInterface(iface).Payloads()
+		f, ok := ifacePayloads[PayloadOpCode(op64)]
+		if ok && f != nil {
+			tryCell := tempCell.CopyRemaining()
+			err = f(p, tryCell)
+			if err == nil {
+				cell.ReadRemainingBits()
+				return nil
+			}
+		}
+	}
+
 	f, ok := funcPayloadDecodersMapping[PayloadOpCode(op64)]
 
 	if ok && f != nil {

@@ -6,6 +6,22 @@ const (
 {{- end }}
 )
 
+const (
+    NUnknown contractNamespace = iota
+{{- range $namespace, $ifaces := .NamespaceToInterfaces }}
+	{{ $namespace }}
+{{- end }}
+)
+
+var namespaceByInterface = map[ContractInterface]contractNamespace{
+	IUnknown:                          NUnknown,
+	{{- range $namespace, $ifaces := .NamespaceToInterfaces }}
+	    {{- range $iface := $ifaces }}
+	        {{ $iface }}: {{ $namespace }},
+	    {{- end }}
+    {{- end }}
+}
+
 func (c ContractInterface) String() string {
 switch c {
    {{- range $name, $iface := .Interfaces }}

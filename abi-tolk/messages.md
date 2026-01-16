@@ -47,6 +47,12 @@ The list below contains the supported message operations, their names and opcode
 | TonCocoonUpgradeContracts| 0xa2370f61 |
 | TonCocoonUpgradeFull| 0x4f7c5789 |
 | TonCocoonWorkerProxyRequest| 0x4d725d2c |
+| TonStonfiV1StonfiSwapJettonPayload| 0x25938561 |
+| TonStonfiV1StonfiSwapOkRefJettonPayload| 0x45078540 |
+| TonStonfiV2StonfiProvideLiquidityJettonPayload| 0xfcf9e58f |
+| TonStonfiV2StonfiProvideLpV2JettonPayload| 0x37c096df |
+| TonStonfiV2StonfiSwapOkJettonPayload| 0xc64370e5 |
+| TonStonfiV2StonfiSwapV2JettonPayload| 0x6664de2a |
 | TonTep74AboaLisa| 0xd53276db |
 | TonTep74AskToBurn| 0x595f07bc |
 | TonTep74AskToTransfer| 0x0f8a7ea5 |
@@ -88,12 +94,6 @@ The list below contains the supported message operations, their names and opcode
 | TonTolkTestsMoonSwapJettonPayload| 0xb37a900b |
 | TonTolkTestsMoonSwapSucceedJettonPayload| 0xcb7f38d6 |
 | TonTolkTestsPoolFundAccountJettonPayload| 0x4468de77 |
-| TonTolkTestsStonfiProvideLiquidityJettonPayload| 0xfcf9e58f |
-| TonTolkTestsStonfiProvideLpV2JettonPayload| 0x37c096df |
-| TonTolkTestsStonfiSwapJettonPayload| 0x25938561 |
-| TonTolkTestsStonfiSwapOkJettonPayload| 0xc64370e5 |
-| TonTolkTestsStonfiSwapOkRefJettonPayload| 0x45078540 |
-| TonTolkTestsStonfiSwapV2JettonPayload| 0x6664de2a |
 | TonTolkTestsStormDepositJettonJettonPayload| 0x76840119 |
 | TonTolkTestsStormStakeJettonPayload| 0xc89a3ee4 |
 | TonTolkTestsTegroAddLiquidityJettonPayload| 0x287e167a |

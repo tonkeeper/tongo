@@ -70,6 +70,51 @@
           }
         }
       ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwap",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x25938561",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referralAddress",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapOkRef",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0x45078540",
+        "prefixLen": 32
+      },
+      "fields": []
     }
   ],
   "incomingMessages": [],

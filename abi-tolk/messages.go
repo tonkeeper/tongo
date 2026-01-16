@@ -16,7 +16,7 @@ func pointer[T any](t T) *T {
 }
 
 func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
-	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+	return func(cell *boc.Cell, decoder *tlb.Decoder) (*uint32, *MsgOpName, any, error) {
 		cell.ResetCounters()
 		readTag, err := cell.ReadUint(tag.Len)
 		if err != nil {
@@ -30,7 +30,10 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 			uintTag = pointer(uint32(readTag))
 		}
 		body := reflect.New(reflect.TypeOf(bodyType))
-		err = tlb.Unmarshal(cell, body.Interface())
+		if decoder == nil {
+			decoder = tlb.NewDecoder()
+		}
+		err = decoder.Unmarshal(cell, body.Interface())
 		if err == nil {
 			return uintTag, pointer(name), body.Elem().Interface(), nil
 		}
@@ -39,9 +42,9 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 }
 
 func decodeMultipleMsgs(funcs []msgDecoderFunc, tag string) msgDecoderFunc {
-	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+	return func(cell *boc.Cell, decoder *tlb.Decoder) (*uint32, *MsgOpName, any, error) {
 		for _, f := range funcs {
-			tag, opName, object, err := f(cell)
+			tag, opName, object, err := f(cell, decoder)
 			if err == nil && completedRead(cell) {
 				return tag, opName, object, err
 			}
@@ -71,7 +74,8 @@ func (body InMsgBody) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 
 func (body *InMsgBody) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	body.SumType = UnknownMsgOp
-	tag, name, value, err := InternalMessageDecoder(cell, nil)
+	ifaces := fromTlbContractInterface(decoder.GetContractInterfaces())
+	tag, name, value, err := InternalMessageDecoder(cell, ifaces)
 	if err != nil {
 		return err
 	}
@@ -262,7 +266,7 @@ func (body ExtOutMsgBody) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-type msgDecoderFunc func(cell *boc.Cell) (*uint32, *MsgOpName, any, error)
+type msgDecoderFunc func(cell *boc.Cell, decoder *tlb.Decoder) (*uint32, *MsgOpName, any, error)
 
 // InternalMessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
 // It returns an opcode, an operation name and a decoded body.
@@ -273,9 +277,12 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*Ms
 	if cell.BitsAvailableForRead() != cell.BitSize() {
 		cell = cell.CopyRemaining() //because body can be part of the message cell
 	}
+	ifaces := toTlbContractInterface(interfaces)
+	decoder := tlb.NewDecoder()
+	decoder.WithContractInterfaces(ifaces)
 	for _, i := range interfaces {
 		for _, f := range i.IntMsgs() {
-			t, m, v, err := f(cell)
+			t, m, v, err := f(cell, decoder)
 			if err == nil {
 				return t, m, v, nil
 			}
@@ -289,7 +296,7 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*Ms
 	tag := uint32(tag64)
 	f := opcodedMsgInDecodeFunctions[tag]
 	if f != nil {
-		t, o, b, err := f(cell)
+		t, o, b, err := f(cell, nil)
 		if err == nil {
 			return t, o, b, nil
 		}
@@ -304,9 +311,12 @@ func ExtInMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOp
 	if cell.BitsAvailableForRead() != cell.BitSize() {
 		cell = cell.CopyRemaining() //because body can be part of the message cell
 	}
+	ifaces := toTlbContractInterface(interfaces)
+	decoder := tlb.NewDecoder()
+	decoder.WithContractInterfaces(ifaces)
 	for _, i := range interfaces {
 		for _, f := range i.ExtInMsgs() {
-			t, m, v, err := f(cell)
+			t, m, v, err := f(cell, decoder)
 			if err == nil {
 				return t, m, v, nil
 			}
@@ -320,7 +330,7 @@ func ExtInMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOp
 	tag := uint32(tag64)
 	f := opcodedMsgExtInDecodeFunctions[tag]
 	if f != nil {
-		t, o, b, err := f(cell)
+		t, o, b, err := f(cell, nil)
 		if err == nil {
 			return t, o, b, nil
 		}
@@ -335,9 +345,12 @@ func ExtOutMessageDecoder(cell *boc.Cell, interfaces []ContractInterface, dest t
 	if cell.BitsAvailableForRead() != cell.BitSize() {
 		cell = cell.CopyRemaining() //because body can be part of the message cell
 	}
+	ifaces := toTlbContractInterface(interfaces)
+	decoder := tlb.NewDecoder()
+	decoder.WithContractInterfaces(ifaces)
 	for _, i := range interfaces {
 		for _, f := range i.ExtOutMsgs() {
-			t, m, v, err := f(cell)
+			t, m, v, err := f(cell, decoder)
 			if err == nil {
 				return t, m, v, nil
 			}
@@ -351,7 +364,7 @@ func ExtOutMessageDecoder(cell *boc.Cell, interfaces []ContractInterface, dest t
 	tag := uint32(tag64)
 	f := opcodedMsgExtOutDecodeFunctions[tag]
 	if f != nil {
-		t, o, b, err := f(cell)
+		t, o, b, err := f(cell, nil)
 		if err == nil {
 			return t, o, b, nil
 		}

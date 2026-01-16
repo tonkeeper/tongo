@@ -103,41 +103,6 @@
     },
     {
       "kind": "Struct",
-      "name": "StonfiSwap",
-      "payloadType": "jetton",
-      "prefix": {
-        "prefixStr": "0x25938561",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "tokenWallet",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "minOut",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "toAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "referralAddress",
-          "ty": {
-            "kind": "addressOpt"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
       "name": "TegroAddLiquidity",
       "payloadType": "jetton",
       "prefix": {
@@ -155,91 +120,6 @@
           "name": "amountB",
           "ty": {
             "kind": "coins"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "StonfiProvideLpV2",
-      "payloadType": "jetton",
-      "prefix": {
-        "prefixStr": "0x37c096df",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "tokenWallet1",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "refundAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "excessesAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "txDeadline",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "crossProvideLpBody",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "CrossProvideLpBody"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "CrossProvideLpBody",
-      "fields": [
-        {
-          "name": "minLpOut",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "toAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "bothPositive",
-          "ty": {
-            "kind": "bool"
-          }
-        },
-        {
-          "name": "fwdAmount",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "customPayload",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
           }
         }
       ]
@@ -540,16 +420,6 @@
     },
     {
       "kind": "Struct",
-      "name": "StonfiSwapOkRef",
-      "payloadType": "jetton",
-      "prefix": {
-        "prefixStr": "0x45078540",
-        "prefixLen": 32
-      },
-      "fields": []
-    },
-    {
-      "kind": "Struct",
       "name": "CoffeeCrossDexResend",
       "payloadType": "jetton",
       "prefix": {
@@ -605,113 +475,6 @@
             "inner": {
               "kind": "cell"
             }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "StonfiSwapV2",
-      "payloadType": "jetton",
-      "prefix": {
-        "prefixStr": "0x6664de2a",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "tokenWallet1",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "refundAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "excessesAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "txDeadline",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "crossSwapBody",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "CrossSwapBody"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "CrossSwapBody",
-      "fields": [
-        {
-          "name": "minOut",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "receiver",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "fwdGas",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "customPayload",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        },
-        {
-          "name": "refundFwdGas",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "refundPayload",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        },
-        {
-          "name": "refFee",
-          "ty": {
-            "kind": "uintN",
-            "n": 16
-          }
-        },
-        {
-          "name": "refAddress",
-          "ty": {
-            "kind": "address"
           }
         }
       ]
@@ -1975,16 +1738,6 @@
     },
     {
       "kind": "Struct",
-      "name": "StonfiSwapOk",
-      "payloadType": "jetton",
-      "prefix": {
-        "prefixStr": "0xc64370e5",
-        "prefixLen": 32
-      },
-      "fields": []
-    },
-    {
-      "kind": "Struct",
       "name": "StormStake",
       "payloadType": "jetton",
       "prefix": {
@@ -2420,29 +2173,6 @@
             "inner": {
               "kind": "cell"
             }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "StonfiProvideLiquidity",
-      "payloadType": "jetton",
-      "prefix": {
-        "prefixStr": "0xfcf9e58f",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "tokenWallet",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "minLpOut",
-          "ty": {
-            "kind": "coins"
           }
         }
       ]

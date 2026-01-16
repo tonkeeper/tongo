@@ -11,16 +11,16 @@ import (
 )
 
 type DefaultType struct {
-	Name          string
-	IsPointerType bool
+	Name  string
+	IsRef bool
 }
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
 		"int":        {"tlb.Int257", false},
-		"coins":      {"tlb.Grams", false},
+		"coins":      {"tlb.VarUInteger16", false},
 		"bool":       {"bool", false},
-		"cell":       {"tlb.Any", false},
+		"cell":       {"tlb.Any", true},
 		"slice":      {"tlb.Any", false},
 		"builder":    {"tlb.Any", false},
 		"remaining":  {"tlb.Any", false},
@@ -308,6 +308,12 @@ func parseField(structName string, field tolkAbi.Field, contractName string) (st
 	res.WriteString(name)
 	res.WriteRune(' ')
 
+	if field.IsPayload != nil && *field.IsPayload == true {
+		res.WriteString("tlb.EitherRef[Payload]")
+
+		return res.String(), "", nil
+	}
+
 	tlbTypePart, tlbTagPart, err := parseTy(field.Ty, contractName)
 	if err != nil {
 		return "", "", err
@@ -371,11 +377,11 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 	var tlbTag strings.Builder
 	defaultType, ok := defaultKnownTypes[ty.SumType]
 	if ok {
-		if defaultType.IsPointerType {
-			tlbType.WriteRune('*')
+		if defaultType.IsRef {
+			tlbTag.WriteRune('^')
 		}
 		tlbType.WriteString(defaultType.Name)
-		return tlbType.String(), "", nil
+		return tlbType.String(), tlbTag.String(), nil
 	}
 
 	switch ty.SumType {

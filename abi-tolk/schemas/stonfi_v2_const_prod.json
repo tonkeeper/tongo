@@ -93,6 +93,16 @@
           }
         }
       ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapOk",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xc64370e5",
+        "prefixLen": 32
+      },
+      "fields": []
     }
   ],
   "incomingMessages": [],

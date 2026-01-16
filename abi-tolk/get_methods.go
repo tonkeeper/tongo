@@ -10,23 +10,23 @@ import (
 )
 
 var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error){
-	"proxy_hash_is_valid":    {DecodeTonCocoonRoot_ProxyHashIsValidResult},
-	"seqno":                  {DecodeTonCocoonWallet_SeqnoResult},
-	"get_public_key":         {DecodeTonCocoonWallet_GetPublicKeyResult},
-	"get_jetton_data":        {DecodeTonTep74JettonMinter_GetJettonDataResult},
-	"get_wallet_data":        {DecodeTonTep74JettonWallet_GetWalletDataResult},
-	"get_pool_data":          {DecodeTonStonfiV1Pool_GetPoolDataResult, DecodeTonStonfiV2PoolConstProduct_GetPoolDataResult, DecodeTonStonfiV2PoolStableSwap_GetPoolDataResult, DecodeTonStonfiV2PoolWeightedStableSwap_GetPoolDataResult},
-	"get_cocoon_client_data": {DecodeTonCocoonClient_GetCocoonClientDataResult},
-	"get_wallet_address":     {DecodeTonTep74JettonMinter_GetWalletAddressResult},
-	"get_lp_account_address": {DecodeTonStonfiV2Pool_GetLpAccountAddressResult, DecodeTonStonfiV2PoolConstProduct_GetLpAccountAddressResult, DecodeTonStonfiV2PoolStableSwap_GetLpAccountAddressResult, DecodeTonStonfiV2PoolWeightedStableSwap_GetLpAccountAddressResult},
-	"get_cur_params":         {DecodeTonCocoonRoot_GetCurParamsResult},
-	"worker_hash_is_valid":   {DecodeTonCocoonRoot_WorkerHashIsValidResult},
-	"get_cocoon_proxy_data":  {DecodeTonCocoonProxy_GetCocoonProxyDataResult},
 	"last_proxy_seqno":       {DecodeTonCocoonRoot_LastProxySeqnoResult},
-	"get_cocoon_data":        {DecodeTonCocoonRoot_GetCocoonDataResult},
+	"proxy_hash_is_valid":    {DecodeTonCocoonRoot_ProxyHashIsValidResult},
 	"model_hash_is_valid":    {DecodeTonCocoonRoot_ModelHashIsValidResult},
+	"seqno":                  {DecodeTonCocoonWallet_SeqnoResult},
+	"get_lp_account_address": {DecodeTonStonfiV2Pool_GetLpAccountAddressResult, DecodeTonStonfiV2PoolConstProduct_GetLpAccountAddressResult, DecodeTonStonfiV2PoolStableSwap_GetLpAccountAddressResult, DecodeTonStonfiV2PoolWeightedStableSwap_GetLpAccountAddressResult},
+	"get_cocoon_client_data": {DecodeTonCocoonClient_GetCocoonClientDataResult},
+	"get_cocoon_proxy_data":  {DecodeTonCocoonProxy_GetCocoonProxyDataResult},
+	"get_cocoon_data":        {DecodeTonCocoonRoot_GetCocoonDataResult},
+	"get_cur_params":         {DecodeTonCocoonRoot_GetCurParamsResult},
+	"get_public_key":         {DecodeTonCocoonWallet_GetPublicKeyResult},
 	"get_owner_address":      {DecodeTonCocoonWallet_GetOwnerAddressResult},
+	"get_wallet_address":     {DecodeTonTep74JettonMinter_GetWalletAddressResult},
+	"get_jetton_data":        {DecodeTonTep74JettonMinter_GetJettonDataResult},
+	"get_pool_data":          {DecodeTonStonfiV1Pool_GetPoolDataResult, DecodeTonStonfiV2PoolConstProduct_GetPoolDataResult, DecodeTonStonfiV2PoolStableSwap_GetPoolDataResult, DecodeTonStonfiV2PoolWeightedStableSwap_GetPoolDataResult},
+	"worker_hash_is_valid":   {DecodeTonCocoonRoot_WorkerHashIsValidResult},
 	"get_cocoon_worker_data": {DecodeTonCocoonWorker_GetCocoonWorkerDataResult},
+	"get_wallet_data":        {DecodeTonTep74JettonWallet_GetWalletDataResult},
 }
 
 var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error){
@@ -45,34 +45,67 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 }
 
 var resultTypes = []interface{}{
+	&TonCocoonRoot_LastProxySeqnoResult{},
 	&TonCocoonRoot_ProxyHashIsValidResult{},
+	&TonCocoonRoot_ModelHashIsValidResult{},
 	&TonCocoonWallet_SeqnoResult{},
-	&TonCocoonWallet_GetPublicKeyResult{},
-	&TonTep74JettonMinter_GetJettonDataResult{},
-	&TonTep74JettonWallet_GetWalletDataResult{},
-	&TonStonfiV1Pool_GetPoolDataResult{},
-	&TonStonfiV2PoolConstProduct_GetPoolDataResult{},
-	&TonStonfiV2PoolStableSwap_GetPoolDataResult{},
-	&TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult{},
-	&TonCocoonClient_GetCocoonClientDataResult{},
-	&TonTep74JettonMinter_GetWalletAddressResult{},
 	&TonStonfiV2PoolConstProduct_GetLpAccountAddressResult{},
 	&TonStonfiV2PoolStableSwap_GetLpAccountAddressResult{},
 	&TonStonfiV2PoolWeightedStableSwap_GetLpAccountAddressResult{},
 	&TonStonfiV2Pool_GetLpAccountAddressResult{},
-	&TonCocoonRoot_GetCurParamsResult{},
-	&TonCocoonRoot_WorkerHashIsValidResult{},
+	&TonCocoonClient_GetCocoonClientDataResult{},
 	&TonCocoonProxy_GetCocoonProxyDataResult{},
-	&TonCocoonRoot_LastProxySeqnoResult{},
 	&TonCocoonRoot_GetCocoonDataResult{},
-	&TonCocoonRoot_ModelHashIsValidResult{},
+	&TonCocoonRoot_GetCurParamsResult{},
+	&TonCocoonWallet_GetPublicKeyResult{},
 	&TonCocoonWallet_GetOwnerAddressResult{},
+	&TonTep74JettonMinter_GetWalletAddressResult{},
+	&TonTep74JettonMinter_GetJettonDataResult{},
+	&TonStonfiV1Pool_GetPoolDataResult{},
+	&TonStonfiV2PoolConstProduct_GetPoolDataResult{},
+	&TonStonfiV2PoolStableSwap_GetPoolDataResult{},
+	&TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult{},
+	&TonCocoonRoot_WorkerHashIsValidResult{},
 	&TonCocoonWorker_GetCocoonWorkerDataResult{},
+	&TonTep74JettonWallet_GetWalletDataResult{},
 }
 
 type Executor interface {
 	RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, methodID int, params tlb.VmStack) (uint32, tlb.VmStack, error)
 }
+type TonCocoonRoot_LastProxySeqnoResult struct {
+	Value tlb.Int257
+}
+
+func LastProxySeqno(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 65647 for "last_proxy_seqno" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 65647, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonRoot_LastProxySeqnoResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonRoot_LastProxySeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonRoot_LastProxySeqnoResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonRoot_LastProxySeqnoResult", result, err
+}
+
 type TonCocoonRoot_ProxyHashIsValidResult struct {
 	Value tlb.Int257
 }
@@ -112,6 +145,45 @@ func DecodeTonCocoonRoot_ProxyHashIsValidResult(stack tlb.VmStack) (resultType s
 	return "TonCocoonRoot_ProxyHashIsValidResult", result, err
 }
 
+type TonCocoonRoot_ModelHashIsValidResult struct {
+	Value tlb.Int257
+}
+
+func ModelHashIsValid(ctx context.Context, executor Executor, reqAccountID ton.AccountID, hash tlb.Int257) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: hash}
+	stack.Put(val)
+
+	// MethodID = 72587 for "model_hash_is_valid" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72587, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonRoot_ModelHashIsValidResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonRoot_ModelHashIsValidResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonRoot_ModelHashIsValidResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonRoot_ModelHashIsValidResult", result, err
+}
+
 type TonCocoonWallet_SeqnoResult struct {
 	Value tlb.Int257
 }
@@ -143,250 +215,6 @@ func DecodeTonCocoonWallet_SeqnoResult(stack tlb.VmStack) (resultType string, re
 	var result TonCocoonWallet_SeqnoResult
 	err = stack.Unmarshal(&result)
 	return "TonCocoonWallet_SeqnoResult", result, err
-}
-
-type TonCocoonWallet_GetPublicKeyResult struct {
-	Value tlb.Int257
-}
-
-func GetPublicKey(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 78748 for "get_public_key" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 78748, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonWallet_GetPublicKeyResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonWallet_GetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonWallet_GetPublicKeyResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonWallet_GetPublicKeyResult", result, err
-}
-
-type TonTep74JettonMinter_GetJettonDataResult = TonTep74JettonDataReply
-
-func GetJettonData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 106029 for "get_jetton_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106029, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonTep74JettonMinter_GetJettonDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonTep74JettonMinter_GetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonTep74JettonMinter_GetJettonDataResult
-	err = stack.Unmarshal(&result)
-	return "TonTep74JettonMinter_GetJettonDataResult", result, err
-}
-
-type TonTep74JettonWallet_GetWalletDataResult = TonTep74JettonWalletDataReply
-
-func GetWalletData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 97026 for "get_wallet_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97026, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonTep74JettonWallet_GetWalletDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonTep74JettonWallet_GetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonTep74JettonWallet_GetWalletDataResult
-	err = stack.Unmarshal(&result)
-	return "TonTep74JettonWallet_GetWalletDataResult", result, err
-}
-
-type TonStonfiV1Pool_GetPoolDataResult = TonStonfiV1GetPoolDataStonfiV1
-
-type TonStonfiV2PoolConstProduct_GetPoolDataResult = TonStonfiV2GetPoolDataStonfiV2
-
-type TonStonfiV2PoolStableSwap_GetPoolDataResult = TonStonfiV2GetPoolDataStonfiV2StableSwap
-
-type TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult = TonStonfiV2GetPoolDataStonfiV2WeightedStableSwap
-
-func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 81689 for "get_pool_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 81689, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonStonfiV1Pool_GetPoolDataResult, DecodeTonStonfiV2PoolConstProduct_GetPoolDataResult, DecodeTonStonfiV2PoolStableSwap_GetPoolDataResult, DecodeTonStonfiV2PoolWeightedStableSwap_GetPoolDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonStonfiV1Pool_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonStonfiV1Pool_GetPoolDataResult
-	err = stack.Unmarshal(&result)
-	return "TonStonfiV1Pool_GetPoolDataResult", result, err
-}
-
-func DecodeTonStonfiV2PoolConstProduct_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 12 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonStonfiV2PoolConstProduct_GetPoolDataResult
-	err = stack.Unmarshal(&result)
-	return "TonStonfiV2PoolConstProduct_GetPoolDataResult", result, err
-}
-
-func DecodeTonStonfiV2PoolStableSwap_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonStonfiV2PoolStableSwap_GetPoolDataResult
-	err = stack.Unmarshal(&result)
-	return "TonStonfiV2PoolStableSwap_GetPoolDataResult", result, err
-}
-
-func DecodeTonStonfiV2PoolWeightedStableSwap_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 16 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult
-	err = stack.Unmarshal(&result)
-	return "TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult", result, err
-}
-
-type TonCocoonClient_GetCocoonClientDataResult struct {
-	Field struct {
-		Field0 tlb.MsgAddress
-		Field1 tlb.MsgAddress
-		Field2 tlb.Int257
-		Field3 tlb.Int257
-		Field4 tlb.Int257
-		Field5 tlb.Int257
-		Field6 tlb.Int257
-		Field7 tlb.Int257
-		Field8 tlb.Int257
-	} `vmStackHint:"tensor"`
-}
-
-func GetCocoonClientData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 75156 for "get_cocoon_client_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 75156, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonClient_GetCocoonClientDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonClient_GetCocoonClientDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonClient_GetCocoonClientDataResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonClient_GetCocoonClientDataResult", result, err
-}
-
-type TonTep74JettonMinter_GetWalletAddressResult struct {
-	Value tlb.MsgAddress
-}
-
-func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val, err = tlb.TlbStructToVmCellSlice(ownerAddress)
-	if err != nil {
-		return "", nil, err
-	}
-	stack.Put(val)
-
-	// MethodID = 103289 for "get_wallet_address" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103289, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonTep74JettonMinter_GetWalletAddressResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonTep74JettonMinter_GetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonTep74JettonMinter_GetWalletAddressResult
-	err = stack.Unmarshal(&result)
-	return "TonTep74JettonMinter_GetWalletAddressResult", result, err
 }
 
 type TonStonfiV2PoolConstProduct_GetLpAccountAddressResult = TonStonfiV2GetLpAccountAddressResult
@@ -462,6 +290,139 @@ func DecodeTonStonfiV2PoolWeightedStableSwap_GetLpAccountAddressResult(stack tlb
 	return "TonStonfiV2PoolWeightedStableSwap_GetLpAccountAddressResult", result, err
 }
 
+type TonCocoonClient_GetCocoonClientDataResult struct {
+	Field struct {
+		Field0 tlb.MsgAddress
+		Field1 tlb.MsgAddress
+		Field2 tlb.Int257
+		Field3 tlb.Int257
+		Field4 tlb.Int257
+		Field5 tlb.Int257
+		Field6 tlb.Int257
+		Field7 tlb.Int257
+		Field8 tlb.Int257
+	} `vmStackHint:"tensor"`
+}
+
+func GetCocoonClientData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 75156 for "get_cocoon_client_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 75156, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonClient_GetCocoonClientDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonClient_GetCocoonClientDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonClient_GetCocoonClientDataResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonClient_GetCocoonClientDataResult", result, err
+}
+
+type TonCocoonProxy_GetCocoonProxyDataResult struct {
+	Field struct {
+		Field0  tlb.MsgAddress
+		Field1  tlb.Int257
+		Field2  tlb.MsgAddress
+		Field3  tlb.Int257
+		Field4  tlb.VarUInteger16
+		Field5  tlb.VarUInteger16
+		Field6  tlb.Int257
+		Field7  tlb.Int257
+		Field8  tlb.Int257
+		Field9  tlb.VarUInteger16
+		Field10 tlb.VarUInteger16
+		Field11 tlb.Int257
+	} `vmStackHint:"tensor"`
+}
+
+func GetCocoonProxyData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 97687 for "get_cocoon_proxy_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97687, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonProxy_GetCocoonProxyDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonProxy_GetCocoonProxyDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 12 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonProxy_GetCocoonProxyDataResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonProxy_GetCocoonProxyDataResult", result, err
+}
+
+type TonCocoonRoot_GetCocoonDataResult struct {
+	Field struct {
+		Field0 tlb.Int257
+		Field1 tlb.Int257
+		Field2 tlb.Int257
+		Field3 tlb.Int257
+		Field4 tlb.Int257
+		Field5 tlb.Int257
+		Field6 tlb.Int257
+		Field7 tlb.Int257
+		Field8 tlb.Int257
+		Field9 tlb.Any
+	} `vmStackHint:"tensor"`
+}
+
+func GetCocoonData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 96613 for "get_cocoon_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96613, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonRoot_GetCocoonDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonRoot_GetCocoonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonRoot_GetCocoonDataResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonRoot_GetCocoonDataResult", result, err
+}
+
 type TonCocoonRoot_GetCurParamsResult struct {
 	Field struct {
 		Field0  tlb.Int257
@@ -510,6 +471,209 @@ func DecodeTonCocoonRoot_GetCurParamsResult(stack tlb.VmStack) (resultType strin
 	return "TonCocoonRoot_GetCurParamsResult", result, err
 }
 
+type TonCocoonWallet_GetPublicKeyResult struct {
+	Value tlb.Int257
+}
+
+func GetPublicKey(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 78748 for "get_public_key" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 78748, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonWallet_GetPublicKeyResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonWallet_GetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonWallet_GetPublicKeyResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonWallet_GetPublicKeyResult", result, err
+}
+
+type TonCocoonWallet_GetOwnerAddressResult struct {
+	Value tlb.MsgAddress
+}
+
+func GetOwnerAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 114619 for "get_owner_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 114619, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonWallet_GetOwnerAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonCocoonWallet_GetOwnerAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonCocoonWallet_GetOwnerAddressResult
+	err = stack.Unmarshal(&result)
+	return "TonCocoonWallet_GetOwnerAddressResult", result, err
+}
+
+type TonTep74JettonMinter_GetWalletAddressResult struct {
+	Value tlb.MsgAddress
+}
+
+func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.MsgAddress) (string, any, error) {
+	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(ownerAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
+
+	// MethodID = 103289 for "get_wallet_address" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103289, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonTep74JettonMinter_GetWalletAddressResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonTep74JettonMinter_GetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonTep74JettonMinter_GetWalletAddressResult
+	err = stack.Unmarshal(&result)
+	return "TonTep74JettonMinter_GetWalletAddressResult", result, err
+}
+
+type TonTep74JettonMinter_GetJettonDataResult = TonTep74JettonDataReply
+
+func GetJettonData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 106029 for "get_jetton_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 106029, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonTep74JettonMinter_GetJettonDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonTep74JettonMinter_GetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonTep74JettonMinter_GetJettonDataResult
+	err = stack.Unmarshal(&result)
+	return "TonTep74JettonMinter_GetJettonDataResult", result, err
+}
+
+type TonStonfiV1Pool_GetPoolDataResult = TonStonfiV1GetPoolDataStonfiV1
+
+type TonStonfiV2PoolConstProduct_GetPoolDataResult = TonStonfiV2GetPoolDataStonfiV2
+
+type TonStonfiV2PoolStableSwap_GetPoolDataResult = TonStonfiV2GetPoolDataStonfiV2StableSwap
+
+type TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult = TonStonfiV2GetPoolDataStonfiV2WeightedStableSwap
+
+func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 81689 for "get_pool_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 81689, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonStonfiV1Pool_GetPoolDataResult, DecodeTonStonfiV2PoolConstProduct_GetPoolDataResult, DecodeTonStonfiV2PoolStableSwap_GetPoolDataResult, DecodeTonStonfiV2PoolWeightedStableSwap_GetPoolDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonStonfiV1Pool_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonStonfiV1Pool_GetPoolDataResult
+	err = stack.Unmarshal(&result)
+	return "TonStonfiV1Pool_GetPoolDataResult", result, err
+}
+
+func DecodeTonStonfiV2PoolConstProduct_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 12 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonStonfiV2PoolConstProduct_GetPoolDataResult
+	err = stack.Unmarshal(&result)
+	return "TonStonfiV2PoolConstProduct_GetPoolDataResult", result, err
+}
+
+func DecodeTonStonfiV2PoolStableSwap_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonStonfiV2PoolStableSwap_GetPoolDataResult
+	err = stack.Unmarshal(&result)
+	return "TonStonfiV2PoolStableSwap_GetPoolDataResult", result, err
+}
+
+func DecodeTonStonfiV2PoolWeightedStableSwap_GetPoolDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 16 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult
+	err = stack.Unmarshal(&result)
+	return "TonStonfiV2PoolWeightedStableSwap_GetPoolDataResult", result, err
+}
+
 type TonCocoonRoot_WorkerHashIsValidResult struct {
 	Value tlb.Int257
 }
@@ -549,201 +713,6 @@ func DecodeTonCocoonRoot_WorkerHashIsValidResult(stack tlb.VmStack) (resultType 
 	return "TonCocoonRoot_WorkerHashIsValidResult", result, err
 }
 
-type TonCocoonProxy_GetCocoonProxyDataResult struct {
-	Field struct {
-		Field0  tlb.MsgAddress
-		Field1  tlb.Int257
-		Field2  tlb.MsgAddress
-		Field3  tlb.Int257
-		Field4  tlb.Grams
-		Field5  tlb.Grams
-		Field6  tlb.Int257
-		Field7  tlb.Int257
-		Field8  tlb.Int257
-		Field9  tlb.Grams
-		Field10 tlb.Grams
-		Field11 tlb.Int257
-	} `vmStackHint:"tensor"`
-}
-
-func GetCocoonProxyData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 97687 for "get_cocoon_proxy_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97687, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonProxy_GetCocoonProxyDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonProxy_GetCocoonProxyDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 12 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonProxy_GetCocoonProxyDataResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonProxy_GetCocoonProxyDataResult", result, err
-}
-
-type TonCocoonRoot_LastProxySeqnoResult struct {
-	Value tlb.Int257
-}
-
-func LastProxySeqno(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 65647 for "last_proxy_seqno" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 65647, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonRoot_LastProxySeqnoResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonRoot_LastProxySeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonRoot_LastProxySeqnoResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonRoot_LastProxySeqnoResult", result, err
-}
-
-type TonCocoonRoot_GetCocoonDataResult struct {
-	Field struct {
-		Field0 tlb.Int257
-		Field1 tlb.Int257
-		Field2 tlb.Int257
-		Field3 tlb.Int257
-		Field4 tlb.Int257
-		Field5 tlb.Int257
-		Field6 tlb.Int257
-		Field7 tlb.Int257
-		Field8 tlb.Int257
-		Field9 tlb.Any
-	} `vmStackHint:"tensor"`
-}
-
-func GetCocoonData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 96613 for "get_cocoon_data" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 96613, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonRoot_GetCocoonDataResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonRoot_GetCocoonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonRoot_GetCocoonDataResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonRoot_GetCocoonDataResult", result, err
-}
-
-type TonCocoonRoot_ModelHashIsValidResult struct {
-	Value tlb.Int257
-}
-
-func ModelHashIsValid(ctx context.Context, executor Executor, reqAccountID ton.AccountID, hash tlb.Int257) (string, any, error) {
-	stack := tlb.VmStack{}
-	var (
-		val tlb.VmStackValue
-		err error
-	)
-	val = tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: hash}
-	stack.Put(val)
-
-	// MethodID = 72587 for "model_hash_is_valid" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 72587, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonRoot_ModelHashIsValidResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonRoot_ModelHashIsValidResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonRoot_ModelHashIsValidResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonRoot_ModelHashIsValidResult", result, err
-}
-
-type TonCocoonWallet_GetOwnerAddressResult struct {
-	Value tlb.MsgAddress
-}
-
-func GetOwnerAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
-	stack := tlb.VmStack{}
-
-	// MethodID = 114619 for "get_owner_address" method
-	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 114619, stack)
-	if err != nil {
-		return "", nil, err
-	}
-	if errCode != 0 && errCode != 1 {
-		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
-	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonCocoonWallet_GetOwnerAddressResult} {
-		s, r, err := f(stack)
-		if err == nil {
-			return s, r, nil
-		}
-	}
-	return "", nil, fmt.Errorf("can not decode outputs")
-}
-
-func DecodeTonCocoonWallet_GetOwnerAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
-		return "", nil, fmt.Errorf("invalid stack format")
-	}
-	var result TonCocoonWallet_GetOwnerAddressResult
-	err = stack.Unmarshal(&result)
-	return "TonCocoonWallet_GetOwnerAddressResult", result, err
-}
-
 type TonCocoonWorker_GetCocoonWorkerDataResult struct {
 	Field struct {
 		Field0 tlb.MsgAddress
@@ -781,4 +750,35 @@ func DecodeTonCocoonWorker_GetCocoonWorkerDataResult(stack tlb.VmStack) (resultT
 	var result TonCocoonWorker_GetCocoonWorkerDataResult
 	err = stack.Unmarshal(&result)
 	return "TonCocoonWorker_GetCocoonWorkerDataResult", result, err
+}
+
+type TonTep74JettonWallet_GetWalletDataResult = TonTep74JettonWalletDataReply
+
+func GetWalletData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+	stack := tlb.VmStack{}
+
+	// MethodID = 97026 for "get_wallet_data" method
+	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 97026, stack)
+	if err != nil {
+		return "", nil, err
+	}
+	if errCode != 0 && errCode != 1 {
+		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
+	}
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeTonTep74JettonWallet_GetWalletDataResult} {
+		s, r, err := f(stack)
+		if err == nil {
+			return s, r, nil
+		}
+	}
+	return "", nil, fmt.Errorf("can not decode outputs")
+}
+
+func DecodeTonTep74JettonWallet_GetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result TonTep74JettonWallet_GetWalletDataResult
+	err = stack.Unmarshal(&result)
+	return "TonTep74JettonWallet_GetWalletDataResult", result, err
 }

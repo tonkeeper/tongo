@@ -57,27 +57,29 @@ type GetMethodWithAbi struct {
 }
 
 type Generator struct {
-	structRefs        map[string]tolkAbi.StructDeclaration
-	aliasRefs         map[string]tolkAbi.AliasDeclaration
-	enumRefs          map[string]tolkAbi.EnumDeclaration
-	abi               []tolkAbi.ABI
-	abiByGetMethod    map[string][]GetMethodWithAbi
-	newTlbTypes       map[string]struct{}
-	loadedTlbTypes    []string
-	loadedTlbMsgTypes map[tlb.Tag][]TLBMsgBody
+	structRefs            map[string]tolkAbi.StructDeclaration
+	aliasRefs             map[string]tolkAbi.AliasDeclaration
+	enumRefs              map[string]tolkAbi.EnumDeclaration
+	abi                   []tolkAbi.ABI
+	abiByGetMethod        map[string][]GetMethodWithAbi
+	newTlbTypes           map[string]struct{}
+	loadedTlbTypes        []string
+	loadedTlbMsgTypes     map[tlb.Tag][]TLBMsgBody
+	loadedTlbPayloadTypes map[string]map[tlb.Tag][]TLBMsgBody
 }
 
 type MsgType int
 
 func NewGenerator(abi []tolkAbi.ABI, abiByGetMethod map[string][]GetMethodWithAbi) *Generator {
 	g := &Generator{
-		structRefs:        make(map[string]tolkAbi.StructDeclaration),
-		aliasRefs:         make(map[string]tolkAbi.AliasDeclaration),
-		enumRefs:          make(map[string]tolkAbi.EnumDeclaration),
-		loadedTlbMsgTypes: make(map[tlb.Tag][]TLBMsgBody),
-		newTlbTypes:       make(map[string]struct{}),
-		abi:               abi,
-		abiByGetMethod:    abiByGetMethod,
+		structRefs:            make(map[string]tolkAbi.StructDeclaration),
+		aliasRefs:             make(map[string]tolkAbi.AliasDeclaration),
+		enumRefs:              make(map[string]tolkAbi.EnumDeclaration),
+		loadedTlbMsgTypes:     make(map[tlb.Tag][]TLBMsgBody),
+		loadedTlbPayloadTypes: make(map[string]map[tlb.Tag][]TLBMsgBody),
+		newTlbTypes:           make(map[string]struct{}),
+		abi:                   abi,
+		abiByGetMethod:        abiByGetMethod,
 	}
 	err := g.registerABI()
 	if err != nil {
@@ -207,14 +209,19 @@ func (g *Generator) registerPayload(result *tolkParser.DeclrResult, declr tolkAb
 
 	payloadName := utils.ToCamelCase(*declr.PayloadType)
 
-	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], TLBMsgBody{
+	msg := TLBMsgBody{
 		Type:             MsgTypePayload,
 		GolangTypeName:   result.Name,
 		GolangOpcodeName: result.Name + payloadName + "PayloadOp",
 		OperationName:    result.Name + payloadName + "Payload",
 		Tag:              tag.Val,
 		Code:             result.Code,
-	})
+	}
+	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
+	if _, init := g.loadedTlbPayloadTypes[namespace]; !init {
+		g.loadedTlbPayloadTypes[namespace] = make(map[tlb.Tag][]TLBMsgBody)
+	}
+	g.loadedTlbPayloadTypes[namespace][key] = append(g.loadedTlbPayloadTypes[namespace][key], msg)
 
 	return nil
 }
@@ -268,14 +275,16 @@ func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace stri
 		return nil
 	}
 	msgsName[msgName] = struct{}{}
-	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], TLBMsgBody{
+	msg := TLBMsgBody{
 		Type:             mType,
 		GolangTypeName:   msgName,
 		GolangOpcodeName: namespace + typePrefix + opSuffix,
 		OperationName:    namespace + typePrefix,
 		Tag:              tag.Val,
 		Code:             res.Code,
-	})
+	}
+	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
+	//g.extendedLoadedTlbMsgTypes[contractFullName] = append(g.extendedLoadedTlbMsgTypes[contractFullName], msg)
 
 	return nil
 }
@@ -311,8 +320,9 @@ func (g *Generator) CollectedTypes() string {
 }
 
 type messagesContext struct {
-	Operations map[tlb.Tag][]TLBMsgBody
-	WhatRender string
+	OperationsByIface map[string]map[tlb.Tag][]TLBMsgBody
+	OperationsByTag   map[tlb.Tag][]TLBMsgBody
+	WhatRender        string
 }
 
 func (g *Generator) GenerateMsgDecoder() string {
@@ -323,7 +333,10 @@ func (g *Generator) GenerateMsgDecoder() string {
 }
 
 func (g *Generator) generateMsgDecoder(msgType MsgType, what string) string {
-	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody), WhatRender: what}
+	context := messagesContext{
+		OperationsByTag: make(map[tlb.Tag][]TLBMsgBody),
+		WhatRender:      what,
+	}
 
 	for tag, operation := range g.loadedTlbMsgTypes {
 		filtered := make([]TLBMsgBody, 0, len(operation))
@@ -333,7 +346,7 @@ func (g *Generator) generateMsgDecoder(msgType MsgType, what string) string {
 			}
 		}
 		if len(filtered) > 0 {
-			context.Operations[tag] = filtered
+			context.OperationsByTag[tag] = filtered
 		}
 	}
 	tmpl, err := template.New("messages").Parse(messagesTemplate)
@@ -715,6 +728,7 @@ type interfaceDescription struct {
 
 func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, error) {
 	context := struct {
+		NamespaceToInterfaces          map[string][]string
 		Interfaces                     map[string]string
 		InvocationOrder                []methodDescription
 		InterfaceOrder                 []interfaceDescription
@@ -722,12 +736,13 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 		Inheritance                    map[string]string
 		IntMsgs, ExtInMsgs, ExtOutMsgs map[string][]string
 	}{
-		Interfaces:  map[string]string{},
-		KnownHashes: map[string]interfaceDescription{},
-		Inheritance: map[string]string{},
-		IntMsgs:     map[string][]string{},
-		ExtInMsgs:   map[string][]string{},
-		ExtOutMsgs:  map[string][]string{},
+		NamespaceToInterfaces: map[string][]string{},
+		Interfaces:            map[string]string{},
+		KnownHashes:           map[string]interfaceDescription{},
+		Inheritance:           map[string]string{},
+		IntMsgs:               map[string][]string{},
+		ExtInMsgs:             map[string][]string{},
+		ExtOutMsgs:            map[string][]string{},
 	}
 	descriptions := map[string]methodDescription{}
 
@@ -775,7 +790,9 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 
 	for _, abi := range g.abi {
 		ifaceName := abi.GetGolangContractName()
+		namespace := abi.GetGolangNamespace()
 		context.Interfaces[ifaceName] = utils.ToSnakeCase(ifaceName)
+		context.NamespaceToInterfaces[namespace] = append(context.NamespaceToInterfaces[namespace], ifaceName)
 		ifaceMethods := map[string]string{}
 		for currentIface := ifaceName; currentIface != ""; currentIface = inheritance[currentIface] {
 			currentMethods := methodsByIface[currentIface]
@@ -851,14 +868,18 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 }
 
 func (g *Generator) RenderPayload() (string, error) {
-	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody)}
+	context := messagesContext{
+		OperationsByIface: make(map[string]map[tlb.Tag][]TLBMsgBody),
+		OperationsByTag:   make(map[tlb.Tag][]TLBMsgBody),
+	}
 	for tag, operation := range g.loadedTlbMsgTypes {
 		for _, body := range operation {
 			if body.Type == MsgTypePayload {
-				context.Operations[tag] = append(context.Operations[tag], body)
+				context.OperationsByTag[tag] = append(context.OperationsByTag[tag], body)
 			}
 		}
 	}
+	context.OperationsByIface = g.loadedTlbPayloadTypes
 	tmpl, err := template.New("payloads").Parse(payloadTmpl)
 	if err != nil {
 		return "", err

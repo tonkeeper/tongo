@@ -100,6 +100,90 @@
           }
         }
       ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiProvideLiquidity",
+      "payloadType": "jetton",
+      "prefix": {
+        "prefixStr": "0xfcf9e58f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "minLpOut",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CrossSwapBody",
+      "fields": [
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "receiver",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "refundFwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "refundPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "refFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
     }
   ],
   "incomingMessages": [],

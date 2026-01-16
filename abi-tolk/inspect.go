@@ -58,7 +58,29 @@ type InspectorOptions struct {
 	libResolver       libResolver
 }
 
+type contractNamespace uint32
+
 type ContractInterface uint32
+
+func toTlbContractInterface(ifaces []ContractInterface) []tlb.ContractInterface {
+	res := make([]tlb.ContractInterface, len(ifaces))
+	for i, iface := range ifaces {
+		res[i] = tlb.ContractInterface(iface)
+	}
+	return res
+}
+
+func fromTlbContractInterface(ifaces []tlb.ContractInterface) []ContractInterface {
+	res := make([]ContractInterface, len(ifaces))
+	for i, iface := range ifaces {
+		res[i] = ContractInterface(iface)
+	}
+	return res
+}
+
+func (c ContractInterface) getNamespace() contractNamespace {
+	return namespaceByInterface[c]
+}
 
 func (c ContractInterface) MarshalJSON() ([]byte, error) {
 	return json.Marshal(c.String())

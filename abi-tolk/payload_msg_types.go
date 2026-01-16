@@ -51,11 +51,11 @@ func decodeTonTolkTestsEncryptedTextCommentJettonPayloadOpPayload(j *Payload, c 
 	return err
 }
 
-func decodeTonTolkTestsStonfiSwapJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsStonfiSwap
+func decodeTonStonfiV1StonfiSwapJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonStonfiV1StonfiSwap
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsStonfiSwapJettonPayloadOp
+		j.SumType = TonStonfiV1StonfiSwapJettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -73,11 +73,11 @@ func decodeTonTolkTestsTegroAddLiquidityJettonPayloadOpPayload(j *Payload, c *bo
 	return err
 }
 
-func decodeTonTolkTestsStonfiProvideLpV2JettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsStonfiProvideLpV2
+func decodeTonStonfiV2StonfiProvideLpV2JettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonStonfiV2StonfiProvideLpV2
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsStonfiProvideLpV2JettonPayloadOp
+		j.SumType = TonStonfiV2StonfiProvideLpV2JettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -117,11 +117,11 @@ func decodeTonTolkTestsPoolFundAccountJettonPayloadOpPayload(j *Payload, c *boc.
 	return err
 }
 
-func decodeTonTolkTestsStonfiSwapOkRefJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsStonfiSwapOkRef
+func decodeTonStonfiV1StonfiSwapOkRefJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonStonfiV1StonfiSwapOkRef
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsStonfiSwapOkRefJettonPayloadOp
+		j.SumType = TonStonfiV1StonfiSwapOkRefJettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -150,11 +150,11 @@ func decodeTonTolkTestsBidaskDammProvideJettonPayloadOpPayload(j *Payload, c *bo
 	return err
 }
 
-func decodeTonTolkTestsStonfiSwapV2JettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsStonfiSwapV2
+func decodeTonStonfiV2StonfiSwapV2JettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonStonfiV2StonfiSwapV2
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsStonfiSwapV2JettonPayloadOp
+		j.SumType = TonStonfiV2StonfiSwapV2JettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -348,11 +348,11 @@ func decodeTonTolkTestsMoonSwapFailedJettonPayloadOpPayload(j *Payload, c *boc.C
 	return err
 }
 
-func decodeTonTolkTestsStonfiSwapOkJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsStonfiSwapOk
+func decodeTonStonfiV2StonfiSwapOkJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonStonfiV2StonfiSwapOk
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsStonfiSwapOkJettonPayloadOp
+		j.SumType = TonStonfiV2StonfiSwapOkJettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -458,11 +458,11 @@ func decodeTonTolkTestsDepositPayloadJettonPayloadOpPayload(j *Payload, c *boc.C
 	return err
 }
 
-func decodeTonTolkTestsStonfiProvideLiquidityJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsStonfiProvideLiquidity
+func decodeTonStonfiV2StonfiProvideLiquidityJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonStonfiV2StonfiProvideLiquidity
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsStonfiProvideLiquidityJettonPayloadOp
+		j.SumType = TonStonfiV2StonfiProvideLiquidityJettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -474,16 +474,16 @@ const (
 	TonTolkTestsTegroJettonSwapJettonPayloadOp            PayloadOpName = "TonTolkTestsTegroJettonSwapJettonPayload"
 	TonTolkTestsCoffeeStakingLockJettonPayloadOp          PayloadOpName = "TonTolkTestsCoffeeStakingLockJettonPayload"
 	TonTolkTestsEncryptedTextCommentJettonPayloadOp       PayloadOpName = "TonTolkTestsEncryptedTextCommentJettonPayload"
-	TonTolkTestsStonfiSwapJettonPayloadOp                 PayloadOpName = "TonTolkTestsStonfiSwapJettonPayload"
+	TonStonfiV1StonfiSwapJettonPayloadOp                  PayloadOpName = "TonStonfiV1StonfiSwapJettonPayload"
 	TonTolkTestsTegroAddLiquidityJettonPayloadOp          PayloadOpName = "TonTolkTestsTegroAddLiquidityJettonPayload"
-	TonTolkTestsStonfiProvideLpV2JettonPayloadOp          PayloadOpName = "TonTolkTestsStonfiProvideLpV2JettonPayload"
+	TonStonfiV2StonfiProvideLpV2JettonPayloadOp           PayloadOpName = "TonStonfiV2StonfiProvideLpV2JettonPayload"
 	TonTolkTestsBidaskProvideBothJettonPayloadOp          PayloadOpName = "TonTolkTestsBidaskProvideBothJettonPayload"
 	TonTolkTestsDedustDepositLiquidityJettonPayloadOp     PayloadOpName = "TonTolkTestsDedustDepositLiquidityJettonPayload"
 	TonTolkTestsPoolFundAccountJettonPayloadOp            PayloadOpName = "TonTolkTestsPoolFundAccountJettonPayload"
-	TonTolkTestsStonfiSwapOkRefJettonPayloadOp            PayloadOpName = "TonTolkTestsStonfiSwapOkRefJettonPayload"
+	TonStonfiV1StonfiSwapOkRefJettonPayloadOp             PayloadOpName = "TonStonfiV1StonfiSwapOkRefJettonPayload"
 	TonTolkTestsCoffeeCrossDexResendJettonPayloadOp       PayloadOpName = "TonTolkTestsCoffeeCrossDexResendJettonPayload"
 	TonTolkTestsBidaskDammProvideJettonPayloadOp          PayloadOpName = "TonTolkTestsBidaskDammProvideJettonPayload"
-	TonTolkTestsStonfiSwapV2JettonPayloadOp               PayloadOpName = "TonTolkTestsStonfiSwapV2JettonPayload"
+	TonStonfiV2StonfiSwapV2JettonPayloadOp                PayloadOpName = "TonStonfiV2StonfiSwapV2JettonPayload"
 	TonTolkTestsBidaskDammProvideOneSideJettonPayloadOp   PayloadOpName = "TonTolkTestsBidaskDammProvideOneSideJettonPayload"
 	TonTolkTestsStormDepositJettonJettonPayloadOp         PayloadOpName = "TonTolkTestsStormDepositJettonJettonPayload"
 	TonTolkTestsInvoicePayloadJettonPayloadOp             PayloadOpName = "TonTolkTestsInvoicePayloadJettonPayload"
@@ -501,7 +501,7 @@ const (
 	TonTolkTestsCoffeeDepositLiquidityJettonPayloadOp     PayloadOpName = "TonTolkTestsCoffeeDepositLiquidityJettonPayload"
 	TonTolkTestsCoffeeNotificationJettonPayloadOp         PayloadOpName = "TonTolkTestsCoffeeNotificationJettonPayload"
 	TonTolkTestsMoonSwapFailedJettonPayloadOp             PayloadOpName = "TonTolkTestsMoonSwapFailedJettonPayload"
-	TonTolkTestsStonfiSwapOkJettonPayloadOp               PayloadOpName = "TonTolkTestsStonfiSwapOkJettonPayload"
+	TonStonfiV2StonfiSwapOkJettonPayloadOp                PayloadOpName = "TonStonfiV2StonfiSwapOkJettonPayload"
 	TonTolkTestsStormStakeJettonPayloadOp                 PayloadOpName = "TonTolkTestsStormStakeJettonPayload"
 	TonTolkTestsWithdrawPayloadJettonPayloadOp            PayloadOpName = "TonTolkTestsWithdrawPayloadJettonPayload"
 	TonTolkTestsMoonSwapSucceedJettonPayloadOp            PayloadOpName = "TonTolkTestsMoonSwapSucceedJettonPayload"
@@ -511,22 +511,22 @@ const (
 	TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOp PayloadOpName = "TonTolkTestsCoffeeMevProtectFailedSwapJettonPayload"
 	TonTolkTestsBidaskSwapJettonPayloadOp                 PayloadOpName = "TonTolkTestsBidaskSwapJettonPayload"
 	TonTolkTestsDepositPayloadJettonPayloadOp             PayloadOpName = "TonTolkTestsDepositPayloadJettonPayload"
-	TonTolkTestsStonfiProvideLiquidityJettonPayloadOp     PayloadOpName = "TonTolkTestsStonfiProvideLiquidityJettonPayload"
+	TonStonfiV2StonfiProvideLiquidityJettonPayloadOp      PayloadOpName = "TonStonfiV2StonfiProvideLiquidityJettonPayload"
 
 	TonTolkTestsTextCommentJettonPayloadOpCode                PayloadOpCode = 0x00000000
 	TonTolkTestsTegroJettonSwapJettonPayloadOpCode            PayloadOpCode = 0x01fb7a25
 	TonTolkTestsCoffeeStakingLockJettonPayloadOpCode          PayloadOpCode = 0x0c0ffede
 	TonTolkTestsEncryptedTextCommentJettonPayloadOpCode       PayloadOpCode = 0x2167da4b
-	TonTolkTestsStonfiSwapJettonPayloadOpCode                 PayloadOpCode = 0x25938561
+	TonStonfiV1StonfiSwapJettonPayloadOpCode                  PayloadOpCode = 0x25938561
 	TonTolkTestsTegroAddLiquidityJettonPayloadOpCode          PayloadOpCode = 0x287e167a
-	TonTolkTestsStonfiProvideLpV2JettonPayloadOpCode          PayloadOpCode = 0x37c096df
+	TonStonfiV2StonfiProvideLpV2JettonPayloadOpCode           PayloadOpCode = 0x37c096df
 	TonTolkTestsBidaskProvideBothJettonPayloadOpCode          PayloadOpCode = 0x3ea0bafc
 	TonTolkTestsDedustDepositLiquidityJettonPayloadOpCode     PayloadOpCode = 0x40e108d6
 	TonTolkTestsPoolFundAccountJettonPayloadOpCode            PayloadOpCode = 0x4468de77
-	TonTolkTestsStonfiSwapOkRefJettonPayloadOpCode            PayloadOpCode = 0x45078540
+	TonStonfiV1StonfiSwapOkRefJettonPayloadOpCode             PayloadOpCode = 0x45078540
 	TonTolkTestsCoffeeCrossDexResendJettonPayloadOpCode       PayloadOpCode = 0x4ee9b106
 	TonTolkTestsBidaskDammProvideJettonPayloadOpCode          PayloadOpCode = 0x63ec24ae
-	TonTolkTestsStonfiSwapV2JettonPayloadOpCode               PayloadOpCode = 0x6664de2a
+	TonStonfiV2StonfiSwapV2JettonPayloadOpCode                PayloadOpCode = 0x6664de2a
 	TonTolkTestsBidaskDammProvideOneSideJettonPayloadOpCode   PayloadOpCode = 0x729c04c8
 	TonTolkTestsStormDepositJettonJettonPayloadOpCode         PayloadOpCode = 0x76840119
 	TonTolkTestsInvoicePayloadJettonPayloadOpCode             PayloadOpCode = 0x7aa23eb5
@@ -544,7 +544,7 @@ const (
 	TonTolkTestsCoffeeDepositLiquidityJettonPayloadOpCode     PayloadOpCode = 0xc0ffee12
 	TonTolkTestsCoffeeNotificationJettonPayloadOpCode         PayloadOpCode = 0xc0ffee36
 	TonTolkTestsMoonSwapFailedJettonPayloadOpCode             PayloadOpCode = 0xc47c1f57
-	TonTolkTestsStonfiSwapOkJettonPayloadOpCode               PayloadOpCode = 0xc64370e5
+	TonStonfiV2StonfiSwapOkJettonPayloadOpCode                PayloadOpCode = 0xc64370e5
 	TonTolkTestsStormStakeJettonPayloadOpCode                 PayloadOpCode = 0xc89a3ee4
 	TonTolkTestsWithdrawPayloadJettonPayloadOpCode            PayloadOpCode = 0xcb03bfaf
 	TonTolkTestsMoonSwapSucceedJettonPayloadOpCode            PayloadOpCode = 0xcb7f38d6
@@ -554,7 +554,7 @@ const (
 	TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOpCode PayloadOpCode = 0xee51ce51
 	TonTolkTestsBidaskSwapJettonPayloadOpCode                 PayloadOpCode = 0xf2ef6c1b
 	TonTolkTestsDepositPayloadJettonPayloadOpCode             PayloadOpCode = 0xf9471134
-	TonTolkTestsStonfiProvideLiquidityJettonPayloadOpCode     PayloadOpCode = 0xfcf9e58f
+	TonStonfiV2StonfiProvideLiquidityJettonPayloadOpCode      PayloadOpCode = 0xfcf9e58f
 )
 
 var KnownPayloadTypes = map[string]any{
@@ -562,16 +562,16 @@ var KnownPayloadTypes = map[string]any{
 	TonTolkTestsTegroJettonSwapJettonPayloadOp:            TonTolkTestsTegroJettonSwap{},
 	TonTolkTestsCoffeeStakingLockJettonPayloadOp:          TonTolkTestsCoffeeStakingLock{},
 	TonTolkTestsEncryptedTextCommentJettonPayloadOp:       TonTolkTestsEncryptedTextComment{},
-	TonTolkTestsStonfiSwapJettonPayloadOp:                 TonTolkTestsStonfiSwap{},
+	TonStonfiV1StonfiSwapJettonPayloadOp:                  TonStonfiV1StonfiSwap{},
 	TonTolkTestsTegroAddLiquidityJettonPayloadOp:          TonTolkTestsTegroAddLiquidity{},
-	TonTolkTestsStonfiProvideLpV2JettonPayloadOp:          TonTolkTestsStonfiProvideLpV2{},
+	TonStonfiV2StonfiProvideLpV2JettonPayloadOp:           TonStonfiV2StonfiProvideLpV2{},
 	TonTolkTestsBidaskProvideBothJettonPayloadOp:          TonTolkTestsBidaskProvideBoth{},
 	TonTolkTestsDedustDepositLiquidityJettonPayloadOp:     TonTolkTestsDedustDepositLiquidity{},
 	TonTolkTestsPoolFundAccountJettonPayloadOp:            TonTolkTestsPoolFundAccount{},
-	TonTolkTestsStonfiSwapOkRefJettonPayloadOp:            TonTolkTestsStonfiSwapOkRef{},
+	TonStonfiV1StonfiSwapOkRefJettonPayloadOp:             TonStonfiV1StonfiSwapOkRef{},
 	TonTolkTestsCoffeeCrossDexResendJettonPayloadOp:       TonTolkTestsCoffeeCrossDexResend{},
 	TonTolkTestsBidaskDammProvideJettonPayloadOp:          TonTolkTestsBidaskDammProvide{},
-	TonTolkTestsStonfiSwapV2JettonPayloadOp:               TonTolkTestsStonfiSwapV2{},
+	TonStonfiV2StonfiSwapV2JettonPayloadOp:                TonStonfiV2StonfiSwapV2{},
 	TonTolkTestsBidaskDammProvideOneSideJettonPayloadOp:   TonTolkTestsBidaskDammProvideOneSide{},
 	TonTolkTestsStormDepositJettonJettonPayloadOp:         TonTolkTestsStormDepositJetton{},
 	TonTolkTestsInvoicePayloadJettonPayloadOp:             TonTolkTestsInvoicePayload{},
@@ -589,7 +589,7 @@ var KnownPayloadTypes = map[string]any{
 	TonTolkTestsCoffeeDepositLiquidityJettonPayloadOp:     TonTolkTestsCoffeeDepositLiquidity{},
 	TonTolkTestsCoffeeNotificationJettonPayloadOp:         TonTolkTestsCoffeeNotification{},
 	TonTolkTestsMoonSwapFailedJettonPayloadOp:             TonTolkTestsMoonSwapFailed{},
-	TonTolkTestsStonfiSwapOkJettonPayloadOp:               TonTolkTestsStonfiSwapOk{},
+	TonStonfiV2StonfiSwapOkJettonPayloadOp:                TonStonfiV2StonfiSwapOk{},
 	TonTolkTestsStormStakeJettonPayloadOp:                 TonTolkTestsStormStake{},
 	TonTolkTestsWithdrawPayloadJettonPayloadOp:            TonTolkTestsWithdrawPayload{},
 	TonTolkTestsMoonSwapSucceedJettonPayloadOp:            TonTolkTestsMoonSwapSucceed{},
@@ -599,23 +599,23 @@ var KnownPayloadTypes = map[string]any{
 	TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOp: TonTolkTestsCoffeeMevProtectFailedSwap{},
 	TonTolkTestsBidaskSwapJettonPayloadOp:                 TonTolkTestsBidaskSwap{},
 	TonTolkTestsDepositPayloadJettonPayloadOp:             TonTolkTestsDepositPayload{},
-	TonTolkTestsStonfiProvideLiquidityJettonPayloadOp:     TonTolkTestsStonfiProvideLiquidity{},
+	TonStonfiV2StonfiProvideLiquidityJettonPayloadOp:      TonStonfiV2StonfiProvideLiquidity{},
 }
 var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
 	TonTolkTestsTextCommentJettonPayloadOp:                TonTolkTestsTextCommentJettonPayloadOpCode,
 	TonTolkTestsTegroJettonSwapJettonPayloadOp:            TonTolkTestsTegroJettonSwapJettonPayloadOpCode,
 	TonTolkTestsCoffeeStakingLockJettonPayloadOp:          TonTolkTestsCoffeeStakingLockJettonPayloadOpCode,
 	TonTolkTestsEncryptedTextCommentJettonPayloadOp:       TonTolkTestsEncryptedTextCommentJettonPayloadOpCode,
-	TonTolkTestsStonfiSwapJettonPayloadOp:                 TonTolkTestsStonfiSwapJettonPayloadOpCode,
+	TonStonfiV1StonfiSwapJettonPayloadOp:                  TonStonfiV1StonfiSwapJettonPayloadOpCode,
 	TonTolkTestsTegroAddLiquidityJettonPayloadOp:          TonTolkTestsTegroAddLiquidityJettonPayloadOpCode,
-	TonTolkTestsStonfiProvideLpV2JettonPayloadOp:          TonTolkTestsStonfiProvideLpV2JettonPayloadOpCode,
+	TonStonfiV2StonfiProvideLpV2JettonPayloadOp:           TonStonfiV2StonfiProvideLpV2JettonPayloadOpCode,
 	TonTolkTestsBidaskProvideBothJettonPayloadOp:          TonTolkTestsBidaskProvideBothJettonPayloadOpCode,
 	TonTolkTestsDedustDepositLiquidityJettonPayloadOp:     TonTolkTestsDedustDepositLiquidityJettonPayloadOpCode,
 	TonTolkTestsPoolFundAccountJettonPayloadOp:            TonTolkTestsPoolFundAccountJettonPayloadOpCode,
-	TonTolkTestsStonfiSwapOkRefJettonPayloadOp:            TonTolkTestsStonfiSwapOkRefJettonPayloadOpCode,
+	TonStonfiV1StonfiSwapOkRefJettonPayloadOp:             TonStonfiV1StonfiSwapOkRefJettonPayloadOpCode,
 	TonTolkTestsCoffeeCrossDexResendJettonPayloadOp:       TonTolkTestsCoffeeCrossDexResendJettonPayloadOpCode,
 	TonTolkTestsBidaskDammProvideJettonPayloadOp:          TonTolkTestsBidaskDammProvideJettonPayloadOpCode,
-	TonTolkTestsStonfiSwapV2JettonPayloadOp:               TonTolkTestsStonfiSwapV2JettonPayloadOpCode,
+	TonStonfiV2StonfiSwapV2JettonPayloadOp:                TonStonfiV2StonfiSwapV2JettonPayloadOpCode,
 	TonTolkTestsBidaskDammProvideOneSideJettonPayloadOp:   TonTolkTestsBidaskDammProvideOneSideJettonPayloadOpCode,
 	TonTolkTestsStormDepositJettonJettonPayloadOp:         TonTolkTestsStormDepositJettonJettonPayloadOpCode,
 	TonTolkTestsInvoicePayloadJettonPayloadOp:             TonTolkTestsInvoicePayloadJettonPayloadOpCode,
@@ -633,7 +633,7 @@ var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
 	TonTolkTestsCoffeeDepositLiquidityJettonPayloadOp:     TonTolkTestsCoffeeDepositLiquidityJettonPayloadOpCode,
 	TonTolkTestsCoffeeNotificationJettonPayloadOp:         TonTolkTestsCoffeeNotificationJettonPayloadOpCode,
 	TonTolkTestsMoonSwapFailedJettonPayloadOp:             TonTolkTestsMoonSwapFailedJettonPayloadOpCode,
-	TonTolkTestsStonfiSwapOkJettonPayloadOp:               TonTolkTestsStonfiSwapOkJettonPayloadOpCode,
+	TonStonfiV2StonfiSwapOkJettonPayloadOp:                TonStonfiV2StonfiSwapOkJettonPayloadOpCode,
 	TonTolkTestsStormStakeJettonPayloadOp:                 TonTolkTestsStormStakeJettonPayloadOpCode,
 	TonTolkTestsWithdrawPayloadJettonPayloadOp:            TonTolkTestsWithdrawPayloadJettonPayloadOpCode,
 	TonTolkTestsMoonSwapSucceedJettonPayloadOp:            TonTolkTestsMoonSwapSucceedJettonPayloadOpCode,
@@ -643,7 +643,65 @@ var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
 	TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOp: TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOpCode,
 	TonTolkTestsBidaskSwapJettonPayloadOp:                 TonTolkTestsBidaskSwapJettonPayloadOpCode,
 	TonTolkTestsDepositPayloadJettonPayloadOp:             TonTolkTestsDepositPayloadJettonPayloadOpCode,
-	TonTolkTestsStonfiProvideLiquidityJettonPayloadOp:     TonTolkTestsStonfiProvideLiquidityJettonPayloadOpCode,
+	TonStonfiV2StonfiProvideLiquidityJettonPayloadOp:      TonStonfiV2StonfiProvideLiquidityJettonPayloadOpCode,
+}
+
+func (c ContractInterface) Payloads() map[PayloadOpCode]func(*Payload, *boc.Cell) error {
+	switch c.getNamespace() {
+	case TonStonfiV1:
+		return map[PayloadOpCode]func(*Payload, *boc.Cell) error{
+			TonStonfiV1StonfiSwapJettonPayloadOpCode:      decodeTonStonfiV1StonfiSwapJettonPayloadOpPayload,
+			TonStonfiV1StonfiSwapOkRefJettonPayloadOpCode: decodeTonStonfiV1StonfiSwapOkRefJettonPayloadOpPayload,
+		}
+	case TonStonfiV2:
+		return map[PayloadOpCode]func(*Payload, *boc.Cell) error{
+			TonStonfiV2StonfiProvideLpV2JettonPayloadOpCode:      decodeTonStonfiV2StonfiProvideLpV2JettonPayloadOpPayload,
+			TonStonfiV2StonfiSwapV2JettonPayloadOpCode:           decodeTonStonfiV2StonfiSwapV2JettonPayloadOpPayload,
+			TonStonfiV2StonfiSwapOkJettonPayloadOpCode:           decodeTonStonfiV2StonfiSwapOkJettonPayloadOpPayload,
+			TonStonfiV2StonfiProvideLiquidityJettonPayloadOpCode: decodeTonStonfiV2StonfiProvideLiquidityJettonPayloadOpPayload,
+		}
+	case TonTolkTests:
+		return map[PayloadOpCode]func(*Payload, *boc.Cell) error{
+			TonTolkTestsTextCommentJettonPayloadOpCode:                decodeTonTolkTestsTextCommentJettonPayloadOpPayload,
+			TonTolkTestsTegroJettonSwapJettonPayloadOpCode:            decodeTonTolkTestsTegroJettonSwapJettonPayloadOpPayload,
+			TonTolkTestsCoffeeStakingLockJettonPayloadOpCode:          decodeTonTolkTestsCoffeeStakingLockJettonPayloadOpPayload,
+			TonTolkTestsEncryptedTextCommentJettonPayloadOpCode:       decodeTonTolkTestsEncryptedTextCommentJettonPayloadOpPayload,
+			TonTolkTestsTegroAddLiquidityJettonPayloadOpCode:          decodeTonTolkTestsTegroAddLiquidityJettonPayloadOpPayload,
+			TonTolkTestsBidaskProvideBothJettonPayloadOpCode:          decodeTonTolkTestsBidaskProvideBothJettonPayloadOpPayload,
+			TonTolkTestsDedustDepositLiquidityJettonPayloadOpCode:     decodeTonTolkTestsDedustDepositLiquidityJettonPayloadOpPayload,
+			TonTolkTestsPoolFundAccountJettonPayloadOpCode:            decodeTonTolkTestsPoolFundAccountJettonPayloadOpPayload,
+			TonTolkTestsCoffeeCrossDexResendJettonPayloadOpCode:       decodeTonTolkTestsCoffeeCrossDexResendJettonPayloadOpPayload,
+			TonTolkTestsBidaskDammProvideJettonPayloadOpCode:          decodeTonTolkTestsBidaskDammProvideJettonPayloadOpPayload,
+			TonTolkTestsBidaskDammProvideOneSideJettonPayloadOpCode:   decodeTonTolkTestsBidaskDammProvideOneSideJettonPayloadOpPayload,
+			TonTolkTestsStormDepositJettonJettonPayloadOpCode:         decodeTonTolkTestsStormDepositJettonJettonPayloadOpPayload,
+			TonTolkTestsInvoicePayloadJettonPayloadOpCode:             decodeTonTolkTestsInvoicePayloadJettonPayloadOpPayload,
+			TonTolkTestsTonkeeperRelayerFeeJettonPayloadOpCode:        decodeTonTolkTestsTonkeeperRelayerFeeJettonPayloadOpPayload,
+			TonTolkTestsBidaskSwapV2JettonPayloadOpCode:               decodeTonTolkTestsBidaskSwapV2JettonPayloadOpPayload,
+			TonTolkTestsMoonBoostPoolJettonPayloadOpCode:              decodeTonTolkTestsMoonBoostPoolJettonPayloadOpPayload,
+			TonTolkTestsBidaskProvideJettonPayloadOpCode:              decodeTonTolkTestsBidaskProvideJettonPayloadOpPayload,
+			TonTolkTestsMoonFillOrderJettonPayloadOpCode:              decodeTonTolkTestsMoonFillOrderJettonPayloadOpPayload,
+			TonTolkTestsBidaskDammProvideBothJettonPayloadOpCode:      decodeTonTolkTestsBidaskDammProvideBothJettonPayloadOpPayload,
+			TonTolkTestsMoonDepositLiquidityJettonPayloadOpCode:       decodeTonTolkTestsMoonDepositLiquidityJettonPayloadOpPayload,
+			TonTolkTestsMoonSwapJettonPayloadOpCode:                   decodeTonTolkTestsMoonSwapJettonPayloadOpPayload,
+			TonTolkTestsCoffeeCrossDexFailureJettonPayloadOpCode:      decodeTonTolkTestsCoffeeCrossDexFailureJettonPayloadOpPayload,
+			TonTolkTestsCoffeeSwapJettonPayloadOpCode:                 decodeTonTolkTestsCoffeeSwapJettonPayloadOpPayload,
+			TonTolkTestsCoffeeCreatePoolJettonPayloadOpCode:           decodeTonTolkTestsCoffeeCreatePoolJettonPayloadOpPayload,
+			TonTolkTestsCoffeeDepositLiquidityJettonPayloadOpCode:     decodeTonTolkTestsCoffeeDepositLiquidityJettonPayloadOpPayload,
+			TonTolkTestsCoffeeNotificationJettonPayloadOpCode:         decodeTonTolkTestsCoffeeNotificationJettonPayloadOpPayload,
+			TonTolkTestsMoonSwapFailedJettonPayloadOpCode:             decodeTonTolkTestsMoonSwapFailedJettonPayloadOpPayload,
+			TonTolkTestsStormStakeJettonPayloadOpCode:                 decodeTonTolkTestsStormStakeJettonPayloadOpPayload,
+			TonTolkTestsWithdrawPayloadJettonPayloadOpCode:            decodeTonTolkTestsWithdrawPayloadJettonPayloadOpPayload,
+			TonTolkTestsMoonSwapSucceedJettonPayloadOpCode:            decodeTonTolkTestsMoonSwapSucceedJettonPayloadOpPayload,
+			TonTolkTestsMoonCreateOrderJettonPayloadOpCode:            decodeTonTolkTestsMoonCreateOrderJettonPayloadOpPayload,
+			TonTolkTestsBidaskDammSwapJettonPayloadOpCode:             decodeTonTolkTestsBidaskDammSwapJettonPayloadOpPayload,
+			TonTolkTestsDedustSwapJettonPayloadOpCode:                 decodeTonTolkTestsDedustSwapJettonPayloadOpPayload,
+			TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOpCode: decodeTonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOpPayload,
+			TonTolkTestsBidaskSwapJettonPayloadOpCode:                 decodeTonTolkTestsBidaskSwapJettonPayloadOpPayload,
+			TonTolkTestsDepositPayloadJettonPayloadOpCode:             decodeTonTolkTestsDepositPayloadJettonPayloadOpPayload,
+		}
+	default:
+		return nil
+	}
 }
 
 var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) error{
@@ -651,16 +709,16 @@ var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) err
 	TonTolkTestsTegroJettonSwapJettonPayloadOpCode:            decodeTonTolkTestsTegroJettonSwapJettonPayloadOpPayload,
 	TonTolkTestsCoffeeStakingLockJettonPayloadOpCode:          decodeTonTolkTestsCoffeeStakingLockJettonPayloadOpPayload,
 	TonTolkTestsEncryptedTextCommentJettonPayloadOpCode:       decodeTonTolkTestsEncryptedTextCommentJettonPayloadOpPayload,
-	TonTolkTestsStonfiSwapJettonPayloadOpCode:                 decodeTonTolkTestsStonfiSwapJettonPayloadOpPayload,
+	TonStonfiV1StonfiSwapJettonPayloadOpCode:                  decodeTonStonfiV1StonfiSwapJettonPayloadOpPayload,
 	TonTolkTestsTegroAddLiquidityJettonPayloadOpCode:          decodeTonTolkTestsTegroAddLiquidityJettonPayloadOpPayload,
-	TonTolkTestsStonfiProvideLpV2JettonPayloadOpCode:          decodeTonTolkTestsStonfiProvideLpV2JettonPayloadOpPayload,
+	TonStonfiV2StonfiProvideLpV2JettonPayloadOpCode:           decodeTonStonfiV2StonfiProvideLpV2JettonPayloadOpPayload,
 	TonTolkTestsBidaskProvideBothJettonPayloadOpCode:          decodeTonTolkTestsBidaskProvideBothJettonPayloadOpPayload,
 	TonTolkTestsDedustDepositLiquidityJettonPayloadOpCode:     decodeTonTolkTestsDedustDepositLiquidityJettonPayloadOpPayload,
 	TonTolkTestsPoolFundAccountJettonPayloadOpCode:            decodeTonTolkTestsPoolFundAccountJettonPayloadOpPayload,
-	TonTolkTestsStonfiSwapOkRefJettonPayloadOpCode:            decodeTonTolkTestsStonfiSwapOkRefJettonPayloadOpPayload,
+	TonStonfiV1StonfiSwapOkRefJettonPayloadOpCode:             decodeTonStonfiV1StonfiSwapOkRefJettonPayloadOpPayload,
 	TonTolkTestsCoffeeCrossDexResendJettonPayloadOpCode:       decodeTonTolkTestsCoffeeCrossDexResendJettonPayloadOpPayload,
 	TonTolkTestsBidaskDammProvideJettonPayloadOpCode:          decodeTonTolkTestsBidaskDammProvideJettonPayloadOpPayload,
-	TonTolkTestsStonfiSwapV2JettonPayloadOpCode:               decodeTonTolkTestsStonfiSwapV2JettonPayloadOpPayload,
+	TonStonfiV2StonfiSwapV2JettonPayloadOpCode:                decodeTonStonfiV2StonfiSwapV2JettonPayloadOpPayload,
 	TonTolkTestsBidaskDammProvideOneSideJettonPayloadOpCode:   decodeTonTolkTestsBidaskDammProvideOneSideJettonPayloadOpPayload,
 	TonTolkTestsStormDepositJettonJettonPayloadOpCode:         decodeTonTolkTestsStormDepositJettonJettonPayloadOpPayload,
 	TonTolkTestsInvoicePayloadJettonPayloadOpCode:             decodeTonTolkTestsInvoicePayloadJettonPayloadOpPayload,
@@ -678,7 +736,7 @@ var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) err
 	TonTolkTestsCoffeeDepositLiquidityJettonPayloadOpCode:     decodeTonTolkTestsCoffeeDepositLiquidityJettonPayloadOpPayload,
 	TonTolkTestsCoffeeNotificationJettonPayloadOpCode:         decodeTonTolkTestsCoffeeNotificationJettonPayloadOpPayload,
 	TonTolkTestsMoonSwapFailedJettonPayloadOpCode:             decodeTonTolkTestsMoonSwapFailedJettonPayloadOpPayload,
-	TonTolkTestsStonfiSwapOkJettonPayloadOpCode:               decodeTonTolkTestsStonfiSwapOkJettonPayloadOpPayload,
+	TonStonfiV2StonfiSwapOkJettonPayloadOpCode:                decodeTonStonfiV2StonfiSwapOkJettonPayloadOpPayload,
 	TonTolkTestsStormStakeJettonPayloadOpCode:                 decodeTonTolkTestsStormStakeJettonPayloadOpPayload,
 	TonTolkTestsWithdrawPayloadJettonPayloadOpCode:            decodeTonTolkTestsWithdrawPayloadJettonPayloadOpPayload,
 	TonTolkTestsMoonSwapSucceedJettonPayloadOpCode:            decodeTonTolkTestsMoonSwapSucceedJettonPayloadOpPayload,
@@ -688,7 +746,7 @@ var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) err
 	TonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOpCode: decodeTonTolkTestsCoffeeMevProtectFailedSwapJettonPayloadOpPayload,
 	TonTolkTestsBidaskSwapJettonPayloadOpCode:                 decodeTonTolkTestsBidaskSwapJettonPayloadOpPayload,
 	TonTolkTestsDepositPayloadJettonPayloadOpCode:             decodeTonTolkTestsDepositPayloadJettonPayloadOpPayload,
-	TonTolkTestsStonfiProvideLiquidityJettonPayloadOpCode:     decodeTonTolkTestsStonfiProvideLiquidityJettonPayloadOpPayload,
+	TonStonfiV2StonfiProvideLiquidityJettonPayloadOpCode:      decodeTonStonfiV2StonfiProvideLiquidityJettonPayloadOpPayload,
 }
 
 type TonTolkTestsTextComment struct {
@@ -697,11 +755,11 @@ type TonTolkTestsTextComment struct {
 
 type TonTolkTestsTegroJettonSwap struct {
 	Extract          bool
-	MaxIn            tlb.Grams
-	MinOut           tlb.Grams
+	MaxIn            tlb.VarUInteger16
+	MinOut           tlb.VarUInteger16
 	Destination      tlb.MsgAddress
 	ErrorDestination tlb.MsgAddress
-	Payload          tlb.Any
+	Payload          tlb.Any `tlb:"^"`
 }
 
 type TonTolkTestsCoffeeStakingLock struct {
@@ -712,80 +770,80 @@ type TonTolkTestsEncryptedTextComment struct {
 	CipherText tlb.Any
 }
 
-type TonTolkTestsStonfiSwap struct {
+type TonStonfiV1StonfiSwap struct {
 	TokenWallet     tlb.MsgAddress
-	MinOut          tlb.Grams
+	MinOut          tlb.VarUInteger16
 	ToAddress       tlb.MsgAddress
 	ReferralAddress tlb.MsgAddress
 }
 
 type TonTolkTestsTegroAddLiquidity struct {
-	AmountA tlb.Grams
-	AmountB tlb.Grams
+	AmountA tlb.VarUInteger16
+	AmountB tlb.VarUInteger16
 }
 
-type TonTolkTestsStonfiProvideLpV2 struct {
+type TonStonfiV2StonfiProvideLpV2 struct {
 	TokenWallet1       tlb.MsgAddress
 	RefundAddress      tlb.MsgAddress
 	ExcessesAddress    tlb.MsgAddress
 	TxDeadline         uint64
-	CrossProvideLpBody TonTolkTestsCrossProvideLpBody `tlb:"^"`
+	CrossProvideLpBody TonStonfiV2CrossProvideLpBody `tlb:"^"`
 }
 
 type TonTolkTestsBidaskProvideBoth struct {
-	TonAmount      tlb.Grams
+	TonAmount      tlb.VarUInteger16
 	DepositType    tlb.Uint4
 	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsDedustDepositLiquidity struct {
 	PoolType            TonTolkTestsDedustPoolType
 	Asset0              TonTolkTestsDedustAsset
 	Asset1              TonTolkTestsDedustAsset
-	Asset0TargetBalance tlb.Grams
-	Asset1TargetBalance tlb.Grams
-	FulfillPayload      *tlb.Any `tlb:"maybe"`
-	RejectPayload       *tlb.Any `tlb:"maybe"`
+	Asset0TargetBalance tlb.VarUInteger16
+	Asset1TargetBalance tlb.VarUInteger16
+	FulfillPayload      *tlb.Any `tlb:"maybe^"`
+	RejectPayload       *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsPoolFundAccount struct {
 	JettonTarget tlb.MsgAddress
-	Enough0      tlb.Grams
-	Enough1      tlb.Grams
+	Enough0      tlb.VarUInteger16
+	Enough1      tlb.VarUInteger16
 	Liquidity    tlb.Uint128
 	TickLower    tlb.Int24
 	TickUpper    tlb.Int24
 }
 
-type TonTolkTestsStonfiSwapOkRef struct {
+type TonStonfiV1StonfiSwapOkRef struct {
 }
 
 type TonTolkTestsCoffeeCrossDexResend struct {
-	Next *tlb.Any `tlb:"maybe"`
+	Next *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsBidaskDammProvide struct {
 	Receiver       tlb.MsgAddress
 	LockLiquidity  bool
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
-type TonTolkTestsStonfiSwapV2 struct {
+type TonStonfiV2StonfiSwapV2 struct {
 	TokenWallet1    tlb.MsgAddress
 	RefundAddress   tlb.MsgAddress
 	ExcessesAddress tlb.MsgAddress
 	TxDeadline      uint64
-	CrossSwapBody   TonTolkTestsCrossSwapBody `tlb:"^"`
+	CrossSwapBody   TonStonfiV2CrossSwapBody `tlb:"^"`
 }
 
 type TonTolkTestsBidaskDammProvideOneSide struct {
 	Receiver       tlb.MsgAddress
 	LockLiquidity  bool
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsStormDepositJetton struct {
@@ -805,11 +863,11 @@ type TonTolkTestsTonkeeperRelayerFee struct {
 
 type TonTolkTestsBidaskSwapV2 struct {
 	ToAddress      tlb.MsgAddress
-	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
-	ExactOut       tlb.Grams
+	Slippage       tlb.Either[tlb.VarUInteger16, tlb.Uint256]
+	ExactOut       tlb.VarUInteger16
 	AdditionalData *TonTolkTestsAdditionalData `tlb:"maybe^"`
-	RejectPayload  *tlb.Any                    `tlb:"maybe"`
-	ForwardPayload *tlb.Any                    `tlb:"maybe"`
+	RejectPayload  *tlb.Any                    `tlb:"maybe^"`
+	ForwardPayload *tlb.Any                    `tlb:"maybe^"`
 }
 
 type TonTolkTestsMoonBoostPool struct {
@@ -818,26 +876,26 @@ type TonTolkTestsMoonBoostPool struct {
 type TonTolkTestsBidaskProvide struct {
 	DepositType    tlb.Uint4
 	LiquidityDict  tlb.HashmapE[tlb.Uint32, int32]
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsMoonFillOrder struct {
 	Recipient        tlb.MsgAddress
-	RecipientPayload *tlb.Any `tlb:"maybe"`
+	RecipientPayload *tlb.Any `tlb:"maybe^"`
 	RejectAddress    tlb.MsgAddress
 }
 
 type TonTolkTestsBidaskDammProvideBoth struct {
-	NativeAmount   tlb.Grams
+	NativeAmount   tlb.VarUInteger16
 	Reciever       tlb.MsgAddress
 	LockLiquidity  bool
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsMoonDepositLiquidity struct {
-	MinLpOut tlb.Grams
+	MinLpOut tlb.VarUInteger16
 }
 
 type TonTolkTestsMoonSwap struct {
@@ -865,13 +923,13 @@ type TonTolkTestsCoffeeDepositLiquidity struct {
 
 type TonTolkTestsCoffeeNotification struct {
 	QueryId uint64
-	Body    tlb.Any
+	Body    tlb.Any `tlb:"^"`
 }
 
 type TonTolkTestsMoonSwapFailed struct {
 }
 
-type TonTolkTestsStonfiSwapOk struct {
+type TonStonfiV2StonfiSwapOk struct {
 }
 
 type TonTolkTestsStormStake struct {
@@ -879,9 +937,9 @@ type TonTolkTestsStormStake struct {
 
 type TonTolkTestsWithdrawPayload struct {
 	AssetAddress     tlb.MsgAddress
-	OracleParams     *tlb.Any `tlb:"maybe"`
-	ForwardTonAmount tlb.Grams
-	ForwardPayload   *tlb.Any `tlb:"maybe"`
+	OracleParams     *tlb.Any `tlb:"maybe^"`
+	ForwardTonAmount tlb.VarUInteger16
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsMoonSwapSucceed struct {
@@ -895,12 +953,12 @@ type TonTolkTestsMoonCreateOrder struct {
 
 type TonTolkTestsBidaskDammSwap struct {
 	ToAddress      tlb.MsgAddress
-	Slippage       tlb.Grams
+	Slippage       tlb.VarUInteger16
 	FromAddress    tlb.MsgAddress
-	ExactOut       tlb.Grams
-	AdditionalData *tlb.Any `tlb:"maybe"`
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	ExactOut       tlb.VarUInteger16
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsDedustSwap struct {
@@ -915,21 +973,21 @@ type TonTolkTestsCoffeeMevProtectFailedSwap struct {
 
 type TonTolkTestsBidaskSwap struct {
 	ToAddress      tlb.MsgAddress
-	Slippage       tlb.Either[tlb.Grams, tlb.Uint256]
-	ExactOut       tlb.Grams
+	Slippage       tlb.Either[tlb.VarUInteger16, tlb.Uint256]
+	ExactOut       tlb.VarUInteger16
 	RefAddress     tlb.MsgAddress
-	AdditionalData *tlb.Any `tlb:"maybe"`
-	RejectPayload  *tlb.Any `tlb:"maybe"`
-	ForwardPayload *tlb.Any `tlb:"maybe"`
+	AdditionalData *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsDepositPayload struct {
-	OracleParams     *tlb.Any `tlb:"maybe"`
-	ForwardTonAmount tlb.Grams
-	ForwardPayload   *tlb.Any `tlb:"maybe"`
+	OracleParams     *tlb.Any `tlb:"maybe^"`
+	ForwardTonAmount tlb.VarUInteger16
+	ForwardPayload   *tlb.Any `tlb:"maybe^"`
 }
 
-type TonTolkTestsStonfiProvideLiquidity struct {
+type TonStonfiV2StonfiProvideLiquidity struct {
 	TokenWallet tlb.MsgAddress
-	MinLpOut    tlb.Grams
+	MinLpOut    tlb.VarUInteger16
 }

@@ -120,6 +120,45 @@
           }
         }
       ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CrossProvideLpBody",
+      "fields": [
+        {
+          "name": "minLpOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "bothPositive",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "fwdAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
     }
   ],
   "incomingMessages": [],

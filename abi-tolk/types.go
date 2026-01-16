@@ -21,19 +21,19 @@ type TonCocoonWorkerProxyRequest struct {
 	OwnerAddress tlb.MsgAddress
 	State        tlb.Uint2
 	Tokens       uint64
-	Payload      *tlb.Any `tlb:"maybe"`
+	Payload      *tlb.Any `tlb:"maybe^"`
 }
 
 type TonCocoonWorkerProxyPayoutRequest struct {
-	WorkerPart     tlb.Grams
-	ProxyPart      tlb.Grams
+	WorkerPart     tlb.VarUInteger16
+	ProxyPart      tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
 type TonCocoonClientStateData struct {
 	State      tlb.Uint2
-	Balance    tlb.Grams
-	Stake      tlb.Grams
+	Balance    tlb.VarUInteger16
+	Stake      tlb.VarUInteger16
 	TokensUsed uint64
 	SecretHash tlb.Uint256
 }
@@ -42,11 +42,11 @@ type TonCocoonClientProxyRequest struct {
 	QueryId      uint64
 	OwnerAddress tlb.MsgAddress
 	StateData    TonCocoonClientStateData `tlb:"^"`
-	Payload      *tlb.Any                 `tlb:"maybe"`
+	Payload      *tlb.Any                 `tlb:"maybe^"`
 }
 
 type TonCocoonClientProxyTopUp struct {
-	TopUpCoins     tlb.Grams
+	TopUpCoins     tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
@@ -54,12 +54,12 @@ type TonCocoonClientProxyRegister struct {
 }
 
 type TonCocoonClientProxyRefundGranted struct {
-	Coins          tlb.Grams
+	Coins          tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
 type TonCocoonClientProxyRefundForce struct {
-	Coins          tlb.Grams
+	Coins          tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
@@ -73,7 +73,7 @@ type TonCocoonSignedMessage struct {
 	QueryId        uint64
 	SendExcessesTo tlb.MsgAddress
 	Signature      tlb.Bits512
-	SignedDataCell tlb.Any
+	SignedDataCell tlb.Any `tlb:"^"`
 }
 
 type TonCocoonPayoutPayloadData struct {
@@ -138,30 +138,30 @@ type TonCocoonUpdateProxy struct {
 
 type TonCocoonChangeFees struct {
 	QueryId           uint64
-	PricePerToken     tlb.Grams
-	WorkerFeePerToken tlb.Grams
+	PricePerToken     tlb.VarUInteger16
+	WorkerFeePerToken tlb.VarUInteger16
 }
 
 type TonCocoonChangeParams struct {
 	QueryId                uint64
-	PricePerToken          tlb.Grams
-	WorkerFeePerToken      tlb.Grams
+	PricePerToken          tlb.VarUInteger16
+	WorkerFeePerToken      tlb.VarUInteger16
 	ProxyDelayBeforeClose  uint32
 	ClientDelayBeforeClose uint32
-	MinProxyStake          tlb.Grams
-	MinClientStake         tlb.Grams
+	MinProxyStake          tlb.VarUInteger16
+	MinClientStake         tlb.VarUInteger16
 }
 
 type TonCocoonUpgradeContracts struct {
 	QueryId    uint64
-	ProxyCode  tlb.Any
-	WorkerCode tlb.Any
-	ClientCode tlb.Any
+	ProxyCode  tlb.Any `tlb:"^"`
+	WorkerCode tlb.Any `tlb:"^"`
+	ClientCode tlb.Any `tlb:"^"`
 }
 
 type TonCocoonUpgradeCode struct {
 	QueryId uint64
-	NewCode tlb.Any
+	NewCode tlb.Any `tlb:"^"`
 }
 
 type TonCocoonResetRoot struct {
@@ -170,8 +170,8 @@ type TonCocoonResetRoot struct {
 
 type TonCocoonUpgradeFull struct {
 	QueryId uint64
-	NewData tlb.Any
-	NewCode tlb.Any
+	NewData tlb.Any `tlb:"^"`
+	NewCode tlb.Any `tlb:"^"`
 }
 
 type TonCocoonChangeOwner struct {
@@ -191,7 +191,7 @@ type TonCocoonExtProxyPayoutRequest struct {
 
 type TonCocoonExtProxyIncreaseStake struct {
 	QueryId        uint64
-	Grams          tlb.Grams
+	Grams          tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
@@ -212,13 +212,13 @@ type TonCocoonCloseCompleteRequestPayload struct {
 
 type TonCocoonExtClientTopUp struct {
 	QueryId        uint64
-	TopUpAmount    tlb.Grams
+	TopUpAmount    tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
 type TonCocoonOwnerClientChangeSecretHashAndTopUp struct {
 	QueryId        uint64
-	TopUpAmount    tlb.Grams
+	TopUpAmount    tlb.VarUInteger16
 	NewSecretHash  tlb.Uint256
 	SendExcessesTo tlb.MsgAddress
 }
@@ -237,7 +237,7 @@ type TonCocoonOwnerClientChangeSecretHash struct {
 
 type TonCocoonOwnerClientIncreaseStake struct {
 	QueryId        uint64
-	NewStake       tlb.Grams
+	NewStake       tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
 }
 
@@ -268,19 +268,19 @@ type TonCocoonCocoonParams struct {
 	ParamsVersion                   uint32
 	UniqueId                        uint32
 	IsTest                          bool
-	PricePerToken                   tlb.Grams
-	WorkerFeePerToken               tlb.Grams
+	PricePerToken                   tlb.VarUInteger16
+	WorkerFeePerToken               tlb.VarUInteger16
 	PromptTokensPriceMultiplier     uint32
 	CachedTokensPriceMultiplier     uint32
 	CompletionTokensPriceMultiplier uint32
 	ReasoningTokensPriceMultiplier  uint32
 	ProxyDelayBeforeClose           uint32
 	ClientDelayBeforeClose          uint32
-	MinProxyStake                   tlb.Grams
-	MinClientStake                  tlb.Grams
-	ProxyScCode                     *tlb.Any `tlb:"maybe"`
-	WorkerScCode                    *tlb.Any `tlb:"maybe"`
-	ClientScCode                    *tlb.Any `tlb:"maybe"`
+	MinProxyStake                   tlb.VarUInteger16
+	MinClientStake                  tlb.VarUInteger16
+	ProxyScCode                     *tlb.Any `tlb:"maybe^"`
+	WorkerScCode                    *tlb.Any `tlb:"maybe^"`
+	ClientScCode                    *tlb.Any `tlb:"maybe^"`
 }
 
 type TonCocoonRootData struct {
@@ -303,8 +303,8 @@ type TonCocoonProxyStorage struct {
 	ProxyPublicKey tlb.Uint256
 	RootAddress    tlb.MsgAddress
 	State          tlb.Uint2
-	Balance        tlb.Grams
-	Stake          tlb.Grams
+	Balance        tlb.VarUInteger16
+	Stake          tlb.VarUInteger16
 	UnlockTs       uint32
 	Params         TonCocoonCocoonParams `tlb:"^"`
 }
@@ -326,8 +326,8 @@ type TonCocoonClientConstData struct {
 
 type TonCocoonClientStorage struct {
 	State        tlb.Uint2
-	Balance      tlb.Grams
-	Stake        tlb.Grams
+	Balance      tlb.VarUInteger16
+	Stake        tlb.VarUInteger16
 	TokensUsed   uint64
 	UnlockTs     uint32
 	SecretHash   tlb.Uint256
@@ -437,7 +437,7 @@ func (t *TonCocoonClientMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type TonCocoonDict tlb.Maybe[tlb.Any]
+type TonCocoonDict tlb.Maybe[tlb.Ref[tlb.Any]]
 
 type TonCocoonTextCmd struct {
 	Action uint8
@@ -704,7 +704,7 @@ type TonCocoonExternalSignedMessage struct {
 type TonCocoonOwnerWalletSendMessage struct {
 	QueryId uint64
 	Mode    uint8
-	Body    tlb.Any
+	Body    tlb.Any `tlb:"^"`
 }
 
 type TonCocoonTextCommand struct {
@@ -769,45 +769,64 @@ func (t *TonCocoonWorkerMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
+type TonDedustStep struct {
+	KindOut bool
+	Limit   tlb.VarUInteger16
+	Next    *tlb.Any `tlb:"maybe^"`
+}
+
+type TonDedustSwapParams struct {
+	Deadline       uint32
+	RecipientAddr  tlb.MsgAddress
+	ReferralAddr   tlb.MsgAddress
+	FulfillPayload *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
+}
+
+type TonDedustDedustSwap struct {
+	Step   TonDedustStep
+	Params TonDedustSwapParams `tlb:"^"`
+}
+
 type TonTep74WalletStorage struct {
-	JettonBalance tlb.Grams
+	JettonBalance tlb.VarUInteger16
 	OwnerAddress  tlb.MsgAddress
 	MinterAddress tlb.MsgAddress
 }
 
 type TonTep74MinterStorage struct {
-	TotalSupply      tlb.Grams
+	TotalSupply      tlb.VarUInteger16
 	AdminAddress     tlb.MsgAddress
-	Content          tlb.Any
-	JettonWalletCode tlb.Any
+	Content          tlb.Any `tlb:"^"`
+	JettonWalletCode tlb.Any `tlb:"^"`
 }
 
 type TonTep74ForwardPayloadRemainder tlb.Any
 
 type TonTep74AskToTransfer struct {
 	QueryId           uint64
-	JettonAmount      tlb.Grams
+	JettonAmount      tlb.VarUInteger16
 	TransferRecipient tlb.MsgAddress
 	SendExcessesTo    tlb.MsgAddress
-	CustomPayload     *tlb.Any `tlb:"maybe"`
-	ForwardTonAmount  tlb.Grams
-	ForwardPayload    TonTep74ForwardPayloadRemainder
+	CustomPayload     *tlb.Any `tlb:"maybe^"`
+	ForwardTonAmount  tlb.VarUInteger16
+	ForwardPayload    tlb.EitherRef[Payload]
 }
 
 type TonTep74TransferNotificationForRecipient struct {
 	QueryId           uint64
-	JettonAmount      tlb.Grams
+	JettonAmount      tlb.VarUInteger16
 	TransferInitiator tlb.MsgAddress
-	ForwardPayload    TonTep74ForwardPayloadRemainder
+	ForwardPayload    tlb.EitherRef[Payload]
 }
 
 type TonTep74InternalTransferStep struct {
 	QueryId           uint64
-	JettonAmount      tlb.Grams
+	JettonAmount      tlb.VarUInteger16
 	TransferInitiator tlb.MsgAddress
 	SendExcessesTo    tlb.MsgAddress
-	ForwardTonAmount  tlb.Grams
-	ForwardPayload    TonTep74ForwardPayloadRemainder
+	ForwardTonAmount  tlb.VarUInteger16
+	ForwardPayload    tlb.EitherRef[Payload]
 }
 
 type TonTep74ReturnExcessesBack struct {
@@ -816,14 +835,14 @@ type TonTep74ReturnExcessesBack struct {
 
 type TonTep74AskToBurn struct {
 	QueryId        uint64
-	JettonAmount   tlb.Grams
+	JettonAmount   tlb.VarUInteger16
 	SendExcessesTo tlb.MsgAddress
-	CustomPayload  *tlb.Any `tlb:"maybe"`
+	CustomPayload  tlb.EitherRef[Payload]
 }
 
 type TonTep74BurnNotificationForMinter struct {
 	QueryId        uint64
-	JettonAmount   tlb.Grams
+	JettonAmount   tlb.VarUInteger16
 	BurnInitiator  tlb.MsgAddress
 	SendExcessesTo tlb.MsgAddress
 }
@@ -843,7 +862,7 @@ type TonTep74ResponseWalletAddress struct {
 type TonTep74MintNewJettons struct {
 	QueryId             uint64
 	MintRecipient       tlb.MsgAddress
-	TonAmount           tlb.Grams
+	TonAmount           tlb.VarUInteger16
 	InternalTransferMsg TonTep74InternalTransferStep `tlb:"^"`
 }
 
@@ -854,7 +873,7 @@ type TonTep74ChangeMinterAdmin struct {
 
 type TonTep74ChangeMinterContent struct {
 	QueryId    uint64
-	NewContent tlb.Any
+	NewContent tlb.Any `tlb:"^"`
 }
 
 type TonTep74AllowedMessageToMinter struct {
@@ -907,8 +926,8 @@ type TonTep74JettonDataReply struct {
 	TotalSupply      tlb.Int257
 	Mintable         bool
 	AdminAddress     tlb.MsgAddress
-	JettonContent    tlb.Any
-	JettonWalletCode tlb.Any
+	JettonContent    tlb.Any `tlb:"^"`
+	JettonWalletCode tlb.Any `tlb:"^"`
 }
 
 type TonTep74AboaLisa TonTep74ReturnExcessesBack
@@ -952,18 +971,10 @@ type TonTep74BounceOpToHandle struct {
 }
 
 type TonTep74JettonWalletDataReply struct {
-	JettonBalance    tlb.Grams
+	JettonBalance    tlb.VarUInteger16
 	OwnerAddress     tlb.MsgAddress
 	MinterAddress    tlb.MsgAddress
-	JettonWalletCode tlb.Any
-}
-
-type TonTolkTestsCrossProvideLpBody struct {
-	MinLpOut      tlb.Grams
-	ToAddress     tlb.MsgAddress
-	BothPositive  bool
-	FwdAmount     tlb.Grams
-	CustomPayload *tlb.Any `tlb:"maybe"`
+	JettonWalletCode tlb.Any `tlb:"^"`
 }
 
 type TonTolkTestsDedustVolatile struct {
@@ -1022,22 +1033,11 @@ func (t *TonTolkTestsDedustAsset) MarshalJSON() ([]byte, error) {
 	}
 }
 
-type TonTolkTestsCrossSwapBody struct {
-	MinOut        tlb.Grams
-	Receiver      tlb.MsgAddress
-	FwdGas        tlb.Grams
-	CustomPayload *tlb.Any `tlb:"maybe"`
-	RefundFwdGas  tlb.Grams
-	RefundPayload *tlb.Any `tlb:"maybe"`
-	RefFee        uint16
-	RefAddress    tlb.MsgAddress
-}
-
 type TonTolkTestsStormNoKeyInit struct {
 }
 
 type TonTolkTestsStormNeedKeyInit struct {
-	UserPublicKeys tlb.HashmapE[tlb.Uint256, tlb.Any]
+	UserPublicKeys tlb.HashmapE[tlb.Uint256, tlb.Ref[tlb.Any]]
 }
 
 type TonTolkTestsInitializationRequest tlb.Either[TonTolkTestsStormNoKeyInit, TonTolkTestsStormNeedKeyInit]
@@ -1062,11 +1062,11 @@ type TonTolkTestsAdditionalData struct {
 
 type TonTolkTestsMoonNextPayload struct {
 	Recipient tlb.MsgAddress
-	Payload   *tlb.Any `tlb:"maybe"`
+	Payload   *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsMoonSwapParams struct {
-	MinOut      tlb.Grams
+	MinOut      tlb.VarUInteger16
 	Deadline    uint64
 	Excess      tlb.MsgAddress
 	Referral    tlb.MsgAddress
@@ -1076,14 +1076,14 @@ type TonTolkTestsMoonSwapParams struct {
 
 type TonTolkTestsCoffeeSwapStepParams struct {
 	PoolAddressHash tlb.Uint256
-	MinOutAmount    tlb.Grams
+	MinOutAmount    tlb.VarUInteger16
 	Next            *TonTolkTestsCoffeeSwapStepParams `tlb:"maybe^"`
 }
 
 type TonTolkTestsCoffeeNotificationDataSingle struct {
 	Reciever tlb.MsgAddress
-	FwdGas   tlb.Grams
-	Payload  tlb.Any
+	FwdGas   tlb.VarUInteger16
+	Payload  tlb.Any `tlb:"^"`
 }
 
 type TonTolkTestsCoffeeNotificationData struct {
@@ -1158,18 +1158,18 @@ type TonTolkTestsCoffeePoolParams struct {
 	First       TonTolkTestsCoffeeAsset
 	Second      TonTolkTestsCoffeeAsset
 	Amm         TonTolkTestsCoffeeAmm
-	AmmSettings *tlb.Any `tlb:"maybe"`
+	AmmSettings *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsCoffeePublicPoolCreationParams struct {
 	Recipient             tlb.MsgAddress
 	UseRecipientOnFailure bool
-	NotificationData      *tlb.Any `tlb:"maybe"`
+	NotificationData      *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsCoffeePrivatePoolCreationParams struct {
 	IsActive      bool
-	ExtraSettings *tlb.Any `tlb:"maybe"`
+	ExtraSettings *tlb.Any `tlb:"maybe^"`
 }
 
 type TonTolkTestsCoffeePoolCreationParams struct {
@@ -1181,20 +1181,20 @@ type TonTolkTestsCoffeeDepositLiquidityConditionNone struct {
 }
 
 type TonTolkTestsCoffeeDepositLiquidityConditionLpQuantity struct {
-	MinLpAmount tlb.Grams
+	MinLpAmount tlb.VarUInteger16
 }
 
 type TonTolkTestsCoffeeDepositLiquidityConditionReservedRatio struct {
-	Denominator  tlb.Grams
-	MinNominator tlb.Grams
-	MaxNominator tlb.Grams
+	Denominator  tlb.VarUInteger16
+	MinNominator tlb.VarUInteger16
+	MaxNominator tlb.VarUInteger16
 }
 
 type TonTolkTestsCoffeeDepositLiquidityConditionComplex struct {
-	MinLpAmoint  tlb.Grams
-	Denominator  tlb.Grams
-	MinNominator tlb.Grams
-	MaxNominator tlb.Grams
+	MinLpAmoint  tlb.VarUInteger16
+	Denominator  tlb.VarUInteger16
+	MinNominator tlb.VarUInteger16
+	MaxNominator tlb.VarUInteger16
 }
 
 type TonTolkTestsCoffeeDepositLiquidityCondition struct {
@@ -1242,7 +1242,7 @@ type TonTolkTestsCoffeeDepositLiquidityParamsTrimmed struct {
 	Referral              tlb.MsgAddress
 	Deadline              uint32
 	Condition             TonTolkTestsCoffeeDepositLiquidityCondition
-	ExtraSettings         *tlb.Any                            `tlb:"maybe"`
+	ExtraSettings         *tlb.Any                            `tlb:"maybe^"`
 	NotificationData      *TonTolkTestsCoffeeNotificationData `tlb:"maybe^"`
 }
 
@@ -1259,7 +1259,7 @@ type TonTolkTestsMoonOrderParams struct {
 
 type TonTolkTestsDedustSwapStepParams struct {
 	KindOut bool
-	Limit   tlb.Grams
+	Limit   tlb.VarUInteger16
 	Next    *TonTolkTestsDedustSwapStep `tlb:"maybe^"`
 }
 
@@ -1272,21 +1272,21 @@ type TonTolkTestsDedustSwapParams struct {
 	Deadline       uint32
 	RecipientAddr  tlb.MsgAddress
 	ReferralAddr   tlb.MsgAddress
-	FulfillPayload *tlb.Any `tlb:"maybe"`
-	RejectPayload  *tlb.Any `tlb:"maybe"`
+	FulfillPayload *tlb.Any `tlb:"maybe^"`
+	RejectPayload  *tlb.Any `tlb:"maybe^"`
 }
 
 type TonStonfiV1GetPoolDataStonfiV1 struct {
-	Reserve0                   tlb.Grams
-	Reserve1                   tlb.Grams
+	Reserve0                   tlb.VarUInteger16
+	Reserve1                   tlb.VarUInteger16
 	Token0Address              tlb.MsgAddress
 	Token1Address              tlb.MsgAddress
 	LpFee                      uint8
 	ProtocolFee                uint8
 	RefFee                     uint8
 	ProtocolFeeAddress         tlb.MsgAddress
-	CollectedToken0ProtocolFee tlb.Grams
-	CollectedToken1ProtocolFee tlb.Grams
+	CollectedToken0ProtocolFee tlb.VarUInteger16
+	CollectedToken1ProtocolFee tlb.VarUInteger16
 }
 
 type TonStonfiV2GetLpAccountAddressResult struct {
@@ -1296,49 +1296,68 @@ type TonStonfiV2GetLpAccountAddressResult struct {
 type TonStonfiV2GetPoolDataStonfiV2 struct {
 	IsLocked                   bool
 	RouterAddress              tlb.MsgAddress
-	TotalSupply                tlb.Grams
-	Reserve0                   tlb.Grams
-	Reserve1                   tlb.Grams
+	TotalSupply                tlb.VarUInteger16
+	Reserve0                   tlb.VarUInteger16
+	Reserve1                   tlb.VarUInteger16
 	Token0Address              tlb.MsgAddress
 	Token1Address              tlb.MsgAddress
 	LpFee                      uint8
 	ProtocolFee                uint8
 	ProtocolFeeAddress         tlb.MsgAddress
-	CollectedToken0ProtocolFee tlb.Grams
-	CollectedToken1ProtocolFee tlb.Grams
+	CollectedToken0ProtocolFee tlb.VarUInteger16
+	CollectedToken1ProtocolFee tlb.VarUInteger16
 }
 
 type TonStonfiV2GetPoolDataStonfiV2StableSwap struct {
 	IsLocked                   bool
 	RouterAddress              tlb.MsgAddress
-	TotalSupply                tlb.Grams
-	Reserve0                   tlb.Grams
-	Reserve1                   tlb.Grams
+	TotalSupply                tlb.VarUInteger16
+	Reserve0                   tlb.VarUInteger16
+	Reserve1                   tlb.VarUInteger16
 	Token0Address              tlb.MsgAddress
 	Token1Address              tlb.MsgAddress
 	LpFee                      uint8
 	ProtocolFee                uint8
 	ProtocolFeeAddress         tlb.MsgAddress
-	CollectedToken0ProtocolFee tlb.Grams
-	CollectedToken1ProtocolFee tlb.Grams
+	CollectedToken0ProtocolFee tlb.VarUInteger16
+	CollectedToken1ProtocolFee tlb.VarUInteger16
 	Additional                 tlb.Uint128
+}
+
+type TonStonfiV2CrossSwapBody struct {
+	MinOut        tlb.VarUInteger16
+	Receiver      tlb.MsgAddress
+	FwdGas        tlb.VarUInteger16
+	CustomPayload *tlb.Any `tlb:"maybe^"`
+	RefundFwdGas  tlb.VarUInteger16
+	RefundPayload *tlb.Any `tlb:"maybe^"`
+	RefFee        uint16
+	RefAddress    tlb.MsgAddress
 }
 
 type TonStonfiV2GetPoolDataStonfiV2WeightedStableSwap struct {
 	IsLocked                   bool
 	RouterAddress              tlb.MsgAddress
-	TotalSupply                tlb.Grams
-	Reserve0                   tlb.Grams
-	Reserve1                   tlb.Grams
+	TotalSupply                tlb.VarUInteger16
+	Reserve0                   tlb.VarUInteger16
+	Reserve1                   tlb.VarUInteger16
 	Token0Address              tlb.MsgAddress
 	Token1Address              tlb.MsgAddress
 	LpFee                      uint8
 	ProtocolFee                uint8
 	ProtocolFeeAddress         tlb.MsgAddress
-	CollectedToken0ProtocolFee tlb.Grams
-	CollectedToken1ProtocolFee tlb.Grams
+	CollectedToken0ProtocolFee tlb.VarUInteger16
+	CollectedToken1ProtocolFee tlb.VarUInteger16
 	Amp                        tlb.Uint128
 	Rate                       tlb.Uint128
 	W0                         tlb.Uint128
 	RateSetter                 tlb.MsgAddress
+}
+
+type TonStonfiV2CrossProvideLpBody struct {
+	MinLpOut      tlb.VarUInteger16
+	ToAddress     tlb.MsgAddress
+	BothPositive  bool
+	FwdAmount     tlb.VarUInteger16
+	CustomPayload *tlb.Any `tlb:"maybe^"`
 }

@@ -48,6 +48,10 @@ func (dec *Decoder) Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, "", reflect.ValueOf(o), dec)
 }
 
+func (dec *Decoder) GetContractInterfaces() []ContractInterface {
+	return dec.contractInterfaces
+}
+
 // UnmarshalerTLB contains method UnmarshalTLB that must be implemented by a struct
 // if it provides specific unmarshalling code.
 type UnmarshalerTLB interface {

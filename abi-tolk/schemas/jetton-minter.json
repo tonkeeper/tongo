@@ -117,6 +117,7 @@
         },
         {
           "name": "forwardPayload",
+          "isPayload": true,
           "ty": {
             "kind": "AliasRef",
             "aliasName": "ForwardPayloadRemainder"
@@ -153,6 +154,7 @@
         },
         {
           "name": "forwardPayload",
+          "isPayload": true,
           "ty": {
             "kind": "AliasRef",
             "aliasName": "ForwardPayloadRemainder"
@@ -201,6 +203,7 @@
         },
         {
           "name": "forwardPayload",
+          "isPayload": true,
           "ty": {
             "kind": "AliasRef",
             "aliasName": "ForwardPayloadRemainder"
@@ -254,6 +257,7 @@
         },
         {
           "name": "customPayload",
+          "isPayload": true,
           "ty": {
             "kind": "nullable",
             "inner": {

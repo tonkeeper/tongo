@@ -13,6 +13,7 @@ const (
 	TonCocoonRoot
 	TonCocoonWallet
 	TonCocoonWorker
+	TonDedustPool
 	TonStonfiV1Pool
 	TonStonfiV2Pool
 	TonStonfiV2PoolConstProduct
@@ -22,6 +23,34 @@ const (
 	TonTep74JettonWallet
 	TonTolkTestsPayloads
 )
+
+const (
+	NUnknown contractNamespace = iota
+	TonCocoon
+	TonDedust
+	TonStonfiV1
+	TonStonfiV2
+	TonTep74
+	TonTolkTests
+)
+
+var namespaceByInterface = map[ContractInterface]contractNamespace{
+	IUnknown:                          NUnknown,
+	TonCocoonClient:                   TonCocoon,
+	TonCocoonProxy:                    TonCocoon,
+	TonCocoonRoot:                     TonCocoon,
+	TonCocoonWallet:                   TonCocoon,
+	TonCocoonWorker:                   TonCocoon,
+	TonDedustPool:                     TonDedust,
+	TonStonfiV1Pool:                   TonStonfiV1,
+	TonStonfiV2Pool:                   TonStonfiV2,
+	TonStonfiV2PoolConstProduct:       TonStonfiV2,
+	TonStonfiV2PoolStableSwap:         TonStonfiV2,
+	TonStonfiV2PoolWeightedStableSwap: TonStonfiV2,
+	TonTep74JettonMinter:              TonTep74,
+	TonTep74JettonWallet:              TonTep74,
+	TonTolkTestsPayloads:              TonTolkTests,
+}
 
 func (c ContractInterface) String() string {
 	switch c {
@@ -35,6 +64,8 @@ func (c ContractInterface) String() string {
 		return "ton_cocoon_wallet"
 	case TonCocoonWorker:
 		return "ton_cocoon_worker"
+	case TonDedustPool:
+		return "ton_dedust_pool"
 	case TonStonfiV1Pool:
 		return "ton_stonfi_v1_pool"
 	case TonStonfiV2Pool:
@@ -68,6 +99,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return TonCocoonWallet
 	case "ton_cocoon_worker":
 		return TonCocoonWorker
+	case "ton_dedust_pool":
+		return TonDedustPool
 	case "ton_stonfi_v1_pool":
 		return TonStonfiV1Pool
 	case "ton_stonfi_v2_pool":

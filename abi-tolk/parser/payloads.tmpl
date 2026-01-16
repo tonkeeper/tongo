@@ -1,5 +1,5 @@
 
-{{- range  $tag, $ops := .Operations }}
+{{- range  $tag, $ops := .OperationsByTag }}
     {{- range $op := $ops}}
       func decode{{ $op.GolangOpcodeName }}Payload(j *Payload, c *boc.Cell) error {
       var res {{ $op.GolangTypeName }}
@@ -16,13 +16,13 @@
 
 
 const (
-{{- range  $tag, $ops := .Operations }}
+{{- range  $tag, $ops := .OperationsByTag }}
     {{- range $op := $ops}}
        {{ $op.GolangOpcodeName }} PayloadOpName = "{{ $op.OperationName }}"
     {{- end }}
 {{- end }}
 
-{{ range  $tag, $ops := .Operations -}}
+{{ range  $tag, $ops := .OperationsByTag -}}
     {{- range $op := $ops}}
        {{ $op.GolangOpcodeName }}Code PayloadOpCode = 0x{{ printf "%08x" $op.Tag }}
    {{- end }}
@@ -30,7 +30,7 @@ const (
 )
 
 var KnownPayloadTypes = map[string]any{
-{{- range  $tag, $ops := .Operations }}
+{{- range  $tag, $ops := .OperationsByTag }}
     {{- range $op := $ops}}
        {{ $op.GolangOpcodeName }}: {{ $op.GolangTypeName }}{},
    {{- end }}
@@ -38,15 +38,31 @@ var KnownPayloadTypes = map[string]any{
 
 }
 var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
-{{- range  $tag, $ops := .Operations }}
+{{- range  $tag, $ops := .OperationsByTag }}
     {{- range $op := $ops}}
        {{ $op.GolangOpcodeName }}: {{ $op.GolangOpcodeName }}Code,
    {{- end }}
 {{- end }}
 }
 
+func (c ContractInterface) Payloads() map[PayloadOpCode]func(*Payload, *boc.Cell) error {
+    switch c.getNamespace() {
+    {{- range  $iface, $opsByTag := .OperationsByIface }}
+        case {{ $iface }}: return map[PayloadOpCode]func(*Payload, *boc.Cell) error{
+        {{- range $tag, $ops := $opsByTag}}
+            {{- range $op := $ops}}
+                {{ $op.GolangOpcodeName }}Code: decode{{ $op.GolangOpcodeName }}Payload,
+            {{- end }}
+        {{- end }}
+        }
+    {{- end }}
+    default:
+        return nil
+    }
+}
+
 var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) error{
-{{- range  $tag, $ops := .Operations }}
+{{- range  $tag, $ops := .OperationsByTag }}
     {{- range $op := $ops}}
        {{ $op.GolangOpcodeName }}Code: decode{{ $op.GolangOpcodeName }}Payload,
    {{- end }}
@@ -54,7 +70,7 @@ var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) err
 }
 
 
-{{- range  $tag, $ops := .Operations }}
+{{- range  $tag, $ops := .OperationsByTag }}
     {{- range $op := $ops}}
        {{ $op.Code }}
     {{- end }}

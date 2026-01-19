@@ -867,6 +867,9 @@
     </get_method>
 
     <get_method name="get_position_manager_address">
+        <input>
+            <slice name="trader_address">msgaddress</slice>
+        </input>
         <output version="storm" fixed_length="true">
             <int name="trader_position_address">msgaddress</int>
         </output>
@@ -1215,7 +1218,7 @@
     <!-- Executor item -->
     <get_method name="get_executor_balances">
         <output version="storm" fixed_length="true">
-            <cell name="balances_dict">Cell</cell>
+            <cell name="balances_dict">cell</cell>
         </output>
     </get_method>
 
@@ -1246,12 +1249,6 @@
     <!-- Position manager -->
     <get_method name="get_position_manager_data">
         <output version="storm" fixed_length="true">
-            <cell name="data">cell</cell>
-        </output>
-    </get_method>
-
-    <get_method name="get_position_manager_contract_data">
-        <output version="storm" fixed_length="true">
             <slice name="trader_address">msgaddress</slice>
             <slice name="vault_address">msgaddress</slice>
             <slice name="vamm_address">msgaddress</slice>
@@ -1259,7 +1256,13 @@
             <cell name="short_record">cell</cell>
             <cell name="orders_dict">cell</cell>
             <cell name="referral_data">cell</cell>
-            <cell name="orders_bitset">cell</cell>
+            <int name="orders_bitset">uint8</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_position_manager_contract_data">
+        <output version="storm" fixed_length="true">
+            <cell name="data">cell</cell>
         </output>
     </get_method>
 
@@ -1308,8 +1311,8 @@
 
     <get_method name="get_highload_data">
         <output version="storm" fixed_length="true">
-            <cell name="old_queries">HashmapE 13 Cell</cell>
-            <cell name="queries">HashmapE 13 Cell</cell>
+            <cell name="old_queries" nullable="true">cell</cell>
+            <cell name="queries" nullable="true">cell</cell>
             <int name="last_clean_time">uint32</int>
             <int name="timeout">uint32</int> <!-- actually we have uint24 here -->
         </output>
@@ -1334,6 +1337,9 @@
     </get_method>
 
     <get_method name="get_position">
+        <input>
+            <slice name="amm_address_key">cell</slice>
+        </input>
         <output version="storm" fixed_length="true">
             <int name="locked">bool</int>
             <cell name="position" nullable="true">PositionData</cell>
@@ -1347,9 +1353,7 @@
             <int name="need_clean">int257</int>
         </input>
         <output version="storm" fixed_length="true">
-            <int name="shift">uint16</int> <!-- actually we have uint10 here -->
-            <int name="bit_number">uint16</int> <!-- actually we have uint10 here -->
-            <int name="need_clean">bool</int>
+            <int name="processed">bool</int>
         </output>
     </get_method>
 

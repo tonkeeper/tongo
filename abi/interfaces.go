@@ -1053,14 +1053,6 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPoolType,
 	},
 	{
-		Name:     "get_position",
-		InvokeFn: GetPosition,
-	},
-	{
-		Name:     "get_position_manager_address",
-		InvokeFn: GetPositionManagerAddress,
-	},
-	{
 		Name:     "get_position_manager_contract_data",
 		InvokeFn: GetPositionManagerContractData,
 	},
@@ -1655,7 +1647,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetLazerData_StormResult",
 			"GetOracleData_StormResult",
 			"GetPauseTime_StormResult",
-			"GetPositionManagerAddress_StormResult",
 			"GetSpotPrice_StormResult",
 			"GetTerminalAmmPrice_StormResult",
 			"GetVammType_StormResult",
@@ -1674,7 +1665,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetLazerData_StormResult",
 			"GetOracleData_StormResult",
 			"GetPauseTime_StormResult",
-			"GetPositionManagerAddress_StormResult",
 			"GetSettlementOracleData_StormResult",
 			"GetSpotPrice_StormResult",
 			"GetTerminalAmmPrice_StormResult",
@@ -1724,7 +1714,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetHighloadData_StormResult",
 			"GetKeysData_StormResult",
 			"GetNftDataResult",
-			"GetPosition_StormResult",
 			"GetStorageData_StormResult",
 			"GetUserPublicKeys_StormResult",
 		},

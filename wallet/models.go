@@ -3,13 +3,13 @@ package wallet
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/utils"
 	"math/big"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type Version int

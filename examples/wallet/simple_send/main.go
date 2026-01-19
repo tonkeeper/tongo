@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/wallet"
-	"log"
 )
 
 const SEED = "best journey rifle scheme bamboo daring finish life have puzzle verb wagon double pencil plate parent canoe soup stable salon drift elephant border hero"

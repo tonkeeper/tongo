@@ -135,24 +135,28 @@ func (p *Payload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error {
 	ifaces := decoder.GetContractInterfaces()
 	for _, iface := range ifaces {
 		ifacePayloads := ContractInterface(iface).Payloads()
-		f, ok := ifacePayloads[PayloadOpCode(op64)]
-		if ok && f != nil {
-			tryCell := tempCell.CopyRemaining()
-			err = f(p, tryCell)
-			if err == nil {
-				cell.ReadRemainingBits()
-				return nil
+		fs, ok := ifacePayloads[PayloadOpCode(op64)]
+		if ok && len(fs) > 0 {
+			for _, f := range fs {
+				tryCell := tempCell.CopyRemaining()
+				err = f(p, tryCell)
+				if err == nil {
+					cell.ReadRemainingBits()
+					return nil
+				}
 			}
 		}
 	}
 
-	f, ok := funcPayloadDecodersMapping[PayloadOpCode(op64)]
+	fs, ok := funcPayloadDecodersMapping[PayloadOpCode(op64)]
 
-	if ok && f != nil {
-		err = f(p, tempCell)
-		if err == nil {
-			cell.ReadRemainingBits()
-			return nil
+	if ok && len(fs) > 0 {
+		for _, f := range fs {
+			err = f(p, tempCell)
+			if err == nil {
+				cell.ReadRemainingBits()
+				return nil
+			}
 		}
 	}
 

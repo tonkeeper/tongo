@@ -66,6 +66,7 @@ type Generator struct {
 	loadedTlbTypes        []string
 	loadedTlbMsgTypes     map[tlb.Tag][]TLBMsgBody
 	loadedTlbPayloadTypes map[string]map[tlb.Tag][]TLBMsgBody
+	contractToNamespace   map[string]string
 }
 
 type MsgType int
@@ -77,13 +78,14 @@ func NewGenerator(abi []tolkAbi.ABI, abiByGetMethod map[string][]GetMethodWithAb
 		enumRefs:              make(map[string]tolkAbi.EnumDeclaration),
 		loadedTlbMsgTypes:     make(map[tlb.Tag][]TLBMsgBody),
 		loadedTlbPayloadTypes: make(map[string]map[tlb.Tag][]TLBMsgBody),
+		contractToNamespace:   make(map[string]string),
 		newTlbTypes:           make(map[string]struct{}),
 		abi:                   abi,
 		abiByGetMethod:        abiByGetMethod,
 	}
 	err := g.registerABI()
 	if err != nil {
-		return g
+		panic(err)
 	}
 
 	return g
@@ -97,6 +99,9 @@ func (g *Generator) registerABI() error {
 	msgsName := make(map[string]struct{})
 	for _, abi := range g.abi {
 		contractName := abi.GetGolangNamespace()
+		fullName := abi.GetGolangContractName()
+
+		g.contractToNamespace[fullName] = contractName
 
 		for _, declr := range abi.Declarations {
 			err := g.registerType(declr, contractName)
@@ -106,25 +111,41 @@ func (g *Generator) registerABI() error {
 		}
 
 		for _, intMsg := range abi.IncomingMessages {
-			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, contractName, msgsName)
+			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, contractName, fullName, msgsName)
+			if err != nil {
+				return err
+			}
+			err = g.registerMsgType(MsgTypePayload, intMsg.BodyTy, contractName, fullName, msgsName)
 			if err != nil {
 				return err
 			}
 		}
 		for _, intMsg := range abi.OutgoingMessages {
-			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, contractName, msgsName)
+			err := g.registerMsgType(MsgTypeInt, intMsg.BodyTy, contractName, fullName, msgsName)
+			if err != nil {
+				return err
+			}
+			err = g.registerMsgType(MsgTypePayload, intMsg.BodyTy, contractName, fullName, msgsName)
 			if err != nil {
 				return err
 			}
 		}
 		for _, extOutMsg := range abi.EmittedMessages {
-			err := g.registerMsgType(MsgTypeExtOut, extOutMsg.BodyTy, contractName, msgsName)
+			err := g.registerMsgType(MsgTypeExtOut, extOutMsg.BodyTy, contractName, fullName, msgsName)
+			if err != nil {
+				return err
+			}
+			err = g.registerMsgType(MsgTypePayload, extOutMsg.BodyTy, contractName, fullName, msgsName)
 			if err != nil {
 				return err
 			}
 		}
 		if abi.IncomingExternal != nil {
-			err := g.registerMsgType(MsgTypeExtIn, abi.IncomingExternal.BodyTy, contractName, msgsName)
+			err := g.registerMsgType(MsgTypeExtIn, abi.IncomingExternal.BodyTy, contractName, fullName, msgsName)
+			if err != nil {
+				return err
+			}
+			err = g.registerMsgType(MsgTypePayload, abi.IncomingExternal.BodyTy, contractName, fullName, msgsName)
 			if err != nil {
 				return err
 			}
@@ -165,7 +186,7 @@ func (g *Generator) registerType(declr tolkAbi.Declaration, namespace string) er
 	if declr.PayloadType == nil {
 		g.loadedTlbTypes = append(g.loadedTlbTypes, result.Code)
 	} else {
-		err = g.registerPayload(result, declr, namespace)
+		err = g.registerPayload(result, result.Tag, *declr.PayloadType, namespace)
 		if err != nil {
 			return err
 		}
@@ -174,40 +195,13 @@ func (g *Generator) registerType(declr tolkAbi.Declaration, namespace string) er
 	return nil
 }
 
-func (g *Generator) registerPayload(result *tolkParser.DeclrResult, declr tolkAbi.Declaration, namespace string) error {
-	var ty tolkAbi.Ty
-	switch declr.SumType {
-	case "Struct":
-		ty = tolkAbi.Ty{
-			SumType: "StructRef",
-			StructRefTy: struct {
-				StructName string       `json:"structName"`
-				TypeArgs   []tolkAbi.Ty `json:"typeArgs,omitempty"`
-			}{
-				StructName: declr.StructDeclaration.Name,
-			},
-		}
-	case "Alias":
-		if declr.AliasDeclaration.TargetTy == nil {
-			return fmt.Errorf("alias target ty cannot be nil")
-		}
-		ty = *declr.AliasDeclaration.TargetTy
-	case "Enum":
-		if declr.EnumDeclaration.EncodedAs == nil {
-			return fmt.Errorf("enum ty cannot be nil")
-		}
-		ty = *declr.EnumDeclaration.EncodedAs
-	}
-	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs, g.enumRefs)
-	if err != nil {
-		return fmt.Errorf("can't decode tag error %w", err)
-	}
+func (g *Generator) registerPayload(result *tolkParser.DeclrResult, tag tolkParser.Tag, payloadType string, namespace string) error {
 	key := tlb.Tag{
 		Len: tag.Len,
 		Val: tag.Val,
 	}
 
-	payloadName := utils.ToCamelCase(*declr.PayloadType)
+	payloadName := utils.ToCamelCase(payloadType)
 
 	msg := TLBMsgBody{
 		Type:             MsgTypePayload,
@@ -217,7 +211,7 @@ func (g *Generator) registerPayload(result *tolkParser.DeclrResult, declr tolkAb
 		Tag:              tag.Val,
 		Code:             result.Code,
 	}
-	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
+	//g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
 	if _, init := g.loadedTlbPayloadTypes[namespace]; !init {
 		g.loadedTlbPayloadTypes[namespace] = make(map[tlb.Tag][]TLBMsgBody)
 	}
@@ -226,7 +220,7 @@ func (g *Generator) registerPayload(result *tolkParser.DeclrResult, declr tolkAb
 	return nil
 }
 
-func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace string, msgsName map[string]struct{}) error {
+func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace, fullName string, msgsName map[string]struct{}) error {
 	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs, g.enumRefs)
 	if err != nil {
 		return fmt.Errorf("can't decode tag error %w", err)
@@ -247,6 +241,9 @@ func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace stri
 	case MsgTypeExtOut:
 		opSuffix = "ExtOutMsgOp"
 		typeSuffix = "ExtOutMsgBody"
+	case MsgTypePayload:
+		opSuffix = "Op"
+		typeSuffix = "PayloadBody"
 	}
 
 	var typePrefix string
@@ -283,8 +280,15 @@ func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace stri
 		Tag:              tag.Val,
 		Code:             res.Code,
 	}
-	g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
-	//g.extendedLoadedTlbMsgTypes[contractFullName] = append(g.extendedLoadedTlbMsgTypes[contractFullName], msg)
+
+	if mType != MsgTypePayload {
+		g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
+	} else {
+		if _, init := g.loadedTlbPayloadTypes[fullName]; !init {
+			g.loadedTlbPayloadTypes[fullName] = make(map[tlb.Tag][]TLBMsgBody)
+		}
+		g.loadedTlbPayloadTypes[fullName][key] = append(g.loadedTlbPayloadTypes[fullName][key], msg)
+	}
 
 	return nil
 }
@@ -879,7 +883,30 @@ func (g *Generator) RenderPayload() (string, error) {
 			}
 		}
 	}
-	context.OperationsByIface = g.loadedTlbPayloadTypes
+	for _, payloads := range g.loadedTlbPayloadTypes {
+		for tag, operation := range payloads {
+			for _, body := range operation {
+				context.OperationsByTag[tag] = append(context.OperationsByTag[tag], body)
+			}
+		}
+	}
+
+	for name, operations := range g.loadedTlbPayloadTypes {
+		_, found := g.contractToNamespace[name] // get namespace for contract
+		if !found {                             // current name is already namespace
+			continue
+		}
+
+		context.OperationsByIface[name] = operations
+	}
+	for contractName, namespace := range g.contractToNamespace {
+		for tag, bodies := range g.loadedTlbPayloadTypes[namespace] {
+			if _, init := context.OperationsByIface[contractName]; !init {
+				context.OperationsByIface[contractName] = make(map[tlb.Tag][]TLBMsgBody)
+			}
+			context.OperationsByIface[contractName][tag] = append(context.OperationsByIface[contractName][tag], bodies...)
+		}
+	}
 	tmpl, err := template.New("payloads").Parse(payloadTmpl)
 	if err != nil {
 		return "", err

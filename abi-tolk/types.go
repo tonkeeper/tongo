@@ -769,6 +769,14 @@ func (t *TonCocoonWorkerMessage) MarshalJSON() ([]byte, error) {
 	}
 }
 
+type TonCoffeeCrossDexResend struct {
+	QueryId       uint64
+	NextRecipient tlb.MsgAddress
+	Next          tlb.Any `tlb:"^"`
+	TotalGas      tlb.VarUInteger16
+	NextGas       tlb.VarUInteger16
+}
+
 type TonDedustStep struct {
 	KindOut bool
 	Limit   tlb.VarUInteger16
@@ -1062,7 +1070,7 @@ type TonTolkTestsAdditionalData struct {
 
 type TonTolkTestsMoonNextPayload struct {
 	Recipient tlb.MsgAddress
-	Payload   *tlb.Any `tlb:"maybe^"`
+	Payload   tlb.EitherRef[Payload]
 }
 
 type TonTolkTestsMoonSwapParams struct {

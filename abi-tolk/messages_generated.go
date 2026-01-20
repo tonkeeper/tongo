@@ -25,6 +25,8 @@ var (
 	decodeFuncTonCocoonUpgradeCodeMsgBody = decodeMsg(tlb.Tag{Val: 0x11aefd51, Len: 32}, TonCocoonUpgradeCodeMsgOp, TonCocoonUpgradeCodeMsgBody{})
 	// 0x178d4519
 	decodeFuncTonTep74InternalTransferStepMsgBody = decodeMsg(tlb.Tag{Val: 0x178d4519, Len: 32}, TonTep74InternalTransferStepMsgOp, TonTep74InternalTransferStepMsgBody{})
+	// 0x200f9086
+	decodeFuncTonCoffeeCrossDexResendMsgBody = decodeMsg(tlb.Tag{Val: 0x200f9086, Len: 32}, TonCoffeeCrossDexResendMsgOp, TonCoffeeCrossDexResendMsgBody{})
 	// 0x26ed7f65
 	decodeFuncTonCocoonOwnerWorkerRegisterMsgBody = decodeMsg(tlb.Tag{Val: 0x26ed7f65, Len: 32}, TonCocoonOwnerWorkerRegisterMsgOp, TonCocoonOwnerWorkerRegisterMsgBody{})
 	// 0x2c76b973
@@ -142,6 +144,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 
 	// 0x178d4519
 	TonTep74InternalTransferStepMsgOpCode: decodeFuncTonTep74InternalTransferStepMsgBody,
+
+	// 0x200f9086
+	TonCoffeeCrossDexResendMsgOpCode: decodeFuncTonCoffeeCrossDexResendMsgBody,
 
 	// 0x26ed7f65
 	TonCocoonOwnerWorkerRegisterMsgOpCode: decodeFuncTonCocoonOwnerWorkerRegisterMsgBody,
@@ -282,6 +287,7 @@ const (
 	TonTep74AskToTransferMsgOp                        MsgOpName = "TonTep74AskToTransfer"
 	TonCocoonUpgradeCodeMsgOp                         MsgOpName = "TonCocoonUpgradeCode"
 	TonTep74InternalTransferStepMsgOp                 MsgOpName = "TonTep74InternalTransferStep"
+	TonCoffeeCrossDexResendMsgOp                      MsgOpName = "TonCoffeeCrossDexResend"
 	TonCocoonOwnerWorkerRegisterMsgOp                 MsgOpName = "TonCocoonOwnerWorkerRegister"
 	TonTep74RequestWalletAddressMsgOp                 MsgOpName = "TonTep74RequestWalletAddress"
 	TonCocoonDelProxyTypeMsgOp                        MsgOpName = "TonCocoonDelProxyType"
@@ -337,6 +343,7 @@ const (
 	TonTep74AskToTransferMsgOpCode                        MsgOpCode = 0x0f8a7ea5
 	TonCocoonUpgradeCodeMsgOpCode                         MsgOpCode = 0x11aefd51
 	TonTep74InternalTransferStepMsgOpCode                 MsgOpCode = 0x178d4519
+	TonCoffeeCrossDexResendMsgOpCode                      MsgOpCode = 0x200f9086
 	TonCocoonOwnerWorkerRegisterMsgOpCode                 MsgOpCode = 0x26ed7f65
 	TonTep74RequestWalletAddressMsgOpCode                 MsgOpCode = 0x2c76b973
 	TonCocoonDelProxyTypeMsgOpCode                        MsgOpCode = 0x3c41d0b2
@@ -399,6 +406,8 @@ type TonTep74AskToTransferMsgBody = TonTep74AskToTransfer
 type TonCocoonUpgradeCodeMsgBody = TonCocoonUpgradeCode
 
 type TonTep74InternalTransferStepMsgBody = TonTep74InternalTransferStep
+
+type TonCoffeeCrossDexResendMsgBody = TonCoffeeCrossDexResend
 
 type TonCocoonOwnerWorkerRegisterMsgBody = TonCocoonOwnerWorkerRegister
 
@@ -496,6 +505,7 @@ var KnownMsgInTypes = map[string]any{
 	TonTep74AskToTransferMsgOp:                        TonTep74AskToTransferMsgBody{},
 	TonCocoonUpgradeCodeMsgOp:                         TonCocoonUpgradeCodeMsgBody{},
 	TonTep74InternalTransferStepMsgOp:                 TonTep74InternalTransferStepMsgBody{},
+	TonCoffeeCrossDexResendMsgOp:                      TonCoffeeCrossDexResendMsgBody{},
 	TonCocoonOwnerWorkerRegisterMsgOp:                 TonCocoonOwnerWorkerRegisterMsgBody{},
 	TonTep74RequestWalletAddressMsgOp:                 TonTep74RequestWalletAddressMsgBody{},
 	TonCocoonDelProxyTypeMsgOp:                        TonCocoonDelProxyTypeMsgBody{},

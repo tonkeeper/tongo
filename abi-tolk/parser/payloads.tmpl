@@ -45,14 +45,22 @@ var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
 {{- end }}
 }
 
-func (c ContractInterface) Payloads() map[PayloadOpCode]func(*Payload, *boc.Cell) error {
-    switch c.getNamespace() {
+func (c ContractInterface) Payloads() map[PayloadOpCode][]func(*Payload, *boc.Cell) error {
+    switch c {
     {{- range  $iface, $opsByTag := .OperationsByIface }}
-        case {{ $iface }}: return map[PayloadOpCode]func(*Payload, *boc.Cell) error{
+        case {{ $iface }}: return map[PayloadOpCode][]func(*Payload, *boc.Cell) error{
         {{- range $tag, $ops := $opsByTag}}
-            {{- range $op := $ops}}
-                {{ $op.GolangOpcodeName }}Code: decode{{ $op.GolangOpcodeName }}Payload,
-            {{- end }}
+              {{- if eq (len $ops) 1}}
+                   {{- range $op := $ops}}
+                      {{ $op.GolangOpcodeName }}Code: {decode{{ $op.GolangOpcodeName }}Payload},
+                   {{- end}}
+               {{- else}}
+                   {{ $tag.Val }}: {
+                       {{- range $op := $ops}}
+                            decode{{ $op.GolangOpcodeName }}Payload,
+                       {{- end}}
+                   },
+              {{- end }}
         {{- end }}
         }
     {{- end }}
@@ -61,10 +69,18 @@ func (c ContractInterface) Payloads() map[PayloadOpCode]func(*Payload, *boc.Cell
     }
 }
 
-var funcPayloadDecodersMapping = map[PayloadOpCode]func(*Payload, *boc.Cell) error{
+var funcPayloadDecodersMapping = map[PayloadOpCode][]func(*Payload, *boc.Cell) error{
 {{- range  $tag, $ops := .OperationsByTag }}
-    {{- range $op := $ops}}
-       {{ $op.GolangOpcodeName }}Code: decode{{ $op.GolangOpcodeName }}Payload,
+    {{- if eq (len $ops) 1}}
+        {{- range $op := $ops}}
+           {{ $op.GolangOpcodeName }}Code: {decode{{ $op.GolangOpcodeName }}Payload},
+        {{- end}}
+    {{- else}}
+        {{ $tag.Val }}: {
+            {{- range $op := $ops}}
+                 decode{{ $op.GolangOpcodeName }}Payload,
+            {{- end}}
+        },
    {{- end }}
 {{- end }}
 }

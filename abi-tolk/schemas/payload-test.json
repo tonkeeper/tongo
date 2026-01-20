@@ -959,6 +959,7 @@
         },
         {
           "name": "payload",
+          "isPayload": true,
           "ty": {
             "kind": "nullable",
             "inner": {

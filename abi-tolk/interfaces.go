@@ -13,6 +13,7 @@ const (
 	TonCocoonRoot
 	TonCocoonWallet
 	TonCocoonWorker
+	TonCoffeePool
 	TonDedustPool
 	TonStonfiV1Pool
 	TonStonfiV2Pool
@@ -27,6 +28,7 @@ const (
 const (
 	NUnknown contractNamespace = iota
 	TonCocoon
+	TonCoffee
 	TonDedust
 	TonStonfiV1
 	TonStonfiV2
@@ -41,6 +43,7 @@ var namespaceByInterface = map[ContractInterface]contractNamespace{
 	TonCocoonRoot:                     TonCocoon,
 	TonCocoonWallet:                   TonCocoon,
 	TonCocoonWorker:                   TonCocoon,
+	TonCoffeePool:                     TonCoffee,
 	TonDedustPool:                     TonDedust,
 	TonStonfiV1Pool:                   TonStonfiV1,
 	TonStonfiV2Pool:                   TonStonfiV2,
@@ -64,6 +67,8 @@ func (c ContractInterface) String() string {
 		return "ton_cocoon_wallet"
 	case TonCocoonWorker:
 		return "ton_cocoon_worker"
+	case TonCoffeePool:
+		return "ton_coffee_pool"
 	case TonDedustPool:
 		return "ton_dedust_pool"
 	case TonStonfiV1Pool:
@@ -99,6 +104,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return TonCocoonWallet
 	case "ton_cocoon_worker":
 		return TonCocoonWorker
+	case "ton_coffee_pool":
+		return TonCoffeePool
 	case "ton_dedust_pool":
 		return TonDedustPool
 	case "ton_stonfi_v1_pool":
@@ -321,6 +328,10 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncTonCocoonReturnExcessesBackMsgBody,
 			decodeFuncTonCocoonPayoutMsgBody,
 			decodeFuncTonCocoonWorkerProxyRequestMsgBody,
+		}
+	case TonCoffeePool:
+		return []msgDecoderFunc{
+			decodeFuncTonCoffeeCrossDexResendMsgBody,
 		}
 	case TonTep74JettonMinter:
 		return []msgDecoderFunc{

@@ -179,3 +179,34 @@ func TestDecodeAndEncodeMsgBodyAsPayload(t *testing.T) {
 		t.Fatalf("got different result")
 	}
 }
+
+func TestDecodeAndEncodeMsgBodyAsPayloadWithoutIntefaces(t *testing.T) {
+	data := "b5ee9c72010208010001c70001647362d09c003c0fe80cf0e9214a68044f58007e4e412c9642ff78a8bcbca9617ffbb0089f5ad246aa43abc4450b3814d934a9010265b37a900b41d8ff761000000006959debc80198878c1df5ae2b8ab947e54ff1f43b2844478fa09540b211901c50ff97ea69be7002030143801805cd40b77025720f35948aa8494d02f8792e1260c1027394054d029e1fda303804004380198878c1df5ae2b8ab947e54ff1f43b2844478fa09540b211901c50ff97ea69be8016d200f9086003c0fe80cf0e921800a6c058f698d02b034457bdb713bd7ffba89d0aa020ac5da9f7bca9b0c4d590e684e614ec082faf0801005016401f3835d003c0fe80cf0e92141d978ab880198878c1df5ae2b8ab947e54ff1f43b2844478fa09540b211901c50ff97ea69bf0601e16664de2a801d856fe796bb3c9254b6c849a88d49ac7df0b951c591dad7dd8f6eefcc37fd337003310f183beb5c5715728fca9fe3e87650888f1f412a8164232038a1ff2fd4d37e006621e3077d6b8ae2ae51f953fc7d0eca1111e3e825502c846407143fe5fa9a6f8000000034acef5e40070059702a14bc8b4d37580198878c1df5ae2b8ab947e54ff1f43b2844478fa09540b211901c50ff97ea69be00000010"
+	boc1, _ := boc.DeserializeBocHex(data)
+
+	var x InMsgBody
+	if err := tlb.Unmarshal(boc1[0], &x); err != nil {
+		t.Fatalf("Unable to unmarshal: %v", err)
+	}
+
+	val, err := json.Marshal(x)
+	if err != nil {
+		t.Fatalf("Unable to marshal: %v", err)
+	}
+
+	var x2 InMsgBody
+	if err = json.Unmarshal(val, &x2); err != nil {
+		t.Fatalf("Unable to unmarshal json: %v", err)
+	}
+
+	boc2 := boc.NewCell()
+	if err := tlb.Marshal(boc2, x2); err != nil {
+		t.Fatalf("Unable to marshal tlb: %v", err)
+	}
+
+	b, _ := boc2.ToBoc()
+	res := fmt.Sprintf("%x", b)
+	if res != data {
+		t.Fatalf("got different result")
+	}
+}

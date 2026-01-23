@@ -386,18 +386,8 @@ type ShardRange struct {
 	To   uint64
 }
 
-// MsgsExecutionParams - message execution parameters (only v2 scheme)
-// msgs_execution_params_tycho_v2#01
-// buffer_limit:uint32
-// group_limit:uint16
-// group_vert_size:uint16
-// externals_expire_timeout:uint16
-// open_ranges_limit:uint16
-// par_0_int_msgs_count_limit:uint32
-// par_0_ext_msgs_count_limit:uint32
-// group_slots_fractions:(HashmapE 16 uint8)
-// range_messages_limit:uint32
-// = MsgsExecutionParams;
+// MsgsExecutionParams - message execution parameters
+// msgs_execution_params_tycho#00 or #01
 type MsgsExecutionParams struct {
 	BufferLimit            uint32
 	GroupLimit             uint16

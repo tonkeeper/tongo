@@ -7,11 +7,11 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-func decodeTonTolkTestsTextCommentJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTolkTestsTextComment
+func decodeTonCocoonTextCmdOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonCocoonTextCmdPayloadBody
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonTolkTestsTextCommentJettonPayloadOp
+		j.SumType = TonCocoonTextCmdOp
 		j.Value = res
 		return nil
 	}
@@ -29,11 +29,11 @@ func decodeTonCocoonTextCommandOpPayload(j *Payload, c *boc.Cell) error {
 	return err
 }
 
-func decodeTonCocoonTextCmdOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonCocoonTextCmdPayloadBody
+func decodeTonTolkTestsTextCommentJettonPayloadOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonTolkTestsTextComment
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
-		j.SumType = TonCocoonTextCmdOp
+		j.SumType = TonTolkTestsTextCommentJettonPayloadOp
 		j.Value = res
 		return nil
 	}
@@ -865,17 +865,6 @@ func decodeTonTep74ResponseWalletAddressOpPayload(j *Payload, c *boc.Cell) error
 	return err
 }
 
-func decodeTonTep74AboaLisaOpPayload(j *Payload, c *boc.Cell) error {
-	var res TonTep74AboaLisaPayloadBody
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = TonTep74AboaLisaOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
 func decodeTonCocoonReturnExcessesBackOpPayload(j *Payload, c *boc.Cell) error {
 	var res TonCocoonReturnExcessesBackPayloadBody
 	err := tlb.Unmarshal(c, &res)
@@ -892,6 +881,17 @@ func decodeTonTep74ReturnExcessesBackOpPayload(j *Payload, c *boc.Cell) error {
 	err := tlb.Unmarshal(c, &res)
 	if err == nil {
 		j.SumType = TonTep74ReturnExcessesBackOp
+		j.Value = res
+		return nil
+	}
+	return err
+}
+
+func decodeTonTep74AboaLisaOpPayload(j *Payload, c *boc.Cell) error {
+	var res TonTep74AboaLisaPayloadBody
+	err := tlb.Unmarshal(c, &res)
+	if err == nil {
+		j.SumType = TonTep74AboaLisaOp
 		j.Value = res
 		return nil
 	}
@@ -1053,9 +1053,9 @@ func decodeTonStonfiV2StonfiProvideLiquidityJettonPayloadOpPayload(j *Payload, c
 }
 
 const (
-	TonTolkTestsTextCommentJettonPayloadOp                PayloadOpName = "TonTolkTestsTextCommentJettonPayload"
-	TonCocoonTextCommandOp                                PayloadOpName = "TonCocoonTextCommand"
 	TonCocoonTextCmdOp                                    PayloadOpName = "TonCocoonTextCmd"
+	TonCocoonTextCommandOp                                PayloadOpName = "TonCocoonTextCommand"
+	TonTolkTestsTextCommentJettonPayloadOp                PayloadOpName = "TonTolkTestsTextCommentJettonPayload"
 	TonTep74ChangeMinterAdminOp                           PayloadOpName = "TonTep74ChangeMinterAdmin"
 	TonTep74ChangeMinterContentOp                         PayloadOpName = "TonTep74ChangeMinterContent"
 	TonTep74MintNewJettonsOp                              PayloadOpName = "TonTep74MintNewJettons"
@@ -1131,9 +1131,9 @@ const (
 	TonTolkTestsWithdrawPayloadJettonPayloadOp            PayloadOpName = "TonTolkTestsWithdrawPayloadJettonPayload"
 	TonTolkTestsMoonSwapSucceedJettonPayloadOp            PayloadOpName = "TonTolkTestsMoonSwapSucceedJettonPayload"
 	TonTep74ResponseWalletAddressOp                       PayloadOpName = "TonTep74ResponseWalletAddress"
-	TonTep74AboaLisaOp                                    PayloadOpName = "TonTep74AboaLisa"
 	TonCocoonReturnExcessesBackOp                         PayloadOpName = "TonCocoonReturnExcessesBack"
 	TonTep74ReturnExcessesBackOp                          PayloadOpName = "TonTep74ReturnExcessesBack"
+	TonTep74AboaLisaOp                                    PayloadOpName = "TonTep74AboaLisa"
 	TonTolkTestsMoonCreateOrderJettonPayloadOp            PayloadOpName = "TonTolkTestsMoonCreateOrderJettonPayload"
 	TonCocoonOwnerClientWithdrawOp                        PayloadOpName = "TonCocoonOwnerClientWithdraw"
 	TonTolkTestsBidaskDammSwapJettonPayloadOp             PayloadOpName = "TonTolkTestsBidaskDammSwapJettonPayload"
@@ -1149,9 +1149,9 @@ const (
 	TonCocoonOwnerClientRequestRefundOp                   PayloadOpName = "TonCocoonOwnerClientRequestRefund"
 	TonStonfiV2StonfiProvideLiquidityJettonPayloadOp      PayloadOpName = "TonStonfiV2StonfiProvideLiquidityJettonPayload"
 
-	TonTolkTestsTextCommentJettonPayloadOpCode                PayloadOpCode = 0x00000000
-	TonCocoonTextCommandOpCode                                PayloadOpCode = 0x00000000
 	TonCocoonTextCmdOpCode                                    PayloadOpCode = 0x00000000
+	TonCocoonTextCommandOpCode                                PayloadOpCode = 0x00000000
+	TonTolkTestsTextCommentJettonPayloadOpCode                PayloadOpCode = 0x00000000
 	TonTep74ChangeMinterAdminOpCode                           PayloadOpCode = 0x00000003
 	TonTep74ChangeMinterContentOpCode                         PayloadOpCode = 0x00000004
 	TonTep74MintNewJettonsOpCode                              PayloadOpCode = 0x00000015
@@ -1227,9 +1227,9 @@ const (
 	TonTolkTestsWithdrawPayloadJettonPayloadOpCode            PayloadOpCode = 0xcb03bfaf
 	TonTolkTestsMoonSwapSucceedJettonPayloadOpCode            PayloadOpCode = 0xcb7f38d6
 	TonTep74ResponseWalletAddressOpCode                       PayloadOpCode = 0xd1735400
-	TonTep74AboaLisaOpCode                                    PayloadOpCode = 0xd53276db
 	TonCocoonReturnExcessesBackOpCode                         PayloadOpCode = 0xd53276db
 	TonTep74ReturnExcessesBackOpCode                          PayloadOpCode = 0xd53276db
+	TonTep74AboaLisaOpCode                                    PayloadOpCode = 0xd53276db
 	TonTolkTestsMoonCreateOrderJettonPayloadOpCode            PayloadOpCode = 0xda067c19
 	TonCocoonOwnerClientWithdrawOpCode                        PayloadOpCode = 0xda068e78
 	TonTolkTestsBidaskDammSwapJettonPayloadOpCode             PayloadOpCode = 0xdd79732c
@@ -1247,9 +1247,9 @@ const (
 )
 
 var KnownPayloadTypes = map[string]any{
-	TonTolkTestsTextCommentJettonPayloadOp:                TonTolkTestsTextComment{},
-	TonCocoonTextCommandOp:                                TonCocoonTextCommandPayloadBody{},
 	TonCocoonTextCmdOp:                                    TonCocoonTextCmdPayloadBody{},
+	TonCocoonTextCommandOp:                                TonCocoonTextCommandPayloadBody{},
+	TonTolkTestsTextCommentJettonPayloadOp:                TonTolkTestsTextComment{},
 	TonTep74ChangeMinterAdminOp:                           TonTep74ChangeMinterAdminPayloadBody{},
 	TonTep74ChangeMinterContentOp:                         TonTep74ChangeMinterContentPayloadBody{},
 	TonTep74MintNewJettonsOp:                              TonTep74MintNewJettonsPayloadBody{},
@@ -1325,9 +1325,9 @@ var KnownPayloadTypes = map[string]any{
 	TonTolkTestsWithdrawPayloadJettonPayloadOp:            TonTolkTestsWithdrawPayload{},
 	TonTolkTestsMoonSwapSucceedJettonPayloadOp:            TonTolkTestsMoonSwapSucceed{},
 	TonTep74ResponseWalletAddressOp:                       TonTep74ResponseWalletAddressPayloadBody{},
-	TonTep74AboaLisaOp:                                    TonTep74AboaLisaPayloadBody{},
 	TonCocoonReturnExcessesBackOp:                         TonCocoonReturnExcessesBackPayloadBody{},
 	TonTep74ReturnExcessesBackOp:                          TonTep74ReturnExcessesBackPayloadBody{},
+	TonTep74AboaLisaOp:                                    TonTep74AboaLisaPayloadBody{},
 	TonTolkTestsMoonCreateOrderJettonPayloadOp:            TonTolkTestsMoonCreateOrder{},
 	TonCocoonOwnerClientWithdrawOp:                        TonCocoonOwnerClientWithdrawPayloadBody{},
 	TonTolkTestsBidaskDammSwapJettonPayloadOp:             TonTolkTestsBidaskDammSwap{},
@@ -1344,9 +1344,9 @@ var KnownPayloadTypes = map[string]any{
 	TonStonfiV2StonfiProvideLiquidityJettonPayloadOp:      TonStonfiV2StonfiProvideLiquidity{},
 }
 var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
-	TonTolkTestsTextCommentJettonPayloadOp:                TonTolkTestsTextCommentJettonPayloadOpCode,
-	TonCocoonTextCommandOp:                                TonCocoonTextCommandOpCode,
 	TonCocoonTextCmdOp:                                    TonCocoonTextCmdOpCode,
+	TonCocoonTextCommandOp:                                TonCocoonTextCommandOpCode,
+	TonTolkTestsTextCommentJettonPayloadOp:                TonTolkTestsTextCommentJettonPayloadOpCode,
 	TonTep74ChangeMinterAdminOp:                           TonTep74ChangeMinterAdminOpCode,
 	TonTep74ChangeMinterContentOp:                         TonTep74ChangeMinterContentOpCode,
 	TonTep74MintNewJettonsOp:                              TonTep74MintNewJettonsOpCode,
@@ -1422,9 +1422,9 @@ var PayloadOpCodes = map[PayloadOpName]PayloadOpCode{
 	TonTolkTestsWithdrawPayloadJettonPayloadOp:            TonTolkTestsWithdrawPayloadJettonPayloadOpCode,
 	TonTolkTestsMoonSwapSucceedJettonPayloadOp:            TonTolkTestsMoonSwapSucceedJettonPayloadOpCode,
 	TonTep74ResponseWalletAddressOp:                       TonTep74ResponseWalletAddressOpCode,
-	TonTep74AboaLisaOp:                                    TonTep74AboaLisaOpCode,
 	TonCocoonReturnExcessesBackOp:                         TonCocoonReturnExcessesBackOpCode,
 	TonTep74ReturnExcessesBackOp:                          TonTep74ReturnExcessesBackOpCode,
+	TonTep74AboaLisaOp:                                    TonTep74AboaLisaOpCode,
 	TonTolkTestsMoonCreateOrderJettonPayloadOp:            TonTolkTestsMoonCreateOrderJettonPayloadOpCode,
 	TonCocoonOwnerClientWithdrawOp:                        TonCocoonOwnerClientWithdrawOpCode,
 	TonTolkTestsBidaskDammSwapJettonPayloadOp:             TonTolkTestsBidaskDammSwapJettonPayloadOpCode,
@@ -1599,9 +1599,9 @@ func (c ContractInterface) Payloads() map[PayloadOpCode][]func(*Payload, *boc.Ce
 
 var funcPayloadDecodersMapping = map[PayloadOpCode][]func(*Payload, *boc.Cell) error{
 	0: {
-		decodeTonTolkTestsTextCommentJettonPayloadOpPayload,
-		decodeTonCocoonTextCommandOpPayload,
 		decodeTonCocoonTextCmdOpPayload,
+		decodeTonCocoonTextCommandOpPayload,
+		decodeTonTolkTestsTextCommentJettonPayloadOpPayload,
 	},
 	TonTep74ChangeMinterAdminOpCode:                         {decodeTonTep74ChangeMinterAdminOpPayload},
 	TonTep74ChangeMinterContentOpCode:                       {decodeTonTep74ChangeMinterContentOpPayload},
@@ -1679,9 +1679,9 @@ var funcPayloadDecodersMapping = map[PayloadOpCode][]func(*Payload, *boc.Cell) e
 	TonTolkTestsMoonSwapSucceedJettonPayloadOpCode:          {decodeTonTolkTestsMoonSwapSucceedJettonPayloadOpPayload},
 	TonTep74ResponseWalletAddressOpCode:                     {decodeTonTep74ResponseWalletAddressOpPayload},
 	3576854235: {
-		decodeTonTep74AboaLisaOpPayload,
 		decodeTonCocoonReturnExcessesBackOpPayload,
 		decodeTonTep74ReturnExcessesBackOpPayload,
+		decodeTonTep74AboaLisaOpPayload,
 	},
 	TonTolkTestsMoonCreateOrderJettonPayloadOpCode:            {decodeTonTolkTestsMoonCreateOrderJettonPayloadOpPayload},
 	TonCocoonOwnerClientWithdrawOpCode:                        {decodeTonCocoonOwnerClientWithdrawOpPayload},
@@ -1699,13 +1699,13 @@ var funcPayloadDecodersMapping = map[PayloadOpCode][]func(*Payload, *boc.Cell) e
 	TonStonfiV2StonfiProvideLiquidityJettonPayloadOpCode:      {decodeTonStonfiV2StonfiProvideLiquidityJettonPayloadOpPayload},
 }
 
-type TonTolkTestsTextComment struct {
-	Text tlb.Any
-}
+type TonCocoonTextCmdPayloadBody = TonCocoonTextCmd
 
 type TonCocoonTextCommandPayloadBody = TonCocoonTextCommand
 
-type TonCocoonTextCmdPayloadBody = TonCocoonTextCmd
+type TonTolkTestsTextComment struct {
+	Text tlb.Any
+}
 
 type TonTep74ChangeMinterAdminPayloadBody = TonTep74ChangeMinterAdmin
 
@@ -1981,11 +1981,11 @@ type TonTolkTestsMoonSwapSucceed struct {
 
 type TonTep74ResponseWalletAddressPayloadBody = TonTep74ResponseWalletAddress
 
-type TonTep74AboaLisaPayloadBody = TonTep74AboaLisa
-
 type TonCocoonReturnExcessesBackPayloadBody = TonCocoonReturnExcessesBack
 
 type TonTep74ReturnExcessesBackPayloadBody = TonTep74ReturnExcessesBack
+
+type TonTep74AboaLisaPayloadBody = TonTep74AboaLisa
 
 type TonTolkTestsMoonCreateOrder struct {
 	Asset1    tlb.MsgAddress

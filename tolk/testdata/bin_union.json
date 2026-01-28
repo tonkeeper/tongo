@@ -1,0 +1,72 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "AddressWithPrefix",
+      "prefix": {
+        "prefixStr": "0b001",
+        "prefixLen": 3
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MapWithPrefix",
+      "prefix": {
+        "prefixStr": "0b011",
+        "prefixLen": 3
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "address"
+            },
+            "v": {
+              "kind": "coins"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CellWithPrefix",
+      "prefix": {
+        "prefixStr": "0b111",
+        "prefixLen": 3
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

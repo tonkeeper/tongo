@@ -11,7 +11,7 @@ import (
 	"text/template"
 
 	"github.com/tonkeeper/tongo/tlb"
-	tolkAbi "github.com/tonkeeper/tongo/tolk/abi"
+	"github.com/tonkeeper/tongo/tolk"
 	tolkParser "github.com/tonkeeper/tongo/tolk/parser"
 	"github.com/tonkeeper/tongo/utils"
 	"golang.org/x/exp/maps"
@@ -52,15 +52,15 @@ type TLBMsgBody struct {
 }
 
 type GetMethodWithAbi struct {
-	ABI       tolkAbi.ABI
-	GetMethod tolkAbi.GetMethod
+	ABI       tolk.ABI
+	GetMethod tolk.GetMethod
 }
 
 type Generator struct {
-	structRefs            map[string]tolkAbi.StructDeclaration
-	aliasRefs             map[string]tolkAbi.AliasDeclaration
-	enumRefs              map[string]tolkAbi.EnumDeclaration
-	abi                   []tolkAbi.ABI
+	structRefs            map[string]tolk.StructDeclaration
+	aliasRefs             map[string]tolk.AliasDeclaration
+	enumRefs              map[string]tolk.EnumDeclaration
+	abi                   []tolk.ABI
 	abiByGetMethod        map[string][]GetMethodWithAbi
 	newTlbTypes           map[string]struct{}
 	loadedTlbTypes        []string
@@ -71,11 +71,11 @@ type Generator struct {
 
 type MsgType int
 
-func NewGenerator(abi []tolkAbi.ABI, abiByGetMethod map[string][]GetMethodWithAbi) *Generator {
+func NewGenerator(abi []tolk.ABI, abiByGetMethod map[string][]GetMethodWithAbi) *Generator {
 	g := &Generator{
-		structRefs:            make(map[string]tolkAbi.StructDeclaration),
-		aliasRefs:             make(map[string]tolkAbi.AliasDeclaration),
-		enumRefs:              make(map[string]tolkAbi.EnumDeclaration),
+		structRefs:            make(map[string]tolk.StructDeclaration),
+		aliasRefs:             make(map[string]tolk.AliasDeclaration),
+		enumRefs:              make(map[string]tolk.EnumDeclaration),
 		loadedTlbMsgTypes:     make(map[tlb.Tag][]TLBMsgBody),
 		loadedTlbPayloadTypes: make(map[string]map[tlb.Tag][]TLBMsgBody),
 		contractToNamespace:   make(map[string]string),
@@ -155,7 +155,7 @@ func (g *Generator) registerABI() error {
 	return nil
 }
 
-func (g *Generator) registerType(declr tolkAbi.Declaration, namespace string) error {
+func (g *Generator) registerType(declr tolk.Declaration, namespace string) error {
 	var result *tolkParser.DeclrResult
 	var err error
 	switch declr.SumType {
@@ -211,7 +211,6 @@ func (g *Generator) registerPayload(result *tolkParser.DeclrResult, tag tolkPars
 		Tag:              tag.Val,
 		Code:             result.Code,
 	}
-	//g.loadedTlbMsgTypes[key] = append(g.loadedTlbMsgTypes[key], msg)
 	if _, init := g.loadedTlbPayloadTypes[namespace]; !init {
 		g.loadedTlbPayloadTypes[namespace] = make(map[tlb.Tag][]TLBMsgBody)
 	}
@@ -220,7 +219,7 @@ func (g *Generator) registerPayload(result *tolkParser.DeclrResult, tag tolkPars
 	return nil
 }
 
-func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace, fullName string, msgsName map[string]struct{}) error {
+func (g *Generator) registerMsgType(mType MsgType, ty tolk.Ty, namespace, fullName string, msgsName map[string]struct{}) error {
 	tag, err := tolkParser.ParseTag(ty, g.structRefs, g.aliasRefs, g.enumRefs)
 	if err != nil {
 		return fmt.Errorf("can't decode tag error %w", err)
@@ -251,14 +250,14 @@ func (g *Generator) registerMsgType(mType MsgType, ty tolkAbi.Ty, namespace, ful
 	var res *tolkParser.MsgResult
 	switch ty.SumType {
 	case "StructRef":
-		typePrefix = utils.ToCamelCase(ty.StructRefTy.StructName)
+		typePrefix = utils.ToCamelCase(ty.StructRef.StructName)
 		msgName = namespace + typePrefix + typeSuffix
 		res, err = tolkParser.ParseStructMsg(ty, msgName, namespace)
 		if err != nil {
 			return err
 		}
 	case "AliasRef":
-		typePrefix = utils.ToCamelCase(ty.AliasRefTy.AliasName)
+		typePrefix = utils.ToCamelCase(ty.AliasRef.AliasName)
 		msgName = namespace + typePrefix + typeSuffix
 		res, err = tolkParser.ParseAliasMsg(ty, msgName, namespace)
 		if err != nil {
@@ -494,7 +493,7 @@ func (g *Generator) getMethod(methodName string, methodID int, m []GetMethodWith
 	return builder.String(), nil
 }
 
-func buildInputStackValues(p []tolkAbi.Parameter) string {
+func buildInputStackValues(p []tolk.Parameter) string {
 	var builder strings.Builder
 	builder.WriteString("stack := tlb.VmStack{}\n")
 
@@ -504,40 +503,40 @@ func buildInputStackValues(p []tolkAbi.Parameter) string {
 
 	for _, s := range p {
 		switch s.Ty.SumType {
-		case "intN":
-			if s.Ty.NumberTy.N <= 64 {
+		case "IntN":
+			if s.Ty.IntN.N <= 64 {
 				builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkTinyInt\", VmStkTinyInt: int64(%s)}\n",
 					utils.ToCamelCasePrivate(s.Name)))
 			} else {
 				builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkInt\", VmStkInt: %s}\n",
 					utils.ToCamelCasePrivate(s.Name)))
 			}
-		case "uintN":
-			if s.Ty.NumberTy.N <= 63 {
+		case "UintN":
+			if s.Ty.UintN.N <= 63 {
 				builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkTinyInt\", VmStkTinyInt: int64(%s)}\n",
 					utils.ToCamelCasePrivate(s.Name)))
 			} else {
 				builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkInt\", VmStkInt: %s}\n",
 					utils.ToCamelCasePrivate(s.Name)))
 			}
-		case "bool":
+		case "Bool":
 			builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkTinyInt\", VmStkTinyInt: BoolToInt64(%s)}\n",
 				utils.ToCamelCasePrivate(s.Name)))
-		case "coins":
+		case "Coins":
 			builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkInt\", VmStkInt: tlb.Int257(BigIntFromUint(uint64(%s)))}\n",
 				utils.ToCamelCasePrivate(s.Name)))
-		case "varintN", "varuintN", "int":
+		case "VarIntN", "VarUintN", "Int":
 			builder.WriteString(fmt.Sprintf("val = tlb.VmStackValue{SumType:  \"VmStkInt\", VmStkInt: %s}\n",
 				utils.ToCamelCasePrivate(s.Name)))
-		case "address", "addressExt", "addressOpt", "addressAny", "slice", "remaining", "bitsN":
+		case "Address", "AddressExt", "AddressOpt", "AddressAny", "Slice", "Remaining", "BitsN":
 			builder.WriteString(fmt.Sprintf("val, err = tlb.TlbStructToVmCellSlice(%s)\n",
 				utils.ToCamelCasePrivate(s.Name)))
 			builder.WriteString(returnStrNilErr)
-		case "cell", "builder", "cellOf", "mapKV":
+		case "Cell", "Builder", "CellOf", "Map":
 			builder.WriteString(fmt.Sprintf("val, err = tlb.TlbStructToVmCell(%s)\n",
 				utils.ToCamelCasePrivate(s.Name)))
 			builder.WriteString(returnStrNilErr)
-		case "nullLiteral", "void":
+		case "NullLiteral", "Void":
 			builder.WriteString("val = tlb.VmStackValue{SumType:  \"VmStkNull\"}\n")
 		default:
 			builder.WriteString(fmt.Sprintf("val, err = tlb.TlbStructToVmCell(%s)\n",
@@ -550,7 +549,7 @@ func buildInputStackValues(p []tolkAbi.Parameter) string {
 	return builder.String()
 }
 
-func (g *Generator) buildOutputDecoder(name string, ty tolkAbi.Ty) (string, error) {
+func (g *Generator) buildOutputDecoder(name string, ty tolk.Ty) (string, error) {
 	builder := new(strings.Builder)
 
 	builder.WriteString(fmt.Sprintf("func Decode%s(stack tlb.VmStack) (resultType string, resultAny any, err error) {\n", name))
@@ -570,11 +569,11 @@ func (g *Generator) buildOutputDecoder(name string, ty tolkAbi.Ty) (string, erro
 	return builder.String(), nil
 }
 
-func (g *Generator) buildOutputStackCheck(ty tolkAbi.Ty) (string, error) {
+func (g *Generator) buildOutputStackCheck(ty tolk.Ty) (string, error) {
 	var builder strings.Builder
 
 	var checksBuilder strings.Builder
-	res, err := g.buildOutputStackTy(ty, &checksBuilder, 0, false, make(map[string]tolkAbi.Ty))
+	res, err := g.buildOutputStackTy(ty, &checksBuilder, 0, false, make(map[string]tolk.Ty))
 	if err != nil {
 		return "", err
 	}
@@ -586,11 +585,11 @@ func (g *Generator) buildOutputStackCheck(ty tolkAbi.Ty) (string, error) {
 }
 
 func (g *Generator) buildOutputStackTy(
-	ty tolkAbi.Ty,
+	ty tolk.Ty,
 	builder *strings.Builder,
 	stackIndex int,
 	isNullable bool,
-	genericsMap map[string]tolkAbi.Ty,
+	genericsMap map[string]tolk.Ty,
 ) (int, error) {
 	stackType := fmt.Sprintf("stack[%d].SumType", stackIndex)
 	nullableCheck := ""
@@ -599,14 +598,14 @@ func (g *Generator) buildOutputStackTy(
 	}
 
 	switch ty.SumType {
-	case "intN", "uintN", "varintN", "varuintN", "coins", "bool", "int":
+	case "IntN", "UintN", "VarIntN", "VarUintN", "Coins", "Bool", "Int":
 		builder.WriteString(fmt.Sprintf("|| ((%s != \"VmStkTinyInt\" && %s != \"VmStkInt\")%s) ", stackType, stackType, nullableCheck))
-	case "address", "addressExt", "addressOpt", "addressAny", "slice", "remaining", "bitsN":
+	case "Address", "AddressExt", "AddressOpt", "AddressAny", "Slice", "Remaining", "BitsN":
 		builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkSlice\"%s) ", stackType, nullableCheck))
-	case "cell", "builder", "cellOf", "mapKV":
+	case "Cell", "Builder", "CellOf", "Map":
 		builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkCell\"%s) ", stackType, nullableCheck))
-	case "tensor":
-		for _, item := range ty.TensorTy.Items {
+	case "Tensor":
+		for _, item := range ty.Tensor.Items {
 			i, err := g.buildOutputStackTy(item, builder, stackIndex, isNullable, genericsMap)
 			if err != nil {
 				return 0, err
@@ -614,8 +613,8 @@ func (g *Generator) buildOutputStackTy(
 			stackIndex = i + 1
 		}
 		return stackIndex - 1, nil
-	case "tupleWith":
-		for _, item := range ty.TupleWithTy.Items {
+	case "TupleWith":
+		for _, item := range ty.TupleWith.Items {
 			i, err := g.buildOutputStackTy(item, builder, stackIndex, isNullable, genericsMap)
 			if err != nil {
 				return 0, err
@@ -623,61 +622,52 @@ func (g *Generator) buildOutputStackTy(
 			stackIndex = i + 1
 		}
 		return stackIndex - 1, nil
-	case "nullLiteral", "void":
+	case "NullLiteral", "Void":
 		builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkNull\") ", stackType))
-	case "callable":
+	case "Callable":
 		builder.WriteString(fmt.Sprintf("|| (%s != \"VmStkCont\") ", stackType))
-	case "nullable":
-		if ty.NullableTy.Inner == nil {
-			return 0, fmt.Errorf("nullable must have inner ty")
-		}
-		i, err := g.buildOutputStackTy(*ty.NullableTy.Inner, builder, stackIndex, true, genericsMap)
+	case "Nullable":
+		i, err := g.buildOutputStackTy(ty.Nullable.Inner, builder, stackIndex, true, genericsMap)
 		if err != nil {
 			return 0, err
 		}
 		return i, nil
 	case "EnumRef":
-		enumTy, found := g.enumRefs[ty.EnumRefTy.EnumName]
+		enumTy, found := g.enumRefs[ty.EnumRef.EnumName]
 		if !found {
-			return 0, fmt.Errorf("EnumRefTy %s not found in enumRefs", ty.EnumRefTy.EnumName)
+			return 0, fmt.Errorf("EnumRef %s not found in enumRefs", ty.EnumRef.EnumName)
 		}
-		if enumTy.EncodedAs == nil {
-			return 0, fmt.Errorf("enum %s has no EncodedAs", enumTy.Name)
-		}
-		i, err := g.buildOutputStackTy(*enumTy.EncodedAs, builder, stackIndex, isNullable, genericsMap)
+		i, err := g.buildOutputStackTy(enumTy.EncodedAs, builder, stackIndex, isNullable, genericsMap)
 		if err != nil {
 			return 0, err
 		}
 		return i, nil
 	case "AliasRef":
-		aliasTy, found := g.aliasRefs[ty.AliasRefTy.AliasName]
+		aliasTy, found := g.aliasRefs[ty.AliasRef.AliasName]
 		if !found {
-			return 0, fmt.Errorf("alias %s not found in aliasRefs", ty.AliasRefTy.AliasName)
+			return 0, fmt.Errorf("alias %s not found in aliasRefs", ty.AliasRef.AliasName)
 		}
-		if aliasTy.TargetTy == nil {
-			return 0, fmt.Errorf("alias %s has no TargetTy", ty.AliasRefTy.AliasName)
-		}
-		genericMap := make(map[string]tolkAbi.Ty)
+		genericMap := make(map[string]tolk.Ty)
 		for i, genericName := range aliasTy.TypeParams {
-			resolvedTy, err := g.resolveGenericT(genericsMap, ty.AliasRefTy.TypeArgs[i])
+			resolvedTy, err := g.resolveGenericT(genericsMap, ty.AliasRef.TypeArgs[i])
 			if err != nil {
 				return 0, err
 			}
 			genericMap[genericName] = *resolvedTy
 		}
-		i, err := g.buildOutputStackTy(*aliasTy.TargetTy, builder, stackIndex, isNullable, genericMap)
+		i, err := g.buildOutputStackTy(aliasTy.TargetTy, builder, stackIndex, isNullable, genericMap)
 		if err != nil {
 			return 0, err
 		}
 		return i, nil
 	case "StructRef":
-		structTy, found := g.structRefs[ty.StructRefTy.StructName]
+		structTy, found := g.structRefs[ty.StructRef.StructName]
 		if !found {
-			return 0, fmt.Errorf("StructRefTy %s not found in structRefs", ty.StructRefTy.StructName)
+			return 0, fmt.Errorf("StructRef %s not found in structRefs", ty.StructRef.StructName)
 		}
-		genericMap := make(map[string]tolkAbi.Ty)
+		genericMap := make(map[string]tolk.Ty)
 		for i, genericName := range structTy.TypeParams {
-			resolvedTy, err := g.resolveGenericT(genericsMap, ty.StructRefTy.TypeArgs[i])
+			resolvedTy, err := g.resolveGenericT(genericsMap, ty.StructRef.TypeArgs[i])
 			if err != nil {
 				return 0, err
 			}
@@ -691,10 +681,10 @@ func (g *Generator) buildOutputStackTy(
 			stackIndex = i + 1
 		}
 		return stackIndex - 1, nil
-	case "genericT":
-		currTy, ok := genericsMap[ty.GenericTy.NameT]
+	case "Generic":
+		currTy, ok := genericsMap[ty.Generic.NameT]
 		if !ok {
-			return 0, fmt.Errorf("type for generic %v not found", ty.GenericTy.NameT)
+			return 0, fmt.Errorf("type for generic %v not found", ty.Generic.NameT)
 		}
 		i, err := g.buildOutputStackTy(currTy, builder, stackIndex, isNullable, genericsMap)
 		if err != nil {
@@ -707,12 +697,12 @@ func (g *Generator) buildOutputStackTy(
 	return stackIndex, nil
 }
 
-func (g *Generator) resolveGenericT(genericMap map[string]tolkAbi.Ty, ty tolkAbi.Ty) (*tolkAbi.Ty, error) {
+func (g *Generator) resolveGenericT(genericMap map[string]tolk.Ty, ty tolk.Ty) (*tolk.Ty, error) {
 	switch ty.SumType {
-	case "genericT":
-		resolvedTy, ok := genericMap[ty.GenericTy.NameT]
+	case "Generic":
+		resolvedTy, ok := genericMap[ty.Generic.NameT]
 		if !ok {
-			return nil, fmt.Errorf("type for generic %v not found", ty.GenericTy.NameT)
+			return nil, fmt.Errorf("type for generic %v not found", ty.Generic.NameT)
 		}
 		return &resolvedTy, nil
 	}

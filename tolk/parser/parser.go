@@ -1,12 +1,11 @@
 package tolkParser
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	tolkAbi "github.com/tonkeeper/tongo/tolk/abi"
+	"github.com/tonkeeper/tongo/tolk"
 	"github.com/tonkeeper/tongo/utils"
 )
 
@@ -17,18 +16,18 @@ type DefaultType struct {
 
 var (
 	defaultKnownTypes = map[string]DefaultType{
-		"int":        {"tlb.Int257", false},
-		"coins":      {"tlb.VarUInteger16", false},
-		"bool":       {"bool", false},
-		"cell":       {"tlb.Any", true},
-		"slice":      {"tlb.Any", false},
-		"builder":    {"tlb.Any", false},
-		"remaining":  {"tlb.Any", false},
-		"address":    {"tlb.MsgAddress", false},
-		"addressOpt": {"tlb.MsgAddress", false},
-		"addressExt": {"tlb.MsgAddress", false},
-		"addressAny": {"tlb.MsgAddress", false},
-		"void":       {"tlb.Void", false},
+		"Int":        {"tlb.Int257", false},
+		"Coins":      {"tlb.VarUInteger16", false},
+		"Bool":       {"bool", false},
+		"Cell":       {"tlb.Any", true},
+		"Slice":      {"tlb.Any", false},
+		"Builder":    {"tlb.Any", false},
+		"Remaining":  {"tlb.Any", false},
+		"Address":    {"tlb.MsgAddress", false},
+		"AddressOpt": {"tlb.MsgAddress", false},
+		"AddressExt": {"tlb.MsgAddress", false},
+		"AddressAny": {"tlb.MsgAddress", false},
+		"Void":       {"tlb.Void", false},
 	}
 )
 
@@ -47,12 +46,12 @@ type Tag struct {
 	Val uint64
 }
 
-func ParseStructMsg(ty tolkAbi.Ty, msgName, contractName string) (*MsgResult, error) {
+func ParseStructMsg(ty tolk.Ty, msgName, contractName string) (*MsgResult, error) {
 	var res strings.Builder
 	res.WriteString("type ")
 	res.WriteString(msgName)
 	res.WriteRune(' ')
-	code, err := createGolangAlias(ty.StructRefTy.StructName, ty.StructRefTy.TypeArgs, contractName)
+	code, err := createGolangAlias(ty.StructRef.StructName, ty.StructRef.TypeArgs, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +62,12 @@ func ParseStructMsg(ty tolkAbi.Ty, msgName, contractName string) (*MsgResult, er
 	}, nil
 }
 
-func ParseAliasMsg(ty tolkAbi.Ty, msgName, contractName string) (*MsgResult, error) {
+func ParseAliasMsg(ty tolk.Ty, msgName, contractName string) (*MsgResult, error) {
 	var res strings.Builder
 	res.WriteString("type ")
 	res.WriteString(msgName)
 	res.WriteRune(' ')
-	code, err := createGolangAlias(ty.AliasRefTy.AliasName, ty.AliasRefTy.TypeArgs, contractName)
+	code, err := createGolangAlias(ty.AliasRef.AliasName, ty.AliasRef.TypeArgs, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -79,15 +78,15 @@ func ParseAliasMsg(ty tolkAbi.Ty, msgName, contractName string) (*MsgResult, err
 	}, nil
 }
 
-func ParseGetMethodCode(ty tolkAbi.Ty, contractName string) (string, error) {
+func ParseGetMethodCode(ty tolk.Ty, contractName string) (string, error) {
 	switch ty.SumType {
 	case "StructRef":
-		name := utils.ToCamelCase(ty.StructRefTy.StructName)
-		return createGolangAlias(name, ty.StructRefTy.TypeArgs, contractName)
+		name := utils.ToCamelCase(ty.StructRef.StructName)
+		return createGolangAlias(name, ty.StructRef.TypeArgs, contractName)
 	case "AliasRef":
-		name := utils.ToCamelCase(ty.AliasRefTy.AliasName)
-		return createGolangAlias(name, ty.AliasRefTy.TypeArgs, contractName)
-	case "tensor":
+		name := utils.ToCamelCase(ty.AliasRef.AliasName)
+		return createGolangAlias(name, ty.AliasRef.TypeArgs, contractName)
+	case "Tensor":
 		var res strings.Builder
 		res.WriteString("struct {\nField ")
 		tlbType, _, err := parseTy(ty, contractName)
@@ -98,7 +97,7 @@ func ParseGetMethodCode(ty tolkAbi.Ty, contractName string) (string, error) {
 		res.WriteString("`vmStackHint:\"tensor\"`\n}\n")
 
 		return res.String(), nil
-	case "tupleWith":
+	case "TupleWith":
 		var res strings.Builder
 		res.WriteString("struct {\nField ")
 		tlbType, _, err := parseTy(ty, contractName)
@@ -124,7 +123,7 @@ func ParseGetMethodCode(ty tolkAbi.Ty, contractName string) (string, error) {
 	}
 }
 
-func createGolangAlias(aliasType string, typeArgs []tolkAbi.Ty, contractName string) (string, error) {
+func createGolangAlias(aliasType string, typeArgs []tolk.Ty, contractName string) (string, error) {
 	var res strings.Builder
 	res.WriteString(" = ")
 	res.WriteString(contractName + aliasType)
@@ -139,16 +138,16 @@ func createGolangAlias(aliasType string, typeArgs []tolkAbi.Ty, contractName str
 }
 
 func ParseTag(
-	ty tolkAbi.Ty,
-	structRefs map[string]tolkAbi.StructDeclaration,
-	aliasRefs map[string]tolkAbi.AliasDeclaration,
-	enumRefs map[string]tolkAbi.EnumDeclaration,
+	ty tolk.Ty,
+	structRefs map[string]tolk.StructDeclaration,
+	aliasRefs map[string]tolk.AliasDeclaration,
+	enumRefs map[string]tolk.EnumDeclaration,
 ) (*Tag, error) {
 	switch ty.SumType {
 	case "StructRef":
-		prefix := structRefs[ty.StructRefTy.StructName].Prefix
+		prefix := structRefs[ty.StructRef.StructName].Prefix
 		if prefix == nil {
-			return nil, fmt.Errorf("%v tag is nil", ty.StructRefTy.StructName)
+			return nil, fmt.Errorf("%v tag is nil", ty.StructRef.StructName)
 		}
 		convertedTag, err := convertPrefixTagToInt(*prefix)
 		if err != nil {
@@ -156,23 +155,17 @@ func ParseTag(
 		}
 		return convertedTag, nil
 	case "AliasRef":
-		aliasRef := aliasRefs[ty.AliasRefTy.AliasName]
-		if aliasRef.TargetTy == nil {
-			return nil, fmt.Errorf("alias ref ty cannot be nil")
-		}
-		return ParseTag(*aliasRef.TargetTy, structRefs, aliasRefs, enumRefs)
+		aliasRef := aliasRefs[ty.AliasRef.AliasName]
+		return ParseTag(aliasRef.TargetTy, structRefs, aliasRefs, enumRefs)
 	case "EnumRef":
-		enumRef := enumRefs[ty.EnumRefTy.EnumName]
-		if enumRef.EncodedAs == nil {
-			return nil, fmt.Errorf("enum ref ty cannot be nil")
-		}
-		return ParseTag(*enumRef.EncodedAs, structRefs, aliasRefs, enumRefs)
+		enumRef := enumRefs[ty.EnumRef.EnumName]
+		return ParseTag(enumRef.EncodedAs, structRefs, aliasRefs, enumRefs)
 	default:
 		return nil, fmt.Errorf("cannot get tag from %s type", ty.SumType)
 	}
 }
 
-func ParseStructDeclr(declr tolkAbi.StructDeclaration, contractName string) (*DeclrResult, error) {
+func ParseStructDeclr(declr tolk.StructDeclaration, contractName string) (*DeclrResult, error) {
 	result := DeclrResult{}
 
 	unionStructs := make([]string, 0)
@@ -213,12 +206,8 @@ func ParseStructDeclr(declr tolkAbi.StructDeclaration, contractName string) (*De
 	return &result, nil
 }
 
-func ParseAliasDeclr(declr tolkAbi.AliasDeclaration, contractName string) (*DeclrResult, error) {
+func ParseAliasDeclr(declr tolk.AliasDeclaration, contractName string) (*DeclrResult, error) {
 	result := DeclrResult{}
-
-	if declr.TargetTy == nil {
-		return nil, errors.New("target ty cannot be null")
-	}
 
 	typeName := contractName + utils.ToCamelCase(declr.Name)
 	var res strings.Builder
@@ -226,7 +215,7 @@ func ParseAliasDeclr(declr tolkAbi.AliasDeclaration, contractName string) (*Decl
 	res.WriteString(typeName)
 	writeGenericStructPart(&res, declr.TypeParams)
 	res.WriteRune(' ')
-	tlbType, tlbTag, err := parseTy(*declr.TargetTy, contractName)
+	tlbType, tlbTag, err := parseTy(declr.TargetTy, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -235,8 +224,8 @@ func ParseAliasDeclr(declr tolkAbi.AliasDeclaration, contractName string) (*Decl
 	res.WriteString(wrappedType)
 	res.WriteRune('\n')
 
-	if declr.TargetTy.SumType == "union" {
-		res.WriteString(generateJSONMarshalForUnion(*declr.TargetTy, typeName))
+	if declr.TargetTy.SumType == "Union" {
+		res.WriteString(generateJSONMarshalForUnion(declr.TargetTy, typeName))
 	}
 
 	result.Code = res.String()
@@ -245,18 +234,25 @@ func ParseAliasDeclr(declr tolkAbi.AliasDeclaration, contractName string) (*Decl
 	return &result, nil
 }
 
-func ParseEnumDeclr(declr tolkAbi.EnumDeclaration, contractName string) (*DeclrResult, error) {
+func ParseEnumDeclr(declr tolk.EnumDeclaration, contractName string) (*DeclrResult, error) {
 	result := DeclrResult{}
-
-	if declr.EncodedAs == nil {
-		return nil, errors.New("target ty cannot be null")
-	}
 
 	isBigInt := false
 	// enum is always an integer
 	// if number has >64 bits or its varint/varuint then type should be bigInt
-	if declr.EncodedAs.NumberTy.N > 64 || strings.HasPrefix(declr.EncodedAs.SumType, "var") {
+	switch declr.EncodedAs.SumType {
+	case "IntN":
+		if declr.EncodedAs.IntN.N > 64 {
+			isBigInt = true
+		}
+	case "UintN":
+		if declr.EncodedAs.UintN.N > 64 {
+			isBigInt = true
+		}
+	case "VarIntN", "VarUintN":
 		isBigInt = true
+	default:
+		return nil, fmt.Errorf("enum encode type must be integer, got: %s", declr.EncodedAs.SumType)
 	}
 
 	var res strings.Builder
@@ -265,7 +261,7 @@ func ParseEnumDeclr(declr tolkAbi.EnumDeclaration, contractName string) (*DeclrR
 	res.WriteString(enumName)
 	res.WriteString(" = ")
 
-	tlbType, tlbTag, err := parseTy(*declr.EncodedAs, contractName)
+	tlbType, tlbTag, err := parseTy(declr.EncodedAs, contractName)
 	if err != nil {
 		return nil, err
 	}
@@ -301,7 +297,7 @@ func ParseEnumDeclr(declr tolkAbi.EnumDeclaration, contractName string) (*DeclrR
 	return &result, nil
 }
 
-func parseField(structName string, field tolkAbi.Field, contractName string) (string, string, error) {
+func parseField(structName string, field tolk.Field, contractName string) (string, string, error) {
 	var res strings.Builder
 	var unionStruct strings.Builder
 	name := utils.ToCamelCase(field.Name)
@@ -319,7 +315,7 @@ func parseField(structName string, field tolkAbi.Field, contractName string) (st
 		return "", "", err
 	}
 	// union and not tlb.Either
-	if field.Ty.SumType == "union" && len(field.Ty.Union.Variants) > 2 {
+	if field.Ty.SumType == "Union" && len(field.Ty.Union.Variants) > 2 {
 		res.WriteString(structName + name)
 
 		unionStruct.WriteString("type ")
@@ -340,7 +336,7 @@ func parseField(structName string, field tolkAbi.Field, contractName string) (st
 	return res.String(), unionStruct.String(), nil
 }
 
-func generateJSONMarshalForUnion(union tolkAbi.Ty, structName string) string {
+func generateJSONMarshalForUnion(union tolk.Ty, structName string) string {
 	if len(union.Union.Variants) == 2 { // tlb.Either
 		return ""
 	}
@@ -363,7 +359,7 @@ func generateJSONMarshalForUnion(union tolkAbi.Ty, structName string) string {
 	return res.String()
 }
 
-func ParseType(ty tolkAbi.Ty, contractName string) (string, error) {
+func ParseType(ty tolk.Ty, contractName string) (string, error) {
 	tlbType, tlbTag, err := parseTy(ty, contractName)
 	if err != nil {
 		return "", err
@@ -372,7 +368,8 @@ func ParseType(ty tolkAbi.Ty, contractName string) (string, error) {
 	return wrapTlbTypeIntoTlbTag(tlbType, tlbTag), nil
 }
 
-func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
+// todo: избавится от огромного switch case
+func parseTy(ty tolk.Ty, contractName string) (string, string, error) {
 	var tlbType strings.Builder
 	var tlbTag strings.Builder
 	defaultType, ok := defaultKnownTypes[ty.SumType]
@@ -385,8 +382,8 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 	}
 
 	switch ty.SumType {
-	case "intN":
-		n := ty.NumberTy.N
+	case "IntN":
+		n := ty.IntN.N
 		tlbIntType := fmt.Sprintf("tlb.Int%v", n)
 		if n == 8 {
 			tlbIntType = "int8"
@@ -398,8 +395,8 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 			tlbIntType = "int64"
 		}
 		tlbType.WriteString(tlbIntType)
-	case "uintN":
-		n := ty.NumberTy.N
+	case "UintN":
+		n := ty.UintN.N
 		tlbUIntType := fmt.Sprintf("tlb.Uint%v", n)
 		if n == 8 {
 			tlbUIntType = "uint8"
@@ -411,17 +408,17 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 			tlbUIntType = "uint64"
 		}
 		tlbType.WriteString(tlbUIntType)
-	case "varintN", "varuintN":
-		tlbVarUIntType := fmt.Sprintf("tlb.VarUInteger%v", ty.NumberTy.N)
+	case "VarIntN":
+		tlbVarUIntType := fmt.Sprintf("tlb.VarUInteger%v", ty.VarIntN.N)
 		tlbType.WriteString(tlbVarUIntType)
-	case "bitsN":
-		tlbVarUIntType := fmt.Sprintf("tlb.Bits%v", ty.BitsTy.N)
+	case "VarUintN":
+		tlbVarUIntType := fmt.Sprintf("tlb.VarUInteger%v", ty.VarUintN.N)
 		tlbType.WriteString(tlbVarUIntType)
-	case "nullable":
-		if ty.NullableTy.Inner == nil {
-			return "", "", fmt.Errorf("inner nullable type cannot be null")
-		}
-		tlbMaybeType, tlbMaybeTag, err := parseTy(*ty.NullableTy.Inner, contractName)
+	case "BitsN":
+		tlbVarUIntType := fmt.Sprintf("tlb.Bits%v", ty.BitsN.N)
+		tlbType.WriteString(tlbVarUIntType)
+	case "Nullable":
+		tlbMaybeType, tlbMaybeTag, err := parseTy(ty.Nullable.Inner, contractName)
 		if err != nil {
 			return "", "", err
 		}
@@ -432,11 +429,8 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 		tlbType.WriteRune('*')
 		tlbType.WriteString(tlbMaybeType)
 		tlbType.WriteRune(' ')
-	case "cellOf":
-		if ty.CellOf.Inner == nil {
-			return "", "", fmt.Errorf("inner cell type cannot be null")
-		}
-		tlbRefType, tlbRefTag, err := parseTy(*ty.CellOf.Inner, contractName)
+	case "CellOf":
+		tlbRefType, tlbRefTag, err := parseTy(ty.CellOf.Inner, contractName)
 		if err != nil {
 			return "", "", err
 		}
@@ -445,9 +439,9 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 
 		tlbType.WriteString(tlbRefType)
 		tlbType.WriteRune(' ')
-	case "tensor":
+	case "Tensor":
 		tlbType.WriteString("struct{\n")
-		for i, innerTy := range ty.TensorTy.Items {
+		for i, innerTy := range ty.Tensor.Items {
 			innerTlbType, innerTlbTag, err := parseTy(innerTy, contractName)
 			if err != nil {
 				return "", "", err
@@ -462,9 +456,9 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 			tlbType.WriteRune('\n')
 		}
 		tlbType.WriteRune('}')
-	case "tupleWith":
+	case "TupleWith":
 		tlbType.WriteString("struct{\n")
-		for i, innerTy := range ty.TupleWithTy.Items {
+		for i, innerTy := range ty.TupleWith.Items {
 			innerTlbType, innerTlbTag, err := parseTy(innerTy, contractName)
 			if err != nil {
 				return "", "", err
@@ -479,19 +473,13 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 			tlbType.WriteRune('\n')
 		}
 		tlbType.WriteRune('}')
-	case "mapKV":
-		if ty.MapTy.K == nil {
-			return "", "", fmt.Errorf("map key cannot be null")
-		}
-		if ty.MapTy.V == nil {
-			return "", "", fmt.Errorf("map value cannot be null")
-		}
+	case "Map":
 		tlbType.WriteString("tlb.HashmapE[")
-		fixedType, err := getFixedSizeTypeForMap(*ty.MapTy.K)
+		fixedType, err := getFixedSizeTypeForMap(ty.Map.K)
 		if err != nil {
 			return "", "", err
 		}
-		valueType, valueTypeTag, err := parseTy(*ty.MapTy.V, contractName)
+		valueType, valueTypeTag, err := parseTy(ty.Map.V, contractName)
 		wrappedType := wrapTlbTypeIntoTlbTag(valueType, valueTypeTag)
 
 		tlbType.WriteString(fixedType)
@@ -499,26 +487,26 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 		tlbType.WriteString(wrappedType)
 		tlbType.WriteRune(']')
 	case "EnumRef":
-		name := contractName + utils.ToCamelCase(ty.EnumRefTy.EnumName)
+		name := contractName + utils.ToCamelCase(ty.EnumRef.EnumName)
 		tlbType.WriteString(name)
 	case "StructRef":
-		name := contractName + utils.ToCamelCase(ty.StructRefTy.StructName)
+		name := contractName + utils.ToCamelCase(ty.StructRef.StructName)
 		tlbType.WriteString(name)
-		err := writeGenericTypesPart(&tlbType, ty.StructRefTy.TypeArgs, contractName)
+		err := writeGenericTypesPart(&tlbType, ty.StructRef.TypeArgs, contractName)
 		if err != nil {
 			return "", "", err
 		}
 	case "AliasRef":
-		name := contractName + utils.ToCamelCase(ty.AliasRefTy.AliasName)
+		name := contractName + utils.ToCamelCase(ty.AliasRef.AliasName)
 		tlbType.WriteString(name)
-		err := writeGenericTypesPart(&tlbType, ty.AliasRefTy.TypeArgs, contractName)
+		err := writeGenericTypesPart(&tlbType, ty.AliasRef.TypeArgs, contractName)
 		if err != nil {
 			return "", "", err
 		}
-	case "genericT":
-		name := ty.GenericTy.NameT
+	case "Generic":
+		name := ty.Generic.NameT
 		tlbType.WriteString(utils.ToCamelCase(name))
-	case "union":
+	case "Union":
 		if len(ty.Union.Variants) == 2 && ty.Union.Variants[0].PrefixStr == "0" {
 			tlbType.WriteString("tlb.Either[")
 
@@ -555,9 +543,9 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 			}
 			tlbType.WriteRune('}')
 		}
-	case "nullLiteral":
+	case "NullLiteral":
 		tlbType.WriteString("tlb.NullLiteral")
-	case "tupleAny", "callable":
+	case "TupleAny", "Callable":
 		return "", "", fmt.Errorf("cannot convert type %v", ty.SumType)
 	default:
 		return "", "", fmt.Errorf("unknown ty type %q", ty.SumType)
@@ -566,25 +554,28 @@ func parseTy(ty tolkAbi.Ty, contractName string) (string, string, error) {
 	return tlbType.String(), tlbTag.String(), nil
 }
 
-func getFixedSizeTypeForMap(ty tolkAbi.Ty) (string, error) {
+func getFixedSizeTypeForMap(ty tolk.Ty) (string, error) {
 	switch ty.SumType {
-	case "intN":
-		n := ty.NumberTy.N
+	case "IntN":
+		n := ty.IntN.N
 		tlbIntType := fmt.Sprintf("tlb.Int%v", n)
 		return tlbIntType, nil
-	case "uintN":
-		n := ty.NumberTy.N
+	case "UintN":
+		n := ty.UintN.N
 		tlbIntType := fmt.Sprintf("tlb.Uint%v", n)
 		return tlbIntType, nil
-	case "varintN", "varuintN":
-		tlbVarUIntType := fmt.Sprintf("tlb.VarUInteger%v", ty.NumberTy.N)
+	case "VarIntN":
+		tlbVarUIntType := fmt.Sprintf("tlb.VarUInteger%v", ty.VarIntN.N)
 		return tlbVarUIntType, nil
-	case "bitsN":
-		tlbVarUIntType := fmt.Sprintf("tlb.Bits%v", ty.BitsTy.N)
+	case "VarUintN":
+		tlbVarUIntType := fmt.Sprintf("tlb.VarUInteger%v", ty.VarUintN.N)
 		return tlbVarUIntType, nil
-	case "bool":
+	case "BitsN":
+		tlbVarUIntType := fmt.Sprintf("tlb.Bits%v", ty.BitsN.N)
+		return tlbVarUIntType, nil
+	case "Bool":
 		return "tlb.Uint1", nil
-	case "address", "addressOpt", "addressExt", "addressAny":
+	case "Address", "AddressOpt", "AddressExt", "AddressAny":
 		return "tlb.InternalAddress", nil
 	default:
 		return "", fmt.Errorf("%v not supported as map key", ty.SumType)
@@ -617,32 +608,14 @@ func wrapTlbTypeIntoTlbTag(tlbTypeArg, tlbTagArg string) string {
 	return tlbType.String()
 }
 
-func convertPrefixTagToInt(tag tolkAbi.Prefix) (*Tag, error) {
+func convertPrefixTagToInt(tag tolk.Prefix) (*Tag, error) {
 	if tag.PrefixLen == 0 {
 		return nil, fmt.Errorf("prefix tag len must be > 0")
 	}
 
-	var val uint64
-	var err error
-	if len(tag.PrefixStr) == 1 {
-		val, err = strconv.ParseUint(tag.PrefixStr, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		if tag.PrefixStr[1] == 'b' {
-			val, err = strconv.ParseUint(tag.PrefixStr[2:], 2, 64)
-			if err != nil {
-				return nil, err
-			}
-		} else if tag.PrefixStr[1] == 'x' {
-			val, err = strconv.ParseUint(tag.PrefixStr[2:], 16, 64)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, fmt.Errorf("prefix tag must be either binary or hex format")
-		}
+	val, err := tolk.PrefixToUint(tag.PrefixStr)
+	if err != nil {
+		return nil, err
 	}
 
 	return &Tag{
@@ -662,7 +635,7 @@ func writeGenericStructPart(builder *strings.Builder, typeParams []string) {
 	}
 }
 
-func writeGenericTypesPart(builder *strings.Builder, typeArgs []tolkAbi.Ty, contractName string) error {
+func writeGenericTypesPart(builder *strings.Builder, typeArgs []tolk.Ty, contractName string) error {
 	if len(typeArgs) > 0 {
 		builder.WriteRune('[')
 		for _, typeArg := range typeArgs {

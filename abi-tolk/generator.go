@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	parser "github.com/tonkeeper/tongo/abi-tolk/parser"
-	tolkAbi "github.com/tonkeeper/tongo/tolk/abi"
+	"github.com/tonkeeper/tongo/tolk"
 )
 
 const HEADER = `package abitolk
@@ -24,7 +24,7 @@ import (
 `
 const SCHEMAS_PATH = "schemas/"
 
-func mergeMethods(abis []tolkAbi.ABI) (map[string][]parser.GetMethodWithAbi, error) {
+func mergeMethods(abis []tolk.ABI) (map[string][]parser.GetMethodWithAbi, error) {
 	methodsMap := map[string][]parser.GetMethodWithAbi{}
 	for _, abi := range abis {
 		for _, method := range abi.GetMethods {
@@ -51,7 +51,7 @@ func mergeMethods(abis []tolkAbi.ABI) (map[string][]parser.GetMethodWithAbi, err
 }
 
 func main() {
-	var abi []tolkAbi.ABI
+	var abi []tolk.ABI
 	filepath.Walk(SCHEMAS_PATH, func(path string, info fs.FileInfo, err error) error {
 		if !strings.HasSuffix(info.Name(), ".json") {
 			return nil

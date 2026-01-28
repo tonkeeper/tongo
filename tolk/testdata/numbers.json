@@ -1,0 +1,72 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "Numbers",
+      "fields": [
+        {
+          "name": "num1",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "num3",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "num4",
+          "ty": {
+            "kind": "varuintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "num5",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "num7",
+          "ty": {
+            "kind": "bitsN",
+            "n": 16
+          }
+        },
+        {
+          "name": "num8",
+          "ty": {
+            "kind": "intN",
+            "n": 14
+          }
+        },
+        {
+          "name": "num9",
+          "ty": {
+            "kind": "varintN",
+            "n": 16
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

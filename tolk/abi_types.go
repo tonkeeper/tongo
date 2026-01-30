@@ -247,27 +247,23 @@ func (d *DefaultValue) MarshalJSON() ([]byte, error) {
 	return concatPrefixAndPayload(prefix, payload), nil
 }
 
-func (d *DefaultValue) UnmarshalDefaultValue(v TolkValue) (bool, error) {
-	vType := v.GetType()
+func (d *DefaultValue) unmarshalDefaultValue(v *Value, vType Ty) (bool, error) {
 	switch d.SumType {
 	case "IntDefaultValue":
 		val, err := binDecHexToUint(d.IntDefaultValue.V)
 		if err != nil {
 			return false, err
 		}
-		err = v.SetValue(val)
+		err = v.SetValue(BigInt(*val), vType)
 		if err != nil {
 			return false, err
 		}
 	case "BoolDefaultValue":
-		err := v.SetValue(d.BoolDefaultValue.V)
+		err := v.SetValue(BoolValue(d.BoolDefaultValue.V), vType)
 		if err != nil {
 			return false, err
 		}
 	case "SliceDefaultValue":
-		if vType.SumType != "Remaining" && vType.SumType != "Slice" {
-			return false, fmt.Errorf("default type %v and field type %v mismatch", d.SumType, vType.SumType)
-		}
 		val, err := hex.DecodeString(d.SliceDefaultValue.Hex)
 		if err != nil {
 			return false, err
@@ -277,15 +273,11 @@ func (d *DefaultValue) UnmarshalDefaultValue(v TolkValue) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		anySlice := Any(*boc.NewCellWithBits(bs))
-		err = v.SetValue(anySlice)
+		err = v.SetValue(*boc.NewCellWithBits(bs), vType)
 		if err != nil {
 			return false, err
 		}
 	case "AddressDefaultValue":
-		if vType.SumType != "Address" {
-			return false, fmt.Errorf("default type %v and field type %v mismatch", d.SumType, vType.SumType)
-		}
 		accountID, err := ton.ParseAccountID(d.AddressDefaultValue.Address)
 		if err != nil {
 			return false, err
@@ -293,21 +285,24 @@ func (d *DefaultValue) UnmarshalDefaultValue(v TolkValue) (bool, error) {
 		err = v.SetValue(InternalAddress{
 			Workchain: int8(accountID.Workchain),
 			Address:   accountID.Address,
-		})
+		}, vType)
 		if err != nil {
 			return false, err
 		}
 	case "TensorDefaultValue":
+		if vType.SumType != "Tensor" {
+			return false, fmt.Errorf("tensor default value type must be tensor, got %q", d.SumType)
+		}
 		tensor := make([]Value, len(d.TensorDefaultValue.Items))
 		for i, item := range d.TensorDefaultValue.Items {
 			val := Value{}
-			_, err := item.UnmarshalDefaultValue(&val)
+			_, err := item.unmarshalDefaultValue(&val, vType.Tensor.Items[i])
 			if err != nil {
 				return false, err
 			}
 			tensor[i] = val
 		}
-		err := v.SetValue(tensor)
+		err := v.SetValue(tensor, vType)
 		if err != nil {
 			return false, err
 		}
@@ -644,71 +639,377 @@ func (t *Ty) MarshalJSON() ([]byte, error) {
 	return concatPrefixAndPayload(prefix, payload), nil
 }
 
-func (t *Ty) UnmarshalTolk(cell *boc.Cell, v TolkValue, decoder *Decoder) error {
-	v.SetType(*t)
+func (t *Ty) UnmarshalTolk2(cell *boc.Cell, v *Value, decoder *Decoder) error {
 	switch t.SumType {
 	case "Int":
-		return t.Int.UnmarshalTolk(cell, v, decoder)
+		err := t.Int.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal unmarshal Int: %w", err)
+		}
+		return nil
 	case "NullLiteral":
-		return t.NullLiteral.UnmarshalTolk(cell, v, decoder)
+		err := t.NullLiteral.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal NullLiteral Int: %w", err)
+		}
+		return nil
 	case "Void":
-		return t.Void.UnmarshalTolk(cell, v, decoder)
+		err := t.Void.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Void: %w", err)
+		}
+		return nil
 	case "IntN":
-		return t.IntN.UnmarshalTolk(cell, v, decoder)
+		err := t.IntN.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal IntN: %w", err)
+		}
+		return nil
 	case "UintN":
-		return t.UintN.UnmarshalTolk(cell, v, decoder)
+		err := t.UintN.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal UintN: %w", err)
+		}
+		return nil
 	case "VarIntN":
-		return t.VarIntN.UnmarshalTolk(cell, v, decoder)
+		err := t.VarIntN.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal VarIntN: %w", err)
+		}
+		return nil
 	case "VarUintN":
-		return t.VarUintN.UnmarshalTolk(cell, v, decoder)
+		err := t.VarUintN.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal VarUintN: %w", err)
+		}
+		return nil
 	case "BitsN":
-		return t.BitsN.UnmarshalTolk(cell, v, decoder)
+		err := t.BitsN.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal BitsN: %w", err)
+		}
+		return nil
 	case "Coins":
-		return t.Coins.UnmarshalTolk(cell, v, decoder)
+		err := t.Coins.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Coins: %w", err)
+		}
+		return nil
 	case "Bool":
-		return t.Bool.UnmarshalTolk(cell, v, decoder)
+		err := t.Bool.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Bool: %w", err)
+		}
+		return nil
 	case "Cell":
-		return t.Cell.UnmarshalTolk(cell, v, decoder)
+		err := t.Cell.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Cell: %w", err)
+		}
+		return nil
 	case "Slice":
-		return t.Slice.UnmarshalTolk(cell, v, decoder)
+		err := t.Slice.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Slice: %w", err)
+		}
+		return nil
 	case "Builder":
-		return t.Builder.UnmarshalTolk(cell, v, decoder)
+		err := t.Builder.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Builder: %w", err)
+		}
+		return nil
 	case "Callable":
-		return t.Callable.UnmarshalTolk(cell, v, decoder)
+		err := t.Callable.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Callable: %w", err)
+		}
+		return nil
 	case "Remaining":
-		return t.Remaining.UnmarshalTolk(cell, v, decoder)
+		err := t.Remaining.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Remaining: %w", err)
+		}
+		return nil
 	case "Address":
-		return t.Address.UnmarshalTolk(cell, v, decoder)
+		err := t.Address.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Address: %w", err)
+		}
+		return nil
 	case "AddressOpt":
-		return t.AddressOpt.UnmarshalTolk(cell, v, decoder)
+		err := t.AddressOpt.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal AddressOpt: %w", err)
+		}
+		return nil
 	case "AddressExt":
-		return t.AddressExt.UnmarshalTolk(cell, v, decoder)
+		err := t.AddressExt.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal AddressExt: %w", err)
+		}
+		return nil
 	case "AddressAny":
-		return t.AddressAny.UnmarshalTolk(cell, v, decoder)
+		err := t.AddressAny.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal AddressAny: %w", err)
+		}
+		return nil
 	case "Nullable":
-		return t.Nullable.UnmarshalTolk(cell, v, decoder)
+		err := t.Nullable.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Nullable: %w", err)
+		}
+		return nil
 	case "CellOf":
-		return t.CellOf.UnmarshalTolk(cell, v, decoder)
+		err := t.CellOf.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal CellOf: %w", err)
+		}
+		return nil
 	case "Tensor":
-		return t.Tensor.UnmarshalTolk(cell, v, decoder)
+		err := t.Tensor.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Tensor: %w", err)
+		}
+		return nil
 	case "TupleWith":
-		return t.TupleWith.UnmarshalTolk(cell, v, decoder)
+		err := t.TupleWith.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal TupleWith: %w", err)
+		}
+		return nil
 	case "TupleAny":
-		return t.TupleAny.UnmarshalTolk(cell, v, decoder)
+		err := t.TupleAny.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal TupleAny: %w", err)
+		}
+		return nil
 	case "Map":
-		return t.Map.UnmarshalTolk(cell, v, decoder)
+		err := t.Map.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Map: %w", err)
+		}
+		return nil
 	case "EnumRef":
-		return t.EnumRef.UnmarshalTolk(cell, v, decoder)
+		err := t.EnumRef.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal EnumRef: %w", err)
+		}
+		return nil
 	case "StructRef":
-		return t.StructRef.UnmarshalTolk(cell, v, decoder)
+		err := t.StructRef.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal StructRef: %w", err)
+		}
+		return nil
 	case "AliasRef":
-		return t.AliasRef.UnmarshalTolk(cell, v, decoder)
+		err := t.AliasRef.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal AliasRef: %w", err)
+		}
+		return nil
 	case "Generic":
-		return t.Generic.UnmarshalTolk(cell, v, decoder)
+		err := t.Generic.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Generic: %w", err)
+		}
+		return nil
 	case "Union":
-		return t.Union.UnmarshalTolk(cell, v, decoder)
+		err := t.Union.UnmarshalTolk(cell, v, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal Union: %w", err)
+		}
+		return nil
 	default:
-		return fmt.Errorf("unknown t type %q", t.SumType)
+		return fmt.Errorf("unknown type %q", t.SumType)
+	}
+}
+
+func (t *Ty) MarshalTolk(cell *boc.Cell, v *Value) error {
+	switch t.SumType {
+	case "Int":
+		err := t.Int.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal unmarshal Int: %w", err)
+		}
+		return nil
+	case "NullLiteral":
+		err := t.NullLiteral.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal NullLiteral Int: %w", err)
+		}
+		return nil
+	case "Void":
+		err := t.Void.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Void: %w", err)
+		}
+		return nil
+	case "IntN":
+		err := t.IntN.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal IntN: %w", err)
+		}
+		return nil
+	case "UintN":
+		err := t.UintN.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal UintN: %w", err)
+		}
+		return nil
+	case "VarIntN":
+		err := t.VarIntN.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal VarIntN: %w", err)
+		}
+		return nil
+	case "VarUintN":
+		err := t.VarUintN.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal VarUintN: %w", err)
+		}
+		return nil
+	case "BitsN":
+		err := t.BitsN.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal BitsN: %w", err)
+		}
+		return nil
+	case "Coins":
+		err := t.Coins.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Coins: %w", err)
+		}
+		return nil
+	case "Bool":
+		err := t.Bool.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Bool: %w", err)
+		}
+		return nil
+	case "Cell":
+		err := t.Cell.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Cell: %w", err)
+		}
+		return nil
+	case "Slice":
+		err := t.Slice.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Slice: %w", err)
+		}
+		return nil
+	case "Builder":
+		err := t.Builder.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Builder: %w", err)
+		}
+		return nil
+	case "Callable":
+		err := t.Callable.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Callable: %w", err)
+		}
+		return nil
+	case "Remaining":
+		err := t.Remaining.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Remaining: %w", err)
+		}
+		return nil
+	case "Address":
+		err := t.Address.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Address: %w", err)
+		}
+		return nil
+	case "AddressOpt":
+		err := t.AddressOpt.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal AddressOpt: %w", err)
+		}
+		return nil
+	case "AddressExt":
+		err := t.AddressExt.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal AddressExt: %w", err)
+		}
+		return nil
+	case "AddressAny":
+		err := t.AddressAny.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal AddressAny: %w", err)
+		}
+		return nil
+	case "Nullable":
+		err := t.Nullable.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Nullable: %w", err)
+		}
+		return nil
+	case "CellOf":
+		err := t.CellOf.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal CellOf: %w", err)
+		}
+		return nil
+	case "Tensor":
+		err := t.Tensor.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Tensor: %w", err)
+		}
+		return nil
+	case "TupleWith":
+		err := t.TupleWith.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal TupleWith: %w", err)
+		}
+		return nil
+	case "TupleAny":
+		err := t.TupleAny.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal TupleAny: %w", err)
+		}
+		return nil
+	case "Map":
+		err := t.Map.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Map: %w", err)
+		}
+		return nil
+	case "EnumRef":
+		err := t.EnumRef.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal EnumRef: %w", err)
+		}
+		return nil
+	case "StructRef":
+		err := t.StructRef.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal StructRef: %w", err)
+		}
+		return nil
+	case "AliasRef":
+		err := t.AliasRef.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal AliasRef: %w", err)
+		}
+		return nil
+	case "Generic":
+		err := t.Generic.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Generic: %w", err)
+		}
+		return nil
+	case "Union":
+		err := t.Union.MarshalTolk(cell, v)
+		if err != nil {
+			return fmt.Errorf("failed to marshal Union: %w", err)
+		}
+		return nil
+	default:
+		return fmt.Errorf("unknown type %q", t.SumType)
 	}
 }
 

@@ -8,7 +8,7 @@ type TolkUnmarshaler interface {
 	UnmarshalTolk(cell *boc.Cell, v *Value, d *Decoder) error
 }
 
-type abiContext struct {
+type abiRefs struct {
 	structRefs  map[string]StructDeclaration
 	aliasRefs   map[string]AliasDeclaration
 	enumRefs    map[string]EnumDeclaration
@@ -16,47 +16,48 @@ type abiContext struct {
 }
 
 type Decoder struct {
-	abiCtx *abiContext
+	abiRefs abiRefs
 }
 
 func NewDecoder() *Decoder {
-	return &Decoder{
-		abiCtx: &abiContext{
-			genericRefs: make(map[string]Ty),
-		},
-	}
+	return &Decoder{}
 }
 
-func (d *Decoder) WithABI(abi ABI) *Decoder {
-	d.abiCtx = &abiContext{
-		structRefs: make(map[string]StructDeclaration),
-		aliasRefs:  make(map[string]AliasDeclaration),
-		enumRefs:   make(map[string]EnumDeclaration),
+func (a *Decoder) WithABI(abi ABI) *Decoder {
+	a.abiRefs = abiRefs{
+		structRefs:  make(map[string]StructDeclaration),
+		aliasRefs:   make(map[string]AliasDeclaration),
+		enumRefs:    make(map[string]EnumDeclaration),
+		genericRefs: make(map[string]Ty),
 	}
 	for _, declr := range abi.Declarations {
 		switch declr.SumType {
 		case "Struct":
-			d.abiCtx.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
+			a.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
 		case "Alias":
-			d.abiCtx.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
+			a.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
 		case "Enum":
-			d.abiCtx.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
+			a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
 		}
 	}
-	return d
+	return a
 }
 
 func UnmarshalTolk(cell *boc.Cell, ty Ty) (*Value, error) {
-	d := NewDecoder()
-	return d.UnmarshalTolk(cell, ty)
+	a := NewDecoder()
+	return a.UnmarshalTolk(cell, ty)
 }
 
-// todo: maybe use only abi (guess best struct to unmarshal)
-func (d *Decoder) UnmarshalTolk(cell *boc.Cell, ty Ty) (*Value, error) {
+func (a *Decoder) UnmarshalTolk(cell *boc.Cell, ty Ty) (*Value, error) {
 	res := &Value{}
-	err := ty.UnmarshalTolk(cell, res, d)
+	err := res.UnmarshalTolk(cell, ty, a)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
+}
+
+func MarshalTolk(c *boc.Cell, v *Value) error {
+	return nil
+	//return v.valType.MarshalTolk(c, v)
 }

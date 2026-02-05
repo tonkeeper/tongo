@@ -7,6 +7,7 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk"
+	"github.com/tonkeeper/tongo/tolk/parser"
 )
 import _ "embed"
 
@@ -14,15 +15,15 @@ import _ "embed"
 var abiData []byte
 
 func main() {
-	var abi tolk.ABI
+	var abi tolkParser.ABI
 	err := json.Unmarshal(abiData, &abi)
 	if err != nil {
 		panic(err)
 	}
 
-	ty := tolk.Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &tolk.StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "Transfer",
 		},
 	}
@@ -37,7 +38,7 @@ func main() {
 
 	decoder := tolk.NewDecoder()
 	decoder.WithABI(abi)
-	res, err := decoder.UnmarshalTolk(cell[0], ty)
+	res, err := decoder.Unmarshal(cell[0], ty)
 	if err != nil {
 		panic(err)
 	}

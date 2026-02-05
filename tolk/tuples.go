@@ -1,112 +1,17 @@
 package tolk
 
 import (
-	"fmt"
-
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tolk/parser"
 )
 
-type Tensor struct {
-	Items []Ty `json:"items"`
-}
+type TupleValues []Value
 
-func (Tensor) SetValue(v *Value, val any) error {
-	t, ok := val.(TensorValues)
-	if !ok {
-		return fmt.Errorf("value is not a tensor")
-	}
-	v.tensor = &t
-	v.sumType = "tensor"
-	return nil
-}
-
-func (t Tensor) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	list := make(TensorValues, len(t.Items))
-	for i, item := range t.Items {
-		inner := Value{}
-		err := inner.UnmarshalTolk(cell, item, decoder)
-		if err != nil {
-			return err
-		}
-		list[i] = inner
-	}
-	err := t.SetValue(v, list)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (v *TensorValues) UnmarshalTolk(cell *boc.Cell, ty Tensor, decoder *Decoder) error {
-	list := make(TensorValues, len(ty.Items))
-	for i, item := range ty.Items {
-		inner := Value{}
-		err := inner.UnmarshalTolk(cell, item, decoder)
-		if err != nil {
-			return err
-		}
-		list[i] = inner
-	}
-	*v = list
-	return nil
-}
-
-func (Tensor) MarshalTolk(cell *boc.Cell, v *Value) error {
-	//if v.tensor == nil {
-	//	return fmt.Errorf("tensor is nil")
-	//}
-	//
-	//for _, tv := range []Value(*v.tensor) {
-	//	err := tv.valType.MarshalTolk(cell, &tv)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-
-	return nil
-}
-
-func (Tensor) Equal(v Value, o Value) bool {
-	return false
-}
-
-type TupleWith struct {
-	Items []Ty `json:"items"`
-}
-
-func (TupleWith) SetValue(v *Value, val any) error {
-	t, ok := val.(TupleValues)
-	if !ok {
-		return fmt.Errorf("value is not a tuple")
-	}
-	v.tupleWith = &t
-	v.sumType = "tupleWith"
-	return nil
-}
-
-func (t TupleWith) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	list := make(TupleValues, len(t.Items))
-	for i, item := range t.Items {
-		inner := Value{}
-		err := inner.UnmarshalTolk(cell, item, decoder)
-		if err != nil {
-			return err
-		}
-		list[i] = inner
-	}
-	err := t.SetValue(v, list)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (v *TupleValues) UnmarshalTolk(cell *boc.Cell, ty TupleWith, decoder *Decoder) error {
+func (v *TupleValues) Unmarshal(cell *boc.Cell, ty tolkParser.TupleWith, decoder *Decoder) error {
 	list := make(TupleValues, len(ty.Items))
 	for i, item := range ty.Items {
 		inner := Value{}
-		err := inner.UnmarshalTolk(cell, item, decoder)
+		err := inner.Unmarshal(cell, item, decoder)
 		if err != nil {
 			return err
 		}
@@ -116,39 +21,72 @@ func (v *TupleValues) UnmarshalTolk(cell *boc.Cell, ty TupleWith, decoder *Decod
 	return nil
 }
 
-func (TupleWith) MarshalTolk(cell *boc.Cell, v *Value) error {
-	//if v.tupleWith == nil {
-	//	return fmt.Errorf("tupleWith is nil")
-	//}
-	//
-	//for _, tv := range []Value(*v.tupleWith) {
-	//	err := tv.valType.MarshalTolk(cell, &tv)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-
+func (v *TupleValues) Marshal(cell *boc.Cell, ty tolkParser.TupleWith, encoder *Encoder) error {
+	for i, item := range []Value(*v) {
+		err := item.Marshal(cell, ty.Items[i], encoder)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (TupleWith) Equal(v Value, o Value) bool {
-	return false
+func (v *TupleValues) Equal(other any) bool {
+	otherTupleValues, ok := other.(TupleValues)
+	if !ok {
+		return false
+	}
+	wV := *v
+	if len(otherTupleValues) != len(wV) {
+		return false
+	}
+	for i := range wV {
+		if !wV[i].Equal(otherTupleValues[i]) {
+			return false
+		}
+	}
+	return true
 }
 
-type TupleAny struct{}
+type TensorValues []Value
 
-func (TupleAny) SetValue(v *Value, val any) error {
-	return fmt.Errorf("tuple any is not supported")
+func (v *TensorValues) Unmarshal(cell *boc.Cell, ty tolkParser.Tensor, decoder *Decoder) error {
+	list := make(TensorValues, len(ty.Items))
+	for i, item := range ty.Items {
+		inner := Value{}
+		err := inner.Unmarshal(cell, item, decoder)
+		if err != nil {
+			return err
+		}
+		list[i] = inner
+	}
+	*v = list
+	return nil
 }
 
-func (TupleAny) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	return fmt.Errorf("tuple any is not supported")
+func (v *TensorValues) Marshal(cell *boc.Cell, ty tolkParser.Tensor, encoder *Encoder) error {
+	for i, item := range []Value(*v) {
+		err := item.Marshal(cell, ty.Items[i], encoder)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func (TupleAny) MarshalTolk(cell *boc.Cell, v *Value) error {
-	return fmt.Errorf("tuple any is not supported")
-}
-
-func (TupleAny) Equal(v Value, o Value) bool {
-	return false
+func (v *TensorValues) Equal(other any) bool {
+	otherTensorValues, ok := other.(TensorValues)
+	if !ok {
+		return false
+	}
+	wV := *v
+	if len(otherTensorValues) != len(wV) {
+		return false
+	}
+	for i := range wV {
+		if !wV[i].Equal(otherTensorValues[i]) {
+			return false
+		}
+	}
+	return true
 }

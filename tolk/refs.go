@@ -3,92 +3,213 @@ package tolk
 import (
 	"fmt"
 	"math/big"
+	"slices"
 
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tolk/parser"
 	"golang.org/x/exp/maps"
 )
 
-type EnumRef struct {
-	EnumName string `json:"enumName"`
+type Prefix struct {
+	Len    int16
+	Prefix uint64
 }
 
-func (EnumRef) SetValue(v *Value, val any) error {
-	e, ok := val.(EnumValue)
-	if !ok {
-		return fmt.Errorf("value is not an enum value")
-	}
-	v.enum = &e
-	v.sumType = "enum"
-	return nil
+type Struct struct {
+	hasPrefix   bool
+	prefix      Prefix
+	fieldNames  []string
+	fieldValues []Value
 }
 
-func (e EnumRef) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	if decoder.abiRefs.enumRefs == nil {
-		return fmt.Errorf("struct has enum reference, but no abi has been given")
+func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Decoder) error {
+	if decoder.abiRefs.structRefs == nil {
+		return fmt.Errorf("struct has struct reference, but no abi has been given")
 	}
-	enum, found := decoder.abiRefs.enumRefs[e.EnumName]
+	strct, found := decoder.abiRefs.structRefs[ty.StructName]
 	if !found {
-		return fmt.Errorf("no enum with name %s was found in given abi", e.EnumName)
+		return fmt.Errorf("no struct with name %s was found in given abi", ty.StructName)
+	}
+	tolkStruct := Struct{
+		fieldNames:  make([]string, 0),
+		fieldValues: make([]Value, 0),
+	}
+	if strct.Prefix != nil {
+		prefixLen := strct.Prefix.PrefixLen
+		if prefixLen > 64 {
+			return fmt.Errorf("struct %v prefix length must be lower than 64", strct.Name)
+		}
+
+		prefix, err := cell.ReadUint(prefixLen)
+		if err != nil {
+			return err
+		}
+		actualPrefix, err := binHexToUint64(strct.Prefix.PrefixStr)
+		if err != nil {
+			return err
+		}
+
+		if prefix != actualPrefix {
+			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
+		}
+		tolkStruct.hasPrefix = true
+		tolkStruct.prefix = Prefix{
+			Len:    int16(prefixLen),
+			Prefix: prefix,
+		}
 	}
 
-	enumVal := Value{}
-	err := enumVal.UnmarshalTolk(cell, enum.EncodedAs, decoder)
+	oldGenericMap := decoder.abiRefs.genericRefs
+	genericMap, err := resolveGeneric(ty.TypeArgs, strct.TypeParams, &decoder.abiRefs)
 	if err != nil {
 		return err
 	}
-	var bigEnumVal big.Int
-	switch enum.EncodedAs.SumType {
-	case "IntN":
-		if enum.EncodedAs.IntN.N > 64 {
-			bigEnumVal = big.Int(*enumVal.bigInt)
-		} else {
-			bigEnumVal = *big.NewInt(int64(*enumVal.smallInt))
-		}
-	case "UintN":
-		if enum.EncodedAs.UintN.N > 64 {
-			bigEnumVal = big.Int(*enumVal.bigInt)
-		} else {
-			bigEnumVal = *new(big.Int).SetUint64(uint64(*enumVal.smallUint))
-		}
-	case "VarIntN", "VarUintN":
-		bigEnumVal = big.Int(*enumVal.bigInt)
-	default:
-		return fmt.Errorf("enum encode type must be integer, got: %s", enum.EncodedAs.SumType)
-	}
+	decoder.abiRefs.genericRefs = genericMap
 
-	for _, member := range enum.Members {
-		val, ok := new(big.Int).SetString(member.Value, 10)
-		if !ok {
-			return fmt.Errorf("invalid enum %v value %v for member %s", e.EnumName, member.Value, member.Name)
+	for _, field := range strct.Fields {
+		fieldVal := Value{}
+		err = fieldVal.Unmarshal(cell, field.Ty, decoder)
+		if err != nil {
+			return err
 		}
 
-		if val.Cmp(&bigEnumVal) == 0 {
-			err = e.SetValue(v, EnumValue{
-				val:   enumVal,
-				Name:  member.Name,
-				Value: *val,
-			})
-			if err != nil {
-				return err
+		if field.Ty.SumType == "Nullable" {
+			optVal := *fieldVal.optionalValue
+			defVal := field.DefaultValue
+			if !optVal.IsExists && defVal != nil {
+				val := Value{}
+				exists, err := val.unmarshalDefaultValue(defVal, field.Ty)
+				if err != nil {
+					return err
+				}
+				if exists {
+					optVal.IsExists = true
+					optVal.Val = val
+				}
 			}
-
-			return nil
 		}
+
+		tolkStruct.fieldNames = append(tolkStruct.fieldNames, field.Name)
+		tolkStruct.fieldValues = append(tolkStruct.fieldValues, fieldVal)
 	}
-	// todo: maybe return err?
-	err = e.SetValue(v, EnumValue{
-		val:   enumVal,
-		Name:  "Unknown",
-		Value: bigEnumVal,
-	})
-	if err != nil {
-		return err
-	}
+
+	decoder.abiRefs.genericRefs = oldGenericMap
+	*s = tolkStruct
 
 	return nil
 }
 
-func (e *EnumValue) UnmarshalTolk(cell *boc.Cell, ty EnumRef, decoder *Decoder) error {
+func (s *Struct) Marshal(cell *boc.Cell, ty tolkParser.StructRef, encoder *Encoder) error {
+	if encoder.abiRefs.structRefs == nil {
+		return fmt.Errorf("struct has struct reference, but no abi has been given")
+	}
+	strct, found := encoder.abiRefs.structRefs[ty.StructName]
+	if !found {
+		return fmt.Errorf("no struct with name %s was found in given abi", ty.StructName)
+	}
+
+	if strct.Prefix != nil {
+		actualPrefix, err := binHexToUint64(strct.Prefix.PrefixStr)
+		if err != nil {
+			return err
+		}
+
+		if s.prefix.Prefix != actualPrefix {
+			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
+		}
+
+		err = cell.WriteUint(s.prefix.Prefix, int(s.prefix.Len))
+		if err != nil {
+			return err
+		}
+	}
+
+	oldGenericMap := encoder.abiRefs.genericRefs
+	genericMap, err := resolveGeneric(ty.TypeArgs, strct.TypeParams, &encoder.abiRefs)
+	if err != nil {
+		return err
+	}
+	encoder.abiRefs.genericRefs = genericMap
+
+	for _, field := range strct.Fields {
+		val, ok := s.GetField(field.Name)
+		if !ok {
+			return fmt.Errorf("struct %v has no field %v", strct.Name, field.Name)
+		}
+
+		err = val.Marshal(cell, field.Ty, encoder)
+		if err != nil {
+			return err
+		}
+	}
+
+	encoder.abiRefs.genericRefs = oldGenericMap
+
+	return nil
+}
+
+func (s *Struct) GetField(field string) (Value, bool) {
+	for i, name := range s.fieldNames {
+		if name == field {
+			return s.fieldValues[i], true
+		}
+	}
+	return Value{}, false
+}
+
+func (s *Struct) SetField(field string, v Value) bool {
+	for i, name := range s.fieldNames {
+		if name == field {
+			s.fieldValues[i] = v
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Struct) RemoveField(field string) {
+	for i, name := range s.fieldNames {
+		if name == field {
+			s.fieldNames[i] = "|" // impossible symbol for field name in Tolk language
+			s.fieldValues[i] = Value{}
+		}
+	}
+}
+
+func (s *Struct) GetPrefix() (Prefix, bool) {
+	if !s.hasPrefix {
+		return Prefix{}, false
+	}
+
+	return s.prefix, true
+}
+
+func (s *Struct) Equal(o any) bool {
+	otherStruct, ok := o.(Struct)
+	if !ok {
+		return false
+	}
+	if s.hasPrefix != otherStruct.hasPrefix {
+		return false
+	}
+	if s.hasPrefix {
+		if s.prefix != otherStruct.prefix {
+			return false
+		}
+	}
+	if !slices.Equal(s.fieldNames, otherStruct.fieldNames) {
+		return false
+	}
+	return slices.Equal(s.fieldValues, otherStruct.fieldValues)
+}
+
+type EnumValue struct {
+	val   Value
+	Name  string
+	Value big.Int
+}
+
+func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *Decoder) error {
 	if decoder.abiRefs.enumRefs == nil {
 		return fmt.Errorf("struct has enum reference, but no abi has been given")
 	}
@@ -98,7 +219,7 @@ func (e *EnumValue) UnmarshalTolk(cell *boc.Cell, ty EnumRef, decoder *Decoder) 
 	}
 
 	enumVal := Value{}
-	err := enumVal.UnmarshalTolk(cell, enum.EncodedAs, decoder)
+	err := enumVal.Unmarshal(cell, enum.EncodedAs, decoder)
 	if err != nil {
 		return err
 	}
@@ -112,7 +233,7 @@ func (e *EnumValue) UnmarshalTolk(cell *boc.Cell, ty EnumRef, decoder *Decoder) 
 		}
 	case "UintN":
 		if enum.EncodedAs.UintN.N > 64 {
-			bigEnumVal = big.Int(*enumVal.bigInt)
+			bigEnumVal = big.Int(*enumVal.bigUint)
 		} else {
 			bigEnumVal = *new(big.Int).SetUint64(uint64(*enumVal.smallUint))
 		}
@@ -150,268 +271,59 @@ func (e *EnumValue) UnmarshalTolk(cell *boc.Cell, ty EnumRef, decoder *Decoder) 
 	return nil
 }
 
-func (EnumRef) MarshalTolk(cell *boc.Cell, v *Value) error {
-	//if v.enum == nil {
-	//	return fmt.Errorf("enum is nil")
-	//}
-	//
-	//valType := v.enum.enumType
-	//if valType.SumType != "IntN" && valType.SumType != "UintN" && valType.SumType != "VarIntN" && valType.SumType != "VarUintN" {
-	//	return fmt.Errorf("enum type must be interger, got: %s", valType.SumType)
-	//}
-	//err := valType.MarshalTolk(cell, &v.enum.val)
-	//if err != nil {
-	//	return err
-	//}
+func (e *EnumValue) Marshal(cell *boc.Cell, ty tolkParser.EnumRef, encoder *Encoder) error {
+	if encoder.abiRefs.enumRefs == nil {
+		return fmt.Errorf("struct has enum reference, but no abi has been given")
+	}
+	enum, found := encoder.abiRefs.enumRefs[ty.EnumName]
+	if !found {
+		return fmt.Errorf("no enum with name %s was found in given abi", ty.EnumName)
+	}
 
-	return nil
+	err := e.val.Marshal(cell, enum.EncodedAs, encoder)
+	if err != nil {
+		return err
+	}
+
+	for _, member := range enum.Members {
+		val, ok := new(big.Int).SetString(member.Value, 10)
+		if !ok {
+			return fmt.Errorf("invalid enum %v value %v for member %s", ty.EnumName, member.Value, member.Name)
+		}
+
+		if val.Cmp(&e.Value) == 0 {
+			return nil
+		}
+	}
+	return fmt.Errorf("enum value not matcher, got: %s", e.Value.String())
 }
 
-func (EnumRef) Equal(v Value, o Value) bool {
-	return false
-}
-
-type StructRef struct {
-	StructName string `json:"structName"`
-	TypeArgs   []Ty   `json:"typeArgs,omitempty"`
-}
-
-func (StructRef) SetValue(v *Value, val any) error {
-	s, ok := val.(Struct)
+func (e *EnumValue) Equal(other any) bool {
+	otherEnumValue, ok := other.(EnumValue)
 	if !ok {
-		return fmt.Errorf("value is not a struct")
+		return false
 	}
-	v.structValue = &s
-	v.sumType = "structValue"
-	return nil
+	if e.Name != otherEnumValue.Name {
+		return false
+	}
+	if e.Value.Cmp(&otherEnumValue.Value) != 0 {
+		return false
+	}
+	return e.val.Equal(otherEnumValue.val)
 }
 
-func (s StructRef) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	if decoder.abiRefs.structRefs == nil {
-		return fmt.Errorf("struct has struct reference, but no abi has been given")
+type AliasValue Value
+
+func (a *AliasValue) Equal(other any) bool {
+	otherAlias, ok := other.(AliasValue)
+	if !ok {
+		return false
 	}
-	strct, found := decoder.abiRefs.structRefs[s.StructName]
-	if !found {
-		return fmt.Errorf("no struct with name %s was found in given abi", s.StructName)
-	}
-	tolkStruct := Struct{
-		field: make(map[string]Value),
-	}
-	if strct.Prefix != nil {
-		prefixLen := strct.Prefix.PrefixLen
-		if prefixLen > 64 {
-			return fmt.Errorf("struct %v prefix length must be lower than 64", strct.Name)
-		}
-
-		prefix, err := cell.ReadUint(prefixLen)
-		if err != nil {
-			return err
-		}
-		actualPrefix, err := binHexToUint64(strct.Prefix.PrefixStr)
-		if err != nil {
-			return err
-		}
-
-		if prefix != actualPrefix {
-			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
-		}
-		tolkStruct.hasPrefix = true
-		tolkStruct.prefix = TolkPrefix{
-			Len:    int16(prefixLen),
-			Prefix: prefix,
-		}
-	}
-
-	oldGenericMap := decoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(s.TypeArgs, strct.TypeParams, decoder)
-	if err != nil {
-		return err
-	}
-	decoder.abiRefs.genericRefs = genericMap
-
-	for _, field := range strct.Fields {
-		fieldVal := Value{}
-		err = fieldVal.UnmarshalTolk(cell, field.Ty, decoder)
-		if err != nil {
-			return err
-		}
-
-		if field.Ty.SumType == "Nullable" {
-			optVal := *fieldVal.optionalValue
-			defVal := field.DefaultValue
-			if !optVal.IsExists && defVal != nil {
-				val := Value{}
-				exists, err := defVal.unmarshalDefaultValue(&val, field.Ty)
-				if err != nil {
-					return err
-				}
-				if exists {
-					optVal.IsExists = true
-					optVal.Val = val
-				}
-			}
-		}
-
-		tolkStruct.field[field.Name] = fieldVal
-	}
-	decoder.abiRefs.genericRefs = oldGenericMap
-
-	err = s.SetValue(v, tolkStruct)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	v := Value(*a)
+	return v.Equal(Value(otherAlias))
 }
 
-func (s *Struct) UnmarshalTolk(cell *boc.Cell, ty StructRef, decoder *Decoder) error {
-	if decoder.abiRefs.structRefs == nil {
-		return fmt.Errorf("struct has struct reference, but no abi has been given")
-	}
-	strct, found := decoder.abiRefs.structRefs[ty.StructName]
-	if !found {
-		return fmt.Errorf("no struct with name %s was found in given abi", ty.StructName)
-	}
-	tolkStruct := Struct{
-		field: make(map[string]Value),
-	}
-	if strct.Prefix != nil {
-		prefixLen := strct.Prefix.PrefixLen
-		if prefixLen > 64 {
-			return fmt.Errorf("struct %v prefix length must be lower than 64", strct.Name)
-		}
-
-		prefix, err := cell.ReadUint(prefixLen)
-		if err != nil {
-			return err
-		}
-		actualPrefix, err := binHexToUint64(strct.Prefix.PrefixStr)
-		if err != nil {
-			return err
-		}
-
-		if prefix != actualPrefix {
-			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
-		}
-		tolkStruct.hasPrefix = true
-		tolkStruct.prefix = TolkPrefix{
-			Len:    int16(prefixLen),
-			Prefix: prefix,
-		}
-	}
-
-	oldGenericMap := decoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(ty.TypeArgs, strct.TypeParams, decoder)
-	if err != nil {
-		return err
-	}
-	decoder.abiRefs.genericRefs = genericMap
-
-	for _, field := range strct.Fields {
-		fieldVal := Value{}
-		err = fieldVal.UnmarshalTolk(cell, field.Ty, decoder)
-		if err != nil {
-			return err
-		}
-
-		if field.Ty.SumType == "Nullable" {
-			optVal := *fieldVal.optionalValue
-			defVal := field.DefaultValue
-			if !optVal.IsExists && defVal != nil {
-				val := Value{}
-				exists, err := defVal.unmarshalDefaultValue(&val, field.Ty)
-				if err != nil {
-					return err
-				}
-				if exists {
-					optVal.IsExists = true
-					optVal.Val = val
-				}
-			}
-		}
-
-		tolkStruct.field[field.Name] = fieldVal
-	}
-
-	decoder.abiRefs.genericRefs = oldGenericMap
-	*s = tolkStruct
-
-	return nil
-}
-
-func (StructRef) MarshalTolk(cell *boc.Cell, v *Value) error {
-	//if v.structValue == nil {
-	//	return fmt.Errorf("struct is nil")
-	//}
-	//
-	//if v.structValue.hasPrefix {
-	//	err := cell.WriteUint(v.structValue.prefix.Prefix, int(v.structValue.prefix.Len))
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	//
-	//for _, f := range v.structValue.field {
-	//	err := f.valType.MarshalTolk(cell, &f)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-
-	return nil
-}
-
-func (StructRef) Equal(v Value, o Value) bool {
-	return false
-}
-
-type AliasRef struct {
-	AliasName string `json:"aliasName"`
-	TypeArgs  []Ty   `json:"typeArgs,omitempty"`
-}
-
-func (AliasRef) SetValue(v *Value, val any) error {
-	return fmt.Errorf("alias cannot be a value")
-}
-
-func (a AliasRef) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	if decoder.abiRefs.aliasRefs == nil {
-		return fmt.Errorf("struct has alias reference, but no abi has been given")
-	}
-	alias, found := decoder.abiRefs.aliasRefs[a.AliasName]
-	if !found {
-		return fmt.Errorf("no alias with name %s was found in given abi", a.AliasName)
-	}
-
-	if alias.CustomUnpackFromSlice {
-		// todo: maybe simply return error?
-		fmt.Println("WARNING! alias has custom unpack method. Standard unpacking can be incorrect!")
-	}
-
-	oldGenericMap := decoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(a.TypeArgs, alias.TypeParams, decoder)
-	if err != nil {
-		return err
-	}
-	decoder.abiRefs.genericRefs = genericMap
-
-	val := Value{}
-	err = val.UnmarshalTolk(cell, alias.TargetTy, decoder)
-	if err != nil {
-		return err
-	}
-	decoder.abiRefs.genericRefs = oldGenericMap
-
-	fmt.Println(123)
-	err = a.SetValue(v, val)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (a *AliasValue) UnmarshalTolk(cell *boc.Cell, ty AliasRef, decoder *Decoder) error {
+func (a *AliasValue) Unmarshal(cell *boc.Cell, ty tolkParser.AliasRef, decoder *Decoder) error {
 	if decoder.abiRefs.aliasRefs == nil {
 		return fmt.Errorf("struct has alias reference, but no abi has been given")
 	}
@@ -422,18 +334,18 @@ func (a *AliasValue) UnmarshalTolk(cell *boc.Cell, ty AliasRef, decoder *Decoder
 
 	if alias.CustomUnpackFromSlice {
 		// todo: maybe simply return error?
-		fmt.Println("WARNING! alias has custom unpack method. Standard unpacking can be incorrect!")
+		fmt.Println("WARNING! alias has custom unpack method. Default unpacking can be incorrect!")
 	}
 
 	oldGenericMap := decoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, decoder)
+	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, &decoder.abiRefs)
 	if err != nil {
 		return err
 	}
 	decoder.abiRefs.genericRefs = genericMap
 
 	val := Value{}
-	err = val.UnmarshalTolk(cell, alias.TargetTy, decoder)
+	err = val.Unmarshal(cell, alias.TargetTy, decoder)
 	if err != nil {
 		return err
 	}
@@ -444,48 +356,56 @@ func (a *AliasValue) UnmarshalTolk(cell *boc.Cell, ty AliasRef, decoder *Decoder
 	return nil
 }
 
-func (AliasRef) MarshalTolk(cell *boc.Cell, v *Value) error {
-	return fmt.Errorf("alias ref cannot be a value")
-}
-
-func (AliasRef) Equal(v Value, o Value) bool {
-	return false
-}
-
-type Generic struct {
-	NameT string `json:"nameT"`
-}
-
-func (Generic) SetValue(v *Value, val any) error {
-	return fmt.Errorf("generic cannot be a value")
-}
-
-func (g Generic) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	currentTy, found := decoder.abiRefs.genericRefs[g.NameT]
+func (a *AliasValue) Marshal(cell *boc.Cell, ty tolkParser.AliasRef, encoder *Encoder) error {
+	if encoder.abiRefs.aliasRefs == nil {
+		return fmt.Errorf("struct has alias reference, but no abi has been given")
+	}
+	alias, found := encoder.abiRefs.aliasRefs[ty.AliasName]
 	if !found {
-		return fmt.Errorf("cannot resolve generic type %v ", g)
+		return fmt.Errorf("no alias with name %s was found in given abi", ty.AliasName)
 	}
-	val := Value{}
-	err := val.UnmarshalTolk(cell, currentTy, decoder)
+
+	if alias.CustomPackToBuilder {
+		// todo: maybe simply return error?
+		fmt.Println("WARNING! alias has custom pack method. Default packing can be incorrect!")
+	}
+
+	oldGenericMap := encoder.abiRefs.genericRefs
+	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, &encoder.abiRefs)
+	if err != nil {
+		return err
+	}
+	encoder.abiRefs.genericRefs = genericMap
+
+	val := Value(*a)
+	err = val.Marshal(cell, alias.TargetTy, encoder)
 	if err != nil {
 		return err
 	}
 
-	err = g.SetValue(v, val)
-	if err != nil {
-		return err
-	}
+	encoder.abiRefs.genericRefs = oldGenericMap
 
 	return nil
 }
 
-func (g *GenericValue) UnmarshalTolk(cell *boc.Cell, ty Generic, decoder *Decoder) error {
+type GenericValue Value
+
+func (g *GenericValue) Equal(other any) bool {
+	otherGeneric, ok := other.(GenericValue)
+	if !ok {
+		return false
+	}
+	v := Value(*g)
+	return v.Equal(Value(otherGeneric))
+}
+
+func (g *GenericValue) Unmarshal(cell *boc.Cell, ty tolkParser.Generic, decoder *Decoder) error {
 	currentTy, found := decoder.abiRefs.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic type %v ", ty.NameT)
 	}
 	val := Value{}
-	err := val.UnmarshalTolk(cell, currentTy, decoder)
+	err := val.Unmarshal(cell, currentTy, decoder)
 	if err != nil {
 		return err
 	}
@@ -495,29 +415,35 @@ func (g *GenericValue) UnmarshalTolk(cell *boc.Cell, ty Generic, decoder *Decode
 	return nil
 }
 
-func (Generic) MarshalTolk(cell *boc.Cell, v *Value) error {
-	return fmt.Errorf("generic cannot be a value")
+func (g *GenericValue) Marshal(cell *boc.Cell, ty tolkParser.Generic, encoder *Encoder) error {
+	currentTy, found := encoder.abiRefs.genericRefs[ty.NameT]
+	if !found {
+		return fmt.Errorf("cannot resolve generic type %v ", ty.NameT)
+	}
+	val := Value(*g)
+	err := val.Marshal(cell, currentTy, encoder)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (Generic) Equal(v Value, o Value) bool {
-	return false
-}
-
-func resolveGeneric(typeArgs []Ty, typeParams []string, d *Decoder) (map[string]Ty, error) {
-	genericMap := make(map[string]Ty)
-	if d.abiRefs.genericRefs != nil {
-		maps.Copy(genericMap, d.abiRefs.genericRefs)
+func resolveGeneric(typeArgs []tolkParser.Ty, typeParams []string, abiRefs *abiRefs) (map[string]tolkParser.Ty, error) {
+	genericMap := make(map[string]tolkParser.Ty)
+	if abiRefs.genericRefs != nil {
+		maps.Copy(genericMap, abiRefs.genericRefs)
 	}
 
 	for i, genericTy := range typeArgs {
 		genericMap[typeParams[i]] = genericTy
 
 		if genericTy.SumType == "Generic" {
-			if d.abiRefs.genericRefs == nil {
+			if abiRefs.genericRefs == nil {
 				return nil, fmt.Errorf("cannot resolve generic type %v", genericTy.Generic.NameT)
 			}
 
-			ty, found := d.abiRefs.genericRefs[genericTy.Generic.NameT]
+			ty, found := abiRefs.genericRefs[genericTy.Generic.NameT]
 			if !found {
 				return nil, fmt.Errorf("generic type %v not found", genericTy.Generic.NameT)
 			}

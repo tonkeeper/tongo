@@ -2,50 +2,41 @@ package tolk
 
 import (
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tolk/parser"
 )
 
-type NullLiteral struct{}
+type NullValue struct{}
 
-func (NullLiteral) SetValue(v *Value, val any) error {
-	v.sumType = "nullLiteral"
+func (n *NullValue) Equal(other any) bool {
+	_, ok := other.(NullValue)
+	if !ok {
+		return false
+	}
+	return true
+}
+
+func (n *NullValue) Unmarshal(cell *boc.Cell, ty tolkParser.NullLiteral, decoder *Decoder) error {
 	return nil
 }
 
-func (NullLiteral) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
+func (n *NullValue) Marshal(cell *boc.Cell, ty tolkParser.NullLiteral, encoder *Encoder) error {
 	return nil
 }
 
-func (n *NullValue) UnmarshalTolk(cell *boc.Cell, ty NullLiteral, decoder *Decoder) error {
+type VoidValue struct{}
+
+func (v *VoidValue) Equal(other any) bool {
+	_, ok := other.(VoidValue)
+	if !ok {
+		return false
+	}
+	return true
+}
+
+func (v *VoidValue) Unmarshal(cell *boc.Cell, ty tolkParser.Void, decoder *Decoder) error {
 	return nil
 }
 
-func (NullLiteral) MarshalTolk(cell *boc.Cell, v *Value) error {
+func (v *VoidValue) Marshal(cell *boc.Cell, ty tolkParser.Void, encoder *Encoder) error {
 	return nil
-}
-
-func (NullLiteral) Equal(v Value, o Value) bool {
-	return false
-}
-
-type Void struct{}
-
-func (Void) SetValue(v *Value, val any) error {
-	v.sumType = "void"
-	return nil
-}
-
-func (Void) UnmarshalTolk(cell *boc.Cell, v *Value, decoder *Decoder) error {
-	return nil
-}
-
-func (v *VoidValue) UnmarshalTolk(cell *boc.Cell, ty Void, decoder *Decoder) error {
-	return nil
-}
-
-func (Void) MarshalTolk(cell *boc.Cell, v *Value) error {
-	return nil
-}
-
-func (Void) Equal(v Value, o Value) bool {
-	return false
 }

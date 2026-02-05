@@ -10,13 +10,14 @@ import (
 
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tolk/parser"
 	"github.com/tonkeeper/tongo/ton"
 )
 
 func TestRuntime_UnmarshalSmallInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "IntN",
-		IntN: &IntN{
+		IntN: &tolkParser.IntN{
 			N: 24,
 		},
 	}
@@ -25,7 +26,7 @@ func TestRuntime_UnmarshalSmallInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,9 +41,9 @@ func TestRuntime_UnmarshalSmallInt(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalBigInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "IntN",
-		IntN: &IntN{
+		IntN: &tolkParser.IntN{
 			N: 183,
 		},
 	}
@@ -51,7 +52,7 @@ func TestRuntime_UnmarshalBigInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,9 +67,9 @@ func TestRuntime_UnmarshalBigInt(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "UintN",
-		UintN: &UintN{
+		UintN: &tolkParser.UintN{
 			N: 53,
 		},
 	}
@@ -77,7 +78,7 @@ func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,9 +93,9 @@ func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalBigUInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "UintN",
-		UintN: &UintN{
+		UintN: &tolkParser.UintN{
 			N: 257,
 		},
 	}
@@ -103,7 +104,7 @@ func TestRuntime_UnmarshalBigUInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -118,9 +119,9 @@ func TestRuntime_UnmarshalBigUInt(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalVarInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "VarIntN",
-		VarIntN: &VarIntN{
+		VarIntN: &tolkParser.VarIntN{
 			N: 16,
 		},
 	}
@@ -129,7 +130,7 @@ func TestRuntime_UnmarshalVarInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,9 +145,9 @@ func TestRuntime_UnmarshalVarInt(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalVarUInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "VarUintN",
-		VarUintN: &VarUintN{
+		VarUintN: &tolkParser.VarUintN{
 			N: 32,
 		},
 	}
@@ -155,7 +156,7 @@ func TestRuntime_UnmarshalVarUInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -170,9 +171,9 @@ func TestRuntime_UnmarshalVarUInt(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalBits(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "BitsN",
-		BitsN: &BitsN{
+		BitsN: &tolkParser.BitsN{
 			N: 24,
 		},
 	}
@@ -181,7 +182,7 @@ func TestRuntime_UnmarshalBits(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -196,16 +197,16 @@ func TestRuntime_UnmarshalBits(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalCoins(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Coins",
-		Coins:   &Coins{},
+		Coins:   &tolkParser.Coins{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010007000009436ec6e0189ebbd7f4")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -220,16 +221,16 @@ func TestRuntime_UnmarshalCoins(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalBool(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Bool",
-		Bool:    &Bool{},
+		Bool:    &tolkParser.Bool{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -244,16 +245,16 @@ func TestRuntime_UnmarshalBool(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalCell(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Cell",
-		Cell:    &Cell{},
+		Cell:    &tolkParser.Cell{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101020100090001000100080000007ba52a3292")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -272,16 +273,16 @@ func TestRuntime_UnmarshalCell(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalRemaining(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:   "Remaining",
-		Remaining: &Remaining{},
+		Remaining: &tolkParser.Remaining{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -300,16 +301,16 @@ func TestRuntime_UnmarshalRemaining(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Address",
-		Address: &Address{},
+		Address: &tolkParser.Address{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -324,16 +325,16 @@ func TestRuntime_UnmarshalAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalNotExitsOptionalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
-		AddressOpt: &AddressOpt{},
+		AddressOpt: &tolkParser.AddressOpt{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -349,16 +350,16 @@ func TestRuntime_UnmarshalNotExitsOptionalAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalExistsOptionalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
-		AddressOpt: &AddressOpt{},
+		AddressOpt: &tolkParser.AddressOpt{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -374,16 +375,16 @@ func TestRuntime_UnmarshalExistsOptionalAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalExternalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressExt",
-		AddressExt: &AddressExt{},
+		AddressExt: &tolkParser.AddressExt{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -403,16 +404,16 @@ func TestRuntime_UnmarshalExternalAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalAnyNoneAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -427,16 +428,16 @@ func TestRuntime_UnmarshalAnyNoneAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalAnyInternalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -451,16 +452,16 @@ func TestRuntime_UnmarshalAnyInternalAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalAnyExternalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -480,16 +481,16 @@ func TestRuntime_UnmarshalAnyExternalAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalAnyVarAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -513,12 +514,12 @@ func TestRuntime_UnmarshalAnyVarAddress(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Nullable",
-		Nullable: &Nullable{
-			Inner: Ty{
+		Nullable: &tolkParser.Nullable{
+			Inner: tolkParser.Ty{
 				SumType:   "Remaining",
-				Remaining: &Remaining{},
+				Remaining: &tolkParser.Remaining{},
 			},
 		},
 	}
@@ -527,7 +528,7 @@ func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -542,12 +543,12 @@ func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Nullable",
-		Nullable: &Nullable{
-			Inner: Ty{
+		Nullable: &tolkParser.Nullable{
+			Inner: tolkParser.Ty{
 				SumType: "Cell",
-				Cell:    &Cell{},
+				Cell:    &tolkParser.Cell{},
 			},
 		},
 	}
@@ -556,7 +557,7 @@ func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -582,12 +583,12 @@ func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalRef(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "CellOf",
-		CellOf: &CellOf{
-			Inner: Ty{
+		CellOf: &tolkParser.CellOf{
+			Inner: tolkParser.Ty{
 				SumType: "IntN",
-				IntN: &IntN{
+				IntN: &tolkParser.IntN{
 					N: 65,
 				},
 			},
@@ -598,7 +599,7 @@ func TestRuntime_UnmarshalRef(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -617,16 +618,16 @@ func TestRuntime_UnmarshalRef(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalEmptyTensor(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Tensor",
-		Tensor:  &Tensor{},
+		Tensor:  &tolkParser.Tensor{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100020000004cacb9cd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -642,40 +643,40 @@ func TestRuntime_UnmarshalEmptyTensor(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalTensor(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Tensor",
-		Tensor: &Tensor{
-			Items: []Ty{
+		Tensor: &tolkParser.Tensor{
+			Items: []tolkParser.Ty{
 				{
 					SumType: "UintN",
-					UintN: &UintN{
+					UintN: &tolkParser.UintN{
 						N: 123,
 					},
 				},
 				{
 					SumType: "Bool",
-					Bool:    &Bool{},
+					Bool:    &tolkParser.Bool{},
 				},
 				{
 					SumType: "Coins",
-					Coins:   &Coins{},
+					Coins:   &tolkParser.Coins{},
 				},
 				{
 					SumType: "Tensor",
-					Tensor: &Tensor{
-						Items: []Ty{
+					Tensor: &tolkParser.Tensor{
+						Items: []tolkParser.Ty{
 							{
 								SumType: "IntN",
-								IntN: &IntN{
+								IntN: &tolkParser.IntN{
 									N: 23,
 								},
 							},
 							{
 								SumType: "Nullable",
-								Nullable: &Nullable{
-									Inner: Ty{
+								Nullable: &tolkParser.Nullable{
+									Inner: tolkParser.Ty{
 										SumType: "IntN",
-										IntN: &IntN{
+										IntN: &tolkParser.IntN{
 											N: 2,
 										},
 									},
@@ -686,7 +687,7 @@ func TestRuntime_UnmarshalTensor(t *testing.T) {
 				},
 				{
 					SumType: "VarIntN",
-					VarIntN: &VarIntN{
+					VarIntN: &tolkParser.VarIntN{
 						N: 32,
 					},
 				},
@@ -698,7 +699,7 @@ func TestRuntime_UnmarshalTensor(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -770,18 +771,18 @@ func TestRuntime_UnmarshalTensor(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "IntN",
-				IntN: &IntN{
+				IntN: &tolkParser.IntN{
 					N: 32,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Bool",
-				Bool:    &Bool{},
+				Bool:    &tolkParser.Bool{},
 			},
 		},
 	}
@@ -790,7 +791,7 @@ func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -818,18 +819,18 @@ func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "UintN",
-				UintN: &UintN{
+				UintN: &tolkParser.UintN{
 					N: 16,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Address",
-				Address: &Address{},
+				Address: &tolkParser.Address{},
 			},
 		},
 	}
@@ -838,7 +839,7 @@ func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -878,18 +879,18 @@ func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "UintN",
-				UintN: &UintN{
+				UintN: &tolkParser.UintN{
 					N: 78,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Cell",
-				Cell:    &Cell{},
+				Cell:    &tolkParser.Cell{},
 			},
 		},
 	}
@@ -898,7 +899,7 @@ func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -930,35 +931,35 @@ func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "BitsN",
-				BitsN: &BitsN{
+				BitsN: &tolkParser.BitsN{
 					N: 16,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Map",
-				Map: &Map{
-					K: Ty{
+				Map: &tolkParser.Map{
+					K: tolkParser.Ty{
 						SumType: "IntN",
-						IntN: &IntN{
+						IntN: &tolkParser.IntN{
 							N: 64,
 						},
 					},
-					V: Ty{
+					V: tolkParser.Ty{
 						SumType: "Tensor",
-						Tensor: &Tensor{
-							Items: []Ty{
+						Tensor: &tolkParser.Tensor{
+							Items: []tolkParser.Ty{
 								{
 									SumType: "Address",
-									Address: &Address{},
+									Address: &tolkParser.Address{},
 								},
 								{
 									SumType: "Coins",
-									Coins:   &Coins{},
+									Coins:   &tolkParser.Coins{},
 								},
 							},
 						},
@@ -972,7 +973,7 @@ func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1031,16 +1032,16 @@ func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "Address",
-				Address: &Address{},
+				Address: &tolkParser.Address{},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Coins",
-				Coins:   &Coins{},
+				Coins:   &tolkParser.Coins{},
 			},
 		},
 	}
@@ -1049,7 +1050,7 @@ func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1086,17 +1087,17 @@ func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
 }
 
 func TestRuntime_UnmarshalUnionWithDecPrefix(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Union",
-		Union: &Union{
-			Variants: []UnionVariant{
+		Union: &tolkParser.Union{
+			Variants: []tolkParser.UnionVariant{
 				{
 					PrefixStr:        "0",
 					PrefixLen:        1,
 					PrefixEatInPlace: true,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "IntN",
-						IntN: &IntN{
+						IntN: &tolkParser.IntN{
 							N: 16,
 						},
 					},
@@ -1105,9 +1106,9 @@ func TestRuntime_UnmarshalUnionWithDecPrefix(t *testing.T) {
 					PrefixStr:        "1",
 					PrefixLen:        1,
 					PrefixEatInPlace: true,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "IntN",
-						IntN: &IntN{
+						IntN: &tolkParser.IntN{
 							N: 128,
 						},
 					},
@@ -1120,7 +1121,7 @@ func TestRuntime_UnmarshalUnionWithDecPrefix(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1152,22 +1153,22 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Union",
-		Union: &Union{
-			Variants: []UnionVariant{
+		Union: &tolkParser.Union{
+			Variants: []tolkParser.UnionVariant{
 				{
 					PrefixStr: "0b001",
 					PrefixLen: 3,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "AddressWithPrefix",
 						},
 					},
@@ -1175,9 +1176,9 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 				{
 					PrefixStr: "0b011",
 					PrefixLen: 3,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "MapWithPrefix",
 						},
 					},
@@ -1185,9 +1186,9 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 				{
 					PrefixStr: "0b111",
 					PrefixLen: 3,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "CellWithPrefix",
 						},
 					},
@@ -1202,7 +1203,7 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1254,22 +1255,22 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Union",
-		Union: &Union{
-			Variants: []UnionVariant{
+		Union: &tolkParser.Union{
+			Variants: []tolkParser.UnionVariant{
 				{
 					PrefixStr: "0x12345678",
 					PrefixLen: 32,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "UInt66WithPrefix",
 						},
 					},
@@ -1277,9 +1278,9 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 				{
 					PrefixStr: "0xdeadbeef",
 					PrefixLen: 32,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "UInt33WithPrefix",
 						},
 					},
@@ -1287,9 +1288,9 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 				{
 					PrefixStr: "0x89abcdef",
 					PrefixLen: 32,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "UInt4WithPrefix",
 						},
 					},
@@ -1304,7 +1305,7 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1344,15 +1345,15 @@ func TestRuntime_UnmarshalALotRefsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "AliasRef",
-		AliasRef: &AliasRef{
+		AliasRef: &tolkParser.AliasRef{
 			AliasName: "GoodNamingForMsg",
 		},
 	}
@@ -1363,7 +1364,7 @@ func TestRuntime_UnmarshalALotRefsFromAlias(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1605,15 +1606,15 @@ func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "ManyRefsMsg",
 		},
 	}
@@ -1624,7 +1625,7 @@ func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1862,20 +1863,20 @@ func TestRuntime_UnmarshalALotGenericsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "ManyRefsMsg",
-			TypeArgs: []Ty{
+			TypeArgs: []tolkParser.Ty{
 				{
 					SumType: "UintN",
-					UintN: &UintN{
+					UintN: &tolkParser.UintN{
 						N: 16,
 					},
 				},
@@ -1889,7 +1890,7 @@ func TestRuntime_UnmarshalALotGenericsFromStruct(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2108,20 +2109,20 @@ func TestRuntime_UnmarshalALotGenericsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "AliasRef",
-		AliasRef: &AliasRef{
+		AliasRef: &tolkParser.AliasRef{
 			AliasName: "GoodNamingForMsg",
-			TypeArgs: []Ty{
+			TypeArgs: []tolkParser.Ty{
 				{
 					SumType: "UintN",
-					UintN: &UintN{
+					UintN: &tolkParser.UintN{
 						N: 16,
 					},
 				},
@@ -2135,7 +2136,7 @@ func TestRuntime_UnmarshalALotGenericsFromAlias(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2358,15 +2359,15 @@ func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "DefaultTest",
 		},
 	}
@@ -2377,7 +2378,7 @@ func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2530,15 +2531,15 @@ func TestRuntime_UnmarshalALotNumbers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "Numbers",
 		},
 	}
@@ -2549,7 +2550,7 @@ func TestRuntime_UnmarshalALotNumbers(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2650,15 +2651,15 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "RandomFields",
 		},
 	}
@@ -2669,7 +2670,7 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2867,9 +2868,9 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 }
 
 func TestRuntime_MarshalSmallInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "IntN",
-		IntN: &IntN{
+		IntN: &tolkParser.IntN{
 			N: 24,
 		},
 	}
@@ -2878,13 +2879,12 @@ func TestRuntime_MarshalSmallInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -2903,9 +2903,9 @@ func TestRuntime_MarshalSmallInt(t *testing.T) {
 }
 
 func TestRuntime_MarshalBigInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "IntN",
-		IntN: &IntN{
+		IntN: &tolkParser.IntN{
 			N: 183,
 		},
 	}
@@ -2914,13 +2914,12 @@ func TestRuntime_MarshalBigInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -2939,9 +2938,9 @@ func TestRuntime_MarshalBigInt(t *testing.T) {
 }
 
 func TestRuntime_MarshalSmallUInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "UintN",
-		UintN: &UintN{
+		UintN: &tolkParser.UintN{
 			N: 53,
 		},
 	}
@@ -2950,13 +2949,12 @@ func TestRuntime_MarshalSmallUInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -2975,9 +2973,9 @@ func TestRuntime_MarshalSmallUInt(t *testing.T) {
 }
 
 func TestRuntime_MarshalBigUInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "UintN",
-		UintN: &UintN{
+		UintN: &tolkParser.UintN{
 			N: 257,
 		},
 	}
@@ -2986,13 +2984,12 @@ func TestRuntime_MarshalBigUInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3011,9 +3008,9 @@ func TestRuntime_MarshalBigUInt(t *testing.T) {
 }
 
 func TestRuntime_MarshalVarInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "VarIntN",
-		VarIntN: &VarIntN{
+		VarIntN: &tolkParser.VarIntN{
 			N: 16,
 		},
 	}
@@ -3022,13 +3019,12 @@ func TestRuntime_MarshalVarInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3047,9 +3043,9 @@ func TestRuntime_MarshalVarInt(t *testing.T) {
 }
 
 func TestRuntime_MarshalVarUInt(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "VarUintN",
-		VarUintN: &VarUintN{
+		VarUintN: &tolkParser.VarUintN{
 			N: 32,
 		},
 	}
@@ -3058,13 +3054,12 @@ func TestRuntime_MarshalVarUInt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3083,9 +3078,9 @@ func TestRuntime_MarshalVarUInt(t *testing.T) {
 }
 
 func TestRuntime_MarshalBits(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "BitsN",
-		BitsN: &BitsN{
+		BitsN: &tolkParser.BitsN{
 			N: 24,
 		},
 	}
@@ -3094,13 +3089,12 @@ func TestRuntime_MarshalBits(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3119,22 +3113,21 @@ func TestRuntime_MarshalBits(t *testing.T) {
 }
 
 func TestRuntime_MarshalCoins(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Coins",
-		Coins:   &Coins{},
+		Coins:   &tolkParser.Coins{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010007000009436ec6e0189ebbd7f4")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3153,22 +3146,21 @@ func TestRuntime_MarshalCoins(t *testing.T) {
 }
 
 func TestRuntime_MarshalBool(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Bool",
-		Bool:    &Bool{},
+		Bool:    &tolkParser.Bool{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3187,22 +3179,21 @@ func TestRuntime_MarshalBool(t *testing.T) {
 }
 
 func TestRuntime_MarshalCell(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Cell",
-		Cell:    &Cell{},
+		Cell:    &tolkParser.Cell{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101020100090001000100080000007ba52a3292")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3221,22 +3212,21 @@ func TestRuntime_MarshalCell(t *testing.T) {
 }
 
 func TestRuntime_MarshalRemaining(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:   "Remaining",
-		Remaining: &Remaining{},
+		Remaining: &tolkParser.Remaining{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3255,22 +3245,21 @@ func TestRuntime_MarshalRemaining(t *testing.T) {
 }
 
 func TestRuntime_MarshalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Address",
-		Address: &Address{},
+		Address: &tolkParser.Address{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3289,22 +3278,21 @@ func TestRuntime_MarshalAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
-		AddressOpt: &AddressOpt{},
+		AddressOpt: &tolkParser.AddressOpt{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3323,22 +3311,21 @@ func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
-		AddressOpt: &AddressOpt{},
+		AddressOpt: &tolkParser.AddressOpt{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3357,22 +3344,21 @@ func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalExternalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressExt",
-		AddressExt: &AddressExt{},
+		AddressExt: &tolkParser.AddressExt{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3391,22 +3377,21 @@ func TestRuntime_MarshalExternalAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3425,22 +3410,21 @@ func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3459,22 +3443,21 @@ func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3493,22 +3476,21 @@ func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		AddressAny: &tolkParser.AddressAny{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3527,12 +3509,12 @@ func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
 }
 
 func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Nullable",
-		Nullable: &Nullable{
-			Inner: Ty{
+		Nullable: &tolkParser.Nullable{
+			Inner: tolkParser.Ty{
 				SumType:   "Remaining",
-				Remaining: &Remaining{},
+				Remaining: &tolkParser.Remaining{},
 			},
 		},
 	}
@@ -3541,13 +3523,12 @@ func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3566,12 +3547,12 @@ func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
 }
 
 func TestRuntime_MarshalExistsNullable(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Nullable",
-		Nullable: &Nullable{
-			Inner: Ty{
+		Nullable: &tolkParser.Nullable{
+			Inner: tolkParser.Ty{
 				SumType: "Cell",
-				Cell:    &Cell{},
+				Cell:    &tolkParser.Cell{},
 			},
 		},
 	}
@@ -3580,13 +3561,12 @@ func TestRuntime_MarshalExistsNullable(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3605,12 +3585,12 @@ func TestRuntime_MarshalExistsNullable(t *testing.T) {
 }
 
 func TestRuntime_MarshalRef(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "CellOf",
-		CellOf: &CellOf{
-			Inner: Ty{
+		CellOf: &tolkParser.CellOf{
+			Inner: tolkParser.Ty{
 				SumType: "IntN",
-				IntN: &IntN{
+				IntN: &tolkParser.IntN{
 					N: 65,
 				},
 			},
@@ -3621,13 +3601,12 @@ func TestRuntime_MarshalRef(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3646,22 +3625,21 @@ func TestRuntime_MarshalRef(t *testing.T) {
 }
 
 func TestRuntime_MarshalEmptyTensor(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Tensor",
-		Tensor:  &Tensor{},
+		Tensor:  &tolkParser.Tensor{},
 	}
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100020000004cacb9cd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3680,40 +3658,40 @@ func TestRuntime_MarshalEmptyTensor(t *testing.T) {
 }
 
 func TestRuntime_MarshalTensor(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Tensor",
-		Tensor: &Tensor{
-			Items: []Ty{
+		Tensor: &tolkParser.Tensor{
+			Items: []tolkParser.Ty{
 				{
 					SumType: "UintN",
-					UintN: &UintN{
+					UintN: &tolkParser.UintN{
 						N: 123,
 					},
 				},
 				{
 					SumType: "Bool",
-					Bool:    &Bool{},
+					Bool:    &tolkParser.Bool{},
 				},
 				{
 					SumType: "Coins",
-					Coins:   &Coins{},
+					Coins:   &tolkParser.Coins{},
 				},
 				{
 					SumType: "Tensor",
-					Tensor: &Tensor{
-						Items: []Ty{
+					Tensor: &tolkParser.Tensor{
+						Items: []tolkParser.Ty{
 							{
 								SumType: "IntN",
-								IntN: &IntN{
+								IntN: &tolkParser.IntN{
 									N: 23,
 								},
 							},
 							{
 								SumType: "Nullable",
-								Nullable: &Nullable{
-									Inner: Ty{
+								Nullable: &tolkParser.Nullable{
+									Inner: tolkParser.Ty{
 										SumType: "IntN",
-										IntN: &IntN{
+										IntN: &tolkParser.IntN{
 											N: 2,
 										},
 									},
@@ -3724,7 +3702,7 @@ func TestRuntime_MarshalTensor(t *testing.T) {
 				},
 				{
 					SumType: "VarIntN",
-					VarIntN: &VarIntN{
+					VarIntN: &tolkParser.VarIntN{
 						N: 32,
 					},
 				},
@@ -3736,13 +3714,12 @@ func TestRuntime_MarshalTensor(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3761,18 +3738,18 @@ func TestRuntime_MarshalTensor(t *testing.T) {
 }
 
 func TestRuntime_MarshalIntKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "IntN",
-				IntN: &IntN{
+				IntN: &tolkParser.IntN{
 					N: 32,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Bool",
-				Bool:    &Bool{},
+				Bool:    &tolkParser.Bool{},
 			},
 		},
 	}
@@ -3781,13 +3758,12 @@ func TestRuntime_MarshalIntKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3806,18 +3782,18 @@ func TestRuntime_MarshalIntKeyMap(t *testing.T) {
 }
 
 func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "UintN",
-				UintN: &UintN{
+				UintN: &tolkParser.UintN{
 					N: 16,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Address",
-				Address: &Address{},
+				Address: &tolkParser.Address{},
 			},
 		},
 	}
@@ -3826,13 +3802,12 @@ func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -3851,18 +3826,18 @@ func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
 }
 
 func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "UintN",
-				UintN: &UintN{
+				UintN: &tolkParser.UintN{
 					N: 78,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Cell",
-				Cell:    &Cell{},
+				Cell:    &tolkParser.Cell{},
 			},
 		},
 	}
@@ -3871,13 +3846,12 @@ func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3896,35 +3870,35 @@ func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
 }
 
 func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "BitsN",
-				BitsN: &BitsN{
+				BitsN: &tolkParser.BitsN{
 					N: 16,
 				},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Map",
-				Map: &Map{
-					K: Ty{
+				Map: &tolkParser.Map{
+					K: tolkParser.Ty{
 						SumType: "IntN",
-						IntN: &IntN{
+						IntN: &tolkParser.IntN{
 							N: 64,
 						},
 					},
-					V: Ty{
+					V: tolkParser.Ty{
 						SumType: "Tensor",
-						Tensor: &Tensor{
-							Items: []Ty{
+						Tensor: &tolkParser.Tensor{
+							Items: []tolkParser.Ty{
 								{
 									SumType: "Address",
-									Address: &Address{},
+									Address: &tolkParser.Address{},
 								},
 								{
 									SumType: "Coins",
-									Coins:   &Coins{},
+									Coins:   &tolkParser.Coins{},
 								},
 							},
 						},
@@ -3938,13 +3912,12 @@ func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -3963,16 +3936,16 @@ func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
 }
 
 func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Map",
-		Map: &Map{
-			K: Ty{
+		Map: &tolkParser.Map{
+			K: tolkParser.Ty{
 				SumType: "Address",
-				Address: &Address{},
+				Address: &tolkParser.Address{},
 			},
-			V: Ty{
+			V: tolkParser.Ty{
 				SumType: "Coins",
-				Coins:   &Coins{},
+				Coins:   &tolkParser.Coins{},
 			},
 		},
 	}
@@ -3981,13 +3954,12 @@ func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4006,17 +3978,17 @@ func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
 }
 
 func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Union",
-		Union: &Union{
-			Variants: []UnionVariant{
+		Union: &tolkParser.Union{
+			Variants: []tolkParser.UnionVariant{
 				{
 					PrefixStr:        "0",
 					PrefixLen:        1,
 					PrefixEatInPlace: true,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "IntN",
-						IntN: &IntN{
+						IntN: &tolkParser.IntN{
 							N: 16,
 						},
 					},
@@ -4025,9 +3997,9 @@ func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
 					PrefixStr:        "1",
 					PrefixLen:        1,
 					PrefixEatInPlace: true,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "IntN",
-						IntN: &IntN{
+						IntN: &tolkParser.IntN{
 							N: 128,
 						},
 					},
@@ -4040,13 +4012,12 @@ func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := UnmarshalTolk(currCell[0], ty)
+	v, err := Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	newCell, err := Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4071,22 +4042,22 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Union",
-		Union: &Union{
-			Variants: []UnionVariant{
+		Union: &tolkParser.Union{
+			Variants: []tolkParser.UnionVariant{
 				{
 					PrefixStr: "0b001",
 					PrefixLen: 3,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "AddressWithPrefix",
 						},
 					},
@@ -4094,9 +4065,9 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 				{
 					PrefixStr: "0b011",
 					PrefixLen: 3,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "MapWithPrefix",
 						},
 					},
@@ -4104,9 +4075,9 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 				{
 					PrefixStr: "0b111",
 					PrefixLen: 3,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "CellWithPrefix",
 						},
 					},
@@ -4121,13 +4092,14 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4152,22 +4124,22 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "Union",
-		Union: &Union{
-			Variants: []UnionVariant{
+		Union: &tolkParser.Union{
+			Variants: []tolkParser.UnionVariant{
 				{
 					PrefixStr: "0x12345678",
 					PrefixLen: 32,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "UInt66WithPrefix",
 						},
 					},
@@ -4175,9 +4147,9 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 				{
 					PrefixStr: "0xdeadbeef",
 					PrefixLen: 32,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "UInt33WithPrefix",
 						},
 					},
@@ -4185,9 +4157,9 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 				{
 					PrefixStr: "0x89abcdef",
 					PrefixLen: 32,
-					VariantTy: Ty{
+					VariantTy: tolkParser.Ty{
 						SumType: "StructRef",
-						StructRef: &StructRef{
+						StructRef: &tolkParser.StructRef{
 							StructName: "UInt4WithPrefix",
 						},
 					},
@@ -4202,13 +4174,14 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4233,15 +4206,15 @@ func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "AliasRef",
-		AliasRef: &AliasRef{
+		AliasRef: &tolkParser.AliasRef{
 			AliasName: "GoodNamingForMsg",
 		},
 	}
@@ -4252,13 +4225,14 @@ func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -4289,15 +4263,15 @@ func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "ManyRefsMsg",
 		},
 	}
@@ -4308,13 +4282,14 @@ func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4339,20 +4314,20 @@ func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "ManyRefsMsg",
-			TypeArgs: []Ty{
+			TypeArgs: []tolkParser.Ty{
 				{
 					SumType: "UintN",
-					UintN: &UintN{
+					UintN: &tolkParser.UintN{
 						N: 16,
 					},
 				},
@@ -4366,13 +4341,14 @@ func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4397,20 +4373,20 @@ func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "AliasRef",
-		AliasRef: &AliasRef{
+		AliasRef: &tolkParser.AliasRef{
 			AliasName: "GoodNamingForMsg",
-			TypeArgs: []Ty{
+			TypeArgs: []tolkParser.Ty{
 				{
 					SumType: "UintN",
-					UintN: &UintN{
+					UintN: &tolkParser.UintN{
 						N: 16,
 					},
 				},
@@ -4424,13 +4400,14 @@ func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4455,15 +4432,15 @@ func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "DefaultTest",
 		},
 	}
@@ -4474,13 +4451,14 @@ func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4505,15 +4483,15 @@ func TestRuntime_MarshalALotNumbers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "Numbers",
 		},
 	}
@@ -4524,13 +4502,14 @@ func TestRuntime_MarshalALotNumbers(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}
@@ -4555,15 +4534,15 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var abi ABI
+	var abi tolkParser.ABI
 	err = json.Unmarshal(data, &abi)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	ty := Ty{
+	ty := tolkParser.Ty{
 		SumType: "StructRef",
-		StructRef: &StructRef{
+		StructRef: &tolkParser.StructRef{
 			StructName: "RandomFields",
 		},
 	}
@@ -4574,13 +4553,14 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 	}
 	decoder := NewDecoder()
 	decoder.WithABI(abi)
-	v, err := decoder.UnmarshalTolk(currCell[0], ty)
+	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	newCell := boc.NewCell()
-	err = MarshalTolk(newCell, v)
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
 	}

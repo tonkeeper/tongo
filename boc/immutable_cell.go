@@ -137,11 +137,11 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 func (ic *immutableCell) Hash(level int) []byte {
 	index := ic.mask.Apply(level).HashIndex()
 	if ic.cellType == PrunedBranchCell {
-		offset := ic.mask.HashIndex()
-		if index != offset {
-			return ic.bitsBuf[2+(index)*32 : 2+(index+1)*32]
-		}
-		index = 0
+		//offset := ic.mask.HashIndex()
+		//if index != offset {
+		return ic.bitsBuf[2+(index)*32 : 2+(index+1)*32]
+		//}
+		//index = 0
 	}
 	return ic.hashes[index]
 }

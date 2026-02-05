@@ -1,47 +1,19 @@
 package tolk
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tolk/parser"
 )
 
-type Address struct{}
-
-func (Address) SetValue(v *Value, val any) error {
-	a, ok := val.(InternalAddress)
-	if !ok {
-		return fmt.Errorf("value is not an internal address")
-	}
-	v.sumType = "internalAddress"
-	v.internalAddress = &a
-	return nil
+type InternalAddress struct {
+	Workchain int8
+	Address   [32]byte
 }
 
-func (a Address) UnmarshalTolk(cell *boc.Cell, v *Value, abiCtx *Decoder) error {
-	err := cell.Skip(3) // skip addr type ($10) and anycast (0)
-	if err != nil {
-		return err
-	}
-	workchain, err := cell.ReadInt(8)
-	if err != nil {
-		return err
-	}
-	address, err := cell.ReadBytes(32)
-	if err != nil {
-		return err
-	}
-	err = a.SetValue(v, InternalAddress{
-		Workchain: int8(workchain),
-		Address:   [32]byte(address),
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (i *InternalAddress) UnmarshalTolk(cell *boc.Cell, ty Address, abiCtx *Decoder) error {
+func (i *InternalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.Address, decoder *Decoder) error {
 	err := cell.Skip(3) // skip addr type ($10) and anycast (0)
 	if err != nil {
 		return err
@@ -61,192 +33,105 @@ func (i *InternalAddress) UnmarshalTolk(cell *boc.Cell, ty Address, abiCtx *Deco
 	return nil
 }
 
-func (Address) MarshalTolk(cell *boc.Cell, v *Value) error {
-	if v.internalAddress == nil {
-		return fmt.Errorf("address not found")
-	}
-
+func (i *InternalAddress) Marshal(cell *boc.Cell, ty tolkParser.Address, encoder *Encoder) error {
 	err := cell.WriteUint(0b100, 3) // internal addr type ($10) and anycast (0)
 	if err != nil {
 		return err
 	}
-	err = cell.WriteInt(int64(v.internalAddress.Workchain), 8)
+	err = cell.WriteInt(int64(i.Workchain), 8)
 	if err != nil {
 		return err
 	}
-	err = cell.WriteBytes(v.internalAddress.Address[:])
+	err = cell.WriteBytes(i.Address[:])
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (Address) Equal(v Value, o Value) bool {
-	if v.internalAddress == nil || o.internalAddress == nil {
+func (i *InternalAddress) Equal(other any) bool {
+	otherInternalAddress, ok := other.(InternalAddress)
+	if !ok {
 		return false
 	}
-	vi := *v.internalAddress
-	oi := *o.internalAddress
-	return vi.Workchain == oi.Workchain && vi.Address == oi.Address
+	return *i == otherInternalAddress
 }
 
-func (Address) GetFixedSize() int {
-	return 267
+func (i *InternalAddress) ToRaw() string {
+	return fmt.Sprintf("%v:%x", i.Workchain, i.Address)
 }
 
-type AddressOpt struct {
+type NoneAddress struct {
 }
 
-func (AddressOpt) SetValue(v *Value, val any) error {
-	a, ok := val.(OptionalAddress)
+func (n *NoneAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, decoder *Decoder) error {
+	_, err := cell.ReadUint(2)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (n *NoneAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder *Encoder) error {
+	err := cell.WriteUint(0, 2) // none addr type ($00)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type OptionalAddress struct {
+	SumType
+	NoneAddress     *NoneAddress
+	InternalAddress *InternalAddress
+}
+
+func (o *OptionalAddress) Equal(other any) bool {
+	otherOptionalAddress, ok := other.(OptionalAddress)
 	if !ok {
-		return fmt.Errorf("value is not an optional address")
+		return false
 	}
-	v.sumType = "optionalAddress"
-	v.optionalAddress = &a
-	return nil
+	if o.SumType != otherOptionalAddress.SumType {
+		return false
+	}
+	if o.SumType == "InternalAddress" {
+		return o.InternalAddress.Equal(otherOptionalAddress.InternalAddress)
+	}
+	return true
 }
 
-func (a AddressOpt) UnmarshalTolk(cell *boc.Cell, v *Value, abiCtx *Decoder) error {
-	tag, err := cell.ReadUint(2)
-	if err != nil {
-		return err
-	}
-	if tag == 0 {
-		err = a.SetValue(v, OptionalAddress{
-			SumType: "NoneAddress",
-		})
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	err = cell.Skip(1) // skip anycast (0)
-	if err != nil {
-		return err
-	}
-	workchain, err := cell.ReadInt(8)
-	if err != nil {
-		return err
-	}
-	address, err := cell.ReadBytes(32)
-	if err != nil {
-		return err
-	}
-	err = a.SetValue(v, OptionalAddress{
-		SumType: "InternalAddress",
-		InternalAddress: InternalAddress{
-			Workchain: int8(workchain),
-			Address:   [32]byte(address),
-		},
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (o *OptionalAddress) UnmarshalTolk(cell *boc.Cell, ty AddressOpt, abiCtx *Decoder) error {
-	tag, err := cell.ReadUint(2)
+func (o *OptionalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, decoder *Decoder) error {
+	copyCell := cell.CopyRemaining()
+	tag, err := copyCell.ReadUint(2)
 	if err != nil {
 		return err
 	}
 	if tag == 0 {
 		o.SumType = "NoneAddress"
-		return nil
+		o.NoneAddress = &NoneAddress{}
+		return o.NoneAddress.Unmarshal(cell, ty, decoder)
 	}
-	err = cell.Skip(1) // skip anycast (0)
-	if err != nil {
-		return err
-	}
-	workchain, err := cell.ReadInt(8)
-	if err != nil {
-		return err
-	}
-	address, err := cell.ReadBytes(32)
-	if err != nil {
-		return err
-	}
+
 	o.SumType = "InternalAddress"
-	o.InternalAddress = InternalAddress{
-		Workchain: int8(workchain),
-		Address:   [32]byte(address),
-	}
-
-	return nil
+	o.InternalAddress = &InternalAddress{}
+	return o.InternalAddress.Unmarshal(cell, tolkParser.Address{}, decoder)
 }
 
-func (AddressOpt) MarshalTolk(cell *boc.Cell, v *Value) error {
-	if v.optionalAddress == nil {
-		return fmt.Errorf("optional address not found")
+func (o *OptionalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder *Encoder) error {
+	if o.SumType == "NoneAddress" {
+		return o.NoneAddress.Marshal(cell, ty, encoder)
 	}
 
-	if v.optionalAddress.SumType == "NoneAddress" {
-		err := cell.WriteUint(0, 2)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}
-
-	err := cell.WriteUint(0b100, 3) // internal addr type ($10) and anycast (0)
-	if err != nil {
-		return err
-	}
-	err = cell.WriteInt(int64(v.optionalAddress.InternalAddress.Workchain), 8)
-	if err != nil {
-		return err
-	}
-	err = cell.WriteBytes(v.optionalAddress.InternalAddress.Address[:])
-	if err != nil {
-		return err
-	}
-	return nil
+	return o.InternalAddress.Marshal(cell, tolkParser.Address{}, encoder)
 }
 
-func (AddressOpt) Equal(v Value, o Value) bool {
-	return false
+type ExternalAddress struct {
+	Len     int16
+	Address boc.BitString
 }
 
-type AddressExt struct{}
-
-func (AddressExt) SetValue(v *Value, val any) error {
-	a, ok := val.(ExternalAddress)
-	if !ok {
-		return fmt.Errorf("value is not an external address")
-	}
-	v.externalAddress = &a
-	v.sumType = "externalAddress"
-	return nil
-}
-
-func (a AddressExt) UnmarshalTolk(cell *boc.Cell, v *Value, abiCtx *Decoder) error {
-	err := cell.Skip(2)
-	if err != nil {
-		return err
-	}
-	ln, err := cell.ReadUint(9)
-	if err != nil {
-		return err
-	}
-	bs, err := cell.ReadBits(int(ln))
-	if err != nil {
-		return err
-	}
-	err = a.SetValue(v, ExternalAddress{
-		Len:     int16(ln),
-		Address: bs,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (e *ExternalAddress) UnmarshalTolk(cell *boc.Cell, ty AddressExt, abiCtx *Decoder) error {
+func (e *ExternalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressExt, decoder *Decoder) error {
 	err := cell.Skip(2)
 	if err != nil {
 		return err
@@ -267,257 +152,167 @@ func (e *ExternalAddress) UnmarshalTolk(cell *boc.Cell, ty AddressExt, abiCtx *D
 	return nil
 }
 
-func (AddressExt) MarshalTolk(cell *boc.Cell, v *Value) error {
-	if v.externalAddress == nil {
-		return fmt.Errorf("external address not found")
-	}
-
+func (e *ExternalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressExt, encoder *Encoder) error {
 	err := cell.WriteUint(1, 2) // external addr type ($01)
 	if err != nil {
 		return err
 	}
-	err = cell.WriteUint(uint64(v.externalAddress.Len), 9)
+	err = cell.WriteUint(uint64(e.Len), 9)
 	if err != nil {
 		return err
 	}
-	err = cell.WriteBitString(v.externalAddress.Address)
+	err = cell.WriteBitString(e.Address)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (AddressExt) Equal(v Value, o Value) bool {
-	return false
-}
-
-type AddressAny struct{}
-
-func (AddressAny) SetValue(v *Value, val any) error {
-	a, ok := val.(AnyAddress)
+func (e *ExternalAddress) Equal(other any) bool {
+	otherExternalAddress, ok := other.(ExternalAddress)
 	if !ok {
-		return fmt.Errorf("value is not an any address")
+		return false
 	}
-	v.anyAddress = &a
-	v.sumType = "anyAddress"
-	return nil
+	if e.Len != otherExternalAddress.Len {
+		return false
+	}
+	return bytes.Equal(e.Address.Buffer(), otherExternalAddress.Address.Buffer())
 }
 
-func (a AddressAny) UnmarshalTolk(cell *boc.Cell, v *Value, abiCtx *Decoder) error {
-	tag, err := cell.ReadUint(2)
-	if err != nil {
-		return err
-	}
-	switch tag {
-	case 0:
-		err = a.SetValue(v, AnyAddress{
-			SumType: "NoneAddress",
-		})
-		if err != nil {
-			return err
-		}
-	case 1:
-		ln, err := cell.ReadUint(9)
-		if err != nil {
-			return err
-		}
-		bs, err := cell.ReadBits(int(ln))
-		if err != nil {
-			return err
-		}
-		err = a.SetValue(v, AnyAddress{
-			SumType: "ExternalAddress",
-			ExternalAddress: &ExternalAddress{
-				Len:     int16(ln),
-				Address: bs,
-			},
-		})
-		if err != nil {
-			return err
-		}
-	case 2:
-		err = cell.Skip(1) // skip anycast (0)
-		if err != nil {
-			return err
-		}
-		workchain, err := cell.ReadInt(8)
-		if err != nil {
-			return err
-		}
-		address, err := cell.ReadBytes(32)
-		if err != nil {
-			return err
-		}
-		err = a.SetValue(v, AnyAddress{
-			SumType: "InternalAddress",
-			InternalAddress: &InternalAddress{
-				Workchain: int8(workchain),
-				Address:   [32]byte(address),
-			},
-		})
-		if err != nil {
-			return err
-		}
-	case 3:
-		err = cell.Skip(1) // skip anycast (0)
-		if err != nil {
-			return err
-		}
-		ln, err := cell.ReadUint(9)
-		if err != nil {
-			return err
-		}
-		workchain, err := cell.ReadInt(32)
-		if err != nil {
-			return err
-		}
-		bs, err := cell.ReadBits(int(ln))
-		if err != nil {
-			return err
-		}
-		err = a.SetValue(v, AnyAddress{
-			SumType: "VarAddress",
-			VarAddress: &VarAddress{
-				Len:       int16(ln),
-				Workchain: int32(workchain),
-				Address:   bs,
-			},
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+type AnyAddress struct {
+	SumType
+	InternalAddress *InternalAddress
+	NoneAddress     *NoneAddress
+	ExternalAddress *ExternalAddress
+	VarAddress      *VarAddress
 }
 
-func (a *AnyAddress) UnmarshalTolk(cell *boc.Cell, ty AddressAny, abiCtx *Decoder) error {
-	tag, err := cell.ReadUint(2)
+func (a *AnyAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressAny, decoder *Decoder) error {
+	copyCell := cell.CopyRemaining()
+	tag, err := copyCell.ReadUint(2)
 	if err != nil {
 		return err
 	}
 	switch tag {
 	case 0:
 		a.SumType = "NoneAddress"
+		a.NoneAddress = &NoneAddress{}
+		return a.NoneAddress.Unmarshal(cell, tolkParser.AddressOpt{}, decoder)
 	case 1:
-		ln, err := cell.ReadUint(9)
-		if err != nil {
-			return err
-		}
-		bs, err := cell.ReadBits(int(ln))
-		if err != nil {
-			return err
-		}
 		a.SumType = "ExternalAddress"
-		a.ExternalAddress = &ExternalAddress{
-			Len:     int16(ln),
-			Address: bs,
-		}
+		a.ExternalAddress = &ExternalAddress{}
+		return a.ExternalAddress.Unmarshal(cell, tolkParser.AddressExt{}, decoder)
 	case 2:
-		err = cell.Skip(1) // skip anycast (0)
-		if err != nil {
-			return err
-		}
-		workchain, err := cell.ReadInt(8)
-		if err != nil {
-			return err
-		}
-		address, err := cell.ReadBytes(32)
-		if err != nil {
-			return err
-		}
 		a.SumType = "InternalAddress"
-		a.InternalAddress = &InternalAddress{
-			Workchain: int8(workchain),
-			Address:   [32]byte(address),
-		}
+		a.InternalAddress = &InternalAddress{}
+		return a.InternalAddress.Unmarshal(cell, tolkParser.Address{}, decoder)
 	case 3:
-		err = cell.Skip(1) // skip anycast (0)
-		if err != nil {
-			return err
-		}
-		ln, err := cell.ReadUint(9)
-		if err != nil {
-			return err
-		}
-		workchain, err := cell.ReadInt(32)
-		if err != nil {
-			return err
-		}
-		bs, err := cell.ReadBits(int(ln))
-		if err != nil {
-			return err
-		}
 		a.SumType = "VarAddress"
-		a.VarAddress = &VarAddress{
-			Len:       int16(ln),
-			Workchain: int32(workchain),
-			Address:   bs,
-		}
+		a.VarAddress = &VarAddress{}
+		return a.VarAddress.Unmarshal(cell, tolkParser.AddressExt{}, decoder)
 	}
 
 	return nil
 }
 
-func (AddressAny) MarshalTolk(cell *boc.Cell, v *Value) error {
-	if v.anyAddress == nil {
-		return fmt.Errorf("any address not found")
-	}
-
-	switch v.anyAddress.SumType {
+func (a *AnyAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressAny, encoder *Encoder) error {
+	switch a.SumType {
 	case "NoneAddress":
-		err := cell.WriteUint(0, 2)
-		if err != nil {
-			return err
-		}
+		return a.NoneAddress.Marshal(cell, tolkParser.AddressOpt{}, encoder)
 	case "InternalAddress":
-		err := cell.WriteUint(0b100, 3) // internal addr type ($10) and anycast (0)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteInt(int64(v.anyAddress.InternalAddress.Workchain), 8)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteBytes(v.anyAddress.InternalAddress.Address[:])
-		if err != nil {
-			return err
-		}
+		return a.InternalAddress.Marshal(cell, tolkParser.Address{}, encoder)
 	case "ExternalAddress":
-		err := cell.WriteUint(1, 2) // external addr type ($01)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteUint(uint64(v.anyAddress.ExternalAddress.Len), 9)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteBitString(v.anyAddress.ExternalAddress.Address)
-		if err != nil {
-			return err
-		}
+		return a.ExternalAddress.Marshal(cell, tolkParser.AddressExt{}, encoder)
 	case "VarAddress":
-		err := cell.WriteUint(0b110, 3) // var addr type ($11) and anycast (0)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteUint(uint64(v.anyAddress.VarAddress.Len), 9)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteInt(int64(v.anyAddress.VarAddress.Workchain), 32)
-		if err != nil {
-			return err
-		}
-		err = cell.WriteBitString(v.anyAddress.VarAddress.Address)
-		if err != nil {
-			return err
-		}
+		return a.VarAddress.Marshal(cell, tolkParser.AddressAny{}, encoder)
 	}
 
 	return nil
 }
 
-func (AddressAny) Equal(v Value, o Value) bool {
+func (a *AnyAddress) Equal(other any) bool {
+	otherAnyAddress, ok := other.(AnyAddress)
+	if !ok {
+		return false
+	}
+	if otherAnyAddress.SumType != a.SumType {
+		return false
+	}
+	switch a.SumType {
+	case "NoneAddress":
+		return true
+	case "InternalAddress":
+		return a.InternalAddress.Equal(otherAnyAddress.InternalAddress)
+	case "ExternalAddress":
+		return a.ExternalAddress.Equal(otherAnyAddress.ExternalAddress)
+	case "VarAddress":
+		return a.VarAddress.Equal(otherAnyAddress.VarAddress)
+	}
 	return false
+}
+
+type VarAddress struct {
+	Len       int16
+	Workchain int32
+	Address   boc.BitString
+}
+
+func (va *VarAddress) Equal(other any) bool {
+	otherVarAddress, ok := other.(VarAddress)
+	if !ok {
+		return false
+	}
+	if va.Len != otherVarAddress.Len {
+		return false
+	}
+	if va.Workchain != otherVarAddress.Workchain {
+		return false
+	}
+	return bytes.Equal(va.Address.Buffer(), otherVarAddress.Address.Buffer())
+}
+
+func (va *VarAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressExt, decoder *Decoder) error {
+	err := cell.Skip(3) // skip var type ($11) and anycast (0)
+	if err != nil {
+		return err
+	}
+	ln, err := cell.ReadUint(9)
+	if err != nil {
+		return err
+	}
+	workchain, err := cell.ReadInt(32)
+	if err != nil {
+		return err
+	}
+	bs, err := cell.ReadBits(int(ln))
+	if err != nil {
+		return err
+	}
+	*va = VarAddress{
+		Len:       int16(ln),
+		Workchain: int32(workchain),
+		Address:   bs,
+	}
+
+	return nil
+}
+
+func (va *VarAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressAny, encoder *Encoder) error {
+	err := cell.WriteUint(0b110, 3) // var addr type ($11) and anycast (0)
+	if err != nil {
+		return err
+	}
+	err = cell.WriteUint(uint64(va.Len), 9)
+	if err != nil {
+		return err
+	}
+	err = cell.WriteInt(int64(va.Workchain), 32)
+	if err != nil {
+		return err
+	}
+	err = cell.WriteBitString(va.Address)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -43,8 +43,35 @@ func decodeRecursiveBinTree(c *boc.Cell) ([]*boc.Cell, error) {
 }
 
 func (b BinTree[T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	// TODO: implement
-	return fmt.Errorf("BinTree marshaling not implemented")
+	if len(b.Values) == 0 {
+		return fmt.Errorf("BinTree must have at least one value")
+	}
+	return b.marshalRecursive(c, b.Values, encoder)
+}
+
+func (b BinTree[T]) marshalRecursive(c *boc.Cell, values []T, encoder *Encoder) error {
+	if len(values) == 1 {
+		if err := c.WriteBit(false); err != nil {
+			return err
+		}
+		return encoder.Marshal(c, values[0])
+	}
+	if err := c.WriteBit(true); err != nil {
+		return err
+	}
+	mid := len(values) / 2
+	l, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	if err := b.marshalRecursive(l, values[:mid], encoder); err != nil {
+		return err
+	}
+	r, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	return b.marshalRecursive(r, values[mid:], encoder)
 }
 
 func (b *BinTree[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {

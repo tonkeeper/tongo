@@ -73,6 +73,9 @@ type ShardState struct { // only manual decoding
 		Left  ShardStateUnsplit `tlb:"^"` // ^ but decodes manually
 		Right ShardStateUnsplit `tlb:"^"` // ^ but decodes manually
 	} `tlbSumType:"split_state#5f327da5"`
+
+	leftCell  *boc.Cell
+	rightCell *boc.Cell
 }
 
 func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -91,8 +94,10 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			if err != nil {
 				return err
 			}
+			s.leftCell = nil
 		} else {
 			s.SplitState.Left = ShardStateUnsplit{}
+			s.leftCell = c1
 		}
 		c1, err = c.NextRef()
 		if err != nil {
@@ -102,8 +107,10 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 			if err := decoder.Unmarshal(c1, &s.SplitState.Right); err != nil {
 				return err
 			}
+			s.rightCell = nil
 		} else {
 			s.SplitState.Right = ShardStateUnsplit{}
+			s.rightCell = c1
 		}
 		s.SumType = "SplitState"
 		break
@@ -120,6 +127,42 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return fmt.Errorf("invalid tag")
 	}
 	return nil
+}
+
+func (m ShardState) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	switch m.SumType {
+	case "SplitState":
+		if err := c.WriteUint(0x5f327da5, 32); err != nil {
+			return err
+		}
+		c1, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if m.leftCell != nil && m.SplitState.Left.Magic == 0 {
+			*c1 = *cloneCell(m.leftCell)
+		} else {
+			if err := encoder.Marshal(c1, m.SplitState.Left); err != nil {
+				return err
+			}
+		}
+		c2, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if m.rightCell != nil && m.SplitState.Right.Magic == 0 {
+			*c2 = *cloneCell(m.rightCell)
+		} else {
+			if err := encoder.Marshal(c2, m.SplitState.Right); err != nil {
+				return err
+			}
+		}
+		return nil
+	case "UnsplitState":
+		return encoder.Marshal(c, m.UnsplitState.Value)
+	default:
+		return fmt.Errorf("invalid tag")
+	}
 }
 
 func (s *ShardState) AccountBalances() map[Bits256]CurrencyCollection {
@@ -333,6 +376,35 @@ type McStateExtra struct {
 type ConfigParams struct {
 	ConfigAddr Bits256
 	Config     Hashmap[Uint32, Ref[boc.Cell]] `tlb:"^"`
+
+	configCell *boc.Cell
+}
+
+func (p *ConfigParams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	if err := decoder.Unmarshal(c, &p.ConfigAddr); err != nil {
+		return err
+	}
+	ref, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	p.configCell = cloneCell(ref)
+	return decoder.Unmarshal(ref, &p.Config)
+}
+
+func (p ConfigParams) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	if err := encoder.Marshal(c, p.ConfigAddr); err != nil {
+		return err
+	}
+	ref, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	if p.configCell != nil {
+		*ref = *cloneCell(p.configCell)
+		return nil
+	}
+	return encoder.Marshal(ref, p.Config)
 }
 
 // CloneKeepingSubsetOfKeys returns a new ConfigParams with only the keys specified in the keys parameter.

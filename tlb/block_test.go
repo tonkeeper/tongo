@@ -64,18 +64,9 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 
 			inputFilename := path.Join(tc.folder, "block.bin")
-			data, err := os.ReadFile(inputFilename)
+			block, err := readBlock(inputFilename)
 			if err != nil {
-				t.Fatalf("ReadFile() failed: %v", err)
-			}
-			cell, err := boc.DeserializeBoc(data)
-			if err != nil {
-				t.Fatalf("boc.DeserializeBoc() failed: %v", err)
-			}
-			var block Block
-			err = Unmarshal(cell[0], &block)
-			if err != nil {
-				t.Fatalf("Unmarshal() failed: %v", err)
+				t.Fatalf("readBlock() failed: %v", err)
 			}
 			accounts := map[string]*AccountBlock{}
 			var txHashes []string
@@ -139,6 +130,49 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_tlb_MarshallingRoundtrip(t *testing.T) {
+	testCases := []struct {
+		folder string
+	}{
+		{folder: "testdata/block-1"},
+		{folder: "testdata/block-2"},
+		{folder: "testdata/block-3"},
+		{folder: "testdata/block-4"},
+		{folder: "testdata/block-5"},
+		{folder: "testdata/block-6"},
+		{folder: "testdata/block-7"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.folder, func(t *testing.T) {
+			inputFilename := path.Join(tc.folder, "block.bin")
+			block, err := readBlock(inputFilename)
+			if err != nil {
+				t.Fatalf("readBlock() failed: %v", err)
+			}
+
+			cell := boc.NewCell()
+			err = Marshal(cell, block)
+			if err != nil {
+				t.Fatalf("Marshal() failed: %v", err)
+			}
+		})
+	}
+}
+
+func readBlock(filename string) (*Block, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("ReadFile() failed: %v", err)
+	}
+	cell, err := boc.DeserializeBoc(data)
+	if err != nil {
+		return nil, fmt.Errorf("boc.DeserializeBoc() failed: %v", err)
+	}
+	var block Block
+	return &block, Unmarshal(cell[0], &block)
 }
 
 func libraries(s *ShardState) map[string]map[string]struct{} {
@@ -279,18 +313,9 @@ func Test_GetInMsgsMetadata(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			inputFilename := path.Join(tc.folder, "block.bin")
-			data, err := os.ReadFile(inputFilename)
+			block, err := readBlock(inputFilename)
 			if err != nil {
-				t.Fatalf("ReadFile() failed: %v", err)
-			}
-			cell, err := boc.DeserializeBoc(data)
-			if err != nil {
-				t.Fatalf("boc.DeserializeBoc() failed: %v", err)
-			}
-			var block Block
-			err = Unmarshal(cell[0], &block)
-			if err != nil {
-				t.Fatalf("Unmarshal() failed: %v", err)
+				t.Fatalf("readBlock() failed: %v", err)
 			}
 			inMsgsMetadata, err := block.GetInMsgsMetadata()
 			if err != nil {

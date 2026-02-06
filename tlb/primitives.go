@@ -94,6 +94,9 @@ func (m *Magic) UnmarshalJSON(b []byte) error {
 }
 
 func (m Magic) EncodeTag(c *boc.Cell, tag string) error {
+	if tag == "" {
+		return c.WriteUint(uint64(m), 32)
+	}
 	return encodeSumTag(c, tag)
 }
 

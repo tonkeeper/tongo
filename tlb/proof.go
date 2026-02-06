@@ -122,6 +122,34 @@ func (s *ShardState) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
+func (m ShardState) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	switch m.SumType {
+	case "SplitState":
+		if err := c.WriteUint(0x5f327da5, 32); err != nil {
+			return err
+		}
+		c1, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if err := encoder.Marshal(c1, m.SplitState.Left); err != nil {
+			return err
+		}
+		c2, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if err := encoder.Marshal(c2, m.SplitState.Right); err != nil {
+			return err
+		}
+		return nil
+	case "UnsplitState":
+		return encoder.Marshal(c, m.UnsplitState.Value)
+	default:
+		return fmt.Errorf("invalid tag")
+	}
+}
+
 func (s *ShardState) AccountBalances() map[Bits256]CurrencyCollection {
 	switch s.SumType {
 	case "UnsplitState":

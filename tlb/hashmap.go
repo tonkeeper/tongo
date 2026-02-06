@@ -461,7 +461,76 @@ type HashMapAugExtraList[T any] struct {
 }
 
 func (h HashmapAug[keyT, T1, T2]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	return fmt.Errorf("not implemented")
+	if len(h.values) == 0 || h.values == nil {
+		return nil
+	}
+	var s keyT
+	keys := make([]boc.BitString, 0, len(h.keys))
+	for _, k := range h.keys {
+		cell := boc.NewCell()
+		err := Marshal(cell, k)
+		if err != nil {
+			return err
+		}
+		keys = append(keys, cell.RawBitString())
+	}
+	return h.encodeMapAug(c, keys, h.values, s.FixedSize())
+}
+
+func (h HashmapAug[keyT, T1, T2]) encodeMapAug(c *boc.Cell, keys []boc.BitString, values []T1, keySize int) error {
+	if len(keys) == 0 || len(values) == 0 {
+		return fmt.Errorf("keys or values are empty")
+	}
+	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], keySize)
+	if err != nil {
+		return err
+	}
+	keySize = keySize - label.BitsAvailableForRead() - 1
+	if len(keys) > 1 {
+		var leftKeys, rightKeys []boc.BitString
+		var leftValues, rightValues []T1
+		for i := range keys {
+			_, err := keys[i].ReadBits(label.BitsAvailableForRead())
+			if err != nil {
+				return err
+			}
+			isRight, err := keys[i].ReadBit()
+			if err != nil {
+				return err
+			}
+			if isRight {
+				rightKeys = append(rightKeys, keys[i].ReadRemainingBits())
+				rightValues = append(rightValues, values[i])
+			} else {
+				leftKeys = append(leftKeys, keys[i].ReadRemainingBits())
+				leftValues = append(leftValues, values[i])
+			}
+		}
+		l, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		err = h.encodeMapAug(l, leftKeys, leftValues, keySize)
+		if err != nil {
+			return err
+		}
+		r, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		err = h.encodeMapAug(r, rightKeys, rightValues, keySize)
+		if err != nil {
+			return err
+		}
+		var extra T2
+		return Marshal(c, extra)
+	}
+	var extra T2
+	err = Marshal(c, extra)
+	if err != nil {
+		return err
+	}
+	return Marshal(c, values[0])
 }
 
 func (h *HashmapAug[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {

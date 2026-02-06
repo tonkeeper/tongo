@@ -23,6 +23,10 @@ func (n *NullValue) Marshal(cell *boc.Cell, ty tolkParser.NullLiteral, encoder *
 	return nil
 }
 
+func (n *NullValue) MarshalJSON() ([]byte, error) {
+	return []byte("null"), nil
+}
+
 type VoidValue struct{}
 
 func (v *VoidValue) Equal(other any) bool {
@@ -39,4 +43,8 @@ func (v *VoidValue) Unmarshal(cell *boc.Cell, ty tolkParser.Void, decoder *Decod
 
 func (v *VoidValue) Marshal(cell *boc.Cell, ty tolkParser.Void, encoder *Encoder) error {
 	return nil
+}
+
+func (v *VoidValue) MarshalJSON() ([]byte, error) {
+	return []byte("null"), nil
 }

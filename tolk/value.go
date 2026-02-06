@@ -4,12 +4,14 @@ package tolk
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math/big"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
 	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type SumType string
@@ -1090,4 +1092,334 @@ func (v *Value) Equal(o any) bool {
 	default:
 		return false
 	}
+}
+
+type JSONSumType struct {
+	SumType string `json:"sumType"`
+}
+
+//func (v *Value) UnmarshalJSON(b []byte) error {
+//	otherValue, ok := o.(Value)
+//	if !ok {
+//		return false
+//	}
+//
+//	switch v.sumType {
+//	case "bool":
+//		if otherValue.bool == nil {
+//			return false
+//		}
+//		return v.bool.Equal(*otherValue.bool)
+//	case "smallInt":
+//		if otherValue.smallInt == nil {
+//			return false
+//		}
+//		return v.smallInt.Equal(*otherValue.smallInt)
+//	case "smallUint":
+//		if otherValue.smallUint == nil {
+//			return false
+//		}
+//		return v.smallUint.Equal(*otherValue.smallUint)
+//	case "bigInt":
+//		if otherValue.bigInt == nil {
+//			return false
+//		}
+//		return v.bigInt.Equal(*otherValue.bigInt)
+//	case "bigUint":
+//		if otherValue.bigUint == nil {
+//			return false
+//		}
+//		return v.bigUint.Equal(*otherValue.bigUint)
+//	case "varInt":
+//		if otherValue.varInt == nil {
+//			return false
+//		}
+//		return v.varInt.Equal(*otherValue.varInt)
+//	case "varUint":
+//		if otherValue.varUint == nil {
+//			return false
+//		}
+//		return v.varUint.Equal(*otherValue.varUint)
+//	case "coins":
+//		if otherValue.coins == nil {
+//			return false
+//		}
+//		return v.coins.Equal(*otherValue.coins)
+//	case "bits":
+//		if otherValue.bits == nil {
+//			return false
+//		}
+//		return v.bits.Equal(*otherValue.bits)
+//	case "cell":
+//		if otherValue.cell == nil {
+//			return false
+//		}
+//		return v.cell.Equal(*otherValue.cell)
+//	case "remaining":
+//		if otherValue.remaining == nil {
+//			return false
+//		}
+//		return v.remaining.Equal(*otherValue.remaining)
+//	case "internalAddress":
+//		if otherValue.internalAddress == nil {
+//			return false
+//		}
+//		return v.internalAddress.Equal(*otherValue.internalAddress)
+//	case "optionalAddress":
+//		if otherValue.optionalAddress == nil {
+//			return false
+//		}
+//		return v.optionalAddress.Equal(*otherValue.optionalAddress)
+//	case "externalAddress":
+//		if otherValue.externalAddress == nil {
+//			return false
+//		}
+//		return v.externalAddress.Equal(*otherValue.externalAddress)
+//	case "anyAddress":
+//		if otherValue.anyAddress == nil {
+//			return false
+//		}
+//		return v.anyAddress.Equal(*otherValue.anyAddress)
+//	case "optionalValue":
+//		if otherValue.optionalValue == nil {
+//			return false
+//		}
+//		return v.optionalValue.Equal(*otherValue.optionalValue)
+//	case "refValue":
+//		if otherValue.refValue == nil {
+//			return false
+//		}
+//		return v.refValue.Equal(*otherValue.refValue)
+//	case "tupleWith":
+//		if otherValue.tupleWith == nil {
+//			return false
+//		}
+//		return v.tupleWith.Equal(*otherValue.tupleWith)
+//	case "tensor":
+//		if otherValue.tensor == nil {
+//			return false
+//		}
+//		return v.tensor.Equal(*otherValue.tensor)
+//	case "mp":
+//		if otherValue.mp == nil {
+//			return false
+//		}
+//		return v.mp.Equal(*otherValue.mp)
+//	case "structValue":
+//		if otherValue.structValue == nil {
+//			return false
+//		}
+//		return v.structValue.Equal(*otherValue.structValue)
+//	case "alias":
+//		if otherValue.alias == nil {
+//			return false
+//		}
+//		return v.alias.Equal(*otherValue.alias)
+//	case "enum":
+//		if otherValue.enum == nil {
+//			return false
+//		}
+//		return v.enum.Equal(*otherValue.enum)
+//	case "generic":
+//		if otherValue.generic == nil {
+//			return false
+//		}
+//		return v.generic.Equal(*otherValue.generic)
+//	case "union":
+//		if otherValue.union == nil {
+//			return false
+//		}
+//		return v.union.Equal(*otherValue.union)
+//	case "null":
+//		if otherValue.null == nil {
+//			return false
+//		}
+//		return v.null.Equal(*otherValue.null)
+//	case "void":
+//		if otherValue.void == nil {
+//			return false
+//		}
+//		return v.void.Equal(*otherValue.void)
+//	default:
+//		return false
+//	}
+//}
+
+func (v *Value) MarshalJSON() ([]byte, error) {
+	st := JSONSumType{}
+	var payload []byte
+	var err error
+
+	switch v.sumType {
+	case "bool":
+		st.SumType = "bool"
+		if v.bool == nil {
+			return nil, fmt.Errorf("bool value not found")
+		}
+		payload, err = json.Marshal(v.bool)
+	case "smallInt":
+		st.SumType = "smallInt"
+		if v.smallInt == nil {
+			return nil, fmt.Errorf("smallInt value not found")
+		}
+		payload, err = json.Marshal(v.smallInt)
+	case "smallUint":
+		st.SumType = "smallUint"
+		if v.smallUint == nil {
+			return nil, fmt.Errorf("smallUint value not found")
+		}
+		payload, err = json.Marshal(v.smallUint)
+	case "bigInt":
+		st.SumType = "bigInt"
+		if v.bigInt == nil {
+			return nil, fmt.Errorf("bigInt value not found")
+		}
+		payload, err = json.Marshal(v.bigInt)
+	case "bigUint":
+		st.SumType = "bigUint"
+		if v.bigUint == nil {
+			return nil, fmt.Errorf("bigUint value not found")
+		}
+		payload, err = json.Marshal(v.bigUint)
+	case "varInt":
+		st.SumType = "varInt"
+		if v.varInt == nil {
+			return nil, fmt.Errorf("varInt value not found")
+		}
+		payload, err = json.Marshal(v.varInt)
+	case "varUint":
+		st.SumType = "varUint"
+		if v.varUint == nil {
+			return nil, fmt.Errorf("varUint value not found")
+		}
+		payload, err = json.Marshal(v.varUint)
+	case "coins":
+		st.SumType = "coins"
+		if v.coins == nil {
+			return nil, fmt.Errorf("coins value not found")
+		}
+		payload, err = json.Marshal(v.coins)
+	case "bits":
+		st.SumType = "bits"
+		if v.bits == nil {
+			return nil, fmt.Errorf("bits value not found")
+		}
+		payload, err = json.Marshal(v.bits)
+	case "cell":
+		st.SumType = "cell"
+		if v.cell == nil {
+			return nil, fmt.Errorf("cell value not found")
+		}
+		payload, err = json.Marshal(v.cell)
+	case "remaining":
+		st.SumType = "remaining"
+		if v.remaining == nil {
+			return nil, fmt.Errorf("remaining value not found")
+		}
+		payload, err = json.Marshal(v.remaining)
+	case "internalAddress":
+		st.SumType = "internalAddress"
+		if v.internalAddress == nil {
+			return nil, fmt.Errorf("internalAddress value not found")
+		}
+		payload, err = json.Marshal(v.internalAddress)
+	case "optionalAddress":
+		st.SumType = "optionalAddress"
+		if v.optionalAddress == nil {
+			return nil, fmt.Errorf("optionalAddress value not found")
+		}
+		payload, err = json.Marshal(v.optionalAddress)
+	case "externalAddress":
+		st.SumType = "externalAddress"
+		if v.externalAddress == nil {
+			return nil, fmt.Errorf("externalAddress value not found")
+		}
+		payload, err = json.Marshal(v.externalAddress)
+	case "anyAddress":
+		st.SumType = "anyAddress"
+		if v.anyAddress == nil {
+			return nil, fmt.Errorf("anyAddress value not found")
+		}
+		payload, err = json.Marshal(v.anyAddress)
+	case "optionalValue":
+		st.SumType = "optionalValue"
+		if v.optionalValue == nil {
+			return nil, fmt.Errorf("optionalValue value not found")
+		}
+		payload, err = json.Marshal(v.optionalValue)
+	case "refValue":
+		st.SumType = "refValue"
+		if v.refValue == nil {
+			return nil, fmt.Errorf("refValue value not found")
+		}
+		payload, err = json.Marshal(v.refValue)
+	case "tupleWith":
+		st.SumType = "tuple"
+		if v.tupleWith == nil {
+			return nil, fmt.Errorf("tupleWith value not found")
+		}
+		payload, err = json.Marshal(v.tupleWith)
+	case "tensor":
+		st.SumType = "bool"
+		if v.tensor == nil {
+			return nil, fmt.Errorf("tensor value not found")
+		}
+		payload, err = json.Marshal(v.tensor)
+	case "mp":
+		st.SumType = "map"
+		if v.mp == nil {
+			return nil, fmt.Errorf("mp value not found")
+		}
+		payload, err = json.Marshal(v.mp)
+	case "structValue":
+		st.SumType = "struct"
+		if v.structValue == nil {
+			return nil, fmt.Errorf("structValue value not found")
+		}
+		payload, err = json.Marshal(v.structValue)
+	case "alias":
+		st.SumType = "alias"
+		if v.alias == nil {
+			return nil, fmt.Errorf("alias value not found")
+		}
+		payload, err = json.Marshal(v.alias)
+	case "enum":
+		st.SumType = "enum"
+		if v.enum == nil {
+			return nil, fmt.Errorf("enum value not found")
+		}
+		payload, err = json.Marshal(v.enum)
+	case "generic":
+		st.SumType = "generic"
+		if v.generic == nil {
+			return nil, fmt.Errorf("generic value not found")
+		}
+		payload, err = json.Marshal(v.generic)
+	case "union":
+		st.SumType = "union"
+		if v.union == nil {
+			return nil, fmt.Errorf("union value not found")
+		}
+		payload, err = json.Marshal(v.union)
+	case "null":
+		st.SumType = "null"
+		if v.null == nil {
+			return nil, fmt.Errorf("null value not found")
+		}
+		payload, err = json.Marshal(v.null)
+	case "void":
+		st.SumType = "void"
+		if v.void == nil {
+			return nil, fmt.Errorf("void value not found")
+		}
+		payload, err = json.Marshal(v.void)
+	default:
+		return nil, fmt.Errorf("unknown value type: %s", v.sumType)
+	}
+
+	prefix, err := json.Marshal(st)
+	if err != nil {
+		return nil, err
+	}
+	return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
 }

@@ -40,7 +40,7 @@ func (u *UnionValue) Unmarshal(cell *boc.Cell, ty tolkParser.Union, decoder *Dec
 	}
 
 	for _, variant := range ty.Variants {
-		variantPrefix, err := tolkParser.PrefixToUint(variant.PrefixStr)
+		variantPrefix, err := PrefixToUint(variant.PrefixStr)
 		if err != nil {
 			return err
 		}
@@ -81,7 +81,7 @@ func (u *UnionValue) Marshal(cell *boc.Cell, ty tolkParser.Union, encoder *Encod
 	}
 
 	for _, variant := range ty.Variants {
-		variantPrefix, err := tolkParser.PrefixToUint(variant.PrefixStr)
+		variantPrefix, err := PrefixToUint(variant.PrefixStr)
 		if err != nil {
 			return err
 		}

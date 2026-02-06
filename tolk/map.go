@@ -1,8 +1,10 @@
 package tolk
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -613,4 +615,20 @@ func (m *MapValue) DeleteByInternalAddress(k InternalAddress) {
 
 func (m *MapValue) Len() int {
 	return m.len
+}
+
+func (m *MapValue) MarshalJSON() ([]byte, error) {
+	s := strings.Builder{}
+	s.WriteString("{\n")
+	for i, k := range m.keys {
+		s.WriteString(fmt.Sprintf("\"%v\":", k))
+		val, err := json.Marshal(m.values[i])
+		if err != nil {
+			return nil, err
+		}
+		s.WriteString(string(val))
+	}
+	s.WriteString("}")
+
+	return []byte(s.String()), nil
 }

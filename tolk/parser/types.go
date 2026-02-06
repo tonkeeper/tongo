@@ -95,19 +95,19 @@ func (d Declaration) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		return concatPrefixAndPayload(prefix, payload), nil
+		return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
 	case "Alias":
 		payload, err = json.Marshal(d.AliasDeclaration)
 		if err != nil {
 			return nil, err
 		}
-		return concatPrefixAndPayload(prefix, payload), nil
+		return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
 	case "Enum":
 		payload, err = json.Marshal(d.EnumDeclaration)
 		if err != nil {
 			return nil, err
 		}
-		return concatPrefixAndPayload(prefix, payload), nil
+		return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
 	default:
 		return nil, fmt.Errorf("unknown declaration type %q", d.SumType)
 	}
@@ -241,7 +241,7 @@ func (d *DefaultValue) MarshalJSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return concatPrefixAndPayload(prefix, payload), nil
+	return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
 }
 
 type AliasDeclaration struct {
@@ -660,7 +660,7 @@ func (t *Ty) MarshalJSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return concatPrefixAndPayload(prefix, payload), nil
+	return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
 }
 
 func (t *Ty) GetFixedSize() (int, bool) {
@@ -761,16 +761,4 @@ type Parameter struct {
 type ThrownError struct {
 	Name    string `json:"constName"`
 	ErrCode int    `json:"errCode"`
-}
-
-func concatPrefixAndPayload(prefix, payload []byte) []byte {
-	if len(payload) == 0 {
-		return prefix
-	}
-	prefix = prefix[:len(prefix)-1] // remove '}'
-	payload[0] = ','                // replace '{' with ','
-	result := make([]byte, 0, len(prefix)+len(payload))
-	result = append(result, prefix...)
-	result = append(result, payload...)
-	return result
 }

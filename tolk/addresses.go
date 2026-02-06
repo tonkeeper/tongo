@@ -2,6 +2,7 @@ package tolk
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -61,6 +62,10 @@ func (i *InternalAddress) ToRaw() string {
 	return fmt.Sprintf("%v:%x", i.Workchain, i.Address)
 }
 
+func (i *InternalAddress) MarshalJSON() ([]byte, error) {
+	return []byte(i.ToRaw()), nil
+}
+
 type NoneAddress struct {
 }
 
@@ -79,6 +84,10 @@ func (n *NoneAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder 
 		return err
 	}
 	return nil
+}
+
+func (n *NoneAddress) MarshalJSON() ([]byte, error) {
+	return []byte(""), nil
 }
 
 type OptionalAddress struct {
@@ -121,9 +130,19 @@ func (o *OptionalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, de
 func (o *OptionalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder *Encoder) error {
 	if o.SumType == "NoneAddress" {
 		return o.NoneAddress.Marshal(cell, ty, encoder)
+	} else if o.SumType == "InternalAddress" {
+		return o.InternalAddress.Marshal(cell, tolkParser.Address{}, encoder)
 	}
+	return fmt.Errorf("unknown any address SumType: %v", o.SumType)
+}
 
-	return o.InternalAddress.Marshal(cell, tolkParser.Address{}, encoder)
+func (o *OptionalAddress) MarshalJSON() ([]byte, error) {
+	if o.SumType == "NoneAddress" {
+		return json.Marshal(o.NoneAddress)
+	} else if o.SumType == "InternalAddress" {
+		return json.Marshal(o.InternalAddress)
+	}
+	return nil, fmt.Errorf("unknown any address SumType: %v", o.SumType)
 }
 
 type ExternalAddress struct {
@@ -177,6 +196,10 @@ func (e *ExternalAddress) Equal(other any) bool {
 		return false
 	}
 	return bytes.Equal(e.Address.Buffer(), otherExternalAddress.Address.Buffer())
+}
+
+func (e *ExternalAddress) MarshalJSON() ([]byte, error) {
+	return []byte(e.Address.ToFiftHex()), nil
 }
 
 type AnyAddress struct {
@@ -251,6 +274,20 @@ func (a *AnyAddress) Equal(other any) bool {
 	return false
 }
 
+func (a *AnyAddress) MarshalJSON() ([]byte, error) {
+	switch a.SumType {
+	case "NoneAddress":
+		return json.Marshal(a.NoneAddress)
+	case "InternalAddress":
+		return json.Marshal(a.InternalAddress)
+	case "ExternalAddress":
+		return json.Marshal(a.ExternalAddress)
+	case "VarAddress":
+		return json.Marshal(a.VarAddress)
+	}
+	return nil, fmt.Errorf("unknown any address SumType: %v", a.SumType)
+}
+
 type VarAddress struct {
 	Len       int16
 	Workchain int32
@@ -315,4 +352,8 @@ func (va *VarAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressAny, encoder 
 		return err
 	}
 	return nil
+}
+
+func (va *VarAddress) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("%d:%s", va.Workchain, va.Address.ToFiftHex())), nil
 }

@@ -1,6 +1,8 @@
 package tolk
 
 import (
+	"encoding/json"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
 )
@@ -134,6 +136,13 @@ func (o *OptValue) Equal(other any) bool {
 		return o.Val.Equal(otherOptValue.Val)
 	}
 	return true
+}
+
+func (o *OptValue) MarshalJSON() ([]byte, error) {
+	if o.IsExists {
+		return json.Marshal(o.Val)
+	}
+	return []byte("null"), nil
 }
 
 type RefValue Value

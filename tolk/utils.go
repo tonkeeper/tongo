@@ -62,3 +62,40 @@ func binDecHexToUint(num string) (*big.Int, error) {
 		return val, nil
 	}
 }
+
+func PrefixToUint(prefix string) (uint64, error) {
+	if prefix == "" {
+		return 0, errors.New("invalid prefix")
+	}
+
+	if len(prefix) == 1 {
+		intPrefix, err := strconv.ParseUint(prefix, 10, 64)
+		if err != nil {
+			return 0, err
+		}
+
+		return intPrefix, nil
+	}
+
+	if len(prefix) == 2 {
+		return 0, fmt.Errorf("prefix tag len must be either 1 or >2")
+	}
+
+	var intPrefix uint64
+	var err error
+	if prefix[1] == 'b' {
+		intPrefix, err = strconv.ParseUint(prefix[2:], 2, 64)
+		if err != nil {
+			return 0, err
+		}
+	} else if prefix[1] == 'x' {
+		intPrefix, err = strconv.ParseUint(prefix[2:], 16, 64)
+		if err != nil {
+			return 0, err
+		}
+	} else {
+		return 0, fmt.Errorf("prefix tag must be either binary or hex format")
+	}
+
+	return intPrefix, nil
+}

@@ -203,21 +203,21 @@
                 <cell name="data_aggregator_code">cell</cell>
                 <cell name="rfq_code">cell</cell>
                 <cell name="content">cell</cell>
-                <int name="unknown_1">int257</int>
-                <int name="unknown_2">int257</int>
-                <int name="unknown_3">int257</int>
-                <int name="unknown_4">int257</int>
-                <int name="unknown_5">int257</int>
-                <cell name="unknown_6" nullable="true">cell</cell>
-                <cell name="unknown_7" nullable="true">cell</cell>
-                <int name="unknown_8">int257</int>
-                <int name="unknown_9">int257</int>
-                <cell name="unknown_10">cell</cell>
-                <cell name="unknown_11" nullable="true">cell</cell>
-                <cell name="unknown_12" nullable="true">cell</cell>
-                <cell name="unknown_13">cell</cell>
-                <cell name="unknown_14" nullable="true">cell</cell>
-                <int name="unknown_15">int257</int>
+                <int name="global_deposit_value_cap">int257</int>
+                <int name="withdraw_fee_rate">int257</int>
+                <int name="queue_withdraw_fee_rate">int257</int>
+                <int name="deposit_queue_total_size">int257</int>
+                <int name="deposit_queue_counter">int257</int>
+                <cell name="deposit_queue_pending_dict" nullable="true">cell</cell>
+                <cell name="deposit_queue_processing_dict" nullable="true">cell</cell>
+                <int name="withdraw_queue_total_size">int257</int>
+                <int name="withdraw_queue_counter">int257</int>
+                <cell name="withdraw_queue_pending_dict">cell</cell>
+                <cell name="withdraw_queue_processing_dict" nullable="true">cell</cell>
+                <cell name="interactive_vaults" nullable="true">cell</cell>
+                <cell name="xchain_connector_address">cell</cell>
+                <cell name="xchain_config" nullable="true">cell</cell>
+                <int name="xchain_update_hash">int257</int>
             </tuple>
         </output>
     </get_method>

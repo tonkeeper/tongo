@@ -8484,21 +8484,21 @@ type GetVaultData_AffluentMultiplyVaultV2Result struct {
 		DataAggregatorCode            boc.Cell
 		RfqCode                       boc.Cell
 		Content                       boc.Cell
-		Unknown1                      tlb.Int257
-		Unknown2                      tlb.Int257
-		Unknown3                      tlb.Int257
-		Unknown4                      tlb.Int257
-		Unknown5                      tlb.Int257
-		Unknown6                      *boc.Cell
-		Unknown7                      *boc.Cell
-		Unknown8                      tlb.Int257
-		Unknown9                      tlb.Int257
-		Unknown10                     boc.Cell
-		Unknown11                     *boc.Cell
-		Unknown12                     *boc.Cell
-		Unknown13                     boc.Cell
-		Unknown14                     *boc.Cell
-		Unknown15                     tlb.Int257
+		GlobalDepositValueCap         tlb.Int257
+		WithdrawFeeRate               tlb.Int257
+		QueueWithdrawFeeRate          tlb.Int257
+		DepositQueueTotalSize         tlb.Int257
+		DepositQueueCounter           tlb.Int257
+		DepositQueuePendingDict       *boc.Cell
+		DepositQueueProcessingDict    *boc.Cell
+		WithdrawQueueTotalSize        tlb.Int257
+		WithdrawQueueCounter          tlb.Int257
+		WithdrawQueuePendingDict      boc.Cell
+		WithdrawQueueProcessingDict   *boc.Cell
+		InteractiveVaults             *boc.Cell
+		XchainConnectorAddress        boc.Cell
+		XchainConfig                  *boc.Cell
+		XchainUpdateHash              tlb.Int257
 	}
 }
 

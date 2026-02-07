@@ -1318,14 +1318,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: AffluentMultiplyVault,
-		Results: []string{
-			"GetJettonDataResult",
-			"GetVaultData_AffluentMultiplyVaultResult",
-			"IsStrategyVault_AffluentResult",
-		},
-	},
-	{
 		Name: AffluentLendingVault,
 		Results: []string{
 			"GetJettonDataResult",
@@ -2136,6 +2128,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetRouterState,
 		},
 	},
+	ton.MustParseHash("9f3fee6f85b5eab94b835fdb5add8278eb39d76eee25f88b909f45c912fce44d"): {
+		contractInterfaces: []ContractInterface{AffluentMultiplyVault},
+		getMethods: []InvokeFn{
+			GetJettonData,
+			GetVaultData,
+			IsStrategyVault,
+		},
+	},
 	ton.MustParseHash("a01e057fbd4288402b9898d78d67bd4e90254c93c5866879bc2d1d12865436bc"): {
 		contractInterfaces: []ContractInterface{MultisigOrderV2},
 		getMethods: []InvokeFn{
@@ -2276,6 +2276,14 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		contractInterfaces: []ContractInterface{WalletV5Beta},
 		getMethods: []InvokeFn{
 			Seqno,
+		},
+	},
+	ton.MustParseHash("f66c149de251ffd031bdb34b79abe43a062ba16b815433691e3ec40a77f01d71"): {
+		contractInterfaces: []ContractInterface{AffluentMultiplyVault},
+		getMethods: []InvokeFn{
+			GetJettonData,
+			GetVaultData,
+			IsStrategyVault,
 		},
 	},
 	ton.MustParseHash("fc8df8be21d83d3876984d7859c078c916dfd7654bc465bf9cd64602eeb4c587"): {

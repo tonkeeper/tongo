@@ -23,6 +23,9 @@
 
     <!-- https://tonviewer.com/EQD3F7Ex_uxBjxEub8FgeDoYYUSIbAUVyehCb_JSiCVL369T  -->
     <interface name="affluent_multiply_vault">
+        <code_hash>f66c149de251ffd031bdb34b79abe43a062ba16b815433691e3ec40a77f01d71</code_hash>
+        <code_hash>9f3fee6f85b5eab94b835fdb5add8278eb39d76eee25f88b909f45c912fce44d</code_hash>
+
         <get_method name="get_jetton_data"/>
         <get_method name="get_wallet_address"/>
         <get_method name="get_vault_data" version="affluent_multiply_vault"/>

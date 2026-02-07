@@ -23,12 +23,22 @@
 
     <!-- https://tonviewer.com/EQD3F7Ex_uxBjxEub8FgeDoYYUSIbAUVyehCb_JSiCVL369T  -->
     <interface name="affluent_multiply_vault">
-        <code_hash>f66c149de251ffd031bdb34b79abe43a062ba16b815433691e3ec40a77f01d71</code_hash>
-        <code_hash>9f3fee6f85b5eab94b835fdb5add8278eb39d76eee25f88b909f45c912fce44d</code_hash>
-
         <get_method name="get_jetton_data"/>
         <get_method name="get_wallet_address"/>
         <get_method name="get_vault_data" version="affluent_multiply_vault"/>
+        <get_method name="is_strategy_vault" version="affluent"/>
+        <get_method name="get_rfq_address" version="affluent"/>
+
+        <msg_out>
+            <internal name="jetton_transfer"/>
+        </msg_out>
+    </interface>
+
+    <!-- https://tonviewer.com/EQDXmtbt1-WSP00tSh6N6FH-4lX7LbnrjORClmtmuZqg4Ymm  -->
+    <interface name="affluent_multiply_vault_v2">
+        <get_method name="get_jetton_data"/>
+        <get_method name="get_wallet_address"/>
+        <get_method name="get_vault_data" version="affluent_multiply_vault_v2"/>
         <get_method name="is_strategy_vault" version="affluent"/>
         <get_method name="get_rfq_address" version="affluent"/>
 
@@ -151,6 +161,63 @@
                 <cell name="data_aggregator_code">cell</cell>
                 <cell name="rfq_code">cell</cell>
                 <cell name="content">cell</cell>
+            </tuple>
+        </output>
+    </get_method>
+    <get_method name="get_vault_data" version="affluent_multiply_vault_v2">
+        <output version="affluent_multiply_vault_v2" fixed_length="true">
+            <tuple name="affluent_vault_data">
+                <slice name="owner_address">msgaddress</slice>
+                <cell name="assets">cell</cell>
+                <cell name="factorial_pools">cell</cell>
+                <int name="aggregator_index">int257</int>
+                <int name="rfq_index">int257</int>
+                <int name="total_supply">int257</int>
+                <int name="collected_management_fee">int257</int>
+                <int name="collected_protocol_fee">int257</int>
+                <int name="is_executing_strategy">bool</int>
+                <cell name="config">cell</cell>
+                <cell name="code">cell</cell>
+                <slice name="protocol_fee_manager_address">msgaddress</slice>
+                <slice name="manager">msgaddress</slice>
+                <int name="is_private_vault">bool</int>
+                <int name="deposit_close_timestamp">int64</int>
+                <int name="withdraw_close_timestamp">int64</int>
+                <cell name="whitelisted_minters" nullable="true">cell</cell>
+                <int name="last_collected_time">int64</int>
+                <int name="management_fee_rate_per_year">int32</int>
+                <int name="protocol_fee_rate_per_year">int32</int>
+                <int name="max_leverage_ratio">int32</int>
+                <cell name="asset_wallet_dict">any</cell>
+                <cell name="wallet_asset_dict">any</cell>
+                <cell name="rfq_config" nullable="true">cell</cell>
+                <cell name="gas_config" nullable="true">cell</cell>
+                <cell name="oracle_config" nullable="true">cell</cell>
+                <cell name="management_fee_recipient_address" nullable="true">msgaddress</cell>
+                <cell name="guardian_address" nullable="true">msgaddress</cell>
+                <int name="timelock">int257</int>
+                <int name="pending_owner_action_index">int257</int>
+                <int name="pending_owner_action_count">int257</int>
+                <cell name="pending_owner_action" nullable="true">msgaddress</cell>
+                <cell name="wallet_code">cell</cell>
+                <cell name="data_aggregator_code">cell</cell>
+                <cell name="rfq_code">cell</cell>
+                <cell name="content">cell</cell>
+                <int name="unknown_1">int257</int>
+                <int name="unknown_2">int257</int>
+                <int name="unknown_3">int257</int>
+                <int name="unknown_4">int257</int>
+                <int name="unknown_5">int257</int>
+                <cell name="unknown_6" nullable="true">cell</cell>
+                <cell name="unknown_7" nullable="true">cell</cell>
+                <int name="unknown_8">int257</int>
+                <int name="unknown_9">int257</int>
+                <cell name="unknown_10">cell</cell>
+                <cell name="unknown_11" nullable="true">cell</cell>
+                <cell name="unknown_12" nullable="true">cell</cell>
+                <cell name="unknown_13">cell</cell>
+                <cell name="unknown_14" nullable="true">cell</cell>
+                <int name="unknown_15">int257</int>
             </tuple>
         </output>
     </get_method>

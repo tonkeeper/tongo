@@ -199,7 +199,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_vault_address":                            {DecodeGetVaultAddress_DedustResult},
 	"get_vault_balance":                            {DecodeGetVaultBalance_StormResult},
 	"get_vault_contract_data":                      {DecodeGetVaultContractData_StormResult},
-	"get_vault_data":                               {DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
+	"get_vault_data":                               {DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_AffluentMultiplyVaultV2Result, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
 	"get_vault_type":                               {DecodeGetVaultType_StormResult},
 	"get_vault_whitelisted_addresses":              {DecodeGetVaultWhitelistedAddresses_StormResult},
 	"get_version":                                  {DecodeGetVersion_StormResult},
@@ -600,6 +600,7 @@ var resultTypes = []interface{}{
 	&GetVaultContractData_StormResult{},
 	&GetVaultData_AffluentLendingVaultResult{},
 	&GetVaultData_AffluentMultiplyVaultResult{},
+	&GetVaultData_AffluentMultiplyVaultV2Result{},
 	&GetVaultData_StonfiV2Result{},
 	&GetVaultData_StormResult{},
 	&GetVaultType_StormResult{},
@@ -8445,6 +8446,62 @@ type GetVaultData_AffluentMultiplyVaultResult struct {
 	}
 }
 
+type GetVaultData_AffluentMultiplyVaultV2Result struct {
+	AffluentVaultData struct {
+		OwnerAddress                  tlb.MsgAddress
+		Assets                        boc.Cell
+		FactorialPools                boc.Cell
+		AggregatorIndex               tlb.Int257
+		RfqIndex                      tlb.Int257
+		TotalSupply                   tlb.Int257
+		CollectedManagementFee        tlb.Int257
+		CollectedProtocolFee          tlb.Int257
+		IsExecutingStrategy           bool
+		Config                        boc.Cell
+		Code                          boc.Cell
+		ProtocolFeeManagerAddress     tlb.MsgAddress
+		Manager                       tlb.MsgAddress
+		IsPrivateVault                bool
+		DepositCloseTimestamp         int64
+		WithdrawCloseTimestamp        int64
+		WhitelistedMinters            *boc.Cell
+		LastCollectedTime             int64
+		ManagementFeeRatePerYear      int32
+		ProtocolFeeRatePerYear        int32
+		MaxLeverageRatio              int32
+		AssetWalletDict               tlb.Any
+		WalletAssetDict               tlb.Any
+		RfqConfig                     *boc.Cell
+		GasConfig                     *boc.Cell
+		OracleConfig                  *boc.Cell
+		ManagementFeeRecipientAddress *tlb.MsgAddress
+		GuardianAddress               *tlb.MsgAddress
+		Timelock                      tlb.Int257
+		PendingOwnerActionIndex       tlb.Int257
+		PendingOwnerActionCount       tlb.Int257
+		PendingOwnerAction            *tlb.MsgAddress
+		WalletCode                    boc.Cell
+		DataAggregatorCode            boc.Cell
+		RfqCode                       boc.Cell
+		Content                       boc.Cell
+		Unknown1                      tlb.Int257
+		Unknown2                      tlb.Int257
+		Unknown3                      tlb.Int257
+		Unknown4                      tlb.Int257
+		Unknown5                      tlb.Int257
+		Unknown6                      *boc.Cell
+		Unknown7                      *boc.Cell
+		Unknown8                      tlb.Int257
+		Unknown9                      tlb.Int257
+		Unknown10                     boc.Cell
+		Unknown11                     *boc.Cell
+		Unknown12                     *boc.Cell
+		Unknown13                     boc.Cell
+		Unknown14                     *boc.Cell
+		Unknown15                     tlb.Int257
+	}
+}
+
 type GetVaultData_StonfiV2Result struct {
 	OwnerAddress    tlb.MsgAddress
 	TokenAddress    tlb.MsgAddress
@@ -8475,7 +8532,7 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_AffluentMultiplyVaultV2Result, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -8500,6 +8557,15 @@ func DecodeGetVaultData_AffluentMultiplyVaultResult(stack tlb.VmStack) (resultTy
 	var result GetVaultData_AffluentMultiplyVaultResult
 	err = stack.Unmarshal(&result)
 	return "GetVaultData_AffluentMultiplyVaultResult", result, err
+}
+
+func DecodeGetVaultData_AffluentMultiplyVaultV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if len(stack) != 1 || (stack[0].SumType != "VmStkTuple") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultData_AffluentMultiplyVaultV2Result
+	err = stack.Unmarshal(&result)
+	return "GetVaultData_AffluentMultiplyVaultV2Result", result, err
 }
 
 func DecodeGetVaultData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -26,6 +27,7 @@ type HashmapItem[keyT fixedSize, T any] struct {
 type Hashmap[keyT fixedSize, T any] struct {
 	keys   []keyT
 	values []T
+	raw    *boc.Cell
 }
 
 // NewHashmap returns a new instance of Hashmap.
@@ -38,13 +40,19 @@ func NewHashmap[keyT fixedSize, T any](keys []keyT, values []T) Hashmap[keyT, T]
 }
 
 func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	if h.raw != nil {
+		*c = *cloneCell(h.raw)
+		return nil
+	}
 	// Marshal empty Hashmap
 	if len(h.values) == 0 || h.values == nil {
 		return nil
 	}
+	order := sortedIndices(h.keys)
 	var s keyT
 	keys := make([]boc.BitString, 0, len(h.keys))
-	for _, k := range h.keys {
+	for _, idx := range order {
+		k := h.keys[idx]
 		cell := boc.NewCell()
 		err := Marshal(cell, k)
 		if err != nil {
@@ -52,7 +60,11 @@ func (h Hashmap[keyT, T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 		}
 		keys = append(keys, cell.RawBitString())
 	}
-	err := h.encodeMap(c, keys, h.values, s.FixedSize())
+	values := make([]T, len(h.values))
+	for i, idx := range order {
+		values[i] = h.values[idx]
+	}
+	err := h.encodeMap(c, keys, values, s.FixedSize())
 	if err != nil {
 		return err
 	}
@@ -115,6 +127,7 @@ func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []
 }
 
 func (h *Hashmap[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	h.raw = cloneCell(c)
 	var s keyT
 	keySize := s.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)
@@ -452,6 +465,7 @@ type HashmapAug[keyT fixedSize, T1, T2 any] struct {
 	keys   []keyT
 	values []T1
 	extra  HashMapAugExtraList[T2]
+	raw    *boc.Cell
 }
 
 type HashMapAugExtraList[T any] struct {
@@ -461,12 +475,18 @@ type HashMapAugExtraList[T any] struct {
 }
 
 func (h HashmapAug[keyT, T1, T2]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	if h.raw != nil {
+		*c = *cloneCell(h.raw)
+		return nil
+	}
 	if len(h.values) == 0 || h.values == nil {
 		return nil
 	}
+	order := sortedIndices(h.keys)
 	var s keyT
 	keys := make([]boc.BitString, 0, len(h.keys))
-	for _, k := range h.keys {
+	for _, idx := range order {
+		k := h.keys[idx]
 		cell := boc.NewCell()
 		err := Marshal(cell, k)
 		if err != nil {
@@ -474,13 +494,18 @@ func (h HashmapAug[keyT, T1, T2]) MarshalTLB(c *boc.Cell, encoder *Encoder) erro
 		}
 		keys = append(keys, cell.RawBitString())
 	}
-	return h.encodeMapAug(c, keys, h.values, s.FixedSize())
+	values := make([]T1, len(h.values))
+	for i, idx := range order {
+		values[i] = h.values[idx]
+	}
+	return h.encodeMapAug(c, keys, values, s.FixedSize(), &h.extra)
 }
 
-func (h HashmapAug[keyT, T1, T2]) encodeMapAug(c *boc.Cell, keys []boc.BitString, values []T1, keySize int) error {
+func (h HashmapAug[keyT, T1, T2]) encodeMapAug(c *boc.Cell, keys []boc.BitString, values []T1, keySize int, extras *HashMapAugExtraList[T2]) error {
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}
+	extras = ensureExtras(extras)
 	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], keySize)
 	if err != nil {
 		return err
@@ -510,7 +535,7 @@ func (h HashmapAug[keyT, T1, T2]) encodeMapAug(c *boc.Cell, keys []boc.BitString
 		if err != nil {
 			return err
 		}
-		err = h.encodeMapAug(l, leftKeys, leftValues, keySize)
+		err = h.encodeMapAug(l, leftKeys, leftValues, keySize, extras.Left)
 		if err != nil {
 			return err
 		}
@@ -518,22 +543,43 @@ func (h HashmapAug[keyT, T1, T2]) encodeMapAug(c *boc.Cell, keys []boc.BitString
 		if err != nil {
 			return err
 		}
-		err = h.encodeMapAug(r, rightKeys, rightValues, keySize)
+		err = h.encodeMapAug(r, rightKeys, rightValues, keySize, extras.Right)
 		if err != nil {
 			return err
 		}
-		var extra T2
-		return Marshal(c, extra)
+		return Marshal(c, extras.Data)
 	}
-	var extra T2
-	err = Marshal(c, extra)
+	err = Marshal(c, extras.Data)
 	if err != nil {
 		return err
 	}
 	return Marshal(c, values[0])
 }
 
+func ensureExtras[T any](extras *HashMapAugExtraList[T]) *HashMapAugExtraList[T] {
+	if extras == nil {
+		return &HashMapAugExtraList[T]{}
+	}
+	return extras
+}
+
+func sortedIndices[keyT fixedSize](keys []keyT) []int {
+	order := make([]int, len(keys))
+	for i := range order {
+		order[i] = i
+	}
+	sort.Slice(order, func(i, j int) bool {
+		cmp, ok := keys[order[i]].Compare(keys[order[j]])
+		if !ok {
+			return false
+		}
+		return cmp < 0
+	})
+	return order
+}
+
 func (h *HashmapAug[keyT, T1, T2]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	h.raw = cloneCell(c)
 	var t keyT
 	keySize := t.FixedSize()
 	keyPrefix := boc.NewBitString(keySize)

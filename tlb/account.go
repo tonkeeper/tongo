@@ -11,6 +11,47 @@ type ShardAccount struct {
 	Account       Account `tlb:"^"`
 	LastTransHash Bits256
 	LastTransLt   uint64
+
+	accountCell *boc.Cell
+}
+
+func (s *ShardAccount) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	ref, err := c.NextRef()
+	if err != nil {
+		return err
+	}
+	if ref.CellType() == boc.PrunedBranchCell {
+		s.Account = Account{}
+		s.accountCell = ref
+	} else {
+		s.accountCell = nil
+		if err := decoder.Unmarshal(ref, &s.Account); err != nil {
+			return err
+		}
+	}
+	if err := decoder.Unmarshal(c, &s.LastTransHash); err != nil {
+		return err
+	}
+	return decoder.Unmarshal(c, &s.LastTransLt)
+}
+
+func (s ShardAccount) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	ref, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	switch {
+	case s.accountCell != nil && s.Account.SumType == "":
+		*ref = *cloneCell(s.accountCell)
+	default:
+		if err := encoder.Marshal(ref, s.Account); err != nil {
+			return err
+		}
+	}
+	if err := encoder.Marshal(c, s.LastTransHash); err != nil {
+		return err
+	}
+	return encoder.Marshal(c, s.LastTransLt)
 }
 
 // Account

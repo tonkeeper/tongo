@@ -8493,7 +8493,7 @@ type GetVaultData_AffluentMultiplyVaultV2Result struct {
 		DepositQueueProcessingDict    *boc.Cell
 		WithdrawQueueTotalSize        tlb.Int257
 		WithdrawQueueCounter          tlb.Int257
-		WithdrawQueuePendingDict      boc.Cell
+		WithdrawQueuePendingDict      *boc.Cell
 		WithdrawQueueProcessingDict   *boc.Cell
 		InteractiveVaults             *boc.Cell
 		XchainConnectorAddress        boc.Cell

@@ -212,7 +212,7 @@
                 <cell name="deposit_queue_processing_dict" nullable="true">cell</cell>
                 <int name="withdraw_queue_total_size">int257</int>
                 <int name="withdraw_queue_counter">int257</int>
-                <cell name="withdraw_queue_pending_dict">cell</cell>
+                <cell name="withdraw_queue_pending_dict" nullable="true">cell</cell>
                 <cell name="withdraw_queue_processing_dict" nullable="true">cell</cell>
                 <cell name="interactive_vaults" nullable="true">cell</cell>
                 <cell name="xchain_connector_address">cell</cell>

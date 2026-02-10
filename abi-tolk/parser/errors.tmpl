@@ -1,0 +1,45 @@
+
+
+var contractErrors = map[ContractInterface]map[int32]string{
+{{range $Interface, $Errors := .Interfaces}}
+    {{- if ne (len $Errors) 0 -}}
+        {{- $Interface}}: {
+         {{- range $Code, $Name := $Errors -}}
+            {{ $Code}}: "{{$Name}}",
+        {{ end -}}	},
+    {{ end -}}
+{{- end -}}
+}
+
+
+var defaultExitCodes = map[int32]string{
+           		0:   "Ok",
+           		1:   "Ok",
+           		2:   "Stack underflow",
+           		3:   "Stack overflow",
+           		4:   "Integer overflow or division by zero",
+           		5:   "Integer out of expected range",
+           		6:   "Invalid opcode",
+           		7:   "Type check error",
+           		8:   "Cell overflow",
+           		9:   "Cell underflow",
+           		10:  "Dictionary error",
+           		11:  "Unknown error",
+           		12:  "Impossible situation error",
+           		13:  "Out of gas error",
+           		-14: "Out of gas error",
+           	}
+
+func GetContractError(interfaces []ContractInterface, code int32) *string {
+	for _, i := range interfaces {
+		if errors, ok := contractErrors[i]; ok {
+			if msg, ok := errors[code]; ok {
+				return &msg
+			}
+		}
+	}
+	if msg, ok := defaultExitCodes[code]; ok {
+		return &msg
+	}
+	return nil
+}

@@ -1,9 +1,6 @@
 package tolk
 
 import (
-	"encoding/json"
-	"strings"
-
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
 )
@@ -32,21 +29,6 @@ func (v *TupleValues) Marshal(cell *boc.Cell, ty tolkParser.TupleWith, encoder *
 		}
 	}
 	return nil
-}
-
-func (v *TupleValues) MarshalJSON() ([]byte, error) {
-	s := strings.Builder{}
-	s.WriteString("[\n")
-	for _, item := range *v {
-		val, err := json.Marshal(item)
-		if err != nil {
-			return nil, err
-		}
-		s.WriteString(string(val))
-		s.WriteString(",\n")
-	}
-	s.WriteString("]")
-	return []byte("null"), nil
 }
 
 func (v *TupleValues) Equal(other any) bool {
@@ -107,19 +89,4 @@ func (v *TensorValues) Equal(other any) bool {
 		}
 	}
 	return true
-}
-
-func (v *TensorValues) MarshalJSON() ([]byte, error) {
-	s := strings.Builder{}
-	s.WriteString("[\n")
-	for _, item := range *v {
-		val, err := json.Marshal(item)
-		if err != nil {
-			return nil, err
-		}
-		s.WriteString(string(val))
-		s.WriteString(",\n")
-	}
-	s.WriteString("]")
-	return []byte("null"), nil
 }

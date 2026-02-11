@@ -1,0 +1,14 @@
+{
+  "sumType": "map",
+  "map": {
+    "keySumType": "smallUint",
+    "14": {
+      "sumType": "internalAddress",
+      "internalAddress": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe"
+    },
+    "23": {
+      "sumType": "internalAddress",
+      "internalAddress": "-1:5555555555555555555555555555555555555555555555555555555555555555"
+    }
+  }
+}

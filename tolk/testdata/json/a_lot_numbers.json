@@ -1,0 +1,35 @@
+{
+  "sumType": "struct",
+  "struct": {
+    "fields": {
+      "num1": {
+        "sumType": "smallUint",
+        "smallUint": 0
+      },
+      "num3": {
+        "sumType": "bigUint",
+        "bigUint": "241"
+      },
+      "num4": {
+        "sumType": "varUint",
+        "varUint": "3421"
+      },
+      "num5": {
+        "sumType": "bool",
+        "bool": true
+      },
+      "num7": {
+        "sumType": "bits",
+        "bits": "3132"
+      },
+      "num8": {
+        "sumType": "smallInt",
+        "smallInt": 0
+      },
+      "num9": {
+        "sumType": "varInt",
+        "varInt": "2342"
+      }
+    }
+  }
+}

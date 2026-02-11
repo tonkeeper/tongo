@@ -1,0 +1,10 @@
+{
+  "sumType": "map",
+  "map": {
+    "keySumType": "bigUint",
+    "2337412": {
+      "sumType": "cell",
+      "cell": "b5ee9c7201010101000800000b000000001ab0"
+    }
+  }
+}

@@ -2,6 +2,8 @@ package tolk
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"math/big"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -57,6 +59,20 @@ func (b *BigInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
+func (b *BigInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(*b)
+	return []byte(`"` + bi.String() + `"`), nil
+}
+
+func (b *BigInt) UnmarshalJSON(bytes []byte) error {
+	bi, ok := new(big.Int).SetString(string(bytes[1:len(bytes)-1]), 10)
+	if !ok {
+		return fmt.Errorf("failed to unmarshal big.Int from %v", string(bytes[1:len(bytes)-1]))
+	}
+	*b = BigInt(*bi)
+	return nil
+}
+
 type UInt64 uint64
 
 func (i *UInt64) Unmarshal(cell *boc.Cell, ty tolkParser.UintN, decoder *Decoder) error {
@@ -106,6 +122,20 @@ func (b *BigUInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
+func (b *BigUInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(*b)
+	return []byte(`"` + bi.String() + `"`), nil
+}
+
+func (b *BigUInt) UnmarshalJSON(bytes []byte) error {
+	bi, ok := new(big.Int).SetString(string(bytes[1:len(bytes)-1]), 10)
+	if !ok {
+		return fmt.Errorf("failed to unmarshal big.Int from %v", string(bytes[1:len(bytes)-1]))
+	}
+	*b = BigUInt(*bi)
+	return nil
+}
+
 type VarInt big.Int
 
 func (vi *VarInt) Unmarshal(cell *boc.Cell, ty tolkParser.VarIntN, decoder *Decoder) error {
@@ -144,6 +174,20 @@ func (vi *VarInt) Equal(other any) bool {
 	bi := big.Int(*vi)
 	otherBi := big.Int(otherBigInt)
 	return bi.Cmp(&otherBi) == 0
+}
+
+func (vi *VarInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(*vi)
+	return []byte(`"` + bi.String() + `"`), nil
+}
+
+func (vi *VarInt) UnmarshalJSON(bytes []byte) error {
+	bi, ok := new(big.Int).SetString(string(bytes[1:len(bytes)-1]), 10)
+	if !ok {
+		return fmt.Errorf("failed to unmarshal big.Int from %v", string(bytes[1:len(bytes)-1]))
+	}
+	*vi = VarInt(*bi)
+	return nil
 }
 
 type VarUInt big.Int
@@ -186,6 +230,20 @@ func (vu *VarUInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
+func (vu *VarUInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(*vu)
+	return []byte(`"` + bi.String() + `"`), nil
+}
+
+func (vu *VarUInt) UnmarshalJSON(bytes []byte) error {
+	bi, ok := new(big.Int).SetString(string(bytes[1:len(bytes)-1]), 10)
+	if !ok {
+		return fmt.Errorf("failed to unmarshal big.Int from %v", string(bytes[1:len(bytes)-1]))
+	}
+	*vu = VarUInt(*bi)
+	return nil
+}
+
 type Bits boc.BitString
 
 func (b *Bits) Unmarshal(cell *boc.Cell, ty tolkParser.BitsN, decoder *Decoder) error {
@@ -217,6 +275,19 @@ func (b *Bits) Equal(other any) bool {
 	return bytes.Equal(bs.Buffer(), otherBs.Buffer())
 }
 
+func (b *Bits) MarshalJSON() ([]byte, error) {
+	return boc.BitString(*b).MarshalJSON()
+}
+
+func (b *Bits) UnmarshalJSON(bytes []byte) error {
+	bs := boc.BitString{}
+	if err := json.Unmarshal(bytes, &bs); err != nil {
+		return err
+	}
+	*b = Bits(bs)
+	return nil
+}
+
 type CoinsValue big.Int
 
 func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty tolkParser.Coins, decoder *Decoder) error {
@@ -224,7 +295,7 @@ func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty tolkParser.Coins, decoder *Dec
 	if err != nil {
 		return err
 	}
-	val, err := cell.ReadBigInt(int(ln) * 8)
+	val, err := cell.ReadBigUint(int(ln) * 8)
 	if err != nil {
 		return err
 	}
@@ -233,8 +304,8 @@ func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty tolkParser.Coins, decoder *Dec
 }
 
 func (c *CoinsValue) Marshal(cell *boc.Cell, ty tolkParser.Coins, encoder *Encoder) error {
-	varInt := VarInt(*c)
-	return varInt.Marshal(cell, tolkParser.VarIntN{N: 16}, encoder) // coins is actually varint16
+	varInt := VarUInt(*c)
+	return varInt.Marshal(cell, tolkParser.VarUintN{N: 16}, encoder) // coins is actually varint16
 }
 
 func (c *CoinsValue) Equal(other any) bool {
@@ -245,6 +316,20 @@ func (c *CoinsValue) Equal(other any) bool {
 	bi := big.Int(*c)
 	otherBi := big.Int(otherBigInt)
 	return bi.Cmp(&otherBi) == 0
+}
+
+func (c *CoinsValue) MarshalJSON() ([]byte, error) {
+	bi := big.Int(*c)
+	return []byte(`"` + bi.String() + `"`), nil
+}
+
+func (c *CoinsValue) UnmarshalJSON(bytes []byte) error {
+	bi, ok := new(big.Int).SetString(string(bytes[1:len(bytes)-1]), 10)
+	if !ok {
+		return fmt.Errorf("failed to unmarshal big.Int from %v", string(bytes[1:len(bytes)-1]))
+	}
+	*c = CoinsValue(*bi)
+	return nil
 }
 
 type BoolValue bool

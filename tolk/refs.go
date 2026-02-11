@@ -1,9 +1,11 @@
 package tolk
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"slices"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -11,8 +13,8 @@ import (
 )
 
 type Prefix struct {
-	Len    int16
-	Prefix uint64
+	Len    int16  `json:"len"`
+	Prefix uint64 `json:"prefix"`
 }
 
 type Struct struct {
@@ -74,7 +76,7 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Dec
 		}
 
 		if field.Ty.SumType == "Nullable" {
-			optVal := *fieldVal.optionalValue
+			optVal := *fieldVal.OptionalValue
 			defVal := field.DefaultValue
 			if !optVal.IsExists && defVal != nil {
 				val := Value{}
@@ -157,6 +159,15 @@ func (s *Struct) GetField(field string) (Value, bool) {
 	return Value{}, false
 }
 
+func (s *Struct) MustGetField(field string) Value {
+	for i, name := range s.fieldNames {
+		if name == field {
+			return s.fieldValues[i]
+		}
+	}
+	panic("field with name " + field + " is not found")
+}
+
 func (s *Struct) SetField(field string, v Value) bool {
 	for i, name := range s.fieldNames {
 		if name == field {
@@ -200,13 +211,86 @@ func (s *Struct) Equal(o any) bool {
 	if !slices.Equal(s.fieldNames, otherStruct.fieldNames) {
 		return false
 	}
-	return slices.Equal(s.fieldValues, otherStruct.fieldValues)
+	for i, value := range s.fieldValues {
+		if !value.Equal(otherStruct.fieldValues[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *Struct) MarshalJSON() ([]byte, error) {
+	builder := strings.Builder{}
+	builder.WriteString("{")
+	if s.hasPrefix {
+		builder.WriteString("\"prefix\":")
+		prefix, err := json.Marshal(s.prefix)
+		if err != nil {
+			return nil, err
+		}
+		builder.Write(prefix)
+		builder.WriteRune(',')
+	}
+	builder.WriteString("\"fields\": {")
+	for i, name := range s.fieldNames {
+		if i != 0 {
+			builder.WriteRune(',')
+		}
+		builder.WriteString(fmt.Sprintf("\"%s\":", name))
+		val, err := json.Marshal(&s.fieldValues[i])
+		if err != nil {
+			return nil, err
+		}
+		builder.Write(val)
+	}
+	builder.WriteString("}}")
+	return []byte(builder.String()), nil
+}
+
+func (s *Struct) UnmarshalJSON(bytes []byte) error {
+	var jsonStruct = struct {
+		Prefix *Prefix         `json:"prefix,omitempty"`
+		Fields json.RawMessage `json:"fields"`
+	}{}
+	if err := json.Unmarshal(bytes, &jsonStruct); err != nil {
+		return err
+	}
+	if jsonStruct.Prefix != nil {
+		s.hasPrefix = true
+		s.prefix = *jsonStruct.Prefix
+	}
+
+	decoder := json.NewDecoder(strings.NewReader(string(jsonStruct.Fields)))
+
+	_, err := decoder.Token() // {
+	if err != nil {
+		return err
+	}
+	for decoder.More() {
+		key, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		stringKey, ok := key.(string)
+		if !ok {
+			return fmt.Errorf("expected string key")
+		}
+		var val Value
+		if err = decoder.Decode(&val); err != nil {
+			return err
+		}
+
+		s.fieldNames = append(s.fieldNames, stringKey)
+		s.fieldValues = append(s.fieldValues, val)
+	}
+
+	return nil
 }
 
 type EnumValue struct {
-	val   Value
-	Name  string
-	Value big.Int
+	ActualValue Value   `json:"actualValue"`
+	Name        string  `json:"name"`
+	Value       big.Int `json:"value"`
 }
 
 func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *Decoder) error {
@@ -227,20 +311,20 @@ func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *De
 	switch enum.EncodedAs.SumType {
 	case "IntN":
 		if enum.EncodedAs.IntN.N > 64 {
-			bigEnumVal = big.Int(*enumVal.bigInt)
+			bigEnumVal = big.Int(*enumVal.BigInt)
 		} else {
-			bigEnumVal = *big.NewInt(int64(*enumVal.smallInt))
+			bigEnumVal = *big.NewInt(int64(*enumVal.SmallInt))
 		}
 	case "UintN":
 		if enum.EncodedAs.UintN.N > 64 {
-			bigEnumVal = big.Int(*enumVal.bigUint)
+			bigEnumVal = big.Int(*enumVal.BigUint)
 		} else {
-			bigEnumVal = *new(big.Int).SetUint64(uint64(*enumVal.smallUint))
+			bigEnumVal = *new(big.Int).SetUint64(uint64(*enumVal.SmallUint))
 		}
 	case "VarIntN":
-		bigEnumVal = big.Int(*enumVal.varInt)
+		bigEnumVal = big.Int(*enumVal.VarInt)
 	case "VarUintN":
-		bigEnumVal = big.Int(*enumVal.varUint)
+		bigEnumVal = big.Int(*enumVal.VarUint)
 	default:
 		return fmt.Errorf("enum encode type must be integer, got: %s", enum.EncodedAs.SumType)
 	}
@@ -253,9 +337,9 @@ func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *De
 
 		if val.Cmp(&bigEnumVal) == 0 {
 			*e = EnumValue{
-				val:   enumVal,
-				Name:  member.Name,
-				Value: *val,
+				ActualValue: enumVal,
+				Name:        member.Name,
+				Value:       *val,
 			}
 
 			return nil
@@ -263,9 +347,9 @@ func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *De
 	}
 	// todo: maybe return err?
 	*e = EnumValue{
-		val:   enumVal,
-		Name:  "Unknown",
-		Value: bigEnumVal,
+		ActualValue: enumVal,
+		Name:        "Unknown",
+		Value:       bigEnumVal,
 	}
 
 	return nil
@@ -280,7 +364,7 @@ func (e *EnumValue) Marshal(cell *boc.Cell, ty tolkParser.EnumRef, encoder *Enco
 		return fmt.Errorf("no enum with name %s was found in given abi", ty.EnumName)
 	}
 
-	err := e.val.Marshal(cell, enum.EncodedAs, encoder)
+	err := e.ActualValue.Marshal(cell, enum.EncodedAs, encoder)
 	if err != nil {
 		return err
 	}
@@ -309,7 +393,7 @@ func (e *EnumValue) Equal(other any) bool {
 	if e.Value.Cmp(&otherEnumValue.Value) != 0 {
 		return false
 	}
-	return e.val.Equal(otherEnumValue.val)
+	return e.ActualValue.Equal(otherEnumValue.ActualValue)
 }
 
 type AliasValue Value

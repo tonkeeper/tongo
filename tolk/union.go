@@ -8,8 +8,8 @@ import (
 )
 
 type UnionValue struct {
-	Prefix Prefix
-	Val    Value
+	Prefix Prefix `json:"prefix"`
+	Val    Value  `json:"value"`
 }
 
 func (u *UnionValue) Unmarshal(cell *boc.Cell, ty tolkParser.Union, decoder *Decoder) error {

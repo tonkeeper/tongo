@@ -14,7 +14,10 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
+const jsonFilesPath = "testdata/json/"
+
 func TestRuntime_UnmarshalSmallInt(t *testing.T) {
+	inputFilename := "small_int"
 	ty := tolkParser.Ty{
 		SumType: "IntN",
 		IntN: &tolkParser.IntN{
@@ -38,9 +41,27 @@ func TestRuntime_UnmarshalSmallInt(t *testing.T) {
 	if val != -35132 {
 		t.Errorf("val != -35132, got %v", val)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalBigInt(t *testing.T) {
+	inputFilename := "big_int"
 	ty := tolkParser.Ty{
 		SumType: "IntN",
 		IntN: &tolkParser.IntN{
@@ -64,9 +85,27 @@ func TestRuntime_UnmarshalBigInt(t *testing.T) {
 	if val.Cmp(big.NewInt(-3513294376431)) != 0 {
 		t.Errorf("val != -3513294376431, got %v", val)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
+	inputFilename := "small_uint"
 	ty := tolkParser.Ty{
 		SumType: "UintN",
 		UintN: &tolkParser.UintN{
@@ -90,9 +129,27 @@ func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
 	if val != 934 {
 		t.Errorf("val != 934, got %v", val)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalBigUInt(t *testing.T) {
+	inputFilename := "big_uint"
 	ty := tolkParser.Ty{
 		SumType: "UintN",
 		UintN: &tolkParser.UintN{
@@ -116,9 +173,27 @@ func TestRuntime_UnmarshalBigUInt(t *testing.T) {
 	if val.Cmp(big.NewInt(351329437643124)) != 0 {
 		t.Errorf("val != 351329437643124, got %v", val.String())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalVarInt(t *testing.T) {
+	inputFilename := "var_int"
 	ty := tolkParser.Ty{
 		SumType: "VarIntN",
 		VarIntN: &tolkParser.VarIntN{
@@ -142,9 +217,27 @@ func TestRuntime_UnmarshalVarInt(t *testing.T) {
 	if val.Cmp(big.NewInt(825432)) != 0 {
 		t.Errorf("val != 825432, got %v", val.String())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalVarUInt(t *testing.T) {
+	inputFilename := "var_uint"
 	ty := tolkParser.Ty{
 		SumType: "VarUintN",
 		VarUintN: &tolkParser.VarUintN{
@@ -168,9 +261,27 @@ func TestRuntime_UnmarshalVarUInt(t *testing.T) {
 	if val.Cmp(big.NewInt(9451236712)) != 0 {
 		t.Errorf("val != 9451236712, got %v", val.String())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalBits(t *testing.T) {
+	inputFilename := "bits"
 	ty := tolkParser.Ty{
 		SumType: "BitsN",
 		BitsN: &tolkParser.BitsN{
@@ -194,9 +305,27 @@ func TestRuntime_UnmarshalBits(t *testing.T) {
 	if bytes.Equal(val.Buffer(), []byte{55, 56, 57}) {
 		t.Errorf("val != {55, 56, 57}, got %v", val)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalCoins(t *testing.T) {
+	inputFilename := "coins"
 	ty := tolkParser.Ty{
 		SumType: "Coins",
 		Coins:   &tolkParser.Coins{},
@@ -218,9 +347,27 @@ func TestRuntime_UnmarshalCoins(t *testing.T) {
 	if val.Cmp(big.NewInt(921464321)) != 0 {
 		t.Errorf("val != 921464321, got %v", val)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalBool(t *testing.T) {
+	inputFilename := "bool"
 	ty := tolkParser.Ty{
 		SumType: "Bool",
 		Bool:    &tolkParser.Bool{},
@@ -242,9 +389,27 @@ func TestRuntime_UnmarshalBool(t *testing.T) {
 	if val {
 		t.Error("val is true")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalCell(t *testing.T) {
+	inputFilename := "cell"
 	ty := tolkParser.Ty{
 		SumType: "Cell",
 		Cell:    &tolkParser.Cell{},
@@ -270,9 +435,27 @@ func TestRuntime_UnmarshalCell(t *testing.T) {
 	if hs != "644e68a539c5107401d194bc82169cbf0ad1635796891551e0750705ab2d74ae" {
 		t.Errorf("val.Hash() != 644e68a539c5107401d194bc82169cbf0ad1635796891551e0750705ab2d74ae, got %v", hs)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalRemaining(t *testing.T) {
+	inputFilename := "remaining"
 	ty := tolkParser.Ty{
 		SumType:   "Remaining",
 		Remaining: &tolkParser.Remaining{},
@@ -298,9 +481,27 @@ func TestRuntime_UnmarshalRemaining(t *testing.T) {
 	if hs != "f1c4e07fbd1786411c2caa9ac9f5d7240aa2007a2a1d5e5ac44f8a168cd4e36b" {
 		t.Errorf("val.Hash() != f1c4e07fbd1786411c2caa9ac9f5d7240aa2007a2a1d5e5ac44f8a168cd4e36b, got %v", hs)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalAddress(t *testing.T) {
+	inputFilename := "internal_address"
 	ty := tolkParser.Ty{
 		SumType: "Address",
 		Address: &tolkParser.Address{},
@@ -322,9 +523,27 @@ func TestRuntime_UnmarshalAddress(t *testing.T) {
 	if val.ToRaw() != "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8" {
 		t.Errorf("val.GetAddress() != 0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8, got %v", val.ToRaw())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalNotExitsOptionalAddress(t *testing.T) {
+	inputFilename := "not_exists_optional_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
 		AddressOpt: &tolkParser.AddressOpt{},
@@ -347,9 +566,27 @@ func TestRuntime_UnmarshalNotExitsOptionalAddress(t *testing.T) {
 	if val.SumType != "NoneAddress" {
 		t.Errorf("val.GetAddress() != none address")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalExistsOptionalAddress(t *testing.T) {
+	inputFilename := "exists_optional_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
 		AddressOpt: &tolkParser.AddressOpt{},
@@ -372,9 +609,27 @@ func TestRuntime_UnmarshalExistsOptionalAddress(t *testing.T) {
 	if val.SumType == "InternalAddress" && val.InternalAddress.ToRaw() != "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8" {
 		t.Errorf("val.GetAddress() != 0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8, got %v", val.InternalAddress.ToRaw())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalExternalAddress(t *testing.T) {
+	inputFilename := "external_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressExt",
 		AddressExt: &tolkParser.AddressExt{},
@@ -401,9 +656,27 @@ func TestRuntime_UnmarshalExternalAddress(t *testing.T) {
 	if val.Len != 8 && bytes.Equal(val.Address.Buffer(), []byte{97, 98}) {
 		t.Errorf("val.GetExternalAddress() != {97, 98}, got %v", val.Address.Buffer())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalAnyNoneAddress(t *testing.T) {
+	inputFilename := "any_none_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -425,9 +698,27 @@ func TestRuntime_UnmarshalAnyNoneAddress(t *testing.T) {
 	if val.SumType != "NoneAddress" {
 		t.Errorf("val.GetAddress() != none address")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalAnyInternalAddress(t *testing.T) {
+	inputFilename := "any_internal_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -449,9 +740,27 @@ func TestRuntime_UnmarshalAnyInternalAddress(t *testing.T) {
 	if val.SumType == "InternalAddress" && val.InternalAddress.ToRaw() != "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8" {
 		t.Errorf("val.GetAddress() != 0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8, got %v", val.InternalAddress.ToRaw())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalAnyExternalAddress(t *testing.T) {
+	inputFilename := "any_external_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -478,9 +787,27 @@ func TestRuntime_UnmarshalAnyExternalAddress(t *testing.T) {
 	if val.SumType == "ExternalAddress" && val.ExternalAddress.Len != 8 && bytes.Equal(val.ExternalAddress.Address.Buffer(), []byte{97, 98}) {
 		t.Errorf("val.GetExternalAddress() != {97, 98}, got %v", val.ExternalAddress.Address.Buffer())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalAnyVarAddress(t *testing.T) {
+	inputFilename := "any_var_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -511,9 +838,27 @@ func TestRuntime_UnmarshalAnyVarAddress(t *testing.T) {
 	if bytes.Equal(val.VarAddress.Address.Buffer(), []byte{97, 98}) {
 		t.Errorf("val.GetExternalAddress() != {97, 98}, got %v", val.ExternalAddress.Address.Buffer())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
+	inputFilename := "not_exists_nullable"
 	ty := tolkParser.Ty{
 		SumType: "Nullable",
 		Nullable: &tolkParser.Nullable{
@@ -540,9 +885,27 @@ func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
 	if val.IsExists {
 		t.Errorf("v.GetOptionalValue() is exists")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
+	inputFilename := "exists_nullable"
 	ty := tolkParser.Ty{
 		SumType: "Nullable",
 		Nullable: &tolkParser.Nullable{
@@ -580,9 +943,27 @@ func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
 	if hs != "df05386a55563049a4834a4cc1ec0dc22f3dcb63c04f7258ae475c5d28981773" {
 		t.Errorf("v.GetOptionalValue().GetCell() != df05386a55563049a4834a4cc1ec0dc22f3dcb63c04f7258ae475c5d28981773, got %v", hs)
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalRef(t *testing.T) {
+	inputFilename := "ref"
 	ty := tolkParser.Ty{
 		SumType: "CellOf",
 		CellOf: &tolkParser.CellOf{
@@ -615,9 +996,27 @@ func TestRuntime_UnmarshalRef(t *testing.T) {
 	if innerVal.Cmp(big.NewInt(1233212)) != 0 {
 		t.Errorf("v.GetRefValue().GetBigInt() != 1233212, got %v", innerVal.String())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalEmptyTensor(t *testing.T) {
+	inputFilename := "empty_tensor"
 	ty := tolkParser.Ty{
 		SumType: "Tensor",
 		Tensor:  &tolkParser.Tensor{},
@@ -640,9 +1039,27 @@ func TestRuntime_UnmarshalEmptyTensor(t *testing.T) {
 	if len(val) != 0 {
 		t.Errorf("v.GetTensor() != empty")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalTensor(t *testing.T) {
+	inputFilename := "tensor"
 	ty := tolkParser.Ty{
 		SumType: "Tensor",
 		Tensor: &tolkParser.Tensor{
@@ -768,9 +1185,27 @@ func TestRuntime_UnmarshalTensor(t *testing.T) {
 	if val4.Cmp(big.NewInt(-9_304_000_000)) != 0 {
 		t.Errorf("val[4].GetVarInt() != -9304000000, got %v", val4.String())
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
+	inputFilename := "int_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -816,9 +1251,27 @@ func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
 	if ok {
 		t.Errorf("val[0] was found")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
+	inputFilename := "uint_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -876,9 +1329,27 @@ func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
 	if ok {
 		t.Errorf("val[0] was found")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
+	inputFilename := "big_int_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -928,9 +1399,27 @@ func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
 	if ok {
 		t.Errorf("val[34] was found")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
+	inputFilename := "bits_int_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -1029,9 +1518,27 @@ func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
 	if ok {
 		t.Errorf("val[{98, 99}] was found")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
+	inputFilename := "address_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -1084,9 +1591,27 @@ func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
 	if ok {
 		t.Errorf("val[\"UQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqEBI\"] was found")
 	}
+
+	pathPrefix := jsonFilesPath + inputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalUnionWithDecPrefix(t *testing.T) {
+	jsonInputFilename := "union_with_dec_prefix"
 	ty := tolkParser.Ty{
 		SumType: "Union",
 		Union: &tolkParser.Union{
@@ -1144,9 +1669,27 @@ func TestRuntime_UnmarshalUnionWithDecPrefix(t *testing.T) {
 	if unionVal.Cmp(big.NewInt(124432123)) != 0 {
 		t.Errorf("val.Val.GetBigInt() != 124432123, got %v", unionVal.String())
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
+	jsonInputFilename := "union_with_bin_prefix"
 	inputFilename := "testdata/bin_union.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -1246,9 +1789,27 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 	if mapCoins.Cmp(big.NewInt(43213412)) != 0 {
 		t.Errorf("val.GetMap()[\"EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs\"].GetCoins() != 43213412, got %v", mapCoins.String())
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
+	jsonInputFilename := "union_with_hex_prefix"
 	inputFilename := "testdata/hex_union.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -1336,9 +1897,27 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 	if unionVal != 1 {
 		t.Errorf("val.GetSmallUInt() != 1, got %v", unionVal)
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalALotRefsFromAlias(t *testing.T) {
+	jsonInputFilename := "a_lot_refs_from_alias"
 	inputFilename := "testdata/refs.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -1597,9 +2176,27 @@ func TestRuntime_UnmarshalALotRefsFromAlias(t *testing.T) {
 	if oper3Enum.Name != "Something" {
 		t.Errorf("currStruct[oper3].GetEnum().Name != Something, got %v", oper3Enum.Name)
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
+	jsonInputFilename := "a_lot_refs_from_struct"
 	inputFilename := "testdata/refs.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -1854,9 +2451,27 @@ func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
 	if oper3Enum.Name != "Something" {
 		t.Errorf("currStruct[oper3].GetEnum().Name != Something, got %v", oper3Enum.Name)
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalALotGenericsFromStruct(t *testing.T) {
+	jsonInputFilename := "a_lot_generics_from_struct"
 	inputFilename := "testdata/generics.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -2100,9 +2715,27 @@ func TestRuntime_UnmarshalALotGenericsFromStruct(t *testing.T) {
 	if myValVal != 16 {
 		t.Fatalf("currStruct[myVal] != 16, got %v", myValVal)
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalALotGenericsFromAlias(t *testing.T) {
+	jsonInputFilename := "a_lot_generics_from_alias"
 	inputFilename := "testdata/generics.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -2350,9 +2983,27 @@ func TestRuntime_UnmarshalALotGenericsFromAlias(t *testing.T) {
 	if myValVal != 16 {
 		t.Fatalf("currStruct[myVal] != 16, got %v", myValVal)
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
+	jsonInputFilename := "a_lot_generics_with_default_values"
 	inputFilename := "testdata/default_values.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -2522,9 +3173,27 @@ func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
 	if num7.IsExists {
 		t.Fatalf("currStruct[num7] exists")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalALotNumbers(t *testing.T) {
+	jsonInputFilename := "a_lot_numbers"
 	inputFilename := "testdata/numbers.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -2642,9 +3311,27 @@ func TestRuntime_UnmarshalALotNumbers(t *testing.T) {
 	if val9.Cmp(big.NewInt(2342)) != 0 {
 		t.Fatalf("num9 != 2342, got %s", val9.String())
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
+	jsonInputFilename := "a_lot_random_fields"
 	inputFilename := "testdata/random_fields.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -2865,9 +3552,27 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 	if default2Val != 55 {
 		t.Fatalf("default2 != 55, got %v", default2Val)
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actual, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = os.WriteFile(pathPrefix+".output.json", actual, os.ModePerm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, expected) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalSmallInt(t *testing.T) {
+	jsonInputFilename := "small_int"
 	ty := tolkParser.Ty{
 		SumType: "IntN",
 		IntN: &tolkParser.IntN{
@@ -2900,44 +3605,23 @@ func TestRuntime_MarshalSmallInt(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
-}
 
-func TestRuntime_MarshalBigInt(t *testing.T) {
-	ty := tolkParser.Ty{
-		SumType: "IntN",
-		IntN: &tolkParser.IntN{
-			N: 183,
-		},
-	}
-
-	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001900002dfffffffffffffffffffffffffffffffffff99bfeac6423a6f0b50c")
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, err := Unmarshal(currCell[0], ty)
-	if err != nil {
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
 		t.Fatal(err)
 	}
-
-	newCell, err := Marshal(v, ty)
-	if err != nil {
-		t.Error(err)
-	}
-
-	oldHs, err := currCell[0].HashString()
-	if err != nil {
-		t.Fatal(err)
-	}
-	newHs, err := newCell.HashString()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if oldHs != newHs {
-		t.Errorf("input and output cells are different")
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
 	}
 }
 
 func TestRuntime_MarshalSmallUInt(t *testing.T) {
+	jsonInputFilename := "small_uint"
 	ty := tolkParser.Ty{
 		SumType: "UintN",
 		UintN: &tolkParser.UintN{
@@ -2970,9 +3654,72 @@ func TestRuntime_MarshalSmallUInt(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
+}
+
+func TestRuntime_MarshalBigInt(t *testing.T) {
+	jsonInputFilename := "big_int"
+	ty := tolkParser.Ty{
+		SumType: "IntN",
+		IntN: &tolkParser.IntN{
+			N: 183,
+		},
+	}
+
+	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001900002dfffffffffffffffffffffffffffffffffff99bfeac6423a6f0b50c")
+	if err != nil {
+		t.Fatal(err)
+	}
+	v, err := Unmarshal(currCell[0], ty)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	newCell, err := Marshal(v, ty)
+	if err != nil {
+		t.Error(err)
+	}
+
+	oldHs, err := currCell[0].HashString()
+	if err != nil {
+		t.Fatal(err)
+	}
+	newHs, err := newCell.HashString()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if oldHs != newHs {
+		t.Errorf("input and output cells are different")
+	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalBigUInt(t *testing.T) {
+	jsonInputFilename := "big_uint"
 	ty := tolkParser.Ty{
 		SumType: "UintN",
 		UintN: &tolkParser.UintN{
@@ -3005,9 +3752,23 @@ func TestRuntime_MarshalBigUInt(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalVarInt(t *testing.T) {
+	jsonInputFilename := "var_int"
 	ty := tolkParser.Ty{
 		SumType: "VarIntN",
 		VarIntN: &tolkParser.VarIntN{
@@ -3040,9 +3801,23 @@ func TestRuntime_MarshalVarInt(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalVarUInt(t *testing.T) {
+	jsonInputFilename := "var_uint"
 	ty := tolkParser.Ty{
 		SumType: "VarUintN",
 		VarUintN: &tolkParser.VarUintN{
@@ -3075,9 +3850,23 @@ func TestRuntime_MarshalVarUInt(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalBits(t *testing.T) {
+	jsonInputFilename := "bits"
 	ty := tolkParser.Ty{
 		SumType: "BitsN",
 		BitsN: &tolkParser.BitsN{
@@ -3110,9 +3899,23 @@ func TestRuntime_MarshalBits(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalCoins(t *testing.T) {
+	jsonInputFilename := "coins"
 	ty := tolkParser.Ty{
 		SumType: "Coins",
 		Coins:   &tolkParser.Coins{},
@@ -3143,9 +3946,23 @@ func TestRuntime_MarshalCoins(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalBool(t *testing.T) {
+	jsonInputFilename := "bool"
 	ty := tolkParser.Ty{
 		SumType: "Bool",
 		Bool:    &tolkParser.Bool{},
@@ -3176,9 +3993,23 @@ func TestRuntime_MarshalBool(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalCell(t *testing.T) {
+	jsonInputFilename := "cell"
 	ty := tolkParser.Ty{
 		SumType: "Cell",
 		Cell:    &tolkParser.Cell{},
@@ -3209,9 +4040,23 @@ func TestRuntime_MarshalCell(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalRemaining(t *testing.T) {
+	jsonInputFilename := "remaining"
 	ty := tolkParser.Ty{
 		SumType:   "Remaining",
 		Remaining: &tolkParser.Remaining{},
@@ -3242,9 +4087,23 @@ func TestRuntime_MarshalRemaining(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalAddress(t *testing.T) {
+	jsonInputFilename := "internal_address"
 	ty := tolkParser.Ty{
 		SumType: "Address",
 		Address: &tolkParser.Address{},
@@ -3275,9 +4134,23 @@ func TestRuntime_MarshalAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
+	jsonInputFilename := "not_exists_optional_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
 		AddressOpt: &tolkParser.AddressOpt{},
@@ -3308,9 +4181,23 @@ func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
+	jsonInputFilename := "exists_optional_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressOpt",
 		AddressOpt: &tolkParser.AddressOpt{},
@@ -3341,9 +4228,23 @@ func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalExternalAddress(t *testing.T) {
+	jsonInputFilename := "external_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressExt",
 		AddressExt: &tolkParser.AddressExt{},
@@ -3374,9 +4275,23 @@ func TestRuntime_MarshalExternalAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
+	jsonInputFilename := "any_none_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -3407,9 +4322,23 @@ func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
+	jsonInputFilename := "any_internal_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -3440,9 +4369,23 @@ func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
+	jsonInputFilename := "any_external_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -3473,9 +4416,23 @@ func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
+	jsonInputFilename := "any_var_address"
 	ty := tolkParser.Ty{
 		SumType:    "AddressAny",
 		AddressAny: &tolkParser.AddressAny{},
@@ -3506,9 +4463,23 @@ func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
+	jsonInputFilename := "not_exists_nullable"
 	ty := tolkParser.Ty{
 		SumType: "Nullable",
 		Nullable: &tolkParser.Nullable{
@@ -3544,9 +4515,23 @@ func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalExistsNullable(t *testing.T) {
+	jsonInputFilename := "exists_nullable"
 	ty := tolkParser.Ty{
 		SumType: "Nullable",
 		Nullable: &tolkParser.Nullable{
@@ -3582,9 +4567,23 @@ func TestRuntime_MarshalExistsNullable(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalRef(t *testing.T) {
+	jsonInputFilename := "ref"
 	ty := tolkParser.Ty{
 		SumType: "CellOf",
 		CellOf: &tolkParser.CellOf{
@@ -3622,9 +4621,23 @@ func TestRuntime_MarshalRef(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalEmptyTensor(t *testing.T) {
+	jsonInputFilename := "empty_tensor"
 	ty := tolkParser.Ty{
 		SumType: "Tensor",
 		Tensor:  &tolkParser.Tensor{},
@@ -3655,9 +4668,23 @@ func TestRuntime_MarshalEmptyTensor(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalTensor(t *testing.T) {
+	jsonInputFilename := "tensor"
 	ty := tolkParser.Ty{
 		SumType: "Tensor",
 		Tensor: &tolkParser.Tensor{
@@ -3735,9 +4762,23 @@ func TestRuntime_MarshalTensor(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalIntKeyMap(t *testing.T) {
+	jsonInputFilename := "int_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -3779,9 +4820,23 @@ func TestRuntime_MarshalIntKeyMap(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
+	jsonInputFilename := "uint_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -3823,9 +4878,23 @@ func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
+	jsonInputFilename := "big_int_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -3867,9 +4936,23 @@ func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
+	jsonInputFilename := "bits_int_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -3933,9 +5016,23 @@ func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
+	jsonInputFilename := "address_key_map"
 	ty := tolkParser.Ty{
 		SumType: "Map",
 		Map: &tolkParser.Map{
@@ -3975,9 +5072,23 @@ func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
+	jsonInputFilename := "union_with_dec_prefix"
 	ty := tolkParser.Ty{
 		SumType: "Union",
 		Union: &tolkParser.Union{
@@ -4033,9 +5144,23 @@ func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
+	jsonInputFilename := "union_with_bin_prefix"
 	inputFilename := "testdata/bin_union.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4115,9 +5240,23 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
+	jsonInputFilename := "union_with_hex_prefix"
 	inputFilename := "testdata/hex_union.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4197,9 +5336,23 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
+	jsonInputFilename := "a_lot_refs_from_alias"
 	inputFilename := "testdata/refs.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4254,9 +5407,23 @@ func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
+	jsonInputFilename := "a_lot_refs_from_struct"
 	inputFilename := "testdata/refs.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4305,9 +5472,23 @@ func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
+	jsonInputFilename := "a_lot_generics_from_struct"
 	inputFilename := "testdata/generics.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4364,9 +5545,23 @@ func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
+	jsonInputFilename := "a_lot_generics_from_alias"
 	inputFilename := "testdata/generics.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4423,9 +5618,23 @@ func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
+	jsonInputFilename := "a_lot_generics_with_default_values"
 	inputFilename := "testdata/default_values.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4474,9 +5683,23 @@ func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalALotNumbers(t *testing.T) {
+	jsonInputFilename := "a_lot_numbers"
 	inputFilename := "testdata/numbers.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4525,9 +5748,23 @@ func TestRuntime_MarshalALotNumbers(t *testing.T) {
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
 	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
+	}
 }
 
 func TestRuntime_MarshalALotRandomFields(t *testing.T) {
+	jsonInputFilename := "a_lot_random_fields"
 	inputFilename := "testdata/random_fields.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4575,5 +5812,18 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 	}
 	if oldHs != newHs {
 		t.Errorf("input and output cells are different")
+	}
+
+	pathPrefix := jsonFilesPath + jsonInputFilename
+	actualJson, err := os.ReadFile(pathPrefix + ".json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var jsonV Value
+	if err := json.Unmarshal(actualJson, &jsonV); err != nil {
+		t.Fatal(err)
+	}
+	if !v.Equal(jsonV) {
+		t.Errorf("%s got different results", pathPrefix)
 	}
 }

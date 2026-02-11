@@ -447,48 +447,48 @@ func (m *MapValue) Get(key Value) (Value, bool) {
 
 func (m *MapValue) GetBySmallInt(v Int64) (Value, bool) {
 	key := Value{
-		sumType:  "smallInt",
-		smallInt: &v,
+		SumType:  "smallInt",
+		SmallInt: &v,
 	}
 	return m.Get(key)
 }
 
 func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
 	key := Value{
-		sumType:   "smallUint",
-		smallUint: &v,
+		SumType:   "smallUint",
+		SmallUint: &v,
 	}
 	return m.Get(key)
 }
 
 func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
 	key := Value{
-		sumType: "bigInt",
-		bigInt:  &v,
+		SumType: "bigInt",
+		BigInt:  &v,
 	}
 	return m.Get(key)
 }
 
 func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
 	key := Value{
-		sumType: "bigUint",
-		bigUint: &v,
+		SumType: "bigUint",
+		BigUint: &v,
 	}
 	return m.Get(key)
 }
 
 func (m *MapValue) GetByBits(v Bits) (Value, bool) {
 	key := Value{
-		sumType: "bits",
-		bits:    &v,
+		SumType: "bits",
+		Bits:    &v,
 	}
 	return m.Get(key)
 }
 
 func (m *MapValue) GetByInternalAddress(v InternalAddress) (Value, bool) {
 	key := Value{
-		sumType:         "internalAddress",
-		internalAddress: &v,
+		SumType:         "internalAddress",
+		InternalAddress: &v,
 	}
 	return m.Get(key)
 }
@@ -509,48 +509,48 @@ func (m *MapValue) Set(key Value, value Value) (bool, error) {
 
 func (m *MapValue) SetBySmallInt(k Int64, value Value) (bool, error) {
 	key := Value{
-		sumType:  "smallInt",
-		smallInt: &k,
+		SumType:  "smallInt",
+		SmallInt: &k,
 	}
 	return m.Set(key, value)
 }
 
 func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
 	key := Value{
-		sumType:   "smallUint",
-		smallUint: &k,
+		SumType:   "smallUint",
+		SmallUint: &k,
 	}
 	return m.Set(key, value)
 }
 
 func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
 	key := Value{
-		sumType: "bigInt",
-		bigInt:  &k,
+		SumType: "bigInt",
+		BigInt:  &k,
 	}
 	return m.Set(key, value)
 }
 
 func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
 	key := Value{
-		sumType: "bigUint",
-		bigUint: &k,
+		SumType: "bigUint",
+		BigUint: &k,
 	}
 	return m.Set(key, value)
 }
 
 func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
 	key := Value{
-		sumType: "bits",
-		bits:    &k,
+		SumType: "bits",
+		Bits:    &k,
 	}
 	return m.Set(key, value)
 }
 
 func (m *MapValue) SetByInternalAddress(k InternalAddress, value Value) (bool, error) {
 	key := Value{
-		sumType:         "internalAddress",
-		internalAddress: &k,
+		SumType:         "internalAddress",
+		InternalAddress: &k,
 	}
 	return m.Set(key, value)
 }
@@ -567,48 +567,48 @@ func (m *MapValue) Delete(key Value) {
 
 func (m *MapValue) DeleteBySmallInt(k Int64) {
 	key := Value{
-		sumType:  "smallInt",
-		smallInt: &k,
+		SumType:  "smallInt",
+		SmallInt: &k,
 	}
 	m.Delete(key)
 }
 
 func (m *MapValue) DeleteBySmallUInt(k UInt64) {
 	key := Value{
-		sumType:   "smallUint",
-		smallUint: &k,
+		SumType:   "smallUint",
+		SmallUint: &k,
 	}
 	m.Delete(key)
 }
 
 func (m *MapValue) DeleteByBigInt(k BigInt) {
 	key := Value{
-		sumType: "bigInt",
-		bigInt:  &k,
+		SumType: "bigInt",
+		BigInt:  &k,
 	}
 	m.Delete(key)
 }
 
 func (m *MapValue) DeleteByBigUInt(k BigUInt) {
 	key := Value{
-		sumType: "bigUint",
-		bigUint: &k,
+		SumType: "bigUint",
+		BigUint: &k,
 	}
 	m.Delete(key)
 }
 
 func (m *MapValue) DeleteByBits(k Bits) {
 	key := Value{
-		sumType: "bits",
-		bits:    &k,
+		SumType: "bits",
+		Bits:    &k,
 	}
 	m.Delete(key)
 }
 
 func (m *MapValue) DeleteByInternalAddress(k InternalAddress) {
 	key := Value{
-		sumType:         "internalAddress",
-		internalAddress: &k,
+		SumType:         "internalAddress",
+		InternalAddress: &k,
 	}
 	m.Delete(key)
 }
@@ -619,16 +619,129 @@ func (m *MapValue) Len() int {
 
 func (m *MapValue) MarshalJSON() ([]byte, error) {
 	s := strings.Builder{}
-	s.WriteString("{\n")
-	for i, k := range m.keys {
-		s.WriteString(fmt.Sprintf("\"%v\":", k))
-		val, err := json.Marshal(m.values[i])
-		if err != nil {
-			return nil, err
+	s.WriteString("{")
+	if len(m.keys) > 0 {
+		s.WriteString("\"keySumType\":")
+		s.WriteString(fmt.Sprintf("\"%s\",", m.keys[0].SumType))
+		for i, k := range m.keys {
+			if i != 0 {
+				s.WriteString(",")
+			}
+			key, err := json.Marshal(k)
+			if err != nil {
+				return nil, err
+			}
+			validKey, err := getKeyValue(string(key))
+			if err != nil {
+				return nil, err
+			}
+			if validKey[0] == '{' {
+				return nil, fmt.Errorf("cannot use %v as a map key", key)
+			}
+			if validKey[0] != '"' {
+				validKey = fmt.Sprintf("\"%s\"", validKey)
+			}
+			s.WriteString(fmt.Sprintf("%v:", validKey))
+			val, err := json.Marshal(m.values[i])
+			if err != nil {
+				return nil, err
+			}
+			s.WriteString(string(val))
 		}
-		s.WriteString(string(val))
 	}
 	s.WriteString("}")
 
 	return []byte(s.String()), nil
+}
+
+func getKeyValue(key string) (string, error) {
+	foundComma := false
+	start := -1
+	end := -1
+	for i, v := range key {
+		if v == ',' {
+			foundComma = true
+		}
+		if v == ':' && foundComma && start == -1 {
+			start = i
+		}
+		if v == '}' {
+			end = i
+			break
+		}
+	}
+	if start == -1 || end == -1 || end < start {
+		return "", fmt.Errorf("invalid key")
+	}
+	return strings.ReplaceAll(key[start+1:end], " ", ""), nil
+}
+
+func (m *MapValue) UnmarshalJSON(bytes []byte) error {
+	decoder := json.NewDecoder(strings.NewReader(string(bytes)))
+	_, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+
+	keyTypeDeclr, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	stringKeyTypeDeclr, ok := keyTypeDeclr.(string)
+	if !ok {
+		return fmt.Errorf("expected key type as a string")
+	}
+	if stringKeyTypeDeclr != "keySumType" {
+		return fmt.Errorf("map does not have key sum type")
+	}
+
+	keyType, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	stringKeyType, ok := keyType.(string)
+	if !ok {
+		return fmt.Errorf("expected map value as a string")
+	}
+	valueTemplate := strings.Builder{}
+	valueTemplate.WriteString("{\"sumType\":\"")
+	valueTemplate.WriteString(stringKeyType)
+	valueTemplate.WriteString("\",\"")
+	valueTemplate.WriteString(stringKeyType)
+	valueTemplate.WriteString("\":%s}")
+	tmpl := valueTemplate.String()
+
+	for decoder.More() {
+		keyValue, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		stringKeyValue, ok := keyValue.(string)
+		if !ok {
+			return fmt.Errorf("expected map key as a string")
+		}
+		keyValueJson := fmt.Sprintf(tmpl, getKeyAsValue(stringKeyType, stringKeyValue))
+		key := Value{}
+		if err = json.Unmarshal([]byte(keyValueJson), &key); err != nil {
+			return err
+		}
+
+		value := Value{}
+		if err = decoder.Decode(&value); err != nil {
+			return err
+		}
+		m.keys = append(m.keys, key)
+		m.values = append(m.values, value)
+		m.len++
+	}
+
+	return nil
+}
+
+func getKeyAsValue(sumType, key string) string {
+	switch sumType {
+	case "smallInt", "smallUint":
+		return key
+	}
+	return fmt.Sprintf("\"%v\"", key)
 }

@@ -1,0 +1,158 @@
+{
+  "sumType": "alias",
+  "alias": {
+    "sumType": "struct",
+    "struct": {
+      "fields": {
+        "payload": {
+          "sumType": "struct",
+          "struct": {
+            "fields": {
+              "value": {
+                "sumType": "union",
+                "union": {
+                  "prefix": {
+                    "len": 1,
+                    "prefix": 1
+                  },
+                  "value": {
+                    "sumType": "refValue",
+                    "refValue": {
+                      "sumType": "generic",
+                      "generic": {
+                        "sumType": "smallUint",
+                        "smallUint": 123
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "either": {
+          "sumType": "alias",
+          "alias": {
+            "sumType": "union",
+            "union": {
+              "prefix": {
+                "len": 1,
+                "prefix": 1
+              },
+              "value": {
+                "sumType": "struct",
+                "struct": {
+                  "fields": {
+                    "value": {
+                      "sumType": "generic",
+                      "generic": {
+                        "sumType": "coins",
+                        "coins": "100000000"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "anotherEither": {
+          "sumType": "alias",
+          "alias": {
+            "sumType": "alias",
+            "alias": {
+              "sumType": "union",
+              "union": {
+                "prefix": {
+                  "len": 1,
+                  "prefix": 1
+                },
+                "value": {
+                  "sumType": "struct",
+                  "struct": {
+                    "fields": {
+                      "value": {
+                        "sumType": "generic",
+                        "generic": {
+                          "sumType": "tensor",
+                          "tensor": [
+                            {
+                              "sumType": "bool",
+                              "bool": true
+                            },
+                            {
+                              "sumType": "coins",
+                              "coins": "1000000000"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "doubler": {
+          "sumType": "refValue",
+          "refValue": {
+            "sumType": "alias",
+            "alias": {
+              "sumType": "tensor",
+              "tensor": [
+                {
+                  "sumType": "generic",
+                  "generic": {
+                    "sumType": "tensor",
+                    "tensor": [
+                      {
+                        "sumType": "coins",
+                        "coins": "1000000000"
+                      },
+                      {
+                        "sumType": "optionalAddress",
+                        "optionalAddress": {
+                          "sumType": "noneAddress"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "sumType": "generic",
+                  "generic": {
+                    "sumType": "tensor",
+                    "tensor": [
+                      {
+                        "sumType": "coins",
+                        "coins": "100000000"
+                      },
+                      {
+                        "sumType": "optionalAddress",
+                        "optionalAddress": {
+                          "sumType": "internalAddress",
+                          "internalAddress": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "myVal": {
+          "sumType": "alias",
+          "alias": {
+            "sumType": "generic",
+            "generic": {
+              "sumType": "smallUint",
+              "smallUint": 16
+            }
+          }
+        }
+      }
+    }
+  }
+}

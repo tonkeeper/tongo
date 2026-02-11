@@ -1,0 +1,131 @@
+{
+  "sumType": "alias",
+  "alias": {
+    "sumType": "struct",
+    "struct": {
+      "prefix": {
+        "len": 32,
+        "prefix": 3735928559
+      },
+      "fields": {
+        "user1": {
+          "sumType": "alias",
+          "alias": {
+            "sumType": "struct",
+            "struct": {
+              "fields": {
+                "addr": {
+                  "sumType": "internalAddress",
+                  "internalAddress": "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8"
+                },
+                "balance": {
+                  "sumType": "coins",
+                  "coins": "1000000000"
+                }
+              }
+            }
+          }
+        },
+        "user2": {
+          "sumType": "optionalValue",
+          "optionalValue": {
+            "isExists": true,
+            "value": {
+              "sumType": "refValue",
+              "refValue": {
+                "sumType": "alias",
+                "alias": {
+                  "sumType": "struct",
+                  "struct": {
+                    "fields": {
+                      "addr": {
+                        "sumType": "internalAddress",
+                        "internalAddress": "0:086fa2a675f74347b08dd4606a549b8fdb98829cb282bc1949d3b12fbaed9dcc"
+                      },
+                      "balance": {
+                        "sumType": "coins",
+                        "coins": "100000000"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "user3": {
+          "sumType": "cell",
+          "cell": "b5ee9c720101010100240000438006e05909e22b2e5e6087533314ee56505f85212914bd5547941a2a658ac62fe101"
+        },
+        "user4": {
+          "sumType": "optionalValue",
+          "optionalValue": {
+            "isExists": false
+          }
+        },
+        "user5": {
+          "sumType": "refValue",
+          "refValue": {
+            "sumType": "struct",
+            "struct": {
+              "fields": {
+                "addr": {
+                  "sumType": "internalAddress",
+                  "internalAddress": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe"
+                },
+                "balance": {
+                  "sumType": "coins",
+                  "coins": "10000000000000"
+                }
+              }
+            }
+          }
+        },
+        "role": {
+          "sumType": "enum",
+          "enum": {
+            "actualValue": {
+              "sumType": "smallUint",
+              "smallUint": 1
+            },
+            "name": "Aboba",
+            "value": 1
+          }
+        },
+        "oper1": {
+          "sumType": "enum",
+          "enum": {
+            "actualValue": {
+              "sumType": "varUint",
+              "varUint": "0"
+            },
+            "name": "Add",
+            "value": 0
+          }
+        },
+        "oper2": {
+          "sumType": "enum",
+          "enum": {
+            "actualValue": {
+              "sumType": "bigInt",
+              "bigInt": "-10000"
+            },
+            "name": "TopUp",
+            "value": -10000
+          }
+        },
+        "oper3": {
+          "sumType": "enum",
+          "enum": {
+            "actualValue": {
+              "sumType": "smallUint",
+              "smallUint": 1
+            },
+            "name": "Something",
+            "value": 1
+          }
+        }
+      }
+    }
+  }
+}

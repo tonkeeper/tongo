@@ -2,8 +2,11 @@ package tolk
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -63,7 +66,25 @@ func (i *InternalAddress) ToRaw() string {
 }
 
 func (i *InternalAddress) MarshalJSON() ([]byte, error) {
-	return []byte(i.ToRaw()), nil
+	return []byte(fmt.Sprintf("\"%v:%x\"", i.Workchain, i.Address)), nil
+}
+
+func (i *InternalAddress) UnmarshalJSON(b []byte) error {
+	addr := strings.Split(string(b[1:len(b)-1]), ":")
+	if len(addr) != 2 {
+		return fmt.Errorf("invalid address")
+	}
+	workchain, err := strconv.ParseInt(addr[0], 10, 32)
+	if err != nil {
+		return err
+	}
+	hexAddr, err := hex.DecodeString(addr[1])
+	if err != nil {
+		return err
+	}
+	i.Workchain = int8(workchain)
+	i.Address = [32]byte(hexAddr)
+	return nil
 }
 
 type NoneAddress struct {
@@ -86,10 +107,6 @@ func (n *NoneAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder 
 	return nil
 }
 
-func (n *NoneAddress) MarshalJSON() ([]byte, error) {
-	return []byte(""), nil
-}
-
 type OptionalAddress struct {
 	SumType
 	NoneAddress     *NoneAddress
@@ -105,7 +122,7 @@ func (o *OptionalAddress) Equal(other any) bool {
 		return false
 	}
 	if o.SumType == "InternalAddress" {
-		return o.InternalAddress.Equal(otherOptionalAddress.InternalAddress)
+		return o.InternalAddress.Equal(*otherOptionalAddress.InternalAddress)
 	}
 	return true
 }
@@ -137,12 +154,39 @@ func (o *OptionalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, enco
 }
 
 func (o *OptionalAddress) MarshalJSON() ([]byte, error) {
+	var optinalAddress = struct {
+		SumType         SumType          `json:"sumType"`
+		InternalAddress *InternalAddress `json:"internalAddress,omitempty"`
+	}{}
+	optinalAddress.SumType = o.SumType
 	if o.SumType == "NoneAddress" {
-		return json.Marshal(o.NoneAddress)
+		optinalAddress.SumType = "noneAddress"
 	} else if o.SumType == "InternalAddress" {
-		return json.Marshal(o.InternalAddress)
+		optinalAddress.SumType = "internalAddress"
+		optinalAddress.InternalAddress = o.InternalAddress
 	}
-	return nil, fmt.Errorf("unknown any address SumType: %v", o.SumType)
+	return json.Marshal(optinalAddress)
+}
+
+func (o *OptionalAddress) UnmarshalJSON(b []byte) error {
+	var optinalAddress = struct {
+		SumType         SumType          `json:"sumType"`
+		InternalAddress *InternalAddress `json:"internalAddress,omitempty"`
+	}{}
+	if err := json.Unmarshal(b, &optinalAddress); err != nil {
+		return err
+	}
+
+	if optinalAddress.SumType == "noneAddress" {
+		o.SumType = "NoneAddress"
+		o.NoneAddress = &NoneAddress{}
+	} else if optinalAddress.SumType == "internalAddress" {
+		o.SumType = "InternalAddress"
+		o.InternalAddress = optinalAddress.InternalAddress
+	} else {
+		return fmt.Errorf("unknown optional address SumType: %v", o.SumType)
+	}
+	return nil
 }
 
 type ExternalAddress struct {
@@ -199,7 +243,18 @@ func (e *ExternalAddress) Equal(other any) bool {
 }
 
 func (e *ExternalAddress) MarshalJSON() ([]byte, error) {
-	return []byte(e.Address.ToFiftHex()), nil
+	return []byte(fmt.Sprintf("\"%s\"", e.Address.ToFiftHex())), nil
+}
+
+func (e *ExternalAddress) UnmarshalJSON(b []byte) error {
+	addr, err := boc.BitStringFromFiftHex(string(b[1 : len(b)-1]))
+	if err != nil {
+		return fmt.Errorf("invalid external address format: %v", string(b))
+	}
+	e.Len = int16(addr.BitsAvailableForRead())
+	e.Address = *addr
+
+	return nil
 }
 
 type AnyAddress struct {
@@ -265,27 +320,67 @@ func (a *AnyAddress) Equal(other any) bool {
 	case "NoneAddress":
 		return true
 	case "InternalAddress":
-		return a.InternalAddress.Equal(otherAnyAddress.InternalAddress)
+		return a.InternalAddress.Equal(*otherAnyAddress.InternalAddress)
 	case "ExternalAddress":
-		return a.ExternalAddress.Equal(otherAnyAddress.ExternalAddress)
+		return a.ExternalAddress.Equal(*otherAnyAddress.ExternalAddress)
 	case "VarAddress":
-		return a.VarAddress.Equal(otherAnyAddress.VarAddress)
+		return a.VarAddress.Equal(*otherAnyAddress.VarAddress)
 	}
 	return false
 }
 
 func (a *AnyAddress) MarshalJSON() ([]byte, error) {
+	var jsonAnyAddress = struct {
+		SumType         string           `json:"sumType"`
+		InternalAddress *InternalAddress `json:"internalAddress,omitempty"`
+		ExternalAddress *ExternalAddress `json:"externalAddress,omitempty"`
+		VarAddress      *VarAddress      `json:"varAddress,omitempty"`
+	}{}
 	switch a.SumType {
 	case "NoneAddress":
-		return json.Marshal(a.NoneAddress)
+		jsonAnyAddress.SumType = "noneAddress"
 	case "InternalAddress":
-		return json.Marshal(a.InternalAddress)
+		jsonAnyAddress.SumType = "internalAddress"
+		jsonAnyAddress.InternalAddress = a.InternalAddress
 	case "ExternalAddress":
-		return json.Marshal(a.ExternalAddress)
+		jsonAnyAddress.SumType = "externalAddress"
+		jsonAnyAddress.ExternalAddress = a.ExternalAddress
 	case "VarAddress":
-		return json.Marshal(a.VarAddress)
+		jsonAnyAddress.SumType = "varAddress"
+		jsonAnyAddress.VarAddress = a.VarAddress
+	default:
+		return nil, fmt.Errorf("unknown any address SumType: %v", a.SumType)
 	}
-	return nil, fmt.Errorf("unknown any address SumType: %v", a.SumType)
+	return json.Marshal(&jsonAnyAddress)
+}
+
+func (a *AnyAddress) UnmarshalJSON(b []byte) error {
+	var anyAddress = struct {
+		SumType         string           `json:"sumType"`
+		InternalAddress *InternalAddress `json:"internalAddress,omitempty"`
+		ExternalAddress *ExternalAddress `json:"externalAddress,omitempty"`
+		VarAddress      *VarAddress      `json:"varAddress,omitempty"`
+	}{}
+	if err := json.Unmarshal(b, &anyAddress); err != nil {
+		return err
+	}
+	switch anyAddress.SumType {
+	case "noneAddress":
+		a.SumType = "NoneAddress"
+		a.NoneAddress = &NoneAddress{}
+	case "internalAddress":
+		a.SumType = "InternalAddress"
+		a.InternalAddress = anyAddress.InternalAddress
+	case "externalAddress":
+		a.SumType = "ExternalAddress"
+		a.ExternalAddress = anyAddress.ExternalAddress
+	case "varAddress":
+		a.SumType = "VarAddress"
+		a.VarAddress = anyAddress.VarAddress
+	default:
+		return fmt.Errorf("unknown anyAddress SumType: %v", anyAddress.SumType)
+	}
+	return nil
 }
 
 type VarAddress struct {
@@ -355,5 +450,24 @@ func (va *VarAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressAny, encoder 
 }
 
 func (va *VarAddress) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("%d:%s", va.Workchain, va.Address.ToFiftHex())), nil
+	return []byte(fmt.Sprintf("\"%d:%s\"", va.Workchain, va.Address.ToFiftHex())), nil
+}
+
+func (va *VarAddress) UnmarshalJSON(b []byte) error {
+	parts := bytes.Split(b[1:len(b)-1], []byte(":"))
+	if len(parts) != 2 {
+		return fmt.Errorf("invalid var address format: %v", string(b))
+	}
+	workchain, err := strconv.ParseInt(string(parts[0]), 10, 32)
+	if err != nil {
+		return err
+	}
+	bs, err := boc.BitStringFromFiftHex(string(parts[1]))
+	if err != nil {
+		return err
+	}
+	va.Workchain = int32(workchain)
+	va.Len = int16(bs.BitsAvailableForRead())
+	va.Address = *bs
+	return nil
 }

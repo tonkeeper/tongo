@@ -48,6 +48,19 @@ func (a *Any) Equal(o any) bool {
 	return oHash == vHash
 }
 
+func (a *Any) MarshalJSON() ([]byte, error) {
+	return boc.Cell(*a).MarshalJSON()
+}
+
+func (a *Any) UnmarshalJSON(b []byte) error {
+	v := &boc.Cell{}
+	if err := json.Unmarshal(b, v); err != nil {
+		return err
+	}
+	*a = Any(*v)
+	return nil
+}
+
 type RemainingValue boc.Cell
 
 func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty tolkParser.Remaining, decoder *Decoder) error {
@@ -90,6 +103,19 @@ func (r *RemainingValue) Equal(o any) bool {
 		return false
 	}
 	return oHash == vHash
+}
+
+func (r *RemainingValue) MarshalJSON() ([]byte, error) {
+	return boc.Cell(*r).MarshalJSON()
+}
+
+func (r *RemainingValue) UnmarshalJSON(b []byte) error {
+	v := &boc.Cell{}
+	if err := json.Unmarshal(b, v); err != nil {
+		return err
+	}
+	*r = RemainingValue(*v)
+	return nil
 }
 
 type OptValue struct {
@@ -139,10 +165,33 @@ func (o *OptValue) Equal(other any) bool {
 }
 
 func (o *OptValue) MarshalJSON() ([]byte, error) {
-	if o.IsExists {
-		return json.Marshal(o.Val)
+	var jsonOptValue = struct {
+		IsExists bool   `json:"isExists"`
+		Val      *Value `json:"value,omitempty"`
+	}{
+		IsExists: o.IsExists,
 	}
-	return []byte("null"), nil
+	if o.IsExists {
+		jsonOptValue.Val = &o.Val
+	}
+
+	return json.Marshal(jsonOptValue)
+}
+
+func (o *OptValue) UnmarshalJSON(b []byte) error {
+	var jsonOptValue = struct {
+		IsExists bool   `json:"isExists"`
+		Val      *Value `json:"value,omitempty"`
+	}{}
+	if err := json.Unmarshal(b, &jsonOptValue); err != nil {
+		return err
+	}
+	o.IsExists = jsonOptValue.IsExists
+	if o.IsExists {
+		o.Val = *jsonOptValue.Val
+	}
+
+	return nil
 }
 
 type RefValue Value
@@ -182,5 +231,6 @@ func (r *RefValue) Equal(other any) bool {
 	if !ok {
 		return false
 	}
-	return r.Equal(otherRefValue)
+	v := Value(*r)
+	return v.Equal(Value(otherRefValue))
 }

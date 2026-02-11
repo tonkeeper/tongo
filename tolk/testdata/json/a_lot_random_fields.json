@@ -1,0 +1,93 @@
+{
+  "sumType": "struct",
+  "struct": {
+    "prefix": {
+      "len": 12,
+      "prefix": 1940
+    },
+    "fields": {
+      "dest_int": {
+        "sumType": "internalAddress",
+        "internalAddress": "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8"
+      },
+      "amount": {
+        "sumType": "coins",
+        "coins": "500000123400000"
+      },
+      "dest_ext": {
+        "sumType": "anyAddress",
+        "anyAddress": {
+          "sumType": "noneAddress"
+        }
+      },
+      "intVector": {
+        "sumType": "tensor",
+        "tensor": [
+          {
+            "sumType": "smallInt",
+            "smallInt": 342
+          },
+          {
+            "sumType": "optionalValue",
+            "optionalValue": {
+              "isExists": true,
+              "value": {
+                "sumType": "coins",
+                "coins": "1000000000"
+              }
+            }
+          },
+          {
+            "sumType": "smallUint",
+            "smallUint": 23443
+          }
+        ]
+      },
+      "needs_more": {
+        "sumType": "refValue",
+        "refValue": {
+          "sumType": "bool",
+          "bool": true
+        }
+      },
+      "some_payload": {
+        "sumType": "cell",
+        "cell": "b5ee9c7201010101002b000051000000000005120041efeaa9731b94da397e5e64622f5e63348b812ac5b4763a93f0dd201d0798d440"
+      },
+      "my_int": {
+        "sumType": "alias",
+        "alias": {
+          "sumType": "smallInt",
+          "smallInt": 432
+        }
+      },
+      "some_union": {
+        "sumType": "union",
+        "union": {
+          "prefix": {
+            "len": 2,
+            "prefix": 1
+          },
+          "value": {
+            "sumType": "smallInt",
+            "smallInt": 30000
+          }
+        }
+      },
+      "default_1": {
+        "sumType": "smallInt",
+        "smallInt": 1
+      },
+      "default_2": {
+        "sumType": "optionalValue",
+        "optionalValue": {
+          "isExists": true,
+          "value": {
+            "sumType": "smallInt",
+            "smallInt": 55
+          }
+        }
+      }
+    }
+  }
+}

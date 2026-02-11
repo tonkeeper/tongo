@@ -1,0 +1,7 @@
+{
+  "sumType": "anyAddress",
+  "anyAddress": {
+    "sumType": "externalAddress",
+    "externalAddress": "4142"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "sumType": "optionalAddress",
+  "optionalAddress": {
+    "sumType": "noneAddress"
+  }
+}

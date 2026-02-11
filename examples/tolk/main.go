@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk"
@@ -51,14 +52,8 @@ func main() {
 		panic("Transfer prefix not found")
 	}
 
-	queryId, ok := tolkStruct.GetField("queryId")
-	if !ok {
-		panic("transfer.queryId not found")
-	}
-	queryIdValue, ok := queryId.GetSmallUInt()
-	if !ok {
-		panic("cannot get transfer.queryId value")
-	}
+	queryId := tolkStruct.MustGetField("queryId")
+	queryIdValue := queryId.MustGetSmallUInt()
 
 	newOwner, ok := tolkStruct.GetField("newOwner")
 	if !ok {
@@ -103,6 +98,21 @@ func main() {
 	forwardPayloadValue, ok := forwardPayload.GetRemaining()
 	if !ok {
 		panic("cannot get transfer.forwardPayload value")
+	}
+
+	val, err := json.MarshalIndent(res, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+	inputFilename := "examples/tolk/output.json"
+	err = os.WriteFile(inputFilename, val, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+
+	tolkValue := tolk.Value{}
+	if err := json.Unmarshal(val, &tolkValue); err != nil {
+		panic(err)
 	}
 
 	fmt.Printf("Transfer prefix: 0x%x\n", prefix.Prefix)

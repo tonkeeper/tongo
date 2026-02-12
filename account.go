@@ -103,9 +103,9 @@ func MustParseAddress(a string) ton.Address {
 	return addr
 }
 
-// dnsResolver provides a method to resolve a domain name to a list of DNS records.
+// dnsResolver provides a method to resolve a domain name to a map of DNS records keyed by category.
 type dnsResolver interface {
-	Resolve(context.Context, string) ([]tlb.DNSRecord, error)
+	Resolve(context.Context, string) (map[dns.DNSCategory]tlb.DNSRecord, error)
 }
 
 func NewAccountAddressParser(resolver dnsResolver) *addressParser {
@@ -146,26 +146,24 @@ func (p *addressParser) ParseAddress(ctx context.Context, address string) (ton.A
 	if err != nil {
 		return ton.Address{}, err
 	}
-	account := ton.Address{Bounce: true}
-	for _, r := range result {
-		if r.SumType == "DNSSmcAddress" {
-			accountID, err := ton.AccountIDFromTlb(r.DNSSmcAddress.Address)
-			if err != nil {
-				return ton.Address{}, err
-			}
-			if accountID == nil {
-				return ton.Address{}, fmt.Errorf("destination account is null")
-			}
-			account.ID = *accountID
-			for _, c := range r.DNSSmcAddress.SmcCapability.Interfaces {
-				if c == "wallet" {
-					account.Bounce = false
-				}
-			}
-			return account, nil
+	r, ok := result[dns.DNSCategoryWallet]
+	if !ok || r.SumType != "DNSSmcAddress" {
+		return ton.Address{}, fmt.Errorf("address not found")
+	}
+	resolved, err := ton.AccountIDFromTlb(r.DNSSmcAddress.Address)
+	if err != nil {
+		return ton.Address{}, err
+	}
+	if resolved == nil {
+		return ton.Address{}, fmt.Errorf("destination account is null")
+	}
+	account := ton.Address{ID: *resolved, Bounce: true}
+	for _, c := range r.DNSSmcAddress.SmcCapability.Interfaces {
+		if c == "wallet" {
+			account.Bounce = false
 		}
 	}
-	return ton.Address{}, fmt.Errorf("address not found")
+	return account, nil
 }
 
 // lazyResolver is a dnsResolver that creates a new dns resolver on the first call to Resolve.
@@ -174,7 +172,7 @@ type lazyResolver struct {
 	dns dnsResolver
 }
 
-func (l *lazyResolver) Resolve(ctx context.Context, s string) ([]tlb.DNSRecord, error) {
+func (l *lazyResolver) Resolve(ctx context.Context, s string) (map[dns.DNSCategory]tlb.DNSRecord, error) {
 	resolver, err := l.resolver()
 	if err != nil {
 		return nil, err

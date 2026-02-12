@@ -107,10 +107,6 @@ func (c *Cell) Hash() ([]byte, error) {
 	return c.hash(map[*Cell]*immutableCell{})
 }
 
-func (c *Cell) HashWithLevel(level int) ([]byte, error) {
-	return c.hashWithLevel(map[*Cell]*immutableCell{}, level)
-}
-
 func (c *Cell) Hash256() ([32]byte, error) {
 	b, err := c.hash(map[*Cell]*immutableCell{})
 	if err != nil {
@@ -129,33 +125,12 @@ func (c *Cell) HashString() (string, error) {
 	return hex.EncodeToString(h), nil
 }
 
-func (c *Cell) HashStringWithLevel(level int) (string, error) {
-	h, err := c.hashWithLevel(map[*Cell]*immutableCell{}, level)
-	if err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(h), nil
-}
-
-func (c *Cell) Depth() int {
-	imc, _ := newImmutableCell(c, make(map[*Cell]*immutableCell))
-	return imc.Depth(0)
-}
-
 func (c *Cell) hash(cache map[*Cell]*immutableCell) ([]byte, error) {
 	imc, err := newImmutableCell(c, cache)
 	if err != nil {
 		return nil, err
 	}
 	return imc.Hash(maxLevel), nil
-}
-
-func (c *Cell) hashWithLevel(cache map[*Cell]*immutableCell, level int) ([]byte, error) {
-	imc, err := newImmutableCell(c, cache)
-	if err != nil {
-		return nil, err
-	}
-	return imc.Hash(level), nil
 }
 
 func (c *Cell) ToBoc() ([]byte, error) {

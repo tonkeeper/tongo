@@ -15,10 +15,6 @@ type SumType string
 
 type Magic uint32
 
-type Void struct{}
-
-type NullLiteral = Void
-
 type Maybe[T any] struct {
 	Exists bool
 	Value  T
@@ -99,25 +95,6 @@ func (m *Magic) UnmarshalJSON(b []byte) error {
 
 func (m Magic) EncodeTag(c *boc.Cell, tag string) error {
 	return encodeSumTag(c, tag)
-}
-
-func (v Void) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	return nil
-}
-
-func (v *Void) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	return nil
-}
-
-func (v Void) MarshalJSON() ([]byte, error) {
-	return []byte("null"), nil
-}
-
-func (v *Void) UnmarshalJSON(b []byte) error {
-	if string(b) == "null" {
-		return nil
-	}
-	return fmt.Errorf("not a void value %v", string(b))
 }
 
 func (m Maybe[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {

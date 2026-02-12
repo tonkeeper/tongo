@@ -1,0 +1,210 @@
+package tychoclient
+
+import (
+	"context"
+	"crypto/tls"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/ton"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
+
+	"github.com/tonkeeper/tongo/tychoclient/proto"
+)
+
+const (
+	// DefaultEndpoint is the testnet endpoint provided by the team
+	DefaultEndpoint = "tonapi-testnet.tychoprotocol.com:443"
+
+	// DefaultTimeout for gRPC calls
+	DefaultTimeout = 30 * time.Second
+)
+
+var BlockNotFoundErr = errors.New("block not found")
+
+// Client provides access to Tycho blockchain data via gRPC
+type Client struct {
+	conn   *grpc.ClientConn
+	client proto.TychoIndexerClient
+}
+
+// NewClient creates a new Tycho client with default settings
+func NewClient() (*Client, error) {
+	return NewClientWithEndpoint(DefaultEndpoint, false)
+}
+
+// NewClientWithEndpoint creates a new Tycho client with a custom endpoint
+func NewClientWithEndpoint(endpoint string, disableTLS bool) (*Client, error) {
+	// Use TLS for secure connection
+	creds := grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{}))
+	if disableTLS {
+		creds = grpc.WithTransportCredentials(insecure.NewCredentials())
+	}
+	conn, err := grpc.Dial(endpoint, creds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to %s: %w", endpoint, err)
+	}
+
+	return &Client{
+		conn:   conn,
+		client: proto.NewTychoIndexerClient(conn),
+	}, nil
+}
+
+// Close closes the gRPC connection
+func (c *Client) Close() error {
+	return c.conn.Close()
+}
+
+// SendMessage sends a message to the blockchain
+func (c *Client) SendMessage(ctx context.Context, payload []byte) (uint32, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	req := &proto.SendMessageRequest{
+		Message: payload,
+	}
+	resp, err := c.client.SendMessage(ctx, req)
+	if err != nil {
+		return 0, fmt.Errorf("failed to send message: %w", err)
+	}
+	if resp.DeliveredTo == 0 {
+		return 0, fmt.Errorf("message not delivered")
+	}
+	return 0, nil
+}
+
+// GetStatus returns the current status of the Tycho node
+func (c *Client) GetStatus(ctx context.Context) (*proto.GetStatusResponse, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	return c.client.GetStatus(ctx, &proto.GetStatusRequest{})
+}
+
+// GetLibraryCell fetches a library cell by hash
+func (c *Client) GetLibraryCell(ctx context.Context, hash []byte) ([]byte, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	req := &proto.GetLibraryCellRequest{
+		Hash: hash,
+	}
+
+	resp, err := c.client.GetLibraryCell(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get library cell: %w", err)
+	}
+
+	switch result := resp.Library.(type) {
+	case *proto.GetLibraryCellResponse_NotFound:
+		return nil, fmt.Errorf("library cell not found")
+	case *proto.GetLibraryCellResponse_Found:
+		return result.Found.Cell, nil
+	default:
+		return nil, fmt.Errorf("unexpected response type")
+	}
+}
+
+// GetLibraries fetches library cells by hash
+func (c *Client) GetLibraries(ctx context.Context, libraryList []ton.Bits256) (map[ton.Bits256]*boc.Cell, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	hashes := make([][]byte, len(libraryList))
+	for i, hash := range libraryList {
+		hashes[i] = hash[:]
+	}
+	req := &proto.GetLibraryCellsRequest{
+		Hashes: hashes,
+	}
+	resp, err := c.client.GetLibraryCells(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get library cells: %w", err)
+	}
+	res := make(map[ton.Bits256]*boc.Cell)
+	for _, l := range resp.Entries {
+		var hash ton.Bits256
+		err = hash.FromBytes(l.Hash)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse library hash: %w", err)
+		}
+		cell, err := boc.DeserializeSingleRootBoc(l.Cell)
+		if err != nil {
+			return nil, fmt.Errorf("failed to deserialize library cell: %w", err)
+		}
+		res[hash] = cell
+	}
+	return res, nil
+}
+
+// GetRawBlockData fetches raw BOC data for debugging purposes
+func (c *Client) GetRawBlockData(ctx context.Context, workchain int32, shard uint64, seqno uint32) ([]byte, error) {
+	ctx, cancel := limitedContext(ctx)
+	defer cancel()
+
+	req := &proto.GetBlockRequest{
+		Query: &proto.GetBlockRequest_BySeqno{
+			BySeqno: &proto.BlockBySeqno{
+				Workchain: workchain,
+				Shard:     shard,
+				Seqno:     seqno,
+			},
+		},
+	}
+
+	stream, err := c.client.GetBlock(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to start block stream: %w", err)
+	}
+
+	return c.readBlockFromStream(stream)
+}
+
+// readBlockFromStream reads block data from the gRPC stream
+func (c *Client) readBlockFromStream(stream proto.TychoIndexer_GetBlockClient) ([]byte, error) {
+	var totalData []byte
+
+	for {
+		resp, err := stream.Recv()
+		if err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
+			return nil, fmt.Errorf("stream error: %w", err)
+		}
+
+		switch msg := resp.Msg.(type) {
+		case *proto.GetBlockResponse_NotFound:
+			return nil, BlockNotFoundErr
+		case *proto.GetBlockResponse_Found:
+			// First chunk with metadata
+			if msg.Found.FirstChunk != nil {
+				totalData = append(totalData, msg.Found.FirstChunk.Data...)
+			}
+		case *proto.GetBlockResponse_Chunk:
+			// Subsequent chunks
+			totalData = append(totalData, msg.Chunk.Data...)
+		default:
+			return nil, fmt.Errorf("unexpected response type: %T", msg)
+		}
+	}
+
+	if len(totalData) == 0 {
+		return nil, fmt.Errorf("no block data received")
+	}
+
+	return totalData, nil
+}
+
+func limitedContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	_, hasDeadline := ctx.Deadline()
+	if hasDeadline {
+		return context.WithCancel(ctx)
+	}
+	return context.WithTimeout(ctx, DefaultTimeout)
+}

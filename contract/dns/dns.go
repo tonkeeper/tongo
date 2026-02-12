@@ -2,6 +2,8 @@ package dns
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strings"
@@ -19,6 +21,20 @@ var (
 	ErrNotResolved = errors.New("not resolved")
 )
 
+func sha256str(value string) DNSCategory {
+	sum := sha256.Sum256([]byte(value))
+	return DNSCategory(hex.EncodeToString(sum[:]))
+}
+
+type DNSCategory string
+
+var (
+	DNSCategoryDNSNextResolver = sha256str("dns_next_resolver")
+	DNSCategoryWallet          = sha256str("wallet")
+	DNSCategorySite            = sha256str("site")
+	DNSCategoryPicture         = sha256str("picture")
+)
+
 type DNS struct {
 	root     ton.AccountID
 	executor executor
@@ -33,7 +49,7 @@ func NewDNS(root ton.AccountID, e executor) *DNS {
 	}
 }
 
-func (d *DNS) Resolve(ctx context.Context, domain string) ([]tlb.DNSRecord, error) {
+func (d *DNS) Resolve(ctx context.Context, domain string) (map[DNSCategory]tlb.DNSRecord, error) {
 	if d.executor == nil {
 		return nil, errors.New("blockchain interface is nil")
 	}
@@ -44,7 +60,7 @@ func (d *DNS) Resolve(ctx context.Context, domain string) ([]tlb.DNSRecord, erro
 	return d.resolve(ctx, d.root, []byte(dom))
 }
 
-func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) ([]tlb.DNSRecord, error) {
+func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) (map[DNSCategory]tlb.DNSRecord, error) {
 	n := int64(len(dom))
 	stack := tlb.VmStack{}
 	val, err := tlb.TlbStructToVmCellSlice(dom)
@@ -86,9 +102,14 @@ func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) (
 		if err != nil {
 			return nil, err
 		}
-		var records []tlb.DNSRecord
-		for i := range recordSet.Records.Values() {
-			records = append(records, recordSet.Records.Values()[i].Value)
+		records := make(map[DNSCategory]tlb.DNSRecord, len(recordSet.Records.Values()))
+		for _, key := range recordSet.Records.Keys() {
+			value, ok := recordSet.Records.Get(key)
+			if !ok {
+				continue
+			}
+			category := DNSCategory(hex.EncodeToString(key[:]))
+			records[category] = value.Value
 		}
 		return records, nil
 	}

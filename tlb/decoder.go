@@ -9,15 +9,12 @@ import (
 
 type resolveLib func(hash Bits256) (*boc.Cell, error)
 
-type ContractInterface uint32
-
 // Decoder unmarshals a cell into a golang type.
 type Decoder struct {
-	hasher             *boc.Hasher
-	withDebug          bool
-	debugPath          []string
-	resolveLib         resolveLib
-	contractInterfaces []ContractInterface
+	hasher     *boc.Hasher
+	withDebug  bool
+	debugPath  []string
+	resolveLib resolveLib
 }
 
 func (d *Decoder) WithDebug() *Decoder {
@@ -31,11 +28,6 @@ func (d *Decoder) WithLibraryResolver(resolveLib resolveLib) *Decoder {
 	return d
 }
 
-func (d *Decoder) WithContractInterfaces(contractInterfaces []ContractInterface) *Decoder {
-	d.contractInterfaces = contractInterfaces
-	return d
-}
-
 // NewDecoder returns a new Decoder.
 func NewDecoder() *Decoder {
 	return &Decoder{
@@ -46,10 +38,6 @@ func NewDecoder() *Decoder {
 // Unmarshal decodes the give cell using TL-B schema and stores the result in the value pointed to by o.
 func (dec *Decoder) Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, "", reflect.ValueOf(o), dec)
-}
-
-func (dec *Decoder) GetContractInterfaces() []ContractInterface {
-	return dec.contractInterfaces
 }
 
 // UnmarshalerTLB contains method UnmarshalTLB that must be implemented by a struct

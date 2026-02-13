@@ -32,7 +32,10 @@ var (
 	DNSCategoryDNSNextResolver = sha256str("dns_next_resolver")
 	DNSCategoryWallet          = sha256str("wallet")
 	DNSCategorySite            = sha256str("site")
+	DNSCategoryStorage         = sha256str("storage")
 	DNSCategoryPicture         = sha256str("picture")
+	DNSCategoryLinks           = sha256str("links")
+	DNSCategoryDescription     = sha256str("description")
 )
 
 type DNS struct {

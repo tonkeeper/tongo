@@ -1,0 +1,30 @@
+{
+  "sumType": "union",
+  "union": {
+    "prefix": {
+      "len": 3,
+      "prefix": 3
+    },
+    "value": {
+      "sumType": "struct",
+      "struct": {
+        "prefix": {
+          "len": 3,
+          "prefix": 3
+        },
+        "fields": {
+          "v": {
+            "sumType": "map",
+            "map": {
+              "keySumType": "internalAddress",
+              "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe": {
+                "sumType": "coins",
+                "coins": "43213412"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Alias",
+      "name": "MyInt32",
+      "targetTy": {
+        "kind": "intN",
+        "n": 32
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "RandomFields",
+      "prefix": {
+        "prefixStr": "0x794",
+        "prefixLen": 12
+      },
+      "fields": [
+        {
+          "name": "dest_int",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "dest_ext",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "intVector",
+          "ty": {
+            "kind": "tensor",
+            "items": [
+              {
+                "kind": "intN",
+                "n": 32
+              },
+              {
+                "kind": "nullable",
+                "inner": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "kind": "uintN",
+                "n": 64
+              }
+            ]
+          }
+        },
+        {
+          "name": "needs_more",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bool"
+            }
+          }
+        },
+        {
+          "name": "some_payload",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "my_int",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "MyInt32"
+          }
+        },
+        {
+          "name": "some_union",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "variantTy": {
+                  "kind": "intN",
+                  "n": 8
+                },
+                "prefixStr": "0b00",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "intN",
+                  "n": 16
+                },
+                "prefixStr": "0b01",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "intN",
+                  "n": 256
+                },
+                "prefixStr": "0b10",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "default_1",
+          "ty": {
+            "kind": "intN",
+            "n": 16
+          },
+          "defaultValue": {
+            "kind": "int",
+            "v": "1"
+          }
+        },
+        {
+          "name": "default_2",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "intN",
+              "n": 16
+            }
+          },
+          "defaultValue": {
+            "kind": "int",
+            "v": "55"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

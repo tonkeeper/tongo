@@ -1,0 +1,24 @@
+{
+  "sumType": "union",
+  "union": {
+    "prefix": {
+      "len": 32,
+      "prefix": 3735928559
+    },
+    "value": {
+      "sumType": "struct",
+      "struct": {
+        "prefix": {
+          "len": 32,
+          "prefix": 3735928559
+        },
+        "fields": {
+          "v": {
+            "sumType": "smallUint",
+            "smallUint": 1
+          }
+        }
+      }
+    }
+  }
+}

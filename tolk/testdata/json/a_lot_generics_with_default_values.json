@@ -1,0 +1,78 @@
+{
+  "sumType": "struct",
+  "struct": {
+    "fields": {
+      "num1": {
+        "sumType": "optionalValue",
+        "optionalValue": {
+          "isExists": true,
+          "value": {
+            "sumType": "smallUint",
+            "smallUint": 4
+          }
+        }
+      },
+      "num2": {
+        "sumType": "optionalValue",
+        "optionalValue": {
+          "isExists": true,
+          "value": {
+            "sumType": "alias",
+            "alias": {
+              "sumType": "smallInt",
+              "smallInt": 5
+            }
+          }
+        }
+      },
+      "addr4": {
+        "sumType": "optionalAddress",
+        "optionalAddress": {
+          "sumType": "noneAddress"
+        }
+      },
+      "addr5": {
+        "sumType": "optionalAddress",
+        "optionalAddress": {
+          "sumType": "internalAddress",
+          "internalAddress": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe"
+        }
+      },
+      "tensor6": {
+        "sumType": "optionalValue",
+        "optionalValue": {
+          "isExists": true,
+          "value": {
+            "sumType": "tensor",
+            "tensor": [
+              {
+                "sumType": "smallInt",
+                "smallInt": 342
+              },
+              {
+                "sumType": "bool",
+                "bool": true
+              }
+            ]
+          }
+        }
+      },
+      "num7": {
+        "sumType": "optionalValue",
+        "optionalValue": {
+          "isExists": false
+        }
+      },
+      "slice3": {
+        "sumType": "optionalValue",
+        "optionalValue": {
+          "isExists": true,
+          "value": {
+            "sumType": "remaining",
+            "remaining": "b5ee9c72010101010005000006616263"
+          }
+        }
+      }
+    }
+  }
+}

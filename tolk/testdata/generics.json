@@ -1,0 +1,297 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Alias",
+      "name": "Wrapper",
+      "targetTy": {
+        "kind": "genericT",
+        "nameT": "W"
+      },
+      "typeParams": [
+        "W"
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "EitherLeft",
+      "typeParams": [
+        "R"
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "genericT",
+            "nameT": "R"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "EitherRight",
+      "typeParams": [
+        "T"
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "genericT",
+            "nameT": "T"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "Either",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "prefixStr": "0",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "EitherLeft",
+              "typeArgs": [
+                {
+                  "kind": "genericT",
+                  "nameT": "L"
+                }
+              ]
+            }
+          },
+          {
+            "prefixStr": "1",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "EitherRight",
+              "typeArgs": [
+                {
+                  "kind": "genericT",
+                  "nameT": "R"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "typeParams": [
+        "L",
+        "R"
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "EitherRef",
+      "typeParams": [
+        "I"
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "genericT",
+                  "nameT": "I"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "cellOf",
+                  "inner": {
+                    "kind": "genericT",
+                    "nameT": "I"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "EitherAlias",
+      "targetTy": {
+        "kind": "AliasRef",
+        "aliasName": "Either",
+        "typeArgs": [
+          {
+            "kind": "genericT",
+            "nameT": "R"
+          },
+          {
+            "kind": "genericT",
+            "nameT": "L"
+          }
+        ]
+      },
+      "typeParams": [
+        "R",
+        "L"
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "Doubler",
+      "targetTy": {
+        "kind": "tensor",
+        "items": [
+          {
+            "kind": "genericT",
+            "nameT": "U"
+          },
+          {
+            "kind": "genericT",
+            "nameT": "U"
+          }
+        ]
+      },
+      "typeParams": [
+        "U"
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ManyRefsMsg",
+      "typeParams": [
+        "T"
+      ],
+      "fields": [
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "EitherRef",
+            "typeArgs": [
+              {
+                "kind": "uintN",
+                "n": 32
+              }
+            ]
+          }
+        },
+        {
+          "name": "either",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Either",
+            "typeArgs": [
+              {
+                "kind": "address"
+              },
+              {
+                "kind": "coins"
+              }
+            ]
+          }
+        },
+        {
+          "name": "anotherEither",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "EitherAlias",
+            "typeArgs": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "tensor",
+                "items": [
+                  {
+                    "kind": "bool"
+                  },
+                  {
+                    "kind": "coins"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "doubler",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "Doubler",
+              "typeArgs": [
+                {
+                  "kind": "tensor",
+                  "items": [
+                    {
+                      "kind": "coins"
+                    },
+                    {
+                      "kind": "addressOpt"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "myVal",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Wrapper",
+            "typeArgs": [
+              {
+                "kind": "genericT",
+                "nameT": "T"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "GoodNamingForMsg",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "ManyRefsMsg",
+        "typeArgs": [
+          {
+            "kind": "genericT",
+            "nameT": "T"
+          }
+        ]
+      },
+      "typeParams": [
+        "T"
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

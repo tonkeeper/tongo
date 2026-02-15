@@ -1,0 +1,10 @@
+{
+  "sumType": "optionalValue",
+  "optionalValue": {
+    "isExists": true,
+    "value": {
+      "sumType": "cell",
+      "cell": "b5ee9c7201010101000700000900000c0ae0"
+    }
+  }
+}

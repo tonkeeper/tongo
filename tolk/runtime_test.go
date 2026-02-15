@@ -2748,6 +2748,68 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 	}
 }
 
+func TestRuntime_UnmarshalAliasWithCustomUnpack(t *testing.T) {
+	jsonInputFilename := "custom_pack_unpack"
+	inputFilename := "testdata/custom_pack_unpack.json"
+	data, err := os.ReadFile(inputFilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var abi tolkParser.ABI
+	err = json.Unmarshal(data, &abi)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ty := tolkParser.NewAliasType("MyAlias")
+
+	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100470000890000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000043b9aca00886e91196")
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoder := NewDecoder()
+	decoder.WithABI(abi)
+	decoder.WithCustomUnpackResolver(func(alias tolkParser.AliasRef, cell *boc.Cell, value *AliasValue) error {
+		err := cell.Skip(512)
+		if err != nil {
+			return fmt.Errorf("failed to 512 bits from alias")
+		}
+		val, err := decoder.Unmarshal(cell, tolkParser.NewStructType("My"))
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal alias' coins")
+		}
+		*value = AliasValue(*val)
+		return nil
+	})
+	v, err := decoder.Unmarshal(currCell[0], ty)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	currAlias, ok := v.GetAlias()
+	if !ok {
+		t.Fatalf("alias not found")
+	}
+	currStruct, ok := currAlias.GetStruct()
+	if !ok {
+		t.Fatalf("num1 not found")
+	}
+	amount, ok := currStruct.GetField("amount")
+	if !ok {
+		t.Fatalf("struct[amount] not found")
+	}
+	amountVal := amount.MustGetCoins()
+	if amountVal.Cmp(big.NewInt(1_000_000_000)) != 0 {
+		t.Fatalf("amount != 1_000_000_000, got %v", amountVal)
+	}
+
+	err = compareExpectedJson(jsonInputFilename, *v)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestRuntime_MarshalSmallInt(t *testing.T) {
 	jsonInputFilename := "small_int"
 	ty := tolkParser.NewIntNType(24)
@@ -4310,6 +4372,96 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 
 	encoder := NewEncoder()
 	encoder.WithABI(abi)
+	newCell, err := encoder.Marshal(v, ty)
+	if err != nil {
+		t.Error(err)
+	}
+
+	oldHs, err := currCell[0].HashString()
+	if err != nil {
+		t.Fatal(err)
+	}
+	newHs, err := newCell.HashString()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if oldHs != newHs {
+		t.Errorf("input and output cells are different")
+	}
+
+	err = compareActualJson(jsonInputFilename, *v)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRuntime_MarshalAliasWithCustomUnpack(t *testing.T) {
+	jsonInputFilename := "custom_pack_unpack"
+	inputFilename := "testdata/custom_pack_unpack.json"
+	data, err := os.ReadFile(inputFilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var abi tolkParser.ABI
+	err = json.Unmarshal(data, &abi)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ty := tolkParser.NewAliasType("MyAlias")
+
+	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100470000890000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000043b9aca00886e91196")
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoder := NewDecoder()
+	decoder.WithABI(abi)
+	decoder.WithCustomUnpackResolver(func(alias tolkParser.AliasRef, cell *boc.Cell, value *AliasValue) error {
+		err := cell.Skip(512)
+		if err != nil {
+			return fmt.Errorf("failed to 512 bits from alias")
+		}
+		val, err := decoder.Unmarshal(cell, tolkParser.NewStructType("My"))
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal alias' coins")
+		}
+		*value = AliasValue(*val)
+		return nil
+	})
+	v, err := decoder.Unmarshal(currCell[0], ty)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	encoder := NewEncoder()
+	encoder.WithABI(abi)
+	encoder.WithCustomPackResolver(func(ref tolkParser.AliasRef, cell *boc.Cell, value *AliasValue) error {
+		err := cell.WriteUint(0, 256)
+		if err != nil {
+			return fmt.Errorf("failed to write 256 bits to alias")
+		}
+		err = cell.WriteUint(0, 256)
+		if err != nil {
+			return fmt.Errorf("failed to write 256 bits to alias again")
+		}
+		val := Value(*value)
+		cl, err := encoder.Marshal(&val, tolkParser.NewStructType("My"))
+		if err != nil {
+			return fmt.Errorf("failed to marshal alias' coins")
+		}
+		err = cell.WriteBitString(cl.ReadRemainingBits())
+		if err != nil {
+			return fmt.Errorf("failed to write marshalled bits to alias")
+		}
+		for _, clRef := range cl.Refs() {
+			err = cell.AddRef(clRef)
+			if err != nil {
+				return fmt.Errorf("failed to add ref to alias")
+			}
+		}
+		return nil
+	})
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)

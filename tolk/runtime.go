@@ -24,8 +24,11 @@ type abiRefs struct {
 	genericRefs map[string]tolkParser.Ty
 }
 
+type customUnpackResolver = func(tolkParser.AliasRef, *boc.Cell, *AliasValue) error
+
 type Decoder struct {
-	abiRefs abiRefs
+	abiRefs              abiRefs
+	customUnpackResolver customUnpackResolver
 }
 
 func NewDecoder() *Decoder {
@@ -52,6 +55,11 @@ func (a *Decoder) WithABI(abi tolkParser.ABI) *Decoder {
 	return a
 }
 
+func (a *Decoder) WithCustomUnpackResolver(customUnpackResolver customUnpackResolver) *Decoder {
+	a.customUnpackResolver = customUnpackResolver
+	return a
+}
+
 func (a *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
 	res := &Value{}
 	err := res.Unmarshal(cell, ty, a)
@@ -61,8 +69,11 @@ func (a *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
 	return res, nil
 }
 
+type customPackResolver = func(tolkParser.AliasRef, *boc.Cell, *AliasValue) error
+
 type Encoder struct {
-	abiRefs abiRefs
+	abiRefs            abiRefs
+	customPackResolver customPackResolver
 }
 
 func NewEncoder() *Encoder {
@@ -86,6 +97,11 @@ func (a *Encoder) WithABI(abi tolkParser.ABI) *Encoder {
 			a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
 		}
 	}
+	return a
+}
+
+func (a *Encoder) WithCustomPackResolver(customPackResolver customPackResolver) *Encoder {
+	a.customPackResolver = customPackResolver
 	return a
 }
 

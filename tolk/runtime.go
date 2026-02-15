@@ -1,6 +1,8 @@
 package tolk
 
 import (
+	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
 )
@@ -54,7 +56,7 @@ func (a *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
 	res := &Value{}
 	err := res.Unmarshal(cell, ty, a)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal tolk value: %w", err)
 	}
 	return res, nil
 }
@@ -91,7 +93,7 @@ func (a *Encoder) Marshal(v *Value, ty tolkParser.Ty) (*boc.Cell, error) {
 	cell := boc.NewCell()
 	err := v.Marshal(cell, ty, a)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to marshal tolk value: %w", err)
 	}
 	return cell, nil
 }

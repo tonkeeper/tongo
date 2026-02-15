@@ -2,12 +2,14 @@ package tolk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type MapValue struct {
@@ -19,7 +21,7 @@ type MapValue struct {
 func (m *MapValue) Unmarshal(cell *boc.Cell, ty tolkParser.Map, decoder *Decoder) error {
 	keySize, ok := ty.K.GetFixedSize()
 	if !ok {
-		return fmt.Errorf("%v is not comparable", ty.K.SumType)
+		return fmt.Errorf("%v type is not comparable", ty.K.SumType)
 	}
 	keyPrefix := boc.NewBitString(keySize)
 
@@ -34,11 +36,11 @@ func (m *MapValue) Unmarshal(cell *boc.Cell, ty tolkParser.Map, decoder *Decoder
 	if isNotEmpty {
 		mpCell, err := cell.NextRef()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get map's next ref: %w", err)
 		}
 		err = mapInner(keySize, keySize, mpCell, &keyPrefix, ty.K, ty.V, &mp.keys, &mp.values, decoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to parse map value: %w", err)
 		}
 	}
 
@@ -64,37 +66,37 @@ func mapInner(
 	}
 	size, keyPrefix, err = loadLabel(leftKeySize, c, keyPrefix)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load map's label: %w", err)
 	}
 	// until key size is not equals we go deeper
 	if keyPrefix.BitsAvailableForRead() < keySize {
 		// 0 bit branch
 		left, err := c.NextRef()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get map's left branch: %w", err)
 		}
 		lp := keyPrefix.Copy()
 		err = lp.WriteBit(false)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to write map's left branch key prefix: %w", err)
 		}
 		err = mapInner(keySize, leftKeySize-(1+size), left, &lp, kt, vt, keys, values, decoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get map's left value: %w", err)
 		}
 		// 1 bit branch
 		right, err := c.NextRef()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get map's right branch: %w", err)
 		}
 		rp := keyPrefix.Copy()
 		err = rp.WriteBit(true)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to write map's right branch key prefix: %w", err)
 		}
 		err = mapInner(keySize, leftKeySize-(1+size), right, &rp, kt, vt, keys, values, decoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get map's right value: %w", err)
 		}
 		return nil
 	}
@@ -102,19 +104,19 @@ func mapInner(
 	v := Value{}
 	err = v.Unmarshal(c, vt, decoder)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal map's value: %w", err)
 	}
 	*values = append(*values, v)
 
 	key, err := keyPrefix.ReadBits(keySize)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get map's key: %w", err)
 	}
 	k := Value{}
 	cell := boc.NewCellWithBits(key)
 	err = k.Unmarshal(cell, kt, decoder)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal map's key: %w", err)
 	}
 	*keys = append(*keys, k)
 
@@ -124,46 +126,46 @@ func mapInner(
 func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, error) {
 	first, err := c.ReadBit()
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, fmt.Errorf("failed to read map's first bit of label's type: %w", err)
 	}
 	// hml_short$0
 	if !first {
 		// Unary, while 1, add to ln
 		ln, err := c.ReadUnary()
 		if err != nil {
-			return 0, nil, err
+			return 0, nil, fmt.Errorf("failed to read map's short label's length: %w", err)
 		}
 		// add bits to key
 		for i := 0; i < int(ln); i++ {
 			bit, err := c.ReadBit()
 			if err != nil {
-				return 0, nil, err
+				return 0, nil, fmt.Errorf("failed to read map's short label's %v-bit: %w", i, err)
 			}
 			err = key.WriteBit(bit)
 			if err != nil {
-				return 0, nil, err
+				return 0, nil, fmt.Errorf("failed to write map's short label's %v-bit: %w", i, err)
 			}
 		}
 		return int(ln), key, nil
 	}
 	second, err := c.ReadBit()
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, fmt.Errorf("failed to read map's second bit of label's type: %w", err)
 	}
 	// hml_long$10
 	if !second {
 		ln, err := c.ReadLimUint(size)
 		if err != nil {
-			return 0, nil, err
+			return 0, nil, fmt.Errorf("failed to read map's long label's length: %w", err)
 		}
 		for i := 0; i < int(ln); i++ {
 			bit, err := c.ReadBit()
 			if err != nil {
-				return 0, nil, err
+				return 0, nil, fmt.Errorf("failed to read map's long label's %v-bit: %w", i, err)
 			}
 			err = key.WriteBit(bit)
 			if err != nil {
-				return 0, nil, err
+				return 0, nil, fmt.Errorf("failed to write map's long label's %v-bit: %w", i, err)
 			}
 		}
 		return int(ln), key, nil
@@ -171,16 +173,16 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 	// hml_same$11
 	bitType, err := c.ReadBit()
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, fmt.Errorf("failed to read map's same label's bit: %w", err)
 	}
 	ln, err := c.ReadLimUint(size)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, fmt.Errorf("failed to read map's same label's length: %w", err)
 	}
 	for i := 0; i < int(ln); i++ {
 		err = key.WriteBit(bitType)
 		if err != nil {
-			return 0, nil, err
+			return 0, nil, fmt.Errorf("failed to write map's same label's %v-bit: %w", i, err)
 		}
 	}
 	return int(ln), key, nil
@@ -189,7 +191,7 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 func (m *MapValue) Marshal(cell *boc.Cell, ty tolkParser.Map, encoder *Encoder) error {
 	keySize, ok := ty.K.GetFixedSize()
 	if !ok {
-		return fmt.Errorf("map key is not a comparable type, got %v", ty.K.SumType)
+		return fmt.Errorf("%s type is not comparable", ty.K.SumType)
 	}
 
 	if len(m.keys) != len(m.values) {
@@ -199,14 +201,14 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty tolkParser.Map, encoder *Encoder) 
 	if len(m.values) == 0 {
 		err := cell.WriteBit(false)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to write map's emptiness bit: %w", err)
 		}
 		return nil
 	}
 
 	err := cell.WriteBit(true)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's not-emptiness bit: %w", err)
 	}
 
 	keys := make([]boc.BitString, len(m.keys))
@@ -214,7 +216,7 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty tolkParser.Map, encoder *Encoder) 
 		keyCell := boc.NewCell()
 		err = k.Marshal(keyCell, ty.K, encoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to marshal map's %v key: %w", i, err)
 		}
 		keys[i] = keyCell.RawBitString()
 	}
@@ -222,12 +224,12 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty tolkParser.Map, encoder *Encoder) 
 	ref := boc.NewCell()
 	err = encodeMap(ref, keys, m.values, keySize, ty.V, encoder)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to encode map: %w", err)
 	}
 
 	err = cell.AddRef(ref)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add map's ref value: %w", err)
 	}
 
 	return nil
@@ -239,20 +241,20 @@ func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, v
 	}
 	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], keySize)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to encode map's label: %w", err)
 	}
 	keySize = keySize - label.BitsAvailableForRead() - 1 // l = n - m - 1 // see tlb
 	var leftKeys, rightKeys []boc.BitString
 	var leftValues, rightValues []Value
 	if len(keys) > 1 {
 		for i := range keys {
-			_, err = keys[i].ReadBits(label.BitsAvailableForRead()) // skip common label
+			err = keys[i].Skip(label.BitsAvailableForRead()) // skip common label
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to skip map's key common label: %w", err)
 			}
 			isRight, err := keys[i].ReadBit()
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to read map's is right bit: %w", err)
 			}
 			if isRight {
 				rightKeys = append(rightKeys, keys[i].ReadRemainingBits())
@@ -264,26 +266,26 @@ func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, v
 		}
 		l, err := c.NewRef()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create map's left value: %w", err)
 		}
 		err = encodeMap(l, leftKeys, leftValues, keySize, vt, encoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to encode map's left value: %w", err)
 		}
 		r, err := c.NewRef()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create map's right value: %w", err)
 		}
 		err = encodeMap(r, rightKeys, rightValues, keySize, vt, encoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to encode map's right value: %w", err)
 		}
-		return err
+		return nil
 	}
 	// marshal value
 	err = values[0].Marshal(c, vt, encoder)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal map's values: %w", err)
 	}
 	return nil
 }
@@ -293,22 +295,22 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, keySize int) (bo
 	if keyFirst != keyLast {
 		bitLeft, err := keyFirst.ReadBit()
 		if err != nil {
-			return boc.BitString{}, err
+			return boc.BitString{}, fmt.Errorf("failed to read map's first label's bit: %w", err)
 		}
 		for keyFirst.BitsAvailableForRead() > 0 {
 			bitRight, err := keyLast.ReadBit()
 			if err != nil {
-				return boc.BitString{}, err
+				return boc.BitString{}, fmt.Errorf("failed to read map's last label's bit: %w", err)
 			}
 			if bitLeft != bitRight {
 				break
 			}
 			if err := label.WriteBit(bitLeft); err != nil {
-				return boc.BitString{}, err
+				return boc.BitString{}, fmt.Errorf("failed to write map's label bit: %w", err)
 			}
 			bitLeft, err = keyFirst.ReadBit()
 			if err != nil {
-				return boc.BitString{}, err
+				return boc.BitString{}, fmt.Errorf("failed to read map's first label's bit: %w", err)
 			}
 		}
 	} else {
@@ -336,7 +338,7 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, keySize int) (bo
 	for label.BitsAvailableForRead() > 0 {
 		bit, err := label.ReadBit()
 		if err != nil {
-			return boc.BitString{}, err
+			return boc.BitString{}, fmt.Errorf("failed to read map's label's bit: %w", err)
 		}
 		if bit {
 			isAllZero = false
@@ -356,7 +358,7 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, keySize int) (bo
 
 	err := encodeFunc(c, keySize, label)
 	if err != nil {
-		return boc.BitString{}, err
+		return boc.BitString{}, fmt.Errorf("failed to encode map's label: %w", err)
 	}
 	return label, nil
 }
@@ -365,36 +367,32 @@ func encodeShortLabel(c *boc.Cell, keySize int, label boc.BitString) error {
 	//hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
 	err := c.WriteBit(false)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's short label type: %w", err)
 	}
 	err = c.WriteUnary(uint(label.BitsAvailableForRead()))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's short label length: %w", err)
 	}
 	err = c.WriteBitString(label)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's short label value: %w", err)
 	}
 	return nil
 }
 
 func encodeLongLabel(c *boc.Cell, keySize int, label boc.BitString) error {
 	// hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
-	err := c.WriteBit(true)
+	err := c.WriteUint(0b10, 2)
 	if err != nil {
-		return err
-	}
-	err = c.WriteBit(false)
-	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's long label type: %w", err)
 	}
 	err = c.WriteLimUint(label.BitsAvailableForRead(), keySize)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's long label length: %w", err)
 	}
 	err = c.WriteBitString(label)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's long label value: %w", err)
 	}
 	return nil
 }
@@ -403,15 +401,15 @@ func encodeSameLabel(c *boc.Cell, keySize int, label boc.BitString) error {
 	//hml_same$11 {m:#} v:Bit n:(#<= m) = HmLabel ~n m;
 	err := c.WriteUint(0b11, 2)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's same label type: %w", err)
 	}
 	err = c.WriteBit(label.BinaryString()[0] == '1')
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's same label bit: %w", err)
 	}
 	err = c.WriteLimUint(label.BitsAvailableForRead(), keySize)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write map's same label length: %w", err)
 	}
 	return nil
 }
@@ -435,9 +433,9 @@ func (m *MapValue) Equal(other any) bool {
 	return true
 }
 
-func (m *MapValue) Get(key Value) (Value, bool) {
+func (m *MapValue) get(key Value) (Value, bool) {
 	for i, k := range m.keys {
-		if k.Equal(Value(key)) {
+		if k.Equal(key) {
 			return m.values[i], true
 		}
 	}
@@ -450,7 +448,7 @@ func (m *MapValue) GetBySmallInt(v Int64) (Value, bool) {
 		SumType:  "smallInt",
 		SmallInt: &v,
 	}
-	return m.Get(key)
+	return m.get(key)
 }
 
 func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
@@ -458,7 +456,7 @@ func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
 		SumType:   "smallUint",
 		SmallUint: &v,
 	}
-	return m.Get(key)
+	return m.get(key)
 }
 
 func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
@@ -466,7 +464,7 @@ func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
 		SumType: "bigInt",
 		BigInt:  &v,
 	}
-	return m.Get(key)
+	return m.get(key)
 }
 
 func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
@@ -474,7 +472,7 @@ func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
 		SumType: "bigUint",
 		BigUint: &v,
 	}
-	return m.Get(key)
+	return m.get(key)
 }
 
 func (m *MapValue) GetByBits(v Bits) (Value, bool) {
@@ -482,7 +480,7 @@ func (m *MapValue) GetByBits(v Bits) (Value, bool) {
 		SumType: "bits",
 		Bits:    &v,
 	}
-	return m.Get(key)
+	return m.get(key)
 }
 
 func (m *MapValue) GetByInternalAddress(v InternalAddress) (Value, bool) {
@@ -490,18 +488,18 @@ func (m *MapValue) GetByInternalAddress(v InternalAddress) (Value, bool) {
 		SumType:         "internalAddress",
 		InternalAddress: &v,
 	}
-	return m.Get(key)
+	return m.get(key)
 }
 
-func (m *MapValue) Set(key Value, value Value) (bool, error) {
+func (m *MapValue) set(key Value, value Value) (bool, error) {
 	for i, k := range m.keys {
-		if k.Equal(Value(key)) {
+		if k.Equal(key) {
 			m.values[i] = value
 			return true, nil
 		}
 	}
 
-	m.keys = append(m.keys, Value(key))
+	m.keys = append(m.keys, key)
 	m.values = append(m.values, value)
 	m.len++
 	return true, nil
@@ -512,7 +510,7 @@ func (m *MapValue) SetBySmallInt(k Int64, value Value) (bool, error) {
 		SumType:  "smallInt",
 		SmallInt: &k,
 	}
-	return m.Set(key, value)
+	return m.set(key, value)
 }
 
 func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
@@ -520,7 +518,7 @@ func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
 		SumType:   "smallUint",
 		SmallUint: &k,
 	}
-	return m.Set(key, value)
+	return m.set(key, value)
 }
 
 func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
@@ -528,7 +526,7 @@ func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
 		SumType: "bigInt",
 		BigInt:  &k,
 	}
-	return m.Set(key, value)
+	return m.set(key, value)
 }
 
 func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
@@ -536,7 +534,7 @@ func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
 		SumType: "bigUint",
 		BigUint: &k,
 	}
-	return m.Set(key, value)
+	return m.set(key, value)
 }
 
 func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
@@ -544,7 +542,7 @@ func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
 		SumType: "bits",
 		Bits:    &k,
 	}
-	return m.Set(key, value)
+	return m.set(key, value)
 }
 
 func (m *MapValue) SetByInternalAddress(k InternalAddress, value Value) (bool, error) {
@@ -552,12 +550,12 @@ func (m *MapValue) SetByInternalAddress(k InternalAddress, value Value) (bool, e
 		SumType:         "internalAddress",
 		InternalAddress: &k,
 	}
-	return m.Set(key, value)
+	return m.set(key, value)
 }
 
-func (m *MapValue) Delete(key Value) {
+func (m *MapValue) delete(key Value) {
 	for i, k := range m.keys {
-		if k.Equal(Value(key)) {
+		if k.Equal(key) {
 			m.keys[i] = Value{}
 			m.values[i] = Value{}
 			m.len--
@@ -570,7 +568,7 @@ func (m *MapValue) DeleteBySmallInt(k Int64) {
 		SumType:  "smallInt",
 		SmallInt: &k,
 	}
-	m.Delete(key)
+	m.delete(key)
 }
 
 func (m *MapValue) DeleteBySmallUInt(k UInt64) {
@@ -578,7 +576,7 @@ func (m *MapValue) DeleteBySmallUInt(k UInt64) {
 		SumType:   "smallUint",
 		SmallUint: &k,
 	}
-	m.Delete(key)
+	m.delete(key)
 }
 
 func (m *MapValue) DeleteByBigInt(k BigInt) {
@@ -586,7 +584,7 @@ func (m *MapValue) DeleteByBigInt(k BigInt) {
 		SumType: "bigInt",
 		BigInt:  &k,
 	}
-	m.Delete(key)
+	m.delete(key)
 }
 
 func (m *MapValue) DeleteByBigUInt(k BigUInt) {
@@ -594,7 +592,7 @@ func (m *MapValue) DeleteByBigUInt(k BigUInt) {
 		SumType: "bigUint",
 		BigUint: &k,
 	}
-	m.Delete(key)
+	m.delete(key)
 }
 
 func (m *MapValue) DeleteByBits(k Bits) {
@@ -602,7 +600,7 @@ func (m *MapValue) DeleteByBits(k Bits) {
 		SumType: "bits",
 		Bits:    &k,
 	}
-	m.Delete(key)
+	m.delete(key)
 }
 
 func (m *MapValue) DeleteByInternalAddress(k InternalAddress) {
@@ -610,7 +608,7 @@ func (m *MapValue) DeleteByInternalAddress(k InternalAddress) {
 		SumType:         "internalAddress",
 		InternalAddress: &k,
 	}
-	m.Delete(key)
+	m.delete(key)
 }
 
 func (m *MapValue) Len() int {
@@ -618,23 +616,27 @@ func (m *MapValue) Len() int {
 }
 
 func (m *MapValue) MarshalJSON() ([]byte, error) {
+	if len(m.keys) != len(m.values) {
+		return nil, errors.New("map values and keys must contain equal length")
+	}
 	s := strings.Builder{}
 	s.WriteString("{")
 	if len(m.keys) > 0 {
 		s.WriteString("\"keySumType\":")
-		s.WriteString(fmt.Sprintf("\"%s\",", m.keys[0].SumType))
+		s.WriteString(fmt.Sprintf("\"%s\",", utils.ToCamelCasePrivate(string(m.keys[0].SumType))))
 		for i, k := range m.keys {
 			if i != 0 {
 				s.WriteString(",")
 			}
 			key, err := json.Marshal(k)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to marshal map's key: %w", err)
 			}
-			validKey, err := getKeyValue(string(key))
+			validKey, err := getJustValue(string(key))
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to get map's key value: %w", err)
 			}
+			// there is no case that key's value may start with '[' since tensors and tuples are not fixed sizes
 			if validKey[0] == '{' {
 				return nil, fmt.Errorf("cannot use %v as a map key", key)
 			}
@@ -644,9 +646,9 @@ func (m *MapValue) MarshalJSON() ([]byte, error) {
 			s.WriteString(fmt.Sprintf("%v:", validKey))
 			val, err := json.Marshal(m.values[i])
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to marshal map's value: %w", err)
 			}
-			s.WriteString(string(val))
+			s.Write(val)
 		}
 	}
 	s.WriteString("}")
@@ -654,38 +656,34 @@ func (m *MapValue) MarshalJSON() ([]byte, error) {
 	return []byte(s.String()), nil
 }
 
-func getKeyValue(key string) (string, error) {
+func getJustValue(key string) (string, error) {
 	foundComma := false
 	start := -1
-	end := -1
 	for i, v := range key {
 		if v == ',' {
 			foundComma = true
 		}
-		if v == ':' && foundComma && start == -1 {
+		if v == ':' && foundComma {
 			start = i
-		}
-		if v == '}' {
-			end = i
 			break
 		}
 	}
-	if start == -1 || end == -1 || end < start {
-		return "", fmt.Errorf("invalid key")
+	if start == -1 {
+		return "", fmt.Errorf("invalid key: %v", key)
 	}
-	return strings.ReplaceAll(key[start+1:end], " ", ""), nil
+	return strings.ReplaceAll(key[start+1:len(key)-1], " ", ""), nil
 }
 
 func (m *MapValue) UnmarshalJSON(bytes []byte) error {
 	decoder := json.NewDecoder(strings.NewReader(string(bytes)))
 	_, err := decoder.Token()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal map: %w", err)
 	}
 
 	keyTypeDeclr, err := decoder.Token()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal map key type declaration: %w", err)
 	}
 	stringKeyTypeDeclr, ok := keyTypeDeclr.(string)
 	if !ok {
@@ -697,39 +695,40 @@ func (m *MapValue) UnmarshalJSON(bytes []byte) error {
 
 	keyType, err := decoder.Token()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal map key type: %w", err)
 	}
 	stringKeyType, ok := keyType.(string)
 	if !ok {
-		return fmt.Errorf("expected map value as a string")
+		return fmt.Errorf("expected map key type value as a string")
 	}
-	valueTemplate := strings.Builder{}
-	valueTemplate.WriteString("{\"sumType\":\"")
-	valueTemplate.WriteString(stringKeyType)
-	valueTemplate.WriteString("\",\"")
-	valueTemplate.WriteString(stringKeyType)
-	valueTemplate.WriteString("\":%s}")
-	tmpl := valueTemplate.String()
+	keyTemplate := strings.Builder{}
+	keyTemplate.WriteString("{\"sumType\":\"")
+	keyTemplate.WriteString(stringKeyType)
+	keyTemplate.WriteString("\",\"")
+	keyTemplate.WriteString(stringKeyType)
+	keyTemplate.WriteString("\":%s}")
+	keyTmpl := keyTemplate.String()
 
 	for decoder.More() {
 		keyValue, err := decoder.Token()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to unmarshal map key's value: %w", err)
 		}
 		stringKeyValue, ok := keyValue.(string)
 		if !ok {
 			return fmt.Errorf("expected map key as a string")
 		}
-		keyValueJson := fmt.Sprintf(tmpl, getKeyAsValue(stringKeyType, stringKeyValue))
+		keyValueJson := fmt.Sprintf(keyTmpl, wrapValue(stringKeyType, stringKeyValue))
 		key := Value{}
 		if err = json.Unmarshal([]byte(keyValueJson), &key); err != nil {
-			return err
+			return fmt.Errorf("failed to unmarshal map key value: %w", err)
 		}
 
-		value := Value{}
+		var value Value
 		if err = decoder.Decode(&value); err != nil {
-			return err
+			return fmt.Errorf("failed to unmarshal map value: %w", err)
 		}
+
 		m.keys = append(m.keys, key)
 		m.values = append(m.values, value)
 		m.len++
@@ -738,10 +737,10 @@ func (m *MapValue) UnmarshalJSON(bytes []byte) error {
 	return nil
 }
 
-func getKeyAsValue(sumType, key string) string {
+func wrapValue(sumType string, v any) any {
 	switch sumType {
-	case "smallInt", "smallUint":
-		return key
+	case "smallInt", "smallUint", "bool", "optionalValue", "tupleWith", "tensor", "map", "struct", "enum", "union", "refValue", "alias", "generic":
+		return v
 	}
-	return fmt.Sprintf("\"%v\"", key)
+	return fmt.Sprintf("\"%v\"", v)
 }

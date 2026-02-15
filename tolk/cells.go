@@ -2,6 +2,7 @@ package tolk
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -12,7 +13,7 @@ type Any boc.Cell
 func (a *Any) Unmarshal(cell *boc.Cell, ty tolkParser.Cell, decoder *Decoder) error {
 	ref, err := cell.NextRef()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get next ref: %w", err)
 	}
 	*a = Any(*ref)
 
@@ -24,7 +25,7 @@ func (a *Any) Marshal(cell *boc.Cell, ty tolkParser.Cell, encoder *Encoder) erro
 	ref := c.CopyRemaining()
 	err := cell.AddRef(ref)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add ref: %w", err)
 	}
 
 	return nil
@@ -49,13 +50,17 @@ func (a *Any) Equal(o any) bool {
 }
 
 func (a *Any) MarshalJSON() ([]byte, error) {
-	return boc.Cell(*a).MarshalJSON()
+	data, err := boc.Cell(*a).MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal any: %w", err)
+	}
+	return data, nil
 }
 
 func (a *Any) UnmarshalJSON(b []byte) error {
 	v := &boc.Cell{}
 	if err := json.Unmarshal(b, v); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal ref: %w", err)
 	}
 	*a = Any(*v)
 	return nil
@@ -75,12 +80,12 @@ func (r *RemainingValue) Marshal(cell *boc.Cell, ty tolkParser.Remaining, encode
 	c := boc.Cell(*r)
 	err := cell.WriteBitString(c.ReadRemainingBits())
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write remaining bits: %w", err)
 	}
-	for _, ref := range c.Refs() {
+	for i, ref := range c.Refs() {
 		err = cell.AddRef(ref)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to add %v remaining ref: %w", i, err)
 		}
 	}
 
@@ -106,13 +111,17 @@ func (r *RemainingValue) Equal(o any) bool {
 }
 
 func (r *RemainingValue) MarshalJSON() ([]byte, error) {
-	return boc.Cell(*r).MarshalJSON()
+	data, err := boc.Cell(*r).MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal remainings: %w", err)
+	}
+	return data, nil
 }
 
 func (r *RemainingValue) UnmarshalJSON(b []byte) error {
 	v := &boc.Cell{}
 	if err := json.Unmarshal(b, v); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal remainigs: %w", err)
 	}
 	*r = RemainingValue(*v)
 	return nil
@@ -126,13 +135,13 @@ type OptValue struct {
 func (o *OptValue) Unmarshal(cell *boc.Cell, ty tolkParser.Nullable, decoder *Decoder) error {
 	isExists, err := cell.ReadBit()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read optinal value existance bit: %w", err)
 	}
 	o.IsExists = isExists
 	if isExists {
 		err = o.Val.Unmarshal(cell, ty.Inner, decoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to unmarshal optinal value: %w", err)
 		}
 	}
 	return nil
@@ -141,10 +150,13 @@ func (o *OptValue) Unmarshal(cell *boc.Cell, ty tolkParser.Nullable, decoder *De
 func (o *OptValue) Marshal(cell *boc.Cell, ty tolkParser.Nullable, encoder *Encoder) error {
 	err := cell.WriteBit(o.IsExists)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write optinal value existance bit: %w", err)
 	}
 	if o.IsExists {
-		return o.Val.Marshal(cell, ty.Inner, encoder)
+		err = o.Val.Marshal(cell, ty.Inner, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal optinal value: %w", err)
+		}
 	}
 
 	return nil
@@ -175,7 +187,11 @@ func (o *OptValue) MarshalJSON() ([]byte, error) {
 		jsonOptValue.Val = &o.Val
 	}
 
-	return json.Marshal(jsonOptValue)
+	data, err := json.Marshal(jsonOptValue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal optinal value: %w", err)
+	}
+	return data, nil
 }
 
 func (o *OptValue) UnmarshalJSON(b []byte) error {
@@ -184,7 +200,7 @@ func (o *OptValue) UnmarshalJSON(b []byte) error {
 		Val      *Value `json:"value,omitempty"`
 	}{}
 	if err := json.Unmarshal(b, &jsonOptValue); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal optinal value: %w", err)
 	}
 	o.IsExists = jsonOptValue.IsExists
 	if o.IsExists {
@@ -199,12 +215,12 @@ type RefValue Value
 func (r *RefValue) Unmarshal(cell *boc.Cell, ty tolkParser.CellOf, decoder *Decoder) error {
 	ref, err := cell.NextRef()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get next ref: %w", err)
 	}
 	innerV := Value{}
 	err = innerV.Unmarshal(ref, ty.Inner, decoder)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal ref: %w", err)
 	}
 	*r = RefValue(innerV)
 
@@ -216,11 +232,11 @@ func (r *RefValue) Marshal(cell *boc.Cell, ty tolkParser.CellOf, encoder *Encode
 	ref := boc.NewCell()
 	err := val.Marshal(ref, ty.Inner, encoder)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal ref: %w", err)
 	}
 	err = cell.AddRef(ref)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add ref: %w", err)
 	}
 
 	return nil

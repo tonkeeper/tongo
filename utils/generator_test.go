@@ -31,6 +31,10 @@ func TestToSnakeCaseString(t *testing.T) {
 			data: "COcoon123Test",
 			want: "c_ocoon123_test",
 		},
+		{
+			data: "FunC",
+			want: "fun_c",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.data, func(t *testing.T) {

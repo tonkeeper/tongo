@@ -1,6 +1,8 @@
 package tolk
 
 import (
+	"fmt"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
 )
@@ -13,7 +15,7 @@ func (v *TupleValues) Unmarshal(cell *boc.Cell, ty tolkParser.TupleWith, decoder
 		inner := Value{}
 		err := inner.Unmarshal(cell, item, decoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to unmarshal %v tuple's value: %w", i, err)
 		}
 		list[i] = inner
 	}
@@ -25,7 +27,7 @@ func (v *TupleValues) Marshal(cell *boc.Cell, ty tolkParser.TupleWith, encoder *
 	for i, item := range []Value(*v) {
 		err := item.Marshal(cell, ty.Items[i], encoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to marshal %v tuple's value: %w", i, err)
 		}
 	}
 	return nil
@@ -56,7 +58,7 @@ func (v *TensorValues) Unmarshal(cell *boc.Cell, ty tolkParser.Tensor, decoder *
 		inner := Value{}
 		err := inner.Unmarshal(cell, item, decoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to unmarshal %v tensor's value: %w", i, err)
 		}
 		list[i] = inner
 	}
@@ -68,7 +70,7 @@ func (v *TensorValues) Marshal(cell *boc.Cell, ty tolkParser.Tensor, encoder *En
 	for i, item := range []Value(*v) {
 		err := item.Marshal(cell, ty.Items[i], encoder)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to marshal %v tensor's value: %w", i, err)
 		}
 	}
 	return nil

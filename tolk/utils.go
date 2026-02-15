@@ -3,7 +3,6 @@ package tolk
 import (
 	"errors"
 	"fmt"
-	"math/big"
 	"strconv"
 )
 
@@ -15,51 +14,17 @@ func binHexToUint64(s string) (uint64, error) {
 	if s[1] == 'b' {
 		val, err := strconv.ParseUint(s[2:], 2, 64)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("invalid bin number: %v", err)
 		}
 		return val, nil
 	} else if s[1] == 'x' {
 		val, err := strconv.ParseUint(s[2:], 16, 64)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("invalid hex number: %v", err)
 		}
 		return val, nil
 	} else {
 		return 0, fmt.Errorf("invalid number base, must be either bin or hex, got")
-	}
-}
-
-func binDecHexToUint(num string) (*big.Int, error) {
-	if len(num) == 0 {
-		return nil, fmt.Errorf("number string is empty")
-	}
-
-	if len(num) == 1 {
-		val, ok := new(big.Int).SetString(num, 10)
-		if !ok {
-			return nil, fmt.Errorf("canont convert %s to int", num)
-		}
-		return val, nil
-	}
-
-	if num[1] == 'b' {
-		val, ok := new(big.Int).SetString(num, 2)
-		if !ok {
-			return nil, fmt.Errorf("canont convert %s to int", num)
-		}
-		return val, nil
-	} else if num[1] == 'x' {
-		val, ok := new(big.Int).SetString(num, 16)
-		if !ok {
-			return nil, fmt.Errorf("canont convert %s to int", num)
-		}
-		return val, nil
-	} else {
-		val, ok := new(big.Int).SetString(num, 10)
-		if !ok {
-			return nil, fmt.Errorf("canont convert %s to int", num)
-		}
-		return val, nil
 	}
 }
 
@@ -71,7 +36,7 @@ func PrefixToUint(prefix string) (uint64, error) {
 	if len(prefix) == 1 {
 		intPrefix, err := strconv.ParseUint(prefix, 10, 64)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("invalid dec prefix: %v", err)
 		}
 
 		return intPrefix, nil
@@ -86,12 +51,12 @@ func PrefixToUint(prefix string) (uint64, error) {
 	if prefix[1] == 'b' {
 		intPrefix, err = strconv.ParseUint(prefix[2:], 2, 64)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("invalid bin prefix: %v", err)
 		}
 	} else if prefix[1] == 'x' {
 		intPrefix, err = strconv.ParseUint(prefix[2:], 16, 64)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("invalid hex prefix: %v", err)
 		}
 	} else {
 		return 0, fmt.Errorf("prefix tag must be either binary or hex format")

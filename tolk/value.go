@@ -3,16 +3,27 @@ package tolk
 // todo: move this to some package or rename somehow.
 
 import (
-	"encoding/hex"
 	"fmt"
 	"math/big"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
-	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type SumType string
+
+func (s SumType) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + utils.ToCamelCasePrivate(string(s)) + `"`), nil
+}
+
+func (s *SumType) UnmarshalJSON(bytes []byte) error {
+	if len(bytes) < 2 {
+		return fmt.Errorf("invalid SumType value: %s", string(bytes))
+	}
+	*s = SumType(bytes[1 : len(bytes)-1])
+	return nil
+}
 
 type Value struct {
 	SumType         SumType          `json:"sumType"`
@@ -399,319 +410,217 @@ func (v *Value) GetType() string {
 	return string(v.SumType)
 }
 
-func (v *Value) SetValue(val any, ty tolkParser.Ty) error {
-	switch ty.SumType {
-	case "IntN":
-		bi, ok := val.(BigInt)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to BigInt", val)
-		}
-		if ty.IntN.N <= 64 {
-			b := big.Int(bi)
-			wVal := Int64(b.Int64())
-			v.SmallInt = &wVal
-		} else {
-			v.BigInt = &bi
-		}
-	case "UintN":
-		bi, ok := val.(BigUInt)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to BigUInt", val)
-		}
-		if ty.UintN.N <= 64 {
-			b := big.Int(bi)
-			wVal := UInt64(b.Uint64())
-			v.SmallUint = &wVal
-		} else {
-			v.BigUint = &bi
-		}
-	case "VarIntN":
-		vi, ok := val.(VarInt)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to VarInt", val)
-		}
-		v.VarInt = &vi
-	case "VarUintN":
-		vi, ok := val.(VarUInt)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to VarUInt", val)
-		}
-		v.VarUint = &vi
-	case "BitsN":
-		b, ok := val.(Bits)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to Bits", val)
-		}
-		v.Bits = &b
-	case "Nullable":
-		o, ok := val.(OptValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to OptValue", val)
-		}
-		v.OptionalValue = &o
-	case "CellOf":
-		r, ok := val.(RefValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to RefValue", val)
-		}
-		v.RefValue = &r
-	case "Tensor":
-		t, ok := val.(TensorValues)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to TensorValues", val)
-		}
-		v.Tensor = &t
-	case "TupleWith":
-		t, ok := val.(TupleValues)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to TupleValues", val)
-		}
-		v.TupleWith = &t
-	case "Map":
-		m, ok := val.(MapValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to MapValue", val)
-		}
-		v.Map = &m
-	case "EnumRef":
-		e, ok := val.(EnumValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to EnumValue", val)
-		}
-		v.Enum = &e
-	case "StructRef":
-		s, ok := val.(Struct)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to Struct", val)
-		}
-		v.Struct = &s
-	case "AliasRef":
-		a, ok := val.(AliasValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to AliasValue", val)
-		}
-		v.Alias = &a
-	case "Generic":
-		g, ok := val.(GenericValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to GenericValue", val)
-		}
-		v.Generic = &g
-	case "Union":
-		u, ok := val.(UnionValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to UnionValue", val)
-		}
-		v.Union = &u
-	case "Int":
-		return fmt.Errorf("int not supported")
-	case "Coins":
-		c, ok := val.(CoinsValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to CoinsValue", val)
-		}
-		v.Coins = &c
-	case "Bool":
-		b, ok := val.(BoolValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to BoolValue", val)
-		}
-		v.Bool = &b
-	case "Cell":
-		a, ok := val.(Any)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to Any", val)
-		}
-		v.Cell = &a
-	case "Slice":
-		return fmt.Errorf("slice not supported")
-	case "Builder":
-		return fmt.Errorf("builder not supported")
-	case "Callable":
-		return fmt.Errorf("callable not supported")
-	case "Remaining":
-		r, ok := val.(RemainingValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to RemainingValue", val)
-		}
-		v.Remaining = &r
-	case "Address":
-		i, ok := val.(InternalAddress)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to InternalAddress", val)
-		}
-		v.InternalAddress = &i
-	case "AddressOpt":
-		o, ok := val.(OptionalAddress)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to OptionalAddress", val)
-		}
-		v.OptionalAddress = &o
-	case "AddressExt":
-		e, ok := val.(ExternalAddress)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to ExternalAddress", val)
-		}
-		v.ExternalAddress = &e
-	case "AddressAny":
-		a, ok := val.(AnyAddress)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to AnyAddress", val)
-		}
-		v.AnyAddress = &a
-	case "TupleAny":
-		return fmt.Errorf("tuple any not supported")
-	case "NullLiteral":
-		n, ok := val.(NullValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to NullValue", val)
-		}
-		v.Null = &n
-	case "Void":
-		vo, ok := val.(VoidValue)
-		if !ok {
-			return fmt.Errorf("cannot convert %v to VoidValue", val)
-		}
-		v.Void = &vo
-	default:
-		return fmt.Errorf("unknown ty type %q", ty.SumType)
-	}
-	return nil
-}
-
 func (v *Value) Unmarshal(cell *boc.Cell, ty tolkParser.Ty, decoder *Decoder) error {
 	var err error
 	switch ty.SumType {
 	case "IntN":
 		if ty.IntN.N <= 64 {
-			v.SumType = "smallInt"
+			v.SumType = "SmallInt"
 			def := Int64(0)
 			v.SmallInt = &def
 			err = v.SmallInt.Unmarshal(cell, *ty.IntN, decoder)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshal small int value: %w", err)
+			}
 		} else {
-			v.SumType = "bigInt"
+			v.SumType = "BigInt"
 			v.BigInt = &BigInt{}
 			err = v.BigInt.Unmarshal(cell, *ty.IntN, decoder)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshal big int value: %w", err)
+			}
 		}
 	case "UintN":
 		if ty.UintN.N <= 64 {
-			v.SumType = "smallUint"
+			v.SumType = "SmallUint"
 			def := UInt64(0)
 			v.SmallUint = &def
 			err = v.SmallUint.Unmarshal(cell, *ty.UintN, decoder)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshal small uint value: %w", err)
+			}
 		} else {
-			v.SumType = "bigUint"
+			v.SumType = "BigUint"
 			v.BigUint = &BigUInt{}
 			err = v.BigUint.Unmarshal(cell, *ty.UintN, decoder)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshal big uint value: %w", err)
+			}
 		}
 	case "VarIntN":
-		v.SumType = "varInt"
+		v.SumType = "VarInt"
 		v.VarInt = &VarInt{}
 		err = v.VarInt.Unmarshal(cell, *ty.VarIntN, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal var int value: %w", err)
+		}
 	case "VarUintN":
-		v.SumType = "varUint"
+		v.SumType = "VarUint"
 		v.VarUint = &VarUInt{}
 		err = v.VarUint.Unmarshal(cell, *ty.VarUintN, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal var uint value: %w", err)
+		}
 	case "BitsN":
-		v.SumType = "bits"
+		v.SumType = "Bits"
 		v.Bits = &Bits{}
 		err = v.Bits.Unmarshal(cell, *ty.BitsN, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal bits value: %w", err)
+		}
 	case "Nullable":
-		v.SumType = "optionalValue"
+		v.SumType = "OptionalValue"
 		v.OptionalValue = &OptValue{}
 		err = v.OptionalValue.Unmarshal(cell, *ty.Nullable, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal nullable value: %w", err)
+		}
 	case "CellOf":
-		v.SumType = "refValue"
+		v.SumType = "RefValue"
 		v.RefValue = &RefValue{}
 		err = v.RefValue.Unmarshal(cell, *ty.CellOf, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal cell of: %w", err)
+		}
 	case "Tensor":
-		v.SumType = "tensor"
+		v.SumType = "Tensor"
 		v.Tensor = &TensorValues{}
 		err = v.Tensor.Unmarshal(cell, *ty.Tensor, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal tensor value: %w", err)
+		}
 	case "TupleWith":
-		v.SumType = "tupleWith"
+		v.SumType = "TupleWith"
 		v.TupleWith = &TupleValues{}
 		err = v.TupleWith.Unmarshal(cell, *ty.TupleWith, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal tuple value: %w", err)
+		}
 	case "Map":
-		v.SumType = "map"
+		v.SumType = "Map"
 		v.Map = &MapValue{}
 		err = v.Map.Unmarshal(cell, *ty.Map, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal map value: %w", err)
+		}
 	case "EnumRef":
-		v.SumType = "enum"
+		v.SumType = "Enum"
 		v.Enum = &EnumValue{}
 		err = v.Enum.Unmarshal(cell, *ty.EnumRef, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal enum value: %w", err)
+		}
 	case "StructRef":
-		v.SumType = "struct"
+		v.SumType = "Struct"
 		v.Struct = &Struct{}
 		err = v.Struct.Unmarshal(cell, *ty.StructRef, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal struct value: %w", err)
+		}
 	case "AliasRef":
-		v.SumType = "alias"
+		v.SumType = "Alias"
 		v.Alias = &AliasValue{}
 		err = v.Alias.Unmarshal(cell, *ty.AliasRef, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal alias value: %w", err)
+		}
 	case "Generic":
-		v.SumType = "generic"
+		v.SumType = "Generic"
 		v.Generic = &GenericValue{}
 		err = v.Generic.Unmarshal(cell, *ty.Generic, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal generic value: %w", err)
+		}
 	case "Union":
-		v.SumType = "union"
+		v.SumType = "Union"
 		v.Union = &UnionValue{}
 		err = v.Union.Unmarshal(cell, *ty.Union, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal union value: %w", err)
+		}
 	case "Int":
-		err = fmt.Errorf("int not supported")
+		err = fmt.Errorf("failed to unmarshal int value: int is not supported")
 	case "Coins":
-		v.SumType = "coins"
+		v.SumType = "Coins"
 		v.Coins = &CoinsValue{}
 		err = v.Coins.Unmarshal(cell, *ty.Coins, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal coins value: %w", err)
+		}
 	case "Bool":
-		v.SumType = "bool"
+		v.SumType = "Bool"
 		def := BoolValue(false)
 		v.Bool = &def
 		err = v.Bool.Unmarshal(cell, *ty.Bool, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal bool value: %w", err)
+		}
 	case "Cell":
-		v.SumType = "cell"
+		v.SumType = "Cell"
 		v.Cell = &Any{}
 		err = v.Cell.Unmarshal(cell, *ty.Cell, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal cell value: %w", err)
+		}
 	case "Slice":
-		err = fmt.Errorf("slice not supported")
+		err = fmt.Errorf("failed to unmarshal slice value: slice is not supported")
 	case "Builder":
-		err = fmt.Errorf("builder not supported")
+		err = fmt.Errorf("failed to unmarshal builder value: builder is not supported")
 	case "Callable":
-		err = fmt.Errorf("callable not supported")
+		err = fmt.Errorf("failed to unmarshal callable value: callable is not supported")
 	case "Remaining":
-		v.SumType = "remaining"
+		v.SumType = "Remaining"
 		v.Remaining = &RemainingValue{}
 		err = v.Remaining.Unmarshal(cell, *ty.Remaining, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal remaining value: %w", err)
+		}
 	case "Address":
-		v.SumType = "internalAddress"
+		v.SumType = "InternalAddress"
 		v.InternalAddress = &InternalAddress{}
 		err = v.InternalAddress.Unmarshal(cell, *ty.Address, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal internal address value: %w", err)
+		}
 	case "AddressOpt":
-		v.SumType = "optionalAddress"
+		v.SumType = "OptionalAddress"
 		v.OptionalAddress = &OptionalAddress{}
 		err = v.OptionalAddress.Unmarshal(cell, *ty.AddressOpt, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal optional address value: %w", err)
+		}
 	case "AddressExt":
-		v.SumType = "externalAddress"
+		v.SumType = "ExternalAddress"
 		v.ExternalAddress = &ExternalAddress{}
 		err = v.ExternalAddress.Unmarshal(cell, *ty.AddressExt, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal external address value: %w", err)
+		}
 	case "AddressAny":
-		v.SumType = "anyAddress"
+		v.SumType = "AnyAddress"
 		v.AnyAddress = &AnyAddress{}
 		err = v.AnyAddress.Unmarshal(cell, *ty.AddressAny, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal any address value: %w", err)
+		}
 	case "TupleAny":
-		err = fmt.Errorf("tuple any not supported")
+		err = fmt.Errorf("failed to unmarshal tuple any value: tuple any is not supported")
 	case "NullLiteral":
-		v.SumType = "null"
+		v.SumType = "Null"
 		v.Null = &NullValue{}
 		err = v.Null.Unmarshal(cell, *ty.NullLiteral, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal null value: %w", err)
+		}
 	case "Void":
-		v.SumType = "void"
+		v.SumType = "Void"
 		v.Void = &VoidValue{}
 		err = v.Void.Unmarshal(cell, *ty.Void, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal void value: %w", err)
+		}
 	default:
 		return fmt.Errorf("unknown ty type %q", ty.SumType)
-	}
-	if err != nil {
-		return err
 	}
 	return nil
 }
@@ -721,228 +630,238 @@ func (v *Value) Marshal(cell *boc.Cell, ty tolkParser.Ty, encoder *Encoder) erro
 	switch ty.SumType {
 	case "IntN":
 		if ty.IntN.N <= 64 {
-			if v.SumType != "smallInt" {
-				return fmt.Errorf("expected smallInt, but got %v", v.SumType)
+			if v.SumType != "SmallInt" {
+				return fmt.Errorf("expected SmallInt, but got %v", v.SumType)
 			}
-			return v.SmallInt.Marshal(cell, *ty.IntN, encoder)
+			err = v.SmallInt.Marshal(cell, *ty.IntN, encoder)
+			if err != nil {
+				return fmt.Errorf("failed to marshal small int value: %w", err)
+			}
 		} else {
-			if v.SumType != "bigInt" {
-				return fmt.Errorf("expected bigInt, but got %v", v.SumType)
+			if v.SumType != "BigInt" {
+				return fmt.Errorf("expected BigInt, but got %v", v.SumType)
 			}
-			return v.BigInt.Marshal(cell, *ty.IntN, encoder)
+			err = v.BigInt.Marshal(cell, *ty.IntN, encoder)
+			if err != nil {
+				return fmt.Errorf("failed to marshal big int value: %w", err)
+			}
 		}
 	case "UintN":
 		if ty.UintN.N <= 64 {
-			if v.SumType != "smallUint" {
-				return fmt.Errorf("expected smallUint, but got %v", v.SumType)
+			if v.SumType != "SmallUint" {
+				return fmt.Errorf("expected SmallUint, but got %v", v.SumType)
 			}
-			return v.SmallUint.Marshal(cell, *ty.UintN, encoder)
+			err = v.SmallUint.Marshal(cell, *ty.UintN, encoder)
+			if err != nil {
+				return fmt.Errorf("failed to marshal small uint value: %w", err)
+			}
 		} else {
-			if v.SumType != "bigUint" {
-				return fmt.Errorf("expected bigUint, but got %v", v.SumType)
+			if v.SumType != "BigUint" {
+				return fmt.Errorf("expected BigUint, but got %v", v.SumType)
 			}
-			return v.BigUint.Marshal(cell, *ty.UintN, encoder)
+			err = v.BigUint.Marshal(cell, *ty.UintN, encoder)
+			if err != nil {
+				return fmt.Errorf("failed to marshal big uint value: %w", err)
+			}
 		}
 	case "VarIntN":
-		if v.SumType != "varInt" {
-			return fmt.Errorf("expected varInt, but got %v", v.SumType)
+		if v.SumType != "VarInt" {
+			return fmt.Errorf("expected VarInt, but got %v", v.SumType)
 		}
-		return v.VarInt.Marshal(cell, *ty.VarIntN, encoder)
+		err = v.VarInt.Marshal(cell, *ty.VarIntN, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal var int value: %w", err)
+		}
 	case "VarUintN":
-		if v.SumType != "varUint" {
-			return fmt.Errorf("expected varUint, but got %v", v.SumType)
+		if v.SumType != "VarUint" {
+			return fmt.Errorf("expected VarUint, but got %v", v.SumType)
 		}
-		return v.VarUint.Marshal(cell, *ty.VarUintN, encoder)
+		err = v.VarUint.Marshal(cell, *ty.VarUintN, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal var uint value: %w", err)
+		}
 	case "BitsN":
-		if v.SumType != "bits" {
-			return fmt.Errorf("expected bits, but got %v", v.SumType)
+		if v.SumType != "Bits" {
+			return fmt.Errorf("expected Bits, but got %v", v.SumType)
 		}
-		return v.Bits.Marshal(cell, *ty.BitsN, encoder)
+		err = v.Bits.Marshal(cell, *ty.BitsN, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal bits value: %w", err)
+		}
 	case "Nullable":
-		if v.SumType != "optionalValue" {
-			return fmt.Errorf("expected optionalValue, but got %v", v.SumType)
+		if v.SumType != "OptionalValue" {
+			return fmt.Errorf("expected OptionalValue, but got %v", v.SumType)
 		}
-		return v.OptionalValue.Marshal(cell, *ty.Nullable, encoder)
+		err = v.OptionalValue.Marshal(cell, *ty.Nullable, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal nullable value: %w", err)
+		}
 	case "CellOf":
-		if v.SumType != "refValue" {
-			return fmt.Errorf("expected refValue, but got %v", v.SumType)
+		if v.SumType != "RefValue" {
+			return fmt.Errorf("expected RefValue, but got %v", v.SumType)
 		}
-		return v.RefValue.Marshal(cell, *ty.CellOf, encoder)
+		err = v.RefValue.Marshal(cell, *ty.CellOf, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal cell of value: %w", err)
+		}
 	case "Tensor":
-		if v.SumType != "tensor" {
-			return fmt.Errorf("expected tensor, but got %v", v.SumType)
+		if v.SumType != "Tensor" {
+			return fmt.Errorf("expected Tensor, but got %v", v.SumType)
 		}
-		return v.Tensor.Marshal(cell, *ty.Tensor, encoder)
+		err = v.Tensor.Marshal(cell, *ty.Tensor, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal tensor value: %w", err)
+		}
 	case "TupleWith":
-		if v.SumType != "tupleWith" {
-			return fmt.Errorf("expected tupleWith, but got %v", v.SumType)
+		if v.SumType != "TupleWith" {
+			return fmt.Errorf("expected TupleWith, but got %v", v.SumType)
 		}
-		return v.TupleWith.Marshal(cell, *ty.TupleWith, encoder)
+		err = v.TupleWith.Marshal(cell, *ty.TupleWith, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal tuple value: %w", err)
+		}
 	case "Map":
-		if v.SumType != "map" {
-			return fmt.Errorf("expected map, but got %v", v.SumType)
+		if v.SumType != "Map" {
+			return fmt.Errorf("expected Map, but got %v", v.SumType)
 		}
-		return v.Map.Marshal(cell, *ty.Map, encoder)
+		err = v.Map.Marshal(cell, *ty.Map, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal map value: %w", err)
+		}
 	case "EnumRef":
-		if v.SumType != "enum" {
-			return fmt.Errorf("expected enum, but got %v", v.SumType)
+		if v.SumType != "Enum" {
+			return fmt.Errorf("expected Enum, but got %v", v.SumType)
 		}
-		return v.Enum.Marshal(cell, *ty.EnumRef, encoder)
+		err = v.Enum.Marshal(cell, *ty.EnumRef, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal enum value: %w", err)
+		}
 	case "StructRef":
-		if v.SumType != "struct" {
-			return fmt.Errorf("expected struct, but got %v", v.SumType)
+		if v.SumType != "Struct" {
+			return fmt.Errorf("expected Struct, but got %v", v.SumType)
 		}
-		return v.Struct.Marshal(cell, *ty.StructRef, encoder)
+		err = v.Struct.Marshal(cell, *ty.StructRef, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal struct value: %w", err)
+		}
 	case "AliasRef":
-		if v.SumType != "alias" {
-			return fmt.Errorf("expected alias, but got %v", v.SumType)
+		if v.SumType != "Alias" {
+			return fmt.Errorf("expected Alias, but got %v", v.SumType)
 		}
-		return v.Alias.Marshal(cell, *ty.AliasRef, encoder)
+		err = v.Alias.Marshal(cell, *ty.AliasRef, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal alias value: %w", err)
+		}
 	case "Generic":
-		if v.SumType != "generic" {
-			return fmt.Errorf("expected generic, but got %v", v.SumType)
+		if v.SumType != "Generic" {
+			return fmt.Errorf("expected Generic, but got %v", v.SumType)
 		}
-		return v.Generic.Marshal(cell, *ty.Generic, encoder)
+		err = v.Generic.Marshal(cell, *ty.Generic, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal generic value: %w", err)
+		}
 	case "Union":
-		if v.SumType != "union" {
-			return fmt.Errorf("expected union, but got %v", v.SumType)
+		if v.SumType != "Union" {
+			return fmt.Errorf("expected Union, but got %v", v.SumType)
 		}
-		return v.Union.Marshal(cell, *ty.Union, encoder)
+		err = v.Union.Marshal(cell, *ty.Union, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal union value: %w", err)
+		}
 	case "Int":
-		err = fmt.Errorf("int not supported")
+		err = fmt.Errorf("failed to marshal int value: int is not supported")
 	case "Coins":
-		if v.SumType != "coins" {
-			return fmt.Errorf("expected coins, but got %v", v.SumType)
+		if v.SumType != "Coins" {
+			return fmt.Errorf("expected Coins, but got %v", v.SumType)
 		}
-		return v.Coins.Marshal(cell, *ty.Coins, encoder)
+		err = v.Coins.Marshal(cell, *ty.Coins, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal coins value: %w", err)
+		}
 	case "Bool":
-		if v.SumType != "bool" {
-			return fmt.Errorf("expected bool, but got %v", v.SumType)
+		if v.SumType != "Bool" {
+			return fmt.Errorf("expected Bool, but got %v", v.SumType)
 		}
-		return v.Bool.Marshal(cell, *ty.Bool, encoder)
+		err = v.Bool.Marshal(cell, *ty.Bool, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal bool value: %w", err)
+		}
 	case "Cell":
-		if v.SumType != "cell" {
-			return fmt.Errorf("expected cell, but got %v", v.SumType)
+		if v.SumType != "Cell" {
+			return fmt.Errorf("expected Cell, but got %v", v.SumType)
 		}
-		return v.Cell.Marshal(cell, *ty.Cell, encoder)
+		err = v.Cell.Marshal(cell, *ty.Cell, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal cell value: %w", err)
+		}
 	case "Slice":
-		err = fmt.Errorf("slice not supported")
+		err = fmt.Errorf("failed to marshal slice value: slice is not supported")
 	case "Builder":
-		err = fmt.Errorf("builder not supported")
+		err = fmt.Errorf("failed to marshal builder value: builder is not supported")
 	case "Callable":
-		err = fmt.Errorf("callable not supported")
+		err = fmt.Errorf("failed to marshal int callable: callable is not supported")
 	case "Remaining":
-		if v.SumType != "remaining" {
-			return fmt.Errorf("expected remaining, but got %v", v.SumType)
+		if v.SumType != "Remaining" {
+			return fmt.Errorf("expected Remaining, but got %v", v.SumType)
 		}
-		return v.Remaining.Marshal(cell, *ty.Remaining, encoder)
+		err = v.Remaining.Marshal(cell, *ty.Remaining, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal remaining value: %w", err)
+		}
 	case "Address":
-		if v.SumType != "internalAddress" {
-			return fmt.Errorf("expected internalAddress, but got %v", v.SumType)
+		if v.SumType != "InternalAddress" {
+			return fmt.Errorf("expected InternalAddress, but got %v", v.SumType)
 		}
-		return v.InternalAddress.Marshal(cell, *ty.Address, encoder)
+		err = v.InternalAddress.Marshal(cell, *ty.Address, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal internal address value: %w", err)
+		}
 	case "AddressOpt":
-		if v.SumType != "optionalAddress" {
-			return fmt.Errorf("expected optionalAddress, but got %v", v.SumType)
+		if v.SumType != "OptionalAddress" {
+			return fmt.Errorf("expected OptionalAddress, but got %v", v.SumType)
 		}
-		return v.OptionalAddress.Marshal(cell, *ty.AddressOpt, encoder)
+		err = v.OptionalAddress.Marshal(cell, *ty.AddressOpt, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal optional address value: %w", err)
+		}
 	case "AddressExt":
-		if v.SumType != "externalAddress" {
-			return fmt.Errorf("expected externalAddress, but got %v", v.SumType)
+		if v.SumType != "ExternalAddress" {
+			return fmt.Errorf("expected ExternalAddress, but got %v", v.SumType)
 		}
-		return v.ExternalAddress.Marshal(cell, *ty.AddressExt, encoder)
+		err = v.ExternalAddress.Marshal(cell, *ty.AddressExt, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal external address value: %w", err)
+		}
 	case "AddressAny":
-		if v.SumType != "anyAddress" {
-			return fmt.Errorf("expected anyAddress, but got %v", v.SumType)
+		if v.SumType != "AnyAddress" {
+			return fmt.Errorf("expected AnyAddress, but got %v", v.SumType)
 		}
-		return v.AnyAddress.Marshal(cell, *ty.AddressAny, encoder)
+		err = v.AnyAddress.Marshal(cell, *ty.AddressAny, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal any address value: %w", err)
+		}
 	case "TupleAny":
-		err = fmt.Errorf("tuple any not supported")
+		err = fmt.Errorf("failed to marshal tuple any value: tuple any not supported")
 	case "NullLiteral":
-		if v.SumType != "null" {
-			return fmt.Errorf("expected null, but got %v", v.SumType)
+		if v.SumType != "Null" {
+			return fmt.Errorf("expected Null, but got %v", v.SumType)
 		}
-		return v.Null.Marshal(cell, *ty.NullLiteral, encoder)
+		err = v.Null.Marshal(cell, *ty.NullLiteral, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal null value: %w", err)
+		}
 	case "Void":
-		if v.SumType != "void" {
-			return fmt.Errorf("expected void, but got %v", v.SumType)
+		if v.SumType != "Void" {
+			return fmt.Errorf("expected Void, but got %v", v.SumType)
 		}
-		return v.Void.Marshal(cell, *ty.Void, encoder)
+		err = v.Void.Marshal(cell, *ty.Void, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal void value: %w", err)
+		}
 	default:
 		err = fmt.Errorf("unknown ty type %q", ty.SumType)
 	}
-	if err != nil {
-		return err
-	}
 	return nil
-}
-
-func (v *Value) unmarshalDefaultValue(d *tolkParser.DefaultValue, vType tolkParser.Ty) (bool, error) {
-	switch d.SumType {
-	case "IntDefaultValue":
-		val, err := binDecHexToUint(d.IntDefaultValue.V)
-		if err != nil {
-			return false, err
-		}
-		err = v.SetValue(BigInt(*val), vType)
-		if err != nil {
-			return false, err
-		}
-	case "BoolDefaultValue":
-		err := v.SetValue(BoolValue(d.BoolDefaultValue.V), vType)
-		if err != nil {
-			return false, err
-		}
-	case "SliceDefaultValue":
-		val, err := hex.DecodeString(d.SliceDefaultValue.Hex)
-		if err != nil {
-			return false, err
-		}
-		bs := boc.NewBitString(hex.DecodedLen(len(val)))
-		err = bs.WriteBytes(val)
-		if err != nil {
-			return false, err
-		}
-		err = v.SetValue(*boc.NewCellWithBits(bs), vType)
-		if err != nil {
-			return false, err
-		}
-	case "AddressDefaultValue":
-		accountID, err := ton.ParseAccountID(d.AddressDefaultValue.Address)
-		if err != nil {
-			return false, err
-		}
-		err = v.SetValue(InternalAddress{
-			Workchain: int8(accountID.Workchain),
-			Address:   accountID.Address,
-		}, vType)
-		if err != nil {
-			return false, err
-		}
-	case "TensorDefaultValue":
-		if vType.SumType != "Tensor" {
-			return false, fmt.Errorf("tensor default value type must be tensor, got %q", d.SumType)
-		}
-		tensor := make([]Value, len(d.TensorDefaultValue.Items))
-		for i, item := range d.TensorDefaultValue.Items {
-			val := Value{}
-			_, err := v.unmarshalDefaultValue(&item, vType.Tensor.Items[i])
-			if err != nil {
-				return false, err
-			}
-			tensor[i] = val
-		}
-		err := v.SetValue(tensor, vType)
-		if err != nil {
-			return false, err
-		}
-	case "NullDefaultValue":
-		return false, nil
-	default:
-		return false, fmt.Errorf("unknown default value type %q", d.SumType)
-	}
-
-	return true, nil
 }
 
 func (v *Value) Equal(o any) bool {
@@ -952,137 +871,137 @@ func (v *Value) Equal(o any) bool {
 	}
 
 	switch v.SumType {
-	case "bool":
+	case "Bool":
 		if otherValue.Bool == nil {
 			return false
 		}
 		return v.Bool.Equal(*otherValue.Bool)
-	case "smallInt":
+	case "SmallInt":
 		if otherValue.SmallInt == nil {
 			return false
 		}
 		return v.SmallInt.Equal(*otherValue.SmallInt)
-	case "smallUint":
+	case "SmallUint":
 		if otherValue.SmallUint == nil {
 			return false
 		}
 		return v.SmallUint.Equal(*otherValue.SmallUint)
-	case "bigInt":
+	case "BigInt":
 		if otherValue.BigInt == nil {
 			return false
 		}
 		return v.BigInt.Equal(*otherValue.BigInt)
-	case "bigUint":
+	case "BigUint":
 		if otherValue.BigUint == nil {
 			return false
 		}
 		return v.BigUint.Equal(*otherValue.BigUint)
-	case "varInt":
+	case "VarInt":
 		if otherValue.VarInt == nil {
 			return false
 		}
 		return v.VarInt.Equal(*otherValue.VarInt)
-	case "varUint":
+	case "VarUint":
 		if otherValue.VarUint == nil {
 			return false
 		}
 		return v.VarUint.Equal(*otherValue.VarUint)
-	case "coins":
+	case "Coins":
 		if otherValue.Coins == nil {
 			return false
 		}
 		return v.Coins.Equal(*otherValue.Coins)
-	case "bits":
+	case "Bits":
 		if otherValue.Bits == nil {
 			return false
 		}
 		return v.Bits.Equal(*otherValue.Bits)
-	case "cell":
+	case "Cell":
 		if otherValue.Cell == nil {
 			return false
 		}
 		return v.Cell.Equal(*otherValue.Cell)
-	case "remaining":
+	case "Remaining":
 		if otherValue.Remaining == nil {
 			return false
 		}
 		return v.Remaining.Equal(*otherValue.Remaining)
-	case "internalAddress":
+	case "InternalAddress":
 		if otherValue.InternalAddress == nil {
 			return false
 		}
 		return v.InternalAddress.Equal(*otherValue.InternalAddress)
-	case "optionalAddress":
+	case "OptionalAddress":
 		if otherValue.OptionalAddress == nil {
 			return false
 		}
 		return v.OptionalAddress.Equal(*otherValue.OptionalAddress)
-	case "externalAddress":
+	case "ExternalAddress":
 		if otherValue.ExternalAddress == nil {
 			return false
 		}
 		return v.ExternalAddress.Equal(*otherValue.ExternalAddress)
-	case "anyAddress":
+	case "AnyAddress":
 		if otherValue.AnyAddress == nil {
 			return false
 		}
 		return v.AnyAddress.Equal(*otherValue.AnyAddress)
-	case "optionalValue":
+	case "OptionalValue":
 		if otherValue.OptionalValue == nil {
 			return false
 		}
 		return v.OptionalValue.Equal(*otherValue.OptionalValue)
-	case "refValue":
+	case "RefValue":
 		if otherValue.RefValue == nil {
 			return false
 		}
 		return v.RefValue.Equal(*otherValue.RefValue)
-	case "tupleWith":
+	case "TupleWith":
 		if otherValue.TupleWith == nil {
 			return false
 		}
 		return v.TupleWith.Equal(*otherValue.TupleWith)
-	case "tensor":
+	case "Tensor":
 		if otherValue.Tensor == nil {
 			return false
 		}
 		return v.Tensor.Equal(*otherValue.Tensor)
-	case "map":
+	case "Map":
 		if otherValue.Map == nil {
 			return false
 		}
 		return v.Map.Equal(*otherValue.Map)
-	case "struct":
+	case "Struct":
 		if otherValue.Struct == nil {
 			return false
 		}
 		return v.Struct.Equal(*otherValue.Struct)
-	case "alias":
+	case "Alias":
 		if otherValue.Alias == nil {
 			return false
 		}
 		return v.Alias.Equal(*otherValue.Alias)
-	case "enum":
+	case "Enum":
 		if otherValue.Enum == nil {
 			return false
 		}
 		return v.Enum.Equal(*otherValue.Enum)
-	case "generic":
+	case "Generic":
 		if otherValue.Generic == nil {
 			return false
 		}
 		return v.Generic.Equal(*otherValue.Generic)
-	case "union":
+	case "Union":
 		if otherValue.Union == nil {
 			return false
 		}
 		return v.Union.Equal(*otherValue.Union)
-	case "null":
+	case "Null":
 		if otherValue.Null == nil {
 			return false
 		}
 		return v.Null.Equal(*otherValue.Null)
-	case "void":
+	case "Void":
 		if otherValue.Void == nil {
 			return false
 		}

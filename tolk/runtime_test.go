@@ -18,12 +18,7 @@ const jsonFilesPath = "testdata/json/"
 
 func TestRuntime_UnmarshalSmallInt(t *testing.T) {
 	inputFilename := "small_int"
-	ty := tolkParser.Ty{
-		SumType: "IntN",
-		IntN: &tolkParser.IntN{
-			N: 24,
-		},
-	}
+	ty := tolkParser.NewIntNType(24)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010005000006ff76c41616db06")
 	if err != nil {
@@ -55,12 +50,7 @@ func TestRuntime_UnmarshalSmallInt(t *testing.T) {
 
 func TestRuntime_UnmarshalBigInt(t *testing.T) {
 	inputFilename := "big_int"
-	ty := tolkParser.Ty{
-		SumType: "IntN",
-		IntN: &tolkParser.IntN{
-			N: 183,
-		},
-	}
+	ty := tolkParser.NewIntNType(183)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001900002dfffffffffffffffffffffffffffffffffff99bfeac6423a6f0b50c")
 	if err != nil {
@@ -87,12 +77,7 @@ func TestRuntime_UnmarshalBigInt(t *testing.T) {
 
 func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
 	inputFilename := "small_uint"
-	ty := tolkParser.Ty{
-		SumType: "UintN",
-		UintN: &tolkParser.UintN{
-			N: 53,
-		},
-	}
+	ty := tolkParser.NewUIntNType(53)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000d00000000001d34e435eafd")
 	if err != nil {
@@ -119,12 +104,7 @@ func TestRuntime_UnmarshalSmallUInt(t *testing.T) {
 
 func TestRuntime_UnmarshalBigUInt(t *testing.T) {
 	inputFilename := "big_uint"
-	ty := tolkParser.Ty{
-		SumType: "UintN",
-		UintN: &tolkParser.UintN{
-			N: 257,
-		},
-	}
+	ty := tolkParser.NewUIntNType(257)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002300004100000000000000000000000000000000000000000000000000009fc4212a38ba40b11cce12")
 	if err != nil {
@@ -151,13 +131,7 @@ func TestRuntime_UnmarshalBigUInt(t *testing.T) {
 
 func TestRuntime_UnmarshalVarInt(t *testing.T) {
 	inputFilename := "var_int"
-	ty := tolkParser.Ty{
-		SumType: "VarIntN",
-		VarIntN: &tolkParser.VarIntN{
-			N: 16,
-		},
-	}
-
+	ty := tolkParser.NewVarInt16Type()
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000730c98588449b6923")
 	if err != nil {
 		t.Fatal(err)
@@ -183,12 +157,7 @@ func TestRuntime_UnmarshalVarInt(t *testing.T) {
 
 func TestRuntime_UnmarshalVarUInt(t *testing.T) {
 	inputFilename := "var_uint"
-	ty := tolkParser.Ty{
-		SumType: "VarUintN",
-		VarUintN: &tolkParser.VarUintN{
-			N: 32,
-		},
-	}
+	ty := tolkParser.NewVarUInt32Type()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000800000b28119ab36b44d3a86c0f")
 	if err != nil {
@@ -215,12 +184,7 @@ func TestRuntime_UnmarshalVarUInt(t *testing.T) {
 
 func TestRuntime_UnmarshalBits(t *testing.T) {
 	inputFilename := "bits"
-	ty := tolkParser.Ty{
-		SumType: "BitsN",
-		BitsN: &tolkParser.BitsN{
-			N: 24,
-		},
-	}
+	ty := tolkParser.NewBitsNType(24)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000500000631323318854035")
 	if err != nil {
@@ -247,10 +211,7 @@ func TestRuntime_UnmarshalBits(t *testing.T) {
 
 func TestRuntime_UnmarshalCoins(t *testing.T) {
 	inputFilename := "coins"
-	ty := tolkParser.Ty{
-		SumType: "Coins",
-		Coins:   &tolkParser.Coins{},
-	}
+	ty := tolkParser.NewCoinsType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010007000009436ec6e0189ebbd7f4")
 	if err != nil {
@@ -277,10 +238,7 @@ func TestRuntime_UnmarshalCoins(t *testing.T) {
 
 func TestRuntime_UnmarshalBool(t *testing.T) {
 	inputFilename := "bool"
-	ty := tolkParser.Ty{
-		SumType: "Bool",
-		Bool:    &tolkParser.Bool{},
-	}
+	ty := tolkParser.NewBoolType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
 	if err != nil {
@@ -307,10 +265,7 @@ func TestRuntime_UnmarshalBool(t *testing.T) {
 
 func TestRuntime_UnmarshalCell(t *testing.T) {
 	inputFilename := "cell"
-	ty := tolkParser.Ty{
-		SumType: "Cell",
-		Cell:    &tolkParser.Cell{},
-	}
+	ty := tolkParser.NewCellType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101020100090001000100080000007ba52a3292")
 	if err != nil {
@@ -341,10 +296,7 @@ func TestRuntime_UnmarshalCell(t *testing.T) {
 
 func TestRuntime_UnmarshalRemaining(t *testing.T) {
 	inputFilename := "remaining"
-	ty := tolkParser.Ty{
-		SumType:   "Remaining",
-		Remaining: &tolkParser.Remaining{},
-	}
+	ty := tolkParser.NewRemainingType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
@@ -375,10 +327,7 @@ func TestRuntime_UnmarshalRemaining(t *testing.T) {
 
 func TestRuntime_UnmarshalAddress(t *testing.T) {
 	inputFilename := "internal_address"
-	ty := tolkParser.Ty{
-		SumType: "Address",
-		Address: &tolkParser.Address{},
-	}
+	ty := tolkParser.NewAddressType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
@@ -405,10 +354,7 @@ func TestRuntime_UnmarshalAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalNotExitsOptionalAddress(t *testing.T) {
 	inputFilename := "not_exists_optional_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressOpt",
-		AddressOpt: &tolkParser.AddressOpt{},
-	}
+	ty := tolkParser.NewAddressOptType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
@@ -436,10 +382,7 @@ func TestRuntime_UnmarshalNotExitsOptionalAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalExistsOptionalAddress(t *testing.T) {
 	inputFilename := "exists_optional_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressOpt",
-		AddressOpt: &tolkParser.AddressOpt{},
-	}
+	ty := tolkParser.NewAddressOptType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
@@ -467,10 +410,7 @@ func TestRuntime_UnmarshalExistsOptionalAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalExternalAddress(t *testing.T) {
 	inputFilename := "external_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressExt",
-		AddressExt: &tolkParser.AddressExt{},
-	}
+	ty := tolkParser.NewAddressExtType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
@@ -502,10 +442,7 @@ func TestRuntime_UnmarshalExternalAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalAnyNoneAddress(t *testing.T) {
 	inputFilename := "any_none_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
@@ -532,10 +469,7 @@ func TestRuntime_UnmarshalAnyNoneAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalAnyInternalAddress(t *testing.T) {
 	inputFilename := "any_internal_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
@@ -562,10 +496,7 @@ func TestRuntime_UnmarshalAnyInternalAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalAnyExternalAddress(t *testing.T) {
 	inputFilename := "any_external_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
@@ -597,10 +528,7 @@ func TestRuntime_UnmarshalAnyExternalAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalAnyVarAddress(t *testing.T) {
 	inputFilename := "any_var_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
@@ -636,15 +564,7 @@ func TestRuntime_UnmarshalAnyVarAddress(t *testing.T) {
 
 func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
 	inputFilename := "not_exists_nullable"
-	ty := tolkParser.Ty{
-		SumType: "Nullable",
-		Nullable: &tolkParser.Nullable{
-			Inner: tolkParser.Ty{
-				SumType:   "Remaining",
-				Remaining: &tolkParser.Remaining{},
-			},
-		},
-	}
+	ty := tolkParser.NewNullableType(tolkParser.NewRemainingType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
 	if err != nil {
@@ -671,15 +591,7 @@ func TestRuntime_UnmarshalNotExistsNullable(t *testing.T) {
 
 func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
 	inputFilename := "exists_nullable"
-	ty := tolkParser.Ty{
-		SumType: "Nullable",
-		Nullable: &tolkParser.Nullable{
-			Inner: tolkParser.Ty{
-				SumType: "Cell",
-				Cell:    &tolkParser.Cell{},
-			},
-		},
-	}
+	ty := tolkParser.NewNullableType(tolkParser.NewCellType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000b000101c001000900000c0ae007880db9")
 	if err != nil {
@@ -717,17 +629,7 @@ func TestRuntime_UnmarshalExistsNullable(t *testing.T) {
 
 func TestRuntime_UnmarshalRef(t *testing.T) {
 	inputFilename := "ref"
-	ty := tolkParser.Ty{
-		SumType: "CellOf",
-		CellOf: &tolkParser.CellOf{
-			Inner: tolkParser.Ty{
-				SumType: "IntN",
-				IntN: &tolkParser.IntN{
-					N: 65,
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewCellOfType(tolkParser.NewIntNType(65))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000e000100010011000000000009689e40e150b4c5")
 	if err != nil {
@@ -758,10 +660,7 @@ func TestRuntime_UnmarshalRef(t *testing.T) {
 
 func TestRuntime_UnmarshalEmptyTensor(t *testing.T) {
 	inputFilename := "empty_tensor"
-	ty := tolkParser.Ty{
-		SumType: "Tensor",
-		Tensor:  &tolkParser.Tensor{},
-	}
+	ty := tolkParser.NewTensorType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100020000004cacb9cd")
 	if err != nil {
@@ -789,57 +688,16 @@ func TestRuntime_UnmarshalEmptyTensor(t *testing.T) {
 
 func TestRuntime_UnmarshalTensor(t *testing.T) {
 	inputFilename := "tensor"
-	ty := tolkParser.Ty{
-		SumType: "Tensor",
-		Tensor: &tolkParser.Tensor{
-			Items: []tolkParser.Ty{
-				{
-					SumType: "UintN",
-					UintN: &tolkParser.UintN{
-						N: 123,
-					},
-				},
-				{
-					SumType: "Bool",
-					Bool:    &tolkParser.Bool{},
-				},
-				{
-					SumType: "Coins",
-					Coins:   &tolkParser.Coins{},
-				},
-				{
-					SumType: "Tensor",
-					Tensor: &tolkParser.Tensor{
-						Items: []tolkParser.Ty{
-							{
-								SumType: "IntN",
-								IntN: &tolkParser.IntN{
-									N: 23,
-								},
-							},
-							{
-								SumType: "Nullable",
-								Nullable: &tolkParser.Nullable{
-									Inner: tolkParser.Ty{
-										SumType: "IntN",
-										IntN: &tolkParser.IntN{
-											N: 2,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				{
-					SumType: "VarIntN",
-					VarIntN: &tolkParser.VarIntN{
-						N: 32,
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewTensorType(
+		tolkParser.NewUIntNType(123),
+		tolkParser.NewBoolType(),
+		tolkParser.NewCoinsType(),
+		tolkParser.NewTensorType(
+			tolkParser.NewIntNType(23),
+			tolkParser.NewNullableType(tolkParser.NewIntNType(2)),
+		),
+		tolkParser.NewVarIntType(32),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001f00003900000000000000000000000000021cb43b9aca00fffd550bfbaae07401a2a98117")
 	if err != nil {
@@ -923,21 +781,7 @@ func TestRuntime_UnmarshalTensor(t *testing.T) {
 
 func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
 	inputFilename := "int_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "IntN",
-				IntN: &tolkParser.IntN{
-					N: 32,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Bool",
-				Bool:    &tolkParser.Bool{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewIntNType(32), tolkParser.NewBoolType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000c000101c001000ba00000007bc09a662c32")
 	if err != nil {
@@ -977,21 +821,7 @@ func TestRuntime_UnmarshalIntKeyMap(t *testing.T) {
 
 func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
 	inputFilename := "uint_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "UintN",
-				UintN: &tolkParser.UintN{
-					N: 16,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Address",
-				Address: &tolkParser.Address{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewUIntNType(16), tolkParser.NewAddressType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410104010053000101c0010202cb02030045a7400b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe80045a3cff5555555555555555555555555555555555555555555555555555555555555555888440ce8")
 	if err != nil {
@@ -1043,21 +873,7 @@ func TestRuntime_UnmarshalUIntKeyMap(t *testing.T) {
 
 func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
 	inputFilename := "big_int_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "UintN",
-				UintN: &tolkParser.UintN{
-					N: 78,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Cell",
-				Cell:    &tolkParser.Cell{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewUIntNType(78), tolkParser.NewCellType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301001a000101c0010115a70000000000000047550902000b000000001ab01d5bf1a9")
 	if err != nil {
@@ -1101,43 +917,16 @@ func TestRuntime_UnmarshalBigIntKeyMap(t *testing.T) {
 
 func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
 	inputFilename := "bits_int_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "BitsN",
-				BitsN: &tolkParser.BitsN{
-					N: 16,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Map",
-				Map: &tolkParser.Map{
-					K: tolkParser.Ty{
-						SumType: "IntN",
-						IntN: &tolkParser.IntN{
-							N: 64,
-						},
-					},
-					V: tolkParser.Ty{
-						SumType: "Tensor",
-						Tensor: &tolkParser.Tensor{
-							Items: []tolkParser.Ty{
-								{
-									SumType: "Address",
-									Address: &tolkParser.Address{},
-								},
-								{
-									SumType: "Coins",
-									Coins:   &tolkParser.Coins{},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(
+		tolkParser.NewBitsNType(16),
+		tolkParser.NewMapType(
+			tolkParser.NewIntNType(64),
+			tolkParser.NewTensorType(
+				tolkParser.NewAddressType(),
+				tolkParser.NewCoinsType(),
+			),
+		),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301003b000101c0010106a0828502005ea0000000000000003e400b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe43b9aca00b89cdc86")
 	if err != nil {
@@ -1208,19 +997,7 @@ func TestRuntime_UnmarshalBitsKeyMap(t *testing.T) {
 
 func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
 	inputFilename := "address_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "Address",
-				Address: &tolkParser.Address{},
-			},
-			V: tolkParser.Ty{
-				SumType: "Coins",
-				Coins:   &tolkParser.Coins{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewAddressType(), tolkParser.NewCoinsType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201002f000101c0010051a17002c44ea652d4092859c67da44e4ca3add6565b0e2897d640a2c51bfb370d8877f9409502f9002016fdc16e")
 	if err != nil {
@@ -1269,35 +1046,11 @@ func TestRuntime_UnmarshalAddressKeyMap(t *testing.T) {
 
 func TestRuntime_UnmarshalUnionWithDecPrefix(t *testing.T) {
 	jsonInputFilename := "union_with_dec_prefix"
-	ty := tolkParser.Ty{
-		SumType: "Union",
-		Union: &tolkParser.Union{
-			Variants: []tolkParser.UnionVariant{
-				{
-					PrefixStr:        "0",
-					PrefixLen:        1,
-					PrefixEatInPlace: true,
-					VariantTy: tolkParser.Ty{
-						SumType: "IntN",
-						IntN: &tolkParser.IntN{
-							N: 16,
-						},
-					},
-				},
-				{
-					PrefixStr:        "1",
-					PrefixLen:        1,
-					PrefixEatInPlace: true,
-					VariantTy: tolkParser.Ty{
-						SumType: "IntN",
-						IntN: &tolkParser.IntN{
-							N: 128,
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewUnionType(
+		1, true,
+		tolkParser.NewUnionVariant(tolkParser.NewIntNType(16), "0"),
+		tolkParser.NewUnionVariant(tolkParser.NewIntNType(128), "1"),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001300002180000000000000000000000003b5577dc0660d6029")
 	if err != nil {
@@ -1347,43 +1100,12 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "Union",
-		Union: &tolkParser.Union{
-			Variants: []tolkParser.UnionVariant{
-				{
-					PrefixStr: "0b001",
-					PrefixLen: 3,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "AddressWithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0b011",
-					PrefixLen: 3,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "MapWithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0b111",
-					PrefixLen: 3,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "CellWithPrefix",
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewUnionType(
+		3, false,
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("AddressWithPrefix"), "0b001"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("MapWithPrefix"), "0b011"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("CellWithPrefix"), "0b111"),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201002e0001017801004fa17002c44ea652d4092859c67da44e4ca3add6565b0e2897d640a2c51bfb370d8877f900a4d89920c413c650")
 	if err != nil {
@@ -1455,43 +1177,12 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "Union",
-		Union: &tolkParser.Union{
-			Variants: []tolkParser.UnionVariant{
-				{
-					PrefixStr: "0x12345678",
-					PrefixLen: 32,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "UInt66WithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0xdeadbeef",
-					PrefixLen: 32,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "UInt33WithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0x89abcdef",
-					PrefixLen: 32,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "UInt4WithPrefix",
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewUnionType(
+		32, false,
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("UInt66WithPrefix"), "0x12345678"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("UInt33WithPrefix"), "0xdeadbeef"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("UInt4WithPrefix"), "0x89abcdef"),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000b000011deadbeef00000000c0d75977b9")
 	if err != nil {
@@ -1551,12 +1242,7 @@ func TestRuntime_UnmarshalALotRefsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "AliasRef",
-		AliasRef: &tolkParser.AliasRef{
-			AliasName: "GoodNamingForMsg",
-		},
-	}
+	ty := tolkParser.NewAliasType("GoodNamingForMsg")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101040100b7000377deadbeef80107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e635087735940143ffffffffffffffffffffffffffff63c006010203004b80010df454cebee868f611ba8c0d4a9371fb73105396505783293a7625f75db3b9880bebc20100438006e05909e22b2e5e6087533314ee56505f85212914bd5547941a2a658ac62fe101004f801622753296a04942ce33ed2272651d6eb2b2d87144beb2051628dfd9b86c43bfcc12309ce54001e09a48b8")
 	if err != nil {
@@ -1818,12 +1504,7 @@ func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "ManyRefsMsg",
-		},
-	}
+	ty := tolkParser.NewStructType("ManyRefsMsg")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101040100b7000377deadbeef80107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e635087735940143ffffffffffffffffffffffffffff63c006010203004b80010df454cebee868f611ba8c0d4a9371fb73105396505783293a7625f75db3b9880bebc20100438006e05909e22b2e5e6087533314ee56505f85212914bd5547941a2a658ac62fe101004f801622753296a04942ce33ed2272651d6eb2b2d87144beb2051628dfd9b86c43bfcc12309ce54001e09a48b8")
 	if err != nil {
@@ -2081,20 +1762,7 @@ func TestRuntime_UnmarshalALotGenericsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "ManyRefsMsg",
-			TypeArgs: []tolkParser.Ty{
-				{
-					SumType: "UintN",
-					UintN: &tolkParser.UintN{
-						N: 16,
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewStructType("ManyRefsMsg", tolkParser.NewUIntNType(16))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410103010043000217d017d7840343b9aca0000108010200080000007b005543b9aca001017d78402005889d4ca5a81250b38cfb489c99475bacacb61c512fac81458a37f66e1b10eff422fc7647")
 	if err != nil {
@@ -2333,20 +2001,7 @@ func TestRuntime_UnmarshalALotGenericsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "AliasRef",
-		AliasRef: &tolkParser.AliasRef{
-			AliasName: "GoodNamingForMsg",
-			TypeArgs: []tolkParser.Ty{
-				{
-					SumType: "UintN",
-					UintN: &tolkParser.UintN{
-						N: 16,
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewAliasType("GoodNamingForMsg", tolkParser.NewUIntNType(16))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410103010043000217d017d7840343b9aca0000108010200080000007b005543b9aca001017d78402005889d4ca5a81250b38cfb489c99475bacacb61c512fac81458a37f66e1b10eff422fc7647")
 	if err != nil {
@@ -2589,12 +2244,7 @@ func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "DefaultTest",
-		},
-	}
+	ty := tolkParser.NewStructType("DefaultTest")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101003100005d80000002414801622753296a04942ce33ed2272651d6eb2b2d87144beb2051628dfd9b86c43bfd00000156ac2c4c70811a9dde")
 	if err != nil {
@@ -2767,12 +2417,7 @@ func TestRuntime_UnmarshalALotNumbers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "Numbers",
-		},
-	}
+	ty := tolkParser.NewStructType("Numbers")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010033000062000000000000000000000000000000000000000000000000000000000000000000000000000000f1106aecc4c800020926dc62f014")
 	if err != nil {
@@ -2893,12 +2538,7 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "RandomFields",
-		},
-	}
+	ty := tolkParser.NewStructType("RandomFields")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301007800028b79480107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6350e038d7eb37c5e80000000ab50ee6b28000000000000016e4c000006c175300001801bc01020001c00051000000000005120041efeaa9731b94da397e5e64622f5e63348b812ac5b4763a93f0dd201d0798d4409e337ceb")
 	if err != nil {
@@ -3110,12 +2750,7 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 
 func TestRuntime_MarshalSmallInt(t *testing.T) {
 	jsonInputFilename := "small_int"
-	ty := tolkParser.Ty{
-		SumType: "IntN",
-		IntN: &tolkParser.IntN{
-			N: 24,
-		},
-	}
+	ty := tolkParser.NewIntNType(24)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010005000006ff76c41616db06")
 	if err != nil {
@@ -3151,12 +2786,7 @@ func TestRuntime_MarshalSmallInt(t *testing.T) {
 
 func TestRuntime_MarshalSmallUInt(t *testing.T) {
 	jsonInputFilename := "small_uint"
-	ty := tolkParser.Ty{
-		SumType: "UintN",
-		UintN: &tolkParser.UintN{
-			N: 53,
-		},
-	}
+	ty := tolkParser.NewUIntNType(53)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000d00000000001d34e435eafd")
 	if err != nil {
@@ -3192,12 +2822,7 @@ func TestRuntime_MarshalSmallUInt(t *testing.T) {
 
 func TestRuntime_MarshalBigInt(t *testing.T) {
 	jsonInputFilename := "big_int"
-	ty := tolkParser.Ty{
-		SumType: "IntN",
-		IntN: &tolkParser.IntN{
-			N: 183,
-		},
-	}
+	ty := tolkParser.NewIntNType(183)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001900002dfffffffffffffffffffffffffffffffffff99bfeac6423a6f0b50c")
 	if err != nil {
@@ -3233,12 +2858,7 @@ func TestRuntime_MarshalBigInt(t *testing.T) {
 
 func TestRuntime_MarshalBigUInt(t *testing.T) {
 	jsonInputFilename := "big_uint"
-	ty := tolkParser.Ty{
-		SumType: "UintN",
-		UintN: &tolkParser.UintN{
-			N: 257,
-		},
-	}
+	ty := tolkParser.NewUIntNType(257)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002300004100000000000000000000000000000000000000000000000000009fc4212a38ba40b11cce12")
 	if err != nil {
@@ -3274,12 +2894,7 @@ func TestRuntime_MarshalBigUInt(t *testing.T) {
 
 func TestRuntime_MarshalVarInt(t *testing.T) {
 	jsonInputFilename := "var_int"
-	ty := tolkParser.Ty{
-		SumType: "VarIntN",
-		VarIntN: &tolkParser.VarIntN{
-			N: 16,
-		},
-	}
+	ty := tolkParser.NewVarInt16Type()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000730c98588449b6923")
 	if err != nil {
@@ -3315,12 +2930,7 @@ func TestRuntime_MarshalVarInt(t *testing.T) {
 
 func TestRuntime_MarshalVarUInt(t *testing.T) {
 	jsonInputFilename := "var_uint"
-	ty := tolkParser.Ty{
-		SumType: "VarUintN",
-		VarUintN: &tolkParser.VarUintN{
-			N: 32,
-		},
-	}
+	ty := tolkParser.NewVarUInt32Type()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000800000b28119ab36b44d3a86c0f")
 	if err != nil {
@@ -3356,12 +2966,7 @@ func TestRuntime_MarshalVarUInt(t *testing.T) {
 
 func TestRuntime_MarshalBits(t *testing.T) {
 	jsonInputFilename := "bits"
-	ty := tolkParser.Ty{
-		SumType: "BitsN",
-		BitsN: &tolkParser.BitsN{
-			N: 24,
-		},
-	}
+	ty := tolkParser.NewBitsNType(24)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000500000631323318854035")
 	if err != nil {
@@ -3397,10 +3002,7 @@ func TestRuntime_MarshalBits(t *testing.T) {
 
 func TestRuntime_MarshalCoins(t *testing.T) {
 	jsonInputFilename := "coins"
-	ty := tolkParser.Ty{
-		SumType: "Coins",
-		Coins:   &tolkParser.Coins{},
-	}
+	ty := tolkParser.NewCoinsType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010007000009436ec6e0189ebbd7f4")
 	if err != nil {
@@ -3436,10 +3038,7 @@ func TestRuntime_MarshalCoins(t *testing.T) {
 
 func TestRuntime_MarshalBool(t *testing.T) {
 	jsonInputFilename := "bool"
-	ty := tolkParser.Ty{
-		SumType: "Bool",
-		Bool:    &tolkParser.Bool{},
-	}
+	ty := tolkParser.NewBoolType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
 	if err != nil {
@@ -3475,10 +3074,7 @@ func TestRuntime_MarshalBool(t *testing.T) {
 
 func TestRuntime_MarshalCell(t *testing.T) {
 	jsonInputFilename := "cell"
-	ty := tolkParser.Ty{
-		SumType: "Cell",
-		Cell:    &tolkParser.Cell{},
-	}
+	ty := tolkParser.NewCellType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101020100090001000100080000007ba52a3292")
 	if err != nil {
@@ -3514,10 +3110,7 @@ func TestRuntime_MarshalCell(t *testing.T) {
 
 func TestRuntime_MarshalRemaining(t *testing.T) {
 	jsonInputFilename := "remaining"
-	ty := tolkParser.Ty{
-		SumType:   "Remaining",
-		Remaining: &tolkParser.Remaining{},
-	}
+	ty := tolkParser.NewRemainingType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
@@ -3553,10 +3146,7 @@ func TestRuntime_MarshalRemaining(t *testing.T) {
 
 func TestRuntime_MarshalAddress(t *testing.T) {
 	jsonInputFilename := "internal_address"
-	ty := tolkParser.Ty{
-		SumType: "Address",
-		Address: &tolkParser.Address{},
-	}
+	ty := tolkParser.NewAddressType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
@@ -3592,10 +3182,7 @@ func TestRuntime_MarshalAddress(t *testing.T) {
 
 func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
 	jsonInputFilename := "not_exists_optional_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressOpt",
-		AddressOpt: &tolkParser.AddressOpt{},
-	}
+	ty := tolkParser.NewAddressOptType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
@@ -3631,10 +3218,7 @@ func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
 
 func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
 	jsonInputFilename := "exists_optional_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressOpt",
-		AddressOpt: &tolkParser.AddressOpt{},
-	}
+	ty := tolkParser.NewAddressOptType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
@@ -3670,10 +3254,7 @@ func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
 
 func TestRuntime_MarshalExternalAddress(t *testing.T) {
 	jsonInputFilename := "external_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressExt",
-		AddressExt: &tolkParser.AddressExt{},
-	}
+	ty := tolkParser.NewAddressExtType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
@@ -3709,10 +3290,7 @@ func TestRuntime_MarshalExternalAddress(t *testing.T) {
 
 func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
 	jsonInputFilename := "any_none_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
 	if err != nil {
@@ -3748,10 +3326,7 @@ func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
 
 func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
 	jsonInputFilename := "any_internal_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
 	if err != nil {
@@ -3787,10 +3362,7 @@ func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
 
 func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
 	jsonInputFilename := "any_external_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
 	if err != nil {
@@ -3826,10 +3398,7 @@ func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
 
 func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
 	jsonInputFilename := "any_var_address"
-	ty := tolkParser.Ty{
-		SumType:    "AddressAny",
-		AddressAny: &tolkParser.AddressAny{},
-	}
+	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
 	if err != nil {
@@ -3865,15 +3434,7 @@ func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
 
 func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
 	jsonInputFilename := "not_exists_nullable"
-	ty := tolkParser.Ty{
-		SumType: "Nullable",
-		Nullable: &tolkParser.Nullable{
-			Inner: tolkParser.Ty{
-				SumType:   "Remaining",
-				Remaining: &tolkParser.Remaining{},
-			},
-		},
-	}
+	ty := tolkParser.NewNullableType(tolkParser.NewRemainingType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
 	if err != nil {
@@ -3909,15 +3470,7 @@ func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
 
 func TestRuntime_MarshalExistsNullable(t *testing.T) {
 	jsonInputFilename := "exists_nullable"
-	ty := tolkParser.Ty{
-		SumType: "Nullable",
-		Nullable: &tolkParser.Nullable{
-			Inner: tolkParser.Ty{
-				SumType: "Cell",
-				Cell:    &tolkParser.Cell{},
-			},
-		},
-	}
+	ty := tolkParser.NewNullableType(tolkParser.NewCellType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000b000101c001000900000c0ae007880db9")
 	if err != nil {
@@ -3953,17 +3506,7 @@ func TestRuntime_MarshalExistsNullable(t *testing.T) {
 
 func TestRuntime_MarshalRef(t *testing.T) {
 	jsonInputFilename := "ref"
-	ty := tolkParser.Ty{
-		SumType: "CellOf",
-		CellOf: &tolkParser.CellOf{
-			Inner: tolkParser.Ty{
-				SumType: "IntN",
-				IntN: &tolkParser.IntN{
-					N: 65,
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewCellOfType(tolkParser.NewIntNType(65))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000e000100010011000000000009689e40e150b4c5")
 	if err != nil {
@@ -3999,10 +3542,7 @@ func TestRuntime_MarshalRef(t *testing.T) {
 
 func TestRuntime_MarshalEmptyTensor(t *testing.T) {
 	jsonInputFilename := "empty_tensor"
-	ty := tolkParser.Ty{
-		SumType: "Tensor",
-		Tensor:  &tolkParser.Tensor{},
-	}
+	ty := tolkParser.NewTensorType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100020000004cacb9cd")
 	if err != nil {
@@ -4038,57 +3578,16 @@ func TestRuntime_MarshalEmptyTensor(t *testing.T) {
 
 func TestRuntime_MarshalTensor(t *testing.T) {
 	jsonInputFilename := "tensor"
-	ty := tolkParser.Ty{
-		SumType: "Tensor",
-		Tensor: &tolkParser.Tensor{
-			Items: []tolkParser.Ty{
-				{
-					SumType: "UintN",
-					UintN: &tolkParser.UintN{
-						N: 123,
-					},
-				},
-				{
-					SumType: "Bool",
-					Bool:    &tolkParser.Bool{},
-				},
-				{
-					SumType: "Coins",
-					Coins:   &tolkParser.Coins{},
-				},
-				{
-					SumType: "Tensor",
-					Tensor: &tolkParser.Tensor{
-						Items: []tolkParser.Ty{
-							{
-								SumType: "IntN",
-								IntN: &tolkParser.IntN{
-									N: 23,
-								},
-							},
-							{
-								SumType: "Nullable",
-								Nullable: &tolkParser.Nullable{
-									Inner: tolkParser.Ty{
-										SumType: "IntN",
-										IntN: &tolkParser.IntN{
-											N: 2,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				{
-					SumType: "VarIntN",
-					VarIntN: &tolkParser.VarIntN{
-						N: 32,
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewTensorType(
+		tolkParser.NewUIntNType(123),
+		tolkParser.NewBoolType(),
+		tolkParser.NewCoinsType(),
+		tolkParser.NewTensorType(
+			tolkParser.NewIntNType(23),
+			tolkParser.NewNullableType(tolkParser.NewIntNType(2)),
+		),
+		tolkParser.NewVarIntType(32),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001f00003900000000000000000000000000021cb43b9aca00fffd550bfbaae07401a2a98117")
 	if err != nil {
@@ -4124,21 +3623,7 @@ func TestRuntime_MarshalTensor(t *testing.T) {
 
 func TestRuntime_MarshalIntKeyMap(t *testing.T) {
 	jsonInputFilename := "int_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "IntN",
-				IntN: &tolkParser.IntN{
-					N: 32,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Bool",
-				Bool:    &tolkParser.Bool{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewIntNType(32), tolkParser.NewBoolType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000c000101c001000ba00000007bc09a662c32")
 	if err != nil {
@@ -4174,21 +3659,7 @@ func TestRuntime_MarshalIntKeyMap(t *testing.T) {
 
 func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
 	jsonInputFilename := "uint_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "UintN",
-				UintN: &tolkParser.UintN{
-					N: 16,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Address",
-				Address: &tolkParser.Address{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewUIntNType(16), tolkParser.NewAddressType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410104010053000101c0010202cb02030045a7400b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe80045a3cff5555555555555555555555555555555555555555555555555555555555555555888440ce8")
 	if err != nil {
@@ -4224,21 +3695,7 @@ func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
 
 func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
 	jsonInputFilename := "big_int_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "UintN",
-				UintN: &tolkParser.UintN{
-					N: 78,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Cell",
-				Cell:    &tolkParser.Cell{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewUIntNType(78), tolkParser.NewCellType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301001a000101c0010115a70000000000000047550902000b000000001ab01d5bf1a9")
 	if err != nil {
@@ -4274,43 +3731,16 @@ func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
 
 func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
 	jsonInputFilename := "bits_int_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "BitsN",
-				BitsN: &tolkParser.BitsN{
-					N: 16,
-				},
-			},
-			V: tolkParser.Ty{
-				SumType: "Map",
-				Map: &tolkParser.Map{
-					K: tolkParser.Ty{
-						SumType: "IntN",
-						IntN: &tolkParser.IntN{
-							N: 64,
-						},
-					},
-					V: tolkParser.Ty{
-						SumType: "Tensor",
-						Tensor: &tolkParser.Tensor{
-							Items: []tolkParser.Ty{
-								{
-									SumType: "Address",
-									Address: &tolkParser.Address{},
-								},
-								{
-									SumType: "Coins",
-									Coins:   &tolkParser.Coins{},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(
+		tolkParser.NewBitsNType(16),
+		tolkParser.NewMapType(
+			tolkParser.NewIntNType(64),
+			tolkParser.NewTensorType(
+				tolkParser.NewAddressType(),
+				tolkParser.NewCoinsType(),
+			),
+		),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301003b000101c0010106a0828502005ea0000000000000003e400b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe43b9aca00b89cdc86")
 	if err != nil {
@@ -4346,19 +3776,7 @@ func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
 
 func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
 	jsonInputFilename := "address_key_map"
-	ty := tolkParser.Ty{
-		SumType: "Map",
-		Map: &tolkParser.Map{
-			K: tolkParser.Ty{
-				SumType: "Address",
-				Address: &tolkParser.Address{},
-			},
-			V: tolkParser.Ty{
-				SumType: "Coins",
-				Coins:   &tolkParser.Coins{},
-			},
-		},
-	}
+	ty := tolkParser.NewMapType(tolkParser.NewAddressType(), tolkParser.NewCoinsType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201002f000101c0010051a17002c44ea652d4092859c67da44e4ca3add6565b0e2897d640a2c51bfb370d8877f9409502f9002016fdc16e")
 	if err != nil {
@@ -4394,35 +3812,11 @@ func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
 
 func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
 	jsonInputFilename := "union_with_dec_prefix"
-	ty := tolkParser.Ty{
-		SumType: "Union",
-		Union: &tolkParser.Union{
-			Variants: []tolkParser.UnionVariant{
-				{
-					PrefixStr:        "0",
-					PrefixLen:        1,
-					PrefixEatInPlace: true,
-					VariantTy: tolkParser.Ty{
-						SumType: "IntN",
-						IntN: &tolkParser.IntN{
-							N: 16,
-						},
-					},
-				},
-				{
-					PrefixStr:        "1",
-					PrefixLen:        1,
-					PrefixEatInPlace: true,
-					VariantTy: tolkParser.Ty{
-						SumType: "IntN",
-						IntN: &tolkParser.IntN{
-							N: 128,
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewUnionType(
+		1, true,
+		tolkParser.NewUnionVariant(tolkParser.NewIntNType(16), "0"),
+		tolkParser.NewUnionVariant(tolkParser.NewIntNType(128), "1"),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001300002180000000000000000000000003b5577dc0660d6029")
 	if err != nil {
@@ -4470,43 +3864,12 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "Union",
-		Union: &tolkParser.Union{
-			Variants: []tolkParser.UnionVariant{
-				{
-					PrefixStr: "0b001",
-					PrefixLen: 3,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "AddressWithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0b011",
-					PrefixLen: 3,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "MapWithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0b111",
-					PrefixLen: 3,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "CellWithPrefix",
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewUnionType(
+		3, false,
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("AddressWithPrefix"), "0b001"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("MapWithPrefix"), "0b011"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("CellWithPrefix"), "0b111"),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201002e0001017801004fa17002c44ea652d4092859c67da44e4ca3add6565b0e2897d640a2c51bfb370d8877f900a4d89920c413c650")
 	if err != nil {
@@ -4558,43 +3921,12 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "Union",
-		Union: &tolkParser.Union{
-			Variants: []tolkParser.UnionVariant{
-				{
-					PrefixStr: "0x12345678",
-					PrefixLen: 32,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "UInt66WithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0xdeadbeef",
-					PrefixLen: 32,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "UInt33WithPrefix",
-						},
-					},
-				},
-				{
-					PrefixStr: "0x89abcdef",
-					PrefixLen: 32,
-					VariantTy: tolkParser.Ty{
-						SumType: "StructRef",
-						StructRef: &tolkParser.StructRef{
-							StructName: "UInt4WithPrefix",
-						},
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewUnionType(
+		32, false,
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("UInt66WithPrefix"), "0x12345678"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("UInt33WithPrefix"), "0xdeadbeef"),
+		tolkParser.NewUnionVariant(tolkParser.NewStructType("UInt4WithPrefix"), "0x89abcdef"),
+	)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000b000011deadbeef00000000c0d75977b9")
 	if err != nil {
@@ -4646,12 +3978,7 @@ func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "AliasRef",
-		AliasRef: &tolkParser.AliasRef{
-			AliasName: "GoodNamingForMsg",
-		},
-	}
+	ty := tolkParser.NewAliasType("GoodNamingForMsg")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101040100b7000377deadbeef80107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e635087735940143ffffffffffffffffffffffffffff63c006010203004b80010df454cebee868f611ba8c0d4a9371fb73105396505783293a7625f75db3b9880bebc20100438006e05909e22b2e5e6087533314ee56505f85212914bd5547941a2a658ac62fe101004f801622753296a04942ce33ed2272651d6eb2b2d87144beb2051628dfd9b86c43bfcc12309ce54001e09a48b8")
 	if err != nil {
@@ -4708,13 +4035,7 @@ func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "ManyRefsMsg",
-		},
-	}
+	ty := tolkParser.NewStructType("ManyRefsMsg")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101040100b7000377deadbeef80107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e635087735940143ffffffffffffffffffffffffffff63c006010203004b80010df454cebee868f611ba8c0d4a9371fb73105396505783293a7625f75db3b9880bebc20100438006e05909e22b2e5e6087533314ee56505f85212914bd5547941a2a658ac62fe101004f801622753296a04942ce33ed2272651d6eb2b2d87144beb2051628dfd9b86c43bfcc12309ce54001e09a48b8")
 	if err != nil {
@@ -4766,20 +4087,7 @@ func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "ManyRefsMsg",
-			TypeArgs: []tolkParser.Ty{
-				{
-					SumType: "UintN",
-					UintN: &tolkParser.UintN{
-						N: 16,
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewStructType("ManyRefsMsg", tolkParser.NewUIntNType(16))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410103010043000217d017d7840343b9aca0000108010200080000007b005543b9aca001017d78402005889d4ca5a81250b38cfb489c99475bacacb61c512fac81458a37f66e1b10eff422fc7647")
 	if err != nil {
@@ -4831,20 +4139,7 @@ func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "AliasRef",
-		AliasRef: &tolkParser.AliasRef{
-			AliasName: "GoodNamingForMsg",
-			TypeArgs: []tolkParser.Ty{
-				{
-					SumType: "UintN",
-					UintN: &tolkParser.UintN{
-						N: 16,
-					},
-				},
-			},
-		},
-	}
+	ty := tolkParser.NewAliasType("GoodNamingForMsg", tolkParser.NewUIntNType(16))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410103010043000217d017d7840343b9aca0000108010200080000007b005543b9aca001017d78402005889d4ca5a81250b38cfb489c99475bacacb61c512fac81458a37f66e1b10eff422fc7647")
 	if err != nil {
@@ -4896,12 +4191,7 @@ func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "DefaultTest",
-		},
-	}
+	ty := tolkParser.NewStructType("DefaultTest")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101003100005d80000002414801622753296a04942ce33ed2272651d6eb2b2d87144beb2051628dfd9b86c43bfd00000156ac2c4c70811a9dde")
 	if err != nil {
@@ -4953,12 +4243,7 @@ func TestRuntime_MarshalALotNumbers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "Numbers",
-		},
-	}
+	ty := tolkParser.NewStructType("Numbers")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010033000062000000000000000000000000000000000000000000000000000000000000000000000000000000f1106aecc4c800020926dc62f014")
 	if err != nil {
@@ -5010,12 +4295,7 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ty := tolkParser.Ty{
-		SumType: "StructRef",
-		StructRef: &tolkParser.StructRef{
-			StructName: "RandomFields",
-		},
-	}
+	ty := tolkParser.NewStructType("RandomFields")
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301007800028b79480107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6350e038d7eb37c5e80000000ab50ee6b28000000000000016e4c000006c175300001801bc01020001c00051000000000005120041efeaa9731b94da397e5e64622f5e63348b812ac5b4763a93f0dd201d0798d4409e337ceb")
 	if err != nil {

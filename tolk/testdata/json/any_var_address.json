@@ -1,0 +1,7 @@
+{
+  "sumType": "anyAddress",
+  "anyAddress": {
+    "sumType": "varAddress",
+    "varAddress": "0:AB"
+  }
+}

@@ -1,0 +1,37 @@
+{
+    "sumType": "struct",
+    "struct": {
+        "prefix": {
+            "len": 32,
+            "prefix": 1607220500
+        },
+        "fields": {
+            "queryId": {
+                "sumType": "smallUint",
+                "smallUint": 0
+            },
+            "newOwner": {
+                "sumType": "internalAddress",
+                "internalAddress": "0:6033a6e8071d39188423c4220e6439f3075c340fa2480e5d1d4883e2e1916e22"
+            },
+            "responseDestination": {
+                "sumType": "internalAddress",
+                "internalAddress": "0:0d28df199ccd0ecd838435390e120ed55601688397c159d0ada90ae8d4c46653"
+            },
+            "customPayload": {
+                "sumType": "optionalValue",
+                "optionalValue": {
+                    "isExists": false
+                }
+            },
+            "forwardAmount": {
+                "sumType": "coins",
+                "coins": "20000000"
+            },
+            "forwardPayload": {
+                "sumType": "remaining",
+                "remaining": "b5ee9c7201010101000300000140"
+            }
+        }
+    }
+}

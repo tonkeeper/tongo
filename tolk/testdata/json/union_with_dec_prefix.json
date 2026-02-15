@@ -1,0 +1,13 @@
+{
+  "sumType": "union",
+  "union": {
+    "prefix": {
+      "len": 1,
+      "prefix": 1
+    },
+    "value": {
+      "sumType": "bigInt",
+      "bigInt": "124432123"
+    }
+  }
+}

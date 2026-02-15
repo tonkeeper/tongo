@@ -395,7 +395,13 @@ func (a *AliasValue) Unmarshal(cell *boc.Cell, ty tolkParser.AliasRef, decoder *
 	}
 
 	if alias.CustomUnpackFromSlice {
-		return fmt.Errorf("alias has custom unpack from slice")
+		if decoder.customUnpackResolver == nil {
+			return fmt.Errorf("custom unmarshal alias %v with custom unpack method", ty.AliasName)
+		}
+		if err := decoder.customUnpackResolver(ty, cell, a); err != nil {
+			return fmt.Errorf("failed to unmarshal alias with custom unpack: %w", err)
+		}
+		return nil
 	}
 
 	oldGenericMap := decoder.abiRefs.genericRefs
@@ -427,7 +433,13 @@ func (a *AliasValue) Marshal(cell *boc.Cell, ty tolkParser.AliasRef, encoder *En
 	}
 
 	if alias.CustomPackToBuilder {
-		return fmt.Errorf("alias has custom pack to builder")
+		if encoder.customPackResolver == nil {
+			return fmt.Errorf("custom marshal alias %v with custom pack method", ty.AliasName)
+		}
+		if err := encoder.customPackResolver(ty, cell, a); err != nil {
+			return fmt.Errorf("failed to marshal alias with custom pack: %w", err)
+		}
+		return nil
 	}
 
 	oldGenericMap := encoder.abiRefs.genericRefs

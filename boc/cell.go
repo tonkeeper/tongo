@@ -436,5 +436,37 @@ func (c *Cell) GetMerkleRoot() ([32]byte, error) {
 	var hash [32]byte
 	copy(hash[:], bytes[1:])
 	return hash, nil
+}
 
+// TODO: move to deserializer
+func (c *Cell) isValidMerkleProofCell() bool {
+	return c.cellType == MerkleProofCell && c.RefsSize() == 1 && c.BitSize() == 280
+}
+
+func (c *Cell) CalculateMerkleProofMeta() (int, [32]byte, error) {
+	if !c.isValidMerkleProofCell() {
+		return 0, [32]byte{}, errors.New("not valid merkle proof cell")
+	}
+	imc, err := newImmutableCell(c.Refs()[0], map[*Cell]*immutableCell{})
+	if err != nil {
+		return 0, [32]byte{}, fmt.Errorf("get immutable cell: %w", err)
+	}
+	h := imc.Hash(0)
+	var hash [32]byte
+	copy(hash[:], h)
+	depth := imc.Depth(0)
+	return depth, hash, nil
+}
+
+// TODO: or add level as optional parameter to Hash256()
+func (c *Cell) Hash256WithLevel(level int) ([32]byte, error) {
+	// TODO: or check for pruned cell and read hash directly from cell
+	imc, err := newImmutableCell(c, map[*Cell]*immutableCell{})
+	if err != nil {
+		return [32]byte{}, err
+	}
+	b := imc.Hash(level)
+	var h [32]byte
+	copy(h[:], b)
+	return h, nil
 }

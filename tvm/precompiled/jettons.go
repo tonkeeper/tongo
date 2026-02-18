@@ -16,42 +16,44 @@ func jettonV1getWalletData(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error
 	}
 	err := tlb.Unmarshal(data, &body)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	var result = make([]tlb.VmStackValue, 4)
 	var b = big.Int(body.Amount)
-	if b.IsInt64() {
-		result[0] = tlb.VmStackValue{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: b.Int64(),
-		}
-	} else {
-		result[0] = tlb.VmStackValue{
-			SumType:  "VmStkInt",
-			VmStkInt: tlb.Int257(b),
-		}
-	}
 	ownerCell := boc.NewCell()
 	masterCell := boc.NewCell()
 	err = tlb.Marshal(ownerCell, body.Owner)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
 	err = tlb.Marshal(masterCell, body.Master)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	result[1], err = tlb.CellToVmCellSlice(ownerCell)
+	ownerSlice, err := tlb.CellToVmCellSlice(ownerCell)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	result[2], err = tlb.CellToVmCellSlice(masterCell)
+	masterSlice, err := tlb.CellToVmCellSlice(masterCell)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	result[3] = tlb.VmStackValue{
+	var result tlb.VmStack
+	result.Put(tlb.VmStackValue{
 		SumType:   "VmStkCell",
 		VmStkCell: tlb.Ref[boc.Cell]{Value: body.Code},
+	})
+	result.Put(masterSlice)
+	result.Put(ownerSlice)
+	if b.IsInt64() {
+		result.Put(tlb.VmStackValue{
+			SumType:      "VmStkTinyInt",
+			VmStkTinyInt: b.Int64(),
+		})
+	} else {
+		result.Put(tlb.VmStackValue{
+			SumType:  "VmStkInt",
+			VmStkInt: tlb.Int257(b),
+		})
 	}
 	return result, nil
 }
@@ -69,43 +71,45 @@ func jettonV2getWalletData(code string) func(data *boc.Cell, args tlb.VmStack) (
 		}
 		err := tlb.Unmarshal(data, &body)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		var result = make([]tlb.VmStackValue, 4)
 		var b = big.Int(body.Amount)
-		if b.IsInt64() {
-			result[0] = tlb.VmStackValue{
-				SumType:      "VmStkTinyInt",
-				VmStkTinyInt: b.Int64(),
-			}
-		} else {
-			result[0] = tlb.VmStackValue{
-				SumType:  "VmStkInt",
-				VmStkInt: tlb.Int257(b),
-			}
-		}
 		ownerCell := boc.NewCell()
 		masterCell := boc.NewCell()
 		err = tlb.Marshal(ownerCell, body.Owner)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
 		err = tlb.Marshal(masterCell, body.Master)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
 		codeCell, _ := boc.DeserializeSinglRootBase64(code)
-		result[1], err = tlb.CellToVmCellSlice(ownerCell)
+		ownerSlice, err := tlb.CellToVmCellSlice(ownerCell)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[2], err = tlb.CellToVmCellSlice(masterCell)
+		masterSlice, err := tlb.CellToVmCellSlice(masterCell)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[3] = tlb.VmStackValue{
+		var result tlb.VmStack
+		result.Put(tlb.VmStackValue{
 			SumType:   "VmStkCell",
 			VmStkCell: tlb.Ref[boc.Cell]{Value: *codeCell},
+		})
+		result.Put(masterSlice)
+		result.Put(ownerSlice)
+		if b.IsInt64() {
+			result.Put(tlb.VmStackValue{
+				SumType:      "VmStkTinyInt",
+				VmStkTinyInt: b.Int64(),
+			})
+		} else {
+			result.Put(tlb.VmStackValue{
+				SumType:  "VmStkInt",
+				VmStkInt: tlb.Int257(b),
+			})
 		}
 		return result, nil
 	}
@@ -130,43 +134,45 @@ func jettonV3getWalletData(code string) func(data *boc.Cell, args tlb.VmStack) (
 		}
 		err := tlb.Unmarshal(data, &body)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		var result = make([]tlb.VmStackValue, 4)
 		var b = big.Int(body.Amount)
-		if b.IsInt64() {
-			result[0] = tlb.VmStackValue{
-				SumType:      "VmStkTinyInt",
-				VmStkTinyInt: b.Int64(),
-			}
-		} else {
-			result[0] = tlb.VmStackValue{
-				SumType:  "VmStkInt",
-				VmStkInt: tlb.Int257(b),
-			}
-		}
 		ownerCell := boc.NewCell()
 		masterCell := boc.NewCell()
 		err = tlb.Marshal(ownerCell, body.Owner)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
 		err = tlb.Marshal(masterCell, body.Master)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
 		codeCell, _ := boc.DeserializeSinglRootBase64(code)
-		result[1], err = tlb.CellToVmCellSlice(ownerCell)
+		ownerSlice, err := tlb.CellToVmCellSlice(ownerCell)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[2], err = tlb.CellToVmCellSlice(masterCell)
+		masterSlice, err := tlb.CellToVmCellSlice(masterCell)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[3] = tlb.VmStackValue{
+		var result tlb.VmStack
+		result.Put(tlb.VmStackValue{
 			SumType:   "VmStkCell",
 			VmStkCell: tlb.Ref[boc.Cell]{Value: *codeCell},
+		})
+		result.Put(masterSlice)
+		result.Put(ownerSlice)
+		if b.IsInt64() {
+			result.Put(tlb.VmStackValue{
+				SumType:      "VmStkTinyInt",
+				VmStkTinyInt: b.Int64(),
+			})
+		} else {
+			result.Put(tlb.VmStackValue{
+				SumType:  "VmStkInt",
+				VmStkInt: tlb.Int257(b),
+			})
 		}
 		return result, nil
 	}
@@ -181,12 +187,10 @@ func isClaimed(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
 	}
 	err := tlb.Unmarshal(data, &body)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	var result = make([]tlb.VmStackValue, 1)
-	result[0] = tlb.VmStackValue{
+	return tlb.VmStackValue{
 		SumType:      "VmStkTinyInt",
 		VmStkTinyInt: int64(body.Status),
-	}
-	return result, nil
+	}.ToStack(), nil
 }

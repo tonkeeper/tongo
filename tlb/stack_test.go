@@ -175,7 +175,7 @@ func Test_IntMatrixTupleUnmarshal(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			val := stack[0]
+			val := stack.Peek(0)
 			if val.SumType != "VmStkTuple" {
 				t.Errorf("Stack value must be tuple, got %v", val.SumType)
 			}

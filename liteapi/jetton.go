@@ -22,18 +22,18 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner ton.AccountI
 	if err != nil {
 		return ton.AccountID{}, err
 	}
-	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_wallet_address", tlb.VmStack{val})
+	errCode, stack, err := c.RunSmcMethod(ctx, master, "get_wallet_address", val.ToStack())
 	if err != nil {
 		return ton.AccountID{}, err
 	}
 	if errCode != 0 && errCode != 1 {
 		return ton.AccountID{}, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	if len(stack) != 1 || stack[0].SumType != "VmStkSlice" {
+	if stack.Len() != 1 || stack.Peek(0).SumType != "VmStkSlice" {
 		return ton.AccountID{}, fmt.Errorf("invalid stack")
 	}
 	var res tlb.MsgAddress
-	err = stack[0].VmStkSlice.UnmarshalToTlbStruct(&res)
+	err = stack.Peek(0).VmStkSlice.UnmarshalToTlbStruct(&res)
 	if err != nil {
 		return ton.AccountID{}, err
 	}
@@ -58,14 +58,15 @@ func (c *Client) GetJettonData(ctx context.Context, master ton.AccountID) (tep64
 	if errCode != 0 && errCode != 1 {
 		return tep64.Metadata{}, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") ||
-		stack[1].SumType != "VmStkTinyInt" ||
-		stack[2].SumType != "VmStkSlice" ||
-		stack[3].SumType != "VmStkCell" ||
-		stack[4].SumType != "VmStkCell" {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") ||
+		stack.Peek(3).SumType != "VmStkTinyInt" ||
+		stack.Peek(2).SumType != "VmStkSlice" ||
+		stack.Peek(1).SumType != "VmStkCell" ||
+		stack.Peek(0).SumType != "VmStkCell" {
 		return tep64.Metadata{}, fmt.Errorf("invalid stack")
 	}
-	cell := &stack[3].VmStkCell.Value
+	elem1 := stack.Peek(1)
+	cell := &elem1.VmStkCell.Value
 	var content tlb.FullContent
 	err = tlb.Unmarshal(cell, &content)
 	if err != nil {
@@ -95,15 +96,16 @@ func (c *Client) GetJettonBalance(ctx context.Context, jettonWallet ton.AccountI
 	if errCode != 0 && errCode != 1 {
 		return nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") ||
-		stack[1].SumType != "VmStkSlice" ||
-		stack[2].SumType != "VmStkSlice" ||
-		stack[3].SumType != "VmStkCell" {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") ||
+		stack.Peek(2).SumType != "VmStkSlice" ||
+		stack.Peek(1).SumType != "VmStkSlice" ||
+		stack.Peek(0).SumType != "VmStkCell" {
 		return nil, fmt.Errorf("invalid stack")
 	}
-	if stack[0].SumType == "VmStkTinyInt" {
-		return big.NewInt(stack[0].VmStkTinyInt), nil
+	bottom := stack.Peek(3)
+	if bottom.SumType == "VmStkTinyInt" {
+		return big.NewInt(bottom.VmStkTinyInt), nil
 	}
-	res := big.Int(stack[0].VmStkInt)
+	res := big.Int(bottom.VmStkInt)
 	return &res, nil
 }

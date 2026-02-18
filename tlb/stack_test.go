@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -73,6 +74,77 @@ func Test_StackUnmarshal(t *testing.T) {
 		t.Fatalf("invalid decoding")
 	}
 
+}
+
+func Test_StackPassthrough(t *testing.T) {
+	var stack VmStack
+
+	nullVal := VmStackValue{SumType: "VmStkNull"}
+	tinyIntVal := VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: 42}
+	bigVal := big.NewInt(1234567890123)
+	intVal := VmStackValue{SumType: "VmStkInt", VmStkInt: Int257(*bigVal)}
+	cellData := boc.NewCell()
+	if err := cellData.WriteUint(0xdeadbeef, 32); err != nil {
+		t.Fatal(err)
+	}
+	cellVal := VmStackValue{SumType: "VmStkCell"}
+	cellVal.VmStkCell.Value = *cellData
+
+	stack.Put(nullVal)
+	stack.Put(tinyIntVal)
+	stack.Put(intVal)
+	stack.Put(cellVal)
+	if stack.Len() != 4 {
+		t.Fatalf("expected len 4, got %d", stack.Len())
+	}
+
+	decodedStack := encodeThenDecode(t, stack)
+	if decodedStack.Len() != 4 {
+		t.Fatalf("expected len 4 after unmarshal, got %d", decodedStack.Len())
+	}
+
+	{
+		gotCell := popType(t, &decodedStack, "VmStkCell").VmStkCell.Value
+		gotCell.ResetCounters()
+		gotBits, err := gotCell.ReadUint(32)
+		if err != nil {
+			t.Fatalf("read cell bits error: %v", err)
+		}
+		if gotBits != 0xdeadbeef {
+			t.Fatalf("expected 0xdeadbeef in cell, got 0x%x", gotBits)
+		}
+
+		bigIntVal := big.Int(popType(t, &decodedStack, "VmStkInt").VmStkInt)
+		assert.True(t, bigIntVal.Cmp(bigVal) == 0)
+
+		intVal := popType(t, &decodedStack, "VmStkTinyInt")
+		assert.Equal(t, int64(42), intVal.VmStkTinyInt)
+
+		popType(t, &decodedStack, "VmStkNull")
+	}
+}
+
+func encodeThenDecode(t *testing.T, stack VmStack) VmStack {
+	c := boc.NewCell()
+	if err := Marshal(c, stack); err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+	var decodedStack VmStack
+	if err := Unmarshal(c, &decodedStack); err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+	return decodedStack
+}
+
+func popType(t *testing.T, stack *VmStack, expectedType SumType) VmStackValue {
+	val, ok := stack.Pop()
+	if !ok {
+		t.Fatalf("stack is empty")
+	}
+	if val.SumType != expectedType {
+		t.Fatalf("expected %s, got %s", expectedType, val.SumType)
+	}
+	return val
 }
 
 func Test_IntMatrixTupleUnmarshal(t *testing.T) {
@@ -175,7 +247,7 @@ func Test_IntMatrixTupleUnmarshal(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			val := stack[0]
+			val := stack.Peek(0)
 			if val.SumType != "VmStkTuple" {
 				t.Errorf("Stack value must be tuple, got %v", val.SumType)
 			}

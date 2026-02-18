@@ -1,7 +1,7 @@
 package txemulator
 
-// #cgo darwin LDFLAGS: -L ../lib/darwin/ -Wl,-rpath,../lib/darwin/ -l emulator
-// #cgo linux LDFLAGS: -L ../lib/linux/ -Wl,-rpath,../lib/linux/ -l emulator
+// #cgo darwin LDFLAGS: -L ${SRCDIR}/../lib/darwin/ -Wl,-rpath,${SRCDIR}/../lib/darwin/ -l emulator
+// #cgo linux LDFLAGS: -L ${SRCDIR}/../lib/linux/ -Wl,-rpath,${SRCDIR}/../lib/linux/ -l emulator
 // #include "../lib/emulator-extern.h"
 // #include <stdlib.h>
 // #include <stdbool.h>

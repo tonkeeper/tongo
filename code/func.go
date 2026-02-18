@@ -41,7 +41,7 @@ func (c *FunCCompiler) Compile(files map[string]string) (string, []byte, error) 
 		return "", nil, err
 	}
 	if !respBody.Success {
-		return "", nil, fmt.Errorf(respBody.Error)
+		return "", nil, fmt.Errorf("%v", respBody.Error)
 	}
 	boc, err := hex.DecodeString(respBody.Hex)
 	return respBody.Fift, boc, err

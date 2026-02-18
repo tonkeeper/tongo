@@ -32,7 +32,7 @@ func TestRunGetMethod(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	code, res, err := emulator.RunSmcMethod(context.Background(), account, "get_nft_address_by_index", tlb.VmStack{val})
+	code, res, err := emulator.RunSmcMethod(context.Background(), account, "get_nft_address_by_index", val.ToStack())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func TestRunGetMethod(t *testing.T) {
 		t.Fatal("TVM execution failed")
 	}
 
-	if len(res) != 1 || res[0].SumType != "VmStkSlice" {
+	if res.Len() != 1 || res.Peek(0).SumType != "VmStkSlice" {
 		t.Fatal("invalid stack data")
 	}
 }
@@ -70,12 +70,12 @@ func TestRunGetMethod_MYADDR(t *testing.T) {
 		t.Fatal("TVM execution failed")
 	}
 
-	fmt.Printf("res %v\n", res[0].SumType)
-	if len(res) != 1 || res[0].SumType != "VmStkSlice" {
+	fmt.Printf("res %v\n", res.Peek(0).SumType)
+	if res.Len() != 1 || res.Peek(0).SumType != "VmStkSlice" {
 		t.Fatal("invalid stack data")
 	}
 	var addr tlb.MsgAddress
-	err = res[0].Unmarshal(&addr)
+	err = res.Peek(0).Unmarshal(&addr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,11 +113,11 @@ func TestEmulator_WithLibraries(t *testing.T) {
 	if code != 0 && code != 1 { // 1 - alternative success code
 		t.Fatal("TVM execution failed")
 	}
-	if len(res) != 1 || res[0].SumType != "VmStkTinyInt" {
+	if res.Len() != 1 || res.Peek(0).SumType != "VmStkTinyInt" {
 		t.Fatal("invalid stack data")
 	}
-	if res[0].VmStkTinyInt != 1 {
-		t.Fatalf("expected: 1, got: %v", res[0].VmStkTinyInt)
+	if res.Peek(0).VmStkTinyInt != 1 {
+		t.Fatalf("expected: 1, got: %v", res.Peek(0).VmStkTinyInt)
 	}
 	// running code without libraries must fail
 	emulator, err = NewEmulator(codeCell, dataCell, config)
@@ -177,7 +177,7 @@ func TestGet_Benchmark(t *testing.T) {
 	start := time.Now()
 	for i := 0; i < num; i++ {
 		for _, method := range methods {
-			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, nil)
+			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, tlb.VmStack{})
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -196,7 +196,7 @@ func TestGet_Benchmark(t *testing.T) {
 			if err != nil {
 				panic(err)
 			}
-			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, nil)
+			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, tlb.VmStack{})
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -228,7 +228,7 @@ func TestGet_Benchmark(t *testing.T) {
 			if err != nil {
 				panic(err)
 			}
-			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, nil)
+			exit, _, err := e.RunSmcMethod(context.Background(), ton.MustParseAccountID(acc), method, tlb.VmStack{})
 			if err != nil {
 				fmt.Println(err)
 			}

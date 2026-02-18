@@ -119,7 +119,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  97026,
 			account: "EQAAseW6AC4wiEWzSxusVP80xM6yYahYRvKEhKmikXBDjYWN",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetWalletDataResult
@@ -142,7 +142,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  97026,
 			account: "EQC0ZCVsOCGda8Qufyqn0WLUBFdP0vl5w09MO8JYCYVn6CjE",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetWalletDataResult
@@ -166,7 +166,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  97026,
 			account: "EQCJgWrPFPqHhJHTu0ISbIaZuc3OkQH8p7ePnmAtsIjpl3rP",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetWalletDataResult
@@ -190,7 +190,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  97026,
 			account: "kQDDNHHLAWzRDIci7_jD1An79w80ER5SzueZHmusWgJs_fG2",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetWalletDataResult
@@ -214,7 +214,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  97026,
 			account: "EQDrV3Vex_zbgvZXV0hCYTYwi3ui9yFtFJl0J4GhONs6XHiH",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetWalletDataResult
@@ -238,7 +238,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  97026,
 			account: "EQCR50nICun4QUzzXcOhrWyY1jsRNWwJm0mBHMtqlOcMSEAn",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetWalletDataResult
@@ -262,7 +262,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  122284,
 			account: "EQCR50nICun4QUzzXcOhrWyY1jsRNWwJm0mBHMtqlOcMSEAn",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				if !reflect.DeepEqual(stack1, stack2) {
@@ -278,7 +278,7 @@ func TestPrecompiles(t *testing.T) {
 			method:  102351,
 			account: "EQBp_P5ZgufdVhOgW5Z81ckgXL2P6YEX_m_fJtsmclLH8tB7",
 			compareFunc: func(stack1, stack2 tlb.VmStack) error {
-				if len(stack2) != len(stack1) {
+				if stack2.Len() != stack1.Len() {
 					return fmt.Errorf("stack length mismatch")
 				}
 				var a, b abi.GetNftDataResult
@@ -324,7 +324,7 @@ func TestPrecompiles(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			exitCode, tvmStack, err := e.RunSmcMethodByID(context.Background(), ton.MustParseAccountID(c.account), c.method, nil)
+			exitCode, tvmStack, err := e.RunSmcMethodByID(context.Background(), ton.MustParseAccountID(c.account), c.method, tlb.VmStack{})
 			if exitCode != 0 {
 				t.Fatal("exit code is not 0", exitCode)
 			}

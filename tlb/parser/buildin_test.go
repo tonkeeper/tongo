@@ -10,7 +10,7 @@ var bitsSizes = []int{96, 264, 320, 352}
 
 func TestGenerateConstantBigInts(t *testing.T) {
 	s := GenerateConstantBigInts(intSizes)
-	fmt.Printf(s)
+	fmt.Println(s)
 }
 
 func TestGenerateVarUintTypes(t *testing.T) {

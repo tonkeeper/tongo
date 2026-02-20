@@ -39,15 +39,16 @@ func (c *Client) DnsResolve(ctx context.Context, address ton.AccountID, domain s
 	if errCode != 0 && errCode != 1 {
 		return 0, nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	if len(stack) != 2 ||
-		stack[0].SumType != "VmStkTinyInt" ||
-		(stack[1].SumType != "VmStkCell" && stack[1].SumType != "VmStkNull") {
+	if stack.Len() != 2 ||
+		stack.Peek(1).SumType != "VmStkTinyInt" ||
+		(stack.Peek(0).SumType != "VmStkCell" && stack.Peek(0).SumType != "VmStkNull") {
 		return 0, nil, fmt.Errorf("invalid stack")
 	}
-	if stack[1].SumType == "VmStkNull" {
+	if stack.Peek(0).SumType == "VmStkNull" {
 		return 0, nil, nil
 	}
-	return int(stack[0].VmStkTinyInt), &stack[1].VmStkCell.Value, err
+	topVal := stack.Peek(0).VmStkCell.Value
+	return int(stack.Peek(1).VmStkTinyInt), &topVal, err
 }
 
 func (c *Client) GetRootDNS(ctx context.Context) (ton.AccountID, error) {

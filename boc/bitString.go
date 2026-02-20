@@ -480,11 +480,44 @@ func (s *BitString) WriteBigInt(val *big.Int, bitLen int) error {
 }
 
 func (s *BitString) WriteUint(val uint64, bitLen int) error {
-	for i := bitLen - 1; i >= 0; i-- {
-		err := s.WriteBit(((val >> i) & 1) > 0)
-		if err != nil {
-			return err
+	if bitLen == 0 {
+		return nil
+	}
+	if bitLen == 1 {
+		return s.WriteBit(val&1 != 0)
+	}
+	if s.len+bitLen > s.cap {
+		return ErrBitStingOverflow
+	}
+	// step 0:
+	if bitLen < 64 {
+		// truncate higher bits to avoid messing up with the unaligned data in last byte in buf
+		val &= (uint64(1) << bitLen) - 1
+	}
+	// step 1: write the only bits to have the buf aligned
+	unalign := s.len % 8
+	if unalign > 0 {
+		s.buf[s.len/8] &= ^(0xFF >> unalign) // explicitly zero bits
+		align := 8 - unalign
+		if bitLen <= align {
+			s.buf[s.len/8] |= byte(val << (align - bitLen))
+			s.len += bitLen
+			return nil
 		}
+		s.buf[s.len/8] |= byte(val >> (bitLen - align))
+		bitLen -= align
+		s.len += align
+	}
+	// step 2: write whole bytes
+	for bitLen >= 8 {
+		s.buf[s.len/8] = byte(val >> (bitLen - 8))
+		bitLen -= 8
+		s.len += 8
+	}
+	// step 3: write remaining bits
+	if bitLen > 0 {
+		s.buf[s.len/8] = byte(val) << (8 - bitLen)
+		s.len += bitLen
 	}
 	return nil
 }
@@ -528,10 +561,18 @@ func (s *BitString) WriteInt(val int64, bitLen int) error {
 }
 
 func (s *BitString) WriteByte(val byte) error {
-	err := s.WriteUint(uint64(val), 8)
-	if err != nil {
-		return err
+	if s.len+8 > s.cap {
+		return ErrBitStingOverflow
 	}
+	n := s.len / 8
+	if s.len%8 == 0 {
+		s.buf[n] = val
+	} else {
+		align := s.len % 8
+		s.buf[n] = (s.buf[n] & ^(0xFF >> align)) | val>>align
+		s.buf[n+1] = val << (8 - align)
+	}
+	s.len += 8
 	return nil
 }
 

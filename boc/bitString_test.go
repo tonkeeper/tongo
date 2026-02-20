@@ -7,6 +7,8 @@ import (
 	"math/bits"
 	"math/rand"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAppend(t *testing.T) {
@@ -195,41 +197,135 @@ func BenchmarkReadUint(b *testing.B) {
 func TestReadUint(t *testing.T) {
 	for _, u := range []uint64{0, 1, 2, 8, 100500, (1 << 32) - 1, 1 << 32, (1 << 32) + 1, (1 << 64) - 1} {
 		for offset := 0; offset <= 17; offset++ {
-			str := NewBitString(1023)
-			for i := 0; i < offset; i++ {
-				str.WriteBit(true)
-			}
-			str.WriteUint(u, bits.Len64(u))
-			if bits.Len64(u) < 32 {
-				str.WriteUint(u, bits.Len64(u)*2)
-			}
-			for i := 0; i < offset; i++ {
-				str.ReadBit()
-			}
+			t.Run(fmt.Sprintf("offset: %d, number: %d", offset, u), func(t *testing.T) {
 
-			u2, err := str.ReadUint(bits.Len64(u))
-			if err != nil {
-				t.Error(err)
-			}
-			if u2 != u {
-				t.Errorf("%v with offset %v: %v", u, offset, u2)
+				str := NewBitString(1023)
+				for i := 0; i < offset; i++ {
+					str.WriteBit(true)
+				}
+				str.WriteUint(u, bits.Len64(u))
+				if bits.Len64(u) < 32 {
+					str.WriteUint(u, bits.Len64(u)*2)
+				}
+				for i := 0; i < offset; i++ {
+					str.ReadBit()
+				}
+
+				u2, err := str.ReadUint(bits.Len64(u))
+				if assert.NoError(t, err) {
+					assert.Equal(t, u, u2)
+				}
+			})
+		}
+	}
+}
+func TestReadUint_Prop(t *testing.T) {
+	for _, pattern := range []uint64{
+		0x0123456789ABCDEF,
+		0xF1E2D3C4B5A69788,
+		0x8040201008040201,
+	} {
+		for bitLen := range 65 {
+			for offset := 0; offset <= 17; offset++ {
+				num := pattern >> (64 - bitLen)
+				outSpaceBit := false
+				t.Run(fmt.Sprintf("number: %x, offset: %d, bitlen: %d", num, offset, bitLen), func(t *testing.T) {
+					str := NewBitString(1023)
+					for i := 0; i < offset; i++ {
+						str.WriteBit(outSpaceBit)
+					}
+					str.WriteUint(num, bitLen)
+					for i := 0; i < 64; i++ {
+						str.WriteBit(outSpaceBit)
+					}
+					for i := 0; i < offset; i++ {
+						str.ReadBit()
+					}
+
+					u2, err := str.ReadUint(bitLen)
+					if assert.NoError(t, err) {
+						assert.Equal(t, num, u2)
+					}
+				})
 			}
 		}
 	}
 }
 
 func TestReadByte(t *testing.T) {
-	str := NewBitString(1023)
-	str.WriteBit(true)
-	str.WriteByte(107)
-	fmt.Printf("%b\n", 107)
-	str.ReadBit()
-	b, err := str.ReadByte()
-	if err != nil {
-		t.Fatal(err)
+	for offset := range 7 {
+		for _, byt := range []byte{
+			0b01101011,
+			0b11100001,
+			0b10000111,
+			0b00000001,
+			0b10000000,
+		} {
+			t.Run(fmt.Sprintf("offset=%v, byte=%d", offset, byt), func(t *testing.T) {
+				str := NewBitString(1023)
+				// WRITE
+				for i := 0; i < offset; i++ {
+					assert.NoError(t, str.WriteBit(true))
+				}
+				assert.NoError(t, str.WriteByte(byt))
+				// READ
+				for i := 0; i < offset; i++ {
+					bit, err := str.ReadBit()
+					assert.NoError(t, err)
+					assert.True(t, bit)
+				}
+				b, err := str.ReadByte()
+				assert.NoError(t, err)
+				assert.Equal(t, byt, b)
+			})
+		}
 	}
-	fmt.Printf("%b\n", b)
-	if b != 107 {
-		t.Fatal(b)
+}
+
+func BenchmarkBitString_WriteByte(b *testing.B) {
+	for offset := range 8 {
+		b.Run(fmt.Sprintf("offset=%v OLD", offset), func(t *testing.B) {
+			str := NewBitString(8 * b.N)
+			for i := 0; i < b.N; i++ {
+				for range 100000 {
+					str.len = offset
+					_ = str.writeByteOld(0xff)
+				}
+			}
+		})
+		b.Run(fmt.Sprintf("offset=%v NEW", offset), func(t *testing.B) {
+			str := NewBitString(8 * b.N)
+			for i := 0; i < b.N; i++ {
+				for range 100000 {
+					str.len = offset
+					_ = str.WriteByte(0xff)
+				}
+			}
+		})
+	}
+}
+
+func BenchmarkBitString_WriteUint(b *testing.B) {
+	for offset := range 8 {
+		for _, size := range []int{1, 2, 4, 5, 8, 32, 64} {
+			b.Run(fmt.Sprintf("offset=%v size=%v NEW", offset, size), func(t *testing.B) {
+				str := NewBitString(8 * b.N)
+				for i := 0; i < b.N; i++ {
+					for range 100000 {
+						str.len = offset
+						_ = str.WriteUint(0xFFFFFFFFFFFFFFFF, size)
+					}
+				}
+			})
+			b.Run(fmt.Sprintf("offset=%v size=%v OLD", offset, size), func(t *testing.B) {
+				str := NewBitString(8 * b.N)
+				for i := 0; i < b.N; i++ {
+					for range 100000 {
+						str.len = offset
+						_ = str.writeUintOld(0xFFFFFFFFFFFFFFFF, size)
+					}
+				}
+			})
+		}
 	}
 }

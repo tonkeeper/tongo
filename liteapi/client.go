@@ -518,7 +518,7 @@ func (c *Client) RunSmcMethodByID(ctx context.Context, accountID ton.AccountID, 
 	}
 	var result tlb.VmStack
 	if res.ExitCode == 4294967040 { //-256
-		return res.ExitCode, nil, ErrAccountNotFound
+		return res.ExitCode, tlb.VmStack{}, ErrAccountNotFound
 	}
 	cells, err := boc.DeserializeBoc(res.Result)
 	if err != nil {

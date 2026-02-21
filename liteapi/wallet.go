@@ -18,8 +18,8 @@ func (c *Client) GetSeqno(ctx context.Context, account ton.AccountID) (uint32, e
 	} else if errCode != 0 && errCode != 1 {
 		return 0, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	if len(stack) != 1 || stack[0].SumType != "VmStkTinyInt" {
+	if stack.Len() != 1 || stack.Peek(0).SumType != "VmStkTinyInt" {
 		return 0, fmt.Errorf("invalid stack")
 	}
-	return uint32(stack[0].VmStkTinyInt), nil
+	return uint32(stack.Peek(0).VmStkTinyInt), nil
 }

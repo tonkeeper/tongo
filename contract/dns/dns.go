@@ -65,14 +65,14 @@ func (d *DNS) Resolve(ctx context.Context, domain string) (map[DNSCategory]tlb.D
 
 func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) (map[DNSCategory]tlb.DNSRecord, error) {
 	n := int64(len(dom))
-	stack := tlb.VmStack{}
+	argStack := tlb.VmStack{}
 	val, err := tlb.TlbStructToVmCellSlice(dom)
 	if err != nil {
 		return nil, err
 	}
-	stack.Put(val)
-	stack.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257{}})
-	exitCode, stack, err := d.executor.RunSmcMethodByID(ctx, resolver, 123660, stack)
+	argStack.Put(val)
+	argStack.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257{}})
+	exitCode, stack, err := d.executor.RunSmcMethodByID(ctx, resolver, 123660, argStack)
 	if err != nil && strings.Contains(err.Error(), "method execution failed") {
 		return nil, fmt.Errorf("%w: %v", ErrNotResolved, err)
 	}
@@ -86,7 +86,7 @@ func (d *DNS) resolve(ctx context.Context, resolver ton.AccountID, dom []byte) (
 		ResolvedBits int64
 		Result       boc.Cell
 	}
-	if len(stack) == 2 && stack[0].SumType == "VmStkTinyInt" && stack[0].VmStkTinyInt == 0 && stack[1].SumType == "VmStkNull" {
+	if stack.Len() == 2 && stack.Peek(1).SumType == "VmStkTinyInt" && stack.Peek(1).VmStkTinyInt == 0 && stack.Peek(0).SumType == "VmStkNull" {
 		return nil, ErrNotResolved
 	}
 	err = stack.Unmarshal(&result)

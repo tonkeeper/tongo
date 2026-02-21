@@ -410,14 +410,15 @@ func buildInputStackValues(r []StackRecord) string {
 
 func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 	var builder strings.Builder
+	n := len(r)
 	if isFixed {
-		builder.WriteString(fmt.Sprintf("if len(stack) != %d ", len(r)))
+		builder.WriteString(fmt.Sprintf("if stack.Len() != %d ", n))
 	} else {
-		builder.WriteString(fmt.Sprintf("if len(stack) < %d ", len(r)))
+		builder.WriteString(fmt.Sprintf("if stack.Len() < %d ", n))
 	}
 	for i, s := range r {
 		nullableCheck := ""
-		stackType := fmt.Sprintf("stack[%d].SumType", i)
+		stackType := fmt.Sprintf("stack.Peek(%d).SumType", n-1-i)
 		if s.Nullable || (s.XMLName.Local == "tuple" && s.List) {
 			nullableCheck = fmt.Sprintf(" && %s != \"VmStkNull\"", stackType)
 		}

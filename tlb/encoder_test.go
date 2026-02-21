@@ -86,10 +86,8 @@ func TestEnum(t *testing.T) {
 }
 
 func TestEnumFail(t *testing.T) {
+	// Empty SumType defaults to first variant, so only invalid SumType should fail
 	var cases = []testSumType{
-		{
-			B: testCase{4, 6},
-		},
 		{
 			SumType: "C",
 			B:       testCase{4, 6},
@@ -101,6 +99,18 @@ func TestEnumFail(t *testing.T) {
 		if err == nil {
 			t.Fatalf("case %d should fail but didn't", i)
 		}
+	}
+}
+
+func TestEnumEmptySumType(t *testing.T) {
+	// Empty SumType should default to the first variant
+	enum := testSumType{
+		B: testCase{4, 6},
+	}
+	b1 := boc.NewCell()
+	err := Marshal(b1, enum)
+	if err != nil {
+		t.Fatalf("empty SumType should default to first variant: %v", err)
 	}
 }
 

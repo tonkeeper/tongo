@@ -73,14 +73,16 @@
     </interface>
     <interface name="coffee_cross_dex">
         <code_hash>fea9c6a1ef5eab2c5ca94d6bef1e33994c5786abeb5264760e150da33bfb3677</code_hash>
+        <code_hash>a63cbf47d55370fe2baebb4bf284bd401e717db4a0ab0e49f4b3b3cc7c0f5652</code_hash>
         <msg_in>
             <internal name="jetton_notify"/>
             <internal name="coffee_cross_dex_resend"/>
             <internal name="coffee_cross_dex_failure"/>
         </msg_in>
-        <error code="100">Invalid payload to resent</error>
+        <error code="100">Invalid payload to resend</error>
         <error code="101">Dedust payload is empty</error>
         <error code="102">ProxyTON payload is empty</error>
+        <error code="103">BidAsk payload is empty</error>
         <error code="200">Not an admin</error>
     </interface>
     <interface name="coffee_staking_master">

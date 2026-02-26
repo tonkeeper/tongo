@@ -2,10 +2,11 @@ package abi
 
 import (
 	"encoding/json"
-	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/tlb"
 	"reflect"
 	"testing"
+
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 func TestNftPayloadJSMarshaling(t *testing.T) {

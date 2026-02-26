@@ -2,8 +2,9 @@ package tlb
 
 import (
 	"fmt"
-	"github.com/tonkeeper/tongo/boc"
 	"testing"
+
+	"github.com/tonkeeper/tongo/boc"
 )
 
 func TestTuple(t *testing.T) {

@@ -12,18 +12,27 @@ import (
 )
 import _ "embed"
 
-//go:embed abi.json
-var abiData []byte
+//go:embed abi/jetton_wallet.json
+var jettonWalletAbiData []byte
+
+//go:embed abi/swap_coffee.json
+var swapCoffeeAbiData []byte
 
 func main() {
-	var abi tolkParser.ABI
-	err := json.Unmarshal(abiData, &abi)
+	var jettonWalletABI tolkParser.ABI
+	err := json.Unmarshal(jettonWalletAbiData, &jettonWalletABI)
+	if err != nil {
+		panic(err)
+	}
+
+	var swapCoffeeABI tolkParser.ABI
+	err = json.Unmarshal(swapCoffeeAbiData, &swapCoffeeABI)
 	if err != nil {
 		panic(err)
 	}
 
 	ty := tolkParser.NewStructType("Transfer")
-	b, err := hex.DecodeString("b5ee9c72c10101010056000000a75fcc3d140000000000000000800c0674dd00e3a7231084788441cc873e60eb8681f44901cba3a9107c5c322dc4500034a37c6673343b360e10d4e438483b555805a20e5f056742b6a42ba35311994c802625a008a90c976e")
+	b, err := hex.DecodeString("b5ee9c72010205010001310001ae0f8a7ea5003c0fe80d6334813ef1895801d9d00dc43cb19c9bfa417f874e7be3670825205a6e50d3490a0aec1194fe2e8f003ffffbc78bb7c4bb37210cfa7f64397ff32df53ce36c46934e21a1e315c93137482ed968810101084ee9b1060201ae0f8a7ea5003c0fe80d6334813ef189d801fe7933ccc21619bc6f1800071d12d4e7aae8d68f637fcdb8facdca753b08c859003ffffbc78bb7c4bb37210cfa7f64397ff32df53ce36c46934e21a1e315c93137481823cf41030153c0ffee10c44cf0b64eb9dedfb010c7b24a508140d86f6e07789f9383bb9b2141ea9c08ea502d0bbc060404008d69a178e5801ffffde3c5dbe25d9b90867d3fb21cbff996fa9e71b62349a710d0f18ae4989bb00021706f0b21587534d776380d79ce6fcbef538e7aacc3f949f91149c80db932bd")
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +42,10 @@ func main() {
 	}
 
 	decoder := tolk.NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(jettonWalletABI, swapCoffeeABI)
+	if err != nil {
+		panic(err)
+	}
 	res, err := decoder.Unmarshal(cell[0], ty)
 	if err != nil {
 		panic(err)
@@ -50,13 +62,13 @@ func main() {
 	queryId := tolkStruct.MustGetField("queryId")
 	queryIdValue := queryId.MustGetSmallUInt()
 
-	newOwner, ok := tolkStruct.GetField("newOwner")
+	newOwner, ok := tolkStruct.GetField("destination")
 	if !ok {
-		panic("transfer.newOwner not found")
+		panic("transfer.destination not found")
 	}
 	newOwnerValue, ok := newOwner.GetAddress()
 	if !ok {
-		panic("cannot get transfer.newOwner value")
+		panic("cannot get transfer.destination value")
 	}
 
 	responseDestination, ok := tolkStruct.GetField("responseDestination")
@@ -86,20 +98,16 @@ func main() {
 		panic("cannot get transfer.forwardAmount value")
 	}
 
-	forwardPayload, ok := tolkStruct.GetField("forwardPayload")
+	_, ok = tolkStruct.GetField("forwardPayload")
 	if !ok {
 		panic("transfer.forwardPayload not found")
-	}
-	forwardPayloadValue, ok := forwardPayload.GetRemaining()
-	if !ok {
-		panic("cannot get transfer.forwardPayload value")
 	}
 
 	val, err := json.MarshalIndent(res, "", "    ")
 	if err != nil {
 		panic(err)
 	}
-	inputFilename := "examples/tolk/output.json"
+	inputFilename := "examples/tolk/payload-unmarshal/output.json"
 	err = os.WriteFile(inputFilename, val, os.ModePerm)
 	if err != nil {
 		panic(err)
@@ -116,5 +124,4 @@ func main() {
 	fmt.Printf("Transfer response destination: %v\n", responseDestinationValue.ToRaw())
 	fmt.Printf("Transfer is custom payload exists: %v\n", customPayloadValue.IsExists)
 	fmt.Printf("Transfer forward amount: %x\n", forwardAmountValue.String())
-	fmt.Printf("Transfer forward value: %x\n", forwardPayloadValue.ReadRemainingBits())
 }

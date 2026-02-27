@@ -70,6 +70,7 @@ type RemainingValue boc.Cell
 
 func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty tolkParser.Remaining, decoder *Decoder) error {
 	rem := cell.CopyRemaining()
+	cell.ReadRemainingBits()
 	if rem != nil {
 		*r = RemainingValue(*rem)
 	}

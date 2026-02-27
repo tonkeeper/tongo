@@ -70,9 +70,19 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Dec
 
 	for _, field := range strct.Fields {
 		fieldVal := Value{}
-		err = fieldVal.Unmarshal(cell, field.Ty, decoder)
-		if err != nil {
-			return fmt.Errorf("failed to unmarshal struct's field %s: %w", field.Name, err)
+
+		isPayloadResolved := false
+		if field.IsPayload != nil && *field.IsPayload {
+			fieldVal, isPayloadResolved, err = s.resolvePayload(cell, field.Ty, decoder)
+			if err != nil {
+				return fmt.Errorf("failed to resolve payload for field %v: %w", field.Name, err)
+			}
+		}
+		if !isPayloadResolved {
+			err = fieldVal.Unmarshal(cell, field.Ty, decoder)
+			if err != nil {
+				return fmt.Errorf("failed to unmarshal struct's field %s: %w", field.Name, err)
+			}
 		}
 
 		tolkStruct.fieldNames = append(tolkStruct.fieldNames, field.Name)
@@ -83,6 +93,66 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Dec
 	*s = tolkStruct
 
 	return nil
+}
+
+// try to resolve payload from all known abi in trace
+func (s *Struct) resolvePayload(cell *boc.Cell, ty tolkParser.Ty, decoder *Decoder) (Value, bool, error) {
+	switch ty.SumType {
+	case "Remaining":
+		isRef, err := cell.ReadBit()
+		if err != nil {
+			return Value{}, false, fmt.Errorf("failed to read isRef prefix: %w", err)
+		}
+		payload := cell.CopyRemaining()
+		if isRef {
+			payload, err = payload.NextRef()
+			if err != nil {
+				return Value{}, false, fmt.Errorf("failed to read payload ref: %w", err)
+			}
+		}
+		v, isResolved, err := resolvePayload(payload, decoder)
+		if err != nil {
+			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
+		}
+		if isResolved {
+			return v, true, nil
+		}
+	case "Cell":
+		payload, err := cell.NextRef()
+		if err != nil {
+			return Value{}, false, fmt.Errorf("failed to read payload ref: %w", err)
+		}
+		payload = payload.CopyRemaining()
+		v, isResolved, err := resolvePayload(payload, decoder)
+		if err != nil {
+			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
+		}
+		if isResolved {
+			return v, true, nil
+		}
+	}
+
+	return Value{}, false, nil
+}
+
+func resolvePayload(payload *boc.Cell, decoder *Decoder) (Value, bool, error) {
+	payloadOpcode, err := payload.ReadUint(32) // payload always 32 bit length
+	if err != nil {
+		return Value{}, false, fmt.Errorf("failed to read payload's opcode: %w", err)
+	}
+	payload.ResetCounters() // reset opcode
+
+	guessedStructs := decoder.abiRefs.opcodeRefs[payloadOpcode]
+	for _, strct := range guessedStructs {
+		v, err := decoder.Unmarshal(payload, tolkParser.NewStructType(strct.Name))
+		if err != nil {
+			continue
+		}
+		return *v, true, nil
+	}
+
+	// todo: maybe try every known struct to unmarshal to?
+	return Value{}, false, nil
 }
 
 func (s *Struct) Marshal(cell *boc.Cell, ty tolkParser.StructRef, encoder *Encoder) error {

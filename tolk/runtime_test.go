@@ -1112,7 +1112,10 @@ func TestRuntime_UnmarshalUnionWithBinPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -1189,7 +1192,10 @@ func TestRuntime_UnmarshalUnionWithHexPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -1249,7 +1255,10 @@ func TestRuntime_UnmarshalALotRefsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -1511,7 +1520,10 @@ func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -1769,7 +1781,10 @@ func TestRuntime_UnmarshalALotGenericsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -2008,7 +2023,10 @@ func TestRuntime_UnmarshalALotGenericsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -2251,7 +2269,10 @@ func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -2424,7 +2445,10 @@ func TestRuntime_UnmarshalALotNumbers(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -2545,7 +2569,10 @@ func TestRuntime_UnmarshalALotRandomFields(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
@@ -2769,7 +2796,10 @@ func TestRuntime_UnmarshalAliasWithCustomUnpack(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	decoder.WithCustomUnpackResolver(func(alias tolkParser.AliasRef, cell *boc.Cell, value *AliasValue) error {
 		err := cell.Skip(512)
 		if err != nil {
@@ -3938,14 +3968,20 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -3995,14 +4031,20 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4047,14 +4089,20 @@ func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Fatal(err)
@@ -4104,14 +4152,20 @@ func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4156,14 +4210,20 @@ func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4208,14 +4268,20 @@ func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4260,14 +4326,20 @@ func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4312,14 +4384,20 @@ func TestRuntime_MarshalALotNumbers(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4364,14 +4442,20 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	v, err := decoder.Unmarshal(currCell[0], ty)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	newCell, err := encoder.Marshal(v, ty)
 	if err != nil {
 		t.Error(err)
@@ -4416,7 +4500,10 @@ func TestRuntime_MarshalAliasWithCustomUnpack(t *testing.T) {
 		t.Fatal(err)
 	}
 	decoder := NewDecoder()
-	decoder.WithABI(abi)
+	err = decoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	decoder.WithCustomUnpackResolver(func(alias tolkParser.AliasRef, cell *boc.Cell, value *AliasValue) error {
 		err := cell.Skip(512)
 		if err != nil {
@@ -4435,7 +4522,10 @@ func TestRuntime_MarshalAliasWithCustomUnpack(t *testing.T) {
 	}
 
 	encoder := NewEncoder()
-	encoder.WithABI(abi)
+	err = encoder.WithABIs(abi)
+	if err != nil {
+		t.Fatal(err)
+	}
 	encoder.WithCustomPackResolver(func(ref tolkParser.AliasRef, cell *boc.Cell, value *AliasValue) error {
 		err := cell.WriteUint(0, 256)
 		if err != nil {

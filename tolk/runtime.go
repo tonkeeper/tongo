@@ -22,6 +22,7 @@ type abiRefs struct {
 	aliasRefs   map[string]tolkParser.AliasDeclaration
 	enumRefs    map[string]tolkParser.EnumDeclaration
 	genericRefs map[string]tolkParser.Ty
+	opcodeRefs  map[uint64][]tolkParser.StructDeclaration
 }
 
 type customUnpackResolver = func(tolkParser.AliasRef, *boc.Cell, *AliasValue) error
@@ -35,29 +36,38 @@ func NewDecoder() *Decoder {
 	return &Decoder{}
 }
 
-func (a *Decoder) WithABI(abi tolkParser.ABI) *Decoder {
+func (a *Decoder) WithABIs(abis ...tolkParser.ABI) error {
 	a.abiRefs = abiRefs{
 		structRefs:  make(map[string]tolkParser.StructDeclaration),
 		aliasRefs:   make(map[string]tolkParser.AliasDeclaration),
 		enumRefs:    make(map[string]tolkParser.EnumDeclaration),
 		genericRefs: make(map[string]tolkParser.Ty),
+		opcodeRefs:  make(map[uint64][]tolkParser.StructDeclaration),
 	}
-	for _, declr := range abi.Declarations {
-		switch declr.SumType {
-		case "Struct":
-			a.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
-		case "Alias":
-			a.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
-		case "Enum":
-			a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
+	for _, abi := range abis {
+		for _, declr := range abi.Declarations {
+			switch declr.SumType {
+			case "Struct":
+				a.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
+				if declr.StructDeclaration.Prefix != nil {
+					prefix, err := binHexToUint64(declr.StructDeclaration.Prefix.PrefixStr)
+					if err != nil {
+						return fmt.Errorf("failed to parse prefix struct %v prefix: %w", declr.StructDeclaration.Name, err)
+					}
+					a.abiRefs.opcodeRefs[prefix] = append(a.abiRefs.opcodeRefs[prefix], declr.StructDeclaration)
+				}
+			case "Alias":
+				a.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
+			case "Enum":
+				a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
+			}
 		}
 	}
-	return a
+	return nil
 }
 
-func (a *Decoder) WithCustomUnpackResolver(customUnpackResolver customUnpackResolver) *Decoder {
+func (a *Decoder) WithCustomUnpackResolver(customUnpackResolver customUnpackResolver) {
 	a.customUnpackResolver = customUnpackResolver
-	return a
 }
 
 func (a *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
@@ -80,29 +90,38 @@ func NewEncoder() *Encoder {
 	return &Encoder{}
 }
 
-func (a *Encoder) WithABI(abi tolkParser.ABI) *Encoder {
+func (a *Encoder) WithABIs(abis ...tolkParser.ABI) error {
 	a.abiRefs = abiRefs{
 		structRefs:  make(map[string]tolkParser.StructDeclaration),
 		aliasRefs:   make(map[string]tolkParser.AliasDeclaration),
 		enumRefs:    make(map[string]tolkParser.EnumDeclaration),
 		genericRefs: make(map[string]tolkParser.Ty),
+		opcodeRefs:  make(map[uint64][]tolkParser.StructDeclaration),
 	}
-	for _, declr := range abi.Declarations {
-		switch declr.SumType {
-		case "Struct":
-			a.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
-		case "Alias":
-			a.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
-		case "Enum":
-			a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
+	for _, abi := range abis {
+		for _, declr := range abi.Declarations {
+			switch declr.SumType {
+			case "Struct":
+				a.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
+				if declr.StructDeclaration.Prefix != nil {
+					prefix, err := binHexToUint64(declr.StructDeclaration.Prefix.PrefixStr)
+					if err != nil {
+						return fmt.Errorf("failed to parse prefix struct %v prefix: %w", declr.StructDeclaration.Name, err)
+					}
+					a.abiRefs.opcodeRefs[prefix] = append(a.abiRefs.opcodeRefs[prefix], declr.StructDeclaration)
+				}
+			case "Alias":
+				a.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
+			case "Enum":
+				a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
+			}
 		}
 	}
-	return a
+	return nil
 }
 
-func (a *Encoder) WithCustomPackResolver(customPackResolver customPackResolver) *Encoder {
+func (a *Encoder) WithCustomPackResolver(customPackResolver customPackResolver) {
 	a.customPackResolver = customPackResolver
-	return a
 }
 
 func (a *Encoder) Marshal(v *Value, ty tolkParser.Ty) (*boc.Cell, error) {

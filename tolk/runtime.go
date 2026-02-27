@@ -36,8 +36,8 @@ func NewDecoder() *Decoder {
 	return &Decoder{}
 }
 
-func (a *Decoder) WithABIs(abis ...tolkParser.ABI) error {
-	a.abiRefs = abiRefs{
+func (d *Decoder) WithABIs(abis ...tolkParser.ABI) error {
+	d.abiRefs = abiRefs{
 		structRefs:  make(map[string]tolkParser.StructDeclaration),
 		aliasRefs:   make(map[string]tolkParser.AliasDeclaration),
 		enumRefs:    make(map[string]tolkParser.EnumDeclaration),
@@ -48,35 +48,50 @@ func (a *Decoder) WithABIs(abis ...tolkParser.ABI) error {
 		for _, declr := range abi.Declarations {
 			switch declr.SumType {
 			case "Struct":
-				a.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
+				d.abiRefs.structRefs[declr.StructDeclaration.Name] = declr.StructDeclaration
 				if declr.StructDeclaration.Prefix != nil {
 					prefix, err := binHexToUint64(declr.StructDeclaration.Prefix.PrefixStr)
 					if err != nil {
 						return fmt.Errorf("failed to parse prefix struct %v prefix: %w", declr.StructDeclaration.Name, err)
 					}
-					a.abiRefs.opcodeRefs[prefix] = append(a.abiRefs.opcodeRefs[prefix], declr.StructDeclaration)
+					d.abiRefs.opcodeRefs[prefix] = append(d.abiRefs.opcodeRefs[prefix], declr.StructDeclaration)
 				}
 			case "Alias":
-				a.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
+				d.abiRefs.aliasRefs[declr.AliasDeclaration.Name] = declr.AliasDeclaration
 			case "Enum":
-				a.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
+				d.abiRefs.enumRefs[declr.EnumDeclaration.Name] = declr.EnumDeclaration
 			}
 		}
 	}
 	return nil
 }
 
-func (a *Decoder) WithCustomUnpackResolver(customUnpackResolver customUnpackResolver) {
-	a.customUnpackResolver = customUnpackResolver
+func (d *Decoder) WithCustomUnpackResolver(customUnpackResolver customUnpackResolver) {
+	d.customUnpackResolver = customUnpackResolver
 }
 
-func (a *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
+func (d *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
 	res := &Value{}
-	err := res.Unmarshal(cell, ty, a)
+	err := res.Unmarshal(cell, ty, d)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal tolk value: %w", err)
 	}
 	return res, nil
+}
+
+func (d *Decoder) UnmarshalMessage(cell *boc.Cell) (*Value, error) {
+	res, isResolved, err := resolvePayload(cell, d)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal tolk value: %w", err)
+	}
+	if isResolved {
+		return &res, nil
+	}
+	res = Value{
+		SumType:   "Remaining",
+		Remaining: (*RemainingValue)(cell),
+	}
+	return &res, nil
 }
 
 type customPackResolver = func(tolkParser.AliasRef, *boc.Cell, *AliasValue) error

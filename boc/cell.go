@@ -341,6 +341,21 @@ func (c *Cell) CopyRemaining() *Cell {
 	return c2
 }
 
+func (c *Cell) CopyCell() *Cell {
+	if c == nil {
+		return nil
+	}
+	c2 := NewCellWithBits(c.RawBitString())
+	for _, ref := range c.Refs() {
+		refCopy := ref.CopyCell()
+		if err := c2.AddRef(refCopy); err != nil {
+			// this should never happen but anyway
+			panic(err)
+		}
+	}
+	return c2
+}
+
 func (c *Cell) WriteBytes(b []byte) error {
 	return c.bits.WriteBytes(b)
 }

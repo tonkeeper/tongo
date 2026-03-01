@@ -1,40 +1,15 @@
 {
-  "sumType": "tensor",
-  "tensor": [
-    {
-      "sumType": "bigUint",
-      "bigUint": "4325"
-    },
-    {
-      "sumType": "bool",
-      "bool": true
-    },
-    {
-      "sumType": "coins",
-      "coins": "1000000000"
-    },
-    {
-      "sumType": "tensor",
-      "tensor": [
-        {
-          "sumType": "smallInt",
-          "smallInt": -342
-        },
-        {
-          "sumType": "optionalValue",
-          "optionalValue": {
-            "isExists": true,
-            "value": {
-              "sumType": "smallInt",
-              "smallInt": 0
-            }
-          }
-        }
-      ]
-    },
-    {
-      "sumType": "varInt",
-      "varInt": "-9304000000"
-    }
+  "value": [
+    "4325",
+    true,
+    "1000000000",
+    [
+      -342,
+      {
+        "isExists": true,
+        "value": 0
+      }
+    ],
+    "-9304000000"
   ]
 }

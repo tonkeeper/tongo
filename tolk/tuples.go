@@ -1,7 +1,9 @@
 package tolk
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -91,4 +93,21 @@ func (v *TensorValues) Equal(other any) bool {
 		}
 	}
 	return true
+}
+
+func (v TensorValues) MarshalJSON() ([]byte, error) {
+	var s strings.Builder
+	s.WriteRune('[')
+	for i, item := range []Value(v) {
+		data, err := json.Marshal(item)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal %v tensor's value: %w", i, err)
+		}
+		s.Write(data)
+		if i != len([]Value(v))-1 {
+			s.WriteRune(',')
+		}
+	}
+	s.WriteRune(']')
+	return []byte(s.String()), nil
 }

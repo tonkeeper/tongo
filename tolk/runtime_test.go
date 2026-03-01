@@ -2841,7 +2841,6 @@ func TestRuntime_UnmarshalAliasWithCustomUnpack(t *testing.T) {
 }
 
 func TestRuntime_MarshalSmallInt(t *testing.T) {
-	jsonInputFilename := "small_int"
 	ty := tolkParser.NewIntNType(24)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010005000006ff76c41616db06")
@@ -2870,14 +2869,9 @@ func TestRuntime_MarshalSmallInt(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalSmallUInt(t *testing.T) {
-	jsonInputFilename := "small_uint"
 	ty := tolkParser.NewUIntNType(53)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000d00000000001d34e435eafd")
@@ -2906,14 +2900,9 @@ func TestRuntime_MarshalSmallUInt(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalBigInt(t *testing.T) {
-	jsonInputFilename := "big_int"
 	ty := tolkParser.NewIntNType(183)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101001900002dfffffffffffffffffffffffffffffffffff99bfeac6423a6f0b50c")
@@ -2942,14 +2931,9 @@ func TestRuntime_MarshalBigInt(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalBigUInt(t *testing.T) {
-	jsonInputFilename := "big_uint"
 	ty := tolkParser.NewUIntNType(257)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002300004100000000000000000000000000000000000000000000000000009fc4212a38ba40b11cce12")
@@ -2978,14 +2962,9 @@ func TestRuntime_MarshalBigUInt(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalVarInt(t *testing.T) {
-	jsonInputFilename := "var_int"
 	ty := tolkParser.NewVarInt16Type()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000730c98588449b6923")
@@ -3014,14 +2993,9 @@ func TestRuntime_MarshalVarInt(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalVarUInt(t *testing.T) {
-	jsonInputFilename := "var_uint"
 	ty := tolkParser.NewVarUInt32Type()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000800000b28119ab36b44d3a86c0f")
@@ -3050,14 +3024,9 @@ func TestRuntime_MarshalVarUInt(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalBits(t *testing.T) {
-	jsonInputFilename := "bits"
 	ty := tolkParser.NewBitsNType(24)
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000500000631323318854035")
@@ -3086,14 +3055,9 @@ func TestRuntime_MarshalBits(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalCoins(t *testing.T) {
-	jsonInputFilename := "coins"
 	ty := tolkParser.NewCoinsType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410101010007000009436ec6e0189ebbd7f4")
@@ -3122,14 +3086,9 @@ func TestRuntime_MarshalCoins(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalBool(t *testing.T) {
-	jsonInputFilename := "bool"
 	ty := tolkParser.NewBoolType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
@@ -3158,14 +3117,9 @@ func TestRuntime_MarshalBool(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalCell(t *testing.T) {
-	jsonInputFilename := "cell"
 	ty := tolkParser.NewCellType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101020100090001000100080000007ba52a3292")
@@ -3194,14 +3148,9 @@ func TestRuntime_MarshalCell(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalRemaining(t *testing.T) {
-	jsonInputFilename := "remaining"
 	ty := tolkParser.NewRemainingType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
@@ -3230,14 +3179,9 @@ func TestRuntime_MarshalRemaining(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAddress(t *testing.T) {
-	jsonInputFilename := "internal_address"
 	ty := tolkParser.NewAddressType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
@@ -3266,14 +3210,9 @@ func TestRuntime_MarshalAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
-	jsonInputFilename := "not_exists_optional_address"
 	ty := tolkParser.NewAddressOptType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
@@ -3302,14 +3241,9 @@ func TestRuntime_MarshalNotExitsOptionalAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
-	jsonInputFilename := "exists_optional_address"
 	ty := tolkParser.NewAddressOptType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
@@ -3338,14 +3272,9 @@ func TestRuntime_MarshalExistsOptionalAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalExternalAddress(t *testing.T) {
-	jsonInputFilename := "external_address"
 	ty := tolkParser.NewAddressExtType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
@@ -3374,14 +3303,9 @@ func TestRuntime_MarshalExternalAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
-	jsonInputFilename := "any_none_address"
 	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100030000012094418655")
@@ -3410,14 +3334,9 @@ func TestRuntime_MarshalAnyNoneAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
-	jsonInputFilename := "any_internal_address"
 	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101002400004380107bfaaa5cc6e5368e5f9799188bd798cd22e04ab16d1d8ea4fc37480741e6351064a3e1a6")
@@ -3446,14 +3365,9 @@ func TestRuntime_MarshalAnyInternalAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
-	jsonInputFilename := "any_external_address"
 	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000600000742082850fcbd94fd")
@@ -3482,14 +3396,9 @@ func TestRuntime_MarshalAnyExternalAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
-	jsonInputFilename := "any_var_address"
 	ty := tolkParser.NewAddressAnyType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000900000dc0800000000ab8d04726e4")
@@ -3518,14 +3427,9 @@ func TestRuntime_MarshalAnyVarAddress(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
-	jsonInputFilename := "not_exists_nullable"
 	ty := tolkParser.NewNullableType(tolkParser.NewRemainingType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010101000300000140f6d24034")
@@ -3554,14 +3458,9 @@ func TestRuntime_MarshalNotExistsNullable(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalExistsNullable(t *testing.T) {
-	jsonInputFilename := "exists_nullable"
 	ty := tolkParser.NewNullableType(tolkParser.NewCellType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000b000101c001000900000c0ae007880db9")
@@ -3590,14 +3489,9 @@ func TestRuntime_MarshalExistsNullable(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalRef(t *testing.T) {
-	jsonInputFilename := "ref"
 	ty := tolkParser.NewCellOfType(tolkParser.NewIntNType(65))
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000e000100010011000000000009689e40e150b4c5")
@@ -3626,14 +3520,9 @@ func TestRuntime_MarshalRef(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalEmptyTensor(t *testing.T) {
-	jsonInputFilename := "empty_tensor"
 	ty := tolkParser.NewTensorType()
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c724101010100020000004cacb9cd")
@@ -3662,14 +3551,9 @@ func TestRuntime_MarshalEmptyTensor(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalTensor(t *testing.T) {
-	jsonInputFilename := "tensor"
 	ty := tolkParser.NewTensorType(
 		tolkParser.NewUIntNType(123),
 		tolkParser.NewBoolType(),
@@ -3707,14 +3591,9 @@ func TestRuntime_MarshalTensor(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalIntKeyMap(t *testing.T) {
-	jsonInputFilename := "int_key_map"
 	ty := tolkParser.NewMapType(tolkParser.NewIntNType(32), tolkParser.NewBoolType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201000c000101c001000ba00000007bc09a662c32")
@@ -3743,14 +3622,9 @@ func TestRuntime_MarshalIntKeyMap(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
-	jsonInputFilename := "uint_key_map"
 	ty := tolkParser.NewMapType(tolkParser.NewUIntNType(16), tolkParser.NewAddressType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c72410104010053000101c0010202cb02030045a7400b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe80045a3cff5555555555555555555555555555555555555555555555555555555555555555888440ce8")
@@ -3779,14 +3653,9 @@ func TestRuntime_MarshalUIntKeyMap(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
-	jsonInputFilename := "big_int_key_map"
 	ty := tolkParser.NewMapType(tolkParser.NewUIntNType(78), tolkParser.NewCellType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010301001a000101c0010115a70000000000000047550902000b000000001ab01d5bf1a9")
@@ -3815,14 +3684,9 @@ func TestRuntime_MarshalBigIntKeyMap(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
-	jsonInputFilename := "bits_int_key_map"
 	ty := tolkParser.NewMapType(
 		tolkParser.NewBitsNType(16),
 		tolkParser.NewMapType(
@@ -3860,14 +3724,9 @@ func TestRuntime_MarshalBitsKeyMap(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
-	jsonInputFilename := "address_key_map"
 	ty := tolkParser.NewMapType(tolkParser.NewAddressType(), tolkParser.NewCoinsType())
 
 	currCell, err := boc.DeserializeBocHex("b5ee9c7241010201002f000101c0010051a17002c44ea652d4092859c67da44e4ca3add6565b0e2897d640a2c51bfb370d8877f9409502f9002016fdc16e")
@@ -3896,14 +3755,9 @@ func TestRuntime_MarshalAddressKeyMap(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
-	jsonInputFilename := "union_with_dec_prefix"
 	ty := tolkParser.NewUnionType(
 		1, true,
 		tolkParser.NewUnionVariant(tolkParser.NewIntNType(16), "0"),
@@ -3936,14 +3790,9 @@ func TestRuntime_MarshalUnionWithDecPrefix(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
-	jsonInputFilename := "union_with_bin_prefix"
 	inputFilename := "testdata/bin_union.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -3999,14 +3848,9 @@ func TestRuntime_MarshalUnionWithBinPrefix(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
-	jsonInputFilename := "union_with_hex_prefix"
 	inputFilename := "testdata/hex_union.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4062,14 +3906,9 @@ func TestRuntime_MarshalUnionWithHexPrefix(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
-	jsonInputFilename := "a_lot_refs_from_alias"
 	inputFilename := "testdata/refs.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4126,14 +3965,9 @@ func TestRuntime_MarshalALotRefsFromAlias(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
-	jsonInputFilename := "a_lot_refs_from_struct"
 	inputFilename := "testdata/refs.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4183,14 +4017,9 @@ func TestRuntime_MarshalALotRefsFromStruct(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
-	jsonInputFilename := "a_lot_generics_from_struct"
 	inputFilename := "testdata/generics.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4241,14 +4070,9 @@ func TestRuntime_MarshalALotGenericsFromStruct(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
-	jsonInputFilename := "a_lot_generics_from_alias"
 	inputFilename := "testdata/generics.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4299,14 +4123,9 @@ func TestRuntime_MarshalALotGenericsFromAlias(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
-	jsonInputFilename := "a_lot_generics_with_default_values"
 	inputFilename := "testdata/default_values.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4357,14 +4176,9 @@ func TestRuntime_MarshalStructWithDefaultValues(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalALotNumbers(t *testing.T) {
-	jsonInputFilename := "a_lot_numbers"
 	inputFilename := "testdata/numbers.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4415,14 +4229,9 @@ func TestRuntime_MarshalALotNumbers(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalALotRandomFields(t *testing.T) {
-	jsonInputFilename := "a_lot_random_fields"
 	inputFilename := "testdata/random_fields.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4473,14 +4282,9 @@ func TestRuntime_MarshalALotRandomFields(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestRuntime_MarshalAliasWithCustomUnpack(t *testing.T) {
-	jsonInputFilename := "custom_pack_unpack"
 	inputFilename := "testdata/custom_pack_unpack.json"
 	data, err := os.ReadFile(inputFilename)
 	if err != nil {
@@ -4569,31 +4373,16 @@ func TestRuntime_MarshalAliasWithCustomUnpack(t *testing.T) {
 		t.Errorf("input and output cells are different")
 	}
 
-	err = compareActualJson(jsonInputFilename, *v)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func compareActualJson(inputFilename string, v Value) error {
-	pathPrefix := jsonFilesPath + inputFilename
-	actualJson, err := os.ReadFile(pathPrefix + ".json")
-	if err != nil {
-		return err
-	}
-	var jsonV Value
-	if err = json.Unmarshal(actualJson, &jsonV); err != nil {
-		return err
-	}
-	if !v.Equal(jsonV) {
-		return fmt.Errorf("%s got different results", pathPrefix)
-	}
-	return nil
 }
 
 func compareExpectedJson(inputFilename string, v Value) error {
+	val := struct {
+		Value Value `json:"value"`
+	}{
+		Value: v,
+	}
 	pathPrefix := jsonFilesPath + inputFilename
-	actual, err := json.MarshalIndent(v, "", "  ")
+	actual, err := json.MarshalIndent(val, "", "  ")
 	if err != nil {
 		return err
 	}

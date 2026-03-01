@@ -1,6 +1,5 @@
 {
-  "sumType": "optionalValue",
-  "optionalValue": {
+  "value": {
     "isExists": false
   }
 }

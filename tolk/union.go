@@ -8,8 +8,8 @@ import (
 )
 
 type UnionValue struct {
-	Prefix Prefix `json:"prefix"`
-	Val    Value  `json:"value"`
+	Prefix Prefix
+	Val    Value
 }
 
 func (u *UnionValue) Unmarshal(cell *boc.Cell, ty tolkParser.Union, decoder *Decoder) error {
@@ -104,4 +104,12 @@ func (u *UnionValue) Equal(other any) bool {
 		return false
 	}
 	return u.Val.Equal(otherUnionValue.Val)
+}
+
+func (u UnionValue) MarshalJSON() ([]byte, error) {
+	data, err := u.Val.MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal ref: %w", err)
+	}
+	return data, nil
 }

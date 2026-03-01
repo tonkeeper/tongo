@@ -49,8 +49,8 @@ func (a *Any) Equal(o any) bool {
 	return oHash == vHash
 }
 
-func (a *Any) MarshalJSON() ([]byte, error) {
-	data, err := boc.Cell(*a).MarshalJSON()
+func (a Any) MarshalJSON() ([]byte, error) {
+	data, err := boc.Cell(a).MarshalJSON()
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal any: %w", err)
 	}
@@ -111,8 +111,8 @@ func (r *RemainingValue) Equal(o any) bool {
 	return oHash == vHash
 }
 
-func (r *RemainingValue) MarshalJSON() ([]byte, error) {
-	data, err := boc.Cell(*r).MarshalJSON()
+func (r RemainingValue) MarshalJSON() ([]byte, error) {
+	data, err := boc.Cell(r).MarshalJSON()
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal remainings: %w", err)
 	}
@@ -177,7 +177,7 @@ func (o *OptValue) Equal(other any) bool {
 	return true
 }
 
-func (o *OptValue) MarshalJSON() ([]byte, error) {
+func (o OptValue) MarshalJSON() ([]byte, error) {
 	var jsonOptValue = struct {
 		IsExists bool   `json:"isExists"`
 		Val      *Value `json:"value,omitempty"`
@@ -250,4 +250,13 @@ func (r *RefValue) Equal(other any) bool {
 	}
 	v := Value(*r)
 	return v.Equal(Value(otherRefValue))
+}
+
+func (r RefValue) MarshalJSON() ([]byte, error) {
+	v := Value(r)
+	data, err := v.MarshalJSON()
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal ref: %w", err)
+	}
+	return data, nil
 }

@@ -23,7 +23,7 @@ func (n *NullValue) Marshal(cell *boc.Cell, ty tolkParser.NullLiteral, encoder *
 	return nil
 }
 
-func (n *NullValue) MarshalJSON() ([]byte, error) {
+func (n NullValue) MarshalJSON() ([]byte, error) {
 	return []byte("null"), nil
 }
 
@@ -45,6 +45,6 @@ func (v *VoidValue) Marshal(cell *boc.Cell, ty tolkParser.Void, encoder *Encoder
 	return nil
 }
 
-func (v *VoidValue) MarshalJSON() ([]byte, error) {
+func (v VoidValue) MarshalJSON() ([]byte, error) {
 	return []byte("null"), nil
 }

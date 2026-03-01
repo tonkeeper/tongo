@@ -3,8 +3,10 @@ package tolk
 // todo: move this to some package or rename somehow.
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -26,34 +28,34 @@ func (s *SumType) UnmarshalJSON(bytes []byte) error {
 }
 
 type Value struct {
-	SumType         SumType          `json:"sumType"`
-	Bool            *BoolValue       `json:"bool,omitempty"`
-	SmallInt        *Int64           `json:"smallInt,omitempty"`
-	SmallUint       *UInt64          `json:"smallUint,omitempty"`
-	BigInt          *BigInt          `json:"bigInt,omitempty"`
-	BigUint         *BigUInt         `json:"bigUint,omitempty"`
-	VarInt          *VarInt          `json:"varInt,omitempty"`
-	VarUint         *VarUInt         `json:"varUint,omitempty"`
-	Coins           *CoinsValue      `json:"coins,omitempty"`
-	Bits            *Bits            `json:"bits,omitempty"`
-	Cell            *Any             `json:"cell,omitempty"`
-	Remaining       *RemainingValue  `json:"remaining,omitempty"`
-	InternalAddress *InternalAddress `json:"internalAddress,omitempty"`
-	OptionalAddress *OptionalAddress `json:"optionalAddress,omitempty"`
-	ExternalAddress *ExternalAddress `json:"externalAddress,omitempty"`
-	AnyAddress      *AnyAddress      `json:"anyAddress,omitempty"`
-	OptionalValue   *OptValue        `json:"optionalValue,omitempty"`
-	RefValue        *RefValue        `json:"refValue,omitempty"`
-	TupleWith       *TupleValues     `json:"tupleWith,omitempty"`
-	Tensor          *TensorValues    `json:"tensor,omitempty"`
-	Map             *MapValue        `json:"map,omitempty"`
-	Struct          *Struct          `json:"struct,omitempty"`
-	Alias           *AliasValue      `json:"alias,omitempty"`
-	Enum            *EnumValue       `json:"enum,omitempty"`
-	Generic         *GenericValue    `json:"generic,omitempty"`
-	Union           *UnionValue      `json:"union,omitempty"`
-	Null            *NullValue       `json:"null,omitempty"`
-	Void            *VoidValue       `json:"void,omitempty"`
+	SumType         SumType
+	Bool            *BoolValue
+	SmallInt        *Int64
+	SmallUint       *UInt64
+	BigInt          *BigInt
+	BigUint         *BigUInt
+	VarInt          *VarInt
+	VarUint         *VarUInt
+	Coins           *CoinsValue
+	Bits            *Bits
+	Cell            *Any
+	Remaining       *RemainingValue
+	InternalAddress *InternalAddress
+	OptionalAddress *OptionalAddress
+	ExternalAddress *ExternalAddress
+	AnyAddress      *AnyAddress
+	OptionalValue   *OptValue
+	RefValue        *RefValue
+	TupleWith       *TupleValues
+	Tensor          *TensorValues
+	Map             *MapValue
+	Struct          *Struct
+	Alias           *AliasValue
+	Enum            *EnumValue
+	Generic         *GenericValue
+	Union           *UnionValue
+	Null            *NullValue
+	Void            *VoidValue
 }
 
 func (v *Value) GetBool() (bool, bool) {
@@ -1009,4 +1011,76 @@ func (v *Value) Equal(o any) bool {
 	default:
 		return false
 	}
+}
+
+func (v Value) MarshalJSON() ([]byte, error) {
+	var s strings.Builder
+	var data []byte
+	var err error
+	switch v.SumType {
+	case "Bool":
+		data, err = json.Marshal(v.Bool)
+	case "SmallInt":
+		data, err = json.Marshal(v.SmallInt)
+	case "SmallUint":
+		data, err = json.Marshal(v.SmallUint)
+	case "BigInt":
+		data, err = json.Marshal(v.BigInt)
+	case "BigUint":
+		data, err = json.Marshal(v.BigUint)
+	case "VarInt":
+		data, err = json.Marshal(v.VarInt)
+	case "VarUint":
+		data, err = json.Marshal(v.VarUint)
+	case "Coins":
+		data, err = json.Marshal(v.Coins)
+	case "Bits":
+		data, err = json.Marshal(v.Bits)
+	case "Cell":
+		data, err = json.Marshal(v.Cell)
+	case "Remaining":
+		data, err = json.Marshal(v.Remaining)
+	case "InternalAddress":
+		data, err = json.Marshal(v.InternalAddress)
+	case "OptionalAddress":
+		data, err = json.Marshal(v.OptionalAddress)
+	case "ExternalAddress":
+		data, err = json.Marshal(v.ExternalAddress)
+	case "AnyAddress":
+		data, err = json.Marshal(v.AnyAddress)
+	case "OptionalValue":
+		data, err = json.Marshal(v.OptionalValue)
+	case "RefValue":
+		data, err = json.Marshal(v.RefValue)
+	case "TupleWith":
+		data, err = json.Marshal(v.TupleWith)
+	case "Tensor":
+		data, err = json.Marshal(v.Tensor)
+	case "Map":
+		data, err = json.Marshal(v.Map)
+	case "Struct":
+		data, err = json.Marshal(v.Struct)
+	case "Alias":
+		val := Value(*v.Alias)
+		data, err = json.Marshal(val)
+	case "Enum":
+		data, err = json.Marshal(v.Enum)
+	case "Generic":
+		val := Value(*v.Generic)
+		data, err = json.Marshal(val)
+	case "Union":
+		data, err = json.Marshal(v.Union)
+	case "Null":
+		data, err = json.Marshal(v.Null)
+	case "Void":
+		data, err = json.Marshal(v.Void)
+	default:
+		err = fmt.Errorf("unknown value type: %s", v.SumType)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal value: %w", err)
+	}
+
+	s.Write(data)
+	return []byte(s.String()), err
 }

@@ -1,12 +1,28 @@
 {
   "value": {
+    "tag": {
+      "name": "many_refs_msg",
+      "prefix": "0x0"
+    },
     "payload": {
+      "tag": {
+        "name": "either_ref",
+        "prefix": "0x0"
+      },
       "value": 123
     },
     "either": {
+      "tag": {
+        "name": "either_right",
+        "prefix": "0x0"
+      },
       "value": "100000000"
     },
     "anotherEither": {
+      "tag": {
+        "name": "either_right",
+        "prefix": "0x0"
+      },
       "value": [
         true,
         "1000000000"

@@ -1,5 +1,9 @@
 {
   "value": {
+    "tag": {
+      "name": "u_int33_with_prefix",
+      "prefix": "0xdeadbeef"
+    },
     "v": 1
   }
 }

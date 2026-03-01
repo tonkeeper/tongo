@@ -1,12 +1,24 @@
 {
   "value": {
+    "tag": {
+      "name": "many_refs_msg",
+      "prefix": "0xdeadbeef"
+    },
     "user1": {
+      "tag": {
+        "name": "address_and_balance",
+        "prefix": "0x0"
+      },
       "addr": "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8",
       "balance": "1000000000"
     },
     "user2": {
       "isExists": true,
       "value": {
+        "tag": {
+          "name": "address_and_balance",
+          "prefix": "0x0"
+        },
         "addr": "0:086fa2a675f74347b08dd4606a549b8fdb98829cb282bc1949d3b12fbaed9dcc",
         "balance": "100000000"
       }
@@ -16,6 +28,10 @@
       "isExists": false
     },
     "user5": {
+      "tag": {
+        "name": "address_and_balance",
+        "prefix": "0x0"
+      },
       "addr": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe",
       "balance": "10000000000000"
     },

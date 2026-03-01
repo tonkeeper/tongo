@@ -1,14 +1,5 @@
 {
-  "sumType": "alias",
-  "alias": {
-    "sumType": "struct",
-    "struct": {
-      "fields": {
-        "amount": {
-          "sumType": "coins",
-          "coins": "1000000000"
-        }
-      }
-    }
+  "value": {
+    "amount": "1000000000"
   }
 }

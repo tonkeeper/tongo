@@ -1,7 +1,3 @@
 {
-  "sumType": "refValue",
-  "refValue": {
-    "sumType": "bigInt",
-    "bigInt": "1233212"
-  }
+  "value": "1233212"
 }

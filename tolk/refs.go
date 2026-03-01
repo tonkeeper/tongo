@@ -110,7 +110,7 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty tolkParser.Ty, decoder *Decod
 				return Value{}, false, fmt.Errorf("failed to read payload ref: %w", err)
 			}
 		}
-		v, isResolved, err := resolvePayload(payload, decoder)
+		v, isResolved, err := decoder.resolvePayload(payload)
 		if err != nil {
 			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
 		}
@@ -123,7 +123,7 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty tolkParser.Ty, decoder *Decod
 			return Value{}, false, fmt.Errorf("failed to read payload ref: %w", err)
 		}
 		payload = payload.CopyRemaining()
-		v, isResolved, err := resolvePayload(payload, decoder)
+		v, isResolved, err := decoder.resolvePayload(payload)
 		if err != nil {
 			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
 		}
@@ -132,26 +132,6 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty tolkParser.Ty, decoder *Decod
 		}
 	}
 
-	return Value{}, false, nil
-}
-
-func resolvePayload(payload *boc.Cell, decoder *Decoder) (Value, bool, error) {
-	payloadOpcode, err := payload.ReadUint(32) // payload always 32 bit length
-	if err != nil {
-		return Value{}, false, fmt.Errorf("failed to read payload's opcode: %w", err)
-	}
-	payload.ResetCounters() // reset opcode
-
-	guessedStructs := decoder.abiRefs.opcodeRefs[payloadOpcode]
-	for _, strct := range guessedStructs {
-		v, err := decoder.Unmarshal(payload, tolkParser.NewStructType(strct.Name))
-		if err != nil {
-			continue
-		}
-		return *v, true, nil
-	}
-
-	// todo: maybe try every known struct to unmarshal to?
 	return Value{}, false, nil
 }
 
@@ -273,19 +253,9 @@ func (s *Struct) Equal(o any) bool {
 	return true
 }
 
-func (s *Struct) MarshalJSON() ([]byte, error) {
+func (s Struct) MarshalJSON() ([]byte, error) {
 	builder := strings.Builder{}
-	builder.WriteString("{")
-	if s.hasPrefix {
-		builder.WriteString("\"prefix\":")
-		prefix, err := json.Marshal(s.prefix)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal struct's prefix: %w", err)
-		}
-		builder.Write(prefix)
-		builder.WriteRune(',')
-	}
-	builder.WriteString("\"fields\": {")
+	builder.WriteRune('{')
 	for i, name := range s.fieldNames {
 		if i != 0 {
 			builder.WriteRune(',')
@@ -297,54 +267,14 @@ func (s *Struct) MarshalJSON() ([]byte, error) {
 		}
 		builder.Write(val)
 	}
-	builder.WriteString("}}")
+	builder.WriteRune('}')
 	return []byte(builder.String()), nil
 }
 
-func (s *Struct) UnmarshalJSON(bytes []byte) error {
-	var jsonStruct = struct {
-		Prefix *Prefix         `json:"prefix,omitempty"`
-		Fields json.RawMessage `json:"fields"`
-	}{}
-	if err := json.Unmarshal(bytes, &jsonStruct); err != nil {
-		return fmt.Errorf("failed to unmarshal struct's prefix: %w", err)
-	}
-	if jsonStruct.Prefix != nil {
-		s.hasPrefix = true
-		s.prefix = *jsonStruct.Prefix
-	}
-
-	decoder := json.NewDecoder(strings.NewReader(string(jsonStruct.Fields)))
-
-	_, err := decoder.Token() // {
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal struct's fields value declrataion: %w", err)
-	}
-	for decoder.More() {
-		key, err := decoder.Token()
-		if err != nil {
-			return fmt.Errorf("failed to unmarshal struct's key: %w", err)
-		}
-		stringKey, ok := key.(string)
-		if !ok {
-			return fmt.Errorf("expected string key")
-		}
-		var val Value
-		if err = decoder.Decode(&val); err != nil {
-			return fmt.Errorf("failed to unmarshal struct's field %s value: %w", stringKey, err)
-		}
-
-		s.fieldNames = append(s.fieldNames, stringKey)
-		s.fieldValues = append(s.fieldValues, val)
-	}
-
-	return nil
-}
-
 type EnumValue struct {
-	ActualValue Value   `json:"actualValue"`
-	Name        string  `json:"name"`
-	Value       big.Int `json:"value"`
+	ActualValue Value
+	Name        string
+	Value       big.Int
 }
 
 func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *Decoder) error {
@@ -401,6 +331,14 @@ func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *De
 	}
 
 	return fmt.Errorf("enum value didn't match any values")
+}
+
+func (e EnumValue) MarshalJSON() ([]byte, error) {
+	data, err := json.Marshal(e.Name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal enum's value: %w", err)
+	}
+	return data, nil
 }
 
 func (e *EnumValue) Marshal(cell *boc.Cell, ty tolkParser.EnumRef, encoder *Encoder) error {

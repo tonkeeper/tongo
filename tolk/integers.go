@@ -67,8 +67,8 @@ func (b *BigInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
-func (b *BigInt) MarshalJSON() ([]byte, error) {
-	bi := big.Int(*b)
+func (b BigInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(b)
 	return []byte(`"` + bi.String() + `"`), nil
 }
 
@@ -141,8 +141,8 @@ func (b *BigUInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
-func (b *BigUInt) MarshalJSON() ([]byte, error) {
-	bi := big.Int(*b)
+func (b BigUInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(b)
 	return []byte(`"` + bi.String() + `"`), nil
 }
 
@@ -198,8 +198,8 @@ func (vi *VarInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
-func (vi *VarInt) MarshalJSON() ([]byte, error) {
-	bi := big.Int(*vi)
+func (vi VarInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(vi)
 	return []byte(`"` + bi.String() + `"`), nil
 }
 
@@ -255,8 +255,8 @@ func (vu *VarUInt) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
-func (vu *VarUInt) MarshalJSON() ([]byte, error) {
-	bi := big.Int(*vu)
+func (vu VarUInt) MarshalJSON() ([]byte, error) {
+	bi := big.Int(vu)
 	return []byte(`"` + bi.String() + `"`), nil
 }
 
@@ -303,8 +303,8 @@ func (b *Bits) Equal(other any) bool {
 	return bytes.Equal(bs.Buffer(), otherBs.Buffer())
 }
 
-func (b *Bits) MarshalJSON() ([]byte, error) {
-	data, err := boc.BitString(*b).MarshalJSON()
+func (b Bits) MarshalJSON() ([]byte, error) {
+	data, err := boc.BitString(b).MarshalJSON()
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal bits value: %w", err)
 	}
@@ -350,8 +350,8 @@ func (c *CoinsValue) Equal(other any) bool {
 	return bi.Cmp(&otherBi) == 0
 }
 
-func (c *CoinsValue) MarshalJSON() ([]byte, error) {
-	bi := big.Int(*c)
+func (c CoinsValue) MarshalJSON() ([]byte, error) {
+	bi := big.Int(c)
 	return []byte(`"` + bi.String() + `"`), nil
 }
 

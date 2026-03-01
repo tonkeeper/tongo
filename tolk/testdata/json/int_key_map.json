@@ -1,10 +1,5 @@
 {
-  "sumType": "map",
-  "map": {
-    "keySumType": "smallInt",
-    "123": {
-      "sumType": "bool",
-      "bool": true
-    }
+  "value": {
+    "123": true
   }
 }

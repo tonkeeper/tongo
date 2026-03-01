@@ -9,7 +9,6 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
-	"github.com/tonkeeper/tongo/utils"
 )
 
 type MapValue struct {
@@ -445,7 +444,7 @@ func (m *MapValue) get(key Value) (Value, bool) {
 
 func (m *MapValue) GetBySmallInt(v Int64) (Value, bool) {
 	key := Value{
-		SumType:  "smallInt",
+		SumType:  "SmallInt",
 		SmallInt: &v,
 	}
 	return m.get(key)
@@ -453,7 +452,7 @@ func (m *MapValue) GetBySmallInt(v Int64) (Value, bool) {
 
 func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
 	key := Value{
-		SumType:   "smallUint",
+		SumType:   "SmallUint",
 		SmallUint: &v,
 	}
 	return m.get(key)
@@ -461,7 +460,7 @@ func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
 
 func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
 	key := Value{
-		SumType: "bigInt",
+		SumType: "BigInt",
 		BigInt:  &v,
 	}
 	return m.get(key)
@@ -469,7 +468,7 @@ func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
 
 func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
 	key := Value{
-		SumType: "bigUint",
+		SumType: "BigUint",
 		BigUint: &v,
 	}
 	return m.get(key)
@@ -477,7 +476,7 @@ func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
 
 func (m *MapValue) GetByBits(v Bits) (Value, bool) {
 	key := Value{
-		SumType: "bits",
+		SumType: "Bits",
 		Bits:    &v,
 	}
 	return m.get(key)
@@ -485,7 +484,7 @@ func (m *MapValue) GetByBits(v Bits) (Value, bool) {
 
 func (m *MapValue) GetByInternalAddress(v InternalAddress) (Value, bool) {
 	key := Value{
-		SumType:         "internalAddress",
+		SumType:         "InternalAddress",
 		InternalAddress: &v,
 	}
 	return m.get(key)
@@ -507,7 +506,7 @@ func (m *MapValue) set(key Value, value Value) (bool, error) {
 
 func (m *MapValue) SetBySmallInt(k Int64, value Value) (bool, error) {
 	key := Value{
-		SumType:  "smallInt",
+		SumType:  "SmallInt",
 		SmallInt: &k,
 	}
 	return m.set(key, value)
@@ -515,7 +514,7 @@ func (m *MapValue) SetBySmallInt(k Int64, value Value) (bool, error) {
 
 func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
 	key := Value{
-		SumType:   "smallUint",
+		SumType:   "SmallUint",
 		SmallUint: &k,
 	}
 	return m.set(key, value)
@@ -523,7 +522,7 @@ func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
 
 func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
 	key := Value{
-		SumType: "bigInt",
+		SumType: "BigInt",
 		BigInt:  &k,
 	}
 	return m.set(key, value)
@@ -531,7 +530,7 @@ func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
 
 func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
 	key := Value{
-		SumType: "bigUint",
+		SumType: "BigUint",
 		BigUint: &k,
 	}
 	return m.set(key, value)
@@ -539,7 +538,7 @@ func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
 
 func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
 	key := Value{
-		SumType: "bits",
+		SumType: "Bits",
 		Bits:    &k,
 	}
 	return m.set(key, value)
@@ -547,7 +546,7 @@ func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
 
 func (m *MapValue) SetByInternalAddress(k InternalAddress, value Value) (bool, error) {
 	key := Value{
-		SumType:         "internalAddress",
+		SumType:         "InternalAddress",
 		InternalAddress: &k,
 	}
 	return m.set(key, value)
@@ -565,7 +564,7 @@ func (m *MapValue) delete(key Value) {
 
 func (m *MapValue) DeleteBySmallInt(k Int64) {
 	key := Value{
-		SumType:  "smallInt",
+		SumType:  "SmallInt",
 		SmallInt: &k,
 	}
 	m.delete(key)
@@ -573,7 +572,7 @@ func (m *MapValue) DeleteBySmallInt(k Int64) {
 
 func (m *MapValue) DeleteBySmallUInt(k UInt64) {
 	key := Value{
-		SumType:   "smallUint",
+		SumType:   "SmallUint",
 		SmallUint: &k,
 	}
 	m.delete(key)
@@ -581,7 +580,7 @@ func (m *MapValue) DeleteBySmallUInt(k UInt64) {
 
 func (m *MapValue) DeleteByBigInt(k BigInt) {
 	key := Value{
-		SumType: "bigInt",
+		SumType: "BigInt",
 		BigInt:  &k,
 	}
 	m.delete(key)
@@ -589,7 +588,7 @@ func (m *MapValue) DeleteByBigInt(k BigInt) {
 
 func (m *MapValue) DeleteByBigUInt(k BigUInt) {
 	key := Value{
-		SumType: "bigUint",
+		SumType: "BigUint",
 		BigUint: &k,
 	}
 	m.delete(key)
@@ -597,7 +596,7 @@ func (m *MapValue) DeleteByBigUInt(k BigUInt) {
 
 func (m *MapValue) DeleteByBits(k Bits) {
 	key := Value{
-		SumType: "bits",
+		SumType: "Bits",
 		Bits:    &k,
 	}
 	m.delete(key)
@@ -605,7 +604,7 @@ func (m *MapValue) DeleteByBits(k Bits) {
 
 func (m *MapValue) DeleteByInternalAddress(k InternalAddress) {
 	key := Value{
-		SumType:         "internalAddress",
+		SumType:         "InternalAddress",
 		InternalAddress: &k,
 	}
 	m.delete(key)
@@ -615,15 +614,13 @@ func (m *MapValue) Len() int {
 	return m.len
 }
 
-func (m *MapValue) MarshalJSON() ([]byte, error) {
+func (m MapValue) MarshalJSON() ([]byte, error) {
 	if len(m.keys) != len(m.values) {
 		return nil, errors.New("map values and keys must contain equal length")
 	}
 	s := strings.Builder{}
 	s.WriteString("{")
 	if len(m.keys) > 0 {
-		s.WriteString("\"keySumType\":")
-		s.WriteString(fmt.Sprintf("\"%s\",", utils.ToCamelCasePrivate(string(m.keys[0].SumType))))
 		for i, k := range m.keys {
 			if i != 0 {
 				s.WriteString(",")
@@ -657,90 +654,8 @@ func (m *MapValue) MarshalJSON() ([]byte, error) {
 }
 
 func getJustValue(key string) (string, error) {
-	foundComma := false
-	start := -1
-	for i, v := range key {
-		if v == ',' {
-			foundComma = true
-		}
-		if v == ':' && foundComma {
-			start = i
-			break
-		}
+	if key[0] != '"' {
+		key = fmt.Sprintf("\"%s\"", key)
 	}
-	if start == -1 {
-		return "", fmt.Errorf("invalid key: %v", key)
-	}
-	return strings.ReplaceAll(key[start+1:len(key)-1], " ", ""), nil
-}
-
-func (m *MapValue) UnmarshalJSON(bytes []byte) error {
-	decoder := json.NewDecoder(strings.NewReader(string(bytes)))
-	_, err := decoder.Token()
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal map: %w", err)
-	}
-
-	keyTypeDeclr, err := decoder.Token()
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal map key type declaration: %w", err)
-	}
-	stringKeyTypeDeclr, ok := keyTypeDeclr.(string)
-	if !ok {
-		return fmt.Errorf("expected key type as a string")
-	}
-	if stringKeyTypeDeclr != "keySumType" {
-		return fmt.Errorf("map does not have key sum type")
-	}
-
-	keyType, err := decoder.Token()
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal map key type: %w", err)
-	}
-	stringKeyType, ok := keyType.(string)
-	if !ok {
-		return fmt.Errorf("expected map key type value as a string")
-	}
-	keyTemplate := strings.Builder{}
-	keyTemplate.WriteString("{\"sumType\":\"")
-	keyTemplate.WriteString(stringKeyType)
-	keyTemplate.WriteString("\",\"")
-	keyTemplate.WriteString(stringKeyType)
-	keyTemplate.WriteString("\":%s}")
-	keyTmpl := keyTemplate.String()
-
-	for decoder.More() {
-		keyValue, err := decoder.Token()
-		if err != nil {
-			return fmt.Errorf("failed to unmarshal map key's value: %w", err)
-		}
-		stringKeyValue, ok := keyValue.(string)
-		if !ok {
-			return fmt.Errorf("expected map key as a string")
-		}
-		keyValueJson := fmt.Sprintf(keyTmpl, wrapValue(stringKeyType, stringKeyValue))
-		key := Value{}
-		if err = json.Unmarshal([]byte(keyValueJson), &key); err != nil {
-			return fmt.Errorf("failed to unmarshal map key value: %w", err)
-		}
-
-		var value Value
-		if err = decoder.Decode(&value); err != nil {
-			return fmt.Errorf("failed to unmarshal map value: %w", err)
-		}
-
-		m.keys = append(m.keys, key)
-		m.values = append(m.values, value)
-		m.len++
-	}
-
-	return nil
-}
-
-func wrapValue(sumType string, v any) any {
-	switch sumType {
-	case "smallInt", "smallUint", "bool", "optionalValue", "tupleWith", "tensor", "map", "struct", "enum", "union", "refValue", "alias", "generic":
-		return v
-	}
-	return fmt.Sprintf("\"%v\"", v)
+	return strings.ReplaceAll(key, " ", ""), nil
 }

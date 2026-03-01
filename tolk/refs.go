@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"math/big"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
+	"github.com/tonkeeper/tongo/utils"
 	"golang.org/x/exp/maps"
 )
 
@@ -19,6 +21,7 @@ type Prefix struct {
 
 type Struct struct {
 	hasPrefix   bool
+	name        string
 	prefix      Prefix
 	fieldNames  []string
 	fieldValues []Value
@@ -35,6 +38,7 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Dec
 	tolkStruct := Struct{
 		fieldNames:  make([]string, 0),
 		fieldValues: make([]Value, 0),
+		name:        ty.StructName,
 	}
 	if strct.Prefix != nil {
 		prefixLen := strct.Prefix.PrefixLen
@@ -255,7 +259,11 @@ func (s *Struct) Equal(o any) bool {
 
 func (s Struct) MarshalJSON() ([]byte, error) {
 	builder := strings.Builder{}
-	builder.WriteRune('{')
+	builder.WriteString("{\"tag\":{\"name\":\"")
+	builder.WriteString(utils.ToSnakeCase(s.name))
+	builder.WriteString("\",\"prefix\":\"0x")
+	builder.WriteString(strconv.FormatInt(int64(s.prefix.Prefix), 16))
+	builder.WriteString("\"},")
 	for i, name := range s.fieldNames {
 		if i != 0 {
 			builder.WriteRune(',')

@@ -1,5 +1,9 @@
 {
   "value": {
+    "tag": {
+      "name": "numbers",
+      "prefix": "0x0"
+    },
     "num1": 0,
     "num3": "241",
     "num4": "3421",

@@ -2,6 +2,7 @@ package txemulator
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -15,6 +16,9 @@ import (
 const SEED = "way label strategy scheme park virtual walnut illegal fringe once state defense museum bone satoshi feel diary buddy notice solve moral maple video local"
 
 func TestSimpleEmulation(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	ctx := context.Background()
 	client, err := liteapi.NewClientWithDefaultTestnet()
 	if err != nil {
@@ -76,6 +80,9 @@ func TestSimpleEmulation(t *testing.T) {
 }
 
 func TestEmulate(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	// this message is for "EQBAF7OBsy_1R8Zs33l6XMP3k1OyMv6Nv-b_-n-qf7de9qp2", which uses a public library.
 	c, err := boc.DeserializeSinglRootBase64("te6ccgEBAgEAoAABz4gAgC9nA2Zf6o+M2b7y9LmH7yanZGX9G3/N//T/VP9uvewComZfYno/fswnemt9B6xfHWRtZ2vKvL8C7ZiExKR3s3vsDDRnpxb5Oaoi7ATNea26glvtLlEwEFRoyIL2ZgqIaAAAAAgcAQBmYgA2ZpktQsYby0n9cV5VWOFINBjScIU2HdondFsK3lDpEBzEtAAAAAAAAAAAAAAAAAAA")
 	if err != nil {
@@ -110,6 +117,9 @@ func TestEmulate(t *testing.T) {
 }
 
 func TestEmulate_To16ParamInC7(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	// this message is for "EQCSRw0AG7MaitZ_KLv6jjUnvg1zunctqe-YQ3h94TVLR7Hm", which uses 16 param from c7: GETPRECOMPILEDGAS opcode.
 	c, err := boc.DeserializeSinglRootBase64("te6cckEBAQEAZAAAw2gAFc7YlRFLm+IiLoWn2gz3YtQWXy2oqm+4ncMtvaabSMsAJJHDQAbsxqK1n8ou/qONSe+DXO6dy2p75hDeH3hNUtHQF9eEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAoQ4iYA==")
 	if err != nil {
@@ -137,6 +147,9 @@ func TestEmulate_To16ParamInC7(t *testing.T) {
 }
 
 func TestEmulate_ToUninitContract(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	// this message is a contract-deploy message for "EQCeL1iwCkDZFIN_w3corAk0HLyDFoFKI9sU-zbpBtsqxwd0", which uses a public library.
 	c, err := boc.DeserializeSinglRootBase64("te6ccgEBAwEAtQACz4gBPF6xYBSBsikG/4buUVgSaDl5Bi0ClEe2KfZt0g22VY4RgapDllUZl8zqKhXvay+jOBYBQZIi9WgRbY+2Sm0k2sZOpAdn+updccco1ndWlewrbU2NzSA29wvefa9KuFSWIeAAAAAQAQIIQgJYfMeJ7/HIT0bsN5fkX8gJoU/1riTx4MemqZzJ3JBh/wBIAAAAAMRoaqYjP2gxcScR+ePyWBCVr/kSa65hTLtoJPi7y8sP")
 	if err != nil {
@@ -167,6 +180,9 @@ func TestEmulate_ToUninitContract(t *testing.T) {
 }
 
 func TestEmulate_WithIgnoreAllSignatures(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	// this message is for "EQDPtRO2fxeWjd9UX_IvA1zOdLDc2a10szPiBzGy0kfjmXbX", which has check signature on recv_external and recv_internal
 	c, err := boc.DeserializeSinglRootBase64("te6cckEBAgEAkAABRYgBn2onbP4vLRu+qL/kXga5nOlhubNa6WZnxA5jZaSPxzIMAQDQAAAAAAAAAAKrr60/pfA+27fommKqEAB5C1D78dguKypKyBtokXNBZBFZspZB31xYXTKFLG4rYDjWXMnQmRQ3vgTjZxq93zIG0X4Dmsgq1ooXFB4d1lrrQoVAzoBfolYKXDvgZbSnzimLaVxv")
 	if err != nil {
@@ -198,6 +214,9 @@ func TestEmulate_WithIgnoreAllSignatures(t *testing.T) {
 }
 
 func TestEmulate_WithDefaultSignatureIgnoreDepth(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	// this message is for "EQDPtRO2fxeWjd9UX_IvA1zOdLDc2a10szPiBzGy0kfjmXbX", which has check signature on recv_external and recv_internal
 	c, err := boc.DeserializeSinglRootBase64("te6cckEBAgEAkAABRYgBn2onbP4vLRu+qL/kXga5nOlhubNa6WZnxA5jZaSPxzIMAQDQAAAAAAAAAAKrr60/pfA+27fommKqEAB5C1D78dguKypKyBtokXNBZBFZspZB31xYXTKFLG4rYDjWXMnQmRQ3vgTjZxq93zIG0X4Dmsgq1ooXFB4d1lrrQoVAzoBfolYKXDvgZbSnzimLaVxv")
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"os"
 	"reflect"
 	"testing"
 
@@ -93,6 +94,9 @@ func mustToMsgAddress(x string) tlb.MsgAddress {
 }
 
 func TestGetMethods(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	extensionAddrBytes, err := hex.DecodeString("3a8f7e96e21bd7018207282a9071ef467d88250589ca6e25f7c8f45093282a4c")
 	if err != nil {
 		t.Fatal(err)
@@ -844,6 +848,9 @@ func TestGetMethods(t *testing.T) {
 }
 
 func TestWhalesNominators(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	address := ton.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
 	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
@@ -946,7 +953,9 @@ func mustAccountIDToMsgAddress(account string) tlb.MsgAddress {
 }
 
 func TestMessageDecoder(t *testing.T) {
-
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	tests := []struct {
 		name         string
 		boc          string
@@ -1406,7 +1415,6 @@ func TestMessageDecoder(t *testing.T) {
 				if !reflect.DeepEqual(value, body) {
 					t.Fatalf("got: %v, want: %v", value, body)
 				}
-
 			},
 		},
 

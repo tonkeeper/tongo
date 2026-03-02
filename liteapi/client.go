@@ -46,6 +46,21 @@ const (
 	ProofPolicyFast
 )
 
+type connPool interface {
+	BestMasterchainInfoClient() *pool.MasterchainInfoClient
+	BestMasterchainClient(ctx context.Context) (*liteclient.Client, ton.BlockIDExt, error)
+	BestClientByAccountID(ctx context.Context, accountID ton.AccountID, archiveRequired bool) (*liteclient.Client, ton.BlockIDExt, error)
+	BestClientByBlockID(ctx context.Context, blockID ton.BlockID) (*liteclient.Client, error)
+	WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout time.Duration) error
+	ConnectionsNumber() int
+	Status() pool.Status
+}
+
+type connPoolProxy struct {
+	primary  connPool
+	fallback connPool
+}
+
 // Client provides a convenient way to interact with TON blockchain.
 //
 // By default, it uses a single connection to a lite server.
@@ -62,7 +77,7 @@ const (
 // the account state can be obtained from a block that is earlier in the blockchain than the master head you obtained at step 1.
 // To avoid this, you can use WithBlock() method to specify a target block for all requests.
 type Client struct {
-	pool *pool.ConnPool
+	pool connPool
 	// proofPolicy specifies a policy for proof checks.
 	proofPolicy ProofPolicy
 
@@ -93,7 +108,18 @@ type Options struct {
 
 	SyncConnectionsInitialization bool
 	PoolStrategy                  pool.Strategy
+
+	// Use public servers if the main ones are unavailable
+	FallbackPolicy FallbackPolicy
 }
+
+type FallbackPolicy int
+
+const (
+	FallbackNone    = iota
+	FallbackMainnet // https://ton.org/global.config.json
+	FallbackTestnet // https://ton.org/testnet-global.config.json
+)
 
 type Option func(o *Options) error
 
@@ -162,6 +188,13 @@ func WithDetectArchiveNodes() Option {
 func WithInitializationContext(ctx context.Context) Option {
 	return func(o *Options) error {
 		o.InitCtx = ctx
+		return nil
+	}
+}
+
+func WithFallbackPolicy(policy FallbackPolicy) Option {
+	return func(o *Options) error {
+		o.FallbackPolicy = policy
 		return nil
 	}
 }
@@ -281,14 +314,48 @@ func NewClient(options ...Option) (*Client, error) {
 			return nil, err
 		}
 	}
-	if len(opts.LiteServers) == 0 {
+	fallbackOpts := *opts // copy
+	switch opts.FallbackPolicy {
+	case FallbackMainnet:
+		if err := setLiteServersFromURL("https://ton.org/global.config.json", &fallbackOpts); err != nil {
+			return nil, err
+		}
+	case FallbackTestnet:
+		if err := setLiteServersFromURL("https://ton.org/testnet-global.config.json", &fallbackOpts); err != nil {
+			return nil, err
+		}
+	default:
+		fallbackOpts.LiteServers = nil
+	}
+	if len(opts.LiteServers) == 0 && len(fallbackOpts.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
-	connPool := pool.New(opts.PoolStrategy)
-	initCh := connPool.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.WorkersPerConnection, opts.DetectArchiveNodes, opts.LiteServers)
-	if opts.SyncConnectionsInitialization {
-		if err := <-initCh; err != nil {
-			return nil, err
+	var primary *pool.ConnPool
+	if len(opts.LiteServers) != 0 {
+		primary = pool.New(opts.PoolStrategy)
+		initCh := primary.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.WorkersPerConnection, opts.DetectArchiveNodes, opts.LiteServers)
+		if opts.SyncConnectionsInitialization {
+			if err := <-initCh; err != nil {
+				return nil, err
+			}
+		}
+		go primary.Run(context.Background())
+	}
+	var fallback *pool.ConnPool
+	if len(fallbackOpts.LiteServers) != 0 {
+		fallback = pool.New(opts.PoolStrategy)
+		_ = fallback.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.WorkersPerConnection, opts.DetectArchiveNodes, fallbackOpts.LiteServers)
+		go fallback.Run(context.Background())
+	}
+	var connPool connPool
+	if primary == nil {
+		connPool = fallback
+	} else if fallback == nil {
+		connPool = primary
+	} else {
+		connPool = &connPoolProxy{
+			primary:  primary,
+			fallback: fallback,
 		}
 	}
 	client := Client{
@@ -296,7 +363,6 @@ func NewClient(options ...Option) (*Client, error) {
 		proofPolicy:             opts.ProofPolicy,
 		archiveDetectionEnabled: opts.DetectArchiveNodes,
 	}
-	go client.pool.Run(context.TODO())
 	return &client, nil
 }
 
@@ -1040,6 +1106,86 @@ func (c *Client) GetOutMsgQueueSizes(ctx context.Context) (liteclient.LiteServer
 		return liteclient.LiteServerOutMsgQueueSizesC{}, err
 	}
 	return res, nil
+}
+
+func (p *connPoolProxy) usePrimary() bool {
+	if p.primary == nil {
+		return false
+	}
+	status := p.primary.Status()
+	for _, c := range status.Connections {
+		if c.Connected {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *connPoolProxy) BestMasterchainInfoClient() *pool.MasterchainInfoClient {
+	if p.usePrimary() {
+		return p.primary.BestMasterchainInfoClient()
+	}
+	if p.fallback != nil {
+		return p.fallback.BestMasterchainInfoClient()
+	}
+	return nil
+}
+
+func (p *connPoolProxy) BestMasterchainClient(ctx context.Context) (*liteclient.Client, ton.BlockIDExt, error) {
+	if p.usePrimary() {
+		return p.primary.BestMasterchainClient(ctx)
+	}
+	if p.fallback != nil {
+		return p.fallback.BestMasterchainClient(ctx)
+	}
+	return nil, ton.BlockIDExt{}, pool.ErrNoConnections
+}
+
+func (p *connPoolProxy) BestClientByAccountID(ctx context.Context, accountID ton.AccountID, archiveRequired bool) (*liteclient.Client, ton.BlockIDExt, error) {
+	if p.usePrimary() {
+		return p.primary.BestClientByAccountID(ctx, accountID, archiveRequired)
+	}
+	if p.fallback != nil {
+		return p.fallback.BestClientByAccountID(ctx, accountID, archiveRequired)
+	}
+	return nil, ton.BlockIDExt{}, pool.ErrNoConnections
+}
+
+func (p *connPoolProxy) BestClientByBlockID(ctx context.Context, blockID ton.BlockID) (*liteclient.Client, error) {
+	if p.usePrimary() {
+		return p.primary.BestClientByBlockID(ctx, blockID)
+	}
+	if p.fallback != nil {
+		return p.fallback.BestClientByBlockID(ctx, blockID)
+	}
+	return nil, pool.ErrNoConnections
+}
+
+func (p *connPoolProxy) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout time.Duration) error {
+	if p.usePrimary() {
+		return p.primary.WaitMasterchainSeqno(ctx, seqno, timeout)
+	}
+	if p.fallback != nil {
+		return p.fallback.WaitMasterchainSeqno(ctx, seqno, timeout)
+	}
+	return pool.ErrNoConnections
+}
+
+func (p *connPoolProxy) Status() pool.Status {
+	if p == nil {
+		return pool.Status{}
+	}
+	if p.usePrimary() {
+		return p.primary.Status()
+	}
+	if p.fallback != nil {
+		return p.fallback.Status()
+	}
+	return pool.Status{}
+}
+
+func (p *connPoolProxy) ConnectionsNumber() int {
+	return len(p.Status().Connections)
 }
 
 var configCache = make(map[string]*config.GlobalConfigurationFile)

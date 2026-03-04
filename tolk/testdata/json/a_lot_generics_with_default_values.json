@@ -1,9 +1,5 @@
 {
   "value": {
-    "tag": {
-      "name": "default_test",
-      "prefix": "0x0"
-    },
     "num1": {
       "isExists": true,
       "value": 4

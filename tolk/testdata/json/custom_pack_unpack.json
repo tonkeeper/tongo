@@ -1,9 +1,5 @@
 {
   "value": {
-    "tag": {
-      "name": "my",
-      "prefix": "0x0"
-    },
     "amount": "1000000000"
   }
 }

@@ -17,7 +17,7 @@ type InternalAddress struct {
 	Address   [32]byte
 }
 
-func (i *InternalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.Address, decoder *Decoder) error {
+func (i *InternalAddress) Unmarshal(cell *boc.Cell, ty parser.Address, decoder *Decoder) error {
 	err := cell.Skip(3) // skip addr type ($10) and anycast (0)
 	if err != nil {
 		return fmt.Errorf("failed to skip internal address type and anycast: %w", err)
@@ -37,7 +37,7 @@ func (i *InternalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.Address, decod
 	return nil
 }
 
-func (i *InternalAddress) Marshal(cell *boc.Cell, ty tolkParser.Address, encoder *Encoder) error {
+func (i *InternalAddress) Marshal(cell *boc.Cell, ty parser.Address, encoder *Encoder) error {
 	err := cell.WriteUint(0b100, 3) // internal addr type ($10) and anycast (0)
 	if err != nil {
 		return fmt.Errorf("failed to write internal address type and anycast: %w", err)
@@ -93,7 +93,7 @@ func (i *InternalAddress) UnmarshalJSON(b []byte) error {
 type NoneAddress struct {
 }
 
-func (n *NoneAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, decoder *Decoder) error {
+func (n *NoneAddress) Unmarshal(cell *boc.Cell, ty parser.AddressOpt, decoder *Decoder) error {
 	_, err := cell.ReadUint(2)
 	if err != nil {
 		return fmt.Errorf("failed to read none address type: %w", err)
@@ -102,7 +102,7 @@ func (n *NoneAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, decode
 	return nil
 }
 
-func (n *NoneAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder *Encoder) error {
+func (n *NoneAddress) Marshal(cell *boc.Cell, ty parser.AddressOpt, encoder *Encoder) error {
 	err := cell.WriteUint(0, 2) // none addr type ($00)
 	if err != nil {
 		return fmt.Errorf("failed to write none address type: %w", err)
@@ -138,7 +138,7 @@ func (o *OptionalAddress) Equal(other any) bool {
 	return true
 }
 
-func (o *OptionalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, decoder *Decoder) error {
+func (o *OptionalAddress) Unmarshal(cell *boc.Cell, ty parser.AddressOpt, decoder *Decoder) error {
 	copyCell := cell.CopyRemaining()
 	tag, err := copyCell.ReadUint(2)
 	if err != nil {
@@ -156,14 +156,14 @@ func (o *OptionalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressOpt, de
 
 	o.SumType = "InternalAddress"
 	o.InternalAddress = &InternalAddress{}
-	err = o.InternalAddress.Unmarshal(cell, tolkParser.Address{}, decoder)
+	err = o.InternalAddress.Unmarshal(cell, parser.Address{}, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal optional address: %w", err)
 	}
 	return nil
 }
 
-func (o *OptionalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, encoder *Encoder) error {
+func (o *OptionalAddress) Marshal(cell *boc.Cell, ty parser.AddressOpt, encoder *Encoder) error {
 	if o.SumType == "NoneAddress" {
 		err := o.NoneAddress.Marshal(cell, ty, encoder)
 		if err != nil {
@@ -171,7 +171,7 @@ func (o *OptionalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressOpt, enco
 		}
 		return nil
 	} else if o.SumType == "InternalAddress" {
-		err := o.InternalAddress.Marshal(cell, tolkParser.Address{}, encoder)
+		err := o.InternalAddress.Marshal(cell, parser.Address{}, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal optional address: %w", err)
 		}
@@ -208,7 +208,7 @@ type ExternalAddress struct {
 	Address boc.BitString
 }
 
-func (e *ExternalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressExt, decoder *Decoder) error {
+func (e *ExternalAddress) Unmarshal(cell *boc.Cell, ty parser.AddressExt, decoder *Decoder) error {
 	err := cell.Skip(2)
 	if err != nil {
 		return fmt.Errorf("failed to skip external address type: %w", err)
@@ -229,7 +229,7 @@ func (e *ExternalAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressExt, de
 	return nil
 }
 
-func (e *ExternalAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressExt, encoder *Encoder) error {
+func (e *ExternalAddress) Marshal(cell *boc.Cell, ty parser.AddressExt, encoder *Encoder) error {
 	err := cell.WriteUint(1, 2) // external addr type ($01)
 	if err != nil {
 		return fmt.Errorf("failed to write external address type: %w", err)
@@ -279,7 +279,7 @@ type AnyAddress struct {
 	VarAddress      *VarAddress
 }
 
-func (a *AnyAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressAny, decoder *Decoder) error {
+func (a *AnyAddress) Unmarshal(cell *boc.Cell, ty parser.AddressAny, decoder *Decoder) error {
 	copyCell := cell.CopyRemaining()
 	tag, err := copyCell.ReadUint(2)
 	if err != nil {
@@ -289,19 +289,19 @@ func (a *AnyAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressAny, decoder
 	case 0:
 		a.SumType = "NoneAddress"
 		a.NoneAddress = &NoneAddress{}
-		err = a.NoneAddress.Unmarshal(cell, tolkParser.AddressOpt{}, decoder)
+		err = a.NoneAddress.Unmarshal(cell, parser.AddressOpt{}, decoder)
 	case 1:
 		a.SumType = "ExternalAddress"
 		a.ExternalAddress = &ExternalAddress{}
-		err = a.ExternalAddress.Unmarshal(cell, tolkParser.AddressExt{}, decoder)
+		err = a.ExternalAddress.Unmarshal(cell, parser.AddressExt{}, decoder)
 	case 2:
 		a.SumType = "InternalAddress"
 		a.InternalAddress = &InternalAddress{}
-		err = a.InternalAddress.Unmarshal(cell, tolkParser.Address{}, decoder)
+		err = a.InternalAddress.Unmarshal(cell, parser.Address{}, decoder)
 	case 3:
 		a.SumType = "VarAddress"
 		a.VarAddress = &VarAddress{}
-		err = a.VarAddress.Unmarshal(cell, tolkParser.AddressExt{}, decoder)
+		err = a.VarAddress.Unmarshal(cell, parser.AddressExt{}, decoder)
 	}
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal any address: %w", err)
@@ -309,17 +309,17 @@ func (a *AnyAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressAny, decoder
 	return nil
 }
 
-func (a *AnyAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressAny, encoder *Encoder) error {
+func (a *AnyAddress) Marshal(cell *boc.Cell, ty parser.AddressAny, encoder *Encoder) error {
 	var err error
 	switch a.SumType {
 	case "NoneAddress":
-		err = a.NoneAddress.Marshal(cell, tolkParser.AddressOpt{}, encoder)
+		err = a.NoneAddress.Marshal(cell, parser.AddressOpt{}, encoder)
 	case "InternalAddress":
-		err = a.InternalAddress.Marshal(cell, tolkParser.Address{}, encoder)
+		err = a.InternalAddress.Marshal(cell, parser.Address{}, encoder)
 	case "ExternalAddress":
-		err = a.ExternalAddress.Marshal(cell, tolkParser.AddressExt{}, encoder)
+		err = a.ExternalAddress.Marshal(cell, parser.AddressExt{}, encoder)
 	case "VarAddress":
-		err = a.VarAddress.Marshal(cell, tolkParser.AddressAny{}, encoder)
+		err = a.VarAddress.Marshal(cell, parser.AddressAny{}, encoder)
 	default:
 		return fmt.Errorf("unknown any address SumType: %v", a.SumType)
 	}
@@ -417,7 +417,7 @@ func (va *VarAddress) Equal(other any) bool {
 	return bytes.Equal(va.Address.Buffer(), otherVarAddress.Address.Buffer())
 }
 
-func (va *VarAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressExt, decoder *Decoder) error {
+func (va *VarAddress) Unmarshal(cell *boc.Cell, ty parser.AddressExt, decoder *Decoder) error {
 	err := cell.Skip(3) // skip var type ($11) and anycast (0)
 	if err != nil {
 		return fmt.Errorf("failed to skip var address type and anycast: %w", err)
@@ -443,7 +443,7 @@ func (va *VarAddress) Unmarshal(cell *boc.Cell, ty tolkParser.AddressExt, decode
 	return nil
 }
 
-func (va *VarAddress) Marshal(cell *boc.Cell, ty tolkParser.AddressAny, encoder *Encoder) error {
+func (va *VarAddress) Marshal(cell *boc.Cell, ty parser.AddressAny, encoder *Encoder) error {
 	err := cell.WriteUint(0b110, 3) // var addr type ($11) and anycast (0)
 	if err != nil {
 		return fmt.Errorf("failed to write var address type and anycast: %w", err)

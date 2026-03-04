@@ -1,4 +1,4 @@
-package tolkParser
+package parser
 
 import (
 	"encoding/json"

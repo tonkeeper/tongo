@@ -12,7 +12,7 @@ import (
 
 type Int64 int64
 
-func (i *Int64) Unmarshal(cell *boc.Cell, ty tolkParser.IntN, decoder *Decoder) error {
+func (i *Int64) Unmarshal(cell *boc.Cell, ty parser.IntN, decoder *Decoder) error {
 	num, err := cell.ReadInt(ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to read %v-bit integer: %w", ty.N, err)
@@ -21,7 +21,7 @@ func (i *Int64) Unmarshal(cell *boc.Cell, ty tolkParser.IntN, decoder *Decoder) 
 	return nil
 }
 
-func (i *Int64) Marshal(cell *boc.Cell, ty tolkParser.IntN, encoder *Encoder) error {
+func (i *Int64) Marshal(cell *boc.Cell, ty parser.IntN, encoder *Encoder) error {
 	err := cell.WriteInt(int64(*i), ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to write %v-bit integer: %w", ty.N, err)
@@ -39,7 +39,7 @@ func (i *Int64) Equal(other any) bool {
 
 type BigInt big.Int
 
-func (b *BigInt) Unmarshal(cell *boc.Cell, ty tolkParser.IntN, decoder *Decoder) error {
+func (b *BigInt) Unmarshal(cell *boc.Cell, ty parser.IntN, decoder *Decoder) error {
 	num, err := cell.ReadBigInt(ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to read %v-bit big integer: %w", ty.N, err)
@@ -48,7 +48,7 @@ func (b *BigInt) Unmarshal(cell *boc.Cell, ty tolkParser.IntN, decoder *Decoder)
 	return nil
 }
 
-func (b *BigInt) Marshal(cell *boc.Cell, ty tolkParser.IntN, encoder *Encoder) error {
+func (b *BigInt) Marshal(cell *boc.Cell, ty parser.IntN, encoder *Encoder) error {
 	bi := big.Int(*b)
 	err := cell.WriteBigInt(&bi, ty.N)
 	if err != nil {
@@ -86,7 +86,7 @@ func (b *BigInt) UnmarshalJSON(bytes []byte) error {
 
 type UInt64 uint64
 
-func (i *UInt64) Unmarshal(cell *boc.Cell, ty tolkParser.UintN, decoder *Decoder) error {
+func (i *UInt64) Unmarshal(cell *boc.Cell, ty parser.UintN, decoder *Decoder) error {
 	num, err := cell.ReadUint(ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to read %v-bit unsigned integer: %w", ty.N, err)
@@ -95,7 +95,7 @@ func (i *UInt64) Unmarshal(cell *boc.Cell, ty tolkParser.UintN, decoder *Decoder
 	return nil
 }
 
-func (i *UInt64) Marshal(cell *boc.Cell, ty tolkParser.UintN, encoder *Encoder) error {
+func (i *UInt64) Marshal(cell *boc.Cell, ty parser.UintN, encoder *Encoder) error {
 	err := cell.WriteUint(uint64(*i), ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to write %v-bit unsigned integer: %w", ty.N, err)
@@ -113,7 +113,7 @@ func (i *UInt64) Equal(other any) bool {
 
 type BigUInt big.Int
 
-func (b *BigUInt) Unmarshal(cell *boc.Cell, ty tolkParser.UintN, decoder *Decoder) error {
+func (b *BigUInt) Unmarshal(cell *boc.Cell, ty parser.UintN, decoder *Decoder) error {
 	num, err := cell.ReadBigUint(ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to read %v-bit usigned big integer: %w", ty.N, err)
@@ -122,7 +122,7 @@ func (b *BigUInt) Unmarshal(cell *boc.Cell, ty tolkParser.UintN, decoder *Decode
 	return nil
 }
 
-func (b *BigUInt) Marshal(cell *boc.Cell, ty tolkParser.UintN, encoder *Encoder) error {
+func (b *BigUInt) Marshal(cell *boc.Cell, ty parser.UintN, encoder *Encoder) error {
 	bi := big.Int(*b)
 	err := cell.WriteBigUint(&bi, ty.N)
 	if err != nil {
@@ -160,7 +160,7 @@ func (b *BigUInt) UnmarshalJSON(bytes []byte) error {
 
 type VarInt big.Int
 
-func (vi *VarInt) Unmarshal(cell *boc.Cell, ty tolkParser.VarIntN, decoder *Decoder) error {
+func (vi *VarInt) Unmarshal(cell *boc.Cell, ty parser.VarIntN, decoder *Decoder) error {
 	ln, err := cell.ReadLimUint(ty.N - 1)
 	if err != nil {
 		return fmt.Errorf("failed to read var integer length: %w", err)
@@ -173,7 +173,7 @@ func (vi *VarInt) Unmarshal(cell *boc.Cell, ty tolkParser.VarIntN, decoder *Deco
 	return nil
 }
 
-func (vi *VarInt) Marshal(cell *boc.Cell, ty tolkParser.VarIntN, encoder *Encoder) error {
+func (vi *VarInt) Marshal(cell *boc.Cell, ty parser.VarIntN, encoder *Encoder) error {
 	bi := big.Int(*vi)
 	num := bi.Bytes()
 	err := cell.WriteLimUint(len(num), ty.N-1)
@@ -217,7 +217,7 @@ func (vi *VarInt) UnmarshalJSON(bytes []byte) error {
 
 type VarUInt big.Int
 
-func (vu *VarUInt) Unmarshal(cell *boc.Cell, ty tolkParser.VarUintN, decoder *Decoder) error {
+func (vu *VarUInt) Unmarshal(cell *boc.Cell, ty parser.VarUintN, decoder *Decoder) error {
 	ln, err := cell.ReadLimUint(ty.N - 1)
 	if err != nil {
 		return fmt.Errorf("failed to read usigned var integer length: %w", err)
@@ -230,7 +230,7 @@ func (vu *VarUInt) Unmarshal(cell *boc.Cell, ty tolkParser.VarUintN, decoder *De
 	return nil
 }
 
-func (vu *VarUInt) Marshal(cell *boc.Cell, ty tolkParser.VarUintN, encoder *Encoder) error {
+func (vu *VarUInt) Marshal(cell *boc.Cell, ty parser.VarUintN, encoder *Encoder) error {
 	bi := big.Int(*vu)
 	num := bi.Bytes()
 	err := cell.WriteLimUint(len(num), ty.N-1)
@@ -274,7 +274,7 @@ func (vu *VarUInt) UnmarshalJSON(bytes []byte) error {
 
 type Bits boc.BitString
 
-func (b *Bits) Unmarshal(cell *boc.Cell, ty tolkParser.BitsN, decoder *Decoder) error {
+func (b *Bits) Unmarshal(cell *boc.Cell, ty parser.BitsN, decoder *Decoder) error {
 	val, err := cell.ReadBits(ty.N)
 	if err != nil {
 		return fmt.Errorf("failed to read bits value: %w", err)
@@ -283,7 +283,7 @@ func (b *Bits) Unmarshal(cell *boc.Cell, ty tolkParser.BitsN, decoder *Decoder) 
 	return nil
 }
 
-func (b *Bits) Marshal(cell *boc.Cell, ty tolkParser.BitsN, encoder *Encoder) error {
+func (b *Bits) Marshal(cell *boc.Cell, ty parser.BitsN, encoder *Encoder) error {
 	bi := boc.BitString(*b)
 	err := cell.WriteBitString(bi)
 	if err != nil {
@@ -322,18 +322,18 @@ func (b *Bits) UnmarshalJSON(bytes []byte) error {
 
 type CoinsValue big.Int
 
-func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty tolkParser.Coins, decoder *Decoder) error {
+func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty parser.Coins, decoder *Decoder) error {
 	varUint := VarUInt{}
-	if err := varUint.Unmarshal(cell, tolkParser.VarUintN{N: 16}, decoder); err != nil {
+	if err := varUint.Unmarshal(cell, parser.VarUintN{N: 16}, decoder); err != nil {
 		return fmt.Errorf("failed to unmarshal coins value: %w", err)
 	}
 	*c = CoinsValue(varUint)
 	return nil
 }
 
-func (c *CoinsValue) Marshal(cell *boc.Cell, ty tolkParser.Coins, encoder *Encoder) error {
+func (c *CoinsValue) Marshal(cell *boc.Cell, ty parser.Coins, encoder *Encoder) error {
 	varUint := VarUInt(*c)
-	err := varUint.Marshal(cell, tolkParser.VarUintN{N: 16}, encoder) // coins is actually varuint16
+	err := varUint.Marshal(cell, parser.VarUintN{N: 16}, encoder) // coins is actually varuint16
 	if err != nil {
 		return fmt.Errorf("failed to marshal coins value: %w", err)
 	}
@@ -377,7 +377,7 @@ func (b *BoolValue) Equal(o any) bool {
 	return *b == otherBool
 }
 
-func (b *BoolValue) Unmarshal(cell *boc.Cell, ty tolkParser.Bool, decoder *Decoder) error {
+func (b *BoolValue) Unmarshal(cell *boc.Cell, ty parser.Bool, decoder *Decoder) error {
 	val, err := cell.ReadBit()
 	if err != nil {
 		return fmt.Errorf("failed to read bool value: %w", err)
@@ -386,7 +386,7 @@ func (b *BoolValue) Unmarshal(cell *boc.Cell, ty tolkParser.Bool, decoder *Decod
 	return nil
 }
 
-func (b *BoolValue) Marshal(cell *boc.Cell, ty tolkParser.Bool, encoder *Encoder) error {
+func (b *BoolValue) Marshal(cell *boc.Cell, ty parser.Bool, encoder *Encoder) error {
 	err := cell.WriteBit(bool(*b))
 	if err != nil {
 		return fmt.Errorf("failed to write bool value: %w", err)

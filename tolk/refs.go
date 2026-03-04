@@ -27,7 +27,7 @@ type Struct struct {
 	fieldValues []Value
 }
 
-func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Decoder) error {
+func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder) error {
 	if decoder.abiRefs.structRefs == nil {
 		return fmt.Errorf("struct has struct reference but no abi has been given")
 	}
@@ -100,7 +100,7 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty tolkParser.StructRef, decoder *Dec
 }
 
 // try to resolve payload from all known abi in trace
-func (s *Struct) resolvePayload(cell *boc.Cell, ty tolkParser.Ty, decoder *Decoder) (Value, bool, error) {
+func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) (Value, bool, error) {
 	switch ty.SumType {
 	case "Remaining":
 		isRef, err := cell.ReadBit()
@@ -139,7 +139,7 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty tolkParser.Ty, decoder *Decod
 	return Value{}, false, nil
 }
 
-func (s *Struct) Marshal(cell *boc.Cell, ty tolkParser.StructRef, encoder *Encoder) error {
+func (s *Struct) Marshal(cell *boc.Cell, ty parser.StructRef, encoder *Encoder) error {
 	if encoder.abiRefs.structRefs == nil {
 		return fmt.Errorf("struct has struct reference but no abi has been given")
 	}
@@ -285,7 +285,7 @@ type EnumValue struct {
 	Value       big.Int
 }
 
-func (e *EnumValue) Unmarshal(cell *boc.Cell, ty tolkParser.EnumRef, decoder *Decoder) error {
+func (e *EnumValue) Unmarshal(cell *boc.Cell, ty parser.EnumRef, decoder *Decoder) error {
 	if decoder.abiRefs.enumRefs == nil {
 		return fmt.Errorf("struct has enum reference but no abi has been given")
 	}
@@ -349,7 +349,7 @@ func (e EnumValue) MarshalJSON() ([]byte, error) {
 	return data, nil
 }
 
-func (e *EnumValue) Marshal(cell *boc.Cell, ty tolkParser.EnumRef, encoder *Encoder) error {
+func (e *EnumValue) Marshal(cell *boc.Cell, ty parser.EnumRef, encoder *Encoder) error {
 	if encoder.abiRefs.enumRefs == nil {
 		return fmt.Errorf("struct has enum reference but no abi has been given")
 	}
@@ -401,7 +401,7 @@ func (a *AliasValue) Equal(other any) bool {
 	return v.Equal(Value(otherAlias))
 }
 
-func (a *AliasValue) Unmarshal(cell *boc.Cell, ty tolkParser.AliasRef, decoder *Decoder) error {
+func (a *AliasValue) Unmarshal(cell *boc.Cell, ty parser.AliasRef, decoder *Decoder) error {
 	if decoder.abiRefs.aliasRefs == nil {
 		return fmt.Errorf("struct has alias reference but no abi has been given")
 	}
@@ -439,7 +439,7 @@ func (a *AliasValue) Unmarshal(cell *boc.Cell, ty tolkParser.AliasRef, decoder *
 	return nil
 }
 
-func (a *AliasValue) Marshal(cell *boc.Cell, ty tolkParser.AliasRef, encoder *Encoder) error {
+func (a *AliasValue) Marshal(cell *boc.Cell, ty parser.AliasRef, encoder *Encoder) error {
 	if encoder.abiRefs.aliasRefs == nil {
 		return fmt.Errorf("struct has alias reference but no abi has been given")
 	}
@@ -487,7 +487,7 @@ func (g *GenericValue) Equal(other any) bool {
 	return v.Equal(Value(otherGeneric))
 }
 
-func (g *GenericValue) Unmarshal(cell *boc.Cell, ty tolkParser.Generic, decoder *Decoder) error {
+func (g *GenericValue) Unmarshal(cell *boc.Cell, ty parser.Generic, decoder *Decoder) error {
 	currentTy, found := decoder.abiRefs.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic's type %v ", ty.NameT)
@@ -503,7 +503,7 @@ func (g *GenericValue) Unmarshal(cell *boc.Cell, ty tolkParser.Generic, decoder 
 	return nil
 }
 
-func (g *GenericValue) Marshal(cell *boc.Cell, ty tolkParser.Generic, encoder *Encoder) error {
+func (g *GenericValue) Marshal(cell *boc.Cell, ty parser.Generic, encoder *Encoder) error {
 	currentTy, found := encoder.abiRefs.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic's type %v ", ty.NameT)
@@ -517,8 +517,8 @@ func (g *GenericValue) Marshal(cell *boc.Cell, ty tolkParser.Generic, encoder *E
 	return nil
 }
 
-func resolveGeneric(typeArgs []tolkParser.Ty, typeParams []string, abiRefs *abiRefs) (map[string]tolkParser.Ty, error) {
-	genericMap := make(map[string]tolkParser.Ty)
+func resolveGeneric(typeArgs []parser.Ty, typeParams []string, abiRefs *abiRefs) (map[string]parser.Ty, error) {
+	genericMap := make(map[string]parser.Ty)
 	if abiRefs.genericRefs != nil {
 		maps.Copy(genericMap, abiRefs.genericRefs)
 	}

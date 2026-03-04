@@ -7,25 +7,25 @@ import (
 	"github.com/tonkeeper/tongo/tolk/parser"
 )
 
-func Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
+func Unmarshal(cell *boc.Cell, ty parser.Ty) (*Value, error) {
 	d := NewDecoder()
 	return d.Unmarshal(cell, ty)
 }
 
-func Marshal(v *Value, ty tolkParser.Ty) (*boc.Cell, error) {
+func Marshal(v *Value, ty parser.Ty) (*boc.Cell, error) {
 	e := NewEncoder()
 	return e.Marshal(v, ty)
 }
 
 type abiRefs struct {
-	structRefs  map[string]tolkParser.StructDeclaration
-	aliasRefs   map[string]tolkParser.AliasDeclaration
-	enumRefs    map[string]tolkParser.EnumDeclaration
-	genericRefs map[string]tolkParser.Ty
-	opcodeRefs  map[uint64][]tolkParser.StructDeclaration
+	structRefs  map[string]parser.StructDeclaration
+	aliasRefs   map[string]parser.AliasDeclaration
+	enumRefs    map[string]parser.EnumDeclaration
+	genericRefs map[string]parser.Ty
+	opcodeRefs  map[uint64][]parser.StructDeclaration
 }
 
-type customUnpackResolver = func(tolkParser.AliasRef, *boc.Cell, *AliasValue) error
+type customUnpackResolver = func(parser.AliasRef, *boc.Cell, *AliasValue) error
 
 type Decoder struct {
 	abiRefs              abiRefs
@@ -36,13 +36,13 @@ func NewDecoder() *Decoder {
 	return &Decoder{}
 }
 
-func (d *Decoder) WithABIs(abis ...tolkParser.ABI) error {
+func (d *Decoder) WithABIs(abis ...parser.ABI) error {
 	d.abiRefs = abiRefs{
-		structRefs:  make(map[string]tolkParser.StructDeclaration),
-		aliasRefs:   make(map[string]tolkParser.AliasDeclaration),
-		enumRefs:    make(map[string]tolkParser.EnumDeclaration),
-		genericRefs: make(map[string]tolkParser.Ty),
-		opcodeRefs:  make(map[uint64][]tolkParser.StructDeclaration),
+		structRefs:  make(map[string]parser.StructDeclaration),
+		aliasRefs:   make(map[string]parser.AliasDeclaration),
+		enumRefs:    make(map[string]parser.EnumDeclaration),
+		genericRefs: make(map[string]parser.Ty),
+		opcodeRefs:  make(map[uint64][]parser.StructDeclaration),
 	}
 	for _, abi := range abis {
 		for _, declr := range abi.Declarations {
@@ -70,7 +70,7 @@ func (d *Decoder) WithCustomUnpackResolver(customUnpackResolver customUnpackReso
 	d.customUnpackResolver = customUnpackResolver
 }
 
-func (d *Decoder) Unmarshal(cell *boc.Cell, ty tolkParser.Ty) (*Value, error) {
+func (d *Decoder) Unmarshal(cell *boc.Cell, ty parser.Ty) (*Value, error) {
 	res := &Value{}
 	err := res.Unmarshal(cell, ty, d)
 	if err != nil {
@@ -103,7 +103,7 @@ func (d *Decoder) resolvePayload(payload *boc.Cell) (Value, bool, error) {
 
 	guessedStructs := d.abiRefs.opcodeRefs[payloadOpcode]
 	for _, strct := range guessedStructs {
-		v, err := d.Unmarshal(payload, tolkParser.NewStructType(strct.Name))
+		v, err := d.Unmarshal(payload, parser.NewStructType(strct.Name))
 		if err != nil {
 			continue
 		}
@@ -114,7 +114,7 @@ func (d *Decoder) resolvePayload(payload *boc.Cell) (Value, bool, error) {
 	return Value{}, false, nil
 }
 
-type customPackResolver = func(tolkParser.AliasRef, *boc.Cell, *AliasValue) error
+type customPackResolver = func(parser.AliasRef, *boc.Cell, *AliasValue) error
 
 type Encoder struct {
 	abiRefs            abiRefs
@@ -125,13 +125,13 @@ func NewEncoder() *Encoder {
 	return &Encoder{}
 }
 
-func (e *Encoder) WithABIs(abis ...tolkParser.ABI) error {
+func (e *Encoder) WithABIs(abis ...parser.ABI) error {
 	e.abiRefs = abiRefs{
-		structRefs:  make(map[string]tolkParser.StructDeclaration),
-		aliasRefs:   make(map[string]tolkParser.AliasDeclaration),
-		enumRefs:    make(map[string]tolkParser.EnumDeclaration),
-		genericRefs: make(map[string]tolkParser.Ty),
-		opcodeRefs:  make(map[uint64][]tolkParser.StructDeclaration),
+		structRefs:  make(map[string]parser.StructDeclaration),
+		aliasRefs:   make(map[string]parser.AliasDeclaration),
+		enumRefs:    make(map[string]parser.EnumDeclaration),
+		genericRefs: make(map[string]parser.Ty),
+		opcodeRefs:  make(map[uint64][]parser.StructDeclaration),
 	}
 	for _, abi := range abis {
 		for _, declr := range abi.Declarations {
@@ -159,7 +159,7 @@ func (e *Encoder) WithCustomPackResolver(customPackResolver customPackResolver) 
 	e.customPackResolver = customPackResolver
 }
 
-func (e *Encoder) Marshal(v *Value, ty tolkParser.Ty) (*boc.Cell, error) {
+func (e *Encoder) Marshal(v *Value, ty parser.Ty) (*boc.Cell, error) {
 	cell := boc.NewCell()
 	err := v.Marshal(cell, ty, e)
 	if err != nil {

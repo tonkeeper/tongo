@@ -17,7 +17,7 @@ type MapValue struct {
 	len    int
 }
 
-func (m *MapValue) Unmarshal(cell *boc.Cell, ty tolkParser.Map, decoder *Decoder) error {
+func (m *MapValue) Unmarshal(cell *boc.Cell, ty parser.Map, decoder *Decoder) error {
 	keySize, ok := ty.K.GetFixedSize()
 	if !ok {
 		return fmt.Errorf("%v type is not comparable", ty.K.SumType)
@@ -54,7 +54,7 @@ func mapInner(
 	keySize, leftKeySize int,
 	c *boc.Cell,
 	keyPrefix *boc.BitString,
-	kt, vt tolkParser.Ty,
+	kt, vt parser.Ty,
 	keys, values *[]Value,
 	decoder *Decoder,
 ) error {
@@ -187,7 +187,7 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 	return int(ln), key, nil
 }
 
-func (m *MapValue) Marshal(cell *boc.Cell, ty tolkParser.Map, encoder *Encoder) error {
+func (m *MapValue) Marshal(cell *boc.Cell, ty parser.Map, encoder *Encoder) error {
 	keySize, ok := ty.K.GetFixedSize()
 	if !ok {
 		return fmt.Errorf("%s type is not comparable", ty.K.SumType)
@@ -234,7 +234,7 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty tolkParser.Map, encoder *Encoder) 
 	return nil
 }
 
-func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, vt tolkParser.Ty, encoder *Encoder) error {
+func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, vt parser.Ty, encoder *Encoder) error {
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}

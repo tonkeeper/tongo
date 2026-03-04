@@ -19,19 +19,19 @@ var jettonWalletAbiData []byte
 var swapCoffeeAbiData []byte
 
 func main() {
-	var jettonWalletABI tolkParser.ABI
+	var jettonWalletABI parser.ABI
 	err := json.Unmarshal(jettonWalletAbiData, &jettonWalletABI)
 	if err != nil {
 		panic(err)
 	}
 
-	var swapCoffeeABI tolkParser.ABI
+	var swapCoffeeABI parser.ABI
 	err = json.Unmarshal(swapCoffeeAbiData, &swapCoffeeABI)
 	if err != nil {
 		panic(err)
 	}
 
-	ty := tolkParser.NewStructType("Transfer")
+	ty := parser.NewStructType("Transfer")
 	b, err := hex.DecodeString("b5ee9c72010205010001310001ae0f8a7ea5003c0fe80d6334813ef1895801d9d00dc43cb19c9bfa417f874e7be3670825205a6e50d3490a0aec1194fe2e8f003ffffbc78bb7c4bb37210cfa7f64397ff32df53ce36c46934e21a1e315c93137482ed968810101084ee9b1060201ae0f8a7ea5003c0fe80d6334813ef189d801fe7933ccc21619bc6f1800071d12d4e7aae8d68f637fcdb8facdca753b08c859003ffffbc78bb7c4bb37210cfa7f64397ff32df53ce36c46934e21a1e315c93137481823cf41030153c0ffee10c44cf0b64eb9dedfb010c7b24a508140d86f6e07789f9383bb9b2141ea9c08ea502d0bbc060404008d69a178e5801ffffde3c5dbe25d9b90867d3fb21cbff996fa9e71b62349a710d0f18ae4989bb00021706f0b21587534d776380d79ce6fcbef538e7aacc3f949f91149c80db932bd")
 	if err != nil {
 		panic(err)

@@ -1,4 +1,4 @@
-package tolkParser
+package parser
 
 func NewIntNType(n int) Ty {
 	return Ty{

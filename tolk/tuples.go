@@ -11,7 +11,7 @@ import (
 
 type TupleValues []Value
 
-func (v *TupleValues) Unmarshal(cell *boc.Cell, ty tolkParser.TupleWith, decoder *Decoder) error {
+func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.TupleWith, decoder *Decoder) error {
 	list := make(TupleValues, len(ty.Items))
 	for i, item := range ty.Items {
 		inner := Value{}
@@ -25,7 +25,7 @@ func (v *TupleValues) Unmarshal(cell *boc.Cell, ty tolkParser.TupleWith, decoder
 	return nil
 }
 
-func (v *TupleValues) Marshal(cell *boc.Cell, ty tolkParser.TupleWith, encoder *Encoder) error {
+func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.TupleWith, encoder *Encoder) error {
 	for i, item := range []Value(*v) {
 		err := item.Marshal(cell, ty.Items[i], encoder)
 		if err != nil {
@@ -54,7 +54,7 @@ func (v *TupleValues) Equal(other any) bool {
 
 type TensorValues []Value
 
-func (v *TensorValues) Unmarshal(cell *boc.Cell, ty tolkParser.Tensor, decoder *Decoder) error {
+func (v *TensorValues) Unmarshal(cell *boc.Cell, ty parser.Tensor, decoder *Decoder) error {
 	list := make(TensorValues, len(ty.Items))
 	for i, item := range ty.Items {
 		inner := Value{}
@@ -68,7 +68,7 @@ func (v *TensorValues) Unmarshal(cell *boc.Cell, ty tolkParser.Tensor, decoder *
 	return nil
 }
 
-func (v *TensorValues) Marshal(cell *boc.Cell, ty tolkParser.Tensor, encoder *Encoder) error {
+func (v *TensorValues) Marshal(cell *boc.Cell, ty parser.Tensor, encoder *Encoder) error {
 	for i, item := range []Value(*v) {
 		err := item.Marshal(cell, ty.Items[i], encoder)
 		if err != nil {

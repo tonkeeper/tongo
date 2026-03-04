@@ -1,0 +1,156 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CoffeeCrossDexResend",
+      "prefix": {
+        "prefixStr": "0x4ee9b106",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "next",
+          "isPayload": true,
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeSwap",
+      "prefix": {
+        "prefixStr": "0xc0ffee10",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "step",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CoffeeSwapStepParams"
+          }
+        },
+        {
+          "name": "params",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "CoffeeSwapParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeSwapStepParams",
+      "fields": [
+        {
+          "name": "poolAddressHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "minOutputAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeSwapStepParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeSwapParams",
+      "fields": [
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoffeeNotificationData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoffeeNotificationData",
+      "fields": [
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

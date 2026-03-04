@@ -1,0 +1,75 @@
+{
+  "contractName": "Jetton",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "Transfer",
+      "prefix": {
+        "prefixStr": "0x0f8a7ea5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "destination",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "responseDestination",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardPayload",
+          "isPayload": true,
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

@@ -62,3 +62,24 @@ func TestDecodeAndEncodeUnknownInMsgBody(t *testing.T) {
 		t.Fatalf("got different result")
 	}
 }
+
+func TestDecodeAndEncodeHashMap(t *testing.T) {
+	data := "b5ee9c7241010b0100f4000202c8010a0201620209020120030802012004070201580506004327fd889d4ca5a81250b38cfb489c99475bacacb61c512fac81458a37f66e1b10eff400432002aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac0044d4ff53355555555555555555555555555555555555555555555555555555555555550045bd002c44ea652d4092859c67da44e4ca3add6565b0e2897d640a2c51bfb370d8877fa00045a3cff555555555555555555555555555555555555555555555555555555555555555580045bd5800aa6aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab8a1b898e"
+	boc1, _ := boc.DeserializeBocHex(data)
+
+	var x tlb.Hashmap[tlb.Uint16, tlb.MsgAddress]
+	if err := tlb.Unmarshal(boc1[0], &x); err != nil {
+		t.Fatalf("Unable to unmarshal: %v", err)
+	}
+
+	boc2 := boc.NewCell()
+	if err := tlb.Marshal(boc2, x); err != nil {
+		t.Fatalf("Unable to marshal: %v", err)
+	}
+
+	hs1, _ := boc1[0].HashString()
+	hs2, _ := boc2.HashString()
+	if hs1 != hs2 {
+		t.Fatalf("got different result")
+	}
+}

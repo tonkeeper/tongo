@@ -12,7 +12,7 @@ type UnionValue struct {
 	Val    Value
 }
 
-func (u *UnionValue) Unmarshal(cell *boc.Cell, ty tolkParser.Union, decoder *Decoder) error {
+func (u *UnionValue) Unmarshal(cell *boc.Cell, ty parser.Union, decoder *Decoder) error {
 	unionV := UnionValue{}
 	if len(ty.Variants) < 2 {
 		return fmt.Errorf("union length must be at least 2")
@@ -62,7 +62,7 @@ func (u *UnionValue) Unmarshal(cell *boc.Cell, ty tolkParser.Union, decoder *Dec
 	return fmt.Errorf("none of union prefixes matched")
 }
 
-func (u *UnionValue) Marshal(cell *boc.Cell, ty tolkParser.Union, encoder *Encoder) error {
+func (u *UnionValue) Marshal(cell *boc.Cell, ty parser.Union, encoder *Encoder) error {
 	if len(ty.Variants) < 2 {
 		return fmt.Errorf("union length must be at least 2")
 	}

@@ -10,7 +10,7 @@ import (
 
 type Any boc.Cell
 
-func (a *Any) Unmarshal(cell *boc.Cell, ty tolkParser.Cell, decoder *Decoder) error {
+func (a *Any) Unmarshal(cell *boc.Cell, ty parser.Cell, decoder *Decoder) error {
 	ref, err := cell.NextRef()
 	if err != nil {
 		return fmt.Errorf("failed to get next ref: %w", err)
@@ -20,7 +20,7 @@ func (a *Any) Unmarshal(cell *boc.Cell, ty tolkParser.Cell, decoder *Decoder) er
 	return nil
 }
 
-func (a *Any) Marshal(cell *boc.Cell, ty tolkParser.Cell, encoder *Encoder) error {
+func (a *Any) Marshal(cell *boc.Cell, ty parser.Cell, encoder *Encoder) error {
 	c := boc.Cell(*a)
 	ref := c.CopyRemaining()
 	err := cell.AddRef(ref)
@@ -68,7 +68,7 @@ func (a *Any) UnmarshalJSON(b []byte) error {
 
 type RemainingValue boc.Cell
 
-func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty tolkParser.Remaining, decoder *Decoder) error {
+func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty parser.Remaining, decoder *Decoder) error {
 	rem := cell.CopyRemaining()
 	cell.ReadRemainingBits()
 	if rem != nil {
@@ -77,7 +77,7 @@ func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty tolkParser.Remaining, deco
 	return nil
 }
 
-func (r *RemainingValue) Marshal(cell *boc.Cell, ty tolkParser.Remaining, encoder *Encoder) error {
+func (r *RemainingValue) Marshal(cell *boc.Cell, ty parser.Remaining, encoder *Encoder) error {
 	c := boc.Cell(*r)
 	err := cell.WriteBitString(c.ReadRemainingBits())
 	if err != nil {
@@ -133,7 +133,7 @@ type OptValue struct {
 	Val      Value
 }
 
-func (o *OptValue) Unmarshal(cell *boc.Cell, ty tolkParser.Nullable, decoder *Decoder) error {
+func (o *OptValue) Unmarshal(cell *boc.Cell, ty parser.Nullable, decoder *Decoder) error {
 	isExists, err := cell.ReadBit()
 	if err != nil {
 		return fmt.Errorf("failed to read optinal value existance bit: %w", err)
@@ -148,7 +148,7 @@ func (o *OptValue) Unmarshal(cell *boc.Cell, ty tolkParser.Nullable, decoder *De
 	return nil
 }
 
-func (o *OptValue) Marshal(cell *boc.Cell, ty tolkParser.Nullable, encoder *Encoder) error {
+func (o *OptValue) Marshal(cell *boc.Cell, ty parser.Nullable, encoder *Encoder) error {
 	err := cell.WriteBit(o.IsExists)
 	if err != nil {
 		return fmt.Errorf("failed to write optinal value existance bit: %w", err)
@@ -213,7 +213,7 @@ func (o *OptValue) UnmarshalJSON(b []byte) error {
 
 type RefValue Value
 
-func (r *RefValue) Unmarshal(cell *boc.Cell, ty tolkParser.CellOf, decoder *Decoder) error {
+func (r *RefValue) Unmarshal(cell *boc.Cell, ty parser.CellOf, decoder *Decoder) error {
 	ref, err := cell.NextRef()
 	if err != nil {
 		return fmt.Errorf("failed to get next ref: %w", err)
@@ -228,7 +228,7 @@ func (r *RefValue) Unmarshal(cell *boc.Cell, ty tolkParser.CellOf, decoder *Deco
 	return nil
 }
 
-func (r *RefValue) Marshal(cell *boc.Cell, ty tolkParser.CellOf, encoder *Encoder) error {
+func (r *RefValue) Marshal(cell *boc.Cell, ty parser.CellOf, encoder *Encoder) error {
 	val := Value(*r)
 	ref := boc.NewCell()
 	err := val.Marshal(ref, ty.Inner, encoder)

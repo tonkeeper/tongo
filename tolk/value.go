@@ -412,7 +412,7 @@ func (v *Value) GetType() string {
 	return string(v.SumType)
 }
 
-func (v *Value) Unmarshal(cell *boc.Cell, ty tolkParser.Ty, decoder *Decoder) error {
+func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error {
 	var err error
 	switch ty.SumType {
 	case "IntN":
@@ -627,7 +627,7 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty tolkParser.Ty, decoder *Decoder) er
 	return nil
 }
 
-func (v *Value) Marshal(cell *boc.Cell, ty tolkParser.Ty, encoder *Encoder) error {
+func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 	var err error
 	switch ty.SumType {
 	case "IntN":

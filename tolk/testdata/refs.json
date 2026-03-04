@@ -1,0 +1,211 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "AddressAndBalance",
+      "fields": [
+        {
+          "name": "addr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "balance",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "GoodNaming",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "AddressAndBalance"
+      }
+    },
+    {
+      "kind": "Enum",
+      "name": "Role",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 1
+      },
+      "members": [
+        {
+          "name": "Admin",
+          "value": "0"
+        },
+        {
+          "name": "Aboba",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "Operation",
+      "encodedAs": {
+        "kind": "varuintN",
+        "n": 16
+      },
+      "members": [
+        {
+          "name": "Add",
+          "value": "0"
+        },
+        {
+          "name": "Sub",
+          "value": "100000000000000"
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "Operation2",
+      "encodedAs": {
+        "kind": "intN",
+        "n": 128
+      },
+      "members": [
+        {
+          "name": "TopUp",
+          "value": "-10000"
+        },
+        {
+          "name": "Withdraw",
+          "value": "10000"
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "Operation3",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 8
+      },
+      "members": [
+        {
+          "name": "Nothing",
+          "value": "10"
+        },
+        {
+          "name": "Something",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ManyRefsMsg",
+      "prefix": {
+        "prefixStr": "0xdeadbeef",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "user1",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "GoodNaming"
+          }
+        },
+        {
+          "name": "user2",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "AliasRef",
+                "aliasName": "GoodNaming"
+              }
+            }
+          }
+        },
+        {
+          "name": "user3",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "user4",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AddressAndBalance"
+            }
+          },
+          "defaultValue": {
+            "kind": "null"
+          }
+        },
+        {
+          "name": "user5",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AddressAndBalance"
+            }
+          }
+        },
+        {
+          "name": "role",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Role"
+          }
+        },
+        {
+          "name": "oper1",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Operation"
+          }
+        },
+        {
+          "name": "oper2",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Operation2"
+          }
+        },
+        {
+          "name": "oper3",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Operation3"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "GoodNamingForMsg",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "ManyRefsMsg"
+      }
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

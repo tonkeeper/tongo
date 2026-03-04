@@ -1,0 +1,28 @@
+{
+  "value": {
+    "num1": {
+      "isExists": true,
+      "value": 4
+    },
+    "num2": {
+      "isExists": true,
+      "value": 5
+    },
+    "addr4": "",
+    "addr5": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe",
+    "tensor6": {
+      "isExists": true,
+      "value": [
+        342,
+        true
+      ]
+    },
+    "num7": {
+      "isExists": false
+    },
+    "slice3": {
+      "isExists": true,
+      "value": "b5ee9c72010101010005000006616263"
+    }
+  }
+}

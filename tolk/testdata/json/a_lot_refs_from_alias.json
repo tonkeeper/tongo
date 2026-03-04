@@ -1,0 +1,27 @@
+{
+  "value": {
+    "user1": {
+      "addr": "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8",
+      "balance": "1000000000"
+    },
+    "user2": {
+      "isExists": true,
+      "value": {
+        "addr": "0:086fa2a675f74347b08dd4606a549b8fdb98829cb282bc1949d3b12fbaed9dcc",
+        "balance": "100000000"
+      }
+    },
+    "user3": "b5ee9c720101010100240000438006e05909e22b2e5e6087533314ee56505f85212914bd5547941a2a658ac62fe101",
+    "user4": {
+      "isExists": false
+    },
+    "user5": {
+      "addr": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe",
+      "balance": "10000000000000"
+    },
+    "role": "Aboba",
+    "oper1": "Add",
+    "oper2": "TopUp",
+    "oper3": "Something"
+  }
+}

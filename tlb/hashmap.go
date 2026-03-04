@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -409,43 +410,105 @@ func encodeLabel(c *boc.Cell, keyFirst, keyLast *boc.BitString, keySize int) (bo
 	}
 	keyFirst.ResetCounter()
 	keyLast.ResetCounter()
-	if label.BitsAvailableForRead() < 8 {
-		//hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
-		err := c.WriteBit(false)
-		if err != nil {
-			return boc.BitString{}, err
-		}
-		// todo pack label
-		err = c.WriteUnary(uint(label.BitsAvailableForRead()))
-		if err != nil {
-			return boc.BitString{}, err
-		}
-		err = c.WriteBitString(label)
-		if err != nil {
-			return boc.BitString{}, err
-		}
 
+	labelLen := label.BitsAvailableForRead()
+
+	// We must find the most compact way to serialize key
+	hmlShortSize := 2*labelLen + 2
+	hmlLongSize := 2 + int(math.Ceil(math.Log2(float64(keySize)+1))) + labelLen
+	var encodeFunc func(*boc.Cell, int, boc.BitString) error
+	isShort := false
+	if hmlShortSize <= hmlLongSize {
+		isShort = true
+		encodeFunc = encodeShortLabel
 	} else {
-		// hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
-		err := c.WriteBit(true)
+		encodeFunc = encodeLongLabel
+	}
+
+	// If all bits in label are the same then we can use hml_same
+	isAllZero := true
+	isAllOne := true
+	for label.BitsAvailableForRead() > 0 {
+		bit, err := label.ReadBit()
 		if err != nil {
 			return boc.BitString{}, err
 		}
-		err = c.WriteBit(false)
-		if err != nil {
-			return boc.BitString{}, err
-		}
-		// todo pack label
-		err = c.WriteLimUint(label.BitsAvailableForRead(), keySize)
-		if err != nil {
-			return boc.BitString{}, err
-		}
-		err = c.WriteBitString(label)
-		if err != nil {
-			return boc.BitString{}, err
+		if bit {
+			isAllZero = false
+		} else {
+			isAllOne = false
 		}
 	}
+	label.ResetCounter()
+	if isAllZero || isAllOne {
+		hmlSameSize := 2 + 1 + int(math.Ceil(math.Log2(float64(keySize)+1)))
+		if isShort && hmlSameSize < hmlShortSize {
+			encodeFunc = encodeSameLabel
+		} else if !isShort && hmlSameSize < hmlLongSize {
+			encodeFunc = encodeSameLabel
+		}
+	}
+
+	err := encodeFunc(c, keySize, label)
+	if err != nil {
+		return boc.BitString{}, err
+	}
 	return label, nil
+}
+
+func encodeShortLabel(c *boc.Cell, keySize int, label boc.BitString) error {
+	//hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
+	err := c.WriteBit(false)
+	if err != nil {
+		return err
+	}
+	err = c.WriteUnary(uint(label.BitsAvailableForRead()))
+	if err != nil {
+		return err
+	}
+	err = c.WriteBitString(label)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func encodeLongLabel(c *boc.Cell, keySize int, label boc.BitString) error {
+	// hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
+	err := c.WriteBit(true)
+	if err != nil {
+		return err
+	}
+	err = c.WriteBit(false)
+	if err != nil {
+		return err
+	}
+	err = c.WriteLimUint(label.BitsAvailableForRead(), keySize)
+	if err != nil {
+		return err
+	}
+	err = c.WriteBitString(label)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func encodeSameLabel(c *boc.Cell, keySize int, label boc.BitString) error {
+	//hml_same$11 {m:#} v:Bit n:(#<= m) = HmLabel ~n m;
+	err := c.WriteUint(0b11, 2)
+	if err != nil {
+		return err
+	}
+	err = c.WriteBit(label.BinaryString()[0] == '1')
+	if err != nil {
+		return err
+	}
+	err = c.WriteLimUint(label.BitsAvailableForRead(), keySize)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type HashmapAug[keyT fixedSize, T1, T2 any] struct {

@@ -1,0 +1,40 @@
+{
+  "contractName": "Test",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "My",
+      "fields": [
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "MyAlias",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "My"
+      },
+      "customPackToBuilder": true,
+      "customUnpackFromSlice": true
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

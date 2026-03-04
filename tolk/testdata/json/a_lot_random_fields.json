@@ -1,0 +1,24 @@
+{
+  "value": {
+    "dest_int": "0:83dfd552e63729b472fcbcc8c45ebcc6691702558b68ec7527e1ba403a0f31a8",
+    "amount": "500000123400000",
+    "dest_ext": "",
+    "intVector": [
+      342,
+      {
+        "isExists": true,
+        "value": "1000000000"
+      },
+      23443
+    ],
+    "needs_more": true,
+    "some_payload": "b5ee9c7201010101002b000051000000000005120041efeaa9731b94da397e5e64622f5e63348b812ac5b4763a93f0dd201d0798d440",
+    "my_int": 432,
+    "some_union": 30000,
+    "default_1": 1,
+    "default_2": {
+      "isExists": true,
+      "value": 55
+    }
+  }
+}

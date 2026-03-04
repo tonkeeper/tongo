@@ -213,10 +213,11 @@ func (s *BitString) ReadBigUint(bitLen int) (*big.Int, error) {
 		}
 		b = []byte{byte(firstByte)}
 	}
-	b, err = s.ReadBytes(bitLen / 8)
+	normalizeB, err := s.ReadBytes(bitLen / 8)
 	if err != nil {
 		return nil, err
 	}
+	b = append(b, normalizeB...)
 	num.SetBytes(b)
 	return num, nil
 }

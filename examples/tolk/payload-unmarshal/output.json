@@ -1,0 +1,148 @@
+{
+    "sumType": "struct",
+    "struct": {
+        "prefix": {
+            "len": 32,
+            "prefix": 260734629
+        },
+        "fields": {
+            "queryId": {
+                "sumType": "smallUint",
+                "smallUint": 16905987934073985
+            },
+            "amount": {
+                "sumType": "coins",
+                "coins": "-1107819"
+            },
+            "destination": {
+                "sumType": "internalAddress",
+                "internalAddress": "0:ece806e21e58ce4dfd20bfc3a73df1b38412902d372869a485057608ca7f1747"
+            },
+            "responseDestination": {
+                "sumType": "internalAddress",
+                "internalAddress": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd"
+            },
+            "customPayload": {
+                "sumType": "optionalValue",
+                "optionalValue": {
+                    "isExists": false
+                }
+            },
+            "forwardAmount": {
+                "sumType": "coins",
+                "coins": "393000000"
+            },
+            "forwardPayload": {
+                "sumType": "struct",
+                "struct": {
+                    "prefix": {
+                        "len": 32,
+                        "prefix": 1323938054
+                    },
+                    "fields": {
+                        "next": {
+                            "sumType": "struct",
+                            "struct": {
+                                "prefix": {
+                                    "len": 32,
+                                    "prefix": 260734629
+                                },
+                                "fields": {
+                                    "queryId": {
+                                        "sumType": "smallUint",
+                                        "smallUint": 16905987934073985
+                                    },
+                                    "amount": {
+                                        "sumType": "coins",
+                                        "coins": "-1107811"
+                                    },
+                                    "destination": {
+                                        "sumType": "internalAddress",
+                                        "internalAddress": "0:ff3c99e6610b0cde378c00038e896a73d5746b47b1bfe6dc7d66e53a9d84642c"
+                                    },
+                                    "responseDestination": {
+                                        "sumType": "internalAddress",
+                                        "internalAddress": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd"
+                                    },
+                                    "customPayload": {
+                                        "sumType": "optionalValue",
+                                        "optionalValue": {
+                                            "isExists": false
+                                        }
+                                    },
+                                    "forwardAmount": {
+                                        "sumType": "coins",
+                                        "coins": "202500000"
+                                    },
+                                    "forwardPayload": {
+                                        "sumType": "struct",
+                                        "struct": {
+                                            "prefix": {
+                                                "len": 32,
+                                                "prefix": 3237998096
+                                            },
+                                            "fields": {
+                                                "step": {
+                                                    "sumType": "struct",
+                                                    "struct": {
+                                                        "fields": {
+                                                            "poolAddressHash": {
+                                                                "sumType": "bigUint",
+                                                                "bigUint": "88789260033367713967225486461025260896651147011656566896934426357962362325226"
+                                                            },
+                                                            "minOutputAmount": {
+                                                                "sumType": "coins",
+                                                                "coins": "12091900000"
+                                                            },
+                                                            "next": {
+                                                                "sumType": "optionalValue",
+                                                                "optionalValue": {
+                                                                    "isExists": false
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "params": {
+                                                    "sumType": "refValue",
+                                                    "refValue": {
+                                                        "sumType": "struct",
+                                                        "struct": {
+                                                            "fields": {
+                                                                "deadline": {
+                                                                    "sumType": "smallUint",
+                                                                    "smallUint": 1772189925
+                                                                },
+                                                                "recipient": {
+                                                                    "sumType": "internalAddress",
+                                                                    "internalAddress": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd"
+                                                                },
+                                                                "referral": {
+                                                                    "sumType": "optionalAddress",
+                                                                    "optionalAddress": {
+                                                                        "sumType": "internalAddress",
+                                                                        "internalAddress": "0:085c1bc2c8561d4d35dd8e035e739bf2fbd4e39eab30fe527e445272036e4caf"
+                                                                    }
+                                                                },
+                                                                "notificationData": {
+                                                                    "sumType": "optionalValue",
+                                                                    "optionalValue": {
+                                                                        "isExists": false
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

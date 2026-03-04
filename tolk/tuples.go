@@ -1,0 +1,113 @@
+package tolk
+
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tolk/parser"
+)
+
+type TupleValues []Value
+
+func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.TupleWith, decoder *Decoder) error {
+	list := make(TupleValues, len(ty.Items))
+	for i, item := range ty.Items {
+		inner := Value{}
+		err := inner.Unmarshal(cell, item, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal %v tuple's value: %w", i, err)
+		}
+		list[i] = inner
+	}
+	*v = list
+	return nil
+}
+
+func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.TupleWith, encoder *Encoder) error {
+	for i, item := range []Value(*v) {
+		err := item.Marshal(cell, ty.Items[i], encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal %v tuple's value: %w", i, err)
+		}
+	}
+	return nil
+}
+
+func (v *TupleValues) Equal(other any) bool {
+	otherTupleValues, ok := other.(TupleValues)
+	if !ok {
+		return false
+	}
+	wV := *v
+	if len(otherTupleValues) != len(wV) {
+		return false
+	}
+	for i := range wV {
+		if !wV[i].Equal(otherTupleValues[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+type TensorValues []Value
+
+func (v *TensorValues) Unmarshal(cell *boc.Cell, ty parser.Tensor, decoder *Decoder) error {
+	list := make(TensorValues, len(ty.Items))
+	for i, item := range ty.Items {
+		inner := Value{}
+		err := inner.Unmarshal(cell, item, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal %v tensor's value: %w", i, err)
+		}
+		list[i] = inner
+	}
+	*v = list
+	return nil
+}
+
+func (v *TensorValues) Marshal(cell *boc.Cell, ty parser.Tensor, encoder *Encoder) error {
+	for i, item := range []Value(*v) {
+		err := item.Marshal(cell, ty.Items[i], encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal %v tensor's value: %w", i, err)
+		}
+	}
+	return nil
+}
+
+func (v *TensorValues) Equal(other any) bool {
+	otherTensorValues, ok := other.(TensorValues)
+	if !ok {
+		return false
+	}
+	wV := *v
+	if len(otherTensorValues) != len(wV) {
+		return false
+	}
+	for i := range wV {
+		if !wV[i].Equal(otherTensorValues[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+func (v TensorValues) MarshalJSON() ([]byte, error) {
+	var s strings.Builder
+	s.WriteRune('[')
+	for i, item := range []Value(v) {
+		data, err := json.Marshal(item)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal %v tensor's value: %w", i, err)
+		}
+		s.Write(data)
+		if i != len([]Value(v))-1 {
+			s.WriteRune(',')
+		}
+	}
+	s.WriteRune(']')
+	return []byte(s.String()), nil
+}

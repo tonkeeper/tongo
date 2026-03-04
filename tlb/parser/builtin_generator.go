@@ -234,6 +234,26 @@ func (u Int{{.NameIndex}}) FixedSize() int {
 	return {{.NameIndex}}
 }
 
+func (u Int{{.NameIndex}}) Equal(other any) bool {
+	otherInt, ok := other.(Int{{.NameIndex}})
+	if !ok {
+		return false
+	}
+	bigU := big.Int(u)
+	otherBigInt := big.Int(otherInt)
+	return bigU.Cmp(&otherBigInt) == 0
+}
+
+func (u Int{{.NameIndex}}) Compare(other any) (int, bool) {
+	otherInt, ok := other.(Int{{.NameIndex}})
+	if !ok {
+		return 0, false
+	}
+	bigU := big.Int(u)
+	otherBigInt := big.Int(otherInt)
+	return bigU.Cmp(&otherBigInt), true
+}
+
 func (u Int{{.NameIndex}}) MarshalJSON() ([]byte, error) {
     i := big.Int(u)
     return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
@@ -291,6 +311,26 @@ func (u *Uint{{.NameIndex}}) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Uint{{.NameIndex}}) FixedSize() int {
 	return {{.NameIndex}}
+}
+
+func (u Uint{{.NameIndex}}) Equal(other any) bool {
+	otherUint, ok := other.(Uint{{.NameIndex}})
+	if !ok {
+		return false
+	}
+	bigU := big.Int(u)
+	otherBigUint := big.Int(otherUint)
+	return bigU.Cmp(&otherBigUint) == 0
+}
+
+func (u Uint{{.NameIndex}}) Compare(other any) (int, bool) {
+	otherUint, ok := other.(Uint{{.NameIndex}})
+	if !ok {
+		return 0, false
+	}
+	bigU := big.Int(u)
+	otherBigUint := big.Int(otherUint)
+	return bigU.Cmp(&otherBigUint), true
 }
 
 func (u Uint{{.NameIndex}}) MarshalJSON() ([]byte, error) {

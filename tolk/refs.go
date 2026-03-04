@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"math/big"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
-	"github.com/tonkeeper/tongo/utils"
 	"golang.org/x/exp/maps"
 )
 
@@ -259,11 +257,7 @@ func (s *Struct) Equal(o any) bool {
 
 func (s Struct) MarshalJSON() ([]byte, error) {
 	builder := strings.Builder{}
-	builder.WriteString("{\"tag\":{\"name\":\"")
-	builder.WriteString(utils.ToSnakeCase(s.name))
-	builder.WriteString("\",\"prefix\":\"0x")
-	builder.WriteString(strconv.FormatInt(int64(s.prefix.Prefix), 16))
-	builder.WriteString("\"},")
+	builder.WriteRune('{')
 	for i, name := range s.fieldNames {
 		if i != 0 {
 			builder.WriteRune(',')

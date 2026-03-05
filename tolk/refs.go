@@ -263,6 +263,10 @@ func (s *Struct) GetPrefix() (Prefix, bool) {
 	return s.prefix, true
 }
 
+func (s *Struct) GetName() string {
+	return s.name
+}
+
 func (s *Struct) Equal(o any) bool {
 	otherStruct, ok := o.(Struct)
 	if !ok {

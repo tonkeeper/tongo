@@ -2,6 +2,13 @@
   "contractName": "Jetton",
   "declarations": [
     {
+      "kind": "Alias",
+      "name": "ForwardPayloadRemainder",
+      "targetTy": {
+        "kind": "remaining"
+      }
+    },
+    {
       "kind": "Struct",
       "name": "Transfer",
       "prefix": {
@@ -53,7 +60,8 @@
           "name": "forwardPayload",
           "isPayload": true,
           "ty": {
-            "kind": "remaining"
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
           }
         }
       ]

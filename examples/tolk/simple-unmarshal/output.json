@@ -1,41 +1,11 @@
 {
-    "sumType": "struct",
-    "struct": {
-        "prefix": {
-            "len": 32,
-            "prefix": 260734629
-        },
-        "fields": {
-            "queryId": {
-                "sumType": "smallUint",
-                "smallUint": 13784990908781977040
-            },
-            "amount": {
-                "sumType": "coins",
-                "coins": "1594225"
-            },
-            "destination": {
-                "sumType": "internalAddress",
-                "internalAddress": "0:92e1411ae546892f33b2c8a89ea90390d8ff4cfbb917a643b91e73f706fdb9d1"
-            },
-            "responseDestination": {
-                "sumType": "internalAddress",
-                "internalAddress": "0:7e33132b7cef9ac53a24b5ea8c7d6f8d5707aadddbc3875869199137705f9a2e"
-            },
-            "customPayload": {
-                "sumType": "optionalValue",
-                "optionalValue": {
-                    "isExists": false
-                }
-            },
-            "forwardAmount": {
-                "sumType": "coins",
-                "coins": "210000000"
-            },
-            "forwardPayload": {
-                "sumType": "remaining",
-                "remaining": "b5ee9c720101030100c40001000101e16664de2a801244183034d9fd59a236f71ec4271be377399056dda4cc3a5ebf5dc40967df641001f8cc4cadf3be6b14e892d7aa31f5be355c1eab776f0e1d61a46644ddc17e68ba003f198995be77cd629d125af5463eb7c6ab83d56eede1c3ac348cc89bb82fcd17000000007fffffffc0020095446cf7101800fc662656f9df358a74496bd518fadf1aae0f55bbb7870eb0d233226ee0bf345c00000540095e99c8dc6a438526df4961936ff51209f307a28c37c6c78310ce140ab78ab658"
-            }
-        }
-    }
+    "queryId": 13784990908781977040,
+    "amount": "1594225",
+    "destination": "0:92e1411ae546892f33b2c8a89ea90390d8ff4cfbb917a643b91e73f706fdb9d1",
+    "responseDestination": "0:7e33132b7cef9ac53a24b5ea8c7d6f8d5707aadddbc3875869199137705f9a2e",
+    "customPayload": {
+        "isExists": false
+    },
+    "forwardAmount": "210000000",
+    "forwardPayload": "b5ee9c720101030100c40001000101e16664de2a801244183034d9fd59a236f71ec4271be377399056dda4cc3a5ebf5dc40967df641001f8cc4cadf3be6b14e892d7aa31f5be355c1eab776f0e1d61a46644ddc17e68ba003f198995be77cd629d125af5463eb7c6ab83d56eede1c3ac348cc89bb82fcd17000000007fffffffc0020095446cf7101800fc662656f9df358a74496bd518fadf1aae0f55bbb7870eb0d233226ee0bf345c00000540095e99c8dc6a438526df4961936ff51209f307a28c37c6c78310ce140ab78ab658"
 }

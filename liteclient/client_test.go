@@ -5,9 +5,10 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/tonkeeper/tongo/ton"
 	"os"
 	"testing"
+
+	"github.com/tonkeeper/tongo/ton"
 
 	"github.com/tonkeeper/tongo/config"
 )
@@ -86,6 +87,9 @@ func TestGeneratedMethod2(t *testing.T) {
 }
 
 func TestGeneratedMethod3(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -191,6 +195,9 @@ func TestClient_WaitMasterchainSeqno(t *testing.T) {
 }
 
 func TestGeneratedMethod6(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)

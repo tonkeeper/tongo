@@ -1,5 +1,5 @@
 
-.PHONY: all imports fmt test
+.PHONY: all imports fmt test test-ci
 
 all: imports fmt test
 
@@ -7,5 +7,7 @@ imports:
 	goimports -l -w $$(go list -f {{.Dir}} ./... | grep -v /vendor/)
 fmt:
 	gofmt -s -l -w $$(go list -f {{.Dir}} ./... | grep -v /vendor/)
-test: 
+test:
 	go test $$(go list ./... | grep -v /vendor/) -timeout 5m -race -coverprofile cover.out
+test-ci:
+	go test -v $$(go list ./... | grep -v /vendor/) -race

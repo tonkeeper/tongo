@@ -132,6 +132,38 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) 
 		if isResolved {
 			return v, true, nil
 		}
+	case "AliasRef":
+		if decoder.abiRefs.aliasRefs == nil {
+			return Value{}, false, fmt.Errorf("struct has alias reference but no abi has been given")
+		}
+		alias, found := decoder.abiRefs.aliasRefs[ty.AliasRef.AliasName]
+		if !found {
+			return Value{}, false, fmt.Errorf("alias with name %s was not found in given abi", ty.AliasRef.AliasName)
+		}
+		oldGenericMap := decoder.abiRefs.genericRefs
+		genericMap, err := resolveGeneric(ty.AliasRef.TypeArgs, alias.TypeParams, &decoder.abiRefs)
+		if err != nil {
+			return Value{}, false, fmt.Errorf("failed to resolve alias' generic value: %w", err)
+		}
+		decoder.abiRefs.genericRefs = genericMap
+
+		val, ok, err := s.resolvePayload(cell, alias.TargetTy, decoder)
+		if err != nil {
+			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
+		}
+		if !ok {
+			return Value{}, false, nil
+		}
+
+		decoder.abiRefs.genericRefs = oldGenericMap
+		return val, true, nil
+	case "Generic":
+		currentTy, found := decoder.abiRefs.genericRefs[ty.Generic.NameT]
+		if !found {
+			return Value{}, false, fmt.Errorf("cannot resolve generic's type %v ", ty.Generic.NameT)
+		}
+
+		return s.resolvePayload(cell, currentTy, decoder)
 	}
 
 	return Value{}, false, nil

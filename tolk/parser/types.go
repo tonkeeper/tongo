@@ -762,3 +762,11 @@ type ThrownError struct {
 	Name    string `json:"constName"`
 	ErrCode int    `json:"errCode"`
 }
+
+func MustParseABI(data []byte) ABI {
+	var abi ABI
+	if err := json.Unmarshal(data, &abi); err != nil {
+		panic(err)
+	}
+	return abi
+}

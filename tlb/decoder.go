@@ -3,6 +3,7 @@ package tlb
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 )
@@ -60,11 +61,19 @@ var bocCellPointerType = reflect.TypeOf(&boc.Cell{})
 var bocTlbANyPointerType = reflect.TypeOf(&Any{})
 var bitStringType = reflect.TypeOf(boc.BitString{})
 
-func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error {
+func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) (err error) {
 	if decoder.withDebug {
-		decoder.debugPath = append(decoder.debugPath, fmt.Sprintf("%v#%v", val.Type().Name(), tag))
+		typeName := val.Type().String()
+		decoder.debugPath = append(decoder.debugPath, fmt.Sprintf("%v#%v", typeName, tag))
 		defer func() {
+			fullPath := append([]string(nil), decoder.debugPath...)
 			decoder.debugPath = decoder.debugPath[:len(decoder.debugPath)-1]
+			if err != nil && decoder.withDebug {
+				path := strings.Join(fullPath, " -> ")
+				if path != "" {
+					err = fmt.Errorf("%w (path: %s)", err, path)
+				}
+			}
 		}()
 	}
 	if c.IsLibrary() {

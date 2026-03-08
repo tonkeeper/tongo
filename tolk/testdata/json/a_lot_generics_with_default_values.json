@@ -22,7 +22,10 @@
     },
     "slice3": {
       "isExists": true,
-      "value": "b5ee9c72010101010005000006616263"
+      "value": {
+        "isRef": false,
+        "value": "b5ee9c72010101010005000006616263"
+      }
     }
   }
 }

@@ -88,8 +88,11 @@ func (d *Decoder) UnmarshalMessage(cell *boc.Cell) (*Value, error) {
 		return &res, nil
 	}
 	res = Value{
-		SumType:   "Remaining",
-		Remaining: (*RemainingValue)(cell),
+		SumType: "Remaining",
+		Remaining: &RemainingValue{
+			IsRef: cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() > 0,
+			Value: *cell,
+		},
 	}
 	return &res, nil
 }
@@ -97,7 +100,7 @@ func (d *Decoder) UnmarshalMessage(cell *boc.Cell) (*Value, error) {
 func (d *Decoder) resolvePayload(payload *boc.Cell) (Value, bool, error) {
 	payloadOpcode, err := payload.ReadUint(32) // payload always 32 bit length
 	if err != nil {
-		return Value{}, false, fmt.Errorf("failed to read payload's opcode: %w", err)
+		return Value{}, false, nil
 	}
 	payload.ResetCounters() // reset opcode
 

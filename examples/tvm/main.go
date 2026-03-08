@@ -37,7 +37,7 @@ func main() {
 		panic(err)
 	}
 
-	code, res, err := emulator.RunSmcMethod(context.Background(), account.ID, "get_nft_address_by_index", tlb.VmStack{val})
+	code, res, err := emulator.RunSmcMethod(context.Background(), account.ID, "get_nft_address_by_index", val.ToStack())
 	if err != nil {
 		panic(err)
 	}
@@ -46,11 +46,11 @@ func main() {
 		panic("TVM execution failed")
 	}
 
-	if len(res) != 1 || res[0].SumType != "VmStkSlice" {
+	if res.Len() != 1 || res.Peek(0).SumType != "VmStkSlice" {
 		panic("invalid stack data")
 	}
 
-	c := res[0].VmStkSlice.Cell()
+	c := res.Peek(0).VmStkSlice.Cell()
 	var a tlb.MsgAddress
 	err = tlb.Unmarshal(c, &a)
 	if err != nil {

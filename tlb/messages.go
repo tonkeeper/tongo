@@ -271,7 +271,7 @@ func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (a MsgAddress) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	switch a.SumType {
-	case "AddrNone":
+	case "AddrNone", "":
 		return c.WriteUint(0, 2)
 	case "AddrExtern":
 		err := c.WriteUint(1, 2)

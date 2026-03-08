@@ -311,7 +311,7 @@ func TestRuntime_UnmarshalRemaining(t *testing.T) {
 	if !ok {
 		t.Errorf("v.GetCell() not successeded")
 	}
-	hs, err := val.HashString()
+	hs, err := val.Value.HashString()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2340,7 +2340,7 @@ func TestRuntime_UnmarshalStructWithDefaultValues(t *testing.T) {
 	if !ok {
 		t.Fatalf("currStruct[slice3].GetRemaining() not successeded")
 	}
-	hs, err := slice3Val.HashString()
+	hs, err := slice3Val.Value.HashString()
 	if err != nil {
 		t.Fatal(err)
 	}

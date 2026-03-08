@@ -394,18 +394,18 @@ func (v *Value) MustGetCell() boc.Cell {
 	return boc.Cell(*v.Cell)
 }
 
-func (v *Value) GetRemaining() (boc.Cell, bool) {
+func (v *Value) GetRemaining() (RemainingValue, bool) {
 	if v.Remaining == nil {
-		return boc.Cell{}, false
+		return RemainingValue{}, false
 	}
-	return boc.Cell(*v.Remaining), true
+	return *v.Remaining, true
 }
 
-func (v *Value) MustGetRemaining() boc.Cell {
+func (v *Value) MustGetRemaining() RemainingValue {
 	if v.Remaining == nil {
 		panic("value is not a remaining")
 	}
-	return boc.Cell(*v.Remaining)
+	return *v.Remaining
 }
 
 func (v *Value) GetType() string {

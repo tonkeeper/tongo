@@ -66,19 +66,26 @@ func (a *Any) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type RemainingValue boc.Cell
+type RemainingValue struct {
+	IsRef bool
+	Value boc.Cell
+}
 
 func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty parser.Remaining, decoder *Decoder) error {
 	rem := cell.CopyRemaining()
 	cell.ReadRemainingBits()
 	if rem != nil {
-		*r = RemainingValue(*rem)
+		isRef := cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() > 0
+		*r = RemainingValue{
+			IsRef: isRef,
+			Value: *rem,
+		}
 	}
 	return nil
 }
 
 func (r *RemainingValue) Marshal(cell *boc.Cell, ty parser.Remaining, encoder *Encoder) error {
-	c := boc.Cell(*r)
+	c := r.Value
 	err := cell.WriteBitString(c.ReadRemainingBits())
 	if err != nil {
 		return fmt.Errorf("failed to write remaining bits: %w", err)
@@ -98,34 +105,43 @@ func (r *RemainingValue) Equal(o any) bool {
 	if !ok {
 		return false
 	}
-	cellV := boc.Cell(*r)
+	cellV := r.Value
 	vHash, err := cellV.HashString()
 	if err != nil {
 		return false
 	}
-	cellO := boc.Cell(other)
+	cellO := other.Value
 	oHash, err := cellO.HashString()
 	if err != nil {
 		return false
 	}
-	return oHash == vHash
+	return oHash == vHash && r.IsRef == other.IsRef
 }
 
 func (r RemainingValue) MarshalJSON() ([]byte, error) {
-	data, err := boc.Cell(r).MarshalJSON()
+	cellData, err := json.Marshal(r.Value)
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal remainings: %w", err)
+		return nil, fmt.Errorf("failed to marshal remainings data: %w", err)
+	}
+	if r.Value.BitsAvailableForRead() == 0 && r.Value.RefsAvailableForRead() == 0 {
+		cellData = []byte("\"\"")
+	}
+	if len(cellData) < 2 {
+		return nil, fmt.Errorf("invalid remaining cell data: %v", cellData)
+	}
+
+	var jsonData = struct {
+		IsRef bool   `json:"isRef"`
+		Value string `json:"value"`
+	}{
+		IsRef: r.IsRef,
+		Value: string(cellData[1 : len(cellData)-1]),
+	}
+	data, err := json.Marshal(jsonData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal remaining: %w", err)
 	}
 	return data, nil
-}
-
-func (r *RemainingValue) UnmarshalJSON(b []byte) error {
-	v := &boc.Cell{}
-	if err := json.Unmarshal(b, v); err != nil {
-		return fmt.Errorf("failed to unmarshal remainigs: %w", err)
-	}
-	*r = RemainingValue(*v)
-	return nil
 }
 
 type OptValue struct {

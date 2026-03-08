@@ -3691,9 +3691,10 @@ type WalletPluginInstallationNotificationMsgBody struct {
 }
 
 type BidaskNativeTransferNotificationMsgBody struct {
-	QueryId        uint64
-	NativeAmount   tlb.Grams
-	ForwardPayload *tlb.Any `tlb:"maybe^"`
+	QueryId         uint64
+	NotificationBit bool
+	NativeAmount    tlb.Grams
+	ForwardPayload  *tlb.Any `tlb:"maybe^"`
 }
 
 type StormWithdrawRequestUserMsgBody struct {

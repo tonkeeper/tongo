@@ -35,7 +35,8 @@ func TestTuple(t *testing.T) {
 		PendingAmount Grams
 		Requested     bool
 	}
-	err = stack[0].VmStkTuple.Unmarshal(&items)
+	top := stack.Peek(0)
+	err = top.VmStkTuple.Unmarshal(&items)
 	if err != nil {
 		panic(err)
 	}
@@ -87,7 +88,8 @@ func TestTuple2(t *testing.T) {
 		Workchain int32
 		Address   Bits256
 	}
-	err = stack[0].VmStkTuple.Unmarshal(&plugins)
+	top := stack.Peek(0)
+	err = top.VmStkTuple.Unmarshal(&plugins)
 	if err != nil {
 		t.Fatal(err)
 	}

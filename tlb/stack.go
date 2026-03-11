@@ -15,7 +15,25 @@ import (
 // vm_stack#_ depth:(## 24) stack:(VmStackList depth) = VmStack;
 // vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1);
 // vm_stk_nil#_ = VmStackList 0;
-type VmStack []VmStackValue
+type VmStack struct {
+	values []VmStackValue // last element is top of the stack
+}
+
+// Len returns the size of the stack
+func (s VmStack) Len() int {
+	return len(s.values)
+}
+
+// Peek returns the top element from the stack (if i == 0) without popping it out
+// peeking empty stack will panic as out of range
+func (s VmStack) Peek(i int) VmStackValue {
+	return s.values[len(s.values)-i-1]
+}
+
+// Put puts the value on top of the stack
+func (s *VmStack) Put(val VmStackValue) {
+	s.values = append(s.values, val)
+}
 
 // VmCont
 // _ cregs:(HashmapE 4 VmStackValue) = VmSaveList;
@@ -61,8 +79,74 @@ type VmTupleRef struct {
 }
 
 func (t VmStkTuple) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	// TODO: implement
-	return fmt.Errorf("VmStkTuple TLB marshaling not implemented")
+	if err := c.WriteUint(uint64(t.Len), 16); err != nil {
+		return err
+	}
+	if t.Len == 0 {
+		if t.Data != nil {
+			return fmt.Errorf("tuple data must be nil when len is 0")
+		}
+		return nil
+	}
+	if t.Data == nil {
+		return fmt.Errorf("tuple data is nil for len %d", t.Len)
+	}
+	return marshalVmTuple(c, t.Len, t.Data, encoder)
+}
+
+func marshalVmTuple(c *boc.Cell, length uint16, tuple *VmTuple, encoder *Encoder) error {
+	if length == 0 {
+		if tuple != nil {
+			return fmt.Errorf("unexpected tuple payload for len 0")
+		}
+		return nil
+	}
+	if tuple == nil {
+		return fmt.Errorf("tuple is nil for len %d", length)
+	}
+	n := length - 1
+	if err := marshalVmTupleRef(c, n, &tuple.Head, encoder); err != nil {
+		return err
+	}
+	if n == 0 {
+		return nil
+	}
+	if tuple.Tail.SumType == "" {
+		return fmt.Errorf("tuple tail is empty for len %d", length)
+	}
+	ref, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	return encoder.Marshal(ref, tuple.Tail)
+}
+
+func marshalVmTupleRef(c *boc.Cell, n uint16, ref *VmTupleRef, encoder *Encoder) error {
+	if ref == nil {
+		return fmt.Errorf("tuple ref is nil")
+	}
+	switch {
+	case n == 0 || n == 1:
+		if ref.Entry == nil {
+			return fmt.Errorf("tuple ref entry is nil for n=%d", n)
+		}
+		entryCell, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		return encoder.Marshal(entryCell, ref.Entry)
+	case n > 1:
+		if ref.Ref == nil {
+			return fmt.Errorf("tuple ref child is nil for n=%d", n)
+		}
+		childCell, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		return marshalVmTuple(childCell, n, ref.Ref, encoder)
+	default:
+		return fmt.Errorf("unsupported tuple ref size n=%d", n)
+	}
 }
 
 func (t *VmStkTuple) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -170,13 +254,17 @@ type VmStackValue struct {
 	VmStkTuple   VmStkTuple    `tlbSumType:"vm_stk_tuple#07"`
 }
 
+func (v VmStackValue) ToStack() VmStack {
+	return VmStack{values: []VmStackValue{v}}
+}
+
 func (s VmStack) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	depth := uint64(len(s))
+	depth := uint64(len(s.values))
 	err := c.WriteUint(depth, 24)
 	if err != nil {
 		return err
 	}
-	err = putStackListItems(c, s)
+	err = putStackListItems(c, s.values)
 	return err
 }
 
@@ -192,7 +280,7 @@ func (s *VmStack) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if err != nil {
 		return err
 	}
-	*s = list
+	s.values = list
 	return nil
 }
 
@@ -222,11 +310,12 @@ func getStackListItems(c *boc.Cell, depth uint64, decoder *Decoder) ([]VmStackVa
 }
 
 func putStackListItems(c *boc.Cell, list []VmStackValue) error {
-	if len(list) == 0 {
+	llen := len(list)
+	if llen == 0 {
 		return nil
 	}
 	restCell := boc.NewCell()
-	err := putStackListItems(restCell, list[1:])
+	err := putStackListItems(restCell, list[:llen-1]) // llen 1 -> list[0:0]
 	if err != nil {
 		return err
 	}
@@ -234,7 +323,7 @@ func putStackListItems(c *boc.Cell, list []VmStackValue) error {
 	if err != nil {
 		return err
 	}
-	err = Marshal(c, list[0])
+	err = Marshal(c, list[llen-1]) // llen 1 -> list[0]
 	return err
 }
 
@@ -265,10 +354,6 @@ func (s *VmStack) UnmarshalTL(r io.Reader) error {
 		return err
 	}
 	return Unmarshal(cell[0], s)
-}
-
-func (s *VmStack) Put(val VmStackValue) {
-	*s = append(VmStack{val}, *s...)
 }
 
 func (s VmCellSlice) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -617,12 +702,12 @@ func (s VmStack) Unmarshal(dest any) error {
 	if val.Kind() != reflect.Pointer {
 		return fmt.Errorf("value should be a pointer")
 	}
-	if val.Elem().Type().NumField() > len(s) {
+	if val.Elem().Type().NumField() > len(s.values) {
 		return fmt.Errorf("not enough values in stack")
 	}
 	for i := 0; i < val.Elem().Type().NumField(); i++ {
 		fieldType := val.Elem().Field(i).Type()
-		if s[i].SumType == "VmStkNull" {
+		if s.values[i].SumType == "VmStkNull" {
 			kind := fieldType.Kind()
 			if kind == reflect.Pointer || kind == reflect.Slice {
 				continue
@@ -630,7 +715,7 @@ func (s VmStack) Unmarshal(dest any) error {
 			return errors.New("can't unmarshal null")
 		}
 		value := reflect.New(fieldType)
-		if err := s[i].Unmarshal(value.Interface()); err != nil {
+		if err := s.values[i].Unmarshal(value.Interface()); err != nil {
 			return err
 		}
 		val.Elem().Field(i).Set(value.Elem())

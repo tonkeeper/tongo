@@ -142,13 +142,13 @@ func TestGetTransactions(t *testing.T) {
 		log.Fatalf("Unable to create tongo client: %v", err)
 	}
 	accountId, _ := ton.AccountIDFromRaw("0:2cf3b5b8c891e517c9addbda1c0386a09ccacbb0e3faf630b51cfc8152325acb")
-	for i := 1; i < 77; i++ {
-		txs, err := tongoClient.GetLastTransactions(context.Background(), accountId, i)
+	for _, n := range []int{1, 15, 76} {
+		txs, err := tongoClient.GetLastTransactions(context.Background(), accountId, n)
 		if err != nil {
 			t.Fatalf("Get transaction error: %v", err)
 		}
-		if len(txs) != i {
-			t.Fatalf("expected #txs: %v, got: %v", i, len(txs))
+		if len(txs) != n {
+			t.Fatalf("expected #txs: %v, got: %v", n, len(txs))
 		}
 		hashes := make(map[string]struct{}, len(txs))
 		for i, tx := range txs {

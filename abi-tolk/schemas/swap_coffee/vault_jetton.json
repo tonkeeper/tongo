@@ -646,7 +646,7 @@
     },
     {
       "kind": "Struct",
-      "name": "SwapStepInternalParamsS",
+      "name": "SwapStepInternalParams",
       "fields": [
         {
           "name": "previousAmount",
@@ -655,16 +655,13 @@
           }
         },
         {
-          "name": "previousAssetHintHas",
-          "ty": {
-            "kind": "bool"
-          }
-        },
-        {
           "name": "previousAssetHint",
           "ty": {
-            "kind": "AliasRef",
-            "aliasName": "Asset"
+            "kind": "nullable",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "Asset"
+            }
           }
         },
         {
@@ -687,15 +684,6 @@
           }
         }
       ]
-    },
-    {
-      "kind": "Alias",
-      "name": "SwapStepInternalParams",
-      "targetTy": {
-        "kind": "StructRef",
-        "structName": "SwapStepInternalParamsS"
-      },
-      "customUnpackFromSlice": true
     },
     {
       "kind": "Struct",
@@ -1063,7 +1051,7 @@
         {
           "name": "stepInternalParams",
           "ty": {
-            "kind": "AliasRef",
+            "kind": "StructRef",
             "aliasName": "SwapStepInternalParams"
           }
         },

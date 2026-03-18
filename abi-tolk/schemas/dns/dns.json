@@ -4,7 +4,7 @@
   "declarations": [
     {
       "kind": "Struct",
-      "name": "DnsText",
+      "name": "DnsTextS",
       "prefix": {
         "prefixStr": "0x1eda",
         "prefixLen": 16
@@ -17,6 +17,15 @@
           }
         }
       ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DnsText",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "DnsTextS"
+      },
+      "customUnpackFromSlice": true
     },
     {
       "kind": "Struct",
@@ -69,10 +78,9 @@
       },
       "fields": [
         {
-          "name": "addrress",
+          "name": "address",
           "ty": {
-            "kind": "bitsN",
-            "n": 256
+            "kind": "address"
           }
         }
       ]

@@ -1,0 +1,4609 @@
+{
+  "contractName": "VammCoinm",
+  "namespace": "ton.stormtrade",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "Parameters",
+      "fields": [
+        {
+          "name": "discount",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rebate",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateMsg",
+      "fields": [
+        {
+          "name": "price",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "spread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "timestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "assetIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OracleData",
+      "fields": [
+        {
+          "name": "updateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsg"
+            }
+          }
+        },
+        {
+          "name": "signatures",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AmmSettings",
+      "fields": [
+        {
+          "name": "fee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rolleverFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "fundingPeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "initMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maintenanceMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "liquidationFeeRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "partialLiquidationRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "spreadLimit",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxPriceImpact",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxPriceSpread",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxOpenNotional",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "feeToStakersPercent",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "fundingMode",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "minPartialLiquidationNotional",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minLeverage",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReferralData",
+      "fields": [
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecutorData",
+      "fields": [
+        {
+          "name": "splitExecutorRewards",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NotificationPayload",
+      "fields": [
+        {
+          "name": "opcode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PositionChange",
+      "fields": [
+        {
+          "name": "size",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "uintN",
+            "n": 1
+          }
+        },
+        {
+          "name": "margin",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openNotional",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "lastUpdatedCumulativePremium",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "fee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "discount",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rebate",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "lastUpdatedTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AmmChange",
+      "fields": [
+        {
+          "name": "quoteAssetReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "quoteAssetReserveWeight",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "baseAssetReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalLongPositionSize",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalShortPositionSize",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openInterestLong",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openInterestShort",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OrderPayload",
+      "fields": [
+        {
+          "name": "orderType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "orderIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "uintN",
+            "n": 1
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Signatures",
+      "fields": [
+        {
+          "name": "data",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OraclePriceData",
+      "fields": [
+        {
+          "name": "price",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "spread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "anotherSpread",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "assetId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OraclePayload",
+      "fields": [
+        {
+          "name": "priceData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OraclePriceData"
+            }
+          }
+        },
+        {
+          "name": "signatures",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "Signatures"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NewExchangeSettings",
+      "fields": [
+        {
+          "name": "fee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rolleverFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "fundingPeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "initMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maintenanceMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "liquidationFeeRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "partialLiquidationRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "spreadLimit",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxPriceImpact",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxPriceSpread",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxOpenNotional",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "feeToStakersPercent",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "fundingMode",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "minPartialLiquidationNotional",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minInitMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "directIncreaseEnabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "directCloseEnabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "executorsWhitelist",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "lowFundingFnA",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "lowFundingFnB",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "highFundingFnA",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "highFundingFnB",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "inflectionPoint",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "executorFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "v3CloseDelay",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "Direction",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 1
+      },
+      "members": [
+        {
+          "name": "Long",
+          "value": "0"
+        },
+        {
+          "name": "Short",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "LogType",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 8
+      },
+      "members": [
+        {
+          "name": "Increase",
+          "value": "0"
+        },
+        {
+          "name": "Close",
+          "value": "1"
+        },
+        {
+          "name": "AddMargin",
+          "value": "2"
+        },
+        {
+          "name": "RemoveMargin",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AmmState",
+      "fields": [
+        {
+          "name": "quoteAssetReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "baseAssetReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "quoteAssetWeight",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "totalLongPositionSize",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalShortPositionSize",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openInterestLong",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openInterestShort",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "latestLongCumulativePremiumFraction",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "latestShortCumulativePremiumFraction",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nextFundingBlockTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OldExchangeSettings",
+      "fields": [
+        {
+          "name": "fee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rolleverFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "fundingPeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "initMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maintenanceMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "liquidationFeeRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "partialLiquidationRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "spreadLimit",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxPriceImpact",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxPriceSpread",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxOpenNotional",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "feeToStakersPercent",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "fundingMode",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "minPartialLiquidationNotional",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minInitMarginRatio",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "directIncreaseEnabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "directCloseEnabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "executorsWhitelist",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "lowFundingFnA",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "lowFundingFnB",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "highFundingFnA",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "highFundingFnB",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "inflectionPoint",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SettlementOracleData",
+      "fields": [
+        {
+          "name": "settlementLastPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "settlementLastSpread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "settlementLastTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "settlementMaxDeviation",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "settlementValidityPeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "settlementAssetId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "EmptyCell",
+      "fields": []
+    },
+    {
+      "kind": "Enum",
+      "name": "OracleType",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 1
+      },
+      "members": [
+        {
+          "name": "Storm",
+          "value": "0"
+        },
+        {
+          "name": "Lazer",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AmmStorage",
+      "fields": [
+        {
+          "name": "balance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vaultAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "assetId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "closeOnly",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "paused",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "oracleLastPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "oracleLastSpread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "oracleLastTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "oracleMaxDeviation",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "oracleValidityPeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "oraclePublicKeysCount",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "pausedAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "ammState",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AmmState"
+            }
+          }
+        },
+        {
+          "name": "exchangeSettings",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OldExchangeSettings"
+            }
+          }
+        },
+        {
+          "name": "oraclePublicKeysRef",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "settlementOracleData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "EmptyCell"
+            }
+          }
+        },
+        {
+          "name": "unpauseAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxLeverage",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "oracleFlag",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "OracleType"
+          }
+        },
+        {
+          "name": "indexAssetPythId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoinAmmStorage",
+      "fields": [
+        {
+          "name": "vaultAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "assetId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "closeOnly",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "paused",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "oracleLastPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "oracleLastSpread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "oracleLastTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "oracleMaxDeviation",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "oracleValidityPeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "oraclePublicKeysCount",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "pausedAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "ammState",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AmmState"
+            }
+          }
+        },
+        {
+          "name": "exchangeSettings",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OldExchangeSettings"
+            }
+          }
+        },
+        {
+          "name": "oraclePublicKeysRef",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "settlementOracleData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "EmptyCell"
+            }
+          }
+        },
+        {
+          "name": "unpauseAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxLeverage",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "oracleFlag",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "OracleType"
+          }
+        },
+        {
+          "name": "indexAssetPythId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "settlementAssetPythId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateMsgV2",
+      "fields": [
+        {
+          "name": "price",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "spread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "timestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "assetIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "pauseAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "unpauseAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "vpiSpread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vpiMarketDepthLong",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vpiMarketDepthShort",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vpiCoefficient",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SingleOraclePayload",
+      "fields": [
+        {
+          "name": "updateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsgV2"
+            }
+          }
+        },
+        {
+          "name": "signatures",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DoubleOraclePayload",
+      "fields": [
+        {
+          "name": "updateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsgV2"
+            }
+          }
+        },
+        {
+          "name": "signatures",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "settlementUpdateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsgV2"
+            }
+          }
+        },
+        {
+          "name": "settlementSignatures",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CreatedPrice",
+      "prefix": {
+        "prefixStr": "0x00",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "updateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsgV2"
+            }
+          }
+        },
+        {
+          "name": "signatures",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CreatedPriceWithSettlement",
+      "prefix": {
+        "prefixStr": "0x01",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "updateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsgV2"
+            }
+          }
+        },
+        {
+          "name": "signatures",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "settlementUpdateMsg",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateMsgV2"
+            }
+          }
+        },
+        {
+          "name": "settlementSignatures",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "CreatedOraclePayload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CreatedPrice"
+            },
+            "prefixStr": "0x00",
+            "prefixLen": 8
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CreatedPriceWithSettlement"
+            },
+            "prefixStr": "0x01",
+            "prefixLen": 8
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "LazerFeed",
+      "fields": [
+        {
+          "name": "numberOfProperties",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "pricePropertyId",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "pricePropertyValue",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "exponentPropertyId",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "exponentPropertyValue",
+          "ty": {
+            "kind": "intN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SingleLazerPayload",
+      "fields": [
+        {
+          "name": "magic",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "timestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "numberOfFeeds",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "indexFeedId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "indexFeed",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "LazerFeed"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DoubleLazerPayload",
+      "fields": [
+        {
+          "name": "magic",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "timestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "numberOfFeeds",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "indexFeedId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "indexFeed",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "LazerFeed"
+          }
+        },
+        {
+          "name": "settlementFeedId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "settlementFeed",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "LazerFeed"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "LazerPayload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "prefixStr": "0",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SingleLazerPayload"
+            }
+          },
+          {
+            "prefixStr": "1",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DoubleLazerPayload"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "LazerMessage",
+      "fields": [
+        {
+          "name": "magic",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "r",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "s",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "v",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "payloadLength",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "LazerPayload"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "LazerMessageWithCreated",
+      "fields": [
+        {
+          "name": "lazerMessage",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "LazerMessage"
+            }
+          }
+        },
+        {
+          "name": "createdLazerMessage",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "LazerMessage"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SingleOraclePayloadV2",
+      "prefix": {
+        "prefixStr": "0x00",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "priceOraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SingleOraclePayload"
+            }
+          }
+        },
+        {
+          "name": "lazerMessage",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "LazerMessage"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DoubleOraclePayloadV2",
+      "prefix": {
+        "prefixStr": "0x01",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "priceOraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SingleOraclePayload"
+            }
+          }
+        },
+        {
+          "name": "lazerMessage",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "LazerMessage"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SingleWithCreatedOraclePayloadV2",
+      "prefix": {
+        "prefixStr": "0x02",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "priceOraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SingleOraclePayload"
+            }
+          }
+        },
+        {
+          "name": "createdOraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "CreatedOraclePayload"
+            }
+          }
+        },
+        {
+          "name": "lazerMessage",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "LazerMessage"
+              }
+            }
+          }
+        },
+        {
+          "name": "createdLazerMessage",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "LazerMessage"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DoubleWithCreatedOraclePayloadV2",
+      "prefix": {
+        "prefixStr": "0x03",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "priceOraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SingleOraclePayload"
+            }
+          }
+        },
+        {
+          "name": "createdOraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "CreatedOraclePayload"
+            }
+          }
+        },
+        {
+          "name": "lazerMessage",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "LazerMessage"
+              }
+            }
+          }
+        },
+        {
+          "name": "createdLazerMessage",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "LazerMessage"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "OraclePayloadV2",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SingleOraclePayloadV2"
+            },
+            "prefixStr": "0x00",
+            "prefixLen": 8
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DoubleOraclePayloadV2"
+            },
+            "prefixStr": "0x01",
+            "prefixLen": 8
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SingleWithCreatedOraclePayloadV2"
+            },
+            "prefixStr": "0x02",
+            "prefixLen": 8
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DoubleWithCreatedOraclePayloadV2"
+            },
+            "prefixStr": "0x03",
+            "prefixLen": 8
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "NotificationReferralParams",
+      "fields": [
+        {
+          "name": "referralAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "referralAddr",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NotificationExecutorParams",
+      "fields": [
+        {
+          "name": "splitExecutorReward",
+          "ty": {
+            "kind": "uintN",
+            "n": 1
+          }
+        },
+        {
+          "name": "executorAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "executorIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MarketDepth",
+      "fields": [
+        {
+          "name": "vpiSpread",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vpiMarketDepthLong",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vpiMarketDepthShort",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "vpiCoefficient",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PositionData",
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "margin",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openNotional",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "lastUpdatedCumulativePremium",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "fee",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "discount",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rebate",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "lastUpdatedTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FreePositionRecord",
+      "fields": [
+        {
+          "name": "positionData",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PositionData"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "LockedPositionRecord",
+      "fields": [
+        {
+          "name": "positionData",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PositionData"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PositionRecord",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "prefixStr": "0",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "FreePositionRecord"
+            }
+          },
+          {
+            "prefixStr": "1",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "LockedPositionRecord"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "AmmStateLog",
+      "fields": [
+        {
+          "name": "quoteAssetReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "quoteAssetWeight",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "baseAssetReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalLongPositionSize",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalShortPositionSize",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openInterestLong",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openInterestShort",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InitializationData",
+      "fields": [
+        {
+          "name": "highloadTimeout",
+          "ty": {
+            "kind": "uintN",
+            "n": 24
+          }
+        },
+        {
+          "name": "keys",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "Keys"
+            }
+          }
+        },
+        {
+          "name": "version",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "newCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NoKeyInit",
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "NeedKeyInit",
+      "fields": [
+        {
+          "name": "userPublicKeys",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "InitializationRequest",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "prefixStr": "0",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NoKeyInit"
+            }
+          },
+          {
+            "prefixStr": "1",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NeedKeyInit"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Enum",
+      "name": "ExecuteSelector",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 1
+      },
+      "members": [
+        {
+          "name": "ExecuteStop",
+          "value": "0"
+        },
+        {
+          "name": "ExecuteTake",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StopLossOrder",
+      "prefix": {
+        "prefixStr": "0x0",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "expiration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "triggerPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TakeProfitOrder",
+      "prefix": {
+        "prefixStr": "0x1",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "expiration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "triggerPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AddMargin",
+      "prefix": {
+        "prefixStr": "0x4",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RemoveMargin",
+      "prefix": {
+        "prefixStr": "0x5",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RequestOrder",
+      "prefix": {
+        "prefixStr": "0x8",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "selector",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "ExecuteSelector"
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "CreateOrder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "UserOrder",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StopLossOrder"
+            },
+            "prefixStr": "0x0",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TakeProfitOrder"
+            },
+            "prefixStr": "0x1",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AddMargin"
+            },
+            "prefixStr": "0x4",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RemoveMargin"
+            },
+            "prefixStr": "0x5",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RequestOrder"
+            },
+            "prefixStr": "0x8",
+            "prefixLen": 4
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "LimitOrder",
+      "prefix": {
+        "prefixStr": "0x2",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "expiration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "leverage",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "limitPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stopPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stopTriggerPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "takeTriggerPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MarketOrder",
+      "prefix": {
+        "prefixStr": "0x3",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "expiration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "leverage",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "limitPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stopPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stopTriggerPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "takeTriggerPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "CreateOrder",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "LimitOrder"
+            },
+            "prefixStr": "0x2",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "MarketOrder"
+            },
+            "prefixStr": "0x3",
+            "prefixLen": 4
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "LimitMarketOrder",
+      "fields": [
+        {
+          "name": "order",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "CreateOrder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Liquidate",
+      "prefix": {
+        "prefixStr": "0x6",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ForceClose",
+      "prefix": {
+        "prefixStr": "0x7",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ForceMaxLeverage",
+      "prefix": {
+        "prefixStr": "0x9",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "ExecutorOrder",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Liquidate"
+            },
+            "prefixStr": "0x6",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ForceClose"
+            },
+            "prefixStr": "0x7",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ForceMaxLeverage"
+            },
+            "prefixStr": "0x9",
+            "prefixLen": 4
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "UserQueryId",
+      "fields": [
+        {
+          "name": "shift",
+          "ty": {
+            "kind": "uintN",
+            "n": 13
+          }
+        },
+        {
+          "name": "bitNumber",
+          "ty": {
+            "kind": "uintN",
+            "n": 10
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecutorQueryId",
+      "fields": [
+        {
+          "name": "shift",
+          "ty": {
+            "kind": "uintN",
+            "n": 13
+          }
+        },
+        {
+          "name": "bitNumber",
+          "ty": {
+            "kind": "uintN",
+            "n": 10
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UserIntentPayload",
+      "fields": [
+        {
+          "name": "ammAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "saAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "UserOrder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UserIntent",
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "UserQueryId"
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "referenceQueryId",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UserQueryId"
+            }
+          }
+        },
+        {
+          "name": "publicKey",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "intent",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UserIntentPayload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecutorIntent",
+      "fields": [
+        {
+          "name": "ammAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "saAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "ExecutorOrder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "Intent",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "prefixStr": "0",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UserIntentType"
+            }
+          },
+          {
+            "prefixStr": "1",
+            "prefixLen": 1,
+            "prefixEatInPlace": true,
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExecutorIntentType"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "UserIntentType",
+      "fields": [
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "intent",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UserIntent"
+            }
+          }
+        },
+        {
+          "name": "oraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "OraclePayloadV2"
+            }
+          }
+        },
+        {
+          "name": "nextIntent",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "union",
+                "variants": [
+                  {
+                    "prefixStr": "0",
+                    "prefixLen": 1,
+                    "prefixEatInPlace": true,
+                    "variantTy": {
+                      "kind": "StructRef",
+                      "structName": "UserIntentType"
+                    }
+                  },
+                  {
+                    "prefixStr": "1",
+                    "prefixLen": 1,
+                    "prefixEatInPlace": true,
+                    "variantTy": {
+                      "kind": "StructRef",
+                      "structName": "ExecutorIntentType"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecutorIntentType",
+      "fields": [
+        {
+          "name": "intent",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "ExecutorIntent"
+            }
+          }
+        },
+        {
+          "name": "oraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "OraclePayloadV2"
+            }
+          }
+        },
+        {
+          "name": "nextIntent",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "union",
+                "variants": [
+                  {
+                    "prefixStr": "0",
+                    "prefixLen": 1,
+                    "prefixEatInPlace": true,
+                    "variantTy": {
+                      "kind": "StructRef",
+                      "structName": "UserIntentType"
+                    }
+                  },
+                  {
+                    "prefixStr": "1",
+                    "prefixLen": 1,
+                    "prefixEatInPlace": true,
+                    "variantTy": {
+                      "kind": "StructRef",
+                      "structName": "ExecutorIntentType"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CurrencyCollection",
+      "fields": [
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "other",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "varuintN",
+              "n": 32
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InternalMessageInfoRelaxed",
+      "prefix": {
+        "prefixStr": "0b0",
+        "prefixLen": 1
+      },
+      "fields": [
+        {
+          "name": "ihrDisabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "bounce",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "bounced",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "src",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "value",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CurrencyCollection"
+          }
+        },
+        {
+          "name": "ihrFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fwdFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "createdLt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NoInitRefBody",
+      "prefix": {
+        "prefixStr": "0b1",
+        "prefixLen": 1
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "ReferrerData",
+      "fields": [
+        {
+          "name": "referrerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referrerPart",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReferrerDataV2",
+      "fields": [
+        {
+          "name": "discount",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rebate",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "refInfo",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 4
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "ReferrerData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RefData0",
+      "prefix": {
+        "prefixStr": "0x0",
+        "prefixLen": 4
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "RefData1",
+      "prefix": {
+        "prefixStr": "0x1",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "data",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "ReferrerDataV2"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RefData2",
+      "prefix": {
+        "prefixStr": "0x2",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "data",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "ReferrerDataV2"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "RefData",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RefData0"
+            },
+            "prefixStr": "0x0",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RefData1"
+            },
+            "prefixStr": "0x1",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RefData2"
+            },
+            "prefixStr": "0x2",
+            "prefixLen": 4
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "AddressesData",
+      "fields": [
+        {
+          "name": "traderAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "smartAccountFactoryAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "vaultAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PreparedMessageBody",
+      "prefix": {
+        "prefixStr": "0x1bea50f1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "bundleSenderAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "ammAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "spentAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "addresses",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AddressesData"
+            }
+          }
+        },
+        {
+          "name": "ref",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "RefData"
+          }
+        },
+        {
+          "name": "position",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PositionData"
+            }
+          }
+        },
+        {
+          "name": "intent",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "Intent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PreparedMessage",
+      "fields": [
+        {
+          "name": "info",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "InternalMessageInfoRelaxed"
+          }
+        },
+        {
+          "name": "noInitRefBody",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "NoInitRefBody"
+          }
+        },
+        {
+          "name": "msgBody",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PreparedMessageBody"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradePayload",
+      "fields": [
+        {
+          "name": "migrateCode",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "newCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SignedUpgradePayload",
+      "fields": [
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "UpgradePayload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExternalMsgPayload",
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "ExecutorQueryId"
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "saAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "actualVersion",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "upgradePayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "SignedUpgradePayload"
+              }
+            }
+          }
+        },
+        {
+          "name": "msg",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "PreparedMessage"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "HighloadData",
+      "fields": [
+        {
+          "name": "oldQueries",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 13
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "queiries",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 13
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "lastCleanTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "timeout",
+          "ty": {
+            "kind": "uintN",
+            "n": 24
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Keys",
+      "fields": [
+        {
+          "name": "hotPublicKey",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "coldPublicKey",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "userPublicKey",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "keyCount",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NotificationPayloadV2",
+      "fields": [
+        {
+          "name": "bunderSenderAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "balanceDelta",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "ammAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "positionData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "PositionData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AdditionalLogData",
+      "fields": [
+        {
+          "name": "indexPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeSettings",
+      "prefix": {
+        "prefixStr": "0xedcd36a6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "redirectAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "settings",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AmmSettings"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PayFunding",
+      "prefix": {
+        "prefixStr": "0xb652c441",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "oracleRef",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OracleData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VammInit",
+      "prefix": {
+        "prefixStr": "0x29c102d1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "redirectAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "code",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecuteOrder",
+      "prefix": {
+        "prefixStr": "0xde1ddbcc",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "orderIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "traderAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "prevAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "executorIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "UserOrder"
+            }
+          }
+        },
+        {
+          "name": "position",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PositionData"
+            }
+          }
+        },
+        {
+          "name": "oraclePayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OraclePayload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TakePositionV2",
+      "prefix": {
+        "prefixStr": "0x1bea50f1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "bunderSenderAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "ammAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "spentAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "addresses",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AddressesData"
+            }
+          }
+        },
+        {
+          "name": "refData",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "RefData"
+          }
+        },
+        {
+          "name": "position",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PositionData"
+            }
+          }
+        },
+        {
+          "name": "intent",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "Intent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CompleteOrder",
+      "prefix": {
+        "prefixStr": "0xcf90d618",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "orderType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "orderIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "originOpcode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "indexPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "settlementOraclePrice",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "coins"
+            }
+          }
+        },
+        {
+          "name": "position",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PositionChange"
+            }
+          }
+        },
+        {
+          "name": "amm",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AmmChange"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VaultTradeNotification",
+      "prefix": {
+        "prefixStr": "0x3475fdd2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "ammIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "freeAmount",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "lockedAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "exchangeAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "withdrawLockedAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "feeToStakers",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "withdrawAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "traderAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referralAddress",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "ReferralData"
+            }
+          }
+        },
+        {
+          "name": "executorParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "ExecutorData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdatePosition",
+      "prefix": {
+        "prefixStr": "0x60dfc677",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "originOpcode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "indexPrice",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "settlementOraclePrice",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "coins"
+            }
+          }
+        },
+        {
+          "name": "position",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PositionChange"
+            }
+          }
+        },
+        {
+          "name": "amm",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AmmChange"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ActivateOrder",
+      "prefix": {
+        "prefixStr": "0x9d2ec640",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "orderIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "activatedOrder",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OrderPayload"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FailedBundleExecution",
+      "prefix": {
+        "prefixStr": "0x666392ee",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "assetId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "errorCode",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "spentAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "saAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "ammAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "direction",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "Direction"
+          }
+        },
+        {
+          "name": "bunderSenderAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "intent",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "Intent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TradeNotificationV2",
+      "prefix": {
+        "prefixStr": "0x28d36491",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "assetId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "freeAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "lockedAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "exchangeAmount",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "withdrawLockedAmount",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "feeToStakers",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "executorAmount",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "totalReferrerAmount",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "refCount",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "referralData",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 4
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "ReferralData"
+            }
+          }
+        },
+        {
+          "name": "saAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "notificationPayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "NotificationPayloadV2"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IntentLog",
+      "fields": [
+        {
+          "name": "logType",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "LogType"
+          }
+        },
+        {
+          "name": "size",
+          "ty": {
+            "kind": "intN",
+            "n": 128
+          }
+        },
+        {
+          "name": "margin",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "openNotional",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "lastUpdatedCpf",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "realizedPnl",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "fundingPayment",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "rolloverFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "positionFeeRate",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "executorFeeRate",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "positionFeeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "executorFeeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "feeToStakersAmount",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "AdditionalLogData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "VammCoinmMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChangeSettings"
+            },
+            "prefixStr": "0xedcd36a6",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PayFunding"
+            },
+            "prefixStr": "0xb652c441",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "VammInit"
+            },
+            "prefixStr": "0x29c102d1",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExecuteOrder"
+            },
+            "prefixStr": "0xde1ddbcc",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TakePositionV2"
+            },
+            "prefixStr": "0x1bea50f1",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CompleteOrder"
+            },
+            "prefixStr": "0xcf90d618",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "VaultTradeNotification"
+            },
+            "prefixStr": "0x3475fdd2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpdatePosition"
+            },
+            "prefixStr": "0x60dfc677",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ActivateOrder"
+            },
+            "prefixStr": "0x9d2ec640",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "FailedBundleExecution"
+            },
+            "prefixStr": "0x666392ee",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TradeNotificationV2"
+            },
+            "prefixStr": "0x28d36491",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChangeSettings"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PayFunding"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "VammInit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExecuteOrder"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TakePositionV2"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CompleteOrder"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "VaultTradeNotification"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdatePosition"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ActivateOrder"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "FailedBundleExecution"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TradeNotificationV2"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

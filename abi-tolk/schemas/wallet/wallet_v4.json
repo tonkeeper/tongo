@@ -1,0 +1,702 @@
+{
+  "contractName": "WalletV4",
+  "namespace": "ton.wallets",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "InternalMessageRelaxed",
+      "prefix": {
+        "prefixStr": "0b0",
+        "prefixLen": 1
+      },
+      "fields": [
+        {
+          "name": "ihrDisabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "bounce",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "bounced",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "src",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "value",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CurrencyCollection"
+          }
+        },
+        {
+          "name": "ihrFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fwdFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "createdLt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "init",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "variantTy": {
+                  "kind": "StructRef",
+                  "structName": "StateInit"
+                },
+                "prefixStr": "0b10",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "cellOf",
+                  "inner": {
+                    "kind": "StructRef",
+                    "structName": "StateInit"
+                  }
+                },
+                "prefixStr": "0b11",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "nullLiteral"
+                },
+                "prefixStr": "0b0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true
+              }
+            ]
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "body",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExternalMessageRelaxed",
+      "prefix": {
+        "prefixStr": "0b11",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "src",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "createdLt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "init",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "variantTy": {
+                  "kind": "StructRef",
+                  "structName": "StateInit"
+                },
+                "prefixStr": "0b10",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "cellOf",
+                  "inner": {
+                    "kind": "StructRef",
+                    "structName": "StateInit"
+                  }
+                },
+                "prefixStr": "0b11",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "nullLiteral"
+                },
+                "prefixStr": "0b0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true
+              }
+            ]
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "body",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CurrencyCollection",
+      "fields": [
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "other",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "varuintN",
+              "n": 32
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "W5SendMessageAction",
+      "prefix": {
+        "prefixStr": "0x0ec3c86d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "message",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "MessageRelaxed2"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "MessageRelaxed2",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InternalMessageRelaxed"
+            },
+            "prefixStr": "0b0",
+            "prefixLen": 1
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExternalMessageRelaxed"
+            },
+            "prefixStr": "0b11",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "SendMessageAction",
+      "fields": [
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "message",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "MessageRelaxed2"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SimpleSendPayload",
+      "prefix": {
+        "prefixStr": "0x00000000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SendMessageAction"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DeployAndInstallPluginPayload",
+      "prefix": {
+        "prefixStr": "0x00000001",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "pluginWorkchain",
+          "ty": {
+            "kind": "intN",
+            "n": 8
+          }
+        },
+        {
+          "name": "pluginBalance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stateInit",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "StateInit"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "body",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InstallPluginPayload",
+      "prefix": {
+        "prefixStr": "0x00000010",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "pluginWorkchain",
+          "ty": {
+            "kind": "intN",
+            "n": 8
+          }
+        },
+        {
+          "name": "pluginAddress",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RemovePluginPayload",
+      "prefix": {
+        "prefixStr": "0x00000011",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "pluginWorkchain",
+          "ty": {
+            "kind": "intN",
+            "n": 8
+          }
+        },
+        {
+          "name": "pluginAddress",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "WalletV4Payload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SimpleSendPayload"
+            },
+            "prefixStr": "0x00000000",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DeployAndInstallPluginPayload"
+            },
+            "prefixStr": "0x00000001",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InstallPluginPayload"
+            },
+            "prefixStr": "0x00000010",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RemovePluginPayload"
+            },
+            "prefixStr": "0x00000011",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "SignedMessageV4",
+      "fields": [
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "subwalletId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "WalletV4Payload"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WalletPluginDestruct",
+      "prefix": {
+        "prefixStr": "0x64737472",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WalletPluginDestructResponse",
+      "prefix": {
+        "prefixStr": "0xe4737472",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PaymentRequest",
+      "prefix": {
+        "prefixStr": "0x706c7567",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CurrencyCollection"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PaymentConfirmed",
+      "prefix": {
+        "prefixStr": "0xf06c7567",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WalletPluginInstallationNotification",
+      "prefix": {
+        "prefixStr": "0x6e6f7465",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "AllowedWalletV4Messages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WalletPluginDestruct"
+            },
+            "prefixStr": "0x64737472",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WalletPluginDestructResponse"
+            },
+            "prefixStr": "0xe4737472",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PaymentRequest"
+            },
+            "prefixStr": "0x706c7567",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PaymentConfirmed"
+            },
+            "prefixStr": "0xf06c7567",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WalletPluginInstallationNotification"
+            },
+            "prefixStr": "0x6e6f7465",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WalletPluginDestruct"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WalletPluginDestructResponse"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PaymentRequest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PaymentConfirmed"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WalletPluginInstallationNotification"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

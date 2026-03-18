@@ -1,0 +1,109 @@
+{
+  "contractName": "Invoice",
+  "namespace": "ton.invoice",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "PaymentProviderUrlNone",
+      "prefix": {
+        "prefixStr": "0x00",
+        "prefixLen": 8
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "PaymentProviderUrlTonSite",
+      "prefix": {
+        "prefixStr": "0x01",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "address",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PaymentProviderUrl",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PaymentProviderUrlNone"
+            },
+            "prefixStr": "0x00",
+            "prefixLen": 8
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PaymentProviderUrlTonSite"
+            },
+            "prefixStr": "0x01",
+            "prefixLen": 8
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "InvoicePayload",
+      "prefix": {
+        "prefixStr": "0x7aa23eb5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "id",
+          "ty": {
+            "kind": "bitsN",
+            "n": 128
+          }
+        },
+        {
+          "name": "url",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "PaymentProviderUrl"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "InvoiceMessages",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "InvoicePayload"
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "InvoicePayload"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

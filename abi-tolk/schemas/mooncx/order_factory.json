@@ -1,0 +1,259 @@
+{
+  "contractName": "OrderFactory",
+  "namespace": "ton.mooncx",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "NextPayload",
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapParams",
+      "fields": [
+        {
+          "name": "minOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "excess",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "nextFulfill",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NextPayload"
+              }
+            }
+          }
+        },
+        {
+          "name": "nextReject",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NextPayload"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OrderParams",
+      "fields": [
+        {
+          "name": "rate",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "lock",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "vestingTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CreateOrder",
+      "prefix": {
+        "prefixStr": "0xda067c19",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "asset2Id",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "orderData",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "OrderParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CreateOrderPayload",
+      "prefix": {
+        "prefixStr": "0xda067c19",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "asset1Id",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "asset2Id",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "orderData",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "OrderParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DeployOrder",
+      "prefix": {
+        "prefixStr": "0x983432e2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "orderFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "orderData",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "OrderParams"
+          }
+        },
+        {
+          "name": "pipes",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "OrderFactoryMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CreateOrder"
+            },
+            "prefixStr": "0xda067c19",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DeployOrder"
+            },
+            "prefixStr": "0x983432e2",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CreateOrder"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DeployOrder"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

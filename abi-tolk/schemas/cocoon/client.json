@@ -1,0 +1,688 @@
+{
+  "contractName": "Client",
+  "namespace": "ton.cocoon",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "ClientStateData",
+      "fields": [
+        {
+          "name": "state",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "balance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "tokensUsed",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "secretHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRequest",
+      "prefix": {
+        "prefixStr": "0x65448ff4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "stateData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "ClientStateData"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyTopUp",
+      "prefix": {
+        "prefixStr": "0x5cfc6b87",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "topUpCoins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRegister",
+      "prefix": {
+        "prefixStr": "0xa35cb580",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRefundGranted",
+      "prefix": {
+        "prefixStr": "0xc68ebc7b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRefundForce",
+      "prefix": {
+        "prefixStr": "0xf4c354c9",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtClientChargeSigned",
+      "prefix": {
+        "prefixStr": "0xbb63ff93",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtClientGrantRefundSigned",
+      "prefix": {
+        "prefixStr": "0xefd711e1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtClientTopUp",
+      "prefix": {
+        "prefixStr": "0xf172e6c2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "topUpAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerClientChangeSecretHashAndTopUp",
+      "prefix": {
+        "prefixStr": "0x8473b408",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "topUpAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "newSecretHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerClientRegister",
+      "prefix": {
+        "prefixStr": "0xc45f9f3b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nonce",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerClientChangeSecretHash",
+      "prefix": {
+        "prefixStr": "0xa9357034",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newSecretHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerClientIncreaseStake",
+      "prefix": {
+        "prefixStr": "0x6a1f6a60",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newStake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerClientWithdraw",
+      "prefix": {
+        "prefixStr": "0xda068e78",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerClientRequestRefund",
+      "prefix": {
+        "prefixStr": "0xfafa6cc1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChargePayload",
+      "prefix": {
+        "prefixStr": "0xbb63ff93",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newTokensUsed",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expectedMyAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "GrantRefundPayload",
+      "prefix": {
+        "prefixStr": "0xefd711e1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newTokensUsed",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expectedMyAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "SignedClientMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtClientChargeSigned"
+            },
+            "prefixStr": "0xbb63ff93",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtClientGrantRefundSigned"
+            },
+            "prefixStr": "0xefd711e1",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "ClientSignedPayload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChargePayload"
+            },
+            "prefixStr": "0xbb63ff93",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "GrantRefundPayload"
+            },
+            "prefixStr": "0xefd711e1",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0x2565934c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Payout",
+      "prefix": {
+        "prefixStr": "0xc59a7cd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "ClientMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtClientChargeSigned"
+            },
+            "prefixStr": "0xbb63ff93",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtClientGrantRefundSigned"
+            },
+            "prefixStr": "0xefd711e1",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtClientTopUp"
+            },
+            "prefixStr": "0xf172e6c2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerClientChangeSecretHashAndTopUp"
+            },
+            "prefixStr": "0x8473b408",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerClientRegister"
+            },
+            "prefixStr": "0xc45f9f3b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerClientChangeSecretHash"
+            },
+            "prefixStr": "0xa9357034",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerClientIncreaseStake"
+            },
+            "prefixStr": "0x6a1f6a60",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerClientWithdraw"
+            },
+            "prefixStr": "0xda068e78",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerClientRequestRefund"
+            },
+            "prefixStr": "0xfafa6cc1",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtClientChargeSigned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtClientGrantRefundSigned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtClientTopUp"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerClientChangeSecretHashAndTopUp"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerClientRegister"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerClientChangeSecretHash"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerClientIncreaseStake"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerClientWithdraw"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerClientRequestRefund"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

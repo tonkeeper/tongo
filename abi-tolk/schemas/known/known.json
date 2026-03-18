@@ -1,0 +1,580 @@
+{
+  "contractName": "Known",
+  "namespace": "ton.general",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CurrencyCollection",
+      "fields": [
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "other",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "varuintN",
+              "n": 32
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NewBounceOriginalInfo",
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CurrencyCollection"
+          }
+        },
+        {
+          "name": "createdLt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NewBounceComputePhaseInfo",
+      "fields": [
+        {
+          "name": "gasUset",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "vmSteps",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Bounce",
+      "prefix": {
+        "prefixStr": "0xffffffff",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BounceV2",
+      "prefix": {
+        "prefixStr": "0xfffffffe",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "isPayload": true,
+          "name": "originalBody",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "originalInfo",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "NewBounceOriginalInfo"
+            }
+          }
+        },
+        {
+          "name": "bouncedByPhase",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "exitCode",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "computePhase",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "NewBounceComputePhaseInfo"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TextComment",
+      "prefix": {
+        "prefixStr": "0x00000000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "text",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "EncryptedTextComment",
+      "prefix": {
+        "prefixStr": "0x2167da4b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "cipherText",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Excess",
+      "prefix": {
+        "prefixStr": "0xd53276db",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TopUp",
+      "prefix": {
+        "prefixStr": "0xd372158c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Credit",
+      "prefix": {
+        "prefixStr": "0x1690c604",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Approve",
+      "prefix": {
+        "prefixStr": "0x7b4b42e6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Disapprove",
+      "prefix": {
+        "prefixStr": "0xe8a0abfe",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ElectorNewStake",
+      "prefix": {
+        "prefixStr": "0x4e73744b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "validatorPubkey",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "stakeAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxfactor",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "adnlAddr",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ElectorNewStakeConfirmation",
+      "prefix": {
+        "prefixStr": "0xf374484c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ElectorRecoverStakeRequest",
+      "prefix": {
+        "prefixStr": "0x47657424",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ElectorRecoverStakeResponse",
+      "prefix": {
+        "prefixStr": "0xf96f7324",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "KnownMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Bounce"
+            },
+            "prefixStr": "0xffffffff",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "BounceV2"
+            },
+            "prefixStr": "0xfffffffe",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TextComment"
+            },
+            "prefixStr": "0x00000000",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "EncryptedTextComment"
+            },
+            "prefixStr": "0x2167da4b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Excess"
+            },
+            "prefixStr": "0xd53276db",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TopUp"
+            },
+            "prefixStr": "0xd372158c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Credit"
+            },
+            "prefixStr": "0x1690c604",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Approve"
+            },
+            "prefixStr": "0x7b4b42e6",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Disapprove"
+            },
+            "prefixStr": "0xe8a0abfe",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ElectorNewStake"
+            },
+            "prefixStr": "0x4e73744b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ElectorNewStakeConfirmation"
+            },
+            "prefixStr": "0xf374484c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ElectorRecoverStakeRequest"
+            },
+            "prefixStr": "0x47657424",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ElectorRecoverStakeResponse"
+            },
+            "prefixStr": "0xf96f7324",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Bounce"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "BounceV2"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TextComment"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "EncryptedTextComment"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Excess"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TopUp"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Credit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Approve"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Disapprove"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ElectorNewStake"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ElectorNewStakeConfirmation"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ElectorRecoverStakeRequest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ElectorRecoverStakeResponse"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

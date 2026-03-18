@@ -1,0 +1,532 @@
+{
+  "contractName": "LendingVault",
+  "namespace": "ton.affluent",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "DepositContext",
+      "prefix": {
+        "prefixStr": "0xf9471134",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "assetAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fromaAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawContext",
+      "prefix": {
+        "prefixStr": "0xcb03bfaf",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "assetAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fromaAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AssetData",
+      "fields": [
+        {
+          "name": "cash",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "balance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "isDepositable",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "isWhitelisted",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "isWithdrawable",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "exposureCap",
+          "ty": {
+            "kind": "uintN",
+            "n": 20
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FactorialPoolAsset",
+      "fields": [
+        {
+          "name": "supply",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "borrow",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "isSuppliable",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "isBorrowable",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ProvideAggregatedDataDeposit",
+      "prefix": {
+        "prefixStr": "0xb0c69ffe",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "assetRequests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "poolRequests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "vaultRequests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "contextPayload",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DepositContext"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ProvideAggregatedDataWithdraw",
+      "prefix": {
+        "prefixStr": "0xb0c69ffe",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "assetRequests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "poolRequests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "vaultRequests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "contextPayload",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "WithdrawContext"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TakeAggregatedDataDeposit",
+      "prefix": {
+        "prefixStr": "0xab7bef17",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "assetData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "poolData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "vaultData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "contextPayload",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DepositContext"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TakeAggregatedDataWithdraw",
+      "prefix": {
+        "prefixStr": "0xd9cf8c91",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "assetData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "poolData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "vaultData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "contextPayload",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "WithdrawContext"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DepositPayload",
+      "prefix": {
+        "prefixStr": "0xf9471134",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "oracleParams",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawPayload",
+      "prefix": {
+        "prefixStr": "0xcb03bfaf",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "assetAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "oracleParams",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "LendingVaultMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ProvideAggregatedDataDeposit"
+            },
+            "prefixStr": "0xb0c69ffe",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ProvideAggregatedDataWithdraw"
+            },
+            "prefixStr": "0xb0c69ffe",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TakeAggregatedDataDeposit"
+            },
+            "prefixStr": "0xab7bef17",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TakeAggregatedDataWithdraw"
+            },
+            "prefixStr": "0xd9cf8c91",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ProvideAggregatedDataDeposit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ProvideAggregatedDataWithdraw"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TakeAggregatedDataDeposit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TakeAggregatedDataWithdraw"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

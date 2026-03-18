@@ -97,8 +97,8 @@
           }
         },
         {
-          "name": "customPayload",
           "isPayload": true,
+          "name": "customPayload",
           "ty": {
             "kind": "nullable",
             "inner": {
@@ -113,8 +113,8 @@
           }
         },
         {
-          "name": "forwardPayload",
           "isPayload": true,
+          "name": "forwardPayload",
           "ty": {
             "kind": "AliasRef",
             "aliasName": "ForwardPayloadRemainder"
@@ -150,8 +150,8 @@
           }
         },
         {
-          "name": "forwardPayload",
           "isPayload": true,
+          "name": "forwardPayload",
           "ty": {
             "kind": "AliasRef",
             "aliasName": "ForwardPayloadRemainder"
@@ -199,8 +199,8 @@
           }
         },
         {
-          "name": "forwardPayload",
           "isPayload": true,
+          "name": "forwardPayload",
           "ty": {
             "kind": "AliasRef",
             "aliasName": "ForwardPayloadRemainder"
@@ -253,6 +253,7 @@
           }
         },
         {
+          "isPayload": true,
           "name": "customPayload",
           "ty": {
             "kind": "nullable",

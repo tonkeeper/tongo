@@ -1,0 +1,488 @@
+{
+  "contractName": "Whales",
+  "namespace": "ton.whales",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "WhalesNominatorMember",
+      "fields": [
+        {
+          "name": "profitPerCoin",
+          "ty": {
+            "kind": "intN",
+            "n": 128
+          }
+        },
+        {
+          "name": "balance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "pendingWithdraw",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "pendingWithdrawAll",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "pendingDeposit",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "memberWithdraw",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WhalesNominatorsMembersList",
+      "fields": [
+        {
+          "name": "list",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "WhalesNominatorMember"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Withdraw",
+      "prefix": {
+        "prefixStr": "0xda803efd",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "gas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Deposit",
+      "prefix": {
+        "prefixStr": "0x7bcd1fef",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "gas",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ForceKick",
+      "prefix": {
+        "prefixStr": "0x1596920c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakeWithdrawDelayed",
+      "prefix": {
+        "prefixStr": "0x74bb3427",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakeWithdrawCompleted",
+      "prefix": {
+        "prefixStr": "0x23d421e1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SendStake",
+      "prefix": {
+        "prefixStr": "0xa2065f2c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "gasLimit",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "validatorPubkey",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "stakeAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxFactor",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "adnlAddr",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawUnowned",
+      "prefix": {
+        "prefixStr": "0x251d6a98",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "gasLimit",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawUnownedResponse",
+      "prefix": {
+        "prefixStr": "0x1d1715bf",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AcceptStake",
+      "prefix": {
+        "prefixStr": "0x99a811fb",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "members",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AcceptWithdraws",
+      "prefix": {
+        "prefixStr": "0xa19fd934",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "members",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "AllowedMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Withdraw"
+            },
+            "prefixStr": "0xda803efd",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Deposit"
+            },
+            "prefixStr": "0x7bcd1fef",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ForceKick"
+            },
+            "prefixStr": "0x1596920c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StakeWithdrawCompleted"
+            },
+            "prefixStr": "0x23d421e1",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StakeWithdrawDelayed"
+            },
+            "prefixStr": "0x74bb3427",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SendStake"
+            },
+            "prefixStr": "0xa2065f2c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WithdrawUnowned"
+            },
+            "prefixStr": "0x251d6a98",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WithdrawUnownedResponse"
+            },
+            "prefixStr": "0x1d1715bf",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AcceptStake"
+            },
+            "prefixStr": "0x99a811fb",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AcceptWithdraws"
+            },
+            "prefixStr": "0xa19fd934",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Withdraw"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Deposit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ForceKick"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "StakeWithdrawCompleted"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "StakeWithdrawDelayed"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SendStake"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WithdrawUnowned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WithdrawUnownedResponse"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AcceptStake"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AcceptWithdraws"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

@@ -1,0 +1,95 @@
+{
+  "contractName": "Vault",
+  "namespace": "ton.daolama",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "DaolamaVaultSupply",
+      "prefix": {
+        "prefixStr": "0x5c11ada9",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DaolamaVaultWithdraw",
+      "prefix": {
+        "prefixStr": "0x7bdd97de",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "VaultMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DaolamaVaultSupply"
+            },
+            "prefixStr": "0x5c11ada9",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DaolamaVaultWithdraw"
+            },
+            "prefixStr": "0x7bdd97de",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DaolamaVaultSupply"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DaolamaVaultWithdraw"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

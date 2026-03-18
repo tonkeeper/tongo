@@ -1,0 +1,139 @@
+{
+  "contractName": "CrossDex",
+  "namespace": "ton.swapcoffee",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CrossDexResend",
+      "prefix": {
+        "prefixStr": "0x200f9086",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nextRecipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "totalGas",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CrossDexResendPayload",
+      "prefix": {
+        "prefixStr": "0x4ee9b106",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "isPayload": true,
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CrossDexFailure",
+      "prefix": {
+        "prefixStr": "0xb902e61a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "CrossDexMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CrossDexResend"
+            },
+            "prefixStr": "0x200f9086",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CrossDexFailure"
+            },
+            "prefixStr": "0xb902e61a",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CrossDexResend"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CrossDexFailure"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

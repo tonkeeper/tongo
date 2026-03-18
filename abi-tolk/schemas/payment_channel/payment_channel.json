@@ -1,0 +1,818 @@
+{
+  "contractName": "PaymentChannel",
+  "namespace": "ton.paymentchannel",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "ConditionPayment",
+      "fields": [
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "condition",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SemiChannelBody",
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sent",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "conditionals",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "ConditionPayment"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SemiChannel",
+      "prefix": {
+        "prefixStr": "0x43685374",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SemiChannelBody"
+          }
+        },
+        {
+          "name": "counterpartyData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "SemiChannelBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SignedSemiChannel",
+      "prefix": {
+        "prefixStr": "0x43685374",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "state",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SemiChannel"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "QuarantinedState",
+      "fields": [
+        {
+          "name": "stateA",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SemiChannelBody"
+          }
+        },
+        {
+          "name": "stateB",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SemiChannelBody"
+          }
+        },
+        {
+          "name": "quarantineStarts",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "stateCommitedByA",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClosingConfig",
+      "fields": [
+        {
+          "name": "quarantineDuration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "misbehaviorFine",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "conditionalCloseDuration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PaymentConfig",
+      "fields": [
+        {
+          "name": "excessFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "destA",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "destB",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Storage",
+      "fields": [
+        {
+          "name": "balanceA",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "balanceB",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "keyA",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "keyB",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "config",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "ClosingConfig"
+            }
+          }
+        },
+        {
+          "name": "commitedSeqnoA",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "commitedSeqnoB",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "quarantin",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "QuarantinedState"
+              }
+            }
+          }
+        },
+        {
+          "name": "payments",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PaymentConfig"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TopUpChannelBalance",
+      "prefix": {
+        "prefixStr": "0x67c7d281",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "addA",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "addB",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InitPaymentChannel",
+      "prefix": {
+        "prefixStr": "0x0e0620c2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "isA",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "tag",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "balanceA",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "balanceB",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChannelCooperativeClose",
+      "prefix": {
+        "prefixStr": "0x5577587e",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "sigA",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        },
+        {
+          "name": "sigB",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        },
+        {
+          "name": "tag",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "balanceA",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "balanceB",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "seqnoA",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "seqnoB",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChannelCooperativeCommit",
+      "prefix": {
+        "prefixStr": "0x79a126ef",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "sigA",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        },
+        {
+          "name": "sigB",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        },
+        {
+          "name": "tag",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "seqnoA",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "seqnoB",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StartUncooperativeChannelClose",
+      "prefix": {
+        "prefixStr": "0x1f151acf",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "signedByA",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "tag",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "schA",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SignedSemiChannel"
+            }
+          }
+        },
+        {
+          "name": "schB",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SignedSemiChannel"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChanllengeQuarantinedChannelState",
+      "prefix": {
+        "prefixStr": "0x088eaa32",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "challengedByA",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "tag",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "schA",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SignedSemiChannel"
+            }
+          }
+        },
+        {
+          "name": "schB",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SignedSemiChannel"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SettleChannelConditionals",
+      "prefix": {
+        "prefixStr": "0x66f6f069",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "fromA",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "conditionalsToSettle",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FinishUncooperativeChannelClose",
+      "prefix": {
+        "prefixStr": "0x25432a91",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "ChannelClosed",
+      "prefix": {
+        "prefixStr": "0xdddc88ba",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "channelId",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PaymentChannelMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TopUpChannelBalance"
+            },
+            "prefixStr": "0x67c7d281",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InitPaymentChannel"
+            },
+            "prefixStr": "0x0e0620c2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChannelCooperativeClose"
+            },
+            "prefixStr": "0x5577587e",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChannelCooperativeCommit"
+            },
+            "prefixStr": "0x79a126ef",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StartUncooperativeChannelClose"
+            },
+            "prefixStr": "0x1f151acf",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChanllengeQuarantinedChannelState"
+            },
+            "prefixStr": "0x088eaa32",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SettleChannelConditionals"
+            },
+            "prefixStr": "0x66f6f069",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "FinishUncooperativeChannelClose"
+            },
+            "prefixStr": "0x25432a91",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChannelClosed"
+            },
+            "prefixStr": "0xdddc88ba",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TopUpChannelBalance"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "InitPaymentChannel"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChannelCooperativeClose"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChannelCooperativeCommit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "StartUncooperativeChannelClose"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChanllengeQuarantinedChannelState"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SettleChannelConditionals"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "FinishUncooperativeChannelClose"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChannelClosed"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

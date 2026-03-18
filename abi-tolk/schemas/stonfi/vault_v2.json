@@ -1,0 +1,455 @@
+{
+  "contractName": "VaultV2",
+  "namespace": "ton.stonfi",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "PtonTonTransfer",
+      "prefix": {
+        "prefixStr": "0x01f3835d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "tonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "refundAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PtonTonRefund",
+      "prefix": {
+        "prefixStr": "0xae25d79e",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PtonResetGas",
+      "prefix": {
+        "prefixStr": "0x29d22935",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PtonDeployWallet",
+      "prefix": {
+        "prefixStr": "0x4f5f4313",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PtonInternalDeploy",
+      "prefix": {
+        "prefixStr": "0x6540cf85",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiPayToParams",
+      "fields": [
+        {
+          "name": "amount0Out",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "token0Address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount1Out",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "token1Address",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StonfiSwapAddrs",
+      "fields": [
+        {
+          "name": "fromUser",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustTonExcesses",
+      "prefix": {
+        "prefixStr": "0x37d3af9e",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustTonPay",
+      "prefix": {
+        "prefixStr": "0x4c3e12d7",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "exitCode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawFeeV2",
+      "prefix": {
+        "prefixStr": "0x354bcdf4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DepositRefFeeV2",
+      "prefix": {
+        "prefixStr": "0x0490f09b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "excessesAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VaultPayToV2",
+      "prefix": {
+        "prefixStr": "0x2100c922",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "tokenAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "VaultV2Messages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PtonTonTransfer"
+            },
+            "prefixStr": "0x01f3835d",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PtonTonRefund"
+            },
+            "prefixStr": "0xae25d79e",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PtonResetGas"
+            },
+            "prefixStr": "0x29d22935",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PtonDeployWallet"
+            },
+            "prefixStr": "0x4f5f4313",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PtonInternalDeploy"
+            },
+            "prefixStr": "0x6540cf85",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustTonExcesses"
+            },
+            "prefixStr": "0x37d3af9e",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustTonPay"
+            },
+            "prefixStr": "0x4c3e12d7",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WithdrawFeeV2"
+            },
+            "prefixStr": "0x354bcdf4",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DepositRefFeeV2"
+            },
+            "prefixStr": "0x0490f09b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "VaultPayToV2"
+            },
+            "prefixStr": "0x2100c922",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PtonTonTransfer"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PtonTonRefund"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PtonResetGas"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PtonDeployWallet"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PtonInternalDeploy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DedustTonExcesses"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DedustTonPay"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WithdrawFeeV2"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DepositRefFeeV2"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "VaultPayToV2"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

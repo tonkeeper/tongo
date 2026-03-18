@@ -1,0 +1,214 @@
+{
+  "contractName": "LpMultitoken",
+  "namespace": "ton.bidask",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "BidaskBurn",
+      "prefix": {
+        "prefixStr": "0x73403c43",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "tokensToBurn",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskBurnAll",
+      "prefix": {
+        "prefixStr": "0xebd6ec83",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskInternalBurn",
+      "prefix": {
+        "prefixStr": "0x16e09400",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "firstBin",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "tokensToBurn",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FeesInternal",
+      "fields": [
+        {
+          "name": "feesPerLpXLast",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "feesPerLpYLast",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "claimedX",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "claimedY",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskLiquidityAddedNotify",
+      "prefix": {
+        "prefixStr": "0x0dc8bb28",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

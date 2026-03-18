@@ -1,0 +1,403 @@
+{
+  "contractName": "ScaledUI",
+  "namespace": "ton.tep526",
+  "declarations": [
+    {
+      "kind": "Alias",
+      "name": "ForwardPayloadRemainder",
+      "targetTy": {
+        "kind": "remaining"
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "AskToTransfer",
+      "prefix": {
+        "prefixStr": "0x0f8a7ea5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "transferRecipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TransferNotificationForRecipient",
+      "prefix": {
+        "prefixStr": "0x7362d09c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "transferInitiator",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "InternalTransferStep",
+      "prefix": {
+        "prefixStr": "0x178d4519",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "transferInitiator",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "ForwardPayloadRemainder"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0xd53276db",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AskToBurn",
+      "prefix": {
+        "prefixStr": "0x595f07bc",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "customPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BurnNotificationForMinter",
+      "prefix": {
+        "prefixStr": "0x7bdd97de",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "burnInitiator",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ScaledUIChanges",
+      "prefix": {
+        "prefixStr": "0xac392598",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "numerator",
+          "ty": {
+            "kind": "varuintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "varuintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "comment",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "remaining"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "ScaledUIMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AskToTransfer"
+            },
+            "prefixStr": "0x0f8a7ea5",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TransferNotificationForRecipient"
+            },
+            "prefixStr": "0x7362d09c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InternalTransferStep"
+            },
+            "prefixStr": "0x178d4519",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ReturnExcessesBack"
+            },
+            "prefixStr": "0xd53276db",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AskToBurn"
+            },
+            "prefixStr": "0x595f07bc",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "BurnNotificationForMinter"
+            },
+            "prefixStr": "0x7bdd97de",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ScaledUIChanges"
+            },
+            "prefixStr": "0xac392598",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AskToTransfer"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TransferNotificationForRecipient"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "InternalTransferStep"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ReturnExcessesBack"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AskToBurn"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "BurnNotificationForMinter"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ScaledUIChanges"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

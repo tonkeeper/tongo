@@ -1,0 +1,813 @@
+{
+  "contractName": "MultisigOrderV2",
+  "namespace": "ton.multisig",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "InternalMessageRelaxed",
+      "prefix": {
+        "prefixStr": "0b0",
+        "prefixLen": 1
+      },
+      "fields": [
+        {
+          "name": "ihrDisabled",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "bounce",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "bounced",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "src",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "value",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CurrencyCollection"
+          }
+        },
+        {
+          "name": "ihrFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fwdFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "createdLt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "init",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "variantTy": {
+                  "kind": "StructRef",
+                  "structName": "StateInit"
+                },
+                "prefixStr": "0b10",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "cellOf",
+                  "inner": {
+                    "kind": "StructRef",
+                    "structName": "StateInit"
+                  }
+                },
+                "prefixStr": "0b11",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "nullLiteral"
+                },
+                "prefixStr": "0b0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true
+              }
+            ]
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "body",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExternalMessageRelaxed",
+      "prefix": {
+        "prefixStr": "0b11",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "src",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "createdLt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "init",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "variantTy": {
+                  "kind": "StructRef",
+                  "structName": "StateInit"
+                },
+                "prefixStr": "0b10",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "cellOf",
+                  "inner": {
+                    "kind": "StructRef",
+                    "structName": "StateInit"
+                  }
+                },
+                "prefixStr": "0b11",
+                "prefixLen": 2,
+                "prefixEatInPlace": true
+              },
+              {
+                "variantTy": {
+                  "kind": "nullLiteral"
+                },
+                "prefixStr": "0b0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true
+              }
+            ]
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "body",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CurrencyCollection",
+      "fields": [
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "other",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "varuintN",
+              "n": 32
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "MessageRelaxed",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "InternalMessageRelaxed"
+            },
+            "prefixStr": "0b0",
+            "prefixLen": 1
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExternalMessageRelaxed"
+            },
+            "prefixStr": "0b11",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "SendMessageAction",
+      "fields": [
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "message",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "MessageRelaxed"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MultisigSendMessage",
+      "prefix": {
+        "prefixStr": "0xf1381e5b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "action",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SendMessageAction"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateMultisigParam",
+      "prefix": {
+        "prefixStr": "0x1d0cfbd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "threshold",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "signers",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "mapKV",
+              "k": {
+                "kind": "uintN",
+                "n": 8
+              },
+              "v": {
+                "kind": "address"
+              }
+            }
+          }
+        },
+        {
+          "name": "proposers",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "MultisigSendMessageAction",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "MultisigSendMessage"
+            },
+            "prefixStr": "0xf1381e5b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpdateMultisigParam"
+            },
+            "prefixStr": "0x1d0cfbd3",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "MultisigOrder",
+      "fields": [
+        {
+          "name": "actions",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "AliasRef",
+                "aliasName": "MultisigSendMessageAction"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SignersList",
+      "fields": [
+        {
+          "name": "signers",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ProposersList",
+      "fields": [
+        {
+          "name": "proposers",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NewOrder",
+      "prefix": {
+        "prefixStr": "0xf718510f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "orderSeqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "signer",
+          "ty": {
+            "kind": "uintN",
+            "n": 1
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "expirationDate",
+          "ty": {
+            "kind": "uintN",
+            "n": 48
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "MultisigOrder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Execute",
+      "prefix": {
+        "prefixStr": "0x75097f5d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "orderSeqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "expirationDate",
+          "ty": {
+            "kind": "uintN",
+            "n": 48
+          }
+        },
+        {
+          "name": "approvals",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "signersHash",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "MultisigOrder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecuteInternal",
+      "prefix": {
+        "prefixStr": "0xa32c59bf",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "MultisigOrder"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OrderInit",
+      "prefix": {
+        "prefixStr": "0x9c73fba2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "threshold",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "signers",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "expirationDate",
+          "ty": {
+            "kind": "uintN",
+            "n": 48
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "MultisigOrder"
+            }
+          }
+        },
+        {
+          "name": "signerIndex",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "uintN",
+              "n": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Approve",
+      "prefix": {
+        "prefixStr": "0xa762230f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "signerIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ApproveAccepted",
+      "prefix": {
+        "prefixStr": "0x82609bf6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ApproveRejected",
+      "prefix": {
+        "prefixStr": "0xafaf283e",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "exitCode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "MultisigOrderV2Messages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NewOrder"
+            },
+            "prefixStr": "0xf718510f",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Execute"
+            },
+            "prefixStr": "0x75097f5d",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExecuteInternal"
+            },
+            "prefixStr": "0xa32c59bf",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OrderInit"
+            },
+            "prefixStr": "0x9c73fba2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Approve"
+            },
+            "prefixStr": "0xa762230f",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ApproveAccepted"
+            },
+            "prefixStr": "0x82609bf6",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ApproveRejected"
+            },
+            "prefixStr": "0xafaf283e",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "NewOrder"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Execute"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExecuteInternal"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OrderInit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Approve"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ApproveAccepted"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ApproveRejected"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

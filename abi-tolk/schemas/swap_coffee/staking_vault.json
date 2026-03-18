@@ -1,0 +1,998 @@
+{
+  "contractName": "StakingVault",
+  "namespace": "ton.swapcoffee",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "StakingAssetData",
+      "fields": [
+        {
+          "name": "wallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakingPositionData",
+      "fields": [
+        {
+          "name": "userPoints",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalPoints",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "startTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "endTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "periodId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakingForwardData",
+      "fields": [
+        {
+          "name": "gas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "AMM",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 3
+      },
+      "members": [
+        {
+          "name": "ContantProduct",
+          "value": "0"
+        },
+        {
+          "name": "CurveFiStable",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "None",
+      "prefix": {
+        "prefixStr": "0b00",
+        "prefixLen": 2
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "LpQuantity",
+      "prefix": {
+        "prefixStr": "0b01",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "minLpAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReservesRatio",
+      "prefix": {
+        "prefixStr": "0b10",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "min_numeration",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "max_numeration",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Complex",
+      "prefix": {
+        "prefixStr": "0b11",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "min_numeration",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "max_numeration",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DepositLiquidityCondition",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "None"
+            },
+            "prefixStr": "0b00",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "LpQuantity"
+            },
+            "prefixStr": "0b01",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ReservesRatio"
+            },
+            "prefixStr": "0b10",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Complex"
+            },
+            "prefixStr": "0b11",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "AssetsQuantity",
+      "prefix": {
+        "prefixStr": "0b01",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "minFirstAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minSecondAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ComplextWithdraw",
+      "prefix": {
+        "prefixStr": "0b11",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "minFirstAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minSecondAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "min_numeration",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "max_numeration",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "WithdrawLiquidityCondition",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "None"
+            },
+            "prefixStr": "0b00",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AssetsQuantity"
+            },
+            "prefixStr": "0b01",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ReservesRatio"
+            },
+            "prefixStr": "0b10",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ComplextWithdraw"
+            },
+            "prefixStr": "0b11",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "Native",
+      "prefix": {
+        "prefixStr": "0b00",
+        "prefixLen": 2
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "Jetton",
+      "prefix": {
+        "prefixStr": "0b01",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "chain",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "hash",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Extra",
+      "prefix": {
+        "prefixStr": "0b10",
+        "prefixLen": 2
+      },
+      "fields": [
+        {
+          "name": "id",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "Asset",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Native"
+            },
+            "prefixStr": "0b00",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Jetton"
+            },
+            "prefixStr": "0b01",
+            "prefixLen": 2
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Extra"
+            },
+            "prefixStr": "0b10",
+            "prefixLen": 2
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolParams",
+      "fields": [
+        {
+          "name": "first",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Asset"
+          }
+        },
+        {
+          "name": "second",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Asset"
+          }
+        },
+        {
+          "name": "amm",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "AMM"
+          }
+        },
+        {
+          "name": "ammSettings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PublicPoolCreationParams",
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "useRecipientOnFailure",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PrivatePoolCreationParams",
+      "fields": [
+        {
+          "name": "isActive",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "extraSettings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolCreationParams",
+      "fields": [
+        {
+          "name": "publicParams",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PublicPoolCreationParams"
+          }
+        },
+        {
+          "name": "privateParams",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PrivatePoolCreationParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NotificationDataSingle",
+      "fields": [
+        {
+          "name": "receiver",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fwdGas",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NotificationData",
+      "fields": [
+        {
+          "name": "onSuccess",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NotificationDataSingle"
+              }
+            }
+          }
+        },
+        {
+          "name": "onFailuer",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NotificationDataSingle"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapParams",
+      "fields": [
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NotificationData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapStepParams",
+      "fields": [
+        {
+          "name": "poolAddressHash",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "minOutput",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "SwapStepParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapStepInternalParamsS",
+      "fields": [
+        {
+          "name": "previousAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "previousAssetHintHas",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "previousAssetHint",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Asset"
+          }
+        },
+        {
+          "name": "minOutputAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "SwapStepParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "SwapStepInternalParams",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "SwapStepInternalParamsS"
+      },
+      "customUnpackFromSlice": true
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapGenericFee",
+      "fields": [
+        {
+          "name": "inputAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "outputAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapReferralFee",
+      "fields": [
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "inputAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "outputAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapFees",
+      "fields": [
+        {
+          "name": "lp",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SwapGenericFee"
+          }
+        },
+        {
+          "name": "protocol",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "SwapGenericFee"
+          }
+        },
+        {
+          "name": "referal",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "SwapReferralFee"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolReserves",
+      "fields": [
+        {
+          "name": "inputReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "outputReserve",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DepositLiquidityParamsTrimmed",
+      "fields": [
+        {
+          "name": "recipient",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "useRecipientOnFailure",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "deadline",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "condition",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DepositLiquidityCondition"
+          }
+        },
+        {
+          "name": "extraSettings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "notificationData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NotificationData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DepositLiquidityParams",
+      "fields": [
+        {
+          "name": "params",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DepositLiquidityParamsTrimmed"
+            }
+          }
+        },
+        {
+          "name": "poolParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PoolParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ContractUpdate",
+      "fields": [
+        {
+          "name": "code",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakingLock",
+      "prefix": {
+        "prefixStr": "0xc0ffede",
+        "prefixLen": 28
+      },
+      "fields": [
+        {
+          "name": "periodId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakingInit",
+      "prefix": {
+        "prefixStr": "0xbe5a7595",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "jettonData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "StakingAssetData"
+            }
+          }
+        },
+        {
+          "name": "positionData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "StakingPositionData"
+            }
+          }
+        },
+        {
+          "name": "periods",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "StakingVaultMessages",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "StakingInit"
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "StakingInit"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

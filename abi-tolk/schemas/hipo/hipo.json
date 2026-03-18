@@ -1,0 +1,196 @@
+{
+  "contractName": "HipoFinance",
+  "namespace": "ton.hipo",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "HipoFinanceDepositCoins",
+      "prefix": {
+        "prefixStr": "0x3d3761a6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "ownershipAssinedAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "referrer",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "HipoProxyTokensMinted",
+      "prefix": {
+        "prefixStr": "0x5be57626",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "tokens",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "roundSince",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "HipoTokensMinted",
+      "prefix": {
+        "prefixStr": "0x5445efee",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "tokens",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "roundSince",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "HipoMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "HipoFinanceDepositCoins"
+            },
+            "prefixStr": "0x3d3761a6",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "HipoProxyTokensMinted"
+            },
+            "prefixStr": "0x5be57626",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "HipoTokensMinted"
+            },
+            "prefixStr": "0x5445efee",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "HipoFinanceDepositCoins"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "HipoProxyTokensMinted"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "HipoTokensMinted"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

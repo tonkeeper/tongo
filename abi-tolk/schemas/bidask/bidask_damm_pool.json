@@ -1,0 +1,681 @@
+{
+  "contractName": "DammPool",
+  "namespace": "ton.bidask",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "BidaskProvideBoth",
+      "prefix": {
+        "prefixStr": "0x3ea0bafc",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "tonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvide",
+      "prefix": {
+        "prefixStr": "0x63ec24ae",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvideBoth",
+      "prefix": {
+        "prefixStr": "0xa8904134",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammSwap",
+      "prefix": {
+        "prefixStr": "0xdd79732c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammSwapPayload",
+      "prefix": {
+        "prefixStr": "0xdd79732c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvideOneSide",
+      "prefix": {
+        "prefixStr": "0x729c04c8",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammProvideOneSidePayload",
+      "prefix": {
+        "prefixStr": "0x729c04c8",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lockLiquidity",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammInternalBurn",
+      "prefix": {
+        "prefixStr": "0xadb8eb49",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "burner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "burnAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "isAccount",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fees",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "FeesInternal"
+            }
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammInternalClaim",
+      "prefix": {
+        "prefixStr": "0x983b6933",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "isAccount",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "reciever",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "walletBalance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fees",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "FeesInternal"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FeesInternal",
+      "fields": [
+        {
+          "name": "feesPerLpXLast",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "feesPerLpYLast",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "claimedX",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "claimedY",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskDammMint",
+      "prefix": {
+        "prefixStr": "0x27ae4eff",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "mintAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "responseAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fees",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "Fees"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Fees",
+      "fields": [
+        {
+          "name": "feesPerLpXLast",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        },
+        {
+          "name": "feesPerLpYLast",
+          "ty": {
+            "kind": "uintN",
+            "n": 220
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskNativeTransferNotification",
+      "prefix": {
+        "prefixStr": "0x6edd65f0",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "notificationBit",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

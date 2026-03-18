@@ -1,0 +1,568 @@
+{
+  "contractName": "Pool",
+  "namespace": "ton.dedust",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "DedustAssetNative",
+      "prefix": {
+        "prefixStr": "0b0000",
+        "prefixLen": 4
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustAssetJetton",
+      "prefix": {
+        "prefixStr": "0b0001",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "workchain",
+          "ty": {
+            "kind": "intN",
+            "n": 8
+          }
+        },
+        {
+          "name": "address",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustAssetExtraCurrency",
+      "prefix": {
+        "prefixStr": "0b0010",
+        "prefixLen": 4
+      },
+      "fields": [
+        {
+          "name": "currencyId",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DedustAsset",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustAssetNative"
+            },
+            "prefixStr": "0b0000",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustAssetJetton"
+            },
+            "prefixStr": "0b0001",
+            "prefixLen": 4
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustAssetExtraCurrency"
+            },
+            "prefixStr": "0b0010",
+            "prefixLen": 4
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapParams",
+      "fields": [
+        {
+          "name": "deadlint",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "recipientAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "referralAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "fulfillPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapStep",
+      "fields": [
+        {
+          "name": "poolAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "params",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DedustSwapStepParams"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapStepParams",
+      "fields": [
+        {
+          "name": "kindOut",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "limit",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "DedustSwapStep"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Enum",
+      "name": "DedustPoolType",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 1
+      },
+      "members": [
+        {
+          "name": "VOLATILE",
+          "value": "0"
+        },
+        {
+          "name": "STABLE",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustPoolParams",
+      "fields": [
+        {
+          "name": "poolType",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "DedustPoolType"
+          }
+        },
+        {
+          "name": "asset0",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DedustAsset"
+          }
+        },
+        {
+          "name": "asset1",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DedustAsset"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapExternal",
+      "prefix": {
+        "prefixStr": "0x61ee542d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proof",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "senderAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "current",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DedustSwapStepParams"
+          }
+        },
+        {
+          "name": "swapParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DedustSwapParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwapPeer",
+      "prefix": {
+        "prefixStr": "0x72aca8aa",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proof",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "asset",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "DedustAsset"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "senderAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "current",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DedustSwapStepParams"
+          }
+        },
+        {
+          "name": "swapParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DedustSwapParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustPayoutFromPool",
+      "prefix": {
+        "prefixStr": "0xad4eb6f5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proof",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "recipientAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustSwap",
+      "prefix": {
+        "prefixStr": "0xea06185d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "step",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "DedustSwapStep"
+          }
+        },
+        {
+          "name": "swapParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DedustSwapParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustDeposit",
+      "prefix": {
+        "prefixStr": "0xb544f4a4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "senderAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amount1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reserve0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reserve1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustWithdraw",
+      "prefix": {
+        "prefixStr": "0x3aa870a6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "senderAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amount0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amount1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reserve0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reserve1",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PoolMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustSwapExternal"
+            },
+            "prefixStr": "0x61ee542d",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DedustSwapPeer"
+            },
+            "prefixStr": "0x72aca8aa",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DedustSwapExternal"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DedustSwapPeer"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

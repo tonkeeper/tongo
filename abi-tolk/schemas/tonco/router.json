@@ -1,0 +1,735 @@
+{
+  "contractName": "Router",
+  "namespace": "ton.tonco",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "PayTo0",
+      "prefix": {
+        "prefixStr": "0x00000000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "coinsInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoinsInfo0"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoinsInfo0",
+      "fields": [
+        {
+          "name": "amount0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "jetton0_address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "jetton1_address",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PayTo200",
+      "prefix": {
+        "prefixStr": "0x000000c8",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "coinsInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoinsInfo200"
+              }
+            }
+          }
+        },
+        {
+          "name": "indexerSwapInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "IndexerSwapInfo200"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoinsInfo200",
+      "fields": [
+        {
+          "name": "amount0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "jetton0_address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "jetton1_address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payloadCell",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoinsInfoPayload"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CoinsInfoPayload",
+      "fields": [
+        {
+          "name": "payloadAmount0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payloadCell0",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "payloadAmount1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payloadCell1",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IndexerSwapInfo200",
+      "fields": [
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "priceSqrt",
+          "ty": {
+            "kind": "uintN",
+            "n": 160
+          }
+        },
+        {
+          "name": "tick",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        },
+        {
+          "name": "feeGrowthGlobal0X128",
+          "ty": {
+            "kind": "intN",
+            "n": 256
+          }
+        },
+        {
+          "name": "feeGrowthGlobal1X128",
+          "ty": {
+            "kind": "intN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PayTo201",
+      "prefix": {
+        "prefixStr": "0x000000c9",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "coinsInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoinsInfo200"
+              }
+            }
+          }
+        },
+        {
+          "name": "indexerSwapInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "IndexerSwapInfo201"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IndexerSwapInfo201",
+      "fields": [
+        {
+          "name": "nftIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "liquidityBurned",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "tickLower",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        },
+        {
+          "name": "tickUpper",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        },
+        {
+          "name": "tick",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PayTo230",
+      "prefix": {
+        "prefixStr": "0x000000e6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "coinsInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "CoinsInfo200"
+              }
+            }
+          }
+        },
+        {
+          "name": "indexerSwapInfo",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "IndexerSwapInfo200"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PayTo",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PayTo0"
+            },
+            "prefixStr": "0x00000000",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PayTo200"
+            },
+            "prefixStr": "0x000000c8",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PayTo201"
+            },
+            "prefixStr": "0x000000c9",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PayTo230"
+            },
+            "prefixStr": "0x000000e6",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "FundAccount",
+      "prefix": {
+        "prefixStr": "0x4468de77",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "jettonTarget",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "enough0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "enough1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "tickLower",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        },
+        {
+          "name": "tickUpper",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "V3Swap",
+      "prefix": {
+        "prefixStr": "0xa7fb58f8",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "sourceWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "swapParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SwapParams"
+            }
+          }
+        },
+        {
+          "name": "swapPayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "SwapPayloads"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapParams",
+      "fields": [
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sqrtPriceLimitX96",
+          "ty": {
+            "kind": "uintN",
+            "n": 160
+          }
+        },
+        {
+          "name": "minOutAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SwapPayloads",
+      "fields": [
+        {
+          "name": "targetAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "okForwardAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "okForwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "refForwardAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "refForwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "V3FundAccount",
+      "prefix": {
+        "prefixStr": "0x4468de77",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amount1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "enough0",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "enough1",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "tickLower",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        },
+        {
+          "name": "tickUpper",
+          "ty": {
+            "kind": "intN",
+            "n": 24
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "V3PayTo",
+      "prefix": {
+        "prefixStr": "0xa1daa96d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "reciever0",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "reciever1",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payTo",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "PayTo"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "RouterMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "V3PayTo"
+            },
+            "prefixStr": "0xa1daa96d",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "V3Swap"
+            },
+            "prefixStr": "0xa7fb58f8",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "V3FundAccount"
+            },
+            "prefixStr": "0x4468de77",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "V3PayTo"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "V3Swap"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "V3FundAccount"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

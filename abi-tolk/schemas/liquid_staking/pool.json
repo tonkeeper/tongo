@@ -1,0 +1,1102 @@
+{
+  "contractName": "Pool",
+  "namespace": "ton.liquidstaking",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "TonstakersControllerData",
+      "fields": [
+        {
+          "name": "controllerId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validator",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "pool",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "governor",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "additional",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TonstakersControllerAdditional"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TonstakersControllerAdditional",
+      "fields": [
+        {
+          "name": "approver",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "halter",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RequestLoan",
+      "prefix": {
+        "prefixStr": "0xe642c965",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "minLoad",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxLoad",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxInterest",
+          "ty": {
+            "kind": "uintN",
+            "n": 24
+          }
+        },
+        {
+          "name": "controllerData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TonstakersControllerData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "LoadRepayment",
+      "prefix": {
+        "prefixStr": "0xdfdca27b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Deposit",
+      "prefix": {
+        "prefixStr": "0x47d54391",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "referral",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Touch",
+      "prefix": {
+        "prefixStr": "0x4bc7c2df",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SetGovernanceFee",
+      "prefix": {
+        "prefixStr": "0x2aaa96a0",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "governanceFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Withdraw",
+      "prefix": {
+        "prefixStr": "0x0a77535c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SetRoles",
+      "prefix": {
+        "prefixStr": "0x5e517f36",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "governor",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "interestManager",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "halter",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "address"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SetDepositSettings",
+      "prefix": {
+        "prefixStr": "0x9bf5561c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "optimisticDepositWithdrawals",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "depositsOpen",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DeployController",
+      "prefix": {
+        "prefixStr": "0xb27edcad",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "controllerId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PrepareGovernanceMigration",
+      "prefix": {
+        "prefixStr": "0x9971881c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "governorUpdateAfter",
+          "ty": {
+            "kind": "uintN",
+            "n": 48
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SendMessage",
+      "prefix": {
+        "prefixStr": "0x270695fb",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "msg",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolUpgrade",
+      "prefix": {
+        "prefixStr": "0x96e7f528",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "code",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "afterUpgrade",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SetSudoer",
+      "prefix": {
+        "prefixStr": "0x79e7c016",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sudoer",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolUnhalt",
+      "prefix": {
+        "prefixStr": "0x7247e7a5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolHalt",
+      "prefix": {
+        "prefixStr": "0x139a1b4e",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IManagerSetInterest",
+      "prefix": {
+        "prefixStr": "0xc9f04485",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "interestRate",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IManagerOperationFee",
+      "prefix": {
+        "prefixStr": "0x54d37487",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IManagerRequestNotification",
+      "prefix": {
+        "prefixStr": "0xb1ebae06",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "minLoan",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxLoan",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxInterest",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "IManagerStats",
+      "prefix": {
+        "prefixStr": "0xc1344900",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "borrowed",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "expected",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "returned",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "profitSign",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "profit",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalBalance",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NftBurn",
+      "prefix": {
+        "prefixStr": "0xf127fe4e",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NftBurnNotification",
+      "prefix": {
+        "prefixStr": "0xed58b0b2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NftInit",
+      "prefix": {
+        "prefixStr": "0x132f9a45",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "prev",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NftPayout",
+      "prefix": {
+        "prefixStr": "0xdb3b8abd",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MintJettons",
+      "prefix": {
+        "prefixStr": "0x1674b0a0",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "destination",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "notification",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forward",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PoolMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RequestLoan"
+            },
+            "prefixStr": "0xe642c965",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "LoadRepayment"
+            },
+            "prefixStr": "0xdfdca27b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Deposit"
+            },
+            "prefixStr": "0x47d54391",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Touch"
+            },
+            "prefixStr": "0x4bc7c2df",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SetGovernanceFee"
+            },
+            "prefixStr": "0x2aaa96a0",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Withdraw"
+            },
+            "prefixStr": "0x0a77535c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SetRoles"
+            },
+            "prefixStr": "0x5e517f36",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SetDepositSettings"
+            },
+            "prefixStr": "0x9bf5561c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DeployController"
+            },
+            "prefixStr": "0xb27edcad",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PrepareGovernanceMigration"
+            },
+            "prefixStr": "0x9971881c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SendMessage"
+            },
+            "prefixStr": "0x270695fb",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PoolUpgrade"
+            },
+            "prefixStr": "0x96e7f528",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SetSudoer"
+            },
+            "prefixStr": "0x79e7c016",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PoolUnhalt"
+            },
+            "prefixStr": "0x7247e7a5",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PoolHalt"
+            },
+            "prefixStr": "0x139a1b4e",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "IManagerSetInterest"
+            },
+            "prefixStr": "0xc9f04485",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "IManagerOperationFee"
+            },
+            "prefixStr": "0x54d37487",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "IManagerRequestNotification"
+            },
+            "prefixStr": "0xb1ebae06",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "IManagerStats"
+            },
+            "prefixStr": "0xc1344900",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NftBurn"
+            },
+            "prefixStr": "0xf127fe4e",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NftBurnNotification"
+            },
+            "prefixStr": "0xed58b0b2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NftInit"
+            },
+            "prefixStr": "0x132f9a45",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "NftPayout"
+            },
+            "prefixStr": "0xdb3b8abd",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "MintJettons"
+            },
+            "prefixStr": "0x1674b0a0",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "RequestLoan"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "LoadRepayment"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Deposit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Touch"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SetGovernanceFee"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Withdraw"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SetRoles"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SetDepositSettings"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DeployController"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PrepareGovernanceMigration"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SendMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PoolUpgrade"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SetSudoer"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PoolUnhalt"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PoolHalt"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "IManagerSetInterest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "IManagerOperationFee"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "IManagerRequestNotification"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "IManagerStats"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "NftBurn"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "NftBurnNotification"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "NftInit"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "NftPayout"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "MintJettons"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

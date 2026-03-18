@@ -1,0 +1,314 @@
+{
+  "contractName": "TonKeeper2FA",
+  "namespace": "ton.tonkeeper2fa",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CertificateDate2FA",
+      "fields": [
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "pubkey",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Certificate2FA",
+      "fields": [
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SendActionsPayload2FA",
+      "prefix": {
+        "prefixStr": "0xb15f2c8c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "msg",
+          "isPayload": true,
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RemoveExtensionPayload2FA",
+      "prefix": {
+        "prefixStr": "0x9d8084d6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DelegationPayload2FA",
+      "prefix": {
+        "prefixStr": "0x23d9c15c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newStateInit",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "forwardAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CancelDelegationPayload2FA",
+      "prefix": {
+        "prefixStr": "0xde82b501",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "Payload2FA",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "SendActionsPayload2FA"
+            },
+            "prefixStr": "0xb15f2c8c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RemoveExtensionPayload2FA"
+            },
+            "prefixStr": "0x9d8084d6",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DelegationPayload2FA"
+            },
+            "prefixStr": "0x23d9c15c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CancelDelegationPayload2FA"
+            },
+            "prefixStr": "0xde82b501",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "SignedExternal",
+      "fields": [
+        {
+          "name": "refWithCertificat",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "Certificate2FA"
+            }
+          }
+        },
+        {
+          "name": "refWithSeedSignature",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Payload2FA"
+          }
+        },
+        {
+          "name": "certificatSignature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TonKeeper2FASigned",
+      "prefix": {
+        "prefixStr": "0x53684037",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "refWithCertificat",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "Certificate2FA"
+            }
+          }
+        },
+        {
+          "name": "refWithSeedSignature",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "Payload2FA"
+          }
+        },
+        {
+          "name": "certificatSignature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "AllowedTonKeeper2FAMessages",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "TonKeeper2FASigned"
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TonKeeper2FASigned"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

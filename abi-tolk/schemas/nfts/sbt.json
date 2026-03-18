@@ -1,0 +1,329 @@
+{
+  "contractName": "SBT",
+  "namespace": "ton.tep64",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "ProveOwnership",
+      "prefix": {
+        "prefixStr": "0x04ded148",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "quieryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "withContent",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwhershipProof",
+      "prefix": {
+        "prefixStr": "0x0524c7ae",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "quieryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "itemId",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "revokedAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RequestOwner",
+      "prefix": {
+        "prefixStr": "0xd0c3bfea",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "quieryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "dest",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "withContent",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerInfo",
+      "prefix": {
+        "prefixStr": "0x0dd607e3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "quieryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "itemId",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "initiator",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "revokedAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Destroy",
+      "prefix": {
+        "prefixStr": "0x1f04537a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "quieryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Revoke",
+      "prefix": {
+        "prefixStr": "0x6f89f5e3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "quieryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "SBTMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ProveOwnership"
+            },
+            "prefixStr": "0x04ded148",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwhershipProof"
+            },
+            "prefixStr": "0x0524c7ae",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RequestOwner"
+            },
+            "prefixStr": "0xd0c3bfea",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerInfo"
+            },
+            "prefixStr": "0x0dd607e3",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Destroy"
+            },
+            "prefixStr": "0x1f04537a",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Revoke"
+            },
+            "prefixStr": "0x6f89f5e3",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ProveOwnership"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwhershipProof"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "RequestOwner"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerInfo"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Destroy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Revoke"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

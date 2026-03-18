@@ -1,0 +1,165 @@
+{
+  "contractName": "InternalLiquidityVault",
+  "namespace": "ton.bidask",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "BidaskSaveLiquidityInfo",
+      "prefix": {
+        "prefixStr": "0x214ad1d2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskAddingLiquidityNotify",
+      "prefix": {
+        "prefixStr": "0xaf31d23f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

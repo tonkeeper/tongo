@@ -1,0 +1,312 @@
+{
+  "contractName": "V2",
+  "namespace": "ton.subscription",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CronTrigger",
+      "prefix": {
+        "prefixStr": "0x2114702d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rewardAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "salt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PaymentConfirmed",
+      "prefix": {
+        "prefixStr": "0xf06c7567",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WalletPluginDestruct",
+      "prefix": {
+        "prefixStr": "0x64737472",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReducePayment",
+      "prefix": {
+        "prefixStr": "0x508238ec",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newPayment",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Deploy",
+      "prefix": {
+        "prefixStr": "0xf71783cb",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "firstChargingData",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "paymentPerPeriod",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "period",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "gracePeriod",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "callerFee",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "withdrawAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "withdrawMsgBody",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "metadata",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CurrencyCollection",
+      "fields": [
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "other",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "varuintN",
+              "n": 32
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PaymentRequest",
+      "prefix": {
+        "prefixStr": "0x706c7567",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "CurrencyCollection"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "V2Messages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CronTrigger"
+            },
+            "prefixStr": "0x2114702d",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PaymentConfirmed"
+            },
+            "prefixStr": "0xf06c7567",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WalletPluginDestruct"
+            },
+            "prefixStr": "0x64737472",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Deploy"
+            },
+            "prefixStr": "0xf71783cb",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ReducePayment"
+            },
+            "prefixStr": "0x508238ec",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PaymentRequest"
+            },
+            "prefixStr": "0x706c7567",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CronTrigger"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PaymentConfirmed"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WalletPluginDestruct"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Deploy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ReducePayment"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PaymentRequest"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

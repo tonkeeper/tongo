@@ -1,0 +1,657 @@
+{
+  "contractName": "Telegram",
+  "namespace": "ton.telegram",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "FixedLengthTextS",
+      "fields": [
+        {
+          "name": "text",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "FixedLengthText",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "FixedLengthTextS"
+      },
+      "customUnpackFromSlice": true
+    },
+    {
+      "kind": "Struct",
+      "name": "NftRoyaltyParams",
+      "fields": [
+        {
+          "name": "numerator",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "denominator",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "destination",
+          "ty": {
+            "kind": "addressAny"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TeleitemAuctionConfig",
+      "fields": [
+        {
+          "name": "beneficiarAddress",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "initialMinBid",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxBid",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minBidStep",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "minExtendTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "duration",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintData",
+      "fields": [
+        {
+          "name": "touched",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "subwalletId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "publicKey",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "collectionContent",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "nftItemCode",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "royaltyParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "NftRoyaltyParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintUnsignedDeploy",
+      "fields": [
+        {
+          "name": "subwalletId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validSince",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validTill",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "username",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "FixedLengthText"
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "auctionConfig",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TeleitemAuctionConfig"
+            }
+          }
+        },
+        {
+          "name": "royaltyParams",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NftRoyaltyParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintRestrictions",
+      "fields": [
+        {
+          "name": "forceSenderAddress",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "rewriteSenderAddress",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "address"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintUnsignedDeployV2",
+      "fields": [
+        {
+          "name": "subwalletId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validSince",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validTill",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "tokenName",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "FixedLengthText"
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "auctionConfig",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TeleitemAuctionConfig"
+            }
+          }
+        },
+        {
+          "name": "royaltyParams",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "NftRoyaltyParams"
+              }
+            }
+          }
+        },
+        {
+          "name": "restrictions",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "TelemintRestrictions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintTokenInfo",
+      "fields": [
+        {
+          "name": "name",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "FixedLengthText"
+          }
+        },
+        {
+          "name": "domain",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "FixedLengthText"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintDeploy",
+      "prefix": {
+        "prefixStr": "0x4637289a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "sig",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "msg",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "TelemintUnsignedDeploy"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TelemintDeployV2",
+      "prefix": {
+        "prefixStr": "0x4637289b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "sig",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "msg",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "TelemintUnsignedDeployV2"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TeleitemDeploy",
+      "prefix": {
+        "prefixStr": "0x299a3e15",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "sender",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "bid",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "tokenInfo",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TelemintTokenInfo"
+            }
+          }
+        },
+        {
+          "name": "nftContent",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "auctionConfig",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TeleitemAuctionConfig"
+            }
+          }
+        },
+        {
+          "name": "royaltyParams",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "NftRoyaltyParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StartAuction",
+      "prefix": {
+        "prefixStr": "0x487a8e81",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "auctionConfig",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "TeleitemAuctionConfig"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CancelAuction",
+      "prefix": {
+        "prefixStr": "0x371638ae",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TeleitemOk",
+      "prefix": {
+        "prefixStr": "0xa37a0983",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TeleitemReturnBid",
+      "prefix": {
+        "prefixStr": "0xa43227e1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "curLt",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TeleitemBidInfo",
+      "prefix": {
+        "prefixStr": "0x38127de1",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "bid",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "bidTs",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "TelegramMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TelemintDeploy"
+            },
+            "prefixStr": "0x4637289a",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TelemintDeployV2"
+            },
+            "prefixStr": "0x4637289b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TeleitemDeploy"
+            },
+            "prefixStr": "0x299a3e15",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "StartAuction"
+            },
+            "prefixStr": "0x487a8e81",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CancelAuction"
+            },
+            "prefixStr": "0x371638ae",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TeleitemOk"
+            },
+            "prefixStr": "0xa37a0983",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TeleitemReturnBid"
+            },
+            "prefixStr": "0xa43227e1",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TelemintDeploy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TelemintDeployV2"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TeleitemDeploy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "StartAuction"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CancelAuction"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TeleitemOk"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TeleitemReturnBid"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

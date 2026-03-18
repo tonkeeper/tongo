@@ -1,0 +1,86 @@
+{
+  "contractName": "Miner",
+  "namespace": "ton.gram",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "GramSubmitProofOfWork",
+      "prefix": {
+        "prefixStr": "0x4d696e65",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "flags",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "expire",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "whom",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "rdata",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "rseed",
+          "ty": {
+            "kind": "uintN",
+            "n": 128
+          }
+        },
+        {
+          "name": "rdata2",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "GramMessages",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "GramSubmitProofOfWork"
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "GramSubmitProofOfWork"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

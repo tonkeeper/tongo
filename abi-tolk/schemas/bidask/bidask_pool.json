@@ -1,0 +1,1383 @@
+{
+  "contractName": "Pool",
+  "namespace": "ton.bidask",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "AdditionalData",
+      "fields": [
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "FarmingData",
+      "fields": [
+        {
+          "name": "distributedXAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "distributedYAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwap",
+      "prefix": {
+        "prefixStr": "0xf2ef6c1b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapPayload",
+      "prefix": {
+        "prefixStr": "0xf2ef6c1b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "refAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapV2",
+      "prefix": {
+        "prefixStr": "0x87d36990",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapV2Payload",
+      "prefix": {
+        "prefixStr": "0x87d36990",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskProvide",
+      "prefix": {
+        "prefixStr": "0x96feef7b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskProvidePayload",
+      "prefix": {
+        "prefixStr": "0x96feef7b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 4
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapSuccess",
+      "prefix": {
+        "prefixStr": "0x520e4831",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newCurrentBin",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "newSqrtPrice",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "isX",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "refCell",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapSuccessV2",
+      "prefix": {
+        "prefixStr": "0xd3a25890",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newCurrentBin",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "newSqrtPrice",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "isX",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "dynamic_fee",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapFallback",
+      "prefix": {
+        "prefixStr": "0x1bba3896",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "firstRangeBin",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "isX",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "amountIn",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSwapFallbackV2",
+      "prefix": {
+        "prefixStr": "0x1bba3896",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "firstRangeBin",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "isX",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "amountIn",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "distributedXAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "distributedYAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskProvideRefund",
+      "prefix": {
+        "prefixStr": "0x02422cbe",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "firstRangeBin",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "xExcess",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "yExcess",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskBurnPayout",
+      "prefix": {
+        "prefixStr": "0x42062d62",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "firstRangeBin",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskAddingLiquidityNotify",
+      "prefix": {
+        "prefixStr": "0xaf31d23f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskInternalSwap",
+      "prefix": {
+        "prefixStr": "0x66210c65",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "isX",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "amountIn",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "refCell",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskInternalSwapV2",
+      "prefix": {
+        "prefixStr": "0x87d36990",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "order",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "isX",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "amountIn",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "exactOut",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "slippage",
+          "ty": {
+            "kind": "union",
+            "variants": [
+              {
+                "prefixStr": "0",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "coins"
+                }
+              },
+              {
+                "prefixStr": "1",
+                "prefixLen": 1,
+                "prefixEatInPlace": true,
+                "variantTy": {
+                  "kind": "uintN",
+                  "n": 256
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "farmingCell",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "FarmingData"
+              }
+            }
+          }
+        },
+        {
+          "name": "additionalData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "AdditionalData"
+              }
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskSaveLiquidityInfo",
+      "prefix": {
+        "prefixStr": "0x214ad1d2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "amountY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "depositType",
+          "ty": {
+            "kind": "uintN",
+            "n": 3
+          }
+        },
+        {
+          "name": "liquidityDict",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "intN",
+              "n": 32
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "rejectPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BidaskNativeTransferNotification",
+      "prefix": {
+        "prefixStr": "0x6edd65f0",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "notificationBit",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "nativeAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

@@ -1,0 +1,194 @@
+{
+  "contractName": "Bemo",
+  "namespace": "ton.bemo",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "BemoStake",
+      "prefix": {
+        "prefixStr": "0x4253c4d5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BemoUnstake",
+      "prefix": {
+        "prefixStr": "0x492ab1b3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "index",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "onwer",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "tonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "jettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BemoDeployUnstakeRequest",
+      "prefix": {
+        "prefixStr": "0x10a1ce75",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "onwer",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "withdrawTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "withdrawJettonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "lockupTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BemoUnstakeNotification",
+      "prefix": {
+        "prefixStr": "0x90c80a07",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "forwardPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "BemoReturnUnstakeRequest",
+      "prefix": {
+        "prefixStr": "0x38633538",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "lockupTimestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

@@ -1,0 +1,389 @@
+{
+  "contractName": "Dns",
+  "namespace": "ton.dns",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "DnsText",
+      "prefix": {
+        "prefixStr": "0x1eda",
+        "prefixLen": 16
+      },
+      "fields": [
+        {
+          "name": "string",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DnsNextResolver",
+      "prefix": {
+        "prefixStr": "0xba93",
+        "prefixLen": 16
+      },
+      "fields": [
+        {
+          "name": "address",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DnsAdnlAddressS",
+      "prefix": {
+        "prefixStr": "0xad01",
+        "prefixLen": 16
+      },
+      "fields": [
+        {
+          "name": "addrress",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DnsAdnlAddress",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "DnsAdnlAddressS"
+      },
+      "customUnpackFromSlice": true
+    },
+    {
+      "kind": "Struct",
+      "name": "DnsSmcAddressS",
+      "prefix": {
+        "prefixStr": "0x9fd3",
+        "prefixLen": 16
+      },
+      "fields": [
+        {
+          "name": "addrress",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DnsSmcAddress",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "DnsSmcAddressS"
+      },
+      "customUnpackFromSlice": true
+    },
+    {
+      "kind": "Struct",
+      "name": "DNSStorageAddress",
+      "prefix": {
+        "prefixStr": "0x7473",
+        "prefixLen": 16
+      },
+      "fields": [
+        {
+          "name": "address",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DnsRecord",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DnsText"
+            },
+            "prefixStr": "0x1eda",
+            "prefixLen": 16
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DnsNextResolver"
+            },
+            "prefixStr": "0xba93",
+            "prefixLen": 16
+          },
+          {
+            "variantTy": {
+              "kind": "AliasRef",
+              "aliasName": "DnsAdnlAddress"
+            },
+            "prefixStr": "0xad01",
+            "prefixLen": 16
+          },
+          {
+            "variantTy": {
+              "kind": "AliasRef",
+              "aliasName": "DnsSmcAddress"
+            },
+            "prefixStr": "0x9fd3",
+            "prefixLen": 16
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DNSStorageAddress"
+            },
+            "prefixStr": "0x7473",
+            "prefixLen": 16
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "DnsBalanceRelease",
+      "prefix": {
+        "prefixStr": "0x4ed14b65",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ProcessGovernanceDecision",
+      "prefix": {
+        "prefixStr": "0x44beae41",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DeleteDnsRecord",
+      "prefix": {
+        "prefixStr": "0x4eb1f0f9",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "key",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeDnsRecord",
+      "prefix": {
+        "prefixStr": "0x4eb1f0f9",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "key",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "value",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "DnsRecord"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AuctionFillUp",
+      "prefix": {
+        "prefixStr": "0x370fec51",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OutbidNotification",
+      "prefix": {
+        "prefixStr": "0x557cea20",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "DnsMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DnsBalanceRelease"
+            },
+            "prefixStr": "0x4ed14b65",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ProcessGovernanceDecision"
+            },
+            "prefixStr": "0x44beae41",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DeleteDnsRecord"
+            },
+            "prefixStr": "0x4eb1f0f9",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChangeDnsRecord"
+            },
+            "prefixStr": "0x4eb1f0f9",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AuctionFillUp"
+            },
+            "prefixStr": "0x370fec51",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OutbidNotification"
+            },
+            "prefixStr": "0x557cea20",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DnsBalanceRelease"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ProcessGovernanceDecision"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DeleteDnsRecord"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChangeDnsRecord"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AuctionFillUp"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OutbidNotification"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

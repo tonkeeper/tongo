@@ -1,0 +1,173 @@
+{
+  "contractName": "Exchange",
+  "namespace": "ton.megatonfi",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "Swap",
+      "prefix": {
+        "prefixStr": "0x7362d09c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "accountAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "inTokenAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "inAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "out",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "OutData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OutData",
+      "fields": [
+        {
+          "name": "outTokenAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "outAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateMiningParams",
+      "prefix": {
+        "prefixStr": "0x56a8e920",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "PoolAddr",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "lastMined",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "lastIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "additional",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "LastData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "LastData",
+      "fields": [
+        {
+          "name": "lastMined",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "lastIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "ExchangeMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "Swap"
+            },
+            "prefixStr": "0x7362d09c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpdateMiningParams"
+            },
+            "prefixStr": "0x56a8e920",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Swap"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateMiningParams"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

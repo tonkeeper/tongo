@@ -1,0 +1,150 @@
+{
+  "contractName": "Executor",
+  "namespace": "ton.stormtrade",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "MintExecutor",
+      "prefix": {
+        "prefixStr": "0x4f38cae8",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "nftOwner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "redirectAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "balancesDict",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AddExecutorAmount",
+      "prefix": {
+        "prefixStr": "0x5dd66579",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "referralAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "originAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawExecutorAmount",
+      "prefix": {
+        "prefixStr": "0x2cde6351",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "index",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "executorAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "ExecutorMessages",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "MintExecutor"
+            },
+            "prefixStr": "0x4f38cae8",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AddExecutorAmount"
+            },
+            "prefixStr": "0x5dd66579",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WithdrawExecutorAmount"
+            },
+            "prefixStr": "0x2cde6351",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "MintExecutor"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AddExecutorAmount"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WithdrawExecutorAmount"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

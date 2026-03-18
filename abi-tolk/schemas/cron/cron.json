@@ -1,0 +1,57 @@
+{
+  "contractName": "Cron",
+  "namespace": "ton.cron",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "CronTrigger",
+      "prefix": {
+        "prefixStr": "0x2114702d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rewardAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "salt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "CronMessages",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "CronTrigger"
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CronTrigger"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

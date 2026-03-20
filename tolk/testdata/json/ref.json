@@ -1,3 +1,6 @@
 {
-  "value": "1233212"
+  "value": {
+    "isRef": true,
+    "value": "1233212"
+  }
 }

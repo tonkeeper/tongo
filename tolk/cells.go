@@ -269,8 +269,14 @@ func (r *RefValue) Equal(other any) bool {
 }
 
 func (r RefValue) MarshalJSON() ([]byte, error) {
-	v := Value(r)
-	data, err := v.MarshalJSON()
+	var jsonData = struct {
+		IsRef bool  `json:"isRef"`
+		Value Value `json:"value"`
+	}{
+		IsRef: true,
+		Value: Value(r),
+	}
+	data, err := json.Marshal(&jsonData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal ref: %w", err)
 	}

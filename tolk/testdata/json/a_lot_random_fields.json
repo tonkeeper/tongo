@@ -11,7 +11,10 @@
       },
       23443
     ],
-    "needs_more": true,
+    "needs_more": {
+      "isRef": true,
+      "value": true
+    },
     "some_payload": "b5ee9c7201010101002b000051000000000005120041efeaa9731b94da397e5e64622f5e63348b812ac5b4763a93f0dd201d0798d440",
     "my_int": 432,
     "some_union": 30000,

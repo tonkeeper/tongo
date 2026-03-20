@@ -117,6 +117,13 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) 
 			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
 		}
 		if isResolved {
+			if isRef {
+				refV := RefValue(v)
+				v = Value{
+					SumType:  "RefValue",
+					RefValue: &refV,
+				}
+			}
 			return v, true, nil
 		}
 	case "Cell":
@@ -129,8 +136,12 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) 
 		if err != nil {
 			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
 		}
+		refV := RefValue(v)
 		if isResolved {
-			return v, true, nil
+			return Value{
+				SumType:  "RefValue",
+				RefValue: &refV,
+			}, true, nil
 		}
 	case "AliasRef":
 		if decoder.abiRefs.aliasRefs == nil {

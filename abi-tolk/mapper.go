@@ -414,12 +414,15 @@ var interfaceToABI = map[abi.ContractInterface]parser.ABI{
 
 	abi.PaymentChannel: parser.MustParseABI(paymentChannel),
 
-	abi.StonfiLpAccountV2: parser.MustParseABI(stonfiLpAccountV2),
-	abi.StonfiPool:        parser.MustParseABI(stonfiPoolV1),
-	abi.StonfiPoolV2:      parser.MustParseABI(stonfiPoolV2),
-	abi.StonfiRouter:      parser.MustParseABI(stonfiRouterV1),
-	abi.StonfiRouterV2:    parser.MustParseABI(stonfiRouterV2),
-	abi.StonfiVaultV2:     parser.MustParseABI(stonfiVaultV2),
+	abi.StonfiLpAccountV2:              parser.MustParseABI(stonfiLpAccountV2),
+	abi.StonfiPool:                     parser.MustParseABI(stonfiPoolV1),
+	abi.StonfiPoolV2:                   parser.MustParseABI(stonfiPoolV2),
+	abi.StonfiPoolV2ConstProduct:       parser.MustParseABI(stonfiPoolV2),
+	abi.StonfiPoolV2Stableswap:         parser.MustParseABI(stonfiPoolV2),
+	abi.StonfiPoolV2WeightedStableswap: parser.MustParseABI(stonfiPoolV2),
+	abi.StonfiRouter:                   parser.MustParseABI(stonfiRouterV1),
+	abi.StonfiRouterV2:                 parser.MustParseABI(stonfiRouterV2),
+	abi.StonfiVaultV2:                  parser.MustParseABI(stonfiVaultV2),
 
 	abi.StorageContract: parser.MustParseABI(storageContract),
 	abi.StorageProvider: parser.MustParseABI(storageProvider),

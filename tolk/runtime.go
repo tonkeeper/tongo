@@ -98,18 +98,21 @@ func (d *Decoder) UnmarshalMessage(cell *boc.Cell) (*Value, error) {
 }
 
 func (d *Decoder) resolvePayload(payload *boc.Cell) (Value, bool, error) {
-	payloadOpcode, err := payload.ReadUint(32) // payload always 32 bit length
+	c := payload.CopyRemaining()
+	payloadOpcode, err := c.ReadUint(32) // payload always 32 bit length
 	if err != nil {
 		return Value{}, false, nil
 	}
-	payload.ResetCounters() // reset opcode
+	c.ResetCounters() // reset opcode
 
 	guessedStructs := d.abiRefs.opcodeRefs[payloadOpcode]
 	for _, strct := range guessedStructs {
-		v, err := d.Unmarshal(payload, parser.NewStructType(strct.Name))
+		v, err := d.Unmarshal(c, parser.NewStructType(strct.Name))
+		c.ResetCounters()
 		if err != nil {
 			continue
 		}
+		payload = c
 		return *v, true, nil
 	}
 

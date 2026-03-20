@@ -551,7 +551,10 @@
           "isPayload": true,
           "name": "customPayload",
           "ty": {
-            "kind": "cell"
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
           }
         },
         {
@@ -564,7 +567,10 @@
           "isPayload": true,
           "name": "refundPayload",
           "ty": {
-            "kind": "cell"
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
           }
         },
         {
@@ -577,7 +583,7 @@
         {
           "name": "refAddress",
           "ty": {
-            "kind": "address"
+            "kind": "addressOpt"
           }
         }
       ]
@@ -586,7 +592,7 @@
       "kind": "Struct",
       "name": "SwapV2Payload",
       "prefix": {
-        "prefixStr": "0x657b54f5",
+        "prefixStr": "0x6664de2a",
         "prefixLen": 32
       },
       "fields": [

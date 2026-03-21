@@ -481,48 +481,44 @@ var interfaceToABI = map[abi.ContractInterface]parser.ABI{
 	abi.WhalesPool: parser.MustParseABI(whales),
 }
 
-func fixedLengthTextUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) func(parser.AliasRef, *boc.Cell, *tolk.AliasValue) error {
-	return func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
-		l, err := c.ReadUint(8)
-		if err != nil {
-			return err
-		}
-		b, err := c.ReadBits(int(l) * 8)
-		text := boc.NewCell()
-		err = text.WriteBitString(b)
-		if err != nil {
-			return err
-		}
-		s := tolk.Struct{}
-		err = s.Unmarshal(text, *parser.NewStructType("FixedLengthTextS").StructRef, decoder)
-		if err != nil {
-			return err
-		}
-		v = &tolk.AliasValue{
-			SumType: "Struct",
-			Struct:  &s,
-		}
-		return nil
+func fixedLengthTextUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) error {
+	l, err := c.ReadUint(8)
+	if err != nil {
+		return err
 	}
+	b, err := c.ReadBits(int(l) * 8)
+	text := boc.NewCell()
+	err = text.WriteBitString(b)
+	if err != nil {
+		return err
+	}
+	s := tolk.Struct{}
+	err = s.Unmarshal(text, *parser.NewStructType("FixedLengthTextS").StructRef, decoder)
+	if err != nil {
+		return err
+	}
+	v = &tolk.AliasValue{
+		SumType: "Struct",
+		Struct:  &s,
+	}
+	return nil
 }
 
-func dnsTextUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) func(parser.AliasRef, *boc.Cell, *tolk.AliasValue) error {
-	return func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
-		chunksQty, err := c.ReadUint(8)
-		if err != nil {
-			return err
-		}
-		res, err := readChunks(c, int(chunksQty))
-		if err != nil {
-			return err
-		}
-		s := tolk.Struct{}
-		err = s.Unmarshal(res, *parser.NewStructType("DnsText").StructRef, decoder)
-		if err != nil {
-			return err
-		}
-		return nil
+func dnsTextUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) error {
+	chunksQty, err := c.ReadUint(8)
+	if err != nil {
+		return err
 	}
+	res, err := readChunks(c, int(chunksQty))
+	if err != nil {
+		return err
+	}
+	s := tolk.Struct{}
+	err = s.Unmarshal(res, *parser.NewStructType("DnsText").StructRef, decoder)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func readChunks(c *boc.Cell, chunksQty int) (*boc.Cell, error) {
@@ -570,144 +566,142 @@ func readChunks(c *boc.Cell, chunksQty int) (*boc.Cell, error) {
 	return res, nil
 }
 
-func dnsAdnlAddressUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) func(parser.AliasRef, *boc.Cell, *tolk.AliasValue) error {
-	return func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
-		pref, err := c.ReadUint(16) // prefix
+func dnsAdnlAddressUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) error {
+	pref, err := c.ReadUint(16) // prefix
+	if err != nil {
+		return err
+	}
+	addr, err := c.ReadBits(32 * 8)
+	if err != nil {
+		return err
+	}
+	flags, err := c.ReadUint(8)
+	if err != nil {
+		return err
+	}
+	if flags > 2 {
+		return fmt.Errorf("invalid dns_adnl_address flags")
+	}
+	if flags > 0 {
+		next, err := c.ReadBit()
 		if err != nil {
 			return err
 		}
-		addr, err := c.ReadBits(32 * 8)
-		if err != nil {
-			return err
-		}
-		flags, err := c.ReadUint(8)
-		if err != nil {
-			return err
-		}
-		if flags > 2 {
-			return fmt.Errorf("invalid dns_adnl_address flags")
-		}
-		if flags > 0 {
-			next, err := c.ReadBit()
+		for next {
+			_, err = c.ReadUint(16)
 			if err != nil {
 				return err
 			}
-			for next {
-				_, err = c.ReadUint(16)
-				if err != nil {
-					return err
-				}
-				next, err = c.ReadBit()
-				if err != nil {
-					return err
-				}
-			}
-		}
-		ac := boc.NewCell()
-		err = ac.WriteUint(pref, 16)
-		if err != nil {
-			return err
-		}
-		err = ac.WriteBitString(addr)
-		if err != nil {
-			return err
-		}
-		s := tolk.Struct{}
-		err = s.Unmarshal(ac, *parser.NewStructType("DnsAdnlAddressS").StructRef, decoder)
-		if err != nil {
-			return err
-		}
-		v = &tolk.AliasValue{
-			SumType: "Struct",
-			Struct:  &s,
-		}
-		return nil
-	}
-}
-
-func dnsSmcAddressUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) func(parser.AliasRef, *boc.Cell, *tolk.AliasValue) error {
-	return func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
-		pref, err := c.ReadUint(16) // prefix
-		if err != nil {
-			return err
-		}
-		addr := tolk.InternalAddress{}
-		err = addr.Unmarshal(c, *parser.NewAddressType().Address, decoder)
-		if err != nil {
-			return err
-		}
-		flags, err := c.ReadUint(8)
-		if err != nil {
-			return err
-		}
-		if flags > 2 {
-			return fmt.Errorf("invalid smc_addr flags")
-		}
-
-		if flags > 0 {
-			next, err := c.ReadBit()
+			next, err = c.ReadBit()
 			if err != nil {
 				return err
 			}
-			for next {
-				prefix, err := c.ReadUint(8)
-				if err != nil {
-					return err
-				}
-				if prefix == 0xff {
-					a := tolk.AliasValue{}
-					err = a.Unmarshal(c, *parser.NewAliasType("DnsText").AliasRef, decoder)
-					if err != nil {
-						return err
-					}
-				}
-				_, err = c.ReadUint(8)
-				if err != nil {
-					return err
-				}
-				next, err = c.ReadBit()
-				if err != nil {
-					return err
-				}
-			}
 		}
-
-		dc := boc.NewCell()
-		err = dc.WriteUint(pref, 16)
-		if err != nil {
-			return err
-		}
-		err = addr.Marshal(dc, parser.Address{}, tolk.NewEncoder())
-		if err != nil {
-			return err
-		}
-
-		s := tolk.Struct{}
-		err = s.Unmarshal(dc, *parser.NewStructType("DnsScmAddress").StructRef, decoder)
-		if err != nil {
-			return err
-		}
-		v = &tolk.AliasValue{
-			SumType: "Struct",
-			Struct:  &s,
-		}
-		return nil
 	}
-}
-
-func getCustomUnpacker(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
-	switch t.AliasName {
-	case "FixedLengthText":
-		return fixedLengthTextUnpack(t, c, v, decoder)
-	case "DnsText":
-		return dnsTextUnpack(t, c, v, decoder)
-	case "DnsAdnlAddress":
-		return dnsAdnlAddressUnpack(t, c, v, decoder)
-	case "DnsSmcAddress":
-		return dnsSmcAddressUnpack(t, c, v, decoder)
+	ac := boc.NewCell()
+	err = ac.WriteUint(pref, 16)
+	if err != nil {
+		return err
 	}
-
+	err = ac.WriteBitString(addr)
+	if err != nil {
+		return err
+	}
+	s := tolk.Struct{}
+	err = s.Unmarshal(ac, *parser.NewStructType("DnsAdnlAddressS").StructRef, decoder)
+	if err != nil {
+		return err
+	}
+	v = &tolk.AliasValue{
+		SumType: "Struct",
+		Struct:  &s,
+	}
 	return nil
+}
+
+func dnsSmcAddressUnpack(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue, decoder *tolk.Decoder) error {
+	pref, err := c.ReadUint(16) // prefix
+	if err != nil {
+		return err
+	}
+	addr := tolk.InternalAddress{}
+	err = addr.Unmarshal(c, *parser.NewAddressType().Address, decoder)
+	if err != nil {
+		return err
+	}
+	flags, err := c.ReadUint(8)
+	if err != nil {
+		return err
+	}
+	if flags > 2 {
+		return fmt.Errorf("invalid smc_addr flags")
+	}
+
+	if flags > 0 {
+		next, err := c.ReadBit()
+		if err != nil {
+			return err
+		}
+		for next {
+			prefix, err := c.ReadUint(8)
+			if err != nil {
+				return err
+			}
+			if prefix == 0xff {
+				a := tolk.AliasValue{}
+				err = a.Unmarshal(c, *parser.NewAliasType("DnsText").AliasRef, decoder)
+				if err != nil {
+					return err
+				}
+			}
+			_, err = c.ReadUint(8)
+			if err != nil {
+				return err
+			}
+			next, err = c.ReadBit()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	dc := boc.NewCell()
+	err = dc.WriteUint(pref, 16)
+	if err != nil {
+		return err
+	}
+	err = addr.Marshal(dc, parser.Address{}, tolk.NewEncoder())
+	if err != nil {
+		return err
+	}
+
+	s := tolk.Struct{}
+	err = s.Unmarshal(dc, *parser.NewStructType("DnsScmAddress").StructRef, decoder)
+	if err != nil {
+		return err
+	}
+	v = &tolk.AliasValue{
+		SumType: "Struct",
+		Struct:  &s,
+	}
+	return nil
+}
+
+func customUnpacker(decoder *tolk.Decoder) func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
+	return func(t parser.AliasRef, c *boc.Cell, v *tolk.AliasValue) error {
+		switch t.AliasName {
+		case "FixedLengthText":
+			return fixedLengthTextUnpack(t, c, v, decoder)
+		case "DnsText":
+			return dnsTextUnpack(t, c, v, decoder)
+		case "DnsAdnlAddress":
+			return dnsAdnlAddressUnpack(t, c, v, decoder)
+		case "DnsSmcAddress":
+			return dnsSmcAddressUnpack(t, c, v, decoder)
+		}
+
+		return nil
+	}
 }
 
 func GetDecoderWithInterfaces(interfaces ...abi.ContractInterface) (*tolk.Decoder, error) {
@@ -729,5 +723,6 @@ func GetDecoderWithInterfaces(interfaces ...abi.ContractInterface) (*tolk.Decode
 	if err != nil {
 		return nil, err
 	}
+	decoder.WithCustomUnpackResolver(customUnpacker(decoder))
 	return decoder, nil
 }

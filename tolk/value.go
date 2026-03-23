@@ -412,6 +412,67 @@ func (v *Value) GetType() string {
 	return string(v.SumType)
 }
 
+func (v *Value) GetValue() any {
+	switch v.SumType {
+	case "Bool":
+		return *v.Bool
+	case "SmallInt":
+		return *v.SmallInt
+	case "SmallUint":
+		return *v.SmallUint
+	case "BigInt":
+		return *v.BigInt
+	case "BigUint":
+		return *v.BigUint
+	case "VarInt":
+		return *v.VarInt
+	case "VarUint":
+		return *v.VarUint
+	case "Coins":
+		return *v.Coins
+	case "Bits":
+		return *v.Bits
+	case "Cell":
+		return *v.Cell
+	case "Remaining":
+		return *v.Remaining
+	case "InternalAddress":
+		return *v.InternalAddress
+	case "OptionalAddress":
+		return *v.OptionalAddress
+	case "ExternalAddress":
+		return *v.ExternalAddress
+	case "AnyAddress":
+		return *v.AnyAddress
+	case "OptionalValue":
+		return *v.OptionalValue
+	case "RefValue":
+		return *v.RefValue
+	case "TupleWith":
+		return *v.TupleWith
+	case "Tensor":
+		return *v.Tensor
+	case "Map":
+		return *v.Map
+	case "Struct":
+		return *v.Struct
+	case "Alias":
+		return *v.Alias
+	case "Enum":
+		return *v.Enum
+	case "Generic":
+		return *v.Generic
+	case "Union":
+		return *v.Union
+	case "Null":
+		return *v.Null
+	case "Void":
+		return *v.Void
+	default:
+		return nil
+	}
+}
+
 func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error {
 	var err error
 	switch ty.SumType {

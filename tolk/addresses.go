@@ -138,6 +138,10 @@ func (o *OptionalAddress) Equal(other any) bool {
 	return true
 }
 
+func (o *OptionalAddress) IsNone() bool {
+	return o.SumType == "NoneAddress"
+}
+
 func (o *OptionalAddress) Unmarshal(cell *boc.Cell, ty parser.AddressOpt, decoder *Decoder) error {
 	copyCell := cell.CopyRemaining()
 	tag, err := copyCell.ReadUint(2)
@@ -277,6 +281,10 @@ type AnyAddress struct {
 	NoneAddress     *NoneAddress
 	ExternalAddress *ExternalAddress
 	VarAddress      *VarAddress
+}
+
+func (a *AnyAddress) IsNone() bool {
+	return a.SumType == "NoneAddress"
 }
 
 func (a *AnyAddress) Unmarshal(cell *boc.Cell, ty parser.AddressAny, decoder *Decoder) error {

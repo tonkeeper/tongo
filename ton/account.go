@@ -12,6 +12,7 @@ import (
 
 	"github.com/snksoft/crc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/tolk"
 	"github.com/tonkeeper/tongo/utils"
 )
 
@@ -205,4 +206,35 @@ func AccountIDFromTlb(a tlb.MsgAddress) (*AccountID, error) {
 		return &AccountID{Workchain: int32(a.AddrStd.WorkchainId), Address: address}, nil
 	}
 	return nil, fmt.Errorf("can not convert not std address to AccountId")
+}
+
+func AccountIDFromTolk(v *tolk.Value) (*AccountID, error) {
+	if addr, ok := v.GetAddress(); ok {
+		return &AccountID{
+			Workchain: int32(addr.Workchain),
+			Address:   addr.Address,
+		}, nil
+	} else if optAddr, ok := v.GetOptionalAddress(); ok {
+		if optAddr.IsNone() {
+			return nil, nil
+		}
+		return &AccountID{
+			Workchain: int32(optAddr.InternalAddress.Workchain),
+			Address:   optAddr.InternalAddress.Address,
+		}, nil
+	} else if _, ok := v.GetExternalAddress(); ok {
+		return nil, nil // todo: do something with external address
+	} else if anyAddr, ok := v.GetAnyAddress(); ok {
+		switch anyAddr.SumType {
+		case "NoneAddress", "ExternalAddress", "VarAddress":
+			return nil, nil
+		case "InternalAddress":
+			return &AccountID{
+				Workchain: int32(anyAddr.InternalAddress.Workchain),
+				Address:   anyAddr.InternalAddress.Address,
+			}, nil
+		}
+	}
+
+	return nil, fmt.Errorf("can not convert to AccountId")
 }

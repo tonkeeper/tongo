@@ -101,11 +101,11 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder
 func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) (Value, bool, error) {
 	switch ty.SumType {
 	case "Remaining":
-		isRef, err := cell.ReadBit()
+		payload := cell.CopyRemaining()
+		isRef, err := payload.ReadBit()
 		if err != nil {
 			return Value{}, false, fmt.Errorf("failed to read isRef prefix: %w", err)
 		}
-		payload := cell.CopyRemaining()
 		if isRef {
 			payload, err = payload.NextRef()
 			if err != nil {

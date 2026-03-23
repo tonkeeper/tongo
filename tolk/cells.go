@@ -76,6 +76,9 @@ func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty parser.Remaining, decoder 
 	cell.ReadRemainingBits()
 	if rem != nil {
 		isRef := cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() > 0
+		if isRef {
+			rem, _ = cell.NextRef()
+		}
 		*r = RemainingValue{
 			IsRef: isRef,
 			Value: *rem,

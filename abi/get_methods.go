@@ -8450,7 +8450,7 @@ type GetVaultData_AffluentMultiplyVaultV2Result struct {
 	AffluentVaultData struct {
 		OwnerAddress                  tlb.MsgAddress
 		Assets                        boc.Cell
-		FactorialPools                boc.Cell
+		FactorialPools                *boc.Cell
 		AggregatorIndex               tlb.Int257
 		RfqIndex                      tlb.Int257
 		TotalSupply                   tlb.Int257

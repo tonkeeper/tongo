@@ -169,7 +169,7 @@
             <tuple name="affluent_vault_data">
                 <slice name="owner_address">msgaddress</slice>
                 <cell name="assets">cell</cell>
-                <cell name="factorial_pools">cell</cell>
+                <cell name="factorial_pools" nullable="true">cell</cell>
                 <int name="aggregator_index">int257</int>
                 <int name="rfq_index">int257</int>
                 <int name="total_supply">int257</int>

@@ -274,6 +274,14 @@ func (s *Struct) GetPrefix() (Prefix, bool) {
 	return s.prefix, true
 }
 
+func (s *Struct) MustGetPrefix() Prefix {
+	if !s.hasPrefix {
+		panic("struct does not have prefix")
+	}
+
+	return s.prefix
+}
+
 func (s *Struct) GetName() string {
 	return s.name
 }

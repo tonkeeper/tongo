@@ -1533,10 +1533,7 @@ func TestRuntime_UnmarshalALotRefsFromStruct(t *testing.T) {
 	if !ok {
 		t.Fatalf("struct not found")
 	}
-	pref, ok := currStruct.GetPrefix()
-	if !ok {
-		t.Fatalf("currStruct.Prefix not found")
-	}
+	pref := currStruct.MustGetPrefix()
 	if pref.Len != 32 {
 		t.Errorf("pref.Len != 32, got %v", pref.Len)
 	}

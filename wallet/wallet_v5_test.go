@@ -78,6 +78,18 @@ func TestNewWalletV5R1(t *testing.T) {
 			},
 		},
 		{
+			name: "workchain 0, mainnet, subwallet 1",
+			opts: []Option{
+				WithWorkchain(0),
+				WithNetworkGlobalID(MainnetGlobalID),
+				WithSubWalletID(1),
+			},
+			want: &walletV5R1{
+				workchain: 0,
+				walletID:  2147483408,
+			},
+		},
+		{
 			name: "workchain -1, mainnet",
 			opts: []Option{
 				WithWorkchain(-1),
@@ -138,6 +150,16 @@ func Test_walletV5R1_generateAddress(t *testing.T) {
 				WithNetworkGlobalID(MainnetGlobalID),
 			},
 			want: ton.MustParseAccountID("0:827137ba7a1ad871a8a8605e8dba799666abb952dfe9eff6e9dfa96700ae16f4"),
+		},
+		{
+			name:       "workchain 0, mainnet, subwallet 1",
+			privateKey: "7c94066ee822c97aa6992fa1c506bfd56d0d8fed2f1027070af7e0a683d46fb671ced1c4c69e53eb7ede24658375f56c142d22cdb21d0728138cb53b817e454e",
+			opts: []Option{
+				WithWorkchain(0),
+				WithNetworkGlobalID(MainnetGlobalID),
+				WithSubWalletID(1),
+			},
+			want: ton.MustParseAccountID("0:f6b01bbe21f27c1bf9a1bf43dac3b1c3e42489b9d2fdd7776a1e68908ed699ee"),
 		},
 	}
 	for _, tt := range tests {

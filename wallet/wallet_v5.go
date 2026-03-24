@@ -24,7 +24,7 @@ type walletV5R1 struct {
 	workchain          int
 }
 
-func genContextID(workchain uint32) uint32 {
+func genContextID(workchain uint32, subwallet uint32) uint32 {
 	contextCell := boc.NewCell()
 	if err := contextCell.WriteUint(1, 1); err != nil {
 		panic(err)
@@ -35,7 +35,7 @@ func genContextID(workchain uint32) uint32 {
 	if err := contextCell.WriteUint(0, 8); err != nil {
 		panic(err)
 	}
-	if err := contextCell.WriteUint(0, 15); err != nil {
+	if err := contextCell.WriteUint(uint64(subwallet&0x7fff), 15); err != nil {
 		panic(err)
 	}
 	contextCell.ResetCounters()
@@ -48,15 +48,16 @@ func genContextID(workchain uint32) uint32 {
 
 func NewWalletV5R1(publicKey ed25519.PublicKey, opts Options) *walletV5R1 {
 	workchain := defaultOr(opts.Workchain, 0)
+	subWalletID := defaultOr(opts.SubWalletID, 0)
 	networkGlobalID := int64(defaultOr[int32](opts.NetworkGlobalID, MainnetGlobalID))
-	contextID := int64(genContextID(uint32(workchain)))
+	contextID := int64(genContextID(uint32(workchain), subWalletID))
 	walletID := contextID ^ networkGlobalID
 
 	return &walletV5R1{
 		publicKey:          publicKey,
 		workchain:          workchain,
-		walletID:           uint32(walletID), // todo: add options to configure wallet id
-		isSignatureAllowed: true,             // todo: add option to disable signature
+		walletID:           uint32(walletID),
+		isSignatureAllowed: true, // todo: add option to disable signature
 	}
 }
 func (w *walletV5R1) generateAddress() (ton.AccountID, error) {

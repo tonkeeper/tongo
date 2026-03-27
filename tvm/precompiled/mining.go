@@ -18,24 +18,12 @@ var getPowParamsGram = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, erro
 	}
 	err := tlb.Unmarshal(data, &body)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	return tlb.VmStack{
-		{
-			SumType:  "VmStkInt",
-			VmStkInt: tlb.Int257(body.Value1),
-		},
-		{
-			SumType:  "VmStkInt",
-			VmStkInt: tlb.Int257(body.Value2),
-		},
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(body.Field1.Value3),
-		},
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(body.Field1.Value4),
-		},
-	}, nil
+	var result tlb.VmStack
+	result.Put(tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(body.Field1.Value4)})
+	result.Put(tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(body.Field1.Value3)})
+	result.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257(body.Value2)})
+	result.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257(body.Value1)})
+	return result, nil
 }

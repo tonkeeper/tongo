@@ -16,14 +16,9 @@ func walletv3seqno(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
 	}
 	err := tlb.Unmarshal(data, &dataV3)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	return tlb.VmStack{
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(dataV3.Seqno),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(dataV3.Seqno)}.ToStack(), nil
 }
 
 var walletv3r2publicKey = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -34,16 +29,11 @@ var walletv3r2publicKey = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, e
 	}
 	err := tlb.Unmarshal(data, &dataV3)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
 	var b big.Int
 	b.SetBytes(dataV3.PublicKey[:])
-	return tlb.VmStack{
-		{
-			SumType:  "VmStkInt",
-			VmStkInt: tlb.Int257(b),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257(b)}.ToStack(), nil
 }
 
 var walletv4r2seqno = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -54,14 +44,9 @@ var walletv4r2seqno = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error
 	}
 	err := tlb.Unmarshal(data, &dataV4)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	return tlb.VmStack{
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(dataV4.Seqno),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(dataV4.Seqno)}.ToStack(), nil
 }
 
 var walletv4r2SubwalletID = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -72,14 +57,9 @@ var walletv4r2SubwalletID = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack,
 	}
 	err := tlb.Unmarshal(data, &dataV4)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	return tlb.VmStack{
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(dataV4.SubWalletId),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(dataV4.SubWalletId)}.ToStack(), nil
 }
 
 var walletv4r2publicKey = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -90,16 +70,11 @@ var walletv4r2publicKey = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, e
 	}
 	err := tlb.Unmarshal(data, &dataV4)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
 	var b big.Int
 	b.SetBytes(dataV4.PublicKey[:])
-	return tlb.VmStack{
-		{
-			SumType:  "VmStkInt",
-			VmStkInt: tlb.Int257(b),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257(b)}.ToStack(), nil
 }
 
 var walletv4r2getPluginList = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -111,15 +86,13 @@ var walletv4r2getPluginList = func(data *boc.Cell, args tlb.VmStack) (tlb.VmStac
 	}
 	err := tlb.Unmarshal(data, &dataV4)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
 	if len(dataV4.PluginDict.Keys()) == 0 {
-		return tlb.VmStack{
-			{SumType: "VmStkNull"},
-		}, nil
+		return tlb.VmStackValue{SumType: "VmStkNull"}.ToStack(), nil
 	}
 	//todo: implement
-	return nil, fmt.Errorf("not implemented not empty dict")
+	return tlb.VmStack{}, fmt.Errorf("not implemented not empty dict")
 }
 
 func walletv5r1seqno(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -132,14 +105,9 @@ func walletv5r1seqno(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
 	}
 	err := tlb.Unmarshal(data, &dataV5)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	return tlb.VmStack{
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(dataV5.Seqno),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(dataV5.Seqno)}.ToStack(), nil
 }
 
 func walletv5r1SubwalletID(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -152,14 +120,9 @@ func walletv5r1SubwalletID(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error
 	}
 	err := tlb.Unmarshal(data, &dataV5)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	return tlb.VmStack{
-		{
-			SumType:      "VmStkTinyInt",
-			VmStkTinyInt: int64(dataV5.WalletID),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: int64(dataV5.WalletID)}.ToStack(), nil
 }
 
 func walletv5r1publicKey(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -172,14 +135,9 @@ func walletv5r1publicKey(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) 
 	}
 	err := tlb.Unmarshal(data, &dataV5)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
 	var b big.Int
 	b.SetBytes(dataV5.PublicKey[:])
-	return tlb.VmStack{
-		{
-			SumType:  "VmStkInt",
-			VmStkInt: tlb.Int257(b),
-		},
-	}, nil
+	return tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257(b)}.ToStack(), nil
 }

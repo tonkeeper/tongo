@@ -15,17 +15,17 @@
 // int128 4*[ int ] = Int128;
 // int256 8*[ int ] = Int256;
 
-tonNode.blockId#b7cdb167 workchain:int shard:long seqno:int = tonNode.BlockId;
-tonNode.blockIdExt#6752eb78 workchain:int shard:long seqno:int root_hash:int256 file_hash:int256 = tonNode.BlockIdExt;
-tonNode.zeroStateIdExt#1d7235ae workchain:int root_hash:int256 file_hash:int256 = tonNode.ZeroStateIdExt;
-tonNode.shardPublicOverlayId#4d9ed329 workchain:int shard:long zero_state_file_hash:int256 = tonNode.ShardPublicOverlayId;
+tonNode.blockId#b7cdb167 workchain:int32 shard:long seqno:int = tonNode.BlockId;
+tonNode.blockIdExt#6752eb78 workchain:int32 shard:long seqno:int root_hash:int256 file_hash:int256 = tonNode.BlockIdExt;
+tonNode.zeroStateIdExt#1d7235ae workchain:int32 root_hash:int256 file_hash:int256 = tonNode.ZeroStateIdExt;
+tonNode.shardPublicOverlayId#4d9ed329 workchain:int32 shard:long zero_state_file_hash:int256 = tonNode.ShardPublicOverlayId;
 
 adnl.message.query#b48bf97a query_id:int256 query:bytes = adnl.Message;
 adnl.message.answer#0fac8416 query_id:int256 answer:bytes = adnl.Message;
 
 liteServer.error#bba9e148 code:int message:string = liteServer.Error;
 
-liteServer.accountId#75a0e2c5 workchain:int id:int256 = liteServer.AccountId;
+liteServer.accountId#75a0e2c5 workchain:int32 id:int256 = liteServer.AccountId;
 liteServer.libraryEntry#8aff2446 hash:int256 data:bytes = liteServer.LibraryEntry;
 
 liteServer.masterchainInfo#85832881 last:tonNode.blockIdExt state_root_hash:int256 init:tonNode.zeroStateIdExt = liteServer.MasterchainInfo;
@@ -86,7 +86,7 @@ liteServer.sendMessage#690ad482 body:bytes = liteServer.SendMsgStatus;
 liteServer.getAccountState#6b890e25 id:tonNode.blockIdExt account:liteServer.accountId = liteServer.AccountState;
 liteServer.getAccountStatePrunned#5a698507 id:tonNode.blockIdExt account:liteServer.accountId = liteServer.AccountState;
 liteServer.runSmcMethod#5cc65dd2 mode:# id:tonNode.blockIdExt account:liteServer.accountId method_id:long params:bytes = liteServer.RunMethodResult;
-liteServer.getShardInfo#46a2f425 id:tonNode.blockIdExt workchain:int shard:long exact:Bool = liteServer.ShardInfo;
+liteServer.getShardInfo#46a2f425 id:tonNode.blockIdExt workchain:int32 shard:long exact:Bool = liteServer.ShardInfo;
 liteServer.getAllShardsInfo#74d3fd6b id:tonNode.blockIdExt = liteServer.AllShardsInfo;
 liteServer.getOneTransaction#d40f24ea id:tonNode.blockIdExt account:liteServer.accountId lt:long = liteServer.TransactionInfo;
 liteServer.getTransactions#1c40e7a1 count:# account:liteServer.accountId lt:long hash:int256 = liteServer.TransactionList;

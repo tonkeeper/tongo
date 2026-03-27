@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"os"
 	"reflect"
 	"testing"
 
@@ -24,7 +25,9 @@ const (
 )
 
 func Test_contractInspector_InspectContract(t *testing.T) {
-
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	//mainnetConfig, _ := boc.DeserializeBocBase64(mainnetConfig)
 	testnetConfig, _ := boc.DeserializeBocBase64(testnetConfig)
 

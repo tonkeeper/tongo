@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/liteapi"
@@ -13,6 +14,9 @@ import (
 )
 
 func TestResolve(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.Skip("Skipping test in CI")
+	}
 	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)

@@ -4,9 +4,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/tonkeeper/tongo/tl/parser"
 	"io/ioutil"
 	"os"
+
+	"github.com/tonkeeper/tongo/tl/parser"
 )
 
 func main() {

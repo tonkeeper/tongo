@@ -278,6 +278,7 @@ type Ty struct {
 	Builder     *Builder
 	Callable    *Callable
 	Remaining   *Remaining
+	String      *String
 	Address     *Address
 	AddressOpt  *AddressOpt
 	AddressExt  *AddressExt
@@ -285,7 +286,8 @@ type Ty struct {
 	Nullable    *Nullable
 	CellOf      *CellOf
 	Tensor      *Tensor
-	TupleWith   *TupleWith
+	ArrayOf     *ArrayOf
+	LispListOf  *LispListOf
 	Map         *Map
 	EnumRef     *EnumRef
 	AliasRef    *AliasRef
@@ -295,6 +297,7 @@ type Ty struct {
 	TupleAny    *TupleAny
 	NullLiteral *NullLiteral
 	Void        *Void
+	Unknown     *Unknown
 }
 
 type Int struct{}
@@ -332,6 +335,8 @@ type AddressOpt struct {
 type AddressExt struct{}
 
 type AddressAny struct{}
+
+type String struct{}
 
 type Cell struct{}
 
@@ -382,9 +387,15 @@ type Tensor struct {
 	Items []Ty `json:"items"`
 }
 
-type TupleWith struct {
-	Items []Ty `json:"items"`
+type ArrayOf struct {
+	Inner Ty `json:"inner"`
 }
+
+type LispListOf struct {
+	Inner Ty `json:"inner"`
+}
+
+type Unknown struct{}
 
 type TupleAny struct{}
 
@@ -438,9 +449,14 @@ func (t *Ty) UnmarshalJSON(b []byte) error {
 		if err := json.Unmarshal(b, &t.Tensor); err != nil {
 			return err
 		}
-	case "tupleWith":
-		t.SumType = "TupleWith"
-		if err := json.Unmarshal(b, &t.TupleWith); err != nil {
+	case "arrayOf":
+		t.SumType = "ArrayOf"
+		if err := json.Unmarshal(b, &t.ArrayOf); err != nil {
+			return err
+		}
+	case "lispListOf":
+		t.SumType = "LispListOf"
+		if err := json.Unmarshal(b, &t.LispListOf); err != nil {
 			return err
 		}
 	case "mapKV":
@@ -580,9 +596,15 @@ func (t *Ty) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-	case "TupleWith":
-		kind.Kind = "tupleWith"
-		payload, err = json.Marshal(t.TupleWith)
+	case "ArrayOf":
+		kind.Kind = "arrayOf"
+		payload, err = json.Marshal(t.ArrayOf)
+		if err != nil {
+			return nil, err
+		}
+	case "LispListOf":
+		kind.Kind = "lispListOf"
+		payload, err = json.Marshal(t.LispListOf)
 		if err != nil {
 			return nil, err
 		}

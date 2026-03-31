@@ -2,32 +2,141 @@ package tolk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
 )
 
-type TupleValues []Value
+type ArrayOf []Value
 
-func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.TupleWith, decoder *Decoder) error {
-	list := make(TupleValues, len(ty.Items))
-	for i, item := range ty.Items {
-		inner := Value{}
-		err := inner.Unmarshal(cell, item, decoder)
-		if err != nil {
-			return fmt.Errorf("failed to unmarshal %v tuple's value: %w", i, err)
-		}
-		list[i] = inner
+func (a *ArrayOf) Unmarshal(cell *boc.Cell, ty parser.ArrayOf, decoder *Decoder) error {
+	ln, err := cell.ReadUint(8)
+	if err != nil {
+		return fmt.Errorf("failed to get array size: %w", err)
 	}
-	*v = list
+	if ln == 0 {
+		_, err = cell.ReadBit()
+		if err != nil {
+			return fmt.Errorf("failed to get array has ref flag: %w", err)
+		}
+		return nil
+	}
+	list := make(ArrayOf, ln)
+	curr := cell
+	for i := 0; i < int(ln); i++ {
+		hasRef, err := cell.ReadBit()
+		if err != nil {
+			return fmt.Errorf("failed to get array has ref flag: %w", err)
+		}
+		if hasRef {
+			curr, err = curr.NextRef()
+			if err != nil {
+				return fmt.Errorf("failed to get array next ref: %w", err)
+			}
+		}
+		for curr.BitsAvailableForRead() > 0 {
+			var val Value
+			if err := val.Unmarshal(cell, ty.Inner, decoder); err != nil {
+				return fmt.Errorf("failed to unmarshal array[%v] element: %w", i, err)
+			}
+			list = append(list, val)
+		}
+	}
+	*a = list
+
 	return nil
 }
 
-func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.TupleWith, encoder *Encoder) error {
-	for i, item := range []Value(*v) {
-		err := item.Marshal(cell, ty.Items[i], encoder)
+func (a *ArrayOf) Marshal(cell *boc.Cell, ty parser.ArrayOf, encoder *Encoder) error {
+	arr := []Value(*a)
+	err := cell.WriteUint(uint64(len(arr)), 8)
+	if err != nil {
+		return fmt.Errorf("failed to write array size: %w", err)
+	}
+	err = cell.WriteBit(true)
+	if err != nil {
+		return fmt.Errorf("failed to write array has ref flag: %w", err)
+	}
+	curr := cell
+	for i, item := range arr {
+		err = item.Marshal(curr, ty.Inner, encoder)
+		if err != nil {
+			if errors.Is(err, boc.ErrBitStingOverflow) {
+				next := boc.NewCell()
+				err = curr.AddRef(next)
+				if err != nil {
+					return fmt.Errorf("failed to add ref for array: %w", err)
+				}
+				curr = next
+
+				err = item.Marshal(curr, ty.Inner, encoder)
+				if err == nil {
+					continue
+				}
+			}
+			return fmt.Errorf("failed to marshal %v tuple's value: %w", i, err)
+		}
+	}
+	return nil
+}
+
+func (a *ArrayOf) Equal(other any) bool {
+	otherArrayValues, ok := other.(ArrayOf)
+	if !ok {
+		return false
+	}
+	wA := *a
+	if len(otherArrayValues) != len(wA) {
+		return false
+	}
+	for i := range wA {
+		if !wA[i].Equal(otherArrayValues[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+type LispListOf []Value
+
+func (ll *LispListOf) Unmarshal(cell *boc.Cell, ty parser.LispListOf, decoder *Decoder) error {
+	list := make(LispListOf, 0)
+	var err error
+	curr := cell
+	for curr.RefsAvailableForRead() > 0 {
+		curr, err = curr.NextRef()
+		if err != nil {
+			return fmt.Errorf("failed to get lisp list next ref: %w", err)
+		}
+		var val Value
+		if err := val.Unmarshal(cell, ty.Inner, decoder); err != nil {
+			return fmt.Errorf("failed to unmarshal lisp list element: %w", err)
+		}
+		list = append(list, val)
+	}
+
+	slices.Reverse(list)
+	*ll = list
+
+	return nil
+}
+
+func (ll *LispListOf) Marshal(cell *boc.Cell, ty parser.LispListOf, encoder *Encoder) error {
+	var err error
+	arr := []Value(*ll)
+	curr := cell
+	for i, item := range arr {
+		ref := boc.NewCell()
+		err = curr.AddRef(ref)
+		if err != nil {
+			return fmt.Errorf("failed to add ref for lisp list element: %w", err)
+		}
+		curr = ref
+		err = item.Marshal(curr, ty.Inner, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal %v tuple's value: %w", i, err)
 		}
@@ -35,17 +144,17 @@ func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.TupleWith, encoder *Enco
 	return nil
 }
 
-func (v *TupleValues) Equal(other any) bool {
-	otherTupleValues, ok := other.(TupleValues)
+func (ll *LispListOf) Equal(other any) bool {
+	otherLispListValues, ok := other.(ArrayOf)
 	if !ok {
 		return false
 	}
-	wV := *v
-	if len(otherTupleValues) != len(wV) {
+	wLL := *ll
+	if len(otherLispListValues) != len(wLL) {
 		return false
 	}
-	for i := range wV {
-		if !wV[i].Equal(otherTupleValues[i]) {
+	for i := range wLL {
+		if !wLL[i].Equal(otherLispListValues[i]) {
 			return false
 		}
 	}

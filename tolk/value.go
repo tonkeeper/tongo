@@ -1,7 +1,5 @@
 package tolk
 
-// todo: move this to some package or rename somehow.
-
 import (
 	"encoding/json"
 	"fmt"
@@ -39,6 +37,7 @@ type Value struct {
 	Coins           *CoinsValue
 	Bits            *Bits
 	Cell            *Any
+	String          *SnakeString
 	Remaining       *RemainingValue
 	InternalAddress *InternalAddress
 	OptionalAddress *OptionalAddress
@@ -46,8 +45,9 @@ type Value struct {
 	AnyAddress      *AnyAddress
 	OptionalValue   *OptValue
 	RefValue        *RefValue
-	TupleWith       *TupleValues
 	Tensor          *TensorValues
+	ArrayOf         *ArrayOf
+	LispListOf      *LispListOf
 	Map             *MapValue
 	Struct          *Struct
 	Alias           *AliasValue
@@ -56,6 +56,7 @@ type Value struct {
 	Union           *UnionValue
 	Null            *NullValue
 	Void            *VoidValue
+	Unknown         *Unknown
 }
 
 func (v *Value) GetBool() (bool, bool) {
@@ -268,6 +269,20 @@ func (v *Value) MustGetRefValue() Value {
 	return Value(*v.RefValue)
 }
 
+func (v *Value) GetStringValue() (string, bool) {
+	if v.String == nil {
+		return "", false
+	}
+	return string(*v.String), true
+}
+
+func (v *Value) MustGetStringValue() Value {
+	if v.RefValue == nil {
+		panic("value is not a reference")
+	}
+	return Value(*v.RefValue)
+}
+
 func (v *Value) GetTensor() ([]Value, bool) {
 	if v.Tensor == nil {
 		return TensorValues{}, false
@@ -280,6 +295,34 @@ func (v *Value) MustGetTensor() []Value {
 		panic("value is not a tensor")
 	}
 	return *v.Tensor
+}
+
+func (v *Value) GetArrayOfValue() ([]Value, bool) {
+	if v.ArrayOf == nil {
+		return []Value{}, false
+	}
+	return *v.ArrayOf, true
+}
+
+func (v *Value) MustGetArrayOfValue() []Value {
+	if v.ArrayOf == nil {
+		panic("value is not an array")
+	}
+	return *v.ArrayOf
+}
+
+func (v *Value) GetLispListOfValue() ([]Value, bool) {
+	if v.ArrayOf == nil {
+		return []Value{}, false
+	}
+	return *v.ArrayOf, true
+}
+
+func (v *Value) MustGetLispListOfValue() []Value {
+	if v.LispListOf == nil {
+		panic("value is not a lisp list of")
+	}
+	return *v.LispListOf
 }
 
 func (v *Value) GetMap() (MapValue, bool) {
@@ -364,20 +407,6 @@ func (v *Value) MustGetUnion() UnionValue {
 		panic("value is not an union")
 	}
 	return *v.Union
-}
-
-func (v *Value) GetTupleValues() ([]Value, bool) {
-	if v.TupleWith == nil {
-		return TupleValues{}, false
-	}
-	return *v.TupleWith, true
-}
-
-func (v *Value) MustGetTupleValues() []Value {
-	if v.TupleWith == nil {
-		panic("value is not a tuple")
-	}
-	return *v.TupleWith
 }
 
 func (v *Value) GetCell() (boc.Cell, bool) {
@@ -491,12 +520,19 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal tensor value: %w", err)
 		}
-	case "TupleWith":
-		v.SumType = "TupleWith"
-		v.TupleWith = &TupleValues{}
-		err = v.TupleWith.Unmarshal(cell, *ty.TupleWith, decoder)
+	case "ArrayOf":
+		v.SumType = "ArrayOf"
+		v.ArrayOf = &ArrayOf{}
+		err = v.ArrayOf.Unmarshal(cell, *ty.ArrayOf, decoder)
 		if err != nil {
-			return fmt.Errorf("failed to unmarshal tuple value: %w", err)
+			return fmt.Errorf("failed to unmarshal array of: %w", err)
+		}
+	case "LispListOf":
+		v.SumType = "LispListOf"
+		v.LispListOf = &LispListOf{}
+		err = v.LispListOf.Unmarshal(cell, *ty.LispListOf, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal lisp list of: %w", err)
 		}
 	case "Map":
 		v.SumType = "Map"
@@ -577,6 +613,14 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal remaining value: %w", err)
 		}
+	case "String":
+		v.SumType = "String"
+		def := SnakeString("")
+		v.String = &def
+		err = v.String.Unmarshal(cell, *ty.String, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal string value: %w", err)
+		}
 	case "Address":
 		v.SumType = "InternalAddress"
 		v.InternalAddress = &InternalAddress{}
@@ -620,6 +664,13 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 		err = v.Void.Unmarshal(cell, *ty.Void, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal void value: %w", err)
+		}
+	case "Unknown":
+		v.SumType = "Unknown"
+		v.Unknown = &Unknown{}
+		err = v.Unknown.Unmarshal(cell, *ty.Unknown, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal unknown value: %w", err)
 		}
 	default:
 		return fmt.Errorf("unknown ty type %q", ty.SumType)
@@ -714,13 +765,21 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if err != nil {
 			return fmt.Errorf("failed to marshal tensor value: %w", err)
 		}
-	case "TupleWith":
-		if v.SumType != "TupleWith" {
-			return fmt.Errorf("expected TupleWith, but got %v", v.SumType)
+	case "ArrayOf":
+		if v.SumType != "ArrayOf" {
+			return fmt.Errorf("expected ArrayOf, but got %v", v.SumType)
 		}
-		err = v.TupleWith.Marshal(cell, *ty.TupleWith, encoder)
+		err = v.ArrayOf.Marshal(cell, *ty.ArrayOf, encoder)
 		if err != nil {
-			return fmt.Errorf("failed to marshal tuple value: %w", err)
+			return fmt.Errorf("failed to marshal array of value: %w", err)
+		}
+	case "LispListOf":
+		if v.SumType != "LispListOf" {
+			return fmt.Errorf("expected LispListOf, but got %v", v.SumType)
+		}
+		err = v.LispListOf.Marshal(cell, *ty.LispListOf, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal lisp list of value: %w", err)
 		}
 	case "Map":
 		if v.SumType != "Map" {
@@ -810,6 +869,14 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if err != nil {
 			return fmt.Errorf("failed to marshal remaining value: %w", err)
 		}
+	case "String":
+		if v.SumType != "String" {
+			return fmt.Errorf("expected String, but got %v", v.SumType)
+		}
+		err = v.String.Marshal(cell, *ty.String, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal string value: %w", err)
+		}
 	case "Address":
 		if v.SumType != "InternalAddress" {
 			return fmt.Errorf("expected InternalAddress, but got %v", v.SumType)
@@ -859,6 +926,14 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		err = v.Void.Marshal(cell, *ty.Void, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal void value: %w", err)
+		}
+	case "Unknown":
+		if v.SumType != "Unknown" {
+			return fmt.Errorf("expected Unknown, but got %v", v.SumType)
+		}
+		err = v.Unknown.Marshal(cell, *ty.Unknown, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal unknown value: %w", err)
 		}
 	default:
 		err = fmt.Errorf("unknown ty type %q", ty.SumType)
@@ -928,6 +1003,11 @@ func (v *Value) Equal(o any) bool {
 			return false
 		}
 		return v.Remaining.Equal(*otherValue.Remaining)
+	case "String":
+		if otherValue.String == nil {
+			return false
+		}
+		return v.String.Equal(*otherValue.String)
 	case "InternalAddress":
 		if otherValue.InternalAddress == nil {
 			return false
@@ -958,16 +1038,21 @@ func (v *Value) Equal(o any) bool {
 			return false
 		}
 		return v.RefValue.Equal(*otherValue.RefValue)
-	case "TupleWith":
-		if otherValue.TupleWith == nil {
-			return false
-		}
-		return v.TupleWith.Equal(*otherValue.TupleWith)
 	case "Tensor":
 		if otherValue.Tensor == nil {
 			return false
 		}
 		return v.Tensor.Equal(*otherValue.Tensor)
+	case "ArrayOf":
+		if otherValue.ArrayOf == nil {
+			return false
+		}
+		return v.ArrayOf.Equal(*otherValue.ArrayOf)
+	case "LispListOf":
+		if otherValue.LispListOf == nil {
+			return false
+		}
+		return v.LispListOf.Equal(*otherValue.LispListOf)
 	case "Map":
 		if otherValue.Map == nil {
 			return false
@@ -1008,6 +1093,11 @@ func (v *Value) Equal(o any) bool {
 			return false
 		}
 		return v.Void.Equal(*otherValue.Void)
+	case "Unknown":
+		if otherValue.Unknown == nil {
+			return false
+		}
+		return v.Unknown.Equal(*otherValue.Unknown)
 	default:
 		return false
 	}
@@ -1040,6 +1130,8 @@ func (v Value) MarshalJSON() ([]byte, error) {
 		data, err = json.Marshal(v.Cell)
 	case "Remaining":
 		data, err = json.Marshal(v.Remaining)
+	case "String":
+		data, err = json.Marshal(v.String)
 	case "InternalAddress":
 		data, err = json.Marshal(v.InternalAddress)
 	case "OptionalAddress":
@@ -1052,10 +1144,12 @@ func (v Value) MarshalJSON() ([]byte, error) {
 		data, err = json.Marshal(v.OptionalValue)
 	case "RefValue":
 		data, err = json.Marshal(v.RefValue)
-	case "TupleWith":
-		data, err = json.Marshal(v.TupleWith)
 	case "Tensor":
 		data, err = json.Marshal(v.Tensor)
+	case "ArrayOf":
+		data, err = json.Marshal(v.ArrayOf)
+	case "LispListOf":
+		data, err = json.Marshal(v.LispListOf)
 	case "Map":
 		data, err = json.Marshal(v.Map)
 	case "Struct":
@@ -1074,6 +1168,8 @@ func (v Value) MarshalJSON() ([]byte, error) {
 		data, err = json.Marshal(v.Null)
 	case "Void":
 		data, err = json.Marshal(v.Void)
+	case "Unknown":
+		data, err = json.Marshal(v.Unknown)
 	default:
 		err = fmt.Errorf("unknown value type: %s", v.SumType)
 	}

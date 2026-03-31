@@ -3,6 +3,7 @@ package tolk
 import (
 	"encoding/json"
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
@@ -275,4 +276,62 @@ func (r RefValue) MarshalJSON() ([]byte, error) {
 		return nil, fmt.Errorf("failed to marshal ref: %w", err)
 	}
 	return data, nil
+}
+
+type SnakeString string
+
+func (s *SnakeString) Unmarshal(cell *boc.Cell, ty parser.String, decoder *Decoder) error {
+	var res boc.BitString
+	res.Append(cell.ReadRemainingBits())
+	ref := *cell
+	for ref.RefsSize() > 0 {
+		nxt, err := ref.NextRef()
+		if err != nil {
+			return fmt.Errorf("failed to get next ref for snake string: %w", err)
+		}
+		res.Append(nxt.ReadRemainingBits())
+	}
+
+	if res.BitsAvailableForRead()%8 != 0 {
+		return fmt.Errorf("incorrect number of bits for snake string: %v", res.BitsAvailableForRead())
+	}
+	buf, err := res.GetTopUppedArray()
+	if err != nil {
+		return fmt.Errorf("failed to get top upped array: %w", err)
+	}
+	if !utf8.Valid(buf) {
+		return fmt.Errorf("invalid UTF-8 in snake string")
+	}
+	*s = SnakeString(buf)
+
+	return nil
+}
+
+func (s *SnakeString) Marshal(cell *boc.Cell, ty parser.String, encoder *Encoder) error {
+	curr := cell
+	for _, r := range string(*s) {
+		l := utf8.RuneLen(r)
+		if cell.BitsAvailableForWrite() < l {
+			next := boc.NewCell()
+			err := curr.AddRef(next)
+			if err != nil {
+				return fmt.Errorf("failed to add ref: %w", err)
+			}
+			curr = next
+		}
+
+		if err := curr.WriteUint(uint64(r), l); err != nil {
+			return fmt.Errorf("failed to write rune: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *SnakeString) Equal(o any) bool {
+	other, ok := o.(SnakeString)
+	if !ok {
+		return false
+	}
+	return string(*s) == string(other)
 }

@@ -383,3 +383,44 @@ func Test_bagOfCells_serializeBoc(t *testing.T) {
 		})
 	}
 }
+
+func Test_bagOfCells_invalidCellDeserialize(t *testing.T) {
+	tests := []struct {
+		name   string
+		hexBoc string
+		err    string
+	}{
+		{
+			name:   "boc with invalid large size bytes",
+			hexBoc: "b5ee9c720501010100020000001231231231232131231231231231231231231231",
+			err:    "invalid cell size value",
+		},
+		{
+			name:   "boc with invalid small tot_cells_size",
+			hexBoc: "b5ee9c72010101010001000000",
+			err:    "invalid cell data size value",
+		},
+		{
+			name:   "boc with invalid large amount with cells",
+			hexBoc: "b5ee9c720101ff010002000000",
+			err:    "not enough bytes for encoding all cells data",
+		},
+		{
+			name:   "too large boc",
+			hexBoc: "b5ee9c7204fffffffffe010002000000123123123123213123123123123123123123123123123123123123" + strings.Repeat("1234", 33565456),
+			err:    "boc is too large",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			bocBytes, err := hex.DecodeString(tt.hexBoc)
+			if err != nil {
+				t.Fatalf("failed to decode boc: %v", err)
+			}
+			_, err = DeserializeBoc(bocBytes)
+			if err == nil || err.Error() != tt.err {
+				t.Fatalf("invalid error: %v", err)
+			}
+		})
+	}
+}

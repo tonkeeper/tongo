@@ -27,6 +27,9 @@ const depthSize = 2
 const maxLevel = 3
 const maxDepth = 1024
 const maxCellWhs = 64
+const minCellSize = 4
+const minTotCellsSize = 2
+const maxCellsCount = 131072
 
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
 
@@ -99,6 +102,10 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 		return nil, errors.New("not enough bytes for encoding cells counters")
 	}
 
+	if sizeBytes > minCellSize {
+		return nil, errors.New("invalid cell size value")
+	}
+
 	offsetBytes := int(boc[0])
 	boc = boc[1:]
 	cellsCount := readNBytesUIntFromArray(sizeBytes, boc)
@@ -112,6 +119,18 @@ func parseBocHeader(boc []byte) (*bocHeader, error) {
 
 	if len(boc) < int(rootsCount)*sizeBytes {
 		return nil, errors.New("not enough bytes for encoding root cells hashes")
+	}
+
+	if totCellsSize < minTotCellsSize {
+		return nil, errors.New("invalid cell data size value")
+	}
+
+	if 2*cellsCount > totCellsSize {
+		return nil, errors.New("not enough bytes for encoding all cells data")
+	}
+
+	if cellsCount > maxCellsCount {
+		return nil, errors.New("boc is too large")
 	}
 
 	// Roots

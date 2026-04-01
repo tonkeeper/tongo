@@ -308,6 +308,10 @@ func (w *Wallet) GetAddress() ton.AccountID {
 	return w.address
 }
 
+func (w *Wallet) GetVersion() Version {
+	return w.ver
+}
+
 func (w *Wallet) StateInit() (*tlb.StateInit, error) {
 	return w.intWallet.generateStateInit()
 }

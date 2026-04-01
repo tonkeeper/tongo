@@ -29,7 +29,7 @@ const maxDepth = 1024
 const maxCellWhs = 64
 const minCellSize = 4
 const minTotCellsSize = 2
-const maxCellsCount = 4096
+const maxCellsCount = 131072
 
 var crcTable = crc32.MakeTable(crc32.Castagnoli)
 

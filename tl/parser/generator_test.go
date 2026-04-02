@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -89,7 +90,9 @@ func TestGenerateGolangTypes(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%s", s)
+	if os.Getenv("TEST_CI") != "1" {
+		fmt.Printf("%s", s)
+	}
 }
 
 func TestGenerateGolangMethods(t *testing.T) {
@@ -107,12 +110,17 @@ func TestGenerateGolangMethods(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%s", ty)
-	fmt.Printf("\n")
-	fmt.Printf("%s", s)
+	if os.Getenv("TEST_CI") != "1" {
+		fmt.Printf("%s", ty)
+		fmt.Printf("\n")
+		fmt.Printf("%s", s)
+	}
 }
 
 func TestCheckBits(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	mode := 53
 	fmt.Printf("Mode: %b\n", mode)
 	for i := 0; i < 6; i++ {

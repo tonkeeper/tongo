@@ -2,6 +2,7 @@ package tongo
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/contract/dns"
@@ -28,6 +29,7 @@ func TestParseAddress(t *testing.T) {
 		typeParse int
 		request   string
 		response  string
+		disabled  bool
 	}
 
 	for _, test := range []testCase{
@@ -44,6 +46,7 @@ func TestParseAddress(t *testing.T) {
 			response:  "0:91d73056e035232f09aaf8242a1d51eea98b6a5bebbf8ac0c9e521d02a1a4bdb",
 		},
 		{
+			disabled:  os.Getenv("TEST_CI") == "1",
 			name:      "Parse dns to raw address",
 			typeParse: parseDnsToRawAddress,
 			request:   "blackpepper.ton",

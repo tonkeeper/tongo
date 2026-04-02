@@ -161,7 +161,7 @@ func parseAccountData(fixture *ShardAccountFixture, accountState []byte, include
 	}
 
 	// Try to parse account
-	parsedAccount, err := tychoclient.ParseShardAccount(accountState)
+	parsedAccount, _, err := tychoclient.ParseShardAccount(accountState, nil, nil)
 	if err != nil {
 		if debugInfo != nil {
 			debugInfo.ParseError = err.Error()

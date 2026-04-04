@@ -669,7 +669,7 @@ func Dnsresolve(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeDnsresolve_RecordsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result Dnsresolve_RecordsResult
@@ -713,7 +713,7 @@ func EstimateLiquidityDepositAmount(ctx context.Context, executor Executor, reqA
 }
 
 func DecodeEstimateLiquidityDepositAmount_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result EstimateLiquidityDepositAmount_CoffeeResult
@@ -753,7 +753,7 @@ func EstimateLiquidityWithdrawAmount(ctx context.Context, executor Executor, req
 }
 
 func DecodeEstimateLiquidityWithdrawAmount_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result EstimateLiquidityWithdrawAmount_CoffeeResult
@@ -798,7 +798,7 @@ func EstimateSwapAmount(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeEstimateSwapAmount_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result EstimateSwapAmount_CoffeeResult
@@ -844,7 +844,7 @@ func EstimateSwapOut(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeEstimateSwapOut_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result EstimateSwapOut_DedustResult
@@ -877,7 +877,7 @@ func GetAllTickInfos(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetAllTickInfos_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAllTickInfos_ToncoResult
@@ -919,7 +919,7 @@ func GetChildContracts(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetChildContracts_ToncoPoolResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetChildContracts_ToncoPoolResult
@@ -928,7 +928,7 @@ func DecodeGetChildContracts_ToncoPoolResult(stack tlb.VmStack) (resultType stri
 }
 
 func DecodeGetChildContracts_ToncoRouterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkCell") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetChildContracts_ToncoRouterResult
@@ -961,7 +961,7 @@ func GetIsActive(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetIsActive_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetIsActive_ToncoResult
@@ -1018,7 +1018,7 @@ func GetPoolStateAndConfiguration(ctx context.Context, executor Executor, reqAcc
 }
 
 func DecodeGetPoolStateAndConfiguration_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 25 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkTinyInt" && stack[20].SumType != "VmStkInt") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkTinyInt" && stack[22].SumType != "VmStkInt") || (stack[23].SumType != "VmStkTinyInt" && stack[23].SumType != "VmStkInt") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") {
+	if stack.Len() != 25 || (stack.Peek(24).SumType != "VmStkSlice") || (stack.Peek(23).SumType != "VmStkSlice") || (stack.Peek(22).SumType != "VmStkSlice") || (stack.Peek(21).SumType != "VmStkSlice") || (stack.Peek(20).SumType != "VmStkSlice") || (stack.Peek(19).SumType != "VmStkSlice") || (stack.Peek(18).SumType != "VmStkSlice") || (stack.Peek(17).SumType != "VmStkTinyInt" && stack.Peek(17).SumType != "VmStkInt") || (stack.Peek(16).SumType != "VmStkTinyInt" && stack.Peek(16).SumType != "VmStkInt") || (stack.Peek(15).SumType != "VmStkTinyInt" && stack.Peek(15).SumType != "VmStkInt") || (stack.Peek(14).SumType != "VmStkTinyInt" && stack.Peek(14).SumType != "VmStkInt") || (stack.Peek(13).SumType != "VmStkTinyInt" && stack.Peek(13).SumType != "VmStkInt") || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolStateAndConfiguration_ToncoResult
@@ -1055,7 +1055,7 @@ func GetRouterState(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetRouterState_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRouterState_ToncoResult
@@ -1093,7 +1093,7 @@ func GetAccountData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetAccountData_ToncoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAccountData_ToncoResult
@@ -1126,7 +1126,7 @@ func GetActiveRange(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetActiveRange_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetActiveRange_BidaskResult
@@ -1167,7 +1167,7 @@ func GetAdjustedSpotPrice(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeGetAdjustedSpotPrice_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAdjustedSpotPrice_StormResult
@@ -1200,7 +1200,7 @@ func GetAdminAddress(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetAdminAddress_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAdminAddress_CoffeeResult
@@ -1233,7 +1233,7 @@ func GetAmmContractData(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetAmmContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAmmContractData_StormResult
@@ -1267,7 +1267,7 @@ func GetAmmName(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetAmmName_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAmmName_StormResult
@@ -1309,7 +1309,7 @@ func GetAmmState(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetAmmState_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+	if stack.Len() != 10 || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAmmState_StormResult
@@ -1346,7 +1346,7 @@ func GetAmmStatus(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetAmmStatus_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAmmStatus_StormResult
@@ -1383,7 +1383,7 @@ func GetAsset(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 }
 
 func DecodeGetAsset_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAsset_DedustResult
@@ -1392,7 +1392,7 @@ func DecodeGetAsset_DedustResult(stack tlb.VmStack) (resultType string, resultAn
 }
 
 func DecodeGetAsset_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAsset_CoffeeResult
@@ -1431,7 +1431,7 @@ func GetAssets(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetAssets_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAssets_DedustResult
@@ -1440,7 +1440,7 @@ func DecodeGetAssets_DedustResult(stack tlb.VmStack) (resultType string, resultA
 }
 
 func DecodeGetAssets_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAssets_MoonResult
@@ -1498,7 +1498,7 @@ func GetAuctionDataV4(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetAuctionDataV4Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 26 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkTinyInt" && stack[20].SumType != "VmStkInt") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkSlice") || (stack[23].SumType != "VmStkSlice") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") || (stack[25].SumType != "VmStkTinyInt" && stack[25].SumType != "VmStkInt") {
+	if stack.Len() != 26 || (stack.Peek(25).SumType != "VmStkTinyInt" && stack.Peek(25).SumType != "VmStkInt") || (stack.Peek(24).SumType != "VmStkTinyInt" && stack.Peek(24).SumType != "VmStkInt") || (stack.Peek(23).SumType != "VmStkTinyInt" && stack.Peek(23).SumType != "VmStkInt") || (stack.Peek(22).SumType != "VmStkSlice") || (stack.Peek(21).SumType != "VmStkSlice") || (stack.Peek(20).SumType != "VmStkSlice") || (stack.Peek(19).SumType != "VmStkTinyInt" && stack.Peek(19).SumType != "VmStkInt") || (stack.Peek(18).SumType != "VmStkSlice") || (stack.Peek(17).SumType != "VmStkTinyInt" && stack.Peek(17).SumType != "VmStkInt") || (stack.Peek(16).SumType != "VmStkSlice") || (stack.Peek(15).SumType != "VmStkTinyInt" && stack.Peek(15).SumType != "VmStkInt") || (stack.Peek(14).SumType != "VmStkTinyInt" && stack.Peek(14).SumType != "VmStkInt") || (stack.Peek(13).SumType != "VmStkSlice") || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAuctionDataV4Result
@@ -1533,7 +1533,7 @@ func GetAuctionInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetAuctionInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() < 3 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAuctionInfoResult
@@ -1566,7 +1566,7 @@ func GetAuthorityAddress(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetAuthorityAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAuthorityAddressResult
@@ -1599,7 +1599,7 @@ func GetAvailableClaimAmount(ctx context.Context, executor Executor, reqAccountI
 }
 
 func DecodeGetAvailableClaimAmountResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetAvailableClaimAmountResult
@@ -1639,7 +1639,7 @@ func GetBalances(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetBalances_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBalances_DedustResult
@@ -1648,7 +1648,7 @@ func DecodeGetBalances_DedustResult(stack tlb.VmStack) (resultType string, resul
 }
 
 func DecodeGetBalancesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBalancesResult
@@ -1690,7 +1690,7 @@ func GetBillAddress(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetBillAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBillAddressResult
@@ -1723,7 +1723,7 @@ func GetBillAmount(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetBillAmountResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBillAmountResult
@@ -1763,7 +1763,7 @@ func GetBinAssets(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetBinAssets_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBinAssets_BidaskResult
@@ -1796,7 +1796,7 @@ func GetBinsNumber(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetBinsNumber_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBinsNumber_BidaskResult
@@ -1832,7 +1832,7 @@ func GetBlankStorageData(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetBlankStorageData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell" && stack[3].SumType != "VmStkNull") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkCell" && stack.Peek(0).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBlankStorageData_StormResult
@@ -1868,7 +1868,7 @@ func GetBufferData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetBufferData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetBufferData_StormResult
@@ -1926,7 +1926,7 @@ func GetCanExecuteOrder(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetCanExecuteOrder_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCanExecuteOrder_StormResult
@@ -1983,7 +1983,7 @@ func GetCanForceClose(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetCanForceClose_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCanForceClose_StormResult
@@ -2042,7 +2042,7 @@ func GetCanLiquidate(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetCanLiquidate_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCanLiquidate_StormResult
@@ -2103,7 +2103,7 @@ func GetChannelData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetChannelDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 8 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTuple") || (stack[2].SumType != "VmStkTuple") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTuple") || (stack[5].SumType != "VmStkTuple") || (stack[6].SumType != "VmStkSlice" && stack[6].SumType != "VmStkNull") || (stack[7].SumType != "VmStkTuple") {
+	if stack.Len() < 8 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTuple") || (stack.Peek(stack.Len()-3).SumType != "VmStkTuple") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkTuple") || (stack.Peek(stack.Len()-6).SumType != "VmStkTuple") || (stack.Peek(stack.Len()-7).SumType != "VmStkSlice" && stack.Peek(stack.Len()-7).SumType != "VmStkNull") || (stack.Peek(stack.Len()-8).SumType != "VmStkTuple") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetChannelDataResult
@@ -2136,7 +2136,7 @@ func GetClaimerAddress(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetClaimerAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetClaimerAddress_StormResult
@@ -2177,7 +2177,7 @@ func GetCocoonClientData(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetCocoonClientData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") {
+	if stack.Len() != 9 || (stack.Peek(8).SumType != "VmStkSlice") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCocoonClientData_CocoonResult
@@ -2219,7 +2219,7 @@ func GetCocoonData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetCocoonData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") {
+	if stack.Len() != 10 || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCocoonData_CocoonResult
@@ -2263,7 +2263,7 @@ func GetCocoonProxyData(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetCocoonProxyData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 12 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
+	if stack.Len() != 12 || (stack.Peek(11).SumType != "VmStkSlice") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkSlice") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCocoonProxyData_CocoonResult
@@ -2300,7 +2300,7 @@ func GetCocoonWorkerData(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetCocoonWorkerData_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCocoonWorkerData_CocoonResult
@@ -2334,7 +2334,7 @@ func GetCode(ctx context.Context, executor Executor, reqAccountID ton.AccountID)
 }
 
 func DecodeGetCode_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCode_CoffeeResult
@@ -2368,7 +2368,7 @@ func GetCollectedFeesInfo(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeGetCollectedFeesInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCollectedFeesInfo_BidaskDammResult
@@ -2403,7 +2403,7 @@ func GetCollectionData(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetCollectionDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkSlice") {
+	if stack.Len() < 3 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkCell") || (stack.Peek(stack.Len()-3).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCollectionDataResult
@@ -2447,7 +2447,7 @@ func GetComputeFundingData(ctx context.Context, executor Executor, reqAccountID 
 }
 
 func DecodeGetComputeFundingData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetComputeFundingData_StormResult
@@ -2483,7 +2483,7 @@ func GetContractData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetContractData_AirdropInterlockerV1Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetContractData_AirdropInterlockerV1Result
@@ -2519,7 +2519,7 @@ func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetCronInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCronInfoResult
@@ -2565,7 +2565,7 @@ func GetCurParams(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetCurParams_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 14 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") {
+	if stack.Len() != 14 || (stack.Peek(13).SumType != "VmStkTinyInt" && stack.Peek(13).SumType != "VmStkInt") || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCurParams_CocoonResult
@@ -2598,7 +2598,7 @@ func GetCurrentBin(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetCurrentBin_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetCurrentBin_BidaskResult
@@ -2632,7 +2632,7 @@ func GetDayTradingData(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetDayTradingData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDayTradingData_StormResult
@@ -2666,7 +2666,7 @@ func GetDefaultReferralFees(ctx context.Context, executor Executor, reqAccountID
 }
 
 func DecodeGetDefaultReferralFees_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDefaultReferralFees_StormResult
@@ -2704,7 +2704,7 @@ func GetDelegationState(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetDelegationStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTuple") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTuple") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDelegationStateResult
@@ -2738,7 +2738,7 @@ func GetDisplayMultiplier(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeGetDisplayMultiplierResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() < 2 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDisplayMultiplierResult
@@ -2774,7 +2774,7 @@ func GetDistributionInfo(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetDistributionInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDistributionInfoResult
@@ -2807,7 +2807,7 @@ func GetDomain(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetDomainResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDomainResult
@@ -2843,7 +2843,7 @@ func GetDynamicFeesInfo(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetDynamicFeesInfo_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetDynamicFeesInfo_BidaskResult
@@ -2876,7 +2876,7 @@ func GetEditor(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetEditorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetEditorResult
@@ -2922,7 +2922,7 @@ func GetEstimatedAttachedValue(ctx context.Context, executor Executor, reqAccoun
 }
 
 func DecodeGetEstimatedAttachedValueResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetEstimatedAttachedValueResult
@@ -2981,7 +2981,7 @@ func GetExchangeSettings(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetExchangeSettings_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 27 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkCell") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkTinyInt" && stack[22].SumType != "VmStkInt") || (stack[23].SumType != "VmStkTinyInt" && stack[23].SumType != "VmStkInt") || (stack[24].SumType != "VmStkTinyInt" && stack[24].SumType != "VmStkInt") || (stack[25].SumType != "VmStkTinyInt" && stack[25].SumType != "VmStkInt") || (stack[26].SumType != "VmStkTinyInt" && stack[26].SumType != "VmStkInt") {
+	if stack.Len() != 27 || (stack.Peek(26).SumType != "VmStkTinyInt" && stack.Peek(26).SumType != "VmStkInt") || (stack.Peek(25).SumType != "VmStkTinyInt" && stack.Peek(25).SumType != "VmStkInt") || (stack.Peek(24).SumType != "VmStkTinyInt" && stack.Peek(24).SumType != "VmStkInt") || (stack.Peek(23).SumType != "VmStkTinyInt" && stack.Peek(23).SumType != "VmStkInt") || (stack.Peek(22).SumType != "VmStkTinyInt" && stack.Peek(22).SumType != "VmStkInt") || (stack.Peek(21).SumType != "VmStkTinyInt" && stack.Peek(21).SumType != "VmStkInt") || (stack.Peek(20).SumType != "VmStkTinyInt" && stack.Peek(20).SumType != "VmStkInt") || (stack.Peek(19).SumType != "VmStkTinyInt" && stack.Peek(19).SumType != "VmStkInt") || (stack.Peek(18).SumType != "VmStkTinyInt" && stack.Peek(18).SumType != "VmStkInt") || (stack.Peek(17).SumType != "VmStkTinyInt" && stack.Peek(17).SumType != "VmStkInt") || (stack.Peek(16).SumType != "VmStkTinyInt" && stack.Peek(16).SumType != "VmStkInt") || (stack.Peek(15).SumType != "VmStkTinyInt" && stack.Peek(15).SumType != "VmStkInt") || (stack.Peek(14).SumType != "VmStkTinyInt" && stack.Peek(14).SumType != "VmStkInt") || (stack.Peek(13).SumType != "VmStkTinyInt" && stack.Peek(13).SumType != "VmStkInt") || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkCell") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExchangeSettings_StormResult
@@ -3014,7 +3014,7 @@ func GetExecutorBalances(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetExecutorBalances_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExecutorBalances_StormResult
@@ -3047,7 +3047,7 @@ func GetExecutorCollectionAddress(ctx context.Context, executor Executor, reqAcc
 }
 
 func DecodeGetExecutorCollectionAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExecutorCollectionAddress_StormResult
@@ -3086,7 +3086,7 @@ func GetExecutorItemAddr(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetExecutorItemAddr_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExecutorItemAddr_StormResult
@@ -3119,7 +3119,7 @@ func GetExecutorVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetExecutorVaultsWhitelist_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExecutorVaultsWhitelist_StormResult
@@ -3165,7 +3165,7 @@ func GetExpectedOutputs(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetExpectedOutputs_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExpectedOutputs_StonfiResult
@@ -3221,7 +3221,7 @@ func GetExpectedSwapResult(ctx context.Context, executor Executor, reqAccountID 
 }
 
 func DecodeGetExpectedSwapResult_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExpectedSwapResult_BidaskDammResult
@@ -3254,7 +3254,7 @@ func GetExtensions(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetExtensionsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell" && stack[0].SumType != "VmStkNull") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell" && stack.Peek(0).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetExtensionsResult
@@ -3293,7 +3293,7 @@ func GetFactoryData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetFactoryData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFactoryData_StormResult
@@ -3338,7 +3338,7 @@ func GetFarmingInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetFarmingInfo_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFarmingInfo_BidaskResult
@@ -3347,7 +3347,7 @@ func DecodeGetFarmingInfo_BidaskResult(stack tlb.VmStack) (resultType string, re
 }
 
 func DecodeGetFarmingInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFarmingInfo_BidaskDammResult
@@ -3385,7 +3385,7 @@ func GetFeesInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetFeesInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFeesInfo_BidaskDammResult
@@ -3424,7 +3424,7 @@ func GetFillOut(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetFillOut_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFillOut_MoonResult
@@ -3469,7 +3469,7 @@ func GetFixPriceDataV4(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetFixPriceDataV4Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice" && stack[4].SumType != "VmStkNull") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkSlice") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkCell" && stack[12].SumType != "VmStkNull") {
+	if stack.Len() != 13 || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkSlice") || (stack.Peek(9).SumType != "VmStkSlice") || (stack.Peek(8).SumType != "VmStkSlice" && stack.Peek(8).SumType != "VmStkNull") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell" && stack.Peek(0).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFixPriceDataV4Result
@@ -3502,7 +3502,7 @@ func GetFullDomain(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetFullDomainResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFullDomainResult
@@ -3547,7 +3547,7 @@ func GetFunding(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetFunding_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFunding_StormResult
@@ -3584,7 +3584,7 @@ func GetFundingSettings(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetFundingSettings_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetFundingSettings_StormResult
@@ -3620,7 +3620,7 @@ func GetHighloadData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetHighloadData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkCell") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetHighloadData_StormResult
@@ -3653,7 +3653,7 @@ func GetId(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (
 }
 
 func DecodeGetId_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetId_MoonResult
@@ -3686,7 +3686,7 @@ func GetIsInited(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetIsInited_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetIsInited_StormResult
@@ -3723,7 +3723,7 @@ func GetJettonData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") {
+	if stack.Len() < 5 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-4).SumType != "VmStkCell") || (stack.Peek(stack.Len()-5).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetJettonDataResult
@@ -3759,7 +3759,7 @@ func GetKeysData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetKeysData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetKeysData_StormResult
@@ -3792,7 +3792,7 @@ func GetLastCleanTime(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetLastCleanTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLastCleanTimeResult
@@ -3825,7 +3825,7 @@ func GetLastFillUpTime(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetLastFillUpTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLastFillUpTimeResult
@@ -3858,7 +3858,7 @@ func GetLastPositionManagerCode(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetLastPositionManagerCode_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLastPositionManagerCode_StormResult
@@ -3893,7 +3893,7 @@ func GetLazerData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetLazerData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLazerData_StormResult
@@ -3946,7 +3946,7 @@ func GetLiquidationPriceVpi(ctx context.Context, executor Executor, reqAccountID
 }
 
 func DecodeGetLiquidationPriceVpi_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLiquidationPriceVpi_StormResult
@@ -3982,7 +3982,7 @@ func GetLiquidityData(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetLiquidityData_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLiquidityData_BidaskResult
@@ -4036,7 +4036,7 @@ func GetLiquidityDepositAddress(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetLiquidityDepositAddress_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLiquidityDepositAddress_DedustResult
@@ -4096,7 +4096,7 @@ func GetLiquidityDepositoryAddress(ctx context.Context, executor Executor, reqAc
 }
 
 func DecodeGetLiquidityDepositoryAddress_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLiquidityDepositoryAddress_CoffeeResult
@@ -4151,7 +4151,7 @@ func GetLiquidityDepositoryAddressNoSettings(ctx context.Context, executor Execu
 }
 
 func DecodeGetLiquidityDepositoryAddressNoSettings_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLiquidityDepositoryAddressNoSettings_CoffeeResult
@@ -4189,7 +4189,7 @@ func GetLiquidityInfo(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetLiquidityInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLiquidityInfo_BidaskDammResult
@@ -4225,7 +4225,7 @@ func GetLockerBillData(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetLockerBillDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLockerBillDataResult
@@ -4263,7 +4263,7 @@ func GetLockerData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetLockerDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLockerDataResult
@@ -4301,7 +4301,7 @@ func GetLockupData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetLockupDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLockupDataResult
@@ -4343,7 +4343,7 @@ func GetLpAccountAddress(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetLpAccountAddress_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpAccountAddress_StonfiResult
@@ -4379,7 +4379,7 @@ func GetLpAccountData(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetLpAccountData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpAccountData_StonfiResult
@@ -4414,7 +4414,7 @@ func GetLpData(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetLpData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") || (stack[2].SumType != "VmStkCell") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpData_MegatonResult
@@ -4453,7 +4453,7 @@ func GetLpMiningData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetLpMiningData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpMiningData_MegatonResult
@@ -4486,7 +4486,7 @@ func GetLpMinterAddress(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetLpMinterAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpMinterAddress_StormResult
@@ -4528,7 +4528,7 @@ func GetLpMultitokenWallet(ctx context.Context, executor Executor, reqAccountID 
 }
 
 func DecodeGetLpMultitokenWallet_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpMultitokenWallet_BidaskResult
@@ -4571,7 +4571,7 @@ func GetLpSwapData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetLpSwapData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkSlice") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+	if stack.Len() != 11 || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkSlice") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetLpSwapData_MegatonResult
@@ -4604,7 +4604,7 @@ func GetMasterAddress(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetMasterAddress_CoffeeStakingVaultResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMasterAddress_CoffeeStakingVaultResult
@@ -4649,7 +4649,7 @@ func GetMember(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetMember_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() < 4 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMember_WhalesNominatorResult
@@ -4682,7 +4682,7 @@ func GetMembersRaw(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetMembersRaw_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMembersRaw_WhalesNominatorResult
@@ -4720,7 +4720,7 @@ func GetMinFees(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetMinFees_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMinFees_StormResult
@@ -4758,7 +4758,7 @@ func GetMiningData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetMiningData_MegatonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMiningData_MegatonResult
@@ -4794,7 +4794,7 @@ func GetMultisigData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetMultisigDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell" && stack[3].SumType != "VmStkNull") {
+	if stack.Len() < 4 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkCell") || (stack.Peek(stack.Len()-4).SumType != "VmStkCell" && stack.Peek(stack.Len()-4).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetMultisigDataResult
@@ -4827,7 +4827,7 @@ func GetNextAdminAddress(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetNextAdminAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNextAdminAddressResult
@@ -4862,7 +4862,7 @@ func GetNextProofInfo(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetNextProofInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() < 3 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNextProofInfoResult
@@ -4901,7 +4901,7 @@ func GetNftAddressByIndex(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeGetNftAddressByIndexResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftAddressByIndexResult
@@ -4935,7 +4935,7 @@ func GetNftApiInfo(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetNftApiInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell") {
+	if stack.Len() < 2 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftApiInfoResult
@@ -4979,7 +4979,7 @@ func GetNftContent(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetNftContentResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftContentResult
@@ -5016,7 +5016,7 @@ func GetNftData(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetNftDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") {
+	if stack.Len() < 5 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-4).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-5).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNftDataResult
@@ -5057,7 +5057,7 @@ func GetNominatorData(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetNominatorDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() < 3 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetNominatorDataResult
@@ -5096,7 +5096,7 @@ func GetOracleData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetOracleData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkCell") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetOracleData_StormResult
@@ -5135,7 +5135,7 @@ func GetOrderAddress(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetOrderAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetOrderAddressResult
@@ -5168,7 +5168,7 @@ func GetOrderAmount(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetOrderAmount_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetOrderAmount_MoonResult
@@ -5209,7 +5209,7 @@ func GetOrderData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetOrderDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkCell") {
+	if stack.Len() < 9 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkCell") || (stack.Peek(stack.Len()-6).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-6).SumType != "VmStkInt") || (stack.Peek(stack.Len()-7).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-7).SumType != "VmStkInt") || (stack.Peek(stack.Len()-8).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-8).SumType != "VmStkInt") || (stack.Peek(stack.Len()-9).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetOrderDataResult
@@ -5242,7 +5242,7 @@ func GetOwnerAddress(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetOwnerAddress_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetOwnerAddress_CocoonResult
@@ -5281,7 +5281,7 @@ func GetParams(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetParams_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetParams_WhalesNominatorResult
@@ -5314,7 +5314,7 @@ func GetPauseTime(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetPauseTime_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPauseTime_StormResult
@@ -5353,7 +5353,7 @@ func GetPaymentInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetPaymentInfo_SubscriptionV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPaymentInfo_SubscriptionV2Result
@@ -5392,7 +5392,7 @@ func GetPegAdjustCost(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetPegAdjustCost_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPegAdjustCost_StormResult
@@ -5434,7 +5434,7 @@ func GetPipe(ctx context.Context, executor Executor, reqAccountID ton.AccountID,
 }
 
 func DecodeGetPipe_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPipe_MoonResult
@@ -5470,7 +5470,7 @@ func GetPluginList(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetPluginListResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTuple" && stack[0].SumType != "VmStkNull") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTuple" && stack.Peek(stack.Len()-1).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPluginListResult
@@ -5503,7 +5503,7 @@ func GetPool(ctx context.Context, executor Executor, reqAccountID ton.AccountID)
 }
 
 func DecodeGetPool_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPool_MoonResult
@@ -5536,7 +5536,7 @@ func GetPoolAddr(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetPoolAddr_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolAddr_BidaskResult
@@ -5583,7 +5583,7 @@ func GetPoolAddress(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetPoolAddress_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolAddress_StonfiResult
@@ -5633,7 +5633,7 @@ func GetPoolAddressNoSettings(ctx context.Context, executor Executor, reqAccount
 }
 
 func DecodeGetPoolAddressNoSettings_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolAddressNoSettings_CoffeeResult
@@ -5693,7 +5693,7 @@ func GetPoolCreatorAddress(ctx context.Context, executor Executor, reqAccountID 
 }
 
 func DecodeGetPoolCreatorAddress_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolCreatorAddress_CoffeeResult
@@ -5748,7 +5748,7 @@ func GetPoolCreatorAddressNoSettings(ctx context.Context, executor Executor, req
 }
 
 func DecodeGetPoolCreatorAddressNoSettings_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolCreatorAddressNoSettings_CoffeeResult
@@ -5920,7 +5920,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetPoolData_AffluentResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 16 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice" && stack[2].SumType != "VmStkNull") || (stack[3].SumType != "VmStkSlice" && stack[3].SumType != "VmStkNull") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice" && stack[5].SumType != "VmStkNull") || (stack[6].SumType != "VmStkCell" && stack[6].SumType != "VmStkNull") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTuple" && stack[13].SumType != "VmStkNull") || (stack[14].SumType != "VmStkCell" && stack[14].SumType != "VmStkNull") || (stack[15].SumType != "VmStkCell") {
+	if stack.Len() != 16 || (stack.Peek(15).SumType != "VmStkTinyInt" && stack.Peek(15).SumType != "VmStkInt") || (stack.Peek(14).SumType != "VmStkTinyInt" && stack.Peek(14).SumType != "VmStkInt") || (stack.Peek(13).SumType != "VmStkSlice" && stack.Peek(13).SumType != "VmStkNull") || (stack.Peek(12).SumType != "VmStkSlice" && stack.Peek(12).SumType != "VmStkNull") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkSlice" && stack.Peek(10).SumType != "VmStkNull") || (stack.Peek(9).SumType != "VmStkCell" && stack.Peek(9).SumType != "VmStkNull") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTuple" && stack.Peek(2).SumType != "VmStkNull") || (stack.Peek(1).SumType != "VmStkCell" && stack.Peek(1).SumType != "VmStkNull") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_AffluentResult
@@ -5929,7 +5929,7 @@ func DecodeGetPoolData_AffluentResult(stack tlb.VmStack) (resultType string, res
 }
 
 func DecodeGetPoolData_DaolamaResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_DaolamaResult
@@ -5938,7 +5938,7 @@ func DecodeGetPoolData_DaolamaResult(stack tlb.VmStack) (resultType string, resu
 }
 
 func DecodeGetPoolData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 10 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+	if stack.Len() != 10 || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_StonfiResult
@@ -5947,7 +5947,7 @@ func DecodeGetPoolData_StonfiResult(stack tlb.VmStack) (resultType string, resul
 }
 
 func DecodeGetPoolData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 12 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") {
+	if stack.Len() != 12 || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkSlice") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_StonfiV2Result
@@ -5956,7 +5956,7 @@ func DecodeGetPoolData_StonfiV2Result(stack tlb.VmStack) (resultType string, res
 }
 
 func DecodeGetPoolData_StonfiV2StableswapResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 13 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") {
+	if stack.Len() != 13 || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkSlice") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_StonfiV2StableswapResult
@@ -5965,7 +5965,7 @@ func DecodeGetPoolData_StonfiV2StableswapResult(stack tlb.VmStack) (resultType s
 }
 
 func DecodeGetPoolData_StonfiV2WeightedStableswapResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 16 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkSlice") {
+	if stack.Len() != 16 || (stack.Peek(15).SumType != "VmStkTinyInt" && stack.Peek(15).SumType != "VmStkInt") || (stack.Peek(14).SumType != "VmStkSlice") || (stack.Peek(13).SumType != "VmStkTinyInt" && stack.Peek(13).SumType != "VmStkInt") || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkSlice") || (stack.Peek(9).SumType != "VmStkSlice") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_StonfiV2WeightedStableswapResult
@@ -5974,7 +5974,7 @@ func DecodeGetPoolData_StonfiV2WeightedStableswapResult(stack tlb.VmStack) (resu
 }
 
 func DecodeGetPoolData_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkCell" && stack[4].SumType != "VmStkNull") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+	if stack.Len() != 11 || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkSlice") || (stack.Peek(8).SumType != "VmStkSlice") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkCell" && stack.Peek(6).SumType != "VmStkNull") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_CoffeeResult
@@ -5983,7 +5983,7 @@ func DecodeGetPoolData_CoffeeResult(stack tlb.VmStack) (resultType string, resul
 }
 
 func DecodeGetPoolData_TfResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 17 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkCell" && stack[9].SumType != "VmStkNull") || (stack[10].SumType != "VmStkCell" && stack[10].SumType != "VmStkNull") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkTinyInt" && stack[12].SumType != "VmStkInt") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTuple" && stack[16].SumType != "VmStkNull") {
+	if stack.Len() < 17 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-5).SumType != "VmStkInt") || (stack.Peek(stack.Len()-6).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-6).SumType != "VmStkInt") || (stack.Peek(stack.Len()-7).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-7).SumType != "VmStkInt") || (stack.Peek(stack.Len()-8).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-8).SumType != "VmStkInt") || (stack.Peek(stack.Len()-9).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-9).SumType != "VmStkInt") || (stack.Peek(stack.Len()-10).SumType != "VmStkCell" && stack.Peek(stack.Len()-10).SumType != "VmStkNull") || (stack.Peek(stack.Len()-11).SumType != "VmStkCell" && stack.Peek(stack.Len()-11).SumType != "VmStkNull") || (stack.Peek(stack.Len()-12).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-12).SumType != "VmStkInt") || (stack.Peek(stack.Len()-13).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-13).SumType != "VmStkInt") || (stack.Peek(stack.Len()-14).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-14).SumType != "VmStkInt") || (stack.Peek(stack.Len()-15).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-15).SumType != "VmStkInt") || (stack.Peek(stack.Len()-16).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-16).SumType != "VmStkInt") || (stack.Peek(stack.Len()-17).SumType != "VmStkTuple" && stack.Peek(stack.Len()-17).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolData_TfResult
@@ -6063,7 +6063,7 @@ func GetPoolFullData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetPoolFullDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 30 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTuple") || (stack[8].SumType != "VmStkTuple") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkSlice" && stack[14].SumType != "VmStkNull") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkSlice" && stack[16].SumType != "VmStkNull") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkSlice" && stack[18].SumType != "VmStkNull") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") || (stack[20].SumType != "VmStkSlice" && stack[20].SumType != "VmStkNull") || (stack[21].SumType != "VmStkTinyInt" && stack[21].SumType != "VmStkInt") || (stack[22].SumType != "VmStkSlice" && stack[22].SumType != "VmStkNull") || (stack[23].SumType != "VmStkSlice" && stack[23].SumType != "VmStkNull") || (stack[24].SumType != "VmStkSlice" && stack[24].SumType != "VmStkNull") || (stack[25].SumType != "VmStkCell") || (stack[26].SumType != "VmStkCell") || (stack[27].SumType != "VmStkCell") || (stack[28].SumType != "VmStkTinyInt" && stack[28].SumType != "VmStkInt") || (stack[29].SumType != "VmStkTinyInt" && stack[29].SumType != "VmStkInt") {
+	if stack.Len() != 30 || (stack.Peek(29).SumType != "VmStkTinyInt" && stack.Peek(29).SumType != "VmStkInt") || (stack.Peek(28).SumType != "VmStkTinyInt" && stack.Peek(28).SumType != "VmStkInt") || (stack.Peek(27).SumType != "VmStkTinyInt" && stack.Peek(27).SumType != "VmStkInt") || (stack.Peek(26).SumType != "VmStkTinyInt" && stack.Peek(26).SumType != "VmStkInt") || (stack.Peek(25).SumType != "VmStkTinyInt" && stack.Peek(25).SumType != "VmStkInt") || (stack.Peek(24).SumType != "VmStkTinyInt" && stack.Peek(24).SumType != "VmStkInt") || (stack.Peek(23).SumType != "VmStkTinyInt" && stack.Peek(23).SumType != "VmStkInt") || (stack.Peek(22).SumType != "VmStkTuple") || (stack.Peek(21).SumType != "VmStkTuple") || (stack.Peek(20).SumType != "VmStkTinyInt" && stack.Peek(20).SumType != "VmStkInt") || (stack.Peek(19).SumType != "VmStkTinyInt" && stack.Peek(19).SumType != "VmStkInt") || (stack.Peek(18).SumType != "VmStkTinyInt" && stack.Peek(18).SumType != "VmStkInt") || (stack.Peek(17).SumType != "VmStkSlice") || (stack.Peek(16).SumType != "VmStkTinyInt" && stack.Peek(16).SumType != "VmStkInt") || (stack.Peek(15).SumType != "VmStkSlice" && stack.Peek(15).SumType != "VmStkNull") || (stack.Peek(14).SumType != "VmStkTinyInt" && stack.Peek(14).SumType != "VmStkInt") || (stack.Peek(13).SumType != "VmStkSlice" && stack.Peek(13).SumType != "VmStkNull") || (stack.Peek(12).SumType != "VmStkTinyInt" && stack.Peek(12).SumType != "VmStkInt") || (stack.Peek(11).SumType != "VmStkSlice" && stack.Peek(11).SumType != "VmStkNull") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkSlice" && stack.Peek(9).SumType != "VmStkNull") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkSlice" && stack.Peek(7).SumType != "VmStkNull") || (stack.Peek(6).SumType != "VmStkSlice" && stack.Peek(6).SumType != "VmStkNull") || (stack.Peek(5).SumType != "VmStkSlice" && stack.Peek(5).SumType != "VmStkNull") || (stack.Peek(4).SumType != "VmStkCell") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolFullDataResult
@@ -6105,7 +6105,7 @@ func GetPoolInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetPoolInfo_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolInfo_BidaskResult
@@ -6114,7 +6114,7 @@ func DecodeGetPoolInfo_BidaskResult(stack tlb.VmStack) (resultType string, resul
 }
 
 func DecodeGetPoolInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolInfo_BidaskDammResult
@@ -6151,7 +6151,7 @@ func GetPoolStatus(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetPoolStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolStatusResult
@@ -6184,7 +6184,7 @@ func GetPoolType(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetPoolType_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPoolType_StonfiV2Result
@@ -6218,7 +6218,7 @@ func GetPosition(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetPosition_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkCell" && stack[1].SumType != "VmStkNull") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell" && stack.Peek(0).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPosition_StormResult
@@ -6265,7 +6265,7 @@ func GetPositionAddress(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeGetPositionAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPositionAddress_StormResult
@@ -6298,7 +6298,7 @@ func GetPositionManagerAddress(ctx context.Context, executor Executor, reqAccoun
 }
 
 func DecodeGetPositionManagerAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPositionManagerAddress_StormResult
@@ -6338,7 +6338,7 @@ func GetPositionManagerContractData(ctx context.Context, executor Executor, reqA
 }
 
 func DecodeGetPositionManagerContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 8 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") || (stack[7].SumType != "VmStkCell") {
+	if stack.Len() != 8 || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkCell") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPositionManagerContractData_StormResult
@@ -6371,7 +6371,7 @@ func GetPositionManagerData(ctx context.Context, executor Executor, reqAccountID
 }
 
 func DecodeGetPositionManagerData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPositionManagerData_StormResult
@@ -6407,7 +6407,7 @@ func GetPowParams(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetPowParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() < 4 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPowParamsResult
@@ -6446,7 +6446,7 @@ func GetPremium(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetPremium_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPremium_StormResult
@@ -6479,7 +6479,7 @@ func GetProxy(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 }
 
 func DecodeGetProxy_WhalesNominatorResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetProxy_WhalesNominatorResult
@@ -6512,7 +6512,7 @@ func GetPublicKey(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetPublicKeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPublicKeyResult
@@ -6545,7 +6545,7 @@ func GetReferralCollectionAddress(ctx context.Context, executor Executor, reqAcc
 }
 
 func DecodeGetReferralCollectionAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReferralCollectionAddress_StormResult
@@ -6581,7 +6581,7 @@ func GetReferralData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetReferralData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkCell") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReferralData_StormResult
@@ -6620,7 +6620,7 @@ func GetReferralItemAddr(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetReferralItemAddr_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReferralItemAddr_StormResult
@@ -6653,7 +6653,7 @@ func GetReferralVaultsWhitelist(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetReferralVaultsWhitelist_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReferralVaultsWhitelist_StormResult
@@ -6707,7 +6707,7 @@ func GetRemainMarginWithFundingPayment(ctx context.Context, executor Executor, r
 }
 
 func DecodeGetRemainMarginWithFundingPayment_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 9 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") {
+	if stack.Len() != 9 || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRemainMarginWithFundingPayment_StormResult
@@ -6748,7 +6748,7 @@ func GetReserves(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetReserves_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReserves_DedustResult
@@ -6757,7 +6757,7 @@ func DecodeGetReserves_DedustResult(stack tlb.VmStack) (resultType string, resul
 }
 
 func DecodeGetReserves_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetReserves_MoonResult
@@ -6790,7 +6790,7 @@ func GetRevokedTime(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetRevokedTimeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRevokedTimeResult
@@ -6829,7 +6829,7 @@ func GetRfqAddress(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetRfqAddress_AffluentResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRfqAddress_AffluentResult
@@ -6862,7 +6862,7 @@ func GetRootPubkey(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetRootPubkeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRootPubkeyResult
@@ -6912,7 +6912,7 @@ func GetRouterData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetRouterData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRouterData_StonfiResult
@@ -6921,7 +6921,7 @@ func DecodeGetRouterData_StonfiResult(stack tlb.VmStack) (resultType string, res
 }
 
 func DecodeGetRouterData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 9 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") || (stack[7].SumType != "VmStkCell") || (stack[8].SumType != "VmStkCell") {
+	if stack.Len() != 9 || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkCell") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRouterData_StonfiV2Result
@@ -6956,7 +6956,7 @@ func GetRouterVersion(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetRouterVersion_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetRouterVersion_StonfiV2Result
@@ -7032,7 +7032,7 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSaleData_BasicResult
@@ -7041,7 +7041,7 @@ func DecodeGetSaleData_BasicResult(stack tlb.VmStack) (resultType string, result
 }
 
 func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+	if stack.Len() != 11 || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSaleData_GetgemsResult
@@ -7050,7 +7050,7 @@ func DecodeGetSaleData_GetgemsResult(stack tlb.VmStack) (resultType string, resu
 }
 
 func DecodeGetSaleData_GetgemsAuctionResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 20 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkTinyInt" && stack[11].SumType != "VmStkInt") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkTinyInt" && stack[13].SumType != "VmStkInt") || (stack[14].SumType != "VmStkTinyInt" && stack[14].SumType != "VmStkInt") || (stack[15].SumType != "VmStkTinyInt" && stack[15].SumType != "VmStkInt") || (stack[16].SumType != "VmStkTinyInt" && stack[16].SumType != "VmStkInt") || (stack[17].SumType != "VmStkTinyInt" && stack[17].SumType != "VmStkInt") || (stack[18].SumType != "VmStkTinyInt" && stack[18].SumType != "VmStkInt") || (stack[19].SumType != "VmStkTinyInt" && stack[19].SumType != "VmStkInt") {
+	if stack.Len() != 20 || (stack.Peek(19).SumType != "VmStkTinyInt" && stack.Peek(19).SumType != "VmStkInt") || (stack.Peek(18).SumType != "VmStkTinyInt" && stack.Peek(18).SumType != "VmStkInt") || (stack.Peek(17).SumType != "VmStkTinyInt" && stack.Peek(17).SumType != "VmStkInt") || (stack.Peek(16).SumType != "VmStkSlice") || (stack.Peek(15).SumType != "VmStkSlice") || (stack.Peek(14).SumType != "VmStkSlice") || (stack.Peek(13).SumType != "VmStkTinyInt" && stack.Peek(13).SumType != "VmStkInt") || (stack.Peek(12).SumType != "VmStkSlice") || (stack.Peek(11).SumType != "VmStkTinyInt" && stack.Peek(11).SumType != "VmStkInt") || (stack.Peek(10).SumType != "VmStkSlice") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSaleData_GetgemsAuctionResult
@@ -7083,7 +7083,7 @@ func GetSeedPubkey(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetSeedPubkeyResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSeedPubkeyResult
@@ -7121,7 +7121,7 @@ func GetSettlementOracleData(ctx context.Context, executor Executor, reqAccountI
 }
 
 func DecodeGetSettlementOracleData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSettlementOracleData_StormResult
@@ -7154,7 +7154,7 @@ func GetSpotPrice(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetSpotPrice_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSpotPrice_StormResult
@@ -7187,7 +7187,7 @@ func GetSqrtP(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 }
 
 func DecodeGetSqrtP_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSqrtP_BidaskResult
@@ -7226,7 +7226,7 @@ func GetStakingStatus(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetStakingStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStakingStatusResult
@@ -7259,7 +7259,7 @@ func GetStartTradeTime(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetStartTradeTime_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStartTradeTime_BidaskDammResult
@@ -7296,7 +7296,7 @@ func GetStatus(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeGetStatusResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStatusResult
@@ -7305,7 +7305,7 @@ func DecodeGetStatusResult(stack tlb.VmStack) (resultType string, resultAny any,
 }
 
 func DecodeGetStatus_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStatus_MoonResult
@@ -7353,7 +7353,7 @@ func GetStorageContractAddress(ctx context.Context, executor Executor, reqAccoun
 }
 
 func DecodeGetStorageContractAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStorageContractAddressResult
@@ -7396,7 +7396,7 @@ func GetStorageContractData(ctx context.Context, executor Executor, reqAccountID
 }
 
 func DecodeGetStorageContractDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkSlice") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") {
+	if stack.Len() < 11 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-5).SumType != "VmStkInt") || (stack.Peek(stack.Len()-6).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-6).SumType != "VmStkInt") || (stack.Peek(stack.Len()-7).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-7).SumType != "VmStkInt") || (stack.Peek(stack.Len()-8).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-8).SumType != "VmStkInt") || (stack.Peek(stack.Len()-9).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-9).SumType != "VmStkInt") || (stack.Peek(stack.Len()-10).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-11).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-11).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStorageContractDataResult
@@ -7436,7 +7436,7 @@ func GetStorageData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetStorageData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 8 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell" && stack[3].SumType != "VmStkNull") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell" && stack[6].SumType != "VmStkNull") || (stack[7].SumType != "VmStkCell") {
+	if stack.Len() != 8 || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkCell" && stack.Peek(4).SumType != "VmStkNull") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell" && stack.Peek(1).SumType != "VmStkNull") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStorageData_StormResult
@@ -7473,7 +7473,7 @@ func GetStorageParams(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetStorageParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() < 5 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-5).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStorageParamsResult
@@ -7532,7 +7532,7 @@ func GetStoredData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetStoredData_CoffeeStakingMasterResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 8 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") || (stack[7].SumType != "VmStkCell") {
+	if stack.Len() != 8 || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStoredData_CoffeeStakingMasterResult
@@ -7541,7 +7541,7 @@ func DecodeGetStoredData_CoffeeStakingMasterResult(stack tlb.VmStack) (resultTyp
 }
 
 func DecodeGetStoredData_CoffeeStakingVaultResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkCell") || (stack[3].SumType != "VmStkCell") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStoredData_CoffeeStakingVaultResult
@@ -7550,7 +7550,7 @@ func DecodeGetStoredData_CoffeeStakingVaultResult(stack tlb.VmStack) (resultType
 }
 
 func DecodeGetStoredData_CoffeeStakingItemResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkCell") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetStoredData_CoffeeStakingItemResult
@@ -7600,7 +7600,7 @@ func GetSubscriptionData(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetSubscriptionDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 10 || (stack[0].SumType != "VmStkTuple") || (stack[1].SumType != "VmStkTuple") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") {
+	if stack.Len() < 10 || (stack.Peek(stack.Len()-1).SumType != "VmStkTuple") || (stack.Peek(stack.Len()-2).SumType != "VmStkTuple") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-5).SumType != "VmStkInt") || (stack.Peek(stack.Len()-6).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-6).SumType != "VmStkInt") || (stack.Peek(stack.Len()-7).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-7).SumType != "VmStkInt") || (stack.Peek(stack.Len()-8).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-8).SumType != "VmStkInt") || (stack.Peek(stack.Len()-9).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-9).SumType != "VmStkInt") || (stack.Peek(stack.Len()-10).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-10).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubscriptionDataResult
@@ -7639,7 +7639,7 @@ func GetSubscriptionInfo(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetSubscriptionInfo_V2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 7 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkSlice") || (stack[5].SumType != "VmStkCell") || (stack[6].SumType != "VmStkCell") {
+	if stack.Len() != 7 || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubscriptionInfo_V2Result
@@ -7672,7 +7672,7 @@ func GetSubwalletId(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetSubwalletIdResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetSubwalletIdResult
@@ -7706,7 +7706,7 @@ func GetTargetBalances(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetTargetBalances_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTargetBalances_DedustResult
@@ -7744,7 +7744,7 @@ func GetTelemintAuctionConfig(ctx context.Context, executor Executor, reqAccount
 }
 
 func DecodeGetTelemintAuctionConfigResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 6 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") {
+	if stack.Len() != 6 || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTelemintAuctionConfigResult
@@ -7781,7 +7781,7 @@ func GetTelemintAuctionState(ctx context.Context, executor Executor, reqAccountI
 }
 
 func DecodeGetTelemintAuctionStateResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkSlice") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTelemintAuctionStateResult
@@ -7814,7 +7814,7 @@ func GetTelemintTokenName(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeGetTelemintTokenNameResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTelemintTokenNameResult
@@ -7847,7 +7847,7 @@ func GetTerminalAmmPrice(ctx context.Context, executor Executor, reqAccountID to
 }
 
 func DecodeGetTerminalAmmPrice_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTerminalAmmPrice_StormResult
@@ -7880,7 +7880,7 @@ func GetTimeout(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetTimeoutResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTimeoutResult
@@ -7913,7 +7913,7 @@ func GetTorrentHash(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetTorrentHashResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTorrentHashResult
@@ -7947,7 +7947,7 @@ func GetTradeFee(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetTradeFee_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetTradeFee_DedustResult
@@ -7983,7 +7983,7 @@ func GetUnlocksInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetUnlocksInfoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkCell") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetUnlocksInfoResult
@@ -8025,7 +8025,7 @@ func GetUserBinAssets(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetUserBinAssets_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() != 2 || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetUserBinAssets_BidaskResult
@@ -8061,7 +8061,7 @@ func GetUserFeesInfo(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetUserFeesInfo_BidaskDammResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetUserFeesInfo_BidaskDammResult
@@ -8094,7 +8094,7 @@ func GetUserPublicKeys(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeGetUserPublicKeys_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetUserPublicKeys_StormResult
@@ -8140,7 +8140,7 @@ func GetValidateSignatures(ctx context.Context, executor Executor, reqAccountID 
 }
 
 func DecodeGetValidateSignatures_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 5 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || ((stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") && stack[2].SumType != "VmStkNull") || ((stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") && stack[3].SumType != "VmStkNull") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") {
+	if stack.Len() != 5 || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || ((stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") && stack.Peek(2).SumType != "VmStkNull") || ((stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") && stack.Peek(1).SumType != "VmStkNull") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetValidateSignatures_StormResult
@@ -8186,7 +8186,7 @@ func GetValidatorControllerData(ctx context.Context, executor Executor, reqAccou
 }
 
 func DecodeGetValidatorControllerDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 14 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") || (stack[9].SumType != "VmStkTinyInt" && stack[9].SumType != "VmStkInt") || (stack[10].SumType != "VmStkTinyInt" && stack[10].SumType != "VmStkInt") || (stack[11].SumType != "VmStkSlice") || (stack[12].SumType != "VmStkSlice") || (stack[13].SumType != "VmStkSlice") {
+	if stack.Len() < 14 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") || (stack.Peek(stack.Len()-4).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-4).SumType != "VmStkInt") || (stack.Peek(stack.Len()-5).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-5).SumType != "VmStkInt") || (stack.Peek(stack.Len()-6).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-6).SumType != "VmStkInt") || (stack.Peek(stack.Len()-7).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-7).SumType != "VmStkInt") || (stack.Peek(stack.Len()-8).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-8).SumType != "VmStkInt") || (stack.Peek(stack.Len()-9).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-9).SumType != "VmStkInt") || (stack.Peek(stack.Len()-10).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-10).SumType != "VmStkInt") || (stack.Peek(stack.Len()-11).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-11).SumType != "VmStkInt") || (stack.Peek(stack.Len()-12).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-13).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-14).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetValidatorControllerDataResult
@@ -8225,7 +8225,7 @@ func GetVammAddress(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetVammAddress_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVammAddress_StormResult
@@ -8258,7 +8258,7 @@ func GetVammType(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 }
 
 func DecodeGetVammType_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVammType_StormResult
@@ -8300,7 +8300,7 @@ func GetVaultAddress(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetVaultAddress_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultAddress_DedustResult
@@ -8342,7 +8342,7 @@ func GetVaultBalance(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetVaultBalance_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultBalance_StormResult
@@ -8375,7 +8375,7 @@ func GetVaultContractData(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeGetVaultContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultContractData_StormResult
@@ -8542,7 +8542,7 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetVaultData_AffluentLendingVaultResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 11 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkSlice") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkSlice") || (stack[8].SumType != "VmStkTuple" && stack[8].SumType != "VmStkNull") || (stack[9].SumType != "VmStkCell") || (stack[10].SumType != "VmStkCell") {
+	if stack.Len() != 11 || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkSlice") || (stack.Peek(8).SumType != "VmStkSlice") || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkTuple" && stack.Peek(2).SumType != "VmStkNull") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultData_AffluentLendingVaultResult
@@ -8551,7 +8551,7 @@ func DecodeGetVaultData_AffluentLendingVaultResult(stack tlb.VmStack) (resultTyp
 }
 
 func DecodeGetVaultData_AffluentMultiplyVaultResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTuple") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTuple") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultData_AffluentMultiplyVaultResult
@@ -8560,7 +8560,7 @@ func DecodeGetVaultData_AffluentMultiplyVaultResult(stack tlb.VmStack) (resultTy
 }
 
 func DecodeGetVaultData_AffluentMultiplyVaultV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTuple") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTuple") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultData_AffluentMultiplyVaultV2Result
@@ -8569,7 +8569,7 @@ func DecodeGetVaultData_AffluentMultiplyVaultV2Result(stack tlb.VmStack) (result
 }
 
 func DecodeGetVaultData_StonfiV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 4 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultData_StonfiV2Result
@@ -8578,7 +8578,7 @@ func DecodeGetVaultData_StonfiV2Result(stack tlb.VmStack) (resultType string, re
 }
 
 func DecodeGetVaultData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 9 || (stack[0].SumType != "VmStkSlice") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkTinyInt" && stack[5].SumType != "VmStkInt") || (stack[6].SumType != "VmStkTinyInt" && stack[6].SumType != "VmStkInt") || (stack[7].SumType != "VmStkTinyInt" && stack[7].SumType != "VmStkInt") || (stack[8].SumType != "VmStkTinyInt" && stack[8].SumType != "VmStkInt") {
+	if stack.Len() != 9 || (stack.Peek(8).SumType != "VmStkSlice") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultData_StormResult
@@ -8611,7 +8611,7 @@ func GetVaultType(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetVaultType_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultType_StormResult
@@ -8644,7 +8644,7 @@ func GetVaultWhitelistedAddresses(ctx context.Context, executor Executor, reqAcc
 }
 
 func DecodeGetVaultWhitelistedAddresses_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVaultWhitelistedAddresses_StormResult
@@ -8677,7 +8677,7 @@ func GetVersion(ctx context.Context, executor Executor, reqAccountID ton.Account
 }
 
 func DecodeGetVersion_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVersion_StormResult
@@ -8723,7 +8723,7 @@ func GetVestingData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeGetVestingData_MoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVestingData_MoonResult
@@ -8732,7 +8732,7 @@ func DecodeGetVestingData_MoonResult(stack tlb.VmStack) (resultType string, resu
 }
 
 func DecodeGetVestingDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 8 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") || (stack[3].SumType != "VmStkTinyInt" && stack[3].SumType != "VmStkInt") || (stack[4].SumType != "VmStkTinyInt" && stack[4].SumType != "VmStkInt") || (stack[5].SumType != "VmStkSlice") || (stack[6].SumType != "VmStkSlice") || (stack[7].SumType != "VmStkCell") {
+	if stack.Len() != 8 || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkSlice") || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetVestingDataResult
@@ -8765,7 +8765,7 @@ func GetWalletAddr(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetWalletAddrResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetWalletAddrResult
@@ -8807,7 +8807,7 @@ func GetWalletAddress(ctx context.Context, executor Executor, reqAccountID ton.A
 }
 
 func DecodeGetWalletAddressResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetWalletAddressResult
@@ -8843,7 +8843,7 @@ func GetWalletData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetWalletDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 4 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkSlice") || (stack[2].SumType != "VmStkSlice") || (stack[3].SumType != "VmStkCell") {
+	if stack.Len() < 4 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-3).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-4).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetWalletDataResult
@@ -8878,7 +8878,7 @@ func GetWalletParams(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetWalletParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() < 3 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-3).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetWalletParamsResult
@@ -8915,7 +8915,7 @@ func IsActive(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 }
 
 func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsActiveResult
@@ -8924,7 +8924,7 @@ func DecodeIsActiveResult(stack tlb.VmStack) (resultType string, resultAny any, 
 }
 
 func DecodeIsActive_CoffeeResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsActive_CoffeeResult
@@ -8957,7 +8957,7 @@ func IsClaimed(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeIsClaimedResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsClaimedResult
@@ -8998,7 +8998,7 @@ func IsPluginInstalled(ctx context.Context, executor Executor, reqAccountID ton.
 }
 
 func DecodeIsPluginInstalledResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsPluginInstalledResult
@@ -9031,7 +9031,7 @@ func IsSignatureAllowed(ctx context.Context, executor Executor, reqAccountID ton
 }
 
 func DecodeIsSignatureAllowedResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsSignatureAllowedResult
@@ -9064,7 +9064,7 @@ func IsStable(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 }
 
 func DecodeIsStable_DedustResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsStable_DedustResult
@@ -9097,7 +9097,7 @@ func IsStrategyVault(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeIsStrategyVault_AffluentResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result IsStrategyVault_AffluentResult
@@ -9131,7 +9131,7 @@ func JettonWalletLockData(ctx context.Context, executor Executor, reqAccountID t
 }
 
 func DecodeJettonWalletLockDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 2 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") {
+	if stack.Len() < 2 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result JettonWalletLockDataResult
@@ -9164,7 +9164,7 @@ func LastProxySeqno(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeLastProxySeqno_CocoonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result LastProxySeqno_CocoonResult
@@ -9202,7 +9202,7 @@ func ListNominators(ctx context.Context, executor Executor, reqAccountID ton.Acc
 }
 
 func DecodeListNominatorsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTuple" && stack[0].SumType != "VmStkNull") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTuple" && stack.Peek(stack.Len()-1).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result ListNominatorsResult
@@ -9238,7 +9238,7 @@ func ListVotes(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeListVotesResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 1 || (stack[0].SumType != "VmStkTuple" && stack[0].SumType != "VmStkNull") {
+	if stack.Len() < 1 || (stack.Peek(stack.Len()-1).SumType != "VmStkTuple" && stack.Peek(stack.Len()-1).SumType != "VmStkNull") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result ListVotesResult
@@ -9283,7 +9283,7 @@ func Processed(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeProcessed_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkTinyInt" && stack[2].SumType != "VmStkInt") {
+	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result Processed_StormResult
@@ -9318,7 +9318,7 @@ func RoyaltyParams(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeRoyaltyParamsResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) < 3 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") || (stack[1].SumType != "VmStkTinyInt" && stack[1].SumType != "VmStkInt") || (stack[2].SumType != "VmStkSlice") {
+	if stack.Len() < 3 || (stack.Peek(stack.Len()-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-2).SumType != "VmStkInt") || (stack.Peek(stack.Len()-3).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result RoyaltyParamsResult
@@ -9351,7 +9351,7 @@ func Seqno(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (
 }
 
 func DecodeSeqnoResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkTinyInt" && stack[0].SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result SeqnoResult
@@ -9384,7 +9384,7 @@ func Whoami(ctx context.Context, executor Executor, reqAccountID ton.AccountID) 
 }
 
 func DecodeWhoami_BidaskResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if len(stack) != 1 || (stack[0].SumType != "VmStkSlice") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkSlice") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result Whoami_BidaskResult

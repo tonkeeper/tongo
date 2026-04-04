@@ -1,9 +1,10 @@
 package precompiled
 
 import (
+	"math/big"
+
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
-	"math/big"
 )
 
 func nftV1getNftData(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
@@ -17,51 +18,64 @@ func nftV1getNftData(data *boc.Cell, args tlb.VmStack) (tlb.VmStack, error) {
 	}
 	err := tlb.Unmarshal(data, &body)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	var result = make([]tlb.VmStackValue, 5)
-	result[0].SumType = "VmStkTinyInt"
+
+	// result[1] - index value
+	var indexVal tlb.VmStackValue
 	if int64(body.Index) < 0 {
 		var b big.Int
 		b.SetUint64(body.Index)
-		result[1].SumType = "VmStkInt"
-		result[1].VmStkInt = tlb.Int257(b)
+		indexVal.SumType = "VmStkInt"
+		indexVal.VmStkInt = tlb.Int257(b)
 	} else {
-		result[1].SumType = "VmStkTinyInt"
-		result[1].VmStkTinyInt = int64(body.Index)
+		indexVal.SumType = "VmStkTinyInt"
+		indexVal.VmStkTinyInt = int64(body.Index)
 	}
+
+	// result[2] - collection slice
 	collectionCells := boc.NewCell()
 	err = tlb.Marshal(collectionCells, body.Collection)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
-	result[2], err = tlb.CellToVmCellSlice(collectionCells)
+	collectionSlice, err := tlb.CellToVmCellSlice(collectionCells)
 	if err != nil {
-		return nil, err
+		return tlb.VmStack{}, err
 	}
+
+	// result[0], result[3], result[4] - init flag, owner, data (conditional)
+	var initVal, ownerVal, dataVal tlb.VmStackValue
 	if data.BitsAvailableForRead() > 0 {
 		err = tlb.Unmarshal(data, &body2)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[0].VmStkTinyInt = -1
+		initVal = tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: -1}
 		ownerCell := boc.NewCell()
 		err = tlb.Marshal(ownerCell, body2.Owner)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[3], err = tlb.CellToVmCellSlice(ownerCell)
+		ownerVal, err = tlb.CellToVmCellSlice(ownerCell)
 		if err != nil {
-			return nil, err
+			return tlb.VmStack{}, err
 		}
-		result[4] = tlb.VmStackValue{
+		dataVal = tlb.VmStackValue{
 			SumType:   "VmStkCell",
 			VmStkCell: tlb.Ref[boc.Cell]{Value: body2.Data},
 		}
 	} else {
-		result[0].VmStkTinyInt = 0
-		result[3].SumType = "VmStkNull"
-		result[4].SumType = "VmStkNull"
+		initVal = tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: 0}
+		ownerVal = tlb.VmStackValue{SumType: "VmStkNull"}
+		dataVal = tlb.VmStackValue{SumType: "VmStkNull"}
 	}
+
+	var result tlb.VmStack
+	result.Put(dataVal)
+	result.Put(ownerVal)
+	result.Put(collectionSlice)
+	result.Put(indexVal)
+	result.Put(initVal)
 	return result, nil
 }

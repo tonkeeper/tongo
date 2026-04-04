@@ -110,8 +110,9 @@ func encode(c *boc.Cell, tag string, o any, encoder *Encoder) error {
 			return encodeStruct(c, o, encoder)
 		}
 	case reflect.Pointer:
-		if val.IsNil() && !t.IsOptional {
-			return fmt.Errorf("can't encode empty pointer %v if tlb scheme is not optional", val.Type())
+		if val.IsNil() {
+			zeroVal := reflect.New(val.Type().Elem())
+			return encode(c, tag, zeroVal.Elem().Interface(), encoder)
 		}
 		return encode(c, tag, val.Elem().Interface(), encoder)
 	case reflect.Array:
@@ -146,9 +147,12 @@ func encodeStruct(c *boc.Cell, o any, encoder *Encoder) error {
 func encodeBasicStruct(c *boc.Cell, o any, encoder *Encoder) error {
 	val := reflect.ValueOf(o)
 	for i := 0; i < val.NumField(); i++ {
+		if !val.Type().Field(i).IsExported() {
+			continue
+		}
 		tag := val.Type().Field(i).Tag.Get("tlb")
 		if err := encode(c, tag, val.Field(i).Interface(), encoder); err != nil {
-			return err
+			return fmt.Errorf("field %v.%v: %w", val.Type().Name(), val.Type().Field(i).Name, err)
 		}
 	}
 	return nil
@@ -159,6 +163,20 @@ func encodeSumType(c *boc.Cell, o any, encoder *Encoder) error {
 	name := val.FieldByName("SumType").String()
 
 	if name == "" {
+		// Default to the first non-SumType field (zero variant)
+		for i := 0; i < val.NumField(); i++ {
+			if val.Field(i).Type().Name() == "SumType" {
+				continue
+			}
+			tag := val.Type().Field(i).Tag.Get("tlbSumType")
+			if err := encodeSumTag(c, tag); err != nil {
+				return err
+			}
+			if err := encode(c, "", val.Field(i).Interface(), encoder); err != nil {
+				return err
+			}
+			return nil
+		}
 		return fmt.Errorf("empty SumType value")
 	}
 

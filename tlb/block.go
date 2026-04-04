@@ -116,6 +116,57 @@ func (i *BlockInfo) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
+func (i BlockInfo) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	var header struct {
+		Magic     Magic `tlb:"block_info#9bc7a987"`
+		BlockInfo BlockInfoPart
+	}
+	header.BlockInfo = i.BlockInfoPart
+	if err := encoder.Marshal(c, header); err != nil {
+		return err
+	}
+	if i.Flags&1 == 1 {
+		if i.GenSoftware == nil {
+			return fmt.Errorf("BlockInfo: Flags&1 is set but GenSoftware is nil")
+		}
+		if err := encoder.Marshal(c, *i.GenSoftware); err != nil {
+			return err
+		}
+	}
+	if i.NotMaster {
+		if i.MasterRef == nil {
+			return fmt.Errorf("BlockInfo: NotMaster is set but MasterRef is nil")
+		}
+		ref, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if err := encoder.Marshal(ref, *i.MasterRef); err != nil {
+			return err
+		}
+	}
+	ref, err := c.NewRef()
+	if err != nil {
+		return err
+	}
+	if err := i.PrevRef.MarshalTLB(ref, encoder); err != nil {
+		return err
+	}
+	if i.VertSeqnoIncr {
+		if i.PrevVertRef == nil {
+			return fmt.Errorf("BlockInfo: VertSeqnoIncr is set but PrevVertRef is nil")
+		}
+		ref, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if err := i.PrevVertRef.MarshalTLB(ref, encoder); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GlobalVersion
 // capabilities#c4 version:uint32 capabilities:uint64 = GlobalVersion;
 type GlobalVersion struct {
@@ -191,6 +242,28 @@ func (i *BlkPrevInfo) UnmarshalTLB(c *boc.Cell, isBlks bool, decoder *Decoder) e
 	res.PrevBlkInfo = &struct{ Prev ExtBlkRef }{Prev: prev}
 	*i = res
 	return nil
+}
+
+func (i *BlkPrevInfo) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	switch i.SumType {
+	case "PrevBlkInfo":
+		return encoder.Marshal(c, i.PrevBlkInfo.Prev)
+	case "PrevBlksInfo":
+		c1, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		if err := encoder.Marshal(c1, i.PrevBlksInfo.Prev1); err != nil {
+			return err
+		}
+		c2, err := c.NewRef()
+		if err != nil {
+			return err
+		}
+		return encoder.Marshal(c2, i.PrevBlksInfo.Prev2)
+	default:
+		return fmt.Errorf("invalid BlkPrevInfo SumType: %v", i.SumType)
+	}
 }
 
 // Block
@@ -335,6 +408,73 @@ func (m *ValueFlow) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	err = decoder.Unmarshal(secondGroup, &m.Minted)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m ValueFlow) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	sumType := uint32(m.Magic)
+	if sumType != valueFlowV1 && sumType != valueFlowV2 {
+		return fmt.Errorf("value flow invalid tag: %v", sumType)
+	}
+	err := c.WriteUint(uint64(sumType), 32)
+	if err != nil {
+		return err
+	}
+	firstGroup := boc.NewCell()
+	err = encoder.Marshal(c, m.FeesCollected)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(firstGroup, m.FromPrevBlk)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(firstGroup, m.ToNextBlk)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(firstGroup, m.Imported)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(firstGroup, m.Exported)
+	if err != nil {
+		return err
+	}
+	err = c.AddRef(firstGroup)
+	if err != nil {
+		return err
+	}
+	if sumType == valueFlowV2 {
+		if m.Burned == nil {
+			return fmt.Errorf("ValueFlow V2 must have Burned field set")
+		}
+		err = encoder.Marshal(c, *m.Burned)
+		if err != nil {
+			return err
+		}
+	}
+	secondGroup := boc.NewCell()
+	err = encoder.Marshal(secondGroup, m.FeesImported)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(secondGroup, m.Recovered)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(secondGroup, m.Created)
+	if err != nil {
+		return err
+	}
+	err = encoder.Marshal(secondGroup, m.Minted)
+	if err != nil {
+		return err
+	}
+	err = c.AddRef(secondGroup)
 	if err != nil {
 		return err
 	}

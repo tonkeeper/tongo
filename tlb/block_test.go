@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"reflect"
 	"sort"
 	"testing"
 
@@ -64,18 +65,15 @@ func Test_tlb_Unmarshal(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 
 			inputFilename := path.Join(tc.folder, "block.bin")
-			data, err := os.ReadFile(inputFilename)
+			block, err := readBlock(inputFilename)
 			if err != nil {
-				t.Fatalf("ReadFile() failed: %v", err)
+				t.Fatalf("readBlock() failed: %v", err)
 			}
-			cell, err := boc.DeserializeBoc(data)
-			if err != nil {
-				t.Fatalf("boc.DeserializeBoc() failed: %v", err)
+			if tc.folder == "testdata/block-5" && block.Magic == 0 {
+				t.Fatalf("block magic not set")
 			}
-			var block Block
-			err = Unmarshal(cell[0], &block)
-			if err != nil {
-				t.Fatalf("Unmarshal() failed: %v", err)
+			if tc.folder == "testdata/block-5" {
+				t.Logf("block magic: 0x%x state sumtype: %s", block.Magic, block.StateUpdate.ToRoot.SumType)
 			}
 			accounts := map[string]*AccountBlock{}
 			var txHashes []string
@@ -139,6 +137,201 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_tlb_MarshallingRoundtrip(t *testing.T) {
+	testCases := []struct {
+		folder string
+	}{
+		{folder: "testdata/block-1"},
+		{folder: "testdata/block-2"},
+		{folder: "testdata/block-3"},
+		{folder: "testdata/block-4"},
+		{folder: "testdata/block-5"},
+		{folder: "testdata/block-6"},
+		{folder: "testdata/block-7"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.folder, func(t *testing.T) {
+			inputFilename := path.Join(tc.folder, "block.bin")
+			block, err := readBlock(inputFilename)
+			if err != nil {
+				t.Fatalf("readBlock() failed: %v", err)
+			}
+
+			cell := boc.NewCell()
+			err = Marshal(cell, block)
+			if err != nil {
+				t.Fatalf("Marshal() failed: %v", err)
+			}
+
+			bocData, err := cell.ToBoc()
+			if err != nil {
+				t.Fatalf("ToBoc() failed: %v", err)
+			}
+			cells, err := boc.DeserializeBoc(bocData)
+			if err != nil {
+				t.Fatalf("DeserializeBoc() failed: %v", err)
+			}
+			var decoded Block
+			if err := Unmarshal(cells[0], &decoded); err != nil {
+				dec := NewDecoder().WithDebug()
+				var dbg Block
+				cells[0].ResetCounters()
+				if dbgErr := dec.Unmarshal(cells[0], &dbg); dbgErr != nil {
+					t.Fatalf("Unmarshal() failed: %v", dbgErr)
+				}
+				t.Fatalf("Unmarshal() failed: %v", err)
+			}
+			if !blocksEqual(block, &decoded) {
+				t.Fatalf("block mismatch after marshaling round-trip: %s", describeBlockDiff(block, &decoded))
+			}
+		})
+	}
+}
+
+func describeBlockDiff(a, b *Block) string {
+	switch {
+	case a.Magic != b.Magic:
+		return "Magic differs"
+	case a.GlobalId != b.GlobalId:
+		return "GlobalId differs"
+	case !reflect.DeepEqual(a.Info, b.Info):
+		return "Info differs"
+	case !reflect.DeepEqual(a.ValueFlow, b.ValueFlow):
+		return "ValueFlow differs"
+	case !reflect.DeepEqual(a.StateUpdate, b.StateUpdate):
+		return describeMerkleUpdateDiff("StateUpdate", a.StateUpdate, b.StateUpdate)
+	case !reflect.DeepEqual(a.Extra, b.Extra):
+		return "Extra differs"
+	default:
+		return "unknown difference"
+	}
+}
+
+func describeMerkleUpdateDiff(name string, a, b MerkleUpdate[ShardState]) string {
+	switch {
+	case a.Magic != b.Magic:
+		return fmt.Sprintf("%s magic differs", name)
+	case a.FromHash != b.FromHash:
+		return fmt.Sprintf("%s FromHash differs", name)
+	case a.ToHash != b.ToHash:
+		return fmt.Sprintf("%s ToHash differs", name)
+	case a.FromDepth != b.FromDepth:
+		return fmt.Sprintf("%s FromDepth differs", name)
+	case a.ToDepth != b.ToDepth:
+		return fmt.Sprintf("%s ToDepth differs", name)
+	case !reflect.DeepEqual(a.FromRoot, b.FromRoot):
+		return describeShardStateDiff(fmt.Sprintf("%s.FromRoot", name), a.FromRoot, b.FromRoot)
+	case !reflect.DeepEqual(a.ToRoot, b.ToRoot):
+		return describeShardStateDiff(fmt.Sprintf("%s.ToRoot", name), a.ToRoot, b.ToRoot)
+	default:
+		return fmt.Sprintf("%s unknown difference", name)
+	}
+}
+
+func describeShardStateDiff(name string, a, b ShardState) string {
+	if a.SumType != b.SumType {
+		return fmt.Sprintf("%s sum type differs: %s vs %s", name, a.SumType, b.SumType)
+	}
+	switch a.SumType {
+	case "UnsplitState":
+		return describeShardStateUnsplitDiff(fmt.Sprintf("%s.UnsplitState", name), a.UnsplitState.Value, b.UnsplitState.Value)
+	case "SplitState":
+		switch {
+		case !reflect.DeepEqual(a.SplitState.Left, b.SplitState.Left):
+			return describeShardStateUnsplitDiff(fmt.Sprintf("%s.SplitState.Left", name), a.SplitState.Left, b.SplitState.Left)
+		case !reflect.DeepEqual(a.SplitState.Right, b.SplitState.Right):
+			return describeShardStateUnsplitDiff(fmt.Sprintf("%s.SplitState.Right", name), a.SplitState.Right, b.SplitState.Right)
+		}
+	default:
+		return fmt.Sprintf("%s unknown sum type %s", name, a.SumType)
+	}
+	return fmt.Sprintf("%s unknown difference", name)
+}
+
+func describeShardStateUnsplitDiff(name string, a, b ShardStateUnsplit) string {
+	switch {
+	case a.Magic != b.Magic:
+		return fmt.Sprintf("%s magic differs", name)
+	case a.ShardStateUnsplit.GlobalID != b.ShardStateUnsplit.GlobalID:
+		return fmt.Sprintf("%s GlobalID differs", name)
+	case a.ShardStateUnsplit.ShardID != b.ShardStateUnsplit.ShardID:
+		return fmt.Sprintf("%s ShardID differs", name)
+	case a.ShardStateUnsplit.SeqNo != b.ShardStateUnsplit.SeqNo:
+		return fmt.Sprintf("%s SeqNo differs", name)
+	case a.ShardStateUnsplit.VertSeqNo != b.ShardStateUnsplit.VertSeqNo:
+		return fmt.Sprintf("%s VertSeqNo differs", name)
+	case a.ShardStateUnsplit.GenUtime != b.ShardStateUnsplit.GenUtime:
+		return fmt.Sprintf("%s GenUtime differs", name)
+	case a.ShardStateUnsplit.GenLt != b.ShardStateUnsplit.GenLt:
+		return fmt.Sprintf("%s GenLt differs", name)
+	case a.ShardStateUnsplit.MinRefMcSeqno != b.ShardStateUnsplit.MinRefMcSeqno:
+		return fmt.Sprintf("%s MinRefMcSeqno differs", name)
+	case !reflect.DeepEqual(a.ShardStateUnsplit.OutMsgQueueInfo, b.ShardStateUnsplit.OutMsgQueueInfo):
+		return fmt.Sprintf("%s OutMsgQueueInfo differs", name)
+	case a.ShardStateUnsplit.BeforeSplit != b.ShardStateUnsplit.BeforeSplit:
+		return fmt.Sprintf("%s BeforeSplit differs", name)
+	case !reflect.DeepEqual(a.ShardStateUnsplit.Accounts, b.ShardStateUnsplit.Accounts):
+		return describeHashmapAugEDiff(fmt.Sprintf("%s.Accounts", name), a.ShardStateUnsplit.Accounts, b.ShardStateUnsplit.Accounts)
+	case !reflect.DeepEqual(a.ShardStateUnsplit.Other, b.ShardStateUnsplit.Other):
+		return fmt.Sprintf("%s Other differs", name)
+	case !reflect.DeepEqual(a.ShardStateUnsplit.Custom, b.ShardStateUnsplit.Custom):
+		return fmt.Sprintf("%s Custom differs", name)
+	default:
+		return fmt.Sprintf("%s unknown difference", name)
+	}
+}
+
+func describeHashmapAugEDiff[keyT fixedSize, T1, T2 any](name string, a, b HashmapAugE[keyT, T1, T2]) string {
+	switch {
+	case len(a.m.keys) != len(b.m.keys):
+		return fmt.Sprintf("%s key count differs", name)
+	case !reflect.DeepEqual(a.m.keys, b.m.keys):
+		return fmt.Sprintf("%s keys differ", name)
+	case !reflect.DeepEqual(a.m.values, b.m.values):
+		if len(a.m.values) != len(b.m.values) {
+			return fmt.Sprintf("%s value count differs: %d vs %d", name, len(a.m.values), len(b.m.values))
+		}
+		for i := range a.m.values {
+			if !reflect.DeepEqual(a.m.values[i], b.m.values[i]) {
+				return fmt.Sprintf("%s value at index %d differs: %#v vs %#v", name, i, a.m.values[i], b.m.values[i])
+			}
+		}
+		return fmt.Sprintf("%s values differ", name)
+	case !reflect.DeepEqual(a.m.extra, b.m.extra):
+		return fmt.Sprintf("%s inner extras differ", name)
+	case !reflect.DeepEqual(a.extra, b.extra):
+		return fmt.Sprintf("%s extra differs", name)
+	default:
+		return fmt.Sprintf("%s unknown difference", name)
+	}
+}
+
+func blocksEqual(a, b *Block) bool {
+	aj, err := json.Marshal(a)
+	if err != nil {
+		return false
+	}
+	bj, err := json.Marshal(b)
+	if err != nil {
+		return false
+	}
+	return bytes.Equal(aj, bj)
+}
+
+func readBlock(filename string) (*Block, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("ReadFile() failed: %v", err)
+	}
+	cell, err := boc.DeserializeBoc(data)
+	if err != nil {
+		return nil, fmt.Errorf("boc.DeserializeBoc() failed: %v", err)
+	}
+	var block Block
+	return &block, Unmarshal(cell[0], &block)
 }
 
 func libraries(s *ShardState) map[string]map[string]struct{} {
@@ -279,18 +472,9 @@ func Test_GetInMsgsMetadata(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			inputFilename := path.Join(tc.folder, "block.bin")
-			data, err := os.ReadFile(inputFilename)
+			block, err := readBlock(inputFilename)
 			if err != nil {
-				t.Fatalf("ReadFile() failed: %v", err)
-			}
-			cell, err := boc.DeserializeBoc(data)
-			if err != nil {
-				t.Fatalf("boc.DeserializeBoc() failed: %v", err)
-			}
-			var block Block
-			err = Unmarshal(cell[0], &block)
-			if err != nil {
-				t.Fatalf("Unmarshal() failed: %v", err)
+				t.Fatalf("readBlock() failed: %v", err)
 			}
 			inMsgsMetadata, err := block.GetInMsgsMetadata()
 			if err != nil {

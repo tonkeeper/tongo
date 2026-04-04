@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -10,7 +9,7 @@ var bitsSizes = []int{96, 264, 320, 352}
 
 func TestGenerateConstantBigInts(t *testing.T) {
 	s := GenerateConstantBigInts(intSizes)
-	fmt.Printf(s)
+	print(s)
 }
 
 func TestGenerateVarUintTypes(t *testing.T) {

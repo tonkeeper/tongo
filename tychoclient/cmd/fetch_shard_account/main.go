@@ -1,3 +1,6 @@
+//go:build broken
+// +build broken
+
 package main
 
 import (

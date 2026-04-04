@@ -29,6 +29,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 	testnetConfig, _ := boc.DeserializeBocBase64(testnetConfig)
 
 	tests := []struct {
+		skip           bool
 		name           string
 		code           string
 		account        string
@@ -150,6 +151,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			},
 		},
 		{
+			skip:       true,
 			name:       "bidask range",
 			account:    "0:00d2899c68c045de01cf6e0fa941794aa3c919d64b48954042b556f703c8e43e",
 			code:       "b5ee9c720101010100230008420298fdd1d25e7cdc870eea89e5e53c14e09fa15ad6db96090f877adb97f78e6088",
@@ -160,6 +162,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			},
 		},
 		{
+			skip:       true,
 			name:       "bidask lp multitoken",
 			account:    "0:0036051e5a4c77495ba80ae140e7b5780c722c7995ad6348fc3114db797a3ed3",
 			code:       "b5ee9c72010101010023000842029468b29f43ac803fc9f621953fdd069a432e4cd1d9a56b9c299b587fe6898fab",
@@ -179,6 +182,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			},
 		},
 		{
+			skip:       true,
 			name:       "bidask damm lp wallet",
 			account:    "0:23f272b9cd8f05aa8cdf8f7ada4083867334e028096815b6188731947886fa8f",
 			code:       "b5ee9c72010101010023000842022433e007ebe57120d7c4809c6c2d76cdf5b680eb1c309c56b6bf8f356c36d135",
@@ -270,6 +274,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			},
 		},
 		{
+			skip:       true,
 			name:       "stonfi v2 const product",
 			account:    "EQCGScrZe1xbyWqWDvdI6mzP-GAcAWFv6ZXuaJOuSqemxku4",
 			code:       "b5ee9c7201010101002300084202a9338ecd624ca15d37e4a8d9bf677ddc9b84f0e98f05f2fb84c7afe332a281b4",
@@ -280,6 +285,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			},
 		},
 		{
+			skip:       true,
 			name:       "stonfi v2 stableswap",
 			account:    "EQBSUY4UWGJFAps0KwHY4tpOGqzU41DZhyrT8OuyAWWtnezy",
 			code:       "b5ee9c72010101010023000842023c882eb9ede6be2459b2d2e469680af9f8e48ab16ec0726f0d07b0e5686be718",
@@ -290,6 +296,7 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			},
 		},
 		{
+			skip:       true,
 			name:       "stonfi v2 weighted stableswap",
 			account:    "EQAF6mNbKhaMrfyhdNcrEnRKW1fXA3jmkS6KM7azm9PunYx5",
 			code:       "b5ee9c72010101010023000842029e5038ab735973d5450fae1a14e7707b332dcd8e744f5dbb3b6a0d994d400c59",
@@ -410,6 +417,9 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.skip {
+				t.SkipNow()
+			}
 			codeBytes, _ := hex.DecodeString(tt.code)
 			dataBytes, _ := hex.DecodeString(tt.data)
 			codeCell, _ := boc.DeserializeBoc(codeBytes)

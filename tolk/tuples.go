@@ -11,7 +11,7 @@ import (
 
 type TupleValues []Value
 
-func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.TupleWith, decoder *Decoder) error {
+func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.ShapedTuple, decoder *Decoder) error {
 	list := make(TupleValues, len(ty.Items))
 	for i, item := range ty.Items {
 		inner := Value{}
@@ -25,7 +25,7 @@ func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.TupleWith, decoder *De
 	return nil
 }
 
-func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.TupleWith, encoder *Encoder) error {
+func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.ShapedTuple, encoder *Encoder) error {
 	for i, item := range []Value(*v) {
 		err := item.Marshal(cell, ty.Items[i], encoder)
 		if err != nil {

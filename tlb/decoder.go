@@ -55,6 +55,11 @@ func Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, "", reflect.ValueOf(o), &dec)
 }
 
+func UnmarshalT[T UnmarshalerTLB](c *boc.Cell, decoder *Decoder) (result T, err error) {
+	err = result.UnmarshalTLB(c, decoder)
+	return
+}
+
 var bocCellType = reflect.TypeOf(boc.Cell{})
 var bocCellPointerType = reflect.TypeOf(&boc.Cell{})
 var bocTlbANyPointerType = reflect.TypeOf(&Any{})

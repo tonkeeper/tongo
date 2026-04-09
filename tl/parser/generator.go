@@ -6,10 +6,11 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"github.com/tonkeeper/tongo/utils"
 	"go/format"
 	"strings"
 	"text/template"
+
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type DefaultType struct {
@@ -636,6 +637,5 @@ func (g *Generator) generateRequestDecoder() string {
 		panic(err)
 		return ""
 	}
-	fmt.Printf("%s", buf.String())
 	return buf.String()
 }

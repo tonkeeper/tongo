@@ -9,8 +9,6 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 )
 
-//go:generate go run generator.go
-
 type SumType string
 
 type Magic uint32

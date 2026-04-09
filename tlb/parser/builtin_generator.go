@@ -410,7 +410,16 @@ func (u Bits%v) Compare(other any) (int, bool) {
 	}
 	return bytes.Compare(u[:], otherBits[:]), true
 }
-	`, i, i/8, i, i, i, i, i/8, i, i, i, i, i)
+
+func (u *Bits%d) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	if bytes, err := c.ReadBytes(%d); err != nil {
+		return err
+	} else {
+		copy(u[:], bytes)
+		return nil
+	}
+}
+	`, i, i/8, i, i, i, i, i/8, i, i, i, i, i, i, i/8)
 		} else {
 			fmt.Fprintf(&b, `
 type Bits%v boc.BitString

@@ -1,7 +1,5 @@
 package liteclient
 
-//go:generate go run generator.go
-
 import (
 	"bytes"
 	"fmt"

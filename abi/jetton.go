@@ -28,6 +28,32 @@ const (
 // JettonOpCode is the first 4 bytes of a message body identifying an operation to be performed.
 type JettonOpCode = uint32
 
+type jettonDecoder func(*JettonPayload, *boc.Cell) error
+
+func decodeJettonPayload[T any](opName JettonOpName, expectedOpCode JettonOpCode, consumePrefix bool, fixedLength bool) jettonDecoder {
+	return func(j *JettonPayload, c *boc.Cell) error {
+		var err error
+		if consumePrefix {
+			err = c.ReadPrefix(32, uint64(expectedOpCode))
+		} else {
+			err = c.PickPrefix(32, uint64(expectedOpCode))
+		}
+		if err != nil {
+			return err
+		}
+		var res T
+		if err = tlb.Unmarshal(c, &res); err != nil {
+			return err
+		}
+		if fixedLength && !completedRead(c) {
+			return fmt.Errorf("cell was not fully consumed")
+		}
+		j.SumType = opName
+		j.Value = res
+		return nil
+	}
+}
+
 func (j *JettonPayload) UnmarshalJSON(data []byte) error {
 	var r struct {
 		SumType string
@@ -122,7 +148,7 @@ func (j *JettonPayload) UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder) error
 		return nil
 	}
 	tempCell := cell.CopyRemaining()
-	op64, err := tempCell.ReadUint(32)
+	op64, err := tempCell.PickUint(32)
 	if errors.Is(err, boc.ErrNotEnoughBits) {
 		j.SumType = UnknownJettonOp
 		j.Value = cell.CopyRemaining()

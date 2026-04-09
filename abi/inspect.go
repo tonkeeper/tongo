@@ -7,6 +7,7 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	codePkg "github.com/tonkeeper/tongo/code"
+	"github.com/tonkeeper/tongo/liteclient"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/utils"
@@ -131,8 +132,8 @@ func NewContractInspector(opts ...InspectorOption) *contractInspector {
 		o(options)
 	}
 	return &contractInspector{
-		knownMethods:    append(methodInvocationOrder, options.additionalMethods...),
-		knownInterfaces: append(contractInterfacesOrder, options.knownInterfaces...),
+		knownMethods:    append(append(methodInvocationOrder, tolkMethods...), options.additionalMethods...),
+		knownInterfaces: append(append(contractInterfacesOrder, tolkInterfaceOrder...), options.knownInterfaces...),
 		scanAllMethods:  options.scanAllMethods,
 		libResolver:     options.libResolver,
 	}
@@ -176,6 +177,9 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		desc.MethodsInspected += 1
 		typeHint, result, err := method.InvokeFn(ctx, executor, reqAccountID)
 		if err != nil {
+			if liteclient.IsClientError(err) {
+				return nil, err
+			}
 			continue
 		}
 		desc.GetMethods = append(desc.GetMethods, MethodInvocation{

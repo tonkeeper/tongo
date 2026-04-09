@@ -3,471 +3,8 @@
 package abi
 
 import (
-	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
-
-func decodeCoffeeStakingLockJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeStakingLockJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeStakingLockJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeTextCommentJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res TextCommentJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = TextCommentJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeTegroJettonSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res TegroJettonSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = TegroJettonSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeEncryptedTextCommentJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res EncryptedTextCommentJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = EncryptedTextCommentJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStonfiSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StonfiSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = StonfiSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeTegroAddLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res TegroAddLiquidityJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = TegroAddLiquidityJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStonfiProvideLpV2JettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StonfiProvideLpV2JettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = StonfiProvideLpV2JettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskProvideBothJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskProvideBothJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskProvideBothJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeDedustDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res DedustDepositLiquidityJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = DedustDepositLiquidityJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodePoolFundAccountJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res PoolFundAccountJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil && completedRead(c) {
-		j.SumType = PoolFundAccountJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStonfiSwapOkRefJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StonfiSwapOkRefJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil && completedRead(c) {
-		j.SumType = StonfiSwapOkRefJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeCrossDexResendJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeCrossDexResendJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeCrossDexResendJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskDammProvideJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskDammProvideJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskDammProvideJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStonfiSwapV2JettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StonfiSwapV2JettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = StonfiSwapV2JettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskDammProvideOneSideJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskDammProvideOneSideJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskDammProvideOneSideJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStormDepositJettonJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StormDepositJettonJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = StormDepositJettonJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeInvoicePayloadJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res InvoicePayloadJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = InvoicePayloadJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeTonkeeperRelayerFeeJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res TonkeeperRelayerFeeJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = TonkeeperRelayerFeeJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskSwapV2JettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskSwapV2JettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskSwapV2JettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonBoostPoolJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonBoostPoolJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonBoostPoolJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskProvideJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskProvideJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskProvideJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonFillOrderJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonFillOrderJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonFillOrderJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskDammProvideBothJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskDammProvideBothJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskDammProvideBothJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonDepositLiquidityJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonDepositLiquidityJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeCrossDexFailureJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeCrossDexFailureJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeCrossDexFailureJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeCreatePoolJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeCreatePoolJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeCreatePoolJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeDepositLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeDepositLiquidityJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeDepositLiquidityJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeNotificationJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeNotificationJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeNotificationJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonSwapFailedJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonSwapFailedJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonSwapFailedJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStonfiSwapOkJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StonfiSwapOkJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil && completedRead(c) {
-		j.SumType = StonfiSwapOkJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStormStakeJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StormStakeJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = StormStakeJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeWithdrawPayloadJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res WithdrawPayloadJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil && completedRead(c) {
-		j.SumType = WithdrawPayloadJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonSwapSucceedJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonSwapSucceedJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonSwapSucceedJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeMoonCreateOrderJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res MoonCreateOrderJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = MoonCreateOrderJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskDammSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskDammSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskDammSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeDedustSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res DedustSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = DedustSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeCoffeeMevProtectFailedSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res CoffeeMevProtectFailedSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = CoffeeMevProtectFailedSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeBidaskSwapJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res BidaskSwapJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = BidaskSwapJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeDepositPayloadJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res DepositPayloadJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil && completedRead(c) {
-		j.SumType = DepositPayloadJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
-
-func decodeStonfiProvideLiquidityJettonOpJetton(j *JettonPayload, c *boc.Cell) error {
-	var res StonfiProvideLiquidityJettonPayload
-	err := tlb.Unmarshal(c, &res)
-	if err == nil {
-		j.SumType = StonfiProvideLiquidityJettonOp
-		j.Value = res
-		return nil
-	}
-	return err
-}
 
 const (
 	CoffeeStakingLockJettonOp          JettonOpName = "CoffeeStakingLock"
@@ -557,7 +94,7 @@ const (
 	StonfiProvideLiquidityJettonOpCode     JettonOpCode = 0xfcf9e58f
 )
 
-var KnownJettonTypes = map[string]any{
+var xmlKnownJettonTypes = map[JettonOpName]any{
 	CoffeeStakingLockJettonOp:          CoffeeStakingLockJettonPayload{},
 	TextCommentJettonOp:                TextCommentJettonPayload{},
 	TegroJettonSwapJettonOp:            TegroJettonSwapJettonPayload{},
@@ -601,7 +138,8 @@ var KnownJettonTypes = map[string]any{
 	DepositPayloadJettonOp:             DepositPayloadJettonPayload{},
 	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonPayload{},
 }
-var JettonOpCodes = map[JettonOpName]JettonOpCode{
+
+var xmlJettonOpCodes = map[JettonOpName]JettonOpCode{
 	CoffeeStakingLockJettonOp:          CoffeeStakingLockJettonOpCode,
 	TextCommentJettonOp:                TextCommentJettonOpCode,
 	TegroJettonSwapJettonOp:            TegroJettonSwapJettonOpCode,
@@ -646,49 +184,49 @@ var JettonOpCodes = map[JettonOpName]JettonOpCode{
 	StonfiProvideLiquidityJettonOp:     StonfiProvideLiquidityJettonOpCode,
 }
 
-var funcJettonDecodersMapping = map[JettonOpCode]func(*JettonPayload, *boc.Cell) error{
-	CoffeeStakingLockJettonOpCode:          decodeCoffeeStakingLockJettonOpJetton,
-	TextCommentJettonOpCode:                decodeTextCommentJettonOpJetton,
-	TegroJettonSwapJettonOpCode:            decodeTegroJettonSwapJettonOpJetton,
-	EncryptedTextCommentJettonOpCode:       decodeEncryptedTextCommentJettonOpJetton,
-	StonfiSwapJettonOpCode:                 decodeStonfiSwapJettonOpJetton,
-	TegroAddLiquidityJettonOpCode:          decodeTegroAddLiquidityJettonOpJetton,
-	StonfiProvideLpV2JettonOpCode:          decodeStonfiProvideLpV2JettonOpJetton,
-	BidaskProvideBothJettonOpCode:          decodeBidaskProvideBothJettonOpJetton,
-	DedustDepositLiquidityJettonOpCode:     decodeDedustDepositLiquidityJettonOpJetton,
-	PoolFundAccountJettonOpCode:            decodePoolFundAccountJettonOpJetton,
-	StonfiSwapOkRefJettonOpCode:            decodeStonfiSwapOkRefJettonOpJetton,
-	CoffeeCrossDexResendJettonOpCode:       decodeCoffeeCrossDexResendJettonOpJetton,
-	BidaskDammProvideJettonOpCode:          decodeBidaskDammProvideJettonOpJetton,
-	StonfiSwapV2JettonOpCode:               decodeStonfiSwapV2JettonOpJetton,
-	BidaskDammProvideOneSideJettonOpCode:   decodeBidaskDammProvideOneSideJettonOpJetton,
-	StormDepositJettonJettonOpCode:         decodeStormDepositJettonJettonOpJetton,
-	InvoicePayloadJettonOpCode:             decodeInvoicePayloadJettonOpJetton,
-	TonkeeperRelayerFeeJettonOpCode:        decodeTonkeeperRelayerFeeJettonOpJetton,
-	BidaskSwapV2JettonOpCode:               decodeBidaskSwapV2JettonOpJetton,
-	MoonBoostPoolJettonOpCode:              decodeMoonBoostPoolJettonOpJetton,
-	BidaskProvideJettonOpCode:              decodeBidaskProvideJettonOpJetton,
-	MoonFillOrderJettonOpCode:              decodeMoonFillOrderJettonOpJetton,
-	BidaskDammProvideBothJettonOpCode:      decodeBidaskDammProvideBothJettonOpJetton,
-	MoonDepositLiquidityJettonOpCode:       decodeMoonDepositLiquidityJettonOpJetton,
-	MoonSwapJettonOpCode:                   decodeMoonSwapJettonOpJetton,
-	CoffeeCrossDexFailureJettonOpCode:      decodeCoffeeCrossDexFailureJettonOpJetton,
-	CoffeeSwapJettonOpCode:                 decodeCoffeeSwapJettonOpJetton,
-	CoffeeCreatePoolJettonOpCode:           decodeCoffeeCreatePoolJettonOpJetton,
-	CoffeeDepositLiquidityJettonOpCode:     decodeCoffeeDepositLiquidityJettonOpJetton,
-	CoffeeNotificationJettonOpCode:         decodeCoffeeNotificationJettonOpJetton,
-	MoonSwapFailedJettonOpCode:             decodeMoonSwapFailedJettonOpJetton,
-	StonfiSwapOkJettonOpCode:               decodeStonfiSwapOkJettonOpJetton,
-	StormStakeJettonOpCode:                 decodeStormStakeJettonOpJetton,
-	WithdrawPayloadJettonOpCode:            decodeWithdrawPayloadJettonOpJetton,
-	MoonSwapSucceedJettonOpCode:            decodeMoonSwapSucceedJettonOpJetton,
-	MoonCreateOrderJettonOpCode:            decodeMoonCreateOrderJettonOpJetton,
-	BidaskDammSwapJettonOpCode:             decodeBidaskDammSwapJettonOpJetton,
-	DedustSwapJettonOpCode:                 decodeDedustSwapJettonOpJetton,
-	CoffeeMevProtectFailedSwapJettonOpCode: decodeCoffeeMevProtectFailedSwapJettonOpJetton,
-	BidaskSwapJettonOpCode:                 decodeBidaskSwapJettonOpJetton,
-	DepositPayloadJettonOpCode:             decodeDepositPayloadJettonOpJetton,
-	StonfiProvideLiquidityJettonOpCode:     decodeStonfiProvideLiquidityJettonOpJetton,
+var xmlJettonDecodersMapping = map[JettonOpCode]jettonDecoder{
+	CoffeeStakingLockJettonOpCode:          decodeJettonPayload[CoffeeStakingLockJettonPayload](CoffeeStakingLockJettonOp, CoffeeStakingLockJettonOpCode, true, false),
+	TextCommentJettonOpCode:                decodeJettonPayload[TextCommentJettonPayload](TextCommentJettonOp, TextCommentJettonOpCode, true, false),
+	TegroJettonSwapJettonOpCode:            decodeJettonPayload[TegroJettonSwapJettonPayload](TegroJettonSwapJettonOp, TegroJettonSwapJettonOpCode, true, false),
+	EncryptedTextCommentJettonOpCode:       decodeJettonPayload[EncryptedTextCommentJettonPayload](EncryptedTextCommentJettonOp, EncryptedTextCommentJettonOpCode, true, false),
+	StonfiSwapJettonOpCode:                 decodeJettonPayload[StonfiSwapJettonPayload](StonfiSwapJettonOp, StonfiSwapJettonOpCode, true, false),
+	TegroAddLiquidityJettonOpCode:          decodeJettonPayload[TegroAddLiquidityJettonPayload](TegroAddLiquidityJettonOp, TegroAddLiquidityJettonOpCode, true, false),
+	StonfiProvideLpV2JettonOpCode:          decodeJettonPayload[StonfiProvideLpV2JettonPayload](StonfiProvideLpV2JettonOp, StonfiProvideLpV2JettonOpCode, true, false),
+	BidaskProvideBothJettonOpCode:          decodeJettonPayload[BidaskProvideBothJettonPayload](BidaskProvideBothJettonOp, BidaskProvideBothJettonOpCode, true, false),
+	DedustDepositLiquidityJettonOpCode:     decodeJettonPayload[DedustDepositLiquidityJettonPayload](DedustDepositLiquidityJettonOp, DedustDepositLiquidityJettonOpCode, true, false),
+	PoolFundAccountJettonOpCode:            decodeJettonPayload[PoolFundAccountJettonPayload](PoolFundAccountJettonOp, PoolFundAccountJettonOpCode, true, true),
+	StonfiSwapOkRefJettonOpCode:            decodeJettonPayload[StonfiSwapOkRefJettonPayload](StonfiSwapOkRefJettonOp, StonfiSwapOkRefJettonOpCode, true, true),
+	CoffeeCrossDexResendJettonOpCode:       decodeJettonPayload[CoffeeCrossDexResendJettonPayload](CoffeeCrossDexResendJettonOp, CoffeeCrossDexResendJettonOpCode, true, false),
+	BidaskDammProvideJettonOpCode:          decodeJettonPayload[BidaskDammProvideJettonPayload](BidaskDammProvideJettonOp, BidaskDammProvideJettonOpCode, true, false),
+	StonfiSwapV2JettonOpCode:               decodeJettonPayload[StonfiSwapV2JettonPayload](StonfiSwapV2JettonOp, StonfiSwapV2JettonOpCode, true, false),
+	BidaskDammProvideOneSideJettonOpCode:   decodeJettonPayload[BidaskDammProvideOneSideJettonPayload](BidaskDammProvideOneSideJettonOp, BidaskDammProvideOneSideJettonOpCode, true, false),
+	StormDepositJettonJettonOpCode:         decodeJettonPayload[StormDepositJettonJettonPayload](StormDepositJettonJettonOp, StormDepositJettonJettonOpCode, true, false),
+	InvoicePayloadJettonOpCode:             decodeJettonPayload[InvoicePayloadJettonPayload](InvoicePayloadJettonOp, InvoicePayloadJettonOpCode, true, false),
+	TonkeeperRelayerFeeJettonOpCode:        decodeJettonPayload[TonkeeperRelayerFeeJettonPayload](TonkeeperRelayerFeeJettonOp, TonkeeperRelayerFeeJettonOpCode, true, false),
+	BidaskSwapV2JettonOpCode:               decodeJettonPayload[BidaskSwapV2JettonPayload](BidaskSwapV2JettonOp, BidaskSwapV2JettonOpCode, true, false),
+	MoonBoostPoolJettonOpCode:              decodeJettonPayload[MoonBoostPoolJettonPayload](MoonBoostPoolJettonOp, MoonBoostPoolJettonOpCode, true, false),
+	BidaskProvideJettonOpCode:              decodeJettonPayload[BidaskProvideJettonPayload](BidaskProvideJettonOp, BidaskProvideJettonOpCode, true, false),
+	MoonFillOrderJettonOpCode:              decodeJettonPayload[MoonFillOrderJettonPayload](MoonFillOrderJettonOp, MoonFillOrderJettonOpCode, true, false),
+	BidaskDammProvideBothJettonOpCode:      decodeJettonPayload[BidaskDammProvideBothJettonPayload](BidaskDammProvideBothJettonOp, BidaskDammProvideBothJettonOpCode, true, false),
+	MoonDepositLiquidityJettonOpCode:       decodeJettonPayload[MoonDepositLiquidityJettonPayload](MoonDepositLiquidityJettonOp, MoonDepositLiquidityJettonOpCode, true, false),
+	MoonSwapJettonOpCode:                   decodeJettonPayload[MoonSwapJettonPayload](MoonSwapJettonOp, MoonSwapJettonOpCode, true, false),
+	CoffeeCrossDexFailureJettonOpCode:      decodeJettonPayload[CoffeeCrossDexFailureJettonPayload](CoffeeCrossDexFailureJettonOp, CoffeeCrossDexFailureJettonOpCode, true, false),
+	CoffeeSwapJettonOpCode:                 decodeJettonPayload[CoffeeSwapJettonPayload](CoffeeSwapJettonOp, CoffeeSwapJettonOpCode, true, false),
+	CoffeeCreatePoolJettonOpCode:           decodeJettonPayload[CoffeeCreatePoolJettonPayload](CoffeeCreatePoolJettonOp, CoffeeCreatePoolJettonOpCode, true, false),
+	CoffeeDepositLiquidityJettonOpCode:     decodeJettonPayload[CoffeeDepositLiquidityJettonPayload](CoffeeDepositLiquidityJettonOp, CoffeeDepositLiquidityJettonOpCode, true, false),
+	CoffeeNotificationJettonOpCode:         decodeJettonPayload[CoffeeNotificationJettonPayload](CoffeeNotificationJettonOp, CoffeeNotificationJettonOpCode, true, false),
+	MoonSwapFailedJettonOpCode:             decodeJettonPayload[MoonSwapFailedJettonPayload](MoonSwapFailedJettonOp, MoonSwapFailedJettonOpCode, true, false),
+	StonfiSwapOkJettonOpCode:               decodeJettonPayload[StonfiSwapOkJettonPayload](StonfiSwapOkJettonOp, StonfiSwapOkJettonOpCode, true, true),
+	StormStakeJettonOpCode:                 decodeJettonPayload[StormStakeJettonPayload](StormStakeJettonOp, StormStakeJettonOpCode, true, false),
+	WithdrawPayloadJettonOpCode:            decodeJettonPayload[WithdrawPayloadJettonPayload](WithdrawPayloadJettonOp, WithdrawPayloadJettonOpCode, true, true),
+	MoonSwapSucceedJettonOpCode:            decodeJettonPayload[MoonSwapSucceedJettonPayload](MoonSwapSucceedJettonOp, MoonSwapSucceedJettonOpCode, true, false),
+	MoonCreateOrderJettonOpCode:            decodeJettonPayload[MoonCreateOrderJettonPayload](MoonCreateOrderJettonOp, MoonCreateOrderJettonOpCode, true, false),
+	BidaskDammSwapJettonOpCode:             decodeJettonPayload[BidaskDammSwapJettonPayload](BidaskDammSwapJettonOp, BidaskDammSwapJettonOpCode, true, false),
+	DedustSwapJettonOpCode:                 decodeJettonPayload[DedustSwapJettonPayload](DedustSwapJettonOp, DedustSwapJettonOpCode, true, false),
+	CoffeeMevProtectFailedSwapJettonOpCode: decodeJettonPayload[CoffeeMevProtectFailedSwapJettonPayload](CoffeeMevProtectFailedSwapJettonOp, CoffeeMevProtectFailedSwapJettonOpCode, true, false),
+	BidaskSwapJettonOpCode:                 decodeJettonPayload[BidaskSwapJettonPayload](BidaskSwapJettonOp, BidaskSwapJettonOpCode, true, false),
+	DepositPayloadJettonOpCode:             decodeJettonPayload[DepositPayloadJettonPayload](DepositPayloadJettonOp, DepositPayloadJettonOpCode, true, true),
+	StonfiProvideLiquidityJettonOpCode:     decodeJettonPayload[StonfiProvideLiquidityJettonPayload](StonfiProvideLiquidityJettonOp, StonfiProvideLiquidityJettonOpCode, true, false),
 }
 
 type CoffeeStakingLockJettonPayload struct {

@@ -717,7 +717,7 @@ var (
 	decodeFuncBounceMsgBody = decodeMsg(tlb.Tag{Val: 0xffffffff, Len: 32}, BounceMsgOp, BounceMsgBody{})
 )
 
-var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
+var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x00000000
 	TextCommentMsgOpCode: decodeFuncTextCommentMsgBody,
@@ -822,11 +822,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	StormDepositNotifyWithDeployMsgOpCode: decodeFuncStormDepositNotifyWithDeployMsgBody,
 
 	//BidaskSwapFallback, BidaskSwapFallbackV2,
-	0x1bba3896: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncBidaskSwapFallbackMsgBody,
-		decodeFuncBidaskSwapFallbackV2MsgBody},
-		"0x1bba3896",
-	),
+	0x1bba3896: multipleMsgsDecoder{
+		tag: "0x1bba3896",
+		funcs: []msgDecoderFunc{
+			decodeFuncBidaskSwapFallbackMsgBody,
+			decodeFuncBidaskSwapFallbackV2MsgBody},
+	},
 
 	// 0x1bea50f1
 	TakePositionV2MsgOpCode: decodeFuncTakePositionV2MsgBody,
@@ -913,11 +914,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	StormDepositNativeMsgOpCode: decodeFuncStormDepositNativeMsgBody,
 
 	//StormVammInit, StormVaultInit,
-	0x29c102d1: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncStormVammInitMsgBody,
-		decodeFuncStormVaultInitMsgBody},
-		"0x29c102d1",
-	),
+	0x29c102d1: multipleMsgsDecoder{
+		tag: "0x29c102d1",
+		funcs: []msgDecoderFunc{
+			decodeFuncStormVammInitMsgBody,
+			decodeFuncStormVaultInitMsgBody},
+	},
 
 	// 0x29d22935
 	PtonResetGasMsgOpCode: decodeFuncPtonResetGasMsgBody,
@@ -1034,11 +1036,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	ElectorNewStakeMsgOpCode: decodeFuncElectorNewStakeMsgBody,
 
 	//DeleteDnsRecord, ChangeDnsRecord,
-	0x4eb1f0f9: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncDeleteDnsRecordMsgBody,
-		decodeFuncChangeDnsRecordMsgBody},
-		"0x4eb1f0f9",
-	),
+	0x4eb1f0f9: multipleMsgsDecoder{
+		tag: "0x4eb1f0f9",
+		funcs: []msgDecoderFunc{
+			decodeFuncDeleteDnsRecordMsgBody,
+			decodeFuncChangeDnsRecordMsgBody},
+	},
 
 	// 0x4ed14b65
 	DnsBalanceReleaseMsgOpCode: decodeFuncDnsBalanceReleaseMsgBody,
@@ -1302,11 +1305,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	WhalesNominatorsDepositMsgOpCode: decodeFuncWhalesNominatorsDepositMsgBody,
 
 	//DaolamaVaultWithdraw, JettonBurnNotification,
-	0x7bdd97de: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncDaolamaVaultWithdrawMsgBody,
-		decodeFuncJettonBurnNotificationMsgBody},
-		"0x7bdd97de",
-	),
+	0x7bdd97de: multipleMsgsDecoder{
+		tag: "0x7bdd97de",
+		funcs: []msgDecoderFunc{
+			decodeFuncDaolamaVaultWithdrawMsgBody,
+			decodeFuncJettonBurnNotificationMsgBody},
+	},
 
 	// 0x81702ef8
 	Poolv3MintMsgOpCode: decodeFuncPoolv3MintMsgBody,
@@ -1321,18 +1325,20 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	StormAddReferralAmountMsgOpCode: decodeFuncStormAddReferralAmountMsgBody,
 
 	//BidaskSwapV2, BidaskInternalSwapV2,
-	0x87d36990: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncBidaskSwapV2MsgBody,
-		decodeFuncBidaskInternalSwapV2MsgBody},
-		"0x87d36990",
-	),
+	0x87d36990: multipleMsgsDecoder{
+		tag: "0x87d36990",
+		funcs: []msgDecoderFunc{
+			decodeFuncBidaskSwapV2MsgBody,
+			decodeFuncBidaskInternalSwapV2MsgBody},
+	},
 
 	//StormProvideOrder, StormProvidePosition,
-	0x8865b402: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncStormProvideOrderMsgBody,
-		decodeFuncStormProvidePositionMsgBody},
-		"0x8865b402",
-	),
+	0x8865b402: multipleMsgsDecoder{
+		tag: "0x8865b402",
+		funcs: []msgDecoderFunc{
+			decodeFuncStormProvideOrderMsgBody,
+			decodeFuncStormProvidePositionMsgBody},
+	},
 
 	// 0x8b771735
 	ReportStaticDataMsgOpCode: decodeFuncReportStaticDataMsgBody,
@@ -1458,11 +1464,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoderFunc{
 	MultisigApproveRejectedMsgOpCode: decodeFuncMultisigApproveRejectedMsgBody,
 
 	//ProvideAggregatedDataDeposit, ProvideAggregatedDataWithdraw,
-	0xb0c69ffe: decodeMultipleMsgs([]msgDecoderFunc{
-		decodeFuncProvideAggregatedDataDepositMsgBody,
-		decodeFuncProvideAggregatedDataWithdrawMsgBody},
-		"0xb0c69ffe",
-	),
+	0xb0c69ffe: multipleMsgsDecoder{
+		tag: "0xb0c69ffe",
+		funcs: []msgDecoderFunc{
+			decodeFuncProvideAggregatedDataDepositMsgBody,
+			decodeFuncProvideAggregatedDataWithdrawMsgBody},
+	},
 
 	// 0xb1ebae06
 	TonstakeImanagerRequestNotificationMsgOpCode: decodeFuncTonstakeImanagerRequestNotificationMsgBody,
@@ -5288,7 +5295,7 @@ var (
 	decodeFuncWalletSignedExternalV5R1ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x7369676e, Len: 32}, WalletSignedExternalV5R1ExtInMsgOp, WalletSignedExternalV5R1ExtInMsgBody{})
 )
 
-var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoderFunc{
+var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x04c52fd2
 	StormExecuteOrdersBundleExternalExtInMsgOpCode: decodeFuncStormExecuteOrdersBundleExternalExtInMsgBody,
@@ -5429,7 +5436,7 @@ var (
 	decodeFuncCoffeeWithdrawLiquiditySucceededExtOutMsgBody = decodeMsg(tlb.Tag{Val: 0xc0ffee35, Len: 32}, CoffeeWithdrawLiquiditySucceededExtOutMsgOp, CoffeeWithdrawLiquiditySucceededExtOutMsgBody{})
 )
 
-var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoderFunc{
+var opcodedMsgExtOutDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x0a9577f0
 	CoffeeStakingRewardsUpdatedExtOutMsgOpCode: decodeFuncCoffeeStakingRewardsUpdatedExtOutMsgBody,

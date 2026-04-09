@@ -1,0 +1,43 @@
+const (
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+	{{ $op.GolangOpcodeName }} {{ $.WhatRender }}OpName = "{{ $op.OperationName }}"
+    {{- end }}
+{{- end }}
+
+{{ range  $tag, $ops := .Operations -}}
+    {{- range $op := $ops}}
+	{{ $op.GolangOpcodeName }}Code {{ $.WhatRender }}OpCode = 0x{{ printf "%08x" $op.Tag }}
+   {{- end }}
+{{- end }}
+)
+
+var xmlKnownJettonTypes = map[JettonOpName]any{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+	{{ $op.GolangOpcodeName }}: {{ $op.GolangTypeName }}{},
+    {{- end }}
+{{- end }}
+}
+
+var xmlJettonOpCodes = map[JettonOpName]JettonOpCode{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+	{{ $op.GolangOpcodeName }}: {{ $op.GolangOpcodeName }}Code,
+    {{- end }}
+{{- end }}
+}
+
+var xmlJettonDecodersMapping = map[JettonOpCode]jettonDecoder{
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+	{{ $op.GolangOpcodeName }}Code: decodeJettonPayload[{{ $op.GolangTypeName }}]({{ $op.GolangOpcodeName }}, {{ $op.GolangOpcodeName }}Code, true, {{ $op.FixedLength }}),
+    {{- end }}
+{{- end }}
+}
+
+{{- range  $tag, $ops := .Operations }}
+    {{- range $op := $ops}}
+{{ $op.Code }}
+    {{- end }}
+{{- end }}

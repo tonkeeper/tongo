@@ -29,6 +29,14 @@ func NewBitString(bitLen int) BitString {
 	}
 }
 
+func BitStringFromBytes(arr []byte) BitString {
+	return BitString{
+		buf: arr,
+		cap: len(arr) * 8,
+		len: len(arr) * 8,
+	}
+}
+
 // BitStringFromFiftHex constructs a new BitString from the given hex representation.
 func BitStringFromFiftHex(hexRepr string) (*BitString, error) {
 	var endingBits string

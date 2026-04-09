@@ -1343,6 +1343,28 @@ func (u *Uint1) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint1) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint1(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint1(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint1(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint1: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int1 int8
 
 func (u Int1) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1390,6 +1412,28 @@ func (u *Int1) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int1(value)
+	return nil
+}
+
+func (u *Int1) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int1(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int1(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int1(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int1: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1443,6 +1487,28 @@ func (u *Uint2) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint2) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint2(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint2(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint2(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint2: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int2 int8
 
 func (u Int2) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1490,6 +1556,28 @@ func (u *Int2) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int2(value)
+	return nil
+}
+
+func (u *Int2) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int2(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int2(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int2(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int2: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1543,6 +1631,28 @@ func (u *Uint3) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint3) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint3(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint3(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint3(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint3: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int3 int8
 
 func (u Int3) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1590,6 +1700,28 @@ func (u *Int3) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int3(value)
+	return nil
+}
+
+func (u *Int3) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int3(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int3(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int3(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int3: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1643,6 +1775,28 @@ func (u *Uint4) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint4) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint4(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint4(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint4(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint4: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int4 int8
 
 func (u Int4) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1690,6 +1844,28 @@ func (u *Int4) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int4(value)
+	return nil
+}
+
+func (u *Int4) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int4(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int4(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int4(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int4: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1743,6 +1919,28 @@ func (u *Uint5) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint5) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint5(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint5(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint5(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint5: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int5 int8
 
 func (u Int5) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1790,6 +1988,28 @@ func (u *Int5) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int5(value)
+	return nil
+}
+
+func (u *Int5) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int5(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int5(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int5(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int5: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1843,6 +2063,28 @@ func (u *Uint6) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint6) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint6(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint6(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint6(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint6: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int6 int8
 
 func (u Int6) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1890,6 +2132,28 @@ func (u *Int6) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int6(value)
+	return nil
+}
+
+func (u *Int6) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int6(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int6(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int6(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int6: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1943,6 +2207,28 @@ func (u *Uint7) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint7) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint7(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint7(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint7(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint7: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Int7 int8
 
 func (u Int7) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1990,6 +2276,28 @@ func (u *Int7) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Int7(value)
+	return nil
+}
+
+func (u *Int7) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int7(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int7(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int7(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int7: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2043,6 +2351,31 @@ func (u *Uint8) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint8) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint8(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint8(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint8(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint8: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint8) HexString() string {
+	return fmt.Sprintf("%02x", uint64(u))
+}
+
 type Int8 int8
 
 func (u Int8) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2093,6 +2426,31 @@ func (u *Int8) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int8) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int8(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int8(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int8(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int8: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int8) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint9 uint16
 
 func (u Uint9) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2140,6 +2498,28 @@ func (u *Uint9) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint9(value)
+	return nil
+}
+
+func (u *Uint9) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint9(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint9(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint9(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint9: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2193,6 +2573,28 @@ func (u *Int9) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int9) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int9(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int9(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int9(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int9: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint10 uint16
 
 func (u Uint10) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2240,6 +2642,28 @@ func (u *Uint10) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint10(value)
+	return nil
+}
+
+func (u *Uint10) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint10(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint10(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint10(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint10: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2293,6 +2717,28 @@ func (u *Int10) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int10) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int10(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int10(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int10(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int10: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint11 uint16
 
 func (u Uint11) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2340,6 +2786,28 @@ func (u *Uint11) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint11(value)
+	return nil
+}
+
+func (u *Uint11) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint11(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint11(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint11(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint11: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2393,6 +2861,28 @@ func (u *Int11) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int11) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int11(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int11(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int11(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int11: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint12 uint16
 
 func (u Uint12) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2440,6 +2930,28 @@ func (u *Uint12) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint12(value)
+	return nil
+}
+
+func (u *Uint12) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint12(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint12(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint12(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint12: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2493,6 +3005,28 @@ func (u *Int12) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int12) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int12(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int12(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int12(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int12: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint13 uint16
 
 func (u Uint13) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2540,6 +3074,28 @@ func (u *Uint13) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint13(value)
+	return nil
+}
+
+func (u *Uint13) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint13(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint13(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint13(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint13: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2593,6 +3149,28 @@ func (u *Int13) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int13) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int13(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int13(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int13(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int13: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint14 uint16
 
 func (u Uint14) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2640,6 +3218,28 @@ func (u *Uint14) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint14(value)
+	return nil
+}
+
+func (u *Uint14) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint14(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint14(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint14(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint14: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2693,6 +3293,28 @@ func (u *Int14) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int14) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int14(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int14(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int14(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int14: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint15 uint16
 
 func (u Uint15) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2740,6 +3362,28 @@ func (u *Uint15) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint15(value)
+	return nil
+}
+
+func (u *Uint15) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint15(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint15(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint15(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint15: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2793,6 +3437,28 @@ func (u *Int15) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int15) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int15(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int15(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int15(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int15: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint16 uint16
 
 func (u Uint16) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2841,6 +3507,31 @@ func (u *Uint16) UnmarshalJSON(p []byte) error {
 	}
 	*u = Uint16(value)
 	return nil
+}
+
+func (u *Uint16) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint16(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint16(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint16(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint16: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint16) HexString() string {
+	return fmt.Sprintf("%04x", uint64(u))
 }
 
 type Int16 int16
@@ -2893,6 +3584,31 @@ func (u *Int16) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int16) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int16(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int16(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int16(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int16: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int16) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint17 uint32
 
 func (u Uint17) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -2940,6 +3656,28 @@ func (u *Uint17) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint17(value)
+	return nil
+}
+
+func (u *Uint17) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint17(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint17(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint17(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint17: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -2993,6 +3731,28 @@ func (u *Int17) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int17) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int17(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int17(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int17(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int17: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint18 uint32
 
 func (u Uint18) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3040,6 +3800,28 @@ func (u *Uint18) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint18(value)
+	return nil
+}
+
+func (u *Uint18) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint18(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint18(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint18(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint18: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3093,6 +3875,28 @@ func (u *Int18) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int18) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int18(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int18(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int18(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int18: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint19 uint32
 
 func (u Uint19) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3140,6 +3944,28 @@ func (u *Uint19) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint19(value)
+	return nil
+}
+
+func (u *Uint19) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint19(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint19(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint19(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint19: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3193,6 +4019,28 @@ func (u *Int19) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int19) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int19(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int19(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int19(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int19: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint20 uint32
 
 func (u Uint20) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3240,6 +4088,28 @@ func (u *Uint20) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint20(value)
+	return nil
+}
+
+func (u *Uint20) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint20(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint20(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint20(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint20: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3293,6 +4163,28 @@ func (u *Int20) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int20) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int20(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int20(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int20(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int20: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint21 uint32
 
 func (u Uint21) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3340,6 +4232,28 @@ func (u *Uint21) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint21(value)
+	return nil
+}
+
+func (u *Uint21) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint21(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint21(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint21(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint21: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3393,6 +4307,28 @@ func (u *Int21) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int21) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int21(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int21(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int21(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int21: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint22 uint32
 
 func (u Uint22) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3440,6 +4376,28 @@ func (u *Uint22) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint22(value)
+	return nil
+}
+
+func (u *Uint22) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint22(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint22(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint22(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint22: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3493,6 +4451,28 @@ func (u *Int22) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int22) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int22(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int22(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int22(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int22: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint23 uint32
 
 func (u Uint23) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3540,6 +4520,28 @@ func (u *Uint23) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint23(value)
+	return nil
+}
+
+func (u *Uint23) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint23(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint23(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint23(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint23: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3593,6 +4595,28 @@ func (u *Int23) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int23) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int23(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int23(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int23(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int23: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint24 uint32
 
 func (u Uint24) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3641,6 +4665,31 @@ func (u *Uint24) UnmarshalJSON(p []byte) error {
 	}
 	*u = Uint24(value)
 	return nil
+}
+
+func (u *Uint24) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint24(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint24(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint24(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint24: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint24) HexString() string {
+	return fmt.Sprintf("%06x", uint64(u))
 }
 
 type Int24 int32
@@ -3693,6 +4742,31 @@ func (u *Int24) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int24) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int24(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int24(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int24(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int24: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int24) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint25 uint32
 
 func (u Uint25) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3740,6 +4814,28 @@ func (u *Uint25) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint25(value)
+	return nil
+}
+
+func (u *Uint25) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint25(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint25(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint25(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint25: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3793,6 +4889,28 @@ func (u *Int25) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int25) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int25(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int25(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int25(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int25: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint26 uint32
 
 func (u Uint26) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3840,6 +4958,28 @@ func (u *Uint26) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint26(value)
+	return nil
+}
+
+func (u *Uint26) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint26(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint26(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint26(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint26: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3893,6 +5033,28 @@ func (u *Int26) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int26) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int26(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int26(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int26(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int26: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint27 uint32
 
 func (u Uint27) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -3940,6 +5102,28 @@ func (u *Uint27) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint27(value)
+	return nil
+}
+
+func (u *Uint27) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint27(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint27(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint27(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint27: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -3993,6 +5177,28 @@ func (u *Int27) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int27) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int27(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int27(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int27(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int27: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint28 uint32
 
 func (u Uint28) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4040,6 +5246,28 @@ func (u *Uint28) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint28(value)
+	return nil
+}
+
+func (u *Uint28) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint28(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint28(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint28(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint28: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4093,6 +5321,28 @@ func (u *Int28) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int28) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int28(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int28(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int28(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int28: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint29 uint32
 
 func (u Uint29) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4140,6 +5390,28 @@ func (u *Uint29) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint29(value)
+	return nil
+}
+
+func (u *Uint29) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint29(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint29(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint29(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint29: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4193,6 +5465,28 @@ func (u *Int29) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int29) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int29(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int29(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int29(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int29: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint30 uint32
 
 func (u Uint30) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4240,6 +5534,28 @@ func (u *Uint30) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint30(value)
+	return nil
+}
+
+func (u *Uint30) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint30(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint30(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint30(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint30: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4293,6 +5609,28 @@ func (u *Int30) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int30) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int30(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int30(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int30(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int30: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint31 uint32
 
 func (u Uint31) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4340,6 +5678,28 @@ func (u *Uint31) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint31(value)
+	return nil
+}
+
+func (u *Uint31) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint31(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint31(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint31(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint31: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4393,6 +5753,28 @@ func (u *Int31) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int31) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int31(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int31(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int31(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int31: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint32 uint32
 
 func (u Uint32) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4441,6 +5823,31 @@ func (u *Uint32) UnmarshalJSON(p []byte) error {
 	}
 	*u = Uint32(value)
 	return nil
+}
+
+func (u *Uint32) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint32(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint32(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint32(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint32: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint32) HexString() string {
+	return fmt.Sprintf("%08x", uint64(u))
 }
 
 type Int32 int32
@@ -4493,6 +5900,31 @@ func (u *Int32) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int32) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int32(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int32(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int32(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int32: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int32) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint33 uint64
 
 func (u Uint33) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4540,6 +5972,28 @@ func (u *Uint33) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint33(value)
+	return nil
+}
+
+func (u *Uint33) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint33(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint33(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint33(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint33: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4593,6 +6047,28 @@ func (u *Int33) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int33) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int33(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int33(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int33(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int33: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint34 uint64
 
 func (u Uint34) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4640,6 +6116,28 @@ func (u *Uint34) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint34(value)
+	return nil
+}
+
+func (u *Uint34) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint34(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint34(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint34(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint34: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4693,6 +6191,28 @@ func (u *Int34) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int34) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int34(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int34(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int34(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int34: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint35 uint64
 
 func (u Uint35) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4740,6 +6260,28 @@ func (u *Uint35) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint35(value)
+	return nil
+}
+
+func (u *Uint35) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint35(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint35(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint35(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint35: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4793,6 +6335,28 @@ func (u *Int35) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int35) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int35(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int35(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int35(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int35: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint36 uint64
 
 func (u Uint36) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4840,6 +6404,28 @@ func (u *Uint36) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint36(value)
+	return nil
+}
+
+func (u *Uint36) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint36(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint36(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint36(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint36: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4893,6 +6479,28 @@ func (u *Int36) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int36) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int36(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int36(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int36(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int36: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint37 uint64
 
 func (u Uint37) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -4940,6 +6548,28 @@ func (u *Uint37) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint37(value)
+	return nil
+}
+
+func (u *Uint37) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint37(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint37(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint37(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint37: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -4993,6 +6623,28 @@ func (u *Int37) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int37) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int37(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int37(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int37(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int37: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint38 uint64
 
 func (u Uint38) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5040,6 +6692,28 @@ func (u *Uint38) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint38(value)
+	return nil
+}
+
+func (u *Uint38) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint38(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint38(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint38(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint38: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5093,6 +6767,28 @@ func (u *Int38) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int38) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int38(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int38(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int38(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int38: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint39 uint64
 
 func (u Uint39) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5140,6 +6836,28 @@ func (u *Uint39) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint39(value)
+	return nil
+}
+
+func (u *Uint39) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint39(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint39(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint39(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint39: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5193,6 +6911,28 @@ func (u *Int39) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int39) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int39(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int39(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int39(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int39: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint40 uint64
 
 func (u Uint40) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5241,6 +6981,31 @@ func (u *Uint40) UnmarshalJSON(p []byte) error {
 	}
 	*u = Uint40(value)
 	return nil
+}
+
+func (u *Uint40) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint40(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint40(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint40(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint40: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint40) HexString() string {
+	return fmt.Sprintf("%010x", uint64(u))
 }
 
 type Int40 int64
@@ -5293,6 +7058,31 @@ func (u *Int40) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int40) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int40(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int40(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int40(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int40: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int40) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint41 uint64
 
 func (u Uint41) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5340,6 +7130,28 @@ func (u *Uint41) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint41(value)
+	return nil
+}
+
+func (u *Uint41) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint41(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint41(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint41(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint41: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5393,6 +7205,28 @@ func (u *Int41) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int41) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int41(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int41(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int41(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int41: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint42 uint64
 
 func (u Uint42) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5440,6 +7274,28 @@ func (u *Uint42) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint42(value)
+	return nil
+}
+
+func (u *Uint42) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint42(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint42(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint42(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint42: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5493,6 +7349,28 @@ func (u *Int42) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int42) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int42(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int42(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int42(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int42: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint43 uint64
 
 func (u Uint43) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5540,6 +7418,28 @@ func (u *Uint43) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint43(value)
+	return nil
+}
+
+func (u *Uint43) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint43(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint43(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint43(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint43: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5593,6 +7493,28 @@ func (u *Int43) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int43) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int43(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int43(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int43(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int43: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint44 uint64
 
 func (u Uint44) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5640,6 +7562,28 @@ func (u *Uint44) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint44(value)
+	return nil
+}
+
+func (u *Uint44) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint44(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint44(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint44(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint44: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5693,6 +7637,28 @@ func (u *Int44) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int44) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int44(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int44(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int44(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int44: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint45 uint64
 
 func (u Uint45) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5740,6 +7706,28 @@ func (u *Uint45) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint45(value)
+	return nil
+}
+
+func (u *Uint45) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint45(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint45(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint45(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint45: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5793,6 +7781,28 @@ func (u *Int45) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int45) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int45(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int45(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int45(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int45: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint46 uint64
 
 func (u Uint46) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5840,6 +7850,28 @@ func (u *Uint46) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint46(value)
+	return nil
+}
+
+func (u *Uint46) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint46(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint46(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint46(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint46: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5893,6 +7925,28 @@ func (u *Int46) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int46) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int46(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int46(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int46(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int46: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint47 uint64
 
 func (u Uint47) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -5940,6 +7994,28 @@ func (u *Uint47) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint47(value)
+	return nil
+}
+
+func (u *Uint47) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint47(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint47(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint47(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint47: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -5993,6 +8069,28 @@ func (u *Int47) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int47) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int47(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int47(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int47(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int47: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint48 uint64
 
 func (u Uint48) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6041,6 +8139,31 @@ func (u *Uint48) UnmarshalJSON(p []byte) error {
 	}
 	*u = Uint48(value)
 	return nil
+}
+
+func (u *Uint48) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint48(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint48(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint48(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint48: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint48) HexString() string {
+	return fmt.Sprintf("%012x", uint64(u))
 }
 
 type Int48 int64
@@ -6093,6 +8216,31 @@ func (u *Int48) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int48) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int48(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int48(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int48(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int48: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int48) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint49 uint64
 
 func (u Uint49) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6140,6 +8288,28 @@ func (u *Uint49) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint49(value)
+	return nil
+}
+
+func (u *Uint49) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint49(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint49(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint49(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint49: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6193,6 +8363,28 @@ func (u *Int49) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int49) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int49(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int49(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int49(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int49: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint50 uint64
 
 func (u Uint50) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6240,6 +8432,28 @@ func (u *Uint50) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint50(value)
+	return nil
+}
+
+func (u *Uint50) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint50(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint50(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint50(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint50: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6293,6 +8507,28 @@ func (u *Int50) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int50) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int50(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int50(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int50(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int50: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint51 uint64
 
 func (u Uint51) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6340,6 +8576,28 @@ func (u *Uint51) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint51(value)
+	return nil
+}
+
+func (u *Uint51) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint51(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint51(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint51(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint51: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6393,6 +8651,28 @@ func (u *Int51) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int51) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int51(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int51(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int51(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int51: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint52 uint64
 
 func (u Uint52) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6440,6 +8720,28 @@ func (u *Uint52) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint52(value)
+	return nil
+}
+
+func (u *Uint52) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint52(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint52(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint52(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint52: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6493,6 +8795,28 @@ func (u *Int52) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int52) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int52(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int52(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int52(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int52: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint53 uint64
 
 func (u Uint53) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6540,6 +8864,28 @@ func (u *Uint53) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint53(value)
+	return nil
+}
+
+func (u *Uint53) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint53(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint53(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint53(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint53: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6593,6 +8939,28 @@ func (u *Int53) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int53) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int53(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int53(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int53(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int53: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint54 uint64
 
 func (u Uint54) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6640,6 +9008,28 @@ func (u *Uint54) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint54(value)
+	return nil
+}
+
+func (u *Uint54) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint54(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint54(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint54(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint54: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6693,6 +9083,28 @@ func (u *Int54) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int54) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int54(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int54(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int54(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int54: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint55 uint64
 
 func (u Uint55) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6740,6 +9152,28 @@ func (u *Uint55) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint55(value)
+	return nil
+}
+
+func (u *Uint55) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint55(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint55(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint55(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint55: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6793,6 +9227,28 @@ func (u *Int55) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int55) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int55(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int55(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int55(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int55: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint56 uint64
 
 func (u Uint56) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6841,6 +9297,31 @@ func (u *Uint56) UnmarshalJSON(p []byte) error {
 	}
 	*u = Uint56(value)
 	return nil
+}
+
+func (u *Uint56) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint56(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint56(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint56(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint56: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint56) HexString() string {
+	return fmt.Sprintf("%014x", uint64(u))
 }
 
 type Int56 int64
@@ -6893,6 +9374,31 @@ func (u *Int56) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int56) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int56(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int56(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int56(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int56: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int56) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+
 type Uint57 uint64
 
 func (u Uint57) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -6940,6 +9446,28 @@ func (u *Uint57) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint57(value)
+	return nil
+}
+
+func (u *Uint57) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint57(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint57(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint57(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint57: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -6993,6 +9521,28 @@ func (u *Int57) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int57) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int57(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int57(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int57(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int57: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint58 uint64
 
 func (u Uint58) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7040,6 +9590,28 @@ func (u *Uint58) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint58(value)
+	return nil
+}
+
+func (u *Uint58) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint58(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint58(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint58(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint58: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7093,6 +9665,28 @@ func (u *Int58) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int58) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int58(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int58(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int58(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int58: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint59 uint64
 
 func (u Uint59) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7140,6 +9734,28 @@ func (u *Uint59) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint59(value)
+	return nil
+}
+
+func (u *Uint59) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint59(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint59(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint59(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint59: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7193,6 +9809,28 @@ func (u *Int59) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int59) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int59(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int59(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int59(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int59: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint60 uint64
 
 func (u Uint60) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7240,6 +9878,28 @@ func (u *Uint60) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint60(value)
+	return nil
+}
+
+func (u *Uint60) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint60(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint60(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint60(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint60: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7293,6 +9953,28 @@ func (u *Int60) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int60) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int60(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int60(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int60(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int60: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint61 uint64
 
 func (u Uint61) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7340,6 +10022,28 @@ func (u *Uint61) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint61(value)
+	return nil
+}
+
+func (u *Uint61) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint61(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint61(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint61(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint61: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7393,6 +10097,28 @@ func (u *Int61) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int61) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int61(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int61(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int61(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int61: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint62 uint64
 
 func (u Uint62) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7440,6 +10166,28 @@ func (u *Uint62) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint62(value)
+	return nil
+}
+
+func (u *Uint62) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint62(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint62(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint62(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint62: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7493,6 +10241,28 @@ func (u *Int62) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int62) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int62(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int62(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int62(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int62: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint63 uint64
 
 func (u Uint63) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7540,6 +10310,28 @@ func (u *Uint63) UnmarshalJSON(p []byte) error {
 		return err
 	}
 	*u = Uint63(value)
+	return nil
+}
+
+func (u *Uint63) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint63(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint63(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint63(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint63: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7593,6 +10385,28 @@ func (u *Int63) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int63) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int63(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int63(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int63(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int63: %v", elem.SumType)
+	}
+	return nil
+}
+
 type Uint64 uint64
 
 func (u Uint64) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7643,6 +10457,31 @@ func (u *Uint64) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint64) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint64(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint64(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint64(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint64: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint64) HexString() string {
+	return fmt.Sprintf("%016x", uint64(u))
+}
+
 type Int64 int64
 
 func (u Int64) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7691,6 +10530,31 @@ func (u *Int64) UnmarshalJSON(p []byte) error {
 	}
 	*u = Int64(value)
 	return nil
+}
+
+func (u *Int64) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int64(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int64(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int64(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int64: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int64) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
 }
 
 type Int128 big.Int
@@ -7748,6 +10612,26 @@ func (u *Int128) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int128) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int128(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Int128(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Int128: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int128) HexString() string {
+	i := big.Int(u)
+	return i.Text(16)
+}
+
 type Int256 big.Int
 
 func (u Int256) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7803,6 +10687,26 @@ func (u *Int256) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Int256) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int256(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Int256(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Int256: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Int256) HexString() string {
+	i := big.Int(u)
+	return i.Text(16)
+}
+
 type Int257 big.Int
 
 func (u Int257) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7855,6 +10759,22 @@ func (u *Int257) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = Int257(z)
+	return nil
+}
+
+func (u *Int257) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int257(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Int257(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Int257: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -7913,6 +10833,26 @@ func (u *Uint128) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint128) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint128(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Uint128(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Uint128: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint128) HexString() string {
+	i := big.Int(u)
+	return fmt.Sprintf("%032x", &i)
+}
+
 type Uint160 big.Int
 
 func (u Uint160) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -7968,6 +10908,26 @@ func (u *Uint160) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint160) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint160(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Uint160(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Uint160: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint160) HexString() string {
+	i := big.Int(u)
+	return fmt.Sprintf("%040x", &i)
+}
+
 type Uint220 big.Int
 
 func (u Uint220) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -8020,6 +10980,22 @@ func (u *Uint220) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = Uint220(z)
+	return nil
+}
+
+func (u *Uint220) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint220(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Uint220(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Uint220: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -8078,6 +11054,26 @@ func (u *Uint256) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *Uint256) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint256(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Uint256(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Uint256: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint256) HexString() string {
+	i := big.Int(u)
+	return fmt.Sprintf("%064x", &i)
+}
+
 type Bits80 [10]byte
 
 func (u Bits80) FixedSize() int {
@@ -8116,6 +11112,10 @@ func (u Bits80) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits80) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits80) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(10); err != nil {
 		return err
@@ -8123,6 +11123,10 @@ func (u *Bits80) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits80) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits96 [12]byte
@@ -8163,6 +11167,10 @@ func (u Bits96) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits96) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits96) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(12); err != nil {
 		return err
@@ -8170,6 +11178,10 @@ func (u *Bits96) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits96) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits128 [16]byte
@@ -8210,6 +11222,10 @@ func (u Bits128) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits128) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits128) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(16); err != nil {
 		return err
@@ -8217,6 +11233,65 @@ func (u *Bits128) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits128) HexString() string {
+	return hex.EncodeToString(u[:])
+}
+
+type Bits160 [20]byte
+
+func (u Bits160) FixedSize() int {
+	return 160
+}
+
+func (u Bits160) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%x\"", u[:])), nil
+}
+
+func (u *Bits160) UnmarshalJSON(b []byte) error {
+	bs, err := hex.DecodeString(strings.Trim(string(b), "\""))
+	if err != nil {
+		return err
+	}
+	if len(bs) != 20 {
+		return fmt.Errorf("can't parse Bits160 %v", string(b))
+	}
+	copy(u[:], bs)
+	return nil
+}
+
+func (u Bits160) Equal(other any) bool {
+	otherBits, ok := other.(Bits160)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+
+func (u Bits160) Compare(other any) (int, bool) {
+	otherBits, ok := other.(Bits160)
+	if !ok {
+		return 0, false
+	}
+	return bytes.Compare(u[:], otherBits[:]), true
+}
+
+func (u Bits160) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
+func (u *Bits160) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	if bytes, err := c.ReadBytes(20); err != nil {
+		return err
+	} else {
+		copy(u[:], bytes)
+		return nil
+	}
+}
+
+func (u Bits160) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits256 [32]byte
@@ -8257,6 +11332,10 @@ func (u Bits256) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits256) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits256) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(32); err != nil {
 		return err
@@ -8264,6 +11343,10 @@ func (u *Bits256) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits256) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits264 [33]byte
@@ -8304,6 +11387,10 @@ func (u Bits264) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits264) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits264) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(33); err != nil {
 		return err
@@ -8311,6 +11398,10 @@ func (u *Bits264) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits264) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits320 [40]byte
@@ -8351,6 +11442,10 @@ func (u Bits320) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits320) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits320) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(40); err != nil {
 		return err
@@ -8358,6 +11453,10 @@ func (u *Bits320) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits320) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits352 [44]byte
@@ -8398,6 +11497,10 @@ func (u Bits352) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits352) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits352) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(44); err != nil {
 		return err
@@ -8405,6 +11508,10 @@ func (u *Bits352) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits352) HexString() string {
+	return hex.EncodeToString(u[:])
 }
 
 type Bits512 [64]byte
@@ -8445,6 +11552,10 @@ func (u Bits512) Compare(other any) (int, bool) {
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
+func (u Bits512) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
 func (u *Bits512) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if bytes, err := c.ReadBytes(64); err != nil {
 		return err
@@ -8452,4 +11563,8 @@ func (u *Bits512) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		copy(u[:], bytes)
 		return nil
 	}
+}
+
+func (u Bits512) HexString() string {
+	return hex.EncodeToString(u[:])
 }

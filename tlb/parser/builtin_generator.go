@@ -2,8 +2,9 @@ package parser
 
 import (
 	"bytes"
-	"fmt"
 	"go/format"
+	"strconv"
+	"strings"
 	"text/template"
 )
 
@@ -131,6 +132,34 @@ func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
     return nil
 }
 
+func (u *Uint{{.NameIndex}}) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint{{.NameIndex}}(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Uint{{.NameIndex}}(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Uint{{.NameIndex}}(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Uint{{.NameIndex}}: %v", elem.SumType)
+	}
+	return nil
+}
+
+{{- if .ByteAligned }}
+func (u Uint{{.NameIndex}}) HexString() string {
+	return fmt.Sprintf("%0{{.HexDigits}}x", uint64(u))
+}
+{{- end }}
+
 type Int{{.NameIndex}} int{{.P}}
 
 func (u Int{{.NameIndex}}) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -187,18 +216,48 @@ func (u *Int{{.NameIndex}}) UnmarshalJSON(p []byte) error {
     *u = Int{{.NameIndex}}(value)
     return nil
 }
+
+func (u *Int{{.NameIndex}}) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int{{.NameIndex}}(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Int{{.NameIndex}}(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Int{{.NameIndex}}(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int{{.NameIndex}}: %v", elem.SumType)
+	}
+	return nil
+}
+
+{{- if .ByteAligned }}
+func (u Int{{.NameIndex}}) HexString() string {
+	return strconv.FormatInt(int64(u), 16)
+}
+{{- end }}
 `
 	tpl, err := template.New("smallInts").Parse(templateStr)
 	if err != nil {
 		panic(err)
 	}
 	type context struct {
-		NameIndex int
-		P         int
+		NameIndex   int
+		P           int
+		ByteAligned bool
+		HexDigits   int
 	}
 	for i := 1; i <= max; i++ {
 		p := nearestPow(i)
-		ctx := context{NameIndex: i, P: p}
+		ctx := context{NameIndex: i, P: p, ByteAligned: i%8 == 0, HexDigits: i / 4}
 		if err := tpl.Execute(&b, ctx); err != nil {
 			panic(err)
 		}
@@ -268,16 +327,40 @@ func (u *Int{{.NameIndex}}) UnmarshalJSON(p []byte) error {
     *u = Int{{.NameIndex}}(z)
     return nil
 }
+
+func (u *Int{{.NameIndex}}) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Int{{.NameIndex}}(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Int{{.NameIndex}}(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Int{{.NameIndex}}: %v", elem.SumType)
+	}
+	return nil
+}
+
+{{- if .ByteAligned }}
+func (u Int{{.NameIndex}}) HexString() string {
+	i := big.Int(u)
+	return i.Text(16)
+}
+{{- end }}
 `
 	tpl, err := template.New("bigInts").Parse(templateStr)
 	if err != nil {
 		panic(err)
 	}
 	type context struct {
-		NameIndex int
+		NameIndex   int
+		ByteAligned bool
 	}
 	for _, i := range sizes {
-		ctx := context{NameIndex: i}
+		ctx := context{NameIndex: i, ByteAligned: i%8 == 0}
 		if err := tpl.Execute(&b, ctx); err != nil {
 			panic(err)
 		}
@@ -347,16 +430,41 @@ func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
     *u = Uint{{.NameIndex}}(z)
     return nil
 }
+
+func (u *Uint{{.NameIndex}}) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint{{.NameIndex}}(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Uint{{.NameIndex}}(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Uint{{.NameIndex}}: %v", elem.SumType)
+	}
+	return nil
+}
+
+{{- if .ByteAligned }}
+func (u Uint{{.NameIndex}}) HexString() string {
+	i := big.Int(u)
+	return fmt.Sprintf("%0{{.HexDigits}}x", &i)
+}
+{{- end }}
 `
 	tpl, err := template.New("bigInts").Parse(templateStr)
 	if err != nil {
 		panic(err)
 	}
 	type context struct {
-		NameIndex int
+		NameIndex   int
+		ByteAligned bool
+		HexDigits   int
 	}
 	for _, i := range sizes {
-		ctx := context{NameIndex: i}
+		ctx := context{NameIndex: i, ByteAligned: i%8 == 0, HexDigits: i / 4}
 		if err := tpl.Execute(&b, ctx); err != nil {
 			panic(err)
 		}
@@ -370,75 +478,87 @@ func (u *Uint{{.NameIndex}}) UnmarshalJSON(p []byte) error {
 
 func GenerateBitsTypes(sizes []int) string {
 	var b bytes.Buffer
-	for _, i := range sizes {
-		if i%8 == 0 {
-			fmt.Fprintf(&b, `
-type Bits%v [%v]byte
+	for _, size := range sizes {
+		replacer := strings.NewReplacer(
+			"$bits$", strconv.Itoa(size),
+			"$bytes$", strconv.Itoa(size/8),
+		)
+		if size%8 == 0 {
+			replacer.WriteString(&b, `
+type Bits$bits$ [$bytes$]byte
 
-func (u Bits%v) FixedSize() int {
-	return %v
+func (u Bits$bits$) FixedSize() int {
+	return $bits$
 }
 
-func (u Bits%v) MarshalJSON() ([]byte, error) {
-    return []byte(fmt.Sprintf("\"%%x\"", u[:])), nil
+func (u Bits$bits$) MarshalJSON() ([]byte, error) {
+    return []byte(fmt.Sprintf("\"%x\"", u[:])), nil
 }
 
-func (u *Bits%v) UnmarshalJSON(b []byte) error {
+func (u *Bits$bits$) UnmarshalJSON(b []byte) error {
 	bs, err := hex.DecodeString(strings.Trim(string(b), "\""))
 	if err != nil {
 		return err
 	}
-	if len(bs) != %v {
-		return fmt.Errorf("can't parse Bits%v %%v", string(b))
+	if len(bs) != $bytes$ {
+		return fmt.Errorf("can't parse Bits$bits$ %v", string(b))
 	}
 	copy(u[:], bs)
     return nil
 }
 
-func (u Bits%v) Equal(other any) bool {
-    otherBits, ok := other.(Bits%v)
+func (u Bits$bits$) Equal(other any) bool {
+    otherBits, ok := other.(Bits$bits$)
 	if !ok {
 		return false
 	}
 	return u == otherBits
 }
 
-func (u Bits%v) Compare(other any) (int, bool) {
-    otherBits, ok := other.(Bits%v)
+func (u Bits$bits$) Compare(other any) (int, bool) {
+    otherBits, ok := other.(Bits$bits$)
 	if !ok {
 		return 0, false
 	}
 	return bytes.Compare(u[:], otherBits[:]), true
 }
 
-func (u *Bits%d) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	if bytes, err := c.ReadBytes(%d); err != nil {
+func (u Bits$bits$) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	return c.WriteBytes(u[:])
+}
+
+func (u *Bits$bits$) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	if bytes, err := c.ReadBytes($bytes$); err != nil {
 		return err
 	} else {
 		copy(u[:], bytes)
 		return nil
 	}
 }
-	`, i, i/8, i, i, i, i, i/8, i, i, i, i, i, i, i/8)
+
+func (u Bits$bits$) HexString() string {
+	return hex.EncodeToString(u[:])
+}
+	`)
 		} else {
-			fmt.Fprintf(&b, `
-type Bits%v boc.BitString
-	
-func (u Bits%v) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+			replacer.WriteString(&b, `
+type Bits$bits$ boc.BitString
+
+func (u Bits$bits$) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return c.WriteBitString(boc.BitString(u))
 }
 	
-func (u *Bits%v) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
-	v, err := c.ReadBits(%v)
-	*u = Bits%v(v)
+func (u *Bits$bits$) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadBits($bits$)
+	*u = Bits$bits$(v)
 	return err
 }
 
-func (u Bits%v) FixedSize() int {
-	return %v
+func (u Bits$bits$) FixedSize() int {
+	return $bits$
 }
 
-	`, i, i, i, i, i, i, i)
+	`)
 		}
 	}
 	bytes, err := format.Source(b.Bytes())

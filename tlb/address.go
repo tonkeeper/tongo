@@ -124,7 +124,7 @@ func (addr *InternalAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 }
 
 func (addr InternalAddress) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
-	if err := c.WriteUint(2, 3); err != nil {
+	if err := c.WriteUint(4, 3); err != nil {
 		return err
 	}
 	if err := c.WriteInt(int64(addr.Workchain), 8); err != nil {
@@ -133,10 +133,12 @@ func (addr InternalAddress) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return c.WriteBytes(addr.Address[:])
 }
 
+func (addr InternalAddress) String() string {
+	return fmt.Sprintf("%d:%s", addr.Workchain, addr.Address.Hex())
+}
+
 func (addr InternalAddress) MarshalJSON() ([]byte, error) {
-	var anycastExtra string
-	x := fmt.Sprintf("%d:%s", addr.Workchain, addr.Address.Hex())
-	return []byte(fmt.Sprintf(`"%s%s"`, x, anycastExtra)), nil
+	return []byte(fmt.Sprintf(`"%s"`, addr.String())), nil
 }
 
 func (addr *InternalAddress) UnmarshalJSON(b []byte) error {
@@ -157,4 +159,26 @@ func (addr *InternalAddress) UnmarshalJSON(b []byte) error {
 	addr.Workchain = int8(num)
 	addr.Address = dst
 	return nil
+}
+
+func (addr *InternalAddress) ReadFromStack(stack *VmStack) error {
+	cell, err := stack.ReadSlice()
+	if err != nil {
+		return err
+	}
+	return addr.UnmarshalTLB(cell, nil)
+}
+
+func (addr InternalAddress) ToMsgAddress() MsgAddress {
+	return MsgAddress{
+		SumType: "AddrStd",
+		AddrStd: struct {
+			Anycast     Maybe[Anycast]
+			WorkchainId int8
+			Address     Bits256
+		}{
+			WorkchainId: addr.Workchain,
+			Address:     addr.Address,
+		},
+	}
 }

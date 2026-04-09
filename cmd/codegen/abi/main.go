@@ -126,7 +126,7 @@ func main() {
 		{msgDecoder, "messages_generated.go", `"github.com/tonkeeper/tongo/tlb"`},
 		{getMethods, "get_methods.go", `"context"`, `"fmt"`, `"github.com/tonkeeper/tongo/ton"`, `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{invocationOrder, "interfaces.go", `"github.com/tonkeeper/tongo/ton"`},
-		{jettons, "jetton_msg_types.go", `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
+		{jettons, "jetton_msg_types.go", `"github.com/tonkeeper/tongo/tlb"`},
 		{nfts, "nfts_msg_types.go", `"github.com/tonkeeper/tongo/boc"`, `"github.com/tonkeeper/tongo/tlb"`},
 		{contractErrors, "contracts_errors.go"},
 	} {

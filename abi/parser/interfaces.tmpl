@@ -4,6 +4,7 @@ const (
 {{- range $name, $iface := .Interfaces }}
 	{{ $name }}
 {{- end }}
+    _xmlContractInterfaceEnd // sentinel used by Tolk codegen for non-overlapping constant values
 )
 
 func (c ContractInterface) String() string {
@@ -13,6 +14,9 @@ switch c {
        return "{{ $iface }}"
   {{- end }}
   default:
+      if s, ok := tolkContractInterfaceStrings[c]; ok {
+          return s
+      }
       return "unknown"
   }
 }
@@ -24,6 +28,9 @@ switch s {
        return {{ $name }}
   {{- end }}
   default:
+      if c, ok := tolkContractInterfaceFromString[s]; ok {
+          return c
+      }
       return IUnknown
   }
 }
@@ -90,7 +97,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc  {
         }
     {{- end }}
     default:
-        return nil
+        return tolkIntMsgs[c]
     }
 }
 
@@ -105,7 +112,7 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc  {
         }
     {{- end }}
     default:
-        return nil
+        return tolkExtInMsgs[c]
     }
 }
 
@@ -120,6 +127,6 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc  {
         }
     {{- end }}
     default:
-        return nil
+        return tolkExtOutMsgs[c]
     }
 }

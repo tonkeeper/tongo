@@ -136,6 +136,7 @@ const (
 	WalletV5R1
 	WalletVesting
 	WhalesPool
+	_xmlContractInterfaceEnd // sentinel used by Tolk codegen for non-overlapping constant values
 )
 
 func (c ContractInterface) String() string {
@@ -397,6 +398,9 @@ func (c ContractInterface) String() string {
 	case WhalesPool:
 		return "whales_pool"
 	default:
+		if s, ok := tolkContractInterfaceStrings[c]; ok {
+			return s
+		}
 		return "unknown"
 	}
 }
@@ -660,6 +664,9 @@ func ContractInterfaceFromString(s string) ContractInterface {
 	case "whales_pool":
 		return WhalesPool
 	default:
+		if c, ok := tolkContractInterfaceFromString[s]; ok {
+			return c
+		}
 		return IUnknown
 	}
 }
@@ -2735,7 +2742,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncWhalesNominatorsForceKickMsgBody,
 		}
 	default:
-		return nil
+		return tolkIntMsgs[c]
 	}
 }
 
@@ -2794,7 +2801,7 @@ func (c ContractInterface) ExtInMsgs() []msgDecoderFunc {
 			decodeFuncWalletSignedExternalV5R1ExtInMsgBody,
 		}
 	default:
-		return nil
+		return tolkExtInMsgs[c]
 	}
 }
 
@@ -2832,6 +2839,6 @@ func (c ContractInterface) ExtOutMsgs() []msgDecoderFunc {
 			decodeFuncIntentLogExtOutMsgBody,
 		}
 	default:
-		return nil
+		return tolkExtOutMsgs[c]
 	}
 }

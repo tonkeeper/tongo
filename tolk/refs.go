@@ -74,12 +74,13 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder
 		fieldVal := Value{}
 
 		isPayloadResolved := false
-		if field.IsPayload != nil && *field.IsPayload {
-			fieldVal, isPayloadResolved, err = s.resolvePayload(cell, field.Ty, decoder)
-			if err != nil {
-				return fmt.Errorf("failed to resolve payload for field %v: %w", field.Name, err)
-			}
-		}
+		//
+		//if field.IsPayload != nil && *field.IsPayload {
+		//	fieldVal, isPayloadResolved, err = s.resolvePayload(cell, field.Ty, decoder)
+		//	if err != nil {
+		//		return fmt.Errorf("failed to resolve payload for field %v: %w", field.Name, err)
+		//	}
+		//}
 		if !isPayloadResolved {
 			err = fieldVal.Unmarshal(cell, field.Ty, decoder)
 			if err != nil {
@@ -440,15 +441,15 @@ func (a *AliasValue) Unmarshal(cell *boc.Cell, ty parser.AliasRef, decoder *Deco
 		return fmt.Errorf("alias with name %s was not found in given abi", ty.AliasName)
 	}
 
-	if alias.CustomUnpackFromSlice {
-		if decoder.customUnpackResolver == nil {
-			return fmt.Errorf("custom unmarshal alias %v with custom unpack method", ty.AliasName)
-		}
-		if err := decoder.customUnpackResolver(ty, cell, a); err != nil {
-			return fmt.Errorf("failed to unmarshal alias with custom unpack: %w", err)
-		}
-		return nil
-	}
+	//if alias.CustomUnpackFromSlice {
+	//	if decoder.customUnpackResolver == nil {
+	//		return fmt.Errorf("custom unmarshal alias %v with custom unpack method", ty.AliasName)
+	//	}
+	//	if err := decoder.customUnpackResolver(ty, cell, a); err != nil {
+	//		return fmt.Errorf("failed to unmarshal alias with custom unpack: %w", err)
+	//	}
+	//	return nil
+	//}
 
 	oldGenericMap := decoder.abiRefs.genericRefs
 	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, &decoder.abiRefs)
@@ -478,15 +479,15 @@ func (a *AliasValue) Marshal(cell *boc.Cell, ty parser.AliasRef, encoder *Encode
 		return fmt.Errorf("alias with name %s was not found in given abi", ty.AliasName)
 	}
 
-	if alias.CustomPackToBuilder {
-		if encoder.customPackResolver == nil {
-			return fmt.Errorf("custom marshal alias %v with custom pack method", ty.AliasName)
-		}
-		if err := encoder.customPackResolver(ty, cell, a); err != nil {
-			return fmt.Errorf("failed to marshal alias with custom pack: %w", err)
-		}
-		return nil
-	}
+	//if alias.CustomPackToBuilder {
+	//	if encoder.customPackResolver == nil {
+	//		return fmt.Errorf("custom marshal alias %v with custom pack method", ty.AliasName)
+	//	}
+	//	if err := encoder.customPackResolver(ty, cell, a); err != nil {
+	//		return fmt.Errorf("failed to marshal alias with custom pack: %w", err)
+	//	}
+	//	return nil
+	//}
 
 	oldGenericMap := encoder.abiRefs.genericRefs
 	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, &encoder.abiRefs)

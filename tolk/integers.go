@@ -322,7 +322,7 @@ func (b *Bits) UnmarshalJSON(bytes []byte) error {
 
 type CoinsValue big.Int
 
-func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty parser.Coins, decoder *Decoder) error {
+func (c *CoinsValue) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	varUint := VarUInt{}
 	if err := varUint.Unmarshal(cell, parser.VarUintN{N: 16}, decoder); err != nil {
 		return fmt.Errorf("failed to unmarshal coins value: %w", err)
@@ -331,7 +331,7 @@ func (c *CoinsValue) Unmarshal(cell *boc.Cell, ty parser.Coins, decoder *Decoder
 	return nil
 }
 
-func (c *CoinsValue) Marshal(cell *boc.Cell, ty parser.Coins, encoder *Encoder) error {
+func (c *CoinsValue) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	varUint := VarUInt(*c)
 	err := varUint.Marshal(cell, parser.VarUintN{N: 16}, encoder) // coins is actually varuint16
 	if err != nil {
@@ -377,7 +377,7 @@ func (b *BoolValue) Equal(o any) bool {
 	return *b == otherBool
 }
 
-func (b *BoolValue) Unmarshal(cell *boc.Cell, ty parser.Bool, decoder *Decoder) error {
+func (b *BoolValue) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	val, err := cell.ReadBit()
 	if err != nil {
 		return fmt.Errorf("failed to read bool value: %w", err)
@@ -386,7 +386,7 @@ func (b *BoolValue) Unmarshal(cell *boc.Cell, ty parser.Bool, decoder *Decoder) 
 	return nil
 }
 
-func (b *BoolValue) Marshal(cell *boc.Cell, ty parser.Bool, encoder *Encoder) error {
+func (b *BoolValue) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	err := cell.WriteBit(bool(*b))
 	if err != nil {
 		return fmt.Errorf("failed to write bool value: %w", err)

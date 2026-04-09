@@ -18,6 +18,22 @@ type Maybe[T any] struct {
 	Value  T
 }
 
+func Just[T any](v T) Maybe[T] {
+	return Maybe[T]{Exists: true, Value: v}
+}
+
+func JustRef[T any](v T) Maybe[Ref[T]] {
+	return Maybe[Ref[T]]{Exists: true, Value: Ref[T]{Value: v}}
+}
+
+func Nothing[T any]() Maybe[T] {
+	var def T
+	return Maybe[T]{
+		Value:  def,
+		Exists: false,
+	}
+}
+
 type Either[M, N any] struct {
 	IsRight bool
 	Left    M
@@ -30,6 +46,12 @@ type EitherRef[T any] struct {
 }
 
 type Ref[T any] struct {
+	Value T
+}
+
+// RefT unlike Ref requires inner type to have marshaling implemented
+// so it does not rely on reflection-based tlb.Encoder
+type RefT[T CodecTLB] struct {
 	Value T
 }
 
@@ -107,6 +129,31 @@ func (m Maybe[_]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 		}
 	}
 	return nil
+}
+
+func UnmarshalMaybeCallback[T any](c *boc.Cell, decode func(c *boc.Cell) (T, error)) (Maybe[T], error) {
+	m := Maybe[T]{}
+	exist, err := c.ReadBit()
+	if err != nil {
+		return m, err
+	}
+	m.Exists = exist
+	if exist {
+		m.Value, err = decode(c)
+	}
+	return m, nil
+}
+
+func StackReadMaybeCallback[T any](stack *VmStack, inner func(c *VmStack) (T, error)) (value Maybe[T], err error) {
+	if stack.Peek(0).SumType == "VmStkNull" {
+		stack.Pop()
+		return Nothing[T](), nil
+	}
+	if value, err := inner(stack); err == nil {
+		return Just(value), nil
+	} else {
+		return Nothing[T](), err
+	}
 }
 
 func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -235,6 +282,20 @@ func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	return nil
+}
+
+func (r *RefT[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	ru := Ref[T]{}
+	if err := ru.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	r.Value = ru.Value
+	return nil
+}
+
+func (r RefT[T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	ru := Ref[T]{Value: r.Value}
+	return ru.MarshalTLB(c, encoder)
 }
 
 func (n Unary) MarshalTLB(c *boc.Cell, encoder *Encoder) error {

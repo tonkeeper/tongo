@@ -10,7 +10,7 @@ import (
 	"github.com/tonkeeper/tongo/tlb/parser"
 )
 
-var bitsSizes = []int{80, 96, 128, 256, 264, 320, 352, 512}
+var bitsSizes = []int{80, 96, 128, 160, 256, 264, 320, 352, 512}
 var intSizes = []int{128, 256, 257}
 var uintSizes = []int{128, 160, 220, 256}
 

@@ -56,6 +56,13 @@ func (id *AccountID) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (id AccountID) ToInternal() tlb.InternalAddress {
+	return tlb.InternalAddress{
+		Workchain: int8(id.Workchain),
+		Address:   id.Address,
+	}
+}
+
 func (id AccountID) ToRaw() string {
 	return fmt.Sprintf("%v:%x", id.Workchain, id.Address)
 }

@@ -191,6 +191,26 @@ func CreateExternalMessage(address AccountID, body *boc.Cell, init *tlb.StateIni
 	return msg, nil
 }
 
+func CreateExternalMessageT[T any](address AccountID, body T, init *tlb.StateInit, importFee tlb.VarUInteger16) (tlb.Message, error) {
+	bodyCell := boc.NewCell()
+	if err := tlb.Marshal(bodyCell, body); err != nil {
+		return tlb.Message{}, fmt.Errorf("marshal message body: %w", err)
+	}
+	return CreateExternalMessage(address, bodyCell, init, importFee)
+}
+
+func CreateExternalMessageTWithState[T any, Ts tlb.MarshalerTLB](address AccountID, body T, init *tlb.StateInitT[Ts], importFee tlb.VarUInteger16) (tlb.Message, error) {
+	var stateInit *tlb.StateInit
+	if init != nil {
+		si, err := init.ToStateInit()
+		if err != nil {
+			return tlb.Message{}, fmt.Errorf("build state init: %w", err)
+		}
+		stateInit = &si
+	}
+	return CreateExternalMessageT(address, body, stateInit, importFee)
+}
+
 // ShardIDs returns a list of IDs of shard blocks this block refers to.
 func ShardIDs(blk *tlb.Block) []BlockIDExt {
 	if !blk.Extra.Custom.Exists {

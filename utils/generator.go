@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"fmt"
+	"go/format"
+	"os"
 	"strings"
 
 	"golang.org/x/exp/constraints"
@@ -85,4 +88,19 @@ func GetOrderedKeys[M ~map[K]V, K constraints.Ordered, V any](m M) []K {
 	keys := maps.Keys(m)
 	slices.Sort(keys)
 	return keys
+}
+
+func WriteFormattedGoCode(path, content string) error {
+	formatted, fmtErr := format.Source([]byte(content))
+	if fmtErr != nil {
+		formatted = []byte(content)
+	}
+	if err := os.WriteFile(path, formatted, 0644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+	if fmtErr != nil {
+		return fmt.Errorf("generated %s with fmt error: %w", path, fmtErr)
+	}
+	fmt.Printf("%s\n", path)
+	return nil
 }

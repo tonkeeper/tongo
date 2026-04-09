@@ -86,6 +86,14 @@ func (m Message) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return nil
 }
 
+func (m Message) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := m.MarshalTLB(c, &Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 // CommonMsgInfo
 // int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
 // src:MsgAddressInt dest:MsgAddressInt
@@ -132,6 +140,107 @@ type StateInit struct {
 	Code       Maybe[Ref[boc.Cell]]
 	Data       Maybe[Ref[boc.Cell]]
 	Library    HashmapE[Bits256, SimpleLib]
+}
+
+// BuildInternal marshals body and wraps it in an internal Message (int_msg_info$0).
+// dest is the destination address, amount is the attached value, bounce controls the bounce flag.
+// Src is left as addr_none (the node fills it in on send).
+func BuildInternal[T, Ts MarshalerTLB](body T, dest InternalAddress, amount Grams, bounce bool, init *StateInitT[Ts]) (Message, error) {
+	bodyCell := boc.NewCell()
+	if err := Marshal(bodyCell, body); err != nil {
+		return Message{}, fmt.Errorf("marshal body: %w", err)
+	}
+	var value CurrencyCollection
+	value.Grams = amount
+	msg := Message{
+		Info: CommonMsgInfo{
+			SumType: "IntMsgInfo",
+			IntMsgInfo: &struct {
+				IhrDisabled bool
+				Bounce      bool
+				Bounced     bool
+				Src         MsgAddress
+				Dest        MsgAddress
+				Value       CurrencyCollection
+				IhrFee      VarUInteger16
+				FwdFee      Grams
+				CreatedLt   uint64
+				CreatedAt   uint32
+			}{
+				IhrDisabled: true,
+				Bounce:      bounce,
+				Src:         NoneMsgAddress(),
+				Dest:        dest.ToMsgAddress(),
+				Value:       value,
+			},
+		},
+		Body: EitherRef[Any]{IsRight: true, Value: Any(*bodyCell)},
+	}
+	if init != nil {
+		si, err := init.ToStateInit()
+		if err != nil {
+			return Message{}, fmt.Errorf("marshal init: %w", err)
+		}
+		msg.Init = Just(EitherRef[StateInit]{
+			IsRight: true,
+			Value:   si,
+		})
+	}
+	return msg, nil
+}
+
+type StateInitT[T MarshalerTLB] struct {
+	SplitDepth Maybe[Uint5]
+	Special    Maybe[TickTock]
+	Code       Maybe[Ref[boc.Cell]]
+	Data       Maybe[Ref[T]]
+	Library    HashmapE[Bits256, SimpleLib]
+}
+
+func (sit StateInitT[T]) Hash() ([]byte, error) {
+	siCell, err := sit.ToCell()
+	if err != nil {
+		return nil, fmt.Errorf("serialize state init: %w", err)
+	}
+	hash, err := siCell.Hash()
+	if err != nil {
+		return nil, fmt.Errorf("hash state init: %w", err)
+	}
+	return hash, nil
+}
+
+func (sit StateInitT[T]) ToCell() (*boc.Cell, error) {
+	cell := boc.NewCell()
+	err := sit.MarshalTLB(cell, &Encoder{})
+	return cell, err
+}
+
+func (sit StateInitT[T]) MarshalTLB(c *boc.Cell, encoder *Encoder) (err error) {
+	si, err := sit.ToStateInit()
+	if err != nil {
+		return err
+	}
+	return Marshal(c, si)
+}
+
+func (sit StateInitT[T]) ToStateInit() (StateInit, error) {
+	result := StateInit{
+		SplitDepth: sit.SplitDepth,
+		Special:    sit.Special,
+		Code:       sit.Code,
+		Library:    sit.Library,
+	}
+	if sit.Data.Exists {
+		dataCell := boc.NewCell()
+		if err := sit.Data.Value.Value.MarshalTLB(dataCell, &Encoder{}); err != nil {
+			return StateInit{}, fmt.Errorf("marshal init data: %w", err)
+		}
+		result.Data = Maybe[Ref[boc.Cell]]{
+			Exists: true,
+			Value:  Ref[boc.Cell]{Value: *dataCell},
+		}
+	}
+	return result, nil
 }
 
 // Anycast
@@ -197,6 +306,12 @@ type MsgAddress struct {
 		WorkchainId int32
 		Address     boc.BitString
 	} `tlbSumType:"addr_var$11"`
+}
+
+func NoneMsgAddress() MsgAddress {
+	return MsgAddress{
+		SumType: "AddrNone",
+	}
 }
 
 func (a *MsgAddress) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
@@ -314,7 +429,7 @@ func (a MsgAddress) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 		}
 		return c.WriteBitString(a.AddrVar.Address)
 	}
-	return fmt.Errorf("invalid tag")
+	return fmt.Errorf("invalid MsgAddress.SumType: %s", a.SumType)
 }
 
 func (a MsgAddress) MarshalJSON() ([]byte, error) {
@@ -439,6 +554,22 @@ func (a *MsgAddress) UnmarshalJSON(b []byte) error {
 		}
 	}
 	return nil
+}
+
+func (a *MsgAddress) ReadFromStack(stack *VmStack) error {
+	stItem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch stItem.SumType {
+	case "VmStkNull":
+		a.SumType = "AddrNone"
+		return nil
+	case "VmStkSlice":
+		return a.UnmarshalTLB(stItem.VmStkSlice.Cell(), NewDecoder())
+	default:
+		return fmt.Errorf("unexpected for address, stack value type: %v", stItem.SumType)
+	}
 }
 
 // TickTock

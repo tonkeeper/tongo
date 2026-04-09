@@ -11,12 +11,23 @@ import (
 	"github.com/tonkeeper/tongo/tl"
 )
 
+var ErrStackEmpty = errors.New("stack is empty")
+
+type VmStackReader interface {
+	ReadFromStack(stack *VmStack) error
+}
+
 // VmStack
 // vm_stack#_ depth:(## 24) stack:(VmStackList depth) = VmStack;
 // vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1);
 // vm_stk_nil#_ = VmStackList 0;
+//
+// MIGRATION NOTE (see https://github.com/tonkeeper/tongo/pull/455)
+//
+//	before VmStack was defined as `type VmStack = []VmStackValue`, this definition has significant problems
+//	please visit (https://github.com/tonkeeper/tongo/pull/455) for the motivation and the migration guide
 type VmStack struct {
-	values []VmStackValue // last element is top of the stack
+	values []VmStackValue // the last element is top of the stack
 }
 
 // Len returns the size of the stack
@@ -43,6 +54,47 @@ func (s *VmStack) Pop() (VmStackValue, bool) {
 	val := s.values[len(s.values)-1]
 	s.values = s.values[:len(s.values)-1]
 	return val, true
+}
+
+func (s *VmStack) ReadBool() (bool, error) {
+	val, ok := s.Pop()
+	if !ok {
+		return false, ErrStackEmpty
+	}
+	if val.SumType == "VmStkInt" {
+		return !val.VmStkInt.Equal(big.NewInt(0)), nil
+	}
+	if val.SumType == "VmStkTinyInt" {
+		return val.VmStkTinyInt != 0, nil
+	}
+	return false, fmt.Errorf("unexpected stack value type for boolean: %s", val.SumType)
+}
+
+func (s *VmStack) ReadSlice() (*boc.Cell, error) {
+	val, ok := s.Pop()
+	if !ok {
+		return nil, ErrStackEmpty
+	}
+	if val.SumType != "VmStkSlice" {
+		return nil, fmt.Errorf("unexpected stack value type for slice: %s", val.SumType)
+	}
+	return val.VmStkSlice.Cell(), nil
+}
+
+func (s *VmStack) ReadCell() (boc.Cell, error) {
+	val, ok := s.Pop()
+	if !ok {
+		return boc.Cell{}, ErrStackEmpty
+	}
+	if val.SumType != "VmStkCell" {
+		return boc.Cell{}, fmt.Errorf("unexpected stack value type for slice: %s", val.SumType)
+	}
+	return val.VmStkCell.Value, nil
+}
+
+func ReadFromStack[T VmStackReader](stack *VmStack) (value T, err error) {
+	err = value.ReadFromStack(stack)
+	return
 }
 
 // VmCont

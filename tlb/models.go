@@ -50,6 +50,28 @@ func (g *Grams) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
+func (u *Grams) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Grams(elem.VmStkTinyInt)
+	case "VmStkInt":
+		bi := big.Int(elem.VmStkInt)
+		if bi.IsUint64() {
+			*u = Grams(bi.Uint64())
+		} else if bi.IsInt64() {
+			*u = Grams(bi.Int64())
+		}
+		return fmt.Errorf("int overflow: %v", elem.SumType)
+	default:
+		return fmt.Errorf("invalid stack element for Int{{.NameIndex}}: %v", elem.SumType)
+	}
+	return nil
+}
+
 func (g SignedCoins) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	err := c.WriteBit(g < 0)
 	if err != nil {

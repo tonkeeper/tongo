@@ -652,6 +652,16 @@ func (h HashmapAugE[keyT, T1, T2]) Keys() []keyT {
 	return h.m.keys
 }
 
+func (h HashmapAugE[keyT, T1, T2]) Items() func(func(keyT, T1) bool) {
+	return func(yield func(keyT, T1) bool) {
+		for i := range h.m.keys {
+			if !yield(h.m.keys[i], h.m.values[i]) {
+				return
+			}
+		}
+	}
+}
+
 func loadLabelSize(size int, c *boc.Cell) (int, error) {
 	first, err := c.ReadBit()
 	if err != nil {

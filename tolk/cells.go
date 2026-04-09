@@ -10,7 +10,7 @@ import (
 
 type Any boc.Cell
 
-func (a *Any) Unmarshal(cell *boc.Cell, ty parser.Cell, decoder *Decoder) error {
+func (a *Any) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	ref, err := cell.NextRef()
 	if err != nil {
 		return fmt.Errorf("failed to get next ref: %w", err)
@@ -20,7 +20,7 @@ func (a *Any) Unmarshal(cell *boc.Cell, ty parser.Cell, decoder *Decoder) error 
 	return nil
 }
 
-func (a *Any) Marshal(cell *boc.Cell, ty parser.Cell, encoder *Encoder) error {
+func (a *Any) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	c := boc.Cell(*a)
 	ref := c.CopyRemaining()
 	err := cell.AddRef(ref)
@@ -71,7 +71,7 @@ type RemainingValue struct {
 	Value boc.Cell
 }
 
-func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty parser.Remaining, decoder *Decoder) error {
+func (r *RemainingValue) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	rem := cell.CopyRemaining()
 	cell.ReadRemainingBits()
 	if rem != nil {
@@ -84,7 +84,7 @@ func (r *RemainingValue) Unmarshal(cell *boc.Cell, ty parser.Remaining, decoder 
 	return nil
 }
 
-func (r *RemainingValue) Marshal(cell *boc.Cell, ty parser.Remaining, encoder *Encoder) error {
+func (r *RemainingValue) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	c := r.Value
 	err := cell.WriteBitString(c.ReadRemainingBits())
 	if err != nil {

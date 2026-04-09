@@ -84,56 +84,48 @@ func NewBitsNType(n int) Ty {
 func NewCoinsType() Ty {
 	return Ty{
 		SumType: "Coins",
-		Coins:   &Coins{},
 	}
 }
 
 func NewBoolType() Ty {
 	return Ty{
 		SumType: "Bool",
-		Bool:    &Bool{},
 	}
 }
 
 func NewCellType() Ty {
 	return Ty{
 		SumType: "Cell",
-		Cell:    &Cell{},
 	}
 }
 
 func NewRemainingType() Ty {
 	return Ty{
-		SumType:   "Remaining",
-		Remaining: &Remaining{},
+		SumType: "Remaining",
 	}
 }
 
 func NewAddressType() Ty {
 	return Ty{
 		SumType: "Address",
-		Address: &Address{},
 	}
 }
 
 func NewAddressOptType() Ty {
 	return Ty{
-		SumType:    "AddressOpt",
-		AddressOpt: &AddressOpt{},
+		SumType: "AddressOpt",
 	}
 }
 
 func NewAddressExtType() Ty {
 	return Ty{
-		SumType:    "AddressExt",
-		AddressExt: &AddressExt{},
+		SumType: "AddressExt",
 	}
 }
 
 func NewAddressAnyType() Ty {
 	return Ty{
-		SumType:    "AddressAny",
-		AddressAny: &AddressAny{},
+		SumType: "AddressAny",
 	}
 }
 
@@ -166,8 +158,8 @@ func NewTensorType(of ...Ty) Ty {
 
 func NewTupleWithType(of ...Ty) Ty {
 	return Ty{
-		SumType: "TupleWith",
-		TupleWith: &TupleWith{
+		SumType: "ShapedTuple",
+		ShapedTuple: &ShapedTuple{
 			Items: of,
 		},
 	}
@@ -175,8 +167,8 @@ func NewTupleWithType(of ...Ty) Ty {
 
 func NewMapType(key, value Ty) Ty {
 	return Ty{
-		SumType: "Map",
-		Map: &Map{
+		SumType: "MapKV",
+		MapKV: &MapKV{
 			K: key,
 			V: value,
 		},

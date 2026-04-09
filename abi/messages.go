@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -38,16 +39,26 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 	}
 }
 
-func decodeMultipleMsgs(funcs []msgDecoderFunc, tag string) msgDecoderFunc {
-	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
-		for _, f := range funcs {
-			tag, opName, object, err := f(cell)
-			if err == nil && completedRead(cell) {
-				return tag, opName, object, err
-			}
+type multipleMsgsDecoder struct {
+	tag   string
+	funcs []msgDecoderFunc
+}
+
+func (mm multipleMsgsDecoder) Decode(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+	var errs []error
+	for _, f := range mm.funcs {
+		tag, opName, object, err := f(cell)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("%s: %v", opName, err))
+			continue
 		}
-		return nil, nil, nil, fmt.Errorf("no one message can be unmarshled for %v", tag)
+		if !completedRead(cell) {
+			errs = append(errs, fmt.Errorf("not all bytes were read"))
+			continue
+		}
+		return tag, opName, object, err
 	}
+	return nil, nil, nil, fmt.Errorf("no message can be unmarshaled for %v: %v", mm.tag, errors.Join(errs...))
 }
 
 type InMsgBody struct {
@@ -264,6 +275,14 @@ func (body ExtOutMsgBody) MarshalJSON() ([]byte, error) {
 
 type msgDecoderFunc func(cell *boc.Cell) (*uint32, *MsgOpName, any, error)
 
+type msgDecoder interface {
+	Decode(cell *boc.Cell) (*uint32, *MsgOpName, any, error)
+}
+
+func (f msgDecoderFunc) Decode(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+	return f(cell)
+}
+
 // InternalMessageDecoder takes in a message body as a cell and tries to decode it based on the contract type or the first 4 bytes.
 // It returns an opcode, an operation name and a decoded body.
 func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOpCode, *MsgOpName, any, error) {
@@ -289,7 +308,7 @@ func InternalMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*Ms
 	tag := uint32(tag64)
 	f := opcodedMsgInDecodeFunctions[tag]
 	if f != nil {
-		t, o, b, err := f(cell)
+		t, o, b, err := f.Decode(cell)
 		if err == nil {
 			return t, o, b, nil
 		}
@@ -320,7 +339,7 @@ func ExtInMessageDecoder(cell *boc.Cell, interfaces []ContractInterface) (*MsgOp
 	tag := uint32(tag64)
 	f := opcodedMsgExtInDecodeFunctions[tag]
 	if f != nil {
-		t, o, b, err := f(cell)
+		t, o, b, err := f.Decode(cell)
 		if err == nil {
 			return t, o, b, nil
 		}
@@ -351,12 +370,39 @@ func ExtOutMessageDecoder(cell *boc.Cell, interfaces []ContractInterface, dest t
 	tag := uint32(tag64)
 	f := opcodedMsgExtOutDecodeFunctions[tag]
 	if f != nil {
-		t, o, b, err := f(cell)
+		t, o, b, err := f.Decode(cell)
 		if err == nil {
 			return t, o, b, nil
 		}
 	}
 	return &tag, nil, nil, nil
+}
+
+func registerInMsgUnmarshalerForOpcode[T tlb.UnmarshalerTLB](m map[uint32]msgDecoder, opcode uint32, opName MsgOpName) {
+	if existing, ok := m[opcode]; ok {
+		multiDec, ok := existing.(multipleMsgsDecoder)
+		if !ok {
+			multiDec = multipleMsgsDecoder{
+				tag:   fmt.Sprintf("%08x", opcode),
+				funcs: []msgDecoderFunc{existing.(msgDecoderFunc)},
+			}
+		}
+		multiDec.funcs = append(multiDec.funcs, getHintedUnmarshalerForMsgT[T](opcode, opName))
+		m[opcode] = multiDec
+		m[opcode] = multiDec
+	} else {
+		m[opcode] = getHintedUnmarshalerForMsgT[T](opcode, opName)
+	}
+}
+
+func getHintedUnmarshalerForMsgT[T tlb.UnmarshalerTLB](tag uint32, opName MsgOpName) msgDecoderFunc {
+	elemTyp := reflect.TypeOf((*T)(nil)).Elem().Elem()
+	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+		value := reflect.New(elemTyp).Interface().(T)
+		cell.ResetCounters()
+		err := value.UnmarshalTLB(cell, tlb.NewDecoder())
+		return &tag, &opName, value, err
+	}
 }
 
 func completedRead(cell *boc.Cell) bool {

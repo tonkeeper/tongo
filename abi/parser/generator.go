@@ -58,6 +58,8 @@ var (
 	getMethodsTemplate string
 	//go:embed messages.tmpl
 	messagesTemplate string
+	//go:embed jetton_payloads.tmpl
+	jettonPayloadTemplate string
 	//go:embed payloads.tmpl
 	payloadTmpl string
 	//go:embed errors.tmpl
@@ -716,22 +718,15 @@ func (g *Generator) RenderInvocationOrderList(simpleMethods []string) (string, e
 }
 
 func (g *Generator) RenderJetton() (string, error) {
-	return g.renderPayload(MsgTypeJettonPayload)
+	return g.renderPayloads("Jetton", MsgTypeJettonPayload, jettonPayloadTemplate)
 }
 
 func (g *Generator) RenderNFT() (string, error) {
-	return g.renderPayload(MsgTypeNFTPayload)
+	return g.renderPayloads("NFT", MsgTypeNFTPayload, payloadTmpl)
 }
 
-func (g *Generator) renderPayload(mType MsgType) (string, error) {
-
-	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody)}
-	switch mType {
-	case MsgTypeNFTPayload:
-		context.WhatRender = "NFT"
-	case MsgTypeJettonPayload:
-		context.WhatRender = "Jetton"
-	}
+func (g *Generator) renderPayloads(kind string, mType MsgType, payloadTmpl string) (string, error) {
+	context := messagesContext{Operations: make(map[tlb.Tag][]TLBMsgBody), WhatRender: kind}
 	for tag, operation := range g.loadedTlbMsgTypes {
 		filtered := make([]TLBMsgBody, 0, len(operation))
 		for _, body := range operation {
@@ -743,7 +738,7 @@ func (g *Generator) renderPayload(mType MsgType) (string, error) {
 			context.Operations[tag] = filtered
 		}
 	}
-	tmpl, err := template.New("jettons").Parse(payloadTmpl)
+	tmpl, err := template.New(kind).Parse(payloadTmpl)
 	if err != nil {
 		return "", err
 	}

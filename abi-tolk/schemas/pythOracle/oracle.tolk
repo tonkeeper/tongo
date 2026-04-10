@@ -1,17 +1,30 @@
+tolk 1.2
+
 import "@stdlib/tvm-dicts"
+type SkippedBytes = uint8
 
-const OP_UPDATE_GUARDIAN_SET: uint32 = 1
-const OP_UPDATE_PRICE_FEEDS: uint32 = 2
-const OP_EXECUTE_GOVERNANCE_ACTION: uint32 = 3
-const OP_UPGRADE_CONTRACT: uint32 = 4
-const OP_PARSE_PRICE_FEED_UPDATES: uint32 = 5
-const OP_PARSE_UNIQUE_PRICE_FEED_UPDATES: uint32 = 6
+fun SkippedBytes.unpackFromSlice(mutate s: slice): SkippedBytes {
+    val byteCount = s.loadUint(8);
+    s.skipBits(byteCount * 8);
+    return byteCount;
+}
 
-const OP_RESPONSE_SUCCESS: uint32 = 0x10001
-const OP_RESPONSE_ERROR: uint32 = 0x10002
+fun SkippedBytes.packToBuilder(self, mutate b: builder) {
+    b.storeAny(self);
+    b.storeUint(0, self * 8);
+}
 
-contract Main {
-    incomingMessages: MainMessage
+type WormholeProofBytes = array<uint8>
+
+fun WormholeProofBytes.unpackFromSlice(mutate s: slice): WormholeProofBytes {
+    return [];
+}
+
+fun WormholeProofBytes.packToBuilder(self, mutate b: builder) {
+}
+
+contract pyth_oracle {
+    incomingMessages: MainMessage,
     storage: MainStorage
     forceAbiExport: (
         MainStorage,
@@ -23,6 +36,9 @@ contract Main {
         GuardianSetsSection,
         GuardianSetRecord,
         GovernanceSection,
+        AccumulatorUpdateHeader,
+        PriceFeedUpdateData,
+        PriceFeedIdList,
         PriceFeedUpdateResponse,
         PriceFeedResponseEntry,
         ErrorResponse,
@@ -68,6 +84,26 @@ struct PricePoint {
     publishTime: uint64
 }
 
+struct AccumulatorUpdateHeader {
+    magic: uint32
+    majorVersion: uint8
+    minorVersion: uint8
+    trailingHeader: SkippedBytes
+    updateType: uint8
+}
+
+struct PriceFeedUpdateData {
+    header: AccumulatorUpdateHeader
+    wormholeProof: WormholeProofBytes
+    numUpdates: uint8
+}
+
+type PriceFeedIdList = array<uint256>
+
+fun PriceFeedIdList.unpackFromSlice(mutate s: slice): PriceFeedIdList {
+    return []
+}
+
 struct DataSourcesSection {
     isValidDataSource: map<uint256, bool>
 }
@@ -85,6 +121,12 @@ struct GuardianSetsSection {
 struct GuardianSetRecord {
     expirationTime: uint64
     guardianKeys: map<uint8, bits160>
+}
+
+struct GuardianSetInfo {
+    expirationTime: int
+    keysDict: cell
+    keyCount: int
 }
 
 struct GovernanceSection {
@@ -140,8 +182,8 @@ struct (0x00000004) UpgradeContractMessage {
 }
 
 struct (0x00000005) ParsePriceFeedUpdatesMessage {
-    updateData: cell
-    priceIds: cell
+    updateData: Cell<PriceFeedUpdateData>
+    priceIds: Cell<PriceFeedIdList>
     minPublishTime: uint64
     maxPublishTime: uint64
     targetAddress: any_address
@@ -149,15 +191,46 @@ struct (0x00000005) ParsePriceFeedUpdatesMessage {
 }
 
 struct (0x00000006) ParseUniquePriceFeedUpdatesMessage {
-    updateData: cell
-    priceIds: cell
+    updateData: Cell<PriceFeedUpdateData>
+    priceIds: Cell<PriceFeedIdList>
     publishTime: uint64
     maxStaleness: uint64
     targetAddress: any_address
     customPayload: cell
 }
 
+struct PriceData {
+    price: int64
+    conf: uint64
+    expo: int32
+    timestamp: uint64
+}
+
+struct PriceFeesCell {
+    assetID: uint256
+    priceData: Cell<Cell<PriceData>> // здесь нет ошибки, там есть другая информация, но она бесполезна
+}
+
+struct (0x00000005) OracleResponseSuccess {
+    someNum: uint8
+    priceFeedsCell: Cell<PriceFeesCell>
+    initialSender: address
+    AfterOperation: cell
+}
+
 fun onInternalMessage(inMsg: InMessage) {
+
+    createMessage({
+        bounce: BounceMode.NoBounce,
+        dest: inMsg.senderAddress,
+        value: 0,
+        body: OracleResponseSuccess{
+            someNum: 0,
+            priceFeedsCell: createEmptyCell() as Cell<PriceFeesCell>,
+            initialSender: inMsg.senderAddress,
+            AfterOperation: createEmptyCell(),
+        }
+    }).send(SEND_MODE_IGNORE_ERRORS + SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE);
 }
 
 fun onBouncedMessage(msg: InMessageBounced) {
@@ -187,20 +260,20 @@ get fun get_is_valid_data_source(data_source: cell): int {
     return 0;
 }
 
-get fun get_price_unsafe(price_feed_id: uint256): (int, int, int, int) {
-    return (0, 0, 0, 0);
+get fun get_price_unsafe(price_feed_id: uint256): PricePoint {
+    return PricePoint { price: 0, conf: 0, expo: 0, publishTime: 0 };
 }
 
-get fun get_price_no_older_than(time_period: int, price_feed_id: uint256): (int, int, int, int) {
-    return (0, 0, 0, 0);
+get fun get_price_no_older_than(time_period: int, price_feed_id: uint256): PricePoint {
+    return PricePoint { price: 0, conf: 0, expo: 0, publishTime: 0 };
 }
 
-get fun get_ema_price_unsafe(price_feed_id: uint256): (int, int, int, int) {
-    return (0, 0, 0, 0);
+get fun get_ema_price_unsafe(price_feed_id: uint256): PricePoint {
+    return PricePoint { price: 0, conf: 0, expo: 0, publishTime: 0 };
 }
 
-get fun get_ema_price_no_older_than(time_period: int, price_feed_id: uint256): (int, int, int, int) {
-    return (0, 0, 0, 0);
+get fun get_ema_price_no_older_than(time_period: int, price_feed_id: uint256): PricePoint {
+    return PricePoint { price: 0, conf: 0, expo: 0, publishTime: 0 };
 }
 
 get fun get_chain_id(): int {
@@ -211,8 +284,8 @@ get fun get_current_guardian_set_index(): int {
     return 0;
 }
 
-get fun get_guardian_set(index: int): (int, cell, int) {
-    return (0, beginCell().endCell(), 0);
+get fun get_guardian_set(index: int): GuardianSetInfo {
+    return GuardianSetInfo { expirationTime: 0, keysDict: beginCell().endCell(), keyCount: 0 };
 }
 
 get fun get_governance_chain_id(): int {

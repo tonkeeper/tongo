@@ -35,6 +35,7 @@ type symTable struct {
 func (tgen TolkGolangGenerator) GenerateGocode() (string, error) {
 	declarationsBuf := &strings.Builder{}
 	marshalersBuf := &strings.Builder{}
+
 	for _, decl := range tgen.abi.Declarations {
 		switch decl.SumType {
 		case parser.DeclarationKindStruct:
@@ -61,7 +62,7 @@ func (tgen TolkGolangGenerator) GenerateGocode() (string, error) {
 		fmt.Fprintf(declarationsBuf, ")\n")
 	}
 
-	return declarationsBuf.String() + "\n" + marshallersBuf.String(), nil
+	return declarationsBuf.String() + "\n" + marshalersBuf.String(), nil
 }
 
 func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *strings.Builder, outMarshal *strings.Builder) {
@@ -347,7 +348,10 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 		}
 		return "", false, fmt.Errorf("%s is %s%s", fieldPath, ty.String(), hint)
 	case parser.TyKindRemaining:
-		return "c.CopyRemaining()", false, nil
+		return `(func () (boc.Cell, error) {
+	cc := c.CopyRemaining()
+	return *cc, nil
+})()`, false, nil
 	case parser.TyKindBitsN:
 		return fmt.Sprintf("tlb.UnmarshalT[tlb.Bits%d](c, decoder)", ty.BitsN.N), true, nil
 	case parser.TyKindCell:
@@ -364,12 +368,14 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 		return fmt.Sprintf("tlb.UnmarshalT[%s](c, decoder)", ty.AliasRef.AliasName), true, nil
 	case parser.TyKindBool:
 		return "c.ReadBit()", false, nil
-	case parser.TyKindAddress, parser.TyKindAddressAny,
+	case parser.TyKindAddress, parser.TyKindAddressAny, parser.TyKindAddressOpt,
 		parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins,
 		parser.TyKindMapKV, parser.TyKindEnumRef, parser.TyKindStructRef:
 		return fmt.Sprintf("tlb.UnmarshalT[%s](c, decoder)", emitGoType(ty)), true, nil
 	case parser.TyKindNullable:
 		return fmt.Sprintf("tlb.UnmarshalT[tlb.Maybe[%s]](c, decoder)", emitGoType(ty.Nullable.Inner)), true, nil
+	case parser.TyKindString:
+		return "c.ReadStringRefTail()", false, nil
 	}
 
 	return "", false, fmt.Errorf("unknown type %v", ty)
@@ -445,6 +451,8 @@ func emitGoType(ty parser.Ty) string {
 		return "tlb.InternalAddress"
 	case parser.TyKindAddressAny:
 		return "tlb.MsgAddress"
+	case parser.TyKindAddressOpt:
+		return "tlb.MsgAddress" // upcast type to only carry none and internal cases (not external)
 	case parser.TyKindNullable:
 		return fmt.Sprintf("tlb.Maybe[%s]", emitGoType(ty.Nullable.Inner))
 	case parser.TyKindMapKV:
@@ -455,6 +463,10 @@ func emitGoType(ty parser.Ty) string {
 		return safeGoIdent(ty.EnumRef.EnumName)
 	case parser.TyKindSlice:
 		return "boc.BitString"
+	case parser.TyKindArrayOf:
+		return fmt.Sprintf("[]%s", emitGoType(ty.ArrayOf.Inner))
+	case parser.TyKindString:
+		return "string"
 	}
 	panic(fmt.Sprintf("getGOType type not supported: %v", ty))
 }

@@ -31,12 +31,27 @@ const PrefixUpgradeContractMessage uint64 = 0x00000004
 type UpgradeContractMessage struct {
 	NewCode boc.Cell
 }
+type SkippedBytes tlb.Uint8
+type AccumulatorUpdateHeader struct {
+	Magic          tlb.Uint32
+	MajorVersion   tlb.Uint8
+	MinorVersion   tlb.Uint8
+	TrailingHeader SkippedBytes
+	UpdateType     tlb.Uint8
+}
+type WormholeProofBytes []tlb.Uint8
+type PriceFeedUpdateData struct {
+	Header        AccumulatorUpdateHeader
+	WormholeProof WormholeProofBytes
+	NumUpdates    tlb.Uint8
+}
+type PriceFeedIdList []tlb.Uint256
 
 const PrefixParsePriceFeedUpdatesMessage uint64 = 0x00000005
 
 type ParsePriceFeedUpdatesMessage struct {
-	UpdateData     boc.Cell
-	PriceIds       boc.Cell
+	UpdateData     tlb.RefT[*PriceFeedUpdateData]
+	PriceIds       tlb.RefT[*PriceFeedIdList]
 	MinPublishTime tlb.Uint64
 	MaxPublishTime tlb.Uint64
 	TargetAddress  tlb.MsgAddress
@@ -46,8 +61,8 @@ type ParsePriceFeedUpdatesMessage struct {
 const PrefixParseUniquePriceFeedUpdatesMessage uint64 = 0x00000006
 
 type ParseUniquePriceFeedUpdatesMessage struct {
-	UpdateData    boc.Cell
-	PriceIds      boc.Cell
+	UpdateData    tlb.RefT[*PriceFeedUpdateData]
+	PriceIds      tlb.RefT[*PriceFeedIdList]
 	PublishTime   tlb.Uint64
 	MaxStaleness  tlb.Uint64
 	TargetAddress tlb.MsgAddress
@@ -125,6 +140,30 @@ type SuccessResponse struct {
 	Result        boc.Cell
 	CustomPayload boc.Cell
 }
+type PriceData struct {
+	Price     tlb.Int64
+	Conf      tlb.Uint64
+	Expo      tlb.Int32
+	Timestamp tlb.Uint64
+}
+type PriceFeesCell struct {
+	AssetID   tlb.Uint256
+	PriceData tlb.RefT[*tlb.RefT[*PriceData]]
+}
+
+const PrefixOracleResponseSuccess uint64 = 0x00000005
+
+type OracleResponseSuccess struct {
+	SomeNum        tlb.Uint8
+	PriceFeedsCell tlb.RefT[*PriceFeesCell]
+	InitialSender  tlb.InternalAddress
+	AfterOperation boc.Cell
+}
+type GuardianSetInfo struct {
+	ExpirationTime tlb.Int257
+	KeysDict       boc.Cell
+	KeyCount       tlb.Int257
+}
 
 func (v *UpdateGuardianSetMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
@@ -170,16 +209,46 @@ func (v *UpgradeContractMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder)
 	}
 	return nil
 }
+func (v *AccumulatorUpdateHeader) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Magic.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.MajorVersion.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.MinorVersion.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.TrailingHeader.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.UpdateType.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	return nil
+}
+func (v *PriceFeedUpdateData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Header.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.WormholeProof.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.NumUpdates.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	return nil
+}
 func (v *ParsePriceFeedUpdatesMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
 	} else if prefix != PrefixParsePriceFeedUpdatesMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.UpdateData, err = c.NextRefV(); err != nil {
+	if err = v.UpdateData.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if v.PriceIds, err = c.NextRefV(); err != nil {
+	if err = v.PriceIds.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
 	if err = v.MinPublishTime.UnmarshalTLB(c, decoder); err != nil {
@@ -202,10 +271,10 @@ func (v *ParseUniquePriceFeedUpdatesMessage) UnmarshalTLB(c *boc.Cell, decoder *
 	} else if prefix != PrefixParseUniquePriceFeedUpdatesMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.UpdateData, err = c.NextRefV(); err != nil {
+	if err = v.UpdateData.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if v.PriceIds, err = c.NextRefV(); err != nil {
+	if err = v.PriceIds.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
 	if err = v.PublishTime.UnmarshalTLB(c, decoder); err != nil {
@@ -387,6 +456,62 @@ func (v *SuccessResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err e
 		return err
 	}
 	if v.CustomPayload, err = c.NextRefV(); err != nil {
+		return err
+	}
+	return nil
+}
+func (v *PriceData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Price.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.Conf.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.Expo.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.Timestamp.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	return nil
+}
+func (v *PriceFeesCell) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.AssetID.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.PriceData.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	return nil
+}
+func (v *OracleResponseSuccess) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if prefix, err := c.ReadUint(32); err != nil {
+		return err
+	} else if prefix != PrefixOracleResponseSuccess {
+		return fmt.Errorf("unexpected prefix: %x", prefix)
+	}
+	if err = v.SomeNum.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.PriceFeedsCell.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if err = v.InitialSender.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if v.AfterOperation, err = c.NextRefV(); err != nil {
+		return err
+	}
+	return nil
+}
+func (v *GuardianSetInfo) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.ExpirationTime.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	if v.KeysDict, err = c.NextRefV(); err != nil {
+		return err
+	}
+	if err = v.KeyCount.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
 	return nil

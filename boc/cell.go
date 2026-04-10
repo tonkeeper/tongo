@@ -281,8 +281,86 @@ func (c *Cell) ReadBits(n int) (BitString, error) {
 	return c.bits.ReadBits(n)
 }
 
+// ReadBitsDeep reads bits from the cell
+// going deep for concatenation: c.bits + c.refs[0].bits + c.refs[0].refs[0].bits
+// last used cell (tail) is returned
+func (c *Cell) ReadBitsDeep(bitsToRead int) (BitString, *Cell, error) {
+	result := NewBitString(bitsToRead)
+	var err error
+	currCell := c
+	for bitsToRead > 0 {
+		available := currCell.BitsAvailableForRead()
+		if available == 0 {
+			currCell, err = currCell.NextRef()
+			if err != nil {
+				return result, currCell, fmt.Errorf("reading ref for rest %d bits: %v", bitsToRead, err)
+			}
+			continue
+		}
+		if bitsToRead <= available {
+			bs, err := currCell.ReadBits(bitsToRead)
+			if err != nil {
+				return result, currCell, err
+			}
+			if err = result.WriteBitString(bs); err != nil {
+				return result, currCell, err
+			}
+			bitsToRead = 0
+		} else {
+			if err = result.WriteBitString(currCell.ReadRemainingBits()); err != nil {
+				return result, currCell, err
+			}
+			bitsToRead -= available
+		}
+	}
+	return result, currCell, nil
+}
+
 func (c *Cell) RawBitString() BitString {
 	return c.bits
+}
+
+func (c *Cell) ReadStringRefTail() (string, error) {
+	ref, err := c.NextRef()
+	if err != nil {
+		return "", err
+	}
+	return ref.ReadStringTail()
+}
+
+func (c *Cell) ReadStringTail() (string, error) {
+	bytes, err := c.ReadBytesTail()
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+func (c *Cell) ReadBytesTail() ([]byte, error) {
+	availableBits := c.BitsAvailableForRead()
+	if availableBits%8 != 0 {
+		return nil, errors.New("read string failed: not aligned")
+	}
+	availableRefs := c.RefsAvailableForRead()
+	if availableRefs > 1 {
+		return nil, errors.New("read string failed: too many refs")
+	}
+	headBytes, err := c.ReadBytes(availableBits / 8)
+	if err != nil {
+		return nil, err
+	}
+	var tailBytes []byte
+	if availableRefs == 1 {
+		ref, err := c.NextRef()
+		if err != nil {
+			return nil, fmt.Errorf("reading ref for tail: %v", err)
+		}
+		tailBytes, err = ref.ReadBytesTail()
+		if err != nil {
+			return nil, fmt.Errorf("reading tail: %v", err)
+		}
+	}
+	return append(headBytes, tailBytes...), nil
 }
 
 func (c *Cell) WriteUnary(n uint) error {

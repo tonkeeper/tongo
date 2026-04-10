@@ -74,12 +74,13 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder
 		fieldVal := Value{}
 
 		isPayloadResolved := false
-		if field.IsPayload != nil && *field.IsPayload {
-			fieldVal, isPayloadResolved, err = s.resolvePayload(cell, field.Ty, decoder)
-			if err != nil {
-				return fmt.Errorf("failed to resolve payload for field %v: %w", field.Name, err)
-			}
-		}
+		//
+		//if field.IsPayload != nil && *field.IsPayload {
+		//	fieldVal, isPayloadResolved, err = s.resolvePayload(cell, field.Ty, decoder)
+		//	if err != nil {
+		//		return fmt.Errorf("failed to resolve payload for field %v: %w", field.Name, err)
+		//	}
+		//}
 		if !isPayloadResolved {
 			err = fieldVal.Unmarshal(cell, field.Ty, decoder)
 			if err != nil {

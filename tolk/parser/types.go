@@ -139,7 +139,7 @@ type Prefix struct {
 
 type Field struct {
 	Name string `json:"name"`
-	//IsPayload    *bool         `json:"isPayload,omitempty"`
+	//IsPayload    *bool         `json:"isPayload,omitempty"` not in
 	Ty           Ty            `json:"ty"`
 	DefaultValue *DefaultValue `json:"defaultValue,omitempty"`
 	Description  string        `json:"description,omitempty"`

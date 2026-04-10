@@ -8,135 +8,178 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-const PrefixUpdateGuardianSetMessage = 0x00000001
+const PrefixUpdateGuardianSetMessage uint64 = 0x00000001
 
 type UpdateGuardianSetMessage struct {
-	WormholeMessage boc.Cell `json:"wormholeMessage"`
+	WormholeMessage boc.Cell
+}
+
+const PrefixUpdatePriceFeedsMessage uint64 = 0x00000002
+
+type UpdatePriceFeedsMessage struct {
+	UpdateData boc.Cell
+}
+
+const PrefixExecuteGovernanceActionMessage uint64 = 0x00000003
+
+type ExecuteGovernanceActionMessage struct {
+	GovernanceVm boc.Cell
+}
+
+const PrefixUpgradeContractMessage uint64 = 0x00000004
+
+type UpgradeContractMessage struct {
+	NewCode boc.Cell
+}
+
+const PrefixParsePriceFeedUpdatesMessage uint64 = 0x00000005
+
+type ParsePriceFeedUpdatesMessage struct {
+	UpdateData     boc.Cell
+	PriceIds       boc.Cell
+	MinPublishTime tlb.Uint64
+	MaxPublishTime tlb.Uint64
+	TargetAddress  tlb.MsgAddress
+	CustomPayload  boc.Cell
+}
+
+const PrefixParseUniquePriceFeedUpdatesMessage uint64 = 0x00000006
+
+type ParseUniquePriceFeedUpdatesMessage struct {
+	UpdateData    boc.Cell
+	PriceIds      boc.Cell
+	PublishTime   tlb.Uint64
+	MaxStaleness  tlb.Uint64
+	TargetAddress tlb.MsgAddress
+	CustomPayload boc.Cell
+}
+type PricePoint struct {
+	Price       tlb.Int64
+	Conf        tlb.Uint64
+	Expo        tlb.Int32
+	PublishTime tlb.Uint64
+}
+type StoredPriceFeed struct {
+	Price    tlb.RefT[*PricePoint]
+	EmaPrice tlb.RefT[*PricePoint]
+}
+type PriceFeedsSection struct {
+	LatestPriceFeeds tlb.Hashmap[tlb.Uint256, tlb.RefT[*StoredPriceFeed]]
+	SingleUpdateFee  tlb.Uint256
+}
+type DataSourcesSection struct {
+	IsValidDataSource tlb.Hashmap[tlb.Uint256, bool]
+}
+type GuardianSetRecord struct {
+	ExpirationTime tlb.Uint64
+	GuardianKeys   tlb.Hashmap[tlb.Uint8, tlb.Bits160]
+}
+type GuardianSetsSection struct {
+	CurrentGuardianSetIndex tlb.Uint32
+	GuardianSets            tlb.Hashmap[tlb.Uint32, tlb.RefT[*GuardianSetRecord]]
+}
+type DataSource struct {
+	EmitterChainId tlb.Uint16
+	EmitterAddress tlb.Uint256
+}
+type GovernanceSection struct {
+	ChainId                        tlb.Uint16
+	GovernanceChainId              tlb.Uint16
+	GovernanceContract             tlb.Uint256
+	ConsumedGovernanceActions      tlb.Hashmap[tlb.Uint256, bool]
+	GovernanceDataSource           tlb.RefT[*DataSource]
+	LastExecutedGovernanceSequence tlb.Uint64
+	GovernanceDataSourceIndex      tlb.Uint32
+	UpgradeCodeHash                tlb.Uint256
+}
+type MainStorage struct {
+	PriceFeeds   tlb.RefT[*PriceFeedsSection]
+	DataSources  tlb.RefT[*DataSourcesSection]
+	GuardianSets tlb.RefT[*GuardianSetsSection]
+	Governance   tlb.RefT[*GovernanceSection]
+}
+type PriceFeedResponseEntry struct {
+	PriceId   tlb.Uint256
+	PriceFeed tlb.RefT[*StoredPriceFeed]
+	Next      tlb.Maybe[tlb.RefT[*PriceFeedResponseEntry]]
+}
+type PriceFeedUpdateResponse struct {
+	Op             tlb.Uint32
+	PriceFeedCount tlb.Uint8
+	PriceFeeds     tlb.RefT[*PriceFeedResponseEntry]
+	OriginalSender tlb.MsgAddress
+	CustomPayload  boc.Cell
+}
+
+const PrefixErrorResponse uint64 = 0x10002
+
+type ErrorResponse struct {
+	ErrorCode     tlb.Uint32
+	Operation     tlb.Uint32
+	CustomPayload boc.Cell
+}
+
+const PrefixSuccessResponse uint64 = 0x10001
+
+type SuccessResponse struct {
+	Result        boc.Cell
+	CustomPayload boc.Cell
 }
 
 func (v *UpdateGuardianSetMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
-	} else if prefix != uint64(0x00000001) {
+	} else if prefix != PrefixUpdateGuardianSetMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.WormholeMessage, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.WormholeMessage, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixUpdatePriceFeedsMessage = 0x00000002
-
-type UpdatePriceFeedsMessage struct {
-	UpdateData boc.Cell `json:"updateData"`
-}
-
 func (v *UpdatePriceFeedsMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
-	} else if prefix != uint64(0x00000002) {
+	} else if prefix != PrefixUpdatePriceFeedsMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.UpdateData, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.UpdateData, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixExecuteGovernanceActionMessage = 0x00000003
-
-type ExecuteGovernanceActionMessage struct {
-	GovernanceVm boc.Cell `json:"governanceVm"`
-}
-
 func (v *ExecuteGovernanceActionMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
-	} else if prefix != uint64(0x00000003) {
+	} else if prefix != PrefixExecuteGovernanceActionMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.GovernanceVm, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.GovernanceVm, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixUpgradeContractMessage = 0x00000004
-
-type UpgradeContractMessage struct {
-	NewCode boc.Cell `json:"newCode"`
-}
-
 func (v *UpgradeContractMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
-	} else if prefix != uint64(0x00000004) {
+	} else if prefix != PrefixUpgradeContractMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.NewCode, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.NewCode, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixParsePriceFeedUpdatesMessage = 0x00000005
-
-type ParsePriceFeedUpdatesMessage struct {
-	UpdateData     boc.Cell       `json:"updateData"`
-	PriceIds       boc.Cell       `json:"priceIds"`
-	MinPublishTime tlb.Uint64     `json:"minPublishTime"`
-	MaxPublishTime tlb.Uint64     `json:"maxPublishTime"`
-	TargetAddress  tlb.MsgAddress `json:"targetAddress"`
-	CustomPayload  boc.Cell       `json:"customPayload"`
-}
-
 func (v *ParsePriceFeedUpdatesMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
-	} else if prefix != uint64(0x00000005) {
+	} else if prefix != PrefixParsePriceFeedUpdatesMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.UpdateData, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.UpdateData, err = c.NextRefV(); err != nil {
 		return err
 	}
-	if v.PriceIds, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.PriceIds, err = c.NextRefV(); err != nil {
 		return err
 	}
 	if err = v.MinPublishTime.UnmarshalTLB(c, decoder); err != nil {
@@ -148,51 +191,21 @@ func (v *ParsePriceFeedUpdatesMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.De
 	if err = v.TargetAddress.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if v.CustomPayload, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.CustomPayload, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixParseUniquePriceFeedUpdatesMessage = 0x00000006
-
-type ParseUniquePriceFeedUpdatesMessage struct {
-	UpdateData    boc.Cell       `json:"updateData"`
-	PriceIds      boc.Cell       `json:"priceIds"`
-	PublishTime   tlb.Uint64     `json:"publishTime"`
-	MaxStaleness  tlb.Uint64     `json:"maxStaleness"`
-	TargetAddress tlb.MsgAddress `json:"targetAddress"`
-	CustomPayload boc.Cell       `json:"customPayload"`
-}
-
 func (v *ParseUniquePriceFeedUpdatesMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(32); err != nil {
 		return err
-	} else if prefix != uint64(0x00000006) {
+	} else if prefix != PrefixParseUniquePriceFeedUpdatesMessage {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.UpdateData, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.UpdateData, err = c.NextRefV(); err != nil {
 		return err
 	}
-	if v.PriceIds, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.PriceIds, err = c.NextRefV(); err != nil {
 		return err
 	}
 	if err = v.PublishTime.UnmarshalTLB(c, decoder); err != nil {
@@ -204,25 +217,11 @@ func (v *ParseUniquePriceFeedUpdatesMessage) UnmarshalTLB(c *boc.Cell, decoder *
 	if err = v.TargetAddress.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if v.CustomPayload, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.CustomPayload, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-type PricePoint struct {
-	Price       tlb.Int64  `json:"price"`
-	Conf        tlb.Uint64 `json:"conf"`
-	Expo        tlb.Int32  `json:"expo"`
-	PublishTime tlb.Uint64 `json:"publishTime"`
-}
-
 func (v *PricePoint) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Price.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -238,12 +237,6 @@ func (v *PricePoint) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error)
 	}
 	return nil
 }
-
-type StoredPriceFeed struct {
-	Price    tlb.RefT[*PricePoint] `json:"price"`
-	EmaPrice tlb.RefT[*PricePoint] `json:"emaPrice"`
-}
-
 func (v *StoredPriceFeed) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Price.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -253,12 +246,6 @@ func (v *StoredPriceFeed) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err e
 	}
 	return nil
 }
-
-type PriceFeedsSection struct {
-	LatestPriceFeeds tlb.Hashmap[tlb.Uint256, tlb.RefT[*StoredPriceFeed]] `json:"latestPriceFeeds"`
-	SingleUpdateFee  tlb.Uint256                                          `json:"singleUpdateFee"`
-}
-
 func (v *PriceFeedsSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.LatestPriceFeeds.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -268,23 +255,12 @@ func (v *PriceFeedsSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err
 	}
 	return nil
 }
-
-type DataSourcesSection struct {
-	IsValidDataSource tlb.Hashmap[tlb.Uint256, bool] `json:"isValidDataSource"`
-}
-
 func (v *DataSourcesSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.IsValidDataSource.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
 	return nil
 }
-
-type GuardianSetRecord struct {
-	ExpirationTime tlb.Uint64                          `json:"expirationTime"`
-	GuardianKeys   tlb.Hashmap[tlb.Uint8, tlb.Bits160] `json:"guardianKeys"`
-}
-
 func (v *GuardianSetRecord) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.ExpirationTime.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -294,12 +270,6 @@ func (v *GuardianSetRecord) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err
 	}
 	return nil
 }
-
-type GuardianSetsSection struct {
-	CurrentGuardianSetIndex tlb.Uint32                                            `json:"currentGuardianSetIndex"`
-	GuardianSets            tlb.Hashmap[tlb.Uint32, tlb.RefT[*GuardianSetRecord]] `json:"guardianSets"`
-}
-
 func (v *GuardianSetsSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.CurrentGuardianSetIndex.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -309,12 +279,6 @@ func (v *GuardianSetsSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (e
 	}
 	return nil
 }
-
-type DataSource struct {
-	EmitterChainId tlb.Uint16  `json:"emitterChainId"`
-	EmitterAddress tlb.Uint256 `json:"emitterAddress"`
-}
-
 func (v *DataSource) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.EmitterChainId.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -324,18 +288,6 @@ func (v *DataSource) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error)
 	}
 	return nil
 }
-
-type GovernanceSection struct {
-	ChainId                        tlb.Uint16                     `json:"chainId"`
-	GovernanceChainId              tlb.Uint16                     `json:"governanceChainId"`
-	GovernanceContract             tlb.Uint256                    `json:"governanceContract"`
-	ConsumedGovernanceActions      tlb.Hashmap[tlb.Uint256, bool] `json:"consumedGovernanceActions"`
-	GovernanceDataSource           tlb.RefT[*DataSource]          `json:"governanceDataSource"`
-	LastExecutedGovernanceSequence tlb.Uint64                     `json:"lastExecutedGovernanceSequence"`
-	GovernanceDataSourceIndex      tlb.Uint32                     `json:"governanceDataSourceIndex"`
-	UpgradeCodeHash                tlb.Uint256                    `json:"upgradeCodeHash"`
-}
-
 func (v *GovernanceSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.ChainId.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -363,14 +315,6 @@ func (v *GovernanceSection) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err
 	}
 	return nil
 }
-
-type MainStorage struct {
-	PriceFeeds   tlb.RefT[*PriceFeedsSection]   `json:"priceFeeds"`
-	DataSources  tlb.RefT[*DataSourcesSection]  `json:"dataSources"`
-	GuardianSets tlb.RefT[*GuardianSetsSection] `json:"guardianSets"`
-	Governance   tlb.RefT[*GovernanceSection]   `json:"governance"`
-}
-
 func (v *MainStorage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.PriceFeeds.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -386,13 +330,6 @@ func (v *MainStorage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error
 	}
 	return nil
 }
-
-type PriceFeedResponseEntry struct {
-	PriceId   tlb.Uint256                                  `json:"priceId"`
-	PriceFeed tlb.RefT[*StoredPriceFeed]                   `json:"priceFeed"`
-	Next      tlb.Maybe[tlb.RefT[*PriceFeedResponseEntry]] `json:"next"`
-}
-
 func (v *PriceFeedResponseEntry) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.PriceId.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -405,15 +342,6 @@ func (v *PriceFeedResponseEntry) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder)
 	}
 	return nil
 }
-
-type PriceFeedUpdateResponse struct {
-	Op             tlb.Uint32                        `json:"op"`
-	PriceFeedCount tlb.Uint8                         `json:"priceFeedCount"`
-	PriceFeeds     tlb.RefT[*PriceFeedResponseEntry] `json:"priceFeeds"`
-	OriginalSender tlb.MsgAddress                    `json:"originalSender"`
-	CustomPayload  boc.Cell                          `json:"customPayload"`
-}
-
 func (v *PriceFeedUpdateResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
 		return err
@@ -427,30 +355,15 @@ func (v *PriceFeedUpdateResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder
 	if err = v.OriginalSender.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if v.CustomPayload, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.CustomPayload, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixErrorResponse = 0x10002
-
-type ErrorResponse struct {
-	ErrorCode     tlb.Uint32 `json:"errorCode"`
-	Operation     tlb.Uint32 `json:"operation"`
-	CustomPayload boc.Cell   `json:"customPayload"`
-}
-
 func (v *ErrorResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(20); err != nil {
 		return err
-	} else if prefix != uint64(0x10002) {
+	} else if prefix != PrefixErrorResponse {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
 	if err = v.ErrorCode.UnmarshalTLB(c, decoder); err != nil {
@@ -459,47 +372,21 @@ func (v *ErrorResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err err
 	if err = v.Operation.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	if v.CustomPayload, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.CustomPayload, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil
 }
-
-const PrefixSuccessResponse = 0x10001
-
-type SuccessResponse struct {
-	Result        boc.Cell `json:"result"`
-	CustomPayload boc.Cell `json:"customPayload"`
-}
-
 func (v *SuccessResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if prefix, err := c.ReadUint(20); err != nil {
 		return err
-	} else if prefix != uint64(0x10001) {
+	} else if prefix != PrefixSuccessResponse {
 		return fmt.Errorf("unexpected prefix: %x", prefix)
 	}
-	if v.Result, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.Result, err = c.NextRefV(); err != nil {
 		return err
 	}
-	if v.CustomPayload, err = (func() (boc.Cell, error) {
-		cref, err := c.NextRef()
-		if err != nil {
-			return boc.Cell{}, err
-		}
-		return *cref, nil
-	}()); err != nil {
+	if v.CustomPayload, err = c.NextRefV(); err != nil {
 		return err
 	}
 	return nil

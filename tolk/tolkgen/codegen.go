@@ -34,16 +34,17 @@ type symTable struct {
 
 func (tgen TolkGolangGenerator) GenerateGocode() (string, error) {
 	declarationsBuf := &strings.Builder{}
+	marshalersBuf := &strings.Builder{}
 	for _, decl := range tgen.abi.Declarations {
 		switch decl.SumType {
 		case parser.DeclarationKindStruct:
-			tgen.structToGo(decl.StructDeclaration, declarationsBuf)
+			tgen.structToGo(decl.StructDeclaration, declarationsBuf, marshalersBuf)
 			break
 		case parser.DeclarationKindAlias:
-			tgen.aliasToGo(decl.AliasDeclaration, declarationsBuf)
+			tgen.aliasToGo(decl.AliasDeclaration, declarationsBuf, marshalersBuf)
 			break
 		case parser.DeclarationKindEnum:
-			tgen.enumToGo(decl.EnumDeclaration, declarationsBuf)
+			tgen.enumToGo(decl.EnumDeclaration, declarationsBuf, marshalersBuf)
 			break
 		default:
 			return "", fmt.Errorf("unexpect kind %v for top-level declaration", decl.SumType)
@@ -60,10 +61,10 @@ func (tgen TolkGolangGenerator) GenerateGocode() (string, error) {
 		fmt.Fprintf(declarationsBuf, ")\n")
 	}
 
-	return declarationsBuf.String(), nil
+	return declarationsBuf.String() + "\n" + marshallersBuf.String(), nil
 }
 
-func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *strings.Builder) {
+func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *strings.Builder, outMarshal *strings.Builder) {
 	if decl.TargetTy.SumType == parser.TyKindUnion {
 		tgen.aliasUnionToGo(decl, out)
 		return
@@ -73,19 +74,20 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *str
 		panic("type params not supported")
 	}
 	out.WriteString(fmt.Sprintf("type %s %s\n", aliasName, emitGoType(decl.TargetTy)))
+
 	if !decl.CustomPackUnpack.UnpackFromSlice {
-		fmt.Fprintf(out, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n", aliasName)
+		fmt.Fprintf(outMarshal, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n", aliasName)
 		if expr, _, err := tgen.symbols.emitLoadExpr(decl.Name, decl.TargetTy); err == nil {
-			fmt.Fprintf(out, "\tvx, err := %s\n", expr)
-			fmt.Fprintf(out, "\tif err != nil {\n")
-			fmt.Fprintf(out, "\t\treturn err\n")
-			fmt.Fprintf(out, "\t}\n")
-			fmt.Fprintf(out, "\t*v = %s(vx)\n", aliasName)
-			fmt.Fprintf(out, "\treturn nil\n")
+			fmt.Fprintf(outMarshal, "\tvx, err := %s\n", expr)
+			fmt.Fprintf(outMarshal, "\tif err != nil {\n")
+			fmt.Fprintf(outMarshal, "\t\treturn err\n")
+			fmt.Fprintf(outMarshal, "\t}\n")
+			fmt.Fprintf(outMarshal, "\t*v = %s(vx)\n", aliasName)
+			fmt.Fprintf(outMarshal, "\treturn nil\n")
 		} else {
 			panic(err)
 		}
-		fmt.Fprintf(out, "}\n")
+		fmt.Fprintf(outMarshal, "}\n")
 	}
 }
 
@@ -242,7 +244,7 @@ func (st *symTable) getAlias(name string) parser.AliasDeclaration {
 }
 
 // conver Tolk `enum X` to golang `type X = underlying type` with `const X1 = value` definitions
-func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strings.Builder) {
+func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strings.Builder, outMarshal *strings.Builder) {
 	typeIdent := safeGoIdent(decl.Name)
 	fmt.Fprintf(out, "type %s %s\n", typeIdent, emitGoType(decl.EncodedAs))
 	fmt.Fprintf(out, "\n")
@@ -253,72 +255,74 @@ func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strin
 		fmt.Fprintf(out, "\t%s %s = %s\n", name, typeIdent, v.Value)
 	}
 	fmt.Fprintf(out, ")\n")
+
 	// otherwise the user should provide implementation in the same package
 	if !decl.CustomPackUnpack.UnpackFromSlice {
 		// UnmarshalTLB(cell *boc.Cell, decoder *tlb.Decoder)
-		fmt.Fprintf(out, "\n")
-		fmt.Fprintf(out, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n", typeIdent)
+		fmt.Fprintf(outMarshal, "\n")
+		fmt.Fprintf(outMarshal, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n", typeIdent)
 		if expr, _, err := tgen.symbols.emitLoadExpr(decl.Name, decl.EncodedAs); err == nil {
-			fmt.Fprintf(out, "\tvx, err := %s\n", expr)
-			fmt.Fprintf(out, "\t*v = %s(vx)\n", typeIdent)
+			fmt.Fprintf(outMarshal, "\tvx, err := %s\n", expr)
+			fmt.Fprintf(outMarshal, "\t*v = %s(vx)\n", typeIdent)
 		} else {
 			panic(err)
 		}
-		fmt.Fprintf(out, "\treturn err\n")
-		fmt.Fprintf(out, "}\n")
+		fmt.Fprintf(outMarshal, "\treturn err\n")
+		fmt.Fprintf(outMarshal, "}\n")
 	}
 	if !decl.CustomPackUnpack.PackToBuilder {
 		// MarshalTLB(c *boc.Cell, encoder *Encoder) error
-		fmt.Fprintf(out, "\n")
-		fmt.Fprintf(out, "func (v %s) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {\n", typeIdent)
+		fmt.Fprintf(outMarshal, "\n")
+		fmt.Fprintf(outMarshal, "func (v %s) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {\n", typeIdent)
 		if expr, err := emitStoreExpr(decl.Name, decl.EncodedAs); err == nil {
-			fmt.Fprintf(out, "\treturn %s\n", expr)
+			fmt.Fprintf(outMarshal, "\treturn %s\n", expr)
 		} else {
 			panic(err)
 		}
-		fmt.Fprintf(out, "}\n")
+		fmt.Fprintf(outMarshal, "}\n")
 	}
 
 }
 
-func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *strings.Builder) {
+func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *strings.Builder, outMarshal *strings.Builder) {
 	if len(decl.TypeParams) > 0 {
 		panic("type params not supported")
 	}
 	typeIdent := safeGoIdent(decl.Name)
 	if decl.Prefix != nil {
-		fmt.Fprintf(out, "const Prefix%s = %s\n", typeIdent, decl.Prefix.PrefixStr)
+		fmt.Fprintf(out, "const Prefix%s uint64 = %s\n", typeIdent, decl.Prefix.PrefixStr)
 	}
 	fmt.Fprintf(out, "type %s struct {\n", typeIdent)
 	for _, field := range decl.Fields {
-		fmt.Fprintf(out, "\t%s %s `json:\"%s\"`\n", safePublicField(field.Name), emitGoType(field.Ty), field.Name)
+		fmt.Fprintf(out, "\t%s %s\n", safePublicField(field.Name), emitGoType(field.Ty))
 	}
 	fmt.Fprintf(out, "}\n")
+
 	if !decl.CustomPackUnpack.UnpackFromSlice {
-		fmt.Fprintf(out, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {\n", typeIdent)
+		fmt.Fprintf(outMarshal, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {\n", typeIdent)
 		if decl.Prefix != nil {
-			fmt.Fprintf(out, "\tif prefix, err := c.ReadUint(%d); err != nil {\n", decl.Prefix.PrefixLen)
-			fmt.Fprintf(out, "\t\treturn err\n")
-			fmt.Fprintf(out, "\t} else if prefix != uint64(%s) {\n", decl.Prefix.PrefixStr)
-			fmt.Fprintf(out, "\t\treturn fmt.Errorf(\"unexpected prefix: %%x\", prefix)\n")
-			fmt.Fprintf(out, "\t}\n")
+			fmt.Fprintf(outMarshal, "\tif prefix, err := c.ReadUint(%d); err != nil {\n", decl.Prefix.PrefixLen)
+			fmt.Fprintf(outMarshal, "\t\treturn err\n")
+			fmt.Fprintf(outMarshal, "\t} else if prefix != Prefix%s {\n", typeIdent)
+			fmt.Fprintf(outMarshal, "\t\treturn fmt.Errorf(\"unexpected prefix: %%x\", prefix)\n")
+			fmt.Fprintf(outMarshal, "\t}\n")
 		}
 		for _, field := range decl.Fields {
 			fieldPath := fmt.Sprintf("%s.%s", typeIdent, safePublicField(field.Name))
 			if expr, hasLoadMethod, err := tgen.symbols.emitLoadExpr(fieldPath, field.Ty); err == nil {
 				if hasLoadMethod {
-					fmt.Fprintf(out, "\tif err = v.%s.UnmarshalTLB(c, decoder); err != nil {\n", safePublicField(field.Name))
+					fmt.Fprintf(outMarshal, "\tif err = v.%s.UnmarshalTLB(c, decoder); err != nil {\n", safePublicField(field.Name))
 				} else {
-					fmt.Fprintf(out, "\tif v.%s, err = %s; err != nil {\n", safePublicField(field.Name), expr)
+					fmt.Fprintf(outMarshal, "\tif v.%s, err = %s; err != nil {\n", safePublicField(field.Name), expr)
 				}
-				fmt.Fprintf(out, "\t\treturn err\n")
-				fmt.Fprintf(out, "\t}\n")
+				fmt.Fprintf(outMarshal, "\t\treturn err\n")
+				fmt.Fprintf(outMarshal, "\t}\n")
 			} else {
 				panic(err)
 			}
 		}
-		fmt.Fprintf(out, "\treturn nil\n")
-		fmt.Fprintf(out, "}\n")
+		fmt.Fprintf(outMarshal, "\treturn nil\n")
+		fmt.Fprintf(outMarshal, "}\n")
 	}
 
 }
@@ -332,14 +336,6 @@ func emitStoreExpr(name string, ty parser.Ty) (string, error) {
 	}
 	return "", fmt.Errorf("unknown type %v", ty)
 }
-
-const CellLoadExpr = `(func() (boc.Cell, error) {
-	cref, err := c.NextRef()
-	if err != nil {
-		return boc.Cell{}, err
-	}
-	return *cref, nil
-}())`
 
 func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, hasLoadMethod bool, err error) {
 
@@ -355,10 +351,10 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 	case parser.TyKindBitsN:
 		return fmt.Sprintf("tlb.UnmarshalT[tlb.Bits%d](c, decoder)", ty.BitsN.N), true, nil
 	case parser.TyKindCell:
-		return CellLoadExpr, false, nil
+		return "c.NextRefV()", false, nil
 	case parser.TyKindCellOf:
 		if ty.CellOf.Inner.SumType == parser.TyKindSlice {
-			return CellLoadExpr, false, nil
+			return "c.NextRefV()", false, nil
 		}
 		return fmt.Sprintf("tlb.UnmarshalT[tlb.RefT[*%s]](c, decoder)", emitGoType(ty.CellOf.Inner)), true, nil
 	case parser.TyKindAliasRef:

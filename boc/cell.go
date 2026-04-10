@@ -189,7 +189,7 @@ func (c *Cell) AddRef(c2 *Cell) error {
 	return ErrCellRefsOverflow
 }
 
-// NextRef returns the next reference cell, nil is only returned  with error
+// NextRef returns the next reference cell, nil is only returned with error
 func (c *Cell) NextRef() (*Cell, error) {
 	if c.refCursor > 3 {
 		return nil, ErrNotEnoughRefs
@@ -201,6 +201,20 @@ func (c *Cell) NextRef() (*Cell, error) {
 		return ref, nil
 	}
 	return nil, ErrNotEnoughRefs
+}
+
+// NextRefV same as NextRef but returns struct instead of pointer
+func (c *Cell) NextRefV() (Cell, error) {
+	if c.refCursor > 3 {
+		return Cell{}, ErrNotEnoughRefs
+	}
+	ref := c.refs[c.refCursor]
+	if ref != nil {
+		c.refCursor++
+		ref.ResetCounters()
+		return *ref, nil
+	}
+	return Cell{}, ErrNotEnoughRefs
 }
 
 func (c *Cell) toStringImpl(ident string, iterationsLimit *int) string {

@@ -1,5 +1,3 @@
-tolk 1.3
-
 import "@stdlib/tvm-dicts"
 
 const OP_UPDATE_GUARDIAN_SET: uint32 = 1

@@ -409,9 +409,10 @@ func emitGoType(ty parser.Ty) string {
 		return fmt.Sprintf("tlb.VarUInteger%d", ty.VarUintN.N)
 	case parser.TyKindBitsN:
 		switch ty.BitsN.N {
-		case 80, 96, 128, 256, 264, 320, 352, 512:
+		case 80, 96, 128, 160, 256, 264, 320, 352, 512:
 			return "tlb.Bits" + fmt.Sprintf("%d", ty.BitsN.N)
 		}
+		panic(fmt.Sprintf("tlb.Bits%d is not supported: update cmd/codegen/integers", ty.BitsN.N))
 	case parser.TyKindCoins:
 		return "tlb.Coins"
 	case parser.TyKindCell:

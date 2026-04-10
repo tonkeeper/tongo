@@ -8219,6 +8219,53 @@ func (u *Bits128) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	}
 }
 
+type Bits160 [20]byte
+
+func (u Bits160) FixedSize() int {
+	return 160
+}
+
+func (u Bits160) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%x\"", u[:])), nil
+}
+
+func (u *Bits160) UnmarshalJSON(b []byte) error {
+	bs, err := hex.DecodeString(strings.Trim(string(b), "\""))
+	if err != nil {
+		return err
+	}
+	if len(bs) != 20 {
+		return fmt.Errorf("can't parse Bits160 %v", string(b))
+	}
+	copy(u[:], bs)
+	return nil
+}
+
+func (u Bits160) Equal(other any) bool {
+	otherBits, ok := other.(Bits160)
+	if !ok {
+		return false
+	}
+	return u == otherBits
+}
+
+func (u Bits160) Compare(other any) (int, bool) {
+	otherBits, ok := other.(Bits160)
+	if !ok {
+		return 0, false
+	}
+	return bytes.Compare(u[:], otherBits[:]), true
+}
+
+func (u *Bits160) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	if bytes, err := c.ReadBytes(20); err != nil {
+		return err
+	} else {
+		copy(u[:], bytes)
+		return nil
+	}
+}
+
 type Bits256 [32]byte
 
 func (u Bits256) FixedSize() int {

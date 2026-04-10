@@ -14,23 +14,23 @@ type Kind struct {
 }
 
 type ABI struct {
-	Namespace        string            `json:"namespace"`
-	ContractName     string            `json:"contractName"`
-	InheritsContract string            `json:"inheritsContract,omitempty"`
-	Author           string            `json:"author,omitempty"`
-	Version          string            `json:"version,omitempty"`
-	Description      string            `json:"description,omitempty"`
-	Declarations     []Declaration     `json:"declarations"`
-	IncomingMessages []IncomingMessage `json:"incomingMessages"`
-	IncomingExternal *IncomingExternal `json:"incomingExternal,omitempty"`
-	OutgoingMessages []OutgoingMessage `json:"outgoingMessages"`
-	EmittedMessages  []OutgoingMessage `json:"emittedEvents"`
-	GetMethods       []GetMethod       `json:"getMethods"`
-	ThrownErrors     []ThrownError     `json:"thrownErrors"`
-	CompilerName     string            `json:"compilerName"`
-	CompilerVersion  string            `json:"compilerVersion"`
-	CodeBoc64        string            `json:"codeBoc64"`
-	CodeHashes       []string          `json:"codeHashes,omitempty"`
+	Namespace        string             `json:"namespace"`
+	ContractName     string             `json:"contractName"`
+	InheritsContract string             `json:"inheritsContract,omitempty"`
+	Author           string             `json:"author,omitempty"`
+	Version          string             `json:"version,omitempty"`
+	Description      string             `json:"description,omitempty"`
+	Declarations     []Declaration      `json:"declarations"`
+	IncomingMessages []IncomingMessage  `json:"incomingMessages"`
+	IncomingExternal []IncomingExternal `json:"incomingExternal"`
+	OutgoingMessages []OutgoingMessage  `json:"outgoingMessages"`
+	EmittedMessages  []OutgoingMessage  `json:"emittedEvents"`
+	GetMethods       []GetMethod        `json:"getMethods"`
+	ThrownErrors     []ThrownError      `json:"thrownErrors"`
+	CompilerName     string             `json:"compilerName"`
+	CompilerVersion  string             `json:"compilerVersion"`
+	CodeBoc64        string             `json:"codeBoc64"`
+	CodeHashes       []string           `json:"codeHashes,omitempty"`
 }
 
 func (a *ABI) GetGolangNamespace() string {

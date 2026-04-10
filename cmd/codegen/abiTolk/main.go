@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"go/format"
 	"log"
 	"os"
 	"path/filepath"
@@ -54,11 +55,14 @@ func main() {
 			return nil
 		}
 
-		code = `package abiGenerated
+		code = `// Code generated - DO NOT EDIT.
+
+package abiGenerated
 
 import (
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"fmt"
 )
 
 ` + code + "\n\n"
@@ -70,7 +74,12 @@ import (
 			return fmt.Errorf("mkdir %s: %w", filepath.Dir(outPath), err)
 		}
 
-		if err := os.WriteFile(outPath, []byte(code), 0644); err != nil {
+		formatted, err := format.Source([]byte(code))
+		if err != nil {
+			return fmt.Errorf("go fmt error %s: %w", outPath, err)
+		}
+
+		if err := os.WriteFile(outPath, formatted, 0644); err != nil {
 			return fmt.Errorf("write %s: %w", outPath, err)
 		}
 

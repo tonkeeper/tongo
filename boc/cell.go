@@ -189,6 +189,7 @@ func (c *Cell) AddRef(c2 *Cell) error {
 	return ErrCellRefsOverflow
 }
 
+// NextRef returns the next reference cell, nil is only returned  with error
 func (c *Cell) NextRef() (*Cell, error) {
 	if c.refCursor > 3 {
 		return nil, ErrNotEnoughRefs

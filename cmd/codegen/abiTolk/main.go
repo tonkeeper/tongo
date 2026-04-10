@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	talkCodegen "github.com/tonkeeper/tongo/abi-tolk/codegen"
 	"github.com/tonkeeper/tongo/tolk/parser"
+	"github.com/tonkeeper/tongo/tolk/tolkgen"
 )
 
 func main() {
@@ -46,7 +46,7 @@ func main() {
 			return fmt.Errorf("parse %s: %w", path, err)
 		}
 
-		gen := talkCodegen.NewTolkGolangGenerator(abi)
+		gen := tolkgen.NewTolkGolangGenerator(abi)
 		code, err := gen.GenerateGocode()
 		if err != nil {
 			return fmt.Errorf("codegen %s: %w", path, err)
@@ -74,16 +74,20 @@ import (
 			return fmt.Errorf("mkdir %s: %w", filepath.Dir(outPath), err)
 		}
 
-		formatted, err := format.Source([]byte(code))
-		if err != nil {
-			return fmt.Errorf("go fmt error %s: %w", outPath, err)
+		formatted, fmtErr := format.Source([]byte(code))
+		if fmtErr != nil {
+			// write anyway, so a developer could debug the output
+			formatted = []byte(code)
 		}
 
 		if err := os.WriteFile(outPath, formatted, 0644); err != nil {
 			return fmt.Errorf("write %s: %w", outPath, err)
 		}
 
-		fmt.Printf("generated %s\n", outPath)
+		if fmtErr != nil {
+			return fmt.Errorf("generated %s with fmt error: %w", outPath, fmtErr)
+		}
+		fmt.Printf("%s\n", outPath)
 		return nil
 	})
 	if err != nil {

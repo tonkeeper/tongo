@@ -33,6 +33,13 @@ type Ref[T any] struct {
 	Value T
 }
 
+// RefT unlike Ref requires inner type to have marshaling implemented
+// so it does not rely on reflection-based tlb.Encoder
+// todo add MarshalerTLB - not needed yet
+type RefT[T UnmarshalerTLB] struct {
+	Value T
+}
+
 type Unary uint
 
 type Any boc.Cell
@@ -235,6 +242,20 @@ func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	return nil
+}
+
+func (r *RefT[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	ru := Ref[T]{}
+	if err := ru.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	r.Value = ru.Value
+	return nil
+}
+
+func (r RefT[T]) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	ru := Ref[T]{Value: r.Value}
+	return ru.MarshalTLB(c, encoder)
 }
 
 func (n Unary) MarshalTLB(c *boc.Cell, encoder *Encoder) error {

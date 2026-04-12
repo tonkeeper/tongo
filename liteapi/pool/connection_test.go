@@ -34,6 +34,9 @@ func createTestLiteServerConnection() (*liteclient.Connection, error) {
 }
 
 func Test_connection_Run(t *testing.T) {
+	if os.Getenv("TEST_CI") == "1" {
+		t.SkipNow()
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Skipf("cannot connect to lite server: %v", err)

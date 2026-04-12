@@ -9,3 +9,5 @@ tlb/parser/testdata/*.output.out
 vendor/
 cover.out
 *.output.json
+.cursor/plans
+.zed

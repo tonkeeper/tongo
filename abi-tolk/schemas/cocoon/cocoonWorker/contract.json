@@ -1,0 +1,359 @@
+{
+  "contractName": "Worker",
+  "namespace": "ton.cocoon",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "WorkerProxyPayoutRequest",
+      "prefix": {
+        "prefixStr": "0x08e7d036",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "workerPart",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "proxyPart",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerWorkerRegister",
+      "prefix": {
+        "prefixStr": "0x26ed7f65",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtWorkerPayoutRequestSigned",
+      "prefix": {
+        "prefixStr": "0xa040ad28",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtWorkerLastPayoutRequestSigned",
+      "prefix": {
+        "prefixStr": "0xf5f26a36",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WorkerProxyRequest",
+      "prefix": {
+        "prefixStr": "0x4d725d2c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "state",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "tokens",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PayoutPayloadData",
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newTokens",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expectedMyAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PayoutPayload",
+      "prefix": {
+        "prefixStr": "0xa040ad28",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "data",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PayoutPayloadData"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "LastPayoutPayload",
+      "prefix": {
+        "prefixStr": "0xf5f26a36",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "data",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PayoutPayloadData"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0x2565934c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Payout",
+      "prefix": {
+        "prefixStr": "0xc59a7cd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "SignedWorkerMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtWorkerPayoutRequestSigned"
+            },
+            "prefixStr": "0xa040ad28",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtWorkerLastPayoutRequestSigned"
+            },
+            "prefixStr": "0xf5f26a36",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "SignedPayload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "PayoutPayload"
+            },
+            "prefixStr": "0xa040ad28",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "LastPayoutPayload"
+            },
+            "prefixStr": "0xf5f26a36",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "WorkerMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtWorkerPayoutRequestSigned"
+            },
+            "prefixStr": "0xa040ad28",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtWorkerLastPayoutRequestSigned"
+            },
+            "prefixStr": "0xf5f26a36",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerWorkerRegister"
+            },
+            "prefixStr": "0x26ed7f65",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WorkerProxyRequest"
+            },
+            "prefixStr": "0x4d725d2c",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtWorkerPayoutRequestSigned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtWorkerLastPayoutRequestSigned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerWorkerRegister"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WorkerProxyRequest"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

@@ -348,9 +348,9 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 		}
 		return "", false, fmt.Errorf("%s is %s%s", fieldPath, ty.String(), hint)
 	case parser.TyKindRemaining:
-		return `(func () (boc.Cell, error) {
+		return `(func () (tlb.Any, error) {
 	cc := c.CopyRemaining()
-	return *cc, nil
+	return tlb.Any(*cc), nil
 })()`, false, nil
 	case parser.TyKindBitsN:
 		return fmt.Sprintf("tlb.UnmarshalT[tlb.Bits%d](c, decoder)", ty.BitsN.N), true, nil

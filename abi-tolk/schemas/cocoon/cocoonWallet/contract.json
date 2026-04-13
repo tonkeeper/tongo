@@ -1,0 +1,231 @@
+{
+  "contractName": "Wallet",
+  "namespace": "ton.cocoon",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0x2565934c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Payout",
+      "prefix": {
+        "prefixStr": "0xc59a7cd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "QueryHeader",
+      "fields": [
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SignedMessage",
+      "fields": [
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "signedDataCell",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExternalSignedMessage",
+      "fields": [
+        {
+          "name": "subwalletId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validUntil",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "msgSeqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerWalletSendMessage",
+      "prefix": {
+        "prefixStr": "0x9c69f376",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "body",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "TextCommand",
+      "prefix": {
+        "prefixStr": "0x00000000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "action",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "AllowedInternalMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerWalletSendMessage"
+            },
+            "prefixStr": "0x9c69f376",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TextCommand"
+            },
+            "prefixStr": "0x00000000",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerWalletSendMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TextCommand"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

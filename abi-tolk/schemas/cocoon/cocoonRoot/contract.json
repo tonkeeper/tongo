@@ -1,0 +1,719 @@
+{
+  "contractName": "Root",
+  "namespace": "ton.cocoon",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "AddWorkerType",
+      "prefix": {
+        "prefixStr": "0xe34b1c60",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "workerHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DelWorkerType",
+      "prefix": {
+        "prefixStr": "0x8d94a79a",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "workerHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AddModelType",
+      "prefix": {
+        "prefixStr": "0xc146134d",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "modelHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DelModelType",
+      "prefix": {
+        "prefixStr": "0x92b11c18",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "modelHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "AddProxyType",
+      "prefix": {
+        "prefixStr": "0x71860e80",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proxyHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DelProxyType",
+      "prefix": {
+        "prefixStr": "0x3c41d0b2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proxyHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RegisterProxy",
+      "prefix": {
+        "prefixStr": "0x927c7cb5",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proxyInfo",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UnregisterProxy",
+      "prefix": {
+        "prefixStr": "0x6d49eaf2",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateProxy",
+      "prefix": {
+        "prefixStr": "0x9c7924ba",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "proxyAddr",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeFees",
+      "prefix": {
+        "prefixStr": "0xc52ed8d4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "pricePerToken",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "workerFeePerToken",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeParams",
+      "prefix": {
+        "prefixStr": "0x022fa189",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "pricePerToken",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "workerFeePerToken",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "proxyDelayBeforeClose",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "clientDelayBeforeClose",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "minProxyStake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "minClientStake",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradeContracts",
+      "prefix": {
+        "prefixStr": "0xa2370f61",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "proxyCode",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "workerCode",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "clientCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradeCode",
+      "prefix": {
+        "prefixStr": "0x11aefd51",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ResetRoot",
+      "prefix": {
+        "prefixStr": "0x563c1d96",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradeFull",
+      "prefix": {
+        "prefixStr": "0x4f7c5789",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newData",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "newCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeOwner",
+      "prefix": {
+        "prefixStr": "0xc4a1ae54",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newOwnerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "RootMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AddWorkerType"
+            },
+            "prefixStr": "0xe34b1c60",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DelWorkerType"
+            },
+            "prefixStr": "0x8d94a79a",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AddModelType"
+            },
+            "prefixStr": "0xc146134d",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DelModelType"
+            },
+            "prefixStr": "0x92b11c18",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "AddProxyType"
+            },
+            "prefixStr": "0x71860e80",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "DelProxyType"
+            },
+            "prefixStr": "0x3c41d0b2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "RegisterProxy"
+            },
+            "prefixStr": "0x927c7cb5",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UnregisterProxy"
+            },
+            "prefixStr": "0x6d49eaf2",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpdateProxy"
+            },
+            "prefixStr": "0x9c7924ba",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChangeFees"
+            },
+            "prefixStr": "0xc52ed8d4",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChangeParams"
+            },
+            "prefixStr": "0x022fa189",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpgradeContracts"
+            },
+            "prefixStr": "0xa2370f61",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpgradeCode"
+            },
+            "prefixStr": "0x11aefd51",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ResetRoot"
+            },
+            "prefixStr": "0x563c1d96",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "UpgradeFull"
+            },
+            "prefixStr": "0x4f7c5789",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ChangeOwner"
+            },
+            "prefixStr": "0xc4a1ae54",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0x2565934c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Payout",
+      "prefix": {
+        "prefixStr": "0xc59a7cd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AddWorkerType"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DelWorkerType"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AddModelType"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DelModelType"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "AddProxyType"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "DelProxyType"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "RegisterProxy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnregisterProxy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateProxy"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChangeFees"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChangeParams"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpgradeContracts"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpgradeCode"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ResetRoot"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpgradeFull"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChangeOwner"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

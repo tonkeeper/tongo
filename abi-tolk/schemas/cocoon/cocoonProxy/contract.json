@@ -1,0 +1,676 @@
+{
+  "contractName": "Proxy",
+  "namespace": "ton.cocoon",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "TextCmd",
+      "prefix": {
+        "prefixStr": "0x00000000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "action",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtProxyPayoutRequest",
+      "prefix": {
+        "prefixStr": "0x7610e6eb",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtProxyIncreaseStake",
+      "prefix": {
+        "prefixStr": "0x9713f187",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OwnerProxyClose",
+      "prefix": {
+        "prefixStr": "0xb51d5a01",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CloseRequestPayload",
+      "prefix": {
+        "prefixStr": "0x636a4391",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expectedMyAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CloseCompleteRequestPayload",
+      "prefix": {
+        "prefixStr": "0xe511abc7",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expectedMyAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "SignedProxyPayload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CloseRequestPayload"
+            },
+            "prefixStr": "0x636a4391",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "CloseCompleteRequestPayload"
+            },
+            "prefixStr": "0xe511abc7",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtProxyCloseRequestSigned",
+      "prefix": {
+        "prefixStr": "0x636a4391",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExtProxyCloseCompleteRequestSigned",
+      "prefix": {
+        "prefixStr": "0xe511abc7",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "rest",
+          "ty": {
+            "kind": "remaining"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientStateData",
+      "fields": [
+        {
+          "name": "state",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "balance",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "tokensUsed",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "secretHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WorkerProxyRequest",
+      "prefix": {
+        "prefixStr": "0x4d725d2c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "state",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "tokens",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WorkerProxyPayoutRequest",
+      "prefix": {
+        "prefixStr": "0x08e7d036",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "workerPart",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "proxyPart",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRequest",
+      "prefix": {
+        "prefixStr": "0x65448ff4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "stateData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "ClientStateData"
+            }
+          }
+        },
+        {
+          "isPayload": true,
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyTopUp",
+      "prefix": {
+        "prefixStr": "0x5cfc6b87",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "topUpCoins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRegister",
+      "prefix": {
+        "prefixStr": "0xa35cb580",
+        "prefixLen": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRefundGranted",
+      "prefix": {
+        "prefixStr": "0xc68ebc7b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ClientProxyRefundForce",
+      "prefix": {
+        "prefixStr": "0xf4c354c9",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "coins",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0x2565934c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Payout",
+      "prefix": {
+        "prefixStr": "0xc59a7cd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "SignedProxyMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtProxyCloseRequestSigned"
+            },
+            "prefixStr": "0x636a4391",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtProxyCloseCompleteRequestSigned"
+            },
+            "prefixStr": "0xe511abc7",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "ClientProxyPayload",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ClientProxyTopUp"
+            },
+            "prefixStr": "0x5cfc6b87",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ClientProxyRegister"
+            },
+            "prefixStr": "0xa35cb580",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ClientProxyRefundGranted"
+            },
+            "prefixStr": "0xc68ebc7b",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ClientProxyRefundForce"
+            },
+            "prefixStr": "0xf4c354c9",
+            "prefixLen": 32
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "WorkerProxyPayload",
+      "targetTy": {
+        "kind": "StructRef",
+        "structName": "WorkerProxyPayoutRequest"
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "ProxyMessage",
+      "targetTy": {
+        "kind": "union",
+        "variants": [
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "TextCmd"
+            },
+            "prefixStr": "0x00000000",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtProxyCloseRequestSigned"
+            },
+            "prefixStr": "0x636a4391",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtProxyCloseCompleteRequestSigned"
+            },
+            "prefixStr": "0xe511abc7",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtProxyPayoutRequest"
+            },
+            "prefixStr": "0x7610e6eb",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ExtProxyIncreaseStake"
+            },
+            "prefixStr": "0x9713f187",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "OwnerProxyClose"
+            },
+            "prefixStr": "0xb51d5a01",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "WorkerProxyRequest"
+            },
+            "prefixStr": "0x4d725d2c",
+            "prefixLen": 32
+          },
+          {
+            "variantTy": {
+              "kind": "StructRef",
+              "structName": "ClientProxyRequest"
+            },
+            "prefixStr": "0x65448ff4",
+            "prefixLen": 32
+          }
+        ]
+      }
+    }
+  ],
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "TextCmd"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtProxyCloseRequestSigned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtProxyCloseCompleteRequestSigned"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtProxyPayoutRequest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExtProxyIncreaseStake"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OwnerProxyClose"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WorkerProxyRequest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ClientProxyRequest"
+      }
+    }
+  ],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "storage": {
+    "storageTy": {
+      "kind": "nullLiteral"
+    }
+  },
+  "getMethods": [],
+  "thrownErrors": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0",
+  "codeBoc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

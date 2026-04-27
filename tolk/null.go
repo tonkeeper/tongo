@@ -2,7 +2,6 @@ package tolk
 
 import (
 	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/tolk/parser"
 )
 
 type NullValue struct{}
@@ -15,11 +14,11 @@ func (n *NullValue) Equal(other any) bool {
 	return true
 }
 
-func (n *NullValue) Unmarshal(cell *boc.Cell, ty parser.NullLiteral, decoder *Decoder) error {
+func (n *NullValue) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
-func (n *NullValue) Marshal(cell *boc.Cell, ty parser.NullLiteral, encoder *Encoder) error {
+func (n *NullValue) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	return nil
 }
 
@@ -37,11 +36,11 @@ func (v *VoidValue) Equal(other any) bool {
 	return true
 }
 
-func (v *VoidValue) Unmarshal(cell *boc.Cell, ty parser.Void, decoder *Decoder) error {
+func (v *VoidValue) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	return nil
 }
 
-func (v *VoidValue) Marshal(cell *boc.Cell, ty parser.Void, encoder *Encoder) error {
+func (v *VoidValue) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	return nil
 }
 

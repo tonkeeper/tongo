@@ -494,14 +494,14 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 	case "TupleWith":
 		v.SumType = "TupleWith"
 		v.TupleWith = &TupleValues{}
-		err = v.TupleWith.Unmarshal(cell, *ty.TupleWith, decoder)
+		err = v.TupleWith.Unmarshal(cell, *ty.ShapedTuple, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal tuple value: %w", err)
 		}
 	case "Map":
 		v.SumType = "Map"
 		v.Map = &MapValue{}
-		err = v.Map.Unmarshal(cell, *ty.Map, decoder)
+		err = v.Map.Unmarshal(cell, *ty.MapKV, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal map value: %w", err)
 		}
@@ -545,7 +545,7 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 	case "Coins":
 		v.SumType = "Coins"
 		v.Coins = &CoinsValue{}
-		err = v.Coins.Unmarshal(cell, *ty.Coins, decoder)
+		err = v.Coins.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal coins value: %w", err)
 		}
@@ -553,14 +553,14 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 		v.SumType = "Bool"
 		def := BoolValue(false)
 		v.Bool = &def
-		err = v.Bool.Unmarshal(cell, *ty.Bool, decoder)
+		err = v.Bool.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal bool value: %w", err)
 		}
 	case "Cell":
 		v.SumType = "Cell"
 		v.Cell = &Any{}
-		err = v.Cell.Unmarshal(cell, *ty.Cell, decoder)
+		err = v.Cell.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal cell value: %w", err)
 		}
@@ -573,35 +573,35 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 	case "Remaining":
 		v.SumType = "Remaining"
 		v.Remaining = &RemainingValue{}
-		err = v.Remaining.Unmarshal(cell, *ty.Remaining, decoder)
+		err = v.Remaining.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal remaining value: %w", err)
 		}
 	case "Address":
 		v.SumType = "InternalAddress"
 		v.InternalAddress = &InternalAddress{}
-		err = v.InternalAddress.Unmarshal(cell, *ty.Address, decoder)
+		err = v.InternalAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal internal address value: %w", err)
 		}
 	case "AddressOpt":
 		v.SumType = "OptionalAddress"
 		v.OptionalAddress = &OptionalAddress{}
-		err = v.OptionalAddress.Unmarshal(cell, *ty.AddressOpt, decoder)
+		err = v.OptionalAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal optional address value: %w", err)
 		}
 	case "AddressExt":
 		v.SumType = "ExternalAddress"
 		v.ExternalAddress = &ExternalAddress{}
-		err = v.ExternalAddress.Unmarshal(cell, *ty.AddressExt, decoder)
+		err = v.ExternalAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal external address value: %w", err)
 		}
 	case "AddressAny":
 		v.SumType = "AnyAddress"
 		v.AnyAddress = &AnyAddress{}
-		err = v.AnyAddress.Unmarshal(cell, *ty.AddressAny, decoder)
+		err = v.AnyAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal any address value: %w", err)
 		}
@@ -610,14 +610,14 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 	case "NullLiteral":
 		v.SumType = "Null"
 		v.Null = &NullValue{}
-		err = v.Null.Unmarshal(cell, *ty.NullLiteral, decoder)
+		err = v.Null.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal null value: %w", err)
 		}
 	case "Void":
 		v.SumType = "Void"
 		v.Void = &VoidValue{}
-		err = v.Void.Unmarshal(cell, *ty.Void, decoder)
+		err = v.Void.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal void value: %w", err)
 		}
@@ -718,7 +718,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "TupleWith" {
 			return fmt.Errorf("expected TupleWith, but got %v", v.SumType)
 		}
-		err = v.TupleWith.Marshal(cell, *ty.TupleWith, encoder)
+		err = v.TupleWith.Marshal(cell, *ty.ShapedTuple, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal tuple value: %w", err)
 		}
@@ -726,7 +726,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Map" {
 			return fmt.Errorf("expected Map, but got %v", v.SumType)
 		}
-		err = v.Map.Marshal(cell, *ty.Map, encoder)
+		err = v.Map.Marshal(cell, *ty.MapKV, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal map value: %w", err)
 		}
@@ -776,7 +776,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Coins" {
 			return fmt.Errorf("expected Coins, but got %v", v.SumType)
 		}
-		err = v.Coins.Marshal(cell, *ty.Coins, encoder)
+		err = v.Coins.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal coins value: %w", err)
 		}
@@ -784,7 +784,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Bool" {
 			return fmt.Errorf("expected Bool, but got %v", v.SumType)
 		}
-		err = v.Bool.Marshal(cell, *ty.Bool, encoder)
+		err = v.Bool.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal bool value: %w", err)
 		}
@@ -792,7 +792,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Cell" {
 			return fmt.Errorf("expected Cell, but got %v", v.SumType)
 		}
-		err = v.Cell.Marshal(cell, *ty.Cell, encoder)
+		err = v.Cell.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal cell value: %w", err)
 		}
@@ -806,7 +806,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Remaining" {
 			return fmt.Errorf("expected Remaining, but got %v", v.SumType)
 		}
-		err = v.Remaining.Marshal(cell, *ty.Remaining, encoder)
+		err = v.Remaining.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal remaining value: %w", err)
 		}
@@ -814,7 +814,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "InternalAddress" {
 			return fmt.Errorf("expected InternalAddress, but got %v", v.SumType)
 		}
-		err = v.InternalAddress.Marshal(cell, *ty.Address, encoder)
+		err = v.InternalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal internal address value: %w", err)
 		}
@@ -822,7 +822,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "OptionalAddress" {
 			return fmt.Errorf("expected OptionalAddress, but got %v", v.SumType)
 		}
-		err = v.OptionalAddress.Marshal(cell, *ty.AddressOpt, encoder)
+		err = v.OptionalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal optional address value: %w", err)
 		}
@@ -830,7 +830,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "ExternalAddress" {
 			return fmt.Errorf("expected ExternalAddress, but got %v", v.SumType)
 		}
-		err = v.ExternalAddress.Marshal(cell, *ty.AddressExt, encoder)
+		err = v.ExternalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal external address value: %w", err)
 		}
@@ -838,7 +838,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "AnyAddress" {
 			return fmt.Errorf("expected AnyAddress, but got %v", v.SumType)
 		}
-		err = v.AnyAddress.Marshal(cell, *ty.AddressAny, encoder)
+		err = v.AnyAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal any address value: %w", err)
 		}
@@ -848,7 +848,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Null" {
 			return fmt.Errorf("expected Null, but got %v", v.SumType)
 		}
-		err = v.Null.Marshal(cell, *ty.NullLiteral, encoder)
+		err = v.Null.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal null value: %w", err)
 		}
@@ -856,7 +856,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if v.SumType != "Void" {
 			return fmt.Errorf("expected Void, but got %v", v.SumType)
 		}
-		err = v.Void.Marshal(cell, *ty.Void, encoder)
+		err = v.Void.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal void value: %w", err)
 		}

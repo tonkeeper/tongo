@@ -1,0 +1,443 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "ReturnExcessesBack",
+      "prefix": {
+        "prefixStr": "0x2565934c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Payout",
+      "prefix": {
+        "prefixStr": "0xc59a7cd3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WorkerProxyRequest",
+      "prefix": {
+        "prefixStr": "0x4d725d2c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "state",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "tokens",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CocoonWorkerData",
+      "fields": [
+        {
+          "name": "ownerAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "proxyAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "proxyPublicKey",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "state",
+          "ty": {
+            "kind": "uintN",
+            "n": 2
+          }
+        },
+        {
+          "name": "tokens",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incomingMessages": [],
+  "incomingExternal": [],
+  "outgoingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ReturnExcessesBack"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Payout"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WorkerProxyRequest"
+      }
+    }
+  ],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 106427,
+      "name": "get_cocoon_worker_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "CocoonWorkerData"
+      }
+    }
+  ],
+  "thrownErrors": [
+    {
+      "kind": "constant",
+      "name": "ERROR_OLD_MESSAGE",
+      "errCode": 1000
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_LOW_MSG_VALUE",
+      "errCode": 1003
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
+      "errCode": 1005
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_CLOSED",
+      "errCode": 1006
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_BAD_SIGNATURE",
+      "errCode": 1007
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
+      "errCode": 1010
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_EXPECTED_MY_ADDRESS",
+      "errCode": 1015
+    }
+  ],
+  "constants": [
+    {
+      "name": "OP_EXCESSES",
+      "value": {
+        "kind": "int",
+        "v": "627413836"
+      }
+    },
+    {
+      "name": "OP_PAYOUT",
+      "value": {
+        "kind": "int",
+        "v": "3315236051"
+      }
+    },
+    {
+      "name": "OP_DO_NOT_PROCESS",
+      "value": {
+        "kind": "int",
+        "v": "2584889280"
+      }
+    },
+    {
+      "name": "ERROR_OLD_MESSAGE",
+      "value": {
+        "kind": "int",
+        "v": "1000"
+      }
+    },
+    {
+      "name": "ERROR_LOW_SMC_BALANCE",
+      "value": {
+        "kind": "int",
+        "v": "1001"
+      }
+    },
+    {
+      "name": "ERROR_LOW_BALANCE",
+      "value": {
+        "kind": "int",
+        "v": "1002"
+      }
+    },
+    {
+      "name": "ERROR_LOW_MSG_VALUE",
+      "value": {
+        "kind": "int",
+        "v": "1003"
+      }
+    },
+    {
+      "name": "ERROR_MSG_FORMAT_MISMATCH",
+      "value": {
+        "kind": "int",
+        "v": "1004"
+      }
+    },
+    {
+      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
+      "value": {
+        "kind": "int",
+        "v": "1005"
+      }
+    },
+    {
+      "name": "ERROR_CLOSED",
+      "value": {
+        "kind": "int",
+        "v": "1006"
+      }
+    },
+    {
+      "name": "ERROR_BAD_SIGNATURE",
+      "value": {
+        "kind": "int",
+        "v": "1007"
+      }
+    },
+    {
+      "name": "ERROR_STORED_DATA_DAMAGED",
+      "value": {
+        "kind": "int",
+        "v": "1008"
+      }
+    },
+    {
+      "name": "ERROR_EXPECTED_OWNER",
+      "value": {
+        "kind": "int",
+        "v": "1009"
+      }
+    },
+    {
+      "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
+      "value": {
+        "kind": "int",
+        "v": "1010"
+      }
+    },
+    {
+      "name": "ERROR_NOT_UNLOCKED_YET",
+      "value": {
+        "kind": "int",
+        "v": "1011"
+      }
+    },
+    {
+      "name": "ERROR_UNKNOWN_OP",
+      "value": {
+        "kind": "int",
+        "v": "1012"
+      }
+    },
+    {
+      "name": "ERROR_UNKNOWN_TEXT_OP",
+      "value": {
+        "kind": "int",
+        "v": "1013"
+      }
+    },
+    {
+      "name": "ERROR_CONTRACT_ADDRESS_MISMATCH",
+      "value": {
+        "kind": "int",
+        "v": "1014"
+      }
+    },
+    {
+      "name": "ERROR_EXPECTED_MY_ADDRESS",
+      "value": {
+        "kind": "int",
+        "v": "1015"
+      }
+    },
+    {
+      "name": "ERROR_UNKNOWN_PROXY_TYPE",
+      "value": {
+        "kind": "int",
+        "v": "2000"
+      }
+    },
+    {
+      "name": "COMMISSION_ESTIMATE",
+      "value": {
+        "kind": "castTo",
+        "inner": {
+          "kind": "int",
+          "v": "100000000"
+        },
+        "castTo": {
+          "kind": "coins"
+        }
+      }
+    },
+    {
+      "name": "STORAGE_ESTIMATE",
+      "value": {
+        "kind": "castTo",
+        "inner": {
+          "kind": "int",
+          "v": "10000000"
+        },
+        "castTo": {
+          "kind": "coins"
+        }
+      }
+    },
+    {
+      "name": "CLIENT_STAKE",
+      "value": {
+        "kind": "castTo",
+        "inner": {
+          "kind": "int",
+          "v": "1000000000"
+        },
+        "castTo": {
+          "kind": "coins"
+        }
+      }
+    },
+    {
+      "name": "WORKCHAIN",
+      "value": {
+        "kind": "int",
+        "v": "0"
+      }
+    },
+    {
+      "name": "client_state_normal",
+      "value": {
+        "kind": "int",
+        "v": "0"
+      }
+    },
+    {
+      "name": "client_state_closing",
+      "value": {
+        "kind": "int",
+        "v": "1"
+      }
+    },
+    {
+      "name": "client_state_closed",
+      "value": {
+        "kind": "int",
+        "v": "2"
+      }
+    },
+    {
+      "name": "proxy_state_normal",
+      "value": {
+        "kind": "int",
+        "v": "0"
+      }
+    },
+    {
+      "name": "proxy_state_closing",
+      "value": {
+        "kind": "int",
+        "v": "1"
+      }
+    },
+    {
+      "name": "proxy_state_closed",
+      "value": {
+        "kind": "int",
+        "v": "2"
+      }
+    },
+    {
+      "name": "worker_state_normal",
+      "value": {
+        "kind": "int",
+        "v": "0"
+      }
+    },
+    {
+      "name": "worker_state_closed",
+      "value": {
+        "kind": "int",
+        "v": "2"
+      }
+    }
+  ],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

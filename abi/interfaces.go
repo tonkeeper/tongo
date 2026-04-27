@@ -21,11 +21,6 @@ const (
 	BidaskLpMultitoken
 	BidaskPool
 	BidaskRange
-	CocoonClient
-	CocoonProxy
-	CocoonRoot
-	CocoonWallet
-	CocoonWorker
 	CoffeeCrossDex
 	CoffeeFactory
 	CoffeeMevProtector
@@ -167,16 +162,6 @@ func (c ContractInterface) String() string {
 		return "bidask_pool"
 	case BidaskRange:
 		return "bidask_range"
-	case CocoonClient:
-		return "cocoon_client"
-	case CocoonProxy:
-		return "cocoon_proxy"
-	case CocoonRoot:
-		return "cocoon_root"
-	case CocoonWallet:
-		return "cocoon_wallet"
-	case CocoonWorker:
-		return "cocoon_worker"
 	case CoffeeCrossDex:
 		return "coffee_cross_dex"
 	case CoffeeFactory:
@@ -433,16 +418,6 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return BidaskPool
 	case "bidask_range":
 		return BidaskRange
-	case "cocoon_client":
-		return CocoonClient
-	case "cocoon_proxy":
-		return CocoonProxy
-	case "cocoon_root":
-		return CocoonRoot
-	case "cocoon_wallet":
-		return CocoonWallet
-	case "cocoon_worker":
-		return CocoonWorker
 	case "coffee_cross_dex":
 		return CoffeeCrossDex
 	case "coffee_factory":
@@ -773,22 +748,6 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetClaimerAddress,
 	},
 	{
-		Name:     "get_cocoon_client_data",
-		InvokeFn: GetCocoonClientData,
-	},
-	{
-		Name:     "get_cocoon_data",
-		InvokeFn: GetCocoonData,
-	},
-	{
-		Name:     "get_cocoon_proxy_data",
-		InvokeFn: GetCocoonProxyData,
-	},
-	{
-		Name:     "get_cocoon_worker_data",
-		InvokeFn: GetCocoonWorkerData,
-	},
-	{
 		Name:     "get_code",
 		InvokeFn: GetCode,
 	},
@@ -807,10 +766,6 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_cron_info",
 		InvokeFn: GetCronInfo,
-	},
-	{
-		Name:     "get_cur_params",
-		InvokeFn: GetCurParams,
 	},
 	{
 		Name:     "get_current_bin",
@@ -1015,10 +970,6 @@ var methodInvocationOrder = []MethodDescription{
 	{
 		Name:     "get_order_data",
 		InvokeFn: GetOrderData,
-	},
-	{
-		Name:     "get_owner_address",
-		InvokeFn: GetOwnerAddress,
 	},
 	{
 		Name:     "get_params",
@@ -1297,10 +1248,6 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: JettonWalletLockData,
 	},
 	{
-		Name:     "last_proxy_seqno",
-		InvokeFn: LastProxySeqno,
-	},
-	{
 		Name:     "list_nominators",
 		InvokeFn: ListNominators,
 	},
@@ -1401,39 +1348,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Results: []string{
 			"GetUserFeesInfo_BidaskDammResult",
 			"GetWalletDataResult",
-		},
-	},
-	{
-		Name: CocoonRoot,
-		Results: []string{
-			"GetCocoonData_CocoonResult",
-			"GetCurParams_CocoonResult",
-			"LastProxySeqno_CocoonResult",
-		},
-	},
-	{
-		Name: CocoonProxy,
-		Results: []string{
-			"GetCocoonProxyData_CocoonResult",
-		},
-	},
-	{
-		Name: CocoonWorker,
-		Results: []string{
-			"GetCocoonWorkerData_CocoonResult",
-		},
-	},
-	{
-		Name: CocoonClient,
-		Results: []string{
-			"GetCocoonClientData_CocoonResult",
-		},
-	},
-	{
-		Name: CocoonWallet,
-		Results: []string{
-			"GetOwnerAddress_CocoonResult",
-			"GetPublicKeyResult",
 		},
 	},
 	{
@@ -2370,55 +2284,6 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncBidaskInternalContinueSwapV2MsgBody,
 			decodeFuncBidaskInternalContinueProvideMsgBody,
 			decodeFuncBidaskInternalBurnMsgBody,
-		}
-	case CocoonClient:
-		return []msgDecoderFunc{
-			decodeFuncExtClientTopUpMsgBody,
-			decodeFuncOwnerClientChangeSecretHashAndTopUpMsgBody,
-			decodeFuncOwnerClientRegisterMsgBody,
-			decodeFuncOwnerClientChangeSecretHashMsgBody,
-			decodeFuncOwnerClientIncreaseStakeMsgBody,
-			decodeFuncOwnerClientWithdrawMsgBody,
-			decodeFuncOwnerClientRequestRefundMsgBody,
-			decodeFuncExtClientChargeSignedMsgBody,
-			decodeFuncExtClientGrantRefundSignedMsgBody,
-		}
-	case CocoonProxy:
-		return []msgDecoderFunc{
-			decodeFuncWorkerProxyRequestMsgBody,
-			decodeFuncClientProxyRequestMsgBody,
-			decodeFuncExtProxyPayoutRequestMsgBody,
-			decodeFuncExtProxyIncreaseStakeMsgBody,
-			decodeFuncExtProxyCloseRequestSignedMsgBody,
-			decodeFuncExtProxyCloseCompleteRequestSignedMsgBody,
-			decodeFuncOwnerProxyCloseMsgBody,
-		}
-	case CocoonRoot:
-		return []msgDecoderFunc{
-			decodeFuncRootAddWorkerTypeMsgBody,
-			decodeFuncRootDelWorkerTypeMsgBody,
-			decodeFuncRootAddModelTypeMsgBody,
-			decodeFuncRootDelModelTypeMsgBody,
-			decodeFuncRootAddProxyTypeMsgBody,
-			decodeFuncRootDelProxyTypeMsgBody,
-			decodeFuncRootUnregisterProxyMsgBody,
-			decodeFuncRootChangePriceMsgBody,
-			decodeFuncRootChangeParamsMsgBody,
-			decodeFuncRootUpgradeContractsMsgBody,
-			decodeFuncRootUpgradeMsgBody,
-			decodeFuncRootResetMsgBody,
-			decodeFuncRootUpgradeFullMsgBody,
-			decodeFuncRootChangeOwnerMsgBody,
-		}
-	case CocoonWallet:
-		return []msgDecoderFunc{
-			decodeFuncOwnerWalletSendMessageMsgBody,
-		}
-	case CocoonWorker:
-		return []msgDecoderFunc{
-			decodeFuncExtWorkerPayoutRequestSignedMsgBody,
-			decodeFuncExtWorkerLastPayoutRequestSignedMsgBody,
-			decodeFuncOwnerWorkerRegisterMsgBody,
 		}
 	case CoffeeCrossDex:
 		return []msgDecoderFunc{

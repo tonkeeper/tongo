@@ -84,14 +84,14 @@ func TestWalletExternalMessage_ProxyRegister_UnmarshalTLB(t *testing.T) {
 }
 
 func TestWalletExternalMessage_xxxx_UnmarshalTLB(t *testing.T) {
-	cell := boc.MustDeserializeSinglRootBase64("te6ccgEBAQEATgAAmGdR/GqOOOBdL5JBOR9eO0fpMa57dVdl6aXUBMohXiThTQT3qPrrzn3b5FlSzG0EMZQtPynF0F9ZZ3zMjuUkpA4AAAAAaeEWZwAAAAA=")
+	cell := boc.MustDeserializeSinglRootHex("b5ee9c720101030100d700019a43f65fd843f8f799360b9763835a6c8c8817bb72c2f4fc9674c3dd50b8306bd11bde9ce23ec97a847c4e822cc9561c68dc6ab8d07523c76f192bac5d9237bc040000000069e8bc07000000160001016842001938ed66cfee1f0f88c07ddc114f8769988a8bfb40f7ce765eb14c63d53ca066205f5e10000000000000000000000000000102009ba9357034872db7dd68a398b265b20dea71f753d544a1fe91b3cbd56d53d2cf9432d3ded5d1ec444d3458dc44801a4639b601d27732407e070e77d821726e762c795eff273aa2c04fffc369435550")
 	var extInMsg WalletExternalMessage
 	if err := tlb.Unmarshal(cell, &extInMsg); err != nil {
 		t.Fatalf("Unmarshal WalletExternalMessage: %v", err)
 	}
 	assert.Equal(t, tlb.Uint32(0), extInMsg.Message.SubwalletId)
-	assert.Equal(t, tlb.Uint32(104), extInMsg.Message.MsgSeqno)
-	assert.Equal(t, tlb.Uint32(1775834354), extInMsg.Message.ValidUntil)
+	assert.Equal(t, tlb.Uint32(22), extInMsg.Message.MsgSeqno)
+	assert.Equal(t, tlb.Uint32(1776860167), extInMsg.Message.ValidUntil)
 	require.Len(t, extInMsg.Message.Forward, 1)
 	assert.Equal(t, tlb.Uint8(0), extInMsg.Message.Forward[0].Mode)
 }

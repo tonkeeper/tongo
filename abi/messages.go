@@ -49,7 +49,11 @@ func (mm multipleMsgsDecoder) Decode(cell *boc.Cell) (*uint32, *MsgOpName, any, 
 	for _, f := range mm.funcs {
 		tag, opName, object, err := f(cell)
 		if err != nil {
-			errs = append(errs, fmt.Errorf("%s: %v", opName, err))
+			opNameS := ""
+			if opName != nil {
+				opNameS = *opName
+			}
+			errs = append(errs, fmt.Errorf("%s: %v", opNameS, err))
 			continue
 		}
 		if !completedRead(cell) {

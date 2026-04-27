@@ -21,8 +21,13 @@ type VmStackReader interface {
 // vm_stack#_ depth:(## 24) stack:(VmStackList depth) = VmStack;
 // vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1);
 // vm_stk_nil#_ = VmStackList 0;
+//
+// MIGRATION NOTE (see https://github.com/tonkeeper/tongo/pull/455)
+//
+//	before VmStack was defined as `type VmStack = []VmStackValue`, this definition has significant problems
+//	please visit (https://github.com/tonkeeper/tongo/pull/455) for the motivation and the migration guide
 type VmStack struct {
-	values []VmStackValue // last element is top of the stack
+	values []VmStackValue // the last element is top of the stack
 }
 
 // Len returns the size of the stack

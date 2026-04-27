@@ -2,10 +2,28 @@
 
 package abi
 
-const ()
+import (
+	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
+)
 
-var tolkKnownJettonTypes = map[JettonOpName]any{}
+const (
+	FfVaultStableDepositJettonOp     JettonOpName = "FfVaultStableDeposit"
+	FfVaultAssetDepositJettonOp      JettonOpName = "FfVaultAssetDeposit"
+	FfVaultStableDepositJettonOpCode JettonOpCode = 0x3d669db7
+	FfVaultAssetDepositJettonOpCode  JettonOpCode = 0x534917c3
+)
 
-var tolkJettonOpCodes = map[JettonOpName]JettonOpCode{}
+var tolkKnownJettonTypes = map[JettonOpName]any{
+	FfVaultStableDepositJettonOp: abiFfVault.StableDeposit{},
+	FfVaultAssetDepositJettonOp:  abiFfVault.AssetDeposit{},
+}
 
-var tolkJettonDecodersMapping = map[JettonOpCode]jettonDecoder{}
+var tolkJettonOpCodes = map[JettonOpName]JettonOpCode{
+	FfVaultStableDepositJettonOp: FfVaultStableDepositJettonOpCode,
+	FfVaultAssetDepositJettonOp:  FfVaultAssetDepositJettonOpCode,
+}
+
+var tolkJettonDecodersMapping = map[JettonOpCode]jettonDecoder{
+	FfVaultStableDepositJettonOpCode: decodeJettonPayload[abiFfVault.StableDeposit](FfVaultStableDepositJettonOp, FfVaultStableDepositJettonOpCode, false, false),
+	FfVaultAssetDepositJettonOpCode:  decodeJettonPayload[abiFfVault.AssetDeposit](FfVaultAssetDepositJettonOp, FfVaultAssetDepositJettonOpCode, false, false),
+}

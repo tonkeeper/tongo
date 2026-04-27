@@ -1,0 +1,1254 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "pyth_oracle",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "UpdateGuardianSetMessage",
+      "prefix": {
+        "prefixStr": "0x00000001",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "wormholeMessage",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdatePriceFeedsMessage",
+      "prefix": {
+        "prefixStr": "0x00000002",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "updateData",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ExecuteGovernanceActionMessage",
+      "prefix": {
+        "prefixStr": "0x00000003",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "governanceVm",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradeContractMessage",
+      "prefix": {
+        "prefixStr": "0x00000004",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "newCode",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "TrailingHeaderBytes",
+      "targetTy": {
+        "kind": "arrayOf",
+        "inner": {
+          "kind": "uintN",
+          "n": 8
+        }
+      },
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Alias",
+      "name": "WormholeProofBytes",
+      "targetTy": {
+        "kind": "arrayOf",
+        "inner": {
+          "kind": "uintN",
+          "n": 8
+        }
+      },
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeedMessage",
+      "fields": [
+        {
+          "name": "messageType",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "priceId",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "price",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "conf",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expo",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "publishTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "prevPublishTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "emaPrice",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "emaConf",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PriceFeedProof",
+      "targetTy": {
+        "kind": "arrayOf",
+        "inner": {
+          "kind": "bitsN",
+          "n": 160
+        }
+      },
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeedUpdate",
+      "fields": [
+        {
+          "name": "message",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PriceFeedMessage"
+          }
+        },
+        {
+          "name": "proof",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "PriceFeedProof"
+          }
+        }
+      ],
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "WormholeUpdateSection",
+      "fields": [
+        {
+          "name": "proof",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "WormholeProofBytes"
+          }
+        },
+        {
+          "name": "updates",
+          "ty": {
+            "kind": "arrayOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PriceFeedUpdate"
+            }
+          }
+        }
+      ],
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "AccumulatorUpdatePayload",
+      "fields": [
+        {
+          "name": "trailingHeader",
+          "ty": {
+            "kind": "AliasRef",
+            "aliasName": "TrailingHeaderBytes"
+          }
+        },
+        {
+          "name": "updateType",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "wormholeSection",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "WormholeUpdateSection"
+          }
+        }
+      ],
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeedUpdateData",
+      "fields": [
+        {
+          "name": "magic",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "majorVersion",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "minorVersion",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "accumulator",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "AccumulatorUpdatePayload"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PriceFeedIdList",
+      "targetTy": {
+        "kind": "arrayOf",
+        "inner": {
+          "kind": "uintN",
+          "n": 256
+        }
+      },
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "ParsePriceFeedUpdatesMessage",
+      "prefix": {
+        "prefixStr": "0x00000005",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "updateData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PriceFeedUpdateData"
+            }
+          }
+        },
+        {
+          "name": "priceIds",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "PriceFeedIdList"
+            }
+          }
+        },
+        {
+          "name": "minPublishTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "maxPublishTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "targetAddress",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ParseUniquePriceFeedUpdatesMessage",
+      "prefix": {
+        "prefixStr": "0x00000006",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "updateData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PriceFeedUpdateData"
+            }
+          }
+        },
+        {
+          "name": "priceIds",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "AliasRef",
+              "aliasName": "PriceFeedIdList"
+            }
+          }
+        },
+        {
+          "name": "publishTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "maxStaleness",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "targetAddress",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PricePoint",
+      "fields": [
+        {
+          "name": "price",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "conf",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expo",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "publishTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StoredPriceFeed",
+      "fields": [
+        {
+          "name": "price",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PricePoint"
+            }
+          }
+        },
+        {
+          "name": "emaPrice",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PricePoint"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeedsSection",
+      "fields": [
+        {
+          "name": "latestPriceFeeds",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "StoredPriceFeed"
+              }
+            }
+          }
+        },
+        {
+          "name": "singleUpdateFee",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DataSourcesSection",
+      "fields": [
+        {
+          "name": "isValidDataSource",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "bool"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "GuardianSetRecord",
+      "fields": [
+        {
+          "name": "expirationTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "guardianKeys",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 8
+            },
+            "v": {
+              "kind": "bitsN",
+              "n": 160
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "GuardianSetsSection",
+      "fields": [
+        {
+          "name": "currentGuardianSetIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "guardianSets",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "GuardianSetRecord"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DataSource",
+      "fields": [
+        {
+          "name": "emitterChainId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "emitterAddress",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "GovernanceSection",
+      "fields": [
+        {
+          "name": "chainId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "governanceChainId",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "governanceContract",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "consumedGovernanceActions",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "bool"
+            }
+          }
+        },
+        {
+          "name": "governanceDataSource",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DataSource"
+            }
+          }
+        },
+        {
+          "name": "lastExecutedGovernanceSequence",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "governanceDataSourceIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "upgradeCodeHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "MainStorage",
+      "fields": [
+        {
+          "name": "priceFeeds",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PriceFeedsSection"
+            }
+          }
+        },
+        {
+          "name": "dataSources",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "DataSourcesSection"
+            }
+          }
+        },
+        {
+          "name": "guardianSets",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "GuardianSetsSection"
+            }
+          }
+        },
+        {
+          "name": "governance",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "GovernanceSection"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeedResponseEntry",
+      "fields": [
+        {
+          "name": "priceId",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "priceFeed",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "StoredPriceFeed"
+            }
+          }
+        },
+        {
+          "name": "next",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "PriceFeedResponseEntry"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeedUpdateResponse",
+      "fields": [
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "priceFeedCount",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "priceFeeds",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PriceFeedResponseEntry"
+            }
+          }
+        },
+        {
+          "name": "originalSender",
+          "ty": {
+            "kind": "addressAny"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "slice"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ErrorResponse",
+      "prefix": {
+        "prefixStr": "0x10002",
+        "prefixLen": 20
+      },
+      "fields": [
+        {
+          "name": "errorCode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "operation",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "slice"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SuccessResponse",
+      "prefix": {
+        "prefixStr": "0x10001",
+        "prefixLen": 20
+      },
+      "fields": [
+        {
+          "name": "result",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceData",
+      "fields": [
+        {
+          "name": "price",
+          "ty": {
+            "kind": "intN",
+            "n": 64
+          }
+        },
+        {
+          "name": "conf",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "expo",
+          "ty": {
+            "kind": "intN",
+            "n": 32
+          }
+        },
+        {
+          "name": "timestamp",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PriceFeesCell",
+      "fields": [
+        {
+          "name": "assetID",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "priceData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "PriceData"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "OracleResponseSuccess",
+      "prefix": {
+        "prefixStr": "0x00000005",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "someNum",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "priceFeedsCell",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PriceFeesCell"
+            }
+          }
+        },
+        {
+          "name": "initialSender",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "AfterOperation",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "GuardianSetInfo",
+      "fields": [
+        {
+          "name": "expirationTime",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "keysDict",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "keyCount",
+          "ty": {
+            "kind": "int"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "storageTy": {
+      "kind": "StructRef",
+      "structName": "MainStorage"
+    }
+  },
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateGuardianSetMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdatePriceFeedsMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ExecuteGovernanceActionMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpgradeContractMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ParsePriceFeedUpdatesMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ParseUniquePriceFeedUpdatesMessage"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "OracleResponseSuccess"
+      }
+    }
+  ],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 123983,
+      "name": "get_update_fee",
+      "parameters": [
+        {
+          "name": "data",
+          "ty": {
+            "kind": "slice"
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 99955,
+      "name": "get_single_update_fee",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 98238,
+      "name": "get_governance_data_source_index",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 110935,
+      "name": "get_governance_data_source",
+      "parameters": [],
+      "returnTy": {
+        "kind": "cell"
+      }
+    },
+    {
+      "tvmMethodId": 70196,
+      "name": "get_last_executed_governance_sequence",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 101632,
+      "name": "get_is_valid_data_source",
+      "parameters": [
+        {
+          "name": "data_source",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 104929,
+      "name": "get_price_unsafe",
+      "parameters": [
+        {
+          "name": "price_feed_id",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "PricePoint"
+      }
+    },
+    {
+      "tvmMethodId": 72563,
+      "name": "get_price_no_older_than",
+      "parameters": [
+        {
+          "name": "time_period",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "price_feed_id",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "PricePoint"
+      }
+    },
+    {
+      "tvmMethodId": 128321,
+      "name": "get_ema_price_unsafe",
+      "parameters": [
+        {
+          "name": "price_feed_id",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "PricePoint"
+      }
+    },
+    {
+      "tvmMethodId": 72490,
+      "name": "get_ema_price_no_older_than",
+      "parameters": [
+        {
+          "name": "time_period",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "price_feed_id",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "PricePoint"
+      }
+    },
+    {
+      "tvmMethodId": 122952,
+      "name": "get_chain_id",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 114628,
+      "name": "get_current_guardian_set_index",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 122035,
+      "name": "get_guardian_set",
+      "parameters": [
+        {
+          "name": "index",
+          "ty": {
+            "kind": "int"
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "GuardianSetInfo"
+      }
+    },
+    {
+      "tvmMethodId": 102302,
+      "name": "get_governance_chain_id",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 65842,
+      "name": "get_governance_contract",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 79649,
+      "name": "governance_action_is_consumed",
+      "parameters": [
+        {
+          "name": "hash",
+          "ty": {
+            "kind": "int"
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "int"
+      }
+    }
+  ],
+  "thrownErrors": [],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

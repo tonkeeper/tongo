@@ -1,0 +1,210 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "ff_vault_position",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "UnstakeRequest",
+      "prefix": {
+        "prefixStr": "0x8a77cf39",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountWantedToUnstake",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UnstakeExecuteInternal",
+      "prefix": {
+        "prefixStr": "0xd1029c99",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountToUnstake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "xautPriceActual",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UnstakeExecuteCancel",
+      "prefix": {
+        "prefixStr": "0x0b30393c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "excessGetter",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amountToAdd",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "NftData",
+      "fields": [
+        {
+          "name": "init",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "index",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "collection_address",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "owner_address",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakePositionInfo",
+      "fields": [
+        {
+          "name": "lockedAssetAmount",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "amountWantedToUnstake",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "previousStablePerAssetCollected",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "priceStake",
+          "ty": {
+            "kind": "int"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnstakeRequest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnstakeExecuteInternal"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnstakeExecuteCancel"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 102351,
+      "name": "get_nft_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "NftData"
+      }
+    },
+    {
+      "tvmMethodId": 102640,
+      "name": "get_stake_position_info",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "StakePositionInfo"
+      }
+    }
+  ],
+  "thrownErrors": [
+    {
+      "kind": "plainInt",
+      "errCode": 0
+    }
+  ],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

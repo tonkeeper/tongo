@@ -1,0 +1,569 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "ff_vault",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "AssetDeposit",
+      "prefix": {
+        "prefixStr": "0x534917c3",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "priceUpdateData",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StableDeposit",
+      "prefix": {
+        "prefixStr": "0x3d669db7",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "distributeBetweenStakers",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "JettonTransferNotification",
+      "typeParams": [
+        "T"
+      ],
+      "prefix": {
+        "prefixStr": "0x7362d09c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "genericT",
+            "nameT": "T"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakeOperation",
+      "prefix": {
+        "prefixStr": "0x7a294fdc",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "depositAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "assetAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UnstakeExecute",
+      "prefix": {
+        "prefixStr": "0x4e835078",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "priceUpdateData",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "amountToUnstake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "itemIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UnstakeOperation",
+      "prefix": {
+        "prefixStr": "0x97004d72",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountToUnstake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "itemIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PositionData",
+      "fields": [
+        {
+          "name": "xautPriceStaked",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "previousStablePerAssetCollected",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UnstakeExecuteInternalCallback",
+      "prefix": {
+        "prefixStr": "0x61755200",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "itemIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amountToUnstake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "xautPriceActual",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "positionData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "PositionData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "WithdrawJetton",
+      "prefix": {
+        "prefixStr": "0xe44c1944",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "jettonWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "toAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VaultStaticData",
+      "fields": [
+        {
+          "name": "PYTHOracle",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "AssetJettonWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "StableJettonWallet",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "nftItemCode",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "stableDecimals",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "assetDecimals",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VaultStorage",
+      "prefix": {
+        "prefixStr": "0x00",
+        "prefixLen": 8
+      },
+      "fields": [
+        {
+          "name": "assetStaked",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "distributedStables",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "maxPriceChange",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "nextItemIndex",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "admin",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "assetAmountOnVault",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stableAmountOnVault",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "staticData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "VaultStaticData"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CollectionData",
+      "fields": [
+        {
+          "name": "next_item_index",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "content",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "StakingData",
+      "fields": [
+        {
+          "name": "tokensStaked",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "distributedStables",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "maxPriceChange",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Balance",
+      "fields": [
+        {
+          "name": "assetAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "stableAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "storageTy": {
+      "kind": "StructRef",
+      "structName": "VaultStorage"
+    }
+  },
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "JettonTransferNotification",
+        "typeArgs": [
+          {
+            "kind": "union",
+            "variants": [
+              {
+                "variantTy": {
+                  "kind": "StructRef",
+                  "structName": "AssetDeposit"
+                },
+                "prefixStr": "0x534917c3",
+                "prefixLen": 32,
+                "stackTypeId": 129,
+                "stackWidth": 1
+              },
+              {
+                "variantTy": {
+                  "kind": "StructRef",
+                  "structName": "StableDeposit"
+                },
+                "prefixStr": "0x3d669db7",
+                "prefixLen": 32,
+                "stackTypeId": 130,
+                "stackWidth": 1
+              }
+            ],
+            "stackWidth": 2
+          }
+        ]
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "StakeOperation"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnstakeExecute"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnstakeOperation"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UnstakeExecuteInternalCallback"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "WithdrawJetton"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 102491,
+      "name": "get_collection_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "CollectionData"
+      }
+    },
+    {
+      "tvmMethodId": 92067,
+      "name": "get_nft_address_by_index",
+      "parameters": [
+        {
+          "name": "itemIndex",
+          "ty": {
+            "kind": "int"
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "address"
+      }
+    },
+    {
+      "tvmMethodId": 108033,
+      "name": "get_staking_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "StakingData"
+      }
+    },
+    {
+      "tvmMethodId": 130343,
+      "name": "get_balance",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "Balance"
+      }
+    }
+  ],
+  "thrownErrors": [
+    {
+      "kind": "plainInt",
+      "errCode": 0
+    }
+  ],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

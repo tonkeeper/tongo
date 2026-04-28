@@ -10,29 +10,6 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-const PrefixUpdateGuardianSetMessage uint64 = 0x00000001
-
-type UpdateGuardianSetMessage struct {
-	WormholeMessage boc.Cell // cell
-}
-
-const PrefixUpdatePriceFeedsMessage uint64 = 0x00000002
-
-type UpdatePriceFeedsMessage struct {
-	UpdateData boc.Cell // cell
-}
-
-const PrefixExecuteGovernanceActionMessage uint64 = 0x00000003
-
-type ExecuteGovernanceActionMessage struct {
-	GovernanceVm boc.Cell // cell
-}
-
-const PrefixUpgradeContractMessage uint64 = 0x00000004
-
-type UpgradeContractMessage struct {
-	NewCode boc.Cell // cell
-}
 type TrailingHeaderBytes []tlb.Uint8
 type WormholeProofBytes []tlb.Uint8
 type PriceFeedMessage struct {
@@ -133,33 +110,6 @@ type MainStorage struct {
 	DataSources  tlb.RefT[*DataSourcesSection]  // Cell<DataSourcesSection>
 	GuardianSets tlb.RefT[*GuardianSetsSection] // Cell<GuardianSetsSection>
 	Governance   tlb.RefT[*GovernanceSection]   // Cell<GovernanceSection>
-}
-type PriceFeedResponseEntry struct {
-	PriceId   tlb.Uint256                                  // uint256
-	PriceFeed tlb.RefT[*StoredPriceFeed]                   // Cell<StoredPriceFeed>
-	Next      tlb.Maybe[tlb.RefT[*PriceFeedResponseEntry]] // Cell<PriceFeedResponseEntry>?
-}
-type PriceFeedUpdateResponse struct {
-	Op             tlb.Uint32                        // uint32
-	PriceFeedCount tlb.Uint8                         // uint8
-	PriceFeeds     tlb.RefT[*PriceFeedResponseEntry] // Cell<PriceFeedResponseEntry>
-	OriginalSender tlb.MsgAddress                    // any_address
-	CustomPayload  boc.Cell                          // Cell<slice>
-}
-
-const PrefixErrorResponse uint64 = 0x10002
-
-type ErrorResponse struct {
-	ErrorCode     tlb.Uint32 // uint32
-	Operation     tlb.Uint32 // uint32
-	CustomPayload boc.Cell   // Cell<slice>
-}
-
-const PrefixSuccessResponse uint64 = 0x10001
-
-type SuccessResponse struct {
-	Result        boc.Cell // cell
-	CustomPayload boc.Cell // cell
 }
 type PriceData struct {
 	Price     tlb.Int64  // int64

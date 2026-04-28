@@ -24,39 +24,40 @@ contract pyth_oracle {
     incomingMessages: MainMessage,
     storage: MainStorage
     forceAbiExport: (
-        MainStorage,
-        PriceFeedsSection,
-        StoredPriceFeed,
-        PricePoint,
-        DataSourcesSection,
-        DataSource,
-        GuardianSetsSection,
-        GuardianSetRecord,
-        GovernanceSection,
-        AccumulatorUpdatePayload,
-        PriceFeedMessage,
-        PriceFeedUpdate,
-        WormholeUpdateSection,
-        PriceFeedUpdateData,
-        PriceFeedIdList,
-        PriceFeedUpdateResponse,
-        PriceFeedResponseEntry,
-        ErrorResponse,
-        SuccessResponse,
-        UpdateGuardianSetMessage,
-        UpdatePriceFeedsMessage,
-        ExecuteGovernanceActionMessage,
-        UpgradeContractMessage,
-        ParsePriceFeedUpdatesMessage,
-        ParseUniquePriceFeedUpdatesMessage
+        // MainStorage,
+        // PriceFeedsSection,
+        // StoredPriceFeed,
+        // PricePoint,
+        // DataSourcesSection,
+        // DataSource,
+        // GuardianSetsSection,
+        // GuardianSetRecord,
+        // GovernanceSection,
+        // AccumulatorUpdatePayload,
+        // PriceFeedMessage,
+        // PriceFeedUpdate,
+        // WormholeUpdateSection,
+        // PriceFeedUpdateData,
+        // PriceFeedIdList,
+        // PriceFeedUpdateResponse,
+        // PriceFeedResponseEntry,
+        // ErrorResponse,
+        // SuccessResponse,
+        // UpdateGuardianSetMessage,
+        // UpdatePriceFeedsMessage,
+        // ExecuteGovernanceActionMessage,
+        // UpgradeContractMessage,
+        // ParsePriceFeedUpdatesMessage,
+        // ParseUniquePriceFeedUpdatesMessage
     )
 }
 
 type MainMessage =
-    UpdateGuardianSetMessage |
-    UpdatePriceFeedsMessage |
-    ExecuteGovernanceActionMessage |
-    UpgradeContractMessage |
+    //   commented messages dont have well-detailed structure yet
+    // UpdateGuardianSetMessage |
+    // UpdatePriceFeedsMessage |
+    // ExecuteGovernanceActionMessage |
+    // UpgradeContractMessage |
     ParsePriceFeedUpdatesMessage |
     ParseUniquePriceFeedUpdatesMessage
 

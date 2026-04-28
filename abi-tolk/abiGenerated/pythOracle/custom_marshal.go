@@ -295,3 +295,43 @@ func (r *PriceFeedIdList) MarshalTLB(c *boc.Cell, _ *tlb.Encoder) error {
 	}
 	return nil
 }
+
+// UnmarshalTLB traverses the linked-list chain produced by create_price_feed_cell_chain.
+// Each node: price_id (256 bits) | ref0: StoredPriceFeed | optional ref1: next node.
+func (r *PriceFeedResponseList) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	entries := make([]PriceFeedResponseEntry, 0)
+	cur := c
+	for {
+		var entry PriceFeedResponseEntry
+		if err := entry.UnmarshalTLB(cur, decoder); err != nil {
+			return fmt.Errorf("price feed entry: %v", err)
+		}
+		entries = append(entries, entry)
+		next, err := cur.NextRefV()
+		if err != nil {
+			break
+		}
+		cur = &next
+	}
+	*r = entries
+	return nil
+}
+
+func (r PriceFeedResponseList) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	if len(r) == 0 {
+		return nil
+	}
+	if err := r[0].MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("price feed entry 0: %v", err)
+	}
+	if len(r) > 1 {
+		nextCell := boc.NewCell()
+		if err := PriceFeedResponseList(r[1:]).MarshalTLB(nextCell, encoder); err != nil {
+			return err
+		}
+		if err := c.AddRef(nextCell); err != nil {
+			return fmt.Errorf("next chain ref: %v", err)
+		}
+	}
+	return nil
+}

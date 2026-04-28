@@ -664,63 +664,41 @@
     },
     {
       "kind": "Struct",
-      "name": "PriceData",
+      "name": "PriceFeedResponseEntry",
       "fields": [
         {
-          "name": "price",
-          "ty": {
-            "kind": "intN",
-            "n": 64
-          }
-        },
-        {
-          "name": "conf",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "expo",
-          "ty": {
-            "kind": "intN",
-            "n": 32
-          }
-        },
-        {
-          "name": "timestamp",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "PriceFeesCell",
-      "fields": [
-        {
-          "name": "assetID",
+          "name": "priceId",
           "ty": {
             "kind": "uintN",
             "n": 256
           }
         },
         {
-          "name": "priceData",
+          "name": "priceFeed",
           "ty": {
             "kind": "cellOf",
             "inner": {
-              "kind": "cellOf",
-              "inner": {
-                "kind": "StructRef",
-                "structName": "PriceData"
-              }
+              "kind": "StructRef",
+              "structName": "StoredPriceFeed"
             }
           }
         }
       ]
+    },
+    {
+      "kind": "Alias",
+      "name": "PriceFeedResponseList",
+      "targetTy": {
+        "kind": "arrayOf",
+        "inner": {
+          "kind": "StructRef",
+          "structName": "PriceFeedResponseEntry"
+        }
+      },
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
     },
     {
       "kind": "Struct",
@@ -731,19 +709,19 @@
       },
       "fields": [
         {
-          "name": "someNum",
+          "name": "feedsCount",
           "ty": {
             "kind": "uintN",
             "n": 8
           }
         },
         {
-          "name": "priceFeedsCell",
+          "name": "priceFeeds",
           "ty": {
             "kind": "cellOf",
             "inner": {
-              "kind": "StructRef",
-              "structName": "PriceFeesCell"
+              "kind": "AliasRef",
+              "aliasName": "PriceFeedResponseList"
             }
           }
         },
@@ -754,7 +732,7 @@
           }
         },
         {
-          "name": "AfterOperation",
+          "name": "afterOperation",
           "ty": {
             "kind": "cell"
           }

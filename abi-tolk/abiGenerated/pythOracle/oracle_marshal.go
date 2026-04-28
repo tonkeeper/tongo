@@ -516,62 +516,25 @@ func (v MainStorage) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *PriceData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Price.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Price: %v", err)
+func (v *PriceFeedResponseEntry) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.PriceId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .PriceId: %v", err)
 	}
-	if err = v.Conf.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Conf: %v", err)
-	}
-	if err = v.Expo.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Expo: %v", err)
-	}
-	if err = v.Timestamp.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Timestamp: %v", err)
+	if err = v.PriceFeed.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .PriceFeed: %v", err)
 	}
 	return nil
 }
-func (v PriceData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Price.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Price: %v", err)
+func (v PriceFeedResponseEntry) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.PriceId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .PriceId: %v", err)
 	}
-	if err = v.Conf.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Conf: %v", err)
-	}
-	if err = v.Expo.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Expo: %v", err)
-	}
-	if err = v.Timestamp.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Timestamp: %v", err)
+	if err = v.PriceFeed.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .PriceFeed: %v", err)
 	}
 	return nil
 }
-func (v PriceData) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *PriceFeesCell) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.AssetID.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .AssetID: %v", err)
-	}
-	if err = v.PriceData.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .PriceData: %v", err)
-	}
-	return nil
-}
-func (v PriceFeesCell) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.AssetID.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .AssetID: %v", err)
-	}
-	if err = v.PriceData.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .PriceData: %v", err)
-	}
-	return nil
-}
-func (v PriceFeesCell) ToCell() (*boc.Cell, error) {
+func (v PriceFeedResponseEntry) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -582,11 +545,11 @@ func (v *OracleResponseSuccess) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) 
 	if err := c.ReadPrefix(32, PrefixOracleResponseSuccess); err != nil {
 		return err
 	}
-	if err = v.SomeNum.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .SomeNum: %v", err)
+	if err = v.FeedsCount.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .FeedsCount: %v", err)
 	}
-	if err = v.PriceFeedsCell.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .PriceFeedsCell: %v", err)
+	if err = v.PriceFeeds.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .PriceFeeds: %v", err)
 	}
 	if err = v.InitialSender.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .InitialSender: %v", err)
@@ -600,11 +563,11 @@ func (v OracleResponseSuccess) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (er
 	if err = c.WriteUint(PrefixOracleResponseSuccess, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
 	}
-	if err = v.SomeNum.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .SomeNum: %v", err)
+	if err = v.FeedsCount.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .FeedsCount: %v", err)
 	}
-	if err = v.PriceFeedsCell.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .PriceFeedsCell: %v", err)
+	if err = v.PriceFeeds.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .PriceFeeds: %v", err)
 	}
 	if err = v.InitialSender.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .InitialSender: %v", err)

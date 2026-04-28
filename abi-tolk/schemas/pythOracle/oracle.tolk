@@ -198,13 +198,23 @@ struct GovernanceSection {
 struct PriceFeedResponseEntry {
     priceId: uint256
     priceFeed: Cell<StoredPriceFeed>
-    next: Cell<PriceFeedResponseEntry>?
+}
+
+// Represented as linked list (see create_price_feed_cell_chain in original source code)
+// Each cell: price_id (256 bits) | ref0: StoredPriceFeed | optional ref1: next node.
+type PriceFeedResponseList = array<PriceFeedResponseEntry>
+
+fun PriceFeedResponseList.unpackFromSlice(mutate s: slice): PriceFeedResponseList {
+    return []
+}
+
+fun PriceFeedResponseList.packToBuilder(self, mutate b: builder) {
 }
 
 struct PriceFeedUpdateResponse {
     op: uint32
     priceFeedCount: uint8
-    priceFeeds: Cell<PriceFeedResponseEntry>
+    priceFeeds: Cell<PriceFeedResponseList>
     originalSender: any_address
     customPayload: Cell<slice>
 }
@@ -267,10 +277,10 @@ struct PriceFeesCell {
 }
 
 struct (0x00000005) OracleResponseSuccess {
-    someNum: uint8
-    priceFeedsCell: Cell<PriceFeesCell>
+    feedsCount: uint8
+    priceFeeds: Cell<PriceFeedResponseList>
     initialSender: address
-    AfterOperation: cell
+    afterOperation: cell
 }
 
 fun onInternalMessage(inMsg: InMessage) {
@@ -280,10 +290,10 @@ fun onInternalMessage(inMsg: InMessage) {
         dest: inMsg.senderAddress,
         value: 0,
         body: OracleResponseSuccess{
-            someNum: 0,
-            priceFeedsCell: createEmptyCell() as Cell<PriceFeesCell>,
+            feedsCount: 0,
+            priceFeeds: createEmptyCell() as Cell<PriceFeedResponseList>,
             initialSender: inMsg.senderAddress,
-            AfterOperation: createEmptyCell(),
+            afterOperation: createEmptyCell(),
         }
     }).send(SEND_MODE_IGNORE_ERRORS + SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE);
 }

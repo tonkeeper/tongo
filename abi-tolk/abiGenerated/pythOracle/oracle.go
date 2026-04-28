@@ -111,24 +111,27 @@ type MainStorage struct {
 	GuardianSets tlb.RefT[*GuardianSetsSection] // Cell<GuardianSetsSection>
 	Governance   tlb.RefT[*GovernanceSection]   // Cell<GovernanceSection>
 }
-type PriceData struct {
-	Price     tlb.Int64  // int64
-	Conf      tlb.Uint64 // uint64
-	Expo      tlb.Int32  // int32
-	Timestamp tlb.Uint64 // uint64
+type PriceFeedResponseEntry struct {
+	PriceId   tlb.Uint256                // uint256
+	PriceFeed tlb.RefT[*StoredPriceFeed] // Cell<StoredPriceFeed>
 }
-type PriceFeesCell struct {
-	AssetID   tlb.Uint256                     // uint256
-	PriceData tlb.RefT[*tlb.RefT[*PriceData]] // Cell<Cell<PriceData>>
+type PriceFeedResponseList []PriceFeedResponseEntry
+
+const PrefixErrorResponse uint64 = 0x10002
+
+type ErrorResponse struct {
+	ErrorCode     tlb.Uint32 // uint32
+	Operation     tlb.Uint32 // uint32
+	CustomPayload boc.Cell   // Cell<slice>
 }
 
 const PrefixOracleResponseSuccess uint64 = 0x00000005
 
 type OracleResponseSuccess struct {
-	SomeNum        tlb.Uint8                // uint8
-	PriceFeedsCell tlb.RefT[*PriceFeesCell] // Cell<PriceFeesCell>
-	InitialSender  tlb.InternalAddress      // address
-	AfterOperation boc.Cell                 // cell
+	FeedsCount     tlb.Uint8                        // uint8
+	PriceFeeds     tlb.RefT[*PriceFeedResponseList] // Cell<PriceFeedResponseList>
+	InitialSender  tlb.InternalAddress              // address
+	AfterOperation boc.Cell                         // cell
 }
 type GuardianSetInfo struct {
 	ExpirationTime tlb.Int257 // int

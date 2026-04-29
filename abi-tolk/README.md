@@ -1,13 +1,23 @@
 # Tolk ABI for Golang
 
-This package generates types and code for interacting with smart contracts given their Tolk-based ABI.
+This package provides a way of interaction with smart contracts given their Tolk-based ABI.
 
-It generates:
+> Smart contract doesn't have to be written in Tolk.
+> For example, [pyth oracle ABI](./schemas/pythOracle/oracle.tolk) only has structures and mocked methods.
 
-- Types for contract storage and messages, including:
-    - marshaling/unmarshalling from/to cell
-    - typed init state builders
-- Get method wrappers for each contract method
+Tolk compiler is able to generate ABI JSON from Tolk source code, it contains descriptions of:
+
+* data types (structs, unions and aliases)
+* get methods
+* internal and external messages
+
+This package is able to generate Go code from that ABI JSON, including:
+
+- marshaling/unmarshalling from/to cell for all types
+- typed [init state](https://docs.ton.org/foundations/messages/deploy) builders
+- get method wrappers for each contract method
+
+> You can also use codegen outside of this library
 
 ## Directory layout
 
@@ -34,6 +44,78 @@ abi-tolk/
         
 ```
 
+## Contract ABI
+
+The main definition of a contract interface is this declaration in source code:
+
+```tolk
+contract cocoon_wallet {
+incomingMessages: AllowedInternalMessage,
+incomingExternal: WalletExternalMessage,
+storage: WalletStorage,
+forceAbiExport: [
+ClientMessage
+]
+}
+
+fun onInternalMessage(in: InMessage) {
+    createMessage({
+        bounce: BounceMode.Only256BitsOfBody,
+        dest: constData.proxyAddress,
+        value: 0,
+        body: ClientProxyRequest {
+             ...
+        }
+    }).send(SEND_MODE_CARRY_ALL_BALANCE);
+}
+
+
+struct CocoonClientData {
+    ownerAddress: address
+    proxyAddress: address
+    //...
+}
+
+get fun get_cocoon_client_data(): CocoonClientData {
+    //...
+}
+
+
+```
+
+This gives us suggestion about:
+
+* what types are expected when decoding messages
+* what types we want to have `ToInternal` and `ToExternal` methods for in the golang code
+* what type represents state of a contract
+
+Outgoing messages are determined by compiler by finding `createMessage` calls,
+so stub code should have `createMessage` stubs to cover possible options.
+
+For get methods it is better to return a struct rather than a tuple for better readability,
+order of structure fields is same as in tuple, so this code is equivalent:
+
+```tolk
+struct NftData {
+    init: bool
+    index: int
+    collection_address: address
+    owner_address: address?
+    content: cell?
+}
+
+get fun get_nft_data(): NftData {
+    throw 0;
+}
+
+// same as more usual:
+
+get fun get_nft_data(): (bool, int, address, address?, cell?) {
+    throw 0;
+}
+
+```
+
 ## What is supported
 
 ### Types
@@ -54,22 +136,53 @@ Primitives:
 
 Structural:
 
-| Tolk type  | Go type       |
-|------------|---------------|
-| `struct X` | `struct X`    |
-| `array<T>` | `[]T`         |
-| `Cell<T>`  | `tlb.RefT<T>` |
+| Tolk type    | Go type       |
+|--------------|---------------|
+| `struct X`   | `struct X`    |
+| `array<T>`   | `[]T`         |
+| `Cell<T>`    | `tlb.RefT<T>` |
+
+
+Aliases are straightforward: `type X = T` (tolk) -> `type X = T` (go)
+
+But with some special cases:
+
+#### Union
+
+Aliased union is translated directly to Go tagged union:
+
+```tolk
+type ClientMessage = ExtClientChargeSigned | ExtClientGrantRefundSigned
+```
+
+Golang:
+
+```go
+type ClientMessageKind uint
+
+const (
+    ClientMessageKind_ExtClientChargeSigned               ClientMessageKind = 0xbb63ff93
+    ClientMessageKind_ExtClientGrantRefundSigned          ClientMessageKind = 0xefd711e1
+)
+
+type ClientMessage struct { // tagged union
+    SumType                             ClientMessageKind
+    ExtClientChargeSigned               *ExtClientChargeSigned
+    ExtClientGrantRefundSigned          *ExtClientGrantRefundSigned
+}
+```
+
+
 
 Not supported yet:
 
 * `tuple<T1,Tn>`
-* not specialized types:
-    * `coordinate: Point<int8>` is ok
-    * but saying contract has storage `Storage<T>` with unknown T is not ok
+
+Storage and message types should be specialized:
+* `type IncomingMessage = Point<int8>` is ok
+* but saying contract has storage `Storage<T>` with unknown T is not ok
 
 ### Internal and external messages
-
-To be described
 
 ### Contract storage
 
@@ -77,7 +190,7 @@ Type representing contract state can be defined in the Tolk ABI:
 
 ```tolk
 contract cocoon_root {
-    storage: RootStorage
+storage: RootStorage
 }
 
 struct RootStorage {
@@ -92,10 +205,10 @@ All internal and external message builders will receive a `*StateInitT[*RootStor
 
 ```go
 func (msg RegisterProxy) ToInternal(
-  dest tlb.InternalAddress,
-  amount tlb.Grams,
-  bounce bool,
-  init *tlb.StateInitT[*RootStorage],
+dest tlb.InternalAddress,
+amount tlb.Grams,
+bounce bool,
+init *tlb.StateInitT[*RootStorage],
 ) (tlb.Message, error)
 ```
 
@@ -136,16 +249,16 @@ e.g.):
 
 ```go
 func (m *ForwardMsgs) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-  /*
-      FunC code:
-      while (cs.slice_refs()) {
-          var mode = cs~load_uint(8);
-          send_raw_message(cs~load_ref(), mode);
-      }
-  */
-  for c.RefsAvailableForRead() > 0 {
-    // etc.
-  }
-  return nil
+/*
+   FunC code:
+   while (cs.slice_refs()) {
+       var mode = cs~load_uint(8);
+       send_raw_message(cs~load_ref(), mode);
+   }
+*/
+for c.RefsAvailableForRead() > 0 {
+// etc.
+}
+return nil
 }
 ```

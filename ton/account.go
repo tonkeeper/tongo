@@ -37,6 +37,20 @@ func (id AccountID) IsZero() bool {
 	return true
 }
 
+func (id AccountID) MarshalText() ([]byte, error) {
+	return []byte(id.ToHuman(true, false)), nil
+}
+
+func (id *AccountID) UnmarshalText(data []byte) error {
+	a, err := ParseAccountID(string(data))
+	if err != nil {
+		return err
+	}
+	id.Workchain = a.Workchain
+	id.Address = a.Address
+	return nil
+}
+
 func (id AccountID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.ToRaw())
 }

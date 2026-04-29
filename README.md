@@ -11,6 +11,7 @@ Go implementation of libraries for TON blockchain.
 6. [TVM](tvm/README.md) - interaction with TVM (TON Virtual Machine)
 7. [Wallet](wallet/README.md) - tools to simplify the deployment and interaction with the wallet smart contract
 8. [Contract](contract/README.md) - tools to simplify the interaction with the smart contracts like Jettons and NFT
+9. [Tolk ABI](abi-tolk/README.md) - data structures and methods for interaction with smart contracts using Tolk ABI
 9. [Examples](examples)
 
 ## Dependencies

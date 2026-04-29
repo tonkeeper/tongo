@@ -95,6 +95,29 @@ func TestParseRawAccountID(t *testing.T) {
 	}
 }
 
+func TestAccountIDMapMarshalUnmarshal(t *testing.T) {
+	original := map[AccountID]int{
+		MustParseAccountID("-1:7014a79eb7a81cf37542a62b75defa99427580e6612f956d47caa0fe0ec5d05e"): 1,
+		MustParseAccountID("0:7014a79eb7a81cf37542a62b75defa99427580e6612f956d47caa0fe0ec5d05e"):  2,
+	}
+	data, err := json.Marshal(original)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var decoded map[AccountID]int
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	if len(decoded) != len(original) {
+		t.Fatalf("expected %d entries, got %d", len(original), len(decoded))
+	}
+	for k, v := range original {
+		if decoded[k] != v {
+			t.Fatalf("key %v: expected %d, got %d", k, v, decoded[k])
+		}
+	}
+}
+
 func TestToMsgAddress(t *testing.T) {
 	ma := (*AccountID)(nil).ToMsgAddress()
 	if ma.SumType != "AddrNone" {

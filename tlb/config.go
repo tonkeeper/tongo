@@ -708,3 +708,50 @@ type ConfigParam81 struct {
 type ConfigParam82 struct {
 	JettonBridgeParams JettonBridgeParams
 }
+
+type NewConsensusConfig struct {
+	SumType
+	SimplexConfig struct {
+		Flags                 Uint7
+		UseQuic               bool
+		TargetRateMs          uint32
+		SlotsPerLeaderWindow  uint32
+		FirstBlockTimeoutMs   uint32
+		MaxLeaderWindowDesync uint32
+	} `tlbSumType:"#21"`
+	SimplexConfigV2 struct {
+		Flags                Uint7
+		UseQuic              bool
+		SlotsPerLeaderWindow uint32
+		NoncriticalParams    HashmapE[Uint8, uint32]
+	} `tlbSumType:"#22"`
+}
+
+func (t *NewConsensusConfig) MarshalJSON() ([]byte, error) {
+	switch t.SumType {
+	case "SimplexConfig":
+		bytes, err := json.Marshal(t.SimplexConfig)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SimplexConfig","SimplexConfig":%v}`, string(bytes))), nil
+	case "SimplexConfigV2":
+		bytes, err := json.Marshal(t.SimplexConfigV2)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(fmt.Sprintf(`{"SumType": "SimplexConfigV2","SimplexConfigV2":%v}`, string(bytes))), nil
+	default:
+		return nil, fmt.Errorf("unknown sum type %v", t.SumType)
+	}
+}
+
+type NewConsensusConfigAll struct {
+	Magic Magic               `tlb:"#10"`
+	Mc    *NewConsensusConfig `tlb:"maybe^"`
+	Shard *NewConsensusConfig `tlb:"maybe^"`
+}
+
+type ConfigParam30 struct {
+	NewConsensusConfigAll NewConsensusConfigAll
+}

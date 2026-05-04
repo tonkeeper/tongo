@@ -43,6 +43,7 @@ type BlockchainConfig struct {
 
 	ConfigParam28 *tlb.ConfigParam28 `json:",omitempty"`
 	ConfigParam29 *tlb.ConfigParam29 `json:",omitempty"`
+	ConfigParam30 *tlb.ConfigParam30 `json:",omitempty"`
 	ConfigParam31 *tlb.ConfigParam31 `json:",omitempty"`
 	ConfigParam32 *tlb.ConfigParam32 `json:",omitempty"`
 	ConfigParam33 *tlb.ConfigParam33 `json:",omitempty"`

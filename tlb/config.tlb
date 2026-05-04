@@ -5,11 +5,11 @@
 
 // validator#53 public_key:SigPubKey weight:uint64 = ValidatorDescr;
 // validator_addr#73 public_key:SigPubKey weight:uint64 adnl_addr:bits256 = ValidatorDescr;
-validators#11 utime_since:uint32 utime_until:uint32 
-  total:(## 16) main:(## 16) { main <= total } { main >= 1 } 
+validators#11 utime_since:uint32 utime_until:uint32
+  total:(## 16) main:(## 16) { main <= total } { main >= 1 }
   list:(Hashmap 16 ValidatorDescr) = ValidatorSet;
-validators_ext#12 utime_since:uint32 utime_until:uint32 
-  total:(## 16) main:(## 16) { main <= total } { main >= 1 } 
+validators_ext#12 utime_since:uint32 utime_until:uint32
+  total:(## 16) main:(## 16) { main <= total } { main >= 1 }
   total_weight:uint64 list:(HashmapE 16 ValidatorDescr) = ValidatorSet;
 
 _ config_addr:bits256 = ConfigParam 0;
@@ -35,15 +35,15 @@ cfg_vote_cfg#36 min_tot_rounds:uint8 max_tot_rounds:uint8 min_wins:uint8 max_los
 cfg_vote_setup#91 normal_params:^ConfigProposalSetup critical_params:^ConfigProposalSetup = ConfigVotingSetup;
 _ ConfigVotingSetup = ConfigParam 11;
 
-cfg_proposal#f3 param_id:int32 param_value:(Maybe ^Cell) if_hash_equal:(Maybe uint256) 
+cfg_proposal#f3 param_id:int32 param_value:(Maybe ^Cell) if_hash_equal:(Maybe uint256)
   = ConfigProposal;
 cfg_proposal_status#ce expires:uint32 proposal:^ConfigProposal is_critical:Bool
-  voters:(HashmapE 16 True) remaining_weight:int64 validator_set_id:uint256 
+  voters:(HashmapE 16 True) remaining_weight:int64 validator_set_id:uint256
   rounds_remaining:uint8 wins:uint8 losses:uint8 = ConfigProposalStatus;
 
 wfmt_basic#1 vm_version:int32 vm_mode:uint64 = WorkchainFormat 1;
 wfmt_ext#0 min_addr_len:(## 12) max_addr_len:(## 12) addr_len_step:(## 12)
-  { min_addr_len >= 64 } { min_addr_len <= max_addr_len } 
+  { min_addr_len >= 64 } { min_addr_len <= max_addr_len }
   { max_addr_len <= 1023 } { addr_len_step <= 1023 }
   workchain_type_id:(## 32) { workchain_type_id >= 1 }
   = WorkchainFormat 0;
@@ -56,7 +56,7 @@ wc_split_merge_timings#0
 //workchain#a5 enabled_since:uint32 min_split:(## 8) max_split:(## 8)
 //  { min_split <= max_split } { max_split <= 60 }
 
-workchain#a6 enabled_since:uint32 actual_min_split:(## 8) 
+workchain#a6 enabled_since:uint32 actual_min_split:(## 8)
   min_split:(## 8) max_split:(## 8) { actual_min_split <= min_split }
   basic:(## 1) active:Bool accept_msgs:Bool flags:(## 13) { flags = 0 }
   zerostate_root_hash:bits256 zerostate_file_hash:bits256
@@ -73,35 +73,35 @@ workchain_v2#a7 enabled_since:uint32 actual_min_split:(## 8)
 
 _ workchains:(HashmapE 32 WorkchainDescr) = ConfigParam 12;
 
-complaint_prices#1a deposit:Grams bit_price:Grams cell_price:Grams = ComplaintPricing; 
+complaint_prices#1a deposit:Grams bit_price:Grams cell_price:Grams = ComplaintPricing;
 _ ComplaintPricing = ConfigParam 13;
 
 block_grams_created#6b masterchain_block_fee:Grams basechain_block_fee:Grams
   = BlockCreateFees;
 _ BlockCreateFees = ConfigParam 14;
 
-_ validators_elected_for:uint32 elections_start_before:uint32 
+_ validators_elected_for:uint32 elections_start_before:uint32
   elections_end_before:uint32 stake_held_for:uint32
   = ConfigParam 15;
-  
-_ max_validators:(## 16) max_main_validators:(## 16) min_validators:(## 16) 
-  { max_validators >= max_main_validators } 
-  { max_main_validators >= min_validators } 
+
+_ max_validators:(## 16) max_main_validators:(## 16) min_validators:(## 16)
+  { max_validators >= max_main_validators }
+  { max_main_validators >= min_validators }
   { min_validators >= 1 }
   = ConfigParam 16;
 
 _ min_stake:Grams max_stake:Grams min_total_stake:Grams max_stake_factor:uint32 = ConfigParam 17;
 
-_#cc utime_since:uint32 bit_price_ps:uint64 cell_price_ps:uint64 
+_#cc utime_since:uint32 bit_price_ps:uint64 cell_price_ps:uint64
   mc_bit_price_ps:uint64 mc_cell_price_ps:uint64 = StoragePrices;
 _ (Hashmap 32 StoragePrices) = ConfigParam 18;
 
-gas_prices#dd gas_price:uint64 gas_limit:uint64 gas_credit:uint64 
-  block_gas_limit:uint64 freeze_due_limit:uint64 delete_due_limit:uint64 
+gas_prices#dd gas_price:uint64 gas_limit:uint64 gas_credit:uint64
+  block_gas_limit:uint64 freeze_due_limit:uint64 delete_due_limit:uint64
   = GasLimitsPrices;
 
-gas_prices_ext#de gas_price:uint64 gas_limit:uint64 special_gas_limit:uint64 gas_credit:uint64 
-  block_gas_limit:uint64 freeze_due_limit:uint64 delete_due_limit:uint64 
+gas_prices_ext#de gas_price:uint64 gas_limit:uint64 special_gas_limit:uint64 gas_credit:uint64
+  block_gas_limit:uint64 freeze_due_limit:uint64 delete_due_limit:uint64
   = GasLimitsPrices;
 
 gas_flat_pfx#d1 flat_gas_limit:uint64 flat_gas_price:uint64 other:GasLimitsPrices
@@ -114,7 +114,7 @@ param_limits#c3 underload:# soft_limit:# { underload <= soft_limit }
   hard_limit:# { soft_limit <= hard_limit } = ParamLimits;
 block_limits#5d bytes:ParamLimits gas:ParamLimits lt_delta:ParamLimits
   = BlockLimits;
-  
+
 config_mc_block_limits#_ BlockLimits = ConfigParam 22;
 config_block_limits#_ BlockLimits = ConfigParam 23;
 
@@ -129,7 +129,7 @@ config_mc_fwd_prices#_ MsgForwardPrices = ConfigParam 24;
 // used for all other messages
 config_fwd_prices#_ MsgForwardPrices = ConfigParam 25;
 
-catchain_config#c1 mc_catchain_lifetime:uint32 shard_catchain_lifetime:uint32 
+catchain_config#c1 mc_catchain_lifetime:uint32 shard_catchain_lifetime:uint32
   shard_validators_lifetime:uint32 shard_validators_num:uint32 = CatchainConfig;
 
 catchain_config_new#c2 flags:(## 7) { flags = 0 } shuffle_mc_validators:Bool
@@ -151,7 +151,7 @@ consensus_config_v3#d8 flags:(## 7) { flags = 0 } new_catchain_ids:Bool
   round_candidates:(## 8) { round_candidates >= 1 }
   next_candidate_delay_ms:uint32 consensus_timeout_ms:uint32
   fast_attempts:uint32 attempt_duration:uint32 catchain_max_deps:uint32
-  max_block_bytes:uint32 max_collated_bytes:uint32 
+  max_block_bytes:uint32 max_collated_bytes:uint32
   proto_version:uint16 = ConsensusConfig;
 
 consensus_config_v4#d9 flags:(## 7) { flags = 0 } new_catchain_ids:Bool
@@ -176,7 +176,7 @@ validator_temp_key#3 adnl_addr:bits256 temp_public_key:SigPubKey seqno:# valid_u
 signed_temp_key#4 key:^ValidatorTempKey signature:CryptoSignature = ValidatorSignedTempKey;
 _ (HashmapE 256 ValidatorSignedTempKey) = ConfigParam 39;
 
-misbehaviour_punishment_config_v1#01 
+misbehaviour_punishment_config_v1#01
   default_flat_fine:Grams default_proportional_fine:uint32
   severity_flat_mult:uint16 severity_proportional_mult:uint16
   unpunishable_interval:uint16
@@ -205,7 +205,7 @@ _ OracleBridgeParams = ConfigParam 72; // Binance Smart Chain bridge
 _ OracleBridgeParams = ConfigParam 73; // Polygon bridge
 
 // Note that chains in which bridge, minter and jetton-wallet operate are fixated
-jetton_bridge_prices#_ bridge_burn_fee:Coins bridge_mint_fee:Coins 
+jetton_bridge_prices#_ bridge_burn_fee:Coins bridge_mint_fee:Coins
                        wallet_min_tons_for_storage:Coins
                        wallet_gas_consumption:Coins
                        minter_min_tons_for_storage:Coins
@@ -217,3 +217,18 @@ jetton_bridge_params_v1#01 bridge_address:bits256 oracles_address:bits256 oracle
 _ JettonBridgeParams = ConfigParam 79; // ETH->TON token bridge
 _ JettonBridgeParams = ConfigParam 81; // BNB->TON token bridge
 _ JettonBridgeParams = ConfigParam 82; // Polygon->TON token bridge
+  // ConfigParam 30 — NewConsensusConfigAll
+
+simplex_config#21 flags:(## 7) use_quic:Bool
+  target_rate_ms:uint32 slots_per_leader_window:uint32
+  first_block_timeout_ms:uint32 max_leader_window_desync:uint32
+  = NewConsensusConfig;
+
+simplex_config_v2#22 flags:(## 7) use_quic:Bool slots_per_leader_window:uint32
+  noncritical_params:(HashmapE 8 uint32)
+  = NewConsensusConfig;
+
+new_consensus_config_all#10 mc:(Maybe ^NewConsensusConfig) shard:(Maybe ^NewConsensusConfig)
+  = NewConsensusConfigAll;
+
+_ NewConsensusConfigAll = ConfigParam 30;

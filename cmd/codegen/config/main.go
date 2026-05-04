@@ -22,8 +22,22 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	g := parser.NewGenerator()
-	s, err := g.GenerateGolangTypes(tlb.Declarations, "", false)
+	// Filter declarations already defined elsewhere in the tlb package.
+	var filtered []parser.CombinatorDeclaration
+	for _, decl := range tlb.Declarations {
+		if decl.Combinator.Name == "GlobalVersion" {
+			continue
+		}
+		filtered = append(filtered, decl)
+	}
+
+	g := parser.NewGenerator(
+		parser.WithTlbPackage(""),
+		// WorkchainFormat is a parameterized type used as (WorkchainFormat basic) in TLB; the
+		// generator cannot express the parameterized application as a plain Go type, so skip it.
+		parser.WithSkipTypes("WorkchainFormat"),
+	)
+	s, err := g.GenerateGolangTypes(filtered, "", false)
 	if err != nil {
 		panic(err)
 	}

@@ -421,6 +421,9 @@ func buildOutputStackCheck(r []StackRecord, isFixed bool) string {
 	for i, s := range r {
 		nullableCheck := ""
 		stackType := fmt.Sprintf("stack.Peek(%d).SumType", n-1-i)
+		if !isFixed {
+			stackType = fmt.Sprintf("stack.Peek(stack.Len()-%v-1).SumType", i)
+		}
 		if s.Nullable || (s.XMLName.Local == "tuple" && s.List) {
 			nullableCheck = fmt.Sprintf(" && %s != \"VmStkNull\"", stackType)
 		}

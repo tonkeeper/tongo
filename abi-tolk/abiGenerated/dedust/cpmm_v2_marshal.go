@@ -9,13 +9,15 @@ import (
 )
 
 func (v *PoolStatus) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	vx, err := tlb.UnmarshalT[tlb.Uint2](c, decoder)
-	*v = PoolStatus(vx)
-	return err
+	return (*tlb.Uint2)(v).UnmarshalTLB(c, decoder)
 }
 
 func (v PoolStatus) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
-	return PoolStatus.MarshalTLB(c, encoder)
+	return tlb.Uint2(v).MarshalTLB(c, encoder)
+}
+
+func (v *PoolStatus) ReadFromStack(stack *tlb.VmStack) error {
+	return (*tlb.Uint2)(v).ReadFromStack(stack)
 }
 func (v *Asset) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Value.UnmarshalTLB(c, decoder); err != nil {
@@ -36,6 +38,12 @@ func (v Asset) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *Asset) ReadFromStack(stack *tlb.VmStack) (err error) {
+	if err = v.Value.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .Value: %v", err)
+	}
+	return nil
+}
 func (v *Q120X120) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Value.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .Value: %v", err)
@@ -54,6 +62,12 @@ func (v Q120X120) ToCell() (*boc.Cell, error) {
 		return nil, err
 	}
 	return c, nil
+}
+func (v *Q120X120) ReadFromStack(stack *tlb.VmStack) (err error) {
+	if err = v.Value.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .Value: %v", err)
+	}
+	return nil
 }
 func (v *PoolReward) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.RemainingTime.UnmarshalTLB(c, decoder); err != nil {
@@ -220,8 +234,14 @@ func (v DedustCpmmV2GetPoolData) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *DedustCpmmV2GetPoolData) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if v.Rewards, err = stack.ReadCell(); err != nil {
-		return fmt.Errorf("failed to read .Rewards: %v", err)
+	{
+		cell, err := stack.ReadCell()
+		if err != nil {
+			return fmt.Errorf("failed to read .Rewards: %v", err)
+		}
+		if err = v.Rewards.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
+			return fmt.Errorf("failed to read .Rewards: %v", err)
+		}
 	}
 	if err = v.YLPFeePerToken.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .YLPFeePerToken: %v", err)
@@ -253,14 +273,32 @@ func (v *DedustCpmmV2GetPoolData) ReadFromStack(stack *tlb.VmStack) (err error) 
 	if err = v.BaseFeeBPS.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .BaseFeeBPS: %v", err)
 	}
-	if v.WalletsByResolutions, err = stack.ReadCell(); err != nil {
-		return fmt.Errorf("failed to read .WalletsByResolutions: %v", err)
+	{
+		cell, err := stack.ReadCell()
+		if err != nil {
+			return fmt.Errorf("failed to read .WalletsByResolutions: %v", err)
+		}
+		if err = v.WalletsByResolutions.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
+			return fmt.Errorf("failed to read .WalletsByResolutions: %v", err)
+		}
 	}
-	if v.AssetsByWallets, err = stack.ReadCell(); err != nil {
-		return fmt.Errorf("failed to read .AssetsByWallets: %v", err)
+	{
+		cell, err := stack.ReadCell()
+		if err != nil {
+			return fmt.Errorf("failed to read .AssetsByWallets: %v", err)
+		}
+		if err = v.AssetsByWallets.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
+			return fmt.Errorf("failed to read .AssetsByWallets: %v", err)
+		}
 	}
-	if v.WalletsByAssets, err = stack.ReadCell(); err != nil {
-		return fmt.Errorf("failed to read .WalletsByAssets: %v", err)
+	{
+		cell, err := stack.ReadCell()
+		if err != nil {
+			return fmt.Errorf("failed to read .WalletsByAssets: %v", err)
+		}
+		if err = v.WalletsByAssets.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
+			return fmt.Errorf("failed to read .WalletsByAssets: %v", err)
+		}
 	}
 	if err = v.AssetY.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .AssetY: %v", err)

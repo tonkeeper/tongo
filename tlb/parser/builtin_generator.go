@@ -50,6 +50,22 @@ func (u *VarUInteger{{.NameIndex}}) UnmarshalJSON(p []byte) error {
     *u = VarUInteger{{.NameIndex}}(z)
     return nil
 }
+
+func (u *VarUInteger{{.NameIndex}}) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger{{.NameIndex}}(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger{{.NameIndex}}(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger{{.NameIndex}}: %v", elem.SumType)
+	}
+	return nil
+}
 `
 	tpl, err := template.New("varUInteger").Parse(templateStr)
 	if err != nil {

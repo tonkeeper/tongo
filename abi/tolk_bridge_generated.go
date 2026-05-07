@@ -5,6 +5,7 @@ package abi
 import (
 	"context"
 	abiCocoon "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/cocoon"
+	abiDedust "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/dedust"
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	"github.com/tonkeeper/tongo/ton"
@@ -137,6 +138,26 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UpgradeContracts](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUpgradeContracts), abiCocoon.CocoonUpgradeContractsMsgOp)
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UpgradeFull](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUpgradeFull), abiCocoon.CocoonUpgradeFullMsgOp)
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.WorkerProxyRequest](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixWorkerProxyRequest), abiCocoon.CocoonWorkerProxyRequestMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "get_pool_data",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiDedust.GetPoolData(ctx, executor, id)
+				return "GetPoolData_DedustCpmmV2Result", r, err
+			},
+		},
+	)
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    DedustCpmmV2,
+			Results: []string{"GetPoolData_DedustCpmmV2Result"},
+		},
+	)
 
 }
 

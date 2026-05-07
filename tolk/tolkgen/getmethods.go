@@ -162,7 +162,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 			return "", false, fmt.Errorf("type %s: %w", ty.String(), err)
 		}
 		return fmt.Sprintf("tlb.ReadFromStack[%s](stack)", goType), true, nil
-	case parser.TyKindCell:
+	case parser.TyKindCell, parser.TyKindMapKV:
 		return "stack.ReadCell()", false, nil
 	case parser.TyKindBool:
 		return "stack.ReadBool()", false, nil
@@ -181,6 +181,9 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 		return fmt.Sprintf(`tlb.StackReadMaybeCallback(stack, func (stack *tlb.VmStack) (%s, error) {
 	return %s
 })`, innerType, innerRead), false, nil
+	case parser.TyKindEnumRef:
+		enum := tgen.symbols.enums[ty.EnumRef.EnumName]
+		return tgen.emitStackReadExpr(fieldPath, enum.EncodedAs, unTupleIfW)
 	default:
 		return "", false, fmt.Errorf("unexpected type in stack read: %s", ty.String())
 	}

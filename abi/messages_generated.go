@@ -185,8 +185,6 @@ var (
 	decodeFuncStorageWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x46ed2e94, Len: 32}, StorageWithdrawMsgOp, StorageWithdrawMsgBody{})
 	// 0x474f86cf
 	decodeFuncDedustPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0x474f86cf, Len: 32}, DedustPayoutMsgOp, DedustPayoutMsgBody{})
-	// 0x47657424
-	decodeFuncElectorRecoverStakeRequestMsgBody = decodeMsg(tlb.Tag{Val: 0x47657424, Len: 32}, ElectorRecoverStakeRequestMsgOp, ElectorRecoverStakeRequestMsgBody{})
 	// 0x47d54391
 	decodeFuncTonstakePoolDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x47d54391, Len: 32}, TonstakePoolDepositMsgOp, TonstakePoolDepositMsgBody{})
 	// 0x487a8e81
@@ -201,8 +199,6 @@ var (
 	decodeFuncDedustTonPayMsgBody = decodeMsg(tlb.Tag{Val: 0x4c3e12d7, Len: 32}, DedustTonPayMsgOp, DedustTonPayMsgBody{})
 	// 0x4d696e65
 	decodeFuncGramSubmitProofOfWorkMsgBody = decodeMsg(tlb.Tag{Val: 0x4d696e65, Len: 32}, GramSubmitProofOfWorkMsgOp, GramSubmitProofOfWorkMsgBody{})
-	// 0x4e73744b
-	decodeFuncElectorNewStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x4e73744b, Len: 32}, ElectorNewStakeMsgOp, ElectorNewStakeMsgBody{})
 	// 0x4eb1f0f9
 	decodeFuncDeleteDnsRecordMsgBody = decodeMsg(tlb.Tag{Val: 0x4eb1f0f9, Len: 32}, DeleteDnsRecordMsgOp, DeleteDnsRecordMsgBody{})
 	// 0x4eb1f0f9
@@ -621,8 +617,6 @@ var (
 	decodeFuncTonstakeNftBurnMsgBody = decodeMsg(tlb.Tag{Val: 0xf127fe4e, Len: 32}, TonstakeNftBurnMsgOp, TonstakeNftBurnMsgBody{})
 	// 0xf2ef6c1b
 	decodeFuncBidaskSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xf2ef6c1b, Len: 32}, BidaskSwapMsgOp, BidaskSwapMsgBody{})
-	// 0xf374484c
-	decodeFuncElectorNewStakeConfirmationMsgBody = decodeMsg(tlb.Tag{Val: 0xf374484c, Len: 32}, ElectorNewStakeConfirmationMsgOp, ElectorNewStakeConfirmationMsgBody{})
 	// 0xf5d4eb52
 	decodeFuncStormWithdrawReferralAmountMsgBody = decodeMsg(tlb.Tag{Val: 0xf5d4eb52, Len: 32}, StormWithdrawReferralAmountMsgOp, StormWithdrawReferralAmountMsgBody{})
 	// 0xf71783cb
@@ -633,8 +627,6 @@ var (
 	decodeFuncStonfiPaymentRequestMsgBody = decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
 	// 0xf9471134
 	decodeFuncCoffeeStakingDepositMsgBody = decodeMsg(tlb.Tag{Val: 0xf9471134, Len: 32}, CoffeeStakingDepositMsgOp, CoffeeStakingDepositMsgBody{})
-	// 0xf96f7324
-	decodeFuncElectorRecoverStakeResponseMsgBody = decodeMsg(tlb.Tag{Val: 0xf96f7324, Len: 32}, ElectorRecoverStakeResponseMsgOp, ElectorRecoverStakeResponseMsgBody{})
 	// 0xfb88e119
 	decodeFuncJettonClaimAdminMsgBody = decodeMsg(tlb.Tag{Val: 0xfb88e119, Len: 32}, JettonClaimAdminMsgOp, JettonClaimAdminMsgBody{})
 	// 0xff86f067
@@ -918,9 +910,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x474f86cf
 	DedustPayoutMsgOpCode: decodeFuncDedustPayoutMsgBody,
 
-	// 0x47657424
-	ElectorRecoverStakeRequestMsgOpCode: decodeFuncElectorRecoverStakeRequestMsgBody,
-
 	// 0x47d54391
 	TonstakePoolDepositMsgOpCode: decodeFuncTonstakePoolDepositMsgBody,
 
@@ -941,9 +930,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x4d696e65
 	GramSubmitProofOfWorkMsgOpCode: decodeFuncGramSubmitProofOfWorkMsgBody,
-
-	// 0x4e73744b
-	ElectorNewStakeMsgOpCode: decodeFuncElectorNewStakeMsgBody,
 
 	//DeleteDnsRecord, ChangeDnsRecord,
 	0x4eb1f0f9: multipleMsgsDecoder{
@@ -1582,9 +1568,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0xf2ef6c1b
 	BidaskSwapMsgOpCode: decodeFuncBidaskSwapMsgBody,
 
-	// 0xf374484c
-	ElectorNewStakeConfirmationMsgOpCode: decodeFuncElectorNewStakeConfirmationMsgBody,
-
 	// 0xf5d4eb52
 	StormWithdrawReferralAmountMsgOpCode: decodeFuncStormWithdrawReferralAmountMsgBody,
 
@@ -1599,9 +1582,6 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0xf9471134
 	CoffeeStakingDepositMsgOpCode: decodeFuncCoffeeStakingDepositMsgBody,
-
-	// 0xf96f7324
-	ElectorRecoverStakeResponseMsgOpCode: decodeFuncElectorRecoverStakeResponseMsgBody,
 
 	// 0xfb88e119
 	JettonClaimAdminMsgOpCode: decodeFuncJettonClaimAdminMsgBody,
@@ -1706,7 +1686,6 @@ const (
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
 	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
 	DedustPayoutMsgOp                            MsgOpName = "DedustPayout"
-	ElectorRecoverStakeRequestMsgOp              MsgOpName = "ElectorRecoverStakeRequest"
 	TonstakePoolDepositMsgOp                     MsgOpName = "TonstakePoolDeposit"
 	TeleitemStartAuctionMsgOp                    MsgOpName = "TeleitemStartAuction"
 	BemoUnstakeMsgOp                             MsgOpName = "BemoUnstake"
@@ -1714,7 +1693,6 @@ const (
 	TonstakePoolTouchMsgOp                       MsgOpName = "TonstakePoolTouch"
 	DedustTonPayMsgOp                            MsgOpName = "DedustTonPay"
 	GramSubmitProofOfWorkMsgOp                   MsgOpName = "GramSubmitProofOfWork"
-	ElectorNewStakeMsgOp                         MsgOpName = "ElectorNewStake"
 	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
 	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
 	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
@@ -1924,13 +1902,11 @@ const (
 	TonstakeControllerUpdateValidatorHashMsgOp   MsgOpName = "TonstakeControllerUpdateValidatorHash"
 	TonstakeNftBurnMsgOp                         MsgOpName = "TonstakeNftBurn"
 	BidaskSwapMsgOp                              MsgOpName = "BidaskSwap"
-	ElectorNewStakeConfirmationMsgOp             MsgOpName = "ElectorNewStakeConfirmation"
 	StormWithdrawReferralAmountMsgOp             MsgOpName = "StormWithdrawReferralAmount"
 	SubscriptionDeployMsgOp                      MsgOpName = "SubscriptionDeploy"
 	MultisigNewOrderMsgOp                        MsgOpName = "MultisigNewOrder"
 	StonfiPaymentRequestMsgOp                    MsgOpName = "StonfiPaymentRequest"
 	CoffeeStakingDepositMsgOp                    MsgOpName = "CoffeeStakingDeposit"
-	ElectorRecoverStakeResponseMsgOp             MsgOpName = "ElectorRecoverStakeResponse"
 	JettonClaimAdminMsgOp                        MsgOpName = "JettonClaimAdmin"
 	MoonWithdrawLiquidityNotifyMsgOp             MsgOpName = "MoonWithdrawLiquidityNotify"
 	BounceV2MsgOp                                MsgOpName = "BounceV2"
@@ -2027,7 +2003,6 @@ const (
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
 	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
 	DedustPayoutMsgOpCode                            MsgOpCode = 0x474f86cf
-	ElectorRecoverStakeRequestMsgOpCode              MsgOpCode = 0x47657424
 	TonstakePoolDepositMsgOpCode                     MsgOpCode = 0x47d54391
 	TeleitemStartAuctionMsgOpCode                    MsgOpCode = 0x487a8e81
 	BemoUnstakeMsgOpCode                             MsgOpCode = 0x492ab1b3
@@ -2035,7 +2010,6 @@ const (
 	TonstakePoolTouchMsgOpCode                       MsgOpCode = 0x4bc7c2df
 	DedustTonPayMsgOpCode                            MsgOpCode = 0x4c3e12d7
 	GramSubmitProofOfWorkMsgOpCode                   MsgOpCode = 0x4d696e65
-	ElectorNewStakeMsgOpCode                         MsgOpCode = 0x4e73744b
 	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
@@ -2245,13 +2219,11 @@ const (
 	TonstakeControllerUpdateValidatorHashMsgOpCode   MsgOpCode = 0xf0fd2250
 	TonstakeNftBurnMsgOpCode                         MsgOpCode = 0xf127fe4e
 	BidaskSwapMsgOpCode                              MsgOpCode = 0xf2ef6c1b
-	ElectorNewStakeConfirmationMsgOpCode             MsgOpCode = 0xf374484c
 	StormWithdrawReferralAmountMsgOpCode             MsgOpCode = 0xf5d4eb52
 	SubscriptionDeployMsgOpCode                      MsgOpCode = 0xf71783cb
 	MultisigNewOrderMsgOpCode                        MsgOpCode = 0xf718510f
 	StonfiPaymentRequestMsgOpCode                    MsgOpCode = 0xf93bb43f
 	CoffeeStakingDepositMsgOpCode                    MsgOpCode = 0xf9471134
-	ElectorRecoverStakeResponseMsgOpCode             MsgOpCode = 0xf96f7324
 	JettonClaimAdminMsgOpCode                        MsgOpCode = 0xfb88e119
 	MoonWithdrawLiquidityNotifyMsgOpCode             MsgOpCode = 0xff86f067
 	BounceV2MsgOpCode                                MsgOpCode = 0xfffffffe
@@ -2888,10 +2860,6 @@ type DedustPayoutMsgBody struct {
 	Payload *tlb.Any `tlb:"maybe^"`
 }
 
-type ElectorRecoverStakeRequestMsgBody struct {
-	QueryId uint64
-}
-
 type TonstakePoolDepositMsgBody struct {
 	QueryId  uint64
 	Referral tlb.Any
@@ -2930,15 +2898,6 @@ type GramSubmitProofOfWorkMsgBody struct {
 	Rdata1 tlb.Bits256
 	Rseed  tlb.Uint128
 	Rdata2 tlb.Bits256
-}
-
-type ElectorNewStakeMsgBody struct {
-	QueryId         uint64
-	ValidatorPubkey tlb.Bits256
-	StakeAt         uint32
-	MaxFactor       uint32
-	AdnlAddr        tlb.Bits256
-	Signature       tlb.Bits512 `tlb:"^"`
 }
 
 type DeleteDnsRecordMsgBody struct {
@@ -4385,10 +4344,6 @@ type BidaskSwapMsgBody struct {
 	ForwardPayload *tlb.Any `tlb:"maybe^"`
 }
 
-type ElectorNewStakeConfirmationMsgBody struct {
-	QueryId uint64
-}
-
 type StormWithdrawReferralAmountMsgBody struct {
 	Index          uint64
 	ReferralAmount tlb.Grams
@@ -4429,10 +4384,6 @@ type CoffeeStakingDepositMsgBody struct {
 	JettonAmount tlb.Grams
 	FromUser     tlb.MsgAddress
 	PeriodId     uint32
-}
-
-type ElectorRecoverStakeResponseMsgBody struct {
-	QueryId uint64
 }
 
 type JettonClaimAdminMsgBody struct {
@@ -4545,7 +4496,6 @@ var KnownMsgInTypes = map[string]any{
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
 	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
 	DedustPayoutMsgOp:                            DedustPayoutMsgBody{},
-	ElectorRecoverStakeRequestMsgOp:              ElectorRecoverStakeRequestMsgBody{},
 	TonstakePoolDepositMsgOp:                     TonstakePoolDepositMsgBody{},
 	TeleitemStartAuctionMsgOp:                    TeleitemStartAuctionMsgBody{},
 	BemoUnstakeMsgOp:                             BemoUnstakeMsgBody{},
@@ -4553,7 +4503,6 @@ var KnownMsgInTypes = map[string]any{
 	TonstakePoolTouchMsgOp:                       TonstakePoolTouchMsgBody{},
 	DedustTonPayMsgOp:                            DedustTonPayMsgBody{},
 	GramSubmitProofOfWorkMsgOp:                   GramSubmitProofOfWorkMsgBody{},
-	ElectorNewStakeMsgOp:                         ElectorNewStakeMsgBody{},
 	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},
 	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},
 	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
@@ -4763,13 +4712,11 @@ var KnownMsgInTypes = map[string]any{
 	TonstakeControllerUpdateValidatorHashMsgOp:   TonstakeControllerUpdateValidatorHashMsgBody{},
 	TonstakeNftBurnMsgOp:                         TonstakeNftBurnMsgBody{},
 	BidaskSwapMsgOp:                              BidaskSwapMsgBody{},
-	ElectorNewStakeConfirmationMsgOp:             ElectorNewStakeConfirmationMsgBody{},
 	StormWithdrawReferralAmountMsgOp:             StormWithdrawReferralAmountMsgBody{},
 	SubscriptionDeployMsgOp:                      SubscriptionDeployMsgBody{},
 	MultisigNewOrderMsgOp:                        MultisigNewOrderMsgBody{},
 	StonfiPaymentRequestMsgOp:                    StonfiPaymentRequestMsgBody{},
 	CoffeeStakingDepositMsgOp:                    CoffeeStakingDepositMsgBody{},
-	ElectorRecoverStakeResponseMsgOp:             ElectorRecoverStakeResponseMsgBody{},
 	JettonClaimAdminMsgOp:                        JettonClaimAdminMsgBody{},
 	MoonWithdrawLiquidityNotifyMsgOp:             MoonWithdrawLiquidityNotifyMsgBody{},
 	BounceV2MsgOp:                                BounceV2MsgBody{},

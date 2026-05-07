@@ -1,0 +1,417 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "single_nominator_pool",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "Withdraw",
+      "prefix": {
+        "prefixStr": "0x00001000",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ChangeValidatorAddress",
+      "prefix": {
+        "prefixStr": "0x00001001",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "newValidatorAddress",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "SendRawMsg",
+      "prefix": {
+        "prefixStr": "0x00007702",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "mode",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "msg",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Upgrade",
+      "prefix": {
+        "prefixStr": "0x00009903",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "code",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Roles",
+      "fields": [
+        {
+          "name": "owner",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "validator",
+          "ty": {
+            "kind": "address"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolConfig",
+      "fields": [
+        {
+          "name": "min_stake",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "deposit_fee",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "withdraw_fee",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "pool_fee",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "receipt_price",
+          "ty": {
+            "kind": "int"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolData",
+      "fields": [
+        {
+          "name": "state",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "nominators_count",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "stake_amount_sent",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "validator_amount",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "pool_config",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "PoolConfig"
+          }
+        },
+        {
+          "name": "nominators",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "withdraw_requests",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        },
+        {
+          "name": "stake_at",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "saved_validator_set_hash",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "validator_set_changes_count",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "validator_set_change_time",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "stake_held_for",
+          "ty": {
+            "kind": "int"
+          }
+        },
+        {
+          "name": "config_proposal_votings",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cell"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Withdraw"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ChangeValidatorAddress"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "SendRawMsg"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "Upgrade"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 130208,
+      "name": "get_roles",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "Roles"
+      }
+    },
+    {
+      "tvmMethodId": 81689,
+      "name": "get_pool_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "PoolData"
+      }
+    }
+  ],
+  "thrownErrors": [
+    {
+      "kind": "constant",
+      "name": "ERROR::WRONG_SET_CODE",
+      "errCode": 8194
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR::INSUFFICIENT_BALANCE",
+      "errCode": 8196
+    }
+  ],
+  "constants": [
+    {
+      "name": "ADDRESS_SIZE",
+      "value": {
+        "kind": "int",
+        "v": "256"
+      }
+    },
+    {
+      "name": "MIN_TON_FOR_STORAGE",
+      "value": {
+        "kind": "int",
+        "v": "1000000000"
+      }
+    },
+    {
+      "name": "MIN_TON_FOR_SEND_MSG",
+      "value": {
+        "kind": "int",
+        "v": "1200000000"
+      }
+    },
+    {
+      "name": "OP::WITHDRAW",
+      "value": {
+        "kind": "int",
+        "v": "4096"
+      }
+    },
+    {
+      "name": "OP::CHANGE_VALIDATOR_ADDRESS",
+      "value": {
+        "kind": "int",
+        "v": "4097"
+      }
+    },
+    {
+      "name": "OP::SEND_RAW_MSG",
+      "value": {
+        "kind": "int",
+        "v": "30466"
+      }
+    },
+    {
+      "name": "OP::UPGRADE",
+      "value": {
+        "kind": "int",
+        "v": "39171"
+      }
+    },
+    {
+      "name": "MODE::SEND_MODE_REMAINING_AMOUNT",
+      "value": {
+        "kind": "int",
+        "v": "64"
+      }
+    },
+    {
+      "name": "ERROR::WRONG_NOMINATOR_WC",
+      "value": {
+        "kind": "int",
+        "v": "8192"
+      }
+    },
+    {
+      "name": "ERROR::WRONG_QUERY_ID",
+      "value": {
+        "kind": "int",
+        "v": "8193"
+      }
+    },
+    {
+      "name": "ERROR::WRONG_SET_CODE",
+      "value": {
+        "kind": "int",
+        "v": "8194"
+      }
+    },
+    {
+      "name": "ERROR::WRONG_VALIDATOR_WC",
+      "value": {
+        "kind": "int",
+        "v": "8195"
+      }
+    },
+    {
+      "name": "ERROR::INSUFFICIENT_BALANCE",
+      "value": {
+        "kind": "int",
+        "v": "8196"
+      }
+    },
+    {
+      "name": "ERROR::INSUFFICIENT_ELECTOR_FEE",
+      "value": {
+        "kind": "int",
+        "v": "8197"
+      }
+    }
+  ],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

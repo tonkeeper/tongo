@@ -140,10 +140,6 @@ The list below contains the supported message operations, their names and opcode
 | Disapprove| 0xe8a0abfe |
 | DisplayMultiplierChanged| 0xac392598 |
 | DnsBalanceRelease| 0x4ed14b65 |
-| ElectorNewStake| 0x4e73744b |
-| ElectorNewStakeConfirmation| 0xf374484c |
-| ElectorRecoverStakeRequest| 0x47657424 |
-| ElectorRecoverStakeResponse| 0xf96f7324 |
 | EncryptedTextComment| 0x2167da4b |
 | EncryptedTextComment| 0x2167da4b |
 | EncryptedTextComment| 0x2167da4b |

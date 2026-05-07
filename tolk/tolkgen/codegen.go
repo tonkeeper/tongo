@@ -151,9 +151,7 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 		}
 	}
 	for _, method := range abi.GetMethods {
-		if method.ReturnTy.SumType == parser.TyKindStructRef {
-			markReadFromStackDeps(&symbols, method.ReturnTy)
-		}
+		symbols.markStructsReadFromStack(method.ReturnTy)
 	}
 	var storageType string
 	if abi.Storage.StorageTy != nil {
@@ -178,33 +176,53 @@ type symTable struct {
 	enumNeedsReadFromStack        map[string]bool
 }
 
-// markReadFromStackDeps walks the type tree of a get-method-returned struct
-// and marks every struct/enum that the generated ReadFromStack code will call
-// `.ReadFromStack(stack)` on, so codegen knows to emit that method for it.
-// MapKV value types are skipped: hashmaps come off the stack as a single cell
-// and are unmarshalled via UnmarshalTLB, not field-by-field reads.
-func markReadFromStackDeps(symbols *symTable, ty parser.Ty) {
+func (s *symTable) markStructsReadFromStack(ty parser.Ty) {
 	switch ty.SumType {
+	case parser.TyKindArrayOf:
+		s.markStructsReadFromStack(ty.ArrayOf.Inner)
 	case parser.TyKindStructRef:
-		name := ty.StructRef.StructName
-		if symbols.structIsReturnedFromGetMethod[name] {
+		structName := ty.StructRef.StructName
+		if s.structIsReturnedFromGetMethod[structName] {
 			return
 		}
-		symbols.structIsReturnedFromGetMethod[name] = true
-		decl, ok := symbols.structs[name]
+		s.structIsReturnedFromGetMethod[structName] = true
+		decl, ok := s.structs[structName]
 		if !ok {
 			return
 		}
 		for _, field := range decl.Fields {
-			if field.Ty.SumType == parser.TyKindMapKV {
-				continue
+			fieldTy := field.Ty
+			if len(ty.StructRef.TypeArgs) > 0 {
+				fieldTy = fieldTy.InstantiateGenerics(decl.TypeParams, ty.StructRef.TypeArgs)
 			}
-			markReadFromStackDeps(symbols, field.Ty)
+			s.markStructsReadFromStack(fieldTy)
 		}
 	case parser.TyKindEnumRef:
-		symbols.enumNeedsReadFromStack[ty.EnumRef.EnumName] = true
+		s.enumNeedsReadFromStack[ty.EnumRef.EnumName] = true
+	case parser.TyKindTensor:
+		for _, item := range ty.Tensor.Items {
+			s.markStructsReadFromStack(item)
+		}
+	case parser.TyKindShapedTuple:
+		for _, item := range ty.ShapedTuple.Items {
+			s.markStructsReadFromStack(item)
+		}
 	case parser.TyKindNullable:
-		markReadFromStackDeps(symbols, ty.Nullable.Inner)
+		s.markStructsReadFromStack(ty.Nullable.Inner)
+	case parser.TyKindAliasRef:
+		aliasDecl, ok := s.aliases[ty.AliasRef.AliasName]
+		if !ok {
+			return
+		}
+		targetTy := aliasDecl.TargetTy
+		if len(aliasDecl.TypeParams) > 0 {
+			targetTy = targetTy.InstantiateGenerics(aliasDecl.TypeParams, ty.AliasRef.TypeArgs)
+		}
+		s.markStructsReadFromStack(targetTy)
+	case parser.TyKindUnion:
+		for _, variant := range ty.Union.Variants {
+			s.markStructsReadFromStack(variant.VariantTy)
+		}
 	}
 }
 

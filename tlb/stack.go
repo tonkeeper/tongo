@@ -41,6 +41,12 @@ func (s VmStack) Peek(i int) VmStackValue {
 	return s.values[len(s.values)-i-1]
 }
 
+// PeekBottom returns the bottom element from the stack (if i == 0)
+// peeking empty stack will panic as out of range
+func (s VmStack) PeekBottom(i int) VmStackValue {
+	return s.values[i]
+}
+
 // Put puts the value on top of the stack
 func (s *VmStack) Put(val VmStackValue) {
 	s.values = append(s.values, val)
@@ -92,9 +98,66 @@ func (s *VmStack) ReadCell() (boc.Cell, error) {
 	return val.VmStkCell.Value, nil
 }
 
+func (s *VmStack) ReadTuple() (VmStkTuple, error) {
+	val, ok := s.Pop()
+	if !ok {
+		return VmStkTuple{}, ErrStackEmpty
+	}
+	if val.SumType != "VmStkTuple" {
+		return VmStkTuple{}, fmt.Errorf("unexpected stack value type for tuple: %s", val.SumType)
+	}
+	return val.VmStkTuple, nil
+}
+
 func ReadFromStack[T VmStackReader](stack *VmStack) (value T, err error) {
 	err = value.ReadFromStack(stack)
 	return
+}
+
+func ReadArrayFromStackT[T VmStackReader](stack *VmStack) (values []T, err error) {
+	return ReadArrayFromStack(stack, func(stack *VmStack) (value T, err error) {
+		err = value.ReadFromStack(stack)
+		return
+	})
+}
+
+func ReadArrayFromStack[T any](stack *VmStack, decode func(value *VmStack) (T, error)) (values []T, err error) {
+	head, ok := stack.Pop()
+	if !ok {
+		return nil, fmt.Errorf("empty stack")
+	}
+	switch head.SumType {
+	case "VmStkNull":
+		return nil, nil
+	case "VmStkTuple":
+		stkVals, err := head.VmStkTuple.RecursiveToSlice()
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert VmStkTuple to slice: %w", err)
+		}
+		values = make([]T, len(stkVals))
+		for i, val := range stkVals {
+			valStk := val.ToStack()
+			if values[i], err = decode(&valStk); err != nil {
+				return nil, fmt.Errorf("failed to read value [%d] from stack: %w", i, err)
+			}
+		}
+		return values, nil
+	default:
+		return nil, fmt.Errorf("unexpected stack value type for array: %s", head.SumType)
+	}
+}
+
+func ReadTupleFromStack[T any](stack *VmStack, decode func(value *VmStack) (T, error)) (result T, err error) {
+	var tup VmStkTuple
+	tup, err = stack.ReadTuple()
+	if err != nil {
+		return
+	}
+	stack, err = tup.AsStack()
+	if err != nil {
+		return
+	}
+	return decode(stack)
 }
 
 // VmCont

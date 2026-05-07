@@ -417,8 +417,8 @@ func (v VaultStorage) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *CollectionData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Next_item_index.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Next_item_index: %v", err)
+	if err = v.NextItemIndex.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .NextItemIndex: %v", err)
 	}
 	if v.Content, err = c.NextRefV(); err != nil {
 		return fmt.Errorf("failed to read .Content: %v", err)
@@ -429,8 +429,8 @@ func (v *CollectionData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err er
 	return nil
 }
 func (v CollectionData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Next_item_index.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Next_item_index: %v", err)
+	if err = v.NextItemIndex.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .NextItemIndex: %v", err)
 	}
 	if err = c.AddRef(&v.Content); err != nil {
 		return fmt.Errorf("failed to .Content: %v", err)
@@ -454,8 +454,8 @@ func (v *CollectionData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if v.Content, err = stack.ReadCell(); err != nil {
 		return fmt.Errorf("failed to read .Content: %v", err)
 	}
-	if err = v.Next_item_index.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .Next_item_index: %v", err)
+	if err = v.NextItemIndex.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .NextItemIndex: %v", err)
 	}
 	return nil
 }

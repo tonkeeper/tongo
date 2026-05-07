@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"testing"
 
+	abiElector "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/elector"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/tlb"
@@ -1457,9 +1458,9 @@ func TestMessageDecoder(t *testing.T) {
 		{
 			name:       "elector new stake",
 			boc:        "te6ccgEBAgEAmQABqE5zdEsAAAGIsvJfe+aMZUshdNyzRr18l+R6zoT5JTFV0wvEY5pVettDt6WoZIhPCAADAAByqS8vzZ9J5LBRsipw1exZ37mcctWGpeeSq/Qpa7CGrQEAgEyUVHocPTT7h/s+//UOfy6LEW8mW1R1pQ35orfivNAb7e5qfpcym6AuhR1D3+bFzQSVm8wlLSxDlfBH+7ceNAw=",
-			wantOpName: ElectorNewStakeMsgOp,
+			wantOpName: abiElector.ElectorNewStakeMsgOp,
 			wantValidate: func(t *testing.T, value any) {
-				body := value.(ElectorNewStakeMsgBody)
+				body := value.(*abiElector.NewStake)
 				if body.QueryId != 1686629408635 {
 					t.Fatalf("queryId mismatch")
 				}
@@ -1468,9 +1469,9 @@ func TestMessageDecoder(t *testing.T) {
 		{
 			name:       "elector new stake confirmation",
 			boc:        "te6ccgEBAQEAEgAAIPN0SEwAAAGIsvJfewAAAAA=",
-			wantOpName: ElectorNewStakeConfirmationMsgOp,
+			wantOpName: abiElector.ElectorNewStakeConfirmationMsgOp,
 			wantValidate: func(t *testing.T, value any) {
-				body := value.(ElectorNewStakeConfirmationMsgBody)
+				body := value.(*abiElector.NewStakeConfirmation)
 				if body.QueryId != 1686629408635 {
 					t.Fatalf("queryId mismatch")
 				}
@@ -1479,9 +1480,9 @@ func TestMessageDecoder(t *testing.T) {
 		{
 			name:       "elector recover stake request",
 			boc:        "te6ccgEBAQEADgAAGEdldCQAAAAAAAAAAA==",
-			wantOpName: ElectorRecoverStakeRequestMsgOp,
+			wantOpName: abiElector.ElectorRecoverStakeRequestMsgOp,
 			wantValidate: func(t *testing.T, value any) {
-				body := value.(ElectorRecoverStakeRequestMsgBody)
+				body := value.(*abiElector.RecoverStakeRequest)
 				fmt.Printf("body = %v\n", body)
 				if body.QueryId != 0 {
 					t.Fatalf("queryId mismatch")
@@ -1491,9 +1492,9 @@ func TestMessageDecoder(t *testing.T) {
 		{
 			name:       "elector recover stake response",
 			boc:        "te6ccgEBAQEADgAAGPlvcyQAAAAAAAAAAA==",
-			wantOpName: ElectorRecoverStakeResponseMsgOp,
+			wantOpName: abiElector.ElectorRecoverStakeResponseMsgOp,
 			wantValidate: func(t *testing.T, value any) {
-				body := value.(ElectorRecoverStakeResponseMsgBody)
+				body := value.(*abiElector.RecoverStakeResponse)
 				if body.QueryId != 0 {
 					t.Fatalf("queryId mismatch")
 				}

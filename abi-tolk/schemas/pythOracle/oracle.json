@@ -741,6 +741,39 @@
     },
     {
       "kind": "Struct",
+      "name": "ErrorResponse",
+      "prefix": {
+        "prefixStr": "0x10002",
+        "prefixLen": 20
+      },
+      "fields": [
+        {
+          "name": "errorCode",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "operation",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "customPayload",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "slice"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
       "name": "GuardianSetInfo",
       "fields": [
         {
@@ -790,6 +823,12 @@
       "bodyTy": {
         "kind": "StructRef",
         "structName": "OracleResponseSuccess"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ErrorResponse"
       }
     }
   ],

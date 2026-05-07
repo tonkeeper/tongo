@@ -2,9 +2,11 @@ package tolkgen
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"text/template"
 
+	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/tolk/parser"
 	"github.com/tonkeeper/tongo/utils"
 )
@@ -147,10 +149,27 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	if unTupleIfW { // inside `array<T>` or `[T, ...]`, if T is non-primitive, it's a sub-tuple
 		wOnStack, err := tgen.calcWidthOnStack(ty)
 		if err != nil {
-			return "", false, err
+			return "", false, fmt.Errorf("calc width on stack: %w", err)
 		}
 		if wOnStack != 1 {
-			return "", false, fmt.Errorf("non-primitive type in array/slice: %s (width=%d)", ty.String(), wOnStack)
+			expr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty, false)
+			if err != nil {
+				return "", false, fmt.Errorf("tuple inner: %w", err)
+			}
+			goType, err := emitGoType(ty)
+			if err != nil {
+				return "", false, fmt.Errorf("tuple inner type %s: %w", ty.String(), err)
+			}
+			if hasMethod {
+				return fmt.Sprintf(`tlb.ReadTupleFromStack(stack, func(stack *tlb.VmStack) (result %s, err error) {
+	err = result.ReadFromStack(stack)
+	return
+})`, goType), false, nil
+			} else {
+				return fmt.Sprintf(`tlb.ReadTupleFromStack(stack, func(stack *tlb.VmStack) (%s, error) {
+	return %s
+})`, goType, expr), false, nil
+			}
 		}
 	}
 
@@ -166,6 +185,27 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 		return "stack.ReadCell()", false, nil
 	case parser.TyKindBool:
 		return "stack.ReadBool()", false, nil
+	case parser.TyKindArrayOf:
+		innerExpr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty.ArrayOf.Inner, true)
+		if err != nil {
+			return "", false, fmt.Errorf("array inner: %w", err)
+		}
+		goType, err := emitGoType(ty.ArrayOf.Inner)
+		if err != nil {
+			return "", false, fmt.Errorf("array inner type %s: %w", ty.ArrayOf.Inner.String(), err)
+		}
+		if hasMethod {
+			return fmt.Sprintf(
+				`tlb.ReadArrayFromStack[%s](stack, func(stack *tlb.VmStack) (value %s, err error) {
+		err = value.ReadFromStack(stack)
+		return
+	})`, goType, goType), false, nil
+		} else {
+			return fmt.Sprintf(
+				`tlb.ReadArrayFromStack[%s](stack, func(stack *tlb.VmStack) (value %s, err error) {
+		return %s
+	})`, goType, goType, innerExpr), false, nil
+		}
 	case parser.TyKindNullable:
 		if ty.Nullable.StackWidth != 0 {
 			return "", false, fmt.Errorf("nullable type with wide stack is not implemented yet: %s", ty.String())
@@ -181,6 +221,81 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 		return fmt.Sprintf(`tlb.StackReadMaybeCallback(stack, func (stack *tlb.VmStack) (%s, error) {
 	return %s
 })`, innerType, innerRead), false, nil
+	case parser.TyKindTensor:
+		items := ty.Tensor.Items
+		if len(items) > tlb.MaxTensorSize {
+			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
+		}
+		loaders := make([]string, len(items))
+		for i, itemTy := range items {
+			expr, hasMethod, err := tgen.emitStackReadExpr(fmt.Sprintf("result.V%d", i), itemTy, false)
+			if err != nil {
+				return "", false, fmt.Errorf("tensor item %d: %w", i, err)
+			}
+			if hasMethod {
+				loaders[i] = fmt.Sprintf(`
+	if err = result.V%d.ReadFromStack(stack); err != nil {
+		return
+	}`, i)
+			} else {
+				loaders[i] = fmt.Sprintf(`
+	if result.V%d, err = %s; err != nil {
+	return
+}`, i, expr)
+			}
+		}
+		slices.Reverse(loaders)
+		typ, err := emitGoType(ty)
+		if err != nil {
+			return "", false, fmt.Errorf("tensor type %s: %w", ty.String(), err)
+		}
+		return fmt.Sprintf(`(func () (result %s, err error) {
+		%s
+		return
+	})()`, typ, strings.Join(loaders, "")), false, nil
+	case parser.TyKindShapedTuple:
+		items := ty.ShapedTuple.Items
+		if len(items) > tlb.MaxTensorSize {
+			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
+		}
+		loaders := make([]string, len(items))
+		for i, itemTy := range items {
+			expr, hasMethod, err := tgen.emitStackReadExpr(fmt.Sprintf("result.V%d", i), itemTy, true)
+			if err != nil {
+				return "", false, fmt.Errorf("tensor item %d: %w", i, err)
+			}
+			if hasMethod {
+				loaders[i] = fmt.Sprintf(`
+	if err = result.V%d.ReadFromStack(stack); err != nil {
+		return
+	}`, i)
+			} else {
+				loaders[i] = fmt.Sprintf(`
+	if result.V%d, err = %s; err != nil {
+	return
+}`, i, expr)
+			}
+		}
+		slices.Reverse(loaders)
+		typ, err := emitGoType(ty)
+		if err != nil {
+			return "", false, fmt.Errorf("tensor type %s: %w", ty.String(), err)
+		}
+		return fmt.Sprintf(`(func () (result %s, err error) {
+	var tuple tlb.VmStkTuple
+	if tuple, err = stack.ReadTuple(); err != nil {
+		err = fmt.Errorf("read tensor: %%w", err)
+		return
+	}
+	var stack *tlb.VmStack
+	stack, err = tuple.AsStack()
+	if err != nil {
+		err = fmt.Errorf("read tensor items: %%w", err)
+		return
+	}
+		%s
+		return
+	})()`, typ, strings.Join(loaders, "")), false, nil
 	default:
 		return "", false, fmt.Errorf("unexpected type in stack read: %s", ty.String())
 	}

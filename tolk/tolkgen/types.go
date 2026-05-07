@@ -2,15 +2,18 @@ package tolkgen
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/tolk/parser"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 func emitStoreExpr(expr string, ty parser.Ty) (string, error) {
 	switch ty.SumType {
 	case parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins,
 		parser.TyKindAddress, parser.TyKindAddressAny, parser.TyKindAddressOpt,
-		parser.TyKindStructRef, parser.TyKindEnumRef, parser.TyKindAliasRef, parser.TyKindMapKV, parser.TyKindBitsN:
+		parser.TyKindStructRef, parser.TyKindEnumRef, parser.TyKindAliasRef, parser.TyKindMapKV, parser.TyKindBitsN, parser.TyKindTensor:
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
 	case parser.TyKindBool:
 		return fmt.Sprintf("c.WriteBit(%s)", expr), nil
@@ -100,6 +103,29 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 			return fmt.Sprintf(`tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (%s, error) {
 	return %s
 })`, innerType, innerLoadExpr), false, nil
+		}
+	case parser.TyKindTensor:
+		if len(ty.Tensor.Items) > tlb.MaxTensorSize {
+			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(ty.Tensor.Items))
+		}
+		loaders := make([]string, len(ty.Tensor.Items))
+		allHaveMethods := true
+		for i, itemTy := range ty.Tensor.Items {
+			expr, hasMethod, err := st.emitLoadExpr(fmt.Sprintf("%s[%d]", fieldPath, i), itemTy)
+			allHaveMethods = allHaveMethods && hasMethod
+			if err != nil {
+				return "", false, fmt.Errorf("tensor item %d: %w", i, err)
+			}
+			loaders[i] = expr
+		}
+		if allHaveMethods {
+			typ, err := emitGoType(ty)
+			if err != nil {
+				return "", false, fmt.Errorf("tensor type %s: %w", ty.String(), err)
+			}
+			return fmt.Sprintf("tlb.UnmarshalT[%s](c, decoder)", typ), true, nil
+		} else {
+			return "", false, fmt.Errorf("tensor items have no methods")
 		}
 	}
 	return "", false, fmt.Errorf("unknown type %v", ty)
@@ -203,6 +229,34 @@ func emitGoType(ty parser.Ty) (string, error) {
 		return fmt.Sprintf("[]%s", innerType), nil
 	case parser.TyKindVoid:
 		return "struct{}", nil
+	case parser.TyKindTensor:
+		items := ty.Tensor.Items
+		if len(items) > tlb.MaxTensorSize {
+			return "", fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
+		}
+		params, err := utils.MapSliceErr(items, emitGoType)
+		if err != nil {
+			return "", fmt.Errorf("tensor items: %w", err)
+		}
+		if len(items) > 0 {
+			return fmt.Sprintf("tlb.Tensor%d[%s]", len(items), strings.Join(params, ", ")), nil
+		} else {
+			return "tlb.Tensor0", nil
+		}
+	case parser.TyKindShapedTuple:
+		items := ty.ShapedTuple.Items
+		if len(items) > tlb.MaxTensorSize {
+			return "", fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
+		}
+		params, err := utils.MapSliceErr(items, emitGoType)
+		if err != nil {
+			return "", fmt.Errorf("tensor items: %w", err)
+		}
+		if len(items) > 0 {
+			return fmt.Sprintf("tlb.ShapedTuple%d[%s]", len(items), strings.Join(params, ", ")), nil
+		} else {
+			return "tlb.ShapedTuple0", nil
+		}
 	}
 	return "", fmt.Errorf("go type not supported: %v", ty)
 }

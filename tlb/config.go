@@ -91,11 +91,11 @@ type ConfigParam8 struct {
 }
 
 type ConfigParam9 struct {
-	MandatoryParams Hashmap[Int32, struct{}]
+	MandatoryParams Hashmap[Uint32, struct{}]
 }
 
 type ConfigParam10 struct {
-	CriticalParams Hashmap[Int32, struct{}]
+	CriticalParams Hashmap[Uint32, struct{}]
 }
 
 type ConfigProposalSetup struct {
@@ -189,6 +189,7 @@ type WorkchainDescr struct {
 		ZerostateRootHash Bits256
 		ZerostateFileHash Bits256
 		Version           uint32
+		SplitMergeTimings WcSplitMergeTimings
 	} `tlbSumType:"#a7"`
 }
 

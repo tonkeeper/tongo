@@ -147,9 +147,7 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 		}
 	}
 	for _, method := range abi.GetMethods {
-		if method.ReturnTy.SumType == parser.TyKindStructRef {
-			symbols.structIsReturnedFromGetMethod[method.ReturnTy.StructRef.StructName] = true
-		}
+		symbols.markStructsReadFromStack(method.ReturnTy)
 	}
 	var storageType string
 	if abi.Storage.StorageTy != nil {
@@ -170,6 +168,54 @@ type symTable struct {
 	aliases                       map[string]parser.AliasDeclaration
 	structs                       map[string]parser.StructDeclaration
 	structIsReturnedFromGetMethod map[string]bool
+}
+
+func (s *symTable) markStructsReadFromStack(ty parser.Ty) {
+	switch ty.SumType {
+	case parser.TyKindArrayOf:
+		s.markStructsReadFromStack(ty.ArrayOf.Inner)
+	case parser.TyKindStructRef:
+		structName := ty.StructRef.StructName
+		if s.structIsReturnedFromGetMethod[structName] {
+			return
+		}
+		s.structIsReturnedFromGetMethod[structName] = true
+		decl, ok := s.structs[structName]
+		if !ok {
+			return
+		}
+		for _, field := range decl.Fields {
+			fieldTy := field.Ty
+			if len(ty.StructRef.TypeArgs) > 0 {
+				fieldTy = fieldTy.InstantiateGenerics(decl.TypeParams, ty.StructRef.TypeArgs)
+			}
+			s.markStructsReadFromStack(fieldTy)
+		}
+	case parser.TyKindTensor:
+		for _, item := range ty.Tensor.Items {
+			s.markStructsReadFromStack(item)
+		}
+	case parser.TyKindShapedTuple:
+		for _, item := range ty.ShapedTuple.Items {
+			s.markStructsReadFromStack(item)
+		}
+	case parser.TyKindNullable:
+		s.markStructsReadFromStack(ty.Nullable.Inner)
+	case parser.TyKindAliasRef:
+		aliasDecl, ok := s.aliases[ty.AliasRef.AliasName]
+		if !ok {
+			return
+		}
+		targetTy := aliasDecl.TargetTy
+		if len(aliasDecl.TypeParams) > 0 {
+			targetTy = targetTy.InstantiateGenerics(aliasDecl.TypeParams, ty.AliasRef.TypeArgs)
+		}
+		s.markStructsReadFromStack(targetTy)
+	case parser.TyKindUnion:
+		for _, variant := range ty.Union.Variants {
+			s.markStructsReadFromStack(variant.VariantTy)
+		}
+	}
 }
 
 func (tgen TolkGolangGenerator) GenerateGocode() (declarations string, marshalers string, err error) {

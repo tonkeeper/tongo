@@ -92,9 +92,9 @@ type VaultStorage struct {
 	StaticData          tlb.RefT[*VaultStaticData] // Cell<VaultStaticData>
 }
 type CollectionData struct {
-	Next_item_index tlb.Int257          // int
-	Content         boc.Cell            // cell
-	Owner           tlb.InternalAddress // address
+	NextItemIndex tlb.Int257          // int
+	Content       boc.Cell            // cell
+	Owner         tlb.InternalAddress // address
 }
 type StakingData struct {
 	TokensStaked       tlb.Coins   // coins

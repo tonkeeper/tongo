@@ -3,6 +3,7 @@ package tlb
 import (
 	"fmt"
 	"reflect"
+	"slices"
 )
 
 func (t *VmStkTuple) Unmarshal(v any) error {
@@ -97,4 +98,50 @@ func (t VmTuple) RecursiveToSlice(depth int) ([]VmStackValue, error) {
 		sl = append(sl, t.Tail)
 	}
 	return sl, nil
+}
+
+// AsStack flattens tuple items into a stack. Head is the top of the stack. Tail is the bottom.
+// VmStkTuple has this shape: ((((a, b), c), d), e)
+// Result VmStack is: [e, d, c, b, a]
+func (t *VmStkTuple) AsStack() (*VmStack, error) {
+	if t == nil {
+		return &VmStack{}, nil
+	}
+
+	switch t.Len {
+	case 0:
+		return &VmStack{}, nil
+	case 1:
+		if t.Data == nil {
+			return nil, fmt.Errorf("tuple len=1 has nil Data")
+		}
+		return &VmStack{values: []VmStackValue{t.Data.Tail}}, nil
+	}
+
+	cur := t.Data
+	if cur == nil {
+		return nil, fmt.Errorf("tuple len=%d has nil Data", t.Len)
+	}
+
+	items := make([]VmStackValue, 0, int(t.Len))
+	items = append(items, cur.Tail)
+
+	for remaining := int(t.Len) - 1; remaining > 1; remaining-- {
+		ref := cur.Head
+		if ref.Ref == nil {
+			return nil, fmt.Errorf("tuple head for remaining=%d has nil Ref", remaining)
+		}
+		cur = ref.Ref
+		items = append(items, cur.Tail)
+	}
+
+	// Now remaining == 1, so cur.Head must be vm_tupref_single.
+	if cur.Head.Entry == nil {
+		return nil, fmt.Errorf("tuple final head has nil Entry")
+	}
+
+	items = append(items, *cur.Head.Entry)
+	slices.Reverse(items)
+
+	return &VmStack{values: items}, nil
 }

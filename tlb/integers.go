@@ -11568,3 +11568,36 @@ func (u *Bits512) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 func (u Bits512) HexString() string {
 	return hex.EncodeToString(u[:])
 }
+
+func (u Uint128) ToBits() Bits128 {
+	i := big.Int(u)
+	var b Bits128
+	i.FillBytes(b[:])
+	return b
+}
+
+func (b Bits128) ToUint() Uint128 {
+	return Uint128(*new(big.Int).SetBytes(b[:]))
+}
+
+func (u Uint160) ToBits() Bits160 {
+	i := big.Int(u)
+	var b Bits160
+	i.FillBytes(b[:])
+	return b
+}
+
+func (b Bits160) ToUint() Uint160 {
+	return Uint160(*new(big.Int).SetBytes(b[:]))
+}
+
+func (u Uint256) ToBits() Bits256 {
+	i := big.Int(u)
+	var b Bits256
+	i.FillBytes(b[:])
+	return b
+}
+
+func (b Bits256) ToUint() Uint256 {
+	return Uint256(*new(big.Int).SetBytes(b[:]))
+}

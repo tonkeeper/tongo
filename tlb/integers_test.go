@@ -48,6 +48,56 @@ func TestUInt_MarshalJSON(t *testing.T) {
 	}
 }
 
+func TestUintBitsConversions(t *testing.T) {
+	t.Run("128", func(t *testing.T) {
+		want := "0102030405060708090a0b0c0d0e0f10"
+		i, ok := new(big.Int).SetString(want, 16)
+		if !ok {
+			t.Fatalf("invalid test integer")
+		}
+		u := Uint128(*i)
+		b := u.ToBits()
+		if b.HexString() != want {
+			t.Fatalf("ToBits() = %v, want %v", b.HexString(), want)
+		}
+		if got := big.Int(b.ToUint()); got.Cmp(i) != 0 {
+			t.Fatalf("ToUint() = %v, want %v", &got, i)
+		}
+	})
+
+	t.Run("160", func(t *testing.T) {
+		want := "0102030405060708090a0b0c0d0e0f1011121314"
+		i, ok := new(big.Int).SetString(want, 16)
+		if !ok {
+			t.Fatalf("invalid test integer")
+		}
+		u := Uint160(*i)
+		b := u.ToBits()
+		if b.HexString() != want {
+			t.Fatalf("ToBits() = %v, want %v", b.HexString(), want)
+		}
+		if got := big.Int(b.ToUint()); got.Cmp(i) != 0 {
+			t.Fatalf("ToUint() = %v, want %v", &got, i)
+		}
+	})
+
+	t.Run("256", func(t *testing.T) {
+		want := "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
+		i, ok := new(big.Int).SetString(want, 16)
+		if !ok {
+			t.Fatalf("invalid test integer")
+		}
+		u := Uint256(*i)
+		b := u.ToBits()
+		if b.HexString() != want {
+			t.Fatalf("ToBits() = %v, want %v", b.HexString(), want)
+		}
+		if got := big.Int(b.ToUint()); got.Cmp(i) != 0 {
+			t.Fatalf("ToUint() = %v, want %v", &got, i)
+		}
+	})
+}
+
 func TestInt_MarshalJSON(t *testing.T) {
 	type block struct {
 		Seqno Int257

@@ -568,6 +568,33 @@ func (u Bits$bits$) FixedSize() int {
 	return string(bytes)
 }
 
+func GenerateUintBitsConversions(uintSizes, bitsSizes []int) string {
+	bitsBySize := make(map[int]bool, len(bitsSizes))
+	for _, size := range bitsSizes {
+		bitsBySize[size] = true
+	}
+
+	var src string
+	for _, size := range uintSizes {
+		if !bitsBySize[size] {
+			continue
+		}
+		src += strings.ReplaceAll(`
+func (u Uint$N) ToBits() Bits$N {
+	i := big.Int(u)
+	var b Bits$N
+	i.FillBytes(b[:])
+	return b
+}
+
+func (b Bits$N) ToUint() Uint$N {
+	return Uint$N(*new(big.Int).SetBytes(b[:]))
+}
+`, "$N", strconv.Itoa(size))
+	}
+	return src
+}
+
 func nearestPow(i int) int {
 	switch {
 	case i <= 8:

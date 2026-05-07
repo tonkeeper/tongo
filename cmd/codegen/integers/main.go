@@ -36,7 +36,8 @@ import (
 		parser.GenerateConstantInts(64) +
 		parser.GenerateConstantBigInts(intSizes) +
 		parser.GenerateConstantBigUints(uintSizes) +
-		parser.GenerateBitsTypes(bitsSizes)
+		parser.GenerateBitsTypes(bitsSizes) +
+		parser.GenerateUintBitsConversions(uintSizes, bitsSizes)
 
 	formatted, err := format.Source([]byte(src))
 	if err != nil {

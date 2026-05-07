@@ -37,6 +37,7 @@ const (
 	DedustFactory
 	DedustLiquidityDeposit
 	DedustPool
+	DedustV2Cpmm
 	DedustVault
 	Dns
 	Editable
@@ -194,6 +195,8 @@ func (c ContractInterface) String() string {
 		return "dedust_liquidity_deposit "
 	case DedustPool:
 		return "dedust_pool"
+	case DedustV2Cpmm:
+		return "dedust_v2_cpmm"
 	case DedustVault:
 		return "dedust_vault"
 	case Dns:
@@ -450,6 +453,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return DedustLiquidityDeposit
 	case "dedust_pool":
 		return DedustPool
+	case "dedust_v2_cpmm":
+		return DedustV2Cpmm
 	case "dedust_vault":
 		return DedustVault
 	case "dns":
@@ -1383,6 +1388,12 @@ var contractInterfacesOrder = []InterfaceDescription{
 		Name: DedustVault,
 		Results: []string{
 			"GetAsset_DedustResult",
+		},
+	},
+	{
+		Name: DedustV2Cpmm,
+		Results: []string{
+			"GetPoolData_DedustV2Result",
 		},
 	},
 	{
@@ -2375,6 +2386,11 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncDedustSwapExternalMsgBody,
 			decodeFuncDedustSwapPeerMsgBody,
 			decodeFuncJettonBurnNotificationMsgBody,
+		}
+	case DedustV2Cpmm:
+		return []msgDecoderFunc{
+			decodeFuncJettonNotifyMsgBody,
+			decodeFuncJettonTransferMsgBody,
 		}
 	case DedustVault:
 		return []msgDecoderFunc{

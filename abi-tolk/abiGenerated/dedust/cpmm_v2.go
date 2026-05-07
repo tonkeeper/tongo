@@ -48,12 +48,12 @@ type DedustCpmmV2GetPoolData struct {
 	CreatorFeeY          tlb.Coins                                      // coins
 	XLPFeePerToken       Q120X120                                       // Q120X120
 	YLPFeePerToken       Q120X120                                       // Q120X120
-	Rewards              tlb.HashmapE[tlb.Uint2, PoolReward]            // map<uint2, PoolReward>
+	Rewards              tlb.Maybe[tlb.HashmapE[tlb.Uint2, PoolReward]] // map<uint2, PoolReward>?
 }
 
 func DecodeGetPoolData(stack *tlb.VmStack) (result DedustCpmmV2GetPoolData, err error) {
-	if stack.Len() != 19 {
-		err = fmt.Errorf("invalid stack size %d, expected 19", stack.Len())
+	if stack.Len() != 20 {
+		err = fmt.Errorf("invalid stack size %d, expected 20", stack.Len())
 		return
 	}
 	err = result.ReadFromStack(stack)

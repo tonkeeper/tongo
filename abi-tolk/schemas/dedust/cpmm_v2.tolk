@@ -48,7 +48,7 @@ struct DedustCpmmV2GetPoolData {
     creatorFeeY: coins
     xLPFeePerToken: Q120X120
     yLPFeePerToken: Q120X120
-    rewards: map<uint2, PoolReward>
+    rewards: map<uint2, PoolReward>?
 }
 
 get fun get_pool_data(): DedustCpmmV2GetPoolData {

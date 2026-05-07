@@ -234,14 +234,10 @@ func (v DedustCpmmV2GetPoolData) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *DedustCpmmV2GetPoolData) ReadFromStack(stack *tlb.VmStack) (err error) {
-	{
-		cell, err := stack.ReadCell()
-		if err != nil {
-			return fmt.Errorf("failed to read .Rewards: %v", err)
-		}
-		if err = v.Rewards.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
-			return fmt.Errorf("failed to read .Rewards: %v", err)
-		}
+	if v.Rewards, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (tlb.HashmapE[tlb.Uint2, PoolReward], error) {
+		return stack.ReadCell()
+	}); err != nil {
+		return fmt.Errorf("failed to read .Rewards: %v", err)
 	}
 	if err = v.YLPFeePerToken.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .YLPFeePerToken: %v", err)

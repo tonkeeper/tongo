@@ -69,7 +69,41 @@
             <internal name="dedust_payout"/>
         </msg_out>
     </interface>
+    <interface name="dedust_v2_cpmm">
+        <get_method name="get_pool_data" version="dedust_v2"/>
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_notify"/>
+            <internal name="jetton_transfer"/>
+        </msg_out>
+    </interface>
 
+    <get_method name="get_pool_data">
+        <output version="dedust_v2" fixed_length="true">
+            <int name="status">int8</int>
+            <int name="deposit_active">bool</int>
+            <int name="swap_active">bool</int>
+            <slice name="asset_x">msgaddress</slice>
+            <slice name="asset_y">msgaddress</slice>
+            <cell name="wallets_by_assets" nullable="true">cell</cell>
+            <cell name="assets_by_wallets" nullable="true">cell</cell>
+            <cell name="wallets_resolutions" nullable="true">cell</cell>
+            <int name="base_fee_bps">int32</int>
+            <int name="reserve_x">int257</int>
+            <int name="reserve_y">int257</int>
+            <int name="liquidity">int257</int>
+            <int name="protocol_fee_x">int257</int>
+            <int name="protocol_fee_y">int257</int>
+            <int name="created_fee_x">int257</int>
+            <int name="created_fee_y">int257</int>
+            <int name="x_lp_fee_per_token">int257</int>
+            <int name="y_lp_fee_per_token">int257</int>
+            <cell name="rewards" nullable="true">cell</cell>
+        </output>
+    </get_method>
     <get_method name="get_reserves">
         <output version="dedust" fixed_length="true">
             <int name="reserve0">int257</int>

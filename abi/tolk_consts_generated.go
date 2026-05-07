@@ -8,10 +8,9 @@ const (
 	CocoonRoot      ContractInterface = _xmlContractInterfaceEnd + 3
 	CocoonWallet    ContractInterface = _xmlContractInterfaceEnd + 4
 	CocoonWorker    ContractInterface = _xmlContractInterfaceEnd + 5
-	DedustCpmmV2    ContractInterface = _xmlContractInterfaceEnd + 6
-	FfVaultPosition ContractInterface = _xmlContractInterfaceEnd + 7
-	FfVault         ContractInterface = _xmlContractInterfaceEnd + 8
-	PythOracle      ContractInterface = _xmlContractInterfaceEnd + 9
+	FfVaultPosition ContractInterface = _xmlContractInterfaceEnd + 6
+	FfVault         ContractInterface = _xmlContractInterfaceEnd + 7
+	PythOracle      ContractInterface = _xmlContractInterfaceEnd + 8
 )
 
 func init() {
@@ -20,7 +19,6 @@ func init() {
 	tolkContractInterfaceStrings[CocoonRoot] = "cocoon_root"
 	tolkContractInterfaceStrings[CocoonWallet] = "cocoon_wallet"
 	tolkContractInterfaceStrings[CocoonWorker] = "cocoon_worker"
-	tolkContractInterfaceStrings[DedustCpmmV2] = "dedust_cpmm_v2"
 	tolkContractInterfaceStrings[FfVaultPosition] = "ff_vault_position"
 	tolkContractInterfaceStrings[FfVault] = "ff_vault"
 	tolkContractInterfaceStrings[PythOracle] = "pyth_oracle"
@@ -30,7 +28,6 @@ func init() {
 	tolkContractInterfaceFromString["cocoon_root"] = CocoonRoot
 	tolkContractInterfaceFromString["cocoon_wallet"] = CocoonWallet
 	tolkContractInterfaceFromString["cocoon_worker"] = CocoonWorker
-	tolkContractInterfaceFromString["dedust_cpmm_v2"] = DedustCpmmV2
 	tolkContractInterfaceFromString["ff_vault_position"] = FfVaultPosition
 	tolkContractInterfaceFromString["ff_vault"] = FfVault
 	tolkContractInterfaceFromString["pyth_oracle"] = PythOracle

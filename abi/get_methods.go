@@ -133,7 +133,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_pool_address_no_settings":                 {DecodeGetPoolAddressNoSettings_CoffeeResult},
 	"get_pool_creator_address":                     {DecodeGetPoolCreatorAddress_CoffeeResult},
 	"get_pool_creator_address_no_settings":         {DecodeGetPoolCreatorAddressNoSettings_CoffeeResult},
-	"get_pool_data":                                {DecodeGetPoolData_AffluentResult, DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult},
+	"get_pool_data":                                {DecodeGetPoolData_AffluentResult, DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_DedustV2Result, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult},
 	"get_pool_full_data":                           {DecodeGetPoolFullDataResult},
 	"get_pool_info":                                {DecodeGetPoolInfo_BidaskResult, DecodeGetPoolInfo_BidaskDammResult},
 	"get_pool_status":                              {DecodeGetPoolStatusResult},
@@ -506,6 +506,7 @@ var resultTypes = []interface{}{
 	&GetPoolData_AffluentResult{},
 	&GetPoolData_CoffeeResult{},
 	&GetPoolData_DaolamaResult{},
+	&GetPoolData_DedustV2Result{},
 	&GetPoolData_StonfiResult{},
 	&GetPoolData_StonfiV2Result{},
 	&GetPoolData_StonfiV2StableswapResult{},
@@ -5551,6 +5552,28 @@ type GetPoolData_DaolamaResult struct {
 	FeeCollected   uint64
 }
 
+type GetPoolData_DedustV2Result struct {
+	Status             int8
+	DepositActive      bool
+	SwapActive         bool
+	AssetX             tlb.MsgAddress
+	AssetY             tlb.MsgAddress
+	WalletsByAssets    *boc.Cell
+	AssetsByWallets    *boc.Cell
+	WalletsResolutions *boc.Cell
+	BaseFeeBps         int32
+	ReserveX           tlb.Int257
+	ReserveY           tlb.Int257
+	Liquidity          tlb.Int257
+	ProtocolFeeX       tlb.Int257
+	ProtocolFeeY       tlb.Int257
+	CreatedFeeX        tlb.Int257
+	CreatedFeeY        tlb.Int257
+	XLpFeePerToken     tlb.Int257
+	YLpFeePerToken     tlb.Int257
+	Rewards            *boc.Cell
+}
+
 type GetPoolData_StonfiResult struct {
 	Reserve0                   tlb.Int257
 	Reserve1                   tlb.Int257
@@ -5646,7 +5669,7 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_AffluentResult, DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_AffluentResult, DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_DedustV2Result, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -5671,6 +5694,15 @@ func DecodeGetPoolData_DaolamaResult(stack tlb.VmStack) (resultType string, resu
 	var result GetPoolData_DaolamaResult
 	err = stack.Unmarshal(&result)
 	return "GetPoolData_DaolamaResult", result, err
+}
+
+func DecodeGetPoolData_DedustV2Result(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if stack.Len() != 19 || (stack.Peek(18).SumType != "VmStkTinyInt" && stack.Peek(18).SumType != "VmStkInt") || (stack.Peek(17).SumType != "VmStkTinyInt" && stack.Peek(17).SumType != "VmStkInt") || (stack.Peek(16).SumType != "VmStkTinyInt" && stack.Peek(16).SumType != "VmStkInt") || (stack.Peek(15).SumType != "VmStkSlice") || (stack.Peek(14).SumType != "VmStkSlice") || (stack.Peek(13).SumType != "VmStkCell" && stack.Peek(13).SumType != "VmStkNull") || (stack.Peek(12).SumType != "VmStkCell" && stack.Peek(12).SumType != "VmStkNull") || (stack.Peek(11).SumType != "VmStkCell" && stack.Peek(11).SumType != "VmStkNull") || (stack.Peek(10).SumType != "VmStkTinyInt" && stack.Peek(10).SumType != "VmStkInt") || (stack.Peek(9).SumType != "VmStkTinyInt" && stack.Peek(9).SumType != "VmStkInt") || (stack.Peek(8).SumType != "VmStkTinyInt" && stack.Peek(8).SumType != "VmStkInt") || (stack.Peek(7).SumType != "VmStkTinyInt" && stack.Peek(7).SumType != "VmStkInt") || (stack.Peek(6).SumType != "VmStkTinyInt" && stack.Peek(6).SumType != "VmStkInt") || (stack.Peek(5).SumType != "VmStkTinyInt" && stack.Peek(5).SumType != "VmStkInt") || (stack.Peek(4).SumType != "VmStkTinyInt" && stack.Peek(4).SumType != "VmStkInt") || (stack.Peek(3).SumType != "VmStkTinyInt" && stack.Peek(3).SumType != "VmStkInt") || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkCell" && stack.Peek(0).SumType != "VmStkNull") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetPoolData_DedustV2Result
+	err = stack.Unmarshal(&result)
+	return "GetPoolData_DedustV2Result", result, err
 }
 
 func DecodeGetPoolData_StonfiResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {

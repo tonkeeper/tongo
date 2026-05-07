@@ -207,9 +207,6 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	})`, goType, goType, innerExpr), false, nil
 		}
 	case parser.TyKindNullable:
-		if ty.Nullable.StackWidth != 0 {
-			return "", false, fmt.Errorf("nullable type with wide stack is not implemented yet: %s", ty.String())
-		}
 		innerRead, _, err := tgen.emitStackReadExpr(fieldPath, ty.Nullable.Inner, unTupleIfW)
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner: %w", err)
@@ -217,6 +214,14 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 		innerType, err := emitGoType(ty.Nullable.Inner)
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner type %s: %w", ty.Nullable.Inner.String(), err)
+		}
+		if ty.Nullable.StackTypeId != 0 {
+			if ty.Nullable.StackWidth <= 0 {
+				return "", false, fmt.Errorf("nullable type with invalid stack width %d: %s", ty.Nullable.StackWidth, ty.String())
+			}
+			return fmt.Sprintf(`tlb.StackReadWideMaybeCallback(stack, %d, func (stack *tlb.VmStack) (%s, error) {
+	return %s
+})`, ty.Nullable.StackWidth, innerType, innerRead), false, nil
 		}
 		return fmt.Sprintf(`tlb.StackReadMaybeCallback(stack, func (stack *tlb.VmStack) (%s, error) {
 	return %s
@@ -309,11 +314,12 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 			return "", false, fmt.Errorf("cell type %s: %w", ty.String(), err)
 		}
 		if hasMethod {
-			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c boc.Cell) (result %s, err error) {
+			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c *boc.Cell) (result %s, err error) {
 	err = result.UnmarshalTLB(c, tlb.NewDecoder())
-}`, goTyp), false, nil
+	return
+})`, goTyp), false, nil
 		} else {
-			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c boc.Cell) (%s, error) {
+			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c *boc.Cell) (%s, error) {
 	return %s
 }`, goTyp, cellDecExpr), false, nil
 		}

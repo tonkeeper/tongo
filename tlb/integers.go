@@ -53,6 +53,22 @@ func (u *VarUInteger1) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger1) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger1(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger1(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger1: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger2 big.Int
 
 func (u VarUInteger2) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -90,6 +106,22 @@ func (u *VarUInteger2) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger2(z)
+	return nil
+}
+
+func (u *VarUInteger2) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger2(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger2(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger2: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -133,6 +165,22 @@ func (u *VarUInteger3) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger3) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger3(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger3(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger3: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger4 big.Int
 
 func (u VarUInteger4) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -170,6 +218,22 @@ func (u *VarUInteger4) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger4(z)
+	return nil
+}
+
+func (u *VarUInteger4) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger4(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger4(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger4: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -213,6 +277,22 @@ func (u *VarUInteger5) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger5) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger5(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger5(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger5: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger6 big.Int
 
 func (u VarUInteger6) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -250,6 +330,22 @@ func (u *VarUInteger6) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger6(z)
+	return nil
+}
+
+func (u *VarUInteger6) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger6(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger6(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger6: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -293,6 +389,22 @@ func (u *VarUInteger7) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger7) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger7(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger7(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger7: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger8 big.Int
 
 func (u VarUInteger8) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -330,6 +442,22 @@ func (u *VarUInteger8) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger8(z)
+	return nil
+}
+
+func (u *VarUInteger8) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger8(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger8(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger8: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -373,6 +501,22 @@ func (u *VarUInteger9) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger9) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger9(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger9(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger9: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger10 big.Int
 
 func (u VarUInteger10) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -410,6 +554,22 @@ func (u *VarUInteger10) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger10(z)
+	return nil
+}
+
+func (u *VarUInteger10) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger10(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger10(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger10: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -453,6 +613,22 @@ func (u *VarUInteger11) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger11) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger11(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger11(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger11: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger12 big.Int
 
 func (u VarUInteger12) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -490,6 +666,22 @@ func (u *VarUInteger12) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger12(z)
+	return nil
+}
+
+func (u *VarUInteger12) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger12(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger12(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger12: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -533,6 +725,22 @@ func (u *VarUInteger13) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger13) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger13(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger13(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger13: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger14 big.Int
 
 func (u VarUInteger14) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -570,6 +778,22 @@ func (u *VarUInteger14) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger14(z)
+	return nil
+}
+
+func (u *VarUInteger14) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger14(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger14(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger14: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -613,6 +837,22 @@ func (u *VarUInteger15) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger15) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger15(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger15(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger15: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger16 big.Int
 
 func (u VarUInteger16) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -650,6 +890,22 @@ func (u *VarUInteger16) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger16(z)
+	return nil
+}
+
+func (u *VarUInteger16) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger16(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger16(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger16: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -693,6 +949,22 @@ func (u *VarUInteger17) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger17) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger17(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger17(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger17: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger18 big.Int
 
 func (u VarUInteger18) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -730,6 +1002,22 @@ func (u *VarUInteger18) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger18(z)
+	return nil
+}
+
+func (u *VarUInteger18) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger18(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger18(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger18: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -773,6 +1061,22 @@ func (u *VarUInteger19) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger19) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger19(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger19(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger19: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger20 big.Int
 
 func (u VarUInteger20) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -810,6 +1114,22 @@ func (u *VarUInteger20) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger20(z)
+	return nil
+}
+
+func (u *VarUInteger20) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger20(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger20(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger20: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -853,6 +1173,22 @@ func (u *VarUInteger21) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger21) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger21(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger21(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger21: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger22 big.Int
 
 func (u VarUInteger22) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -890,6 +1226,22 @@ func (u *VarUInteger22) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger22(z)
+	return nil
+}
+
+func (u *VarUInteger22) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger22(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger22(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger22: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -933,6 +1285,22 @@ func (u *VarUInteger23) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger23) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger23(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger23(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger23: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger24 big.Int
 
 func (u VarUInteger24) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -970,6 +1338,22 @@ func (u *VarUInteger24) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger24(z)
+	return nil
+}
+
+func (u *VarUInteger24) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger24(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger24(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger24: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1013,6 +1397,22 @@ func (u *VarUInteger25) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger25) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger25(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger25(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger25: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger26 big.Int
 
 func (u VarUInteger26) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1050,6 +1450,22 @@ func (u *VarUInteger26) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger26(z)
+	return nil
+}
+
+func (u *VarUInteger26) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger26(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger26(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger26: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1093,6 +1509,22 @@ func (u *VarUInteger27) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger27) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger27(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger27(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger27: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger28 big.Int
 
 func (u VarUInteger28) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1130,6 +1562,22 @@ func (u *VarUInteger28) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger28(z)
+	return nil
+}
+
+func (u *VarUInteger28) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger28(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger28(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger28: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1173,6 +1621,22 @@ func (u *VarUInteger29) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger29) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger29(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger29(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger29: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger30 big.Int
 
 func (u VarUInteger30) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1210,6 +1674,22 @@ func (u *VarUInteger30) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger30(z)
+	return nil
+}
+
+func (u *VarUInteger30) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger30(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger30(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger30: %v", elem.SumType)
+	}
 	return nil
 }
 
@@ -1253,6 +1733,22 @@ func (u *VarUInteger31) UnmarshalJSON(p []byte) error {
 	return nil
 }
 
+func (u *VarUInteger31) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger31(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger31(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger31: %v", elem.SumType)
+	}
+	return nil
+}
+
 type VarUInteger32 big.Int
 
 func (u VarUInteger32) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -1290,6 +1786,22 @@ func (u *VarUInteger32) UnmarshalJSON(p []byte) error {
 		return fmt.Errorf("invalid integer: %s", p)
 	}
 	*u = VarUInteger32(z)
+	return nil
+}
+
+func (u *VarUInteger32) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = VarUInteger32(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = VarUInteger32(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for VarUInteger32: %v", elem.SumType)
+	}
 	return nil
 }
 

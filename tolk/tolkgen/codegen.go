@@ -138,6 +138,7 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 		structs:                       make(map[string]parser.StructDeclaration),
 		enums:                         make(map[string]parser.EnumDeclaration),
 		structIsReturnedFromGetMethod: make(map[string]bool),
+		enumNeedsReadFromStack:        make(map[string]bool),
 	}
 	for _, decl := range abi.Declarations {
 		switch decl.SumType {
@@ -151,7 +152,7 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 	}
 	for _, method := range abi.GetMethods {
 		if method.ReturnTy.SumType == parser.TyKindStructRef {
-			symbols.structIsReturnedFromGetMethod[method.ReturnTy.StructRef.StructName] = true
+			markReadFromStackDeps(&symbols, method.ReturnTy)
 		}
 	}
 	var storageType string
@@ -174,6 +175,37 @@ type symTable struct {
 	structs                       map[string]parser.StructDeclaration
 	enums                         map[string]parser.EnumDeclaration
 	structIsReturnedFromGetMethod map[string]bool
+	enumNeedsReadFromStack        map[string]bool
+}
+
+// markReadFromStackDeps walks the type tree of a get-method-returned struct
+// and marks every struct/enum that the generated ReadFromStack code will call
+// `.ReadFromStack(stack)` on, so codegen knows to emit that method for it.
+// MapKV value types are skipped: hashmaps come off the stack as a single cell
+// and are unmarshalled via UnmarshalTLB, not field-by-field reads.
+func markReadFromStackDeps(symbols *symTable, ty parser.Ty) {
+	switch ty.SumType {
+	case parser.TyKindStructRef:
+		name := ty.StructRef.StructName
+		if symbols.structIsReturnedFromGetMethod[name] {
+			return
+		}
+		symbols.structIsReturnedFromGetMethod[name] = true
+		decl, ok := symbols.structs[name]
+		if !ok {
+			return
+		}
+		for _, field := range decl.Fields {
+			if field.Ty.SumType == parser.TyKindMapKV {
+				continue
+			}
+			markReadFromStackDeps(symbols, field.Ty)
+		}
+	case parser.TyKindEnumRef:
+		symbols.enumNeedsReadFromStack[ty.EnumRef.EnumName] = true
+	case parser.TyKindNullable:
+		markReadFromStackDeps(symbols, ty.Nullable.Inner)
+	}
 }
 
 func (tgen TolkGolangGenerator) GenerateGocode() (declarations string, marshalers string, err error) {
@@ -522,19 +554,19 @@ func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strin
 
 	// otherwise the user should provide implementation in the same package
 	if !decl.CustomPackUnpack.UnpackFromSlice {
-		expr, _, err := tgen.symbols.emitLoadExpr(decl.Name, decl.EncodedAs)
-		if err != nil {
-			return fmt.Errorf("enum %q load expression: %w", decl.Name, err)
-		}
-		fmt.Fprintf(outMarshal, "\nfunc (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n\tvx, err := %s\n\t*v = %s(vx)\n\treturn err\n}\n",
-			typeIdent, expr, typeIdent)
+		fmt.Fprintf(outMarshal, "\nfunc (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n\treturn (*%s)(v).UnmarshalTLB(c, decoder)\n}\n",
+			typeIdent, encodedType)
 	}
 	if !decl.CustomPackUnpack.PackToBuilder {
-		expr, err := emitStoreExpr(decl.Name, decl.EncodedAs)
+		expr, err := emitStoreExpr(fmt.Sprintf("%s(v)", encodedType), decl.EncodedAs)
 		if err != nil {
 			return fmt.Errorf("enum %q store expression: %w", decl.Name, err)
 		}
 		fmt.Fprintf(outMarshal, "\nfunc (v %s) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {\n\treturn %s\n}\n", typeIdent, expr)
+	}
+	if tgen.symbols.enumNeedsReadFromStack[decl.Name] {
+		fmt.Fprintf(outMarshal, "\nfunc (v *%s) ReadFromStack(stack *tlb.VmStack) error {\n\treturn (*%s)(v).ReadFromStack(stack)\n}\n",
+			typeIdent, encodedType)
 	}
 
 	return nil
@@ -624,6 +656,20 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *s
 		slices.Reverse(fields)
 		for _, field := range fields {
 			publicField := safePublicField(field.Name)
+			if field.Ty.SumType == parser.TyKindMapKV {
+				// HashmapE arrives on the stack as a single cell; pop it and
+				// unmarshal into the typed field rather than assigning the cell directly.
+				fmt.Fprintf(outMarshal, "\t{\n")
+				fmt.Fprintf(outMarshal, "\t\tcell, err := stack.ReadCell()\n")
+				fmt.Fprintf(outMarshal, "\t\tif err != nil {\n")
+				fmt.Fprintf(outMarshal, "\t\t\treturn fmt.Errorf(\"failed to read .%s: %%v\", err)\n", publicField)
+				fmt.Fprintf(outMarshal, "\t\t}\n")
+				fmt.Fprintf(outMarshal, "\t\tif err = v.%s.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {\n", publicField)
+				fmt.Fprintf(outMarshal, "\t\t\treturn fmt.Errorf(\"failed to read .%s: %%v\", err)\n", publicField)
+				fmt.Fprintf(outMarshal, "\t\t}\n")
+				fmt.Fprintf(outMarshal, "\t}\n")
+				continue
+			}
 			expr, hasMethod, err := tgen.emitStackReadExpr(publicField, field.Ty, false)
 			if err != nil {
 				return fmt.Errorf("struct %q field %q stack expression: %w", decl.Name, field.Name, err)

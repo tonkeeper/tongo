@@ -156,6 +156,37 @@ func StackReadMaybeCallback[T any](stack *VmStack, inner func(c *VmStack) (T, er
 	}
 }
 
+func StackReadWideMaybeCallback[T any](stack *VmStack, stackW int, inner func(c *VmStack) (T, error)) (value Maybe[T], err error) {
+	if stackW <= 0 {
+		return Nothing[T](), fmt.Errorf("invalid nullable stack width: %d", stackW)
+	}
+	if stack.Len() < stackW {
+		return Nothing[T](), ErrStackEmpty
+	}
+	typeID := stack.Peek(stackW - 1)
+	isEmpty := false
+	if typeID.SumType == "VmStkInt" {
+		diff, _ := typeID.VmStkInt.Compare(Int257FromInt64(0))
+		isEmpty = diff == 0
+	} else if typeID.SumType == "VmStkTinyInt" {
+		isEmpty = typeID.VmStkTinyInt == 0
+	} else {
+		return Nothing[T](), fmt.Errorf("unexpected stack value type for nullable type id: %s", typeID.SumType)
+	}
+	if isEmpty {
+		for range stackW {
+			stack.Pop()
+		}
+		return Nothing[T](), nil
+	}
+	if value.Value, err = inner(stack); err != nil {
+		return Nothing[T](), err
+	}
+	stack.Pop()
+	value.Exists = true
+	return value, nil
+}
+
 func (m *Maybe[_]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	exist, err := c.ReadBit()
 	if err != nil {

@@ -35,9 +35,9 @@ struct DedustCpmmV2GetPoolData {
     swapActive: bool
     assetX: Asset
     assetY: Asset
-    walletsByAssets: map<uint256, address>
-    assetsByWallets: map<uint256, address>
-    walletsByResolutions: map<uint256, address>
+    walletsByAssets: map<uint256, address>?
+    assetsByWallets: map<uint256, address>?
+    walletsByResolutions: map<uint256, address>?
     baseFeeBPS: uint16
     reserveX: coins
     reserveY: coins

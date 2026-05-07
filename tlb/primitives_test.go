@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -38,6 +40,40 @@ func TestMaybe(t *testing.T) {
 			t.Fatal("not equal")
 		}
 	}
+}
+
+func TestStackReadWideMaybeCallback(t *testing.T) {
+	t.Run("exists", func(t *testing.T) {
+		stack := VmStack{values: []VmStackValue{
+			{SumType: "VmStkTinyInt", VmStkTinyInt: 129},
+			{SumType: "VmStkTinyInt", VmStkTinyInt: 42},
+		}}
+		got, err := StackReadWideMaybeCallback(&stack, 2, func(stack *VmStack) (int64, error) {
+			value, ok := stack.Pop()
+			if !ok {
+				return 0, ErrStackEmpty
+			}
+			return value.VmStkTinyInt, nil
+		})
+		require.NoError(t, err)
+		assert.True(t, got.Exists)
+		assert.Equal(t, int64(42), got.Value)
+		assert.Equal(t, 0, stack.Len())
+	})
+
+	t.Run("nothing", func(t *testing.T) {
+		stack := VmStack{values: []VmStackValue{
+			{SumType: "VmStkTinyInt", VmStkTinyInt: 0},
+			{SumType: "VmStkNull"},
+		}}
+		got, err := StackReadWideMaybeCallback(&stack, 2, func(stack *VmStack) (int64, error) {
+			require.Fail(t, "inner callback must not be called")
+			return 0, nil
+		})
+		require.NoError(t, err)
+		assert.False(t, got.Exists)
+		assert.Equal(t, 0, stack.Len())
+	})
 }
 
 func TestUnary(t *testing.T) {

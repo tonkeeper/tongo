@@ -160,13 +160,13 @@ func ReadTupleFromStack[T any](stack *VmStack, decode func(value *VmStack) (T, e
 	return decode(stack)
 }
 
-func ReadCellFromStack[T any](stack *VmStack, decode func(boc.Cell) (T, error)) (result T, err error) {
+func ReadCellFromStack[T any](stack *VmStack, decode func(*boc.Cell) (T, error)) (result T, err error) {
 	var cell boc.Cell
 	cell, err = stack.ReadCell()
 	if err != nil {
 		return
 	}
-	return decode(cell)
+	return decode(&cell)
 }
 
 // VmCont

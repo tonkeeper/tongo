@@ -30,30 +30,30 @@ type PoolReward struct {
 	LastUpdate      tlb.Uint40 // uint40
 }
 type DedustCpmmV2GetPoolData struct {
-	Status               PoolStatus                                     // PoolStatus
-	DepositActive        bool                                           // bool
-	SwapActive           bool                                           // bool
-	AssetX               Asset                                          // Asset
-	AssetY               Asset                                          // Asset
-	WalletsByAssets      tlb.HashmapE[tlb.Uint256, tlb.InternalAddress] // map<uint256, address>
-	AssetsByWallets      tlb.HashmapE[tlb.Uint256, tlb.InternalAddress] // map<uint256, address>
-	WalletsByResolutions tlb.HashmapE[tlb.Uint256, tlb.InternalAddress] // map<uint256, address>
-	BaseFeeBPS           tlb.Uint16                                     // uint16
-	ReserveX             tlb.Coins                                      // coins
-	ReserveY             tlb.Coins                                      // coins
-	Liquidity            tlb.Coins                                      // coins
-	ProtocolFeeX         tlb.Coins                                      // coins
-	ProtocolFeeY         tlb.Coins                                      // coins
-	CreatorFeeX          tlb.Coins                                      // coins
-	CreatorFeeY          tlb.Coins                                      // coins
-	XLPFeePerToken       Q120X120                                       // Q120X120
-	YLPFeePerToken       Q120X120                                       // Q120X120
-	Rewards              tlb.Maybe[tlb.HashmapE[tlb.Uint2, PoolReward]] // map<uint2, PoolReward>?
+	Status               PoolStatus                                                // PoolStatus
+	DepositActive        bool                                                      // bool
+	SwapActive           bool                                                      // bool
+	AssetX               Asset                                                     // Asset
+	AssetY               Asset                                                     // Asset
+	WalletsByAssets      tlb.Maybe[tlb.HashmapE[tlb.Uint256, tlb.InternalAddress]] // map<uint256, address>?
+	AssetsByWallets      tlb.Maybe[tlb.HashmapE[tlb.Uint256, tlb.InternalAddress]] // map<uint256, address>?
+	WalletsByResolutions tlb.Maybe[tlb.HashmapE[tlb.Uint256, tlb.InternalAddress]] // map<uint256, address>?
+	BaseFeeBPS           tlb.Uint16                                                // uint16
+	ReserveX             tlb.Coins                                                 // coins
+	ReserveY             tlb.Coins                                                 // coins
+	Liquidity            tlb.Coins                                                 // coins
+	ProtocolFeeX         tlb.Coins                                                 // coins
+	ProtocolFeeY         tlb.Coins                                                 // coins
+	CreatorFeeX          tlb.Coins                                                 // coins
+	CreatorFeeY          tlb.Coins                                                 // coins
+	XLPFeePerToken       Q120X120                                                  // Q120X120
+	YLPFeePerToken       Q120X120                                                  // Q120X120
+	Rewards              tlb.Maybe[tlb.HashmapE[tlb.Uint2, PoolReward]]            // map<uint2, PoolReward>?
 }
 
 func DecodeGetPoolData(stack *tlb.VmStack) (result DedustCpmmV2GetPoolData, err error) {
-	if stack.Len() != 20 {
-		err = fmt.Errorf("invalid stack size %d, expected 20", stack.Len())
+	if stack.Len() != 23 {
+		err = fmt.Errorf("invalid stack size %d, expected 23", stack.Len())
 		return
 	}
 	err = result.ReadFromStack(stack)

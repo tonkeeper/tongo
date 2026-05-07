@@ -234,8 +234,11 @@ func (v DedustCpmmV2GetPoolData) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *DedustCpmmV2GetPoolData) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if v.Rewards, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (tlb.HashmapE[tlb.Uint2, PoolReward], error) {
-		return stack.ReadCell()
+	if v.Rewards, err = tlb.StackReadWideMaybeCallback(stack, 2, func(stack *tlb.VmStack) (tlb.HashmapE[tlb.Uint2, PoolReward], error) {
+		return tlb.ReadCellFromStack(stack, func(c *boc.Cell) (result tlb.HashmapE[tlb.Uint2, PoolReward], err error) {
+			err = result.UnmarshalTLB(c, tlb.NewDecoder())
+			return
+		})
 	}); err != nil {
 		return fmt.Errorf("failed to read .Rewards: %v", err)
 	}
@@ -269,32 +272,29 @@ func (v *DedustCpmmV2GetPoolData) ReadFromStack(stack *tlb.VmStack) (err error) 
 	if err = v.BaseFeeBPS.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .BaseFeeBPS: %v", err)
 	}
-	{
-		cell, err := stack.ReadCell()
-		if err != nil {
-			return fmt.Errorf("failed to read .WalletsByResolutions: %v", err)
-		}
-		if err = v.WalletsByResolutions.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
-			return fmt.Errorf("failed to read .WalletsByResolutions: %v", err)
-		}
+	if v.WalletsByResolutions, err = tlb.StackReadWideMaybeCallback(stack, 2, func(stack *tlb.VmStack) (tlb.HashmapE[tlb.Uint256, tlb.InternalAddress], error) {
+		return tlb.ReadCellFromStack(stack, func(c *boc.Cell) (result tlb.HashmapE[tlb.Uint256, tlb.InternalAddress], err error) {
+			err = result.UnmarshalTLB(c, tlb.NewDecoder())
+			return
+		})
+	}); err != nil {
+		return fmt.Errorf("failed to read .WalletsByResolutions: %v", err)
 	}
-	{
-		cell, err := stack.ReadCell()
-		if err != nil {
-			return fmt.Errorf("failed to read .AssetsByWallets: %v", err)
-		}
-		if err = v.AssetsByWallets.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
-			return fmt.Errorf("failed to read .AssetsByWallets: %v", err)
-		}
+	if v.AssetsByWallets, err = tlb.StackReadWideMaybeCallback(stack, 2, func(stack *tlb.VmStack) (tlb.HashmapE[tlb.Uint256, tlb.InternalAddress], error) {
+		return tlb.ReadCellFromStack(stack, func(c *boc.Cell) (result tlb.HashmapE[tlb.Uint256, tlb.InternalAddress], err error) {
+			err = result.UnmarshalTLB(c, tlb.NewDecoder())
+			return
+		})
+	}); err != nil {
+		return fmt.Errorf("failed to read .AssetsByWallets: %v", err)
 	}
-	{
-		cell, err := stack.ReadCell()
-		if err != nil {
-			return fmt.Errorf("failed to read .WalletsByAssets: %v", err)
-		}
-		if err = v.WalletsByAssets.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {
-			return fmt.Errorf("failed to read .WalletsByAssets: %v", err)
-		}
+	if v.WalletsByAssets, err = tlb.StackReadWideMaybeCallback(stack, 2, func(stack *tlb.VmStack) (tlb.HashmapE[tlb.Uint256, tlb.InternalAddress], error) {
+		return tlb.ReadCellFromStack(stack, func(c *boc.Cell) (result tlb.HashmapE[tlb.Uint256, tlb.InternalAddress], err error) {
+			err = result.UnmarshalTLB(c, tlb.NewDecoder())
+			return
+		})
+	}); err != nil {
+		return fmt.Errorf("failed to read .WalletsByAssets: %v", err)
 	}
 	if err = v.AssetY.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .AssetY: %v", err)

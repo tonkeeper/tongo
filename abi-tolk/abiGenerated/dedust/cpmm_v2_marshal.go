@@ -17,6 +17,25 @@ func (v *PoolStatus) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 func (v PoolStatus) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	return PoolStatus.MarshalTLB(c, encoder)
 }
+func (v *Asset) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Value.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Value: %v", err)
+	}
+	return nil
+}
+func (v Asset) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Value.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Value: %v", err)
+	}
+	return nil
+}
+func (v Asset) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *Q120X120) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Value.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .Value: %v", err)

@@ -26,6 +26,18 @@
     },
     {
       "kind": "Struct",
+      "name": "Asset",
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
       "name": "Q120X120",
       "fields": [
         {
@@ -108,13 +120,15 @@
         {
           "name": "assetX",
           "ty": {
-            "kind": "address"
+            "kind": "StructRef",
+            "structName": "Asset"
           }
         },
         {
           "name": "assetY",
           "ty": {
-            "kind": "address"
+            "kind": "StructRef",
+            "structName": "Asset"
           }
         },
         {

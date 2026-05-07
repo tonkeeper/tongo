@@ -17,6 +17,9 @@ const (
 	PoolStatusinitialized   PoolStatus = 2
 )
 
+type Asset struct {
+	Value tlb.MsgAddress // address?
+}
 type Q120X120 struct {
 	Value tlb.VarUInteger32 // varuint32
 }
@@ -30,8 +33,8 @@ type DedustCpmmV2GetPoolData struct {
 	Status               PoolStatus                                     // PoolStatus
 	DepositActive        bool                                           // bool
 	SwapActive           bool                                           // bool
-	AssetX               tlb.InternalAddress                            // address
-	AssetY               tlb.InternalAddress                            // address
+	AssetX               Asset                                          // Asset
+	AssetY               Asset                                          // Asset
 	WalletsByAssets      tlb.HashmapE[tlb.Uint256, tlb.InternalAddress] // map<uint256, address>
 	AssetsByWallets      tlb.HashmapE[tlb.Uint256, tlb.InternalAddress] // map<uint256, address>
 	WalletsByResolutions tlb.HashmapE[tlb.Uint256, tlb.InternalAddress] // map<uint256, address>

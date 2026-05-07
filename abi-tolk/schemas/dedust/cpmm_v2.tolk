@@ -25,12 +25,16 @@ struct PoolReward {
     lastUpdate: uint40 = 0;
 }
 
+struct Asset {
+    value: address?
+}
+
 struct DedustCpmmV2GetPoolData {
     status: PoolStatus
     depositActive: bool
     swapActive: bool
-    assetX: address
-    assetY: address
+    assetX: Asset
+    assetY: Asset
     walletsByAssets: map<uint256, address>
     assetsByWallets: map<uint256, address>
     walletsByResolutions: map<uint256, address>
@@ -52,8 +56,12 @@ get fun get_pool_data(): DedustCpmmV2GetPoolData {
         status: PoolStatus.initialized,
         depositActive: false,
         swapActive: false,
-        assetX: address("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"),
-        assetY: address("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"),
+        assetX: Asset{
+            value: address("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs")
+        },
+        assetY: Asset{
+            value: address("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs")
+        },
         walletsByAssets: createEmptyMap(),
         assetsByWallets: createEmptyMap(),
         walletsByResolutions: createEmptyMap(),

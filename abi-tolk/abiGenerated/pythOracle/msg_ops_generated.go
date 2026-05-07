@@ -3,6 +3,7 @@
 package abiPythOracle
 
 const (
+	PythOracleErrorResponseMsgOp                      = "PythOracleErrorResponse"
 	PythOracleOracleResponseSuccessMsgOp              = "PythOracleOracleResponseSuccess"
 	PythOracleParsePriceFeedUpdatesMessageMsgOp       = "PythOracleParsePriceFeedUpdatesMessage"
 	PythOracleParseUniquePriceFeedUpdatesMessageMsgOp = "PythOracleParseUniquePriceFeedUpdatesMessage"

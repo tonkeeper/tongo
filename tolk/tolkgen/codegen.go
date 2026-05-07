@@ -674,20 +674,6 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *s
 		slices.Reverse(fields)
 		for _, field := range fields {
 			publicField := safePublicField(field.Name)
-			if field.Ty.SumType == parser.TyKindMapKV {
-				// HashmapE arrives on the stack as a single cell; pop it and
-				// unmarshal into the typed field rather than assigning the cell directly.
-				fmt.Fprintf(outMarshal, "\t{\n")
-				fmt.Fprintf(outMarshal, "\t\tcell, err := stack.ReadCell()\n")
-				fmt.Fprintf(outMarshal, "\t\tif err != nil {\n")
-				fmt.Fprintf(outMarshal, "\t\t\treturn fmt.Errorf(\"failed to read .%s: %%v\", err)\n", publicField)
-				fmt.Fprintf(outMarshal, "\t\t}\n")
-				fmt.Fprintf(outMarshal, "\t\tif err = v.%s.UnmarshalTLB(&cell, &tlb.Decoder{}); err != nil {\n", publicField)
-				fmt.Fprintf(outMarshal, "\t\t\treturn fmt.Errorf(\"failed to read .%s: %%v\", err)\n", publicField)
-				fmt.Fprintf(outMarshal, "\t\t}\n")
-				fmt.Fprintf(outMarshal, "\t}\n")
-				continue
-			}
 			expr, hasMethod, err := tgen.emitStackReadExpr(publicField, field.Ty, false)
 			if err != nil {
 				return fmt.Errorf("struct %q field %q stack expression: %w", decl.Name, field.Name, err)

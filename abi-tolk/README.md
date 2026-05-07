@@ -113,7 +113,19 @@ get fun get_nft_data(): NftData {
 get fun get_nft_data(): (bool, int, address, address?, cell?) {
     throw 0;
 }
+```
 
+Note that structures are inlined in stack layout, so this is another equivalent of above:
+
+```tolk
+
+struct Addresses {
+    collection_address: address
+    owner_address: address?
+}
+
+get fun some_method(): (bool, int, Addresses, cell?) {
+}
 ```
 
 ## What is supported
@@ -136,11 +148,13 @@ Primitives:
 
 Structural:
 
-| Tolk type    | Go type       |
-|--------------|---------------|
-| `struct X`   | `struct X`    |
-| `array<T>`   | `[]T`         |
-| `Cell<T>`    | `tlb.RefT<T>` |
+| Tolk type           | Go type                      |
+|---------------------|------------------------------|
+| `struct X`          | `struct X`                   |
+| `array<T>`          | `[]T`                        |
+| `Cell<T>`           | `tlb.RefT<T>`                |
+| tensor `(T1,...Tn)` | `tlb.TensorN[T1,...Tn]`      |
+| tuple `[T1,...Tn]`  | `tlb.ShapedTupleN[T1,...Tn]` |
 
 
 Aliases are straightforward: `type X = T` (tolk) -> `type X = T` (go)
@@ -171,12 +185,6 @@ type ClientMessage struct { // tagged union
     ExtClientGrantRefundSigned          *ExtClientGrantRefundSigned
 }
 ```
-
-
-
-Not supported yet:
-
-* `tuple<T1,Tn>`
 
 Storage and message types should be specialized:
 * `type IncomingMessage = Point<int8>` is ok

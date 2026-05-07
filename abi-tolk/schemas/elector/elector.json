@@ -1,0 +1,821 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "elector",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "NewStake",
+      "prefix": {
+        "prefixStr": "0x4e73744b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "validatorPubkey",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "stakeAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxFactor",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "adnlAddr",
+          "ty": {
+            "kind": "bitsN",
+            "n": 256
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "bitsN",
+              "n": 512
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RecoverStakeRequest",
+      "prefix": {
+        "prefixStr": "0x47657424",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradeCode",
+      "prefix": {
+        "prefixStr": "0x4e436f64",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "code",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ConfigAccepted",
+      "prefix": {
+        "prefixStr": "0xee764f4b",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ConfigRejected",
+      "prefix": {
+        "prefixStr": "0xee764f6f",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ValidatorComplaint",
+      "fields": [
+        {
+          "name": "tag",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "validatorPubkey",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "description",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "createdAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "severity",
+          "ty": {
+            "kind": "uintN",
+            "n": 8
+          }
+        },
+        {
+          "name": "rewardAddr",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "paid",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "suggestedFine",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "suggestedFinePart",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RegisterComplaint",
+      "prefix": {
+        "prefixStr": "0x52674370",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "electionId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "complaint",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "ValidatorComplaint"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VoteComplaint",
+      "prefix": {
+        "prefixStr": "0x56744370",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "signature",
+          "ty": {
+            "kind": "bitsN",
+            "n": 512
+          }
+        },
+        {
+          "name": "signTag",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "validatorIdx",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "electionId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "complaintHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ElectorMember",
+      "fields": [
+        {
+          "name": "stake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "time",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "maxFactor",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "srcAddr",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "adnlAddr",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Elect",
+      "fields": [
+        {
+          "name": "electAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "electClose",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "minStake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalStake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "members",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "ElectorMember"
+            }
+          }
+        },
+        {
+          "name": "failed",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "finished",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ElectorStorage",
+      "fields": [
+        {
+          "name": "elect",
+          "ty": {
+            "kind": "nullable",
+            "inner": {
+              "kind": "cellOf",
+              "inner": {
+                "kind": "StructRef",
+                "structName": "Elect"
+              }
+            }
+          }
+        },
+        {
+          "name": "credits",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "coins"
+            }
+          }
+        },
+        {
+          "name": "pastElections",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 32
+            },
+            "v": {
+              "kind": "slice"
+            }
+          }
+        },
+        {
+          "name": "grams",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "activeId",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "activeHash",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ParticipantListValidatorData",
+      "fields": [
+        {
+          "name": "stake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "maxFactor",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "address",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        },
+        {
+          "name": "adnlAddr",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ParticipantListExtended",
+      "fields": [
+        {
+          "name": "electAt",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "electClose",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        },
+        {
+          "name": "minStake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "totalStake",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "validators",
+          "ty": {
+            "kind": "arrayOf",
+            "inner": {
+              "kind": "shapedTuple",
+              "items": [
+                {
+                  "kind": "uintN",
+                  "n": 256
+                },
+                {
+                  "kind": "StructRef",
+                  "structName": "ParticipantListValidatorData"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "failed",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "finished",
+          "ty": {
+            "kind": "bool"
+          }
+        }
+      ],
+      "customPackUnpack": {
+        "packToBuilder": true,
+        "unpackFromSlice": true
+      }
+    },
+    {
+      "kind": "Struct",
+      "name": "NewStakeConfirmation",
+      "prefix": {
+        "prefixStr": "0xf374484c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "comment",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "RecoverStakeResponse",
+      "prefix": {
+        "prefixStr": "0xf96f7324",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ReturnStake",
+      "prefix": {
+        "prefixStr": "0xee6f454c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "reason",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ErrorResponse",
+      "prefix": {
+        "prefixStr": "0xfffffffe",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpgradeCodeResponse",
+      "prefix": {
+        "prefixStr": "0xce436f64",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "ComplaintResponse",
+      "prefix": {
+        "prefixStr": "0xf2676350",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "VoteComplaintResponse",
+      "prefix": {
+        "prefixStr": "0xd6745240",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "op",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "storageTy": {
+      "kind": "StructRef",
+      "structName": "ElectorStorage"
+    }
+  },
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "NewStake"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "RecoverStakeRequest"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpgradeCode"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ConfigAccepted"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "ConfigRejected"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "RegisterComplaint"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "VoteComplaint"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 86535,
+      "name": "active_election_id",
+      "parameters": [],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 87852,
+      "name": "participates_in",
+      "parameters": [
+        {
+          "name": "validator_key",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 130944,
+      "name": "compute_returned_stake",
+      "parameters": [
+        {
+          "name": "wallet_addr",
+          "ty": {
+            "kind": "uintN",
+            "n": 256
+          }
+        }
+      ],
+      "returnTy": {
+        "kind": "int"
+      }
+    },
+    {
+      "tvmMethodId": 86698,
+      "name": "participant_list_extended",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "ParticipantListExtended"
+      }
+    }
+  ],
+  "thrownErrors": [
+    {
+      "kind": "plainInt",
+      "errCode": 0
+    }
+  ],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

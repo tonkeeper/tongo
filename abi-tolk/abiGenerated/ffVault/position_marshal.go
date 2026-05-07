@@ -120,11 +120,11 @@ func (v *NftData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Index.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .Index: %v", err)
 	}
-	if err = v.Collection_address.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Collection_address: %v", err)
+	if err = v.CollectionAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .CollectionAddress: %v", err)
 	}
-	if err = v.Owner_address.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Owner_address: %v", err)
+	if err = v.OwnerAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
 	}
 	if v.Content, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
 		return c.NextRefV()
@@ -140,11 +140,11 @@ func (v NftData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.Index.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .Index: %v", err)
 	}
-	if err = v.Collection_address.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Collection_address: %v", err)
+	if err = v.CollectionAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .CollectionAddress: %v", err)
 	}
-	if err = v.Owner_address.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Owner_address: %v", err)
+	if err = v.OwnerAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .OwnerAddress: %v", err)
 	}
 	if err = v.Content.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .Content: %v", err)
@@ -164,11 +164,11 @@ func (v *NftData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	}); err != nil {
 		return fmt.Errorf("failed to read .Content: %v", err)
 	}
-	if err = v.Owner_address.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .Owner_address: %v", err)
+	if err = v.OwnerAddress.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
 	}
-	if err = v.Collection_address.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .Collection_address: %v", err)
+	if err = v.CollectionAddress.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .CollectionAddress: %v", err)
 	}
 	if err = v.Index.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .Index: %v", err)

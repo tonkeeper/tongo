@@ -5,8 +5,10 @@ package abi
 import (
 	"context"
 	abiCocoon "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/cocoon"
+	abiElector "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/elector"
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
+	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
 	"github.com/tonkeeper/tongo/ton"
 )
 
@@ -143,6 +145,48 @@ func init() {
 func init() {
 	tolkMethods = append(tolkMethods,
 		MethodDescription{
+			Name: "active_election_id",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiElector.GetActiveElectionId(ctx, executor, id)
+				return "GetActiveElectionId_ElectorResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "participant_list_extended",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiElector.GetParticipantListExtended(ctx, executor, id)
+				return "GetParticipantListExtended_ElectorResult", r, err
+			},
+		},
+	)
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    Elector,
+			Results: []string{"GetActiveElectionId_ElectorResult", "GetParticipantListExtended_ElectorResult"},
+		},
+	)
+
+	registerInMsgUnmarshalerForOpcode[*abiElector.ComplaintResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixComplaintResponse), abiElector.ElectorComplaintResponseMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.ConfigAccepted](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixConfigAccepted), abiElector.ElectorConfigAcceptedMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.ConfigRejected](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixConfigRejected), abiElector.ElectorConfigRejectedMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.ErrorResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixErrorResponse), abiElector.ElectorErrorResponseMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.NewStake](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixNewStake), abiElector.ElectorNewStakeMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.NewStakeConfirmation](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixNewStakeConfirmation), abiElector.ElectorNewStakeConfirmationMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.RecoverStakeRequest](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixRecoverStakeRequest), abiElector.ElectorRecoverStakeRequestMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.RecoverStakeResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixRecoverStakeResponse), abiElector.ElectorRecoverStakeResponseMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.RegisterComplaint](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixRegisterComplaint), abiElector.ElectorRegisterComplaintMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.ReturnStake](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixReturnStake), abiElector.ElectorReturnStakeMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.UpgradeCode](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixUpgradeCode), abiElector.ElectorUpgradeCodeMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.UpgradeCodeResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixUpgradeCodeResponse), abiElector.ElectorUpgradeCodeResponseMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.VoteComplaint](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixVoteComplaint), abiElector.ElectorVoteComplaintMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiElector.VoteComplaintResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixVoteComplaintResponse), abiElector.ElectorVoteComplaintResponseMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
 			Name: "get_nft_data",
 			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
 				r, err := abiFfVault.GetNftData(ctx, executor, id)
@@ -271,8 +315,41 @@ func init() {
 		},
 	)
 
+	registerInMsgUnmarshalerForOpcode[*abiPythOracle.ErrorResponse](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixErrorResponse), abiPythOracle.PythOracleErrorResponseMsgOp)
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.OracleResponseSuccess](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixOracleResponseSuccess), abiPythOracle.PythOracleOracleResponseSuccessMsgOp)
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.ParsePriceFeedUpdatesMessage](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixParsePriceFeedUpdatesMessage), abiPythOracle.PythOracleParsePriceFeedUpdatesMessageMsgOp)
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.ParseUniquePriceFeedUpdatesMessage](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixParseUniquePriceFeedUpdatesMessage), abiPythOracle.PythOracleParseUniquePriceFeedUpdatesMessageMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "get_roles",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiSingleNominatorPool.GetRoles(ctx, executor, id)
+				return "GetRoles_SingleNominatorPoolResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_pool_data",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiSingleNominatorPool.GetPoolData(ctx, executor, id)
+				return "GetPoolData_SingleNominatorPoolResult", r, err
+			},
+		},
+	)
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    SingleNominatorPool,
+			Results: []string{"GetRoles_SingleNominatorPoolResult", "GetPoolData_SingleNominatorPoolResult"},
+		},
+	)
+
+	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.ChangeValidatorAddress](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixChangeValidatorAddress), abiSingleNominatorPool.SingleNominatorPoolChangeValidatorAddressMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.SendRawMsg](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixSendRawMsg), abiSingleNominatorPool.SingleNominatorPoolSendRawMsgMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Upgrade](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixUpgrade), abiSingleNominatorPool.SingleNominatorPoolUpgradeMsgOp)
+	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Withdraw](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixWithdraw), abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp)
 
 }

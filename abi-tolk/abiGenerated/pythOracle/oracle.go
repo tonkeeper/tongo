@@ -125,6 +125,14 @@ type OracleResponseSuccess struct {
 	InitialSender  tlb.InternalAddress              // address
 	AfterOperation boc.Cell                         // cell
 }
+
+const PrefixErrorResponse uint64 = 0x10002
+
+type ErrorResponse struct {
+	ErrorCode     tlb.Uint32 // uint32
+	Operation     tlb.Uint32 // uint32
+	CustomPayload boc.Cell   // Cell<slice>
+}
 type GuardianSetInfo struct {
 	ExpirationTime tlb.Int257 // int
 	KeysDict       boc.Cell   // cell

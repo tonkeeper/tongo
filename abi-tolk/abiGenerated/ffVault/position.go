@@ -33,11 +33,11 @@ type UnstakeExecuteCancel struct {
 	AmountToAdd  tlb.Coins           // coins
 }
 type NftData struct {
-	Init               bool                // bool
-	Index              tlb.Int257          // int
-	Collection_address tlb.InternalAddress // address
-	Owner_address      tlb.MsgAddress      // address?
-	Content            tlb.Maybe[boc.Cell] // cell?
+	Init              bool                // bool
+	Index             tlb.Int257          // int
+	CollectionAddress tlb.InternalAddress // address
+	OwnerAddress      tlb.MsgAddress      // address?
+	Content           tlb.Maybe[boc.Cell] // cell?
 }
 type StakePositionInfo struct {
 	LockedAssetAmount               tlb.Int257 // int

@@ -584,6 +584,43 @@ func (v OracleResponseSuccess) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *ErrorResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(20, PrefixErrorResponse); err != nil {
+		return err
+	}
+	if err = v.ErrorCode.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ErrorCode: %v", err)
+	}
+	if err = v.Operation.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Operation: %v", err)
+	}
+	if v.CustomPayload, err = c.NextRefV(); err != nil {
+		return fmt.Errorf("failed to read .CustomPayload: %v", err)
+	}
+	return nil
+}
+func (v ErrorResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixErrorResponse, 20); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.ErrorCode.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ErrorCode: %v", err)
+	}
+	if err = v.Operation.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Operation: %v", err)
+	}
+	if err = c.AddRef(&v.CustomPayload); err != nil {
+		return fmt.Errorf("failed to .CustomPayload: %v", err)
+	}
+	return nil
+}
+func (v ErrorResponse) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *GuardianSetInfo) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.ExpirationTime.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .ExpirationTime: %v", err)

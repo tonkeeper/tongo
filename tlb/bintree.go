@@ -12,6 +12,9 @@ type BinTree[T any] struct {
 
 func decodeRecursiveBinTree(c *boc.Cell) ([]*boc.Cell, error) {
 	var cellAr []*boc.Cell
+	if c.CellType() == boc.PrunedBranchCell {
+		return cellAr, nil
+	}
 	isBranch, err := c.ReadBit()
 	if err != nil {
 		return nil, err

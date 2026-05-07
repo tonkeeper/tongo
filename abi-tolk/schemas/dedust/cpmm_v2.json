@@ -1,0 +1,273 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "dedust_cpmm_v2",
+  "declarations": [
+    {
+      "kind": "Enum",
+      "name": "PoolStatus",
+      "encodedAs": {
+        "kind": "uintN",
+        "n": 2
+      },
+      "members": [
+        {
+          "name": "uninitialized",
+          "value": "0"
+        },
+        {
+          "name": "initializing",
+          "value": "1"
+        },
+        {
+          "name": "initialized",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Asset",
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "addressOpt"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "Q120X120",
+      "fields": [
+        {
+          "name": "value",
+          "ty": {
+            "kind": "varuintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PoolReward",
+      "fields": [
+        {
+          "name": "remainingTime",
+          "ty": {
+            "kind": "uintN",
+            "n": 40
+          },
+          "defaultValue": {
+            "kind": "int",
+            "v": "0"
+          }
+        },
+        {
+          "name": "remainingBudget",
+          "ty": {
+            "kind": "coins"
+          },
+          "defaultValue": {
+            "kind": "int",
+            "v": "0"
+          }
+        },
+        {
+          "name": "rewardsPerToken",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "Q120X120"
+          }
+        },
+        {
+          "name": "lastUpdate",
+          "ty": {
+            "kind": "uintN",
+            "n": 40
+          },
+          "defaultValue": {
+            "kind": "int",
+            "v": "0"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "DedustCpmmV2GetPoolData",
+      "fields": [
+        {
+          "name": "status",
+          "ty": {
+            "kind": "EnumRef",
+            "enumName": "PoolStatus"
+          }
+        },
+        {
+          "name": "depositActive",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "swapActive",
+          "ty": {
+            "kind": "bool"
+          }
+        },
+        {
+          "name": "assetX",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "Asset"
+          }
+        },
+        {
+          "name": "assetY",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "Asset"
+          }
+        },
+        {
+          "name": "walletsByAssets",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "assetsByWallets",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "walletsByResolutions",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 256
+            },
+            "v": {
+              "kind": "address"
+            }
+          }
+        },
+        {
+          "name": "baseFeeBPS",
+          "ty": {
+            "kind": "uintN",
+            "n": 16
+          }
+        },
+        {
+          "name": "reserveX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "reserveY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "liquidity",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "protocolFeeX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "protocolFeeY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "creatorFeeX",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "creatorFeeY",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "xLPFeePerToken",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "Q120X120"
+          }
+        },
+        {
+          "name": "yLPFeePerToken",
+          "ty": {
+            "kind": "StructRef",
+            "structName": "Q120X120"
+          }
+        },
+        {
+          "name": "rewards",
+          "ty": {
+            "kind": "mapKV",
+            "k": {
+              "kind": "uintN",
+              "n": 2
+            },
+            "v": {
+              "kind": "StructRef",
+              "structName": "PoolReward"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incomingMessages": [],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 81689,
+      "name": "get_pool_data",
+      "parameters": [],
+      "returnTy": {
+        "kind": "StructRef",
+        "structName": "DedustCpmmV2GetPoolData"
+      }
+    }
+  ],
+  "thrownErrors": [],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

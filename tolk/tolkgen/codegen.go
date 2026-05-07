@@ -136,6 +136,7 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 	symbols := symTable{
 		aliases:                       make(map[string]parser.AliasDeclaration),
 		structs:                       make(map[string]parser.StructDeclaration),
+		enums:                         make(map[string]parser.EnumDeclaration),
 		structIsReturnedFromGetMethod: make(map[string]bool),
 	}
 	for _, decl := range abi.Declarations {
@@ -144,6 +145,8 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 			symbols.aliases[decl.AliasDeclaration.Name] = decl.AliasDeclaration
 		case parser.DeclarationKindStruct:
 			symbols.structs[decl.StructDeclaration.Name] = decl.StructDeclaration
+		case parser.DeclarationKindEnum:
+			symbols.enums[decl.EnumDeclaration.Name] = decl.EnumDeclaration
 		}
 	}
 	for _, method := range abi.GetMethods {
@@ -169,6 +172,7 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 type symTable struct {
 	aliases                       map[string]parser.AliasDeclaration
 	structs                       map[string]parser.StructDeclaration
+	enums                         map[string]parser.EnumDeclaration
 	structIsReturnedFromGetMethod map[string]bool
 }
 

@@ -9,6 +9,7 @@ import (
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
+	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
 
@@ -78,6 +79,104 @@ func init() {
 			},
 		},
 	)
+
+	KnownGetMethodsDecoder["get_cocoon_client_data"] = append(KnownGetMethodsDecoder["get_cocoon_client_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetCocoonClientData(&st)
+		return "GetCocoonClientData_CocoonClientResult", r, err
+	})
+	KnownGetMethodsDecoder["get_cocoon_proxy_data"] = append(KnownGetMethodsDecoder["get_cocoon_proxy_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetCocoonProxyData(&st)
+		return "GetCocoonProxyData_CocoonProxyResult", r, err
+	})
+	KnownGetMethodsDecoder["last_proxy_seqno"] = append(KnownGetMethodsDecoder["last_proxy_seqno"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetLastProxySeqno(&st)
+		return "GetLastProxySeqno_CocoonRootResult", r, err
+	})
+	KnownGetMethodsDecoder["get_cocoon_data"] = append(KnownGetMethodsDecoder["get_cocoon_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetCocoonData(&st)
+		return "GetCocoonData_CocoonRootResult", r, err
+	})
+	KnownGetMethodsDecoder["get_cur_params"] = append(KnownGetMethodsDecoder["get_cur_params"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetCurParams(&st)
+		return "GetCurParams_CocoonRootResult", r, err
+	})
+	KnownGetMethodsDecoder["proxy_hash_is_valid"] = append(KnownGetMethodsDecoder["proxy_hash_is_valid"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetProxyHashIsValid(&st)
+		return "GetProxyHashIsValid_CocoonRootResult", r, err
+	})
+	KnownGetMethodsDecoder["worker_hash_is_valid"] = append(KnownGetMethodsDecoder["worker_hash_is_valid"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetWorkerHashIsValid(&st)
+		return "GetWorkerHashIsValid_CocoonRootResult", r, err
+	})
+	KnownGetMethodsDecoder["model_hash_is_valid"] = append(KnownGetMethodsDecoder["model_hash_is_valid"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetModelHashIsValid(&st)
+		return "GetModelHashIsValid_CocoonRootResult", r, err
+	})
+	KnownGetMethodsDecoder["seqno"] = append(KnownGetMethodsDecoder["seqno"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetSeqno(&st)
+		return "GetSeqno_CocoonWalletResult", r, err
+	})
+	KnownGetMethodsDecoder["get_public_key"] = append(KnownGetMethodsDecoder["get_public_key"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetPublicKey(&st)
+		return "GetPublicKey_CocoonWalletResult", r, err
+	})
+	KnownGetMethodsDecoder["get_owner_address"] = append(KnownGetMethodsDecoder["get_owner_address"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetOwnerAddress(&st)
+		return "GetOwnerAddress_CocoonWalletResult", r, err
+	})
+	KnownGetMethodsDecoder["get_cocoon_worker_data"] = append(KnownGetMethodsDecoder["get_cocoon_worker_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiCocoon.DecodeGetCocoonWorkerData(&st)
+		return "GetCocoonWorkerData_CocoonWorkerResult", r, err
+	})
+
+	KnownSimpleGetMethods[75156] = append(KnownSimpleGetMethods[75156], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetCocoonClientData(ctx, executor, id)
+		return "GetCocoonClientData_CocoonClientResult", r, err
+	})
+	KnownSimpleGetMethods[97687] = append(KnownSimpleGetMethods[97687], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetCocoonProxyData(ctx, executor, id)
+		return "GetCocoonProxyData_CocoonProxyResult", r, err
+	})
+	KnownSimpleGetMethods[65647] = append(KnownSimpleGetMethods[65647], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetLastProxySeqno(ctx, executor, id)
+		return "GetLastProxySeqno_CocoonRootResult", r, err
+	})
+	KnownSimpleGetMethods[96613] = append(KnownSimpleGetMethods[96613], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetCocoonData(ctx, executor, id)
+		return "GetCocoonData_CocoonRootResult", r, err
+	})
+	KnownSimpleGetMethods[89457] = append(KnownSimpleGetMethods[89457], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetCurParams(ctx, executor, id)
+		return "GetCurParams_CocoonRootResult", r, err
+	})
+	KnownSimpleGetMethods[85143] = append(KnownSimpleGetMethods[85143], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetSeqno(ctx, executor, id)
+		return "GetSeqno_CocoonWalletResult", r, err
+	})
+	KnownSimpleGetMethods[78748] = append(KnownSimpleGetMethods[78748], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetPublicKey(ctx, executor, id)
+		return "GetPublicKey_CocoonWalletResult", r, err
+	})
+	KnownSimpleGetMethods[114619] = append(KnownSimpleGetMethods[114619], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetOwnerAddress(ctx, executor, id)
+		return "GetOwnerAddress_CocoonWalletResult", r, err
+	})
+	KnownSimpleGetMethods[106427] = append(KnownSimpleGetMethods[106427], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiCocoon.GetCocoonWorkerData(ctx, executor, id)
+		return "GetCocoonWorkerData_CocoonWorkerResult", r, err
+	})
 
 	tolkInterfaceOrder = append(tolkInterfaceOrder,
 		InterfaceDescription{
@@ -160,6 +259,36 @@ func init() {
 		},
 	)
 
+	KnownGetMethodsDecoder["active_election_id"] = append(KnownGetMethodsDecoder["active_election_id"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiElector.DecodeGetActiveElectionId(&st)
+		return "GetActiveElectionId_ElectorResult", r, err
+	})
+	KnownGetMethodsDecoder["participates_in"] = append(KnownGetMethodsDecoder["participates_in"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiElector.DecodeGetParticipatesIn(&st)
+		return "GetParticipatesIn_ElectorResult", r, err
+	})
+	KnownGetMethodsDecoder["compute_returned_stake"] = append(KnownGetMethodsDecoder["compute_returned_stake"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiElector.DecodeGetComputeReturnedStake(&st)
+		return "GetComputeReturnedStake_ElectorResult", r, err
+	})
+	KnownGetMethodsDecoder["participant_list_extended"] = append(KnownGetMethodsDecoder["participant_list_extended"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiElector.DecodeGetParticipantListExtended(&st)
+		return "GetParticipantListExtended_ElectorResult", r, err
+	})
+
+	KnownSimpleGetMethods[86535] = append(KnownSimpleGetMethods[86535], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiElector.GetActiveElectionId(ctx, executor, id)
+		return "GetActiveElectionId_ElectorResult", r, err
+	})
+	KnownSimpleGetMethods[86698] = append(KnownSimpleGetMethods[86698], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiElector.GetParticipantListExtended(ctx, executor, id)
+		return "GetParticipantListExtended_ElectorResult", r, err
+	})
+
 	tolkInterfaceOrder = append(tolkInterfaceOrder,
 		InterfaceDescription{
 			Name:    Elector,
@@ -222,6 +351,58 @@ func init() {
 			},
 		},
 	)
+
+	KnownGetMethodsDecoder["get_nft_data"] = append(KnownGetMethodsDecoder["get_nft_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiFfVault.DecodeGetNftData(&st)
+		return "GetNftData_FfVaultPositionResult", r, err
+	})
+	KnownGetMethodsDecoder["get_stake_position_info"] = append(KnownGetMethodsDecoder["get_stake_position_info"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiFfVault.DecodeGetStakePositionInfo(&st)
+		return "GetStakePositionInfo_FfVaultPositionResult", r, err
+	})
+	KnownGetMethodsDecoder["get_collection_data"] = append(KnownGetMethodsDecoder["get_collection_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiFfVault.DecodeGetCollectionData(&st)
+		return "GetCollectionData_FfVaultResult", r, err
+	})
+	KnownGetMethodsDecoder["get_nft_address_by_index"] = append(KnownGetMethodsDecoder["get_nft_address_by_index"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiFfVault.DecodeGetNftAddressByIndex(&st)
+		return "GetNftAddressByIndex_FfVaultResult", r, err
+	})
+	KnownGetMethodsDecoder["get_staking_data"] = append(KnownGetMethodsDecoder["get_staking_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiFfVault.DecodeGetStakingData(&st)
+		return "GetStakingData_FfVaultResult", r, err
+	})
+	KnownGetMethodsDecoder["get_balance"] = append(KnownGetMethodsDecoder["get_balance"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiFfVault.DecodeGetBalance(&st)
+		return "GetBalance_FfVaultResult", r, err
+	})
+
+	KnownSimpleGetMethods[102351] = append(KnownSimpleGetMethods[102351], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiFfVault.GetNftData(ctx, executor, id)
+		return "GetNftData_FfVaultPositionResult", r, err
+	})
+	KnownSimpleGetMethods[102640] = append(KnownSimpleGetMethods[102640], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiFfVault.GetStakePositionInfo(ctx, executor, id)
+		return "GetStakePositionInfo_FfVaultPositionResult", r, err
+	})
+	KnownSimpleGetMethods[102491] = append(KnownSimpleGetMethods[102491], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiFfVault.GetCollectionData(ctx, executor, id)
+		return "GetCollectionData_FfVaultResult", r, err
+	})
+	KnownSimpleGetMethods[108033] = append(KnownSimpleGetMethods[108033], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiFfVault.GetStakingData(ctx, executor, id)
+		return "GetStakingData_FfVaultResult", r, err
+	})
+	KnownSimpleGetMethods[130343] = append(KnownSimpleGetMethods[130343], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiFfVault.GetBalance(ctx, executor, id)
+		return "GetBalance_FfVaultResult", r, err
+	})
 
 	tolkInterfaceOrder = append(tolkInterfaceOrder,
 		InterfaceDescription{
@@ -308,6 +489,120 @@ func init() {
 		},
 	)
 
+	KnownGetMethodsDecoder["get_update_fee"] = append(KnownGetMethodsDecoder["get_update_fee"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetUpdateFee(&st)
+		return "GetUpdateFee_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_single_update_fee"] = append(KnownGetMethodsDecoder["get_single_update_fee"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetSingleUpdateFee(&st)
+		return "GetSingleUpdateFee_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_governance_data_source_index"] = append(KnownGetMethodsDecoder["get_governance_data_source_index"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetGovernanceDataSourceIndex(&st)
+		return "GetGovernanceDataSourceIndex_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_governance_data_source"] = append(KnownGetMethodsDecoder["get_governance_data_source"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetGovernanceDataSource(&st)
+		return "GetGovernanceDataSource_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_last_executed_governance_sequence"] = append(KnownGetMethodsDecoder["get_last_executed_governance_sequence"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetLastExecutedGovernanceSequence(&st)
+		return "GetLastExecutedGovernanceSequence_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_is_valid_data_source"] = append(KnownGetMethodsDecoder["get_is_valid_data_source"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetIsValidDataSource(&st)
+		return "GetIsValidDataSource_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_price_unsafe"] = append(KnownGetMethodsDecoder["get_price_unsafe"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetPriceUnsafe(&st)
+		return "GetPriceUnsafe_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_price_no_older_than"] = append(KnownGetMethodsDecoder["get_price_no_older_than"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetPriceNoOlderThan(&st)
+		return "GetPriceNoOlderThan_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_ema_price_unsafe"] = append(KnownGetMethodsDecoder["get_ema_price_unsafe"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetEmaPriceUnsafe(&st)
+		return "GetEmaPriceUnsafe_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_ema_price_no_older_than"] = append(KnownGetMethodsDecoder["get_ema_price_no_older_than"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetEmaPriceNoOlderThan(&st)
+		return "GetEmaPriceNoOlderThan_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_chain_id"] = append(KnownGetMethodsDecoder["get_chain_id"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetChainId(&st)
+		return "GetChainId_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_current_guardian_set_index"] = append(KnownGetMethodsDecoder["get_current_guardian_set_index"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetCurrentGuardianSetIndex(&st)
+		return "GetCurrentGuardianSetIndex_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_guardian_set"] = append(KnownGetMethodsDecoder["get_guardian_set"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetGuardianSet(&st)
+		return "GetGuardianSet_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_governance_chain_id"] = append(KnownGetMethodsDecoder["get_governance_chain_id"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetGovernanceChainId(&st)
+		return "GetGovernanceChainId_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["get_governance_contract"] = append(KnownGetMethodsDecoder["get_governance_contract"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetGovernanceContract(&st)
+		return "GetGovernanceContract_PythOracleResult", r, err
+	})
+	KnownGetMethodsDecoder["governance_action_is_consumed"] = append(KnownGetMethodsDecoder["governance_action_is_consumed"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiPythOracle.DecodeGetGovernanceActionIsConsumed(&st)
+		return "GetGovernanceActionIsConsumed_PythOracleResult", r, err
+	})
+
+	KnownSimpleGetMethods[99955] = append(KnownSimpleGetMethods[99955], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetSingleUpdateFee(ctx, executor, id)
+		return "GetSingleUpdateFee_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[98238] = append(KnownSimpleGetMethods[98238], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetGovernanceDataSourceIndex(ctx, executor, id)
+		return "GetGovernanceDataSourceIndex_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[110935] = append(KnownSimpleGetMethods[110935], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetGovernanceDataSource(ctx, executor, id)
+		return "GetGovernanceDataSource_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[70196] = append(KnownSimpleGetMethods[70196], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetLastExecutedGovernanceSequence(ctx, executor, id)
+		return "GetLastExecutedGovernanceSequence_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[122952] = append(KnownSimpleGetMethods[122952], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetChainId(ctx, executor, id)
+		return "GetChainId_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[114628] = append(KnownSimpleGetMethods[114628], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetCurrentGuardianSetIndex(ctx, executor, id)
+		return "GetCurrentGuardianSetIndex_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[102302] = append(KnownSimpleGetMethods[102302], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetGovernanceChainId(ctx, executor, id)
+		return "GetGovernanceChainId_PythOracleResult", r, err
+	})
+	KnownSimpleGetMethods[65842] = append(KnownSimpleGetMethods[65842], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiPythOracle.GetGovernanceContract(ctx, executor, id)
+		return "GetGovernanceContract_PythOracleResult", r, err
+	})
+
 	tolkInterfaceOrder = append(tolkInterfaceOrder,
 		InterfaceDescription{
 			Name:    PythOracle,
@@ -339,6 +634,26 @@ func init() {
 			},
 		},
 	)
+
+	KnownGetMethodsDecoder["get_roles"] = append(KnownGetMethodsDecoder["get_roles"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiSingleNominatorPool.DecodeGetRoles(&st)
+		return "GetRoles_SingleNominatorPoolResult", r, err
+	})
+	KnownGetMethodsDecoder["get_pool_data"] = append(KnownGetMethodsDecoder["get_pool_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiSingleNominatorPool.DecodeGetPoolData(&st)
+		return "GetPoolData_SingleNominatorPoolResult", r, err
+	})
+
+	KnownSimpleGetMethods[130208] = append(KnownSimpleGetMethods[130208], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiSingleNominatorPool.GetRoles(ctx, executor, id)
+		return "GetRoles_SingleNominatorPoolResult", r, err
+	})
+	KnownSimpleGetMethods[81689] = append(KnownSimpleGetMethods[81689], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiSingleNominatorPool.GetPoolData(ctx, executor, id)
+		return "GetPoolData_SingleNominatorPoolResult", r, err
+	})
 
 	tolkInterfaceOrder = append(tolkInterfaceOrder,
 		InterfaceDescription{

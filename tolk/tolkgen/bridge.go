@@ -9,11 +9,13 @@ import (
 	"github.com/tonkeeper/tongo/utils"
 )
 
-// BridgeMethod describes a 0-parameter get method that can be wrapped as abi.InvokeFn.
+// BridgeMethod describes a get method that can be exposed through abi registries.
 type BridgeMethod struct {
 	TolkName   string // e.g. "get_cocoon_data"
 	GoFuncName string // e.g. "GetCocoonData"
 	ResultType string // e.g. "GetCocoonData_CocoonRootResult"
+	MethodID   int    // TVM method id
+	HasParams  bool
 }
 
 // PrefixedStruct describes a TLB struct with a fixed opcode prefix.
@@ -28,7 +30,7 @@ type PrefixedStruct struct {
 type BridgeContract struct {
 	InterfaceName string         // abi.ContractInterface const, e.g. "CocoonRoot"
 	StringName    string         // snake_case identifier, e.g. "cocoon_root"
-	Methods       []BridgeMethod // 0-param get methods only
+	Methods       []BridgeMethod // all get methods
 	Results       []string       // method result type strings for interface detection
 }
 
@@ -69,17 +71,18 @@ func BridgeGroupFromEntries(groupName, modulePath, outputDir string, entries []S
 		var methods []BridgeMethod
 		var results []string
 		for _, m := range e.ABI.GetMethods {
-			if len(m.Parameters) > 0 {
-				continue // only 0-param methods can be wrapped as InvokeFn
-			}
 			goFunc := MethodGoName(m.Name)
 			resultType := goFunc + "_" + ifaceName + "Result"
 			methods = append(methods, BridgeMethod{
 				TolkName:   m.Name,
 				GoFuncName: goFunc,
 				ResultType: resultType,
+				MethodID:   m.TvmMethodID,
+				HasParams:  len(m.Parameters) > 0,
 			})
-			results = append(results, resultType)
+			if len(m.Parameters) == 0 {
+				results = append(results, resultType)
+			}
 		}
 
 		contracts = append(contracts, BridgeContract{
@@ -170,10 +173,13 @@ func GenerateAllBridgesFile(groups []BridgeGroup) (string, error) {
 func writeBridgeBody(out *strings.Builder, g BridgeGroup) error {
 	fmt.Fprintf(out, "func init() {\n")
 
-	if hasAnyMethods(g) {
+	if hasAnyInvokableMethods(g) {
 		fmt.Fprintf(out, "\ttolkMethods = append(tolkMethods,\n")
 		for _, c := range g.Contracts {
 			for _, m := range c.Methods {
+				if m.HasParams {
+					continue // only 0-param methods can be wrapped as InvokeFn
+				}
 				fmt.Fprintf(out,
 					`		MethodDescription{
 			Name: %q,
@@ -186,6 +192,36 @@ func writeBridgeBody(out *strings.Builder, g BridgeGroup) error {
 			}
 		}
 		fmt.Fprintf(out, "\t)\n\n")
+	}
+
+	if hasAnyMethods(g) {
+		for _, c := range g.Contracts {
+			for _, m := range c.Methods {
+				fmt.Fprintf(out,
+					`	KnownGetMethodsDecoder[%q] = append(KnownGetMethodsDecoder[%q], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := %s.Decode%s(&st)
+		return %q, r, err
+	})
+`, m.TolkName, m.TolkName, g.PackageAlias, m.GoFuncName, m.ResultType)
+			}
+		}
+		fmt.Fprintf(out, "\n")
+
+		for _, c := range g.Contracts {
+			for _, m := range c.Methods {
+				if m.HasParams {
+					continue
+				}
+				fmt.Fprintf(out,
+					`	KnownSimpleGetMethods[%d] = append(KnownSimpleGetMethods[%d], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := %s.%s(ctx, executor, id)
+		return %q, r, err
+	})
+`, m.MethodID, m.MethodID, g.PackageAlias, m.GoFuncName, m.ResultType)
+			}
+		}
+		fmt.Fprintf(out, "\n")
 	}
 
 	if hasDetectableIfaces(g) {
@@ -231,6 +267,17 @@ func hasAnyMethods(g BridgeGroup) bool {
 	for _, c := range g.Contracts {
 		if len(c.Methods) > 0 {
 			return true
+		}
+	}
+	return false
+}
+
+func hasAnyInvokableMethods(g BridgeGroup) bool {
+	for _, c := range g.Contracts {
+		for _, m := range c.Methods {
+			if !m.HasParams {
+				return true
+			}
 		}
 	}
 	return false

@@ -176,20 +176,23 @@ type WorkchainDescr struct {
 		ZerostateRootHash Bits256
 		ZerostateFileHash Bits256
 		Version           uint32
+		Format            WorkchainFormat
 	} `tlbSumType:"#a6"`
 	WorkchainV2 struct {
-		EnabledSince      uint32
-		ActualMinSplit    uint8
-		MinSplit          uint8
-		MaxSplit          uint8
-		Basic             Uint1
-		Active            bool
-		AcceptMsgs        bool
-		Flags             Uint13
-		ZerostateRootHash Bits256
-		ZerostateFileHash Bits256
-		Version           uint32
-		SplitMergeTimings WcSplitMergeTimings
+		EnabledSince              uint32
+		ActualMinSplit            uint8
+		MinSplit                  uint8
+		MaxSplit                  uint8
+		Basic                     Uint1
+		Active                    bool
+		AcceptMsgs                bool
+		Flags                     Uint13
+		ZerostateRootHash         Bits256
+		ZerostateFileHash         Bits256
+		Version                   uint32
+		Format                    WorkchainFormat
+		SplitMergeTimings         WcSplitMergeTimings
+		PersistentStateSplitDepth uint8
 	} `tlbSumType:"#a7"`
 }
 

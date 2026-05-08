@@ -6,6 +6,9 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestConvertBlockchainConfig(t *testing.T) {
@@ -26,40 +29,31 @@ func TestConvertBlockchainConfig(t *testing.T) {
 			expectedFilename:     "testdata/config_4324374",
 			expectedBrokenParams: []int{79},
 		},
+		{
+			name:                "mainnet config at 2026 May 8",
+			configProofFilename: "testdata/config_proof_65466080.boc",
+			expectedFilename:    "testdata/config_65466080",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			configProof, err := os.ReadFile(tt.configProofFilename)
-			if err != nil {
-				t.Fatalf("os.ReadFile() failed: %v", err)
-			}
+			require.NoError(t, err, "failed to read config proof from %s", tt.configProofFilename)
 			params, err := DecodeConfigParams(configProof)
-			if err != nil {
-				t.Fatalf("DecodeConfigParams() failed: %v", err)
-			}
+			require.NoError(t, err, "DecodeConfigParams() failed")
 			config, brokenParams, err := ConvertBlockchainConfig(params, true)
-			if err != nil {
-				t.Fatalf("ConvertBlockchainConfig() failed: %v", err)
-			}
+			require.NoError(t, err, "ConvertBlockchainConfig() failed")
 			bs, err := json.MarshalIndent(config, "", "  ")
-			if err != nil {
-				t.Fatalf("json.MarshalIndent() failed: %v", err)
-			}
+			require.NoError(t, err, "MarshalIndent() failed")
 			if !reflect.DeepEqual(brokenParams, tt.expectedBrokenParams) {
 				t.Fatalf("expected: %v\nactual: %v", tt.expectedBrokenParams, brokenParams)
 			}
 			outputFilename := fmt.Sprintf("%s.output.json", tt.expectedFilename)
-			if err := os.WriteFile(outputFilename, bs, 0644); err != nil {
-				t.Fatalf("os.WriteFile() failed: %v", err)
-			}
+			require.NoError(t, os.WriteFile(outputFilename, bs, 0644))
 			expectedFilename := fmt.Sprintf("%s.json", tt.expectedFilename)
 			expected, err := os.ReadFile(expectedFilename)
-			if err != nil {
-				t.Fatalf("os.ReadFile() failed: %v", err)
-			}
-			if string(expected) != string(bs) {
-				t.Fatalf("expected: %s\nactual: %s", expected, bs)
-			}
+			require.NoError(t, err)
+			assert.Equal(t, string(expected), string(bs))
 		})
 	}
 }

@@ -56,8 +56,6 @@
   },
   "ConfigParam10": {
     "CriticalParams": {
-      "-1000": {},
-      "-1001": {},
       "0": {},
       "1": {},
       "10": {},
@@ -69,6 +67,8 @@
       "32": {},
       "34": {},
       "36": {},
+      "4294966295": {},
+      "4294966296": {},
       "9": {}
     }
   },
@@ -114,7 +114,15 @@
           "Flags": 0,
           "ZerostateRootHash": "55b13f6d0e1d0c34c9c2160f6f918e92d82bf9ddcf8de2e4c94a3fdf39d15446",
           "ZerostateFileHash": "ee0bedfe4b32761fb35e9e1d8818ea720cad1a0e7b4d2ed673c488e72e910342",
-          "Version": 0
+          "Version": 0,
+          "Format": {
+            "SumType": "WorkchainFormat1",
+            "WorkchainFormat1": {
+              "Magic": "0x1",
+              "VmVersion": -1,
+              "VmMode": 0
+            }
+          }
         },
         "WorkchainV2": {
           "EnabledSince": 0,
@@ -127,7 +135,16 @@
           "Flags": 0,
           "ZerostateRootHash": "0000000000000000000000000000000000000000000000000000000000000000",
           "ZerostateFileHash": "0000000000000000000000000000000000000000000000000000000000000000",
-          "Version": 0
+          "Version": 0,
+          "Format": null,
+          "SplitMergeTimings": {
+            "Magic": "0x0",
+            "SplitMergeDelay": 0,
+            "SplitMergeInterval": 0,
+            "MinSplitMergeInterval": 0,
+            "MaxSplitMergeDelay": 0
+          },
+          "PersistentStateSplitDepth": 0
         }
       }
     }

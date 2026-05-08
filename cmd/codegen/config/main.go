@@ -33,9 +33,6 @@ func main() {
 
 	g := parser.NewGenerator(
 		parser.WithTlbPackage(""),
-		// WorkchainFormat is a parameterized type used as (WorkchainFormat basic) in TLB; the
-		// generator cannot express the parameterized application as a plain Go type, so skip it.
-		parser.WithSkipTypes("WorkchainFormat"),
 	)
 	s, err := g.GenerateGolangTypes(filtered, "", false)
 	if err != nil {

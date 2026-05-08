@@ -28,10 +28,9 @@ type TlbType struct {
 }
 
 type Generator struct {
-	knownTypes     map[string]DefaultType
-	newTlbTypes    map[string]TlbType
-	tlbPkg         string          // package prefix for tlb types, e.g. "tlb"; empty when generating for the tlb package itself
-	skipFieldTypes map[string]bool // field types to omit from generated structs
+	knownTypes  map[string]DefaultType
+	newTlbTypes map[string]TlbType
+	tlbPkg      string // package prefix for tlb types, e.g. "tlb"; empty when generating for the tlb package itself
 }
 
 var (
@@ -91,25 +90,12 @@ func WithTlbPackage(pkg string) Option {
 	}
 }
 
-// WithSkipTypes causes fields whose resolved Go type matches any of the given
-// names to be omitted from the generated output. Use this for TLB types that
-// cannot be expressed as a plain Go type (e.g. parameterized type applications
-// whose parameter is a runtime variable rather than a constant).
-func WithSkipTypes(types ...string) Option {
-	return func(g *Generator) {
-		for _, t := range types {
-			g.skipFieldTypes[t] = true
-		}
-	}
-}
-
 func NewGenerator(options ...Option) *Generator {
 
 	g := &Generator{
-		knownTypes:     maps.Clone(defaultKnownTypes),
-		newTlbTypes:    make(map[string]TlbType),
-		tlbPkg:         "tlb",
-		skipFieldTypes: make(map[string]bool),
+		knownTypes:  maps.Clone(defaultKnownTypes),
+		newTlbTypes: make(map[string]TlbType),
+		tlbPkg:      "tlb",
 	}
 	for _, o := range options {
 		o(g)
@@ -241,9 +227,6 @@ func (g *Generator) fieldDefinitionsToStruct(definitions []FieldDefinition, encl
 			return "", err
 		}
 		typeName := t.String()
-		if g.skipFieldTypes[typeName] {
-			continue
-		}
 		if enclosingType != "" && typeName == enclosingType {
 			t = golangType{name: "*" + typeName, tag: t.tag}
 		}

@@ -201,42 +201,79 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiCocoon.CocoonAddModelTypeMsgOp] = abiCocoon.AddModelType{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.AddModelType](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixAddModelType), abiCocoon.CocoonAddModelTypeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonAddProxyTypeMsgOp] = abiCocoon.AddProxyType{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.AddProxyType](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixAddProxyType), abiCocoon.CocoonAddProxyTypeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonAddWorkerTypeMsgOp] = abiCocoon.AddWorkerType{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.AddWorkerType](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixAddWorkerType), abiCocoon.CocoonAddWorkerTypeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonChangeFeesMsgOp] = abiCocoon.ChangeFees{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ChangeFees](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixChangeFees), abiCocoon.CocoonChangeFeesMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonChangeOwnerMsgOp] = abiCocoon.ChangeOwner{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ChangeOwner](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixChangeOwner), abiCocoon.CocoonChangeOwnerMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonChangeParamsMsgOp] = abiCocoon.ChangeParams{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ChangeParams](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixChangeParams), abiCocoon.CocoonChangeParamsMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonClientProxyRequestMsgOp] = abiCocoon.ClientProxyRequest{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ClientProxyRequest](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixClientProxyRequest), abiCocoon.CocoonClientProxyRequestMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonDelModelTypeMsgOp] = abiCocoon.DelModelType{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.DelModelType](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixDelModelType), abiCocoon.CocoonDelModelTypeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonDelProxyTypeMsgOp] = abiCocoon.DelProxyType{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.DelProxyType](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixDelProxyType), abiCocoon.CocoonDelProxyTypeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonDelWorkerTypeMsgOp] = abiCocoon.DelWorkerType{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.DelWorkerType](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixDelWorkerType), abiCocoon.CocoonDelWorkerTypeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtClientChargeSignedMsgOp] = abiCocoon.ExtClientChargeSigned{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtClientChargeSigned](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtClientChargeSigned), abiCocoon.CocoonExtClientChargeSignedMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtClientGrantRefundSignedMsgOp] = abiCocoon.ExtClientGrantRefundSigned{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtClientGrantRefundSigned](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtClientGrantRefundSigned), abiCocoon.CocoonExtClientGrantRefundSignedMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtClientTopUpMsgOp] = abiCocoon.ExtClientTopUp{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtClientTopUp](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtClientTopUp), abiCocoon.CocoonExtClientTopUpMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtProxyCloseCompleteRequestSignedMsgOp] = abiCocoon.ExtProxyCloseCompleteRequestSigned{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtProxyCloseCompleteRequestSigned](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtProxyCloseCompleteRequestSigned), abiCocoon.CocoonExtProxyCloseCompleteRequestSignedMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtProxyCloseRequestSignedMsgOp] = abiCocoon.ExtProxyCloseRequestSigned{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtProxyCloseRequestSigned](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtProxyCloseRequestSigned), abiCocoon.CocoonExtProxyCloseRequestSignedMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtProxyIncreaseStakeMsgOp] = abiCocoon.ExtProxyIncreaseStake{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtProxyIncreaseStake](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtProxyIncreaseStake), abiCocoon.CocoonExtProxyIncreaseStakeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonExtProxyPayoutRequestMsgOp] = abiCocoon.ExtProxyPayoutRequest{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ExtProxyPayoutRequest](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixExtProxyPayoutRequest), abiCocoon.CocoonExtProxyPayoutRequestMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerClientChangeSecretHashMsgOp] = abiCocoon.OwnerClientChangeSecretHash{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerClientChangeSecretHash](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerClientChangeSecretHash), abiCocoon.CocoonOwnerClientChangeSecretHashMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerClientChangeSecretHashAndTopUpMsgOp] = abiCocoon.OwnerClientChangeSecretHashAndTopUp{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerClientChangeSecretHashAndTopUp](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerClientChangeSecretHashAndTopUp), abiCocoon.CocoonOwnerClientChangeSecretHashAndTopUpMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerClientIncreaseStakeMsgOp] = abiCocoon.OwnerClientIncreaseStake{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerClientIncreaseStake](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerClientIncreaseStake), abiCocoon.CocoonOwnerClientIncreaseStakeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerClientRegisterMsgOp] = abiCocoon.OwnerClientRegister{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerClientRegister](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerClientRegister), abiCocoon.CocoonOwnerClientRegisterMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerClientRequestRefundMsgOp] = abiCocoon.OwnerClientRequestRefund{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerClientRequestRefund](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerClientRequestRefund), abiCocoon.CocoonOwnerClientRequestRefundMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerClientWithdrawMsgOp] = abiCocoon.OwnerClientWithdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerClientWithdraw](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerClientWithdraw), abiCocoon.CocoonOwnerClientWithdrawMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerProxyCloseMsgOp] = abiCocoon.OwnerProxyClose{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerProxyClose](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerProxyClose), abiCocoon.CocoonOwnerProxyCloseMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonOwnerWalletSendMessageMsgOp] = abiCocoon.OwnerWalletSendMessage{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.OwnerWalletSendMessage](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixOwnerWalletSendMessage), abiCocoon.CocoonOwnerWalletSendMessageMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonPayoutMsgOp] = abiCocoon.Payout{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.Payout](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixPayout), abiCocoon.CocoonPayoutMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonRegisterProxyMsgOp] = abiCocoon.RegisterProxy{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.RegisterProxy](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixRegisterProxy), abiCocoon.CocoonRegisterProxyMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonResetRootMsgOp] = abiCocoon.ResetRoot{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ResetRoot](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixResetRoot), abiCocoon.CocoonResetRootMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonReturnExcessesBackMsgOp] = abiCocoon.ReturnExcessesBack{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ReturnExcessesBack](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixReturnExcessesBack), abiCocoon.CocoonReturnExcessesBackMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonTextCmdMsgOp] = abiCocoon.TextCmd{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.TextCmd](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixTextCmd), abiCocoon.CocoonTextCmdMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonTextCommandMsgOp] = abiCocoon.TextCommand{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.TextCommand](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixTextCommand), abiCocoon.CocoonTextCommandMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonUnregisterProxyMsgOp] = abiCocoon.UnregisterProxy{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UnregisterProxy](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUnregisterProxy), abiCocoon.CocoonUnregisterProxyMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonUpdateProxyMsgOp] = abiCocoon.UpdateProxy{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UpdateProxy](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUpdateProxy), abiCocoon.CocoonUpdateProxyMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonUpgradeCodeMsgOp] = abiCocoon.UpgradeCode{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UpgradeCode](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUpgradeCode), abiCocoon.CocoonUpgradeCodeMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonUpgradeContractsMsgOp] = abiCocoon.UpgradeContracts{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UpgradeContracts](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUpgradeContracts), abiCocoon.CocoonUpgradeContractsMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonUpgradeFullMsgOp] = abiCocoon.UpgradeFull{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.UpgradeFull](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixUpgradeFull), abiCocoon.CocoonUpgradeFullMsgOp)
+	KnownMsgInTypes[abiCocoon.CocoonWorkerProxyRequestMsgOp] = abiCocoon.WorkerProxyRequest{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.WorkerProxyRequest](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixWorkerProxyRequest), abiCocoon.CocoonWorkerProxyRequestMsgOp)
 
 }
@@ -296,19 +333,33 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiElector.ElectorComplaintResponseMsgOp] = abiElector.ComplaintResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.ComplaintResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixComplaintResponse), abiElector.ElectorComplaintResponseMsgOp)
+	KnownMsgInTypes[abiElector.ElectorConfigAcceptedMsgOp] = abiElector.ConfigAccepted{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.ConfigAccepted](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixConfigAccepted), abiElector.ElectorConfigAcceptedMsgOp)
+	KnownMsgInTypes[abiElector.ElectorConfigRejectedMsgOp] = abiElector.ConfigRejected{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.ConfigRejected](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixConfigRejected), abiElector.ElectorConfigRejectedMsgOp)
+	KnownMsgInTypes[abiElector.ElectorErrorResponseMsgOp] = abiElector.ErrorResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.ErrorResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixErrorResponse), abiElector.ElectorErrorResponseMsgOp)
+	KnownMsgInTypes[abiElector.ElectorNewStakeMsgOp] = abiElector.NewStake{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.NewStake](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixNewStake), abiElector.ElectorNewStakeMsgOp)
+	KnownMsgInTypes[abiElector.ElectorNewStakeConfirmationMsgOp] = abiElector.NewStakeConfirmation{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.NewStakeConfirmation](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixNewStakeConfirmation), abiElector.ElectorNewStakeConfirmationMsgOp)
+	KnownMsgInTypes[abiElector.ElectorRecoverStakeRequestMsgOp] = abiElector.RecoverStakeRequest{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.RecoverStakeRequest](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixRecoverStakeRequest), abiElector.ElectorRecoverStakeRequestMsgOp)
+	KnownMsgInTypes[abiElector.ElectorRecoverStakeResponseMsgOp] = abiElector.RecoverStakeResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.RecoverStakeResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixRecoverStakeResponse), abiElector.ElectorRecoverStakeResponseMsgOp)
+	KnownMsgInTypes[abiElector.ElectorRegisterComplaintMsgOp] = abiElector.RegisterComplaint{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.RegisterComplaint](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixRegisterComplaint), abiElector.ElectorRegisterComplaintMsgOp)
+	KnownMsgInTypes[abiElector.ElectorReturnStakeMsgOp] = abiElector.ReturnStake{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.ReturnStake](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixReturnStake), abiElector.ElectorReturnStakeMsgOp)
+	KnownMsgInTypes[abiElector.ElectorUpgradeCodeMsgOp] = abiElector.UpgradeCode{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.UpgradeCode](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixUpgradeCode), abiElector.ElectorUpgradeCodeMsgOp)
+	KnownMsgInTypes[abiElector.ElectorUpgradeCodeResponseMsgOp] = abiElector.UpgradeCodeResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.UpgradeCodeResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixUpgradeCodeResponse), abiElector.ElectorUpgradeCodeResponseMsgOp)
+	KnownMsgInTypes[abiElector.ElectorVoteComplaintMsgOp] = abiElector.VoteComplaint{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.VoteComplaint](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixVoteComplaint), abiElector.ElectorVoteComplaintMsgOp)
+	KnownMsgInTypes[abiElector.ElectorVoteComplaintResponseMsgOp] = abiElector.VoteComplaintResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.VoteComplaintResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixVoteComplaintResponse), abiElector.ElectorVoteComplaintResponseMsgOp)
 
 }
@@ -415,16 +466,27 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiFfVault.FfVaultAssetDepositMsgOp] = abiFfVault.AssetDeposit{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.AssetDeposit](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixAssetDeposit), abiFfVault.FfVaultAssetDepositMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultStableDepositMsgOp] = abiFfVault.StableDeposit{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.StableDeposit](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixStableDeposit), abiFfVault.FfVaultStableDepositMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultStakeOperationMsgOp] = abiFfVault.StakeOperation{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.StakeOperation](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixStakeOperation), abiFfVault.FfVaultStakeOperationMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultUnstakeExecuteMsgOp] = abiFfVault.UnstakeExecute{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.UnstakeExecute](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixUnstakeExecute), abiFfVault.FfVaultUnstakeExecuteMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultUnstakeExecuteCancelMsgOp] = abiFfVault.UnstakeExecuteCancel{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.UnstakeExecuteCancel](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixUnstakeExecuteCancel), abiFfVault.FfVaultUnstakeExecuteCancelMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultUnstakeExecuteInternalMsgOp] = abiFfVault.UnstakeExecuteInternal{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.UnstakeExecuteInternal](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixUnstakeExecuteInternal), abiFfVault.FfVaultUnstakeExecuteInternalMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultUnstakeExecuteInternalCallbackMsgOp] = abiFfVault.UnstakeExecuteInternalCallback{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.UnstakeExecuteInternalCallback](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixUnstakeExecuteInternalCallback), abiFfVault.FfVaultUnstakeExecuteInternalCallbackMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultUnstakeOperationMsgOp] = abiFfVault.UnstakeOperation{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.UnstakeOperation](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixUnstakeOperation), abiFfVault.FfVaultUnstakeOperationMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultUnstakeRequestMsgOp] = abiFfVault.UnstakeRequest{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.UnstakeRequest](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixUnstakeRequest), abiFfVault.FfVaultUnstakeRequestMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultVaultStorageMsgOp] = abiFfVault.VaultStorage{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.VaultStorage](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixVaultStorage), abiFfVault.FfVaultVaultStorageMsgOp)
+	KnownMsgInTypes[abiFfVault.FfVaultWithdrawJettonMsgOp] = abiFfVault.WithdrawJetton{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.WithdrawJetton](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixWithdrawJetton), abiFfVault.FfVaultWithdrawJettonMsgOp)
 
 }
@@ -610,9 +672,13 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiPythOracle.PythOracleErrorResponseMsgOp] = abiPythOracle.ErrorResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.ErrorResponse](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixErrorResponse), abiPythOracle.PythOracleErrorResponseMsgOp)
+	KnownMsgInTypes[abiPythOracle.PythOracleOracleResponseSuccessMsgOp] = abiPythOracle.OracleResponseSuccess{}
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.OracleResponseSuccess](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixOracleResponseSuccess), abiPythOracle.PythOracleOracleResponseSuccessMsgOp)
+	KnownMsgInTypes[abiPythOracle.PythOracleParsePriceFeedUpdatesMessageMsgOp] = abiPythOracle.ParsePriceFeedUpdatesMessage{}
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.ParsePriceFeedUpdatesMessage](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixParsePriceFeedUpdatesMessage), abiPythOracle.PythOracleParsePriceFeedUpdatesMessageMsgOp)
+	KnownMsgInTypes[abiPythOracle.PythOracleParseUniquePriceFeedUpdatesMessageMsgOp] = abiPythOracle.ParseUniquePriceFeedUpdatesMessage{}
 	registerInMsgUnmarshalerForOpcode[*abiPythOracle.ParseUniquePriceFeedUpdatesMessage](opcodedMsgInDecodeFunctions, uint32(abiPythOracle.PrefixParseUniquePriceFeedUpdatesMessage), abiPythOracle.PythOracleParseUniquePriceFeedUpdatesMessageMsgOp)
 
 }
@@ -662,9 +728,13 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiSingleNominatorPool.SingleNominatorPoolChangeValidatorAddressMsgOp] = abiSingleNominatorPool.ChangeValidatorAddress{}
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.ChangeValidatorAddress](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixChangeValidatorAddress), abiSingleNominatorPool.SingleNominatorPoolChangeValidatorAddressMsgOp)
+	KnownMsgInTypes[abiSingleNominatorPool.SingleNominatorPoolSendRawMsgMsgOp] = abiSingleNominatorPool.SendRawMsg{}
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.SendRawMsg](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixSendRawMsg), abiSingleNominatorPool.SingleNominatorPoolSendRawMsgMsgOp)
+	KnownMsgInTypes[abiSingleNominatorPool.SingleNominatorPoolUpgradeMsgOp] = abiSingleNominatorPool.Upgrade{}
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Upgrade](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixUpgrade), abiSingleNominatorPool.SingleNominatorPoolUpgradeMsgOp)
+	KnownMsgInTypes[abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp] = abiSingleNominatorPool.Withdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Withdraw](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixWithdraw), abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp)
 
 }

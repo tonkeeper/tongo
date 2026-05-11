@@ -206,6 +206,9 @@ func writeBridgeBody(out *strings.Builder, g BridgeGroup) error {
 
 	if len(g.PrefixedStructs) > 0 {
 		for _, s := range g.PrefixedStructs {
+			fmt.Fprintf(out, "KnownMsgInTypes[%s.%s] = %s.%s{}\n",
+				g.PackageAlias, s.MsgOpConst,
+				g.PackageAlias, s.StructName)
 			fmt.Fprintf(out, "\tregisterInMsgUnmarshalerForOpcode[*%s.%s](opcodedMsgInDecodeFunctions, uint32(%s.%s), %s.%s)\n",
 				g.PackageAlias, s.StructName,
 				g.PackageAlias, s.PrefixConst,

@@ -1,329 +1,8 @@
 package parser
 
 import (
-	"encoding/json"
-	"fmt"
 	"math/big"
-	"strings"
-
-	"github.com/tonkeeper/tongo/utils"
 )
-
-type Kind struct {
-	Kind string `json:"kind"`
-}
-
-type ABI struct {
-	Namespace        string             `json:"namespace"`
-	ContractName     string             `json:"contractName"`
-	InheritsContract string             `json:"inheritsContract,omitempty"`
-	Author           string             `json:"author,omitempty"`
-	Version          string             `json:"version,omitempty"`
-	Description      string             `json:"description,omitempty"`
-	Declarations     []Declaration      `json:"declarations"`
-	IncomingMessages []IncomingMessage  `json:"incomingMessages"`
-	IncomingExternal []IncomingExternal `json:"incomingExternal"`
-	OutgoingMessages []OutgoingMessage  `json:"outgoingMessages"`
-	EmittedMessages  []OutgoingMessage  `json:"emittedEvents"`
-	GetMethods       []GetMethod        `json:"getMethods"`
-	ThrownErrors     []ThrownError      `json:"thrownErrors"`
-	Storage          Storage            `json:"storage,omitempty"`
-	CompilerName     string             `json:"compilerName"`
-	CompilerVersion  string             `json:"compilerVersion"`
-	CodeBoc64        string             `json:"codeBoc64"`
-	CodeHashes       []string           `json:"codeHashes,omitempty"`
-}
-
-// Storage describes the on-chain persistent storage layout of a contract.
-type Storage struct {
-	StorageTy *Ty `json:"storageTy,omitempty"`
-}
-
-func (a *ABI) GetGolangNamespace() string {
-	return utils.ToCamelCase(a.Namespace)
-}
-
-func (a *ABI) GetGolangContractName() string {
-	return a.GetGolangNamespace() + utils.ToCamelCase(a.ContractName)
-}
-
-type DeclarationKind string
-
-const (
-	DeclarationKindStruct DeclarationKind = "Struct"
-	DeclarationKindAlias  DeclarationKind = "Alias"
-	DeclarationKindEnum   DeclarationKind = "Enum"
-)
-
-type Declaration struct {
-	SumType           DeclarationKind `json:"kind"`
-	PayloadType       *string         `json:"payloadType,omitempty"` // todo: think abt naming
-	StructDeclaration StructDeclaration
-	AliasDeclaration  AliasDeclaration
-	EnumDeclaration   EnumDeclaration
-}
-
-func (d *Declaration) UnmarshalJSON(b []byte) error {
-	var r struct {
-		Kind        string  `json:"kind"`
-		PayloadType *string `json:"payloadType,omitempty"`
-	}
-	if err := json.Unmarshal(b, &r); err != nil {
-		return err
-	}
-
-	d.PayloadType = r.PayloadType
-	switch r.Kind {
-	case "Struct":
-		d.SumType = DeclarationKindStruct
-		if err := json.Unmarshal(b, &d.StructDeclaration); err != nil {
-			return err
-		}
-	case "Alias":
-		d.SumType = DeclarationKindAlias
-		if err := json.Unmarshal(b, &d.AliasDeclaration); err != nil {
-			return err
-		}
-	case "Enum":
-		d.SumType = DeclarationKindEnum
-		if err := json.Unmarshal(b, &d.EnumDeclaration); err != nil {
-			return err
-		}
-	default:
-		return fmt.Errorf("unknown declaration type %q", d.SumType)
-	}
-
-	return nil
-}
-
-func (d Declaration) MarshalJSON() ([]byte, error) {
-	var kind Kind
-	kind.Kind = string(d.SumType)
-
-	var payload []byte
-	prefix, err := json.Marshal(kind)
-	if err != nil {
-		return nil, err
-	}
-
-	switch d.SumType {
-	case DeclarationKindStruct:
-		payload, err = json.Marshal(d.StructDeclaration)
-		if err != nil {
-			return nil, err
-		}
-		return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
-	case DeclarationKindAlias:
-		payload, err = json.Marshal(d.AliasDeclaration)
-		if err != nil {
-			return nil, err
-		}
-		return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
-	case DeclarationKindEnum:
-		payload, err = json.Marshal(d.EnumDeclaration)
-		if err != nil {
-			return nil, err
-		}
-		return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
-	default:
-		return nil, fmt.Errorf("unknown declaration type %q", d.SumType)
-	}
-}
-
-type StructDeclaration struct {
-	Name             string               `json:"name"`
-	TypeParams       []string             `json:"typeParams,omitempty"`
-	Prefix           *Prefix              `json:"prefix,omitempty"`
-	Fields           []Field              `json:"fields"`
-	CustomPackUnpack ABICustomSerializers `json:"customPackUnpack"`
-}
-
-type Prefix struct {
-	PrefixStr string `json:"prefixStr"`
-	PrefixLen int    `json:"prefixLen"`
-}
-
-type Field struct {
-	Name string `json:"name"`
-	//IsPayload    *bool         `json:"isPayload,omitempty"` not in
-	Ty Ty `json:"ty"`
-	//DefaultValue *DefaultValue `json:"defaultValue,omitempty"`
-	Description string `json:"description,omitempty"`
-}
-
-type DefaultValue struct {
-	SumType         string `json:"kind"`
-	IntDefaultValue struct {
-		V string `json:"v"`
-	}
-	BoolDefaultValue struct {
-		V bool `json:"v"`
-	}
-	SliceDefaultValue struct {
-		Hex string `json:"hex"`
-	}
-	AddressDefaultValue struct {
-		Address string `json:"addr"`
-	}
-	TensorDefaultValue struct {
-		Items []DefaultValue `json:"items"`
-	}
-	NullDefaultValue struct{}
-}
-
-func (d *DefaultValue) UnmarshalJSON(b []byte) error {
-	var kind Kind
-
-	if err := json.Unmarshal(b, &kind); err != nil {
-		return err
-	}
-
-	switch kind.Kind {
-	case "int":
-		d.SumType = "IntDefaultValue"
-		if err := json.Unmarshal(b, &d.IntDefaultValue); err != nil {
-			return err
-		}
-	case "bool":
-		d.SumType = "BoolDefaultValue"
-		if err := json.Unmarshal(b, &d.BoolDefaultValue); err != nil {
-			return err
-		}
-	case "slice":
-		d.SumType = "SliceDefaultValue"
-		if err := json.Unmarshal(b, &d.SliceDefaultValue); err != nil {
-			return err
-		}
-	case "address":
-		d.SumType = "AddressDefaultValue"
-		if err := json.Unmarshal(b, &d.AddressDefaultValue); err != nil {
-			return err
-		}
-	case "tensor":
-		d.SumType = "TensorDefaultValue"
-		if err := json.Unmarshal(b, &d.TensorDefaultValue); err != nil {
-			return err
-		}
-	case "null":
-		d.SumType = "NullDefaultValue"
-	default:
-		return fmt.Errorf("unknown default value type %q", kind.Kind)
-	}
-
-	return nil
-}
-
-func (d *DefaultValue) MarshalJSON() ([]byte, error) {
-	var kind Kind
-	var payload []byte
-	var err error
-
-	switch d.SumType {
-	case "IntDefaultValue":
-		kind.Kind = "int"
-		payload, err = json.Marshal(d.IntDefaultValue)
-		if err != nil {
-			return nil, err
-		}
-	case "BoolDefaultValue":
-		kind.Kind = "bool"
-		payload, err = json.Marshal(d.BoolDefaultValue)
-		if err != nil {
-			return nil, err
-		}
-	case "SliceDefaultValue":
-		kind.Kind = "slice"
-		payload, err = json.Marshal(d.SliceDefaultValue)
-		if err != nil {
-			return nil, err
-		}
-	case "AddressDefaultValue":
-		kind.Kind = "address"
-		payload, err = json.Marshal(d.AddressDefaultValue)
-		if err != nil {
-			return nil, err
-		}
-	case "TensorDefaultValue":
-		kind.Kind = "tensor"
-		payload, err = json.Marshal(d.TensorDefaultValue)
-		if err != nil {
-			return nil, err
-		}
-	case "NullDefaultValue":
-		kind.Kind = "null"
-	default:
-		return nil, fmt.Errorf("unknown default value type %q", d.SumType)
-	}
-
-	prefix, err := json.Marshal(kind)
-	if err != nil {
-		return nil, err
-	}
-	return utils.ConcatPrefixAndSuffixIfExists(prefix, payload), nil
-}
-
-type AliasDeclaration struct {
-	Name             string               `json:"name"`
-	TargetTy         Ty                   `json:"targetTy"`
-	TypeParams       []string             `json:"typeParams,omitempty"`
-	CustomPackUnpack ABICustomSerializers `json:"customPackUnpack"`
-}
-
-type EnumDeclaration struct {
-	Name             string               `json:"name"`
-	EncodedAs        Ty                   `json:"encodedAs"`
-	Members          []EnumMember         `json:"members"`
-	CustomPackUnpack ABICustomSerializers `json:"customPackUnpack"`
-}
-
-type ABICustomSerializers struct {
-	PackToBuilder   bool `json:"packToBuilder"`
-	UnpackFromSlice bool `json:"unpackFromSlice"`
-}
-
-type EnumMember struct {
-	Name string `json:"name"`
-	// Value is a number string
-	Value string `json:"value"`
-}
-
-/*
-export type Ty =
-    | { kind: 'int' }
-    | { kind: 'intN'; n: number }
-    | { kind: 'uintN'; n: number }
-    | { kind: 'varintN', n: number }
-    | { kind: 'varuintN', n: number }
-    | { kind: 'coins' }
-    | { kind: 'bool' }
-    | { kind: 'cell' }
-    | { kind: 'builder' }
-    | { kind: 'slice' }
-    | { kind: 'string' }
-    | { kind: 'remaining' }
-    | { kind: 'address' }
-    | { kind: 'addressOpt' }
-    | { kind: 'addressExt' }
-    | { kind: 'addressAny' }
-    | { kind: 'bitsN'; n: number }
-    | { kind: 'nullLiteral' }
-    | { kind: 'callable' }
-    | { kind: 'void' }
-    | { kind: 'unknown' }
-    | { kind: 'nullable'; inner: Ty; stackTypeId?: number; stackWidth?: number }
-    | { kind: 'cellOf'; inner: Ty }
-    | { kind: 'arrayOf'; inner: Ty }
-    | { kind: 'lispListOf'; inner: Ty }
-    | { kind: 'tensor'; items: Ty[] }
-    | { kind: 'shapedTuple'; items: Ty[] }
-    | { kind: 'mapKV'; k: Ty; v: Ty }
-    | { kind: 'EnumRef'; enumName: string }
-    | { kind: 'StructRef'; structName: string; typeArgs?: Ty[] }
-    | { kind: 'AliasRef'; aliasName: string; typeArgs?: Ty[] }
-    | { kind: 'genericT'; nameT: string }
-    | { kind: 'union'; variants: UnionVariant[]; stackWidth: number }
-
-*/
 
 type TyKind = string
 
@@ -363,19 +42,12 @@ const (
 	TyKindUnion       TyKind = "union"
 )
 
-type String struct{}
-
-type Unknown struct{}
-
-type LispListOf struct {
-	Inner Ty `json:"inner"`
-}
-
 type Ty struct {
-	SumType     string `json:"kind"`
+	SumType     TyKind `json:"kind"`
 	IntN        *IntN
 	UintN       *UintN
 	VarIntN     *VarIntN
+	VarUintN    *VarUintN
 	BitsN       *BitsN
 	Nullable    *Nullable
 	CellOf      *CellOf
@@ -387,9 +59,8 @@ type Ty struct {
 	EnumRef     *EnumRef
 	StructRef   *StructRef
 	AliasRef    *AliasRef
-	Generic     *Generic
+	GenericT    *GenericT
 	Union       *Union
-	VarUintN    *VarUintN
 	// types without parameters
 	//    Int         *Int
 	//    Coins       *Coins
@@ -409,143 +80,134 @@ type Ty struct {
 	//    Unknown     *Unknown
 }
 
-/**
-export function renderTy(ty: Ty): string {
-    switch (ty.kind) {
-        case 'int':         return `int`;
-        case 'intN':        return `int${ty.n}`;
-        case 'uintN':       return `uint${ty.n}`;
-        case 'varintN':     return `varint${ty.n}`;
-        case 'varuintN':    return `varuint${ty.n}`;
-        case 'coins':       return `coins`;
-        case 'bool':        return `bool`;
-        case 'cell':        return `cell`;
-        case 'builder':     return `builder`;
-        case 'slice':       return `slice`;
-        case 'string':      return `string`;
-        case 'remaining':   return `RemainingBitsAndRefs`;
-        case 'address':     return `address`;
-        case 'addressOpt':  return `address?`;
-        case 'addressExt':  return `ext_address`;
-        case 'addressAny':  return `any_address`;
-        case 'bitsN':       return `bits${ty.n}`;
-        case 'nullLiteral': return `null`;
-        case 'callable':    return `continuation`;
-        case 'void':        return `void`;
-        case 'unknown':     return `unknown`;
-        case 'nullable':    return `${renderTy(ty.inner)}?`;
-        case 'cellOf':      return `Cell<${renderTy(ty.inner)}>`;
-        case 'arrayOf':     return `array<${renderTy(ty.inner)}>`;
-        case 'lispListOf':  return `lisp_list<${renderTy(ty.inner)}>`;
-        case 'tensor':      return `(${ty.items.map(renderTy).join(', ')})`;
-        case 'shapedTuple': return `[${ty.items.map(renderTy).join(', ')}]`;
-        case 'mapKV':       return `map<${renderTy(ty.k)}, ${renderTy(ty.v)}>`;
-        case 'EnumRef':     return ty.enumName;
-        case 'StructRef':   return ty.structName + (ty.typeArgs ? `<${ty.typeArgs.map(renderTy).join(', ')}>` : '');
-        case 'AliasRef':    return ty.aliasName + (ty.typeArgs ? `<${ty.typeArgs.map(renderTy).join(', ')}>` : '');
-        case 'genericT':    return ty.nameT;
-        case 'union':       return ty.variants.map(v => renderTy(v.variantTy)).join(' | ');
-    }
-}
-*/
+type ABIDeclarationKind string
 
-func (ty Ty) String() string {
-	switch ty.SumType {
-	case TyKindInt:
-		return "int"
-	case TyKindIntN:
-		return fmt.Sprintf("int%d", ty.IntN.N)
-	case TyKindUintN:
-		return fmt.Sprintf("uint%d", ty.UintN.N)
-	case TyKindVarIntN:
-		return fmt.Sprintf("varint%d", ty.VarIntN.N)
-	case TyKindVarUintN:
-		return fmt.Sprintf("varuint%d", ty.VarUintN.N)
-	case TyKindCoins:
-		return "coins"
-	case TyKindBool:
-		return "bool"
-	case TyKindCell:
-		return "cell"
-	case TyKindBuilder:
-		return "builder"
-	case TyKindSlice:
-		return "slice"
-	case TyKindString:
-		return "string"
-	case TyKindRemaining:
-		return "RemainingBitsAndRefs"
-	case TyKindAddress:
-		return "address"
-	case TyKindAddressOpt:
-		return "address?"
-	case TyKindAddressExt:
-		return "ext_address"
-	case TyKindAddressAny:
-		return "any_address"
-	case TyKindBitsN:
-		return fmt.Sprintf("bits%d", ty.BitsN.N)
-	case TyKindNullLiteral:
-		return "null"
-	case TyKindCallable:
-		return "continuation"
-	case TyKindVoid:
-		return "void"
-	case TyKindUnknown:
-		return "unknown"
-	case TyKindNullable:
-		return fmt.Sprintf("%s?", ty.Nullable.Inner.String())
-	case TyKindCellOf:
-		return fmt.Sprintf("Cell<%s>", ty.CellOf.Inner.String())
-	case TyKindArrayOf:
-		return fmt.Sprintf("array<%s>", ty.ArrayOf.Inner.String())
-	case TyKindLispListOf:
-		return fmt.Sprintf("lisp_list<%s>", ty.LispListOf.Inner.String())
-	case TyKindTensor:
-		items := make([]string, len(ty.Tensor.Items))
-		for i, item := range ty.Tensor.Items {
-			items[i] = item.String()
-		}
-		return fmt.Sprintf("(%s)", strings.Join(items, ", "))
-	case TyKindShapedTuple:
-		items := make([]string, len(ty.ShapedTuple.Items))
-		for i, item := range ty.ShapedTuple.Items {
-			items[i] = item.String()
-		}
-		return fmt.Sprintf("[%s]", strings.Join(items, ", "))
-	case TyKindMapKV:
-		return fmt.Sprintf("map<%s, %s>", ty.MapKV.K.String(), ty.MapKV.V.String())
-	case TyKindEnumRef:
-		return ty.EnumRef.EnumName
-	case TyKindStructRef:
-		if len(ty.StructRef.TypeArgs) > 0 {
-			args := make([]string, len(ty.StructRef.TypeArgs))
-			for i, arg := range ty.StructRef.TypeArgs {
-				args[i] = arg.String()
-			}
-			return fmt.Sprintf("%s<%s>", ty.StructRef.StructName, strings.Join(args, ", "))
-		}
-		return ty.StructRef.StructName
-	case TyKindAliasRef:
-		if len(ty.AliasRef.TypeArgs) > 0 {
-			args := make([]string, len(ty.AliasRef.TypeArgs))
-			for i, arg := range ty.AliasRef.TypeArgs {
-				args[i] = arg.String()
-			}
-			return fmt.Sprintf("%s<%s>", ty.AliasRef.AliasName, strings.Join(args, ", "))
-		}
-		return ty.AliasRef.AliasName
-	case TyKindGenericT:
-		return ty.Generic.NameT
-	case TyKindUnion:
-		variants := make([]string, len(ty.Union.Variants))
-		for i, v := range ty.Union.Variants {
-			variants[i] = v.VariantTy.String()
-		}
-		return strings.Join(variants, " | ")
-	default:
-		return "unknown"
-	}
+const (
+	DeclarationKindStruct ABIDeclarationKind = "struct"
+	DeclarationKindAlias  ABIDeclarationKind = "alias"
+	DeclarationKindEnum   ABIDeclarationKind = "enum"
+)
+
+type ABIDeclaration struct {
+	SumType           ABIDeclarationKind `json:"kind"`
+	StructDeclaration ABIStruct
+	AliasDeclaration  ABIAlias
+	EnumDeclaration   ABIEnum
+}
+
+// ABIStruct represents a Tolk struct.
+// Examples:
+//
+// > struct Point { x: int, y: int }
+// A simple struct, not serializable (because 'int', not 'int8' or similar)
+//
+// > struct Wrapper<TItem> { item: TItem }
+// A generic struct (has type_params), fields[0].ty = { kind: 'genericT', name_t: 'TItem' }
+//
+// > struct (0x12345678) Increment { ... }
+// Has a serialization prefix: prefix_num = 0x12345678, prefix_len = 32
+//
+// A field can have `@abi.clientType(<type>)` annotation to override how it's rendered in explorers/UI.
+// Then the field has `client_ty_idx` set. It's used for wrappers (serialization), but not for stack.
+type ABIStruct struct {
+	Name             string               `json:"name"`
+	TyIdx            int                  `json:"ty_idx"`
+	TypeParams       []string             `json:"type_params,omitempty"`
+	Prefix           *Prefix              `json:"prefix,omitempty"`
+	Fields           []Field              `json:"fields"`
+	CustomPackUnpack ABICustomSerializers `json:"custom_pack_unpack,omitempty"`
+	Description      string               `json:"description,omitempty"`
+}
+
+type Prefix struct {
+	PrefixNum int `json:"prefix_num"`
+	PrefixLen int `json:"prefix_len"`
+}
+
+type Field struct {
+	Name        string `json:"name"`
+	TyIdx       int    `json:"ty_idx"`
+	ClientTyIdx *int   `json:"client_ty_idx,omitempty"`
+	Description string `json:"description,omitempty"`
+	// DefaultValue *ABIConstExpression // not used
+}
+
+// ABIAlias represents a Tolk type alias.
+// Examples:
+//
+// > type UserId = int32
+// A simple alias, target_ty = { kind: 'intN', n: 32 }
+//
+// > type Maybe<T> = MaybeNothing | MaybeJust<T>
+// A generic alias (has type_params), target_ty = { kind: 'union', variants: ... }
+//
+// An alias is serialized as its target, unless it has custom serializers in Tolk code.
+type ABIAlias struct {
+	Name             string               `json:"name"`
+	TyIdx            int                  `json:"ty_idx"`
+	TargetTyIdx      int                  `json:"target_ty_idx"`
+	TypeParams       []string             `json:"type_params,omitempty"`
+	CustomPackUnpack ABICustomSerializers `json:"custom_pack_unpack,omitempty"`
+	Description      string               `json:"description,omitempty"`
+}
+
+// ABIEnum represents a Tolk enum.
+// Examples:
+//
+// > enum Color { Red, Green, Blue }
+// Has 3 members (values '0', '1', '2'), encoded as 'uint2' (auto-calculated by the compiler).
+//
+// > enum Mode: int8 { User = 0, Admin = 127 }
+// Has 2 members, encoded as 'int8' (specified manually).
+type ABIEnum struct {
+	Name             string               `json:"name"`
+	TyIdx            int                  `json:"ty_idx"`
+	EncodedAsTyIdx   int                  `json:"encoded_as_ty_idx"`
+	Members          []ABIEnumMember      `json:"members"`
+	CustomPackUnpack ABICustomSerializers `json:"custom_pack_unpack,omitempty"`
+	Description      string               `json:"description,omitempty"`
+}
+
+type ABIEnumMember struct {
+	Name  string  `json:"name"`
+	Value big.Int `json:"value"`
+}
+
+// ABIStructInstantiation is a resolved runtime shape for a generic struct.
+// For example, we have `struct Wrapper<T> { item: T }`, and somewhere `Wrapper<Point>` is used.
+// Then `Wrapper<Point>` is present in `unique_types` as `StructRef "Wrapper" type_args=Point",
+// and its instantiated fields types = ["Point"] exist here.
+// Without monomorphization, client-side cannot reconstruct stack layout in case of generic nullables/unions.
+type ABIStructInstantiation struct {
+	TyIdx                  int                  `json:"ty_idx"`
+	StructName             string               `json:"struct_name"`
+	MonomorphicFieldsTyIdx []int                `json:"monomorphic_fields_ty_idx"`
+	CustomPackUnpack       ABICustomSerializers `json:"custom_pack_unpack,omitempty"`
+}
+
+// ABICustomSerializers is present in a struct/alias if that type has custom serializers in Tolk code:
+//
+// fun SomeType.packToBuilder(self, mutate b: builder) { ... }
+// fun SomeType.unpackFromSlice(mutate s: slice): SomeAlias { ... }
+//
+// Body of these functions is not a part of ABI (it's arbitrary Tolk code).
+// To make serialization work (e.g., in TypeScript wrappers),
+// one should provide equivalent implementations in a language ABI is applied to.
+type ABICustomSerializers struct {
+	PackToBuilder   bool `json:"pack_to_builder"`
+	UnpackFromSlice bool `json:"unpack_from_slice"`
+}
+
+// ABIAliasInstantiation is a resolved runtime shape for a generic alias.
+// For example, we have `type Maybe<T> = None | Just<T>`, and somewhere `Maybe<int>` is used.
+// Then `Maybe<int>` is present in `unique_types` as `AliasRef "Maybe" type_args=int",
+// and its instantiated target = "None | Just<int>" exists here.
+// Without monomorphization, client-side cannot reconstruct stack layout in case of generic nullables/unions.
+type ABIAliasInstantiation struct {
+	TyIdx                  int                  `json:"ty_idx"`
+	AliasName              string               `json:"alias_name"`
+	MonomorphicTargetTyIdx int                  `json:"monomorphic_target_ty_idx"`
+	CustomPackUnpack       ABICustomSerializers `json:"custom_pack_unpack,omitempty"`
 }
 
 type IntN struct {
@@ -569,274 +231,81 @@ type BitsN struct {
 }
 
 type Nullable struct {
-	Inner       Ty  `json:"inner"`
-	StackTypeId int `json:"stackTypeId,omitempty"`
-	StackWidth  int `json:"stackWidth,omitempty"`
+	InnerTyIdx  int `json:"inner_ty_idx"`
+	StackTypeId int `json:"stack_type_id,omitempty"`
+	StackWidth  int `json:"stack_width,omitempty"`
 }
 
 type CellOf struct {
-	Inner Ty `json:"inner"`
+	InnerTyIdx int `json:"inner_ty_idx"`
 }
 
 type ArrayOf struct {
-	Inner Ty `json:"inner"`
+	InnerTyIdx int `json:"inner_ty_idx"`
 }
 
-type MapKV struct {
-	K Ty `json:"k"`
-	V Ty `json:"v"`
-}
-
-type EnumRef struct {
-	EnumName string `json:"enumName"`
-}
-
-type StructRef struct {
-	StructName string `json:"structName"`
-	TypeArgs   []Ty   `json:"typeArgs,omitempty"`
-}
-
-type AliasRef struct {
-	AliasName string `json:"aliasName"`
-	TypeArgs  []Ty   `json:"typeArgs,omitempty"`
-}
-
-type Generic struct {
-	NameT string `json:"nameT"`
+type LispListOf struct {
+	InnerTyIdx int `json:"inner_ty_idx"`
 }
 
 type Tensor struct {
-	Items []Ty `json:"items"`
+	ItemsTyIdx []int `json:"items_ty_idx"`
 }
 
 type ShapedTuple struct {
-	Items []Ty `json:"items"`
+	ItemsTyIdx []int `json:"items_ty_idx"`
+}
+
+type MapKV struct {
+	KeyTyIdx   int `json:"key_ty_idx"`
+	ValueTyIdx int `json:"value_ty_idx"`
+}
+
+type EnumRef struct {
+	EnumName string `json:"enum_name"`
+}
+
+type StructRef struct {
+	StructName    string `json:"struct_name"`
+	TypeArgsTyIdx []int  `json:"type_args_ty_idx,omitempty"`
+}
+
+type AliasRef struct {
+	AliasName     string `json:"alias_name"`
+	TypeArgsTyIdx []int  `json:"type_args_ty_idx,omitempty"`
+}
+
+type GenericT struct {
+	NameT string `json:"name_t"`
 }
 
 type Union struct {
 	Variants   []UnionVariant `json:"variants"`
-	StackWidth int            `json:"stackWidth"`
+	StackWidth int            `json:"stack_width,omitempty"`
 }
 
-func (t *Ty) UnmarshalJSON(b []byte) error {
-	var kind Kind
-	if err := json.Unmarshal(b, &kind); err != nil {
-		return err
-	}
-	switch kind.Kind {
-	case TyKindIntN:
-		t.SumType = TyKindIntN
-		return json.Unmarshal(b, &t.IntN)
-	case TyKindUintN:
-		t.SumType = TyKindUintN
-		return json.Unmarshal(b, &t.UintN)
-	case TyKindVarIntN:
-		t.SumType = TyKindVarIntN
-		return json.Unmarshal(b, &t.VarIntN)
-	case TyKindVarUintN:
-		t.SumType = TyKindVarUintN
-		return json.Unmarshal(b, &t.VarUintN)
-	case TyKindBitsN:
-		t.SumType = TyKindBitsN
-		return json.Unmarshal(b, &t.BitsN)
-	case TyKindNullable:
-		t.SumType = TyKindNullable
-		return json.Unmarshal(b, &t.Nullable)
-	case TyKindCellOf:
-		t.SumType = TyKindCellOf
-		return json.Unmarshal(b, &t.CellOf)
-	case TyKindArrayOf:
-		t.SumType = TyKindArrayOf
-		return json.Unmarshal(b, &t.ArrayOf)
-	case TyKindLispListOf:
-		t.SumType = TyKindLispListOf
-		return json.Unmarshal(b, &t.LispListOf)
-	case TyKindTensor:
-		t.SumType = TyKindTensor
-		return json.Unmarshal(b, &t.Tensor)
-	case TyKindShapedTuple:
-		t.SumType = TyKindShapedTuple
-		return json.Unmarshal(b, &t.ShapedTuple)
-	case TyKindMapKV:
-		t.SumType = TyKindMapKV
-		return json.Unmarshal(b, &t.MapKV)
-	case TyKindEnumRef:
-		t.SumType = TyKindEnumRef
-		return json.Unmarshal(b, &t.EnumRef)
-	case TyKindStructRef:
-		t.SumType = TyKindStructRef
-		return json.Unmarshal(b, &t.StructRef)
-	case TyKindAliasRef:
-		t.SumType = TyKindAliasRef
-		return json.Unmarshal(b, &t.AliasRef)
-	case TyKindGenericT:
-		t.SumType = TyKindGenericT
-		return json.Unmarshal(b, &t.Generic)
-	case TyKindUnion:
-		t.SumType = TyKindUnion
-		return json.Unmarshal(b, &t.Union)
-	case TyKindInt, TyKindCoins, TyKindBool, TyKindCell, TyKindBuilder, TyKindSlice, TyKindString, TyKindRemaining, TyKindAddress:
-		t.SumType = kind.Kind
-	case TyKindAddressOpt, TyKindAddressExt, TyKindAddressAny, TyKindNullLiteral, TyKindCallable, TyKindVoid, TyKindUnknown:
-		t.SumType = kind.Kind
-		return nil
-	default:
-		return fmt.Errorf("unknown type kind %q", kind.Kind)
-	}
-
-	return nil
-}
-
-func (t *Ty) MarshalJSON() ([]byte, error) {
-	var payload []byte
-	var err error
-	switch t.SumType {
-	case TyKindIntN:
-		payload, err = json.Marshal(t.IntN)
-	case TyKindUintN:
-		payload, err = json.Marshal(t.UintN)
-	case TyKindVarIntN:
-		payload, err = json.Marshal(t.VarIntN)
-	case TyKindVarUintN:
-		payload, err = json.Marshal(t.VarUintN)
-	case TyKindBitsN:
-		payload, err = json.Marshal(t.BitsN)
-	case TyKindNullable:
-		payload, err = json.Marshal(t.Nullable)
-	case TyKindCellOf:
-		payload, err = json.Marshal(t.CellOf)
-	case TyKindArrayOf:
-		payload, err = json.Marshal(t.ArrayOf)
-	case TyKindLispListOf:
-		payload, err = json.Marshal(t.LispListOf)
-	case TyKindTensor:
-		payload, err = json.Marshal(t.Tensor)
-	case TyKindShapedTuple:
-		payload, err = json.Marshal(t.ShapedTuple)
-	case TyKindMapKV:
-		payload, err = json.Marshal(t.MapKV)
-	case TyKindEnumRef:
-		payload, err = json.Marshal(t.EnumRef)
-	case TyKindStructRef:
-		payload, err = json.Marshal(t.StructRef)
-	case TyKindAliasRef:
-		payload, err = json.Marshal(t.AliasRef)
-	case TyKindGenericT:
-		payload, err = json.Marshal(t.Generic)
-	case TyKindUnion:
-		payload, err = json.Marshal(t.Union)
-	default:
-	}
-	if err != nil {
-		return nil, err
-	}
-	return utils.ConcatPrefixAndSuffixIfExists([]byte(fmt.Sprintf(`{"kind": "%s"}`, t.SumType)), payload), nil
+type UnionVariant struct {
+	VariantTyIdx     int  `json:"variant_ty_idx"`
+	PrefixNum        int  `json:"prefix_num"`
+	PrefixLen        int  `json:"prefix_len"`
+	IsPrefixImplicit bool `json:"is_prefix_implicit,omitempty"`
+	StackTypeId      int  `json:"stack_type_id,omitempty"`
+	StackWidth       int  `json:"stack_width,omitempty"`
 }
 
 func (t *Ty) GetFixedSize() (int, bool) {
 	switch t.SumType {
-	case "IntN":
+	case TyKindIntN:
 		return t.IntN.N, true
-	case "UintN":
+	case TyKindUintN:
 		return t.UintN.N, true
-	case "BitsN":
+	case TyKindBitsN:
 		return t.BitsN.N, true
-	case "Bool":
+	case TyKindBool:
 		return 1, true
-	case "Address":
+	case TyKindAddress:
 		return 267, true
 	default:
 		return 0, false
 	}
-}
-
-type UnionVariant struct {
-	PrefixStr        string `json:"prefixStr"`
-	PrefixLen        int    `json:"prefixLen"`
-	PrefixEatInPlace bool   `json:"prefixEatInPlace,omitempty"`
-	VariantTy        Ty     `json:"variantTy"`
-}
-
-type IncomingMessage struct {
-	BodyTy            Ty       `json:"bodyTy"`
-	MinimalMsgValue   *big.Int `json:"minimalMsgValue,omitempty"`
-	Description       string   `json:"description,omitempty"`
-	PreferredSendMode int16    `json:"preferredSendMode,omitempty"`
-}
-
-func (m *IncomingMessage) GetMsgName() (string, error) {
-	return getMsgName(m.BodyTy)
-}
-
-type IncomingExternal struct {
-	BodyTy      Ty     `json:"bodyTy"`
-	Description string `json:"description,omitempty"`
-}
-
-func (m *IncomingExternal) GetMsgName() (string, error) {
-	return getMsgName(m.BodyTy)
-}
-
-type OutgoingMessage struct {
-	BodyTy      Ty     `json:"bodyTy"`
-	Description string `json:"description,omitempty"`
-}
-
-func (m *OutgoingMessage) GetMsgName() (string, error) {
-	return getMsgName(m.BodyTy)
-}
-
-func getMsgName(ty Ty) (string, error) {
-	switch ty.SumType {
-	case "StructRef":
-		return ty.StructRef.StructName, nil
-	case "AliasRef":
-		return ty.AliasRef.AliasName, nil
-	default:
-		return "", fmt.Errorf("cannot get name for %q body", ty.SumType)
-	}
-}
-
-type GetMethod struct {
-	TvmMethodID int         `json:"tvmMethodId"`
-	Name        string      `json:"name"`
-	Parameters  []Parameter `json:"parameters"`
-	ReturnTy    Ty          `json:"returnTy"`
-	Description string      `json:"description,omitempty"`
-}
-
-func (g GetMethod) GolangFunctionName() string {
-	return utils.ToCamelCase(g.Name)
-}
-
-func (g GetMethod) FullResultName(contractName string) string {
-	res := ""
-	if contractName != "" {
-		res = contractName + "_"
-	}
-	res += utils.ToCamelCase(g.Name)
-
-	return res + "Result"
-}
-
-func (g GetMethod) UsedByIntrospection() bool {
-	return len(g.Parameters) == 0
-}
-
-type Parameter struct {
-	Name string `json:"name"`
-	Ty   Ty     `json:"ty"`
-}
-
-type ThrownError struct {
-	Name    string `json:"constName"`
-	ErrCode int    `json:"errCode"`
-}
-
-func MustParseABI(data []byte) ABI {
-	var abi ABI
-	if err := json.Unmarshal(data, &abi); err != nil {
-		panic(err)
-	}
-	return abi
 }

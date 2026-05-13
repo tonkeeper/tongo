@@ -95,6 +95,155 @@ func (v ExtProxyCloseCompleteRequestSigned) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *CocoonProxyData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.OwnerAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
+	}
+	if err = v.ProxyPublicKey.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ProxyPublicKey: %v", err)
+	}
+	if err = v.RootAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .RootAddress: %v", err)
+	}
+	if err = v.State.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .State: %v", err)
+	}
+	if err = v.Balance.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Balance: %v", err)
+	}
+	if err = v.Stake.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Stake: %v", err)
+	}
+	if err = v.UnlockTs.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .UnlockTs: %v", err)
+	}
+	if err = v.PricePerToken.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .PricePerToken: %v", err)
+	}
+	if err = v.WorkerFeePerToken.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .WorkerFeePerToken: %v", err)
+	}
+	if err = v.MinProxyStake.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .MinProxyStake: %v", err)
+	}
+	if err = v.MinClientStake.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .MinClientStake: %v", err)
+	}
+	if err = v.ParamsVersion.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ParamsVersion: %v", err)
+	}
+	return nil
+}
+func (v CocoonProxyData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.OwnerAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .OwnerAddress: %v", err)
+	}
+	if err = v.ProxyPublicKey.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ProxyPublicKey: %v", err)
+	}
+	if err = v.RootAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .RootAddress: %v", err)
+	}
+	if err = v.State.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .State: %v", err)
+	}
+	if err = v.Balance.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Balance: %v", err)
+	}
+	if err = v.Stake.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Stake: %v", err)
+	}
+	if err = v.UnlockTs.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .UnlockTs: %v", err)
+	}
+	if err = v.PricePerToken.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .PricePerToken: %v", err)
+	}
+	if err = v.WorkerFeePerToken.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .WorkerFeePerToken: %v", err)
+	}
+	if err = v.MinProxyStake.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .MinProxyStake: %v", err)
+	}
+	if err = v.MinClientStake.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .MinClientStake: %v", err)
+	}
+	if err = v.ParamsVersion.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ParamsVersion: %v", err)
+	}
+	return nil
+}
+func (v CocoonProxyData) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *CocoonProxyData) ReadFromStack(stack *tlb.VmStack) (err error) {
+	if err = v.ParamsVersion.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .ParamsVersion: %v", err)
+	}
+	if err = v.MinClientStake.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .MinClientStake: %v", err)
+	}
+	if err = v.MinProxyStake.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .MinProxyStake: %v", err)
+	}
+	if err = v.WorkerFeePerToken.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .WorkerFeePerToken: %v", err)
+	}
+	if err = v.PricePerToken.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .PricePerToken: %v", err)
+	}
+	if err = v.UnlockTs.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .UnlockTs: %v", err)
+	}
+	if err = v.Stake.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .Stake: %v", err)
+	}
+	if err = v.Balance.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .Balance: %v", err)
+	}
+	if err = v.State.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .State: %v", err)
+	}
+	if err = v.RootAddress.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .RootAddress: %v", err)
+	}
+	if err = v.ProxyPublicKey.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .ProxyPublicKey: %v", err)
+	}
+	if err = v.OwnerAddress.ReadFromStack(stack); err != nil {
+		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
+	}
+	return nil
+}
+func (v *Payout) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixPayout); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	return nil
+}
+func (v Payout) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixPayout, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	return nil
+}
+func (v Payout) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *ExtProxyPayoutRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixExtProxyPayoutRequest); err != nil {
 		return err
@@ -254,130 +403,6 @@ func (v ProxyStorage) ToCell() (*boc.Cell, error) {
 		return nil, err
 	}
 	return c, nil
-}
-func (v *CocoonProxyData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.OwnerAddress.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
-	}
-	if err = v.ProxyPublicKey.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ProxyPublicKey: %v", err)
-	}
-	if err = v.RootAddress.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .RootAddress: %v", err)
-	}
-	if err = v.State.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .State: %v", err)
-	}
-	if err = v.Balance.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Balance: %v", err)
-	}
-	if err = v.Stake.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Stake: %v", err)
-	}
-	if err = v.UnlockTs.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .UnlockTs: %v", err)
-	}
-	if err = v.PricePerToken.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .PricePerToken: %v", err)
-	}
-	if err = v.WorkerFeePerToken.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .WorkerFeePerToken: %v", err)
-	}
-	if err = v.MinProxyStake.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .MinProxyStake: %v", err)
-	}
-	if err = v.MinClientStake.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .MinClientStake: %v", err)
-	}
-	if err = v.ParamsVersion.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ParamsVersion: %v", err)
-	}
-	return nil
-}
-func (v CocoonProxyData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.OwnerAddress.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .OwnerAddress: %v", err)
-	}
-	if err = v.ProxyPublicKey.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ProxyPublicKey: %v", err)
-	}
-	if err = v.RootAddress.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .RootAddress: %v", err)
-	}
-	if err = v.State.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .State: %v", err)
-	}
-	if err = v.Balance.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Balance: %v", err)
-	}
-	if err = v.Stake.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Stake: %v", err)
-	}
-	if err = v.UnlockTs.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .UnlockTs: %v", err)
-	}
-	if err = v.PricePerToken.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .PricePerToken: %v", err)
-	}
-	if err = v.WorkerFeePerToken.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .WorkerFeePerToken: %v", err)
-	}
-	if err = v.MinProxyStake.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .MinProxyStake: %v", err)
-	}
-	if err = v.MinClientStake.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .MinClientStake: %v", err)
-	}
-	if err = v.ParamsVersion.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ParamsVersion: %v", err)
-	}
-	return nil
-}
-func (v CocoonProxyData) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *CocoonProxyData) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if err = v.ParamsVersion.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .ParamsVersion: %v", err)
-	}
-	if err = v.MinClientStake.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .MinClientStake: %v", err)
-	}
-	if err = v.MinProxyStake.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .MinProxyStake: %v", err)
-	}
-	if err = v.WorkerFeePerToken.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .WorkerFeePerToken: %v", err)
-	}
-	if err = v.PricePerToken.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .PricePerToken: %v", err)
-	}
-	if err = v.UnlockTs.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .UnlockTs: %v", err)
-	}
-	if err = v.Stake.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .Stake: %v", err)
-	}
-	if err = v.Balance.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .Balance: %v", err)
-	}
-	if err = v.State.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .State: %v", err)
-	}
-	if err = v.RootAddress.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .RootAddress: %v", err)
-	}
-	if err = v.ProxyPublicKey.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .ProxyPublicKey: %v", err)
-	}
-	if err = v.OwnerAddress.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
-	}
-	return nil
 }
 
 func (msg TextCmd) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {

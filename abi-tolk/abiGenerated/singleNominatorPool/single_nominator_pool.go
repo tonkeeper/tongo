@@ -66,6 +66,8 @@ type PoolData struct {
 }
 
 const ( // errors
+	ErrorWrongSetCode        = 0x2002 // 8194
+	ErrorInsufficientBalance = 0x2004 // 8196
 )
 
 func DecodeGetRoles(stack *tlb.VmStack) (result Roles, err error) {

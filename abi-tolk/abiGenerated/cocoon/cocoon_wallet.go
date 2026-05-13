@@ -10,6 +10,22 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
+type WalletExternalMessage struct {
+	Signature tlb.Bits512           // bits512
+	Message   ExternalSignedMessage // ExternalSignedMessage
+}
+type ExternalSignedMessage struct {
+	SubwalletId tlb.Uint32  // uint32
+	ValidUntil  tlb.Uint32  // uint32
+	MsgSeqno    tlb.Uint32  // uint32
+	Forward     ForwardMsgs // ForwardMsgs
+}
+type ForwardMsgs []ForwardMsg
+type ForwardMsg struct {
+	Mode tlb.Uint8 // uint8
+	Msg  boc.Cell  // cell
+}
+
 const PrefixOwnerWalletSendMessage uint64 = 0x9c69f376
 
 type OwnerWalletSendMessage struct {
@@ -22,21 +38,6 @@ const PrefixTextCommand uint64 = 0x00000000
 
 type TextCommand struct {
 	Action tlb.Uint8 // uint8
-}
-type ForwardMsg struct {
-	Mode tlb.Uint8 // uint8
-	Msg  boc.Cell  // cell
-}
-type ForwardMsgs []ForwardMsg
-type ExternalSignedMessage struct {
-	SubwalletId tlb.Uint32  // uint32
-	ValidUntil  tlb.Uint32  // uint32
-	MsgSeqno    tlb.Uint32  // uint32
-	Forward     ForwardMsgs // ForwardMsgs
-}
-type WalletExternalMessage struct {
-	Signature tlb.Bits512           // bits512
-	Message   ExternalSignedMessage // ExternalSignedMessage
 }
 type WalletStorage struct {
 	Seqno        tlb.Uint32          // uint32

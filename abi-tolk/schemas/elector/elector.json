@@ -100,6 +100,34 @@
     },
     {
       "kind": "StructRef",
+      "struct_name": "VoteComplaintResponse"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ComplaintResponse"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpgradeCodeResponse"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ErrorResponse"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ReturnStake"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RecoverStakeResponse"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "NewStakeConfirmation"
+    },
+    {
+      "kind": "StructRef",
       "struct_name": "ElectorStorage"
     },
     {
@@ -113,15 +141,15 @@
     {
       "kind": "mapKV",
       "key_ty_idx": 23,
-      "value_ty_idx": 28
+      "value_ty_idx": 35
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 27
+      "inner_ty_idx": 34
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 30
+      "inner_ty_idx": 37
     },
     {
       "kind": "mapKV",
@@ -145,40 +173,12 @@
       "kind": "shapedTuple",
       "items_ty_idx": [
         23,
-        35
+        42
       ]
     },
     {
       "kind": "arrayOf",
-      "inner_ty_idx": 36
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "NewStakeConfirmation"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "RecoverStakeResponse"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "ReturnStake"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "ErrorResponse"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "UpgradeCodeResponse"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "ComplaintResponse"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "VoteComplaintResponse"
+      "inner_ty_idx": 43
     }
   ],
   "struct_instantiations": [],
@@ -222,7 +222,7 @@
     {
       "kind": "struct",
       "name": "NewStakeConfirmation",
-      "ty_idx": 38,
+      "ty_idx": 32,
       "prefix": {
         "prefix_num": 4084484172,
         "prefix_len": 32
@@ -256,7 +256,7 @@
     {
       "kind": "struct",
       "name": "RecoverStakeResponse",
-      "ty_idx": 39,
+      "ty_idx": 31,
       "prefix": {
         "prefix_num": 4184830756,
         "prefix_len": 32
@@ -290,7 +290,7 @@
     {
       "kind": "struct",
       "name": "UpgradeCodeResponse",
-      "ty_idx": 42,
+      "ty_idx": 28,
       "prefix": {
         "prefix_num": 3460525924,
         "prefix_len": 32
@@ -397,7 +397,7 @@
     {
       "kind": "struct",
       "name": "ReturnStake",
-      "ty_idx": 40,
+      "ty_idx": 30,
       "prefix": {
         "prefix_num": 4000269644,
         "prefix_len": 32
@@ -416,7 +416,7 @@
     {
       "kind": "struct",
       "name": "ErrorResponse",
-      "ty_idx": 41,
+      "ty_idx": 29,
       "prefix": {
         "prefix_num": 4294967294,
         "prefix_len": 32
@@ -435,7 +435,7 @@
     {
       "kind": "struct",
       "name": "ComplaintResponse",
-      "ty_idx": 43,
+      "ty_idx": 27,
       "prefix": {
         "prefix_num": 4066861904,
         "prefix_len": 32
@@ -454,7 +454,7 @@
     {
       "kind": "struct",
       "name": "VoteComplaintResponse",
-      "ty_idx": 44,
+      "ty_idx": 26,
       "prefix": {
         "prefix_num": 3597947456,
         "prefix_len": 32
@@ -516,7 +516,7 @@
     {
       "kind": "struct",
       "name": "ElectorMember",
-      "ty_idx": 28,
+      "ty_idx": 35,
       "fields": [
         {
           "name": "stake",
@@ -543,7 +543,7 @@
     {
       "kind": "struct",
       "name": "ParticipantListValidatorData",
-      "ty_idx": 35,
+      "ty_idx": 42,
       "fields": [
         {
           "name": "stake",
@@ -566,7 +566,7 @@
     {
       "kind": "struct",
       "name": "ParticipantListExtended",
-      "ty_idx": 34,
+      "ty_idx": 41,
       "fields": [
         {
           "name": "electAt",
@@ -586,7 +586,7 @@
         },
         {
           "name": "validators",
-          "ty_idx": 37
+          "ty_idx": 44
         },
         {
           "name": "failed",
@@ -605,7 +605,7 @@
     {
       "kind": "struct",
       "name": "Elect",
-      "ty_idx": 27,
+      "ty_idx": 34,
       "fields": [
         {
           "name": "electAt",
@@ -625,7 +625,7 @@
         },
         {
           "name": "members",
-          "ty_idx": 29
+          "ty_idx": 36
         },
         {
           "name": "failed",
@@ -640,19 +640,19 @@
     {
       "kind": "struct",
       "name": "ElectorStorage",
-      "ty_idx": 26,
+      "ty_idx": 33,
       "fields": [
         {
           "name": "elect",
-          "ty_idx": 31
+          "ty_idx": 38
         },
         {
           "name": "credits",
-          "ty_idx": 32
+          "ty_idx": 39
         },
         {
           "name": "pastElections",
-          "ty_idx": 33
+          "ty_idx": 40
         },
         {
           "name": "grams",
@@ -670,7 +670,7 @@
     }
   ],
   "storage": {
-    "storage_ty_idx": 26
+    "storage_ty_idx": 33
   },
   "incoming_messages": [
     {
@@ -696,7 +696,29 @@
     }
   ],
   "incoming_external": [],
-  "outgoing_messages": [],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 26
+    },
+    {
+      "body_ty_idx": 27
+    },
+    {
+      "body_ty_idx": 28
+    },
+    {
+      "body_ty_idx": 29
+    },
+    {
+      "body_ty_idx": 30
+    },
+    {
+      "body_ty_idx": 31
+    },
+    {
+      "body_ty_idx": 32
+    }
+  ],
   "emitted_events": [],
   "get_methods": [
     {
@@ -731,7 +753,7 @@
       "tvm_method_id": 86698,
       "name": "participant_list_extended",
       "parameters": [],
-      "return_ty_idx": 34
+      "return_ty_idx": 41
     }
   ],
   "thrown_errors": [

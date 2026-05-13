@@ -8,27 +8,43 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-func (v *AssetDeposit) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixAssetDeposit); err != nil {
+func (v *WithdrawJetton) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixWithdrawJetton); err != nil {
 		return err
 	}
-	if v.PriceUpdateData, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
-		return c.NextRefV()
-	}); err != nil {
-		return fmt.Errorf("failed to read .PriceUpdateData: %v", err)
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.JettonWallet.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .JettonWallet: %v", err)
+	}
+	if err = v.ToAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ToAddress: %v", err)
+	}
+	if err = v.Amount.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Amount: %v", err)
 	}
 	return nil
 }
-func (v AssetDeposit) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixAssetDeposit, 32); err != nil {
+func (v WithdrawJetton) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixWithdrawJetton, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
 	}
-	if err = v.PriceUpdateData.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .PriceUpdateData: %v", err)
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.JettonWallet.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .JettonWallet: %v", err)
+	}
+	if err = v.ToAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ToAddress: %v", err)
+	}
+	if err = v.Amount.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Amount: %v", err)
 	}
 	return nil
 }
-func (v AssetDeposit) ToCell() (*boc.Cell, error) {
+func (v WithdrawJetton) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -54,43 +70,6 @@ func (v StableDeposit) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error)
 	return nil
 }
 func (v StableDeposit) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *StakeOperation) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixStakeOperation); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.DepositAddress.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .DepositAddress: %v", err)
-	}
-	if err = v.AssetAmount.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .AssetAmount: %v", err)
-	}
-	return nil
-}
-func (v StakeOperation) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixStakeOperation, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.DepositAddress.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .DepositAddress: %v", err)
-	}
-	if err = v.AssetAmount.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .AssetAmount: %v", err)
-	}
-	return nil
-}
-func (v StakeOperation) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -134,6 +113,70 @@ func (v UnstakeExecute) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error
 	return nil
 }
 func (v UnstakeExecute) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *AssetDeposit) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixAssetDeposit); err != nil {
+		return err
+	}
+	if v.PriceUpdateData, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
+		return c.NextRefV()
+	}); err != nil {
+		return fmt.Errorf("failed to read .PriceUpdateData: %v", err)
+	}
+	return nil
+}
+func (v AssetDeposit) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixAssetDeposit, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.PriceUpdateData.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .PriceUpdateData: %v", err)
+	}
+	return nil
+}
+func (v AssetDeposit) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *StakeOperation) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixStakeOperation); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.DepositAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .DepositAddress: %v", err)
+	}
+	if err = v.AssetAmount.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .AssetAmount: %v", err)
+	}
+	return nil
+}
+func (v StakeOperation) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixStakeOperation, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.DepositAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .DepositAddress: %v", err)
+	}
+	if err = v.AssetAmount.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .AssetAmount: %v", err)
+	}
+	return nil
+}
+func (v StakeOperation) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -251,49 +294,6 @@ func (v UnstakeExecuteInternalCallback) MarshalTLB(c *boc.Cell, encoder *tlb.Enc
 	return nil
 }
 func (v UnstakeExecuteInternalCallback) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *WithdrawJetton) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixWithdrawJetton); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.JettonWallet.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .JettonWallet: %v", err)
-	}
-	if err = v.ToAddress.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ToAddress: %v", err)
-	}
-	if err = v.Amount.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Amount: %v", err)
-	}
-	return nil
-}
-func (v WithdrawJetton) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixWithdrawJetton, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.JettonWallet.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .JettonWallet: %v", err)
-	}
-	if err = v.ToAddress.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ToAddress: %v", err)
-	}
-	if err = v.Amount.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Amount: %v", err)
-	}
-	return nil
-}
-func (v WithdrawJetton) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err

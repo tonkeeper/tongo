@@ -1,8 +1,6 @@
 
 contract ff_vault_position {
     incomingMessages: PositionMessage,
-    forceAbiExport: (
-    )
 }
 
 type PositionMessage = UnstakeRequest | UnstakeExecuteInternal | UnstakeExecuteCancel;

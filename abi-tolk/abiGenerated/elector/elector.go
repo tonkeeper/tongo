@@ -21,9 +21,22 @@ type NewStake struct {
 	Signature       tlb.RefT[*tlb.Bits512] // Cell<bits512>
 }
 
+const PrefixNewStakeConfirmation uint64 = 0xf374484c
+
+type NewStakeConfirmation struct {
+	QueryId tlb.Uint64 // uint64
+	Comment tlb.Uint32 // uint32
+}
+
 const PrefixRecoverStakeRequest uint64 = 0x47657424
 
 type RecoverStakeRequest struct {
+	QueryId tlb.Uint64 // uint64
+}
+
+const PrefixRecoverStakeResponse uint64 = 0xf96f7324
+
+type RecoverStakeResponse struct {
 	QueryId tlb.Uint64 // uint64
 }
 
@@ -32,6 +45,13 @@ const PrefixUpgradeCode uint64 = 0x4e436f64
 type UpgradeCode struct {
 	QueryId tlb.Uint64 // uint64
 	Code    boc.Cell   // cell
+}
+
+const PrefixUpgradeCodeResponse uint64 = 0xce436f64
+
+type UpgradeCodeResponse struct {
+	QueryId tlb.Uint64 // uint64
+	Op      tlb.Uint32 // uint32
 }
 
 const PrefixConfigAccepted uint64 = 0xee764f4b
@@ -44,17 +64,6 @@ const PrefixConfigRejected uint64 = 0xee764f6f
 
 type ConfigRejected struct {
 	QueryId tlb.Uint64 // uint64
-}
-type ValidatorComplaint struct {
-	Tag               tlb.Uint8   // uint8
-	ValidatorPubkey   tlb.Uint256 // uint256
-	Description       boc.Cell    // cell
-	CreatedAt         tlb.Uint32  // uint32
-	Severity          tlb.Uint8   // uint8
-	RewardAddr        tlb.Uint256 // uint256
-	Paid              tlb.Coins   // coins
-	SuggestedFine     tlb.Coins   // coins
-	SuggestedFinePart tlb.Uint32  // uint32
 }
 
 const PrefixRegisterComplaint uint64 = 0x52674370
@@ -75,12 +84,66 @@ type VoteComplaint struct {
 	ElectionId    tlb.Uint32  // uint32
 	ComplaintHash tlb.Uint256 // uint256
 }
+
+const PrefixReturnStake uint64 = 0xee6f454c
+
+type ReturnStake struct {
+	QueryId tlb.Uint64 // uint64
+	Reason  tlb.Uint32 // uint32
+}
+
+const PrefixErrorResponse uint64 = 0xfffffffe
+
+type ErrorResponse struct {
+	QueryId tlb.Uint64 // uint64
+	Op      tlb.Uint32 // uint32
+}
+
+const PrefixComplaintResponse uint64 = 0xf2676350
+
+type ComplaintResponse struct {
+	QueryId tlb.Uint64 // uint64
+	Op      tlb.Uint32 // uint32
+}
+
+const PrefixVoteComplaintResponse uint64 = 0xd6745240
+
+type VoteComplaintResponse struct {
+	QueryId tlb.Uint64 // uint64
+	Op      tlb.Uint32 // uint32
+}
+type ValidatorComplaint struct {
+	Tag               tlb.Uint8   // uint8
+	ValidatorPubkey   tlb.Uint256 // uint256
+	Description       boc.Cell    // cell
+	CreatedAt         tlb.Uint32  // uint32
+	Severity          tlb.Uint8   // uint8
+	RewardAddr        tlb.Uint256 // uint256
+	Paid              tlb.Coins   // coins
+	SuggestedFine     tlb.Coins   // coins
+	SuggestedFinePart tlb.Uint32  // uint32
+}
 type ElectorMember struct {
 	Stake     tlb.Coins   // coins
 	Time      tlb.Uint32  // uint32
 	MaxFactor tlb.Uint32  // uint32
 	SrcAddr   tlb.Uint256 // uint256
 	AdnlAddr  tlb.Uint256 // uint256
+}
+type ParticipantListValidatorData struct {
+	Stake     tlb.Coins   // coins
+	MaxFactor tlb.Uint32  // uint32
+	Address   tlb.Uint256 // uint256
+	AdnlAddr  tlb.Uint256 // uint256
+}
+type ParticipantListExtended struct {
+	ElectAt    tlb.Uint32                                                    // uint32
+	ElectClose tlb.Uint32                                                    // uint32
+	MinStake   tlb.Coins                                                     // coins
+	TotalStake tlb.Coins                                                     // coins
+	Validators []tlb.ShapedTuple2[tlb.Uint256, ParticipantListValidatorData] // array<[uint256, ParticipantListValidatorData]>
+	Failed     bool                                                          // bool
+	Finished   bool                                                          // bool
 }
 type Elect struct {
 	ElectAt    tlb.Uint32                               // uint32
@@ -98,69 +161,6 @@ type ElectorStorage struct {
 	Grams         tlb.Coins                            // coins
 	ActiveId      tlb.Uint32                           // uint32
 	ActiveHash    tlb.Uint256                          // uint256
-}
-type ParticipantListValidatorData struct {
-	Stake     tlb.Coins   // coins
-	MaxFactor tlb.Uint32  // uint32
-	Address   tlb.Uint256 // uint256
-	AdnlAddr  tlb.Uint256 // uint256
-}
-type ParticipantListExtended struct {
-	ElectAt    tlb.Uint32                                                    // uint32
-	ElectClose tlb.Uint32                                                    // uint32
-	MinStake   tlb.Coins                                                     // coins
-	TotalStake tlb.Coins                                                     // coins
-	Validators []tlb.ShapedTuple2[tlb.Uint256, ParticipantListValidatorData] // array<[uint256, ParticipantListValidatorData]>
-	Failed     bool                                                          // bool
-	Finished   bool                                                          // bool
-}
-
-const PrefixNewStakeConfirmation uint64 = 0xf374484c
-
-type NewStakeConfirmation struct {
-	QueryId tlb.Uint64 // uint64
-	Comment tlb.Uint32 // uint32
-}
-
-const PrefixRecoverStakeResponse uint64 = 0xf96f7324
-
-type RecoverStakeResponse struct {
-	QueryId tlb.Uint64 // uint64
-}
-
-const PrefixReturnStake uint64 = 0xee6f454c
-
-type ReturnStake struct {
-	QueryId tlb.Uint64 // uint64
-	Reason  tlb.Uint32 // uint32
-}
-
-const PrefixErrorResponse uint64 = 0xfffffffe
-
-type ErrorResponse struct {
-	QueryId tlb.Uint64 // uint64
-	Op      tlb.Uint32 // uint32
-}
-
-const PrefixUpgradeCodeResponse uint64 = 0xce436f64
-
-type UpgradeCodeResponse struct {
-	QueryId tlb.Uint64 // uint64
-	Op      tlb.Uint32 // uint32
-}
-
-const PrefixComplaintResponse uint64 = 0xf2676350
-
-type ComplaintResponse struct {
-	QueryId tlb.Uint64 // uint64
-	Op      tlb.Uint32 // uint32
-}
-
-const PrefixVoteComplaintResponse uint64 = 0xd6745240
-
-type VoteComplaintResponse struct {
-	QueryId tlb.Uint64 // uint64
-	Op      tlb.Uint32 // uint32
 }
 
 const ( // errors

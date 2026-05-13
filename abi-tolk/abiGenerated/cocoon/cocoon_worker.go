@@ -17,9 +17,6 @@ type CocoonWorkerData struct {
 	Tokens         tlb.Uint64          // uint64
 }
 
-const ( // errors
-)
-
 func DecodeGetCocoonWorkerData(stack *tlb.VmStack) (result CocoonWorkerData, err error) {
 	if stack.Len() != 5 {
 		err = fmt.Errorf("invalid stack size %d, expected 5", stack.Len())

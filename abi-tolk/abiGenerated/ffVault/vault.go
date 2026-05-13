@@ -10,24 +10,19 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-const PrefixAssetDeposit uint64 = 0x534917c3
+const PrefixWithdrawJetton uint64 = 0xe44c1944
 
-type AssetDeposit struct {
-	PriceUpdateData tlb.Maybe[boc.Cell] // cell?
+type WithdrawJetton struct {
+	QueryId      tlb.Uint64          // uint64
+	JettonWallet tlb.InternalAddress // address
+	ToAddress    tlb.InternalAddress // address
+	Amount       tlb.Coins           // coins
 }
 
 const PrefixStableDeposit uint64 = 0x3d669db7
 
 type StableDeposit struct {
 	DistributeBetweenStakers bool // bool
-}
-
-const PrefixStakeOperation uint64 = 0x7a294fdc
-
-type StakeOperation struct {
-	QueryId        tlb.Uint64          // uint64
-	DepositAddress tlb.InternalAddress // address
-	AssetAmount    tlb.Coins           // coins
 }
 
 const PrefixUnstakeExecute uint64 = 0x4e835078
@@ -37,6 +32,20 @@ type UnstakeExecute struct {
 	PriceUpdateData boc.Cell   // cell
 	AmountToUnstake tlb.Coins  // coins
 	ItemIndex       tlb.Uint64 // uint64
+}
+
+const PrefixAssetDeposit uint64 = 0x534917c3
+
+type AssetDeposit struct {
+	PriceUpdateData tlb.Maybe[boc.Cell] // cell?
+}
+
+const PrefixStakeOperation uint64 = 0x7a294fdc
+
+type StakeOperation struct {
+	QueryId        tlb.Uint64          // uint64
+	DepositAddress tlb.InternalAddress // address
+	AssetAmount    tlb.Coins           // coins
 }
 
 const PrefixUnstakeOperation uint64 = 0x97004d72
@@ -60,15 +69,6 @@ type UnstakeExecuteInternalCallback struct {
 	XautPriceActual tlb.Uint256             // uint256
 	Owner           tlb.InternalAddress     // address
 	PositionData    tlb.RefT[*PositionData] // Cell<PositionData>
-}
-
-const PrefixWithdrawJetton uint64 = 0xe44c1944
-
-type WithdrawJetton struct {
-	QueryId      tlb.Uint64          // uint64
-	JettonWallet tlb.InternalAddress // address
-	ToAddress    tlb.InternalAddress // address
-	Amount       tlb.Coins           // coins
 }
 type VaultStaticData struct {
 	PYTHOracle         tlb.InternalAddress // address

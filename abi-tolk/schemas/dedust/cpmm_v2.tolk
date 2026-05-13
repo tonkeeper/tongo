@@ -1,7 +1,6 @@
 contract dedust_cpmm_v2 {
-incomingMessages: (),
-storage: null,
-forceAbiExport: []
+    incomingMessages: (),
+    storage: null,
 }
 
 fun onInternalMessage(in: InMessage) {

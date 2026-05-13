@@ -1,1361 +1,924 @@
 {
-  "abiSchemaVersion": "1.0",
-  "contractName": "cocoon_root",
+  "abi_schema_version": "1.0",
+  "contract_name": "cocoon_root",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AddWorkerType"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DelWorkerType"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AddModelType"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DelModelType"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AddProxyType"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DelProxyType"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RegisterProxy"
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UnregisterProxy"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpdateProxy"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ChangeFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ChangeParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpgradeContracts"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpgradeCode"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ResetRoot"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpgradeFull"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ChangeOwner"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RootStorage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RootData"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 13,
+      "value_ty_idx": 2
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RegisteredProxy"
+    },
+    {
+      "kind": "uintN",
+      "n": 1
+    },
+    {
+      "kind": "string"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 9,
+      "value_ty_idx": 33
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 31
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CocoonParams"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 38
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ReturnExcessesBack"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CocoonData"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CurrentCocoonParams"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
   "declarations": [
     {
-      "kind": "Struct",
-      "name": "AddWorkerType",
-      "prefix": {
-        "prefixStr": "0xe34b1c60",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "workerHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "DelWorkerType",
-      "prefix": {
-        "prefixStr": "0x8d94a79a",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "workerHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "AddModelType",
-      "prefix": {
-        "prefixStr": "0xc146134d",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "modelHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "DelModelType",
-      "prefix": {
-        "prefixStr": "0x92b11c18",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "modelHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "AddProxyType",
-      "prefix": {
-        "prefixStr": "0x71860e80",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "proxyHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "DelProxyType",
-      "prefix": {
-        "prefixStr": "0x3c41d0b2",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "proxyHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "RegisterProxy",
-      "prefix": {
-        "prefixStr": "0x927c7cb5",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "proxyInfo",
-          "ty": {
-            "kind": "remaining"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "UnregisterProxy",
-      "prefix": {
-        "prefixStr": "0x6d49eaf2",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "seqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "UpdateProxy",
-      "prefix": {
-        "prefixStr": "0x9c7924ba",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "seqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "proxyAddr",
-          "ty": {
-            "kind": "remaining"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ChangeFees",
-      "prefix": {
-        "prefixStr": "0xc52ed8d4",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "pricePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "workerFeePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ChangeParams",
-      "prefix": {
-        "prefixStr": "0x022fa189",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "pricePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "workerFeePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "proxyDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "clientDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "minProxyStake",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "minClientStake",
-          "ty": {
-            "kind": "coins"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "UpgradeContracts",
-      "prefix": {
-        "prefixStr": "0xa2370f61",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "proxyCode",
-          "ty": {
-            "kind": "cell"
-          }
-        },
-        {
-          "name": "workerCode",
-          "ty": {
-            "kind": "cell"
-          }
-        },
-        {
-          "name": "clientCode",
-          "ty": {
-            "kind": "cell"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "UpgradeCode",
-      "prefix": {
-        "prefixStr": "0x11aefd51",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "newCode",
-          "ty": {
-            "kind": "cell"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ResetRoot",
-      "prefix": {
-        "prefixStr": "0x563c1d96",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "UpgradeFull",
-      "prefix": {
-        "prefixStr": "0x4f7c5789",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "newData",
-          "ty": {
-            "kind": "cell"
-          }
-        },
-        {
-          "name": "newCode",
-          "ty": {
-            "kind": "cell"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ChangeOwner",
-      "prefix": {
-        "prefixStr": "0xc4a1ae54",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "newOwnerAddress",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "RegisteredProxy",
-      "fields": [
-        {
-          "name": "kind",
-          "ty": {
-            "kind": "uintN",
-            "n": 1
-          }
-        },
-        {
-          "name": "address",
-          "ty": {
-            "kind": "string"
-          }
-        }
-      ],
-      "customPackUnpack": {
-        "packToBuilder": true,
-        "unpackFromSlice": true
-      }
-    },
-    {
-      "kind": "Struct",
-      "name": "RootData",
-      "fields": [
-        {
-          "name": "proxyHashes",
-          "ty": {
-            "kind": "mapKV",
-            "k": {
-              "kind": "uintN",
-              "n": 256
-            },
-            "v": {
-              "kind": "slice"
-            }
-          }
-        },
-        {
-          "name": "registeredProxies",
-          "ty": {
-            "kind": "mapKV",
-            "k": {
-              "kind": "uintN",
-              "n": 32
-            },
-            "v": {
-              "kind": "StructRef",
-              "structName": "RegisteredProxy"
-            }
-          }
-        },
-        {
-          "name": "lastProxySeqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "workerHashes",
-          "ty": {
-            "kind": "mapKV",
-            "k": {
-              "kind": "uintN",
-              "n": 256
-            },
-            "v": {
-              "kind": "slice"
-            }
-          }
-        },
-        {
-          "name": "modelHashes",
-          "ty": {
-            "kind": "mapKV",
-            "k": {
-              "kind": "uintN",
-              "n": 256
-            },
-            "v": {
-              "kind": "slice"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "CocoonParams",
-      "fields": [
-        {
-          "name": "structVersion",
-          "ty": {
-            "kind": "uintN",
-            "n": 8
-          }
-        },
-        {
-          "name": "paramsVersion",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "uniqueId",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "isTest",
-          "ty": {
-            "kind": "bool"
-          }
-        },
-        {
-          "name": "pricePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "workerFeePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "promptTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "cachedTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "completionTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "reasoningTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "proxyDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "clientDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "minProxyStake",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "minClientStake",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "proxyScCode",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        },
-        {
-          "name": "workerScCode",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        },
-        {
-          "name": "clientScCode",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "RootStorage",
-      "fields": [
-        {
-          "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "data",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "RootData"
-            }
-          }
-        },
-        {
-          "name": "params",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "CocoonParams"
-            }
-          }
-        },
-        {
-          "name": "version",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ReturnExcessesBack",
-      "prefix": {
-        "prefixStr": "0x2565934c",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "Payout",
-      "prefix": {
-        "prefixStr": "0xc59a7cd3",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "CocoonData",
+      "ty_idx": 43,
       "fields": [
         {
           "name": "version",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "lastProxySeqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "paramsVersion",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "uniqueId",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "isTest",
-          "ty": {
-            "kind": "bool"
-          }
+          "ty_idx": 5
         },
         {
           "name": "pricePerToken",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "workerFeePerToken",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "minProxyStake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "minClientStake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "CurrentCocoonParams",
+      "ty_idx": 44,
       "fields": [
         {
           "name": "paramsVersion",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "uniqueId",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "isTest",
-          "ty": {
-            "kind": "bool"
-          }
+          "ty_idx": 5
         },
         {
           "name": "pricePerToken",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "workerFeePerToken",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "cachedTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "reasoningTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "proxyDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "clientDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "minProxyStake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "minClientStake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "proxyCodeHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 13
         },
         {
           "name": "workerCodeHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 13
         },
         {
           "name": "clientCodeHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ReturnExcessesBack",
+      "ty_idx": 42,
+      "prefix": {
+        "prefix_num": 627413836,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AddWorkerType",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 3813350496,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "workerHash",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DelWorkerType",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 2375329690,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "workerHash",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AddModelType",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 3242595149,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "modelHash",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DelModelType",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 2461080600,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "modelHash",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AddProxyType",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 1904610944,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "proxyHash",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DelProxyType",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 1010946226,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "proxyHash",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "RegisterProxy",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 2457631925,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "proxyInfo",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UnregisterProxy",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 1833560818,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "seqno",
+          "ty_idx": 9
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UpdateProxy",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 2625184954,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "seqno",
+          "ty_idx": 9
+        },
+        {
+          "name": "proxyAddr",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChangeFees",
+      "ty_idx": 23,
+      "prefix": {
+        "prefix_num": 3308181716,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pricePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "workerFeePerToken",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChangeParams",
+      "ty_idx": 24,
+      "prefix": {
+        "prefix_num": 36675977,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pricePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "workerFeePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "proxyDelayBeforeClose",
+          "ty_idx": 9
+        },
+        {
+          "name": "clientDelayBeforeClose",
+          "ty_idx": 9
+        },
+        {
+          "name": "minProxyStake",
+          "ty_idx": 6
+        },
+        {
+          "name": "minClientStake",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UpgradeContracts",
+      "ty_idx": 25,
+      "prefix": {
+        "prefix_num": 2721517409,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "proxyCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "workerCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "clientCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UpgradeCode",
+      "ty_idx": 26,
+      "prefix": {
+        "prefix_num": 296680785,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ResetRoot",
+      "ty_idx": 27,
+      "prefix": {
+        "prefix_num": 1446780310,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UpgradeFull",
+      "ty_idx": 28,
+      "prefix": {
+        "prefix_num": 1333548937,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newData",
+          "ty_idx": 3
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChangeOwner",
+      "ty_idx": 29,
+      "prefix": {
+        "prefix_num": 3298930260,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newOwnerAddress",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CocoonParams",
+      "ty_idx": 38,
+      "fields": [
+        {
+          "name": "structVersion",
+          "ty_idx": 39
+        },
+        {
+          "name": "paramsVersion",
+          "ty_idx": 9
+        },
+        {
+          "name": "uniqueId",
+          "ty_idx": 9
+        },
+        {
+          "name": "isTest",
+          "ty_idx": 5
+        },
+        {
+          "name": "pricePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "workerFeePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "promptTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "cachedTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "completionTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "reasoningTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "proxyDelayBeforeClose",
+          "ty_idx": 9
+        },
+        {
+          "name": "clientDelayBeforeClose",
+          "ty_idx": 9
+        },
+        {
+          "name": "minProxyStake",
+          "ty_idx": 6
+        },
+        {
+          "name": "minClientStake",
+          "ty_idx": 6
+        },
+        {
+          "name": "proxyScCode",
+          "ty_idx": 40
+        },
+        {
+          "name": "workerScCode",
+          "ty_idx": 40
+        },
+        {
+          "name": "clientScCode",
+          "ty_idx": 40
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "RegisteredProxy",
+      "ty_idx": 33,
+      "fields": [
+        {
+          "name": "kind",
+          "ty_idx": 34
+        },
+        {
+          "name": "address",
+          "ty_idx": 35
+        }
+      ],
+      "custom_pack_unpack": {
+        "pack_to_builder": true,
+        "unpack_from_slice": true
+      }
+    },
+    {
+      "kind": "struct",
+      "name": "RootData",
+      "ty_idx": 31,
+      "fields": [
+        {
+          "name": "proxyHashes",
+          "ty_idx": 32
+        },
+        {
+          "name": "registeredProxies",
+          "ty_idx": 36
+        },
+        {
+          "name": "lastProxySeqno",
+          "ty_idx": 9
+        },
+        {
+          "name": "workerHashes",
+          "ty_idx": 32
+        },
+        {
+          "name": "modelHashes",
+          "ty_idx": 32
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "RootStorage",
+      "ty_idx": 30,
+      "fields": [
+        {
+          "name": "ownerAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "data",
+          "ty_idx": 37
+        },
+        {
+          "name": "params",
+          "ty_idx": 41
+        },
+        {
+          "name": "version",
+          "ty_idx": 9
         }
       ]
     }
   ],
   "storage": {
-    "storageTy": {
-      "kind": "StructRef",
-      "structName": "RootStorage"
-    }
+    "storage_ty_idx": 30
   },
-  "incomingMessages": [
+  "incoming_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "AddWorkerType"
-      }
+      "body_ty_idx": 12
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "DelWorkerType"
-      }
+      "body_ty_idx": 14
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "AddModelType"
-      }
+      "body_ty_idx": 15
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "DelModelType"
-      }
+      "body_ty_idx": 16
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "AddProxyType"
-      }
+      "body_ty_idx": 17
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "DelProxyType"
-      }
+      "body_ty_idx": 18
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "RegisterProxy"
-      }
+      "body_ty_idx": 19
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UnregisterProxy"
-      }
+      "body_ty_idx": 21
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpdateProxy"
-      }
+      "body_ty_idx": 22
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ChangeFees"
-      }
+      "body_ty_idx": 23
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ChangeParams"
-      }
+      "body_ty_idx": 24
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpgradeContracts"
-      }
+      "body_ty_idx": 25
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpgradeCode"
-      }
+      "body_ty_idx": 26
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ResetRoot"
-      }
+      "body_ty_idx": 27
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpgradeFull"
-      }
+      "body_ty_idx": 28
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ChangeOwner"
-      }
+      "body_ty_idx": 29
     }
   ],
-  "incomingExternal": [],
-  "outgoingMessages": [
+  "incoming_external": [],
+  "outgoing_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ReturnExcessesBack"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "Payout"
-      }
+      "body_ty_idx": 42
     }
   ],
-  "emittedEvents": [],
-  "getMethods": [
+  "emitted_events": [],
+  "get_methods": [
     {
-      "tvmMethodId": 65647,
+      "tvm_method_id": 65647,
       "name": "last_proxy_seqno",
       "parameters": [],
-      "returnTy": {
-        "kind": "int"
-      }
+      "return_ty_idx": 1
     },
     {
-      "tvmMethodId": 96613,
+      "tvm_method_id": 96613,
       "name": "get_cocoon_data",
       "parameters": [],
-      "returnTy": {
-        "kind": "StructRef",
-        "structName": "CocoonData"
-      }
+      "return_ty_idx": 43
     },
     {
-      "tvmMethodId": 89457,
+      "tvm_method_id": 89457,
       "name": "get_cur_params",
       "parameters": [],
-      "returnTy": {
-        "kind": "StructRef",
-        "structName": "CurrentCocoonParams"
-      }
+      "return_ty_idx": 44
     },
     {
-      "tvmMethodId": 129381,
+      "tvm_method_id": 129381,
       "name": "proxy_hash_is_valid",
       "parameters": [
         {
           "name": "hash",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         }
       ],
-      "returnTy": {
-        "kind": "int"
-      }
+      "return_ty_idx": 1
     },
     {
-      "tvmMethodId": 95753,
+      "tvm_method_id": 95753,
       "name": "worker_hash_is_valid",
       "parameters": [
         {
           "name": "hash",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         }
       ],
-      "returnTy": {
-        "kind": "int"
-      }
+      "return_ty_idx": 1
     },
     {
-      "tvmMethodId": 72587,
+      "tvm_method_id": 72587,
       "name": "model_hash_is_valid",
       "parameters": [
         {
           "name": "hash",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         }
       ],
-      "returnTy": {
-        "kind": "int"
-      }
+      "return_ty_idx": 1
     }
   ],
-  "thrownErrors": [
+  "thrown_errors": [
     {
       "kind": "constant",
       "name": "ERROR_MSG_FORMAT_MISMATCH",
-      "errCode": 1004
-    },
-    {
-      "kind": "constant",
-      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "errCode": 1005
-    },
-    {
-      "kind": "constant",
-      "name": "ERROR_BAD_SIGNATURE",
-      "errCode": 1007
+      "err_code": 1004
     },
     {
       "kind": "constant",
       "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "errCode": 1010
+      "err_code": 1010
     },
     {
       "kind": "constant",
       "name": "ERROR_UNKNOWN_PROXY_TYPE",
-      "errCode": 2000
+      "err_code": 2000
     }
   ],
-  "constants": [
-    {
-      "name": "OP_EXCESSES",
-      "value": {
-        "kind": "int",
-        "v": "627413836"
-      }
-    },
-    {
-      "name": "OP_PAYOUT",
-      "value": {
-        "kind": "int",
-        "v": "3315236051"
-      }
-    },
-    {
-      "name": "OP_DO_NOT_PROCESS",
-      "value": {
-        "kind": "int",
-        "v": "2584889280"
-      }
-    },
-    {
-      "name": "ERROR_OLD_MESSAGE",
-      "value": {
-        "kind": "int",
-        "v": "1000"
-      }
-    },
-    {
-      "name": "ERROR_LOW_SMC_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1001"
-      }
-    },
-    {
-      "name": "ERROR_LOW_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1002"
-      }
-    },
-    {
-      "name": "ERROR_LOW_MSG_VALUE",
-      "value": {
-        "kind": "int",
-        "v": "1003"
-      }
-    },
-    {
-      "name": "ERROR_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1004"
-      }
-    },
-    {
-      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1005"
-      }
-    },
-    {
-      "name": "ERROR_CLOSED",
-      "value": {
-        "kind": "int",
-        "v": "1006"
-      }
-    },
-    {
-      "name": "ERROR_BAD_SIGNATURE",
-      "value": {
-        "kind": "int",
-        "v": "1007"
-      }
-    },
-    {
-      "name": "ERROR_STORED_DATA_DAMAGED",
-      "value": {
-        "kind": "int",
-        "v": "1008"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1009"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1010"
-      }
-    },
-    {
-      "name": "ERROR_NOT_UNLOCKED_YET",
-      "value": {
-        "kind": "int",
-        "v": "1011"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_OP",
-      "value": {
-        "kind": "int",
-        "v": "1012"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_TEXT_OP",
-      "value": {
-        "kind": "int",
-        "v": "1013"
-      }
-    },
-    {
-      "name": "ERROR_CONTRACT_ADDRESS_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1014"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MY_ADDRESS",
-      "value": {
-        "kind": "int",
-        "v": "1015"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_PROXY_TYPE",
-      "value": {
-        "kind": "int",
-        "v": "2000"
-      }
-    },
-    {
-      "name": "COMMISSION_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "100000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "STORAGE_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "10000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "CLIENT_STAKE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "1000000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "WORKCHAIN",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "client_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "proxy_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "proxy_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "proxy_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "worker_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "worker_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    }
-  ],
-  "compilerName": "tolk",
-  "compilerVersion": "1.2.0"
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgECFQEAA7QAART/APSkE/S88sgLAQIBYgIDAfTQ7aLt+/iR8kAgxwCRMOD4J28Q+Jeh+C+gggiYloC2CXD7AiDXCx+CEJoSR8C6kTDgINMfMdcLP+1E0PpI1NTXCx8j+JIlxwXy4/ID0ALQAvQE9ATTHwXWB9Mf1iD6APoA1n/TH9Mf+gD6APQE9AT0BREV1ywnGljjBAQCASALDAL+kTCOu9csJGylPNSRMI6v1ywmCjCabJEwjqPXLCSViODEkTCOl9csI4wwdASRMI6L1ywh4g6FlJEw4w7i4uLi4sjPhQgBERIB+lKCECVlk0zPC44BERMByz/Jgwb7AAzI9AAb9AAZyx8czskGyM4Vyx8TzgH6AgH6As4Wyx/LHwUGAvbXLCST4+Wsju/XLCNqT1eUkTCO4tcsJOPJJdSOEdNfMdMAAfLT7NMGAaoC1yHRjsXXLCYpdsaknTg4CaQG0z8x+gD6ADCOqdcsIBF9DEyOGGwzMzQ0BaQF0z8x+gD6ANMf0x/6APoAMOMOEIoQeFUT4gdQqgji4gzjDQwHCAA8AfoCAfoCFfQAEvQAFPQAyQKkAcj6UhPMzMsfye1UAv7XLCURuHsMjnLXLCCNd+qMnFcQXw9sUddM+wTbMeDXLCKx4Oy0kTCOS9csInvivEyOKlcQXw80WzLTP9TXTAHtVPsEyM+FCBL6UoIQJWWTTM8Ljss/yYMG+wDbMeBXExES1ywmJQ1ypJLyP+HTPzH6SDAREuIKERQKQQrjDREUCQoAJtM/MdMAAfLT7NMGAaoC1yHRDKQAFlcVWwikERLU1NdMAAxIekVAQTACASANDgBFv8sph2omh9JBjqahjpj5jo6HoCGPoCGOmPmPoCGPoCGOi4QCAUgPEAIBIBESAD+wG/tRND6SDHU1DHTHzHR0PQEMfQEMdMf9AQx9AQx0YABFsuLMO1E0PpIMdTUMdMfMdHQ9AQx9AQx0x8x9AQx9AQx0XCAAsbeuPaiaH0kGOoY6mmPmOjoaYOY6Y/pj+kAfQB9AGmPmOmP6Y+Y6Y/pj+mP/QB9AHoCegJ6AmiRN1nJgXyASRk4cRC3WcmA/IBJGLhxETdZyYF8gEkZOHEJQAgFYExQARa8EmHaiaH0kGOpqGOmPmOjoegIY+gIY6Y+Y+gIY+gIY6LhAAJ2ssvaiaH0kamppj+iBaHoCGPoCGOmP+gIY+gIY6IDoaYOY6Y/pj+kAfQB9AGmPmOmPmOmPmOmPmOmPmOmPmP0AfQB6Ahj6Ahj6AhjoqoRA"
 }

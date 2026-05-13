@@ -1,4 +1,4 @@
-package tolk
+package runtime
 
 import (
 	"fmt"
@@ -18,11 +18,11 @@ func Marshal(v *Value, ty parser.Ty) (*boc.Cell, error) {
 }
 
 type abiRefs struct {
-	structRefs  map[string]parser.StructDeclaration
-	aliasRefs   map[string]parser.AliasDeclaration
-	enumRefs    map[string]parser.EnumDeclaration
+	structRefs  map[string]parser.ABIStruct
+	aliasRefs   map[string]parser.ABIAlias
+	enumRefs    map[string]parser.ABIEnum
 	genericRefs map[string]parser.Ty
-	opcodeRefs  map[uint64][]parser.StructDeclaration
+	opcodeRefs  map[uint64][]parser.ABIStruct
 }
 
 type customUnpackResolver = func(parser.AliasRef, *boc.Cell, *AliasValue) error
@@ -36,13 +36,13 @@ func NewDecoder() *Decoder {
 	return &Decoder{}
 }
 
-func (d *Decoder) WithABIs(abis ...parser.ABI) error {
+func (d *Decoder) WithABIs(abis ...parser.ContractABI) error {
 	d.abiRefs = abiRefs{
-		structRefs:  make(map[string]parser.StructDeclaration),
-		aliasRefs:   make(map[string]parser.AliasDeclaration),
-		enumRefs:    make(map[string]parser.EnumDeclaration),
+		structRefs:  make(map[string]parser.ABIStruct),
+		aliasRefs:   make(map[string]parser.ABIAlias),
+		enumRefs:    make(map[string]parser.ABIEnum),
 		genericRefs: make(map[string]parser.Ty),
-		opcodeRefs:  make(map[uint64][]parser.StructDeclaration),
+		opcodeRefs:  make(map[uint64][]parser.ABIStruct),
 	}
 	for _, abi := range abis {
 		for _, declr := range abi.Declarations {
@@ -130,11 +130,11 @@ func NewEncoder() *Encoder {
 
 func (e *Encoder) WithABIs(abis ...parser.ABI) error {
 	e.abiRefs = abiRefs{
-		structRefs:  make(map[string]parser.StructDeclaration),
-		aliasRefs:   make(map[string]parser.AliasDeclaration),
-		enumRefs:    make(map[string]parser.EnumDeclaration),
+		structRefs:  make(map[string]parser.ABIStruct),
+		aliasRefs:   make(map[string]parser.ABIAlias),
+		enumRefs:    make(map[string]parser.ABIEnum),
 		genericRefs: make(map[string]parser.Ty),
-		opcodeRefs:  make(map[uint64][]parser.StructDeclaration),
+		opcodeRefs:  make(map[uint64][]parser.ABIStruct),
 	}
 	for _, abi := range abis {
 		for _, declr := range abi.Declarations {

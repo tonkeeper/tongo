@@ -1,4 +1,4 @@
-package tolk
+package runtime
 
 // todo: move this to some package or rename somehow.
 
@@ -526,10 +526,10 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal alias value: %w", err)
 		}
-	case "Generic":
-		v.SumType = "Generic"
+	case "GenericT":
+		v.SumType = "GenericT"
 		v.Generic = &GenericValue{}
-		err = v.Generic.Unmarshal(cell, *ty.Generic, decoder)
+		err = v.Generic.Unmarshal(cell, *ty.GenericT, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal generic value: %w", err)
 		}
@@ -754,11 +754,11 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 		if err != nil {
 			return fmt.Errorf("failed to marshal alias value: %w", err)
 		}
-	case "Generic":
-		if v.SumType != "Generic" {
-			return fmt.Errorf("expected Generic, but got %v", v.SumType)
+	case "GenericT":
+		if v.SumType != "GenericT" {
+			return fmt.Errorf("expected GenericT, but got %v", v.SumType)
 		}
-		err = v.Generic.Marshal(cell, *ty.Generic, encoder)
+		err = v.Generic.Marshal(cell, *ty.GenericT, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal generic value: %w", err)
 		}
@@ -988,7 +988,7 @@ func (v *Value) Equal(o any) bool {
 			return false
 		}
 		return v.Enum.Equal(*otherValue.Enum)
-	case "Generic":
+	case "GenericT":
 		if otherValue.Generic == nil {
 			return false
 		}
@@ -1065,7 +1065,7 @@ func (v Value) MarshalJSON() ([]byte, error) {
 		data, err = json.Marshal(val)
 	case "Enum":
 		data, err = json.Marshal(v.Enum)
-	case "Generic":
+	case "GenericT":
 		val := Value(*v.Generic)
 		data, err = json.Marshal(val)
 	case "Union":

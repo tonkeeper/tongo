@@ -1,4 +1,4 @@
-package tolk
+package runtime
 
 import (
 	"github.com/tonkeeper/tongo/boc"

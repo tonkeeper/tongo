@@ -1,4 +1,4 @@
-package tolk
+package runtime
 
 import (
 	"encoding/json"
@@ -158,10 +158,10 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) 
 
 		decoder.abiRefs.genericRefs = oldGenericMap
 		return val, true, nil
-	case "Generic":
-		currentTy, found := decoder.abiRefs.genericRefs[ty.Generic.NameT]
+	case "GenericT":
+		currentTy, found := decoder.abiRefs.genericRefs[ty.GenericT.NameT]
 		if !found {
-			return Value{}, false, fmt.Errorf("cannot resolve generic's type %v ", ty.Generic.NameT)
+			return Value{}, false, fmt.Errorf("cannot resolve generic's type %v ", ty.GenericT.NameT)
 		}
 
 		return s.resolvePayload(cell, currentTy, decoder)
@@ -180,7 +180,7 @@ func (s *Struct) Marshal(cell *boc.Cell, ty parser.StructRef, encoder *Encoder) 
 	}
 
 	if strct.Prefix != nil {
-		actualPrefix, err := binHexToUint64(strct.Prefix.PrefixStr)
+		actualPrefix, err := tolk.binHexToUint64(strct.Prefix.PrefixStr)
 		if err != nil {
 			return fmt.Errorf("failed to parse struct's prefix %v to integer: %w", strct.Prefix.PrefixStr, err)
 		}
@@ -518,7 +518,7 @@ func (g *GenericValue) Equal(other any) bool {
 	return v.Equal(Value(otherGeneric))
 }
 
-func (g *GenericValue) Unmarshal(cell *boc.Cell, ty parser.Generic, decoder *Decoder) error {
+func (g *GenericValue) Unmarshal(cell *boc.Cell, ty parser.GenericT, decoder *Decoder) error {
 	currentTy, found := decoder.abiRefs.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic's type %v ", ty.NameT)
@@ -534,7 +534,7 @@ func (g *GenericValue) Unmarshal(cell *boc.Cell, ty parser.Generic, decoder *Dec
 	return nil
 }
 
-func (g *GenericValue) Marshal(cell *boc.Cell, ty parser.Generic, encoder *Encoder) error {
+func (g *GenericValue) Marshal(cell *boc.Cell, ty parser.GenericT, encoder *Encoder) error {
 	currentTy, found := encoder.abiRefs.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic's type %v ", ty.NameT)
@@ -557,14 +557,14 @@ func resolveGeneric(typeArgs []parser.Ty, typeParams []string, abiRefs *abiRefs)
 	for i, genericTy := range typeArgs {
 		genericMap[typeParams[i]] = genericTy
 
-		if genericTy.SumType == "Generic" {
+		if genericTy.SumType == "GenericT" {
 			if abiRefs.genericRefs == nil {
-				return nil, fmt.Errorf("cannot resolve generic's type %v", genericTy.Generic.NameT)
+				return nil, fmt.Errorf("cannot resolve generic's type %v", genericTy.GenericT.NameT)
 			}
 
-			ty, found := abiRefs.genericRefs[genericTy.Generic.NameT]
+			ty, found := abiRefs.genericRefs[genericTy.GenericT.NameT]
 			if !found {
-				return nil, fmt.Errorf("generic's type %v not found", genericTy.Generic.NameT)
+				return nil, fmt.Errorf("generic's type %v not found", genericTy.GenericT.NameT)
 			}
 			genericMap[typeParams[i]] = ty
 		}

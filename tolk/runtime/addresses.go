@@ -1,4 +1,4 @@
-package tolk
+package runtime
 
 import (
 	"bytes"

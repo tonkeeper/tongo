@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/tolk"
 	"github.com/tonkeeper/tongo/tolk/parser"
+	"github.com/tonkeeper/tongo/tolk/runtime"
 )
 import _ "embed"
 
@@ -32,7 +32,7 @@ func main() {
 		panic(err)
 	}
 
-	decoder := tolk.NewDecoder()
+	decoder := runtime.NewDecoder()
 	err = decoder.WithABIs(jettonWalletABI)
 	if err != nil {
 		panic(err)
@@ -104,7 +104,7 @@ func main() {
 		panic(err)
 	}
 
-	tolkValue := tolk.Value{}
+	tolkValue := runtime.Value{}
 	if err := json.Unmarshal(val, &tolkValue); err != nil {
 		panic(err)
 	}

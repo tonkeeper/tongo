@@ -1,0 +1,15 @@
+{
+  "name": "tongo-tolk-schemas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "abi": "tsx example.ts"
+  },
+  "dependencies": {
+    "@ton/tolk-js": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "tsx": "^4.0.0"
+  }
+}

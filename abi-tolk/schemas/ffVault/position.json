@@ -1,210 +1,234 @@
 {
-  "abiSchemaVersion": "1.0",
-  "contractName": "ff_vault_position",
+  "abi_schema_version": "1.0",
+  "contract_name": "ff_vault_position",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UnstakeRequest"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UnstakeExecuteInternal"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UnstakeExecuteCancel"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "NftData"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StakePositionInfo"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
   "declarations": [
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "UnstakeRequest",
+      "ty_idx": 12,
       "prefix": {
-        "prefixStr": "0x8a77cf39",
-        "prefixLen": 32
+        "prefix_num": 2323107641,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "amountWantedToUnstake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "UnstakeExecuteInternal",
+      "ty_idx": 13,
       "prefix": {
-        "prefixStr": "0xd1029c99",
-        "prefixLen": 32
+        "prefix_num": 3506609305,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "amountToUnstake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "xautPriceActual",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 14
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "UnstakeExecuteCancel",
+      "ty_idx": 15,
       "prefix": {
-        "prefixStr": "0x0b30393c",
-        "prefixLen": 32
+        "prefix_num": 187709756,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "excessGetter",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "amountToAdd",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "NftData",
+      "ty_idx": 16,
       "fields": [
         {
           "name": "init",
-          "ty": {
-            "kind": "bool"
-          }
+          "ty_idx": 5
         },
         {
           "name": "index",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         },
         {
           "name": "collection_address",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "owner_address",
-          "ty": {
-            "kind": "addressOpt"
-          }
+          "ty_idx": 17
         },
         {
           "name": "content",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
+          "ty_idx": 18
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "StakePositionInfo",
+      "ty_idx": 19,
       "fields": [
         {
           "name": "lockedAssetAmount",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         },
         {
           "name": "amountWantedToUnstake",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         },
         {
           "name": "previousStablePerAssetCollected",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         },
         {
           "name": "priceStake",
-          "ty": {
-            "kind": "int"
-          }
+          "ty_idx": 1
         }
       ]
     }
   ],
   "storage": {},
-  "incomingMessages": [
+  "incoming_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UnstakeRequest"
-      }
+      "body_ty_idx": 12
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UnstakeExecuteInternal"
-      }
+      "body_ty_idx": 13
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UnstakeExecuteCancel"
-      }
+      "body_ty_idx": 15
     }
   ],
-  "incomingExternal": [],
-  "outgoingMessages": [],
-  "emittedEvents": [],
-  "getMethods": [
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [
     {
-      "tvmMethodId": 102351,
+      "tvm_method_id": 102351,
       "name": "get_nft_data",
       "parameters": [],
-      "returnTy": {
-        "kind": "StructRef",
-        "structName": "NftData"
-      }
+      "return_ty_idx": 16
     },
     {
-      "tvmMethodId": 102640,
+      "tvm_method_id": 102640,
       "name": "get_stake_position_info",
       "parameters": [],
-      "returnTy": {
-        "kind": "StructRef",
-        "structName": "StakePositionInfo"
-      }
+      "return_ty_idx": 19
     }
   ],
-  "thrownErrors": [
+  "thrown_errors": [
     {
-      "kind": "plainInt",
-      "errCode": 0
+      "kind": "plain_int",
+      "err_code": 0
     }
   ],
-  "constants": [],
-  "compilerName": "tolk",
-  "compilerVersion": "1.2.0"
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBBgEAKgABFP8A9KQT9LzyyAsBAgFiAgMABtDyAAICdAQFAAmz8/yAIAAJsDw8gCA="
 }

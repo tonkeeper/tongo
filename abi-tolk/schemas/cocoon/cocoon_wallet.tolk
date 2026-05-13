@@ -1,7 +1,7 @@
 import "@stdlib/gas-payments"
-import "errors"
-import "opcodes"
-import "storage"
+import "imports/errors"
+import "imports/opcodes"
+import "imports/storage"
 
 
 contract cocoon_wallet {
@@ -68,7 +68,7 @@ fun onExternalMessage(inMsg: slice) {
 
     var storage = WalletStorage.load();
 
-    assert (!(storage.status & 1)) throw 1031;  // Not blocked
+    assert ((storage.status & 1) == 0) throw 1031;  // Not blocked
     assert (msg.msgSeqno == storage.seqno) throw 1032;
     assert (msg.subwalletId == storage.subwalletId) throw 1033;
     assert (isSignatureValid(inMsg.hash(), signature, storage.publicKey)) throw 1034;

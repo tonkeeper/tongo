@@ -1,443 +1,207 @@
 {
-  "abiSchemaVersion": "1.0",
-  "contractName": "",
+  "abi_schema_version": "1.0",
+  "contract_name": "",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ReturnExcessesBack"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "WorkerProxyRequest"
+    },
+    {
+      "kind": "uintN",
+      "n": 2
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CocoonWorkerData"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
   "declarations": [
     {
-      "kind": "Struct",
-      "name": "ReturnExcessesBack",
-      "prefix": {
-        "prefixStr": "0x2565934c",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "Payout",
-      "prefix": {
-        "prefixStr": "0xc59a7cd3",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "WorkerProxyRequest",
-      "prefix": {
-        "prefixStr": "0x4d725d2c",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "state",
-          "ty": {
-            "kind": "uintN",
-            "n": 2
-          }
-        },
-        {
-          "name": "tokens",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "payload",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "CocoonWorkerData",
+      "ty_idx": 16,
       "fields": [
         {
           "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "proxyAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "proxyPublicKey",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 17
         },
         {
           "name": "state",
-          "ty": {
-            "kind": "uintN",
-            "n": 2
-          }
+          "ty_idx": 14
         },
         {
           "name": "tokens",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ReturnExcessesBack",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 627413836,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "WorkerProxyRequest",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 1299340588,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "ownerAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "state",
+          "ty_idx": 14
+        },
+        {
+          "name": "tokens",
+          "ty_idx": 11
+        },
+        {
+          "name": "payload",
+          "ty_idx": 15
         }
       ]
     }
   ],
   "storage": {},
-  "incomingMessages": [],
-  "incomingExternal": [],
-  "outgoingMessages": [
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ReturnExcessesBack"
-      }
+      "body_ty_idx": 12
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "Payout"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "WorkerProxyRequest"
-      }
+      "body_ty_idx": 13
     }
   ],
-  "emittedEvents": [],
-  "getMethods": [
+  "emitted_events": [],
+  "get_methods": [
     {
-      "tvmMethodId": 106427,
+      "tvm_method_id": 106427,
       "name": "get_cocoon_worker_data",
       "parameters": [],
-      "returnTy": {
-        "kind": "StructRef",
-        "structName": "CocoonWorkerData"
-      }
+      "return_ty_idx": 16
     }
   ],
-  "thrownErrors": [
+  "thrown_errors": [
     {
       "kind": "constant",
       "name": "ERROR_OLD_MESSAGE",
-      "errCode": 1000
+      "err_code": 1000
     },
     {
       "kind": "constant",
       "name": "ERROR_LOW_MSG_VALUE",
-      "errCode": 1003
+      "err_code": 1003
     },
     {
       "kind": "constant",
       "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "errCode": 1005
+      "err_code": 1005
     },
     {
       "kind": "constant",
       "name": "ERROR_CLOSED",
-      "errCode": 1006
+      "err_code": 1006
     },
     {
       "kind": "constant",
       "name": "ERROR_BAD_SIGNATURE",
-      "errCode": 1007
+      "err_code": 1007
     },
     {
       "kind": "constant",
       "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "errCode": 1010
+      "err_code": 1010
     },
     {
       "kind": "constant",
       "name": "ERROR_EXPECTED_MY_ADDRESS",
-      "errCode": 1015
+      "err_code": 1015
     }
   ],
-  "constants": [
-    {
-      "name": "OP_EXCESSES",
-      "value": {
-        "kind": "int",
-        "v": "627413836"
-      }
-    },
-    {
-      "name": "OP_PAYOUT",
-      "value": {
-        "kind": "int",
-        "v": "3315236051"
-      }
-    },
-    {
-      "name": "OP_DO_NOT_PROCESS",
-      "value": {
-        "kind": "int",
-        "v": "2584889280"
-      }
-    },
-    {
-      "name": "ERROR_OLD_MESSAGE",
-      "value": {
-        "kind": "int",
-        "v": "1000"
-      }
-    },
-    {
-      "name": "ERROR_LOW_SMC_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1001"
-      }
-    },
-    {
-      "name": "ERROR_LOW_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1002"
-      }
-    },
-    {
-      "name": "ERROR_LOW_MSG_VALUE",
-      "value": {
-        "kind": "int",
-        "v": "1003"
-      }
-    },
-    {
-      "name": "ERROR_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1004"
-      }
-    },
-    {
-      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1005"
-      }
-    },
-    {
-      "name": "ERROR_CLOSED",
-      "value": {
-        "kind": "int",
-        "v": "1006"
-      }
-    },
-    {
-      "name": "ERROR_BAD_SIGNATURE",
-      "value": {
-        "kind": "int",
-        "v": "1007"
-      }
-    },
-    {
-      "name": "ERROR_STORED_DATA_DAMAGED",
-      "value": {
-        "kind": "int",
-        "v": "1008"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1009"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1010"
-      }
-    },
-    {
-      "name": "ERROR_NOT_UNLOCKED_YET",
-      "value": {
-        "kind": "int",
-        "v": "1011"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_OP",
-      "value": {
-        "kind": "int",
-        "v": "1012"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_TEXT_OP",
-      "value": {
-        "kind": "int",
-        "v": "1013"
-      }
-    },
-    {
-      "name": "ERROR_CONTRACT_ADDRESS_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1014"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MY_ADDRESS",
-      "value": {
-        "kind": "int",
-        "v": "1015"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_PROXY_TYPE",
-      "value": {
-        "kind": "int",
-        "v": "2000"
-      }
-    },
-    {
-      "name": "COMMISSION_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "100000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "STORAGE_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "10000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "CLIENT_STAKE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "1000000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "WORKCHAIN",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "client_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "proxy_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "proxy_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "proxy_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "worker_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "worker_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    }
-  ],
-  "compilerName": "tolk",
-  "compilerVersion": "1.2.0"
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgECCgEAAg8AART/APSkE/S88sgLAQIBYgIDAgLPBAUAJaE/d9qJofSR9JGn/6YDpn+oY6MD2z4kfJAIMcAkTDg+CdvEPiXofgvoIIQBo53gLYJIdcLH4IQmhJHwLqRW+DtRND6SPpI0//TAdM/10wiwwLy4+74l4IQBfXhALzy4+sn1ywlAgVpROMC1ywnr5NRtOMCMTM2AdcsITdr+yzjAvI/gBgYHAfUMzQ0NvgoEscF8uP3BI4RMzVTMbvy4+iCCJiWgHD7AnKbU1C58uPoA3D7AgXiI9DTSDH6APoAMFJHoVMGqFAnoajIz5Ajn0DaUAb6AlAF+gIV+lLJyM+FiFJw+lKCEE1yXSzPC44Vyz9ScPpSI88LASHPCz8U9ADJgwaAJAcQwB9Mf0z/6SIMI1xjU0SD5AFMo+RDy4+8g0NMf1ws/URa68uPtJLry4+0g0NcsJQIFaUSOK9csJ6+TUbSS8j/h0z/TP/pIMBDOEL0QrBCbEIoQiRB4EGcQVhBFEDR/8AHjDQgApPiSJMcF8uPyBHD7AgPTP/pIMHFtyM+FiBX6UgH6AoIQTXJdLM8LiiLPCz8U+lIUywEUyz8T9ADJcfsAyM+FCBL6UoIQJWWTTM8Ljss/yYMG+wAAQNM/0z/6SDAQzhC9EKwQmxCKEIkQeBBnEFYQRRA0cPABACr7AAXI+lIU+lISy/8SywHLP8zJ7VQ="
 }

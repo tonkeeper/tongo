@@ -9,3 +9,4 @@ tlb/parser/testdata/*.output.out
 vendor/
 cover.out
 *.output.json
+node_modules/

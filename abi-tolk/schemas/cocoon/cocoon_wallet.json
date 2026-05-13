@@ -1,587 +1,301 @@
 {
-  "abiSchemaVersion": "1.0",
-  "contractName": "cocoon_wallet",
+  "abi_schema_version": "1.0",
+  "contract_name": "cocoon_wallet",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerWalletSendMessage"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "TextCommand"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "WalletExternalMessage"
+    },
+    {
+      "kind": "bitsN",
+      "n": 512
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExternalSignedMessage"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "ForwardMsgs"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ForwardMsg"
+    },
+    {
+      "kind": "arrayOf",
+      "inner_ty_idx": 19
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "WalletStorage"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
   "declarations": [
     {
-      "kind": "Struct",
-      "name": "OwnerWalletSendMessage",
-      "prefix": {
-        "prefixStr": "0x9c69f376",
-        "prefixLen": 32
-      },
+      "kind": "struct",
+      "name": "WalletExternalMessage",
+      "ty_idx": 15,
       "fields": [
         {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "name": "signature",
+          "ty_idx": 16
         },
         {
-          "name": "mode",
-          "ty": {
-            "kind": "uintN",
-            "n": 8
-          }
-        },
-        {
-          "name": "body",
-          "ty": {
-            "kind": "cell"
-          }
+          "name": "message",
+          "ty_idx": 17
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "TextCommand",
+      "kind": "struct",
+      "name": "ExternalSignedMessage",
+      "ty_idx": 17,
+      "fields": [
+        {
+          "name": "subwalletId",
+          "ty_idx": 9
+        },
+        {
+          "name": "validUntil",
+          "ty_idx": 9
+        },
+        {
+          "name": "msgSeqno",
+          "ty_idx": 9
+        },
+        {
+          "name": "forward",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "ForwardMsgs",
+      "ty_idx": 18,
+      "target_ty_idx": 20,
+      "custom_pack_unpack": {
+        "pack_to_builder": true,
+        "unpack_from_slice": true
+      }
+    },
+    {
+      "kind": "struct",
+      "name": "ForwardMsg",
+      "ty_idx": 19,
+      "fields": [
+        {
+          "name": "mode",
+          "ty_idx": 13
+        },
+        {
+          "name": "msg",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerWalletSendMessage",
+      "ty_idx": 12,
       "prefix": {
-        "prefixStr": "0x00000000",
-        "prefixLen": 32
+        "prefix_num": 2624189302,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "mode",
+          "ty_idx": 13
+        },
+        {
+          "name": "body",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "TextCommand",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "action",
-          "ty": {
-            "kind": "uintN",
-            "n": 8
-          }
+          "ty_idx": 13
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "ForwardMsg",
-      "fields": [
-        {
-          "name": "mode",
-          "ty": {
-            "kind": "uintN",
-            "n": 8
-          }
-        },
-        {
-          "name": "msg",
-          "ty": {
-            "kind": "cell"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Alias",
-      "name": "ForwardMsgs",
-      "targetTy": {
-        "kind": "arrayOf",
-        "inner": {
-          "kind": "StructRef",
-          "structName": "ForwardMsg"
-        }
-      },
-      "customPackUnpack": {
-        "packToBuilder": true,
-        "unpackFromSlice": true
-      }
-    },
-    {
-      "kind": "Struct",
-      "name": "ExternalSignedMessage",
-      "fields": [
-        {
-          "name": "subwalletId",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "validUntil",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "msgSeqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "forward",
-          "ty": {
-            "kind": "AliasRef",
-            "aliasName": "ForwardMsgs"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "WalletExternalMessage",
-      "fields": [
-        {
-          "name": "signature",
-          "ty": {
-            "kind": "bitsN",
-            "n": 512
-          }
-        },
-        {
-          "name": "message",
-          "ty": {
-            "kind": "StructRef",
-            "structName": "ExternalSignedMessage"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "WalletStorage",
+      "ty_idx": 21,
       "fields": [
         {
           "name": "seqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "subwalletId",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "publicKey",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 22
         },
         {
           "name": "status",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ReturnExcessesBack",
-      "prefix": {
-        "prefixStr": "0x2565934c",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "Payout",
-      "prefix": {
-        "prefixStr": "0xc59a7cd3",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 7
         }
       ]
     }
   ],
   "storage": {
-    "storageTy": {
-      "kind": "StructRef",
-      "structName": "WalletStorage"
-    }
+    "storage_ty_idx": 21
   },
-  "incomingMessages": [
+  "incoming_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerWalletSendMessage"
-      }
+      "body_ty_idx": 12
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "TextCommand"
-      }
+      "body_ty_idx": 14
     }
   ],
-  "incomingExternal": [
+  "incoming_external": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "WalletExternalMessage"
-      }
+      "body_ty_idx": 15
     }
   ],
-  "outgoingMessages": [
+  "outgoing_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ReturnExcessesBack"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "Payout"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "TextCommand"
-      }
+      "body_ty_idx": 14
     }
   ],
-  "emittedEvents": [],
-  "getMethods": [
+  "emitted_events": [],
+  "get_methods": [
     {
-      "tvmMethodId": 85143,
+      "tvm_method_id": 85143,
       "name": "seqno",
       "parameters": [],
-      "returnTy": {
-        "kind": "int"
-      }
+      "return_ty_idx": 1
     },
     {
-      "tvmMethodId": 78748,
+      "tvm_method_id": 78748,
       "name": "get_public_key",
       "parameters": [],
-      "returnTy": {
-        "kind": "int"
-      }
+      "return_ty_idx": 1
     },
     {
-      "tvmMethodId": 114619,
+      "tvm_method_id": 114619,
       "name": "get_owner_address",
       "parameters": [],
-      "returnTy": {
-        "kind": "address"
-      }
+      "return_ty_idx": 7
     }
   ],
-  "thrownErrors": [
+  "thrown_errors": [
     {
-      "kind": "constant",
-      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "errCode": 1005
+      "kind": "plain_int",
+      "err_code": 1030
     },
     {
-      "kind": "constant",
-      "name": "ERROR_BAD_SIGNATURE",
-      "errCode": 1007
+      "kind": "plain_int",
+      "err_code": 1031
     },
     {
-      "kind": "plainInt",
-      "errCode": 1030
+      "kind": "plain_int",
+      "err_code": 1032
     },
     {
-      "kind": "plainInt",
-      "errCode": 1031
+      "kind": "plain_int",
+      "err_code": 1033
     },
     {
-      "kind": "plainInt",
-      "errCode": 1032
+      "kind": "plain_int",
+      "err_code": 1034
     },
     {
-      "kind": "plainInt",
-      "errCode": 1033
+      "kind": "plain_int",
+      "err_code": 1035
     },
     {
-      "kind": "plainInt",
-      "errCode": 1034
+      "kind": "plain_int",
+      "err_code": 1040
     },
     {
-      "kind": "plainInt",
-      "errCode": 1035
-    },
-    {
-      "kind": "plainInt",
-      "errCode": 1040
-    },
-    {
-      "kind": "plainInt",
-      "errCode": 1041
+      "kind": "plain_int",
+      "err_code": 1041
     }
   ],
-  "constants": [
-    {
-      "name": "ERROR_OLD_MESSAGE",
-      "value": {
-        "kind": "int",
-        "v": "1000"
-      }
-    },
-    {
-      "name": "ERROR_LOW_SMC_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1001"
-      }
-    },
-    {
-      "name": "ERROR_LOW_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1002"
-      }
-    },
-    {
-      "name": "ERROR_LOW_MSG_VALUE",
-      "value": {
-        "kind": "int",
-        "v": "1003"
-      }
-    },
-    {
-      "name": "ERROR_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1004"
-      }
-    },
-    {
-      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1005"
-      }
-    },
-    {
-      "name": "ERROR_CLOSED",
-      "value": {
-        "kind": "int",
-        "v": "1006"
-      }
-    },
-    {
-      "name": "ERROR_BAD_SIGNATURE",
-      "value": {
-        "kind": "int",
-        "v": "1007"
-      }
-    },
-    {
-      "name": "ERROR_STORED_DATA_DAMAGED",
-      "value": {
-        "kind": "int",
-        "v": "1008"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1009"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1010"
-      }
-    },
-    {
-      "name": "ERROR_NOT_UNLOCKED_YET",
-      "value": {
-        "kind": "int",
-        "v": "1011"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_OP",
-      "value": {
-        "kind": "int",
-        "v": "1012"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_TEXT_OP",
-      "value": {
-        "kind": "int",
-        "v": "1013"
-      }
-    },
-    {
-      "name": "ERROR_CONTRACT_ADDRESS_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1014"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MY_ADDRESS",
-      "value": {
-        "kind": "int",
-        "v": "1015"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_PROXY_TYPE",
-      "value": {
-        "kind": "int",
-        "v": "2000"
-      }
-    },
-    {
-      "name": "OP_EXCESSES",
-      "value": {
-        "kind": "int",
-        "v": "627413836"
-      }
-    },
-    {
-      "name": "OP_PAYOUT",
-      "value": {
-        "kind": "int",
-        "v": "3315236051"
-      }
-    },
-    {
-      "name": "OP_DO_NOT_PROCESS",
-      "value": {
-        "kind": "int",
-        "v": "2584889280"
-      }
-    },
-    {
-      "name": "COMMISSION_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "100000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "STORAGE_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "10000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "CLIENT_STAKE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "1000000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "WORKCHAIN",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "client_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "proxy_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "proxy_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "proxy_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "worker_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "worker_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "SIZE_SIGNATURE",
-      "value": {
-        "kind": "int",
-        "v": "512"
-      }
-    }
-  ],
-  "compilerName": "tolk",
-  "compilerVersion": "1.2.0"
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgECCwEAAXAAART/APSkE/S88sgLAQIBIAIDAgFIBAUAxPKDCNcYINMf0x/TH9EB+CO88uQG7UTQ0x/TH9P/0x/6SNEhcbDy1AdRVLry5AhRUrry5AkFyM75FlQQZfkQ8uQK+CdvEIIQdzWUAL7y5Av4AKTIyx8Uyx8Sy//LH/pSye1UAdjQ+JHyQCDHAJEw4CDXCx8gghAlZZNMupF/miCCEMWafNO6wwDikjB/mYIQmhJHwLrDAOKRMODtRNCBAUDXGNMfIPpIMPiSxwXy5BAD1ywk40+btJxsMdM/MdMH10wB+wDg1ywgAAAABOMC8j8GAgEgBwgAotcLByDAd44cXwSCCJiWgHL7AviSyM+FiPpSgHfPC5bJgwb7AI4qIMBinDBxsQHIzssfzsntVI4XwHWT8sQR4YIQ/////rAByM7LH87J7VTi4gIBIAkKABu9/d9qJoQICwa5D9JBhAAXuznO1E0NM/MdcL/4ABG4yX7UTQ1wsfg="
 }

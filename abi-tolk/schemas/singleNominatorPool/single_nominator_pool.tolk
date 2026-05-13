@@ -97,7 +97,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, inMsgFull: cell, inMsgBody:
 
     var cs: slice = inMsgFull.beginParse();
     var flags: int = cs.loadUint(4); // int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
-    if (flags & 1) {
+    if ((flags & 1) != 0) {
         // ignore all bounced messages
         return;
     }

@@ -1,1128 +1,767 @@
 {
-  "abiSchemaVersion": "1.0",
-  "contractName": "cocoon_client",
+  "abi_schema_version": "1.0",
+  "contract_name": "cocoon_client",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExtClientChargeSigned"
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExtClientGrantRefundSigned"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExtClientTopUp"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerClientChangeSecretHashAndTopUp"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerClientRegister"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerClientChangeSecretHash"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerClientIncreaseStake"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerClientWithdraw"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "OwnerClientRequestRefund"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClientStorage"
+    },
+    {
+      "kind": "uintN",
+      "n": 2
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClientConstData"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 25
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CocoonParams"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 27
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "ClientMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 3143892883,
+          "prefix_len": 32,
+          "stack_type_id": 135,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 14,
+          "prefix_num": 4023849441,
+          "prefix_len": 32,
+          "stack_type_id": 136,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 15,
+          "prefix_num": 4050839234,
+          "prefix_len": 32,
+          "stack_type_id": 137,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 16,
+          "prefix_num": 2222175240,
+          "prefix_len": 32,
+          "stack_type_id": 138,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 18,
+          "prefix_num": 3294601019,
+          "prefix_len": 32,
+          "stack_type_id": 139,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 19,
+          "prefix_num": 2838851636,
+          "prefix_len": 32,
+          "stack_type_id": 140,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 20,
+          "prefix_num": 1780443744,
+          "prefix_len": 32,
+          "stack_type_id": 141,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 21,
+          "prefix_num": 3657862776,
+          "prefix_len": 32,
+          "stack_type_id": 142,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 22,
+          "prefix_num": 4210715841,
+          "prefix_len": 32,
+          "stack_type_id": 143,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 5
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        31
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ReturnExcessesBack"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClientProxyRequest"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClientStateData"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 36
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CocoonClientData"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
   "declarations": [
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "ExtClientChargeSigned",
+      "ty_idx": 12,
       "prefix": {
-        "prefixStr": "0xbb63ff93",
-        "prefixLen": 32
+        "prefix_num": 3143892883,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "rest",
-          "ty": {
-            "kind": "remaining"
-          }
+          "ty_idx": 13
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "ExtClientGrantRefundSigned",
+      "ty_idx": 14,
       "prefix": {
-        "prefixStr": "0xefd711e1",
-        "prefixLen": 32
+        "prefix_num": 4023849441,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "rest",
-          "ty": {
-            "kind": "remaining"
-          }
+          "ty_idx": 13
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "ExtClientTopUp",
-      "prefix": {
-        "prefixStr": "0xf172e6c2",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "topUpAmount",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
+      "kind": "alias",
+      "name": "ClientMessage",
+      "ty_idx": 31,
+      "target_ty_idx": 32
     },
     {
-      "kind": "Struct",
-      "name": "OwnerClientChangeSecretHashAndTopUp",
-      "prefix": {
-        "prefixStr": "0x8473b408",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "topUpAmount",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "newSecretHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "OwnerClientRegister",
-      "prefix": {
-        "prefixStr": "0xc45f9f3b",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "nonce",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "OwnerClientChangeSecretHash",
-      "prefix": {
-        "prefixStr": "0xa9357034",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "newSecretHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "OwnerClientIncreaseStake",
-      "prefix": {
-        "prefixStr": "0x6a1f6a60",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "newStake",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "OwnerClientWithdraw",
-      "prefix": {
-        "prefixStr": "0xda068e78",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "OwnerClientRequestRefund",
-      "prefix": {
-        "prefixStr": "0xfafa6cc1",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        },
-        {
-          "name": "sendExcessesTo",
-          "ty": {
-            "kind": "address"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ClientConstData",
+      "kind": "struct",
+      "name": "CocoonClientData",
+      "ty_idx": 38,
       "fields": [
         {
           "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "proxyAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "proxyPublicKey",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "CocoonParams",
-      "fields": [
-        {
-          "name": "structVersion",
-          "ty": {
-            "kind": "uintN",
-            "n": 8
-          }
+          "ty_idx": 17
         },
-        {
-          "name": "paramsVersion",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "uniqueId",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "isTest",
-          "ty": {
-            "kind": "bool"
-          }
-        },
-        {
-          "name": "pricePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "workerFeePerToken",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "promptTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "cachedTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "completionTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "reasoningTokensPriceMultiplier",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "proxyDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "clientDelayBeforeClose",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        },
-        {
-          "name": "minProxyStake",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "minClientStake",
-          "ty": {
-            "kind": "coins"
-          }
-        },
-        {
-          "name": "proxyScCode",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        },
-        {
-          "name": "workerScCode",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        },
-        {
-          "name": "clientScCode",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "ClientStorage",
-      "fields": [
         {
           "name": "state",
-          "ty": {
-            "kind": "uintN",
-            "n": 2
-          }
+          "ty_idx": 24
         },
         {
           "name": "balance",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "stake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "tokensUsed",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "unlockTs",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "secretHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        },
-        {
-          "name": "constDataRef",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "ClientConstData"
-            }
-          }
-        },
-        {
-          "name": "params",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "CocoonParams"
-            }
-          }
+          "ty_idx": 17
         }
       ]
     },
     {
-      "kind": "Alias",
-      "name": "ClientMessage",
-      "targetTy": {
-        "kind": "union",
-        "variants": [
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "ExtClientChargeSigned"
-            },
-            "prefixStr": "0xbb63ff93",
-            "prefixLen": 32,
-            "stackTypeId": 135,
-            "stackWidth": 1
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "ExtClientGrantRefundSigned"
-            },
-            "prefixStr": "0xefd711e1",
-            "prefixLen": 32,
-            "stackTypeId": 136,
-            "stackWidth": 1
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "ExtClientTopUp"
-            },
-            "prefixStr": "0xf172e6c2",
-            "prefixLen": 32,
-            "stackTypeId": 137,
-            "stackWidth": 3
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "OwnerClientChangeSecretHashAndTopUp"
-            },
-            "prefixStr": "0x8473b408",
-            "prefixLen": 32,
-            "stackTypeId": 138,
-            "stackWidth": 4
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "OwnerClientRegister"
-            },
-            "prefixStr": "0xc45f9f3b",
-            "prefixLen": 32,
-            "stackTypeId": 139,
-            "stackWidth": 3
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "OwnerClientChangeSecretHash"
-            },
-            "prefixStr": "0xa9357034",
-            "prefixLen": 32,
-            "stackTypeId": 140,
-            "stackWidth": 3
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "OwnerClientIncreaseStake"
-            },
-            "prefixStr": "0x6a1f6a60",
-            "prefixLen": 32,
-            "stackTypeId": 141,
-            "stackWidth": 3
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "OwnerClientWithdraw"
-            },
-            "prefixStr": "0xda068e78",
-            "prefixLen": 32,
-            "stackTypeId": 142,
-            "stackWidth": 2
-          },
-          {
-            "variantTy": {
-              "kind": "StructRef",
-              "structName": "OwnerClientRequestRefund"
-            },
-            "prefixStr": "0xfafa6cc1",
-            "prefixLen": 32,
-            "stackTypeId": 143,
-            "stackWidth": 2
-          }
-        ],
-        "stackWidth": 5
-      }
-    },
-    {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "ReturnExcessesBack",
+      "ty_idx": 34,
       "prefix": {
-        "prefixStr": "0x2565934c",
-        "prefixLen": 32
+        "prefix_num": 627413836,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "Payout",
-      "prefix": {
-        "prefixStr": "0xc59a7cd3",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "ClientStateData",
+      "ty_idx": 36,
       "fields": [
         {
           "name": "state",
-          "ty": {
-            "kind": "uintN",
-            "n": 2
-          }
+          "ty_idx": 24
         },
         {
           "name": "balance",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "stake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "tokensUsed",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "secretHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 17
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "ClientProxyRequest",
+      "ty_idx": 35,
       "prefix": {
-        "prefixStr": "0x65448ff4",
-        "prefixLen": 32
+        "prefix_num": 1698992116,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "queryId",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "stateData",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "ClientStateData"
-            }
-          }
+          "ty_idx": 37
         },
         {
           "name": "payload",
-          "ty": {
-            "kind": "nullable",
-            "inner": {
-              "kind": "cell"
-            }
-          }
+          "ty_idx": 29
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "CocoonClientData",
+      "kind": "struct",
+      "name": "ExtClientTopUp",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 4050839234,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "topUpAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerClientChangeSecretHashAndTopUp",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 2222175240,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "topUpAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "newSecretHash",
+          "ty_idx": 17
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerClientRegister",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 3294601019,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "nonce",
+          "ty_idx": 11
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerClientChangeSecretHash",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 2838851636,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newSecretHash",
+          "ty_idx": 17
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerClientIncreaseStake",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 1780443744,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newStake",
+          "ty_idx": 6
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerClientWithdraw",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 3657862776,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "OwnerClientRequestRefund",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 4210715841,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "sendExcessesTo",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CocoonParams",
+      "ty_idx": 27,
+      "fields": [
+        {
+          "name": "structVersion",
+          "ty_idx": 28
+        },
+        {
+          "name": "paramsVersion",
+          "ty_idx": 9
+        },
+        {
+          "name": "uniqueId",
+          "ty_idx": 9
+        },
+        {
+          "name": "isTest",
+          "ty_idx": 5
+        },
+        {
+          "name": "pricePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "workerFeePerToken",
+          "ty_idx": 6
+        },
+        {
+          "name": "promptTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "cachedTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "completionTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "reasoningTokensPriceMultiplier",
+          "ty_idx": 9
+        },
+        {
+          "name": "proxyDelayBeforeClose",
+          "ty_idx": 9
+        },
+        {
+          "name": "clientDelayBeforeClose",
+          "ty_idx": 9
+        },
+        {
+          "name": "minProxyStake",
+          "ty_idx": 6
+        },
+        {
+          "name": "minClientStake",
+          "ty_idx": 6
+        },
+        {
+          "name": "proxyScCode",
+          "ty_idx": 29
+        },
+        {
+          "name": "workerScCode",
+          "ty_idx": 29
+        },
+        {
+          "name": "clientScCode",
+          "ty_idx": 29
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClientConstData",
+      "ty_idx": 25,
       "fields": [
         {
           "name": "ownerAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "proxyAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "proxyPublicKey",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
-        },
+          "ty_idx": 17
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClientStorage",
+      "ty_idx": 23,
+      "fields": [
         {
           "name": "state",
-          "ty": {
-            "kind": "uintN",
-            "n": 2
-          }
+          "ty_idx": 24
         },
         {
           "name": "balance",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "stake",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "tokensUsed",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "ty_idx": 11
         },
         {
           "name": "unlockTs",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
+          "ty_idx": 9
         },
         {
           "name": "secretHash",
-          "ty": {
-            "kind": "uintN",
-            "n": 256
-          }
+          "ty_idx": 17
+        },
+        {
+          "name": "constDataRef",
+          "ty_idx": 26
+        },
+        {
+          "name": "params",
+          "ty_idx": 30
         }
       ]
     }
   ],
   "storage": {
-    "storageTy": {
-      "kind": "StructRef",
-      "structName": "ClientStorage"
-    }
+    "storage_ty_idx": 23
   },
-  "incomingMessages": [
+  "incoming_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ExtClientChargeSigned"
-      }
+      "body_ty_idx": 12
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ExtClientGrantRefundSigned"
-      }
+      "body_ty_idx": 14
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ExtClientTopUp"
-      }
+      "body_ty_idx": 15
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerClientChangeSecretHashAndTopUp"
-      }
+      "body_ty_idx": 16
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerClientRegister"
-      }
+      "body_ty_idx": 18
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerClientChangeSecretHash"
-      }
+      "body_ty_idx": 19
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerClientIncreaseStake"
-      }
+      "body_ty_idx": 20
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerClientWithdraw"
-      }
+      "body_ty_idx": 21
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "OwnerClientRequestRefund"
-      }
+      "body_ty_idx": 22
     }
   ],
-  "incomingExternal": [],
-  "outgoingMessages": [
+  "incoming_external": [],
+  "outgoing_messages": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ReturnExcessesBack"
-      }
+      "body_ty_idx": 34
     },
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "Payout"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "ClientProxyRequest"
-      }
+      "body_ty_idx": 35
     }
   ],
-  "emittedEvents": [],
-  "getMethods": [
+  "emitted_events": [],
+  "get_methods": [
     {
-      "tvmMethodId": 75156,
+      "tvm_method_id": 75156,
       "name": "get_cocoon_client_data",
       "parameters": [],
-      "returnTy": {
-        "kind": "StructRef",
-        "structName": "CocoonClientData"
-      }
+      "return_ty_idx": 38
     }
   ],
-  "thrownErrors": [
+  "thrown_errors": [
     {
       "kind": "constant",
       "name": "ERROR_OLD_MESSAGE",
-      "errCode": 1000
+      "err_code": 1000
     },
     {
       "kind": "constant",
       "name": "ERROR_LOW_SMC_BALANCE",
-      "errCode": 1001
+      "err_code": 1001
     },
     {
       "kind": "constant",
       "name": "ERROR_LOW_MSG_VALUE",
-      "errCode": 1003
+      "err_code": 1003
     },
     {
       "kind": "constant",
       "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "errCode": 1005
+      "err_code": 1005
     },
     {
       "kind": "constant",
       "name": "ERROR_CLOSED",
-      "errCode": 1006
+      "err_code": 1006
     },
     {
       "kind": "constant",
       "name": "ERROR_BAD_SIGNATURE",
-      "errCode": 1007
+      "err_code": 1007
     },
     {
       "kind": "constant",
       "name": "ERROR_EXPECTED_OWNER",
-      "errCode": 1009
+      "err_code": 1009
     },
     {
       "kind": "constant",
       "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "errCode": 1010
+      "err_code": 1010
     },
     {
       "kind": "constant",
       "name": "ERROR_NOT_UNLOCKED_YET",
-      "errCode": 1011
+      "err_code": 1011
     },
     {
       "kind": "constant",
       "name": "ERROR_EXPECTED_MY_ADDRESS",
-      "errCode": 1015
+      "err_code": 1015
     }
   ],
-  "constants": [
-    {
-      "name": "OP_EXCESSES",
-      "value": {
-        "kind": "int",
-        "v": "627413836"
-      }
-    },
-    {
-      "name": "OP_PAYOUT",
-      "value": {
-        "kind": "int",
-        "v": "3315236051"
-      }
-    },
-    {
-      "name": "OP_DO_NOT_PROCESS",
-      "value": {
-        "kind": "int",
-        "v": "2584889280"
-      }
-    },
-    {
-      "name": "ERROR_OLD_MESSAGE",
-      "value": {
-        "kind": "int",
-        "v": "1000"
-      }
-    },
-    {
-      "name": "ERROR_LOW_SMC_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1001"
-      }
-    },
-    {
-      "name": "ERROR_LOW_BALANCE",
-      "value": {
-        "kind": "int",
-        "v": "1002"
-      }
-    },
-    {
-      "name": "ERROR_LOW_MSG_VALUE",
-      "value": {
-        "kind": "int",
-        "v": "1003"
-      }
-    },
-    {
-      "name": "ERROR_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1004"
-      }
-    },
-    {
-      "name": "ERROR_SIGNED_MSG_FORMAT_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1005"
-      }
-    },
-    {
-      "name": "ERROR_CLOSED",
-      "value": {
-        "kind": "int",
-        "v": "1006"
-      }
-    },
-    {
-      "name": "ERROR_BAD_SIGNATURE",
-      "value": {
-        "kind": "int",
-        "v": "1007"
-      }
-    },
-    {
-      "name": "ERROR_STORED_DATA_DAMAGED",
-      "value": {
-        "kind": "int",
-        "v": "1008"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1009"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MESSAGE_FROM_OWNER",
-      "value": {
-        "kind": "int",
-        "v": "1010"
-      }
-    },
-    {
-      "name": "ERROR_NOT_UNLOCKED_YET",
-      "value": {
-        "kind": "int",
-        "v": "1011"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_OP",
-      "value": {
-        "kind": "int",
-        "v": "1012"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_TEXT_OP",
-      "value": {
-        "kind": "int",
-        "v": "1013"
-      }
-    },
-    {
-      "name": "ERROR_CONTRACT_ADDRESS_MISMATCH",
-      "value": {
-        "kind": "int",
-        "v": "1014"
-      }
-    },
-    {
-      "name": "ERROR_EXPECTED_MY_ADDRESS",
-      "value": {
-        "kind": "int",
-        "v": "1015"
-      }
-    },
-    {
-      "name": "ERROR_UNKNOWN_PROXY_TYPE",
-      "value": {
-        "kind": "int",
-        "v": "2000"
-      }
-    },
-    {
-      "name": "COMMISSION_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "100000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "STORAGE_ESTIMATE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "10000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "CLIENT_STAKE",
-      "value": {
-        "kind": "castTo",
-        "inner": {
-          "kind": "int",
-          "v": "1000000000"
-        },
-        "castTo": {
-          "kind": "coins"
-        }
-      }
-    },
-    {
-      "name": "WORKCHAIN",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "client_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "client_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "proxy_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "proxy_state_closing",
-      "value": {
-        "kind": "int",
-        "v": "1"
-      }
-    },
-    {
-      "name": "proxy_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    },
-    {
-      "name": "worker_state_normal",
-      "value": {
-        "kind": "int",
-        "v": "0"
-      }
-    },
-    {
-      "name": "worker_state_closed",
-      "value": {
-        "kind": "int",
-        "v": "2"
-      }
-    }
-  ],
-  "compilerName": "tolk",
-  "compilerVersion": "1.2.0"
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "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"
 }

@@ -1,10 +1,10 @@
 
 import "@stdlib/gas-payments"
 import "@stdlib/tvm-dicts"
-import "opcodes"
-import "errors"
-import "messages"
-import "storage"
+import "imports/opcodes"
+import "imports/errors"
+import "imports/messages"
+import "imports/storage"
 
 
 contract cocoon_root {

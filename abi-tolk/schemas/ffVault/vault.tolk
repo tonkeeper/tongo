@@ -3,8 +3,6 @@
 contract ff_vault {
     storage: VaultStorage
     incomingMessages: VaultMessage,
-    forceAbiExport: (
-    )
 }
 
 struct (0x7362d09c) JettonTransferNotification<T> {

@@ -42,12 +42,6 @@ type CocoonParams struct {
 	ClientScCode                    tlb.Maybe[boc.Cell] // cell?
 }
 
-const PrefixPayout uint64 = 0xc59a7cd3
-
-type Payout struct {
-	QueryId tlb.Uint64 // uint64
-}
-
 const PrefixReturnExcessesBack uint64 = 0x2565934c
 
 type ReturnExcessesBack struct {
@@ -63,3 +57,14 @@ type WorkerProxyRequest struct {
 	Tokens       tlb.Uint64          // uint64
 	Payload      tlb.Maybe[boc.Cell] // cell?
 }
+
+const ( // errors
+	ErrorBadSignature             = 0x3EF // 1007
+	ErrorClosed                   = 0x3EE // 1006
+	ErrorExpectedMessageFromOwner = 0x3F2 // 1010
+	ErrorExpectedMyAddress        = 0x3F7 // 1015
+	ErrorLowMsgValue              = 0x3EB // 1003
+	ErrorNotUnlockedYet           = 0x3F3 // 1011
+	ErrorOldMessage               = 0x3E8 // 1000
+	ErrorSignedMsgFormatMismatch  = 0x3ED // 1005
+)

@@ -1,4 +1,4 @@
-tolk 1.2
+tolk 1.4
 
 import "@stdlib/tvm-dicts"
 
@@ -23,33 +23,6 @@ fun TrailingHeaderBytes.packToBuilder(self, mutate b: builder) {
 contract pyth_oracle {
     incomingMessages: MainMessage,
     storage: MainStorage
-    forceAbiExport: (
-        // MainStorage,
-        // PriceFeedsSection,
-        // StoredPriceFeed,
-        // PricePoint,
-        // DataSourcesSection,
-        // DataSource,
-        // GuardianSetsSection,
-        // GuardianSetRecord,
-        // GovernanceSection,
-        // AccumulatorUpdatePayload,
-        // PriceFeedMessage,
-        // PriceFeedUpdate,
-        // WormholeUpdateSection,
-        // PriceFeedUpdateData,
-        // PriceFeedIdList,
-        // PriceFeedUpdateResponse,
-        // PriceFeedResponseEntry,
-        // ErrorResponse,
-        // SuccessResponse,
-        // UpdateGuardianSetMessage,
-        // UpdatePriceFeedsMessage,
-        // ExecuteGovernanceActionMessage,
-        // UpgradeContractMessage,
-        // ParsePriceFeedUpdatesMessage,
-        // ParseUniquePriceFeedUpdatesMessage
-    )
 }
 
 type MainMessage =

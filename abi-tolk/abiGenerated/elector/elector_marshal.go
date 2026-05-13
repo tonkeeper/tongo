@@ -63,6 +63,37 @@ func (v NewStake) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *NewStakeConfirmation) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixNewStakeConfirmation); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.Comment.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Comment: %v", err)
+	}
+	return nil
+}
+func (v NewStakeConfirmation) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixNewStakeConfirmation, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.Comment.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Comment: %v", err)
+	}
+	return nil
+}
+func (v NewStakeConfirmation) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *RecoverStakeRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixRecoverStakeRequest); err != nil {
 		return err
@@ -82,6 +113,31 @@ func (v RecoverStakeRequest) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err 
 	return nil
 }
 func (v RecoverStakeRequest) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *RecoverStakeResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixRecoverStakeResponse); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	return nil
+}
+func (v RecoverStakeResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixRecoverStakeResponse, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	return nil
+}
+func (v RecoverStakeResponse) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -113,6 +169,37 @@ func (v UpgradeCode) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	return nil
 }
 func (v UpgradeCode) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *UpgradeCodeResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixUpgradeCodeResponse); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Op: %v", err)
+	}
+	return nil
+}
+func (v UpgradeCodeResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixUpgradeCodeResponse, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.Op.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Op: %v", err)
+	}
+	return nil
+}
+func (v UpgradeCodeResponse) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -163,73 +250,6 @@ func (v ConfigRejected) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error
 	return nil
 }
 func (v ConfigRejected) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *ValidatorComplaint) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Tag.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Tag: %v", err)
-	}
-	if err = v.ValidatorPubkey.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ValidatorPubkey: %v", err)
-	}
-	if v.Description, err = c.NextRefV(); err != nil {
-		return fmt.Errorf("failed to read .Description: %v", err)
-	}
-	if err = v.CreatedAt.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .CreatedAt: %v", err)
-	}
-	if err = v.Severity.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Severity: %v", err)
-	}
-	if err = v.RewardAddr.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .RewardAddr: %v", err)
-	}
-	if err = v.Paid.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Paid: %v", err)
-	}
-	if err = v.SuggestedFine.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .SuggestedFine: %v", err)
-	}
-	if err = v.SuggestedFinePart.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .SuggestedFinePart: %v", err)
-	}
-	return nil
-}
-func (v ValidatorComplaint) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Tag.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Tag: %v", err)
-	}
-	if err = v.ValidatorPubkey.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ValidatorPubkey: %v", err)
-	}
-	if err = c.AddRef(&v.Description); err != nil {
-		return fmt.Errorf("failed to .Description: %v", err)
-	}
-	if err = v.CreatedAt.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .CreatedAt: %v", err)
-	}
-	if err = v.Severity.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Severity: %v", err)
-	}
-	if err = v.RewardAddr.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .RewardAddr: %v", err)
-	}
-	if err = v.Paid.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Paid: %v", err)
-	}
-	if err = v.SuggestedFine.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .SuggestedFine: %v", err)
-	}
-	if err = v.SuggestedFinePart.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .SuggestedFinePart: %v", err)
-	}
-	return nil
-}
-func (v ValidatorComplaint) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -328,6 +348,197 @@ func (v VoteComplaint) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *ReturnStake) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixReturnStake); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.Reason.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Reason: %v", err)
+	}
+	return nil
+}
+func (v ReturnStake) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixReturnStake, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.Reason.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Reason: %v", err)
+	}
+	return nil
+}
+func (v ReturnStake) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *ErrorResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixErrorResponse); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Op: %v", err)
+	}
+	return nil
+}
+func (v ErrorResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixErrorResponse, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.Op.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Op: %v", err)
+	}
+	return nil
+}
+func (v ErrorResponse) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *ComplaintResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixComplaintResponse); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Op: %v", err)
+	}
+	return nil
+}
+func (v ComplaintResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixComplaintResponse, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.Op.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Op: %v", err)
+	}
+	return nil
+}
+func (v ComplaintResponse) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *VoteComplaintResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixVoteComplaintResponse); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Op: %v", err)
+	}
+	return nil
+}
+func (v VoteComplaintResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixVoteComplaintResponse, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	if err = v.Op.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Op: %v", err)
+	}
+	return nil
+}
+func (v VoteComplaintResponse) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *ValidatorComplaint) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Tag.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Tag: %v", err)
+	}
+	if err = v.ValidatorPubkey.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ValidatorPubkey: %v", err)
+	}
+	if v.Description, err = c.NextRefV(); err != nil {
+		return fmt.Errorf("failed to read .Description: %v", err)
+	}
+	if err = v.CreatedAt.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .CreatedAt: %v", err)
+	}
+	if err = v.Severity.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Severity: %v", err)
+	}
+	if err = v.RewardAddr.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .RewardAddr: %v", err)
+	}
+	if err = v.Paid.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Paid: %v", err)
+	}
+	if err = v.SuggestedFine.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .SuggestedFine: %v", err)
+	}
+	if err = v.SuggestedFinePart.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .SuggestedFinePart: %v", err)
+	}
+	return nil
+}
+func (v ValidatorComplaint) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Tag.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Tag: %v", err)
+	}
+	if err = v.ValidatorPubkey.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ValidatorPubkey: %v", err)
+	}
+	if err = c.AddRef(&v.Description); err != nil {
+		return fmt.Errorf("failed to .Description: %v", err)
+	}
+	if err = v.CreatedAt.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .CreatedAt: %v", err)
+	}
+	if err = v.Severity.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Severity: %v", err)
+	}
+	if err = v.RewardAddr.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .RewardAddr: %v", err)
+	}
+	if err = v.Paid.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Paid: %v", err)
+	}
+	if err = v.SuggestedFine.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .SuggestedFine: %v", err)
+	}
+	if err = v.SuggestedFinePart.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .SuggestedFinePart: %v", err)
+	}
+	return nil
+}
+func (v ValidatorComplaint) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *ElectorMember) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Stake.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .Stake: %v", err)
@@ -365,110 +576,6 @@ func (v ElectorMember) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error)
 	return nil
 }
 func (v ElectorMember) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *Elect) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.ElectAt.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ElectAt: %v", err)
-	}
-	if err = v.ElectClose.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ElectClose: %v", err)
-	}
-	if err = v.MinStake.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .MinStake: %v", err)
-	}
-	if err = v.TotalStake.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .TotalStake: %v", err)
-	}
-	if err = v.Members.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Members: %v", err)
-	}
-	if v.Failed, err = c.ReadBit(); err != nil {
-		return fmt.Errorf("failed to read .Failed: %v", err)
-	}
-	if v.Finished, err = c.ReadBit(); err != nil {
-		return fmt.Errorf("failed to read .Finished: %v", err)
-	}
-	return nil
-}
-func (v Elect) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.ElectAt.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ElectAt: %v", err)
-	}
-	if err = v.ElectClose.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ElectClose: %v", err)
-	}
-	if err = v.MinStake.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .MinStake: %v", err)
-	}
-	if err = v.TotalStake.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .TotalStake: %v", err)
-	}
-	if err = v.Members.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Members: %v", err)
-	}
-	if err = c.WriteBit(v.Failed); err != nil {
-		return fmt.Errorf("failed to .Failed: %v", err)
-	}
-	if err = c.WriteBit(v.Finished); err != nil {
-		return fmt.Errorf("failed to .Finished: %v", err)
-	}
-	return nil
-}
-func (v Elect) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *ElectorStorage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Elect.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Elect: %v", err)
-	}
-	if err = v.Credits.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Credits: %v", err)
-	}
-	if err = v.PastElections.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .PastElections: %v", err)
-	}
-	if err = v.Grams.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Grams: %v", err)
-	}
-	if err = v.ActiveId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ActiveId: %v", err)
-	}
-	if err = v.ActiveHash.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ActiveHash: %v", err)
-	}
-	return nil
-}
-func (v ElectorStorage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Elect.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Elect: %v", err)
-	}
-	if err = v.Credits.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Credits: %v", err)
-	}
-	if err = v.PastElections.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .PastElections: %v", err)
-	}
-	if err = v.Grams.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Grams: %v", err)
-	}
-	if err = v.ActiveId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ActiveId: %v", err)
-	}
-	if err = v.ActiveHash.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ActiveHash: %v", err)
-	}
-	return nil
-}
-func (v ElectorStorage) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
@@ -576,211 +683,104 @@ func (v *ParticipantListExtended) ReadFromStack(stack *tlb.VmStack) (err error) 
 	}
 	return nil
 }
-func (v *NewStakeConfirmation) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixNewStakeConfirmation); err != nil {
-		return err
+func (v *Elect) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.ElectAt.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ElectAt: %v", err)
 	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
+	if err = v.ElectClose.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ElectClose: %v", err)
 	}
-	if err = v.Comment.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Comment: %v", err)
+	if err = v.MinStake.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .MinStake: %v", err)
+	}
+	if err = v.TotalStake.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .TotalStake: %v", err)
+	}
+	if err = v.Members.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Members: %v", err)
+	}
+	if v.Failed, err = c.ReadBit(); err != nil {
+		return fmt.Errorf("failed to read .Failed: %v", err)
+	}
+	if v.Finished, err = c.ReadBit(); err != nil {
+		return fmt.Errorf("failed to read .Finished: %v", err)
 	}
 	return nil
 }
-func (v NewStakeConfirmation) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixNewStakeConfirmation, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
+func (v Elect) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.ElectAt.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ElectAt: %v", err)
 	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
+	if err = v.ElectClose.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ElectClose: %v", err)
 	}
-	if err = v.Comment.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Comment: %v", err)
+	if err = v.MinStake.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .MinStake: %v", err)
+	}
+	if err = v.TotalStake.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .TotalStake: %v", err)
+	}
+	if err = v.Members.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Members: %v", err)
+	}
+	if err = c.WriteBit(v.Failed); err != nil {
+		return fmt.Errorf("failed to .Failed: %v", err)
+	}
+	if err = c.WriteBit(v.Finished); err != nil {
+		return fmt.Errorf("failed to .Finished: %v", err)
 	}
 	return nil
 }
-func (v NewStakeConfirmation) ToCell() (*boc.Cell, error) {
+func (v Elect) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err
 	}
 	return c, nil
 }
-func (v *RecoverStakeResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixRecoverStakeResponse); err != nil {
-		return err
+func (v *ElectorStorage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Elect.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Elect: %v", err)
 	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
+	if err = v.Credits.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Credits: %v", err)
 	}
-	return nil
-}
-func (v RecoverStakeResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixRecoverStakeResponse, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
+	if err = v.PastElections.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .PastElections: %v", err)
 	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
+	if err = v.Grams.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Grams: %v", err)
 	}
-	return nil
-}
-func (v RecoverStakeResponse) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
+	if err = v.ActiveId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ActiveId: %v", err)
 	}
-	return c, nil
-}
-func (v *ReturnStake) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixReturnStake); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.Reason.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Reason: %v", err)
+	if err = v.ActiveHash.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ActiveHash: %v", err)
 	}
 	return nil
 }
-func (v ReturnStake) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixReturnStake, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
+func (v ElectorStorage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Elect.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Elect: %v", err)
 	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
+	if err = v.Credits.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Credits: %v", err)
 	}
-	if err = v.Reason.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Reason: %v", err)
+	if err = v.PastElections.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .PastElections: %v", err)
 	}
-	return nil
-}
-func (v ReturnStake) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
+	if err = v.Grams.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Grams: %v", err)
 	}
-	return c, nil
-}
-func (v *ErrorResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixErrorResponse); err != nil {
-		return err
+	if err = v.ActiveId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ActiveId: %v", err)
 	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Op: %v", err)
+	if err = v.ActiveHash.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ActiveHash: %v", err)
 	}
 	return nil
 }
-func (v ErrorResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixErrorResponse, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.Op.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Op: %v", err)
-	}
-	return nil
-}
-func (v ErrorResponse) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *UpgradeCodeResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixUpgradeCodeResponse); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Op: %v", err)
-	}
-	return nil
-}
-func (v UpgradeCodeResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixUpgradeCodeResponse, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.Op.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Op: %v", err)
-	}
-	return nil
-}
-func (v UpgradeCodeResponse) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *ComplaintResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixComplaintResponse); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Op: %v", err)
-	}
-	return nil
-}
-func (v ComplaintResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixComplaintResponse, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.Op.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Op: %v", err)
-	}
-	return nil
-}
-func (v ComplaintResponse) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *VoteComplaintResponse) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixVoteComplaintResponse); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.Op.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Op: %v", err)
-	}
-	return nil
-}
-func (v VoteComplaintResponse) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixVoteComplaintResponse, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.Op.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Op: %v", err)
-	}
-	return nil
-}
-func (v VoteComplaintResponse) ToCell() (*boc.Cell, error) {
+func (v ElectorStorage) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err

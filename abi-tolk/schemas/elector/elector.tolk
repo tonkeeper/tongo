@@ -1,4 +1,4 @@
-tolk 1.2
+tolk 1.4
 
 // Tolk ABI for the TON elector contract (FunC source: governance-contract/elector-code.fc).
 // This is a stub
@@ -6,19 +6,14 @@ tolk 1.2
 contract elector {
     incomingMessages: ElectorMessage
     storage: ElectorStorage
-    forceAbiExport: (
-        Elect,
-        ElectorMember,
-        ParticipantListExtended,
-        ParticipantListValidatorData,
-        NewStakeConfirmation,
-        RecoverStakeResponse,
-        ReturnStake,
-        ErrorResponse,
-        UpgradeCodeResponse,
-        ComplaintResponse,
-        VoteComplaintResponse,
-    )
+    outgoingMessages:
+        VoteComplaintResponse |
+        ComplaintResponse |
+        UpgradeCodeResponse |
+        ErrorResponse |
+        ReturnStake |
+        RecoverStakeResponse |
+        NewStakeConfirmation
 }
 
 type ElectorMessage =

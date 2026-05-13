@@ -10,8 +10,28 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-type TrailingHeaderBytes []tlb.Uint8
 type WormholeProofBytes []tlb.Uint8
+type TrailingHeaderBytes []tlb.Uint8
+type MainStorage struct {
+	PriceFeeds   tlb.RefT[*PriceFeedsSection]   // Cell<PriceFeedsSection>
+	DataSources  tlb.RefT[*DataSourcesSection]  // Cell<DataSourcesSection>
+	GuardianSets tlb.RefT[*GuardianSetsSection] // Cell<GuardianSetsSection>
+	Governance   tlb.RefT[*GovernanceSection]   // Cell<GovernanceSection>
+}
+type PriceFeedsSection struct {
+	LatestPriceFeeds tlb.HashmapE[tlb.Uint256, tlb.RefT[*StoredPriceFeed]] // map<uint256, Cell<StoredPriceFeed>>
+	SingleUpdateFee  tlb.Uint256                                           // uint256
+}
+type StoredPriceFeed struct {
+	Price    tlb.RefT[*PricePoint] // Cell<PricePoint>
+	EmaPrice tlb.RefT[*PricePoint] // Cell<PricePoint>
+}
+type PricePoint struct {
+	Price       tlb.Int64  // int64
+	Conf        tlb.Uint64 // uint64
+	Expo        tlb.Int32  // int32
+	PublishTime tlb.Uint64 // uint64
+}
 type PriceFeedMessage struct {
 	MessageType     tlb.Uint8   // uint8
 	PriceId         tlb.Uint256 // uint256
@@ -44,6 +64,49 @@ type PriceFeedUpdateData struct {
 	Accumulator  AccumulatorUpdatePayload // AccumulatorUpdatePayload
 }
 type PriceFeedIdList []tlb.Uint256
+type DataSourcesSection struct {
+	IsValidDataSource tlb.HashmapE[tlb.Uint256, bool] // map<uint256, bool>
+}
+type DataSource struct {
+	EmitterChainId tlb.Uint16  // uint16
+	EmitterAddress tlb.Uint256 // uint256
+}
+type GuardianSetsSection struct {
+	CurrentGuardianSetIndex tlb.Uint32                                             // uint32
+	GuardianSets            tlb.HashmapE[tlb.Uint32, tlb.RefT[*GuardianSetRecord]] // map<uint32, Cell<GuardianSetRecord>>
+}
+type GuardianSetRecord struct {
+	ExpirationTime tlb.Uint64                           // uint64
+	GuardianKeys   tlb.HashmapE[tlb.Uint8, tlb.Bits160] // map<uint8, bits160>
+}
+type GuardianSetInfo struct {
+	ExpirationTime tlb.Int257 // int
+	KeysDict       boc.Cell   // cell
+	KeyCount       tlb.Int257 // int
+}
+type GovernanceSection struct {
+	ChainId                        tlb.Uint16                      // uint16
+	GovernanceChainId              tlb.Uint16                      // uint16
+	GovernanceContract             tlb.Uint256                     // uint256
+	ConsumedGovernanceActions      tlb.HashmapE[tlb.Uint256, bool] // map<uint256, bool>
+	GovernanceDataSource           tlb.RefT[*DataSource]           // Cell<DataSource>
+	LastExecutedGovernanceSequence tlb.Uint64                      // uint64
+	GovernanceDataSourceIndex      tlb.Uint32                      // uint32
+	UpgradeCodeHash                tlb.Uint256                     // uint256
+}
+type PriceFeedResponseEntry struct {
+	PriceId   tlb.Uint256                // uint256
+	PriceFeed tlb.RefT[*StoredPriceFeed] // Cell<StoredPriceFeed>
+}
+type PriceFeedResponseList []PriceFeedResponseEntry
+
+const PrefixErrorResponse uint64 = 0x10002
+
+type ErrorResponse struct {
+	ErrorCode     tlb.Uint32 // uint32
+	Operation     tlb.Uint32 // uint32
+	CustomPayload boc.Cell   // Cell<slice>
+}
 
 const PrefixParsePriceFeedUpdatesMessage uint64 = 0x00000005
 
@@ -66,56 +129,6 @@ type ParseUniquePriceFeedUpdatesMessage struct {
 	TargetAddress tlb.MsgAddress                 // any_address
 	CustomPayload boc.Cell                       // cell
 }
-type PricePoint struct {
-	Price       tlb.Int64  // int64
-	Conf        tlb.Uint64 // uint64
-	Expo        tlb.Int32  // int32
-	PublishTime tlb.Uint64 // uint64
-}
-type StoredPriceFeed struct {
-	Price    tlb.RefT[*PricePoint] // Cell<PricePoint>
-	EmaPrice tlb.RefT[*PricePoint] // Cell<PricePoint>
-}
-type PriceFeedsSection struct {
-	LatestPriceFeeds tlb.HashmapE[tlb.Uint256, tlb.RefT[*StoredPriceFeed]] // map<uint256, Cell<StoredPriceFeed>>
-	SingleUpdateFee  tlb.Uint256                                           // uint256
-}
-type DataSourcesSection struct {
-	IsValidDataSource tlb.HashmapE[tlb.Uint256, bool] // map<uint256, bool>
-}
-type GuardianSetRecord struct {
-	ExpirationTime tlb.Uint64                           // uint64
-	GuardianKeys   tlb.HashmapE[tlb.Uint8, tlb.Bits160] // map<uint8, bits160>
-}
-type GuardianSetsSection struct {
-	CurrentGuardianSetIndex tlb.Uint32                                             // uint32
-	GuardianSets            tlb.HashmapE[tlb.Uint32, tlb.RefT[*GuardianSetRecord]] // map<uint32, Cell<GuardianSetRecord>>
-}
-type DataSource struct {
-	EmitterChainId tlb.Uint16  // uint16
-	EmitterAddress tlb.Uint256 // uint256
-}
-type GovernanceSection struct {
-	ChainId                        tlb.Uint16                      // uint16
-	GovernanceChainId              tlb.Uint16                      // uint16
-	GovernanceContract             tlb.Uint256                     // uint256
-	ConsumedGovernanceActions      tlb.HashmapE[tlb.Uint256, bool] // map<uint256, bool>
-	GovernanceDataSource           tlb.RefT[*DataSource]           // Cell<DataSource>
-	LastExecutedGovernanceSequence tlb.Uint64                      // uint64
-	GovernanceDataSourceIndex      tlb.Uint32                      // uint32
-	UpgradeCodeHash                tlb.Uint256                     // uint256
-}
-type MainStorage struct {
-	PriceFeeds   tlb.RefT[*PriceFeedsSection]   // Cell<PriceFeedsSection>
-	DataSources  tlb.RefT[*DataSourcesSection]  // Cell<DataSourcesSection>
-	GuardianSets tlb.RefT[*GuardianSetsSection] // Cell<GuardianSetsSection>
-	Governance   tlb.RefT[*GovernanceSection]   // Cell<GovernanceSection>
-}
-type PriceFeedResponseEntry struct {
-	PriceId   tlb.Uint256                // uint256
-	PriceFeed tlb.RefT[*StoredPriceFeed] // Cell<StoredPriceFeed>
-}
-type PriceFeedResponseList []PriceFeedResponseEntry
 
 const PrefixOracleResponseSuccess uint64 = 0x00000005
 
@@ -124,19 +137,6 @@ type OracleResponseSuccess struct {
 	PriceFeeds     tlb.RefT[*PriceFeedResponseList] // Cell<PriceFeedResponseList>
 	InitialSender  tlb.InternalAddress              // address
 	AfterOperation boc.Cell                         // cell
-}
-
-const PrefixErrorResponse uint64 = 0x10002
-
-type ErrorResponse struct {
-	ErrorCode     tlb.Uint32 // uint32
-	Operation     tlb.Uint32 // uint32
-	CustomPayload boc.Cell   // Cell<slice>
-}
-type GuardianSetInfo struct {
-	ExpirationTime tlb.Int257 // int
-	KeysDict       boc.Cell   // cell
-	KeyCount       tlb.Int257 // int
 }
 
 func DecodeGetUpdateFee(stack *tlb.VmStack) (result tlb.Int257, err error) {

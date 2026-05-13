@@ -9,6 +9,93 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
+func (v *WalletExternalMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Signature.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Signature: %v", err)
+	}
+	if err = v.Message.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Message: %v", err)
+	}
+	return nil
+}
+func (v WalletExternalMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Signature.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Signature: %v", err)
+	}
+	if err = v.Message.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Message: %v", err)
+	}
+	return nil
+}
+func (v WalletExternalMessage) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *ExternalSignedMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.SubwalletId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .SubwalletId: %v", err)
+	}
+	if err = v.ValidUntil.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ValidUntil: %v", err)
+	}
+	if err = v.MsgSeqno.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .MsgSeqno: %v", err)
+	}
+	if err = v.Forward.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Forward: %v", err)
+	}
+	return nil
+}
+func (v ExternalSignedMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.SubwalletId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .SubwalletId: %v", err)
+	}
+	if err = v.ValidUntil.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ValidUntil: %v", err)
+	}
+	if err = v.MsgSeqno.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .MsgSeqno: %v", err)
+	}
+	if err = v.Forward.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Forward: %v", err)
+	}
+	return nil
+}
+func (v ExternalSignedMessage) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *ForwardMsg) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Mode.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Mode: %v", err)
+	}
+	if v.Msg, err = c.NextRefV(); err != nil {
+		return fmt.Errorf("failed to read .Msg: %v", err)
+	}
+	return nil
+}
+func (v ForwardMsg) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Mode.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Mode: %v", err)
+	}
+	if err = c.AddRef(&v.Msg); err != nil {
+		return fmt.Errorf("failed to .Msg: %v", err)
+	}
+	return nil
+}
+func (v ForwardMsg) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *OwnerWalletSendMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixOwnerWalletSendMessage); err != nil {
 		return err
@@ -65,93 +152,6 @@ func (v TextCommand) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	return nil
 }
 func (v TextCommand) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *ForwardMsg) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Mode.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Mode: %v", err)
-	}
-	if v.Msg, err = c.NextRefV(); err != nil {
-		return fmt.Errorf("failed to read .Msg: %v", err)
-	}
-	return nil
-}
-func (v ForwardMsg) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Mode.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Mode: %v", err)
-	}
-	if err = c.AddRef(&v.Msg); err != nil {
-		return fmt.Errorf("failed to .Msg: %v", err)
-	}
-	return nil
-}
-func (v ForwardMsg) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *ExternalSignedMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.SubwalletId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .SubwalletId: %v", err)
-	}
-	if err = v.ValidUntil.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ValidUntil: %v", err)
-	}
-	if err = v.MsgSeqno.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .MsgSeqno: %v", err)
-	}
-	if err = v.Forward.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Forward: %v", err)
-	}
-	return nil
-}
-func (v ExternalSignedMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.SubwalletId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .SubwalletId: %v", err)
-	}
-	if err = v.ValidUntil.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ValidUntil: %v", err)
-	}
-	if err = v.MsgSeqno.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .MsgSeqno: %v", err)
-	}
-	if err = v.Forward.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Forward: %v", err)
-	}
-	return nil
-}
-func (v ExternalSignedMessage) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *WalletExternalMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Signature.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Signature: %v", err)
-	}
-	if err = v.Message.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Message: %v", err)
-	}
-	return nil
-}
-func (v WalletExternalMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Signature.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Signature: %v", err)
-	}
-	if err = v.Message.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Message: %v", err)
-	}
-	return nil
-}
-func (v WalletExternalMessage) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
 		return nil, err

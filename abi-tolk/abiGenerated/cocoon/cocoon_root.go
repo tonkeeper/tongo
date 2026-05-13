@@ -10,6 +10,35 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
+type CocoonData struct {
+	Version           tlb.Uint32          // uint32
+	LastProxySeqno    tlb.Uint32          // uint32
+	ParamsVersion     tlb.Uint32          // uint32
+	UniqueId          tlb.Uint32          // uint32
+	IsTest            bool                // bool
+	PricePerToken     tlb.Coins           // coins
+	WorkerFeePerToken tlb.Coins           // coins
+	MinProxyStake     tlb.Coins           // coins
+	MinClientStake    tlb.Coins           // coins
+	OwnerAddress      tlb.InternalAddress // address
+}
+type CurrentCocoonParams struct {
+	ParamsVersion                  tlb.Uint32  // uint32
+	UniqueId                       tlb.Uint32  // uint32
+	IsTest                         bool        // bool
+	PricePerToken                  tlb.Coins   // coins
+	WorkerFeePerToken              tlb.Coins   // coins
+	CachedTokensPriceMultiplier    tlb.Uint32  // uint32
+	ReasoningTokensPriceMultiplier tlb.Uint32  // uint32
+	ProxyDelayBeforeClose          tlb.Uint32  // uint32
+	ClientDelayBeforeClose         tlb.Uint32  // uint32
+	MinProxyStake                  tlb.Coins   // coins
+	MinClientStake                 tlb.Coins   // coins
+	ProxyCodeHash                  tlb.Uint256 // uint256
+	WorkerCodeHash                 tlb.Uint256 // uint256
+	ClientCodeHash                 tlb.Uint256 // uint256
+}
+
 const PrefixAddWorkerType uint64 = 0xe34b1c60
 
 type AddWorkerType struct {
@@ -147,36 +176,10 @@ type RootStorage struct {
 	Params       tlb.RefT[*CocoonParams] // Cell<CocoonParams>
 	Version      tlb.Uint32              // uint32
 }
-type CocoonData struct {
-	Version           tlb.Uint32          // uint32
-	LastProxySeqno    tlb.Uint32          // uint32
-	ParamsVersion     tlb.Uint32          // uint32
-	UniqueId          tlb.Uint32          // uint32
-	IsTest            bool                // bool
-	PricePerToken     tlb.Coins           // coins
-	WorkerFeePerToken tlb.Coins           // coins
-	MinProxyStake     tlb.Coins           // coins
-	MinClientStake    tlb.Coins           // coins
-	OwnerAddress      tlb.InternalAddress // address
-}
-type CurrentCocoonParams struct {
-	ParamsVersion                  tlb.Uint32  // uint32
-	UniqueId                       tlb.Uint32  // uint32
-	IsTest                         bool        // bool
-	PricePerToken                  tlb.Coins   // coins
-	WorkerFeePerToken              tlb.Coins   // coins
-	CachedTokensPriceMultiplier    tlb.Uint32  // uint32
-	ReasoningTokensPriceMultiplier tlb.Uint32  // uint32
-	ProxyDelayBeforeClose          tlb.Uint32  // uint32
-	ClientDelayBeforeClose         tlb.Uint32  // uint32
-	MinProxyStake                  tlb.Coins   // coins
-	MinClientStake                 tlb.Coins   // coins
-	ProxyCodeHash                  tlb.Uint256 // uint256
-	WorkerCodeHash                 tlb.Uint256 // uint256
-	ClientCodeHash                 tlb.Uint256 // uint256
-}
 
 const ( // errors
+	ErrorMsgFormatMismatch = 0x3EC // 1004
+	ErrorUnknownProxyType  = 0x7D0 // 2000
 )
 
 func DecodeGetLastProxySeqno(stack *tlb.VmStack) (result tlb.Int257, err error) {

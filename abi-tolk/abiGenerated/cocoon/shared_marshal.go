@@ -217,31 +217,6 @@ func (v CocoonParams) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *Payout) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixPayout); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	return nil
-}
-func (v Payout) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixPayout, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	return nil
-}
-func (v Payout) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
 func (v *ReturnExcessesBack) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixReturnExcessesBack); err != nil {
 		return err

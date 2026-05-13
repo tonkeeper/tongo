@@ -27,6 +27,26 @@ const PrefixExtProxyCloseCompleteRequestSigned uint64 = 0xe511abc7
 type ExtProxyCloseCompleteRequestSigned struct {
 	Rest boc.Cell // RemainingBitsAndRefs
 }
+type CocoonProxyData struct {
+	OwnerAddress      tlb.InternalAddress // address
+	ProxyPublicKey    tlb.Uint256         // uint256
+	RootAddress       tlb.InternalAddress // address
+	State             tlb.Uint2           // uint2
+	Balance           tlb.Coins           // coins
+	Stake             tlb.Coins           // coins
+	UnlockTs          tlb.Uint32          // uint32
+	PricePerToken     tlb.Coins           // coins
+	WorkerFeePerToken tlb.Coins           // coins
+	MinProxyStake     tlb.Coins           // coins
+	MinClientStake    tlb.Coins           // coins
+	ParamsVersion     tlb.Uint32          // uint32
+}
+
+const PrefixPayout uint64 = 0xc59a7cd3
+
+type Payout struct {
+	QueryId tlb.Uint64 // uint64
+}
 
 const PrefixExtProxyPayoutRequest uint64 = 0x7610e6eb
 
@@ -59,22 +79,10 @@ type ProxyStorage struct {
 	UnlockTs       tlb.Uint32              // uint32
 	Params         tlb.RefT[*CocoonParams] // Cell<CocoonParams>
 }
-type CocoonProxyData struct {
-	OwnerAddress      tlb.InternalAddress // address
-	ProxyPublicKey    tlb.Uint256         // uint256
-	RootAddress       tlb.InternalAddress // address
-	State             tlb.Uint2           // uint2
-	Balance           tlb.Coins           // coins
-	Stake             tlb.Coins           // coins
-	UnlockTs          tlb.Uint32          // uint32
-	PricePerToken     tlb.Coins           // coins
-	WorkerFeePerToken tlb.Coins           // coins
-	MinProxyStake     tlb.Coins           // coins
-	MinClientStake    tlb.Coins           // coins
-	ParamsVersion     tlb.Uint32          // uint32
-}
 
 const ( // errors
+	ErrorUnknownTextOp           = 0x3F5 // 1013
+	ErrorContractAddressMismatch = 0x3F6 // 1014
 )
 
 func DecodeGetCocoonProxyData(stack *tlb.VmStack) (result CocoonProxyData, err error) {

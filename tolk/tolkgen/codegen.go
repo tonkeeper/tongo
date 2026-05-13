@@ -128,15 +128,18 @@ func GenerateExecutorFile(pkgName string, entries []ExecutorEntry) (string, erro
 
 type TolkGolangGenerator struct {
 	symbols     *symTable
-	abi         parser.ABI
+	abi         parser.ContractABI
 	storageType string // empty when no storage
 }
 
-func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
+func NewTolkGolangGenerator(abi parser.ContractABI) (*TolkGolangGenerator, error) {
 	symbols := symTable{
-		aliases:                       make(map[string]parser.AliasDeclaration),
-		structs:                       make(map[string]parser.StructDeclaration),
-		enums:                         make(map[string]parser.EnumDeclaration),
+		aliases:                       make(map[string]parser.ABIAlias),
+		structs:                       make(map[string]parser.ABIStruct),
+		enums:                         make(map[string]parser.ABIEnum),
+		uniqueTypes:                   abi.UniqueTypes,
+		structInstantiations:          abi.StructInstantiations,
+		aliasInstantiations:           abi.AliasInstantiations,
 		structIsReturnedFromGetMethod: make(map[string]bool),
 		enumNeedsReadFromStack:        make(map[string]bool),
 	}
@@ -151,14 +154,14 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 		}
 	}
 	for _, method := range abi.GetMethods {
-		symbols.markStructsReadFromStack(method.ReturnTy)
+		symbols.markStructsReadFromStack(method.ReturnTyIdx)
 	}
 	var storageType string
-	if abi.Storage.StorageTy != nil {
+	if abi.Storage.StorageTyIdx != nil {
 		var err error
-		storageType, err = emitGoType(*abi.Storage.StorageTy)
+		storageType, err = symbols.emitGoType(*abi.Storage.StorageTyIdx)
 		if err != nil {
-			return nil, fmt.Errorf("storage type %s: %w", abi.Storage.StorageTy.String(), err)
+			return nil, fmt.Errorf("storage type: %w", err)
 		}
 	}
 	return &TolkGolangGenerator{
@@ -169,59 +172,58 @@ func NewTolkGolangGenerator(abi parser.ABI) (*TolkGolangGenerator, error) {
 }
 
 type symTable struct {
-	aliases                       map[string]parser.AliasDeclaration
-	structs                       map[string]parser.StructDeclaration
-	enums                         map[string]parser.EnumDeclaration
+	aliases                       map[string]parser.ABIAlias
+	structs                       map[string]parser.ABIStruct
+	enums                         map[string]parser.ABIEnum
+	uniqueTypes                   []parser.Ty
+	structInstantiations          []parser.ABIStructInstantiation
+	aliasInstantiations           []parser.ABIAliasInstantiation
 	structIsReturnedFromGetMethod map[string]bool
 	enumNeedsReadFromStack        map[string]bool
 }
 
-func (s *symTable) markStructsReadFromStack(ty parser.Ty) {
+func (s *symTable) markStructsReadFromStack(tyIdx int) {
+	ty, err := s.tyByIdx(tyIdx)
+	if err != nil {
+		return
+	}
 	switch ty.SumType {
 	case parser.TyKindArrayOf:
-		s.markStructsReadFromStack(ty.ArrayOf.Inner)
+		s.markStructsReadFromStack(ty.ArrayOf.InnerTyIdx)
 	case parser.TyKindStructRef:
 		structName := ty.StructRef.StructName
 		if s.structIsReturnedFromGetMethod[structName] {
 			return
 		}
 		s.structIsReturnedFromGetMethod[structName] = true
-		decl, ok := s.structs[structName]
-		if !ok {
+		fields, err := s.structFieldsOf(tyIdx, true)
+		if err != nil {
 			return
 		}
-		for _, field := range decl.Fields {
-			fieldTy := field.Ty
-			if len(ty.StructRef.TypeArgs) > 0 {
-				fieldTy = fieldTy.InstantiateGenerics(decl.TypeParams, ty.StructRef.TypeArgs)
-			}
-			s.markStructsReadFromStack(fieldTy)
+		for _, field := range fields {
+			s.markStructsReadFromStack(field.TyIdx)
 		}
 	case parser.TyKindEnumRef:
 		s.enumNeedsReadFromStack[ty.EnumRef.EnumName] = true
 	case parser.TyKindTensor:
-		for _, item := range ty.Tensor.Items {
+		for _, item := range ty.Tensor.ItemsTyIdx {
 			s.markStructsReadFromStack(item)
 		}
 	case parser.TyKindShapedTuple:
-		for _, item := range ty.ShapedTuple.Items {
+		for _, item := range ty.ShapedTuple.ItemsTyIdx {
 			s.markStructsReadFromStack(item)
 		}
 	case parser.TyKindNullable:
-		s.markStructsReadFromStack(ty.Nullable.Inner)
+		s.markStructsReadFromStack(ty.Nullable.InnerTyIdx)
 	case parser.TyKindAliasRef:
-		aliasDecl, ok := s.aliases[ty.AliasRef.AliasName]
-		if !ok {
+		targetTyIdx, _, err := s.aliasTargetOf(tyIdx)
+		if err != nil {
 			return
 		}
-		targetTy := aliasDecl.TargetTy
-		if len(aliasDecl.TypeParams) > 0 {
-			targetTy = targetTy.InstantiateGenerics(aliasDecl.TypeParams, ty.AliasRef.TypeArgs)
-		}
-		s.markStructsReadFromStack(targetTy)
+		s.markStructsReadFromStack(targetTyIdx)
 	case parser.TyKindUnion:
 		for _, variant := range ty.Union.Variants {
-			s.markStructsReadFromStack(variant.VariantTy)
+			s.markStructsReadFromStack(variant.VariantTyIdx)
 		}
 	}
 }
@@ -253,7 +255,7 @@ func (tgen TolkGolangGenerator) GenerateGocode() (declarations string, marshaler
 		fmt.Fprintf(declarationsBuf, "const ( // errors\n")
 		for _, t := range tgen.abi.ThrownErrors {
 			if t.Name != "" {
-				fmt.Fprintf(declarationsBuf, "\t%s = 0x%X  // %d\n", safeGoIdent(t.Name), t.ErrCode, t.ErrCode)
+				fmt.Fprintf(declarationsBuf, "\t%s = 0x%X  // %d\n", safeErrorIdent(t.Name), t.ErrCode, t.ErrCode)
 			}
 		}
 		fmt.Fprintf(declarationsBuf, ")\n")
@@ -262,8 +264,12 @@ func (tgen TolkGolangGenerator) GenerateGocode() (declarations string, marshaler
 	return declarationsBuf.String(), marshalersBuf.String(), nil
 }
 
-func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *strings.Builder, outMarshal *strings.Builder) error {
-	if decl.TargetTy.SumType == parser.TyKindUnion {
+func (tgen TolkGolangGenerator) aliasToGo(decl parser.ABIAlias, out *strings.Builder, outMarshal *strings.Builder) error {
+	targetTy, err := tgen.symbols.tyByIdx(decl.TargetTyIdx)
+	if err != nil {
+		return fmt.Errorf("target type: %w", err)
+	}
+	if targetTy.SumType == parser.TyKindUnion {
 		if err := tgen.aliasUnionToGo(decl, out, outMarshal); err != nil {
 			return fmt.Errorf("union alias: %w", err)
 		}
@@ -273,9 +279,9 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *str
 	if len(decl.TypeParams) > 0 {
 		return fmt.Errorf("type params not supported for alias %q", decl.Name)
 	}
-	targetType, err := emitGoType(decl.TargetTy)
+	targetType, err := tgen.symbols.emitGoType(decl.TargetTyIdx)
 	if err != nil {
-		return fmt.Errorf("target type %s: %w", decl.TargetTy.String(), err)
+		return fmt.Errorf("target type: %w", err)
 	}
 	out.WriteString(fmt.Sprintf("type %s %s\n", aliasName, targetType))
 
@@ -284,7 +290,7 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *str
 	}
 
 	if !decl.CustomPackUnpack.UnpackFromSlice {
-		expr, _, err := tgen.symbols.emitLoadExpr(decl.Name, decl.TargetTy)
+		expr, _, err := tgen.symbols.emitLoadExpr(decl.Name, decl.TargetTyIdx)
 		if err != nil {
 			return fmt.Errorf("emit unmarshal expression for %q: %w", decl.Name, err)
 		}
@@ -300,7 +306,7 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *str
 			aliasName, expr, aliasName)
 	}
 	if !decl.CustomPackUnpack.PackToBuilder {
-		expr, err := emitStoreExpr("v", decl.TargetTy)
+		expr, err := tgen.symbols.emitStoreExpr("v", decl.TargetTyIdx)
 		if err != nil {
 			return fmt.Errorf("emit marshal expression for %q: %w", decl.Name, err)
 		}
@@ -312,12 +318,16 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.AliasDeclaration, out *str
 	return nil
 }
 
-func (tgen TolkGolangGenerator) aliasUnionToGo(decl parser.AliasDeclaration, out *strings.Builder, outMarshal *strings.Builder) error {
+func (tgen TolkGolangGenerator) aliasUnionToGo(decl parser.ABIAlias, out *strings.Builder, outMarshal *strings.Builder) error {
 	aliasName := safeGoIdent(decl.Name)
 	if len(decl.TypeParams) > 0 {
 		return fmt.Errorf("type params not supported for alias %q", decl.Name)
 	}
-	variants, err := tgen.symbols.createLabelsForUnion(decl.TargetTy.Union.Variants)
+	targetTy, err := tgen.symbols.tyByIdx(decl.TargetTyIdx)
+	if err != nil {
+		return fmt.Errorf("target type: %w", err)
+	}
+	variants, err := tgen.symbols.createLabelsForUnion(targetTy.Union.Variants, nil)
 	if err != nil {
 		return fmt.Errorf("create labels for union %q: %w", decl.Name, err)
 	}
@@ -326,31 +336,34 @@ func (tgen TolkGolangGenerator) aliasUnionToGo(decl parser.AliasDeclaration, out
 	out.WriteString(fmt.Sprintf("type %sKind uint\n", aliasName))
 	fmt.Fprintf(out, "const (\n")
 	for _, v := range variants {
-		fmt.Fprintf(out, "\t%sKind_%s %sKind = %s\n", aliasName, safeGoIdent(v.label), aliasName, v.PrefixStr)
+		fmt.Fprintf(out, "\t%sKind_%s %sKind = %d\n", aliasName, safeGoIdent(v.label), aliasName, v.PrefixNum)
 	}
 	fmt.Fprintf(out, ")\n")
 	out.WriteString(fmt.Sprintf("type %s struct { // tagged union\n", aliasName))
 	out.WriteString(fmt.Sprintf("\tSumType %sKind\n", aliasName))
 	for _, v := range variants {
-		variantType, err := emitGoType(v.VariantTy)
+		variantType, err := tgen.symbols.emitGoType(v.VariantTyIdx)
 		if err != nil {
-			return fmt.Errorf("variant %q type %s: %w", v.label, v.VariantTy.String(), err)
+			return fmt.Errorf("variant %q type: %w", v.label, err)
 		}
 		out.WriteString(fmt.Sprintf("\t%s *%s\n", safeGoIdent(v.label), variantType))
 	}
 	out.WriteString("}\n")
 
-	isEither01 := len(variants) == 2 && variants[0].PrefixStr == "0b0" && variants[1].PrefixStr == "0b1"
+	isEither01 := len(variants) == 2 &&
+		variants[0].IsPrefixImplicit && variants[1].IsPrefixImplicit &&
+		variants[0].PrefixNum == 0 && variants[0].PrefixLen == 1 &&
+		variants[1].PrefixNum == 1 && variants[1].PrefixLen == 1
 
 	// UnmarshalTLB goes to outMarshal.
 	if !decl.CustomPackUnpack.UnpackFromSlice {
 		fmt.Fprintf(outMarshal, "func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {\n", aliasName)
 		if isEither01 {
-			rExpr, _, err := tgen.symbols.emitLoadExpr(aliasName, variants[0].VariantTy)
+			rExpr, _, err := tgen.symbols.emitLoadExpr(aliasName, variants[0].VariantTyIdx)
 			if err != nil {
 				return fmt.Errorf("load expression for %q right variant: %w", decl.Name, err)
 			}
-			lExpr, _, err := tgen.symbols.emitLoadExpr(aliasName, variants[1].VariantTy)
+			lExpr, _, err := tgen.symbols.emitLoadExpr(aliasName, variants[1].VariantTyIdx)
 			if err != nil {
 				return fmt.Errorf("load expression for %q left variant: %w", decl.Name, err)
 			}
@@ -367,9 +380,9 @@ func (tgen TolkGolangGenerator) aliasUnionToGo(decl parser.AliasDeclaration, out
 		} else {
 			isUniformPrefix := true
 			uniformPrefixLen := variants[0].PrefixLen
-			uniformPrefixEatInPlace := variants[0].PrefixEatInPlace
+			uniformPrefixEatInPlace := variants[0].IsPrefixImplicit
 			for _, v := range variants[1:] {
-				if v.PrefixLen != uniformPrefixLen || v.PrefixEatInPlace != uniformPrefixEatInPlace {
+				if v.PrefixLen != uniformPrefixLen || v.IsPrefixImplicit != uniformPrefixEatInPlace {
 					isUniformPrefix = false
 					break
 				}
@@ -388,8 +401,8 @@ switch v.SumType {
 `, prefixReadFn, uniformPrefixLen, aliasName)
 				for _, v := range variants {
 					fmt.Fprintf(outMarshal, "\tcase %sKind_%s:\n", aliasName, safeGoIdent(v.label))
-					fmt.Fprintf(outMarshal, "\t\tv.%s = new(%s)\n", v.label, v.label)
-					fmt.Fprintf(outMarshal, "\t\treturn  v.%s.UnmarshalTLB(c, decoder)\n", v.label)
+					fmt.Fprintf(outMarshal, "\t\tv.%s = new(%s)\n", safeGoIdent(v.label), safeGoIdent(v.label))
+					fmt.Fprintf(outMarshal, "\t\treturn  v.%s.UnmarshalTLB(c, decoder)\n", safeGoIdent(v.label))
 				}
 				fmt.Fprintf(outMarshal, `	default:
 		return fmt.Errorf("unknown prefix: %%x", prefix)
@@ -398,7 +411,7 @@ switch v.SumType {
 			} else {
 				for _, v := range variants {
 					prefixReadFn := "ReadUint"
-					if !v.PrefixEatInPlace {
+					if !v.IsPrefixImplicit {
 						prefixReadFn = "PickUint"
 					}
 					fmt.Fprintf(outMarshal, `if prefix, err := c.%s(%d); err != nil {
@@ -408,7 +421,7 @@ switch v.SumType {
 	v.%s = new(%s)
 	return  v.%s.UnmarshalTLB(c, decoder)
 }
-`, prefixReadFn, v.PrefixLen, aliasName, safeGoIdent(v.label), aliasName, v.label, v.label, v.label)
+`, prefixReadFn, v.PrefixLen, aliasName, safeGoIdent(v.label), aliasName, safeGoIdent(v.label), safeGoIdent(v.label), safeGoIdent(v.label))
 				}
 				fmt.Fprintf(outMarshal, "\treturn fmt.Errorf(\"could not find suitable prefix\")\n")
 			}
@@ -444,10 +457,10 @@ switch v.SumType {
 			fmt.Fprintf(outMarshal, "\t}\n")
 		} else {
 			isUniformPrefix := true
-			uniformPrefixEatInPlace := variants[0].PrefixEatInPlace
+			uniformPrefixEatInPlace := variants[0].IsPrefixImplicit
 			uniformPrefixLen := variants[0].PrefixLen
 			for _, v := range variants[1:] {
-				if v.PrefixLen != uniformPrefixLen || v.PrefixEatInPlace != uniformPrefixEatInPlace {
+				if v.PrefixLen != uniformPrefixLen || v.IsPrefixImplicit != uniformPrefixEatInPlace {
 					isUniformPrefix = false
 					break
 				}
@@ -456,15 +469,15 @@ switch v.SumType {
 			for _, v := range variants {
 				fmt.Fprintf(outMarshal, "\tcase %sKind_%s:\n", aliasName, safeGoIdent(v.label))
 				// When PrefixEatInPlace=true the union owns the prefix; write it before delegating.
-				eatInPlace := (isUniformPrefix && uniformPrefixEatInPlace) || (!isUniformPrefix && v.PrefixEatInPlace)
+				eatInPlace := (isUniformPrefix && uniformPrefixEatInPlace) || (!isUniformPrefix && v.IsPrefixImplicit)
 				if eatInPlace {
 					fmt.Fprintf(outMarshal, "\t\tif err := c.WriteUint(uint64(%sKind_%s), %d); err != nil { return err }\n",
 						aliasName, safeGoIdent(v.label), v.PrefixLen)
 				}
 				// Delegate to variant's MarshalTLB (for PrefixEatInPlace=false it writes its own prefix).
 				if v.label != "" {
-					fmt.Fprintf(outMarshal, "\t\tif v.%s == nil { return fmt.Errorf(\"%s.%s is nil\") }\n", v.label, aliasName, v.label)
-					fmt.Fprintf(outMarshal, "\t\treturn v.%s.MarshalTLB(c, encoder)\n", v.label)
+					fmt.Fprintf(outMarshal, "\t\tif v.%s == nil { return fmt.Errorf(\"%s.%s is nil\") }\n", safeGoIdent(v.label), aliasName, safeGoIdent(v.label))
+					fmt.Fprintf(outMarshal, "\t\treturn v.%s.MarshalTLB(c, encoder)\n", safeGoIdent(v.label))
 				} else {
 					fmt.Fprintf(outMarshal, "\t\treturn nil\n")
 				}
@@ -485,33 +498,61 @@ type unionVariantLabeled struct {
 	parser.UnionVariant
 }
 
-func (st *symTable) createLabel(ty parser.Ty) string {
-	return safeGoIdent(ty.String())
-}
-
-func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant) (result []unionVariantLabeled, err error) {
+func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant, uLabelTyIdx *int) (result []unionVariantLabeled, err error) {
+	var genericVariantsTyIdx []int
+	if uLabelTyIdx != nil {
+		labelTy, err := st.tyByIdx(*uLabelTyIdx)
+		if err != nil {
+			return nil, err
+		}
+		if labelTy.SumType == parser.TyKindUnion && len(labelTy.Union.Variants) == len(variants) {
+			for _, v := range labelTy.Union.Variants {
+				genericVariantsTyIdx = append(genericVariantsTyIdx, v.VariantTyIdx)
+			}
+		}
+	}
 	unique := make(map[string]struct{})
 	hasDuplicates := false
-	for _, variant := range variants {
-		label := st.createLabel(variant.VariantTy)
+	for i, variant := range variants {
+		labelTyIdx := variant.VariantTyIdx
+		if genericVariantsTyIdx != nil {
+			labelTyIdx = genericVariantsTyIdx[i]
+		}
+		label, err := st.createLabelByIdx(labelTyIdx)
+		if err != nil {
+			return nil, err
+		}
 		if _, ok := unique[label]; ok {
 			hasDuplicates = true
 		} else {
 			unique[label] = struct{}{}
 		}
 	}
-	for _, variant := range variants {
-		variantTy := variant.VariantTy
+	for i, variant := range variants {
+		labelTyIdx := variant.VariantTyIdx
+		if genericVariantsTyIdx != nil {
+			labelTyIdx = genericVariantsTyIdx[i]
+		}
+		variantTy, err := st.tyByIdx(labelTyIdx)
+		if err != nil {
+			return nil, err
+		}
 		if variantTy.SumType == parser.TyKindNullLiteral {
 			result = append(result, unionVariantLabeled{label: "", hasValueField: false, UnionVariant: variant})
 		} else {
 			labelVariant := unionVariantLabeled{UnionVariant: variant}
 			if hasDuplicates {
-				labelVariant.label = variantTy.String()
+				labelVariant.label, err = st.renderTy(labelTyIdx)
+				if err != nil {
+					return nil, err
+				}
 				labelVariant.hasValueField = true
 			} else {
-				labelVariant.label = st.createLabel(variantTy)
-				hasOwnLabel, err := st.isStructWithItsOwnLabel(variantTy)
+				labelVariant.label, err = st.createLabelByIdx(labelTyIdx)
+				if err != nil {
+					return nil, err
+				}
+				hasOwnLabel, err := st.isStructWithItsOwnLabel(labelTyIdx)
 				if err != nil {
 					return nil, err
 				}
@@ -523,12 +564,41 @@ func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant) (result
 	return result, nil
 }
 
-func (st *symTable) isStructWithItsOwnLabel(ty parser.Ty) (bool, error) {
+func (st *symTable) createLabelByIdx(tyIdx int) (string, error) {
+	ty, err := st.tyByIdx(tyIdx)
+	if err != nil {
+		return "", err
+	}
+	switch ty.SumType {
+	case parser.TyKindStructRef:
+		return safeGoIdent(ty.StructRef.StructName), nil
+	case parser.TyKindAliasRef:
+		targetTyIdx, _, err := st.aliasTargetOf(tyIdx)
+		if err != nil {
+			return "", err
+		}
+		return st.createLabelByIdx(targetTyIdx)
+	case parser.TyKindEnumRef:
+		return safeGoIdent(ty.EnumRef.EnumName), nil
+	default:
+		s, err := st.renderTy(tyIdx)
+		if err != nil {
+			return "", err
+		}
+		return safeGoIdent(s), nil
+	}
+}
+
+func (st *symTable) isStructWithItsOwnLabel(tyIdx int) (bool, error) {
+	ty, err := st.tyByIdx(tyIdx)
+	if err != nil {
+		return false, err
+	}
 	switch ty.SumType {
 	case parser.TyKindStructRef:
 		return true, nil
 	case parser.TyKindAliasRef:
-		aliasTarget, err := st.getAliasTarget(ty.AliasRef.AliasName)
+		aliasTarget, _, err := st.aliasTargetOf(tyIdx)
 		if err != nil {
 			return false, err
 		}
@@ -538,27 +608,27 @@ func (st *symTable) isStructWithItsOwnLabel(ty parser.Ty) (bool, error) {
 	}
 }
 
-func (st *symTable) getAliasTarget(name string) (parser.Ty, error) {
+func (st *symTable) getAliasTarget(name string) (int, error) {
 	alias, err := st.getAlias(name)
 	if err != nil {
-		return parser.Ty{}, err
+		return 0, err
 	}
-	return alias.TargetTy, nil
+	return alias.TargetTyIdx, nil
 }
 
-func (st *symTable) getAlias(name string) (parser.AliasDeclaration, error) {
+func (st *symTable) getAlias(name string) (parser.ABIAlias, error) {
 	if a, ok := st.aliases[name]; ok {
 		return a, nil
 	}
-	return parser.AliasDeclaration{}, fmt.Errorf("alias %s not found", name)
+	return parser.ABIAlias{}, fmt.Errorf("alias %s not found", name)
 }
 
 // conver Tolk `enum X` to golang `type X = underlying type` with `const X1 = value` definitions
-func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strings.Builder, outMarshal *strings.Builder) error {
+func (tgen TolkGolangGenerator) enumToGo(decl parser.ABIEnum, out *strings.Builder, outMarshal *strings.Builder) error {
 	typeIdent := safeGoIdent(decl.Name)
-	encodedType, err := emitGoType(decl.EncodedAs)
+	encodedType, err := tgen.symbols.emitGoType(decl.EncodedAsTyIdx)
 	if err != nil {
-		return fmt.Errorf("enum %q encoded type %s: %w", decl.Name, decl.EncodedAs.String(), err)
+		return fmt.Errorf("enum %q encoded type: %w", decl.Name, err)
 	}
 	fmt.Fprintf(out, "type %s %s\n", typeIdent, encodedType)
 	fmt.Fprintf(out, "\n")
@@ -566,7 +636,7 @@ func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strin
 	for _, v := range decl.Members {
 		name := enumItemIdent(typeIdent, v.Name)
 		// handle toCell/store/fromSlice collision
-		fmt.Fprintf(out, "\t%s %s = %s\n", name, typeIdent, v.Value)
+		fmt.Fprintf(out, "\t%s %s = %s\n", name, typeIdent, v.Value.String())
 	}
 	fmt.Fprintf(out, ")\n")
 
@@ -576,7 +646,7 @@ func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strin
 			typeIdent, encodedType)
 	}
 	if !decl.CustomPackUnpack.PackToBuilder {
-		expr, err := emitStoreExpr(fmt.Sprintf("%s(v)", encodedType), decl.EncodedAs)
+		expr, err := tgen.symbols.emitStoreExpr(fmt.Sprintf("%s(v)", encodedType), decl.EncodedAsTyIdx)
 		if err != nil {
 			return fmt.Errorf("enum %q store expression: %w", decl.Name, err)
 		}
@@ -590,21 +660,29 @@ func (tgen TolkGolangGenerator) enumToGo(decl parser.EnumDeclaration, out *strin
 	return nil
 }
 
-func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *strings.Builder, outMarshal *strings.Builder) error {
+func (tgen TolkGolangGenerator) structToGo(decl parser.ABIStruct, out *strings.Builder, outMarshal *strings.Builder) error {
 	if len(decl.TypeParams) > 0 {
 		return fmt.Errorf("type params not supported for struct %q", decl.Name)
 	}
 	typeIdent := safeGoIdent(decl.Name)
 	if decl.Prefix != nil {
-		fmt.Fprintf(out, "const Prefix%s uint64 = %s\n", typeIdent, decl.Prefix.PrefixStr)
+		prefix, err := prefixConstValue(decl.Prefix)
+		if err != nil {
+			return fmt.Errorf("struct %q prefix: %w", decl.Name, err)
+		}
+		fmt.Fprintf(out, "const Prefix%s uint64 = %s\n", typeIdent, prefix)
 	}
 	fmt.Fprintf(out, "type %s struct {\n", typeIdent)
 	for _, field := range decl.Fields {
-		fieldType, err := emitGoType(field.Ty)
+		fieldType, err := tgen.symbols.emitGoType(field.TyIdx)
 		if err != nil {
-			return fmt.Errorf("struct %q field %q type %s: %w", decl.Name, field.Name, field.Ty.String(), err)
+			return fmt.Errorf("struct %q field %q type: %w", decl.Name, field.Name, err)
 		}
-		fmt.Fprintf(out, "\t%s %s // %s\n", safePublicField(field.Name), fieldType, field.Ty.String())
+		renderedTy, err := tgen.symbols.renderTy(field.TyIdx)
+		if err != nil {
+			return fmt.Errorf("struct %q field %q render type: %w", decl.Name, field.Name, err)
+		}
+		fmt.Fprintf(out, "\t%s %s // %s\n", safePublicField(field.Name), fieldType, renderedTy)
 	}
 	fmt.Fprintf(out, "}\n")
 
@@ -622,7 +700,7 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *s
 		}
 		for _, field := range decl.Fields {
 			fieldPath := fmt.Sprintf("%s.%s", typeIdent, safePublicField(field.Name))
-			expr, hasLoadMethod, err := tgen.symbols.emitLoadExpr(fieldPath, field.Ty)
+			expr, hasLoadMethod, err := tgen.symbols.emitLoadExpr(fieldPath, field.TyIdx)
 			if err != nil {
 				return fmt.Errorf("struct %q field %q unmarshal expression: %w", decl.Name, field.Name, err)
 			}
@@ -651,7 +729,7 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *s
 		for _, field := range decl.Fields {
 			pFieldName := safePublicField(field.Name)
 			fieldExpr := fmt.Sprintf("v.%s", pFieldName)
-			if expr, err := emitStoreExpr(fieldExpr, field.Ty); err == nil {
+			if expr, err := tgen.symbols.emitStoreExpr(fieldExpr, field.TyIdx); err == nil {
 				fmt.Fprintf(outMarshal, `if err = %s; err != nil {
 	return fmt.Errorf("failed to .%s: %%v", err)
 }
@@ -674,7 +752,7 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.StructDeclaration, out *s
 		slices.Reverse(fields)
 		for _, field := range fields {
 			publicField := safePublicField(field.Name)
-			expr, hasMethod, err := tgen.emitStackReadExpr(publicField, field.Ty, false)
+			expr, hasMethod, err := tgen.emitStackReadExpr(publicField, field.TyIdx, false)
 			if err != nil {
 				return fmt.Errorf("struct %q field %q stack expression: %w", decl.Name, field.Name, err)
 			}

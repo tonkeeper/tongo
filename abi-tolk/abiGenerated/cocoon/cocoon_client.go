@@ -21,6 +21,43 @@ const PrefixExtClientGrantRefundSigned uint64 = 0xefd711e1
 type ExtClientGrantRefundSigned struct {
 	Rest boc.Cell // RemainingBitsAndRefs
 }
+type ClientMessageKind uint
+
+const (
+	ClientMessageKind_ExtClientChargeSigned               ClientMessageKind = 3143892883
+	ClientMessageKind_ExtClientGrantRefundSigned          ClientMessageKind = 4023849441
+	ClientMessageKind_ExtClientTopUp                      ClientMessageKind = 4050839234
+	ClientMessageKind_OwnerClientChangeSecretHashAndTopUp ClientMessageKind = 2222175240
+	ClientMessageKind_OwnerClientRegister                 ClientMessageKind = 3294601019
+	ClientMessageKind_OwnerClientChangeSecretHash         ClientMessageKind = 2838851636
+	ClientMessageKind_OwnerClientIncreaseStake            ClientMessageKind = 1780443744
+	ClientMessageKind_OwnerClientWithdraw                 ClientMessageKind = 3657862776
+	ClientMessageKind_OwnerClientRequestRefund            ClientMessageKind = 4210715841
+)
+
+type ClientMessage struct { // tagged union
+	SumType                             ClientMessageKind
+	ExtClientChargeSigned               *ExtClientChargeSigned
+	ExtClientGrantRefundSigned          *ExtClientGrantRefundSigned
+	ExtClientTopUp                      *ExtClientTopUp
+	OwnerClientChangeSecretHashAndTopUp *OwnerClientChangeSecretHashAndTopUp
+	OwnerClientRegister                 *OwnerClientRegister
+	OwnerClientChangeSecretHash         *OwnerClientChangeSecretHash
+	OwnerClientIncreaseStake            *OwnerClientIncreaseStake
+	OwnerClientWithdraw                 *OwnerClientWithdraw
+	OwnerClientRequestRefund            *OwnerClientRequestRefund
+}
+type CocoonClientData struct {
+	OwnerAddress   tlb.InternalAddress // address
+	ProxyAddress   tlb.InternalAddress // address
+	ProxyPublicKey tlb.Uint256         // uint256
+	State          tlb.Uint2           // uint2
+	Balance        tlb.Coins           // coins
+	Stake          tlb.Coins           // coins
+	TokensUsed     tlb.Uint64          // uint64
+	UnlockTs       tlb.Uint32          // uint32
+	SecretHash     tlb.Uint256         // uint256
+}
 
 const PrefixExtClientTopUp uint64 = 0xf172e6c2
 
@@ -91,45 +128,10 @@ type ClientStorage struct {
 	ConstDataRef tlb.RefT[*ClientConstData] // Cell<ClientConstData>
 	Params       tlb.RefT[*CocoonParams]    // Cell<CocoonParams>
 }
-type ClientMessageKind uint
-
-const (
-	ClientMessageKind_ExtClientChargeSigned               ClientMessageKind = 0xbb63ff93
-	ClientMessageKind_ExtClientGrantRefundSigned          ClientMessageKind = 0xefd711e1
-	ClientMessageKind_ExtClientTopUp                      ClientMessageKind = 0xf172e6c2
-	ClientMessageKind_OwnerClientChangeSecretHashAndTopUp ClientMessageKind = 0x8473b408
-	ClientMessageKind_OwnerClientRegister                 ClientMessageKind = 0xc45f9f3b
-	ClientMessageKind_OwnerClientChangeSecretHash         ClientMessageKind = 0xa9357034
-	ClientMessageKind_OwnerClientIncreaseStake            ClientMessageKind = 0x6a1f6a60
-	ClientMessageKind_OwnerClientWithdraw                 ClientMessageKind = 0xda068e78
-	ClientMessageKind_OwnerClientRequestRefund            ClientMessageKind = 0xfafa6cc1
-)
-
-type ClientMessage struct { // tagged union
-	SumType                             ClientMessageKind
-	ExtClientChargeSigned               *ExtClientChargeSigned
-	ExtClientGrantRefundSigned          *ExtClientGrantRefundSigned
-	ExtClientTopUp                      *ExtClientTopUp
-	OwnerClientChangeSecretHashAndTopUp *OwnerClientChangeSecretHashAndTopUp
-	OwnerClientRegister                 *OwnerClientRegister
-	OwnerClientChangeSecretHash         *OwnerClientChangeSecretHash
-	OwnerClientIncreaseStake            *OwnerClientIncreaseStake
-	OwnerClientWithdraw                 *OwnerClientWithdraw
-	OwnerClientRequestRefund            *OwnerClientRequestRefund
-}
-type CocoonClientData struct {
-	OwnerAddress   tlb.InternalAddress // address
-	ProxyAddress   tlb.InternalAddress // address
-	ProxyPublicKey tlb.Uint256         // uint256
-	State          tlb.Uint2           // uint2
-	Balance        tlb.Coins           // coins
-	Stake          tlb.Coins           // coins
-	TokensUsed     tlb.Uint64          // uint64
-	UnlockTs       tlb.Uint32          // uint32
-	SecretHash     tlb.Uint256         // uint256
-}
 
 const ( // errors
+	ErrorLowSmcBalance = 0x3E9 // 1001
+	ErrorExpectedOwner = 0x3F1 // 1009
 )
 
 func DecodeGetCocoonClientData(stack *tlb.VmStack) (result CocoonClientData, err error) {

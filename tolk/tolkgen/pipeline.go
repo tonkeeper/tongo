@@ -33,7 +33,7 @@ func DefaultCodegenPipelineConfig() CodegenPipelineConfig {
 
 type schemaEntry struct {
 	outPath string
-	abi     parser.ABI
+	abi     parser.ContractABI
 }
 
 func GenerateFromSchemas(cfg CodegenPipelineConfig) error {
@@ -57,7 +57,7 @@ func GenerateFromSchemas(cfg CodegenPipelineConfig) error {
 			return err
 		}
 		if d.IsDir() {
-			if strings.HasPrefix(d.Name(), ".") {
+			if strings.HasPrefix(d.Name(), ".") || d.Name() == "node_modules" {
 				return filepath.SkipDir
 			}
 			return nil
@@ -70,8 +70,15 @@ func GenerateFromSchemas(cfg CodegenPipelineConfig) error {
 		if err != nil {
 			return fmt.Errorf("read %s: %w", path, err)
 		}
+		var raw map[string]json.RawMessage
+		if err := json.Unmarshal(data, &raw); err != nil {
+			return fmt.Errorf("parse %s: %w", path, err)
+		}
+		if _, ok := raw["unique_types"]; !ok {
+			return nil
+		}
 
-		var abi parser.ABI
+		var abi parser.ContractABI
 		if err := json.Unmarshal(data, &abi); err != nil {
 			return fmt.Errorf("parse %s: %w", path, err)
 		}
@@ -174,8 +181,8 @@ func processGroup(outDir string, entries []schemaEntry, rootOutputDir string) er
 	groupName := filepath.Base(outDir)
 	camelGroupName := utils.ToCamelCase(groupName)
 
-	abisByPath := make(map[string]parser.ABI, len(entries))
-	groupABIs := make([]parser.ABI, 0, len(entries))
+	abisByPath := make(map[string]parser.ContractABI, len(entries))
+	groupABIs := make([]parser.ContractABI, 0, len(entries))
 	for _, e := range entries {
 		abisByPath[e.outPath] = e.abi
 		groupABIs = append(groupABIs, e.abi)
@@ -235,7 +242,7 @@ func processGroup(outDir string, entries []schemaEntry, rootOutputDir string) er
 		abi.IncomingExternal = e.abi.IncomingExternal
 		abi.IncomingMessages = e.abi.IncomingMessages
 		ifaceName := ""
-		if len(abi.GetMethods) > 0 || abi.Storage.StorageTy != nil {
+		if len(abi.GetMethods) > 0 || abi.Storage.StorageTyIdx != nil {
 			baseName := strings.TrimSuffix(filepath.Base(e.outPath), ".go")
 			ifaceName = utils.ToCamelCase(baseName)
 		}
@@ -247,7 +254,7 @@ func processGroup(outDir string, entries []schemaEntry, rootOutputDir string) er
 	return nil
 }
 
-func writeGoFile(path, pkgName string, abi parser.ABI, ifaceName string) error {
+func writeGoFile(path, pkgName string, abi parser.ContractABI, ifaceName string) error {
 	gen, err := NewTolkGolangGenerator(abi)
 	if err != nil {
 		return fmt.Errorf("generator for %s: %w", path, err)

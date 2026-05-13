@@ -38,21 +38,21 @@ func (tgen TolkGolangGenerator) GenerateGetMethodsCode() (string, error) {
 	return out.String(), nil
 }
 
-func (tgen TolkGolangGenerator) genGetMethod(method parser.GetMethod, out *strings.Builder) error {
+func (tgen TolkGolangGenerator) genGetMethod(method parser.ABIGetMethod, out *strings.Builder) error {
 	goFnName := MethodGoName(method.Name)
 	decodeFnName := "Decode" + goFnName
 
-	retGoType, err := stackReturnGoType(method.ReturnTy)
+	retGoType, err := tgen.stackReturnGoType(method.ReturnTyIdx)
 	if err != nil {
 		return err
 	}
 
-	expectedSize, err := tgen.calcWidthOnStack(method.ReturnTy)
+	expectedSize, err := tgen.calcWidthOnStack(method.ReturnTyIdx)
 	if err != nil {
 		return err
 	}
 
-	readExpr, hasMethod, err := tgen.emitStackReadExpr("result", method.ReturnTy, false)
+	readExpr, hasMethod, err := tgen.emitStackReadExpr("result", method.ReturnTyIdx, false)
 	if err != nil {
 		return fmt.Errorf("return type expr generation failed: %w", err)
 	}
@@ -65,7 +65,7 @@ func (tgen TolkGolangGenerator) genGetMethod(method parser.GetMethod, out *strin
 	if len(method.Parameters) > 0 {
 		var sb strings.Builder
 		for _, p := range method.Parameters {
-			pushOne, err := stackPushCode(utils.ToCamelCasePrivate(p.Name), p.Ty)
+			pushOne, err := tgen.stackPushCode(utils.ToCamelCasePrivate(p.Name), p.TyIdx)
 			if err != nil {
 				return fmt.Errorf("param %q: %w", p.Name, err)
 			}
@@ -84,7 +84,7 @@ func (tgen TolkGolangGenerator) genGetMethod(method parser.GetMethod, out *strin
 		"ExpectedSize": expectedSize,
 		"DecodeRead":   decodeRead,
 		"ConstName":    constName,
-		"MethodID":     method.TvmMethodID,
+		"MethodID":     method.TVMMethodID,
 		"GoFnName":     goFnName,
 		"ParamsDecl":   paramsDecl,
 		"PushCode":     pushCode,
@@ -96,7 +96,11 @@ func (tgen TolkGolangGenerator) genGetMethod(method parser.GetMethod, out *strin
 	return nil
 }
 
-func stackPushCode(paramGoName string, ty parser.Ty) (string, error) {
+func (tgen TolkGolangGenerator) stackPushCode(paramGoName string, tyIdx int) (string, error) {
+	ty, err := tgen.symbols.tyByIdx(tyIdx)
+	if err != nil {
+		return "", err
+	}
 	switch ty.SumType {
 	case parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins:
 		return fmt.Sprintf("\tstack.Put(tlb.VmStackValue{SumType: \"VmStkInt\", VmStkInt: tlb.Int257(%s)})\n", paramGoName), nil
@@ -145,20 +149,24 @@ func stackPushCode(paramGoName string, ty parser.Ty) (string, error) {
 	}
 }
 
-func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty, unTupleIfW bool) (string, bool, error) {
+func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, unTupleIfW bool) (string, bool, error) {
+	ty, err := tgen.symbols.tyByIdx(tyIdx)
+	if err != nil {
+		return "", false, err
+	}
 	if unTupleIfW { // inside `array<T>` or `[T, ...]`, if T is non-primitive, it's a sub-tuple
-		wOnStack, err := tgen.calcWidthOnStack(ty)
+		wOnStack, err := tgen.calcWidthOnStack(tyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("calc width on stack: %w", err)
 		}
 		if wOnStack != 1 {
-			expr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty, false)
+			expr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, tyIdx, false)
 			if err != nil {
 				return "", false, fmt.Errorf("tuple inner: %w", err)
 			}
-			goType, err := emitGoType(ty)
+			goType, err := tgen.symbols.emitGoType(tyIdx)
 			if err != nil {
-				return "", false, fmt.Errorf("tuple inner type %s: %w", ty.String(), err)
+				return "", false, fmt.Errorf("tuple inner type: %w", err)
 			}
 			if hasMethod {
 				return fmt.Sprintf(`tlb.ReadTupleFromStack(stack, func(stack *tlb.VmStack) (result %s, err error) {
@@ -176,9 +184,9 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	switch ty.SumType {
 	case parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins,
 		parser.TyKindStructRef, parser.TyKindAddress, parser.TyKindAddressOpt:
-		goType, err := emitGoType(ty)
+		goType, err := tgen.symbols.emitGoType(tyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("type %s: %w", ty.String(), err)
+			return "", false, fmt.Errorf("type: %w", err)
 		}
 		return fmt.Sprintf("tlb.ReadFromStack[%s](stack)", goType), true, nil
 	case parser.TyKindCell:
@@ -186,13 +194,13 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	case parser.TyKindBool:
 		return "stack.ReadBool()", false, nil
 	case parser.TyKindArrayOf:
-		innerExpr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty.ArrayOf.Inner, true)
+		innerExpr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty.ArrayOf.InnerTyIdx, true)
 		if err != nil {
 			return "", false, fmt.Errorf("array inner: %w", err)
 		}
-		goType, err := emitGoType(ty.ArrayOf.Inner)
+		goType, err := tgen.symbols.emitGoType(ty.ArrayOf.InnerTyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("array inner type %s: %w", ty.ArrayOf.Inner.String(), err)
+			return "", false, fmt.Errorf("array inner type: %w", err)
 		}
 		if hasMethod {
 			return fmt.Sprintf(
@@ -207,17 +215,17 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	})`, goType, goType, innerExpr), false, nil
 		}
 	case parser.TyKindNullable:
-		innerRead, _, err := tgen.emitStackReadExpr(fieldPath, ty.Nullable.Inner, unTupleIfW)
+		innerRead, _, err := tgen.emitStackReadExpr(fieldPath, ty.Nullable.InnerTyIdx, unTupleIfW)
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner: %w", err)
 		}
-		innerType, err := emitGoType(ty.Nullable.Inner)
+		innerType, err := tgen.symbols.emitGoType(ty.Nullable.InnerTyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("nullable inner type %s: %w", ty.Nullable.Inner.String(), err)
+			return "", false, fmt.Errorf("nullable inner type: %w", err)
 		}
 		if ty.Nullable.StackTypeId != 0 {
 			if ty.Nullable.StackWidth <= 0 {
-				return "", false, fmt.Errorf("nullable type with invalid stack width %d: %s", ty.Nullable.StackWidth, ty.String())
+				return "", false, fmt.Errorf("nullable type with invalid stack width %d", ty.Nullable.StackWidth)
 			}
 			return fmt.Sprintf(`tlb.StackReadWideMaybeCallback(stack, %d, func (stack *tlb.VmStack) (%s, error) {
 	return %s
@@ -227,13 +235,13 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	return %s
 })`, innerType, innerRead), false, nil
 	case parser.TyKindTensor:
-		items := ty.Tensor.Items
+		items := ty.Tensor.ItemsTyIdx
 		if len(items) > tlb.MaxTensorSize {
 			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
 		}
 		loaders := make([]string, len(items))
-		for i, itemTy := range items {
-			expr, hasMethod, err := tgen.emitStackReadExpr(fmt.Sprintf("result.V%d", i), itemTy, false)
+		for i, itemTyIdx := range items {
+			expr, hasMethod, err := tgen.emitStackReadExpr(fmt.Sprintf("result.V%d", i), itemTyIdx, false)
 			if err != nil {
 				return "", false, fmt.Errorf("tensor item %d: %w", i, err)
 			}
@@ -250,22 +258,22 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 			}
 		}
 		slices.Reverse(loaders)
-		typ, err := emitGoType(ty)
+		typ, err := tgen.symbols.emitGoType(tyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("tensor type %s: %w", ty.String(), err)
+			return "", false, fmt.Errorf("tensor type: %w", err)
 		}
 		return fmt.Sprintf(`(func () (result %s, err error) {
 		%s
 		return
 	})()`, typ, strings.Join(loaders, "")), false, nil
 	case parser.TyKindShapedTuple:
-		items := ty.ShapedTuple.Items
+		items := ty.ShapedTuple.ItemsTyIdx
 		if len(items) > tlb.MaxTensorSize {
 			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
 		}
 		loaders := make([]string, len(items))
-		for i, itemTy := range items {
-			expr, hasMethod, err := tgen.emitStackReadExpr(fmt.Sprintf("result.V%d", i), itemTy, true)
+		for i, itemTyIdx := range items {
+			expr, hasMethod, err := tgen.emitStackReadExpr(fmt.Sprintf("result.V%d", i), itemTyIdx, true)
 			if err != nil {
 				return "", false, fmt.Errorf("tensor item %d: %w", i, err)
 			}
@@ -282,9 +290,9 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 			}
 		}
 		slices.Reverse(loaders)
-		typ, err := emitGoType(ty)
+		typ, err := tgen.symbols.emitGoType(tyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("tensor type %s: %w", ty.String(), err)
+			return "", false, fmt.Errorf("tensor type: %w", err)
 		}
 		return fmt.Sprintf(`(func () (result %s, err error) {
 	var tuple tlb.VmStkTuple
@@ -303,15 +311,15 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 	})()`, typ, strings.Join(loaders, "")), false, nil
 	case parser.TyKindEnumRef:
 		enum := tgen.symbols.enums[ty.EnumRef.EnumName]
-		return tgen.emitStackReadExpr(fieldPath, enum.EncodedAs, unTupleIfW)
+		return tgen.emitStackReadExpr(fieldPath, enum.EncodedAsTyIdx, unTupleIfW)
 	case parser.TyKindMapKV:
-		cellDecExpr, hasMethod, err := tgen.symbols.emitLoadExpr(fieldPath, ty)
+		cellDecExpr, hasMethod, err := tgen.symbols.emitLoadExpr(fieldPath, tyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("cell decode expression: %w", err)
 		}
-		goTyp, err := emitGoType(ty)
+		goTyp, err := tgen.symbols.emitGoType(tyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("cell type %s: %w", ty.String(), err)
+			return "", false, fmt.Errorf("cell type: %w", err)
 		}
 		if hasMethod {
 			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c *boc.Cell) (result %s, err error) {
@@ -324,29 +332,30 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, ty parser.Ty
 }`, goTyp, cellDecExpr), false, nil
 		}
 	default:
-		return "", false, fmt.Errorf("unexpected type in stack read: %s", ty.String())
+		renderedTy, _ := tgen.symbols.renderTy(tyIdx)
+		return "", false, fmt.Errorf("unexpected type in stack read: %s", renderedTy)
 	}
 }
 
 // paramsDecl builds the extra parameter declarations for a get method signature,
 // e.g. ", hash tlb.Int257, amount tlb.Coins".
-func (tgen TolkGolangGenerator) paramsDecl(params []parser.Parameter) (string, error) {
+func (tgen TolkGolangGenerator) paramsDecl(params []parser.ABIGetMethodParameter) (string, error) {
 	if len(params) == 0 {
 		return "", nil
 	}
 	var sb strings.Builder
 	for _, p := range params {
 		goName := utils.ToCamelCasePrivate(p.Name)
-		goType, err := emitGoType(p.Ty)
+		goType, err := tgen.symbols.emitGoType(p.TyIdx)
 		if err != nil {
-			return "", fmt.Errorf("param %q type %s: %w", p.Name, p.Ty.String(), err)
+			return "", fmt.Errorf("param %q type: %w", p.Name, err)
 		}
 		fmt.Fprintf(&sb, ", %s %s", goName, goType)
 	}
 	return sb.String(), nil
 }
 
-func (tgen TolkGolangGenerator) paramsCall(params []parser.Parameter) string {
+func (tgen TolkGolangGenerator) paramsCall(params []parser.ABIGetMethodParameter) string {
 	if len(params) == 0 {
 		return ""
 	}
@@ -368,7 +377,7 @@ func (tgen TolkGolangGenerator) clientMethodSpecs() ([]clientMethodSpec, error) 
 	specs := make([]clientMethodSpec, 0, len(tgen.abi.GetMethods))
 	for _, method := range tgen.abi.GetMethods {
 		goFnName := MethodGoName(method.Name)
-		retGoType, err := stackReturnGoType(method.ReturnTy)
+		retGoType, err := tgen.stackReturnGoType(method.ReturnTyIdx)
 		if err != nil {
 			return nil, fmt.Errorf("get method %q return type: %w", method.Name, err)
 		}
@@ -481,7 +490,7 @@ func (tgen TolkGolangGenerator) GenerateExternalMessagesCode() (string, error) {
 
 	var out strings.Builder
 	for _, ext := range tgen.abi.IncomingExternal {
-		msgName, err := ext.GetMsgName()
+		msgName, err := tgen.symbols.msgName(ext.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -517,7 +526,7 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 	// Build set of struct names referenced in incomingMessages.
 	incomingMsgNames := make(map[string]struct{}, len(tgen.abi.IncomingMessages))
 	for _, msg := range tgen.abi.IncomingMessages {
-		msgName, err := msg.GetMsgName()
+		msgName, err := tgen.symbols.msgName(msg.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -541,7 +550,7 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 
 	// Generate ToInternal for each direct incoming message type.
 	for _, msg := range tgen.abi.IncomingMessages {
-		msgName, err := msg.GetMsgName()
+		msgName, err := tgen.symbols.msgName(msg.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -554,16 +563,18 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 			continue
 		}
 		alias := decl.AliasDeclaration
-		if alias.TargetTy.SumType != parser.TyKindUnion {
+		targetTy, err := tgen.symbols.tyByIdx(alias.TargetTyIdx)
+		if err != nil || targetTy.SumType != parser.TyKindUnion {
 			continue
 		}
-		allInternal := len(alias.TargetTy.Union.Variants) > 0
-		for _, variant := range alias.TargetTy.Union.Variants {
-			if variant.VariantTy.SumType != parser.TyKindStructRef {
+		allInternal := len(targetTy.Union.Variants) > 0
+		for _, variant := range targetTy.Union.Variants {
+			variantTy, err := tgen.symbols.tyByIdx(variant.VariantTyIdx)
+			if err != nil || variantTy.SumType != parser.TyKindStructRef {
 				allInternal = false
 				break
 			}
-			if _, ok := incomingMsgNames[variant.VariantTy.StructRef.StructName]; !ok {
+			if _, ok := incomingMsgNames[variantTy.StructRef.StructName]; !ok {
 				allInternal = false
 				break
 			}

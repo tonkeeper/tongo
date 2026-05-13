@@ -9,7 +9,11 @@ import (
 	"github.com/tonkeeper/tongo/utils"
 )
 
-func emitStoreExpr(expr string, ty parser.Ty) (string, error) {
+func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
+	ty, err := st.tyByIdx(tyIdx)
+	if err != nil {
+		return "", err
+	}
 	switch ty.SumType {
 	case parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins,
 		parser.TyKindAddress, parser.TyKindAddressAny, parser.TyKindAddressOpt,
@@ -26,7 +30,11 @@ func emitStoreExpr(expr string, ty parser.Ty) (string, error) {
 	case parser.TyKindNullable:
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
 	case parser.TyKindCellOf:
-		if ty.CellOf.Inner.SumType == parser.TyKindSlice {
+		inner, err := st.tyByIdx(ty.CellOf.InnerTyIdx)
+		if err != nil {
+			return "", fmt.Errorf("cellOf inner: %w", err)
+		}
+		if inner.SumType == parser.TyKindSlice {
 			return fmt.Sprintf("c.AddRef(&%s)", expr), nil
 		}
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
@@ -34,21 +42,29 @@ func emitStoreExpr(expr string, ty parser.Ty) (string, error) {
 	return "", fmt.Errorf("unknown type %v", ty)
 }
 
-func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, hasLoadMethod bool, err error) {
+func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasLoadMethod bool, err error) {
+	ty, err := st.tyByIdx(tyIdx)
+	if err != nil {
+		return "", false, err
+	}
 
 	switch ty.SumType {
 	case parser.TyKindBuilder, parser.TyKindSlice, parser.TyKindUnknown, parser.TyKindCallable:
+		renderedTy, err := st.renderTy(tyIdx)
+		if err != nil {
+			return "", false, err
+		}
 		var hint string
 		if ty.SumType == parser.TyKindBuilder || ty.SumType == parser.TyKindSlice {
 			hint = " (it can be used for writing only)"
 		}
-		return "", false, fmt.Errorf("%s is %s%s", fieldPath, ty.String(), hint)
+		return "", false, fmt.Errorf("%s is %s%s", fieldPath, renderedTy, hint)
 	case parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins,
 		parser.TyKindAddress, parser.TyKindAddressAny, parser.TyKindAddressOpt,
 		parser.TyKindStructRef, parser.TyKindEnumRef, parser.TyKindMapKV:
-		goType, err := emitGoType(ty)
+		goType, err := st.emitGoType(tyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("type %s: %w", ty.String(), err)
+			return "", false, fmt.Errorf("type: %w", err)
 		}
 		return fmt.Sprintf("tlb.UnmarshalT[%s](c, decoder)", goType), true, nil
 	case parser.TyKindBitsN:
@@ -68,50 +84,54 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 		return *remain, nil
 	})()`, false, nil
 	case parser.TyKindCellOf:
-		if ty.CellOf.Inner.SumType == parser.TyKindSlice {
+		inner, err := st.tyByIdx(ty.CellOf.InnerTyIdx)
+		if err != nil {
+			return "", false, fmt.Errorf("cellOf inner: %w", err)
+		}
+		if inner.SumType == parser.TyKindSlice {
 			return "c.NextRefV()", false, nil
 		}
-		innerType, err := emitGoType(ty.CellOf.Inner)
+		innerType, err := st.emitGoType(ty.CellOf.InnerTyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("cellOf inner type %s: %w", ty.CellOf.Inner.String(), err)
+			return "", false, fmt.Errorf("cellOf inner type: %w", err)
 		}
 		return fmt.Sprintf("tlb.UnmarshalT[tlb.RefT[*%s]](c, decoder)", innerType), true, nil
 	case parser.TyKindAliasRef:
-		if len(ty.AliasRef.TypeArgs) > 0 {
+		if len(ty.AliasRef.TypeArgsTyIdx) > 0 {
 			return "", false, fmt.Errorf("type arguments not supported for aliases")
 		}
 		return fmt.Sprintf("tlb.UnmarshalT[%s](c, decoder)", ty.AliasRef.AliasName), true, nil
 	case parser.TyKindNullable:
-		innerLoadExpr, innerHasLoadMethod, err := st.emitLoadExpr(fieldPath, ty.Nullable.Inner)
+		innerLoadExpr, innerHasLoadMethod, err := st.emitLoadExpr(fieldPath, ty.Nullable.InnerTyIdx)
 		if err != nil {
 			return "", false, err
 		}
 		if innerHasLoadMethod {
-			innerType, err := emitGoType(ty.Nullable.Inner)
+			innerType, err := st.emitGoType(ty.Nullable.InnerTyIdx)
 			if err != nil {
-				return "", false, fmt.Errorf("nullable inner type %s: %w", ty.Nullable.Inner.String(), err)
+				return "", false, fmt.Errorf("nullable inner type: %w", err)
 			}
 			return fmt.Sprintf(`(func () (result tlb.Maybe[%s], err error) {
 		result.UnmarshalTLB(c, decoder)
 		return
 	})()`, innerType), true, nil
 		} else {
-			innerType, err := emitGoType(ty.Nullable.Inner)
+			innerType, err := st.emitGoType(ty.Nullable.InnerTyIdx)
 			if err != nil {
-				return "", false, fmt.Errorf("nullable inner type %s: %w", ty.Nullable.Inner.String(), err)
+				return "", false, fmt.Errorf("nullable inner type: %w", err)
 			}
 			return fmt.Sprintf(`tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (%s, error) {
 	return %s
 })`, innerType, innerLoadExpr), false, nil
 		}
 	case parser.TyKindTensor:
-		if len(ty.Tensor.Items) > tlb.MaxTensorSize {
-			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(ty.Tensor.Items))
+		if len(ty.Tensor.ItemsTyIdx) > tlb.MaxTensorSize {
+			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(ty.Tensor.ItemsTyIdx))
 		}
-		loaders := make([]string, len(ty.Tensor.Items))
+		loaders := make([]string, len(ty.Tensor.ItemsTyIdx))
 		allHaveMethods := true
-		for i, itemTy := range ty.Tensor.Items {
-			expr, hasMethod, err := st.emitLoadExpr(fmt.Sprintf("%s[%d]", fieldPath, i), itemTy)
+		for i, itemTyIdx := range ty.Tensor.ItemsTyIdx {
+			expr, hasMethod, err := st.emitLoadExpr(fmt.Sprintf("%s[%d]", fieldPath, i), itemTyIdx)
 			allHaveMethods = allHaveMethods && hasMethod
 			if err != nil {
 				return "", false, fmt.Errorf("tensor item %d: %w", i, err)
@@ -119,9 +139,9 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 			loaders[i] = expr
 		}
 		if allHaveMethods {
-			typ, err := emitGoType(ty)
+			typ, err := st.emitGoType(tyIdx)
 			if err != nil {
-				return "", false, fmt.Errorf("tensor type %s: %w", ty.String(), err)
+				return "", false, fmt.Errorf("tensor type: %w", err)
 			}
 			return fmt.Sprintf("tlb.UnmarshalT[%s](c, decoder)", typ), true, nil
 		} else {
@@ -131,7 +151,11 @@ func (st *symTable) emitLoadExpr(fieldPath string, ty parser.Ty) (expr string, h
 	return "", false, fmt.Errorf("unknown type %v", ty)
 }
 
-func emitGoType(ty parser.Ty) (string, error) {
+func (st *symTable) emitGoType(tyIdx int) (string, error) {
+	ty, err := st.tyByIdx(tyIdx)
+	if err != nil {
+		return "", err
+	}
 	switch ty.SumType {
 	case parser.TyKindInt:
 		return "tlb.Int257", nil
@@ -161,16 +185,16 @@ func emitGoType(ty parser.Ty) (string, error) {
 			return "tlb.CurrencyCollection", nil
 		default:
 			name := ty.StructRef.StructName
-			if len(ty.StructRef.TypeArgs) > 0 {
-				tArgs := ""
-				for _, t := range ty.StructRef.TypeArgs {
-					goType, err := emitGoType(t)
+			if len(ty.StructRef.TypeArgsTyIdx) > 0 {
+				tArgs := make([]string, 0, len(ty.StructRef.TypeArgsTyIdx))
+				for _, t := range ty.StructRef.TypeArgsTyIdx {
+					goType, err := st.emitGoType(t)
 					if err != nil {
 						return "", err
 					}
-					tArgs += goType + ", "
+					tArgs = append(tArgs, goType)
 				}
-				name += "[" + tArgs + "]"
+				name += "[" + strings.Join(tArgs, ", ") + "]"
 			}
 			return name, nil
 		}
@@ -183,46 +207,50 @@ func emitGoType(ty parser.Ty) (string, error) {
 		}
 		return "", fmt.Errorf("tlb.Bits%d is not supported: update cmd/codegen/integers", ty.BitsN.N)
 	case parser.TyKindCellOf:
-		if ty.CellOf.Inner.SumType == parser.TyKindSlice {
+		inner, err := st.tyByIdx(ty.CellOf.InnerTyIdx)
+		if err != nil {
+			return "", fmt.Errorf("cellOf inner: %w", err)
+		}
+		if inner.SumType == parser.TyKindSlice {
 			return "boc.Cell", nil
 		}
-		innerType, err := emitGoType(ty.CellOf.Inner)
+		innerType, err := st.emitGoType(ty.CellOf.InnerTyIdx)
 		if err != nil {
 			return "", err
 		}
 		return fmt.Sprintf("tlb.RefT[*%s]", innerType), nil
 	case parser.TyKindAliasRef:
 		name := ty.AliasRef.AliasName
-		if len(ty.AliasRef.TypeArgs) > 0 {
-			tArgs := ""
-			for _, t := range ty.AliasRef.TypeArgs {
-				goType, err := emitGoType(t)
+		if len(ty.AliasRef.TypeArgsTyIdx) > 0 {
+			tArgs := make([]string, 0, len(ty.AliasRef.TypeArgsTyIdx))
+			for _, t := range ty.AliasRef.TypeArgsTyIdx {
+				goType, err := st.emitGoType(t)
 				if err != nil {
 					return "", err
 				}
-				tArgs = tArgs + goType + ", "
+				tArgs = append(tArgs, goType)
 			}
-			name = name + "[" + tArgs + "]"
+			name = name + "[" + strings.Join(tArgs, ", ") + "]"
 		}
 		return name, nil
 	case parser.TyKindNullable:
-		innerType, err := emitGoType(ty.Nullable.Inner)
+		innerType, err := st.emitGoType(ty.Nullable.InnerTyIdx)
 		if err != nil {
 			return "", err
 		}
 		return fmt.Sprintf("tlb.Maybe[%s]", innerType), nil
 	case parser.TyKindMapKV:
-		kType, err := emitGoType(ty.MapKV.K)
+		kType, err := st.emitGoType(ty.MapKV.KeyTyIdx)
 		if err != nil {
 			return "", err
 		}
-		vType, err := emitGoType(ty.MapKV.V)
+		vType, err := st.emitGoType(ty.MapKV.ValueTyIdx)
 		if err != nil {
 			return "", err
 		}
 		return fmt.Sprintf("tlb.HashmapE[%s, %s]", kType, vType), nil
 	case parser.TyKindArrayOf:
-		innerType, err := emitGoType(ty.ArrayOf.Inner)
+		innerType, err := st.emitGoType(ty.ArrayOf.InnerTyIdx)
 		if err != nil {
 			return "", err
 		}
@@ -230,11 +258,11 @@ func emitGoType(ty parser.Ty) (string, error) {
 	case parser.TyKindVoid:
 		return "struct{}", nil
 	case parser.TyKindTensor:
-		items := ty.Tensor.Items
+		items := ty.Tensor.ItemsTyIdx
 		if len(items) > tlb.MaxTensorSize {
 			return "", fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
 		}
-		params, err := utils.MapSliceErr(items, emitGoType)
+		params, err := utils.MapSliceErr(items, st.emitGoType)
 		if err != nil {
 			return "", fmt.Errorf("tensor items: %w", err)
 		}
@@ -244,11 +272,11 @@ func emitGoType(ty parser.Ty) (string, error) {
 			return "tlb.Tensor0", nil
 		}
 	case parser.TyKindShapedTuple:
-		items := ty.ShapedTuple.Items
+		items := ty.ShapedTuple.ItemsTyIdx
 		if len(items) > tlb.MaxTensorSize {
 			return "", fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(items))
 		}
-		params, err := utils.MapSliceErr(items, emitGoType)
+		params, err := utils.MapSliceErr(items, st.emitGoType)
 		if err != nil {
 			return "", fmt.Errorf("tensor items: %w", err)
 		}

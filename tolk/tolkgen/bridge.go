@@ -52,7 +52,7 @@ type TolkInterfaceDef struct {
 // SchemaEntry is a single ABI file within a group, identified by its base name.
 type SchemaEntry struct {
 	BaseName string // file basename without extension, e.g. "cocoon_root"
-	ABI      parser.ABI
+	ABI      parser.ContractABI
 }
 
 // BridgeGroupFromEntries builds a BridgeGroup from a slice of schema entries.
@@ -62,7 +62,7 @@ func BridgeGroupFromEntries(groupName, modulePath, outputDir string, entries []S
 	camelGroup := utils.ToCamelCase(groupName) // e.g. "Cocoon", "PythOracle"
 
 	var contracts []BridgeContract
-	var allABIs []parser.ABI
+	var allABIs []parser.ContractABI
 
 	for _, e := range entries {
 		allABIs = append(allABIs, e.ABI)
@@ -77,7 +77,7 @@ func BridgeGroupFromEntries(groupName, modulePath, outputDir string, entries []S
 				TolkName:   m.Name,
 				GoFuncName: goFunc,
 				ResultType: resultType,
-				MethodID:   m.TvmMethodID,
+				MethodID:   m.TVMMethodID,
 				HasParams:  len(m.Parameters) > 0,
 			})
 			if len(m.Parameters) == 0 {
@@ -104,7 +104,7 @@ func BridgeGroupFromEntries(groupName, modulePath, outputDir string, entries []S
 
 // InterfaceNameFromABI derives the abi.ContractInterface Go constant name.
 // Uses contractName from the ABI JSON if set, otherwise derives from the file basename.
-func InterfaceNameFromABI(abi parser.ABI, baseName string) string {
+func InterfaceNameFromABI(abi parser.ContractABI, baseName string) string {
 	if abi.ContractName != "" {
 		return utils.ToCamelCase(abi.ContractName)
 	}
@@ -112,7 +112,7 @@ func InterfaceNameFromABI(abi parser.ABI, baseName string) string {
 }
 
 // StringNameFromABI returns the snake_case name used in String() / ContractInterfaceFromString().
-func StringNameFromABI(abi parser.ABI, baseName string) string {
+func StringNameFromABI(abi parser.ContractABI, baseName string) string {
 	if abi.ContractName != "" {
 		return abi.ContractName
 	}
@@ -121,7 +121,7 @@ func StringNameFromABI(abi parser.ABI, baseName string) string {
 
 // CollectPrefixedStructs returns all structs with a TLB prefix across the given ABIs,
 // deduplicated by struct name and sorted for deterministic output.
-func CollectPrefixedStructs(abis []parser.ABI, camelGroupName string) []PrefixedStruct {
+func CollectPrefixedStructs(abis []parser.ContractABI, camelGroupName string) []PrefixedStruct {
 	seen := map[string]struct{}{}
 	var result []PrefixedStruct
 	for _, a := range abis {

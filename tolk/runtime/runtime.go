@@ -83,11 +83,10 @@ func (d *Decoder) UnmarshalMessage(cell *boc.Cell) (*Value, error) {
 }
 
 func (d *Decoder) resolvePayload(payload *boc.Cell) (Value, bool, error) {
-	payloadOpcode, err := payload.ReadUint(32) // payload always 32 bit length
+	payloadOpcode, err := payload.PickUint(32) // payload always 32 bit length
 	if err != nil {
 		return Value{}, false, nil
 	}
-	payload.ResetCounters() // reset opcode
 
 	guessedStructs := d.opcodeRefs[payloadOpcode]
 	for _, tyIdx := range guessedStructs {

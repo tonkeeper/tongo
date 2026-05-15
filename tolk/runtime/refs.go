@@ -35,32 +35,32 @@ func (s *Struct) UnmarshalTyIdx(cell *boc.Cell, tyIdx int, decoder *Decoder) err
 	if ty.SumType != parser.TyKindStructRef {
 		return fmt.Errorf("expected StructRef at ty_idx=%d", tyIdx)
 	}
-	strct, found := decoder.abiIndex.Structs[ty.StructRef.StructName]
+	structDef, found := decoder.abiIndex.Structs[ty.StructRef.StructName]
 	if !found {
 		return fmt.Errorf("struct with name %s was not found in given abi", ty.StructRef.StructName)
 	}
-	tolkStruct := Struct{
+	structVal := Struct{
 		fieldNames: make([]string, 0),
 		fields:     make(map[string]Value),
 		name:       ty.StructRef.StructName,
 	}
-	if strct.Prefix != nil {
-		prefixLen := strct.Prefix.PrefixLen
+	if structDef.Prefix != nil {
+		prefixLen := structDef.Prefix.PrefixLen
 		if prefixLen > 64 {
-			return fmt.Errorf("struct %v prefix length must be lower than 64", strct.Name)
+			return fmt.Errorf("struct %v prefix length must be lower than 64", structDef.Name)
 		}
 
 		prefix, err := cell.ReadUint(prefixLen)
 		if err != nil {
 			return fmt.Errorf("failed to read struct's %v-bit length prefix: %w", prefixLen, err)
 		}
-		actualPrefix := uint64(strct.Prefix.PrefixNum)
+		actualPrefix := uint64(structDef.Prefix.PrefixNum)
 
 		if prefix != actualPrefix {
-			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
+			return fmt.Errorf("struct %v prefix does not match actual prefix %v", structDef.Name, actualPrefix)
 		}
-		tolkStruct.hasPrefix = true
-		tolkStruct.prefix = Prefix{
+		structVal.hasPrefix = true
+		structVal.prefix = Prefix{
 			Len:    int16(prefixLen),
 			Prefix: prefix,
 		}
@@ -73,26 +73,16 @@ func (s *Struct) UnmarshalTyIdx(cell *boc.Cell, tyIdx int, decoder *Decoder) err
 	for _, field := range fields {
 		fieldVal := Value{}
 
-		isPayloadResolved := false
-		//
-		//if field.IsPayload != nil && *field.IsPayload {
-		//	fieldVal, isPayloadResolved, err = s.resolvePayload(cell, field.Ty, decoder)
-		//	if err != nil {
-		//		return fmt.Errorf("failed to resolve payload for field %v: %w", field.Name, err)
-		//	}
-		//}
-		if !isPayloadResolved {
-			err = fieldVal.UnmarshalTyIdx(cell, field.TyIdx, decoder)
-			if err != nil {
-				return fmt.Errorf("failed to unmarshal struct's field %s: %w", field.Name, err)
-			}
+		err = fieldVal.UnmarshalTyIdx(cell, field.TyIdx, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal struct's field %s: %w", field.Name, err)
 		}
 
-		tolkStruct.fieldNames = append(tolkStruct.fieldNames, field.Name)
-		tolkStruct.fields[field.Name] = fieldVal
+		structVal.fieldNames = append(structVal.fieldNames, field.Name)
+		structVal.fields[field.Name] = fieldVal
 	}
 
-	*s = tolkStruct
+	*s = structVal
 
 	return nil
 }

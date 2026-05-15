@@ -1,0 +1,2851 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "Jetton",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "Transfer"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "WrapJettonPayload"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "JettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeStakingLockJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "TextCommentJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "TegroJettonSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EncryptedTextCommentJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StonfiSwapJettonPayload"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "TegroAddLiquidityJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StonfiProvideLpV2JettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CrossProvideLpBody"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 24
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskProvideBothJettonPayload"
+    },
+    {
+      "kind": "uintN",
+      "n": 4
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 9,
+      "value_ty_idx": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustDepositLiquidityJettonPayload"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "DedustPoolType"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustVolatile"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustStable"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 31,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "stack_type_id": 137,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 32,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "stack_type_id": 138,
+          "stack_width": 0
+        }
+      ],
+      "stack_width": 1
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "DedustAsset"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustAssetNative"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustAssetJetton"
+    },
+    {
+      "kind": "intN",
+      "n": 8
+    },
+    {
+      "kind": "bitsN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustAssetExtraCurrency"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 35,
+          "prefix_num": 0,
+          "prefix_len": 4,
+          "stack_type_id": 139,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 36,
+          "prefix_num": 1,
+          "prefix_len": 4,
+          "stack_type_id": 140,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 39,
+          "prefix_num": 2,
+          "prefix_len": 4,
+          "stack_type_id": 141,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "PoolFundAccountJettonPayload"
+    },
+    {
+      "kind": "uintN",
+      "n": 128
+    },
+    {
+      "kind": "intN",
+      "n": 24
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StonfiSwapOkRefJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeCrossDexResendJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskDammProvideJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StonfiSwapV2JettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CrossSwapBody"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 48
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskDammProvideOneSideJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StormDepositJettonJettonPayload"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "InitializationRequest"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StormNoKeyInit"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StormNeedKeyInit"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 56,
+      "value_ty_idx": 3
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 54,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "stack_type_id": 149,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 55,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "stack_type_id": 150,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "InvoicePayloadJettonPayload"
+    },
+    {
+      "kind": "bitsN",
+      "n": 128
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "InvoiceUrl"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "InvoiceUrlNone"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "InvoiceUrlTonsite"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 62,
+          "prefix_num": 0,
+          "prefix_len": 8,
+          "stack_type_id": 152,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 63,
+          "prefix_num": 1,
+          "prefix_len": 8,
+          "stack_type_id": 153,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "TonkeeperRelayerFeeJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskSwapV2JettonPayload"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 6,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 17,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 56,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 53,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AdditionalData"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 68
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 69
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonBoostPoolJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskProvideJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonFillOrderJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskDammProvideBothJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonDepositLiquidityJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonNextPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonSwapParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 76
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 78
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeCrossDexFailureJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeSwapStepParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 83
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 84
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeSwapParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeNotificationData"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeNotificationDataSingle"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 88
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 89
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 87
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 91
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 86
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeCreatePoolJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeePoolParams"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "CoffeeAsset"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeAssetNative"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeAssetJetton"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeAssetExtra"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 97,
+          "prefix_num": 0,
+          "prefix_len": 2,
+          "stack_type_id": 167,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 98,
+          "prefix_num": 1,
+          "prefix_len": 2,
+          "stack_type_id": 168,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 100,
+          "prefix_num": 2,
+          "prefix_len": 2,
+          "stack_type_id": 169,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 3
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "CoffeeAmm"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeAmmConstProd"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeAmmCurveFiStable"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 103,
+          "prefix_num": 0,
+          "prefix_len": 3,
+          "stack_type_id": 170,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 104,
+          "prefix_num": 1,
+          "prefix_len": 3,
+          "stack_type_id": 171,
+          "stack_width": 0
+        }
+      ],
+      "stack_width": 1
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeePoolCreationParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeePublicPoolCreationParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeePrivatePoolCreationParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityParamsTrimmed"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "CoffeeDepositLiquidityCondition"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityConditionNone"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityConditionLpQuantity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityConditionReservedRatio"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeDepositLiquidityConditionComplex"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 113,
+          "prefix_num": 0,
+          "prefix_len": 2,
+          "stack_type_id": 173,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 114,
+          "prefix_num": 1,
+          "prefix_len": 2,
+          "stack_type_id": 174,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 115,
+          "prefix_num": 2,
+          "prefix_len": 2,
+          "stack_type_id": 175,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 116,
+          "prefix_num": 3,
+          "prefix_len": 2,
+          "stack_type_id": 176,
+          "stack_width": 4
+        }
+      ],
+      "stack_width": 5
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeNotificationJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonSwapFailedJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StonfiSwapOkJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StormStakeJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "WithdrawPayloadJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonSwapSucceedJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonCreateOrderJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MoonOrderParams"
+    },
+    {
+      "kind": "uintN",
+      "n": 2
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskDammSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustSwapStep"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustSwapStepParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 129
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 131
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DedustSwapParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 133
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CoffeeMevProtectFailedSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidaskSwapJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DepositPayloadJettonPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StonfiProvideLiquidityJettonPayload"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 16,
+          "prefix_num": 0,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 129,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 17,
+          "prefix_num": 1,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 130,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 18,
+          "prefix_num": 2,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 131,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 19,
+          "prefix_num": 3,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 132,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 20,
+          "prefix_num": 4,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 133,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 22,
+          "prefix_num": 5,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 134,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 23,
+          "prefix_num": 6,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 135,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 26,
+          "prefix_num": 7,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 136,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 29,
+          "prefix_num": 8,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 142,
+          "stack_width": 11
+        },
+        {
+          "variant_ty_idx": 41,
+          "prefix_num": 9,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 143,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 44,
+          "prefix_num": 10,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 144,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 45,
+          "prefix_num": 11,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 145,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 46,
+          "prefix_num": 12,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 146,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 47,
+          "prefix_num": 13,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 147,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 51,
+          "prefix_num": 14,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 148,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 52,
+          "prefix_num": 15,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 151,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 59,
+          "prefix_num": 16,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 154,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 65,
+          "prefix_num": 17,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 155,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 66,
+          "prefix_num": 18,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 156,
+          "stack_width": 7
+        },
+        {
+          "variant_ty_idx": 71,
+          "prefix_num": 19,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 157,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 72,
+          "prefix_num": 20,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 158,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 73,
+          "prefix_num": 21,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 159,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 74,
+          "prefix_num": 22,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 160,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 75,
+          "prefix_num": 23,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 161,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 76,
+          "prefix_num": 24,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 162,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 77,
+          "prefix_num": 25,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 163,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 80,
+          "prefix_num": 26,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 164,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 81,
+          "prefix_num": 27,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 165,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 82,
+          "prefix_num": 28,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 166,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 94,
+          "prefix_num": 29,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 172,
+          "stack_width": 13
+        },
+        {
+          "variant_ty_idx": 109,
+          "prefix_num": 30,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 177,
+          "stack_width": 19
+        },
+        {
+          "variant_ty_idx": 118,
+          "prefix_num": 31,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 178,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 119,
+          "prefix_num": 32,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 179,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 120,
+          "prefix_num": 33,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 180,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 121,
+          "prefix_num": 34,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 181,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 122,
+          "prefix_num": 35,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 182,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 123,
+          "prefix_num": 36,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 183,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 124,
+          "prefix_num": 37,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 184,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 127,
+          "prefix_num": 38,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 185,
+          "stack_width": 7
+        },
+        {
+          "variant_ty_idx": 128,
+          "prefix_num": 39,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 186,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 135,
+          "prefix_num": 40,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 187,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 136,
+          "prefix_num": 41,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 188,
+          "stack_width": 8
+        },
+        {
+          "variant_ty_idx": 137,
+          "prefix_num": 42,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 189,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 138,
+          "prefix_num": 43,
+          "prefix_len": 6,
+          "is_prefix_implicit": true,
+          "stack_type_id": 190,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 20
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRef",
+      "type_args_ty_idx": [
+        14
+      ]
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 14
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 14,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 191,
+          "stack_width": 20
+        },
+        {
+          "variant_ty_idx": 141,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 192,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 21
+    },
+    {
+      "kind": "genericT",
+      "name_t": "I"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRef",
+      "type_args_ty_idx": [
+        143
+      ]
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 143
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 143,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true
+        },
+        {
+          "variant_ty_idx": 145,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true
+        }
+      ]
+    }
+  ],
+  "struct_instantiations": [
+    {
+      "ty_idx": 140,
+      "struct_name": "EitherRef<WrapJettonPayload>",
+      "monomorphic_fields_ty_idx": [
+        142
+      ]
+    }
+  ],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "Transfer",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 260734629,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "destination",
+          "ty_idx": 7
+        },
+        {
+          "name": "responseDestination",
+          "ty_idx": 7
+        },
+        {
+          "name": "customPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 140
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "WrapJettonPayload",
+      "ty_idx": 14,
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 15
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "JettonPayload",
+      "ty_idx": 15,
+      "target_ty_idx": 139
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeStakingLockJettonPayload",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 202374878,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "periodID",
+          "ty_idx": 9
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "TextCommentJettonPayload",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "text",
+          "ty_idx": 2
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "TegroJettonSwapJettonPayload",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 33258021,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "extract",
+          "ty_idx": 5
+        },
+        {
+          "name": "maxIn",
+          "ty_idx": 6
+        },
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "destination",
+          "ty_idx": 7
+        },
+        {
+          "name": "errorDestination",
+          "ty_idx": 7
+        },
+        {
+          "name": "payload",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EncryptedTextCommentJettonPayload",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 560454219,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "cipherText",
+          "ty_idx": 2
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StonfiSwapJettonPayload",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 630424929,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "toAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "referralAddress",
+          "ty_idx": 21
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "TegroAddLiquidityJettonPayload",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 679351930,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "amountA",
+          "ty_idx": 6
+        },
+        {
+          "name": "amountB",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StonfiProvideLpV2JettonPayload",
+      "ty_idx": 23,
+      "prefix": {
+        "prefix_num": 935368415,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet1",
+          "ty_idx": 7
+        },
+        {
+          "name": "refundAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "excessesAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "txDeadline",
+          "ty_idx": 11
+        },
+        {
+          "name": "crossProvideLpBody",
+          "ty_idx": 25
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CrossProvideLpBody",
+      "ty_idx": 24,
+      "fields": [
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "toAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "bothPositive",
+          "ty_idx": 5
+        },
+        {
+          "name": "fwdAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "customPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskProvideBothJettonPayload",
+      "ty_idx": 26,
+      "prefix": {
+        "prefix_num": 1050721020,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "tonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "depositType",
+          "ty_idx": 27
+        },
+        {
+          "name": "liquidityDict",
+          "ty_idx": 28
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DedustVolatile",
+      "ty_idx": 31,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 1
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "DedustStable",
+      "ty_idx": 32,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 1
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "DedustAssetNative",
+      "ty_idx": 35,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 4
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "DedustAssetJetton",
+      "ty_idx": 36,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 4
+      },
+      "fields": [
+        {
+          "name": "workchain",
+          "ty_idx": 37
+        },
+        {
+          "name": "hash",
+          "ty_idx": 38
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DedustAssetExtraCurrency",
+      "ty_idx": 39,
+      "prefix": {
+        "prefix_num": 2,
+        "prefix_len": 4
+      },
+      "fields": [
+        {
+          "name": "currencyId",
+          "ty_idx": 8
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "DedustPoolType",
+      "ty_idx": 30,
+      "target_ty_idx": 33
+    },
+    {
+      "kind": "alias",
+      "name": "DedustAsset",
+      "ty_idx": 34,
+      "target_ty_idx": 40
+    },
+    {
+      "kind": "struct",
+      "name": "DedustDepositLiquidityJettonPayload",
+      "ty_idx": 29,
+      "prefix": {
+        "prefix_num": 1088489686,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "poolType",
+          "ty_idx": 30
+        },
+        {
+          "name": "asset0",
+          "ty_idx": 34
+        },
+        {
+          "name": "asset1",
+          "ty_idx": 34
+        },
+        {
+          "name": "asset0TargetBalance",
+          "ty_idx": 6
+        },
+        {
+          "name": "asset1TargetBalance",
+          "ty_idx": 6
+        },
+        {
+          "name": "fulfillPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "PoolFundAccountJettonPayload",
+      "ty_idx": 41,
+      "prefix": {
+        "prefix_num": 1147723383,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "jettonTarget",
+          "ty_idx": 7
+        },
+        {
+          "name": "enough0",
+          "ty_idx": 6
+        },
+        {
+          "name": "enough1",
+          "ty_idx": 6
+        },
+        {
+          "name": "liquidity",
+          "ty_idx": 42
+        },
+        {
+          "name": "tickLower",
+          "ty_idx": 43
+        },
+        {
+          "name": "tickUpper",
+          "ty_idx": 43
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StonfiSwapOkRefJettonPayload",
+      "ty_idx": 44,
+      "prefix": {
+        "prefix_num": 1158120768,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeCrossDexResendJettonPayload",
+      "ty_idx": 45,
+      "prefix": {
+        "prefix_num": 1323938054,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "next",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskDammProvideJettonPayload",
+      "ty_idx": 46,
+      "prefix": {
+        "prefix_num": 1676420270,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "receiver",
+          "ty_idx": 7
+        },
+        {
+          "name": "lockLiquidity",
+          "ty_idx": 5
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StonfiSwapV2JettonPayload",
+      "ty_idx": 47,
+      "prefix": {
+        "prefix_num": 1717886506,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet1",
+          "ty_idx": 7
+        },
+        {
+          "name": "refundAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "excessesAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "txDeadline",
+          "ty_idx": 11
+        },
+        {
+          "name": "crossSwapBody",
+          "ty_idx": 50
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CrossSwapBody",
+      "ty_idx": 48,
+      "fields": [
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "receiver",
+          "ty_idx": 7
+        },
+        {
+          "name": "fwdGas",
+          "ty_idx": 6
+        },
+        {
+          "name": "customPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "refundFwdGas",
+          "ty_idx": 6
+        },
+        {
+          "name": "refundPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 49
+        },
+        {
+          "name": "refAddress",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskDammProvideOneSideJettonPayload",
+      "ty_idx": 51,
+      "prefix": {
+        "prefix_num": 1922827464,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "receiver",
+          "ty_idx": 7
+        },
+        {
+          "name": "lockLiquidity",
+          "ty_idx": 5
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StormNoKeyInit",
+      "ty_idx": 54,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 1
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "StormNeedKeyInit",
+      "ty_idx": 55,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 1
+      },
+      "fields": [
+        {
+          "name": "userPublicKeys",
+          "ty_idx": 57
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "InitializationRequest",
+      "ty_idx": 53,
+      "target_ty_idx": 58
+    },
+    {
+      "kind": "struct",
+      "name": "StormDepositJettonJettonPayload",
+      "ty_idx": 52,
+      "prefix": {
+        "prefix_num": 1988362521,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "receiverAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "init",
+          "ty_idx": 5
+        },
+        {
+          "name": "keyInit",
+          "ty_idx": 53
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "InvoiceUrlNone",
+      "ty_idx": 62,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 8
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "InvoiceUrlTonsite",
+      "ty_idx": 63,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 8
+      },
+      "fields": [
+        {
+          "name": "address",
+          "ty_idx": 38
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "InvoiceUrl",
+      "ty_idx": 61,
+      "target_ty_idx": 64
+    },
+    {
+      "kind": "struct",
+      "name": "InvoicePayloadJettonPayload",
+      "ty_idx": 59,
+      "prefix": {
+        "prefix_num": 2057453237,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "id",
+          "ty_idx": 60
+        },
+        {
+          "name": "url",
+          "ty_idx": 61
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "TonkeeperRelayerFeeJettonPayload",
+      "ty_idx": 65,
+      "prefix": {
+        "prefix_num": 2274207459,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "AdditionalData",
+      "ty_idx": 68,
+      "fields": [
+        {
+          "name": "fromAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "refAddress",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskSwapV2JettonPayload",
+      "ty_idx": 66,
+      "prefix": {
+        "prefix_num": 2278779280,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "slippage",
+          "ty_idx": 67
+        },
+        {
+          "name": "exactOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "additionalData",
+          "ty_idx": 70
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonBoostPoolJettonPayload",
+      "ty_idx": 71,
+      "prefix": {
+        "prefix_num": 2527729030,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskProvideJettonPayload",
+      "ty_idx": 72,
+      "prefix": {
+        "prefix_num": 2533289851,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "depositType",
+          "ty_idx": 27
+        },
+        {
+          "name": "liquidityDict",
+          "ty_idx": 28
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonFillOrderJettonPayload",
+      "ty_idx": 73,
+      "prefix": {
+        "prefix_num": 2578749506,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "recipientPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "rejectAddress",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskDammProvideBothJettonPayload",
+      "ty_idx": 74,
+      "prefix": {
+        "prefix_num": 2828026164,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "nativeAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "reciever",
+          "ty_idx": 7
+        },
+        {
+          "name": "lockLiquidity",
+          "ty_idx": 5
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonDepositLiquidityJettonPayload",
+      "ty_idx": 75,
+      "prefix": {
+        "prefix_num": 3005069185,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonNextPayload",
+      "ty_idx": 76,
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "payload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonSwapParams",
+      "ty_idx": 77,
+      "fields": [
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "deadline",
+          "ty_idx": 11
+        },
+        {
+          "name": "excess",
+          "ty_idx": 7
+        },
+        {
+          "name": "referral",
+          "ty_idx": 7
+        },
+        {
+          "name": "nextFulfill",
+          "ty_idx": 79
+        },
+        {
+          "name": "nextReject",
+          "ty_idx": 79
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonSwapJettonPayload",
+      "ty_idx": 80,
+      "prefix": {
+        "prefix_num": 3011153931,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "moonSwap",
+          "ty_idx": 77
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeCrossDexFailureJettonPayload",
+      "ty_idx": 81,
+      "prefix": {
+        "prefix_num": 3103974938,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeSwapStepParams",
+      "ty_idx": 83,
+      "fields": [
+        {
+          "name": "poolAddressHash",
+          "ty_idx": 56
+        },
+        {
+          "name": "minOutAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "next",
+          "ty_idx": 85
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeNotificationDataSingle",
+      "ty_idx": 88,
+      "fields": [
+        {
+          "name": "reciever",
+          "ty_idx": 7
+        },
+        {
+          "name": "fwdGas",
+          "ty_idx": 6
+        },
+        {
+          "name": "payload",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeNotificationData",
+      "ty_idx": 87,
+      "fields": [
+        {
+          "name": "onSuccess",
+          "ty_idx": 90
+        },
+        {
+          "name": "onFailure",
+          "ty_idx": 90
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeSwapParams",
+      "ty_idx": 86,
+      "fields": [
+        {
+          "name": "deadline",
+          "ty_idx": 9
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "referral",
+          "ty_idx": 7
+        },
+        {
+          "name": "notificationData",
+          "ty_idx": 92
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeSwapJettonPayload",
+      "ty_idx": 82,
+      "prefix": {
+        "prefix_num": 3237998096,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "step",
+          "ty_idx": 83
+        },
+        {
+          "name": "params",
+          "ty_idx": 93
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeAssetNative",
+      "ty_idx": 97,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 2
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeAssetJetton",
+      "ty_idx": 98,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 2
+      },
+      "fields": [
+        {
+          "name": "chain",
+          "ty_idx": 99
+        },
+        {
+          "name": "hash",
+          "ty_idx": 56
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeAssetExtra",
+      "ty_idx": 100,
+      "prefix": {
+        "prefix_num": 2,
+        "prefix_len": 2
+      },
+      "fields": [
+        {
+          "name": "id",
+          "ty_idx": 9
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "CoffeeAsset",
+      "ty_idx": 96,
+      "target_ty_idx": 101
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeAmmConstProd",
+      "ty_idx": 103,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 3
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeAmmCurveFiStable",
+      "ty_idx": 104,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 3
+      },
+      "fields": []
+    },
+    {
+      "kind": "alias",
+      "name": "CoffeeAmm",
+      "ty_idx": 102,
+      "target_ty_idx": 105
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeePoolParams",
+      "ty_idx": 95,
+      "fields": [
+        {
+          "name": "first",
+          "ty_idx": 96
+        },
+        {
+          "name": "second",
+          "ty_idx": 96
+        },
+        {
+          "name": "amm",
+          "ty_idx": 102
+        },
+        {
+          "name": "ammSettings",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeePublicPoolCreationParams",
+      "ty_idx": 107,
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "useRecipientOnFailure",
+          "ty_idx": 5
+        },
+        {
+          "name": "notificationData",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeePrivatePoolCreationParams",
+      "ty_idx": 108,
+      "fields": [
+        {
+          "name": "isActive",
+          "ty_idx": 5
+        },
+        {
+          "name": "extraSettings",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeePoolCreationParams",
+      "ty_idx": 106,
+      "fields": [
+        {
+          "name": "public",
+          "ty_idx": 107
+        },
+        {
+          "name": "privateP",
+          "ty_idx": 108
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeCreatePoolJettonPayload",
+      "ty_idx": 94,
+      "prefix": {
+        "prefix_num": 3237998097,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "params",
+          "ty_idx": 95
+        },
+        {
+          "name": "creationParams",
+          "ty_idx": 106
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityConditionNone",
+      "ty_idx": 113,
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 2
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityConditionLpQuantity",
+      "ty_idx": 114,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 2
+      },
+      "fields": [
+        {
+          "name": "minLpAmount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityConditionReservedRatio",
+      "ty_idx": 115,
+      "prefix": {
+        "prefix_num": 2,
+        "prefix_len": 2
+      },
+      "fields": [
+        {
+          "name": "denominator",
+          "ty_idx": 6
+        },
+        {
+          "name": "minNominator",
+          "ty_idx": 6
+        },
+        {
+          "name": "maxNominator",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityConditionComplex",
+      "ty_idx": 116,
+      "prefix": {
+        "prefix_num": 3,
+        "prefix_len": 2
+      },
+      "fields": [
+        {
+          "name": "minLpAmoint",
+          "ty_idx": 6
+        },
+        {
+          "name": "denominator",
+          "ty_idx": 6
+        },
+        {
+          "name": "minNominator",
+          "ty_idx": 6
+        },
+        {
+          "name": "maxNominator",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "CoffeeDepositLiquidityCondition",
+      "ty_idx": 112,
+      "target_ty_idx": 117
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityParamsTrimmed",
+      "ty_idx": 111,
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "useRecipientOnFailure",
+          "ty_idx": 5
+        },
+        {
+          "name": "referral",
+          "ty_idx": 21
+        },
+        {
+          "name": "deadline",
+          "ty_idx": 9
+        },
+        {
+          "name": "condition",
+          "ty_idx": 112
+        },
+        {
+          "name": "extraSettings",
+          "ty_idx": 13
+        },
+        {
+          "name": "notificationData",
+          "ty_idx": 92
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityParams",
+      "ty_idx": 110,
+      "fields": [
+        {
+          "name": "params",
+          "ty_idx": 111
+        },
+        {
+          "name": "poolParmas",
+          "ty_idx": 95
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeDepositLiquidityJettonPayload",
+      "ty_idx": 109,
+      "prefix": {
+        "prefix_num": 3237998098,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "params",
+          "ty_idx": 110
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeNotificationJettonPayload",
+      "ty_idx": 118,
+      "prefix": {
+        "prefix_num": 3237998134,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "body",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonSwapFailedJettonPayload",
+      "ty_idx": 119,
+      "prefix": {
+        "prefix_num": 3296468823,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "StonfiSwapOkJettonPayload",
+      "ty_idx": 120,
+      "prefix": {
+        "prefix_num": 3326308581,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "StormStakeJettonPayload",
+      "ty_idx": 121,
+      "prefix": {
+        "prefix_num": 3365551844,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "WithdrawPayloadJettonPayload",
+      "ty_idx": 122,
+      "prefix": {
+        "prefix_num": 3406020527,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "assetAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "oracleParams",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonSwapSucceedJettonPayload",
+      "ty_idx": 123,
+      "prefix": {
+        "prefix_num": 3414112470,
+        "prefix_len": 32
+      },
+      "fields": []
+    },
+    {
+      "kind": "struct",
+      "name": "MoonOrderParams",
+      "ty_idx": 125,
+      "fields": [
+        {
+          "name": "rate",
+          "ty_idx": 56
+        },
+        {
+          "name": "lock",
+          "ty_idx": 126
+        },
+        {
+          "name": "vestingTime",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MoonCreateOrderJettonPayload",
+      "ty_idx": 124,
+      "prefix": {
+        "prefix_num": 3657858073,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "asset1",
+          "ty_idx": 7
+        },
+        {
+          "name": "asset2",
+          "ty_idx": 7
+        },
+        {
+          "name": "orderData",
+          "ty_idx": 125
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskDammSwapJettonPayload",
+      "ty_idx": 127,
+      "prefix": {
+        "prefix_num": 3715724076,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "slippage",
+          "ty_idx": 6
+        },
+        {
+          "name": "fromAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "exactOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "additionalData",
+          "ty_idx": 13
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DedustSwapStepParams",
+      "ty_idx": 130,
+      "fields": [
+        {
+          "name": "kindOut",
+          "ty_idx": 5
+        },
+        {
+          "name": "limit",
+          "ty_idx": 6
+        },
+        {
+          "name": "next",
+          "ty_idx": 132
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DedustSwapStep",
+      "ty_idx": 129,
+      "fields": [
+        {
+          "name": "poolAddr",
+          "ty_idx": 7
+        },
+        {
+          "name": "params",
+          "ty_idx": 130
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DedustSwapParams",
+      "ty_idx": 133,
+      "fields": [
+        {
+          "name": "deadline",
+          "ty_idx": 9
+        },
+        {
+          "name": "recipientAddr",
+          "ty_idx": 7
+        },
+        {
+          "name": "referralAddr",
+          "ty_idx": 7
+        },
+        {
+          "name": "fulfillPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DedustSwapJettonPayload",
+      "ty_idx": 128,
+      "prefix": {
+        "prefix_num": 3818968194,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "step",
+          "ty_idx": 129
+        },
+        {
+          "name": "swapParams",
+          "ty_idx": 134
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CoffeeMevProtectFailedSwapJettonPayload",
+      "ty_idx": 135,
+      "prefix": {
+        "prefix_num": 3998338641,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidaskSwapJettonPayload",
+      "ty_idx": 136,
+      "prefix": {
+        "prefix_num": 4075777051,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "toAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "slippage",
+          "ty_idx": 67
+        },
+        {
+          "name": "exactOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "refAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "additionalData",
+          "ty_idx": 13
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DepositPayloadJettonPayload",
+      "ty_idx": 137,
+      "prefix": {
+        "prefix_num": 4182184244,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "oracleParams",
+          "ty_idx": 13
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StonfiProvideLiquidityJettonPayload",
+      "ty_idx": 138,
+      "prefix": {
+        "prefix_num": 4244235663,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "tokenWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EitherRef",
+      "ty_idx": 144,
+      "type_params": [
+        "I"
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 146
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

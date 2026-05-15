@@ -1,11 +1,11 @@
 package runtime
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tonkeeper/tongo/abi"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -272,36 +272,26 @@ func BenchmarkRuntimeUnmarshalling(b *testing.B) {
 
 func BenchmarkRuntimeMessageUnmarshalling(b *testing.B) {
 	type Case struct {
-		name     string
-		cell     boc.Cell
-		abiFiles []string
+		name    string
+		cell    boc.Cell
+		abiFile string
 	}
 	for _, curr := range []Case{
 		{
-			name:     "unmarshal jetton transfer message stonfi",
-			cell:     *boc.MustDeserializeSinglRootHex("b5ee9c720102030100011b0001ae0f8a7ea5546de4efb35a04c230f424080125c28235ca8d125e676591513d520721b1fe99f7722f4c87723ce7ee0dfb73a300268806c2c709c47ec1b610073c38ef75cf6066e9e4368b10ddbdc015d0e59c98881c9c38010101e16664de2a801244183034d9fd59a236f71ec4271be377399056dda4cc3a5ebf5dc40967df64100268806c2c709c47ec1b610073c38ef75cf6066e9e4368b10ddbdc015d0e59c98a004d100d858e1388fd836c200e7871deeb9ec0cdd3c86d1621bb7b802ba1cb39310000000034d3e7f3c002009542ecec75480134403616384e23f60db08039e1c77bae7b03374f21b45886edee00ae872ce4c4000005400f4684b10a661eaa395f87d4a660e6dfc3bec187a8b24f6f362c0c6b1d20f1b5d8"),
-			abiFiles: []string{"testdata/jetton_transfer.json", "testdata/payloads.json"},
+			name:    "unmarshal jetton transfer message stonfi",
+			cell:    *boc.MustDeserializeSinglRootHex("b5ee9c720102030100011b0001ae0f8a7ea5546de4efb35a04c230f424080125c28235ca8d125e676591513d520721b1fe99f7722f4c87723ce7ee0dfb73a300268806c2c709c47ec1b610073c38ef75cf6066e9e4368b10ddbdc015d0e59c98881c9c38010101e16664de2a801244183034d9fd59a236f71ec4271be377399056dda4cc3a5ebf5dc40967df64100268806c2c709c47ec1b610073c38ef75cf6066e9e4368b10ddbdc015d0e59c98a004d100d858e1388fd836c200e7871deeb9ec0cdd3c86d1621bb7b802ba1cb39310000000034d3e7f3c002009542ecec75480134403616384e23f60db08039e1c77bae7b03374f21b45886edee00ae872ce4c4000005400f4684b10a661eaa395f87d4a660e6dfc3bec187a8b24f6f362c0c6b1d20f1b5d8"),
+			abiFile: "testdata/jetton_transfer.json",
 		},
 	} {
-		abis := make([]parser.ContractABI, len(curr.abiFiles))
-		for i, abiFile := range curr.abiFiles {
-			data, err := os.ReadFile(abiFile)
-			if err != nil {
-				b.Fatal(err)
-			}
-
-			var abi parser.ContractABI
-			err = json.Unmarshal(data, &abi)
-			if err != nil {
-				b.Fatal(err)
-			}
-			abis[i] = abi
-		}
+		abi := loadTestABI(b, curr.abiFile)
 		b.Run(curr.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				curr.cell.ResetCounters()
-				decoder := NewDecoder(abis[0])
-				_, err := decoder.UnmarshalMessage(&curr.cell)
+				decoder := NewDecoder(abi)
+				msg, err := decoder.UnmarshalMessage(&curr.cell)
+				require.NotNil(b, msg)
+				require.Equal(b, SumTypeStruct, msg.SumType)
+				assert.Equal(b, "Transfer", msg.Struct.GetName())
 				if err != nil {
 					b.Fatal(err)
 				}

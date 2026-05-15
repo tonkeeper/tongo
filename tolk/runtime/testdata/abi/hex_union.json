@@ -1,0 +1,156 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeHexUnion",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UInt66WithPrefix"
+    },
+    {
+      "kind": "uintN",
+      "n": 66
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UInt33WithPrefix"
+    },
+    {
+      "kind": "uintN",
+      "n": 33
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UInt4WithPrefix"
+    },
+    {
+      "kind": "uintN",
+      "n": 4
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 305419896,
+          "prefix_len": 32,
+          "stack_type_id": 129,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 14,
+          "prefix_num": 3735928559,
+          "prefix_len": 32,
+          "stack_type_id": 130,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 16,
+          "prefix_num": 2309737967,
+          "prefix_len": 32,
+          "stack_type_id": 131,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "UInt66WithPrefix",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 305419896,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UInt33WithPrefix",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 3735928559,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty_idx": 15
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UInt4WithPrefix",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 2309737967,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty_idx": 17
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

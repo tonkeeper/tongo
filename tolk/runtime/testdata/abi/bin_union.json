@@ -1,0 +1,149 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeBinUnion",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AddressWithPrefix"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MapWithPrefix"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 7,
+      "value_ty_idx": 6
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CellWithPrefix"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 1,
+          "prefix_len": 3,
+          "stack_type_id": 129,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 13,
+          "prefix_num": 3,
+          "prefix_len": 3,
+          "stack_type_id": 130,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 15,
+          "prefix_num": 7,
+          "prefix_len": 3,
+          "stack_type_id": 131,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "AddressWithPrefix",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 3
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MapWithPrefix",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 3,
+        "prefix_len": 3
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CellWithPrefix",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 7,
+        "prefix_len": 3
+      },
+      "fields": [
+        {
+          "name": "v",
+          "ty_idx": 3
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

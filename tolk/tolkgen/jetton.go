@@ -49,19 +49,21 @@ func StripJettonNotifyWrappers(abi parser.ContractABI) (parser.ContractABI, []Je
 		}
 	}
 	symbols := symTable{
-		aliases:              aliases,
-		structs:              structs,
-		enums:                map[string]parser.ABIEnum{},
-		uniqueTypes:          abi.UniqueTypes,
-		structInstantiations: abi.StructInstantiations,
-		aliasInstantiations:  abi.AliasInstantiations,
+		ABIIndex: &parser.ABIIndex{
+			UniqueTypes:          abi.UniqueTypes,
+			StructInstantiations: abi.StructInstantiations,
+			AliasInstantiations:  abi.AliasInstantiations,
+			Structs:              structs,
+			Aliases:              aliases,
+			Enums:                map[string]parser.ABIEnum{},
+		},
 	}
 
 	wrappers := map[string]struct{}{}
 	payloadByType := map[string]JettonPayloadType{}
 
 	for _, msg := range abi.IncomingMessages {
-		body, err := symbols.tyByIdx(msg.BodyTyIdx)
+		body, err := symbols.TyByIdx(msg.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -101,7 +103,7 @@ func StripJettonNotifyWrappers(abi parser.ContractABI) (parser.ContractABI, []Je
 	filtered.IncomingMessages = make([]parser.ABIInternalMessage, 0, len(abi.IncomingMessages))
 	for _, msg := range abi.IncomingMessages {
 		keep := true
-		if body, err := symbols.tyByIdx(msg.BodyTyIdx); err == nil && body.SumType == parser.TyKindStructRef {
+		if body, err := symbols.TyByIdx(msg.BodyTyIdx); err == nil && body.SumType == parser.TyKindStructRef {
 			_, keep = wrappers[body.StructRef.StructName]
 			keep = !keep
 		}
@@ -131,7 +133,7 @@ func isJettonPayloadWrapper(st *symTable, decl parser.ABIStruct) bool {
 	if op, ok := parseOpcode32(decl.Prefix); !ok || op != jettonNotifyMsgOpCode {
 		return false
 	}
-	fieldTy, err := st.tyByIdx(decl.Fields[0].TyIdx)
+	fieldTy, err := st.TyByIdx(decl.Fields[0].TyIdx)
 	if err != nil {
 		return false
 	}
@@ -144,7 +146,7 @@ func isJettonPayloadWrapper(st *symTable, decl parser.ABIStruct) bool {
 type aliasStack map[string]struct{}
 
 func collectPayloadTypes(st *symTable, tyIdx int, seen aliasStack) []JettonPayloadType {
-	ty, err := st.tyByIdx(tyIdx)
+	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return nil
 	}
@@ -157,7 +159,7 @@ func collectPayloadTypes(st *symTable, tyIdx int, seen aliasStack) []JettonPaylo
 			}
 			return out
 		}
-		if s, ok := st.structs[ty.StructRef.StructName]; ok {
+		if s, ok := st.Structs[ty.StructRef.StructName]; ok {
 			if op, ok := parseOpcode32(s.Prefix); ok {
 				return []JettonPayloadType{{TypeName: s.Name, OpCode: op}}
 			}
@@ -166,7 +168,7 @@ func collectPayloadTypes(st *symTable, tyIdx int, seen aliasStack) []JettonPaylo
 	case parser.TyKindUnion:
 		out := make([]JettonPayloadType, 0, len(ty.Union.Variants))
 		for _, v := range ty.Union.Variants {
-			variantTy, err := st.tyByIdx(v.VariantTyIdx)
+			variantTy, err := st.TyByIdx(v.VariantTyIdx)
 			if err != nil {
 				continue
 			}
@@ -183,7 +185,7 @@ func collectPayloadTypes(st *symTable, tyIdx int, seen aliasStack) []JettonPaylo
 		}
 		return out
 	case parser.TyKindAliasRef:
-		alias, ok := st.aliases[ty.AliasRef.AliasName]
+		alias, ok := st.Aliases[ty.AliasRef.AliasName]
 		if !ok {
 			return nil
 		}
@@ -195,7 +197,7 @@ func collectPayloadTypes(st *symTable, tyIdx int, seen aliasStack) []JettonPaylo
 		}
 		seen[alias.Name] = struct{}{}
 		target := alias.TargetTyIdx
-		if targetOverride, _, err := st.aliasTargetOf(tyIdx); err == nil {
+		if targetOverride, _, err := st.AliasTargetOf(tyIdx); err == nil {
 			target = targetOverride
 		}
 		out := collectPayloadTypes(st, target, seen)

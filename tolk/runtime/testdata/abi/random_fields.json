@@ -1,0 +1,198 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeRandomFields",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "MyInt32"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RandomFields"
+    },
+    {
+      "kind": "addressAny"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 6
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        8,
+        15,
+        11
+      ]
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 5
+    },
+    {
+      "kind": "intN",
+      "n": 8
+    },
+    {
+      "kind": "intN",
+      "n": 16
+    },
+    {
+      "kind": "intN",
+      "n": 256
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 18,
+          "prefix_num": 0,
+          "prefix_len": 2,
+          "is_prefix_implicit": true,
+          "stack_type_id": 42,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 19,
+          "prefix_num": 1,
+          "prefix_len": 2,
+          "is_prefix_implicit": true,
+          "stack_type_id": 44,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 20,
+          "prefix_num": 2,
+          "prefix_len": 2,
+          "is_prefix_implicit": true,
+          "stack_type_id": 52,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 19
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "MyInt32",
+      "ty_idx": 12,
+      "target_ty_idx": 8
+    },
+    {
+      "kind": "struct",
+      "name": "RandomFields",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 1940,
+        "prefix_len": 12
+      },
+      "fields": [
+        {
+          "name": "dest_int",
+          "ty_idx": 7
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "dest_ext",
+          "ty_idx": 14
+        },
+        {
+          "name": "intVector",
+          "ty_idx": 16
+        },
+        {
+          "name": "needs_more",
+          "ty_idx": 17
+        },
+        {
+          "name": "some_payload",
+          "ty_idx": 3
+        },
+        {
+          "name": "my_int",
+          "ty_idx": 12
+        },
+        {
+          "name": "some_union",
+          "ty_idx": 21
+        },
+        {
+          "name": "default_1",
+          "ty_idx": 19,
+          "default_value": {
+            "kind": "int",
+            "v": "1"
+          }
+        },
+        {
+          "name": "default_2",
+          "ty_idx": 22,
+          "default_value": {
+            "kind": "int",
+            "v": "55"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

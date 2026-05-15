@@ -1,0 +1,197 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeDefaultValues",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Int8"
+    },
+    {
+      "kind": "intN",
+      "n": 8
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Addr"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DefaultTest"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 9
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 12
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        8,
+        5
+      ]
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 19,
+      "stack_type_id": 129,
+      "stack_width": 3
+    },
+    {
+      "kind": "intN",
+      "n": 128
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 21
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 23
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "Int8",
+      "ty_idx": 12,
+      "target_ty_idx": 13
+    },
+    {
+      "kind": "alias",
+      "name": "Addr",
+      "ty_idx": 14,
+      "target_ty_idx": 7
+    },
+    {
+      "kind": "struct",
+      "name": "DefaultTest",
+      "ty_idx": 15,
+      "fields": [
+        {
+          "name": "num1",
+          "ty_idx": 16,
+          "default_value": {
+            "kind": "int",
+            "v": "4"
+          }
+        },
+        {
+          "name": "num2",
+          "ty_idx": 17,
+          "default_value": {
+            "kind": "int",
+            "v": "5"
+          }
+        },
+        {
+          "name": "addr4",
+          "ty_idx": 18,
+          "default_value": {
+            "kind": "null"
+          }
+        },
+        {
+          "name": "addr5",
+          "ty_idx": 18,
+          "default_value": {
+            "kind": "address",
+            "addr": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe"
+          }
+        },
+        {
+          "name": "tensor6",
+          "ty_idx": 20,
+          "default_value": {
+            "kind": "tensor",
+            "items": [
+              {
+                "kind": "int",
+                "v": "342"
+              },
+              {
+                "kind": "bool",
+                "v": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "num7",
+          "ty_idx": 22,
+          "default_value": {
+            "kind": "null"
+          }
+        },
+        {
+          "name": "slice3",
+          "ty_idx": 24,
+          "default_value": {
+            "kind": "slice",
+            "hex": "616263"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

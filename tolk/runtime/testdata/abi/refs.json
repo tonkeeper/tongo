@@ -1,0 +1,267 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeRefs",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AddressAndBalance"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "GoodNaming"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ManyRefsMsg"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 15
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 12,
+      "stack_type_id": 129,
+      "stack_width": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 12
+    },
+    {
+      "kind": "EnumRef",
+      "enum_name": "Role"
+    },
+    {
+      "kind": "uintN",
+      "n": 1
+    },
+    {
+      "kind": "EnumRef",
+      "enum_name": "Operation"
+    },
+    {
+      "kind": "varuintN",
+      "n": 16
+    },
+    {
+      "kind": "EnumRef",
+      "enum_name": "Operation2"
+    },
+    {
+      "kind": "intN",
+      "n": 128
+    },
+    {
+      "kind": "EnumRef",
+      "enum_name": "Operation3"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "GoodNamingForMsg"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "AddressAndBalance",
+      "ty_idx": 12,
+      "fields": [
+        {
+          "name": "addr",
+          "ty_idx": 7
+        },
+        {
+          "name": "balance",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "GoodNaming",
+      "ty_idx": 13,
+      "target_ty_idx": 12
+    },
+    {
+      "kind": "enum",
+      "name": "Role",
+      "ty_idx": 19,
+      "encoded_as_ty_idx": 20,
+      "members": [
+        {
+          "name": "Admin",
+          "value": "0"
+        },
+        {
+          "name": "Aboba",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Operation",
+      "ty_idx": 21,
+      "encoded_as_ty_idx": 22,
+      "members": [
+        {
+          "name": "Add",
+          "value": "0"
+        },
+        {
+          "name": "Sub",
+          "value": "100000000000000"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Operation2",
+      "ty_idx": 23,
+      "encoded_as_ty_idx": 24,
+      "members": [
+        {
+          "name": "TopUp",
+          "value": "-10000"
+        },
+        {
+          "name": "Withdraw",
+          "value": "10000"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Operation3",
+      "ty_idx": 25,
+      "encoded_as_ty_idx": 26,
+      "members": [
+        {
+          "name": "Nothing",
+          "value": "10"
+        },
+        {
+          "name": "Something",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ManyRefsMsg",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 3735928559,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "user1",
+          "ty_idx": 13
+        },
+        {
+          "name": "user2",
+          "ty_idx": 16
+        },
+        {
+          "name": "user3",
+          "ty_idx": 3
+        },
+        {
+          "name": "user4",
+          "ty_idx": 17,
+          "default_value": {
+            "kind": "null"
+          }
+        },
+        {
+          "name": "user5",
+          "ty_idx": 18
+        },
+        {
+          "name": "role",
+          "ty_idx": 19
+        },
+        {
+          "name": "oper1",
+          "ty_idx": 21
+        },
+        {
+          "name": "oper2",
+          "ty_idx": 23
+        },
+        {
+          "name": "oper3",
+          "ty_idx": 25
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "GoodNamingForMsg",
+      "ty_idx": 27,
+      "target_ty_idx": 14
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

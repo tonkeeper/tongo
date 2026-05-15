@@ -97,7 +97,7 @@ func (tgen TolkGolangGenerator) genGetMethod(method parser.ABIGetMethod, out *st
 }
 
 func (tgen TolkGolangGenerator) stackPushCode(paramGoName string, tyIdx int) (string, error) {
-	ty, err := tgen.symbols.tyByIdx(tyIdx)
+	ty, err := tgen.symbols.TyByIdx(tyIdx)
 	if err != nil {
 		return "", err
 	}
@@ -150,7 +150,7 @@ func (tgen TolkGolangGenerator) stackPushCode(paramGoName string, tyIdx int) (st
 }
 
 func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, unTupleIfW bool) (string, bool, error) {
-	ty, err := tgen.symbols.tyByIdx(tyIdx)
+	ty, err := tgen.symbols.TyByIdx(tyIdx)
 	if err != nil {
 		return "", false, err
 	}
@@ -310,7 +310,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 		return
 	})()`, typ, strings.Join(loaders, "")), false, nil
 	case parser.TyKindEnumRef:
-		enum := tgen.symbols.enums[ty.EnumRef.EnumName]
+		enum := tgen.symbols.Enums[ty.EnumRef.EnumName]
 		return tgen.emitStackReadExpr(fieldPath, enum.EncodedAsTyIdx, unTupleIfW)
 	case parser.TyKindMapKV:
 		cellDecExpr, hasMethod, err := tgen.symbols.emitLoadExpr(fieldPath, tyIdx)
@@ -332,7 +332,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 }`, goTyp, cellDecExpr), false, nil
 		}
 	default:
-		renderedTy, _ := tgen.symbols.renderTy(tyIdx)
+		renderedTy, _ := tgen.symbols.RenderTy(tyIdx)
 		return "", false, fmt.Errorf("unexpected type in stack read: %s", renderedTy)
 	}
 }
@@ -490,7 +490,7 @@ func (tgen TolkGolangGenerator) GenerateExternalMessagesCode() (string, error) {
 
 	var out strings.Builder
 	for _, ext := range tgen.abi.IncomingExternal {
-		msgName, err := tgen.symbols.msgName(ext.BodyTyIdx)
+		msgName, err := tgen.symbols.MsgName(ext.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -526,7 +526,7 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 	// Build set of struct names referenced in incomingMessages.
 	incomingMsgNames := make(map[string]struct{}, len(tgen.abi.IncomingMessages))
 	for _, msg := range tgen.abi.IncomingMessages {
-		msgName, err := tgen.symbols.msgName(msg.BodyTyIdx)
+		msgName, err := tgen.symbols.MsgName(msg.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -550,7 +550,7 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 
 	// Generate ToInternal for each direct incoming message type.
 	for _, msg := range tgen.abi.IncomingMessages {
-		msgName, err := tgen.symbols.msgName(msg.BodyTyIdx)
+		msgName, err := tgen.symbols.MsgName(msg.BodyTyIdx)
 		if err != nil {
 			continue
 		}
@@ -563,13 +563,13 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 			continue
 		}
 		alias := decl.AliasDeclaration
-		targetTy, err := tgen.symbols.tyByIdx(alias.TargetTyIdx)
+		targetTy, err := tgen.symbols.TyByIdx(alias.TargetTyIdx)
 		if err != nil || targetTy.SumType != parser.TyKindUnion {
 			continue
 		}
 		allInternal := len(targetTy.Union.Variants) > 0
 		for _, variant := range targetTy.Union.Variants {
-			variantTy, err := tgen.symbols.tyByIdx(variant.VariantTyIdx)
+			variantTy, err := tgen.symbols.TyByIdx(variant.VariantTyIdx)
 			if err != nil || variantTy.SumType != parser.TyKindStructRef {
 				allInternal = false
 				break

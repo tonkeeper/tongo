@@ -9,7 +9,6 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tolk/parser"
-	"golang.org/x/exp/maps"
 )
 
 type Prefix struct {
@@ -18,25 +17,32 @@ type Prefix struct {
 }
 
 type Struct struct {
-	hasPrefix   bool
-	name        string
-	prefix      Prefix
-	fieldNames  []string
-	fieldValues []Value
+	hasPrefix  bool
+	name       string
+	prefix     Prefix
+	fieldNames []string
+	fields     map[string]Value
 }
 
-func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder) error {
-	if decoder.abiRefs.structRefs == nil {
+func (s *Struct) UnmarshalTyIdx(cell *boc.Cell, tyIdx int, decoder *Decoder) error {
+	if decoder.abiIndex.Structs == nil {
 		return fmt.Errorf("struct has struct reference but no abi has been given")
 	}
-	strct, found := decoder.abiRefs.structRefs[ty.StructName]
+	ty, err := decoder.abiIndex.TyByIdx(tyIdx)
+	if err != nil {
+		return err
+	}
+	if ty.SumType != parser.TyKindStructRef {
+		return fmt.Errorf("expected StructRef at ty_idx=%d", tyIdx)
+	}
+	strct, found := decoder.abiIndex.Structs[ty.StructRef.StructName]
 	if !found {
-		return fmt.Errorf("struct with name %s was not found in given abi", ty.StructName)
+		return fmt.Errorf("struct with name %s was not found in given abi", ty.StructRef.StructName)
 	}
 	tolkStruct := Struct{
-		fieldNames:  make([]string, 0),
-		fieldValues: make([]Value, 0),
-		name:        ty.StructName,
+		fieldNames: make([]string, 0),
+		fields:     make(map[string]Value),
+		name:       ty.StructRef.StructName,
 	}
 	if strct.Prefix != nil {
 		prefixLen := strct.Prefix.PrefixLen
@@ -48,10 +54,7 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder
 		if err != nil {
 			return fmt.Errorf("failed to read struct's %v-bit length prefix: %w", prefixLen, err)
 		}
-		actualPrefix, err := binHexToUint64(strct.Prefix.PrefixStr)
-		if err != nil {
-			return fmt.Errorf("failed to parse struct's prefix %v to integer: %w", prefix, err)
-		}
+		actualPrefix := uint64(strct.Prefix.PrefixNum)
 
 		if prefix != actualPrefix {
 			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
@@ -63,14 +66,11 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder
 		}
 	}
 
-	oldGenericMap := decoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(ty.TypeArgs, strct.TypeParams, &decoder.abiRefs)
+	fields, err := decoder.abiIndex.StructFieldsOf(tyIdx, false)
 	if err != nil {
-		return fmt.Errorf("failed to resolve struct's generic value: %w", err)
+		return fmt.Errorf("failed to resolve struct fields: %w", err)
 	}
-	decoder.abiRefs.genericRefs = genericMap
-
-	for _, field := range strct.Fields {
+	for _, field := range fields {
 		fieldVal := Value{}
 
 		isPayloadResolved := false
@@ -82,26 +82,29 @@ func (s *Struct) Unmarshal(cell *boc.Cell, ty parser.StructRef, decoder *Decoder
 		//	}
 		//}
 		if !isPayloadResolved {
-			err = fieldVal.Unmarshal(cell, field.Ty, decoder)
+			err = fieldVal.UnmarshalTyIdx(cell, field.TyIdx, decoder)
 			if err != nil {
 				return fmt.Errorf("failed to unmarshal struct's field %s: %w", field.Name, err)
 			}
 		}
 
 		tolkStruct.fieldNames = append(tolkStruct.fieldNames, field.Name)
-		tolkStruct.fieldValues = append(tolkStruct.fieldValues, fieldVal)
+		tolkStruct.fields[field.Name] = fieldVal
 	}
 
-	decoder.abiRefs.genericRefs = oldGenericMap
 	*s = tolkStruct
 
 	return nil
 }
 
 // try to resolve payload from all known abi in trace
-func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) (Value, bool, error) {
+func (s *Struct) resolvePayload(cell *boc.Cell, tyIdx int, decoder *Decoder) (Value, bool, error) {
+	ty, err := decoder.abiIndex.TyByIdx(tyIdx)
+	if err != nil {
+		return Value{}, false, err
+	}
 	switch ty.SumType {
-	case "Remaining":
+	case parser.TyKindRemaining:
 		isRef, err := cell.ReadBit()
 		if err != nil {
 			return Value{}, false, fmt.Errorf("failed to read isRef prefix: %w", err)
@@ -120,7 +123,7 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) 
 		if isResolved {
 			return v, true, nil
 		}
-	case "Cell":
+	case parser.TyKindCell:
 		payload, err := cell.NextRef()
 		if err != nil {
 			return Value{}, false, fmt.Errorf("failed to read payload ref: %w", err)
@@ -133,57 +136,45 @@ func (s *Struct) resolvePayload(cell *boc.Cell, ty parser.Ty, decoder *Decoder) 
 		if isResolved {
 			return v, true, nil
 		}
-	case "AliasRef":
-		if decoder.abiRefs.aliasRefs == nil {
+	case parser.TyKindAliasRef:
+		if decoder.abiIndex.Aliases == nil {
 			return Value{}, false, fmt.Errorf("struct has alias reference but no abi has been given")
 		}
-		alias, found := decoder.abiRefs.aliasRefs[ty.AliasRef.AliasName]
-		if !found {
-			return Value{}, false, fmt.Errorf("alias with name %s was not found in given abi", ty.AliasRef.AliasName)
-		}
-		oldGenericMap := decoder.abiRefs.genericRefs
-		genericMap, err := resolveGeneric(ty.AliasRef.TypeArgs, alias.TypeParams, &decoder.abiRefs)
+		targetTyIdx, _, err := decoder.abiIndex.AliasTargetOf(tyIdx)
 		if err != nil {
-			return Value{}, false, fmt.Errorf("failed to resolve alias' generic value: %w", err)
+			return Value{}, false, fmt.Errorf("failed to resolve alias target: %w", err)
 		}
-		decoder.abiRefs.genericRefs = genericMap
-
-		val, ok, err := s.resolvePayload(cell, alias.TargetTy, decoder)
-		if err != nil {
-			return Value{}, false, fmt.Errorf("failed to resolve payload: %w", err)
-		}
-		if !ok {
-			return Value{}, false, nil
-		}
-
-		decoder.abiRefs.genericRefs = oldGenericMap
-		return val, true, nil
-	case "GenericT":
-		currentTy, found := decoder.abiRefs.genericRefs[ty.GenericT.NameT]
+		return s.resolvePayload(cell, targetTyIdx, decoder)
+	case parser.TyKindGenericT:
+		currentTyIdx, found := decoder.genericRefs[ty.GenericT.NameT]
 		if !found {
 			return Value{}, false, fmt.Errorf("cannot resolve generic's type %v ", ty.GenericT.NameT)
 		}
 
-		return s.resolvePayload(cell, currentTy, decoder)
+		return s.resolvePayload(cell, currentTyIdx, decoder)
 	}
 
 	return Value{}, false, nil
 }
 
-func (s *Struct) Marshal(cell *boc.Cell, ty parser.StructRef, encoder *Encoder) error {
-	if encoder.abiRefs.structRefs == nil {
+func (s *Struct) MarshalTyIdx(cell *boc.Cell, tyIdx int, encoder *Encoder) error {
+	if encoder.abiIndex.Structs == nil {
 		return fmt.Errorf("struct has struct reference but no abi has been given")
 	}
-	strct, found := encoder.abiRefs.structRefs[ty.StructName]
+	ty, err := encoder.abiIndex.TyByIdx(tyIdx)
+	if err != nil {
+		return err
+	}
+	if ty.SumType != parser.TyKindStructRef {
+		return fmt.Errorf("expected StructRef at ty_idx=%d", tyIdx)
+	}
+	strct, found := encoder.abiIndex.Structs[ty.StructRef.StructName]
 	if !found {
-		return fmt.Errorf("struct with name %s was not found in given abi", ty.StructName)
+		return fmt.Errorf("struct with name %s was not found in given abi", ty.StructRef.StructName)
 	}
 
 	if strct.Prefix != nil {
-		actualPrefix, err := tolk.binHexToUint64(strct.Prefix.PrefixStr)
-		if err != nil {
-			return fmt.Errorf("failed to parse struct's prefix %v to integer: %w", strct.Prefix.PrefixStr, err)
-		}
+		actualPrefix := uint64(strct.Prefix.PrefixNum)
 
 		if s.prefix.Prefix != actualPrefix {
 			return fmt.Errorf("struct %v prefix does not match actual prefix %v", strct.Name, actualPrefix)
@@ -195,52 +186,49 @@ func (s *Struct) Marshal(cell *boc.Cell, ty parser.StructRef, encoder *Encoder) 
 		}
 	}
 
-	oldGenericMap := encoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(ty.TypeArgs, strct.TypeParams, &encoder.abiRefs)
+	fields, err := encoder.abiIndex.StructFieldsOf(tyIdx, false)
 	if err != nil {
-		return fmt.Errorf("failed to resolve struct's generic value: %w", err)
+		return fmt.Errorf("failed to resolve struct fields: %w", err)
 	}
-	encoder.abiRefs.genericRefs = genericMap
-
-	for _, field := range strct.Fields {
+	for _, field := range fields {
 		val, ok := s.GetField(field.Name)
 		if !ok {
 			return fmt.Errorf("struct %v has no field %v", strct.Name, field.Name)
 		}
 
-		err = val.Marshal(cell, field.Ty, encoder)
+		err = val.MarshalTyIdx(cell, field.TyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal struct's field %s: %w", field.Name, err)
 		}
 	}
 
-	encoder.abiRefs.genericRefs = oldGenericMap
-
 	return nil
 }
 
 func (s *Struct) GetField(field string) (Value, bool) {
-	for i, name := range s.fieldNames {
-		if name == field {
-			return s.fieldValues[i], true
-		}
+	if s.fields == nil {
+		return Value{}, false
 	}
-	return Value{}, false
+	v, ok := s.fields[field]
+	return v, ok
 }
 
 func (s *Struct) MustGetField(field string) Value {
-	for i, name := range s.fieldNames {
-		if name == field {
-			return s.fieldValues[i]
+	if s.fields != nil {
+		if v, ok := s.fields[field]; ok {
+			return v
 		}
 	}
 	panic("field with name " + field + " is not found")
 }
 
 func (s *Struct) SetField(field string, v Value) bool {
-	for i, name := range s.fieldNames {
+	for _, name := range s.fieldNames {
 		if name == field {
-			s.fieldValues[i] = v
+			if s.fields == nil {
+				s.fields = make(map[string]Value)
+			}
+			s.fields[field] = v
 			return true
 		}
 	}
@@ -251,7 +239,8 @@ func (s *Struct) RemoveField(field string) {
 	for i, name := range s.fieldNames {
 		if name == field {
 			s.fieldNames = append(s.fieldNames[:i], s.fieldNames[i+1:]...)
-			s.fieldValues = append(s.fieldValues[:i], s.fieldValues[i+1:]...)
+			delete(s.fields, field)
+			return
 		}
 	}
 }
@@ -284,8 +273,12 @@ func (s *Struct) Equal(o any) bool {
 	if !slices.Equal(s.fieldNames, otherStruct.fieldNames) {
 		return false
 	}
-	for i, value := range s.fieldValues {
-		if !value.Equal(otherStruct.fieldValues[i]) {
+	if len(s.fields) != len(otherStruct.fields) {
+		return false
+	}
+	for name, value := range s.fields {
+		otherValue, ok := otherStruct.fields[name]
+		if !ok || !value.Equal(otherValue) {
 			return false
 		}
 	}
@@ -300,11 +293,15 @@ func (s Struct) MarshalJSON() ([]byte, error) {
 			builder.WriteRune(',')
 		}
 		builder.WriteString(fmt.Sprintf("\"%s\":", name))
-		val, err := json.Marshal(&s.fieldValues[i])
+		val, ok := s.fields[name]
+		if !ok {
+			return nil, fmt.Errorf("struct field %s not found", name)
+		}
+		data, err := json.Marshal(&val)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal struct's field %s: %w", name, err)
 		}
-		builder.Write(val)
+		builder.Write(data)
 	}
 	builder.WriteRune('}')
 	return []byte(builder.String()), nil
@@ -317,52 +314,52 @@ type EnumValue struct {
 }
 
 func (e *EnumValue) Unmarshal(cell *boc.Cell, ty parser.EnumRef, decoder *Decoder) error {
-	if decoder.abiRefs.enumRefs == nil {
+	if decoder.abiIndex.Enums == nil {
 		return fmt.Errorf("struct has enum reference but no abi has been given")
 	}
-	enum, found := decoder.abiRefs.enumRefs[ty.EnumName]
+	enum, found := decoder.abiIndex.Enums[ty.EnumName]
 	if !found {
 		return fmt.Errorf("enum with name %s was not found in given abi", ty.EnumName)
 	}
 
 	enumVal := Value{}
-	err := enumVal.Unmarshal(cell, enum.EncodedAs, decoder)
+	err := enumVal.UnmarshalTyIdx(cell, enum.EncodedAsTyIdx, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal enum's value: %w", err)
 	}
+	encodedAs, err := decoder.abiIndex.TyByIdx(enum.EncodedAsTyIdx)
+	if err != nil {
+		return fmt.Errorf("failed to resolve enum encoding type: %w", err)
+	}
 	var bigEnumVal big.Int
-	switch enum.EncodedAs.SumType {
-	case "IntN":
-		if enum.EncodedAs.IntN.N > 64 {
+	switch encodedAs.SumType {
+	case parser.TyKindIntN:
+		if encodedAs.IntN.N > 64 {
 			bigEnumVal = big.Int(*enumVal.BigInt)
 		} else {
 			bigEnumVal = *big.NewInt(int64(*enumVal.SmallInt))
 		}
-	case "UintN":
-		if enum.EncodedAs.UintN.N > 64 {
+	case parser.TyKindUintN:
+		if encodedAs.UintN.N > 64 {
 			bigEnumVal = big.Int(*enumVal.BigUint)
 		} else {
 			bigEnumVal = *new(big.Int).SetUint64(uint64(*enumVal.SmallUint))
 		}
-	case "VarIntN":
+	case parser.TyKindVarIntN:
 		bigEnumVal = big.Int(*enumVal.VarInt)
-	case "VarUintN":
+	case parser.TyKindVarUintN:
 		bigEnumVal = big.Int(*enumVal.VarUint)
 	default:
-		return fmt.Errorf("enum encode type must be integer, got: %s", enum.EncodedAs.SumType)
+		return fmt.Errorf("enum encode type must be integer, got: %s", encodedAs.SumType)
 	}
 
 	for _, member := range enum.Members {
-		val, ok := new(big.Int).SetString(member.Value, 10)
-		if !ok {
-			return fmt.Errorf("invalid enum %v value %v for member %s", ty.EnumName, member.Value, member.Name)
-		}
-
+		val := member.Value.Int
 		if val.Cmp(&bigEnumVal) == 0 {
 			*e = EnumValue{
 				ActualValue: enumVal,
 				Name:        member.Name,
-				Value:       *val,
+				Value:       val,
 			}
 
 			return nil
@@ -381,26 +378,21 @@ func (e EnumValue) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EnumValue) Marshal(cell *boc.Cell, ty parser.EnumRef, encoder *Encoder) error {
-	if encoder.abiRefs.enumRefs == nil {
+	if encoder.abiIndex.Enums == nil {
 		return fmt.Errorf("struct has enum reference but no abi has been given")
 	}
-	enum, found := encoder.abiRefs.enumRefs[ty.EnumName]
+	enum, found := encoder.abiIndex.Enums[ty.EnumName]
 	if !found {
 		return fmt.Errorf("enum with name %s was not found in given abi", ty.EnumName)
 	}
 
-	err := e.ActualValue.Marshal(cell, enum.EncodedAs, encoder)
+	err := e.ActualValue.MarshalTyIdx(cell, enum.EncodedAsTyIdx, encoder)
 	if err != nil {
 		return fmt.Errorf("failed to marshal enum's value: %w", err)
 	}
 
 	for _, member := range enum.Members {
-		val, ok := new(big.Int).SetString(member.Value, 10)
-		if !ok {
-			return fmt.Errorf("invalid enum %v value %v for member %s", ty.EnumName, member.Value, member.Name)
-		}
-
-		if val.Cmp(&e.Value) == 0 {
+		if member.Value.Cmp(&e.Value) == 0 {
 			return nil
 		}
 	}
@@ -432,77 +424,78 @@ func (a *AliasValue) Equal(other any) bool {
 	return v.Equal(Value(otherAlias))
 }
 
-func (a *AliasValue) Unmarshal(cell *boc.Cell, ty parser.AliasRef, decoder *Decoder) error {
-	if decoder.abiRefs.aliasRefs == nil {
+func (a *AliasValue) UnmarshalTyIdx(cell *boc.Cell, tyIdx int, decoder *Decoder) error {
+	if decoder.abiIndex.Aliases == nil {
 		return fmt.Errorf("struct has alias reference but no abi has been given")
 	}
-	alias, found := decoder.abiRefs.aliasRefs[ty.AliasName]
-	if !found {
-		return fmt.Errorf("alias with name %s was not found in given abi", ty.AliasName)
-	}
-
-	//if alias.CustomUnpackFromSlice {
-	//	if decoder.customUnpackResolver == nil {
-	//		return fmt.Errorf("custom unmarshal alias %v with custom unpack method", ty.AliasName)
-	//	}
-	//	if err := decoder.customUnpackResolver(ty, cell, a); err != nil {
-	//		return fmt.Errorf("failed to unmarshal alias with custom unpack: %w", err)
-	//	}
-	//	return nil
-	//}
-
-	oldGenericMap := decoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, &decoder.abiRefs)
+	ty, err := decoder.abiIndex.TyByIdx(tyIdx)
 	if err != nil {
-		return fmt.Errorf("failed to resolve alias' generic value: %w", err)
+		return err
 	}
-	decoder.abiRefs.genericRefs = genericMap
+	if ty.SumType != parser.TyKindAliasRef {
+		return fmt.Errorf("expected AliasRef at ty_idx=%d", tyIdx)
+	}
+
+	alias, err := decoder.abiIndex.GetAlias(ty.AliasRef.AliasName)
+	if err != nil {
+		return err
+	}
+	if alias.CustomPackUnpack.UnpackFromSlice {
+		if decoder.customUnpackResolver == nil {
+			return fmt.Errorf("custom unpack resolver for alias %q is not configured", ty.AliasRef.AliasName)
+		}
+		return decoder.customUnpackResolver(*ty.AliasRef, cell, a)
+	}
+
+	targetTyIdx, _, err := decoder.abiIndex.AliasTargetOf(tyIdx)
+	if err != nil {
+		return fmt.Errorf("failed to resolve alias target: %w", err)
+	}
 
 	val := Value{}
-	err = val.Unmarshal(cell, alias.TargetTy, decoder)
+	err = val.UnmarshalTyIdx(cell, targetTyIdx, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal alias value: %w", err)
 	}
 
-	decoder.abiRefs.genericRefs = oldGenericMap
 	*a = AliasValue(val)
 
 	return nil
 }
 
-func (a *AliasValue) Marshal(cell *boc.Cell, ty parser.AliasRef, encoder *Encoder) error {
-	if encoder.abiRefs.aliasRefs == nil {
+func (a *AliasValue) MarshalTyIdx(cell *boc.Cell, tyIdx int, encoder *Encoder) error {
+	if encoder.abiIndex.Aliases == nil {
 		return fmt.Errorf("struct has alias reference but no abi has been given")
 	}
-	alias, found := encoder.abiRefs.aliasRefs[ty.AliasName]
-	if !found {
-		return fmt.Errorf("alias with name %s was not found in given abi", ty.AliasName)
-	}
-
-	//if alias.CustomPackToBuilder {
-	//	if encoder.customPackResolver == nil {
-	//		return fmt.Errorf("custom marshal alias %v with custom pack method", ty.AliasName)
-	//	}
-	//	if err := encoder.customPackResolver(ty, cell, a); err != nil {
-	//		return fmt.Errorf("failed to marshal alias with custom pack: %w", err)
-	//	}
-	//	return nil
-	//}
-
-	oldGenericMap := encoder.abiRefs.genericRefs
-	genericMap, err := resolveGeneric(ty.TypeArgs, alias.TypeParams, &encoder.abiRefs)
+	ty, err := encoder.abiIndex.TyByIdx(tyIdx)
 	if err != nil {
-		return fmt.Errorf("failed to resolve alias' generic value: %w", err)
+		return err
 	}
-	encoder.abiRefs.genericRefs = genericMap
+	if ty.SumType != parser.TyKindAliasRef {
+		return fmt.Errorf("expected AliasRef at ty_idx=%d", tyIdx)
+	}
+
+	alias, err := encoder.abiIndex.GetAlias(ty.AliasRef.AliasName)
+	if err != nil {
+		return err
+	}
+	if alias.CustomPackUnpack.PackToBuilder {
+		if encoder.customPackResolver == nil {
+			return fmt.Errorf("custom pack resolver for alias %q is not configured", ty.AliasRef.AliasName)
+		}
+		return encoder.customPackResolver(*ty.AliasRef, cell, a)
+	}
+
+	targetTyIdx, _, err := encoder.abiIndex.AliasTargetOf(tyIdx)
+	if err != nil {
+		return fmt.Errorf("failed to resolve alias target: %w", err)
+	}
 
 	val := Value(*a)
-	err = val.Marshal(cell, alias.TargetTy, encoder)
+	err = val.MarshalTyIdx(cell, targetTyIdx, encoder)
 	if err != nil {
 		return fmt.Errorf("failed to marshal alias value: %w", err)
 	}
-
-	encoder.abiRefs.genericRefs = oldGenericMap
 
 	return nil
 }
@@ -519,12 +512,12 @@ func (g *GenericValue) Equal(other any) bool {
 }
 
 func (g *GenericValue) Unmarshal(cell *boc.Cell, ty parser.GenericT, decoder *Decoder) error {
-	currentTy, found := decoder.abiRefs.genericRefs[ty.NameT]
+	currentTyIdx, found := decoder.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic's type %v ", ty.NameT)
 	}
 	val := Value{}
-	err := val.Unmarshal(cell, currentTy, decoder)
+	err := val.UnmarshalTyIdx(cell, currentTyIdx, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal generic's value: %w", err)
 	}
@@ -535,40 +528,15 @@ func (g *GenericValue) Unmarshal(cell *boc.Cell, ty parser.GenericT, decoder *De
 }
 
 func (g *GenericValue) Marshal(cell *boc.Cell, ty parser.GenericT, encoder *Encoder) error {
-	currentTy, found := encoder.abiRefs.genericRefs[ty.NameT]
+	currentTyIdx, found := encoder.genericRefs[ty.NameT]
 	if !found {
 		return fmt.Errorf("cannot resolve generic's type %v ", ty.NameT)
 	}
 	val := Value(*g)
-	err := val.Marshal(cell, currentTy, encoder)
+	err := val.MarshalTyIdx(cell, currentTyIdx, encoder)
 	if err != nil {
 		return fmt.Errorf("failed to marshal generic's value: %w", err)
 	}
 
 	return nil
-}
-
-func resolveGeneric(typeArgs []parser.Ty, typeParams []string, abiRefs *abiRefs) (map[string]parser.Ty, error) {
-	genericMap := make(map[string]parser.Ty)
-	if abiRefs.genericRefs != nil {
-		maps.Copy(genericMap, abiRefs.genericRefs)
-	}
-
-	for i, genericTy := range typeArgs {
-		genericMap[typeParams[i]] = genericTy
-
-		if genericTy.SumType == "GenericT" {
-			if abiRefs.genericRefs == nil {
-				return nil, fmt.Errorf("cannot resolve generic's type %v", genericTy.GenericT.NameT)
-			}
-
-			ty, found := abiRefs.genericRefs[genericTy.GenericT.NameT]
-			if !found {
-				return nil, fmt.Errorf("generic's type %v not found", genericTy.GenericT.NameT)
-			}
-			genericMap[typeParams[i]] = ty
-		}
-	}
-
-	return genericMap, nil
 }

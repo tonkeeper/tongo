@@ -1,0 +1,493 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeBenchmarkTypes",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkSmallInt"
+    },
+    {
+      "kind": "intN",
+      "n": 24
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkBigInt"
+    },
+    {
+      "kind": "intN",
+      "n": 183
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkSmallUint"
+    },
+    {
+      "kind": "uintN",
+      "n": 53
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkBigUint"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkVarInt16"
+    },
+    {
+      "kind": "varintN",
+      "n": 16
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkVarUint32"
+    },
+    {
+      "kind": "varuintN",
+      "n": 32
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkBits24"
+    },
+    {
+      "kind": "bitsN",
+      "n": 24
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkCoins"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkBool"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkCell"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkRemaining"
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkAddress"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkOptionalAddress"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkExternalAddress"
+    },
+    {
+      "kind": "addressAny"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkAnyAddress"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkNullableRemaining"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 30
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkNullableCell"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkRefInt65"
+    },
+    {
+      "kind": "intN",
+      "n": 65
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 42
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkEmptyTensor"
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": []
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkNotEmptyTensor"
+    },
+    {
+      "kind": "uintN",
+      "n": 123
+    },
+    {
+      "kind": "intN",
+      "n": 23
+    },
+    {
+      "kind": "intN",
+      "n": 2
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 49
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        48,
+        50
+      ]
+    },
+    {
+      "kind": "varintN",
+      "n": 32
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        47,
+        5,
+        6,
+        51,
+        52
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkSmallIntKeyMap"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 8,
+      "value_ty_idx": 5
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkSmallUintKeyMap"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 57,
+      "value_ty_idx": 7
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkBigUintKeyMap"
+    },
+    {
+      "kind": "uintN",
+      "n": 78
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 60,
+      "value_ty_idx": 3
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkBitsKeyMap"
+    },
+    {
+      "kind": "bitsN",
+      "n": 16
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        7,
+        6
+      ]
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 10,
+      "value_ty_idx": 64
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 63,
+      "value_ty_idx": 65
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkAddressKeyMap"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 7,
+      "value_ty_idx": 6
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "BenchmarkDecUnion"
+    },
+    {
+      "kind": "intN",
+      "n": 16
+    },
+    {
+      "kind": "intN",
+      "n": 128
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 70,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 44,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 71,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 50,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "BenchmarkSmallInt",
+      "ty_idx": 12,
+      "target_ty_idx": 13
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkBigInt",
+      "ty_idx": 14,
+      "target_ty_idx": 15
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkSmallUint",
+      "ty_idx": 16,
+      "target_ty_idx": 17
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkBigUint",
+      "ty_idx": 18,
+      "target_ty_idx": 19
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkVarInt16",
+      "ty_idx": 20,
+      "target_ty_idx": 21
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkVarUint32",
+      "ty_idx": 22,
+      "target_ty_idx": 23
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkBits24",
+      "ty_idx": 24,
+      "target_ty_idx": 25
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkCoins",
+      "ty_idx": 26,
+      "target_ty_idx": 6
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkBool",
+      "ty_idx": 27,
+      "target_ty_idx": 5
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkCell",
+      "ty_idx": 28,
+      "target_ty_idx": 3
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkRemaining",
+      "ty_idx": 29,
+      "target_ty_idx": 30
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkAddress",
+      "ty_idx": 31,
+      "target_ty_idx": 7
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkOptionalAddress",
+      "ty_idx": 32,
+      "target_ty_idx": 33
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkExternalAddress",
+      "ty_idx": 34,
+      "target_ty_idx": 35
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkAnyAddress",
+      "ty_idx": 36,
+      "target_ty_idx": 35
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkNullableRemaining",
+      "ty_idx": 37,
+      "target_ty_idx": 38
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkNullableCell",
+      "ty_idx": 39,
+      "target_ty_idx": 40
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkRefInt65",
+      "ty_idx": 41,
+      "target_ty_idx": 43
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkEmptyTensor",
+      "ty_idx": 44,
+      "target_ty_idx": 45
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkNotEmptyTensor",
+      "ty_idx": 46,
+      "target_ty_idx": 53
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkSmallIntKeyMap",
+      "ty_idx": 54,
+      "target_ty_idx": 55
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkSmallUintKeyMap",
+      "ty_idx": 56,
+      "target_ty_idx": 58
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkBigUintKeyMap",
+      "ty_idx": 59,
+      "target_ty_idx": 61
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkBitsKeyMap",
+      "ty_idx": 62,
+      "target_ty_idx": 66
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkAddressKeyMap",
+      "ty_idx": 67,
+      "target_ty_idx": 68
+    },
+    {
+      "kind": "alias",
+      "name": "BenchmarkDecUnion",
+      "ty_idx": 69,
+      "target_ty_idx": 72
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

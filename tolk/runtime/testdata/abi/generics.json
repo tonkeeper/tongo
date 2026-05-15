@@ -1,0 +1,613 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeGenerics",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Wrapper",
+      "type_args_ty_idx": [
+        12
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "W"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Wrapper",
+      "type_args_ty_idx": [
+        14
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherLeft",
+      "type_args_ty_idx": [
+        7
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "R"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherLeft",
+      "type_args_ty_idx": [
+        17
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRight",
+      "type_args_ty_idx": [
+        6
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "T"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRight",
+      "type_args_ty_idx": [
+        20
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Either",
+      "type_args_ty_idx": [
+        7,
+        6
+      ]
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 16,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "stack_type_id": 129,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 19,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "stack_type_id": 130,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    },
+    {
+      "kind": "genericT",
+      "name_t": "L"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Either",
+      "type_args_ty_idx": [
+        24,
+        17
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherLeft",
+      "type_args_ty_idx": [
+        24
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRight",
+      "type_args_ty_idx": [
+        17
+      ]
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 26,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true
+        },
+        {
+          "variant_ty_idx": 27,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true
+        }
+      ]
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        5,
+        6
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "EitherAlias",
+      "type_args_ty_idx": [
+        5,
+        29
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Either",
+      "type_args_ty_idx": [
+        5,
+        29
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherLeft",
+      "type_args_ty_idx": [
+        5
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRight",
+      "type_args_ty_idx": [
+        29
+      ]
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 32,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "stack_type_id": 131,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 33,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "stack_type_id": 132,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 3
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "EitherAlias",
+      "type_args_ty_idx": [
+        17,
+        24
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Either",
+      "type_args_ty_idx": [
+        17,
+        24
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRef",
+      "type_args_ty_idx": [
+        9
+      ]
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 9
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 9,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 47,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 38,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true,
+          "stack_type_id": 133,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 2
+    },
+    {
+      "kind": "genericT",
+      "name_t": "I"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EitherRef",
+      "type_args_ty_idx": [
+        40
+      ]
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 40
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 40,
+          "prefix_num": 0,
+          "prefix_len": 1,
+          "is_prefix_implicit": true
+        },
+        {
+          "variant_ty_idx": 42,
+          "prefix_num": 1,
+          "prefix_len": 1,
+          "is_prefix_implicit": true
+        }
+      ]
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        6,
+        44
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Doubler",
+      "type_args_ty_idx": [
+        45
+      ]
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        45,
+        45
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "U"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Doubler",
+      "type_args_ty_idx": [
+        48
+      ]
+    },
+    {
+      "kind": "tensor",
+      "items_ty_idx": [
+        48,
+        48
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ManyRefsMsg",
+      "type_args_ty_idx": [
+        12
+      ]
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 46
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ManyRefsMsg",
+      "type_args_ty_idx": [
+        20
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "Wrapper",
+      "type_args_ty_idx": [
+        20
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "GoodNamingForMsg",
+      "type_args_ty_idx": [
+        12
+      ]
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "GoodNamingForMsg",
+      "type_args_ty_idx": [
+        20
+      ]
+    }
+  ],
+  "struct_instantiations": [
+    {
+      "ty_idx": 16,
+      "struct_name": "EitherLeft<address>",
+      "monomorphic_fields_ty_idx": [
+        7
+      ]
+    },
+    {
+      "ty_idx": 19,
+      "struct_name": "EitherRight<coins>",
+      "monomorphic_fields_ty_idx": [
+        6
+      ]
+    },
+    {
+      "ty_idx": 32,
+      "struct_name": "EitherLeft<bool>",
+      "monomorphic_fields_ty_idx": [
+        5
+      ]
+    },
+    {
+      "ty_idx": 33,
+      "struct_name": "EitherRight<(bool, coins)>",
+      "monomorphic_fields_ty_idx": [
+        29
+      ]
+    },
+    {
+      "ty_idx": 37,
+      "struct_name": "EitherRef<uint32>",
+      "monomorphic_fields_ty_idx": [
+        39
+      ]
+    },
+    {
+      "ty_idx": 51,
+      "struct_name": "ManyRefsMsg<uint16>",
+      "monomorphic_fields_ty_idx": [
+        37,
+        22,
+        30,
+        52,
+        13
+      ]
+    }
+  ],
+  "alias_instantiations": [
+    {
+      "ty_idx": 13,
+      "alias_name": "Wrapper<uint16>",
+      "monomorphic_target_ty_idx": 12
+    },
+    {
+      "ty_idx": 22,
+      "alias_name": "Either<address, coins>",
+      "monomorphic_target_ty_idx": 23
+    },
+    {
+      "ty_idx": 31,
+      "alias_name": "Either<bool, (bool, coins)>",
+      "monomorphic_target_ty_idx": 34
+    },
+    {
+      "ty_idx": 30,
+      "alias_name": "EitherAlias<bool, (bool, coins)>",
+      "monomorphic_target_ty_idx": 31
+    },
+    {
+      "ty_idx": 46,
+      "alias_name": "Doubler<(coins, address?)>",
+      "monomorphic_target_ty_idx": 47
+    },
+    {
+      "ty_idx": 55,
+      "alias_name": "GoodNamingForMsg<uint16>",
+      "monomorphic_target_ty_idx": 51
+    }
+  ],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "Wrapper",
+      "ty_idx": 15,
+      "target_ty_idx": 14,
+      "type_params": [
+        "W"
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EitherLeft",
+      "ty_idx": 18,
+      "type_params": [
+        "R"
+      ],
+      "prefix": {
+        "prefix_num": 0,
+        "prefix_len": 1
+      },
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 17
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EitherRight",
+      "ty_idx": 21,
+      "type_params": [
+        "T"
+      ],
+      "prefix": {
+        "prefix_num": 1,
+        "prefix_len": 1
+      },
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "Either",
+      "ty_idx": 25,
+      "target_ty_idx": 28,
+      "type_params": [
+        "L",
+        "R"
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EitherRef",
+      "ty_idx": 41,
+      "type_params": [
+        "I"
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 43
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "EitherAlias",
+      "ty_idx": 35,
+      "target_ty_idx": 36,
+      "type_params": [
+        "R",
+        "L"
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "Doubler",
+      "ty_idx": 49,
+      "target_ty_idx": 50,
+      "type_params": [
+        "U"
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ManyRefsMsg",
+      "ty_idx": 53,
+      "type_params": [
+        "T"
+      ],
+      "fields": [
+        {
+          "name": "payload",
+          "ty_idx": 37
+        },
+        {
+          "name": "either",
+          "ty_idx": 22
+        },
+        {
+          "name": "anotherEither",
+          "ty_idx": 30
+        },
+        {
+          "name": "doubler",
+          "ty_idx": 52
+        },
+        {
+          "name": "myVal",
+          "ty_idx": 54
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "GoodNamingForMsg",
+      "ty_idx": 56,
+      "target_ty_idx": 53,
+      "type_params": [
+        "T"
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

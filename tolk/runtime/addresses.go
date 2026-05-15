@@ -9,11 +9,19 @@ import (
 	"strings"
 
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 type InternalAddress struct {
 	Workchain int8
 	Address   [32]byte
+}
+
+func InternalAddressFromTLB(accID ton.AccountID) InternalAddress {
+	return InternalAddress{
+		Workchain: int8(accID.Workchain),
+		Address:   accID.Address,
+	}
 }
 
 func (i *InternalAddress) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
@@ -131,7 +139,7 @@ func (o *OptionalAddress) Equal(other any) bool {
 	if o.SumType != otherOptionalAddress.SumType {
 		return false
 	}
-	if o.SumType == "InternalAddress" {
+	if o.SumType == SumTypeInternalAddress {
 		return o.InternalAddress.Equal(*otherOptionalAddress.InternalAddress)
 	}
 	return true
@@ -144,7 +152,7 @@ func (o *OptionalAddress) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 		return fmt.Errorf("failed to read optional address type: %w", err)
 	}
 	if tag == 0 {
-		o.SumType = "NoneAddress"
+		o.SumType = SumTypeNoneAddress
 		o.NoneAddress = &NoneAddress{}
 		err = o.NoneAddress.Unmarshal(cell, decoder)
 		if err != nil {
@@ -153,7 +161,7 @@ func (o *OptionalAddress) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 
-	o.SumType = "InternalAddress"
+	o.SumType = SumTypeInternalAddress
 	o.InternalAddress = &InternalAddress{}
 	err = o.InternalAddress.Unmarshal(cell, decoder)
 	if err != nil {
@@ -163,13 +171,13 @@ func (o *OptionalAddress) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 }
 
 func (o *OptionalAddress) Marshal(cell *boc.Cell, encoder *Encoder) error {
-	if o.SumType == "NoneAddress" {
+	if o.SumType == SumTypeNoneAddress {
 		err := o.NoneAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal optional address: %w", err)
 		}
 		return nil
-	} else if o.SumType == "InternalAddress" {
+	} else if o.SumType == SumTypeInternalAddress {
 		err := o.InternalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal optional address: %w", err)
@@ -180,9 +188,9 @@ func (o *OptionalAddress) Marshal(cell *boc.Cell, encoder *Encoder) error {
 }
 
 func (o OptionalAddress) MarshalJSON() ([]byte, error) {
-	if o.SumType == "NoneAddress" {
+	if o.SumType == SumTypeNoneAddress {
 		return json.Marshal(o.NoneAddress)
-	} else if o.SumType == "InternalAddress" {
+	} else if o.SumType == SumTypeInternalAddress {
 		return json.Marshal(o.InternalAddress)
 	} else {
 		return nil, fmt.Errorf("unknown optional address SumType: %v", o.SumType)
@@ -192,12 +200,12 @@ func (o OptionalAddress) MarshalJSON() ([]byte, error) {
 func (o *OptionalAddress) UnmarshalJSON(b []byte) error {
 	var internalAddress *InternalAddress
 	if err := json.Unmarshal(b, &internalAddress); err != nil {
-		o.SumType = "NoneAddress"
+		o.SumType = SumTypeNoneAddress
 		o.NoneAddress = &NoneAddress{}
 		return nil
 	}
 
-	o.SumType = "InternalAddress"
+	o.SumType = SumTypeInternalAddress
 	o.InternalAddress = internalAddress
 	return nil
 }
@@ -286,19 +294,19 @@ func (a *AnyAddress) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 	}
 	switch tag {
 	case 0:
-		a.SumType = "NoneAddress"
+		a.SumType = SumTypeNoneAddress
 		a.NoneAddress = &NoneAddress{}
 		err = a.NoneAddress.Unmarshal(cell, decoder)
 	case 1:
-		a.SumType = "ExternalAddress"
+		a.SumType = SumTypeExternalAddress
 		a.ExternalAddress = &ExternalAddress{}
 		err = a.ExternalAddress.Unmarshal(cell, decoder)
 	case 2:
-		a.SumType = "InternalAddress"
+		a.SumType = SumTypeInternalAddress
 		a.InternalAddress = &InternalAddress{}
 		err = a.InternalAddress.Unmarshal(cell, decoder)
 	case 3:
-		a.SumType = "VarAddress"
+		a.SumType = SumTypeVarAddress
 		a.VarAddress = &VarAddress{}
 		err = a.VarAddress.Unmarshal(cell, decoder)
 	}
@@ -311,13 +319,13 @@ func (a *AnyAddress) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
 func (a *AnyAddress) Marshal(cell *boc.Cell, encoder *Encoder) error {
 	var err error
 	switch a.SumType {
-	case "NoneAddress":
+	case SumTypeNoneAddress:
 		err = a.NoneAddress.Marshal(cell, encoder)
-	case "InternalAddress":
+	case SumTypeInternalAddress:
 		err = a.InternalAddress.Marshal(cell, encoder)
-	case "ExternalAddress":
+	case SumTypeExternalAddress:
 		err = a.ExternalAddress.Marshal(cell, encoder)
-	case "VarAddress":
+	case SumTypeVarAddress:
 		err = a.VarAddress.Marshal(cell, encoder)
 	default:
 		return fmt.Errorf("unknown any address SumType: %v", a.SumType)
@@ -338,13 +346,13 @@ func (a *AnyAddress) Equal(other any) bool {
 		return false
 	}
 	switch a.SumType {
-	case "NoneAddress":
+	case SumTypeNoneAddress:
 		return true
-	case "InternalAddress":
+	case SumTypeInternalAddress:
 		return a.InternalAddress.Equal(*otherAnyAddress.InternalAddress)
-	case "ExternalAddress":
+	case SumTypeExternalAddress:
 		return a.ExternalAddress.Equal(*otherAnyAddress.ExternalAddress)
-	case "VarAddress":
+	case SumTypeVarAddress:
 		return a.VarAddress.Equal(*otherAnyAddress.VarAddress)
 	}
 	return false
@@ -354,13 +362,13 @@ func (a AnyAddress) MarshalJSON() ([]byte, error) {
 	var data []byte
 	var err error
 	switch a.SumType {
-	case "NoneAddress":
+	case SumTypeNoneAddress:
 		data, err = json.Marshal(a.NoneAddress)
-	case "InternalAddress":
+	case SumTypeInternalAddress:
 		data, err = json.Marshal(a.InternalAddress)
-	case "ExternalAddress":
+	case SumTypeExternalAddress:
 		data, err = json.Marshal(a.ExternalAddress)
-	case "VarAddress":
+	case SumTypeVarAddress:
 		data, err = json.Marshal(a.VarAddress)
 	default:
 		return nil, fmt.Errorf("unknown any address SumType: %v", a.SumType)
@@ -374,24 +382,24 @@ func (a AnyAddress) MarshalJSON() ([]byte, error) {
 func (a *AnyAddress) UnmarshalJSON(b []byte) error {
 	var internalAddress *InternalAddress
 	if err := json.Unmarshal(b, &internalAddress); err == nil {
-		a.SumType = "InternalAddress"
+		a.SumType = SumTypeInternalAddress
 		a.InternalAddress = internalAddress
 		return nil
 	}
 
 	var externalAddress *ExternalAddress
 	if err := json.Unmarshal(b, &externalAddress); err == nil {
-		a.SumType = "ExternalAddress"
+		a.SumType = SumTypeExternalAddress
 		a.ExternalAddress = externalAddress
 	}
 
 	var varAddress *VarAddress
 	if err := json.Unmarshal(b, &varAddress); err == nil {
-		a.SumType = "VarAddress"
+		a.SumType = SumTypeVarAddress
 		a.VarAddress = varAddress
 	}
 
-	a.SumType = "NoneAddress"
+	a.SumType = SumTypeNoneAddress
 	a.NoneAddress = &NoneAddress{}
 	return nil
 }

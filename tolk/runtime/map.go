@@ -18,9 +18,14 @@ type MapValue struct {
 }
 
 func (m *MapValue) Unmarshal(cell *boc.Cell, ty parser.MapKV, decoder *Decoder) error {
-	keySize, ok := ty.K.GetFixedSize()
+	keyTy, err := decoder.abiIndex.TyByIdx(ty.KeyTyIdx)
+	if err != nil {
+		return fmt.Errorf("failed to resolve map key type: %w", err)
+	}
+	valueTyIdx := ty.ValueTyIdx
+	keySize, ok := keyTy.GetFixedSize()
 	if !ok {
-		return fmt.Errorf("%v type is not comparable", ty.K.SumType)
+		return fmt.Errorf("%v type is not comparable", keyTy.SumType)
 	}
 	keyPrefix := boc.NewBitString(keySize)
 
@@ -37,7 +42,7 @@ func (m *MapValue) Unmarshal(cell *boc.Cell, ty parser.MapKV, decoder *Decoder) 
 		if err != nil {
 			return fmt.Errorf("failed to get map's next ref: %w", err)
 		}
-		err = mapInner(keySize, keySize, mpCell, &keyPrefix, ty.K, ty.V, &mp.keys, &mp.values, decoder)
+		err = mapInner(keySize, keySize, mpCell, &keyPrefix, ty.KeyTyIdx, valueTyIdx, &mp.keys, &mp.values, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to parse map value: %w", err)
 		}
@@ -54,7 +59,7 @@ func mapInner(
 	keySize, leftKeySize int,
 	c *boc.Cell,
 	keyPrefix *boc.BitString,
-	kt, vt parser.Ty,
+	keyTyIdx, valueTyIdx int,
 	keys, values *[]Value,
 	decoder *Decoder,
 ) error {
@@ -79,7 +84,7 @@ func mapInner(
 		if err != nil {
 			return fmt.Errorf("failed to write map's left branch key prefix: %w", err)
 		}
-		err = mapInner(keySize, leftKeySize-(1+size), left, &lp, kt, vt, keys, values, decoder)
+		err = mapInner(keySize, leftKeySize-(1+size), left, &lp, keyTyIdx, valueTyIdx, keys, values, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to get map's left value: %w", err)
 		}
@@ -93,7 +98,7 @@ func mapInner(
 		if err != nil {
 			return fmt.Errorf("failed to write map's right branch key prefix: %w", err)
 		}
-		err = mapInner(keySize, leftKeySize-(1+size), right, &rp, kt, vt, keys, values, decoder)
+		err = mapInner(keySize, leftKeySize-(1+size), right, &rp, keyTyIdx, valueTyIdx, keys, values, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to get map's right value: %w", err)
 		}
@@ -101,7 +106,7 @@ func mapInner(
 	}
 	// add node to map
 	v := Value{}
-	err = v.Unmarshal(c, vt, decoder)
+	err = v.UnmarshalTyIdx(c, valueTyIdx, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal map's value: %w", err)
 	}
@@ -113,7 +118,7 @@ func mapInner(
 	}
 	k := Value{}
 	cell := boc.NewCellWithBits(key)
-	err = k.Unmarshal(cell, kt, decoder)
+	err = k.UnmarshalTyIdx(cell, keyTyIdx, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal map's key: %w", err)
 	}
@@ -188,9 +193,13 @@ func loadLabel(size int, c *boc.Cell, key *boc.BitString) (int, *boc.BitString, 
 }
 
 func (m *MapValue) Marshal(cell *boc.Cell, ty parser.MapKV, encoder *Encoder) error {
-	keySize, ok := ty.K.GetFixedSize()
+	keyTy, err := encoder.abiIndex.TyByIdx(ty.KeyTyIdx)
+	if err != nil {
+		return fmt.Errorf("failed to resolve map key type: %w", err)
+	}
+	keySize, ok := keyTy.GetFixedSize()
 	if !ok {
-		return fmt.Errorf("%s type is not comparable", ty.K.SumType)
+		return fmt.Errorf("%s type is not comparable", keyTy.SumType)
 	}
 
 	if len(m.keys) != len(m.values) {
@@ -205,7 +214,7 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty parser.MapKV, encoder *Encoder) er
 		return nil
 	}
 
-	err := cell.WriteBit(true)
+	err = cell.WriteBit(true)
 	if err != nil {
 		return fmt.Errorf("failed to write map's not-emptiness bit: %w", err)
 	}
@@ -213,7 +222,7 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty parser.MapKV, encoder *Encoder) er
 	keys := make([]boc.BitString, len(m.keys))
 	for i, k := range m.keys {
 		keyCell := boc.NewCell()
-		err = k.Marshal(keyCell, ty.K, encoder)
+		err = k.MarshalTyIdx(keyCell, ty.KeyTyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal map's %v key: %w", i, err)
 		}
@@ -221,7 +230,7 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty parser.MapKV, encoder *Encoder) er
 	}
 
 	ref := boc.NewCell()
-	err = encodeMap(ref, keys, m.values, keySize, ty.V, encoder)
+	err = encodeMap(ref, keys, m.values, keySize, ty.ValueTyIdx, encoder)
 	if err != nil {
 		return fmt.Errorf("failed to encode map: %w", err)
 	}
@@ -234,7 +243,7 @@ func (m *MapValue) Marshal(cell *boc.Cell, ty parser.MapKV, encoder *Encoder) er
 	return nil
 }
 
-func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, vt parser.Ty, encoder *Encoder) error {
+func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, valueTyIdx int, encoder *Encoder) error {
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}
@@ -267,7 +276,7 @@ func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, v
 		if err != nil {
 			return fmt.Errorf("failed to create map's left value: %w", err)
 		}
-		err = encodeMap(l, leftKeys, leftValues, keySize, vt, encoder)
+		err = encodeMap(l, leftKeys, leftValues, keySize, valueTyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to encode map's left value: %w", err)
 		}
@@ -275,14 +284,14 @@ func encodeMap(c *boc.Cell, keys []boc.BitString, values []Value, keySize int, v
 		if err != nil {
 			return fmt.Errorf("failed to create map's right value: %w", err)
 		}
-		err = encodeMap(r, rightKeys, rightValues, keySize, vt, encoder)
+		err = encodeMap(r, rightKeys, rightValues, keySize, valueTyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to encode map's right value: %w", err)
 		}
 		return nil
 	}
 	// marshal value
-	err = values[0].Marshal(c, vt, encoder)
+	err = values[0].MarshalTyIdx(c, valueTyIdx, encoder)
 	if err != nil {
 		return fmt.Errorf("failed to marshal map's values: %w", err)
 	}
@@ -444,7 +453,7 @@ func (m *MapValue) get(key Value) (Value, bool) {
 
 func (m *MapValue) GetBySmallInt(v Int64) (Value, bool) {
 	key := Value{
-		SumType:  "SmallInt",
+		SumType:  SumTypeSmallInt,
 		SmallInt: &v,
 	}
 	return m.get(key)
@@ -452,7 +461,7 @@ func (m *MapValue) GetBySmallInt(v Int64) (Value, bool) {
 
 func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
 	key := Value{
-		SumType:   "SmallUint",
+		SumType:   SumTypeSmallUint,
 		SmallUint: &v,
 	}
 	return m.get(key)
@@ -460,7 +469,7 @@ func (m *MapValue) GetBySmallUInt(v UInt64) (Value, bool) {
 
 func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
 	key := Value{
-		SumType: "BigInt",
+		SumType: SumTypeBigInt,
 		BigInt:  &v,
 	}
 	return m.get(key)
@@ -468,7 +477,7 @@ func (m *MapValue) GetByBigInt(v BigInt) (Value, bool) {
 
 func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
 	key := Value{
-		SumType: "BigUint",
+		SumType: SumTypeBigUint,
 		BigUint: &v,
 	}
 	return m.get(key)
@@ -476,7 +485,7 @@ func (m *MapValue) GetByBigUInt(v BigUInt) (Value, bool) {
 
 func (m *MapValue) GetByBits(v Bits) (Value, bool) {
 	key := Value{
-		SumType: "Bits",
+		SumType: SumTypeBits,
 		Bits:    &v,
 	}
 	return m.get(key)
@@ -484,7 +493,7 @@ func (m *MapValue) GetByBits(v Bits) (Value, bool) {
 
 func (m *MapValue) GetByInternalAddress(v InternalAddress) (Value, bool) {
 	key := Value{
-		SumType:         "InternalAddress",
+		SumType:         SumTypeInternalAddress,
 		InternalAddress: &v,
 	}
 	return m.get(key)
@@ -506,7 +515,7 @@ func (m *MapValue) set(key Value, value Value) (bool, error) {
 
 func (m *MapValue) SetBySmallInt(k Int64, value Value) (bool, error) {
 	key := Value{
-		SumType:  "SmallInt",
+		SumType:  SumTypeSmallInt,
 		SmallInt: &k,
 	}
 	return m.set(key, value)
@@ -514,7 +523,7 @@ func (m *MapValue) SetBySmallInt(k Int64, value Value) (bool, error) {
 
 func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
 	key := Value{
-		SumType:   "SmallUint",
+		SumType:   SumTypeSmallUint,
 		SmallUint: &k,
 	}
 	return m.set(key, value)
@@ -522,7 +531,7 @@ func (m *MapValue) SetBySmallUInt(k UInt64, value Value) (bool, error) {
 
 func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
 	key := Value{
-		SumType: "BigInt",
+		SumType: SumTypeBigInt,
 		BigInt:  &k,
 	}
 	return m.set(key, value)
@@ -530,7 +539,7 @@ func (m *MapValue) SetByBigInt(k BigInt, value Value) (bool, error) {
 
 func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
 	key := Value{
-		SumType: "BigUint",
+		SumType: SumTypeBigUint,
 		BigUint: &k,
 	}
 	return m.set(key, value)
@@ -538,7 +547,7 @@ func (m *MapValue) SetByBigUInt(k BigUInt, value Value) (bool, error) {
 
 func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
 	key := Value{
-		SumType: "Bits",
+		SumType: SumTypeBits,
 		Bits:    &k,
 	}
 	return m.set(key, value)
@@ -546,7 +555,7 @@ func (m *MapValue) SetByBits(k Bits, value Value) (bool, error) {
 
 func (m *MapValue) SetByInternalAddress(k InternalAddress, value Value) (bool, error) {
 	key := Value{
-		SumType:         "InternalAddress",
+		SumType:         SumTypeInternalAddress,
 		InternalAddress: &k,
 	}
 	return m.set(key, value)
@@ -564,7 +573,7 @@ func (m *MapValue) delete(key Value) {
 
 func (m *MapValue) DeleteBySmallInt(k Int64) {
 	key := Value{
-		SumType:  "SmallInt",
+		SumType:  SumTypeSmallInt,
 		SmallInt: &k,
 	}
 	m.delete(key)
@@ -572,7 +581,7 @@ func (m *MapValue) DeleteBySmallInt(k Int64) {
 
 func (m *MapValue) DeleteBySmallUInt(k UInt64) {
 	key := Value{
-		SumType:   "SmallUint",
+		SumType:   SumTypeSmallUint,
 		SmallUint: &k,
 	}
 	m.delete(key)
@@ -580,7 +589,7 @@ func (m *MapValue) DeleteBySmallUInt(k UInt64) {
 
 func (m *MapValue) DeleteByBigInt(k BigInt) {
 	key := Value{
-		SumType: "BigInt",
+		SumType: SumTypeBigInt,
 		BigInt:  &k,
 	}
 	m.delete(key)
@@ -588,7 +597,7 @@ func (m *MapValue) DeleteByBigInt(k BigInt) {
 
 func (m *MapValue) DeleteByBigUInt(k BigUInt) {
 	key := Value{
-		SumType: "BigUint",
+		SumType: SumTypeBigUint,
 		BigUint: &k,
 	}
 	m.delete(key)
@@ -596,7 +605,7 @@ func (m *MapValue) DeleteByBigUInt(k BigUInt) {
 
 func (m *MapValue) DeleteByBits(k Bits) {
 	key := Value{
-		SumType: "Bits",
+		SumType: SumTypeBits,
 		Bits:    &k,
 	}
 	m.delete(key)
@@ -604,7 +613,7 @@ func (m *MapValue) DeleteByBits(k Bits) {
 
 func (m *MapValue) DeleteByInternalAddress(k InternalAddress) {
 	key := Value{
-		SumType:         "InternalAddress",
+		SumType:         SumTypeInternalAddress,
 		InternalAddress: &k,
 	}
 	m.delete(key)

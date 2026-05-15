@@ -7,7 +7,7 @@ import (
 )
 
 func (tgen TolkGolangGenerator) calcWidthOnStack(tyIdx int) (int, error) {
-	ty, err := tgen.symbols.tyByIdx(tyIdx)
+	ty, err := tgen.symbols.TyByIdx(tyIdx)
 	if err != nil {
 		return 0, err
 	}
@@ -25,7 +25,7 @@ func (tgen TolkGolangGenerator) calcWidthOnStack(tyIdx int) (int, error) {
 		}
 		return totalWidth, nil
 	case parser.TyKindStructRef:
-		fields, err := tgen.symbols.structFieldsOf(tyIdx, true)
+		fields, err := tgen.symbols.StructFieldsOf(tyIdx, true)
 		if err != nil {
 			return 0, err
 		}
@@ -39,7 +39,7 @@ func (tgen TolkGolangGenerator) calcWidthOnStack(tyIdx int) (int, error) {
 		}
 		return totalWidth, nil
 	case parser.TyKindAliasRef:
-		targetTyIdx, _, err := tgen.symbols.aliasTargetOf(tyIdx)
+		targetTyIdx, _, err := tgen.symbols.AliasTargetOf(tyIdx)
 		if err != nil {
 			return 0, fmt.Errorf("alias %q: %w", ty.AliasRef.AliasName, err)
 		}
@@ -56,7 +56,7 @@ func (tgen TolkGolangGenerator) calcWidthOnStack(tyIdx int) (int, error) {
 }
 
 func (tgen TolkGolangGenerator) stackReturnGoType(tyIdx int) (string, error) {
-	ty, err := tgen.symbols.tyByIdx(tyIdx)
+	ty, err := tgen.symbols.TyByIdx(tyIdx)
 	if err != nil {
 		return "", err
 	}

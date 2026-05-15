@@ -169,8 +169,13 @@ type ABIEnum struct {
 }
 
 type ABIEnumMember struct {
-	Name  string  `json:"name"`
-	Value big.Int `json:"value"`
+	Name  string `json:"name"`
+	Value BigInt `json:"value"`
+}
+
+// BigInt wraps big.Int for JSON marshaling with string-number supports
+type BigInt struct {
+	big.Int
 }
 
 // ABIStructInstantiation is a resolved runtime shape for a generic struct.

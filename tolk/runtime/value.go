@@ -15,6 +15,38 @@ import (
 
 type SumType string
 
+const (
+	SumTypeBool            SumType = "Bool"
+	SumTypeSmallInt        SumType = "SmallInt"
+	SumTypeSmallUint       SumType = "SmallUint"
+	SumTypeBigInt          SumType = "BigInt"
+	SumTypeBigUint         SumType = "BigUint"
+	SumTypeVarInt          SumType = "VarInt"
+	SumTypeVarUint         SumType = "VarUint"
+	SumTypeCoins           SumType = "Coins"
+	SumTypeBits            SumType = "Bits"
+	SumTypeCell            SumType = "Cell"
+	SumTypeRemaining       SumType = "Remaining"
+	SumTypeInternalAddress SumType = "InternalAddress"
+	SumTypeOptionalAddress SumType = "OptionalAddress"
+	SumTypeExternalAddress SumType = "ExternalAddress"
+	SumTypeAnyAddress      SumType = "AnyAddress"
+	SumTypeNoneAddress     SumType = "NoneAddress"
+	SumTypeVarAddress      SumType = "VarAddress"
+	SumTypeOptionalValue   SumType = "OptionalValue"
+	SumTypeRefValue        SumType = "RefValue"
+	SumTypeTupleWith       SumType = "TupleWith"
+	SumTypeTensor          SumType = "Tensor"
+	SumTypeMap             SumType = "Map"
+	SumTypeStruct          SumType = "Struct"
+	SumTypeAlias           SumType = "Alias"
+	SumTypeEnum            SumType = "Enum"
+	SumTypeGenericT        SumType = "GenericT"
+	SumTypeUnion           SumType = "Union"
+	SumTypeNull            SumType = "Null"
+	SumTypeVoid            SumType = "Void"
+)
+
 func (s SumType) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + utils.ToCamelCasePrivate(string(s)) + `"`), nil
 }
@@ -412,12 +444,30 @@ func (v *Value) GetType() string {
 	return string(v.SumType)
 }
 
+func (v *Value) UnmarshalTyIdx(cell *boc.Cell, tyIdx int, decoder *Decoder) error {
+	ty, err := decoder.abiIndex.TyByIdx(tyIdx)
+	if err != nil {
+		return err
+	}
+	return v.unmarshal(cell, ty, &tyIdx, decoder)
+}
+
 func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error {
+	var tyIdx *int
+	if decoder.abiIndex != nil {
+		if idx, ok := decoder.abiIndex.TyIdxOf(ty); ok {
+			tyIdx = &idx
+		}
+	}
+	return v.unmarshal(cell, ty, tyIdx, decoder)
+}
+
+func (v *Value) unmarshal(cell *boc.Cell, ty parser.Ty, tyIdx *int, decoder *Decoder) error {
 	var err error
 	switch ty.SumType {
-	case "IntN":
+	case parser.TyKindIntN:
 		if ty.IntN.N <= 64 {
-			v.SumType = "SmallInt"
+			v.SumType = SumTypeSmallInt
 			def := Int64(0)
 			v.SmallInt = &def
 			err = v.SmallInt.Unmarshal(cell, *ty.IntN, decoder)
@@ -425,16 +475,16 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 				return fmt.Errorf("failed to unmarshal small int value: %w", err)
 			}
 		} else {
-			v.SumType = "BigInt"
+			v.SumType = SumTypeBigInt
 			v.BigInt = &BigInt{}
 			err = v.BigInt.Unmarshal(cell, *ty.IntN, decoder)
 			if err != nil {
 				return fmt.Errorf("failed to unmarshal big int value: %w", err)
 			}
 		}
-	case "UintN":
+	case parser.TyKindUintN:
 		if ty.UintN.N <= 64 {
-			v.SumType = "SmallUint"
+			v.SumType = SumTypeSmallUint
 			def := UInt64(0)
 			v.SmallUint = &def
 			err = v.SmallUint.Unmarshal(cell, *ty.UintN, decoder)
@@ -442,180 +492,184 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 				return fmt.Errorf("failed to unmarshal small uint value: %w", err)
 			}
 		} else {
-			v.SumType = "BigUint"
+			v.SumType = SumTypeBigUint
 			v.BigUint = &BigUInt{}
 			err = v.BigUint.Unmarshal(cell, *ty.UintN, decoder)
 			if err != nil {
 				return fmt.Errorf("failed to unmarshal big uint value: %w", err)
 			}
 		}
-	case "VarIntN":
-		v.SumType = "VarInt"
+	case parser.TyKindVarIntN:
+		v.SumType = SumTypeVarInt
 		v.VarInt = &VarInt{}
 		err = v.VarInt.Unmarshal(cell, *ty.VarIntN, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal var int value: %w", err)
 		}
-	case "VarUintN":
-		v.SumType = "VarUint"
+	case parser.TyKindVarUintN:
+		v.SumType = SumTypeVarUint
 		v.VarUint = &VarUInt{}
 		err = v.VarUint.Unmarshal(cell, *ty.VarUintN, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal var uint value: %w", err)
 		}
-	case "BitsN":
-		v.SumType = "Bits"
+	case parser.TyKindBitsN:
+		v.SumType = SumTypeBits
 		v.Bits = &Bits{}
 		err = v.Bits.Unmarshal(cell, *ty.BitsN, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal bits value: %w", err)
 		}
-	case "Nullable":
-		v.SumType = "OptionalValue"
+	case parser.TyKindNullable:
+		v.SumType = SumTypeOptionalValue
 		v.OptionalValue = &OptValue{}
 		err = v.OptionalValue.Unmarshal(cell, *ty.Nullable, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal nullable value: %w", err)
 		}
-	case "CellOf":
-		v.SumType = "RefValue"
+	case parser.TyKindCellOf:
+		v.SumType = SumTypeRefValue
 		v.RefValue = &RefValue{}
 		err = v.RefValue.Unmarshal(cell, *ty.CellOf, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal cell of: %w", err)
 		}
-	case "Tensor":
-		v.SumType = "Tensor"
+	case parser.TyKindTensor:
+		v.SumType = SumTypeTensor
 		v.Tensor = &TensorValues{}
 		err = v.Tensor.Unmarshal(cell, *ty.Tensor, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal tensor value: %w", err)
 		}
-	case "TupleWith":
-		v.SumType = "TupleWith"
+	case parser.TyKindShapedTuple:
+		v.SumType = SumTypeTupleWith
 		v.TupleWith = &TupleValues{}
 		err = v.TupleWith.Unmarshal(cell, *ty.ShapedTuple, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal tuple value: %w", err)
 		}
-	case "Map":
-		v.SumType = "Map"
+	case parser.TyKindMapKV:
+		v.SumType = SumTypeMap
 		v.Map = &MapValue{}
 		err = v.Map.Unmarshal(cell, *ty.MapKV, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal map value: %w", err)
 		}
-	case "EnumRef":
-		v.SumType = "Enum"
+	case parser.TyKindEnumRef:
+		v.SumType = SumTypeEnum
 		v.Enum = &EnumValue{}
 		err = v.Enum.Unmarshal(cell, *ty.EnumRef, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal enum value: %w", err)
 		}
-	case "StructRef":
-		v.SumType = "Struct"
+	case parser.TyKindStructRef:
+		v.SumType = SumTypeStruct
 		v.Struct = &Struct{}
-		err = v.Struct.Unmarshal(cell, *ty.StructRef, decoder)
+		if tyIdx == nil {
+			return fmt.Errorf("struct %q requires ty_idx context", ty.StructRef.StructName)
+		}
+		err = v.Struct.UnmarshalTyIdx(cell, *tyIdx, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal struct value: %w", err)
 		}
-	case "AliasRef":
-		v.SumType = "Alias"
+	case parser.TyKindAliasRef:
+		v.SumType = SumTypeAlias
 		v.Alias = &AliasValue{}
-		err = v.Alias.Unmarshal(cell, *ty.AliasRef, decoder)
+		if tyIdx == nil {
+			return fmt.Errorf("alias %q requires ty_idx context", ty.AliasRef.AliasName)
+		}
+		err = v.Alias.UnmarshalTyIdx(cell, *tyIdx, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal alias value: %w", err)
 		}
-	case "GenericT":
-		v.SumType = "GenericT"
+	case parser.TyKindGenericT:
+		v.SumType = SumTypeGenericT
 		v.Generic = &GenericValue{}
 		err = v.Generic.Unmarshal(cell, *ty.GenericT, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal generic value: %w", err)
 		}
-	case "Union":
-		v.SumType = "Union"
+	case parser.TyKindUnion:
+		v.SumType = SumTypeUnion
 		v.Union = &UnionValue{}
 		err = v.Union.Unmarshal(cell, *ty.Union, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal union value: %w", err)
 		}
-	case "Int":
+	case parser.TyKindInt:
 		err = fmt.Errorf("failed to unmarshal int value: int is not supported")
-	case "Coins":
-		v.SumType = "Coins"
+	case parser.TyKindCoins:
+		v.SumType = SumTypeCoins
 		v.Coins = &CoinsValue{}
 		err = v.Coins.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal coins value: %w", err)
 		}
-	case "Bool":
-		v.SumType = "Bool"
+	case parser.TyKindBool:
+		v.SumType = SumTypeBool
 		def := BoolValue(false)
 		v.Bool = &def
 		err = v.Bool.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal bool value: %w", err)
 		}
-	case "Cell":
-		v.SumType = "Cell"
+	case parser.TyKindCell:
+		v.SumType = SumTypeCell
 		v.Cell = &Any{}
 		err = v.Cell.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal cell value: %w", err)
 		}
-	case "Slice":
+	case parser.TyKindSlice:
 		err = fmt.Errorf("failed to unmarshal slice value: slice is not supported")
-	case "Builder":
+	case parser.TyKindBuilder:
 		err = fmt.Errorf("failed to unmarshal builder value: builder is not supported")
-	case "Callable":
+	case parser.TyKindCallable:
 		err = fmt.Errorf("failed to unmarshal callable value: callable is not supported")
-	case "Remaining":
-		v.SumType = "Remaining"
+	case parser.TyKindRemaining:
+		v.SumType = SumTypeRemaining
 		v.Remaining = &RemainingValue{}
 		err = v.Remaining.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal remaining value: %w", err)
 		}
-	case "Address":
-		v.SumType = "InternalAddress"
+	case parser.TyKindAddress:
+		v.SumType = SumTypeInternalAddress
 		v.InternalAddress = &InternalAddress{}
 		err = v.InternalAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal internal address value: %w", err)
 		}
-	case "AddressOpt":
-		v.SumType = "OptionalAddress"
+	case parser.TyKindAddressOpt:
+		v.SumType = SumTypeOptionalAddress
 		v.OptionalAddress = &OptionalAddress{}
 		err = v.OptionalAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal optional address value: %w", err)
 		}
-	case "AddressExt":
-		v.SumType = "ExternalAddress"
+	case parser.TyKindAddressExt:
+		v.SumType = SumTypeExternalAddress
 		v.ExternalAddress = &ExternalAddress{}
 		err = v.ExternalAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal external address value: %w", err)
 		}
-	case "AddressAny":
-		v.SumType = "AnyAddress"
+	case parser.TyKindAddressAny:
+		v.SumType = SumTypeAnyAddress
 		v.AnyAddress = &AnyAddress{}
 		err = v.AnyAddress.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal any address value: %w", err)
 		}
-	case "TupleAny":
-		err = fmt.Errorf("failed to unmarshal tuple any value: tuple any is not supported")
-	case "NullLiteral":
-		v.SumType = "Null"
+	case parser.TyKindNullLiteral:
+		v.SumType = SumTypeNull
 		v.Null = &NullValue{}
 		err = v.Null.Unmarshal(cell, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal null value: %w", err)
 		}
-	case "Void":
-		v.SumType = "Void"
+	case parser.TyKindVoid:
+		v.SumType = SumTypeVoid
 		v.Void = &VoidValue{}
 		err = v.Void.Unmarshal(cell, decoder)
 		if err != nil {
@@ -627,12 +681,30 @@ func (v *Value) Unmarshal(cell *boc.Cell, ty parser.Ty, decoder *Decoder) error 
 	return nil
 }
 
+func (v *Value) MarshalTyIdx(cell *boc.Cell, tyIdx int, encoder *Encoder) error {
+	ty, err := encoder.abiIndex.TyByIdx(tyIdx)
+	if err != nil {
+		return err
+	}
+	return v.marshal(cell, ty, &tyIdx, encoder)
+}
+
 func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
+	var tyIdx *int
+	if encoder.abiIndex != nil {
+		if idx, ok := encoder.abiIndex.TyIdxOf(ty); ok {
+			tyIdx = &idx
+		}
+	}
+	return v.marshal(cell, ty, tyIdx, encoder)
+}
+
+func (v *Value) marshal(cell *boc.Cell, ty parser.Ty, tyIdx *int, encoder *Encoder) error {
 	var err error
 	switch ty.SumType {
-	case "IntN":
+	case parser.TyKindIntN:
 		if ty.IntN.N <= 64 {
-			if v.SumType != "SmallInt" {
+			if v.SumType != SumTypeSmallInt {
 				return fmt.Errorf("expected SmallInt, but got %v", v.SumType)
 			}
 			err = v.SmallInt.Marshal(cell, *ty.IntN, encoder)
@@ -640,7 +712,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 				return fmt.Errorf("failed to marshal small int value: %w", err)
 			}
 		} else {
-			if v.SumType != "BigInt" {
+			if v.SumType != SumTypeBigInt {
 				return fmt.Errorf("expected BigInt, but got %v", v.SumType)
 			}
 			err = v.BigInt.Marshal(cell, *ty.IntN, encoder)
@@ -648,9 +720,9 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 				return fmt.Errorf("failed to marshal big int value: %w", err)
 			}
 		}
-	case "UintN":
+	case parser.TyKindUintN:
 		if ty.UintN.N <= 64 {
-			if v.SumType != "SmallUint" {
+			if v.SumType != SumTypeSmallUint {
 				return fmt.Errorf("expected SmallUint, but got %v", v.SumType)
 			}
 			err = v.SmallUint.Marshal(cell, *ty.UintN, encoder)
@@ -658,7 +730,7 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 				return fmt.Errorf("failed to marshal small uint value: %w", err)
 			}
 		} else {
-			if v.SumType != "BigUint" {
+			if v.SumType != SumTypeBigUint {
 				return fmt.Errorf("expected BigUint, but got %v", v.SumType)
 			}
 			err = v.BigUint.Marshal(cell, *ty.UintN, encoder)
@@ -666,194 +738,198 @@ func (v *Value) Marshal(cell *boc.Cell, ty parser.Ty, encoder *Encoder) error {
 				return fmt.Errorf("failed to marshal big uint value: %w", err)
 			}
 		}
-	case "VarIntN":
-		if v.SumType != "VarInt" {
+	case parser.TyKindVarIntN:
+		if v.SumType != SumTypeVarInt {
 			return fmt.Errorf("expected VarInt, but got %v", v.SumType)
 		}
 		err = v.VarInt.Marshal(cell, *ty.VarIntN, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal var int value: %w", err)
 		}
-	case "VarUintN":
-		if v.SumType != "VarUint" {
+	case parser.TyKindVarUintN:
+		if v.SumType != SumTypeVarUint {
 			return fmt.Errorf("expected VarUint, but got %v", v.SumType)
 		}
 		err = v.VarUint.Marshal(cell, *ty.VarUintN, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal var uint value: %w", err)
 		}
-	case "BitsN":
-		if v.SumType != "Bits" {
+	case parser.TyKindBitsN:
+		if v.SumType != SumTypeBits {
 			return fmt.Errorf("expected Bits, but got %v", v.SumType)
 		}
 		err = v.Bits.Marshal(cell, *ty.BitsN, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal bits value: %w", err)
 		}
-	case "Nullable":
-		if v.SumType != "OptionalValue" {
+	case parser.TyKindNullable:
+		if v.SumType != SumTypeOptionalValue {
 			return fmt.Errorf("expected OptionalValue, but got %v", v.SumType)
 		}
 		err = v.OptionalValue.Marshal(cell, *ty.Nullable, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal nullable value: %w", err)
 		}
-	case "CellOf":
-		if v.SumType != "RefValue" {
+	case parser.TyKindCellOf:
+		if v.SumType != SumTypeRefValue {
 			return fmt.Errorf("expected RefValue, but got %v", v.SumType)
 		}
 		err = v.RefValue.Marshal(cell, *ty.CellOf, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal cell of value: %w", err)
 		}
-	case "Tensor":
-		if v.SumType != "Tensor" {
+	case parser.TyKindTensor:
+		if v.SumType != SumTypeTensor {
 			return fmt.Errorf("expected Tensor, but got %v", v.SumType)
 		}
 		err = v.Tensor.Marshal(cell, *ty.Tensor, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal tensor value: %w", err)
 		}
-	case "TupleWith":
-		if v.SumType != "TupleWith" {
+	case parser.TyKindShapedTuple:
+		if v.SumType != SumTypeTupleWith {
 			return fmt.Errorf("expected TupleWith, but got %v", v.SumType)
 		}
 		err = v.TupleWith.Marshal(cell, *ty.ShapedTuple, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal tuple value: %w", err)
 		}
-	case "Map":
-		if v.SumType != "Map" {
+	case parser.TyKindMapKV:
+		if v.SumType != SumTypeMap {
 			return fmt.Errorf("expected Map, but got %v", v.SumType)
 		}
 		err = v.Map.Marshal(cell, *ty.MapKV, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal map value: %w", err)
 		}
-	case "EnumRef":
-		if v.SumType != "Enum" {
+	case parser.TyKindEnumRef:
+		if v.SumType != SumTypeEnum {
 			return fmt.Errorf("expected Enum, but got %v", v.SumType)
 		}
 		err = v.Enum.Marshal(cell, *ty.EnumRef, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal enum value: %w", err)
 		}
-	case "StructRef":
-		if v.SumType != "Struct" {
+	case parser.TyKindStructRef:
+		if v.SumType != SumTypeStruct {
 			return fmt.Errorf("expected Struct, but got %v", v.SumType)
 		}
-		err = v.Struct.Marshal(cell, *ty.StructRef, encoder)
+		if tyIdx == nil {
+			return fmt.Errorf("struct %q requires ty_idx context", ty.StructRef.StructName)
+		}
+		err = v.Struct.MarshalTyIdx(cell, *tyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal struct value: %w", err)
 		}
-	case "AliasRef":
-		if v.SumType != "Alias" {
+	case parser.TyKindAliasRef:
+		if v.SumType != SumTypeAlias {
 			return fmt.Errorf("expected Alias, but got %v", v.SumType)
 		}
-		err = v.Alias.Marshal(cell, *ty.AliasRef, encoder)
+		if tyIdx == nil {
+			return fmt.Errorf("alias %q requires ty_idx context", ty.AliasRef.AliasName)
+		}
+		err = v.Alias.MarshalTyIdx(cell, *tyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal alias value: %w", err)
 		}
-	case "GenericT":
-		if v.SumType != "GenericT" {
+	case parser.TyKindGenericT:
+		if v.SumType != SumTypeGenericT {
 			return fmt.Errorf("expected GenericT, but got %v", v.SumType)
 		}
 		err = v.Generic.Marshal(cell, *ty.GenericT, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal generic value: %w", err)
 		}
-	case "Union":
-		if v.SumType != "Union" {
+	case parser.TyKindUnion:
+		if v.SumType != SumTypeUnion {
 			return fmt.Errorf("expected Union, but got %v", v.SumType)
 		}
 		err = v.Union.Marshal(cell, *ty.Union, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal union value: %w", err)
 		}
-	case "Int":
+	case parser.TyKindInt:
 		err = fmt.Errorf("failed to marshal int value: int is not supported")
-	case "Coins":
-		if v.SumType != "Coins" {
+	case parser.TyKindCoins:
+		if v.SumType != SumTypeCoins {
 			return fmt.Errorf("expected Coins, but got %v", v.SumType)
 		}
 		err = v.Coins.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal coins value: %w", err)
 		}
-	case "Bool":
-		if v.SumType != "Bool" {
+	case parser.TyKindBool:
+		if v.SumType != SumTypeBool {
 			return fmt.Errorf("expected Bool, but got %v", v.SumType)
 		}
 		err = v.Bool.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal bool value: %w", err)
 		}
-	case "Cell":
-		if v.SumType != "Cell" {
+	case parser.TyKindCell:
+		if v.SumType != SumTypeCell {
 			return fmt.Errorf("expected Cell, but got %v", v.SumType)
 		}
 		err = v.Cell.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal cell value: %w", err)
 		}
-	case "Slice":
+	case parser.TyKindSlice:
 		err = fmt.Errorf("failed to marshal slice value: slice is not supported")
-	case "Builder":
+	case parser.TyKindBuilder:
 		err = fmt.Errorf("failed to marshal builder value: builder is not supported")
-	case "Callable":
+	case parser.TyKindCallable:
 		err = fmt.Errorf("failed to marshal int callable: callable is not supported")
-	case "Remaining":
-		if v.SumType != "Remaining" {
+	case parser.TyKindRemaining:
+		if v.SumType != SumTypeRemaining {
 			return fmt.Errorf("expected Remaining, but got %v", v.SumType)
 		}
 		err = v.Remaining.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal remaining value: %w", err)
 		}
-	case "Address":
-		if v.SumType != "InternalAddress" {
+	case parser.TyKindAddress:
+		if v.SumType != SumTypeInternalAddress {
 			return fmt.Errorf("expected InternalAddress, but got %v", v.SumType)
 		}
 		err = v.InternalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal internal address value: %w", err)
 		}
-	case "AddressOpt":
-		if v.SumType != "OptionalAddress" {
+	case parser.TyKindAddressOpt:
+		if v.SumType != SumTypeOptionalAddress {
 			return fmt.Errorf("expected OptionalAddress, but got %v", v.SumType)
 		}
 		err = v.OptionalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal optional address value: %w", err)
 		}
-	case "AddressExt":
-		if v.SumType != "ExternalAddress" {
+	case parser.TyKindAddressExt:
+		if v.SumType != SumTypeExternalAddress {
 			return fmt.Errorf("expected ExternalAddress, but got %v", v.SumType)
 		}
 		err = v.ExternalAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal external address value: %w", err)
 		}
-	case "AddressAny":
-		if v.SumType != "AnyAddress" {
+	case parser.TyKindAddressAny:
+		if v.SumType != SumTypeAnyAddress {
 			return fmt.Errorf("expected AnyAddress, but got %v", v.SumType)
 		}
 		err = v.AnyAddress.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal any address value: %w", err)
 		}
-	case "TupleAny":
-		err = fmt.Errorf("failed to marshal tuple any value: tuple any not supported")
-	case "NullLiteral":
-		if v.SumType != "Null" {
+	case parser.TyKindNullLiteral:
+		if v.SumType != SumTypeNull {
 			return fmt.Errorf("expected Null, but got %v", v.SumType)
 		}
 		err = v.Null.Marshal(cell, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal null value: %w", err)
 		}
-	case "Void":
-		if v.SumType != "Void" {
+	case parser.TyKindVoid:
+		if v.SumType != SumTypeVoid {
 			return fmt.Errorf("expected Void, but got %v", v.SumType)
 		}
 		err = v.Void.Marshal(cell, encoder)
@@ -873,137 +949,137 @@ func (v *Value) Equal(o any) bool {
 	}
 
 	switch v.SumType {
-	case "Bool":
+	case SumTypeBool:
 		if otherValue.Bool == nil {
 			return false
 		}
 		return v.Bool.Equal(*otherValue.Bool)
-	case "SmallInt":
+	case SumTypeSmallInt:
 		if otherValue.SmallInt == nil {
 			return false
 		}
 		return v.SmallInt.Equal(*otherValue.SmallInt)
-	case "SmallUint":
+	case SumTypeSmallUint:
 		if otherValue.SmallUint == nil {
 			return false
 		}
 		return v.SmallUint.Equal(*otherValue.SmallUint)
-	case "BigInt":
+	case SumTypeBigInt:
 		if otherValue.BigInt == nil {
 			return false
 		}
 		return v.BigInt.Equal(*otherValue.BigInt)
-	case "BigUint":
+	case SumTypeBigUint:
 		if otherValue.BigUint == nil {
 			return false
 		}
 		return v.BigUint.Equal(*otherValue.BigUint)
-	case "VarInt":
+	case SumTypeVarInt:
 		if otherValue.VarInt == nil {
 			return false
 		}
 		return v.VarInt.Equal(*otherValue.VarInt)
-	case "VarUint":
+	case SumTypeVarUint:
 		if otherValue.VarUint == nil {
 			return false
 		}
 		return v.VarUint.Equal(*otherValue.VarUint)
-	case "Coins":
+	case SumTypeCoins:
 		if otherValue.Coins == nil {
 			return false
 		}
 		return v.Coins.Equal(*otherValue.Coins)
-	case "Bits":
+	case SumTypeBits:
 		if otherValue.Bits == nil {
 			return false
 		}
 		return v.Bits.Equal(*otherValue.Bits)
-	case "Cell":
+	case SumTypeCell:
 		if otherValue.Cell == nil {
 			return false
 		}
 		return v.Cell.Equal(*otherValue.Cell)
-	case "Remaining":
+	case SumTypeRemaining:
 		if otherValue.Remaining == nil {
 			return false
 		}
 		return v.Remaining.Equal(*otherValue.Remaining)
-	case "InternalAddress":
+	case SumTypeInternalAddress:
 		if otherValue.InternalAddress == nil {
 			return false
 		}
 		return v.InternalAddress.Equal(*otherValue.InternalAddress)
-	case "OptionalAddress":
+	case SumTypeOptionalAddress:
 		if otherValue.OptionalAddress == nil {
 			return false
 		}
 		return v.OptionalAddress.Equal(*otherValue.OptionalAddress)
-	case "ExternalAddress":
+	case SumTypeExternalAddress:
 		if otherValue.ExternalAddress == nil {
 			return false
 		}
 		return v.ExternalAddress.Equal(*otherValue.ExternalAddress)
-	case "AnyAddress":
+	case SumTypeAnyAddress:
 		if otherValue.AnyAddress == nil {
 			return false
 		}
 		return v.AnyAddress.Equal(*otherValue.AnyAddress)
-	case "OptionalValue":
+	case SumTypeOptionalValue:
 		if otherValue.OptionalValue == nil {
 			return false
 		}
 		return v.OptionalValue.Equal(*otherValue.OptionalValue)
-	case "RefValue":
+	case SumTypeRefValue:
 		if otherValue.RefValue == nil {
 			return false
 		}
 		return v.RefValue.Equal(*otherValue.RefValue)
-	case "TupleWith":
+	case SumTypeTupleWith:
 		if otherValue.TupleWith == nil {
 			return false
 		}
 		return v.TupleWith.Equal(*otherValue.TupleWith)
-	case "Tensor":
+	case SumTypeTensor:
 		if otherValue.Tensor == nil {
 			return false
 		}
 		return v.Tensor.Equal(*otherValue.Tensor)
-	case "Map":
+	case SumTypeMap:
 		if otherValue.Map == nil {
 			return false
 		}
 		return v.Map.Equal(*otherValue.Map)
-	case "Struct":
+	case SumTypeStruct:
 		if otherValue.Struct == nil {
 			return false
 		}
 		return v.Struct.Equal(*otherValue.Struct)
-	case "Alias":
+	case SumTypeAlias:
 		if otherValue.Alias == nil {
 			return false
 		}
 		return v.Alias.Equal(*otherValue.Alias)
-	case "Enum":
+	case SumTypeEnum:
 		if otherValue.Enum == nil {
 			return false
 		}
 		return v.Enum.Equal(*otherValue.Enum)
-	case "GenericT":
+	case SumTypeGenericT:
 		if otherValue.Generic == nil {
 			return false
 		}
 		return v.Generic.Equal(*otherValue.Generic)
-	case "Union":
+	case SumTypeUnion:
 		if otherValue.Union == nil {
 			return false
 		}
 		return v.Union.Equal(*otherValue.Union)
-	case "Null":
+	case SumTypeNull:
 		if otherValue.Null == nil {
 			return false
 		}
 		return v.Null.Equal(*otherValue.Null)
-	case "Void":
+	case SumTypeVoid:
 		if otherValue.Void == nil {
 			return false
 		}
@@ -1018,61 +1094,61 @@ func (v Value) MarshalJSON() ([]byte, error) {
 	var data []byte
 	var err error
 	switch v.SumType {
-	case "Bool":
+	case SumTypeBool:
 		data, err = json.Marshal(v.Bool)
-	case "SmallInt":
+	case SumTypeSmallInt:
 		data, err = json.Marshal(v.SmallInt)
-	case "SmallUint":
+	case SumTypeSmallUint:
 		data, err = json.Marshal(v.SmallUint)
-	case "BigInt":
+	case SumTypeBigInt:
 		data, err = json.Marshal(v.BigInt)
-	case "BigUint":
+	case SumTypeBigUint:
 		data, err = json.Marshal(v.BigUint)
-	case "VarInt":
+	case SumTypeVarInt:
 		data, err = json.Marshal(v.VarInt)
-	case "VarUint":
+	case SumTypeVarUint:
 		data, err = json.Marshal(v.VarUint)
-	case "Coins":
+	case SumTypeCoins:
 		data, err = json.Marshal(v.Coins)
-	case "Bits":
+	case SumTypeBits:
 		data, err = json.Marshal(v.Bits)
-	case "Cell":
+	case SumTypeCell:
 		data, err = json.Marshal(v.Cell)
-	case "Remaining":
+	case SumTypeRemaining:
 		data, err = json.Marshal(v.Remaining)
-	case "InternalAddress":
+	case SumTypeInternalAddress:
 		data, err = json.Marshal(v.InternalAddress)
-	case "OptionalAddress":
+	case SumTypeOptionalAddress:
 		data, err = json.Marshal(v.OptionalAddress)
-	case "ExternalAddress":
+	case SumTypeExternalAddress:
 		data, err = json.Marshal(v.ExternalAddress)
-	case "AnyAddress":
+	case SumTypeAnyAddress:
 		data, err = json.Marshal(v.AnyAddress)
-	case "OptionalValue":
+	case SumTypeOptionalValue:
 		data, err = json.Marshal(v.OptionalValue)
-	case "RefValue":
+	case SumTypeRefValue:
 		data, err = json.Marshal(v.RefValue)
-	case "TupleWith":
+	case SumTypeTupleWith:
 		data, err = json.Marshal(v.TupleWith)
-	case "Tensor":
+	case SumTypeTensor:
 		data, err = json.Marshal(v.Tensor)
-	case "Map":
+	case SumTypeMap:
 		data, err = json.Marshal(v.Map)
-	case "Struct":
+	case SumTypeStruct:
 		data, err = json.Marshal(v.Struct)
-	case "Alias":
+	case SumTypeAlias:
 		val := Value(*v.Alias)
 		data, err = json.Marshal(val)
-	case "Enum":
+	case SumTypeEnum:
 		data, err = json.Marshal(v.Enum)
-	case "GenericT":
+	case SumTypeGenericT:
 		val := Value(*v.Generic)
 		data, err = json.Marshal(val)
-	case "Union":
+	case SumTypeUnion:
 		data, err = json.Marshal(v.Union)
-	case "Null":
+	case SumTypeNull:
 		data, err = json.Marshal(v.Null)
-	case "Void":
+	case SumTypeVoid:
 		data, err = json.Marshal(v.Void)
 	default:
 		err = fmt.Errorf("unknown value type: %s", v.SumType)

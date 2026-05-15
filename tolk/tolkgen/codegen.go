@@ -134,24 +134,9 @@ type TolkGolangGenerator struct {
 
 func NewTolkGolangGenerator(abi parser.ContractABI) (*TolkGolangGenerator, error) {
 	symbols := symTable{
-		aliases:                       make(map[string]parser.ABIAlias),
-		structs:                       make(map[string]parser.ABIStruct),
-		enums:                         make(map[string]parser.ABIEnum),
-		uniqueTypes:                   abi.UniqueTypes,
-		structInstantiations:          abi.StructInstantiations,
-		aliasInstantiations:           abi.AliasInstantiations,
+		ABIIndex:                      parser.NewABIIndex(abi),
 		structIsReturnedFromGetMethod: make(map[string]bool),
 		enumNeedsReadFromStack:        make(map[string]bool),
-	}
-	for _, decl := range abi.Declarations {
-		switch decl.SumType {
-		case parser.DeclarationKindAlias:
-			symbols.aliases[decl.AliasDeclaration.Name] = decl.AliasDeclaration
-		case parser.DeclarationKindStruct:
-			symbols.structs[decl.StructDeclaration.Name] = decl.StructDeclaration
-		case parser.DeclarationKindEnum:
-			symbols.enums[decl.EnumDeclaration.Name] = decl.EnumDeclaration
-		}
 	}
 	for _, method := range abi.GetMethods {
 		symbols.markStructsReadFromStack(method.ReturnTyIdx)
@@ -172,18 +157,13 @@ func NewTolkGolangGenerator(abi parser.ContractABI) (*TolkGolangGenerator, error
 }
 
 type symTable struct {
-	aliases                       map[string]parser.ABIAlias
-	structs                       map[string]parser.ABIStruct
-	enums                         map[string]parser.ABIEnum
-	uniqueTypes                   []parser.Ty
-	structInstantiations          []parser.ABIStructInstantiation
-	aliasInstantiations           []parser.ABIAliasInstantiation
+	*parser.ABIIndex
 	structIsReturnedFromGetMethod map[string]bool
 	enumNeedsReadFromStack        map[string]bool
 }
 
 func (s *symTable) markStructsReadFromStack(tyIdx int) {
-	ty, err := s.tyByIdx(tyIdx)
+	ty, err := s.TyByIdx(tyIdx)
 	if err != nil {
 		return
 	}
@@ -196,7 +176,7 @@ func (s *symTable) markStructsReadFromStack(tyIdx int) {
 			return
 		}
 		s.structIsReturnedFromGetMethod[structName] = true
-		fields, err := s.structFieldsOf(tyIdx, true)
+		fields, err := s.StructFieldsOf(tyIdx, true)
 		if err != nil {
 			return
 		}
@@ -216,7 +196,7 @@ func (s *symTable) markStructsReadFromStack(tyIdx int) {
 	case parser.TyKindNullable:
 		s.markStructsReadFromStack(ty.Nullable.InnerTyIdx)
 	case parser.TyKindAliasRef:
-		targetTyIdx, _, err := s.aliasTargetOf(tyIdx)
+		targetTyIdx, _, err := s.AliasTargetOf(tyIdx)
 		if err != nil {
 			return
 		}
@@ -265,7 +245,7 @@ func (tgen TolkGolangGenerator) GenerateGocode() (declarations string, marshaler
 }
 
 func (tgen TolkGolangGenerator) aliasToGo(decl parser.ABIAlias, out *strings.Builder, outMarshal *strings.Builder) error {
-	targetTy, err := tgen.symbols.tyByIdx(decl.TargetTyIdx)
+	targetTy, err := tgen.symbols.TyByIdx(decl.TargetTyIdx)
 	if err != nil {
 		return fmt.Errorf("target type: %w", err)
 	}
@@ -323,7 +303,7 @@ func (tgen TolkGolangGenerator) aliasUnionToGo(decl parser.ABIAlias, out *string
 	if len(decl.TypeParams) > 0 {
 		return fmt.Errorf("type params not supported for alias %q", decl.Name)
 	}
-	targetTy, err := tgen.symbols.tyByIdx(decl.TargetTyIdx)
+	targetTy, err := tgen.symbols.TyByIdx(decl.TargetTyIdx)
 	if err != nil {
 		return fmt.Errorf("target type: %w", err)
 	}
@@ -501,7 +481,7 @@ type unionVariantLabeled struct {
 func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant, uLabelTyIdx *int) (result []unionVariantLabeled, err error) {
 	var genericVariantsTyIdx []int
 	if uLabelTyIdx != nil {
-		labelTy, err := st.tyByIdx(*uLabelTyIdx)
+		labelTy, err := st.TyByIdx(*uLabelTyIdx)
 		if err != nil {
 			return nil, err
 		}
@@ -533,7 +513,7 @@ func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant, uLabelT
 		if genericVariantsTyIdx != nil {
 			labelTyIdx = genericVariantsTyIdx[i]
 		}
-		variantTy, err := st.tyByIdx(labelTyIdx)
+		variantTy, err := st.TyByIdx(labelTyIdx)
 		if err != nil {
 			return nil, err
 		}
@@ -542,7 +522,7 @@ func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant, uLabelT
 		} else {
 			labelVariant := unionVariantLabeled{UnionVariant: variant}
 			if hasDuplicates {
-				labelVariant.label, err = st.renderTy(labelTyIdx)
+				labelVariant.label, err = st.RenderTy(labelTyIdx)
 				if err != nil {
 					return nil, err
 				}
@@ -565,7 +545,7 @@ func (st *symTable) createLabelsForUnion(variants []parser.UnionVariant, uLabelT
 }
 
 func (st *symTable) createLabelByIdx(tyIdx int) (string, error) {
-	ty, err := st.tyByIdx(tyIdx)
+	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return "", err
 	}
@@ -573,7 +553,7 @@ func (st *symTable) createLabelByIdx(tyIdx int) (string, error) {
 	case parser.TyKindStructRef:
 		return safeGoIdent(ty.StructRef.StructName), nil
 	case parser.TyKindAliasRef:
-		targetTyIdx, _, err := st.aliasTargetOf(tyIdx)
+		targetTyIdx, _, err := st.AliasTargetOf(tyIdx)
 		if err != nil {
 			return "", err
 		}
@@ -581,7 +561,7 @@ func (st *symTable) createLabelByIdx(tyIdx int) (string, error) {
 	case parser.TyKindEnumRef:
 		return safeGoIdent(ty.EnumRef.EnumName), nil
 	default:
-		s, err := st.renderTy(tyIdx)
+		s, err := st.RenderTy(tyIdx)
 		if err != nil {
 			return "", err
 		}
@@ -590,7 +570,7 @@ func (st *symTable) createLabelByIdx(tyIdx int) (string, error) {
 }
 
 func (st *symTable) isStructWithItsOwnLabel(tyIdx int) (bool, error) {
-	ty, err := st.tyByIdx(tyIdx)
+	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return false, err
 	}
@@ -598,7 +578,7 @@ func (st *symTable) isStructWithItsOwnLabel(tyIdx int) (bool, error) {
 	case parser.TyKindStructRef:
 		return true, nil
 	case parser.TyKindAliasRef:
-		aliasTarget, _, err := st.aliasTargetOf(tyIdx)
+		aliasTarget, _, err := st.AliasTargetOf(tyIdx)
 		if err != nil {
 			return false, err
 		}
@@ -608,19 +588,17 @@ func (st *symTable) isStructWithItsOwnLabel(tyIdx int) (bool, error) {
 	}
 }
 
-func (st *symTable) getAliasTarget(name string) (int, error) {
-	alias, err := st.getAlias(name)
-	if err != nil {
-		return 0, err
+func prefixConstValue(p *parser.Prefix) (string, error) {
+	if p == nil {
+		return "", nil
 	}
-	return alias.TargetTyIdx, nil
-}
-
-func (st *symTable) getAlias(name string) (parser.ABIAlias, error) {
-	if a, ok := st.aliases[name]; ok {
-		return a, nil
+	if p.PrefixLen > 64 {
+		return "", fmt.Errorf("prefix length too large: %d", p.PrefixLen)
 	}
-	return parser.ABIAlias{}, fmt.Errorf("alias %s not found", name)
+	if p.PrefixLen%4 == 0 {
+		return fmt.Sprintf("0x%0*x", p.PrefixLen/4, p.PrefixNum), nil
+	}
+	return fmt.Sprintf("0b%0*b", p.PrefixLen, p.PrefixNum), nil
 }
 
 // conver Tolk `enum X` to golang `type X = underlying type` with `const X1 = value` definitions
@@ -678,7 +656,7 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.ABIStruct, out *strings.B
 		if err != nil {
 			return fmt.Errorf("struct %q field %q type: %w", decl.Name, field.Name, err)
 		}
-		renderedTy, err := tgen.symbols.renderTy(field.TyIdx)
+		renderedTy, err := tgen.symbols.RenderTy(field.TyIdx)
 		if err != nil {
 			return fmt.Errorf("struct %q field %q render type: %w", decl.Name, field.Name, err)
 		}

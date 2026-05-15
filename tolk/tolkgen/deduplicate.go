@@ -29,12 +29,7 @@ func ExtractShared(abis map[string]parser.ContractABI) (map[string]parser.Contra
 	for _, key := range sortedKeys(abis) {
 		abi := abis[key]
 		symbols := symTable{
-			aliases:              map[string]parser.ABIAlias{},
-			structs:              map[string]parser.ABIStruct{},
-			enums:                map[string]parser.ABIEnum{},
-			uniqueTypes:          abi.UniqueTypes,
-			structInstantiations: abi.StructInstantiations,
-			aliasInstantiations:  abi.AliasInstantiations,
+			ABIIndex: parser.NewABIIndex(abi),
 		}
 		for _, decl := range abi.Declarations {
 			name := DeclName(decl)
@@ -229,13 +224,13 @@ func declFingerprint(d parser.ABIDeclaration, st *symTable) (string, error) {
 	case parser.DeclarationKindStruct:
 		fields := make([]fieldFP, 0, len(d.StructDeclaration.Fields))
 		for _, f := range d.StructDeclaration.Fields {
-			ty, err := st.renderTy(f.TyIdx)
+			ty, err := st.RenderTy(f.TyIdx)
 			if err != nil {
 				return "", fmt.Errorf("field %q type: %w", f.Name, err)
 			}
 			var clientTy string
 			if f.ClientTyIdx != nil {
-				clientTy, err = st.renderTy(*f.ClientTyIdx)
+				clientTy, err = st.RenderTy(*f.ClientTyIdx)
 				if err != nil {
 					return "", fmt.Errorf("field %q client type: %w", f.Name, err)
 				}
@@ -252,7 +247,7 @@ func declFingerprint(d parser.ABIDeclaration, st *symTable) (string, error) {
 			Description      string                      `json:"description,omitempty"`
 		}{d.SumType, d.StructDeclaration.Name, d.StructDeclaration.TypeParams, d.StructDeclaration.Prefix, fields, d.StructDeclaration.CustomPackUnpack, d.StructDeclaration.Description}
 	case parser.DeclarationKindAlias:
-		targetTy, err := st.renderTy(d.AliasDeclaration.TargetTyIdx)
+		targetTy, err := st.RenderTy(d.AliasDeclaration.TargetTyIdx)
 		if err != nil {
 			return "", fmt.Errorf("alias target: %w", err)
 		}
@@ -265,7 +260,7 @@ func declFingerprint(d parser.ABIDeclaration, st *symTable) (string, error) {
 			Description      string                      `json:"description,omitempty"`
 		}{d.SumType, d.AliasDeclaration.Name, targetTy, d.AliasDeclaration.TypeParams, d.AliasDeclaration.CustomPackUnpack, d.AliasDeclaration.Description}
 	case parser.DeclarationKindEnum:
-		encodedAs, err := st.renderTy(d.EnumDeclaration.EncodedAsTyIdx)
+		encodedAs, err := st.RenderTy(d.EnumDeclaration.EncodedAsTyIdx)
 		if err != nil {
 			return "", fmt.Errorf("enum encoded type: %w", err)
 		}

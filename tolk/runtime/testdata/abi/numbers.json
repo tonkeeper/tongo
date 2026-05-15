@@ -1,0 +1,119 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "RuntimeNumbers",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "Numbers"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "varuintN",
+      "n": 32
+    },
+    {
+      "kind": "bitsN",
+      "n": 16
+    },
+    {
+      "kind": "intN",
+      "n": 14
+    },
+    {
+      "kind": "varintN",
+      "n": 16
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "Numbers",
+      "ty_idx": 12,
+      "fields": [
+        {
+          "name": "num1",
+          "ty_idx": 11
+        },
+        {
+          "name": "num3",
+          "ty_idx": 13
+        },
+        {
+          "name": "num4",
+          "ty_idx": 14
+        },
+        {
+          "name": "num5",
+          "ty_idx": 5
+        },
+        {
+          "name": "num7",
+          "ty_idx": 15
+        },
+        {
+          "name": "num8",
+          "ty_idx": 16
+        },
+        {
+          "name": "num9",
+          "ty_idx": 17
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBAgEAEAABFP8A9KQT9LzyyAsBAALT"
+}

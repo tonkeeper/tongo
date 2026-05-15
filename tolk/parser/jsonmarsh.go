@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -188,4 +189,28 @@ func (t *Ty) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	return utils.ConcatPrefixAndSuffixIfExists([]byte(fmt.Sprintf(`{"kind": "%s"}`, t.SumType)), payload), nil
+}
+
+func (b BigInt) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, b.String())), nil
+}
+
+func (b *BigInt) UnmarshalJSON(p []byte) error {
+	p = bytes.TrimSpace(p)
+	if bytes.Equal(p, []byte("null")) {
+		return nil
+	}
+	var s string
+	if len(p) >= 2 && p[0] == '"' {
+		if err := json.Unmarshal(p, &s); err != nil {
+			return err
+		}
+	} else {
+		s = string(p)
+	}
+
+	if _, ok := b.Int.SetString(s, 10); !ok {
+		return fmt.Errorf("not a valid big integer: %s", p)
+	}
+	return nil
 }

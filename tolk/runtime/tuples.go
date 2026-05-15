@@ -12,10 +12,10 @@ import (
 type TupleValues []Value
 
 func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.ShapedTuple, decoder *Decoder) error {
-	list := make(TupleValues, len(ty.Items))
-	for i, item := range ty.Items {
+	list := make(TupleValues, len(ty.ItemsTyIdx))
+	for i, itemTyIdx := range ty.ItemsTyIdx {
 		inner := Value{}
-		err := inner.Unmarshal(cell, item, decoder)
+		err := inner.UnmarshalTyIdx(cell, itemTyIdx, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal %v tuple's value: %w", i, err)
 		}
@@ -27,7 +27,7 @@ func (v *TupleValues) Unmarshal(cell *boc.Cell, ty parser.ShapedTuple, decoder *
 
 func (v *TupleValues) Marshal(cell *boc.Cell, ty parser.ShapedTuple, encoder *Encoder) error {
 	for i, item := range []Value(*v) {
-		err := item.Marshal(cell, ty.Items[i], encoder)
+		err := item.MarshalTyIdx(cell, ty.ItemsTyIdx[i], encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal %v tuple's value: %w", i, err)
 		}
@@ -55,10 +55,10 @@ func (v *TupleValues) Equal(other any) bool {
 type TensorValues []Value
 
 func (v *TensorValues) Unmarshal(cell *boc.Cell, ty parser.Tensor, decoder *Decoder) error {
-	list := make(TensorValues, len(ty.Items))
-	for i, item := range ty.Items {
+	list := make(TensorValues, len(ty.ItemsTyIdx))
+	for i, itemTyIdx := range ty.ItemsTyIdx {
 		inner := Value{}
-		err := inner.Unmarshal(cell, item, decoder)
+		err := inner.UnmarshalTyIdx(cell, itemTyIdx, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal %v tensor's value: %w", i, err)
 		}
@@ -70,7 +70,7 @@ func (v *TensorValues) Unmarshal(cell *boc.Cell, ty parser.Tensor, decoder *Deco
 
 func (v *TensorValues) Marshal(cell *boc.Cell, ty parser.Tensor, encoder *Encoder) error {
 	for i, item := range []Value(*v) {
-		err := item.Marshal(cell, ty.Items[i], encoder)
+		err := item.MarshalTyIdx(cell, ty.ItemsTyIdx[i], encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal %v tensor's value: %w", i, err)
 		}

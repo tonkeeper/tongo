@@ -156,7 +156,7 @@ func (o *OptValue) Unmarshal(cell *boc.Cell, ty parser.Nullable, decoder *Decode
 	}
 	o.IsExists = isExists
 	if isExists {
-		err = o.Val.Unmarshal(cell, ty.Inner, decoder)
+		err = o.Val.UnmarshalTyIdx(cell, ty.InnerTyIdx, decoder)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal optinal value: %w", err)
 		}
@@ -170,7 +170,7 @@ func (o *OptValue) Marshal(cell *boc.Cell, ty parser.Nullable, encoder *Encoder)
 		return fmt.Errorf("failed to write optinal value existance bit: %w", err)
 	}
 	if o.IsExists {
-		err = o.Val.Marshal(cell, ty.Inner, encoder)
+		err = o.Val.MarshalTyIdx(cell, ty.InnerTyIdx, encoder)
 		if err != nil {
 			return fmt.Errorf("failed to marshal optinal value: %w", err)
 		}
@@ -235,7 +235,7 @@ func (r *RefValue) Unmarshal(cell *boc.Cell, ty parser.CellOf, decoder *Decoder)
 		return fmt.Errorf("failed to get next ref: %w", err)
 	}
 	innerV := Value{}
-	err = innerV.Unmarshal(ref, ty.Inner, decoder)
+	err = innerV.UnmarshalTyIdx(ref, ty.InnerTyIdx, decoder)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal ref: %w", err)
 	}
@@ -247,7 +247,7 @@ func (r *RefValue) Unmarshal(cell *boc.Cell, ty parser.CellOf, decoder *Decoder)
 func (r *RefValue) Marshal(cell *boc.Cell, ty parser.CellOf, encoder *Encoder) error {
 	val := Value(*r)
 	ref := boc.NewCell()
-	err := val.Marshal(ref, ty.Inner, encoder)
+	err := val.MarshalTyIdx(ref, ty.InnerTyIdx, encoder)
 	if err != nil {
 		return fmt.Errorf("failed to marshal ref: %w", err)
 	}

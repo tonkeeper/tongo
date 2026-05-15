@@ -10,7 +10,7 @@ import (
 )
 
 func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
-	ty, err := st.tyByIdx(tyIdx)
+	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return "", err
 	}
@@ -30,7 +30,7 @@ func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
 	case parser.TyKindNullable:
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
 	case parser.TyKindCellOf:
-		inner, err := st.tyByIdx(ty.CellOf.InnerTyIdx)
+		inner, err := st.TyByIdx(ty.CellOf.InnerTyIdx)
 		if err != nil {
 			return "", fmt.Errorf("cellOf inner: %w", err)
 		}
@@ -43,14 +43,14 @@ func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
 }
 
 func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasLoadMethod bool, err error) {
-	ty, err := st.tyByIdx(tyIdx)
+	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return "", false, err
 	}
 
 	switch ty.SumType {
 	case parser.TyKindBuilder, parser.TyKindSlice, parser.TyKindUnknown, parser.TyKindCallable:
-		renderedTy, err := st.renderTy(tyIdx)
+		renderedTy, err := st.RenderTy(tyIdx)
 		if err != nil {
 			return "", false, err
 		}
@@ -84,7 +84,7 @@ func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasL
 		return *remain, nil
 	})()`, false, nil
 	case parser.TyKindCellOf:
-		inner, err := st.tyByIdx(ty.CellOf.InnerTyIdx)
+		inner, err := st.TyByIdx(ty.CellOf.InnerTyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("cellOf inner: %w", err)
 		}
@@ -152,7 +152,7 @@ func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasL
 }
 
 func (st *symTable) emitGoType(tyIdx int) (string, error) {
-	ty, err := st.tyByIdx(tyIdx)
+	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return "", err
 	}
@@ -207,7 +207,7 @@ func (st *symTable) emitGoType(tyIdx int) (string, error) {
 		}
 		return "", fmt.Errorf("tlb.Bits%d is not supported: update cmd/codegen/integers", ty.BitsN.N)
 	case parser.TyKindCellOf:
-		inner, err := st.tyByIdx(ty.CellOf.InnerTyIdx)
+		inner, err := st.TyByIdx(ty.CellOf.InnerTyIdx)
 		if err != nil {
 			return "", fmt.Errorf("cellOf inner: %w", err)
 		}

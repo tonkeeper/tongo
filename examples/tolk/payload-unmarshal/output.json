@@ -8,29 +8,33 @@
     },
     "forwardAmount": "393000000",
     "forwardPayload": {
-        "next": {
-            "queryId": 16905987934073985,
-            "amount": "-1107811",
-            "destination": "0:ff3c99e6610b0cde378c00038e896a73d5746b47b1bfe6dc7d66e53a9d84642c",
-            "responseDestination": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd",
-            "customPayload": {
-                "isExists": false
-            },
-            "forwardAmount": "202500000",
-            "forwardPayload": {
-                "step": {
-                    "poolAddressHash": "88789260033367713967225486461025260896651147011656566896934426357962362325226",
-                    "minOutputAmount": "12091900000",
-                    "next": {
-                        "isExists": false
-                    }
+        "value": {
+            "next": {
+                "queryId": 16905987934073985,
+                "amount": "-1107811",
+                "destination": "0:ff3c99e6610b0cde378c00038e896a73d5746b47b1bfe6dc7d66e53a9d84642c",
+                "responseDestination": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd",
+                "customPayload": {
+                    "isExists": false
                 },
-                "params": {
-                    "deadline": 1772189925,
-                    "recipient": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd",
-                    "referral": "0:085c1bc2c8561d4d35dd8e035e739bf2fbd4e39eab30fe527e445272036e4caf",
-                    "notificationData": {
-                        "isExists": false
+                "forwardAmount": "202500000",
+                "forwardPayload": {
+                    "value": {
+                        "step": {
+                            "poolAddressHash": "88789260033367713967225486461025260896651147011656566896934426357962362325226",
+                            "minOutAmount": "12091900000",
+                            "next": {
+                                "isExists": false
+                            }
+                        },
+                        "params": {
+                            "deadline": 1772189925,
+                            "recipient": "0:ffffef1e2edf12ecdc8433e9fd90e5ffccb7d4f38db11a4d3886878c5724c4dd",
+                            "referral": "0:085c1bc2c8561d4d35dd8e035e739bf2fbd4e39eab30fe527e445272036e4caf",
+                            "notificationData": {
+                                "isExists": false
+                            }
+                        }
                     }
                 }
             }

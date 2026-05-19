@@ -24,8 +24,6 @@ type JettonPayload =
         MoonFillOrderJettonPayload |
         BidaskDammProvideBothJettonPayload |
         MoonDepositLiquidityJettonPayload |
-        MoonNextPayload |
-        MoonSwapParams |
         MoonSwapJettonPayload |
         CoffeeCrossDexFailureJettonPayload |
         CoffeeSwapJettonPayload |
@@ -143,7 +141,7 @@ struct (0x4468de77) PoolFundAccountJettonPayload {
 struct (0x45078540) StonfiSwapOkRefJettonPayload {}
 
 struct (0x4ee9b106) CoffeeCrossDexResendJettonPayload {
-    next: cell?
+    next: RemainingBitsAndRefs
 }
 
 struct (0x63ec24ae) BidaskDammProvideJettonPayload {

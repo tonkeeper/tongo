@@ -23,8 +23,7 @@ func (u *UnionValue) Unmarshal(cell *boc.Cell, ty parser.Union, decoder *Decoder
 		return fmt.Errorf("union prefix length must be less than or equal to 64")
 	}
 
-	copyCell := cell.CopyRemaining()
-	prefix, err := copyCell.ReadUint(prefixLen)
+	prefix, err := cell.PickUint(prefixLen)
 	if err != nil {
 		return fmt.Errorf("failed to read union's %v-length prefix: %w", prefixLen, err)
 	}

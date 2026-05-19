@@ -67,18 +67,32 @@ func (a *Any) UnmarshalJSON(b []byte) error {
 }
 
 type RemainingValue struct {
-	IsRef bool
-	Value boc.Cell
+	IsRef    bool
+	Value    boc.Cell
+	Resolved *Value
 }
 
 func (r *RemainingValue) Unmarshal(cell *boc.Cell, decoder *Decoder) error {
-	rem := cell.CopyRemaining()
-	cell.ReadRemainingBits()
+	rem := cell.ReadRemaining()
 	if rem != nil {
-		isRef := cell.BitsAvailableForRead() == 0 && cell.RefsAvailableForRead() > 0
+		isRef := rem.BitsAvailableForRead() == 0 && rem.RefsAvailableForRead() > 0
+		var resolved *Value
+		if !isRef {
+			resValue, isResolved, err := decoder.resolvePayload(rem.CopyCell())
+			if isResolved && err == nil {
+				resolved = &resValue
+			}
+		} else {
+			ref, _ := rem.CopyCell().NextRef()
+			resValue, isResolved, err := decoder.resolvePayload(ref)
+			if isResolved && err == nil {
+				resolved = &resValue
+			}
+		}
 		*r = RemainingValue{
-			IsRef: isRef,
-			Value: *rem,
+			IsRef:    isRef,
+			Value:    *rem,
+			Resolved: resolved,
 		}
 	}
 	return nil
@@ -119,15 +133,16 @@ func (r *RemainingValue) Equal(o any) bool {
 }
 
 func (r RemainingValue) MarshalJSON() ([]byte, error) {
-	cellData, err := json.Marshal(r.Value)
+	if r.Resolved != nil {
+		return r.Resolved.MarshalJSON()
+	}
+
+	bocStr, err := r.Value.ToBocString()
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal remainings data: %w", err)
 	}
 	if r.Value.BitsAvailableForRead() == 0 && r.Value.RefsAvailableForRead() == 0 {
-		cellData = []byte("\"\"")
-	}
-	if len(cellData) < 2 {
-		return nil, fmt.Errorf("invalid remaining cell data: %v", cellData)
+		bocStr = ""
 	}
 
 	var jsonData = struct {
@@ -135,7 +150,7 @@ func (r RemainingValue) MarshalJSON() ([]byte, error) {
 		Value string `json:"value"`
 	}{
 		IsRef: r.IsRef,
-		Value: string(cellData[1 : len(cellData)-1]),
+		Value: bocStr,
 	}
 	data, err := json.Marshal(jsonData)
 	if err != nil {

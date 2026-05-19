@@ -12,17 +12,16 @@ import (
 )
 import _ "embed"
 
-//go:embed abi/jetton_wallet.json
+//go:embed abi/jetton_transfer.json
 var jettonWalletAbiData []byte
 
 func main() {
-	var jettonWalletABI parser.ABI
+	var jettonWalletABI parser.ContractABI
 	err := json.Unmarshal(jettonWalletAbiData, &jettonWalletABI)
 	if err != nil {
 		panic(err)
 	}
 
-	ty := parser.NewStructType("Transfer")
 	b, err := hex.DecodeString("b5ee9c720102030100011b0001ae0f8a7ea5bf4e20320df05dd0318537180125c28235ca8d125e676591513d520721b1fe99f7722f4c87723ce7ee0dfb73a3001f8cc4cadf3be6b14e892d7aa31f5be355c1eab776f0e1d61a46644ddc17e68b881908b1010101e16664de2a801244183034d9fd59a236f71ec4271be377399056dda4cc3a5ebf5dc40967df641001f8cc4cadf3be6b14e892d7aa31f5be355c1eab776f0e1d61a46644ddc17e68ba003f198995be77cd629d125af5463eb7c6ab83d56eede1c3ac348cc89bb82fcd17000000007fffffffc0020095446cf7101800fc662656f9df358a74496bd518fadf1aae0f55bbb7870eb0d233226ee0bf345c00000540095e99c8dc6a438526df4961936ff51209f307a28c37c6c78310ce140ab78ab658")
 	if err != nil {
 		panic(err)
@@ -32,12 +31,11 @@ func main() {
 		panic(err)
 	}
 
-	decoder := runtime.NewDecoder()
-	err = decoder.WithABIs(jettonWalletABI)
-	if err != nil {
-		panic(err)
-	}
-	res, err := decoder.Unmarshal(cell[0], ty)
+	decoder := runtime.NewDecoder(jettonWalletABI)
+	res, err := decoder.Unmarshal(cell[0], parser.Ty{
+		SumType:   parser.TyKindStructRef,
+		StructRef: &parser.StructRef{StructName: "Transfer"},
+	})
 	if err != nil {
 		panic(err)
 	}

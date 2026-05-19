@@ -473,6 +473,18 @@ func (c *Cell) ReadRemainingBits() BitString {
 	return c.bits.ReadRemainingBits()
 }
 
+func (c *Cell) ReadRemaining() *Cell {
+	if c == nil {
+		return nil
+	}
+	rem := NewCellWithBits(c.bits.ReadRemainingBits())
+	for c.RefsAvailableForRead() > 0 {
+		r, _ := c.NextRef()
+		_ = rem.AddRef(r)
+	}
+	return rem
+}
+
 func (c *Cell) CopyRemaining() *Cell {
 	if c == nil {
 		return nil

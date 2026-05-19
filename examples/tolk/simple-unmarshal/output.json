@@ -7,5 +7,26 @@
         "isExists": false
     },
     "forwardAmount": "210000000",
-    "forwardPayload": "b5ee9c720101030100c40001000101e16664de2a801244183034d9fd59a236f71ec4271be377399056dda4cc3a5ebf5dc40967df641001f8cc4cadf3be6b14e892d7aa31f5be355c1eab776f0e1d61a46644ddc17e68ba003f198995be77cd629d125af5463eb7c6ab83d56eede1c3ac348cc89bb82fcd17000000007fffffffc0020095446cf7101800fc662656f9df358a74496bd518fadf1aae0f55bbb7870eb0d233226ee0bf345c00000540095e99c8dc6a438526df4961936ff51209f307a28c37c6c78310ce140ab78ab658"
+    "forwardPayload": {
+        "value": {
+            "tokenWallet1": "0:9220c181a6cfeacd11b7b8f62138df1bb9cc82b6ed2661d2f5faee204b3efb20",
+            "refundAddress": "0:7e33132b7cef9ac53a24b5ea8c7d6f8d5707aadddbc3875869199137705f9a2e",
+            "excessesAddress": "0:7e33132b7cef9ac53a24b5ea8c7d6f8d5707aadddbc3875869199137705f9a2e",
+            "txDeadline": 4294967295,
+            "crossSwapBody": {
+                "minOut": "1188000001",
+                "receiver": "0:7e33132b7cef9ac53a24b5ea8c7d6f8d5707aadddbc3875869199137705f9a2e",
+                "fwdGas": "0",
+                "customPayload": {
+                    "isExists": false
+                },
+                "refundFwdGas": "0",
+                "refundPayload": {
+                    "isExists": false
+                },
+                "refFee": 10,
+                "refAddress": "0:95e99c8dc6a438526df4961936ff51209f307a28c37c6c78310ce140ab78ab65"
+            }
+        }
+    }
 }

@@ -1,0 +1,225 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "XtrMaster",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "UpdateUser",
+      "prefix": {
+        "prefixStr": "0x59ff81d6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "destAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdatePayment",
+      "prefix": {
+        "prefixStr": "0x2a999df4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "destAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateData",
+      "fields": [
+        {
+          "name": "code",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "version",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateContractAndProcessMessage",
+      "prefix": {
+        "prefixStr": "0xe2628539",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "updateData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateData"
+            }
+          }
+        },
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fromAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "PushXTR",
+      "prefix": {
+        "prefixStr": "0x6f027868",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CommitXTR",
+      "prefix": {
+        "prefixStr": "0xe472935c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateUser"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdatePayment"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateContractAndProcessMessage"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PushXTR"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CommitXTR"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 98392,
+      "name": "get_user_latest_version",
+      "parameters": [],
+      "returnTy": {
+        "kind": "uintN",
+        "n": 32
+      }
+    },
+    {
+      "tvmMethodId": 126127,
+      "name": "get_payment_latest_version",
+      "parameters": [],
+      "returnTy": {
+        "kind": "uintN",
+        "n": 32
+      }
+    }
+  ],
+  "thrownErrors": [],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

@@ -13,6 +13,7 @@ const (
 	FfVault             ContractInterface = _xmlContractInterfaceEnd + 8
 	PythOracle          ContractInterface = _xmlContractInterfaceEnd + 9
 	SingleNominatorPool ContractInterface = _xmlContractInterfaceEnd + 10
+	XtrMaster           ContractInterface = _xmlContractInterfaceEnd + 11
 )
 
 func init() {
@@ -26,6 +27,7 @@ func init() {
 	tolkContractInterfaceStrings[FfVault] = "ff_vault"
 	tolkContractInterfaceStrings[PythOracle] = "pyth_oracle"
 	tolkContractInterfaceStrings[SingleNominatorPool] = "single_nominator_pool"
+	tolkContractInterfaceStrings[XtrMaster] = "XtrMaster"
 
 	tolkContractInterfaceFromString["cocoon_client"] = CocoonClient
 	tolkContractInterfaceFromString["cocoon_proxy"] = CocoonProxy
@@ -37,4 +39,5 @@ func init() {
 	tolkContractInterfaceFromString["ff_vault"] = FfVault
 	tolkContractInterfaceFromString["pyth_oracle"] = PythOracle
 	tolkContractInterfaceFromString["single_nominator_pool"] = SingleNominatorPool
+	tolkContractInterfaceFromString["XtrMaster"] = XtrMaster
 }

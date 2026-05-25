@@ -4,6 +4,28 @@
   "declarations": [
     {
       "kind": "Struct",
+      "name": "UpdateUser",
+      "prefix": {
+        "prefixStr": "0x59ff81d6",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "destAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
       "name": "PushXTR",
       "prefix": {
         "prefixStr": "0x6f027868",
@@ -28,6 +50,12 @@
   ],
   "storage": {},
   "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateUser"
+      }
+    },
     {
       "bodyTy": {
         "kind": "StructRef",

@@ -5,9 +5,17 @@ package abiXtr
 import (
 	"context"
 	"fmt"
+	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
+
+const PrefixUpdateUser uint64 = 0x59ff81d6
+
+type UpdateUser struct {
+	DestAddress tlb.InternalAddress // address
+	Payload     boc.Cell            // cell
+}
 
 const PrefixPushXTR uint64 = 0x6f027868
 

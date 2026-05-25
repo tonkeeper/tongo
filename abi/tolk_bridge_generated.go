@@ -787,5 +787,7 @@ func init() {
 
 	KnownMsgInTypes[abiXtr.XtrPushXTRMsgOp] = abiXtr.PushXTR{}
 	registerInMsgUnmarshalerForOpcode[*abiXtr.PushXTR](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixPushXTR), abiXtr.XtrPushXTRMsgOp)
+	KnownMsgInTypes[abiXtr.XtrUpdateUserMsgOp] = abiXtr.UpdateUser{}
+	registerInMsgUnmarshalerForOpcode[*abiXtr.UpdateUser](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixUpdateUser), abiXtr.XtrUpdateUserMsgOp)
 
 }

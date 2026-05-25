@@ -3,5 +3,6 @@
 package abiXtr
 
 const (
-	XtrPushXTRMsgOp = "XtrPushXTR"
+	XtrPushXTRMsgOp    = "XtrPushXTR"
+	XtrUpdateUserMsgOp = "XtrUpdateUser"
 )

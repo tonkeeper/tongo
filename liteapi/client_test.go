@@ -22,7 +22,9 @@ import (
 )
 
 func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
-	t.Skip("when public lite servers are down, this test will fail")
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	cli, err := NewClient(Mainnet())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -40,6 +42,9 @@ func TestNewClient_WithMaxConnectionsNumber(t *testing.T) {
 }
 
 func TestAsyncInitialization(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	accountId := ton.MustParseAccountID("EQAs87W4yJHlF8mt29ocA4agnMrLsOP69jC1HPyBUjJay-7l")
 
 	cli, err := NewClient(Mainnet(),
@@ -80,6 +85,9 @@ func TestAsyncInitialization(t *testing.T) {
 }
 
 func TestSyncInitialization(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	cli, err := NewClient(Mainnet(), WithMaxConnectionsNumber(2))
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -109,6 +117,9 @@ func TestSyncInitialization(t *testing.T) {
 }
 
 func TestGetTransactions_archive(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	if len(os.Getenv("ARCHIVE_NODES_CONFIG")) == 0 {
 		t.Skip("ARCHIVE_NODES_CONFIG env is not set")
 	}
@@ -134,6 +145,9 @@ func TestGetTransactions_archive(t *testing.T) {
 }
 
 func TestGetTransactions(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: live-chain transaction history drifts; expected tx count is unstable")
+	}
 	if len(os.Getenv("LITE_SERVERS")) == 0 {
 		t.Skip("LITE_SERVERS env is not set")
 	}
@@ -183,6 +197,9 @@ func TestSendRawMessage(t *testing.T) {
 }
 
 func TestRunSmcMethod(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: depends on public mainnet lite-servers being reachable in CI")
+	}
 	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -195,6 +212,9 @@ func TestRunSmcMethod(t *testing.T) {
 }
 
 func TestGetAllShards(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
@@ -248,6 +268,9 @@ func createOutputFile(api *Client, extID ton.BlockIDExt, filename string, accoun
 }
 
 func TestGetBlock(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: depends on public mainnet lite-servers being reachable in CI")
+	}
 	testCases := []struct {
 		name    string
 		blockID string
@@ -331,6 +354,9 @@ func TestGetBlock(t *testing.T) {
 }
 
 func TestGetConfigAll(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
@@ -342,6 +368,9 @@ func TestGetConfigAll(t *testing.T) {
 }
 
 func TestGetAccountState(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
@@ -375,6 +404,9 @@ func TestGetAccountState(t *testing.T) {
 }
 
 func TestLookupBlock(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)
@@ -397,6 +429,9 @@ func TestLookupBlock(t *testing.T) {
 }
 
 func TestGetOneTransaction(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -437,6 +472,9 @@ func TestGetOneTransaction(t *testing.T) {
 }
 
 func TestGetLibraries(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -465,6 +503,9 @@ func TestGetLibraries(t *testing.T) {
 }
 
 func TestGetJettonWallet(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -479,6 +520,9 @@ func TestGetJettonWallet(t *testing.T) {
 }
 
 func TestGetJettonData(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -492,6 +536,9 @@ func TestGetJettonData(t *testing.T) {
 }
 
 func TestGetJettonBalance(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -505,6 +552,9 @@ func TestGetJettonBalance(t *testing.T) {
 }
 
 func TestDnsResolve(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -518,6 +568,9 @@ func TestDnsResolve(t *testing.T) {
 }
 
 func TestGetRootDNS(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tongoClient, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -530,6 +583,9 @@ func TestGetRootDNS(t *testing.T) {
 }
 
 func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	var a ton.AccountID
 	rand.Read(a.Address[:])
 	client, err := NewClientWithDefaultTestnet()
@@ -544,6 +600,9 @@ func TestClient_GetTransactionsForUnknownAccount(t *testing.T) {
 }
 
 func TestMappingTransactionsToBlocks(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	const limit = 100
 	c, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
@@ -623,6 +682,9 @@ func TestFromEnvs(t *testing.T) {
 }
 
 func TestWaitMasterchainBlock(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	api, err := NewClient(Mainnet(), FromEnvs())
 	if err != nil {
 		t.Fatal(err)

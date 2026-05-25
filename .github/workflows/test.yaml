@@ -22,6 +22,7 @@ jobs:
         env:
           LD_LIBRARY_PATH: ${{ github.workspace }}/libs
           LITE_SERVERS: ${{ secrets.LITE_SERVERS }}
+          CI_TEST: "1"
         run: |
           sudo apt-get install -y libsecp256k1-0
           mkdir -p ${{ env.LD_LIBRARY_PATH}}

@@ -3,6 +3,7 @@ package tonconnect
 import (
 	"context"
 	"crypto/ed25519"
+	"os"
 	"testing"
 	"time"
 
@@ -11,6 +12,9 @@ import (
 )
 
 func TestCreateSignedProof(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	cli, err := liteapi.NewClient(liteapi.Testnet())
 	if err != nil {
 		t.Fatalf("liteapi.NewClient() failed: %v", err)

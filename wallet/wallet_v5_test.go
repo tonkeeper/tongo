@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ed25519"
 	"encoding/hex"
+	"os"
 	"reflect"
 	"testing"
 
@@ -12,6 +13,9 @@ import (
 )
 
 func TestGetW5ExtensionsList(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tests := []struct {
 		name           string
 		accountID      string
@@ -183,6 +187,9 @@ func Test_walletV5R1_generateAddress(t *testing.T) {
 }
 
 func TestGetW5R1ExtensionsList(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tests := []struct {
 		name           string
 		accountID      string

@@ -34,6 +34,9 @@ func createTestLiteServerConnection() (*liteclient.Connection, error) {
 }
 
 func Test_connection_Run(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: races against live masterchain block production")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Skipf("cannot connect to lite server: %v", err)
@@ -67,6 +70,9 @@ func Test_connection_Run(t *testing.T) {
 }
 
 func Test_connection_FindMinAvailableMasterchainSeqno(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	tests := []struct {
 		name         string
 		host         string

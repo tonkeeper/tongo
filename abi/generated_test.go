@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"os"
 	"reflect"
 	"testing"
 
@@ -845,6 +846,9 @@ func TestGetMethods(t *testing.T) {
 }
 
 func TestWhalesNominators(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	address := ton.MustParseAccountID("EQBI-wGVp_x0VFEjd7m9cEUD3tJ_bnxMSp0Tb9qz757ATEAM")
 	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {

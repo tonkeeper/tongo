@@ -70,6 +70,80 @@ func (v UpdatePayment) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *UpdateData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if v.Code, err = c.NextRefV(); err != nil {
+		return fmt.Errorf("failed to read .Code: %v", err)
+	}
+	if v.Data, err = c.NextRefV(); err != nil {
+		return fmt.Errorf("failed to read .Data: %v", err)
+	}
+	if err = v.Version.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Version: %v", err)
+	}
+	return nil
+}
+func (v UpdateData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.AddRef(&v.Code); err != nil {
+		return fmt.Errorf("failed to .Code: %v", err)
+	}
+	if err = c.AddRef(&v.Data); err != nil {
+		return fmt.Errorf("failed to .Data: %v", err)
+	}
+	if err = v.Version.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Version: %v", err)
+	}
+	return nil
+}
+func (v UpdateData) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *UpdateContractAndProcessMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixUpdateContractAndProcessMessage); err != nil {
+		return err
+	}
+	if err = v.UpdateData.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .UpdateData: %v", err)
+	}
+	if err = v.FromAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .FromAddress: %v", err)
+	}
+	if err = v.FromAmount.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .FromAmount: %v", err)
+	}
+	if v.Payload, err = c.NextRefV(); err != nil {
+		return fmt.Errorf("failed to read .Payload: %v", err)
+	}
+	return nil
+}
+func (v UpdateContractAndProcessMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixUpdateContractAndProcessMessage, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.UpdateData.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .UpdateData: %v", err)
+	}
+	if err = v.FromAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .FromAddress: %v", err)
+	}
+	if err = v.FromAmount.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .FromAmount: %v", err)
+	}
+	if err = c.AddRef(&v.Payload); err != nil {
+		return fmt.Errorf("failed to .Payload: %v", err)
+	}
+	return nil
+}
+func (v UpdateContractAndProcessMessage) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 func (v *PushXTR) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixPushXTR); err != nil {
 		return err
@@ -107,6 +181,10 @@ func (msg UpdateUser) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bou
 }
 
 func (msg UpdatePayment) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
+	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+}
+
+func (msg UpdateContractAndProcessMessage) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
 	return tlb.BuildInternal(msg, dest, amount, bounce, init)
 }
 

@@ -48,6 +48,69 @@
     },
     {
       "kind": "Struct",
+      "name": "UpdateData",
+      "fields": [
+        {
+          "name": "code",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "data",
+          "ty": {
+            "kind": "cell"
+          }
+        },
+        {
+          "name": "version",
+          "ty": {
+            "kind": "uintN",
+            "n": 32
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
+      "name": "UpdateContractAndProcessMessage",
+      "prefix": {
+        "prefixStr": "0xe2628539",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "updateData",
+          "ty": {
+            "kind": "cellOf",
+            "inner": {
+              "kind": "StructRef",
+              "structName": "UpdateData"
+            }
+          }
+        },
+        {
+          "name": "fromAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "fromAmount",
+          "ty": {
+            "kind": "coins"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
       "name": "PushXTR",
       "prefix": {
         "prefixStr": "0x6f027868",
@@ -82,6 +145,12 @@
       "bodyTy": {
         "kind": "StructRef",
         "structName": "UpdatePayment"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdateContractAndProcessMessage"
       }
     },
     {

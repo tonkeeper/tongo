@@ -23,6 +23,20 @@ type UpdatePayment struct {
 	DestAddress tlb.InternalAddress // address
 	Payload     boc.Cell            // cell
 }
+type UpdateData struct {
+	Code    boc.Cell   // cell
+	Data    boc.Cell   // cell
+	Version tlb.Uint32 // uint32
+}
+
+const PrefixUpdateContractAndProcessMessage uint64 = 0xe2628539
+
+type UpdateContractAndProcessMessage struct {
+	UpdateData  tlb.RefT[*UpdateData] // Cell<UpdateData>
+	FromAddress tlb.InternalAddress   // address
+	FromAmount  tlb.Coins             // coins
+	Payload     boc.Cell              // cell
+}
 
 const PrefixPushXTR uint64 = 0x6f027868
 

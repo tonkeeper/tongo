@@ -138,7 +138,7 @@ func TestGeneratedMethod5(t *testing.T) {
 	client := NewClient(c)
 	r, err := client.LiteServerGetMasterchainInfo(context.Background())
 	if err != nil {
-		panic(err)
+		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
 	}
 
 	req := LiteServerLookupBlockRequest{
@@ -153,6 +153,9 @@ func TestGeneratedMethod5(t *testing.T) {
 	}
 
 	r1, err := client.LiteServerLookupBlock(context.Background(), req)
+	if err != nil {
+		t.Fatalf("LiteServerLookupBlock() failed: %v", err)
+	}
 
 	req1 := LiteServerGetBlockProofRequest{
 		Mode:        0,
@@ -162,7 +165,7 @@ func TestGeneratedMethod5(t *testing.T) {
 
 	r2, err := client.LiteServerGetBlockProof(context.Background(), req1)
 	if err != nil {
-		panic(err)
+		t.Fatalf("LiteServerGetBlockProof() failed: %v", err)
 	}
 	_ = r2
 }

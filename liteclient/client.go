@@ -217,7 +217,15 @@ func (c *Client) liteServerRequest(ctx context.Context, q []byte) ([]byte, error
 	data = append(data, tl.EncodeLength(len(q))...)
 	data = append(data, q...)
 	data = alignBytes(data)
-	return c.Request(ctx, data)
+	resp, err := c.Request(ctx, data)
+	return resp, c.wrapErr(err)
+}
+
+func (c *Client) wrapErr(err error) error {
+	if err == nil || len(c.connections) == 0 {
+		return err
+	}
+	return &LiteServerError{Address: c.connections[0].host, Err: err}
 }
 
 func alignBytes(data []byte) []byte {
@@ -251,7 +259,7 @@ func (c *Client) WaitMasterchainSeqno(ctx context.Context, seqno uint32, timeout
 		if errRes.Code == 0 {
 			return nil
 		}
-		return errRes
+		return c.wrapErr(errRes)
 	}
 	return fmt.Errorf("invalid tag")
 }

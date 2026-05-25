@@ -3,6 +3,7 @@ package tychoclient
 import (
 	"context"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"os"
 	"testing"
@@ -298,39 +299,49 @@ func TestParseTychoBlockErrorCases(t *testing.T) {
 func TestParseShardAccount(t *testing.T) {
 	tests := []struct {
 		name        string
-		bocData     []byte
+		state       []byte
+		proof       []byte
+		address     []byte
 		expectError bool
 		errorMsg    string
 	}{
 		{
-			name:        "empty BOC data",
-			bocData:     []byte{},
+			name:        "empty proof",
+			state:       []byte{},
+			proof:       []byte{},
+			address:     []byte{},
 			expectError: true,
-			errorMsg:    "empty BOC data",
+			errorMsg:    "failed to decode account data from proof",
 		},
 		{
-			name:        "nil BOC data",
-			bocData:     nil,
+			name:        "nil proof",
+			state:       nil,
+			proof:       nil,
+			address:     nil,
 			expectError: true,
-			errorMsg:    "empty BOC data",
+			errorMsg:    "failed to decode account data from proof",
 		},
 		{
-			name:        "invalid BOC data",
-			bocData:     []byte{0x01, 0x02, 0x03},
+			name:        "invalid proof",
+			state:       []byte{},
+			proof:       []byte{0x01, 0x02, 0x03},
+			address:     []byte{},
 			expectError: true,
-			errorMsg:    "failed to deserialize BOC",
+			errorMsg:    "failed to decode account data from proof",
 		},
 		{
-			name:        "short invalid BOC data",
-			bocData:     []byte{0xb5, 0xee},
+			name:        "short invalid proof",
+			state:       []byte{},
+			proof:       []byte{0xb5, 0xee},
+			address:     []byte{},
 			expectError: true,
-			errorMsg:    "failed to deserialize BOC",
+			errorMsg:    "failed to decode account data from proof",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			account, err := ParseShardAccount(tt.bocData)
+			_, _, err := ParseShardAccount(tt.state, tt.proof, tt.address)
 
 			if tt.expectError {
 				if err == nil {
@@ -338,22 +349,12 @@ func TestParseShardAccount(t *testing.T) {
 					return
 				}
 				if tt.errorMsg != "" {
-					if len(err.Error()) == 0 || err.Error()[:len(tt.errorMsg)] != tt.errorMsg {
-						t.Errorf("expected error to contain '%s', got: %v", tt.errorMsg, err)
+					if len(err.Error()) < len(tt.errorMsg) || err.Error()[:len(tt.errorMsg)] != tt.errorMsg {
+						t.Errorf("expected error to start with '%s', got: %v", tt.errorMsg, err)
 					}
 				}
-				if account != nil {
-					t.Errorf("expected nil account on error, got: %v", account)
-				}
-			} else {
-				if err != nil {
-					t.Errorf("unexpected error: %v", err)
-					return
-				}
-				if account == nil {
-					t.Error("expected account but got nil")
-					return
-				}
+			} else if err != nil {
+				t.Errorf("unexpected error: %v", err)
 			}
 		})
 	}
@@ -459,9 +460,18 @@ func TestParseShardAccount_Integration(t *testing.T) {
 					t.Error("Empty BOC data after decoding")
 				}
 
+				proofData, err := base64.StdEncoding.DecodeString(fixture.Proof)
+				if err != nil {
+					t.Fatalf("Failed to decode proof: %v", err)
+				}
+				addrBytes, err := hex.DecodeString(fixture.Address)
+				if err != nil {
+					t.Fatalf("Failed to decode address: %v", err)
+				}
+
 				// Try to parse the account
 				// Note: We expect this to fail for now due to TLB parsing issues
-				account, err := ParseShardAccount(bocData)
+				account, _, err := ParseShardAccount(bocData, proofData, addrBytes)
 				if err != nil {
 					t.Logf("ParseShardAccount failed as expected (TLB issue): %v", err)
 
@@ -476,14 +486,9 @@ func TestParseShardAccount_Integration(t *testing.T) {
 						t.Logf("✅ Root cell has %d bits available for read", cells[0].BitsAvailableForRead())
 					}
 				} else {
-					// If parsing succeeds, validate the account
-					if account == nil {
-						t.Error("ParseShardAccount succeeded but returned nil account")
-					} else {
-						t.Logf("✅ Successfully parsed account")
-						t.Logf("   LastTransLt: %d", account.LastTransLt)
-						t.Logf("   Account type: %s", account.Account.SumType)
-					}
+					t.Logf("✅ Successfully parsed account")
+					t.Logf("   LastTransLt: %d", account.LastTransLt)
+					t.Logf("   Account type: %s", account.Account.SumType)
 				}
 			}
 

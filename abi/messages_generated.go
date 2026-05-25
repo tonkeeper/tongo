@@ -1201,12 +1201,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 			decodeFuncBidaskInternalSwapV2MsgBody},
 	},
 
-	//StormProvideOrder, StormProvidePosition,
+	//StormProvidePosition, StormProvideOrder,
 	0x8865b402: multipleMsgsDecoder{
 		tag: "0x8865b402",
 		funcs: []msgDecoderFunc{
-			decodeFuncStormProvideOrderMsgBody,
-			decodeFuncStormProvidePositionMsgBody},
+			decodeFuncStormProvidePositionMsgBody,
+			decodeFuncStormProvideOrderMsgBody},
 	},
 
 	// 0x8b771735

@@ -785,6 +785,8 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiXtr.XtrCommitXTRMsgOp] = abiXtr.CommitXTR{}
+	registerInMsgUnmarshalerForOpcode[*abiXtr.CommitXTR](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixCommitXTR), abiXtr.XtrCommitXTRMsgOp)
 	KnownMsgInTypes[abiXtr.XtrPushXTRMsgOp] = abiXtr.PushXTR{}
 	registerInMsgUnmarshalerForOpcode[*abiXtr.PushXTR](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixPushXTR), abiXtr.XtrPushXTRMsgOp)
 	KnownMsgInTypes[abiXtr.XtrUpdateContractAndProcessMessageMsgOp] = abiXtr.UpdateContractAndProcessMessage{}

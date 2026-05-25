@@ -131,6 +131,35 @@
           }
         }
       ]
+    },
+    {
+      "kind": "Struct",
+      "name": "CommitXTR",
+      "prefix": {
+        "prefixStr": "0xe472935c",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "userAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
     }
   ],
   "storage": {},
@@ -157,6 +186,12 @@
       "bodyTy": {
         "kind": "StructRef",
         "structName": "PushXTR"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "CommitXTR"
       }
     }
   ],

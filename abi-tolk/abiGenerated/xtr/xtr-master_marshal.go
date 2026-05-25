@@ -175,6 +175,43 @@ func (v PushXTR) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+func (v *CommitXTR) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixCommitXTR); err != nil {
+		return err
+	}
+	if err = v.Seqno.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Seqno: %v", err)
+	}
+	if err = v.UserAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .UserAddress: %v", err)
+	}
+	if err = v.Amount.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Amount: %v", err)
+	}
+	return nil
+}
+func (v CommitXTR) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixCommitXTR, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.Seqno.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Seqno: %v", err)
+	}
+	if err = v.UserAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .UserAddress: %v", err)
+	}
+	if err = v.Amount.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Amount: %v", err)
+	}
+	return nil
+}
+func (v CommitXTR) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
 
 func (msg UpdateUser) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
 	return tlb.BuildInternal(msg, dest, amount, bounce, init)
@@ -189,5 +226,9 @@ func (msg UpdateContractAndProcessMessage) ToInternal(dest tlb.InternalAddress, 
 }
 
 func (msg PushXTR) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
+	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+}
+
+func (msg CommitXTR) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
 	return tlb.BuildInternal(msg, dest, amount, bounce, init)
 }

@@ -45,6 +45,14 @@ type PushXTR struct {
 	Amount tlb.Coins  // coins
 }
 
+const PrefixCommitXTR uint64 = 0xe472935c
+
+type CommitXTR struct {
+	Seqno       tlb.Uint64          // uint64
+	UserAddress tlb.InternalAddress // address
+	Amount      tlb.Coins           // coins
+}
+
 func DecodeGetUserLatestVersion(stack *tlb.VmStack) (result tlb.Uint32, err error) {
 	if stack.Len() != 1 {
 		err = fmt.Errorf("invalid stack size %d, expected 1", stack.Len())

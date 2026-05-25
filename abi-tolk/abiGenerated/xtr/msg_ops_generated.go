@@ -3,6 +3,7 @@
 package abiXtr
 
 const (
+	XtrCommitXTRMsgOp                       = "XtrCommitXTR"
 	XtrPushXTRMsgOp                         = "XtrPushXTR"
 	XtrUpdateContractAndProcessMessageMsgOp = "XtrUpdateContractAndProcessMessage"
 	XtrUpdatePaymentMsgOp                   = "XtrUpdatePayment"

@@ -1,5 +1,5 @@
 contract XtrMaster {
-    incomingMessages: (UpdateUser, UpdatePayment, UpdateContractAndProcessMessage, PushXTR),
+    incomingMessages: (UpdateUser, UpdatePayment, UpdateContractAndProcessMessage, PushXTR, CommitXTR),
     storage: null,
     forceAbiExport: []
 }
@@ -10,6 +10,12 @@ fun onInternalMessage(in: InMessage) {
 
 struct (0x6f027868) PushXTR {
     seqno: uint64
+    amount: coins
+}
+
+struct (0xe472935c) CommitXTR {
+    seqno: uint64
+    userAddress: address
     amount: coins
 }
 

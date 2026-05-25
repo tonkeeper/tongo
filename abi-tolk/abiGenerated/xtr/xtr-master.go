@@ -17,6 +17,13 @@ type UpdateUser struct {
 	Payload     boc.Cell            // cell
 }
 
+const PrefixUpdatePayment uint64 = 0x2a999df4
+
+type UpdatePayment struct {
+	DestAddress tlb.InternalAddress // address
+	Payload     boc.Cell            // cell
+}
+
 const PrefixPushXTR uint64 = 0x6f027868
 
 type PushXTR struct {

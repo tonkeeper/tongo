@@ -26,6 +26,28 @@
     },
     {
       "kind": "Struct",
+      "name": "UpdatePayment",
+      "prefix": {
+        "prefixStr": "0x2a999df4",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "destAddress",
+          "ty": {
+            "kind": "address"
+          }
+        },
+        {
+          "name": "payload",
+          "ty": {
+            "kind": "cell"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Struct",
       "name": "PushXTR",
       "prefix": {
         "prefixStr": "0x6f027868",
@@ -54,6 +76,12 @@
       "bodyTy": {
         "kind": "StructRef",
         "structName": "UpdateUser"
+      }
+    },
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "UpdatePayment"
       }
     },
     {

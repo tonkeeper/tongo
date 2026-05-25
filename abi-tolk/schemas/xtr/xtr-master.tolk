@@ -1,5 +1,5 @@
 contract XtrMaster {
-    incomingMessages: (UpdateUser, PushXTR),
+    incomingMessages: (UpdateUser, UpdatePayment, PushXTR),
     storage: null,
     forceAbiExport: []
 }
@@ -14,6 +14,11 @@ struct (0x6f027868) PushXTR {
 }
 
 struct (0x59ff81d6) UpdateUser {
+    destAddress: address
+    payload: cell
+}
+
+struct (0x2a999df4) UpdatePayment {
     destAddress: address
     payload: cell
 }

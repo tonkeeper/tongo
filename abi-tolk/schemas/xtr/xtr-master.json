@@ -1,0 +1,65 @@
+{
+  "abiSchemaVersion": "1.0",
+  "contractName": "XtrMaster",
+  "declarations": [
+    {
+      "kind": "Struct",
+      "name": "PushXTR",
+      "prefix": {
+        "prefixStr": "0x6f027868",
+        "prefixLen": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty": {
+            "kind": "uintN",
+            "n": 64
+          }
+        },
+        {
+          "name": "amount",
+          "ty": {
+            "kind": "coins"
+          }
+        }
+      ]
+    }
+  ],
+  "storage": {},
+  "incomingMessages": [
+    {
+      "bodyTy": {
+        "kind": "StructRef",
+        "structName": "PushXTR"
+      }
+    }
+  ],
+  "incomingExternal": [],
+  "outgoingMessages": [],
+  "emittedEvents": [],
+  "getMethods": [
+    {
+      "tvmMethodId": 98392,
+      "name": "get_user_latest_version",
+      "parameters": [],
+      "returnTy": {
+        "kind": "uintN",
+        "n": 32
+      }
+    },
+    {
+      "tvmMethodId": 126127,
+      "name": "get_payment_latest_version",
+      "parameters": [],
+      "returnTy": {
+        "kind": "uintN",
+        "n": 32
+      }
+    }
+  ],
+  "thrownErrors": [],
+  "constants": [],
+  "compilerName": "tolk",
+  "compilerVersion": "1.2.0"
+}

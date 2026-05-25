@@ -9,6 +9,7 @@ import (
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
+	abiXtr "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/xtr"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
@@ -736,5 +737,55 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Upgrade](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixUpgrade), abiSingleNominatorPool.SingleNominatorPoolUpgradeMsgOp)
 	KnownMsgInTypes[abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp] = abiSingleNominatorPool.Withdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Withdraw](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixWithdraw), abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "get_user_latest_version",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiXtr.GetUserLatestVersion(ctx, executor, id)
+				return "GetUserLatestVersion_XtrMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_payment_latest_version",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiXtr.GetPaymentLatestVersion(ctx, executor, id)
+				return "GetPaymentLatestVersion_XtrMasterResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["get_user_latest_version"] = append(KnownGetMethodsDecoder["get_user_latest_version"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiXtr.DecodeGetUserLatestVersion(&st)
+		return "GetUserLatestVersion_XtrMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_payment_latest_version"] = append(KnownGetMethodsDecoder["get_payment_latest_version"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiXtr.DecodeGetPaymentLatestVersion(&st)
+		return "GetPaymentLatestVersion_XtrMasterResult", r, err
+	})
+
+	KnownSimpleGetMethods[98392] = append(KnownSimpleGetMethods[98392], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiXtr.GetUserLatestVersion(ctx, executor, id)
+		return "GetUserLatestVersion_XtrMasterResult", r, err
+	})
+	KnownSimpleGetMethods[126127] = append(KnownSimpleGetMethods[126127], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiXtr.GetPaymentLatestVersion(ctx, executor, id)
+		return "GetPaymentLatestVersion_XtrMasterResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    XtrMaster,
+			Results: []string{"GetUserLatestVersion_XtrMasterResult", "GetPaymentLatestVersion_XtrMasterResult"},
+		},
+	)
+
+	KnownMsgInTypes[abiXtr.XtrPushXTRMsgOp] = abiXtr.PushXTR{}
+	registerInMsgUnmarshalerForOpcode[*abiXtr.PushXTR](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixPushXTR), abiXtr.XtrPushXTRMsgOp)
 
 }

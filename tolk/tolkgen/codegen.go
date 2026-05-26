@@ -270,11 +270,23 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.ABIAlias, out *strings.Bui
 	}
 
 	if !decl.CustomPackUnpack.UnpackFromSlice {
-		expr, _, err := tgen.symbols.emitLoadExpr(decl.Name, decl.TargetTyIdx)
+		expr, hasMethod, err := tgen.symbols.emitLoadExpr(decl.Name, decl.TargetTyIdx)
 		if err != nil {
 			return fmt.Errorf("emit unmarshal expression for %q: %w", decl.Name, err)
 		}
-		fmt.Fprintf(outMarshal, `func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+
+		if hasMethod {
+			fmt.Fprintf(outMarshal, `func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var vx %s
+	if err := vx.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	*v = %s(vx)
+	return nil
+}
+`, aliasName, targetType, aliasName)
+		} else {
+			fmt.Fprintf(outMarshal, `func (v *%s) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	vx, err := %s
 	if err != nil {
 		return err
@@ -283,10 +295,11 @@ func (tgen TolkGolangGenerator) aliasToGo(decl parser.ABIAlias, out *strings.Bui
 	return nil
 }
 `,
-			aliasName, expr, aliasName)
+				aliasName, expr, aliasName)
+		}
 	}
 	if !decl.CustomPackUnpack.PackToBuilder {
-		expr, err := tgen.symbols.emitStoreExpr("v", decl.TargetTyIdx)
+		expr, err := tgen.symbols.emitStoreExpr(targetType+"(v)", decl.TargetTyIdx)
 		if err != nil {
 			return fmt.Errorf("emit marshal expression for %q: %w", decl.Name, err)
 		}

@@ -538,21 +538,21 @@ func (v *Balance) ReadFromStack(stack *tlb.VmStack) (err error) {
 }
 
 func (msg StakeOperation) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*VaultStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UnstakeExecute) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*VaultStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UnstakeOperation) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*VaultStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UnstakeExecuteInternalCallback) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*VaultStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg WithdrawJetton) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*VaultStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }

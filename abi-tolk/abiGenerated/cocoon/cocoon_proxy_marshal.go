@@ -406,33 +406,33 @@ func (v ProxyStorage) ToCell() (*boc.Cell, error) {
 }
 
 func (msg TextCmd) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ExtProxyCloseRequestSigned) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ExtProxyCloseCompleteRequestSigned) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ExtProxyPayoutRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ExtProxyIncreaseStake) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg OwnerProxyClose) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg WorkerProxyRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ClientProxyRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }

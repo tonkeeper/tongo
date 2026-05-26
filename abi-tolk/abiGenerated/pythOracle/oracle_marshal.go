@@ -666,9 +666,9 @@ func (v OracleResponseSuccess) ToCell() (*boc.Cell, error) {
 }
 
 func (msg ParsePriceFeedUpdatesMessage) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*MainStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ParseUniquePriceFeedUpdatesMessage) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*MainStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }

@@ -145,7 +145,7 @@ type StateInit struct {
 // BuildInternal marshals body and wraps it in an internal Message (int_msg_info$0).
 // dest is the destination address, amount is the attached value, bounce controls the bounce flag.
 // Src is left as addr_none (the node fills it in on send).
-func BuildInternal[T, Ts MarshalerTLB](body T, dest InternalAddress, amount Grams, bounce bool, init *StateInitT[Ts]) (Message, error) {
+func BuildInternal[T, Ts CodecTLB](body T, dest InternalAddress, amount Grams, bounce bool, init *StateInitT[Ts]) (Message, error) {
 	bodyCell := boc.NewCell()
 	if err := Marshal(bodyCell, body); err != nil {
 		return Message{}, fmt.Errorf("marshal body: %w", err)
@@ -189,7 +189,7 @@ func BuildInternal[T, Ts MarshalerTLB](body T, dest InternalAddress, amount Gram
 	return msg, nil
 }
 
-type StateInitT[T MarshalerTLB] struct {
+type StateInitT[T CodecTLB] struct {
 	SplitDepth Maybe[Uint5]
 	Special    Maybe[TickTock]
 	Code       Maybe[Ref[boc.Cell]]
@@ -221,6 +221,28 @@ func (sit StateInitT[T]) MarshalTLB(c *boc.Cell, encoder *Encoder) (err error) {
 		return err
 	}
 	return Marshal(c, si)
+}
+
+func (sit *StateInitT[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	si := StateInit{}
+	err := decoder.Unmarshal(c, &si)
+	if err != nil {
+		return err
+	}
+	sit.Code = si.Code
+	sit.Library = si.Library
+	sit.Special = si.Special
+	sit.SplitDepth = si.SplitDepth
+	sit.Data = Nothing[Ref[T]]()
+	if si.Data.Exists {
+		var data T
+		err := decoder.Unmarshal(&si.Data.Value.Value, &data)
+		if err != nil {
+			return err
+		}
+		sit.Data = Just(Ref[T]{Value: data})
+	}
+	return nil
 }
 
 func (sit StateInitT[T]) ToStateInit() (StateInit, error) {

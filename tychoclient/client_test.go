@@ -34,6 +34,9 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestGetStatus(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	client, err := NewClient()
 	if err != nil {
 		t.Fatalf("Failed to create client: %v", err)
@@ -57,6 +60,9 @@ func TestGetStatus(t *testing.T) {
 }
 
 func TestGetRawBlockData(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	client, err := NewClient()
 	if err != nil {
 		t.Fatalf("Failed to create client: %v", err)

@@ -789,29 +789,29 @@ func (v ElectorStorage) ToCell() (*boc.Cell, error) {
 }
 
 func (msg NewStake) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg RecoverStakeRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UpgradeCode) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ConfigAccepted) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ConfigRejected) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg RegisterComplaint) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg VoteComplaint) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ElectorStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }

@@ -900,65 +900,65 @@ func (v RootStorage) ToCell() (*boc.Cell, error) {
 }
 
 func (msg AddWorkerType) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg DelWorkerType) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg AddModelType) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg DelModelType) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg AddProxyType) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg DelProxyType) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg RegisterProxy) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UnregisterProxy) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UpdateProxy) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ChangeFees) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ChangeParams) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UpgradeContracts) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UpgradeCode) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ResetRoot) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg UpgradeFull) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ChangeOwner) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*RootStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }

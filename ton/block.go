@@ -199,7 +199,7 @@ func CreateExternalMessageT[T any](address AccountID, body T, init *tlb.StateIni
 	return CreateExternalMessage(address, bodyCell, init, importFee)
 }
 
-func CreateExternalMessageTWithState[T any, Ts tlb.MarshalerTLB](address AccountID, body T, init *tlb.StateInitT[Ts], importFee tlb.VarUInteger16) (tlb.Message, error) {
+func CreateExternalMessageTWithState[T any, Ts tlb.CodecTLB](address AccountID, body T, init *tlb.StateInitT[Ts], importFee tlb.VarUInteger16) (tlb.Message, error) {
 	var stateInit *tlb.StateInit
 	if init != nil {
 		si, err := init.ToStateInit()

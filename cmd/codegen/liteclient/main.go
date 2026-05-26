@@ -46,6 +46,7 @@ import (
 	"fmt"
 	"github.com/tonkeeper/tongo/tl"
 	"io"
+	"time"
 )
 ` + types + functions
 

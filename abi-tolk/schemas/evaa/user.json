@@ -1,0 +1,297 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "evaa_user",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AggregatedBalances"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UserScData"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "UserScData",
+      "ty_idx": 14,
+      "fields": [
+        {
+          "name": "codeVersion",
+          "ty_idx": 1
+        },
+        {
+          "name": "masterAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "ownerAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "userPrincipals",
+          "ty_idx": 3
+        },
+        {
+          "name": "state",
+          "ty_idx": 10
+        },
+        {
+          "name": "userRewards",
+          "ty_idx": 13
+        },
+        {
+          "name": "backupCell1",
+          "ty_idx": 13
+        },
+        {
+          "name": "backupCell2",
+          "ty_idx": 13
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AggregatedBalances",
+      "ty_idx": 12,
+      "fields": [
+        {
+          "name": "supply",
+          "ty_idx": 1
+        },
+        {
+          "name": "borrow",
+          "ty_idx": 1
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 93886,
+      "name": "codeVersion",
+      "parameters": [],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 72773,
+      "name": "isUserSc",
+      "parameters": [],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 85756,
+      "name": "getAccountAssetBalance",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        },
+        {
+          "name": "sRate",
+          "ty_idx": 1
+        },
+        {
+          "name": "bRate",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 83597,
+      "name": "getAccountBalances",
+      "parameters": [
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 3
+    },
+    {
+      "tvm_method_id": 110706,
+      "name": "getAccountHealth",
+      "parameters": [
+        {
+          "name": "assetConfigCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "pricesPacked",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 93740,
+      "name": "getAvailableToBorrow",
+      "parameters": [
+        {
+          "name": "assetConfigCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "pricesPacked",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 71655,
+      "name": "getIsLiquidable",
+      "parameters": [
+        {
+          "name": "assetConfigCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "pricesPacked",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 84372,
+      "name": "getAggregatedBalances",
+      "parameters": [
+        {
+          "name": "assetConfigCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "pricesPacked",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 12
+    },
+    {
+      "tvm_method_id": 79099,
+      "name": "get_asset_principal",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 129778,
+      "name": "getPrincipals",
+      "parameters": [],
+      "return_ty_idx": 3
+    },
+    {
+      "tvm_method_id": 105294,
+      "name": "getRewards",
+      "parameters": [],
+      "return_ty_idx": 13
+    },
+    {
+      "tvm_method_id": 94250,
+      "name": "getAllUserScData",
+      "parameters": [],
+      "return_ty_idx": 14
+    },
+    {
+      "tvm_method_id": 118928,
+      "name": "get_maximum_withdraw_amount",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        },
+        {
+          "name": "pricesPacked",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetConfigCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgECHQEAAQQAART/APSkE/S88sgLAQIBYgIDAAzQMPiR8kACASAEBQIBIAYHAgEgFhcCASAICQIBIAwNAgFYCgsACbafZg4QAAuv86+BuEAAB64iv8ACAUgODwIBIBITAQmvRphEQBwCASAQEQAMqZRfA3AgAAqq/F8DcAIDe6AUFQKhsAqcI0IYAXlajNSP9KyuoOUqykp5oOeUSbCtAIkyEhhCAbK5AT89I0IYAXlajNSP9KyuoOUqykp5oOeUSbCtAIkyEhhCAbK5AT89IgjiG1tgHBwACbrF8DcIAAW75wgCASAYGQIBIBobAQe3adEQHAALtg5L4G4QAAu2EgvgjhABB7deURAcAAA="
+}

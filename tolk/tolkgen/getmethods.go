@@ -538,13 +538,13 @@ func (tgen TolkGolangGenerator) GenerateInternalMessagesCode() (string, error) {
 	if tgen.storageType != "" {
 		initParamType = fmt.Sprintf("*tlb.StateInitT[*%s]", tgen.storageType)
 	} else {
-		initParamType = "*tlb.StateInitT[tlb.Any]"
+		initParamType = "*tlb.StateInitT[*tlb.Any]"
 	}
 
 	writeToInternal := func(goMsgType string) {
 		fmt.Fprintf(&out, "func (msg %s) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init %s) (tlb.Message, error) {\n",
 			goMsgType, initParamType)
-		fmt.Fprintf(&out, "\treturn tlb.BuildInternal(msg, dest, amount, bounce, init)\n")
+		fmt.Fprintf(&out, "\treturn tlb.BuildInternal(&msg, dest, amount, bounce, init)\n")
 		fmt.Fprintf(&out, "}\n\n")
 	}
 

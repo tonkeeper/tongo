@@ -231,14 +231,14 @@ func (v *StakePositionInfo) ReadFromStack(stack *tlb.VmStack) (err error) {
 	return nil
 }
 
-func (msg UnstakeRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+func (msg UnstakeRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*tlb.Any]) (tlb.Message, error) {
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
-func (msg UnstakeExecuteInternal) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+func (msg UnstakeExecuteInternal) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*tlb.Any]) (tlb.Message, error) {
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
-func (msg UnstakeExecuteCancel) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[tlb.Any]) (tlb.Message, error) {
-	return tlb.BuildInternal(msg, dest, amount, bounce, init)
+func (msg UnstakeExecuteCancel) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*tlb.Any]) (tlb.Message, error) {
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }

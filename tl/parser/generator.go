@@ -544,19 +544,26 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	builder.WriteString(fmt.Sprintf("func (c %s) %s(ctx context.Context", typeName, methodName))
 	if len(c.FieldDefinitions) > 0 {
 		builder.WriteString(fmt.Sprintf(", request %sRequest", methodName))
-		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", respType.name))
+	}
+	builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", respType.name))
 
+	// metrics: time the whole method and report the actual host and final err
+	// (including lite server errors decoded below) once the method returns.
+	builder.WriteString("start := time.Now()\n")
+	builder.WriteString("var host string\n")
+	builder.WriteString(fmt.Sprintf("defer func() { c.observeRequest(host, %sRequestName, start, err) }()\n", methodName))
+
+	if len(c.FieldDefinitions) > 0 {
 		// request marshaling
 		builder.WriteString(fmt.Sprintf("payload, err := tl.Marshal(struct{tl.SumType \n Req %sRequest", methodName))
 		builder.WriteString(fmt.Sprintf(" `tlSumType:\"%08x\"`}{SumType: \"Req\", Req: request})\n", tag))
 		builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
 	} else {
-		builder.WriteString(fmt.Sprintf(") (res %s ,err error) {\n", respType.name))
 		builder.WriteString("payload := make([]byte, 4)\n")
 		builder.WriteString(fmt.Sprintf("binary.LittleEndian.PutUint32(payload, %#x)\n", tag))
 	}
 
-	builder.WriteString("resp, err := c.liteServerRequest(ctx, payload)\n")
+	builder.WriteString("resp, host, err := c.liteServerRequest(ctx, payload)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
 
 	builder.WriteString("if len(resp) < 4 {return res, fmt.Errorf(\"not enough bytes for tag\")}\n")

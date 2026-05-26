@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/tonkeeper/tongo/tl"
 	"io"
+	"time"
 )
 
 type TonNodeBlockIdC struct {
@@ -2933,9 +2934,12 @@ func (t *LiteServerGetMasterchainInfoRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetMasterchainInfo(ctx context.Context) (res LiteServerMasterchainInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetMasterchainInfoRequestName, start, err) }()
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0x89b5e62e)
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -2989,6 +2993,9 @@ func (t *LiteServerGetMasterchainInfoExtRequest) UnmarshalTL(r io.Reader) error 
 }
 
 func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request LiteServerGetMasterchainInfoExtRequest) (res LiteServerMasterchainInfoExtC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetMasterchainInfoExtRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetMasterchainInfoExtRequest `tlSumType:"70a671df"`
@@ -2996,7 +3003,7 @@ func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request Li
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3026,9 +3033,12 @@ func (t *LiteServerGetTimeRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetTime(ctx context.Context) (res LiteServerCurrentTimeC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetTimeRequestName, start, err) }()
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0x16ad5a34)
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3058,9 +3068,12 @@ func (t *LiteServerGetVersionRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetVersion(ctx context.Context) (res LiteServerVersionC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetVersionRequestName, start, err) }()
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0x232b940b)
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3114,6 +3127,9 @@ func (t *LiteServerGetBlockRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetBlock(ctx context.Context, request LiteServerGetBlockRequest) (res LiteServerBlockDataC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetBlockRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetBlockRequest `tlSumType:"6377cf0d"`
@@ -3121,7 +3137,7 @@ func (c *Client) LiteServerGetBlock(ctx context.Context, request LiteServerGetBl
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3175,6 +3191,9 @@ func (t *LiteServerGetStateRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetState(ctx context.Context, request LiteServerGetStateRequest) (res LiteServerBlockStateC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetStateRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetStateRequest `tlSumType:"ba6e2eb6"`
@@ -3182,7 +3201,7 @@ func (c *Client) LiteServerGetState(ctx context.Context, request LiteServerGetSt
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3249,6 +3268,9 @@ func (t *LiteServerGetBlockHeaderRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetBlockHeader(ctx context.Context, request LiteServerGetBlockHeaderRequest) (res LiteServerBlockHeaderC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetBlockHeaderRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetBlockHeaderRequest `tlSumType:"21ec069e"`
@@ -3256,7 +3278,7 @@ func (c *Client) LiteServerGetBlockHeader(ctx context.Context, request LiteServe
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3310,6 +3332,9 @@ func (t *LiteServerSendMessageRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerSendMessage(ctx context.Context, request LiteServerSendMessageRequest) (res LiteServerSendMsgStatusC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerSendMessageRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerSendMessageRequest `tlSumType:"690ad482"`
@@ -3317,7 +3342,7 @@ func (c *Client) LiteServerSendMessage(ctx context.Context, request LiteServerSe
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3384,6 +3409,9 @@ func (t *LiteServerGetAccountStateRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetAccountState(ctx context.Context, request LiteServerGetAccountStateRequest) (res LiteServerAccountStateC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetAccountStateRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetAccountStateRequest `tlSumType:"6b890e25"`
@@ -3391,7 +3419,7 @@ func (c *Client) LiteServerGetAccountState(ctx context.Context, request LiteServ
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3458,6 +3486,9 @@ func (t *LiteServerGetAccountStatePrunnedRequest) UnmarshalTL(r io.Reader) error
 }
 
 func (c *Client) LiteServerGetAccountStatePrunned(ctx context.Context, request LiteServerGetAccountStatePrunnedRequest) (res LiteServerAccountStateC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetAccountStatePrunnedRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetAccountStatePrunnedRequest `tlSumType:"5a698507"`
@@ -3465,7 +3496,7 @@ func (c *Client) LiteServerGetAccountStatePrunned(ctx context.Context, request L
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3571,6 +3602,9 @@ func (t *LiteServerRunSmcMethodRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerRunSmcMethod(ctx context.Context, request LiteServerRunSmcMethodRequest) (res LiteServerRunMethodResultC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerRunSmcMethodRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerRunSmcMethodRequest `tlSumType:"5cc65dd2"`
@@ -3578,7 +3612,7 @@ func (c *Client) LiteServerRunSmcMethod(ctx context.Context, request LiteServerR
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3671,6 +3705,9 @@ func (t *LiteServerGetShardInfoRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetShardInfo(ctx context.Context, request LiteServerGetShardInfoRequest) (res LiteServerShardInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetShardInfoRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetShardInfoRequest `tlSumType:"46a2f425"`
@@ -3678,7 +3715,7 @@ func (c *Client) LiteServerGetShardInfo(ctx context.Context, request LiteServerG
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3732,6 +3769,9 @@ func (t *LiteServerGetAllShardsInfoRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetAllShardsInfo(ctx context.Context, request LiteServerGetAllShardsInfoRequest) (res LiteServerAllShardsInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetAllShardsInfoRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetAllShardsInfoRequest `tlSumType:"74d3fd6b"`
@@ -3739,7 +3779,7 @@ func (c *Client) LiteServerGetAllShardsInfo(ctx context.Context, request LiteSer
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3819,6 +3859,9 @@ func (t *LiteServerGetOneTransactionRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetOneTransaction(ctx context.Context, request LiteServerGetOneTransactionRequest) (res LiteServerTransactionInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetOneTransactionRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetOneTransactionRequest `tlSumType:"d40f24ea"`
@@ -3826,7 +3869,7 @@ func (c *Client) LiteServerGetOneTransaction(ctx context.Context, request LiteSe
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -3919,6 +3962,9 @@ func (t *LiteServerGetTransactionsRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetTransactions(ctx context.Context, request LiteServerGetTransactionsRequest) (res LiteServerTransactionListC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetTransactionsRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetTransactionsRequest `tlSumType:"1c40e7a1"`
@@ -3926,7 +3972,7 @@ func (c *Client) LiteServerGetTransactions(ctx context.Context, request LiteServ
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4031,6 +4077,9 @@ func (t *LiteServerLookupBlockRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerLookupBlock(ctx context.Context, request LiteServerLookupBlockRequest) (res LiteServerBlockHeaderC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerLookupBlockRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerLookupBlockRequest `tlSumType:"fac8f71e"`
@@ -4038,7 +4087,7 @@ func (c *Client) LiteServerLookupBlock(ctx context.Context, request LiteServerLo
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4156,6 +4205,9 @@ func (t *LiteServerLookupBlockWithProofRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerLookupBlockWithProof(ctx context.Context, request LiteServerLookupBlockWithProofRequest) (res LiteServerLookupBlockResultC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerLookupBlockWithProofRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerLookupBlockWithProofRequest `tlSumType:"9c045ff8"`
@@ -4163,7 +4215,7 @@ func (c *Client) LiteServerLookupBlockWithProof(ctx context.Context, request Lit
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4268,6 +4320,9 @@ func (t *LiteServerListBlockTransactionsRequest) UnmarshalTL(r io.Reader) error 
 }
 
 func (c *Client) LiteServerListBlockTransactions(ctx context.Context, request LiteServerListBlockTransactionsRequest) (res LiteServerBlockTransactionsC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerListBlockTransactionsRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerListBlockTransactionsRequest `tlSumType:"adfcc7da"`
@@ -4275,7 +4330,7 @@ func (c *Client) LiteServerListBlockTransactions(ctx context.Context, request Li
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4380,6 +4435,9 @@ func (t *LiteServerListBlockTransactionsExtRequest) UnmarshalTL(r io.Reader) err
 }
 
 func (c *Client) LiteServerListBlockTransactionsExt(ctx context.Context, request LiteServerListBlockTransactionsExtRequest) (res LiteServerBlockTransactionsExtC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerListBlockTransactionsExtRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerListBlockTransactionsExtRequest `tlSumType:"0079dd5c"`
@@ -4387,7 +4445,7 @@ func (c *Client) LiteServerListBlockTransactionsExt(ctx context.Context, request
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4473,6 +4531,9 @@ func (t *LiteServerGetBlockProofRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetBlockProof(ctx context.Context, request LiteServerGetBlockProofRequest) (res LiteServerPartialBlockProofC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetBlockProofRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetBlockProofRequest `tlSumType:"8aea9c44"`
@@ -4480,7 +4541,7 @@ func (c *Client) LiteServerGetBlockProof(ctx context.Context, request LiteServer
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4547,6 +4608,9 @@ func (t *LiteServerGetConfigAllRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetConfigAll(ctx context.Context, request LiteServerGetConfigAllRequest) (res LiteServerConfigInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetConfigAllRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetConfigAllRequest `tlSumType:"911b26b7"`
@@ -4554,7 +4618,7 @@ func (c *Client) LiteServerGetConfigAll(ctx context.Context, request LiteServerG
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4634,6 +4698,9 @@ func (t *LiteServerGetConfigParamsRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetConfigParams(ctx context.Context, request LiteServerGetConfigParamsRequest) (res LiteServerConfigInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetConfigParamsRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetConfigParamsRequest `tlSumType:"2a111c19"`
@@ -4641,7 +4708,7 @@ func (c *Client) LiteServerGetConfigParams(ctx context.Context, request LiteServ
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4759,6 +4826,9 @@ func (t *LiteServerGetValidatorStatsRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetValidatorStats(ctx context.Context, request LiteServerGetValidatorStatsRequest) (res LiteServerValidatorStatsC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetValidatorStatsRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetValidatorStatsRequest `tlSumType:"091a58bc"`
@@ -4766,7 +4836,7 @@ func (c *Client) LiteServerGetValidatorStats(ctx context.Context, request LiteSe
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4820,6 +4890,9 @@ func (t *LiteServerGetLibrariesRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetLibraries(ctx context.Context, request LiteServerGetLibrariesRequest) (res LiteServerLibraryResultC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetLibrariesRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetLibrariesRequest `tlSumType:"d122b662"`
@@ -4827,7 +4900,7 @@ func (c *Client) LiteServerGetLibraries(ctx context.Context, request LiteServerG
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4907,6 +4980,9 @@ func (t *LiteServerGetLibrariesWithProofRequest) UnmarshalTL(r io.Reader) error 
 }
 
 func (c *Client) LiteServerGetLibrariesWithProof(ctx context.Context, request LiteServerGetLibrariesWithProofRequest) (res LiteServerLibraryResultWithProofC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetLibrariesWithProofRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetLibrariesWithProofRequest `tlSumType:"8c026c31"`
@@ -4914,7 +4990,7 @@ func (c *Client) LiteServerGetLibrariesWithProof(ctx context.Context, request Li
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -4968,6 +5044,9 @@ func (t *LiteServerGetShardBlockProofRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetShardBlockProof(ctx context.Context, request LiteServerGetShardBlockProofRequest) (res LiteServerShardBlockProofC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetShardBlockProofRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetShardBlockProofRequest `tlSumType:"4ca60350"`
@@ -4975,7 +5054,7 @@ func (c *Client) LiteServerGetShardBlockProof(ctx context.Context, request LiteS
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -5067,6 +5146,9 @@ func (t *LiteServerGetOutMsgQueueSizesRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetOutMsgQueueSizes(ctx context.Context, request LiteServerGetOutMsgQueueSizesRequest) (res LiteServerOutMsgQueueSizesC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetOutMsgQueueSizesRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetOutMsgQueueSizesRequest `tlSumType:"7bc19c36"`
@@ -5074,7 +5156,7 @@ func (c *Client) LiteServerGetOutMsgQueueSizes(ctx context.Context, request Lite
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -5176,6 +5258,9 @@ func (t *LiteServerGetDispatchQueueInfoRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request LiteServerGetDispatchQueueInfoRequest) (res LiteServerDispatchQueueInfoC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteServerGetDispatchQueueInfoRequestName, start, err) }()
 	payload, err := tl.Marshal(struct {
 		tl.SumType
 		Req LiteServerGetDispatchQueueInfoRequest `tlSumType:"01e66bf3"`
@@ -5183,7 +5268,7 @@ func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request Lit
 	if err != nil {
 		return res, err
 	}
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}
@@ -5213,9 +5298,12 @@ func (t *LiteProxyGetRequestRateLimitRequest) UnmarshalTL(r io.Reader) error {
 }
 
 func (c *Client) LiteProxyGetRequestRateLimit(ctx context.Context) (res LiteProxyRequestRateLimitC, err error) {
+	start := time.Now()
+	var host string
+	defer func() { c.observeRequest(host, LiteProxyGetRequestRateLimitRequestName, start, err) }()
 	payload := make([]byte, 4)
 	binary.LittleEndian.PutUint32(payload, 0xf0f83e86)
-	resp, err := c.liteServerRequest(ctx, payload)
+	resp, host, err := c.liteServerRequest(ctx, payload)
 	if err != nil {
 		return res, err
 	}

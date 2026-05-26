@@ -10,34 +10,6 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-const PrefixUpdateUser uint64 = 0x59ff81d6
-
-type UpdateUser struct {
-	DestAddress tlb.InternalAddress // address
-	Payload     boc.Cell            // cell
-}
-
-const PrefixUpdatePayment uint64 = 0x2a999df4
-
-type UpdatePayment struct {
-	DestAddress tlb.InternalAddress // address
-	Payload     boc.Cell            // cell
-}
-type UpdateData struct {
-	Code    boc.Cell   // cell
-	Data    boc.Cell   // cell
-	Version tlb.Uint32 // uint32
-}
-
-const PrefixUpdateContractAndProcessMessage uint64 = 0xe2628539
-
-type UpdateContractAndProcessMessage struct {
-	UpdateData  tlb.RefT[*UpdateData] // Cell<UpdateData>
-	FromAddress tlb.InternalAddress   // address
-	FromAmount  tlb.Coins             // coins
-	Payload     boc.Cell              // cell
-}
-
 const PrefixPushXTR uint64 = 0x6f027868
 
 type PushXTR struct {
@@ -51,6 +23,34 @@ type CommitXTR struct {
 	Seqno       tlb.Uint64          // uint64
 	UserAddress tlb.InternalAddress // address
 	Amount      tlb.Coins           // coins
+}
+
+const PrefixUpdateUser uint64 = 0x59ff81d6
+
+type UpdateUser struct {
+	DestAddress tlb.InternalAddress // address
+	Payload     boc.Cell            // cell
+}
+
+const PrefixUpdatePayment uint64 = 0x2a999df4
+
+type UpdatePayment struct {
+	DestAddress tlb.InternalAddress // address
+	Payload     boc.Cell            // cell
+}
+
+const PrefixUpdateContractAndProcessMessage uint64 = 0xe2628539
+
+type UpdateContractAndProcessMessage struct {
+	UpdateData  tlb.RefT[*UpdateData] // Cell<UpdateData>
+	FromAddress tlb.InternalAddress   // address
+	FromAmount  tlb.Coins             // coins
+	Payload     boc.Cell              // cell
+}
+type UpdateData struct {
+	Code    boc.Cell   // cell
+	Data    boc.Cell   // cell
+	Version tlb.Uint32 // uint32
 }
 
 func DecodeGetUserLatestVersion(stack *tlb.VmStack) (result tlb.Uint32, err error) {

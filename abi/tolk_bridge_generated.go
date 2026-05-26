@@ -6,6 +6,7 @@ import (
 	"context"
 	abiCocoon "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/cocoon"
 	abiElector "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/elector"
+	abiEvaa "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/evaa"
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
@@ -362,6 +363,331 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiElector.VoteComplaint](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixVoteComplaint), abiElector.ElectorVoteComplaintMsgOp)
 	KnownMsgInTypes[abiElector.ElectorVoteComplaintResponseMsgOp] = abiElector.VoteComplaintResponse{}
 	registerInMsgUnmarshalerForOpcode[*abiElector.VoteComplaintResponse](opcodedMsgInDecodeFunctions, uint32(abiElector.PrefixVoteComplaintResponse), abiElector.ElectorVoteComplaintResponseMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "get_active",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetActive(ctx, executor, id)
+				return "GetActive_EvaaMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getTokensKeys",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetTokensKeys(ctx, executor, id)
+				return "GetTokensKeys_EvaaMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getLastUserScVersion",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetLastUserScVersion(ctx, executor, id)
+				return "GetLastUserScVersion_EvaaMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getUpgradeConfig",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetUpgradeConfig(ctx, executor, id)
+				return "GetUpgradeConfig_EvaaMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_supervisor",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetSupervisor(ctx, executor, id)
+				return "GetSupervisor_EvaaMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getStore",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetStore(ctx, executor, id)
+				return "GetStore_EvaaMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "codeVersion",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetCodeVersion(ctx, executor, id)
+				return "GetCodeVersion_EvaaUserResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "isUserSc",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetIsUserSc(ctx, executor, id)
+				return "GetIsUserSc_EvaaUserResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getPrincipals",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetPrincipals(ctx, executor, id)
+				return "GetPrincipals_EvaaUserResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getRewards",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetRewards(ctx, executor, id)
+				return "GetRewards_EvaaUserResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getAllUserScData",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiEvaa.GetAllUserScData(ctx, executor, id)
+				return "GetAllUserScData_EvaaUserResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["get_asset_sb_rate"] = append(KnownGetMethodsDecoder["get_asset_sb_rate"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetSbRate(&st)
+		return "GetAssetSbRate_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getAssetRates"] = append(KnownGetMethodsDecoder["getAssetRates"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetRates(&st)
+		return "GetAssetRates_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getAssetReserves"] = append(KnownGetMethodsDecoder["getAssetReserves"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetReserves(&st)
+		return "GetAssetReserves_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getAssetTotals"] = append(KnownGetMethodsDecoder["getAssetTotals"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetTotals(&st)
+		return "GetAssetTotals_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getUpdatedRates"] = append(KnownGetMethodsDecoder["getUpdatedRates"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetUpdatedRates(&st)
+		return "GetUpdatedRates_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getUpdatedRatesForAllAssets"] = append(KnownGetMethodsDecoder["getUpdatedRatesForAllAssets"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetUpdatedRatesForAllAssets(&st)
+		return "GetUpdatedRatesForAllAssets_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getCollateralQuote"] = append(KnownGetMethodsDecoder["getCollateralQuote"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetCollateralQuote(&st)
+		return "GetCollateralQuote_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_user_address"] = append(KnownGetMethodsDecoder["get_user_address"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetUserAddress(&st)
+		return "GetUserAddress_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_user_subaccount_address"] = append(KnownGetMethodsDecoder["get_user_subaccount_address"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetUserSubaccountAddress(&st)
+		return "GetUserSubaccountAddress_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_active"] = append(KnownGetMethodsDecoder["get_active"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetActive(&st)
+		return "GetActive_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getTokensKeys"] = append(KnownGetMethodsDecoder["getTokensKeys"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetTokensKeys(&st)
+		return "GetTokensKeys_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getLastUserScVersion"] = append(KnownGetMethodsDecoder["getLastUserScVersion"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetLastUserScVersion(&st)
+		return "GetLastUserScVersion_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getUpgradeConfig"] = append(KnownGetMethodsDecoder["getUpgradeConfig"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetUpgradeConfig(&st)
+		return "GetUpgradeConfig_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_asset_tracking_info"] = append(KnownGetMethodsDecoder["get_asset_tracking_info"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetTrackingInfo(&st)
+		return "GetAssetTrackingInfo_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_supervisor"] = append(KnownGetMethodsDecoder["get_supervisor"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetSupervisor(&st)
+		return "GetSupervisor_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_asset_total_principals"] = append(KnownGetMethodsDecoder["get_asset_total_principals"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetTotalPrincipals(&st)
+		return "GetAssetTotalPrincipals_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_asset_balance"] = append(KnownGetMethodsDecoder["get_asset_balance"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetBalance(&st)
+		return "GetAssetBalance_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_asset_liquidity_by_id"] = append(KnownGetMethodsDecoder["get_asset_liquidity_by_id"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetLiquidityById(&st)
+		return "GetAssetLiquidityById_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_asset_liquidity_minus_reserves_by_id"] = append(KnownGetMethodsDecoder["get_asset_liquidity_minus_reserves_by_id"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetLiquidityMinusReservesById(&st)
+		return "GetAssetLiquidityMinusReservesById_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["getStore"] = append(KnownGetMethodsDecoder["getStore"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetStore(&st)
+		return "GetStore_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["claim_asset_reserves_min_attachment"] = append(KnownGetMethodsDecoder["claim_asset_reserves_min_attachment"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetClaimAssetReservesMinAttachment(&st)
+		return "GetClaimAssetReservesMinAttachment_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["supply_min_attachment"] = append(KnownGetMethodsDecoder["supply_min_attachment"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetSupplyMinAttachment(&st)
+		return "GetSupplyMinAttachment_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["withdraw_min_attachment"] = append(KnownGetMethodsDecoder["withdraw_min_attachment"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetWithdrawMinAttachment(&st)
+		return "GetWithdrawMinAttachment_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["liquidate_min_attachment"] = append(KnownGetMethodsDecoder["liquidate_min_attachment"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetLiquidateMinAttachment(&st)
+		return "GetLiquidateMinAttachment_EvaaMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["codeVersion"] = append(KnownGetMethodsDecoder["codeVersion"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetCodeVersion(&st)
+		return "GetCodeVersion_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["isUserSc"] = append(KnownGetMethodsDecoder["isUserSc"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetIsUserSc(&st)
+		return "GetIsUserSc_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getAccountAssetBalance"] = append(KnownGetMethodsDecoder["getAccountAssetBalance"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAccountAssetBalance(&st)
+		return "GetAccountAssetBalance_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getAccountBalances"] = append(KnownGetMethodsDecoder["getAccountBalances"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAccountBalances(&st)
+		return "GetAccountBalances_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getAccountHealth"] = append(KnownGetMethodsDecoder["getAccountHealth"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAccountHealth(&st)
+		return "GetAccountHealth_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getAvailableToBorrow"] = append(KnownGetMethodsDecoder["getAvailableToBorrow"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAvailableToBorrow(&st)
+		return "GetAvailableToBorrow_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getIsLiquidable"] = append(KnownGetMethodsDecoder["getIsLiquidable"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetIsLiquidable(&st)
+		return "GetIsLiquidable_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getAggregatedBalances"] = append(KnownGetMethodsDecoder["getAggregatedBalances"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAggregatedBalances(&st)
+		return "GetAggregatedBalances_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["get_asset_principal"] = append(KnownGetMethodsDecoder["get_asset_principal"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAssetPrincipal(&st)
+		return "GetAssetPrincipal_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getPrincipals"] = append(KnownGetMethodsDecoder["getPrincipals"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetPrincipals(&st)
+		return "GetPrincipals_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getRewards"] = append(KnownGetMethodsDecoder["getRewards"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetRewards(&st)
+		return "GetRewards_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["getAllUserScData"] = append(KnownGetMethodsDecoder["getAllUserScData"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetAllUserScData(&st)
+		return "GetAllUserScData_EvaaUserResult", r, err
+	})
+	KnownGetMethodsDecoder["get_maximum_withdraw_amount"] = append(KnownGetMethodsDecoder["get_maximum_withdraw_amount"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiEvaa.DecodeGetMaximumWithdrawAmount(&st)
+		return "GetMaximumWithdrawAmount_EvaaUserResult", r, err
+	})
+
+	KnownSimpleGetMethods[129327] = append(KnownSimpleGetMethods[129327], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetActive(ctx, executor, id)
+		return "GetActive_EvaaMasterResult", r, err
+	})
+	KnownSimpleGetMethods[98436] = append(KnownSimpleGetMethods[98436], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetTokensKeys(ctx, executor, id)
+		return "GetTokensKeys_EvaaMasterResult", r, err
+	})
+	KnownSimpleGetMethods[88592] = append(KnownSimpleGetMethods[88592], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetLastUserScVersion(ctx, executor, id)
+		return "GetLastUserScVersion_EvaaMasterResult", r, err
+	})
+	KnownSimpleGetMethods[73690] = append(KnownSimpleGetMethods[73690], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetUpgradeConfig(ctx, executor, id)
+		return "GetUpgradeConfig_EvaaMasterResult", r, err
+	})
+	KnownSimpleGetMethods[88756] = append(KnownSimpleGetMethods[88756], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetSupervisor(ctx, executor, id)
+		return "GetSupervisor_EvaaMasterResult", r, err
+	})
+	KnownSimpleGetMethods[87334] = append(KnownSimpleGetMethods[87334], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetStore(ctx, executor, id)
+		return "GetStore_EvaaMasterResult", r, err
+	})
+	KnownSimpleGetMethods[93886] = append(KnownSimpleGetMethods[93886], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetCodeVersion(ctx, executor, id)
+		return "GetCodeVersion_EvaaUserResult", r, err
+	})
+	KnownSimpleGetMethods[72773] = append(KnownSimpleGetMethods[72773], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetIsUserSc(ctx, executor, id)
+		return "GetIsUserSc_EvaaUserResult", r, err
+	})
+	KnownSimpleGetMethods[129778] = append(KnownSimpleGetMethods[129778], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetPrincipals(ctx, executor, id)
+		return "GetPrincipals_EvaaUserResult", r, err
+	})
+	KnownSimpleGetMethods[105294] = append(KnownSimpleGetMethods[105294], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetRewards(ctx, executor, id)
+		return "GetRewards_EvaaUserResult", r, err
+	})
+	KnownSimpleGetMethods[94250] = append(KnownSimpleGetMethods[94250], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiEvaa.GetAllUserScData(ctx, executor, id)
+		return "GetAllUserScData_EvaaUserResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    EvaaMaster,
+			Results: []string{"GetActive_EvaaMasterResult", "GetTokensKeys_EvaaMasterResult", "GetLastUserScVersion_EvaaMasterResult", "GetUpgradeConfig_EvaaMasterResult", "GetSupervisor_EvaaMasterResult", "GetStore_EvaaMasterResult"},
+		},
+		InterfaceDescription{
+			Name:    EvaaUser,
+			Results: []string{"GetCodeVersion_EvaaUserResult", "GetIsUserSc_EvaaUserResult", "GetPrincipals_EvaaUserResult", "GetRewards_EvaaUserResult", "GetAllUserScData_EvaaUserResult"},
+		},
+	)
 
 }
 

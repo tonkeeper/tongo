@@ -1,225 +1,247 @@
 {
-  "abiSchemaVersion": "1.0",
-  "contractName": "XtrMaster",
+  "abi_schema_version": "1.0",
+  "contract_name": "XtrMaster",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpdateUser"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpdatePayment"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpdateContractAndProcessMessage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpdateData"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 15
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "PushXTR"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CommitXTR"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": []
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
   "declarations": [
     {
-      "kind": "Struct",
+      "kind": "struct",
+      "name": "PushXTR",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 1862432872,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CommitXTR",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 3832714076,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "seqno",
+          "ty_idx": 11
+        },
+        {
+          "name": "userAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
       "name": "UpdateUser",
+      "ty_idx": 12,
       "prefix": {
-        "prefixStr": "0x59ff81d6",
-        "prefixLen": 32
+        "prefix_num": 1509917142,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "destAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "payload",
-          "ty": {
-            "kind": "cell"
-          }
+          "ty_idx": 3
         }
       ]
     },
     {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "UpdatePayment",
+      "ty_idx": 13,
       "prefix": {
-        "prefixStr": "0x2a999df4",
-        "prefixLen": 32
+        "prefix_num": 714710516,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "destAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "payload",
-          "ty": {
-            "kind": "cell"
-          }
+          "ty_idx": 3
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "UpdateData",
-      "fields": [
-        {
-          "name": "code",
-          "ty": {
-            "kind": "cell"
-          }
-        },
-        {
-          "name": "data",
-          "ty": {
-            "kind": "cell"
-          }
-        },
-        {
-          "name": "version",
-          "ty": {
-            "kind": "uintN",
-            "n": 32
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
+      "kind": "struct",
       "name": "UpdateContractAndProcessMessage",
+      "ty_idx": 14,
       "prefix": {
-        "prefixStr": "0xe2628539",
-        "prefixLen": 32
+        "prefix_num": 3798107449,
+        "prefix_len": 32
       },
       "fields": [
         {
           "name": "updateData",
-          "ty": {
-            "kind": "cellOf",
-            "inner": {
-              "kind": "StructRef",
-              "structName": "UpdateData"
-            }
-          }
+          "ty_idx": 16
         },
         {
           "name": "fromAddress",
-          "ty": {
-            "kind": "address"
-          }
+          "ty_idx": 7
         },
         {
           "name": "fromAmount",
-          "ty": {
-            "kind": "coins"
-          }
+          "ty_idx": 6
         },
         {
           "name": "payload",
-          "ty": {
-            "kind": "cell"
-          }
+          "ty_idx": 3
         }
       ]
     },
     {
-      "kind": "Struct",
-      "name": "PushXTR",
-      "prefix": {
-        "prefixStr": "0x6f027868",
-        "prefixLen": 32
-      },
+      "kind": "struct",
+      "name": "UpdateData",
+      "ty_idx": 15,
       "fields": [
         {
-          "name": "seqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "name": "code",
+          "ty_idx": 3
         },
         {
-          "name": "amount",
-          "ty": {
-            "kind": "coins"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "Struct",
-      "name": "CommitXTR",
-      "prefix": {
-        "prefixStr": "0xe472935c",
-        "prefixLen": 32
-      },
-      "fields": [
-        {
-          "name": "seqno",
-          "ty": {
-            "kind": "uintN",
-            "n": 64
-          }
+          "name": "data",
+          "ty_idx": 3
         },
         {
-          "name": "userAddress",
-          "ty": {
-            "kind": "address"
-          }
-        },
-        {
-          "name": "amount",
-          "ty": {
-            "kind": "coins"
-          }
+          "name": "version",
+          "ty_idx": 9
         }
       ]
     }
   ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 13
+    },
+    {
+      "body_ty_idx": 14
+    },
+    {
+      "body_ty_idx": 17
+    },
+    {
+      "body_ty_idx": 18
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
   "storage": {},
-  "incomingMessages": [
+  "get_methods": [
     {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpdateUser"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpdatePayment"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "UpdateContractAndProcessMessage"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "PushXTR"
-      }
-    },
-    {
-      "bodyTy": {
-        "kind": "StructRef",
-        "structName": "CommitXTR"
-      }
-    }
-  ],
-  "incomingExternal": [],
-  "outgoingMessages": [],
-  "emittedEvents": [],
-  "getMethods": [
-    {
-      "tvmMethodId": 98392,
+      "tvm_method_id": 98392,
       "name": "get_user_latest_version",
       "parameters": [],
-      "returnTy": {
-        "kind": "uintN",
-        "n": 32
-      }
+      "return_ty_idx": 9
     },
     {
-      "tvmMethodId": 126127,
+      "tvm_method_id": 126127,
       "name": "get_payment_latest_version",
       "parameters": [],
-      "returnTy": {
-        "kind": "uintN",
-        "n": 32
-      }
+      "return_ty_idx": 9
     }
   ],
-  "thrownErrors": [],
-  "constants": [],
-  "compilerName": "tolk",
-  "compilerVersion": "1.2.0"
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgEBBgEAKwABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQAIBWAQFAAe4BYcIAAe6yvcI"
 }

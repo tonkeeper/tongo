@@ -375,6 +375,22 @@ func (h *HashmapE[keyT, T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	return err
 }
 
+func ReadHashmapFromStack[keyT fixedSize, T any](stack *VmStack) (result Hashmap[keyT, T], err error) {
+	if stack.Len() == 0 {
+		return result, ErrStackEmpty
+	}
+	if stack.Peek(0).SumType == "VmStkNull" {
+		stack.Pop()
+		return result, nil
+	}
+	cell, err := stack.ReadCell()
+	if err != nil {
+		return result, err
+	}
+	err = result.UnmarshalTLB(&cell, NewDecoder())
+	return result, err
+}
+
 func (h HashmapE[keyT, T]) Values() []T {
 	return h.m.values
 }

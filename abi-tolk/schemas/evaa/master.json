@@ -1,0 +1,448 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "evaa_master",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SbRate"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AssetTotals"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpgradeConfigResult"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AssetTrackingInfo"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "UpgradeConfigResult",
+      "ty_idx": 14,
+      "fields": [
+        {
+          "name": "masterCodeVersion",
+          "ty_idx": 1
+        },
+        {
+          "name": "userCodeVersion",
+          "ty_idx": 1
+        },
+        {
+          "name": "timeout",
+          "ty_idx": 9
+        },
+        {
+          "name": "updateTime",
+          "ty_idx": 11
+        },
+        {
+          "name": "freezeTime",
+          "ty_idx": 11
+        },
+        {
+          "name": "userCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "newMasterCode",
+          "ty_idx": 15
+        },
+        {
+          "name": "newUserCode",
+          "ty_idx": 15
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AssetTrackingInfo",
+      "ty_idx": 16,
+      "fields": [
+        {
+          "name": "trackingSupplyIndex",
+          "ty_idx": 1
+        },
+        {
+          "name": "trackingBorrowIndex",
+          "ty_idx": 1
+        },
+        {
+          "name": "lastAccrual",
+          "ty_idx": 1
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "SbRate",
+      "ty_idx": 12,
+      "fields": [
+        {
+          "name": "sRate",
+          "ty_idx": 1
+        },
+        {
+          "name": "bRate",
+          "ty_idx": 1
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AssetTotals",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "totalSupply",
+          "ty_idx": 1
+        },
+        {
+          "name": "totalBorrow",
+          "ty_idx": 1
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 73635,
+      "name": "get_asset_sb_rate",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 12
+    },
+    {
+      "tvm_method_id": 81961,
+      "name": "getAssetRates",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 12
+    },
+    {
+      "tvm_method_id": 69219,
+      "name": "getAssetReserves",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 107252,
+      "name": "getAssetTotals",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 13
+    },
+    {
+      "tvm_method_id": 122313,
+      "name": "getUpdatedRates",
+      "parameters": [
+        {
+          "name": "assetConfigCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetDynamicsCollection",
+          "ty_idx": 3
+        },
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        },
+        {
+          "name": "timeElapsed",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 12
+    },
+    {
+      "tvm_method_id": 91858,
+      "name": "getUpdatedRatesForAllAssets",
+      "parameters": [
+        {
+          "name": "timeElapsed",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 3
+    },
+    {
+      "tvm_method_id": 73209,
+      "name": "getCollateralQuote",
+      "parameters": [
+        {
+          "name": "borrowAssetId",
+          "ty_idx": 1
+        },
+        {
+          "name": "borrowLiquidateAmount",
+          "ty_idx": 1
+        },
+        {
+          "name": "collateralAssetId",
+          "ty_idx": 1
+        },
+        {
+          "name": "pricesPacked",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 102784,
+      "name": "get_user_address",
+      "parameters": [
+        {
+          "name": "ownerAddress",
+          "ty_idx": 7
+        }
+      ],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 120531,
+      "name": "get_user_subaccount_address",
+      "parameters": [
+        {
+          "name": "ownerAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "subaccountId",
+          "ty_idx": 8
+        }
+      ],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 129327,
+      "name": "get_active",
+      "parameters": [],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 98436,
+      "name": "getTokensKeys",
+      "parameters": [],
+      "return_ty_idx": 3
+    },
+    {
+      "tvm_method_id": 88592,
+      "name": "getLastUserScVersion",
+      "parameters": [],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 73690,
+      "name": "getUpgradeConfig",
+      "parameters": [],
+      "return_ty_idx": 14
+    },
+    {
+      "tvm_method_id": 102264,
+      "name": "get_asset_tracking_info",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 16
+    },
+    {
+      "tvm_method_id": 88756,
+      "name": "get_supervisor",
+      "parameters": [],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 71695,
+      "name": "get_asset_total_principals",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 13
+    },
+    {
+      "tvm_method_id": 101067,
+      "name": "get_asset_balance",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 68120,
+      "name": "get_asset_liquidity_by_id",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 104212,
+      "name": "get_asset_liquidity_minus_reserves_by_id",
+      "parameters": [
+        {
+          "name": "assetId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 87334,
+      "name": "getStore",
+      "parameters": [],
+      "return_ty_idx": 3
+    },
+    {
+      "tvm_method_id": 110493,
+      "name": "claim_asset_reserves_min_attachment",
+      "parameters": [
+        {
+          "name": "fwdFee",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 91095,
+      "name": "supply_min_attachment",
+      "parameters": [
+        {
+          "name": "fwdFee",
+          "ty_idx": 1
+        },
+        {
+          "name": "supplyUserMessage",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 123993,
+      "name": "withdraw_min_attachment",
+      "parameters": [
+        {
+          "name": "fwdFee",
+          "ty_idx": 1
+        },
+        {
+          "name": "withdrawUserMessage",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 112852,
+      "name": "liquidate_min_attachment",
+      "parameters": [
+        {
+          "name": "fwdFee",
+          "ty_idx": 1
+        },
+        {
+          "name": "liquidateUserMessage",
+          "ty_idx": 3
+        }
+      ],
+      "return_ty_idx": 1
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 0
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.0",
+  "code_boc64": "te6ccgECMwEAAWAAART/APSkE/S88sgLAQIBYgIDAAzQMPiR8kACASAEBQIBIAYHAgEgHB0CAUgICQIBIBITAgFYCgsCAVgMDQAIqhgwcAAIqmMwcAAKqA8wcCACASAODwAJp/K+COECAW4QEQAJtGYOBBABE7NOCo4ABBENrbAkAgEgFBUCAWIaGwALsApMHAggAgEgFhcBB66TREAkAgJyGBkABbkHCABLu0jQhgBeVqM1I/0rK6g5SrKSnmg55RJsK0AiTISGEIBsrkBPz0gACKvXW3ABCKrSMIgkAgEgHh8CASAtLgIBICAhAgEgKSoCASAiIwIBSCcoAQesQkRAJAIBICUmAAAACKrLMHAADKt4MHBTAAAUqYBwggHW0+1D2AAIqxQwcAIBICssAAmyNRbcIAALrXoYOBBAAAmvzpg4QAIBWC8wAgEgMTIACa9p+QBAAA2u5K+COBBAAAmxFlbcIAAHskvcIA=="
+}

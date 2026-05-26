@@ -96,6 +96,27 @@ func (tgen TolkGolangGenerator) genGetMethod(method parser.ABIGetMethod, out *st
 	return nil
 }
 
+// int257Conversion builds an expression converting an integer parameter to
+// tlb.Int257 for pushing onto the VM stack. tlb.Int257 is backed by big.Int, so
+// big.Int-backed tlb types (Int257, Var(U)IntegerN, and Int/UintN with N > 64)
+// convert directly, while the fixed-width primitive types (Int/UintN with
+// N <= 64 and Coins) must go through Int257FromInt64.
+func int257Conversion(ty parser.Ty, paramGoName string) string {
+	bigIntBacked := false
+	switch ty.SumType {
+	case parser.TyKindInt, parser.TyKindVarIntN, parser.TyKindVarUintN:
+		bigIntBacked = true
+	case parser.TyKindIntN:
+		bigIntBacked = ty.IntN.N > 64
+	case parser.TyKindUintN:
+		bigIntBacked = ty.UintN.N > 64
+	}
+	if bigIntBacked {
+		return fmt.Sprintf("tlb.Int257(%s)", paramGoName)
+	}
+	return fmt.Sprintf("tlb.Int257FromInt64(int64(%s))", paramGoName)
+}
+
 func (tgen TolkGolangGenerator) stackPushCode(paramGoName string, tyIdx int) (string, error) {
 	ty, err := tgen.symbols.TyByIdx(tyIdx)
 	if err != nil {
@@ -103,7 +124,8 @@ func (tgen TolkGolangGenerator) stackPushCode(paramGoName string, tyIdx int) (st
 	}
 	switch ty.SumType {
 	case parser.TyKindInt, parser.TyKindIntN, parser.TyKindUintN, parser.TyKindVarIntN, parser.TyKindVarUintN, parser.TyKindCoins:
-		return fmt.Sprintf("\tstack.Put(tlb.VmStackValue{SumType: \"VmStkInt\", VmStkInt: tlb.Int257(%s)})\n", paramGoName), nil
+		expr := int257Conversion(ty, paramGoName)
+		return fmt.Sprintf("\tstack.Put(tlb.VmStackValue{SumType: \"VmStkInt\", VmStkInt: %s})\n", expr), nil
 	case parser.TyKindBool:
 		return fmt.Sprintf(`	if %s {
 		stack.Put(tlb.VmStackValue{SumType: "VmStkTinyInt", VmStkTinyInt: 1})
@@ -164,7 +186,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 			if err != nil {
 				return "", false, fmt.Errorf("tuple inner: %w", err)
 			}
-			goType, err := tgen.symbols.emitGoType(tyIdx)
+			goType, err := tgen.emitStackGoType(tyIdx)
 			if err != nil {
 				return "", false, fmt.Errorf("tuple inner type: %w", err)
 			}
@@ -198,7 +220,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 		if err != nil {
 			return "", false, fmt.Errorf("array inner: %w", err)
 		}
-		goType, err := tgen.symbols.emitGoType(ty.ArrayOf.InnerTyIdx)
+		goType, err := tgen.emitStackGoType(ty.ArrayOf.InnerTyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("array inner type: %w", err)
 		}
@@ -219,7 +241,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner: %w", err)
 		}
-		innerType, err := tgen.symbols.emitGoType(ty.Nullable.InnerTyIdx)
+		innerType, err := tgen.emitStackGoType(ty.Nullable.InnerTyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner type: %w", err)
 		}
@@ -258,7 +280,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 			}
 		}
 		slices.Reverse(loaders)
-		typ, err := tgen.symbols.emitGoType(tyIdx)
+		typ, err := tgen.emitStackGoType(tyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("tensor type: %w", err)
 		}
@@ -290,7 +312,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 			}
 		}
 		slices.Reverse(loaders)
-		typ, err := tgen.symbols.emitGoType(tyIdx)
+		typ, err := tgen.emitStackGoType(tyIdx)
 		if err != nil {
 			return "", false, fmt.Errorf("tensor type: %w", err)
 		}
@@ -313,24 +335,18 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 		enum := tgen.symbols.Enums[ty.EnumRef.EnumName]
 		return tgen.emitStackReadExpr(fieldPath, enum.EncodedAsTyIdx, unTupleIfW)
 	case parser.TyKindMapKV:
-		cellDecExpr, hasMethod, err := tgen.symbols.emitLoadExpr(fieldPath, tyIdx)
+		// A dictionary on the stack is null (empty) or a cell holding the dictionary
+		// root loaded directly: a Hashmap, not the in-cell HashmapE (which has a Maybe
+		// prefix and stores the root behind a ref).
+		kType, err := tgen.emitStackGoType(ty.MapKV.KeyTyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("cell decode expression: %w", err)
+			return "", false, fmt.Errorf("map key type: %w", err)
 		}
-		goTyp, err := tgen.symbols.emitGoType(tyIdx)
+		vType, err := tgen.emitStackGoType(ty.MapKV.ValueTyIdx)
 		if err != nil {
-			return "", false, fmt.Errorf("cell type: %w", err)
+			return "", false, fmt.Errorf("map value type: %w", err)
 		}
-		if hasMethod {
-			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c *boc.Cell) (result %s, err error) {
-	err = result.UnmarshalTLB(c, tlb.NewDecoder())
-	return
-})`, goTyp), false, nil
-		} else {
-			return fmt.Sprintf(`tlb.ReadCellFromStack(stack, func (c *boc.Cell) (%s, error) {
-	return %s
-}`, goTyp, cellDecExpr), false, nil
-		}
+		return fmt.Sprintf("tlb.ReadHashmapFromStack[%s, %s](stack)", kType, vType), false, nil
 	default:
 		renderedTy, _ := tgen.symbols.RenderTy(tyIdx)
 		return "", false, fmt.Errorf("unexpected type in stack read: %s", renderedTy)

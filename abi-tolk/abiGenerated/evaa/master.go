@@ -293,7 +293,7 @@ func DecodeGetUserSubaccountAddress(stack *tlb.VmStack) (result tlb.InternalAddr
 
 const MethodIDGetUserSubaccountAddress = 0x1D6D3
 
-func GetUserSubaccountAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.InternalAddress, subaccountId tlb.Int257) (result tlb.InternalAddress, err error) {
+func GetUserSubaccountAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ownerAddress tlb.InternalAddress, subaccountId tlb.Int32) (result tlb.InternalAddress, err error) {
 	var errCode uint32
 	var stack tlb.VmStack
 	{
@@ -305,7 +305,7 @@ func GetUserSubaccountAddress(ctx context.Context, executor Executor, reqAccount
 		}
 		stack.Put(val)
 	}
-	stack.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257(subaccountId)})
+	stack.Put(tlb.VmStackValue{SumType: "VmStkInt", VmStkInt: tlb.Int257FromInt64(int64(subaccountId))})
 	errCode, stack, err = executor.RunSmcMethodByID(ctx, reqAccountID, MethodIDGetUserSubaccountAddress, stack)
 	if err != nil {
 		return
@@ -770,7 +770,7 @@ func (c masterImpl) GetUserAddress(ctx context.Context, reqAccountID ton.Account
 	return GetUserAddress(ctx, c.executor, reqAccountID, ownerAddress)
 }
 
-func (c masterImpl) GetUserSubaccountAddress(ctx context.Context, reqAccountID ton.AccountID, ownerAddress tlb.InternalAddress, subaccountId tlb.Int257) (tlb.InternalAddress, error) {
+func (c masterImpl) GetUserSubaccountAddress(ctx context.Context, reqAccountID ton.AccountID, ownerAddress tlb.InternalAddress, subaccountId tlb.Int32) (tlb.InternalAddress, error) {
 	return GetUserSubaccountAddress(ctx, c.executor, reqAccountID, ownerAddress, subaccountId)
 }
 
@@ -871,7 +871,7 @@ func (c masterWithAccountImpl) GetUserAddress(ctx context.Context, ownerAddress 
 	return GetUserAddress(ctx, c.executor, c.accountID, ownerAddress)
 }
 
-func (c masterWithAccountImpl) GetUserSubaccountAddress(ctx context.Context, ownerAddress tlb.InternalAddress, subaccountId tlb.Int257) (tlb.InternalAddress, error) {
+func (c masterWithAccountImpl) GetUserSubaccountAddress(ctx context.Context, ownerAddress tlb.InternalAddress, subaccountId tlb.Int32) (tlb.InternalAddress, error) {
 	return GetUserSubaccountAddress(ctx, c.executor, c.accountID, ownerAddress, subaccountId)
 }
 

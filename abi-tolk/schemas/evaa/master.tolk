@@ -72,7 +72,7 @@ get fun get_user_address(ownerAddress: address): address {
     return get_user_subaccount_address(ownerAddress, 0);
 }
 
-get fun get_user_subaccount_address(ownerAddress: address, subaccountId: int): address {
+get fun get_user_subaccount_address(ownerAddress: address, subaccountId: int32): address {
     throw 0;
 }
 

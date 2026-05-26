@@ -25,6 +25,9 @@ type AggregatedBalances struct {
 	Borrow tlb.Int257 // int
 }
 
+const ( // errors
+)
+
 func DecodeGetCodeVersion(stack *tlb.VmStack) (result tlb.Int257, err error) {
 	if stack.Len() != 1 {
 		err = fmt.Errorf("invalid stack size %d, expected 1", stack.Len())
@@ -370,17 +373,17 @@ func GetAssetPrincipal(ctx context.Context, executor Executor, reqAccountID ton.
 	return DecodeGetAssetPrincipal(&stack)
 }
 
-func DecodeGetPrincipals(stack *tlb.VmStack) (result boc.Cell, err error) {
+func DecodeGetPrincipals(stack *tlb.VmStack) (result tlb.Hashmap[tlb.Bits256, tlb.Int64], err error) {
 	if stack.Len() != 1 {
 		err = fmt.Errorf("invalid stack size %d, expected 1", stack.Len())
 		return
 	}
-	return stack.ReadCell()
+	return tlb.ReadHashmapFromStack[tlb.Bits256, tlb.Int64](stack)
 }
 
 const MethodIDGetPrincipals = 0x1FAF2
 
-func GetPrincipals(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (result boc.Cell, err error) {
+func GetPrincipals(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (result tlb.Hashmap[tlb.Bits256, tlb.Int64], err error) {
 	var errCode uint32
 	var stack tlb.VmStack
 	errCode, stack, err = executor.RunSmcMethodByID(ctx, reqAccountID, MethodIDGetPrincipals, stack)
@@ -546,7 +549,7 @@ func (c userImpl) GetAssetPrincipal(ctx context.Context, reqAccountID ton.Accoun
 	return GetAssetPrincipal(ctx, c.executor, reqAccountID, assetId)
 }
 
-func (c userImpl) GetPrincipals(ctx context.Context, reqAccountID ton.AccountID) (boc.Cell, error) {
+func (c userImpl) GetPrincipals(ctx context.Context, reqAccountID ton.AccountID) (tlb.Hashmap[tlb.Bits256, tlb.Int64], error) {
 	return GetPrincipals(ctx, c.executor, reqAccountID)
 }
 
@@ -603,7 +606,7 @@ func (c userWithAccountImpl) GetAssetPrincipal(ctx context.Context, assetId tlb.
 	return GetAssetPrincipal(ctx, c.executor, c.accountID, assetId)
 }
 
-func (c userWithAccountImpl) GetPrincipals(ctx context.Context) (boc.Cell, error) {
+func (c userWithAccountImpl) GetPrincipals(ctx context.Context) (tlb.Hashmap[tlb.Bits256, tlb.Int64], error) {
 	return GetPrincipals(ctx, c.executor, c.accountID)
 }
 

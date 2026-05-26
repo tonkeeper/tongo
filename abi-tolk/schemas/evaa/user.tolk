@@ -65,8 +65,8 @@ get fun get_asset_principal(assetId: int): int {
     return 0;
 }
 
-get fun getPrincipals(): cell {
-    return beginCell().endCell();
+get fun getPrincipals(): map<bits256, int64> {
+    throw 0;
 }
 
 get fun getRewards(): cell? {

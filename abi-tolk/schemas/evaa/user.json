@@ -47,6 +47,15 @@
       "struct_name": "AggregatedBalances"
     },
     {
+      "kind": "bitsN",
+      "n": 256
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 13,
+      "value_ty_idx": 10
+    },
+    {
       "kind": "nullable",
       "inner_ty_idx": 3
     },
@@ -61,7 +70,7 @@
     {
       "kind": "struct",
       "name": "UserScData",
-      "ty_idx": 14,
+      "ty_idx": 16,
       "fields": [
         {
           "name": "codeVersion",
@@ -85,15 +94,15 @@
         },
         {
           "name": "userRewards",
-          "ty_idx": 13
+          "ty_idx": 15
         },
         {
           "name": "backupCell1",
-          "ty_idx": 13
+          "ty_idx": 15
         },
         {
           "name": "backupCell2",
-          "ty_idx": 13
+          "ty_idx": 15
         }
       ]
     },
@@ -252,19 +261,19 @@
       "tvm_method_id": 129778,
       "name": "getPrincipals",
       "parameters": [],
-      "return_ty_idx": 3
+      "return_ty_idx": 14
     },
     {
       "tvm_method_id": 105294,
       "name": "getRewards",
       "parameters": [],
-      "return_ty_idx": 13
+      "return_ty_idx": 15
     },
     {
       "tvm_method_id": 94250,
       "name": "getAllUserScData",
       "parameters": [],
-      "return_ty_idx": 14
+      "return_ty_idx": 16
     },
     {
       "tvm_method_id": 118928,
@@ -290,8 +299,13 @@
       "return_ty_idx": 1
     }
   ],
-  "thrown_errors": [],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 0
+    }
+  ],
   "compiler_name": "tolk",
   "compiler_version": "1.4.0",
-  "code_boc64": "te6ccgECHQEAAQQAART/APSkE/S88sgLAQIBYgIDAAzQMPiR8kACASAEBQIBIAYHAgEgFhcCASAICQIBIAwNAgFYCgsACbafZg4QAAuv86+BuEAAB64iv8ACAUgODwIBIBITAQmvRphEQBwCASAQEQAMqZRfA3AgAAqq/F8DcAIDe6AUFQKhsAqcI0IYAXlajNSP9KyuoOUqykp5oOeUSbCtAIkyEhhCAbK5AT89I0IYAXlajNSP9KyuoOUqykp5oOeUSbCtAIkyEhhCAbK5AT89IgjiG1tgHBwACbrF8DcIAAW75wgCASAYGQIBIBobAQe3adEQHAALtg5L4G4QAAu2EgvgjhABB7deURAcAAA="
+  "code_boc64": "te6ccgECHQEAAQQAART/APSkE/S88sgLAQIBYgIDAAzQMPiR8kACASAEBQIBIAYHAgEgFhcCASAICQIBIAwNAgFYCgsACbafZg4QAAuv86+BuEAAB64iv8ACAUgODwIBIBITAQmvRphEQBoCASAQEQAMqZRfA3AgAAqq/F8DcAIDe6AUFQKhsAqcI0IYAXlajNSP9KyuoOUqykp5oOeUSbCtAIkyEhhCAbK5AT89I0IYAXlajNSP9KyuoOUqykp5oOeUSbCtAIkyEhhCAbK5AT89IgjiG1tgGhoACbrF8DcIAAW75wgCASAYGQIBIBscAQe3adEQGgALtg5L4G4QAAAAC7YSC+COEAAJt15eQBA="
 }

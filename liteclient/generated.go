@@ -7,8 +7,9 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
-	"github.com/tonkeeper/tongo/tl"
 	"io"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 type TonNodeBlockIdC struct {
@@ -2949,7 +2950,7 @@ func (c *Client) LiteServerGetMasterchainInfo(ctx context.Context) (res LiteServ
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x85832881 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3010,7 +3011,7 @@ func (c *Client) LiteServerGetMasterchainInfoExt(ctx context.Context, request Li
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xa8cce0f5 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3042,7 +3043,7 @@ func (c *Client) LiteServerGetTime(ctx context.Context) (res LiteServerCurrentTi
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xe953000d {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3074,7 +3075,7 @@ func (c *Client) LiteServerGetVersion(ctx context.Context) (res LiteServerVersio
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x5a0491e5 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3135,7 +3136,7 @@ func (c *Client) LiteServerGetBlock(ctx context.Context, request LiteServerGetBl
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xa574ed6c {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3196,7 +3197,7 @@ func (c *Client) LiteServerGetState(ctx context.Context, request LiteServerGetSt
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xabaddc0c {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3270,7 +3271,7 @@ func (c *Client) LiteServerGetBlockHeader(ctx context.Context, request LiteServe
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x752d8219 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3331,7 +3332,7 @@ func (c *Client) LiteServerSendMessage(ctx context.Context, request LiteServerSe
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x3950e597 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3405,7 +3406,7 @@ func (c *Client) LiteServerGetAccountState(ctx context.Context, request LiteServ
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x7079c751 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3479,7 +3480,7 @@ func (c *Client) LiteServerGetAccountStatePrunned(ctx context.Context, request L
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x7079c751 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3592,7 +3593,7 @@ func (c *Client) LiteServerRunSmcMethod(ctx context.Context, request LiteServerR
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xa39a616b {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3692,7 +3693,7 @@ func (c *Client) LiteServerGetShardInfo(ctx context.Context, request LiteServerG
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x9fe6cd84 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3753,7 +3754,7 @@ func (c *Client) LiteServerGetAllShardsInfo(ctx context.Context, request LiteSer
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x98fe72d {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3840,7 +3841,7 @@ func (c *Client) LiteServerGetOneTransaction(ctx context.Context, request LiteSe
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xedeed47 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -3940,7 +3941,7 @@ func (c *Client) LiteServerGetTransactions(ctx context.Context, request LiteServ
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x6f26c60b {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4052,7 +4053,7 @@ func (c *Client) LiteServerLookupBlock(ctx context.Context, request LiteServerLo
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x752d8219 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4177,7 +4178,7 @@ func (c *Client) LiteServerLookupBlockWithProof(ctx context.Context, request Lit
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x57c7ccc5 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4289,7 +4290,7 @@ func (c *Client) LiteServerListBlockTransactions(ctx context.Context, request Li
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xbd8cad2b {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4401,7 +4402,7 @@ func (c *Client) LiteServerListBlockTransactionsExt(ctx context.Context, request
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xfb8ffce4 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4494,7 +4495,7 @@ func (c *Client) LiteServerGetBlockProof(ctx context.Context, request LiteServer
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x8ed0d2c1 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4568,7 +4569,7 @@ func (c *Client) LiteServerGetConfigAll(ctx context.Context, request LiteServerG
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xae7b272f {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4655,7 +4656,7 @@ func (c *Client) LiteServerGetConfigParams(ctx context.Context, request LiteServ
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xae7b272f {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4780,7 +4781,7 @@ func (c *Client) LiteServerGetValidatorStats(ctx context.Context, request LiteSe
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xb9f796d8 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4841,7 +4842,7 @@ func (c *Client) LiteServerGetLibraries(ctx context.Context, request LiteServerG
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x117ab96b {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4928,7 +4929,7 @@ func (c *Client) LiteServerGetLibrariesWithProof(ctx context.Context, request Li
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x99370a1f {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -4989,7 +4990,7 @@ func (c *Client) LiteServerGetShardBlockProof(ctx context.Context, request LiteS
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x1d62a07a {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -5088,7 +5089,7 @@ func (c *Client) LiteServerGetOutMsgQueueSizes(ctx context.Context, request Lite
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0xf8504a03 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -5197,7 +5198,7 @@ func (c *Client) LiteServerGetDispatchQueueInfo(ctx context.Context, request Lit
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x5d1132d0 {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)
@@ -5229,7 +5230,7 @@ func (c *Client) LiteProxyGetRequestRateLimit(ctx context.Context) (res LiteProx
 		if err != nil {
 			return res, err
 		}
-		return res, errRes
+		return res, c.wrapErr(errRes)
 	}
 	if tag == 0x14cb3f0c {
 		err = tl.Unmarshal(bytes.NewReader(resp[4:]), &res)

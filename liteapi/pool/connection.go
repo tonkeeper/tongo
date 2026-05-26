@@ -2,6 +2,7 @@ package pool
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"time"
 
@@ -147,7 +148,8 @@ func (c *connection) FindMinAvailableMasterchainSeqno(ctx context.Context) (uint
 		}
 		_, err := c.client.LiteServerLookupBlock(ctx, request)
 		if err != nil {
-			if e, ok := err.(liteclient.LiteServerErrorC); ok && e.Code == 651 {
+			var e liteclient.LiteServerErrorC
+			if errors.As(err, &e) && e.Code == 651 {
 				min = next + 1
 				next = (min + max) / 2
 				continue

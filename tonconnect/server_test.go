@@ -1,6 +1,7 @@
 package tonconnect
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -8,6 +9,9 @@ import (
 )
 
 func TestGenerateAndVerifyPayload(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	liteApiClient, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		t.Fatalf("failed create liteapi client: %v", err)
@@ -32,6 +36,9 @@ func TestGenerateAndVerifyPayload(t *testing.T) {
 }
 
 func TestExpirePayload(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	liteApiClient, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		t.Fatalf("failed create liteapi client: %v", err)

@@ -778,8 +778,8 @@ func truncatedHistory(err error) bool {
 	if err == nil {
 		return false
 	}
-	e, ok := err.(liteclient.LiteServerErrorC)
-	return ok && int32(e.Code) == -400
+	var e liteclient.LiteServerErrorC
+	return errors.As(err, &e) && int32(e.Code) == -400
 }
 
 func (c *Client) GetLastTransactions(ctx context.Context, a ton.AccountID, limit int) ([]ton.Transaction, error) {
@@ -799,7 +799,8 @@ func (c *Client) GetLastTransactions(ctx context.Context, a ton.AccountID, limit
 		}
 		txs, err := c.GetTransactions(ctx, uint32(transactionCount), a, lastLt, ton.Bits256(lastHash))
 		if err != nil {
-			if e, ok := err.(liteclient.LiteServerErrorC); ok && int32(e.Code) == -400 { // liteserver can store not full history. in that case it return error -400 for old transactions
+			var e liteclient.LiteServerErrorC
+			if errors.As(err, &e) && int32(e.Code) == -400 { // liteserver can store not full history. in that case it return error -400 for old transactions
 				break
 			}
 			return nil, err

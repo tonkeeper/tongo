@@ -862,7 +862,6 @@
             <int name="high_funding_fn_a">int64</int>
             <int name="high_funding_fn_b">uint64</int>
             <int name="inflection_point">uint64</int>
-            <int name="v3_close_delay">uint32</int>
         </output>
     </get_method>
 

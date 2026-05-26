@@ -567,7 +567,7 @@ func (g *Generator) generateGolangMethod(typeName string, c CombinatorDeclaratio
 	builder.WriteString("var errRes LiteServerErrorC\n")
 	builder.WriteString("err = tl.Unmarshal(bytes.NewReader(resp[4:]), &errRes)\n")
 	builder.WriteString(fmt.Sprintf(functionReturnErr, "err"))
-	builder.WriteString("return res, errRes\n")
+	builder.WriteString("return res, c.wrapErr(errRes)\n")
 	builder.WriteString("}\n")
 
 	if len(respType.tags) == 0 {

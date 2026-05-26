@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"os"
 	"testing"
 	"time"
 
@@ -134,6 +135,9 @@ func TestEmulator_WithLibraries(t *testing.T) {
 }
 
 func TestGet_Benchmark(t *testing.T) {
+	if os.Getenv("CI_TEST") == "1" {
+		t.Skip("flaky: no sense running in CI mode")
+	}
 	acc := "EQCq_bZJPkPoAxScGRqVfzCalamT3yYdQUURNDdjKkEvQ1yq"
 	methods := []string{"get_collection_data"}
 

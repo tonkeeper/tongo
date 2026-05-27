@@ -55,10 +55,10 @@ func NewTonBlockId(fileHash, rootHash Bits256, seqno uint32, shard uint64, workc
 }
 
 func (id BlockIDExt) String() string {
-	return fmt.Sprintf("(%d,%x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
+	return fmt.Sprintf("(%d,%016x,%d,%x,%x)", id.Workchain, id.Shard, id.Seqno, id.RootHash, id.FileHash)
 }
 func (id BlockID) String() string {
-	return fmt.Sprintf("(%d,%x,%d)", id.Workchain, id.Shard, id.Seqno)
+	return fmt.Sprintf("(%d,%016x,%d)", id.Workchain, id.Shard, id.Seqno)
 }
 
 func getParents(blkPrevInfo tlb.BlkPrevInfo, afterSplit, afterMerge bool, shard uint64, workchain int32) ([]BlockIDExt, error) {

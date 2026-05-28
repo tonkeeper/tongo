@@ -37,6 +37,7 @@ const (
 type ConnPool struct {
 	strategy           Strategy
 	updateBestInterval time.Duration
+	observer           liteclient.RequestObserver
 
 	masterHeadUpdatedCh chan masterHeadUpdated
 
@@ -61,10 +62,27 @@ type conn interface {
 	Status() ConnStatus
 }
 
+type Options struct {
+	Observer liteclient.RequestObserver
+}
+
+type Option func(*Options)
+
+func WithObserver(observer liteclient.RequestObserver) Option {
+	return func(o *Options) {
+		o.Observer = observer
+	}
+}
+
 // New returns a new instance of a connections pool.
-func New(strategy Strategy) *ConnPool {
+func New(strategy Strategy, options ...Option) *ConnPool {
+	opts := Options{}
+	for _, option := range options {
+		option(&opts)
+	}
 	return &ConnPool{
 		strategy:            strategy,
+		observer:            opts.Observer,
 		updateBestInterval:  updateBestConnectionInterval,
 		waitList:            map[uint64]chan ton.BlockIDExt{},
 		masterHeadUpdatedCh: make(chan masterHeadUpdated, 10),
@@ -77,7 +95,7 @@ func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Durat
 		clientsCh := make(chan clientWrapper, len(servers))
 		for connID, server := range servers {
 			go func(connID int, server config.LiteServer) {
-				cli, _ := connect(ctx, timeout, server, workersPerConnection)
+				cli, _ := connect(ctx, timeout, server, workersPerConnection, p.observer)
 				// TODO: log error
 				clientsCh <- clientWrapper{
 					connID:     connID,
@@ -119,7 +137,7 @@ func (p *ConnPool) InitializeConnections(ctx context.Context, timeout time.Durat
 	return ch
 }
 
-func connect(ctx context.Context, timeout time.Duration, server config.LiteServer, n int) (*liteclient.Client, error) {
+func connect(ctx context.Context, timeout time.Duration, server config.LiteServer, n int, observer liteclient.RequestObserver) (*liteclient.Client, error) {
 	serverPubkey, err := base64.StdEncoding.DecodeString(server.Key)
 	if err != nil {
 		return nil, err
@@ -128,7 +146,14 @@ func connect(ctx context.Context, timeout time.Duration, server config.LiteServe
 	if err != nil {
 		return nil, err
 	}
-	cli := liteclient.NewClient(c, liteclient.OptionTimeout(timeout), liteclient.OptionWorkersPerConnection(n))
+	opts := []liteclient.Options{
+		liteclient.OptionTimeout(timeout),
+		liteclient.OptionWorkersPerConnection(n),
+	}
+	if observer != nil {
+		opts = append(opts, liteclient.OptionObserver(observer))
+	}
+	cli := liteclient.NewClient(c, opts...)
 	if _, err := cli.LiteServerGetMasterchainInfo(ctx); err != nil {
 		return nil, err
 	}

@@ -93,6 +93,7 @@ type Options struct {
 
 	SyncConnectionsInitialization bool
 	PoolStrategy                  pool.Strategy
+	Observer                      liteclient.RequestObserver
 }
 
 type Option func(o *Options) error
@@ -132,6 +133,15 @@ func WithAsyncConnectionsInit() Option {
 func WithPoolStrategy(strategy pool.Strategy) Option {
 	return func(o *Options) error {
 		o.PoolStrategy = strategy
+		return nil
+	}
+}
+
+// WithObserver registers callback for every lite server call
+// for purpose of error rate & latency measurement
+func WithObserver(observer liteclient.RequestObserver) Option {
+	return func(o *Options) error {
+		o.Observer = observer
 		return nil
 	}
 }
@@ -284,7 +294,11 @@ func NewClient(options ...Option) (*Client, error) {
 	if len(opts.LiteServers) == 0 {
 		return nil, fmt.Errorf("server list empty")
 	}
-	connPool := pool.New(opts.PoolStrategy)
+	poolOptions := []pool.Option{}
+	if opts.Observer != nil {
+		poolOptions = append(poolOptions, pool.WithObserver(opts.Observer))
+	}
+	connPool := pool.New(opts.PoolStrategy, poolOptions...)
 	initCh := connPool.InitializeConnections(opts.InitCtx, opts.Timeout, opts.MaxConnections, opts.WorkersPerConnection, opts.DetectArchiveNodes, opts.LiteServers)
 	if opts.SyncConnectionsInitialization {
 		if err := <-initCh; err != nil {

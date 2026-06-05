@@ -62,7 +62,7 @@
       "struct_name": "BidPaymentData"
     },
     {
-      "kind": "addressAny"
+      "kind": "addressOpt"
     },
     {
       "kind": "StructRef",

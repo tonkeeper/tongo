@@ -272,7 +272,7 @@
       "struct_name": "GetCronInfoResult"
     },
     {
-      "kind": "addressAny"
+      "kind": "addressOpt"
     },
     {
       "kind": "remaining"

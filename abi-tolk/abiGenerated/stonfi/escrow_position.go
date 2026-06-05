@@ -63,13 +63,13 @@ type GetCronInfoResult struct {
 	RepeatEvery         tlb.Uint32 // uint32
 }
 type ItemAdditionalFieldMore struct {
-	AskJettonMinter tlb.MsgAddress // any_address
-	OrderOwner      tlb.MsgAddress // any_address
-	RefundTo        tlb.MsgAddress // any_address
+	AskJettonMinter tlb.MsgAddress // address?
+	OrderOwner      tlb.MsgAddress // address?
+	RefundTo        tlb.MsgAddress // address?
 }
 type ItemAdditionalField struct {
-	AskJettonWallet            tlb.MsgAddress                          // any_address
-	RefFee                     tlb.MsgAddress                          // any_address
+	AskJettonWallet            tlb.MsgAddress                          // address?
+	RefFee                     tlb.MsgAddress                          // address?
 	RefFeeTier                 tlb.Uint16                              // uint16
 	SafeDepositAndForwardValue tlb.Coins                               // coins
 	UserFillToVault            bool                                    // bool
@@ -79,19 +79,19 @@ type ItemAdditionalField struct {
 	LockForwardParams          tlb.Maybe[tlb.RefT[*LockForwardParams]] // Cell<LockForwardParams>?
 }
 type ItemInternalUnlockExtraFields struct {
-	Recipient tlb.MsgAddress // any_address
-	RefundTo  tlb.MsgAddress // any_address
-	Excesses  tlb.MsgAddress // any_address
+	Recipient tlb.MsgAddress // address?
+	RefundTo  tlb.MsgAddress // address?
+	Excesses  tlb.MsgAddress // address?
 }
 type ExternalItemWithdrawPayload struct {
-	EscrowItem   tlb.MsgAddress // any_address
+	EscrowItem   tlb.MsgAddress // address?
 	SignatureTTL tlb.Uint64     // uint64
 	WithdrawArgs boc.Cell       // cell
 }
 type EscrowWithdrawSignMessage struct {
 	SchemaHash        tlb.Uint32                             // uint32
 	Timestamp         tlb.Uint64                             // uint64
-	UserWalletAddress tlb.MsgAddress                         // any_address
+	UserWalletAddress tlb.MsgAddress                         // address?
 	Domain            boc.Cell                               // cell
 	Payload           tlb.RefT[*ExternalItemWithdrawPayload] // Cell<ExternalItemWithdrawPayload>
 }
@@ -100,9 +100,9 @@ const PrefixItemInternalLock uint64 = 0x7ab06181
 
 type ItemInternalLock struct {
 	QueryId         tlb.Uint64                     // uint64
-	TokenAddress    tlb.MsgAddress                 // any_address
+	TokenAddress    tlb.MsgAddress                 // address?
 	Amount          tlb.Coins                      // coins
-	Excesses        tlb.MsgAddress                 // any_address
+	Excesses        tlb.MsgAddress                 // address?
 	RefundToVault   bool                           // bool
 	AdditionalField tlb.RefT[*ItemAdditionalField] // Cell<ItemAdditionalField>
 	LockArgs        tlb.RefT[*BilateralLockArgs]   // Cell<BilateralLockArgs>
@@ -115,8 +115,8 @@ type ItemInternalUnlock struct {
 	QueryId                  tlb.Uint64                               // uint64
 	FillToVault              bool                                     // bool
 	RefundToVault            bool                                     // bool
-	Resolver                 tlb.MsgAddress                           // any_address
-	ResolverSentJettonWallet tlb.MsgAddress                           // any_address
+	Resolver                 tlb.MsgAddress                           // address?
+	ResolverSentJettonWallet tlb.MsgAddress                           // address?
 	ResolverSentAmount       tlb.Coins                                // coins
 	UnlockArgs               tlb.RefT[*BilateralUnlockArgs]           // Cell<BilateralUnlockArgs>
 	ExtraFields              tlb.RefT[*ItemInternalUnlockExtraFields] // Cell<ItemInternalUnlockExtraFields>
@@ -128,7 +128,7 @@ const PrefixItemWithdraw uint64 = 0x12b8a987
 type ItemWithdraw struct {
 	QueryId       tlb.Uint64                          // uint64
 	WithdrawArgs  boc.Cell                            // cell
-	Excesses      tlb.MsgAddress                      // any_address
+	Excesses      tlb.MsgAddress                      // address?
 	ForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
 }
 
@@ -143,7 +143,7 @@ type ExternalItemWithdraw struct {
 const PrefixExternalCronTrigger uint64 = 0x2114702d
 
 type ExternalCronTrigger struct {
-	RewardAddress tlb.MsgAddress // any_address
+	RewardAddress tlb.MsgAddress // address?
 	Salt          tlb.Uint32     // uint32
 }
 

@@ -225,7 +225,7 @@
       "struct_name": "GetVaultDataResult"
     },
     {
-      "kind": "addressAny"
+      "kind": "addressOpt"
     },
     {
       "kind": "remaining"

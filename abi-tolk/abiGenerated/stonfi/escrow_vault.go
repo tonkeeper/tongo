@@ -33,18 +33,18 @@ type GetVaultDataResult struct {
 	Owner        tlb.InternalAddress // address
 }
 type VaultLockAdditionalData struct {
-	Excesses                tlb.MsgAddress                          // any_address
+	Excesses                tlb.MsgAddress                          // address?
 	TonSafeDeposit          tlb.Coins                               // coins
 	UserFillToVault         bool                                    // bool
-	AskJettonWallet         tlb.MsgAddress                          // any_address
+	AskJettonWallet         tlb.MsgAddress                          // address?
 	OwnerPubkey             tlb.Maybe[tlb.Uint256]                  // uint256?
 	More                    tlb.RefT[*VaultLockAdditionalDataMore]  // Cell<VaultLockAdditionalDataMore>
 	UserUnlockForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]]     // Cell<ForwardParams>?
 	LockForwardParams       tlb.Maybe[tlb.RefT[*LockForwardParams]] // Cell<LockForwardParams>?
 }
 type VaultUnlockExtraFields struct {
-	Recipient tlb.MsgAddress // any_address
-	RefundTo  tlb.MsgAddress // any_address
+	Recipient tlb.MsgAddress // address?
+	RefundTo  tlb.MsgAddress // address?
 }
 
 const PrefixVaultLock uint64 = 0x24864ed4
@@ -54,7 +54,7 @@ type VaultLock struct {
 	Amount          tlb.Coins                          // coins
 	QuoteId         tlb.Uint256                        // uint256
 	RefundToVault   bool                               // bool
-	RefFee          tlb.MsgAddress                     // any_address
+	RefFee          tlb.MsgAddress                     // address?
 	RefFeeTier      tlb.Uint16                         // uint16
 	AdditionalData  tlb.RefT[*VaultLockAdditionalData] // Cell<VaultLockAdditionalData>
 	LockArgs        tlb.RefT[*BilateralLockArgs]       // Cell<BilateralLockArgs>
@@ -70,7 +70,7 @@ type VaultUnlock struct {
 	FillToVault         bool                                // bool
 	RefundToVault       bool                                // bool
 	UnlockArgs          tlb.RefT[*BilateralUnlockArgs]      // Cell<BilateralUnlockArgs>
-	Excesses            tlb.MsgAddress                      // any_address
+	Excesses            tlb.MsgAddress                      // address?
 	ExtraFields         tlb.RefT[*VaultUnlockExtraFields]   // Cell<VaultUnlockExtraFields>
 	UnlockForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
 }
@@ -80,7 +80,7 @@ const PrefixVaultWithdrawTokens uint64 = 0x5809e482
 type VaultWithdrawTokens struct {
 	QueryId               tlb.Uint64                          // uint64
 	Amount                tlb.Coins                           // coins
-	Excesses              tlb.MsgAddress                      // any_address
+	Excesses              tlb.MsgAddress                      // address?
 	WithdrawForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
 }
 
@@ -89,7 +89,7 @@ const PrefixVaultDepositTokens uint64 = 0x555edf4b
 type VaultDepositTokens struct {
 	QueryId          tlb.Uint64          // uint64
 	Amount           tlb.Coins           // coins
-	Excesses         tlb.MsgAddress      // any_address
+	Excesses         tlb.MsgAddress      // address?
 	ForwardTonAmount tlb.Coins           // coins
 	ForwardPayload   tlb.Maybe[boc.Cell] // cell?
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type BilateralLockArgs struct {
-	Resolver             tlb.MsgAddress           // any_address
+	Resolver             tlb.MsgAddress           // address?
 	ResolverTimeoutDelta tlb.Uint64               // uint64
 	ResolverAskAmount    tlb.Coins                // coins
 	ResolverPublicKey    tlb.Maybe[tlb.Uint256]   // uint256?
@@ -20,7 +20,7 @@ type BilateralSignPayload struct {
 }
 type BilateralSignedMessage struct {
 	ExpirationTime tlb.Uint64     // uint64
-	Resolver       tlb.MsgAddress // any_address
+	Resolver       tlb.MsgAddress // address?
 }
 type BilateralUnlockArgs struct {
 	MinOut             tlb.Coins                       // coins
@@ -37,11 +37,11 @@ type ForwardParams struct {
 	RejectPayload  tlb.Maybe[boc.Cell] // cell?
 }
 type LockForwardParams struct {
-	Dest          tlb.MsgAddress // any_address
+	Dest          tlb.MsgAddress // address?
 	ForwardParams ForwardParams  // ForwardParams
 }
 type VaultLockAdditionalDataMore struct {
-	OrderOwner      tlb.MsgAddress // any_address
-	RefundTo        tlb.MsgAddress // any_address
-	AskJettonMinter tlb.MsgAddress // any_address
+	OrderOwner      tlb.MsgAddress // address?
+	RefundTo        tlb.MsgAddress // address?
+	AskJettonMinter tlb.MsgAddress // address?
 }

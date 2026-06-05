@@ -58,41 +58,41 @@ type GetVersionResult struct {
 }
 type BidPaymentData struct {
 	UsingVault      bool                                // bool
-	Recipient       tlb.MsgAddress                      // any_address
-	BidJettonWallet tlb.MsgAddress                      // any_address
+	Recipient       tlb.MsgAddress                      // address?
+	BidJettonWallet tlb.MsgAddress                      // address?
 	Amount          tlb.Coins                           // coins
 	ForwardParams   tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
 }
 type AskRefundData struct {
-	RefundTo   tlb.MsgAddress // any_address
+	RefundTo   tlb.MsgAddress // address?
 	UsingVault bool           // bool
 	Amount     tlb.Coins      // coins
 }
 type UserPaymentData struct {
-	User                           tlb.MsgAddress                      // any_address
-	UserReceiveJettonWallet        tlb.MsgAddress                      // any_address
+	User                           tlb.MsgAddress                      // address?
+	UserReceiveJettonWallet        tlb.MsgAddress                      // address?
 	UserReceiveAmount              tlb.Coins                           // coins
 	UserDepositViaVault            bool                                // bool
 	UserForwardParams              tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
-	UserExcesses                   tlb.MsgAddress                      // any_address
+	UserExcesses                   tlb.MsgAddress                      // address?
 	UserSafeDepositAndForwardValue tlb.Uint64                          // uint64
 }
 type MinterRefundRequestExtraFields struct {
-	JettonWallet     tlb.MsgAddress            // any_address
-	Excesses         tlb.MsgAddress            // any_address
+	JettonWallet     tlb.MsgAddress            // address?
+	Excesses         tlb.MsgAddress            // address?
 	ForwardTonAmount tlb.Coins                 // coins
 	ForwardPayload   tlb.Maybe[ForwardParams]  // ForwardParams?
-	LockRejectDest   tlb.Maybe[tlb.MsgAddress] // any_address?
+	LockRejectDest   tlb.Maybe[tlb.MsgAddress] // address??
 }
 type InternalLockExtraNested struct {
-	AskJettonWallet tlb.MsgAddress  // any_address
+	AskJettonWallet tlb.MsgAddress  // address?
 	OwnerPubkey     tlb.Maybe[bool] // bool?
 }
 type InternalLockExtra struct {
 	QuoteId                    tlb.Uint256                             // uint256
-	RefFee                     tlb.MsgAddress                          // any_address
+	RefFee                     tlb.MsgAddress                          // address?
 	RefFeeTier                 tlb.Uint16                              // uint16
-	Excesses                   tlb.MsgAddress                          // any_address
+	Excesses                   tlb.MsgAddress                          // address?
 	SafeDepositAndForwardValue tlb.Coins                               // coins
 	RefundToVault              bool                                    // bool
 	UserFillToVault            bool                                    // bool
@@ -105,26 +105,26 @@ type UnlockAdditionalData struct {
 	QuoteId       tlb.Uint256                         // uint256
 	FillToVault   bool                                // bool
 	RefundToVault bool                                // bool
-	Recipient     tlb.MsgAddress                      // any_address
-	RefundTo      tlb.MsgAddress                      // any_address
+	Recipient     tlb.MsgAddress                      // address?
+	RefundTo      tlb.MsgAddress                      // address?
 	UnlockArgs    tlb.RefT[*BilateralUnlockArgs]      // Cell<BilateralUnlockArgs>
 	ForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
 }
 type MinterLockPayloadExtraFieldsMore struct {
-	OrderOwner      tlb.MsgAddress // any_address
-	AskJettonMinter tlb.MsgAddress // any_address
+	OrderOwner      tlb.MsgAddress // address?
+	AskJettonMinter tlb.MsgAddress // address?
 }
 type MinterLockPayloadExtraFields struct {
-	AskJettonWallet         tlb.MsgAddress                              // any_address
-	RefundTo                tlb.MsgAddress                              // any_address
+	AskJettonWallet         tlb.MsgAddress                              // address?
+	RefundTo                tlb.MsgAddress                              // address?
 	OwnerPubkey             tlb.Maybe[bool]                             // bool?
 	More                    tlb.RefT[*MinterLockPayloadExtraFieldsMore] // Cell<MinterLockPayloadExtraFieldsMore>
 	UserUnlockForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]]         // Cell<ForwardParams>?
 	LockForwardParams       tlb.Maybe[tlb.RefT[*LockForwardParams]]     // Cell<LockForwardParams>?
 }
 type UnlockPayloadExtraFields struct {
-	Recipient     tlb.MsgAddress // any_address
-	RefundTo      tlb.MsgAddress // any_address
+	Recipient     tlb.MsgAddress // address?
+	RefundTo      tlb.MsgAddress // address?
 	FillToVault   bool           // bool
 	RefundToVault bool           // bool
 }
@@ -203,28 +203,28 @@ const PrefixMinterUpdateProtocolTier uint64 = 0xde34aedc
 type MinterUpdateProtocolTier struct {
 	QueryId  tlb.Uint64     // uint64
 	NewTier  tlb.Uint16     // uint16
-	Excesses tlb.MsgAddress // any_address
+	Excesses tlb.MsgAddress // address?
 }
 
 const PrefixMinterTakeProtocolOwnership uint64 = 0x88124614
 
 type MinterTakeProtocolOwnership struct {
 	QueryId  tlb.Uint64     // uint64
-	Excesses tlb.MsgAddress // any_address
+	Excesses tlb.MsgAddress // address?
 }
 
 const PrefixMinterCancelNextProtocolOwner uint64 = 0x07f886e6
 
 type MinterCancelNextProtocolOwner struct {
 	QueryId  tlb.Uint64     // uint64
-	Excesses tlb.MsgAddress // any_address
+	Excesses tlb.MsgAddress // address?
 }
 
 const PrefixMinterResetGas uint64 = 0xfe16529e
 
 type MinterResetGas struct {
 	QueryId   tlb.Uint64     // uint64
-	Recipient tlb.MsgAddress // any_address
+	Recipient tlb.MsgAddress // address?
 }
 
 const PrefixMinterLockPayload uint64 = 0x3e246684
@@ -246,7 +246,7 @@ const PrefixMinterUnlockPayload uint64 = 0x6a58f85c
 
 type MinterUnlockPayload struct {
 	QuoteId       tlb.Uint256                         // uint256
-	Excesses      tlb.MsgAddress                      // any_address
+	Excesses      tlb.MsgAddress                      // address?
 	ExtraFields   tlb.RefT[*UnlockPayloadExtraFields] // Cell<UnlockPayloadExtraFields>
 	UnlockArgs    tlb.RefT[*BilateralUnlockArgs]      // Cell<BilateralUnlockArgs>
 	ForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
@@ -255,7 +255,7 @@ type MinterUnlockPayload struct {
 const PrefixMinterDepositVault uint64 = 0x702b4dc8
 
 type MinterDepositVault struct {
-	Excesses      tlb.MsgAddress                      // any_address
+	Excesses      tlb.MsgAddress                      // address?
 	ForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]] // Cell<ForwardParams>?
 }
 

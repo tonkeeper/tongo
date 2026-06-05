@@ -1,6 +1,7 @@
 package abiStonfi
 
 import (
+	"encoding/json"
 	"math/big"
 	"testing"
 
@@ -9,42 +10,6 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 )
-
-// addr builds a tlb.MsgAddress from "<workchain>:<hex>", or addr_none for "".
-func addr(s string) tlb.MsgAddress {
-	if s == "" {
-		return tlb.MsgAddress{SumType: "AddrNone"}
-	}
-	var ia tlb.InternalAddress
-	if err := ia.UnmarshalJSON([]byte(s)); err != nil {
-		panic(err)
-	}
-	return ia.ToMsgAddress()
-}
-
-// u256 builds a tlb.Uint256 from a decimal string.
-func u256(s string) tlb.Uint256 {
-	v, ok := new(big.Int).SetString(s, 10)
-	if !ok {
-		panic("invalid uint256: " + s)
-	}
-	return tlb.Uint256(*v)
-}
-
-// mustCell deserializes a single-root cell from its base64 BoC.
-func mustCell(b64 string) boc.Cell {
-	return *boc.MustDeserializeSinglRootBase64(b64)
-}
-
-// emptyRemaining matches the empty cell produced when decoding a
-// RemainingBitsAndRefs field that has no bits or refs left to read.
-func emptyRemaining() boc.Cell {
-	return *boc.NewCell().CopyRemaining()
-}
-
-// ============================================================
-// StonFi Escrow Factory — Incoming Messages
-// ============================================================
 
 func TestStonfiEscrowFactory_IncomingMessages(t *testing.T) {
 	tests := []struct {
@@ -141,9 +106,11 @@ func TestStonfiEscrowFactory_IncomingMessages(t *testing.T) {
 						Resolver:             addr("0:cc707e0ceff5545feaae6c9265376d75f9e780ca3268d93737e6af26d83c0638"),
 						ResolverTimeoutDelta: tlb.Uint64(60000),
 						ResolverAskAmount:    tlb.Grams(200000000),
-						DutchSegments:        tlb.RefT[*DutchSegments]{Value: &DutchSegments{Segments: emptyRemaining()}},
+						DutchSegments: tlb.RefT[*DutchSegments]{Value: &DutchSegments{
+							Segments: *boc.NewCell().CopyRemaining(),
+						}},
 					}},
-					UnlockCondition: mustCell("te6ccgEBAQEAIwAIQgIYPyS+2qlMQi2PGtOhqXUK+7DXsPUwmOEbsllBAA67eQ=="),
+					UnlockCondition: *boc.MustDeserializeSinglRootBase64("te6ccgEBAQEAIwAIQgIYPyS+2qlMQi2PGtOhqXUK+7DXsPUwmOEbsllBAA67eQ=="),
 					ExtraFields: tlb.RefT[*MinterLockPayloadExtraFields]{Value: &MinterLockPayloadExtraFields{
 						AskJettonWallet: addr("0:2b9cd9d451f2f0d22c6669400718257802c1b92c92d844ac39b23af0c99f14e6"),
 						RefundTo:        addr("0:02a573c7c8bb9e45e50c0a64ad7ac45703bec82bf6408479cb280b10e4c8cc52"),
@@ -177,27 +144,89 @@ func TestStonfiEscrowFactory_IncomingMessages(t *testing.T) {
 			cell := boc.MustDeserializeSinglRootHex(tt.boc)
 			var msg FactoryIncomingMessage
 			require.NoError(t, tlb.Unmarshal(cell, &msg))
-			assert.Equal(t, tt.expected, &msg)
+			assertEqualDecoded(t, tt.expected, &msg)
 			assert.True(t, cell.IsEmpty(), "cell should be fully consumed")
 		})
 	}
 }
 
-// ============================================================
-// StonFi Escrow Position — Incoming Messages
-// ============================================================
-
 func TestStonfiEscrowPosition_IncomingMessages(t *testing.T) {
 	tests := []struct {
-		name   string
-		txHash string
-		boc    string
+		name     string
+		txHash   string
+		boc      string
+		expected *PositionIncomingMessage
 	}{
+		{
+			// tx c19b0d1b52c035a4640d13d9f9aab0ae67f540948c01461b300b2d04ae46ba24
+			name:   "ItemInternalLock",
+			txHash: "c19b0d1b52c035a4640d13d9f9aab0ae67f540948c01461b300b2d04ae46ba24",
+			boc:    "b5ee9c72010206010001490003a77ab06181635862ac4d440252800e4c77ee3b482c706882be33e1f27a10c9d47e3e73c97107ab9923ba219fadf10806146581000d31d1ac6942099ccc803f9c2511616c22050af29b5c81babbbfb3caae1d22ab1001020301518007e28fa60d3977b85cb977ddb6a73dde1734ca86119ec08040a7bf3580403370600052047868c00404015c801ebdde4c025f4a056cec4660383e1e4d8587d9f2def99b5f3e0db375a725fab5800000000000000f08049319e205084202183f24bedaa94c422d8f1ad3a1a9750afbb0d7b0f53098e11bb25941000ebb7900c9800b7616c0fcd81f7c40c1dc067511e88583b4697e6a6961ebb80ec324c1e8a53f7000d31d1ac6942099ccc803f9c2511616c22050af29b5c81babbbfb3caae1d22ab2001a63a358d284133999007f384a22c2d8440a15e536b90375777f67955c3a455640000e1402498cf1001e",
+			expected: &PositionIncomingMessage{
+				SumType: PositionIncomingMessageKind_ItemInternalLock,
+				ItemInternalLock: &ItemInternalLock{
+					QueryId:      tlb.Uint64(7158580099875603026),
+					TokenAddress: addr("0:7263bf71da4163834415f19f0f93d0864ea3f1f39e4b883d5cc91dd10cfd6f88"),
+					Amount:       tlb.Grams(51000000),
+					Excesses:     addr("0:34c746b1a50826733200fe70944585b088142bca6d7206eaeefecf2ab8748aac"),
+					AdditionalField: tlb.RefT[*ItemAdditionalField]{Value: &ItemAdditionalField{
+						AskJettonWallet:            addr("0:3f147d3069cbbdc2e5cbbeedb539eef0b9a654308cf60402053df9ac02019b83"),
+						RefFee:                     addr(""),
+						RefFeeTier:                 tlb.Uint16(10),
+						SafeDepositAndForwardValue: tlb.Grams(150000000),
+						More: tlb.RefT[*ItemAdditionalFieldMore]{Value: &ItemAdditionalFieldMore{
+							AskJettonMinter: addr("0:5bb0b607e6c0fbe2060ee033a88f442c1da34bf3534b0f5dc07619260f4529fb"),
+							OrderOwner:      addr("0:34c746b1a50826733200fe70944585b088142bca6d7206eaeefecf2ab8748aac"),
+							RefundTo:        addr("0:34c746b1a50826733200fe70944585b088142bca6d7206eaeefecf2ab8748aac"),
+						}},
+					}},
+					LockArgs: tlb.RefT[*BilateralLockArgs]{Value: &BilateralLockArgs{
+						Resolver:             addr("0:f5eef26012fa502b67623301c1f0f26c2c3ecf96f7ccdaf9f06d9bad392fd5ac"),
+						ResolverTimeoutDelta: tlb.Uint64(120),
+						ResolverAskAmount:    tlb.Grams(38374641),
+						DutchSegments: tlb.RefT[*DutchSegments]{Value: &DutchSegments{
+							Num:      tlb.Uint4(1),
+							Segments: *boc.MustDeserializeSinglRootBase64("te6ccgEBAQEACQAADUAkmM8QAeg="),
+						}},
+					}},
+					UnlockCondition: *boc.MustDeserializeSinglRootBase64("te6ccgEBAQEAIwAIQgIYPyS+2qlMQi2PGtOhqXUK+7DXsPUwmOEbsllBAA67eQ=="),
+				},
+			},
+		},
 		{
 			// tx b6ec3d9b17f1b251bc89b0105a779db3cbc50abf32446da04f1ea6ca03d28ed7
 			name:   "ItemInternalUnlock",
 			txHash: "b6ec3d9b17f1b251bc89b0105a779db3cbc50abf32446da04f1ea6ca03d28ed7",
 			boc:    "b5ee9c720101030100c70002a7696fa2d800000000699ade292007af77930097d2815b3b11980e0f87936161f67cb7be66d7cf836cdd69c97ead64003f147d3069cbbdc2e5cbbeedb539eef0b9a654308cf60402053df9ac02019b83402498cf140102000b4030a32c104000c9801ebdde4c025f4a056cec4660383e1e4d8587d9f2def99b5f3e0db375a725fab59003d7bbc9804be940ad9d88cc0707c3c9b0b0fb3e5bdf336be7c1b66eb4e4bf56b2007af77930097d2815b3b11980e0f87936161f67cb7be66d7cf836cdd69c97ead640",
+			expected: &PositionIncomingMessage{
+				SumType: PositionIncomingMessageKind_ItemInternalUnlock,
+				ItemInternalUnlock: &ItemInternalUnlock{
+					QueryId:                  tlb.Uint64(1771757097),
+					Resolver:                 addr("0:f5eef26012fa502b67623301c1f0f26c2c3ecf96f7ccdaf9f06d9bad392fd5ac"),
+					ResolverSentJettonWallet: addr("0:3f147d3069cbbdc2e5cbbeedb539eef0b9a654308cf60402053df9ac02019b83"),
+					ResolverSentAmount:       tlb.Grams(38374641),
+					UnlockArgs:               tlb.RefT[*BilateralUnlockArgs]{Value: &BilateralUnlockArgs{MinOut: tlb.Grams(51000001)}},
+					ExtraFields: tlb.RefT[*ItemInternalUnlockExtraFields]{Value: &ItemInternalUnlockExtraFields{
+						Recipient: addr("0:f5eef26012fa502b67623301c1f0f26c2c3ecf96f7ccdaf9f06d9bad392fd5ac"),
+						RefundTo:  addr("0:f5eef26012fa502b67623301c1f0f26c2c3ecf96f7ccdaf9f06d9bad392fd5ac"),
+						Excesses:  addr("0:f5eef26012fa502b67623301c1f0f26c2c3ecf96f7ccdaf9f06d9bad392fd5ac"),
+					}},
+				},
+			},
+		},
+		{
+			// tx 8f463491f6c91df8a69a17e5fa27f57914c728fbb1b6e6bcd2772c331d8ab317
+			name:   "ItemWithdraw",
+			txHash: "8f463491f6c91df8a69a17e5fa27f57914c728fbb1b6e6bcd2772c331d8ab317",
+			boc:    "b5ee9c7201010201003300015b12b8a98799c0431cc4cc062d801bf7ab7d092ffb8193f97bf8ced0c9081bbf15ac847adaacafb361d04e1ad91588010000",
+			expected: &PositionIncomingMessage{
+				SumType: PositionIncomingMessageKind_ItemWithdraw,
+				ItemWithdraw: &ItemWithdraw{
+					QueryId:      tlb.Uint64(11078928874171270701),
+					WithdrawArgs: *boc.MustDeserializeSinglRootBase64("te6ccgEBAQEAAgAAAA=="),
+					Excesses:     addr("0:dfbd5be8497fdc0c9fcbdfc676864840ddf8ad6423d6d5657d9b0e8270d6c8ac"),
+				},
+			},
 		},
 	}
 
@@ -206,34 +235,66 @@ func TestStonfiEscrowPosition_IncomingMessages(t *testing.T) {
 			cell := boc.MustDeserializeSinglRootHex(tt.boc)
 			var msg PositionIncomingMessage
 			require.NoError(t, tlb.Unmarshal(cell, &msg))
-
-			assert.Equal(t, PositionIncomingMessageKind_ItemInternalUnlock, msg.SumType)
-			require.NotNil(t, msg.ItemInternalUnlock)
-			assert.Equal(t, tlb.Uint64(1771757097), msg.ItemInternalUnlock.QueryId)
-			assert.False(t, msg.ItemInternalUnlock.FillToVault)
-			assert.False(t, msg.ItemInternalUnlock.RefundToVault)
-			assert.NotZero(t, msg.ItemInternalUnlock.Resolver)
-			assert.Equal(t, tlb.Grams(38374641), msg.ItemInternalUnlock.ResolverSentAmount)
-			assert.NotNil(t, msg.ItemInternalUnlock.ExtraFields.Value)
+			assertEqualDecoded(t, tt.expected, &msg)
+			assert.True(t, cell.IsEmpty(), "cell should be fully consumed")
 		})
 	}
 }
 
-// ============================================================
-// StonFi Escrow Vault — Incoming Messages
-// ============================================================
+func TestStonfiEscrowPosition_ExternalMessages(t *testing.T) {
+	tests := []struct {
+		name     string
+		txHash   string
+		boc      string
+		expected *PositionExternalMessage
+	}{
+		{
+			// msg 306bd66765d0097fe6919403092e6de13cd3246d38e9d04a4f5c88ffceba6a14
+			name:   "ExternalCronTrigger",
+			txHash: "306bd66765d0097fe6919403092e6de13cd3246d38e9d04a4f5c88ffceba6a14",
+			boc:    "b5ee9c7201010101002c0000532114702d800c4c7a1efeef93a245170deab302f80465e43fa30f24b63db5e5d8dd704a87cfd34e343150",
+			expected: &PositionExternalMessage{
+				SumType: PositionExternalMessageKind_ExternalCronTrigger,
+				ExternalCronTrigger: &ExternalCronTrigger{
+					RewardAddress: addr("0:6263d0f7f77c9d1228b86f559817c0232f21fd187925b1edaf2ec6eb82543e7e"),
+					Salt:          tlb.Uint32(2591138186),
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cell := boc.MustDeserializeSinglRootHex(tt.boc)
+			var msg PositionExternalMessage
+			require.NoError(t, tlb.Unmarshal(cell, &msg))
+			assertEqualDecoded(t, tt.expected, &msg)
+			assert.True(t, cell.IsEmpty(), "cell should be fully consumed")
+		})
+	}
+}
 
 func TestStonfiEscrowVault_IncomingMessages(t *testing.T) {
 	tests := []struct {
-		name   string
-		txHash string
-		boc    string
+		name     string
+		txHash   string
+		boc      string
+		expected *VaultIncomingMessage
 	}{
 		{
-			// tx 894d807a3418e0ed3b77df6c3faccc602a03d3ba5998a703db5b0494b9ba09c7
+			// tx 3587b08f3fcd4c5af1c713a0f09c142d66745a01ac0fbdefa188ce9733825802
 			name:   "VaultDepositTokens",
-			txHash: "894d807a3418e0ed3b77df6c3faccc602a03d3ba5998a703db5b0494b9ba09c7",
-			boc:    "b5ee9c72010101010033000061555edf4b0000000069bb336e26ed0801ebdde4c025f4a056cec4660383e1e4d8587d9f2def99b5f3e0db375a725fab5808",
+			txHash: "3587b08f3fcd4c5af1c713a0f09c142d66745a01ac0fbdefa188ce9733825802",
+			boc:    "b5ee9c72010101010033000061555edf4b00000000695ba8b222b2d801ebdde4c025f4a056cec4660383e1e4d8587d9f2def99b5f3e0db375a725fab5808",
+			expected: &VaultIncomingMessage{
+				SumType: VaultIncomingMessageKind_VaultDepositTokens,
+				VaultDepositTokens: &VaultDepositTokens{
+					QueryId:          tlb.Uint64(1767614642),
+					Amount:           tlb.Grams(11053),
+					Excesses:         addr("0:f5eef26012fa502b67623301c1f0f26c2c3ecf96f7ccdaf9f06d9bad392fd5ac"),
+					ForwardTonAmount: tlb.Grams(0),
+				},
+			},
 		},
 	}
 
@@ -242,13 +303,37 @@ func TestStonfiEscrowVault_IncomingMessages(t *testing.T) {
 			cell := boc.MustDeserializeSinglRootHex(tt.boc)
 			var msg VaultIncomingMessage
 			require.NoError(t, tlb.Unmarshal(cell, &msg))
-
-			assert.Equal(t, VaultIncomingMessageKind_VaultDepositTokens, msg.SumType)
-			require.NotNil(t, msg.VaultDepositTokens)
-			assert.Equal(t, tlb.Uint64(1773876078), msg.VaultDepositTokens.QueryId)
-			assert.Equal(t, tlb.Coins(28368), msg.VaultDepositTokens.Amount)
-			assert.Equal(t, tlb.Coins(0), msg.VaultDepositTokens.ForwardTonAmount)
-			assert.NotZero(t, msg.VaultDepositTokens.Excesses)
+			assertEqualDecoded(t, tt.expected, &msg)
+			assert.True(t, cell.IsEmpty(), "cell should be fully consumed")
 		})
 	}
+}
+
+func addr(s string) tlb.MsgAddress {
+	if s == "" {
+		return tlb.MsgAddress{SumType: "AddrNone"}
+	}
+	var ia tlb.InternalAddress
+	if err := ia.UnmarshalJSON([]byte(s)); err != nil {
+		panic(err)
+	}
+	return ia.ToMsgAddress()
+}
+
+func u256(s string) tlb.Uint256 {
+	v, ok := new(big.Int).SetString(s, 10)
+	if !ok {
+		panic("invalid uint256: " + s)
+	}
+	return tlb.Uint256(*v)
+}
+
+func assertEqualDecoded(t *testing.T, expected, actual any) {
+	t.Helper()
+
+	expectedJSON, err := json.Marshal(expected)
+	require.NoError(t, err)
+	actualJSON, err := json.Marshal(actual)
+	require.NoError(t, err)
+	assert.JSONEq(t, string(expectedJSON), string(actualJSON))
 }

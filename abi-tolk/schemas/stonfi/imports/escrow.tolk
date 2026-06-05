@@ -12,7 +12,7 @@ struct ForwardParams {
 }
 
 struct LockForwardParams {
-    dest: any_address
+    dest: address?
     forwardParams: ForwardParams
 }
 
@@ -35,14 +35,14 @@ struct DutchAuctionData {
 
 struct BilateralConditionState {
     initBidAmount: coins
-    resolver: any_address
+    resolver: address?
     resolverTimeout: uint64
     resolverAskAmount: coins
     auctionData: Cell<DutchAuctionData>
 }
 
 struct BilateralLockArgs {
-    resolver: any_address
+    resolver: address?
     resolverTimeoutDelta: uint64
     resolverAskAmount: coins
     resolverPublicKey: uint256?
@@ -51,7 +51,7 @@ struct BilateralLockArgs {
 
 struct BilateralSignedMessage {
     expirationTime: uint64
-    resolver: any_address
+    resolver: address?
 }
 
 struct BilateralSignPayload {
@@ -71,47 +71,47 @@ struct DutchPriceAtArg {
 
 struct BidPaymentData {
     usingVault: bool
-    recipient: any_address
-    bidJettonWallet: any_address
+    recipient: address?
+    bidJettonWallet: address?
     amount: coins
     forwardParams: Cell<ForwardParams>?
 }
 
 struct AskRefundData {
-    refundTo: any_address
+    refundTo: address?
     usingVault: bool
     amount: coins
 }
 
 struct UserPaymentData {
-    user: any_address
-    userReceiveJettonWallet: any_address
+    user: address?
+    userReceiveJettonWallet: address?
     userReceiveAmount: coins
     userDepositViaVault: bool
     userForwardParams: Cell<ForwardParams>?
-    userExcesses: any_address
+    userExcesses: address?
     userSafeDepositAndForwardValue: uint64
 }
 
 struct MinterRefundRequestExtraFields {
-    jettonWallet: any_address
-    excesses: any_address
+    jettonWallet: address?
+    excesses: address?
     forwardTonAmount: coins
     forwardPayload: cell?
     lockRejectDest: any_address?
 }
 
 struct VaultLockAdditionalDataMore {
-    orderOwner: any_address
-    refundTo: any_address
-    askJettonMinter: any_address
+    orderOwner: address?
+    refundTo: address?
+    askJettonMinter: address?
 }
 
 struct VaultLockAdditionalData {
-    excesses: any_address
+    excesses: address?
     tonSafeDeposit: coins
     userFillToVault: bool
-    askJettonWallet: any_address
+    askJettonWallet: address?
     ownerPubkey: uint256?
     more: Cell<VaultLockAdditionalDataMore>
     userUnlockForwardParams: Cell<ForwardParams>?
@@ -119,15 +119,15 @@ struct VaultLockAdditionalData {
 }
 
 struct InternalLockExtraNested {
-    askJettonWallet: any_address
+    askJettonWallet: address?
     ownerPubkey: uint256?
 }
 
 struct InternalLockExtra {
     quoteId: uint256
-    refFee: any_address
+    refFee: address?
     refFeeTier: uint16
-    excesses: any_address
+    excesses: address?
     safeDepositAndForwardValue: coins
     refundToVault: bool
     userFillToVault: bool
@@ -141,20 +141,20 @@ struct UnlockAdditionalData {
     quoteId: uint256
     fillToVault: bool
     refundToVault: bool
-    recipient: any_address
-    refundTo: any_address
+    recipient: address?
+    refundTo: address?
     unlockArgs: Cell<BilateralUnlockArgs>
     forwardParams: Cell<ForwardParams>?
 }
 
 struct MinterLockPayloadExtraFieldsMore {
-    orderOwner: any_address
-    askJettonMinter: any_address
+    orderOwner: address?
+    askJettonMinter: address?
 }
 
 struct MinterLockPayloadExtraFields {
-    askJettonWallet: any_address
-    refundTo: any_address
+    askJettonWallet: address?
+    refundTo: address?
     ownerPubkey: uint256?
     more: Cell<MinterLockPayloadExtraFieldsMore>
     userUnlockForwardParams: Cell<ForwardParams>?
@@ -162,21 +162,21 @@ struct MinterLockPayloadExtraFields {
 }
 
 struct UnlockPayloadExtraFields {
-    recipient: any_address
-    refundTo: any_address
+    recipient: address?
+    refundTo: address?
     fillToVault: bool
     refundToVault: bool
 }
 
 struct ItemAdditionalFieldMore {
-    askJettonMinter: any_address
-    orderOwner: any_address
-    refundTo: any_address
+    askJettonMinter: address?
+    orderOwner: address?
+    refundTo: address?
 }
 
 struct ItemAdditionalField {
-    askJettonWallet: any_address
-    refFee: any_address
+    askJettonWallet: address?
+    refFee: address?
     refFeeTier: uint16
     safeDepositAndForwardValue: coins
     userFillToVault: bool
@@ -187,13 +187,13 @@ struct ItemAdditionalField {
 }
 
 struct ItemInternalUnlockExtraFields {
-    recipient: any_address
-    refundTo: any_address
-    excesses: any_address
+    recipient: address?
+    refundTo: address?
+    excesses: address?
 }
 
 struct ExternalItemWithdrawPayload {
-    escrowItem: any_address
+    escrowItem: address?
     signatureTTL: uint64
     withdrawArgs: cell
 }
@@ -201,14 +201,14 @@ struct ExternalItemWithdrawPayload {
 struct EscrowWithdrawSignMessage {
     schemaHash: uint32
     timestamp: uint64
-    userWalletAddress: any_address
+    userWalletAddress: address?
     domain: cell
     payload: Cell<ExternalItemWithdrawPayload>
 }
 
 struct VaultUnlockExtraFields {
-    recipient: any_address
-    refundTo: any_address
+    recipient: address?
+    refundTo: address?
 }
 
 // ============================================================
@@ -277,22 +277,22 @@ struct (0x5df8fa35) MinterGiveProtocolOwnership {
 struct (0xde34aedc) MinterUpdateProtocolTier {
     queryId: uint64
     newTier: uint16
-    excesses: any_address
+    excesses: address?
 }
 
 struct (0x88124614) MinterTakeProtocolOwnership {
     queryId: uint64
-    excesses: any_address
+    excesses: address?
 }
 
 struct (0x07f886e6) MinterCancelNextProtocolOwner {
     queryId: uint64
-    excesses: any_address
+    excesses: address?
 }
 
 struct (0xfe16529e) MinterResetGas {
     queryId: uint64
-    recipient: any_address
+    recipient: address?
 }
 
 // ——— Jetton payloads ———
@@ -312,14 +312,14 @@ struct (0x3e246684) MinterLockPayload {
 
 struct (0x6a58f85c) MinterUnlockPayload {
     quoteId: uint256
-    excesses: any_address
+    excesses: address?
     extraFields: Cell<UnlockPayloadExtraFields>
     unlockArgs: Cell<BilateralUnlockArgs>
     forwardParams: Cell<ForwardParams>?
 }
 
 struct (0x702b4dc8) MinterDepositVault {
-    excesses: any_address
+    excesses: address?
     forwardParams: Cell<ForwardParams>?
 }
 
@@ -327,9 +327,9 @@ struct (0x702b4dc8) MinterDepositVault {
 
 struct (0x7ab06181) ItemInternalLock {
     queryId: uint64
-    tokenAddress: any_address
+    tokenAddress: address?
     amount: coins
-    excesses: any_address
+    excesses: address?
     refundToVault: bool
     additionalField: Cell<ItemAdditionalField>
     lockArgs: Cell<BilateralLockArgs>
@@ -340,8 +340,8 @@ struct (0x696fa2d8) ItemInternalUnlock {
     queryId: uint64
     fillToVault: bool
     refundToVault: bool
-    resolver: any_address
-    resolverSentJettonWallet: any_address
+    resolver: address?
+    resolverSentJettonWallet: address?
     resolverSentAmount: coins
     unlockArgs: Cell<BilateralUnlockArgs>
     extraFields: Cell<ItemInternalUnlockExtraFields>
@@ -351,7 +351,7 @@ struct (0x696fa2d8) ItemInternalUnlock {
 struct (0x12b8a987) ItemWithdraw {
     queryId: uint64
     withdrawArgs: cell
-    excesses: any_address
+    excesses: address?
     forwardParams: Cell<ForwardParams>?
 }
 
@@ -364,7 +364,7 @@ struct (0x8af982e1) ExternalItemWithdraw {
 }
 
 struct (0x2114702d) ExternalCronTrigger {
-    rewardAddress: any_address
+    rewardAddress: address?
     salt: uint32
 }
 
@@ -375,7 +375,7 @@ struct (0x24864ed4) VaultLock {
     amount: coins
     quoteId: uint256
     refundToVault: bool
-    refFee: any_address
+    refFee: address?
     refFeeTier: uint16
     additionalData: Cell<VaultLockAdditionalData>
     lockArgs: Cell<BilateralLockArgs>
@@ -389,7 +389,7 @@ struct (0x4bd679ff) VaultUnlock {
     fillToVault: bool
     refundToVault: bool
     unlockArgs: Cell<BilateralUnlockArgs>
-    excesses: any_address
+    excesses: address?
     extraFields: Cell<VaultUnlockExtraFields>
     unlockForwardParams: Cell<ForwardParams>?
 }
@@ -397,14 +397,14 @@ struct (0x4bd679ff) VaultUnlock {
 struct (0x5809e482) VaultWithdrawTokens {
     queryId: uint64
     amount: coins
-    excesses: any_address
+    excesses: address?
     withdrawForwardParams: Cell<ForwardParams>?
 }
 
 struct (0x555edf4b) VaultDepositTokens {
     queryId: uint64
     amount: coins
-    excesses: any_address
+    excesses: address?
     forwardTonAmount: coins
     forwardPayload: cell?
 }

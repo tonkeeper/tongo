@@ -215,6 +215,8 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 		return "stack.ReadCell()", false, nil
 	case parser.TyKindBool:
 		return "stack.ReadBool()", false, nil
+	case parser.TyKindString:
+		return "stack.ReadStringTail()", false, nil
 	case parser.TyKindArrayOf:
 		innerExpr, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty.ArrayOf.InnerTyIdx, true)
 		if err != nil {

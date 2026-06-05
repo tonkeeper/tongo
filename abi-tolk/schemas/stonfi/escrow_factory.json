@@ -62,9 +62,6 @@
       "struct_name": "BidPaymentData"
     },
     {
-      "kind": "addressOpt"
-    },
-    {
       "kind": "StructRef",
       "struct_name": "ForwardParams"
     },
@@ -74,11 +71,11 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 18
+      "inner_ty_idx": 17
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 20
+      "inner_ty_idx": 19
     },
     {
       "kind": "cellOf",
@@ -90,7 +87,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 23
+      "inner_ty_idx": 22
     },
     {
       "kind": "StructRef",
@@ -98,7 +95,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 25
+      "inner_ty_idx": 24
     },
     {
       "kind": "StructRef",
@@ -109,12 +106,15 @@
       "struct_name": "MinterRefundRequestExtraFields"
     },
     {
+      "kind": "addressAny"
+    },
+    {
       "kind": "nullable",
-      "inner_ty_idx": 17
+      "inner_ty_idx": 28
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 28
+      "inner_ty_idx": 27
     },
     {
       "kind": "StructRef",
@@ -301,7 +301,7 @@
           "stack_width": 9
         },
         {
-          "variant_ty_idx": 27,
+          "variant_ty_idx": 26,
           "prefix_num": 3608432653,
           "prefix_len": 32,
           "is_prefix_implicit": null,
@@ -416,6 +416,9 @@
     {
       "kind": "uintN",
       "n": 8
+    },
+    {
+      "kind": "string"
     }
   ],
   "struct_instantiations": [],
@@ -469,14 +472,14 @@
         },
         {
           "name": "development",
-          "ty_idx": 3
+          "ty_idx": 79
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ForwardParams",
-      "ty_idx": 18,
+      "ty_idx": 17,
       "fields": [
         {
           "name": "value",
@@ -484,11 +487,11 @@
         },
         {
           "name": "successPayload",
-          "ty_idx": 19
+          "ty_idx": 18
         },
         {
           "name": "rejectPayload",
-          "ty_idx": 19
+          "ty_idx": 18
         }
       ]
     },
@@ -499,11 +502,11 @@
       "fields": [
         {
           "name": "dest",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "forwardParams",
-          "ty_idx": 18
+          "ty_idx": 17
         }
       ]
     },
@@ -529,7 +532,7 @@
       "fields": [
         {
           "name": "resolver",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "resolverTimeoutDelta",
@@ -560,7 +563,7 @@
         },
         {
           "name": "resolver",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -609,11 +612,11 @@
         },
         {
           "name": "recipient",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "bidJettonWallet",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "amount",
@@ -621,18 +624,18 @@
         },
         {
           "name": "forwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         }
       ]
     },
     {
       "kind": "struct",
       "name": "AskRefundData",
-      "ty_idx": 23,
+      "ty_idx": 22,
       "fields": [
         {
           "name": "refundTo",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "usingVault",
@@ -647,15 +650,15 @@
     {
       "kind": "struct",
       "name": "UserPaymentData",
-      "ty_idx": 25,
+      "ty_idx": 24,
       "fields": [
         {
           "name": "user",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "userReceiveJettonWallet",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "userReceiveAmount",
@@ -667,11 +670,11 @@
         },
         {
           "name": "userForwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         },
         {
           "name": "userExcesses",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "userSafeDepositAndForwardValue",
@@ -682,15 +685,15 @@
     {
       "kind": "struct",
       "name": "MinterRefundRequestExtraFields",
-      "ty_idx": 28,
+      "ty_idx": 27,
       "fields": [
         {
           "name": "jettonWallet",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "forwardTonAmount",
@@ -698,7 +701,7 @@
         },
         {
           "name": "forwardPayload",
-          "ty_idx": 19
+          "ty_idx": 18
         },
         {
           "name": "lockRejectDest",
@@ -713,15 +716,15 @@
       "fields": [
         {
           "name": "orderOwner",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "refundTo",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "askJettonMinter",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -732,7 +735,7 @@
       "fields": [
         {
           "name": "askJettonWallet",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "ownerPubkey",
@@ -751,7 +754,7 @@
         },
         {
           "name": "refFee",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "refFeeTier",
@@ -759,7 +762,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "safeDepositAndForwardValue",
@@ -779,7 +782,7 @@
         },
         {
           "name": "userUnlockForwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         },
         {
           "name": "lockForwardParams",
@@ -810,11 +813,11 @@
         },
         {
           "name": "recipient",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "refundTo",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "unlockArgs",
@@ -822,7 +825,7 @@
         },
         {
           "name": "forwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         }
       ]
     },
@@ -833,11 +836,11 @@
       "fields": [
         {
           "name": "orderOwner",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "askJettonMinter",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -848,11 +851,11 @@
       "fields": [
         {
           "name": "askJettonWallet",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "refundTo",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "ownerPubkey",
@@ -864,7 +867,7 @@
         },
         {
           "name": "userUnlockForwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         },
         {
           "name": "lockForwardParams",
@@ -879,11 +882,11 @@
       "fields": [
         {
           "name": "recipient",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "refundTo",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "fillToVault",
@@ -930,22 +933,22 @@
         },
         {
           "name": "bidPaymentData",
-          "ty_idx": 22
+          "ty_idx": 21
         },
         {
           "name": "askRefundData",
-          "ty_idx": 24
+          "ty_idx": 23
         },
         {
           "name": "userPaymentData",
-          "ty_idx": 26
+          "ty_idx": 25
         }
       ]
     },
     {
       "kind": "struct",
       "name": "MinterRefundRequest",
-      "ty_idx": 27,
+      "ty_idx": 26,
       "prefix": {
         "prefix_num": 3608432653,
         "prefix_len": 32
@@ -1090,7 +1093,7 @@
         },
         {
           "name": "forwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         }
       ]
     },
@@ -1136,7 +1139,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -1155,7 +1158,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -1174,7 +1177,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -1193,7 +1196,7 @@
         },
         {
           "name": "recipient",
-          "ty_idx": 17
+          "ty_idx": 14
         }
       ]
     },
@@ -1263,7 +1266,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "extraFields",
@@ -1275,7 +1278,7 @@
         },
         {
           "name": "forwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         }
       ]
     },
@@ -1290,11 +1293,11 @@
       "fields": [
         {
           "name": "excesses",
-          "ty_idx": 17
+          "ty_idx": 14
         },
         {
           "name": "forwardParams",
-          "ty_idx": 21
+          "ty_idx": 20
         }
       ]
     }
@@ -1304,7 +1307,7 @@
       "body_ty_idx": 12
     },
     {
-      "body_ty_idx": 27
+      "body_ty_idx": 26
     },
     {
       "body_ty_idx": 31

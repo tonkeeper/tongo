@@ -1,3 +1,5 @@
+import "../../../../tolk/runtime/testdata/abi/generics"
+
 // StonFi Escrow — shared data types and message structs.
 // Contracts: escrow_factory, escrow_position, escrow_vault.
 
@@ -198,7 +200,7 @@ struct ExternalItemWithdrawPayload {
     withdrawArgs: cell
 }
 
-struct EscrowWithdrawSignMessage {
+struct (0x75569022) EscrowWithdrawSignMessage {
     schemaHash: uint32
     timestamp: uint64
     userWalletAddress: address?
@@ -424,5 +426,5 @@ struct (0xac8a7373) LockRejectNotification {
 struct (0x44aceac4) VaultDepositNotification {
     queryId: uint64
     amount: coins
-    forwardPayload: cell
+    forwardPayload: EitherRef<cell>
 }

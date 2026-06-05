@@ -90,13 +90,13 @@ get fun getVaultAddress(jettonWallet: address, owner: address): address {
 struct GetVersionResult {
     major: uint8
     minor: uint8
-    development: cell
+    development: string
 }
 
 get fun getVersion(): GetVersionResult {
     return GetVersionResult{
         major: 0,
         minor: 0,
-        development: beginCell().endCell(),
+        development: "",
     };
 }

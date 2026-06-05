@@ -47,6 +47,9 @@
       "struct_name": "ItemInternalLock"
     },
     {
+      "kind": "addressOpt"
+    },
+    {
       "kind": "StructRef",
       "struct_name": "ItemAdditionalField"
     },
@@ -60,7 +63,7 @@
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 15
+      "inner_ty_idx": 16
     },
     {
       "kind": "StructRef",
@@ -68,7 +71,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 17
+      "inner_ty_idx": 18
     },
     {
       "kind": "StructRef",
@@ -80,11 +83,11 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 19
+      "inner_ty_idx": 20
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 21
+      "inner_ty_idx": 22
     },
     {
       "kind": "StructRef",
@@ -92,15 +95,15 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 23
-    },
-    {
-      "kind": "nullable",
       "inner_ty_idx": 24
     },
     {
+      "kind": "nullable",
+      "inner_ty_idx": 25
+    },
+    {
       "kind": "cellOf",
-      "inner_ty_idx": 13
+      "inner_ty_idx": 14
     },
     {
       "kind": "StructRef",
@@ -115,12 +118,15 @@
       "n": 4
     },
     {
-      "kind": "cellOf",
-      "inner_ty_idx": 28
+      "kind": "remaining"
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 27
+      "inner_ty_idx": 29
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 28
     },
     {
       "kind": "StructRef",
@@ -144,17 +150,17 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 36
+      "inner_ty_idx": 38
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 34,
+      "inner_ty_idx": 36,
       "stack_type_id": 134,
       "stack_width": 3
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 33
+      "inner_ty_idx": 35
     },
     {
       "kind": "StructRef",
@@ -162,7 +168,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 40
+      "inner_ty_idx": 42
     },
     {
       "kind": "StructRef",
@@ -182,11 +188,11 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 45
+      "inner_ty_idx": 47
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 44
+      "inner_ty_idx": 46
     },
     {
       "kind": "StructRef",
@@ -208,7 +214,7 @@
           "stack_width": 8
         },
         {
-          "variant_ty_idx": 32,
+          "variant_ty_idx": 34,
           "prefix_num": 1768923864,
           "prefix_len": 32,
           "is_prefix_implicit": null,
@@ -216,7 +222,7 @@
           "stack_width": 9
         },
         {
-          "variant_ty_idx": 42,
+          "variant_ty_idx": 44,
           "prefix_num": 314091911,
           "prefix_len": 32,
           "is_prefix_implicit": null,
@@ -234,7 +240,7 @@
       "kind": "union",
       "variants": [
         {
-          "variant_ty_idx": 43,
+          "variant_ty_idx": 45,
           "prefix_num": 2331607777,
           "prefix_len": 32,
           "is_prefix_implicit": null,
@@ -242,7 +248,7 @@
           "stack_width": 3
         },
         {
-          "variant_ty_idx": 48,
+          "variant_ty_idx": 50,
           "prefix_num": 554987565,
           "prefix_len": 32,
           "is_prefix_implicit": null,
@@ -255,8 +261,8 @@
     {
       "kind": "shapedTuple",
       "items_ty_idx": [
-        49,
-        51
+        51,
+        53
       ]
     },
     {
@@ -270,16 +276,6 @@
     {
       "kind": "StructRef",
       "struct_name": "GetCronInfoResult"
-    },
-    {
-      "kind": "addressOpt"
-    },
-    {
-      "kind": "remaining"
-    },
-    {
-      "kind": "nullable",
-      "inner_ty_idx": 57
     }
   ],
   "struct_instantiations": [],
@@ -288,23 +284,23 @@
     {
       "kind": "alias",
       "name": "PositionIncomingMessage",
-      "ty_idx": 49,
-      "target_ty_idx": 50
-    },
-    {
-      "kind": "alias",
-      "name": "PositionExternalMessage",
       "ty_idx": 51,
       "target_ty_idx": 52
     },
     {
+      "kind": "alias",
+      "name": "PositionExternalMessage",
+      "ty_idx": 53,
+      "target_ty_idx": 54
+    },
+    {
       "kind": "struct",
       "name": "GetOrderDataResult",
-      "ty_idx": 54,
+      "ty_idx": 56,
       "fields": [
         {
           "name": "status",
-          "ty_idx": 55
+          "ty_idx": 57
         },
         {
           "name": "quoteId",
@@ -332,7 +328,7 @@
         },
         {
           "name": "refFeeTier",
-          "ty_idx": 14
+          "ty_idx": 15
         },
         {
           "name": "pendingUserReceiveAmount",
@@ -360,7 +356,7 @@
         },
         {
           "name": "userUnlockForwardSuccessPayload",
-          "ty_idx": 20
+          "ty_idx": 21
         },
         {
           "name": "userFillToVault",
@@ -379,7 +375,7 @@
     {
       "kind": "struct",
       "name": "GetCronInfoResult",
-      "ty_idx": 56,
+      "ty_idx": 58,
       "fields": [
         {
           "name": "nextCallTime",
@@ -402,7 +398,7 @@
     {
       "kind": "struct",
       "name": "ForwardParams",
-      "ty_idx": 19,
+      "ty_idx": 20,
       "fields": [
         {
           "name": "value",
@@ -410,52 +406,52 @@
         },
         {
           "name": "successPayload",
-          "ty_idx": 20
+          "ty_idx": 21
         },
         {
           "name": "rejectPayload",
-          "ty_idx": 20
+          "ty_idx": 21
         }
       ]
     },
     {
       "kind": "struct",
       "name": "LockForwardParams",
-      "ty_idx": 23,
+      "ty_idx": 24,
       "fields": [
         {
           "name": "dest",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "forwardParams",
-          "ty_idx": 19
+          "ty_idx": 20
         }
       ]
     },
     {
       "kind": "struct",
       "name": "DutchSegments",
-      "ty_idx": 28,
+      "ty_idx": 29,
       "fields": [
         {
           "name": "num",
-          "ty_idx": 29
+          "ty_idx": 30
         },
         {
           "name": "segments",
-          "ty_idx": 58
+          "ty_idx": 31
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralLockArgs",
-      "ty_idx": 27,
+      "ty_idx": 28,
       "fields": [
         {
           "name": "resolver",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "resolverTimeoutDelta",
@@ -467,18 +463,18 @@
         },
         {
           "name": "resolverPublicKey",
-          "ty_idx": 16
+          "ty_idx": 17
         },
         {
           "name": "dutchSegments",
-          "ty_idx": 30
+          "ty_idx": 32
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralSignedMessage",
-      "ty_idx": 36,
+      "ty_idx": 38,
       "fields": [
         {
           "name": "expirationTime",
@@ -486,29 +482,29 @@
         },
         {
           "name": "resolver",
-          "ty_idx": 57
+          "ty_idx": 13
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralSignPayload",
-      "ty_idx": 34,
+      "ty_idx": 36,
       "fields": [
         {
           "name": "signature",
-          "ty_idx": 35
+          "ty_idx": 37
         },
         {
           "name": "message",
-          "ty_idx": 37
+          "ty_idx": 39
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralUnlockArgs",
-      "ty_idx": 33,
+      "ty_idx": 35,
       "fields": [
         {
           "name": "minOut",
@@ -520,45 +516,45 @@
         },
         {
           "name": "signed",
-          "ty_idx": 38
+          "ty_idx": 40
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ItemAdditionalFieldMore",
-      "ty_idx": 17,
+      "ty_idx": 18,
       "fields": [
         {
           "name": "askJettonMinter",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "orderOwner",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "refundTo",
-          "ty_idx": 57
+          "ty_idx": 13
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ItemAdditionalField",
-      "ty_idx": 13,
+      "ty_idx": 14,
       "fields": [
         {
           "name": "askJettonWallet",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "refFee",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "refFeeTier",
-          "ty_idx": 14
+          "ty_idx": 15
         },
         {
           "name": "safeDepositAndForwardValue",
@@ -570,49 +566,49 @@
         },
         {
           "name": "ownerPubkey",
-          "ty_idx": 16
+          "ty_idx": 17
         },
         {
           "name": "more",
-          "ty_idx": 18
+          "ty_idx": 19
         },
         {
           "name": "userUnlockForwardParams",
-          "ty_idx": 22
+          "ty_idx": 23
         },
         {
           "name": "lockForwardParams",
-          "ty_idx": 25
+          "ty_idx": 26
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ItemInternalUnlockExtraFields",
-      "ty_idx": 40,
+      "ty_idx": 42,
       "fields": [
         {
           "name": "recipient",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "refundTo",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "excesses",
-          "ty_idx": 57
+          "ty_idx": 13
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ExternalItemWithdrawPayload",
-      "ty_idx": 45,
+      "ty_idx": 47,
       "fields": [
         {
           "name": "escrowItem",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "signatureTTL",
@@ -627,7 +623,11 @@
     {
       "kind": "struct",
       "name": "EscrowWithdrawSignMessage",
-      "ty_idx": 44,
+      "ty_idx": 46,
+      "prefix": {
+        "prefix_num": 1968607266,
+        "prefix_len": 32
+      },
       "fields": [
         {
           "name": "schemaHash",
@@ -639,7 +639,7 @@
         },
         {
           "name": "userWalletAddress",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "domain",
@@ -647,7 +647,7 @@
         },
         {
           "name": "payload",
-          "ty_idx": 46
+          "ty_idx": 48
         }
       ]
     },
@@ -666,7 +666,7 @@
         },
         {
           "name": "tokenAddress",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "amount",
@@ -674,7 +674,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "refundToVault",
@@ -682,11 +682,11 @@
         },
         {
           "name": "additionalField",
-          "ty_idx": 26
+          "ty_idx": 27
         },
         {
           "name": "lockArgs",
-          "ty_idx": 31
+          "ty_idx": 33
         },
         {
           "name": "unlockCondition",
@@ -697,7 +697,7 @@
     {
       "kind": "struct",
       "name": "ItemInternalUnlock",
-      "ty_idx": 32,
+      "ty_idx": 34,
       "prefix": {
         "prefix_num": 1768923864,
         "prefix_len": 32
@@ -717,11 +717,11 @@
         },
         {
           "name": "resolver",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "resolverSentJettonWallet",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "resolverSentAmount",
@@ -729,22 +729,22 @@
         },
         {
           "name": "unlockArgs",
-          "ty_idx": 39
-        },
-        {
-          "name": "extraFields",
           "ty_idx": 41
         },
         {
+          "name": "extraFields",
+          "ty_idx": 43
+        },
+        {
           "name": "forwardParams",
-          "ty_idx": 22
+          "ty_idx": 23
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ItemWithdraw",
-      "ty_idx": 42,
+      "ty_idx": 44,
       "prefix": {
         "prefix_num": 314091911,
         "prefix_len": 32
@@ -760,18 +760,18 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "forwardParams",
-          "ty_idx": 22
+          "ty_idx": 23
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ExternalItemWithdraw",
-      "ty_idx": 43,
+      "ty_idx": 45,
       "prefix": {
         "prefix_num": 2331607777,
         "prefix_len": 32
@@ -783,18 +783,18 @@
         },
         {
           "name": "signature",
-          "ty_idx": 35
+          "ty_idx": 37
         },
         {
           "name": "signMessage",
-          "ty_idx": 47
+          "ty_idx": 49
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ExternalCronTrigger",
-      "ty_idx": 48,
+      "ty_idx": 50,
       "prefix": {
         "prefix_num": 554987565,
         "prefix_len": 32
@@ -802,7 +802,7 @@
       "fields": [
         {
           "name": "rewardAddress",
-          "ty_idx": 57
+          "ty_idx": 13
         },
         {
           "name": "salt",
@@ -816,18 +816,18 @@
       "body_ty_idx": 12
     },
     {
-      "body_ty_idx": 32
+      "body_ty_idx": 34
     },
     {
-      "body_ty_idx": 42
+      "body_ty_idx": 44
     }
   ],
   "incoming_external": [
     {
-      "body_ty_idx": 43
+      "body_ty_idx": 45
     },
     {
-      "body_ty_idx": 48
+      "body_ty_idx": 50
     }
   ],
   "outgoing_messages": [],
@@ -838,13 +838,13 @@
       "tvm_method_id": 119157,
       "name": "getOrderData",
       "parameters": [],
-      "return_ty_idx": 54
+      "return_ty_idx": 56
     },
     {
       "tvm_method_id": 77915,
       "name": "get_cron_info",
       "parameters": [],
-      "return_ty_idx": 56
+      "return_ty_idx": 58
     }
   ],
   "thrown_errors": [],

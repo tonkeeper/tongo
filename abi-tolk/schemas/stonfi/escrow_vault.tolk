@@ -30,15 +30,6 @@ fun onInternalMessage(in: InMessage) {
     }
 }
 
-fun onCreateMessageStubs() {
-    createMessage({
-        bounce: BounceMode.NoBounce,
-        dest: address("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"),
-        value: 0,
-        body: VaultDepositNotification { queryId: 0, amount: 0, forwardPayload: beginCell().endCell() }
-    });
-}
-
 // ============================================================
 // Vault Get Methods
 // ============================================================

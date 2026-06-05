@@ -151,7 +151,13 @@ func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasL
 	return "", false, fmt.Errorf("unknown type %v", ty)
 }
 
+var iii = 0
+
 func (st *symTable) emitGoType(tyIdx int) (string, error) {
+	iii += 1
+	if iii%50 == 0 {
+		println()
+	}
 	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
 		return "", err

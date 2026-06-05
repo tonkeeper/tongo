@@ -98,6 +98,14 @@ func (s *VmStack) ReadCell() (boc.Cell, error) {
 	return val.VmStkCell.Value, nil
 }
 
+func (s *VmStack) ReadStringTail() (string, error) {
+	c, err := s.ReadCell()
+	if err != nil {
+		return "", err
+	}
+	return c.ReadStringTail()
+}
+
 func (s *VmStack) ReadTuple() (VmStkTuple, error) {
 	val, ok := s.Pop()
 	if !ok {

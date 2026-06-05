@@ -51,6 +51,9 @@
       "n": 256
     },
     {
+      "kind": "addressOpt"
+    },
+    {
       "kind": "uintN",
       "n": 16
     },
@@ -68,7 +71,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 17
+      "inner_ty_idx": 18
     },
     {
       "kind": "StructRef",
@@ -80,11 +83,11 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 19
+      "inner_ty_idx": 20
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 21
+      "inner_ty_idx": 22
     },
     {
       "kind": "StructRef",
@@ -92,15 +95,15 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 23
-    },
-    {
-      "kind": "nullable",
       "inner_ty_idx": 24
     },
     {
+      "kind": "nullable",
+      "inner_ty_idx": 25
+    },
+    {
       "kind": "cellOf",
-      "inner_ty_idx": 15
+      "inner_ty_idx": 16
     },
     {
       "kind": "StructRef",
@@ -115,12 +118,15 @@
       "n": 4
     },
     {
-      "kind": "cellOf",
-      "inner_ty_idx": 28
+      "kind": "remaining"
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 27
+      "inner_ty_idx": 29
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 28
     },
     {
       "kind": "StructRef",
@@ -144,17 +150,17 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 36
+      "inner_ty_idx": 38
     },
     {
       "kind": "nullable",
-      "inner_ty_idx": 34,
-      "stack_type_id": 134,
+      "inner_ty_idx": 36,
+      "stack_type_id": 130,
       "stack_width": 3
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 33
+      "inner_ty_idx": 35
     },
     {
       "kind": "StructRef",
@@ -162,7 +168,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 40
+      "inner_ty_idx": 42
     },
     {
       "kind": "StructRef",
@@ -184,31 +190,31 @@
           "prefix_num": 612781780,
           "prefix_len": 32,
           "is_prefix_implicit": null,
-          "stack_type_id": 133,
+          "stack_type_id": 129,
           "stack_width": 9
         },
         {
-          "variant_ty_idx": 32,
+          "variant_ty_idx": 34,
           "prefix_num": 1272347135,
           "prefix_len": 32,
           "is_prefix_implicit": null,
-          "stack_type_id": 135,
+          "stack_type_id": 131,
           "stack_width": 9
         },
         {
-          "variant_ty_idx": 42,
+          "variant_ty_idx": 44,
           "prefix_num": 1477043330,
           "prefix_len": 32,
           "is_prefix_implicit": null,
-          "stack_type_id": 136,
+          "stack_type_id": 132,
           "stack_width": 4
         },
         {
-          "variant_ty_idx": 43,
+          "variant_ty_idx": 45,
           "prefix_num": 1432280907,
           "prefix_len": 32,
           "is_prefix_implicit": null,
-          "stack_type_id": 137,
+          "stack_type_id": 133,
           "stack_width": 5
         }
       ],
@@ -217,22 +223,12 @@
     {
       "kind": "shapedTuple",
       "items_ty_idx": [
-        44
+        46
       ]
     },
     {
       "kind": "StructRef",
       "struct_name": "GetVaultDataResult"
-    },
-    {
-      "kind": "addressOpt"
-    },
-    {
-      "kind": "remaining"
-    },
-    {
-      "kind": "nullable",
-      "inner_ty_idx": 48
     }
   ],
   "struct_instantiations": [],
@@ -241,13 +237,13 @@
     {
       "kind": "alias",
       "name": "VaultIncomingMessage",
-      "ty_idx": 44,
-      "target_ty_idx": 45
+      "ty_idx": 46,
+      "target_ty_idx": 47
     },
     {
       "kind": "struct",
       "name": "GetVaultDataResult",
-      "ty_idx": 47,
+      "ty_idx": 49,
       "fields": [
         {
           "name": "minter",
@@ -270,7 +266,7 @@
     {
       "kind": "struct",
       "name": "ForwardParams",
-      "ty_idx": 19,
+      "ty_idx": 20,
       "fields": [
         {
           "name": "value",
@@ -278,52 +274,52 @@
         },
         {
           "name": "successPayload",
-          "ty_idx": 20
+          "ty_idx": 21
         },
         {
           "name": "rejectPayload",
-          "ty_idx": 20
+          "ty_idx": 21
         }
       ]
     },
     {
       "kind": "struct",
       "name": "LockForwardParams",
-      "ty_idx": 23,
+      "ty_idx": 24,
       "fields": [
         {
           "name": "dest",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "forwardParams",
-          "ty_idx": 19
+          "ty_idx": 20
         }
       ]
     },
     {
       "kind": "struct",
       "name": "DutchSegments",
-      "ty_idx": 28,
+      "ty_idx": 29,
       "fields": [
         {
           "name": "num",
-          "ty_idx": 29
+          "ty_idx": 30
         },
         {
           "name": "segments",
-          "ty_idx": 49
+          "ty_idx": 31
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralLockArgs",
-      "ty_idx": 27,
+      "ty_idx": 28,
       "fields": [
         {
           "name": "resolver",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "resolverTimeoutDelta",
@@ -335,18 +331,18 @@
         },
         {
           "name": "resolverPublicKey",
-          "ty_idx": 16
+          "ty_idx": 17
         },
         {
           "name": "dutchSegments",
-          "ty_idx": 30
+          "ty_idx": 32
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralSignedMessage",
-      "ty_idx": 36,
+      "ty_idx": 38,
       "fields": [
         {
           "name": "expirationTime",
@@ -354,29 +350,29 @@
         },
         {
           "name": "resolver",
-          "ty_idx": 48
+          "ty_idx": 14
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralSignPayload",
-      "ty_idx": 34,
+      "ty_idx": 36,
       "fields": [
         {
           "name": "signature",
-          "ty_idx": 35
+          "ty_idx": 37
         },
         {
           "name": "message",
-          "ty_idx": 37
+          "ty_idx": 39
         }
       ]
     },
     {
       "kind": "struct",
       "name": "BilateralUnlockArgs",
-      "ty_idx": 33,
+      "ty_idx": 35,
       "fields": [
         {
           "name": "minOut",
@@ -388,37 +384,37 @@
         },
         {
           "name": "signed",
-          "ty_idx": 38
+          "ty_idx": 40
         }
       ]
     },
     {
       "kind": "struct",
       "name": "VaultLockAdditionalDataMore",
-      "ty_idx": 17,
+      "ty_idx": 18,
       "fields": [
         {
           "name": "orderOwner",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "refundTo",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "askJettonMinter",
-          "ty_idx": 48
+          "ty_idx": 14
         }
       ]
     },
     {
       "kind": "struct",
       "name": "VaultLockAdditionalData",
-      "ty_idx": 15,
+      "ty_idx": 16,
       "fields": [
         {
           "name": "excesses",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "tonSafeDeposit",
@@ -430,38 +426,38 @@
         },
         {
           "name": "askJettonWallet",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "ownerPubkey",
-          "ty_idx": 16
+          "ty_idx": 17
         },
         {
           "name": "more",
-          "ty_idx": 18
+          "ty_idx": 19
         },
         {
           "name": "userUnlockForwardParams",
-          "ty_idx": 22
+          "ty_idx": 23
         },
         {
           "name": "lockForwardParams",
-          "ty_idx": 25
+          "ty_idx": 26
         }
       ]
     },
     {
       "kind": "struct",
       "name": "VaultUnlockExtraFields",
-      "ty_idx": 40,
+      "ty_idx": 42,
       "fields": [
         {
           "name": "recipient",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "refundTo",
-          "ty_idx": 48
+          "ty_idx": 14
         }
       ]
     },
@@ -492,19 +488,19 @@
         },
         {
           "name": "refFee",
-          "ty_idx": 48
-        },
-        {
-          "name": "refFeeTier",
           "ty_idx": 14
         },
         {
+          "name": "refFeeTier",
+          "ty_idx": 15
+        },
+        {
           "name": "additionalData",
-          "ty_idx": 26
+          "ty_idx": 27
         },
         {
           "name": "lockArgs",
-          "ty_idx": 31
+          "ty_idx": 33
         },
         {
           "name": "unlockCondition",
@@ -515,7 +511,7 @@
     {
       "kind": "struct",
       "name": "VaultUnlock",
-      "ty_idx": 32,
+      "ty_idx": 34,
       "prefix": {
         "prefix_num": 1272347135,
         "prefix_len": 32
@@ -543,26 +539,26 @@
         },
         {
           "name": "unlockArgs",
-          "ty_idx": 39
-        },
-        {
-          "name": "excesses",
-          "ty_idx": 48
-        },
-        {
-          "name": "extraFields",
           "ty_idx": 41
         },
         {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "extraFields",
+          "ty_idx": 43
+        },
+        {
           "name": "unlockForwardParams",
-          "ty_idx": 22
+          "ty_idx": 23
         }
       ]
     },
     {
       "kind": "struct",
       "name": "VaultWithdrawTokens",
-      "ty_idx": 42,
+      "ty_idx": 44,
       "prefix": {
         "prefix_num": 1477043330,
         "prefix_len": 32
@@ -578,18 +574,18 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "withdrawForwardParams",
-          "ty_idx": 22
+          "ty_idx": 23
         }
       ]
     },
     {
       "kind": "struct",
       "name": "VaultDepositTokens",
-      "ty_idx": 43,
+      "ty_idx": 45,
       "prefix": {
         "prefix_num": 1432280907,
         "prefix_len": 32
@@ -605,7 +601,7 @@
         },
         {
           "name": "excesses",
-          "ty_idx": 48
+          "ty_idx": 14
         },
         {
           "name": "forwardTonAmount",
@@ -613,7 +609,7 @@
         },
         {
           "name": "forwardPayload",
-          "ty_idx": 20
+          "ty_idx": 21
         }
       ]
     }
@@ -623,13 +619,13 @@
       "body_ty_idx": 12
     },
     {
-      "body_ty_idx": 32
+      "body_ty_idx": 34
     },
     {
-      "body_ty_idx": 42
+      "body_ty_idx": 44
     },
     {
-      "body_ty_idx": 43
+      "body_ty_idx": 45
     }
   ],
   "incoming_external": [],
@@ -641,7 +637,7 @@
       "tvm_method_id": 114667,
       "name": "getVaultData",
       "parameters": [],
-      "return_ty_idx": 47
+      "return_ty_idx": 49
     }
   ],
   "thrown_errors": [],

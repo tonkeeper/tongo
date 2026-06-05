@@ -1,0 +1,854 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "stonfi_escrow_position",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ItemInternalLock"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ItemAdditionalField"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 15
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ItemAdditionalFieldMore"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 17
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ForwardParams"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 19
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 21
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "LockForwardParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 23
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 24
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralLockArgs"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DutchSegments"
+    },
+    {
+      "kind": "uintN",
+      "n": 4
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 28
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 27
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ItemInternalUnlock"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralUnlockArgs"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralSignPayload"
+    },
+    {
+      "kind": "bitsN",
+      "n": 512
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralSignedMessage"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 36
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 34,
+      "stack_type_id": 134,
+      "stack_width": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 33
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ItemInternalUnlockExtraFields"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 40
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ItemWithdraw"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExternalItemWithdraw"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EscrowWithdrawSignMessage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExternalItemWithdrawPayload"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 45
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 44
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ExternalCronTrigger"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "PositionIncomingMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 2058379649,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 133,
+          "stack_width": 8
+        },
+        {
+          "variant_ty_idx": 32,
+          "prefix_num": 1768923864,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 135,
+          "stack_width": 9
+        },
+        {
+          "variant_ty_idx": 42,
+          "prefix_num": 314091911,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 136,
+          "stack_width": 4
+        }
+      ],
+      "stack_width": 10
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "PositionExternalMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 43,
+          "prefix_num": 2331607777,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 137,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 48,
+          "prefix_num": 554987565,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 138,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 4
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        49,
+        51
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetOrderDataResult"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetCronInfoResult"
+    },
+    {
+      "kind": "addressAny"
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 57
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "PositionIncomingMessage",
+      "ty_idx": 49,
+      "target_ty_idx": 50
+    },
+    {
+      "kind": "alias",
+      "name": "PositionExternalMessage",
+      "ty_idx": 51,
+      "target_ty_idx": 52
+    },
+    {
+      "kind": "struct",
+      "name": "GetOrderDataResult",
+      "ty_idx": 54,
+      "fields": [
+        {
+          "name": "status",
+          "ty_idx": 55
+        },
+        {
+          "name": "quoteId",
+          "ty_idx": 1
+        },
+        {
+          "name": "minter",
+          "ty_idx": 7
+        },
+        {
+          "name": "bidJettonWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "bidJettonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "bidFromUser",
+          "ty_idx": 7
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 7
+        },
+        {
+          "name": "refFeeTier",
+          "ty_idx": 14
+        },
+        {
+          "name": "pendingUserReceiveAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "askJettonWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "askJettonMinter",
+          "ty_idx": 7
+        },
+        {
+          "name": "conditionState",
+          "ty_idx": 3
+        },
+        {
+          "name": "conditionCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "userUnlockForwardParams",
+          "ty_idx": 1
+        },
+        {
+          "name": "userUnlockForwardSuccessPayload",
+          "ty_idx": 20
+        },
+        {
+          "name": "userFillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "safeDepositAndForwardValue",
+          "ty_idx": 11
+        },
+        {
+          "name": "excessesReceiver",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GetCronInfoResult",
+      "ty_idx": 56,
+      "fields": [
+        {
+          "name": "nextCallTime",
+          "ty_idx": 9
+        },
+        {
+          "name": "reward",
+          "ty_idx": 6
+        },
+        {
+          "name": "balanceMinusAmounts",
+          "ty_idx": 10
+        },
+        {
+          "name": "repeatEvery",
+          "ty_idx": 9
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ForwardParams",
+      "ty_idx": 19,
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 6
+        },
+        {
+          "name": "successPayload",
+          "ty_idx": 20
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "LockForwardParams",
+      "ty_idx": 23,
+      "fields": [
+        {
+          "name": "dest",
+          "ty_idx": 57
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 19
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DutchSegments",
+      "ty_idx": 28,
+      "fields": [
+        {
+          "name": "num",
+          "ty_idx": 29
+        },
+        {
+          "name": "segments",
+          "ty_idx": 58
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralLockArgs",
+      "ty_idx": 27,
+      "fields": [
+        {
+          "name": "resolver",
+          "ty_idx": 57
+        },
+        {
+          "name": "resolverTimeoutDelta",
+          "ty_idx": 11
+        },
+        {
+          "name": "resolverAskAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "resolverPublicKey",
+          "ty_idx": 16
+        },
+        {
+          "name": "dutchSegments",
+          "ty_idx": 30
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralSignedMessage",
+      "ty_idx": 36,
+      "fields": [
+        {
+          "name": "expirationTime",
+          "ty_idx": 11
+        },
+        {
+          "name": "resolver",
+          "ty_idx": 57
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralSignPayload",
+      "ty_idx": 34,
+      "fields": [
+        {
+          "name": "signature",
+          "ty_idx": 35
+        },
+        {
+          "name": "message",
+          "ty_idx": 37
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralUnlockArgs",
+      "ty_idx": 33,
+      "fields": [
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "ignoreRefundAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "signed",
+          "ty_idx": 38
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ItemAdditionalFieldMore",
+      "ty_idx": 17,
+      "fields": [
+        {
+          "name": "askJettonMinter",
+          "ty_idx": 57
+        },
+        {
+          "name": "orderOwner",
+          "ty_idx": 57
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 57
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ItemAdditionalField",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "askJettonWallet",
+          "ty_idx": 57
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 57
+        },
+        {
+          "name": "refFeeTier",
+          "ty_idx": 14
+        },
+        {
+          "name": "safeDepositAndForwardValue",
+          "ty_idx": 6
+        },
+        {
+          "name": "userFillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "ownerPubkey",
+          "ty_idx": 16
+        },
+        {
+          "name": "more",
+          "ty_idx": 18
+        },
+        {
+          "name": "userUnlockForwardParams",
+          "ty_idx": 22
+        },
+        {
+          "name": "lockForwardParams",
+          "ty_idx": 25
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ItemInternalUnlockExtraFields",
+      "ty_idx": 40,
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 57
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 57
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 57
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ExternalItemWithdrawPayload",
+      "ty_idx": 45,
+      "fields": [
+        {
+          "name": "escrowItem",
+          "ty_idx": 57
+        },
+        {
+          "name": "signatureTTL",
+          "ty_idx": 11
+        },
+        {
+          "name": "withdrawArgs",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EscrowWithdrawSignMessage",
+      "ty_idx": 44,
+      "fields": [
+        {
+          "name": "schemaHash",
+          "ty_idx": 9
+        },
+        {
+          "name": "timestamp",
+          "ty_idx": 11
+        },
+        {
+          "name": "userWalletAddress",
+          "ty_idx": 57
+        },
+        {
+          "name": "domain",
+          "ty_idx": 3
+        },
+        {
+          "name": "payload",
+          "ty_idx": 46
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ItemInternalLock",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 2058379649,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "tokenAddress",
+          "ty_idx": 57
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 57
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "additionalField",
+          "ty_idx": 26
+        },
+        {
+          "name": "lockArgs",
+          "ty_idx": 31
+        },
+        {
+          "name": "unlockCondition",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ItemInternalUnlock",
+      "ty_idx": 32,
+      "prefix": {
+        "prefix_num": 1768923864,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "fillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "resolver",
+          "ty_idx": 57
+        },
+        {
+          "name": "resolverSentJettonWallet",
+          "ty_idx": 57
+        },
+        {
+          "name": "resolverSentAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "unlockArgs",
+          "ty_idx": 39
+        },
+        {
+          "name": "extraFields",
+          "ty_idx": 41
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 22
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ItemWithdraw",
+      "ty_idx": 42,
+      "prefix": {
+        "prefix_num": 314091911,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "withdrawArgs",
+          "ty_idx": 3
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 57
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 22
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ExternalItemWithdraw",
+      "ty_idx": 43,
+      "prefix": {
+        "prefix_num": 2331607777,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "signature",
+          "ty_idx": 35
+        },
+        {
+          "name": "signMessage",
+          "ty_idx": 47
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ExternalCronTrigger",
+      "ty_idx": 48,
+      "prefix": {
+        "prefix_num": 554987565,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "rewardAddress",
+          "ty_idx": 57
+        },
+        {
+          "name": "salt",
+          "ty_idx": 9
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 32
+    },
+    {
+      "body_ty_idx": 42
+    }
+  ],
+  "incoming_external": [
+    {
+      "body_ty_idx": 43
+    },
+    {
+      "body_ty_idx": 48
+    }
+  ],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 119157,
+      "name": "getOrderData",
+      "parameters": [],
+      "return_ty_idx": 54
+    },
+    {
+      "tvm_method_id": 77915,
+      "name": "get_cron_info",
+      "parameters": [],
+      "return_ty_idx": 56
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgECCQEAARcAART/APSkE/S88sgLAQIBYgIDAEjQ+JHyQNcsI9WDDAyRMODXLCNLfRbEkTDg1ywglcVMPDHc8j8CASAEBQANvYLbgqOABATtvourgQRoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6RoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6EUaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+kSpkUTEwGBgYHAEOAFiJ1MpagSULOM+0icmUdbrKy2HFEvrIFFijf2bhsQ7/QAlSIiCRtcCKNCGAFiJ1MpagSULOM+0icmUdbrKy2HFEvrIFFijf2bhsQ7/QICAAA"
+}

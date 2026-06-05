@@ -1,0 +1,651 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "stonfi_escrow_vault",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultLock"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultLockAdditionalData"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultLockAdditionalDataMore"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 17
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ForwardParams"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 19
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 21
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "LockForwardParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 23
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 24
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 15
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralLockArgs"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DutchSegments"
+    },
+    {
+      "kind": "uintN",
+      "n": 4
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 28
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 27
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultUnlock"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralUnlockArgs"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralSignPayload"
+    },
+    {
+      "kind": "bitsN",
+      "n": 512
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralSignedMessage"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 36
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 34,
+      "stack_type_id": 134,
+      "stack_width": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 33
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultUnlockExtraFields"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 40
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultWithdrawTokens"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultDepositTokens"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "VaultIncomingMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 612781780,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 133,
+          "stack_width": 9
+        },
+        {
+          "variant_ty_idx": 32,
+          "prefix_num": 1272347135,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 135,
+          "stack_width": 9
+        },
+        {
+          "variant_ty_idx": 42,
+          "prefix_num": 1477043330,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 136,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 43,
+          "prefix_num": 1432280907,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 137,
+          "stack_width": 5
+        }
+      ],
+      "stack_width": 10
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        44
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetVaultDataResult"
+    },
+    {
+      "kind": "addressAny"
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 48
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "VaultIncomingMessage",
+      "ty_idx": 44,
+      "target_ty_idx": 45
+    },
+    {
+      "kind": "struct",
+      "name": "GetVaultDataResult",
+      "ty_idx": 47,
+      "fields": [
+        {
+          "name": "minter",
+          "ty_idx": 7
+        },
+        {
+          "name": "jettonWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "balance",
+          "ty_idx": 6
+        },
+        {
+          "name": "owner",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ForwardParams",
+      "ty_idx": 19,
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 6
+        },
+        {
+          "name": "successPayload",
+          "ty_idx": 20
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "LockForwardParams",
+      "ty_idx": 23,
+      "fields": [
+        {
+          "name": "dest",
+          "ty_idx": 48
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 19
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DutchSegments",
+      "ty_idx": 28,
+      "fields": [
+        {
+          "name": "num",
+          "ty_idx": 29
+        },
+        {
+          "name": "segments",
+          "ty_idx": 49
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralLockArgs",
+      "ty_idx": 27,
+      "fields": [
+        {
+          "name": "resolver",
+          "ty_idx": 48
+        },
+        {
+          "name": "resolverTimeoutDelta",
+          "ty_idx": 11
+        },
+        {
+          "name": "resolverAskAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "resolverPublicKey",
+          "ty_idx": 16
+        },
+        {
+          "name": "dutchSegments",
+          "ty_idx": 30
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralSignedMessage",
+      "ty_idx": 36,
+      "fields": [
+        {
+          "name": "expirationTime",
+          "ty_idx": 11
+        },
+        {
+          "name": "resolver",
+          "ty_idx": 48
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralSignPayload",
+      "ty_idx": 34,
+      "fields": [
+        {
+          "name": "signature",
+          "ty_idx": 35
+        },
+        {
+          "name": "message",
+          "ty_idx": 37
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralUnlockArgs",
+      "ty_idx": 33,
+      "fields": [
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "ignoreRefundAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "signed",
+          "ty_idx": 38
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultLockAdditionalDataMore",
+      "ty_idx": 17,
+      "fields": [
+        {
+          "name": "orderOwner",
+          "ty_idx": 48
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 48
+        },
+        {
+          "name": "askJettonMinter",
+          "ty_idx": 48
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultLockAdditionalData",
+      "ty_idx": 15,
+      "fields": [
+        {
+          "name": "excesses",
+          "ty_idx": 48
+        },
+        {
+          "name": "tonSafeDeposit",
+          "ty_idx": 6
+        },
+        {
+          "name": "userFillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "askJettonWallet",
+          "ty_idx": 48
+        },
+        {
+          "name": "ownerPubkey",
+          "ty_idx": 16
+        },
+        {
+          "name": "more",
+          "ty_idx": 18
+        },
+        {
+          "name": "userUnlockForwardParams",
+          "ty_idx": 22
+        },
+        {
+          "name": "lockForwardParams",
+          "ty_idx": 25
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultUnlockExtraFields",
+      "ty_idx": 40,
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 48
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 48
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultLock",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 612781780,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 48
+        },
+        {
+          "name": "refFeeTier",
+          "ty_idx": 14
+        },
+        {
+          "name": "additionalData",
+          "ty_idx": 26
+        },
+        {
+          "name": "lockArgs",
+          "ty_idx": 31
+        },
+        {
+          "name": "unlockCondition",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultUnlock",
+      "ty_idx": 32,
+      "prefix": {
+        "prefix_num": 1272347135,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "fillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "unlockArgs",
+          "ty_idx": 39
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 48
+        },
+        {
+          "name": "extraFields",
+          "ty_idx": 41
+        },
+        {
+          "name": "unlockForwardParams",
+          "ty_idx": 22
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultWithdrawTokens",
+      "ty_idx": 42,
+      "prefix": {
+        "prefix_num": 1477043330,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 48
+        },
+        {
+          "name": "withdrawForwardParams",
+          "ty_idx": 22
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultDepositTokens",
+      "ty_idx": 43,
+      "prefix": {
+        "prefix_num": 1432280907,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 48
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 20
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 32
+    },
+    {
+      "body_ty_idx": 42
+    },
+    {
+      "body_ty_idx": 43
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 114667,
+      "name": "getVaultData",
+      "parameters": [],
+      "return_ty_idx": 47
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBBAEAtAABFP8A9KQT9LzyyAsBAgFiAgMAXND4kfJA1ywhJDJ2pJEw4NcsIl6zz/yRMODXLCLATyQUkTDg1ywiqvb6XDHc8j8A36F/1xoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6RoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6OEaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+k="
+}

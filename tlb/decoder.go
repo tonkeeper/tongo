@@ -55,6 +55,22 @@ func Unmarshal(c *boc.Cell, o any) error {
 	return decode(c, "", reflect.ValueOf(o), &dec)
 }
 
+func UnmarshalHex(c string, o any) error {
+	cell, err := boc.DeserializeSinglRootHex(c)
+	if err != nil {
+		return err
+	}
+	return Unmarshal(cell, o)
+}
+
+func UnmarshalBase64(c string, o any) error {
+	cell, err := boc.DeserializeSinglRootBase64(c)
+	if err != nil {
+		return err
+	}
+	return Unmarshal(cell, o)
+}
+
 func UnmarshalT[T UnmarshalerTLB](c *boc.Cell, decoder *Decoder) (result T, err error) {
 	err = result.UnmarshalTLB(c, decoder)
 	return

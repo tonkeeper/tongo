@@ -10,6 +10,7 @@ import (
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
+	abiStonfi "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonfi"
 	abiXtr "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/xtr"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -1063,6 +1064,164 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Upgrade](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixUpgrade), abiSingleNominatorPool.SingleNominatorPoolUpgradeMsgOp)
 	KnownMsgInTypes[abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp] = abiSingleNominatorPool.Withdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiSingleNominatorPool.Withdraw](opcodedMsgInDecodeFunctions, uint32(abiSingleNominatorPool.PrefixWithdraw), abiSingleNominatorPool.SingleNominatorPoolWithdrawMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "getEscrowData",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiStonfi.GetEscrowData(ctx, executor, id)
+				return "GetEscrowData_StonfiEscrowFactoryResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getVersion",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiStonfi.GetVersion(ctx, executor, id)
+				return "GetVersion_StonfiEscrowFactoryResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getOrderData",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiStonfi.GetOrderData(ctx, executor, id)
+				return "GetOrderData_StonfiEscrowPositionResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_cron_info",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiStonfi.GetCronInfo(ctx, executor, id)
+				return "GetCronInfo_StonfiEscrowPositionResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getVaultData",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiStonfi.GetVaultData(ctx, executor, id)
+				return "GetVaultData_StonfiEscrowVaultResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["getEscrowData"] = append(KnownGetMethodsDecoder["getEscrowData"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetEscrowData(&st)
+		return "GetEscrowData_StonfiEscrowFactoryResult", r, err
+	})
+	KnownGetMethodsDecoder["getItemAddress"] = append(KnownGetMethodsDecoder["getItemAddress"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetItemAddress(&st)
+		return "GetItemAddress_StonfiEscrowFactoryResult", r, err
+	})
+	KnownGetMethodsDecoder["getVaultAddress"] = append(KnownGetMethodsDecoder["getVaultAddress"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetVaultAddress(&st)
+		return "GetVaultAddress_StonfiEscrowFactoryResult", r, err
+	})
+	KnownGetMethodsDecoder["getVersion"] = append(KnownGetMethodsDecoder["getVersion"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetVersion(&st)
+		return "GetVersion_StonfiEscrowFactoryResult", r, err
+	})
+	KnownGetMethodsDecoder["getOrderData"] = append(KnownGetMethodsDecoder["getOrderData"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetOrderData(&st)
+		return "GetOrderData_StonfiEscrowPositionResult", r, err
+	})
+	KnownGetMethodsDecoder["get_cron_info"] = append(KnownGetMethodsDecoder["get_cron_info"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetCronInfo(&st)
+		return "GetCronInfo_StonfiEscrowPositionResult", r, err
+	})
+	KnownGetMethodsDecoder["getVaultData"] = append(KnownGetMethodsDecoder["getVaultData"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonfi.DecodeGetVaultData(&st)
+		return "GetVaultData_StonfiEscrowVaultResult", r, err
+	})
+
+	KnownSimpleGetMethods[77307] = append(KnownSimpleGetMethods[77307], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiStonfi.GetEscrowData(ctx, executor, id)
+		return "GetEscrowData_StonfiEscrowFactoryResult", r, err
+	})
+	KnownSimpleGetMethods[74724] = append(KnownSimpleGetMethods[74724], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiStonfi.GetVersion(ctx, executor, id)
+		return "GetVersion_StonfiEscrowFactoryResult", r, err
+	})
+	KnownSimpleGetMethods[119157] = append(KnownSimpleGetMethods[119157], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiStonfi.GetOrderData(ctx, executor, id)
+		return "GetOrderData_StonfiEscrowPositionResult", r, err
+	})
+	KnownSimpleGetMethods[77915] = append(KnownSimpleGetMethods[77915], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiStonfi.GetCronInfo(ctx, executor, id)
+		return "GetCronInfo_StonfiEscrowPositionResult", r, err
+	})
+	KnownSimpleGetMethods[114667] = append(KnownSimpleGetMethods[114667], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiStonfi.GetVaultData(ctx, executor, id)
+		return "GetVaultData_StonfiEscrowVaultResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    StonfiEscrowFactory,
+			Results: []string{"GetEscrowData_StonfiEscrowFactoryResult", "GetVersion_StonfiEscrowFactoryResult"},
+		},
+		InterfaceDescription{
+			Name:    StonfiEscrowPosition,
+			Results: []string{"GetOrderData_StonfiEscrowPositionResult", "GetCronInfo_StonfiEscrowPositionResult"},
+		},
+		InterfaceDescription{
+			Name:    StonfiEscrowVault,
+			Results: []string{"GetVaultData_StonfiEscrowVaultResult"},
+		},
+	)
+
+	KnownMsgInTypes[abiStonfi.StonfiExternalCronTriggerMsgOp] = abiStonfi.ExternalCronTrigger{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.ExternalCronTrigger](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixExternalCronTrigger), abiStonfi.StonfiExternalCronTriggerMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiExternalItemWithdrawMsgOp] = abiStonfi.ExternalItemWithdraw{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.ExternalItemWithdraw](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixExternalItemWithdraw), abiStonfi.StonfiExternalItemWithdrawMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiItemInternalLockMsgOp] = abiStonfi.ItemInternalLock{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.ItemInternalLock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixItemInternalLock), abiStonfi.StonfiItemInternalLockMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiItemInternalUnlockMsgOp] = abiStonfi.ItemInternalUnlock{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.ItemInternalUnlock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixItemInternalUnlock), abiStonfi.StonfiItemInternalUnlockMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiItemWithdrawMsgOp] = abiStonfi.ItemWithdraw{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.ItemWithdraw](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixItemWithdraw), abiStonfi.StonfiItemWithdrawMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterCancelNextProtocolOwnerMsgOp] = abiStonfi.MinterCancelNextProtocolOwner{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterCancelNextProtocolOwner](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterCancelNextProtocolOwner), abiStonfi.StonfiMinterCancelNextProtocolOwnerMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterDepositVaultMsgOp] = abiStonfi.MinterDepositVault{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterDepositVault](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterDepositVault), abiStonfi.StonfiMinterDepositVaultMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterGiveProtocolOwnershipMsgOp] = abiStonfi.MinterGiveProtocolOwnership{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterGiveProtocolOwnership](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterGiveProtocolOwnership), abiStonfi.StonfiMinterGiveProtocolOwnershipMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterInitTransferMsgOp] = abiStonfi.MinterInitTransfer{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterInitTransfer](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterInitTransfer), abiStonfi.StonfiMinterInitTransferMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterInternalLockMsgOp] = abiStonfi.MinterInternalLock{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterInternalLock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterInternalLock), abiStonfi.StonfiMinterInternalLockMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterInternalUnlockMsgOp] = abiStonfi.MinterInternalUnlock{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterInternalUnlock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterInternalUnlock), abiStonfi.StonfiMinterInternalUnlockMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterInternalWithdrawTokensMsgOp] = abiStonfi.MinterInternalWithdrawTokens{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterInternalWithdrawTokens](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterInternalWithdrawTokens), abiStonfi.StonfiMinterInternalWithdrawTokensMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterLockPayloadMsgOp] = abiStonfi.MinterLockPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterLockPayload](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterLockPayload), abiStonfi.StonfiMinterLockPayloadMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterRefundRequestMsgOp] = abiStonfi.MinterRefundRequest{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterRefundRequest](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterRefundRequest), abiStonfi.StonfiMinterRefundRequestMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterResetGasMsgOp] = abiStonfi.MinterResetGas{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterResetGas](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterResetGas), abiStonfi.StonfiMinterResetGasMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterTakeProtocolOwnershipMsgOp] = abiStonfi.MinterTakeProtocolOwnership{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterTakeProtocolOwnership](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterTakeProtocolOwnership), abiStonfi.StonfiMinterTakeProtocolOwnershipMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterUnlockPayloadMsgOp] = abiStonfi.MinterUnlockPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterUnlockPayload](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterUnlockPayload), abiStonfi.StonfiMinterUnlockPayloadMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiMinterUpdateProtocolTierMsgOp] = abiStonfi.MinterUpdateProtocolTier{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.MinterUpdateProtocolTier](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixMinterUpdateProtocolTier), abiStonfi.StonfiMinterUpdateProtocolTierMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiVaultDepositTokensMsgOp] = abiStonfi.VaultDepositTokens{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.VaultDepositTokens](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixVaultDepositTokens), abiStonfi.StonfiVaultDepositTokensMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiVaultLockMsgOp] = abiStonfi.VaultLock{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.VaultLock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixVaultLock), abiStonfi.StonfiVaultLockMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiVaultUnlockMsgOp] = abiStonfi.VaultUnlock{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.VaultUnlock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixVaultUnlock), abiStonfi.StonfiVaultUnlockMsgOp)
+	KnownMsgInTypes[abiStonfi.StonfiVaultWithdrawTokensMsgOp] = abiStonfi.VaultWithdrawTokens{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.VaultWithdrawTokens](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixVaultWithdrawTokens), abiStonfi.StonfiVaultWithdrawTokensMsgOp)
 
 }
 

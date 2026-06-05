@@ -26,11 +26,20 @@ contract stonfi_escrow_position {
 }
 
 fun onInternalMessage(in: InMessage) {
+    declarePositionErrors();
     val msg = lazy PositionIncomingMessage.fromSlice(in.body);
     match (msg) {
         ItemInternalLock => { }
         ItemInternalUnlock => { }
         ItemWithdraw => { }
+    }
+}
+
+fun declarePositionErrors() {
+    if (false) {
+        throw ERROR_WRONG_STATUS;
+        throw ERROR_INSUFFICIENT_GAS;
+        throw ERROR_INVALID_AMOUNT;
     }
 }
 
@@ -61,7 +70,7 @@ struct GetOrderDataResult {
     askJettonMinter: address
     conditionState: cell
     conditionCode: cell
-    userUnlockForwardParams: int
+    userUnlockForwardParams: coins?
     userUnlockForwardSuccessPayload: cell?
     userFillToVault: bool
     safeDepositAndForwardValue: uint64

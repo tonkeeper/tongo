@@ -3,6 +3,14 @@ import "../../../../tolk/runtime/testdata/abi/generics"
 // StonFi Escrow — shared data types and message structs.
 // Contracts: escrow_factory, escrow_position, escrow_vault.
 
+const ERROR_INVALID_CALL = 5190
+const ERROR_INVALID_CALLER = 32950
+const ERROR_WRONG_WORKCHAIN = 33533
+const ERROR_INSUFFICIENT_GAS = 33565
+const ERROR_INVALID_AMOUNT = 34643
+const ERROR_INVALID_TRANSFER_NOTIFICATION_PAYLOAD = 34658
+const ERROR_WRONG_STATUS = 46254
+
 // ============================================================
 // Shared data types (no opcode prefix)
 // ============================================================

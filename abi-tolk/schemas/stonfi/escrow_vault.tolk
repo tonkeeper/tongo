@@ -21,12 +21,20 @@ contract stonfi_escrow_vault {
 }
 
 fun onInternalMessage(in: InMessage) {
+    declareVaultErrors();
     val msg = lazy VaultIncomingMessage.fromSlice(in.body);
     match (msg) {
         VaultLock => { }
         VaultUnlock => { }
         VaultWithdrawTokens => { }
         VaultDepositTokens => { }
+    }
+}
+
+fun declareVaultErrors() {
+    if (false) {
+        throw ERROR_INVALID_CALLER;
+        throw ERROR_INSUFFICIENT_GAS;
     }
 }
 

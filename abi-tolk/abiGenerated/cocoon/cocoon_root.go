@@ -22,6 +22,7 @@ type CocoonData struct {
 	MinClientStake    tlb.Coins           // coins
 	OwnerAddress      tlb.InternalAddress // address
 }
+
 type CurrentCocoonParams struct {
 	ParamsVersion                  tlb.Uint32  // uint32
 	UniqueId                       tlb.Uint32  // uint32
@@ -159,10 +160,12 @@ type ChangeOwner struct {
 	QueryId         tlb.Uint64          // uint64
 	NewOwnerAddress tlb.InternalAddress // address
 }
+
 type RegisteredProxy struct {
 	Kind    tlb.Uint1 // uint1
 	Address string    // string
 }
+
 type RootData struct {
 	ProxyHashes       tlb.HashmapE[tlb.Uint256, boc.Cell]       // map<uint256, slice>
 	RegisteredProxies tlb.HashmapE[tlb.Uint32, RegisteredProxy] // map<uint32, RegisteredProxy>
@@ -170,6 +173,7 @@ type RootData struct {
 	WorkerHashes      tlb.HashmapE[tlb.Uint256, boc.Cell]       // map<uint256, slice>
 	ModelHashes       tlb.HashmapE[tlb.Uint256, boc.Cell]       // map<uint256, slice>
 }
+
 type RootStorage struct {
 	OwnerAddress tlb.InternalAddress     // address
 	Data         tlb.RefT[*RootData]     // Cell<RootData>
@@ -177,10 +181,9 @@ type RootStorage struct {
 	Version      tlb.Uint32              // uint32
 }
 
-const ( // errors
-	ErrorMsgFormatMismatch = 0x3EC // 1004
-	ErrorUnknownProxyType  = 0x7D0 // 2000
-)
+const ErrorMsgFormatMismatch = 0x3EC // 1004
+
+const ErrorUnknownProxyType = 0x7D0 // 2000
 
 func DecodeGetLastProxySeqno(stack *tlb.VmStack) (result tlb.Int257, err error) {
 	if stack.Len() != 1 {

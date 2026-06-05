@@ -640,7 +640,18 @@
       "return_ty_idx": 49
     }
   ],
-  "thrown_errors": [],
+  "thrown_errors": [
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_CALLER",
+      "err_code": 32950
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INSUFFICIENT_GAS",
+      "err_code": 33565
+    }
+  ],
   "compiler_name": "tolk",
   "compiler_version": "1.4.1",
   "code_boc64": "te6ccgEBBAEAtAABFP8A9KQT9LzyyAsBAgFiAgMAXND4kfJA1ywhJDJ2pJEw4NcsIl6zz/yRMODXLCLATyQUkTDg1ywiqvb6XDHc8j8A36F/1xoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6RoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6OEaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+k="

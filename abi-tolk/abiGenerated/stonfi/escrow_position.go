@@ -18,12 +18,13 @@ const (
 	PositionIncomingMessageKind_ItemWithdraw       PositionIncomingMessageKind = 314091911
 )
 
-type PositionIncomingMessage struct { // tagged union
+type PositionIncomingMessage struct {
 	SumType            PositionIncomingMessageKind
 	ItemInternalLock   *ItemInternalLock
 	ItemInternalUnlock *ItemInternalUnlock
 	ItemWithdraw       *ItemWithdraw
 }
+
 type PositionExternalMessageKind uint
 
 const (
@@ -31,42 +32,46 @@ const (
 	PositionExternalMessageKind_ExternalCronTrigger  PositionExternalMessageKind = 554987565
 )
 
-type PositionExternalMessage struct { // tagged union
+type PositionExternalMessage struct {
 	SumType              PositionExternalMessageKind
 	ExternalItemWithdraw *ExternalItemWithdraw
 	ExternalCronTrigger  *ExternalCronTrigger
 }
+
 type GetOrderDataResult struct {
-	Status                          tlb.Uint8           // uint8
-	QuoteId                         tlb.Int257          // int
-	Minter                          tlb.InternalAddress // address
-	BidJettonWallet                 tlb.InternalAddress // address
-	BidJettonAmount                 tlb.Coins           // coins
-	BidFromUser                     tlb.InternalAddress // address
-	RefFee                          tlb.InternalAddress // address
-	RefFeeTier                      tlb.Uint16          // uint16
-	PendingUserReceiveAmount        tlb.Coins           // coins
-	AskJettonWallet                 tlb.InternalAddress // address
-	AskJettonMinter                 tlb.InternalAddress // address
-	ConditionState                  boc.Cell            // cell
-	ConditionCode                   boc.Cell            // cell
-	UserUnlockForwardParams         tlb.Int257          // int
-	UserUnlockForwardSuccessPayload tlb.Maybe[boc.Cell] // cell?
-	UserFillToVault                 bool                // bool
-	SafeDepositAndForwardValue      tlb.Uint64          // uint64
-	ExcessesReceiver                tlb.InternalAddress // address
+	Status                          tlb.Uint8            // uint8
+	QuoteId                         tlb.Int257           // int
+	Minter                          tlb.InternalAddress  // address
+	BidJettonWallet                 tlb.InternalAddress  // address
+	BidJettonAmount                 tlb.Coins            // coins
+	BidFromUser                     tlb.InternalAddress  // address
+	RefFee                          tlb.InternalAddress  // address
+	RefFeeTier                      tlb.Uint16           // uint16
+	PendingUserReceiveAmount        tlb.Coins            // coins
+	AskJettonWallet                 tlb.InternalAddress  // address
+	AskJettonMinter                 tlb.InternalAddress  // address
+	ConditionState                  boc.Cell             // cell
+	ConditionCode                   boc.Cell             // cell
+	UserUnlockForwardParams         tlb.Maybe[tlb.Coins] // coins?
+	UserUnlockForwardSuccessPayload tlb.Maybe[boc.Cell]  // cell?
+	UserFillToVault                 bool                 // bool
+	SafeDepositAndForwardValue      tlb.Uint64           // uint64
+	ExcessesReceiver                tlb.InternalAddress  // address
 }
+
 type GetCronInfoResult struct {
 	NextCallTime        tlb.Uint32 // uint32
 	Reward              tlb.Coins  // coins
 	BalanceMinusAmounts tlb.Int64  // int64
 	RepeatEvery         tlb.Uint32 // uint32
 }
+
 type ItemAdditionalFieldMore struct {
 	AskJettonMinter tlb.MsgAddress // address?
 	OrderOwner      tlb.MsgAddress // address?
 	RefundTo        tlb.MsgAddress // address?
 }
+
 type ItemAdditionalField struct {
 	AskJettonWallet            tlb.MsgAddress                          // address?
 	RefFee                     tlb.MsgAddress                          // address?
@@ -78,16 +83,21 @@ type ItemAdditionalField struct {
 	UserUnlockForwardParams    tlb.Maybe[tlb.RefT[*ForwardParams]]     // Cell<ForwardParams>?
 	LockForwardParams          tlb.Maybe[tlb.RefT[*LockForwardParams]] // Cell<LockForwardParams>?
 }
+
 type ItemInternalUnlockExtraFields struct {
 	Recipient tlb.MsgAddress // address?
 	RefundTo  tlb.MsgAddress // address?
 	Excesses  tlb.MsgAddress // address?
 }
+
 type ExternalItemWithdrawPayload struct {
 	EscrowItem   tlb.MsgAddress // address?
 	SignatureTTL tlb.Uint64     // uint64
 	WithdrawArgs boc.Cell       // cell
 }
+
+const PrefixEscrowWithdrawSignMessage uint64 = 0x75569022
+
 type EscrowWithdrawSignMessage struct {
 	SchemaHash        tlb.Uint32                             // uint32
 	Timestamp         tlb.Uint64                             // uint64
@@ -146,6 +156,8 @@ type ExternalCronTrigger struct {
 	RewardAddress tlb.MsgAddress // address?
 	Salt          tlb.Uint32     // uint32
 }
+
+const ErrorWrongStatus = 0xB4AE // 46254
 
 func DecodeGetOrderData(stack *tlb.VmStack) (result GetOrderDataResult, err error) {
 	if stack.Len() != 18 {

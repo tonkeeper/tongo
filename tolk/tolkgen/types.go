@@ -26,7 +26,7 @@ func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
 	case parser.TyKindSlice:
 		return fmt.Sprintf("c.AddRef(%s)", expr), nil
 	case parser.TyKindString:
-		return fmt.Sprintf("c.WriteStringRefTail(%s)", expr), nil
+		return fmt.Sprintf("(func() error { _, err := c.WriteStringRefTail(%s); return err })()", expr), nil
 	case parser.TyKindNullable:
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
 	case parser.TyKindCellOf:

@@ -30,6 +30,7 @@ contract stonfi_escrow_factory {
 }
 
 fun onInternalMessage(in: InMessage) {
+    declareFactoryErrors();
     val msg = lazy FactoryIncomingMessage.fromSlice(in.body);
     match (msg) {
         MinterInitTransfer => { }
@@ -45,6 +46,17 @@ fun onInternalMessage(in: InMessage) {
         MinterLockPayload => { }
         MinterUnlockPayload => { }
         MinterDepositVault => { }
+    }
+}
+
+fun declareFactoryErrors() {
+    if (false) {
+        throw ERROR_INVALID_CALL;
+        throw ERROR_INVALID_CALLER;
+        throw ERROR_WRONG_WORKCHAIN;
+        throw ERROR_INSUFFICIENT_GAS;
+        throw ERROR_INVALID_AMOUNT;
+        throw ERROR_INVALID_TRANSFER_NOTIFICATION_PAYLOAD;
     }
 }
 

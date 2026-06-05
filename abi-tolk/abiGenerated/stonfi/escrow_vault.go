@@ -19,19 +19,21 @@ const (
 	VaultIncomingMessageKind_VaultDepositTokens  VaultIncomingMessageKind = 1432280907
 )
 
-type VaultIncomingMessage struct { // tagged union
+type VaultIncomingMessage struct {
 	SumType             VaultIncomingMessageKind
 	VaultLock           *VaultLock
 	VaultUnlock         *VaultUnlock
 	VaultWithdrawTokens *VaultWithdrawTokens
 	VaultDepositTokens  *VaultDepositTokens
 }
+
 type GetVaultDataResult struct {
 	Minter       tlb.InternalAddress // address
 	JettonWallet tlb.InternalAddress // address
 	Balance      tlb.Coins           // coins
 	Owner        tlb.InternalAddress // address
 }
+
 type VaultLockAdditionalData struct {
 	Excesses                tlb.MsgAddress                          // address?
 	TonSafeDeposit          tlb.Coins                               // coins
@@ -42,6 +44,7 @@ type VaultLockAdditionalData struct {
 	UserUnlockForwardParams tlb.Maybe[tlb.RefT[*ForwardParams]]     // Cell<ForwardParams>?
 	LockForwardParams       tlb.Maybe[tlb.RefT[*LockForwardParams]] // Cell<LockForwardParams>?
 }
+
 type VaultUnlockExtraFields struct {
 	Recipient tlb.MsgAddress // address?
 	RefundTo  tlb.MsgAddress // address?

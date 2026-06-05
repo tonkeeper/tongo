@@ -8,6 +8,106 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+func (v *ForwardParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Value.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Value: %v", err)
+	}
+	if v.SuccessPayload, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
+		return c.NextRefV()
+	}); err != nil {
+		return fmt.Errorf("failed to read .SuccessPayload: %v", err)
+	}
+	if v.RejectPayload, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
+		return c.NextRefV()
+	}); err != nil {
+		return fmt.Errorf("failed to read .RejectPayload: %v", err)
+	}
+	return nil
+}
+
+func (v ForwardParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Value.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Value: %v", err)
+	}
+	if err = v.SuccessPayload.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .SuccessPayload: %v", err)
+	}
+	if err = v.RejectPayload.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .RejectPayload: %v", err)
+	}
+	return nil
+}
+
+func (v ForwardParams) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+func (v *LockForwardParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Dest.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Dest: %v", err)
+	}
+	if err = v.ForwardParams.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .ForwardParams: %v", err)
+	}
+	return nil
+}
+
+func (v LockForwardParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Dest.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Dest: %v", err)
+	}
+	if err = v.ForwardParams.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .ForwardParams: %v", err)
+	}
+	return nil
+}
+
+func (v LockForwardParams) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+func (v *DutchSegments) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Num.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Num: %v", err)
+	}
+	if v.Segments, err = (func() (boc.Cell, error) {
+		remain := c.CopyRemaining()
+		if remain == nil {
+			return boc.Cell{}, nil
+		}
+		return *remain, nil
+	})(); err != nil {
+		return fmt.Errorf("failed to read .Segments: %v", err)
+	}
+	return nil
+}
+
+func (v DutchSegments) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Num.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Num: %v", err)
+	}
+	if err = c.AddRef(&v.Segments); err != nil {
+		return fmt.Errorf("failed to .Segments: %v", err)
+	}
+	return nil
+}
+
+func (v DutchSegments) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func (v *BilateralLockArgs) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.Resolver.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .Resolver: %v", err)
@@ -26,6 +126,7 @@ func (v *BilateralLockArgs) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err
 	}
 	return nil
 }
+
 func (v BilateralLockArgs) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.Resolver.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .Resolver: %v", err)
@@ -44,6 +145,7 @@ func (v BilateralLockArgs) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err er
 	}
 	return nil
 }
+
 func (v BilateralLockArgs) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -51,31 +153,7 @@ func (v BilateralLockArgs) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *BilateralSignPayload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Signature.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Signature: %v", err)
-	}
-	if err = v.Message.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Message: %v", err)
-	}
-	return nil
-}
-func (v BilateralSignPayload) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Signature.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Signature: %v", err)
-	}
-	if err = v.Message.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Message: %v", err)
-	}
-	return nil
-}
-func (v BilateralSignPayload) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
+
 func (v *BilateralSignedMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.ExpirationTime.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .ExpirationTime: %v", err)
@@ -85,6 +163,7 @@ func (v *BilateralSignedMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder)
 	}
 	return nil
 }
+
 func (v BilateralSignedMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.ExpirationTime.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .ExpirationTime: %v", err)
@@ -94,6 +173,7 @@ func (v BilateralSignedMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (e
 	}
 	return nil
 }
+
 func (v BilateralSignedMessage) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -101,6 +181,35 @@ func (v BilateralSignedMessage) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
+func (v *BilateralSignPayload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Signature.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Signature: %v", err)
+	}
+	if err = v.Message.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Message: %v", err)
+	}
+	return nil
+}
+
+func (v BilateralSignPayload) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Signature.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Signature: %v", err)
+	}
+	if err = v.Message.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Message: %v", err)
+	}
+	return nil
+}
+
+func (v BilateralSignPayload) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func (v *BilateralUnlockArgs) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.MinOut.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .MinOut: %v", err)
@@ -113,6 +222,7 @@ func (v *BilateralUnlockArgs) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (e
 	}
 	return nil
 }
+
 func (v BilateralUnlockArgs) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.MinOut.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .MinOut: %v", err)
@@ -125,6 +235,7 @@ func (v BilateralUnlockArgs) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err 
 	}
 	return nil
 }
+
 func (v BilateralUnlockArgs) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -132,97 +243,7 @@ func (v BilateralUnlockArgs) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *DutchSegments) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Num.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Num: %v", err)
-	}
-	if v.Segments, err = (func() (boc.Cell, error) {
-		remain := c.CopyRemaining()
-		if remain == nil {
-			return boc.Cell{}, nil
-		}
-		return *remain, nil
-	})(); err != nil {
-		return fmt.Errorf("failed to read .Segments: %v", err)
-	}
-	return nil
-}
-func (v DutchSegments) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Num.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Num: %v", err)
-	}
-	if err = c.AddRef(&v.Segments); err != nil {
-		return fmt.Errorf("failed to .Segments: %v", err)
-	}
-	return nil
-}
-func (v DutchSegments) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *ForwardParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Value.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Value: %v", err)
-	}
-	if v.SuccessPayload, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
-		return c.NextRefV()
-	}); err != nil {
-		return fmt.Errorf("failed to read .SuccessPayload: %v", err)
-	}
-	if v.RejectPayload, err = tlb.UnmarshalMaybeCallback(c, func(c *boc.Cell) (boc.Cell, error) {
-		return c.NextRefV()
-	}); err != nil {
-		return fmt.Errorf("failed to read .RejectPayload: %v", err)
-	}
-	return nil
-}
-func (v ForwardParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Value.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Value: %v", err)
-	}
-	if err = v.SuccessPayload.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .SuccessPayload: %v", err)
-	}
-	if err = v.RejectPayload.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .RejectPayload: %v", err)
-	}
-	return nil
-}
-func (v ForwardParams) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-func (v *LockForwardParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.Dest.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Dest: %v", err)
-	}
-	if err = v.ForwardParams.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ForwardParams: %v", err)
-	}
-	return nil
-}
-func (v LockForwardParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.Dest.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Dest: %v", err)
-	}
-	if err = v.ForwardParams.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ForwardParams: %v", err)
-	}
-	return nil
-}
-func (v LockForwardParams) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
+
 func (v *VaultLockAdditionalDataMore) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.OrderOwner.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .OrderOwner: %v", err)
@@ -235,6 +256,7 @@ func (v *VaultLockAdditionalDataMore) UnmarshalTLB(c *boc.Cell, decoder *tlb.Dec
 	}
 	return nil
 }
+
 func (v VaultLockAdditionalDataMore) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.OrderOwner.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .OrderOwner: %v", err)
@@ -247,6 +269,7 @@ func (v VaultLockAdditionalDataMore) MarshalTLB(c *boc.Cell, encoder *tlb.Encode
 	}
 	return nil
 }
+
 func (v VaultLockAdditionalDataMore) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {

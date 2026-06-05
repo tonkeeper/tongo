@@ -1178,6 +1178,8 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiStonfi.StonfiEscrowWithdrawSignMessageMsgOp] = abiStonfi.EscrowWithdrawSignMessage{}
+	registerInMsgUnmarshalerForOpcode[*abiStonfi.EscrowWithdrawSignMessage](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixEscrowWithdrawSignMessage), abiStonfi.StonfiEscrowWithdrawSignMessageMsgOp)
 	KnownMsgInTypes[abiStonfi.StonfiExternalCronTriggerMsgOp] = abiStonfi.ExternalCronTrigger{}
 	registerInMsgUnmarshalerForOpcode[*abiStonfi.ExternalCronTrigger](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixExternalCronTrigger), abiStonfi.StonfiExternalCronTriggerMsgOp)
 	KnownMsgInTypes[abiStonfi.StonfiExternalItemWithdrawMsgOp] = abiStonfi.ExternalItemWithdraw{}

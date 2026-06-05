@@ -1387,7 +1387,38 @@
       "return_ty_idx": 77
     }
   ],
-  "thrown_errors": [],
+  "thrown_errors": [
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_CALL",
+      "err_code": 5190
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_CALLER",
+      "err_code": 32950
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_WRONG_WORKCHAIN",
+      "err_code": 33533
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INSUFFICIENT_GAS",
+      "err_code": 33565
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_AMOUNT",
+      "err_code": 34643
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_TRANSFER_NOTIFICATION_PAYLOAD",
+      "err_code": 34658
+    }
+  ],
   "compiler_name": "tolk",
   "compiler_version": "1.4.1",
   "code_boc64": "te6ccgECDgEAAUIAART/APSkE/S88sgLAQIBYgIDAvjQ+JHyQNcsIji26LSRMODXLCa4ooBskTDg1ywjLlpCrJEw4NcsIYfxFVyRMODXLCFh2jSUkTDg1ywi78fRrJEw4NcsJvGlduSRMODXLCRAkjCkkTDg1ywgP8Q3NJEw4NcsJ/CylPSRMODXLCHxIzQkkTDg1ywjUsfC5OMCBAUCASAHCAACMAEOidcnMdzyPwYACHArTcgCAUgJCgBPvhsi3GhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/pABPtAwmEaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+kAIBSAsMAQut8jgQREANAlWu/bhGhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/oQxERADQ0AAA=="

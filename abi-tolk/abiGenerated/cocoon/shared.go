@@ -7,6 +7,20 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+const PrefixReturnExcessesBack uint64 = 0x2565934c
+
+type ReturnExcessesBack struct {
+	QueryId tlb.Uint64 // uint64
+}
+
+type ClientStateData struct {
+	State      tlb.Uint2   // uint2
+	Balance    tlb.Coins   // coins
+	Stake      tlb.Coins   // coins
+	TokensUsed tlb.Uint64  // uint64
+	SecretHash tlb.Uint256 // uint256
+}
+
 const PrefixClientProxyRequest uint64 = 0x65448ff4
 
 type ClientProxyRequest struct {
@@ -15,13 +29,7 @@ type ClientProxyRequest struct {
 	StateData    tlb.RefT[*ClientStateData] // Cell<ClientStateData>
 	Payload      tlb.Maybe[boc.Cell]        // cell?
 }
-type ClientStateData struct {
-	State      tlb.Uint2   // uint2
-	Balance    tlb.Coins   // coins
-	Stake      tlb.Coins   // coins
-	TokensUsed tlb.Uint64  // uint64
-	SecretHash tlb.Uint256 // uint256
-}
+
 type CocoonParams struct {
 	StructVersion                   tlb.Uint8           // uint8
 	ParamsVersion                   tlb.Uint32          // uint32
@@ -42,11 +50,21 @@ type CocoonParams struct {
 	ClientScCode                    tlb.Maybe[boc.Cell] // cell?
 }
 
-const PrefixReturnExcessesBack uint64 = 0x2565934c
+const ErrorOldMessage = 0x3E8 // 1000
 
-type ReturnExcessesBack struct {
-	QueryId tlb.Uint64 // uint64
-}
+const ErrorLowMsgValue = 0x3EB // 1003
+
+const ErrorSignedMsgFormatMismatch = 0x3ED // 1005
+
+const ErrorClosed = 0x3EE // 1006
+
+const ErrorBadSignature = 0x3EF // 1007
+
+const ErrorExpectedMessageFromOwner = 0x3F2 // 1010
+
+const ErrorNotUnlockedYet = 0x3F3 // 1011
+
+const ErrorExpectedMyAddress = 0x3F7 // 1015
 
 const PrefixWorkerProxyRequest uint64 = 0x4d725d2c
 
@@ -57,14 +75,3 @@ type WorkerProxyRequest struct {
 	Tokens       tlb.Uint64          // uint64
 	Payload      tlb.Maybe[boc.Cell] // cell?
 }
-
-const ( // errors
-	ErrorBadSignature             = 0x3EF // 1007
-	ErrorClosed                   = 0x3EE // 1006
-	ErrorExpectedMessageFromOwner = 0x3F2 // 1010
-	ErrorExpectedMyAddress        = 0x3F7 // 1015
-	ErrorLowMsgValue              = 0x3EB // 1003
-	ErrorNotUnlockedYet           = 0x3F3 // 1011
-	ErrorOldMessage               = 0x3E8 // 1000
-	ErrorSignedMsgFormatMismatch  = 0x3ED // 1005
-)

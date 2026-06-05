@@ -669,9 +669,6 @@
       ]
     }
   ],
-  "storage": {
-    "storage_ty_idx": 33
-  },
   "incoming_messages": [
     {
       "body_ty_idx": 12
@@ -720,6 +717,9 @@
     }
   ],
   "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 33
+  },
   "get_methods": [
     {
       "tvm_method_id": 86535,
@@ -763,6 +763,6 @@
     }
   ],
   "compiler_name": "tolk",
-  "compiler_version": "1.4.0",
+  "compiler_version": "1.4.1",
   "code_boc64": "te6ccgEBCgEAQgABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQAIBIAQFAgN6oAYHAAm//AGDhAIBaggJAAirLDBwAAW4dwgAB7qvIAg="
 }

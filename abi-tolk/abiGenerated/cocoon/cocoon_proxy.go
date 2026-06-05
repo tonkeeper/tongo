@@ -27,6 +27,7 @@ const PrefixExtProxyCloseCompleteRequestSigned uint64 = 0xe511abc7
 type ExtProxyCloseCompleteRequestSigned struct {
 	Rest boc.Cell // RemainingBitsAndRefs
 }
+
 type CocoonProxyData struct {
 	OwnerAddress      tlb.InternalAddress // address
 	ProxyPublicKey    tlb.Uint256         // uint256
@@ -69,6 +70,7 @@ type OwnerProxyClose struct {
 	QueryId        tlb.Uint64          // uint64
 	SendExcessesTo tlb.InternalAddress // address
 }
+
 type ProxyStorage struct {
 	OwnerAddress   tlb.InternalAddress     // address
 	ProxyPublicKey tlb.Uint256             // uint256
@@ -80,10 +82,9 @@ type ProxyStorage struct {
 	Params         tlb.RefT[*CocoonParams] // Cell<CocoonParams>
 }
 
-const ( // errors
-	ErrorUnknownTextOp           = 0x3F5 // 1013
-	ErrorContractAddressMismatch = 0x3F6 // 1014
-)
+const ErrorUnknownTextOp = 0x3F5 // 1013
+
+const ErrorContractAddressMismatch = 0x3F6 // 1014
 
 func DecodeGetCocoonProxyData(stack *tlb.VmStack) (result CocoonProxyData, err error) {
 	if stack.Len() != 12 {

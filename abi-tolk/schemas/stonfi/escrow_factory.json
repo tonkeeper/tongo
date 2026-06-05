@@ -1,0 +1,1452 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "stonfi_escrow_factory",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterInitTransfer"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BidPaymentData"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ForwardParams"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 17
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 19
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AskRefundData"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 22
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UserPaymentData"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 24
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterRefundRequest"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterRefundRequestExtraFields"
+    },
+    {
+      "kind": "addressAny"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 28
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 27
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterInternalLock"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralLockArgs"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DutchSegments"
+    },
+    {
+      "kind": "uintN",
+      "n": 4
+    },
+    {
+      "kind": "remaining"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 34
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 32
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "InternalLockExtra"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VaultLockAdditionalDataMore"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 40
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "LockForwardParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 42
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 43
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "InternalLockExtraNested"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 45
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 39
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterInternalUnlock"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UnlockAdditionalData"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralUnlockArgs"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralSignPayload"
+    },
+    {
+      "kind": "bitsN",
+      "n": 512
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BilateralSignedMessage"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 53
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 51,
+      "stack_type_id": 132,
+      "stack_width": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 50
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 49
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterInternalWithdrawTokens"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterGiveProtocolOwnership"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterUpdateProtocolTier"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterTakeProtocolOwnership"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterCancelNextProtocolOwner"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterResetGas"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterLockPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterLockPayloadExtraFields"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterLockPayloadExtraFieldsMore"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 66
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 65
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterUnlockPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UnlockPayloadExtraFields"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 70
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MinterDepositVault"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "LockRejectNotification"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "FactoryIncomingMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 1192680726,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 129,
+          "stack_width": 9
+        },
+        {
+          "variant_ty_idx": 26,
+          "prefix_num": 3608432653,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 130,
+          "stack_width": 8
+        },
+        {
+          "variant_ty_idx": 31,
+          "prefix_num": 1707821141,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 131,
+          "stack_width": 7
+        },
+        {
+          "variant_ty_idx": 48,
+          "prefix_num": 821961387,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 133,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 58,
+          "prefix_num": 742082194,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 134,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 59,
+          "prefix_num": 1576598069,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 135,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 60,
+          "prefix_num": 3727994588,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 136,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 61,
+          "prefix_num": 2282898964,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 137,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 62,
+          "prefix_num": 133727974,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 138,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 63,
+          "prefix_num": 4262875806,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 139,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 64,
+          "prefix_num": 1042572932,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 140,
+          "stack_width": 10
+        },
+        {
+          "variant_ty_idx": 69,
+          "prefix_num": 1784215644,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 141,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 72,
+          "prefix_num": 1881886152,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 142,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 11
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        74
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EscrowData"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetVersionResult"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "string"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "FactoryIncomingMessage",
+      "ty_idx": 74,
+      "target_ty_idx": 75
+    },
+    {
+      "kind": "struct",
+      "name": "EscrowData",
+      "ty_idx": 77,
+      "fields": [
+        {
+          "name": "globalId",
+          "ty_idx": 11
+        },
+        {
+          "name": "protocol",
+          "ty_idx": 7
+        },
+        {
+          "name": "protocolTier",
+          "ty_idx": 15
+        },
+        {
+          "name": "itemCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "vaultCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GetVersionResult",
+      "ty_idx": 78,
+      "fields": [
+        {
+          "name": "major",
+          "ty_idx": 79
+        },
+        {
+          "name": "minor",
+          "ty_idx": 79
+        },
+        {
+          "name": "development",
+          "ty_idx": 80
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ForwardParams",
+      "ty_idx": 17,
+      "fields": [
+        {
+          "name": "value",
+          "ty_idx": 6
+        },
+        {
+          "name": "successPayload",
+          "ty_idx": 18
+        },
+        {
+          "name": "rejectPayload",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "LockForwardParams",
+      "ty_idx": 42,
+      "fields": [
+        {
+          "name": "dest",
+          "ty_idx": 14
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 17
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DutchSegments",
+      "ty_idx": 34,
+      "fields": [
+        {
+          "name": "num",
+          "ty_idx": 35
+        },
+        {
+          "name": "segments",
+          "ty_idx": 36
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralLockArgs",
+      "ty_idx": 32,
+      "fields": [
+        {
+          "name": "resolver",
+          "ty_idx": 14
+        },
+        {
+          "name": "resolverTimeoutDelta",
+          "ty_idx": 11
+        },
+        {
+          "name": "resolverAskAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "resolverPublicKey",
+          "ty_idx": 33
+        },
+        {
+          "name": "dutchSegments",
+          "ty_idx": 37
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralSignedMessage",
+      "ty_idx": 53,
+      "fields": [
+        {
+          "name": "expirationTime",
+          "ty_idx": 11
+        },
+        {
+          "name": "resolver",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralSignPayload",
+      "ty_idx": 51,
+      "fields": [
+        {
+          "name": "signature",
+          "ty_idx": 52
+        },
+        {
+          "name": "message",
+          "ty_idx": 54
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BilateralUnlockArgs",
+      "ty_idx": 50,
+      "fields": [
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "ignoreRefundAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "signed",
+          "ty_idx": 55
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "BidPaymentData",
+      "ty_idx": 16,
+      "fields": [
+        {
+          "name": "usingVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 14
+        },
+        {
+          "name": "bidJettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "AskRefundData",
+      "ty_idx": 22,
+      "fields": [
+        {
+          "name": "refundTo",
+          "ty_idx": 14
+        },
+        {
+          "name": "usingVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UserPaymentData",
+      "ty_idx": 24,
+      "fields": [
+        {
+          "name": "user",
+          "ty_idx": 14
+        },
+        {
+          "name": "userReceiveJettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "userReceiveAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "userDepositViaVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "userForwardParams",
+          "ty_idx": 20
+        },
+        {
+          "name": "userExcesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "userSafeDepositAndForwardValue",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterRefundRequestExtraFields",
+      "ty_idx": 27,
+      "fields": [
+        {
+          "name": "jettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "forwardTonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 18
+        },
+        {
+          "name": "lockRejectDest",
+          "ty_idx": 29
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VaultLockAdditionalDataMore",
+      "ty_idx": 40,
+      "fields": [
+        {
+          "name": "orderOwner",
+          "ty_idx": 14
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 14
+        },
+        {
+          "name": "askJettonMinter",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "InternalLockExtraNested",
+      "ty_idx": 45,
+      "fields": [
+        {
+          "name": "askJettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "ownerPubkey",
+          "ty_idx": 33
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "InternalLockExtra",
+      "ty_idx": 39,
+      "fields": [
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 14
+        },
+        {
+          "name": "refFeeTier",
+          "ty_idx": 15
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "safeDepositAndForwardValue",
+          "ty_idx": 6
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "userFillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "more",
+          "ty_idx": 41
+        },
+        {
+          "name": "userUnlockForwardParams",
+          "ty_idx": 20
+        },
+        {
+          "name": "lockForwardParams",
+          "ty_idx": 44
+        },
+        {
+          "name": "nested",
+          "ty_idx": 46
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UnlockAdditionalData",
+      "ty_idx": 49,
+      "fields": [
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "fillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 14
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 14
+        },
+        {
+          "name": "unlockArgs",
+          "ty_idx": 56
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterLockPayloadExtraFieldsMore",
+      "ty_idx": 66,
+      "fields": [
+        {
+          "name": "orderOwner",
+          "ty_idx": 14
+        },
+        {
+          "name": "askJettonMinter",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterLockPayloadExtraFields",
+      "ty_idx": 65,
+      "fields": [
+        {
+          "name": "askJettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 14
+        },
+        {
+          "name": "ownerPubkey",
+          "ty_idx": 33
+        },
+        {
+          "name": "more",
+          "ty_idx": 67
+        },
+        {
+          "name": "userUnlockForwardParams",
+          "ty_idx": 20
+        },
+        {
+          "name": "lockForwardParams",
+          "ty_idx": 44
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UnlockPayloadExtraFields",
+      "ty_idx": 70,
+      "fields": [
+        {
+          "name": "recipient",
+          "ty_idx": 14
+        },
+        {
+          "name": "refundTo",
+          "ty_idx": 14
+        },
+        {
+          "name": "fillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterInitTransfer",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1192680726,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "transferType",
+          "ty_idx": 9
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 14
+        },
+        {
+          "name": "refFeeTier",
+          "ty_idx": 15
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "bidPaymentData",
+          "ty_idx": 21
+        },
+        {
+          "name": "askRefundData",
+          "ty_idx": 23
+        },
+        {
+          "name": "userPaymentData",
+          "ty_idx": 25
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterRefundRequest",
+      "ty_idx": 26,
+      "prefix": {
+        "prefix_num": 3608432653,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "useVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 14
+        },
+        {
+          "name": "exitCode",
+          "ty_idx": 9
+        },
+        {
+          "name": "prevMessage",
+          "ty_idx": 9
+        },
+        {
+          "name": "extraFields",
+          "ty_idx": 30
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterInternalLock",
+      "ty_idx": 31,
+      "prefix": {
+        "prefix_num": 1707821141,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "owner",
+          "ty_idx": 14
+        },
+        {
+          "name": "jettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "lockArgs",
+          "ty_idx": 38
+        },
+        {
+          "name": "unlockCondition",
+          "ty_idx": 3
+        },
+        {
+          "name": "additionalData",
+          "ty_idx": 47
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterInternalUnlock",
+      "ty_idx": 48,
+      "prefix": {
+        "prefix_num": 821961387,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "owner",
+          "ty_idx": 14
+        },
+        {
+          "name": "jettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "additionalData",
+          "ty_idx": 57
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterInternalWithdrawTokens",
+      "ty_idx": 58,
+      "prefix": {
+        "prefix_num": 742082194,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "jettonWallet",
+          "ty_idx": 14
+        },
+        {
+          "name": "collectedFees",
+          "ty_idx": 6
+        },
+        {
+          "name": "owner",
+          "ty_idx": 14
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterGiveProtocolOwnership",
+      "ty_idx": 59,
+      "prefix": {
+        "prefix_num": 1576598069,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newProtocolAddress",
+          "ty_idx": 14
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterUpdateProtocolTier",
+      "ty_idx": 60,
+      "prefix": {
+        "prefix_num": 3727994588,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newTier",
+          "ty_idx": 15
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterTakeProtocolOwnership",
+      "ty_idx": 61,
+      "prefix": {
+        "prefix_num": 2282898964,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterCancelNextProtocolOwner",
+      "ty_idx": 62,
+      "prefix": {
+        "prefix_num": 133727974,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterResetGas",
+      "ty_idx": 63,
+      "prefix": {
+        "prefix_num": 4262875806,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterLockPayload",
+      "ty_idx": 64,
+      "prefix": {
+        "prefix_num": 1042572932,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "refundToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "refFee",
+          "ty_idx": 14
+        },
+        {
+          "name": "refFeeTier",
+          "ty_idx": 15
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "tonSafeDeposit",
+          "ty_idx": 6
+        },
+        {
+          "name": "userFillToVault",
+          "ty_idx": 5
+        },
+        {
+          "name": "lockArgs",
+          "ty_idx": 38
+        },
+        {
+          "name": "unlockCondition",
+          "ty_idx": 3
+        },
+        {
+          "name": "extraFields",
+          "ty_idx": 68
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterUnlockPayload",
+      "ty_idx": 69,
+      "prefix": {
+        "prefix_num": 1784215644,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "quoteId",
+          "ty_idx": 13
+        },
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "extraFields",
+          "ty_idx": 71
+        },
+        {
+          "name": "unlockArgs",
+          "ty_idx": 56
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MinterDepositVault",
+      "ty_idx": 72,
+      "prefix": {
+        "prefix_num": 1881886152,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "excesses",
+          "ty_idx": 14
+        },
+        {
+          "name": "forwardParams",
+          "ty_idx": 20
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "LockRejectNotification",
+      "ty_idx": 73,
+      "prefix": {
+        "prefix_num": 2894754675,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "forwardPayload",
+          "ty_idx": 18
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 26
+    },
+    {
+      "body_ty_idx": 31
+    },
+    {
+      "body_ty_idx": 48
+    },
+    {
+      "body_ty_idx": 58
+    },
+    {
+      "body_ty_idx": 59
+    },
+    {
+      "body_ty_idx": 60
+    },
+    {
+      "body_ty_idx": 61
+    },
+    {
+      "body_ty_idx": 62
+    },
+    {
+      "body_ty_idx": 63
+    },
+    {
+      "body_ty_idx": 64
+    },
+    {
+      "body_ty_idx": 69
+    },
+    {
+      "body_ty_idx": 72
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 73
+    }
+  ],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 77307,
+      "name": "getEscrowData",
+      "parameters": [],
+      "return_ty_idx": 77
+    },
+    {
+      "tvm_method_id": 65633,
+      "name": "getItemAddress",
+      "parameters": [
+        {
+          "name": "quoteId",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 115556,
+      "name": "getVaultAddress",
+      "parameters": [
+        {
+          "name": "jettonWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "owner",
+          "ty_idx": 7
+        }
+      ],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 74724,
+      "name": "getVersion",
+      "parameters": [],
+      "return_ty_idx": 78
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_CALL",
+      "err_code": 5190
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_CALLER",
+      "err_code": 32950
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_WRONG_WORKCHAIN",
+      "err_code": 33533
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INSUFFICIENT_GAS",
+      "err_code": 33565
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_AMOUNT",
+      "err_code": 34643
+    },
+    {
+      "kind": "constant",
+      "name": "ERROR_INVALID_TRANSFER_NOTIFICATION_PAYLOAD",
+      "err_code": 34658
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBCwEAvAABFP8A9KQT9LzyyAsBAgFiAgMAFtAw+JHyQIEURvLwAgEgBAUCAUgGBwBPvhsi3GhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/pABPtAwmEaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+kAIBSAgJAQut8jgQREAKAlWu/bhGhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/oQxERACgoAAA=="
+}

@@ -264,7 +264,6 @@
       ]
     }
   ],
-  "storage": {},
   "incoming_messages": [
     {
       "body_ty_idx": 12
@@ -282,6 +281,7 @@
   "incoming_external": [],
   "outgoing_messages": [],
   "emitted_events": [],
+  "storage": {},
   "get_methods": [
     {
       "tvm_method_id": 130208,
@@ -309,6 +309,6 @@
     }
   ],
   "compiler_name": "tolk",
-  "compiler_version": "1.4.0",
+  "compiler_version": "1.4.1",
   "code_boc64": "te6ccgECCAEAAQEAART/APSkE/S88sgLAQIBYgIDAqrQ7UTQ+kj6SDHRIccAkl8F4ALQ0wMBcbCSXwXg+kgwAdMfIcAAiMjMz1AixwWwIddKwACwjhJbgwvIU1ShghA7msoAofoCz1CT0z8x4lEjxwXjAl8FBAUCASAGBwACdwDSIIMLuo4tAfoAUFShghA7msoAoRS2CIEgBCHCAPL0yM+FiFIg+lIB+gJwzwtqyYBA+wASkjMz4iGBEAG6nAL6SAPI+lL6UsntVJEw4iCBdwK6mAHTB9dMAfsAkTHiggCZA7qVgSAC8vDgACe9+MuTi4KjgAKjgANraqORUpiLbAAVv+UHaiaH0kfSRow="
 }

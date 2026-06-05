@@ -21,6 +21,7 @@ const PrefixExtClientGrantRefundSigned uint64 = 0xefd711e1
 type ExtClientGrantRefundSigned struct {
 	Rest boc.Cell // RemainingBitsAndRefs
 }
+
 type ClientMessageKind uint
 
 const (
@@ -35,7 +36,7 @@ const (
 	ClientMessageKind_OwnerClientRequestRefund            ClientMessageKind = 4210715841
 )
 
-type ClientMessage struct { // tagged union
+type ClientMessage struct {
 	SumType                             ClientMessageKind
 	ExtClientChargeSigned               *ExtClientChargeSigned
 	ExtClientGrantRefundSigned          *ExtClientGrantRefundSigned
@@ -47,6 +48,7 @@ type ClientMessage struct { // tagged union
 	OwnerClientWithdraw                 *OwnerClientWithdraw
 	OwnerClientRequestRefund            *OwnerClientRequestRefund
 }
+
 type CocoonClientData struct {
 	OwnerAddress   tlb.InternalAddress // address
 	ProxyAddress   tlb.InternalAddress // address
@@ -113,11 +115,13 @@ type OwnerClientRequestRefund struct {
 	QueryId        tlb.Uint64          // uint64
 	SendExcessesTo tlb.InternalAddress // address
 }
+
 type ClientConstData struct {
 	OwnerAddress   tlb.InternalAddress // address
 	ProxyAddress   tlb.InternalAddress // address
 	ProxyPublicKey tlb.Uint256         // uint256
 }
+
 type ClientStorage struct {
 	State        tlb.Uint2                  // uint2
 	Balance      tlb.Coins                  // coins
@@ -129,10 +133,9 @@ type ClientStorage struct {
 	Params       tlb.RefT[*CocoonParams]    // Cell<CocoonParams>
 }
 
-const ( // errors
-	ErrorLowSmcBalance = 0x3E9 // 1001
-	ErrorExpectedOwner = 0x3F1 // 1009
-)
+const ErrorLowSmcBalance = 0x3E9 // 1001
+
+const ErrorExpectedOwner = 0x3F1 // 1009
 
 func DecodeGetCocoonClientData(stack *tlb.VmStack) (result CocoonClientData, err error) {
 	if stack.Len() != 9 {

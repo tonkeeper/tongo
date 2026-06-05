@@ -193,7 +193,6 @@
       ]
     }
   ],
-  "storage": {},
   "incoming_messages": [
     {
       "body_ty_idx": 12
@@ -208,6 +207,7 @@
   "incoming_external": [],
   "outgoing_messages": [],
   "emitted_events": [],
+  "storage": {},
   "get_methods": [
     {
       "tvm_method_id": 102351,
@@ -229,6 +229,6 @@
     }
   ],
   "compiler_name": "tolk",
-  "compiler_version": "1.4.0",
+  "compiler_version": "1.4.1",
   "code_boc64": "te6ccgEBBgEAKgABFP8A9KQT9LzyyAsBAgFiAgMABtDyAAICdAQFAAmz8/yAIAAJsDw8gCA="
 }

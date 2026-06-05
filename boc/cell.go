@@ -546,6 +546,10 @@ func (c *Cell) RefsAvailableForRead() int {
 	return c.RefsSize() - c.refCursor
 }
 
+func (c *Cell) IsEmpty() bool {
+	return c.BitsAvailableForRead() == 0 && c.RefsAvailableForRead() == 0
+}
+
 func (c *Cell) Sign(key ed25519.PrivateKey) ([]byte, error) {
 	hash, err := c.Hash()
 	if err != nil {

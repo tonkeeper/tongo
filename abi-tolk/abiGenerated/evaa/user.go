@@ -402,8 +402,9 @@ func DecodeGetRewards(stack *tlb.VmStack) (result tlb.Maybe[boc.Cell], err error
 		err = fmt.Errorf("invalid stack size %d, expected 1", stack.Len())
 		return
 	}
-	return tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	return tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	})
 }
 

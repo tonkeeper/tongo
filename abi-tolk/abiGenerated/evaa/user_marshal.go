@@ -76,18 +76,21 @@ func (v UserScData) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *UserScData) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if v.BackupCell2, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.BackupCell2, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .BackupCell2: %v", err)
 	}
-	if v.BackupCell1, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.BackupCell1, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .BackupCell1: %v", err)
 	}
-	if v.UserRewards, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.UserRewards, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .UserRewards: %v", err)
 	}

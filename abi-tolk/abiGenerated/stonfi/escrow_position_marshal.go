@@ -239,13 +239,15 @@ func (v *GetOrderDataResult) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if v.UserFillToVault, err = stack.ReadBool(); err != nil {
 		return fmt.Errorf("failed to read .UserFillToVault: %v", err)
 	}
-	if v.UserUnlockForwardSuccessPayload, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.UserUnlockForwardSuccessPayload, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .UserUnlockForwardSuccessPayload: %v", err)
 	}
-	if v.UserUnlockForwardParams, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (tlb.Coins, error) {
-		return tlb.ReadFromStack[tlb.Coins](stack)
+	if v.UserUnlockForwardParams, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value tlb.Coins, err error) {
+		err = value.ReadFromStack(stack)
+		return
 	}); err != nil {
 		return fmt.Errorf("failed to read .UserUnlockForwardParams: %v", err)
 	}

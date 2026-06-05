@@ -239,7 +239,7 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 	})`, goType, goType, innerExpr), false, nil
 		}
 	case parser.TyKindNullable:
-		innerRead, _, err := tgen.emitStackReadExpr(fieldPath, ty.Nullable.InnerTyIdx, unTupleIfW)
+		innerRead, hasMethod, err := tgen.emitStackReadExpr(fieldPath, ty.Nullable.InnerTyIdx, unTupleIfW)
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner: %w", err)
 		}
@@ -247,17 +247,21 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 		if err != nil {
 			return "", false, fmt.Errorf("nullable inner type: %w", err)
 		}
+		readBody := "err = value.ReadFromStack(stack)\nreturn"
+		if !hasMethod {
+			readBody = fmt.Sprintf("	return %s\n", innerRead)
+		}
 		if ty.Nullable.StackTypeId != 0 {
 			if ty.Nullable.StackWidth <= 0 {
 				return "", false, fmt.Errorf("nullable type with invalid stack width %d", ty.Nullable.StackWidth)
 			}
-			return fmt.Sprintf(`tlb.StackReadWideMaybeCallback(stack, %d, func (stack *tlb.VmStack) (%s, error) {
-	return %s
-})`, ty.Nullable.StackWidth, innerType, innerRead), false, nil
+			return fmt.Sprintf(`tlb.StackReadWideMaybeCallback(stack, %d, func (stack *tlb.VmStack) (value %s, err error) {
+	%s
+})`, ty.Nullable.StackWidth, innerType, readBody), false, nil
 		}
-		return fmt.Sprintf(`tlb.StackReadMaybeCallback(stack, func (stack *tlb.VmStack) (%s, error) {
-	return %s
-})`, innerType, innerRead), false, nil
+		return fmt.Sprintf(`tlb.StackReadMaybeCallback(stack, func (stack *tlb.VmStack) (value %s, err error) {
+	%s
+})`, innerType, readBody), false, nil
 	case parser.TyKindTensor:
 		items := ty.Tensor.ItemsTyIdx
 		if len(items) > tlb.MaxTensorSize {

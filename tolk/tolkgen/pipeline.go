@@ -188,17 +188,6 @@ func processGroup(outDir string, entries []schemaEntry, rootOutputDir string) er
 		groupABIs = append(groupABIs, e.abi)
 	}
 
-	deduped, sharedABI, err := ExtractShared(abisByPath)
-	if err != nil {
-		return err
-	}
-
-	if sharedABI != nil {
-		if err := writeGoFile(filepath.Join(outDir, "shared.go"), pkgName, *sharedABI, ""); err != nil {
-			return err
-		}
-	}
-
 	msgOpsCode, err := GenerateMsgOpsFile(pkgName, CollectPrefixedStructs(groupABIs, camelGroupName))
 	if err != nil {
 		return fmt.Errorf("msg ops %s: %w", outDir, err)
@@ -236,7 +225,7 @@ func processGroup(outDir string, entries []schemaEntry, rootOutputDir string) er
 	}
 
 	for _, e := range entries {
-		abi := deduped[e.outPath]
+		abi := abisByPath[e.outPath]
 		abi.GetMethods = e.abi.GetMethods
 		abi.Storage = e.abi.Storage
 		abi.IncomingExternal = e.abi.IncomingExternal
@@ -249,6 +238,19 @@ func processGroup(outDir string, entries []schemaEntry, rootOutputDir string) er
 		if err := writeGoFile(e.outPath, pkgName, abi, ifaceName); err != nil {
 			return err
 		}
+	}
+
+	contractPaths := make([]string, 0, len(entries))
+	marshalPaths := make([]string, 0, len(entries))
+	for _, e := range entries {
+		contractPaths = append(contractPaths, e.outPath)
+		marshalPaths = append(marshalPaths, strings.TrimSuffix(e.outPath, ".go")+"_marshal.go")
+	}
+	if err := deduplicateGoDefinitions(contractPaths, filepath.Join(outDir, "shared.go")); err != nil {
+		return fmt.Errorf("deduplicate go definitions %s: %w", outDir, err)
+	}
+	if err := deduplicateGoDefinitions(marshalPaths, filepath.Join(outDir, "shared_marshal.go")); err != nil {
+		return fmt.Errorf("deduplicate marshal definitions %s: %w", outDir, err)
 	}
 
 	return nil

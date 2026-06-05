@@ -26,6 +26,7 @@ func (v *CocoonWorkerData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err 
 	}
 	return nil
 }
+
 func (v CocoonWorkerData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.OwnerAddress.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .OwnerAddress: %v", err)
@@ -44,6 +45,7 @@ func (v CocoonWorkerData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err err
 	}
 	return nil
 }
+
 func (v CocoonWorkerData) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -51,6 +53,7 @@ func (v CocoonWorkerData) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *CocoonWorkerData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if err = v.Tokens.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .Tokens: %v", err)

@@ -331,8 +331,9 @@ func (v PoolData) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *PoolData) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if v.ConfigProposalVotings, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.ConfigProposalVotings, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .ConfigProposalVotings: %v", err)
 	}
@@ -351,13 +352,15 @@ func (v *PoolData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if err = v.StakeAt.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .StakeAt: %v", err)
 	}
-	if v.WithdrawRequests, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.WithdrawRequests, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .WithdrawRequests: %v", err)
 	}
-	if v.Nominators, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.Nominators, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .Nominators: %v", err)
 	}

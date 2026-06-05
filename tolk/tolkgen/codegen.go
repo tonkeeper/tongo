@@ -652,8 +652,12 @@ func (tgen TolkGolangGenerator) enumToGo(decl parser.ABIEnum, out *strings.Build
 }
 
 func (tgen TolkGolangGenerator) structToGo(decl parser.ABIStruct, out *strings.Builder, outMarshal *strings.Builder) error {
+	if _, ok := TongoStructs[decl.Name]; ok {
+		return nil
+	}
+	var typeArgs string
 	if len(decl.TypeParams) > 0 {
-		return fmt.Errorf("type params not supported for struct %q", decl.Name)
+		typeArgs = fmt.Sprintf("[%s tlb.Codec]", strings.Join(decl.TypeParams, ", "))
 	}
 	typeIdent := safeGoIdent(decl.Name)
 	if decl.Prefix != nil {
@@ -663,7 +667,7 @@ func (tgen TolkGolangGenerator) structToGo(decl parser.ABIStruct, out *strings.B
 		}
 		fmt.Fprintf(out, "const Prefix%s uint64 = %s\n", typeIdent, prefix)
 	}
-	fmt.Fprintf(out, "type %s struct {\n", typeIdent)
+	fmt.Fprintf(out, "type %s%s struct {\n", typeIdent, typeArgs)
 	for _, field := range decl.Fields {
 		fieldType, err := tgen.symbols.emitGoType(field.TyIdx)
 		if err != nil {

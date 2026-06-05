@@ -74,13 +74,15 @@ func (v UpgradeConfigResult) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *UpgradeConfigResult) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if v.NewUserCode, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.NewUserCode, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .NewUserCode: %v", err)
 	}
-	if v.NewMasterCode, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (boc.Cell, error) {
+	if v.NewMasterCode, err = tlb.StackReadMaybeCallback(stack, func(stack *tlb.VmStack) (value boc.Cell, err error) {
 		return stack.ReadCell()
+
 	}); err != nil {
 		return fmt.Errorf("failed to read .NewMasterCode: %v", err)
 	}

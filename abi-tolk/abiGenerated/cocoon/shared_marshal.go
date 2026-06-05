@@ -8,6 +8,80 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+func (v *ReturnExcessesBack) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixReturnExcessesBack); err != nil {
+		return err
+	}
+	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .QueryId: %v", err)
+	}
+	return nil
+}
+
+func (v ReturnExcessesBack) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixReturnExcessesBack, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .QueryId: %v", err)
+	}
+	return nil
+}
+
+func (v ReturnExcessesBack) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+func (v *ClientStateData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.State.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .State: %v", err)
+	}
+	if err = v.Balance.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Balance: %v", err)
+	}
+	if err = v.Stake.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Stake: %v", err)
+	}
+	if err = v.TokensUsed.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .TokensUsed: %v", err)
+	}
+	if err = v.SecretHash.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .SecretHash: %v", err)
+	}
+	return nil
+}
+
+func (v ClientStateData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.State.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .State: %v", err)
+	}
+	if err = v.Balance.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Balance: %v", err)
+	}
+	if err = v.Stake.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Stake: %v", err)
+	}
+	if err = v.TokensUsed.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .TokensUsed: %v", err)
+	}
+	if err = v.SecretHash.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .SecretHash: %v", err)
+	}
+	return nil
+}
+
+func (v ClientStateData) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func (v *ClientProxyRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixClientProxyRequest); err != nil {
 		return err
@@ -28,6 +102,7 @@ func (v *ClientProxyRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (er
 	}
 	return nil
 }
+
 func (v ClientProxyRequest) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixClientProxyRequest, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -46,6 +121,7 @@ func (v ClientProxyRequest) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err e
 	}
 	return nil
 }
+
 func (v ClientProxyRequest) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -53,49 +129,7 @@ func (v ClientProxyRequest) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *ClientStateData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.State.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .State: %v", err)
-	}
-	if err = v.Balance.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Balance: %v", err)
-	}
-	if err = v.Stake.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Stake: %v", err)
-	}
-	if err = v.TokensUsed.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .TokensUsed: %v", err)
-	}
-	if err = v.SecretHash.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .SecretHash: %v", err)
-	}
-	return nil
-}
-func (v ClientStateData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.State.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .State: %v", err)
-	}
-	if err = v.Balance.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Balance: %v", err)
-	}
-	if err = v.Stake.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Stake: %v", err)
-	}
-	if err = v.TokensUsed.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .TokensUsed: %v", err)
-	}
-	if err = v.SecretHash.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .SecretHash: %v", err)
-	}
-	return nil
-}
-func (v ClientStateData) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
+
 func (v *CocoonParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.StructVersion.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .StructVersion: %v", err)
@@ -156,6 +190,7 @@ func (v *CocoonParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err erro
 	}
 	return nil
 }
+
 func (v CocoonParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.StructVersion.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .StructVersion: %v", err)
@@ -210,6 +245,7 @@ func (v CocoonParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) 
 	}
 	return nil
 }
+
 func (v CocoonParams) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -217,31 +253,7 @@ func (v CocoonParams) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *ReturnExcessesBack) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixReturnExcessesBack); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	return nil
-}
-func (v ReturnExcessesBack) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixReturnExcessesBack, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	return nil
-}
-func (v ReturnExcessesBack) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
+
 func (v *WorkerProxyRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixWorkerProxyRequest); err != nil {
 		return err
@@ -265,6 +277,7 @@ func (v *WorkerProxyRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (er
 	}
 	return nil
 }
+
 func (v WorkerProxyRequest) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixWorkerProxyRequest, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -286,6 +299,7 @@ func (v WorkerProxyRequest) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err e
 	}
 	return nil
 }
+
 func (v WorkerProxyRequest) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {

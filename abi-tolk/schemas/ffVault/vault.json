@@ -61,6 +61,7 @@
           "variant_ty_idx": 12,
           "prefix_num": 1397299139,
           "prefix_len": 32,
+          "is_prefix_implicit": null,
           "stack_type_id": 129,
           "stack_width": 1
         },
@@ -68,6 +69,7 @@
           "variant_ty_idx": 14,
           "prefix_num": 1030135223,
           "prefix_len": 32,
+          "is_prefix_implicit": null,
           "stack_type_id": 130,
           "stack_width": 1
         }
@@ -490,9 +492,6 @@
       ]
     }
   ],
-  "storage": {
-    "storage_ty_idx": 27
-  },
   "incoming_messages": [
     {
       "body_ty_idx": 16
@@ -516,6 +515,9 @@
   "incoming_external": [],
   "outgoing_messages": [],
   "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 27
+  },
   "get_methods": [
     {
       "tvm_method_id": 102491,
@@ -554,6 +556,6 @@
     }
   ],
   "compiler_name": "tolk",
-  "compiler_version": "1.4.0",
+  "compiler_version": "1.4.1",
   "code_boc64": "te6ccgEBCgEARwABFP8A9KQT9LzyyAsBAgFiAgMAENAw+JHyQPIAAgEgBAUACb89H5AEAgEgBgcCASAICQAJu9J/IAgACbYLfkAQAAm0wD5AEA=="
 }

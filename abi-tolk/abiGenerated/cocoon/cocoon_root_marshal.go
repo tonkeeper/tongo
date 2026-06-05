@@ -41,6 +41,7 @@ func (v *CocoonData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error)
 	}
 	return nil
 }
+
 func (v CocoonData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.Version.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .Version: %v", err)
@@ -74,6 +75,7 @@ func (v CocoonData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v CocoonData) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -81,6 +83,7 @@ func (v CocoonData) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *CocoonData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if err = v.OwnerAddress.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
@@ -114,6 +117,7 @@ func (v *CocoonData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	}
 	return nil
 }
+
 func (v *CurrentCocoonParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.ParamsVersion.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .ParamsVersion: %v", err)
@@ -159,6 +163,7 @@ func (v *CurrentCocoonParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (e
 	}
 	return nil
 }
+
 func (v CurrentCocoonParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.ParamsVersion.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .ParamsVersion: %v", err)
@@ -204,6 +209,7 @@ func (v CurrentCocoonParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err 
 	}
 	return nil
 }
+
 func (v CurrentCocoonParams) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -211,6 +217,7 @@ func (v CurrentCocoonParams) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *CurrentCocoonParams) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if err = v.ClientCodeHash.ReadFromStack(stack); err != nil {
 		return fmt.Errorf("failed to read .ClientCodeHash: %v", err)
@@ -256,6 +263,7 @@ func (v *CurrentCocoonParams) ReadFromStack(stack *tlb.VmStack) (err error) {
 	}
 	return nil
 }
+
 func (v *AddWorkerType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixAddWorkerType); err != nil {
 		return err
@@ -268,6 +276,7 @@ func (v *AddWorkerType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err err
 	}
 	return nil
 }
+
 func (v AddWorkerType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixAddWorkerType, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -280,6 +289,7 @@ func (v AddWorkerType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error)
 	}
 	return nil
 }
+
 func (v AddWorkerType) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -287,6 +297,7 @@ func (v AddWorkerType) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *DelWorkerType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixDelWorkerType); err != nil {
 		return err
@@ -299,6 +310,7 @@ func (v *DelWorkerType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err err
 	}
 	return nil
 }
+
 func (v DelWorkerType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixDelWorkerType, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -311,6 +323,7 @@ func (v DelWorkerType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error)
 	}
 	return nil
 }
+
 func (v DelWorkerType) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -318,6 +331,7 @@ func (v DelWorkerType) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *AddModelType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixAddModelType); err != nil {
 		return err
@@ -330,6 +344,7 @@ func (v *AddModelType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err erro
 	}
 	return nil
 }
+
 func (v AddModelType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixAddModelType, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -342,6 +357,7 @@ func (v AddModelType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) 
 	}
 	return nil
 }
+
 func (v AddModelType) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -349,6 +365,7 @@ func (v AddModelType) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *DelModelType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixDelModelType); err != nil {
 		return err
@@ -361,6 +378,7 @@ func (v *DelModelType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err erro
 	}
 	return nil
 }
+
 func (v DelModelType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixDelModelType, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -373,6 +391,7 @@ func (v DelModelType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) 
 	}
 	return nil
 }
+
 func (v DelModelType) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -380,6 +399,7 @@ func (v DelModelType) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *AddProxyType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixAddProxyType); err != nil {
 		return err
@@ -392,6 +412,7 @@ func (v *AddProxyType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err erro
 	}
 	return nil
 }
+
 func (v AddProxyType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixAddProxyType, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -404,6 +425,7 @@ func (v AddProxyType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) 
 	}
 	return nil
 }
+
 func (v AddProxyType) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -411,6 +433,7 @@ func (v AddProxyType) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *DelProxyType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixDelProxyType); err != nil {
 		return err
@@ -423,6 +446,7 @@ func (v *DelProxyType) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err erro
 	}
 	return nil
 }
+
 func (v DelProxyType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixDelProxyType, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -435,6 +459,7 @@ func (v DelProxyType) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) 
 	}
 	return nil
 }
+
 func (v DelProxyType) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -442,6 +467,7 @@ func (v DelProxyType) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *RegisterProxy) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixRegisterProxy); err != nil {
 		return err
@@ -460,6 +486,7 @@ func (v *RegisterProxy) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err err
 	}
 	return nil
 }
+
 func (v RegisterProxy) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixRegisterProxy, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -472,6 +499,7 @@ func (v RegisterProxy) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error)
 	}
 	return nil
 }
+
 func (v RegisterProxy) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -479,6 +507,7 @@ func (v RegisterProxy) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *UnregisterProxy) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixUnregisterProxy); err != nil {
 		return err
@@ -491,6 +520,7 @@ func (v *UnregisterProxy) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err e
 	}
 	return nil
 }
+
 func (v UnregisterProxy) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixUnregisterProxy, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -503,6 +533,7 @@ func (v UnregisterProxy) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err erro
 	}
 	return nil
 }
+
 func (v UnregisterProxy) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -510,6 +541,7 @@ func (v UnregisterProxy) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *UpdateProxy) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixUpdateProxy); err != nil {
 		return err
@@ -531,6 +563,7 @@ func (v *UpdateProxy) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error
 	}
 	return nil
 }
+
 func (v UpdateProxy) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixUpdateProxy, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -546,6 +579,7 @@ func (v UpdateProxy) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v UpdateProxy) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -553,6 +587,7 @@ func (v UpdateProxy) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *ChangeFees) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixChangeFees); err != nil {
 		return err
@@ -568,6 +603,7 @@ func (v *ChangeFees) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error)
 	}
 	return nil
 }
+
 func (v ChangeFees) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixChangeFees, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -583,6 +619,7 @@ func (v ChangeFees) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v ChangeFees) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -590,6 +627,7 @@ func (v ChangeFees) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *ChangeParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixChangeParams); err != nil {
 		return err
@@ -617,6 +655,7 @@ func (v *ChangeParams) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err erro
 	}
 	return nil
 }
+
 func (v ChangeParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixChangeParams, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -644,6 +683,7 @@ func (v ChangeParams) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) 
 	}
 	return nil
 }
+
 func (v ChangeParams) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -651,6 +691,7 @@ func (v ChangeParams) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *UpgradeContracts) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixUpgradeContracts); err != nil {
 		return err
@@ -669,6 +710,7 @@ func (v *UpgradeContracts) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err 
 	}
 	return nil
 }
+
 func (v UpgradeContracts) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixUpgradeContracts, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -687,6 +729,7 @@ func (v UpgradeContracts) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err err
 	}
 	return nil
 }
+
 func (v UpgradeContracts) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -694,6 +737,7 @@ func (v UpgradeContracts) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *UpgradeCode) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixUpgradeCode); err != nil {
 		return err
@@ -706,6 +750,7 @@ func (v *UpgradeCode) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error
 	}
 	return nil
 }
+
 func (v UpgradeCode) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixUpgradeCode, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -718,6 +763,7 @@ func (v UpgradeCode) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v UpgradeCode) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -725,6 +771,7 @@ func (v UpgradeCode) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *ResetRoot) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixResetRoot); err != nil {
 		return err
@@ -734,6 +781,7 @@ func (v *ResetRoot) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) 
 	}
 	return nil
 }
+
 func (v ResetRoot) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixResetRoot, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -743,6 +791,7 @@ func (v ResetRoot) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v ResetRoot) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -750,6 +799,7 @@ func (v ResetRoot) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *UpgradeFull) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixUpgradeFull); err != nil {
 		return err
@@ -765,6 +815,7 @@ func (v *UpgradeFull) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error
 	}
 	return nil
 }
+
 func (v UpgradeFull) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixUpgradeFull, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -780,6 +831,7 @@ func (v UpgradeFull) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v UpgradeFull) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -787,6 +839,7 @@ func (v UpgradeFull) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *ChangeOwner) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixChangeOwner); err != nil {
 		return err
@@ -799,6 +852,7 @@ func (v *ChangeOwner) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error
 	}
 	return nil
 }
+
 func (v ChangeOwner) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = c.WriteUint(PrefixChangeOwner, 32); err != nil {
 		return fmt.Errorf("failed to write prefix: %v", err)
@@ -811,6 +865,7 @@ func (v ChangeOwner) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v ChangeOwner) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -818,6 +873,7 @@ func (v ChangeOwner) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *RootData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.ProxyHashes.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .ProxyHashes: %v", err)
@@ -836,6 +892,7 @@ func (v *RootData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	}
 	return nil
 }
+
 func (v RootData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.ProxyHashes.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .ProxyHashes: %v", err)
@@ -854,6 +911,7 @@ func (v RootData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v RootData) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
@@ -861,6 +919,7 @@ func (v RootData) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
+
 func (v *RootStorage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.OwnerAddress.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .OwnerAddress: %v", err)
@@ -876,6 +935,7 @@ func (v *RootStorage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error
 	}
 	return nil
 }
+
 func (v RootStorage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	if err = v.OwnerAddress.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .OwnerAddress: %v", err)
@@ -891,6 +951,7 @@ func (v RootStorage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
 	}
 	return nil
 }
+
 func (v RootStorage) ToCell() (*boc.Cell, error) {
 	c := boc.NewCell()
 	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {

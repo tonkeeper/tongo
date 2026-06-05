@@ -1,0 +1,292 @@
+<abi>
+    <types>
+        forward_params#_ value:Coins successPayload:(Maybe ^Cell) rejectPayload:(Maybe ^Cell) = ForwardParams;
+        lock_forward_params#_ dest:MsgAddress forwardParams:ForwardParams = LockForwardParams;
+
+        dutch_segment#_ askEnd:Coins duration:uint16 = DutchSegment;
+        dutch_segments#_ num:uint4 segments:Cell = DutchSegments;
+        dutch_auction_data#_ dutchRemaining:Coins resolverPublicKey:(Maybe uint256) pendingUserReceiveAmount:Coins dutchSegments:^DutchSegments = DutchAuctionData;
+        bilateral_condition_state#_ initBidAmount:Coins resolver:MsgAddress resolverTimeout:uint64 resolverAskAmount:Coins auctionData:^DutchAuctionData = BilateralConditionState;
+        bilateral_lock_args#_ resolver:MsgAddress resolverTimeoutDelta:uint64 resolverAskAmount:Coins resolverPublicKey:(Maybe uint256) dutchSegments:^DutchSegments = BilateralLockArgs;
+        bilateral_signed_message#_ expirationTime:uint64 resolver:MsgAddress = BilateralSignedMessage;
+        bilateral_sign_payload#_ signature:bits512 message:^BilateralSignedMessage = BilateralSignPayload;
+        bilateral_unlock_args#_ minOut:Coins ignoreRefundAmount:Coins signed:(Maybe BilateralSignPayload) = BilateralUnlockArgs;
+        dutch_price_at_arg#_ timestamp:(Maybe uint64) = DutchPriceAtArg;
+
+        bid_payment_data#_ usingVault:Bool recipient:MsgAddress bidJettonWallet:MsgAddress amount:Coins forwardParams:(Maybe ^ForwardParams) = BidPaymentData;
+        ask_refund_data#_ refundTo:MsgAddress usingVault:Bool amount:Coins = AskRefundData;
+        user_payment_data#_ user:MsgAddress userReceiveJettonWallet:MsgAddress userReceiveAmount:Coins userDepositViaVault:Bool userForwardParams:(Maybe ^ForwardParams) userExcesses:MsgAddress userSafeDepositAndForwardValue:uint64 = UserPaymentData;
+        minter_refund_request_extra_fields#_ jettonWallet:MsgAddress excesses:MsgAddress forwardTonAmount:Coins forwardPayload:(Maybe ^Cell) lockRejectDest:(Maybe MsgAddress) = MinterRefundRequestExtraFields;
+        internal_lock_extra_nested#_ askJettonWallet:MsgAddress ownerPubkey:(Maybe uint256) = InternalLockExtraNested;
+        internal_lock_extra#_ quoteId:uint256 refFee:MsgAddress refFeeTier:uint16 excesses:MsgAddress safeDepositAndForwardValue:Coins refundToVault:Bool userFillToVault:Bool more:^VaultLockAdditionalDataMore userUnlockForwardParams:(Maybe ^ForwardParams) lockForwardParams:(Maybe ^LockForwardParams) nested:^InternalLockExtraNested = InternalLockExtra;
+        unlock_additional_data#_ quoteId:uint256 fillToVault:Bool refundToVault:Bool recipient:MsgAddress refundTo:MsgAddress unlockArgs:^BilateralUnlockArgs forwardParams:(Maybe ^ForwardParams) = UnlockAdditionalData;
+        minter_lock_payload_extra_fields_more#_ orderOwner:MsgAddress askJettonMinter:MsgAddress = MinterLockPayloadExtraFieldsMore;
+        minter_lock_payload_extra_fields#_ askJettonWallet:MsgAddress refundTo:MsgAddress ownerPubkey:(Maybe uint256) more:^MinterLockPayloadExtraFieldsMore userUnlockForwardParams:(Maybe ^ForwardParams) lockForwardParams:(Maybe ^LockForwardParams) = MinterLockPayloadExtraFields;
+        unlock_payload_extra_fields#_ recipient:MsgAddress refundTo:MsgAddress fillToVault:Bool refundToVault:Bool = UnlockPayloadExtraFields;
+
+        item_additional_field_more#_ askJettonMinter:MsgAddress orderOwner:MsgAddress refundTo:MsgAddress = ItemAdditionalFieldMore;
+        item_additional_field#_ askJettonWallet:MsgAddress refFee:MsgAddress refFeeTier:uint16 safeDepositAndForwardValue:Coins userFillToVault:Bool ownerPubkey:(Maybe uint256) more:^ItemAdditionalFieldMore userUnlockForwardParams:(Maybe ^ForwardParams) lockForwardParams:(Maybe ^LockForwardParams) = ItemAdditionalField;
+        item_internal_unlock_extra_fields#_ recipient:MsgAddress refundTo:MsgAddress excesses:MsgAddress = ItemInternalUnlockExtraFields;
+        external_item_withdraw_payload#_ escrowItem:MsgAddress signatureTTL:uint64 withdrawArgs:^Cell = ExternalItemWithdrawPayload;
+        escrow_withdraw_sign_message#75569022 schemaHash:uint32 timestamp:uint64 userWalletAddress:MsgAddress domain:^Cell payload:^ExternalItemWithdrawPayload = EscrowWithdrawSignMessage;
+
+        vault_lock_additional_data_more#_ orderOwner:MsgAddress refundTo:MsgAddress askJettonMinter:MsgAddress = VaultLockAdditionalDataMore;
+        vault_lock_additional_data#_ excesses:MsgAddress tonSafeDeposit:Coins userFillToVault:Bool askJettonWallet:MsgAddress ownerPubkey:(Maybe uint256) more:^VaultLockAdditionalDataMore userUnlockForwardParams:(Maybe ^ForwardParams) lockForwardParams:(Maybe ^LockForwardParams) = VaultLockAdditionalData;
+        vault_unlock_extra_fields#_ recipient:MsgAddress refundTo:MsgAddress = VaultUnlockExtraFields;
+    </types>
+
+    <interface name="stonfi_escrow_factory">
+        <code_hash>73b47bdad91b206afed4cc55207136992b5ae00f4a244d11b41f639eba6b5e1d</code_hash>
+        <get_method name="getEscrowData"/>
+        <get_method name="getItemAddress"/>
+        <get_method name="getVaultAddress"/>
+        <get_method name="getVersion"/>
+        <msg_in>
+            <internal name="jetton_notify"/>
+            <internal name="minter_init_transfer"/>
+            <internal name="minter_refund_request"/>
+            <internal name="minter_internal_lock"/>
+            <internal name="minter_internal_unlock"/>
+            <internal name="minter_internal_withdraw_tokens"/>
+            <internal name="minter_give_protocol_ownership"/>
+            <internal name="minter_update_protocol_tier"/>
+            <internal name="minter_cancel_next_protocol_owner"/>
+            <internal name="minter_reset_gas"/>
+            <internal name="minter_take_protocol_ownership"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_transfer"/>
+            <internal name="jetton_excesses"/>
+            <internal name="item_internal_lock"/>
+            <internal name="item_internal_unlock"/>
+            <internal name="vault_deposit_tokens"/>
+            <internal name="lock_reject_notification"/>
+        </msg_out>
+        <error code="5190">Invalid call</error>
+        <error code="32950">Invalid caller</error>
+        <error code="33533">Wrong workchain</error>
+        <error code="33565">Insufficient gas</error>
+        <error code="34643">Invalid amount</error>
+        <error code="34658">Invalid transfer notification payload</error>
+    </interface>
+
+    <interface name="stonfi_escrow_position">
+        <code_hash>aab1db63f193a4aecaa3e3a959fc1784f1412b191a66ae870958405ba88114c7</code_hash>
+        <get_method name="getOrderData"/>
+        <get_method name="get_cron_info"/>
+        <msg_in>
+            <internal name="item_internal_lock"/>
+            <internal name="item_internal_unlock"/>
+            <internal name="item_withdraw"/>
+            <ext_in name="external_item_withdraw"/>
+            <ext_in name="external_cron_trigger"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_excesses"/>
+            <internal name="minter_init_transfer"/>
+            <internal name="minter_refund_request"/>
+            <internal name="item_lock_success"/>
+        </msg_out>
+        <error code="46254">Wrong status</error>
+        <error code="33565">Insufficient gas</error>
+        <error code="34643">Invalid amount</error>
+    </interface>
+
+    <interface name="stonfi_escrow_vault">
+        <code_hash>a16ce5a25feb87415b18b9cda9265b5d85328a32219ea47a7f529a8860c0450f</code_hash>
+        <get_method name="getVaultData"/>
+        <msg_in>
+            <internal name="vault_lock"/>
+            <internal name="vault_unlock"/>
+            <internal name="vault_withdraw_tokens"/>
+            <internal name="vault_deposit_tokens"/>
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_excesses"/>
+            <internal name="vault_deposit_notification"/>
+            <internal name="minter_internal_lock"/>
+            <internal name="minter_internal_unlock"/>
+            <internal name="minter_internal_withdraw_tokens"/>
+        </msg_out>
+        <error code="32950">Invalid caller</error>
+        <error code="33565">Insufficient gas</error>
+    </interface>
+
+    <get_method name="getEscrowData">
+        <output fixed_length="true">
+            <int name="globalId">uint64</int>
+            <slice name="protocol">msgaddress</slice>
+            <int name="protocolTier">uint16</int>
+            <cell name="itemCode">cell</cell>
+            <cell name="vaultCode">cell</cell>
+        </output>
+    </get_method>
+
+    <get_method name="getItemAddress">
+        <input>
+            <int name="quoteId">int257</int>
+        </input>
+        <output fixed_length="true">
+            <slice name="itemAddress">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="getVaultAddress">
+        <input>
+            <slice name="jettonWallet">msgaddress</slice>
+            <slice name="owner">msgaddress</slice>
+        </input>
+        <output fixed_length="true">
+            <slice name="vaultAddress">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="getVersion">
+        <output fixed_length="true">
+            <int name="major">uint8</int>
+            <int name="minor">uint8</int>
+            <slice name="development">string</slice>
+        </output>
+    </get_method>
+
+    <get_method name="getOrderData">
+        <output fixed_length="true">
+            <int name="status">uint8</int>
+            <int name="quoteId">int257</int>
+            <slice name="minter">msgaddress</slice>
+            <slice name="bidJettonWallet">msgaddress</slice>
+            <int name="bidJettonAmount">coins</int>
+            <slice name="bidFromUser">msgaddress</slice>
+            <slice name="refFee">msgaddress</slice>
+            <int name="refFeeTier">uint16</int>
+            <int name="pendingUserReceiveAmount">coins</int>
+            <slice name="askJettonWallet">msgaddress</slice>
+            <slice name="askJettonMinter">msgaddress</slice>
+            <cell name="conditionState">cell</cell>
+            <cell name="conditionCode">cell</cell>
+            <int name="userUnlockForwardParams" nullable="true">coins</int>
+            <cell name="userUnlockForwardSuccessPayload" nullable="true">cell</cell>
+            <int name="userFillToVault">bool</int>
+            <int name="safeDepositAndForwardValue">uint64</int>
+            <slice name="excessesReceiver">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <get_method name="get_cron_info">
+        <output fixed_length="true">
+            <int name="next_call_time">uint32</int>
+            <int name="reward">coins</int>
+            <int name="balance_minus_amounts">int64</int>
+            <int name="repeat_every">uint32</int>
+        </output>
+    </get_method>
+
+    <get_method name="getVaultData">
+        <output fixed_length="true">
+            <slice name="minter">msgaddress</slice>
+            <slice name="jettonWallet">msgaddress</slice>
+            <int name="balance">coins</int>
+            <slice name="owner">msgaddress</slice>
+        </output>
+    </get_method>
+
+    <internal name="minter_init_transfer">
+        minter_init_transfer#4716dd16 queryId:uint64 quoteId:uint256 transferType:uint32 refFee:MsgAddress refFeeTier:uint16 excesses:MsgAddress bidPaymentData:^BidPaymentData askRefundData:^AskRefundData userPaymentData:^UserPaymentData = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_refund_request">
+        minter_refund_request#d714500d queryId:uint64 quoteId:uint256 amount:Coins useVault:Bool recipient:MsgAddress exitCode:uint32 prevMessage:uint32 extraFields:^MinterRefundRequestExtraFields = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_internal_lock">
+        minter_internal_lock#65cb4855 queryId:uint64 owner:MsgAddress jettonWallet:MsgAddress amount:Coins lockArgs:^BilateralLockArgs unlockCondition:^Cell additionalData:^InternalLockExtra = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_internal_unlock">
+        minter_internal_unlock#30fe22ab queryId:uint64 owner:MsgAddress jettonWallet:MsgAddress amount:Coins excesses:MsgAddress additionalData:^UnlockAdditionalData = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_internal_withdraw_tokens">
+        minter_internal_withdraw_tokens#2c3b4692 queryId:uint64 jettonWallet:MsgAddress collectedFees:Coins owner:MsgAddress excesses:MsgAddress forwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_give_protocol_ownership">
+        minter_give_protocol_ownership#5df8fa35 queryId:uint64 newProtocolAddress:MsgAddress excesses:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_update_protocol_tier">
+        minter_update_protocol_tier#de34aedc queryId:uint64 newTier:uint16 excesses:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_take_protocol_ownership">
+        minter_take_protocol_ownership#88124614 queryId:uint64 excesses:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_cancel_next_protocol_owner">
+        minter_cancel_next_protocol_owner#07f886e6 queryId:uint64 excesses:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <internal name="minter_reset_gas">
+        minter_reset_gas#fe16529e queryId:uint64 recipient:MsgAddress = InternalMsgBody;
+    </internal>
+
+    <jetton_payload name="minter_lock_payload">
+        minter_lock_payload#3e246684 quoteId:uint256 refundToVault:Bool refFee:MsgAddress refFeeTier:uint16 excesses:MsgAddress tonSafeDeposit:Coins userFillToVault:Bool lockArgs:^BilateralLockArgs unlockCondition:^Cell extraFields:^MinterLockPayloadExtraFields = InternalMsgBody;
+    </jetton_payload>
+
+    <jetton_payload name="minter_unlock_payload">
+        minter_unlock_payload#6a58f85c quoteId:uint256 excesses:MsgAddress extraFields:^UnlockPayloadExtraFields unlockArgs:^BilateralUnlockArgs forwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </jetton_payload>
+
+    <jetton_payload name="minter_deposit_vault">
+        minter_deposit_vault#702b4dc8 excesses:MsgAddress forwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </jetton_payload>
+
+    <internal name="item_internal_lock">
+        item_internal_lock#7ab06181 queryId:uint64 tokenAddress:MsgAddress amount:Coins excesses:MsgAddress refundToVault:Bool additionalField:^ItemAdditionalField lockArgs:^BilateralLockArgs unlockCondition:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="item_internal_unlock">
+        item_internal_unlock#696fa2d8 queryId:uint64 fillToVault:Bool refundToVault:Bool resolver:MsgAddress resolverSentJettonWallet:MsgAddress resolverSentAmount:Coins unlockArgs:^BilateralUnlockArgs extraFields:^ItemInternalUnlockExtraFields forwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </internal>
+
+    <internal name="item_withdraw">
+        item_withdraw#12b8a987 queryId:uint64 withdrawArgs:^Cell excesses:MsgAddress forwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </internal>
+
+    <internal name="item_lock_success">
+        item_lock_success#14b8bb09 queryId:uint64 forwardPayload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="lock_reject_notification">
+        lock_reject_notification#ac8a7373 queryId:uint64 forwardPayload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <ext_in name="external_item_withdraw">
+        external_item_withdraw#8af982e1 queryId:uint64 signature:bits512 signMessage:^EscrowWithdrawSignMessage = ExternalMsgBody;
+    </ext_in>
+
+    <ext_in name="external_cron_trigger">
+        external_cron_trigger#2114702d rewardAddress:MsgAddress salt:uint32 = ExternalMsgBody;
+    </ext_in>
+
+    <internal name="vault_lock">
+        vault_lock#24864ed4 queryId:uint64 amount:Coins quoteId:uint256 refundToVault:Bool refFee:MsgAddress refFeeTier:uint16 additionalData:^VaultLockAdditionalData lockArgs:^BilateralLockArgs unlockCondition:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="vault_unlock">
+        vault_unlock#4bd679ff queryId:uint64 amount:Coins quoteId:uint256 fillToVault:Bool refundToVault:Bool unlockArgs:^BilateralUnlockArgs excesses:MsgAddress extraFields:^VaultUnlockExtraFields unlockForwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </internal>
+
+    <internal name="vault_withdraw_tokens">
+        vault_withdraw_tokens#5809e482 queryId:uint64 amount:Coins excesses:MsgAddress withdrawForwardParams:(Maybe ^ForwardParams) = InternalMsgBody;
+    </internal>
+
+    <internal name="vault_deposit_tokens">
+        vault_deposit_tokens#555edf4b queryId:uint64 amount:Coins excesses:MsgAddress forwardTonAmount:Coins forwardPayload:(Maybe ^Cell) = InternalMsgBody;
+    </internal>
+
+    <internal name="vault_deposit_notification">
+        vault_deposit_notification#44aceac4 queryId:uint64 amount:Coins forwardPayload:(Either Cell ^Cell) = InternalMsgBody;
+    </internal>
+</abi>

@@ -144,7 +144,6 @@
       ]
     }
   ],
-  "storage": {},
   "incoming_messages": [],
   "incoming_external": [],
   "outgoing_messages": [
@@ -156,6 +155,7 @@
     }
   ],
   "emitted_events": [],
+  "storage": {},
   "get_methods": [
     {
       "tvm_method_id": 106427,
@@ -202,6 +202,6 @@
     }
   ],
   "compiler_name": "tolk",
-  "compiler_version": "1.4.0",
+  "compiler_version": "1.4.1",
   "code_boc64": "te6ccgECCgEAAg8AART/APSkE/S88sgLAQIBYgIDAgLPBAUAJaE/d9qJofSR9JGn/6YDpn+oY6MD2z4kfJAIMcAkTDg+CdvEPiXofgvoIIQBo53gLYJIdcLH4IQmhJHwLqRW+DtRND6SPpI0//TAdM/10wiwwLy4+74l4IQBfXhALzy4+sn1ywlAgVpROMC1ywnr5NRtOMCMTM2AdcsITdr+yzjAvI/gBgYHAfUMzQ0NvgoEscF8uP3BI4RMzVTMbvy4+iCCJiWgHD7AnKbU1C58uPoA3D7AgXiI9DTSDH6APoAMFJHoVMGqFAnoajIz5Ajn0DaUAb6AlAF+gIV+lLJyM+FiFJw+lKCEE1yXSzPC44Vyz9ScPpSI88LASHPCz8U9ADJgwaAJAcQwB9Mf0z/6SIMI1xjU0SD5AFMo+RDy4+8g0NMf1ws/URa68uPtJLry4+0g0NcsJQIFaUSOK9csJ6+TUbSS8j/h0z/TP/pIMBDOEL0QrBCbEIoQiRB4EGcQVhBFEDR/8AHjDQgApPiSJMcF8uPyBHD7AgPTP/pIMHFtyM+FiBX6UgH6AoIQTXJdLM8LiiLPCz8U+lIUywEUyz8T9ADJcfsAyM+FCBL6UoIQJWWTTM8Ljss/yYMG+wAAQNM/0z/6SDAQzhC9EKwQmxCKEIkQeBBnEFYQRRA0cPABACr7AAXI+lIU+lISy/8SywHLP8zJ7VQ="
 }

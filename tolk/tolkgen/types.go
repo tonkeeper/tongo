@@ -26,7 +26,7 @@ func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
 	case parser.TyKindSlice:
 		return fmt.Sprintf("c.AddRef(%s)", expr), nil
 	case parser.TyKindString:
-		return fmt.Sprintf("c.WriteStringRefTail(%s)", expr), nil
+		return fmt.Sprintf("(func() error { _, err := c.WriteStringRefTail(%s); return err })()", expr), nil
 	case parser.TyKindNullable:
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
 	case parser.TyKindCellOf:
@@ -151,6 +151,11 @@ func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasL
 	return "", false, fmt.Errorf("unknown type %v", ty)
 }
 
+var TongoStructs = map[string]string{
+	"CurrencyCollection": "tlb.CurrencyCollection",
+	"EitherRef":          "tlb.EitherRef",
+}
+
 func (st *symTable) emitGoType(tyIdx int) (string, error) {
 	ty, err := st.TyByIdx(tyIdx)
 	if err != nil {
@@ -180,24 +185,18 @@ func (st *symTable) emitGoType(tyIdx int) (string, error) {
 	case parser.TyKindAddressAny, parser.TyKindAddressOpt:
 		return "tlb.MsgAddress", nil
 	case parser.TyKindStructRef:
-		switch ty.StructRef.StructName {
-		case "CurrencyCollection":
-			return "tlb.CurrencyCollection", nil
-		default:
-			name := ty.StructRef.StructName
-			if len(ty.StructRef.TypeArgsTyIdx) > 0 {
-				tArgs := make([]string, 0, len(ty.StructRef.TypeArgsTyIdx))
-				for _, t := range ty.StructRef.TypeArgsTyIdx {
-					goType, err := st.emitGoType(t)
-					if err != nil {
-						return "", err
-					}
-					tArgs = append(tArgs, goType)
-				}
-				name += "[" + strings.Join(tArgs, ", ") + "]"
-			}
-			return name, nil
+		name := ty.StructRef.StructName
+		if tongoStructRef, ok := TongoStructs[ty.StructRef.StructName]; ok {
+			name = tongoStructRef
 		}
+		if len(ty.StructRef.TypeArgsTyIdx) > 0 {
+			tArgs, err := utils.MapSliceErr(ty.StructRef.TypeArgsTyIdx, st.emitGoType)
+			if err != nil {
+				return "", err
+			}
+			name += "[" + strings.Join(tArgs, ", ") + "]"
+		}
+		return name, nil
 	case parser.TyKindEnumRef:
 		return safeGoIdent(ty.EnumRef.EnumName), nil
 	case parser.TyKindBitsN:

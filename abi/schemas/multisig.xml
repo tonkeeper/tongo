@@ -19,7 +19,7 @@
         <get_method name="get_order_address"/>
         <error code="1007">Unauthorized proposer</error>
         <error code="1008">Invalid new order</error>
-        <error code="100">Not enough ton</error>
+        <error code="100">Not enough Gram</error>
         <error code="101">Unauthorized execute</error>
         <error code="102">Signers outdated</error>
         <error code="103">Invalid dictionary sequence</error>

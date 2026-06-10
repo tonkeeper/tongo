@@ -32,8 +32,8 @@ type TransferMessage struct {
 	JettonAmount        *big.Int
 	Destination         ton.AccountID
 	ResponseDestination *ton.AccountID
-	AttachedTon         tlb.Grams
-	ForwardTonAmount    tlb.Grams
+	AttachedGram        tlb.Grams
+	ForwardGramAmount   tlb.Grams
 	ForwardPayload      *boc.Cell
 	CustomPayload       *boc.Cell
 	StateInit           *tlb.StateInit
@@ -41,13 +41,13 @@ type TransferMessage struct {
 
 func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 	c := boc.NewCell()
-	forwardTon := big.NewInt(int64(tm.ForwardTonAmount))
+	forwardGrams := big.NewInt(int64(tm.ForwardGramAmount))
 	msgBody := abi.JettonTransferMsgBody{
 		QueryId:             uint64(time.Now().UnixNano()),
 		Amount:              tlb.VarUInteger16(*tm.JettonAmount),
 		Destination:         tm.Destination.ToMsgAddress(),
 		ResponseDestination: tm.ResponseDestination.ToMsgAddress(),
-		ForwardTonAmount:    tlb.VarUInteger16(*forwardTon),
+		ForwardTonAmount:    tlb.VarUInteger16(*forwardGrams),
 	}
 	if tm.CustomPayload != nil {
 		payload := tlb.Any(*tm.CustomPayload)
@@ -68,7 +68,7 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 		return tlb.Message{}, 0, err
 	}
 	m := wallet.Message{
-		Amount:  tm.AttachedTon,
+		Amount:  tm.AttachedGram,
 		Address: jettonWallet,
 		Bounce:  true,
 		Mode:    wallet.DefaultMessageMode,

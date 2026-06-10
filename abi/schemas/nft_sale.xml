@@ -24,9 +24,9 @@
         <error code="410">Inconsistent price and fees</error>
         <error code="500">Unauthorized initiation</error>
         <error code="501">Invalid op, expected ownership_assigned</error>
-        <error code="450">Not enough TONs for sale</error>
+        <error code="450">Not enough Gram for sale</error>
         <error code="451">This sale is broken: royalty, fee, or profit is less than zero</error>
-        <error code="457">Not enough TONs for cancellation</error>
+        <error code="457">Not enough Gram for cancellation</error>
         <error code="458">Unauthorized cancellation</error>
         <error code="459">This sale is only for a jetton</error>
         <error code="4501">Not enough funds for sale</error>
@@ -44,8 +44,8 @@
         <error code="410">Inconsistent price and fees</error>
         <error code="500">Unauthorized initiation</error>
         <error code="501">Invalid op, expected ownership_assigned</error>
-        <error code="450">Not enough TONs for sale</error>
-        <error code="457">Not enough TONs for cancellation</error>
+        <error code="450">Not enough Gram for sale</error>
+        <error code="457">Not enough Gram for cancellation</error>
         <error code="458">Unauthorized cancellation</error>
         <error code="65535">Unknown operation</error>
     </interface>
@@ -54,8 +54,8 @@
         <error code="404">Already sold or cancelled</error>
         <error code="500">Unauthorized initiation</error>
         <error code="501">Invalid op, expected ownership_assigned</error>
-        <error code="450">Not enough TONs for sale</error>
-        <error code="457">Not enough TONs for cancellation</error>
+        <error code="450">Not enough Gram for sale</error>
+        <error code="457">Not enough Gram for cancellation</error>
         <error code="458">Unauthorized cancellation</error>
         <error code="65535">Unknown operation</error>
     </interface>
@@ -69,7 +69,7 @@
         <error code="1003">Invalid op, expect ownership_assigned</error>
         <error code="1005">Already executed</error>
         <error code="1006">Already activated</error>
-        <error code="1008">Not enough TONs</error>
+        <error code="1008">Not enough Gram</error>
         <error code="1009">Already has bid</error>
         <error code="1010">Auction in progress</error>
         <error code="65535">Unknown operation</error>
@@ -150,7 +150,7 @@
       <error code="1003">Invalid op, expect ownership_assigned</error>
       <error code="1005">Already executed</error>
       <error code="1006">Already activated</error>
-      <error code="1008">Not enough TONs</error>
+      <error code="1008">Not enough Gram</error>
       <error code="1009">Already has bid</error>
       <error code="1010">Auction in progress</error>
       <error code="1014">Auction is in a broken state: auction duration is too long</error>

@@ -290,7 +290,7 @@ func (w *Wallet) Send(ctx context.Context, messages ...Sendable) error {
 }
 
 // GetBalance
-// Gets actual TON balance for wallet
+// Gets actual GRAM balance for the wallet
 func (w *Wallet) GetBalance(ctx context.Context) (uint64, error) {
 	if w.blockchain == nil {
 		return 0, errors.New("blockchain interface is nil")

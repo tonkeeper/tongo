@@ -110,7 +110,7 @@ func TestExample(t *testing.T) {
 
 	testAccount := tontest.Account().
 		StateInit(tontest.MustAnyToCell(codeBoc), tontest.MustAnyToCell(initData)).
-		Balance(ton.OneTON).
+		Balance(ton.OneGRAM).
 		MustShardAccount()
 
 	tracer, err := txemulator.NewTraceBuilder(

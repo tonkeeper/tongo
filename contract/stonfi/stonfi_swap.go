@@ -85,13 +85,13 @@ func (s *Stonfi) MakeSwapMessage(attachedTON tlb.Grams, forwardTONAmount tlb.Gra
 		return nil, err
 	}
 	jettonTransfer := jetton.TransferMessage{
-		Sender:           address,
-		Jetton:           jetton.New(s.master0, s.cli),
-		JettonAmount:     &jettonAmount,
-		Destination:      s.router,
-		AttachedTon:      attachedTON,
-		ForwardTonAmount: forwardTONAmount,
-		ForwardPayload:   c,
+		Sender:            address,
+		Jetton:            jetton.New(s.master0, s.cli),
+		JettonAmount:      &jettonAmount,
+		Destination:       s.router,
+		AttachedGram:      attachedTON,
+		ForwardGramAmount: forwardTONAmount,
+		ForwardPayload:    c,
 	}
 	return &jettonTransfer, nil
 }

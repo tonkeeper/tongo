@@ -4,7 +4,7 @@ var contractErrors = map[ContractInterface]map[int32]string{
 {{range $Interface, $Errors := .Interfaces}}
     {{- if ne (len $Errors) 0 -}}
         {{- $Interface}}: {
-         {{- range $Code, $Name := $Errors -}}
+         {{ range $Code, $Name := $Errors -}}
             {{ $Code}}: "{{$Name}}",
         {{ end -}}	},
     {{ end -}}

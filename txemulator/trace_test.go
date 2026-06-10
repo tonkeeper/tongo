@@ -44,10 +44,10 @@ func TestSimpleEmulation(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = w.Send(ctx, wallet.SimpleTransfer{
-		Amount:  ton.OneTON / 10,
+		Amount:  ton.OneGRAM / 10,
 		Address: w.GetAddress(),
 	}, wallet.SimpleTransfer{
-		Amount:  ton.OneTON / 10,
+		Amount:  ton.OneGRAM / 10,
 		Address: w.GetAddress(),
 	})
 	if err != nil {
@@ -70,7 +70,7 @@ func TestSimpleEmulation(t *testing.T) {
 	if len(tree.Children) != 2 {
 		t.Fatal(len(tree.Children))
 	}
-	if tree.Children[0].TX.Msgs.InMsg.Value.Value.Info.IntMsgInfo.Value.Grams != ton.OneTON/10 {
+	if tree.Children[0].TX.Msgs.InMsg.Value.Value.Info.IntMsgInfo.Value.Grams != ton.OneGRAM/10 {
 		t.Fatal("invalid amount")
 	}
 }

@@ -49,11 +49,11 @@ func TestSendJetton(t *testing.T) {
 
 	log.Printf("Prev balance: %v", b)
 	jettonTransfer := TransferMessage{
-		Jetton:           j,
-		JettonAmount:     amount,
-		Destination:      recipientAddr,
-		AttachedTon:      ton.OneTON / 2,
-		ForwardTonAmount: 200_000_000,
+		Jetton:            j,
+		JettonAmount:      amount,
+		Destination:       recipientAddr,
+		AttachedGram:      ton.OneGRAM / 2,
+		ForwardGramAmount: 200_000_000,
 	}
 	err = w.Send(context.Background(), jettonTransfer)
 	if err != nil {

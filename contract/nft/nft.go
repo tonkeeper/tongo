@@ -32,8 +32,8 @@ func (item Item) Transfer(ctx context.Context, sender sender, destination ton.Ac
 		ItemAddress:         item.Address,
 		Destination:         destination,
 		ResponseDestination: sender.GetAddress(),
-		AttachedTon:         ton.OneTON / 20,
-		ForwardTon:          0,
+		AttachedGram:        ton.OneGRAM / 20,
+		ForwardGram:         0,
 	}
 	return sender.Send(ctx, transfer)
 }
@@ -42,20 +42,20 @@ type ItemTransferMessage struct {
 	ItemAddress         ton.AccountID
 	Destination         ton.AccountID
 	ResponseDestination ton.AccountID
-	AttachedTon         tlb.Grams
-	ForwardTon          tlb.Grams
+	AttachedGram        tlb.Grams
+	ForwardGram         tlb.Grams
 	ForwardPayload      *boc.Cell
 	CustomPayload       *boc.Cell
 }
 
 func (itm ItemTransferMessage) ToInternal() (tlb.Message, byte, error) {
 	c := boc.NewCell()
-	forwardTon := big.NewInt(int64(itm.ForwardTon))
+	forwardGram := big.NewInt(int64(itm.ForwardGram))
 	msgBody := abi.NftTransferMsgBody{
 		QueryId:             uint64(time.Now().UnixNano()),
 		NewOwner:            itm.Destination.ToMsgAddress(),
 		ResponseDestination: itm.ResponseDestination.ToMsgAddress(),
-		ForwardAmount:       tlb.VarUInteger16(*forwardTon),
+		ForwardAmount:       tlb.VarUInteger16(*forwardGram),
 	}
 	if itm.CustomPayload != nil {
 		payload := tlb.Any(*itm.CustomPayload)
@@ -72,7 +72,7 @@ func (itm ItemTransferMessage) ToInternal() (tlb.Message, byte, error) {
 		return tlb.Message{}, 0, err
 	}
 	m := wallet.Message{
-		Amount:  itm.AttachedTon,
+		Amount:  itm.AttachedGram,
 		Address: itm.ItemAddress,
 		Bounce:  true,
 		Mode:    wallet.DefaultMessageMode,

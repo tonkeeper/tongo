@@ -58,8 +58,8 @@ func main() {
 		Jetton:              j,
 		JettonAmount:        amount,
 		Destination:         recipientAddr.ID,
-		AttachedTon:         400_000_000,
-		ForwardTonAmount:    200_000_000,
+		AttachedGram:        400_000_000,
+		ForwardGramAmount:   200_000_000,
 		Sender:              w.GetAddress(),
 		ResponseDestination: &ownerAddress,
 	}

@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"github.com/tonkeeper/tongo"
 	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/ton"
 	"github.com/tonkeeper/tongo/wallet"
-	"log"
 )
 
 const SEED = "best journey rifle scheme bamboo daring finish life have puzzle verb wagon double pencil plate parent canoe soup stable salon drift elephant border hero"
@@ -24,7 +25,7 @@ func main() {
 
 	log.Printf("Wallet address: %v\n", w.GetAddress().ToRaw())
 	err = w.Send(context.TODO(), wallet.SimpleTransfer{
-		Amount:  ton.OneTON,
+		Amount:  ton.OneGRAM,
 		Address: tongo.MustParseAccountID("EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0"),
 		Comment: "hi! hope it will be enough for buying a yacht",
 	})

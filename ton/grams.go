@@ -2,4 +2,4 @@ package ton
 
 import "github.com/tonkeeper/tongo/tlb"
 
-const OneTON tlb.Grams = 1_000_000_000
+const OneGRAM tlb.Grams = 1_000_000_000

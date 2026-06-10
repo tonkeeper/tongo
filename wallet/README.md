@@ -3,7 +3,7 @@
 This library supports:
 1. Address generation from public or private keys for V1-V4 wallets
 2. Message generation for deploying new wallets
-3. Message generation for TON transfer (long comment supported) and custom payload 
+3. Message generation for GRAM transfer (long comment supported) and custom payload 
 (for V1-V4 supports up to 4 payload messages)
 
 Wallets smart contracts description:

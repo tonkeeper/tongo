@@ -3,22 +3,24 @@
 package abi
 
 const (
-	CocoonClient         ContractInterface = _xmlContractInterfaceEnd + 1
-	CocoonProxy          ContractInterface = _xmlContractInterfaceEnd + 2
-	CocoonRoot           ContractInterface = _xmlContractInterfaceEnd + 3
-	CocoonWallet         ContractInterface = _xmlContractInterfaceEnd + 4
-	CocoonWorker         ContractInterface = _xmlContractInterfaceEnd + 5
-	Elector              ContractInterface = _xmlContractInterfaceEnd + 6
-	EvaaMaster           ContractInterface = _xmlContractInterfaceEnd + 7
-	EvaaUser             ContractInterface = _xmlContractInterfaceEnd + 8
-	FfVaultPosition      ContractInterface = _xmlContractInterfaceEnd + 9
-	FfVault              ContractInterface = _xmlContractInterfaceEnd + 10
-	PythOracle           ContractInterface = _xmlContractInterfaceEnd + 11
-	SingleNominatorPool  ContractInterface = _xmlContractInterfaceEnd + 12
-	StonfiEscrowFactory  ContractInterface = _xmlContractInterfaceEnd + 13
-	StonfiEscrowPosition ContractInterface = _xmlContractInterfaceEnd + 14
-	StonfiEscrowVault    ContractInterface = _xmlContractInterfaceEnd + 15
-	XtrMaster            ContractInterface = _xmlContractInterfaceEnd + 16
+	CocoonClient             ContractInterface = _xmlContractInterfaceEnd + 1
+	CocoonProxy              ContractInterface = _xmlContractInterfaceEnd + 2
+	CocoonRoot               ContractInterface = _xmlContractInterfaceEnd + 3
+	CocoonWallet             ContractInterface = _xmlContractInterfaceEnd + 4
+	CocoonWorker             ContractInterface = _xmlContractInterfaceEnd + 5
+	Elector                  ContractInterface = _xmlContractInterfaceEnd + 6
+	EvaaMaster               ContractInterface = _xmlContractInterfaceEnd + 7
+	EvaaUser                 ContractInterface = _xmlContractInterfaceEnd + 8
+	FfVaultPosition          ContractInterface = _xmlContractInterfaceEnd + 9
+	FfVault                  ContractInterface = _xmlContractInterfaceEnd + 10
+	PythOracle               ContractInterface = _xmlContractInterfaceEnd + 11
+	SingleNominatorPool      ContractInterface = _xmlContractInterfaceEnd + 12
+	StonfiEscrowFactory      ContractInterface = _xmlContractInterfaceEnd + 13
+	StonfiEscrowPosition     ContractInterface = _xmlContractInterfaceEnd + 14
+	StonfiEscrowVault        ContractInterface = _xmlContractInterfaceEnd + 15
+	StonksPumpVirtualMinter  ContractInterface = _xmlContractInterfaceEnd + 16
+	StonksPumpVirtualFactory ContractInterface = _xmlContractInterfaceEnd + 17
+	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 18
 )
 
 func init() {
@@ -37,6 +39,8 @@ func init() {
 	tolkContractInterfaceStrings[StonfiEscrowFactory] = "stonfi_escrow_factory"
 	tolkContractInterfaceStrings[StonfiEscrowPosition] = "stonfi_escrow_position"
 	tolkContractInterfaceStrings[StonfiEscrowVault] = "stonfi_escrow_vault"
+	tolkContractInterfaceStrings[StonksPumpVirtualMinter] = "StonksPumpVirtualMinter"
+	tolkContractInterfaceStrings[StonksPumpVirtualFactory] = "StonksPumpVirtualFactory"
 	tolkContractInterfaceStrings[XtrMaster] = "XtrMaster"
 
 	tolkContractInterfaceFromString["cocoon_client"] = CocoonClient
@@ -54,5 +58,7 @@ func init() {
 	tolkContractInterfaceFromString["stonfi_escrow_factory"] = StonfiEscrowFactory
 	tolkContractInterfaceFromString["stonfi_escrow_position"] = StonfiEscrowPosition
 	tolkContractInterfaceFromString["stonfi_escrow_vault"] = StonfiEscrowVault
+	tolkContractInterfaceFromString["StonksPumpVirtualMinter"] = StonksPumpVirtualMinter
+	tolkContractInterfaceFromString["StonksPumpVirtualFactory"] = StonksPumpVirtualFactory
 	tolkContractInterfaceFromString["XtrMaster"] = XtrMaster
 }

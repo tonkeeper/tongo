@@ -1,0 +1,267 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "StonksPumpVirtualMinter",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "PresaleSellNotificationForMinter"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BuyFromPresale"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "AskToPresaleSell"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        15
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "PresaleTradeEvent"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "BondingData"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "AskToPresaleSell",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 3424294831,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "jettonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "tonsRecipient",
+          "ty_idx": 13
+        },
+        {
+          "name": "minTonOut",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Wallet owner request to sell jettons back into the virtual presale."
+    },
+    {
+      "kind": "struct",
+      "name": "PresaleSellNotificationForMinter",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 3424294832,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "jettonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "sellInitiator",
+          "ty_idx": 7
+        },
+        {
+          "name": "tonsRecipient",
+          "ty_idx": 13
+        },
+        {
+          "name": "minTonOut",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Wallet-to-minter notification carrying burned presale-sale jettons."
+    },
+    {
+      "kind": "struct",
+      "name": "BuyFromPresale",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 3424294830,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "tonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "minJettonsOut",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Minter request to buy jettons from the virtual presale."
+    },
+    {
+      "kind": "struct",
+      "name": "PresaleTradeEvent",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 3424294835,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "isBuy",
+          "ty_idx": 5
+        },
+        {
+          "name": "amountIn",
+          "ty_idx": 6
+        },
+        {
+          "name": "amountOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "leftover",
+          "ty_idx": 6
+        }
+      ],
+      "description": "External log emitted by the minter after a presale buy or sell."
+    },
+    {
+      "kind": "struct",
+      "name": "BondingData",
+      "ty_idx": 18,
+      "fields": [
+        {
+          "name": "progressBps",
+          "ty_idx": 1
+        },
+        {
+          "name": "migrationTonTarget",
+          "ty_idx": 1
+        },
+        {
+          "name": "cumulativeTonReserve",
+          "ty_idx": 1
+        },
+        {
+          "name": "cumulativeJettonReserve",
+          "ty_idx": 1
+        },
+        {
+          "name": "tonsCollected",
+          "ty_idx": 1
+        },
+        {
+          "name": "maxBuyPercent",
+          "ty_idx": 1
+        },
+        {
+          "name": "tokensSold",
+          "ty_idx": 1
+        },
+        {
+          "name": "presaleOpen",
+          "ty_idx": 1
+        }
+      ],
+      "description": "Return shape of get_bonding_data()."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 14
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [
+    {
+      "body_ty_idx": 17
+    }
+  ],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 119688,
+      "name": "get_bonding_data",
+      "parameters": [],
+      "return_ty_idx": 18
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBBQEArQABFP8A9KQT9LzyyAsBAgFiAgMBmtD4kfJA1ywmYNS9dI400z/6APoAMIsC+JLIz5Mwal7OFcs/z4NQA/oCAfoCEvpSz4QgycjPhyASznHPC2HMyXD7AODXLCZg1L2E4wIwBAAVoacQ4KjgAKjgAEEAeNM/+gD6SPpQ+gAwiwIibkBD4wTIz5Mwal7OFcs/z4FQA/oCWPoCEvpSz4QgycjPhyASznHPC2HMyXD7AA=="
+}

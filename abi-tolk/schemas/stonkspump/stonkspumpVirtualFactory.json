@@ -1,0 +1,115 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "StonksPumpVirtualFactory",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "StonksPumpVirtualFactoryMessage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CreateVirtualLiquidityJetton"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "alias",
+      "name": "StonksPumpVirtualFactoryMessage",
+      "ty_idx": 12,
+      "target_ty_idx": 13,
+      "description": "Factory request that deploys and initializes a virtual-liquidity jetton."
+    },
+    {
+      "kind": "struct",
+      "name": "CreateVirtualLiquidityJetton",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 3424294913,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "content",
+          "ty_idx": 3
+        },
+        {
+          "name": "devBuyTonAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "maxBuyPercent",
+          "ty_idx": 14
+        },
+        {
+          "name": "devWallet",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Factory request that deploys and initializes a virtual-liquidity jetton."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAHQABFP8A9KQT9LzyyAsBABzT+JHyQNcsJmDUwAwx3A=="
+}

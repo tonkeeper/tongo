@@ -11,6 +11,7 @@ import (
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
 	abiStonfi "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonfi"
+	abiStonkspump "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonkspump"
 	abiXtr "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/xtr"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -1230,6 +1231,48 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiStonfi.VaultUnlock](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixVaultUnlock), abiStonfi.StonfiVaultUnlockMsgOp)
 	KnownMsgInTypes[abiStonfi.StonfiVaultWithdrawTokensMsgOp] = abiStonfi.VaultWithdrawTokens{}
 	registerInMsgUnmarshalerForOpcode[*abiStonfi.VaultWithdrawTokens](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixVaultWithdrawTokens), abiStonfi.StonfiVaultWithdrawTokensMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "get_bonding_data",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiStonkspump.GetBondingData(ctx, executor, id)
+				return "GetBondingData_StonksPumpVirtualMinterResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["get_bonding_data"] = append(KnownGetMethodsDecoder["get_bonding_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiStonkspump.DecodeGetBondingData(&st)
+		return "GetBondingData_StonksPumpVirtualMinterResult", r, err
+	})
+
+	KnownSimpleGetMethods[119688] = append(KnownSimpleGetMethods[119688], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiStonkspump.GetBondingData(ctx, executor, id)
+		return "GetBondingData_StonksPumpVirtualMinterResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    StonksPumpVirtualMinter,
+			Results: []string{"GetBondingData_StonksPumpVirtualMinterResult"},
+		},
+	)
+
+	KnownMsgInTypes[abiStonkspump.StonkspumpAskToPresaleSellMsgOp] = abiStonkspump.AskToPresaleSell{}
+	registerInMsgUnmarshalerForOpcode[*abiStonkspump.AskToPresaleSell](opcodedMsgInDecodeFunctions, uint32(abiStonkspump.PrefixAskToPresaleSell), abiStonkspump.StonkspumpAskToPresaleSellMsgOp)
+	KnownMsgInTypes[abiStonkspump.StonkspumpBuyFromPresaleMsgOp] = abiStonkspump.BuyFromPresale{}
+	registerInMsgUnmarshalerForOpcode[*abiStonkspump.BuyFromPresale](opcodedMsgInDecodeFunctions, uint32(abiStonkspump.PrefixBuyFromPresale), abiStonkspump.StonkspumpBuyFromPresaleMsgOp)
+	KnownMsgInTypes[abiStonkspump.StonkspumpCreateVirtualLiquidityJettonMsgOp] = abiStonkspump.CreateVirtualLiquidityJetton{}
+	registerInMsgUnmarshalerForOpcode[*abiStonkspump.CreateVirtualLiquidityJetton](opcodedMsgInDecodeFunctions, uint32(abiStonkspump.PrefixCreateVirtualLiquidityJetton), abiStonkspump.StonkspumpCreateVirtualLiquidityJettonMsgOp)
+	KnownMsgInTypes[abiStonkspump.StonkspumpPresaleSellNotificationForMinterMsgOp] = abiStonkspump.PresaleSellNotificationForMinter{}
+	registerInMsgUnmarshalerForOpcode[*abiStonkspump.PresaleSellNotificationForMinter](opcodedMsgInDecodeFunctions, uint32(abiStonkspump.PrefixPresaleSellNotificationForMinter), abiStonkspump.StonkspumpPresaleSellNotificationForMinterMsgOp)
+	KnownMsgInTypes[abiStonkspump.StonkspumpPresaleTradeEventMsgOp] = abiStonkspump.PresaleTradeEvent{}
+	registerInMsgUnmarshalerForOpcode[*abiStonkspump.PresaleTradeEvent](opcodedMsgInDecodeFunctions, uint32(abiStonkspump.PrefixPresaleTradeEvent), abiStonkspump.StonkspumpPresaleTradeEventMsgOp)
 
 }
 

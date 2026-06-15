@@ -9,8 +9,9 @@ import (
 // FindLibraries looks for library cells inside the given cell tree and
 // returns a list of hashes of found library cells.
 func FindLibraries(cell *boc.Cell) ([]ton.Bits256, error) {
-	libs, err := findLibraries(cell)
-	if err != nil {
+	libs := make(map[ton.Bits256]struct{})
+	visited := make(map[*boc.Cell]struct{})
+	if err := findLibraries(cell, libs, visited); err != nil {
 		return nil, err
 	}
 	if len(libs) == 0 {
@@ -23,37 +24,33 @@ func FindLibraries(cell *boc.Cell) ([]ton.Bits256, error) {
 	return hashes, nil
 }
 
-func findLibraries(cell *boc.Cell) (map[ton.Bits256]struct{}, error) {
+func findLibraries(cell *boc.Cell, libs map[ton.Bits256]struct{}, visited map[*boc.Cell]struct{}) error {
+	// "visited" tracks cells already walked by pointer identity.
+	// Without this set, findLibraries explores every root->leaf
+	// path independently, which is exponential on real code cells.
+	if _, ok := visited[cell]; ok {
+		return nil
+	}
+	visited[cell] = struct{}{}
+	cell.ShallowResetCounters()
 	if cell.IsExotic() {
 		if cell.CellType() == boc.LibraryCell {
 			bytes, err := cell.ReadBytes(33)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			var hash ton.Bits256
 			copy(hash[:], bytes[1:])
-			return map[ton.Bits256]struct{}{
-				hash: {},
-			}, nil
-		}
-		return nil, nil
-	}
-	var libs map[ton.Bits256]struct{}
-	for _, ref := range cell.Refs() {
-		ref.ResetCounters()
-		hashes, err := findLibraries(ref)
-		if err != nil {
-			return nil, err
-		}
-		if libs == nil {
-			libs = hashes
-			continue
-		}
-		for hash := range hashes {
 			libs[hash] = struct{}{}
 		}
+		return nil
 	}
-	return libs, nil
+	for _, ref := range cell.Refs() {
+		if err := findLibraries(ref, libs, visited); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // LibrariesToBase64 converts a map with libraries to a base64 string.

@@ -197,7 +197,7 @@ func (c *Cell) NextRef() (*Cell, error) {
 	ref := c.refs[c.refCursor]
 	if ref != nil {
 		c.refCursor++
-		ref.ResetCounters()
+		ref.ShallowResetCounters()
 		return ref, nil
 	}
 	return nil, ErrNotEnoughRefs
@@ -211,7 +211,7 @@ func (c *Cell) NextRefV() (Cell, error) {
 	ref := c.refs[c.refCursor]
 	if ref != nil {
 		c.refCursor++
-		ref.ResetCounters()
+		ref.ShallowResetCounters()
 		return *ref, nil
 	}
 	return Cell{}, ErrNotEnoughRefs
@@ -529,13 +529,30 @@ func (c *Cell) WriteBytes(b []byte) error {
 }
 
 func (c *Cell) ResetCounters() {
+	c.resetCounters(map[*Cell]struct{}{})
+}
+
+func (c *Cell) resetCounters(visited map[*Cell]struct{}) {
+	// "visited" dedups shared cells by pointer identity.
+	// Without this the recursion re-walks shared subtrees
+	// once per path through them — exponential on real code cells.
+	// Mirrors (*Cell).hash, which already memoizes by *Cell.
+	if _, ok := visited[c]; ok {
+		return
+	}
+	visited[c] = struct{}{}
 	c.bits.ResetCounter()
 	c.refCursor = 0
 	for _, r := range c.refs {
 		if r != nil {
-			r.ResetCounters()
+			r.resetCounters(visited)
 		}
 	}
+}
+
+func (c *Cell) ShallowResetCounters() {
+	c.bits.ResetCounter()
+	c.refCursor = 0
 }
 
 func (c *Cell) BitsAvailableForRead() int {

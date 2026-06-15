@@ -57,7 +57,10 @@ func (m *Message) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	copy(m.hash[:], hash[:])
-	c.ResetCounters()
+	// Shallow reset: the message subtree is re-read top-down via NextRef, which
+	// resets each child as it is entered. A full ResetCounters re-walks the whole
+	// subtree per message (super-linear over a block) — see ResetOwnCounters.
+	c.ResetOwnCounters()
 
 	var msg struct {
 		Info CommonMsgInfo

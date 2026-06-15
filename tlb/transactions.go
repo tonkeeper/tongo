@@ -73,7 +73,11 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	copy(tx.hash[:], hash[:])
-	c.ResetCounters()
+	// Only c's own read cursor needs resetting after hashing: the subtree is
+	// re-read top-down via NextRef, which resets each child as it is entered.
+	// A full ResetCounters here re-walks the whole tx subtree per transaction
+	// (super-linear over a block) — see boc.Cell.ResetOwnCounters.
+	c.ResetOwnCounters()
 
 	sumType, err := c.ReadUint(4)
 	if err != nil {

@@ -269,6 +269,9 @@ type MasterchainInfoClient struct {
 }
 
 func (s *MasterchainInfoClient) LiteServerGetMasterchainInfoExt(ctx context.Context, request liteclient.LiteServerGetMasterchainInfoExtRequest) (res liteclient.LiteServerMasterchainInfoExtC, err error) {
+	if s.conn == nil {
+		return liteclient.LiteServerMasterchainInfoExtC{}, ErrNoConnections
+	}
 	info, err := s.conn.Client().LiteServerGetMasterchainInfoExt(ctx, request)
 	if err != nil {
 		return liteclient.LiteServerMasterchainInfoExtC{}, err
@@ -278,6 +281,9 @@ func (s *MasterchainInfoClient) LiteServerGetMasterchainInfoExt(ctx context.Cont
 }
 
 func (s *MasterchainInfoClient) LiteServerGetMasterchainInfo(ctx context.Context) (liteclient.LiteServerMasterchainInfoC, error) {
+	if s.conn == nil {
+		return liteclient.LiteServerMasterchainInfoC{}, ErrNoConnections
+	}
 	info, err := s.conn.Client().LiteServerGetMasterchainInfo(ctx)
 	if err != nil {
 		return liteclient.LiteServerMasterchainInfoC{}, err

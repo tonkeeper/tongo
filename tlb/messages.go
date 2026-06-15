@@ -57,7 +57,7 @@ func (m *Message) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	copy(m.hash[:], hash[:])
-	c.ResetCounters()
+	c.ShallowResetCounters()
 
 	var msg struct {
 		Info CommonMsgInfo

@@ -73,7 +73,7 @@ func (tx *Transaction) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 		return err
 	}
 	copy(tx.hash[:], hash[:])
-	c.ResetCounters()
+	c.ShallowResetCounters()
 
 	sumType, err := c.ReadUint(4)
 	if err != nil {

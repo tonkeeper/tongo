@@ -197,7 +197,7 @@ func (c *Cell) NextRef() (*Cell, error) {
 	ref := c.refs[c.refCursor]
 	if ref != nil {
 		c.refCursor++
-		ref.ResetCounters()
+		ref.resetOwnCounters()
 		return ref, nil
 	}
 	return nil, ErrNotEnoughRefs
@@ -211,7 +211,7 @@ func (c *Cell) NextRefV() (Cell, error) {
 	ref := c.refs[c.refCursor]
 	if ref != nil {
 		c.refCursor++
-		ref.ResetCounters()
+		ref.resetOwnCounters()
 		return *ref, nil
 	}
 	return Cell{}, ErrNotEnoughRefs
@@ -536,6 +536,16 @@ func (c *Cell) ResetCounters() {
 			r.ResetCounters()
 		}
 	}
+}
+
+// resetOwnCounters resets only this cell's read cursors, without recursing into
+// its subtree. NextRef/NextRefV use this instead of ResetCounters: a child is
+// reset exactly when it is descended into, so resetting the whole subtree on
+// every descent re-walked already-reset cells, making decoding super-linear
+// (~O(n*depth)) and effectively hanging on large blocks.
+func (c *Cell) resetOwnCounters() {
+	c.bits.ResetCounter()
+	c.refCursor = 0
 }
 
 func (c *Cell) BitsAvailableForRead() int {

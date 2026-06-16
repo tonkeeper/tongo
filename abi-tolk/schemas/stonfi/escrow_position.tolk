@@ -66,19 +66,3 @@ get fun getOrderData(): GetOrderDataResult {
         excessesReceiver: address("EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"),
     };
 }
-
-struct GetCronInfoResult {
-    nextCallTime: uint32
-    reward: coins
-    balanceMinusAmounts: int64
-    repeatEvery: uint32
-}
-
-get fun get_cron_info(): GetCronInfoResult {
-    return GetCronInfoResult {
-        nextCallTime: 0,
-        reward: 0,
-        balanceMinusAmounts: 0,
-        repeatEvery: 0,
-    };
-}

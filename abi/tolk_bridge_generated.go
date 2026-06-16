@@ -1092,13 +1092,6 @@ func init() {
 			},
 		},
 		MethodDescription{
-			Name: "get_cron_info",
-			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
-				r, err := abiStonfi.GetCronInfo(ctx, executor, id)
-				return "GetCronInfo_StonfiEscrowPositionResult", r, err
-			},
-		},
-		MethodDescription{
 			Name: "getVaultData",
 			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
 				r, err := abiStonfi.GetVaultData(ctx, executor, id)
@@ -1132,11 +1125,6 @@ func init() {
 		r, err := abiStonfi.DecodeGetOrderData(&st)
 		return "GetOrderData_StonfiEscrowPositionResult", r, err
 	})
-	KnownGetMethodsDecoder["get_cron_info"] = append(KnownGetMethodsDecoder["get_cron_info"], func(stack tlb.VmStack) (string, any, error) {
-		st := stack
-		r, err := abiStonfi.DecodeGetCronInfo(&st)
-		return "GetCronInfo_StonfiEscrowPositionResult", r, err
-	})
 	KnownGetMethodsDecoder["getVaultData"] = append(KnownGetMethodsDecoder["getVaultData"], func(stack tlb.VmStack) (string, any, error) {
 		st := stack
 		r, err := abiStonfi.DecodeGetVaultData(&st)
@@ -1155,10 +1143,6 @@ func init() {
 		r, err := abiStonfi.GetOrderData(ctx, executor, id)
 		return "GetOrderData_StonfiEscrowPositionResult", r, err
 	})
-	KnownSimpleGetMethods[77915] = append(KnownSimpleGetMethods[77915], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
-		r, err := abiStonfi.GetCronInfo(ctx, executor, id)
-		return "GetCronInfo_StonfiEscrowPositionResult", r, err
-	})
 	KnownSimpleGetMethods[114667] = append(KnownSimpleGetMethods[114667], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
 		r, err := abiStonfi.GetVaultData(ctx, executor, id)
 		return "GetVaultData_StonfiEscrowVaultResult", r, err
@@ -1171,7 +1155,7 @@ func init() {
 		},
 		InterfaceDescription{
 			Name:    StonfiEscrowPosition,
-			Results: []string{"GetOrderData_StonfiEscrowPositionResult", "GetCronInfo_StonfiEscrowPositionResult"},
+			Results: []string{"GetOrderData_StonfiEscrowPositionResult"},
 		},
 		InterfaceDescription{
 			Name:    StonfiEscrowVault,

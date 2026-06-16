@@ -293,62 +293,6 @@ func (v *GetOrderDataResult) ReadFromStack(stack *tlb.VmStack) (err error) {
 	return nil
 }
 
-func (v *GetCronInfoResult) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err = v.NextCallTime.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .NextCallTime: %v", err)
-	}
-	if err = v.Reward.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Reward: %v", err)
-	}
-	if err = v.BalanceMinusAmounts.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .BalanceMinusAmounts: %v", err)
-	}
-	if err = v.RepeatEvery.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .RepeatEvery: %v", err)
-	}
-	return nil
-}
-
-func (v GetCronInfoResult) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = v.NextCallTime.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .NextCallTime: %v", err)
-	}
-	if err = v.Reward.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Reward: %v", err)
-	}
-	if err = v.BalanceMinusAmounts.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .BalanceMinusAmounts: %v", err)
-	}
-	if err = v.RepeatEvery.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .RepeatEvery: %v", err)
-	}
-	return nil
-}
-
-func (v GetCronInfoResult) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-
-func (v *GetCronInfoResult) ReadFromStack(stack *tlb.VmStack) (err error) {
-	if err = v.RepeatEvery.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .RepeatEvery: %v", err)
-	}
-	if err = v.BalanceMinusAmounts.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .BalanceMinusAmounts: %v", err)
-	}
-	if err = v.Reward.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .Reward: %v", err)
-	}
-	if err = v.NextCallTime.ReadFromStack(stack); err != nil {
-		return fmt.Errorf("failed to read .NextCallTime: %v", err)
-	}
-	return nil
-}
-
 func (v *ItemAdditionalFieldMore) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err = v.AskJettonMinter.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .AskJettonMinter: %v", err)

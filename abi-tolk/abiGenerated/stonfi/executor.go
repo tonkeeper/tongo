@@ -30,12 +30,10 @@ type EscrowFactoryWithAccount interface {
 type EscrowPosition interface {
 	WithAccountId(accountID ton.AccountID) EscrowPositionWithAccount
 	GetOrderData(ctx context.Context, reqAccountID ton.AccountID) (GetOrderDataResult, error)
-	GetCronInfo(ctx context.Context, reqAccountID ton.AccountID) (GetCronInfoResult, error)
 }
 
 type EscrowPositionWithAccount interface {
 	GetOrderData(ctx context.Context) (GetOrderDataResult, error)
-	GetCronInfo(ctx context.Context) (GetCronInfoResult, error)
 }
 
 type EscrowVault interface {

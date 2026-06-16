@@ -99,7 +99,7 @@ func (s *VmStack) ReadCell() (boc.Cell, error) {
 }
 
 func (s *VmStack) ReadStringTail() (string, error) {
-	c, err := s.ReadCell()
+	c, err := s.ReadSlice()
 	if err != nil {
 		return "", err
 	}

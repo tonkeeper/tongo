@@ -1,0 +1,233 @@
+<abi>
+    <types>
+        trade_fees#_
+        referrer_fee:(VarUInteger 16)
+        fee_1:(VarUInteger 16)
+        fee_2:(VarUInteger 16)
+        = GramboTradeFees;
+
+        sell_params#_ min_ton_out:(VarUInteger 16)
+        referrer:MsgAddress
+        custom_payload:(Maybe ^Cell) = GramboSellParams;
+
+        _#_ collected_ton:(VarUInteger 16)
+        tokens_sold:(VarUInteger 16)
+        graduated:bool
+        fee_addr_1:MsgAddress
+        fee_addr_2:MsgAddress = GramboCurveState;
+
+        _#_ stonfi_router:MsgAddress
+        pton_wallet:MsgAddress = GramboDexConfig;
+
+        _#_ virtual_ton_reserve:(VarUInteger 16)
+        ton_target:(VarUInteger 16)
+        factory:MsgAddress
+        total_supply:(VarUInteger 16)
+        seed:uint256
+        curve_state:^GramboCurveState
+        wallet_code:^Cell
+        metadata:^Cell
+        dex_config:^GramboDexConfig = GramboMasterStorage;
+
+        _#_ activated:bool
+        balance:(VarUInteger 16)
+        owner:MsgAddress
+        master:MsgAddress = GramboWalletStorage;
+    </types>
+
+    <interface name="grambo_factory">
+        <msg_in>
+            <internal name="grambo_deploy" />
+            <internal name="grambo_update_data" />
+            <internal name="grambo_update_code" />
+        </msg_in>
+        <msg_out>
+            <internal name="grambo_launch" />
+        </msg_out>
+        <error code="65299">Invalid curve parameters</error>
+        <error code="65347">Unauthorized</error>
+        <error code="65360">Insufficient message value</error>
+    </interface>
+
+    <interface name="grambo_jetton_master" inherits="jetton_master">
+        <get_method name="get_amount_out" version="grambo" />
+        <get_method name="get_ton_out" version="grambo" />
+        <get_method name="get_curve_state" version="grambo" />
+        <msg_in>
+            <internal name="grambo_launch" />
+            <internal name="grambo_buy" />
+            <internal name="grambo_sell_notification" />
+            <internal name="grambo_provide_wallet_address" />
+            <internal name="grambo_unlock_wallet" />
+            <internal name="grambo_withdraw" />
+        </msg_in>
+        <msg_out>
+            <internal name="jetton_internal_transfer" />
+            <internal name="grambo_activate_wallet" />
+            <internal name="grambo_take_wallet_address" />
+            <internal name="jetton_excess" />
+            <ext_out name="grambo_swap_event" />
+            <ext_out name="grambo_graduate_event" />
+        </msg_out>
+        <error code="74">Unauthorized</error>
+        <error code="65296">Already launched</error>
+        <error code="65344">Slippage error</error>
+        <error code="65347">Unauthorized</error>
+        <error code="65360">Insufficient value or balance</error>
+        <error code="65397">Not graduated</error>
+        <error code="65398">Already graduated</error>
+    </interface>
+
+    <interface name="grambo_jetton_wallet" inherits="jetton_wallet">
+        <get_method name="get_wallet_status" version="grambo" />
+        <msg_in>
+            <internal name="grambo_activate_wallet" />
+        </msg_in>
+        <msg_out>
+            <internal name="grambo_sell_notification" />
+        </msg_out>
+        <error code="65397">Wallet not activated</error>
+    </interface>
+
+    <get_method name="get_amount_out">
+        <input>
+            <tinyint name="ton_in">uint64</tinyint>
+        </input>
+        <output version="grambo" fixed_length="true">
+            <int name="tokens_out">int257</int>
+        </output>
+    </get_method>
+
+    <get_method name="get_ton_out">
+        <input>
+            <int name="tokens_in">int257</int>
+        </input>
+        <output version="grambo" fixed_length="true">
+            <tinyint name="ton_out">uint64</tinyint>
+        </output>
+    </get_method>
+
+    <get_method name="get_curve_state">
+        <output version="grambo" fixed_length="true">
+            <tinyint name="virtual_ton_reserve">uint64</tinyint>
+            <tinyint name="ton_target">uint64</tinyint>
+            <tinyint name="collected_ton">uint64</tinyint>
+            <int name="tokens_sold">int257</int>
+            <bool name="graduated">bool</bool>
+        </output>
+    </get_method>
+
+    <get_method name="get_wallet_status">
+        <output version="grambo" fixed_length="true">
+            <bool name="activated">bool</bool>
+        </output>
+    </get_method>
+
+    <internal name="grambo_deploy">
+        deploy#2c98ffaf
+        query_id:uint64
+        metadata:^Cell
+        virtual_ton_reserve:(VarUInteger 16)
+        ton_target:(VarUInteger 16)
+        prebuy_amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_update_data">
+        update_data#20b031d9
+        new_data:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_update_code">
+        update_code#61d196c1
+        new_code:^Cell = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_launch">
+        launch#372f1ae3
+        query_id:uint64
+        buyer:MsgAddress
+        virtual_ton_reserve:(VarUInteger 16)
+        ton_target:(VarUInteger 16)
+        prebuy_amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_buy">
+        buy#2f54494e
+        query_id:uint64
+        ton_amount:(VarUInteger 16)
+        recipient:MsgAddress
+        min_tokens_out:(VarUInteger 16)
+        referrer:MsgAddress
+        custom_payload:(Maybe ^Cell)
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_sell_notification">
+        sell_notification#31fc1276
+        query_id:uint64
+        amount:(VarUInteger 16)
+        from:MsgAddress
+        response_destination:MsgAddress
+        sell_params:(Maybe ^GramboSellParams)
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_provide_wallet_address">
+        provide_wallet_address#17b5012c
+        query_id:uint64
+        owner:MsgAddress
+        include_address:bool
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_take_wallet_address">
+        take_wallet_address#29cb7264
+        query_id:uint64
+        owner_address:(Maybe ^Cell)
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_unlock_wallet">
+        unlock_wallet#7966410f
+        query_id:uint64
+        owner:MsgAddress
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_withdraw">
+        withdraw#43e84bb5
+        query_id:uint64
+        amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+
+    <internal name="grambo_activate_wallet">
+        activate_wallet#6b75d3e2
+        query_id:uint64
+        = InternalMsgBody;
+    </internal>
+
+    <ext_out name="grambo_swap_event">
+        swap_event#5025398e
+        query_id:uint64
+        recipient:MsgAddress
+        is_buy:Bool
+        new_collected_ton:(VarUInteger 16)
+        ton_amount:(VarUInteger 16)
+        token_amount:(VarUInteger 16)
+        referrer:MsgAddress
+        fees:^GramboTradeFees
+        custom_payload:(Maybe ^Cell)
+        = ExtOutMsgBody;
+    </ext_out>
+
+    <ext_out name="grambo_graduate_event">
+        graduate_event#0ab3d75c
+        query_id:uint64
+        ton_to_dex:(VarUInteger 16)
+        tokens_to_dex:(VarUInteger 16)
+        = ExtOutMsgBody;
+    </ext_out>
+</abi>

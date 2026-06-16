@@ -523,6 +523,16 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 				XtrMaster,
 			},
 		},
+		{
+			name:    "MTW 2fa",
+			account: "EQDhm4WB2vgKX81Xxz0_hqppyhAXRzIkbgtiinwq9XCdQJxl",
+			code:    "b5ee9c7201010101002300084202701eede652337f699550cc51cb15263259aae6fc6eba976237945f142dda982d",
+			data:    "b5ee9c7201010201005900019b00000006801fd71122093713f0bdefb56ffff4c9ebc68b5bf6f625cfcab2ace579ee95bda5b985158c1faa9c2c14493263e876331c5078db4452681d9eabcb9df28d05725a00000000000000000801000c353537363332",
+			want: []ContractInterface{
+				Mytonwallet2Fa,
+			},
+			hasLibrary: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

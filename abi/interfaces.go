@@ -61,6 +61,7 @@ const (
 	MoonPool
 	MultisigOrderV2
 	MultisigV2
+	Mytonwallet2Fa
 	NftAuctionGetgemsV3
 	NftAuctionGetgemsV4
 	NftAuctionV1
@@ -243,6 +244,8 @@ func (c ContractInterface) String() string {
 		return "multisig_order_v2"
 	case MultisigV2:
 		return "multisig_v2"
+	case Mytonwallet2Fa:
+		return "mytonwallet_2fa"
 	case NftAuctionGetgemsV3:
 		return "nft_auction_getgems_v3"
 	case NftAuctionGetgemsV4:
@@ -501,6 +504,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return MultisigOrderV2
 	case "multisig_v2":
 		return MultisigV2
+	case "mytonwallet_2fa":
+		return Mytonwallet2Fa
 	case "nft_auction_getgems_v3":
 		return NftAuctionGetgemsV3
 	case "nft_auction_getgems_v4":
@@ -1932,6 +1937,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetSubwalletId,
 			GetTimeout,
 		},
+	},
+	ton.MustParseHash("14dbe27de307b26faf75361dc5429d1a14b5288f9a82ce08727513c02835e4f7"): {
+		contractInterfaces: []ContractInterface{Mytonwallet2Fa},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("1bd9c5a39bffb7a0f341588b5dd92b813a842bf65ef14109382200ceaf8f72df"): {
 		contractInterfaces: []ContractInterface{NftAuctionGetgemsV3},

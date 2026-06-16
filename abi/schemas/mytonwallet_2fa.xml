@@ -1,0 +1,5 @@
+<abi>
+    <interface name="mytonwallet_2fa">
+        <code_hash>14dbe27de307b26faf75361dc5429d1a14b5288f9a82ce08727513c02835e4f7</code_hash>
+    </interface>
+</abi>

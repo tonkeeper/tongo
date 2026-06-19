@@ -124,10 +124,9 @@
     </get_method>
 
     <internal name="grambo_deploy">
-        deploy#2c98ffaf
+        deploy#0d4295e0
         query_id:uint64
         metadata:^Cell
-        virtual_ton_reserve:(VarUInteger 16)
         ton_target:(VarUInteger 16)
         prebuy_amount:(VarUInteger 16)
         = InternalMsgBody;

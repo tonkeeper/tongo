@@ -59,13 +59,6 @@ type GetOrderDataResult struct {
 	ExcessesReceiver                tlb.InternalAddress  // address
 }
 
-type GetCronInfoResult struct {
-	NextCallTime        tlb.Uint32 // uint32
-	Reward              tlb.Coins  // coins
-	BalanceMinusAmounts tlb.Int64  // int64
-	RepeatEvery         tlb.Uint32 // uint32
-}
-
 type ItemAdditionalFieldMore struct {
 	AskJettonMinter tlb.MsgAddress // address?
 	OrderOwner      tlb.MsgAddress // address?
@@ -191,31 +184,6 @@ func GetOrderData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	return DecodeGetOrderData(&stack)
 }
 
-func DecodeGetCronInfo(stack *tlb.VmStack) (result GetCronInfoResult, err error) {
-	if stack.Len() != 4 {
-		err = fmt.Errorf("invalid stack size %d, expected 4", stack.Len())
-		return
-	}
-	err = result.ReadFromStack(stack)
-	return
-}
-
-const MethodIDGetCronInfo = 0x1305B
-
-func GetCronInfo(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (result GetCronInfoResult, err error) {
-	var errCode uint32
-	var stack tlb.VmStack
-	errCode, stack, err = executor.RunSmcMethodByID(ctx, reqAccountID, MethodIDGetCronInfo, stack)
-	if err != nil {
-		return
-	}
-	if errCode != 0 && errCode != 1 {
-		err = fmt.Errorf("method execution failed with code: %v", errCode)
-		return
-	}
-	return DecodeGetCronInfo(&stack)
-}
-
 type escrowPositionImpl struct {
 	executor Executor
 }
@@ -232,10 +200,6 @@ func (c escrowPositionImpl) GetOrderData(ctx context.Context, reqAccountID ton.A
 	return GetOrderData(ctx, c.executor, reqAccountID)
 }
 
-func (c escrowPositionImpl) GetCronInfo(ctx context.Context, reqAccountID ton.AccountID) (GetCronInfoResult, error) {
-	return GetCronInfo(ctx, c.executor, reqAccountID)
-}
-
 type escrowPositionWithAccountImpl struct {
 	executor  Executor
 	accountID ton.AccountID
@@ -243,8 +207,4 @@ type escrowPositionWithAccountImpl struct {
 
 func (c escrowPositionWithAccountImpl) GetOrderData(ctx context.Context) (GetOrderDataResult, error) {
 	return GetOrderData(ctx, c.executor, c.accountID)
-}
-
-func (c escrowPositionWithAccountImpl) GetCronInfo(ctx context.Context) (GetCronInfoResult, error) {
-	return GetCronInfo(ctx, c.executor, c.accountID)
 }

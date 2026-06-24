@@ -201,6 +201,12 @@ type Inspection struct {
 	// from the code are not attempted and are not listed).
 	Methods    []MethodResult
 	Interfaces []InterfaceMatch
+	// MethodsError is set when the contract's get-methods dictionary could not be read from its
+	// code. When non-nil, no methods were attempted because the inspector could not learn which
+	// methods exist (typically an unresolved library), as opposed to the contract genuinely
+	// having no get methods. This is the failure the lossy InspectContract reports as "no
+	// interfaces, no methods, nil error".
+	MethodsError error
 }
 
 // Decoded returns the methods that ran and decoded successfully.
@@ -332,7 +338,7 @@ func (ci contractInspector) InspectContract2(ctx context.Context, code []byte, e
 	if err != nil {
 		return nil, err
 	}
-	insp := &Inspection{CodeHash: info.Hash}
+	insp := &Inspection{CodeHash: info.Hash, MethodsError: info.MethodsError}
 	rec := &recordingExecutor{inner: executor}
 
 	// For known contracts the interfaces are fixed; we only run their get methods to collect results.
@@ -408,6 +414,12 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 type CodeInfo struct {
 	Hash    ton.Bits256
 	Methods map[int64]struct{}
+	// MethodsError is set when the get-methods dictionary could not be read from the code
+	// (the reference to it was missing or its decoding failed, often because a referenced
+	// library could not be resolved). In that case Methods is nil but GetCodeInfo still
+	// returns a nil error, because a contract is allowed to expose no get methods. Inspect
+	// this to tell "no get methods" apart from "we failed to read the get methods".
+	MethodsError error
 }
 
 func (i CodeInfo) isMethodOkToTry(name string) bool {
@@ -460,8 +472,9 @@ func GetCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*CodeI
 	}
 	c, err := root.NextRef()
 	if err != nil {
-		// we are OK, if there is no information about get methods
-		return &CodeInfo{Hash: h}, nil
+		// we are OK, if there is no information about get methods, but record why so callers
+		// can distinguish a genuine absence from a failure to read the get-methods dictionary.
+		return &CodeInfo{Hash: h, MethodsError: fmt.Errorf("failed to reach get-methods cell: %w", err)}, nil
 	}
 	if c.IsLibrary() {
 		hash, err := c.GetLibraryHash()
@@ -498,8 +511,9 @@ func GetCodeInfo(ctx context.Context, code []byte, resolver libResolver) (*CodeI
 
 	err = decoder.Unmarshal(c, &getMethods)
 	if err != nil {
-		// we are OK, if there is no information about get methods
-		return &CodeInfo{Hash: h}, nil
+		// we are OK, if there is no information about get methods, but record why so callers
+		// can distinguish a genuine absence from a failure to decode the get-methods dictionary.
+		return &CodeInfo{Hash: h, MethodsError: fmt.Errorf("failed to decode get-methods dictionary: %w", err)}, nil
 	}
 	keys := getMethods.Hashmap.Keys()
 	methods := make(map[int64]struct{}, len(keys))

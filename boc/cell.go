@@ -513,15 +513,17 @@ func (c *Cell) CopyCell() *Cell {
 	if c == nil {
 		return nil
 	}
-	c2 := NewCellWithBits(c.RawBitString())
-	for _, ref := range c.Refs() {
-		refCopy := ref.CopyCell()
-		if err := c2.AddRef(refCopy); err != nil {
-			// this should never happen but anyway
-			panic(err)
-		}
+	newC := Cell{
+		bits:      c.bits.Copy(),
+		refs:      [4]*Cell{},
+		refCursor: c.refCursor,
+		cellType:  c.cellType,
+		mask:      c.mask,
 	}
-	return c2
+	for i, ref := range c.refs {
+		newC.refs[i] = ref.CopyCell()
+	}
+	return &newC
 }
 
 func (c *Cell) WriteBytes(b []byte) error {

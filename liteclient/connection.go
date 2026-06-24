@@ -6,9 +6,10 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
-	"github.com/tonkeeper/tongo/tl"
 	"sync"
 	"time"
+
+	"github.com/tonkeeper/tongo/tl"
 )
 
 const (
@@ -328,11 +329,14 @@ func (c *Connection) sendAuthComplete(received Packet) error {
 
 	signature := ed25519.Sign(c.authKey, append(append([]byte{}, c.nonce...), nonce...))
 
-	payload := make([]byte, 4)
-	binary.LittleEndian.PutUint32(payload, magicTcpAuthentificationComplete)
-	binary.LittleEndian.PutUint32(payload, magicPubKey)
+	payload := make([]byte, 0, 4+4+ed25519.PublicKeySize+ed25519.SignatureSize+8)
+	payload = binary.LittleEndian.AppendUint32(payload, magicTcpAuthentificationComplete)
+
+	payload = binary.LittleEndian.AppendUint32(payload, magicPubKey)
+
 	pubKey := c.authKey.Public().(ed25519.PublicKey)
 	payload = append(payload, pubKey[:]...)
+
 	payload = append(payload, tl.EncodeLength(len(signature))...)
 	payload = append(payload, signature...)
 	payload = alignBytes(payload)

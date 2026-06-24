@@ -42,7 +42,7 @@ func (c *Client) GetJettonWallet(ctx context.Context, master, owner ton.AccountI
 		return ton.AccountID{}, err
 	}
 	if addr == nil {
-		return ton.AccountID{}, fmt.Errorf("addres none")
+		return ton.AccountID{}, fmt.Errorf("address none")
 	}
 	return *addr, nil
 }

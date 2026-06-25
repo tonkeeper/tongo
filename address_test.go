@@ -2,6 +2,7 @@ package tongo
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/contract/dns"
@@ -10,6 +11,9 @@ import (
 )
 
 func TestParseAddress(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server to resolve DNS")
+	}
 	cli, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		t.Fatalf("failed to create liteapi client: %v", err)

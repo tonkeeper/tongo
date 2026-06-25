@@ -889,7 +889,10 @@ func GetChildContracts(ctx context.Context, executor Executor, reqAccountID ton.
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetChildContracts_ToncoPoolResult, DecodeGetChildContracts_ToncoRouterResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetChildContracts_ToncoPoolResult,
+		DecodeGetChildContracts_ToncoRouterResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1353,7 +1356,10 @@ func GetAsset(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAsset_DedustResult, DecodeGetAsset_CoffeeResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetAsset_DedustResult,
+		DecodeGetAsset_CoffeeResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1401,7 +1407,10 @@ func GetAssets(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetAssets_DedustResult, DecodeGetAssets_MoonResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetAssets_DedustResult,
+		DecodeGetAssets_MoonResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -1609,7 +1618,10 @@ func GetBalances(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetBalances_DedustResult, DecodeGetBalancesResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetBalances_DedustResult,
+		DecodeGetBalancesResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -3098,7 +3110,10 @@ func GetFarmingInfo(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetFarmingInfo_BidaskResult, DecodeGetFarmingInfo_BidaskDammResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetFarmingInfo_BidaskResult,
+		DecodeGetFarmingInfo_BidaskDammResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -5669,7 +5684,17 @@ func GetPoolData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolData_AffluentResult, DecodeGetPoolData_DaolamaResult, DecodeGetPoolData_DedustV2Result, DecodeGetPoolData_StonfiResult, DecodeGetPoolData_StonfiV2Result, DecodeGetPoolData_StonfiV2StableswapResult, DecodeGetPoolData_StonfiV2WeightedStableswapResult, DecodeGetPoolData_CoffeeResult, DecodeGetPoolData_TfResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetPoolData_AffluentResult,
+		DecodeGetPoolData_DaolamaResult,
+		DecodeGetPoolData_DedustV2Result,
+		DecodeGetPoolData_StonfiResult,
+		DecodeGetPoolData_StonfiV2Result,
+		DecodeGetPoolData_StonfiV2StableswapResult,
+		DecodeGetPoolData_StonfiV2WeightedStableswapResult,
+		DecodeGetPoolData_CoffeeResult,
+		DecodeGetPoolData_TfResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -5863,7 +5888,10 @@ func GetPoolInfo(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetPoolInfo_BidaskResult, DecodeGetPoolInfo_BidaskDammResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetPoolInfo_BidaskResult,
+		DecodeGetPoolInfo_BidaskDammResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -6506,7 +6534,10 @@ func GetReserves(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetReserves_DedustResult, DecodeGetReserves_MoonResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetReserves_DedustResult,
+		DecodeGetReserves_MoonResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -6670,7 +6701,10 @@ func GetRouterData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetRouterData_StonfiResult, DecodeGetRouterData_StonfiV2Result} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetRouterData_StonfiResult,
+		DecodeGetRouterData_StonfiV2Result,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -6790,7 +6824,11 @@ func GetSaleData(ctx context.Context, executor Executor, reqAccountID ton.Accoun
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetSaleData_BasicResult, DecodeGetSaleData_GetgemsResult, DecodeGetSaleData_GetgemsAuctionResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetSaleData_BasicResult,
+		DecodeGetSaleData_GetgemsResult,
+		DecodeGetSaleData_GetgemsAuctionResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -7054,7 +7092,10 @@ func GetStatus(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStatusResult, DecodeGetStatus_MoonResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetStatusResult,
+		DecodeGetStatus_MoonResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -7290,7 +7331,11 @@ func GetStoredData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetStoredData_CoffeeStakingMasterResult, DecodeGetStoredData_CoffeeStakingVaultResult, DecodeGetStoredData_CoffeeStakingItemResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetStoredData_CoffeeStakingMasterResult,
+		DecodeGetStoredData_CoffeeStakingVaultResult,
+		DecodeGetStoredData_CoffeeStakingItemResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -8300,7 +8345,13 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_AffluentMultiplyVaultV2Result, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetVaultData_AffluentLendingVaultResult,
+		DecodeGetVaultData_AffluentMultiplyVaultResult,
+		DecodeGetVaultData_AffluentMultiplyVaultV2Result,
+		DecodeGetVaultData_StonfiV2Result,
+		DecodeGetVaultData_StormResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -8481,7 +8532,10 @@ func GetVestingData(ctx context.Context, executor Executor, reqAccountID ton.Acc
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeGetVestingData_MoonResult, DecodeGetVestingDataResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeGetVestingData_MoonResult,
+		DecodeGetVestingDataResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil
@@ -8673,7 +8727,10 @@ func IsActive(ctx context.Context, executor Executor, reqAccountID ton.AccountID
 	if errCode != 0 && errCode != 1 {
 		return "", nil, fmt.Errorf("method execution failed with code: %v", errCode)
 	}
-	for _, f := range []func(tlb.VmStack) (string, any, error){DecodeIsActiveResult, DecodeIsActive_CoffeeResult} {
+	for _, f := range []func(tlb.VmStack) (string, any, error){
+		DecodeIsActiveResult,
+		DecodeIsActive_CoffeeResult,
+	} {
 		s, r, err := f(stack)
 		if err == nil {
 			return s, r, nil

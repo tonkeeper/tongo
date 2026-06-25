@@ -359,9 +359,17 @@ func (g *Generator) getMethod(m GetMethod, methodID int, methodName string) (str
 
 	decoders := ""
 	builder.WriteString("for _, f := range []func(tlb.VmStack)(string, any, error){")
+	multilineOutDecs := len(m.Output) > 1
+	if multilineOutDecs {
+		builder.WriteString("\n")
+	}
 	for _, o := range m.Output {
 		name := o.FullResultName(methodName)
-		builder.WriteString(fmt.Sprintf("Decode%s, ", name))
+		if multilineOutDecs {
+			builder.WriteString(fmt.Sprintf("Decode%s,\n", name))
+		} else {
+			builder.WriteString(fmt.Sprintf("Decode%s, ", name))
+		}
 		resDecoder, err := g.buildOutputDecoder(name, o.Stack, o.FixedLength)
 		if err != nil {
 			return "", err

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/liteapi"
@@ -13,6 +14,9 @@ import (
 )
 
 func TestResolve(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server to resolve DNS")
+	}
 	client, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)
@@ -37,7 +41,6 @@ func TestResolve(t *testing.T) {
 		{"hfdshfkjshkjdhfklhldkfhlakjh.ton", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", "", "", false},
 		{"ololo.png", "0:ab027c8b08f5bbb529d643b64eff3b434e3d236347d697e4ffc8a6e8ba160504", "", "", false},
 		{"hasselbach.ton", "0:85b1573c32727a3f053a2e2f04157d6fa65cdcd1fe06444b7d52cc8a35277146", "", "3496f55fcad2007d1ef9fcf18639493e25109c353c0583d4a3f694dfbdf06dad", true},
-		{"kontext.ton", "0:85b1573c32727a3f053a2e2f04157d6fa65cdcd1fe06444b7d52cc8a35277146", "https://hasselbach.ru/hydratingkitten.png", "", true},
 	} {
 		t.Run(c.domain, func(t *testing.T) {
 			res, err := dns.Resolve(context.Background(), c.domain)

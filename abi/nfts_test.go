@@ -2,6 +2,7 @@ package abi
 
 import (
 	"encoding/json"
+	"github.com/stretchr/testify/require"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"reflect"
@@ -28,25 +29,25 @@ func TestNftPayloadJSMarshaling(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c, err := boc.DeserializeBocHex(tt.boc)
-			assert(t, err)
+			require.NoError(t, err)
 			var j, j2 NFTPayload
 			err = tlb.Unmarshal(c[0], &j)
-			assert(t, err)
+			require.NoError(t, err)
 			b, err := json.Marshal(j)
-			assert(t, err)
+			require.NoError(t, err)
 			if string(b) != tt.want {
 				t.Errorf("NftPayload.MarshalJSON() = %v, want %v", string(b), tt.want)
 			}
 			err = json.Unmarshal(b, &j2)
-			assert(t, err)
+			require.NoError(t, err)
 			if j.SumType != UnknownNFTOp && !reflect.DeepEqual(j, j2) {
 				t.Errorf("NftPayload.UnmarshalJSON() = %v, want %v", j2, j)
 			}
 			c2 := boc.NewCell()
 			err = tlb.Marshal(c2, j2)
-			assert(t, err)
+			require.NoError(t, err)
 			s, err := c2.ToBocString()
-			assert(t, err)
+			require.NoError(t, err)
 			if s != tt.boc {
 				t.Errorf("JettonPayload.MarshalTLB() = %v, want %v", s, tt.boc)
 			}

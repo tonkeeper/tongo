@@ -288,7 +288,6 @@ The list below contains the supported message operations, their names and opcode
 | StormOrderCreated| 0x3a943ce6 |
 | StormPayFunding| 0xb652c441 |
 | StormProvideOrder| 0x8865b402 |
-| StormProvidePosition| 0x8865b402 |
 | StormReferralFees| 0x4fedc82b |
 | StormRemoveAllKeysExceptCurrent| 0x644794b8 |
 | StormRemovePublicKey| 0x76519f8b |

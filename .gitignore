@@ -11,3 +11,4 @@ cover.out
 *.output.json
 node_modules/
 **/build/cache/
+.env

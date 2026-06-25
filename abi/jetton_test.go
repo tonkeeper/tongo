@@ -3,18 +3,14 @@ package abi
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/tonkeeper/tongo/boc"
-	"github.com/tonkeeper/tongo/tlb"
 	"math/big"
 	"reflect"
 	"testing"
-)
 
-func assert(t *testing.T, err error) {
-	if err != nil {
-		t.Fatal(err)
-	}
-}
+	"github.com/stretchr/testify/require"
+	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
+)
 
 func mustToAny(t *testing.T, s string) *tlb.Any {
 	b, err := boc.DeserializeBocHex(s)
@@ -74,25 +70,25 @@ func TestJettonPayloadJSMarshaling(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c, err := boc.DeserializeBocHex(tt.boc)
-			assert(t, err)
+			require.NoError(t, err)
 			var j, j2 JettonPayload
 			err = tlb.Unmarshal(c[0], &j)
-			assert(t, err)
+			require.NoError(t, err)
 			b, err := json.Marshal(j)
-			assert(t, err)
+			require.NoError(t, err)
 			if string(b) != tt.want {
 				t.Errorf("JettonPayload.MarshalJSON() = %v, want %v", string(b), tt.want)
 			}
 			err = json.Unmarshal(b, &j2)
-			assert(t, err)
+			require.NoError(t, err)
 			if j.SumType != UnknownJettonOp && !reflect.DeepEqual(j, j2) {
 				t.Errorf("JettonPayload.UnmarshalJSON() = %v, want %v", j2, j)
 			}
 			c2 := boc.NewCell()
 			err = tlb.Marshal(c2, j2)
-			assert(t, err)
+			require.NoError(t, err)
 			s, err := c2.ToBocString()
-			assert(t, err)
+			require.NoError(t, err)
 			if s != tt.boc {
 				t.Errorf("JettonPayload.MarshalTLB() = %v, want %v", s, tt.boc)
 			}
@@ -259,14 +255,14 @@ func TestJettonCustomUnmarshalling(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c, err := boc.DeserializeBocHex(tt.boc)
-			assert(t, err)
+			require.NoError(t, err)
 			switch tt.want.(type) {
 			case JettonTransferMsgBody:
 				var j JettonTransferMsgBody
 				err = c[0].Skip(32)
-				assert(t, err)
+				require.NoError(t, err)
 				err = tlb.Unmarshal(c[0], &j)
-				assert(t, err)
+				require.NoError(t, err)
 				r1, _ := json.Marshal(j)
 				r2, _ := json.Marshal(tt.want)
 				if !bytes.Equal(r1, r2) {
@@ -275,9 +271,9 @@ func TestJettonCustomUnmarshalling(t *testing.T) {
 			case JettonNotifyMsgBody:
 				var j JettonNotifyMsgBody
 				err = c[0].Skip(32)
-				assert(t, err)
+				require.NoError(t, err)
 				err = tlb.Unmarshal(c[0], &j)
-				assert(t, err)
+				require.NoError(t, err)
 				r1, _ := json.Marshal(j)
 				r2, _ := json.Marshal(tt.want)
 				if !bytes.Equal(r1, r2) {
@@ -286,9 +282,9 @@ func TestJettonCustomUnmarshalling(t *testing.T) {
 			case JettonInternalTransferMsgBody:
 				var j JettonInternalTransferMsgBody
 				err = c[0].Skip(32)
-				assert(t, err)
+				require.NoError(t, err)
 				err = tlb.Unmarshal(c[0], &j)
-				assert(t, err)
+				require.NoError(t, err)
 				r1, _ := json.Marshal(j)
 				r2, _ := json.Marshal(tt.want)
 				if !bytes.Equal(r1, r2) {

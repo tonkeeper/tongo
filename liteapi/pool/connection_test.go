@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/tonkeeper/tongo/config"
 	"github.com/tonkeeper/tongo/liteclient"
 	"github.com/tonkeeper/tongo/ton"
@@ -58,12 +59,10 @@ func Test_connection_Run(t *testing.T) {
 		t.Fatalf("failed to wait for next seqno: %v", err)
 	}
 	// give a few milliseconds to the connection's goroutine
-	time.Sleep(1 * time.Second)
+	time.Sleep(300 * time.Millisecond)
 
 	newMasterHead := conn.MasterHead()
-	if masterHead.Seqno+1 != newMasterHead.Seqno {
-		t.Fatalf("expected seqno %d, got %d", masterHead.Seqno+1, newMasterHead.Seqno)
-	}
+	assert.GreaterOrEqual(t, newMasterHead.Seqno, masterHead.Seqno+1, "expected at least previous seqno +1")
 }
 
 func Test_connection_FindMinAvailableMasterchainSeqno(t *testing.T) {

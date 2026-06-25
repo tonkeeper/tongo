@@ -6,15 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tonkeeper/tongo/liteapi"
 	"github.com/tonkeeper/tongo/wallet"
 )
 
 func TestCreateSignedProof(t *testing.T) {
-	cli, err := liteapi.NewClient(liteapi.Testnet())
-	if err != nil {
-		t.Fatalf("liteapi.NewClient() failed: %v", err)
-	}
 	tests := []struct {
 		name    string
 		version wallet.Version
@@ -33,7 +28,7 @@ func TestCreateSignedProof(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			srv, err := NewTonConnect(cli, tt.secret)
+			srv, err := NewTonConnect(stubExecutor{}, tt.secret)
 			if err != nil {
 				t.Fatalf("NewTonConnect() failed: %v", err)
 			}

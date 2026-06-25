@@ -447,7 +447,7 @@
         <msg_out>
             <internal name="storm_deposit_notify"/>
             <internal name="storm_fail_notification"/>
-            <internal name="storm_provide_position"/>
+            <internal name="storm_provide_order"/>
             <internal name="storm_referral_fees"/>
             <internal name="storm_vamm_init"/>
             <internal name="storm_unsuccessful_deposit"/>
@@ -505,7 +505,7 @@
         <msg_out>
             <internal name="storm_deposit_notify"/>
             <internal name="storm_fail_notification"/>
-            <internal name="storm_provide_position"/>
+            <internal name="storm_provide_order"/>
             <internal name="storm_referral_fees"/>
             <internal name="storm_vamm_init"/>
             <internal name="storm_unsuccessful_deposit"/>
@@ -747,7 +747,7 @@
             <internal name="storm_activate_order"/>
             <internal name="storm_update_position"/>
             <internal name="storm_update_position_with_stop_loss"/>
-            <internal name="storm_provide_position"/>
+            <internal name="storm_provide_order"/>
         </msg_in>
         <msg_out>
             <internal name="storm_order_created"/>
@@ -1532,7 +1532,6 @@
         order_canceled#69d08679 = InternalMsgBody;
     </internal>
 
-    <!-- old name: storm_provide_position   -->
     <internal name="storm_provide_order">
         provide_order#8865b402 order_type:uint4 order_index:uint3 direction:uint1 executor_index:uint32 oracle_payload:^OraclePayload = InternalMsgBody;
     </internal>
@@ -1543,10 +1542,6 @@
 
     <internal name="storm_complete_order">
         complete_order#cf90d618 order_type:uint4 order_index:uint3 direction:uint1 origin_opcode:uint32 index_price:Coins settlement_oracle_price:(Maybe Coins) position:^PositionChange amm:^AmmChange = InternalMsgBody;
-    </internal>
-
-    <internal name="storm_provide_position">
-        provide_order#8865b402 order_type:uint4 order_index:uint3 direction:uint1 executor_index:uint32 oracle_payload:^OraclePayload = InternalMsgBody;
     </internal>
 
     <!-- Smart account factory -->

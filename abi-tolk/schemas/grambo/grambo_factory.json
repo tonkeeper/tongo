@@ -1,0 +1,237 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "grambo_factory",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboDeploy"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboUpdateData"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboUpdateCode"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboLaunch"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "FactoryIncomingMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 222467552,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 129,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 13,
+          "prefix_num": 548418009,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 130,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 14,
+          "prefix_num": 1641125569,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 131,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 5
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        16
+      ]
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "GramboDeploy",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 222467552,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "metadata",
+          "ty_idx": 3
+        },
+        {
+          "name": "ton_target",
+          "ty_idx": 6
+        },
+        {
+          "name": "prebuy_amount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboUpdateData",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 548418009,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "new_data",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboUpdateCode",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 1641125569,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "new_code",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "FactoryIncomingMessage",
+      "ty_idx": 16,
+      "target_ty_idx": 17
+    },
+    {
+      "kind": "struct",
+      "name": "GramboLaunch",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 925833955,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "buyer",
+          "ty_idx": 7
+        },
+        {
+          "name": "virtual_ton_reserve",
+          "ty_idx": 6
+        },
+        {
+          "name": "ton_target",
+          "ty_idx": 6
+        },
+        {
+          "name": "prebuy_amount",
+          "ty_idx": 6
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 13
+    },
+    {
+      "body_ty_idx": 14
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 15
+    }
+  ],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 65299
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65347
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65360
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAGwABFP8A9KQT9LzyyAsBABjTMPiR8kCCAP8T8vA="
+}

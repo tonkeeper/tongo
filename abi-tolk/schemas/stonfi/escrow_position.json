@@ -280,10 +280,6 @@
     {
       "kind": "nullable",
       "inner_ty_idx": 6
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "GetCronInfoResult"
     }
   ],
   "struct_instantiations": [],
@@ -377,29 +373,6 @@
         {
           "name": "excessesReceiver",
           "ty_idx": 7
-        }
-      ]
-    },
-    {
-      "kind": "struct",
-      "name": "GetCronInfoResult",
-      "ty_idx": 60,
-      "fields": [
-        {
-          "name": "nextCallTime",
-          "ty_idx": 9
-        },
-        {
-          "name": "reward",
-          "ty_idx": 6
-        },
-        {
-          "name": "balanceMinusAmounts",
-          "ty_idx": 10
-        },
-        {
-          "name": "repeatEvery",
-          "ty_idx": 9
         }
       ]
     },
@@ -870,12 +843,6 @@
       "name": "getOrderData",
       "parameters": [],
       "return_ty_idx": 57
-    },
-    {
-      "tvm_method_id": 77915,
-      "name": "get_cron_info",
-      "parameters": [],
-      "return_ty_idx": 60
     }
   ],
   "thrown_errors": [
@@ -897,5 +864,5 @@
   ],
   "compiler_name": "tolk",
   "compiler_version": "1.4.1",
-  "code_boc64": "te6ccgEBCQEA/wABFP8A9KQT9LzyyAsBAgFiAgMAGNAw+JHyQIIAtK7y8AIBIAQFAA29gtuCo4AEBO2+i6uBBGhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/pGhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/oRRoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6RKmRRMTAYGBgcAQ4AWInUylqBJQs4z7SJyZR1usrLYcUS+sgUWKN/ZuGxDv9ACVIiIJG1wIo0IYAWInUylqBJQs4z7SJyZR1usrLYcUS+sgUWKN/ZuGxDv9AgIAAA="
+  "code_boc64": "te6ccgEBBwEA8QABFP8A9KQT9LzyyAsBAgFiAgMAGNAw+JHyQIIAtK7y8ATtoaLq4EEaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+kaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+hFGhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/pEqZFExMEBAQFAEOAFiJ1MpagSULOM+0icmUdbrKy2HFEvrIFFijf2bhsQ7/QAlSIiCRtcCKNCGAFiJ1MpagSULOM+0icmUdbrKy2HFEvrIFFijf2bhsQ7/QGBgAA"
 }

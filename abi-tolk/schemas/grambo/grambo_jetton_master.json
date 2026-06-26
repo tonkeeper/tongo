@@ -1,0 +1,921 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "grambo_jetton_master",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboLaunch"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboBuy"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboSellNotification"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboSellParams"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 16
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 17
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboProvideWalletAddress"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboUnlockWallet"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboWithdraw"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboSwapEvent"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboTradeFees"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 23
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboGraduateEvent"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonInternalTransfer"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboActivateWallet"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboTakeWalletAddress"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonExcess"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboMasterStorage"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboCurveState"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 32
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboDexConfig"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 34
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "MasterIncomingMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 925833955,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 129,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 13,
+          "prefix_num": 794052942,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 130,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 15,
+          "prefix_num": 838603382,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 131,
+          "stack_width": 5
+        },
+        {
+          "variant_ty_idx": 19,
+          "prefix_num": 397738284,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 132,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 20,
+          "prefix_num": 2036744463,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 133,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 21,
+          "prefix_num": 1139297205,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 134,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 7
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "MasterOutgoingMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 26,
+          "prefix_num": 395134233,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 137,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 27,
+          "prefix_num": 1802884066,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 138,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 28,
+          "prefix_num": 701198948,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 139,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 29,
+          "prefix_num": 3576854235,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 140,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 7
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "MasterExternalMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 22,
+          "prefix_num": 1344616846,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 135,
+          "stack_width": 9
+        },
+        {
+          "variant_ty_idx": 25,
+          "prefix_num": 179558236,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 136,
+          "stack_width": 3
+        }
+      ],
+      "stack_width": 10
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        36,
+        38,
+        40
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetCurveStateResult"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetJettonDataResult"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "GramboTradeFees",
+      "ty_idx": 23,
+      "fields": [
+        {
+          "name": "referrer_fee",
+          "ty_idx": 6
+        },
+        {
+          "name": "fee_1",
+          "ty_idx": 6
+        },
+        {
+          "name": "fee_2",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboSellParams",
+      "ty_idx": 16,
+      "fields": [
+        {
+          "name": "min_ton_out",
+          "ty_idx": 6
+        },
+        {
+          "name": "referrer",
+          "ty_idx": 7
+        },
+        {
+          "name": "custom_payload",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboLaunch",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 925833955,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "buyer",
+          "ty_idx": 7
+        },
+        {
+          "name": "virtual_ton_reserve",
+          "ty_idx": 6
+        },
+        {
+          "name": "ton_target",
+          "ty_idx": 6
+        },
+        {
+          "name": "prebuy_amount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboBuy",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 794052942,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "ton_amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "min_tokens_out",
+          "ty_idx": 6
+        },
+        {
+          "name": "referrer",
+          "ty_idx": 7
+        },
+        {
+          "name": "custom_payload",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboSellNotification",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 838603382,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "from",
+          "ty_idx": 7
+        },
+        {
+          "name": "response_destination",
+          "ty_idx": 7
+        },
+        {
+          "name": "sell_params",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboProvideWalletAddress",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 397738284,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "owner",
+          "ty_idx": 7
+        },
+        {
+          "name": "include_address",
+          "ty_idx": 5
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboUnlockWallet",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 2036744463,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "owner",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboWithdraw",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 1139297205,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "MasterIncomingMessage",
+      "ty_idx": 36,
+      "target_ty_idx": 37
+    },
+    {
+      "kind": "struct",
+      "name": "JettonInternalTransfer",
+      "ty_idx": 26,
+      "prefix": {
+        "prefix_num": 395134233,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "from",
+          "ty_idx": 7
+        },
+        {
+          "name": "response_address",
+          "ty_idx": 7
+        },
+        {
+          "name": "forward_ton_amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "forward_payload",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboActivateWallet",
+      "ty_idx": 27,
+      "prefix": {
+        "prefix_num": 1802884066,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboTakeWalletAddress",
+      "ty_idx": 28,
+      "prefix": {
+        "prefix_num": 701198948,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "owner_address",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "JettonExcess",
+      "ty_idx": 29,
+      "prefix": {
+        "prefix_num": 3576854235,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "MasterOutgoingMessage",
+      "ty_idx": 38,
+      "target_ty_idx": 39
+    },
+    {
+      "kind": "struct",
+      "name": "GramboSwapEvent",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 1344616846,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "is_buy",
+          "ty_idx": 5
+        },
+        {
+          "name": "new_collected_ton",
+          "ty_idx": 6
+        },
+        {
+          "name": "ton_amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "token_amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "referrer",
+          "ty_idx": 7
+        },
+        {
+          "name": "fees",
+          "ty_idx": 24
+        },
+        {
+          "name": "custom_payload",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboGraduateEvent",
+      "ty_idx": 25,
+      "prefix": {
+        "prefix_num": 179558236,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "ton_to_dex",
+          "ty_idx": 6
+        },
+        {
+          "name": "tokens_to_dex",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "MasterExternalMessage",
+      "ty_idx": 40,
+      "target_ty_idx": 41
+    },
+    {
+      "kind": "struct",
+      "name": "GramboCurveState",
+      "ty_idx": 32,
+      "fields": [
+        {
+          "name": "collected_ton",
+          "ty_idx": 6
+        },
+        {
+          "name": "tokens_sold",
+          "ty_idx": 6
+        },
+        {
+          "name": "graduated",
+          "ty_idx": 5
+        },
+        {
+          "name": "fee_addr_1",
+          "ty_idx": 7
+        },
+        {
+          "name": "fee_addr_2",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboDexConfig",
+      "ty_idx": 34,
+      "fields": [
+        {
+          "name": "stonfi_router",
+          "ty_idx": 7
+        },
+        {
+          "name": "pton_wallet",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboMasterStorage",
+      "ty_idx": 30,
+      "fields": [
+        {
+          "name": "virtual_ton_reserve",
+          "ty_idx": 6
+        },
+        {
+          "name": "ton_target",
+          "ty_idx": 6
+        },
+        {
+          "name": "factory",
+          "ty_idx": 7
+        },
+        {
+          "name": "total_supply",
+          "ty_idx": 6
+        },
+        {
+          "name": "seed",
+          "ty_idx": 31
+        },
+        {
+          "name": "curve_state",
+          "ty_idx": 33
+        },
+        {
+          "name": "wallet_code",
+          "ty_idx": 3
+        },
+        {
+          "name": "metadata",
+          "ty_idx": 3
+        },
+        {
+          "name": "dex_config",
+          "ty_idx": 35
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GetCurveStateResult",
+      "ty_idx": 43,
+      "fields": [
+        {
+          "name": "virtual_ton_reserve",
+          "ty_idx": 11
+        },
+        {
+          "name": "ton_target",
+          "ty_idx": 11
+        },
+        {
+          "name": "collected_ton",
+          "ty_idx": 11
+        },
+        {
+          "name": "tokens_sold",
+          "ty_idx": 1
+        },
+        {
+          "name": "graduated",
+          "ty_idx": 5
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GetJettonDataResult",
+      "ty_idx": 44,
+      "fields": [
+        {
+          "name": "total_supply",
+          "ty_idx": 1
+        },
+        {
+          "name": "mintable",
+          "ty_idx": 1
+        },
+        {
+          "name": "admin_address",
+          "ty_idx": 7
+        },
+        {
+          "name": "jetton_content",
+          "ty_idx": 3
+        },
+        {
+          "name": "jetton_wallet_code",
+          "ty_idx": 3
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 13
+    },
+    {
+      "body_ty_idx": 15
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 20
+    },
+    {
+      "body_ty_idx": 21
+    }
+  ],
+  "incoming_external": [
+    {
+      "body_ty_idx": 22
+    },
+    {
+      "body_ty_idx": 25
+    }
+  ],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 26
+    },
+    {
+      "body_ty_idx": 27
+    },
+    {
+      "body_ty_idx": 28
+    },
+    {
+      "body_ty_idx": 29
+    }
+  ],
+  "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 30
+  },
+  "get_methods": [
+    {
+      "tvm_method_id": 89420,
+      "name": "get_amount_out",
+      "parameters": [
+        {
+          "name": "ton_in",
+          "ty_idx": 11
+        }
+      ],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 113951,
+      "name": "get_ton_out",
+      "parameters": [
+        {
+          "name": "tokens_in",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 11
+    },
+    {
+      "tvm_method_id": 124044,
+      "name": "get_curve_state",
+      "parameters": [],
+      "return_ty_idx": 43
+    },
+    {
+      "tvm_method_id": 106029,
+      "name": "get_jetton_data",
+      "parameters": [],
+      "return_ty_idx": 44
+    },
+    {
+      "tvm_method_id": 103289,
+      "name": "get_wallet_address",
+      "parameters": [
+        {
+          "name": "owner_address",
+          "ty_idx": 7
+        }
+      ],
+      "return_ty_idx": 7
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 74
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65296
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65344
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65347
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65360
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65397
+    },
+    {
+      "kind": "plain_int",
+      "err_code": 65398
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBDQEApAABFP8A9KQT9LzyyAsBAgFiAgMAEtAw+JHyQPLASgIBIAQFAAm+6mGDhAIBIAYHAgEgCAkAD7pIxwVHAAcIAgFYCgsACbej5g4QAE+tvJhGhDACxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id/pAAlWvFrgQRoQwAsROplLUCShZxn2kTkyjrdZWWw4ol9ZAosUb+zcNiHf6RERADAwAAA=="
+}

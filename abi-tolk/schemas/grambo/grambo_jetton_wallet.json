@@ -1,0 +1,247 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "grambo_jetton_wallet",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "WalletIncomingMessage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboActivateWallet"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboSellNotification"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboSellParams"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 15
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 17
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GramboWalletStorage"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        12
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "GetWalletDataResult"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "GramboSellParams",
+      "ty_idx": 15,
+      "fields": [
+        {
+          "name": "min_ton_out",
+          "ty_idx": 6
+        },
+        {
+          "name": "referrer",
+          "ty_idx": 7
+        },
+        {
+          "name": "custom_payload",
+          "ty_idx": 16
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboSellNotification",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 838603382,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "from",
+          "ty_idx": 7
+        },
+        {
+          "name": "response_destination",
+          "ty_idx": 7
+        },
+        {
+          "name": "sell_params",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GramboActivateWallet",
+      "ty_idx": 13,
+      "prefix": {
+        "prefix_num": 1802884066,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "query_id",
+          "ty_idx": 11
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "WalletIncomingMessage",
+      "ty_idx": 12,
+      "target_ty_idx": 13
+    },
+    {
+      "kind": "struct",
+      "name": "GramboWalletStorage",
+      "ty_idx": 19,
+      "fields": [
+        {
+          "name": "activated",
+          "ty_idx": 5
+        },
+        {
+          "name": "balance",
+          "ty_idx": 6
+        },
+        {
+          "name": "owner",
+          "ty_idx": 7
+        },
+        {
+          "name": "master",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "GetWalletDataResult",
+      "ty_idx": 21,
+      "fields": [
+        {
+          "name": "balance",
+          "ty_idx": 1
+        },
+        {
+          "name": "owner_address",
+          "ty_idx": 7
+        },
+        {
+          "name": "jetton_master_address",
+          "ty_idx": 7
+        },
+        {
+          "name": "jetton_wallet_code",
+          "ty_idx": 3
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 14
+    }
+  ],
+  "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 19
+  },
+  "get_methods": [
+    {
+      "tvm_method_id": 112384,
+      "name": "get_wallet_status",
+      "parameters": [],
+      "return_ty_idx": 5
+    },
+    {
+      "tvm_method_id": 97026,
+      "name": "get_wallet_data",
+      "parameters": [],
+      "return_ty_idx": 21
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 65397
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBBwEAfQABFP8A9KQT9LzyyAsBAgFiAgMAGNAw+JHyQIIA/3Xy8AIBIAQFAZm/2BOEaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+kaEMALETqZS1AkoWcZ9pE5Mo63WVlsOKJfWQKLFG/s3DYh3+kRAYAB724A4QAAA=="
+}

@@ -8,6 +8,7 @@ import (
 	abiElector "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/elector"
 	abiEvaa "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/evaa"
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
+	abiGrambo "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/grambo"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
 	abiStonfi "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonfi"
@@ -817,6 +818,135 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.VaultStorage](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixVaultStorage), abiFfVault.FfVaultVaultStorageMsgOp)
 	KnownMsgInTypes[abiFfVault.FfVaultWithdrawJettonMsgOp] = abiFfVault.WithdrawJetton{}
 	registerInMsgUnmarshalerForOpcode[*abiFfVault.WithdrawJetton](opcodedMsgInDecodeFunctions, uint32(abiFfVault.PrefixWithdrawJetton), abiFfVault.FfVaultWithdrawJettonMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "get_curve_state",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiGrambo.GetCurveState(ctx, executor, id)
+				return "GetCurveState_GramboJettonMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_jetton_data",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiGrambo.GetJettonData(ctx, executor, id)
+				return "GetJettonData_GramboJettonMasterResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_wallet_status",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiGrambo.GetWalletStatus(ctx, executor, id)
+				return "GetWalletStatus_GramboJettonWalletResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_wallet_data",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiGrambo.GetWalletData(ctx, executor, id)
+				return "GetWalletData_GramboJettonWalletResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["get_amount_out"] = append(KnownGetMethodsDecoder["get_amount_out"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetAmountOut(&st)
+		return "GetAmountOut_GramboJettonMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_ton_out"] = append(KnownGetMethodsDecoder["get_ton_out"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetTonOut(&st)
+		return "GetTonOut_GramboJettonMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_curve_state"] = append(KnownGetMethodsDecoder["get_curve_state"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetCurveState(&st)
+		return "GetCurveState_GramboJettonMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_jetton_data"] = append(KnownGetMethodsDecoder["get_jetton_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetJettonData(&st)
+		return "GetJettonData_GramboJettonMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_wallet_address"] = append(KnownGetMethodsDecoder["get_wallet_address"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetWalletAddress(&st)
+		return "GetWalletAddress_GramboJettonMasterResult", r, err
+	})
+	KnownGetMethodsDecoder["get_wallet_status"] = append(KnownGetMethodsDecoder["get_wallet_status"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetWalletStatus(&st)
+		return "GetWalletStatus_GramboJettonWalletResult", r, err
+	})
+	KnownGetMethodsDecoder["get_wallet_data"] = append(KnownGetMethodsDecoder["get_wallet_data"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiGrambo.DecodeGetWalletData(&st)
+		return "GetWalletData_GramboJettonWalletResult", r, err
+	})
+
+	KnownSimpleGetMethods[124044] = append(KnownSimpleGetMethods[124044], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiGrambo.GetCurveState(ctx, executor, id)
+		return "GetCurveState_GramboJettonMasterResult", r, err
+	})
+	KnownSimpleGetMethods[106029] = append(KnownSimpleGetMethods[106029], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiGrambo.GetJettonData(ctx, executor, id)
+		return "GetJettonData_GramboJettonMasterResult", r, err
+	})
+	KnownSimpleGetMethods[112384] = append(KnownSimpleGetMethods[112384], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiGrambo.GetWalletStatus(ctx, executor, id)
+		return "GetWalletStatus_GramboJettonWalletResult", r, err
+	})
+	KnownSimpleGetMethods[97026] = append(KnownSimpleGetMethods[97026], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiGrambo.GetWalletData(ctx, executor, id)
+		return "GetWalletData_GramboJettonWalletResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    GramboJettonMaster,
+			Results: []string{"GetCurveState_GramboJettonMasterResult", "GetJettonData_GramboJettonMasterResult"},
+		},
+		InterfaceDescription{
+			Name:    GramboJettonWallet,
+			Results: []string{"GetWalletStatus_GramboJettonWalletResult", "GetWalletData_GramboJettonWalletResult"},
+		},
+	)
+
+	KnownMsgInTypes[abiGrambo.GramboGramboActivateWalletMsgOp] = abiGrambo.GramboActivateWallet{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboActivateWallet](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboActivateWallet), abiGrambo.GramboGramboActivateWalletMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboBuyMsgOp] = abiGrambo.GramboBuy{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboBuy](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboBuy), abiGrambo.GramboGramboBuyMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboDeployMsgOp] = abiGrambo.GramboDeploy{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboDeploy](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboDeploy), abiGrambo.GramboGramboDeployMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboGraduateEventMsgOp] = abiGrambo.GramboGraduateEvent{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboGraduateEvent](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboGraduateEvent), abiGrambo.GramboGramboGraduateEventMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboLaunchMsgOp] = abiGrambo.GramboLaunch{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboLaunch](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboLaunch), abiGrambo.GramboGramboLaunchMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboProvideWalletAddressMsgOp] = abiGrambo.GramboProvideWalletAddress{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboProvideWalletAddress](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboProvideWalletAddress), abiGrambo.GramboGramboProvideWalletAddressMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboSellNotificationMsgOp] = abiGrambo.GramboSellNotification{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboSellNotification](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboSellNotification), abiGrambo.GramboGramboSellNotificationMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboSwapEventMsgOp] = abiGrambo.GramboSwapEvent{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboSwapEvent](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboSwapEvent), abiGrambo.GramboGramboSwapEventMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboTakeWalletAddressMsgOp] = abiGrambo.GramboTakeWalletAddress{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboTakeWalletAddress](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboTakeWalletAddress), abiGrambo.GramboGramboTakeWalletAddressMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboUnlockWalletMsgOp] = abiGrambo.GramboUnlockWallet{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboUnlockWallet](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboUnlockWallet), abiGrambo.GramboGramboUnlockWalletMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboUpdateCodeMsgOp] = abiGrambo.GramboUpdateCode{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboUpdateCode](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboUpdateCode), abiGrambo.GramboGramboUpdateCodeMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboUpdateDataMsgOp] = abiGrambo.GramboUpdateData{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboUpdateData](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboUpdateData), abiGrambo.GramboGramboUpdateDataMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboGramboWithdrawMsgOp] = abiGrambo.GramboWithdraw{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboWithdraw](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboWithdraw), abiGrambo.GramboGramboWithdrawMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboJettonExcessMsgOp] = abiGrambo.JettonExcess{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.JettonExcess](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixJettonExcess), abiGrambo.GramboJettonExcessMsgOp)
+	KnownMsgInTypes[abiGrambo.GramboJettonInternalTransferMsgOp] = abiGrambo.JettonInternalTransfer{}
+	registerInMsgUnmarshalerForOpcode[*abiGrambo.JettonInternalTransfer](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixJettonInternalTransfer), abiGrambo.GramboJettonInternalTransferMsgOp)
 
 }
 

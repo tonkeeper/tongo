@@ -13,14 +13,17 @@ const (
 	EvaaUser                 ContractInterface = _xmlContractInterfaceEnd + 8
 	FfVaultPosition          ContractInterface = _xmlContractInterfaceEnd + 9
 	FfVault                  ContractInterface = _xmlContractInterfaceEnd + 10
-	PythOracle               ContractInterface = _xmlContractInterfaceEnd + 11
-	SingleNominatorPool      ContractInterface = _xmlContractInterfaceEnd + 12
-	StonfiEscrowFactory      ContractInterface = _xmlContractInterfaceEnd + 13
-	StonfiEscrowPosition     ContractInterface = _xmlContractInterfaceEnd + 14
-	StonfiEscrowVault        ContractInterface = _xmlContractInterfaceEnd + 15
-	StonksPumpVirtualMinter  ContractInterface = _xmlContractInterfaceEnd + 16
-	StonksPumpVirtualFactory ContractInterface = _xmlContractInterfaceEnd + 17
-	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 18
+	GramboFactory            ContractInterface = _xmlContractInterfaceEnd + 11
+	GramboJettonMaster       ContractInterface = _xmlContractInterfaceEnd + 12
+	GramboJettonWallet       ContractInterface = _xmlContractInterfaceEnd + 13
+	PythOracle               ContractInterface = _xmlContractInterfaceEnd + 14
+	SingleNominatorPool      ContractInterface = _xmlContractInterfaceEnd + 15
+	StonfiEscrowFactory      ContractInterface = _xmlContractInterfaceEnd + 16
+	StonfiEscrowPosition     ContractInterface = _xmlContractInterfaceEnd + 17
+	StonfiEscrowVault        ContractInterface = _xmlContractInterfaceEnd + 18
+	StonksPumpVirtualMinter  ContractInterface = _xmlContractInterfaceEnd + 19
+	StonksPumpVirtualFactory ContractInterface = _xmlContractInterfaceEnd + 20
+	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 21
 )
 
 func init() {
@@ -34,6 +37,9 @@ func init() {
 	tolkContractInterfaceStrings[EvaaUser] = "evaa_user"
 	tolkContractInterfaceStrings[FfVaultPosition] = "ff_vault_position"
 	tolkContractInterfaceStrings[FfVault] = "ff_vault"
+	tolkContractInterfaceStrings[GramboFactory] = "grambo_factory"
+	tolkContractInterfaceStrings[GramboJettonMaster] = "grambo_jetton_master"
+	tolkContractInterfaceStrings[GramboJettonWallet] = "grambo_jetton_wallet"
 	tolkContractInterfaceStrings[PythOracle] = "pyth_oracle"
 	tolkContractInterfaceStrings[SingleNominatorPool] = "single_nominator_pool"
 	tolkContractInterfaceStrings[StonfiEscrowFactory] = "stonfi_escrow_factory"
@@ -53,6 +59,9 @@ func init() {
 	tolkContractInterfaceFromString["evaa_user"] = EvaaUser
 	tolkContractInterfaceFromString["ff_vault_position"] = FfVaultPosition
 	tolkContractInterfaceFromString["ff_vault"] = FfVault
+	tolkContractInterfaceFromString["grambo_factory"] = GramboFactory
+	tolkContractInterfaceFromString["grambo_jetton_master"] = GramboJettonMaster
+	tolkContractInterfaceFromString["grambo_jetton_wallet"] = GramboJettonWallet
 	tolkContractInterfaceFromString["pyth_oracle"] = PythOracle
 	tolkContractInterfaceFromString["single_nominator_pool"] = SingleNominatorPool
 	tolkContractInterfaceFromString["stonfi_escrow_factory"] = StonfiEscrowFactory

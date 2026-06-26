@@ -9,6 +9,26 @@ on:
       - 'master'
 
 jobs:
+  go-generate:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - name: Go Version
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.24.11'
+      - name: go generate
+        run: go generate ./...
+      - name: check generated files
+        run: |
+          git diff --exit-code
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --porcelain
+            echo "::error::go generate ./... produced untracked files"
+            exit 1
+          fi
+
   unit-tests:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
@@ -17,7 +37,7 @@ jobs:
       - name: Go Version
         uses: actions/setup-go@v3
         with:
-          go-version: '1.22'
+          go-version: '1.24.11'
       - name: test
         env:
           LD_LIBRARY_PATH: ${{ github.workspace }}/libs

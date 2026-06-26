@@ -2526,7 +2526,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormActivateOrderMsgBody,
 			decodeFuncStormUpdatePositionMsgBody,
 			decodeFuncStormUpdatePositionWithStopLossMsgBody,
-			decodeFuncStormProvidePositionMsgBody,
+			decodeFuncStormProvideOrderMsgBody,
 		}
 	case StormReferral:
 		return []msgDecoderFunc{

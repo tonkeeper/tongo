@@ -3,16 +3,10 @@ package tonconnect
 import (
 	"testing"
 	"time"
-
-	"github.com/tonkeeper/tongo/liteapi"
 )
 
 func TestGenerateAndVerifyPayload(t *testing.T) {
-	liteApiClient, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
-	if err != nil {
-		t.Fatalf("failed create liteapi client: %v", err)
-	}
-	tonConnect, err := NewTonConnect(liteApiClient, "my_secret", WithLifeTimePayload(300), WithLifeTimeProof(300))
+	tonConnect, err := NewTonConnect(stubExecutor{}, "my_secret", WithLifeTimePayload(300), WithLifeTimeProof(300))
 	if err != nil {
 		t.Fatalf("failed create tonconnect: %v", err)
 	}
@@ -32,11 +26,7 @@ func TestGenerateAndVerifyPayload(t *testing.T) {
 }
 
 func TestExpirePayload(t *testing.T) {
-	liteApiClient, err := liteapi.NewClient(liteapi.Mainnet(), liteapi.FromEnvs())
-	if err != nil {
-		t.Fatalf("failed create liteapi client: %v", err)
-	}
-	tonConnect, err := NewTonConnect(liteApiClient, "my_secret", WithLifeTimePayload(1), WithLifeTimeProof(1)) // set little lifetime
+	tonConnect, err := NewTonConnect(stubExecutor{}, "my_secret", WithLifeTimePayload(1), WithLifeTimeProof(1)) // set little lifetime
 	if err != nil {
 		t.Fatalf("failed create tonconnect: %v", err)
 	}

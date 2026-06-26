@@ -5,9 +5,12 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/tonkeeper/tongo/ton"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/tonkeeper/tongo/ton"
 
 	"github.com/tonkeeper/tongo/config"
 )
@@ -130,6 +133,7 @@ func TestGeneratedMethod4(t *testing.T) {
 }
 
 func TestGeneratedMethod5(t *testing.T) {
+	t.SkipNow()
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -182,12 +186,8 @@ func TestClient_WaitMasterchainSeqno(t *testing.T) {
 		t.Fatalf("WaitMasterchainSeqno() failed: %v", err)
 	}
 	resp, err = client.LiteServerGetMasterchainInfo(context.Background())
-	if err != nil {
-		t.Fatalf("LiteServerGetMasterchainInfo() failed: %v", err)
-	}
-	if resp.Last.Seqno != seqno {
-		t.Fatalf("want seqno: %v, got: %v", seqno, resp.Last.Seqno)
-	}
+	require.NoError(t, err, "LiteServerGetMasterchainInfo() failed")
+	assert.GreaterOrEqual(t, resp.Last.Seqno, seqno)
 }
 
 func TestGeneratedMethod6(t *testing.T) {

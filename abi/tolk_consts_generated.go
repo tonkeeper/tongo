@@ -23,7 +23,10 @@ const (
 	StonfiEscrowVault        ContractInterface = _xmlContractInterfaceEnd + 18
 	StonksPumpVirtualMinter  ContractInterface = _xmlContractInterfaceEnd + 19
 	StonksPumpVirtualFactory ContractInterface = _xmlContractInterfaceEnd + 20
-	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 21
+	VerifierSourceItem       ContractInterface = _xmlContractInterfaceEnd + 21
+	VerifierSourcesRegistry  ContractInterface = _xmlContractInterfaceEnd + 22
+	VerifierRegistry         ContractInterface = _xmlContractInterfaceEnd + 23
+	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 24
 )
 
 func init() {
@@ -47,6 +50,9 @@ func init() {
 	tolkContractInterfaceStrings[StonfiEscrowVault] = "stonfi_escrow_vault"
 	tolkContractInterfaceStrings[StonksPumpVirtualMinter] = "StonksPumpVirtualMinter"
 	tolkContractInterfaceStrings[StonksPumpVirtualFactory] = "StonksPumpVirtualFactory"
+	tolkContractInterfaceStrings[VerifierSourceItem] = "verifier_source_item"
+	tolkContractInterfaceStrings[VerifierSourcesRegistry] = "verifier_sources_registry"
+	tolkContractInterfaceStrings[VerifierRegistry] = "verifier_registry"
 	tolkContractInterfaceStrings[XtrMaster] = "XtrMaster"
 
 	tolkContractInterfaceFromString["cocoon_client"] = CocoonClient
@@ -69,5 +75,8 @@ func init() {
 	tolkContractInterfaceFromString["stonfi_escrow_vault"] = StonfiEscrowVault
 	tolkContractInterfaceFromString["StonksPumpVirtualMinter"] = StonksPumpVirtualMinter
 	tolkContractInterfaceFromString["StonksPumpVirtualFactory"] = StonksPumpVirtualFactory
+	tolkContractInterfaceFromString["verifier_source_item"] = VerifierSourceItem
+	tolkContractInterfaceFromString["verifier_sources_registry"] = VerifierSourcesRegistry
+	tolkContractInterfaceFromString["verifier_registry"] = VerifierRegistry
 	tolkContractInterfaceFromString["XtrMaster"] = XtrMaster
 }

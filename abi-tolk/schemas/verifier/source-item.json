@@ -1,0 +1,174 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "verifier_source_item",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SourceContent"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "StringTail"
+    },
+    {
+      "kind": "string"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SourceItemStorage"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 12
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SourceItemData"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "SourceItemStorage",
+      "ty_idx": 16,
+      "fields": [
+        {
+          "name": "verifierId",
+          "ty_idx": 17
+        },
+        {
+          "name": "verifiedCodeCellHash",
+          "ty_idx": 17
+        },
+        {
+          "name": "sourceItemRegistry",
+          "ty_idx": 7
+        },
+        {
+          "name": "content",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "SourceItemData",
+      "ty_idx": 19,
+      "fields": [
+        {
+          "name": "verifierId",
+          "ty_idx": 17
+        },
+        {
+          "name": "verifiedCodeCellHash",
+          "ty_idx": 17
+        },
+        {
+          "name": "sourceItemRegistry",
+          "ty_idx": 7
+        },
+        {
+          "name": "content",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "StringTail",
+      "ty_idx": 14,
+      "target_ty_idx": 15,
+      "custom_pack_unpack": {
+        "pack_to_builder": true,
+        "unpack_from_slice": true
+      }
+    },
+    {
+      "kind": "struct",
+      "name": "SourceContent",
+      "ty_idx": 12,
+      "fields": [
+        {
+          "name": "version",
+          "ty_idx": 13
+        },
+        {
+          "name": "url",
+          "ty_idx": 14
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 16
+  },
+  "get_methods": [
+    {
+      "tvm_method_id": 96182,
+      "name": "get_source_item_data",
+      "parameters": [],
+      "return_ty_idx": 19
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1"
+}

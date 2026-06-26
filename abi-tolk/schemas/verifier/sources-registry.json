@@ -1,0 +1,437 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "verifier_sources_registry",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DeploySourceItemPayload"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SourceContent"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "StringTail"
+    },
+    {
+      "kind": "string"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 14
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ChangeVerifierRegistry"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ChangeAdmin"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SetSourceItemCode"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SetCode"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SetDeploymentCosts"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SourcesRegistryStorage"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "SourcesRegistryInternalMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 1002,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 133,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 19,
+          "prefix_num": 2003,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 134,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 20,
+          "prefix_num": 3004,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 135,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 21,
+          "prefix_num": 4005,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 136,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 22,
+          "prefix_num": 5006,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 137,
+          "stack_width": 2
+        },
+        {
+          "variant_ty_idx": 23,
+          "prefix_num": 6007,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 138,
+          "stack_width": 3
+        }
+      ],
+      "stack_width": 5
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        25
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "DeploymentCosts"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "SourcesRegistryStorage",
+      "ty_idx": 24,
+      "fields": [
+        {
+          "name": "minGram",
+          "ty_idx": 6
+        },
+        {
+          "name": "maxGram",
+          "ty_idx": 6
+        },
+        {
+          "name": "adminAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "verifierRegistryAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "sourceItemCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "DeploySourceItemPayload",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1002,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "verifierId",
+          "ty_idx": 13
+        },
+        {
+          "name": "verifiedCodeCellHash",
+          "ty_idx": 13
+        },
+        {
+          "name": "sourceContent",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChangeVerifierRegistry",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 2003,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newVerifierRegistry",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChangeAdmin",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 3004,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newAdmin",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "SetSourceItemCode",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 4005,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newSourceItemCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "SetCode",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 5006,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "SetDeploymentCosts",
+      "ty_idx": 23,
+      "prefix": {
+        "prefix_num": 6007,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newMinGram",
+          "ty_idx": 6
+        },
+        {
+          "name": "newMaxGram",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "SourcesRegistryInternalMessage",
+      "ty_idx": 25,
+      "target_ty_idx": 26
+    },
+    {
+      "kind": "struct",
+      "name": "DeploymentCosts",
+      "ty_idx": 28,
+      "fields": [
+        {
+          "name": "minGram",
+          "ty_idx": 6
+        },
+        {
+          "name": "maxGram",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "StringTail",
+      "ty_idx": 16,
+      "target_ty_idx": 17,
+      "custom_pack_unpack": {
+        "pack_to_builder": true,
+        "unpack_from_slice": true
+      }
+    },
+    {
+      "kind": "struct",
+      "name": "SourceContent",
+      "ty_idx": 14,
+      "fields": [
+        {
+          "name": "version",
+          "ty_idx": 15
+        },
+        {
+          "name": "url",
+          "ty_idx": 16
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 20
+    },
+    {
+      "body_ty_idx": 21
+    },
+    {
+      "body_ty_idx": 22
+    },
+    {
+      "body_ty_idx": 23
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 12
+    }
+  ],
+  "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 24
+  },
+  "get_methods": [
+    {
+      "tvm_method_id": 79057,
+      "name": "get_source_item_address",
+      "parameters": [
+        {
+          "name": "verifierId",
+          "ty_idx": 1
+        },
+        {
+          "name": "verifiedCodeCellHash",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 69660,
+      "name": "get_verifier_registry_address",
+      "parameters": [],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 94255,
+      "name": "get_admin_address",
+      "parameters": [],
+      "return_ty_idx": 7
+    },
+    {
+      "tvm_method_id": 79299,
+      "name": "get_deployment_costs",
+      "parameters": [],
+      "return_ty_idx": 28
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBCgEA3QABFP8A9KQT9LzyyAsBAgFiAgMAcNAw+JHc+JLIz4QCyciLwAAAPqAAAAAAAAAACM8WcM8L/3DPC//MycjPhQgS+lJxzwtuzMmAQPsAAgFIBAUCASAGBwBNuwL40IYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAE22A5GhDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJACA3qgCAkATaNFbjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAHow3Agg=="
+}

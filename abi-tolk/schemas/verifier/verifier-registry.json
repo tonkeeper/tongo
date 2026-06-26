@@ -1,0 +1,366 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "verifier_registry",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ForwardMessage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MessageDescription"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "addressAny"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "UpdateVerifier"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VerifierSettings"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 14,
+      "value_ty_idx": 9
+    },
+    {
+      "kind": "string"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "RemoveVerifier"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VerifierRegistryStorage"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "Verifier"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 14,
+      "value_ty_idx": 24
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "VerifierRegistryInternalMessage"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 12,
+          "prefix_num": 1965127512,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 133,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 17,
+          "prefix_num": 1610798618,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 134,
+          "stack_width": 6
+        },
+        {
+          "variant_ty_idx": 22,
+          "prefix_num": 435836471,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 135,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 7
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        26
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "VerifierInfo"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "MessageDescription",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "verifierId",
+          "ty_idx": 14
+        },
+        {
+          "name": "validUntil",
+          "ty_idx": 9
+        },
+        {
+          "name": "sourceAddr",
+          "ty_idx": 15
+        },
+        {
+          "name": "targetAddr",
+          "ty_idx": 15
+        },
+        {
+          "name": "msg",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VerifierSettings",
+      "ty_idx": 18,
+      "fields": [
+        {
+          "name": "multiSigThreshold",
+          "ty_idx": 19
+        },
+        {
+          "name": "pubKeyEndpoints",
+          "ty_idx": 20
+        },
+        {
+          "name": "name",
+          "ty_idx": 21
+        },
+        {
+          "name": "marketingUrl",
+          "ty_idx": 21
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "Verifier",
+      "ty_idx": 24,
+      "fields": [
+        {
+          "name": "admin",
+          "ty_idx": 15
+        },
+        {
+          "name": "settings",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "VerifierRegistryStorage",
+      "ty_idx": 23,
+      "fields": [
+        {
+          "name": "verifiers",
+          "ty_idx": 25
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ForwardMessage",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1965127512,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "msg",
+          "ty_idx": 16
+        },
+        {
+          "name": "signatures",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "UpdateVerifier",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 1610798618,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "verifierId",
+          "ty_idx": 14
+        },
+        {
+          "name": "settings",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "RemoveVerifier",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 435836471,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "id",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "VerifierRegistryInternalMessage",
+      "ty_idx": 26,
+      "target_ty_idx": 27
+    },
+    {
+      "kind": "struct",
+      "name": "VerifierInfo",
+      "ty_idx": 29,
+      "fields": [
+        {
+          "name": "admin",
+          "ty_idx": 7
+        },
+        {
+          "name": "settings",
+          "ty_idx": 3
+        },
+        {
+          "name": "found",
+          "ty_idx": 5
+        }
+      ]
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 17
+    },
+    {
+      "body_ty_idx": 22
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [
+    {
+      "body_ty_idx": 3
+    }
+  ],
+  "emitted_events": [],
+  "storage": {
+    "storage_ty_idx": 23
+  },
+  "get_methods": [
+    {
+      "tvm_method_id": 93808,
+      "name": "get_verifier",
+      "parameters": [
+        {
+          "name": "id",
+          "ty_idx": 1
+        }
+      ],
+      "return_ty_idx": 29
+    },
+    {
+      "tvm_method_id": 68685,
+      "name": "get_verifiers_num",
+      "parameters": [],
+      "return_ty_idx": 1
+    },
+    {
+      "tvm_method_id": 111516,
+      "name": "get_verifiers",
+      "parameters": [],
+      "return_ty_idx": 3
+    }
+  ],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBCQEAiQABFP8A9KQT9LzyyAsBAgFiAgMCWtAw+JHc+JKIyM+FCBL6UnHPC27MyYMG+wD4kojIz4UIEvpScc8LbszJgED7AAgIAgEgBAUCASAGBwEHvZzkRAgAB7jE1wgBU7rnAwjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEiHCAgAAA=="
+}

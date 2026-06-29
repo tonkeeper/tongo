@@ -92,10 +92,18 @@ func (s *VmStack) ReadCell() (boc.Cell, error) {
 	if !ok {
 		return boc.Cell{}, ErrStackEmpty
 	}
-	if val.SumType != "VmStkCell" {
+	switch val.SumType {
+	case "VmStkCell":
+		return val.VmStkCell.Value, nil
+	case "VmStkSlice":
+		c, err := val.VmStkSlice.CellSafe()
+		if err != nil || c == nil {
+			return boc.Cell{}, err
+		}
+		return *c, nil
+	default:
 		return boc.Cell{}, fmt.Errorf("unexpected stack value type for slice: %s", val.SumType)
 	}
-	return val.VmStkCell.Value, nil
 }
 
 func (s *VmStack) ReadStringTail() (string, error) {
@@ -575,29 +583,37 @@ func (s *VmCellSlice) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 }
 
 func (s VmCellSlice) Cell() *boc.Cell {
+	cell, err := s.CellSafe()
+	if err != nil {
+		panic(err)
+	}
+	return cell
+}
+
+func (s VmCellSlice) CellSafe() (*boc.Cell, error) {
 	// TODO: maybe add as a filed to VmCellSlice
 	cell := boc.NewCell()
 	s.cell.ResetCounters()
 	err := s.cell.Skip(s.stBits)
 	if err != nil {
-		panic("not enough cell bits")
+		return nil, errors.New("not enough cell bits")
 	}
 	bits, err := s.cell.ReadBits(s.endBits - s.stBits)
 	if err != nil {
-		panic("not enough cell bits")
+		return nil, errors.New("not enough cell bits")
 	}
 	refs := s.cell.Refs()
 	err = cell.WriteBitString(bits)
 	if err != nil {
-		panic("can not write bits to empty cell")
+		return nil, errors.New("can not write bits to empty cell")
 	}
 	for _, ref := range refs[s.stRef:s.endRef] {
 		err = cell.AddRef(ref)
 		if err != nil {
-			panic("can not write ref to empty cell")
+			return nil, errors.New("can not write ref to empty cell")
 		}
 	}
-	return cell
+	return cell, nil
 }
 
 func (ct VmCont) MarshalTLB(c *boc.Cell, encoder *Encoder) error {

@@ -4,7 +4,6 @@ package abiVerifier
 
 import (
 	"context"
-	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
 )
@@ -49,13 +48,13 @@ type VerifierRegistry interface {
 	WithAccountId(accountID ton.AccountID) VerifierRegistryWithAccount
 	GetVerifier(ctx context.Context, reqAccountID ton.AccountID, id tlb.Int257) (VerifierInfo, error)
 	GetVerifiersNum(ctx context.Context, reqAccountID ton.AccountID) (tlb.Int257, error)
-	GetVerifiers(ctx context.Context, reqAccountID ton.AccountID) (boc.Cell, error)
+	GetVerifiers(ctx context.Context, reqAccountID ton.AccountID) (tlb.RefT[*VerifierRegistryStorage], error)
 	AccountState(ctx context.Context, reqAccountID ton.AccountID) (tlb.ShardAccount, VerifierRegistryStorage, error)
 }
 
 type VerifierRegistryWithAccount interface {
 	GetVerifier(ctx context.Context, id tlb.Int257) (VerifierInfo, error)
 	GetVerifiersNum(ctx context.Context) (tlb.Int257, error)
-	GetVerifiers(ctx context.Context) (boc.Cell, error)
+	GetVerifiers(ctx context.Context) (tlb.RefT[*VerifierRegistryStorage], error)
 	AccountState(ctx context.Context) (tlb.ShardAccount, VerifierRegistryStorage, error)
 }

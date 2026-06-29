@@ -114,6 +114,6 @@ get fun get_verifiers_num(): int {
     return 0;
 }
 
-get fun get_verifiers(): cell {
-    return beginCell().endCell();
+get fun get_verifiers(): Cell<VerifierRegistryStorage> {
+    throw 0;;
 }

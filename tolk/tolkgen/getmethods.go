@@ -223,16 +223,18 @@ func (tgen TolkGolangGenerator) emitStackReadExpr(fieldPath string, tyIdx int, u
 			return "", false, fmt.Errorf("type: %w", err)
 		}
 		if hasMethod {
-			expr = "err = value.UnmarshalTLB(&c, tlb.NewDecoder())\nreturn"
+			expr = "err = value.UnmarshalTLB(c, tlb.NewDecoder())\nreturn"
 		} else {
 			expr = "return " + expr
 		}
 		return fmt.Sprintf(`(func () (value %s, err error) {
-			var c boc.Cell
-			c, err = stack.ReadCell()
+			var cIn boc.Cell
+			cIn, err = stack.ReadCell()
 			if err != nil {
 				return
 			}
+			c := boc.NewCell()
+			_ = c.AddRef(&cIn)
 			%s
 		})()`, goType, expr), false, nil
 

@@ -141,6 +141,10 @@
     {
       "kind": "StructRef",
       "struct_name": "VerifierInfo"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 23
     }
   ],
   "struct_instantiations": [],
@@ -356,11 +360,16 @@
       "tvm_method_id": 111516,
       "name": "get_verifiers",
       "parameters": [],
-      "return_ty_idx": 3
+      "return_ty_idx": 30
     }
   ],
-  "thrown_errors": [],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 0
+    }
+  ],
   "compiler_name": "tolk",
   "compiler_version": "1.4.1",
-  "code_boc64": "te6ccgEBCQEAiQABFP8A9KQT9LzyyAsBAgFiAgMCWtAw+JHc+JKIyM+FCBL6UnHPC27MyYMG+wD4kojIz4UIEvpScc8LbszJgED7AAgIAgEgBAUCASAGBwEHvZzkRAgAB7jE1wgBU7rnAwjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEiHCAgAAA=="
+  "code_boc64": "te6ccgEBCQEAiQABFP8A9KQT9LzyyAsBAgFiAgMCWtAw+JHc+JKIyM+FCBL6UnHPC27MyYMG+wD4kojIz4UIEvpScc8LbszJgED7AAgIAgEgBAUCASAGBwAJvZznkAQAB7jE1wgBU7rnAwjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEiHCAgAAA=="
 }

@@ -90,12 +90,14 @@ func (v SourceItemData) ToCell() (*boc.Cell, error) {
 
 func (v *SourceItemData) ReadFromStack(stack *tlb.VmStack) (err error) {
 	if v.Content, err = (func() (value tlb.RefT[*SourceContent], err error) {
-		var c boc.Cell
-		c, err = stack.ReadCell()
+		var cIn boc.Cell
+		cIn, err = stack.ReadCell()
 		if err != nil {
 			return
 		}
-		err = value.UnmarshalTLB(&c, tlb.NewDecoder())
+		c := boc.NewCell()
+		_ = c.AddRef(&cIn)
+		err = value.UnmarshalTLB(c, tlb.NewDecoder())
 		return
 	})(); err != nil {
 		return fmt.Errorf("failed to read .Content: %v", err)

@@ -73,6 +73,9 @@ type VerifierInfo struct {
 	Found    bool                // bool
 }
 
+const ( // errors
+)
+
 func DecodeGetVerifier(stack *tlb.VmStack) (result VerifierInfo, err error) {
 	if stack.Len() != 3 {
 		err = fmt.Errorf("invalid stack size %d, expected 3", stack.Len())
@@ -124,17 +127,27 @@ func GetVerifiersNum(ctx context.Context, executor Executor, reqAccountID ton.Ac
 	return DecodeGetVerifiersNum(&stack)
 }
 
-func DecodeGetVerifiers(stack *tlb.VmStack) (result boc.Cell, err error) {
+func DecodeGetVerifiers(stack *tlb.VmStack) (result tlb.RefT[*VerifierRegistryStorage], err error) {
 	if stack.Len() != 1 {
 		err = fmt.Errorf("invalid stack size %d, expected 1", stack.Len())
 		return
 	}
-	return stack.ReadCell()
+	return (func() (value tlb.RefT[*VerifierRegistryStorage], err error) {
+		var cIn boc.Cell
+		cIn, err = stack.ReadCell()
+		if err != nil {
+			return
+		}
+		c := boc.NewCell()
+		_ = c.AddRef(&cIn)
+		err = value.UnmarshalTLB(c, tlb.NewDecoder())
+		return
+	})()
 }
 
 const MethodIDGetVerifiers = 0x1B39C
 
-func GetVerifiers(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (result boc.Cell, err error) {
+func GetVerifiers(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (result tlb.RefT[*VerifierRegistryStorage], err error) {
 	var errCode uint32
 	var stack tlb.VmStack
 	errCode, stack, err = executor.RunSmcMethodByID(ctx, reqAccountID, MethodIDGetVerifiers, stack)
@@ -187,7 +200,7 @@ func (c verifierRegistryImpl) GetVerifiersNum(ctx context.Context, reqAccountID 
 	return GetVerifiersNum(ctx, c.executor, reqAccountID)
 }
 
-func (c verifierRegistryImpl) GetVerifiers(ctx context.Context, reqAccountID ton.AccountID) (boc.Cell, error) {
+func (c verifierRegistryImpl) GetVerifiers(ctx context.Context, reqAccountID ton.AccountID) (tlb.RefT[*VerifierRegistryStorage], error) {
 	return GetVerifiers(ctx, c.executor, reqAccountID)
 }
 
@@ -209,7 +222,7 @@ func (c verifierRegistryWithAccountImpl) GetVerifiersNum(ctx context.Context) (t
 	return GetVerifiersNum(ctx, c.executor, c.accountID)
 }
 
-func (c verifierRegistryWithAccountImpl) GetVerifiers(ctx context.Context) (boc.Cell, error) {
+func (c verifierRegistryWithAccountImpl) GetVerifiers(ctx context.Context) (tlb.RefT[*VerifierRegistryStorage], error) {
 	return GetVerifiers(ctx, c.executor, c.accountID)
 }
 

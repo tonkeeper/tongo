@@ -46,12 +46,24 @@ func (v BuyXTRRequest) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 func (v *StarPriceData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.Sig.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Sig: %v", err)
+	}
+	if err = v.Timestamp.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Timestamp: %v", err)
+	}
 	if err = v.StarPrice.UnmarshalTLB(c, decoder); err != nil {
 		return fmt.Errorf("failed to read .StarPrice: %v", err)
 	}
 	return nil
 }
 func (v StarPriceData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.Sig.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Sig: %v", err)
+	}
+	if err = v.Timestamp.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Timestamp: %v", err)
+	}
 	if err = v.StarPrice.MarshalTLB(c, encoder); err != nil {
 		return fmt.Errorf("failed to .StarPrice: %v", err)
 	}
@@ -63,6 +75,17 @@ func (v StarPriceData) ToCell() (*boc.Cell, error) {
 		return nil, err
 	}
 	return c, nil
+}
+func (v *StarPrice) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var vx StarPriceData
+	if err := vx.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	*v = StarPrice(vx)
+	return nil
+}
+func (v StarPrice) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	return StarPriceData(v).MarshalTLB(c, encoder)
 }
 func (v *PushXTR) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixPushXTR); err != nil {

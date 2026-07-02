@@ -18,7 +18,9 @@ type BuyXTRRequest struct {
 	StarPriceData StarPrice           // StarPrice
 }
 type StarPriceData struct {
-	StarPrice tlb.Coins // coins
+	Sig       tlb.Bits512 // bits512
+	Timestamp tlb.Uint32  // uint32
+	StarPrice tlb.Coins   // coins
 }
 type StarPrice StarPriceData
 

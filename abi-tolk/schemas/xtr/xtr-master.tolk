@@ -15,22 +15,11 @@ struct (0x6fc25520) BuyXTRRequest {
 }
 
 struct StarPriceData {
+    sig: bits512
+    timestamp: uint32
     starPrice: coins
 }
 type StarPrice = StarPriceData;
-fun StarPrice.unpackFromSlice(mutate s: slice) {
-    s.loadBits(512);
-    s.loadUint(32);
-    return StarPrice{
-        starPrice: s.loadCoins(),
-    };
-}
-fun StarPrice.packToBuilder(self, mutate b: builder) {
-    b.storeUint(0, 256);
-    b.storeUint(0, 256);
-    b.storeUint(0, 32);
-    b.storeCoins(self.starPrice);
-}
 
 struct (0x6f027868) PushXTR {
     seqno: uint64

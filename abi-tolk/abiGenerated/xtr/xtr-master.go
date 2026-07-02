@@ -10,6 +10,18 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
+const PrefixBuyXTRRequest uint64 = 0x6fc25520
+
+type BuyXTRRequest struct {
+	UserAddress   tlb.InternalAddress // address
+	Amount        tlb.Coins           // coins
+	StarPriceData StarPrice           // StarPrice
+}
+type StarPriceData struct {
+	StarPrice tlb.Coins // coins
+}
+type StarPrice StarPriceData
+
 const PrefixPushXTR uint64 = 0x6f027868
 
 type PushXTR struct {

@@ -64,6 +64,18 @@
     },
     {
       "kind": "StructRef",
+      "struct_name": "BuyXTRRequest"
+    },
+    {
+      "kind": "AliasRef",
+      "alias_name": "StarPrice"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "StarPriceData"
+    },
+    {
+      "kind": "StructRef",
       "struct_name": "PushXTR"
     },
     {
@@ -80,8 +92,48 @@
   "declarations": [
     {
       "kind": "struct",
-      "name": "PushXTR",
+      "name": "BuyXTRRequest",
       "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 1875006752,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "userAddress",
+          "ty_idx": 7
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "starPriceData",
+          "ty_idx": 18
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "StarPriceData",
+      "ty_idx": 19,
+      "fields": [
+        {
+          "name": "starPrice",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "alias",
+      "name": "StarPrice",
+      "ty_idx": 18,
+      "target_ty_idx": 19
+    },
+    {
+      "kind": "struct",
+      "name": "PushXTR",
+      "ty_idx": 20,
       "prefix": {
         "prefix_num": 1862432872,
         "prefix_len": 32
@@ -100,7 +152,7 @@
     {
       "kind": "struct",
       "name": "CommitXTR",
-      "ty_idx": 18,
+      "ty_idx": 21,
       "prefix": {
         "prefix_num": 3832714076,
         "prefix_len": 32
@@ -219,7 +271,10 @@
       "body_ty_idx": 17
     },
     {
-      "body_ty_idx": 18
+      "body_ty_idx": 20
+    },
+    {
+      "body_ty_idx": 21
     }
   ],
   "incoming_external": [],

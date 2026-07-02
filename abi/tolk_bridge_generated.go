@@ -1584,6 +1584,8 @@ func init() {
 		},
 	)
 
+	KnownMsgInTypes[abiXtr.XtrBuyXTRRequestMsgOp] = abiXtr.BuyXTRRequest{}
+	registerInMsgUnmarshalerForOpcode[*abiXtr.BuyXTRRequest](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixBuyXTRRequest), abiXtr.XtrBuyXTRRequestMsgOp)
 	KnownMsgInTypes[abiXtr.XtrCommitXTRMsgOp] = abiXtr.CommitXTR{}
 	registerInMsgUnmarshalerForOpcode[*abiXtr.CommitXTR](opcodedMsgInDecodeFunctions, uint32(abiXtr.PrefixCommitXTR), abiXtr.XtrCommitXTRMsgOp)
 	KnownMsgInTypes[abiXtr.XtrPushXTRMsgOp] = abiXtr.PushXTR{}

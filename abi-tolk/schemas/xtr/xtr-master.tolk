@@ -1,5 +1,5 @@
 contract XtrMaster {
-    incomingMessages: (UpdateUser, UpdatePayment, UpdateContractAndProcessMessage, PushXTR, CommitXTR),
+    incomingMessages: (UpdateUser, UpdatePayment, UpdateContractAndProcessMessage, BuyXTRRequest, PushXTR, CommitXTR),
     storage: null,
     forceAbiExport: []
 }
@@ -7,6 +7,17 @@ contract XtrMaster {
 fun onInternalMessage(in: InMessage) {
 
 }
+
+struct (0x6fc25520) BuyXTRRequest {
+    userAddress: address
+    amount: coins
+    starPriceData: StarPrice
+}
+
+struct StarPriceData {
+    starPrice: coins
+}
+type StarPrice = StarPriceData;
 
 struct (0x6f027868) PushXTR {
     seqno: uint64

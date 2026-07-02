@@ -8,6 +8,73 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
+func (v *BuyXTRRequest) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err := c.ReadPrefix(32, PrefixBuyXTRRequest); err != nil {
+		return err
+	}
+	if err = v.UserAddress.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .UserAddress: %v", err)
+	}
+	if err = v.Amount.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .Amount: %v", err)
+	}
+	if err = v.StarPriceData.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .StarPriceData: %v", err)
+	}
+	return nil
+}
+func (v BuyXTRRequest) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = c.WriteUint(PrefixBuyXTRRequest, 32); err != nil {
+		return fmt.Errorf("failed to write prefix: %v", err)
+	}
+	if err = v.UserAddress.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .UserAddress: %v", err)
+	}
+	if err = v.Amount.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .Amount: %v", err)
+	}
+	if err = v.StarPriceData.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .StarPriceData: %v", err)
+	}
+	return nil
+}
+func (v BuyXTRRequest) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *StarPriceData) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
+	if err = v.StarPrice.UnmarshalTLB(c, decoder); err != nil {
+		return fmt.Errorf("failed to read .StarPrice: %v", err)
+	}
+	return nil
+}
+func (v StarPriceData) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
+	if err = v.StarPrice.MarshalTLB(c, encoder); err != nil {
+		return fmt.Errorf("failed to .StarPrice: %v", err)
+	}
+	return nil
+}
+func (v StarPriceData) ToCell() (*boc.Cell, error) {
+	c := boc.NewCell()
+	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+func (v *StarPrice) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+	var vx StarPriceData
+	if err := vx.UnmarshalTLB(c, decoder); err != nil {
+		return err
+	}
+	*v = StarPrice(vx)
+	return nil
+}
+func (v StarPrice) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+	return StarPriceData(v).MarshalTLB(c, encoder)
+}
 func (v *PushXTR) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixPushXTR); err != nil {
 		return err
@@ -222,6 +289,10 @@ func (msg UpdatePayment) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, 
 }
 
 func (msg UpdateContractAndProcessMessage) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*tlb.Any]) (tlb.Message, error) {
+	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
+}
+
+func (msg BuyXTRRequest) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*tlb.Any]) (tlb.Message, error) {
 	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 

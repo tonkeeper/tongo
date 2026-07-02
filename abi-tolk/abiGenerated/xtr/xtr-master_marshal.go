@@ -64,17 +64,6 @@ func (v StarPriceData) ToCell() (*boc.Cell, error) {
 	}
 	return c, nil
 }
-func (v *StarPrice) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	var vx StarPriceData
-	if err := vx.UnmarshalTLB(c, decoder); err != nil {
-		return err
-	}
-	*v = StarPrice(vx)
-	return nil
-}
-func (v StarPrice) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
-	return StarPriceData(v).MarshalTLB(c, encoder)
-}
 func (v *PushXTR) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixPushXTR); err != nil {
 		return err

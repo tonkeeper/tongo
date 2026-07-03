@@ -167,10 +167,6 @@ func (w *walletV5R1) CreateMsgBodyWithoutSignature(internalMessages []RawMessage
 	if err := tlb.Marshal(bodyCell, msg); err != nil {
 		return nil, err
 	}
-	bytes := [64]byte{}
-	if err := bodyCell.WriteBytes(bytes[:]); err != nil {
-		return nil, err
-	}
 	return bodyCell, nil
 }
 

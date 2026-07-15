@@ -361,7 +361,13 @@ func (p *ConnPool) notifySubscribers(update masterHeadUpdated) {
 		return
 	}
 	for _, ch := range p.waitList {
-		ch <- update.Head
+		select {
+		default:
+			// subscriber hasn't drained the previous head yet; don't block
+			// the pool's Run() goroutine while holding the lock — it will
+			// pick up the next update on the following iteration.
+		case ch <- update.Head:
+		}
 	}
 }
 

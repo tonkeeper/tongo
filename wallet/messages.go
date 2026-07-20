@@ -4,6 +4,7 @@ import (
 	"crypto/ed25519"
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -96,12 +97,7 @@ func (m *MessageV4) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 			Bounce:  true,
 			Mode:    3,
 		}
-		if msg.Payload.DeployAndInstallPlugin.StateInit.Code.Exists {
-			out.Code = &msg.Payload.DeployAndInstallPlugin.StateInit.Code.Value.Value
-		}
-		if msg.Payload.DeployAndInstallPlugin.StateInit.Data.Exists {
-			out.Data = &msg.Payload.DeployAndInstallPlugin.StateInit.Data.Value.Value
-		}
+		out.Init = &msg.Payload.DeployAndInstallPlugin.StateInit
 	case "InstallPlugin":
 		m.Op = 2
 		bodyRef = false
@@ -162,7 +158,21 @@ type W5SendMessageAction struct {
 	Msg   *boc.Cell `tlb:"^"`
 }
 
-type W5Actions []W5SendMessageAction
+// W5ActionList messages for wallet to forward.
+// slice order matches the order of wallet taking the corresponding actions
+// if you used to refer this type as W5Actions, ensure that's this order is what you expect
+type W5ActionList []W5SendMessageAction
+
+func newW5Actions(internalMessages []RawMessage) W5ActionList {
+	actions := make([]W5SendMessageAction, len(internalMessages))
+	for i, msg := range internalMessages {
+		actions[i] = W5SendMessageAction{
+			Msg:  msg.Message,
+			Mode: msg.Mode,
+		}
+	}
+	return actions
+}
 
 // MessageV5Beta is a message format used by wallet v5 beta.
 type MessageV5Beta struct {
@@ -174,7 +184,7 @@ type MessageV5Beta struct {
 		Seqno      uint32
 		Op         bool
 		Signature  tlb.Bits512
-		Actions    W5Actions `tlb:"^"`
+		Actions    W5ActionList `tlb:"^"`
 	} `tlbSumType:"#73696e74"`
 	// SignedExternal is an external message authenticated by a signature.
 	SignedExternal struct {
@@ -183,7 +193,7 @@ type MessageV5Beta struct {
 		Seqno      uint32
 		Op         bool
 		Signature  tlb.Bits512
-		Actions    W5Actions `tlb:"^"`
+		Actions    W5ActionList `tlb:"^"`
 	} `tlbSumType:"#7369676e"`
 }
 
@@ -195,7 +205,7 @@ type MessageV5 struct {
 		WalletId        uint32
 		ValidUntil      uint32
 		Seqno           uint32
-		Actions         *W5Actions         `tlb:"maybe^"`
+		Actions         *W5ActionList      `tlb:"maybe^"`
 		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
 		Signature       tlb.Bits512
 	} `tlbSumType:"#73696e74"`
@@ -204,13 +214,13 @@ type MessageV5 struct {
 		WalletId        uint32
 		ValidUntil      uint32
 		Seqno           uint32
-		Actions         *W5Actions         `tlb:"maybe^"`
+		Actions         *W5ActionList      `tlb:"maybe^"`
 		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
 		Signature       tlb.Bits512
 	} `tlbSumType:"#7369676e"`
 	ExtensionAction *struct {
 		QueryID         uint64
-		Actions         *W5Actions         `tlb:"maybe^"`
+		Actions         *W5ActionList      `tlb:"maybe^"`
 		ExtendedActions *W5ExtendedActions `tlb:"maybe"`
 	} `tlbSumType:"#6578746e"`
 }
@@ -233,6 +243,19 @@ type SignedMsgBody struct {
 type RawMessage struct {
 	Message *boc.Cell
 	Mode    byte
+}
+
+// ToRawMessage prepares internal message for a wallet to forward
+func ToRawMessage(message Sendable) (RawMessage, error) {
+	intMsg, mode, err := message.ToInternal()
+	if err != nil {
+		return RawMessage{}, err
+	}
+	cell := boc.NewCell()
+	if err := tlb.Marshal(cell, intMsg); err != nil {
+		return RawMessage{}, err
+	}
+	return RawMessage{Message: cell, Mode: mode}, nil
 }
 
 type PayloadV1toV4 []RawMessage
@@ -494,11 +517,12 @@ func (p *PayloadHighload) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error 
 	return nil
 }
 
-func (l *W5Actions) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
+func (l *W5ActionList) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	var actions []W5SendMessageAction
 	for {
 		switch c.BitsAvailableForRead() {
 		case 0:
+			slices.Reverse(actions)
 			*l = actions
 			return nil
 		case 40:
@@ -518,27 +542,27 @@ func (l *W5Actions) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	}
 }
 
-func (l W5Actions) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
+func (l W5ActionList) MarshalTLB(c *boc.Cell, _ *tlb.Encoder) error {
 	if len(l) == 0 {
 		return nil
 	}
-	if err := c.WriteUint(0x0ec3c86d, 32); err != nil {
-		return err
-	}
-	action := l[0]
-	if err := c.WriteUint(uint64(action.Mode), 8); err != nil {
-		return err
-	}
-	cell := boc.NewCell()
-	next := l[1:]
-	if err := encoder.Marshal(cell, next); err != nil {
-		return err
-	}
-	if err := c.AddRef(cell); err != nil {
-		return err
-	}
-	if err := c.AddRef(action.Msg); err != nil {
-		return err
+
+	for i := len(l) - 1; i >= 0; i-- {
+		action := l[i]
+		if err := c.WriteUint(0x0ec3c86d, 32); err != nil {
+			return err
+		}
+		if err := c.WriteUint(uint64(action.Mode), 8); err != nil {
+			return err
+		}
+		prev := boc.NewCell()
+		if err := c.AddRef(prev); err != nil {
+			return err
+		}
+		if err := c.AddRef(action.Msg); err != nil {
+			return err
+		}
+		c = prev
 	}
 	return nil
 }

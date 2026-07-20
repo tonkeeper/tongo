@@ -3,13 +3,13 @@ package wallet
 import (
 	"context"
 	"fmt"
-	"github.com/tonkeeper/tongo/utils"
 	"math/big"
 	"time"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/utils"
 )
 
 type Version int
@@ -187,6 +187,25 @@ func VersionFromString(s string) (Version, error) {
 	return v, nil
 }
 
+func GetVersionByCode(code boc.Cell) (Version, error) {
+	hash, err := code.Hash256()
+	if err != nil {
+		return 0, fmt.Errorf("failed to calculate code hash: %w", err)
+	}
+	version, ok := GetVerByCodeHash(hash)
+	if !ok {
+		return 0, fmt.Errorf("not a wallet")
+	}
+	return version, nil
+}
+
+// SupportsRelay reports whether this wallet version can execute a signed message body
+// delivered inside an internal message (the internal_signed opcode)
+// see https://docs.ton.org/contracts/standard/wallets/gasless
+func (v Version) SupportsRelay() bool {
+	return v == V5R1 || v == V5Beta
+}
+
 type Sendable interface {
 	ToInternal() (tlb.Message, uint8, error)
 }
@@ -246,11 +265,13 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 type Message struct {
 	Amount  tlb.Grams
 	Address ton.AccountID
-	Body    *boc.Cell
-	Code    *boc.Cell
-	Data    *boc.Cell
-	Bounce  bool
-	Mode    uint8
+	// Src is the sender address. Usually, nil is used (if message will be external)
+	// for relayed messages (gasless), non-nill src is required
+	Src    *ton.AccountID
+	Body   *boc.Cell
+	Init   *tlb.StateInit
+	Bounce bool
+	Mode   uint8
 }
 
 func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
@@ -272,7 +293,7 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 	}{
 		IhrDisabled: true,
 		Bounce:      m.Bounce,
-		Src:         (*ton.AccountID)(nil).ToMsgAddress(),
+		Src:         m.Src.ToMsgAddress(),
 		Dest:        m.Address.ToMsgAddress(),
 		IhrFee:      tlb.VarUInteger16(*big.NewInt(0)),
 	}
@@ -286,13 +307,11 @@ func (m Message) ToInternal() (message tlb.Message, mode uint8, err error) {
 		intMsg.Body.IsRight = true //todo: check length and
 		intMsg.Body.Value = tlb.Any(*m.Body)
 	}
-	if m.Code != nil && m.Data != nil {
-		intMsg.Init.Exists = true
-		intMsg.Init.Value.IsRight = true
-		intMsg.Init.Value.Value.Code.Exists = true
-		intMsg.Init.Value.Value.Data.Exists = true
-		intMsg.Init.Value.Value.Code.Value.Value = *m.Code
-		intMsg.Init.Value.Value.Data.Value.Value = *m.Data
+	if m.Init != nil {
+		intMsg.Init = tlb.Just(tlb.EitherRef[tlb.StateInit]{
+			IsRight: true,
+			Value:   *m.Init,
+		})
 	}
 
 	return intMsg, m.Mode, nil
@@ -367,8 +386,7 @@ func (cd ContractDeploy) ToInternal() (tlb.Message, uint8, error) {
 		Amount:  cd.Amount,
 		Address: ton.AccountID{cd.Workchain, hash},
 		Body:    body,
-		Code:    code,
-		Data:    data,
+		Init:    &init,
 		Bounce:  true,
 		Mode:    3,
 	}

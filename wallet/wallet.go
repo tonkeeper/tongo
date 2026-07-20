@@ -81,8 +81,52 @@ func applyOptions(opts ...Option) Options {
 // The version number is associated with a specific implementation of the wallet code
 // (https://github.com/toncenter/tonweb/blob/master/src/contract/wallet/WalletSources.md)
 func New(key ed25519.PrivateKey, ver Version, blockchain blockchain, opts ...Option) (Wallet, error) {
+	w, err := NewFromPublicKey(key.Public().(ed25519.PublicKey), ver, opts...)
+	if err != nil {
+		return Wallet{}, err
+	}
+	w.key = key
+	w.blockchain = blockchain
+	return w, nil
+}
+
+// NewFromAddress reconstructs a wallet from its public key and address by finding the wallet
+// version whose default configuration produces the given address
+func NewFromAddress(publicKey ed25519.PublicKey, address ton.AccountID) (Wallet, error) {
+	for _, ver := range []Version{V5Beta, V5R1, V4R2, V4R1, V3R2, V3R1} {
+		w, err := NewFromPublicKey(publicKey, ver, WithWorkchain(int(address.Workchain)))
+		if err != nil || w.GetAddress() != address {
+			continue
+		}
+		return w, nil
+	}
+	return Wallet{}, fmt.Errorf("no known wallet version produces %v from the given public key", address)
+}
+
+// NewFromCodeAndData reconstructs a wallet from the contract's onchain code and data, returning
+// it along with the seqno stored in the data. A non-zero workchain must be provided via WithWorkchain
+func NewFromCodeAndData(code, data boc.Cell, opts ...Option) (Wallet, uint32, error) {
+	ver, err := GetVersionByCode(code)
+	if err != nil {
+		return Wallet{}, 0, err
+	}
+	seqno, subWalletID, publicKey, err := parseWalletData(ver, data)
+	if err != nil {
+		return Wallet{}, 0, fmt.Errorf("can't parse %v wallet data: %w", ver.ToString(), err)
+	}
+	w, err := NewFromPublicKey(publicKey, ver, append(opts, WithSubWalletID(subWalletID))...)
+	if err != nil {
+		return Wallet{}, 0, err
+	}
+	return w, seqno, nil
+}
+
+// NewFromPublicKey creates a wallet from a public key only. Such a wallet can build unsigned
+// message bodies (see CreateMsgBodyWithoutSignature) and answer questions about the contract,
+// but cannot sign or send anything
+func NewFromPublicKey(publicKey ed25519.PublicKey, ver Version, opts ...Option) (Wallet, error) {
 	options := applyOptions(opts...)
-	w, err := newWallet(key.Public().(ed25519.PublicKey), ver, options)
+	w, err := newWallet(publicKey, ver, options)
 	if err != nil {
 		return Wallet{}, err
 	}
@@ -92,10 +136,8 @@ func New(key ed25519.PrivateKey, ver Version, blockchain blockchain, opts ...Opt
 	}
 	return Wallet{
 		address:            address,
-		key:                key,
 		ver:                ver,
 		intWallet:          w,
-		blockchain:         blockchain,
 		msgDefaultLifetime: options.MsgLifetime,
 	}, nil
 }
@@ -185,15 +227,15 @@ func (w *Wallet) RawSendV2(
 	if w.blockchain == nil {
 		return ton.Bits256{}, errors.New("blockchain interface is nil")
 	}
-	if len(internalMessages) > w.intWallet.maxMessageNumber() {
-		return ton.Bits256{}, fmt.Errorf("%v wallet support up to %v internal messages", w.ver, w.intWallet.maxMessageNumber())
+	if len(internalMessages) > w.MaxMessageNumber() {
+		return ton.Bits256{}, fmt.Errorf("%v wallet support up to %v internal messages", w.ver, w.MaxMessageNumber())
 	}
 	msgConfig := MessageConfig{
 		Seqno:      seqno,
 		ValidUntil: validUntil,
 		V5MsgType:  V5MsgTypeSignedExternal,
 	}
-	signedBodyCell, err := w.intWallet.createSignedMsgBodyCell(w.key, internalMessages, msgConfig)
+	signedBodyCell, err := w.createSignedMsgBodyCell(internalMessages, msgConfig)
 	if err != nil {
 		return ton.Bits256{}, fmt.Errorf("can not marshal wallet message body: %v", err)
 	}
@@ -266,15 +308,11 @@ func (w *Wallet) SendV2(ctx context.Context, waitingConfirmation time.Duration, 
 	}
 	msgArray := make([]RawMessage, 0, len(messages))
 	for _, m := range messages {
-		intMsg, mode, err := m.ToInternal()
+		rawMsg, err := ToRawMessage(m)
 		if err != nil {
 			return ton.Bits256{}, err
 		}
-		cell := boc.NewCell()
-		if err := tlb.Marshal(cell, intMsg); err != nil {
-			return ton.Bits256{}, err
-		}
-		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
+		msgArray = append(msgArray, rawMsg)
 	}
 	validUntil := time.Now().Add(w.msgDefaultLifetime)
 	return w.RawSendV2(ctx, params.Seqno, validUntil, msgArray, params.Init, waitingConfirmation)
@@ -312,6 +350,47 @@ func (w *Wallet) GetVersion() Version {
 	return w.ver
 }
 
+// MaxMessageNumber number of internal messages a single message body of this wallet can carry
+func (w *Wallet) MaxMessageNumber() int {
+	return w.intWallet.MaxMessageNumber()
+}
+
+// IsRelaySupported whether wallet supports owner-signed internal messages
+// see https://docs.ton.org/contracts/standard/wallets/v5#gasless-transactions
+func (w *Wallet) IsRelaySupported() bool {
+	return w.ver == V5R1 || w.ver == V5Beta
+}
+
+func (w *Wallet) CreateMsgBodyWithoutSignature(msgConfig MessageConfig, internalMessages []RawMessage) (*boc.Cell, error) {
+	if msgConfig.ValidUntil.IsZero() {
+		msgConfig.ValidUntil = time.Now().Add(w.msgDefaultLifetime)
+	}
+	return w.intWallet.CreateMsgBodyWithoutSignature(internalMessages, msgConfig)
+}
+
+func (w *Wallet) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
+	return w.intWallet.AttachSignature(body, signature)
+}
+
+// createSignedMsgBodyCell builds an unsigned message body, signs its hash with the wallet's
+// private key and attaches the signature in the layout the wallet contract expects.
+func (w *Wallet) createSignedMsgBodyCell(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
+	if w.key == nil {
+		return nil, errors.New("wallet has no private key")
+	}
+	bodyCell, err := w.intWallet.CreateMsgBodyWithoutSignature(internalMessages, msgConfig)
+	if err != nil {
+		return nil, err
+	}
+	signBytes, err := bodyCell.Sign(w.key)
+	if err != nil {
+		return nil, fmt.Errorf("can not sign wallet message body: %v", err)
+	}
+	var signature tlb.Bits512
+	copy(signature[:], signBytes)
+	return w.intWallet.AttachSignature(bodyCell, signature)
+}
+
 func (w *Wallet) StateInit() (*tlb.StateInit, error) {
 	return w.intWallet.generateStateInit()
 }
@@ -325,22 +404,55 @@ type MessageConfig struct {
 func (w *Wallet) CreateMessageBody(msgConfig MessageConfig, messages ...Sendable) (*boc.Cell, error) {
 	msgArray := make([]RawMessage, 0, len(messages))
 	for _, m := range messages {
-		intMsg, mode, err := m.ToInternal()
+		rawMsg, err := ToRawMessage(m)
 		if err != nil {
 			return nil, err
 		}
-		cell := boc.NewCell()
-		if err := tlb.Marshal(cell, intMsg); err != nil {
-			return nil, err
-		}
-		msgArray = append(msgArray, RawMessage{Message: cell, Mode: mode})
+		msgArray = append(msgArray, rawMsg)
 	}
 	if msgConfig.ValidUntil.IsZero() {
 		msgConfig.ValidUntil = time.Now().Add(w.msgDefaultLifetime)
 	}
-	signedBodyCell, err := w.intWallet.createSignedMsgBodyCell(w.key, msgArray, msgConfig)
+	signedBodyCell, err := w.createSignedMsgBodyCell(msgArray, msgConfig)
 	if err != nil {
 		return nil, err
 	}
 	return signedBodyCell, nil
+}
+
+func parseWalletData(ver Version, data boc.Cell) (seqno uint32, subWalletID uint32, publicKey ed25519.PublicKey, err error) {
+	switch ver {
+	case V1R1, V1R2, V1R3, V2R1, V2R2:
+		var d DataV1V2
+		if err := tlb.Unmarshal(&data, &d); err != nil {
+			return 0, 0, nil, err
+		}
+		return d.Seqno, 0, append(ed25519.PublicKey{}, d.PublicKey[:]...), nil
+	case V3R1, V3R2:
+		var d DataV3
+		if err := tlb.Unmarshal(&data, &d); err != nil {
+			return 0, 0, nil, err
+		}
+		return d.Seqno, d.SubWalletId, append(ed25519.PublicKey{}, d.PublicKey[:]...), nil
+	case V4R1, V4R2:
+		var d DataV4
+		if err := tlb.Unmarshal(&data, &d); err != nil {
+			return 0, 0, nil, err
+		}
+		return d.Seqno, d.SubWalletId, append(ed25519.PublicKey{}, d.PublicKey[:]...), nil
+	case V5R1:
+		var d DataV5R1
+		if err := tlb.Unmarshal(&data, &d); err != nil {
+			return 0, 0, nil, err
+		}
+		return d.Seqno, 0, append(ed25519.PublicKey{}, d.PublicKey[:]...), nil
+	case V5Beta:
+		var d DataV5Beta
+		if err := tlb.Unmarshal(&data, &d); err != nil {
+			return 0, 0, nil, err
+		}
+		return uint32(d.Seqno), 0, append(ed25519.PublicKey{}, d.PublicKey[:]...), nil
+	default:
+		return 0, 0, nil, fmt.Errorf("unsupported wallet version: %v", ver.ToString())
+	}
 }

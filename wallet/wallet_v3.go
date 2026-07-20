@@ -51,11 +51,11 @@ func (w *walletV3) generateStateInit() (*tlb.StateInit, error) {
 	return generateStateInit(w.version, data)
 }
 
-func (w *walletV3) maxMessageNumber() int {
+func (w *walletV3) MaxMessageNumber() int {
 	return 4
 }
 
-func (w *walletV3) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
+func (w *walletV3) CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
 	body := MessageV3{
 		SubWalletId: w.subWalletID,
 		ValidUntil:  uint32(msgConfig.ValidUntil.Unix()),
@@ -66,7 +66,11 @@ func (w *walletV3) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, intern
 	if err := tlb.Marshal(bodyCell, body); err != nil {
 		return nil, err
 	}
-	return signBodyCell(*bodyCell, privateKey)
+	return bodyCell, nil
+}
+
+func (w *walletV3) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
+	return attachSignatureAsSignedMsgBody(body, signature)
 }
 
 func (w *walletV3) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {

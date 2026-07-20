@@ -27,8 +27,10 @@ type Jetton struct {
 }
 
 type TransferMessage struct {
-	Jetton              *Jetton
-	Sender              ton.AccountID
+	Jetton *Jetton
+	Sender ton.AccountID
+	// SenderJettonWallet if nil, inferred from Sender + Jetton. Those are not required at all otherwise (for ToInternal)
+	SenderJettonWallet  *ton.AccountID
 	JettonAmount        *big.Int
 	Destination         ton.AccountID
 	ResponseDestination *ton.AccountID
@@ -63,9 +65,17 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 	if err := tlb.Marshal(c, msgBody); err != nil {
 		return tlb.Message{}, 0, err
 	}
-	jettonWallet, err := tm.Jetton.GetJettonWallet(context.TODO(), tm.Sender)
-	if err != nil {
-		return tlb.Message{}, 0, err
+	var jettonWallet ton.AccountID
+	if tm.SenderJettonWallet != nil {
+		jettonWallet = *tm.SenderJettonWallet
+	} else if tm.Jetton != nil {
+		var err error
+		jettonWallet, err = tm.Jetton.GetJettonWallet(context.TODO(), tm.Sender)
+		if err != nil {
+			return tlb.Message{}, 0, err
+		}
+	} else {
+		return tlb.Message{}, 0, errors.New("either SenderJettonWallet or Jetton must be set")
 	}
 	m := wallet.Message{
 		Amount:  tm.AttachedGram,
@@ -75,12 +85,7 @@ func (tm TransferMessage) ToInternal() (tlb.Message, uint8, error) {
 		Body:    c,
 	}
 	if tm.StateInit != nil {
-		if tm.StateInit.Code.Exists {
-			m.Code = &tm.StateInit.Code.Value.Value
-		}
-		if tm.StateInit.Data.Exists {
-			m.Data = &tm.StateInit.Data.Value.Value
-		}
+		m.Init = tm.StateInit
 	}
 	return m.ToInternal()
 }

@@ -17,8 +17,9 @@ type NextMsgParams struct {
 type wallet interface {
 	generateAddress() (ton.AccountID, error)
 	generateStateInit() (*tlb.StateInit, error)
-	maxMessageNumber() int
-	createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error)
+	MaxMessageNumber() int
+	CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error)
+	AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error)
 	NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error)
 }
 
@@ -57,30 +58,37 @@ func generateAddress(workchain int, stateInit tlb.StateInit) (ton.AccountID, err
 	}
 	h, err := stateCell.Hash()
 	if err != nil {
-		return ton.AccountID{}, err
+		return ton.AccountID{}, fmt.Errorf("can not calculate state init hash: %v", err)
 	}
 	var hash tlb.Bits256
 	copy(hash[:], h[:])
-	if err != nil {
-		return ton.AccountID{}, fmt.Errorf("can not calculate state init hash: %v", err)
-	}
 	return ton.AccountID{Workchain: int32(workchain), Address: hash}, nil
 }
 
-func signBodyCell(bodyCell boc.Cell, privateKey ed25519.PrivateKey) (*boc.Cell, error) {
-	signBytes, err := bodyCell.Sign(privateKey)
-	if err != nil {
-		return nil, fmt.Errorf("can not sign wallet message body: %v", err)
+func attachSignatureToBody(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
+	cell := boc.NewCell()
+	if err := cell.WriteBitString(body.RawBitString()); err != nil {
+		return nil, err
 	}
-	bits512 := tlb.Bits512{}
-	copy(bits512[:], signBytes[:])
+	for _, ref := range body.Refs() {
+		if err := cell.AddRef(ref); err != nil {
+			return nil, err
+		}
+	}
+	if err := cell.WriteBytes(signature[:]); err != nil {
+		return nil, err
+	}
+	return cell, nil
+}
+
+func attachSignatureAsSignedMsgBody(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
 	signedBody := SignedMsgBody{
-		Sign:    bits512,
-		Message: tlb.Any(bodyCell),
+		Sign:    signature,
+		Message: tlb.Any(*body),
 	}
-	signedBodyCell := boc.NewCell()
-	if err := tlb.Marshal(signedBodyCell, signedBody); err != nil {
-		return nil, fmt.Errorf("can not marshal signed body: %v", err)
+	cell := boc.NewCell()
+	if err := tlb.Marshal(cell, signedBody); err != nil {
+		return nil, err
 	}
-	return signedBodyCell, nil
+	return cell, nil
 }

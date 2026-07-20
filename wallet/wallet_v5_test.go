@@ -6,9 +6,17 @@ import (
 	"encoding/hex"
 	"reflect"
 	"testing"
+	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/liteapi"
+	"github.com/tonkeeper/tongo/liteclient"
+	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
+	"github.com/tonkeeper/tongo/tontest"
+	"github.com/tonkeeper/tongo/txemulator"
 )
 
 func TestGetW5ExtensionsList(t *testing.T) {
@@ -217,4 +225,135 @@ func TestGetW5R1ExtensionsList(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestW5ActionsEmulatedExecutionOrder(t *testing.T) {
+	privateKey, err := SeedToPrivateKey(RandomSeed())
+	require.NoError(t, err)
+	w, err := New(privateKey, V5R1, nil, WithNetworkGlobalID(MainnetGlobalID))
+	require.NoError(t, err)
+	stateInit, err := w.StateInit()
+	require.NoError(t, err)
+	walletState := tontest.Account().
+		Address(w.GetAddress()).
+		State(tlb.AccountActive).
+		Balance(220_000_000).
+		StateInit(&stateInit.Code.Value.Value, &stateInit.Data.Value.Value).
+		MustShardAccount()
+
+	recipients := []ton.AccountID{
+		ton.MustParseAccountID("0:00000000000000000000000000000000000000000000000000000000000000a1"),
+		ton.MustParseAccountID("0:00000000000000000000000000000000000000000000000000000000000000b2"),
+		ton.MustParseAccountID("0:00000000000000000000000000000000000000000000000000000000000000c3"),
+	}
+	transfers := []Sendable{
+		SimpleTransfer{Amount: 70_000_000, Address: recipients[0], Comment: "first"},
+		SimpleTransfer{Amount: 80_000_000, Address: recipients[1], Comment: "second"},
+		SimpleTransfer{Amount: 500_000_000, Address: recipients[2], Comment: "too much"},
+	}
+
+	body, err := w.CreateMessageBody(MessageConfig{
+		Seqno:      0,
+		ValidUntil: time.Now().Add(time.Minute),
+		V5MsgType:  V5MsgTypeSignedExternal,
+	}, transfers...)
+	require.NoError(t, err)
+	msg, err := ton.CreateExternalMessage(w.GetAddress(), body, nil, tlb.VarUInteger16{})
+	require.NoError(t, err)
+	accountSource := walletV5OrderTestAccountSource{
+		accounts: map[ton.AccountID]tlb.ShardAccount{
+			w.GetAddress(): walletState,
+		},
+	}
+	tracer, err := txemulator.NewTraceBuilder(
+		txemulator.WithAccountsSource(accountSource),
+		txemulator.WithLimit(10),
+	)
+	require.NoError(t, err)
+	tree, err := tracer.Run(context.Background(), msg)
+	require.NoError(t, err)
+
+	action := tree.TX.Description.TransOrd.Action
+	require.True(t, action.Exists)
+	actionPhase := action.Value.Value
+	assert.Equal(t, uint16(len(transfers)), actionPhase.TotActions)
+	assert.Equal(t, uint16(1), actionPhase.SkippedActions)
+	assert.Equal(t, uint16(2), actionPhase.MsgsCreated)
+	require.Len(t, tree.Children, 2)
+	for i, child := range tree.Children {
+		msg := child.TX.Msgs.InMsg.Value.Value
+		gotDest, err := ton.AccountIDFromTlb(msg.Info.IntMsgInfo.Dest)
+		if assert.NoError(t, err) {
+			assert.NotNil(t, gotDest)
+			assert.Equal(t, recipients[i], *gotDest)
+			wantAmount := transfers[i].(SimpleTransfer).Amount
+			assert.Equal(t, wantAmount, msg.Info.IntMsgInfo.Value.Grams)
+		}
+	}
+}
+
+func TestW5ActionsMarshalUnmarshalLogicalOrder(t *testing.T) {
+	actions := W5ActionList{
+		{Mode: 1, Msg: mustW5ActionMsgCell(t, 1)},
+		{Mode: 2, Msg: mustW5ActionMsgCell(t, 2)},
+		{Mode: 3, Msg: mustW5ActionMsgCell(t, 3)},
+	}
+
+	cell := boc.NewCell()
+	require.NoError(t, tlb.Marshal(cell, actions))
+
+	var got W5ActionList
+	require.NoError(t, tlb.Unmarshal(cell.CopyCell(), &got))
+	requireW5ActionsEqual(t, actions, got)
+}
+
+func mustW5ActionMsgCell(t *testing.T, value uint64) *boc.Cell {
+	t.Helper()
+	cell := boc.NewCell()
+	require.NoError(t, cell.WriteUint(value, 32))
+	return cell
+}
+
+func requireW5ActionsEqual(t *testing.T, want, got W5ActionList) {
+	t.Helper()
+	require.Len(t, got, len(want))
+	for i := range want {
+		require.Equal(t, want[i].Mode, got[i].Mode)
+		wantHash, err := want[i].Msg.HashString()
+		require.NoError(t, err)
+		gotHash, err := got[i].Msg.HashString()
+		require.NoError(t, err)
+		require.Equal(t, wantHash, gotHash)
+	}
+}
+
+type walletV5OrderTestAccountSource struct {
+	accounts map[ton.AccountID]tlb.ShardAccount
+}
+
+func (s walletV5OrderTestAccountSource) GetAccountState(_ context.Context, account ton.AccountID) (tlb.ShardAccount, error) {
+	if state, ok := s.accounts[account]; ok {
+		return state, nil
+	}
+	return tontest.Account().Address(account).MustShardAccount(), nil
+}
+
+func (s walletV5OrderTestAccountSource) GetLibraries(_ context.Context, _ []ton.Bits256) (map[ton.Bits256]*boc.Cell, error) {
+	return nil, nil
+}
+
+func (s walletV5OrderTestAccountSource) GetAllShardsInfo(_ context.Context, _ ton.BlockIDExt) ([]ton.BlockIDExt, error) {
+	return []ton.BlockIDExt{{
+		BlockID: ton.BlockID{
+			Workchain: 0,
+			Shard:     0x8000000000000000,
+			Seqno:     1,
+		},
+	}}, nil
+}
+
+func (s walletV5OrderTestAccountSource) GetMasterchainInfo(_ context.Context) (liteclient.LiteServerMasterchainInfoC, error) {
+	return liteclient.LiteServerMasterchainInfoC{
+		Last: liteclient.TonNodeBlockIdExtC{Seqno: 1},
+	}, nil
 }

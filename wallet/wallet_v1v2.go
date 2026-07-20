@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"crypto/ed25519"
+	"fmt"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
@@ -46,12 +47,16 @@ func (w *walletV1V2) generateStateInit() (*tlb.StateInit, error) {
 	return generateStateInit(w.version, data)
 }
 
-func (w *walletV1V2) maxMessageNumber() int {
+func (w *walletV1V2) MaxMessageNumber() int {
 	return 4
 }
 
-func (w *walletV1V2) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
-	panic("implement me")
+func (w *walletV1V2) CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
+	return nil, fmt.Errorf("message body creation is not implemented for v1/v2 wallets")
+}
+
+func (w *walletV1V2) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
+	return attachSignatureAsSignedMsgBody(body, signature)
 }
 
 func (w *walletV1V2) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {

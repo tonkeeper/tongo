@@ -78,27 +78,20 @@ func (w *walletV5R1) generateStateInit() (*tlb.StateInit, error) {
 	return generateStateInit(V5R1, data)
 }
 
-func (w *walletV5R1) maxMessageNumber() int {
-	return 255
-}
-
 type extV5R1SignedMessage struct {
 	WalletId        uint32
 	ValidUntil      uint32
 	Seqno           uint32
-	Actions         *W5Actions         `tlb:"maybe^"`
+	Actions         *W5ActionList      `tlb:"maybe^"`
 	ExtendedActions *W5ExtendedActions `tlb:"maybe"`
 }
 
+func (w *walletV5R1) MaxMessageNumber() int {
+	return 255
+}
+
 func (w *walletV5R1) CreateSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, extensionsActions *W5ExtendedActions, msgConfig MessageConfig) (*boc.Cell, error) {
-	actions := make([]W5SendMessageAction, 0, len(internalMessages))
-	for _, msg := range internalMessages {
-		actions = append(actions, W5SendMessageAction{
-			Msg:  msg.Message,
-			Mode: msg.Mode,
-		})
-	}
-	w5Actions := W5Actions(actions)
+	w5Actions := newW5Actions(internalMessages)
 	msg := extV5R1SignedMessage{
 		WalletId:        w.walletID,
 		ValidUntil:      uint32(msgConfig.ValidUntil.Unix()),
@@ -123,10 +116,6 @@ func (w *walletV5R1) CreateSignedMsgBodyCell(privateKey ed25519.PrivateKey, inte
 	return bodyCell, nil
 }
 
-func (w *walletV5R1) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
-	return w.CreateSignedMsgBodyCell(privateKey, internalMessages, nil, msgConfig)
-}
-
 func (w *walletV5R1) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	if state.Account.Status() == tlb.AccountActive {
 		var data DataV5R1
@@ -146,14 +135,7 @@ func (w *walletV5R1) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, e
 }
 
 func (w *walletV5R1) CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
-	actions := make([]W5SendMessageAction, 0, len(internalMessages))
-	for _, msg := range internalMessages {
-		actions = append(actions, W5SendMessageAction{
-			Msg:  msg.Message,
-			Mode: msg.Mode,
-		})
-	}
-	w5Actions := W5Actions(actions)
+	w5Actions := newW5Actions(internalMessages)
 	msg := extV5R1SignedMessage{
 		WalletId:   w.walletID,
 		ValidUntil: uint32(msgConfig.ValidUntil.Unix()),
@@ -168,6 +150,10 @@ func (w *walletV5R1) CreateMsgBodyWithoutSignature(internalMessages []RawMessage
 		return nil, err
 	}
 	return bodyCell, nil
+}
+
+func (w *walletV5R1) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
+	return attachSignatureToBody(body, signature)
 }
 
 // GetW5R1ExtensionsList returns a list of wallet v5 extensions added to a specific wallet.

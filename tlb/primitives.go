@@ -40,6 +40,10 @@ type Either[M, N any] struct {
 	Right   N
 }
 
+// EitherRef represent how Value is stored:
+//
+//	"Left" is when Value is directly stored (in the same cell)
+//	"Right" is when Value stored in a next ref
 type EitherRef[T any] struct {
 	IsRight bool
 	Value   T

@@ -106,7 +106,7 @@ func TestExtractRawMessages(t *testing.T) {
 			ver:  V5Beta,
 			want: []RawMessage{
 				{
-					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMtxsAAAAAAAAAAAAAAAAAAEA="),
+					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMPQkAAAAAAAAAAAAAAAAAAEA="),
 					Mode:    3,
 				},
 				{
@@ -114,7 +114,7 @@ func TestExtractRawMessages(t *testing.T) {
 					Mode:    3,
 				},
 				{
-					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMPQkAAAAAAAAAAAAAAAAAAEA="),
+					Message: mustFromBase64("te6ccgEBAQEAVwAAqWgB6G+oc+JDZG77OSjCMnH/ugluoRhGeUI6497n7aCbbhcAGzNMlqFjDeWk/rivKqxwpBoMaThCmw7tE7othW8odIgMtxsAAAAAAAAAAAAAAAAAAEA="),
 					Mode:    3,
 				},
 			},
@@ -125,11 +125,11 @@ func TestExtractRawMessages(t *testing.T) {
 			ver:  V5R1,
 			want: []RawMessage{
 				{
-					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4aYloAAAAAAAAAAAAAAAAAAA=="),
+					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4cxLQAAAAAAAAAAAAAAAAAAA=="),
 					Mode:    3,
 				},
 				{
-					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4cxLQAAAAAAAAAAAAAAAAAAA=="),
+					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAa5yKA/gbStnXmg2U1Zib1GE01YSPACHaGA0K0BpBRw4aYloAAAAAAAAAAAAAAAAAAA=="),
 					Mode:    3,
 				},
 			},

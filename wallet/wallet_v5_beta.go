@@ -83,10 +83,6 @@ func (w *walletV5Beta) generateStateInit() (*tlb.StateInit, error) {
 	return generateStateInit(w.version, data)
 }
 
-func (w *walletV5Beta) maxMessageNumber() int {
-	return 254
-}
-
 func (w *walletV5Beta) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	if state.Account.Status() == tlb.AccountActive {
 		var data DataV5Beta
@@ -111,17 +107,15 @@ type extV5BetaSignedMessage struct {
 	ValidUntil uint32
 	Seqno      uint32
 	Op         bool
-	Actions    W5Actions `tlb:"^"`
+	Actions    W5ActionList `tlb:"^"`
+}
+
+func (w *walletV5Beta) MaxMessageNumber() int {
+	return 254
 }
 
 func (w *walletV5Beta) CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
-	actions := make([]W5SendMessageAction, 0, len(internalMessages))
-	for _, msg := range internalMessages {
-		actions = append(actions, W5SendMessageAction{
-			Msg:  msg.Message,
-			Mode: msg.Mode,
-		})
-	}
+	actions := newW5Actions(internalMessages)
 	msg := extV5BetaSignedMessage{
 		WalletId: WalletV5ID{
 			NetworkGlobalID: w.networkGlobalID,
@@ -143,40 +137,8 @@ func (w *walletV5Beta) CreateMsgBodyWithoutSignature(internalMessages []RawMessa
 	return bodyCell, nil
 }
 
-func (w *walletV5Beta) createSignedMsgBodyCell(privateKey ed25519.PrivateKey, internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error) {
-	actions := make([]W5SendMessageAction, 0, len(internalMessages))
-	for _, msg := range internalMessages {
-		actions = append(actions, W5SendMessageAction{
-			Msg:  msg.Message,
-			Mode: msg.Mode,
-		})
-	}
-	msg := extV5BetaSignedMessage{
-		WalletId: WalletV5ID{
-			NetworkGlobalID: w.networkGlobalID,
-			Workchain:       uint8(w.workchain),
-			SubWalletID:     w.subWalletID,
-		},
-		ValidUntil: uint32(msgConfig.ValidUntil.Unix()),
-		Seqno:      msgConfig.Seqno,
-		Op:         false,
-		Actions:    actions,
-	}
-	bodyCell := boc.NewCell()
-	if err := bodyCell.WriteUint(uint64(msgConfig.V5MsgType), 32); err != nil {
-		return nil, err
-	}
-	if err := tlb.Marshal(bodyCell, msg); err != nil {
-		return nil, err
-	}
-	signature, err := bodyCell.Sign(privateKey)
-	if err != nil {
-		return nil, err
-	}
-	if err := bodyCell.WriteBytes(signature); err != nil {
-		return nil, err
-	}
-	return bodyCell, nil
+func (w *walletV5Beta) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error) {
+	return attachSignatureToBody(body, signature)
 }
 
 func unpackAddr(wc int8, addr [32]byte) ton.AccountID {

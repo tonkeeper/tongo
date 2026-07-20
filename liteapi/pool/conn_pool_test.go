@@ -16,6 +16,7 @@ type mockConn struct {
 	id           int
 	seqno        uint32
 	isOK         bool
+	isArchive    bool
 	avgRoundTrip time.Duration
 }
 
@@ -24,7 +25,7 @@ func (m *mockConn) AverageRoundTrip() time.Duration {
 }
 
 func (m *mockConn) IsArchiveNode() bool {
-	return false
+	return m.isArchive
 }
 
 func (m *mockConn) ID() int {
@@ -48,7 +49,7 @@ func (m *mockConn) IsOK() bool {
 }
 
 func (m *mockConn) Client() *liteclient.Client {
-	panic("implement me")
+	return nil
 }
 
 func (m *mockConn) Status() ConnStatus {
@@ -164,6 +165,43 @@ func TestConnPool_updateBest(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestConnPool_BestArchiveClient(t *testing.T) {
+	t.Run("round-robins over OK archive nodes only", func(t *testing.T) {
+		// seqno is used purely as an identity marker for each conn.
+		p := &ConnPool{
+			conns: []conn{
+				&mockConn{id: 0, seqno: 10, isOK: true, isArchive: true},
+				&mockConn{id: 1, seqno: 20, isOK: false, isArchive: true}, // not OK -> skipped
+				&mockConn{id: 2, seqno: 30, isOK: true, isArchive: false}, // not archive -> skipped
+				&mockConn{id: 3, seqno: 40, isOK: true, isArchive: true},
+				&mockConn{id: 4, seqno: 50, isOK: true, isArchive: true},
+			},
+		}
+		want := []uint32{10, 40, 50, 10, 40, 50, 10} // cycles through the 3 eligible nodes
+		for i, expected := range want {
+			_, head, err := p.BestArchiveClient(context.Background())
+			if err != nil {
+				t.Fatalf("call %d: unexpected error: %v", i, err)
+			}
+			if head.Seqno != expected {
+				t.Fatalf("call %d: expected archive node seqno %d, got %d", i, expected, head.Seqno)
+			}
+		}
+	})
+
+	t.Run("returns error when no archive nodes qualify", func(t *testing.T) {
+		p := &ConnPool{
+			conns: []conn{
+				&mockConn{id: 0, isOK: true, isArchive: false},
+				&mockConn{id: 1, isOK: false, isArchive: true},
+			},
+		}
+		if _, _, err := p.BestArchiveClient(context.Background()); err == nil {
+			t.Fatal("expected 'no archive nodes available' error, got nil")
+		}
+	})
 }
 
 type mockConnWithClient struct {

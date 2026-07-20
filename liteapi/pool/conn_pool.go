@@ -46,6 +46,7 @@ type ConnPool struct {
 	bestConn   conn
 	waitListID uint64
 	waitList   map[uint64]chan ton.BlockIDExt
+	archiveRR  uint64
 }
 
 // conn contains all methods needed by a pool.
@@ -321,12 +322,20 @@ func (p *ConnPool) BestMasterchainClient(ctx context.Context) (*liteclient.Clien
 	}
 }
 func (p *ConnPool) BestArchiveClient(ctx context.Context) (*liteclient.Client, ton.BlockIDExt, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	var archives []conn
 	for _, c := range p.conns {
 		if c.IsOK() && c.IsArchiveNode() {
-			return c.Client(), c.MasterHead(), nil
+			archives = append(archives, c)
 		}
 	}
-	return nil, ton.BlockIDExt{}, fmt.Errorf("no archive nodes available")
+	if len(archives) == 0 {
+		return nil, ton.BlockIDExt{}, fmt.Errorf("no archive nodes available")
+	}
+	c := archives[p.archiveRR%uint64(len(archives))]
+	p.archiveRR++
+	return c.Client(), c.MasterHead(), nil
 }
 
 // BestClientByAccountID returns a liteclient and its known masterchain head.

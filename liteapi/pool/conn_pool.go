@@ -338,7 +338,11 @@ func (p *ConnPool) BestClientByAccountID(ctx context.Context, accountID ton.Acco
 }
 
 // BestClientByBlockID returns a liteclient and its known masterchain head.
-func (p *ConnPool) BestClientByBlockID(ctx context.Context, blockID ton.BlockID) (*liteclient.Client, error) {
+func (p *ConnPool) BestClientByBlockID(ctx context.Context, blockID ton.BlockID, archiveRequired bool) (*liteclient.Client, error) {
+	if archiveRequired {
+		c, _, err := p.BestArchiveClient(ctx)
+		return c, err
+	}
 	server, _, err := p.BestMasterchainClient(ctx)
 	return server, err
 }

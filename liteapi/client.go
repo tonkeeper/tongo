@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -194,6 +195,8 @@ func FromEnvsOrMainnet() Option {
 			return err
 		}
 		o.LiteServers = file.LiteServers
+		o.MaxConnections = len(file.LiteServers)
+		o.DetectArchiveNodes = true // so the archive fallback in block-by-id reads can pick an archive node
 		return nil
 	}
 }
@@ -216,6 +219,8 @@ func FromEnvsOrTestnet() Option {
 			return err
 		}
 		o.LiteServers = file.LiteServers
+		o.MaxConnections = len(file.LiteServers)
+		o.DetectArchiveNodes = true // so the archive fallback in block-by-id reads can pick an archive node
 		return nil
 	}
 }
@@ -397,15 +402,27 @@ func (c *Client) GetBlock(ctx context.Context, blockID ton.BlockIDExt) (tlb.Bloc
 }
 
 func (c *Client) GetBlockRaw(ctx context.Context, blockID ton.BlockIDExt) (liteclient.LiteServerBlockDataC, error) {
-	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
-	if err != nil {
-		return liteclient.LiteServerBlockDataC{}, err
+	archiveRequired := false
+	for {
+		client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID, archiveRequired)
+		if err != nil {
+			return liteclient.LiteServerBlockDataC{}, err
+		}
+		res, err := client.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest{
+			Id: liteclient.BlockIDExt(blockID),
+		})
+		if blockNotInDB(err) {
+			if !c.archiveDetectionEnabled || archiveRequired {
+				return liteclient.LiteServerBlockDataC{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return liteclient.LiteServerBlockDataC{}, err
+		}
+		return res, nil
 	}
-	res, err := client.LiteServerGetBlock(ctx, liteclient.LiteServerGetBlockRequest{liteclient.BlockIDExt(blockID)})
-	if err != nil {
-		return liteclient.LiteServerBlockDataC{}, err
-	}
-	return res, err
 }
 
 func (c *Client) GetState(ctx context.Context, blockID ton.BlockIDExt) ([]byte, ton.Bits256, ton.Bits256, error) {
@@ -418,15 +435,25 @@ func (c *Client) GetState(ctx context.Context, blockID ton.BlockIDExt) ([]byte, 
 }
 
 func (c *Client) GetStateRaw(ctx context.Context, blockID ton.BlockIDExt) (liteclient.LiteServerBlockStateC, error) {
-	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
-	if err != nil {
-		return liteclient.LiteServerBlockStateC{}, err
+	archiveRequired := false
+	for {
+		client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID, archiveRequired)
+		if err != nil {
+			return liteclient.LiteServerBlockStateC{}, err
+		}
+		res, err := client.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
+		if blockNotInDB(err) {
+			if !c.archiveDetectionEnabled || archiveRequired {
+				return liteclient.LiteServerBlockStateC{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return liteclient.LiteServerBlockStateC{}, err
+		}
+		return res, nil
 	}
-	res, err := client.LiteServerGetState(ctx, liteclient.LiteServerGetStateRequest{Id: liteclient.BlockIDExt(blockID)})
-	if err != nil {
-		return liteclient.LiteServerBlockStateC{}, err
-	}
-	return res, nil
 }
 
 func (c *Client) GetBlockHeader(ctx context.Context, blockID ton.BlockIDExt, mode uint32) (tlb.BlockInfo, error) {
@@ -439,39 +466,59 @@ func (c *Client) GetBlockHeader(ctx context.Context, blockID ton.BlockIDExt, mod
 }
 
 func (c *Client) GetBlockHeaderRaw(ctx context.Context, blockID ton.BlockIDExt, mode uint32) (liteclient.LiteServerBlockHeaderC, error) {
-	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
-	if err != nil {
-		return liteclient.LiteServerBlockHeaderC{}, err
+	archiveRequired := false
+	for {
+		client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID, archiveRequired)
+		if err != nil {
+			return liteclient.LiteServerBlockHeaderC{}, err
+		}
+		res, err := client.LiteServerGetBlockHeader(ctx, liteclient.LiteServerGetBlockHeaderRequest{
+			Id:   liteclient.BlockIDExt(blockID),
+			Mode: mode,
+		})
+		if blockNotInDB(err) {
+			if !c.archiveDetectionEnabled || archiveRequired {
+				return liteclient.LiteServerBlockHeaderC{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return liteclient.LiteServerBlockHeaderC{}, err
+		}
+		return res, nil
 	}
-	res, err := client.LiteServerGetBlockHeader(ctx, liteclient.LiteServerGetBlockHeaderRequest{
-		Id:   liteclient.BlockIDExt(blockID),
-		Mode: mode,
-	})
-	if err != nil {
-		return liteclient.LiteServerBlockHeaderC{}, err
-	}
-	return res, nil
 }
 
 func (c *Client) LookupBlock(ctx context.Context, blockID ton.BlockID, mode uint32, lt *uint64, utime *uint32) (ton.BlockIDExt, tlb.BlockInfo, error) {
-	client, err := c.pool.BestClientByBlockID(ctx, blockID)
-	if err != nil {
-		return ton.BlockIDExt{}, tlb.BlockInfo{}, err
+	archiveRequired := false
+	for {
+		client, err := c.pool.BestClientByBlockID(ctx, blockID, archiveRequired)
+		if err != nil {
+			return ton.BlockIDExt{}, tlb.BlockInfo{}, err
+		}
+		res, err := client.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
+			Mode: mode,
+			Id: liteclient.TonNodeBlockIdC{
+				Workchain: uint32(blockID.Workchain),
+				Shard:     blockID.Shard,
+				Seqno:     blockID.Seqno,
+			},
+			Lt:    lt,
+			Utime: utime,
+		})
+		if blockNotInDB(err) {
+			if !c.archiveDetectionEnabled || archiveRequired {
+				return ton.BlockIDExt{}, tlb.BlockInfo{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return ton.BlockIDExt{}, tlb.BlockInfo{}, err
+		}
+		return decodeBlockHeader(res)
 	}
-	res, err := client.LiteServerLookupBlock(ctx, liteclient.LiteServerLookupBlockRequest{
-		Mode: mode,
-		Id: liteclient.TonNodeBlockIdC{
-			Workchain: uint32(blockID.Workchain),
-			Shard:     blockID.Shard,
-			Seqno:     blockID.Seqno,
-		},
-		Lt:    lt,
-		Utime: utime,
-	})
-	if err != nil {
-		return ton.BlockIDExt{}, tlb.BlockInfo{}, err
-	}
-	return decodeBlockHeader(res)
 }
 
 func decodeBlockHeader(header liteclient.LiteServerBlockHeaderC) (ton.BlockIDExt, tlb.BlockInfo, error) {
@@ -796,6 +843,20 @@ func truncatedHistory(err error) bool {
 	return ok && int32(e.Code) == -400
 }
 
+// blockNotInDB reports whether err indicates that a lite server does not retain
+// the requested block (e.g. a pruned/historical block on a non-archive node).
+func blockNotInDB(err error) bool {
+	if err == nil {
+		return false
+	}
+	var e liteclient.LiteServerErrorC
+	if errors.As(err, &e) {
+		// 651 = "... seqno not in db"; message check covers related pruned-block codes
+		return e.Code == 651 || strings.Contains(e.Message, "not in db")
+	}
+	return strings.Contains(err.Error(), "not in db")
+}
+
 func (c *Client) GetLastTransactions(ctx context.Context, a ton.AccountID, limit int) ([]ton.Transaction, error) {
 	state, err := c.GetAccountState(ctx, a)
 	if err != nil {
@@ -846,7 +907,7 @@ func (c *Client) ListBlockTransactions(
 }
 
 func (c *Client) ListBlockTransactionsRaw(ctx context.Context, blockID ton.BlockIDExt, mode, count uint32, after *liteclient.LiteServerTransactionId3C) (liteclient.LiteServerBlockTransactionsC, error) {
-	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID)
+	client, err := c.pool.BestClientByBlockID(ctx, blockID.BlockID, false)
 	if err != nil {
 		return liteclient.LiteServerBlockTransactionsC{}, err
 	}
@@ -877,33 +938,41 @@ func (c *Client) GetBlockProof(
 
 func (c *Client) GetBlockProofRaw(ctx context.Context, knownBlock ton.BlockIDExt, targetBlock *ton.BlockIDExt) (liteclient.LiteServerPartialBlockProofC, error) {
 	var (
-		err    error
-		client *liteclient.Client
-		mode   uint32 = 0
+		mode uint32 = 0
 	)
+	blockID := knownBlock.BlockID
 	if targetBlock != nil {
-		client, err = c.pool.BestClientByBlockID(ctx, targetBlock.BlockID)
+		blockID = targetBlock.BlockID
 		mode = 1
-	} else {
-		client, err = c.pool.BestClientByBlockID(ctx, knownBlock.BlockID)
-	}
-	if err != nil {
-		return liteclient.LiteServerPartialBlockProofC{}, err
 	}
 	var tb *liteclient.TonNodeBlockIdExtC
 	if targetBlock != nil {
 		b := liteclient.BlockIDExt(*targetBlock)
 		tb = &b
 	}
-	res, err := client.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
-		Mode:        mode,
-		KnownBlock:  liteclient.BlockIDExt(knownBlock),
-		TargetBlock: tb,
-	})
-	if err != nil {
-		return liteclient.LiteServerPartialBlockProofC{}, err
+	archiveRequired := false
+	for {
+		client, err := c.pool.BestClientByBlockID(ctx, blockID, archiveRequired)
+		if err != nil {
+			return liteclient.LiteServerPartialBlockProofC{}, err
+		}
+		res, err := client.LiteServerGetBlockProof(ctx, liteclient.LiteServerGetBlockProofRequest{
+			Mode:        mode,
+			KnownBlock:  liteclient.BlockIDExt(knownBlock),
+			TargetBlock: tb,
+		})
+		if blockNotInDB(err) {
+			if !c.archiveDetectionEnabled || archiveRequired {
+				return liteclient.LiteServerPartialBlockProofC{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return liteclient.LiteServerPartialBlockProofC{}, err
+		}
+		return res, nil
 	}
-	return res, nil
 }
 
 // GetConfigAll returns a current configuration of the blockchain.

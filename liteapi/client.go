@@ -1194,13 +1194,29 @@ func (c *Client) GetPoolStatus() pool.Status {
 
 func (c *Client) WaitMasterchainBlock(ctx context.Context, seqno uint32, timeout time.Duration) (ton.BlockIDExt, error) {
 	t := uint32(timeout.Milliseconds())
-	client, _, err := c.pool.BestMasterchainClient(ctx)
-	if err != nil {
-		return ton.BlockIDExt{}, err
+	archiveRequired := false
+	for {
+		var client *liteclient.Client
+		var err error
+		if archiveRequired {
+			client, _, err = c.pool.BestArchiveClient(ctx)
+		} else {
+			client, _, err = c.pool.BestMasterchainClient(ctx)
+		}
+		if err != nil {
+			return ton.BlockIDExt{}, err
+		}
+		res, err := client.WaitMasterchainBlock(ctx, seqno, t)
+		if blockNotInDB(err) {
+			if !c.archiveDetectionEnabled || archiveRequired {
+				return ton.BlockIDExt{}, err
+			}
+			archiveRequired = true
+			continue
+		}
+		if err != nil {
+			return ton.BlockIDExt{}, err
+		}
+		return res.Id.ToBlockIdExt(), nil
 	}
-	res, err := client.WaitMasterchainBlock(ctx, seqno, t)
-	if err != nil {
-		return ton.BlockIDExt{}, err
-	}
-	return res.Id.ToBlockIdExt(), nil
 }

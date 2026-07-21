@@ -146,6 +146,14 @@ func (c *Cell) ToBocBase64() (string, error) {
 	return c.ToBocBase64Custom(false, false, false, 0)
 }
 
+func (c *Cell) ToBocHex() (string, error) {
+	bytes, err := c.ToBoc()
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
+
 func (c *Cell) ToBocCustom(idx bool, hasCrc32 bool, cacheBits bool, flags uint) ([]byte, error) {
 	bag := newBagOfCells()
 	return bag.serializeBoc([]*Cell{c}, idx, hasCrc32, cacheBits, 0)

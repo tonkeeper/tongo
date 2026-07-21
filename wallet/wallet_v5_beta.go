@@ -141,6 +141,10 @@ func (w *walletV5Beta) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*
 	return attachSignatureToBody(body, signature)
 }
 
+func (w *walletV5Beta) GetPublicKey() ed25519.PublicKey {
+	return w.publicKey
+}
+
 func unpackAddr(wc int8, addr [32]byte) ton.AccountID {
 	addr[31] = addr[31] ^ uint8(wc+1)
 	return ton.AccountID{

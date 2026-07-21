@@ -86,3 +86,7 @@ func (w *walletHighloadV2) NextMessageParams(state tlb.ShardAccount) (NextMsgPar
 	}
 	return NextMsgParams{Init: stateInit}, nil
 }
+
+func (w *walletHighloadV2) GetPublicKey() ed25519.PublicKey {
+	return w.publicKey
+}

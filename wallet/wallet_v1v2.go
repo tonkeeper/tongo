@@ -62,3 +62,7 @@ func (w *walletV1V2) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*bo
 func (w *walletV1V2) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error) {
 	panic("implement me")
 }
+
+func (w *walletV1V2) GetPublicKey() ed25519.PublicKey {
+	return w.publicKey
+}

@@ -93,3 +93,7 @@ func (w *walletV4) NextMessageParams(state tlb.ShardAccount) (NextMsgParams, err
 	}
 	return NextMsgParams{Init: init}, nil
 }
+
+func (w *walletV4) GetPublicKey() ed25519.PublicKey {
+	return w.publicKey
+}

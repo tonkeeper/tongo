@@ -156,6 +156,10 @@ func (w *walletV5R1) AttachSignature(body *boc.Cell, signature tlb.Bits512) (*bo
 	return attachSignatureToBody(body, signature)
 }
 
+func (w *walletV5R1) GetPublicKey() ed25519.PublicKey {
+	return w.publicKey
+}
+
 // GetW5R1ExtensionsList returns a list of wallet v5 extensions added to a specific wallet.
 func GetW5R1ExtensionsList(state tlb.ShardAccount, workchain int) (map[ton.AccountID]struct{}, error) {
 	if state.Account.Status() == tlb.AccountActive {

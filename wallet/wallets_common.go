@@ -21,6 +21,7 @@ type wallet interface {
 	CreateMsgBodyWithoutSignature(internalMessages []RawMessage, msgConfig MessageConfig) (*boc.Cell, error)
 	AttachSignature(body *boc.Cell, signature tlb.Bits512) (*boc.Cell, error)
 	NextMessageParams(state tlb.ShardAccount) (NextMsgParams, error)
+	GetPublicKey() ed25519.PublicKey
 }
 
 func defaultOr[T any](value *T, defaultValue T) T {

@@ -420,6 +420,10 @@ func (w *Wallet) CreateMessageBody(msgConfig MessageConfig, messages ...Sendable
 	return signedBodyCell, nil
 }
 
+func (w *Wallet) GetPublicKey() ed25519.PublicKey {
+	return w.intWallet.GetPublicKey()
+}
+
 func parseWalletData(ver Version, data boc.Cell) (seqno uint32, subWalletID uint32, publicKey ed25519.PublicKey, err error) {
 	switch ver {
 	case V1R1, V1R2, V1R3, V2R1, V2R2:

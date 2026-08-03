@@ -377,6 +377,8 @@ var (
 	decodeFuncBidaskInternalSwapV2MsgBody = decodeMsg(tlb.Tag{Val: 0x87d36990, Len: 32}, BidaskInternalSwapV2MsgOp, BidaskInternalSwapV2MsgBody{})
 	// 0x8865b402
 	decodeFuncStormProvideOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvideOrderMsgOp, StormProvideOrderMsgBody{})
+	// 0x8865b402
+	decodeFuncStormProvidePositionMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvidePositionMsgOp, StormProvidePositionMsgBody{})
 	// 0x8b771735
 	decodeFuncReportStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{})
 	// 0x8efed779
@@ -1199,8 +1201,13 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 			decodeFuncBidaskInternalSwapV2MsgBody},
 	},
 
-	// 0x8865b402
-	StormProvideOrderMsgOpCode: decodeFuncStormProvideOrderMsgBody,
+	//StormProvideOrder, StormProvidePosition,
+	0x8865b402: multipleMsgsDecoder{
+		tag: "0x8865b402",
+		funcs: []msgDecoderFunc{
+			decodeFuncStormProvideOrderMsgBody,
+			decodeFuncStormProvidePositionMsgBody},
+	},
 
 	// 0x8b771735
 	ReportStaticDataMsgOpCode: decodeFuncReportStaticDataMsgBody,
@@ -1775,6 +1782,7 @@ const (
 	BidaskSwapV2MsgOp                            MsgOpName = "BidaskSwapV2"
 	BidaskInternalSwapV2MsgOp                    MsgOpName = "BidaskInternalSwapV2"
 	StormProvideOrderMsgOp                       MsgOpName = "StormProvideOrder"
+	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
 	BemoUnstakeNotificationMsgOp                 MsgOpName = "BemoUnstakeNotification"
@@ -2091,6 +2099,7 @@ const (
 	BidaskSwapV2MsgOpCode                            MsgOpCode = 0x87d36990
 	BidaskInternalSwapV2MsgOpCode                    MsgOpCode = 0x87d36990
 	StormProvideOrderMsgOpCode                       MsgOpCode = 0x8865b402
+	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
 	BemoUnstakeNotificationMsgOpCode                 MsgOpCode = 0x90c80a07
@@ -3530,6 +3539,14 @@ type StormProvideOrderMsgBody struct {
 	OraclePayload OraclePayload `tlb:"^"`
 }
 
+type StormProvidePositionMsgBody struct {
+	OrderType     tlb.Uint4
+	OrderIndex    tlb.Uint3
+	Direction     tlb.Uint1
+	ExecutorIndex uint32
+	OraclePayload OraclePayload `tlb:"^"`
+}
+
 type ReportStaticDataMsgBody struct {
 	QueryId    uint64
 	Index      tlb.Uint256
@@ -4575,6 +4592,7 @@ var KnownMsgInTypes = map[string]any{
 	BidaskSwapV2MsgOp:                            BidaskSwapV2MsgBody{},
 	BidaskInternalSwapV2MsgOp:                    BidaskInternalSwapV2MsgBody{},
 	StormProvideOrderMsgOp:                       StormProvideOrderMsgBody{},
+	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
 	BemoUnstakeNotificationMsgOp:                 BemoUnstakeNotificationMsgBody{},

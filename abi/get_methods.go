@@ -306,7 +306,6 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	102351: {GetNftData},
 	102491: {GetCollectionData},
 	102917: {GetDayTradingData},
-	103148: {GetPosition},
 	103232: {GetValidatorControllerData},
 	103471: {GetRouterState},
 	103723: {IsStable},
@@ -365,7 +364,6 @@ var KnownSimpleGetMethods = map[int][]func(ctx context.Context, executor Executo
 	127226: {GetPool},
 	128085: {GetRouterData},
 	128568: {GetLiquidityData},
-	128710: {GetPositionManagerAddress},
 	128979: {JettonWalletLockData},
 	129292: {GetSubscriptionInfo},
 	129581: {GetSeedPubkey},
@@ -3378,8 +3376,8 @@ func DecodeGetFundingSettings_StormResult(stack tlb.VmStack) (resultType string,
 }
 
 type GetHighloadData_StormResult struct {
-	OldQueries    tlb.HashmapE[tlb.Uint13, boc.Cell]
-	Queries       tlb.HashmapE[tlb.Uint13, boc.Cell]
+	OldQueries    *boc.Cell
+	Queries       *boc.Cell
 	LastCleanTime uint32
 	Timeout       uint32
 }
@@ -3405,7 +3403,7 @@ func GetHighloadData(ctx context.Context, executor Executor, reqAccountID ton.Ac
 }
 
 func DecodeGetHighloadData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkCell" && stack.Peek(3).SumType != "VmStkNull") || (stack.Peek(2).SumType != "VmStkCell" && stack.Peek(2).SumType != "VmStkNull") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetHighloadData_StormResult
@@ -5993,8 +5991,17 @@ type GetPosition_StormResult struct {
 	Position *PositionData
 }
 
-func GetPosition(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+func GetPosition(ctx context.Context, executor Executor, reqAccountID ton.AccountID, ammAddressKey boc.Cell) (string, any, error) {
 	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(ammAddressKey)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
 
 	// MethodID = 103148 for "get_position" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 103148, stack)
@@ -6073,8 +6080,17 @@ type GetPositionManagerAddress_StormResult struct {
 	TraderPositionAddress tlb.MsgAddress
 }
 
-func GetPositionManagerAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
+func GetPositionManagerAddress(ctx context.Context, executor Executor, reqAccountID ton.AccountID, traderAddress tlb.MsgAddress) (string, any, error) {
 	stack := tlb.VmStack{}
+	var (
+		val tlb.VmStackValue
+		err error
+	)
+	val, err = tlb.TlbStructToVmCellSlice(traderAddress)
+	if err != nil {
+		return "", nil, err
+	}
+	stack.Put(val)
 
 	// MethodID = 128710 for "get_position_manager_address" method
 	errCode, stack, err := executor.RunSmcMethodByID(ctx, reqAccountID, 128710, stack)
@@ -6103,14 +6119,7 @@ func DecodeGetPositionManagerAddress_StormResult(stack tlb.VmStack) (resultType 
 }
 
 type GetPositionManagerContractData_StormResult struct {
-	TraderAddress tlb.MsgAddress
-	VaultAddress  tlb.MsgAddress
-	VammAddress   tlb.MsgAddress
-	LongRecord    boc.Cell
-	ShortRecord   boc.Cell
-	OrdersDict    boc.Cell
-	ReferralData  boc.Cell
-	OrdersBitset  boc.Cell
+	Data boc.Cell
 }
 
 func GetPositionManagerContractData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -6134,7 +6143,7 @@ func GetPositionManagerContractData(ctx context.Context, executor Executor, reqA
 }
 
 func DecodeGetPositionManagerContractData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if stack.Len() != 8 || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkCell") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPositionManagerContractData_StormResult
@@ -6143,7 +6152,14 @@ func DecodeGetPositionManagerContractData_StormResult(stack tlb.VmStack) (result
 }
 
 type GetPositionManagerData_StormResult struct {
-	Data boc.Cell
+	TraderAddress tlb.MsgAddress
+	VaultAddress  tlb.MsgAddress
+	VammAddress   tlb.MsgAddress
+	LongRecord    boc.Cell
+	ShortRecord   boc.Cell
+	OrdersDict    boc.Cell
+	ReferralData  boc.Cell
+	OrdersBitset  uint8
 }
 
 func GetPositionManagerData(ctx context.Context, executor Executor, reqAccountID ton.AccountID) (string, any, error) {
@@ -6167,7 +6183,7 @@ func GetPositionManagerData(ctx context.Context, executor Executor, reqAccountID
 }
 
 func DecodeGetPositionManagerData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
+	if stack.Len() != 8 || (stack.Peek(7).SumType != "VmStkSlice") || (stack.Peek(6).SumType != "VmStkSlice") || (stack.Peek(5).SumType != "VmStkSlice") || (stack.Peek(4).SumType != "VmStkCell") || (stack.Peek(3).SumType != "VmStkCell") || (stack.Peek(2).SumType != "VmStkCell") || (stack.Peek(1).SumType != "VmStkCell") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPositionManagerData_StormResult
@@ -9039,9 +9055,7 @@ func DecodeListVotesResult(stack tlb.VmStack) (resultType string, resultAny any,
 }
 
 type Processed_StormResult struct {
-	Shift     uint16
-	BitNumber uint16
-	NeedClean bool
+	Processed bool
 }
 
 func Processed(ctx context.Context, executor Executor, reqAccountID ton.AccountID, shift tlb.Int257, bitNumber tlb.Int257, needClean tlb.Int257) (string, any, error) {
@@ -9075,7 +9089,7 @@ func Processed(ctx context.Context, executor Executor, reqAccountID ton.AccountI
 }
 
 func DecodeProcessed_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if stack.Len() != 3 || (stack.Peek(2).SumType != "VmStkTinyInt" && stack.Peek(2).SumType != "VmStkInt") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result Processed_StormResult

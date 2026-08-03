@@ -1026,14 +1026,6 @@ var methodInvocationOrder = []MethodDescription{
 		InvokeFn: GetPoolType,
 	},
 	{
-		Name:     "get_position",
-		InvokeFn: GetPosition,
-	},
-	{
-		Name:     "get_position_manager_address",
-		InvokeFn: GetPositionManagerAddress,
-	},
-	{
 		Name:     "get_position_manager_contract_data",
 		InvokeFn: GetPositionManagerContractData,
 	},
@@ -1605,7 +1597,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetLazerData_StormResult",
 			"GetOracleData_StormResult",
 			"GetPauseTime_StormResult",
-			"GetPositionManagerAddress_StormResult",
 			"GetSpotPrice_StormResult",
 			"GetTerminalAmmPrice_StormResult",
 			"GetVammType_StormResult",
@@ -1624,7 +1615,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetLazerData_StormResult",
 			"GetOracleData_StormResult",
 			"GetPauseTime_StormResult",
-			"GetPositionManagerAddress_StormResult",
 			"GetSettlementOracleData_StormResult",
 			"GetSpotPrice_StormResult",
 			"GetTerminalAmmPrice_StormResult",
@@ -1674,7 +1664,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 			"GetHighloadData_StormResult",
 			"GetKeysData_StormResult",
 			"GetNftDataResult",
-			"GetPosition_StormResult",
 			"GetStorageData_StormResult",
 			"GetUserPublicKeys_StormResult",
 		},
@@ -2098,6 +2087,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	},
 	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
 		contractInterfaces: []ContractInterface{WalletV1R1},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("a63cbf47d55370fe2baebb4bf284bd401e717db4a0ab0e49f4b3b3cc7c0f5652"): {
+		contractInterfaces: []ContractInterface{CoffeeCrossDex},
 		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("acd2b8ec4db7414396fa53698653ecc04a416ee3649d8f5b20b41f176ad833f0"): {
@@ -2526,7 +2519,7 @@ func (c ContractInterface) IntMsgs() []msgDecoderFunc {
 			decodeFuncStormActivateOrderMsgBody,
 			decodeFuncStormUpdatePositionMsgBody,
 			decodeFuncStormUpdatePositionWithStopLossMsgBody,
-			decodeFuncStormProvideOrderMsgBody,
+			decodeFuncStormProvidePositionMsgBody,
 		}
 	case StormReferral:
 		return []msgDecoderFunc{

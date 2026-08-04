@@ -1,4 +1,18 @@
 <abi>
+    <!--
+        Hipo Finance - liquid staking of the native coin (GRAM, formerly TON).
+        Treasury: EQCLyZHP4Xe8fpchQz76O-_RmUhaVc_9BAoGyJrwJrcbz2eZ
+        Jetton parent (hGRAM, formerly hTON): EQDPdq8xjAhytYqfGSX8KcFWIReCufsB9Wdg0pLlYSO_h76w
+        Schemas mirror contracts/schema.tlb of github.com/HipoFinance/contract.
+
+        Ops already covered by the generic TEP schemas are intentionally not redeclared
+        here: unstake_tokens (TEP-74 burn#595f07bc), transfer_notification (#7362d09c),
+        ownership_assigned (#05138d91), gas_excess (excesses#d53276db), and burn_bill,
+        which is the TEP-85 revoke#6f89f5e3 with an identical body.
+    -->
+
+    <!--    Treasury ops    -->
+
     <internal name="hipo_finance_deposit_coins">
         deposit_coins#3d3761a6
         query_id:uint64
@@ -8,6 +22,61 @@
         referrer:MsgAddress
         = InternalMsgBody;
     </internal>
+    <internal name="hipo_finance_reserve_tokens">
+        reserve_tokens#386a358b
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        owner:MsgAddress
+        mode:uint4
+        ownership_assigned_amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_mint_tokens">
+        mint_tokens#42684479
+        query_id:uint64
+        coins:(VarUInteger 16)
+        owner:MsgAddress
+        parent:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_burn_tokens">
+        burn_tokens#7cffe1ee
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        owner:MsgAddress
+        parent:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_last_bill_burned">
+        last_bill_burned#c6d8b51f
+        query_id:uint64
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_request_loan">
+        request_loan#36335da9
+        query_id:uint64
+        round_since:uint32
+        loan_amount:(VarUInteger 16)
+        min_payment:(VarUInteger 16)
+        borrower_reward_share:uint8
+        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
+        adnl_addr:bits256 signature:^(bits512) ]
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_recover_stake_result">
+        recover_stake_result#0fca4c86
+        query_id:uint64
+        ok:Bool
+        borrower:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+
+    <!--    Parent ops    -->
+
     <internal name="hipo_finance_proxy_tokens_minted">
         proxy_tokens_minted#5be57626
         query_id:uint64
@@ -17,6 +86,41 @@
         round_since:uint32
         = InternalMsgBody;
     </internal>
+    <internal name="hipo_finance_proxy_save_coins">
+        proxy_save_coins#47daa10f
+        query_id:uint64
+        coins:(VarUInteger 16)
+        owner:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_proxy_reserve_tokens">
+        proxy_reserve_tokens#688b0213
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        owner:MsgAddress
+        mode:uint4
+        ownership_assigned_amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_proxy_rollback_unstake">
+        proxy_rollback_unstake#32b67194
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        owner:MsgAddress
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_proxy_tokens_burned">
+        proxy_tokens_burned#4476fde0
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        coins:(VarUInteger 16)
+        owner:MsgAddress
+        = InternalMsgBody;
+    </internal>
+
+    <!--    Wallet ops    -->
+
     <internal name="hipo_finance_tokens_minted">
         tokens_minted#5445efee
         query_id:uint64
@@ -24,6 +128,87 @@
         coins:(VarUInteger 16)
         owner:MsgAddress
         round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_save_coins">
+        save_coins#4cce0e74
+        query_id:uint64
+        coins:(VarUInteger 16)
+        owner:MsgAddress
+        round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_rollback_unstake">
+        rollback_unstake#1b77fd1a
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_tokens_burned">
+        tokens_burned#5b512e25
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        coins:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+
+    <!--    Collection ops    -->
+
+    <internal name="hipo_finance_mint_bill">
+        mint_bill#4b2d7871
+        query_id:uint64
+        amount:(VarUInteger 16)
+        unstake:Bool
+        owner:MsgAddress
+        parent:MsgAddress
+        ownership_assigned_amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_bill_burned">
+        bill_burned#840f6369
+        query_id:uint64
+        amount:(VarUInteger 16)
+        unstake:Bool
+        owner:MsgAddress
+        parent:MsgAddress
+        index:uint64
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_burn_all">
+        burn_all#639d400a
+        query_id:uint64
+        start_index:uint64
+        = InternalMsgBody;
+    </internal>
+
+    <!--    Bill ops    -->
+
+    <internal name="hipo_finance_assign_bill">
+        assign_bill#3275dfc2
+        query_id:uint64
+        amount:(VarUInteger 16)
+        unstake:Bool
+        owner:MsgAddress
+        parent:MsgAddress
+        ownership_assigned_amount:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+
+    <!--    Borrower ops    -->
+
+    <internal name="hipo_finance_loan_result">
+        loan_result#faaa8366
+        query_id:uint64
+        = InternalMsgBody;
+    </internal>
+
+    <!--    Staker ops    -->
+
+    <internal name="hipo_finance_withdrawal_notification">
+        withdrawal_notification#f0fa223b
+        query_id:uint64
+        tokens:(VarUInteger 16)
+        coins:(VarUInteger 16)
         = InternalMsgBody;
     </internal>
 </abi>

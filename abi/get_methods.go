@@ -5064,7 +5064,7 @@ func GetPauseTime(ctx context.Context, executor Executor, reqAccountID ton.Accou
 }
 
 func DecodeGetPauseTime_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkCell") {
+	if stack.Len() != 1 || (stack.Peek(0).SumType != "VmStkTinyInt" && stack.Peek(0).SumType != "VmStkInt") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetPauseTime_StormResult

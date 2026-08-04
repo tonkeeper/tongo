@@ -330,7 +330,6 @@
             <internal name="storm_trade_notification_v2"/>
             <ext_out name="intent_log"/>
         </msg_out>
-        <get_method name="get_pause_time" version="storm"/>
         <get_method name="get_amm_contract_data" version="storm"/>
         <get_method name="get_amm_name" version="storm"/>
         <get_method name="get_amm_status" version="storm"/>
@@ -432,17 +431,17 @@
 
     <interface name="storm_vault">
         <msg_in>
-            <internal name="storm_withdraw_referral_amount"/>
-            <internal name="storm_withdraw_executor_amount"/>
-            <internal name="storm_vault_unstake"/>
-            <internal name="storm_vault_init"/>
-            <internal name="storm_request_withdraw_position"/>
-            <internal name="storm_vault_trade_notification"/>
+            <internal name="storm_withdraw_referral_amount" version="storm"/>
+            <internal name="storm_withdraw_executor_amount" version="storm"/>
+            <internal name="storm_vault_unstake" version="storm"/>
+            <internal name="storm_vault_init" version="storm"/>
+            <internal name="storm_request_withdraw_position" version="storm"/>
+            <internal name="storm_vault_trade_notification" version="storm"/>
             <internal name="jetton_notify"/>
-            <internal name="storm_deposit_revert"/>
-            <internal name="storm_withdraw_request"/>
-            <internal name="storm_trade_notification_v2"/>
-            <internal name="storm_failed_bundle_execution"/>
+            <internal name="storm_deposit_revert" version="storm"/>
+            <internal name="storm_withdraw_request" version="storm"/>
+            <internal name="storm_trade_notification_v2" version="storm"/>
+            <internal name="storm_failed_bundle_execution" version="storm"/>
         </msg_in>
         <msg_out>
             <internal name="storm_deposit_notify"/>
@@ -490,17 +489,17 @@
 
     <interface name="storm_vault_native">
         <msg_in>
-            <internal name="storm_withdraw_referral_amount"/>
-            <internal name="storm_withdraw_executor_amount"/>
-            <internal name="storm_vault_stake"/>
-            <internal name="storm_vault_init"/>
-            <internal name="storm_request_withdraw_position"/>
-            <internal name="storm_vault_trade_notification"/>
-            <internal name="storm_deposit_native"/>
-            <internal name="storm_deposit_revert"/>
-            <internal name="storm_withdraw_request"/>
-            <internal name="storm_trade_notification_v2"/>
-            <internal name="storm_failed_bundle_execution"/>
+            <internal name="storm_withdraw_referral_amount" version="storm"/>
+            <internal name="storm_withdraw_executor_amount" version="storm"/>
+            <internal name="storm_vault_stake" version="storm"/>
+            <internal name="storm_vault_init" version="storm"/>
+            <internal name="storm_request_withdraw_position" version="storm"/>
+            <internal name="storm_vault_trade_notification" version="storm"/>
+            <internal name="storm_deposit_native" version="storm"/>
+            <internal name="storm_deposit_revert" version="storm"/>
+            <internal name="storm_withdraw_request" version="storm"/>
+            <internal name="storm_trade_notification_v2" version="storm"/>
+            <internal name="storm_failed_bundle_execution" version="storm"/>
         </msg_in>
         <msg_out>
             <internal name="storm_deposit_notify"/>
@@ -512,20 +511,20 @@
             <internal name="storm_withdraw_success"/>
             <internal name="storm_notify_update_position"/>
         </msg_out>
-        <get_method name="get_vault_contract_data"/>
-        <get_method name="get_vault_data"/>
-        <get_method name="get_buffer_data"/>
-        <get_method name="get_vault_whitelisted_addresses"/>
-        <get_method name="get_position_address"/>
-        <get_method name="get_vamm_address"/>
-        <get_method name="get_lp_minter_address"/>
-        <get_method name="get_referral_item_addr"/>
-        <get_method name="get_executor_item_addr"/>
-        <get_method name="get_referral_collection_address"/>
-        <get_method name="get_executor_collection_address"/>
-        <get_method name="get_claimer_address"/>
-        <get_method name="get_last_position_manager_code"/>
-        <get_method name="get_vault_type"/>
+        <get_method name="get_vault_contract_data" version="storm"/>
+        <get_method name="get_vault_data" version="storm"/>
+        <get_method name="get_buffer_data" version="storm"/>
+        <get_method name="get_vault_whitelisted_addresses" version="storm"/>
+        <get_method name="get_position_address" version="storm"/>
+        <get_method name="get_vamm_address" version="storm"/>
+        <get_method name="get_lp_minter_address" version="storm"/>
+        <get_method name="get_referral_item_addr" version="storm"/>
+        <get_method name="get_executor_item_addr" version="storm"/>
+        <get_method name="get_referral_collection_address" version="storm"/>
+        <get_method name="get_executor_collection_address" version="storm"/>
+        <get_method name="get_claimer_address" version="storm"/>
+        <get_method name="get_last_position_manager_code" version="storm"/>
+        <get_method name="get_vault_type" version="storm"/>
         <error code="100">Invalid jetton</error>
         <error code="101">Invalid jetton amount</error>
         <error code="102">Not enough gas</error>
@@ -644,8 +643,8 @@
         <get_method name="get_nft_address_by_index"/>
         <get_method name="royalty_params"/>
         <get_method name="get_nft_content"/>
-        <get_method name="get_factory_data"/>
-        <get_method name="get_min_fees"/>
+        <get_method name="get_factory_data" version="storm"/>
+        <get_method name="get_min_fees" version="storm"/>
         <error code="150">Not enough gas to deploy</error>
         <error code="401">Unauthorized</error>
         <error code="406">Insufficient gas</error>
@@ -687,8 +686,8 @@
         <get_method name="get_nft_address_by_index"/>
         <get_method name="royalty_params"/>
         <get_method name="get_nft_content"/>
-        <get_method name="get_default_referral_fees"/>
-        <get_method name="get_referral_vaults_whitelist"/>
+        <get_method name="get_default_referral_fees" version="storm"/>
+        <get_method name="get_referral_vaults_whitelist" version="storm"/>
         <error code="301">Not an owner</error>
         <error code="302">Provide vaults min value</error>
         <error code="303">Wrong vault wc</error>
@@ -712,7 +711,7 @@
             <internal name="storm_withdraw_executor_amount"/>
         </msg_out>
         <get_method name="get_nft_data"/>
-        <get_method name="get_executor_balances"/>
+        <get_method name="get_executor_balances" version="storm"/>
         <error code="351">Not an owner</error>
         <error code="354">Wrong vault wc</error>
         <error code="357">Negative response value</error>
@@ -729,7 +728,7 @@
         <get_method name="get_nft_address_by_index"/>
         <get_method name="royalty_params"/>
         <get_method name="get_nft_content"/>
-        <get_method name="get_executor_vaults_whitelist"/>
+        <get_method name="get_executor_vaults_whitelist" version="storm"/>
         <error code="351">Not an owner</error>
         <error code="352">Provide vaults min value</error>
         <error code="353">Unauthorized batch request</error>
@@ -753,10 +752,10 @@
             <internal name="storm_order_created"/>
             <internal name="storm_order_canceled"/>
         </msg_out>
-        <get_method name="get_position_manager_data"/>
-        <get_method name="get_position_manager_contract_data"/>
-        <get_method name="get_is_inited"/>
-        <get_method name="get_version"/>
+        <get_method name="get_position_manager_data" version="storm"/>
+        <get_method name="get_position_manager_contract_data" version="storm"/>
+        <get_method name="get_is_inited" version="storm"/>
+        <get_method name="get_version" version="storm"/>
         <error code="500">Position locked</error>
         <error code="501">Not an amm</error>
         <error code="502">Not a trader</error>
@@ -792,7 +791,7 @@
 
     <get_method name="get_pause_time">
         <output version="storm" fixed_length="true">
-            <cell name="pause_time">uint32</cell>
+            <int name="pause_time">uint32</int>
         </output>
     </get_method>
 

@@ -171,9 +171,6 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 
 	for _, method := range ci.knownMethods {
 		// let's avoid running get methods that we know don't exist
-		//if method.Name == "get_pause_time" {
-		//	fmt.Println(1)
-		//}
 		if !ci.scanAllMethods && !info.isMethodOkToTry(method.Name) {
 			continue
 		}
@@ -191,9 +188,6 @@ func (ci contractInspector) InspectContract(ctx context.Context, code []byte, ex
 		})
 	}
 	for _, iface := range ci.knownInterfaces {
-		if iface.Name == SmartAccountFactory {
-			fmt.Println(1)
-		}
 		if desc.hasAllResults(iface.Results) {
 			desc.ContractInterfaces = append(desc.ContractInterfaces, iface.Name)
 		}

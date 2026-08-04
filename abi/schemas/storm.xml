@@ -215,7 +215,6 @@
             <internal name="storm_trade_notification_v2"/>
             <ext_out name="intent_log"/>
         </msg_out>
-        <get_method name="get_pause_time" version="storm"/>
         <get_method name="get_amm_contract_data" version="storm"/>
         <get_method name="get_amm_name" version="storm"/>
         <get_method name="get_amm_status" version="storm"/>
@@ -431,17 +430,17 @@
 
     <interface name="storm_vault">
         <msg_in>
-            <internal name="storm_withdraw_referral_amount" version="storm"/>
-            <internal name="storm_withdraw_executor_amount" version="storm"/>
-            <internal name="storm_vault_unstake" version="storm"/>
-            <internal name="storm_vault_init" version="storm"/>
-            <internal name="storm_request_withdraw_position" version="storm"/>
-            <internal name="storm_vault_trade_notification" version="storm"/>
+            <internal name="storm_withdraw_referral_amount"/>
+            <internal name="storm_withdraw_executor_amount"/>
+            <internal name="storm_vault_unstake"/>
+            <internal name="storm_vault_init"/>
+            <internal name="storm_request_withdraw_position"/>
+            <internal name="storm_vault_trade_notification"/>
             <internal name="jetton_notify"/>
-            <internal name="storm_deposit_revert" version="storm"/>
-            <internal name="storm_withdraw_request" version="storm"/>
-            <internal name="storm_trade_notification_v2" version="storm"/>
-            <internal name="storm_failed_bundle_execution" version="storm"/>
+            <internal name="storm_deposit_revert"/>
+            <internal name="storm_withdraw_request"/>
+            <internal name="storm_trade_notification_v2"/>
+            <internal name="storm_failed_bundle_execution"/>
         </msg_in>
         <msg_out>
             <internal name="storm_deposit_notify"/>
@@ -453,20 +452,20 @@
             <internal name="storm_withdraw_success"/>
             <internal name="storm_notify_update_position"/>
         </msg_out>
-        <get_method name="get_vault_contract_data"/>
-        <get_method name="get_vault_data"/>
-        <get_method name="get_buffer_data"/>
-        <get_method name="get_vault_whitelisted_addresses"/>
-        <get_method name="get_position_address"/>
-        <get_method name="get_vamm_address"/>
-        <get_method name="get_lp_minter_address"/>
-        <get_method name="get_referral_item_addr"/>
-        <get_method name="get_executor_item_addr"/>
-        <get_method name="get_referral_collection_address"/>
-        <get_method name="get_executor_collection_address"/>
-        <get_method name="get_claimer_address"/>
-        <get_method name="get_last_position_manager_code"/>
-        <get_method name="get_vault_type"/>
+        <get_method name="get_vault_contract_data" version="storm"/>
+        <get_method name="get_vault_data" version="storm"/>
+        <get_method name="get_buffer_data" version="storm"/>
+        <get_method name="get_vault_whitelisted_addresses" version="storm"/>
+        <get_method name="get_position_address" version="storm"/>
+        <get_method name="get_vamm_address" version="storm"/>
+        <get_method name="get_lp_minter_address" version="storm"/>
+        <get_method name="get_referral_item_addr" version="storm"/>
+        <get_method name="get_executor_item_addr" version="storm"/>
+        <get_method name="get_referral_collection_address" version="storm"/>
+        <get_method name="get_executor_collection_address" version="storm"/>
+        <get_method name="get_claimer_address" version="storm"/>
+        <get_method name="get_last_position_manager_code" version="storm"/>
+        <get_method name="get_vault_type" version="storm"/>
         <error code="100">Invalid jetton</error>
         <error code="101">Invalid jetton amount</error>
         <error code="102">Not enough gas</error>
@@ -489,17 +488,17 @@
 
     <interface name="storm_vault_native">
         <msg_in>
-            <internal name="storm_withdraw_referral_amount" version="storm"/>
-            <internal name="storm_withdraw_executor_amount" version="storm"/>
-            <internal name="storm_vault_stake" version="storm"/>
-            <internal name="storm_vault_init" version="storm"/>
-            <internal name="storm_request_withdraw_position" version="storm"/>
-            <internal name="storm_vault_trade_notification" version="storm"/>
-            <internal name="storm_deposit_native" version="storm"/>
-            <internal name="storm_deposit_revert" version="storm"/>
-            <internal name="storm_withdraw_request" version="storm"/>
-            <internal name="storm_trade_notification_v2" version="storm"/>
-            <internal name="storm_failed_bundle_execution" version="storm"/>
+            <internal name="storm_withdraw_referral_amount"/>
+            <internal name="storm_withdraw_executor_amount"/>
+            <internal name="storm_vault_stake"/>
+            <internal name="storm_vault_init"/>
+            <internal name="storm_request_withdraw_position"/>
+            <internal name="storm_vault_trade_notification"/>
+            <internal name="storm_deposit_native"/>
+            <internal name="storm_deposit_revert"/>
+            <internal name="storm_withdraw_request"/>
+            <internal name="storm_trade_notification_v2"/>
+            <internal name="storm_failed_bundle_execution"/>
         </msg_in>
         <msg_out>
             <internal name="storm_deposit_notify"/>

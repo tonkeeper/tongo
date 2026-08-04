@@ -487,6 +487,7 @@
     </interface>
 
     <interface name="storm_vault_native">
+        <code_hash>a2709e365972b5ef67d147b9858663ce451fd7a08d81ec01eca5e6b3319715da</code_hash>
         <msg_in>
             <internal name="storm_withdraw_referral_amount"/>
             <internal name="storm_withdraw_executor_amount"/>

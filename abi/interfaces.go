@@ -1635,21 +1635,6 @@ var contractInterfacesOrder = []InterfaceDescription{
 		},
 	},
 	{
-		Name: StormVaultNative,
-		Results: []string{
-			"GetBufferData_StormResult",
-			"GetClaimerAddress_StormResult",
-			"GetExecutorCollectionAddress_StormResult",
-			"GetLastPositionManagerCode_StormResult",
-			"GetLpMinterAddress_StormResult",
-			"GetReferralCollectionAddress_StormResult",
-			"GetVaultContractData_StormResult",
-			"GetVaultData_StormResult",
-			"GetVaultType_StormResult",
-			"GetVaultWhitelistedAddresses_StormResult",
-		},
-	},
-	{
 		Name: SmartAccountBlank,
 		Results: []string{
 			"GetBlankStorageData_StormResult",
@@ -2086,6 +2071,21 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 	ton.MustParseHash("a0cfc2c48aee16a271f2cfc0b7382d81756cecb1017d077faaab3bb602f6868c"): {
 		contractInterfaces: []ContractInterface{WalletV1R1},
 		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("a2709e365972b5ef67d147b9858663ce451fd7a08d81ec01eca5e6b3319715da"): {
+		contractInterfaces: []ContractInterface{StormVaultNative},
+		getMethods: []InvokeFn{
+			GetBufferData,
+			GetClaimerAddress,
+			GetExecutorCollectionAddress,
+			GetLastPositionManagerCode,
+			GetLpMinterAddress,
+			GetReferralCollectionAddress,
+			GetVaultContractData,
+			GetVaultData,
+			GetVaultType,
+			GetVaultWhitelistedAddresses,
+		},
 	},
 	ton.MustParseHash("a63cbf47d55370fe2baebb4bf284bd401e717db4a0ab0e49f4b3b3cc7c0f5652"): {
 		contractInterfaces: []ContractInterface{CoffeeCrossDex},

@@ -46,6 +46,12 @@ type multipleMsgsDecoder struct {
 
 func (mm multipleMsgsDecoder) Decode(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
 	var errs []error
+	ls := struct { // last success without complete read
+		success bool
+		tag     *uint32
+		opName  *MsgOpName
+		object  any
+	}{}
 	for _, f := range mm.funcs {
 		tag, opName, object, err := f(cell)
 		if err != nil {
@@ -57,10 +63,16 @@ func (mm multipleMsgsDecoder) Decode(cell *boc.Cell) (*uint32, *MsgOpName, any, 
 			continue
 		}
 		if !completedRead(cell) {
-			errs = append(errs, fmt.Errorf("not all bytes were read"))
+			ls.success = true
+			ls.tag = tag
+			ls.opName = opName
+			ls.object = object
 			continue
 		}
-		return tag, opName, object, err
+		return tag, opName, object, nil
+	}
+	if ls.success {
+		return ls.tag, ls.opName, ls.object, nil
 	}
 	return nil, nil, nil, fmt.Errorf("no message can be unmarshaled for %v: %v", mm.tag, errors.Join(errs...))
 }

@@ -25,18 +25,7 @@ type PositionIncomingMessage struct {
 	ItemWithdraw       *ItemWithdraw
 }
 
-type PositionExternalMessageKind uint
-
-const (
-	PositionExternalMessageKind_ExternalItemWithdraw PositionExternalMessageKind = 2331607777
-	PositionExternalMessageKind_ExternalCronTrigger  PositionExternalMessageKind = 554987565
-)
-
-type PositionExternalMessage struct {
-	SumType              PositionExternalMessageKind
-	ExternalItemWithdraw *ExternalItemWithdraw
-	ExternalCronTrigger  *ExternalCronTrigger
-}
+type PositionExternalMessage ExternalItemWithdraw
 
 type GetOrderDataResult struct {
 	Status                          tlb.Uint8            // uint8
@@ -141,13 +130,6 @@ type ExternalItemWithdraw struct {
 	QueryId     tlb.Uint64                           // uint64
 	Signature   tlb.Bits512                          // bits512
 	SignMessage tlb.RefT[*EscrowWithdrawSignMessage] // Cell<EscrowWithdrawSignMessage>
-}
-
-const PrefixExternalCronTrigger uint64 = 0x2114702d
-
-type ExternalCronTrigger struct {
-	RewardAddress tlb.MsgAddress // address?
-	Salt          tlb.Uint32     // uint32
 }
 
 const PrefixItemLockSuccess uint64 = 0x14b8bb09

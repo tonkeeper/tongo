@@ -63,15 +63,6 @@ type MasterIncomingMessage =
     | GramboUnlockWallet
     | GramboWithdraw
 
-struct (0x178d4519) JettonInternalTransfer {
-    query_id: uint64
-    amount: coins
-    from: address
-    response_address: address
-    forward_ton_amount: coins
-    forward_payload: cell
-}
-
 struct (0x6b75d3e2) GramboActivateWallet {
     query_id: uint64
 }
@@ -81,15 +72,9 @@ struct (0x29cb7264) GramboTakeWalletAddress {
     owner_address: cell?
 }
 
-struct (0xd53276db) JettonExcess {
-    query_id: uint64
-}
-
 type MasterOutgoingMessage =
-    | JettonInternalTransfer
     | GramboActivateWallet
     | GramboTakeWalletAddress
-    | JettonExcess
 
 struct (0x5025398e) GramboSwapEvent {
     query_id: uint64

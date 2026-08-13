@@ -7,7 +7,6 @@ type PositionIncomingMessage =
 
 type PositionExternalMessage =
     | ExternalItemWithdraw
-    | ExternalCronTrigger
 
 contract stonfi_escrow_position {
     incomingMessages: PositionIncomingMessage

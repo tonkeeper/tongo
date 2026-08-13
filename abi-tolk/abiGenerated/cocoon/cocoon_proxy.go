@@ -10,12 +10,6 @@ import (
 	"github.com/tonkeeper/tongo/ton"
 )
 
-const PrefixTextCmd uint64 = 0x00000000
-
-type TextCmd struct {
-	Action tlb.Uint8 // uint8
-}
-
 const PrefixExtProxyCloseRequestSigned uint64 = 0x636a4391
 
 type ExtProxyCloseRequestSigned struct {
@@ -81,8 +75,6 @@ type ProxyStorage struct {
 	UnlockTs       tlb.Uint32              // uint32
 	Params         tlb.RefT[*CocoonParams] // Cell<CocoonParams>
 }
-
-const ErrorUnknownTextOp = 0x3F5 // 1013
 
 const ErrorContractAddressMismatch = 0x3F6 // 1014
 

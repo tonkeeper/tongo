@@ -241,39 +241,6 @@ func TestStonfiEscrowPosition_IncomingMessages(t *testing.T) {
 	}
 }
 
-func TestStonfiEscrowPosition_ExternalMessages(t *testing.T) {
-	tests := []struct {
-		name     string
-		txHash   string
-		boc      string
-		expected *PositionExternalMessage
-	}{
-		{
-			// msg 306bd66765d0097fe6919403092e6de13cd3246d38e9d04a4f5c88ffceba6a14
-			name:   "ExternalCronTrigger",
-			txHash: "306bd66765d0097fe6919403092e6de13cd3246d38e9d04a4f5c88ffceba6a14",
-			boc:    "b5ee9c7201010101002c0000532114702d800c4c7a1efeef93a245170deab302f80465e43fa30f24b63db5e5d8dd704a87cfd34e343150",
-			expected: &PositionExternalMessage{
-				SumType: PositionExternalMessageKind_ExternalCronTrigger,
-				ExternalCronTrigger: &ExternalCronTrigger{
-					RewardAddress: addr("0:6263d0f7f77c9d1228b86f559817c0232f21fd187925b1edaf2ec6eb82543e7e"),
-					Salt:          tlb.Uint32(2591138186),
-				},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cell := boc.MustDeserializeSinglRootHex(tt.boc)
-			var msg PositionExternalMessage
-			require.NoError(t, tlb.Unmarshal(cell, &msg))
-			assertEqualDecoded(t, tt.expected, &msg)
-			assert.True(t, cell.IsEmpty(), "cell should be fully consumed")
-		})
-	}
-}
-
 func TestStonfiEscrowVault_IncomingMessages(t *testing.T) {
 	tests := []struct {
 		name     string

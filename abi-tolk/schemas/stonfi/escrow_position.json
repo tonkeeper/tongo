@@ -175,6 +175,10 @@
       "struct_name": "ItemWithdraw"
     },
     {
+      "kind": "AliasRef",
+      "alias_name": "PositionExternalMessage"
+    },
+    {
       "kind": "StructRef",
       "struct_name": "ExternalItemWithdraw"
     },
@@ -188,15 +192,11 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 47
+      "inner_ty_idx": 48
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 46
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "ExternalCronTrigger"
+      "inner_ty_idx": 47
     },
     {
       "kind": "StructRef",
@@ -237,36 +237,10 @@
       "stack_width": 10
     },
     {
-      "kind": "AliasRef",
-      "alias_name": "PositionExternalMessage"
-    },
-    {
-      "kind": "union",
-      "variants": [
-        {
-          "variant_ty_idx": 45,
-          "prefix_num": 2331607777,
-          "prefix_len": 32,
-          "is_prefix_implicit": null,
-          "stack_type_id": 133,
-          "stack_width": 3
-        },
-        {
-          "variant_ty_idx": 50,
-          "prefix_num": 554987565,
-          "prefix_len": 32,
-          "is_prefix_implicit": null,
-          "stack_type_id": 134,
-          "stack_width": 2
-        }
-      ],
-      "stack_width": 4
-    },
-    {
       "kind": "shapedTuple",
       "items_ty_idx": [
         52,
-        54
+        45
       ]
     },
     {
@@ -294,17 +268,17 @@
     {
       "kind": "alias",
       "name": "PositionExternalMessage",
-      "ty_idx": 54,
-      "target_ty_idx": 55
+      "ty_idx": 45,
+      "target_ty_idx": 46
     },
     {
       "kind": "struct",
       "name": "GetOrderDataResult",
-      "ty_idx": 57,
+      "ty_idx": 55,
       "fields": [
         {
           "name": "status",
-          "ty_idx": 58
+          "ty_idx": 56
         },
         {
           "name": "quoteId",
@@ -356,7 +330,7 @@
         },
         {
           "name": "userUnlockForwardParams",
-          "ty_idx": 59
+          "ty_idx": 57
         },
         {
           "name": "userUnlockForwardSuccessPayload",
@@ -585,7 +559,7 @@
     {
       "kind": "struct",
       "name": "ExternalItemWithdrawPayload",
-      "ty_idx": 47,
+      "ty_idx": 48,
       "fields": [
         {
           "name": "escrowItem",
@@ -604,7 +578,7 @@
     {
       "kind": "struct",
       "name": "EscrowWithdrawSignMessage",
-      "ty_idx": 46,
+      "ty_idx": 47,
       "prefix": {
         "prefix_num": 1968607266,
         "prefix_len": 32
@@ -628,7 +602,7 @@
         },
         {
           "name": "payload",
-          "ty_idx": 48
+          "ty_idx": 49
         }
       ]
     },
@@ -752,7 +726,7 @@
     {
       "kind": "struct",
       "name": "ExternalItemWithdraw",
-      "ty_idx": 45,
+      "ty_idx": 46,
       "prefix": {
         "prefix_num": 2331607777,
         "prefix_len": 32
@@ -768,26 +742,7 @@
         },
         {
           "name": "signMessage",
-          "ty_idx": 49
-        }
-      ]
-    },
-    {
-      "kind": "struct",
-      "name": "ExternalCronTrigger",
-      "ty_idx": 50,
-      "prefix": {
-        "prefix_num": 554987565,
-        "prefix_len": 32
-      },
-      "fields": [
-        {
-          "name": "rewardAddress",
-          "ty_idx": 13
-        },
-        {
-          "name": "salt",
-          "ty_idx": 9
+          "ty_idx": 50
         }
       ]
     },
@@ -825,9 +780,6 @@
   "incoming_external": [
     {
       "body_ty_idx": 45
-    },
-    {
-      "body_ty_idx": 50
     }
   ],
   "outgoing_messages": [
@@ -842,7 +794,7 @@
       "tvm_method_id": 119157,
       "name": "getOrderData",
       "parameters": [],
-      "return_ty_idx": 57
+      "return_ty_idx": 55
     }
   ],
   "thrown_errors": [

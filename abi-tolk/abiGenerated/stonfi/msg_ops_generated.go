@@ -4,7 +4,6 @@ package abiStonfi
 
 const (
 	StonfiEscrowWithdrawSignMessageMsgOp     = "StonfiEscrowWithdrawSignMessage"
-	StonfiExternalCronTriggerMsgOp           = "StonfiExternalCronTrigger"
 	StonfiExternalItemWithdrawMsgOp          = "StonfiExternalItemWithdraw"
 	StonfiItemInternalLockMsgOp              = "StonfiItemInternalLock"
 	StonfiItemInternalUnlockMsgOp            = "StonfiItemInternalUnlock"

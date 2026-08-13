@@ -61,46 +61,16 @@ func (v PositionIncomingMessage) ToCell() (*boc.Cell, error) {
 }
 
 func (v *PositionExternalMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
-	prefix, err := c.PickUint(32)
-	if err != nil {
+	var vx ExternalItemWithdraw
+	if err := vx.UnmarshalTLB(c, decoder); err != nil {
 		return err
 	}
-	v.SumType = PositionExternalMessageKind(prefix)
-	switch v.SumType {
-	case PositionExternalMessageKind_ExternalItemWithdraw:
-		v.ExternalItemWithdraw = new(ExternalItemWithdraw)
-		return v.ExternalItemWithdraw.UnmarshalTLB(c, decoder)
-	case PositionExternalMessageKind_ExternalCronTrigger:
-		v.ExternalCronTrigger = new(ExternalCronTrigger)
-		return v.ExternalCronTrigger.UnmarshalTLB(c, decoder)
-	default:
-		return fmt.Errorf("unknown prefix: %x", prefix)
-	}
+	*v = PositionExternalMessage(vx)
+	return nil
 }
 
 func (v PositionExternalMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
-	switch v.SumType {
-	case PositionExternalMessageKind_ExternalItemWithdraw:
-		if v.ExternalItemWithdraw == nil {
-			return fmt.Errorf("PositionExternalMessage.ExternalItemWithdraw is nil")
-		}
-		return v.ExternalItemWithdraw.MarshalTLB(c, encoder)
-	case PositionExternalMessageKind_ExternalCronTrigger:
-		if v.ExternalCronTrigger == nil {
-			return fmt.Errorf("PositionExternalMessage.ExternalCronTrigger is nil")
-		}
-		return v.ExternalCronTrigger.MarshalTLB(c, encoder)
-	default:
-		return fmt.Errorf("unknown PositionExternalMessage variant: %v", v.SumType)
-	}
-}
-
-func (v PositionExternalMessage) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
+	return ExternalItemWithdraw(v).MarshalTLB(c, encoder)
 }
 
 func (v *GetOrderDataResult) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
@@ -749,40 +719,6 @@ func (v ExternalItemWithdraw) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 
-func (v *ExternalCronTrigger) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixExternalCronTrigger); err != nil {
-		return err
-	}
-	if err = v.RewardAddress.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .RewardAddress: %v", err)
-	}
-	if err = v.Salt.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Salt: %v", err)
-	}
-	return nil
-}
-
-func (v ExternalCronTrigger) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixExternalCronTrigger, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.RewardAddress.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .RewardAddress: %v", err)
-	}
-	if err = v.Salt.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Salt: %v", err)
-	}
-	return nil
-}
-
-func (v ExternalCronTrigger) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-
 func (v *ItemLockSuccess) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixItemLockSuccess); err != nil {
 		return err
@@ -819,11 +755,7 @@ func (v ItemLockSuccess) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 
-func (msg ExternalItemWithdraw) ToExternal(address ton.AccountID, init *tlb.StateInit) (tlb.Message, error) {
-	return ton.CreateExternalMessageT(address, msg, init, tlb.VarUInteger16{})
-}
-
-func (msg ExternalCronTrigger) ToExternal(address ton.AccountID, init *tlb.StateInit) (tlb.Message, error) {
+func (msg PositionExternalMessage) ToExternal(address ton.AccountID, init *tlb.StateInit) (tlb.Message, error) {
 	return ton.CreateExternalMessageT(address, msg, init, tlb.VarUInteger16{})
 }
 

@@ -265,8 +265,6 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ResetRoot](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixResetRoot), abiCocoon.CocoonResetRootMsgOp)
 	KnownMsgInTypes[abiCocoon.CocoonReturnExcessesBackMsgOp] = abiCocoon.ReturnExcessesBack{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.ReturnExcessesBack](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixReturnExcessesBack), abiCocoon.CocoonReturnExcessesBackMsgOp)
-	KnownMsgInTypes[abiCocoon.CocoonTextCmdMsgOp] = abiCocoon.TextCmd{}
-	registerInMsgUnmarshalerForOpcode[*abiCocoon.TextCmd](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixTextCmd), abiCocoon.CocoonTextCmdMsgOp)
 	KnownMsgInTypes[abiCocoon.CocoonTextCommandMsgOp] = abiCocoon.TextCommand{}
 	registerInMsgUnmarshalerForOpcode[*abiCocoon.TextCommand](opcodedMsgInDecodeFunctions, uint32(abiCocoon.PrefixTextCommand), abiCocoon.CocoonTextCommandMsgOp)
 	KnownMsgInTypes[abiCocoon.CocoonUnregisterProxyMsgOp] = abiCocoon.UnregisterProxy{}
@@ -944,10 +942,6 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboUpdateData](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboUpdateData), abiGrambo.GramboGramboUpdateDataMsgOp)
 	KnownMsgInTypes[abiGrambo.GramboGramboWithdrawMsgOp] = abiGrambo.GramboWithdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboWithdraw](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboWithdraw), abiGrambo.GramboGramboWithdrawMsgOp)
-	KnownMsgInTypes[abiGrambo.GramboJettonExcessMsgOp] = abiGrambo.JettonExcess{}
-	registerInMsgUnmarshalerForOpcode[*abiGrambo.JettonExcess](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixJettonExcess), abiGrambo.GramboJettonExcessMsgOp)
-	KnownMsgInTypes[abiGrambo.GramboJettonInternalTransferMsgOp] = abiGrambo.JettonInternalTransfer{}
-	registerInMsgUnmarshalerForOpcode[*abiGrambo.JettonInternalTransfer](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixJettonInternalTransfer), abiGrambo.GramboJettonInternalTransferMsgOp)
 
 }
 
@@ -1296,8 +1290,6 @@ func init() {
 
 	KnownMsgInTypes[abiStonfi.StonfiEscrowWithdrawSignMessageMsgOp] = abiStonfi.EscrowWithdrawSignMessage{}
 	registerInMsgUnmarshalerForOpcode[*abiStonfi.EscrowWithdrawSignMessage](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixEscrowWithdrawSignMessage), abiStonfi.StonfiEscrowWithdrawSignMessageMsgOp)
-	KnownMsgInTypes[abiStonfi.StonfiExternalCronTriggerMsgOp] = abiStonfi.ExternalCronTrigger{}
-	registerInMsgUnmarshalerForOpcode[*abiStonfi.ExternalCronTrigger](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixExternalCronTrigger), abiStonfi.StonfiExternalCronTriggerMsgOp)
 	KnownMsgInTypes[abiStonfi.StonfiExternalItemWithdrawMsgOp] = abiStonfi.ExternalItemWithdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiStonfi.ExternalItemWithdraw](opcodedMsgInDecodeFunctions, uint32(abiStonfi.PrefixExternalItemWithdraw), abiStonfi.StonfiExternalItemWithdrawMsgOp)
 	KnownMsgInTypes[abiStonfi.StonfiItemInternalLockMsgOp] = abiStonfi.ItemInternalLock{}

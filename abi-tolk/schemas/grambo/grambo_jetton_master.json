@@ -100,19 +100,11 @@
     },
     {
       "kind": "StructRef",
-      "struct_name": "JettonInternalTransfer"
-    },
-    {
-      "kind": "StructRef",
       "struct_name": "GramboActivateWallet"
     },
     {
       "kind": "StructRef",
       "struct_name": "GramboTakeWalletAddress"
-    },
-    {
-      "kind": "StructRef",
-      "struct_name": "JettonExcess"
     },
     {
       "kind": "StructRef",
@@ -128,7 +120,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 32
+      "inner_ty_idx": 30
     },
     {
       "kind": "StructRef",
@@ -136,7 +128,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 34
+      "inner_ty_idx": 32
     },
     {
       "kind": "AliasRef",
@@ -205,38 +197,22 @@
       "variants": [
         {
           "variant_ty_idx": 26,
-          "prefix_num": 395134233,
-          "prefix_len": 32,
-          "is_prefix_implicit": null,
-          "stack_type_id": 137,
-          "stack_width": 6
-        },
-        {
-          "variant_ty_idx": 27,
           "prefix_num": 1802884066,
           "prefix_len": 32,
           "is_prefix_implicit": null,
-          "stack_type_id": 138,
+          "stack_type_id": 137,
           "stack_width": 1
         },
         {
-          "variant_ty_idx": 28,
+          "variant_ty_idx": 27,
           "prefix_num": 701198948,
           "prefix_len": 32,
           "is_prefix_implicit": null,
-          "stack_type_id": 139,
+          "stack_type_id": 138,
           "stack_width": 2
-        },
-        {
-          "variant_ty_idx": 29,
-          "prefix_num": 3576854235,
-          "prefix_len": 32,
-          "is_prefix_implicit": null,
-          "stack_type_id": 140,
-          "stack_width": 1
         }
       ],
-      "stack_width": 7
+      "stack_width": 3
     },
     {
       "kind": "AliasRef",
@@ -267,9 +243,9 @@
     {
       "kind": "shapedTuple",
       "items_ty_idx": [
+        34,
         36,
-        38,
-        40
+        38
       ]
     },
     {
@@ -483,48 +459,13 @@
     {
       "kind": "alias",
       "name": "MasterIncomingMessage",
-      "ty_idx": 36,
-      "target_ty_idx": 37
-    },
-    {
-      "kind": "struct",
-      "name": "JettonInternalTransfer",
-      "ty_idx": 26,
-      "prefix": {
-        "prefix_num": 395134233,
-        "prefix_len": 32
-      },
-      "fields": [
-        {
-          "name": "query_id",
-          "ty_idx": 11
-        },
-        {
-          "name": "amount",
-          "ty_idx": 6
-        },
-        {
-          "name": "from",
-          "ty_idx": 7
-        },
-        {
-          "name": "response_address",
-          "ty_idx": 7
-        },
-        {
-          "name": "forward_ton_amount",
-          "ty_idx": 6
-        },
-        {
-          "name": "forward_payload",
-          "ty_idx": 3
-        }
-      ]
+      "ty_idx": 34,
+      "target_ty_idx": 35
     },
     {
       "kind": "struct",
       "name": "GramboActivateWallet",
-      "ty_idx": 27,
+      "ty_idx": 26,
       "prefix": {
         "prefix_num": 1802884066,
         "prefix_len": 32
@@ -539,7 +480,7 @@
     {
       "kind": "struct",
       "name": "GramboTakeWalletAddress",
-      "ty_idx": 28,
+      "ty_idx": 27,
       "prefix": {
         "prefix_num": 701198948,
         "prefix_len": 32
@@ -556,25 +497,10 @@
       ]
     },
     {
-      "kind": "struct",
-      "name": "JettonExcess",
-      "ty_idx": 29,
-      "prefix": {
-        "prefix_num": 3576854235,
-        "prefix_len": 32
-      },
-      "fields": [
-        {
-          "name": "query_id",
-          "ty_idx": 11
-        }
-      ]
-    },
-    {
       "kind": "alias",
       "name": "MasterOutgoingMessage",
-      "ty_idx": 38,
-      "target_ty_idx": 39
+      "ty_idx": 36,
+      "target_ty_idx": 37
     },
     {
       "kind": "struct",
@@ -649,13 +575,13 @@
     {
       "kind": "alias",
       "name": "MasterExternalMessage",
-      "ty_idx": 40,
-      "target_ty_idx": 41
+      "ty_idx": 38,
+      "target_ty_idx": 39
     },
     {
       "kind": "struct",
       "name": "GramboCurveState",
-      "ty_idx": 32,
+      "ty_idx": 30,
       "fields": [
         {
           "name": "collected_ton",
@@ -682,7 +608,7 @@
     {
       "kind": "struct",
       "name": "GramboDexConfig",
-      "ty_idx": 34,
+      "ty_idx": 32,
       "fields": [
         {
           "name": "stonfi_router",
@@ -697,7 +623,7 @@
     {
       "kind": "struct",
       "name": "GramboMasterStorage",
-      "ty_idx": 30,
+      "ty_idx": 28,
       "fields": [
         {
           "name": "virtual_ton_reserve",
@@ -717,11 +643,11 @@
         },
         {
           "name": "seed",
-          "ty_idx": 31
+          "ty_idx": 29
         },
         {
           "name": "curve_state",
-          "ty_idx": 33
+          "ty_idx": 31
         },
         {
           "name": "wallet_code",
@@ -733,14 +659,14 @@
         },
         {
           "name": "dex_config",
-          "ty_idx": 35
+          "ty_idx": 33
         }
       ]
     },
     {
       "kind": "struct",
       "name": "GetCurveStateResult",
-      "ty_idx": 43,
+      "ty_idx": 41,
       "fields": [
         {
           "name": "virtual_ton_reserve",
@@ -767,7 +693,7 @@
     {
       "kind": "struct",
       "name": "GetJettonDataResult",
-      "ty_idx": 44,
+      "ty_idx": 42,
       "fields": [
         {
           "name": "total_supply",
@@ -826,17 +752,11 @@
     },
     {
       "body_ty_idx": 27
-    },
-    {
-      "body_ty_idx": 28
-    },
-    {
-      "body_ty_idx": 29
     }
   ],
   "emitted_events": [],
   "storage": {
-    "storage_ty_idx": 30
+    "storage_ty_idx": 28
   },
   "get_methods": [
     {
@@ -865,13 +785,13 @@
       "tvm_method_id": 124044,
       "name": "get_curve_state",
       "parameters": [],
-      "return_ty_idx": 43
+      "return_ty_idx": 41
     },
     {
       "tvm_method_id": 106029,
       "name": "get_jetton_data",
       "parameters": [],
-      "return_ty_idx": 44
+      "return_ty_idx": 42
     },
     {
       "tvm_method_id": 103289,

@@ -70,17 +70,6 @@ type MasterIncomingMessage struct {
 	GramboWithdraw             *GramboWithdraw
 }
 
-const PrefixJettonInternalTransfer uint64 = 0x178d4519
-
-type JettonInternalTransfer struct {
-	QueryId          tlb.Uint64          // uint64
-	Amount           tlb.Coins           // coins
-	From             tlb.InternalAddress // address
-	ResponseAddress  tlb.InternalAddress // address
-	ForwardTonAmount tlb.Coins           // coins
-	ForwardPayload   boc.Cell            // cell
-}
-
 const PrefixGramboTakeWalletAddress uint64 = 0x29cb7264
 
 type GramboTakeWalletAddress struct {
@@ -88,27 +77,17 @@ type GramboTakeWalletAddress struct {
 	OwnerAddress tlb.Maybe[boc.Cell] // cell?
 }
 
-const PrefixJettonExcess uint64 = 0xd53276db
-
-type JettonExcess struct {
-	QueryId tlb.Uint64 // uint64
-}
-
 type MasterOutgoingMessageKind uint
 
 const (
-	MasterOutgoingMessageKind_JettonInternalTransfer  MasterOutgoingMessageKind = 395134233
 	MasterOutgoingMessageKind_GramboActivateWallet    MasterOutgoingMessageKind = 1802884066
 	MasterOutgoingMessageKind_GramboTakeWalletAddress MasterOutgoingMessageKind = 701198948
-	MasterOutgoingMessageKind_JettonExcess            MasterOutgoingMessageKind = 3576854235
 )
 
 type MasterOutgoingMessage struct {
 	SumType                 MasterOutgoingMessageKind
-	JettonInternalTransfer  *JettonInternalTransfer
 	GramboActivateWallet    *GramboActivateWallet
 	GramboTakeWalletAddress *GramboTakeWalletAddress
-	JettonExcess            *JettonExcess
 }
 
 const PrefixGramboSwapEvent uint64 = 0x5025398e

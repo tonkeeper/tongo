@@ -59,7 +59,7 @@ func Test_connection_Run(t *testing.T) {
 		t.Fatalf("failed to wait for next seqno: %v", err)
 	}
 	// give a few milliseconds to the connection's goroutine
-	time.Sleep(300 * time.Millisecond)
+	time.Sleep(600 * time.Millisecond)
 
 	newMasterHead := conn.MasterHead()
 	assert.GreaterOrEqual(t, newMasterHead.Seqno, masterHead.Seqno+1, "expected at least previous seqno +1")

@@ -286,64 +286,6 @@ func (v MasterIncomingMessage) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 
-func (v *JettonInternalTransfer) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixJettonInternalTransfer); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	if err = v.Amount.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Amount: %v", err)
-	}
-	if err = v.From.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .From: %v", err)
-	}
-	if err = v.ResponseAddress.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ResponseAddress: %v", err)
-	}
-	if err = v.ForwardTonAmount.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .ForwardTonAmount: %v", err)
-	}
-	if v.ForwardPayload, err = c.NextRefV(); err != nil {
-		return fmt.Errorf("failed to read .ForwardPayload: %v", err)
-	}
-	return nil
-}
-
-func (v JettonInternalTransfer) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixJettonInternalTransfer, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	if err = v.Amount.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Amount: %v", err)
-	}
-	if err = v.From.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .From: %v", err)
-	}
-	if err = v.ResponseAddress.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ResponseAddress: %v", err)
-	}
-	if err = v.ForwardTonAmount.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .ForwardTonAmount: %v", err)
-	}
-	if err = c.AddRef(&v.ForwardPayload); err != nil {
-		return fmt.Errorf("failed to .ForwardPayload: %v", err)
-	}
-	return nil
-}
-
-func (v JettonInternalTransfer) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-
 func (v *GramboTakeWalletAddress) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixGramboTakeWalletAddress); err != nil {
 		return err
@@ -380,34 +322,6 @@ func (v GramboTakeWalletAddress) ToCell() (*boc.Cell, error) {
 	return c, nil
 }
 
-func (v *JettonExcess) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixJettonExcess); err != nil {
-		return err
-	}
-	if err = v.QueryId.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .QueryId: %v", err)
-	}
-	return nil
-}
-
-func (v JettonExcess) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixJettonExcess, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.QueryId.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .QueryId: %v", err)
-	}
-	return nil
-}
-
-func (v JettonExcess) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-
 func (v *MasterOutgoingMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) error {
 	prefix, err := c.PickUint(32)
 	if err != nil {
@@ -415,18 +329,12 @@ func (v *MasterOutgoingMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) 
 	}
 	v.SumType = MasterOutgoingMessageKind(prefix)
 	switch v.SumType {
-	case MasterOutgoingMessageKind_JettonInternalTransfer:
-		v.JettonInternalTransfer = new(JettonInternalTransfer)
-		return v.JettonInternalTransfer.UnmarshalTLB(c, decoder)
 	case MasterOutgoingMessageKind_GramboActivateWallet:
 		v.GramboActivateWallet = new(GramboActivateWallet)
 		return v.GramboActivateWallet.UnmarshalTLB(c, decoder)
 	case MasterOutgoingMessageKind_GramboTakeWalletAddress:
 		v.GramboTakeWalletAddress = new(GramboTakeWalletAddress)
 		return v.GramboTakeWalletAddress.UnmarshalTLB(c, decoder)
-	case MasterOutgoingMessageKind_JettonExcess:
-		v.JettonExcess = new(JettonExcess)
-		return v.JettonExcess.UnmarshalTLB(c, decoder)
 	default:
 		return fmt.Errorf("unknown prefix: %x", prefix)
 	}
@@ -434,11 +342,6 @@ func (v *MasterOutgoingMessage) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) 
 
 func (v MasterOutgoingMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) error {
 	switch v.SumType {
-	case MasterOutgoingMessageKind_JettonInternalTransfer:
-		if v.JettonInternalTransfer == nil {
-			return fmt.Errorf("MasterOutgoingMessage.JettonInternalTransfer is nil")
-		}
-		return v.JettonInternalTransfer.MarshalTLB(c, encoder)
 	case MasterOutgoingMessageKind_GramboActivateWallet:
 		if v.GramboActivateWallet == nil {
 			return fmt.Errorf("MasterOutgoingMessage.GramboActivateWallet is nil")
@@ -449,11 +352,6 @@ func (v MasterOutgoingMessage) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) err
 			return fmt.Errorf("MasterOutgoingMessage.GramboTakeWalletAddress is nil")
 		}
 		return v.GramboTakeWalletAddress.MarshalTLB(c, encoder)
-	case MasterOutgoingMessageKind_JettonExcess:
-		if v.JettonExcess == nil {
-			return fmt.Errorf("MasterOutgoingMessage.JettonExcess is nil")
-		}
-		return v.JettonExcess.MarshalTLB(c, encoder)
 	default:
 		return fmt.Errorf("unknown MasterOutgoingMessage variant: %v", v.SumType)
 	}

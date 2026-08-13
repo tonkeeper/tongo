@@ -32,7 +32,6 @@ const (
 	CocoonRegisterProxyMsgOp                       = "CocoonRegisterProxy"
 	CocoonResetRootMsgOp                           = "CocoonResetRoot"
 	CocoonReturnExcessesBackMsgOp                  = "CocoonReturnExcessesBack"
-	CocoonTextCmdMsgOp                             = "CocoonTextCmd"
 	CocoonTextCommandMsgOp                         = "CocoonTextCommand"
 	CocoonUnregisterProxyMsgOp                     = "CocoonUnregisterProxy"
 	CocoonUpdateProxyMsgOp                         = "CocoonUpdateProxy"

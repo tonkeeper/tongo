@@ -373,11 +373,6 @@ struct (0x8af982e1) ExternalItemWithdraw {
     signMessage: Cell<EscrowWithdrawSignMessage>
 }
 
-struct (0x2114702d) ExternalCronTrigger {
-    rewardAddress: address?
-    salt: uint32
-}
-
 // ——— Vault incoming ———
 
 struct (0x24864ed4) VaultLock {

@@ -16,6 +16,4 @@ const (
 	GramboGramboUpdateCodeMsgOp           = "GramboGramboUpdateCode"
 	GramboGramboUpdateDataMsgOp           = "GramboGramboUpdateData"
 	GramboGramboWithdrawMsgOp             = "GramboGramboWithdraw"
-	GramboJettonExcessMsgOp               = "GramboJettonExcess"
-	GramboJettonInternalTransferMsgOp     = "GramboJettonInternalTransfer"
 )

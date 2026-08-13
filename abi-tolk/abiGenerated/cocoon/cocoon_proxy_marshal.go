@@ -8,34 +8,6 @@ import (
 	"github.com/tonkeeper/tongo/tlb"
 )
 
-func (v *TextCmd) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
-	if err := c.ReadPrefix(32, PrefixTextCmd); err != nil {
-		return err
-	}
-	if err = v.Action.UnmarshalTLB(c, decoder); err != nil {
-		return fmt.Errorf("failed to read .Action: %v", err)
-	}
-	return nil
-}
-
-func (v TextCmd) MarshalTLB(c *boc.Cell, encoder *tlb.Encoder) (err error) {
-	if err = c.WriteUint(PrefixTextCmd, 32); err != nil {
-		return fmt.Errorf("failed to write prefix: %v", err)
-	}
-	if err = v.Action.MarshalTLB(c, encoder); err != nil {
-		return fmt.Errorf("failed to .Action: %v", err)
-	}
-	return nil
-}
-
-func (v TextCmd) ToCell() (*boc.Cell, error) {
-	c := boc.NewCell()
-	if err := v.MarshalTLB(c, &tlb.Encoder{}); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-
 func (v *ExtProxyCloseRequestSigned) UnmarshalTLB(c *boc.Cell, decoder *tlb.Decoder) (err error) {
 	if err := c.ReadPrefix(32, PrefixExtProxyCloseRequestSigned); err != nil {
 		return err
@@ -430,10 +402,6 @@ func (v ProxyStorage) ToCell() (*boc.Cell, error) {
 		return nil, err
 	}
 	return c, nil
-}
-
-func (msg TextCmd) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {
-	return tlb.BuildInternal(&msg, dest, amount, bounce, init)
 }
 
 func (msg ExtProxyCloseRequestSigned) ToInternal(dest tlb.InternalAddress, amount tlb.Grams, bounce bool, init *tlb.StateInitT[*ProxyStorage]) (tlb.Message, error) {

@@ -12,11 +12,6 @@ contract cocoon_proxy {
 
 // === Proxy-specific Message Types ===
 
-// Text command messages
-struct (0x00000000) TextCmd {
-    action: uint8  // 99 = "c", 119 = "w"
-}
-
 // Signed message payloads
 type SignedProxyPayload = CloseRequestPayload | CloseCompleteRequestPayload
 
@@ -37,7 +32,6 @@ type WorkerProxyPayload = WorkerProxyPayoutRequest
 
 // All message types that can be directly matched
 type ProxyMessage =
-    | TextCmd
     | ExtProxyCloseRequestSigned
     | ExtProxyCloseCompleteRequestSigned
     | ExtProxyPayoutRequest
@@ -229,36 +223,6 @@ fun onInternalMessage(in: InMessage) {
     val msg = lazy ProxyMessage.fromSlice(in.body);
 
     match (msg) {
-        TextCmd => {
-            match (msg.action) {
-                99 => {
-                    // "c" - close
-                    assert (COMMISSION_ESTIMATE <= in.valueCoins) throw ERROR_LOW_MSG_VALUE;
-                    assert (storage.state == proxy_state_normal) throw ERROR_CLOSED;
-                    assert (in.senderAddress == storage.ownerAddress) throw ERROR_EXPECTED_MESSAGE_FROM_OWNER;
-
-                    storage.close(0, storage.ownerAddress, toLeaveOnBalance);
-                },
-                119 => {
-                    // "w" - withdraw
-                    assert (COMMISSION_ESTIMATE <= in.valueCoins) throw ERROR_LOW_MSG_VALUE;
-                    assert (storage.state != proxy_state_closed) throw ERROR_CLOSED;
-                    assert (in.senderAddress == storage.ownerAddress) throw ERROR_EXPECTED_MESSAGE_FROM_OWNER;
-
-                    reserveToncoinsOnBalance(toLeaveOnBalance - storage.balance, 0);
-
-                    storage.balance = 0;
-                    sendPayout(storage.ownerAddress, 0, 0, SEND_MODE_CARRY_ALL_BALANCE);
-                },
-                else => {
-                    throw ERROR_UNKNOWN_TEXT_OP;
-                }
-            }
-
-            storage.save();
-            return;
-
-        }
         ExtProxyCloseRequestSigned => {
             storage.handleSignedProxyMessage(in.body, in.valueCoins, toLeaveOnBalance, storage.proxyPublicKey);
         },

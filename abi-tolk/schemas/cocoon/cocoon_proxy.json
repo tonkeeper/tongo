@@ -44,14 +44,6 @@
     },
     {
       "kind": "StructRef",
-      "struct_name": "TextCmd"
-    },
-    {
-      "kind": "uintN",
-      "n": 8
-    },
-    {
-      "kind": "StructRef",
       "struct_name": "ExtProxyCloseRequestSigned"
     },
     {
@@ -99,7 +91,7 @@
     },
     {
       "kind": "cellOf",
-      "inner_ty_idx": 24
+      "inner_ty_idx": 22
     },
     {
       "kind": "StructRef",
@@ -110,8 +102,12 @@
       "struct_name": "CocoonParams"
     },
     {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
       "kind": "cellOf",
-      "inner_ty_idx": 28
+      "inner_ty_idx": 26
     },
     {
       "kind": "StructRef",
@@ -131,23 +127,8 @@
   "declarations": [
     {
       "kind": "struct",
-      "name": "TextCmd",
-      "ty_idx": 12,
-      "prefix": {
-        "prefix_num": 0,
-        "prefix_len": 32
-      },
-      "fields": [
-        {
-          "name": "action",
-          "ty_idx": 13
-        }
-      ]
-    },
-    {
-      "kind": "struct",
       "name": "ExtProxyCloseRequestSigned",
-      "ty_idx": 14,
+      "ty_idx": 12,
       "prefix": {
         "prefix_num": 1667908497,
         "prefix_len": 32
@@ -155,14 +136,14 @@
       "fields": [
         {
           "name": "rest",
-          "ty_idx": 15
+          "ty_idx": 13
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ExtProxyCloseCompleteRequestSigned",
-      "ty_idx": 16,
+      "ty_idx": 14,
       "prefix": {
         "prefix_num": 3843140551,
         "prefix_len": 32
@@ -170,14 +151,14 @@
       "fields": [
         {
           "name": "rest",
-          "ty_idx": 15
+          "ty_idx": 13
         }
       ]
     },
     {
       "kind": "struct",
       "name": "CocoonProxyData",
-      "ty_idx": 32,
+      "ty_idx": 31,
       "fields": [
         {
           "name": "ownerAddress",
@@ -185,7 +166,7 @@
         },
         {
           "name": "proxyPublicKey",
-          "ty_idx": 25
+          "ty_idx": 23
         },
         {
           "name": "rootAddress",
@@ -193,7 +174,7 @@
         },
         {
           "name": "state",
-          "ty_idx": 21
+          "ty_idx": 19
         },
         {
           "name": "balance",
@@ -232,7 +213,7 @@
     {
       "kind": "struct",
       "name": "ReturnExcessesBack",
-      "ty_idx": 30,
+      "ty_idx": 29,
       "prefix": {
         "prefix_num": 627413836,
         "prefix_len": 32
@@ -247,7 +228,7 @@
     {
       "kind": "struct",
       "name": "Payout",
-      "ty_idx": 31,
+      "ty_idx": 30,
       "prefix": {
         "prefix_num": 3315236051,
         "prefix_len": 32
@@ -262,7 +243,7 @@
     {
       "kind": "struct",
       "name": "WorkerProxyRequest",
-      "ty_idx": 20,
+      "ty_idx": 18,
       "prefix": {
         "prefix_num": 1299340588,
         "prefix_len": 32
@@ -278,7 +259,7 @@
         },
         {
           "name": "state",
-          "ty_idx": 21
+          "ty_idx": 19
         },
         {
           "name": "tokens",
@@ -286,18 +267,18 @@
         },
         {
           "name": "payload",
-          "ty_idx": 22
+          "ty_idx": 20
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ClientStateData",
-      "ty_idx": 24,
+      "ty_idx": 22,
       "fields": [
         {
           "name": "state",
-          "ty_idx": 21
+          "ty_idx": 19
         },
         {
           "name": "balance",
@@ -313,14 +294,14 @@
         },
         {
           "name": "secretHash",
-          "ty_idx": 25
+          "ty_idx": 23
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ClientProxyRequest",
-      "ty_idx": 23,
+      "ty_idx": 21,
       "prefix": {
         "prefix_num": 1698992116,
         "prefix_len": 32
@@ -336,18 +317,18 @@
         },
         {
           "name": "stateData",
-          "ty_idx": 26
+          "ty_idx": 24
         },
         {
           "name": "payload",
-          "ty_idx": 22
+          "ty_idx": 20
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ExtProxyPayoutRequest",
-      "ty_idx": 17,
+      "ty_idx": 15,
       "prefix": {
         "prefix_num": 1980819179,
         "prefix_len": 32
@@ -366,7 +347,7 @@
     {
       "kind": "struct",
       "name": "ExtProxyIncreaseStake",
-      "ty_idx": 18,
+      "ty_idx": 16,
       "prefix": {
         "prefix_num": 2534666631,
         "prefix_len": 32
@@ -389,7 +370,7 @@
     {
       "kind": "struct",
       "name": "OwnerProxyClose",
-      "ty_idx": 19,
+      "ty_idx": 17,
       "prefix": {
         "prefix_num": 3038599681,
         "prefix_len": 32
@@ -408,11 +389,11 @@
     {
       "kind": "struct",
       "name": "CocoonParams",
-      "ty_idx": 28,
+      "ty_idx": 26,
       "fields": [
         {
           "name": "structVersion",
-          "ty_idx": 13
+          "ty_idx": 27
         },
         {
           "name": "paramsVersion",
@@ -468,22 +449,22 @@
         },
         {
           "name": "proxyScCode",
-          "ty_idx": 22
+          "ty_idx": 20
         },
         {
           "name": "workerScCode",
-          "ty_idx": 22
+          "ty_idx": 20
         },
         {
           "name": "clientScCode",
-          "ty_idx": 22
+          "ty_idx": 20
         }
       ]
     },
     {
       "kind": "struct",
       "name": "ProxyStorage",
-      "ty_idx": 27,
+      "ty_idx": 25,
       "fields": [
         {
           "name": "ownerAddress",
@@ -491,7 +472,7 @@
         },
         {
           "name": "proxyPublicKey",
-          "ty_idx": 25
+          "ty_idx": 23
         },
         {
           "name": "rootAddress",
@@ -499,7 +480,7 @@
         },
         {
           "name": "state",
-          "ty_idx": 21
+          "ty_idx": 19
         },
         {
           "name": "balance",
@@ -515,7 +496,7 @@
         },
         {
           "name": "params",
-          "ty_idx": 29
+          "ty_idx": 28
         }
       ]
     }
@@ -528,6 +509,9 @@
       "body_ty_idx": 14
     },
     {
+      "body_ty_idx": 15
+    },
+    {
       "body_ty_idx": 16
     },
     {
@@ -537,34 +521,28 @@
       "body_ty_idx": 18
     },
     {
-      "body_ty_idx": 19
-    },
-    {
-      "body_ty_idx": 20
-    },
-    {
-      "body_ty_idx": 23
+      "body_ty_idx": 21
     }
   ],
   "incoming_external": [],
   "outgoing_messages": [
     {
-      "body_ty_idx": 30
+      "body_ty_idx": 29
     },
     {
-      "body_ty_idx": 31
+      "body_ty_idx": 30
     }
   ],
   "emitted_events": [],
   "storage": {
-    "storage_ty_idx": 27
+    "storage_ty_idx": 25
   },
   "get_methods": [
     {
       "tvm_method_id": 97687,
       "name": "get_cocoon_proxy_data",
       "parameters": [],
-      "return_ty_idx": 32
+      "return_ty_idx": 31
     }
   ],
   "thrown_errors": [
@@ -600,11 +578,6 @@
     },
     {
       "kind": "constant",
-      "name": "ERROR_UNKNOWN_TEXT_OP",
-      "err_code": 1013
-    },
-    {
-      "kind": "constant",
       "name": "ERROR_CONTRACT_ADDRESS_MISMATCH",
       "err_code": 1014
     },
@@ -616,5 +589,5 @@
   ],
   "compiler_name": "tolk",
   "compiler_version": "1.4.1",
-  "code_boc64": "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"
+  "code_boc64": "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"
 }

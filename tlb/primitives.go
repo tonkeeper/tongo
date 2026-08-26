@@ -307,8 +307,12 @@ func (m *Ref[T]) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	if err != nil {
 		return err
 	}
-	if r.CellType() == boc.PrunedBranchCell {
+	if r.IsPruned() {
 		var value T
+		// if target is cell, write the pruned cell
+		if cell, ok := any(&value).(*boc.Cell); ok {
+			*cell = *r
+		}
 		m.Value = value
 		return nil
 	}

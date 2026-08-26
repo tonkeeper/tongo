@@ -136,7 +136,12 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 		if c.IsLibrary() {
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
-		if c.CellType() == boc.PrunedBranchCell {
+		if c.IsPruned() {
+			// if decoded expects a cell, give it the pruned cell as it is
+			// otherwise, as before, there is nothing to do
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType && val.CanSet() {
+				val.Set(reflect.ValueOf(c).Elem())
+			}
 			return nil
 		}
 	case t.IsMaybe:
@@ -163,7 +168,12 @@ func decode(c *boc.Cell, tag string, val reflect.Value, decoder *Decoder) error 
 			}
 			return fmt.Errorf("library cell as a ref is not implemented")
 		}
-		if c.CellType() == boc.PrunedBranchCell {
+		if c.IsPruned() {
+			if val.Kind() == reflect.Struct && val.Type() == bocCellType && val.CanSet() {
+				// this is a pruned cell, and the targer is a cell,
+				// so it's no problem to keep it as it is (like library cell)
+				val.Set(reflect.ValueOf(c).Elem())
+			}
 			return nil
 		}
 	}

@@ -81,6 +81,10 @@ func (c *Cell) IsLibrary() bool {
 	return c.cellType == LibraryCell
 }
 
+func (c *Cell) IsPruned() bool {
+	return c.cellType == PrunedBranchCell
+}
+
 func (c *Cell) GetLibraryHash() ([32]byte, error) {
 	if !c.IsLibrary() {
 		return [32]byte{}, errors.New("not library cell")
@@ -131,6 +135,21 @@ func (c *Cell) hash(cache map[*Cell]*immutableCell) ([]byte, error) {
 		return nil, err
 	}
 	return imc.Hash(maxLevel), nil
+}
+
+var ErrNotPrunedCell = errors.New("not a pruned branch cell")
+
+func (c *Cell) PrunedHash() (result [32]byte, err error) {
+	if !c.IsPruned() {
+		err = ErrNotPrunedCell
+		return
+	}
+	var imc *immutableCell
+	imc, err = newImmutableCell(c, map[*Cell]*immutableCell{})
+	if err == nil {
+		copy(result[:], imc.Hash(0)) // get pruned cell hash
+	}
+	return
 }
 
 func (c *Cell) ToBoc() ([]byte, error) {

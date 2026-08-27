@@ -56,6 +56,25 @@ func (a Account) Status() AccountStatus {
 	panic("invalid sum types for account status")
 }
 
+func (a Account) GetStateInit() *StateInit {
+	if a.SumType != "Account" {
+		return nil
+	}
+	state := a.Account.Storage.State
+	if state.SumType != "AccountActive" {
+		return nil
+	}
+	return &state.AccountActive.StateInit
+}
+
+func (a Account) Hash() (hash Bits256, err error) {
+	c := boc.NewCell()
+	if err = Marshal(c, a); err != nil {
+		return
+	}
+	return c.Hash256()
+}
+
 // AccountStorage
 // account_storage$_ last_trans_lt:uint64
 // balance:CurrencyCollection state:AccountState

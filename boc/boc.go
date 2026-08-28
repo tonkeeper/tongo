@@ -209,6 +209,8 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 	dataBytesSize := int(d2>>1) + int(d2%2)
 	fullfilledBytes := !((d2 % 2) > 0)
 	withHashes := (d1 & 0b10000) != 0
+	// the mask declared by d1 is not kept on the cell, it is only needed to know
+	// how many hashes and depths precede the cell data. See levelMaskOf.
 	mask := levelMask(d1 >> 5)
 
 	if withHashes {
@@ -220,10 +222,8 @@ func deserializeCellData(cellData []byte, referenceIndexSize int) (*Cell, []int,
 		// the first byte of an exotic cell stores the cell's type.
 		exoticType := CellType(readNBytesUIntFromArray(1, cellData))
 		cell = NewCellExotic(exoticType)
-		cell.mask = mask
 	} else {
 		cell = NewCell()
-		cell.mask = mask
 	}
 
 	if len(cellData) < dataBytesSize+referenceIndexSize*refNum {
@@ -331,7 +331,7 @@ func (boc *bagOfCells) serializeBoc(rootCells []*Cell, idx bool, hasCrc32 bool, 
 	reps := make([][]byte, cellCount)
 	for i := cellCount - 1; i >= 0; i-- {
 		ci := cellInfos[i]
-		repr := ci.cell.bocReprWithoutRefs(ci.cell.mask)
+		repr := ci.cell.bocReprWithoutRefs(ci.mask)
 		for j := 0; j < ci.refsNumber; j++ {
 			var b [8]byte
 			k := cellCount - 1 - ci.refsIndex[j]
@@ -458,6 +458,10 @@ func (boc *bagOfCells) importCell(state *orderState, cell *Cell, depth int) (int
 	if err != nil {
 		return 0, err
 	}
+	mask, err := boc.hasher.levelMask(cell)
+	if err != nil {
+		return 0, err
+	}
 	if pos, ok := state.cells[hash]; ok {
 		state.cellList[pos].shouldCache = true
 		return pos, nil
@@ -488,7 +492,8 @@ func (boc *bagOfCells) importCell(state *orderState, cell *Cell, depth int) (int
 		wt:          sumChildWt,
 		refsIndex:   refs,
 		refsNumber:  refsNumber,
-		hashCount:   cell.mask.HashesCount(),
+		mask:        mask,
+		hashCount:   mask.HashesCount(),
 		newIndex:    -1,
 		isRootCell:  false,
 	}
@@ -502,6 +507,7 @@ type cellInfo struct {
 	wt          int
 	refsIndex   [4]int
 	refsNumber  int
+	mask        levelMask
 	hashCount   int
 	newIndex    int
 	isRootCell  bool

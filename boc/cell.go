@@ -17,6 +17,7 @@ var ErrCellRefsOverflow = errors.New("too many refs")
 var ErrNotEnoughRefs = errors.New("not enough refs")
 var ErrNotSingleRoot = errors.New("should be one root cell")
 var ErrDepthIsTooBig = errors.New("depth is too big")
+var ErrMalformedExoticCell = errors.New("malformed exotic cell")
 
 type CellType uint8
 
@@ -33,7 +34,8 @@ type Cell struct {
 	refs      [4]*Cell
 	refCursor int
 	cellType  CellType
-	mask      levelMask
+	// a cell has no level mask field on purpose: a stale mask makes a cell tree
+	// unserializable, see levelMaskOf.
 	// TODO: add capacity checking
 }
 
@@ -545,7 +547,6 @@ func (c *Cell) CopyCell() *Cell {
 		refs:      [4]*Cell{},
 		refCursor: c.refCursor,
 		cellType:  c.cellType,
-		mask:      c.mask,
 	}
 	for i, ref := range c.refs {
 		newC.refs[i] = ref.CopyCell()
@@ -660,8 +661,41 @@ func (c *Cell) bocReprWithoutRefs(mask levelMask) []byte {
 }
 
 // Level returns a level of this cell.
+// It returns 0 if the cell's level mask can't be derived, use LevelMask to get the error.
 func (c *Cell) Level() int {
-	return c.mask.Level()
+	mask, err := c.LevelMask()
+	if err != nil {
+		return 0
+	}
+	return levelMask(mask).Level()
+}
+
+// LevelMask returns a level mask of this cell derived from its type, content and refs.
+// It fails if this cell or one of its descendants is a malformed exotic cell.
+func (c *Cell) LevelMask() (uint8, error) {
+	imc, err := newImmutableCell(c, map[*Cell]*immutableCell{})
+	if err != nil {
+		return 0, err
+	}
+	return uint8(imc.mask), nil
+}
+
+// HashAtLevel returns a hash of this cell for the given level.
+//
+// Hash256 returns the hash of the highest level, which is what ton's Cell::get_hash() does.
+// Level 0 is the representation hash: for a cell tree containing pruned branches,
+// that is the hash of the original, unpruned tree.
+func (c *Cell) HashAtLevel(level int) ([32]byte, error) {
+	if level < 0 || level > maxLevel {
+		return [32]byte{}, fmt.Errorf("level must be in [0, %v], got %v", maxLevel, level)
+	}
+	imc, err := newImmutableCell(c, map[*Cell]*immutableCell{})
+	if err != nil {
+		return [32]byte{}, err
+	}
+	var h [32]byte
+	copy(h[:], imc.Hash(level))
+	return h, nil
 }
 
 func (c *Cell) GetMerkleRoot() ([32]byte, error) {

@@ -47,9 +47,29 @@ func TestUnmarshalKeepsPrunedBranch(t *testing.T) {
 	t.Run("rebuild", func(t *testing.T) {
 		rebuilt := boc.NewCell()
 		require.Nil(t, Marshal(rebuilt, account))
-		h, err := rebuilt.Hash256()
+
+		// the rebuilt tree carries a pruned branch, so it is a level 1 cell,
+		// just like the tree it was decoded from.
+		mask, err := rebuilt.LevelMask()
+		require.Nil(t, err)
+		require.Equal(t, uint8(1), mask, "a tree with a pruned branch must not claim level 0")
+		originalMask, err := cell.LevelMask()
+		require.Nil(t, err)
+		require.Equal(t, originalMask, mask)
+
+		// level 0 is the representation hash: the hash of the original, unpruned account.
+		h, err := rebuilt.HashAtLevel(0)
 		require.Nil(t, err)
 		require.Equal(t, prunedAccountHash, hex.EncodeToString(h[:]))
+
+		// and marshalling must not change any hash of the decoded tree
+		for level := 0; level <= 3; level++ {
+			want, err := cell.HashAtLevel(level)
+			require.Nil(t, err)
+			got, err := rebuilt.HashAtLevel(level)
+			require.Nil(t, err)
+			require.Equal(t, hex.EncodeToString(want[:]), hex.EncodeToString(got[:]), "hash of level %v", level)
+		}
 	})
 
 	t.Run("restore pruned code", func(t *testing.T) {

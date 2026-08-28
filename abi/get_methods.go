@@ -3480,7 +3480,7 @@ func DecodeGetIsInited_StormResult(stack tlb.VmStack) (resultType string, result
 type GetJettonDataResult struct {
 	TotalSupply      tlb.Int257
 	Mintable         bool
-	AdminAddress     tlb.MsgAddress
+	AdminAddress     *tlb.MsgAddress
 	JettonContent    tlb.Any
 	JettonWalletCode tlb.Any
 }
@@ -3506,7 +3506,7 @@ func GetJettonData(ctx context.Context, executor Executor, reqAccountID ton.Acco
 }
 
 func DecodeGetJettonDataResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
-	if stack.Len() < 5 || (stack.Peek(stack.Len()-0-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-0-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-1-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2-1).SumType != "VmStkSlice") || (stack.Peek(stack.Len()-3-1).SumType != "VmStkCell") || (stack.Peek(stack.Len()-4-1).SumType != "VmStkCell") {
+	if stack.Len() < 5 || (stack.Peek(stack.Len()-0-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-0-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-1-1).SumType != "VmStkTinyInt" && stack.Peek(stack.Len()-1-1).SumType != "VmStkInt") || (stack.Peek(stack.Len()-2-1).SumType != "VmStkSlice" && stack.Peek(stack.Len()-2-1).SumType != "VmStkNull") || (stack.Peek(stack.Len()-3-1).SumType != "VmStkCell") || (stack.Peek(stack.Len()-4-1).SumType != "VmStkCell") {
 		return "", nil, fmt.Errorf("invalid stack format")
 	}
 	var result GetJettonDataResult

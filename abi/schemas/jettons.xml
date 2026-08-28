@@ -56,7 +56,7 @@
         <output>
             <int name="total_supply">int257</int>
             <int name="mintable">bool</int>
-            <slice name="admin_address">msgaddress</slice>
+            <slice name="admin_address" nullable="true">msgaddress</slice>
             <cell name="jetton_content">any</cell>
             <cell name="jetton_wallet_code">any</cell>
         </output>

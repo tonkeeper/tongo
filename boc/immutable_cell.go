@@ -29,14 +29,12 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 		return imm, nil
 	}
 	imm := &immutableCell{
-		mask:     c.mask,
 		cellType: c.cellType,
 		refs:     make([]*immutableCell, 0, c.RefsSize()),
-		hashes:   make([][]byte, 0, c.mask.HashesCount()),
-		depths:   make([]int, 0, c.mask.HashesCount()),
 		bitsBuf:  c.bits.buf,
 		bitsLen:  c.bits.len,
 	}
+	refMasks := make([]levelMask, 0, c.RefsSize())
 	for _, ref := range c.refs {
 		if ref == nil {
 			break
@@ -46,9 +44,18 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 			return nil, err
 		}
 		imm.refs = append(imm.refs, immRef)
+		refMasks = append(refMasks, immRef.mask)
 	}
+	// a cell's level mask is derived from its type, content and refs, never taken
+	// from the cell itself - see levelMaskOf.
+	mask, err := levelMaskOf(c.cellType, c.bits.buf, c.bits.len, refMasks)
+	if err != nil {
+		return nil, err
+	}
+	imm.mask = mask
+	imm.hashes = make([][]byte, 0, mask.HashesCount())
+	imm.depths = make([]int, 0, mask.HashesCount())
 
-	mask := c.mask
 	level := mask.Level()
 
 	// the algorithm below is taken directly from ton-blockchain/ton
@@ -94,11 +101,11 @@ func newImmutableCell(c *Cell, cache map[*Cell]*immutableCell) (*immutableCell, 
 		x := sha256.New()
 		if hashIndex == offset {
 			// either i=0 or cellType=PrunedBranchCell
-			cellRepr := c.bocReprWithoutRefs(c.mask.Apply(i))
+			cellRepr := c.bocReprWithoutRefs(mask.Apply(i))
 			x.Write(cellRepr)
 		} else {
 			// i>0
-			x.Write([]byte{d1(c, c.mask.Apply(i)), d2(c)})
+			x.Write([]byte{d1(c, mask.Apply(i)), d2(c)})
 			x.Write(imm.hashes[hashIndex-offset-1])
 		}
 
@@ -171,7 +178,6 @@ func (ic *immutableCell) pruneCells(pruned map[*immutableCell]struct{}) (*Cell, 
 		// we are pruned
 		// let's replace this cell with a pruned branch cell
 		prunedCell := NewCell()
-		prunedCell.mask = 1
 		prunedCell.cellType = PrunedBranchCell
 		if err := prunedCell.WriteUint(1, 8); err != nil {
 			return nil, err
@@ -199,19 +205,13 @@ func (ic *immutableCell) pruneCells(pruned map[*immutableCell]struct{}) (*Cell, 
 		bits:     bits,
 		refs:     [4]*Cell{},
 		cellType: ic.cellType,
-		mask:     ic.mask,
 	}
-	mask := ic.mask
 	for i, ref := range ic.refs {
 		cell, err := ref.pruneCells(pruned)
 		if err != nil {
 			return nil, err
 		}
-		if cell.mask > 0 {
-			mask |= cell.mask
-		}
 		res.refs[i] = cell
 	}
-	res.mask = mask
 	return &res, nil
 }

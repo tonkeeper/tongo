@@ -24,6 +24,15 @@ func (h *Hasher) Hash(c *Cell) ([]byte, error) {
 	return c.hash(h.cache)
 }
 
+// levelMask returns the derived level mask of the given cell, reusing the hasher's cache.
+func (h *Hasher) levelMask(c *Cell) (levelMask, error) {
+	imm, err := newImmutableCell(c, h.cache)
+	if err != nil {
+		return 0, err
+	}
+	return imm.mask, nil
+}
+
 func (h *Hasher) HashString(c *Cell) (string, error) {
 	if s, ok := h.cacheHex[c]; ok {
 		return s, nil

@@ -172,13 +172,6 @@ func (t DNSText) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
 	return nil
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func (r *DNSRecord) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 	t, err := c.ReadUint(16)
 	if err != nil {

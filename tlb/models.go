@@ -151,7 +151,7 @@ type CurrencyCollection struct {
 // extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32))
 // = ExtraCurrencyCollection;
 type ExtraCurrencyCollection struct {
-	Dict HashmapE[Uint32, VarUInteger32]
+	Dict HashmapE[Int32, VarUInteger32]
 }
 
 func (h HashmapE[keyT, T]) MarshalJSON() ([]byte, error) {

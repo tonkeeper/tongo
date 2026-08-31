@@ -10,6 +10,7 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/tonkeeper/tongo/boc"
 )
 
@@ -134,9 +135,10 @@ func Test_tlb_Unmarshal(t *testing.T) {
 			if err != nil {
 				t.Errorf("ReadFile() failed: %v", err)
 			}
-			if bytes.Compare(bytes.Trim(content, " \n"), bytes.Trim(bs, " \n")) != 0 {
-				t.Errorf("block content mismatch")
-			}
+			assert.Equal(t,
+				string(bytes.Trim(content, " \n")),
+				string(bytes.Trim(bs, " \n")),
+				"block content mismatch")
 		})
 	}
 }

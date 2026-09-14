@@ -32,7 +32,7 @@ const (
 	HighLoadV2
 	HighLoadV2R1
 	HighLoadV2R2
-	// TODO: maybe add lockup wallet
+	WalletTg
 )
 
 var codeVersionToString = map[Version]string{
@@ -52,6 +52,7 @@ var codeVersionToString = map[Version]string{
 	HighLoadV1R2: "highload_v1R2",
 	HighLoadV2R1: "highload_v2R1",
 	HighLoadV2R2: "highload_v2R2",
+	WalletTg:     "walletTg",
 }
 var stringToVersion = map[string]Version{}
 
@@ -86,6 +87,7 @@ var codes = map[Version]string{
 	HighLoadV2:   "te6ccgEBCQEA5QABFP8A9KQT9LzyyAsBAgEgAgcCAUgDBAAE0DACASAFBgAXvZznaiaGmvmOuF/8AEG+X5dqJoaY+Y6Z/p/5j6AmipEEAgegc30JjJLb/JXdHxQB6vKDCNcYINMf0z/4I6ofUyC58mPtRNDTH9M/0//0BNFTYIBA9A5voTHyYFFzuvKiB/kBVBCH+RDyowL0BNH4AH+OFiGAEPR4b6UgmALTB9QwAfsAkTLiAbPmW4MlochANIBA9EOK5jEByMsfE8s/y//0AMntVAgANCCAQPSWb6VsEiCUMFMDud4gkzM2AZJsIeKz",
 	HighLoadV2R1: "te6ccgEBBwEA1gABFP8A9KQT9KDyyAsBAgEgAgMCAUgEBQHu8oMI1xgg0x/TP/gjqh9TILnyY+1E0NMf0z/T//QE0VNggED0Dm+hMfJgUXO68qIH+QFUEIf5EPKjAvQE0fgAf44YIYAQ9HhvoW+hIJgC0wfUMAH7AJEy4gGz5luDJaHIQDSAQPRDiuYxyBLLHxPLP8v/9ADJ7VQGAATQMABBoZfl2omhpj5jpn+n/mPoCaKkQQCB6BzfQmMktv8ld0fFADgggED0lm+hb6EyURCUMFMDud4gkzM2AZIyMOKz",
 	HighLoadV2R2: "te6ccgEBCQEA6QABFP8A9KQT9LzyyAsBAgEgAgMCAUgEBQHu8oMI1xgg0x/TP/gjqh9TILnyY+1E0NMf0z/T//QE0VNggED0Dm+hMfJgUXO68qIH+QFUEIf5EPKjAvQE0fgAf44YIYAQ9HhvoW+hIJgC0wfUMAH7AJEy4gGz5luDJaHIQDSAQPRDiuYxyBLLHxPLP8v/9ADJ7VQIAATQMAIBIAYHABe9nOdqJoaa+Y64X/wAQb5fl2omhpj5jpn+n/mPoCaKkQQCB6BzfQmMktv8ld0fFAA4IIBA9JZvoW+hMlEQlDBTA7neIJMzNgGSMjDisw==",
+	WalletTg:     "te6cckEBAQEAGgAAMP8AIJgh10mDCLnyQN+Ahfgz0O0eIO1T2WlCfjk=",
 }
 
 // codeHashToVersion maps code's hash to a wallet version.
@@ -243,7 +245,7 @@ func (m SimpleTransfer) ToInternal() (message tlb.Message, mode uint8, err error
 	}
 	info.IntMsgInfo.Value.Grams = m.Amount
 	for k, v := range m.ExtraCurrency {
-		info.IntMsgInfo.Value.Other.Dict.Put(tlb.Uint32(k), v)
+		info.IntMsgInfo.Value.Other.Dict.Put(tlb.Int32(k), v)
 	}
 
 	intMsg := tlb.Message{

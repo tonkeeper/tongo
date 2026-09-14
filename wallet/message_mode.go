@@ -11,6 +11,9 @@ const (
 	// a wallet will transfer all the remaining value of the inbound message in addition to the value initially indicated
 	// in the new message
 	AttachAllRemainingBalanceOfInboundMessage MessageMode = 64
+	// IgnoreErrors means that a wallet will ignore any errors arising while processing this message
+	// during the action phase. It is required for messages sent by external requests of the Telegram wallet.
+	IgnoreErrors MessageMode = 2
 	// DestroyAccount means that current account must be destroyed if its resulting balance is zero (often used with Mode 128).
 	DestroyAccount MessageMode = 32
 )

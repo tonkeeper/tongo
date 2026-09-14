@@ -14,6 +14,7 @@ import (
 	abiStonfi "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonfi"
 	abiStonkspump "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonkspump"
 	abiVerifier "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/verifier"
+	abiWalletTg "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/walletTg"
 	abiXtr "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/xtr"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -1528,6 +1529,100 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiVerifier.SetSourceItemCode](opcodedMsgInDecodeFunctions, uint32(abiVerifier.PrefixSetSourceItemCode), abiVerifier.VerifierSetSourceItemCodeMsgOp)
 	KnownMsgInTypes[abiVerifier.VerifierUpdateVerifierMsgOp] = abiVerifier.UpdateVerifier{}
 	registerInMsgUnmarshalerForOpcode[*abiVerifier.UpdateVerifier](opcodedMsgInDecodeFunctions, uint32(abiVerifier.PrefixUpdateVerifier), abiVerifier.VerifierUpdateVerifierMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "revision",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiWalletTg.GetRevision(ctx, executor, id)
+				return "GetRevision_WalletTgResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "seqno",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiWalletTg.GetSeqno(ctx, executor, id)
+				return "GetSeqno_WalletTgResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_subwallet_id",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiWalletTg.GetSubwalletId(ctx, executor, id)
+				return "GetSubwalletId_WalletTgResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "get_public_key",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiWalletTg.GetPublicKey(ctx, executor, id)
+				return "GetPublicKey_WalletTgResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["revision"] = append(KnownGetMethodsDecoder["revision"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiWalletTg.DecodeGetRevision(&st)
+		return "GetRevision_WalletTgResult", r, err
+	})
+	KnownGetMethodsDecoder["seqno"] = append(KnownGetMethodsDecoder["seqno"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiWalletTg.DecodeGetSeqno(&st)
+		return "GetSeqno_WalletTgResult", r, err
+	})
+	KnownGetMethodsDecoder["get_subwallet_id"] = append(KnownGetMethodsDecoder["get_subwallet_id"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiWalletTg.DecodeGetSubwalletId(&st)
+		return "GetSubwalletId_WalletTgResult", r, err
+	})
+	KnownGetMethodsDecoder["get_public_key"] = append(KnownGetMethodsDecoder["get_public_key"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiWalletTg.DecodeGetPublicKey(&st)
+		return "GetPublicKey_WalletTgResult", r, err
+	})
+
+	KnownSimpleGetMethods[116453] = append(KnownSimpleGetMethods[116453], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiWalletTg.GetRevision(ctx, executor, id)
+		return "GetRevision_WalletTgResult", r, err
+	})
+	KnownSimpleGetMethods[85143] = append(KnownSimpleGetMethods[85143], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiWalletTg.GetSeqno(ctx, executor, id)
+		return "GetSeqno_WalletTgResult", r, err
+	})
+	KnownSimpleGetMethods[81467] = append(KnownSimpleGetMethods[81467], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiWalletTg.GetSubwalletId(ctx, executor, id)
+		return "GetSubwalletId_WalletTgResult", r, err
+	})
+	KnownSimpleGetMethods[78748] = append(KnownSimpleGetMethods[78748], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiWalletTg.GetPublicKey(ctx, executor, id)
+		return "GetPublicKey_WalletTgResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    WalletTg,
+			Results: []string{"GetRevision_WalletTgResult", "GetSeqno_WalletTgResult", "GetSubwalletId_WalletTgResult", "GetPublicKey_WalletTgResult"},
+		},
+	)
+
+	KnownMsgInTypes[abiWalletTg.WalletTgChangePublicKeyRequestEMsgOp] = abiWalletTg.ChangePublicKeyRequestE{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.ChangePublicKeyRequestE](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixChangePublicKeyRequestE), abiWalletTg.WalletTgChangePublicKeyRequestEMsgOp)
+	KnownMsgInTypes[abiWalletTg.WalletTgChangePublicKeyRequestIMsgOp] = abiWalletTg.ChangePublicKeyRequestI{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.ChangePublicKeyRequestI](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixChangePublicKeyRequestI), abiWalletTg.WalletTgChangePublicKeyRequestIMsgOp)
+	KnownMsgInTypes[abiWalletTg.WalletTgSendBulkMessagesRequestEMsgOp] = abiWalletTg.SendBulkMessagesRequestE{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.SendBulkMessagesRequestE](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixSendBulkMessagesRequestE), abiWalletTg.WalletTgSendBulkMessagesRequestEMsgOp)
+	KnownMsgInTypes[abiWalletTg.WalletTgSendBulkMessagesRequestIMsgOp] = abiWalletTg.SendBulkMessagesRequestI{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.SendBulkMessagesRequestI](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixSendBulkMessagesRequestI), abiWalletTg.WalletTgSendBulkMessagesRequestIMsgOp)
+	KnownMsgInTypes[abiWalletTg.WalletTgSendOneMessageRequestEMsgOp] = abiWalletTg.SendOneMessageRequestE{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.SendOneMessageRequestE](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixSendOneMessageRequestE), abiWalletTg.WalletTgSendOneMessageRequestEMsgOp)
+	KnownMsgInTypes[abiWalletTg.WalletTgSendOneMessageRequestIMsgOp] = abiWalletTg.SendOneMessageRequestI{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.SendOneMessageRequestI](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixSendOneMessageRequestI), abiWalletTg.WalletTgSendOneMessageRequestIMsgOp)
+	KnownMsgInTypes[abiWalletTg.WalletTgStorageMsgOp] = abiWalletTg.Storage{}
+	registerInMsgUnmarshalerForOpcode[*abiWalletTg.Storage](opcodedMsgInDecodeFunctions, uint32(abiWalletTg.PrefixStorage), abiWalletTg.WalletTgStorageMsgOp)
 
 }
 

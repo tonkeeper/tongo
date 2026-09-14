@@ -26,7 +26,8 @@ const (
 	VerifierSourceItem       ContractInterface = _xmlContractInterfaceEnd + 21
 	VerifierSourcesRegistry  ContractInterface = _xmlContractInterfaceEnd + 22
 	VerifierRegistry         ContractInterface = _xmlContractInterfaceEnd + 23
-	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 24
+	WalletTg                 ContractInterface = _xmlContractInterfaceEnd + 24
+	XtrMaster                ContractInterface = _xmlContractInterfaceEnd + 25
 )
 
 func init() {
@@ -53,6 +54,7 @@ func init() {
 	tolkContractInterfaceStrings[VerifierSourceItem] = "verifier_source_item"
 	tolkContractInterfaceStrings[VerifierSourcesRegistry] = "verifier_sources_registry"
 	tolkContractInterfaceStrings[VerifierRegistry] = "verifier_registry"
+	tolkContractInterfaceStrings[WalletTg] = "walletTg"
 	tolkContractInterfaceStrings[XtrMaster] = "XtrMaster"
 
 	tolkContractInterfaceFromString["cocoon_client"] = CocoonClient
@@ -78,5 +80,6 @@ func init() {
 	tolkContractInterfaceFromString["verifier_source_item"] = VerifierSourceItem
 	tolkContractInterfaceFromString["verifier_sources_registry"] = VerifierSourcesRegistry
 	tolkContractInterfaceFromString["verifier_registry"] = VerifierRegistry
+	tolkContractInterfaceFromString["walletTg"] = WalletTg
 	tolkContractInterfaceFromString["XtrMaster"] = XtrMaster
 }

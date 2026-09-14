@@ -11290,6 +11290,81 @@ func (u *Int257) ReadFromStack(stack *VmStack) error {
 	return nil
 }
 
+type Uint96 big.Int
+
+func (u Uint96) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
+	x := big.Int(u)
+	return c.WriteBigUint(&x, 96)
+}
+
+func (u *Uint96) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
+	v, err := c.ReadBigUint(96)
+	if err != nil {
+		return err
+	}
+	*u = Uint96(*v)
+	return err
+}
+
+func (u Uint96) FixedSize() int {
+	return 96
+}
+
+func (u Uint96) Equal(other any) bool {
+	otherUint, ok := other.(Uint96)
+	if !ok {
+		return false
+	}
+	bigU := big.Int(u)
+	otherBigUint := big.Int(otherUint)
+	return bigU.Cmp(&otherBigUint) == 0
+}
+
+func (u Uint96) Compare(other any) (int, bool) {
+	otherUint, ok := other.(Uint96)
+	if !ok {
+		return 0, false
+	}
+	bigU := big.Int(u)
+	otherBigUint := big.Int(otherUint)
+	return bigU.Cmp(&otherBigUint), true
+}
+
+func (u Uint96) MarshalJSON() ([]byte, error) {
+	i := big.Int(u)
+	return []byte(fmt.Sprintf("\"%s\"", i.String())), nil
+}
+
+func (u *Uint96) UnmarshalJSON(p []byte) error {
+	var z big.Int
+	_, ok := z.SetString(strings.Trim(string(p), "\""), 10)
+	if !ok {
+		return fmt.Errorf("invalid integer: %s", p)
+	}
+	*u = Uint96(z)
+	return nil
+}
+
+func (u *Uint96) ReadFromStack(stack *VmStack) error {
+	elem, ok := stack.Pop()
+	if !ok {
+		return ErrStackEmpty
+	}
+	switch elem.SumType {
+	case "VmStkTinyInt":
+		*u = Uint96(*big.NewInt(elem.VmStkTinyInt))
+	case "VmStkInt":
+		*u = Uint96(elem.VmStkInt)
+	default:
+		return fmt.Errorf("invalid stack element for Uint96: %v", elem.SumType)
+	}
+	return nil
+}
+func (u Uint96) HexString() string {
+	i := big.Int(u)
+	return fmt.Sprintf("%024x", &i)
+}
+
 type Uint128 big.Int
 
 func (u Uint128) MarshalTLB(c *boc.Cell, encoder *Encoder) error {
@@ -12079,6 +12154,17 @@ func (u *Bits512) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Bits512) HexString() string {
 	return hex.EncodeToString(u[:])
+}
+
+func (u Uint96) ToBits() Bits96 {
+	i := big.Int(u)
+	var b Bits96
+	i.FillBytes(b[:])
+	return b
+}
+
+func (b Bits96) ToUint() Uint96 {
+	return Uint96(*new(big.Int).SetBytes(b[:]))
 }
 
 func (u Uint128) ToBits() Bits128 {

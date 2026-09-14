@@ -5,8 +5,10 @@ import (
 	"crypto/ed25519"
 	"errors"
 	"fmt"
+	"math/big"
 	"time"
 
+	abiWalletTg "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/walletTg"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -93,7 +95,7 @@ func New(key ed25519.PrivateKey, ver Version, blockchain blockchain, opts ...Opt
 // NewFromAddress reconstructs a wallet from its public key and address by finding the wallet
 // version whose default configuration produces the given address
 func NewFromAddress(publicKey ed25519.PublicKey, address ton.AccountID) (Wallet, error) {
-	for _, ver := range []Version{V5Beta, V5R1, V4R2, V4R1, V3R2, V3R1} {
+	for _, ver := range []Version{V5Beta, V5R1, V4R2, V4R1, V3R2, V3R1, WalletTg} {
 		w, err := NewFromPublicKey(publicKey, ver, WithWorkchain(int(address.Workchain)))
 		if err != nil || w.GetAddress() != address {
 			continue
@@ -156,6 +158,8 @@ func newWallet(key ed25519.PublicKey, version Version, options Options) (wallet,
 		return NewWalletV5R1(key, options), nil
 	case HighLoadV2R2:
 		return newWalletHighloadV2(version, key, options), nil
+	case WalletTg:
+		return newWalletTg(key, options), nil
 	default:
 		return nil, fmt.Errorf("unsupported wallet version: %v", version)
 	}
@@ -399,6 +403,7 @@ type MessageConfig struct {
 	Seqno      uint32
 	ValidUntil time.Time
 	V5MsgType  V5MsgType
+	TgMsgType  TgMsgType
 }
 
 func (w *Wallet) CreateMessageBody(msgConfig MessageConfig, messages ...Sendable) (*boc.Cell, error) {
@@ -456,6 +461,13 @@ func parseWalletData(ver Version, data boc.Cell) (seqno uint32, subWalletID uint
 			return 0, 0, nil, err
 		}
 		return uint32(d.Seqno), 0, append(ed25519.PublicKey{}, d.PublicKey[:]...), nil
+	case WalletTg:
+		var storage abiWalletTg.Storage
+		if err := storage.UnmarshalTLB(&data, tlb.NewDecoder()); err != nil {
+			return 0, 0, nil, err
+		}
+		key := big.Int(storage.PublicKey)
+		return uint32(storage.Seqno), uint32(storage.SubwalletId), key.FillBytes(make([]byte, ed25519.PublicKeySize)), nil
 	default:
 		return 0, 0, nil, fmt.Errorf("unsupported wallet version: %v", ver.ToString())
 	}

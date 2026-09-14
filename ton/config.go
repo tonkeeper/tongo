@@ -68,8 +68,14 @@ type BlockchainConfig struct {
 	// Negative keys don't have a schema,
 	// so we store them as raw cells.
 
-	ConfigParamNegative71  *boc.Cell `json:",omitempty"`
-	ConfigParamNegative999 *boc.Cell `json:",omitempty"`
+	ConfigParamNegative71   *boc.Cell `json:",omitempty"`
+	ConfigParamNegative90   *boc.Cell `json:",omitempty"`
+	ConfigParamNegative999  *boc.Cell `json:",omitempty"`
+	ConfigParamNegative1000 *boc.Cell `json:",omitempty"`
+
+	// ConfigParamNegative123 Telegram wallet contract code
+	// see https://github.com/ton-blockchain/tg-wallet-contract.
+	ConfigParamNegative123 *boc.Cell `json:",omitempty"`
 }
 
 func (conf *BlockchainConfig) ConfigAddr() (AccountID, bool) {
@@ -105,6 +111,13 @@ func (conf *BlockchainConfig) DnsRootAddr() (AccountID, bool) {
 		return AccountID{Workchain: -1, Address: conf.ConfigParam4.DnsRootAddr}, true
 	}
 	return AccountID{}, false
+}
+
+func (conf *BlockchainConfig) TelegramWalletCode() (*boc.Cell, bool) {
+	if conf.ConfigParamNegative123 != nil {
+		return conf.ConfigParamNegative123, true
+	}
+	return nil, false
 }
 
 func (conf *BlockchainConfig) MandatoryParams() []int {

@@ -29,6 +29,12 @@ func (st *symTable) emitStoreExpr(expr string, tyIdx int) (string, error) {
 		return fmt.Sprintf("(func() error { _, err := c.WriteStringRefTail(%s); return err })()", expr), nil
 	case parser.TyKindNullable:
 		return fmt.Sprintf("%s.MarshalTLB(c, encoder)", expr), nil
+	case parser.TyKindArrayOf:
+		innerType, err := st.emitGoType(ty.ArrayOf.InnerTyIdx)
+		if err != nil {
+			return "", fmt.Errorf("array inner type: %w", err)
+		}
+		return fmt.Sprintf("tlb.StoreTolkArray(c, encoder, []%s(%s))", innerType, expr), nil
 	case parser.TyKindCellOf:
 		inner, err := st.TyByIdx(ty.CellOf.InnerTyIdx)
 		if err != nil {
@@ -124,6 +130,12 @@ func (st *symTable) emitLoadExpr(fieldPath string, tyIdx int) (expr string, hasL
 	return %s
 })`, innerType, innerLoadExpr), false, nil
 		}
+	case parser.TyKindArrayOf:
+		innerType, err := st.emitGoType(ty.ArrayOf.InnerTyIdx)
+		if err != nil {
+			return "", false, fmt.Errorf("array inner type: %w", err)
+		}
+		return fmt.Sprintf("tlb.LoadTolkArray[%s](c, decoder)", innerType), false, nil
 	case parser.TyKindTensor:
 		if len(ty.Tensor.ItemsTyIdx) > tlb.MaxTensorSize {
 			return "", false, fmt.Errorf("tensor size %d is too big, update tlb/tensor.go", len(ty.Tensor.ItemsTyIdx))

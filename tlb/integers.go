@@ -11661,6 +11661,9 @@ func (u Uint256) HexString() string {
 	return fmt.Sprintf("%064x", &i)
 }
 
+// BitsSizes are the widths BitsN types are generated for.
+var BitsSizes = []int{80, 96, 128, 160, 256, 264, 320, 352, 512}
+
 type Bits80 [10]byte
 
 func (u Bits80) FixedSize() int {

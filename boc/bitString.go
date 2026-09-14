@@ -1,6 +1,8 @@
 package boc
 
 import (
+	"bytes"
+	"cmp"
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
@@ -86,6 +88,38 @@ func (s *BitString) GetWriteCursor() int {
 
 func (s *BitString) Buffer() []byte {
 	return s.buf
+}
+
+func (s *BitString) Equal(other BitString) bool {
+	if s.len != other.len {
+		return false
+	}
+	full := s.len / 8
+	if !bytes.Equal(s.buf[:full], other.buf[:full]) {
+		return false
+	}
+	rest := s.len % 8
+	if rest == 0 {
+		return true
+	}
+	mask := byte(0xFF) << (8 - rest)
+	return s.buf[full]&mask == other.buf[full]&mask
+}
+
+func (s *BitString) Compare(other BitString) int {
+	shortest := min(s.len, other.len)
+	full := shortest / 8
+	if c := bytes.Compare(s.buf[:full], other.buf[:full]); c != 0 {
+		return c
+	}
+	if rest := shortest % 8; rest != 0 {
+		mask := byte(0xFF) << (8 - rest)
+		var left, right byte
+		if left, right = s.buf[full]&mask, other.buf[full]&mask; left != right {
+			return cmp.Compare(left, right)
+		}
+	}
+	return cmp.Compare(s.len, other.len)
 }
 
 func (s *BitString) checkRange(n int) error {

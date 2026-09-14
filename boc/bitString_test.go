@@ -347,3 +347,70 @@ func BenchmarkBitString_WriteUint(b *testing.B) {
 		}
 	}
 }
+
+// bitsOf builds a bit string of the given bits, with a capacity that does not
+// have to match their number.
+func bitsOf(t *testing.T, capacity int, bits string) BitString {
+	t.Helper()
+	s := NewBitString(capacity)
+	for _, bit := range bits {
+		if err := s.WriteBit(bit == '1'); err != nil {
+			t.Fatalf("WriteBit() failed: %v", err)
+		}
+	}
+	return s
+}
+
+func TestBitString_Equal(t *testing.T) {
+	tests := []struct {
+		name      string
+		leftCap   int
+		left      string
+		rightCap  int
+		right     string
+		wantEqual bool
+	}{
+		{name: "same bits", leftCap: 12, left: "101100111", rightCap: 12, right: "101100111", wantEqual: true},
+		// The buffer of the wider bit string is longer, and its bits past
+		// the write cursor are not part of its value.
+		{name: "same bits, wider capacity", leftCap: 9, left: "101100111", rightCap: 64, right: "101100111", wantEqual: true},
+		{name: "differing bit in the partial byte", leftCap: 9, left: "101100111", rightCap: 9, right: "101100110"},
+		{name: "differing bit in a full byte", leftCap: 9, left: "101100111", rightCap: 9, right: "111100111"},
+		{name: "prefix", leftCap: 9, left: "10110011", rightCap: 9, right: "101100111"},
+		{name: "empty", leftCap: 0, left: "", rightCap: 8, right: "", wantEqual: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			left := bitsOf(t, tt.leftCap, tt.left)
+			right := bitsOf(t, tt.rightCap, tt.right)
+			assert.Equal(t, tt.wantEqual, left.Equal(right))
+			assert.Equal(t, tt.wantEqual, right.Equal(left), "not symmetric")
+			assert.Equal(t, tt.wantEqual, left.Compare(right) == 0)
+			assert.Equal(t, tt.wantEqual, right.Compare(left) == 0)
+		})
+	}
+}
+
+func TestBitString_Compare(t *testing.T) {
+	tests := []struct {
+		name  string
+		left  string
+		right string
+		want  int
+	}{
+		{name: "equal", left: "101100111", right: "101100111"},
+		{name: "differing bit in a full byte", left: "101100111", right: "111100111", want: -1},
+		{name: "differing bit in the partial byte", left: "101100110", right: "101100111", want: -1},
+		{name: "a prefix sorts first", left: "10110011", right: "101100111", want: -1},
+		{name: "longer sorts after", left: "101100111", right: "10110011", want: 1},
+		{name: "first bit decides", left: "1", right: "0111111111", want: 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			left := bitsOf(t, 64, tt.left)
+			right := bitsOf(t, 64, tt.right)
+			assert.Equal(t, tt.want, left.Compare(right))
+			assert.Equal(t, -tt.want, right.Compare(left), "reversed")
+		})
+	}
+}

@@ -494,6 +494,16 @@ func (u Uint{{.NameIndex}}) HexString() string {
 
 func GenerateBitsTypes(sizes []int) string {
 	var b bytes.Buffer
+	// BitsSizes lets code that generates references to these types, such as
+	// tolk/tolkgen, tell which widths exist.
+	b.WriteString("\n// BitsSizes are the widths BitsN types are generated for.\nvar BitsSizes = []int{")
+	for i, size := range sizes {
+		if i > 0 {
+			b.WriteString(", ")
+		}
+		b.WriteString(strconv.Itoa(size))
+	}
+	b.WriteString("}\n")
 	for _, size := range sizes {
 		replacer := strings.NewReplacer(
 			"$bits$", strconv.Itoa(size),
@@ -572,6 +582,24 @@ func (u *Bits$bits$) UnmarshalTLB(c *boc.Cell, decoder *Decoder) error {
 
 func (u Bits$bits$) FixedSize() int {
 	return $bits$
+}
+
+func (u Bits$bits$) Equal(other any) bool {
+	otherBits, ok := other.(Bits$bits$)
+	if !ok {
+		return false
+	}
+	left := boc.BitString(u)
+	return left.Equal(boc.BitString(otherBits))
+}
+
+func (u Bits$bits$) Compare(other any) (int, bool) {
+	otherBits, ok := other.(Bits$bits$)
+	if !ok {
+		return 0, false
+	}
+	left := boc.BitString(u)
+	return left.Compare(boc.BitString(otherBits)), true
 }
 
 	`)

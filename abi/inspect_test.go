@@ -666,6 +666,9 @@ func Test_contractInspector_InspectContract(t *testing.T) {
 			account: "0:e6473848d6c44acbb2453cab8cea9440d9501def3d01dba332759ef5b4fe2b7f",
 			code:    "b5ee9c7201010101001a000030ff00209821d7498308b9f240df8085f833d0ed1e20ed53d9",
 			data:    "b5ee9c7201010101002b00005200000000017fff7f11d944a1707a06d429faacab64e8515725f3fb2171a27c78e8f9310b06ee02f617",
+			want: []ContractInterface{
+				WalletTg,
+			},
 		},
 	}
 	staticLibrary, err := getStaticLibraryResolver(inspectorLibraries)

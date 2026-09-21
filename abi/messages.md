@@ -174,6 +174,7 @@ The list below contains the supported message operations, their names and opcode
 | HipoFinanceRecoverStakes| 0x4f173d3e |
 | HipoFinanceRequestLoan| 0x36335da9 |
 | HipoFinanceRequestLoanV1| 0x36335da9 |
+| HipoFinanceRequestLoanV2| 0x36335da9 |
 | HipoFinanceRequestRejected| 0xcd0f2116 |
 | HipoFinanceReserveTokens| 0x386a358b |
 | HipoFinanceRollbackUnstake| 0x1b77fd1a |

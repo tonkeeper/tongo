@@ -162,6 +162,8 @@ var (
 	// 0x36335da9
 	decodeFuncHipoFinanceRequestLoanMsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanMsgOp, HipoFinanceRequestLoanMsgBody{})
 	// 0x36335da9
+	decodeFuncHipoFinanceRequestLoanV2MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV2MsgOp, HipoFinanceRequestLoanV2MsgBody{})
+	// 0x36335da9
 	decodeFuncHipoFinanceRequestLoanV1MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV1MsgOp, HipoFinanceRequestLoanV1MsgBody{})
 	// 0x367f2743
 	decodeFuncStormFailNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x367f2743, Len: 32}, StormFailNotificationMsgOp, StormFailNotificationMsgBody{})
@@ -927,11 +929,12 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x354bcdf4
 	StonfiWithdrawFeeV2MsgOpCode: decodeFuncStonfiWithdrawFeeV2MsgBody,
 
-	//HipoFinanceRequestLoan, HipoFinanceRequestLoanV1,
+	//HipoFinanceRequestLoan, HipoFinanceRequestLoanV2, HipoFinanceRequestLoanV1,
 	0x36335da9: multipleMsgsDecoder{
 		tag: "0x36335da9",
 		funcs: []msgDecoderFunc{
 			decodeFuncHipoFinanceRequestLoanMsgBody,
+			decodeFuncHipoFinanceRequestLoanV2MsgBody,
 			decodeFuncHipoFinanceRequestLoanV1MsgBody},
 	},
 
@@ -1816,6 +1819,7 @@ const (
 	StormVaultTradeNotificationMsgOp             MsgOpName = "StormVaultTradeNotification"
 	StonfiWithdrawFeeV2MsgOp                     MsgOpName = "StonfiWithdrawFeeV2"
 	HipoFinanceRequestLoanMsgOp                  MsgOpName = "HipoFinanceRequestLoan"
+	HipoFinanceRequestLoanV2MsgOp                MsgOpName = "HipoFinanceRequestLoanV2"
 	HipoFinanceRequestLoanV1MsgOp                MsgOpName = "HipoFinanceRequestLoanV1"
 	StormFailNotificationMsgOp                   MsgOpName = "StormFailNotification"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
@@ -2161,6 +2165,7 @@ const (
 	StormVaultTradeNotificationMsgOpCode             MsgOpCode = 0x3475fdd2
 	StonfiWithdrawFeeV2MsgOpCode                     MsgOpCode = 0x354bcdf4
 	HipoFinanceRequestLoanMsgOpCode                  MsgOpCode = 0x36335da9
+	HipoFinanceRequestLoanV2MsgOpCode                MsgOpCode = 0x36335da9
 	HipoFinanceRequestLoanV1MsgOpCode                MsgOpCode = 0x36335da9
 	StormFailNotificationMsgOpCode                   MsgOpCode = 0x367f2743
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
@@ -2974,6 +2979,20 @@ type StonfiWithdrawFeeV2MsgBody struct {
 }
 
 type HipoFinanceRequestLoanMsgBody struct {
+	QueryId     uint64
+	RoundSince  uint32
+	LoanAmount  tlb.VarUInteger16
+	MinPayment  tlb.VarUInteger16
+	NewStakeMsg struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	} `tlb:"^"`
+}
+
+type HipoFinanceRequestLoanV2MsgBody struct {
 	QueryId             uint64
 	RoundSince          uint32
 	LoanAmount          tlb.VarUInteger16
@@ -4878,6 +4897,7 @@ var KnownMsgInTypes = map[string]any{
 	StormVaultTradeNotificationMsgOp:             StormVaultTradeNotificationMsgBody{},
 	StonfiWithdrawFeeV2MsgOp:                     StonfiWithdrawFeeV2MsgBody{},
 	HipoFinanceRequestLoanMsgOp:                  HipoFinanceRequestLoanMsgBody{},
+	HipoFinanceRequestLoanV2MsgOp:                HipoFinanceRequestLoanV2MsgBody{},
 	HipoFinanceRequestLoanV1MsgOp:                HipoFinanceRequestLoanV1MsgBody{},
 	StormFailNotificationMsgOp:                   StormFailNotificationMsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},

@@ -25,6 +25,7 @@ const (
 	SumTypeVarUint         SumType = "VarUint"
 	SumTypeCoins           SumType = "Coins"
 	SumTypeBits            SumType = "Bits"
+	SumTypeString          SumType = "String"
 	SumTypeCell            SumType = "Cell"
 	SumTypeRemaining       SumType = "Remaining"
 	SumTypeInternalAddress SumType = "InternalAddress"
@@ -70,6 +71,7 @@ type Value struct {
 	VarUint         *VarUInt
 	Coins           *CoinsValue
 	Bits            *Bits
+	String          *StringValue
 	Cell            *Any
 	Remaining       *RemainingValue
 	InternalAddress *InternalAddress
@@ -214,6 +216,20 @@ func (v *Value) MustGetBits() boc.BitString {
 		panic("value is not a bits")
 	}
 	return boc.BitString(*v.Bits)
+}
+
+func (v *Value) GetString() (string, bool) {
+	if v.String == nil {
+		return "", false
+	}
+	return string(*v.String), true
+}
+
+func (v *Value) MustGetString() string {
+	if v.String == nil {
+		panic("value is not a string")
+	}
+	return string(*v.String)
 }
 
 func (v *Value) GetAddress() (InternalAddress, bool) {
@@ -613,6 +629,14 @@ func (v *Value) unmarshal(cell *boc.Cell, ty parser.Ty, tyIdx *int, decoder *Dec
 		if err != nil {
 			return fmt.Errorf("failed to unmarshal bool value: %w", err)
 		}
+	case parser.TyKindString:
+		v.SumType = SumTypeString
+		def := StringValue("")
+		v.String = &def
+		err = v.String.Unmarshal(cell, decoder)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal string value: %w", err)
+		}
 	case parser.TyKindCell:
 		v.SumType = SumTypeCell
 		v.Cell = &Any{}
@@ -874,6 +898,14 @@ func (v *Value) marshal(cell *boc.Cell, ty parser.Ty, tyIdx *int, encoder *Encod
 		if err != nil {
 			return fmt.Errorf("failed to marshal cell value: %w", err)
 		}
+	case parser.TyKindString:
+		if v.SumType != SumTypeString {
+			return fmt.Errorf("expected String, but got %v", v.SumType)
+		}
+		err = v.String.Marshal(cell, encoder)
+		if err != nil {
+			return fmt.Errorf("failed to marshal string value: %w", err)
+		}
 	case parser.TyKindSlice:
 		err = fmt.Errorf("failed to marshal slice value: slice is not supported")
 	case parser.TyKindBuilder:
@@ -954,6 +986,11 @@ func (v *Value) Equal(o any) bool {
 			return false
 		}
 		return v.Bool.Equal(*otherValue.Bool)
+	case SumTypeString:
+		if otherValue.String == nil {
+			return false
+		}
+		return v.String.Equal(*otherValue.String)
 	case SumTypeSmallInt:
 		if otherValue.SmallInt == nil {
 			return false
@@ -1096,6 +1133,8 @@ func (v Value) MarshalJSON() ([]byte, error) {
 	switch v.SumType {
 	case SumTypeBool:
 		data, err = json.Marshal(v.Bool)
+	case SumTypeString:
+		data, err = json.Marshal(v.String)
 	case SumTypeSmallInt:
 		data, err = json.Marshal(v.SmallInt)
 	case SumTypeSmallUint:

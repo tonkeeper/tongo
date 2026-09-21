@@ -44,6 +44,31 @@ abi-tolk/
         
 ```
 
+## Contract catalog
+
+[`catalog`](./catalog) reads catalog from
+[ton-blockchain/abis](https://github.com/ton-blockchain/abis)
+
+A copy of the catalog is embedded in the package, so there is always one to fall back on:
+
+```go
+c, err := catalog.GetLatest(ctx)
+if err != nil {
+    c = catalog.GetBuiltin() // should not panic, ensured by test coverage
+}
+```
+
+To move the embedded copy to a newer [release](https://github.com/ton-blockchain/abis/releases):
+
+```sh
+cd abi-tolk/catalog
+TAG=v0.1.2
+curl -sSL https://github.com/ton-blockchain/abis/releases/download/$TAG/abi-catalog.json |
+    gzip -9n > builtin/abi-catalog.json.gz
+echo $TAG > builtin/version.txt
+go test ./abi-tolk/catalog
+```
+
 ## Contract ABI
 
 The main definition of a contract interface is this declaration in source code:

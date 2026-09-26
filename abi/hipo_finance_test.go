@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
+	"github.com/tonkeeper/tongo/tlb"
 )
 
 // Every message below is a real one taken from mainnet, one per Hipo op declared in
@@ -123,10 +124,10 @@ func TestHipoFinanceFieldWidths(t *testing.T) {
 // exactly, so none can be mistaken for another.
 //
 // The three older messages are real; the oldest carries a share of 8 on the old scale out of
-// 255, the same bid as 2056 on the new one. The last two are the third with max_stake added,
-// once as 0 (no cap, the shortest the field can be) and once as a realistic cap, built with
-// @ton/core rather than taken from a block: the stake-cap release is not deployed yet, so no
-// message in this shape exists on chain. Replace them with real ones once they do.
+// 255, the same bid as 2056 on the new one. The last two carry max_stake: 0 (no cap, the shortest
+// the field can be), the third with the field added, built with
+// @ton/core, before the stake-cap release was deployed. The capped one has since been replaced by a
+// real message; the one with max_stake 0 has no real counterpart yet.
 func TestHipoFinanceRequestLoanEveryEra(t *testing.T) {
 	for _, c := range []struct {
 		name string
@@ -137,7 +138,7 @@ func TestHipoFinanceRequestLoanEveryEra(t *testing.T) {
 		{"sent after the widening", "B5EE9C720101030100AF00013E36335DA9000000006AA5512B6AA64F087016BFFF2242C0052D7FFFD14007070101901781DB04A92CB9444B3043E9C8DB1BB6FC23B7DA38B9E7902A8ECCDEA2632F796AA64F08000300000F130A89779CC0D6E9CBA7571982050AF2AD2C59206879E5762DC21235D3BA66020080BFF1F56BB51083DB7B22CF827282C6D759FEBE75B5D011DEC36EF29933D7AC763757B03237DA9F88F85982223F4F91C9801C33631536342937184DD93D46FE06", HipoFinanceRequestLoanV2MsgOp},
 		{"sent 2026-09-26, naming no share", "B5EE9C720101030100AD00013A36335DA9000000006AB72B706AB74F087031471B7D5E5F357F000000000101908BEFC2D391D594DB74129D7CF454338E8E2103D24A34A04F9D04F39E116C67726AB74F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A97402008012DDE6DE3DFEB85DE761EC71BBACD92935E752AB2C1900B01B22C445B5F8A79F5196E06A469444948122E88647BDC2D5679863296206DCEBCADBCDE507D0C703", HipoFinanceRequestLoanV3MsgOp},
 		{"stake cap, max_stake 0", hipoRequestLoanNoCap, HipoFinanceRequestLoanMsgOp},
-		{"stake cap, max_stake 3157083 GRAM", hipoRequestLoanCapped, HipoFinanceRequestLoanMsgOp},
+		{"sent 2026-09-26 09:39, max_stake 3067441.598 GRAM", hipoRequestLoanCapped, HipoFinanceRequestLoanMsgOp},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			raw, err := hex.DecodeString(c.body)
@@ -165,20 +166,23 @@ func TestHipoFinanceRequestLoanEveryEra(t *testing.T) {
 	}
 }
 
-// The sent-2026-09-26 request above, with max_stake added after min_payment.
+// A real request sent 2026-09-26 09:39 UTC, after the stake-cap release, carrying a cap; and the
+// sent-2026-09-26 _v3 request above with max_stake 0 added, built with @ton/core, because no request with
+// a zero cap has been sent yet. Replace that one with a real message once one exists.
 const (
 	hipoRequestLoanNoCap  = "B5EE9C720101030100AE00013B36335DA9000000006AB72B706AB74F087031471B7D5E5F357F00000000080101908BEFC2D391D594DB74129D7CF454338E8E2103D24A34A04F9D04F39E116C67726AB74F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A97402008012DDE6DE3DFEB85DE761EC71BBACD92935E752AB2C1900B01B22C445B5F8A79F5196E06A469444948122E88647BDC2D5679863296206DCEBCADBCDE507D0C703"
-	hipoRequestLoanCapped = "B5EE9C720101030100B500014936335DA9000000006AB72B706AB74F087031471B7D5E5F357F0000000070B3759AABDCE0080101908BEFC2D391D594DB74129D7CF454338E8E2103D24A34A04F9D04F39E116C67726AB74F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A97402008012DDE6DE3DFEB85DE761EC71BBACD92935E752AB2C1900B01B22C445B5F8A79F5196E06A469444948122E88647BDC2D5679863296206DCEBCADBCDE507D0C703"
+	hipoRequestLoanCapped = "B5EE9C720101030100B500014936335DA9000000006AB792B46AB84F087062B759BD8C3A85FEC000000070AE5D266D86D72801019090A730060B00B26CCC717450249B0FA9C0B66588678BB7111A211C205DC7FB496AB84F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A974020080AC838AF88782854EEFA3718AD2FC4943ACFEB6E613A052CF80C8746488DBD7A0BDBD3F7E10EC4BFC5737313CAB5481B344164F14A12432F285E3AE12E492120B"
 )
 
 // max_stake is read as the value that was sent, and every field before it keeps its place.
 func TestHipoFinanceRequestLoanMaxStake(t *testing.T) {
 	for _, c := range []struct {
-		body string
-		want uint64
+		body                       string
+		round                      uint32
+		loan, minPayment, maxStake string
 	}{
-		{hipoRequestLoanNoCap, 0},
-		{hipoRequestLoanCapped, 3_157_083_000_000_000},
+		{hipoRequestLoanNoCap, 1790398216, "866903578240499", "545460846592", "0"},
+		{hipoRequestLoanCapped, 1790463752, "1736633986106280", "1094142918656", "3067441598459250"},
 	} {
 		raw, err := hex.DecodeString(c.body)
 		if err != nil {
@@ -196,17 +200,23 @@ func TestHipoFinanceRequestLoanMaxStake(t *testing.T) {
 		if !ok {
 			t.Fatalf("request_loan with max_stake did not decode to its body type")
 		}
-		if got := big.Int(loan.MaxStake); got.Uint64() != c.want {
-			t.Errorf("max_stake = %v, want %v", got.String(), c.want)
+		for name, got := range map[string]string{
+			"max_stake":   bigString(loan.MaxStake),
+			"loan_amount": bigString(loan.LoanAmount),
+			"min_payment": bigString(loan.MinPayment),
+		} {
+			want := map[string]string{"max_stake": c.maxStake, "loan_amount": c.loan, "min_payment": c.minPayment}[name]
+			if got != want {
+				t.Errorf("%v = %v, want %v", name, got, want)
+			}
 		}
-		if got := big.Int(loan.LoanAmount); got.String() != "866903578240499" {
-			t.Errorf("loan_amount = %v", got.String())
-		}
-		if got := big.Int(loan.MinPayment); got.String() != "545460846592" {
-			t.Errorf("min_payment = %v", got.String())
-		}
-		if loan.RoundSince != 1790398216 {
-			t.Errorf("round_since = %v", loan.RoundSince)
+		if loan.RoundSince != c.round {
+			t.Errorf("round_since = %v, want %v", loan.RoundSince, c.round)
 		}
 	}
+}
+
+func bigString(v tlb.VarUInteger16) string {
+	b := big.Int(v)
+	return b.String()
 }

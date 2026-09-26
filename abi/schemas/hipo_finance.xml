@@ -80,12 +80,19 @@
         round_since:uint32
         = InternalMsgBody;
     </internal>
+    <!--
+        max_stake is the most the loan stakes in total (loan, the leftover the treasury adds
+        to it, and the borrower's collateral), and 0 for no cap. The treasury stops adding
+        leftover there. Required from Hipo's stake-cap release on; see _v3 for the layout
+        before it.
+    -->
     <internal name="hipo_finance_request_loan">
         request_loan#36335da9
         query_id:uint64
         round_since:uint32
         loan_amount:(VarUInteger 16)
         min_payment:(VarUInteger 16)
+        max_stake:(VarUInteger 16)
         new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
         adnl_addr:bits256 signature:^(bits512) ]
         = InternalMsgBody;
@@ -109,14 +116,25 @@
         = InternalMsgBody;
     </internal>
     <!--
-        The two layouts request_loan had before 2026-09-21, when borrower_reward_share stopped
-        being part of a bid: the treasury now sets one share for every loan in a round and
-        refuses a request that names its own. Before that the borrower chose it, as 16 bits
-        out of 65535 from 2026-09-05 and as 8 bits out of 255 before that. Both are declared
-        so that requests from those eras still decode when a trace is reclassified. None of
-        the three can be confused with another: the decoder prefers whichever reading consumes
-        the body exactly, and each layout does that only for its own era.
+        The three layouts request_loan had before the stake-cap release. From 2026-09-21 the
+        body named nothing after min_payment (_v3): the treasury sets one share for every loan
+        in a round and refuses a request that names its own. Before that the borrower chose
+        it, as 16 bits out of 65535 from 2026-09-05 (_v2) and as 8 bits out of 255 before that
+        (_v1). All are declared so that requests from those eras still decode when a trace is
+        reclassified. None of the four layouts can be confused with another: the decoder
+        prefers whichever reading consumes the body exactly, each does that only for its own
+        era, and max_stake, at 4 + 8n bits, is never 0, 8 or 16 bits long.
     -->
+    <internal name="hipo_finance_request_loan_v3">
+        request_loan#36335da9
+        query_id:uint64
+        round_since:uint32
+        loan_amount:(VarUInteger 16)
+        min_payment:(VarUInteger 16)
+        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
+        adnl_addr:bits256 signature:^(bits512) ]
+        = InternalMsgBody;
+    </internal>
     <internal name="hipo_finance_request_loan_v2">
         request_loan#36335da9
         query_id:uint64

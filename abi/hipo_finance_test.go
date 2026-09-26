@@ -2,6 +2,7 @@ package abi
 
 import (
 	"encoding/hex"
+	"math/big"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -113,19 +114,19 @@ func TestHipoFinanceFieldWidths(t *testing.T) {
 	}
 }
 
-// request_loan has had three shapes. borrower_reward_share widened from 8 bits to 16 on
+// request_loan has had four shapes. borrower_reward_share widened from 8 bits to 16 on
 // 2026-09-05, and on 2026-09-21 it left the message altogether: the treasury sets one share
-// for every loan in a round and refuses a request that names its own. Explorers reclassify
-// history, so all three have to decode -- a request from an earlier era would otherwise turn
-// back into raw hex. They are told apart by which reading consumes the body exactly, so none
-// can be mistaken for another.
+// for every loan in a round and refuses a request that names its own. Hipo's stake-cap
+// release then made max_stake, a coins field, required after min_payment. Explorers
+// reclassify history, so every shape has to decode: a request from an earlier era would
+// otherwise turn back into raw hex. They are told apart by which reading consumes the body
+// exactly, so none can be mistaken for another.
 //
-// The two older messages are real, one from each side of the widening; the older carries a
-// share of 8 on the old scale out of 255, the same bid as 2056 on the new one. The third is
-// the second one with its 16 share bits removed, built with this package rather than taken
-// from a block: the release landed at 14:19:35 UTC on 2026-09-21, after the last request of
-// that round, so the first request in this layout will be the next round's. Replace it with
-// a real message once one exists.
+// The three older messages are real; the oldest carries a share of 8 on the old scale out of
+// 255, the same bid as 2056 on the new one. The last two are the third with max_stake added,
+// once as 0 (no cap, the shortest the field can be) and once as a realistic cap, built with
+// @ton/core rather than taken from a block: the stake-cap release is not deployed yet, so no
+// message in this shape exists on chain. Replace them with real ones once they do.
 func TestHipoFinanceRequestLoanEveryEra(t *testing.T) {
 	for _, c := range []struct {
 		name string
@@ -134,7 +135,9 @@ func TestHipoFinanceRequestLoanEveryEra(t *testing.T) {
 	}{
 		{"sent 2026-09-04, before the widening", "B5EE9C724101030100AE00013C36335DA9000000006A9ACF486A9B4F087038D7EA4C6800055D21DBA000080101903FB17DF20664C4E5A9C28B1DF3FE159CED3B01E67D7858CA2E9AA022DD2F94F16A9B4F080004800020791D63C50ED91D13E2B1F5D68589D5CC9A10B81AB775C3543BDFB9AC74F00C0200806DE2E5754D83CAFF1ED8654CA90D51E9D8224DFAF34E70B61BDEDD2D3FB255AD35333D0CBC4205D911B621782D22A47D4675C3EA31E3B07A3A7C371295E48605BA9A9BF8", HipoFinanceRequestLoanV1MsgOp},
 		{"sent after the widening", "B5EE9C720101030100AF00013E36335DA9000000006AA5512B6AA64F087016BFFF2242C0052D7FFFD14007070101901781DB04A92CB9444B3043E9C8DB1BB6FC23B7DA38B9E7902A8ECCDEA2632F796AA64F08000300000F130A89779CC0D6E9CBA7571982050AF2AD2C59206879E5762DC21235D3BA66020080BFF1F56BB51083DB7B22CF827282C6D759FEBE75B5D011DEC36EF29933D7AC763757B03237DA9F88F85982223F4F91C9801C33631536342937184DD93D46FE06", HipoFinanceRequestLoanV2MsgOp},
-		{"the layout in force since 2026-09-21, which names no share", "B5EE9C720101030100AD00013A36335DA9000000006AA5512B6AA64F087016BFFF2242C0052D7FFFD1400101901781DB04A92CB9444B3043E9C8DB1BB6FC23B7DA38B9E7902A8ECCDEA2632F796AA64F08000300000F130A89779CC0D6E9CBA7571982050AF2AD2C59206879E5762DC21235D3BA66020080BFF1F56BB51083DB7B22CF827282C6D759FEBE75B5D011DEC36EF29933D7AC763757B03237DA9F88F85982223F4F91C9801C33631536342937184DD93D46FE06", HipoFinanceRequestLoanMsgOp},
+		{"sent 2026-09-26, naming no share", "B5EE9C720101030100AD00013A36335DA9000000006AB72B706AB74F087031471B7D5E5F357F000000000101908BEFC2D391D594DB74129D7CF454338E8E2103D24A34A04F9D04F39E116C67726AB74F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A97402008012DDE6DE3DFEB85DE761EC71BBACD92935E752AB2C1900B01B22C445B5F8A79F5196E06A469444948122E88647BDC2D5679863296206DCEBCADBCDE507D0C703", HipoFinanceRequestLoanV3MsgOp},
+		{"stake cap, max_stake 0", hipoRequestLoanNoCap, HipoFinanceRequestLoanMsgOp},
+		{"stake cap, max_stake 3157083 GRAM", hipoRequestLoanCapped, HipoFinanceRequestLoanMsgOp},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			raw, err := hex.DecodeString(c.body)
@@ -159,5 +162,51 @@ func TestHipoFinanceRequestLoanEveryEra(t *testing.T) {
 				t.Errorf("%d bits left unread", left)
 			}
 		})
+	}
+}
+
+// The sent-2026-09-26 request above, with max_stake added after min_payment.
+const (
+	hipoRequestLoanNoCap  = "B5EE9C720101030100AE00013B36335DA9000000006AB72B706AB74F087031471B7D5E5F357F00000000080101908BEFC2D391D594DB74129D7CF454338E8E2103D24A34A04F9D04F39E116C67726AB74F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A97402008012DDE6DE3DFEB85DE761EC71BBACD92935E752AB2C1900B01B22C445B5F8A79F5196E06A469444948122E88647BDC2D5679863296206DCEBCADBCDE507D0C703"
+	hipoRequestLoanCapped = "B5EE9C720101030100B500014936335DA9000000006AB72B706AB74F087031471B7D5E5F357F0000000070B3759AABDCE0080101908BEFC2D391D594DB74129D7CF454338E8E2103D24A34A04F9D04F39E116C67726AB74F08000480000A23E5F061401A6CAF0B6F0319DE100CF7F7BB10398C0E57B2C8F3264818A97402008012DDE6DE3DFEB85DE761EC71BBACD92935E752AB2C1900B01B22C445B5F8A79F5196E06A469444948122E88647BDC2D5679863296206DCEBCADBCDE507D0C703"
+)
+
+// max_stake is read as the value that was sent, and every field before it keeps its place.
+func TestHipoFinanceRequestLoanMaxStake(t *testing.T) {
+	for _, c := range []struct {
+		body string
+		want uint64
+	}{
+		{hipoRequestLoanNoCap, 0},
+		{hipoRequestLoanCapped, 3_157_083_000_000_000},
+	} {
+		raw, err := hex.DecodeString(c.body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cells, err := boc.DeserializeBoc(raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _, body, err := InternalMessageDecoder(cells[0], nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		loan, ok := body.(HipoFinanceRequestLoanMsgBody)
+		if !ok {
+			t.Fatalf("request_loan with max_stake did not decode to its body type")
+		}
+		if got := big.Int(loan.MaxStake); got.Uint64() != c.want {
+			t.Errorf("max_stake = %v, want %v", got.String(), c.want)
+		}
+		if got := big.Int(loan.LoanAmount); got.String() != "866903578240499" {
+			t.Errorf("loan_amount = %v", got.String())
+		}
+		if got := big.Int(loan.MinPayment); got.String() != "545460846592" {
+			t.Errorf("min_payment = %v", got.String())
+		}
+		if loan.RoundSince != 1790398216 {
+			t.Errorf("round_since = %v", loan.RoundSince)
+		}
 	}
 }

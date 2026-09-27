@@ -3,27 +3,18 @@
         Hipo Finance - liquid staking of the native coin (GRAM, formerly TON).
         Treasury: EQCLyZHP4Xe8fpchQz76O-_RmUhaVc_9BAoGyJrwJrcbz2eZ
         Jetton parent (hGRAM, formerly hTON): EQDPdq8xjAhytYqfGSX8KcFWIReCufsB9Wdg0pLlYSO_h76w
-        Layouts follow the FunC sources (contracts/*.fc) of github.com/HipoFinance/contract.
+        Layouts follow the FunC sources of github.com/HipoFinance/contract.
 
         Ops already covered by the generic TEP schemas are intentionally not redeclared
         here: unstake_tokens (TEP-74 burn#595f07bc), transfer_notification (#7362d09c),
         ownership_assigned (#05138d91), gas_excess (excesses#d53276db), and burn_bill,
         which is the TEP-85 revoke#6f89f5e3 with an identical body.
 
-        Also left out on purpose, because their op codes are shared by other protocols and
-        every declaration here decodes globally: top_up#5372158c, withdraw_jettons#768a50b2,
-        provide_current_quote#ad83913f and take_current_quote#0a420458. On mainnet most
-        messages carrying them go to contracts that are not Hipo's, and naming those
-        hipo_finance would mislabel them.
+        top_up, withdraw_jettons and the quote ops are left out too: most mainnet messages
+        with their op codes belong to other protocols.
     -->
 
-    <!--
-        Round lifecycle. Anyone may send these three, and every one on mainnet so far has
-        arrived as an EXTERNAL message: route_external_message in treasury.fc accepts these
-        and nothing else. route_internal_message sends the same ops to the same handlers, which
-        do not look at the sender, so they are declared here only in the form they are
-        actually sent in.
-    -->
+    <!--    Round lifecycle: sent as external messages    -->
 
     <ext_in name="hipo_finance_participate_in_election">
         participate_in_election#574a297b
@@ -93,13 +84,40 @@
         round_since:uint32
         = InternalMsgBody;
     </internal>
-    <!--
-        max_stake is the most the loan stakes in total (loan, the leftover the treasury adds
-        to it, and the borrower's collateral), and 0 for no cap. The treasury stops adding
-        leftover there. Required from Hipo's stake-cap release on; see _v3 for the layout
-        before it.
-    -->
+    <!--    request_loan layouts: share uint8, _v2 share uint16, _v3 no share, _v4 max_stake    -->
     <internal name="hipo_finance_request_loan">
+        request_loan#36335da9
+        query_id:uint64
+        round_since:uint32
+        loan_amount:(VarUInteger 16)
+        min_payment:(VarUInteger 16)
+        borrower_reward_share:uint8
+        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
+        adnl_addr:bits256 signature:^(bits512) ]
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_request_loan_v2">
+        request_loan#36335da9
+        query_id:uint64
+        round_since:uint32
+        loan_amount:(VarUInteger 16)
+        min_payment:(VarUInteger 16)
+        borrower_reward_share:uint16
+        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
+        adnl_addr:bits256 signature:^(bits512) ]
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_request_loan_v3">
+        request_loan#36335da9
+        query_id:uint64
+        round_since:uint32
+        loan_amount:(VarUInteger 16)
+        min_payment:(VarUInteger 16)
+        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
+        adnl_addr:bits256 signature:^(bits512) ]
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_request_loan_v4">
         request_loan#36335da9
         query_id:uint64
         round_since:uint32
@@ -126,48 +144,6 @@
         recover_stakes#4f173d3e
         query_id:uint64
         round_since:uint32
-        = InternalMsgBody;
-    </internal>
-    <!--
-        The three layouts request_loan had before the stake-cap release. From 2026-09-21 the
-        body named nothing after min_payment (_v3): the treasury sets one share for every loan
-        in a round and refuses a request that names its own. Before that the borrower chose
-        it, as 16 bits out of 65535 from 2026-09-05 (_v2) and as 8 bits out of 255 before that
-        (_v1). All are declared so that requests from those eras still decode when a trace is
-        reclassified. None of the four layouts can be confused with another: the decoder
-        prefers whichever reading consumes the body exactly, each does that only for its own
-        era, and max_stake, at 4 + 8n bits, is never 0, 8 or 16 bits long.
-    -->
-    <internal name="hipo_finance_request_loan_v3">
-        request_loan#36335da9
-        query_id:uint64
-        round_since:uint32
-        loan_amount:(VarUInteger 16)
-        min_payment:(VarUInteger 16)
-        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
-        adnl_addr:bits256 signature:^(bits512) ]
-        = InternalMsgBody;
-    </internal>
-    <internal name="hipo_finance_request_loan_v2">
-        request_loan#36335da9
-        query_id:uint64
-        round_since:uint32
-        loan_amount:(VarUInteger 16)
-        min_payment:(VarUInteger 16)
-        borrower_reward_share:uint16
-        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
-        adnl_addr:bits256 signature:^(bits512) ]
-        = InternalMsgBody;
-    </internal>
-    <internal name="hipo_finance_request_loan_v1">
-        request_loan#36335da9
-        query_id:uint64
-        round_since:uint32
-        loan_amount:(VarUInteger 16)
-        min_payment:(VarUInteger 16)
-        borrower_reward_share:uint8
-        new_stake_msg:^[ validator_pubkey:bits256 stake_at:uint32 max_factor:uint32
-        adnl_addr:bits256 signature:^(bits512) ]
         = InternalMsgBody;
     </internal>
     <internal name="hipo_finance_recover_stake_result">
@@ -337,7 +313,7 @@
         = InternalMsgBody;
     </internal>
 
-    <!--    Burner ops: the treasury pays the borrower fee's burn share to the burner    -->
+    <!--    Burner ops    -->
 
     <internal name="hipo_finance_take_borrower_fee">
         take_borrower_fee#5e2d81f4
@@ -353,12 +329,7 @@
         = InternalMsgBody;
     </internal>
 
-    <!--
-        Surplus. The owner sends it to their hGRAM wallet, the governor to the treasury, and
-        the treasury relays it to the parent and the librarian: one op and one layout in all
-        four contracts. return_excess may be addr_none, and the wallet then returns to the
-        sender.
-    -->
+    <!--    Surplus: wallet, parent, treasury and librarian    -->
 
     <internal name="hipo_finance_withdraw_surplus">
         withdraw_surplus#23355ffb

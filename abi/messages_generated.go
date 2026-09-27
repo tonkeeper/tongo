@@ -164,11 +164,11 @@ var (
 	// 0x36335da9
 	decodeFuncHipoFinanceRequestLoanMsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanMsgOp, HipoFinanceRequestLoanMsgBody{})
 	// 0x36335da9
-	decodeFuncHipoFinanceRequestLoanV3MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV3MsgOp, HipoFinanceRequestLoanV3MsgBody{})
-	// 0x36335da9
 	decodeFuncHipoFinanceRequestLoanV2MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV2MsgOp, HipoFinanceRequestLoanV2MsgBody{})
 	// 0x36335da9
-	decodeFuncHipoFinanceRequestLoanV1MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV1MsgOp, HipoFinanceRequestLoanV1MsgBody{})
+	decodeFuncHipoFinanceRequestLoanV3MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV3MsgOp, HipoFinanceRequestLoanV3MsgBody{})
+	// 0x36335da9
+	decodeFuncHipoFinanceRequestLoanV4MsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV4MsgOp, HipoFinanceRequestLoanV4MsgBody{})
 	// 0x367f2743
 	decodeFuncStormFailNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x367f2743, Len: 32}, StormFailNotificationMsgOp, StormFailNotificationMsgBody{})
 	// 0x370fec51
@@ -942,14 +942,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x354bcdf4
 	StonfiWithdrawFeeV2MsgOpCode: decodeFuncStonfiWithdrawFeeV2MsgBody,
 
-	//HipoFinanceRequestLoan, HipoFinanceRequestLoanV3, HipoFinanceRequestLoanV2, HipoFinanceRequestLoanV1,
+	//HipoFinanceRequestLoan, HipoFinanceRequestLoanV2, HipoFinanceRequestLoanV3, HipoFinanceRequestLoanV4,
 	0x36335da9: multipleMsgsDecoder{
 		tag: "0x36335da9",
 		funcs: []msgDecoderFunc{
 			decodeFuncHipoFinanceRequestLoanMsgBody,
-			decodeFuncHipoFinanceRequestLoanV3MsgBody,
 			decodeFuncHipoFinanceRequestLoanV2MsgBody,
-			decodeFuncHipoFinanceRequestLoanV1MsgBody},
+			decodeFuncHipoFinanceRequestLoanV3MsgBody,
+			decodeFuncHipoFinanceRequestLoanV4MsgBody},
 	},
 
 	// 0x367f2743
@@ -1843,9 +1843,9 @@ const (
 	StormVaultTradeNotificationMsgOp             MsgOpName = "StormVaultTradeNotification"
 	StonfiWithdrawFeeV2MsgOp                     MsgOpName = "StonfiWithdrawFeeV2"
 	HipoFinanceRequestLoanMsgOp                  MsgOpName = "HipoFinanceRequestLoan"
-	HipoFinanceRequestLoanV3MsgOp                MsgOpName = "HipoFinanceRequestLoanV3"
 	HipoFinanceRequestLoanV2MsgOp                MsgOpName = "HipoFinanceRequestLoanV2"
-	HipoFinanceRequestLoanV1MsgOp                MsgOpName = "HipoFinanceRequestLoanV1"
+	HipoFinanceRequestLoanV3MsgOp                MsgOpName = "HipoFinanceRequestLoanV3"
+	HipoFinanceRequestLoanV4MsgOp                MsgOpName = "HipoFinanceRequestLoanV4"
 	StormFailNotificationMsgOp                   MsgOpName = "StormFailNotification"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
@@ -2194,9 +2194,9 @@ const (
 	StormVaultTradeNotificationMsgOpCode             MsgOpCode = 0x3475fdd2
 	StonfiWithdrawFeeV2MsgOpCode                     MsgOpCode = 0x354bcdf4
 	HipoFinanceRequestLoanMsgOpCode                  MsgOpCode = 0x36335da9
-	HipoFinanceRequestLoanV3MsgOpCode                MsgOpCode = 0x36335da9
 	HipoFinanceRequestLoanV2MsgOpCode                MsgOpCode = 0x36335da9
-	HipoFinanceRequestLoanV1MsgOpCode                MsgOpCode = 0x36335da9
+	HipoFinanceRequestLoanV3MsgOpCode                MsgOpCode = 0x36335da9
+	HipoFinanceRequestLoanV4MsgOpCode                MsgOpCode = 0x36335da9
 	StormFailNotificationMsgOpCode                   MsgOpCode = 0x367f2743
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
@@ -3017,26 +3017,12 @@ type StonfiWithdrawFeeV2MsgBody struct {
 }
 
 type HipoFinanceRequestLoanMsgBody struct {
-	QueryId     uint64
-	RoundSince  uint32
-	LoanAmount  tlb.VarUInteger16
-	MinPayment  tlb.VarUInteger16
-	MaxStake    tlb.VarUInteger16
-	NewStakeMsg struct {
-		ValidatorPubkey tlb.Bits256
-		StakeAt         uint32
-		MaxFactor       uint32
-		AdnlAddr        tlb.Bits256
-		Signature       tlb.Bits512 `tlb:"^"`
-	} `tlb:"^"`
-}
-
-type HipoFinanceRequestLoanV3MsgBody struct {
-	QueryId     uint64
-	RoundSince  uint32
-	LoanAmount  tlb.VarUInteger16
-	MinPayment  tlb.VarUInteger16
-	NewStakeMsg struct {
+	QueryId             uint64
+	RoundSince          uint32
+	LoanAmount          tlb.VarUInteger16
+	MinPayment          tlb.VarUInteger16
+	BorrowerRewardShare uint8
+	NewStakeMsg         struct {
 		ValidatorPubkey tlb.Bits256
 		StakeAt         uint32
 		MaxFactor       uint32
@@ -3060,13 +3046,27 @@ type HipoFinanceRequestLoanV2MsgBody struct {
 	} `tlb:"^"`
 }
 
-type HipoFinanceRequestLoanV1MsgBody struct {
-	QueryId             uint64
-	RoundSince          uint32
-	LoanAmount          tlb.VarUInteger16
-	MinPayment          tlb.VarUInteger16
-	BorrowerRewardShare uint8
-	NewStakeMsg         struct {
+type HipoFinanceRequestLoanV3MsgBody struct {
+	QueryId     uint64
+	RoundSince  uint32
+	LoanAmount  tlb.VarUInteger16
+	MinPayment  tlb.VarUInteger16
+	NewStakeMsg struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	} `tlb:"^"`
+}
+
+type HipoFinanceRequestLoanV4MsgBody struct {
+	QueryId     uint64
+	RoundSince  uint32
+	LoanAmount  tlb.VarUInteger16
+	MinPayment  tlb.VarUInteger16
+	MaxStake    tlb.VarUInteger16
+	NewStakeMsg struct {
 		ValidatorPubkey tlb.Bits256
 		StakeAt         uint32
 		MaxFactor       uint32
@@ -4964,9 +4964,9 @@ var KnownMsgInTypes = map[string]any{
 	StormVaultTradeNotificationMsgOp:             StormVaultTradeNotificationMsgBody{},
 	StonfiWithdrawFeeV2MsgOp:                     StonfiWithdrawFeeV2MsgBody{},
 	HipoFinanceRequestLoanMsgOp:                  HipoFinanceRequestLoanMsgBody{},
-	HipoFinanceRequestLoanV3MsgOp:                HipoFinanceRequestLoanV3MsgBody{},
 	HipoFinanceRequestLoanV2MsgOp:                HipoFinanceRequestLoanV2MsgBody{},
-	HipoFinanceRequestLoanV1MsgOp:                HipoFinanceRequestLoanV1MsgBody{},
+	HipoFinanceRequestLoanV3MsgOp:                HipoFinanceRequestLoanV3MsgBody{},
+	HipoFinanceRequestLoanV4MsgOp:                HipoFinanceRequestLoanV4MsgBody{},
 	StormFailNotificationMsgOp:                   StormFailNotificationMsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},

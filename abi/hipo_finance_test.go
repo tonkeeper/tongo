@@ -7,10 +7,12 @@ import (
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 // Every message below is a real one taken from mainnet, one per Hipo op declared in
-// hipo_finance.xml that this file covers.
+// hipo_finance.xml that this file covers. The one exception is send_unstake_all, which has
+// never been sent and is built by its own test.
 //
 // Each case also asserts that decoding consumed the whole body. That is the point of the
 // test rather than a detail: a field declared at the wrong width still decodes, it just
@@ -35,6 +37,10 @@ func TestHipoFinanceMessages(t *testing.T) {
 		{name: "request_rejected", ext: false, body: "B5EE9C7201010101000E000018CD0F2116000000006AA92B87", want: HipoFinanceRequestRejectedMsgOp},
 		{name: "take_profit", ext: false, body: "B5EE9C7201010101000E0000188B556813000000006A95CF67", want: HipoFinanceTakeProfitMsgOp},
 		{name: "take_borrower_fee", ext: false, body: "B5EE9C7201010101000E0000185E2D81F4000000006A9FCF60", want: HipoFinanceTakeBorrowerFeeMsgOp},
+		{name: "withdraw_surplus (return_excess named)", ext: false, body: hipoWithdrawSurplusNamed, want: HipoFinanceWithdrawSurplusMsgOp},
+		{name: "withdraw_surplus (return_excess addr_none)", ext: false, body: "B5EE9C7241010101000F00001923355FFB000000000000000020C0F0D6E5", want: HipoFinanceWithdrawSurplusMsgOp},
+		{name: "proxy_unstake_all", ext: false, body: hipoProxyUnstakeAll, want: HipoFinanceProxyUnstakeAllMsgOp},
+		{name: "unstake_all", ext: false, body: "B5EE9C7241010101000E0000185AE3014800000000000000001A99794C", want: HipoFinanceUnstakeAllMsgOp},
 		{name: "request_loan (2026-09-05 era, names a share)", ext: false, body: "B5EE9C720101030100AF00013E36335DA9000000006AA5512B6AA64F087016BFFF2242C0052D7FFFD14007070101901781DB04A92CB9444B3043E9C8DB1BB6FC23B7DA38B9E7902A8ECCDEA2632F796AA64F08000300000F130A89779CC0D6E9CBA7571982050AF2AD2C59206879E5762DC21235D3BA66020080BFF1F56BB51083DB7B22CF827282C6D759FEBE75B5D011DEC36EF29933D7AC763757B03237DA9F88F85982223F4F91C9801C33631536342937184DD93D46FE06", want: HipoFinanceRequestLoanV2MsgOp},
 	}
 	for _, c := range cases {
@@ -210,6 +216,81 @@ func TestHipoFinanceRequestLoanMaxStake(t *testing.T) {
 		if loan.RoundSince != c.round {
 			t.Errorf("round_since = %v, want %v", loan.RoundSince, c.round)
 		}
+	}
+}
+
+// The unstake-all chain and withdraw_surplus, real messages from mainnet. The unstake-all pair
+// was sent 2026-09-18 20:29 UTC for a holder who staked out by the comment "w": the treasury
+// asks the parent for the owner's wallet (proxy_unstake_all), and the parent tells that wallet
+// to burn everything (unstake_all). The named withdraw_surplus was sent to the treasury on
+// 2026-04-28 and returns the excess to its own sender.
+const (
+	hipoProxyUnstakeAll      = "B5EE9C7241010101003000005B76BD27600000000000000000800AE312CA6033CE18AEA03884FB7B4C3EE66C9B77BFBB7A7ED5BE143646DB4FED10B57BFFDC"
+	hipoWithdrawSurplusNamed = "B5EE9C7241010101003000005B23355FFB00000000000000008014C584C0176A7C32C8DEEE2841418B807482F9FB5EB86146284A4D05314C123DF0E01A8118"
+)
+
+// The addresses these carry are the ones sent: the owner whose wallet is unstaked, and where
+// the surplus goes.
+func TestHipoFinanceUnstakeAllAndSurplusAddresses(t *testing.T) {
+	for _, c := range []struct {
+		body, want string
+		addr       func(any) (tlb.MsgAddress, bool)
+	}{
+		{hipoProxyUnstakeAll, "0:57189653019e70c57501c427dbda61f73364dbbdfddbd3f6adf0a1b236da7f68",
+			func(b any) (tlb.MsgAddress, bool) { v, ok := b.(HipoFinanceProxyUnstakeAllMsgBody); return v.Owner, ok }},
+		{hipoWithdrawSurplusNamed, "0:a62c2600bb53e19646f771420a0c5c03a417cfdaf5c30a31425268298a6091ef",
+			func(b any) (tlb.MsgAddress, bool) {
+				v, ok := b.(HipoFinanceWithdrawSurplusMsgBody)
+				return v.ReturnExcess, ok
+			}},
+	} {
+		raw, err := hex.DecodeString(c.body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cells, err := boc.DeserializeBoc(raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _, body, err := InternalMessageDecoder(cells[0], nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		addr, ok := c.addr(body)
+		if !ok {
+			t.Fatalf("decoded to %T", body)
+		}
+		got, err := ton.AccountIDFromTlb(addr)
+		if err != nil || got == nil {
+			t.Fatalf("address did not decode: %v", err)
+		}
+		if got.ToRaw() != c.want {
+			t.Errorf("address = %v, want %v", got.ToRaw(), c.want)
+		}
+	}
+}
+
+// send_unstake_all has never been sent on mainnet: the dapp and the comment "w" reach the same
+// flow another way. So this one is built, from the layout treasury.fc reads -- a query_id and
+// nothing else -- rather than taken from the chain.
+func TestHipoFinanceSendUnstakeAll(t *testing.T) {
+	c := boc.NewCell()
+	if err := c.WriteUint(0x45baeda9, 32); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.WriteUint(1790463752, 64); err != nil {
+		t.Fatal(err)
+	}
+	c.ResetCounters()
+	_, op, body, err := InternalMessageDecoder(c, nil)
+	if err != nil || op == nil || *op != HipoFinanceSendUnstakeAllMsgOp {
+		t.Fatalf("got %v, %v", op, err)
+	}
+	if q := body.(HipoFinanceSendUnstakeAllMsgBody).QueryId; q != 1790463752 {
+		t.Errorf("query_id = %v", q)
+	}
+	if left := c.BitsAvailableForRead(); left != 0 {
+		t.Errorf("%d bits left unread", left)
 	}
 }
 

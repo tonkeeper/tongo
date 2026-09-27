@@ -3,18 +3,26 @@
         Hipo Finance - liquid staking of the native coin (GRAM, formerly TON).
         Treasury: EQCLyZHP4Xe8fpchQz76O-_RmUhaVc_9BAoGyJrwJrcbz2eZ
         Jetton parent (hGRAM, formerly hTON): EQDPdq8xjAhytYqfGSX8KcFWIReCufsB9Wdg0pLlYSO_h76w
-        Schemas mirror contracts/schema.tlb of github.com/HipoFinance/contract.
+        Layouts follow the FunC sources (contracts/*.fc) of github.com/HipoFinance/contract.
 
         Ops already covered by the generic TEP schemas are intentionally not redeclared
         here: unstake_tokens (TEP-74 burn#595f07bc), transfer_notification (#7362d09c),
         ownership_assigned (#05138d91), gas_excess (excesses#d53276db), and burn_bill,
         which is the TEP-85 revoke#6f89f5e3 with an identical body.
+
+        Also left out on purpose, because their op codes are shared by other protocols and
+        every declaration here decodes globally: top_up#5372158c, withdraw_jettons#768a50b2,
+        provide_current_quote#ad83913f and take_current_quote#0a420458. On mainnet most
+        messages carrying them go to contracts that are not Hipo's, and naming those
+        hipo_finance would mislabel them.
     -->
 
     <!--
-        Round lifecycle. These three arrive as EXTERNAL messages: treasury.fc routes them
-        through route_external_message, which accepts nothing else, and no internal handler
-        takes them.
+        Round lifecycle. Anyone may send these three, and every one on mainnet so far has
+        arrived as an EXTERNAL message: route_external_message in treasury.fc accepts these
+        and nothing else. route_internal_message sends the same ops to the same handlers, which
+        do not look at the sender, so they are declared here only in the form they are
+        actually sent in.
     -->
 
     <ext_in name="hipo_finance_participate_in_election">
@@ -72,6 +80,11 @@
         owner:MsgAddress
         parent:MsgAddress
         round_since:uint32
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_send_unstake_all">
+        send_unstake_all#45baeda9
+        query_id:uint64
         = InternalMsgBody;
     </internal>
     <internal name="hipo_finance_last_bill_burned">
@@ -209,6 +222,12 @@
         owner:MsgAddress
         = InternalMsgBody;
     </internal>
+    <internal name="hipo_finance_proxy_unstake_all">
+        proxy_unstake_all#76bd2760
+        query_id:uint64
+        owner:MsgAddress
+        = InternalMsgBody;
+    </internal>
 
     <!--    Wallet ops    -->
 
@@ -240,6 +259,11 @@
         query_id:uint64
         tokens:(VarUInteger 16)
         coins:(VarUInteger 16)
+        = InternalMsgBody;
+    </internal>
+    <internal name="hipo_finance_unstake_all">
+        unstake_all#5ae30148
+        query_id:uint64
         = InternalMsgBody;
     </internal>
 
@@ -312,6 +336,9 @@
         query_id:uint64
         = InternalMsgBody;
     </internal>
+
+    <!--    Burner ops: the treasury pays the borrower fee's burn share to the burner    -->
+
     <internal name="hipo_finance_take_borrower_fee">
         take_borrower_fee#5e2d81f4
         query_id:uint64
@@ -323,6 +350,20 @@
     <internal name="hipo_finance_take_profit">
         take_profit#8b556813
         query_id:uint64
+        = InternalMsgBody;
+    </internal>
+
+    <!--
+        Surplus. The owner sends it to their hGRAM wallet, the governor to the treasury, and
+        the treasury relays it to the parent and the librarian: one op and one layout in all
+        four contracts. return_excess may be addr_none, and the wallet then returns to the
+        sender.
+    -->
+
+    <internal name="hipo_finance_withdraw_surplus">
+        withdraw_surplus#23355ffb
+        query_id:uint64
+        return_excess:MsgAddress
         = InternalMsgBody;
     </internal>
 

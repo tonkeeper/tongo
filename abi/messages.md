@@ -170,6 +170,7 @@ The list below contains the supported message operations, their names and opcode
 | HipoFinanceProxySaveCoins| 0x47daa10f |
 | HipoFinanceProxyTokensBurned| 0x4476fde0 |
 | HipoFinanceProxyTokensMinted| 0x5be57626 |
+| HipoFinanceProxyUnstakeAll| 0x76bd2760 |
 | HipoFinanceRecoverStakeResult| 0x0fca4c86 |
 | HipoFinanceRecoverStakes| 0x4f173d3e |
 | HipoFinanceRequestLoan| 0x36335da9 |
@@ -180,11 +181,14 @@ The list below contains the supported message operations, their names and opcode
 | HipoFinanceReserveTokens| 0x386a358b |
 | HipoFinanceRollbackUnstake| 0x1b77fd1a |
 | HipoFinanceSaveCoins| 0x4cce0e74 |
+| HipoFinanceSendUnstakeAll| 0x45baeda9 |
 | HipoFinanceTakeBorrowerFee| 0x5e2d81f4 |
 | HipoFinanceTakeProfit| 0x8b556813 |
 | HipoFinanceTokensBurned| 0x5b512e25 |
 | HipoFinanceTokensMinted| 0x5445efee |
+| HipoFinanceUnstakeAll| 0x5ae30148 |
 | HipoFinanceVsetChanged| 0x2f0b5b3b |
+| HipoFinanceWithdrawSurplus| 0x23355ffb |
 | HipoFinanceWithdrawalNotification| 0xf0fa223b |
 | InitPaymentChannel| 0x0e0620c2 |
 | IntentLog| 0x812e8f40 |

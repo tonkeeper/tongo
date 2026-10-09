@@ -767,3 +767,9 @@ func Test_getCodeInfo(t *testing.T) {
 		})
 	}
 }
+
+func TestWalletTgImplementsWallet(t *testing.T) {
+	if !WalletTg.Implements(Wallet) {
+		t.Fatalf("WalletTg must implement Wallet")
+	}
+}

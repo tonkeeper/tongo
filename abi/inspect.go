@@ -79,6 +79,10 @@ func (c ContractInterface) Implements(other ContractInterface) bool {
 	if c == other {
 		return true
 	}
+	// tolk interfaces are not covered by the generated inheritance tree
+	if c == WalletTg {
+		return Wallet.Implements(other)
+	}
 	return c.recursiveImplements(other)
 }
 

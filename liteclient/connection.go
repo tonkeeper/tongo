@@ -328,14 +328,8 @@ func (c *Connection) sendAuthComplete(received Packet) error {
 
 	signature := ed25519.Sign(c.authKey, append(append([]byte{}, c.nonce...), nonce...))
 
-	payload := make([]byte, 4)
-	binary.LittleEndian.PutUint32(payload, magicTcpAuthentificationComplete)
-	binary.LittleEndian.PutUint32(payload, magicPubKey)
 	pubKey := c.authKey.Public().(ed25519.PublicKey)
-	payload = append(payload, pubKey[:]...)
-	payload = append(payload, tl.EncodeLength(len(signature))...)
-	payload = append(payload, signature...)
-	payload = alignBytes(payload)
+	payload := buildAuthCompletePayload(pubKey, signature)
 
 	p, err := NewPacket(payload)
 	if err != nil {
@@ -346,4 +340,23 @@ func (c *Connection) sendAuthComplete(received Packet) error {
 		return fmt.Errorf("failed to send auth sign request, err: %w", err)
 	}
 	return nil
+}
+
+// buildAuthCompletePayload serializes a tcp.authentificationComplete message:
+//
+//	tcp.authentificationComplete key:PublicKey signature:bytes = tcp.Message
+//
+// where key:PublicKey is itself serialized as pub.ed25519 key:int256 = PublicKey.
+// The layout is therefore the message type magic, the PublicKey constructor magic,
+// the 32-byte public key, and the length-prefixed signature. The two magics must
+// occupy distinct 4-byte slots; writing both to the same offset dropped the
+// message type prefix (see #463).
+func buildAuthCompletePayload(pubKey ed25519.PublicKey, signature []byte) []byte {
+	payload := make([]byte, 8)
+	binary.LittleEndian.PutUint32(payload[:4], magicTcpAuthentificationComplete)
+	binary.LittleEndian.PutUint32(payload[4:8], magicPubKey)
+	payload = append(payload, pubKey[:]...)
+	payload = append(payload, tl.EncodeLength(len(signature))...)
+	payload = append(payload, signature...)
+	return alignBytes(payload)
 }

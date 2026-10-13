@@ -142,6 +142,9 @@ func TestGetTransactions_archive(t *testing.T) {
 }
 
 func TestGetTransactions(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	if len(os.Getenv("LITE_SERVERS")) == 0 {
 		t.Skip("LITE_SERVERS env is not set")
 	}

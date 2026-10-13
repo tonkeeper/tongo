@@ -2301,6 +2301,167 @@ func TestMessageDecoder(t *testing.T) {
 			},
 		},
 		{
+			name:       "hipo_finance_decide_loan_requests",
+			boc:        "b5ee9c720101010100120000206a31d344000000006a9e2b966a9e4f08",
+			wantOpName: HipoFinanceDecideLoanRequestsMsgOp,
+			wantValue:  HipoFinanceDecideLoanRequestsMsgBody{QueryId: 1788750742, RoundSince: 1788759816},
+		},
+		{
+			name:       "hipo_finance_process_loan_requests",
+			boc:        "b5ee9c72010101010012000020071d07cc000000006a9e2b966a9e4f08",
+			wantOpName: HipoFinanceProcessLoanRequestsMsgOp,
+			wantValue:  HipoFinanceProcessLoanRequestsMsgBody{QueryId: 1788750742, RoundSince: 1788759816},
+		},
+		{
+			name:       "hipo_finance_recover_stakes",
+			boc:        "b5ee9c720101010100120000204f173d3e000000006a95cf676a944f08",
+			wantOpName: HipoFinanceRecoverStakesMsgOp,
+			wantValue:  HipoFinanceRecoverStakesMsgBody{QueryId: 1788202855, RoundSince: 1788104456},
+		},
+		{
+			name:       "hipo_finance_proxy_new_stake",
+			boc:        "b5ee9c7201010301009c000118089cd4d0000000006a9e2b960101904539b3ce286825e1027b3558c95d016aa774dd24c5e6238ea57f967c0937595d6a9e4f0800030000a86f0b341c62d351e454b8abbd6a6a041fc9a901f795f5ad307e6a2ef5af029f020080c7f9ba5f103e7abf9f9a328c7390739f50dffd83f6530561945c489cfad46438ae1d1d68b38021c686aa2bbd814004d32f8e71f76b3ad4ba1e320ab874e70f00",
+			wantOpName: HipoFinanceProxyNewStakeMsgOp,
+			wantValue: HipoFinanceProxyNewStakeMsgBody{
+				QueryId:     1788750742,
+				NewStakeMsg: hipoNewStakeMsg("4539b3ce286825e1027b3558c95d016aa774dd24c5e6238ea57f967c0937595d", 1788759816, 196608, "a86f0b341c62d351e454b8abbd6a6a041fc9a901f795f5ad307e6a2ef5af029f", "c7f9ba5f103e7abf9f9a328c7390739f50dffd83f6530561945c489cfad46438ae1d1d68b38021c686aa2bbd814004d32f8e71f76b3ad4ba1e320ab874e70f00"),
+			},
+		},
+		{
+			name:       "hipo_finance_proxy_recover_stake",
+			boc:        "b5ee9c7201010101000e000018407cb243000000006a95cf67",
+			wantOpName: HipoFinanceProxyRecoverStakeMsgOp,
+			wantValue:  HipoFinanceProxyRecoverStakeMsgBody{QueryId: 1788202855},
+		},
+		{
+			name:       "hipo_finance_request_rejected",
+			boc:        "b5ee9c7201010101000e000018cd0f2116000000006aa92b87",
+			wantOpName: HipoFinanceRequestRejectedMsgOp,
+			wantValue:  HipoFinanceRequestRejectedMsgBody{QueryId: 1789471623},
+		},
+		{
+			name:       "hipo_finance_take_profit",
+			boc:        "b5ee9c7201010101000e0000188b556813000000006a95cf67",
+			wantOpName: HipoFinanceTakeProfitMsgOp,
+			wantValue:  HipoFinanceTakeProfitMsgBody{QueryId: 1788202855},
+		},
+		{
+			name:       "hipo_finance_take_borrower_fee",
+			boc:        "b5ee9c7201010101000e0000185e2d81f4000000006a9fcf60",
+			wantOpName: HipoFinanceTakeBorrowerFeeMsgOp,
+			wantValue:  HipoFinanceTakeBorrowerFeeMsgBody{QueryId: 1788858208},
+		},
+		{
+			name:       "hipo_finance_withdraw_surplus",
+			boc:        "b5ee9c7241010101003000005b23355ffb00000000000000008014c584c0176a7c32c8deee2841418b807482f9fb5eb86146284a4d05314c123df0e01a8118",
+			wantOpName: HipoFinanceWithdrawSurplusMsgOp,
+			wantValue: HipoFinanceWithdrawSurplusMsgBody{
+				ReturnExcess: mustAccountIDToMsgAddress("0:a62c2600bb53e19646f771420a0c5c03a417cfdaf5c30a31425268298a6091ef"),
+			},
+		},
+		{
+			name:       "hipo_finance_withdraw_surplus without return_excess",
+			boc:        "b5ee9c7241010101000f00001923355ffb000000000000000020c0f0d6e5",
+			wantOpName: HipoFinanceWithdrawSurplusMsgOp,
+			wantValue: HipoFinanceWithdrawSurplusMsgBody{
+				ReturnExcess: tlb.MsgAddress{SumType: "AddrNone"},
+			},
+		},
+		{
+			name:       "hipo_finance_proxy_unstake_all",
+			boc:        "b5ee9c7241010101003000005b76bd27600000000000000000800ae312ca6033ce18aea03884fb7b4c3ee66c9b77bfbb7a7ed5be143646db4fed10b57bffdc",
+			wantOpName: HipoFinanceProxyUnstakeAllMsgOp,
+			wantValue: HipoFinanceProxyUnstakeAllMsgBody{
+				Owner: mustAccountIDToMsgAddress("0:57189653019e70c57501c427dbda61f73364dbbdfddbd3f6adf0a1b236da7f68"),
+			},
+		},
+		{
+			name:       "hipo_finance_unstake_all",
+			boc:        "b5ee9c7241010101000e0000185ae3014800000000000000001a99794c",
+			wantOpName: HipoFinanceUnstakeAllMsgOp,
+			wantValue:  HipoFinanceUnstakeAllMsgBody{QueryId: 0},
+		},
+		{
+			name:       "hipo_finance_send_unstake_all",
+			boc:        "b5ee9c7201010101000e00001845baeda9000000006ab84f08",
+			wantOpName: HipoFinanceSendUnstakeAllMsgOp,
+			wantValue:  HipoFinanceSendUnstakeAllMsgBody{QueryId: 1790463752},
+		},
+		{
+			name:       "hipo_finance_request_loan",
+			boc:        "b5ee9c724101030100ae00013c36335da9000000006a9acf486a9b4f087038d7ea4c6800055d21dba000080101903fb17df20664c4e5a9c28b1df3fe159ced3b01e67d7858ca2e9aa022dd2f94f16a9b4f080004800020791d63c50ed91d13e2b1f5d68589d5cc9a10b81ab775c3543bdfb9ac74f00c0200806de2e5754d83caff1ed8654ca90d51e9d8224dfaf34e70b61bdedd2d3fb255ad35333d0cbc4205d911b621782d22a47d4675c3ea31e3b07a3a7c371295e48605ba9a9bf8",
+			wantOpName: HipoFinanceRequestLoanMsgOp,
+			wantValue: HipoFinanceRequestLoanMsgBody{
+				QueryId:             1788530504,
+				RoundSince:          1788563208,
+				LoanAmount:          mustToVarUInteger16("1000000000000000"),
+				MinPayment:          mustToVarUInteger16("400000000000"),
+				BorrowerRewardShare: 8,
+				NewStakeMsg:         hipoNewStakeMsg("3fb17df20664c4e5a9c28b1df3fe159ced3b01e67d7858ca2e9aa022dd2f94f1", 1788563208, 294912, "20791d63c50ed91d13e2b1f5d68589d5cc9a10b81ab775c3543bdfb9ac74f00c", "6de2e5754d83caff1ed8654ca90d51e9d8224dfaf34e70b61bdedd2d3fb255ad35333d0cbc4205d911b621782d22a47d4675c3ea31e3b07a3a7c371295e48605"),
+			},
+		},
+		{
+			name:       "hipo_finance_request_loan_v2",
+			boc:        "b5ee9c720101030100af00013e36335da9000000006aa5512b6aa64f087016bfff2242c0052d7fffd14007070101901781db04a92cb9444b3043e9c8db1bb6fc23b7da38b9e7902a8eccdea2632f796aa64f08000300000f130a89779cc0d6e9cba7571982050af2ad2c59206879e5762dc21235d3ba66020080bff1f56bb51083db7b22cf827282c6d759febe75b5d011dec36ef29933d7ac763757b03237da9f88f85982223f4f91c9801c33631536342937184dd93d46fe06",
+			wantOpName: HipoFinanceRequestLoanV2MsgOp,
+			wantValue: HipoFinanceRequestLoanV2MsgBody{
+				QueryId:             1789219115,
+				RoundSince:          1789284104,
+				LoanAmount:          mustToVarUInteger16("400222000000000"),
+				MinPayment:          mustToVarUInteger16("195421000000"),
+				BorrowerRewardShare: 1799,
+				NewStakeMsg:         hipoNewStakeMsg("1781db04a92cb9444b3043e9c8db1bb6fc23b7da38b9e7902a8eccdea2632f79", 1789284104, 196608, "0f130a89779cc0d6e9cba7571982050af2ad2c59206879e5762dc21235d3ba66", "bff1f56bb51083db7b22cf827282c6d759febe75b5d011dec36ef29933d7ac763757b03237da9f88f85982223f4f91c9801c33631536342937184dd93d46fe06"),
+			},
+		},
+		{
+			name:       "hipo_finance_request_loan_v3",
+			boc:        "b5ee9c720101030100ad00013a36335da9000000006ab72b706ab74f087031471b7d5e5f357f000000000101908befc2d391d594db74129d7cf454338e8e2103d24a34a04f9d04f39e116c67726ab74f08000480000a23e5f061401a6caf0b6f0319de100cf7f7bb10398c0e57b2c8f3264818a97402008012dde6de3dfeb85de761ec71bbacd92935e752ab2c1900b01b22c445b5f8a79f5196e06a469444948122e88647bdc2d5679863296206dcebcadbcde507d0c703",
+			wantOpName: HipoFinanceRequestLoanV3MsgOp,
+			wantValue: HipoFinanceRequestLoanV3MsgBody{
+				QueryId:     1790389104,
+				RoundSince:  1790398216,
+				LoanAmount:  mustToVarUInteger16("866903578240499"),
+				MinPayment:  mustToVarUInteger16("545460846592"),
+				NewStakeMsg: hipoNewStakeMsg("8befc2d391d594db74129d7cf454338e8e2103d24a34a04f9d04f39e116c6772", 1790398216, 294912, "0a23e5f061401a6caf0b6f0319de100cf7f7bb10398c0e57b2c8f3264818a974", "12dde6de3dfeb85de761ec71bbacd92935e752ab2c1900b01b22c445b5f8a79f5196e06a469444948122e88647bdc2d5679863296206dcebcadbcde507d0c703"),
+			},
+		},
+		{
+			name:       "hipo_finance_request_loan_v4 without max_stake",
+			boc:        "b5ee9c720101030100ae00013b36335da9000000006ab7d8906ab84f08704cbd15e7260005d78000000008010190e05b060871e5af3693d58c9903e18b09a90063607e1b201331c2e6b7a3dafbed6ab84f0800030000a86f0b341c62d351e454b8abbd6a6a041fc9a901f795f5ad307e6a2ef5af029f020080e1a5826d807e98351c0ee2f87912393d37834e72ec1b5d1183845cf329fedcc10b83ff120630e50349be81aad8cc994cd7030d680be7ba28e97bccc1056c6706",
+			wantOpName: HipoFinanceRequestLoanV4MsgOp,
+			wantValue: HipoFinanceRequestLoanV4MsgBody{
+				QueryId:     1790433424,
+				RoundSince:  1790463752,
+				LoanAmount:  mustToVarUInteger16("1350000000000000"),
+				MinPayment:  mustToVarUInteger16("925565452288"),
+				MaxStake:    mustToVarUInteger16("0"),
+				NewStakeMsg: hipoNewStakeMsg("e05b060871e5af3693d58c9903e18b09a90063607e1b201331c2e6b7a3dafbed", 1790463752, 196608, "a86f0b341c62d351e454b8abbd6a6a041fc9a901f795f5ad307e6a2ef5af029f", "e1a5826d807e98351c0ee2f87912393d37834e72ec1b5d1183845cf329fedcc10b83ff120630e50349be81aad8cc994cd7030d680be7ba28e97bccc1056c6706"),
+			},
+		},
+		{
+			name:       "hipo_finance_request_loan_v4",
+			boc:        "b5ee9c720101030100b500014936335da9000000006ab792b46ab84f087062b759bd8c3a85fec000000070ae5d266d86d72801019090a730060b00b26ccc717450249b0fa9c0b66588678bb7111a211c205dc7fb496ab84f08000480000a23e5f061401a6caf0b6f0319de100cf7f7bb10398c0e57b2c8f3264818a974020080ac838af88782854eefa3718ad2fc4943acfeb6e613a052cf80c8746488dbd7a0bdbd3f7e10ec4bfc5737313cab5481b344164f14a12432f285e3ae12e492120b",
+			wantOpName: HipoFinanceRequestLoanV4MsgOp,
+			wantValue: HipoFinanceRequestLoanV4MsgBody{
+				QueryId:     1790415540,
+				RoundSince:  1790463752,
+				LoanAmount:  mustToVarUInteger16("1736633986106280"),
+				MinPayment:  mustToVarUInteger16("1094142918656"),
+				MaxStake:    mustToVarUInteger16("3067441598459250"),
+				NewStakeMsg: hipoNewStakeMsg("90a730060b00b26ccc717450249b0fa9c0b66588678bb7111a211c205dc7fb49", 1790463752, 294912, "0a23e5f061401a6caf0b6f0319de100cf7f7bb10398c0e57b2c8f3264818a974", "ac838af88782854eefa3718ad2fc4943acfeb6e613a052cf80c8746488dbd7a0bdbd3f7e10ec4bfc5737313cab5481b344164f14a12432f285e3ae12e492120b"),
+			},
+		},
+		{
+			// request_loan _v4 with a byte appended: no declared layout reads it exactly
+			name: "hipo_finance_request_loan unknown layout",
+			boc:  "b5ee9c720101030100af00013d36335da9000000006ab7d8906ab84f08704cbd15e7260005d7800000000ab8010190e05b060871e5af3693d58c9903e18b09a90063607e1b201331c2e6b7a3dafbed6ab84f0800030000a86f0b341c62d351e454b8abbd6a6a041fc9a901f795f5ad307e6a2ef5af029f020080e1a5826d807e98351c0ee2f87912393d37834e72ec1b5d1183845cf329fedcc10b83ff120630e50349be81aad8cc994cd7030d680be7ba28e97bccc1056c6706",
+		},
+		{
+			// take_profit#8b556813 followed by a field it does not have: another protocol's op
+			name: "hipo_finance_take_profit with a longer body",
+			boc:  "b5ee9c7201010101000f00001a8b556813000000006a95cf67ab",
+		},
+		{
 			name:       "bemo_stake",
 			boc:        "b5ee9c7201010101001200001f4253c4d5000000000000000030186a04",
 			wantOpName: BemoStakeMsgOp,
@@ -2393,6 +2554,28 @@ func TestMessageDecoder(t *testing.T) {
 				t.Fatalf("want value: \n%v\n, got: \n%v", string(b1), string(b2))
 			}
 		})
+	}
+}
+
+func hipoNewStakeMsg(validatorPubkey string, stakeAt, maxFactor uint32, adnlAddr, signature string) struct {
+	ValidatorPubkey tlb.Bits256
+	StakeAt         uint32
+	MaxFactor       uint32
+	AdnlAddr        tlb.Bits256
+	Signature       tlb.Bits512 `tlb:"^"`
+} {
+	return struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	}{
+		ValidatorPubkey: mustToBits256(validatorPubkey),
+		StakeAt:         stakeAt,
+		MaxFactor:       maxFactor,
+		AdnlAddr:        mustToBits256(adnlAddr),
+		Signature:       mustToBits512(signature),
 	}
 }
 
@@ -3013,6 +3196,35 @@ func TestDecodeExternalIn(t *testing.T) {
 				}
 			},
 		},
+		{
+			name:       "hipo_finance_participate_in_election",
+			boc:        "b5ee9c72010101010012000020574a297b000000006a9e2b966a9e4f08",
+			wantOpName: HipoFinanceParticipateInElectionExtInMsgOp,
+			wantValue: func() any {
+				return HipoFinanceParticipateInElectionExtInMsgBody{QueryId: 1788750742, RoundSince: 1788759816}
+			},
+		},
+		{
+			name:       "hipo_finance_vset_changed",
+			boc:        "b5ee9c720101010100120000202f0b5b3b000000006aa24f296aa14f08",
+			wantOpName: HipoFinanceVsetChangedExtInMsgOp,
+			wantValue: func() any {
+				return HipoFinanceVsetChangedExtInMsgBody{QueryId: 1789021993, RoundSince: 1788956424}
+			},
+		},
+		{
+			name:       "hipo_finance_finish_participation",
+			boc:        "b5ee9c7201010101001200002023274435000000006a95cf676a944f08",
+			wantOpName: HipoFinanceFinishParticipationExtInMsgOp,
+			wantValue: func() any {
+				return HipoFinanceFinishParticipationExtInMsgBody{QueryId: 1788202855, RoundSince: 1788104456}
+			},
+		},
+		{
+			// the "wallet v4" external with its signature starting with participate_in_election#574a297b
+			name: "hipo_finance_participate_in_election opcode in a wallet signature",
+			boc:  "b5ee9c720101020100a100019c574a297b683b74bfeb574b3e921c3376cf24bf6c95c93f9a8b7168f093350a01a313ea46307ac579d75de99353b155c78351a6f554fd4a5ebf2ac3332f3f050329a9a31765b0e360000007f5000301009c62001679dadc6448f28be4d6eded0e01c3504e6565d871fd7b185a8e7e40a9192d65a02faf08000000000000000000000000000000000000d0af20d182d0b2d0bed0b920d184d0b0d0bdd0b0d182",
+		},
 	}
 
 	for _, tt := range tests {
@@ -3029,6 +3241,12 @@ func TestDecodeExternalIn(t *testing.T) {
 			_, opName, value, err := ExtInMessageDecoder(c, tt.interfaces)
 			if err != nil {
 				t.Fatalf("MessageDecoder() error: %v", err)
+			}
+			if tt.wantOpName == "" {
+				if opName != nil {
+					t.Fatalf("got opname: %v, want unknown", *opName)
+				}
+				return
 			}
 			if *opName != tt.wantOpName {
 				t.Fatalf("got opname: %v, want: %v", *opName, tt.wantOpName)

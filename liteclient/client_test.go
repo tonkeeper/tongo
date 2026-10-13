@@ -36,6 +36,9 @@ func createTestLiteServerConnection() (*Connection, error) {
 }
 
 func TestClient(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -51,6 +54,9 @@ func TestClient(t *testing.T) {
 }
 
 func TestGeneratedMethod(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -65,6 +71,9 @@ func TestGeneratedMethod(t *testing.T) {
 }
 
 func TestGeneratedMethod2(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -89,6 +98,9 @@ func TestGeneratedMethod2(t *testing.T) {
 }
 
 func TestGeneratedMethod3(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -117,6 +129,9 @@ func TestGeneratedMethod3(t *testing.T) {
 }
 
 func TestGeneratedMethod4(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -172,6 +187,9 @@ func TestGeneratedMethod5(t *testing.T) {
 }
 
 func TestClient_WaitMasterchainSeqno(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -191,6 +209,9 @@ func TestClient_WaitMasterchainSeqno(t *testing.T) {
 }
 
 func TestGeneratedMethod6(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)
@@ -230,6 +251,9 @@ func TestGeneratedMethod6(t *testing.T) {
 }
 
 func TestClient_WaitMasterchainBlock(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Fatalf("NewConnection() failed: %v", err)

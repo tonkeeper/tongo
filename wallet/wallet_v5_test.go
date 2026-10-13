@@ -196,6 +196,9 @@ func Test_walletV5R1_generateAddress(t *testing.T) {
 }
 
 func TestGetW5R1ExtensionsList(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	tests := []struct {
 		name           string
 		accountID      string

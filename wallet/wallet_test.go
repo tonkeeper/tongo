@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/tonkeeper/tongo/boc"
@@ -110,6 +111,9 @@ func TestSimpleSend(t *testing.T) {
 }
 
 func TestGetSeqno(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	client, err := liteapi.NewClientWithDefaultTestnet()
 	if err != nil {
 		log.Fatalf("Unable to create tongo client: %v", err)

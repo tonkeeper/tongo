@@ -35,6 +35,9 @@ func createTestLiteServerConnection() (*liteclient.Connection, error) {
 }
 
 func Test_connection_Run(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	c, err := createTestLiteServerConnection()
 	if err != nil {
 		t.Skipf("cannot connect to lite server: %v", err)
@@ -66,6 +69,9 @@ func Test_connection_Run(t *testing.T) {
 }
 
 func Test_connection_FindMinAvailableMasterchainSeqno(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("needs a live lite server")
+	}
 	tests := []struct {
 		name         string
 		host         string

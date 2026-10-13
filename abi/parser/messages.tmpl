@@ -4,7 +4,7 @@ var (
 {{- range $tag, $ops := .Operations }}
                 {{- range $op := $ops }}
                 // 0x{{ printf "%08x" $tag.Val }}
- decodeFunc{{ $op.GolangTypeName }} = decodeMsg(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.GolangOpcodeName }}, {{ $op.GolangTypeName }}{})
+ decodeFunc{{ $op.GolangTypeName }} = {{ if $op.FixedLength }}decodeFixedLengthMsg{{ else }}decodeMsg{{ end }}(tlb.Tag{Val:0x{{ printf "%08x" $tag.Val }},Len:{{ $tag.Len }}}, {{ $op.GolangOpcodeName }}, {{ $op.GolangTypeName }}{})
             {{- end }}
         {{- end }}
 )

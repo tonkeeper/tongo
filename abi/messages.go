@@ -39,6 +39,17 @@ func decodeMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
 	}
 }
 
+func decodeFixedLengthMsg(tag tlb.Tag, name MsgOpName, bodyType any) msgDecoderFunc {
+	decode := decodeMsg(tag, name, bodyType)
+	return func(cell *boc.Cell) (*uint32, *MsgOpName, any, error) {
+		uintTag, opName, body, err := decode(cell)
+		if err == nil && !completedRead(cell) {
+			return uintTag, nil, nil, fmt.Errorf("body is longer than declared")
+		}
+		return uintTag, opName, body, err
+	}
+}
+
 type multipleMsgsDecoder struct {
 	tag   string
 	funcs []msgDecoderFunc

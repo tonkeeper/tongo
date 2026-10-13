@@ -29,10 +29,14 @@ var (
 	decodeFuncOwnershipProofMsgBody = decodeMsg(tlb.Tag{Val: 0x0524c7ae, Len: 32}, OwnershipProofMsgOp, OwnershipProofMsgBody{})
 	// 0x06ecd527
 	decodeFuncStonfiCbAddLiquidityV2MsgBody = decodeMsg(tlb.Tag{Val: 0x06ecd527, Len: 32}, StonfiCbAddLiquidityV2MsgOp, StonfiCbAddLiquidityV2MsgBody{})
+	// 0x071d07cc
+	decodeFuncHipoFinanceProcessLoanRequestsMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x071d07cc, Len: 32}, HipoFinanceProcessLoanRequestsMsgOp, HipoFinanceProcessLoanRequestsMsgBody{})
 	// 0x088eaa32
 	decodeFuncChallengeQuarantinedChannelStateMsgBody = decodeMsg(tlb.Tag{Val: 0x088eaa32, Len: 32}, ChallengeQuarantinedChannelStateMsgOp, ChallengeQuarantinedChannelStateMsgBody{})
+	// 0x089cd4d0
+	decodeFuncHipoFinanceProxyNewStakeMsgBody = decodeMsg(tlb.Tag{Val: 0x089cd4d0, Len: 32}, HipoFinanceProxyNewStakeMsgOp, HipoFinanceProxyNewStakeMsgBody{})
 	// 0x0a77535c
-	decodeFuncTonstakePoolWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0x0a77535c, Len: 32}, TonstakePoolWithdrawalMsgOp, TonstakePoolWithdrawalMsgBody{})
+	decodeFuncTonstakePoolWithdrawalMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x0a77535c, Len: 32}, TonstakePoolWithdrawalMsgOp, TonstakePoolWithdrawalMsgBody{})
 	// 0x0a9577f0
 	decodeFuncCoffeeStakingUpdateRewardsMsgBody = decodeMsg(tlb.Tag{Val: 0x0a9577f0, Len: 32}, CoffeeStakingUpdateRewardsMsgOp, CoffeeStakingUpdateRewardsMsgBody{})
 	// 0x0c09445a
@@ -56,7 +60,7 @@ var (
 	// 0x132f9a45
 	decodeFuncTonstakeNftInitMsgBody = decodeMsg(tlb.Tag{Val: 0x132f9a45, Len: 32}, TonstakeNftInitMsgOp, TonstakeNftInitMsgBody{})
 	// 0x139a1b4e
-	decodeFuncTonstakeControllerPoolHaltMsgBody = decodeMsg(tlb.Tag{Val: 0x139a1b4e, Len: 32}, TonstakeControllerPoolHaltMsgOp, TonstakeControllerPoolHaltMsgBody{})
+	decodeFuncTonstakeControllerPoolHaltMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x139a1b4e, Len: 32}, TonstakeControllerPoolHaltMsgOp, TonstakeControllerPoolHaltMsgBody{})
 	// 0x1596920c
 	decodeFuncWhalesNominatorsForceKickMsgBody = decodeMsg(tlb.Tag{Val: 0x1596920c, Len: 32}, WhalesNominatorsForceKickMsgOp, WhalesNominatorsForceKickMsgBody{})
 	// 0x166cedee
@@ -64,7 +68,7 @@ var (
 	// 0x1674b0a0
 	decodeFuncTonstakePayoutMintJettonsMsgBody = decodeMsg(tlb.Tag{Val: 0x1674b0a0, Len: 32}, TonstakePayoutMintJettonsMsgOp, TonstakePayoutMintJettonsMsgBody{})
 	// 0x1690c604
-	decodeFuncCreditMsgBody = decodeMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, CreditMsgOp, CreditMsgBody{})
+	decodeFuncCreditMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x1690c604, Len: 32}, CreditMsgOp, CreditMsgBody{})
 	// 0x16e09400
 	decodeFuncBidaskInternalBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x16e09400, Len: 32}, BidaskInternalBurnMsgOp, BidaskInternalBurnMsgBody{})
 	// 0x178d4519
@@ -105,14 +109,16 @@ var (
 	decodeFuncDedustCreateVaultMsgBody = decodeMsg(tlb.Tag{Val: 0x21cfe02b, Len: 32}, DedustCreateVaultMsgOp, DedustCreateVaultMsgBody{})
 	// 0x220c4c19
 	decodeFuncStormAddPublicKeyMsgBody = decodeMsg(tlb.Tag{Val: 0x220c4c19, Len: 32}, StormAddPublicKeyMsgOp, StormAddPublicKeyMsgBody{})
+	// 0x23355ffb
+	decodeFuncHipoFinanceWithdrawSurplusMsgBody = decodeMsg(tlb.Tag{Val: 0x23355ffb, Len: 32}, HipoFinanceWithdrawSurplusMsgOp, HipoFinanceWithdrawSurplusMsgBody{})
 	// 0x235caf52
 	decodeFuncJettonCallToMsgBody = decodeMsg(tlb.Tag{Val: 0x235caf52, Len: 32}, JettonCallToMsgOp, JettonCallToMsgBody{})
 	// 0x23d421e1
-	decodeFuncWhalesNominatorsStakeWithdrawCompletedMsgBody = decodeMsg(tlb.Tag{Val: 0x23d421e1, Len: 32}, WhalesNominatorsStakeWithdrawCompletedMsgOp, WhalesNominatorsStakeWithdrawCompletedMsgBody{})
+	decodeFuncWhalesNominatorsStakeWithdrawCompletedMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x23d421e1, Len: 32}, WhalesNominatorsStakeWithdrawCompletedMsgOp, WhalesNominatorsStakeWithdrawCompletedMsgBody{})
 	// 0x2508d66a
 	decodeFuncJettonUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x2508d66a, Len: 32}, JettonUpgradeMsgOp, JettonUpgradeMsgBody{})
 	// 0x251d6a98
-	decodeFuncWhalesNominatorsWithdrawUnownedMsgBody = decodeMsg(tlb.Tag{Val: 0x251d6a98, Len: 32}, WhalesNominatorsWithdrawUnownedMsgOp, WhalesNominatorsWithdrawUnownedMsgBody{})
+	decodeFuncWhalesNominatorsWithdrawUnownedMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x251d6a98, Len: 32}, WhalesNominatorsWithdrawUnownedMsgOp, WhalesNominatorsWithdrawUnownedMsgBody{})
 	// 0x25432a91
 	decodeFuncFinishUncooperativeChannelCloseMsgBody = decodeMsg(tlb.Tag{Val: 0x25432a91, Len: 32}, FinishUncooperativeChannelCloseMsgOp, FinishUncooperativeChannelCloseMsgBody{})
 	// 0x25938561
@@ -120,7 +126,7 @@ var (
 	// 0x26fa12a4
 	decodeFuncBidaskDammClaimFeesMsgBody = decodeMsg(tlb.Tag{Val: 0x26fa12a4, Len: 32}, BidaskDammClaimFeesMsgOp, BidaskDammClaimFeesMsgBody{})
 	// 0x270695fb
-	decodeFuncTonstakeControllerPoolSendMessageMsgBody = decodeMsg(tlb.Tag{Val: 0x270695fb, Len: 32}, TonstakeControllerPoolSendMessageMsgOp, TonstakeControllerPoolSendMessageMsgBody{})
+	decodeFuncTonstakeControllerPoolSendMessageMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x270695fb, Len: 32}, TonstakeControllerPoolSendMessageMsgOp, TonstakeControllerPoolSendMessageMsgBody{})
 	// 0x27ae4eff
 	decodeFuncBidaskDammMintMsgBody = decodeMsg(tlb.Tag{Val: 0x27ae4eff, Len: 32}, BidaskDammMintMsgOp, BidaskDammMintMsgBody{})
 	// 0x28d36491
@@ -144,7 +150,7 @@ var (
 	// 0x2fcb26a2
 	decodeFuncGetStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x2fcb26a2, Len: 32}, GetStaticDataMsgOp, GetStaticDataMsgBody{})
 	// 0x30026327
-	decodeFuncTonstakeControllerValidatorWithdrawalMsgBody = decodeMsg(tlb.Tag{Val: 0x30026327, Len: 32}, TonstakeControllerValidatorWithdrawalMsgOp, TonstakeControllerValidatorWithdrawalMsgBody{})
+	decodeFuncTonstakeControllerValidatorWithdrawalMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x30026327, Len: 32}, TonstakeControllerValidatorWithdrawalMsgOp, TonstakeControllerValidatorWithdrawalMsgBody{})
 	// 0x319b0cdc
 	decodeFuncTonstakePoolWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0x319b0cdc, Len: 32}, TonstakePoolWithdrawMsgOp, TonstakePoolWithdrawMsgBody{})
 	// 0x3275dfc2
@@ -156,7 +162,13 @@ var (
 	// 0x354bcdf4
 	decodeFuncStonfiWithdrawFeeV2MsgBody = decodeMsg(tlb.Tag{Val: 0x354bcdf4, Len: 32}, StonfiWithdrawFeeV2MsgOp, StonfiWithdrawFeeV2MsgBody{})
 	// 0x36335da9
-	decodeFuncHipoFinanceRequestLoanMsgBody = decodeMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanMsgOp, HipoFinanceRequestLoanMsgBody{})
+	decodeFuncHipoFinanceRequestLoanMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanMsgOp, HipoFinanceRequestLoanMsgBody{})
+	// 0x36335da9
+	decodeFuncHipoFinanceRequestLoanV2MsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV2MsgOp, HipoFinanceRequestLoanV2MsgBody{})
+	// 0x36335da9
+	decodeFuncHipoFinanceRequestLoanV3MsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV3MsgOp, HipoFinanceRequestLoanV3MsgBody{})
+	// 0x36335da9
+	decodeFuncHipoFinanceRequestLoanV4MsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x36335da9, Len: 32}, HipoFinanceRequestLoanV4MsgOp, HipoFinanceRequestLoanV4MsgBody{})
 	// 0x367f2743
 	decodeFuncStormFailNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x367f2743, Len: 32}, StormFailNotificationMsgOp, StormFailNotificationMsgBody{})
 	// 0x370fec51
@@ -179,6 +191,8 @@ var (
 	decodeFuncHipoFinanceDepositCoinsMsgBody = decodeMsg(tlb.Tag{Val: 0x3d3761a6, Len: 32}, HipoFinanceDepositCoinsMsgOp, HipoFinanceDepositCoinsMsgBody{})
 	// 0x3ebe5431
 	decodeFuncAccountv3AddLiquidityMsgBody = decodeMsg(tlb.Tag{Val: 0x3ebe5431, Len: 32}, Accountv3AddLiquidityMsgOp, Accountv3AddLiquidityMsgBody{})
+	// 0x407cb243
+	decodeFuncHipoFinanceProxyRecoverStakeMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x407cb243, Len: 32}, HipoFinanceProxyRecoverStakeMsgOp, HipoFinanceProxyRecoverStakeMsgBody{})
 	// 0x419d5d4d
 	decodeFuncProofStorageMsgBody = decodeMsg(tlb.Tag{Val: 0x419d5d4d, Len: 32}, ProofStorageMsgOp, ProofStorageMsgBody{})
 	// 0x42062d62
@@ -193,6 +207,8 @@ var (
 	decodeFuncHipoFinanceProxyTokensBurnedMsgBody = decodeMsg(tlb.Tag{Val: 0x4476fde0, Len: 32}, HipoFinanceProxyTokensBurnedMsgOp, HipoFinanceProxyTokensBurnedMsgBody{})
 	// 0x44beae41
 	decodeFuncProcessGovernanceDecisionMsgBody = decodeMsg(tlb.Tag{Val: 0x44beae41, Len: 32}, ProcessGovernanceDecisionMsgOp, ProcessGovernanceDecisionMsgBody{})
+	// 0x45baeda9
+	decodeFuncHipoFinanceSendUnstakeAllMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x45baeda9, Len: 32}, HipoFinanceSendUnstakeAllMsgOp, HipoFinanceSendUnstakeAllMsgBody{})
 	// 0x4637289a
 	decodeFuncTelemintDeployMsgBody = decodeMsg(tlb.Tag{Val: 0x4637289a, Len: 32}, TelemintDeployMsgOp, TelemintDeployMsgBody{})
 	// 0x4637289b
@@ -214,7 +230,7 @@ var (
 	// 0x4b2d7871
 	decodeFuncHipoFinanceMintBillMsgBody = decodeMsg(tlb.Tag{Val: 0x4b2d7871, Len: 32}, HipoFinanceMintBillMsgOp, HipoFinanceMintBillMsgBody{})
 	// 0x4bc7c2df
-	decodeFuncTonstakePoolTouchMsgBody = decodeMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
+	decodeFuncTonstakePoolTouchMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x4bc7c2df, Len: 32}, TonstakePoolTouchMsgOp, TonstakePoolTouchMsgBody{})
 	// 0x4c3e12d7
 	decodeFuncDedustTonPayMsgBody = decodeMsg(tlb.Tag{Val: 0x4c3e12d7, Len: 32}, DedustTonPayMsgOp, DedustTonPayMsgBody{})
 	// 0x4cce0e74
@@ -222,11 +238,13 @@ var (
 	// 0x4d696e65
 	decodeFuncGramSubmitProofOfWorkMsgBody = decodeMsg(tlb.Tag{Val: 0x4d696e65, Len: 32}, GramSubmitProofOfWorkMsgOp, GramSubmitProofOfWorkMsgBody{})
 	// 0x4eb1f0f9
-	decodeFuncDeleteDnsRecordMsgBody = decodeMsg(tlb.Tag{Val: 0x4eb1f0f9, Len: 32}, DeleteDnsRecordMsgOp, DeleteDnsRecordMsgBody{})
+	decodeFuncDeleteDnsRecordMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x4eb1f0f9, Len: 32}, DeleteDnsRecordMsgOp, DeleteDnsRecordMsgBody{})
 	// 0x4eb1f0f9
 	decodeFuncChangeDnsRecordMsgBody = decodeMsg(tlb.Tag{Val: 0x4eb1f0f9, Len: 32}, ChangeDnsRecordMsgOp, ChangeDnsRecordMsgBody{})
 	// 0x4ed14b65
 	decodeFuncDnsBalanceReleaseMsgBody = decodeMsg(tlb.Tag{Val: 0x4ed14b65, Len: 32}, DnsBalanceReleaseMsgOp, DnsBalanceReleaseMsgBody{})
+	// 0x4f173d3e
+	decodeFuncHipoFinanceRecoverStakesMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x4f173d3e, Len: 32}, HipoFinanceRecoverStakesMsgOp, HipoFinanceRecoverStakesMsgBody{})
 	// 0x4f38cae8
 	decodeFuncStormMintExecutorMsgBody = decodeMsg(tlb.Tag{Val: 0x4f38cae8, Len: 32}, StormMintExecutorMsgOp, StormMintExecutorMsgBody{})
 	// 0x4f5f4313
@@ -250,7 +268,7 @@ var (
 	// 0x54cbf19b
 	decodeFuncUpdateStorageParamsMsgBody = decodeMsg(tlb.Tag{Val: 0x54cbf19b, Len: 32}, UpdateStorageParamsMsgOp, UpdateStorageParamsMsgBody{})
 	// 0x54d37487
-	decodeFuncTonstakeImanagerOperationFeeMsgBody = decodeMsg(tlb.Tag{Val: 0x54d37487, Len: 32}, TonstakeImanagerOperationFeeMsgOp, TonstakeImanagerOperationFeeMsgBody{})
+	decodeFuncTonstakeImanagerOperationFeeMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x54d37487, Len: 32}, TonstakeImanagerOperationFeeMsgOp, TonstakeImanagerOperationFeeMsgBody{})
 	// 0x5577587e
 	decodeFuncChannelCooperativeCloseMsgBody = decodeMsg(tlb.Tag{Val: 0x5577587e, Len: 32}, ChannelCooperativeCloseMsgOp, ChannelCooperativeCloseMsgBody{})
 	// 0x557cea20
@@ -267,6 +285,8 @@ var (
 	decodeFuncBidaskInternalContinueSwapV2MsgBody = decodeMsg(tlb.Tag{Val: 0x5a6a036f, Len: 32}, BidaskInternalContinueSwapV2MsgOp, BidaskInternalContinueSwapV2MsgBody{})
 	// 0x5a89f5a2
 	decodeFuncStormNotifyWithDeployMsgBody = decodeMsg(tlb.Tag{Val: 0x5a89f5a2, Len: 32}, StormNotifyWithDeployMsgOp, StormNotifyWithDeployMsgBody{})
+	// 0x5ae30148
+	decodeFuncHipoFinanceUnstakeAllMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x5ae30148, Len: 32}, HipoFinanceUnstakeAllMsgOp, HipoFinanceUnstakeAllMsgBody{})
 	// 0x5b0dd9f4
 	decodeFuncStormInitSaMsgBody = decodeMsg(tlb.Tag{Val: 0x5b0dd9f4, Len: 32}, StormInitSaMsgOp, StormInitSaMsgBody{})
 	// 0x5b27f9c5
@@ -281,6 +301,8 @@ var (
 	decodeFuncStormUpdatePositionWithStopLossMsgBody = decodeMsg(tlb.Tag{Val: 0x5d1b17b8, Len: 32}, StormUpdatePositionWithStopLossMsgOp, StormUpdatePositionWithStopLossMsgBody{})
 	// 0x5dd66579
 	decodeFuncStormAddExecutorAmountMsgBody = decodeMsg(tlb.Tag{Val: 0x5dd66579, Len: 32}, StormAddExecutorAmountMsgOp, StormAddExecutorAmountMsgBody{})
+	// 0x5e2d81f4
+	decodeFuncHipoFinanceTakeBorrowerFeeMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x5e2d81f4, Len: 32}, HipoFinanceTakeBorrowerFeeMsgOp, HipoFinanceTakeBorrowerFeeMsgBody{})
 	// 0x5e517f36
 	decodeFuncTonstakePoolSetRolesMsgBody = decodeMsg(tlb.Tag{Val: 0x5e517f36, Len: 32}, TonstakePoolSetRolesMsgOp, TonstakePoolSetRolesMsgBody{})
 	// 0x5f40f1ec
@@ -331,6 +353,8 @@ var (
 	decodeFuncGetRoyaltyParamsMsgBody = decodeMsg(tlb.Tag{Val: 0x693d3950, Len: 32}, GetRoyaltyParamsMsgOp, GetRoyaltyParamsMsgBody{})
 	// 0x69d08679
 	decodeFuncStormOrderCanceledMsgBody = decodeMsg(tlb.Tag{Val: 0x69d08679, Len: 32}, StormOrderCanceledMsgOp, StormOrderCanceledMsgBody{})
+	// 0x6a31d344
+	decodeFuncHipoFinanceDecideLoanRequestsMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x6a31d344, Len: 32}, HipoFinanceDecideLoanRequestsMsgOp, HipoFinanceDecideLoanRequestsMsgBody{})
 	// 0x6b1b8a3f
 	decodeFuncMoonProvideLiquidityMsgBody = decodeMsg(tlb.Tag{Val: 0x6b1b8a3f, Len: 32}, MoonProvideLiquidityMsgOp, MoonProvideLiquidityMsgBody{})
 	// 0x6bc79e7e
@@ -350,7 +374,7 @@ var (
 	// 0x71e4a09a
 	decodeFuncBidaskDammBurnMsgBody = decodeMsg(tlb.Tag{Val: 0x71e4a09a, Len: 32}, BidaskDammBurnMsgOp, BidaskDammBurnMsgBody{})
 	// 0x7247e7a5
-	decodeFuncTonstakeControllerPoolUnhaltMsgBody = decodeMsg(tlb.Tag{Val: 0x7247e7a5, Len: 32}, TonstakeControllerPoolUnhaltMsgOp, TonstakeControllerPoolUnhaltMsgBody{})
+	decodeFuncTonstakeControllerPoolUnhaltMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x7247e7a5, Len: 32}, TonstakeControllerPoolUnhaltMsgOp, TonstakeControllerPoolUnhaltMsgBody{})
 	// 0x729c04c8
 	decodeFuncBidaskDammProvideOneSideMsgBody = decodeMsg(tlb.Tag{Val: 0x729c04c8, Len: 32}, BidaskDammProvideOneSideMsgOp, BidaskDammProvideOneSideMsgBody{})
 	// 0x72aca8aa
@@ -366,19 +390,21 @@ var (
 	// 0x737b4eb6
 	decodeFuncMoonProvideLiquiditySucceedMsgBody = decodeMsg(tlb.Tag{Val: 0x737b4eb6, Len: 32}, MoonProvideLiquiditySucceedMsgOp, MoonProvideLiquiditySucceedMsgBody{})
 	// 0x74bb3427
-	decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody = decodeMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{})
+	decodeFuncWhalesNominatorsStakeWithdrawDelayedMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x74bb3427, Len: 32}, WhalesNominatorsStakeWithdrawDelayedMsgOp, WhalesNominatorsStakeWithdrawDelayedMsgBody{})
 	// 0x75097f5d
 	decodeFuncMultisigExecuteMsgBody = decodeMsg(tlb.Tag{Val: 0x75097f5d, Len: 32}, MultisigExecuteMsgOp, MultisigExecuteMsgBody{})
 	// 0x756e6b77
 	decodeFuncSubscriptionFallbackMsgBody = decodeMsg(tlb.Tag{Val: 0x756e6b77, Len: 32}, SubscriptionFallbackMsgOp, SubscriptionFallbackMsgBody{})
 	// 0x76519f8b
 	decodeFuncStormRemovePublicKeyMsgBody = decodeMsg(tlb.Tag{Val: 0x76519f8b, Len: 32}, StormRemovePublicKeyMsgOp, StormRemovePublicKeyMsgBody{})
+	// 0x76bd2760
+	decodeFuncHipoFinanceProxyUnstakeAllMsgBody = decodeMsg(tlb.Tag{Val: 0x76bd2760, Len: 32}, HipoFinanceProxyUnstakeAllMsgOp, HipoFinanceProxyUnstakeAllMsgBody{})
 	// 0x77a33521
 	decodeFuncMegatonWtonMintMsgBody = decodeMsg(tlb.Tag{Val: 0x77a33521, Len: 32}, MegatonWtonMintMsgOp, MegatonWtonMintMsgBody{})
 	// 0x79a126ef
 	decodeFuncChannelCooperativeCommitMsgBody = decodeMsg(tlb.Tag{Val: 0x79a126ef, Len: 32}, ChannelCooperativeCommitMsgOp, ChannelCooperativeCommitMsgBody{})
 	// 0x79e7c016
-	decodeFuncTonstakeControllerPoolSetSudoerMsgBody = decodeMsg(tlb.Tag{Val: 0x79e7c016, Len: 32}, TonstakeControllerPoolSetSudoerMsgOp, TonstakeControllerPoolSetSudoerMsgBody{})
+	decodeFuncTonstakeControllerPoolSetSudoerMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x79e7c016, Len: 32}, TonstakeControllerPoolSetSudoerMsgOp, TonstakeControllerPoolSetSudoerMsgBody{})
 	// 0x79f937ea
 	decodeFuncCloseStorageContractMsgBody = decodeMsg(tlb.Tag{Val: 0x79f937ea, Len: 32}, CloseStorageContractMsgOp, CloseStorageContractMsgBody{})
 	// 0x7a361688
@@ -386,7 +412,7 @@ var (
 	// 0x7aa23eb5
 	decodeFuncInvoicePayloadMsgBody = decodeMsg(tlb.Tag{Val: 0x7aa23eb5, Len: 32}, InvoicePayloadMsgOp, InvoicePayloadMsgBody{})
 	// 0x7b4b42e6
-	decodeFuncApproveMsgBody = decodeMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
+	decodeFuncApproveMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x7b4b42e6, Len: 32}, ApproveMsgOp, ApproveMsgBody{})
 	// 0x7bcd1fef
 	decodeFuncWhalesNominatorsDepositMsgBody = decodeMsg(tlb.Tag{Val: 0x7bcd1fef, Len: 32}, WhalesNominatorsDepositMsgOp, WhalesNominatorsDepositMsgBody{})
 	// 0x7bdd97de
@@ -411,10 +437,12 @@ var (
 	decodeFuncStormProvideOrderMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvideOrderMsgOp, StormProvideOrderMsgBody{})
 	// 0x8865b402
 	decodeFuncStormProvidePositionMsgBody = decodeMsg(tlb.Tag{Val: 0x8865b402, Len: 32}, StormProvidePositionMsgOp, StormProvidePositionMsgBody{})
+	// 0x8b556813
+	decodeFuncHipoFinanceTakeProfitMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x8b556813, Len: 32}, HipoFinanceTakeProfitMsgOp, HipoFinanceTakeProfitMsgBody{})
 	// 0x8b771735
 	decodeFuncReportStaticDataMsgBody = decodeMsg(tlb.Tag{Val: 0x8b771735, Len: 32}, ReportStaticDataMsgOp, ReportStaticDataMsgBody{})
 	// 0x8efed779
-	decodeFuncTonstakeControllerWithdrawValidatorMsgBody = decodeMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{})
+	decodeFuncTonstakeControllerWithdrawValidatorMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x8efed779, Len: 32}, TonstakeControllerWithdrawValidatorMsgOp, TonstakeControllerWithdrawValidatorMsgBody{})
 	// 0x90c80a07
 	decodeFuncBemoUnstakeNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0x90c80a07, Len: 32}, BemoUnstakeNotificationMsgOp, BemoUnstakeNotificationMsgBody{})
 	// 0x90d3b4ad
@@ -424,7 +452,7 @@ var (
 	// 0x96aa1586
 	decodeFuncMoonBoostPoolMsgBody = decodeMsg(tlb.Tag{Val: 0x96aa1586, Len: 32}, MoonBoostPoolMsgOp, MoonBoostPoolMsgBody{})
 	// 0x96e7f528
-	decodeFuncTonstakeControllerPoolUpgradeMsgBody = decodeMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{})
+	decodeFuncTonstakeControllerPoolUpgradeMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x96e7f528, Len: 32}, TonstakeControllerPoolUpgradeMsgOp, TonstakeControllerPoolUpgradeMsgBody{})
 	// 0x96feef7b
 	decodeFuncBidaskProvideMsgBody = decodeMsg(tlb.Tag{Val: 0x96feef7b, Len: 32}, BidaskProvideMsgOp, BidaskProvideMsgBody{})
 	// 0x97d51f2f
@@ -450,7 +478,7 @@ var (
 	// 0xa1daa96d
 	decodeFuncPayToMsgBody = decodeMsg(tlb.Tag{Val: 0xa1daa96d, Len: 32}, PayToMsgOp, PayToMsgBody{})
 	// 0xa2065f2c
-	decodeFuncWhalesNominatorsSendStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{})
+	decodeFuncWhalesNominatorsSendStakeMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xa2065f2c, Len: 32}, WhalesNominatorsSendStakeMsgOp, WhalesNominatorsSendStakeMsgBody{})
 	// 0xa32c59bf
 	decodeFuncMultisigExecuteInternalMsgBody = decodeMsg(tlb.Tag{Val: 0xa32c59bf, Len: 32}, MultisigExecuteInternalMsgOp, MultisigExecuteInternalMsgBody{})
 	// 0xa37a0983
@@ -576,19 +604,21 @@ var (
 	// 0xc89a3ee4
 	decodeFuncStormVaultStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xc89a3ee4, Len: 32}, StormVaultStakeMsgOp, StormVaultStakeMsgBody{})
 	// 0xc9f04485
-	decodeFuncTonstakeImanagerSetInterestMsgBody = decodeMsg(tlb.Tag{Val: 0xc9f04485, Len: 32}, TonstakeImanagerSetInterestMsgOp, TonstakeImanagerSetInterestMsgBody{})
+	decodeFuncTonstakeImanagerSetInterestMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xc9f04485, Len: 32}, TonstakeImanagerSetInterestMsgOp, TonstakeImanagerSetInterestMsgBody{})
 	// 0xcb4ddc3c
 	decodeFuncStormMintReferralMsgBody = decodeMsg(tlb.Tag{Val: 0xcb4ddc3c, Len: 32}, StormMintReferralMsgOp, StormMintReferralMsgBody{})
 	// 0xcb7f38d6
 	decodeFuncMoonSwapSucceedMsgBody = decodeMsg(tlb.Tag{Val: 0xcb7f38d6, Len: 32}, MoonSwapSucceedMsgOp, MoonSwapSucceedMsgBody{})
 	// 0xcb862902
 	decodeFuncJettonChangeMetadataMsgBody = decodeMsg(tlb.Tag{Val: 0xcb862902, Len: 32}, JettonChangeMetadataMsgOp, JettonChangeMetadataMsgBody{})
+	// 0xcd0f2116
+	decodeFuncHipoFinanceRequestRejectedMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xcd0f2116, Len: 32}, HipoFinanceRequestRejectedMsgOp, HipoFinanceRequestRejectedMsgBody{})
 	// 0xcf90d618
 	decodeFuncStormCompleteOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xcf90d618, Len: 32}, StormCompleteOrderMsgOp, StormCompleteOrderMsgBody{})
 	// 0xd0c3bfea
 	decodeFuncSbtRequestOwnerMsgBody = decodeMsg(tlb.Tag{Val: 0xd0c3bfea, Len: 32}, SbtRequestOwnerMsgOp, SbtRequestOwnerMsgBody{})
 	// 0xd372158c
-	decodeFuncTopUpMsgBody = decodeMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TopUpMsgOp, TopUpMsgBody{})
+	decodeFuncTopUpMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xd372158c, Len: 32}, TopUpMsgOp, TopUpMsgBody{})
 	// 0xd3a25890
 	decodeFuncBidaskSwapSuccessV2MsgBody = decodeMsg(tlb.Tag{Val: 0xd3a25890, Len: 32}, BidaskSwapSuccessV2MsgOp, BidaskSwapSuccessV2MsgBody{})
 	// 0xd4caedcd
@@ -608,7 +638,7 @@ var (
 	// 0xda803efd
 	decodeFuncWhalesNominatorsWithdrawMsgBody = decodeMsg(tlb.Tag{Val: 0xda803efd, Len: 32}, WhalesNominatorsWithdrawMsgOp, WhalesNominatorsWithdrawMsgBody{})
 	// 0xdb3b8abd
-	decodeFuncTonstakeNftPayoutMsgBody = decodeMsg(tlb.Tag{Val: 0xdb3b8abd, Len: 32}, TonstakeNftPayoutMsgOp, TonstakeNftPayoutMsgBody{})
+	decodeFuncTonstakeNftPayoutMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xdb3b8abd, Len: 32}, TonstakeNftPayoutMsgOp, TonstakeNftPayoutMsgBody{})
 	// 0xdd79732c
 	decodeFuncBidaskDammSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xdd79732c, Len: 32}, BidaskDammSwapMsgOp, BidaskDammSwapMsgBody{})
 	// 0xdddc88ba
@@ -616,7 +646,7 @@ var (
 	// 0xde1ddbcc
 	decodeFuncStormExecuteOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xde1ddbcc, Len: 32}, StormExecuteOrderMsgOp, StormExecuteOrderMsgBody{})
 	// 0xdfdca27b
-	decodeFuncTonstakePoolLoanRepaymentMsgBody = decodeMsg(tlb.Tag{Val: 0xdfdca27b, Len: 32}, TonstakePoolLoanRepaymentMsgOp, TonstakePoolLoanRepaymentMsgBody{})
+	decodeFuncTonstakePoolLoanRepaymentMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xdfdca27b, Len: 32}, TonstakePoolLoanRepaymentMsgOp, TonstakePoolLoanRepaymentMsgBody{})
 	// 0xe0505d0e
 	decodeFuncTonstakeControllerNewStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xe0505d0e, Len: 32}, TonstakeControllerNewStakeMsgOp, TonstakeControllerNewStakeMsgBody{})
 	// 0xe4737472
@@ -626,17 +656,17 @@ var (
 	// 0xe642c965
 	decodeFuncTonstakePoolRequestLoanMsgBody = decodeMsg(tlb.Tag{Val: 0xe642c965, Len: 32}, TonstakePoolRequestLoanMsgOp, TonstakePoolRequestLoanMsgBody{})
 	// 0xe8a0abfe
-	decodeFuncDisapproveMsgBody = decodeMsg(tlb.Tag{Val: 0xe8a0abfe, Len: 32}, DisapproveMsgOp, DisapproveMsgBody{})
+	decodeFuncDisapproveMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xe8a0abfe, Len: 32}, DisapproveMsgOp, DisapproveMsgBody{})
 	// 0xea06185d
 	decodeFuncDedustSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xea06185d, Len: 32}, DedustSwapMsgOp, DedustSwapMsgBody{})
 	// 0xeb373a05
-	decodeFuncTonstakeControllerRecoverStakeMsgBody = decodeMsg(tlb.Tag{Val: 0xeb373a05, Len: 32}, TonstakeControllerRecoverStakeMsgOp, TonstakeControllerRecoverStakeMsgBody{})
+	decodeFuncTonstakeControllerRecoverStakeMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xeb373a05, Len: 32}, TonstakeControllerRecoverStakeMsgOp, TonstakeControllerRecoverStakeMsgBody{})
 	// 0xebd6ec83
 	decodeFuncBidaskBurnAllMsgBody = decodeMsg(tlb.Tag{Val: 0xebd6ec83, Len: 32}, BidaskBurnAllMsgOp, BidaskBurnAllMsgBody{})
 	// 0xed58b0b2
 	decodeFuncTonstakeNftBurnNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0xed58b0b2, Len: 32}, TonstakeNftBurnNotificationMsgOp, TonstakeNftBurnNotificationMsgBody{})
 	// 0xed7378a6
-	decodeFuncTonstakeControllerReturnUnusedLoanMsgBody = decodeMsg(tlb.Tag{Val: 0xed7378a6, Len: 32}, TonstakeControllerReturnUnusedLoanMsgOp, TonstakeControllerReturnUnusedLoanMsgBody{})
+	decodeFuncTonstakeControllerReturnUnusedLoanMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xed7378a6, Len: 32}, TonstakeControllerReturnUnusedLoanMsgOp, TonstakeControllerReturnUnusedLoanMsgBody{})
 	// 0xedcd36a6
 	decodeFuncStormChangeSettingsMsgBody = decodeMsg(tlb.Tag{Val: 0xedcd36a6, Len: 32}, StormChangeSettingsMsgOp, StormChangeSettingsMsgBody{})
 	// 0xee51ce51
@@ -648,9 +678,9 @@ var (
 	// 0xf0fa223b
 	decodeFuncHipoFinanceWithdrawalNotificationMsgBody = decodeMsg(tlb.Tag{Val: 0xf0fa223b, Len: 32}, HipoFinanceWithdrawalNotificationMsgOp, HipoFinanceWithdrawalNotificationMsgBody{})
 	// 0xf0fd2250
-	decodeFuncTonstakeControllerUpdateValidatorHashMsgBody = decodeMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{})
+	decodeFuncTonstakeControllerUpdateValidatorHashMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xf0fd2250, Len: 32}, TonstakeControllerUpdateValidatorHashMsgOp, TonstakeControllerUpdateValidatorHashMsgBody{})
 	// 0xf127fe4e
-	decodeFuncTonstakeNftBurnMsgBody = decodeMsg(tlb.Tag{Val: 0xf127fe4e, Len: 32}, TonstakeNftBurnMsgOp, TonstakeNftBurnMsgBody{})
+	decodeFuncTonstakeNftBurnMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xf127fe4e, Len: 32}, TonstakeNftBurnMsgOp, TonstakeNftBurnMsgBody{})
 	// 0xf2ef6c1b
 	decodeFuncBidaskSwapMsgBody = decodeMsg(tlb.Tag{Val: 0xf2ef6c1b, Len: 32}, BidaskSwapMsgOp, BidaskSwapMsgBody{})
 	// 0xf5d4eb52
@@ -660,7 +690,7 @@ var (
 	// 0xf718510f
 	decodeFuncMultisigNewOrderMsgBody = decodeMsg(tlb.Tag{Val: 0xf718510f, Len: 32}, MultisigNewOrderMsgOp, MultisigNewOrderMsgBody{})
 	// 0xf93bb43f
-	decodeFuncStonfiPaymentRequestMsgBody = decodeMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
+	decodeFuncStonfiPaymentRequestMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0xf93bb43f, Len: 32}, StonfiPaymentRequestMsgOp, StonfiPaymentRequestMsgBody{})
 	// 0xf9471134
 	decodeFuncCoffeeStakingDepositMsgBody = decodeMsg(tlb.Tag{Val: 0xf9471134, Len: 32}, CoffeeStakingDepositMsgOp, CoffeeStakingDepositMsgBody{})
 	// 0xfaaa8366
@@ -710,8 +740,14 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x06ecd527
 	StonfiCbAddLiquidityV2MsgOpCode: decodeFuncStonfiCbAddLiquidityV2MsgBody,
 
+	// 0x071d07cc
+	HipoFinanceProcessLoanRequestsMsgOpCode: decodeFuncHipoFinanceProcessLoanRequestsMsgBody,
+
 	// 0x088eaa32
 	ChallengeQuarantinedChannelStateMsgOpCode: decodeFuncChallengeQuarantinedChannelStateMsgBody,
+
+	// 0x089cd4d0
+	HipoFinanceProxyNewStakeMsgOpCode: decodeFuncHipoFinanceProxyNewStakeMsgBody,
 
 	// 0x0a77535c
 	TonstakePoolWithdrawalMsgOpCode: decodeFuncTonstakePoolWithdrawalMsgBody,
@@ -826,6 +862,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x220c4c19
 	StormAddPublicKeyMsgOpCode: decodeFuncStormAddPublicKeyMsgBody,
 
+	// 0x23355ffb
+	HipoFinanceWithdrawSurplusMsgOpCode: decodeFuncHipoFinanceWithdrawSurplusMsgBody,
+
 	// 0x235caf52
 	JettonCallToMsgOpCode: decodeFuncJettonCallToMsgBody,
 
@@ -903,8 +942,15 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x354bcdf4
 	StonfiWithdrawFeeV2MsgOpCode: decodeFuncStonfiWithdrawFeeV2MsgBody,
 
-	// 0x36335da9
-	HipoFinanceRequestLoanMsgOpCode: decodeFuncHipoFinanceRequestLoanMsgBody,
+	//HipoFinanceRequestLoan, HipoFinanceRequestLoanV2, HipoFinanceRequestLoanV3, HipoFinanceRequestLoanV4,
+	0x36335da9: multipleMsgsDecoder{
+		tag: "0x36335da9",
+		funcs: []msgDecoderFunc{
+			decodeFuncHipoFinanceRequestLoanMsgBody,
+			decodeFuncHipoFinanceRequestLoanV2MsgBody,
+			decodeFuncHipoFinanceRequestLoanV3MsgBody,
+			decodeFuncHipoFinanceRequestLoanV4MsgBody},
+	},
 
 	// 0x367f2743
 	StormFailNotificationMsgOpCode: decodeFuncStormFailNotificationMsgBody,
@@ -939,6 +985,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x3ebe5431
 	Accountv3AddLiquidityMsgOpCode: decodeFuncAccountv3AddLiquidityMsgBody,
 
+	// 0x407cb243
+	HipoFinanceProxyRecoverStakeMsgOpCode: decodeFuncHipoFinanceProxyRecoverStakeMsgBody,
+
 	// 0x419d5d4d
 	ProofStorageMsgOpCode: decodeFuncProofStorageMsgBody,
 
@@ -959,6 +1008,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x44beae41
 	ProcessGovernanceDecisionMsgOpCode: decodeFuncProcessGovernanceDecisionMsgBody,
+
+	// 0x45baeda9
+	HipoFinanceSendUnstakeAllMsgOpCode: decodeFuncHipoFinanceSendUnstakeAllMsgBody,
 
 	// 0x4637289a
 	TelemintDeployMsgOpCode: decodeFuncTelemintDeployMsgBody,
@@ -1012,6 +1064,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x4ed14b65
 	DnsBalanceReleaseMsgOpCode: decodeFuncDnsBalanceReleaseMsgBody,
+
+	// 0x4f173d3e
+	HipoFinanceRecoverStakesMsgOpCode: decodeFuncHipoFinanceRecoverStakesMsgBody,
 
 	// 0x4f38cae8
 	StormMintExecutorMsgOpCode: decodeFuncStormMintExecutorMsgBody,
@@ -1073,6 +1128,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x5a89f5a2
 	StormNotifyWithDeployMsgOpCode: decodeFuncStormNotifyWithDeployMsgBody,
 
+	// 0x5ae30148
+	HipoFinanceUnstakeAllMsgOpCode: decodeFuncHipoFinanceUnstakeAllMsgBody,
+
 	// 0x5b0dd9f4
 	StormInitSaMsgOpCode: decodeFuncStormInitSaMsgBody,
 
@@ -1093,6 +1151,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x5dd66579
 	StormAddExecutorAmountMsgOpCode: decodeFuncStormAddExecutorAmountMsgBody,
+
+	// 0x5e2d81f4
+	HipoFinanceTakeBorrowerFeeMsgOpCode: decodeFuncHipoFinanceTakeBorrowerFeeMsgBody,
 
 	// 0x5e517f36
 	TonstakePoolSetRolesMsgOpCode: decodeFuncTonstakePoolSetRolesMsgBody,
@@ -1169,6 +1230,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x69d08679
 	StormOrderCanceledMsgOpCode: decodeFuncStormOrderCanceledMsgBody,
 
+	// 0x6a31d344
+	HipoFinanceDecideLoanRequestsMsgOpCode: decodeFuncHipoFinanceDecideLoanRequestsMsgBody,
+
 	// 0x6b1b8a3f
 	MoonProvideLiquidityMsgOpCode: decodeFuncMoonProvideLiquidityMsgBody,
 
@@ -1232,6 +1296,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0x76519f8b
 	StormRemovePublicKeyMsgOpCode: decodeFuncStormRemovePublicKeyMsgBody,
 
+	// 0x76bd2760
+	HipoFinanceProxyUnstakeAllMsgOpCode: decodeFuncHipoFinanceProxyUnstakeAllMsgBody,
+
 	// 0x77a33521
 	MegatonWtonMintMsgOpCode: decodeFuncMegatonWtonMintMsgBody,
 
@@ -1294,6 +1361,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 			decodeFuncStormProvideOrderMsgBody,
 			decodeFuncStormProvidePositionMsgBody},
 	},
+
+	// 0x8b556813
+	HipoFinanceTakeProfitMsgOpCode: decodeFuncHipoFinanceTakeProfitMsgBody,
 
 	// 0x8b771735
 	ReportStaticDataMsgOpCode: decodeFuncReportStaticDataMsgBody,
@@ -1555,6 +1625,9 @@ var opcodedMsgInDecodeFunctions = map[uint32]msgDecoder{
 	// 0xcb862902
 	JettonChangeMetadataMsgOpCode: decodeFuncJettonChangeMetadataMsgBody,
 
+	// 0xcd0f2116
+	HipoFinanceRequestRejectedMsgOpCode: decodeFuncHipoFinanceRequestRejectedMsgBody,
+
 	// 0xcf90d618
 	StormCompleteOrderMsgOpCode: decodeFuncStormCompleteOrderMsgBody,
 
@@ -1703,7 +1776,9 @@ const (
 	NftOwnershipAssignedMsgOp                    MsgOpName = "NftOwnershipAssigned"
 	OwnershipProofMsgOp                          MsgOpName = "OwnershipProof"
 	StonfiCbAddLiquidityV2MsgOp                  MsgOpName = "StonfiCbAddLiquidityV2"
+	HipoFinanceProcessLoanRequestsMsgOp          MsgOpName = "HipoFinanceProcessLoanRequests"
 	ChallengeQuarantinedChannelStateMsgOp        MsgOpName = "ChallengeQuarantinedChannelState"
+	HipoFinanceProxyNewStakeMsgOp                MsgOpName = "HipoFinanceProxyNewStake"
 	TonstakePoolWithdrawalMsgOp                  MsgOpName = "TonstakePoolWithdrawal"
 	CoffeeStakingUpdateRewardsMsgOp              MsgOpName = "CoffeeStakingUpdateRewards"
 	BidaskInternalContinueProvideMsgOp           MsgOpName = "BidaskInternalContinueProvide"
@@ -1741,6 +1816,7 @@ const (
 	EncryptedTextCommentMsgOp                    MsgOpName = "EncryptedTextComment"
 	DedustCreateVaultMsgOp                       MsgOpName = "DedustCreateVault"
 	StormAddPublicKeyMsgOp                       MsgOpName = "StormAddPublicKey"
+	HipoFinanceWithdrawSurplusMsgOp              MsgOpName = "HipoFinanceWithdrawSurplus"
 	JettonCallToMsgOp                            MsgOpName = "JettonCallTo"
 	WhalesNominatorsStakeWithdrawCompletedMsgOp  MsgOpName = "WhalesNominatorsStakeWithdrawCompleted"
 	JettonUpgradeMsgOp                           MsgOpName = "JettonUpgrade"
@@ -1767,6 +1843,9 @@ const (
 	StormVaultTradeNotificationMsgOp             MsgOpName = "StormVaultTradeNotification"
 	StonfiWithdrawFeeV2MsgOp                     MsgOpName = "StonfiWithdrawFeeV2"
 	HipoFinanceRequestLoanMsgOp                  MsgOpName = "HipoFinanceRequestLoan"
+	HipoFinanceRequestLoanV2MsgOp                MsgOpName = "HipoFinanceRequestLoanV2"
+	HipoFinanceRequestLoanV3MsgOp                MsgOpName = "HipoFinanceRequestLoanV3"
+	HipoFinanceRequestLoanV4MsgOp                MsgOpName = "HipoFinanceRequestLoanV4"
 	StormFailNotificationMsgOp                   MsgOpName = "StormFailNotification"
 	AuctionFillUpMsgOp                           MsgOpName = "AuctionFillUp"
 	TeleitemCancelAuctionMsgOp                   MsgOpName = "TeleitemCancelAuction"
@@ -1778,6 +1857,7 @@ const (
 	StormOrderCreatedMsgOp                       MsgOpName = "StormOrderCreated"
 	HipoFinanceDepositCoinsMsgOp                 MsgOpName = "HipoFinanceDepositCoins"
 	Accountv3AddLiquidityMsgOp                   MsgOpName = "Accountv3AddLiquidity"
+	HipoFinanceProxyRecoverStakeMsgOp            MsgOpName = "HipoFinanceProxyRecoverStake"
 	ProofStorageMsgOp                            MsgOpName = "ProofStorage"
 	BidaskBurnPayoutMsgOp                        MsgOpName = "BidaskBurnPayout"
 	BemoStakeMsgOp                               MsgOpName = "BemoStake"
@@ -1785,6 +1865,7 @@ const (
 	Poolv3FundAccountMsgOp                       MsgOpName = "Poolv3FundAccount"
 	HipoFinanceProxyTokensBurnedMsgOp            MsgOpName = "HipoFinanceProxyTokensBurned"
 	ProcessGovernanceDecisionMsgOp               MsgOpName = "ProcessGovernanceDecision"
+	HipoFinanceSendUnstakeAllMsgOp               MsgOpName = "HipoFinanceSendUnstakeAll"
 	TelemintDeployMsgOp                          MsgOpName = "TelemintDeploy"
 	TelemintDeployV2MsgOp                        MsgOpName = "TelemintDeployV2"
 	StorageWithdrawMsgOp                         MsgOpName = "StorageWithdraw"
@@ -1802,6 +1883,7 @@ const (
 	DeleteDnsRecordMsgOp                         MsgOpName = "DeleteDnsRecord"
 	ChangeDnsRecordMsgOp                         MsgOpName = "ChangeDnsRecord"
 	DnsBalanceReleaseMsgOp                       MsgOpName = "DnsBalanceRelease"
+	HipoFinanceRecoverStakesMsgOp                MsgOpName = "HipoFinanceRecoverStakes"
 	StormMintExecutorMsgOp                       MsgOpName = "StormMintExecutor"
 	PtonDeployWalletMsgOp                        MsgOpName = "PtonDeployWallet"
 	StormReferralFeesMsgOp                       MsgOpName = "StormReferralFees"
@@ -1822,6 +1904,7 @@ const (
 	StormDepositTonMsgOp                         MsgOpName = "StormDepositTon"
 	BidaskInternalContinueSwapV2MsgOp            MsgOpName = "BidaskInternalContinueSwapV2"
 	StormNotifyWithDeployMsgOp                   MsgOpName = "StormNotifyWithDeploy"
+	HipoFinanceUnstakeAllMsgOp                   MsgOpName = "HipoFinanceUnstakeAll"
 	StormInitSaMsgOp                             MsgOpName = "StormInitSa"
 	StormDepositRevertMsgOp                      MsgOpName = "StormDepositRevert"
 	HipoFinanceTokensBurnedMsgOp                 MsgOpName = "HipoFinanceTokensBurned"
@@ -1829,6 +1912,7 @@ const (
 	DaolamaVaultSupplyMsgOp                      MsgOpName = "DaolamaVaultSupply"
 	StormUpdatePositionWithStopLossMsgOp         MsgOpName = "StormUpdatePositionWithStopLoss"
 	StormAddExecutorAmountMsgOp                  MsgOpName = "StormAddExecutorAmount"
+	HipoFinanceTakeBorrowerFeeMsgOp              MsgOpName = "HipoFinanceTakeBorrowerFee"
 	TonstakePoolSetRolesMsgOp                    MsgOpName = "TonstakePoolSetRoles"
 	StormExecuteOrdersBundleInternalMsgOp        MsgOpName = "StormExecuteOrdersBundleInternal"
 	NftTransferMsgOp                             MsgOpName = "NftTransfer"
@@ -1854,6 +1938,7 @@ const (
 	HipoFinanceProxyReserveTokensMsgOp           MsgOpName = "HipoFinanceProxyReserveTokens"
 	GetRoyaltyParamsMsgOp                        MsgOpName = "GetRoyaltyParams"
 	StormOrderCanceledMsgOp                      MsgOpName = "StormOrderCanceled"
+	HipoFinanceDecideLoanRequestsMsgOp           MsgOpName = "HipoFinanceDecideLoanRequests"
 	MoonProvideLiquidityMsgOp                    MsgOpName = "MoonProvideLiquidity"
 	CoffeeMevProtectHoldFundsMsgOp               MsgOpName = "CoffeeMevProtectHoldFunds"
 	StormUnsuccessfulDepositMsgOp                MsgOpName = "StormUnsuccessfulDeposit"
@@ -1875,6 +1960,7 @@ const (
 	MultisigExecuteMsgOp                         MsgOpName = "MultisigExecute"
 	SubscriptionFallbackMsgOp                    MsgOpName = "SubscriptionFallback"
 	StormRemovePublicKeyMsgOp                    MsgOpName = "StormRemovePublicKey"
+	HipoFinanceProxyUnstakeAllMsgOp              MsgOpName = "HipoFinanceProxyUnstakeAll"
 	MegatonWtonMintMsgOp                         MsgOpName = "MegatonWtonMint"
 	ChannelCooperativeCommitMsgOp                MsgOpName = "ChannelCooperativeCommit"
 	TonstakeControllerPoolSetSudoerMsgOp         MsgOpName = "TonstakeControllerPoolSetSudoer"
@@ -1894,6 +1980,7 @@ const (
 	BidaskInternalSwapV2MsgOp                    MsgOpName = "BidaskInternalSwapV2"
 	StormProvideOrderMsgOp                       MsgOpName = "StormProvideOrder"
 	StormProvidePositionMsgOp                    MsgOpName = "StormProvidePosition"
+	HipoFinanceTakeProfitMsgOp                   MsgOpName = "HipoFinanceTakeProfit"
 	ReportStaticDataMsgOp                        MsgOpName = "ReportStaticData"
 	TonstakeControllerWithdrawValidatorMsgOp     MsgOpName = "TonstakeControllerWithdrawValidator"
 	BemoUnstakeNotificationMsgOp                 MsgOpName = "BemoUnstakeNotification"
@@ -1980,6 +2067,7 @@ const (
 	StormMintReferralMsgOp                       MsgOpName = "StormMintReferral"
 	MoonSwapSucceedMsgOp                         MsgOpName = "MoonSwapSucceed"
 	JettonChangeMetadataMsgOp                    MsgOpName = "JettonChangeMetadata"
+	HipoFinanceRequestRejectedMsgOp              MsgOpName = "HipoFinanceRequestRejected"
 	StormCompleteOrderMsgOp                      MsgOpName = "StormCompleteOrder"
 	SbtRequestOwnerMsgOp                         MsgOpName = "SbtRequestOwner"
 	TopUpMsgOp                                   MsgOpName = "TopUp"
@@ -2039,7 +2127,9 @@ const (
 	NftOwnershipAssignedMsgOpCode                    MsgOpCode = 0x05138d91
 	OwnershipProofMsgOpCode                          MsgOpCode = 0x0524c7ae
 	StonfiCbAddLiquidityV2MsgOpCode                  MsgOpCode = 0x06ecd527
+	HipoFinanceProcessLoanRequestsMsgOpCode          MsgOpCode = 0x071d07cc
 	ChallengeQuarantinedChannelStateMsgOpCode        MsgOpCode = 0x088eaa32
+	HipoFinanceProxyNewStakeMsgOpCode                MsgOpCode = 0x089cd4d0
 	TonstakePoolWithdrawalMsgOpCode                  MsgOpCode = 0x0a77535c
 	CoffeeStakingUpdateRewardsMsgOpCode              MsgOpCode = 0x0a9577f0
 	BidaskInternalContinueProvideMsgOpCode           MsgOpCode = 0x0c09445a
@@ -2077,6 +2167,7 @@ const (
 	EncryptedTextCommentMsgOpCode                    MsgOpCode = 0x2167da4b
 	DedustCreateVaultMsgOpCode                       MsgOpCode = 0x21cfe02b
 	StormAddPublicKeyMsgOpCode                       MsgOpCode = 0x220c4c19
+	HipoFinanceWithdrawSurplusMsgOpCode              MsgOpCode = 0x23355ffb
 	JettonCallToMsgOpCode                            MsgOpCode = 0x235caf52
 	WhalesNominatorsStakeWithdrawCompletedMsgOpCode  MsgOpCode = 0x23d421e1
 	JettonUpgradeMsgOpCode                           MsgOpCode = 0x2508d66a
@@ -2103,6 +2194,9 @@ const (
 	StormVaultTradeNotificationMsgOpCode             MsgOpCode = 0x3475fdd2
 	StonfiWithdrawFeeV2MsgOpCode                     MsgOpCode = 0x354bcdf4
 	HipoFinanceRequestLoanMsgOpCode                  MsgOpCode = 0x36335da9
+	HipoFinanceRequestLoanV2MsgOpCode                MsgOpCode = 0x36335da9
+	HipoFinanceRequestLoanV3MsgOpCode                MsgOpCode = 0x36335da9
+	HipoFinanceRequestLoanV4MsgOpCode                MsgOpCode = 0x36335da9
 	StormFailNotificationMsgOpCode                   MsgOpCode = 0x367f2743
 	AuctionFillUpMsgOpCode                           MsgOpCode = 0x370fec51
 	TeleitemCancelAuctionMsgOpCode                   MsgOpCode = 0x371638ae
@@ -2114,6 +2208,7 @@ const (
 	StormOrderCreatedMsgOpCode                       MsgOpCode = 0x3a943ce6
 	HipoFinanceDepositCoinsMsgOpCode                 MsgOpCode = 0x3d3761a6
 	Accountv3AddLiquidityMsgOpCode                   MsgOpCode = 0x3ebe5431
+	HipoFinanceProxyRecoverStakeMsgOpCode            MsgOpCode = 0x407cb243
 	ProofStorageMsgOpCode                            MsgOpCode = 0x419d5d4d
 	BidaskBurnPayoutMsgOpCode                        MsgOpCode = 0x42062d62
 	BemoStakeMsgOpCode                               MsgOpCode = 0x4253c4d5
@@ -2121,6 +2216,7 @@ const (
 	Poolv3FundAccountMsgOpCode                       MsgOpCode = 0x4468de77
 	HipoFinanceProxyTokensBurnedMsgOpCode            MsgOpCode = 0x4476fde0
 	ProcessGovernanceDecisionMsgOpCode               MsgOpCode = 0x44beae41
+	HipoFinanceSendUnstakeAllMsgOpCode               MsgOpCode = 0x45baeda9
 	TelemintDeployMsgOpCode                          MsgOpCode = 0x4637289a
 	TelemintDeployV2MsgOpCode                        MsgOpCode = 0x4637289b
 	StorageWithdrawMsgOpCode                         MsgOpCode = 0x46ed2e94
@@ -2138,6 +2234,7 @@ const (
 	DeleteDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	ChangeDnsRecordMsgOpCode                         MsgOpCode = 0x4eb1f0f9
 	DnsBalanceReleaseMsgOpCode                       MsgOpCode = 0x4ed14b65
+	HipoFinanceRecoverStakesMsgOpCode                MsgOpCode = 0x4f173d3e
 	StormMintExecutorMsgOpCode                       MsgOpCode = 0x4f38cae8
 	PtonDeployWalletMsgOpCode                        MsgOpCode = 0x4f5f4313
 	StormReferralFeesMsgOpCode                       MsgOpCode = 0x4fedc82b
@@ -2158,6 +2255,7 @@ const (
 	StormDepositTonMsgOpCode                         MsgOpCode = 0x5a091c43
 	BidaskInternalContinueSwapV2MsgOpCode            MsgOpCode = 0x5a6a036f
 	StormNotifyWithDeployMsgOpCode                   MsgOpCode = 0x5a89f5a2
+	HipoFinanceUnstakeAllMsgOpCode                   MsgOpCode = 0x5ae30148
 	StormInitSaMsgOpCode                             MsgOpCode = 0x5b0dd9f4
 	StormDepositRevertMsgOpCode                      MsgOpCode = 0x5b27f9c5
 	HipoFinanceTokensBurnedMsgOpCode                 MsgOpCode = 0x5b512e25
@@ -2165,6 +2263,7 @@ const (
 	DaolamaVaultSupplyMsgOpCode                      MsgOpCode = 0x5c11ada9
 	StormUpdatePositionWithStopLossMsgOpCode         MsgOpCode = 0x5d1b17b8
 	StormAddExecutorAmountMsgOpCode                  MsgOpCode = 0x5dd66579
+	HipoFinanceTakeBorrowerFeeMsgOpCode              MsgOpCode = 0x5e2d81f4
 	TonstakePoolSetRolesMsgOpCode                    MsgOpCode = 0x5e517f36
 	StormExecuteOrdersBundleInternalMsgOpCode        MsgOpCode = 0x5f40f1ec
 	NftTransferMsgOpCode                             MsgOpCode = 0x5fcc3d14
@@ -2190,6 +2289,7 @@ const (
 	HipoFinanceProxyReserveTokensMsgOpCode           MsgOpCode = 0x688b0213
 	GetRoyaltyParamsMsgOpCode                        MsgOpCode = 0x693d3950
 	StormOrderCanceledMsgOpCode                      MsgOpCode = 0x69d08679
+	HipoFinanceDecideLoanRequestsMsgOpCode           MsgOpCode = 0x6a31d344
 	MoonProvideLiquidityMsgOpCode                    MsgOpCode = 0x6b1b8a3f
 	CoffeeMevProtectHoldFundsMsgOpCode               MsgOpCode = 0x6bc79e7e
 	StormUnsuccessfulDepositMsgOpCode                MsgOpCode = 0x6cde12e2
@@ -2211,6 +2311,7 @@ const (
 	MultisigExecuteMsgOpCode                         MsgOpCode = 0x75097f5d
 	SubscriptionFallbackMsgOpCode                    MsgOpCode = 0x756e6b77
 	StormRemovePublicKeyMsgOpCode                    MsgOpCode = 0x76519f8b
+	HipoFinanceProxyUnstakeAllMsgOpCode              MsgOpCode = 0x76bd2760
 	MegatonWtonMintMsgOpCode                         MsgOpCode = 0x77a33521
 	ChannelCooperativeCommitMsgOpCode                MsgOpCode = 0x79a126ef
 	TonstakeControllerPoolSetSudoerMsgOpCode         MsgOpCode = 0x79e7c016
@@ -2230,6 +2331,7 @@ const (
 	BidaskInternalSwapV2MsgOpCode                    MsgOpCode = 0x87d36990
 	StormProvideOrderMsgOpCode                       MsgOpCode = 0x8865b402
 	StormProvidePositionMsgOpCode                    MsgOpCode = 0x8865b402
+	HipoFinanceTakeProfitMsgOpCode                   MsgOpCode = 0x8b556813
 	ReportStaticDataMsgOpCode                        MsgOpCode = 0x8b771735
 	TonstakeControllerWithdrawValidatorMsgOpCode     MsgOpCode = 0x8efed779
 	BemoUnstakeNotificationMsgOpCode                 MsgOpCode = 0x90c80a07
@@ -2316,6 +2418,7 @@ const (
 	StormMintReferralMsgOpCode                       MsgOpCode = 0xcb4ddc3c
 	MoonSwapSucceedMsgOpCode                         MsgOpCode = 0xcb7f38d6
 	JettonChangeMetadataMsgOpCode                    MsgOpCode = 0xcb862902
+	HipoFinanceRequestRejectedMsgOpCode              MsgOpCode = 0xcd0f2116
 	StormCompleteOrderMsgOpCode                      MsgOpCode = 0xcf90d618
 	SbtRequestOwnerMsgOpCode                         MsgOpCode = 0xd0c3bfea
 	TopUpMsgOpCode                                   MsgOpCode = 0xd372158c
@@ -2446,6 +2549,11 @@ type StonfiCbAddLiquidityV2MsgBody struct {
 	} `tlb:"^"`
 }
 
+type HipoFinanceProcessLoanRequestsMsgBody struct {
+	QueryId    uint64
+	RoundSince uint32
+}
+
 type ChallengeQuarantinedChannelStateMsgBody struct {
 	ChallengedByA bool
 	Signature     tlb.Bits512
@@ -2453,6 +2561,17 @@ type ChallengeQuarantinedChannelStateMsgBody struct {
 	ChannelId     tlb.Uint128
 	SchA          SignedSemiChannel `tlb:"^"`
 	SchB          SignedSemiChannel `tlb:"^"`
+}
+
+type HipoFinanceProxyNewStakeMsgBody struct {
+	QueryId     uint64
+	NewStakeMsg struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	} `tlb:"^"`
 }
 
 type TonstakePoolWithdrawalMsgBody struct {
@@ -2719,6 +2838,11 @@ type StormAddPublicKeyMsgBody struct {
 	PublicKey tlb.Uint256
 }
 
+type HipoFinanceWithdrawSurplusMsgBody struct {
+	QueryId      uint64
+	ReturnExcess tlb.MsgAddress
+}
+
 type JettonCallToMsgBody struct {
 	QueryId   uint64
 	ToAddress tlb.MsgAddress
@@ -2907,6 +3031,50 @@ type HipoFinanceRequestLoanMsgBody struct {
 	} `tlb:"^"`
 }
 
+type HipoFinanceRequestLoanV2MsgBody struct {
+	QueryId             uint64
+	RoundSince          uint32
+	LoanAmount          tlb.VarUInteger16
+	MinPayment          tlb.VarUInteger16
+	BorrowerRewardShare uint16
+	NewStakeMsg         struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	} `tlb:"^"`
+}
+
+type HipoFinanceRequestLoanV3MsgBody struct {
+	QueryId     uint64
+	RoundSince  uint32
+	LoanAmount  tlb.VarUInteger16
+	MinPayment  tlb.VarUInteger16
+	NewStakeMsg struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	} `tlb:"^"`
+}
+
+type HipoFinanceRequestLoanV4MsgBody struct {
+	QueryId     uint64
+	RoundSince  uint32
+	LoanAmount  tlb.VarUInteger16
+	MinPayment  tlb.VarUInteger16
+	MaxStake    tlb.VarUInteger16
+	NewStakeMsg struct {
+		ValidatorPubkey tlb.Bits256
+		StakeAt         uint32
+		MaxFactor       uint32
+		AdnlAddr        tlb.Bits256
+		Signature       tlb.Bits512 `tlb:"^"`
+	} `tlb:"^"`
+}
+
 type StormFailNotificationMsgBody struct {
 	Query               uint64
 	SpentAmount         tlb.Grams
@@ -2988,6 +3156,10 @@ type Accountv3AddLiquidityMsgBody struct {
 	TickUpper  tlb.Int24
 }
 
+type HipoFinanceProxyRecoverStakeMsgBody struct {
+	QueryId uint64
+}
+
 type ProofStorageMsgBody struct {
 	QueryId       uint64
 	FileDictProof tlb.Any `tlb:"^"`
@@ -3036,6 +3208,10 @@ type HipoFinanceProxyTokensBurnedMsgBody struct {
 }
 
 type ProcessGovernanceDecisionMsgBody struct {
+	QueryId uint64
+}
+
+type HipoFinanceSendUnstakeAllMsgBody struct {
 	QueryId uint64
 }
 
@@ -3134,6 +3310,11 @@ type ChangeDnsRecordMsgBody struct {
 
 type DnsBalanceReleaseMsgBody struct {
 	QueryId uint64
+}
+
+type HipoFinanceRecoverStakesMsgBody struct {
+	QueryId    uint64
+	RoundSince uint32
 }
 
 type StormMintExecutorMsgBody struct {
@@ -3301,6 +3482,10 @@ type StormNotifyWithDeployMsgBody struct {
 	JettonMinterAddress tlb.MsgAddress
 }
 
+type HipoFinanceUnstakeAllMsgBody struct {
+	QueryId uint64
+}
+
 type StormInitSaMsgBody struct {
 	QueryId  uint64
 	InitData InitializationData
@@ -3345,6 +3530,10 @@ type StormUpdatePositionWithStopLossMsgBody struct {
 type StormAddExecutorAmountMsgBody struct {
 	ReferralAmount tlb.Grams
 	OriginAddr     tlb.MsgAddress
+}
+
+type HipoFinanceTakeBorrowerFeeMsgBody struct {
+	QueryId uint64
 }
 
 type TonstakePoolSetRolesMsgBody struct {
@@ -3553,6 +3742,11 @@ type GetRoyaltyParamsMsgBody struct {
 
 type StormOrderCanceledMsgBody struct{}
 
+type HipoFinanceDecideLoanRequestsMsgBody struct {
+	QueryId    uint64
+	RoundSince uint32
+}
+
 type MoonProvideLiquidityMsgBody struct {
 	QueryId     uint64
 	Amount1     tlb.Grams
@@ -3671,6 +3865,11 @@ type SubscriptionFallbackMsgBody struct{}
 type StormRemovePublicKeyMsgBody struct {
 	QueryId   uint64
 	PublicKey tlb.Uint256
+}
+
+type HipoFinanceProxyUnstakeAllMsgBody struct {
+	QueryId uint64
+	Owner   tlb.MsgAddress
 }
 
 type MegatonWtonMintMsgBody struct {
@@ -3802,6 +4001,10 @@ type StormProvidePositionMsgBody struct {
 	Direction     tlb.Uint1
 	ExecutorIndex uint32
 	OraclePayload OraclePayload `tlb:"^"`
+}
+
+type HipoFinanceTakeProfitMsgBody struct {
+	QueryId uint64
 }
 
 type ReportStaticDataMsgBody struct {
@@ -4369,6 +4572,10 @@ type JettonChangeMetadataMsgBody struct {
 	Metadata tlb.Any
 }
 
+type HipoFinanceRequestRejectedMsgBody struct {
+	QueryId uint64
+}
+
 type StormCompleteOrderMsgBody struct {
 	OrderType             tlb.Uint4
 	OrderIndex            tlb.Uint3
@@ -4690,7 +4897,9 @@ var KnownMsgInTypes = map[string]any{
 	NftOwnershipAssignedMsgOp:                    NftOwnershipAssignedMsgBody{},
 	OwnershipProofMsgOp:                          OwnershipProofMsgBody{},
 	StonfiCbAddLiquidityV2MsgOp:                  StonfiCbAddLiquidityV2MsgBody{},
+	HipoFinanceProcessLoanRequestsMsgOp:          HipoFinanceProcessLoanRequestsMsgBody{},
 	ChallengeQuarantinedChannelStateMsgOp:        ChallengeQuarantinedChannelStateMsgBody{},
+	HipoFinanceProxyNewStakeMsgOp:                HipoFinanceProxyNewStakeMsgBody{},
 	TonstakePoolWithdrawalMsgOp:                  TonstakePoolWithdrawalMsgBody{},
 	CoffeeStakingUpdateRewardsMsgOp:              CoffeeStakingUpdateRewardsMsgBody{},
 	BidaskInternalContinueProvideMsgOp:           BidaskInternalContinueProvideMsgBody{},
@@ -4728,6 +4937,7 @@ var KnownMsgInTypes = map[string]any{
 	EncryptedTextCommentMsgOp:                    EncryptedTextCommentMsgBody{},
 	DedustCreateVaultMsgOp:                       DedustCreateVaultMsgBody{},
 	StormAddPublicKeyMsgOp:                       StormAddPublicKeyMsgBody{},
+	HipoFinanceWithdrawSurplusMsgOp:              HipoFinanceWithdrawSurplusMsgBody{},
 	JettonCallToMsgOp:                            JettonCallToMsgBody{},
 	WhalesNominatorsStakeWithdrawCompletedMsgOp:  WhalesNominatorsStakeWithdrawCompletedMsgBody{},
 	JettonUpgradeMsgOp:                           JettonUpgradeMsgBody{},
@@ -4754,6 +4964,9 @@ var KnownMsgInTypes = map[string]any{
 	StormVaultTradeNotificationMsgOp:             StormVaultTradeNotificationMsgBody{},
 	StonfiWithdrawFeeV2MsgOp:                     StonfiWithdrawFeeV2MsgBody{},
 	HipoFinanceRequestLoanMsgOp:                  HipoFinanceRequestLoanMsgBody{},
+	HipoFinanceRequestLoanV2MsgOp:                HipoFinanceRequestLoanV2MsgBody{},
+	HipoFinanceRequestLoanV3MsgOp:                HipoFinanceRequestLoanV3MsgBody{},
+	HipoFinanceRequestLoanV4MsgOp:                HipoFinanceRequestLoanV4MsgBody{},
 	StormFailNotificationMsgOp:                   StormFailNotificationMsgBody{},
 	AuctionFillUpMsgOp:                           AuctionFillUpMsgBody{},
 	TeleitemCancelAuctionMsgOp:                   TeleitemCancelAuctionMsgBody{},
@@ -4765,6 +4978,7 @@ var KnownMsgInTypes = map[string]any{
 	StormOrderCreatedMsgOp:                       StormOrderCreatedMsgBody{},
 	HipoFinanceDepositCoinsMsgOp:                 HipoFinanceDepositCoinsMsgBody{},
 	Accountv3AddLiquidityMsgOp:                   Accountv3AddLiquidityMsgBody{},
+	HipoFinanceProxyRecoverStakeMsgOp:            HipoFinanceProxyRecoverStakeMsgBody{},
 	ProofStorageMsgOp:                            ProofStorageMsgBody{},
 	BidaskBurnPayoutMsgOp:                        BidaskBurnPayoutMsgBody{},
 	BemoStakeMsgOp:                               BemoStakeMsgBody{},
@@ -4772,6 +4986,7 @@ var KnownMsgInTypes = map[string]any{
 	Poolv3FundAccountMsgOp:                       Poolv3FundAccountMsgBody{},
 	HipoFinanceProxyTokensBurnedMsgOp:            HipoFinanceProxyTokensBurnedMsgBody{},
 	ProcessGovernanceDecisionMsgOp:               ProcessGovernanceDecisionMsgBody{},
+	HipoFinanceSendUnstakeAllMsgOp:               HipoFinanceSendUnstakeAllMsgBody{},
 	TelemintDeployMsgOp:                          TelemintDeployMsgBody{},
 	TelemintDeployV2MsgOp:                        TelemintDeployV2MsgBody{},
 	StorageWithdrawMsgOp:                         StorageWithdrawMsgBody{},
@@ -4789,6 +5004,7 @@ var KnownMsgInTypes = map[string]any{
 	DeleteDnsRecordMsgOp:                         DeleteDnsRecordMsgBody{},
 	ChangeDnsRecordMsgOp:                         ChangeDnsRecordMsgBody{},
 	DnsBalanceReleaseMsgOp:                       DnsBalanceReleaseMsgBody{},
+	HipoFinanceRecoverStakesMsgOp:                HipoFinanceRecoverStakesMsgBody{},
 	StormMintExecutorMsgOp:                       StormMintExecutorMsgBody{},
 	PtonDeployWalletMsgOp:                        PtonDeployWalletMsgBody{},
 	StormReferralFeesMsgOp:                       StormReferralFeesMsgBody{},
@@ -4809,6 +5025,7 @@ var KnownMsgInTypes = map[string]any{
 	StormDepositTonMsgOp:                         StormDepositTonMsgBody{},
 	BidaskInternalContinueSwapV2MsgOp:            BidaskInternalContinueSwapV2MsgBody{},
 	StormNotifyWithDeployMsgOp:                   StormNotifyWithDeployMsgBody{},
+	HipoFinanceUnstakeAllMsgOp:                   HipoFinanceUnstakeAllMsgBody{},
 	StormInitSaMsgOp:                             StormInitSaMsgBody{},
 	StormDepositRevertMsgOp:                      StormDepositRevertMsgBody{},
 	HipoFinanceTokensBurnedMsgOp:                 HipoFinanceTokensBurnedMsgBody{},
@@ -4816,6 +5033,7 @@ var KnownMsgInTypes = map[string]any{
 	DaolamaVaultSupplyMsgOp:                      DaolamaVaultSupplyMsgBody{},
 	StormUpdatePositionWithStopLossMsgOp:         StormUpdatePositionWithStopLossMsgBody{},
 	StormAddExecutorAmountMsgOp:                  StormAddExecutorAmountMsgBody{},
+	HipoFinanceTakeBorrowerFeeMsgOp:              HipoFinanceTakeBorrowerFeeMsgBody{},
 	TonstakePoolSetRolesMsgOp:                    TonstakePoolSetRolesMsgBody{},
 	StormExecuteOrdersBundleInternalMsgOp:        StormExecuteOrdersBundleInternalMsgBody{},
 	NftTransferMsgOp:                             NftTransferMsgBody{},
@@ -4841,6 +5059,7 @@ var KnownMsgInTypes = map[string]any{
 	HipoFinanceProxyReserveTokensMsgOp:           HipoFinanceProxyReserveTokensMsgBody{},
 	GetRoyaltyParamsMsgOp:                        GetRoyaltyParamsMsgBody{},
 	StormOrderCanceledMsgOp:                      StormOrderCanceledMsgBody{},
+	HipoFinanceDecideLoanRequestsMsgOp:           HipoFinanceDecideLoanRequestsMsgBody{},
 	MoonProvideLiquidityMsgOp:                    MoonProvideLiquidityMsgBody{},
 	CoffeeMevProtectHoldFundsMsgOp:               CoffeeMevProtectHoldFundsMsgBody{},
 	StormUnsuccessfulDepositMsgOp:                StormUnsuccessfulDepositMsgBody{},
@@ -4862,6 +5081,7 @@ var KnownMsgInTypes = map[string]any{
 	MultisigExecuteMsgOp:                         MultisigExecuteMsgBody{},
 	SubscriptionFallbackMsgOp:                    SubscriptionFallbackMsgBody{},
 	StormRemovePublicKeyMsgOp:                    StormRemovePublicKeyMsgBody{},
+	HipoFinanceProxyUnstakeAllMsgOp:              HipoFinanceProxyUnstakeAllMsgBody{},
 	MegatonWtonMintMsgOp:                         MegatonWtonMintMsgBody{},
 	ChannelCooperativeCommitMsgOp:                ChannelCooperativeCommitMsgBody{},
 	TonstakeControllerPoolSetSudoerMsgOp:         TonstakeControllerPoolSetSudoerMsgBody{},
@@ -4881,6 +5101,7 @@ var KnownMsgInTypes = map[string]any{
 	BidaskInternalSwapV2MsgOp:                    BidaskInternalSwapV2MsgBody{},
 	StormProvideOrderMsgOp:                       StormProvideOrderMsgBody{},
 	StormProvidePositionMsgOp:                    StormProvidePositionMsgBody{},
+	HipoFinanceTakeProfitMsgOp:                   HipoFinanceTakeProfitMsgBody{},
 	ReportStaticDataMsgOp:                        ReportStaticDataMsgBody{},
 	TonstakeControllerWithdrawValidatorMsgOp:     TonstakeControllerWithdrawValidatorMsgBody{},
 	BemoUnstakeNotificationMsgOp:                 BemoUnstakeNotificationMsgBody{},
@@ -4967,6 +5188,7 @@ var KnownMsgInTypes = map[string]any{
 	StormMintReferralMsgOp:                       StormMintReferralMsgBody{},
 	MoonSwapSucceedMsgOp:                         MoonSwapSucceedMsgBody{},
 	JettonChangeMetadataMsgOp:                    JettonChangeMetadataMsgBody{},
+	HipoFinanceRequestRejectedMsgOp:              HipoFinanceRequestRejectedMsgBody{},
 	StormCompleteOrderMsgOp:                      StormCompleteOrderMsgBody{},
 	SbtRequestOwnerMsgOp:                         SbtRequestOwnerMsgBody{},
 	TopUpMsgOp:                                   TopUpMsgBody{},
@@ -5031,6 +5253,12 @@ var (
 	decodeFuncStormExecuteOrdersBundleExternalExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x04c52fd2, Len: 32}, StormExecuteOrdersBundleExternalExtInMsgOp, StormExecuteOrdersBundleExternalExtInMsgBody{})
 	// 0x2114702d
 	decodeFuncCronTriggerExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x2114702d, Len: 32}, CronTriggerExtInMsgOp, CronTriggerExtInMsgBody{})
+	// 0x23274435
+	decodeFuncHipoFinanceFinishParticipationExtInMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x23274435, Len: 32}, HipoFinanceFinishParticipationExtInMsgOp, HipoFinanceFinishParticipationExtInMsgBody{})
+	// 0x2f0b5b3b
+	decodeFuncHipoFinanceVsetChangedExtInMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x2f0b5b3b, Len: 32}, HipoFinanceVsetChangedExtInMsgOp, HipoFinanceVsetChangedExtInMsgBody{})
+	// 0x574a297b
+	decodeFuncHipoFinanceParticipateInElectionExtInMsgBody = decodeFixedLengthMsg(tlb.Tag{Val: 0x574a297b, Len: 32}, HipoFinanceParticipateInElectionExtInMsgOp, HipoFinanceParticipateInElectionExtInMsgBody{})
 	// 0x7369676e
 	decodeFuncWalletSignedExternalV5R1ExtInMsgBody = decodeMsg(tlb.Tag{Val: 0x7369676e, Len: 32}, WalletSignedExternalV5R1ExtInMsgOp, WalletSignedExternalV5R1ExtInMsgBody{})
 )
@@ -5042,6 +5270,15 @@ var opcodedMsgExtInDecodeFunctions = map[uint32]msgDecoder{
 
 	// 0x2114702d
 	CronTriggerExtInMsgOpCode: decodeFuncCronTriggerExtInMsgBody,
+
+	// 0x23274435
+	HipoFinanceFinishParticipationExtInMsgOpCode: decodeFuncHipoFinanceFinishParticipationExtInMsgBody,
+
+	// 0x2f0b5b3b
+	HipoFinanceVsetChangedExtInMsgOpCode: decodeFuncHipoFinanceVsetChangedExtInMsgBody,
+
+	// 0x574a297b
+	HipoFinanceParticipateInElectionExtInMsgOpCode: decodeFuncHipoFinanceParticipateInElectionExtInMsgBody,
 
 	// 0x7369676e
 	WalletSignedExternalV5R1ExtInMsgOpCode: decodeFuncWalletSignedExternalV5R1ExtInMsgBody,
@@ -5056,6 +5293,9 @@ const (
 	HighloadWalletSignedV2ExtInMsgOp           MsgOpName = "HighloadWalletSignedV2"
 	StormExecuteOrdersBundleExternalExtInMsgOp MsgOpName = "StormExecuteOrdersBundleExternal"
 	CronTriggerExtInMsgOp                      MsgOpName = "CronTrigger"
+	HipoFinanceFinishParticipationExtInMsgOp   MsgOpName = "HipoFinanceFinishParticipation"
+	HipoFinanceVsetChangedExtInMsgOp           MsgOpName = "HipoFinanceVsetChanged"
+	HipoFinanceParticipateInElectionExtInMsgOp MsgOpName = "HipoFinanceParticipateInElection"
 	WalletSignedExternalV5R1ExtInMsgOp         MsgOpName = "WalletSignedExternalV5R1"
 )
 
@@ -5068,6 +5308,9 @@ const (
 	HighloadWalletSignedV2ExtInMsgOpCode           MsgOpCode = 0x00000000
 	StormExecuteOrdersBundleExternalExtInMsgOpCode MsgOpCode = 0x04c52fd2
 	CronTriggerExtInMsgOpCode                      MsgOpCode = 0x2114702d
+	HipoFinanceFinishParticipationExtInMsgOpCode   MsgOpCode = 0x23274435
+	HipoFinanceVsetChangedExtInMsgOpCode           MsgOpCode = 0x2f0b5b3b
+	HipoFinanceParticipateInElectionExtInMsgOpCode MsgOpCode = 0x574a297b
 	WalletSignedExternalV5R1ExtInMsgOpCode         MsgOpCode = 0x7369676e
 )
 
@@ -5124,6 +5367,21 @@ type CronTriggerExtInMsgBody struct {
 	Salt          uint32
 }
 
+type HipoFinanceFinishParticipationExtInMsgBody struct {
+	QueryId    uint64
+	RoundSince uint32
+}
+
+type HipoFinanceVsetChangedExtInMsgBody struct {
+	QueryId    uint64
+	RoundSince uint32
+}
+
+type HipoFinanceParticipateInElectionExtInMsgBody struct {
+	QueryId    uint64
+	RoundSince uint32
+}
+
 type WalletSignedExternalV5R1ExtInMsgBody struct {
 	WalletId   uint32
 	ValidUntil uint32
@@ -5142,6 +5400,9 @@ var KnownMsgExtInTypes = map[string]any{
 	HighloadWalletSignedV2ExtInMsgOp:           HighloadWalletSignedV2ExtInMsgBody{},
 	StormExecuteOrdersBundleExternalExtInMsgOp: StormExecuteOrdersBundleExternalExtInMsgBody{},
 	CronTriggerExtInMsgOp:                      CronTriggerExtInMsgBody{},
+	HipoFinanceFinishParticipationExtInMsgOp:   HipoFinanceFinishParticipationExtInMsgBody{},
+	HipoFinanceVsetChangedExtInMsgOp:           HipoFinanceVsetChangedExtInMsgBody{},
+	HipoFinanceParticipateInElectionExtInMsgOp: HipoFinanceParticipateInElectionExtInMsgBody{},
 	WalletSignedExternalV5R1ExtInMsgOp:         WalletSignedExternalV5R1ExtInMsgBody{},
 }
 

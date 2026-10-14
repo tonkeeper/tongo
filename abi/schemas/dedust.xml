@@ -71,6 +71,35 @@
     </interface>
     <interface name="dedust_v2_cpmm">
         <get_method name="get_pool_data" version="dedust_v2"/>
+        <error code="20">Not uninitialized</error>
+        <error code="21">Not initializing</error>
+        <error code="22">Not initialized</error>
+        <error code="23">Sender unauthorized</error>
+        <error code="24">Wallet cannot be resolved</error>
+        <error code="25">Message value too low</error>
+        <error code="26">Duplicate of assets</error>
+        <error code="28">Unrelated asset</error>
+        <error code="29">Value too low</error>
+        <error code="30">Slippage exceeded</error>
+        <error code="31">Asset not supported</error>
+        <error code="32">Wrong workchain</error>
+        <error code="33">Deadline exceeded</error>
+        <error code="34">Zero liquidity</error>
+        <error code="35">Max creator fee exceeded</error>
+        <error code="36">Not enough liquidity</error>
+        <error code="37">Swap not active</error>
+        <error code="38">Deposit not active</error>
+        <error code="39">Wallet already registered</error>
+        <error code="40">Wallet not registered</error>
+        <error code="41">Unknown resolver</error>
+        <error code="42">Reward is not allowed</error>
+        <error code="43">Max reward duration exceeded</error>
+        <error code="44">Zero duration reward</error>
+        <error code="45">Reward budget dilution</error>
+        <error code="46">Reward is not active</error>
+        <error code="47">Zero input amount</error>
+        <error code="63">Invalid tag</error>
+        <error code="65535">Unknown operation</error>
         <msg_in>
             <internal name="jetton_notify"/>
             <internal name="jetton_transfer"/>

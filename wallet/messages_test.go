@@ -5,9 +5,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
+	"github.com/tonkeeper/tongo/ton"
 )
 
 func mustFromBase64(msg string) *boc.Cell {
@@ -149,6 +151,17 @@ func TestExtractRawMessages(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "walletTg",
+			boc:  "te6ccgEBBgEA+gACRYgAWn5Zry9N0hmIe/77TOOnZPRFwxLfJUVbEDRBLa/4AegeAQICATQDBAGic2uzKWM4jSK3TtQ6hNKbR9psKzGjNKsvMyrsjgQ67RnRig+DRx41dz/pkJ7VCWo/9ecj88fSe60xBLD0nbqzBmOJbnV//38RatWenwAAAAADBQAw/wAgmCHXSYMIufJA34CF+DPQ7R4g7VPZAFIAAAAAAH//fxGz5PkKRWy5F7oxTr8dK0cQNsF0bihrG6Mzys8LkhGL2QBmQgAWn5Zry9N0hmIe/77TOOnZPRFwxLfJUVbEDRBLa/4AehzEtAAAAAAAAAAAAAAAAAAA",
+			ver:  WalletTg,
+			want: []RawMessage{
+				{
+					Message: mustFromBase64("te6ccgEBAQEANQAAZkIAFp+Wa8vTdIZiHv++0zjp2T0RcMS3yVFWxA0QS2v+AHocxLQAAAAAAAAAAAAAAAAAAA=="),
+					Mode:    3,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,6 +172,9 @@ func TestExtractRawMessages(t *testing.T) {
 			rawMessages, err := ExtractRawMessages(tt.ver, c[0])
 			if err != nil {
 				t.Fatal(err)
+			}
+			if len(rawMessages) != len(tt.want) {
+				t.Fatalf("want %v raw messages, got %v", len(tt.want), len(rawMessages))
 			}
 			for i, msg := range rawMessages {
 				bocHash, err := msg.Message.Hash256()
@@ -187,6 +203,59 @@ func TestExtractRawMessages(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestWalletTgSignedMessage(t *testing.T) {
+	privateKey, _ := SeedToPrivateKey(RandomSeed())
+	otherKey, _ := SeedToPrivateKey(RandomSeed())
+	w, err := New(privateKey, WalletTg, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	internalMessages := []RawMessage{
+		{Message: mustFromBase64("te6ccgEBAQEANQAAZkIAFp+Wa8vTdIZiHv++0zjp2T0RcMS3yVFWxA0QS2v+AHocxLQAAAAAAAAAAAAAAAAAAA=="), Mode: 3},
+		{Message: mustFromBase64("te6ccgEBAQEANgAAaEIAKZ+YbyuRCr3COPqoHc/iwAZGwcvzy6H7y1iPME1tc0+lloLwAAAAAAAAAAAAAAAAAAA="), Mode: 2},
+	}
+	for _, msgs := range [][]RawMessage{internalMessages[:1], internalMessages} {
+		body, err := w.createSignedMsgBodyCell(msgs, MessageConfig{Seqno: 7, ValidUntil: time.Now().Add(time.Minute)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		extMsg, err := ton.CreateExternalMessage(w.GetAddress(), body, nil, tlb.VarUInteger16{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		cell := boc.NewCell()
+		if err := tlb.Marshal(cell, extMsg); err != nil {
+			t.Fatal(err)
+		}
+		if err := VerifySignature(WalletTg, cell, privateKey.Public().(ed25519.PublicKey)); err != nil {
+			t.Fatalf("VerifySignature() failed: %v", err)
+		}
+		if err := VerifySignature(WalletTg, cell, otherKey.Public().(ed25519.PublicKey)); err == nil {
+			t.Fatalf("VerifySignature() had to fail but it didn't")
+		}
+		rawMessages, err := ExtractRawMessages(WalletTg, cell)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(rawMessages) != len(msgs) {
+			t.Fatalf("want %v raw messages, got %v", len(msgs), len(rawMessages))
+		}
+		for i, msg := range rawMessages {
+			got, err := msg.Message.Hash256()
+			if err != nil {
+				t.Fatal(err)
+			}
+			want, err := msgs[i].Message.Hash256()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got != want || msg.Mode != msgs[i].Mode {
+				t.Fatalf("raw message %v mismatch", i)
+			}
+		}
 	}
 }
 

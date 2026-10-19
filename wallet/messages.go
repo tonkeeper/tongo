@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 
+	abiWalletTg "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/walletTg"
 	"github.com/tonkeeper/tongo/boc"
 	"github.com/tonkeeper/tongo/tlb"
 	"github.com/tonkeeper/tongo/ton"
@@ -312,6 +313,19 @@ func DecodeMessageV5Beta(msg *boc.Cell) (*MessageV5Beta, error) {
 	return &msgv5, nil
 }
 
+func DecodeMessageTg(msg *boc.Cell) (*abiWalletTg.SignedExternalRequest, error) {
+	var m tlb.Message
+	if err := tlb.Unmarshal(msg, &m); err != nil {
+		return nil, err
+	}
+	var req abiWalletTg.SignedExternalRequest
+	bodyCell := boc.Cell(m.Body.Value)
+	if err := req.UnmarshalTLB(&bodyCell, tlb.NewDecoder()); err != nil {
+		return nil, err
+	}
+	return &req, nil
+}
+
 func DecodeMessageV4(msg *boc.Cell) (*MessageV4, error) {
 	signedMsgBody, err := extractSignedMsgBody(msg)
 	if err != nil {
@@ -396,9 +410,30 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 			return nil, err
 		}
 		return hl.RawMessages, nil
+	case WalletTg:
+		req, err := DecodeMessageTg(msg)
+		if err != nil {
+			return nil, err
+		}
+		return tgRawMessages(req.Request), nil
 	default:
 		return nil, fmt.Errorf("wallet version is not supported: %v", ver)
 	}
+}
+
+func tgRawMessages(req abiWalletTg.AllowedExternalMsg) []RawMessage {
+	var msgs []abiWalletTg.MessageToSend
+	switch req.SumType {
+	case abiWalletTg.AllowedExternalMsgKind_SendOneMessageRequestE:
+		msgs = []abiWalletTg.MessageToSend{req.SendOneMessageRequestE.Msg}
+	case abiWalletTg.AllowedExternalMsgKind_SendBulkMessagesRequestE:
+		msgs = req.SendBulkMessagesRequestE.MsgArr
+	}
+	rawMessages := make([]RawMessage, 0, len(msgs))
+	for _, msg := range msgs {
+		rawMessages = append(rawMessages, RawMessage{Message: &msg.MessageCell, Mode: byte(msg.SendMode)})
+	}
+	return rawMessages
 }
 
 // VerifySignature checks whether the given message (tlb.Message) represented as a cell
@@ -407,7 +442,7 @@ func ExtractRawMessages(ver Version, msg *boc.Cell) ([]RawMessage, error) {
 // Otherwise, it returns an error.
 func VerifySignature(ver Version, msg *boc.Cell, publicKey ed25519.PublicKey) error {
 	switch ver {
-	case V3R1, V3R2, V3R2Lockup, V4R1, V4R2, HighLoadV2R2:
+	case V3R1, V3R2, V3R2Lockup, V4R1, V4R2, HighLoadV2R2, WalletTg:
 		signedMsgBody, err := extractSignedMsgBody(msg)
 		if err != nil {
 			return err

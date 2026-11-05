@@ -68,6 +68,12 @@
         <code_hash>6cda351c3c0ee368873a5ea10f53b9a47a55aacdc8deb3fd103c2f968c952527</code_hash>
         <code_hash>e82ca5b820228565747a837c7634bef30bb48f5297937b2141fe5f6118ffaa4c</code_hash>
         <code_hash>fc8df8be21d83d3876984d7859c078c916dfd7654bc465bf9cd64602eeb4c587</code_hash>
+        <code_hash>e80fac6ca3f855621ddcbb6be4451c1a76a56cc5045b3155a445edc168a9b9ca</code_hash>
+        <code_hash>b1d357548b57224544ba88ad1624e00d4ef048d02156f32aa915725b810e3157</code_hash>
+    </interface>
+    <interface name="omniston_referral_vault">
+        <code_hash>b484529ae4e23dd60fccc22a737d6b61046d85164fe9b1f5cfc254d4e6de5e93</code_hash>
+        <get_method name="get_vault_data" version="omniston"/>
     </interface>
 
     <get_method name="get_vault_data">
@@ -76,6 +82,12 @@
             <slice name="token_address">msgaddress</slice>
             <slice name="router_address">msgaddress</slice>
             <int name="deposited_amount">int257</int>
+        </output>
+        <output version="omniston" fixed_length="true">
+            <slice name="minter_address">msgaddress</slice>
+            <slice name="minter_jetton_wallet_address">msgaddress</slice>
+            <int name="balance">int257</int>
+            <slice name="owner_address">msgaddress</slice>
         </output>
     </get_method>
 

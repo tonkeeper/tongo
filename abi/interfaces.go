@@ -76,6 +76,7 @@ const (
 	NftSaleV1
 	NftSaleV2
 	OmnistonReferral
+	OmnistonReferralVault
 	PaymentChannel
 	Sbt
 	ScaledUi
@@ -274,6 +275,8 @@ func (c ContractInterface) String() string {
 		return "nft_sale_v2"
 	case OmnistonReferral:
 		return "omniston_referral"
+	case OmnistonReferralVault:
+		return "omniston_referral_vault"
 	case PaymentChannel:
 		return "payment_channel"
 	case Sbt:
@@ -534,6 +537,8 @@ func ContractInterfaceFromString(s string) ContractInterface {
 		return NftSaleV2
 	case "omniston_referral":
 		return OmnistonReferral
+	case "omniston_referral_vault":
+		return OmnistonReferralVault
 	case "payment_channel":
 		return PaymentChannel
 	case "sbt":
@@ -2097,6 +2102,16 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 			GetContractData,
 		},
 	},
+	ton.MustParseHash("b1d357548b57224544ba88ad1624e00d4ef048d02156f32aa915725b810e3157"): {
+		contractInterfaces: []ContractInterface{OmnistonReferral},
+		getMethods:         []InvokeFn{},
+	},
+	ton.MustParseHash("b484529ae4e23dd60fccc22a737d6b61046d85164fe9b1f5cfc254d4e6de5e93"): {
+		contractInterfaces: []ContractInterface{OmnistonReferralVault},
+		getMethods: []InvokeFn{
+			GetVaultData,
+		},
+	},
 	ton.MustParseHash("b48b531abec3b714638291f7d77ed6dc9f6a2729efca20477137374d4ae8b590"): {
 		contractInterfaces: []ContractInterface{WalletVesting},
 		getMethods: []InvokeFn{
@@ -2194,6 +2209,10 @@ var knownContracts = map[ton.Bits256]knownContractDescription{
 		getMethods: []InvokeFn{
 			Seqno,
 		},
+	},
+	ton.MustParseHash("e80fac6ca3f855621ddcbb6be4451c1a76a56cc5045b3155a445edc168a9b9ca"): {
+		contractInterfaces: []ContractInterface{OmnistonReferral},
+		getMethods:         []InvokeFn{},
 	},
 	ton.MustParseHash("e82ca5b820228565747a837c7634bef30bb48f5297937b2141fe5f6118ffaa4c"): {
 		contractInterfaces: []ContractInterface{OmnistonReferral},

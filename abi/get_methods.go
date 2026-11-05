@@ -193,7 +193,7 @@ var KnownGetMethodsDecoder = map[string][]func(tlb.VmStack) (string, any, error)
 	"get_vault_address":                            {DecodeGetVaultAddress_DedustResult},
 	"get_vault_balance":                            {DecodeGetVaultBalance_StormResult},
 	"get_vault_contract_data":                      {DecodeGetVaultContractData_StormResult},
-	"get_vault_data":                               {DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_AffluentMultiplyVaultV2Result, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_StormResult},
+	"get_vault_data":                               {DecodeGetVaultData_AffluentLendingVaultResult, DecodeGetVaultData_AffluentMultiplyVaultResult, DecodeGetVaultData_AffluentMultiplyVaultV2Result, DecodeGetVaultData_StonfiV2Result, DecodeGetVaultData_OmnistonResult, DecodeGetVaultData_StormResult},
 	"get_vault_type":                               {DecodeGetVaultType_StormResult},
 	"get_vault_whitelisted_addresses":              {DecodeGetVaultWhitelistedAddresses_StormResult},
 	"get_version":                                  {DecodeGetVersion_StormResult},
@@ -580,6 +580,7 @@ var resultTypes = []interface{}{
 	&GetVaultData_AffluentLendingVaultResult{},
 	&GetVaultData_AffluentMultiplyVaultResult{},
 	&GetVaultData_AffluentMultiplyVaultV2Result{},
+	&GetVaultData_OmnistonResult{},
 	&GetVaultData_StonfiV2Result{},
 	&GetVaultData_StormResult{},
 	&GetVaultType_StormResult{},
@@ -8331,6 +8332,13 @@ type GetVaultData_AffluentMultiplyVaultV2Result struct {
 	}
 }
 
+type GetVaultData_OmnistonResult struct {
+	MinterAddress             tlb.MsgAddress
+	MinterJettonWalletAddress tlb.MsgAddress
+	Balance                   tlb.Int257
+	OwnerAddress              tlb.MsgAddress
+}
+
 type GetVaultData_StonfiV2Result struct {
 	OwnerAddress    tlb.MsgAddress
 	TokenAddress    tlb.MsgAddress
@@ -8366,6 +8374,7 @@ func GetVaultData(ctx context.Context, executor Executor, reqAccountID ton.Accou
 		DecodeGetVaultData_AffluentMultiplyVaultResult,
 		DecodeGetVaultData_AffluentMultiplyVaultV2Result,
 		DecodeGetVaultData_StonfiV2Result,
+		DecodeGetVaultData_OmnistonResult,
 		DecodeGetVaultData_StormResult,
 	} {
 		s, r, err := f(stack)
@@ -8410,6 +8419,15 @@ func DecodeGetVaultData_StonfiV2Result(stack tlb.VmStack) (resultType string, re
 	var result GetVaultData_StonfiV2Result
 	err = stack.Unmarshal(&result)
 	return "GetVaultData_StonfiV2Result", result, err
+}
+
+func DecodeGetVaultData_OmnistonResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {
+	if stack.Len() != 4 || (stack.Peek(3).SumType != "VmStkSlice") || (stack.Peek(2).SumType != "VmStkSlice") || (stack.Peek(1).SumType != "VmStkTinyInt" && stack.Peek(1).SumType != "VmStkInt") || (stack.Peek(0).SumType != "VmStkSlice") {
+		return "", nil, fmt.Errorf("invalid stack format")
+	}
+	var result GetVaultData_OmnistonResult
+	err = stack.Unmarshal(&result)
+	return "GetVaultData_OmnistonResult", result, err
 }
 
 func DecodeGetVaultData_StormResult(stack tlb.VmStack) (resultType string, resultAny any, err error) {

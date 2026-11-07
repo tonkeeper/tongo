@@ -1,0 +1,972 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_clmm_range",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeDeploy"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeInitPrice"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeSwap"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmTonSwapParams"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeDepositLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmDepositBin"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 10,
+      "value_ty_idx": 23
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeProvideLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeWithdrawFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmBin"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 10,
+      "value_ty_idx": 27
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeWithdrawLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeCancelDeposit"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeCollectProtocolFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeUpdateFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeUpdateWallets"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeUpgrade"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeSwapPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmJettonSwapParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeDepositLiquidityPayload"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 35,
+          "prefix_num": 3511755023,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 140,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 37,
+          "prefix_num": 3963622466,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 141,
+          "stack_width": 2
+        }
+      ],
+      "stack_width": 5
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonTransferNotification",
+      "type_args_ty_idx": [
+        38
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "T"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonTransferNotification",
+      "type_args_ty_idx": [
+        40
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeDepositLiquidityExcess"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeDepositLiquidityRefund"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeWithdrawLiquidityPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeWithdrawFeesPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeCancelDepositRefund"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeProtocolFeesPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmExcess"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeStorage"
+    },
+    {
+      "kind": "intN",
+      "n": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmRangeState"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 52
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 50
+    }
+  ],
+  "struct_instantiations": [
+    {
+      "ty_idx": 39,
+      "struct_name": "JettonTransferNotification<ClmmRangeSwapPayload | ClmmRangeDepositLiquidityPayload>",
+      "monomorphic_fields_ty_idx": [
+        38
+      ]
+    }
+  ],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "JettonTransferNotification",
+      "ty_idx": 41,
+      "type_params": [
+        "T"
+      ],
+      "prefix": {
+        "prefix_num": 1935855772,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty_idx": 40
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeInitPrice",
+      "ty_idx": 16,
+      "fields": [
+        {
+          "name": "initBin",
+          "ty_idx": 10
+        },
+        {
+          "name": "initSqrtPrice",
+          "ty_idx": 17
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeDeploy",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1917542405,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "yMaster",
+          "ty_idx": 7
+        },
+        {
+          "name": "binStep",
+          "ty_idx": 14
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 15
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 15
+        },
+        {
+          "name": "initPrice",
+          "ty_idx": 18
+        },
+        {
+          "name": "lpAccCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpPositionCode",
+          "ty_idx": 3
+        }
+      ],
+      "description": "Pool deploys the range (with StateInit and 1 GRAM) with the pair, bin step,\nLP and protocol fees (basis points), start price and the LP account and LP\nposition codes; the range then asks the jetton masters for its wallets."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmTonSwapParams",
+      "ty_idx": 20,
+      "fields": [
+        {
+          "name": "swapAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "excess",
+          "ty_idx": 7
+        },
+        {
+          "name": "sqrtPriceLimit",
+          "ty_idx": 17
+        },
+        {
+          "name": "nextFulfill",
+          "ty_idx": 21
+        },
+        {
+          "name": "nextReject",
+          "ty_idx": 21
+        }
+      ],
+      "description": "GRAM swap parameters; sqrtPriceLimit 0 means no price limit. excess is the\nresponse destination of the jetton transfer that pays the result.\nnextFulfill / nextReject, when set, name the next hop: a recipient address,\noptionally followed by a Maybe ^Cell payload that is forwarded to it."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeSwap",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 3511755023,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "swapParams",
+          "ty_idx": 20
+        }
+      ],
+      "description": "Trader swaps the GRAM attached to the message (ranges whose x side is GRAM);\nswapAmount 0 swaps all GRAM left after gas. The jettons bought arrive as a\njetton transfer with SwapFulfillPayload; a rejected swap returns the\nGRAM with SwapReject."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmDepositBin",
+      "ty_idx": 23,
+      "fields": [
+        {
+          "name": "x",
+          "ty_idx": 6
+        },
+        {
+          "name": "y",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeDepositLiquidity",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 3963622466,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "depositAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "isSingle",
+          "ty_idx": 5
+        },
+        {
+          "name": "depositBins",
+          "ty_idx": 24
+        }
+      ],
+      "description": "Provider adds GRAM liquidity (ranges whose x side is GRAM): depositAmount is\nspread over depositBins (bin index -> amounts). With isSingle the range adds\nit at once and deploys a new LP position; otherwise the range keeps the GRAM\nand records the amount in the provider's LP account, which pairs it with the\njetton leg (ClmmRangeProvideLiquidity)."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeProvideLiquidity",
+      "ty_idx": 25,
+      "prefix": {
+        "prefix_num": 877013500,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "xAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "yAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "depositBins",
+          "ty_idx": 24
+        }
+      ],
+      "description": "LP account of provider sends the amounts of both legs of a two-sided deposit,\nwhich the range already holds. The range adds the liquidity and deploys a new\nLP position, or refunds both legs (the GRAM leg with\nClmmRangeDepositLiquidityRefund)."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmBin",
+      "ty_idx": 27,
+      "fields": [
+        {
+          "name": "l",
+          "ty_idx": 17
+        },
+        {
+          "name": "xFee",
+          "ty_idx": 17
+        },
+        {
+          "name": "yFee",
+          "ty_idx": 17
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeWithdrawFees",
+      "ty_idx": 26,
+      "prefix": {
+        "prefix_num": 2496729,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "nftIndex",
+          "ty_idx": 11
+        },
+        {
+          "name": "withdrawBins",
+          "ty_idx": 28
+        }
+      ],
+      "description": "LP position nftIndex of provider asks the range to pay the fees accrued on its\nbins (bin index -> liquidity and fee checkpoints); the range pays them and\nanswers with ClmmPositionWithdrawFeesUpdate."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeWithdrawLiquidity",
+      "ty_idx": 29,
+      "prefix": {
+        "prefix_num": 1762237355,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "nftIndex",
+          "ty_idx": 11
+        },
+        {
+          "name": "withdrawBins",
+          "ty_idx": 28
+        }
+      ],
+      "description": "LP position nftIndex of provider withdraws the liquidity of the given bins;\nthe range pays out both assets plus fees and answers with\nClmmPositionWithdrawLiquidityUpdate."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeCancelDeposit",
+      "ty_idx": 30,
+      "prefix": {
+        "prefix_num": 768293067,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "yAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        }
+      ],
+      "description": "LP account of provider asks the range to refund a pending deposit leg that a\nnew leg of the same side replaced."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeCollectProtocolFees",
+      "ty_idx": 31,
+      "prefix": {
+        "prefix_num": 3687319989,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Pool forwards ClmmPoolCollectProtocolFees: the range pays its protocol fees to\nrecipient."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeUpdateFees",
+      "ty_idx": 32,
+      "prefix": {
+        "prefix_num": 2428381675,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 15
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 15
+        }
+      ],
+      "description": "Pool forwards ClmmPoolUpdateRangeFees: new LP and protocol fees (basis points)."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeUpdateWallets",
+      "ty_idx": 33,
+      "prefix": {
+        "prefix_num": 2709029576,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xWallet",
+          "ty_idx": 13
+        },
+        {
+          "name": "yWallet",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Pool forwards ClmmPoolUpdateRangeWallets: the range replaces its jetton wallets."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeUpgrade",
+      "ty_idx": 34,
+      "prefix": {
+        "prefix_num": 4029031187,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 21
+        },
+        {
+          "name": "newData",
+          "ty_idx": 21
+        }
+      ],
+      "description": "Pool forwards ClmmPoolUpgradeRange: the range replaces its code and/or data."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmJettonSwapParams",
+      "ty_idx": 36,
+      "fields": [
+        {
+          "name": "excess",
+          "ty_idx": 7
+        },
+        {
+          "name": "sqrtPriceLimit",
+          "ty_idx": 17
+        },
+        {
+          "name": "nextFulfill",
+          "ty_idx": 21
+        },
+        {
+          "name": "nextReject",
+          "ty_idx": 21
+        }
+      ],
+      "description": "Jetton swap parameters: as ClmmTonSwapParams, without swapAmount (the whole\ntransferred amount is swapped)."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeSwapPayload",
+      "ty_idx": 35,
+      "prefix": {
+        "prefix_num": 3511755023,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "swapParams",
+          "ty_idx": 36
+        }
+      ],
+      "description": "Forward payload of a jetton transfer to the range: swap the jettons for the\nother asset. The query id is the transfer's."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeDepositLiquidityPayload",
+      "ty_idx": 37,
+      "prefix": {
+        "prefix_num": 3963622466,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "isSingle",
+          "ty_idx": 5
+        },
+        {
+          "name": "depositBins",
+          "ty_idx": 24
+        }
+      ],
+      "description": "Forward payload of a jetton transfer to the range: a jetton liquidity deposit,\nas ClmmRangeDepositLiquidity. With isSingle the range adds it at once and\ndeploys a new LP position; otherwise it is one leg of a two-sided deposit."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeDepositLiquidityExcess",
+      "ty_idx": 42,
+      "prefix": {
+        "prefix_num": 2308453783,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range returns the GRAM of a deposit that did not go into the bins: the amount\nabove the bin amounts and the part the bins could not take."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeDepositLiquidityRefund",
+      "ty_idx": 43,
+      "prefix": {
+        "prefix_num": 2003912566,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range refunds the GRAM of a failed deposit (a single GRAM deposit or the GRAM\nleg of ClmmRangeProvideLiquidity); a jetton leg comes back as a plain jetton\ntransfer."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeWithdrawLiquidityPayout",
+      "ty_idx": 44,
+      "prefix": {
+        "prefix_num": 2897101169,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range pays the GRAM part of a ClmmRangeWithdrawLiquidity (liquidity plus fees)\nto the provider; the jetton part is a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeWithdrawFeesPayout",
+      "ty_idx": 45,
+      "prefix": {
+        "prefix_num": 3158958971,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range pays the GRAM part of the fees of a ClmmRangeWithdrawFees to the\nprovider; the jetton part is a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeCancelDepositRefund",
+      "ty_idx": 46,
+      "prefix": {
+        "prefix_num": 1572056601,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range refunds the GRAM leg of a deposit cancelled by ClmmRangeCancelDeposit."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeProtocolFeesPayout",
+      "ty_idx": 47,
+      "prefix": {
+        "prefix_num": 2641140516,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range pays the GRAM part of its protocol fees to the recipient of\nClmmRangeCollectProtocolFees; the jetton part is a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmExcess",
+      "ty_idx": 48,
+      "prefix": {
+        "prefix_num": 1607856819,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Rest of the GRAM sent back by a moon.cx CLMM range (after a payout or refund)\nor LP account (after recording a deposit leg)."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeState",
+      "ty_idx": 52,
+      "fields": [
+        {
+          "name": "currentBin",
+          "ty_idx": 10
+        },
+        {
+          "name": "currentSqrtP",
+          "ty_idx": 17
+        },
+        {
+          "name": "xProtocolFees",
+          "ty_idx": 6
+        },
+        {
+          "name": "yProtocolFees",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmRangeStorage",
+      "ty_idx": 50,
+      "fields": [
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 51
+        },
+        {
+          "name": "xWallet",
+          "ty_idx": 13
+        },
+        {
+          "name": "yWallet",
+          "ty_idx": 7
+        },
+        {
+          "name": "binStep",
+          "ty_idx": 14
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 15
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 15
+        },
+        {
+          "name": "positionIndex",
+          "ty_idx": 11
+        },
+        {
+          "name": "rangeState",
+          "ty_idx": 53
+        },
+        {
+          "name": "bins",
+          "ty_idx": 28
+        },
+        {
+          "name": "lpAccountCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpPositionCode",
+          "ty_idx": 3
+        }
+      ],
+      "description": "Contract data returned by getRange once the range knows its jetton wallets."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 22
+    },
+    {
+      "body_ty_idx": 25
+    },
+    {
+      "body_ty_idx": 26
+    },
+    {
+      "body_ty_idx": 29
+    },
+    {
+      "body_ty_idx": 30
+    },
+    {
+      "body_ty_idx": 31
+    },
+    {
+      "body_ty_idx": 32
+    },
+    {
+      "body_ty_idx": 33
+    },
+    {
+      "body_ty_idx": 34
+    },
+    {
+      "body_ty_idx": 39
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 103203,
+      "name": "getRange",
+      "parameters": [],
+      "return_ty_idx": 54
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 0
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBBAEAIQABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQAAJoSZH5AE="
+}

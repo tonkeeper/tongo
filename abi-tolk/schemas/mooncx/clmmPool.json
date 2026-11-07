@@ -1,0 +1,389 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_clmm_pool",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolDeploy"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPayloadCode"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 14
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolCollectProtocolFees"
+    },
+    {
+      "kind": "intN",
+      "n": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolUpdateRangeWallets"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolUpdateRangeFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolUpgradeRange"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolUpgrade"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPoolStorage"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 24
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 17,
+      "value_ty_idx": 7
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "ClmmPayloadCode",
+      "ty_idx": 14,
+      "fields": [
+        {
+          "name": "rangeCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpAccCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpPositionCode",
+          "ty_idx": 3
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolDeploy",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1832123853,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "initBin",
+          "ty_idx": 10
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "payloadCode",
+          "ty_idx": 15
+        }
+      ],
+      "description": "Factory deploys the pool (with StateInit) with the start bin, the LP and\nprotocol fees (basis points) and the codes of the range, LP account and LP\nposition contracts; the pool deploys its three ranges with ClmmRangeDeploy."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolCollectProtocolFees",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 4025452250,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 17
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Factory forwards ClmmFactoryCollectProtocolFees; the pool passes it to range\nrangeNum as ClmmRangeCollectProtocolFees."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolUpdateRangeWallets",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 3895333281,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 17
+        },
+        {
+          "name": "xWallet",
+          "ty_idx": 19
+        },
+        {
+          "name": "yWallet",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Factory forwards ClmmFactoryUpdateRangeWallets; the pool passes it to range\nrangeNum as ClmmRangeUpdateWallets."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolUpdateRangeFees",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 3648674869,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 17
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 13
+        }
+      ],
+      "description": "Factory forwards ClmmFactoryUpdateRangeFees; the pool passes it to range\nrangeNum as ClmmRangeUpdateFees."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolUpgradeRange",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 2006056065,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 17
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 22
+        },
+        {
+          "name": "newData",
+          "ty_idx": 22
+        }
+      ],
+      "description": "Factory forwards ClmmFactoryUpgradeRange; the pool passes it to range\nrangeNum as ClmmRangeUpgrade."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolUpgrade",
+      "ty_idx": 23,
+      "prefix": {
+        "prefix_num": 3086510602,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 22
+        },
+        {
+          "name": "newData",
+          "ty_idx": 22
+        }
+      ],
+      "description": "Factory forwards ClmmFactoryUpgradePool: the pool replaces its code and/or data."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPoolStorage",
+      "ty_idx": 24,
+      "fields": [
+        {
+          "name": "factory",
+          "ty_idx": 7
+        },
+        {
+          "name": "xMaster",
+          "ty_idx": 19
+        },
+        {
+          "name": "yMaster",
+          "ty_idx": 7
+        },
+        {
+          "name": "binStep",
+          "ty_idx": 25
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "rangeCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpAccCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpPositionCode",
+          "ty_idx": 3
+        }
+      ],
+      "description": "Contract data returned by getPool."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 16
+    },
+    {
+      "body_ty_idx": 18
+    },
+    {
+      "body_ty_idx": 20
+    },
+    {
+      "body_ty_idx": 21
+    },
+    {
+      "body_ty_idx": 23
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 87704,
+      "name": "getPool",
+      "parameters": [],
+      "return_ty_idx": 26
+    },
+    {
+      "tvm_method_id": 122414,
+      "name": "getRanges",
+      "parameters": [],
+      "return_ty_idx": 27,
+      "description": "Addresses of the pool's ranges by rangeNum (-1, 0 and 1)."
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 0
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBBgEALQABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQAIBIAQFAAm+tMeQBAAJvvF3kAQ="
+}

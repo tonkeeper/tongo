@@ -1,0 +1,281 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_cpmm_position",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionDeploy"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionContent"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionWithdrawLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionWithdrawFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionWithdrawFeesUpdate"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionLockLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPositionStorage"
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 20
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "CpmmPositionContent",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "lp",
+          "ty_idx": 6
+        },
+        {
+          "name": "xFeesLp",
+          "ty_idx": 14
+        },
+        {
+          "name": "yFeesLp",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPositionDeploy",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 2069687103,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "content",
+          "ty_idx": 15
+        },
+        {
+          "name": "locked",
+          "ty_idx": 5
+        }
+      ],
+      "description": "Pool mints LP into the owner's position, deploying it with StateInit on the\nfirst deposit; a later deposit is merged in. The position returns the GRAM\nabove 0.05 to the owner with CpmmExcess."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPositionWithdrawLiquidity",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 2220133114,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Owner withdraws amount LP; the position sends CpmmPoolWithdrawLiquidity to the\npool. Refused while the position is locked or a fee withdrawal is pending."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPositionWithdrawFees",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 4079346420,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Owner collects the accrued fees; the position sends CpmmPoolWithdrawFees to the\npool and stays frozen until CpmmPositionWithdrawFeesUpdate arrives."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPositionWithdrawFeesUpdate",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 2427260824,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xFeesLp",
+          "ty_idx": 14
+        },
+        {
+          "name": "yFeesLp",
+          "ty_idx": 14
+        }
+      ],
+      "description": "Pool's answer to CpmmPoolWithdrawFees: the new fee checkpoints; unfreezes the position."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPositionLockLiquidity",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 3075602488,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Owner locks the position's liquidity for good (there is no unlock); fees can\nstill be collected."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPositionStorage",
+      "ty_idx": 20,
+      "fields": [
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "user",
+          "ty_idx": 7
+        },
+        {
+          "name": "data",
+          "ty_idx": 15
+        },
+        {
+          "name": "frozen",
+          "ty_idx": 5
+        },
+        {
+          "name": "locked",
+          "ty_idx": 5
+        }
+      ],
+      "description": "Contract data returned by getPosition."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 16
+    },
+    {
+      "body_ty_idx": 17
+    },
+    {
+      "body_ty_idx": 18
+    },
+    {
+      "body_ty_idx": 19
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [
+    {
+      "tvm_method_id": 109064,
+      "name": "getPosition",
+      "parameters": [],
+      "return_ty_idx": 21
+    },
+    {
+      "tvm_method_id": 107920,
+      "name": "getLocked",
+      "parameters": [],
+      "return_ty_idx": 5
+    }
+  ],
+  "thrown_errors": [
+    {
+      "kind": "plain_int",
+      "err_code": 0
+    }
+  ],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBBgEALgABFP8A9KQT9LzyyAsBAgFiAgMADNAw+JHyQAIDeqAEBQAJrsh5AEAACa0EeQBA"
+}

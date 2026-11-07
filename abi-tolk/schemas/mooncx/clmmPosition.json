@@ -1,0 +1,278 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_clmm_position",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionDeploy"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmBin"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 10,
+      "value_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionWithdrawLiquidity"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 10,
+      "value_ty_idx": 5
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionWithdrawFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionWithdrawFeesUpdate"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionWithdrawLiquidityUpdate"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionLockLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmPositionClosed"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        22
+      ]
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "ClmmBin",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "l",
+          "ty_idx": 14
+        },
+        {
+          "name": "xFee",
+          "ty_idx": 14
+        },
+        {
+          "name": "yFee",
+          "ty_idx": 14
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionDeploy",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1314194601,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "positionBins",
+          "ty_idx": 15
+        }
+      ],
+      "description": "Range deploys a new position (with StateInit) for provider with the bins of a\ndeposit (bin index -> liquidity and fee checkpoints)."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionWithdrawLiquidity",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 3359733179,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "withdrawBins",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Owner withdraws the liquidity of the given bins (only the keys are used); the\nposition sends ClmmRangeWithdrawLiquidity to its range. Refused while the\nposition is locked or waiting for the range."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionWithdrawFees",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 1902908376,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Owner collects the fees of all bins; the position sends ClmmRangeWithdrawFees\nto its range."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionWithdrawFeesUpdate",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 4266249791,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "updatedBins",
+          "ty_idx": 15
+        }
+      ],
+      "description": "Range's answer to ClmmRangeWithdrawFees: the bins with new fee checkpoints."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionWithdrawLiquidityUpdate",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 405104919,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Range's answer to ClmmRangeWithdrawLiquidity. A position left without bins\nthen returns its balance to the owner with ClmmPositionClosed."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionLockLiquidity",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 2232147242,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Owner locks the position's liquidity for good (there is no unlock); fees can\nstill be collected."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmPositionClosed",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 2151160115,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Position left without bins returns its whole balance to the owner and is\ndestroyed."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 16
+    },
+    {
+      "body_ty_idx": 18
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 20
+    },
+    {
+      "body_ty_idx": 21
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

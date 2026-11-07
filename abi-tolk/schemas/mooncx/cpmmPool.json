@@ -1,0 +1,1008 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_cpmm_pool",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolDeploy"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolProvideReady"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolSwap"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmTonSwapParams"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SwapFulfill"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolDepositLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "LpSplit"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 20
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 22
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolProvideLiquidity"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolWithdrawLiquidity"
+    },
+    {
+      "kind": "uintN",
+      "n": 256
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolWithdrawFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolCancelDeposit"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolBoost"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolCollectProtocolFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolUpdateWallets"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolUpgrade"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolSwapPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmJettonSwapParams"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SwapFulfillPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolDepositLiquidityPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolBoostPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SwapRejectPayload"
+    },
+    {
+      "kind": "union",
+      "variants": [
+        {
+          "variant_ty_idx": 34,
+          "prefix_num": 4198827371,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 142,
+          "stack_width": 4
+        },
+        {
+          "variant_ty_idx": 36,
+          "prefix_num": 2635343427,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 143,
+          "stack_width": 1
+        },
+        {
+          "variant_ty_idx": 37,
+          "prefix_num": 2427390819,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 144,
+          "stack_width": 3
+        },
+        {
+          "variant_ty_idx": 38,
+          "prefix_num": 1354492932,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 145,
+          "stack_width": 0
+        },
+        {
+          "variant_ty_idx": 39,
+          "prefix_num": 4281522841,
+          "prefix_len": 32,
+          "is_prefix_implicit": null,
+          "stack_type_id": 146,
+          "stack_width": 1
+        }
+      ],
+      "stack_width": 5
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonTransferNotification",
+      "type_args_ty_idx": [
+        40
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "T"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonTransferNotification",
+      "type_args_ty_idx": [
+        42
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolTakeReady"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "SwapReject"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolProvideLiquidityRefund"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolProvideLiquidityExcess"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolWithdrawLiquidityPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolWithdrawFeesPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolCancelDepositRefund"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmPoolProtocolFeesPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmExcess"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52
+      ]
+    }
+  ],
+  "struct_instantiations": [
+    {
+      "ty_idx": 41,
+      "struct_name": "JettonTransferNotification<CpmmPoolSwapPayload | SwapFulfillPayload | CpmmPoolDepositLiquidityPayload | CpmmPoolBoostPayload | SwapRejectPayload>",
+      "monomorphic_fields_ty_idx": [
+        40
+      ]
+    }
+  ],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "JettonTransferNotification",
+      "ty_idx": 43,
+      "type_params": [
+        "T"
+      ],
+      "prefix": {
+        "prefix_num": 1935855772,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty_idx": 42
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolDeploy",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1822739302,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 13
+        },
+        {
+          "name": "lpAccCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "lpPositionCode",
+          "ty_idx": 3
+        }
+      ],
+      "description": "Factory deploys the pool (with StateInit). lpFee (the fee tier) and\nprotocolFee are charged on the swap input, in basis points; the codes are\nthose of the LP account and LP position contracts. The pool then asks the\njetton masters for its wallets."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolProvideReady",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 1155200783,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "attempt",
+          "ty_idx": 13
+        }
+      ],
+      "description": "Asks the pool whether it is ready (its jetton wallets are known); attempt counts retries."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolTakeReady",
+      "ty_idx": 44,
+      "prefix": {
+        "prefix_num": 1728519949,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "attempt",
+          "ty_idx": 13
+        },
+        {
+          "name": "isReady",
+          "ty_idx": 5
+        }
+      ],
+      "description": "Pool's answer to CpmmPoolProvideReady."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmTonSwapParams",
+      "ty_idx": 16,
+      "fields": [
+        {
+          "name": "swapAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "excess",
+          "ty_idx": 7
+        },
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "nextFulfill",
+          "ty_idx": 17
+        },
+        {
+          "name": "nextReject",
+          "ty_idx": 17
+        }
+      ],
+      "description": "GRAM swap parameters. excess is the response destination of the jetton\ntransfer that pays the result. nextFulfill / nextReject, when set, name the\nnext hop: a recipient address, optionally followed by a Maybe ^Cell payload\nthat is forwarded to it."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolSwap",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 4198827371,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "swapParams",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Trader swaps the GRAM attached to the message (GRAM pools only); swapAmount 0\nswaps all GRAM left after gas. The jettons bought arrive as a jetton transfer\nwith SwapFulfillPayload; a rejected swap returns the GRAM with\nSwapReject."
+    },
+    {
+      "kind": "struct",
+      "name": "SwapFulfill",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 2635343427,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "payload",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Swap result paid in GRAM by a moon.cx CPMM pool (a moon.cx CLMM range sends\nthe same message) to the trader or to the nextFulfill recipient: amount is the\nGRAM bought, payload is the next hop's payload. A pool or range that receives\nit as the next hop of a route swaps the attached GRAM; payload then holds its\nGRAM swap parameters (CpmmTonSwapParams, ClmmTonSwapParams for a range)."
+    },
+    {
+      "kind": "struct",
+      "name": "SwapReject",
+      "ty_idx": 45,
+      "prefix": {
+        "prefix_num": 4281522841,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "payload",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Rejected swap: a moon.cx CPMM pool (a moon.cx CLMM range sends the same\nmessage) returns the GRAM to the trader or to the nextReject recipient.\namount is the rejected swap amount (a CLMM range sends 0 when it rejects\nbefore swapping); payload is the next hop's payload."
+    },
+    {
+      "kind": "struct",
+      "name": "LpSplit",
+      "ty_idx": 20,
+      "fields": [
+        {
+          "name": "aRecipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "aBps",
+          "ty_idx": 21
+        },
+        {
+          "name": "bRecipient",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolDepositLiquidity",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 2427390819,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "locked",
+          "ty_idx": 5
+        },
+        {
+          "name": "split",
+          "ty_idx": 23
+        }
+      ],
+      "description": "Deposits the GRAM attached to the message as liquidity into a GRAM pool;\nsplit optionally shares the LP between two recipients."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolProvideLiquidity",
+      "ty_idx": 24,
+      "prefix": {
+        "prefix_num": 1219049181,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "xAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "yAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "locked",
+          "ty_idx": 5
+        },
+        {
+          "name": "split",
+          "ty_idx": 23
+        }
+      ],
+      "description": "LP account of provider sends the amounts of both legs of a deposit, which the\npool already holds, once the second one is recorded. The pool mints LP into\none LP position (two with split, allowed only on the first deposit) and\nreturns the rest with CpmmPoolProvideLiquidityExcess, or refunds both legs."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolWithdrawLiquidity",
+      "ty_idx": 25,
+      "prefix": {
+        "prefix_num": 3419927415,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "lpPos",
+          "ty_idx": 6
+        },
+        {
+          "name": "xFeesPos",
+          "ty_idx": 26
+        },
+        {
+          "name": "yFeesPos",
+          "ty_idx": 26
+        }
+      ],
+      "description": "LP position of provider asks the pool to burn lpPos LP and pay out both assets\nplus the fees accrued since its fee checkpoints xFeesPos / yFeesPos."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolWithdrawFees",
+      "ty_idx": 27,
+      "prefix": {
+        "prefix_num": 3586783427,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "lpPos",
+          "ty_idx": 6
+        },
+        {
+          "name": "xFeesPos",
+          "ty_idx": 26
+        },
+        {
+          "name": "yFeesPos",
+          "ty_idx": 26
+        }
+      ],
+      "description": "LP position of provider asks the pool to pay the fees accrued on lpPos LP since\nits fee checkpoints; the pool answers with CpmmPositionWithdrawFeesUpdate."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolCancelDeposit",
+      "ty_idx": 28,
+      "prefix": {
+        "prefix_num": 529604057,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "provider",
+          "ty_idx": 7
+        },
+        {
+          "name": "xAmount",
+          "ty_idx": 6
+        },
+        {
+          "name": "yAmount",
+          "ty_idx": 6
+        }
+      ],
+      "description": "LP account of provider asks the pool to refund a pending deposit leg that a\nnew leg of the same side replaced."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolBoost",
+      "ty_idx": 29,
+      "prefix": {
+        "prefix_num": 1354492932,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Anyone donates the attached GRAM (minus 0.05) to the GRAM reserve of a GRAM\npool that has liquidity."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolCollectProtocolFees",
+      "ty_idx": 30,
+      "prefix": {
+        "prefix_num": 2805158992,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Factory forwards CpmmFactoryCollectProtocolFees: the pool pays its protocol\nfees to recipient."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolUpdateWallets",
+      "ty_idx": 31,
+      "prefix": {
+        "prefix_num": 3265163962,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newXWallet",
+          "ty_idx": 32
+        },
+        {
+          "name": "newYWallet",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Factory forwards CpmmFactoryUpdatePoolWallets: the pool replaces its jetton wallets."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolUpgrade",
+      "ty_idx": 33,
+      "prefix": {
+        "prefix_num": 945394728,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 17
+        },
+        {
+          "name": "newData",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Factory forwards CpmmFactoryUpgradePool: the pool replaces its code and/or data."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmJettonSwapParams",
+      "ty_idx": 35,
+      "fields": [
+        {
+          "name": "excess",
+          "ty_idx": 7
+        },
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "nextFulfill",
+          "ty_idx": 17
+        },
+        {
+          "name": "nextReject",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Jetton swap parameters: as CpmmTonSwapParams, without swapAmount (the whole\ntransferred amount is swapped)."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolSwapPayload",
+      "ty_idx": 34,
+      "prefix": {
+        "prefix_num": 4198827371,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "swapParams",
+          "ty_idx": 35
+        }
+      ],
+      "description": "Forward payload of a jetton transfer to the pool: swap the jettons for the\nother asset. The query id is the transfer's."
+    },
+    {
+      "kind": "struct",
+      "name": "SwapFulfillPayload",
+      "ty_idx": 36,
+      "prefix": {
+        "prefix_num": 2635343427,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Forward payload of a swap result paid in jettons by a moon.cx CPMM pool (a\nmoon.cx CLMM range sends the same payload) to the trader or to the nextFulfill\nrecipient; payload is the next hop's payload. A pool or range that receives\nit as the next hop of a route swaps the jettons; payload then holds its jetton\nswap parameters (CpmmJettonSwapParams, ClmmJettonSwapParams for a range)."
+    },
+    {
+      "kind": "struct",
+      "name": "SwapRejectPayload",
+      "ty_idx": 39,
+      "prefix": {
+        "prefix_num": 4281522841,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty_idx": 17
+        }
+      ],
+      "description": "Forward payload of the jetton refund of a rejected jetton swap, sent by a\nmoon.cx CPMM pool (a moon.cx CLMM range sends the same payload) to the trader\nor to the nextReject recipient; payload is the next hop's payload."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolDepositLiquidityPayload",
+      "ty_idx": 37,
+      "prefix": {
+        "prefix_num": 2427390819,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "locked",
+          "ty_idx": 5
+        },
+        {
+          "name": "split",
+          "ty_idx": 23
+        }
+      ],
+      "description": "Forward payload of a jetton transfer to the pool: the jetton leg of a liquidity\ndeposit (CpmmPoolDepositLiquidity is the GRAM leg)."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolBoostPayload",
+      "ty_idx": 38,
+      "prefix": {
+        "prefix_num": 1354492932,
+        "prefix_len": 32
+      },
+      "fields": [],
+      "description": "Forward payload of a jetton transfer to the pool: donate the jettons to the\nreserves of a pool that has liquidity."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolProvideLiquidityRefund",
+      "ty_idx": 46,
+      "prefix": {
+        "prefix_num": 1733724730,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Pool refunds the GRAM leg of a CpmmPoolProvideLiquidity that failed (minimum\nLP not met, zero LP out, an amount above 2^120 - 1, first deposit not made by\nthe pool initiator, or a split on a pool that already has liquidity); a jetton\nleg comes back as a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolProvideLiquidityExcess",
+      "ty_idx": 47,
+      "prefix": {
+        "prefix_num": 2644474797,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Pool returns the GRAM left after a successful CpmmPoolProvideLiquidity."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolWithdrawLiquidityPayout",
+      "ty_idx": 48,
+      "prefix": {
+        "prefix_num": 364375890,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Pool pays the GRAM leg of a CpmmPoolWithdrawLiquidity to the provider; the\njetton leg is a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolWithdrawFeesPayout",
+      "ty_idx": 49,
+      "prefix": {
+        "prefix_num": 870849881,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Pool pays the GRAM leg of a CpmmPoolWithdrawFees to the provider; the jetton\nleg is a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolCancelDepositRefund",
+      "ty_idx": 50,
+      "prefix": {
+        "prefix_num": 3524415547,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Pool refunds the GRAM leg of a deposit cancelled by CpmmPoolCancelDeposit."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmPoolProtocolFeesPayout",
+      "ty_idx": 51,
+      "prefix": {
+        "prefix_num": 367427243,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Pool pays the GRAM part of its protocol fees to the recipient of\nCpmmPoolCollectProtocolFees; the jetton part is a plain jetton transfer."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmExcess",
+      "ty_idx": 52,
+      "prefix": {
+        "prefix_num": 328359922,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Rest of the GRAM sent back by a moon.cx CPMM pool (after a payout or refund),\nLP account (after recording a deposit leg) or LP position (after a deploy)."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 14
+    },
+    {
+      "body_ty_idx": 15
+    },
+    {
+      "body_ty_idx": 18
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 24
+    },
+    {
+      "body_ty_idx": 25
+    },
+    {
+      "body_ty_idx": 27
+    },
+    {
+      "body_ty_idx": 28
+    },
+    {
+      "body_ty_idx": 29
+    },
+    {
+      "body_ty_idx": 30
+    },
+    {
+      "body_ty_idx": 31
+    },
+    {
+      "body_ty_idx": 33
+    },
+    {
+      "body_ty_idx": 41
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

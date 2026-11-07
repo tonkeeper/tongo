@@ -1,0 +1,429 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_memepad_curve",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveInit"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "EconState"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveBuy"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveCreatorClaimFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveUpgrade"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveSellPayload"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonTransferNotification",
+      "type_args_ty_idx": [
+        21
+      ]
+    },
+    {
+      "kind": "genericT",
+      "name_t": "T"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "JettonTransferNotification",
+      "type_args_ty_idx": [
+        23
+      ]
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveSellPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveExcess"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveCreatorFeesPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveProtocolPayout"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadCurveDeployError"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        25,
+        26,
+        27,
+        28,
+        29
+      ]
+    }
+  ],
+  "struct_instantiations": [
+    {
+      "ty_idx": 22,
+      "struct_name": "JettonTransferNotification<MemepadCurveSellPayload>",
+      "monomorphic_fields_ty_idx": [
+        21
+      ]
+    }
+  ],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "JettonTransferNotification",
+      "ty_idx": 24,
+      "type_params": [
+        "T"
+      ],
+      "prefix": {
+        "prefix_num": 1935855772,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "payload",
+          "ty_idx": 23
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "EconState",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "tokensForSale",
+          "ty_idx": 6
+        },
+        {
+          "name": "tokensForLp",
+          "ty_idx": 6
+        },
+        {
+          "name": "virtualGram",
+          "ty_idx": 6
+        },
+        {
+          "name": "virtualTokens",
+          "ty_idx": 6
+        },
+        {
+          "name": "targetGram",
+          "ty_idx": 6
+        },
+        {
+          "name": "tradeFeeBps",
+          "ty_idx": 14
+        },
+        {
+          "name": "creatorFeeBps",
+          "ty_idx": 14
+        },
+        {
+          "name": "poolFeeBps",
+          "ty_idx": 15
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveInit",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 1640588314,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "cpmmFactory",
+          "ty_idx": 7
+        },
+        {
+          "name": "protocolRecipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "initialBuy",
+          "ty_idx": 6
+        },
+        {
+          "name": "econ",
+          "ty_idx": 16
+        },
+        {
+          "name": "jwCode",
+          "ty_idx": 3
+        },
+        {
+          "name": "metadata",
+          "ty_idx": 3
+        }
+      ],
+      "description": "Factory initializes a freshly deployed curve and runs the creator's initial buy, if any."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveDeployError",
+      "ty_idx": 29,
+      "prefix": {
+        "prefix_num": 1190569358,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Curve refunds the GRAM attached to MemepadCurveInit to the creator when the curve is already initialized."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveBuy",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 701624769,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Trader buys the curve's tokens for the GRAM attached to the message."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveSellPayload",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 3111818423,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "minOut",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Custom payload of the jetton burn that sells tokens back to the curve (the\njetton wallet forwards it to the curve as the extra ref of burn_notification);\nminOut is the minimum GRAM out."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveSellPayout",
+      "ty_idx": 25,
+      "prefix": {
+        "prefix_num": 3739723911,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "gramOut",
+          "ty_idx": 6
+        }
+      ],
+      "description": "Curve pays GRAM to the seller after a sell (jetton burn)."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveExcess",
+      "ty_idx": 26,
+      "prefix": {
+        "prefix_num": 3396097912,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Curve returns leftover GRAM: the change of a buy that overshoots the graduation\ntarget, or the GRAM attached to a burn after the curve has graduated."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveCreatorClaimFees",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 1858619111,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Creator collects accumulated creator fees."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveCreatorFeesPayout",
+      "ty_idx": 27,
+      "prefix": {
+        "prefix_num": 2860981315,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Curve pays accumulated creator fees (GRAM attached) to the creator."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveProtocolPayout",
+      "ty_idx": 28,
+      "prefix": {
+        "prefix_num": 193776210,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Curve sends accumulated platform fees (GRAM attached) to the factory,\non a creator fee claim and at graduation."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadCurveUpgrade",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 606682316,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 20
+        },
+        {
+          "name": "newData",
+          "ty_idx": 20
+        }
+      ],
+      "description": "Factory forwards a code/data upgrade to the curve."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 17
+    },
+    {
+      "body_ty_idx": 18
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 22
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

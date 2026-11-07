@@ -1,0 +1,337 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_clmm_factory",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryCreatePool"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryUpgradePool"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryUpdateRangeWallets"
+    },
+    {
+      "kind": "intN",
+      "n": 16
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryUpdateRangeFees"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryUpgradeRange"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryCollectProtocolFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmFactoryUpgrade"
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryCreatePool",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 3991235300,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "yMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "binStep",
+          "ty_idx": 14
+        },
+        {
+          "name": "initBin",
+          "ty_idx": 10
+        }
+      ],
+      "description": "Creates a pool for a pair with a bin step (25, 50, 100 or 200) starting at\ninitBin; a null master stands for GRAM, and the factory orders the masters\nitself. Needs at least 4 GRAM."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryUpgradePool",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 1282859598,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 16
+        },
+        {
+          "name": "newData",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Admin replaces the code and/or data of a pool; the factory forwards it to the\npool as ClmmPoolUpgrade."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryUpdateRangeWallets",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 3848170951,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 18
+        },
+        {
+          "name": "xWallet",
+          "ty_idx": 13
+        },
+        {
+          "name": "yWallet",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Admin sets the jetton wallets of range rangeNum of a pool (a null xWallet\nmeans the x side is GRAM); forwarded as ClmmPoolUpdateRangeWallets."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryUpdateRangeFees",
+      "ty_idx": 19,
+      "prefix": {
+        "prefix_num": 1074213524,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 18
+        },
+        {
+          "name": "lpFee",
+          "ty_idx": 20
+        },
+        {
+          "name": "protocolFee",
+          "ty_idx": 20
+        }
+      ],
+      "description": "Admin sets the LP and protocol fees (basis points) of range rangeNum of a\npool; forwarded as ClmmPoolUpdateRangeFees."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryUpgradeRange",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 115079040,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 18
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 16
+        },
+        {
+          "name": "newData",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Admin replaces the code and/or data of range rangeNum of a pool; forwarded\nas ClmmPoolUpgradeRange."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryCollectProtocolFees",
+      "ty_idx": 22,
+      "prefix": {
+        "prefix_num": 1261646539,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "rangeNum",
+          "ty_idx": 18
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Admin collects the protocol fees of range rangeNum of a pool; forwarded as\nClmmPoolCollectProtocolFees."
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmFactoryUpgrade",
+      "ty_idx": 23,
+      "prefix": {
+        "prefix_num": 1231632631,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 16
+        },
+        {
+          "name": "newData",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Admin replaces the factory code and/or data."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 15
+    },
+    {
+      "body_ty_idx": 17
+    },
+    {
+      "body_ty_idx": 19
+    },
+    {
+      "body_ty_idx": 21
+    },
+    {
+      "body_ty_idx": 22
+    },
+    {
+      "body_ty_idx": 23
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

@@ -1,0 +1,139 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_cpmm_account",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmAccountDepositLiquidityRecord"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "LpSplit"
+    },
+    {
+      "kind": "uintN",
+      "n": 16
+    },
+    {
+      "kind": "cellOf",
+      "inner_ty_idx": 13
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 15
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "LpSplit",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "aRecipient",
+          "ty_idx": 7
+        },
+        {
+          "name": "aBps",
+          "ty_idx": 14
+        },
+        {
+          "name": "bRecipient",
+          "ty_idx": 7
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmAccountDepositLiquidityRecord",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 4255725386,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xIn",
+          "ty_idx": 5
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "minLpOut",
+          "ty_idx": 6
+        },
+        {
+          "name": "locked",
+          "ty_idx": 5
+        },
+        {
+          "name": "split",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Pool records one leg of a liquidity deposit in the provider's LP account\n(deploying it with StateInit on first use); xIn tells which side amount is."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

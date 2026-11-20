@@ -7,6 +7,22 @@ import (
 	"github.com/tonkeeper/tongo/boc"
 )
 
+func TestGramsMarshalTLB(t *testing.T) {
+	for _, amount := range []Grams{math.MaxInt64, 1 << 63, 1<<63 + 1, math.MaxUint64} {
+		cell := boc.NewCell()
+		if err := Marshal(cell, amount); err != nil {
+			t.Fatalf("Marshal(%d): %v", amount, err)
+		}
+		var got Grams
+		if err := Unmarshal(cell, &got); err != nil {
+			t.Fatalf("Unmarshal(%d): %v", amount, err)
+		}
+		if got != amount {
+			t.Errorf("marshal/unmarshal %d: got %d", amount, got)
+		}
+	}
+}
+
 func TestGrams_UnmarshalTLB(t *testing.T) {
 	tests := []struct {
 		name      string

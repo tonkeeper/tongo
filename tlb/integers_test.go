@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"math/big"
 	"testing"
+
+	"github.com/tonkeeper/tongo/boc"
 )
 
 func TestVarUInteger_MarshalJSON(t *testing.T) {
@@ -145,5 +147,26 @@ func TestBits_JSON(t *testing.T) {
 				t.Errorf("want: %v, got: %v", tt.want, value)
 			}
 		})
+	}
+}
+
+func TestVarUIntegerLengthLimit(t *testing.T) {
+	// Both types use a three-bit length prefix. Seven bytes fit only VarUInteger 8.
+	value := new(big.Int).Lsh(big.NewInt(1), 48)
+	c := boc.NewCell()
+	if err := VarUInteger7(*value).MarshalTLB(c, nil); err == nil {
+		t.Fatal("VarUInteger 7 accepted a seven-byte value")
+	}
+	if err := VarUInteger8(*value).MarshalTLB(c, nil); err != nil {
+		t.Fatal(err)
+	}
+	var as7 VarUInteger7
+	if err := as7.UnmarshalTLB(c, nil); err == nil {
+		t.Fatal("VarUInteger 7 accepted length prefix 7")
+	}
+	c.ResetCounters()
+	var as8 VarUInteger8
+	if err := as8.UnmarshalTLB(c, nil); err != nil || (*big.Int)(&as8).Cmp(value) != 0 {
+		t.Fatalf("VarUInteger 8 round trip: got %v, err %v", (*big.Int)(&as8), err)
 	}
 }

@@ -414,3 +414,31 @@ func TestBitString_Compare(t *testing.T) {
 		})
 	}
 }
+
+func TestLimUintBounds(t *testing.T) {
+	for _, bound := range []int{0, 1, 4, 5, 6, 7, 8, 15, 16, 31, 32} {
+		t.Run(fmt.Sprint(bound), func(t *testing.T) {
+			width := bits.Len(uint(bound))
+			for value := 0; value <= bound; value++ {
+				s := NewBitString(width)
+				if !assert.NoError(t, s.WriteLimUint(value, bound)) {
+					return
+				}
+				assert.Equal(t, width, s.BitsAvailableForRead())
+				got, err := s.ReadLimUint(bound)
+				assert.NoError(t, err)
+				assert.Equal(t, uint(value), got)
+			}
+
+			s := NewBitString(width)
+			assert.Error(t, s.WriteLimUint(bound+1, bound))
+			assert.Error(t, s.WriteLimUint(-1, bound))
+			assert.Zero(t, s.BitsAvailableForRead())
+			if bound+1 < 1<<width {
+				assert.NoError(t, s.WriteUint(uint64(bound+1), width))
+				_, err := s.ReadLimUint(bound)
+				assert.Error(t, err)
+			}
+		})
+	}
+}

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 
@@ -38,6 +39,10 @@ func (id AccountID) IsZero() bool {
 }
 
 func (id AccountID) MarshalText() ([]byte, error) {
+	// The friendly address format stores the workchain in a signed byte.
+	if id.Workchain < math.MinInt8 || id.Workchain > math.MaxInt8 {
+		return []byte(id.ToRaw()), nil
+	}
 	return []byte(id.ToHuman(true, false)), nil
 }
 

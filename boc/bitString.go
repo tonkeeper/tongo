@@ -717,17 +717,26 @@ func (s *BitString) ReadUnary() (uint, error) {
 // ReadLimUint
 // #<= n
 func (s *BitString) ReadLimUint(n int) (uint, error) {
-	ln := minBitsRequired(uint64(n))
-	res, err := s.ReadUint(ln)
-	return uint(res), err
+	if n < 0 {
+		return 0, fmt.Errorf("negative limit %d", n)
+	}
+	res, err := s.ReadUint(minBitsRequired(uint64(n)))
+	if err != nil {
+		return 0, err
+	}
+	if res > uint64(n) {
+		return 0, fmt.Errorf("value %d exceeds limit %d", res, n)
+	}
+	return uint(res), nil
 }
 
 // WriteLimUint
 // #<= n
 func (s *BitString) WriteLimUint(val, n int) error {
-	ln := minBitsRequired(uint64(n))
-	err := s.WriteUint(uint64(val), ln)
-	return err
+	if val < 0 || val > n {
+		return fmt.Errorf("value %d is outside range [0, %d]", val, n)
+	}
+	return s.WriteUint(uint64(val), minBitsRequired(uint64(n)))
 }
 
 func (s *BitString) ReadRemainingBits() BitString {

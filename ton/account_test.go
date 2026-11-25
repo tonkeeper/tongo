@@ -124,3 +124,20 @@ func TestToMsgAddress(t *testing.T) {
 		t.Fatal(ma.SumType)
 	}
 }
+
+func TestAccountIDTextWorkchain(t *testing.T) {
+	for _, wc := range []int32{-2147483648, -129, -128, -1, 0, 127, 128, 2147483647} {
+		id := AccountID{Workchain: wc, Address: [32]byte{1, 2, 3}}
+		text, err := id.MarshalText()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if wc >= -128 && wc <= 127 && string(text) != id.ToHuman(true, false) {
+			t.Fatalf("workchain %d: unexpected friendly address %s", wc, text)
+		}
+		var decoded AccountID
+		if err := decoded.UnmarshalText(text); err != nil || decoded != id {
+			t.Fatalf("workchain %d: decoded %v, error %v", wc, decoded, err)
+		}
+	}
+}

@@ -64,7 +64,18 @@ func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []
 	if len(keys) == 0 || len(values) == 0 {
 		return fmt.Errorf("keys or values are empty")
 	}
-	label, err := encodeLabel(c, &keys[0], &keys[len(keys)-1], keySize)
+	// The smallest and largest keys share exactly the prefix common to all keys.
+	// NewHashmap accepts its key/value pairs in any order.
+	first, last := &keys[0], &keys[0]
+	for i := 1; i < len(keys); i++ {
+		key := &keys[i]
+		if key.Compare(*first) < 0 {
+			first = key
+		} else if key.Compare(*last) > 0 {
+			last = key
+		}
+	}
+	label, err := encodeLabel(c, first, last, keySize)
 	if err != nil {
 		return err
 	}
@@ -73,7 +84,7 @@ func (h Hashmap[keyT, T]) encodeMap(c *boc.Cell, keys []boc.BitString, values []
 	var leftValues, rightValues []T
 	if len(keys) > 1 {
 		for i := range keys {
-			_, err := keys[i].ReadBits(label.BitsAvailableForRead()) // skip common label
+			err := keys[i].Skip(label.BitsAvailableForRead())
 			if err != nil {
 				return err
 			}

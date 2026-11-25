@@ -1,6 +1,7 @@
 package tlb
 
 import (
+	"bytes"
 	"os"
 	"reflect"
 	"testing"
@@ -100,6 +101,42 @@ func Benchmark_HashmapAug_Unmarshal(b *testing.B) {
 		err = m.UnmarshalTLB(cell[0], &Decoder{})
 		if err != nil {
 			b.Errorf("UnmarshalTLB() failed: %v", err)
+		}
+	}
+}
+
+func TestHashmapMarshalKeyOrder(t *testing.T) {
+	// The outside keys share 31 bits. The middle key can differ at the first bit.
+	const high Uint32 = 1 << 31
+	amounts := map[Uint32]uint16{0: 11, 1: 22, high: 33}
+	var want []byte
+	for _, keys := range [][]Uint32{
+		{0, 1, high}, {0, high, 1}, {1, 0, high},
+		{1, high, 0}, {high, 0, 1}, {high, 1, 0},
+	} {
+		values := []uint16{amounts[keys[0]], amounts[keys[1]], amounts[keys[2]]}
+		c := boc.NewCell()
+		if err := Marshal(c, NewHashmap(keys, values)); err != nil {
+			t.Fatalf("marshal keys %v: %v", keys, err)
+		}
+		got, err := c.ToBoc()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want == nil {
+			want = got
+		} else if !bytes.Equal(got, want) {
+			t.Fatalf("keys %v: got %x, want %x", keys, got, want)
+		}
+
+		var decoded Hashmap[Uint32, uint16]
+		if err := Unmarshal(c, &decoded); err != nil {
+			t.Fatal(err)
+		}
+		for key, amount := range amounts {
+			if got, ok := decoded.Get(key); !ok || got != amount {
+				t.Fatalf("keys %v: lookup %d = (%d, %t), want %d", keys, key, got, ok, amount)
+			}
 		}
 	}
 }

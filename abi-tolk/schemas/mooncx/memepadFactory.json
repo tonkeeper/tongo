@@ -1,0 +1,231 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_memepad_factory",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadFactoryCreateCurve"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadFactoryWithdraw"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadFactoryUpgrade"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadFactoryUpgradeCurve"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "MemepadFactoryWithdrawPayout"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        18
+      ]
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "MemepadFactoryCreateCurve",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 2122549947,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "salt",
+          "ty_idx": 11
+        },
+        {
+          "name": "feeBps",
+          "ty_idx": 13
+        },
+        {
+          "name": "initialBuy",
+          "ty_idx": 6
+        },
+        {
+          "name": "content",
+          "ty_idx": 3
+        }
+      ],
+      "description": "Creator asks the factory to deploy a new curve (bonding curve + jetton).\ncontent holds name, symbol and image as text refs plus an optional ref with extra fields."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadFactoryWithdraw",
+      "ty_idx": 14,
+      "prefix": {
+        "prefix_num": 848324774,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Admin withdraws GRAM from the factory."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadFactoryWithdrawPayout",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 4242879192,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        }
+      ],
+      "description": "Factory pays the withdrawn GRAM to the recipient of MemepadFactoryWithdraw."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadFactoryUpgrade",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 246839550,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 16
+        },
+        {
+          "name": "newData",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Admin replaces factory code and/or data."
+    },
+    {
+      "kind": "struct",
+      "name": "MemepadFactoryUpgradeCurve",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 2421683563,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "curve",
+          "ty_idx": 7
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 16
+        },
+        {
+          "name": "newData",
+          "ty_idx": 16
+        }
+      ],
+      "description": "Admin asks the factory to upgrade one curve."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 14
+    },
+    {
+      "body_ty_idx": 15
+    },
+    {
+      "body_ty_idx": 17
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

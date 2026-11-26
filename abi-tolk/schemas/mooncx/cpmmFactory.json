@@ -1,0 +1,320 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_cpmm_factory",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryCreatePool"
+    },
+    {
+      "kind": "addressOpt"
+    },
+    {
+      "kind": "uintN",
+      "n": 8
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryProvidePoolAddress"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryCollectProtocolFees"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryUpdatePoolWallets"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryUpgradePool"
+    },
+    {
+      "kind": "nullable",
+      "inner_ty_idx": 3
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryUpgrade"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "CpmmFactoryTakePoolAddress"
+    },
+    {
+      "kind": "shapedTuple",
+      "items_ty_idx": [
+        21
+      ]
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryCreatePool",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 3966917711,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "yMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "feeBps",
+          "ty_idx": 14
+        }
+      ],
+      "description": "Creates a pool for a pair; a null master stands for GRAM."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryProvidePoolAddress",
+      "ty_idx": 15,
+      "prefix": {
+        "prefix_num": 490909495,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "xMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "yMaster",
+          "ty_idx": 7
+        },
+        {
+          "name": "feeBps",
+          "ty_idx": 14
+        },
+        {
+          "name": "initiator",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Asks the factory for the address of the pool of a pair created by initiator;\nthe answer goes back to the sender."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryTakePoolAddress",
+      "ty_idx": 21,
+      "prefix": {
+        "prefix_num": 2175108130,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "xMaster",
+          "ty_idx": 13
+        },
+        {
+          "name": "yMaster",
+          "ty_idx": 7
+        },
+        {
+          "name": "feeBps",
+          "ty_idx": 14
+        }
+      ],
+      "description": "Factory's answer to CpmmFactoryProvidePoolAddress."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryCollectProtocolFees",
+      "ty_idx": 16,
+      "prefix": {
+        "prefix_num": 3297955049,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "recipient",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Admin collects the protocol fees of a pool; the factory forwards it to the\npool as CpmmPoolCollectProtocolFees."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryUpdatePoolWallets",
+      "ty_idx": 17,
+      "prefix": {
+        "prefix_num": 1373113950,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "xWallet",
+          "ty_idx": 13
+        },
+        {
+          "name": "yWallet",
+          "ty_idx": 7
+        }
+      ],
+      "description": "Admin sets the jetton wallets of a pool (a null xWallet means the x side is\nGRAM); the factory forwards it to the pool as CpmmPoolUpdateWallets."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryUpgradePool",
+      "ty_idx": 18,
+      "prefix": {
+        "prefix_num": 225644312,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "pool",
+          "ty_idx": 7
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 19
+        },
+        {
+          "name": "newData",
+          "ty_idx": 19
+        }
+      ],
+      "description": "Admin replaces the code and/or data of a pool; the factory forwards it to the\npool as CpmmPoolUpgrade."
+    },
+    {
+      "kind": "struct",
+      "name": "CpmmFactoryUpgrade",
+      "ty_idx": 20,
+      "prefix": {
+        "prefix_num": 3135378330,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "newCode",
+          "ty_idx": 19
+        },
+        {
+          "name": "newData",
+          "ty_idx": 19
+        }
+      ],
+      "description": "Admin replaces the factory code and/or data."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    },
+    {
+      "body_ty_idx": 15
+    },
+    {
+      "body_ty_idx": 16
+    },
+    {
+      "body_ty_idx": 17
+    },
+    {
+      "body_ty_idx": 18
+    },
+    {
+      "body_ty_idx": 20
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

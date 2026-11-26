@@ -1,0 +1,120 @@
+{
+  "abi_schema_version": "1.0",
+  "contract_name": "mooncx_clmm_account",
+  "unique_types": [
+    {
+      "kind": "void"
+    },
+    {
+      "kind": "int"
+    },
+    {
+      "kind": "slice"
+    },
+    {
+      "kind": "cell"
+    },
+    {
+      "kind": "builder"
+    },
+    {
+      "kind": "bool"
+    },
+    {
+      "kind": "coins"
+    },
+    {
+      "kind": "address"
+    },
+    {
+      "kind": "intN",
+      "n": 32
+    },
+    {
+      "kind": "uintN",
+      "n": 32
+    },
+    {
+      "kind": "intN",
+      "n": 64
+    },
+    {
+      "kind": "uintN",
+      "n": 64
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmAccountDepositLiquidityRecord"
+    },
+    {
+      "kind": "StructRef",
+      "struct_name": "ClmmDepositBin"
+    },
+    {
+      "kind": "mapKV",
+      "key_ty_idx": 10,
+      "value_ty_idx": 13
+    }
+  ],
+  "struct_instantiations": [],
+  "alias_instantiations": [],
+  "declarations": [
+    {
+      "kind": "struct",
+      "name": "ClmmDepositBin",
+      "ty_idx": 13,
+      "fields": [
+        {
+          "name": "x",
+          "ty_idx": 6
+        },
+        {
+          "name": "y",
+          "ty_idx": 6
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ClmmAccountDepositLiquidityRecord",
+      "ty_idx": 12,
+      "prefix": {
+        "prefix_num": 3985570310,
+        "prefix_len": 32
+      },
+      "fields": [
+        {
+          "name": "queryId",
+          "ty_idx": 11
+        },
+        {
+          "name": "amount",
+          "ty_idx": 6
+        },
+        {
+          "name": "xIn",
+          "ty_idx": 5
+        },
+        {
+          "name": "depositBins",
+          "ty_idx": 14
+        }
+      ],
+      "description": "Range records one leg of a two-sided deposit in the provider's LP account\n(deploying it with StateInit on first use); xIn tells which side amount is."
+    }
+  ],
+  "incoming_messages": [
+    {
+      "body_ty_idx": 12
+    }
+  ],
+  "incoming_external": [],
+  "outgoing_messages": [],
+  "emitted_events": [],
+  "storage": {},
+  "get_methods": [],
+  "thrown_errors": [],
+  "compiler_name": "tolk",
+  "compiler_version": "1.4.1",
+  "code_boc64": "te6ccgEBAgEAFQABFP8A9KQT9LzyyAsBAAzTMPiR8kA="
+}

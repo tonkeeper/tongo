@@ -9,6 +9,7 @@ import (
 	abiEvaa "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/evaa"
 	abiFfVault "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/ffVault"
 	abiGrambo "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/grambo"
+	abiMooncx "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/mooncx"
 	abiPythOracle "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/pythOracle"
 	abiSingleNominatorPool "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/singleNominatorPool"
 	abiStonfi "github.com/tonkeeper/tongo/abi-tolk/abiGenerated/stonfi"
@@ -943,6 +944,302 @@ func init() {
 	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboUpdateData](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboUpdateData), abiGrambo.GramboGramboUpdateDataMsgOp)
 	KnownMsgInTypes[abiGrambo.GramboGramboWithdrawMsgOp] = abiGrambo.GramboWithdraw{}
 	registerInMsgUnmarshalerForOpcode[*abiGrambo.GramboWithdraw](opcodedMsgInDecodeFunctions, uint32(abiGrambo.PrefixGramboWithdraw), abiGrambo.GramboGramboWithdrawMsgOp)
+
+}
+
+func init() {
+	tolkMethods = append(tolkMethods,
+		MethodDescription{
+			Name: "getPool",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiMooncx.GetPool(ctx, executor, id)
+				return "GetPool_MooncxClmmPoolResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getRanges",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiMooncx.GetRanges(ctx, executor, id)
+				return "GetRanges_MooncxClmmPoolResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getRange",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiMooncx.GetRange(ctx, executor, id)
+				return "GetRange_MooncxClmmRangeResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getPosition",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiMooncx.GetPosition(ctx, executor, id)
+				return "GetPosition_MooncxCpmmPositionResult", r, err
+			},
+		},
+		MethodDescription{
+			Name: "getLocked",
+			InvokeFn: func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+				r, err := abiMooncx.GetLocked(ctx, executor, id)
+				return "GetLocked_MooncxCpmmPositionResult", r, err
+			},
+		},
+	)
+
+	KnownGetMethodsDecoder["getPool"] = append(KnownGetMethodsDecoder["getPool"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiMooncx.DecodeGetPool(&st)
+		return "GetPool_MooncxClmmPoolResult", r, err
+	})
+	KnownGetMethodsDecoder["getRanges"] = append(KnownGetMethodsDecoder["getRanges"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiMooncx.DecodeGetRanges(&st)
+		return "GetRanges_MooncxClmmPoolResult", r, err
+	})
+	KnownGetMethodsDecoder["getRange"] = append(KnownGetMethodsDecoder["getRange"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiMooncx.DecodeGetRange(&st)
+		return "GetRange_MooncxClmmRangeResult", r, err
+	})
+	KnownGetMethodsDecoder["getPosition"] = append(KnownGetMethodsDecoder["getPosition"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiMooncx.DecodeGetPosition(&st)
+		return "GetPosition_MooncxCpmmPositionResult", r, err
+	})
+	KnownGetMethodsDecoder["getLocked"] = append(KnownGetMethodsDecoder["getLocked"], func(stack tlb.VmStack) (string, any, error) {
+		st := stack
+		r, err := abiMooncx.DecodeGetLocked(&st)
+		return "GetLocked_MooncxCpmmPositionResult", r, err
+	})
+
+	KnownSimpleGetMethods[87704] = append(KnownSimpleGetMethods[87704], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiMooncx.GetPool(ctx, executor, id)
+		return "GetPool_MooncxClmmPoolResult", r, err
+	})
+	KnownSimpleGetMethods[122414] = append(KnownSimpleGetMethods[122414], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiMooncx.GetRanges(ctx, executor, id)
+		return "GetRanges_MooncxClmmPoolResult", r, err
+	})
+	KnownSimpleGetMethods[103203] = append(KnownSimpleGetMethods[103203], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiMooncx.GetRange(ctx, executor, id)
+		return "GetRange_MooncxClmmRangeResult", r, err
+	})
+	KnownSimpleGetMethods[109064] = append(KnownSimpleGetMethods[109064], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiMooncx.GetPosition(ctx, executor, id)
+		return "GetPosition_MooncxCpmmPositionResult", r, err
+	})
+	KnownSimpleGetMethods[107920] = append(KnownSimpleGetMethods[107920], func(ctx context.Context, executor Executor, id ton.AccountID) (string, any, error) {
+		r, err := abiMooncx.GetLocked(ctx, executor, id)
+		return "GetLocked_MooncxCpmmPositionResult", r, err
+	})
+
+	tolkInterfaceOrder = append(tolkInterfaceOrder,
+		InterfaceDescription{
+			Name:    MooncxClmmPool,
+			Results: []string{"GetPool_MooncxClmmPoolResult", "GetRanges_MooncxClmmPoolResult"},
+		},
+		InterfaceDescription{
+			Name:    MooncxClmmRange,
+			Results: []string{"GetRange_MooncxClmmRangeResult"},
+		},
+		InterfaceDescription{
+			Name:    MooncxCpmmPosition,
+			Results: []string{"GetPosition_MooncxCpmmPositionResult", "GetLocked_MooncxCpmmPositionResult"},
+		},
+	)
+
+	KnownMsgInTypes[abiMooncx.MooncxClmmAccountDepositLiquidityRecordMsgOp] = abiMooncx.ClmmAccountDepositLiquidityRecord{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmAccountDepositLiquidityRecord](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmAccountDepositLiquidityRecord), abiMooncx.MooncxClmmAccountDepositLiquidityRecordMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmExcessMsgOp] = abiMooncx.ClmmExcess{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmExcess](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmExcess), abiMooncx.MooncxClmmExcessMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryCollectProtocolFeesMsgOp] = abiMooncx.ClmmFactoryCollectProtocolFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryCollectProtocolFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryCollectProtocolFees), abiMooncx.MooncxClmmFactoryCollectProtocolFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryCreatePoolMsgOp] = abiMooncx.ClmmFactoryCreatePool{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryCreatePool](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryCreatePool), abiMooncx.MooncxClmmFactoryCreatePoolMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryUpdateRangeFeesMsgOp] = abiMooncx.ClmmFactoryUpdateRangeFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryUpdateRangeFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryUpdateRangeFees), abiMooncx.MooncxClmmFactoryUpdateRangeFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryUpdateRangeWalletsMsgOp] = abiMooncx.ClmmFactoryUpdateRangeWallets{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryUpdateRangeWallets](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryUpdateRangeWallets), abiMooncx.MooncxClmmFactoryUpdateRangeWalletsMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryUpgradeMsgOp] = abiMooncx.ClmmFactoryUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryUpgrade), abiMooncx.MooncxClmmFactoryUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryUpgradePoolMsgOp] = abiMooncx.ClmmFactoryUpgradePool{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryUpgradePool](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryUpgradePool), abiMooncx.MooncxClmmFactoryUpgradePoolMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmFactoryUpgradeRangeMsgOp] = abiMooncx.ClmmFactoryUpgradeRange{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmFactoryUpgradeRange](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmFactoryUpgradeRange), abiMooncx.MooncxClmmFactoryUpgradeRangeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPoolCollectProtocolFeesMsgOp] = abiMooncx.ClmmPoolCollectProtocolFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPoolCollectProtocolFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPoolCollectProtocolFees), abiMooncx.MooncxClmmPoolCollectProtocolFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPoolDeployMsgOp] = abiMooncx.ClmmPoolDeploy{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPoolDeploy](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPoolDeploy), abiMooncx.MooncxClmmPoolDeployMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPoolUpdateRangeFeesMsgOp] = abiMooncx.ClmmPoolUpdateRangeFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPoolUpdateRangeFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPoolUpdateRangeFees), abiMooncx.MooncxClmmPoolUpdateRangeFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPoolUpdateRangeWalletsMsgOp] = abiMooncx.ClmmPoolUpdateRangeWallets{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPoolUpdateRangeWallets](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPoolUpdateRangeWallets), abiMooncx.MooncxClmmPoolUpdateRangeWalletsMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPoolUpgradeMsgOp] = abiMooncx.ClmmPoolUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPoolUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPoolUpgrade), abiMooncx.MooncxClmmPoolUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPoolUpgradeRangeMsgOp] = abiMooncx.ClmmPoolUpgradeRange{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPoolUpgradeRange](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPoolUpgradeRange), abiMooncx.MooncxClmmPoolUpgradeRangeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionClosedMsgOp] = abiMooncx.ClmmPositionClosed{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionClosed](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionClosed), abiMooncx.MooncxClmmPositionClosedMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionDeployMsgOp] = abiMooncx.ClmmPositionDeploy{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionDeploy](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionDeploy), abiMooncx.MooncxClmmPositionDeployMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionLockLiquidityMsgOp] = abiMooncx.ClmmPositionLockLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionLockLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionLockLiquidity), abiMooncx.MooncxClmmPositionLockLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionWithdrawFeesMsgOp] = abiMooncx.ClmmPositionWithdrawFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionWithdrawFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionWithdrawFees), abiMooncx.MooncxClmmPositionWithdrawFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionWithdrawFeesUpdateMsgOp] = abiMooncx.ClmmPositionWithdrawFeesUpdate{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionWithdrawFeesUpdate](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionWithdrawFeesUpdate), abiMooncx.MooncxClmmPositionWithdrawFeesUpdateMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionWithdrawLiquidityMsgOp] = abiMooncx.ClmmPositionWithdrawLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionWithdrawLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionWithdrawLiquidity), abiMooncx.MooncxClmmPositionWithdrawLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmPositionWithdrawLiquidityUpdateMsgOp] = abiMooncx.ClmmPositionWithdrawLiquidityUpdate{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmPositionWithdrawLiquidityUpdate](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmPositionWithdrawLiquidityUpdate), abiMooncx.MooncxClmmPositionWithdrawLiquidityUpdateMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeCancelDepositMsgOp] = abiMooncx.ClmmRangeCancelDeposit{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeCancelDeposit](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeCancelDeposit), abiMooncx.MooncxClmmRangeCancelDepositMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeCancelDepositRefundMsgOp] = abiMooncx.ClmmRangeCancelDepositRefund{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeCancelDepositRefund](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeCancelDepositRefund), abiMooncx.MooncxClmmRangeCancelDepositRefundMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeCollectProtocolFeesMsgOp] = abiMooncx.ClmmRangeCollectProtocolFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeCollectProtocolFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeCollectProtocolFees), abiMooncx.MooncxClmmRangeCollectProtocolFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeDeployMsgOp] = abiMooncx.ClmmRangeDeploy{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeDeploy](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeDeploy), abiMooncx.MooncxClmmRangeDeployMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeDepositLiquidityMsgOp] = abiMooncx.ClmmRangeDepositLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeDepositLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeDepositLiquidity), abiMooncx.MooncxClmmRangeDepositLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeDepositLiquidityExcessMsgOp] = abiMooncx.ClmmRangeDepositLiquidityExcess{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeDepositLiquidityExcess](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeDepositLiquidityExcess), abiMooncx.MooncxClmmRangeDepositLiquidityExcessMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeDepositLiquidityPayloadMsgOp] = abiMooncx.ClmmRangeDepositLiquidityPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeDepositLiquidityPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeDepositLiquidityPayload), abiMooncx.MooncxClmmRangeDepositLiquidityPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeDepositLiquidityRefundMsgOp] = abiMooncx.ClmmRangeDepositLiquidityRefund{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeDepositLiquidityRefund](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeDepositLiquidityRefund), abiMooncx.MooncxClmmRangeDepositLiquidityRefundMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeProtocolFeesPayoutMsgOp] = abiMooncx.ClmmRangeProtocolFeesPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeProtocolFeesPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeProtocolFeesPayout), abiMooncx.MooncxClmmRangeProtocolFeesPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeProvideLiquidityMsgOp] = abiMooncx.ClmmRangeProvideLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeProvideLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeProvideLiquidity), abiMooncx.MooncxClmmRangeProvideLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeSwapMsgOp] = abiMooncx.ClmmRangeSwap{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeSwap](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeSwap), abiMooncx.MooncxClmmRangeSwapMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeSwapPayloadMsgOp] = abiMooncx.ClmmRangeSwapPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeSwapPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeSwapPayload), abiMooncx.MooncxClmmRangeSwapPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeUpdateFeesMsgOp] = abiMooncx.ClmmRangeUpdateFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeUpdateFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeUpdateFees), abiMooncx.MooncxClmmRangeUpdateFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeUpdateWalletsMsgOp] = abiMooncx.ClmmRangeUpdateWallets{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeUpdateWallets](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeUpdateWallets), abiMooncx.MooncxClmmRangeUpdateWalletsMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeUpgradeMsgOp] = abiMooncx.ClmmRangeUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeUpgrade), abiMooncx.MooncxClmmRangeUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeWithdrawFeesMsgOp] = abiMooncx.ClmmRangeWithdrawFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeWithdrawFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeWithdrawFees), abiMooncx.MooncxClmmRangeWithdrawFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeWithdrawFeesPayoutMsgOp] = abiMooncx.ClmmRangeWithdrawFeesPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeWithdrawFeesPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeWithdrawFeesPayout), abiMooncx.MooncxClmmRangeWithdrawFeesPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeWithdrawLiquidityMsgOp] = abiMooncx.ClmmRangeWithdrawLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeWithdrawLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeWithdrawLiquidity), abiMooncx.MooncxClmmRangeWithdrawLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxClmmRangeWithdrawLiquidityPayoutMsgOp] = abiMooncx.ClmmRangeWithdrawLiquidityPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.ClmmRangeWithdrawLiquidityPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixClmmRangeWithdrawLiquidityPayout), abiMooncx.MooncxClmmRangeWithdrawLiquidityPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmAccountDepositLiquidityRecordMsgOp] = abiMooncx.CpmmAccountDepositLiquidityRecord{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmAccountDepositLiquidityRecord](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmAccountDepositLiquidityRecord), abiMooncx.MooncxCpmmAccountDepositLiquidityRecordMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmExcessMsgOp] = abiMooncx.CpmmExcess{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmExcess](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmExcess), abiMooncx.MooncxCpmmExcessMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryCollectProtocolFeesMsgOp] = abiMooncx.CpmmFactoryCollectProtocolFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryCollectProtocolFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryCollectProtocolFees), abiMooncx.MooncxCpmmFactoryCollectProtocolFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryCreatePoolMsgOp] = abiMooncx.CpmmFactoryCreatePool{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryCreatePool](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryCreatePool), abiMooncx.MooncxCpmmFactoryCreatePoolMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryProvidePoolAddressMsgOp] = abiMooncx.CpmmFactoryProvidePoolAddress{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryProvidePoolAddress](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryProvidePoolAddress), abiMooncx.MooncxCpmmFactoryProvidePoolAddressMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryTakePoolAddressMsgOp] = abiMooncx.CpmmFactoryTakePoolAddress{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryTakePoolAddress](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryTakePoolAddress), abiMooncx.MooncxCpmmFactoryTakePoolAddressMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryUpdatePoolWalletsMsgOp] = abiMooncx.CpmmFactoryUpdatePoolWallets{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryUpdatePoolWallets](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryUpdatePoolWallets), abiMooncx.MooncxCpmmFactoryUpdatePoolWalletsMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryUpgradeMsgOp] = abiMooncx.CpmmFactoryUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryUpgrade), abiMooncx.MooncxCpmmFactoryUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmFactoryUpgradePoolMsgOp] = abiMooncx.CpmmFactoryUpgradePool{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmFactoryUpgradePool](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmFactoryUpgradePool), abiMooncx.MooncxCpmmFactoryUpgradePoolMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolBoostMsgOp] = abiMooncx.CpmmPoolBoost{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolBoost](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolBoost), abiMooncx.MooncxCpmmPoolBoostMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolBoostPayloadMsgOp] = abiMooncx.CpmmPoolBoostPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolBoostPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolBoostPayload), abiMooncx.MooncxCpmmPoolBoostPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolCancelDepositMsgOp] = abiMooncx.CpmmPoolCancelDeposit{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolCancelDeposit](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolCancelDeposit), abiMooncx.MooncxCpmmPoolCancelDepositMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolCancelDepositRefundMsgOp] = abiMooncx.CpmmPoolCancelDepositRefund{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolCancelDepositRefund](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolCancelDepositRefund), abiMooncx.MooncxCpmmPoolCancelDepositRefundMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolCollectProtocolFeesMsgOp] = abiMooncx.CpmmPoolCollectProtocolFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolCollectProtocolFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolCollectProtocolFees), abiMooncx.MooncxCpmmPoolCollectProtocolFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolDeployMsgOp] = abiMooncx.CpmmPoolDeploy{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolDeploy](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolDeploy), abiMooncx.MooncxCpmmPoolDeployMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolDepositLiquidityMsgOp] = abiMooncx.CpmmPoolDepositLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolDepositLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolDepositLiquidity), abiMooncx.MooncxCpmmPoolDepositLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolDepositLiquidityPayloadMsgOp] = abiMooncx.CpmmPoolDepositLiquidityPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolDepositLiquidityPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolDepositLiquidityPayload), abiMooncx.MooncxCpmmPoolDepositLiquidityPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolProtocolFeesPayoutMsgOp] = abiMooncx.CpmmPoolProtocolFeesPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolProtocolFeesPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolProtocolFeesPayout), abiMooncx.MooncxCpmmPoolProtocolFeesPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolProvideLiquidityMsgOp] = abiMooncx.CpmmPoolProvideLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolProvideLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolProvideLiquidity), abiMooncx.MooncxCpmmPoolProvideLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolProvideLiquidityExcessMsgOp] = abiMooncx.CpmmPoolProvideLiquidityExcess{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolProvideLiquidityExcess](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolProvideLiquidityExcess), abiMooncx.MooncxCpmmPoolProvideLiquidityExcessMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolProvideLiquidityRefundMsgOp] = abiMooncx.CpmmPoolProvideLiquidityRefund{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolProvideLiquidityRefund](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolProvideLiquidityRefund), abiMooncx.MooncxCpmmPoolProvideLiquidityRefundMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolProvideReadyMsgOp] = abiMooncx.CpmmPoolProvideReady{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolProvideReady](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolProvideReady), abiMooncx.MooncxCpmmPoolProvideReadyMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolSwapMsgOp] = abiMooncx.CpmmPoolSwap{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolSwap](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolSwap), abiMooncx.MooncxCpmmPoolSwapMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolSwapPayloadMsgOp] = abiMooncx.CpmmPoolSwapPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolSwapPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolSwapPayload), abiMooncx.MooncxCpmmPoolSwapPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolTakeReadyMsgOp] = abiMooncx.CpmmPoolTakeReady{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolTakeReady](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolTakeReady), abiMooncx.MooncxCpmmPoolTakeReadyMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolUpdateWalletsMsgOp] = abiMooncx.CpmmPoolUpdateWallets{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolUpdateWallets](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolUpdateWallets), abiMooncx.MooncxCpmmPoolUpdateWalletsMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolUpgradeMsgOp] = abiMooncx.CpmmPoolUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolUpgrade), abiMooncx.MooncxCpmmPoolUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolWithdrawFeesMsgOp] = abiMooncx.CpmmPoolWithdrawFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolWithdrawFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolWithdrawFees), abiMooncx.MooncxCpmmPoolWithdrawFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolWithdrawFeesPayoutMsgOp] = abiMooncx.CpmmPoolWithdrawFeesPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolWithdrawFeesPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolWithdrawFeesPayout), abiMooncx.MooncxCpmmPoolWithdrawFeesPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolWithdrawLiquidityMsgOp] = abiMooncx.CpmmPoolWithdrawLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolWithdrawLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolWithdrawLiquidity), abiMooncx.MooncxCpmmPoolWithdrawLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPoolWithdrawLiquidityPayoutMsgOp] = abiMooncx.CpmmPoolWithdrawLiquidityPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPoolWithdrawLiquidityPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPoolWithdrawLiquidityPayout), abiMooncx.MooncxCpmmPoolWithdrawLiquidityPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPositionDeployMsgOp] = abiMooncx.CpmmPositionDeploy{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPositionDeploy](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPositionDeploy), abiMooncx.MooncxCpmmPositionDeployMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPositionLockLiquidityMsgOp] = abiMooncx.CpmmPositionLockLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPositionLockLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPositionLockLiquidity), abiMooncx.MooncxCpmmPositionLockLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPositionWithdrawFeesMsgOp] = abiMooncx.CpmmPositionWithdrawFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPositionWithdrawFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPositionWithdrawFees), abiMooncx.MooncxCpmmPositionWithdrawFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPositionWithdrawFeesUpdateMsgOp] = abiMooncx.CpmmPositionWithdrawFeesUpdate{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPositionWithdrawFeesUpdate](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPositionWithdrawFeesUpdate), abiMooncx.MooncxCpmmPositionWithdrawFeesUpdateMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxCpmmPositionWithdrawLiquidityMsgOp] = abiMooncx.CpmmPositionWithdrawLiquidity{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.CpmmPositionWithdrawLiquidity](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixCpmmPositionWithdrawLiquidity), abiMooncx.MooncxCpmmPositionWithdrawLiquidityMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveBuyMsgOp] = abiMooncx.MemepadCurveBuy{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveBuy](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveBuy), abiMooncx.MooncxMemepadCurveBuyMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveCreatorClaimFeesMsgOp] = abiMooncx.MemepadCurveCreatorClaimFees{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveCreatorClaimFees](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveCreatorClaimFees), abiMooncx.MooncxMemepadCurveCreatorClaimFeesMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveCreatorFeesPayoutMsgOp] = abiMooncx.MemepadCurveCreatorFeesPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveCreatorFeesPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveCreatorFeesPayout), abiMooncx.MooncxMemepadCurveCreatorFeesPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveDeployErrorMsgOp] = abiMooncx.MemepadCurveDeployError{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveDeployError](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveDeployError), abiMooncx.MooncxMemepadCurveDeployErrorMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveExcessMsgOp] = abiMooncx.MemepadCurveExcess{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveExcess](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveExcess), abiMooncx.MooncxMemepadCurveExcessMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveInitMsgOp] = abiMooncx.MemepadCurveInit{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveInit](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveInit), abiMooncx.MooncxMemepadCurveInitMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveProtocolPayoutMsgOp] = abiMooncx.MemepadCurveProtocolPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveProtocolPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveProtocolPayout), abiMooncx.MooncxMemepadCurveProtocolPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveSellPayloadMsgOp] = abiMooncx.MemepadCurveSellPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveSellPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveSellPayload), abiMooncx.MooncxMemepadCurveSellPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveSellPayoutMsgOp] = abiMooncx.MemepadCurveSellPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveSellPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveSellPayout), abiMooncx.MooncxMemepadCurveSellPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadCurveUpgradeMsgOp] = abiMooncx.MemepadCurveUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadCurveUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadCurveUpgrade), abiMooncx.MooncxMemepadCurveUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadFactoryCreateCurveMsgOp] = abiMooncx.MemepadFactoryCreateCurve{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadFactoryCreateCurve](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadFactoryCreateCurve), abiMooncx.MooncxMemepadFactoryCreateCurveMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadFactoryUpgradeMsgOp] = abiMooncx.MemepadFactoryUpgrade{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadFactoryUpgrade](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadFactoryUpgrade), abiMooncx.MooncxMemepadFactoryUpgradeMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadFactoryUpgradeCurveMsgOp] = abiMooncx.MemepadFactoryUpgradeCurve{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadFactoryUpgradeCurve](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadFactoryUpgradeCurve), abiMooncx.MooncxMemepadFactoryUpgradeCurveMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadFactoryWithdrawMsgOp] = abiMooncx.MemepadFactoryWithdraw{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadFactoryWithdraw](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadFactoryWithdraw), abiMooncx.MooncxMemepadFactoryWithdrawMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxMemepadFactoryWithdrawPayoutMsgOp] = abiMooncx.MemepadFactoryWithdrawPayout{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.MemepadFactoryWithdrawPayout](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixMemepadFactoryWithdrawPayout), abiMooncx.MooncxMemepadFactoryWithdrawPayoutMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxSwapFulfillMsgOp] = abiMooncx.SwapFulfill{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.SwapFulfill](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixSwapFulfill), abiMooncx.MooncxSwapFulfillMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxSwapFulfillPayloadMsgOp] = abiMooncx.SwapFulfillPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.SwapFulfillPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixSwapFulfillPayload), abiMooncx.MooncxSwapFulfillPayloadMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxSwapRejectMsgOp] = abiMooncx.SwapReject{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.SwapReject](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixSwapReject), abiMooncx.MooncxSwapRejectMsgOp)
+	KnownMsgInTypes[abiMooncx.MooncxSwapRejectPayloadMsgOp] = abiMooncx.SwapRejectPayload{}
+	registerInMsgUnmarshalerForOpcode[*abiMooncx.SwapRejectPayload](opcodedMsgInDecodeFunctions, uint32(abiMooncx.PrefixSwapRejectPayload), abiMooncx.MooncxSwapRejectPayloadMsgOp)
 
 }
 
